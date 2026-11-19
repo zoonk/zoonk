@@ -1,6 +1,7 @@
 "use client";
 
 import { type ResolvedBuddy } from "@zoonk/core/profile/default-buddy";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
@@ -8,6 +9,7 @@ import { useOptimistic } from "react";
 import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { SwitchSettingRow } from "../_components/setting-rows";
+import { LIST_DETAIL_GRID_CLASS } from "../_components/side-detail";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
 import { type CountryName, type SuggestedCountry } from "../country/country-choice";
@@ -53,10 +55,11 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
   return {
     buddy,
     homeCountry,
-    saveBuddy: (next: AppearanceBuddy) =>
+    saveBuddy: (next: AppearanceBuddy, onSaved?: () => void) =>
       run(
         () => setOptimisticBuddy({ ...next, picked: true }),
         () => actions.saveBuddy(next),
+        onSaved,
       ),
     setHomeCountry: (next: CountryName) =>
       run(
@@ -85,48 +88,50 @@ export function AppearanceScreen({
   const appearance = useAppearance({ actions, view });
 
   return (
-    <div className="flex flex-col gap-7" data-slot="appearance-screen">
+    <div
+      className={cn("flex flex-col gap-7", view.canPersonalize && LIST_DETAIL_GRID_CLASS)}
+      data-slot="appearance-screen"
+    >
       {view.canPersonalize && (
-        <PageSection>
-          <SectionTitle>{t("Your buddy")}</SectionTitle>
-          <BuddySettings
-            availableGlasses={view.availableGlasses}
-            look={view.look}
-            onSave={appearance.saveBuddy}
-            buddy={appearance.buddy}
-          />
-        </PageSection>
+        <BuddySettings
+          availableGlasses={view.availableGlasses}
+          look={view.look}
+          onSave={appearance.saveBuddy}
+          buddy={appearance.buddy}
+        />
       )}
 
-      {view.canPersonalize && (
-        <PageSection className="gap-0.5">
-          <SectionTitle>{t("Lessons")}</SectionTitle>
+      <div className="flex flex-col gap-7 xl:in-data-signed-in:col-start-1 xl:in-data-signed-in:row-start-1">
+        {view.canPersonalize && (
+          <PageSection className="gap-0.5">
+            <SectionTitle>{t("Lessons")}</SectionTitle>
+            <ListGroup>
+              <SwitchSettingRow
+                checked={appearance.soundsEnabled}
+                description={t("When you get it right or finish")}
+                label={t("Sounds")}
+                onCheckedChange={appearance.setSoundsEnabled}
+              />
+            </ListGroup>
+          </PageSection>
+        )}
+
+        <PageSection>
+          <SectionTitle>
+            {view.canPersonalize ? t("Language and region") : t("Language")}
+          </SectionTitle>
           <ListGroup>
-            <SwitchSettingRow
-              checked={appearance.soundsEnabled}
-              description={t("When you get it right or finish")}
-              label={t("Sounds")}
-              onCheckedChange={appearance.setSoundsEnabled}
-            />
+            <LanguageSetting onChange={onLanguageChange} />
+            {view.canPersonalize && (
+              <HomeCountrySetting
+                onChange={appearance.setHomeCountry}
+                suggested={view.homeCountrySuggested}
+                value={appearance.homeCountry}
+              />
+            )}
           </ListGroup>
         </PageSection>
-      )}
-
-      <PageSection>
-        <SectionTitle>
-          {view.canPersonalize ? t("Language and region") : t("Language")}
-        </SectionTitle>
-        <ListGroup>
-          <LanguageSetting onChange={onLanguageChange} />
-          {view.canPersonalize && (
-            <HomeCountrySetting
-              onChange={appearance.setHomeCountry}
-              suggested={view.homeCountrySuggested}
-              value={appearance.homeCountry}
-            />
-          )}
-        </ListGroup>
-      </PageSection>
+      </div>
     </div>
   );
 }

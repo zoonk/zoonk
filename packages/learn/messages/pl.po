@@ -699,7 +699,6 @@ msgid "That didn't save. Try again."
 msgstr "Nie udało się zapisać. Spróbuj ponownie."
 
 #: src/_components/sheet-header.tsx
-#: src/_components/side-detail.tsx
 #: src/_components/suggestion.tsx
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
@@ -1155,13 +1154,6 @@ msgid "Mastered"
 msgstr "Opanowane"
 
 #: src/appearance/appearance-screen.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/conversation/tutor-identity.tsx
-msgctxt "FRwDt3"
-msgid "Your buddy"
-msgstr "Twój kumpel"
-
-#: src/appearance/appearance-screen.tsx
 msgctxt "hDPGwB"
 msgid "When you get it right or finish"
 msgstr "Gdy odpowiesz poprawnie lub skończysz"
@@ -1192,6 +1184,12 @@ msgid "Glasses"
 msgstr "Okulary"
 
 #: src/appearance/buddy-settings.tsx
+#: src/conversation/tutor-identity.tsx
+msgctxt "FRwDt3"
+msgid "Your buddy"
+msgstr "Twój kumpel"
+
+#: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-details.tsx
 #: src/certificates/certificate-moment-parts.tsx
 #: src/onboarding/steps/schedule-aim.tsx
@@ -1208,6 +1206,11 @@ msgstr "Zmień"
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
 msgstr "Wybierz swojego kumpla"
+
+#: src/appearance/buddy-settings.tsx
+msgctxt "GrnZDN"
+msgid "Saved."
+msgstr "Zapisano."
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "h4cg3V"
@@ -6973,6 +6976,11 @@ msgid "Couldn't undo. It changed since."
 msgstr "Nie udało się cofnąć zmiany. W międzyczasie wprowadzono kolejną."
 
 #: src/memory/memory-screen.tsx
+msgctxt "GUOjcs"
+msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
+msgstr "Zoonk nie zapisuje informacji o zdrowiu, religii ani innych wrażliwych danych, chyba że o to poprosisz."
+
+#: src/memory/memory-screen.tsx
 msgctxt "PulZNg"
 msgid "Nothing yet. What you share shows up here as you study and chat."
 msgstr "Na razie nic. To, czym się dzielisz, pojawia się tutaj, gdy się uczysz i rozmawiasz."
@@ -6986,11 +6994,6 @@ msgstr "Pobierz zapisane informacje"
 msgctxt "U3W00j"
 msgid "A copy of your memory"
 msgstr "Kopia zapisanych informacji"
-
-#: src/memory/memory-screen.tsx
-msgctxt "GUOjcs"
-msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
-msgstr "Zoonk nie zapisuje informacji o zdrowiu, religii ani innych wrażliwych danych, chyba że o to poprosisz."
 
 #: src/memory/memory-updated.tsx
 msgctxt "0U54N2"

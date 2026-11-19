@@ -699,7 +699,6 @@ msgid "That didn't save. Try again."
 msgstr "Kaydedilemedi. Tekrar dene."
 
 #: src/_components/sheet-header.tsx
-#: src/_components/side-detail.tsx
 #: src/_components/suggestion.tsx
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
@@ -1155,13 +1154,6 @@ msgid "Mastered"
 msgstr "Tam öğrenildi"
 
 #: src/appearance/appearance-screen.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/conversation/tutor-identity.tsx
-msgctxt "FRwDt3"
-msgid "Your buddy"
-msgstr "Arkadaşın"
-
-#: src/appearance/appearance-screen.tsx
 msgctxt "hDPGwB"
 msgid "When you get it right or finish"
 msgstr "Doğru cevap verdiğinde veya bitirdiğinde"
@@ -1192,6 +1184,12 @@ msgid "Glasses"
 msgstr "Gözlük"
 
 #: src/appearance/buddy-settings.tsx
+#: src/conversation/tutor-identity.tsx
+msgctxt "FRwDt3"
+msgid "Your buddy"
+msgstr "Arkadaşın"
+
+#: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-details.tsx
 #: src/certificates/certificate-moment-parts.tsx
 #: src/onboarding/steps/schedule-aim.tsx
@@ -1208,6 +1206,11 @@ msgstr "Değiştir"
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
 msgstr "Arkadaşını seç"
+
+#: src/appearance/buddy-settings.tsx
+msgctxt "GrnZDN"
+msgid "Saved."
+msgstr "Kaydedildi."
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "h4cg3V"
@@ -6973,6 +6976,11 @@ msgid "Couldn't undo. It changed since."
 msgstr "Geri alınamadı. Bu bilgi sonradan değişti."
 
 #: src/memory/memory-screen.tsx
+msgctxt "GUOjcs"
+msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
+msgstr "Sen istemedikçe Zoonk sağlık, din gibi hassas konulardaki bilgilerini saklamaz."
+
+#: src/memory/memory-screen.tsx
 msgctxt "PulZNg"
 msgid "Nothing yet. What you share shows up here as you study and chat."
 msgstr "Henüz bir şey yok. Çalışıp sohbet ettikçe paylaştıkların burada görünür."
@@ -6986,11 +6994,6 @@ msgstr "Belleğini indir"
 msgctxt "U3W00j"
 msgid "A copy of your memory"
 msgstr "Belleğinin bir kopyası"
-
-#: src/memory/memory-screen.tsx
-msgctxt "GUOjcs"
-msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
-msgstr "Sen istemedikçe Zoonk sağlık, din gibi hassas konulardaki bilgilerini saklamaz."
 
 #: src/memory/memory-updated.tsx
 msgctxt "0U54N2"

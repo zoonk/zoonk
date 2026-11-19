@@ -93,7 +93,7 @@ export function BuddyGlassesPicker({
   return (
     <RadioGroup
       aria-label={t("Glasses")}
-      className="grid gap-2"
+      className="grid gap-2 @lg/buddy-pane:grid-cols-2"
       onValueChange={(next) => {
         const option = options.find((item) => item.glasses === next && item.earned);
 

@@ -699,7 +699,6 @@ msgid "That didn't save. Try again."
 msgstr "저장하지 못했어요. 다시 시도해 보세요."
 
 #: src/_components/sheet-header.tsx
-#: src/_components/side-detail.tsx
 #: src/_components/suggestion.tsx
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
@@ -1155,13 +1154,6 @@ msgid "Mastered"
 msgstr "마스터"
 
 #: src/appearance/appearance-screen.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/conversation/tutor-identity.tsx
-msgctxt "FRwDt3"
-msgid "Your buddy"
-msgstr "내 짝꿍"
-
-#: src/appearance/appearance-screen.tsx
 msgctxt "hDPGwB"
 msgid "When you get it right or finish"
 msgstr "정답을 맞히거나 학습을 마쳤을 때"
@@ -1192,6 +1184,12 @@ msgid "Glasses"
 msgstr "안경"
 
 #: src/appearance/buddy-settings.tsx
+#: src/conversation/tutor-identity.tsx
+msgctxt "FRwDt3"
+msgid "Your buddy"
+msgstr "내 짝꿍"
+
+#: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-details.tsx
 #: src/certificates/certificate-moment-parts.tsx
 #: src/onboarding/steps/schedule-aim.tsx
@@ -1208,6 +1206,11 @@ msgstr "바꾸기"
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
 msgstr "짝꿍 고르기"
+
+#: src/appearance/buddy-settings.tsx
+msgctxt "GrnZDN"
+msgid "Saved."
+msgstr "저장했어요."
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "h4cg3V"
@@ -6973,6 +6976,11 @@ msgid "Couldn't undo. It changed since."
 msgstr "그사이 내용이 바뀌어서 되돌릴 수 없어요."
 
 #: src/memory/memory-screen.tsx
+msgctxt "GUOjcs"
+msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
+msgstr "따로 요청하지 않으면 Zoonk는 건강, 종교 같은 민감한 정보를 저장하지 않아요."
+
+#: src/memory/memory-screen.tsx
 msgctxt "PulZNg"
 msgid "Nothing yet. What you share shows up here as you study and chat."
 msgstr "아직 아무것도 없어요. 공부하고 대화하면서 알려 주신 내용이 여기에 표시돼요."
@@ -6986,11 +6994,6 @@ msgstr "메모리 다운로드"
 msgctxt "U3W00j"
 msgid "A copy of your memory"
 msgstr "내 메모리 사본"
-
-#: src/memory/memory-screen.tsx
-msgctxt "GUOjcs"
-msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
-msgstr "따로 요청하지 않으면 Zoonk는 건강, 종교 같은 민감한 정보를 저장하지 않아요."
 
 #: src/memory/memory-updated.tsx
 msgctxt "0U54N2"

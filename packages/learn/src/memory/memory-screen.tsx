@@ -22,6 +22,7 @@ import {
 } from "../_components/page";
 import { useChangeSaveFailed } from "../_components/save-error";
 import { SettingRow } from "../_components/setting-rows";
+import { PageAsideNote } from "../_components/side-detail";
 import { findRowMenu, useKeepFocus } from "../_utils/use-keep-focus";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
@@ -193,6 +194,12 @@ export function MemoryScreen({
   const screen = useMemoryScreen({ actions, memory });
   const groups = groupByCategory(screen.facts);
 
+  const sensitiveNote = (
+    <PageSectionFooter>
+      {t("Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.")}
+    </PageSectionFooter>
+  );
+
   return (
     <div className="flex flex-col gap-7" data-slot="memory-screen">
       <MemorySwitch buddyName={buddyName} enabled={screen.enabled} onChange={screen.setEnabled} />
@@ -225,8 +232,8 @@ export function MemoryScreen({
         </PageSection>
       ))}
 
-      <footer className="flex flex-col gap-4">
-        {groups.length > 0 && (
+      {groups.length > 0 ? (
+        <PageAsideNote className="flex flex-col gap-4">
           <ListGroup>
             <DownloadRow
               actionLabel={t("Download your memory")}
@@ -235,13 +242,11 @@ export function MemoryScreen({
               load={actions.exportMemory}
             />
           </ListGroup>
-        )}
-        <PageSectionFooter>
-          {t(
-            "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
-          )}
-        </PageSectionFooter>
-      </footer>
+          {sensitiveNote}
+        </PageAsideNote>
+      ) : (
+        sensitiveNote
+      )}
     </div>
   );
 }

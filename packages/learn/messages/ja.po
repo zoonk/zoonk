@@ -699,7 +699,6 @@ msgid "That didn't save. Try again."
 msgstr "保存できませんでした。もう一度お試しください。"
 
 #: src/_components/sheet-header.tsx
-#: src/_components/side-detail.tsx
 #: src/_components/suggestion.tsx
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
@@ -1155,13 +1154,6 @@ msgid "Mastered"
 msgstr "習得済み"
 
 #: src/appearance/appearance-screen.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/conversation/tutor-identity.tsx
-msgctxt "FRwDt3"
-msgid "Your buddy"
-msgstr "相棒"
-
-#: src/appearance/appearance-screen.tsx
 msgctxt "hDPGwB"
 msgid "When you get it right or finish"
 msgstr "正解したときや学習を終えたとき"
@@ -1192,6 +1184,12 @@ msgid "Glasses"
 msgstr "メガネ"
 
 #: src/appearance/buddy-settings.tsx
+#: src/conversation/tutor-identity.tsx
+msgctxt "FRwDt3"
+msgid "Your buddy"
+msgstr "相棒"
+
+#: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-details.tsx
 #: src/certificates/certificate-moment-parts.tsx
 #: src/onboarding/steps/schedule-aim.tsx
@@ -1208,6 +1206,11 @@ msgstr "変更する"
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
 msgstr "相棒を選ぶ"
+
+#: src/appearance/buddy-settings.tsx
+msgctxt "GrnZDN"
+msgid "Saved."
+msgstr "保存しました。"
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "h4cg3V"
@@ -6973,6 +6976,11 @@ msgid "Couldn't undo. It changed since."
 msgstr "取り消せませんでした。その後、内容が変更されています。"
 
 #: src/memory/memory-screen.tsx
+msgctxt "GUOjcs"
+msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
+msgstr "Zoonkは、保存を頼まれない限り、健康や宗教などのデリケートな情報を保存しません。"
+
+#: src/memory/memory-screen.tsx
 msgctxt "PulZNg"
 msgid "Nothing yet. What you share shows up here as you study and chat."
 msgstr "まだ何もありません。学習したり会話したりする中で教えたことが、ここに表示されます。"
@@ -6986,11 +6994,6 @@ msgstr "メモリをダウンロードする"
 msgctxt "U3W00j"
 msgid "A copy of your memory"
 msgstr "メモリのコピー"
-
-#: src/memory/memory-screen.tsx
-msgctxt "GUOjcs"
-msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
-msgstr "Zoonkは、保存を頼まれない限り、健康や宗教などのデリケートな情報を保存しません。"
 
 #: src/memory/memory-updated.tsx
 msgctxt "0U54N2"

@@ -699,7 +699,6 @@ msgid "That didn't save. Try again."
 msgstr "That didn't save. Try again."
 
 #: src/_components/sheet-header.tsx
-#: src/_components/side-detail.tsx
 #: src/_components/suggestion.tsx
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
@@ -1155,13 +1154,6 @@ msgid "Mastered"
 msgstr "Mastered"
 
 #: src/appearance/appearance-screen.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/conversation/tutor-identity.tsx
-msgctxt "FRwDt3"
-msgid "Your buddy"
-msgstr "Your buddy"
-
-#: src/appearance/appearance-screen.tsx
 msgctxt "hDPGwB"
 msgid "When you get it right or finish"
 msgstr "When you get it right or finish"
@@ -1192,6 +1184,12 @@ msgid "Glasses"
 msgstr "Glasses"
 
 #: src/appearance/buddy-settings.tsx
+#: src/conversation/tutor-identity.tsx
+msgctxt "FRwDt3"
+msgid "Your buddy"
+msgstr "Your buddy"
+
+#: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-details.tsx
 #: src/certificates/certificate-moment-parts.tsx
 #: src/onboarding/steps/schedule-aim.tsx
@@ -1208,6 +1206,11 @@ msgstr "Change"
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
 msgstr "Choose your buddy"
+
+#: src/appearance/buddy-settings.tsx
+msgctxt "GrnZDN"
+msgid "Saved."
+msgstr "Saved."
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "h4cg3V"
@@ -6973,6 +6976,11 @@ msgid "Couldn't undo. It changed since."
 msgstr "Couldn't undo. It changed since."
 
 #: src/memory/memory-screen.tsx
+msgctxt "GUOjcs"
+msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
+msgstr "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
+
+#: src/memory/memory-screen.tsx
 msgctxt "PulZNg"
 msgid "Nothing yet. What you share shows up here as you study and chat."
 msgstr "Nothing yet. What you share shows up here as you study and chat."
@@ -6986,11 +6994,6 @@ msgstr "Download your memory"
 msgctxt "U3W00j"
 msgid "A copy of your memory"
 msgstr "A copy of your memory"
-
-#: src/memory/memory-screen.tsx
-msgctxt "GUOjcs"
-msgid "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
-msgstr "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to."
 
 #: src/memory/memory-updated.tsx
 msgctxt "0U54N2"

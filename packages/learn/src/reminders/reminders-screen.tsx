@@ -12,8 +12,9 @@ import { useId, useOptimistic } from "react";
 import { AccountAskMark } from "../_components/account-ask";
 import { ListGroup } from "../_components/list-group";
 import { NoticeCard } from "../_components/notice-card";
-import { PageSectionFooter } from "../_components/page";
+import { PageSectionFooter, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { SettingRow, SwitchSettingRow } from "../_components/setting-rows";
+import { PageAsideNote } from "../_components/side-detail";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { ReminderTimeSelect } from "./reminder-time";
 import { useOtherZoneName } from "./reminder-zone";
@@ -151,13 +152,18 @@ export function RemindersScreen({
         </ListGroup>
 
         {!view.push.phone && (
-          <PageSectionFooter>
-            {t({
-              description:
-                "Stands in for the Push notifications row: name them in the same words as that row",
-              message: "To get push notifications, turn them on in the Zoonk phone app.",
-            })}
-          </PageSectionFooter>
+          <PageAsideNote className="flex flex-col gap-3">
+            <PageSectionHeader className="hidden xl:in-data-signed-in:flex">
+              <PageSectionTitle>{t("Push notifications")}</PageSectionTitle>
+            </PageSectionHeader>
+            <PageSectionFooter>
+              {t({
+                description:
+                  "Stands in for the Push notifications row: name them in the same words as that row",
+                message: "To get push notifications, turn them on in the Zoonk phone app.",
+              })}
+            </PageSectionFooter>
+          </PageAsideNote>
         )}
       </div>
 

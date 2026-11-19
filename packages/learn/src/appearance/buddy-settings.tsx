@@ -1,6 +1,7 @@
 "use client";
 
 import { type ResolvedBuddy } from "@zoonk/core/profile/default-buddy";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -10,10 +11,12 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
 import {
   ListGroup,
   ListRow,
@@ -21,8 +24,10 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
+import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { SheetHeader } from "../_components/sheet-header";
-import { SIDE_DETAIL_PLACE_CLASS, SideDetail, useSideColumn } from "../_components/side-detail";
+import { SIDE_DETAIL_PANE_CLASS } from "../_components/side-detail";
 import { type BuddyGlassesOption, BuddyGlassesPicker } from "../buddies/buddy-glasses-picker";
 import { BUDDY_GLASSES } from "../buddies/buddy-labels";
 import { type BuddyChoice, type BuddyLook, BuddyPicker } from "../buddies/buddy-picker";
@@ -34,25 +39,15 @@ function toGlassesOptions(available: BuddyGlasses[]): BuddyGlassesOption[] {
   return BUDDY_GLASSES.map((glasses) => ({ earned: available.includes(glasses), glasses }));
 }
 
-export function BuddyEditor({
-  beside = false,
-  glasses,
-  initial,
-  look,
-  onClose,
-  onSave,
-  picked,
-}: {
-  /** Open in the settings' aside, beside the row that opened it, instead of over the page. */
-  beside?: boolean;
+type BuddyDraftInput = {
   glasses?: BuddyGlassesOption[];
   initial: BuddyChoice;
   look: BuddyLook;
-  onClose: () => void;
-  onSave: (choice: BuddyChoice) => void;
+  /** Whether the learner chose this buddy; one they were given can be saved as it is. */
   picked: boolean;
-}) {
-  const t = useExtracted();
+};
+
+function useBuddyDraft({ initial, picked }: Pick<BuddyDraftInput, "initial" | "picked">) {
   const defaultName = useDefaultBuddyName();
 
   const [choice, setChoice] = useState(() => ({
@@ -69,43 +64,48 @@ export function BuddyEditor({
     choice.glasses !== initial.glasses ||
     name !== initial.name;
 
-  const picker = (
+  return { changed, choice, setChoice, showDefaultName: !initial.name, value: { ...choice, name } };
+}
+
+function BuddyFields({
+  draft,
+  glasses,
+  look,
+}: Pick<BuddyDraftInput, "glasses" | "look"> & { draft: ReturnType<typeof useBuddyDraft> }) {
+  const t = useExtracted();
+
+  return (
     <>
       <BuddyPicker
-        choice={choice}
+        choice={draft.choice}
         look={look}
-        onChange={setChoice}
-        showDefaultName={!initial.name}
+        onChange={draft.setChoice}
+        showDefaultName={draft.showDefaultName}
       />
 
       {glasses && (
         <div className="flex flex-col gap-2">
           <p className="text-sm font-medium">{t("Glasses")}</p>
           <BuddyGlassesPicker
-            kind={choice.kind}
+            kind={draft.choice.kind}
             look={look}
-            onChange={(next) => setChoice({ ...choice, glasses: next })}
+            onChange={(next) => draft.setChoice({ ...draft.choice, glasses: next })}
             options={glasses}
-            value={choice.glasses}
+            value={draft.choice.glasses}
           />
         </div>
       )}
     </>
   );
+}
 
-  const save = (
-    <Button disabled={!changed} onClick={() => onSave({ ...choice, name })} size="lg">
-      {t("Save")}
-    </Button>
-  );
-
-  if (beside) {
-    return (
-      <SideDetail footer={save} onClose={onClose} title={t("Your buddy")}>
-        {picker}
-      </SideDetail>
-    );
-  }
+export function BuddyEditor({
+  onClose,
+  onSave,
+  ...input
+}: BuddyDraftInput & { onClose: () => void; onSave: (choice: BuddyChoice) => void }) {
+  const t = useExtracted();
+  const draft = useBuddyDraft(input);
 
   return (
     <Drawer
@@ -121,34 +121,61 @@ export function BuddyEditor({
           <DrawerTitle>{t("Your buddy")}</DrawerTitle>
         </SheetHeader>
 
-        <DrawerContent className="flex flex-col gap-5 pt-2">{picker}</DrawerContent>
+        <DrawerContent className="flex flex-col gap-5 pt-2">
+          <BuddyFields draft={draft} glasses={input.glasses} look={input.look} />
+        </DrawerContent>
 
-        <DrawerFooter>{save}</DrawerFooter>
+        <DrawerFooter>
+          <Button disabled={!draft.changed} onClick={() => onSave(draft.value)} size="lg">
+            {t("Save")}
+          </Button>
+        </DrawerFooter>
       </DrawerPopup>
     </Drawer>
   );
 }
 
 /**
- * The learner's buddy, whole, in the section's aside until its editor opens there. The row beside
- * it names it, so this only shows it.
+ * The buddy's place beside Preferences' rows where a detail has a pane (`LIST_DETAIL_GRID_CLASS`):
+ * always open, so looking at the buddies needs no step, its Save in the page's bar as About you's is.
  */
-function BuddyBeside({ buddy, look }: { buddy: AppearanceBuddy; look: BuddyLook }) {
+function BuddyPane({
+  onSave,
+  ...input
+}: BuddyDraftInput & { onSave: (choice: BuddyChoice) => void }) {
+  const t = useExtracted();
+  const titleId = useId();
+  const draft = useBuddyDraft(input);
+
   return (
-    <div
-      aria-hidden="true"
-      className={cn(SIDE_DETAIL_PLACE_CLASS, "hidden items-center pt-16")}
-      data-slot="buddy-beside"
+    <section
+      aria-labelledby={titleId}
+      className={cn(
+        "hidden xl:in-data-signed-in:col-start-2 xl:in-data-signed-in:row-start-1",
+        SIDE_DETAIL_PANE_CLASS,
+      )}
+      data-slot="settings-detail"
     >
-      <Buddy
-        beltColor={look.beltColor}
-        className="size-44"
-        energy={look.energy}
-        glasses={buddy.glasses}
-        kind={buddy.kind}
-        studiedToday={look.studiedToday}
-      />
-    </div>
+      <Page>
+        <PageSection className={cn("@container/buddy-pane", CLEAR_OF_PINNED_ACTIONS_CLASS)}>
+          <PageSectionHeader>
+            <PageSectionTitle id={titleId}>{t("Your buddy")}</PageSectionTitle>
+          </PageSectionHeader>
+
+          <div className="flex flex-col gap-5">
+            <BuddyFields draft={draft} glasses={input.glasses} look={input.look} />
+          </div>
+        </PageSection>
+
+        <BottomBar>
+          <BottomBarActions>
+            <EnterButton disabled={!draft.changed} onClick={() => onSave(draft.value)}>
+              {t("Save")}
+            </EnterButton>
+          </BottomBarActions>
+        </BottomBar>
+      </Page>
+    </section>
   );
 }
 
@@ -175,6 +202,14 @@ function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy
   );
 }
 
+function toAppearanceBuddy(choice: BuddyChoice): AppearanceBuddy {
+  return { glasses: choice.glasses, kind: choice.kind, name: choice.name.trim() || null };
+}
+
+/**
+ * Its row opens the editor over the page. Where a detail has a pane the editor is that pane, and
+ * the row steps out: the pane already shows the buddy.
+ */
 export function BuddySettings({
   availableGlasses,
   look,
@@ -183,13 +218,20 @@ export function BuddySettings({
 }: {
   availableGlasses: BuddyGlasses[];
   look: BuddyLook;
-  onSave: (buddy: AppearanceBuddy) => void;
+  /** `onSaved` runs once the save went through, for a save that leaves its form on the screen. */
+  onSave: (buddy: AppearanceBuddy, onSaved?: () => void) => void;
   buddy: ResolvedBuddy;
 }) {
   const t = useExtracted();
   const [isEditing, setIsEditing] = useState(false);
-  const beside = useSideColumn();
   const trigger = useRef<HTMLButtonElement>(null);
+
+  const editor = {
+    glasses: toGlassesOptions(availableGlasses),
+    initial: { glasses: buddy.glasses, kind: buddy.kind, name: buddy.name ?? "" },
+    look,
+    picked: buddy.picked,
+  };
 
   const close = () => {
     setIsEditing(false);
@@ -198,44 +240,44 @@ export function BuddySettings({
 
   return (
     <>
-      <ListGroup>
-        <ListRow className="items-center">
-          <CurrentBuddy look={look} buddy={buddy} />
+      <PageSection className="xl:in-data-signed-in:hidden">
+        <PageSectionHeader>
+          <PageSectionTitle>{t("Your buddy")}</PageSectionTitle>
+        </PageSectionHeader>
 
-          <Button
-            aria-haspopup={beside ? undefined : "dialog"}
-            className="shrink-0"
-            onClick={() => setIsEditing(true)}
-            ref={trigger}
-            size="lg"
-            variant="outline"
-          >
-            {buddy.picked ? t("Change") : t("Choose your buddy")}
-          </Button>
-        </ListRow>
-      </ListGroup>
+        <ListGroup>
+          <ListRow className="items-center">
+            <CurrentBuddy look={look} buddy={buddy} />
 
-      {!isEditing && <BuddyBeside buddy={buddy} look={look} />}
+            <Button
+              aria-haspopup="dialog"
+              className="shrink-0"
+              onClick={() => setIsEditing(true)}
+              ref={trigger}
+              size="lg"
+              variant="outline"
+            >
+              {buddy.picked ? t("Change") : t("Choose your buddy")}
+            </Button>
+          </ListRow>
+        </ListGroup>
+      </PageSection>
 
       {isEditing && (
         <BuddyEditor
-          beside={beside}
-          glasses={toGlassesOptions(availableGlasses)}
-          initial={{ glasses: buddy.glasses, kind: buddy.kind, name: buddy.name ?? "" }}
-          look={look}
+          {...editor}
           onClose={close}
-          picked={buddy.picked}
           onSave={(choice) => {
             close();
-
-            onSave({
-              glasses: choice.glasses,
-              kind: choice.kind,
-              name: choice.name.trim() || null,
-            });
+            onSave(toAppearanceBuddy(choice));
           }}
         />
       )}
+
+      <BuddyPane
+        {...editor}
+        onSave={(choice) => onSave(toAppearanceBuddy(choice), () => showSuccessToast(t("Saved.")))}
+      />
     </>
   );
 }

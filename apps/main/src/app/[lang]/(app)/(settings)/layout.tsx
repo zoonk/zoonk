@@ -19,7 +19,6 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
           <SettingsAsideSlot
             accountOn={[getMenu("settings").url, getMenu("profile").url, getMenu("support").url]}
             extras={[{ content: <FollowUs />, href: getMenu("support").url }]}
-            filledBy={[getMenu("settings").url, getMenu("appearance").url]}
           >
             <Suspense fallback={<SettingsAsideSkeleton />}>
               <SettingsAside />

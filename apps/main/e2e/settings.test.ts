@@ -1,4 +1,5 @@
 import { instant } from "@next/playwright";
+import { prisma } from "@zoonk/db";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 
@@ -146,4 +147,36 @@ test("Help waits for a message before enabling Send", async ({ userWithoutProgre
   await expect(send).toBeEnabled();
   await message.clear();
   await expect(send).toBeDisabled();
+});
+
+test("the buddy editor is open beside Preferences' rows on a wide screen and a dialog from its row on a narrow one", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await page.setViewportSize({ height: 900, width: 1440 });
+  await page.goto("/settings/appearance");
+
+  const editor = page.getByRole("region", { name: "Your buddy" });
+  const noodle = editor.getByRole("radio", { name: /^Noodle/u });
+  const save = editor.getByRole("button", { exact: true, name: "Save" });
+  await expectHydrated(noodle);
+  await expect(page.getByRole("button", { name: "Choose your buddy" })).toBeHidden();
+
+  await noodle.click();
+  await save.click();
+  await expect(save).toBeDisabled();
+  await expect(noodle).toBeChecked();
+
+  await expect
+    .poll(() =>
+      prisma.userLearningProfile
+        .findUnique({ where: { userId: noProgressUser.id } })
+        .then((profile) => profile?.buddyKind),
+    )
+    .toBe("noodle");
+
+  await page.setViewportSize({ height: 900, width: 1024 });
+  await expect(editor).toBeHidden();
+  await page.getByRole("button", { exact: true, name: "Change" }).click();
+  await expect(page.getByRole("dialog", { name: "Your buddy" })).toBeVisible();
 });
