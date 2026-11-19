@@ -252,7 +252,12 @@ export function LessonAside() {
   const { lesson, slots } = useLessonPlayerConfig();
   const { screen, state } = useLessonPlayer();
 
-  if (state.phase === "completed" && !slots.completion && lesson.summary) {
+  // The host's moment draws its own panel over this rail, such as the day's lessons.
+  if (state.phase === "completed" && slots.completion) {
+    return <TaskAside label={t("Help with this screen")} />;
+  }
+
+  if (state.phase === "completed" && lesson.summary) {
     return (
       <TaskAside label={t("Lesson map")} scrollsByKeyboard title={t("Lesson map")}>
         <LessonMap map={lesson.summary} title={lesson.title} />
