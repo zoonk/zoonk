@@ -124,22 +124,27 @@ describe("where the title and the main action sit (E8 and R2)", () => {
   });
 
   it("catches the same 101 px title offset on both screen sizes", () => {
-    const phone = page({ titleTop: { actual: 101, expected: 69 } });
-    const laptop = page({ titleTop: { actual: 101, expected: 69 } });
+    const phone = page({ titleTop: { actual: 101, bare: false, expected: 69 } });
+    const laptop = page({ titleTop: { actual: 101, bare: false, expected: 69 } });
 
     assert.deepEqual(
       [phone, laptop].map((each) => titleTopFindings(each)[0]?.value),
       [EXTRA_TOP, EXTRA_TOP],
     );
 
-    assert.deepEqual(titleTopFindings(page({ titleTop: { actual: 69, expected: 69 } })), []);
+    assert.deepEqual(
+      titleTopFindings(page({ titleTop: { actual: 69, bare: false, expected: 69 } })),
+      [],
+    );
   });
 
   it("leaves other surfaces and absent app-shell titles alone", () => {
     assert.deepEqual(titleTopFindings(page()), []);
 
     assert.deepEqual(
-      titleTopFindings(page({ kind: "marketing", titleTop: { actual: 101, expected: 69 } })),
+      titleTopFindings(
+        page({ kind: "marketing", titleTop: { actual: 101, bare: false, expected: 69 } }),
+      ),
       [],
     );
   });

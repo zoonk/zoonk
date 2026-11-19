@@ -37,6 +37,21 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
   );
 }
 
+/**
+ * A page's bar on a computer when it holds nothing there: the sidebar holds the way back and the
+ * page has no actions of its own. It keeps only its top room and hairline and scrolls away, so the
+ * title centers on the sidebar's first row (`PageTopBar`'s `className`). `always` is a tab's own
+ * page; `learner` and `visitor` are a page the sidebar lists in that state, which `data-signed-in`
+ * says before the first paint.
+ */
+export const BARE_ON_COMPUTER_CLASS = {
+  always: "lg:static lg:pb-0 lg:*:hidden",
+  learner:
+    "lg:[[data-signed-in]_&]:static lg:[[data-signed-in]_&]:pb-0 lg:[[data-signed-in]_&]:*:hidden",
+  visitor:
+    "lg:[:root:not([data-signed-in])_&]:static lg:[:root:not([data-signed-in])_&]:pb-0 lg:[:root:not([data-signed-in])_&]:*:hidden",
+} as const;
+
 /** The page's column inside the frame: the bar over a tab and the notices line up with it. */
 export const FRAME_COLUMN_CLASS =
   "mx-auto w-full px-(--page-gutter) sm:max-w-3xl lg:mx-0 lg:max-w-none";
@@ -87,8 +102,9 @@ const WITH_BAR_COLUMN_CLASS =
   "max-[72rem]:contents [&>[data-slot=bottom-bar]]:mt-auto max-[72rem]:[&>[data-slot=bottom-bar]]:order-last";
 
 /**
- * At desktop widths the aside starts at the title, below either the frame bar or the page's own
- * bar, wherever in its column the page draws it. `bottomBar` is the page's `BottomBar`.
+ * At desktop widths the aside's first card starts on the frame's first row, 12px from the top, level
+ * with the sidebar's first row and the page's bar or title, wherever in its column the page draws
+ * them. `bottomBar` is the page's `BottomBar`.
  */
 export function PageWithAside({
   aside,
@@ -128,7 +144,7 @@ export function PageWithAside({
           aria-label={asideLabel}
           className={cn(
             "flex min-w-0 flex-col gap-7 outline-none min-[72rem]:gap-9",
-            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:pt-[calc(var(--frame-bar,0px)+0.25rem)] min-[72rem]:pb-8 min-[72rem]:group-has-[>div_[data-slot=page-top-bar]]/page-aside:pt-[calc(4.25rem+1px)] xl:w-80",
+            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:pt-3 min-[72rem]:pb-8 xl:w-80",
             asideClassName,
           )}
           data-slot="page-aside"

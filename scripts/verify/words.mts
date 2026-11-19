@@ -16,8 +16,11 @@ type PagePlace = {
   primaryOutsideBar?: string[];
   /** Whether the one main action is pinned (fixed or sticky) in the screen's lower half; null without exactly one. */
   actionPinned: boolean | null;
-  /** Null without a page header, or inside task and onboarding frames. */
-  titleTop: { actual: number; expected: number | null } | null;
+  /**
+   * Null without a page header, or inside task and onboarding frames. `bare` is a bar that holds
+   * nothing at this size (shorter than a control), whose title takes the bar's row.
+   */
+  titleTop: { actual: number; bare: boolean; expected: number | null } | null;
 };
 
 export type PageText = PagePlace & {
@@ -93,9 +96,13 @@ export function readWords(): PageText {
     );
 
     const style = getComputedStyle(header);
+    const barHeight = bar?.getBoundingClientRect().height ?? 0;
+    // A bar with a row holds a 44 px control; one that holds nothing keeps only its top room.
+    const rowHeight = 44;
 
     return {
       actual: title.getBoundingClientRect().top - frame.getBoundingClientRect().top,
+      bare: bar !== undefined && barHeight < rowHeight,
       expected: bar
         ? bar.getBoundingClientRect().height +
           pixels(style.paddingTop) +

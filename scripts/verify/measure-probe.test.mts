@@ -27,7 +27,7 @@ const platform = vi.hoisted(() => {
       actionPinned: false,
       buttons: ["Continue"],
       text: "Choose",
-      titleTop: { actual: 101, expected: 69 },
+      titleTop: { actual: 101, bare: false, expected: 69 },
     },
     transferredBytes: { html: 0, scripts: 0, total: 0 },
     visibleLinks: [],

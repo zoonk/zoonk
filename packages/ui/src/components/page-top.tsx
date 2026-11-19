@@ -54,15 +54,19 @@ function BackLink({
 
 /**
  * The bar over a page's title: its way back at the start, its actions at the end. With the header
- * under it (`PAGE_HEADER_CLASS`) it owns all the room above the title, so every page's title sits at one height, on a phone and a
- * computer, whether or not the bar holds anything. It sticks while the page scrolls and reaches the
- * frame's edges by the frame's own side padding (`--page-gutter`); the frame has no top padding.
+ * under it (`PAGE_HEADER_CLASS`) it owns all the room above the title: its row is the frame's first
+ * row, 12px from the top, and the title sits under it. It sticks while the page scrolls and reaches
+ * the frame's edges by the frame's own side padding (`--page-gutter`); the frame has no top padding.
+ * `className` is for a frame whose bar holds nothing in some state (on a computer, where a sidebar
+ * holds the way back): `static pb-0 *:hidden` then leaves only its top room and hairline (13px),
+ * so the title takes the bar's row and centers on it instead of sitting under an empty bar.
  * A bar whose start must stay readable sets `--bar-start-min`: when large text leaves the start less
  * than that, the actions move to a line of their own under it.
  */
 function PageTopBar({
   actions,
   back,
+  className,
   middle,
   ref,
 }: {
@@ -70,6 +74,7 @@ function PageTopBar({
   actions?: React.ReactNode;
   /** A `BackLink` to the parent page; a page with no parent has none. */
   back?: React.ReactNode;
+  className?: string;
   middle?: React.ReactNode;
   ref?: React.Ref<HTMLDivElement>;
 }) {
@@ -80,6 +85,7 @@ function PageTopBar({
       className={cn(
         "bg-background sticky top-0 z-30 -mx-(--page-gutter) border-b px-(--page-gutter) pt-3 pb-2 transition-colors motion-reduce:transition-none",
         scrolled ? "border-border" : "border-transparent",
+        className,
       )}
       data-slot="page-top-bar"
       ref={ref}

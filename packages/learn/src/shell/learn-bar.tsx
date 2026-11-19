@@ -16,6 +16,7 @@ import {
   nameAppEntry,
   subscribeToHistory,
 } from "./app-history";
+import { BARE_ON_COMPUTER_CLASS } from "./learn-shell";
 
 /** `PageTopBar`'s height: a title above this line is under the bar. */
 const BAR_HEIGHT_PX = 65;
@@ -185,6 +186,7 @@ export function LearnPageBar({
 
   return (
     <PageTopBar
+      className={listed && !children ? BARE_ON_COMPUTER_CLASS[listed] : undefined}
       // `data-title-away` (`group-data-title-away/page-bar`) lets an action give way to the page's
       // name on a phone, as Ask (its face alone) and a visitor's links (hidden) do.
       actions={
@@ -253,6 +255,7 @@ export function LearnSectionBar({
   return (
     <PageTopBar
       actions={end}
+      className={listed && !end ? BARE_ON_COMPUTER_CLASS[listed] : undefined}
       back={
         <>
           <LearnBackLink

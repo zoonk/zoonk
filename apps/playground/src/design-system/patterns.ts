@@ -69,7 +69,7 @@ export const PATTERNS: readonly Pattern[] = [
       "An arrow for back.",
     ],
     follow: [
-      "`PageTop` (or `PageTopBar` in a layout with `PAGE_HEADER_CLASS` in the page): 12px, the 44px bar, 12px, then the title, the same on a phone and a computer, whether or not the bar holds anything.",
+      "`PageTop` (or `PageTopBar` in a layout with `PAGE_HEADER_CLASS` in the page): 12px, the 44px bar, 12px, then the title. A bar that holds nothing at a size (a tab's own page on a computer, where the sidebar holds the goal and the way back) gives its row to the title, which centers on it, level with the sidebar's first row.",
       "`BackLink`: a chevron and the name of the page it goes back to, the mirror of a See all row, so both keep one gap between words and chevron.",
       "The link's chevron lines up with the title's first letter; the pull follows the title's type role, so no page sets it.",
       "A full-screen task keeps ✕ instead.",
