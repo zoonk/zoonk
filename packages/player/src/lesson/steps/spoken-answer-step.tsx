@@ -223,7 +223,15 @@ function ModeSwitch({
 
   if (mode === "speak") {
     const label = t("I can't talk now");
-    const alternative = canListen ? t("Listen") : t("Type instead");
+
+    const alternative = canListen
+      ? t("Listen")
+      : t({
+          description:
+            "On a question answered aloud: the learner types this one answer instead of saying it.",
+          id: "typeSpokenAnswer",
+          message: "Type instead",
+        });
 
     return (
       <StepWayOut

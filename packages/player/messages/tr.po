@@ -1381,9 +1381,9 @@ msgid "Pick a name for spot {number}, or drag it onto any spot."
 msgstr "{number} numaralı nokta için bir ad seç veya bir adı istediğin noktaya sürükle."
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "TNAgYA"
-msgid "{count, plural, one {# name has no spot.} other {# names have no spot.}}"
-msgstr "{count, plural, other {# isim kullanılmayacak.}}"
+msgctxt "S_5x1D"
+msgid "{count, plural, one {# name doesn't belong on the diagram.} other {# names don't belong on the diagram.}}"
+msgstr "{count, plural, one {Diyagramda yeri olmayan # isim var.} other {# isim diyagramda yer almıyor.}}"
 
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
@@ -1838,8 +1838,8 @@ msgid "Every atom has all its bonds."
 msgstr "Tüm atomların bağları tamamlandı."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "5EQ069"
-msgid "Pick an atom to select it."
+msgctxt "esd72m"
+msgid "Pick an atom."
 msgstr "Bir atom seç."
 
 #: src/activities/molecule-builder/molecule-status.tsx
@@ -3560,10 +3560,11 @@ msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "Şu an konuşamıyorum"
 
+#. On a question answered aloud: the learner types this one answer instead of saying it.
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "KBc0tZ"
+msgctxt "typeSpokenAnswer"
 msgid "Type instead"
-msgstr "Yazarak devam et"
+msgstr "Yaz"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
@@ -3908,9 +3909,9 @@ msgid "Questions about this lesson"
 msgstr "Bu dersle ilgili sorular"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "lzRuXz"
-msgid "With a free account, you can ask about any screen."
-msgstr "Ücretsiz bir hesapla istediğin ekran hakkında soru sorabilirsin."
+msgctxt "OCg58Y"
+msgid "With a free account, you can ask about anything in a lesson."
+msgstr "Ücretsiz bir hesapla derste istediğin her şeyi sorabilirsin."
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

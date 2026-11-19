@@ -46,7 +46,7 @@ function MoleculeSelectionGuidance({
 }) {
   const t = useExtracted();
   const nameOf = useAtomName();
-  const pick = t("Pick an atom to select it.");
+  const pick = t("Pick an atom.");
 
   const bond = (atom: string) =>
     t(

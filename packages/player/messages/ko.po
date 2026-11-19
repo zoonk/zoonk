@@ -1381,9 +1381,9 @@ msgid "Pick a name for spot {number}, or drag it onto any spot."
 msgstr "{number}번 자리에 넣을 이름을 고르거나 원하는 자리로 끌어다 놓으세요."
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "TNAgYA"
-msgid "{count, plural, one {# name has no spot.} other {# names have no spot.}}"
-msgstr "{count, plural, other {들어갈 자리가 없는 이름이 #개 있어요.}}"
+msgctxt "S_5x1D"
+msgid "{count, plural, one {# name doesn't belong on the diagram.} other {# names don't belong on the diagram.}}"
+msgstr "{count, plural, other {도표에 들어갈 곳이 없는 이름이 #개 있어요.}}"
 
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
@@ -1838,9 +1838,9 @@ msgid "Every atom has all its bonds."
 msgstr "모든 원자의 결합 자리가 채워졌어요."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "5EQ069"
-msgid "Pick an atom to select it."
-msgstr "원자를 선택하세요."
+msgctxt "esd72m"
+msgid "Pick an atom."
+msgstr "원자를 하나 선택해 보세요."
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "TFHgRi"
@@ -3560,10 +3560,11 @@ msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "지금은 말할 수 없어요"
 
+#. On a question answered aloud: the learner types this one answer instead of saying it.
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "KBc0tZ"
+msgctxt "typeSpokenAnswer"
 msgid "Type instead"
-msgstr "글로 대화하기"
+msgstr "대신 입력하기"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
@@ -3908,9 +3909,9 @@ msgid "Questions about this lesson"
 msgstr "이 레슨에 대한 질문"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "lzRuXz"
-msgid "With a free account, you can ask about any screen."
-msgstr "무료 계정이 있으면 어떤 화면에 대해서든 질문할 수 있어요."
+msgctxt "OCg58Y"
+msgid "With a free account, you can ask about anything in a lesson."
+msgstr "무료 계정으로 레슨에서 무엇이든 질문할 수 있어요."
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

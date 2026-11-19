@@ -268,16 +268,16 @@ describe.each([
 ])("a Plan suggestion's request from $from.width to $to.width px", ({ from, to }) => {
   afterEach(cleanup);
 
-  it(`keeps "Add to my plan" busy and adds once`, async () => {
+  it(`keeps "Add to plan" busy and adds once`, async () => {
     await atViewport(from, async () => {
       const held = renderPlanSlots({ host: { ...HOST_BASE, certificates: null }, plan: PLAN });
 
-      await press("Add to my plan");
+      await press("Add to plan");
       await expect.poll(() => held.change).toHaveBeenCalledOnce();
 
       await cross(to);
 
-      await expect.poll(() => isBusy("Add to my plan")).toBe(true);
+      await expect.poll(() => isBusy("Add to plan")).toBe(true);
 
       held.releaseChange();
 
@@ -402,13 +402,13 @@ function editorChange(id: string): PlanChangeView {
 describe("the Plan's requests belong to its screen", () => {
   afterEach(cleanup);
 
-  it(`shows "Add to my plan" busy in both copies while its form action runs`, async () => {
+  it(`shows "Add to plan" busy in both copies while its form action runs`, async () => {
     await atViewport(LAPTOP, async () => {
       const held = renderPlanSlots({ host: { ...HOST_BASE, certificates: null }, plan: PLAN });
 
-      await press("Add to my plan");
+      await press("Add to plan");
 
-      await expect.poll(() => busyInEveryCopy("Add to my plan")).toEqual(["true", "true"]);
+      await expect.poll(() => busyInEveryCopy("Add to plan")).toEqual(["true", "true"]);
 
       held.releaseChange();
 
@@ -421,17 +421,17 @@ describe("the Plan's requests belong to its screen", () => {
     await atViewport(LAPTOP, async () => {
       const host = { ...HOST_BASE, certificates: null };
       const held = renderPlanSlots({ host, plan: PLAN });
-      await press("Add to my plan");
+      await press("Add to plan");
       await expect.poll(() => held.change).toHaveBeenCalledOnce();
 
       const other = { ...PLAN, goalId: "another-goal", planId: "another-plan" };
       const pastDate = { kind: "pastDate" as const, lessons: 3 };
       held.show({ host, plan: { ...other, fitOffer: null, status: pastDate } });
-      await expect.poll(() => shownButton("Add to my plan")).toBeUndefined();
+      await expect.poll(() => shownButton("Add to plan")).toBeUndefined();
       held.show({ host, plan: other });
 
-      await expect.poll(() => shownButton("Add to my plan")).toBeDefined();
-      expect(isBusy("Add to my plan")).toBe(false);
+      await expect.poll(() => shownButton("Add to plan")).toBeDefined();
+      expect(isBusy("Add to plan")).toBe(false);
       held.releaseChange();
     });
   });

@@ -98,7 +98,7 @@ export function TutorIntro({
             {t("Ask {name}", { name: identity.name })}
           </EmptyTitle>
           <EmptyDescription>
-            {t("With a free account, you can ask about any screen.")}
+            {t("With a free account, you can ask about anything in a lesson.")}
           </EmptyDescription>
         </>
       )}

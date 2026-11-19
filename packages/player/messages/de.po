@@ -1381,9 +1381,9 @@ msgid "Pick a name for spot {number}, or drag it onto any spot."
 msgstr "Wähl einen Namen für Stelle {number} aus oder zieh ihn auf eine beliebige Stelle."
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "TNAgYA"
-msgid "{count, plural, one {# name has no spot.} other {# names have no spot.}}"
-msgstr "{count, plural, one {# Name passt zu keiner Stelle.} other {# Namen passen zu keiner Stelle.}}"
+msgctxt "S_5x1D"
+msgid "{count, plural, one {# name doesn't belong on the diagram.} other {# names don't belong on the diagram.}}"
+msgstr "{count, plural, one {# Name gehört nicht ins Diagramm.} other {# Namen gehören nicht ins Diagramm.}}"
 
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
@@ -1838,9 +1838,9 @@ msgid "Every atom has all its bonds."
 msgstr "Alle Atome haben ihre möglichen Bindungen."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "5EQ069"
-msgid "Pick an atom to select it."
-msgstr "Wähl ein Atom aus."
+msgctxt "esd72m"
+msgid "Pick an atom."
+msgstr "Wähle ein Atom."
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "TFHgRi"
@@ -3560,10 +3560,11 @@ msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "Ich kann gerade nicht sprechen"
 
+#. On a question answered aloud: the learner types this one answer instead of saying it.
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "KBc0tZ"
+msgctxt "typeSpokenAnswer"
 msgid "Type instead"
-msgstr "Stattdessen schreiben"
+msgstr "Stattdessen tippen"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
@@ -3908,9 +3909,9 @@ msgid "Questions about this lesson"
 msgstr "Fragen zu dieser Lektion"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "lzRuXz"
-msgid "With a free account, you can ask about any screen."
-msgstr "Mit einem kostenlosen Konto kannst du zu jeder Seite Fragen stellen."
+msgctxt "OCg58Y"
+msgid "With a free account, you can ask about anything in a lesson."
+msgstr "Mit einem kostenlosen Konto kannst du in einer Lektion alles fragen."
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

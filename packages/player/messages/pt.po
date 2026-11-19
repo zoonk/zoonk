@@ -1267,7 +1267,7 @@ msgstr "Um teclado de piano de dó a si. Teclas pressionadas: {notes}."
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "9uJ5mO"
 msgid "Play the sound, then pick."
-msgstr "Reproduza o som e depois escolha."
+msgstr "Ouça o som e depois escolha."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "r2N9bw"
@@ -1381,8 +1381,8 @@ msgid "Pick a name for spot {number}, or drag it onto any spot."
 msgstr "Escolha um nome para o ponto {number} ou arraste um nome para qualquer ponto."
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "TNAgYA"
-msgid "{count, plural, one {# name has no spot.} other {# names have no spot.}}"
+msgctxt "S_5x1D"
+msgid "{count, plural, one {# name doesn't belong on the diagram.} other {# names don't belong on the diagram.}}"
 msgstr "{count, plural, one {# nome não tem lugar no diagrama.} other {# nomes não têm lugar no diagrama.}}"
 
 #: src/activities/labeled-diagram/name-bank.tsx
@@ -1838,8 +1838,8 @@ msgid "Every atom has all its bonds."
 msgstr "Todos os átomos têm todas as suas ligações."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "5EQ069"
-msgid "Pick an atom to select it."
+msgctxt "esd72m"
+msgid "Pick an atom."
 msgstr "Selecione um átomo."
 
 #: src/activities/molecule-builder/molecule-status.tsx
@@ -1931,7 +1931,7 @@ msgstr "Notas"
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "RpejPq"
 msgid "Guitar frets"
-msgstr "Casas da guitarra"
+msgstr "Casas do violão"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "yYzCD2"
@@ -2396,7 +2396,7 @@ msgstr "Tudo certo."
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "FfrrCO"
 msgid "Tap Start the beat, then tap along"
-msgstr "Toque em Iniciar o ritmo e depois acompanhe com toques"
+msgstr "Toque em Começar o ritmo e depois acompanhe com toques"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2406,7 +2406,7 @@ msgstr "Ajuste seu som"
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "Nl2YDQ"
 msgid "Start the beat"
-msgstr "Iniciar o ritmo"
+msgstr "Começar o ritmo"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
@@ -2990,7 +2990,7 @@ msgstr "Você ainda pode revisar e praticar o que você errou."
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "practiceMistakesAction"
 msgid "Practice mistakes"
-msgstr "Praticar erros"
+msgstr "Praticar"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "mOFG3K"
@@ -3026,7 +3026,7 @@ msgstr "Entrar"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "KFO_vV"
 msgid "Everything you learned comes with you."
-msgstr "Tudo o que você aprendeu vai com você."
+msgstr "Tudo o que você aprendeu continua com você."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EY8lh9"
@@ -3057,7 +3057,7 @@ msgstr "Esta aula não está disponível"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "bBaQAY"
 msgid "You've been logged out"
-msgstr "Sua sessão foi encerrada"
+msgstr "Você saiu da sua conta"
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "z7s-vx"
@@ -3415,7 +3415,7 @@ msgstr "Ainda estamos conferindo. Está demorando mais que o normal."
 #: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
 msgid "Listen again"
-msgstr "Ouça de novo"
+msgstr "Ouvir de novo"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "wIdPyY"
@@ -3560,10 +3560,11 @@ msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "Não posso falar agora"
 
+#. On a question answered aloud: the learner types this one answer instead of saying it.
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "KBc0tZ"
+msgctxt "typeSpokenAnswer"
 msgid "Type instead"
-msgstr "Conversar por texto"
+msgstr "Digitar"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
@@ -3790,12 +3791,12 @@ msgstr "Faça uma pergunta"
 #: src/questions/lesson-question-errors.tsx
 msgctxt "NYRAZH"
 msgid "You've been logged out."
-msgstr "Sua sessão foi encerrada."
+msgstr "Você saiu da sua conta."
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "JGZkd5"
 msgid "Asking questions needs a subscription"
-msgstr "Para fazer perguntas, você precisa de uma assinatura"
+msgstr "Para fazer perguntas, é preciso assinar"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "0-TBnr"
@@ -3908,9 +3909,9 @@ msgid "Questions about this lesson"
 msgstr "Perguntas sobre esta aula"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "lzRuXz"
-msgid "With a free account, you can ask about any screen."
-msgstr "Com uma conta grátis, você pode tirar dúvidas sobre qualquer tela."
+msgctxt "OCg58Y"
+msgid "With a free account, you can ask about anything in a lesson."
+msgstr "Com uma conta grátis, você pode tirar dúvidas sobre qualquer parte da aula."
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

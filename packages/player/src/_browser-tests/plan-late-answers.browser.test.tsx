@@ -42,7 +42,7 @@ const BASES: PlanBasesView = {
   knownCount: 0,
 };
 
-/** Its fit offer is from an earlier day's plan write, so "Add to my plan" checks today's numbers first. */
+/** Its fit offer is from an earlier day's plan write, so "Add to plan" checks today's numbers first. */
 const PLAN: PlanView = {
   access: { mocksRequirePlus: false },
   areas: [],
@@ -207,7 +207,7 @@ function renderHeldOffer(plan: PlanView = PLAN) {
 }
 
 async function addFromCard(held: ReturnType<typeof renderHeldOffer>) {
-  await page.getByRole("button", { name: "Add to my plan" }).click();
+  await page.getByRole("button", { name: "Add to plan" }).click();
   await expect.poll(() => held.preview).toHaveBeenCalledOnce();
 }
 
@@ -381,7 +381,7 @@ describe("the Plan's offer to fit more lessons", () => {
       await addFromCard(held);
 
       held.showPlan({ ...PLAN, schedule: { ...PLAN.schedule, dailyMinutes: 45 } });
-      const add = page.getByRole("button", { name: "Add to my plan" });
+      const add = page.getByRole("button", { name: "Add to plan" });
       await expect.element(add).toBeEnabled();
       held.release();
       await settle();
@@ -407,7 +407,7 @@ describe("the Plan's offer to fit more lessons", () => {
       await settle();
       expect(held.change).not.toHaveBeenCalled();
 
-      await expect.element(page.getByRole("button", { name: "Add to my plan" })).toBeEnabled();
+      await expect.element(page.getByRole("button", { name: "Add to plan" })).toBeEnabled();
 
       held.screen.unmount();
     });

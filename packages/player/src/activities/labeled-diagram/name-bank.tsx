@@ -97,9 +97,10 @@ export function NameBank({
         {extraNames > 0 && (
           <>
             {" "}
-            {t("{count, plural, one {# name has no spot.} other {# names have no spot.}}", {
-              count: extraNames,
-            })}
+            {t(
+              "{count, plural, one {# name doesn't belong on the diagram.} other {# names don't belong on the diagram.}}",
+              { count: extraNames },
+            )}
           </>
         )}
       </p>
