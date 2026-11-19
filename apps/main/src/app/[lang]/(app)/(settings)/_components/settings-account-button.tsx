@@ -1,8 +1,10 @@
 "use client";
 
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
-import { usePathname } from "@/i18n/navigation";
+import { getPathname, usePathname } from "@/i18n/navigation";
 import { usePageAsksForAccount } from "@zoonk/learn/account-ask";
+import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "@zoonk/learn/list";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LogInIcon, UserPlusIcon } from "lucide-react";
@@ -56,5 +58,28 @@ export function SettingsAccountButton({ status }: { status: "guest" | "visitor" 
     <CurrentPageLoginLink className={className} icon={<UserPlusIcon aria-hidden="true" />}>
       {t("Create a free account")}
     </CurrentPageLoginLink>
+  );
+}
+
+/**
+ * A guest's row at the top of the Settings list on a phone, where an account holder's row with
+ * their name is: there the bar has no row of its own to hold the button.
+ */
+export function SettingsAccountRow() {
+  const t = useExtracted();
+  const locale = useAppLocale();
+  const next = getPathname({ href: "/settings", locale });
+
+  return (
+    <ListGroup>
+      <ListRowLink className="min-h-14" href={`/login?next=${encodeURIComponent(next)}`}>
+        <span className="bg-muted text-muted-foreground flex size-9 shrink-0 items-center justify-center self-center rounded-full">
+          <UserPlusIcon aria-hidden="true" className="size-4" />
+        </span>
+        <ListRowContent>
+          <ListRowTitle>{t("Create a free account")}</ListRowTitle>
+        </ListRowContent>
+      </ListRowLink>
+    </ListGroup>
   );
 }

@@ -14,6 +14,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { SettingsAccountRow } from "../_components/settings-account-button";
 import { SettingsHubLists } from "../_components/settings-links";
 import { getSettingsPagesShown } from "../_components/settings-pages-shown";
 import ProfilePage from "../profile/page";
@@ -27,8 +28,12 @@ export async function generateMetadata(): Promise<Metadata> {
 async function AccountRow() {
   const session = await getSession();
 
-  if (!session || session.user.isAnonymous) {
+  if (!session) {
     return null;
+  }
+
+  if (session.user.isAnonymous) {
+    return <SettingsAccountRow />;
   }
 
   return (

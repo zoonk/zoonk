@@ -11,7 +11,7 @@ import {
 import { PageWithAside } from "@zoonk/learn/shell";
 import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SectionBarFrame, type SectionLink } from "./section-layout";
+import { SectionBarFrame, type SectionLink, SectionTitleEnd } from "./section-layout";
 
 /**
  * From `xl`, for whoever has a session, beside the pages of the section that have something for
@@ -20,6 +20,32 @@ import { SectionBarFrame, type SectionLink } from "./section-layout";
  */
 const ASIDE_CLASS =
   "hidden min-[72rem]:hidden xl:in-data-signed-in:flex xl:in-data-signed-in:not-has-[>*>*]:not-group-has-[[data-slot=page-aside-note]]/page-aside:hidden";
+
+/** The section's title from a tablet up, with its action at the row's end (`SectionTitleEnd`). */
+function SectionTitleRow({
+  end,
+  hub,
+  parents,
+}: {
+  end?: React.ReactNode;
+  hub: SectionLink;
+  parents?: SectionLink[];
+}) {
+  return (
+    <div className={PAGE_HEADER_CLASS}>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-title min-w-0" data-slot="section-title">
+          {hub.title}
+        </p>
+        {end && (
+          <SectionTitleEnd hub={hub} parents={parents}>
+            {end}
+          </SectionTitleEnd>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function SectionPage({
   aside,
@@ -64,11 +90,7 @@ export function SectionPage({
         )}
       >
         <div className={cn(TAB_ROW_GAP_CLASS, "hidden md:flex")}>
-          <div className={PAGE_HEADER_CLASS}>
-            <p className="text-title" data-slot="section-title">
-              {hub.title}
-            </p>
-          </div>
+          <SectionTitleRow end={end} hub={hub} parents={parents} />
           {nav}
         </div>
 
