@@ -125,12 +125,12 @@ export function PageWithAside({
 }) {
   return (
     <div
-      className="group/page-aside flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-10 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
+      className="group/page-aside flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-(--page-gutter) min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
       data-slot="page-with-aside"
     >
       <div
         className={cn(
-          "flex min-w-0 flex-col min-[72rem]:px-10 min-[72rem]:pb-16",
+          "flex min-w-0 flex-col min-[72rem]:px-(--page-gutter) min-[72rem]:pb-16",
           bottomBar && WITH_BAR_COLUMN_CLASS,
           className,
         )}

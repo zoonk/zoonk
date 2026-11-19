@@ -118,10 +118,10 @@ A box that holds content (a card, a panel, a composer) gives it the same room on
 
 ### S5. The gutter is the frame's
 
-Content keeps the frame's gutter from the screen's edge: 16px on a phone, 32px on a tablet, 40px beside the sidebar from `lg`. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
+Content keeps the frame's gutter from the screen's edge: 16px on a phone and 24px from a tablet up, beside the sidebar too (`FRAME_GUTTER_CLASS`). It is about the room the page's corners keep across (the bottom bar's and the page top's 16px) and the sidebar's own inset, so a corner reads even and the page never looks more padded than the frame around it. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
 
-- **Check.** The main region's leftmost and rightmost ink against the screen's edges.
-- **Usual break.** A box drawn with an outside ring, 1px wider than the field above it.
+- **Check.** The main region's leftmost and rightmost ink against the screen's edges: 16px at 390, 24px at 768 and beside the sidebar at 1440.
+- **Usual break.** A box drawn with an outside ring, 1px wider than the field above it. A frame or a column that pads by its own number instead of `--page-gutter`.
 
 ## Shape
 

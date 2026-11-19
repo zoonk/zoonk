@@ -4,9 +4,13 @@ import { cn } from "@zoonk/ui/lib/utils";
 const ROW_CLASS =
   "w-full max-w-[calc(var(--page-measure,100%)+2*var(--page-gutter))] px-(--page-gutter) lg:max-w-none";
 
-/** The frame's side padding at each size: the app's shell and a full page drawn without it. */
-export const FRAME_GUTTER_CLASS =
-  "[--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)] lg:[--page-gutter:--spacing(10)]";
+/**
+ * The frame's side padding: 16px on a phone and 24px from `sm`, the room a page's corners keep
+ * across from the bottom bar's and the page top's 16px, and the sidebar's own inset. Every frame
+ * that draws app pages takes it from here: the app's shell, a full page drawn without it, the
+ * internal tools' pages.
+ */
+export const FRAME_GUTTER_CLASS = "[--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(6)]";
 
 /**
  * The bar's room over and under its buttons, 16px at every size, so the bar stays as compact on a

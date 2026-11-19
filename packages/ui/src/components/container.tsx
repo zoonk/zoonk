@@ -1,4 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { FRAME_GUTTER_CLASS } from "./bottom-bar";
 
 export function Container({ children, className }: React.ComponentProps<"main">) {
   return (
@@ -8,7 +9,7 @@ export function Container({ children, className }: React.ComponentProps<"main">)
   );
 }
 
-const PAGE_INSET_CLASS = "px-4 sm:px-8 lg:px-10";
+const PAGE_INSET_CLASS = cn("px-(--page-gutter)", FRAME_GUTTER_CLASS);
 
 type ContainerDescriptionProps = React.ComponentProps<"p">;
 
