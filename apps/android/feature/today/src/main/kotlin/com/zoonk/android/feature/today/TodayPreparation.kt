@@ -19,8 +19,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.goalcontent.CoverageBar
-import com.zoonk.android.feature.plan.lessonsStudied
 import com.zoonk.android.feature.plan.lessonsProgressLine
+import com.zoonk.android.feature.plan.lessonsStudied
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
