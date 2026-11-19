@@ -223,7 +223,6 @@ msgstr "Heute"
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
-#: src/app/[lang]/(app)/(settings)/_components/settings-aside.tsx
 #: src/components/learn/journey-page-bar.tsx
 msgctxt "fz0z4c"
 msgid "Plan"
@@ -1113,7 +1112,6 @@ msgctxt "95pnlV"
 msgid "Your account"
 msgstr "Dein Konto"
 
-#: src/app/[lang]/(app)/(settings)/_components/settings-aside.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 #: src/components/pricing/plus-adds.tsx
@@ -1122,7 +1120,6 @@ msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
 
-#: src/app/[lang]/(app)/(settings)/_components/settings-aside.tsx
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-adds.tsx
 msgctxt "tf1lIh"
