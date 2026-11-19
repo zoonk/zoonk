@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { useId } from "react";
 import { PageSectionTitle } from "../../_components/page";
 import { getChapterKey, isWritingAhead, useChapterTitle } from "../../journey/journey-chapters";
 import { PlanRoadmap } from "../../journey/plan-roadmap";
@@ -13,8 +14,10 @@ function useRevealPhases() {
   return plan.phases.filter((phase) => phase.kind !== "afterExam");
 }
 
-export function PlanPhasesBar() {
+/** `stacked` lists the phases one per row, for a column too narrow for their band. */
+export function PlanPhasesBar({ stacked = false }: { stacked?: boolean }) {
   const t = useExtracted();
+  const titleId = useId();
   const phases = useRevealPhases();
 
   if (phases.length < 2) {
@@ -22,14 +25,15 @@ export function PlanPhasesBar() {
   }
 
   return (
-    <section aria-labelledby="plan-phases" className="flex flex-col gap-2.5">
-      <PageSectionTitle id="plan-phases">{t("Phases")}</PageSectionTitle>
-      <PlanRoadmap density="reveal" />
+    <section aria-labelledby={titleId} className="flex flex-col gap-2.5">
+      <PageSectionTitle id={titleId}>{t("Phases")}</PageSectionTitle>
+      <PlanRoadmap density={stacked ? "revealList" : "reveal"} />
     </section>
   );
 }
 
 export function PlanChapterList() {
+  const titleId = useId();
   const t = useExtracted();
   const title = useChapterTitle();
   const phases = useRevealPhases();
@@ -45,8 +49,8 @@ export function PlanChapterList() {
   const rest = chapters.length - ROWS_SHOWN;
 
   return (
-    <section aria-labelledby="plan-chapters" className="flex flex-col gap-1">
-      <PageSectionTitle id="plan-chapters">{t("Chapters")}</PageSectionTitle>
+    <section aria-labelledby={titleId} className="flex flex-col gap-1">
+      <PageSectionTitle id={titleId}>{t("Chapters")}</PageSectionTitle>
 
       <ol className="flex flex-col [&>li+li]:border-t">
         {chapters.slice(0, ROWS_SHOWN).map((chapter, index) => (

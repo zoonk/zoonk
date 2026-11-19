@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { cumulativeLayoutShift } from "./checks.mts";
 import { type LoadReport } from "./measure.mts";
+import { type Readable } from "./readable.mts";
 import { type PageWords, wordGrowth } from "./words.mts";
 
 const KILOBYTE = 1024;
@@ -20,7 +21,7 @@ type Loaded = Pick<
   | "serverCpuMs"
   | "shifts"
   | "viewport"
-> & { words?: PageWords };
+> & { readable?: Readable; words?: PageWords };
 
 const METRICS = [
   "lcpMs",

@@ -120,7 +120,7 @@ async function toGoalView({
     examName: goal.examName,
     examSubjects: goal.examSubjects,
     examTarget: goal.examTarget,
-    examYear: goal.examYear,
+    examYear: exam?.pastYear ? undefined : goal.examYear,
     followUps: followUps.map((question) => ({ answer: null, question })),
     institution: goal.institution,
     level: goal.ownLevel,

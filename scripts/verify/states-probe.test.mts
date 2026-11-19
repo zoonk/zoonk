@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { installPageHelpers } from "./page-helpers.mts";
+import { readRegions } from "./press-probe.mts";
 import { compareLayout, markActions, pickedIds, snapshotLayout } from "./states-probe.mts";
 
 function frame(element: HTMLElement) {
@@ -71,7 +72,7 @@ describe("state layout measurements", () => {
     </section><footer style="position:sticky" data-frame="0,700,200,44"><button data-frame="0,0,80,44">Pinned</button></footer>`;
 
     snapshotLayout();
-    assert.equal(globalThis.zoonkLayout?.length, 2);
+    assert.equal(globalThis.zoonkLayout?.step?.length, 2);
     const section = document.querySelector<HTMLElement>("section");
     const button = document.querySelector<HTMLElement>("section button");
     assert.ok(section && button);
@@ -98,6 +99,38 @@ describe("state layout measurements", () => {
     assert.deepEqual(compareLayout("target").moved, []);
     document.body.replaceChildren();
     assert.deepEqual(compareLayout("target"), { moved: [], target: null });
+  });
+});
+
+describe("what a press reveals", () => {
+  it("counts a field revealed in a sheet as in the sheet's flow and tied to its switch, and a menu over it as floating", () => {
+    document.body.innerHTML = `<div role="dialog" style="position:fixed" data-frame="0,200,390,640">
+      <button role="switch" data-zoonk-act="weekend" data-frame="320,400,44,24">Weekends</button>
+      <section data-frame="0,460,390,80">Later</section>
+    </div>`;
+
+    snapshotLayout("press-0");
+    const sheet = document.querySelector<HTMLElement>("[role=dialog]");
+    const field = Object.assign(document.createElement("div"), { textContent: "Weekend time" });
+    field.dataset.frame = "0,440,390,76";
+    field.id = "weekend-time";
+    sheet?.querySelector("section")?.before(field);
+    // The switch names its field only while it's on.
+    document.querySelector("[role=switch]")?.setAttribute("aria-controls", "weekend-time");
+    const menu = Object.assign(document.createElement("div"), { textContent: "Report" });
+    menu.setAttribute("style", "position:fixed");
+    menu.dataset.frame = "200,100,160,44";
+    document.body.append(menu);
+
+    const { appeared } = readRegions({ from: "press-0", targetId: "weekend" });
+
+    assert.deepEqual(
+      appeared.map(({ floating, label, tied }) => [label, floating, tied]),
+      [
+        ['div "Weekend time"', false, true],
+        ['div "Report"', true, false],
+      ],
+    );
   });
 });
 
