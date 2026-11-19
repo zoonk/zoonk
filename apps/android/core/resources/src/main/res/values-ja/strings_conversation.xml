@@ -127,7 +127,7 @@
   "conversation_start_preparing": "4886c7eb21efc24ca3fa3fa398443c4aa54943382e58367863debd2233591a15",
   "conversation_still_closing": "27de0396ef3cfd4767817efdd588bc4179bf5798d08cf037a3cdd2a11265fcb2",
   "conversation_still_to_get_across": "8c7caa10974b3c03bf1151517e2e7474da71ff0f9bec0e3c3b3b0b9203615082",
-  "conversation_take_over": "b0754db8ce9d82f1f3adf111d618e79ab66b2501e902ceea26b247dd6bd1cbc9",
+  "conversation_take_over": "92ade70060e077050d5c81cc0c32574b98235874b8abf8700625474a4a651e1f",
   "conversation_take_your_time": "90be5ab34a633d501f509236445f5e536d633480dd2c54ac8d0e3751b1ba7549",
   "conversation_taken_over": "0233f0cf67d5f777b1e65464a8f06b5f624a5b9d267ef16bc006aba4005ed86a",
   "conversation_talking": "227fda9f983f90d331ec1f32abff8e9f6f5a9f58b29255e7645cd4e8938c673f",
@@ -248,7 +248,7 @@
     <string name="conversation_paused">現在、どなたも利用できません。しばらくしてからもう一度お試しください。</string>
     <string name="conversation_in_progress_title">別の会話が進行中です</string>
     <string name="conversation_in_progress">別の端末かブラウザで会話中です。この会話を始めると、そちらの会話はフィードバックなしで終了します。</string>
-    <string name="conversation_take_over">ここからスタート</string>
+    <string name="conversation_take_over">ここで始める</string>
     <string name="conversation_dropped_title">会話の接続が切れました</string>
     <string name="conversation_dropped">もう一度つなぐか、会話を終了して話した内容へのフィードバックを受け取ってください。</string>
     <string name="conversation_end_call">会話を終了する</string>

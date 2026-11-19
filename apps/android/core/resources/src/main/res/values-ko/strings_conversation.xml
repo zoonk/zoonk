@@ -127,7 +127,7 @@
   "conversation_start_preparing": "06daed1770416273515317d3cae894ab153b7d42ccd1cbb1a9899c968a003737",
   "conversation_still_closing": "273752f549ceeb91137ce806a71ab1c8fabca7996a449cdf148f542bd413c14b",
   "conversation_still_to_get_across": "bdab040420d137407153f92b227cac9bd2cd91f4a1c0810919eec59062ff0a15",
-  "conversation_take_over": "ad192026e6675283c737ad632a0e47db1e01c80ed35c9a5b9d927f6463bdbdde",
+  "conversation_take_over": "66feaffff746b04a35dd09b4dd11226a421157e3073d9dec949a1635f1bc742d",
   "conversation_take_your_time": "c4b922da26f3775d14ce0c4264e33e43d35affca6ee010d2b71d6407fac4f06c",
   "conversation_taken_over": "41ed3612c3e2d9b8a8c9684da01a69e10ce2d86e6d7958fb9af2ce1d0f57e760",
   "conversation_talking": "4e22448f97e3c342fd0a1685b114bcf570689a4661e7d8228b029f911ed74661",
@@ -248,7 +248,7 @@
     <string name="conversation_paused">지금은 모두 대화를 이용할 수 없어요. 나중에 다시 시도해 보세요.</string>
     <string name="conversation_in_progress_title">다른 대화가 진행 중이에요</string>
     <string name="conversation_in_progress">다른 기기나 브라우저에서 열려 있어요. 이 대화를 시작하면 진행 중인 대화는 피드백 없이 끝나요.</string>
-    <string name="conversation_take_over">여기서 시작</string>
+    <string name="conversation_take_over">여기서 시작하기</string>
     <string name="conversation_dropped_title">대화 연결이 끊겼어요</string>
     <string name="conversation_dropped">다시 연결하거나 대화를 끝내고 지금까지 말한 내용에 대한 피드백을 받아 보세요.</string>
     <string name="conversation_end_call">대화 끝내기</string>

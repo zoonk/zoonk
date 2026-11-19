@@ -151,7 +151,7 @@ class FreeLessonGateTest {
     @Config(qualifiers = "es-w320dp-h640dp")
     fun startTakesSubscribesBoxAtTheNarrowestWidthInItsLongestLanguage() {
         showNoticeInPlace()
-        val subscribe = rule.onNodeWithText("Suscribirse").getBoundsInRoot()
+        val subscribe = rule.onNodeWithText("Suscribirte").getBoundsInRoot()
 
         clock.passOpening()
         rule.waitUntil(10_000) { rule.onAllNodesWithText("Empezar").fetchSemanticsNodes().isNotEmpty() }

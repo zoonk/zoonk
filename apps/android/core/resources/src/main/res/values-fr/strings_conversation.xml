@@ -127,7 +127,7 @@
   "conversation_start_preparing": "574a513cdd36db1355ffd74c2b928122f45a4e1e71aba5a1513a3395077878fd",
   "conversation_still_closing": "cbb9e4caecbe05a28a7aeb26b7d3a6a3a7a7886fa6516d6ac249c9a29ba3b40b",
   "conversation_still_to_get_across": "e6da7b76beeecf6786abdcc2535574116681ada10c32c3b414e2ca3e3264d870",
-  "conversation_take_over": "d80f13d70d68ae303eb0a6cf073d7e41e30131b639eaeb73afd357e3acbd5a55",
+  "conversation_take_over": "34bd19a7c36e460180c5d431b1a4cecec7f60804a369776679dd1a31c4e6e43d",
   "conversation_take_your_time": "2f1e5904ed836a234152d966fb7243b13150cb76ca51e77d5402cbcc67c3a77e",
   "conversation_taken_over": "153273ebe7c6256aaffaeb256de1e8952e17174d91ba212a160d81a19eb04715",
   "conversation_talking": "8a43fb8f73a218aea4b32ff99138782e1ed100f09b012649f76bf36848c37985",
@@ -248,7 +248,7 @@
     <string name="conversation_paused">C’est pareil pour tout le monde en ce moment. Réessaie plus tard.</string>
     <string name="conversation_in_progress_title">Tu as déjà un appel en cours</string>
     <string name="conversation_in_progress">Il est en cours sur un autre appareil ou dans ton navigateur. Si tu démarres cet appel, l’autre se termine sans bilan.</string>
-    <string name="conversation_take_over">Commence ici</string>
+    <string name="conversation_take_over">Commencer ici</string>
     <string name="conversation_dropped_title">L’appel a été coupé</string>
     <string name="conversation_dropped">Rappelle ou termine l’appel pour recevoir un retour sur ce que tu as dit.</string>
     <string name="conversation_end_call">Terminer l’appel</string>

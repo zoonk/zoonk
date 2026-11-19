@@ -127,7 +127,7 @@
   "conversation_start_preparing": "8c34b819d3486590feeef3eb821d9b8050f313e474d909b4f55872bcb2495ac2",
   "conversation_still_closing": "aae06e3c768780e11be8d9c27518e1d59325b9ae58a1bad697bd13cc26432019",
   "conversation_still_to_get_across": "4d34b97991deafc3612d40188aed7051e979736ff34d91e33e821e4cf3ab3320",
-  "conversation_take_over": "1d5d809490c825c10caa123cf85e4007581c26d1b1101ef07a130503a3abb0a8",
+  "conversation_take_over": "6667b943367ebbe372bcae7b0202eee096a0a1d27e4861fe9ad67329febdfda6",
   "conversation_take_your_time": "5adc53a3d92030a23f8cc5f9ca21b959b23eeef85c4d39be78abb5d578981a29",
   "conversation_taken_over": "e695e3277e6f5f5393a5204250423c3d22f4b2fdfbb54371488e70609723d64e",
   "conversation_talking": "5b37131d1b5db2f0119c5ad22811ef826efec5420c99e21617911b8cba1f53fe",
@@ -248,7 +248,7 @@
     <string name="conversation_paused">Al momento è così per tutti. Riprova più tardi.</string>
     <string name="conversation_in_progress_title">Hai un’altra conversazione in corso</string>
     <string name="conversation_in_progress">È aperta su un altro dispositivo o nel browser. Se inizi questa, l’altra termina e non ne riceverai i commenti.</string>
-    <string name="conversation_take_over">Inizia da qui</string>
+    <string name="conversation_take_over">Inizia qui</string>
     <string name="conversation_dropped_title">La conversazione si è interrotta</string>
     <string name="conversation_dropped">Riprendi la conversazione oppure terminala per ricevere commenti su quello che hai detto.</string>
     <string name="conversation_end_call">Termina la conversazione</string>

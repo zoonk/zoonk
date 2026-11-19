@@ -7679,31 +7679,31 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza aquí"
+            "value" : "Empezar aquí"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commence ici"
+            "value" : "Commencer ici"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia da qui"
+            "value" : "Inizia qui"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ここからスタート"
+            "value" : "ここで始める"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "여기서 시작"
+            "value" : "여기서 시작하기"
           }
         },
         "pl" : {
@@ -7715,7 +7715,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comece aqui"
+            "value" : "Começar aqui"
           }
         },
         "tr" : {
