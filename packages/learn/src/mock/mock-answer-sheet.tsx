@@ -144,15 +144,11 @@ export function MockQuestionMap({ className }: { className?: string }) {
 
   return (
     <HorizontalScroll
+      box={{ label: t("Questions") }}
       className={className}
       labels={{ left: t("Earlier questions"), right: t("Later questions") }}
     >
-      <ol
-        aria-label={t("Questions")}
-        className="flex w-max min-w-full gap-2 p-0.5"
-        data-slot="mock-question-map"
-        ref={row}
-      >
+      <ol className="flex w-max min-w-full gap-2 p-0.5" data-slot="mock-question-map" ref={row}>
         {questions.map((question, index) => (
           <li className="w-11 shrink-0 grow" key={question.itemId}>
             <QuestionCell index={index} onPick={runner.go} question={question} />
