@@ -87,7 +87,7 @@
 - “End date” (a plan’s): “data final”, not “data de término”
 - “left out”: “ficar de fora”, not “pulado” or “ignorado”
 - “skipped” (known through placement): “pulado”, not “ignorado”
-- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Tempo diário”, not “Tempo por dia”
+- “Daily study time”, the setting's name, and “Time a day” as a label (how long the learner studies each day): “Tempo diário”, not “Tempo por dia”
 
 ## Buddy names
 
