@@ -21,7 +21,7 @@
   "profile_questions_job_placeholder": "2e1fcca03f2d210682fd261da02b7961f42d69a2a086d253ebcaceba3c690ab8",
   "profile_questions_lesson_ready": "e789fb8861f2e977ed77e03cd31c526e44927db84ac1f87ceae2775811727469",
   "profile_questions_listen_favorites": "a51d652412d93d09f238434d42c6f7c9e10ab4243b49e83e3d3b04fe6ed8fe10",
-  "profile_questions_listen_placeholder": "9afb5dab14dee128d8794c35ed9451a7608c5c01f237e50d005c1c9b283262e6",
+  "profile_questions_listen_placeholder": "3334b600702c4f754a82806bc670e25a8371b42ce34d279575b55e7a4767d332",
   "profile_questions_listen_title": "49bac9c2e67819913be5e222cf559a2d208b2444b6d3fade30328e0a56afdcd0",
   "profile_questions_memory_off": "e5d1d0ec46787d3c72d308e4801d34930684896e080202e1ba53af2978fa7b50",
   "profile_questions_never_ask": "8ad9dbe4eedfd39d9524afc42215a0637d0716cf4520f3b8c8873229e3c5dbf5",
@@ -69,7 +69,7 @@
   "profile_questions_tools_placeholder": "bcfeb8dd5029df3bfcadfed9ecf1e781358f353628256a51c2d7e756a1d444de",
   "profile_questions_tools_title": "175cc9a816e4515842a6efb1fbf775047a97465d3e74e464aa261d3299c93394",
   "profile_questions_watch_favorites": "a17729ad32e449a806930543f9f7cf313d5e24c9d30fafa2e38aeb800773307f",
-  "profile_questions_watch_placeholder": "c9f7af870161bfaf6a89a78e7571ba18ab5a897efb67b5dbc4d531409f584059",
+  "profile_questions_watch_placeholder": "b8e5f141e4cabfd2964d1ed427afcf46b0cc5d7ed4b77fe06ea7d48dd42a7e03",
   "profile_questions_watch_title": "f9f22f2dadd110eb14e1a813b8de039e9e2de39467308d6ed6c1ae01f8ca265f",
   "profile_questions_which_field": "9f63c7668489e37bb71f6960f7b1c02d087d73dab23e77a38a3efe57d0afeeb9",
   "profile_questions_work_description": "1c503b9f57c58eb5cdece58f67248fcb1caeebaeee6af20e9064adfe4e1ee643",
@@ -104,10 +104,10 @@
     <string name="profile_questions_interest_description">Escolha até 3. A gente vai usar nos exemplos das suas aulas.</string>
     <string name="profile_questions_watch_title">O que você gosta de assistir?</string>
     <string name="profile_questions_watch_favorites">Séries, filmes, times ou canais favoritos (opcional)</string>
-    <string name="profile_questions_watch_placeholder">Ex.: Star Trek, Formula 1</string>
+    <string name="profile_questions_watch_placeholder">Ex.: Star Trek, Fórmula 1</string>
     <string name="profile_questions_listen_title">O que você gosta de ouvir?</string>
     <string name="profile_questions_listen_favorites">Artistas ou podcasts favoritos (opcional)</string>
-    <string name="profile_questions_listen_placeholder">Ex.: Coldplay, TED Talks Daily</string>
+    <string name="profile_questions_listen_placeholder">Ex.: Coldplay, Café da Manhã</string>
     <string name="profile_questions_play_title">O que você gosta de jogar?</string>
     <string name="profile_questions_play_favorites">Jogos favoritos (opcional)</string>
     <string name="profile_questions_play_placeholder">Ex.: Catan, Valorant</string>

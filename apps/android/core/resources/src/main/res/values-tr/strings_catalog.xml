@@ -44,7 +44,7 @@
   "catalog_level_beginner": "1813ac78f3b6c72d10fe62073f85da3fb9efe0b81f7b9edacbafa231501e452c",
   "catalog_level_intermediate": "1c414520cb5b971931886a2fefbf5762a7731ee1b85220ea0297e64f99db74f5",
   "catalog_level_overview": "e845be8166fb6b5900fa3831d2aaaf14f3dccc52d1ae6c74b8808c5abc406c03",
-  "catalog_level_unwritten": "55bcab411b2193bce8412ff6c25aa1667cf4dc9bae0ab79207bcd34f3e0f98a7",
+  "catalog_level_unwritten": "ca59e3e18d10e25b58f153e2c71f0775fad1ceab954e06b75357d1e342ed7ea4",
   "catalog_load_more_failed": "99b37e54d9e0641fa4dc0f342d707bc2867715b3de13bc2aa61e53f94373f78e",
   "catalog_loading_more": "fdacc73dcdecb8d792b276f5f8896bbab37c2879360f04e50bb155276e78e0f8",
   "catalog_open_course": "c8fa13a834e3bc191c3816a37713f5707269bfa96faac4463379d33942acda3a",
@@ -183,7 +183,7 @@
         <item quantity="other">%1$d kısa ders</item>
     </plurals>
     <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet; its lessons get ready when the learner reaches it. -->
-    <string name="catalog_level_unwritten">Bu seviyeye geldiğinde hazır olacak.</string>
+    <string name="catalog_level_unwritten">Bu seviyeye geldiğinde üniteler hazır olur.</string>
     <!-- Marks the chapter (or level) of the next lesson in the learner's plan on the course's outline. -->
     <string name="catalog_you_are_here">Buradasın</string>
     <string name="catalog_outline_unwritten">Planını oluştur, Zoonk bu kursun derslerini zaten bildiklerine göre hazırlasın.</string>

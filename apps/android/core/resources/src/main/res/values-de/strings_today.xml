@@ -78,7 +78,7 @@
   "today_preparation": "c52f8af5a11b897ae8b0aa730090aa7d5c7b10155050bae3d49ae02886a2ca6d",
   "today_progress": "6a14528b0d57579828682db8a621938a43c69afc7d2f58c5dc4521ae5cfdc877",
   "today_progress_lessons_today": "701a287ffeadbc4c4246b3c73616a35a6ff4bbb9d09a7a28ce6c180c426efe41",
-  "today_progress_meaning": "ac97e8197a93a014e6dbd97ad8e5495285e9be15ebf3ef11c527188e73ec4335",
+  "today_progress_meaning": "94c196fae9c89949189b6af40fa963b81891aa3c6ce44ffe5df4a2455cb22fa8",
   "today_quick_explanation": "03bafe9c0e49323f09819e5b7df0de68bef2e0f434081d82efc9fde1098e78aa",
   "today_rest": "45d4003b4df1b461c99332e9d8c4270d94189fc08dd8bb97a63335c5fec3e695",
   "today_rest_enjoy": "e45a33b47fc0e92954d0762ef1609011d1bab7fa0fbe7a085bf981c4e914ee6b",
@@ -336,7 +336,7 @@
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">Fortschritt</string>
     <!-- What the goal's progress number is made of -->
-    <string name="today_progress_meaning">Anteil der Lektionen in deinem Plan, die du gelernt hast oder schon vorher kanntest.</string>
+    <string name="today_progress_meaning">Der Anteil der Lektionen in deinem Plan, die du gelernt hast oder schon kanntest.</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
     <string name="today_preparation">Vorbereitung</string>
     <!-- A link at the end of the progress card that opens the learner's plan. -->

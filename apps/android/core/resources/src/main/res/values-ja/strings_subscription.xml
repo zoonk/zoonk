@@ -15,7 +15,7 @@
   "subscription_answer_free_lessons": "e37aaa503502bdd91ca0a33d65c185ef276be33bb9278da53526fe41826b47a1",
   "subscription_answer_free_material": "133300fae2a62da0a1831036867b0f9314d914132e624c2486710b41d1486c86",
   "subscription_answer_refund": "b707676bc39338154dea938882340dd611b747a64496f56d7479d25f23327ee3",
-  "subscription_answer_unlimited": "35150ebae58b18f6f7c0e3fe24a760a6d373d1b2fa16b56b2ffecf215db52b15",
+  "subscription_answer_unlimited": "949fe757239845c53c96834ff1b76817a7eb460e04eeb7eb9d9828880ee4d5bc",
   "subscription_benefit_buddy": "e0508362a1b5b3e7bc13d6e098853079e1748b4773ed4dc9841959073113deca",
   "subscription_benefit_calls": "ee2014dd733e12aafe49d676dc3cf33d65142206e33d198a78a77c0ad89e2662",
   "subscription_benefit_certificates": "21381b8c5051c4fca237b60f7a0878e797a1682e8ce9c65a37d3dcb5baa7bc6e",
@@ -26,8 +26,8 @@
   "subscription_cancel_anytime": "c7c206e8bd8b3f503334b3a4695145818cebb085d6c8e117a453294c15d4a0c0",
   "subscription_contact_support": "113f34d5b3304c0384f27e242338c47e4cfb6b46a91f39b38c6fa7b893cf0f10",
   "subscription_current_plan": "c0c880e21da7133a521ab461808c031bd40a7145d1ff82d7e1c6aca4a02695de",
-  "subscription_deletion_app_store": "97094c11da311d0648a76df8cd466fa2a2bd600ffae0ccb7cc3933579087cabd",
-  "subscription_deletion_google_play": "a049af0d2b0793c6bf6db81b8281a64ef00d6f0502b1b51d059efb10b1b82f4b",
+  "subscription_deletion_app_store": "e3ae8bb7453a8d44515a1f74f37d01ec7f80a42de36b4cd35b82dd81256691d3",
+  "subscription_deletion_google_play": "6cc064baf67dbe55104c15a02e3166e53bc2027d1013d08395bdf278b836a885",
   "subscription_deletion_notice": "ff15fc1d6e6623774cc243d36108fb305bc0c71174f3947313eb36632726bffb",
   "subscription_ending": "e8117bcafeee18a4a8c44e26dcedcd05f803790a7b622abf502dd2f685d66bcd",
   "subscription_ends_on": "49fb6308ca748df2ab67e487c35bf25188ec2d9b6b6fd599dafac5ce107f9dad",
@@ -93,9 +93,9 @@
     <string name="subscription_renewal_failed">前回の更新料金を決済できませんでした。</string>
     <string name="subscription_deletion_notice">アカウントを削除すると、Plusもすぐに終了します。</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
-    <string name="subscription_deletion_app_store">App Storeで登録したPlusは、App Storeで解約するまで請求が続きます。</string>
+    <string name="subscription_deletion_app_store">アカウントを削除しても、App Storeで購入したPlusは解約されません。App Storeで解約してください。</string>
     <!-- The same, for Plus bought in Google Play. -->
-    <string name="subscription_deletion_google_play">Google Playで登録したPlusは、Google Playで解約するまで請求が続きます。</string>
+    <string name="subscription_deletion_google_play">アカウントを削除しても、Google Playで購入したPlusは解約されません。Google Playで解約してください。</string>
     <string name="subscription_free">無料プラン</string>
     <string name="subscription_monthly">月払い</string>
     <string name="subscription_yearly">年払い</string>
@@ -173,7 +173,7 @@
     </plurals>
     <string name="subscription_answer_free_calls">会話でのスピーキング練習はPlusより回数が少なくなります（試験のスピーキングタスクはPlusで利用できます）</string>
     <string name="subscription_question_unlimited">Plusは本当に無制限ですか？</string>
-    <string name="subscription_answer_unlimited">ほぼ無制限です。レッスン、目標、相棒の制限は、ボットや自動化ツールによる利用を防ぐためだけのものです。学習する人の利用を制限するものではありません。会話練習には1日ごとと1か月ごとの上限がありますが、無料プランより多く利用できます。</string>
+    <string name="subscription_answer_unlimited">通常の学習なら、はい。レッスン、目標、AI学習の相棒には、ボットなどの自動ツールを防ぐための制限しかありません。スピーキング練習の会話には1日と1か月ごとの上限がありますが、無料プランより高く設定されています。</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">適正利用ポリシーを読む</string>
     <string name="subscription_question_cancel">解約するとどうなりますか？</string>

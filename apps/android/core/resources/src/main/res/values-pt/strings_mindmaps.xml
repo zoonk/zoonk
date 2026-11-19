@@ -20,14 +20,14 @@
   "mindmaps_drawing": "7a5616033bfb58b5e5f02ee1310af3324a6f4252af7113db3c2781e18e18d413",
   "mindmaps_drawing_wait": "dd366881b9acce90fcd751a668c0511a0590803fd7e329d59aacf936dc201757",
   "mindmaps_empty": "b363968d1fcd4abec0e718be94019adb4f7ae46a4122a3df4d04ea69a45bc344",
-  "mindmaps_empty_stopped": "2716d82647ccc6c23996ad17746c2b3ab4ab85b2d60dab51b21edc661dbdf89f",
+  "mindmaps_empty_stopped": "c737c324bd6881f21a2199e1e01e6b3678a6241cc8a4973b096fed9ee58e278f",
   "mindmaps_failed": "f9570911237951d827e0cd58be6371e7e199900fc9d586d7bd2c786f6e720db2",
   "mindmaps_fit": "20f43e8039030a5a9c08cddfae7c42d8f29f3604e59e741316566d2adcd65ed8",
   "mindmaps_in_short": "8d9c4f61193c1c25bf8f82bac35003901cddf5d942343612d24f510d85755f32",
   "mindmaps_lesson_map": "c13a6a29a77eb55877381cf70c61c10b5b4f8efcdaa65d37259ddac9e4d0ce73",
   "mindmaps_lesson_maps": "7277f731cff97d211da5b83e58d2ab50ce3764044b10357b0dca79c0c2c87fef",
-  "mindmaps_lessons_count_free": "aec283bf181f146b9d2f44a0bf5410744bd6f6b47953eafa3e7ef60584ed6225",
-  "mindmaps_lessons_empty": "ba9bec79b31343f0d615af23d8ffd1363bb16c963538d73f31975d018a3303e2",
+  "mindmaps_lessons_count_free": "82e0ce0c7ebdd107314d047f38d0e081281658efed0d928558732d7c0bd7d5dc",
+  "mindmaps_lessons_empty": "5505deaf184d34f9b6ef24b5ca1be880d35d0073c5e4bf7181d3e9b43d95e6d6",
   "mindmaps_lessons_first_free": "5c423f9cd4e5a2114783dc12a5f8cb2ca34f2db21688691488c4068798389d41",
   "mindmaps_lessons_first_plus": "e091b70823e8e74048ed6b65f892877c9ec3cf2fff58e5c611b0b0da55f4b320",
   "mindmaps_lessons_to_write": "afb05314183edc6c19979d0fc218bc64ae20cef4676fd5a14301485a15f07e37",
@@ -39,7 +39,7 @@
   "mindmaps_open_lesson": "8578d87211fb5ad70d0594aaad81b67d367eff51b25c470de036439c9a63bd59",
   "mindmaps_open_spoken": "d9178a8e393177ff2281765c5c38fd2bb7193eb38bdd3eaea30a122a7a915e0d",
   "mindmaps_options": "5b4078438e899c998711fcbc3bcc3b4b5c30a858e73b8ed443a141731b2dc3c3",
-  "mindmaps_other_chapters": "a7fc7a17a549060cfaeb71dfcd1708ae0c8cc068b6abc5c2323e8b4ddca710c5",
+  "mindmaps_other_chapters": "707e4719ea4fc37d15327516f7ed72d444e33292bc71287f64ca54159a211a32",
   "mindmaps_previous": "812d68b1afc486ff9d9cc735cd9e2429105d841e70afa7f6c53913a380c7f36a",
   "mindmaps_ready": "88fb4e4bd0bba729e35b82c768aa9116163f3d283a4ea03908a382e149e01572",
   "mindmaps_remove": "c3b1320ec9351aa22f182ff61b9f17fce1f3420d9adcf32b5d2d1e97382c10b9",
@@ -86,7 +86,7 @@
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Capítulo %1$s</string>
     <string name="mindmaps_empty">Ainda não há mapas de capítulos. Cada capítulo que você conclui ganha um.</string>
-    <string name="mindmaps_empty_stopped">Ainda não há mapas de capítulos.</string>
+    <string name="mindmaps_empty_stopped">Ainda não tem mapas de capítulos.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mapa mental de %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
@@ -122,7 +122,7 @@
         <item quantity="other">%1$s aulas para criar</item>
     </plurals>
     <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
-    <string name="mindmaps_lessons_count_free">Criar aulas conta para o seu limite de aulas grátis.</string>
+    <string name="mindmaps_lessons_count_free">Criar mapas conta para o seu limite de aulas grátis.</string>
     <string name="mindmaps_writing_lessons">Criando as aulas e depois o mapa mental…</string>
     <string name="mindmaps_writing_lessons_wait">Isso leva alguns minutos. Pode sair; o mapa vai estar aqui.</string>
     <string name="mindmaps_drawing">Desenhando o mapa mental…</string>
@@ -158,7 +158,7 @@
     <string name="mindmaps_study">Estudar mapas</string>
     <string name="mindmaps_create_all">Criar todos</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
-    <string name="mindmaps_other_chapters">Ainda não há mapa</string>
+    <string name="mindmaps_other_chapters">Ainda sem mapa</string>
     <!-- A tab's name: the mind maps of the goal's chapters, one per chapter. -->
     <string name="mindmaps_tab_chapters">Mapas dos capítulos</string>
     <!-- A tab's name: the small mind maps of single lessons, grouped by chapter. -->
@@ -182,7 +182,7 @@
     <string name="mindmaps_lesson_map">Mapa de aula</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Mostrar todos os %1$s</string>
-    <string name="mindmaps_lessons_empty">Ainda não há mapas de aulas. Cada aula termina com um.</string>
+    <string name="mindmaps_lessons_empty">Ainda não tem mapas de aulas. Cada aula termina com um.</string>
     <string name="mindmaps_saved_empty">Você ainda não salvou nada. Toque no ícone de salvar em um mapa para guardar ele aqui.</string>
     <!-- Over saved maps that can't open anymore, such as a chapter that left the plan. -->
     <string name="mindmaps_no_longer_available">Não está mais disponível</string>
@@ -225,8 +225,12 @@
     <string name="mindmaps_zoom">Ampliar</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">Este mapa não está mais disponível.</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
     <string name="mindmaps_shown_as">Mostrar o mapa como</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
     <string name="mindmaps_shown_map">Mapa</string>
+    <!-- The study screen's switch: shows a map as text. -->
     <string name="mindmaps_shown_text">Texto</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
     <string name="mindmaps_zoom_hint">Toque no mapa para ampliar</string>
 </resources>

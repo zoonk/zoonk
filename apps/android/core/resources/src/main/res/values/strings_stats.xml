@@ -35,7 +35,7 @@
     <!-- In place of the weekly score chart while it has fewer than two weeks to draw. -->
     <string name="stats_trend_after_two_weeks">Your trend shows after two weeks of study</string>
     <!-- The key under the belt row: a folded belt is one the learner hasn't earned yet. -->
-    <string name="stats_belt_coming">Coming</string>
+    <string name="stats_belt_coming">Upcoming</string>
     <!-- Each belt's one-word name under its drawing in the row of every belt. -->
     <string name="stats_belt_white">White</string>
     <string name="stats_belt_yellow">Yellow</string>
@@ -114,8 +114,12 @@
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Your best day is %1$s.</string>
     <string name="stats_days_same">You answer about the same every day.</string>
-    <!-- %1$s is a time of day in lowercase: morning, afternoon, evening or night. -->
-    <string name="stats_best_time_is">Your best time is the %1$s.</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from midnight to 6 AM. -->
+    <string name="stats_best_time_night">You do best at night.</string>
+    <string name="stats_best_time_morning">You do best in the morning.</string>
+    <string name="stats_best_time_afternoon">You do best in the afternoon.</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from 6 PM to midnight. -->
+    <string name="stats_best_time_evening">You do best in the evening.</string>
     <string name="stats_times_same">The time of day makes no difference.</string>
     <string name="stats_answer_more">Answer more questions to see when you do best.</string>
     <!-- Answers given from midnight to 6 AM. -->

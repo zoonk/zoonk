@@ -41,7 +41,7 @@ class PlanEditorResizeTest {
 
         compose.onNodeWithText("Content country").performClick()
         compose.onNodeWithText("Portugal").performClick()
-        compose.onNodeWithText("Change your country?").assertIsDisplayed()
+        compose.onNodeWithText("Change country?").assertIsDisplayed()
 
         assertConfirmationSurvivesTurningThePhone()
     }
@@ -60,10 +60,10 @@ class PlanEditorResizeTest {
         compose.onNodeWithText("Portugal").performClick()
         compose.onNodeWithText("Change country").performClick()
         compose.waitForIdle()
-        compose.onNodeWithText("Change your country?").assertDoesNotExist()
+        compose.onNodeWithText("Change country?").assertDoesNotExist()
 
         compose.onNodeWithText("Portugal").performClick()
-        compose.onNodeWithText("Change your country?").assertIsDisplayed()
+        compose.onNodeWithText("Change country?").assertIsDisplayed()
 
         assertConfirmationSurvivesTurningThePhone()
     }
@@ -102,10 +102,10 @@ class PlanEditorResizeTest {
     private fun assertConfirmationSurvivesTurningThePhone() {
         width = 900.dp
         compose.waitForIdle()
-        compose.onNodeWithText("Change your country?").assertIsDisplayed()
+        compose.onNodeWithText("Change country?").assertIsDisplayed()
 
         restoration.emulateSavedInstanceStateRestore()
         compose.waitForIdle()
-        compose.onNodeWithText("Change your country?").assertIsDisplayed()
+        compose.onNodeWithText("Change country?").assertIsDisplayed()
     }
 }

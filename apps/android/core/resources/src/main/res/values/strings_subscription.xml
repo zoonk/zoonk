@@ -16,9 +16,9 @@
     <string name="subscription_renewal_failed">Your last renewal payment failed.</string>
     <string name="subscription_deletion_notice">Deleting your account ends Plus right away.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
-    <string name="subscription_deletion_app_store">Plus from the App Store keeps charging until you cancel it there.</string>
+    <string name="subscription_deletion_app_store">Deleting your account doesn\'t cancel Plus from the App Store. Cancel it there.</string>
     <!-- The same, for Plus bought in Google Play. -->
-    <string name="subscription_deletion_google_play">Plus from Google Play keeps charging until you cancel it there.</string>
+    <string name="subscription_deletion_google_play">Deleting your account doesn\'t cancel Plus from Google Play. Cancel it there.</string>
     <string name="subscription_free">Free</string>
     <string name="subscription_monthly">Monthly</string>
     <string name="subscription_yearly">Yearly</string>
@@ -104,7 +104,7 @@
     </plurals>
     <string name="subscription_answer_free_calls">Speaking practice calls, fewer than with Plus (exam speaking tasks come with Plus)</string>
     <string name="subscription_question_unlimited">Is Plus really unlimited?</string>
-    <string name="subscription_answer_unlimited">Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than without Plus.</string>
+    <string name="subscription_answer_unlimited">For normal study, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking practice calls have daily and monthly limits, higher than on Free.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Read our fair use policy</string>
     <string name="subscription_question_cancel">What happens if I cancel?</string>

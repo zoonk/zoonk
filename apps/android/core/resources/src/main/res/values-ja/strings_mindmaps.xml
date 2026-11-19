@@ -26,7 +26,7 @@
   "mindmaps_in_short": "f0d66cba29693fc07d5eaa4b72204893e7db8d2905cdbdf1e417ef90a15f3ad7",
   "mindmaps_lesson_map": "f56b79f9b7da17b37772870b15fff5673baf2c4d93af86e6407c145fd294cabf",
   "mindmaps_lesson_maps": "349539b758b43accc1d45bac8ff1840eb8b7a0e23ac0a17fc1558763e47ed411",
-  "mindmaps_lessons_count_free": "265169232b037d8444e3941b04cecc1dfa1d5c6c47eb328e2722c25341630b02",
+  "mindmaps_lessons_count_free": "63554283ae00dc489642152369038e00006cf35effa3e00d536223d713436928",
   "mindmaps_lessons_empty": "fa5254cc0822ec5b5592a61ce3beb7f737e0c961ab7308d8baec1dbb0ea1777c",
   "mindmaps_lessons_first_free": "96768a9e8994e39fc18f80190029a833e8230c41f4c12553241cd1692e2cc36a",
   "mindmaps_lessons_first_plus": "45bd7694a9a0766ec694e400921b7f07094c20235520e08b020b2a7bc99f2c10",
@@ -114,7 +114,7 @@
         <item quantity="other">%1$sレッスンの作成が必要</item>
     </plurals>
     <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
-    <string name="mindmaps_lessons_count_free">レッスンの作成には、無料で利用できるレッスン枠を使います。</string>
+    <string name="mindmaps_lessons_count_free">マップの作成分は、無料で利用できるレッスン数に含まれます。</string>
     <string name="mindmaps_writing_lessons">レッスン、マインドマップの順に作成しています…</string>
     <string name="mindmaps_writing_lessons_wait">数分かかります。画面を離れても、後でここから確認できます。</string>
     <string name="mindmaps_drawing">マインドマップを作成しています…</string>
@@ -209,8 +209,12 @@
     <string name="mindmaps_zoom">拡大する</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">このマップはもう利用できません。</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
     <string name="mindmaps_shown_as">マップの表示方法</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
     <string name="mindmaps_shown_map">マップ</string>
+    <!-- The study screen's switch: shows a map as text. -->
     <string name="mindmaps_shown_text">テキスト</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
     <string name="mindmaps_zoom_hint">マップをタップすると拡大できます</string>
 </resources>

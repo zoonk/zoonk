@@ -7,7 +7,7 @@
   "settings_apple_not_revoked": "44e5b63eecea77892508687355688a1c685d0e6cc6ab64be2b07665d16c577af",
   "settings_cancel": "d46528908c856030862c6a9b539d1d5cb68ec94309e008728eaa096f395642a9",
   "settings_delete_account": "078b6b87dd140b31c664e26f85ccc7a52f0bb1fcaea8b20ed81cab9cc8b50350",
-  "settings_delete_code_description": "dc469b47d61fdeb8f58e11dd91bbbf831384271887cffa540828e26d2f3c2f76",
+  "settings_delete_code_description": "66f2f34ae2761d61cf35a5b45d80b7f60c9439f08ac1f3da5e9b8b8ee771d3e0",
   "settings_delete_code_title": "c1cbdf2b7db003617fc387b98eac5ece09b3af2271ced759770123bed765b0db",
   "settings_delete_confirm_description": "9c5579483541b2095a2f0d7e472389ec5aaf86cbce3ea0a52ce1b4d88f7ea1f8",
   "settings_delete_confirm_title": "9101a4be064896ee9d18fc802359e5fc75c9eb5e81b68e22bebb968ca06e977d",
@@ -76,7 +76,7 @@
     <string name="settings_cancel">Anuluj</string>
     <string name="settings_delete_code_title">Potwierdź, że to ty</string>
     <!-- %1$s is the account's email address. -->
-    <string name="settings_delete_code_description">Dla bezpieczeństwa wpisz kod, który wysłaliśmy na adres %1$s.</string>
+    <string name="settings_delete_code_description">Dla bezpieczeństwa wpisz kod wysłany na adres %1$s.</string>
     <string name="settings_delete_verify">Potwierdź i usuń</string>
     <string name="settings_delete_failed">Nie udało się usunąć twojego konta. Spróbuj ponownie lub napisz na hello@zoonk.com.</string>
     <string name="settings_account_deleted">Usunięto twoje konto.</string>

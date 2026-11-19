@@ -44,7 +44,7 @@
   "catalog_level_beginner": "29a997025751a07c6dba3e283325e77805aeb15243e2f55f9900d3e7b0b4ead2",
   "catalog_level_intermediate": "532f1701e22126704180dd2256b718b0c661d091aed7eced4e8f87a56d5136bd",
   "catalog_level_overview": "797c532a8a06d2f84bade54bb214ce429da473135ba0dac5bebc3286f2595a94",
-  "catalog_level_unwritten": "41a7b12a4b29584e0263a6ce75c63b07cd2aa9c61ccef86d9c8bd6a20e91ce16",
+  "catalog_level_unwritten": "98e44447fdd21e2f6d340e5fbfe5cafe114dfc133fec213184631280ddd1c065",
   "catalog_load_more_failed": "fcc6d609a47b56ff8c3d007994d65149868f5dc0a9349909c7bae9ce76eb064f",
   "catalog_loading_more": "d82c9c0e7ce1e3da9edb3e10efb6073e994e040ae4c9c1c338c9aa691c8dde43",
   "catalog_open_course": "6cba1067825aa8f5e0e2a0c0200972190ec30ac3a927d0d7e06590332fd7897d",
@@ -174,7 +174,7 @@
         <item quantity="other">短いレッスン%1$d本</item>
     </plurals>
     <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet; its lessons get ready when the learner reaches it. -->
-    <string name="catalog_level_unwritten">このレベルに進むと、レッスンが用意されます。</string>
+    <string name="catalog_level_unwritten">このレベルに進む頃には、チャプターの準備ができています。</string>
     <!-- Marks the chapter (or level) of the next lesson in the learner's plan on the course's outline. -->
     <string name="catalog_you_are_here">現在地</string>
     <string name="catalog_outline_unwritten">学習計画を作ると、すでに知っていることをもとに、Zoonkがこのコースのレッスンを用意します。</string>

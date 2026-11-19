@@ -123,7 +123,7 @@
     <string name="onboarding_row_dates_estimated">From its usual dates. We\'ll tell you when the official ones are out.</string>
     <string name="onboarding_row_pick_date">Pick your date</string>
     <string name="onboarding_row_several_sittings">This exam is held several times a year. Until you pick one, your plan uses the first.</string>
-    <string name="onboarding_row_notice_says">The official exam date is %1$s. Use it as your exam date?</string>
+    <string name="onboarding_row_notice_says">The official exam date is %1$s. Use it?</string>
 
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
@@ -228,8 +228,7 @@
     <string name="onboarding_placement_set_title">Your starting point is set</string>
     <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
     <string name="onboarding_placement_set_description">It gets more accurate every day.</string>
-    <string name="onboarding_placement_unavailable_title">Let\'s skip the questions</string>
-    <string name="onboarding_placement_unavailable_description">We couldn\'t prepare questions for this goal. Your first sessions will find your starting point instead.</string>
+    <string name="onboarding_placement_unavailable_title">We\'ll see what you know in your first few days</string>
 
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
@@ -242,8 +241,8 @@
     <string name="onboarding_language_test_use_app_in">Use the app in %1$s</string>
     <string name="onboarding_language_test_preparing_title">Preparing your level test</string>
     <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">We\'re writing the questions for the %1$s test now. It takes a minute or two, and only this once.</string>
-    <string name="onboarding_language_test_skip_note">Your plan starts from the level you gave, and your first sessions fine-tune it.</string>
+    <string name="onboarding_language_test_preparing_description">Getting the %1$s test ready takes a minute or two, and only this once.</string>
+    <string name="onboarding_language_test_skip_note">Your plan starts from the level you gave, and your first days fine-tune it.</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">I didn\'t understand the audio</string>
     <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
@@ -319,7 +318,7 @@
     <string name="onboarding_reveal_phase_light_review">Light review</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">The exam\'s likely date is now %1$s.</string>
-    <string name="onboarding_reveal_notice_day_notice">The official exam date is %1$s. Use it as your exam date?</string>
+    <string name="onboarding_reveal_notice_day_notice">The official exam date is %1$s. Use it?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">No exam date in %1$s</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
@@ -598,7 +597,7 @@
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">Country</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
-    <string name="onboarding_variety_description">Your practice calls and our answers to your questions use the country you choose. Lessons and their audio use %1$s.</string>
+    <string name="onboarding_variety_description">Your practice calls and our answers to your questions match the country you choose. Lessons and their audio use %1$s.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
     <string name="onboarding_variety_none">No preference</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->

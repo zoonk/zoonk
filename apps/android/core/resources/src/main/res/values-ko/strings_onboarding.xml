@@ -121,12 +121,12 @@
   "onboarding_language_test_new_alphabet": "eb34ccb221d88e5f697eb5214db2fc09f1eba979086ed88b68a1ed2d31193821",
   "onboarding_language_test_play": "a0fd584629595bcf5406c748717f15d45d9b94465c9f318b5f722331c87a4ebb",
   "onboarding_language_test_play_again": "be82aa1a60a6c687c61e6f89acc7f9cd3c30ae1a224e5f77dfa2891badcb5ea3",
-  "onboarding_language_test_preparing_description": "535deda15b16ad1060c4344776fac3de918cab05ee80ce7f986b395b0051703d",
+  "onboarding_language_test_preparing_description": "2bfcae3f5b605d7ccd72089e81cf7cf479996137d57ff9b6628ac31e57389a91",
   "onboarding_language_test_preparing_title": "94615d9e60fc65b2c577a1d067e72198df4441ce5370ca93659b3effde841a37",
   "onboarding_language_test_reading": "0051297ad6a930c747e8bc231b5885cefd451f8fbc285838064538af8eb81ac8",
   "onboarding_language_test_say_it": "25b74caf4579eda9d8073bcb2725bcdb28a03b0992b4c09b6e804f3dbc7b94f7",
   "onboarding_language_test_skip": "6edb586dd333544d74d80eeae05d13c0ef07f6921679a0dd73f048a30d239a54",
-  "onboarding_language_test_skip_note": "ff5edc8c6bcb8d62c5fb6595acf2f99ef2825a9b2a6ff65f33487d9a8ed82d2c",
+  "onboarding_language_test_skip_note": "18079eb854c0cb2ddc3fe732b1905d44a5c2f52fd9edcc1ae13741dbc70f6f1d",
   "onboarding_language_test_skip_part": "8c1a1603c760a37c39ad4e5bab0afd6eb798746e814c635609227ec200b9566a",
   "onboarding_language_test_skip_question": "caf9a3854a40eda2bb243df73064a4f7cb4fc9c883ded8bc22135ffecee19ee2",
   "onboarding_language_test_speaking": "92c8e90a4f78908d32c23dd286292b2f0269ba18df3d250d9cc413ec80366a1f",
@@ -188,8 +188,7 @@
   "onboarding_placement_stop": "02e273972d7338ed2c1c7bc2586e3509d3080b9e737eab3c95280c84db1db586",
   "onboarding_placement_title": "acdb6700b66da4d5e1e1928dccae0dbc60e7d6612aa36ceb1b4b89a4bb772350",
   "onboarding_placement_true": "c872e46fbdc965984b41d78a1cda86d2de3279be370c0667d4eada144bc5772c",
-  "onboarding_placement_unavailable_description": "a919acc588eb2e5d4ecbc8301bb75285d822b5d9425ea5ba58f2c7ecc3b9f57c",
-  "onboarding_placement_unavailable_title": "53fc3229175254059a1b3d8ddbe4ceae90a0b8cdc3c24cca9b681922f55a2f7f",
+  "onboarding_placement_unavailable_title": "09f24a594ddeaf335996a529ce949b200b9d9b05de7164105edcc791d73329eb",
   "onboarding_placement_waiting_material": "b5685e7cc21bfcac74b019e622489c3f81ecc6bc2e8fbbc056d26c017f4662f6",
   "onboarding_placement_waiting_time": "fe6da200e022e0348f749a4c667b3275f18b468082c1187d43fbf8c92f034770",
   "onboarding_placement_wrong": "c9bac29490f4a2bfff337fb88ff62813dc9877064e0169aa2e3e966e652898e6",
@@ -281,7 +280,7 @@
   "onboarding_reveal_most_questions": "60041a16529598dd029c4195363de683a33ef54b399544c5a30c573e72d78c92",
   "onboarding_reveal_no_sitting": "ad4bbd500f5419e0ddbe235976cf0e9483d1b2583c656f0c9381c7b2e790d4cf",
   "onboarding_reveal_notice_day_estimated": "cd30787795e54f1fc885741390d4b86005d8aa8fb223a570aafe51d08aac15ad",
-  "onboarding_reveal_notice_day_notice": "5a6a90ec083b4d6e89dd8fa23bb9ce2d49f41211e96742d3aa9770533e438c84",
+  "onboarding_reveal_notice_day_notice": "a91516be110415bab2522604720d4abc62fc194a7c135dfc5c376d29340ed683",
   "onboarding_reveal_notice_subjects": "9c61d929b43dad5381edd8096adf538e5b9d29cf53ddb3a1015296f65bf720e7",
   "onboarding_reveal_pace_covers": "c90fd5b2825bb6bfacd89a2ca47475b5707e15e033d299cffb0ad41c19c15694",
   "onboarding_reveal_pace_time": "2772903b46464bd116c89286a4c4f6909d083ee20b13594d447cb89b74401813",
@@ -352,7 +351,7 @@
   "onboarding_row_material": "1646e8f11b3f1d150be03e0b2bcd177e6e2e5fb63a1fc82ac31235e3a72cdac6",
   "onboarding_row_material_note": "063e584a90bc127b7b77b42d1ab4149023de7e95e9d2ced35cb635de38a37546",
   "onboarding_row_minutes_a_day": "1fc429e09904fd162c8db767b02d748a86b6a28a80a187594a1303ba622cc85c",
-  "onboarding_row_notice_says": "fd4dd5435ac7cc816f06fd9ba35219b7dde7d3663ad785ba810d7b2653fe85e4",
+  "onboarding_row_notice_says": "d32f8b4a8b87e0569ae067db7ada2791c29663e83342eb1d0af2560449e2a276",
   "onboarding_row_pick_date": "30507fa38de2b3730fa8e95bcaf98bf5576c8a19f368d690324d18306d01783a",
   "onboarding_row_position": "ac871aa91bada1d4727e15db2f807d3573392a0130bd7258620bf1f75a8cdff3",
   "onboarding_row_reason": "6f6d7c14f3b5fd924944be9b8434c03bcf3b7e9c2731d020eed3bb9d00182093",
@@ -421,7 +420,7 @@
   "onboarding_understood_title": "f2f260898ea1595626189b7b79bbad96dff1b9beaeaedaedc56b6d267688d5b2",
   "onboarding_upload_file": "d2d52367d480fbb119d1abcd9e2199c560bd75085940a316d3fa597eca0eaf09",
   "onboarding_use_this_date": "e594cc95859d175246e34b9dc7436892c9410b9e862acdd8262b77ff0373414e",
-  "onboarding_variety_description": "10dfeeab16c5e818c0f7be74b2e19f1f95e883202935424aadf786251551753f",
+  "onboarding_variety_description": "bb62fba4136aee6278d950a9267c981c4425dd875ea7301e3b69960ff90a0f57",
   "onboarding_variety_none": "afec222bbba63b7053d1be0050ab4f704e9ef45219de8694e525927eee058d07",
   "onboarding_variety_note": "9dd51b6c6f41baf375bff33b72e36dc593f0ce5b7d61746ba331b324785ad87b",
   "onboarding_variety_title": "7adbda650c598dc76e1b91d8ef6feea1e5bdc033198a43a3a9652e58500e9c23",
@@ -554,7 +553,7 @@
     <string name="onboarding_row_dates_estimated">예년 일정을 바탕으로 예상했어요. 공식 일정이 나오면 알려 드릴게요.</string>
     <string name="onboarding_row_pick_date">날짜 선택하기</string>
     <string name="onboarding_row_several_sittings">이 시험은 매년 여러 번 열려요. 날짜를 고르기 전까지는 첫 번째 시험일을 기준으로 계획을 세워요.</string>
-    <string name="onboarding_row_notice_says">공식 시험일은 %1$s이에요. 이 날짜를 시험일로 설정할까요?</string>
+    <string name="onboarding_row_notice_says">공식 시험일은 %1$s예요. 이 날짜를 사용할까요?</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">읽는 데 약 5분 걸리는 짧은 설명을 만들어 드릴게요.</string>
@@ -653,8 +652,7 @@
     <string name="onboarding_placement_set_title">학습 시작점이 정해졌어요</string>
     <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
     <string name="onboarding_placement_set_description">매일 더 정확해져요.</string>
-    <string name="onboarding_placement_unavailable_title">문제는 건너뛸게요</string>
-    <string name="onboarding_placement_unavailable_description">이 목표에 맞는 문제를 준비하지 못했어요. 대신 처음 몇 번의 학습을 통해 시작점을 찾을게요.</string>
+    <string name="onboarding_placement_unavailable_title">처음 며칠 동안 알고 있는 내용을 확인해 볼게요</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">%1$s 실력을 알아봐요</string>
@@ -666,8 +664,8 @@
     <string name="onboarding_language_test_use_app_in">%1$s로 앱 사용하기</string>
     <string name="onboarding_language_test_preparing_title">레벨 테스트를 준비하고 있어요</string>
     <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">지금 %1$s 레벨 테스트 문제를 만들고 있어요. 1~2분 정도 걸리고, 이번 한 번만 진행돼요.</string>
-    <string name="onboarding_language_test_skip_note">알려 준 수준에 맞춰 계획을 시작하고, 처음 몇 번의 학습을 통해 더 알맞게 조정해요.</string>
+    <string name="onboarding_language_test_preparing_description">%1$s 레벨 테스트를 준비하는 데 1~2분 정도 걸려요. 처음 한 번만 준비하면 돼요.</string>
+    <string name="onboarding_language_test_skip_note">계획은 알려 주신 레벨에 맞춰 시작하고, 첫 며칠 동안 세부 내용을 조정해요.</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">무슨 말인지 못 알아들었어요</string>
     <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
@@ -740,7 +738,7 @@
     <string name="onboarding_reveal_phase_light_review">가벼운 복습</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">현재 예상 시험일은 %1$s이에요.</string>
-    <string name="onboarding_reveal_notice_day_notice">공식 시험일은 %1$s이에요. 이 날짜를 시험일로 설정할까요?</string>
+    <string name="onboarding_reveal_notice_day_notice">공식 시험일은 %1$s예요. 이 날짜를 사용할까요?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$s에는 예정된 시험이 없어요</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
@@ -1002,7 +1000,7 @@
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">국가</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
-    <string name="onboarding_variety_description">대화 연습과 질문에 대한 답변에는 선택한 나라에서 쓰는 말을 사용해요. 레슨과 레슨 오디오에는 %1$s을(를) 사용해요.</string>
+    <string name="onboarding_variety_description">대화 연습과 질문에 대한 답변은 선택한 국가의 말투에 맞춰져요. 레슨과 음성에는 %1$s을 사용해요.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
     <string name="onboarding_variety_none">상관없어요</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->

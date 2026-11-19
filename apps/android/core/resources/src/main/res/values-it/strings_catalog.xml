@@ -44,7 +44,7 @@
   "catalog_level_beginner": "c0218f318afeef5757ba928805a5554c596e56148f2fc0c9e775840ff4e674df",
   "catalog_level_intermediate": "49f44eb706c9ce99534df6f82a71a71f2b2274ec4d32c17152e5f2d282bd19d1",
   "catalog_level_overview": "30b439eb9710a65e00cbcbcf723a88a33af25283e6d31bc09ceaadc9e98559b8",
-  "catalog_level_unwritten": "1a53d1fef8a9a4d01f07e157d386edb99966294996b5294efb7788465a40e572",
+  "catalog_level_unwritten": "81541266ecd8be3161db3ac4074d505b2642b514c14ace3ee2448d1a60a09c4b",
   "catalog_load_more_failed": "6238a4fdbc4a0bf48994032357f849ec8b04a7741d1c273005327a360b177618",
   "catalog_loading_more": "c3fb2775e1431d99bfcea7e06141aab175f2e0f514700725e6c0cbbc30350bc9",
   "catalog_open_course": "dcc6880b6e9ee57b2f6713d3d0494a2681667e06963ace010ab182e426a6f292",
@@ -192,7 +192,7 @@
         <item quantity="other">%1$d lezioni brevi</item>
     </plurals>
     <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet; its lessons get ready when the learner reaches it. -->
-    <string name="catalog_level_unwritten">Le lezioni saranno pronte quando ci arriverai.</string>
+    <string name="catalog_level_unwritten">I capitoli saranno pronti quando arriverai a questo livello.</string>
     <!-- Marks the chapter (or level) of the next lesson in the learner's plan on the course's outline. -->
     <string name="catalog_you_are_here">Sei qui</string>
     <string name="catalog_outline_unwritten">Crea il tuo piano e Zoonk prepara le lezioni di questo corso, partendo da quello che sai già.</string>

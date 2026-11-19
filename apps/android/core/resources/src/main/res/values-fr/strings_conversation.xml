@@ -9,7 +9,7 @@
   "conversation_below_level": "3c6fba1892616aa15d1e6f0624193bda45e04604a83f40031aef0916896adaf6",
   "conversation_better": "9af770bf5ecf9ab44c8890956636247777e79615caed50d48b2b018bd28cb4d4",
   "conversation_brain_power": "2ba86cb68a9089824ee9b84b3b98b115e7710de9a8c96bebbea0c8a38f020461",
-  "conversation_brief_note": "6acbc98305d7abda7cd1137ea19a2d98a0a6c395b7cd88936fdb21c6b80620a9",
+  "conversation_brief_note": "1cdfb2ee8c93a76f5d711c71c1872902e96ea4734a040e367a3c6ccac583eae9",
   "conversation_by_criterion": "4f9d1f1890a7d7607716733311e9fdbd7a6ebe39cce3182fa755fca35405f8a6",
   "conversation_call": "7f105bc93e89dad1fb05962fb550d89dac915153bd8648d373a37a21d45ba970",
   "conversation_call_again": "936eacd758c64268f8955009e73a4c099095f373e1f172f6428fba2604e1c5b9",
@@ -63,7 +63,7 @@
   "conversation_goals_tile": "87f03cb99a0494fb304548cda081299e059e81ce34fad599ab160e0b333a3a6b",
   "conversation_help": "96f7756688f26866df8c8170f18cf412392aba6b33f24c90900c72fe7d69f61f",
   "conversation_ielts_mock": "ded47d23e8f1f3ccfe4599f502ba9e9733b092511689c6ed08f101d76004f904",
-  "conversation_in_progress": "6f361a2c3162c2ee610058c02802a9a843a50864e14e4a95bda3ea2d3d4016cb",
+  "conversation_in_progress": "12c9dbe38da5de8e8c514ff8742bc6f785407067d082b16ff0a76da9434afa91",
   "conversation_in_progress_title": "67ccb562cdd84c7a6b4a86f7e6d91e951313474cb82cdc0341a361a7968f8a8e",
   "conversation_intro_meta": "e0b1754761f3150c9e9cfe9357dfa41a34f8d7acf71a135ca6f0769696b68b01",
   "conversation_keep_talking": "e43de8e0a9dde952998e437672c2d91496bea1f916b576ac9982c3beffa26b9f",
@@ -136,7 +136,7 @@
   "conversation_to_improve": "e936a757b79b8d91eb8aad9846be08725aeae6ff1c41c326c00d91b700868f00",
   "conversation_toefl_mock": "d02391876d8e3b9de0dbd1e27b61df47c4ec7080bf34cacd30bf50501d93b976",
   "conversation_try_again": "da88cdabe3d9b4b41de53605e56e7eaa768af3fa8e8d78557bf3c309b927af88",
-  "conversation_try_again_later": "c06a2d172ce379ae6cd79c9c52cd5730049de14ddf64bd701761bf4735dd94ed",
+  "conversation_try_again_later": "1952675c58f7af09f75e0bf5ba8cb95f5fdb6ccc5fae041abe48f12ff8f0c393",
   "conversation_try_another_mock": "6e3205407c4a777d17e7e275b0d5f4e520a4d9fbf0e7949950f1c6400e72b9d5",
   "conversation_type_below": "1ef5cc3474793e4f2ea59da7c4a1472cde9db2b94733705f6a689c1a0d23ae24",
   "conversation_type_instead": "819817e927001acc8e003c3a7d05ae2bdac052a21bf0611da625a7e6faeac5a6",
@@ -247,7 +247,7 @@
     <string name="conversation_paused_title">Les appels sont en pause</string>
     <string name="conversation_paused">C’est pareil pour tout le monde en ce moment. Réessaie plus tard.</string>
     <string name="conversation_in_progress_title">Tu as déjà un appel en cours</string>
-    <string name="conversation_in_progress">Il est en cours sur un autre appareil ou dans ton navigateur. Si tu démarres cet appel, l’autre se termine sans bilan.</string>
+    <string name="conversation_in_progress">Cet appel est en cours sur un autre appareil ou dans ton navigateur. En lancer un autre y mettra fin sans recueillir ton avis.</string>
     <string name="conversation_take_over">Commencer ici</string>
     <string name="conversation_dropped_title">L’appel a été coupé</string>
     <string name="conversation_dropped">Rappelle ou termine l’appel pour recevoir un retour sur ce que tu as dit.</string>
@@ -271,7 +271,7 @@
     <string name="conversation_not_this_time">Pas cette fois</string>
     <string name="conversation_goals_tile">Objectifs</string>
     <string name="conversation_brain_power">Puissance Mentale</string>
-    <string name="conversation_try_again_later">L’appel te sera reproposé pour que tu puisses réessayer.</string>
+    <string name="conversation_try_again_later">Revanche à ta prochaine séance</string>
     <string name="conversation_stars_rule">Une étoile pour avoir terminé, une pour avoir transmis tous les messages et une si tu n’as pas utilisé l’aide.</string>
     <string name="conversation_went_well">Ce qui s’est bien passé</string>
     <string name="conversation_said_well">Les phrases que tu as bien formulées</string>
@@ -343,7 +343,7 @@
     <string name="conversation_below_level">En dessous du niveau %1$s</string>
     <string name="conversation_level_line">Sur ces échelles, %1$s correspond au niveau %2$s.</string>
     <string name="conversation_typed_note">Tu as écrit tes réponses, donc cette estimation ne tient pas compte de ton expression orale.</string>
-    <string name="conversation_brief_note">Tu as peu parlé, donc cette estimation est approximative.</string>
+    <string name="conversation_brief_note">Tu n’as pas beaucoup parlé, donc cette estimation est approximative.</string>
     <string name="conversation_focus">À travailler</string>
     <string name="conversation_not_rated">Non évalué</string>
     <string name="conversation_estimate">Une estimation, pas un score officiel.</string>

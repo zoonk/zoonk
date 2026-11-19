@@ -121,12 +121,12 @@
   "onboarding_language_test_new_alphabet": "ba559d32f9c177ca90c78dbc5e8362b5a3def8aced93b715ec95443ad79aa08c",
   "onboarding_language_test_play": "a5f557ba5a236ddae87c6e709ff753830d7c362ae7bd6eb1e216d149f86a7a59",
   "onboarding_language_test_play_again": "cab320e380d9f1ea91eda59247d91b8c831c905f4810cf15368df218af53e23e",
-  "onboarding_language_test_preparing_description": "dc2e2115078f89eb6920dea6207dd0f64880dd5f601b7ab93ad7ea77a5198f68",
+  "onboarding_language_test_preparing_description": "2a4acb7538bdb56ea5ea4edff8647905d41935c213e791ed3633da853b5bd524",
   "onboarding_language_test_preparing_title": "2f230c19dedb46084ffc7695a5531e878bc3eb67c9cf26d1c788d9fe66b5ba10",
   "onboarding_language_test_reading": "7d5c4d036fd25eac8ec7a96ff29c8e9137edd163bba985fd899a3d0b5a7efc6b",
   "onboarding_language_test_say_it": "f003a1125f16219cfbb5fa4930597deebc1c910a5340920f14fde3137f5bba41",
   "onboarding_language_test_skip": "77e6bfa2f2e93bc983fd543c2f3dc938c08480d25f071c2c8c6bcef8e5f4c997",
-  "onboarding_language_test_skip_note": "713e18558925d4afb711279e26a842be73c9db8604987d65d8ee3d5649341bb1",
+  "onboarding_language_test_skip_note": "cb6b11d4bce83011e4bedac4bcb509575fa3fe0e7305b3a5fa84b0e7deac1ccd",
   "onboarding_language_test_skip_part": "0fda78edda08603996d493b14cf7026161a26cec9a2f3ab1395c02ea0be70531",
   "onboarding_language_test_skip_question": "e850fb148f77a4e2918467e143797953267b2564bd6bb90f4a22dde72e213cbe",
   "onboarding_language_test_speaking": "891642754b1866e66b4a231a52ef35ed6edb69212699138ef7ede761f31230b9",
@@ -188,8 +188,7 @@
   "onboarding_placement_stop": "dee28e807c746242c378454c59b01de776ef328dfc43a56c83f224edaedfe95e",
   "onboarding_placement_title": "d0fa7b05b6f03847deba206a8d7c6de7627bbc1fb99b4446325fd414bfa34747",
   "onboarding_placement_true": "16af2dbe9cbfa732b57c0254dc7dd79181c68e689831cd827beaa49528778b10",
-  "onboarding_placement_unavailable_description": "9a26d37c833460a6a828c806c716279dc5aa2813dcf935705c2238906b8c5929",
-  "onboarding_placement_unavailable_title": "7133a6d3913d7d2555dc551f91794f90d1052f8138b28045db10503e49a2f95b",
+  "onboarding_placement_unavailable_title": "6a1d6ec8151f541c42941baa1e48267c48ba0bcf2736ab296b4dd216d3bd4f99",
   "onboarding_placement_waiting_material": "df22a2477a012ac1f288032b2c6e071597109624031eb420c6e6227aa45f0a2e",
   "onboarding_placement_waiting_time": "9e9a2a5de46c219086e517f5feeb3f5f8df16244c36d13e99eea7cf90aac3c95",
   "onboarding_placement_wrong": "ef28abd1857c6f2b3360f10748df2de15432293930a589d04b1a972946d8d4ca",
@@ -281,7 +280,7 @@
   "onboarding_reveal_most_questions": "29887559ecd0a865b6ee6f3568c49c233b330d59d891c2e106f99b9846e27313",
   "onboarding_reveal_no_sitting": "631998b16663b7179a6dc430d3602a14c061586748433b8d5aeaba701217734a",
   "onboarding_reveal_notice_day_estimated": "d09f46c148376c2b6058529e1863493d44d29078326af82d390867ed5f118029",
-  "onboarding_reveal_notice_day_notice": "8dc9b6a6af6d22bb86619e31d3d50fdc64d422630b52123479fdfaf3e02fb6ac",
+  "onboarding_reveal_notice_day_notice": "1f56d06b3b5a8e43914aa5a85ce334c97152fb714e3e95877b0c4a81d4958e1d",
   "onboarding_reveal_notice_subjects": "ac5eae05390553f67a79e7b3905c46894ef84d06a7134f8d4d1d540f2553f46e",
   "onboarding_reveal_pace_covers": "59ffc876a921e1da56adbf5e7976b127cfaf9f7623c8db05ea5ea8e4a1a0a6f4",
   "onboarding_reveal_pace_time": "44769e9bd976c4693094bd546dcbd554cd5d5ff3a64df5c449922fb318a519fa",
@@ -352,7 +351,7 @@
   "onboarding_row_material": "5115e0ca3274d96cdc10937e4c24a50fedcd7abd7ea743c9902044484a491a17",
   "onboarding_row_material_note": "876b8fa4f94d9f7b7aaffd003f882c9f056186b45d22d8c328972bd21f905ac5",
   "onboarding_row_minutes_a_day": "8e0b47a6718989766fba7ed290a75afebe7e287e470d7b9f7f51b81bcf71a35a",
-  "onboarding_row_notice_says": "d7ea50cf9e957af7719e21f8faf8a740edf4dce9eda6273d72a881952cb549da",
+  "onboarding_row_notice_says": "c99adbdc9f43f0963bb95f18151aa83ef25745f037972cb040d9db7994fb4cee",
   "onboarding_row_pick_date": "88778f00b1f9f9ae8a21de4f4086c6680c3929ab231d3f3cc786b4bd79cdec9c",
   "onboarding_row_position": "7b4791e448eab2ad39e323e90445e533e969de329af94df3e13f8d45fb8f6728",
   "onboarding_row_reason": "c1d0430ec54a9c097387b493950df1a5b04508f2dee8eb756188a559cfd4afee",
@@ -421,7 +420,7 @@
   "onboarding_understood_title": "b1628ada34a238e2adf71e4eeb8e1694b7147961678040bacd0d016ea4de04e8",
   "onboarding_upload_file": "2bc2c500d0c0ccac3b411d6192fa6225dc7f0c4eba31b0fbd7b713b2f73bb6ea",
   "onboarding_use_this_date": "9b759ece8f7f4875dca78eb1211091a6b26911e6478af7d06ad65d7532f612ad",
-  "onboarding_variety_description": "0370836b52bef709750f904ed7cfbec26faf7ca1b408eede199f8640ec1d335d",
+  "onboarding_variety_description": "17202a2610314b51557c758058090c4579f0230900de4b3a40202b38f2dea9b7",
   "onboarding_variety_none": "88ed730ef103a87938a1ed784a8c3bd682e1402607cb7fdcc80465c0a8704ef2",
   "onboarding_variety_note": "ffdd20f899a5a806ff86849c7e8e0a34769d773bfcc6a566dc5c6433eb42be6e",
   "onboarding_variety_title": "debce6a2316c2d7aa8576b68e03e628cfc76967323ecc19ac5de7ac982f4e133",
@@ -556,7 +555,7 @@
     <string name="onboarding_row_dates_estimated">Sınavın genelde yapıldığı tarihlere göre tahmin edildi. Resmî tarihler açıklanınca haber vereceğiz.</string>
     <string name="onboarding_row_pick_date">Tarihini seç</string>
     <string name="onboarding_row_several_sittings">Bu sınav yılda birkaç kez yapılıyor. Bir tarih seçene kadar planın ilk sınav tarihini esas alır.</string>
-    <string name="onboarding_row_notice_says">Resmî sınav tarihi %1$s. Bu tarihi sınav tarihin olarak kullanalım mı?</string>
+    <string name="onboarding_row_notice_says">Resmî sınav tarihi %1$s. Bu tarihi kullanalım mı?</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">Yaklaşık 5 dakikada okuyabileceğin kısa bir açıklama hazırlayacağız.</string>
@@ -657,8 +656,7 @@
     <string name="onboarding_placement_set_title">Başlangıç noktan belirlendi</string>
     <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
     <string name="onboarding_placement_set_description">Her gün seviyeni daha doğru yansıtır.</string>
-    <string name="onboarding_placement_unavailable_title">Soruları atlayalım</string>
-    <string name="onboarding_placement_unavailable_description">Bu hedef için soru hazırlayamadık. Başlangıç noktanı ilk çalışmalarında belirleyeceğiz.</string>
+    <string name="onboarding_placement_unavailable_title">İlk birkaç gününde neler bildiğini göreceğiz</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">%1$s seviyene bakalım</string>
@@ -670,8 +668,8 @@
     <string name="onboarding_language_test_use_app_in">Uygulamayı %1$s dilinde kullan</string>
     <string name="onboarding_language_test_preparing_title">Seviye tespit testini hazırlıyoruz</string>
     <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">Şimdi %1$s testi için soruları hazırlıyoruz. Bir iki dakika sürer ve bunu yalnızca bir kez yapıyoruz.</string>
-    <string name="onboarding_language_test_skip_note">Planın belirttiğin seviyeden başlar ve ilk çalışmalarına göre ayarlanır.</string>
+    <string name="onboarding_language_test_preparing_description">%1$s seviye tespit testini hazırlamak bir iki dakika sürer ve bu yalnızca bir kez olur.</string>
+    <string name="onboarding_language_test_skip_note">Planın belirttiğin seviyeden başlar; ilk birkaç günde daha iyi ayarlanır.</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">Dinlediğimi anlamadım</string>
     <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
@@ -746,7 +744,7 @@
     <string name="onboarding_reveal_phase_light_review">Hafif tekrar</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">Sınavın tahmini tarihi artık %1$s.</string>
-    <string name="onboarding_reveal_notice_day_notice">Resmî sınav tarihi %1$s. Bu tarihi sınav tarihin olarak kullanalım mı?</string>
+    <string name="onboarding_reveal_notice_day_notice">Resmî sınav tarihi %1$s. Bu tarihi kullanalım mı?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$s ayında sınav tarihi yok</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
@@ -1025,7 +1023,7 @@
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">Ülke</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
-    <string name="onboarding_variety_description">Pratik yaptığın sohbetlerde ve sorularına verdiğimiz cevaplarda seçtiğin ülkede konuşulan dili kullanıyoruz. Derslerde ve ses kayıtlarında %1$s kullanılıyor.</string>
+    <string name="onboarding_variety_description">Konuşma sohbetlerin ve sorularına verdiğimiz cevaplar seçtiğin ülkeye uygun olur. Derslerde ve seslerinde %1$s kullanılır.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
     <string name="onboarding_variety_none">Tercihim yok</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->

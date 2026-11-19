@@ -8,7 +8,7 @@
   "buddy_page_energy_named": "16b85af5e82f1c28154d186c6de838214a8467e19bb0f3e9deb0430219232941",
   "buddy_page_energy_napping": "2133a1854f2c795e24e34786d6c0d1db9f539702f0da3a685bb92dfe66412ef1",
   "buddy_page_energy_starts": "c0537afaf741d8d58a429b83aa349d8d0d47d98fe42975acbf838c5d3ff2e7b4",
-  "buddy_page_energy_study": "0cc943f9ba21de9b1a784b963d35aa1824f213c14931949c7052c6e34c6bf134",
+  "buddy_page_energy_study": "bcce50405e783373ee44ae9a4adda9a105bd69e0d0bc40a11ae689c42dce95ef",
   "buddy_page_first_anytime": "88974b296a484b111687696334683f557f06139ecd72f5707e10b27185ef51b1",
   "buddy_page_first_ask": "d19be3c3d16dc3a853db1ad1f73b8c1c1f11b4703d37968e33f53b6246832f8b",
   "buddy_page_first_call": "3b717fb80bf2a97b37a1817322a0b1dd137182ada45cc7bff07b24ef7f282177",
@@ -76,7 +76,7 @@
     <string name="buddy_page_energy_named">Energia di %1$s</string>
     <string name="buddy_page_energy_starts">Si attiva con la tua prima lezione.</string>
     <string name="buddy_page_energy_napping">%1$s sta facendo un pisolino. Studia e si sveglierà.</string>
-    <string name="buddy_page_energy_study">Studia oggi per mantenerla alta.</string>
+    <string name="buddy_page_energy_study">Studia oggi per mantenere alta l’Energia.</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d su %2$d missione</item>

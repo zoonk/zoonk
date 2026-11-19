@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.stats
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -764,7 +765,7 @@ private fun patternsSentence(summary: PatternsSummary): String {
         }
     val time =
         when (val times = summary.times) {
-            is Verdict.Best -> stringResource(R.string.stats_best_time_is, timeName(times.key).lowercase(locale))
+            is Verdict.Best -> stringResource(bestTimeSentence(times.key))
             is Verdict.Even -> stringResource(R.string.stats_times_same)
             Verdict.NotEnough -> null
         }
@@ -829,6 +830,15 @@ private fun weekdayName(
     val names = weekdayNames(locale)
     return (if (short) names.short else names.full).getValue(DayOfWeek.valueOf(key.uppercase(Locale.ROOT)))
 }
+
+@StringRes
+private fun bestTimeSentence(key: String): Int =
+    when (key) {
+        "night" -> R.string.stats_best_time_night
+        "morning" -> R.string.stats_best_time_morning
+        "afternoon" -> R.string.stats_best_time_afternoon
+        else -> R.string.stats_best_time_evening
+    }
 
 @Composable
 private fun timeName(key: String): String =

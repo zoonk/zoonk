@@ -35,7 +35,7 @@
   "tutor_error_gone": "42dec4324d42b09c1ed8714858925c621c902f83d9dcf4b7a496f033b59cc25b",
   "tutor_error_invalid": "1c0bb795f2e6d5361f9246313df9bd27f55dd184d40215e02788acf4b409e0c2",
   "tutor_error_last_question": "c2293722837a14ffa5004a9a966f804e7ef16339aa3398220a51cce062cabe2b",
-  "tutor_error_session": "c95f25e27b9acd2bb027cf2124fb3041fc6c6f32da49dbc7b25adc6b500ffe5c",
+  "tutor_error_session": "2d0b98b613118f34fb521e406ed2a5c5a1367f5f2b18227f369edfc4412f7bdb",
   "tutor_error_slow_down": "742e3f30b874215c4842c06a6f6b65d53730df2753f25c6adca4a69dc25ad9fb",
   "tutor_error_subscription": "056a21984e8848d7975129bef704f578e4b1dc8abdd18d0436bdd0c856742cfa",
   "tutor_get_answer": "87ca2d1e134772e44e675a7442eb75d19153f7872ecfa8fe834fc9802d27eba1",
@@ -65,7 +65,7 @@
   "tutor_offer_essay_gate": "14a7c6b578b50833f97c62b0105599de1b22feb8e315fae5a256c8d055ac3f08",
   "tutor_offer_essay_weekly": "b0ac1418301cb66f6fdf41f4186ca5adef693ac40d6853d7ac5590d0248a78f1",
   "tutor_offer_goal": "86d9b5fc1e1b42347f13bee15f79edc40f17e3e5bdcc26504adf6ef7bd71fe47",
-  "tutor_offer_goal_gate": "c8a63f3cd3a38bc00a217ed617eb32a0f6094055eb98aec06ae4b8058bb23451",
+  "tutor_offer_goal_gate": "3d738763167869c1499b0e47b912a7d7d62f3dd31a117dac5c1dc0b1d1b147dc",
   "tutor_offer_home_country_saved": "e021c7668cd81a250c6ac5570306ef5945e03bc54e54c8462fdeb2258b98188a",
   "tutor_offer_home_country_title": "710875d8b42511d927f1cd035e9923fd3747000ecc87db54ed77f69351166faa",
   "tutor_offer_logbook": "5d8334e623e93f7c46f612e3db40fbd0f2123def71dd1b03f7144b651aa46049",
@@ -78,7 +78,7 @@
   "tutor_offer_mock": "289207f11996d88de2f6c36315c47f899501c3b284f2e16fdb5908959f6a5a49",
   "tutor_offer_mock_by_subject": "7d46b4a773e9e4acdccd35a14b5358fd8750d2f7681e0167999a5319ed54a352",
   "tutor_offer_mock_description": "76d73fa3a00af807f112c19235058fce4e69c9a527f616ca450cacf68c63fb72",
-  "tutor_offer_mock_gate": "45a310b173cd9614ae2d83a058349b1543c2f3cfdb99e9128d9067442e10801a",
+  "tutor_offer_mock_gate": "d670b2373874678fd8a1342cc21c2c5174480c96edf28b6d4375f2a00b0a1f05",
   "tutor_offer_open": "5ca46ef0a06138f1ea5b8e1c21f61ad184db71ede97987d74b9b43ca6ca6a125",
   "tutor_offer_plus": "e0fef3edd9c23ebaed4b44a709ae562e7524473dc0dc85586b6b63bffd43e22a",
   "tutor_offer_plus_description": "a4d83d120b9f73950d2301dcaeb0a50e7e3824a85d35ac7f611009c8e1e2221a",
@@ -172,7 +172,7 @@
     <string name="tutor_thinking">Pensando…</string>
     <string name="tutor_load_earlier">Carregar perguntas anteriores</string>
     <string name="tutor_load_earlier_failed">Não foi possível carregar as perguntas anteriores. Tente de novo.</string>
-    <string name="tutor_error_session">Sua sessão foi encerrada.</string>
+    <string name="tutor_error_session">Você saiu da sua conta.</string>
     <string name="tutor_error_subscription">Para fazer perguntas, é preciso assinar</string>
     <string name="tutor_error_gone">Esta aula não está mais disponível.</string>
     <string name="tutor_error_invalid">A gente não conseguiu enviar esta pergunta. Tente de novo.</string>
@@ -217,7 +217,7 @@
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
     <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="tutor_offer_goal_gate">Para começar outro objetivo agora, é preciso assinar</string>
+    <string name="tutor_offer_goal_gate">Para começar outro objetivo, é preciso assinar</string>
     <string name="tutor_offer_catalog_course">Um curso pronto no catálogo</string>
     <string name="tutor_offer_chapter_test">Teste: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">
@@ -235,7 +235,7 @@
     <string name="tutor_offer_mock_description">Quando você quiser: um dia inteiro de prova ou meio dia</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="tutor_offer_mock_by_subject">Quando quiser: um dia inteiro de prova, meio dia ou uma matéria</string>
-    <string name="tutor_offer_mock_gate">Simulados precisam de assinatura</string>
+    <string name="tutor_offer_mock_gate">Para fazer simulados, é preciso assinar</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_weekly">Prática toda semana no seu plano, com correção de cada rascunho.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->

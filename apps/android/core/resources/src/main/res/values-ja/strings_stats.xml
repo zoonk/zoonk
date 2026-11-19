@@ -12,7 +12,7 @@
   "stats_belt_blue": "940db92ba3976240c16e9ed265a6366643238c9278c35827c778b3a351c652e0",
   "stats_belt_brown": "e1020855bc25137454a844b6a6e7cd4247085561b8501d8304b9f6e4ba7faf98",
   "stats_belt_comes_after": "1a063930631e231f92cedd322756052f14cb098473afa74b22c56bb823d93dca",
-  "stats_belt_coming": "62a171129d28eaa0f63eb1a42118c765e3b84706a617fe5070f46bc72e2152f5",
+  "stats_belt_coming": "69b3e50998f38996da09a6e852633b71f07781c1bb21cff67ba9e2853580e3ba",
   "stats_belt_current": "eeca18a1f2b94efda6a63d529939befb480cb0340024de4b74ecd9efd7e5bd17",
   "stats_belt_earned": "ff9fa09132443349ef65e3fe7608f0e542fd16f0b5c1de2708de6a8b9acf8559",
   "stats_belt_gray": "ad8d6cbbeba616954c734069171db4e31c9b3ebf2ab722dab9819a6527c0f72c",
@@ -27,7 +27,10 @@
   "stats_best_day_is": "a9693f5cc6abd055aab11871daebe487ee5c4ab6485ded82654a7bb1b6def99f",
   "stats_best_on": "fa540cb982860d0918cfa9ab0b7865efce26cdfb17e2f87e7fb09548eee5ad26",
   "stats_best_time": "7de3d7ebe0b08a0d6f3197f3a61f4aab7a25aedd1e47d96d4af583e798e74233",
-  "stats_best_time_is": "cd18a567a467a74fedfd77216d13af3385466ca61ca821696b377633e5c75dc2",
+  "stats_best_time_afternoon": "544e2cf4002a2638216f15dfa0e81309c3312812fb3ef348d78676381112ac51",
+  "stats_best_time_evening": "24d5f27daff79b09a92f212bbe4ac7ee3db2d9dab0e40b825363e06284c750ca",
+  "stats_best_time_morning": "9b82c8e7b6b2df40ba285d2a33bfc9ded10b4fdf927ffb8441b049a8d702f8e0",
+  "stats_best_time_night": "1ccebf3b4fdca642c833957125a439e7876ec4e00e1d226c309a3a1161189b2b",
   "stats_brain_power_amount": "c5542f0cf102aa2aa3ba3b26ec12f840e03f5fc3df2e900a13a33c1afa2d6dee",
   "stats_brain_power_to": "ec6c2c83c29cad277f2c1de95d42a3b0c80ad48fafcf26c7bfa7a4f66a493bca",
   "stats_calendar_activity_summary": "6da11943d91f36466baf9c2345732fcaad28bb9352a6273ff59847299c34edee",
@@ -182,8 +185,12 @@
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">一番調子がよいのは%1$sです。</string>
     <string name="stats_days_same">どの曜日も調子はほぼ同じです。</string>
-    <!-- %1$s is a time of day in lowercase: morning, afternoon, evening or night. -->
-    <string name="stats_best_time_is">一番調子がよい時間帯は%1$sです。</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from midnight to 6 AM. -->
+    <string name="stats_best_time_night">夜にいちばんよく答えられています。</string>
+    <string name="stats_best_time_morning">朝にいちばんよく答えられています。</string>
+    <string name="stats_best_time_afternoon">午後にいちばんよく答えられています。</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from 6 PM to midnight. -->
+    <string name="stats_best_time_evening">夕方から夜にかけて、いちばんよく答えられています。</string>
     <string name="stats_times_same">時間帯による違いはありません。</string>
     <string name="stats_answer_more">さらに問題に答えると、調子のよい曜日や時間帯がわかります。</string>
     <!-- Answers given from midnight to 6 AM. -->

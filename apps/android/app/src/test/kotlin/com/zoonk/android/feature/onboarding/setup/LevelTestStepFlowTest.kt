@@ -163,7 +163,7 @@ class LevelTestStepFlowTest {
 
         assertEquals(1, api.prepared)
         rule.onNodeWithText("Preparing your level test").assertIsDisplayed()
-        rule.onNodeWithText("We're writing the questions for the Italian test", substring = true).assertIsDisplayed()
+        rule.onNodeWithText("Getting the Italian test ready", substring = true).assertIsDisplayed()
         rule.onNodeWithText("Skip the test").assertIsDisplayed()
 
         api.levelTest = levelTestOf()

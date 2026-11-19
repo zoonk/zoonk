@@ -26,7 +26,7 @@
   "mindmaps_in_short": "77b7d51daf54a6ee521a51bf712796780911ef3cbbdc0fa3a0a918b53059eef5",
   "mindmaps_lesson_map": "fa761138688697d8a5e73bcce19c8970c4f7b5a7aaea6bd3c8a61ec1f7977b6d",
   "mindmaps_lesson_maps": "7427c1f95d20c90cf62f6df2bdc29ac88b2c2ed988b5cde99c90eb593c5a1aa1",
-  "mindmaps_lessons_count_free": "4184cf9972fc84ce2319b3c5a191b58622945ba5a98c71868d7b17f1e1cc515d",
+  "mindmaps_lessons_count_free": "1e1e052fe43ebaf5a3bb0a79bf2a370d2d1e0a9def5412535673f784b692fb5a",
   "mindmaps_lessons_empty": "b42b7fce6a6885fbaddac3fc9c05a2df18ef6d79d0d9d86ba2bf25077f587246",
   "mindmaps_lessons_first_free": "f5b67af5d91c3bb3f3090c6cfa7efa32799e42373e1423226f6b5893b9073f7f",
   "mindmaps_lessons_first_plus": "904a9bbc613aebb2f2e10050c8a0520a973f9a391d1a68fab504959c06e45e55",
@@ -126,7 +126,7 @@
         <item quantity="other">%1$s lekcji do przygotowania</item>
     </plurals>
     <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
-    <string name="mindmaps_lessons_count_free">Przygotowanie lekcji wlicza się do twojego limitu bezpłatnych lekcji.</string>
+    <string name="mindmaps_lessons_count_free">Tworzenie map wlicza się do limitu bezpłatnych lekcji.</string>
     <string name="mindmaps_writing_lessons">Przygotowujemy lekcje, a potem mapę myśli…</string>
     <string name="mindmaps_writing_lessons_wait">To potrwa kilka minut. Możesz wyjść, a mapa będzie tu czekać.</string>
     <string name="mindmaps_drawing">Rysujemy mapę myśli…</string>
@@ -233,8 +233,12 @@
     <string name="mindmaps_zoom">Powiększ</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">Ta mapa nie jest już dostępna.</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
     <string name="mindmaps_shown_as">Pokaż mapę jako</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
     <string name="mindmaps_shown_map">Mapa</string>
+    <!-- The study screen's switch: shows a map as text. -->
     <string name="mindmaps_shown_text">Tekst</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
     <string name="mindmaps_zoom_hint">Stuknij mapę, aby ją powiększyć</string>
 </resources>

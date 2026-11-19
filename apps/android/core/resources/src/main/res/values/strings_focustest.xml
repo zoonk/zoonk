@@ -64,7 +64,7 @@
     <string name="focustest_see_all_subjects">See all subjects</string>
     <string name="focustest_subjects">Subjects</string>
     <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
-    <string name="focustest_session_questions">Ask a few more in my sessions</string>
+    <string name="focustest_session_questions">Ask a few more questions as I study</string>
     <string name="focustest_session_questions_when">During your first week</string>
     <string name="focustest_done">Done</string>
     <string name="focustest_answer_more">Answer more questions</string>

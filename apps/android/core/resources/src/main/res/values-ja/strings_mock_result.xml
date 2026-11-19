@@ -7,9 +7,9 @@
   "mock_result_answers": "c3442a794ce7bced72643c13869e7ae1a4628a1128a1e96c86e9073c6a40aa30",
   "mock_result_below_minimum": "e57d6ac5a02a2019de5ffb28a950eb145ce21259b10feb981a5136ad4889ad6a",
   "mock_result_below_minimum_named": "4a6bf12692fcc46209f28aea51b001c7b19598ce423d4dd49565f0d36757610d",
-  "mock_result_below_minimum_percent": "623357c414e59cf6d6bfdf448bf645eac1eb8ab11ce706d0c61e3d95ef5217c5",
-  "mock_result_below_minimum_points": "12a836aa6d10b5d753c16621464927a1ccd407155296e72dd5be2d1eca265a1a",
-  "mock_result_below_minimum_points_decimal": "4e0477d0c27acce2d7909d95375ad069b4c05a8799bc3d83df8b2eccae0833c6",
+  "mock_result_below_minimum_percent": "e62f48ece6680811d52f30991e254a123a1efd63404a8ac1519605ee684fde82",
+  "mock_result_below_minimum_points": "cb8c30e5f0ab83eaccd27c838d08c19e2339a8ee1bc7c5c800ae77aec86fa2f6",
+  "mock_result_below_minimum_points_decimal": "8d4e099a01a60b2ea68c533333e88b05a036b08fe3898b1e9fedc8b6ac003854",
   "mock_result_below_percent": "67d6df0b39ef7f96f70a124eb2d2da95e397b1a4a8aff63f55467d90c6b5724e",
   "mock_result_blank": "c697e23d0c1843460cc34b9277ecb2165f4232a822fdd9a378f00b3a13b56233",
   "mock_result_blank_gain": "4b0f95dee68d72896b4e8ad56ec4a63d969f09f3797659bc371f029d2e1227b3",
@@ -236,13 +236,13 @@
     <!-- The result's headline when one test missed the least it needs. %1$s is the test, such as "P1". -->
     <string name="mock_result_below_minimum_named">%1$sで必要な最低スコアに届いていません</string>
     <!-- Under mock_result_below_minimum. %1$s is the score as a percent of the points, such as "38%"; %2$s is the percent needed, such as "40%". -->
-    <string name="mock_result_below_minimum_percent">結果は%1$sです。%2$sが必要です。</string>
+    <string name="mock_result_below_minimum_percent">スコアは%1$sでした。最低ラインは%2$sです。</string>
     <!-- Under mock_result_below_minimum. %1$s is how many points are missing, possibly a decimal; %2$s is the points needed. -->
     <plurals name="mock_result_below_minimum_points">
-        <item quantity="other">%1$s点不足しています。必要なスコアは%2$sです。</item>
+        <item quantity="other">%1$s点足りません。最低ラインは%2$sです。</item>
     </plurals>
     <!-- mock_result_below_minimum_points in the form a language gives decimal numbers (Polish "1,5 punktu"). -->
-    <string name="mock_result_below_minimum_points_decimal">%1$s点不足しています。必要なスコアは%2$sです。</string>
+    <string name="mock_result_below_minimum_points_decimal">最低ラインまであと%1$s点です。最低ラインは%2$sです。</string>
     <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
     <string name="mock_result_projected_total">試験全体に換算すると、約%1$s点（%2$s点満点）です。</string>
     <!-- A minimum this mock couldn't check. %1$s is the percent of their points the objective tests need together, such as "50%". -->

@@ -16,7 +16,7 @@
   "memory_edit_description": "4a97284edbd3224a2a0f13016b75a2ebdbf0c5a8f0a7091b61d9298e492639ff",
   "memory_edit_label": "0da017f33127fea44259e03408ff8e9f247e680d5845756112ce4a7fbe0a1c19",
   "memory_edit_title": "787abad11b3beaeaca9cd0ad7b1fc4fb0a5301c3dda3473a60d9c3ab2c472fe1",
-  "memory_empty": "4aeadbb8efdc94769fa49b0ce291edfcf32caed56b266c52c1210786855ada47",
+  "memory_empty": "4efa79fe23f6bf2d3244dccdcbc597eff3a2e63f54ac7dcfa6fbb2740957a4eb",
   "memory_fact_options": "5cd20bcb69f5c3887bf52ac6d06f8a9ba0dfa9cb081e53340b74e741cb36bd0d",
   "memory_fact_source": "ea89c2ba316d63868b8de220db424e3f03b942c1f9caa714a9e43f404201a03a",
   "memory_save_failed": "70d14e88cd2dc39731fe880eca698cb0e0dbfaef3a96a2069cfcb7fe74d2f9ef",
@@ -32,13 +32,13 @@
   "memory_updated": "90149d2e4e904ce504bd6460c2306a0845ca23caaebbc3f263576fdd439dfafd",
   "memory_updated_more": "0ff23ad08139feae4614c324c4c84fc02fcf2887accef731a847d6f61e24d5db",
   "memory_use": "890bee8558d85af0306318b362f7ea3f2c74f93c3cc004c1e8d21e83368b7f35",
-  "memory_use_description": "4f0641e4c14290e614b028830bde5f0fd30b3f3c62b1eef32a4d8d5dca25f719"
+  "memory_use_description": "5e51e02a7dc5a237078510e10b087507f01e16bc78c175b487f132f8fcdc37d3"
 }
 -->
 <resources>
     <string name="memory_description">Lo que Zoonk recuerda para darte ejemplos y planes adaptados a tu vida.</string>
     <string name="memory_use">Usar la memoria</string>
-    <string name="memory_empty">Aún no hay nada. Las notas aparecen aquí a medida que estudias y conversas.</string>
+    <string name="memory_empty">Aún no hay nada. Lo que compartes aparecerá aquí mientras estudias y conversas.</string>
     <string name="memory_save_failed">No se pudo guardar. Inténtalo de nuevo.</string>
     <string name="memory_category_goals">Objetivos</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
@@ -77,5 +77,5 @@
     <string name="memory_undo_failed">No se pudo deshacer. Ya hubo otro cambio.</string>
     <string name="memory_undo_retry">No se pudo deshacer. Inténtalo de nuevo.</string>
     <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
-    <string name="memory_use_description">Ejemplos de tu vida, planes que se adaptan a tu semana y llamadas con %1$s que recuerdan lo que le cuentas</string>
+    <string name="memory_use_description">Ejemplos personales, planes que se adaptan a tu semana y conversaciones con %1$s que recuerdan lo que compartes</string>
 </resources>

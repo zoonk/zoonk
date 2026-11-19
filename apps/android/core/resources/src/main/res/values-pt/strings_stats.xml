@@ -12,7 +12,7 @@
   "stats_belt_blue": "a0193553265572084c17bbe1fe085ad516712e1818b3f1cf33b2429fca145686",
   "stats_belt_brown": "9496687560236e2d816e61d4dad98f88d8d9de87059419e9a03f2e5f1cdde730",
   "stats_belt_comes_after": "19f4a2f750b23c10674eb70d280b28b319b558e15b2303613147b740a67653d6",
-  "stats_belt_coming": "2781793b415564554e923c414bb46468a83bd4eff7c0493ec5fc71552f0340ef",
+  "stats_belt_coming": "aeb8049363deecf3b24a6360d6353d0be4a877824141ffef031a5aeb04f168d7",
   "stats_belt_current": "cb430d032ca1780171a3d64a94120e3fe5baf052aa1152b734395217606cd746",
   "stats_belt_earned": "8c7657ad46d813d566bb892e44ac675261bbcca1c1f24824fd698f91b10320f0",
   "stats_belt_gray": "28403c5c66936b923ff04678cdb49bde9c2b2b94a922217f31e41a2269053d5c",
@@ -27,7 +27,10 @@
   "stats_best_day_is": "d2bcb231aa1bbe711a8b8e72a787c9b12eaa3d15df3a75c50837f0f595a6d394",
   "stats_best_on": "9bb379be65e57ff080f2410f0accf9d7252a0089069fcc4d0aa6251d1129620c",
   "stats_best_time": "ee3ecb78c93f362b6499e1637720c13be0517a548aecf6babc6f01b4c16285ba",
-  "stats_best_time_is": "48059163a91895cc3c5248db0a500bb4fdfed5e89277d63f4c3fd779ce114d26",
+  "stats_best_time_afternoon": "bc48f31a7bd32109c6a3662d4d9c3b460212a2081973649cbf2eed6674c2a221",
+  "stats_best_time_evening": "51f2cd750baeab8e02598d7010740e9ca52cf4d7116890dd6359458624068ef4",
+  "stats_best_time_morning": "e2be7b161aa144acb7d88841e871dbeda96a0150248bdc37051eea15d9d0cf0c",
+  "stats_best_time_night": "07250b612e6fc87c5e17e455fe8a11dbcfadc2e2d538b3a7a2f99753b001f525",
   "stats_brain_power_amount": "1b0ce568e54919f9ac89eed80fbd10c290d83ee37beb455b677929094568041c",
   "stats_brain_power_to": "00151f8f788fa804f27d1c8d901c21239c2ec5d364e17c9f9cd3d6bc37c04133",
   "stats_calendar_activity_summary": "f40fc06a3e91aeed834e1ca50b858bb4734ea09db18d13365367c87396ad5aa3",
@@ -196,8 +199,12 @@
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Seu melhor dia é %1$s.</string>
     <string name="stats_days_same">Seu desempenho é parecido todos os dias.</string>
-    <!-- %1$s is a time of day in lowercase: morning, afternoon, evening or night. -->
-    <string name="stats_best_time_is">Você se sai melhor neste período do dia: %1$s.</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from midnight to 6 AM. -->
+    <string name="stats_best_time_night">Você se sai melhor de madrugada.</string>
+    <string name="stats_best_time_morning">Você se sai melhor de manhã.</string>
+    <string name="stats_best_time_afternoon">Você se sai melhor à tarde.</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from 6 PM to midnight. -->
+    <string name="stats_best_time_evening">Você se sai melhor à noite.</string>
     <string name="stats_times_same">O horário não faz diferença.</string>
     <string name="stats_answer_more">Responda a mais perguntas para ver quando você se sai melhor.</string>
     <!-- Answers given from midnight to 6 AM. -->

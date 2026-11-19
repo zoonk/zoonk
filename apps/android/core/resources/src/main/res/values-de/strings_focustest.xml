@@ -54,7 +54,7 @@
   "focustest_see_all_subjects": "213668f2ff9b5e4348d34db52c9c887ea89cc212ab95d0fad8e3a15c43ee542f",
   "focustest_see_my_result": "c7b4cceb190bb2340a230534c639933e57b3b98146859453af99c5386daf1298",
   "focustest_see_your_result": "63f6694985576990e2c8afb8513efebeab1ddb92d2d24733752176675d960774",
-  "focustest_session_questions": "c2e48aed65b493901909cca43c688b0b780d2461c8350c4b8badc046f6ccd480",
+  "focustest_session_questions": "246f8a24bce7bc7df75c4db118041d69c2a1229a07a24129e4c3967d064b7a70",
   "focustest_session_questions_when": "95398affa7e00aaf8a370bbea8ec78edc16aa9d6efbd13f3ce6665baafd28070",
   "focustest_skip_note": "0a5456c64e6527b07f531c29941044838d5d7ba8307c5c4f79ed4ad91e0a3393",
   "focustest_speaking_not_checked": "3c79c08e6729c1044e680f2cfa757836a69fc0d6fa46b90107e84bb622861a41",
@@ -139,7 +139,7 @@
     <string name="focustest_see_all_subjects">Alle Fächer ansehen</string>
     <string name="focustest_subjects">Fächer</string>
     <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
-    <string name="focustest_session_questions">In meinen Lerneinheiten noch ein paar Fragen stellen</string>
+    <string name="focustest_session_questions">Bei meinen Lerneinheiten ein paar weitere Fragen stellen</string>
     <string name="focustest_session_questions_when">In deiner ersten Woche</string>
     <string name="focustest_done">Fertig</string>
     <string name="focustest_answer_more">Weitere Fragen beantworten</string>

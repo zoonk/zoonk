@@ -15,7 +15,7 @@
   "subscription_answer_free_lessons": "d9c357c4ce65df493352e66c7632cffa13088ae3a1588a7eb5e64da85cecd498",
   "subscription_answer_free_material": "1cd68bb5d21baa2966605fad1f61ad94c7439037e765c7482b057c0d77b46d0d",
   "subscription_answer_refund": "a7bb6d6ea44d9e9a98dd113c3deca48590694a1270ba0fa5d72c82f9f6640a9e",
-  "subscription_answer_unlimited": "66a2ff5e83d88810aafccd30bf470f46ce2c26e0061d5f331bd385023fde4644",
+  "subscription_answer_unlimited": "61640b9df5902c6f2a804301f004174d7c6b3f53fcb8f9d3cc20733e64f1d839",
   "subscription_benefit_buddy": "e1a8ad62e48d21334ec73705af9636ed31f1223f7199df68631d548233fcbc4b",
   "subscription_benefit_calls": "5ee036bddcef7fa57b00d6c1a1f5c04e92db6469a0f2fa9c7b011eb3f91f1188",
   "subscription_benefit_certificates": "fdfa63fe0b7e89c843d0556f7c2161ca6dd0c953943b2836461d9ba91401d170",
@@ -26,8 +26,8 @@
   "subscription_cancel_anytime": "b3889b437557ca1e77edda1805888eb26d4b35be3ae0bb922a8610abf89966fb",
   "subscription_contact_support": "377eed1872744835e794f472abf805372f0cd1a1feff5ff6a8043c6e763ec5e9",
   "subscription_current_plan": "64b88f84a0cd48e7d3e45c3c65c27745bd81dbf3187a35add8028112e81fc79c",
-  "subscription_deletion_app_store": "28c1c6c0e00c30739457b9f6b81fd807539b8ce98342062e3ab848b3def0e3f3",
-  "subscription_deletion_google_play": "9dc3897985a026a2578cdc87ccdd133e1dbc63ea4dca6a336b943ccc86aca82f",
+  "subscription_deletion_app_store": "54d9440b369895659179511285fc8f3d572a03eccac15f73462416453a59d004",
+  "subscription_deletion_google_play": "2a6bcf306b865822e29746370fdf79613a8289767ff2843c798602e9ff28831f",
   "subscription_deletion_notice": "0865f2035ce6f8047616126c50c6da4886137bd50502b22d4e5a22d4119dac61",
   "subscription_ending": "63e2d190121641dbae3e048e86b5f7f1cebc4ca47063a858f2f4340a0f8c1f8e",
   "subscription_ends_on": "068e31a435e74e1ef448da19cc3a9201792492900f2c18a658dd06549990e764",
@@ -93,9 +93,9 @@
     <string name="subscription_renewal_failed">최근 갱신 결제에 실패했어요.</string>
     <string name="subscription_deletion_notice">계정을 삭제하면 Plus 이용이 바로 종료돼요.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
-    <string name="subscription_deletion_app_store">App Store에서 구독한 Plus는 해당 스토어에서 해지할 때까지 요금이 계속 청구돼요.</string>
+    <string name="subscription_deletion_app_store">계정을 삭제해도 App Store에서 구독한 Plus는 해지되지 않아요. App Store에서 해지해 주세요.</string>
     <!-- The same, for Plus bought in Google Play. -->
-    <string name="subscription_deletion_google_play">Google Play에서 구독한 Plus는 해당 스토어에서 해지할 때까지 요금이 계속 청구돼요.</string>
+    <string name="subscription_deletion_google_play">계정을 삭제해도 Google Play에서 구독한 Plus는 해지되지 않아요. Google Play에서 해지해 주세요.</string>
     <string name="subscription_free">무료</string>
     <string name="subscription_monthly">월간</string>
     <string name="subscription_yearly">연간</string>
@@ -173,7 +173,7 @@
     </plurals>
     <string name="subscription_answer_free_calls">말하기 연습 대화는 Plus보다 횟수가 적어요(시험 말하기 과제는 Plus에 포함돼요)</string>
     <string name="subscription_question_unlimited">Plus는 정말 무제한인가요?</string>
-    <string name="subscription_answer_unlimited">거의 무제한이에요. 레슨, 목표, 짝꿍에는 봇과 자동화 도구를 막기 위한 제한만 있고, 사람이 공부하는 데는 제한을 두지 않아요. 말하기 연습 대화에는 하루와 한 달 이용 한도가 있지만, Plus 없이 이용할 때보다 높아요.</string>
+    <string name="subscription_answer_unlimited">일반적인 학습은 제한 없이 할 수 있어요. 레슨, 목표, AI 공부 짝꿍에는 봇과 자동화 도구를 막기 위한 제한만 있어요. 말하기 연습 대화에는 일일 및 월간 제한이 있지만, 무료보다 한도가 높아요.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">공정 사용 정책 읽기</string>
     <string name="subscription_question_cancel">해지하면 어떻게 되나요?</string>

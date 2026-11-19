@@ -8,7 +8,7 @@
   "buddy_page_energy_named": "b9f9be4aaf2e83b17be0ed46897063b317da7c83f8a0c074e43eaba7d2ce9071",
   "buddy_page_energy_napping": "fe3204f45a79c764d4d65c7bd504a378b09b00ac5f2091c4a6154bcad5b4fce6",
   "buddy_page_energy_starts": "3c8df6053f325318dd2889974c7947c416fff895701db7e0fe2f027fec49c2bc",
-  "buddy_page_energy_study": "9ac3c11eedaac3ca2b327858b2f04ccb5f35ad0bf89c34a1ae8d10049a131ecd",
+  "buddy_page_energy_study": "3e8730b7908e33a34de9a5bcfbbc482dba64d34395c017089c1ba7762f9351b4",
   "buddy_page_first_anytime": "59c142d89a822bab4458198a0296d4349f9524fd01feb2869ab6276db5be4376",
   "buddy_page_first_ask": "0bc4da62266b416ff9ad9bb41ae9857f251f54646f5564fb7ef00a6521f07c58",
   "buddy_page_first_call": "8b67f5a235feb27c65243fca857ef2caf8a554ecafbc940f79e7cfef35081e4c",
@@ -76,7 +76,7 @@
     <string name="buddy_page_energy_named">%1$sのエネルギー</string>
     <string name="buddy_page_energy_starts">最初のレッスンから始まります。</string>
     <string name="buddy_page_energy_napping">%1$sはお昼寝中です。学習すると目を覚まします。</string>
-    <string name="buddy_page_energy_study">今日の学習でエネルギーを保ちましょう。</string>
+    <string name="buddy_page_energy_study">今日学習して、Energyを保ちましょう。</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="other">ミッション%1$d/%2$d完了</item>

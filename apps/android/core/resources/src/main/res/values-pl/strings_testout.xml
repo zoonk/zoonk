@@ -4,7 +4,7 @@
   "testout_already_skipped": "0d6235a2d079c3356c5bd833f654711ad7580f3b31a6c0c486b33e5c705d09b5",
   "testout_aside_title": "6ba8a366fea648dfab604c286b65db738d4ac4d6422da7bd8b19599cfa970030",
   "testout_continue": "252ed225e3a947b8962c40f1c02d2098da9d89b2fea0421e72de8a4c18292a50",
-  "testout_intro_detail": "0835e371a3bf5a9e2b709fc2e10732517bdc162decc3d9ef1a922d1f1ce12618",
+  "testout_intro_detail": "89a56f28fceb1406e1b0400f56efc827048bb755f731e8953a3da4d5c7563479",
   "testout_intro_title": "78d9bdb66c0305fe8a9f5e73367e20ed6df26c273319ccb85bbb4a0489281fad",
   "testout_lessons_back": "8655b0c8e7e29f8e671f302fb230b10c3db3a004bb0903a19f1d31ec05426dd5",
   "testout_lessons_left": "603b1ed8f7b18e079430f71ea1a06d4dd5289bb3aacd334be3b68e43d23dc441",
@@ -26,7 +26,7 @@
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">Test: %1$s</string>
     <string name="testout_intro_title">Już to znasz?</string>
-    <string name="testout_intro_detail">Kilka pytań z tego rozdziału i wyniki na koniec. Jeśli dobrze ci pójdzie, plan pominie to, co już znasz.</string>
+    <string name="testout_intro_detail">Kilka pytań z tego rozdziału. Jeśli dobrze ci pójdzie, plan nie uwzględni tego, co już znasz.</string>
     <string name="testout_start">Rozpocznij test</string>
     <string name="testout_writing">Przygotowujemy dla ciebie pytania</string>
     <string name="testout_writing_questions">Przygotowujemy pytania do tego rozdziału</string>

@@ -54,7 +54,7 @@
   "focustest_see_all_subjects": "82b7554562ac0f683cc5afe1b292dc62671c19c4e598d8c5acfca4027f01bea7",
   "focustest_see_my_result": "250c9531634f14d4891d0fa7496ee60ef068dc54d00b3d24d38279882fb037e1",
   "focustest_see_your_result": "5dfb1926eea291f109f29d125d1f0ade32521c3ae3c74b6332e4f9a99119c71b",
-  "focustest_session_questions": "476c27f53a69d2cd45c58554e160e5aec73e1fd428d005267fb10f65398d4f43",
+  "focustest_session_questions": "824bdbf8b385165c47322e0004b02e6122625f47b750d49fe149cc28e54ac344",
   "focustest_session_questions_when": "d04b2f8187491bd23804f92eca3c7f4cea634db55bc3d2bc6ca3ad73e050974e",
   "focustest_skip_note": "78a74cbb501335879145dde71c4ef8106a97e0f9d68a5154e20d8e67c564e0d9",
   "focustest_speaking_not_checked": "fef00e3e9c47ecc8c8f82aa9bfb6b8d266d389e6f34b6934b67b679dccc84bdd",
@@ -136,7 +136,7 @@
     <string name="focustest_see_all_subjects">전체 과목 보기</string>
     <string name="focustest_subjects">과목</string>
     <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
-    <string name="focustest_session_questions">학습 중에 문제 몇 개 더 풀기</string>
+    <string name="focustest_session_questions">공부하면서 문제를 몇 개 더 풀기</string>
     <string name="focustest_session_questions_when">첫 주 동안만</string>
     <string name="focustest_done">완료</string>
     <string name="focustest_answer_more">문제 더 풀기</string>

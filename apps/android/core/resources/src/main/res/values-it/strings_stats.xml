@@ -12,7 +12,7 @@
   "stats_belt_blue": "cf0b0aa78981951b8e9df55c157a3882c291238880f4c6fbd0ee4162f6cf9195",
   "stats_belt_brown": "cd847aa7d007e055d6967f1bd731b8fb1e5d7dc8df21733c63f7604586529130",
   "stats_belt_comes_after": "8a3874bfe0869e1b8ec314164f8a2cd1a90d3a396e98c992cde8d81caff5965b",
-  "stats_belt_coming": "0399d31b52862ebcf8492b437b7c64f376ec961b7883280c0241a6b6e62970e4",
+  "stats_belt_coming": "0dcf4f43a6b9c3b8fa5aad348972f9b0a55b72143d4f5533b531fd701ca3b153",
   "stats_belt_current": "aa0eaab3e40f7736af08fdc56d79184a6d8a04ba618921aee73c3dd6770e01b1",
   "stats_belt_earned": "05fc50e0deb9697919a0fd4f9bb97c72ac133c18f95d7a32255bc4da7a536716",
   "stats_belt_gray": "aebd9ba727e6e3a9ae56a9fe525a9d05cc0c075300881382b79e6d3800eafc8e",
@@ -27,7 +27,10 @@
   "stats_best_day_is": "054ad37dfd6f12e4ab260340888f2432ebb78980f3fde095b162e6cdac91c0f5",
   "stats_best_on": "04bc1c07f89e304d9c9495bc735aaa9e549dbb24f66abe3c281e6df70e5577c2",
   "stats_best_time": "25fb60f7215158dc391d3c14870629cd437ec1fb18a46f4155b92d946037b68f",
-  "stats_best_time_is": "e747bba010c825ea13bda6f25b5f65ed86d2ba334eec4f31ff36288601292b5c",
+  "stats_best_time_afternoon": "52a67e6f643e84a9b743310136a9135ae174792f8f92e9b691fee4d473e0b2f2",
+  "stats_best_time_evening": "a54e3db04d987c543202a7a4ed7c33b67b62e624ccdff3934cc99b510d55de0d",
+  "stats_best_time_morning": "1d737c545d802295d305c695dbd7a6ec7386572f202aee37f9ec052817baae05",
+  "stats_best_time_night": "dd7b5b45ca076d3d679ff1fcd4d5b5def9ebd21fdfd565710ce8d5ef732f6caa",
   "stats_brain_power_amount": "c92266dcf75ef0e04c2463de860fb1bf11e852e044f958bdfec3fca1a6b85a24",
   "stats_brain_power_to": "a8759e70e972f762e13b9adb84403e231eada9782beacc463e2f548ff385e5e2",
   "stats_calendar_activity_summary": "bcaccf618730daec2af3e5311e9e49d29c48b2b464d953680ea45f071b127d81",
@@ -114,7 +117,7 @@
     <!-- In place of the weekly score chart while it has fewer than two weeks to draw. -->
     <string name="stats_trend_after_two_weeks">Vedrai il tuo andamento dopo due settimane di studio</string>
     <!-- The key under the belt row: a folded belt is one the learner hasn't earned yet. -->
-    <string name="stats_belt_coming">Da conquistare</string>
+    <string name="stats_belt_coming">In arrivo</string>
     <!-- Each belt's one-word name under its drawing in the row of every belt. -->
     <string name="stats_belt_white">Bianca</string>
     <string name="stats_belt_yellow">Gialla</string>
@@ -196,8 +199,12 @@
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">Il tuo giorno migliore è %1$s.</string>
     <string name="stats_days_same">Ottieni risultati simili ogni giorno.</string>
-    <!-- %1$s is a time of day in lowercase: morning, afternoon, evening or night. -->
-    <string name="stats_best_time_is">Rispondi meglio di %1$s.</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from midnight to 6 AM. -->
+    <string name="stats_best_time_night">Dai il meglio di notte.</string>
+    <string name="stats_best_time_morning">Rendi meglio al mattino.</string>
+    <string name="stats_best_time_afternoon">Rendi meglio nel pomeriggio.</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from 6 PM to midnight. -->
+    <string name="stats_best_time_evening">Dai il meglio di sera.</string>
     <string name="stats_times_same">L’orario non fa differenza.</string>
     <string name="stats_answer_more">Rispondi ad altre domande per vedere quando vai meglio.</string>
     <!-- Answers given from midnight to 6 AM. -->

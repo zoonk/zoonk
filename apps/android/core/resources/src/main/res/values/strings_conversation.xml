@@ -79,7 +79,7 @@
     <string name="conversation_paused_title">Calls are paused</string>
     <string name="conversation_paused">It\'s the same for everyone right now. Try again later.</string>
     <string name="conversation_in_progress_title">You\'re in another call</string>
-    <string name="conversation_in_progress">It\'s open on another device or in your browser. Starting this one ends it, without its feedback.</string>
+    <string name="conversation_in_progress">That call is open on another device or in your browser. Starting this one ends it without feedback.</string>
     <string name="conversation_take_over">Start here</string>
     <string name="conversation_dropped_title">The call dropped</string>
     <string name="conversation_dropped">Call again, or end the call to get feedback on what you said.</string>
@@ -103,7 +103,7 @@
     <string name="conversation_not_this_time">Not this time</string>
     <string name="conversation_goals_tile">Goals</string>
     <string name="conversation_brain_power">Brain Power</string>
-    <string name="conversation_try_again_later">The call comes back so you can try again.</string>
+    <string name="conversation_try_again_later">Rematch next time you study</string>
     <string name="conversation_stars_rule">A star for finishing, one for getting everything across and one without Help.</string>
     <string name="conversation_went_well">What went well</string>
     <string name="conversation_said_well">Phrases you said well</string>
@@ -176,7 +176,7 @@
     <string name="conversation_below_level">Below %1$s</string>
     <string name="conversation_level_line">On these scales, %1$s is the %2$s level.</string>
     <string name="conversation_typed_note">You typed your replies, so this estimate leaves out how you sound.</string>
-    <string name="conversation_brief_note">You said little, so this estimate is rough.</string>
+    <string name="conversation_brief_note">You didn\'t say much, so this estimate is rough.</string>
     <string name="conversation_focus">Focus</string>
     <string name="conversation_not_rated">Not rated</string>
     <string name="conversation_estimate">An estimate, not an official score.</string>

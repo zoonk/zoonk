@@ -78,7 +78,7 @@
   "today_preparation": "58f7d35ba97a8dde0e802254bf6afa91aa9bac7511957b85c162ce087304bd18",
   "today_progress": "c09f3f024cf6b6c24b3967ed5cb139035833bdcef7e5a70660ed82c67fd80125",
   "today_progress_lessons_today": "d0388f82677d79dcbedfd80b84218a5ff7f0a3dfa588c8b2e000a9f5a7cbee60",
-  "today_progress_meaning": "cfa37fd8e25adfc2c2c981baef898793ab937744e88324c61112700d3790a352",
+  "today_progress_meaning": "df67719460e084175ff8018ace4fc89815cc469722b8e06273859a088def4322",
   "today_quick_explanation": "164be5838c0753246c16d1119f067f9944ce54ff65a35e16942ab7727e48d0d2",
   "today_rest": "0cb9183422b9d2c5ba3afc08b71bd762fca8581d5db0a72a89b24efd3eb40411",
   "today_rest_enjoy": "f518dc2677121d1d6a6c09a5010cd9d8b3908c8b12f561b0bb48f35525ab2765",
@@ -327,7 +327,7 @@
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">進み具合</string>
     <!-- What the goal's progress number is made of -->
-    <string name="today_progress_meaning">計画内のレッスンのうち、学習済み、またはもともと知っていたレッスンの割合です。</string>
+    <string name="today_progress_meaning">学習計画のレッスンのうち、学習済みまたはもともと知っていたものの割合</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
     <string name="today_preparation">準備状況</string>
     <!-- A link at the end of the progress card that opens the learner's plan. -->

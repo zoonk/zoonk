@@ -4,7 +4,7 @@
   "testout_already_skipped": "3c32cb7b2321b50410fbd6ff8557bfbf7f5f9396d32e6724268bfe8a510fd7a1",
   "testout_aside_title": "f454566a075e8a72b576f63d280528d052c8173e80bd7c672bd7fa2296702bbb",
   "testout_continue": "100b49ed6044b4460e0759324f8caad37d1282c0b41a129f63263f892f650950",
-  "testout_intro_detail": "0fda8708f9334100c2e7effd751eb43029d8de86ff6bb823dfe88416ca595f21",
+  "testout_intro_detail": "9beb79e0450fe98793dfbeda6a5620ef37eee9224bbe362c0a3794be73eb9ad1",
   "testout_intro_title": "5aa8d14696cc085ec5904a5a135e0e4af249ba3aeb02349d9f2050cc6363459b",
   "testout_lessons_back": "7d00c62e34e4c8d7c185c1d0aa82bf2064746326da83a66e715a0041afe39fe0",
   "testout_lessons_left": "99de0a8d350fe0b974896b0b0ea14e7bf39424f164ddadf4a57ebd7f97fd25d3",
@@ -26,7 +26,7 @@
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">Test : %1$s</string>
     <string name="testout_intro_title">Tu connais déjà ce contenu ?</string>
-    <string name="testout_intro_detail">Quelques questions sur ce chapitre, avec tes résultats à la fin. Si tu réussis, ton plan saute ce que tu sais déjà.</string>
+    <string name="testout_intro_detail">Quelques questions sur ce chapitre. Si tu réussis, ton plan sautera ce que tu connais déjà.</string>
     <string name="testout_start">Commencer le test</string>
     <string name="testout_writing">Préparation de tes questions</string>
     <string name="testout_writing_questions">Préparation de questions sur ce chapitre</string>

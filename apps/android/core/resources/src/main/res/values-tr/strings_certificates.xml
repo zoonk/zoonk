@@ -77,7 +77,7 @@
   "certificates_save": "fa64e3ff34da391c213ef64a868468feaf6bb9c54333f85f824b46e50a19fd28",
   "certificates_saved_one": "cb9a0eff88b9afea06d79f3ce15b58dfc7ef8c6a39d1ef65bfdc922882d76c3c",
   "certificates_saved_several": "c1b76c21d2aeb5f701b7ee77114a23c29774a289af4d72aeb16a2b3b2b0b2765",
-  "certificates_see_yours": "56fdf48258ba9ec9c6477bb04c2fe7d95e2e7a3ffda8b1dae3716841d3e943b1",
+  "certificates_see_yours": "382c3fdada50d54f6f663217b021595c5b093cddbbd0f23098cf258825424d7c",
   "certificates_several_ready": "2aa8ab946b2b14b1dbcf771c081d35db61950cb5cd5e80db356996bdef743c30",
   "certificates_share": "1667a04a3fa87ab77b2af29918c4e5937c3ed9b0dd266072e1aa943c71739091",
   "certificates_title": "e7dd358dc931effbbf24d9491bf7d473b1db8e856c697ea1209be98ea816e65c",
@@ -100,7 +100,7 @@
     <string name="certificates_continue_learning">Öğrenmeye devam et</string>
     <string name="certificates_your_next">Sıradaki sertifikan</string>
     <string name="certificates_gate_title">Sertifikalar için abonelik gerekiyor</string>
-    <string name="certificates_see_yours">Sertifikanı gör</string>
+    <string name="certificates_see_yours">Sertifikayı gör</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">Sertifikayı görüntüle</string>
     <string name="certificates_view_several">Sertifikaları görüntüle</string>

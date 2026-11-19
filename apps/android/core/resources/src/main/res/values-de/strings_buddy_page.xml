@@ -8,7 +8,7 @@
   "buddy_page_energy_named": "6031315612c9d07bc4e45256d3e2fe2672359a6ccee2e7d8e3ff0363d587005f",
   "buddy_page_energy_napping": "fb923bc0c9284627969927fa772a9bd377605167ff807ed6887fb98150ea8a6a",
   "buddy_page_energy_starts": "20d88ceb7469387211430ad48329af8736eebf6625b0c7c9df37651ed66e53ff",
-  "buddy_page_energy_study": "e8d70426f1ad181d951b0a6e2d152085131a218f47ac0d3f88cd5dc9e33fb46a",
+  "buddy_page_energy_study": "13d5bad7a27f481b547f4b1f0b12d98597f0d2d48df57137a4a8d9c9eace43bf",
   "buddy_page_first_anytime": "684063efd7293b075026bfa65b0bfad79c7287b1320dd378b6960c247328ba6c",
   "buddy_page_first_ask": "20e414100e4194699173706e90f1b8c4f393488163a3898d462192f2da462128",
   "buddy_page_first_call": "8d76bf12e14b8db1a76e222f9a6a8a458168ccf5a513a99bb523aeac5f5e9c54",
@@ -76,7 +76,7 @@
     <string name="buddy_page_energy_named">Energie von %1$s</string>
     <string name="buddy_page_energy_starts">Mit deiner ersten Lektion geht’s los.</string>
     <string name="buddy_page_energy_napping">%1$s macht ein Nickerchen. Lern, um deinen Kumpel aufzuwecken.</string>
-    <string name="buddy_page_energy_study">Lern heute, damit die Energie hoch bleibt.</string>
+    <string name="buddy_page_energy_study">Lern heute, damit deine Energy oben bleibt.</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d von %2$d Mission</item>

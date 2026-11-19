@@ -7,9 +7,9 @@
   "mock_result_answers": "ce3e9a41bb4a501346a1de73aae809711ed7b518e709bb0c4ab74b75a19ec95d",
   "mock_result_below_minimum": "273c70cb783b98d897930dd0fd6555e9fe6519e4b3c2ae5e21fe9cd32fea6e16",
   "mock_result_below_minimum_named": "f1ddb32d8f17ebb8d5fc15161445486ba097d95f55220bde2e4e3244ab9087e8",
-  "mock_result_below_minimum_percent": "95908abb03f3b365d1ae237eb08865471bda8e355ab9fce1c28bc6e69a61eee3",
-  "mock_result_below_minimum_points": "377a9ae1b923b697f8773fb87098dd8157771291145fa43849ac65ae525b7ff7",
-  "mock_result_below_minimum_points_decimal": "f8fbd27aa5624d0b82c1243fd9f7890f801e41625ffb227b10e08f30e2fb936f",
+  "mock_result_below_minimum_percent": "57f51f3b1d1824c1d376b476d31be28020544ff339ffca94a1a45e9b967e8507",
+  "mock_result_below_minimum_points": "f5c929db289c9fb76de07152311fab73480e2e6ab125f6ef85ffad7895091f8b",
+  "mock_result_below_minimum_points_decimal": "537528a54911c595b33bd6a3f4a0c3ce34e0ed58f381619de735a798e2240905",
   "mock_result_below_percent": "8144013b56a9fd5eb8f403523b42e7bf7495f970011a7492724ba3914b5c2337",
   "mock_result_blank": "0f4e631f55d736c1fba1d7fbed33db4ef7e4d7139ffd7e164bc25f615a101d90",
   "mock_result_blank_gain": "e6d404276008faea8138a64a8942216c243717703d8e3bf1b471833917da566f",
@@ -236,13 +236,13 @@
     <!-- The result's headline when one test missed the least it needs. %1$s is the test, such as "P1". -->
     <string name="mock_result_below_minimum_named">%1$s 최소 점수 미달</string>
     <!-- Under mock_result_below_minimum. %1$s is the score as a percent of the points, such as "38%"; %2$s is the percent needed, such as "40%". -->
-    <string name="mock_result_below_minimum_percent">점수는 %1$s예요. 최소 %2$s가 필요해요.</string>
+    <string name="mock_result_below_minimum_percent">점수가 %1$s예요. 최소 점수는 %2$s예요.</string>
     <!-- Under mock_result_below_minimum. %1$s is how many points are missing, possibly a decimal; %2$s is the points needed. -->
     <plurals name="mock_result_below_minimum_points">
-        <item quantity="other">%1$s점이 부족해요. 최소 %2$s점이 필요해요.</item>
+        <item quantity="other">%1$s점 모자라요. 최소 점수는 %2$s예요.</item>
     </plurals>
     <!-- mock_result_below_minimum_points in the form a language gives decimal numbers (Polish "1,5 punktu"). -->
-    <string name="mock_result_below_minimum_points_decimal">%1$s점이 부족해요. 최소 %2$s점이 필요해요.</string>
+    <string name="mock_result_below_minimum_points_decimal">최소 점수보다 %1$s점 모자라요. 최소 점수는 %2$s예요.</string>
     <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
     <string name="mock_result_projected_total">전체 시험으로 환산하면 약 %1$s점이에요. 만점은 %2$s점이에요.</string>
     <!-- A minimum this mock couldn't check. %1$s is the percent of their points the objective tests need together, such as "50%". -->

@@ -77,7 +77,7 @@
   "certificates_save": "74fad0e2090c7383d8ed00a094247d79474050ced9a141bcbd16100370bff45e",
   "certificates_saved_one": "2b5f9f3040d0b0b482e9358c6f7431945de4c9a5c29cefa46da46b41391986eb",
   "certificates_saved_several": "9f8c22b8bde04a986f775163687faa91facc78826dce98196c0694ee2768a950",
-  "certificates_see_yours": "9f0656af598c63bb9398485e3b82110546d47ecd8818929cfb7df4dc38565035",
+  "certificates_see_yours": "2c2e9145e40ceba7e387d1aca8b4bee5f5d0276f471e80afc904c56e55193276",
   "certificates_several_ready": "53f145b5bb0aff510f15df48f312b5cc998061d3d89e0cc7e8b2e93f47363f0c",
   "certificates_share": "d2c91bcedf7d378b719e6f4b46970aa5f23ac160a592fb0624380f0243cb51e4",
   "certificates_title": "269aac309b2a2f38240b639c2c8bcf97ba08e4f6dd65c48c3032911e0f5fd50b",
@@ -100,7 +100,7 @@
     <string name="certificates_continue_learning">Seguir aprendiendo</string>
     <string name="certificates_your_next">Tu próximo certificado</string>
     <string name="certificates_gate_title">Los certificados requieren una suscripción</string>
-    <string name="certificates_see_yours">Ver tu certificado</string>
+    <string name="certificates_see_yours">Ver certificado</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">Ver certificado</string>
     <string name="certificates_view_several">Ver certificados</string>

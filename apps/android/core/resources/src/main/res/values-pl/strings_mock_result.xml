@@ -7,9 +7,9 @@
   "mock_result_answers": "48fac7507934e3ac589abf854394ab0ec86d20bd9ed2cea677820ae1ba263619",
   "mock_result_below_minimum": "5fa4a9e55279d856001e4373029ec3b74238779403bc4cc28d0c92077af90772",
   "mock_result_below_minimum_named": "9607ab7e64e7e622108bad70461f43363c95b7038343a0446a4c7963cd604a8c",
-  "mock_result_below_minimum_percent": "7caf4328e6934e5cfc902036e283a62ba8692c6954dbc25cf1b92f45a2afdf64",
-  "mock_result_below_minimum_points": "3045cda4be9bfaff7c7dce0e0e8ecdd441f45c566c2b709d50df3414a5f3ab6d",
-  "mock_result_below_minimum_points_decimal": "95554367de5a418f6ce369ae91e8ca684325fd9067513ed90c27114dff3b2716",
+  "mock_result_below_minimum_percent": "3ea84f82793320418ce3f9ea92679f2f6f673d380abbe669ebb3fa6d7112ada7",
+  "mock_result_below_minimum_points": "4d9dc0e7ed15c5dd1f3580f8cf7ab3b28120e6325f764beabe388579e1acd411",
+  "mock_result_below_minimum_points_decimal": "37ddb9d53684fb65b87f2b0ebb627b89d0f19f87a233fe84d7485498f402da9a",
   "mock_result_below_percent": "21ed1e518fef37eef51003ac9f28feff1efaad2ae67f7b69ad51d15665c0c31e",
   "mock_result_blank": "6c566353ae7144760c0685523aad3527e0f756cdb56acf2edecf62dcbf3b2fb9",
   "mock_result_blank_gain": "d6a5003cf41d2c443a224dbeac4867f0d274536e428b8990833e1be6f3279603",
@@ -257,16 +257,16 @@
     <!-- The result's headline when one test missed the least it needs. %1$s is the test, such as "P1". -->
     <string name="mock_result_below_minimum_named">%1$s: poniżej minimum</string>
     <!-- Under mock_result_below_minimum. %1$s is the score as a percent of the points, such as "38%"; %2$s is the percent needed, such as "40%". -->
-    <string name="mock_result_below_minimum_percent">Wynik to %1$s. Wymagane minimum to %2$s.</string>
+    <string name="mock_result_below_minimum_percent">Twój wynik to %1$s. Minimum wynosi %2$s.</string>
     <!-- Under mock_result_below_minimum. %1$s is how many points are missing, possibly a decimal; %2$s is the points needed. -->
     <plurals name="mock_result_below_minimum_points">
-        <item quantity="one">To o %1$s punkt mniej niż wymagane minimum: %2$s.</item>
-        <item quantity="few">To o %1$s punkty mniej niż wymagane minimum: %2$s.</item>
-        <item quantity="many">To o %1$s punktów mniej niż wymagane minimum: %2$s.</item>
-        <item quantity="other">To o %1$s punktu mniej niż wymagane minimum: %2$s.</item>
+        <item quantity="one">Masz o %1$s punkt za mało do minimum, %2$s.</item>
+        <item quantity="few">Masz o %1$s punkty za mało do minimum, %2$s.</item>
+        <item quantity="many">Masz o %1$s punktów za mało do minimum, %2$s.</item>
+        <item quantity="other">Masz o %1$s punktu za mało do minimum, %2$s.</item>
     </plurals>
     <!-- mock_result_below_minimum_points in the form a language gives decimal numbers (Polish "1,5 punktu"). -->
-    <string name="mock_result_below_minimum_points_decimal">To o %1$s punktu mniej niż wymagane minimum: %2$s.</string>
+    <string name="mock_result_below_minimum_points_decimal">Masz o %1$s punktu za mało do minimum, %2$s.</string>
     <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
     <string name="mock_result_projected_total">Około %1$s z %2$s punktów za cały egzamin.</string>
     <!-- A minimum this mock couldn't check. %1$s is the percent of their points the objective tests need together, such as "50%". -->

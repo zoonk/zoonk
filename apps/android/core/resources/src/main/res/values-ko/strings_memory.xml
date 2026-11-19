@@ -16,7 +16,7 @@
   "memory_edit_description": "cee7bd9a231a7d919ca0ed0409c2c2a2eacddcdf87135d6e3c284afd3a898b2a",
   "memory_edit_label": "ccf8d15d738496a95c1e289f19511be8e8c9d6c19f59221bfccae88df52b8de3",
   "memory_edit_title": "0dce69a0faef5f938930498aca9c3c6c6c7ecb38e22831b3d08c44b9e807280a",
-  "memory_empty": "9c645672ca22f67f5ed68be3044672fd214bb7aa3157cd860b843b361c1fb253",
+  "memory_empty": "dca7b86b8e8dfbe32e40f0c999d02024eb0936d1d908baaba84e4ba06875c693",
   "memory_fact_options": "4b353083286056e1844199aa1f77e3c66bc03225736c7a58e9f5f06c80b4ed69",
   "memory_fact_source": "8b95152edecc6dbceeb44b558d941dddf6b2e375276a4eab1ef49281b68097c6",
   "memory_save_failed": "a23fdb675c53837e2774b36b148092a8fd09c3323777e78c44c87348bf29d1b0",
@@ -32,13 +32,13 @@
   "memory_updated": "e43d811b41b1c96275a8b20b96b47580069e0fa10bb49301f152cbb026687053",
   "memory_updated_more": "80d0da63e9f33e9646a7880960600015277717b141669a362fcde9637702687d",
   "memory_use": "3ffead7c761f1704ad003c12bd057f7a0564ae47e18238e3764703bd1a215372",
-  "memory_use_description": "29a266a4e871998bdd8563df382d19caabc6c257d946f64f174edbf09270b857"
+  "memory_use_description": "3f5cc03473c5970e933f90a09e031c0e596fa3642a17f0ea9ccfb2d4fd532537"
 }
 -->
 <resources>
     <string name="memory_description">내 생활에 맞는 예시와 계획을 제공하기 위해 Zoonk가 기억하는 내용이에요.</string>
     <string name="memory_use">메모리 사용</string>
-    <string name="memory_empty">아직 메모가 없어요. 학습하고 대화하다 보면 여기에 메모가 표시돼요.</string>
+    <string name="memory_empty">아직 아무것도 없어요. 공부하고 대화하면서 알려 주신 내용이 여기에 표시돼요.</string>
     <string name="memory_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <string name="memory_category_goals">목표</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
@@ -75,5 +75,5 @@
     <string name="memory_undo_failed">그사이 내용이 바뀌어서 되돌릴 수 없어요.</string>
     <string name="memory_undo_retry">되돌리지 못했어요. 다시 시도해 보세요.</string>
     <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
-    <string name="memory_use_description">나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 %1$s와(과)의 대화</string>
+    <string name="memory_use_description">개인 맞춤 예시, 한 주에 맞는 계획, 공유한 내용을 기억하는 %1$s와의 대화</string>
 </resources>

@@ -113,14 +113,14 @@
     <!-- The result's headline when one test missed the least it needs. %1$s is the test, such as "P1". -->
     <string name="mock_result_below_minimum_named">Below the minimum in %1$s</string>
     <!-- Under mock_result_below_minimum. %1$s is the score as a percent of the points, such as "38%"; %2$s is the percent needed, such as "40%". -->
-    <string name="mock_result_below_minimum_percent">At %1$s. It needs %2$s.</string>
+    <string name="mock_result_below_minimum_percent">You scored %1$s. The minimum is %2$s.</string>
     <!-- Under mock_result_below_minimum. %1$s is how many points are missing, possibly a decimal; %2$s is the points needed. -->
     <plurals name="mock_result_below_minimum_points">
-        <item quantity="one">%1$s point short of the %2$s it needs.</item>
-        <item quantity="other">%1$s points short of the %2$s it needs.</item>
+        <item quantity="one">%1$s point short of the minimum, %2$s.</item>
+        <item quantity="other">%1$s points short of the minimum, %2$s.</item>
     </plurals>
     <!-- mock_result_below_minimum_points in the form a language gives decimal numbers (Polish "1,5 punktu"). -->
-    <string name="mock_result_below_minimum_points_decimal">%1$s points short of the %2$s it needs.</string>
+    <string name="mock_result_below_minimum_points_decimal">%1$s points short of the minimum, %2$s.</string>
     <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
     <string name="mock_result_projected_total">About %1$s of %2$s points on the whole exam.</string>
     <!-- A minimum this mock couldn't check. %1$s is the percent of their points the objective tests need together, such as "50%". -->

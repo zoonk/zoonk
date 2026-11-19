@@ -14,13 +14,13 @@
   "limit_lessons_day": "06b8853e455eecaa9aafab37f3b8787f1741f4f7f7374de1ca0337e6f1b5e7d0",
   "limit_lessons_free": "2611d86890e0b56621b5879ce455ad0889324f9bbad0c7faf81a24f65293d9ae",
   "limit_lessons_guest": "0e213afea5d37c0bacc8b245f4891701f28f957508a160a0c2bbb45a7066cdb4",
-  "limit_map_enough_on": "9164c0a381300b249d701615cf008c9377d865e03d7021e6f3f1ca1e35cbe35a",
-  "limit_map_enough_today": "1df8b2421d1c578666afb30de829058ac4a2915f2ed5e9d3f2594bf6ba7a5050",
-  "limit_map_enough_tomorrow": "5ea8b25ca510a8c0683a15710623559b7e58d4bcdb16c6c44674dd5dfa2ca698",
+  "limit_map_enough_on": "f487436e3a2a33b5c02f85894b6eaf78bad35774df5d033dbed85608a1556853",
+  "limit_map_enough_today": "e71b6bde316263e5a77c219a43875ff14692ff2aef5e24379149e1d4660e79b8",
+  "limit_map_enough_tomorrow": "c64ecc549062c01e59f57a31a693654c50a34b4462ab65ef0e616ce4b9829e0c",
   "limit_map_needs_subscription": "89d7a2019e358e3bc4defec66c0d11f071f36e878fc15b0df3623e368856cf5d",
-  "limit_map_needs_subscription_line": "7177c94bc85c6754809a9ae408947a171e70057a1b3fcec817287db26ee5e67e",
+  "limit_map_needs_subscription_line": "a46cddc1dbeb635ef45224547540186e38d482d9e714a4ee72f099806211b30d",
   "limit_map_not_enough": "bc1bc8b61e9e3dd170240352762748103e5c945679285120873a3fd30973c6bc",
-  "limit_map_ready": "2432ce119febd23096a146694717dad1fb0cd579cb567cf1a5aa06f4c95eb2ee",
+  "limit_map_ready": "66baaa2ffdbc2b45176563b4501b03f0d89105b43dd9bf5992c9bf0afbc100e3",
   "limit_messages_day": "22c48858eb4cf46632fa059e7269a35ca9754c2590449f12c9b8f69b9337ea94",
   "limit_messages_used": "b21d9f33874c365c128cbbefcb81e7147d87633153370bc8450730e045acd67a",
   "limit_mind_maps_day": "9b5d275d455337c87bffd26a88d3fee98b18b4b270f7213d64de83b4d123c72e",
@@ -33,9 +33,9 @@
   "limit_more_on_or_subscribe": "28b88a3bf4af5b79c5162743d68342d90ffcb41afee49186af307898ed2ccd56",
   "limit_more_tomorrow": "d159b177ab0afe700095ab2d107b1e9eb3316911058911a4e33d734ca3fafaaa",
   "limit_more_tomorrow_or_subscribe": "800f614c215520cb5dd5d971600cbea553aec7cc643331789d405cef4b0f2a2a",
-  "limit_outlines_day": "cf5a9cb6403a6305ef27b25a49d41b5a8be97e79bf2786a9fd0c4818743b0f30",
-  "limit_outlines_guest": "6abe592fa1573f55264da1e599b23826a10105a6e1a2c74e946cf2efa84d75e2",
-  "limit_outlines_used": "f06bf7c64093242ecafab494911c53a2dcd1aa505551387513f35780ac910079",
+  "limit_outlines_day": "b7a4981c8128e76f85fe28f1d1b42dde84aeadc5b585e3aaf4ebfc33816a727d",
+  "limit_outlines_guest": "b43d03a349d7168efca3c5aac51cf33e2798e073d7f9219a6647dd1017828494",
+  "limit_outlines_used": "ad95c7581f76f2a75f446d7f7410072001f16c25794bdc0068e1b2163eff8282",
   "limit_questions_day": "ff9145b733227cab48ed4d4f191353966d85048d2482e65ef4741755761931cd",
   "limit_questions_used": "f8633e8d4c1c8ac02e9ce03c723e743f004f16966ab53167e209bf9d7bf10cc2",
   "limit_quick_explanations_used": "a605adf281c9a55eedea8a23c42d10f172f3073980ebf3fc45f8b39d0d1c5d64",
@@ -90,19 +90,19 @@
     <string name="limit_lesson_ready">Tu próxima lección gratis está lista</string>
     <string name="limit_map_not_enough">Aún no tienes suficientes lecciones gratis para este mapa</string>
     <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
-    <string name="limit_map_enough_today">Tendrás suficientes más tarde hoy, o puedes suscribirte para crearlo ahora.</string>
+    <string name="limit_map_enough_today">Tendrás suficientes lecciones más tarde hoy, o suscríbete para crear el mapa ahora.</string>
     <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
-    <string name="limit_map_enough_tomorrow">Tendrás suficientes mañana, o puedes suscribirte para crearlo ahora.</string>
+    <string name="limit_map_enough_tomorrow">Tendrás suficientes lecciones mañana, o suscríbete para crear el mapa ahora.</string>
     <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_map_enough_on">Tendrás suficientes el %1$s, o puedes suscribirte para crearlo ahora.</string>
+    <string name="limit_map_enough_on">Tendrás suficientes lecciones el %1$s, o suscríbete para crear el mapa ahora.</string>
     <string name="limit_map_ready">Ya puedes crear este mapa</string>
     <string name="limit_map_needs_subscription">Este mapa necesita una suscripción</string>
     <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
-    <string name="limit_map_needs_subscription_line">Al crearlo, se preparan más lecciones de las que incluye el plan gratis.</string>
+    <string name="limit_map_needs_subscription_line">Este capítulo tiene más lecciones de las que puedes empezar gratis.</string>
     <string name="limit_mind_maps_guest">No hay más mapas mentales sin una cuenta</string>
     <string name="limit_mind_maps_day">No te quedan mapas mentales nuevos hoy</string>
     <string name="limit_mind_maps_used">Alcanzaste tu límite de mapas mentales</string>
-    <string name="limit_outlines_guest">No hay más vistas previas sin una cuenta</string>
-    <string name="limit_outlines_day">No te quedan vistas previas hoy</string>
-    <string name="limit_outlines_used">Alcanzaste tu límite de vistas previas</string>
+    <string name="limit_outlines_guest">No hay más lecciones anticipadas sin una cuenta</string>
+    <string name="limit_outlines_day">No hay más lecciones anticipadas hoy</string>
+    <string name="limit_outlines_used">Ya usaste tus lecciones anticipadas</string>
 </resources>

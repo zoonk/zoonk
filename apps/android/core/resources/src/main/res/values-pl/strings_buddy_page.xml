@@ -8,7 +8,7 @@
   "buddy_page_energy_named": "a4fe232c86987aacdf4b5a8460110f90dbd92d4371a25f1d5f172bd6ecd085c1",
   "buddy_page_energy_napping": "97e4847d185f8f242090fb26939242219970ef71052244927438d9911f5c80c0",
   "buddy_page_energy_starts": "faa0b80993c0622a7da2bac9b3f6cee3cfd946370c780287acfe394eb6f3d875",
-  "buddy_page_energy_study": "1ee7cee58cf88b18e30301819bb9265704be516d8a743ee51bf43e2ac1a00817",
+  "buddy_page_energy_study": "50e3b6e28c8885f3dac19bf05dfb64ae3613e995e5d0ef3c057bb26cb5f342a8",
   "buddy_page_first_anytime": "1b91cb9a4d7e6dcf482266a8550c602836c5db7711f134701f8a804a469ab7e8",
   "buddy_page_first_ask": "15c6e5d8ded5021aebcac74af5fd29e8dd7462de47c67960374539efe3953267",
   "buddy_page_first_call": "8c044e3a55d30b9bfa9e1454d04bfe9624c74babec296fad36f7806aaf57293f",
@@ -76,7 +76,7 @@
     <string name="buddy_page_energy_named">Energia: %1$s</string>
     <string name="buddy_page_energy_starts">Pojawi się po pierwszej lekcji.</string>
     <string name="buddy_page_energy_napping">%1$s drzemie. Obudzi się, gdy zaczniesz naukę.</string>
-    <string name="buddy_page_energy_study">Poucz się dziś, żeby utrzymać jej poziom.</string>
+    <string name="buddy_page_energy_study">Ucz się dziś, aby Energia nie spadła.</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d z %2$d misji</item>

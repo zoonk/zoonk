@@ -16,7 +16,7 @@
   "memory_edit_description": "5fbab10c1bf93d1d394c8ca6f7d8908a40859b144b635e2288f4734b4d829a81",
   "memory_edit_label": "2bf2557377937142cfd403fefc4326dc7022988a9b80e587fdc805e6343f59ab",
   "memory_edit_title": "0dd6ca6493e3d6377259d11709706ff71e6b0045da5a66a6941d21543ab205d0",
-  "memory_empty": "b2d8caf8c81f51b0611a3400c72746000cefd4787f9158fab5e5e57caef098ff",
+  "memory_empty": "832a27ab480d416effdaae27c021f4526f5fade45d561252b87b8c133bf33f75",
   "memory_fact_options": "e5bb3c26713e462936e15834e0a30af70a07e90976ee1f2fc4fd9c763df2d0ee",
   "memory_fact_source": "2efc6248821d436441090be9ecaf1704dd03caded6cf3e0b3f39943008e4fa00",
   "memory_save_failed": "5559ecf6ba3ffb331fc7a16e9753087b5922089b178930db5dd1daa852cf158a",
@@ -32,13 +32,13 @@
   "memory_updated": "241cbd11d496f2f566b222f5f4d9ab792879b9ad2a295ed9d90cbc03e3ec0f30",
   "memory_updated_more": "9766c52994b21d4fa17999095cd9ef87766445b9c41bbc9f6867f0a4503c243d",
   "memory_use": "f5e1bee57b5fbfaa9b4f3ff355301ac7d374dece2d091e54060e6a9b02c83d60",
-  "memory_use_description": "e8c009a43760c0efc91e8c64a835b395e2f7b5656777cb95111874986c2c0666"
+  "memory_use_description": "b366a1003cda30bf801eed1f9b27353f35c96273a1f614361eb26ddc5e58144e"
 }
 -->
 <resources>
     <string name="memory_description">生活に合った例や学習計画を用意するために、Zoonkが覚えている情報です。</string>
     <string name="memory_use">メモリを使う</string>
-    <string name="memory_empty">まだメモはありません。学習やチャットをすると、ここにメモが表示されます。</string>
+    <string name="memory_empty">まだ何もありません。学習したり会話したりする中で教えたことが、ここに表示されます。</string>
     <string name="memory_save_failed">保存できませんでした。もう一度お試しください。</string>
     <string name="memory_category_goals">目標</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
@@ -75,5 +75,5 @@
     <string name="memory_undo_failed">取り消せませんでした。その後、内容が変更されています。</string>
     <string name="memory_undo_retry">取り消せませんでした。もう一度お試しください。</string>
     <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
-    <string name="memory_use_description">身近な例、1週間の予定に合った学習計画、近況を踏まえた%1$sとの会話</string>
+    <string name="memory_use_description">共有したことを覚えている%1$sとの会話や、週に合わせた学習計画、個人に合わせた例</string>
 </resources>

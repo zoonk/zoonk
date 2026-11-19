@@ -15,7 +15,7 @@
   "subscription_answer_free_lessons": "093befcd84dd9543fd460ce646fcbd02710eee8f97776de805c251b57152d827",
   "subscription_answer_free_material": "aef5f73c212bb647dc1c59776e557008ec5b9a8e233d35a1862b56093ee4056c",
   "subscription_answer_refund": "8a3d390e17572bfc9d5ec36b58ab94f63856e9a6412707abba4a2ede8956c734",
-  "subscription_answer_unlimited": "2543e51d805fbeac4f2fdd6780d78b9cbe0c8f1838fcb35f2d7ad4e4b850781a",
+  "subscription_answer_unlimited": "beb14dcd063f15ab667b2b31b0876e496f5fc783ffd4307739b0da33d328190a",
   "subscription_benefit_buddy": "02fe0c9b222a68f7af8816efb57d1b436030bfdcf783db1ac748b57df7bb05a2",
   "subscription_benefit_calls": "ac3b2c9d481b8bc0f3ab23a28153ba69210d91726fa80e5f074a9d17f3d01a26",
   "subscription_benefit_certificates": "327755911895a6d3b1d585592ff3707193373a9b6238f8de49ce578ef108a12c",
@@ -26,8 +26,8 @@
   "subscription_cancel_anytime": "01286831343c40949bbf7a456c5f87613dc7d964751f59b9dfec6c177a87dd59",
   "subscription_contact_support": "8064f05f931c772f3742264a14010577184faa0e6d2b2463b73ef442933f4e8d",
   "subscription_current_plan": "88443b10dadd6a449d5632a55d43abb90aed882f672aa0c173fbab9ec993bea4",
-  "subscription_deletion_app_store": "0dd35d74d41343e97c88fb43d95a90bf5f4b3f067c8e0531dc092f23a9931500",
-  "subscription_deletion_google_play": "207057586605aa8f6c3a811c53490b7eb93b22b60cd2192899f4e1e58faa2401",
+  "subscription_deletion_app_store": "aff40d48d948e9a9cd36466344580dbbcabbfc07f1f5ea473b3d11b3b0ed3ee9",
+  "subscription_deletion_google_play": "467fd3b734e52bc93b0292a89b7fbbec424f4c1138a0109cdfa0c470f0572f54",
   "subscription_deletion_notice": "7d33a8958869c99d2201da4350e57bbf4f86bd59e8f4396ebf95521be81ae4d9",
   "subscription_ending": "fc73a34ebf2fa01292f51f42d4bc8a10f2550971da534f84eb101709f1ca1625",
   "subscription_ends_on": "aae6ae9dc74c62b9a69049e2d1fbd4e8ed99fed7bd6887c313ede2f24f6b2066",
@@ -93,9 +93,9 @@
     <string name="subscription_renewal_failed">Son yenileme ödemen alınamadı.</string>
     <string name="subscription_deletion_notice">Hesabını sildiğinde Plus hemen sona erer.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
-    <string name="subscription_deletion_app_store">App Store’dan aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder.</string>
+    <string name="subscription_deletion_app_store">Hesabını silmek, App Store üzerinden alınan Plus aboneliğini iptal etmez. İptal işlemini App Store’dan yap.</string>
     <!-- The same, for Plus bought in Google Play. -->
-    <string name="subscription_deletion_google_play">Google Play’den aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder.</string>
+    <string name="subscription_deletion_google_play">Hesabını silmek, Google Play üzerinden alınan Plus aboneliğini iptal etmez. İptal işlemini Google Play’den yap.</string>
     <string name="subscription_free">Ücretsiz</string>
     <string name="subscription_monthly">Aylık</string>
     <string name="subscription_yearly">Yıllık</string>
@@ -181,7 +181,7 @@
     </plurals>
     <string name="subscription_answer_free_calls">Konuşma pratiği için Plus’tan daha az sohbet (sınavların konuşma bölümleri Plus’a dahildir)</string>
     <string name="subscription_question_unlimited">Plus gerçekten sınırsız mı?</string>
-    <string name="subscription_answer_unlimited">Neredeyse. Dersler, hedefler ve ders arkadaşın için sınırlar yalnızca botları ve otomatik araçları engellemek için var, öğrenmeni kısıtlamak için değil. Konuşma pratiği sohbetlerinin günlük ve aylık sınırları var; Plus’ta bu sınırlar daha yüksek.</string>
+    <string name="subscription_answer_unlimited">Normal çalışma için evet. Dersler, hedefler ve yapay zekâ ders arkadaşı yalnızca botları ve otomatik araçları engelleyen sınırlara sahip. Konuşma pratiği sohbetlerinin günlük ve aylık sınırları var; bu sınırlar Ücretsiz pakettekinden daha yüksek.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Adil kullanım politikamızı oku</string>
     <string name="subscription_question_cancel">İptal edersem ne olur?</string>

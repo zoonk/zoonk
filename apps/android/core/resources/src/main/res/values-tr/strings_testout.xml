@@ -4,7 +4,7 @@
   "testout_already_skipped": "6df0bb86a5e2b2c6b702c32ef57a81bf1cb63559752816e9b2e785682cfc8ad2",
   "testout_aside_title": "679ffc0424849f722bfd988aca814e7b94c004f8577986a38c9c2903660ad173",
   "testout_continue": "442e7f0243316ee148c7945767569e1e4c456911d8fc623f699aa94d8f29a1f9",
-  "testout_intro_detail": "3cfbda3a6641e27d4f64d6b5c24ed4596200de8e60f0a3d8d085479357c75174",
+  "testout_intro_detail": "97e168893e650a13a0dc77c103a5c8362ff28201a75c5ee1a731831daeae6e14",
   "testout_intro_title": "70ad76e57738e45ae67b9be85ff890bb5cef1c7cd516927859d519c3b2a41cf7",
   "testout_lessons_back": "9477a3ef9b0984de2e7dc69f00c08a24fed4c8916c7cb9bc3b4a46a88a638251",
   "testout_lessons_left": "153a3e035fd830fea9e767036d77aa004cb7adb19afe2657ab70e113ab744aa2",
@@ -26,7 +26,7 @@
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">Test: %1$s</string>
     <string name="testout_intro_title">Bunu zaten biliyor musun?</string>
-    <string name="testout_intro_detail">Bu üniteyle ilgili birkaç soru var. Sonuçlarını en sonda göreceksin. Başarılı olursan planın zaten bildiklerini atlar.</string>
+    <string name="testout_intro_detail">Bu üniteyle ilgili birkaç soru. Soruları iyi yanıtlarsan planın zaten bildiğin konuları planından çıkarır.</string>
     <string name="testout_start">Testi başlat</string>
     <string name="testout_writing">Sorularını hazırlıyoruz</string>
     <string name="testout_writing_questions">Bu üniteyle ilgili sorular hazırlıyoruz</string>

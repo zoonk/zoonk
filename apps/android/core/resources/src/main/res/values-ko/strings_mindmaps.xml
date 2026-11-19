@@ -26,7 +26,7 @@
   "mindmaps_in_short": "f4ec32fee0f215d1d091d939873ba11c4d5c343440cfdcb6ed6fbee8fe7ee184",
   "mindmaps_lesson_map": "753240e94f4b610f1b961667775a9c73f49b5e8ecccf789e636eafa62cdd6712",
   "mindmaps_lesson_maps": "a710a21552e39fcdfbc4bc3ffede3e87167b9eabb93c18272b34a4f87fe64e5c",
-  "mindmaps_lessons_count_free": "4cfc9b6154f265c77b3d6a1eae3decb5c5457da84e203cd875092eb7d5f3b3ec",
+  "mindmaps_lessons_count_free": "438032d404a722a0c543903dbabe6747ee227e0525e149c3f6fd80f0e780eefa",
   "mindmaps_lessons_empty": "e119def5d208f98427c38aa995e61f9a3ceff7bf81b358c17c7fcc815e7e6162",
   "mindmaps_lessons_first_free": "d4f4f4f00b1e80e5d049c551c0433454307fccdd9fd72e04a513d8b3cc863aaa",
   "mindmaps_lessons_first_plus": "23e610d87d4fdf9970d8e1a2d5125b1e09ca7567fdec374928a481e38ec2fae0",
@@ -114,7 +114,7 @@
         <item quantity="other">만들 레슨 %1$s개</item>
     </plurals>
     <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
-    <string name="mindmaps_lessons_count_free">레슨을 만들면 무료 레슨 한도에서 차감돼요.</string>
+    <string name="mindmaps_lessons_count_free">맵을 만들면 무료 레슨 이용 횟수에 포함돼요.</string>
     <string name="mindmaps_writing_lessons">레슨, 마인드맵 순서로 만들고 있어요…</string>
     <string name="mindmaps_writing_lessons_wait">몇 분 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요.</string>
     <string name="mindmaps_drawing">마인드맵을 그리고 있어요…</string>
@@ -209,8 +209,12 @@
     <string name="mindmaps_zoom">확대하기</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">이 마인드맵은 더 이상 볼 수 없어요.</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
     <string name="mindmaps_shown_as">마인드맵 보기 방식</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
     <string name="mindmaps_shown_map">맵</string>
+    <!-- The study screen's switch: shows a map as text. -->
     <string name="mindmaps_shown_text">글</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
     <string name="mindmaps_zoom_hint">맵을 탭하면 확대돼요</string>
 </resources>

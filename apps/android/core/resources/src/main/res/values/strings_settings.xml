@@ -24,7 +24,7 @@
     <string name="settings_cancel">Cancel</string>
     <string name="settings_delete_code_title">Confirm it\'s you</string>
     <!-- %1$s is the account's email address. -->
-    <string name="settings_delete_code_description">For your safety, enter the code we sent to %1$s.</string>
+    <string name="settings_delete_code_description">For your security, enter the code we sent to %1$s.</string>
     <string name="settings_delete_verify">Verify and delete</string>
     <string name="settings_delete_failed">We couldn\'t delete your account. Try again or email hello@zoonk.com.</string>
     <string name="settings_account_deleted">Your account was deleted.</string>

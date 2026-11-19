@@ -204,7 +204,7 @@ class FreeLessonGateTest {
         }
 
         rule.onNodeWithText("This map needs a subscription").assertExists()
-        rule.onNodeWithText("You can make this map now").assertExists()
+        rule.onNodeWithText("You can create this map now").assertExists()
         rule.onNodeWithText("You've used your free lessons").assertDoesNotExist()
     }
 }

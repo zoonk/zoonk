@@ -4,7 +4,7 @@
   "testout_already_skipped": "d77908f39cf1f724e6dfcd1bc9908c95832d64f5f36a36354d32912f5eb90a29",
   "testout_aside_title": "c0e46012d40d0346689be1ecd8bd51e20120a153406475a1b37d35693c8f34a9",
   "testout_continue": "f54a2459e4c5ef5cbd4c0809f41b2362085c9a556540d6e0b90ab567e7dac5ce",
-  "testout_intro_detail": "ab7f29687db0950ae019137a2b663905d88edd558d48e28adabd4328cf47e796",
+  "testout_intro_detail": "e73bf192924542073d4309803ea0b27b21db56685c231e6da4d2d68a1f7a6688",
   "testout_intro_title": "81d66218093c5cc4815423a4ff271dfbfe50cd48170f13acda60149382d0f062",
   "testout_lessons_back": "cbb3d53a371d07cc128243cab45b8262d5aab6ba1475f42add76f9dcb42a27c3",
   "testout_lessons_left": "98a1143c1dd740b1f66dd5043b634720bbaf8f6c8501f8e7c2e28b67c328c6d7",
@@ -26,7 +26,7 @@
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">テスト：%1$s</string>
     <string name="testout_intro_title">すでに知っている内容ですか？</string>
-    <string name="testout_intro_detail">この章の問題にいくつか答えると、最後に結果が表示されます。十分に正解できれば、すでに知っている内容は学習計画でスキップされます。</string>
+    <string name="testout_intro_detail">この章の問題にいくつか答えます。よくできると、すでに知っている内容は学習計画からスキップされます。</string>
     <string name="testout_start">テストを始める</string>
     <string name="testout_writing">問題を作成しています</string>
     <string name="testout_writing_questions">この章の問題を作成しています</string>

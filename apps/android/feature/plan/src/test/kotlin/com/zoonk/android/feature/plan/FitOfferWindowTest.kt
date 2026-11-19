@@ -47,7 +47,7 @@ import org.robolectric.annotation.Config
 import java.io.IOException
 
 /**
- * Add to my plan on a later day's fit offer checks today's numbers first, from the card that asked, which shows at every
+ * Add to plan on a later day's fit offer checks today's numbers first, from the card that asked, which shows at every
  * width: recreated, it adds the lessons once or says the check failed; left, it adds and says nothing.
  */
 @RunWith(AndroidJUnit4::class)
@@ -65,7 +65,7 @@ class FitOfferWindowTest {
     fun aCheckOutWhileThePanelIsRecreatedAddsTheLessonsOnce() {
         val (held, api) = launchAFitOffer(wide = true)
 
-        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNodeWithText("Add to plan").performClick()
         scenario.recreate()
         held.complete(Unit)
         rule.waitForIdle()
@@ -77,7 +77,7 @@ class FitOfferWindowTest {
     fun aCheckOutWhileThePhoneCardIsRecreatedAddsTheLessonsOnce() {
         val (held, api) = launchAFitOffer(wide = false)
 
-        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNodeWithText("Add to plan").performClick()
         scenario.recreate()
         held.complete(Unit)
         rule.waitForIdle()
@@ -89,7 +89,7 @@ class FitOfferWindowTest {
     fun aCheckAskedOnAWideWindowThatAnswersAfterAPhoneRecreationAddsTheLessonsOnce() {
         val (held, api) = launchAFitOffer(wide = true)
 
-        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNodeWithText("Add to plan").performClick()
         RuntimeEnvironment.setQualifiers("w411dp-h891dp")
         scenario.recreate()
         rule.waitForIdle()
@@ -103,7 +103,7 @@ class FitOfferWindowTest {
     fun aCheckFromThePanelAddsNothingWhenARefreshReplacesItsSuggestion() {
         val (held, api) = launchAFitOffer(wide = true)
 
-        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNodeWithText("Add to plan").performClick()
         rule.runOnIdle {
             FitOfferTest.page =
                 FitOfferTest.page!!.copy(
@@ -111,7 +111,7 @@ class FitOfferWindowTest {
                 )
         }
         rule.onNodeWithText("More lessons than days left").assertExists()
-        rule.onNodeWithText("Add to my plan").assertDoesNotExist()
+        rule.onNodeWithText("Add to plan").assertDoesNotExist()
         held.complete(Unit)
         rule.waitForIdle()
 
@@ -123,7 +123,7 @@ class FitOfferWindowTest {
     fun aCheckFromThePanelAddsNothingWhenThePlanChangesButItsSuggestionStays() {
         val (held, api) = launchAFitOffer(wide = true)
 
-        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNodeWithText("Add to plan").performClick()
         rule.runOnIdle {
             val current = FitOfferTest.page!!
             FitOfferTest.page = current.copy(plan = current.plan.copy(schedule = current.plan.schedule.copy(dailyMinutes = 30)))
@@ -134,11 +134,11 @@ class FitOfferWindowTest {
 
         assertEquals(emptyList<List<PlanOp>>(), api.changes)
         assertEquals(PlanPreviewState.Idle, FitOfferTest.viewModel.slotPreview.value)
-        rule.onNodeWithText("Add to my plan").assertIsEnabled()
+        rule.onNodeWithText("Add to plan").assertIsEnabled()
 
         val next = CompletableDeferred<Unit>()
         api.previewGate = next
-        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNodeWithText("Add to plan").performClick()
         rule.onNode(hasStateDescription("Checking what changes…")).assertExists()
         next.complete(Unit)
         rule.waitForIdle()
@@ -150,7 +150,7 @@ class FitOfferWindowTest {
     fun anUnchangedPlanRefreshKeepsTheFitCheck() {
         val (held, api) = launchAFitOffer(wide = true)
 
-        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNodeWithText("Add to plan").performClick()
         rule.runOnIdle {
             val current = FitOfferTest.page!!
             FitOfferTest.page = current.copy(plan = current.plan.copy())
@@ -166,7 +166,7 @@ class FitOfferWindowTest {
     fun aCheckThatFailsWhileThePanelIsRecreatedSaysSo() {
         val (held, api) = launchAFitOffer(wide = true)
 
-        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNodeWithText("Add to plan").performClick()
         scenario.recreate()
         held.completeExceptionally(IOException("offline"))
         rule.waitForIdle()
@@ -179,7 +179,7 @@ class FitOfferWindowTest {
     fun aCheckThatFailsAfterTheLearnerLeftThePlanSaysNothingOnTheirReturn() {
         val (held, api) = launchAFitOffer(wide = true)
 
-        rule.onNodeWithText("Add to my plan").performClick()
+        rule.onNodeWithText("Add to plan").performClick()
         FitOfferTest.visible = false
         rule.waitForIdle()
         held.completeExceptionally(IOException("offline"))

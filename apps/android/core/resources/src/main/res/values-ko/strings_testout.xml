@@ -4,7 +4,7 @@
   "testout_already_skipped": "25ec930102d744e5229d0d8e271e432c369563945e391dc07a0d0c9adc0e51a4",
   "testout_aside_title": "a9af4f260e456d338d46e917c6e050fbde0d2efc73a40004f2b31f6231720dab",
   "testout_continue": "3cd74b462dc6f90461968b802612ab6eeef2e1a5fa3e6fa91842877cef128c16",
-  "testout_intro_detail": "cc04ed1937360ef55622505c044dc8e51fae20700d4a607936439814e7763368",
+  "testout_intro_detail": "125fac85cd2cf6ace551ef305635ba990cf88e8a32c69b7e28e875216e9266e1",
   "testout_intro_title": "abc671b2b9457ec40d882f83f1805112649de7cdc8d4db8d1d6bde78bdefb57c",
   "testout_lessons_back": "80dc28f14f39f859e343d587394fb7b1365b8433eb18efa66af9323784bc0831",
   "testout_lessons_left": "c149c9136ffb7f3dff070cd2347b1a27f88ea1ce75518d4d7d854ec6df75df55",
@@ -26,7 +26,7 @@
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">테스트: %1$s</string>
     <string name="testout_intro_title">이미 아는 내용인가요?</string>
-    <string name="testout_intro_detail">이 챕터의 문제를 몇 개 풀면 마지막에 결과를 볼 수 있어요. 잘 풀면 이미 아는 내용은 계획에서 건너뛰게 돼요.</string>
+    <string name="testout_intro_detail">이 챕터에 관한 문제 몇 개예요. 잘 풀면 이미 아는 내용은 계획에서 건너뛰어요.</string>
     <string name="testout_start">테스트 시작하기</string>
     <string name="testout_writing">문제를 만들고 있어요</string>
     <string name="testout_writing_questions">이 챕터의 문제를 만들고 있어요</string>

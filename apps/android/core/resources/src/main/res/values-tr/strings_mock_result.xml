@@ -7,9 +7,9 @@
   "mock_result_answers": "b4ac3afaf2894ad82da294381edd44a65ea8bd3bc2730961f68096cd7c632bf9",
   "mock_result_below_minimum": "b642eed8b8ae077a496313257db227848f16a7b7d32c45e383fb3b6fff344482",
   "mock_result_below_minimum_named": "80b8ab710d7b55a65301c352d5ce85d97208c218b0d9f82911b9b0a270c17884",
-  "mock_result_below_minimum_percent": "c86c1add7fcc0bfe2f441f53d50b04c1442ce2b67d51d9301665787e767dd9d4",
-  "mock_result_below_minimum_points": "b4ad475cbc4b53733e086c1d14689051464ad9623f1dfb93d422fc0395cc2294",
-  "mock_result_below_minimum_points_decimal": "c4318db06ffc0f07e00491a2de27f02a421655b48b6ccb9c8bd59e7f05191ede",
+  "mock_result_below_minimum_percent": "61f0b9e1e1842634fcab42af15bfdc110dd50c0dca5cf47ed7a12fe7d96f67aa",
+  "mock_result_below_minimum_points": "c4f8904c55ea4fbfb1e8fbcdddc7351c03ce0a190c78fb488b1186fc15bef9e4",
+  "mock_result_below_minimum_points_decimal": "71201c6a0c741ae65bd8a69256e984f165c77081e8a67fab5b8f35b566d1269d",
   "mock_result_below_percent": "6b2f7277eb78ffec8d796c0d7afe0ff36ca08ce117a5209fa60506f5ea845f20",
   "mock_result_blank": "6a20d73e618cb9f8be11638dc675584605cee36d678d80d27504a330d13c5c52",
   "mock_result_blank_gain": "e6fbb493c1595f183d781fff83a2389f34361b1dbc6b472bf4b3aeef4c1c0b5d",
@@ -243,14 +243,14 @@
     <!-- The result's headline when one test missed the least it needs. %1$s is the test, such as "P1". -->
     <string name="mock_result_below_minimum_named">%1$s için gereken puanın altında</string>
     <!-- Under mock_result_below_minimum. %1$s is the score as a percent of the points, such as "38%"; %2$s is the percent needed, such as "40%". -->
-    <string name="mock_result_below_minimum_percent">Sonucun %1$s. En az %2$s gerekiyor.</string>
+    <string name="mock_result_below_minimum_percent">%1$s puan aldın. Gereken en düşük puan %2$s.</string>
     <!-- Under mock_result_below_minimum. %1$s is how many points are missing, possibly a decimal; %2$s is the points needed. -->
     <plurals name="mock_result_below_minimum_points">
-        <item quantity="one">%1$s puan eksik; gereken puan %2$s.</item>
-        <item quantity="other">%1$s puan eksik; gereken puan %2$s.</item>
+        <item quantity="one">%1$s puanla gereken en düşük puanın altında kaldın: %2$s.</item>
+        <item quantity="other">%1$s puanla gereken en düşük puanın altında kaldın: %2$s.</item>
     </plurals>
     <!-- mock_result_below_minimum_points in the form a language gives decimal numbers (Polish "1,5 punktu"). -->
-    <string name="mock_result_below_minimum_points_decimal">%1$s puan eksik; gereken puan %2$s.</string>
+    <string name="mock_result_below_minimum_points_decimal">%1$s puanla gereken en düşük puanın altında kaldın: %2$s.</string>
     <!-- A part of the exam's mock, projected onto the whole exam. %1$s is the projected points; %2$s the exam's most points. -->
     <string name="mock_result_projected_total">Sınavın tamamı için tahmini puanın %1$s; alınabilecek en yüksek puan %2$s.</string>
     <!-- A minimum this mock couldn't check. %1$s is the percent of their points the objective tests need together, such as "50%". -->

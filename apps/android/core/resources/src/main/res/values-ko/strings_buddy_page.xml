@@ -8,7 +8,7 @@
   "buddy_page_energy_named": "6943ef5652b55f6a87e5283d5cacbeb697d02111373ac17781361cd20c98cf9f",
   "buddy_page_energy_napping": "11bfb22d9eaea27a48939684c5c61fe7a077aa66e9814f68cc2747a8c55788b6",
   "buddy_page_energy_starts": "45edaa4d35a435e9c79285cf32091bb08b922c377ab180081f4d4205cb0ec0db",
-  "buddy_page_energy_study": "904fef9ec3743f099abf42a7498a291a7fec5bdaf90d7e823a36d7a4c7312305",
+  "buddy_page_energy_study": "01fd2e28aff6649e1a6a94221532d82992ffaccff533c75524fd5072c7ef154b",
   "buddy_page_first_anytime": "c5977058e90f3e2aa7f0591a666832b61ce29aa30c86712bad996f1f52eb072c",
   "buddy_page_first_ask": "7c6ea1ad3fb341856e7bd954e994c2f7af6f7be0533dd8afefc3c7f5a0c6b624",
   "buddy_page_first_call": "767e2da8249d94a9d2ee2b765555113d420e5a949be4cf4b99ee7b421d956fca",
@@ -76,7 +76,7 @@
     <string name="buddy_page_energy_named">%1$s의 에너지</string>
     <string name="buddy_page_energy_starts">첫 레슨을 하면 시작돼요.</string>
     <string name="buddy_page_energy_napping">%1$s(이)가 낮잠을 자고 있어요. 공부해서 깨워 주세요.</string>
-    <string name="buddy_page_energy_study">오늘 공부해서 에너지를 유지해 보세요.</string>
+    <string name="buddy_page_energy_study">오늘 공부해서 Energy를 유지해 보세요.</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="other">미션 %1$d/%2$d개 완료</item>

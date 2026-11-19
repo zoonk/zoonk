@@ -79,7 +79,7 @@
   "player_getting_challenge_ready": "5e907f2507204a25988c3c176a11b829af3dff26de0f3ea2f28ee0ec7dfb0bab",
   "player_getting_lesson_ready": "112956ec179f478d6a1024a92c25fe4d56066958f40bcacede6542cf070f1629",
   "player_guess_chip": "18013673888e94e1a92fc58755564b3bb06f4c0dfd04164dce775785f9b029dd",
-  "player_guest_limit_description": "1c1087f77fdcbcbd41916476da0e4206925351256ecedd8a3b958a60fd595640",
+  "player_guest_limit_description": "9d772aef3fbc7e8b0748b11613e77c029b690270fa8c12f5802d041061c2a1d8",
   "player_guest_save_note": "c82a9e4783dcda584d54879e29ba747a43f55f588d9cbd91195ad42f09464e4e",
   "player_how_to_say": "635d20b1aa497a4fab77bf9c12543482c1983fd6cc39930c8a48ca0d51ab8337",
   "player_hyperdrive_streak": "aec071f9abf8c3a6dd78ccc1fd4a891ccad7eeb3f44205d3f439ce8d8effc3f6",
@@ -153,7 +153,7 @@
   "player_spelled": "95ecbb14ea0bb84ee21bd76c4410065d111cc6f588c36c74427a5c5428408675",
   "player_start_failed_description": "2a6121107dc2ad41325f810f298dfce66d41648b25e67174be8918ed1ab36b74",
   "player_start_failed_title": "faa0f3f06a55f142b79f948722a46a7e126cba33787ed3a2684fcf833ed0e4d5",
-  "player_start_note": "b2ff048105d132df567ecf6cb38eb42ef5e1540da71698751cddd31ad4d6bbec",
+  "player_start_note": "3c4cea4cf8ebbad8103de47c5c54ab1128be65557c4738d62380fc30a20e7ef1",
   "player_start_the_lesson": "7e0734795b41ede1da230a71384bbad6077b8056f94107e5c35cc4a9f780129d",
   "player_start_this_challenge": "4c6eaa77539fd0614b7688dbc2a916fd9a252243d3d0d567c6f2f95c0fc16888",
   "player_start_this_lesson": "d04f0090955ec91efb8cc9b4a6d069ec188822e5cd762225d9fcafd177e5ddfb",
@@ -174,7 +174,7 @@
   "player_verdict_sample_answer": "641269ba9c886df36cfdb0deda865d476698085da77949d61bcd589708e31c45",
   "player_verdict_typo": "dfdf84daa98f7ec5150d2809cc8cabcc4336c8799328f6c1adf97c6322ca72ad",
   "player_verdict_unchecked": "e255fd20c1b1a98d98bf7398b50a73d4bdc8043f7093b09054d2dee3ad2b229e",
-  "player_wait_stopped": "65d66193d37d47200630ea1d595ff13616e8f429586ab61779493805516306bc",
+  "player_wait_stopped": "79421f4a3cd5494b3a8c7dfcb300f0fd6099953d583d77d56e282f8ab4175fde",
   "player_what_we_heard": "cff3bbaf96c5e8b75b6a790b8b0813e2f092631d9a00e3a448ab92985dbaa28c",
   "player_word_heard_as": "ae4cece2b468f7df9398da465e5b154ddef648b4ebbbae7bf9bfbd043efb97cc",
   "player_word_not_heard": "603917f3edd594514065c1dd88ca2fa9579f316fa4454fee07d1c8c8059ff9d0",
@@ -298,7 +298,7 @@
     <string name="player_getting_lesson_ready">Preparando sua aula</string>
     <string name="player_getting_challenge_ready">Preparando seu desafio</string>
     <string name="player_lesson_ready">Sua aula está pronta</string>
-    <string name="player_wait_stopped">A gente não conseguiu preparar essa aula</string>
+    <string name="player_wait_stopped">A gente não conseguiu preparar esta aula</string>
     <string name="player_start_this_lesson">Começar</string>
     <string name="player_challenge_not_written_title">Este desafio ainda não está pronto</string>
     <string name="player_challenge_ready">Seu desafio está pronto</string>
@@ -332,7 +332,7 @@
     <string name="player_challenge_phase_fix_line_1">Refazendo as partes que não faziam sentido…</string>
     <string name="player_writing_note">Leva alguns minutos e continua mesmo se você sair.</string>
     <!-- Under the title of a lesson that isn't written yet, before the learner taps to get it ready. -->
-    <string name="player_start_note">O preparo leva alguns minutos.</string>
+    <string name="player_start_note">Isso leva alguns minutos.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
     <string name="player_ready_now">Para começar agora</string>
     <plurals name="player_review_ideas">
@@ -403,7 +403,7 @@
         <item quantity="many">Você abriu muitas aulas em pouco tempo. Esta aula abre sozinha em %1$s segundos.</item>
         <item quantity="other">Você abriu muitas aulas em pouco tempo. Esta aula abre sozinha em %1$s segundos.</item>
     </plurals>
-    <string name="player_guest_limit_description">Tudo o que você aprendeu vai com você.</string>
+    <string name="player_guest_limit_description">Tudo o que você aprendeu continua com você.</string>
     <string name="player_lesson_complete">Aula concluída</string>
     <string name="player_already_knew">Você já sabia</string>
     <string name="player_saving_progress">Salvando seu progresso…</string>

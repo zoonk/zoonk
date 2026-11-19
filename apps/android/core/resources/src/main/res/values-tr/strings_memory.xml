@@ -16,7 +16,7 @@
   "memory_edit_description": "99f8d0f5b381923929085b67f52c206c3126f2b10315ea4139cde52d7de5de1e",
   "memory_edit_label": "3d7b3aa1f40ed4771baab6c6df1a7bb06625a111e93a62554a290fa7a2369f1f",
   "memory_edit_title": "a7a6ea6de5ff4bf5439be8362ed03d26608d5bee78e4af09930a0efbecb8dee5",
-  "memory_empty": "663454392454c1552f166c3a96d2a6f8b502b38df0eaafd45ce4debfb7be80d0",
+  "memory_empty": "1f4c26dabe5dbc740f42fee913548224bbf49ad32258345838258b33618aae39",
   "memory_fact_options": "2e606799b894e94beefa8176ad6717d44b0af8345fcc3735ef5033b044dfc760",
   "memory_fact_source": "94b8dc4cce9ab293bbc2cfb8c0af6400a2c661f566403f9d4a71a4e9347d1a7c",
   "memory_save_failed": "2527ad064bc705744237c50baee045ec4be37b8b9bf3ab1f627d38846f194f1a",
@@ -32,13 +32,13 @@
   "memory_updated": "ac602a4e7c0f66fb45d940ed4290840dbbd81cfb3c2045d524b879e7b6c8fdff",
   "memory_updated_more": "ce709ea5b0d67159e6f0672c54e92c96f5a8d4db2338d9e1c0a806a0b247f618",
   "memory_use": "297c66e29db9f2d54b3fc26538ee0bdc4ee18b6df1a56806e7d6ef1baa921137",
-  "memory_use_description": "d3dcaaec0fa1e3846d7dea4d2d35d8388710d9b0252b489949d80f27eebc9c85"
+  "memory_use_description": "a1f970e72ac429ab248cc56a91aef39f043db5ab0b2ccc139833aa9c0e893eac"
 }
 -->
 <resources>
     <string name="memory_description">Hayatına uygun örnekler ve planlar sunmak için Zoonk’un seninle ilgili hatırladıkları.</string>
     <string name="memory_use">Belleği kullan</string>
-    <string name="memory_empty">Henüz bir şey yok. Çalıştıkça ve sohbet ettikçe notlar burada görünür.</string>
+    <string name="memory_empty">Henüz bir şey yok. Çalışıp sohbet ettikçe paylaştıkların burada görünür.</string>
     <string name="memory_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <string name="memory_category_goals">Hedefler</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
@@ -76,5 +76,5 @@
     <string name="memory_undo_failed">Geri alınamadı. Bu bilgi sonradan değişti.</string>
     <string name="memory_undo_retry">Geri alınamadı. Tekrar dene.</string>
     <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
-    <string name="memory_use_description">Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan %1$s ile sohbetler</string>
+    <string name="memory_use_description">Paylaştıklarını hatırlayan %1$s ile sohbetler, kişisel örnekler ve haftana uyan planlar</string>
 </resources>

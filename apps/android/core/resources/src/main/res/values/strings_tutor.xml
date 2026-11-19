@@ -98,7 +98,7 @@
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
     <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="tutor_offer_goal_gate">Another goal now needs a subscription</string>
+    <string name="tutor_offer_goal_gate">Starting another goal needs a subscription</string>
     <string name="tutor_offer_catalog_course">A ready course in the catalog</string>
     <string name="tutor_offer_chapter_test">Test: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">

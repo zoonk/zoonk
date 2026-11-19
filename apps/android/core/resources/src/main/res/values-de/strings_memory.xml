@@ -16,7 +16,7 @@
   "memory_edit_description": "d7c9353e8570ed1bcb22943c668a6bbd30aa217a20a0a63a5f64c73442d92437",
   "memory_edit_label": "6d3f0a5de48580ad99905a3e0a288632464dfdc81ef85a395c6e04df24609e0e",
   "memory_edit_title": "e6e857b2dc815a8a80836f685fb683818ffbbc7dd2d1d81dc1c7ec978a503d0e",
-  "memory_empty": "3b11e1372997f3bc958624fed91f077b636c466f92afa624749d3f4f2a8792f7",
+  "memory_empty": "24ce7ac34b32d14ab2e12a3186c9d009f8aad52845bb509fdee229353338cecc",
   "memory_fact_options": "77fffd63eb5bfc6451aede5794bdff4f052d6a994d274796f07e376672609a2c",
   "memory_fact_source": "6ca531d23fc8d44843ef92de75c01145d51209c102d03dc1412f5dd0ca720110",
   "memory_save_failed": "b9b722b782352903b83d0e7302a27a5cf1a730d1115291260d746edb11a6dd92",
@@ -32,13 +32,13 @@
   "memory_updated": "4a142d4a8877ed27695f5df9ae6c71375c12f184ed27451f3ba8d031849e63a2",
   "memory_updated_more": "79fddad795cb2644fe0ebbe9f34c23e3c6890a3e3e070ca14e25837e6c352552",
   "memory_use": "3a4de16106f2a8433d5a89624c8108789115571668e08e41fa237a749f4353dc",
-  "memory_use_description": "cd70216c00222e067661578435fd05359d6c304aa2d00cb41d1025cbb179db8f"
+  "memory_use_description": "078f22bbee63df6c5ceffbead185add50a6c0b95cd2506df272ea3217629421e"
 }
 -->
 <resources>
     <string name="memory_description">Was Zoonk sich merkt, um dir Beispiele und Pläne zu geben, die zu deinem Leben passen.</string>
     <string name="memory_use">Erinnerungen verwenden</string>
-    <string name="memory_empty">Noch nichts. Hier erscheinen Notizen, während du lernst und chattest.</string>
+    <string name="memory_empty">Noch nichts. Was du teilst, erscheint hier, während du lernst und chattest.</string>
     <string name="memory_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <string name="memory_category_goals">Ziele</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
@@ -76,5 +76,5 @@
     <string name="memory_undo_failed">Das ließ sich nicht rückgängig machen. Der Eintrag wurde inzwischen geändert.</string>
     <string name="memory_undo_retry">Das ließ sich nicht rückgängig machen. Versuch es noch einmal.</string>
     <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
-    <string name="memory_use_description">Persönliche Beispiele, Pläne, die zu deiner Woche passen, und Gespräche mit %1$s, die an deine Neuigkeiten anknüpfen</string>
+    <string name="memory_use_description">Persönliche Beispiele, Pläne, die zu deiner Woche passen, und Gespräche mit %1$s, bei denen alles Wichtige im Gedächtnis bleibt</string>
 </resources>

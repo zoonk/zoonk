@@ -77,7 +77,7 @@
   "certificates_save": "b390ac37e7061ea024360fef33c44f7a52741c28e25e1bbaa903e4d7989bac1f",
   "certificates_saved_one": "1b46ce1bba34a353b5e5aa0fb05908088aa86d97200b1967cc09df943551c685",
   "certificates_saved_several": "27bc86dee99d919f859a2e0e60fc56f5a37368079458d8f9af5c5dfcb381c8d4",
-  "certificates_see_yours": "c24668d150eee16d85510edf31fea0806d7748939e741c0a9df5438f783096d7",
+  "certificates_see_yours": "0bcfbf8eef0dd78271921bcdb597e65b7813068ade7fa8a3f35537859595ed77",
   "certificates_several_ready": "c7dae0941b4d87d5e46a7581c5bd5ddc20be96a1230f73c74e19f9df6dfc4dab",
   "certificates_share": "c53231c847ffa607d8ba737bacc96cf9790f2a0813425670739a82188f36c15b",
   "certificates_title": "5409f1bac51719b30e4fb2f7aa1f0bc32b9ec54f73f60c43f98e80ed7d82673e",
@@ -100,7 +100,7 @@
     <string name="certificates_continue_learning">계속 학습하기</string>
     <string name="certificates_your_next">다음에 받을 인증서</string>
     <string name="certificates_gate_title">인증서를 받으려면 구독이 필요해요</string>
-    <string name="certificates_see_yours">내 인증서 보기</string>
+    <string name="certificates_see_yours">인증서 보기</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">인증서 보기</string>
     <string name="certificates_view_several">인증서 보기</string>

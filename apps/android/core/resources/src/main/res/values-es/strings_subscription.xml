@@ -15,7 +15,7 @@
   "subscription_answer_free_lessons": "e21f1f8aeb2493f99d4cc5e7b40e00f44cf628da9611aed55e8a63fd6a3d4e64",
   "subscription_answer_free_material": "8c036362d6dfa60d194fa6c65904bfe17c3b0a09ecf2fb879099b1300a93cbfa",
   "subscription_answer_refund": "7088c0226104a13c3bb25c798839442e13fa8b04ad6e2a8cfe262656e75fb360",
-  "subscription_answer_unlimited": "2a8581c669b39281cad2de8a1c6f37f616f6d093c6f73b896026629bcee68014",
+  "subscription_answer_unlimited": "f6b50ab907430ae5950d5257b0a3fc64a8d5f235592292a8159c6c8f03242c4c",
   "subscription_benefit_buddy": "0ec30aae7af8d91fd5bc4cf5d24a94cd4938a0e54076ace470a1e33d8f3e5bdd",
   "subscription_benefit_calls": "b378a7f21b57937ad8f16274d419ef8ea5f30287d05d241f84dcf593d736d0c5",
   "subscription_benefit_certificates": "2b0f5aaffb212b019895ef088209c9c0f12c299764221aedb5338fc25db4cce0",
@@ -26,8 +26,8 @@
   "subscription_cancel_anytime": "98d23b5f20816a60485994f2846584fc6f749ed0e104a4fb21bfeeed07529af8",
   "subscription_contact_support": "b40e75dd885c5046d3608b341163c7f4811a1fa4d8b9c63cccecf7def8380a7f",
   "subscription_current_plan": "8b841e3e82fb6d291d12e040517af5283d1b69c1885a35bfc662fa36eb3bf801",
-  "subscription_deletion_app_store": "e0fc5581a015821111534e95255f7dfa03ae89bd9c43f0252752b092120bdc7e",
-  "subscription_deletion_google_play": "a8d836c8b67bfdd3564ebdb8471e76d441d540651905f1246dc1ef20e8f2cd67",
+  "subscription_deletion_app_store": "3143a82b396545120be72e26e8fe9cf624b33f0f913be1ec9af5050d0c2f4c7b",
+  "subscription_deletion_google_play": "adb259f46d7fcaff22801af8e3bca94d969e7097da98e2a8680d7e124afe8b2a",
   "subscription_deletion_notice": "53da16b7521f22ef0b050d5deb202434658eb894825f8e3d586a17f8254a665f",
   "subscription_ending": "e5eb64d0831163db948017e1cf0508fb54742b2e87881c1ba84586b7ad221432",
   "subscription_ends_on": "aa6e5fe08a2c2103984eb07845f6e24702b2314cdc02183dccb1944d9e9d6a33",
@@ -93,9 +93,9 @@
     <string name="subscription_renewal_failed">No pudimos procesar tu último pago de renovación.</string>
     <string name="subscription_deletion_notice">Al eliminar tu cuenta, dejas de tener Plus de inmediato.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
-    <string name="subscription_deletion_app_store">Plus del App Store se sigue cobrando hasta que lo canceles ahí.</string>
+    <string name="subscription_deletion_app_store">Eliminar tu cuenta no cancela Plus del App Store. Cancela la suscripción ahí.</string>
     <!-- The same, for Plus bought in Google Play. -->
-    <string name="subscription_deletion_google_play">Plus de Google Play se sigue cobrando hasta que lo canceles ahí.</string>
+    <string name="subscription_deletion_google_play">Eliminar tu cuenta no cancela Plus de Google Play. Cancela la suscripción ahí.</string>
     <string name="subscription_free">Gratis</string>
     <string name="subscription_monthly">Mensual</string>
     <string name="subscription_yearly">Anual</string>
@@ -189,7 +189,7 @@
     </plurals>
     <string name="subscription_answer_free_calls">Llamadas para practicar la expresión oral, menos que con Plus (las tareas de expresión oral de los exámenes se incluyen con Plus)</string>
     <string name="subscription_question_unlimited">¿Plus es realmente ilimitado?</string>
-    <string name="subscription_answer_unlimited">Casi. Las lecciones, los objetivos y tu compañero solo tienen límites para impedir el uso de bots y herramientas automatizadas, no para frenar a quienes aprenden. Las llamadas para practicar la expresión oral tienen límites diarios y mensuales más altos que sin Plus.</string>
+    <string name="subscription_answer_unlimited">Para estudiar normalmente, sí. Las lecciones, los objetivos y el Compañero de IA solo tienen límites para evitar el uso de bots y herramientas automatizadas. Las llamadas de práctica de expresión oral tienen límites diarios y mensuales, más altos que en Gratis.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Leer nuestra política de uso justo</string>
     <string name="subscription_question_cancel">¿Qué pasa si cancelo?</string>

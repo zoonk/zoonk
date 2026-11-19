@@ -4,7 +4,7 @@
   "country_all": "ce0146beeb773fc5be5cdcc6af7cfda8f086aab2cf3d92adb1c6d1954e9ffe10",
   "country_change_body": "c6fa9432322bd38d093bd911eff2ea68b42cada97e367fc381be79d79bd391e3",
   "country_change_confirm": "64258b65020859e1986038c5889a0faccf20d36bea79cfe7eff51a9ee44aaf6a",
-  "country_change_title": "8eaa8922d8da0046e9e4ed418b33767c3e546d427c0adc8f067bc6c0657dcec9",
+  "country_change_title": "64eb135e311d23846329a84160157c5c579cd60f102b758db086823fdba4bb71",
   "country_content_label": "da9362ff98fd9a174800632f70576aa637f2c2d060ed5b91f36fa97c79f75c6e",
   "country_content_value": "c9ce4b59dcfcfc2a95ca7585b1ef5d4b6e32a42fa47f934e38e1a9e08ebdeff7",
   "country_exam_label": "47c62621496fc04feae581ba76a22403bfb1021cb620c3d26fdd2a01d93c465a",
@@ -55,7 +55,7 @@
     <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
     <string name="country_lesson_examples_label">Derslerdeki örnekler</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
-    <string name="country_change_title">Ülkeni değiştirmek istiyor musun?</string>
+    <string name="country_change_title">Ülke değişsin mi?</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->
     <string name="country_change_body">Yeni ülke: %1$s. Buna göre yeni bir plan hazırlayacağız. Bitirdiğin dersleri tekrar yapman gerekmez.</string>
     <!-- The dialog's button that saves the new country and rebuilds the plan for it. -->

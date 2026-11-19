@@ -8,7 +8,7 @@
   "buddy_page_energy_named": "f105751a5de19889bc6b2a19fe39dfb28fed7e00201bdf66b37c14d62fe08bc7",
   "buddy_page_energy_napping": "e6cc71a49be6914f7384642d7c6a611b68af90d6c21f7436d0f94ba8eae13cf9",
   "buddy_page_energy_starts": "c0f5183fc34cb95e425c92921ebe906fd543c3a2f1fecc636779dbe87090b128",
-  "buddy_page_energy_study": "4368337051e15dc758790e33c33d7800fe69480eb2eea73474cf990ee7acf8d0",
+  "buddy_page_energy_study": "d8d8236e9e803c3c24cb184647c8852891376b7d15dc4411ccab93086684caf8",
   "buddy_page_first_anytime": "53753e89a2f66195487318b8ae5f3004141d9ee19449c2beeeee8a2f37eeb648",
   "buddy_page_first_ask": "dd0b0bbb23e33a025b81aac4d8200a2fa1e16c076378afcab34988df723a0a88",
   "buddy_page_first_call": "95f0e8bef2fd4dc76cb9d7447da3e7635b0443827bb65516e7824485e8bd326d",
@@ -76,7 +76,7 @@
     <string name="buddy_page_energy_named">%1$s · Enerji</string>
     <string name="buddy_page_energy_starts">İlk dersinle başlar.</string>
     <string name="buddy_page_energy_napping">%1$s şekerleme yapıyor. Uyandırmak için ders çalış.</string>
-    <string name="buddy_page_energy_study">Enerjisini korumak için bugün ders çalış.</string>
+    <string name="buddy_page_energy_study">Enerjini yüksek tutmak için bugün çalış.</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d / %2$d görev</item>

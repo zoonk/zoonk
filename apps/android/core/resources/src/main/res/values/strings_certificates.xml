@@ -11,7 +11,7 @@
     <string name="certificates_continue_learning">Continue learning</string>
     <string name="certificates_your_next">Your next certificate</string>
     <string name="certificates_gate_title">Certificates need a subscription</string>
-    <string name="certificates_see_yours">See your certificate</string>
+    <string name="certificates_see_yours">See certificate</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">View certificate</string>
     <string name="certificates_view_several">View certificates</string>

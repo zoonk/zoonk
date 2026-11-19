@@ -15,7 +15,7 @@
   "challenge_change_failed": "4e1af2f3838201360d1645377412077915a4653c2b50042d703f0e19fb1dfed2",
   "challenge_continue": "a129b19c146b214e12ff563697b5156bc0e7c416894d059fa8b49319feb81567",
   "challenge_day_time": "4b8d59960e55229572e921e3e01f9fd8d624921951a4132c6d39efa2b7456b32",
-  "challenge_mock_gate": "9a54ed115c0f765285000ed0dee7203599f0a4e74b15ccf5a933faf3c45c5bd2",
+  "challenge_mock_gate": "6897f5cd483805d1adc6d0bc316111cd1db2b866524e3df16647364db83cec18",
   "challenge_mock_start": "f690149cd68e693e26df4f8c8c63aaefba3d446273c59aa19bea9a9e9e9d5e6b",
   "challenge_move": "f9753511fa55d6493d63f1cc7dcde51cdf33b530394d32b4e395c50730f22d4e",
   "challenge_move_before_monday": "b750345d280281b4f4ee569d70ca12b45ebd52a58016c72201155491f6da981b",
@@ -131,7 +131,7 @@
         <item quantity="other">%1$d de %2$d objetivos</item>
     </plurals>
     <string name="challenge_start">Começar</string>
-    <string name="challenge_mock_gate">Simulados exigem uma assinatura</string>
+    <string name="challenge_mock_gate">Para fazer simulados, é preciso assinar</string>
     <string name="challenge_call_gate">Esta conversa exige uma assinatura</string>
     <string name="challenge_call_gate_line">Seu plano continua sem ela.</string>
     <string name="challenge_start_failed">Não deu certo. Tente de novo daqui a pouco.</string>

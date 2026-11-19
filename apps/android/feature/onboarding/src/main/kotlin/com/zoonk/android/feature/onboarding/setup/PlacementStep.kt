@@ -606,7 +606,7 @@ internal fun ColumnScope.PlacementUnavailable(
     PlacementOutcome(
         eyebrow = null,
         title = stringResource(R.string.onboarding_placement_unavailable_title),
-        description = stringResource(R.string.onboarding_placement_unavailable_description),
+        description = null,
         pending = pending,
         failed = failed,
         onContinue = onContinue,
@@ -618,7 +618,7 @@ internal fun ColumnScope.PlacementUnavailable(
 private fun ColumnScope.PlacementOutcome(
     eyebrow: String?,
     title: String,
-    description: String,
+    description: String?,
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,

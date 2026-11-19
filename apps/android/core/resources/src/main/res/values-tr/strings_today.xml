@@ -78,7 +78,7 @@
   "today_preparation": "38dfe2b3370dddf77a2d036377a7a612b339831ca44054416a1f47d3ba8740a9",
   "today_progress": "6b09ad230100c230e85275e97660210374481606a40186bef99d623bb505a972",
   "today_progress_lessons_today": "7da1c745aa81da8d2f665e37416f001d0dd8473603df290a1c40fea536a781e4",
-  "today_progress_meaning": "39d6cb2d4b2ff51bc99775daac0873177f9f3a1d1fad0d71fd8eecfd9681c38d",
+  "today_progress_meaning": "8efec1351c56dc895863a39840f3bfa41492bdabc99fdf923cf02377ce19c4ee",
   "today_quick_explanation": "5c18dbfe8f8e02910d8dcd4b65b9e89df64fd08f1dcda26aeeb68d4ea4a8d8bb",
   "today_rest": "71b9ba28710fd7a9912a50bb432f3f26973e6c3e7ccb49cfb00c430fe892f58c",
   "today_rest_enjoy": "3d4467f0f838adede9ab1fceca4a2c968008d041b211d03aa8c4dd65e57393d2",
@@ -336,7 +336,7 @@
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">İlerleme</string>
     <!-- What the goal's progress number is made of -->
-    <string name="today_progress_meaning">Çalıştığın veya zaten bildiğin derslerin planındaki tüm derslere oranı.</string>
+    <string name="today_progress_meaning">Planındaki derslerden çalıştıklarının veya zaten bildiklerinin oranı.</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
     <string name="today_preparation">Hazırlık</string>
     <!-- A link at the end of the progress card that opens the learner's plan. -->

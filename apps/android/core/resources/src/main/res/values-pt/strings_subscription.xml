@@ -15,7 +15,7 @@
   "subscription_answer_free_lessons": "9dbba7da5275c9829831f521b2ab9233e2aefc94bbaf3c5716f0b1fb4c32b0a6",
   "subscription_answer_free_material": "ce2b7d6a02c0960efe40545a3aa70da87103f8cfd3bdced930cad59c81e7f2f7",
   "subscription_answer_refund": "ce715ae36c20f5b14cbc1a1a80a270f16c7ca2490523d0b977ce29bd4dc562a2",
-  "subscription_answer_unlimited": "c6450aece3a4c61fcfb0c7de882dc04a1028ca5a0fa1855cd5db89e6721f5bd6",
+  "subscription_answer_unlimited": "78e3f0f0bdfa4d90c750f6b0e41ed27ddd86aa18864e476cd75be451492a6725",
   "subscription_benefit_buddy": "6fc097e2b5a3817f345c84df99faf9d135903b61e3cf298100bcece5a1db2e8c",
   "subscription_benefit_calls": "06c02222f23358b7380ec41b5f82c808a99b131204c5a60dae79ec583d00d832",
   "subscription_benefit_certificates": "040bb6e0c49cf97ccdbbdc9ed9761aea9974702f615a4ada99fbb224dbff59db",
@@ -26,15 +26,15 @@
   "subscription_cancel_anytime": "774704a893c56cb8bca9085d2fbcde8142a1f7618281439a3517eadaf13b0e58",
   "subscription_contact_support": "904edfa7b05b5d4007689954de4452f0108848fb1ff38c93a1fe31991174071b",
   "subscription_current_plan": "17999193d58b393abb3e66db33e546017d5d7c69b6c349b3701da0c929a45e50",
-  "subscription_deletion_app_store": "b724a58fed2817bf42570b22920e11d6529a166d4fac0d0a3f16dd9094d29b8b",
-  "subscription_deletion_google_play": "ac7ec6389dd1d7de9cf48f098ea530f49fe2cc3409065406fccccc92bdb291e6",
+  "subscription_deletion_app_store": "7c8b9f05adec042c0bee2934a5eeb6baffbc6a58ba66c55b2005c1c203451626",
+  "subscription_deletion_google_play": "a62cd946abe31f797d5dd597caac4e07b8681be50fe650bc9be566911df0bc5e",
   "subscription_deletion_notice": "0771224a5a3ac53a394f2c3dd08efde4d01afa3c208dcb3fd063b6f2a7c70654",
   "subscription_ending": "fbdb14ecf1bbd0a685d205a0cee398e7b6db3a19737e0b8c3ea60ab9673f01a9",
   "subscription_ends_on": "28f48effc8f2beeeccb7de6f99930851d027a78278b0bcae1d25002854f5c82e",
   "subscription_free": "fd0e890bb5d4ac7f48866d89c5b26b870f7c2146bf1da62fe005a2ad0418b542",
   "subscription_free_buddy": "642c31f0a0c640c3f0b3ad2f750663abdc9656772320474d15f560bf7b8c0e5c",
   "subscription_free_buddy_monthly": "f42db5e0d03e57aeacf20eac691a223c4ce2487f3bc685d55a35f9ca1703f903",
-  "subscription_free_calls": "f7656a57b6a9aef999e1ff501437d93d0ef59bfd42bb43552fbd9b1a9c3be1b9",
+  "subscription_free_calls": "0f14de9dc8866fae6af47bf05f8e61c90ddd27c9b6d864133fe9158ac67fe1ab",
   "subscription_free_goals": "39858c20f20ca77bd23e135715d10386ab598c59734a56c7c022dcba123e9d92",
   "subscription_free_lessons_a_month": "a360a92d56d275ff56931c99cb61db8fa6b5c5f5eace8ae99a4264c31fe46a73",
   "subscription_free_plan": "e015f00da2a9e4c8eb725814aa033b760acc66642526567224da3d1ad7bb2cc0",
@@ -93,9 +93,9 @@
     <string name="subscription_renewal_failed">O pagamento da sua última renovação falhou.</string>
     <string name="subscription_deletion_notice">Excluir sua conta encerra o Plus na hora.</string>
     <!-- In the dialog that deletes the account, for Plus bought in the App Store. -->
-    <string name="subscription_deletion_app_store">A cobrança do Plus pela App Store continua até você cancelar por lá.</string>
+    <string name="subscription_deletion_app_store">Excluir sua conta não cancela o Plus da App Store. Cancele por lá.</string>
     <!-- The same, for Plus bought in Google Play. -->
-    <string name="subscription_deletion_google_play">A cobrança do Plus via Google Play continua até você cancelar por lá.</string>
+    <string name="subscription_deletion_google_play">Excluir sua conta não cancela o Plus do Google Play. Cancele por lá.</string>
     <string name="subscription_free">Grátis</string>
     <string name="subscription_monthly">Mensal</string>
     <string name="subscription_yearly">Anual</string>
@@ -156,7 +156,7 @@
         <item quantity="other">Um parceiro de estudos com IA: %1$d mensagens por dia, até %2$s por mês</item>
     </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
-    <string name="subscription_free_calls">Prática de conversação</string>
+    <string name="subscription_free_calls">Conversas de prática</string>
     <string name="subscription_questions_title">Dúvidas frequentes</string>
     <string name="subscription_questions_unsure">Ainda tem dúvidas?</string>
     <!-- Each language writes to its own support inbox: keep the address for this language's support (Portuguese: contato@zoonk.com). -->
@@ -189,7 +189,7 @@
     </plurals>
     <string name="subscription_answer_free_calls">Prática de conversação, com menos conversas que no Plus (tarefas de conversação de provas vêm com o Plus)</string>
     <string name="subscription_question_unlimited">O Plus é mesmo ilimitado?</string>
-    <string name="subscription_answer_unlimited">Quase. As aulas, os objetivos e seu parceiro só têm limites para barrar robôs e ferramentas automáticas, não quem está aprendendo. As conversas têm limites diários e mensais, mais altos do que no plano Grátis.</string>
+    <string name="subscription_answer_unlimited">Para quem está estudando, sim. As aulas, os objetivos e o parceiro de estudos com IA só têm limites para impedir o uso por robôs e ferramentas automatizadas. As conversas de prática têm limites diários e mensais, maiores que no Grátis.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Leia nossa política de uso justo</string>
     <string name="subscription_question_cancel">O que acontece se eu cancelar?</string>

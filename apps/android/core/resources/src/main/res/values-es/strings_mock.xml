@@ -81,7 +81,7 @@
   "mock_step_failed": "c4f52911ede83ad142941a34feff27f49383e728d622f4ae68c5fa851437cab8",
   "mock_step_failed_saved": "fe9d5593baa0d080ab54165163c94c7bf200b4939667996e50990ac9d4a3a1fe",
   "mock_step_slow": "cb77162165981c1e111ca3be66a1a60e27d80979d8eafe6f460a4136e4c73bd7",
-  "mock_take": "416a81af8a0d617ca8d09f27bbca11e1acd396287827d00ad4ba80aec7d6e113",
+  "mock_take": "14d41efe1289ea3168bee573fe3896d1e0a60c2459e366eae42ee251995d51e9",
   "mock_take_another": "58be408532fe343ecae29f8201687e3f8644e608b83d1578b0ff8a03f7ddc42f",
   "mock_time_left_caption": "2e351623be520ce5ec7be5588e3832357d45db40ef42a49400494a8ac3560740",
   "mock_time_left_label": "59d57109af0acb34a2310e57321e15bfeb3c0f30a3ecd164d334d765f7e227b3",
@@ -114,7 +114,7 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Nuevo simulacro</string>
+    <string name="mock_take">Nuevo simulacro de examen</string>
     <string name="mock_continue">Continuar</string>
     <string name="mock_label">Simulacro de examen</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->

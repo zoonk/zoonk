@@ -95,7 +95,7 @@
         <item quantity="other">%1$d short lessons</item>
     </plurals>
     <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet; its lessons get ready when the learner reaches it. -->
-    <string name="catalog_level_unwritten">Ready when you get there.</string>
+    <string name="catalog_level_unwritten">Chapters are ready by the time you reach this level.</string>
     <!-- Marks the chapter (or level) of the next lesson in the learner's plan on the course's outline. -->
     <string name="catalog_you_are_here">You are here</string>
     <string name="catalog_outline_unwritten">Build your plan and Zoonk gets this course\'s lessons ready, starting from what you already know.</string>

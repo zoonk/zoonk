@@ -44,7 +44,7 @@
   "catalog_level_beginner": "d6d3700a99a0b0630517d75789ead63478a4b5ee47faed88c3346c09b086f10f",
   "catalog_level_intermediate": "4bacaf7e7f079c16d6ae5682e2dac89860832282078bbf2e648208d730fa8088",
   "catalog_level_overview": "c0863096e0cbe497d9c13609056aa12006b000635df7b998a52f959bc951e61a",
-  "catalog_level_unwritten": "a12efe37060461382314a39b06bb90d4409b235741167c6b9b6a087b501a20d0",
+  "catalog_level_unwritten": "0c9b3906ead2e7d0da1fdb13d97b1c41b0f3e8ffc6e06f5d77cacea4820467fe",
   "catalog_load_more_failed": "74fa98ccfbd1dec5334ff8d92ecd6b2dfa0a755df2cbe9a8edd20af8d54c4a9a",
   "catalog_loading_more": "1903ec455add80f3d2bfea131637cdf34949107ce617c028c2e4d98a68a92512",
   "catalog_open_course": "3b43fa2ef13fe5aff789edcb9c27ea7a04237810778840eab5deb34d88d48fa0",
@@ -174,7 +174,7 @@
         <item quantity="other">짧은 레슨 %1$d개</item>
     </plurals>
     <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet; its lessons get ready when the learner reaches it. -->
-    <string name="catalog_level_unwritten">이 단계까지 오면 레슨이 준비돼요.</string>
+    <string name="catalog_level_unwritten">이 레벨에 도달할 때쯤 챕터가 준비돼요.</string>
     <!-- Marks the chapter (or level) of the next lesson in the learner's plan on the course's outline. -->
     <string name="catalog_you_are_here">현재 위치</string>
     <string name="catalog_outline_unwritten">계획을 세우면 Zoonk가 이미 아는 내용을 바탕으로 이 코스의 레슨을 준비해요.</string>

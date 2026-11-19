@@ -44,7 +44,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-/** The fit offer's card on a later day, where Add to my plan checks today's numbers first. */
+/** The fit offer's card on a later day, where Add to plan checks today's numbers first. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class FitOfferCheckTest {
@@ -83,7 +83,7 @@ class FitOfferCheckTest {
         api.preview = checked(plan.fitOffer!!.effect)
         show()
 
-        compose.onNodeWithText("Add to my plan").performClick()
+        compose.onNodeWithText("Add to plan").performClick()
         compose.onNode(hasStateDescription("Checking what changes…")).assertExists()
         shown = false
         compose.waitForIdle()
@@ -101,7 +101,7 @@ class FitOfferCheckTest {
         api.preview = checked(plan.fitOffer!!.effect)
         show()
 
-        compose.onNodeWithText("Add to my plan").performClick()
+        compose.onNodeWithText("Add to plan").performClick()
         page = page.copy(plan = plan(""""estimate":{"remainingHours":9,"totalHours":12},$offer"""))
         store.plan[page.goal.id].update { it.copy(plan = page.plan) }
         compose.waitForIdle()
@@ -121,7 +121,7 @@ class FitOfferCheckTest {
         api.preview = checked(plan.fitOffer!!.effect)
         show()
 
-        compose.onNodeWithText("Add to my plan").performClick()
+        compose.onNodeWithText("Add to plan").performClick()
         compose.onNodeWithText("Not now").performClick()
         held.complete(Unit)
         compose.waitForIdle()
@@ -142,7 +142,7 @@ class FitOfferCheckTest {
         show()
         val before = layout()
 
-        compose.onNodeWithText("Add to my plan").performClick()
+        compose.onNodeWithText("Add to plan").performClick()
         val during = layout()
         checkHeld.complete(Unit)
         compose.waitForIdle()
@@ -164,7 +164,7 @@ class FitOfferCheckTest {
         show()
         val before = compose.onNodeWithText("Not now").getUnclippedBoundsInRoot()
 
-        compose.onNodeWithText("Add to my plan").performClick()
+        compose.onNodeWithText("Add to plan").performClick()
         held.complete(Unit)
         compose.waitForIdle()
 
@@ -196,7 +196,7 @@ class FitOfferCheckTest {
         api.preview = checked(ApiJson.decodeFromString<PlanEffect>(effect(""""lessonsAdded":4""")))
         show()
 
-        compose.onNodeWithText("Add to my plan").performClick()
+        compose.onNodeWithText("Add to plan").performClick()
 
         compose.onNodeWithText("Your plan changed since you saw this. Here's what it does now.").assertExists()
         compose.onNodeWithText("You have time for 4 more lessons").assertExists()

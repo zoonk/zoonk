@@ -6,9 +6,9 @@
   "buddy_page_count": "92c57da6bd2d12d4e1149291a0fbab60863405692cf119468cffd1af6c49696d",
   "buddy_page_earlier_questions": "02720fbf9ff48933a6f6a539cbb35e7a8a2d61ed28ee9abe7a2e3d25393cea9c",
   "buddy_page_energy_named": "71d67b8dafd4224afd4703678c01c4d35abb55fbb6d18af4a12056bd29207f23",
-  "buddy_page_energy_napping": "cb5bff763e024f80b96b191f524fdee77149276c66683de7e30bcbe90a390c42",
+  "buddy_page_energy_napping": "76ec29885ee43808a6be8db516b5f42c7bbc5a3868be66eab45650623b4683a0",
   "buddy_page_energy_starts": "0ab543dc1acfd1d0a0fecc4ee5959bb45519f82ebf0b402a1c47eb49a82abca7",
-  "buddy_page_energy_study": "c68048f620b5d88b179d27191d03769e9bfe6fc756cb71943c6d7a6d4bfcc4cc",
+  "buddy_page_energy_study": "d14d1d35c1b5b4a3b397d6c61b04dfbc7074dc6e86719df948aa1c537316057f",
   "buddy_page_first_anytime": "76990de936e4448eed83523b30e4e8c2ea67ce065ac713844d6b2cb7563a97db",
   "buddy_page_first_ask": "dfca21311da7889934c0c4001c293f9897d4d704855c45aafa8c5dce1fdbd1e1",
   "buddy_page_first_call": "5f67e3822867b64858da98c509ee8b33ab8ca6c5dfcc02c4345f9fbe1d677c98",
@@ -28,7 +28,7 @@
   "buddy_page_goal_label": "b970ee5a3e00e9e29d013269984812fff5adfe222e17fed9713802de1a180b6d",
   "buddy_page_goal_placeholder": "18cd55359389c65033e317063617ad5232823ffa468cb3c50e4c1b09597c5318",
   "buddy_page_greeting": "8d2cd072cee53d814bd5c630ad2342b5f5a350dc6d9727aea9ba3f8a81050902",
-  "buddy_page_grows": "6ffe0b712f25e902134e66dd915857703931736b1ed96cf27e687e50327beb35",
+  "buddy_page_grows": "c05d650eb3ecb3dc78394ae4b778d556f69250c7d75cbdc8002e9d82868d30eb",
   "buddy_page_missions_count": "d42c8cbb1c3585b59f504d17bcacdd7f349da8d8b21ef61e4fef6a31e6684d50",
   "buddy_page_more": "a69adc5510b85ef35600609c9dc9c468732aa9aa98d9e2b784066e00dc8fbd77",
   "buddy_page_placeholder": "2b158a3f408b5c8487d15394532aa431b5a41cc1787256f65df6a0047554ccdc",
@@ -75,8 +75,8 @@
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">Energia de %1$s</string>
     <string name="buddy_page_energy_starts">Começa na sua primeira aula.</string>
-    <string name="buddy_page_energy_napping">%1$s está tirando uma soneca. Estude para espantar o sono.</string>
-    <string name="buddy_page_energy_study">Estude hoje para manter a Energia em alta.</string>
+    <string name="buddy_page_energy_napping">%1$s está cochilando. Estude e %1$s acorda.</string>
+    <string name="buddy_page_energy_study">Estude hoje para manter a Energia.</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d de %2$d missão</item>
@@ -86,7 +86,7 @@
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_fully_grown">Crescimento completo</string>
     <!-- %1$s is a belt, like "Orange belt". -->
-    <string name="buddy_page_grows">Cresce quando você chega à %1$s</string>
+    <string name="buddy_page_grows">Cresce quando você alcança a %1$s</string>
     <string name="buddy_page_remembers">O que %1$s lembra</string>
     <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
     <string name="buddy_page_glasses_description">Escolha um par que você já ganhou.</string>

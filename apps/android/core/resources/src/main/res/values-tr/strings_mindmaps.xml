@@ -26,7 +26,7 @@
   "mindmaps_in_short": "510935e0b38e3a3470604c09f491aaa500aa08dad6b824f8660861ff1b97a43a",
   "mindmaps_lesson_map": "5bb30d0f45ecfde2b8e0f03f070e7671246641fbaf58a83675ef2e4e0b52df30",
   "mindmaps_lesson_maps": "f4c611dc71251ad1457882b1bd26d88a105f9b0f4deb3a81c5f80d628387c997",
-  "mindmaps_lessons_count_free": "76d3852bf2ed41cc4db29468c516344d3e6762d4831feec2582a6b593d119f2f",
+  "mindmaps_lessons_count_free": "954fb3210cd4df678b8bf750eaaf1e3872e484ea46c29ad6d7c40419ade5e29e",
   "mindmaps_lessons_empty": "e8f73c87acee88bd160b7635900a93f8066e0fc508d6d10ae63108631253fbeb",
   "mindmaps_lessons_first_free": "f8acb4b7c9cfc88677fdc0f592652df92ec8273a5c5a1b57cef1b616502381c3",
   "mindmaps_lessons_first_plus": "d387162e42ccd430f715ef8357d08e51576f2f917ba779ff9ed18e49ddd93153",
@@ -118,7 +118,7 @@
         <item quantity="other">Hazırlanacak %1$s ders</item>
     </plurals>
     <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
-    <string name="mindmaps_lessons_count_free">Hazırladığımız dersler ücretsiz ders hakkından düşülür.</string>
+    <string name="mindmaps_lessons_count_free">Harita oluşturmak ücretsiz ders hakkından düşer.</string>
     <string name="mindmaps_writing_lessons">Önce dersleri, sonra zihin haritasını hazırlıyoruz…</string>
     <string name="mindmaps_writing_lessons_wait">Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak.</string>
     <string name="mindmaps_drawing">Zihin haritasını çiziyoruz…</string>
@@ -217,8 +217,12 @@
     <string name="mindmaps_zoom">Yakınlaştır</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">Bu harita artık kullanılamıyor.</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
     <string name="mindmaps_shown_as">Haritanın görünümü</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
     <string name="mindmaps_shown_map">Harita</string>
+    <!-- The study screen's switch: shows a map as text. -->
     <string name="mindmaps_shown_text">Metin</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
     <string name="mindmaps_zoom_hint">Yakınlaştırmak için haritaya dokun</string>
 </resources>

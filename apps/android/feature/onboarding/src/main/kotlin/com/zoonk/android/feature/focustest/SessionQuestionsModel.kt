@@ -13,7 +13,7 @@ import com.zoonk.api.models.FocusTestSessionQuestions
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/** "Ask a few more in my sessions": the test's questions inside the first week's sessions, switched from its result. */
+/** "Ask a few more questions as I study": the test's questions inside the first week's sessions, switched from its result. */
 internal class SessionQuestionsModel(
     private val store: FocusTestStore,
     private val goalId: UUID,

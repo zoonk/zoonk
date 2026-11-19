@@ -97,7 +97,7 @@ class UnderstoodRowsTest {
             )
 
         assertEquals("December\u00a02026", row.value)
-        assertEquals("The official exam date is November\u00a08. Use it as your exam date?", row.note)
+        assertEquals("The official exam date is November\u00a08. Use it?", row.note)
         assertEquals(LocalDate.of(2026, 11, 8), row.suggestedDate)
     }
 

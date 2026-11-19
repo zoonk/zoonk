@@ -40,7 +40,7 @@
         <item quantity="other">%1$s lessons to write</item>
     </plurals>
     <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
-    <string name="mindmaps_lessons_count_free">Writing lessons counts toward your free lessons.</string>
+    <string name="mindmaps_lessons_count_free">Creating maps counts toward your free lessons.</string>
     <string name="mindmaps_writing_lessons">Writing the lessons, then the mind map…</string>
     <string name="mindmaps_writing_lessons_wait">This takes a few minutes. You can leave; it\'ll be here.</string>
     <string name="mindmaps_drawing">Drawing the mind map…</string>

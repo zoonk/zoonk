@@ -19,9 +19,9 @@
     <!-- When a phase of the plan ends. %1$s is a day, like "Dec 12". -->
     <string name="plan_ends">Ends %1$s</string>
     <!-- When a phase of the plan is expected to end. %1$s is a day, like "Dec 12". -->
-    <string name="plan_ends_about">Ends about %1$s</string>
+    <string name="plan_ends_about">Ends around %1$s</string>
     <!-- When a phase of the plan is expected to end. %1$s is a month, like "Jan". -->
-    <string name="plan_ends_about_month">Ends about %1$s</string>
+    <string name="plan_ends_about_month">Ends around %1$s</string>
     <string name="plan_date_range">%1$s – %2$s</string>
 
     <string name="plan_no_goal_description">Tell us what you want to learn, and we\'ll plan every day until you get there.</string>
@@ -229,10 +229,10 @@
     <string name="plan_pace_lessons_first_today">They come first on Today.</string>
     <!-- %1$s is a number of minutes; %2$s is a number of days, such as "3 days". -->
     <string name="plan_pace_more_minutes_a_day">Study %1$s more min a day for %2$s to be up to date.</string>
-    <string name="plan_add_time_or_later_date">Add time a day or pick a later date.</string>
+    <string name="plan_add_time_or_later_date">Study longer each day or pick a later date.</string>
     <string name="plan_pace_win_challenge">Every lesson is done. Win the challenge to finish your plan.</string>
     <string name="plan_pace_win_challenges">Every lesson is done. Win the challenges to finish your plan.</string>
-    <string name="plan_pace_no_longer_fits">You have more lessons than days left. Add time a day or pick a later date.</string>
+    <string name="plan_pace_no_longer_fits">You have more lessons than days left. Study longer each day or pick a later date.</string>
     <plurals name="plan_pace_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
@@ -313,9 +313,9 @@
     <string name="plan_how_calculated">How it\'s calculated</string>
     <string name="plan_measure_progress">The share of your plan\'s lessons you\'ve studied or already knew. Right answers, what you remember and weekly challenges show how well you know them.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_review_once">Each subject counts as much as it\'s worth on the exam. A subject\'s number is how much of it you\'ve studied times how well you answer, and it stays under %1$s until you review every topic once.</string>
+    <string name="plan_measure_review_once">Each subject counts as much as it\'s worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you review every topic once.</string>
     <!-- %1$s is a share, such as "75%". -->
-    <string name="plan_measure_mock_exam">Each subject counts as much as it\'s worth on the exam. A subject\'s number is how much of it you\'ve studied times how well you answer, and it stays under %1$s until you take a mock exam.</string>
+    <string name="plan_measure_mock_exam">Each subject counts as much as it\'s worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you take a mock exam.</string>
     <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
     <string name="plan_next">Next</string>
     <string name="plan_next_topics_count_most">Study the topics that count most</string>
@@ -332,7 +332,7 @@
     <string name="plan_still_first_challenge">Take your first weekly challenge</string>
 
     <string name="plan_change_today_changed">Done. Today\'s lessons changed too.</string>
-    <string name="plan_change_today_unchanged">Done. It starts on your next study day.</string>
+    <string name="plan_change_today_unchanged">Done. The change starts on your next study day.</string>
     <string name="plan_change_from_now_on">Done.</string>
     <string name="plan_change_changed">Your plan changed.</string>
     <string name="plan_change_own_level_first">For your new level, these come first: %1$s.</string>
@@ -341,7 +341,7 @@
     <string name="plan_change_follows_guide">Your plan follows the exam\'s official guide.</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">The exam\'s likely date is now %1$s.</string>
-    <string name="plan_change_notice_says">The official exam date is %1$s. Use it as your exam date?</string>
+    <string name="plan_change_notice_says">The official exam date is %1$s. Use it?</string>
     <string name="plan_change_keep_official_date">Keep official date</string>
     <string name="plan_change_daily_time_changed">You now study %1$s a day.</string>
     <string name="plan_change_rest_day">%1$s: rest day.</string>
@@ -399,7 +399,7 @@
     <string name="plan_system_macos" translatable="false">macOS</string>
     <string name="plan_system_phone">Phone only</string>
     <string name="plan_system_windows" translatable="false">Windows</string>
-    <string name="plan_change_missed_days">Your plan moved to fit the days you missed.</string>
+    <string name="plan_change_missed_days">Your plan changed to make up for the days you missed.</string>
     <plurals name="plan_change_tested_out">
         <item quantity="one">You passed the test, so your plan skips %d lesson.</item>
         <item quantity="other">You passed the test, so your plan skips %d lessons.</item>
@@ -487,7 +487,7 @@
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: which ones will you take?</string>
     <string name="plan_prerequisites">Prerequisites</string>
-    <string name="plan_prerequisites_description">What your topics build on. Choose how much of it to study.</string>
+    <string name="plan_prerequisites_description">What your topics build on. Choose how much to study.</string>
     <plurals name="plan_bases_mixed">
         <item quantity="one">%1$d prerequisite · your choices · %2$s</item>
         <item quantity="other">%1$d prerequisites · your choices · %2$s</item>
@@ -499,7 +499,7 @@
     </plurals>
     <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_quick">
-        <item quantity="one">%1$d prerequisite · one short lesson each · %2$s</item>
+        <item quantity="one">%1$d prerequisite · one short lesson · %2$s</item>
         <item quantity="other">%1$d prerequisites · one short lesson each · %2$s</item>
     </plurals>
     <plurals name="plan_bases_skip">
@@ -565,11 +565,11 @@
     <string name="plan_cadence_final_weeks_effect">Less spaced practice, concentrated in the final weeks before the exam.</string>
 
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_none">No time a day covers everything by %1$s.</string>
+    <string name="plan_time_none">There isn\'t enough time to cover everything by %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_none_month">No time a day covers everything by %1$s.</string>
+    <string name="plan_time_none_month">There isn\'t enough time to cover everything by %1$s.</string>
     <string name="plan_time_takes_everything">Covering everything takes about %1$s a day.</string>
-    <string name="plan_time_takes_most">The most any time covers is about %1$s, at %2$s a day.</string>
+    <string name="plan_time_takes_most">The most you can cover is about %1$s, at %2$s a day.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
     <string name="plan_time_share_exam">Covers about %1$s of your exam topics by %2$s.</string>
     <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
@@ -661,7 +661,7 @@
     <string name="plan_choose_focus_yourself">Or choose them yourself</string>
     <string name="plan_focus_includes">Includes %1$s</string>
     <string name="plan_focus_only">Only %1$s</string>
-    <string name="plan_focus_already_in">Nothing changed: %1$s already have every lesson in your plan.</string>
+    <string name="plan_focus_already_in">Nothing changed. All %1$s lessons are already in your plan.</string>
     <string name="plan_focus_cant_move">Nothing changed: %1$s already start as early as what they build on allows, and your time has no room for more of them. More time a day brings more in.</string>
     <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
     <string name="plan_focus_on_these">Focus on these</string>
@@ -669,7 +669,7 @@
     <string name="plan_remove_focus">Remove focus</string>
     <string name="plan_couldnt_check_changes">We couldn\'t check what changes.</string>
     <string name="plan_apply">Change my plan</string>
-    <string name="plan_add_to_my_plan">Add to my plan</string>
+    <string name="plan_add_to_my_plan">Add to plan</string>
     <string name="plan_not_now">Not now</string>
     <string name="plan_suggestion_previous">Previous</string>
     <string name="plan_suggestion_next">Next</string>
@@ -834,7 +834,7 @@
     <string name="plan_ask_restore_activities">Bring %1$s back to your lessons?</string>
     <string name="plan_ask_prerequisites">Change your prerequisites?</string>
     <string name="plan_ask_aim">Study up to %1$s?</string>
-    <string name="plan_ask_fit_lessons">Add the lessons your time fits?</string>
+    <string name="plan_ask_fit_lessons">Add the lessons that fit your time?</string>
     <string name="plan_ask_change">Change your plan?</string>
     <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. -->
     <string name="plan_ask_follow_guide">Follow the exam\'s official guide?</string>

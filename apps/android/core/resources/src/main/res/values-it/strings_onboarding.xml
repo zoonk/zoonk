@@ -121,12 +121,12 @@
   "onboarding_language_test_new_alphabet": "f71ca97372357d3aa07df4c7f1fce96143505db6d6996fbb1c2d9bd7473f3297",
   "onboarding_language_test_play": "a24dc77827aed32a87c3bbe6acb25cf64a6a7e05254694c2deb22b0a6e43cdb3",
   "onboarding_language_test_play_again": "0ef5c05be22119419ede52db09ac5e3fa6fe6a21c1818cf2b185cb6d8303aead",
-  "onboarding_language_test_preparing_description": "2849a7168813982ebb987717a074af9ab32e7f44c0275b72543e58344edee6d5",
+  "onboarding_language_test_preparing_description": "3264888fd9fbb9ee945e527a3f5613d9d623bc85a640dccd7dfb039eb9454f3e",
   "onboarding_language_test_preparing_title": "d0daeba8170246a4dfaf4e75d64f693072a7ede984187c2ac36c9ebaa937126d",
   "onboarding_language_test_reading": "c077d2b97434eafda710e3c909b6ec95172d965c4192eb053e549fe7949624f9",
   "onboarding_language_test_say_it": "dd4282e4ab3d88cb05674e686a687f7a54398882bee59afd55e098eff91e2cb9",
   "onboarding_language_test_skip": "047d1c5e23328805c6889eb13a119f7192920515ac5d0b2cae14d58b50228e36",
-  "onboarding_language_test_skip_note": "cf65e4d15016546f026ff3c226795242fd049cb94ec9f6db7bcf503ab01add55",
+  "onboarding_language_test_skip_note": "22208729ad6515eea7a763c3ea5b4c0aedd3717de7fd863794cff21d2473f748",
   "onboarding_language_test_skip_part": "57ad51fef57e906679fcc2737f001519a66b633962fc5da52ea7dfc3b5e4f261",
   "onboarding_language_test_skip_question": "09f3cd807662109852f53d31b7b354e3cb68a57b055e35e03d262c2c0c85b923",
   "onboarding_language_test_speaking": "00907f2b68c5fa08834f29dd191f65a64144ef228b20924683b88c46c747789f",
@@ -188,8 +188,7 @@
   "onboarding_placement_stop": "80b5ce710a50296cff875d4136cdcf2bc68cf459fd477793c6f8b79639d4ee83",
   "onboarding_placement_title": "3203bba5c413f9b3b61d288a01496202bb138863cd00cd4f2b544c1430661a67",
   "onboarding_placement_true": "22edb8ba0b0db283ccfe840acb063c383ca6aea4376b413e48e4de064d062a3d",
-  "onboarding_placement_unavailable_description": "1f9caae30d205bd2f7a11c7defa8e0f90dfc5d210c58b0c3e2c2d7e1f217b2ab",
-  "onboarding_placement_unavailable_title": "4b0c4c5f45b54cd6c407cf0551a8a85b41e8485c8ec566f63960f50d5617c230",
+  "onboarding_placement_unavailable_title": "c496cf3a41b92e1bec5e2a6190365f89652c1be02eaf9dd0ca4cc42a5e40e23c",
   "onboarding_placement_waiting_material": "bb3a180eb5132d02129e83bd79dded77f5ece664659102af55909235bf256b97",
   "onboarding_placement_waiting_time": "d2eeec8910a8157e0ac8011ab23fc37ad6bed253f01dea1613bdf4481e2125a7",
   "onboarding_placement_wrong": "aa91fc0e46c88414d4523d3a0a0807e1c49bd430276bd4761e8bd1bbd99d3d7f",
@@ -281,7 +280,7 @@
   "onboarding_reveal_most_questions": "aa512bd4b999cad6911af9afa8639720f5b3d7fce25a45c8fd016510c2e722be",
   "onboarding_reveal_no_sitting": "0f1775ff8605a940c06ba0182199ac68ea14aeadc14ec14b2cba35dc11b49124",
   "onboarding_reveal_notice_day_estimated": "4832f90fa817a1d53f0be2a0b9c557f737f925698fb28e9867dbcee585047f67",
-  "onboarding_reveal_notice_day_notice": "fd8ea7edf973e2c018a3f8d5d340910c23e72c53ed9afb6df4865680bd491be5",
+  "onboarding_reveal_notice_day_notice": "2011767391109f106c3452ac153bea94fcb94549d7801e4f46c687d765c1a119",
   "onboarding_reveal_notice_subjects": "9cae1aff88d0d7cb9e7fe7f14cbe408cccd62e338b59a58c3a6d33068fc0bda7",
   "onboarding_reveal_pace_covers": "28a79ef291b1790ebcb0adefe8232b44309429922744fc2b76ea467c4771f61c",
   "onboarding_reveal_pace_time": "76242e3ae87dd935533b98951381eb68982ad197e68476aa5a47907574979b95",
@@ -352,7 +351,7 @@
   "onboarding_row_material": "e7d1e3985fe94a99418bb174833089583f785607b96990a8b7423be2f342dbb9",
   "onboarding_row_material_note": "30275cce4f56141076c8e7708699f13a806cc3d3ac0a4689fce5d9ac9d1088f8",
   "onboarding_row_minutes_a_day": "6d7c2f47e282a8ad86d22e067c1dd28b05bf06a32ee94cd45c8c049ec524941b",
-  "onboarding_row_notice_says": "edabd6436bd48d4757ad421b58ffd53bf7278cdf9bbb9764e1b9abbd59314972",
+  "onboarding_row_notice_says": "74d8d8135f119c8e62065acf90dba55f65f3c36a861da8a9460a971c8ffc509b",
   "onboarding_row_pick_date": "cbbc9efb035aded22fe5fc9746f0cc6f585755e38ebe2a3cf7c3e0ec9b70a424",
   "onboarding_row_position": "d11d47651a59650d477510061fb8ad039349878fa2d2978d955aa05fc8d74b48",
   "onboarding_row_reason": "dfd1944e673d751534e9a1680796c2f806cae6bf3b8c2a432ac881039741a8c1",
@@ -421,7 +420,7 @@
   "onboarding_understood_title": "b6849c6dde4eeb3d1bf316d2038808e43feda24c4b288b129fcad9d598364e59",
   "onboarding_upload_file": "e068e3496598ab5c1ce0d8e683092ddd4180c395f8f4ed8f2d54096bda36877d",
   "onboarding_use_this_date": "b7cc38e16304727cf744909838e23f37738be2757500be77b96b379249e72011",
-  "onboarding_variety_description": "78cc820a6700c1ed6f78645dddf444d1acac3acd8b12915191c667a303339ae7",
+  "onboarding_variety_description": "4e005240376731ed20c03113a4b0186cfdb9f1275491b9b558cf76859fb2ba62",
   "onboarding_variety_none": "b5245a60a09b0dd538d832cdb50020616788fee32649c350b12163bfa11d371f",
   "onboarding_variety_note": "3249b61a993dd6816f3df9f9d3695e147896c44ce26da051acfd7b35dd3fed64",
   "onboarding_variety_title": "a885af511d9c6a40845ca91d9ffec9d86496d2dace622f9ca23162410fd22903",
@@ -558,7 +557,7 @@
     <string name="onboarding_row_dates_estimated">Stima basata sulle date abituali. Ti avviseremo quando usciranno quelle ufficiali.</string>
     <string name="onboarding_row_pick_date">Scegli la tua data</string>
     <string name="onboarding_row_several_sittings">Questo esame si svolge più volte all’anno. Finché non scegli una data, il tuo piano si basa sulla prima.</string>
-    <string name="onboarding_row_notice_says">La data ufficiale dell’esame è %1$s. Vuoi usarla come data del tuo esame?</string>
+    <string name="onboarding_row_notice_says">La data ufficiale dell’esame è %1$s. Vuoi usarla?</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
     <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
     <string name="onboarding_explain_description">Ti prepareremo una breve spiegazione da leggere in circa 5 minuti.</string>
@@ -661,8 +660,7 @@
     <string name="onboarding_placement_set_title">Abbiamo definito il tuo punto di partenza</string>
     <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
     <string name="onboarding_placement_set_description">Diventa più preciso ogni giorno.</string>
-    <string name="onboarding_placement_unavailable_title">Saltiamo le domande</string>
-    <string name="onboarding_placement_unavailable_description">Non siamo riusciti a preparare le domande per questo obiettivo. Definiremo il tuo punto di partenza nelle prime sessioni.</string>
+    <string name="onboarding_placement_unavailable_title">Nei primi giorni vedremo cosa sai già</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">Vediamo il tuo livello in %1$s</string>
@@ -674,8 +672,8 @@
     <string name="onboarding_language_test_use_app_in">Usa l’app in %1$s</string>
     <string name="onboarding_language_test_preparing_title">Stiamo preparando il tuo test di livello</string>
     <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">Stiamo preparando le domande per il test di %1$s. Ci vorranno uno o due minuti, solo questa volta.</string>
-    <string name="onboarding_language_test_skip_note">Il tuo piano parte dal livello che hai indicato e si adatta in base alle prime sessioni.</string>
+    <string name="onboarding_language_test_preparing_description">Ci vuole un minuto o due per preparare il test di %1$s, solo questa volta.</string>
+    <string name="onboarding_language_test_skip_note">Il tuo piano parte dal livello che hai indicato e si perfeziona nei primi giorni.</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">Non ho capito l’audio</string>
     <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
@@ -752,7 +750,7 @@
     <string name="onboarding_reveal_phase_light_review">Ripasso leggero</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">La data più probabile per l’esame è ora %1$s.</string>
-    <string name="onboarding_reveal_notice_day_notice">La data ufficiale dell’esame è %1$s. Vuoi usarla come data del tuo esame?</string>
+    <string name="onboarding_reveal_notice_day_notice">La data ufficiale dell’esame è %1$s. Vuoi usarla?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">Nessuna data d’esame a %1$s</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
@@ -1048,7 +1046,7 @@
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">Paese</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
-    <string name="onboarding_variety_description">Per le conversazioni di allenamento e le risposte alle tue domande usiamo la variante del paese che scegli. Le lezioni e i relativi audio sono in %1$s.</string>
+    <string name="onboarding_variety_description">Le conversazioni di allenamento e le nostre risposte alle tue domande seguono il paese che scegli. Le lezioni e il loro audio usano %1$s.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
     <string name="onboarding_variety_none">Nessuna preferenza</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->

@@ -9,7 +9,7 @@
   "conversation_below_level": "df6085ab98d57072b5c863a25ff1e92f1931757b6e99db753660907aaed523f8",
   "conversation_better": "9478d390cb22def63a50fad9e5d2393b7317876b20a182041478973f906ef120",
   "conversation_brain_power": "5242adc7b4fbf59e162235ff66607a72582b7a1fbd41eb7dd38714fa374a7907",
-  "conversation_brief_note": "333e1e0edd1c4a2fd15263a3f3e805f86774a7894d4d2686fee8b7cdda0f408f",
+  "conversation_brief_note": "31522c589dd55ab45c89c971e1014d082c8d9b6b95eb967bf3862c44410055f0",
   "conversation_by_criterion": "15f5a2a58abb3c82d421f02056a9f8915d3876dccc74cd6cbd61daa7e5f17b58",
   "conversation_call": "baab600f7ca62e174150a4edc026d1489c7c8b8480a430e139c521139a2ae91f",
   "conversation_call_again": "df66222e3136e54551157a85a7181f53ece57d002690dfed03c5ff9c399fbb15",
@@ -63,7 +63,7 @@
   "conversation_goals_tile": "4a8db1434863b375299a4128a9c0ce1eb7304a58f84576886686bf6d02df5b80",
   "conversation_help": "e0a7ef86d86b284f387de5e16a291579130f352924d4847f046ef83d5c202d8d",
   "conversation_ielts_mock": "f1c63c4c6b9b0060597711bc5345994301d7251cd7de5efbc436e36ca2aa8a8b",
-  "conversation_in_progress": "3c7b6dc69b1b7de534530d8a79d6092d1c459703c74cc4b088b9140f741b3e30",
+  "conversation_in_progress": "fe42f4b174d728bc244a17e5c5eaa707f6bfc68cbd30866a42d8e3c252f0a290",
   "conversation_in_progress_title": "6ba9a21cd9becfb6aa1b40fe7083ca3912b078be41f3cec37998ec66d11fe53a",
   "conversation_intro_meta": "38bd678fa0af1220121d6c5fa95872465e2d3617292c0ce085770005a7c69248",
   "conversation_keep_talking": "e24d8573688331336bdfbbe1c238a7be7cef8ea61758d37c238cedc882620cd0",
@@ -136,7 +136,7 @@
   "conversation_to_improve": "d6650a87e38113b15214d64cf39a3bdea7b9fdde7823819f5f92e550b187ab7e",
   "conversation_toefl_mock": "03cc9ef9f9163eab3b5e47cdceb38012e78700dd930967c9f25a099a94a0bec2",
   "conversation_try_again": "1919433f2fe25b9edc8a07246e614a5447c0b86c2e1a1592a8383b4b08d85214",
-  "conversation_try_again_later": "020fd37773d5aade5e561332de378e8f3630575d907eb27f0099576e5443efe3",
+  "conversation_try_again_later": "4247789764fdee99d5f820a2b083db75789d9c53b17bb97418d8424521dae7ef",
   "conversation_try_another_mock": "a233ee73ca32186cd16f432e77265346a325845c3b2acf0aa76d4292d2d3c200",
   "conversation_type_below": "f5883e9d7279f689bd24f0fb0051d65a160c9d8f4a713862b44a03512fd7eb22",
   "conversation_type_instead": "8f04dee3e5d6f6505ef0bd305fa26fc6fa1bbee2a770f25aa704f53c382b4941",
@@ -247,7 +247,7 @@
     <string name="conversation_paused_title">Sohbetlere ara verildi</string>
     <string name="conversation_paused">Şu an herkes aynı durumda. Daha sonra tekrar dene.</string>
     <string name="conversation_in_progress_title">Başka bir sohbetin açık</string>
-    <string name="conversation_in_progress">Başka bir cihazda ya da tarayıcında açık. Bu sohbeti başlatırsan diğeri biter ve o sohbet için geri bildirim alamazsın.</string>
+    <string name="conversation_in_progress">Bu sohbet başka bir cihazda veya tarayıcında açık. Bunu başlatırsan önceki sohbet geri bildirim verilmeden sona erer.</string>
     <string name="conversation_take_over">Buradan başla</string>
     <string name="conversation_dropped_title">Sohbet bağlantısı kesildi</string>
     <string name="conversation_dropped">Tekrar bağlan veya söylediklerin hakkında geri bildirim almak için sohbeti bitir.</string>
@@ -270,7 +270,7 @@
     <string name="conversation_not_this_time">Bu kez olmadı</string>
     <string name="conversation_goals_tile">Hedefler</string>
     <string name="conversation_brain_power">Beyin Gücü</string>
-    <string name="conversation_try_again_later">Tekrar deneyebilmen için sohbet yeniden karşına çıkar.</string>
+    <string name="conversation_try_again_later">Rövanş bir sonraki çalışmanda</string>
     <string name="conversation_stars_rule">Bitirmek, her şeyi anlatmak ve Yardım kullanmamak birer yıldız kazandırır.</string>
     <string name="conversation_went_well">İyi gidenler</string>
     <string name="conversation_said_well">İyi kullandığın ifadeler</string>
@@ -342,7 +342,7 @@
     <string name="conversation_below_level">%1$s seviyesinin altında</string>
     <string name="conversation_level_line">Bu ölçeklerde %1$s, %2$s düzeyine karşılık gelir.</string>
     <string name="conversation_typed_note">Yanıtlarını yazdığın için bu tahminde nasıl konuştuğun değerlendirilmedi.</string>
-    <string name="conversation_brief_note">Az konuştuğun için bu tahmin pek kesin değil.</string>
+    <string name="conversation_brief_note">Pek konuşmadığın için bu tahmin çok kesin değil.</string>
     <string name="conversation_focus">Odak</string>
     <string name="conversation_not_rated">Değerlendirilmedi</string>
     <string name="conversation_estimate">Bu bir tahmin, resmî puan değil.</string>

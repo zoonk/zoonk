@@ -44,7 +44,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.util.UUID
 
-/** "Ask a few more in my sessions" on the result opened from the plan. */
+/** "Ask a few more questions as I study" on the result opened from the plan. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class FocusTestSwitchTest {

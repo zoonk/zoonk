@@ -3,7 +3,7 @@
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">Test: %1$s</string>
     <string name="testout_intro_title">Already know this?</string>
-    <string name="testout_intro_detail">A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know.</string>
+    <string name="testout_intro_detail">A few questions on this chapter. Do well, and your plan skips what you already know.</string>
     <string name="testout_start">Start the test</string>
 
     <string name="testout_writing">Writing your questions</string>

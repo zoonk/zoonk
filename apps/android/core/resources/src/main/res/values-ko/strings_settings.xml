@@ -7,7 +7,7 @@
   "settings_apple_not_revoked": "e9ed36b41f2e5a1d9016a688412d3c6a9a7bc1061d66cba692d538f98939f78e",
   "settings_cancel": "339760bb6e766ac8d06a5c2b7945fa75135f27c2570424e1a41df9eec65987e4",
   "settings_delete_account": "b6b1eef67aa0084ec9280b4208ca61a50fffa9bfe6ec4808f793fcaa948f8974",
-  "settings_delete_code_description": "4ae5278829d7d32ff4052c528f121395e71085d1117de0d311383fa71aef04f7",
+  "settings_delete_code_description": "a866741492d7434c7d17df8d60401efe00fadfebad706a30ab119b3075f3eed1",
   "settings_delete_code_title": "0987d0b987df998a16c135d3b9cd2e9611a55238a4c9353a3bc99822a7d38b53",
   "settings_delete_confirm_description": "e676be3570e8d635d2e1e75ba3a49b1d28d0fbe5bdc433aeac8e2446049acf0c",
   "settings_delete_confirm_title": "c9791b054038920d9a5e550ef72213f55a9aa29cc71b5985becd31650891980a",
@@ -76,7 +76,7 @@
     <string name="settings_cancel">취소</string>
     <string name="settings_delete_code_title">본인 확인</string>
     <!-- %1$s is the account's email address. -->
-    <string name="settings_delete_code_description">계정 보호를 위해 %1$s에 보낸 코드를 입력하세요.</string>
+    <string name="settings_delete_code_description">보안을 위해 %1$s로 보낸 코드를 입력해 주세요.</string>
     <string name="settings_delete_verify">인증 후 삭제하기</string>
     <string name="settings_delete_failed">계정을 삭제하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요.</string>
     <string name="settings_account_deleted">계정이 삭제됐어요.</string>

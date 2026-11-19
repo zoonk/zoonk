@@ -12,7 +12,7 @@
   "stats_belt_blue": "921ad4c25f1ae4537ce53aeef1cc7e76c472896ce6d9f5a5f116cef27cee45b4",
   "stats_belt_brown": "7db323da3789167248e250ebdb02861b1ec59f9d5076f74a9715026f3e46cd4b",
   "stats_belt_comes_after": "aebeee5b512d1b45cb40c144fd6aa9988e18e3333275d3fc61c50e81a5406819",
-  "stats_belt_coming": "e71b0dd5603a7ef5c464ba20f73fc33a2edcc4a97aad9ea3c0b572dd3331460b",
+  "stats_belt_coming": "3262a24dd6b551ca1fb3d24d18e234e943b114f2d0232381349ec8c9926f3b96",
   "stats_belt_current": "6ea9c24370d561fe6672990ee6962d211ab0fff2e1f128ec2ea19c4545ae6bf1",
   "stats_belt_earned": "d9f0b7f03c8db5a7ddd09191bb632b3af5f1fd081ef0b1cbfb8120e974f8d075",
   "stats_belt_gray": "199208e46befce3fa0623cf685bea812f7c87da7ddb753514148e585a2dc0970",
@@ -27,7 +27,10 @@
   "stats_best_day_is": "e1b11224c185773ab444f32123fd7bfb48ae094d536f1e2d70f58b64caa4f06c",
   "stats_best_on": "dcb314b8f9d977e160f36c5cf6eb75c8247c4b1d7b4bebf10159ebe9c20f694a",
   "stats_best_time": "0c081b4588643196ae572582798030434576fc062aaa462a8e3d075108fd8a0a",
-  "stats_best_time_is": "292afc996c5819abd02f2ee208adb03e9016186cf08ee1f6750d8aa5d5e489c2",
+  "stats_best_time_afternoon": "b07ecaea121d0e9e774ecddbdc6fccf89ca23a3f8ddd67bd11d66ccbc69ebb39",
+  "stats_best_time_evening": "a19c1104334061e7d2f82be5e217bdb8c5b5594496dedfc4ac119727fd0f9693",
+  "stats_best_time_morning": "14e867ae9925f6e363f7fc54ee54822e6633fc1cc90dd7dce423dfaff556d3d7",
+  "stats_best_time_night": "4674b5a6bfe1458b0788d5af9171a89a68cd5fce885e16efcc4104845a6d6122",
   "stats_brain_power_amount": "54ddb7714c945739493857d85dc79556f1c939d1beea4d212a634a265fadb015",
   "stats_brain_power_to": "6ada5811349723697b2a6210a807017ae8222245f98203df59ed55225cdda1fb",
   "stats_calendar_activity_summary": "3fa551a7af988d575161e7442b60cc6d8d5f1dc5c6676ad6caae21ffa57bf91a",
@@ -114,7 +117,7 @@
     <!-- In place of the weekly score chart while it has fewer than two weeks to draw. -->
     <string name="stats_trend_after_two_weeks">İki hafta çalıştıktan sonra puanındaki değişimi görebilirsin</string>
     <!-- The key under the belt row: a folded belt is one the learner hasn't earned yet. -->
-    <string name="stats_belt_coming">Sırada</string>
+    <string name="stats_belt_coming">Yakında</string>
     <!-- Each belt's one-word name under its drawing in the row of every belt. -->
     <string name="stats_belt_white">Beyaz</string>
     <string name="stats_belt_yellow">Sarı</string>
@@ -189,8 +192,12 @@
     <!-- %1$s is a weekday's full name, such as "Thursday". -->
     <string name="stats_best_day_is">En iyi günün %1$s.</string>
     <string name="stats_days_same">Cevaplarının doğruluk oranı her gün yaklaşık aynı.</string>
-    <!-- %1$s is a time of day in lowercase: morning, afternoon, evening or night. -->
-    <string name="stats_best_time_is">En başarılı olduğun zaman: %1$s.</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from midnight to 6 AM. -->
+    <string name="stats_best_time_night">Gece en iyi performansı gösteriyorsun.</string>
+    <string name="stats_best_time_morning">En iyi cevapları sabah veriyorsun.</string>
+    <string name="stats_best_time_afternoon">En iyi cevapları öğleden sonra veriyorsun.</string>
+    <!-- Over the patterns charts: the part of the day the learner answers best. Answers from 6 PM to midnight. -->
+    <string name="stats_best_time_evening">Akşam en iyi performansı gösteriyorsun.</string>
     <string name="stats_times_same">Günün hangi saati olduğu fark etmiyor.</string>
     <string name="stats_answer_more">En başarılı olduğun zamanları görmek için daha fazla soru cevapla.</string>
     <!-- Answers given from midnight to 6 AM. -->

@@ -65,7 +65,7 @@
   "tutor_offer_essay_gate": "f071f2113f32eec08ddc5986500d7a29c260429c483bfd1c20d063d3f0709ffd",
   "tutor_offer_essay_weekly": "afe4c4b9c3557ff44d84613840c2fc86e30a2d8fbc76648a4aaef1c09100fbc8",
   "tutor_offer_goal": "c82a4788b6b89c5c791aa41114d56888b4c6190184bee9780a435d7f0ea97972",
-  "tutor_offer_goal_gate": "f3115d1300a20a2150eec3caf205426b2373d9b87e1d46b2df5ffc358c9e2424",
+  "tutor_offer_goal_gate": "481262bf8e5d2969a5985853021858ec2e295de2c33fa06f10fe8f262993dc92",
   "tutor_offer_home_country_saved": "43b9ac0cd8fb550f3e7abaeaa08a2185bd1c096bb5b5e822ba9434108eb85f5a",
   "tutor_offer_home_country_title": "aa2394b7ca333ea7ca129f1852904043166d072a6a0a680b463b8f913f9fa1a8",
   "tutor_offer_logbook": "5b36606af035780324d145030b8066834a30aa827bca337f05c3ee1ae304325b",
@@ -217,7 +217,7 @@
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
     <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="tutor_offer_goal_gate">Ahora necesitas una suscripción para crear otro objetivo</string>
+    <string name="tutor_offer_goal_gate">Iniciar otro objetivo requiere una suscripción</string>
     <string name="tutor_offer_catalog_course">Un curso ya disponible en el catálogo</string>
     <string name="tutor_offer_chapter_test">Prueba: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">
