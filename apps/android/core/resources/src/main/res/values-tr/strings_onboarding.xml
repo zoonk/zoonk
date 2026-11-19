@@ -696,102 +696,16 @@
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->
     <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
-    <!-- Under a plan without a date that holds every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_covers">Planın hedefinin tamamını kapsıyor. Daha erken bitirmek için günlük çalışma süreni artır ya da bir tarih seç; planın en önemli konuları o tarihe sığdırır.</string>
-    <!-- Under a plan without a date that stops before every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_time">Günlük çalışma süren planının kapsamını belirler. Daha fazlasını öğrenmek ya da daha erken bitirmek için günlük süreni artır ya da bir tarih seç; planın en önemli konuları o tarihe sığdırır.</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
     <string name="onboarding_reveal_start">Başla</string>
-    <string name="onboarding_reveal_adjust">Ayarla</string>
     <string name="onboarding_reveal_save_note">Planını kaydet, bir dahaki gelişinde de burada olsun.</string>
     <string name="onboarding_reveal_phases">Aşamalar</string>
-    <string name="onboarding_reveal_chapters">Üniteler</string>
-    <plurals name="onboarding_reveal_more_chapters">
-        <item quantity="one">%d ünite daha</item>
-        <item quantity="other">%d ünite daha</item>
-    </plurals>
-    <plurals name="onboarding_reveal_known_skills">
-        <item quantity="one">Zaten bildiğin %d beceri</item>
-        <item quantity="other">Zaten bildiğin %d beceri</item>
-    </plurals>
-    <!-- A new plan's chapter whose lessons are still being written. -->
-    <string name="onboarding_reveal_more_lessons">Diğer dersler</string>
     <string name="onboarding_reveal_usual_structure">Resmî belgeleri okumayı bitirene kadar bu plan sınavın her zamanki yapısını temel alır. Belgeler planında değişiklik gerektirirse kararı Bugün sayfasında sen verirsin.</string>
-    <!-- Phases of an exam plan, named by what the learner does in them. -->
-    <string name="onboarding_reveal_phase_foundations">Temeller</string>
-    <string name="onboarding_reveal_phase_gaps">Eksikleri tamamlama</string>
-    <string name="onboarding_reveal_phase_practice">Alıştırma</string>
-    <string name="onboarding_reveal_phase_final_stretch">Son düzlük</string>
-    <!-- %1$d is the phase's place in the plan. -->
-    <string name="onboarding_reveal_phase_number">%1$d. aşama</string>
-    <!-- Phases of a plan whose exam is days away. -->
-    <string name="onboarding_reveal_phase_map_and_gaps">Sınav kapsamı ve eksikler</string>
-    <string name="onboarding_reveal_phase_mock_and_practice">Deneme sınavı ve alıştırma</string>
-    <string name="onboarding_reveal_phase_full_review_and_practice">Genel tekrar ve alıştırma</string>
-    <string name="onboarding_reveal_phase_short_mock">Kısa deneme sınavı ve tekrar</string>
-    <string name="onboarding_reveal_phase_full_review">Genel tekrar</string>
-    <string name="onboarding_reveal_phase_light_review">Hafif tekrar</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">Sınavın tahmini tarihi artık %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">Resmî sınav tarihi %1$s. Bu tarihi kullanalım mı?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$s ayında sınav tarihi yok</string>
-    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_reveal_covers_nothing">Günde %1$s ayırmak, hedefin için gereken her şeyi çalışmaya yetmiyor.</string>
-    <string name="onboarding_reveal_covers_exam_deeper">Günde %1$s ayırarak sınavın tüm konularını, en çok sorulanları ise daha ayrıntılı çalışırsın.</string>
-    <string name="onboarding_reveal_covers_exam_lighter">Günde %1$s ayırarak sınavın tüm konularını çalışırsın, bazılarını daha az ayrıntılı ele alırsın.</string>
-    <string name="onboarding_reveal_covers_goal">Günde %1$s ayırarak hedefin için gereken her şeyi, en önemli kısımları ise daha ayrıntılı çalışırsın.</string>
-    <string name="onboarding_reveal_covers_exam_after">Günde %1$s ayırarak sınava kadar tüm konulara yetişemezsin: en az sorulanlar sınavdan sonraya kalır.</string>
-    <string name="onboarding_reveal_covers_exam_left_out">Günde %1$s ayırarak tüm konulara yetişemezsin: en az sorulanlar dışarıda kalır.</string>
-    <string name="onboarding_reveal_covers_goal_left_out">Günde %1$s ayırarak hedefin için gereken her şeyi çalışamazsın: öğrenme yolunun sonundakiler dışarıda kalır.</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="onboarding_reveal_full_course_finish">Günde %1$s çalışırsan planını %2$s ayında, %3$s tarihindeki sınavdan sonra bitirirsin. Sınava kadar en çok soru çıkan konulara öncelik verilir.</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="onboarding_reveal_full_course_finish_month">Günde %1$s çalışırsan planını %2$s ayında, %3$s ayındaki sınavdan sonra bitirirsin. Sınava kadar en çok soru çıkan konulara öncelik verilir.</string>
-    <string name="onboarding_reveal_full_course">Sınava kadar en sık çıkan konulara öncelik verilir. Yetişmeyenler sınavdan sonra işlenir.</string>
-    <plurals name="onboarding_reveal_modules">
-        <item quantity="one">%d modül</item>
-        <item quantity="other">%d modül</item>
-    </plurals>
-    <plurals name="onboarding_reveal_material_topics">
-        <item quantity="one">Materyalinden %d konu</item>
-        <item quantity="other">Materyalinden %d konu</item>
-    </plurals>
-    <plurals name="onboarding_reveal_notice_subjects">
-        <item quantity="one">%d branş</item>
-        <item quantity="other">%d branş</item>
-    </plurals>
-    <!-- %1$s lists subjects with their number of questions, such as "Math 45 · Languages 45". -->
-    <string name="onboarding_reveal_most_questions">En çok soru: %1$s</string>
-    <plurals name="onboarding_reveal_topics">
-        <item quantity="one">%d konu</item>
-        <item quantity="other">%d konu</item>
-    </plurals>
-    <plurals name="onboarding_reveal_topics_all_planned">
-        <item quantity="one">%d konu, hepsi planında</item>
-        <item quantity="other">%d konu, hepsi planında</item>
-    </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
-    <plurals name="onboarding_reveal_topics_dont_fit">
-        <item quantity="one">%1$d / %2$d konu, günlük %3$s çalışma süresine sığmıyor</item>
-        <item quantity="other">%1$d / %2$d konu, günlük %3$s çalışma süresine sığmıyor</item>
-    </plurals>
-    <!-- %1$d topics in the plan, out of %2$d (the count the plural follows). -->
-    <plurals name="onboarding_reveal_topics_planned">
-        <item quantity="one">%1$d / %2$d konu planında</item>
-        <item quantity="other">%1$d / %2$d konu planında</item>
-    </plurals>
-    <string name="onboarding_reveal_weights">Alanlara göre ağırlık</string>
-    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
-    <string name="onboarding_reveal_estimated_percent">~%1$s</string>
-    <string name="onboarding_reveal_estimated_material_area">~ Tahmini: Materyalinde bu alanın ağırlığı belirtilmiyor.</string>
-    <string name="onboarding_reveal_estimated_material_areas">~ Tahmini: Materyalinde bu alanların ağırlıkları belirtilmiyor.</string>
-    <string name="onboarding_reveal_estimated_guide_area">~ Tahmini: Resmî kılavuzda bu alanın ağırlığı belirtilmiyor.</string>
-    <string name="onboarding_reveal_estimated_guide_areas">~ Tahmini: Resmî kılavuzda bu alanların ağırlıkları belirtilmiyor.</string>
-    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
-    <string name="onboarding_reveal_estimated_notice_area">~ Tahmini: Resmî ilanda bu alanın ağırlığı belirtilmiyor.</string>
-    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
-    <string name="onboarding_reveal_estimated_notice_areas">~ Tahmini: Resmî ilanda bu alanların ağırlıkları belirtilmiyor.</string>
     <string name="onboarding_intent_label">Materyalinle ne yapmak istediğin</string>
     <string name="onboarding_continue">Devam et</string>
     <string name="onboarding_skip">Atla</string>
@@ -910,11 +824,6 @@
         <item quantity="one">%d gün</item>
         <item quantity="other">%d gün</item>
     </plurals>
-    <!-- Over the plan's first week: how many of its days the learner studies, today among them. -->
-    <plurals name="onboarding_reveal_study_days">
-        <item quantity="one">%d çalışma günü</item>
-        <item quantity="other">%d çalışma günü</item>
-    </plurals>
     <string name="onboarding_schedule_title">Her gün ne kadar süre ders çalışabilirsin?</string>
     <string name="onboarding_full_course">Sınavdan sonra çalışmaya devam et</string>
     <string name="onboarding_full_course_rule">Sınava kadar en sık çıkan konulara öncelik verilir. Yetişmeyenler sınavdan sonra işlenir.</string>
@@ -942,13 +851,6 @@
     <string name="onboarding_reveal_reading_line_fit">Bunları planına yerleştiriyoruz…</string>
     <string name="onboarding_see_plan">Planı gör</string>
     <string name="onboarding_plan_ready_goal">%1$s planın hazır.</string>
-    <string name="onboarding_reveal_start_here">Buradan başla</string>
-    <string name="onboarding_reveal_up_next">Sıradaki</string>
-    <string name="onboarding_reveal_first_week">İlk haftan</string>
-    <string name="onboarding_reveal_rest_day">Dinlenme günü</string>
-    <string name="onboarding_reveal_challenge">Meydan okuma</string>
-    <string name="onboarding_reveal_review">Tekrar yap</string>
-    <string name="onboarding_reveal_mock">Deneme sınavı</string>
     <string name="onboarding_reveal_a_day">günde</string>
     <string name="onboarding_reveal_weekends">hafta sonları %1$s</string>
     <string name="onboarding_reveal_until_exam">sınava kadar</string>
@@ -998,15 +900,6 @@
     <string name="onboarding_aim_from_intermediate">Orta seviyeden, günde %1$s</string>
     <string name="onboarding_aim_from_advanced">İleri seviyeden, günde %1$s</string>
     <string name="onboarding_aim_from_level">%1$s düzeyinden, günde %2$s</string>
-    <!-- The count is the separate animated readout above this noun. -->
-    <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
-        <item quantity="one">ders</item>
-        <item quantity="other">ders</item>
-    </plurals>
-    <plurals name="onboarding_reveal_lessons_done">
-        <item quantity="one">ders, %1$s tanesi tamamlandı</item>
-        <item quantity="other">ders, %1$s tanesi tamamlandı</item>
-    </plurals>
     <string name="onboarding_reason_choices">Bu dili öğrenme nedenin</string>
     <string name="onboarding_aim_description">Kursunun hedef seviyesi, planının süresini belirler.</string>
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->

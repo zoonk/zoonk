@@ -270,102 +270,16 @@
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->
     <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
-    <!-- Under a plan without a date that holds every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_covers">Your plan covers every part of your goal. To finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
-    <!-- Under a plan without a date that stops before every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_time">Your time a day sets how far your plan goes. To go further or finish sooner, give it more time a day, or pick a date and it fits what matters most by then.</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
     <string name="onboarding_reveal_start">Start</string>
-    <string name="onboarding_reveal_adjust">Adjust</string>
     <string name="onboarding_reveal_save_note">Save your plan so it\'s here next time.</string>
     <string name="onboarding_reveal_phases">Phases</string>
-    <string name="onboarding_reveal_chapters">Chapters</string>
-    <plurals name="onboarding_reveal_more_chapters">
-        <item quantity="one">%d more chapter</item>
-        <item quantity="other">%d more chapters</item>
-    </plurals>
-    <plurals name="onboarding_reveal_known_skills">
-        <item quantity="one">%d skill you already know</item>
-        <item quantity="other">%d skills you already know</item>
-    </plurals>
-    <!-- A new plan's chapter whose lessons are still being written. -->
-    <string name="onboarding_reveal_more_lessons">More lessons</string>
     <string name="onboarding_reveal_usual_structure">This plan follows the exam\'s usual structure while we finish reading its official documents. If they change your plan, you\'ll decide on Today.</string>
-    <!-- Phases of an exam plan, named by what the learner does in them. -->
-    <string name="onboarding_reveal_phase_foundations">Foundations</string>
-    <string name="onboarding_reveal_phase_gaps">Fill the gaps</string>
-    <string name="onboarding_reveal_phase_practice">Practice</string>
-    <string name="onboarding_reveal_phase_final_stretch">Final stretch</string>
-    <!-- %1$d is the phase's place in the plan. -->
-    <string name="onboarding_reveal_phase_number">Phase %1$d</string>
-    <!-- Phases of a plan whose exam is days away. -->
-    <string name="onboarding_reveal_phase_map_and_gaps">Exam map and gaps</string>
-    <string name="onboarding_reveal_phase_mock_and_practice">Mock and practice</string>
-    <string name="onboarding_reveal_phase_full_review_and_practice">Full review and practice</string>
-    <string name="onboarding_reveal_phase_short_mock">Short mock and review</string>
-    <string name="onboarding_reveal_phase_full_review">Full review</string>
-    <string name="onboarding_reveal_phase_light_review">Light review</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">The exam\'s likely date is now %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">The official exam date is %1$s. Use it?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">No exam date in %1$s</string>
-    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_reveal_covers_nothing">%1$s a day isn\'t enough time to cover your goal.</string>
-    <string name="onboarding_reveal_covers_exam_deeper">%1$s a day studies every topic of the exam, the ones that come up most in more depth.</string>
-    <string name="onboarding_reveal_covers_exam_lighter">%1$s a day studies every topic of the exam, some of them in less depth.</string>
-    <string name="onboarding_reveal_covers_goal">%1$s a day studies every part of your goal, the ones that matter most in more depth.</string>
-    <string name="onboarding_reveal_covers_exam_after">%1$s a day doesn\'t reach every topic by the exam: the ones that come up least come after it.</string>
-    <string name="onboarding_reveal_covers_exam_left_out">%1$s a day doesn\'t reach every topic: the ones that come up least are left out.</string>
-    <string name="onboarding_reveal_covers_goal_left_out">%1$s a day doesn\'t reach every part of your goal: what comes last in your path is left out.</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="onboarding_reveal_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s. Until the exam, what comes up most comes first.</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="onboarding_reveal_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s. Until the exam, what comes up most comes first.</string>
-    <string name="onboarding_reveal_full_course">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
-    <plurals name="onboarding_reveal_modules">
-        <item quantity="one">%d module</item>
-        <item quantity="other">%d modules</item>
-    </plurals>
-    <plurals name="onboarding_reveal_material_topics">
-        <item quantity="one">%d topic from your material</item>
-        <item quantity="other">%d topics from your material</item>
-    </plurals>
-    <plurals name="onboarding_reveal_notice_subjects">
-        <item quantity="one">%d subject</item>
-        <item quantity="other">%d subjects</item>
-    </plurals>
-    <!-- %1$s lists subjects with their number of questions, such as "Math 45 · Languages 45". -->
-    <string name="onboarding_reveal_most_questions">Most questions: %1$s</string>
-    <plurals name="onboarding_reveal_topics">
-        <item quantity="one">%d topic</item>
-        <item quantity="other">%d topics</item>
-    </plurals>
-    <plurals name="onboarding_reveal_topics_all_planned">
-        <item quantity="one">%d topic, all in your plan</item>
-        <item quantity="other">%d topics, all in your plan</item>
-    </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
-    <plurals name="onboarding_reveal_topics_dont_fit">
-        <item quantity="one">%1$d of %2$d topic doesn\'t fit in %3$s a day</item>
-        <item quantity="other">%1$d of %2$d topics don\'t fit in %3$s a day</item>
-    </plurals>
-    <!-- %1$d topics in the plan, out of %2$d (the count the plural follows). -->
-    <plurals name="onboarding_reveal_topics_planned">
-        <item quantity="one">%1$d of %2$d topic in your plan</item>
-        <item quantity="other">%1$d of %2$d topics in your plan</item>
-    </plurals>
-    <string name="onboarding_reveal_weights">Weight by area</string>
-    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
-    <string name="onboarding_reveal_estimated_percent">~%1$s</string>
-    <string name="onboarding_reveal_estimated_material_area">~ Estimated: your material doesn\'t say how much this area weighs.</string>
-    <string name="onboarding_reveal_estimated_material_areas">~ Estimated: your material doesn\'t say how much these areas weigh.</string>
-    <string name="onboarding_reveal_estimated_guide_area">~ Estimated: the official guide doesn\'t say how much this area weighs.</string>
-    <string name="onboarding_reveal_estimated_guide_areas">~ Estimated: the official guide doesn\'t say how much these areas weigh.</string>
-    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
-    <string name="onboarding_reveal_estimated_notice_area">~ Estimated: the official guide doesn\'t say how much this area weighs.</string>
-    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
-    <string name="onboarding_reveal_estimated_notice_areas">~ Estimated: the official guide doesn\'t say how much these areas weigh.</string>
     <string name="onboarding_intent_label">What you want to do with your material</string>
     <string name="onboarding_continue">Continue</string>
     <string name="onboarding_skip">Skip</string>
@@ -484,11 +398,6 @@
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>
-    <!-- Over the plan's first week: how many of its days the learner studies, today among them. -->
-    <plurals name="onboarding_reveal_study_days">
-        <item quantity="one">%d study day</item>
-        <item quantity="other">%d study days</item>
-    </plurals>
     <string name="onboarding_schedule_title">How much time can you study each day?</string>
     <string name="onboarding_full_course">Keep studying after the exam</string>
     <string name="onboarding_full_course_rule">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
@@ -516,13 +425,6 @@
     <string name="onboarding_reveal_reading_line_fit">Fitting them into your plan…</string>
     <string name="onboarding_see_plan">See plan</string>
     <string name="onboarding_plan_ready_goal">Your %1$s plan is ready.</string>
-    <string name="onboarding_reveal_start_here">Start here</string>
-    <string name="onboarding_reveal_up_next">Up next</string>
-    <string name="onboarding_reveal_first_week">Your first week</string>
-    <string name="onboarding_reveal_rest_day">Rest day</string>
-    <string name="onboarding_reveal_challenge">Challenge</string>
-    <string name="onboarding_reveal_review">Review</string>
-    <string name="onboarding_reveal_mock">Mock exam</string>
     <string name="onboarding_reveal_a_day">a day</string>
     <string name="onboarding_reveal_weekends">%1$s on weekends</string>
     <string name="onboarding_reveal_until_exam">until the exam</string>
@@ -572,15 +474,6 @@
     <string name="onboarding_aim_from_intermediate">From an intermediate level, at %1$s a day.</string>
     <string name="onboarding_aim_from_advanced">From an advanced level, at %1$s a day.</string>
     <string name="onboarding_aim_from_level">From %1$s, at %2$s a day.</string>
-    <!-- The count is the separate animated readout above this noun. -->
-    <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
-        <item quantity="one">lesson</item>
-        <item quantity="other">lessons</item>
-    </plurals>
-    <plurals name="onboarding_reveal_lessons_done">
-        <item quantity="one">lesson, %1$s done</item>
-        <item quantity="other">lessons, %1$s done</item>
-    </plurals>
     <string name="onboarding_reason_choices">Why you\'re learning it</string>
     <string name="onboarding_aim_description">How far your course goes, which sets how long your plan is.</string>
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->

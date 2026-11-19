@@ -173,9 +173,6 @@
     <string name="focustest_take_test">Hacer la Prueba de enfoque</string>
     <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
     <string name="focustest_schedule_focus">Con este tiempo, te sugerimos prestar más atención a %1$s.</string>
-    <!-- On the plan reveal: %1$s is a daily study time, such as "4 hr"; %2$s a date, such as "Dec 10"; %3$s lists up to three exam subjects. -->
-    <string name="focustest_reveal_trade_off">Con %1$s al día, no habrá tiempo para estudiar todos los temas antes del %2$s. Este plan dedica más tiempo a %3$s.</string>
-    <string name="focustest_what_test_changed">Ver qué cambió con tu prueba</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">La Prueba de enfoque te muestra qué estudiar más.</string>
     <!-- %1$s is a duration, such as "15 min". -->

@@ -165,9 +165,6 @@
     <string name="focustest_take_test">집중 진단 받기</string>
     <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
     <string name="focustest_schedule_focus">학습 시간이 이 정도라면 %1$s에 더 집중하는 걸 추천해요.</string>
-    <!-- On the plan reveal: %1$s is a daily study time, such as "4 hr"; %2$s a date, such as "Dec 10"; %3$s lists up to three exam subjects. -->
-    <string name="focustest_reveal_trade_off">하루 %1$s씩 공부하면 %2$s 전까지 다루지 못하는 주제가 생겨요. 이 계획은 %3$s에 시간을 더 배정해요.</string>
-    <string name="focustest_what_test_changed">진단으로 달라진 점 보기</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요.</string>
     <!-- %1$s is a duration, such as "15 min". -->

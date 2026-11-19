@@ -693,93 +693,16 @@
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->
     <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
-    <!-- Under a plan without a date that holds every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_covers">目標のすべての内容を含む学習計画です。1日の学習時間を増やすと早く終えられます。期日を決めると、それまでに特に大切な内容を学べる計画になります。</string>
-    <!-- Under a plan without a date that stops before every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_time">1日の学習時間によって、計画で学べる範囲が決まります。1日の学習時間を増やすと、もっと学んだり早く終えたりできます。期日を決めると、それまでに特に大切な内容を学べる計画になります。</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
     <string name="onboarding_reveal_start">始める</string>
-    <string name="onboarding_reveal_adjust">調整する</string>
     <string name="onboarding_reveal_save_note">次回も見られるように、学習計画を保存しましょう。</string>
     <string name="onboarding_reveal_phases">フェーズ</string>
-    <string name="onboarding_reveal_chapters">章</string>
-    <plurals name="onboarding_reveal_more_chapters">
-        <item quantity="other">ほか%d章</item>
-    </plurals>
-    <plurals name="onboarding_reveal_known_skills">
-        <item quantity="other">すでに身についているスキル%d個</item>
-    </plurals>
-    <!-- A new plan's chapter whose lessons are still being written. -->
-    <string name="onboarding_reveal_more_lessons">ほかのレッスン</string>
     <string name="onboarding_reveal_usual_structure">公式資料の読み込みが終わるまでは、試験の通常の構成に沿った学習計画になっています。資料の内容で学習計画が変わる場合は、「今日」で変更するかどうかを決められます。</string>
-    <!-- Phases of an exam plan, named by what the learner does in them. -->
-    <string name="onboarding_reveal_phase_foundations">基礎固め</string>
-    <string name="onboarding_reveal_phase_gaps">知識の穴を埋める</string>
-    <string name="onboarding_reveal_phase_practice">演習</string>
-    <string name="onboarding_reveal_phase_final_stretch">仕上げ</string>
-    <!-- %1$d is the phase's place in the plan. -->
-    <string name="onboarding_reveal_phase_number">フェーズ%1$d</string>
-    <!-- Phases of a plan whose exam is days away. -->
-    <string name="onboarding_reveal_phase_map_and_gaps">試験の全体像と苦手分野</string>
-    <string name="onboarding_reveal_phase_mock_and_practice">模試と練習</string>
-    <string name="onboarding_reveal_phase_full_review_and_practice">総復習と練習</string>
-    <string name="onboarding_reveal_phase_short_mock">短時間の模試と復習</string>
-    <string name="onboarding_reveal_phase_full_review">総復習</string>
-    <string name="onboarding_reveal_phase_light_review">軽めの復習</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">試験日は現在、%1$sの見込みです。</string>
     <string name="onboarding_reveal_notice_day_notice">公式な試験日は%1$sです。この日付を使いますか？</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$sに試験の予定はありません</string>
-    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_reveal_covers_nothing">1日%1$sでは、目標に必要な内容をすべて学びきれません。</string>
-    <string name="onboarding_reveal_covers_exam_deeper">1日%1$sの学習で、試験のすべてのトピックを学び、よく出るトピックはより深く学びます。</string>
-    <string name="onboarding_reveal_covers_exam_lighter">1日%1$sの学習で、試験のすべてのトピックを学びますが、一部は深く掘り下げません。</string>
-    <string name="onboarding_reveal_covers_goal">1日%1$sの学習で、目標に必要な内容をすべて学び、特に大切な内容はより深く学びます。</string>
-    <string name="onboarding_reveal_covers_exam_after">1日%1$sでは、試験までにすべてのトピックを学びきれません。出題の少ないトピックは試験後に学びます。</string>
-    <string name="onboarding_reveal_covers_exam_left_out">1日%1$sでは、すべてのトピックを学びきれません。出題の少ないトピックは計画に入りきりません。</string>
-    <string name="onboarding_reveal_covers_goal_left_out">1日%1$sでは、目標に必要な内容をすべて学びきれません。学ぶ順番が後の内容は計画に入りきりません。</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="onboarding_reveal_full_course_finish">1日%1$sのペースでは、学習計画が終わるのは%2$sで、%3$sの試験より後になります。試験までは、よく出る内容を優先します。</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="onboarding_reveal_full_course_finish_month">1日%1$sのペースでは、学習計画が終わるのは%2$sで、%3$sの試験より後になります。試験までは、よく出る内容を優先します。</string>
-    <string name="onboarding_reveal_full_course">試験までは、よく出る内容を優先して学びます。入りきらない内容は試験後に学びます。</string>
-    <plurals name="onboarding_reveal_modules">
-        <item quantity="other">%d単元</item>
-    </plurals>
-    <plurals name="onboarding_reveal_material_topics">
-        <item quantity="other">資料に含まれる%d個のトピック</item>
-    </plurals>
-    <plurals name="onboarding_reveal_notice_subjects">
-        <item quantity="other">%d科目</item>
-    </plurals>
-    <!-- %1$s lists subjects with their number of questions, such as "Math 45 · Languages 45". -->
-    <string name="onboarding_reveal_most_questions">出題数が最も多い科目：%1$s</string>
-    <plurals name="onboarding_reveal_topics">
-        <item quantity="other">%d個のトピック</item>
-    </plurals>
-    <plurals name="onboarding_reveal_topics_all_planned">
-        <item quantity="other">トピック%d個すべてが学習計画に入っています</item>
-    </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
-    <plurals name="onboarding_reveal_topics_dont_fit">
-        <item quantity="other">トピック%1$d個（全%2$d個中）が1日%3$sでは計画に入りきりません</item>
-    </plurals>
-    <!-- %1$d topics in the plan, out of %2$d (the count the plural follows). -->
-    <plurals name="onboarding_reveal_topics_planned">
-        <item quantity="other">トピック%1$d個（全%2$d個中）が学習計画に入っています</item>
-    </plurals>
-    <string name="onboarding_reveal_weights">分野ごとの割合</string>
-    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
-    <string name="onboarding_reveal_estimated_percent">~%1$s</string>
-    <string name="onboarding_reveal_estimated_material_area">~ 推定値：資料にはこの分野の比重が記載されていません。</string>
-    <string name="onboarding_reveal_estimated_material_areas">~ 推定値：資料にはこれらの分野の比重が記載されていません。</string>
-    <string name="onboarding_reveal_estimated_guide_area">~ 推定値：公式ガイドにはこの分野の比重が記載されていません。</string>
-    <string name="onboarding_reveal_estimated_guide_areas">~ 推定値：公式ガイドにはこれらの分野の比重が記載されていません。</string>
-    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
-    <string name="onboarding_reveal_estimated_notice_area">~ 推定：要項にこの分野の配点が記載されていません。</string>
-    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
-    <string name="onboarding_reveal_estimated_notice_areas">~ 推定：要項にこれらの分野の配点が記載されていません。</string>
     <string name="onboarding_intent_label">資料を使ってやりたいこと</string>
     <string name="onboarding_continue">続ける</string>
     <string name="onboarding_skip">スキップ</string>
@@ -893,10 +816,6 @@
     <plurals name="onboarding_days">
         <item quantity="other">%d日</item>
     </plurals>
-    <!-- Over the plan's first week: how many of its days the learner studies, today among them. -->
-    <plurals name="onboarding_reveal_study_days">
-        <item quantity="other">%d日間の学習</item>
-    </plurals>
     <string name="onboarding_schedule_title">1日にどれくらい学習時間を取れますか？</string>
     <string name="onboarding_full_course">試験後も学習を続ける</string>
     <string name="onboarding_full_course_rule">試験までは、よく出る内容を優先して学びます。入りきらない内容は試験後に学びます。</string>
@@ -924,13 +843,6 @@
     <string name="onboarding_reveal_reading_line_fit">学習計画に組み込んでいます…</string>
     <string name="onboarding_see_plan">プランを見る</string>
     <string name="onboarding_plan_ready_goal">「%1$s」の学習計画ができました。</string>
-    <string name="onboarding_reveal_start_here">ここからスタート</string>
-    <string name="onboarding_reveal_up_next">次のレッスン</string>
-    <string name="onboarding_reveal_first_week">最初の週</string>
-    <string name="onboarding_reveal_rest_day">休みの日</string>
-    <string name="onboarding_reveal_challenge">チャレンジ</string>
-    <string name="onboarding_reveal_review">復習</string>
-    <string name="onboarding_reveal_mock">模試</string>
     <string name="onboarding_reveal_a_day">1日あたり</string>
     <string name="onboarding_reveal_weekends">週末は%1$s</string>
     <string name="onboarding_reveal_until_exam">試験まで</string>
@@ -978,13 +890,6 @@
     <string name="onboarding_aim_from_intermediate">中級から、1日%1$sずつ学びます。</string>
     <string name="onboarding_aim_from_advanced">上級から、1日%1$sずつ学びます。</string>
     <string name="onboarding_aim_from_level">%1$sから、1日%2$sずつ学びます。</string>
-    <!-- The count is the separate animated readout above this noun. -->
-    <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
-        <item quantity="other">レッスン</item>
-    </plurals>
-    <plurals name="onboarding_reveal_lessons_done">
-        <item quantity="other">レッスン、%1$s完了</item>
-    </plurals>
     <string name="onboarding_reason_choices">学ぶ理由</string>
     <string name="onboarding_aim_description">コースで目指すレベルによって、学習計画の期間が決まります。</string>
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->

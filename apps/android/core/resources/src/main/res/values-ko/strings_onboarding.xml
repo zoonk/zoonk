@@ -693,93 +693,16 @@
     <!-- When a plan without a date ends at the learner's pace. %1$s is a month and year, such as "March 2027". -->
     <!-- %1$s is a duration, such as "30 min". -->
     <!-- %1$s is the time on study weekdays and %2$s on weekend days, such as "30 min". -->
-    <!-- Under a plan without a date that holds every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_covers">목표에 필요한 모든 내용이 계획에 담겨 있어요. 더 빨리 끝내려면 하루 학습 시간을 늘리거나 날짜를 정해 보세요. 날짜를 정하면 그때까지 가장 중요한 내용을 배울 수 있도록 계획을 맞춰요.</string>
-    <!-- Under a plan without a date that stops before every part of a learn goal. -->
-    <string name="onboarding_reveal_pace_time">하루 학습 시간에 따라 계획에 담을 수 있는 내용이 달라져요. 더 많이 배우거나 더 빨리 끝내려면 하루 학습 시간을 늘리거나 날짜를 정해 보세요. 날짜를 정하면 그때까지 가장 중요한 내용을 배울 수 있도록 계획을 맞춰요.</string>
     <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
     <string name="onboarding_reveal_start">시작</string>
-    <string name="onboarding_reveal_adjust">조정하기</string>
     <string name="onboarding_reveal_save_note">다음에도 볼 수 있도록 계획을 저장하세요.</string>
     <string name="onboarding_reveal_phases">단계</string>
-    <string name="onboarding_reveal_chapters">챕터</string>
-    <plurals name="onboarding_reveal_more_chapters">
-        <item quantity="other">챕터 %d개 더</item>
-    </plurals>
-    <plurals name="onboarding_reveal_known_skills">
-        <item quantity="other">이미 아는 스킬 %d개</item>
-    </plurals>
-    <!-- A new plan's chapter whose lessons are still being written. -->
-    <string name="onboarding_reveal_more_lessons">추가 레슨</string>
     <string name="onboarding_reveal_usual_structure">공식 문서를 다 읽기 전까지는 시험의 일반적인 구성에 맞춘 계획이에요. 문서 내용에 따라 계획을 바꿀 필요가 생기면 오늘 화면에서 변경 여부를 결정할 수 있어요.</string>
-    <!-- Phases of an exam plan, named by what the learner does in them. -->
-    <string name="onboarding_reveal_phase_foundations">기초 다지기</string>
-    <string name="onboarding_reveal_phase_gaps">부족한 부분 채우기</string>
-    <string name="onboarding_reveal_phase_practice">연습하기</string>
-    <string name="onboarding_reveal_phase_final_stretch">마무리</string>
-    <!-- %1$d is the phase's place in the plan. -->
-    <string name="onboarding_reveal_phase_number">%1$d단계</string>
-    <!-- Phases of a plan whose exam is days away. -->
-    <string name="onboarding_reveal_phase_map_and_gaps">시험 개요와 부족한 부분</string>
-    <string name="onboarding_reveal_phase_mock_and_practice">모의고사와 연습</string>
-    <string name="onboarding_reveal_phase_full_review_and_practice">총복습과 연습</string>
-    <string name="onboarding_reveal_phase_short_mock">짧은 모의고사와 복습</string>
-    <string name="onboarding_reveal_phase_full_review">총복습</string>
-    <string name="onboarding_reveal_phase_light_review">가벼운 복습</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">현재 예상 시험일은 %1$s이에요.</string>
     <string name="onboarding_reveal_notice_day_notice">공식 시험일은 %1$s예요. 이 날짜를 사용할까요?</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$s에는 예정된 시험이 없어요</string>
-    <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_reveal_covers_nothing">목표에 필요한 내용을 모두 공부하려면 하루 %1$s보다 더 많은 시간이 필요해요.</string>
-    <string name="onboarding_reveal_covers_exam_deeper">하루 %1$s씩 시험에 나오는 모든 주제를 공부하고, 가장 자주 출제되는 주제는 더 깊이 공부해요.</string>
-    <string name="onboarding_reveal_covers_exam_lighter">하루 %1$s씩 시험에 나오는 모든 주제를 공부하고, 일부 주제는 간략히 다뤄요.</string>
-    <string name="onboarding_reveal_covers_goal">하루 %1$s씩 목표에 필요한 내용을 모두 공부하고, 가장 중요한 내용은 더 깊이 공부해요.</string>
-    <string name="onboarding_reveal_covers_exam_after">하루 %1$s씩 공부하면 시험 전까지 모든 주제를 다룰 수는 없어요. 출제 빈도가 가장 낮은 주제는 시험 후에 공부해요.</string>
-    <string name="onboarding_reveal_covers_exam_left_out">하루 %1$s씩 공부하면 모든 주제를 다룰 수는 없어요. 출제 빈도가 가장 낮은 주제는 제외돼요.</string>
-    <string name="onboarding_reveal_covers_goal_left_out">하루 %1$s씩 공부하면 목표에 필요한 내용을 모두 다룰 수는 없어요. 학습 순서상 마지막에 배우는 내용은 제외돼요.</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="onboarding_reveal_full_course_finish">하루 %1$s씩 공부하면 %2$s에 마치게 돼요. %3$s 시험 이후라서, 시험 전까지는 가장 자주 출제되는 내용부터 배워요.</string>
-    <!-- %1$s is a duration; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="onboarding_reveal_full_course_finish_month">하루 %1$s씩 공부하면 %2$s에 마치게 돼요. %3$s 시험 이후라서, 시험 전까지는 가장 자주 출제되는 내용부터 배워요.</string>
-    <string name="onboarding_reveal_full_course">시험 전까지는 자주 출제되는 내용부터 배워요. 그때까지 다루지 못하는 내용은 시험 후에 배워요.</string>
-    <plurals name="onboarding_reveal_modules">
-        <item quantity="other">단원 %d개</item>
-    </plurals>
-    <plurals name="onboarding_reveal_material_topics">
-        <item quantity="other">자료에서 가져온 주제 %d개</item>
-    </plurals>
-    <plurals name="onboarding_reveal_notice_subjects">
-        <item quantity="other">%d과목</item>
-    </plurals>
-    <!-- %1$s lists subjects with their number of questions, such as "Math 45 · Languages 45". -->
-    <string name="onboarding_reveal_most_questions">문제가 가장 많은 과목: %1$s</string>
-    <plurals name="onboarding_reveal_topics">
-        <item quantity="other">주제 %d개</item>
-    </plurals>
-    <plurals name="onboarding_reveal_topics_all_planned">
-        <item quantity="other">주제 %d개 모두 계획에 포함</item>
-    </plurals>
-    <!-- %1$d topics left out of %2$d (the count the plural follows) don't fit in %3$s a day. -->
-    <plurals name="onboarding_reveal_topics_dont_fit">
-        <item quantity="other">계획에서 제외된 주제 %1$d개 (전체 %2$d개, 하루 %3$s 기준)</item>
-    </plurals>
-    <!-- %1$d topics in the plan, out of %2$d (the count the plural follows). -->
-    <plurals name="onboarding_reveal_topics_planned">
-        <item quantity="other">계획에 포함된 주제 %1$d개 (전체 %2$d개)</item>
-    </plurals>
-    <string name="onboarding_reveal_weights">영역별 비중</string>
-    <!-- An area's estimated weight. %1$s is a percentage, such as "20%". -->
-    <string name="onboarding_reveal_estimated_percent">~%1$s</string>
-    <string name="onboarding_reveal_estimated_material_area">~ 추정치: 자료에 이 영역의 비중이 나와 있지 않아요.</string>
-    <string name="onboarding_reveal_estimated_material_areas">~ 추정치: 자료에 이 영역들의 비중이 나와 있지 않아요.</string>
-    <string name="onboarding_reveal_estimated_guide_area">~ 추정치: 공식 안내서에 이 영역의 비중이 나와 있지 않아요.</string>
-    <string name="onboarding_reveal_estimated_guide_areas">~ 추정치: 공식 안내서에 이 영역들의 비중이 나와 있지 않아요.</string>
-    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
-    <string name="onboarding_reveal_estimated_notice_area">~ 추정치: 공고에 이 영역의 비중이 나와 있지 않아요.</string>
-    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
-    <string name="onboarding_reveal_estimated_notice_areas">~ 추정치: 공고에 이 영역들의 비중이 나와 있지 않아요.</string>
     <string name="onboarding_intent_label">자료로 하고 싶은 일</string>
     <string name="onboarding_continue">계속하기</string>
     <string name="onboarding_skip">건너뛰기</string>
@@ -893,10 +816,6 @@
     <plurals name="onboarding_days">
         <item quantity="other">%d일</item>
     </plurals>
-    <!-- Over the plan's first week: how many of its days the learner studies, today among them. -->
-    <plurals name="onboarding_reveal_study_days">
-        <item quantity="other">학습일 %d일</item>
-    </plurals>
     <string name="onboarding_schedule_title">하루에 얼마나 공부할 수 있나요?</string>
     <string name="onboarding_full_course">시험 후에도 계속 공부하기</string>
     <string name="onboarding_full_course_rule">시험 전까지는 자주 출제되는 내용부터 배워요. 그때까지 다루지 못하는 내용은 시험 후에 배워요.</string>
@@ -924,13 +843,6 @@
     <string name="onboarding_reveal_reading_line_fit">계획에 반영하고 있어요…</string>
     <string name="onboarding_see_plan">계획 보기</string>
     <string name="onboarding_plan_ready_goal">%1$s 계획이 준비됐어요.</string>
-    <string name="onboarding_reveal_start_here">여기서 시작</string>
-    <string name="onboarding_reveal_up_next">다음 레슨</string>
-    <string name="onboarding_reveal_first_week">첫 주</string>
-    <string name="onboarding_reveal_rest_day">쉬는 날</string>
-    <string name="onboarding_reveal_challenge">챌린지</string>
-    <string name="onboarding_reveal_review">복습</string>
-    <string name="onboarding_reveal_mock">모의고사</string>
     <string name="onboarding_reveal_a_day">하루</string>
     <string name="onboarding_reveal_weekends">주말에는 %1$s</string>
     <string name="onboarding_reveal_until_exam">시험까지</string>
@@ -978,13 +890,6 @@
     <string name="onboarding_aim_from_intermediate">중급부터 하루에 %1$s씩 공부해요.</string>
     <string name="onboarding_aim_from_advanced">고급부터 하루에 %1$s씩 공부해요.</string>
     <string name="onboarding_aim_from_level">%1$s부터 하루에 %2$s씩 공부해요.</string>
-    <!-- The count is the separate animated readout above this noun. -->
-    <plurals name="onboarding_reveal_lessons" tools:ignore="ImpliedQuantity">
-        <item quantity="other">레슨</item>
-    </plurals>
-    <plurals name="onboarding_reveal_lessons_done">
-        <item quantity="other">레슨, %1$s개 완료</item>
-    </plurals>
     <string name="onboarding_reason_choices">배우는 이유</string>
     <string name="onboarding_aim_description">코스에서 어디까지 배울지에 따라 계획 기간이 정해져요.</string>
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
