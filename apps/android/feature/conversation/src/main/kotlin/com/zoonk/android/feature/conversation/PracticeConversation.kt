@@ -203,7 +203,7 @@ fun PracticeConversation(
     ListRow(
         headline = { Text(stringResource(R.string.conversation_practice)) },
         modifier = modifier,
-        onClick = { state.sheetOpen = true },
+        onClick = if (call.paused) null else ({ state.sheetOpen = true }),
         leading = { KindDot(LearnKind.Conversation) },
         supporting = (if (call.paused) stringResource(R.string.conversation_paused_title) else with)?.let { text -> { Text(text) } },
     )

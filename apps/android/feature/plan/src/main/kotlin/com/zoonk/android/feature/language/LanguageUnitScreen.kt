@@ -57,16 +57,18 @@ import com.zoonk.android.feature.conversation.PracticeConversation
 import com.zoonk.android.feature.conversation.rememberPracticeCallState
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.goalcontent.DetailHero
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.questions.ItemText
-import com.zoonk.android.feature.tutor.TutorAskButton
+import com.zoonk.android.feature.tutor.AskTutor
+import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DisclosureRow
-import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.KindDotLeading
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -89,7 +91,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -158,7 +159,7 @@ private fun UnitEntry(
         title = unit?.unit?.title,
         actions = {
             if (unit != null) {
-                TutorAskButton(TutorScope.Chapter(chapterId.toString()), app, navigator, worded = false)
+                AskTutor(TutorScope.Chapter(chapterId.toString()), app, navigator, appearance = AskTutorAppearance.Icon)
                 ReportProblemMenu(app, FeedbackTarget("unit", FeedbackSubmissionContext.ContentKind.CHAPTER, chapterId))
             }
         },
@@ -292,25 +293,19 @@ private fun UnitHero(
 ) {
     val locale = currentLocale()
     val info = unit.unit
-    val done = lessons.count { it.done }
-    val eyebrow =
+    val place =
         info.position?.let { stringResource(R.string.language_unit_eyebrow, formatNumber(it.toDouble(), locale), info.levelRange) }
             ?: info.levelRange
     val facts =
-        if (lessons.isEmpty()) {
-            null
-        } else {
-            listOfNotNull(
-                pluralStringResource(R.plurals.language_unit_lessons, lessons.size, lessons.size),
-                lessons.sumOf { it.minutes }.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
-                stringResource(R.string.language_unit_done_share, formatPercent(done.toDouble() / lessons.size, locale)),
-            ).factsLine()
-        }
+        listOfNotNull(
+            place,
+            lessons.size.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.language_unit_lessons, it, it) },
+            lessons.sumOf { it.minutes }.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
+        )
 
-    Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(eyebrow)
+    DetailHero {
         Text(info.title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
-        facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
+        Facts(facts)
     }
 }
 
@@ -324,7 +319,10 @@ private fun UnitObjectives(
             stringResource(if (finished) R.string.language_can_already else R.string.language_unit_objectives),
             Modifier.padding(horizontal = LIST_ITEM_INSET),
         )
-        objectives.take(SHOWN_OBJECTIVES).forEach { CanDoRow(it, done = finished) }
+        objectives.take(SHOWN_OBJECTIVES).forEachIndexed { index, objective ->
+            if (index > 0) ListDivider()
+            CanDoRow(objective, done = finished)
+        }
     }
 }
 
@@ -498,7 +496,7 @@ private fun UnitReference(
                         stringResource(R.string.language_unit_summary),
                         expanded = "summary" in expanded,
                         onExpandedChange = { expanded.show("summary", it) },
-                        leading = { MarkIcon(R.drawable.ic_checklist) },
+                        leading = { MarkIcon(R.drawable.ic_book_2) },
                     ) { LessonSummaries(unit.summaries.map { LessonSummary(it.title, it.ideas) }) }
                 }
             }

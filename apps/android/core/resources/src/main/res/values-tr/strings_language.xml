@@ -43,7 +43,6 @@
   "language_skill_writing": "ac50c7a5aedcdc1decb4cdc0a23db7794acb524bbe63ccbce109433af3ec6da8",
   "language_unit_about": "ca463739ab1a1ab8e3f967ecc30e279517df7c7d8cb4e5e310524ee1b2bdcce3",
   "language_unit_continue": "7b38f0f909ee0aacdc5a3efaf7361544014bf8bd92b88cb075b65823449cf799",
-  "language_unit_done_share": "7becbfa38277cbe19bb6ac164a65d750f0932dfca08538712bd4ee26f2046f24",
   "language_unit_eyebrow": "7446c8d3a03055aab0e48089f590332495bf87cf6b7420dcf611cb9e57ecf1e2",
   "language_unit_grammar_tips": "0e0b3388a8a1bc5ae998514c4414e324ec0e228cc4f8626094f9d63d178dcb83",
   "language_unit_lessons": "6af12a51258d9864cb1798d1ab418598ed0a3359deeb98f2fcf753e1ad44c175",
@@ -66,7 +65,6 @@
         <item quantity="other">%d ders</item>
     </plurals>
     <!-- How much of the unit is done, the unit being the subject: "33% done". -->
-    <string name="language_unit_done_share">%1$s tamamlandı</string>
     <string name="language_unit_start">Başla</string>
     <string name="language_unit_continue">Devam et</string>
     <string name="language_unit_objectives">Bu ünitenin sonunda</string>
