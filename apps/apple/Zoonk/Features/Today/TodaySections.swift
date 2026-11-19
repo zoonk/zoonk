@@ -953,42 +953,36 @@ struct TodayProgressSection: View {
       }
       .loads(standing, refreshable: false)
     } else if let progress = view.progress {
-      let syllabus = plans.syllabus(goalId: view.goal.id)
-
-      Group {
-        if progress.measure == "preparation" {
-          card(
-            title: Text(
-              "Preparation", tableName: "Today", comment: "Title of an exam's preparation card"),
-            value: progress.value.formatted(.percent.precision(.fractionLength(0))),
-            detail: weekGain(progress.weekGain ?? 0)
-          ) {
-            EmptyView()
-          }
-        } else if let lessons = progress.lessons {
-          card(
-            title: Text(
-              "Progress", tableName: "Today", comment: "Title of the goal's progress card"),
-            value: goalProgressPercent(progress.value),
-            // Until the syllabus says what was known, known lessons would read as studied.
-            detail: syllabus.value.map {
-              let known = min(lessons.done, $0.lessons.known)
-              return Text(
-                verbatim: lessonsProgressLine(studied: lessons.done - known, known: known))
-            }
-          ) {
-            if lessons.total > 0 {
-              CoverageBar(done: Double(lessons.done) / Double(lessons.total))
-            }
+      if progress.measure == "preparation" {
+        card(
+          title: Text(
+            "Preparation", tableName: "Today", comment: "Title of an exam's preparation card"),
+          value: progress.value.formatted(.percent.precision(.fractionLength(0))),
+          detail: weekGain(progress.weekGain ?? 0)
+        ) {
+          EmptyView()
+        }
+      } else if let lessons = progress.lessons {
+        card(
+          title: Text(
+            "Progress", tableName: "Today", comment: "Title of the goal's progress card"),
+          value: goalProgressPercent(progress.value),
+          detail: nil,
+          spoken: Text(
+            "Lessons you've studied or already knew, out of your plan's.", tableName: "Plan",
+            comment: "What the goal's progress number is made of")
+        ) {
+          if lessons.total > 0 {
+            CoverageBar(done: Double(lessons.done) / Double(lessons.total))
           }
         }
       }
-      .loads(syllabus, refreshable: false)
     }
   }
 
   private func card(
-    title: Text, value: String?, detail: Text?, @ViewBuilder content: () -> some View
+    title: Text, value: String?, detail: Text?, spoken: Text? = nil,
+    @ViewBuilder content: () -> some View
   ) -> some View {
     PageSection {
       Button {
@@ -1025,13 +1019,12 @@ struct TodayProgressSection: View {
         .contentShape(.rect)
       }
       .tint(.primary)
+      .accessibilityValue(spoken ?? Text(verbatim: ""))
     } header: {
       SectionTitle(title)
     }
   }
 
-  /// Only what was studied: a long plan never leads with its thousand lessons, and what the
-  /// learner already knew stays in the number and the bars.
   /// Nothing in a week without a whole point either way.
   private func weekGain(_ gain: Double) -> Text? {
     let points = Int((gain * 100).rounded())

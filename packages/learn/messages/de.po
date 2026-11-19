@@ -1107,17 +1107,6 @@ msgctxt "UAppyx"
 msgid "{count, plural, =0 {atoms} one {atom} other {atoms}}"
 msgstr "{count, plural, =0 {Atome} one {Atom} other {Atome}}"
 
-#: src/_utils/use-lessons-progress-line.ts
-msgctxt "l25yqY"
-msgid "{studied, number} studied · {known, number} already known"
-msgstr "{studied, number} gelernt · {known, number} schon bekannt"
-
-#. A short line under the progress percent, in a small tile.
-#: src/_utils/use-lessons-progress-line.ts
-msgctxt "Z1VCaI"
-msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
-msgstr "{studied, plural, =0 {Noch keine Lektionen gelernt} one {# Lektion gelernt} other {# Lektionen gelernt}}"
-
 #: src/_utils/use-pass-marks-note.ts
 msgctxt "Yc8HfI"
 msgid "In {language}, as the exam's documents say it."
@@ -4801,6 +4790,17 @@ msgstr "{points, number} diese Woche"
 msgctxt "Kus9gk"
 msgid "Preparation"
 msgstr "Vorbereitung"
+
+#: src/journey/journey-hero.tsx
+msgctxt "l25yqY"
+msgid "{studied, number} studied · {known, number} already known"
+msgstr "{studied, number} gelernt · {known, number} schon bekannt"
+
+#. A short line under the progress percent, in a small tile.
+#: src/journey/journey-hero.tsx
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Noch keine Lektionen gelernt} one {# Lektion gelernt} other {# Lektionen gelernt}}"
 
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
@@ -13364,6 +13364,12 @@ msgstr "Alles klar."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Aus deinen letzten Antworten"
+
+#. What the goal's progress number is made of
+#: src/today/today-lessons-card.tsx
+msgctxt "sUCOex"
+msgid "Lessons you've studied or already knew, out of your plan's."
+msgstr "Anteil der Lektionen in deinem Plan, die du gelernt hast oder schon vorher kanntest."
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

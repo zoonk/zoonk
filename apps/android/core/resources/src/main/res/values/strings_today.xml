@@ -182,6 +182,8 @@
     <string name="today_behind_kept">Okay. Your time stays the same.</string>
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">Progress</string>
+    <!-- What the goal's progress number is made of -->
+    <string name="today_progress_meaning">Lessons you\'ve studied or already knew, out of your plan\'s.</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
     <string name="today_preparation">Preparation</string>
     <!-- A link at the end of the progress card that opens the learner's plan. -->

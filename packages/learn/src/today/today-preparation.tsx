@@ -80,11 +80,9 @@ function LevelCard({
 /** The goal's one number; its parts are the Plan's to list. */
 export function TodayPreparation({
   className,
-  knownLessons,
   language = null,
 }: {
   className?: string;
-  knownLessons: number;
   language?: Pick<LanguageTodayView, "level" | "targetLanguage"> | null;
 }) {
   const { today } = useTodayScreen();
@@ -110,12 +108,5 @@ export function TodayPreparation({
     );
   }
 
-  return (
-    <LessonsCard
-      className={className}
-      knownLessons={knownLessons}
-      lessons={progress.lessons}
-      value={progress.value}
-    />
-  );
+  return <LessonsCard className={className} lessons={progress.lessons} value={progress.value} />;
 }

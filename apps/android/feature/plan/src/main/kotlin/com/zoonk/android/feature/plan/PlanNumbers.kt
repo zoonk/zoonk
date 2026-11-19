@@ -269,11 +269,11 @@ private fun studiedLessonsLine(
 }
 
 /**
- * The line under a goal's progress percent, on the Plan and on Today. The percent counts lessons studied and those the
- * learner already knew ([known] counts within [done]), so once there are known ones the line names both.
+ * The line under the Plan's progress percent. The percent counts lessons studied and those the learner already knew
+ * ([known] counts within [done]), so once there are known ones the line names both.
  */
 @Composable
-fun lessonsProgressLine(
+private fun lessonsProgressLine(
     done: Long,
     known: Long,
 ): String {
@@ -286,7 +286,7 @@ fun lessonsProgressLine(
     )
 }
 
-fun lessonsStudied(
+private fun lessonsStudied(
     done: Long,
     known: Long,
 ): Long = (done - known).coerceAtLeast(0)

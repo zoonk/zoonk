@@ -1107,17 +1107,6 @@ msgctxt "UAppyx"
 msgid "{count, plural, =0 {atoms} one {atom} other {atoms}}"
 msgstr "{count, plural, =0 {atomów} one {atom} few {atomy} many {atomów} other {atomu}}"
 
-#: src/_utils/use-lessons-progress-line.ts
-msgctxt "l25yqY"
-msgid "{studied, number} studied · {known, number} already known"
-msgstr "Przerobione: {studied, number} · znane wcześniej: {known, number}"
-
-#. A short line under the progress percent, in a small tile.
-#: src/_utils/use-lessons-progress-line.ts
-msgctxt "Z1VCaI"
-msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
-msgstr "{studied, plural, =0 {Jeszcze żadnej lekcji} one {# przerobiona lekcja} few {# przerobione lekcje} many {# przerobionych lekcji} other {# przerobionej lekcji}}"
-
 #: src/_utils/use-pass-marks-note.ts
 msgctxt "Yc8HfI"
 msgid "In {language}, as the exam's documents say it."
@@ -4801,6 +4790,17 @@ msgstr "{points, number} w tym tygodniu"
 msgctxt "Kus9gk"
 msgid "Preparation"
 msgstr "Przygotowanie"
+
+#: src/journey/journey-hero.tsx
+msgctxt "l25yqY"
+msgid "{studied, number} studied · {known, number} already known"
+msgstr "Przerobione: {studied, number} · znane wcześniej: {known, number}"
+
+#. A short line under the progress percent, in a small tile.
+#: src/journey/journey-hero.tsx
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Jeszcze żadnej lekcji} one {# przerobiona lekcja} few {# przerobione lekcje} many {# przerobionych lekcji} other {# przerobionej lekcji}}"
 
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
@@ -13364,6 +13364,12 @@ msgstr "Zapisano."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Na podstawie twoich ostatnich odpowiedzi"
+
+#. What the goal's progress number is made of
+#: src/today/today-lessons-card.tsx
+msgctxt "sUCOex"
+msgid "Lessons you've studied or already knew, out of your plan's."
+msgstr "Lekcje przerobione lub znane wcześniej spośród wszystkich lekcji w planie."
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

@@ -1107,17 +1107,6 @@ msgctxt "UAppyx"
 msgid "{count, plural, =0 {atoms} one {atom} other {atoms}}"
 msgstr "{count, plural, =0 {원자} other {원자}}"
 
-#: src/_utils/use-lessons-progress-line.ts
-msgctxt "l25yqY"
-msgid "{studied, number} studied · {known, number} already known"
-msgstr "학습 완료 {studied, number}개 · 이미 알던 것 {known, number}개"
-
-#. A short line under the progress percent, in a small tile.
-#: src/_utils/use-lessons-progress-line.ts
-msgctxt "Z1VCaI"
-msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
-msgstr "{studied, plural, =0 {아직 학습한 레슨 없음} other {레슨 #개 학습}}"
-
 #: src/_utils/use-pass-marks-note.ts
 msgctxt "Yc8HfI"
 msgid "In {language}, as the exam's documents say it."
@@ -4801,6 +4790,17 @@ msgstr "이번 주 {points, number}"
 msgctxt "Kus9gk"
 msgid "Preparation"
 msgstr "준비도"
+
+#: src/journey/journey-hero.tsx
+msgctxt "l25yqY"
+msgid "{studied, number} studied · {known, number} already known"
+msgstr "학습 완료 {studied, number}개 · 이미 알던 것 {known, number}개"
+
+#. A short line under the progress percent, in a small tile.
+#: src/journey/journey-hero.tsx
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {아직 학습한 레슨 없음} other {레슨 #개 학습}}"
 
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
@@ -13364,6 +13364,12 @@ msgstr "확인했어요."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "최근 답변을 바탕으로"
+
+#. What the goal's progress number is made of
+#: src/today/today-lessons-card.tsx
+msgctxt "sUCOex"
+msgid "Lessons you've studied or already knew, out of your plan's."
+msgstr "계획의 전체 레슨 중 공부했거나 이미 알고 있던 레슨의 비율이에요."
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

@@ -78,6 +78,7 @@
   "today_preparation": "bf5f0b7013dc04e15d46292c0fd93e6addc94cf12c6d3450bf623fa24ad430d8",
   "today_progress": "f4725cc39c66627dec6428f20c538d25e92da4d7b1c0a17892a964fcc9a88081",
   "today_progress_lessons_today": "82ec4ee177663cd75e3d8f6239aa45fe99b7f88f4fc12c6709f5f70a89e07d98",
+  "today_progress_meaning": "525c71d2bcfcfdef0aeb403c6f74238aaf6cac7cc5d05df9345f7e389a63c507",
   "today_quick_explanation": "a85e7002b6629d1a6be3e94a40ffdc753d3220f853c136016e7db550b4f75c7e",
   "today_rest": "e8e68c8826f857001a1dc6048f368870531db2c7117163d09a0f090e0fc46a30",
   "today_rest_enjoy": "a5127d2cddfb294bbb9ecdffed46f72ddbd44029f5f207af46fdfb43f1ef3527",
@@ -325,6 +326,8 @@
     <string name="today_behind_kept">알겠어요. 학습 시간은 그대로예요.</string>
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">진행률</string>
+    <!-- What the goal's progress number is made of -->
+    <string name="today_progress_meaning">계획의 전체 레슨 중 공부했거나 이미 알고 있던 레슨의 비율이에요.</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
     <string name="today_preparation">준비도</string>
     <!-- A link at the end of the progress card that opens the learner's plan. -->

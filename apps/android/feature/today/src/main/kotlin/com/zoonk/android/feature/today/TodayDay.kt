@@ -40,7 +40,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.language.LanguageLevelCard
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.ExamOverActions
-import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.OpeningWaitLine
@@ -93,7 +92,6 @@ fun TodayDay(
     buddy: BuddyLook,
     buddyName: String,
     practice: @Composable () -> Unit = {},
-    plans: PlanStore? = null,
     language: LoadState<LanguageToday>? = null,
     onboarding: OnboardingStore? = null,
     snackbars: AppSnackbars,
@@ -174,10 +172,8 @@ fun TodayDay(
                             today.level?.let { LanguageLevelCard(it, today.targetLanguage, onOpenPlan = openPlan) }
                         }
                     } else {
-                        val syllabus = plans?.syllabus?.get(read.today.goal.id)?.collectShown()
                         TodayPreparation(
                             read.today.progress,
-                            syllabus?.value?.value,
                             onOpenPlan = openPlan,
                             goalTitle = read.today.goal.displayName,
                         )

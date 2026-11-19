@@ -198,7 +198,6 @@ private fun TodayRead(
                                 navigate = navigator::open,
                             )
                         },
-                        plans = app.plans,
                         snackbars = app.snackbars,
                         refreshIfChanged = app.today::refreshIfChanged,
                         language = language,
