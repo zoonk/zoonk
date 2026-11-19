@@ -3,9 +3,11 @@ import { basename, dirname, join } from "node:path";
 import { z } from "zod";
 import { type Capture } from "../verify/alignment-capture.mts";
 import { readCaptures } from "../verify/alignment-validate.mts";
+import { carryReads } from "./carry.mts";
 import {
   type CaptureItem,
   type Side,
+  isRecorded,
   readAlignment,
   readManifest,
   writeManifest,
@@ -77,7 +79,8 @@ function itemOf({ capture, picture }: Render, side: Side): CaptureItem {
 /**
  * Puts Android renders (each picture's `<name>.json` from `writeRender`) into a capture folder as
  * `pr:media check` reads it: the picture, its item in `capture.json` and its capture in
- * `alignment.json`. A picture adopted again replaces its earlier record.
+ * `alignment.json`. A picture adopted again replaces its earlier record, keeping its read as a
+ * capture does.
  */
 export async function adoptRenders({
   renders,
@@ -96,13 +99,27 @@ export async function adoptRenders({
   }
 
   await mkdir(to, { recursive: true });
+  const manifest = (await readManifest(to)) ?? [];
+  const previous = manifest.filter((item) => isRecorded(item));
+
+  // Before the new pictures overwrite the old ones: a retake keeps the one it replaced.
+  const carried = await Promise.all(
+    [...Map.groupBy(read, ({ source }) => dirname(source))].map(async ([folder, group]) =>
+      carryReads({
+        folder,
+        items: group.map((render) => itemOf(render, side)),
+        keep: to,
+        previous,
+        previousFolder: to,
+      }),
+    ),
+  );
 
   await Promise.all(
     read.map(async ({ picture, source }) => copyFile(source, join(to, picture.file))),
   );
 
-  const items = read.map((render) => itemOf(render, side));
-  const manifest = (await readManifest(to)) ?? [];
+  const items = carried.flat();
   await writeManifest(to, [...manifest.filter((item) => !files.has(item.file)), ...items]);
 
   const { captures = [] } = await readAlignment(to);

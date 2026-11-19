@@ -6,7 +6,7 @@ import { z } from "zod";
 import { adoptRenders } from "./adopt.mts";
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
 import { checkPictures } from "./check.mts";
-import { type Side, readManifest, writeManifest } from "./media.mts";
+import { type Side, readManifest, readOf, writeManifest } from "./media.mts";
 
 const fixture = checkFixture();
 
@@ -110,6 +110,15 @@ describe("pr:media adopt, an Android render into a capture folder", () => {
       "alignment",
       "alignment",
     ]);
+  });
+
+  it("keeps a read render's read when the same picture is adopted again", async () => {
+    const clean = { uncommitted: "clean" };
+    const { to } = await adoptAndCheck([render(clean)], { read: true });
+    await adoptRenders({ renders: [render(clean)], side: "after", to });
+    const [item] = (await readManifest(to)) ?? [];
+
+    assert.deepEqual(item && readOf(item), { ...CLEAN, carriedFrom: sha256("picture") });
   });
 
   it("refuses a picture that isn't the one its layout file measured", async () => {

@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import sharp from "sharp";
 import { describe, it } from "vitest";
-import { type CaptureItem } from "./media.mts";
+import { type CaptureItem, type Read } from "./media.mts";
 import { tileBoxes, writeReadingSheet } from "./tiles.mts";
 
 const PIXELS = 1_150_000;
@@ -71,23 +71,21 @@ function item(name: string, side: CaptureItem["side"]): CaptureItem {
 }
 
 /** A capture root with a before and an after of `today`, and an after of a new screen. */
-async function capturedRoot() {
+async function capturedRoot({ after = [item("today", "after"), item("goal", "after")] } = {}) {
   const root = mkdtempSync(join(tmpdir(), "pr-media-sheet-"));
 
   const png = await sharp({ create: { background: "#fff", channels: 4, height: 40, width: 40 } })
     .png()
     .toBuffer();
 
-  const sides = {
-    after: [item("today", "after"), item("goal", "after")],
-    before: [item("today", "before")],
-  };
+  const sides = { after, before: [item("today", "before")] };
 
   for (const [side, items] of Object.entries(sides)) {
     mkdirSync(join(root, side));
     writeFileSync(join(root, side, "capture.json"), JSON.stringify(items));
 
-    for (const { file } of items) {
+    for (const file of items.flatMap((one) => [one.file, one.retakes?.file ?? []]).flat()) {
+      mkdirSync(join(root, side, dirname(file)), { recursive: true });
       writeFileSync(join(root, side, file), png);
     }
   }
@@ -106,5 +104,38 @@ describe("the reader's sheet", () => {
     assert.ok(sheet.indexOf("before/today.png") > sort);
     assert.ok(sheet.includes("- after/today.png: [before/today.png](../before/today.png)"));
     assert.match(sheet, /- after\/goal\.png: no before, so everything on it is this change's/u);
+  });
+
+  it("asks only whether a retake's fixes held, and leaves out the pictures already read", async () => {
+    const fixed = {
+      commit: "c0ffee",
+      id: "f-1",
+      state: "fixed" as const,
+      text: "The title is cut",
+    };
+
+    const earlier: Read = { at: "2026-11-14T12:00:00.000Z", by: "reader", findings: [fixed] };
+    const retakes = { file: "earlier/today.png", read: { ...earlier, retake: true as const } };
+
+    const root = await capturedRoot({
+      after: [
+        { ...item("today", "after"), retakes },
+        { ...item("goal", "after"), read: earlier },
+      ],
+    });
+
+    const { count, path, third } = await writeReadingSheet({ root, sheet: join(root, "read") });
+    const sheet = await readFile(path, "utf8");
+
+    assert.deepEqual([count, third], [1, 1]);
+    assert.ok(sheet.includes("## Check the fixes"));
+
+    assert.ok(
+      sheet.includes("Read before: ![after/today.png, read before](../after/earlier/today.png)"),
+    );
+
+    assert.ok(sheet.includes("Fixed since:\n- The title is cut\n"));
+    assert.ok(!sheet.includes("## Then sort each finding"));
+    assert.ok(!sheet.includes("goal"));
   });
 });

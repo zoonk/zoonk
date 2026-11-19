@@ -145,6 +145,43 @@ describe("recording a read", () => {
     );
   });
 
+  it("keeps the findings of the read a retake replaced, and marks its read as a check of the fixes", async () => {
+    const { folder, root } = twoEqualPictures();
+    const [first, second] = (await readManifest(folder)) ?? [];
+
+    const fixed = {
+      ...SORTED,
+      commit: "c0ffee",
+      id: "fixed-1",
+      state: "fixed" as const,
+      text: "a",
+    };
+
+    const filed = { ...SORTED, id: "filed-1", issue: 2790, state: "issue" as const, text: "b" };
+    const earlier = { at: "2026-11-14T12:00:00.000Z", by: "reader", findings: [fixed, filed] };
+    const retakes = { file: "earlier/first.png", read: earlier };
+    writeFileSync(join(folder, "capture.json"), JSON.stringify([{ ...first, retakes }, second]));
+
+    const entries =
+      parseFindings([{ ...SORTED, file: "after/first.png", text: "The fix moved the title" }]) ??
+      [];
+
+    await recordReads({ by: "another reader", entries, root });
+    const [retaken] = (await readManifest(folder)) ?? [];
+    const read = retaken && readOf(retaken);
+
+    assert.deepEqual(
+      read?.findings.map(({ state, text }) => [state, text]),
+      [
+        ["fixed", "a"],
+        ["issue", "b"],
+        ["open", "The fix moved the title"],
+      ],
+    );
+
+    assert.equal(read?.retake, true);
+  });
+
   it("keeps a picture's read and findings when it is registered again", async () => {
     const root = mkdtempSync(join(tmpdir(), "pr-media-register-"));
     const folder = join(root, "native");

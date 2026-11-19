@@ -1,7 +1,8 @@
 /* oxlint-disable no-await-in-loop -- One pair at a time: a full-page shot decodes to tens of megabytes. */
-import { join } from "node:path";
+import { copyFile, mkdir } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import { compareShots } from "./compare.mts";
-import { type CaptureItem } from "./media.mts";
+import { type CaptureItem, type Retake } from "./media.mts";
 
 /** A read holds only for the same state, drawn at the same size, scale, language and scheme. */
 function configuration(item: CaptureItem): string {
@@ -22,28 +23,57 @@ async function samePixels(earlier: string, now: string): Promise<boolean> {
 }
 
 /**
+ * What a retake of `earlier` checks its fixes against: `earlier`'s read and picture, or, when
+ * nobody read `earlier`, the read it retook. The picture is copied into `keep`.
+ */
+async function retakeOf({
+  earlier,
+  keep,
+  previousFolder,
+}: {
+  earlier: CaptureItem;
+  keep: string;
+  previousFolder: string;
+}): Promise<Retake | undefined> {
+  const retake = earlier.read
+    ? { file: `earlier/${earlier.file}`, read: earlier.read }
+    : earlier.retakes;
+
+  if (retake) {
+    await mkdir(dirname(join(keep, retake.file)), { recursive: true });
+    const from = join(previousFolder, earlier.read ? earlier.file : retake.file);
+    await copyFile(from, join(keep, retake.file));
+  }
+
+  return retake;
+}
+
+/**
  * A picture captured again with the same pixels shows what was read, so its read and its
- * findings' states carry over; anything else needs a new read.
+ * findings' states carry over. One whose pixels changed keeps the read it retakes, with that
+ * picture copied into `keep` (`folder` unless given), so its new read checks only the fixes.
  */
 export async function carryReads({
   folder,
   items,
+  keep = folder,
   previous,
   previousFolder,
 }: {
   folder: string;
   items: CaptureItem[];
+  keep?: string;
   previous: CaptureItem[];
   previousFolder: string;
 }): Promise<CaptureItem[]> {
-  const read = new Map(
-    previous.flatMap((item) => (item.read ? [[configuration(item), item]] : [])),
+  const earlierOf = new Map(
+    previous.flatMap((item) => (item.read || item.retakes ? [[configuration(item), item]] : [])),
   );
 
   const carried: CaptureItem[] = [];
 
   for (const item of items) {
-    const earlier = read.get(configuration(item));
+    const earlier = earlierOf.get(configuration(item));
 
     const same =
       earlier?.read &&
@@ -51,14 +81,13 @@ export async function carryReads({
         (item.kind === "shot" &&
           (await samePixels(join(previousFolder, earlier.file), join(folder, item.file)))));
 
-    carried.push(
-      same && earlier.read
-        ? {
-            ...item,
-            read: { ...earlier.read, carriedFrom: earlier.read.carriedFrom ?? earlier.sha256 },
-          }
-        : item,
-    );
+    if (same && earlier.read) {
+      const carriedFrom = earlier.read.carriedFrom ?? earlier.sha256;
+      carried.push({ ...item, read: { ...earlier.read, carriedFrom } });
+    } else {
+      const retakes = earlier && (await retakeOf({ earlier, keep, previousFolder }));
+      carried.push(retakes ? { ...item, retakes } : item);
+    }
   }
 
   return carried;

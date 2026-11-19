@@ -5,13 +5,16 @@ import sharp from "sharp";
 import { findManifests } from "./locate.mts";
 import {
   type AlignmentReport,
+  type Finding,
   type ManifestItem,
+  type Retake,
   displayPath,
   fileName,
   isRecorded,
   pathWithin,
   readAlignment,
   readManifest,
+  readOf,
 } from "./media.mts";
 
 /** Vision models shrink an image past about 1.15 megapixels or 1568 px on a side. */
@@ -159,13 +162,79 @@ function scenarioGroups(pictures: Picture[]): string[] {
   );
 }
 
-/**
- * Cuts every after picture under `root` into original-size tiles and writes `READ.md` beside them:
- * the pictures first, then the numbers the checks recorded, then the words across platforms.
- */
-export async function writeReadingSheet({ root, sheet }: { root: string; sheet: string }) {
-  const { measured, pictures } = await collect(root);
-  const after = pictures.filter(({ item }) => item.side === "after");
+async function pictureSection({
+  heading,
+  link,
+  picture,
+  sheet,
+}: {
+  heading: string;
+  link: (path: string) => string;
+  picture: Picture;
+  sheet: string;
+}): Promise<string[]> {
+  return [
+    `## ${heading}`,
+    "",
+    describeItem(picture.item),
+    "",
+    `Whole screen: ![${picture.id}](${link(picture.path)})`,
+    "",
+    ...(await cutPicture({ link, picture, sheet })),
+    "",
+  ];
+}
+
+/** The reader's sort of a finding, which a fault still there keeps. */
+function marksOf({ before, misleads, rule }: Finding): string {
+  return rule === undefined ? "" : ` (rule ${rule}, before ${before}, misleads ${misleads})`;
+}
+
+/** A retake's section: the picture, the one read before it and the findings fixed since. */
+async function fixesSection({
+  link,
+  picture,
+  retakes,
+  sheet,
+}: {
+  link: (path: string) => string;
+  picture: Picture;
+  retakes: Retake;
+  sheet: string;
+}): Promise<string[]> {
+  const fixed = retakes.read.findings.filter((finding) => finding.state === "fixed");
+  const earlier = resolve(picture.folder, retakes.file);
+
+  return [
+    ...(await pictureSection({ heading: `Fixed: ${picture.id}`, link, picture, sheet })),
+    `Read before: ![${picture.id}, read before](${link(earlier)})`,
+    "",
+    ...(fixed.length > 0
+      ? ["Fixed since:", ...fixed.map((finding) => `- ${finding.text}${marksOf(finding)}`)]
+      : ["Nothing was fixed since: say only whether anything got worse."]),
+    "",
+  ];
+}
+
+/** The blind pass over pictures nobody read: pictures, numbers, words, then the sort. */
+async function blindPart({
+  blind,
+  link,
+  pictures,
+  root,
+  measured,
+  sheet,
+}: {
+  blind: Picture[];
+  link: (path: string) => string;
+  measured: Measured[];
+  pictures: Picture[];
+  root: string;
+  sheet: string;
+}): Promise<string[]> {
+  if (blind.length === 0) {
+    return [];
+  }
 
   const before = new Map(
     pictures
@@ -176,32 +245,22 @@ export async function writeReadingSheet({ root, sheet }: { root: string; sheet: 
       }),
   );
 
-  await rm(join(sheet, "tiles"), { force: true, recursive: true });
-  const link = (path: string) => relative(sheet, path).replaceAll("\\", "/");
   const sections: string[] = [];
-  const befores: string[] = [];
 
-  for (const [index, picture] of after.entries()) {
+  for (const [index, picture] of blind.entries()) {
+    sections.push(
+      ...(await pictureSection({ heading: `${index + 1}. ${picture.id}`, link, picture, sheet })),
+    );
+  }
+
+  const befores = blind.map((picture) => {
     const key = pairKey(picture.item);
     const pair = key ? before.get(key) : undefined;
 
-    sections.push(
-      `## ${index + 1}. ${picture.id}`,
-      "",
-      describeItem(picture.item),
-      "",
-      `Whole screen: ![${picture.id}](${link(picture.path)})`,
-      "",
-      ...(await cutPicture({ link, picture, sheet })),
-      "",
-    );
-
-    befores.push(
-      pair
-        ? `- ${picture.id}: [${pair.id}](${link(pair.path)})`
-        : `- ${picture.id}: no before, so everything on it is this change's`,
-    );
-  }
+    return pair
+      ? `- ${picture.id}: [${pair.id}](${link(pair.path)})`
+      : `- ${picture.id}: no before, so everything on it is this change's`;
+  });
 
   const numbers = measured.flatMap(({ folder, report }) =>
     (report.findings ?? []).map(
@@ -209,9 +268,7 @@ export async function writeReadingSheet({ root, sheet }: { root: string; sheet: 
     ),
   );
 
-  const markdown = [
-    `# Read ${after.length === 1 ? "this picture" : `these ${after.length} pictures`}`,
-    "",
+  return [
     "Read them as someone who built none of it. For each picture, look at the whole screen, then every tile at original size, and write down what is off before you look at any numbers: edges that don't line up, uneven gaps, room left empty, text cut off or crowded, two filled buttons on one surface, words someone new to Zoonk wouldn't know. Crop at 3× only for a small doubt, and keep an unmarked copy beside any overlay.",
     "",
     ...sections,
@@ -226,7 +283,7 @@ export async function writeReadingSheet({ root, sheet }: { root: string; sheet: 
     "- List every question a page asks together, apart from their answers, and check they read as one set.",
     "- For each wait or notice state, put its words from every platform side by side. The meaning must match; each platform may phrase it its own way.",
     "",
-    ...scenarioGroups(after),
+    ...scenarioGroups(blind),
     "",
     "## Then sort each finding",
     "",
@@ -234,6 +291,46 @@ export async function writeReadingSheet({ root, sheet }: { root: string; sheet: 
     "",
     ...befores,
     "",
+  ];
+}
+
+/**
+ * Cuts every after picture under `root` that needs a read into original-size tiles and writes
+ * `READ.md` beside them. A picture nobody read gets the blind pass, then the sort; a retake gets
+ * only the check of its fixes against the picture read before.
+ */
+export async function writeReadingSheet({ root, sheet }: { root: string; sheet: string }) {
+  const { measured, pictures } = await collect(root);
+  const unread = pictures.filter(({ item }) => item.side === "after" && !readOf(item));
+
+  const retaken = unread.flatMap((picture) => {
+    const retakes = "retakes" in picture.item ? picture.item.retakes : undefined;
+    return retakes ? [{ picture, retakes }] : [];
+  });
+
+  const blind = unread.filter(({ item }) => !("retakes" in item && item.retakes));
+
+  await rm(join(sheet, "tiles"), { force: true, recursive: true });
+  const link = (path: string) => relative(sheet, path).replaceAll("\\", "/");
+  const fixes: string[] = [];
+
+  for (const { picture, retakes } of retaken) {
+    fixes.push(...(await fixesSection({ link, picture, retakes, sheet })));
+  }
+
+  const markdown = [
+    `# Read ${unread.length === 1 ? "this picture" : `these ${unread.length} pictures`}`,
+    "",
+    ...(await blindPart({ blind, link, measured, pictures, root, sheet })),
+    ...(fixes.length > 0
+      ? [
+          "## Check the fixes",
+          "",
+          'Each picture below retakes one that was read. Answer only two things: is each fixed finding gone, and is anything else on the screen worse than in the picture read before? Nothing else is a finding here. Write a fault still there as a finding again, with its marks; one the fix made is a finding with "before": false.',
+          "",
+          ...fixes,
+        ]
+      : []),
     "## Record the read",
     "",
     "```sh",
@@ -246,5 +343,8 @@ export async function writeReadingSheet({ root, sheet }: { root: string; sheet: 
 
   await mkdir(sheet, { recursive: true });
   await writeFile(join(sheet, "READ.md"), markdown);
-  return { count: after.length, path: join(sheet, "READ.md") };
+
+  // A retake of a read that itself checked a fix would be a third round.
+  const third = retaken.filter(({ retakes }) => retakes.read.retake).length;
+  return { count: unread.length, path: join(sheet, "READ.md"), third };
 }

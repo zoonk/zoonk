@@ -93,14 +93,18 @@ export async function recordReads({
           return item;
         }
 
-        // A finding leaves a record only through resolve, so a read replacing one keeps it.
-        const kept = "read" in item ? (item.read?.findings ?? []) : [];
+        // A finding leaves a record only through resolve, so a read replacing one keeps it, and a
+        // read of a retake keeps the findings of the read it retakes.
+        const retakes = "retakes" in item ? item.retakes : undefined;
+        const unnamed = "read" in item ? (item.read?.findings ?? []) : [];
+        const kept = [...(retakes?.read.findings ?? []), ...unnamed];
 
         const added = entries.flatMap(({ files, finding }) =>
           files.includes(id) && !kept.some((earlier) => earlier.id === finding.id) ? [finding] : [],
         );
 
-        const read: Read = { at, by, findings: [...kept, ...added] };
+        const findings = [...new Map([...kept, ...added].map((one) => [one.id, one])).values()];
+        const read: Read = { at, by, findings, ...(retakes && { retake: true }) };
         return { ...item, read };
       });
 

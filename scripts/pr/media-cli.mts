@@ -314,8 +314,15 @@ async function printDeviceSection({ positionals: links }: Arguments) {
 
 async function tiles({ positionals: [folder] }: Arguments) {
   const root = resolve(folder ?? CAPTURE);
-  const { count, path } = await writeReadingSheet({ root, sheet: join(root, "read") });
+  const { count, path, third } = await writeReadingSheet({ root, sheet: join(root, "read") });
   console.log(`${count} pictures to read: ${displayPath(path)}`);
+
+  if (third > 0) {
+    console.log(
+      `${third} of them already had their fixes checked once. Don't read them a third time: stop and rethink the fix (AGENTS.md, "When progress stalls").`,
+    );
+  }
+
   return true;
 }
 

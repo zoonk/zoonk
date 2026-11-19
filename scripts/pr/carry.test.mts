@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -8,6 +8,9 @@ import { carryReads } from "./carry.mts";
 import { type CaptureItem, type Read } from "./media.mts";
 
 const SIZE = 40;
+
+/** Where a retake keeps the picture it replaced. */
+const RETAKEN = "earlier/phone/light/today.png";
 
 const READ: Read = {
   at: "2026-11-14T12:00:00.000Z",
@@ -69,6 +72,10 @@ async function recapture({
     writeFileSync(join(base, "phone/light/today.png"), bytes);
   }
 
+  // The picture an earlier retake kept, read before the one now in the folder.
+  mkdirSync(join(previousFolder, "earlier/phone/light"), { recursive: true });
+  writeFileSync(join(previousFolder, RETAKEN), await png({ left: 2 }));
+
   const [carried] = await carryReads({
     folder,
     items: [item(now)],
@@ -76,18 +83,32 @@ async function recapture({
     previousFolder,
   });
 
-  return carried?.read;
+  return { carried, folder, read: carried?.read };
 }
 
 describe("a re-capture keeps the read of pictures whose pixels didn't change", () => {
   it("carries the read and its findings' states to the same pixels in different bytes", async () => {
-    const read = await recapture({ picture: await png({ effort: 1 }) });
+    const { read } = await recapture({ picture: await png({ effort: 1 }) });
 
     assert.deepEqual(read, { ...READ, carriedFrom: "old" });
   });
 
-  it("asks for a new read when the picture moved by one pixel", async () => {
-    assert.equal(await recapture({ picture: await png({ left: 11 }) }), undefined);
+  it("asks for a read of the fixes when the picture moved by one pixel, keeping the one it retakes", async () => {
+    const { carried, folder } = await recapture({ picture: await png({ left: 11 }) });
+
+    assert.equal(carried?.read, undefined);
+    assert.deepEqual(carried?.retakes, { file: RETAKEN, read: READ });
+    assert.deepEqual(readFileSync(join(folder, RETAKEN)), await png());
+  });
+
+  it("keeps what an unread retake retook when it is captured again", async () => {
+    const { carried, folder } = await recapture({
+      before: { read: undefined, retakes: { file: RETAKEN, read: READ } },
+      picture: await png({ left: 12 }),
+    });
+
+    assert.deepEqual(carried?.retakes, { file: RETAKEN, read: READ });
+    assert.deepEqual(readFileSync(join(folder, RETAKEN)), await png({ left: 2 }));
   });
 
   it("never carries a read across a changed scenario, viewport, locale, scheme or scale", async () => {
@@ -101,8 +122,8 @@ describe("a re-capture keeps the read of pictures whose pixels didn't change", (
       { scale: 2 },
     ];
 
-    const reads = await Promise.all(changes.map(async (now) => recapture({ now, picture })));
+    const retakes = await Promise.all(changes.map(async (now) => recapture({ now, picture })));
 
-    assert.ok(reads.every((read) => read === undefined));
+    assert.ok(retakes.every(({ carried }) => !carried?.read && !carried?.retakes));
   });
 });

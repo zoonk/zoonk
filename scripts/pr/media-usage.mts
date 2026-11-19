@@ -26,8 +26,10 @@ Checks that every picture a PR body shows was captured, from which build, and re
            body's folder by default). Each picture's capture.json is looked for in its folder and
            every folder above it, and anywhere under each --manifests folder, so a
            picture copied away from its capture needs --manifests. Exits non-zero on any failure.
-  tiles    cuts every after picture under <dir> into original-size tiles and writes
-           <dir>/read/READ.md, the reader's sheet: pictures first, numbers second, then words.
+  tiles    cuts every after picture under <dir> still to read into original-size tiles and writes
+           <dir>/read/READ.md, the reader's sheet: a blind pass (pictures, numbers, words), then
+           the sort against the before pictures. A retake, whose pixels changed since its read,
+           gets only a check of its fixes against the picture read before, which it keeps.
   read     records a read on every after picture under <dir> that has none: clean, or the
            findings in the file, a JSON array of { "file", "text", "rule", "before", "misleads" }
            with files as READ.md lists them, sorted by the reader after its blind pass.
