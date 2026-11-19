@@ -185,7 +185,7 @@ msgstr "Zapytaj"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "Q25Oon"
 msgid "New goal"
-msgstr "Wyznacz nowy cel"
+msgstr "Nowy cel"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "u82Vi2"

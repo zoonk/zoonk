@@ -72,7 +72,7 @@
   "player_explain_answer": "294d15b6123747096d33709bac165bc9fe53f6ee3154e585bdf67a9dff7aa4e0",
   "player_explain_answer_failed": "386af5625c972ac6221ae2949dc8a1bc5ca6233ed636ca409e75e4a48d8d21ac",
   "player_explain_answer_title": "03e637c930834e4c82b8de0802aa8cb4e402dd5ef8aebe13c1258f733373fd63",
-  "player_explain_first": "0b313ff0964170472770cb0d0e823f7da32b1f5c9dcd6e7aed0d78ef66b26b02",
+  "player_explain_first": "7ab0b2a1a53c4b778154df78c7177e5f33db6dd738bbf7a84689dbb40b27bf14",
   "player_finish": "e50ca159f1b705ce86bbf721ec8e8636b3798ebc867490aed934c006ebbaa6cd",
   "player_from_the_lesson": "3e9a4085aa06a00f7be9dedd4abad6fe80d42d08f07c2b11ea35316c21421cb4",
   "player_get_it_ready": "332ab8501c9127dde2e8cfd877f200b070af15ccbcae819e7a91985f3b161f83",
@@ -288,7 +288,7 @@
     <string name="player_cant_write_now">Pular perguntas com resposta escrita hoje</string>
     <string name="player_dont_know_yet">Ainda não sei</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
-    <string name="player_explain_first">Ver a explicação primeiro</string>
+    <string name="player_explain_first">Ver explicação primeiro</string>
     <string name="player_check_failed">Não foi possível conferir sua resposta desta vez. Tente de novo.</string>
     <string name="player_still_checking">Ainda estamos conferindo. Está demorando mais que o normal.</string>
     <string name="player_enter_hint">Pressione Enter para conferir e Shift+Enter para começar uma nova linha.</string>

@@ -509,7 +509,7 @@
   "plan_tools_without": "ebfa12805cb8683bc975b5cd879de45f6bb05be1098f81c38de9741fcf7a3813",
   "plan_topics_studied": "664feaff4cd491a7a11b18f295eb023d703100b05131b38aa61c8628957df0c5",
   "plan_trickster_not_in_plan": "ed782ead8e7e67aed325ccbcb4f943152ff543f85861b96b7616efc104e049b2",
-  "plan_try_again": "64cf1db814134a71e9bc16954324b943392d655500f7ab9f9369553410b75efc",
+  "plan_try_again": "649e7175ef7d85558f8659a809a4748a3616a2e1e8e28c0c3b4e435ea77b6206",
   "plan_tuesdays": "592cda714fd06aafe2b52aa904d3eb79d09e57c949f3b83edd7c384e37fd2bb4",
   "plan_undo": "be42799ef92682ad53c85bfa46bc297a08d2b5ec4bedeb909b46e6acbc7e62af",
   "plan_undo_failed": "40e8a1058cc8622931d8987d70805f4f410c3c78dbc03a11ebed2015b84ab8e5",
@@ -1163,7 +1163,7 @@
     <string name="plan_time_covers_share_goal">Mit %1$s am Tag erreichst du etwa %2$s deines Ziels</string>
     <string name="plan_covered_not_enough">%1$s am Tag reichen nicht aus, um dein Ziel vollständig abzudecken.</string>
     <string name="plan_finding">Wir ermitteln die benötigte Zeit…</string>
-    <string name="plan_try_again">Versuch es noch einmal</string>
+    <string name="plan_try_again">Noch einmal versuchen</string>
     <string name="plan_find_building">Dein Plan wird noch erstellt. Versuch es gleich noch einmal.</string>
     <string name="plan_find_failed">Wir konnten die benötigte Zeit nicht berechnen.</string>
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->

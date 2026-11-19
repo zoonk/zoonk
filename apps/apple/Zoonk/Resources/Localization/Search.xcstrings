@@ -1081,7 +1081,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practicar con tus errores"
+            "value" : "Practicar tus errores"
           }
         },
         "fr" : {
@@ -1117,7 +1117,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar o que você errou"
+            "value" : "Praticar seus erros"
           }
         },
         "tr" : {

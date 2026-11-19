@@ -180,7 +180,7 @@
   "onboarding_placement_question_number": "ce1063a66b5dde601d2911b31a62ebe04c0ab444b6748e7ecf3d4ceedc10f769",
   "onboarding_placement_ready": "83b9ae6f8cf04e16f08af1c59aa649e69153b2f01f7c26b4afbd88237cb2906c",
   "onboarding_placement_right": "86858cf96b72118ba48d61fc3e992f4c736c71cf8308c89b6147628c5c794073",
-  "onboarding_placement_see_plan": "a931589be4b5298391a179f1a5df6c529ed6e4c594547e8717287231911f9698",
+  "onboarding_placement_see_plan": "46f3729e0365db94d96521e233fddc733c4146cfa5293a00bdcb53fdc7f6705c",
   "onboarding_placement_set_description": "4bbb81cc64316f015342bd99eca20295291ecbdf15c359408cd955de7ed458c2",
   "onboarding_placement_set_title": "5b04738d36e5039e8c4933cfcb46c5c95848b320aa174ba6a4313072464fc260",
   "onboarding_placement_skip_basics": "c83c1244424cc67d08ceb99fd54b5e9827a13289f6a8b9538580e5b702cae811",
@@ -649,7 +649,7 @@
     <string name="onboarding_placement_right">Richtig</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Falsch</string>
-    <string name="onboarding_placement_see_plan">Sieh dir deinen Plan an</string>
+    <string name="onboarding_placement_see_plan">Deinen Plan ansehen</string>
     <plurals name="onboarding_placement_answered">
         <item quantity="one">%d Frage beantwortet</item>
         <item quantity="other">%d Fragen beantwortet</item>

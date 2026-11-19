@@ -185,7 +185,7 @@ msgstr "Sor"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "Q25Oon"
 msgid "New goal"
-msgstr "Yeni bir hedefe başla"
+msgstr "Yeni hedef"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "u82Vi2"

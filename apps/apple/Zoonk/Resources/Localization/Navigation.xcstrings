@@ -1608,7 +1608,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neues Ziel starten"
+            "value" : "Neues Ziel"
           }
         },
         "es" : {
@@ -1626,7 +1626,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia un nuovo obiettivo"
+            "value" : "Nuovo obiettivo"
           }
         },
         "ja" : {
@@ -1644,7 +1644,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dodaj nowy cel"
+            "value" : "Nowy cel"
           }
         },
         "pt" : {
@@ -1656,7 +1656,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yeni bir hedefe başla"
+            "value" : "Yeni hedef"
           }
         }
       }

@@ -164,7 +164,7 @@
   "player_summary": "c9948aea0fc2f66f20c56d44f9f820d3eedf155673b2cf098077f293e08cad9c",
   "player_summary_ideas": "107b97c9f1cb79aefb3f136599e3fafa88dea703f9844cfcabaed4c2ee610a3b",
   "player_time_studied": "a0bb81d4cc87e2b700ed5685920aad21ef29b5469765e79e2238139cc8ae56c4",
-  "player_try_again": "e398898ca3f1e201967a7472ef2d7608b41664dff48d5da275cc910f6b39c62c",
+  "player_try_again": "15616f615798b3e4fa10c8cd7edd6c3cb104abb7286053754a2931b0bb5bb4b7",
   "player_unchecked_compare": "6420751de5094b9bedae34f8603b1adb76095cc5d9f4ebbf8f14775efdfe4410",
   "player_unchecked_updated": "a726a2753a07c9396583d8766dc55164c6c73ee2d6b111d1effcb4d220038236",
   "player_verdict_almost": "998ad7e176ee97c8f2ce2ee289800811bed33b34c66b1f8921633a99c148a2ea",
@@ -342,7 +342,7 @@
     <string name="player_set_aside_description">Dein Plan geht ohne diese Lektion weiter.</string>
     <string name="player_opening_lesson">Wir öffnen deine Lektion</string>
     <string name="player_open_failed">Wir konnten die Lektion nicht öffnen. Versuch es noch einmal oder melde dich an, um weiterzumachen.</string>
-    <string name="player_try_again">Versuch es noch einmal</string>
+    <string name="player_try_again">Noch einmal versuchen</string>
     <string name="player_back">Zurück</string>
     <string name="player_not_found_title">Diese Lektion ist nicht verfügbar</string>
     <string name="player_cant_talk_now">Ich kann gerade nicht sprechen</string>

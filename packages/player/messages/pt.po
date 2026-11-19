@@ -2990,7 +2990,7 @@ msgstr "Você ainda pode revisar e praticar o que você errou."
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "AFQMLq"
 msgid "Practice your mistakes"
-msgstr "Praticar o que você errou"
+msgstr "Praticar seus erros"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "4NMpnC"

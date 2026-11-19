@@ -54,7 +54,7 @@
 - “Buddy”: “Compañero”
 - Mission names (missions list, first steps) and activity badges (what the learner does, above the prompt): “tú” imperative: “Completa tu primera lección”, “Lee la gráfica”, “Ordena”
 - “essay”: “redacción”, not “ensayo”; “Writing practice” (essays): “Práctica de redacción”
-- “Mistakes notebook”: “Cuaderno de errores”; “Practice mistakes” / “Practice your mistakes”: “Practicar con tus errores”
+- “Mistakes notebook”: “Cuaderno de errores”; “Practice mistakes”: “Practicar errores”; “Practice your mistakes”: “Practicar tus errores”
 - “Saved to your mistakes”: “Guardado en tu cuaderno de errores”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Por corregir” / “Corregidos”
 - “full review” (language exam preparation): “revisión completa”; spaced review: “repaso”

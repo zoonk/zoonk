@@ -32,7 +32,7 @@
   "search_mock_exam": "b73611f96d7590bba424e7152d17a30b6f14e15ed92690d9bc16696dfe7a4eeb",
   "search_open": "d233fc5c694240c3592a695bd95940968feb7e61cc900a5d744d98fe51f2b8dd",
   "search_placeholder": "28f4d4407d400be4f3a9f1fc93422b5b4310da06bc8e85eec18c390d3c212b24",
-  "search_practice_mistakes": "304b98bea056e4c054c18ed6a1cebe259ee8f920f79ecc1f9b138cb6740c1ce6",
+  "search_practice_mistakes": "1e19651c874e73b384c44c2b41b2a25bef7102e781e808f0035547c2e533c931",
   "search_preferences": "c0943b65788ec0aff16ee368b794d925ff0a9136c2017384a0273ce805285375",
   "search_pricing": "78a07454af96ddac6fba13970fb3aa4ef6b8c37115cc60eef0e39a895b458061",
   "search_profile": "438514bc4cc5d81ebb068ce62b2457847ed01a5c01a9c62ab4ceccd41c271f01",
@@ -68,7 +68,7 @@
     <string name="search_take_mock">Fazer um simulado</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
     <string name="search_take_mock_detail">Dia inteiro, meio dia ou uma matéria</string>
-    <string name="search_practice_mistakes">Praticar o que você errou</string>
+    <string name="search_practice_mistakes">Praticar seus erros</string>
     <string name="search_ask_buddy">Pergunte para %1$s…</string>
     <string name="search_start_new_goal">Começar um novo objetivo</string>
     <string name="search_buddy_keyword">Parceiro</string>

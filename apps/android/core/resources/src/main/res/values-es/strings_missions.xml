@@ -24,7 +24,7 @@
   "missions_open_challenge": "69aef155a44e06196a3010bffae37ffd5761fe6cb173dd6986f907ea8bf10b68",
   "missions_open_chapter": "2c8a41c799f267be98f17596679ebc5cc29605db55db06c644c6a940dac12b5f",
   "missions_open_essay": "30f4237fce35fc7bf54664fe15438bea3153cacfdd8db6c978ca11a646afcff6",
-  "missions_open_mistakes": "e604fccbb2f254cf09da63ada7f41feb44d30a8288dbeda4abbea2abc6175d70",
+  "missions_open_mistakes": "16fdd8eb6c83c2b6688f09c4d74123895c2bbce1979fa602633ae2686e8c5531",
   "missions_open_mock": "75801a0fad015626aad5d72e22422ce728a370a8513f73ddfee2105d9671c3e8",
   "missions_open_mock_chooser": "ef9862aec892028288da5034b80340d2be93ed91760aed52dc3ff84c3db354d1",
   "missions_open_new_lesson": "de1c1e82ec776a5958526c2ebae9eba6dd1c31c58454624d17f533d1a7634135",
@@ -104,7 +104,7 @@
     <string name="missions_open_mock">Ir al simulacro de hoy</string>
     <string name="missions_open_essay">Ir a la redacción de hoy</string>
     <string name="missions_open_practice">Ir a la práctica de hoy</string>
-    <string name="missions_open_mistakes">Practicar con tus errores</string>
+    <string name="missions_open_mistakes">Practicar tus errores</string>
     <string name="missions_open_pattern">Ir al patrón</string>
     <string name="missions_open_pronunciation">Ir a la práctica de pronunciación</string>
     <string name="missions_open_call">Elegir una llamada</string>

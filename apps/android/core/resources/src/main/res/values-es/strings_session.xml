@@ -11,7 +11,7 @@
   "session_block_mock_exam": "a7305e4b85a2194479b2ccc0d0da13fb8dad0e7bb2249a9d40b525cbc4921796",
   "session_block_new_lesson": "b14746ab8e54f38aacf56a70c0e0a7c72842c1757d04a6b16201e7d3eed76a1d",
   "session_block_practice_areas": "86791144af067b0ce40c7b92125e7ba5e62b07aafef064f59ebec6dbf515b95c",
-  "session_block_practice_mistakes": "03157b975e3ba41467bf3f5d0eba3b560950c9aff32b31de5ba67d034c6097ef",
+  "session_block_practice_mistakes": "e31585899753b211464d78f06ea5180ed3aff00eaf9c3567e99b0898f117454a",
   "session_block_practice_topic": "cf0e44d65362d1db97a12fa6813ceb14bd1fb6d1fef9d5cbff5bbc63a2ac55b2",
   "session_block_questions": "fdf53fb6be8173b4342f526c391e97ea33bd0b17837dc703948736562fcaa6f4",
   "session_block_rematch": "c93fe08384f4c2c71eb5ae54e3f14abd76d8f6c90b6d7e94c2b98650b7a03fc4",
@@ -101,7 +101,7 @@
     <string name="session_block_what_you_know">Lo que ya sabes</string>
     <string name="session_block_new_lesson">Nueva lección</string>
     <string name="session_block_writing_practice">Práctica de redacción</string>
-    <string name="session_block_practice_mistakes">Practicar con tus errores</string>
+    <string name="session_block_practice_mistakes">Practicar errores</string>
     <string name="session_block_bonus_practice">Práctica extra</string>
     <string name="session_block_mixed_practice">Práctica variada</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->

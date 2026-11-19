@@ -3415,7 +3415,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agregar al día de hoy"
+            "value" : "Agregar para hoy"
           }
         },
         "fr" : {
@@ -3451,7 +3451,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicionar ao dia de hoje"
+            "value" : "Adicionar para hoje"
           }
         },
         "tr" : {
@@ -7407,7 +7407,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crear un objetivo"
+            "value" : "Nuevo objetivo"
           }
         },
         "fr" : {
@@ -7419,7 +7419,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia un nuovo obiettivo"
+            "value" : "Nuovo obiettivo"
           }
         },
         "ja" : {
@@ -7437,7 +7437,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wyznacz nowy cel"
+            "value" : "Nowy cel"
           }
         },
         "pt" : {
@@ -7449,7 +7449,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yeni bir hedefe başla"
+            "value" : "Yeni hedef"
           }
         }
       }
@@ -8711,7 +8711,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practicar con tus errores"
+            "value" : "Practicar errores"
           }
         },
         "fr" : {
@@ -8723,13 +8723,13 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esercizi sugli errori"
+            "value" : "Esercitati sugli errori"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "間違えたところを復習する"
+            "value" : "間違えたところの練習"
           }
         },
         "ko" : {
@@ -8747,7 +8747,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar o que você errou"
+            "value" : "Praticar erros"
           }
         },
         "tr" : {

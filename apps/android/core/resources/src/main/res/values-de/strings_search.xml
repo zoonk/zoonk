@@ -30,8 +30,8 @@
   "search_memory": "8180e532b0f05f73279526b39afa51a90942c8d7b5a4c4bfca16775dac1e0840",
   "search_mistakes_notebook": "4e3e946372cf6019819a1d6a0d8530864a281f48605e14d40def3a13c40a4d0b",
   "search_mock_exam": "22b7d5f321102ffa7a5596a8ee45ca79b775af0ce29618d43fda4679e934eb46",
-  "search_open": "5760f70e491ee905bb386c1db02d4fcf9862747b1c6793ddfd229963ac4705b6",
-  "search_placeholder": "d3bb755bf28982ad373e82f37bb782d792ad2d6ee2fa2429a546ebded3dcdab4",
+  "search_open": "77284e5a0eef0dc347488af1ebfda5e2f476d434a2aad40be9cdce61b4e05a31",
+  "search_placeholder": "9305695887aea9f4d7b289c4f4a44edca73d161f2189b07365268678cb3fe9d1",
   "search_practice_mistakes": "b1c409d0952301240e9a87aecc1498086ba020bad01b5f922a88c71750364b78",
   "search_preferences": "c34ea9baafd85a102c9cade13ddd6efecbee9a2abebe77991b47728841cce6fa",
   "search_pricing": "5bc6f3f84daccda90a5952fde20b358858931d45b20ae2b7a00e3fdce39e1e24",
@@ -49,8 +49,8 @@
 }
 -->
 <resources>
-    <string name="search_placeholder">Such etwas oder stell eine Frage…</string>
-    <string name="search_open">Such etwas oder stell eine Frage</string>
+    <string name="search_placeholder">Suchen oder fragen…</string>
+    <string name="search_open">Suchen oder fragen</string>
     <string name="search_close">Suche schließen</string>
     <string name="search_clear">Suche löschen</string>
     <string name="search_continue_failed">Dein nächster Schritt konnte nicht geöffnet werden. Versuch es noch einmal.</string>

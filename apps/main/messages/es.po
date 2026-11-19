@@ -207,7 +207,7 @@ msgstr "Hacer un simulacro"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "AFQMLq"
 msgid "Practice your mistakes"
-msgstr "Practicar con tus errores"
+msgstr "Practicar tus errores"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "z6HKe1"
@@ -2683,7 +2683,7 @@ msgstr "Prepararla"
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
-msgstr "Practicar con tus errores"
+msgstr "Practicar errores"
 
 #. The home share card's subhead, under a headline listing goals.
 #: src/app/[lang]/opengraph-image.tsx

@@ -7645,7 +7645,7 @@ msgstr "Salir. Lo que ya respondiste cuenta."
 #: src/session/use-block-copy.ts
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
-msgstr "Practicar con tus errores"
+msgstr "Practicar errores"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "SMv32M"

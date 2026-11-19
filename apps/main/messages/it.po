@@ -185,7 +185,7 @@ msgstr "Chiedi"
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "Q25Oon"
 msgid "New goal"
-msgstr "Inizia un nuovo obiettivo"
+msgstr "Nuovo obiettivo"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "u82Vi2"
@@ -2683,7 +2683,7 @@ msgstr "Prepara la lezione"
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
-msgstr "Esercizi sugli errori"
+msgstr "Esercitati sugli errori"
 
 #. The home share card's subhead, under a headline listing goals.
 #: src/app/[lang]/opengraph-image.tsx

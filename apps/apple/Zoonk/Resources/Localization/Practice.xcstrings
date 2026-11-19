@@ -8054,7 +8054,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Practicar con tus errores"
+            "value" : "Practicar errores"
           }
         },
         "fr" : {
@@ -8090,13 +8090,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praticar o que você errou"
+            "value" : "Praticar erros"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yanlışların üzerinde çalış"
+            "value" : "Yanlışlarına çalış"
           }
         }
       }
