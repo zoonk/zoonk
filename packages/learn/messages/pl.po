@@ -2392,7 +2392,6 @@ msgid "Chapter summary"
 msgstr "Podsumowanie rozdziału"
 
 #: src/chapter/chapter-screen.tsx
-#: src/syllabus/subject-aside.tsx
 msgctxt "kc79d3"
 msgid "Topics"
 msgstr "Tematy"
@@ -9649,7 +9648,6 @@ msgid "Building your plan stopped"
 msgstr "Przerwano przygotowywanie twojego planu"
 
 #: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Do1Pfd"
 msgid "Chapters"
@@ -12927,11 +12925,6 @@ msgctxt "I4mdto"
 msgid "{count, plural, one {Also in # exam} other {Also in # exams}}"
 msgstr "{count, plural, one {Także na # egzaminie} other {Także na # egzaminach}}"
 
-#: src/syllabus/subject-aside.tsx
-msgctxt "wGdj4O"
-msgid "Counts your answers in lessons, practice and tests."
-msgstr "Uwzględnia twoje odpowiedzi z lekcji, ćwiczeń i testów."
-
 #. Labels a subject's count of questions from a past exam. The exam's name and year go last, after the separator, with no article before them.
 #: src/syllabus/subject-aside.tsx
 msgctxt "questionsNamedExamEdition"
@@ -13009,11 +13002,6 @@ msgstr "Z twoich materiałów"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "Także w twoim planie"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, one {# rozdział} few {# rozdziały} many {# rozdziałów} other {# rozdziału}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"

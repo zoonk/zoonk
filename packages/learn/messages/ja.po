@@ -2392,7 +2392,6 @@ msgid "Chapter summary"
 msgstr "章のまとめ"
 
 #: src/chapter/chapter-screen.tsx
-#: src/syllabus/subject-aside.tsx
 msgctxt "kc79d3"
 msgid "Topics"
 msgstr "トピック"
@@ -9649,7 +9648,6 @@ msgid "Building your plan stopped"
 msgstr "学習計画の作成が途中で止まりました"
 
 #: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Do1Pfd"
 msgid "Chapters"
@@ -12927,11 +12925,6 @@ msgctxt "I4mdto"
 msgid "{count, plural, one {Also in # exam} other {Also in # exams}}"
 msgstr "{count, plural, other {ほかの#試験でも出題}}"
 
-#: src/syllabus/subject-aside.tsx
-msgctxt "wGdj4O"
-msgid "Counts your answers in lessons, practice and tests."
-msgstr "レッスン、練習、テストでの回答を反映しています。"
-
 #. Labels a subject's count of questions from a past exam. The exam's name and year go last, after the separator, with no article before them.
 #: src/syllabus/subject-aside.tsx
 msgctxt "questionsNamedExamEdition"
@@ -13009,11 +13002,6 @@ msgstr "資料から"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "学習計画の追加項目"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, other {#章}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"

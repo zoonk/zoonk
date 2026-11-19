@@ -2392,7 +2392,6 @@ msgid "Chapter summary"
 msgstr "챕터 요약"
 
 #: src/chapter/chapter-screen.tsx
-#: src/syllabus/subject-aside.tsx
 msgctxt "kc79d3"
 msgid "Topics"
 msgstr "주제"
@@ -9649,7 +9648,6 @@ msgid "Building your plan stopped"
 msgstr "계획 만들기가 중단됐어요"
 
 #: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Do1Pfd"
 msgid "Chapters"
@@ -12927,11 +12925,6 @@ msgctxt "I4mdto"
 msgid "{count, plural, one {Also in # exam} other {Also in # exams}}"
 msgstr "{count, plural, other {다른 시험 #개에도 포함}}"
 
-#: src/syllabus/subject-aside.tsx
-msgctxt "wGdj4O"
-msgid "Counts your answers in lessons, practice and tests."
-msgstr "레슨, 연습, 테스트에서 제출한 답을 반영해요."
-
 #. Labels a subject's count of questions from a past exam. The exam's name and year go last, after the separator, with no article before them.
 #: src/syllabus/subject-aside.tsx
 msgctxt "questionsNamedExamEdition"
@@ -13009,11 +13002,6 @@ msgstr "내 자료에서 가져옴"
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "내 계획에도 포함"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "GG6-cA"
-msgid "{count, plural, one {# chapter} other {# chapters}}"
-msgstr "{count, plural, other {챕터 #개}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
