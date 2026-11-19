@@ -411,6 +411,8 @@ private struct MistakeEntryView: View {
   }
 }
 
+/// What the learner answered, or the right answer, after the fact: the answer option's result
+/// look, locked (main's `AnswerPair`).
 struct MistakeAnswerRow: View {
   let text: String
   let isRight: Bool
@@ -418,32 +420,13 @@ struct MistakeAnswerRow: View {
   let isLiteral: Bool
 
   var body: some View {
-    TagBesideOrUnder(
+    AnswerOption(
+      isPicked: !isRight,
+      result: isRight ? .right : .wrong,
+      isLocked: true,
       text: isLiteral ? RichInline(text: AttributedString(text)) : LessonRichText.typeset(text),
-      tag: AnyView(
-        Text(
-          isRight
-            ? LocalizedStringResource(
-              "Correct", table: "Practice",
-              comment: "Mark beside the right option once a question is graded.")
-            : LocalizedStringResource(
-              "Your answer", table: "Practice",
-              comment: "Mark beside the learner's wrong pick once a question is graded.")
-        )
-        .typeStyle(.meta.weight(.semibold))
-        .foregroundStyle(isRight ? Color.successText : Color.destructiveText))
+      action: {}
     )
-    .typeStyle(.body.weight(.medium))
-    .padding(12)
-    .background(
-      (isRight ? Color.success : Color.destructive).opacity(0.1),
-      in: RoundedRectangle(cornerRadius: 10, style: .continuous)
-    )
-    .overlay(
-      RoundedRectangle(cornerRadius: 10, style: .continuous).strokeBorder(
-        isRight ? Color.success : Color.destructive, lineWidth: 1.5)
-    )
-    .accessibilityElement(children: .combine)
   }
 }
 

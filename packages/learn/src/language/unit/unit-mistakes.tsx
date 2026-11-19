@@ -5,8 +5,8 @@ import {
   type LanguageUnitView,
 } from "@zoonk/core/view-models/language/contract";
 import { useExtracted } from "next-intl";
+import { AnswerPair } from "../../_components/answer-option";
 import { Eyebrow } from "../../_components/eyebrow";
-import { MistakeAnswer } from "../../mistakes/mistake-entry";
 import { ItemStem, ItemText } from "../../questions/item-text";
 
 type UnitMistake = LanguageUnitView["mistakes"][number];
@@ -31,8 +31,9 @@ function MistakeItem({ mistake }: { mistake: UnitMistake }) {
       <div className="text-sm font-medium">
         <ItemStem text={mistake.question} />
       </div>
-      {mistake.answer && <MistakeAnswer kind="learner">{mistake.answer}</MistakeAnswer>}
-      {mistake.correctAnswer && <MistakeAnswer kind="right">{mistake.correctAnswer}</MistakeAnswer>}
+      {(mistake.answer || mistake.correctAnswer) && (
+        <AnswerPair right={mistake.correctAnswer || null} yours={mistake.answer || null} />
+      )}
       {mistake.explanation && (
         <ItemText className="text-muted-foreground text-sm" text={mistake.explanation} />
       )}

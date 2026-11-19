@@ -13,8 +13,7 @@ import {
   TriangleAlertIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { TagBesideOrUnder } from "../_components/answer-option";
-import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
+import { AnswerPair } from "../_components/answer-option";
 import { Eyebrow } from "../_components/eyebrow";
 import { QuestionTitle } from "../_components/question-title";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
@@ -48,55 +47,6 @@ function MistakeCauseLabel({ cause }: { cause: MistakeEntry["cause"] }) {
     <Eyebrow className="bg-muted ring-0" icon={<CauseIcon aria-hidden="true" />}>
       {causeLabel(cause)}
     </Eyebrow>
-  );
-}
-
-function hiddenLabel(words: React.ReactNode) {
-  return <span className="sr-only">{words}</span>;
-}
-
-export function MistakeAnswer({
-  children,
-  kind,
-}: {
-  children: React.ReactNode;
-  kind: "learner" | "right";
-}) {
-  const t = useExtracted();
-  const right = kind === "right";
-  const answer = () => children;
-
-  return (
-    <p
-      className={cn(
-        "text-reading w-full rounded-xl px-4 py-3 leading-6 font-medium wrap-break-word",
-        right ? ANSWER_TONE.right : ANSWER_TONE.wrong,
-      )}
-      data-slot="mistake-answer"
-    >
-      <TagBesideOrUnder
-        tag={
-          <span
-            aria-hidden="true"
-            className={cn(ANSWER_TAG_CLASS, ANSWER_TAG_TONE[right ? "right" : "wrong"])}
-          >
-            {right ? t("Correct") : t("Your answer")}
-          </span>
-        }
-      >
-        <span>
-          {right
-            ? t.rich("<label>Right answer:</label> <answer></answer>", {
-                answer,
-                label: hiddenLabel,
-              })
-            : t.rich("<label>You answered:</label> <answer></answer>", {
-                answer,
-                label: hiddenLabel,
-              })}
-        </span>
-      </TagBesideOrUnder>
-    </p>
   );
 }
 
@@ -215,22 +165,17 @@ export function MistakeEntryCard({
       <QuestionTitle heading={false} text={snapshot.question} />
 
       {(answer || correct) && (
-        <div className="flex flex-col gap-2">
-          {answer && (
-            <MistakeAnswer kind="learner">
-              {WRITTEN_ANSWER_FORMATS.has(snapshot.format ?? "") ? (
-                answer
-              ) : (
-                <ItemLine text={answer} />
-              )}
-            </MistakeAnswer>
-          )}
-          {correct && (
-            <MistakeAnswer kind="right">
-              {snapshot.format === "typed" ? correct : <ItemLine text={correct} />}
-            </MistakeAnswer>
-          )}
-        </div>
+        <AnswerPair
+          right={correct && (snapshot.format === "typed" ? correct : <ItemLine text={correct} />)}
+          yours={
+            answer &&
+            (WRITTEN_ANSWER_FORMATS.has(snapshot.format ?? "") ? (
+              answer
+            ) : (
+              <ItemLine text={answer} />
+            ))
+          }
+        />
       )}
 
       {snapshot.explanation && (

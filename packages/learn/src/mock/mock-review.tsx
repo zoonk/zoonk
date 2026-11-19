@@ -1,9 +1,8 @@
 "use client";
 
 import { type MockReviewEntry } from "@zoonk/core/exams/mocks/view-contract";
-import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
+import { AnswerPair } from "../_components/answer-option";
 import { Eyebrow } from "../_components/eyebrow";
 import { ItemCitationNote } from "../_components/item-citation";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
@@ -33,18 +32,10 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
         <p className="text-muted-foreground text-reading">{t("You left it blank.")}</p>
       )}
 
-      <AnswerOptionGroup aria-label={t("Your answer and the right one")}>
-        {yours !== null && (
-          <AnswerOption disabled marker={<XIcon />} picked result="wrong">
-            {line(yours)}
-          </AnswerOption>
-        )}
-        {right !== null && (
-          <AnswerOption disabled marker={<CheckIcon />} picked={false} result="right">
-            {line(right)}
-          </AnswerOption>
-        )}
-      </AnswerOptionGroup>
+      <AnswerPair
+        right={right === null ? null : line(right)}
+        yours={yours === null ? null : line(yours)}
+      />
     </>
   );
 }

@@ -4,6 +4,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
+import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
 import { SpokenMath } from "../rich-text/spoken-math";
@@ -308,5 +309,31 @@ export function TagBesideOrUnder({
         </LineMarker>
       )}
     </span>
+  );
+}
+
+/** What the learner answered over the right answer, after the fact: a mock's review, the notebook. */
+export function AnswerPair({
+  right,
+  yours,
+}: {
+  right: React.ReactNode | null;
+  yours: React.ReactNode | null;
+}) {
+  const t = useExtracted();
+
+  return (
+    <AnswerOptionGroup aria-label={t("Your answer and the right one")}>
+      {yours !== null && (
+        <AnswerOption disabled marker={<XIcon />} picked result="wrong">
+          {yours}
+        </AnswerOption>
+      )}
+      {right !== null && (
+        <AnswerOption disabled marker={<CheckIcon />} picked={false} result="right">
+          {right}
+        </AnswerOption>
+      )}
+    </AnswerOptionGroup>
   );
 }
