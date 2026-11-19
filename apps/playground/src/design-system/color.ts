@@ -65,7 +65,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
       {
         meaning: "The stronger line.",
         name: "input",
-        use: "Inputs, answer options at rest, secondary buttons, chips.",
+        use: "Every outlined control at rest: fields, selects, code boxes, checkboxes, radios, secondary buttons, chips, answer options.",
       },
     ],
   },
