@@ -134,7 +134,7 @@ fun ChapterScreen(
                     key = key,
                     store = app.goalContent,
                     navigator = navigator,
-                    menu = { ReportProblemMenu(report, inPage = true) },
+                    menu = { ReportProblemMenu(report) },
                     ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
                     mindMap = { ChapterMapSlot(chapterMindMapShown(key, app)) { ChapterMindMapRow(key, app, navigator::open, it) } },
                 )
@@ -154,7 +154,7 @@ internal fun ChapterContent(
     key: ChapterKey,
     store: GoalContentStore,
     navigator: AppNavigator,
-    menu: @Composable () -> Unit = {},
+    menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
     mindMap: @Composable () -> ChapterMapSlot? = { null },
 ) {
@@ -246,7 +246,7 @@ internal fun ChapterPage(
     chapter: GoalChapter,
     practice: PracticeState,
     actions: ChapterActions,
-    menu: @Composable () -> Unit = {},
+    menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
     mindMap: ChapterMapSlot? = null,
 ) {
@@ -257,8 +257,9 @@ internal fun ChapterPage(
     DetailPage(
         title = chapter.chapter.title,
         onBack = actions.back,
-        hero = { ChapterHero(chapter, menu) },
+        hero = { ChapterHero(chapter) },
         ask = ask,
+        menu = menu,
         action =
             next?.let {
                 { modifier -> ContinueButton(started = lessons.any { it.done }, onClick = { actions.openLesson(it.lessonId) }, modifier) }
@@ -295,13 +296,9 @@ private fun ChapterLesson.listed() =
     )
 
 @Composable
-private fun ChapterHero(
-    chapter: GoalChapter,
-    menu: @Composable () -> Unit,
-) {
+private fun ChapterHero(chapter: GoalChapter) {
     val locale = currentLocale()
     val lessons = chapter.lessons
-    val done = lessons.count { it.state == ChapterLesson.State.DONE }
     val number = formatNumber(chapter.chapter.position.toDouble(), locale)
     val minutes = lessons.sumOf { it.minutes }.toInt()
     val counts =
@@ -311,12 +308,11 @@ private fun ChapterHero(
             listOfNotNull(
                 pluralStringResource(R.plurals.goalcontent_lesson_count, lessons.size, lessons.size),
                 minutes.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
-                percentDone(done.toDouble() / lessons.size),
             )
         }
     val facts = listOf(stringResource(R.string.goalcontent_chapter_number, number)) + counts
 
-    DetailHero(menu) {
+    DetailHero {
         Text(
             text = chapter.chapter.title,
             modifier = Modifier.pageTitle(),

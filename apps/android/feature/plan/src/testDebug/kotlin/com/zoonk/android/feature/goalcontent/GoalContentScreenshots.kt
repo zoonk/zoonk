@@ -166,7 +166,7 @@ class GoalContentScreenshots {
             val app = remember { AppContainer.preview(context) }
             val navigator = rememberAppNavigator()
             return Pair(
-                { ReportProblemMenu(app, FeedbackTarget(screen = "screenshots"), inPage = true) },
+                { ReportProblemMenu(app, FeedbackTarget(screen = "screenshots")) },
                 { AskTutor(scope, app, navigator, appearance = it) },
             )
         }
