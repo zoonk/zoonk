@@ -55,7 +55,7 @@ function LockedDetail({ option }: { option: BuddyGlassesOption }) {
 
   return (
     <span className="flex flex-col gap-1.5">
-      <span className="text-muted-foreground flex items-start gap-1 text-xs font-normal">
+      <span className="text-muted-foreground flex items-start gap-1 text-xs font-normal text-pretty">
         <LineMarker aria-hidden="true">
           <LockIcon className="size-3" />
         </LineMarker>
