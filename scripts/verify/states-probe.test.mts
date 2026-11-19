@@ -103,7 +103,7 @@ describe("state layout measurements", () => {
 });
 
 describe("what a press reveals", () => {
-  it("counts a field revealed in a sheet as in the sheet's flow, and a menu over it as floating", () => {
+  it("counts a field revealed in a sheet as in the sheet's flow and tied to its switch, and a menu over it as floating", () => {
     document.body.innerHTML = `<div role="dialog" style="position:fixed" data-frame="0,200,390,640">
       <button role="switch" data-zoonk-act="weekend" data-frame="320,400,44,24">Weekends</button>
       <section data-frame="0,460,390,80">Later</section>
@@ -113,7 +113,10 @@ describe("what a press reveals", () => {
     const sheet = document.querySelector<HTMLElement>("[role=dialog]");
     const field = Object.assign(document.createElement("div"), { textContent: "Weekend time" });
     field.dataset.frame = "0,440,390,76";
+    field.id = "weekend-time";
     sheet?.querySelector("section")?.before(field);
+    // The switch names its field only while it's on.
+    document.querySelector("[role=switch]")?.setAttribute("aria-controls", "weekend-time");
     const menu = Object.assign(document.createElement("div"), { textContent: "Report" });
     menu.setAttribute("style", "position:fixed");
     menu.dataset.frame = "200,100,160,44";
@@ -122,10 +125,10 @@ describe("what a press reveals", () => {
     const { appeared } = readRegions({ from: "press-0", targetId: "weekend" });
 
     assert.deepEqual(
-      appeared.map(({ floating, label }) => [label, floating]),
+      appeared.map(({ floating, label, tied }) => [label, floating, tied]),
       [
-        ['div "Weekend time"', false],
-        ['div "Report"', true],
+        ['div "Weekend time"', false, true],
+        ['div "Report"', true, false],
       ],
     );
   });

@@ -287,7 +287,10 @@ export function readRegions({
   const target = document.querySelector(`[data-zoonk-act="${targetId}"]`);
   const before = globalThis.zoonkLayout?.[from] ?? [];
   const known = new Set(before.map(({ element }) => element));
-  const ids = controls.split(/\s+/u).filter(Boolean);
+  // A switch may name the field it shows only while it's on, so its tie is read on both sides.
+  const ids = `${controls} ${target?.getAttribute("aria-controls") ?? ""}`
+    .split(/\s+/u)
+    .filter(Boolean);
 
   function shownNow(element: HTMLElement) {
     return (

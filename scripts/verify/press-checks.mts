@@ -262,7 +262,7 @@ export function pressFindings(press: Press): Finding[] {
     findings.push({
       check: "Press: reveal without aria-controls",
       level: "warn",
-      message: `${doing} ${control} shows or hides ${reveal.regions[0]?.label ?? "a region"} under it and pushes what follows, but doesn't name it in aria-controls (with aria-expanded), so it's read as a reveal by its place alone`,
+      message: `${doing} ${control} shows or hides ${reveal.regions[0]?.label ?? "a region"} under it and pushes what follows, but doesn't name it in aria-controls, so it's read as a reveal by its place alone`,
     });
   }
 
