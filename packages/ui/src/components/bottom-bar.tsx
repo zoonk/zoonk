@@ -1,7 +1,8 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
+/** Under `lg` the buttons fill the content's measure; from `lg` the main action ends at the bar's end. */
 const ROW_CLASS =
-  "w-full max-w-[calc(var(--page-measure,100%)+2*var(--page-gutter))] px-(--page-gutter)";
+  "w-full max-w-[calc(var(--page-measure,100%)+2*var(--page-gutter))] px-(--page-gutter) lg:max-w-none";
 
 /** The frame's side padding at each size: the app's shell and a full page drawn without it. */
 export const FRAME_GUTTER_CLASS =
@@ -23,10 +24,11 @@ export const BOTTOM_BAR_ROOM_CLASS = "pt-4 pb-[max(1rem,var(--page-safe-bottom))
  *
  * It reaches the frame's edges by the frame's own padding (`--page-gutter`, `--page-bottom`) and
  * rests on what the frame docks under it (`--page-dock`), so it's the same piece in the app's
- * shell and in a full-screen task. Its sides are the frame's gutter, so its buttons line up with the
- * page; over and under them it keeps its own 16px (`BOTTOM_BAR_ROOM_CLASS`), whatever the gutter.
- * `className` is for the frame's wrapper, to give the row the frame's column and gutter; a screen
- * passes none.
+ * shell and in a full-screen task. Its sides are the frame's gutter; over and under its buttons it
+ * keeps its own 16px (`BOTTOM_BAR_ROOM_CLASS`), whatever the gutter. On a phone and a tablet its
+ * buttons fill the content's measure; on a computer the main action sits at the bar's end, one
+ * gutter in from its edge, wherever the content's column ends, and the note ends on that edge too.
+ * `className` is for the frame's wrapper, to give the row the frame's gutter; a screen passes none.
  */
 function BottomBar({
   children,

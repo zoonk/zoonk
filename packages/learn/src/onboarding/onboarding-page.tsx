@@ -48,15 +48,10 @@ const WIDE_ASIDE_CLASS =
 
 const SCREEN_MEASURE_CLASS = "lg:max-w-column";
 
-/**
- * The bars' rows sit on the screen's measured column, as a measured page's do: Back, ✕ and "…" on
- * its edges, the buttons ending where it ends.
- */
+/** The top bar's row sits on the screen's measured column: Back, ✕ and "…" on its edges. */
 const BAR_AT_MEASURE_CLASS = cn(
   "lg:**:data-[slot=page-top-bar]:*:max-w-column lg:**:data-[slot=page-top-bar]:*:me-auto",
   "lg:**:data-[slot=bar-lead]:max-w-column lg:**:data-[slot=bar-lead]:me-auto lg:**:data-[slot=bar-lead]:w-full",
-  "lg:**:data-[slot=bottom-bar-row]:me-auto lg:**:data-[slot=bottom-bar-row]:max-w-[calc(var(--container-column)+2*var(--page-gutter))]",
-  "lg:**:data-[slot=bottom-bar-note]:*:*:me-auto lg:**:data-[slot=bottom-bar-note]:*:*:max-w-[calc(var(--container-column)+2*var(--page-gutter))]",
 );
 
 export function OnboardingScreenPage({

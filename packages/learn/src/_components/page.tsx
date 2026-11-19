@@ -7,8 +7,8 @@ export const PAGE_COLUMN_CLASS = "w-full min-w-0";
 
 /**
  * A narrower measure for the page's content (`--page-measure`). Its bottom bar still spans the
- * page's room, so every bar is as wide as the frame lets it be, and the bar's buttons end where the
- * content does.
+ * page's room, so every bar is as wide as the frame lets it be; its buttons fill the measure on a
+ * phone and a tablet, and end at the bar's end on a computer.
  */
 const MEASURE_CLASS = {
   form: "[--page-measure:var(--container-form)]",

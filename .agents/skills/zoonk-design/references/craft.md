@@ -40,7 +40,7 @@ A control with a bezel lines up by its bezel. A bare one takes `Button`'s `edge`
 
 ### E3. One end edge
 
-Trailing things end on the column's end edge: a header's detail, a row's value or chevron, a button's bezel, a meter. In one list, rows with and without a chevron end their values on one edge, and so do values and glyphs at a row's end: a row without a chevron keeps the chevron's room.
+Trailing things end on the column's end edge: a header's detail, a row's value or chevron, a button's bezel, a meter. The bottom bar's buttons are the bar's, not the column's (R2). In one list, rows with and without a chevron end their values on one edge, and so do values and glyphs at a row's end: a row without a chevron keeps the chevron's room.
 
 - **Check.** Ruler down the right side: details, values, chevrons and buttons end on one line (glyph ink within 2px), and in a list every row's value ends where the others' do (`end-edge`).
 - **Usual break.** A chevron whose box is flush and whose ink stops 5px short, under a detail that ends on the edge. A date that runs to the edge on the one row with nothing to open.
@@ -392,10 +392,10 @@ Each role is drawn by its shared piece, with nothing added around it by the scre
 
 ### R2. The main action is in the bottom bar
 
-An app screen's one main action sits in `BottomBar`, pinned to the bottom of the screen on a phone and a computer, where the thumb is and where Enter's hint is found. A task's record or check button is its main action and sits there too. A screen with no main action has no bar; what opens over a page keeps its own footer. On a [marketing page](../SKILL.md#marketing-pages) the one action sits in the page, and the bar shows it once the page's own has scrolled away.
+An app screen's one main action sits in `BottomBar`, pinned to the bottom of the screen on a phone and a computer, where the thumb is and where Enter's hint is found. On a phone and a tablet the buttons fill the content's measure; on a computer the main action sits at the bar's end, one gutter in from its edge, wherever the content's column ends, as in the player, and the bar's note ends on that edge too. A task's record or check button is its main action and sits there too. A screen with no main action has no bar; what opens over a page keeps its own footer. On a [marketing page](../SKILL.md#marketing-pages) the one action sits in the page, and the bar shows it once the page's own has scrolled away.
 
-- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440 (`R2 main action pinned`, `R2 primary action in page`).
-- **Usual break.** The action under the content on one screen, beside the title on the next, at the top on a computer.
+- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440 (`R2 main action pinned`, `R2 primary action in page`). At 1440 the main action ends one gutter from the bar's end (look at).
+- **Usual break.** The action under the content on one screen, beside the title on the next, at the top on a computer. The main action ending on a narrow column's edge, with empty bar beyond it.
 
 ### R3. The line over a title is `Eyebrow`
 
