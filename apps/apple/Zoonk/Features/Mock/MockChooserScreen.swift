@@ -401,7 +401,8 @@ private struct MockChooser: View {
       localized: "usually \(MockLabels.duration(minutes: usual))", table: "Mock",
       comment: "After a mock exam's size and time limit: about how long learners usually take.")
 
-    return [size, pace].joinedFacts()
+    // Each fact stays on one line, so a narrow row breaks only between them.
+    return [size, pace].map { $0.replacing(" ", with: "\u{00A0}") }.joinedFacts()
   }
 
   /// Main's `ChoiceRows`: the words, the mock's size under them on a phone or before the row's

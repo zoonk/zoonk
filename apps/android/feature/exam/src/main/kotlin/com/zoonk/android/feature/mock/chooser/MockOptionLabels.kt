@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.api.models.MockLeftOut
@@ -72,7 +72,9 @@ internal fun mockOptionSize(option: MockOption): String {
     val questions = option.questions.toInt()
     val size = pluralStringResource(R.plurals.mock_chooser_option_size, questions, questions, minutesText(option.minutes))
     val usual = usualMinutes(option) ?: return size
-    return factsLine(size, stringResource(R.string.mock_chooser_usually, minutesText(usual)))
+    // Each fact stays on one line, so a narrow row breaks only between them.
+    return listOf(size, stringResource(R.string.mock_chooser_usually, minutesText(usual)))
+        .joinToString(FACT_SEPARATOR) { it.replace(' ', '\u00A0') }
 }
 
 private const val ESTIMATE_STEP_MINUTES = 5.0
