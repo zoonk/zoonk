@@ -19,8 +19,8 @@ const TODAY_ISO = "2026-11-03";
 
 /** Zu's own words: the reply the tutor model writes before its proposal card. */
 const REPLY = {
-  en: "Sure, a lighter week is a good way to keep going without burning out. I can make this a light week: half your daily time, about 30 minutes a day, through next Monday. Nothing is skipped, so your plan just ends a few days later. Tap **Apply** if that works for you.",
-  pt: "Claro, uma semana mais leve ajuda a manter o ritmo sem se cansar. Posso deixar esta semana leve: metade do seu tempo por dia, uns 30 minutos, até a próxima segunda. Nada fica de fora, então o plano só termina alguns dias depois. Toque em **Aplicar** se fizer sentido para você.",
+  en: "Sure, a lighter week is a good way to keep going without burning out. I can make this a light week: half your daily time, about 30 minutes a day, through next Monday. Nothing is skipped, so your plan just ends a few days later. It changes only once you confirm it on the card below.",
+  pt: "Claro, uma semana mais leve ajuda a manter o ritmo sem se cansar. Posso deixar esta semana leve: metade do seu tempo por dia, uns 30 minutos, até a próxima segunda. Nada fica de fora, então o plano só termina alguns dias depois. Ele só muda quando você confirmar no cartão abaixo.",
 } as const;
 
 const BRAIN_POWER = 410;
