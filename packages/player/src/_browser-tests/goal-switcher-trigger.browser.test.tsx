@@ -82,7 +82,7 @@ describe("the goal menu's trigger", () => {
       </LearnProvider>,
     );
 
-    const trigger = page.getByRole("button", { name: new RegExp(`^${name}`) });
+    const trigger = page.getByRole("button", { name });
     await expect.element(trigger).toHaveAttribute("title", name);
     expect(trigger.element().getBoundingClientRect().height).toBe(32);
   });
