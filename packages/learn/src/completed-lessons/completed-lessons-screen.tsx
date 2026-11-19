@@ -13,12 +13,7 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
-import {
-  PageSection,
-  PageSectionHeader,
-  PageSectionTitle,
-  PageSubtitle,
-} from "../_components/page";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
@@ -91,13 +86,11 @@ function DaySection({
 }
 
 export function CompletedLessonsScreen({
-  goalTitle,
   hrefs,
   lessons,
   moreHref,
   today,
 }: {
-  goalTitle: string;
   hrefs: CompletedLessonsHrefs;
   lessons: readonly CompletedLesson[];
   moreHref: string | null;
@@ -123,8 +116,6 @@ export function CompletedLessonsScreen({
       <DetailHero>
         <DetailHeroText>
           <DetailTitle>{t("Completed lessons")}</DetailTitle>
-          {/* The sidebar names the goal from `lg`; under it the bar is the way back, so the page does. */}
-          <PageSubtitle className="lg:hidden">{goalTitle}</PageSubtitle>
         </DetailHeroText>
       </DetailHero>
 
