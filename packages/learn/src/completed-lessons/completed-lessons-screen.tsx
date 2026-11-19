@@ -115,7 +115,7 @@ function GroupTabs({
 }) {
   const t = useExtracted();
 
-  const tabs = [
+  const tabs: { key: string | null; lessons: number; name: string }[] = [
     {
       key: null,
       lessons: filter.total,
@@ -126,7 +126,7 @@ function GroupTabs({
         message: "All",
       }),
     },
-    ...filter.groups.map((group) => ({ ...group, key: group.key as string | null })),
+    ...filter.groups,
   ];
 
   return tabs.map((tab) => (
