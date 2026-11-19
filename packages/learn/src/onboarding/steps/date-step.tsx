@@ -158,7 +158,6 @@ function DateFieldStep({
 
         <Input
           aria-describedby={noteId}
-          className="md:text-reading h-11 text-base"
           id={inputId}
           max={bounds.max}
           min={bounds.min}

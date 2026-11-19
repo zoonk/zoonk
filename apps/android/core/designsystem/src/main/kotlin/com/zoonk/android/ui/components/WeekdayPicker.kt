@@ -1,6 +1,5 @@
 package com.zoonk.android.ui.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -32,7 +31,8 @@ import java.util.Locale
 /**
  * Main's `WeekdayToggle` grid: the week's seven days in one row of equal boxes, Monday to Sunday as the plan's
  * week runs in every language, each the same box on or off. A weekday is 0 for Sunday to 6 for Saturday, as the
- * plan counts them. On, a day is picked as an answer is: an ink line on the picked tint.
+ * plan counts them. On, a day is the pick's soft fill with its name in ink; off, its bare, faint name, so on and off
+ * are told apart without reading. Medium or high contrast gives both their line.
  */
 @Composable
 fun WeekdayPicker(
@@ -79,7 +79,7 @@ private fun DayToggle(
     val locale = currentLocale()
     val day = DayOfWeek.of(if (weekday == 0) DAYS_PER_WEEK else weekday)
     val colors = MaterialTheme.colorScheme
-    val content = if (on) colors.onSurface else colors.onSurfaceVariant
+    val content = if (on) colors.onSurface else MaterialTheme.zoonk.faint
 
     Surface(
         checked = on,
@@ -89,7 +89,7 @@ private fun DayToggle(
         shape = MaterialTheme.shapes.small,
         color = if (on) MaterialTheme.zoonk.selectedTint else Color.Transparent,
         contentColor = if (enabled) content else content.copy(alpha = DISABLED_ALPHA),
-        border = BorderStroke(1.dp, colors.outline),
+        border = pickedBorder(),
     ) {
         Box(Modifier.padding(horizontal = DAY_PADDING), contentAlignment = Alignment.Center) {
             Text(

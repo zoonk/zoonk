@@ -209,8 +209,12 @@
     <string name="mindmaps_zoom">拡大する</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">このマップはもう利用できません。</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
     <string name="mindmaps_shown_as">マップの表示方法</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
     <string name="mindmaps_shown_map">マップ</string>
+    <!-- The study screen's switch: shows a map as text. -->
     <string name="mindmaps_shown_text">テキスト</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
     <string name="mindmaps_zoom_hint">マップをタップすると拡大できます</string>
 </resources>

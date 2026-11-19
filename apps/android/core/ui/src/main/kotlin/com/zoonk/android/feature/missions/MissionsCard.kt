@@ -19,6 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -64,7 +65,6 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.busyClickable
 import com.zoonk.android.ui.components.celebrates
-import com.zoonk.android.ui.components.dottedUnderline
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkMotion
@@ -385,58 +385,67 @@ fun MissionListRow(
     }
 }
 
+/** The amount shows the unit's short form; a hover or a long press names the unit in full, and a tap opens the level page. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrainPowerReward(
     points: String,
     earned: Boolean,
     onLevel: () -> Unit,
 ) {
-    val label = stringResource(R.string.missions_brain_power)
+    val amount = stringResource(R.string.missions_points, points)
+    val name = stringResource(R.string.missions_brain_power)
+    val spoken = "$amount $name"
 
-    Row(
-        modifier =
-            Modifier
-                .clip(MaterialTheme.shapes.small)
-                .clickable(role = Role.Button, onClick = onLevel)
-                .semantics(mergeDescendants = true) {}
-                .heightIn(min = 32.dp)
-                .padding(horizontal = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+        tooltip = { PlainTooltip { Text(name) } },
+        state = rememberTooltipState(),
     ) {
-        // brainText, since the page's color on brain is under AA in light.
-        val fill = MaterialTheme.zoonk.brainText
         Row(
             modifier =
-                if (earned) {
-                    Modifier
-                        .clip(MaterialTheme.shapes.extraSmall)
-                        .background(fill)
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                } else {
-                    Modifier
-                },
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable(role = Role.Button, onClick = onLevel)
+                    .clearAndSetSemantics { contentDescription = spoken }
+                    .heightIn(min = 32.dp)
+                    .padding(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painterResource(if (earned) R.drawable.ic_check else R.drawable.ic_psychology),
-                contentDescription = null,
-                modifier = Modifier.size(14.dp),
-                tint = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brain,
-            )
+            // brainText, since the page's color on brain is under AA in light.
+            val fill = MaterialTheme.zoonk.brainText
+            Row(
+                modifier =
+                    if (earned) {
+                        Modifier
+                            .clip(MaterialTheme.shapes.extraSmall)
+                            .background(fill)
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    } else {
+                        Modifier
+                    },
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painterResource(if (earned) R.drawable.ic_check else R.drawable.ic_psychology),
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brain,
+                )
+                Text(
+                    text = amount,
+                    color = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brainText,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.zoonkType.data.withTabularFigures(),
+                )
+            }
             Text(
-                text = stringResource(R.string.missions_points, points),
-                color = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brainText,
-                fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.zoonkType.data.withTabularFigures(),
+                stringResource(R.string.missions_brain_power_short),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
-        Text(
-            label,
-            modifier = Modifier.dottedUnderline(MaterialTheme.colorScheme.outline),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-        )
     }
 }

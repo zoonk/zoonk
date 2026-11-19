@@ -28,7 +28,7 @@
   "stats_best_on": "272c1ab7ae0b439602aba00515d7c0d0a65cc4fa65662934fdfa503a3e2add54",
   "stats_best_time": "5d53a7e31dcdb5dbbfc4f10a243c8e862aeaf5296203294cccca98c64ecf0a1d",
   "stats_best_time_is": "0c51aca1aa2527c1cfdf54e0c4fce9534bcf39c0fc10f3fcfdcd45f74992b685",
-  "stats_brain_power_amount": "84e764ac135f7caff913856412e2aca786320ca40f35bc121fd7aaeed8a0403d",
+  "stats_brain_power_amount": "3fbb75c7a75b110a02a16166edafd38f45350bd2e533fd42a3bfe09841327089",
   "stats_brain_power_to": "dd17f793e5e8f9764932f1da99f59dc46cadc7c7df7cdcf044931d0a6c636a42",
   "stats_calendar_activity_summary": "0114b64d96f0f2e06a99164332b2bf0ea903cbeedcbcb890e340a650c944d6ef",
   "stats_calendar_energy_summary": "a5e0ef1b7074bc33f15f65a22164e2bfa87058c62c50c4eab0fb52fd9ddf1559",
@@ -102,7 +102,8 @@
     <string name="stats_see_all">Alle ansehen</string>
     <string name="stats_best_day">Bester Tag</string>
     <string name="stats_best_time">Beste Uhrzeit</string>
-    <string name="stats_brain_power_amount">%1$s Brain Power</string>
+    <!-- The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out. -->
+    <string name="stats_brain_power_amount">%1$s Brain Power (BP)</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Alle Gürtel erreicht</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->

@@ -54,7 +54,7 @@ function OpeningMapIdea({
     <Popover>
       <PopoverTrigger
         aria-label={ideaOfTotal}
-        className="bg-background border-foreground/30 hover:border-foreground/60 data-popup-open:border-foreground/60 data-popup-open:bg-selected-tint contrast-more:border-foreground absolute grid size-16 -translate-1/2 place-items-center rounded-full border-2 border-dashed transition-colors"
+        className="bg-background border-input hover:border-foreground/30 focus-visible:border-ring focus-visible:ring-ring/50 data-popup-open:bg-selected-tint contrast-more:border-foreground contrast-more:data-popup-open:border-foreground absolute grid size-16 -translate-1/2 place-items-center rounded-full border-2 border-dashed transition-colors outline-none focus-visible:ring-[3px] data-popup-open:border-transparent"
         data-slot="opening-map-idea"
         style={position}
       >
@@ -117,7 +117,7 @@ export function OpeningMap({ ideas }: { ideas: readonly MapIdea[] }) {
       >
         <svg
           aria-hidden="true"
-          className="text-foreground/25 contrast-more:text-foreground absolute inset-0 size-full"
+          className="text-input contrast-more:text-foreground absolute inset-0 size-full"
           viewBox={`0 0 ${String(size.x)} ${String(size.y)}`}
         >
           {points.map((point, index) => {
@@ -140,7 +140,7 @@ export function OpeningMap({ ideas }: { ideas: readonly MapIdea[] }) {
 
         <span
           aria-hidden="true"
-          className="bg-foreground/30 absolute size-2.5 -translate-1/2 rounded-full"
+          className="bg-foreground/20 contrast-more:bg-foreground absolute size-2.5 -translate-1/2 rounded-full"
           style={toPercent({ point: center, size })}
         />
 

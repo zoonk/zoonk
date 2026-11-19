@@ -39,11 +39,16 @@ msgid "Your answer and the right one"
 msgstr "Your answer and the right one"
 
 #: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Brain Power"
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>Brain Power</words>"
+
+#. Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.
+#: src/_components/brain-power-amount.tsx
+msgctxt "_Q0taG"
+msgid "BP"
+msgstr "BP"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
@@ -553,11 +558,6 @@ msgstr "Your plan goes on without it."
 msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Summaries"
-
-#: src/_components/moment-readouts.tsx
-msgctxt "XjzZDx"
-msgid "<number>+{points}</number> <words>Brain Power</words>"
-msgstr "<number>+{points}</number> <words>Brain Power</words>"
 
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
@@ -5746,6 +5746,13 @@ msgstr "{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Goals"
+
+#: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Brain Power"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"

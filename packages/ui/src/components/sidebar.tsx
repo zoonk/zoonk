@@ -52,21 +52,6 @@ export function SidebarHeader({ className, ...props }: React.ComponentProps<"div
 }
 
 /**
- * The sidebar's first row, as tall as a page's bar, so the toggle and a page's way back share a
- * line. The toggle holds it alone at both widths, in the window's start corner, so pressing it
- * never moves it and a second press needs no aim.
- */
-export function SidebarToggleRow({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("flex h-11 items-center", className)}
-      data-slot="sidebar-toggle-row"
-      {...props}
-    />
-  );
-}
-
-/**
  * What sits between the header and the footer. It scrolls by itself when the window is short, so
  * the footer stays in reach; its padding keeps a row's focus ring inside what scrolls.
  */

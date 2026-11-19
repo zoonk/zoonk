@@ -28,7 +28,7 @@
   "stats_best_on": "04bc1c07f89e304d9c9495bc735aaa9e549dbb24f66abe3c281e6df70e5577c2",
   "stats_best_time": "25fb60f7215158dc391d3c14870629cd437ec1fb18a46f4155b92d946037b68f",
   "stats_best_time_is": "e747bba010c825ea13bda6f25b5f65ed86d2ba334eec4f31ff36288601292b5c",
-  "stats_brain_power_amount": "c92266dcf75ef0e04c2463de860fb1bf11e852e044f958bdfec3fca1a6b85a24",
+  "stats_brain_power_amount": "3a1661162ba3c267b127781212be186e48199effe3e55545fe6fa426c2cdfffe",
   "stats_brain_power_to": "a8759e70e972f762e13b9adb84403e231eada9782beacc463e2f548ff385e5e2",
   "stats_calendar_activity_summary": "bcaccf618730daec2af3e5311e9e49d29c48b2b464d953680ea45f071b127d81",
   "stats_calendar_energy_summary": "9ad7a537944a562bb6ab1c6f0d9836178c9e2de4b58c48177d48472e88046700",
@@ -102,7 +102,8 @@
     <string name="stats_see_all">Vedi tutto</string>
     <string name="stats_best_day">Giorno migliore</string>
     <string name="stats_best_time">Orario migliore</string>
-    <string name="stats_brain_power_amount">%1$s punti di Potenza Mentale</string>
+    <!-- The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out. -->
+    <string name="stats_brain_power_amount">%1$s punti di Potenza Mentale (PM)</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Tutte le cinture ottenute</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->

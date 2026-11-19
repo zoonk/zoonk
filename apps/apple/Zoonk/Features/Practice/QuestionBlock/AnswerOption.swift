@@ -40,7 +40,7 @@ struct AnswerOption: View {
           markedContent
 
           VStack(alignment: .leading, spacing: 12) {
-            KeyMarker(number: marker)
+            KeyMarker(number: marker, isPicked: isPicked && result == nil)
             answerContent
           }
         }
@@ -57,7 +57,7 @@ struct AnswerOption: View {
   private var markedContent: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       if let marker {
-        KeyMarker(number: marker)
+        KeyMarker(number: marker, isPicked: isPicked && result == nil)
       }
       answerContent
     }
@@ -255,20 +255,22 @@ private struct AnswerOptionLayout: Layout {
   }
 }
 
-/// Main's `Kbd`: the key that picks an option.
+/// Main's `Kbd`: the key that picks an option. A picked option's key turns ink: the option's mark,
+/// as a radio's dot is.
 private struct KeyMarker: View {
   let number: Int
+  var isPicked = false
 
   var body: some View {
     let shape = RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
 
     Text(number, format: .number)
       .typeStyle(.small.monospaced().weight(.medium))
-      .foregroundStyle(.mutedForeground)
+      .foregroundStyle(isPicked ? Color(.background) : .mutedForeground)
       .padding(.horizontal, 4)
       .frame(minWidth: 20, minHeight: 20)
-      .background(Color(.foreground).opacity(0.04), in: shape)
-      .overlay(shape.strokeBorder(Color(.foreground).opacity(0.12)))
+      .background(Color(.foreground).opacity(isPicked ? 1 : 0.04), in: shape)
+      .overlay(shape.strokeBorder(Color(.foreground).opacity(isPicked ? 0 : 0.12)))
       .accessibilityHidden(true)
   }
 }

@@ -35,6 +35,7 @@
 - “learning path”: “trilha”
 - “prerequisite”: “base”, not “pré-requisito”
 - “Brain Power”: “Poder Mental”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “PM”
 - “score”, including an exam's “band”: “pontuação”, not “nota” or “faixa”; the admission cut-off stays “nota de corte”
 - “again”, including “Retry”: “de novo”, not “novamente”
 - “listening”: “escuta”

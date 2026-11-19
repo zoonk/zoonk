@@ -145,12 +145,19 @@ export const TASK_TITLE_CLASS = "text-foreground text-sm leading-5 font-medium";
 export function TaskHeaderTitle({
   announce = true,
   detail,
+  spoken = false,
   title,
 }: {
   announce?: boolean;
   detail?: React.ReactNode;
+  /** For a screen whose body shows the same title large: only screen readers get it here. */
+  spoken?: boolean;
   title: string;
 }) {
+  if (spoken) {
+    return <h1 className="sr-only">{title}</h1>;
+  }
+
   return (
     <div className="flex min-w-0 shrink flex-col items-center text-center text-balance">
       <h1 className={TASK_TITLE_CLASS}>{title}</h1>

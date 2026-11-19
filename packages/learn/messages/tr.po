@@ -39,11 +39,16 @@ msgid "Your answer and the right one"
 msgstr "Cevabın ve doğru cevap"
 
 #: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Beyin Gücü"
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>Beyin Gücü</words>"
+
+#. Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.
+#: src/_components/brain-power-amount.tsx
+msgctxt "_Q0taG"
+msgid "BP"
+msgstr "BG"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
@@ -553,11 +558,6 @@ msgstr "Planın onsuz da devam eder."
 msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Özetler"
-
-#: src/_components/moment-readouts.tsx
-msgctxt "XjzZDx"
-msgid "<number>+{points}</number> <words>Brain Power</words>"
-msgstr "<number>+{points}</number> <words>Beyin Gücü</words>"
 
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
@@ -5746,6 +5746,13 @@ msgstr "{stars, plural, =0 {3 yıldızdan # tanesi} other {3 üzerinden # yıld�
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Hedefler"
+
+#: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Beyin Gücü"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"

@@ -19,6 +19,7 @@
 
 ## Glossary
 
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “MU”
 - “goal” (the learner's goal): “cel”
 - “plan” (study plan): “plan”; subscription plan: “pakiet”
 - “Free” (subscription name): “Free”, as in “pakiet Free”; a “free account”: “bezpłatne konto”

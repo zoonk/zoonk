@@ -19,12 +19,13 @@ const VIEWPORT_SLOT = "contribution-calendar-viewport";
 
 /**
  * The viewport's scroller clips what's drawn outside the grid, so the ring sits inside the day and
- * keyboard focus rings the day itself. Its inner line keeps it readable on every level's color. The grid
- * holds it once, instead of every day of a year repeating it in the page.
+ * keyboard focus rings the day itself: the soft focus ring, dark only with more contrast. Its inner
+ * line keeps it readable on every level's color. The grid holds it once, instead of every day of a
+ * year repeating it in the page.
  */
 const DAY_RING_CLASS = cn(
-  "**:data-active:inset-ring-foreground **:data-active:ring-background **:data-active:ring-3 **:data-active:inset-ring-2 **:data-active:ring-inset",
-  "focus-visible:**:data-current:inset-ring-foreground focus-visible:**:data-current:ring-background focus-visible:**:data-current:ring-3 focus-visible:**:data-current:inset-ring-2 focus-visible:**:data-current:ring-inset",
+  "**:data-active:inset-ring-ring/50 contrast-more:**:data-active:inset-ring-foreground **:data-active:ring-background **:data-active:ring-3 **:data-active:inset-ring-2 **:data-active:ring-inset",
+  "focus-visible:**:data-current:inset-ring-ring/50 contrast-more:focus-visible:**:data-current:inset-ring-foreground focus-visible:**:data-current:ring-background focus-visible:**:data-current:ring-3 focus-visible:**:data-current:inset-ring-2 focus-visible:**:data-current:ring-inset",
 );
 
 /** Whole weeks fill the column; `recentOnPhone` keeps a phone to the last 26 weeks. */

@@ -45,7 +45,8 @@ struct TodaySessionSection: View {
     let coming = next == nil ? nil : session.comingLessons
     let timedRows = upcoming.count + (coming == nil ? 0 : 1)
     let upcomingCount = timedRows
-    let shownUpcoming = disclosures.showsMore ? upcomingCount : StudyDay.upcomingRows
+    let foldedShown = StudyDay.shownUpcomingRows(upcomingCount)
+    let shownUpcoming = disclosures.showsMore ? upcomingCount : foldedShown
 
     if foldsDone {
       DayFoldRow(
@@ -100,14 +101,14 @@ struct TodaySessionSection: View {
       .disabled(busy != nil && busy != .prepare)
     }
 
-    if upcomingCount > StudyDay.upcomingRows {
+    if upcomingCount > foldedShown {
       DayFoldRow(
-        isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - StudyDay.upcomingRows,
+        isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - foldedShown,
         more: StudyDay.moreLabel(
-          hidden: Array(upcoming.dropFirst(StudyDay.upcomingRows)), lessonsAhead: coming != nil),
-        minutes: timedRows > StudyDay.upcomingRows
+          hidden: Array(upcoming.dropFirst(foldedShown)), lessonsAhead: coming != nil),
+        minutes: timedRows > foldedShown
           ? session.foldedMinutes(
-            showing: before + [next].compactMap { $0 } + upcoming.prefix(StudyDay.upcomingRows))
+            showing: before + [next].compactMap { $0 } + upcoming.prefix(foldedShown))
           : nil
       )
       .id(Self.moreFold)

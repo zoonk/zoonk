@@ -11,7 +11,7 @@ import { DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
 import { FoldRow, focusRevealedRow, useMoreLabel } from "./today-fold-row";
 import { SESSION_LIST_ID } from "./today-ids";
-import { UPCOMING_ROWS, getFoldedRows, splitTodayQueue } from "./today-queue";
+import { getFoldedRows, splitTodayQueue } from "./today-queue";
 import { TodayUpNext } from "./today-up-next";
 
 const DONE_ROWS = 1;
@@ -111,7 +111,7 @@ function SessionQueue({ next }: { next: DayStep | null }) {
 
         {next && <BlockRow block={next} isNext showSubject={showSubject} />}
 
-        {(moreOpen ? after : after.slice(0, UPCOMING_ROWS)).map((block) => (
+        {(moreOpen ? after : after.slice(0, folded.shown)).map((block) => (
           <BlockRow
             block={block}
             isNext={false}
@@ -121,10 +121,10 @@ function SessionQueue({ next }: { next: DayStep | null }) {
           />
         ))}
 
-        {lessonsAhead && (moreOpen || after.length < UPCOMING_ROWS) && <ComingLessonsRow />}
+        {lessonsAhead && (moreOpen || !folded.folds) && <ComingLessonsRow />}
       </ol>
 
-      {folded.count > 0 && (
+      {folded.folds && (
         <FoldRow
           controls={SESSION_LIST_ID}
           done={false}

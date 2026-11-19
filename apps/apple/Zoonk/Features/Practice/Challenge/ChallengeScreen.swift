@@ -505,11 +505,19 @@ struct ChallengeScreen: View {
   /// Main's `TaskMeta`: the facts in mono, then the Brain Power a win brings in its color.
   private func meta(_ challenge: Components.Schemas.Challenge) -> [FactSegments.Fact]? {
     let facts = facts(challenge)
+    let points = challenge.reward.brainPower
     let reward =
-      challenge.reward.brainPower > 0 && !challenge.mock
-      ? String(
-        localized: "+\(challenge.reward.brainPower) Brain Power", table: "Practice",
-        comment: "A challenge's Brain Power reward.")
+      points > 0 && !challenge.mock
+      ? FactSegments.Fact(
+        text: "+\(points.formatted())", color: Color(.brainText),
+        unit: String(
+          localized: "BP", table: "Today",
+          comment:
+            "Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives."
+        ),
+        spoken: String(
+          localized: "+\(points) Brain Power", table: "Practice",
+          comment: "A challenge's Brain Power reward."))
       : nil
 
     guard !facts.isEmpty || reward != nil else {
@@ -517,7 +525,7 @@ struct ChallengeScreen: View {
     }
 
     var line = facts.map { FactSegments.Fact(text: $0) }
-    if let reward { line.append(.init(text: reward, color: Color(.brainText))) }
+    if let reward { line.append(reward) }
     return line
   }
 

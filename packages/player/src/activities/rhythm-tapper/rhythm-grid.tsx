@@ -59,7 +59,7 @@ function RoundRow({
               className={cn(
                 "aspect-square max-h-8 w-full rounded-xs motion-safe:transition-shadow",
                 step.isHit ? "bg-viz-accent" : "bg-background",
-                playingStep === step.index && "ring-foreground ring-2",
+                playingStep === step.index && "ring-ring/50 contrast-more:ring-foreground ring-2",
               )}
             />
           </div>

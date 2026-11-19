@@ -46,6 +46,8 @@ import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.ceremonies.MomentBuddy
+import com.zoonk.android.feature.ceremonies.momentBuddy
 import com.zoonk.android.feature.player.LessonColumnBeforeFold
 import com.zoonk.android.feature.player.LessonEndSlot
 import com.zoonk.android.feature.player.LessonPlayerExits
@@ -55,6 +57,7 @@ import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toPlayableLesson
+import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -158,7 +161,8 @@ private fun ExplanationView(
     LaunchedEffect(explanation, (session as? SessionState.SignedIn)?.session) { viewModel.show(explanation) }
 
     if (lesson != null && (readsAtOnce || started)) {
-        val playable = remember(lesson) { lesson.toPlayableLesson() }
+        // The lesson goes by the question's title, as Today and the goal list name it.
+        val playable = remember(lesson, explanation.title) { lesson.toPlayableLesson().copy(title = explanation.title) }
         val exits = remember(navigator) { explainExits(navigator) }
 
         PlayingLesson(
@@ -169,7 +173,7 @@ private fun ExplanationView(
             exits = exits,
             endSlot =
                 LessonEndSlot(
-                    body = { state -> ExplainEnding(explanation, state, navigator, readAgain) },
+                    body = { state -> ExplainEnding(explanation, state, momentBuddy(app), navigator, readAgain) },
                     done = { finish(explanation, navigator) },
                 ),
         )
@@ -275,17 +279,12 @@ private fun ExplainHeading(
     }
 }
 
-/** Main's `Outline`: what's coming, numbered, with placeholders until the run names the screens. */
+/** Main's `Outline`: the screens to come, numbered, with placeholders until the run names them. */
 @Composable
 private fun Outline(titles: List<String>) {
     val locale = currentLocale()
 
     Column {
-        Text(
-            stringResource(R.string.explain_coming),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
-        )
         val rows = titles.ifEmpty { List(OUTLINE_PLACEHOLDERS) { null } }
         rows.forEachIndexed { index, title ->
             if (index > 0) HorizontalDivider()
@@ -418,10 +417,12 @@ internal fun SlowWait(
 internal fun ExplainEnding(
     explanation: Explanation,
     state: LessonPlayerState,
+    buddy: MomentBuddy,
     navigator: AppNavigator,
     readAgain: suspend () -> Unit,
 ) {
     val saving = state.completion?.status == CompletionStatus.Saving
+    val result = state.completion?.result
     val locale = currentLocale()
 
     // The course to go further is linked a few seconds after the explanation can be read.
@@ -441,7 +442,9 @@ internal fun ExplainEnding(
                 LessonReadouts(state, withFacts = false)
             }
 
-            if (explanation.recap.isNotEmpty()) {
+            if (!saving && result != null) DayMoment(result, buddy.look, buddy.name)
+
+            if (!saving && explanation.recap.isNotEmpty()) {
                 Column {
                     Text(
                         pluralStringResource(

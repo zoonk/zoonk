@@ -28,7 +28,7 @@
   "stats_best_on": "5ade58c07b1009da539892caccdc19c67c52ada48c69ca0641e10662cf2e4085",
   "stats_best_time": "62f05858edf7f99679b59ab30d37ccfe216f4d706d983377a6e477bab8e67c85",
   "stats_best_time_is": "f64fa39f502b9682b3f5563f20b88ee217fe88dd5c8102e604e94dc2e2bf6ea0",
-  "stats_brain_power_amount": "f723d3ba78f7941e694fddd0822f010d656ae903298c180d26345d9f814c5a82",
+  "stats_brain_power_amount": "ca74230c478f3ab91230fd89b31302fca5b43acf5ab3ab5a32a34a0c271776df",
   "stats_brain_power_to": "510aaa73ab03e3cd6da27ad333aa77822c1ef55e0d9943cff407987ef5ffb05c",
   "stats_calendar_activity_summary": "9176b2b9669c74e726d84be6b12ac8f72a8cc8bfaf99dbe8cf3aa282a2ffc88c",
   "stats_calendar_energy_summary": "1597c72f5dc97db800c921f7764982a9f33cc536996b978d1be4d15d31b7b1f2",
@@ -102,7 +102,8 @@
     <string name="stats_see_all">Ver todo</string>
     <string name="stats_best_day">Mejor día</string>
     <string name="stats_best_time">Mejor momento</string>
-    <string name="stats_brain_power_amount">%1$s de Poder Mental</string>
+    <!-- The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out. -->
+    <string name="stats_brain_power_amount">%1$s de Poder Mental (PM)</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Todos los cinturones obtenidos</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->

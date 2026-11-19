@@ -28,7 +28,7 @@
   "stats_best_on": "a28582c6d0af04879283764c5ef0d6d43aaaf7b3295a2e29b66599c6cf427760",
   "stats_best_time": "049a4bf80702948b4a2cee038c7265e65228c901894d35ba70c1155d8c50c4a3",
   "stats_best_time_is": "0dd55c609fb688c94303e2a5689678074f438289596b59744c7de6c87c0621a4",
-  "stats_brain_power_amount": "caa9571cfd3203fc7455ef23400f236c1543b4d7c3734276797718de4deebeed",
+  "stats_brain_power_amount": "90d3c8faaebe4be5f8fa034e1882417499a47ea4ec85ef59d76d76d39112e2e6",
   "stats_brain_power_to": "600661d1f2b2e072449ca5d120c83c2028bc2f44eaa4c551bab3676989ba0e3b",
   "stats_calendar_activity_summary": "37891a32d2b4666301363bc33d9d4bea8762ecebf43bfc8b64a090b95bcae472",
   "stats_calendar_energy_summary": "e35dd3c63ff79a9e4a0215b8f2bd40b72c69db17fb7b71b2b7745b924f3b8eb5",
@@ -102,7 +102,8 @@
     <string name="stats_see_all">Zobacz wszystkie</string>
     <string name="stats_best_day">Najlepszy dzień</string>
     <string name="stats_best_time">Najlepsza pora</string>
-    <string name="stats_brain_power_amount">%1$s pkt Mocy Umysłu</string>
+    <!-- The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out. -->
+    <string name="stats_brain_power_amount">%1$s pkt Mocy Umysłu (MU)</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Wszystkie pasy zdobyte</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->

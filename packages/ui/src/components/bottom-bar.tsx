@@ -17,10 +17,11 @@ export const FRAME_GUTTER_CLASS =
 /**
  * The bar's room over and under its buttons: the frame's gutter, 16px where the frame names none,
  * and the home indicator's inset where nothing is docked under it. A foot drawn level with the bar
- * (a task's side panel) takes the same room under the same gutter.
+ * (a task's side panel) takes the same room under the same gutter. Its controls stay 44px with a
+ * mouse too (`keep-touch-size`): the screen's main action, and what sits level with it.
  */
 export const BOTTOM_BAR_ROOM_CLASS =
-  "pt-[max(1rem,var(--page-gutter))] pb-[max(1rem,var(--page-gutter),var(--page-safe-bottom))]";
+  "keep-touch-size pt-[max(1rem,var(--page-gutter))] pb-[max(1rem,var(--page-gutter),var(--page-safe-bottom))]";
 
 /**
  * The one home of a screen's main action, on a phone and a computer: pinned to the bottom of its
