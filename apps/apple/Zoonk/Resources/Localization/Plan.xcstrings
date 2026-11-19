@@ -8594,12 +8594,6 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg podstawa · jedna krótka lekcja"
-                    }
-                  },
                   "few" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -8610,6 +8604,12 @@
                     "stringUnit" : {
                       "state" : "translated",
                       "value" : "%arg podstaw · jedna krótka lekcja na każdą"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg podstawa · jedna krótka lekcja"
                     }
                   },
                   "other" : {
@@ -17083,10 +17083,58 @@
     },
     "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you review every topic once." : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedes Fach zählt in der Prüfung entsprechend seiner Gewichtung. Der Wert steigt, je mehr du dafür lernst und je mehr richtige Antworten du gibst. Er bleibt unter 75 %, bis du jedes Thema einmal wiederholt hast."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada materia cuenta según el peso que tiene en el examen. Su porcentaje aumenta a medida que estudias más y respondes mejor, y se mantiene por debajo del 75% hasta que repases cada tema una vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque matière compte selon son poids à l’examen. Sa part augmente à mesure que tu l’étudies et que tu réponds mieux, et reste sous les 75 % jusqu’à ce que tu aies révisé chaque sujet une fois."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogni materia pesa quanto vale all’esame. Il suo punteggio aumenta man mano che la studi e rispondi meglio, e resta sotto il 75% finché non ripassi una volta ogni argomento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験での配点に応じて、各科目の割合が決まります。その数値は、その科目を学習し、正解を重ねるほど上がりますが、すべてのトピックを一度復習するまでは75％未満のままです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 과목의 비중은 시험에서 차지하는 비중과 같아요. 해당 과목을 더 많이 공부하고 문제를 더 잘 풀수록 수치가 올라가며, 모든 주제를 한 번씩 복습하기 전까지는 75%를 넘지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Każdy przedmiot ma taką wagę jak na egzaminie. Jego wynik rośnie, gdy coraz więcej się z niego uczysz i udzielasz lepszych odpowiedzi. Nie przekracza 75%, dopóki nie powtórzysz każdego tematu choć raz."
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cada matéria conta de acordo com o peso que tem na prova. O número dela cresce conforme você estuda mais e acerta mais, e fica abaixo de 75% até você revisar todos os tópicos uma vez."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her branş, sınavda taşıdığı ağırlık kadar hesaba katılır. O branşta çalıştıkça ve daha çok doğru cevap verdikçe oranı artar; tüm konuları bir kez tekrar edene kadar %75’in altında kalır."
           }
         }
       }
@@ -17094,10 +17142,58 @@
     "Each subject counts as much as it's worth on the exam. Its number grows as you study more of it and answer better, and stays under 75% until you take a mock exam." : {
       "comment" : "How the exam preparation number is worked out",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedes Fach zählt so viel, wie es in der Prüfung wert ist. Der Wert steigt, je mehr du dafür lernst und je besser du antwortest, und bleibt unter 75 %, bis du eine Probeprüfung machst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada materia cuenta según el valor que tiene en el examen. Su porcentaje aumenta a medida que estudias más y respondes mejor, y se mantiene por debajo del 75% hasta que haces un simulacro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque matière compte en fonction de son poids à l’examen. Son score augmente à mesure que tu l’étudies et que tu réponds mieux, et reste inférieur à 75 % jusqu’à ce que tu passes un examen blanc."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogni materia contribuisce in base al suo peso nell’esame. Il relativo punteggio aumenta man mano che la studi e rispondi meglio, e resta sotto il 75% finché non fai una simulazione d’esame."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各科目は、試験での配点に応じて準備状況に反映されます。学習を進め、問題に正しく答えるほど数値が上がりますが、模試を受けるまでは75％未満のままです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 과목은 시험에서 차지하는 비중만큼 반영돼요. 과목별 준비도는 해당 과목을 더 공부하고 문제를 더 잘 풀수록 높아지며, 모의고사를 보기 전까지는 75%를 넘지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Każdy przedmiot ma taką wagę, jaką ma na egzaminie. Jego wskaźnik rośnie w miarę nauki i poprawnych odpowiedzi, ale nie przekracza 75% przed podejściem do egzaminu próbnego."
+          }
+        },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cada matéria conta de acordo com o peso que tem na prova. O número dela cresce conforme você estuda mais e acerta mais, e fica abaixo de 75% até você fazer um simulado."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her branş, sınavdaki ağırlığı oranında hesaba katılır. O branşta daha çok çalışıp soruları daha iyi cevapladıkça hazırlık puanın yükselir. Deneme sınavına girene kadar %75’in altında kalır."
           }
         }
       }

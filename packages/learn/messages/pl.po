@@ -471,16 +471,19 @@ msgctxt "OztxNT"
 msgid "You've used your mind maps"
 msgstr "Wykorzystano limit map myśli"
 
+#. Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons.
 #: src/_components/help-limit-notice.tsx
 msgctxt "K5TvNf"
 msgid "No more early lessons today"
 msgstr "Nie ma już dziś wcześniejszych lekcji"
 
+#. Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons.
 #: src/_components/help-limit-notice.tsx
 msgctxt "pMit-x"
 msgid "No more early lessons without an account"
 msgstr "Nie ma już wcześniejszych lekcji bez konta"
 
+#. Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons.
 #: src/_components/help-limit-notice.tsx
 msgctxt "mzLrh8"
 msgid "You've used your early lessons"

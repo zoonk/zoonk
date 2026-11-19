@@ -3167,48 +3167,48 @@
       }
     },
     "No more early lessons today" : {
-      "comment" : "The learner saw all the topics ahead of time they can today",
+      "comment" : "Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heute keine weiteren Lektionen im Voraus"
+            "value" : "Heute gibt es keine weiteren vorab erstellten Lektionen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya no hay más lecciones anticipadas por hoy"
+            "value" : "No hay más lecciones anticipadas hoy"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as vu toutes les leçons en avance possibles aujourd’hui"
+            "value" : "Plus de leçons en avance aujourd’hui"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per oggi non ci sono altre lezioni in anticipo"
+            "value" : "Nessun’altra lezione anticipata oggi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日はこれ以上、先取りレッスンを受けられません"
+            "value" : "今日はこれ以上先取りレッスンを利用できません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘은 미리 볼 수 있는 레슨을 모두 확인했어요"
+            "value" : "오늘은 미리 준비된 레슨을 더 이용할 수 없어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie ma już dziś lekcji z wyprzedzeniem"
+            "value" : "Nie ma już dziś wcześniejszych lekcji"
           }
         },
         "pt" : {
@@ -3220,54 +3220,54 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugün erken erişebileceğin başka ders kalmadı"
+            "value" : "Bugün daha fazla erken erişim dersi yok"
           }
         }
       }
     },
     "No more early lessons without an account" : {
-      "comment" : "A guest saw the topic ahead of time they can without an account",
+      "comment" : "Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ohne Konto keine weiteren Lektionen im Voraus"
+            "value" : "Ohne Konto gibt es keine weiteren vorab erstellten Lektionen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya no hay más lecciones anticipadas sin una cuenta"
+            "value" : "No hay más lecciones anticipadas sin una cuenta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as vu toutes les leçons en avance possibles sans compte"
+            "value" : "Plus de leçons en avance sans compte"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non ci sono altre lezioni in anticipo senza un account"
+            "value" : "Nessun’altra lezione anticipata senza un account"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アカウントなしでは、これ以上先取りレッスンを受けられません"
+            "value" : "アカウントなしでは、これ以上先取りレッスンを利用できません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계정 없이 미리 볼 수 있는 레슨을 모두 확인했어요"
+            "value" : "계정 없이 미리 준비된 레슨을 더 이용할 수 없어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bez konta nie ma już lekcji z wyprzedzeniem"
+            "value" : "Nie ma już wcześniejszych lekcji bez konta"
           }
         },
         "pt" : {
@@ -3279,7 +3279,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hesap açmadan erken erişebileceğin başka ders kalmadı"
+            "value" : "Hesap açmadan daha fazla erken erişim dersi yok"
           }
         }
       }
@@ -6943,11 +6943,12 @@
       }
     },
     "You've used your early lessons" : {
+      "comment" : "Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine kostenlosen Lektionen aufgebraucht"
+            "value" : "Du hast deine vorab erstellten Lektionen aufgebraucht"
           }
         },
         "es" : {
@@ -6977,7 +6978,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "미리 이용할 수 있는 레슨을 모두 사용했어요"
+            "value" : "미리 준비된 레슨을 다 이용했어요"
           }
         },
         "pl" : {

@@ -265,7 +265,11 @@ extension HelpLimit {
     case .mindMaps:
       LocalizedStringResource("You've used your mind maps", table: "Subscriptions")
     case .previews:
-      LocalizedStringResource("You've used your early lessons", table: "Subscriptions")
+      LocalizedStringResource(
+        "You've used your early lessons", table: "Subscriptions",
+        comment:
+          "Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons."
+      )
     case .goals:
       LocalizedStringResource("You've started all the new goals you can", table: "Subscriptions")
     case .uploads:
@@ -302,7 +306,9 @@ extension HelpLimit {
     case .previews:
       LocalizedStringResource(
         "No more early lessons today", table: "Subscriptions",
-        comment: "The learner saw all the topics ahead of time they can today")
+        comment:
+          "Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons."
+      )
     case .callTime:
       LocalizedStringResource(
         "No more calls today", table: "Subscriptions", comment: "The plan's call time is used")
@@ -326,7 +332,9 @@ extension HelpLimit {
     case .previews:
       LocalizedStringResource(
         "No more early lessons without an account", table: "Subscriptions",
-        comment: "A guest saw the topic ahead of time they can without an account")
+        comment:
+          "Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons."
+      )
     case .callTime:
       LocalizedStringResource(
         "Calls need a free account", table: "Subscriptions", comment: "A guest can't call")

@@ -275,9 +275,21 @@ function useOutlineLimitWords(limit: OutlineLimit): LimitWords {
   const t = useExtracted();
 
   return useCapWords(limit, {
-    day: t("No more early lessons today"),
-    guest: t("No more early lessons without an account"),
-    rolling: t("You've used your early lessons"),
+    day: t({
+      description:
+        "Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons.",
+      message: "No more early lessons today",
+    }),
+    guest: t({
+      description:
+        "Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons.",
+      message: "No more early lessons without an account",
+    }),
+    rolling: t({
+      description:
+        "Early lessons are a topic's lessons got ready before the plan reaches it, from a topic far ahead; not the cap on new lessons.",
+      message: "You've used your early lessons",
+    }),
   });
 }
 
