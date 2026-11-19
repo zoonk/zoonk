@@ -396,8 +396,6 @@ struct BlockRow: View {
   var showsDetail = false
   /// Said in place of the row's own line, such as a review's first explanations.
   var lineOverride: String?
-  /// Main's reveal tags its next block where to start.
-  var tag: Text?
 
   var body: some View {
     RowLayout(alignment: lineCount >= 3 ? .firstTextBaseline : .center) {
@@ -408,12 +406,6 @@ struct BlockRow: View {
           .layoutPart(.label, text: Text(verbatim: block.displayTitle))
           .typeStyle(.rowTitle)
           .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
-
-        if let tag {
-          tag
-            .typeStyle(.meta.weight(.medium))
-            .foregroundStyle(.successText)
-        }
 
         if failed {
           FailureLine(
@@ -445,7 +437,7 @@ struct BlockRow: View {
 
   /// The title and the lines under it, for where the mark sits (craft E5).
   private var lineCount: Int {
-    1 + (tag == nil ? 0 : 1) + (failed ? 1 : 0) + (shownLine == nil ? 0 : 1)
+    1 + (failed ? 1 : 0) + (shownLine == nil ? 0 : 1)
   }
 
   @ViewBuilder

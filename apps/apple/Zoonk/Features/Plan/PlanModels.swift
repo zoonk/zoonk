@@ -265,28 +265,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     week.days.first { $0.state == .today }?.date ?? week.startDate
   }
 
-  /// Whether the plan lays a lesson on today or the six days after it, the days its reveal lists
-  /// (core's `buildNextDaysView`). Its week ends on Sunday, so a day of it already gone stands for
-  /// the same weekday next week: a study day while the plan still runs.
-  var hasLessonsInNextSevenDays: Bool {
-    let today = today
-
-    return week.days.contains { day in
-      guard day.date < today else {
-        return !day.items.isEmpty
-      }
-
-      let runs =
-        end == nil && estimate.endDate.map { PlanDate.days(from: day.date, to: $0) >= 7 } ?? true
-      return runs && PlanDate.weekday(day.date).map { schedule.weekdayMinutes[$0] > 0 } ?? false
-    }
-  }
-
-  /// Whether today has lessons: on a rest day the reveal's week starts with the days after it.
-  var hasLessonsToday: Bool {
-    week.days.contains { $0.state == .today && !$0.items.isEmpty }
-  }
-
   /// The phases a drawing of the plan counts: studying after an exam comes past its finish, and a
   /// phase the plan holds nothing of has no days.
   var roadPhases: [PlanPhase] {
@@ -350,6 +328,8 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
   let kind: Kind
   let lessonsDone: Int
   let lessonsTotal: Int
+  /// What the learner can do once the phase is done, as a new plan's path names it.
+  let milestone: String?
   let mocks: Mocks
   /// Exam phases come without a name; see `PlanPhase.title`.
   let name: String?
@@ -451,49 +431,9 @@ struct PlanWeekDay: Decodable, Equatable, Identifiable, Sendable {
   }
 }
 
-/// A day of the plan's first week, with the lessons laid out on it.
-/// The reveal's Today and first week, composed in core so each lesson shows once: drawn as given.
+/// The day Today will show, which the reveal's Start opens.
 struct PlanRevealRead: Decodable, Equatable, Sendable {
-  struct Week: Decodable, Equatable, Sendable {
-    let days: Int
-    let minutes: Int
-  }
-
   let today: StudyDay
-  /// What `today` lists, in minutes.
-  let minutes: Int
-  /// The days after today.
-  let nextDays: [RevealDay]
-  let week: Week
-}
-
-struct RevealDay: Decodable, Equatable, Identifiable, Sendable {
-  struct Item: Decodable, Equatable, Sendable {
-    enum Kind: String, Decodable, Sendable {
-      case boss
-      case chapter
-      case checkpoint
-      case lesson
-      case mock
-      case review
-    }
-
-    let kind: Kind
-    let lessonId: String?
-    /// The lessons it holds on its day: an estimate for lessons still being written, 0 for other work.
-    let lessons: Int
-    let status: String
-    /// The lesson's; empty for a skill whose lessons are still being written.
-    let title: String
-
-    var isTeaching: Bool { kind == .lesson || kind == .chapter }
-  }
-
-  let date: String
-  let items: [Item]
-  let minutes: Double
-
-  var id: String { date }
 }
 
 enum BaseChoice: String, Codable, Sendable {
@@ -629,8 +569,44 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
   /// The plan says which skills teach which topic, so topics have a status.
   let topicsMapped: Bool
 
+  /// Core's `hasSubjectPages`: a language keeps its path; an exam's notice, or more than one
+  /// module, has subjects.
   var hasSubjectPages: Bool {
-    goal.kind == "exam" ? !subjects.isEmpty : subjects.count >= 2
+    goal.kind != "language" && (kind == "notice" || subjects.count > 1)
+  }
+
+  struct SubjectGroup: Identifiable {
+    /// The subjects the plan adds outside the notice, after its own groups.
+    let extra: Bool
+    let name: String?
+    let subjects: [SyllabusSubject]
+
+    var id: String { extra ? "extra" : "notice:\(name ?? "")" }
+  }
+
+  /// Main's `groupSubjects`: the notice's groups in its order, then what the plan adds outside it;
+  /// a plan's modules are one group.
+  var subjectGroups: [SubjectGroup] {
+    guard kind == "notice" else {
+      return [SubjectGroup(extra: false, name: nil, subjects: subjects)]
+    }
+
+    func key(_ subject: SyllabusSubject) -> String? {
+      subject.source == "plan" ? nil : (subject.group ?? "")
+    }
+
+    var keys: [String?] = []
+
+    for subject in subjects where !keys.contains(key(subject)) {
+      keys.append(key(subject))
+    }
+
+    return (keys.filter { $0 != nil } + keys.filter { $0 == nil }).map { groupKey in
+      let inGroup = subjects.filter { key($0) == groupKey }
+      return SubjectGroup(
+        extra: groupKey == nil, name: groupKey == nil ? nil : inGroup.first?.group,
+        subjects: inGroup)
+    }
   }
 
   func sharedExams(of subject: SyllabusSubject) -> [SharedExam] {
@@ -689,6 +665,8 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   let areas: [String]
   let chapters: [Chapter]
   let displayWeight: DisplayWeight?
+  /// The notice's group the subject is listed under, if it groups them.
+  let group: String?
   let key: String
   let lessonsDone: Int
   let lessonsKnown: Int

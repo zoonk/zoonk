@@ -430,16 +430,13 @@ private struct RevealExamChoices: View {
     ForEach(plan.examChoices) { choice in
       if let line = choice.followingLine {
         // One sentence with the change inline, as main's: "Foreign language: Inglês · Change".
-        Section {
-          Button {
-            change(choice.group)
-          } label: {
-            Text("\(lineLabel(line))\(changeLabel)")
-              .frame(maxWidth: .infinity, alignment: .leading)
-          }
-          .buttonStyle(.plain)
-          .listRowBackground(Color.clear)
+        Button {
+          change(choice.group)
+        } label: {
+          Text("\(lineLabel(line))\(changeLabel)")
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .buttonStyle(.plain)
       }
     }
   }
@@ -582,104 +579,83 @@ private struct PlanReveal: View {
   @Environment(PlanStore.self) private var plans
   @Environment(TodayStore.self) private var today
   @State private var adjusting: AdjustPlanSheet.Section?
-  @State private var sheet: PlanSheet?
-  /// Start's, or a row's while `openingRow` names it.
-  @State private var opening = VisitRequest<OpenFailure>()
-  @State private var openingRow: Int?
-  private var failedRow: Int? { opening.outcome?.row }
-  private var startFailure: StartFailure? { opening.outcome?.start }
+  @State private var starting = VisitRequest<StartFailure>()
+  @State private var open = Set<String>()
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
-  @State private var slotAnswer: PlanSlotAnswer?
 
   var body: some View {
     let goal = learnerGoal
-    let context = PlanContext(
-      goal: goal, plan: plan, adjust: { adjusting = $0 }, show: { sheet = $0 })
-    let syllabus = plans.syllabus(goalId: goal.id)
-    let structure = syllabus.value.flatMap { $0.hasSubjectPages ? $0 : nil }
     let day = onboarding.revealToday(goalID: goal.id)
+    let syllabus = plans.syllabus(goalId: goal.id)
+    let context = PlanContext(goal: goal, plan: plan, adjust: { adjusting = $0 }, show: { _ in })
 
-    // What the learner does now leads; the plan at a glance sits beside it, or under it.
-    PaneSplit {
+    // Main's reveal: the title and the plan's structure lead; what the learner chose sits in the
+    // pane beside them, or under the title.
+    OnboardingPaneColumn {
       ZoonkList {
-        todaySections(goal: goal, day: day)
+        planSections(goal: goal, titled: true)
+      }
+    } content: { isBeside in
+      ZoonkList {
+        heading(goal)
+
+        if !isBeside {
+          planSections(goal: goal, titled: false)
+        }
+
+        RevealStructure(context: context, syllabus: syllabus, open: $open)
       }
       .bottomBar(note: barNote) { actions(day: day.value?.today) }
       // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
-    } secondary: {
-      ZoonkList {
-        glanceSections(goal: goal, day: day)
-        detailSections(context: context, structure: structure)
-      }
-    } single: {
-      ZoonkList {
-        todaySections(goal: goal, day: day)
-        glanceSections(goal: goal, day: day)
-        detailSections(context: context, structure: structure)
-      }
-      .bottomBar(note: barNote) { actions(day: day.value?.today) }
-      // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
-      .scrollEdgeEffectStyle(.hard, for: .bottom)
-      .onboardingColumn()
     }
-    .loads(syllabus, day, refreshable: false)
+    .loads(day, syllabus, refreshable: false)
     .onDisappear {
-      opening.leave()
-      openingRow = nil
+      starting.leave()
     }
-    .planSheets($sheet, context: context, syllabus: syllabus.value, slotAnswer: $slotAnswer)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
         .zoonkSheet()
     }
   }
 
-  @ViewBuilder
-  private func todaySections(goal: LearnerGoal, day: Resource<PlanRevealRead>) -> some View {
+  /// A finished moment says so in its title; the goal's name is the line under it.
+  private func heading(_ goal: LearnerGoal) -> some View {
     StepHeader(title: Text(.planReady), description: Text(verbatim: goal.displayName))
-
-    switch day.state {
-    case .loaded(let reveal):
-      RevealToday(
-        day: reveal.today, minutes: reveal.minutes, busy: openingRow, failed: failedRow,
-        open: opening.isRunning && openingRow == nil ? nil : { open($0, on: reveal.today) })
-    case .idle, .loading:
-      // Today's rows hold their place, so the plan doesn't move as they come.
-      if plan.hasLessonsToday {
-        RevealTodayPlaceholder()
-      }
-    case .empty, .failed:
-      EmptyView()
-    }
   }
 
+  /// Main's `RevealPlan`: what the learner chose, to check before starting: the time a day and
+  /// where the plan ends, an exam's options, and the lines that only show when the plan needs
+  /// something from them.
   @ViewBuilder
-  private func glanceSections(goal: LearnerGoal, day: Resource<PlanRevealRead>) -> some View {
+  private func planSections(goal: LearnerGoal, titled: Bool) -> some View {
     Section {
       VStack(alignment: .leading, spacing: 20) {
         RevealReadouts(plan: plan, isExam: goal.kind == .exam)
         coverage
+        RevealExamChoices(plan: plan) { adjusting = .choice($0) }
       }
       .listRowBackground(Color.clear)
+    } header: {
+      if titled {
+        SectionTitle(Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan"))
+      }
     }
-
-    RevealExamChoices(plan: plan) { adjusting = .choice($0) }
 
     RevealNoticeDay(
       isSaving: $isChangingDate, failed: $dateChangeFailed, goalID: goal.id, plan: plan)
 
-    switch day.state {
-    case .loaded(let reveal):
-      RevealWeek(days: reveal.nextDays, week: reveal.week)
-    case .idle, .loading:
-      // A reveal whose seven days hold no lesson draws nothing.
-      if plan.hasLessonsInNextSevenDays {
-        RevealWeekPlaceholder()
+    if plan.notice == .usual {
+      Section {
+      } footer: {
+        SectionFooter {
+          Text(
+            "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
+            tableName: "Onboarding",
+            comment: "Under a plan revealed before its exam's official documents were read")
+        }
       }
-    case .empty, .failed:
-      EmptyView()
     }
   }
 
@@ -728,11 +704,11 @@ private struct PlanReveal: View {
     Button {
       adjusting = .top
     } label: {
-      Text("Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it")
+      Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
     }
     .buttonStyle(.outline)
 
-    BusyButton(isBusy: opening.isRunning && openingRow == nil) {
+    BusyButton(isBusy: starting.isRunning) {
       start(on: day)
     } label: {
       if day?.blocks.contains(where: \.isFinished) == true {
@@ -745,12 +721,11 @@ private struct PlanReveal: View {
     }
     .buttonStyle(.mainAction)
     .keyboardShortcut(.defaultAction)
-    .disabled(openingRow != nil)
   }
 
   /// What a tap couldn't do, or, for a guest, that the plan isn't saved yet.
   private var barNote: BarNote? {
-    switch startFailure {
+    switch starting.outcome {
     case .save:
       return BarNote(
         LocalizedStringResource(
@@ -777,93 +752,23 @@ private struct PlanReveal: View {
     }
   }
 
-  @ViewBuilder
-  private func detailSections(context: PlanContext, structure: GoalSyllabus?) -> some View {
-    // A plan of one phase has nothing to draw in time: its chapters say its shape instead.
-    if plan.roadPhases.count > 1 {
-      PlanRoadmapSection(context: context, structure: structure, listsPhases: true)
-    } else {
-      RevealChapters(plan: plan)
-    }
-
-    if plan.notice == .usual {
-      Section {
-      } footer: {
-        SectionFooter {
-          Text(
-            "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
-            tableName: "Onboarding",
-            comment: "Under a plan revealed before its exam's official documents were read")
-        }
-      }
-    }
-
-    if structure == nil, plan.roadPhases.count > 1 {
-      PlanPathSection(context: context)
-    }
-  }
-
-  /// Today waits for the reveal to be seen: until it's saved, Today brings the learner back here,
-  /// so a failed save stays here to try again.
-  private func openToday() {
-    guard !opening.isRunning else {
-      return
-    }
-
-    opening.run {
-
-      do {
-        try await onboarding.markPlanRevealed(goalID: view.goal.id)
-      } catch is CancellationError {
-        return nil
-      } catch {
-        return OpenFailure(start: .save, row: nil)
-      }
-
-      await today.today.refresh()
-
-      if !Task.isCancelled {
-        router.showRoot(of: .today)
-      }
-
-      return nil
-    }
-  }
-
-  /// Start opens the step tagged where to start, as its row does; with none to open, Today.
+  /// Start opens the day's next step the way Today's row does, so the learner comes back from it to
+  /// Today; with none to open, Today. Either way the reveal ends first: until that's saved, Today
+  /// brings the learner back here, so a failed save stays here to try again.
   private func start(on day: StudyDay?) {
-    if let day, let next = day.nextBlock, next.opensFromReveal {
-      open(next, on: day, fromStart: true)
-    } else {
-      openToday()
-    }
-  }
-
-  /// A row ends the reveal as Start does, then opens its step the way Today's row does, so the
-  /// learner comes back from it to Today.
-  private func open(_ block: StudyBlock, on day: StudyDay, fromStart: Bool = false) {
-    guard !opening.isRunning else {
+    guard !starting.isRunning else {
       return
     }
 
-    openingRow = fromStart ? nil : block.position
     let shown = router.shown
 
-    func fail(_ failure: StartFailure) -> OpenFailure {
-      OpenFailure(start: fromStart ? failure : nil, row: fromStart ? nil : block.position)
-    }
-
-    opening.run {
-      defer {
-        if !Task.isCancelled { openingRow = nil }
-      }
-
+    starting.run {
       do {
         try await onboarding.markPlanRevealed(goalID: view.goal.id)
       } catch is CancellationError {
         return nil
       } catch {
-        return fail(.save)
+        return .save
       }
 
       // The step opens over Today, and the session screen reads the day from it.
@@ -874,32 +779,32 @@ private struct PlanReveal: View {
         return nil
       }
 
-      if day.waitsForStart(block) {
+      guard let day, let next = day.nextBlock, next.opensFromReveal else {
         router.showRoot(of: .today)
-        router.showIntro(of: block)
         return nil
       }
 
-      switch await today.open(block, as: .block, on: day, goalID: view.goal.id) {
-      // The day changed under the row: the reveal reads it again, as Today would.
+      if day.waitsForStart(next) {
+        router.showRoot(of: .today)
+        router.showIntro(of: next)
+        return nil
+      }
+
+      switch await today.open(next, as: .block, on: day, goalID: view.goal.id) {
+      // The day changed under the reveal: it reads the day again, as Today would.
       case .done(.changed):
         break
       case .done(let destination) where !Task.isCancelled && router.shown == shown:
         router.showRoot(of: .today)
         router.openStudy(destination)
       case .failed:
-        return fail(.open)
+        return .open
       case .done, .obsolete:
         break
       }
 
       return nil
     }
-  }
-
-  private struct OpenFailure {
-    let start: StartFailure?
-    let row: Int?
   }
 
   private enum StartFailure {
@@ -919,46 +824,4 @@ private struct PlanReveal: View {
       displayName: view.goal.displayName, title: view.goal.title)
   }
 
-}
-
-/// Lessons still being written ahead aren't chapters yet.
-private struct RevealChapters: View {
-  let plan: GoalPlan
-
-  private static let shown = 5
-
-  var body: some View {
-    let chapters = plan.roadPhases.flatMap(\.chapters).filter { !($0.writing && !$0.far) }
-    let rest = chapters.count - Self.shown
-
-    if !chapters.isEmpty {
-      Section {
-        ForEach(Array(chapters.prefix(Self.shown).enumerated()), id: \.element.id) {
-          index, chapter in
-          Label {
-            chapter.title.isEmpty
-              ? Text(
-                "More lessons", tableName: "Onboarding",
-                comment: "A new plan's chapter whose lessons are still being written")
-              : Text(chapter.title)
-          } icon: {
-            Text(index + 1, format: .number)
-              .monospacedDigit()
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-      } header: {
-        SectionTitle(
-          Text("Chapters", tableName: "Onboarding", comment: "Header over a new plan's chapters"))
-      } footer: {
-        SectionFooter {
-          if rest > 0 {
-            Text(
-              "\(rest) more chapters", tableName: "Onboarding",
-              comment: "Under a new plan's first chapters: how many more it holds")
-          }
-        }
-      }
-    }
-  }
 }

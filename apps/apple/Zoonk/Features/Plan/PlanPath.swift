@@ -74,8 +74,6 @@ extension PlanPhase {
 
 private struct PlanPhaseRow: View {
   @Environment(PlanStore.self) private var store
-  @Environment(\.stacksContent) private var isStacked
-  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let context: PlanContext
   let phase: PlanPhase
@@ -195,37 +193,7 @@ private struct PlanPhaseRow: View {
   }
 
   private func header(next: Bool) -> some View {
-    let title = Text(phase.title)
-      .typeWeight(phase.state == .current ? .semibold : .medium, legibility: legibilityWeight)
-      .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
-
-    return ListRow(title, description: meta) {
-      StatusMark(status: next ? .next : phase.mark)
-    } trailing: {
-      if let end {
-        Text(verbatim: end.shown)
-          .typeStyle(.data)
-          .layoutRole(.date)
-          .accessibilityHidden(true)
-      }
-    }
-    .accessibilityElement(children: .combine)
-    .accessibilityValue(Text(verbatim: spokenState))
-  }
-
-  private var end: PhaseEnd? {
-    context.isPaused ? nil : context.plan.phaseEnd(phase)
-  }
-
-  /// "You are here" on the current phase, then its end.
-  private var spokenState: String {
-    let here =
-      phase.state == .current
-      ? String(
-        localized: "You are here", table: "Plan", comment: "Spoken on the learner's current phase")
-      : nil
-
-    return [here, end?.spoken].compactMap(\.self).joined(separator: ", ")
+    PlanPhaseLabel(context: context, phase: phase, description: meta, next: next)
   }
 
   private var meta: Text? {
@@ -268,12 +236,60 @@ private struct PlanPhaseRow: View {
   }
 }
 
-private struct PlanChapterRow: View {
+/// A phase's row on the path: its mark, its name over a line, and when it ends.
+struct PlanPhaseLabel: View {
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   let context: PlanContext
-  let chapter: PlanChapter
+  let phase: PlanPhase
+  var description: Text?
+  var next = false
 
   var body: some View {
-    if let chapterId = chapter.chapterId {
+    let title = Text(phase.title)
+      .typeWeight(phase.state == .current ? .semibold : .medium, legibility: legibilityWeight)
+      .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
+
+    ListRow(title, description: description) {
+      StatusMark(status: next ? .next : phase.mark)
+    } trailing: {
+      if let end {
+        Text(verbatim: end.shown)
+          .typeStyle(.data)
+          .layoutRole(.date)
+          .accessibilityHidden(true)
+      }
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityValue(Text(verbatim: spokenState))
+  }
+
+  private var end: PhaseEnd? {
+    context.isPaused ? nil : context.plan.phaseEnd(phase)
+  }
+
+  /// "You are here" on the current phase, then its end.
+  private var spokenState: String {
+    let here =
+      phase.state == .current
+      ? String(
+        localized: "You are here", table: "Plan", comment: "Spoken on the learner's current phase")
+      : nil
+
+    return [here, end?.spoken].compactMap(\.self).joined(separator: ", ")
+  }
+}
+
+struct PlanChapterRow: View {
+  let context: PlanContext
+  let chapter: PlanChapter
+  /// A new plan's path only says what's there: none of its chapters opens.
+  var opens = true
+
+  var body: some View {
+    if !opens {
+      content(isMuted: chapter.state == .done)
+    } else if let chapterId = chapter.chapterId {
       PlanRouteLink(route: route(chapterId)) {
         content(isMuted: false)
       }

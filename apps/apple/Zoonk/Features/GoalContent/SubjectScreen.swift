@@ -505,10 +505,12 @@ private struct SubjectTopicsSection: View {
   }
 }
 
-private struct SubjectTopicRow: View {
+struct SubjectTopicRow: View {
   let goal: LearnerGoal
   let topic: SyllabusSubject.Topic
   @Binding var isExpanded: Bool
+  /// A new plan's subjects only say what's there: none of a topic's chapters opens.
+  var opens = true
 
   var body: some View {
     if topic.chapters.isEmpty {
@@ -516,7 +518,7 @@ private struct SubjectTopicRow: View {
     } else {
       DisclosureGroup(isExpanded: $isExpanded) {
         ForEach(topic.chapters) { chapter in
-          if let chapterId = chapter.chapterId {
+          if opens, let chapterId = chapter.chapterId {
             NavigationLink(
               value: goal.kind == .language
                 ? AppRoute.languageUnit(chapterId: chapterId)
