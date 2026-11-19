@@ -99,12 +99,41 @@ function BuddyFields({
   );
 }
 
+/** The editor's fields as a form, so Enter in the name saves as its Save does. */
+function BuddyForm({
+  draft,
+  id,
+  onSave,
+  ...fields
+}: Pick<BuddyDraftInput, "glasses" | "look"> & {
+  draft: ReturnType<typeof useBuddyDraft>;
+  id: string;
+  onSave: (choice: BuddyChoice) => void;
+}) {
+  return (
+    <form
+      className="flex flex-col gap-5"
+      id={id}
+      onSubmit={(event) => {
+        event.preventDefault();
+
+        if (draft.changed) {
+          onSave(draft.value);
+        }
+      }}
+    >
+      <BuddyFields draft={draft} {...fields} />
+    </form>
+  );
+}
+
 export function BuddyEditor({
   onClose,
   onSave,
   ...input
 }: BuddyDraftInput & { onClose: () => void; onSave: (choice: BuddyChoice) => void }) {
   const t = useExtracted();
+  const formId = useId();
   const draft = useBuddyDraft(input);
 
   return (
@@ -121,12 +150,18 @@ export function BuddyEditor({
           <DrawerTitle>{t("Your buddy")}</DrawerTitle>
         </SheetHeader>
 
-        <DrawerContent className="flex flex-col gap-5 pt-2">
-          <BuddyFields draft={draft} glasses={input.glasses} look={input.look} />
+        <DrawerContent className="pt-2">
+          <BuddyForm
+            draft={draft}
+            glasses={input.glasses}
+            id={formId}
+            look={input.look}
+            onSave={onSave}
+          />
         </DrawerContent>
 
         <DrawerFooter>
-          <Button disabled={!draft.changed} onClick={() => onSave(draft.value)} size="lg">
+          <Button disabled={!draft.changed} form={formId} size="lg" type="submit">
             {t("Save")}
           </Button>
         </DrawerFooter>
@@ -145,6 +180,7 @@ function BuddyPane({
 }: BuddyDraftInput & { onSave: (choice: BuddyChoice) => void }) {
   const t = useExtracted();
   const titleId = useId();
+  const formId = useId();
   const draft = useBuddyDraft(input);
 
   return (
@@ -162,14 +198,18 @@ function BuddyPane({
             <PageSectionTitle id={titleId}>{t("Your buddy")}</PageSectionTitle>
           </PageSectionHeader>
 
-          <div className="flex flex-col gap-5">
-            <BuddyFields draft={draft} glasses={input.glasses} look={input.look} />
-          </div>
+          <BuddyForm
+            draft={draft}
+            glasses={input.glasses}
+            id={formId}
+            look={input.look}
+            onSave={onSave}
+          />
         </PageSection>
 
         <BottomBar>
           <BottomBarActions>
-            <EnterButton disabled={!draft.changed} onClick={() => onSave(draft.value)}>
+            <EnterButton disabled={!draft.changed} form={formId} type="submit">
               {t("Save")}
             </EnterButton>
           </BottomBarActions>
