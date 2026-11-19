@@ -175,7 +175,7 @@ export function ListRowBody({ className, ...props }: React.ComponentProps<"span"
     <span
       className={cn(
         TITLE_ROW_CLASS,
-        "min-h-11 min-w-0 flex-1 gap-y-0.5 py-2.75",
+        "min-h-control min-w-0 flex-1 gap-y-0.5 py-(--row-pad)",
         "*:data-[slot=list-row-content]:min-h-0 *:data-[slot=list-row-content]:py-0",
         className,
       )}
@@ -189,7 +189,7 @@ export function ListRowContent({ className, ...props }: React.ComponentProps<"sp
   return (
     <span
       className={cn(
-        "flex min-h-11 min-w-0 flex-1 flex-col justify-center gap-px py-2.75",
+        "min-h-control flex min-w-0 flex-1 flex-col justify-center gap-px py-(--row-pad)",
         className,
       )}
       data-slot="list-row-content"

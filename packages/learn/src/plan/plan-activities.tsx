@@ -46,7 +46,7 @@ export function PlanActivities() {
 
           return (
             <Toggle
-              className="h-11 px-4"
+              className="h-control px-(--control-pad)"
               disabled={isPending}
               focusableWhenDisabled
               key={activity}

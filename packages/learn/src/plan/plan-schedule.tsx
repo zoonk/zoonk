@@ -92,7 +92,7 @@ function DailyCoverage({
 
       <div
         className={cn(
-          "col-start-1 row-start-1 flex flex-col gap-2 *:min-h-0 [&_button]:min-h-11",
+          "[&_button]:min-h-control col-start-1 row-start-1 flex flex-col gap-2 *:min-h-0",
           pending && "invisible",
         )}
       >
