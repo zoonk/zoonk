@@ -132,18 +132,15 @@ private struct PlanPhaseRow: View {
     }
 
     if hidden > 0 {
-      Button {
-        store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
-          $0.showsAllChapters.toggle()
-        }
-      } label: {
-        Label {
-          foldLabel(hidden: hidden, showsAll: showsAll)
-        } icon: {
-          Image(systemName: showsAll ? "minus" : "plus")
-        }
-      }
-      .foregroundStyle(.mutedForeground)
+      MoreRowsFold(
+        words: foldLabel(hidden: hidden, showsAll: showsAll),
+        isUnfolded: Binding {
+          showsAll
+        } set: { shows in
+          store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
+            $0.showsAllChapters = shows
+          }
+        })
     }
   }
 

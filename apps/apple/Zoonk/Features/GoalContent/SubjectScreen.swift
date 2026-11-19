@@ -267,19 +267,11 @@ private struct SubjectContent: View {
         }
 
         if hidden > 0 {
-          Button {
-            showsAllChapters = true
-          } label: {
-            ListRow(
-              Text(
-                "\(hidden) more chapters", tableName: "Plan",
-                comment: "Shows the phase's chapters left out around the next one"
-              )
-              .foregroundStyle(.mutedForeground)
-            ) {
-              Image(systemName: "plus")
-            }
-          }
+          MoreRowsFold(
+            words: Text(
+              "\(hidden) more chapters", tableName: "Plan",
+              comment: "Shows the phase's chapters left out around the next one"),
+            isUnfolded: $showsAllChapters)
         }
       } header: {
         SectionTitle(

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,15 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -322,49 +317,26 @@ internal fun ChapterMark(
 }
 
 /**
- * Main's list footer that shows the chapters left out: its small plus in the marks' column, so its words start where theirs do.
- * With [open] it folds them away again, and TalkBack hears whether it's open and can open or close it.
+ * Main's list footer that shows the chapters left out: its words start where the rows' titles do, and it ends in the
+ * fold arrow every fold row ends in. With [open] it folds them away again, and TalkBack hears whether it's open.
  */
 @Composable
 internal fun MoreChaptersRow(
     text: String,
-    open: Boolean? = null,
+    open: Boolean = false,
     indent: Dp = 0.dp,
     onClick: () -> Unit,
 ) {
-    val openWords = stringResource(if (open == true) R.string.disclosure_expanded else R.string.disclosure_collapsed)
-
     ListRow(
         headline = { Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant) },
-        modifier =
-            Modifier.semantics {
-                if (open != null) {
-                    stateDescription = openWords
-                    val toggle = {
-                        onClick()
-                        true
-                    }
-                    if (open) collapse(action = toggle) else expand(action = toggle)
-                }
-            },
         onClick = onClick,
         indent = indent,
-        leading = {
-            Box(Modifier.size(MARK_COLUMN), contentAlignment = Alignment.Center) {
-                Icon(
-                    painterResource(if (open == true) R.drawable.ic_remove else R.drawable.ic_add),
-                    contentDescription = null,
-                    modifier = Modifier.size(FOOTER_PLUS),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        },
-        chevron = false,
+        expanded = open,
+        leading = { Box(Modifier.size(MARK_COLUMN)) },
     )
 }
 
 private val MARK_COLUMN = 24.dp
-private val FOOTER_PLUS = 16.dp
 
 /** A chapter's mark wherever it's listed: next, part done as a ring, skipped, done or ahead. */
 @Composable
