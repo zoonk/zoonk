@@ -100,11 +100,12 @@ private fun LazyListScope.sessionQueue(
     val moreOpen = viewModel.moreOpen
     val coming = if (next != null && (model.day.lessonsComing || model.day.lessonsToPrepare)) 1 else 0
     val upcoming = queue.after.size + coming
-    val more = (upcoming - UPCOMING_ROWS).coerceAtLeast(0)
+    val shown = shownUpcomingRows(upcoming)
+    val more = upcoming - shown
     // As main's `getFoldedRows`: the fold names lessons only when every row it hides is one.
-    val lessonsOnly = coming == 0 && queue.after.drop(UPCOMING_ROWS).all { it.kind == StudyBlock.Kind.LEARN }
-    val shownAfter = if (moreOpen) queue.after else queue.after.take(UPCOMING_ROWS)
-    val showsComing = coming > 0 && (moreOpen || queue.after.size < UPCOMING_ROWS)
+    val lessonsOnly = coming == 0 && queue.after.drop(shown).all { it.kind == StudyBlock.Kind.LEARN }
+    val shownAfter = if (moreOpen) queue.after else queue.after.take(shown)
+    val showsComing = coming > 0 && (moreOpen || queue.after.size < shown)
     // The list's last row has no hairline under it, as main's `last:border-b-0`; above "N more" it keeps one.
     val endsList = more == 0 || moreOpen
 

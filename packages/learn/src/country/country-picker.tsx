@@ -119,7 +119,7 @@ function CatalogState({ onRetry, status }: { onRetry: () => void; status: "faile
 
       {status === "loading" ? (
         Array.from({ length: SKELETON_ROWS }, (_, index) => (
-          <div className="flex min-h-11 items-center sm:px-2.5" key={index}>
+          <div className="min-h-control flex items-center sm:px-2.5" key={index}>
             <Skeleton className="h-4 w-36 rounded" />
           </div>
         ))

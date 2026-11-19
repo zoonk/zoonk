@@ -37,6 +37,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.controlInk
+import com.zoonk.android.ui.components.pickedBorder
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.Plan
@@ -218,7 +219,7 @@ private fun AreaChoice(
         modifier = Modifier.fillMaxWidth().semantics { role = Role.Checkbox },
         shape = MaterialTheme.shapes.medium,
         color = if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent,
-        border = BorderStroke(1.dp, colors.outline),
+        border = if (checked) pickedBorder() else BorderStroke(1.dp, colors.outline),
     ) {
         Row(
             modifier = Modifier.heightIn(min = 56.dp).padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),

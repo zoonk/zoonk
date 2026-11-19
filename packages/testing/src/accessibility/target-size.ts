@@ -15,9 +15,8 @@ const TARGET_LIMITS = {
 /** Today's day bar keeps its look and is never made taller to press: a granted exception to Z3. */
 const EXEMPT_SLOTS = new Set(["today-day-segment"]);
 
-/** A menu's rows are 36 px with a mouse and 44 px on touch: a granted exception to Z3. */
-const MOUSE_ROW_PX = 36;
-const MENU_ROW_SLOTS = new Set(["dropdown-menu-item", "dropdown-menu-radio-item"]);
+/** With a mouse a control is 36 px (`--control-height`); touch keeps 44 px: a granted exception to Z3. */
+const MOUSE_TARGET_PX = 36;
 
 export const TARGET_SELECTOR = [
   "a[href]",
@@ -166,8 +165,7 @@ export function describeTarget(sample: TargetSample): string {
 }
 
 function getMinimum(sample: TargetSample): number {
-  const min =
-    sample.finePointer && MENU_ROW_SLOTS.has(sample.slot ?? "") ? MOUSE_ROW_PX : TARGET_LIMITS.min;
+  const min = sample.finePointer ? MOUSE_TARGET_PX : TARGET_LIMITS.min;
 
   return min - TARGET_LIMITS.sizeTolerance;
 }

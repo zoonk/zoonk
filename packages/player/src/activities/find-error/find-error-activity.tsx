@@ -82,7 +82,7 @@ function FindErrorStep({
         ACTIVITY_PRESS_CLASS,
         "focus-visible:border-ring flex w-full items-start gap-3 text-sm leading-snug sm:text-base",
         !isChecked && !isPicked && "hover:bg-accent",
-        !isChecked && isPicked && "bg-selected-tint",
+        !isChecked && isPicked && "bg-selected-tint contrast-more:border-input border-transparent",
         verdict === "error" && cn(ACTIVITY_COLOR.right.box, ACTIVITY_COLOR.right.soft),
         verdict === "picked" && cn(ACTIVITY_COLOR.wrong.box, ACTIVITY_COLOR.wrong.soft),
       )}

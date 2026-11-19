@@ -144,7 +144,8 @@ test("an expanded day highlights only the current lesson on a touch screen", asy
 }) => {
   const user = await createE2EUser(getBaseURL());
   const goal = await goalFixture({ dailyMinutes: 20, timezone: "UTC", userId: user.id });
-  const lessonTitles = Array.from({ length: 6 }, (_, index) => `Today's lesson ${index + 1}`);
+  // Two rows past the first few, so the day folds them: a single one would just show.
+  const lessonTitles = Array.from({ length: 7 }, (_, index) => `Today's lesson ${index + 1}`);
 
   const [session, lessons] = await Promise.all([
     studySessionFixture({ goalId: goal.id, userId: user.id }),

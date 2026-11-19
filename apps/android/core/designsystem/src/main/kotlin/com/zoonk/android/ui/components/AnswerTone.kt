@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 
@@ -40,12 +41,22 @@ fun answerTone(
             result == AnswerResult.Right -> BorderStroke(CHECKED, colors.tertiary) to colors.tertiaryContainer
             result == AnswerResult.Wrong -> BorderStroke(CHECKED, MaterialTheme.zoonk.destructive) to colors.errorContainer
             result == AnswerResult.Guess -> BorderStroke(CHECKED, colors.onSurfaceVariant) to Color.Transparent
-            picked -> BorderStroke(1.dp, colors.outline) to MaterialTheme.zoonk.selectedTint
+            picked -> pickedBorder() to MaterialTheme.zoonk.selectedTint
             else -> BorderStroke(1.dp, colors.outline) to Color.Transparent
         }
 
     return AnswerTone(border = border, container = container, contentColor = colors.onSurface)
 }
+
+/**
+ * Main's pick: the soft fill takes the line's place, so a pick is a quiet tile with its own mark. The line comes
+ * back only when the device asks for more contrast.
+ */
+@Composable
+fun pickedBorder(): BorderStroke = BorderStroke(1.dp, pickedBorderColor())
+
+@Composable
+fun pickedBorderColor(): Color = if (LocalMoreContrast.current) MaterialTheme.colorScheme.outline else Color.Transparent
 
 /** A right pick says "Your answer", or "Your guess" when [guessed], so it isn't called correct twice under its verdict. */
 @Composable

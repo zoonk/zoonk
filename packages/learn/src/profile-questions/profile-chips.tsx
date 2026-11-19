@@ -13,7 +13,7 @@ function ProfileChip({
 }: Omit<ChipOption, "id"> & { disabled?: boolean; onToggle: () => void }) {
   return (
     <Toggle
-      className="aria-pressed:text-foreground text-reading h-auto min-h-11 rounded-lg px-3.5 py-2 text-left whitespace-normal"
+      className="aria-pressed:text-foreground text-reading min-h-control h-auto rounded-lg px-3.5 py-2 text-left whitespace-normal"
       disabled={disabled}
       focusableWhenDisabled
       onPressedChange={onToggle}

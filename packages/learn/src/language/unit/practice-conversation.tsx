@@ -53,9 +53,9 @@ function MinuteChips({
       {choices.map((minutes) => (
         <label
           className={cn(
-            "border-input flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
-            "hover:bg-muted/50 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
-            "has-checked:bg-selected-tint has-checked:hover:bg-selected-tint",
+            "border-input text-muted-foreground min-h-control flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
+            "hover:bg-muted/60 hover:text-foreground has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
+            "has-checked:bg-selected-tint has-checked:text-foreground has-checked:hover:bg-selected-tint contrast-more:has-checked:border-input has-checked:border-transparent",
           )}
           key={minutes}
         >
