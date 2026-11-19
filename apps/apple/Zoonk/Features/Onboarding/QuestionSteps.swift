@@ -96,8 +96,6 @@ struct QuestionForm<Content: View, Buttons: View>: View {
     .bottomBar(note: failure.map { BarNote($0) }) {
       buttons
     }
-    // Skip's outline is see-through, so what scrolls under the bar stops at its edge.
-    .scrollEdgeEffectStyle(.hard, for: .bottom)
   }
 }
 

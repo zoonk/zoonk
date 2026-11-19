@@ -3,7 +3,8 @@ import UIKit
 
 extension View {
   /// Main's `BottomBar`: the one home of a screen's main action, pinned at the bottom in a
-  /// `safeAreaBar`, so content scrolls under it with the system's edge effect. Its buttons are 44pt,
+  /// `safeAreaBar` on the page's background under a hairline, so content scrolls out of sight under
+  /// it and never shows through its see-through outline buttons. Its buttons are 44pt,
   /// 8pt apart in one row, the main action last and taking the room the others leave; when they
   /// don't fit one row, or at an accessibility text size, they stack, each as wide as the bar. On a wide bar the main action sits
   /// at the bar's end at its own width instead. Its one line (`note`) floats over the screen just
@@ -28,6 +29,8 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
       .safeAreaBar(edge: .bottom) {
         bar.environment(\.barColumn, columns.count == 1 ? columns.first : nil)
       }
+      // A soft edge would fade the page above the bar's hairline, over the backing it ends at.
+      .scrollEdgeEffectStyle(.hard, for: .bottom)
   }
 }
 
@@ -98,6 +101,13 @@ private struct BottomBar<Actions: View>: View {
     .barColumn(column, listMargins: listMargins, isTask: isTask)
     .background(ListMarginsReader { listMargins = $0 })
     .keepsOffFold()
+    // Main's bar: the page's background from its hairline to the screen's edge. The system's edge
+    // effect alone leaves a list's section header sharp under the buttons, drawn above it.
+    .background {
+      Color(.background)
+        .overlay(alignment: .top) { Divider() }
+        .ignoresSafeArea(edges: .bottom)
+    }
     .floatingAbove {
       if let note {
         note

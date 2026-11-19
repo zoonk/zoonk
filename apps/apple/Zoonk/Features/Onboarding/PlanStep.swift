@@ -607,8 +607,6 @@ private struct PlanReveal: View {
         RevealStructure(context: context, syllabus: syllabus, open: $open)
       }
       .bottomBar(note: barNote) { actions(day: day.value?.today) }
-      // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
-      .scrollEdgeEffectStyle(.hard, for: .bottom)
     }
     .loads(day, syllabus, refreshable: false)
     .onDisappear {

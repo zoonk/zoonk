@@ -125,9 +125,6 @@ struct MindMapReader: View {
       .bottomBar {
         actionBar(cards, index: index)
       }
-      // The bar's soft edge doesn't reach a page's own scroll inside the pager, so an outline would
-      // run crisp under the see-through Previous.
-      .scrollEdgeEffectStyle(.hard, for: .bottom)
       .taskTitle(Text(title))
       .announcesStatus(title)
       .taskAction(isShown: save != nil) {
