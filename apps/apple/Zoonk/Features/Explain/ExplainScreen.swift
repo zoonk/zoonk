@@ -233,26 +233,15 @@ private struct ExplanationView: View {
                   "A goal typed for the learner from a quick explanation's topic, mid-sentence")))
         }
       } label: {
-        VStack(alignment: .leading, spacing: 2) {
+        ListRow(
           Text(
             "Learn more about this", tableName: "Explain",
-            comment: "Starts a plan from a quick explanation"
-          )
-          .foregroundStyle(.primary)
-          Group {
-            if let course = explanation.goFurther.course {
-              Text(
-                "Build a plan for \(course.title)", tableName: "Explain",
-                comment: "Under the in-depth row: the course's title")
-            } else {
-              Text(
-                "Build a plan for the whole subject", tableName: "Explain",
-                comment: "Under the in-depth row")
-            }
-          }
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+            comment: "Starts a plan from a quick explanation"),
+          description: deeperDescription
+        ) {
+          Image(systemName: "graduationcap")
         }
+        .disclosureChevron()
       }
 
       if hasPlayed {
@@ -260,13 +249,10 @@ private struct ExplanationView: View {
           Button {
             startGoal(question)
           } label: {
-            VStack(alignment: .leading, spacing: 2) {
-              Text(question)
-                .foregroundStyle(.primary)
-              quickExplanation
-                .typeStyle(.note)
-                .foregroundStyle(.mutedForeground)
+            ListRow(Text(question), description: quickExplanation) {
+              Image(systemName: "questionmark.circle")
             }
+            .disclosureChevron()
           }
         }
       }
@@ -275,6 +261,18 @@ private struct ExplanationView: View {
         Text(
           "Want to go further?", tableName: "Explain",
           comment: "Header over ways to go further after a quick explanation"))
+    }
+  }
+
+  private var deeperDescription: Text {
+    if let course = explanation.goFurther.course {
+      Text(
+        "Build a plan for \(course.title)", tableName: "Explain",
+        comment: "Under the in-depth row: the course's title")
+    } else {
+      Text(
+        "Build a plan for the whole subject", tableName: "Explain",
+        comment: "Under the in-depth row")
     }
   }
 

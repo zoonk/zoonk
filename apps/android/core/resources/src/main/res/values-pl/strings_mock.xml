@@ -32,8 +32,8 @@
   "mock_left_blank": "7ea161139a5bd53191cdcdcaf74e3c8b0d95759098cc5681125b2b3e10cc7b46",
   "mock_left_blank_and_flagged": "f7a8cdbfb3381f4fb7805750f3878556c3e81f7567b9812c160d932fbf46416b",
   "mock_left_blank_only": "57a917a2bf5757a50b22ef1b1a3ffd3ed16f2dbd3231a988f756d2434b3de535",
-  "mock_left_flagged": "fe9f06acce310af9cde66189e1086da1b3c790dd02bb013895a3cd39a70ec5be",
-  "mock_left_flagged_only": "3bc435f88f4f0e494308ad1bb412990419ba52dab5de551aea3153627b52022e",
+  "mock_left_flagged": "3eb8f1145eaeb75e41f1edb35619ba73df63b787f7dab9d705377d884d6dcb9c",
+  "mock_left_flagged_only": "19f80712d0920d9aaa1fdaebcc321af673da48cffdaee12d32dd664365245db9",
   "mock_moves_forward": "b65cd634a9826ed08fa1e682db995a3a83d02b6e38fcaa4dca9316096de6a53b",
   "mock_moves_forward_must": "7310517b3ce53cecc567124a4ce0e1d4cfb2ee2a41b539e141ba98ad9257e61c",
   "mock_moves_must": "97ee1542015a3e659628e73406014d59d36f531eb2578d0d14e65066bfb0708b",
@@ -89,6 +89,7 @@
   "mock_time_up": "642ca76fe98188a2f39e3e5478f5c776a8cb269e43b88ef8330e9db4f4a34820",
   "mock_title": "d774246727fe8e909c10cbbea407fcacc586d484c8061f3126607d91d724e87b",
   "mock_try_again": "a3eefff768b7862fd7df9f37fc1c12722627eca1151fa96055795e194e20e3ab",
+  "mock_unflag": "bd5c43e32389bd6172814f286617e6fca5446256a76686969e0fef08ad98c778",
   "mock_words": "1d9d3c22f10d27d0c771f21a8dd4f8140daf039ccd35e27e4748379889dd711a",
   "mock_written_part": "0f496cce0ce85beefb50cc21b9700a774139685f84d918b585e6872c26c21d06",
   "mock_written_part_area": "f56b68c4b6c7021f13e3cf0635f9ddb3c5b1b4a85f58e40a02d9940d8c2651ca",
@@ -135,6 +136,7 @@
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Pytanie %1$d z %2$d · %3$s</string>
     <string name="mock_flag">Oznacz</string>
+    <string name="mock_unflag">Usuń oznaczenie</string>
     <string name="mock_next">Dalej</string>
     <string name="mock_hand_in_section">Oddaj część</string>
     <string name="mock_moves_review_any">Przegląd odpowiedzi: możesz wrócić do dowolnego pytania.</string>
@@ -150,7 +152,7 @@
     <string name="mock_moves_must">Odpowiedz na każde pytanie, by przejść dalej.</string>
     <string name="mock_hand_in_mock_title">Oddać egzamin próbny?</string>
     <string name="mock_hand_in_section_title">Oddać tę część?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
     <plurals name="mock_left_blank">
         <item quantity="one">Na %d pytanie nie ma odpowiedzi</item>
         <item quantity="few">Na %d pytania nie ma odpowiedzi</item>
@@ -158,10 +160,7 @@
         <item quantity="other">Na %d pytań nie ma odpowiedzi</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="one">%d jest oznaczone</item>
-        <item quantity="few">%d są oznaczone</item>
-        <item quantity="many">%d jest oznaczonych</item>
-        <item quantity="other">%d jest oznaczonych</item>
+        <item quantity="other">%d oznaczono do sprawdzenia</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s i %2$s.</string>
@@ -172,10 +171,10 @@
         <item quantity="other">Na %d pytań nie ma odpowiedzi.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d pytanie jest oznaczone.</item>
-        <item quantity="few">%d pytania są oznaczone.</item>
-        <item quantity="many">%d pytań jest oznaczonych.</item>
-        <item quantity="other">%d pytań jest oznaczonych.</item>
+        <item quantity="one">%d pytanie oznaczono do sprawdzenia.</item>
+        <item quantity="few">%d pytania oznaczono do sprawdzenia.</item>
+        <item quantity="many">%d pytań oznaczono do sprawdzenia.</item>
+        <item quantity="other">%d pytania oznaczono do sprawdzenia.</item>
     </plurals>
     <string name="mock_every_answered">Na wszystkie pytania udzielono odpowiedzi.</string>
     <string name="mock_essay_blank">Wypracowanie jest puste.</string>

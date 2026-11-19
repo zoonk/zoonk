@@ -32,8 +32,8 @@
   "mock_left_blank": "ce8ffd8b2a3c6e0ce03e9e381be9c08a032a5f0c7a8faa2f931485760b8a8e7c",
   "mock_left_blank_and_flagged": "7e1b60c99b954904fa52efc4a07d28b4cbe481cd34c1c7a56ea1dacf7cad0be8",
   "mock_left_blank_only": "0ad26202901e6cf83ae4c407d3b21599a6491ca2dc60710385b5d385dfb587fa",
-  "mock_left_flagged": "5040a62448e43dc657d6b799477ca5fa26892665fc4758d51a63ea96dbf84008",
-  "mock_left_flagged_only": "ca7828fdfdac2c0b622c198cf6a5c5f06069f37a02eced319a87d3473ba96f5e",
+  "mock_left_flagged": "f068d8640c6ec921c37b3f1b8f3cb46d177251d3f1ace947749d3e8ee2aba115",
+  "mock_left_flagged_only": "cc0d076f2453a2746b2175964e9d94459f0adff664f7b1b573aee2a9574dadec",
   "mock_moves_forward": "cdc3ee0dd0e95a8c1e555be879946bcb9fee3b0062dab7aff5de72a4c4f3c4ed",
   "mock_moves_forward_must": "6556d0a8534c0513fce04ec7429e886d4d7ec87aec8b30723a573adf9c212592",
   "mock_moves_must": "ef103d1af4ba879750f8c213ea68b4e5b01ef07b9ab9e8622d37cfb23ad45412",
@@ -89,6 +89,7 @@
   "mock_time_up": "f1ab42d6017d2038843a23a2c07513aeca1c01b83379317f75bd70bb5b6ed288",
   "mock_title": "b402c6c3a77c0c06124a494ca6874f10d9d9307361d36ee12baafc501dba301b",
   "mock_try_again": "98d297e50a37d27896ec382bb0506080459ca438f9db8fd243974c40b862d234",
+  "mock_unflag": "f314c9f505d9f3d26168801dfca335e4eb7f9774cffcfb557aa11f15142c5a2a",
   "mock_words": "7b17f89d2d812afd31dc837584004d26ab0ea6399ed8de1d63ef364cb71534ac",
   "mock_written_part": "6496121dab5e7ae4edfbab325cf0a3874a934c61b1ec32ab94b94eb071ab6439",
   "mock_written_part_area": "1cca1b0572584c071b81d022d16b3f0d29da31a22a25a485686f4fd3b7566579",
@@ -131,6 +132,7 @@
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Frage %1$d von %2$d · %3$s</string>
     <string name="mock_flag">Markieren</string>
+    <string name="mock_unflag">Markierung entfernen</string>
     <string name="mock_next">Weiter</string>
     <string name="mock_hand_in_section">Abschnitt abgeben</string>
     <string name="mock_moves_review_any">Überprüfung: Du kannst zu jeder Frage zurückgehen.</string>
@@ -144,14 +146,14 @@
     <string name="mock_moves_must">Beantworte jede Frage, um weiterzukommen.</string>
     <string name="mock_hand_in_mock_title">Probeprüfung abgeben?</string>
     <string name="mock_hand_in_section_title">Diesen Abschnitt abgeben?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d Frage ist unbeantwortet</item>
         <item quantity="other">%d Fragen sind unbeantwortet</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="one">%d markiert</item>
-        <item quantity="other">%d markiert</item>
+        <item quantity="one">%d ist zur Überprüfung markiert</item>
+        <item quantity="other">%d sind zur Überprüfung markiert</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s und %2$s.</string>
@@ -160,8 +162,8 @@
         <item quantity="other">%d Fragen sind unbeantwortet.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d Frage ist markiert.</item>
-        <item quantity="other">%d Fragen sind markiert.</item>
+        <item quantity="one">%d Frage ist zur Überprüfung markiert.</item>
+        <item quantity="other">%d Fragen sind zur Überprüfung markiert.</item>
     </plurals>
     <string name="mock_every_answered">Alle Fragen sind beantwortet.</string>
     <string name="mock_essay_blank">Der Aufsatz ist leer.</string>

@@ -32,8 +32,8 @@
   "mock_left_blank": "ef9ce209842503123875a9715dda8271ec38ba2473eda0a8d32f8a14f3d76b2b",
   "mock_left_blank_and_flagged": "f8600bff6469b59d06cd78fa22b8a4a43dfb400ea21096e065ff6e884e1ded61",
   "mock_left_blank_only": "08127ffb57058880ec7ce4fc9e1e0ab43f9ea0a79c3431e76c9e1b1265a65f40",
-  "mock_left_flagged": "d7436fba742079f4e6d34a66821c5fa222e6a220285d9d32af0bcd8e29ca766a",
-  "mock_left_flagged_only": "4efcc92ad8858a604d396b69121801c395bfc908bc1a12f1a29740bc92834358",
+  "mock_left_flagged": "99fd1ddef06db653997c86005cd580faa35ac439ce5e78c8814e782dbdf0499f",
+  "mock_left_flagged_only": "8d612250829d3be3d16736818363632920317c7228a2a277becfc39bdc047440",
   "mock_moves_forward": "0fd5fbd394370caf979d32c88e2e014e8319e96e0b07fc78871182ed03346c4d",
   "mock_moves_forward_must": "8a2761fea44bcd787deff78e7461cfb9a8b109f9e66aa079defbaa804c605622",
   "mock_moves_must": "5d50fdaef2eb822824c9c8f7a82876d06e04252082640f28957afe296422a023",
@@ -89,6 +89,7 @@
   "mock_time_up": "a325cb213a6cad076ff135592e12611e5dc4c433213d04d5a9fe02720dac2171",
   "mock_title": "f7baa19ebfb880dc0db9ad9e6b6ffe82da5eecc99b6df74bdca4beb9b189d242",
   "mock_try_again": "97c6befc797e9a063493c62d85b875cb6074994815d830bef0f0c4c7b3f443a3",
+  "mock_unflag": "b286738fcbe813c6c52a29fe09ce510cb87efd634a5a84217820046e947668cc",
   "mock_words": "09bea6696784497561148eb3b0daa415cfadf75894d07ef11e3c5cd4857b7e35",
   "mock_written_part": "6394e671851eb17368937215e9a5700250292edfa3dbd6f32df4769d8c3706a6",
   "mock_written_part_area": "b43f3a2581a6f24450f38dc40c9c8920a7c5a5d0031d2105e31516cbc48973d3",
@@ -131,6 +132,7 @@
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Soru %1$d / %2$d · %3$s</string>
     <string name="mock_flag">İşaretle</string>
+    <string name="mock_unflag">İşareti kaldır</string>
     <string name="mock_next">Devam et</string>
     <string name="mock_hand_in_section">Oturumu teslim et</string>
     <string name="mock_moves_review_any">Gözden geçirme: istediğin soruya geri dönebilirsin.</string>
@@ -144,14 +146,13 @@
     <string name="mock_moves_must">İlerlemek için her soruyu cevapla.</string>
     <string name="mock_hand_in_mock_title">Deneme sınavını teslim etmek istiyor musun?</string>
     <string name="mock_hand_in_section_title">Bu oturumu teslim etmek istiyor musun?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d soru boş</item>
         <item quantity="other">%d soru boş</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="one">%d soru işaretli</item>
-        <item quantity="other">%d soru işaretli</item>
+        <item quantity="other">%d soru tekrar bakmak için işaretlendi</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s ve %2$s.</string>
@@ -160,8 +161,8 @@
         <item quantity="other">%d soru boş.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d soru işaretli.</item>
-        <item quantity="other">%d soru işaretli.</item>
+        <item quantity="one">%d soru tekrar bakmak için işaretlendi.</item>
+        <item quantity="other">%d soru tekrar bakmak için işaretlendi.</item>
     </plurals>
     <string name="mock_every_answered">Tüm sorular cevaplandı.</string>
     <string name="mock_essay_blank">Kompozisyon boş.</string>

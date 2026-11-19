@@ -72,7 +72,7 @@ If you can create issues from their account (`gh auth status`), write the body i
 gh issue create --repo zoonk/zoonk --title "<title>" --body-file <folder>/report.md
 ```
 
-If the account can write to zoonk/zoonk (`gh api repos/zoonk/zoonk --jq .permissions.push` prints `true`), add `--type Bug`, a `--label` for each of its [labels](../zoonk-github-issues/SKILL.md#labels), and `--attach <folder>/screen.png` for each screenshot, shown under the screenshots heading as `![What the screen shows](./screen.png)`, then set its [priority](../zoonk-github-issues/SKILL.md#priority) and its [links to related issues](../zoonk-github-issues/SKILL.md#link-related-issues). Other accounts can't set these, so leave them out. If gh fails, look for the issue (`gh issue list --repo zoonk/zoonk --author @me --limit 3`) before running it again; it may already exist.
+If the account can write to zoonk/zoonk (`gh api repos/zoonk/zoonk --jq .permissions.push` prints `true`), add `--type Bug`, a `--label` for each of its [labels](../zoonk-github-issues/references/metadata.md#labels), and `--attach <folder>/screen.png` for each screenshot, shown under the screenshots heading as `![What the screen shows](./screen.png)`, then set its [priority](../zoonk-github-issues/references/metadata.md#priority) and its [links to related issues](../zoonk-github-issues/references/linking.md). Other accounts can't set these, so leave them out. If gh fails, look for the issue (`gh issue list --repo zoonk/zoonk --author @me --limit 3`) before running it again; it may already exist.
 
 Otherwise, or when they have screenshots the account can't attach, give them a link to the filled-in form, with each value URL-encoded and the disclosure at the start of `what-happened`:
 

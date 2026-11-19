@@ -32,8 +32,8 @@
   "mock_left_blank": "faef7f7d326ee9695b84517dd898692e29f185affc662e95270c06f077d6d526",
   "mock_left_blank_and_flagged": "091ff6560bc4cfa86106cdd57b28534e89851e1f62c15e724ecf00f485d57c31",
   "mock_left_blank_only": "9e0a834ef9e48935965da623c1e759f580c064355e9ce1a0465b1a1e6febafcd",
-  "mock_left_flagged": "7348ec63134b3fd92b157932ef2dc6f40b2c0f132e114d8393f987a0bc61152e",
-  "mock_left_flagged_only": "c163ce4d0dad94b88be698638dc7e4fe5619c94c405a7cdc99b2daa5e9ce010c",
+  "mock_left_flagged": "70d80483ee423b85775e084318230c471ecc65c665ca56c11085d671508d5aec",
+  "mock_left_flagged_only": "edd2beacf809db2eddc2c7079813c4373581d2904d382ecd27b5e380de25db33",
   "mock_moves_forward": "acbc515bcb980cc6cbac47ce172c57723637ad055d68946c180a391a3599b894",
   "mock_moves_forward_must": "f7016cf8ca0010a0e353a4de491a0513737d0363e19af2496f192a0d504464c5",
   "mock_moves_must": "b1f4229e74544983b1da6f8e3510054082199cc69576c221e478e2e6fa84a239",
@@ -89,6 +89,7 @@
   "mock_time_up": "fb275e912d2d230d3591760002f560fe33281126d08e3edb1ee6e89b910e9bca",
   "mock_title": "0f19d611c751361eb9555d2ee28389d0630fac4f1c901f76684803cc609bc240",
   "mock_try_again": "8e451b19b31422e3c68cf25c2178008e6a382c400a5b6ed561dc0e98a73343c7",
+  "mock_unflag": "2676f416eeb1b7c12fecaad3c22823b853098634f1b68d1c999f82946abe1b6f",
   "mock_words": "43cb4068a9544f3d72f790e638c502d1828d1b86e4806c87964d672de5bfac9a",
   "mock_written_part": "d196438ea20f94b45d2f9805f8c98fcbcccb3bcb5dd38dd8144a801edbe2c607",
   "mock_written_part_area": "776f3ec7232d13e89256437497dc23d49d65a49a112494e884770df52bc01bff",
@@ -133,6 +134,7 @@
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Questão %1$d de %2$d · %3$s</string>
     <string name="mock_flag">Marcar</string>
+    <string name="mock_unflag">Remover marcação</string>
     <string name="mock_next">Próxima</string>
     <string name="mock_hand_in_section">Entregar esta parte</string>
     <string name="mock_moves_review_any">Revisão: você pode voltar a qualquer pergunta.</string>
@@ -147,16 +149,15 @@
     <string name="mock_moves_must">Responda a cada pergunta para avançar.</string>
     <string name="mock_hand_in_mock_title">Entregar o simulado?</string>
     <string name="mock_hand_in_section_title">Entregar esta seção?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d questão está em branco</item>
         <item quantity="many">%d questões estão em branco</item>
         <item quantity="other">%d questões estão em branco</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="one">%d está marcada</item>
-        <item quantity="many">%d estão marcadas</item>
-        <item quantity="other">%d estão marcadas</item>
+        <item quantity="one">%d está marcada para revisão</item>
+        <item quantity="other">%d estão marcadas para revisão</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s e %2$s.</string>
@@ -166,9 +167,9 @@
         <item quantity="other">%d questões estão em branco.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d questão está marcada.</item>
-        <item quantity="many">%d questões estão marcadas.</item>
-        <item quantity="other">%d questões estão marcadas.</item>
+        <item quantity="one">%d questão está marcada para revisão.</item>
+        <item quantity="many">%d questões estão marcadas para revisão.</item>
+        <item quantity="other">%d questões estão marcadas para revisão.</item>
     </plurals>
     <string name="mock_every_answered">Todas as perguntas foram respondidas.</string>
     <string name="mock_essay_blank">A redação está em branco.</string>
