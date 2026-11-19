@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "explain_coming": "89c468d0a82664406dcdd3f260de2ed45d3c94676679d88f6c7d59262098213a",
   "explain_deeper": "f702d8a7b0939f10c4f609f6b91a4bb43d348b47eb2d9cb9508a0430bc938929",
   "explain_deeper_course": "cf326f6a27bbb4fb7de3641cbaf6b7514cf2e686845abcb9a756d713d42a079f",
   "explain_deeper_goal": "b29d591f0e9d9d7d5ece5f40646000bc006c15ccf693df0d3071abb314ea0bc6",
@@ -37,7 +36,6 @@
     <string name="explain_phase_write_review">Bilgilerin doğruluğunu kontrol ediyoruz…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
     <string name="explain_quick">Kısa açıklama · %1$s</string>
-    <string name="explain_coming">Seni neler bekliyor</string>
     <string name="explain_one_question">En sonda 1 kısa soru</string>
     <string name="explain_deeper">Bu konuda daha çok şey öğren</string>
     <!-- %1$s is a course's title. -->
