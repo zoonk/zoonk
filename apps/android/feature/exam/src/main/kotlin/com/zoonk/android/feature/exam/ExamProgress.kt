@@ -23,16 +23,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.mockDate
 import com.zoonk.android.feature.mock.mockSubject
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.StatTile
-import com.zoonk.android.ui.components.StatTiles
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -66,11 +69,11 @@ private fun ProgressCard(
     val last = progress.mocks.lastOrNull()
     val trends = progress.subjects.any { it.change != null }
 
+    if (latest != null) LatestMockReadout(latest)
+
     progressLine(progress, currentLocale())?.let {
         Text(it, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
     }
-
-    if (latest != null) LatestMockTile(latest)
 
     if (first != null && last != null && progress.mocks.size > 1) {
         val points =
@@ -130,27 +133,23 @@ private fun latestMock(
 }
 
 @Composable
-private fun LatestMockTile(latest: LatestMock) {
-    StatTiles(
-        columns = 1,
-        tiles =
-            listOf { modifier ->
-                StatTile(
-                    label = stringResource(R.string.exam_latest_mock),
-                    value = percent(latest.percent),
-                    modifier = modifier,
-                    detail = latest.measure,
-                    icon = { Icon(painterResource(R.drawable.ic_timer), contentDescription = null, modifier = it) },
-                    footer = latest.change?.let { { SinceFirst(it) } },
-                )
-            },
-    )
-}
+private fun LatestMockReadout(latest: LatestMock) {
+    val change = latest.change
+    val since = change?.let { stringResource(R.string.exam_since_first, signedChange(it)) }
+    val rising = SpanStyle(color = MaterialTheme.colorScheme.onTertiaryContainer)
+    val line =
+        buildAnnotatedString {
+            append(latest.measure)
+            if (change != null && since != null) {
+                append(FACT_SEPARATOR)
+                withStyle(if (change > 0) rising else SpanStyle()) { append(since) }
+            }
+        }
 
-@Composable
-private fun SinceFirst(change: Long) {
-    val color = if (change > 0) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-    Text(stringResource(R.string.exam_since_first, signedChange(change)), color = color, style = MaterialTheme.typography.bodySmall)
+    Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Readout(percent(latest.percent), style = MaterialTheme.typography.headlineMedium)
+        Text(line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+    }
 }
 
 @Composable

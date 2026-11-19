@@ -37,7 +37,6 @@
   "exam_format_one_day": "3ca275975290a2eb6b815b07527c76b0626fab602e102e21b05c394c8e09ad99",
   "exam_format_two_days": "5cb7b50c6a9f82ca7f19d0508121ab4114ae6e1b7a84d0cb56f4b3972f3049ee",
   "exam_how_did_it_go": "57c90acd84b0ce91aed9611a1cd54fd3311b2f12e396ffd58633ae9660033471",
-  "exam_latest_mock": "d601136c7f14880d306d277682f9136705d4c4c73407d4d13e3f2dacb9530bce",
   "exam_mock_answered": "c6942311634b1aba941b45b815e94cd7774dce719b329b7e2cb973634954f861",
   "exam_mock_handed_in": "61733527b61df08eb2d5630fda2974486e3fb1376fe463af01963570d714eb36",
   "exam_mock_time_left": "a6f8fdb52bce1074fa865cbb2b6e40afcdf9402a4e34947cf9dc26d8cf44bb90",
@@ -199,7 +198,6 @@
         <item quantity="other">%d pytania</item>
     </plurals>
     <string name="exam_progress_title">Twoje postępy</string>
-    <string name="exam_latest_mock">Ostatni egzamin próbny</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
     <string name="exam_net_score_in">Wynik: %1$s</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->

@@ -37,7 +37,6 @@
   "exam_format_one_day": "61e077111c9fa7f6f30000c0186831958b3591595617359527cf43c9173c45ff",
   "exam_format_two_days": "44c4cf65f7605eeeacb58f2fe6525bdb890ca8e6991d9f35246f352cf0ebe23b",
   "exam_how_did_it_go": "5b618b1a919c6f31a56cc916b1d3a76a02f5b78d69b7712c0e2409c8b105fc31",
-  "exam_latest_mock": "a56f7f9e2f83ac79df23a4ee55daee523906f21096ffe89c9afcd1acb2164702",
   "exam_mock_answered": "3b92b93d8726ca6d46eaf3dbc28470f6b709692a156a51f221a593f7d267c26c",
   "exam_mock_handed_in": "a603e79428778c5937ec60c7f3a090dfe04bbd556292be758a6766536a748a26",
   "exam_mock_time_left": "1ed902fbc6f1d8150b9fa5b4b78437dd6bc8b99900bc456c0d9e55e9ae7a6a63",
@@ -194,7 +193,6 @@
         <item quantity="other">%d preguntas</item>
     </plurals>
     <string name="exam_progress_title">Tu progreso</string>
-    <string name="exam_latest_mock">Último simulacro</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
     <string name="exam_net_score_in">Puntaje en %1$s</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
