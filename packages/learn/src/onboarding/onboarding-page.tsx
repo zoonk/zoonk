@@ -47,13 +47,16 @@ const RAIL_CLASS = "hidden min-[72rem]:flex";
 
 /**
  * A screen asks one thing, so its column is centered in the room its bars span, as a task's is:
- * Back or ✕, "…" and the main action sit in that room's corners. A row of the bottom bar that
- * belongs to the column (`bar-lead`) sits on it.
+ * Back or ✕, "…" and the main action sit in that room's corners. In a room under 50rem the
+ * column would stop a few pixels short of those corners, so it fills the room instead: the
+ * second term is huge while the room (100%) is under 50rem and negative from there.
  */
-const SCREEN_COLUMN_CLASS = "lg:max-w-column lg:mx-auto";
+const COLUMN_OR_ROOM_CLASS =
+  "lg:mx-auto lg:max-w-[max(var(--container-column),(50rem_-_100%)*9999)]";
 
+/** A row of the bottom bar that belongs to the column sits on it. */
 const BAR_LEAD_ON_COLUMN_CLASS =
-  "lg:**:data-[slot=bar-lead]:max-w-column lg:**:data-[slot=bar-lead]:mx-auto lg:**:data-[slot=bar-lead]:w-full";
+  "lg:**:data-[slot=bar-lead]:mx-auto lg:**:data-[slot=bar-lead]:w-full lg:**:data-[slot=bar-lead]:max-w-[max(var(--container-column),(50rem_-_100%)*9999)]";
 
 export function OnboardingScreenPage({
   backHref,
@@ -80,7 +83,7 @@ export function OnboardingScreenPage({
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} />
 
-      <Page className={cn("flex-1 gap-6", SCREEN_COLUMN_CLASS)}>
+      <Page className={cn("flex-1 gap-6", COLUMN_OR_ROOM_CLASS)}>
         {notice}
         {children}
       </Page>
