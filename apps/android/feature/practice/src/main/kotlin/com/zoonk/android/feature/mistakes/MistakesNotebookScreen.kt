@@ -277,12 +277,14 @@ private fun NotebookList(
         )
     val keys = page.groups.map { it.groupKey() }
     val selectedKey = memory.picked?.takeIf { it in keys } ?: keys.firstOrNull()
+    // Narrow, each skill opens and closes on its own, so opening one never moves the row tapped.
+    val opened = memory.opened ?: listOfNotNull(keys.firstOrNull())
     val actions =
         NotebookActions(
             onTab = { onTab?.invoke(it) },
             onPick = { groupKey, open ->
                 if (open) memory.picked = groupKey
-                memory.collapsed = !open
+                memory.opened = ArrayList(opened.filter { it != groupKey } + listOfNotNull(groupKey.takeIf { open }))
             },
             onRetry = { scope.launch { store.notebooks[key].refresh() } },
             onPattern = { navigator.open(AppRoute.Pattern(it.toString())) },
@@ -302,27 +304,27 @@ private fun NotebookList(
         if (wide && page.groups.isNotEmpty()) {
             WideNotebook(page, actions, lead, selectedKey, memory.scroll)
         } else {
-            NarrowNotebook(page, actions, lead, selectedKey.takeUnless { memory.collapsed }, memory.scroll)
+            NarrowNotebook(page, actions, lead, opened.toSet(), memory.scroll)
         }
     }
 }
 
-/** What's open in one of the notebook's lists and where it's scrolled. */
+/** What's open in one of the notebook's lists and where it's scrolled: [opened] is null until a fold is tapped. */
 private class ListMemory(
     val scroll: LazyListState,
     picked: MutableState<String?>,
-    collapsed: MutableState<Boolean>,
+    opened: MutableState<ArrayList<String>?>,
 ) {
     var picked by picked
-    var collapsed by collapsed
+    var opened by opened
 }
 
 @Composable
 private fun rememberListMemory(): ListMemory {
     val scroll = rememberLazyListState()
     val picked = rememberSaveable { mutableStateOf<String?>(null) }
-    val collapsed = rememberSaveable { mutableStateOf(false) }
-    return remember(scroll) { ListMemory(scroll, picked, collapsed) }
+    val opened = rememberSaveable { mutableStateOf<ArrayList<String>?>(null) }
+    return remember(scroll) { ListMemory(scroll, picked, opened) }
 }
 
 private class NotebookPage(
@@ -366,7 +368,7 @@ private fun NarrowNotebook(
     page: NotebookPage,
     actions: NotebookActions,
     lead: NotebookLead,
-    open: String?,
+    open: Set<String>,
     listState: LazyListState,
 ) {
     LazyColumn(Modifier.fillMaxSize(), listState, pagePadding()) {
@@ -378,7 +380,7 @@ private fun NarrowNotebook(
                     val groupKey = group.groupKey()
                     DisclosureRow(
                         title = group.skillName(),
-                        expanded = open == groupKey,
+                        expanded = groupKey in open,
                         onExpandedChange = { actions.onPick(groupKey, it) },
                         leading = group.fixedMark(),
                         count = group.size,
