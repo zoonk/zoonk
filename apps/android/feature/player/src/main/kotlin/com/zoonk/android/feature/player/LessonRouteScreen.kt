@@ -197,6 +197,7 @@ internal fun PlayingLesson(
                 chapters = app.goalContent,
                 analytics = app.analytics,
                 saved = createSavedStateHandle(),
+                hosted = endSlot != null,
             )
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()
