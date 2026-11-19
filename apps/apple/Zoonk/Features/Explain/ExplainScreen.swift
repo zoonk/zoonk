@@ -86,15 +86,8 @@ private struct ExplanationView: View {
   private var content: some View {
     ZoonkList {
       Section {
-        PageHeader(
-          Text(explanation.title),
-          chip: Chip(
-            Text(
-              "Quick explanation\u{00A0}· \(studyDuration(minutes: 5))",
-              tableName: "Explain",
-              comment: "Chip over a quick explanation's title: its kind and length"))
-        )
-        .listRowBackground(Color.clear)
+        PageHeader(Text(explanation.title), chip: chip)
+          .listRowBackground(Color.clear)
       }
 
       if hasPlayed, !explanation.recap.isEmpty {
@@ -196,6 +189,22 @@ private struct ExplanationView: View {
       table: "Explain", comment: "Under a quick explanation that's still being written")
   }
 
+  private var chip: Chip {
+    hasPlayed
+      ? Chip(
+        Text(
+          "Now you know", tableName: "Explain", comment: "Eyebrow over a read quick explanation"),
+        tone: .success)
+      : Chip(quickExplanation)
+  }
+
+  private var quickExplanation: Text {
+    Text(
+      "Quick explanation\u{00A0}· \(studyDuration(minutes: 5))",
+      tableName: "Explain",
+      comment: "Chip over a quick explanation's title: its kind and length")
+  }
+
   private var recap: some View {
     Section {
       ForEach(Array(explanation.recap.enumerated()), id: \.offset) { index, line in
@@ -208,15 +217,10 @@ private struct ExplanationView: View {
         }
       }
     } header: {
-      Label {
+      SectionTitle(
         Text(
-          "Now you know", tableName: "Explain", comment: "Header over a quick explanation's summary"
-        )
-      } icon: {
-        Image(systemName: "checkmark.circle.fill")
-      }
-      .sectionTitleStyle()
-      .foregroundStyle(.successText)
+          "In \(explanation.recap.count) sentences", tableName: "Explain",
+          comment: "Header over a quick explanation's summary; the number is its sentences"))
     }
   }
 
@@ -261,8 +265,13 @@ private struct ExplanationView: View {
           Button {
             startGoal(question)
           } label: {
-            Text(question)
-              .foregroundStyle(.primary)
+            VStack(alignment: .leading, spacing: 2) {
+              Text(question)
+                .foregroundStyle(.primary)
+              quickExplanation
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
+            }
           }
         }
       }
