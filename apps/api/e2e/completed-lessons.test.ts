@@ -47,6 +47,7 @@ test.describe("Completed lessons API", () => {
 
     expect(first).toMatchObject({
       data: [{ finishedOn: "2026-10-21", lessonId: lessons[1]?.id, title: lessons[1]?.title }],
+      filter: null,
       pagination: { hasMore: true },
     });
 

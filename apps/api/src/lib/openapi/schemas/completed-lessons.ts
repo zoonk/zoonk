@@ -1,5 +1,6 @@
 import {
   COMPLETED_LESSON_PAGE_SIZE,
+  completedLessonFilterSchema,
   completedLessonListInputSchema,
   completedLessonSchema,
 } from "@zoonk/core/completed-lessons/contract";
@@ -17,5 +18,14 @@ export const completedLessonListQuerySchema = completedLessonListInputSchema
   .meta({ id: "CompletedLessonListQuery" });
 
 export const completedLessonListResponseSchema = z
-  .object({ data: z.array(completedLessonSchema), pagination: paginationSchema })
+  .object({
+    data: z.array(completedLessonSchema),
+    filter: completedLessonFilterSchema
+      .nullable()
+      .meta({
+        description:
+          "What the list narrows to, the same on every page and for every `group`. Null while the list is short enough to read whole, or has lessons of fewer than two groups",
+      }),
+    pagination: paginationSchema,
+  })
   .meta({ id: "CompletedLessonList" });

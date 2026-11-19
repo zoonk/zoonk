@@ -2457,7 +2457,7 @@
     },
     "/me/completed-lessons": {
       "get": {
-        "description": "The goal's completed lessons, one per lesson, newest first by the last time the learner finished it, so a replay moves a lesson to the top. A lesson counts for the goal when the learner finished it and it's in the goal's plan (finishing a lesson checks it off in every plan) or the learner studied it while the goal was active. Review capsules, skipped and tested-out lessons, practice and unfinished runs are left out. Group the rows by `finishedOn`. A replay can shift later pages by one: skip a lesson already shown.",
+        "description": "The goal's completed lessons, one per lesson, newest first by the last time the learner finished it, so a replay moves a lesson to the top. A lesson counts for the goal when the learner finished it and it's in the goal's plan (finishing a lesson checks it off in every plan) or the learner studied it while the goal was active. Review capsules, skipped and tested-out lessons, practice and unfinished runs are left out. Group the rows by `finishedOn`. `group` narrows the list to one of the plan's groups, which `filter` lists with how many completed lessons each has. A replay can shift later pages by one: skip a lesson already shown.",
         "operationId": "listCurrentUserCompletedLessons",
         "security": [
           {
@@ -2483,6 +2483,16 @@
             },
             "required": true,
             "description": "The goal whose completed lessons to list"
+          },
+          {
+            "in": "query",
+            "name": "group",
+            "schema": {
+              "description": "Lists only the lessons of this group, by a `key` from `filter.groups`; a key the goal doesn't have lists every lesson",
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Lists only the lessons of this group, by a `key` from `filter.groups`; a key the goal doesn't have lists every lesson"
           },
           {
             "in": "query",
@@ -38718,12 +38728,22 @@
               "$ref": "#/components/schemas/CompletedLesson"
             }
           },
+          "filter": {
+            "nullable": true,
+            "description": "What the list narrows to, the same on every page and for every `group`. Null while the list is short enough to read whole, or has lessons of fewer than two groups",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CompletedLessonFilter"
+              }
+            ]
+          },
           "pagination": {
             "$ref": "#/components/schemas/Pagination"
           }
         },
         "required": [
           "data",
+          "filter",
           "pagination"
         ],
         "additionalProperties": false
@@ -38742,6 +38762,11 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
             "description": "The learner-local day the learner last finished the lesson, as `YYYY-MM-DD`: a replay moves the lesson to its day"
           },
+          "group": {
+            "nullable": true,
+            "description": "The `key` of its group in `filter.groups`. Null when the list has no `filter`, or the lesson is in none of the plan's groups",
+            "type": "string"
+          },
           "lessonId": {
             "type": "string",
             "format": "uuid",
@@ -38755,8 +38780,66 @@
         "required": [
           "chapterTitle",
           "finishedOn",
+          "group",
           "lessonId",
           "title"
+        ],
+        "additionalProperties": false
+      },
+      "CompletedLessonFilter": {
+        "type": "object",
+        "properties": {
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompletedLessonGroup"
+            },
+            "description": "The groups with completed lessons, the one with the most first. A lesson of none of the plan's groups counts only in `total`"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "subjects",
+              "modules",
+              "phases"
+            ],
+            "description": "What the plan groups its lessons by: an exam's `subjects`, another goal's `modules`, or its `phases` when it has fewer than two of those"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Every completed lesson, whatever `group` asked"
+          }
+        },
+        "required": [
+          "groups",
+          "kind",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "CompletedLessonGroup": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Names the group in `group`"
+          },
+          "lessons": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "The completed lessons in it"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "lessons",
+          "name"
         ],
         "additionalProperties": false
       },

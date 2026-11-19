@@ -4,6 +4,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -50,7 +51,10 @@ async function learnerWithGoals() {
   return { goal, otherGoal, user };
 }
 
-async function listFor(goalId: string, page: { limit?: number; offset?: number } = {}) {
+async function listFor(
+  goalId: string,
+  page: { group?: string; limit?: number; offset?: number } = {},
+) {
   const result = await listCurrentUserCompletedLessons(
     completedLessonListInputSchema.parse({ goalId, ...page }),
   );
@@ -60,6 +64,10 @@ async function listFor(goalId: string, page: { limit?: number; offset?: number }
   }
 
   return result;
+}
+
+function isRenting(index: number) {
+  return index % 3 === 0;
 }
 
 describe(listCurrentUserCompletedLessons, () => {
@@ -115,17 +123,20 @@ describe(listCurrentUserCompletedLessons, () => {
     ]);
 
     await expect(listFor(goal.id)).resolves.toStrictEqual({
+      filter: null,
       hasMore: false,
       lessons: [
         {
           chapterTitle: "Waves",
           finishedOn: "2026-10-29",
+          group: null,
           lessonId: replayed.id,
           title: "Interference",
         },
         {
           chapterTitle: null,
           finishedOn: "2026-10-25",
+          group: null,
           lessonId: single.id,
           title: "Explained by you",
         },
@@ -197,6 +208,7 @@ describe(listCurrentUserCompletedLessons, () => {
     ]);
 
     await expect(listFor(goal.id)).resolves.toStrictEqual({
+      filter: null,
       hasMore: false,
       lessons: [],
       status: "ready",
@@ -231,9 +243,71 @@ describe(listCurrentUserCompletedLessons, () => {
     ]);
 
     expect(second).toStrictEqual({
+      filter: null,
       hasMore: false,
       lessons: [expect.objectContaining({ lessonId: lessons[0]?.id })],
       status: "ready",
     });
+  });
+
+  it("narrows a long list to one of the plan's groups, counting every group", async () => {
+    const [{ goal, user }, planSkill, lessons] = await Promise.all([
+      learnerWithGoals(),
+      skillFixture(),
+      Promise.all(Array.from({ length: 12 }, () => libraryLessonFixture())),
+    ]);
+
+    await Promise.all([
+      planFixture({
+        goalId: goal.id,
+        items: lessons.map((lesson, index) => ({
+          lessonId: lesson.id,
+          phase: isRenting(index) ? 1 : 0,
+          // Only the plan says which skill the first lesson is taught for.
+          skillId: index === 0 ? planSkill.id : undefined,
+        })),
+        phases: [{ name: "Arriving" }, { name: "Renting a flat" }],
+      }),
+      ...lessons.map((lesson, index) =>
+        finishedRun({
+          endedAt: `2026-10-${10 + index}T15:00:00.000Z`,
+          goalId: goal.id,
+          lessonId: lesson.id,
+          userId: user.id,
+        }),
+      ),
+    ]);
+
+    const filter = {
+      groups: [
+        { key: "arriving", lessons: 8, name: "Arriving" },
+        { key: "renting-a-flat", lessons: 4, name: "Renting a flat" },
+      ],
+      kind: "modules",
+      total: 12,
+    };
+
+    const [all, renting, firstRenting, unknown] = await Promise.all([
+      listFor(goal.id),
+      listFor(goal.id, { group: "renting-a-flat" }),
+      listFor(goal.id, { group: "renting-a-flat", limit: 3 }),
+      listFor(goal.id, { group: "cooking" }),
+    ]);
+
+    expect(all.filter).toStrictEqual(filter);
+    expect(all.lessons).toHaveLength(12);
+    expect(all.lessons.at(0)?.group).toBe("arriving");
+    expect(renting.filter).toStrictEqual(filter);
+
+    expect(renting.lessons.map((lesson) => lesson.lessonId)).toStrictEqual(
+      lessons
+        .filter((_, index) => isRenting(index))
+        .map((lesson) => lesson.id)
+        .toReversed(),
+    );
+
+    expect(firstRenting.hasMore).toBe(true);
+    expect(firstRenting.lessons).toHaveLength(3);
+    expect(unknown.lessons).toHaveLength(12);
   });
 });
