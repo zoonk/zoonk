@@ -10,7 +10,7 @@
   "mock_break_time_left": "b130f4f76d1787e1c0806bb41ccd5b4caa8f56786adf15d477d21b4aa2b03376",
   "mock_cell_answered": "23ae19049484d4a490bb35bdb4a4ef2493e46d8cdb82c4797a64681f633e634a",
   "mock_cell_marked_for_review": "b4dea36983fb5a4ea8f45ef5f0f17ea6d1656f91ab03effef0191189e19e1093",
-  "mock_continue": "f43f02679569823585b117b2026fa8c338a2f363d53ecceab174c1b01b0b79b8",
+  "mock_continue": "5965ef3b8dfb02a512bfb09c3f92a8f71d18c31a47f4aae5a481ce2f5e19d343",
   "mock_continue_section": "92d4bff9c631dc4d0d43288bce514ed7726014cedb42ce5e7a973e2ebf87b7a2",
   "mock_essay_blank": "0f4c6b7edf719b845b0c39be8ddf03293dc3f5304436ac13d23c5e0c4e5e2da5",
   "mock_essays_blank": "2d8657594f92edc80cd24eddea4af4efccf77af18c69c2982d404e602b3042f8",
@@ -86,7 +86,7 @@
   "mock_step_failed": "2662505ea4fe63031f234d1323bbccfe6a216b56083813a696ca6b8c5494decf",
   "mock_step_failed_saved": "9f9155d9a285a276b839f23d3edcffcdca38d25c8fb239242b59fe7f7585e5fa",
   "mock_step_slow": "0a48b08c6647383f33cc84b46e5ce4bc26cffa7267983236e03885dab2a45b06",
-  "mock_take": "3adc3d91958911877620f74e655a070ab10ab9daf85dc1b8368b4c97c5e71a6a",
+  "mock_take": "5c8b380799b86a4080b59f90589481953d7847fa5d730ff6444799c281ad1a82",
   "mock_take_another": "aa33d88a60829c2f662beb16e48a31679936bc3fc4b6447bf6c95371a73d3cfc",
   "mock_time_left_caption": "1f4ea93bc8c8d1634e04a8c184c884c2b09e99cc42a2765382d6b7592a1ed6be",
   "mock_time_left_label": "d6f4caa11e4282d386c936b138374c6bd45ef06ea6da94311894a2f3ae0693b1",
@@ -116,8 +116,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Deneme sınavına gir</string>
-    <string name="mock_continue">Deneme sınavına devam et</string>
+    <string name="mock_take">Yeni deneme sınavı</string>
+    <string name="mock_continue">Devam et</string>
     <string name="mock_label">Deneme sınavı</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">Deneme sınavı · %1$s</string>

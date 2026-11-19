@@ -10,7 +10,7 @@
   "mock_break_time_left": "4f3cc9021ee629acb5e30d0f2abaaedbf3a808342fc020104ba9aee719d3db32",
   "mock_cell_answered": "c8ed966eca1cd9288568b83c9f9c855baa712384d1625ce046460c2a82b825d7",
   "mock_cell_marked_for_review": "ad5d22a0e042f5325a1dbd28026181d56b66a2e8f39ef35c2b258aa4237ac9c2",
-  "mock_continue": "6c3bc28a6927c7dc256d193898c6e37a8cdfab57829e66445889896ba4ca6719",
+  "mock_continue": "cb8e76efe8f9b23401880463ef9f50e993998a3160387527bb307fd8db64fad9",
   "mock_continue_section": "083f7983129b6f1e9a8b4b8ee0dd5f8ece3efbd544a363a83c872a4595f90a6e",
   "mock_essay_blank": "591133e1d1682e3db5cf7803672e3c9a0e3ac0107a1f406c076661e6d0a4a1bb",
   "mock_essays_blank": "2bfc9d98877bd2c7218ce59f45ca71df27efdd7dbd1f223fc3ff559497650e26",
@@ -86,7 +86,7 @@
   "mock_step_failed": "acee38dda99ba6d247627e7e8b799431147d9381c938c8b92212e8617ec04b1c",
   "mock_step_failed_saved": "cb02f5ca414e783f8ef74c502baa5316a44429be7a7cdef9880790ac46281910",
   "mock_step_slow": "e2e55c76b3491a06e984221031b3483e318fbf155e4e061f7012be6af14dd18f",
-  "mock_take": "9163571301618d42b6a828ef1b296d79896e76031986ce72427773763f11b08a",
+  "mock_take": "b47f6a3774534441e51c474b11e1cdfd8e40a82dd877a1e546ffdb4f51854a86",
   "mock_take_another": "212202b2f2f0e5bbf39de5344348eef2c8444a096e82f7c75e33938f664536f1",
   "mock_time_left_caption": "d555aad45835a2829636e1b8b3af7329dbde02a5299ed1f20e082c346d6f5e5d",
   "mock_time_left_label": "0adf969ffb5897738e1f9099788de2081660bf3a16a7d3224f28fb584d869574",
@@ -118,8 +118,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Fai una simulazione</string>
-    <string name="mock_continue">Riprendi la simulazione</string>
+    <string name="mock_take">Nuova simulazione</string>
+    <string name="mock_continue">Continua</string>
     <string name="mock_label">Simulazione d’esame</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">Simulazione · %1$s</string>

@@ -268,6 +268,7 @@ msgstr "{days, plural, one {Falta cerca de # dia} other {Faltam cerca de # dias}
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
+#: src/mock/mock-entry.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
 #: src/onboarding/onboarding-skeletons.tsx
@@ -2900,7 +2901,6 @@ msgid "A short call out loud, at your level."
 msgstr "Uma conversa curta em voz alta, no seu nível."
 
 #: src/conversation/tutor-tool-offer.tsx
-#: src/exam/exam-mocks-section.tsx
 #: src/mock/mock-chooser.tsx
 #: src/mock/mock-entry.tsx
 msgctxt "g5EneG"
@@ -3453,6 +3453,13 @@ msgstr "Seu progresso"
 msgctxt "zP4GPk"
 msgid "Mock exams"
 msgstr "Simulados"
+
+#. Opens the mock exam chooser, from the exam page.
+#: src/exam/exam-mocks-section.tsx
+#: src/mock/mock-entry.tsx
+msgctxt "MQXzps"
+msgid "New mock"
+msgstr "Novo simulado"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "5LQ3R0"

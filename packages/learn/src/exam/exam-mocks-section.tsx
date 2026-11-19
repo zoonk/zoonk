@@ -59,7 +59,10 @@ export function ExamMocks({ entry = false }: { entry?: boolean }) {
           className={cn(buttonVariants({ size: "sm", variant: "outline" }), "self-start")}
           href="/mock/new"
         >
-          {t("Take a mock exam")}
+          {t({
+            description: "Opens the mock exam chooser, from the exam page.",
+            message: "New mock",
+          })}
         </LearnLink>
       )}
     </PageSection>

@@ -10,7 +10,7 @@
   "mock_break_time_left": "d70678f380db1785ea5d06114df142d294b954482f360b6028fb824a6c6ec7bb",
   "mock_cell_answered": "852f5756e5ba7f72ae947e20be16ca933aa43f36c9239f6067f1b19adc5d06d6",
   "mock_cell_marked_for_review": "a128669d57c7543e8469a0a4c5677beb72470b245a727c76daa0df88359810fc",
-  "mock_continue": "afd2a653cf236fe185a47b789409207807337863cd5bf34cfc1a3de556f309b4",
+  "mock_continue": "8fdb544d63b79b7e2a2f57ba5eea4d52a5cef2beb4d7be5087cc15fb4b292bcf",
   "mock_continue_section": "cf11cdc71796562873e389f24c5481314e6c36f67fe4e12ea687f8a8ff434516",
   "mock_essay_blank": "ce8543c6a4ee0cb7164c70ab1e1b17dded3472d63352408adb2786f5cfa24caf",
   "mock_essays_blank": "52d374db82c3456fbe0f87eede8ef209c82f8509b10b37e274c4fc6f466f7e05",
@@ -86,7 +86,7 @@
   "mock_step_failed": "cbbcdcd886a9c081d46f4cfe15081c2c63dd85bbc26394fedf4ddda1d034dc54",
   "mock_step_failed_saved": "d482b4fd7426c03514180c3ecbbda65a7ab2ca3d8c80fd2ed24e14cd72c893ca",
   "mock_step_slow": "322309f4717aa9659498dd0cbe54d1f33414226e1e6d28fa081751e5a241ab89",
-  "mock_take": "b78f7a61e09b41741cfecd3cc3337e22313b5f894e8f2009fb876e5013607330",
+  "mock_take": "52ae0a303ae84111f86cf8fc0afb61285aa4347a8b356fd34f8afc7e2fe69ef4",
   "mock_take_another": "c0dc1064e785896abb1291d16aa803394549b4b680ad8a4f382614d066be589b",
   "mock_time_left_caption": "082a4816c38368d1f234aaabb39b0c5db8a3b9836498684c53380f06259ebef9",
   "mock_time_left_label": "075620d091fc1a4062aa8e785fd6df6929a794b6bbe43570bec06955aa4bcce1",
@@ -118,8 +118,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Passer un examen blanc</string>
-    <string name="mock_continue">Continuer ton examen blanc</string>
+    <string name="mock_take">Nouvel examen blanc</string>
+    <string name="mock_continue">Continuer</string>
     <string name="mock_label">Examen blanc</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">Examen blanc · %1$s</string>

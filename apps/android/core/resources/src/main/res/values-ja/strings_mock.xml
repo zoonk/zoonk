@@ -10,7 +10,7 @@
   "mock_break_time_left": "c242660b660cd52ce630a0983d01149f104f45ee1ffaf62624ed12d07a9e0b81",
   "mock_cell_answered": "104bdd3ddf561f40b8299398f49ded7effef14828ed816aa146b7579fb9857d3",
   "mock_cell_marked_for_review": "9119cde7ec6b9d27af87a36ea5c2556c9eb0c75dc63907f207552f3ea1b9f54d",
-  "mock_continue": "48298322cad404d3d999253bb4e39110329c41e1fea376e187f209e9d1ba83bf",
+  "mock_continue": "d1eed4bd1214e1028b8fa6e5ca751d7782d93a8ff8c852df2f0960293f592731",
   "mock_continue_section": "b756f1009d5558f0fa38b9c2972ed8a7e14d8ad928bfcd6e9e1dd126af55be97",
   "mock_essay_blank": "c8766822cc7ca0a22fee1e791dc4f12ba6f55b7ea56f73ad48cd8b187f9b7633",
   "mock_essays_blank": "4af0a1ca99d713efd5e40b61ea38b00b8671e85cc37d6091b1c418be0bfbd795",
@@ -86,7 +86,7 @@
   "mock_step_failed": "c3e7180a5848ba1b7e998d8e94623f790b371afa40c9c6ca27f170cdc499a2b2",
   "mock_step_failed_saved": "6887678cbdabb518d65fbde78d22fcba143a4522169db70b594376879421d17b",
   "mock_step_slow": "65e9f11144709d507ef2b5062438d9f901836085db1869a9c18198a200602388",
-  "mock_take": "0fdddcbf2fc7d288e9f72f1fa030340edcdc8e47c9e61041823848eabfec72b9",
+  "mock_take": "56cc9d96ea50a1147da60a021cd7d6b7552cc24949076162649f9a05bb2e25b0",
   "mock_take_another": "99e0c61f88537914aeaad860872cf6d51dd6a2ef0c1b102261399a1513f95832",
   "mock_time_left_caption": "3f13505cc4d3dde44e75b54b5287421da796ffb8a373c18f5615c85b986b1225",
   "mock_time_left_label": "eb66be9ccfe02fb3f803a9bb8945f38ecc2e0c00b3e0106e3abde6fae737a07d",
@@ -114,8 +114,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">模試を受ける</string>
-    <string name="mock_continue">模試を再開する</string>
+    <string name="mock_take">新しい模試</string>
+    <string name="mock_continue">続ける</string>
     <string name="mock_label">模試</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">模試 · %1$s</string>

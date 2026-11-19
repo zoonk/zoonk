@@ -15,8 +15,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Take a mock exam</string>
-    <string name="mock_continue">Continue your mock exam</string>
+    <string name="mock_take">New mock</string>
+    <string name="mock_continue">Continue</string>
     <string name="mock_label">Mock exam</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">Mock exam · %1$s</string>

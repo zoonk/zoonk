@@ -10,7 +10,7 @@
   "mock_break_time_left": "d0d583ef1f721ef6afe5cd51cc304dac780c65f961537e6a431ab24fc3e09616",
   "mock_cell_answered": "54c0769e569f82484ed0630821996817e51dea945cb8faa40ac1f4766a843f70",
   "mock_cell_marked_for_review": "fc28da3772c74b45c3088e67313b324a6f95e20cff7dbc132026ee7255569a37",
-  "mock_continue": "367b8aae2d85f9cf5093968c5d7afd0155a1a97217608c85729a4788d27e25bd",
+  "mock_continue": "8070e48e065069e0eea5e6091113ae8af12721bd7b3de437712a0c01fb68c95c",
   "mock_continue_section": "f4c54908fdc13388c7c72283863cdbbcc07d605292dda053a726bb0e1553a721",
   "mock_essay_blank": "4a5f860ee5cb5a10194f32b2a4d495e96ad5f31a098e3b3095f5782ea7bd241c",
   "mock_essays_blank": "c34a2a8597eea9e5a013b76add6723d76e815882023a477129aed3c1464b7176",
@@ -86,7 +86,7 @@
   "mock_step_failed": "e04149f9a3178c8dea8c1dd1fcaba57ce82bdc3e918447a0e255e87d78213653",
   "mock_step_failed_saved": "f9b07e6c3c946f233bde0bf592666620deb899310f006ee55d4dbba00a80efe7",
   "mock_step_slow": "04d2178f33926cdfe638db475670f062f9816fc099eba6738de5c3ffda38e44a",
-  "mock_take": "5424b156585a80d975ad408436dcfb2e36a1605c6a4c0ac2844e4ca2131d0491",
+  "mock_take": "93838546fa88af2fdfb3dc752a4cf1ccde5331a41d6fa8e204a3eee9e03120f6",
   "mock_take_another": "d689582841fb0593b60b0d9e2b01b941a50cd01cb6a4c13a27ad8037521abea9",
   "mock_time_left_caption": "97030723846c3124f0bc7e0e52a40089f319bde35bc6c93d12285a6023f651a5",
   "mock_time_left_label": "9ef2cdc869b54706d3ae928ba63a311a1179ec8ae719c386011ee35d89a788eb",
@@ -116,8 +116,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Probeprüfung ablegen</string>
-    <string name="mock_continue">Probeprüfung fortsetzen</string>
+    <string name="mock_take">Neue Probeprüfung</string>
+    <string name="mock_continue">Weiter</string>
     <string name="mock_label">Probeprüfung</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">Probeprüfung · %1$s</string>

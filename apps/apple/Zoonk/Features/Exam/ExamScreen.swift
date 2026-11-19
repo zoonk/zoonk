@@ -150,9 +150,9 @@ struct ExamList: View {
         }
       } label: {
         if options.running != nil {
-          Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
+          Text("Continue", tableName: "Exam", comment: "A running mock")
         } else {
-          Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
+          Text("New mock", tableName: "Exam", comment: "Opens the mock chooser")
         }
       }
       .buttonStyle(.mainAction)
@@ -709,7 +709,7 @@ private struct ExamMocksSection: View {
           Button {
             router.open(.mockChooser)
           } label: {
-            Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
+            Text("New mock", tableName: "Exam", comment: "Opens the mock chooser")
           }
           .buttonStyle(.outline)
           .controlSize(.small)

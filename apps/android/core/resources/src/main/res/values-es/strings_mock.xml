@@ -10,7 +10,7 @@
   "mock_break_time_left": "37c4adf6f41cc8b6762d53515415f239765e7982a697c2a26b97e7aeb437f12b",
   "mock_cell_answered": "cc64f077487484589ba1200b9d81c35a1514bb13f8353678d92a5b47d95984f5",
   "mock_cell_marked_for_review": "aaf0fabeaecb2b3e807f0dd357d336353848dd787a0fe4db637aabbb05d15fdd",
-  "mock_continue": "7f489ee62cf7be19aa1f65254ddcf213a3559eb0a7c211f0a19bbd91b3139375",
+  "mock_continue": "2a7098259a73269bb884816eb4adcfbc1ece8fd1af6549e4435956b7a2dc2e4e",
   "mock_continue_section": "93c7b30b6aba3f902322f5b9d4c6bee2033e66908d0162d59768667951c95d34",
   "mock_essay_blank": "e244166fe30fa485574cfc1053bb84d28abbe7df1450c56858bae83aaa152d06",
   "mock_essays_blank": "0d3cfd781d88d04886f154683c732d7a917703112b7545cc8e0f9a62743ef154",
@@ -86,7 +86,7 @@
   "mock_step_failed": "c4f52911ede83ad142941a34feff27f49383e728d622f4ae68c5fa851437cab8",
   "mock_step_failed_saved": "fe9d5593baa0d080ab54165163c94c7bf200b4939667996e50990ac9d4a3a1fe",
   "mock_step_slow": "cb77162165981c1e111ca3be66a1a60e27d80979d8eafe6f460a4136e4c73bd7",
-  "mock_take": "8919a6fd23923a5ec792b22fd1f900c3d4cfcaec4ab5811500c1a397ba8336b0",
+  "mock_take": "416a81af8a0d617ca8d09f27bbca11e1acd396287827d00ad4ba80aec7d6e113",
   "mock_take_another": "58be408532fe343ecae29f8201687e3f8644e608b83d1578b0ff8a03f7ddc42f",
   "mock_time_left_caption": "2e351623be520ce5ec7be5588e3832357d45db40ef42a49400494a8ac3560740",
   "mock_time_left_label": "59d57109af0acb34a2310e57321e15bfeb3c0f30a3ecd164d334d765f7e227b3",
@@ -118,8 +118,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Hacer un simulacro</string>
-    <string name="mock_continue">Continuar tu simulacro</string>
+    <string name="mock_take">Nuevo simulacro</string>
+    <string name="mock_continue">Continuar</string>
     <string name="mock_label">Simulacro de examen</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">Simulacro · %1$s</string>

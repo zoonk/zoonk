@@ -10,7 +10,7 @@
   "mock_break_time_left": "43c60fd16bdf26e5295ff23a226c2ee92eb42722f964b57eea78442bc11620a9",
   "mock_cell_answered": "9fd1742c2543efa225945d6c78f6cfedb8b8b82e45cc0ea51c18df2edbc6adb6",
   "mock_cell_marked_for_review": "fc6498bbb1af542fccc2f39c0fbad4ebd1de4cbaf33df22189122bb754a34d5e",
-  "mock_continue": "898a1a5f9e4467c4a564855b4677047e55c83afc11dcfbee5fe37def116e3482",
+  "mock_continue": "d484d6987ce9da48a0a05d13206675acecc4674a12e960efe25a96602b7a47e2",
   "mock_continue_section": "d7518f7a6c75b5991efb4df8505e92e801635257e828e414c4a45e5b694fa5f6",
   "mock_essay_blank": "2cf7deeb67c834fb51a4b843bb6e152595d5644497d805b033a23be4c3619f6f",
   "mock_essays_blank": "c777c518171c4be3313a2d10c4eaeb6363277c9a185c9ef9ec7740199a8efc6b",
@@ -86,7 +86,7 @@
   "mock_step_failed": "3dbba610a1878387bed694571803ce0aa5efe268b4b9b657074b34daef02a0a5",
   "mock_step_failed_saved": "053cb1bded37cc0a3684e5eaf5dd2827f39b61c7134f3452d4699ea50a7f5728",
   "mock_step_slow": "900ace26a3cad048d43188a3d91398ff15e61b7089c19218c10c01297774070b",
-  "mock_take": "3ee2c74fed0163aeae21a77fbbef1cf63022fe7b5cb6db557f0079483795e0ca",
+  "mock_take": "99f2c43dc6c8b4cf617642861c5bfa824b4b37631eb2424ba04542ab15a779bd",
   "mock_take_another": "9d561cbc5bcc5263d4741d3416619f07796be695d52b0d663a3c506a8657d012",
   "mock_time_left_caption": "b493eaabd85dc13d9fe1dd01320a7c9d147ef9825650cb926d89428dc6762811",
   "mock_time_left_label": "ec3512e5be433a79317e639b1b62cac9d7a80b3afe68228c6a54d26a226e6656",
@@ -114,8 +114,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">모의고사 보기</string>
-    <string name="mock_continue">모의고사 이어서 풀기</string>
+    <string name="mock_take">새 모의고사</string>
+    <string name="mock_continue">계속하기</string>
     <string name="mock_label">모의고사</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">모의고사 · %1$s</string>
