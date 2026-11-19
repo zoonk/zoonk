@@ -39,11 +39,13 @@ private struct BeltProgression: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
           Text(
-            "\(level.totalBrainPower.formatted()) Brain Power", tableName: "Progress",
-            comment: "The learner's Brain Power, at the end of the belt panel's first line"
+            "\(level.totalBrainPower.formatted()) Brain Power (BP)", tableName: "Progress",
+            comment:
+              "The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out."
           )
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
+          .typeStyle(.rowTitle)
+          .monospacedDigit()
+          .foregroundStyle(.brainText)
         }
         .accessibilityElement(children: .combine)
 

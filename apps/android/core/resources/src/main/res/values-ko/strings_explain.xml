@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "explain_coming": "9631575ea86f08b2f75a6a08b1574186114e0bb99e03eb0f78492072aa32f5ac",
   "explain_deeper": "f8c7184ece2814485ced351c32863f7a1531dbf459fd49a14bffe3194927da2e",
   "explain_deeper_course": "64fe546479a09fe7d6349be14a344b972ef628f693b758dcce7c9e70fc384121",
   "explain_deeper_goal": "e1276792feb8635befc78a3cade44276b186e75e806d5e01796d3aeb0a8b9560",
@@ -37,7 +36,6 @@
     <string name="explain_phase_write_review">내용이 사실과 맞는지 확인하고 있어요…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
     <string name="explain_quick">간단한 설명 · %1$s</string>
-    <string name="explain_coming">배울 내용</string>
     <string name="explain_one_question">마지막에 간단한 문제 1개</string>
     <string name="explain_deeper">이 내용 더 알아보기</string>
     <!-- %1$s is a course's title. -->

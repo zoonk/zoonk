@@ -909,18 +909,9 @@
 
         BigQuantity("38 min left")
 
-        FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
-          MomentReadout {
-            Text(verbatim: "8/10")
-          } words: {
-            Text(verbatim: "Right")
-          }
-          MomentReadout(tint: .brainText) {
-            Text(verbatim: "+120")
-          } words: {
-            Text(verbatim: "Brain Power")
-          }
-        }
+        LessonReadouts(correct: 1, answered: 1, brainPower: 12)
+        LessonReadouts(correct: 3, answered: 4, brainPower: 30)
+        LessonReadouts(correct: 7, answered: 10, brainPower: 120, studied: "4 min studied")
 
         HStack(spacing: 12) {
           GoalRing(share: 1, size: 26) {

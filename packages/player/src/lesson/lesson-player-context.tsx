@@ -51,6 +51,11 @@ export type LessonPlayerSlots = {
   completion?: (props: LessonCompletionSlotProps) => ReactNode;
   /** Return null to keep the lesson header; render `menu` at the replacement header's end. */
   completionHeader?: (props: LessonCompletionSlotProps & { menu: ReactNode }) => ReactNode;
+  /**
+   * The host's end titles the screen with the lesson's own name, so the header keeps that name for
+   * screen readers only while the end shows.
+   */
+  completionTitled?: boolean;
   /** The lesson end's bar, in place of its links to the next lesson. */
   completionActions?: (props: LessonCompletionSlotProps) => ReactNode;
   /** More under a saved lesson's end, above its bar. */

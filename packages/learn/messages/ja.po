@@ -13,14 +13,12 @@ msgstr "回答の選択肢"
 
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "正解"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -35,11 +33,21 @@ msgctxt "ihtBFm"
 msgid "Your guess"
 msgstr "予想"
 
+#: src/_components/answer-pair.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "回答と正解"
+
 #: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>脳力</words>"
+
+#. Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.
+#: src/_components/brain-power-amount.tsx
+msgctxt "_Q0taG"
+msgid "BP"
 msgstr "脳力"
 
 #: src/_components/chapter-mark.tsx
@@ -551,11 +559,6 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "まとめ"
 
-#: src/_components/moment-readouts.tsx
-msgctxt "XjzZDx"
-msgid "<number>+{points}</number> <words>Brain Power</words>"
-msgstr "<number>+{points}</number> <words>脳力</words>"
-
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -594,11 +597,13 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "いつもより時間がかかっています。自動で開くので、もう一度タップしなくても大丈夫です。"
 
 #: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "左にスクロールする"
 
 #: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "右にスクロールする"
@@ -2227,6 +2232,7 @@ msgstr "結果は最後に表示されます。"
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -2528,7 +2534,6 @@ msgid "{count, plural, one {You needed # right to win.} other {You needed # righ
 msgstr "{count, plural, other {勝つには#問の正解が必要でした。}}"
 
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
 msgctxt "wS1KQ6"
 msgid "<label>Right answer:</label> <answer></answer>"
@@ -2593,7 +2598,6 @@ msgstr "レッスンをもう一度学ぶ"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/focus-test/focus-test-subjects.tsx
-#: src/mock/mock-chooser-picked.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "ay-crl"
 msgid "Subjects"
@@ -5764,6 +5768,13 @@ msgid "Goals"
 msgstr "目標"
 
 #: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "脳力"
+
+#: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
 msgid "The call comes back so you can try again."
 msgstr "この会話はまた出てくるので、もう一度挑戦できます。"
@@ -7586,11 +7597,6 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "自信があるときだけ答えましょう。自信がないと言っても大丈夫です。"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "Gr6IEG"
-msgid "<label>You answered:</label> <answer></answer>"
-msgstr "<label>回答：</label><answer></answer>"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "明日から練習できます"
@@ -7846,14 +7852,10 @@ msgid "The next section starts on its own when the break ends."
 msgstr "休憩が終わると、次のセクションが自動で始まります。"
 
 #: src/mock/mock-chooser-last-mock.tsx
+#: src/mock/mock-chooser-page.tsx
 msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "前回の模試"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "C0vG_3"
-msgid "The picked mock exam"
-msgstr "選んだ模試"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
@@ -7874,36 +7876,6 @@ msgstr "模試を準備しています…"
 msgctxt "4FZiEz"
 msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 msgstr "本番に近い問題を作成しています。準備ができ次第、ここで模試が始まります。"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "y0zaf-"
-msgid "Time limit"
-msgstr "制限時間"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "-LMjdj"
-msgid "Usually takes"
-msgstr "所要時間の目安"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "約{time}"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-question.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kyHVVK"
-msgid "Written part"
-msgstr "記述問題"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "TX7Ut7"
-msgid "Parts"
-msgstr "パート"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -7980,9 +7952,9 @@ msgstr "答えを保存できませんでした。"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "2_2n3w"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
-msgstr "{blank, plural, other {未回答の問題が#問}}、{flagged, plural, other {見直し対象の問題が#問}}あります。"
+msgctxt "Beu7ZD"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
+msgstr "{blank, plural, =1 {#問が空欄です} other {空欄の問題が#問あります}}、{flagged, plural, =1 {#問を見直しにしています} other {見直し対象の問題が#問あります}}。"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7992,9 +7964,9 @@ msgstr "{count, plural, other {未回答の問題が#問あります。}}"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "gaB5_0"
-msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
-msgstr "{count, plural, other {見直し対象の問題が#問あります。}}"
+msgctxt "GCYYkV"
+msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
+msgstr "{count, plural, =1 {#問を見直しにしています。} other {見直し対象の問題が#問あります。}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8186,6 +8158,12 @@ msgctxt "mockQuestionsAndTime"
 msgid "{count, plural, one {# question} other {# questions}} · {time}"
 msgstr "{count, plural, other {#問}}・{time}"
 
+#. After a mock exam's size and time limit: about how long learners usually take.
+#: src/mock/mock-option-labels.ts
+msgctxt "Zz21lR"
+msgid "usually {time}"
+msgstr "通常{time}ほど"
+
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
 msgctxt "-IhwDy"
@@ -8196,6 +8174,13 @@ msgstr "未回答にする"
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "記述問題 · {area}"
+
+#: src/mock/mock-question.tsx
+#: src/mock/mock-runner-view.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kyHVVK"
+msgid "Written part"
+msgstr "記述問題"
 
 #: src/mock/mock-question.tsx
 msgctxt "cPym2K"
@@ -8213,6 +8198,12 @@ msgid "Review mistakes"
 msgstr "間違えた問題を見直す"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "一部正解"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8224,11 +8215,7 @@ msgid "Wrong"
 msgstr "不正解"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "一部正解"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "未解答"
@@ -8265,21 +8252,6 @@ msgid "By topic"
 msgstr "トピック別"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "解答を見る"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "詳細を見る"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "回答数"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "この模試について"
@@ -8305,7 +8277,6 @@ msgid "Grade it"
 msgstr "採点する"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "未回答でした。"
@@ -8588,30 +8559,20 @@ msgid "{change} since the last one"
 msgstr "前回から{change}"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "回答数"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "今回の模試のあと"
-
-#: src/mock/mock-review.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "回答と正解"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "問題{number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "第{number}問"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "一部正解で、部分点がつきました。"
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
@@ -8759,11 +8720,11 @@ msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "減点後のスコア {score}／{total}"
 
-#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}、見直し対象"
+msgctxt "ETtb7q"
+msgid "{question}, flagged"
+msgstr "{question}（見直し）"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9488,6 +9449,12 @@ msgstr "知っている内容はスキップします"
 msgctxt "47D0tB"
 msgid "Only what's new or hard"
 msgstr "知らないことや難しいことだけを学びます"
+
+#: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "約{time}"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "P05JFf"

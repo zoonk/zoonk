@@ -195,8 +195,13 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
             </p>
 
             <p className="text-brain-text text-sm font-medium tabular-nums">
-              {t("{points} Brain Power", {
-                points: formatWholeNumber({ format, value: currentBelt.totalBrainPower }),
+              {t({
+                description:
+                  "The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out.",
+                message: "{points} Brain Power (BP)",
+                values: {
+                  points: formatWholeNumber({ format, value: currentBelt.totalBrainPower }),
+                },
               })}
             </p>
           </div>

@@ -18,7 +18,7 @@ function ReviewEntry({ question }: { question: string }) {
   );
 }
 
-/** A mock result's "See answers": each entry has its own "…". */
+/** A sheet whose entries each have their own "…". */
 function ReviewEntries() {
   return (
     <Drawer defaultOpen>

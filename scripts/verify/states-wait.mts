@@ -28,7 +28,7 @@ export async function settle(page: Page, ms: number) {
 
 export async function holdStill(page: Page) {
   for (let tries = 0; tries < STILL_TRIES; tries += 1) {
-    await page.evaluate(snapshotLayout);
+    await page.evaluate(snapshotLayout, "step");
     await page.waitForTimeout(STILL_MS);
 
     const { moved: changed } = await page.evaluate(compareLayout, "");

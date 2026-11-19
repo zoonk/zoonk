@@ -135,7 +135,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
         use: "A checked radio or checkbox, and an answer's \"Your answer\" before it's checked.",
       },
       {
-        meaning: "A pick's fill, darker than a hover, never with a ring.",
+        meaning: "A pick's fill, as light as `muted`, in its line's place: never with a ring.",
         name: "selected-tint",
         tint: true,
         use: "Under a picked answer, choice, card or toggle (`ANSWER_TONE.picked`, `ChoiceList`, `Toggle`).",

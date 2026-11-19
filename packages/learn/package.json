@@ -108,6 +108,7 @@
     "./messages/*.po": "./messages/*.po",
     "./mind-maps": "./src/mind-maps/mind-maps-screen.tsx",
     "./mind-maps/actions": "./src/mind-maps/mind-map-actions.ts",
+    "./mind-maps/description": "./src/mind-maps/mind-map-description.tsx",
     "./mind-maps/finished-chapter": "./src/mind-maps/finished-chapter-map.tsx",
     "./mind-maps/outline": "./src/mind-maps/mind-map-outline.tsx",
     "./mind-maps/page": "./src/mind-maps/_utils/mind-maps-page.ts",

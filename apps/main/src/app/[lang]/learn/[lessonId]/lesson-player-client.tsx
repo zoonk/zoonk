@@ -109,7 +109,7 @@ type LessonPlayerClientProps = {
   challengeTeam?: ChallengeTeam | null;
   endingSlots?: Pick<
     NonNullable<LessonPlayerProviderProps["slots"]>,
-    "completion" | "completionActions" | "completionDetails"
+    "completion" | "completionActions" | "completionDetails" | "completionTitled"
   >;
   firstAnswer: string | null;
   goalId?: string | null;

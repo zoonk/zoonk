@@ -9,7 +9,7 @@
   "mock_break_detail": "1c2f3f869e85c4a746d8d13cfb535396bdc5ce24b60fa84796b6d71f61ffaae4",
   "mock_break_time_left": "d70678f380db1785ea5d06114df142d294b954482f360b6028fb824a6c6ec7bb",
   "mock_cell_answered": "852f5756e5ba7f72ae947e20be16ca933aa43f36c9239f6067f1b19adc5d06d6",
-  "mock_cell_marked_for_review": "a128669d57c7543e8469a0a4c5677beb72470b245a727c76daa0df88359810fc",
+  "mock_cell_flagged": "89e14ee09a8b1ff18ea424548cf929c116ba281bef8ee35fcae038a34e9f114d",
   "mock_continue": "8fdb544d63b79b7e2a2f57ba5eea4d52a5cef2beb4d7be5087cc15fb4b292bcf",
   "mock_continue_section": "cf11cdc71796562873e389f24c5481314e6c36f67fe4e12ea687f8a8ff434516",
   "mock_essay_blank": "ce8543c6a4ee0cb7164c70ab1e1b17dded3472d63352408adb2786f5cfa24caf",
@@ -32,8 +32,8 @@
   "mock_left_blank": "ed5b2b753c98801fe9cff37a97806c46dcc024fedbd27ec506971ad41b88cad3",
   "mock_left_blank_and_flagged": "6d06ef6ee00a5b78f1c3a3a4b541dce97ce0f714128bced3f5ba12680475b646",
   "mock_left_blank_only": "8cce4729aaf592fc82f0c0bfa098c0dc29b2e1373a73d87688446f4cdb90b0d1",
-  "mock_left_flagged": "e3bfa3c500d309ae477cdbc2dce07e1d7557785f301309d90a0609318574c387",
-  "mock_left_flagged_only": "cfc972d50836ba2e1eb00136c27d3a8f24b373ad1c6857a509708d18bbe25611",
+  "mock_left_flagged": "4a9dee675ead616f7cfdd1d602a5662b2c809437fae8e406cf3690fb648a39fa",
+  "mock_left_flagged_only": "31815d2d3dc4b518a8809bdb318486214d1de9d28e383a07bdd2709913481360",
   "mock_moves_forward": "f2ee8c32e084f26e3979d6806bfbf7d0902a47669c17b5e1dfffa28ae1c1a8af",
   "mock_moves_forward_must": "9d75f80209b554e5fb16fc276043ea153d3c7f4a750fc366dfdfe6d19d34451d",
   "mock_moves_must": "31a19be81dc0a9973fe1b8e4dfa88fbf17db4d643a92b3ac2ca27552dec7c20e",
@@ -149,15 +149,16 @@
     <string name="mock_moves_must">Réponds à chaque question pour continuer.</string>
     <string name="mock_hand_in_mock_title">Rendre l’examen blanc ?</string>
     <string name="mock_hand_in_section_title">Rendre cette partie ?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d question est sans réponse</item>
         <item quantity="many">%d questions sont sans réponse</item>
         <item quantity="other">%d questions sont sans réponse</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="one">%d est marquée pour révision</item>
-        <item quantity="other">%d sont marquées pour révision</item>
+        <item quantity="one">%d est marquée</item>
+        <item quantity="many">%d sont marquées</item>
+        <item quantity="other">%d sont marquées</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s et %2$s.</string>
@@ -167,9 +168,9 @@
         <item quantity="other">%d questions sont sans réponse.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d question est marquée pour révision.</item>
-        <item quantity="many">%d questions sont marquées pour révision.</item>
-        <item quantity="other">%d questions sont marquées pour révision.</item>
+        <item quantity="one">%d question est marquée.</item>
+        <item quantity="many">%d questions sont marquées.</item>
+        <item quantity="other">%d questions sont marquées.</item>
     </plurals>
     <string name="mock_every_answered">Toutes les questions ont une réponse.</string>
     <string name="mock_essay_blank">La rédaction est vide.</string>
@@ -194,8 +195,8 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">réponse donnée</string>
-    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_marked_for_review">%1$s, marquée pour révision</string>
+    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_flagged">%1$s, marquée</string>
     <string name="mock_sections">Parties</string>
     <string name="mock_section_number">Partie %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

@@ -46,6 +46,8 @@ import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.ceremonies.MomentBuddy
+import com.zoonk.android.feature.ceremonies.momentBuddy
 import com.zoonk.android.feature.player.LessonColumnBeforeFold
 import com.zoonk.android.feature.player.LessonEndSlot
 import com.zoonk.android.feature.player.LessonPlayerExits
@@ -55,6 +57,7 @@ import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toPlayableLesson
+import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -69,6 +72,7 @@ import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.QUICK_EXPLANATION_MINUTES
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.taskBarColumn
@@ -158,7 +162,8 @@ private fun ExplanationView(
     LaunchedEffect(explanation, (session as? SessionState.SignedIn)?.session) { viewModel.show(explanation) }
 
     if (lesson != null && (readsAtOnce || started)) {
-        val playable = remember(lesson) { lesson.toPlayableLesson() }
+        // The lesson goes by the question's title, as Today and the goal list name it.
+        val playable = remember(lesson, explanation.title) { lesson.toPlayableLesson().copy(title = explanation.title) }
         val exits = remember(navigator) { explainExits(navigator) }
 
         PlayingLesson(
@@ -169,7 +174,7 @@ private fun ExplanationView(
             exits = exits,
             endSlot =
                 LessonEndSlot(
-                    body = { state -> ExplainEnding(explanation, state, navigator, readAgain) },
+                    body = { state -> ExplainEnding(explanation, state, momentBuddy(app), navigator, readAgain) },
                     done = { finish(explanation, navigator) },
                 ),
         )
@@ -275,17 +280,12 @@ private fun ExplainHeading(
     }
 }
 
-/** Main's `Outline`: what's coming, numbered, with placeholders until the run names the screens. */
+/** Main's `Outline`: the screens to come, numbered, with placeholders until the run names them. */
 @Composable
 private fun Outline(titles: List<String>) {
     val locale = currentLocale()
 
     Column {
-        Text(
-            stringResource(R.string.explain_coming),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
-        )
         val rows = titles.ifEmpty { List(OUTLINE_PLACEHOLDERS) { null } }
         rows.forEachIndexed { index, title ->
             if (index > 0) HorizontalDivider()
@@ -413,15 +413,20 @@ internal fun SlowWait(
     }
 }
 
+/** Main's ending spaces its sections 28px apart, 8 more than the result's own spacing. */
+private val SECTION_GAP = 8.dp
+
 /** Main's `ExplainEnding`: what the learner now knows, the explanation in a few sentences, and where to go further. */
 @Composable
 internal fun ExplainEnding(
     explanation: Explanation,
     state: LessonPlayerState,
+    buddy: MomentBuddy,
     navigator: AppNavigator,
     readAgain: suspend () -> Unit,
 ) {
     val saving = state.completion?.status == CompletionStatus.Saving
+    val result = state.completion?.result
     val locale = currentLocale()
 
     // The course to go further is linked a few seconds after the explanation can be read.
@@ -441,26 +446,28 @@ internal fun ExplainEnding(
                 LessonReadouts(state, withFacts = false)
             }
 
-            if (explanation.recap.isNotEmpty()) {
-                Column {
-                    Text(
+            if (!saving && result != null) DayMoment(result, buddy.look, buddy.name)
+
+            if (!saving && explanation.recap.isNotEmpty()) {
+                Column(Modifier.padding(top = SECTION_GAP), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    SectionHeader(
                         pluralStringResource(
                             R.plurals.explain_recap,
                             explanation.recap.size,
                             formatNumber(explanation.recap.size.toDouble(), locale),
                         ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelLarge,
                     )
-                    explanation.recap.forEachIndexed { index, sentence ->
-                        if (index > 0) HorizontalDivider()
-                        Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text(
-                                formatNumber((index + 1).toDouble(), locale),
-                                color = MaterialTheme.zoonk.faint,
-                                style = MaterialTheme.zoonkType.data,
-                            )
-                            Text(sentence, style = MaterialTheme.typography.bodyMedium)
+                    Column {
+                        explanation.recap.forEachIndexed { index, sentence ->
+                            if (index > 0) HorizontalDivider()
+                            Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                Text(
+                                    formatNumber((index + 1).toDouble(), locale),
+                                    color = MaterialTheme.zoonk.faint,
+                                    style = MaterialTheme.zoonkType.data,
+                                )
+                                Text(sentence, style = MaterialTheme.typography.bodyMedium)
+                            }
                         }
                     }
                 }
@@ -468,12 +475,8 @@ internal fun ExplainEnding(
         },
         next = {
             if (!saving) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        stringResource(R.string.explain_go_further),
-                        modifier = Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                Column(Modifier.padding(top = SECTION_GAP), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    SectionHeader(stringResource(R.string.explain_go_further))
                     DeeperRow(explanation, navigator)
                     explanation.goFurther.questions.forEach { question ->
                         GoFurtherRow(R.drawable.ic_help, question, quickExplanationLabel()) { startGoal(question, navigator) }

@@ -327,37 +327,37 @@
         }
       }
     },
-    "%@ Brain Power" : {
-      "comment" : "The learner's Brain Power, at the end of the belt panel's first line",
+    "%@ Brain Power (BP)" : {
+      "comment" : "The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ Brain Power"
+            "value" : "%@ Brain Power (BP)"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ de Poder Mental"
+            "value" : "%@ de Poder Mental (PM)"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ points de Puissance Mentale"
+            "value" : "%@ points de Puissance Mentale (PM)"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ punti di Potenza Mentale"
+            "value" : "%@ punti di Potenza Mentale (PM)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@脳力"
+            "value" : "%@ 脳力"
           }
         },
         "ko" : {
@@ -369,19 +369,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ pkt Mocy Umysłu"
+            "value" : "%@ pkt Mocy Umysłu (MU)"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ de Poder Mental"
+            "value" : "%@ de Poder Mental (PM)"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ Beyin Gücü"
+            "value" : "%@ Beyin Gücü (BG)"
           }
         }
       }
@@ -4439,6 +4439,64 @@
         }
       }
     },
+    "Past 6 months" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzte 6 Monate"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Últimos 6 meses"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 derniers mois"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimi 6 mesi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "過去6か月"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 6개월"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnie 6 miesięcy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Últimos 6 meses"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son 6 ay"
+          }
+        }
+      }
+    },
     "Past 12 months" : {
       "localizations" : {
         "de" : {
@@ -4551,64 +4609,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Son 90 gün"
-          }
-        }
-      }
-    },
-    "Past 6 months" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Letzte 6 Monate"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Últimos 6 meses"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "6 derniers mois"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ultimi 6 mesi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "過去6か月"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "최근 6개월"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ostatnie 6 miesięcy"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Últimos 6 meses"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Son 6 ay"
           }
         }
       }

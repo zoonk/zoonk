@@ -19,6 +19,7 @@ import { type TaskFrameAside } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { useMockNumber, useMockTitle } from "./mock-labels";
 import { MockResultActions, MockResultContinue } from "./mock-result-actions";
+import { MockResultAnswers, hasAnswerCounts } from "./mock-result-answers";
 import { MockResultBreakdown, hasBreakdown, useMockRange } from "./mock-result-breakdown";
 import { MockResultDetails } from "./mock-result-details";
 import { useEssayItems } from "./mock-result-essays";
@@ -34,10 +35,11 @@ import {
   usePlanChange,
 } from "./mock-result-plan";
 import { reachedEveryMinimum, useMissedMinimum } from "./mock-result-points";
+import { ResultSection } from "./mock-result-section";
 import { useSpeakingItems } from "./mock-result-speaking";
 import { type MockResultPart, getResultAsideParts, getResultSteps } from "./mock-result-steps";
-
-type Area = MockResult["areas"][number];
+import { MockReview } from "./mock-review";
+import { getVerdictAreas } from "./mock-verdict";
 
 /** The number the result leads with, and the one line that names it. */
 function useScore(result: MockResult): { caption: string; value: string } {
@@ -88,26 +90,18 @@ function useScore(result: MockResult): { caption: string; value: string } {
   };
 }
 
-function getAreaMeasure(area: Area): number {
-  return area.score?.score ?? (area.total > 0 ? area.correct / area.total : 0);
-}
-
 /** One sentence on what the number means for the learner's next days, or nothing. */
 function useVerdict(result: MockResult): string | null {
   const t = useExtracted();
-  const ranked = result.areas.toSorted((a, b) => getAreaMeasure(b) - getAreaMeasure(a));
-  const best = ranked[0];
-  const worst = ranked.at(-1);
+  const areas = getVerdictAreas(result.areas);
 
   if (reachedEveryMinimum(result.points)) {
     return t("You reached every minimum in this mock exam.");
   }
 
-  if (!best || !worst || getAreaMeasure(best) === getAreaMeasure(worst)) {
-    return null;
-  }
-
-  return t("Strongest: {best}. Work on: {worst}.", { best: best.name, worst: worst.name });
+  return areas
+    ? t("Strongest: {best}. Work on: {worst}.", { best: areas.best.name, worst: areas.worst.name })
+    : null;
 }
 
 function DeltaLine({ result }: { result: MockResult }) {
@@ -145,6 +139,29 @@ function MockDayMoment() {
   );
 }
 
+function hasSummary(result: MockResult): boolean {
+  return hasAnswerCounts(result) || hasBreakdown(result);
+}
+
+/**
+ * What supports the number: how the answers went and each subject's share of it. Beside the page
+ * on a wide screen, and before the questions under it.
+ */
+function MockResultSummary({ result }: { result: MockResult }) {
+  const t = useExtracted();
+
+  return (
+    <>
+      {hasAnswerCounts(result) && (
+        <ResultSection title={t("Answers")}>
+          <MockResultAnswers result={result} />
+        </ResultSection>
+      )}
+      {hasBreakdown(result) && <MockResultBreakdown result={result} />}
+    </>
+  );
+}
+
 function ScoreStep({ result }: { result: MockResult }) {
   const title = useMockTitle();
   const { runner } = useMockScreen();
@@ -177,9 +194,13 @@ function ScoreStep({ result }: { result: MockResult }) {
         {!missed && <MockDayMoment />}
       </div>
 
-      {hasBreakdown(result) && <MockResultBreakdown result={result} />}
+      {hasSummary(result) && (
+        <div className="with-aside:hidden flex w-full flex-col gap-8" data-slot="mock-summary">
+          <MockResultSummary result={result} />
+        </div>
+      )}
 
-      <MockResultDetails result={result} />
+      <MockReview review={runner.view.review} trueFalseLabels={runner.view.trueFalseLabels} />
     </StepCard>
   );
 }
@@ -188,20 +209,28 @@ function useResultAside({
   change,
   has,
   preparation,
+  result,
 }: {
   change: PlanChange;
   has: Record<MockResultPart, boolean>;
   preparation: MockResult["preparation"];
+  result: MockResult;
 }): TaskFrameAside | null {
   const t = useExtracted();
+  const title = useMockTitle();
+  const { runner } = useMockScreen();
+  const summary = has.score && hasSummary(result);
+  const after = getResultAsideParts(has).length > 0;
 
-  if (getResultAsideParts(has).length === 0) {
+  if (!summary && !after) {
     return null;
   }
 
   return {
     children: (
       <>
+        {summary && <MockResultSummary result={result} />}
+
         {preparation && (
           <TaskAsideSection title={t("Your preparation")}>
             <p className="flex flex-col items-start gap-1.5 [&>span:first-child]:text-3xl">
@@ -218,8 +247,9 @@ function useResultAside({
         )}
       </>
     ),
-    label: t("After this mock exam"),
-    title: t("After this mock exam"),
+    // Its blocks name themselves once the answers lead it, so the rail's own line would repeat them.
+    label: summary ? title(runner.view) : t("After this mock exam"),
+    title: summary ? undefined : t("After this mock exam"),
   };
 }
 
@@ -243,7 +273,7 @@ function useResultSteps(result: MockResult) {
     speaking: speaking.length > 0,
   };
 
-  const aside = useResultAside({ change, has, preparation });
+  const aside = useResultAside({ change, has, preparation, result });
 
   const parts: Record<MockResultPart, StepsItem[]> = {
     essays,
@@ -291,6 +321,7 @@ function MockResultSteps({ result }: { result: MockResult }) {
       exitHref={hrefs.exit}
       finalAction={<MockResultActions />}
       finalSecondAction={<MockResultContinue />}
+      headerEnd={<MockResultDetails result={result} />}
       items={items.map((item) => ({
         ...item,
         action: (

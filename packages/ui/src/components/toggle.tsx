@@ -5,7 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 
 const toggleVariants = cva(
-  "group/toggle hit-area hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-pressed:bg-selected-tint aria-pressed:hover:bg-selected-tint aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 relative inline-flex items-center justify-center gap-1 rounded-lg text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/toggle hit-area hover:bg-muted/60 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-pressed:bg-selected-tint aria-pressed:text-foreground aria-pressed:hover:bg-selected-tint aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 relative inline-flex items-center justify-center gap-1 rounded-lg text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText] forced-colors:aria-pressed:forced-color-adjust-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
@@ -15,9 +15,14 @@ const toggleVariants = cva(
         sm: "h-8 min-w-8 px-3",
       },
       variant: {
+        // One of a fixed set that is always all on screen (a week's days): off is the bare, faint
+        // label and on the pick's tile, so on and off are told apart without reading. More contrast
+        // gives both their line.
+        cell: "text-faint contrast-more:border-input border border-transparent bg-transparent",
         default: "bg-transparent",
+        // Off, a line and a quiet label; on, the pick's fill takes the line's place.
         outline:
-          "border-input border bg-transparent",
+          "border-input text-muted-foreground contrast-more:aria-pressed:border-input border bg-transparent aria-pressed:border-transparent",
       },
     },
   },

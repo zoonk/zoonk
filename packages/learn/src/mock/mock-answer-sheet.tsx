@@ -34,12 +34,14 @@ function useSheetCountLine(): string {
 }
 
 const CELL_FILLED_CLASS =
-  "bg-surface-3 text-foreground enabled:hover:bg-surface-3 ring-transparent";
+  "bg-selected-tint text-foreground enabled:hover:bg-selected-tint contrast-more:ring-input ring-transparent";
 
 const CELL_CURRENT_CLASS =
   "after:bg-foreground after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full";
 
-const CELL_FLAGGED_CLASS = "text-warning-text ring-warning ring-2";
+/** A flag is a tint in its own color, never a ring; an answered one keeps its number in ink. */
+const CELL_FLAGGED_CLASS =
+  "bg-warning/14 enabled:hover:bg-warning/14 contrast-more:ring-warning ring-transparent contrast-more:ring-2";
 
 function QuestionCell({
   index,
@@ -54,6 +56,7 @@ function QuestionCell({
   const draft = runner.drafts[question.itemId];
   const isEssay = question.format === "essay";
   const isCurrent = index === runner.position;
+  const isAnswered = countsTowardMockProgress(runner, question.itemId);
 
   const label = useQuestionCellLabel({ flagged: Boolean(draft?.flagged), question });
 
@@ -63,8 +66,8 @@ function QuestionCell({
       aria-label={label}
       className={cn(
         "focus-visible:outline-ring/50 text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-3 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
-        countsTowardMockProgress(runner, question.itemId) && CELL_FILLED_CLASS,
-        draft?.flagged && CELL_FLAGGED_CLASS,
+        isAnswered && CELL_FILLED_CLASS,
+        draft?.flagged && cn(CELL_FLAGGED_CLASS, !isAnswered && "text-warning-text"),
         isCurrent && cn(CELL_CURRENT_CLASS, !draft?.flagged && "text-foreground"),
       )}
       disabled={!runner.moves.canOpen(index)}
@@ -145,15 +148,11 @@ export function MockQuestionMap({ className }: { className?: string }) {
 
   return (
     <HorizontalScroll
+      box={{ label: t("Questions") }}
       className={className}
       labels={{ left: t("Earlier questions"), right: t("Later questions") }}
     >
-      <ol
-        aria-label={t("Questions")}
-        className="flex w-max min-w-full gap-2 p-0.5"
-        data-slot="mock-question-map"
-        ref={row}
-      >
+      <ol className="flex w-max min-w-full gap-2 p-0.5" data-slot="mock-question-map" ref={row}>
         {questions.map((question, index) => (
           <li className="w-11 shrink-0 grow" key={question.itemId}>
             <QuestionCell index={index} onPick={runner.go} question={question} />

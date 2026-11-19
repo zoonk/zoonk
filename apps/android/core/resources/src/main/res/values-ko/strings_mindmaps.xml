@@ -54,7 +54,10 @@
   "mindmaps_saved_empty": "2a5e36f326c156fc69dd6e9ff218fd0976ca7a58957a2780e8d7a365cee547a9",
   "mindmaps_saved_state": "80438167e711e394111ea24b9b5c7d4297caa1fd9e668cd0268dba3a15eec950",
   "mindmaps_show_all": "2d897bb618e4efb10c876e77cc387a4b2a663f9695f7b8d8c73927e7965c5402",
+  "mindmaps_shown_as": "61289214d15a0a2e22c5f6177943d93487fc9d54fb4bf0038b3e7af39e3bdd27",
   "mindmaps_shown_as_text": "943d780a5d4f23ca742bc022487dfa29f0f12af9736f2549efc8baf29f9cddba",
+  "mindmaps_shown_map": "aa433ac31cb378f2dcdb7fc5dca2c0e1775f883c730eddc47fc0de343170dfc9",
+  "mindmaps_shown_text": "30cfe1a3fa254f544119fad266daf93d50a097a9ba4b342006e59810d3cbac9c",
   "mindmaps_start_from_first": "5f8da31bdab99ba9fa5cada678c6c9dc0b8c09a4d2b3a33a5636d10c534939ba",
   "mindmaps_study": "9306a8076d4b064cd9040644e80b05aae44875a70207393cb39ada2c1679e5de",
   "mindmaps_tab_chapters": "47524aa55d18f05919df4d931193ad530876c6615d6a7b42816298a7f3850610",
@@ -69,6 +72,7 @@
   "mindmaps_writing_lessons": "ad9c10df3b69ab9ca35ab37098e6750cb137421b28ba2ef3306f2dd43e4d035e",
   "mindmaps_writing_lessons_wait": "b4b41bf177ba95f4b6f8921248ae4b9f17cf6dcf99c6877defd7cc1703f417c2",
   "mindmaps_zoom": "eedcdd63c984c7d6ca81ddcf46b5a8011f2ff73deda6690121f41ac428206904",
+  "mindmaps_zoom_hint": "73faa4d9dd069654d60872122fb312abb0cc9723fc19b99918860ca17206482d",
   "mindmaps_zoom_in": "c4c9d7f160537bc2f68d505e978f810954c7eeb5d2e5885b76db2225961acd42",
   "mindmaps_zoom_out": "1438a347326823f3c10d04590d3a2048986d8e74703d88680ba75e104ebadbad"
 }
@@ -205,4 +209,12 @@
     <string name="mindmaps_zoom">확대하기</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">이 마인드맵은 더 이상 볼 수 없어요.</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
+    <string name="mindmaps_shown_as">마인드맵 보기 방식</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
+    <string name="mindmaps_shown_map">맵</string>
+    <!-- The study screen's switch: shows a map as text. -->
+    <string name="mindmaps_shown_text">글</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
+    <string name="mindmaps_zoom_hint">맵을 탭하면 확대돼요</string>
 </resources>

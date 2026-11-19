@@ -1,0 +1,91 @@
+import { type MockReviewEntry } from "@zoonk/core/exams/mocks/view-contract";
+import { describe, expect, it } from "vitest";
+import { page } from "vitest/browser";
+import { MockReview } from "../../../learn/src/mock/mock-review";
+import { render } from "../_test-utils/render";
+
+function entry(overrides: Partial<MockReviewEntry> & { number: number }): MockReviewEntry {
+  return {
+    area: "Languages",
+    citation: null,
+    context: `Passage for question ${overrides.number}.`,
+    correctAnswer: "The right option",
+    explanation: `Why question ${overrides.number} went wrong.`,
+    format: "multipleChoice",
+    itemId: `item-${overrides.number}`,
+    learnerAnswer: "The picked option",
+    outcome: "wrong",
+    question: `What does question ${overrides.number} ask?`,
+    set: null,
+    ...overrides,
+  };
+}
+
+const REVIEW = [
+  entry({ number: 4 }),
+  entry({ number: 7 }),
+  entry({ learnerAnswer: null, number: 9, outcome: "blank" }),
+];
+
+const row = (number: number) =>
+  page.getByRole("button", { name: `What does question ${number} ask?` });
+
+function top(number: number): number {
+  return row(number).element().getBoundingClientRect().top;
+}
+
+describe("a mock exam's questions to review", () => {
+  it("lists every missed question as a closed row, with how many there are", async () => {
+    render(<MockReview review={REVIEW} trueFalseLabels="trueFalse" />);
+
+    const list = page.getByRole("region", { name: "Questions to review" });
+
+    await expect.element(list.getByRole("listitem")).toHaveLength(REVIEW.length);
+    await expect.element(list.getByText("3", { exact: true })).toBeVisible();
+    await expect.element(row(4)).toHaveAttribute("aria-expanded", "false");
+    expect(row(4).element().textContent).toMatch(/Question 4.+Languages$/u);
+    await expect.element(page.getByText("Why question 4 went wrong.")).not.toBeInTheDocument();
+  });
+
+  it("opens a row in place to its passage, both answers and why, moving no row above it", async () => {
+    render(<MockReview review={REVIEW} trueFalseLabels="trueFalse" />);
+
+    await expect.element(row(7)).toBeVisible();
+    const before = { first: top(4), pressed: top(7) };
+
+    await row(7).click();
+
+    await expect.element(page.getByText("Passage for question 7.")).toBeVisible();
+    await expect.element(page.getByText("Why question 7 went wrong.")).toBeVisible();
+
+    const answers = page.getByRole("group", { name: "Your answer and the right one" });
+
+    await expect.element(answers.getByText("The picked option")).toBeVisible();
+    await expect.element(answers.getByText("The right option")).toBeVisible();
+    await expect.element(page.getByText("Why question 4 went wrong.")).not.toBeInTheDocument();
+
+    expect({ first: top(4), pressed: top(7) }).toStrictEqual(before);
+  });
+
+  it("says on its row that a question was left blank, and shows only the right answer", async () => {
+    render(<MockReview review={REVIEW} trueFalseLabels="trueFalse" />);
+
+    await expect.element(row(9)).toBeVisible();
+
+    expect(row(9).element().textContent).toMatch(/Question 9.+Languages.+Blank$/u);
+    expect(row(4).element().textContent).not.toMatch(/Blank/u);
+
+    await row(9).click();
+
+    const answers = page.getByRole("group", { name: "Your answer and the right one" });
+
+    await expect.element(answers.getByText("The right option")).toBeVisible();
+    await expect.element(answers.getByText("Your answer")).not.toBeInTheDocument();
+  });
+
+  it("draws nothing when every answer was right", async () => {
+    const { container } = render(<MockReview review={[]} trueFalseLabels="trueFalse" />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+});

@@ -145,6 +145,21 @@ function panel(slot: string, content = "") {
   document.querySelector<HTMLElement>(`[data-slot="${slot}"]`)?.focus();
 }
 
+/** A laptop's viewport less the 15 px a classic scrollbar's gutter keeps. */
+// oxlint-disable-next-line no-magic-numbers -- A laptop's room in pixels.
+const ROOM = new DOMRect(0, 0, 1425, 900);
+
+/** A drawer whose backdrop fills the room, every other element drawn at `box`. */
+function drawerInRoom(box: () => DOMRect) {
+  panel("drawer-popup");
+
+  vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function placed(
+    this: Element,
+  ) {
+    return this.matches("[data-slot=drawer-backdrop]") ? ROOM : box();
+  });
+}
+
 describe("shared panel readings", () => {
   it.each(["side-panel-content", "drawer-popup"])(
     "reads a portaled menu inside %s and requires its own focus and close",
@@ -231,11 +246,12 @@ describe("shared panel readings", () => {
     assert.equal(returned(), false);
   });
 
-  it("requires a drawer centered on a laptop without a visible handle", () => {
-    panel("drawer-popup");
+  it("requires a drawer centered in its backdrop's room, which a scrollbar's gutter narrows, without a visible handle", () => {
+    let box = new DOMRect(0, 0, 100, 100);
+    drawerInRoom(() => box);
+
     assert.equal(read()?.centered, false);
-    const box = new DOMRect(innerWidth / 2 - HALF_PANEL, innerHeight / 2 - HALF_PANEL, 100, 100);
-    vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue(box);
+    box = new DOMRect(ROOM.width / 2 - HALF_PANEL, ROOM.height / 2 - HALF_PANEL, 100, 100);
     assert.equal(read()?.centered, true);
 
     document

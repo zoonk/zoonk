@@ -2,6 +2,7 @@
 
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getIsoDateParts } from "@zoonk/utils/date-format";
 import { useExtracted } from "next-intl";
 import { daysUntilIsoDate, useFormatIsoDate, useIsoToday } from "../../_utils/iso-date";
@@ -124,9 +125,15 @@ function FinishReadout() {
   );
 }
 
-export function RevealReadouts() {
+/** `flush` opens a column: no rule or space above the figures. */
+export function RevealReadouts({ flush = false }: { flush?: boolean }) {
   return (
-    <div className="grid auto-cols-fr grid-flow-col border-y [&>*+*]:border-s">
+    <div
+      className={cn(
+        "grid auto-cols-fr grid-flow-col border-y [&>*+*]:border-s",
+        flush && "border-t-0 *:pt-0",
+      )}
+    >
       <TimeReadout />
       <FinishReadout />
     </div>

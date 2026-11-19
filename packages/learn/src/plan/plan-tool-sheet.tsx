@@ -55,7 +55,7 @@ function SystemPicker({
       <div className="flex flex-wrap gap-2">
         {TOOL_SYSTEMS.map((system) => (
           <Toggle
-            className="h-11 rounded-lg px-4"
+            className="h-control rounded-lg px-(--control-pad)"
             key={system}
             onPressedChange={() => onChange(system)}
             pressed={value === system}

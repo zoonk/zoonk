@@ -67,6 +67,7 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -316,14 +317,22 @@ internal fun QuestionCell(
             stringResource(R.string.mock_question_number, question.number)
         }
     // Flagged is read in the key's words, as the web's cell is.
-    val name = if (flagged) stringResource(R.string.mock_cell_marked_for_review, number) else number
+    val name = if (flagged) stringResource(R.string.mock_cell_flagged, number) else number
     val states = if (answered) stringResource(R.string.mock_cell_answered) else ""
-    // The current one has a bar under its number, the web's; a flagged one keeps its amber ring.
+    // The current one has a bar under its number and a flagged one an amber tint with its flag, the web's: never a
+    // ring, except the amber one more contrast asks for.
+    val moreContrast = LocalMoreContrast.current
     val border =
         when {
-            flagged -> MaterialTheme.zoonk.warning
-            answered -> Color.Transparent
+            flagged && moreContrast -> MaterialTheme.zoonk.warning
+            flagged || answered -> Color.Transparent
             else -> MaterialTheme.colorScheme.outlineVariant
+        }
+    val fill =
+        when {
+            flagged -> MaterialTheme.zoonk.warning.copy(alpha = FLAGGED_TINT)
+            answered -> MaterialTheme.zoonk.selectedTint
+            else -> Color.Transparent
         }
 
     val interactions = remember { MutableInteractionSource() }
@@ -346,12 +355,12 @@ internal fun QuestionCell(
                 .heightIn(min = 44.dp)
                 .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .clip(shape)
-                .background(if (answered) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent)
+                .background(fill)
                 .border(if (flagged) 2.dp else 1.dp, border, shape)
                 .indication(interactions, ripple()),
             contentAlignment = Alignment.Center,
         ) {
-            CellLabel(question, answered || current, flagged)
+            CellLabel(question, answered || current, flagged && !answered)
             if (flagged) FlagGlyph(Modifier.align(Alignment.TopEnd).padding(3.dp).size(10.dp))
             if (current) {
                 Box(
@@ -436,6 +445,9 @@ private const val MS_PER_SECOND = 1000L
 
 /** Material's disabled emphasis. */
 private const val DISABLED_ALPHA = 0.38f
+
+/** Main's `bg-warning/14`. */
+private const val FLAGGED_TINT = 0.14f
 
 internal val MockExam.trueFalseWords: TrueFalseWords
     get() = if (trueFalseLabels.value == "rightWrong") TrueFalseWords.RightWrong else TrueFalseWords.TrueFalse

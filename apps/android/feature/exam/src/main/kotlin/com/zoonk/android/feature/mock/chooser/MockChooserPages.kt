@@ -68,7 +68,6 @@ import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.controlInk
@@ -147,24 +146,19 @@ internal fun PracticeChooser(
                 else -> null
             },
         bar = { TaskActions { main -> action(main) } },
-        aside = {
-            // What a pick shows comes last, so picking moves nothing above it.
+        aside =
             view.lastMock?.let { last ->
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SectionHeader(stringResource(R.string.mock_chooser_last_mock))
-                    MockSummaryRow(last, onOpen = last.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }, stacked = true)
+                {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        SectionHeader(stringResource(R.string.mock_chooser_last_mock))
+                        MockSummaryRow(
+                            last,
+                            onOpen = last.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } },
+                            stacked = true,
+                        )
+                    }
                 }
-            }
-            option?.let {
-                PickedMock(
-                    title = mockOptionName(it, severalDays),
-                    size = PickedSize(it.questions, it.minutes, it.estimatedMinutes),
-                    namesTitle = stringResource(if (it.covers != null) R.string.mock_chooser_parts else R.string.mock_chooser_subjects),
-                    names = it.covers ?: it.areas,
-                    written = it.written,
-                )
-            }
-        },
+            },
     ) { asideBeside ->
         item(key = "hero", contentType = "hero") {
             PageHeader(stringResource(R.string.mock_chooser_title), supporting = stringResource(R.string.mock_chooser_line))
@@ -280,7 +274,7 @@ private fun ChooserPage(
     onEnter: () -> Unit,
     note: (@Composable () -> Unit)?,
     bar: @Composable ColumnScope.() -> Unit,
-    aside: @Composable ColumnScope.() -> Unit,
+    aside: (@Composable ColumnScope.() -> Unit)?,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     // Main's screen Enter: a focused control that acts (the last mock, the bar's button, a notice's
@@ -289,7 +283,7 @@ private fun ChooserPage(
     Column(Modifier.onKeyEvent { event -> enterTakes(event, onEnter) }) {
         DetailPage(
             aside = aside,
-            asideLabel = stringResource(R.string.mock_chooser_picked),
+            asideLabel = stringResource(R.string.mock_chooser_last_mock),
             modifier = Modifier.weight(1f),
             listState = listState,
             noteRoom = noteRoom,
@@ -449,89 +443,6 @@ private fun ChoiceSize(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = style.withTabularFigures(),
     )
-}
-
-internal data class PickedSize(
-    val questions: Long,
-    val minutes: Long,
-    val estimatedMinutes: Long,
-)
-
-/** Main's `ChooserPicked`: the picked mock's size and what it asks, beside the options. */
-@Composable
-private fun PickedMock(
-    title: String,
-    size: PickedSize,
-    namesTitle: String,
-    names: List<String>,
-    written: List<String> = emptyList(),
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            SectionHeader(title)
-            Column {
-                PickedFact(stringResource(R.string.mock_chooser_questions), formatNumber(size.questions.toDouble(), currentLocale()))
-                PickedFact(stringResource(R.string.mock_chooser_time_limit), minutesText(size.minutes))
-                // Core sends the limit when no estimate covers the whole mock (an essay, too few answers).
-                if (size.estimatedMinutes < size.minutes) {
-                    PickedFact(
-                        stringResource(R.string.mock_chooser_usually_takes),
-                        stringResource(R.string.mock_chooser_about, minutesText(size.estimatedMinutes)),
-                    )
-                }
-            }
-        }
-        if (names.isNotEmpty() || written.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SectionLabel(namesTitle)
-                Column {
-                    names.forEachIndexed { index, name ->
-                        if (index > 0) HorizontalDivider()
-                        PickedName(name, detail = null)
-                    }
-                    written.forEachIndexed { index, name ->
-                        if (names.isNotEmpty() || index > 0) HorizontalDivider()
-                        PickedName(name, detail = stringResource(R.string.mock_chooser_written_part))
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun PickedFact(
-    label: String,
-    value: String,
-) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .semantics(mergeDescendants = true) {},
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(label, Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        Text(value, style = MaterialTheme.typography.bodyMedium.withTabularFigures())
-    }
-}
-
-@Composable
-private fun PickedName(
-    name: String,
-    detail: String?,
-) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .heightIn(min = 48.dp)
-            .padding(vertical = 12.dp)
-            .semantics(mergeDescendants = true) {},
-    ) {
-        Text(name, style = MaterialTheme.typography.bodyMedium)
-        detail?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
-    }
 }
 
 private val STACK_BELOW = 480.dp

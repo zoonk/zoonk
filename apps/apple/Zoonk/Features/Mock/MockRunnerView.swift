@@ -509,18 +509,22 @@ struct MockSectionCounts {
   var leftOpen: String {
     var parts: [String] = []
 
-    if blank > 0 {
+    if blank > 0, flagged > 0 {
+      parts.append(
+        String(
+          localized: "\(blank) questions are blank and \(flagged) are flagged.", table: "Mock",
+          comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
+      )
+    } else if blank > 0 {
       parts.append(
         String(
           localized: "\(blank) questions are blank.", table: "Mock",
           comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
       )
-    }
-
-    if flagged > 0 {
+    } else if flagged > 0 {
       parts.append(
         String(
-          localized: "\(flagged) questions are marked for review.", table: "Mock",
+          localized: "\(flagged) questions are flagged.", table: "Mock",
           comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
       )
     }
@@ -583,35 +587,8 @@ private struct MockAnswerSheet: View {
           row(question, at: index)
         }
       } header: {
-        VStack(alignment: .leading, spacing: 8) {
-          SectionTitle(
-            Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
-          AccessibilityStack(spacing: 12) {
-            Label {
-              MockAnswerMark.blank
-            } icon: {
-              Image(systemName: "circle")
-            }
-            Label {
-              MockAnswerMark.answered
-            } icon: {
-              Image(systemName: "circle.fill")
-            }
-            Label {
-              Text("Current question", tableName: "Mock")
-            } icon: {
-              Image(systemName: "square.fill")
-                .foregroundStyle(.muted)
-            }
-            Label {
-              Text(MockLabels.markedForReview(MockSectionCounts(run: run).flagged))
-            } icon: {
-              Image(systemName: "flag.fill")
-            }
-          }
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-        }
+        SectionTitle(
+          Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
       } footer: {
         if let tools = view.currentSection?.tools {
           SectionFooter {
@@ -709,9 +686,9 @@ struct MockSheetRow: View {
     .accessibilityLabel(
       flagged
         ? Text(
-          "\(name), marked for review", tableName: "Mock",
+          "\(name), flagged", tableName: "Mock",
           comment:
-            "A cell of the mock exam's answer sheet the learner marked to look at again. %@ is \"Question 12\" or \"Written part\", so use a form that agrees with both."
+            "A cell of the mock exam's answer sheet the learner flagged to look at again. %@ is \"Question 12\" or \"Written part\", so use a form that agrees with both."
         )
         : Text(name)
     )

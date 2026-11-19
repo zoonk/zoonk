@@ -20,6 +20,7 @@ import { measureFrames } from "./content-frames.mts";
 import { readCraft } from "./craft-probe.mts";
 import { craftFindings } from "./craft.mts";
 import { type Shortcuts } from "./keys.mts";
+import { type PressRecord } from "./press-walk.mts";
 import {
   findOverflow,
   findTruncated,
@@ -29,6 +30,7 @@ import {
   visibleLinks,
 } from "./probe.mts";
 import { readStatements } from "./queries.mts";
+import { type Readable, readReadable } from "./readable.mts";
 import {
   classifyRequest,
   inlineRscCharacters,
@@ -81,6 +83,9 @@ export type LoadReport = LoadMeasurement & {
   viewport: ViewportName;
   words: PageWords;
   walk?: WalkCoverage;
+  pressRecords?: PressRecord[];
+  /** What a learner can read on it, which `--baseline` compares. */
+  readable: Readable;
 };
 
 const QUERY_HASH_LENGTH = 8;
@@ -140,6 +145,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     lcpMs: probe?.lcp ?? null,
     overflow: await page.evaluate(findOverflow),
     production: !(await page.evaluate(isNextDev)),
+    readable: await page.evaluate(readReadable),
     roles: await page.evaluate(readRoleFacts),
     shifts: probe?.shifts ?? [],
     skeletonLastMs: probe?.skeletonFrames.at(-1) ?? null,
@@ -205,6 +211,7 @@ export async function measureLoad(
       bytes,
       craft,
       discovery,
+      readable,
       roles,
       timeOrigin: _,
       words: text,
@@ -256,6 +263,7 @@ export async function measureLoad(
       framesDirectory: `${name}-frames`,
       mainThreadMs,
       path: redactQuery(path),
+      readable,
       screenshots: appearances.screenshots,
       viewport,
       words,

@@ -28,7 +28,7 @@
   "stats_best_on": "fa540cb982860d0918cfa9ab0b7865efce26cdfb17e2f87e7fb09548eee5ad26",
   "stats_best_time": "7de3d7ebe0b08a0d6f3197f3a61f4aab7a25aedd1e47d96d4af583e798e74233",
   "stats_best_time_is": "cd18a567a467a74fedfd77216d13af3385466ca61ca821696b377633e5c75dc2",
-  "stats_brain_power_amount": "c5542f0cf102aa2aa3ba3b26ec12f840e03f5fc3df2e900a13a33c1afa2d6dee",
+  "stats_brain_power_amount": "6f414987a666dff78fe8c4524ba41b441d0c5b6313e518c7e08d454b3c14c1ac",
   "stats_brain_power_to": "ec6c2c83c29cad277f2c1de95d42a3b0c80ad48fafcf26c7bfa7a4f66a493bca",
   "stats_calendar_activity_summary": "6da11943d91f36466baf9c2345732fcaad28bb9352a6273ff59847299c34edee",
   "stats_calendar_energy_summary": "dd4099840b745293e9a2dd11b87813fa2e3756bfbe61e3a66ab0d84709885a08",
@@ -102,7 +102,8 @@
     <string name="stats_see_all">すべて見る</string>
     <string name="stats_best_day">正答率が最も高い曜日</string>
     <string name="stats_best_time">調子のよい時間帯</string>
-    <string name="stats_brain_power_amount">脳力%1$s</string>
+    <!-- The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out. -->
+    <string name="stats_brain_power_amount">%1$s 脳力</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">すべての帯を獲得済み</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->

@@ -17,7 +17,7 @@ export type RowChoice<Value extends string> = {
   description?: string;
   label: string;
   mark?: string;
-  trailing?: string;
+  trailing?: React.ReactNode;
   value: Value;
 };
 

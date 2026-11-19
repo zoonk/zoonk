@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "explain_coming": "8665b017424e5d1263174081c4b68eba4ea7ef163bf8d0c099ef5e34afb4b88a",
   "explain_deeper": "3fd79e2dfbcc663fc70122b2fc3bfaf2cf18142b7224ec74b290c9c6bc0467ae",
   "explain_deeper_course": "7d032436b22d1c1299d9c2d2485b7e6fe289d35ffc504df32dd428cda580ca0e",
   "explain_deeper_goal": "bff2c4fb54f20eaac3a58c64ac0097eaac46ec2b7162a022ec362579263a92b7",
@@ -37,7 +36,6 @@
     <string name="explain_phase_write_review">Conferindo os fatos…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
     <string name="explain_quick">Explicação rápida · %1$s</string>
-    <string name="explain_coming">O que vem pela frente</string>
     <string name="explain_one_question">1 pergunta rápida no final</string>
     <string name="explain_deeper">Saiba mais sobre isso</string>
     <!-- %1$s is a course's title. -->

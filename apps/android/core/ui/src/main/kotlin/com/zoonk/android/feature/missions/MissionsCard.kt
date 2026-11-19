@@ -19,6 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -64,7 +65,6 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.busyClickable
 import com.zoonk.android.ui.components.celebrates
-import com.zoonk.android.ui.components.dottedUnderline
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkMotion
@@ -74,11 +74,10 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyMission
 
 /**
- * The day's missions (main's `MissionsCard`), one look wherever they show: the buddy, the title, how many
- * are done beside the Brain Power they earn together, a track, and every mission as a row. [foldRows] keeps
- * the rows behind the title (Today, where most are rows of the day's list already); [collapseWhenDone]
- * folds a won day to one line; [showBuddy] off where the whole page is the buddy's. [opening] and
- * [openFailed] say where a row's tap stands.
+ * The day's missions (main's `MissionsCard`), one look wherever they show: the title, a track with the Brain Power
+ * the missions earn together at its end, and every mission as a row. [foldRows] keeps the rows behind the title
+ * (Today, where most are rows of the day's list already); [collapseWhenDone] folds a won day to one line. [opening]
+ * and [openFailed] say where a row's tap stands.
  */
 @Composable
 fun MissionsCard(
@@ -94,7 +93,6 @@ fun MissionsCard(
     openFailed: (DayMission) -> Boolean = { false },
     foldRows: Boolean = false,
     collapseWhenDone: Boolean = false,
-    showBuddy: Boolean = true,
 ) {
     if (missions.isEmpty()) return
 
@@ -122,18 +120,16 @@ fun MissionsCard(
 
     OutlinedCard(modifier) {
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = if (open) 4.dp else 16.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                if (showBuddy) Buddy(buddy, Modifier.size(24.dp), crop = BuddyCrop.Face)
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    MissionsTitle(won, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        MissionsStatus(progress, Modifier.weight(1f))
-                        BrainPowerReward(points, earned = won, onLevel)
-                    }
-                }
-            }
+            MissionsTitle(won, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
 
-            MissionTrack(progress, Modifier.padding(top = 14.dp))
+            Row(
+                Modifier.padding(top = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                MissionTrack(progress, Modifier.weight(1f), label = missionsDoneLabel(progress))
+                BrainPowerReward(points, earned = won, onLevel)
+            }
 
             if (open) {
                 Column(Modifier.padding(top = 6.dp)) {
@@ -196,28 +192,14 @@ private fun MissionsLine(
     }
 }
 
-/** How many are done; nothing once they all are, where the reward says it. */
+/** How many are done, said for the track. */
 @Composable
-private fun MissionsStatus(
-    progress: MissionProgress,
-    modifier: Modifier,
-) {
+private fun missionsDoneLabel(progress: MissionProgress): String {
     val locale = currentLocale()
-
-    Text(
-        text =
-            if (progress.full) {
-                ""
-            } else {
-                stringResource(
-                    R.string.missions_progress,
-                    formatNumber(progress.done.toDouble(), locale),
-                    formatNumber(progress.total.toDouble(), locale),
-                )
-            },
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+    return stringResource(
+        R.string.missions_progress,
+        formatNumber(progress.done.toDouble(), locale),
+        formatNumber(progress.total.toDouble(), locale),
     )
 }
 
@@ -267,6 +249,7 @@ internal fun MissionTrack(
     modifier: Modifier,
     justDone: Collection<DayMission> = emptyList(),
     delayMillis: Int = 0,
+    label: String? = null,
 ) {
     val fills = progress.fills(justDone)
     val brain = MaterialTheme.zoonk.brain
@@ -274,7 +257,10 @@ internal fun MissionTrack(
     val celebrate = celebrates()
     val delays = fillDelays(fills, delayMillis)
 
-    Row(modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+    Row(
+        modifier.fillMaxWidth().clearAndSetSemantics { label?.let { contentDescription = it } },
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
         fills.zip(delays).forEach { (part, delay) ->
             val (start, fill) = part
             val animates = celebrate && delay != null
@@ -399,58 +385,67 @@ fun MissionListRow(
     }
 }
 
+/** The amount shows the unit's short form; a hover or a long press names the unit in full, and a tap opens the level page. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrainPowerReward(
     points: String,
     earned: Boolean,
     onLevel: () -> Unit,
 ) {
-    val label = stringResource(R.string.missions_brain_power)
+    val amount = stringResource(R.string.missions_points, points)
+    val name = stringResource(R.string.missions_brain_power)
+    val spoken = "$amount $name"
 
-    Row(
-        modifier =
-            Modifier
-                .clip(MaterialTheme.shapes.small)
-                .clickable(role = Role.Button, onClick = onLevel)
-                .semantics(mergeDescendants = true) {}
-                .heightIn(min = 32.dp)
-                .padding(horizontal = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+        tooltip = { PlainTooltip { Text(name) } },
+        state = rememberTooltipState(),
     ) {
-        // brainText, since the page's color on brain is under AA in light.
-        val fill = MaterialTheme.zoonk.brainText
         Row(
             modifier =
-                if (earned) {
-                    Modifier
-                        .clip(MaterialTheme.shapes.extraSmall)
-                        .background(fill)
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                } else {
-                    Modifier
-                },
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable(role = Role.Button, onClick = onLevel)
+                    .clearAndSetSemantics { contentDescription = spoken }
+                    .heightIn(min = 32.dp)
+                    .padding(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painterResource(if (earned) R.drawable.ic_check else R.drawable.ic_psychology),
-                contentDescription = null,
-                modifier = Modifier.size(14.dp),
-                tint = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brain,
-            )
+            // brainText, since the page's color on brain is under AA in light.
+            val fill = MaterialTheme.zoonk.brainText
+            Row(
+                modifier =
+                    if (earned) {
+                        Modifier
+                            .clip(MaterialTheme.shapes.extraSmall)
+                            .background(fill)
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    } else {
+                        Modifier
+                    },
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painterResource(if (earned) R.drawable.ic_check else R.drawable.ic_psychology),
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brain,
+                )
+                Text(
+                    text = amount,
+                    color = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brainText,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.zoonkType.data.withTabularFigures(),
+                )
+            }
             Text(
-                text = stringResource(R.string.missions_points, points),
-                color = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brainText,
-                fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.zoonkType.data.withTabularFigures(),
+                stringResource(R.string.missions_brain_power_short),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
-        Text(
-            label,
-            modifier = Modifier.dottedUnderline(MaterialTheme.colorScheme.outline),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-        )
     }
 }

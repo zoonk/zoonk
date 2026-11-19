@@ -6,14 +6,20 @@ import { type ReactNode, useState } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
 import { DetailContent } from "../_components/detail-page";
 import { PageSectionTitle } from "../_components/page";
+import { FactSegments } from "../_components/task-meta";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
 import { ChooserBar, ChooserHeader, ChooserLayout, MockWriting } from "./mock-chooser-page";
 import { type MockChooserStatus } from "./mock-chooser-parts";
-import { type MockChooserHrefs, PickedMock } from "./mock-chooser-picked";
-import { useMockOptionDetail, useMockOptionName, useMockOptionSize } from "./mock-option-labels";
+import {
+  useMockOptionDetail,
+  useMockOptionName,
+  useMockOptionSizeFacts,
+} from "./mock-option-labels";
 import { MockShortDialog } from "./mock-short-dialog";
 
 export type { MockChooserStatus } from "./mock-chooser-parts";
+
+type MockChooserHrefs = { mock: (id: string) => string };
 
 export function getMockOptionKey(option: MockOptionView): string {
   return [option.kind, option.day ?? "", option.area ?? ""].join(":");
@@ -28,12 +34,12 @@ function useMockChoices({
 }) {
   const name = useMockOptionName();
   const detail = useMockOptionDetail();
-  const size = useMockOptionSize();
+  const sizeFacts = useMockOptionSizeFacts();
 
   return options.map((option) => ({
     description: detail({ option, severalDays }) || undefined,
     label: name({ option, severalDays }),
-    trailing: size(option),
+    trailing: <FactSegments facts={sizeFacts(option)} />,
     value: getMockOptionKey(option),
   }));
 }
@@ -135,13 +141,7 @@ function PracticeChooser({
 
   return (
     <ChooserLayout
-      aside={
-        <>
-          {/* What a pick shows comes last, so picking moves nothing above it. */}
-          <ChooserLastMock mock={view.lastMock} resultHref={hrefs.mock} />
-          {option && <PickedMock option={option} severalDays={severalDays} />}
-        </>
-      }
+      aside={view.lastMock && <ChooserLastMock mock={view.lastMock} resultHref={hrefs.mock} />}
       bar={bar}
       bottomBar={
         <ChooserBar busy={busy} disabled={!option} gated={gated} onStart={start} status={shown} />

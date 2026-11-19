@@ -54,7 +54,10 @@
   "mindmaps_saved_empty": "ca99ff617322bbd11b7b14c47a1f1f704023826b042651e0f67e6f386d3fec86",
   "mindmaps_saved_state": "73bc22257a6bebf97060e7fdbea6b7a89017b52d0dfe0eeb2d2099c9c99632f9",
   "mindmaps_show_all": "0262aff550f5e46b29563b87e3819506ad6e76d07828edb0f9f6fd2c1a665c01",
+  "mindmaps_shown_as": "d2d5ac0526142b7728e5ec5f76e7eae10ae68580b6aea7949cc2c6335262e8e8",
   "mindmaps_shown_as_text": "c20e11075bcf89d5789416048f1f1c6ca2588b78c7dc151383081192a5486278",
+  "mindmaps_shown_map": "deae401f8f0f94bfeb5ece6933a5c4adaf45f712e637a8e0e020b14fc4069a7b",
+  "mindmaps_shown_text": "18f1aa677df73d90bf591bc1bf99036b7a6849a801309e9377bc39400257f0a9",
   "mindmaps_start_from_first": "f5882c2245618314aa0275bdf9c1641d3554740debd6effc9aa105f344efc658",
   "mindmaps_study": "53f29eee54672680bbfb45bfcb74291124005d732d68f3b85bf9ca0ea4ef2194",
   "mindmaps_tab_chapters": "9412bee49e18b15286bfea8b5343dab0b61818141225865bcf68de713262c01d",
@@ -69,6 +72,7 @@
   "mindmaps_writing_lessons": "625dc3d93496f57c1a16c985f32e896b576c9e483a794567a4324a6ec7c6da00",
   "mindmaps_writing_lessons_wait": "d0fe3c39bbc958376bbc91591cecf35cc3b3b753bc96f99b2881928af6f63c66",
   "mindmaps_zoom": "27d8ec211623e83af6e06acbe50a735e96a1f895c1ad220c958e0ae2b7fc4dba",
+  "mindmaps_zoom_hint": "40dcee000028828e7073a9d6620b9aac68ae800fe6d7add453a589b839231fdd",
   "mindmaps_zoom_in": "dfda8dbaf93e84c2deb134c0366ceeb251d60bf099268627161016b526d519f8",
   "mindmaps_zoom_out": "90e6572e17fb828fb552b0f2a5a0941141332f2476ccfbcf6749a7d68144e0dc"
 }
@@ -213,4 +217,12 @@
     <string name="mindmaps_zoom">Yakınlaştır</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">Bu harita artık kullanılamıyor.</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
+    <string name="mindmaps_shown_as">Haritanın görünümü</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
+    <string name="mindmaps_shown_map">Harita</string>
+    <!-- The study screen's switch: shows a map as text. -->
+    <string name="mindmaps_shown_text">Metin</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
+    <string name="mindmaps_zoom_hint">Yakınlaştırmak için haritaya dokun</string>
 </resources>

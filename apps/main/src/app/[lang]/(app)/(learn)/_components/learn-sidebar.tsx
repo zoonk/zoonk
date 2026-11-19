@@ -1,13 +1,7 @@
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { VisitorStartButton } from "@/components/public/visitor-start";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import {
-  Sidebar,
-  SidebarBody,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarHeaderRow,
-} from "@zoonk/ui/components/sidebar";
+import { Sidebar, SidebarBody, SidebarFooter, SidebarHeader } from "@zoonk/ui/components/sidebar";
 import { SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LogInIcon } from "lucide-react";
@@ -24,7 +18,7 @@ async function VisitorAccount() {
       <CurrentPageLoginLink
         className={cn(
           buttonVariants({ variant: "outline" }),
-          "sidebar-collapsed:my-1 sidebar-collapsed:size-8 sidebar-collapsed:p-0! w-full",
+          "sidebar-collapsed:my-0.5 sidebar-collapsed:size-8 sidebar-collapsed:p-0! w-full",
         )}
         icon={<LogInIcon aria-hidden="true" />}
       >
@@ -42,10 +36,9 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
     <Sidebar aria-label={t("Sidebar")} className="gap-4">
       <SidebarHeader className="gap-4">
         {/* 44px, as tall as a page's bar, so the goal and the page's way back share a line. */}
-        <SidebarHeaderRow className="min-h-11">
+        <div className="flex min-h-11 min-w-0 items-center">
           <LearnGoalMenu placement="sidebar" />
-          <SidebarToggle collapseLabel={t("Collapse sidebar")} expandLabel={t("Expand sidebar")} />
-        </SidebarHeaderRow>
+        </div>
         <LearnSidebarSearch />
       </SidebarHeader>
 
@@ -54,14 +47,15 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
         <LearnerSections />
       </SidebarBody>
 
-      {/* The footer sits on the bottom edge, so its first row grows upward and moves nothing. */}
       <SidebarFooter>
-        <SidebarToggle
-          className="sidebar-collapsed:flex hidden"
-          collapseLabel={t("Collapse sidebar")}
-          expandLabel={t("Expand sidebar")}
-        />
         <VisitorStartButton />
+        <SidebarToggle collapseLabel={t("Collapse sidebar")} expandLabel={t("Expand sidebar")}>
+          {t({
+            description:
+              "A row at the end of the sidebar that folds the sidebar to a narrow column of icons. One word.",
+            message: "Collapse",
+          })}
+        </SidebarToggle>
         <LearnSidebarFeedback />
         <SidebarAccount visitor={<VisitorAccount />} />
       </SidebarFooter>

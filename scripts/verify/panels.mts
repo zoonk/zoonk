@@ -1,7 +1,24 @@
 import { type Page } from "@playwright/test";
 import { type Finding } from "./checks.mts";
 import { focusReturned, readPanel } from "./keys-probe.mts";
-import { OVERLAYS } from "./overlays.mts";
+import { OVERLAYS, OVERLAY_SELECTOR } from "./overlays.mts";
+
+/** Whatever floats over the page and closes on Esc: a shared overlay, a dialog, a menu or a list box. */
+export const OVERLAY =
+  `${OVERLAY_SELECTOR}, [role=dialog], [role=alertdialog], [role=menu], [role=listbox]`
+    .split(", ")
+    .map((selector) => `${selector}:visible`)
+    .join(", ");
+
+/** Closes what floats over the page with Esc, and says whether there was one. */
+export async function closeOverlay(page: Page) {
+  if ((await page.locator(OVERLAY).count()) > 0) {
+    await page.keyboard.press("Escape");
+    return true;
+  }
+
+  return false;
+}
 
 export type PanelFacts = NonNullable<ReturnType<typeof readPanel>> & { focusBack: boolean | null };
 

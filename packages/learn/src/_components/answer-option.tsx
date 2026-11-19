@@ -106,7 +106,7 @@ function useResultLabels() {
 }
 
 /** A right pick says whose it is, so it isn't called correct twice under its verdict. */
-function ResultTag({
+export function ResultTag({
   guessed,
   picked,
   result,
@@ -174,17 +174,20 @@ function ReservedTag({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * A number is the row's key, so a touch screen gives up its room (craft E1, B2). Once checked or
- * disabled the key does nothing, so it hides in its room and the answer stays put.
+ * A number is the row's key, so a touch screen gives up its room (craft E1, B2). A picked row's key
+ * turns ink, the row's mark as a radio's dot is. Once checked or disabled the key does nothing, so
+ * it hides in its room and the answer stays put.
  */
-function OptionMarker({
+export function OptionMarker({
   isChecked,
   layout,
   marker,
+  picked,
 }: {
   isChecked: boolean;
   layout: "row" | "stacked";
   marker: React.ReactNode;
+  picked: boolean;
 }) {
   const isKey = typeof marker === "number";
 
@@ -197,7 +200,11 @@ function OptionMarker({
         layout === "stacked" && "absolute top-3 left-3 z-10",
       )}
     >
-      <Kbd className="[&_svg]:size-3">{marker}</Kbd>
+      <Kbd
+        className={cn("[&_svg]:size-3", picked && "bg-selected text-selected-foreground ring-0")}
+      >
+        {marker}
+      </Kbd>
     </LineMarker>
   );
 }
@@ -275,6 +282,7 @@ export function AnswerOption({
         isChecked={Boolean(result) || Boolean(props.disabled)}
         layout={layout}
         marker={marker}
+        picked={picked && !result}
       />
 
       <TagBesideOrUnder layout={layout} reservesTag={picks && tag === undefined} tag={shownTag}>

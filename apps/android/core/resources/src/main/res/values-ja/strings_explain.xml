@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "explain_coming": "cced7d85e61a343d9032e39b683eda0217b609c18faa2a62105e23b5e5037dca",
   "explain_deeper": "299008db9a1c190b4c991c699694cda479f1ad2e1a2f305a6b38c694d2c6d9cb",
   "explain_deeper_course": "2fc5a1a95e36c09076ebc5eab3249f9cbb7bb135f788b05333e0237ff7187ec4",
   "explain_deeper_goal": "a48002c1957b8aab9c2c70fb05e91ff066bc48fe44f2dc01685a82c7bb9eeab4",
@@ -37,7 +36,6 @@
     <string name="explain_phase_write_review">事実関係を確認しています…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
     <string name="explain_quick">短い解説 · %1$s</string>
-    <string name="explain_coming">これから学ぶこと</string>
     <string name="explain_one_question">最後に短い問題を1問</string>
     <string name="explain_deeper">この内容をもっと学ぶ</string>
     <!-- %1$s is a course's title. -->

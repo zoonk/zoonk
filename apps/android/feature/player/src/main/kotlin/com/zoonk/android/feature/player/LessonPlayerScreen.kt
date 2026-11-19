@@ -403,8 +403,9 @@ fun LessonPlayer(
                                 }
                             }
                     },
-            // A lesson that isn't there has no name or options to show, only the way out.
-            title = { if (!missing) LessonTitle(lesson.title) },
+            // A lesson that isn't there has no name or options to show, only the way out; a host's own end
+            // heads the screen with the lesson's name itself (main's `completionTitled`).
+            title = { if (!missing && ownEnd == null) LessonTitle(lesson.title) },
             actions = {
                 if (viewModel.hasUnsent) UnsavedAnswers()
                 if (!missing) ScreenMenu(state, screen, viewModel)

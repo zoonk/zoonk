@@ -101,7 +101,7 @@ function PlacedWordTile({
 
 function DragOverlayWord({ option }: { option: WordBankOption }) {
   return (
-    <div className={cn(WORD_CHIP_CLASS, "bg-background ring-foreground")}>
+    <div className={cn(WORD_CHIP_CLASS, "bg-background contrast-more:ring-foreground shadow-lg")}>
       <span>{option.word}</span>
       <RomanizationText>{option.romanization}</RomanizationText>
     </div>

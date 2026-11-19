@@ -190,7 +190,7 @@ class PlanRevealStepFlowTest {
     }
 
     @Test
-    fun theFirstWeekCountsTodayWithTheDaysAfterItAboveThem() {
+    fun todaysLessonsLeadAndTheFirstWeekCountsTodayAsItsFirstRow() {
         show(reveal = revealTodayOf())
         navigator.open(SETUP)
         rule.waitForIdle()
@@ -201,10 +201,13 @@ class PlanRevealStepFlowTest {
                 .performScrollTo()
                 .getUnclippedBoundsInRoot()
                 .top
-        val today = rule.onNodeWithText("Today").getUnclippedBoundsInRoot().top
+        val todays = rule.onAllNodesWithText("Today")
+        assertEquals(2, todays.fetchSemanticsNodes().size)
+        val lessons = todays[0].getUnclippedBoundsInRoot().top
+        val row = todays[1].getUnclippedBoundsInRoot().top
 
         rule.onNodeWithText("6 study days", substring = true).assertExists()
-        assertTrue(week < today)
+        assertTrue(lessons < week && week < row)
     }
 
     @Test

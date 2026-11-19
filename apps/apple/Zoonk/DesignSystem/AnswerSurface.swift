@@ -11,18 +11,37 @@ enum AnswerTone {
 }
 
 extension View {
-  /// An answer option's or a tile's ground: at rest the stronger line; the learner's pick the same
-  /// line on the pick's fill, never a ring; checked, a ring in its verdict's color on that color's tint.
+  /// An answer option's or a tile's ground: at rest the stronger line; the learner's pick the pick's
+  /// soft fill in the line's place, never a ring; checked, a ring in its verdict's color on that
+  /// color's tint.
   func answerSurface(
     _ tone: AnswerTone, cornerRadius: CGFloat = Radius.option, isPressed: Bool = false
   )
     -> some View
   {
+    modifier(AnswerSurface(tone: tone, cornerRadius: cornerRadius, isPressed: isPressed))
+  }
+}
+
+private struct AnswerSurface: ViewModifier {
+  let tone: AnswerTone
+  let cornerRadius: CGFloat
+  let isPressed: Bool
+
+  @Environment(\.colorSchemeContrast) private var contrast
+
+  func body(content: Content) -> some View {
     let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
-    return background(fill(tone, isPressed: isPressed), in: shape)
-      .overlay(shape.strokeBorder(stroke(tone), lineWidth: lineWidth(tone)))
+    content
+      .background(fill(tone, isPressed: isPressed), in: shape)
+      .overlay(shape.strokeBorder(line, lineWidth: lineWidth(tone)))
       .contentShape(shape)
+  }
+
+  /// A pick's line comes back only when the device asks for more contrast.
+  private var line: Color {
+    tone == .picked && contrast != .increased ? .clear : stroke(tone)
   }
 }
 

@@ -7,6 +7,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.height
@@ -105,7 +106,7 @@ class FreeLessonGateTest {
                     .BrainPowerReward("50", false) { opened = AppRoute.StatsLevel }
             }
         }
-        rule.onNodeWithText("Brain Power").performClick()
+        rule.onNodeWithContentDescription("+50 Brain Power").performClick()
         assertEquals(AppRoute.StatsLevel, opened)
     }
 

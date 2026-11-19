@@ -41,19 +41,8 @@
     <string name="mock_chooser_writing">Writing your mock exam</string>
     <string name="mock_chooser_writing_questions">Writing questions like the exam\'s</string>
     <string name="mock_chooser_writing_questions_line">Picking what to ask in each subject…</string>
-    <!-- The panel beside the options, about the one picked. -->
-    <string name="mock_chooser_picked">The picked mock exam</string>
-    <!-- Labels the number of questions in an exam or a mock exam. -->
-    <string name="mock_chooser_questions">Questions</string>
-    <string name="mock_chooser_time_limit">Time limit</string>
-    <string name="mock_chooser_usually_takes">Usually takes</string>
-    <!-- %1$s is a duration, such as "1 hr 20 min". -->
-    <string name="mock_chooser_about">About %1$s</string>
-    <string name="mock_chooser_subjects">Subjects</string>
-    <!-- The exam's sections a mock sits, such as Listening and Reading. -->
-    <string name="mock_chooser_parts">Parts</string>
-    <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
-    <string name="mock_chooser_written_part">Written part</string>
+    <!-- After a mock exam's size and time limit: about how long learners usually take. -->
+    <string name="mock_chooser_usually">usually %1$s</string>
     <string name="mock_chooser_last_mock">Your last mock exam</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">Questions per subject in the %1$s, as counted by %2$s.</string>

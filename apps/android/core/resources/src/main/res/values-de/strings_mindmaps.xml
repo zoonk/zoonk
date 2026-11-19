@@ -54,7 +54,10 @@
   "mindmaps_saved_empty": "5f21e913539641c74377c870277b51388e16aebc8983f7bc4b847814d24c304b",
   "mindmaps_saved_state": "c3acaadec4d094f61f1f228e53774f8d4ce2767a72af44c7de0ce819643f5b32",
   "mindmaps_show_all": "aabee69a32bec86245a15714a802e9620945f417f7cf7e0fba920cd5b5d713a0",
+  "mindmaps_shown_as": "63335c1dae4d82433d709c7df4b525e6b3d2141573f48c25aacc1fa7137b1792",
   "mindmaps_shown_as_text": "f00a49b56cffc684be6a97e171eafd85ca69ceaf2420d075db928660334b5f60",
+  "mindmaps_shown_map": "18d6088871cf1af19bd4dee26db18fb8687081038202c15016bb9ce53159db8e",
+  "mindmaps_shown_text": "3ee5bd5ffabb8b946407eeca5166d3cd33ae355ba35e3e6e7931a249fdcdd9f1",
   "mindmaps_start_from_first": "24dbf9a6205f26d9d8f14da576dab842792801123fc518796fa9d760a1a71697",
   "mindmaps_study": "a9e12f5a153de7783e70dea509b372db733704a6f017b873f17b85b2919f6d14",
   "mindmaps_tab_chapters": "098162f5a70f26e1fd6296b07fcdac063904d0a6a42b6ffadf601691a514d128",
@@ -69,6 +72,7 @@
   "mindmaps_writing_lessons": "fd6d2e0f90f058b9b9429c367b5d7b28d39a5e8f117ee16ef0481f2573dfe351",
   "mindmaps_writing_lessons_wait": "a9ba433eddc4a4d84bb1c25f289fbc2d452aa8adf4dce9c93a8ef3db12ecccb6",
   "mindmaps_zoom": "57f6880b771a85a4691709a55148fd75801bd0f61d5fe90c9ec388403176b1de",
+  "mindmaps_zoom_hint": "9d4722d1f9f9ce8de819c0791be472634e65140641eca6188ee8c38efaf77276",
   "mindmaps_zoom_in": "f7c7804e0013bb2140b497130354d8aa20bc99dbb38b51e92866fa2249a4473d",
   "mindmaps_zoom_out": "6a8784457cbba6c38ea39c494f59c28c720a7da34f518a69a694351960ba518d"
 }
@@ -213,4 +217,12 @@
     <string name="mindmaps_zoom">Vergrößern</string>
     <!-- A map the deck counted that can't open anymore. -->
     <string name="mindmaps_map_gone">Diese Mindmap ist nicht mehr verfügbar.</string>
+    <!-- Names the study screen's switch between a map's picture and its text. -->
+    <string name="mindmaps_shown_as">Ansicht der Mindmap</string>
+    <!-- The study screen's switch: shows a map as its picture. -->
+    <string name="mindmaps_shown_map">Karte</string>
+    <!-- The study screen's switch: shows a map as text. -->
+    <string name="mindmaps_shown_text">Text</string>
+    <!-- Under a map's picture on the study screen: tapping it opens the picture to zoom. -->
+    <string name="mindmaps_zoom_hint">Tippe auf die Karte, um sie zu vergrößern</string>
 </resources>

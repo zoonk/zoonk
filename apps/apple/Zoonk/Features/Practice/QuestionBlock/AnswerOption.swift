@@ -20,16 +20,27 @@ struct AnswerOption: View {
   var tag: AnyView?
   let text: RichInline
   var detail: String?
-  let action: () -> Void
+  /// Without one, the answer is shown after the fact: the same look, with nothing to press.
+  let action: (() -> Void)?
 
   var body: some View {
+    if let action {
+      button(action)
+    } else {
+      markedContent
+        .answerOptionFrame(AnswerOptionStyle.tone(isPicked: isPicked, result: result))
+        .accessibilityElement(children: .combine)
+    }
+  }
+
+  private func button(_ action: @escaping () -> Void) -> some View {
     Button(action: action) {
       if let marker {
         ViewThatFits(in: .horizontal) {
           markedContent
 
           VStack(alignment: .leading, spacing: 12) {
-            KeyMarker(number: marker)
+            KeyMarker(number: marker, isPicked: isPicked && result == nil)
             answerContent
           }
         }
@@ -46,7 +57,7 @@ struct AnswerOption: View {
   private var markedContent: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       if let marker {
-        KeyMarker(number: marker)
+        KeyMarker(number: marker, isPicked: isPicked && result == nil)
       }
       answerContent
     }
@@ -244,20 +255,22 @@ private struct AnswerOptionLayout: Layout {
   }
 }
 
-/// Main's `Kbd`: the key that picks an option.
+/// Main's `Kbd`: the key that picks an option. A picked option's key turns ink: the option's mark,
+/// as a radio's dot is.
 private struct KeyMarker: View {
   let number: Int
+  var isPicked = false
 
   var body: some View {
     let shape = RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
 
     Text(number, format: .number)
       .typeStyle(.small.monospaced().weight(.medium))
-      .foregroundStyle(.mutedForeground)
+      .foregroundStyle(isPicked ? Color(.background) : .mutedForeground)
       .padding(.horizontal, 4)
       .frame(minWidth: 20, minHeight: 20)
-      .background(Color(.foreground).opacity(0.04), in: shape)
-      .overlay(shape.strokeBorder(Color(.foreground).opacity(0.12)))
+      .background(Color(.foreground).opacity(isPicked ? 1 : 0.04), in: shape)
+      .overlay(shape.strokeBorder(Color(.foreground).opacity(isPicked ? 0 : 0.12)))
       .accessibilityHidden(true)
   }
 }
@@ -269,21 +282,28 @@ struct AnswerOptionStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .typeStyle(.button)
-      .foregroundStyle(Color(.foreground))
-      .padding(.horizontal, 16)
-      .padding(.vertical, 13)
-      .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-      .answerSurface(tone, isPressed: configuration.isPressed)
+      .answerOptionFrame(
+        Self.tone(isPicked: isPicked, result: result), isPressed: configuration.isPressed)
   }
 
-  private var tone: AnswerTone {
+  static func tone(isPicked: Bool, result: AnswerOptionResult?) -> AnswerTone {
     switch result {
     case .guess: .guess
     case .right: .right
     case .wrong: .wrong
     case nil: isPicked ? .picked : .idle
     }
+  }
+}
+
+extension View {
+  fileprivate func answerOptionFrame(_ tone: AnswerTone, isPressed: Bool = false) -> some View {
+    typeStyle(.button)
+      .foregroundStyle(Color(.foreground))
+      .padding(.horizontal, 16)
+      .padding(.vertical, 13)
+      .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+      .answerSurface(tone, isPressed: isPressed)
   }
 }
 

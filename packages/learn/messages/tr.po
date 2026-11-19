@@ -13,14 +13,12 @@ msgstr "Cevap seçenekleri"
 
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Doğru"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -35,12 +33,22 @@ msgctxt "ihtBFm"
 msgid "Your guess"
 msgstr "Tahminin"
 
+#: src/_components/answer-pair.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "Cevabın ve doğru cevap"
+
 #: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Beyin Gücü"
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>Beyin Gücü</words>"
+
+#. Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.
+#: src/_components/brain-power-amount.tsx
+msgctxt "_Q0taG"
+msgid "BP"
+msgstr "BG"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
@@ -551,11 +559,6 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Özetler"
 
-#: src/_components/moment-readouts.tsx
-msgctxt "XjzZDx"
-msgid "<number>+{points}</number> <words>Brain Power</words>"
-msgstr "<number>+{points}</number> <words>Beyin Gücü</words>"
-
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -594,11 +597,13 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Bu işlem normalden uzun sürüyor. Kendiliğinden açılacak, tekrar dokunmana gerek yok."
 
 #: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Sola kaydır"
 
 #: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Sağa kaydır"
@@ -2227,6 +2232,7 @@ msgstr "Sonucunu en sonda göreceksin."
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -2528,7 +2534,6 @@ msgid "{count, plural, one {You needed # right to win.} other {You needed # righ
 msgstr "{count, plural, other {Kazanmak için # doğru cevap vermen gerekiyordu.}}"
 
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
 msgctxt "wS1KQ6"
 msgid "<label>Right answer:</label> <answer></answer>"
@@ -2593,7 +2598,6 @@ msgstr "Bir dersi yeniden çalış"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/focus-test/focus-test-subjects.tsx
-#: src/mock/mock-chooser-picked.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "ay-crl"
 msgid "Subjects"
@@ -5764,6 +5768,13 @@ msgid "Goals"
 msgstr "Hedefler"
 
 #: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Beyin Gücü"
+
+#: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
 msgid "The call comes back so you can try again."
 msgstr "Tekrar deneyebilmen için bu sohbet yeniden karşına çıkar."
@@ -7586,11 +7597,6 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Sadece eminsen cevapla. Emin olmadığını söylemen de sorun değil."
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "Gr6IEG"
-msgid "<label>You answered:</label> <answer></answer>"
-msgstr "<label>Cevabın:</label> <answer></answer>"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "Yarın tekrar çözebilirsin"
@@ -7846,14 +7852,10 @@ msgid "The next section starts on its own when the break ends."
 msgstr "Mola bittiğinde sonraki oturum kendiliğinden başlar."
 
 #: src/mock/mock-chooser-last-mock.tsx
+#: src/mock/mock-chooser-page.tsx
 msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "Son deneme sınavın"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "C0vG_3"
-msgid "The picked mock exam"
-msgstr "Seçtiğin deneme sınavı"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
@@ -7874,36 +7876,6 @@ msgstr "Deneme sınavını hazırlıyoruz…"
 msgctxt "4FZiEz"
 msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 msgstr "Senin için sınavdakilere benzer sorular hazırlıyoruz. Sorular hazır olur olmaz deneme sınavı burada başlayacak."
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "y0zaf-"
-msgid "Time limit"
-msgstr "Süre sınırı"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "-LMjdj"
-msgid "Usually takes"
-msgstr "Ortalama süre"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "Yaklaşık {time}"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-question.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kyHVVK"
-msgid "Written part"
-msgstr "Yazılı bölüm"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "TX7Ut7"
-msgid "Parts"
-msgstr "Bölümler"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -7980,9 +7952,9 @@ msgstr "Bir cevap kaydedilmedi."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "2_2n3w"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
-msgstr "{blank, plural, other {# soru boş}} ve {flagged, plural, other {# soru tekrar bakmak için işaretlendi}}."
+msgctxt "Beu7ZD"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
+msgstr "{blank, plural, one {# soru boş bırakıldı} other {# soru boş bırakıldı}} ve {flagged, plural, one {# soru işaretlendi} other {# soru işaretlendi}}."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7992,9 +7964,9 @@ msgstr "{count, plural, other {# soru boş.}}"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "gaB5_0"
-msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
-msgstr "{count, plural, other {# soru tekrar bakmak için işaretlendi.}}"
+msgctxt "GCYYkV"
+msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
+msgstr "{count, plural, one {# soru işaretlendi.} other {# soru işaretlendi.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8186,6 +8158,12 @@ msgctxt "mockQuestionsAndTime"
 msgid "{count, plural, one {# question} other {# questions}} · {time}"
 msgstr "{count, plural, other {# soru}} · {time}"
 
+#. After a mock exam's size and time limit: about how long learners usually take.
+#: src/mock/mock-option-labels.ts
+msgctxt "Zz21lR"
+msgid "usually {time}"
+msgstr "genellikle {time}"
+
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
 msgctxt "-IhwDy"
@@ -8196,6 +8174,13 @@ msgstr "Boş bırak"
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "Yazılı bölüm · {area}"
+
+#: src/mock/mock-question.tsx
+#: src/mock/mock-runner-view.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kyHVVK"
+msgid "Written part"
+msgstr "Yazılı bölüm"
 
 #: src/mock/mock-question.tsx
 msgctxt "cPym2K"
@@ -8213,6 +8198,12 @@ msgid "Review mistakes"
 msgstr "Yanlışlarını incele"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "Kısmen doğru"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8224,11 +8215,7 @@ msgid "Wrong"
 msgstr "Yanlış"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "Kısmen doğru"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Boş"
@@ -8265,21 +8252,6 @@ msgid "By topic"
 msgstr "Konulara göre"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "Cevapları gör"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "Ayrıntıları gör"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Cevaplar"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "Bu deneme sınavı hakkında"
@@ -8305,7 +8277,6 @@ msgid "Grade it"
 msgstr "Not ver"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "Boş bıraktın."
@@ -8588,30 +8559,20 @@ msgid "{change} since the last one"
 msgstr "Son deneme sınavına göre {change}"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "Cevaplar"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Bu deneme sınavından sonra"
-
-#: src/mock/mock-review.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "Cevabın ve doğru cevap"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "Soru {number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Soru {number}"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "Kısmen doğru: bu sorudan kısmi puan aldın."
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
@@ -8759,11 +8720,11 @@ msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "{score} / {total} net"
 
-#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}, tekrar bakmak için işaretlendi"
+msgctxt "ETtb7q"
+msgid "{question}, flagged"
+msgstr "{question}, işaretli"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9488,6 +9449,12 @@ msgstr "Zaten bildiklerimi atlamak"
 msgctxt "47D0tB"
 msgid "Only what's new or hard"
 msgstr "Sadece yeni ya da zor konular"
+
+#: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "Yaklaşık {time}"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "P05JFf"

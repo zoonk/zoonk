@@ -82,7 +82,7 @@ function BuddyTodaySheet({
 
           {today && today.missions.length > 0 && (
             <div className="border-t pt-5">
-              <MissionsCard showBuddy={false} buddy={buddy} links={links} today={today} />
+              <MissionsCard buddy={buddy} links={links} today={today} />
             </div>
           )}
 
@@ -139,7 +139,8 @@ export function BuddyToday({
   return (
     <>
       <div
-        className={cn("flex flex-wrap items-center gap-x-2.5 gap-y-1", className)}
+        // Its links' padding hangs past the row, so their words start where the name's do.
+        className={cn("-mx-2 flex flex-wrap items-center gap-x-2.5 gap-y-1", className)}
         data-slot="buddy-today"
       >
         <LearnLink

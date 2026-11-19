@@ -24,6 +24,7 @@
 - “check” (an answer): “prüfen”
 - “write” (Zoonk generating content): “erstellen”; learner writing: “schreiben”
 - “Brain Power”: “Brain Power”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “BP”
 - “score”: “Score”
 - “band” (an exam's score band): “Bandwert”
 - “level”: “Level”

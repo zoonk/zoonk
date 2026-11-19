@@ -49,14 +49,14 @@
     <string name="mock_moves_must">Answer each question to move on.</string>
     <string name="mock_hand_in_mock_title">Hand in the mock exam?</string>
     <string name="mock_hand_in_section_title">Hand in this section?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d question is blank</item>
         <item quantity="other">%d questions are blank</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="one">%d is marked for review</item>
-        <item quantity="other">%d are marked for review</item>
+        <item quantity="one">%d is flagged</item>
+        <item quantity="other">%d are flagged</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s and %2$s.</string>
@@ -65,8 +65,8 @@
         <item quantity="other">%d questions are blank.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d question is marked for review.</item>
-        <item quantity="other">%d questions are marked for review.</item>
+        <item quantity="one">%d question is flagged.</item>
+        <item quantity="other">%d questions are flagged.</item>
     </plurals>
     <string name="mock_every_answered">Every question is answered.</string>
     <string name="mock_essay_blank">The essay is blank.</string>
@@ -89,8 +89,8 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">answered</string>
-    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_marked_for_review">%1$s, marked for review</string>
+    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_flagged">%1$s, flagged</string>
     <string name="mock_sections">Sections</string>
     <string name="mock_section_number">Section %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

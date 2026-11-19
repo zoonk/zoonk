@@ -4,9 +4,15 @@ extension View {
   /// A task's title in its bar, on the screen's middle whatever the bar holds beside it, as the
   /// system's own title is, and on up to two lines there, so an ordinary chapter or lesson title
   /// shows whole. The system still has it as the screen's title (VoiceOver, the window, Back's
-  /// menu), and a vertical bar (iPhone Duo) has no room for it.
-  func taskTitle(_ title: Text) -> some View {
-    modifier(TaskTitleToolbar(title: title))
+  /// menu), and a vertical bar (iPhone Duo) has no room for it. A screen that shows the same title
+  /// large in its body keeps it out of the bar (`isShown` false) and only names the screen.
+  @ViewBuilder
+  func taskTitle(_ title: Text, isShown: Bool = true) -> some View {
+    if isShown {
+      modifier(TaskTitleToolbar(title: title))
+    } else {
+      barName(title)
+    }
   }
 
   /// A task's close in its toolbar, the item the bar keeps when it runs out of room (iPhone Duo's

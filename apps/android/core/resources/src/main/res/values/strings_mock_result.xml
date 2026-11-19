@@ -17,9 +17,6 @@
     <string name="mock_result_strongest">Strongest: %1$s. Work on: %2$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Details</string>
-    <string name="mock_result_see_details">See details</string>
-    <!-- A small button under the result that opens the questions to review. -->
-    <string name="mock_result_see_answers">See answers</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->
     <string name="mock_result_answers">Answers</string>
     <string name="mock_result_about_title">About this mock exam</string>
@@ -179,11 +176,8 @@
     </plurals>
     <string name="mock_result_keep_answering">Your flagged answers still earned points, so keep answering them.</string>
     <string name="mock_result_review">Questions to review</string>
-    <!-- %2$s is the question's subject, such as "Mathematics". -->
-    <string name="mock_result_question_area">Question %1$d · %2$s</string>
     <string name="mock_result_question">Question %1$d</string>
     <string name="mock_result_left_blank">You left it blank.</string>
-    <string name="mock_result_partly_right_note">Partly right: it earned part of its points.</string>
     <string name="mock_result_written_part">Written part · %1$d of %2$d</string>
     <string name="mock_result_too_short">Too short to grade</string>
     <string name="mock_result_grading">Grading it with the exam\'s rubric. It can take up to 30 seconds.</string>

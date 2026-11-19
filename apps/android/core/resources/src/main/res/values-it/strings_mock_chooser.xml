@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "mock_chooser_about": "239d187b776a0c8ed01d5264e735abe55b4ce850439359ef73feb614d75a4a5a",
   "mock_chooser_day": "24f99dc153976e5cc2c2639897117a0dd3b548fe92d39f0a08fbadddaa2f4358",
   "mock_chooser_day_without": "11bd3a411120f75819f903d6e9dab16c6b5165bd3c0e21f5d204b895cb181c87",
   "mock_chooser_failed": "dda930727357ec12c08013ed34542e96d270e8a45fac0a752844746eaf988bfb",
@@ -15,12 +14,9 @@
   "mock_chooser_not_enough": "932c0dd1379d758a7498f17118afe3405745cf28516e8ae2f106ef7a5d6c0559",
   "mock_chooser_one_subject": "895bcf9ea419b7af9d9c2fff277db9ff017456938cbd8af3da2452113a0afe8a",
   "mock_chooser_option_size": "d1be103766c2835bea323d15e6ae070568d42d960f9a93bf7b054ff8a5e57728",
-  "mock_chooser_parts": "8e71204d8cf56c4bfca97fc72852e21a7b7f752613770d1bcf495aa2716147b2",
   "mock_chooser_pick_another": "46de6b3c7fce088440b8b4c6eebf67babf6c462da91918444160e067bc5e69e8",
-  "mock_chooser_picked": "160c0d7db8804561256d2586f6cc44b28804621ac30b004981f8a406b2ff1d58",
   "mock_chooser_preparing": "265d2d4dfdc4588191d5addb0b6bd001e1b4b2a792e99610e8797d5582f958ab",
   "mock_chooser_preparing_detail": "d209ab9ce72af963f56d85f60b28d733cdab7da60ea1cf2e7c28c7a6f21c1768",
-  "mock_chooser_questions": "a5ad3aed6840e78c477c1921b7269c91c9a97ccc14fbd3f9e58b65c80e795614",
   "mock_chooser_short_day": "3f6548b3b7bed3467eea230953a004113a15675e30f9d52ff11fcc2ab0b2d0d5",
   "mock_chooser_short_later_today": "8152d7bbcc9f5f4f882848530a25df94c41428f2842c9470a4cd3565c6c8d3f8",
   "mock_chooser_short_line": "7fe464535b4fce24d9598cad89137348b3d88b99d3c7f6563cf33ed9a93917f8",
@@ -29,15 +25,12 @@
   "mock_chooser_size_latest_exam": "7fb3bc7febaadf1d669d83b77d56f16483fd90e1c19ef6002038bac54f01b06d",
   "mock_chooser_size_past_edition": "736044dc678eb2c819dbeda907eb43e20e20bb0c0d96182d9106b4f2966d019f",
   "mock_chooser_start": "17804e400290d23f05b4bf056b65a666e3c4368e8d3cf4a028aead168a1374d1",
-  "mock_chooser_subjects": "7981919bb227b20a24456a0eb320f407c7a46442bd27e4ed6968694bcdca0baf",
   "mock_chooser_the_exam": "c2cd4b59462ea55a0dd34d0e8d9c7a6eaeab53b7f272ecac6717cebf573c1fa4",
-  "mock_chooser_time_limit": "3d24abef7c35d7f35337959406ee9b79ec2745222945d2f842dae45ece34f575",
   "mock_chooser_title": "d3139eaa9d8f8036169c2a201d01c04ae52fe06be895bfef3a70715bf78e7c22",
-  "mock_chooser_usually_takes": "8f312a970265baf180e088c7cca91fe663d866cf3598c64e94a6a45682caab9d",
+  "mock_chooser_usually": "59b3578f5eddca989d30c3e7a3f011e594fc9a7e3c958868a3fd30758bfa00d2",
   "mock_chooser_writing": "d508607b347d98377e471f89cf12e5ae3a8d64a5e3b5f114ed387e908f66a611",
   "mock_chooser_writing_questions": "80cf97fc9b691ec94b524661ef0c7928afcbb5e17ab1d2f9f2266a8346f94ea8",
-  "mock_chooser_writing_questions_line": "a3a9ed610f567d85da63ccb494810a1e507421d76b9cc6dc89f5396604fd3317",
-  "mock_chooser_written_part": "749a6bc478232362e6b863fc208ead834db2d34202d66b2008560577b7a6e351"
+  "mock_chooser_writing_questions_line": "a3a9ed610f567d85da63ccb494810a1e507421d76b9cc6dc89f5396604fd3317"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -83,19 +76,8 @@
     <string name="mock_chooser_writing">Stiamo preparando la tua simulazione</string>
     <string name="mock_chooser_writing_questions">Stiamo preparando domande simili a quelle dell’esame</string>
     <string name="mock_chooser_writing_questions_line">Stiamo scegliendo cosa chiedere per ogni materia…</string>
-    <!-- The panel beside the options, about the one picked. -->
-    <string name="mock_chooser_picked">La simulazione d’esame scelta</string>
-    <!-- Labels the number of questions in an exam or a mock exam. -->
-    <string name="mock_chooser_questions">Domande</string>
-    <string name="mock_chooser_time_limit">Tempo limite</string>
-    <string name="mock_chooser_usually_takes">Di solito richiede</string>
-    <!-- %1$s is a duration, such as "1 hr 20 min". -->
-    <string name="mock_chooser_about">Circa %1$s</string>
-    <string name="mock_chooser_subjects">Materie</string>
-    <!-- The exam's sections a mock sits, such as Listening and Reading. -->
-    <string name="mock_chooser_parts">Parti</string>
-    <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
-    <string name="mock_chooser_written_part">Parte scritta</string>
+    <!-- After a mock exam's size and time limit: about how long learners usually take. -->
+    <string name="mock_chooser_usually">di solito %1$s</string>
     <string name="mock_chooser_last_mock">La tua ultima simulazione d’esame</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">Domande per materia (%1$s), secondo il conteggio di %2$s.</string>

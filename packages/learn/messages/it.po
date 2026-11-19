@@ -13,14 +13,12 @@ msgstr "Opzioni di risposta"
 
 #: src/_components/answer-option.tsx
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Corretta"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -35,12 +33,22 @@ msgctxt "ihtBFm"
 msgid "Your guess"
 msgstr "La tua ipotesi"
 
+#: src/_components/answer-pair.tsx
+msgctxt "9-6ClJ"
+msgid "Your answer and the right one"
+msgstr "La tua risposta e quella corretta"
+
 #: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Potenza Mentale"
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>Potenza Mentale</words>"
+
+#. Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives.
+#: src/_components/brain-power-amount.tsx
+msgctxt "_Q0taG"
+msgid "BP"
+msgstr "PM"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
@@ -551,11 +559,6 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Riassunti"
 
-#: src/_components/moment-readouts.tsx
-msgctxt "XjzZDx"
-msgid "<number>+{points}</number> <words>Brain Power</words>"
-msgstr "<number>+{points}</number> <words>Potenza Mentale</words>"
-
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -594,11 +597,13 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Stiamo impiegando più tempo del solito. Si aprirà automaticamente, non serve toccare di nuovo."
 
 #: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Scorri a sinistra"
 
 #: src/_components/page-tabs.tsx
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Scorri a destra"
@@ -2227,6 +2232,7 @@ msgstr "Vedrai il risultato alla fine."
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -2528,7 +2534,6 @@ msgid "{count, plural, one {You needed # right to win.} other {You needed # righ
 msgstr "{count, plural, one {Ti serviva # risposta giusta per vincere.} other {Ti servivano # risposte giuste per vincere.}}"
 
 #: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
 msgctxt "wS1KQ6"
 msgid "<label>Right answer:</label> <answer></answer>"
@@ -2593,7 +2598,6 @@ msgstr "Rifai una lezione"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/focus-test/focus-test-subjects.tsx
-#: src/mock/mock-chooser-picked.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "ay-crl"
 msgid "Subjects"
@@ -5764,6 +5768,13 @@ msgid "Goals"
 msgstr "Obiettivi"
 
 #: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Potenza Mentale"
+
+#: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
 msgid "The call comes back so you can try again."
 msgstr "La conversazione torna disponibile, così puoi riprovare."
@@ -7586,11 +7597,6 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Rispondi solo se non hai dubbi. Va bene anche dire che ne hai."
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "Gr6IEG"
-msgid "<label>You answered:</label> <answer></answer>"
-msgstr "<label>Hai risposto:</label> <answer></answer>"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "Puoi esercitarti domani"
@@ -7846,14 +7852,10 @@ msgid "The next section starts on its own when the break ends."
 msgstr "La prossima sezione inizia automaticamente quando finisce la pausa."
 
 #: src/mock/mock-chooser-last-mock.tsx
+#: src/mock/mock-chooser-page.tsx
 msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "La tua ultima simulazione d’esame"
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "C0vG_3"
-msgid "The picked mock exam"
-msgstr "La simulazione scelta"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
@@ -7874,36 +7876,6 @@ msgstr "Stiamo preparando la tua simulazione…"
 msgctxt "4FZiEz"
 msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 msgstr "Stiamo preparando per te domande simili a quelle dell’esame. La simulazione inizia qui appena sono pronte."
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "y0zaf-"
-msgid "Time limit"
-msgstr "Tempo limite"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "-LMjdj"
-msgid "Usually takes"
-msgstr "Durata abituale"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "Circa {time}"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-question.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kyHVVK"
-msgid "Written part"
-msgstr "Parte scritta"
-
-#: src/mock/mock-chooser-picked.tsx
-msgctxt "TX7Ut7"
-msgid "Parts"
-msgstr "Parti"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -7980,9 +7952,9 @@ msgstr "Una risposta non è stata salvata."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "2_2n3w"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
-msgstr "{blank, plural, one {# domanda è senza risposta} other {# domande sono senza risposta}} e {flagged, plural, one {# è contrassegnata per la revisione} other {# sono contrassegnate per la revisione}}."
+msgctxt "Beu7ZD"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
+msgstr "{blank, plural, one {# domanda è in bianco} other {# domande sono in bianco}} e {flagged, plural, one {# è contrassegnata} other {# sono contrassegnate}}."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7992,9 +7964,9 @@ msgstr "{count, plural, one {# domanda è senza risposta.} other {# domande sono
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "gaB5_0"
-msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
-msgstr "{count, plural, one {# domanda è contrassegnata per la revisione.} other {# domande sono contrassegnate per la revisione.}}"
+msgctxt "GCYYkV"
+msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
+msgstr "{count, plural, one {# domanda è contrassegnata.} other {# domande sono contrassegnate.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8186,6 +8158,12 @@ msgctxt "mockQuestionsAndTime"
 msgid "{count, plural, one {# question} other {# questions}} · {time}"
 msgstr "{count, plural, one {# domanda} other {# domande}} · {time}"
 
+#. After a mock exam's size and time limit: about how long learners usually take.
+#: src/mock/mock-option-labels.ts
+msgctxt "Zz21lR"
+msgid "usually {time}"
+msgstr "di solito {time}"
+
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
 msgctxt "-IhwDy"
@@ -8196,6 +8174,13 @@ msgstr "Lascia in bianco"
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "Parte scritta · {area}"
+
+#: src/mock/mock-question.tsx
+#: src/mock/mock-runner-view.tsx
+#: src/mock/use-question-cell-label.ts
+msgctxt "kyHVVK"
+msgid "Written part"
+msgstr "Parte scritta"
 
 #: src/mock/mock-question.tsx
 msgctxt "cPym2K"
@@ -8213,6 +8198,12 @@ msgid "Review mistakes"
 msgstr "Rivedi gli errori"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "Parzialmente corrette"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8224,11 +8215,7 @@ msgid "Wrong"
 msgstr "Errate"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "Parzialmente corrette"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Senza risposta"
@@ -8265,21 +8252,6 @@ msgid "By topic"
 msgstr "Per argomento"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "Vedi le risposte"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "Vedi i dettagli"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Risposte"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "Su questa simulazione"
@@ -8305,7 +8277,6 @@ msgid "Grade it"
 msgstr "Valutalo"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "Non hai risposto."
@@ -8588,30 +8559,20 @@ msgid "{change} since the last one"
 msgstr "{change} rispetto all’ultima simulazione"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "Risposte"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Dopo questa simulazione"
-
-#: src/mock/mock-review.tsx
-msgctxt "9-6ClJ"
-msgid "Your answer and the right one"
-msgstr "La tua risposta e quella corretta"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "Domanda {number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Domanda {number}"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "Parzialmente corretta: hai ottenuto una parte dei punti."
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
@@ -8759,11 +8720,11 @@ msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "Punteggio netto: {score} su {total}"
 
-#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}, contrassegnata per la revisione"
+msgctxt "ETtb7q"
+msgid "{question}, flagged"
+msgstr "{question}, contrassegnata"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -9488,6 +9449,12 @@ msgstr "Saltare quello che so già"
 msgctxt "47D0tB"
 msgid "Only what's new or hard"
 msgstr "Solo quello che è nuovo o difficile"
+
+#: src/onboarding/steps/level-choices.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "Circa {time}"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "P05JFf"
