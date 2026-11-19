@@ -200,8 +200,7 @@ private struct ChapterContent: View {
                 "Take the test and skip the chapter", tableName: "Plan",
                 comment: "What the chapter's test-out does")
             ) {
-              Image(systemName: "checkmark.seal")
-                .accessibilityHidden(true)
+              KindDot(kind: .practice)
             }
             .disclosureChevron()
           }
@@ -406,7 +405,8 @@ private struct ChapterReferenceSection: View {
           "Chapter summary", tableName: "Plan",
           comment: "Folds a chapter's topics and summaries")
       ) {
-        Image(systemName: "checklist")
+        // Main's lucide NotebookText.
+        Image(systemName: "text.book.closed")
           .resizable()
           .scaledToFit()
           .frame(width: markSize, height: markSize)

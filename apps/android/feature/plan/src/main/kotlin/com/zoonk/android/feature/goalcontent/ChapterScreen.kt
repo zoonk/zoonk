@@ -430,11 +430,11 @@ private fun ChapterReference(
         val map = mindMap?.row
         if (mapFirst && map != null) map(Modifier)
         if (hasSummary) {
-            if (mapFirst && map != null) Spacer(Modifier.height(12.dp))
+            if (mapFirst && map != null) ListDivider()
             ChapterSummary(chapter, expanded) { expanded = it }
         }
         if (!mapFirst && map != null) {
-            if (hasSummary) Spacer(Modifier.height(12.dp))
+            if (hasSummary) ListDivider()
             map(Modifier)
         }
     }
@@ -450,7 +450,8 @@ private fun ChapterSummary(
         stringResource(R.string.goalcontent_chapter_summary),
         expanded = expanded,
         onExpandedChange = onExpandedChange,
-        leading = { MarkIcon(R.drawable.ic_checklist) },
+        // Main's lucide NotebookText; Apple's text.book.closed.
+        leading = { MarkIcon(R.drawable.ic_book_2) },
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
             if (chapter.skills.isNotEmpty()) {
