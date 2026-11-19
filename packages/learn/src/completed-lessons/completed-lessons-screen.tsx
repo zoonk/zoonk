@@ -122,6 +122,7 @@ function GroupTabs({
       name: t({
         description:
           "The first choice of the filter on Completed lessons, before the subjects: every lesson.",
+        id: "completedLessonsAll",
         message: "All",
       }),
     },

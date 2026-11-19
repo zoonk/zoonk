@@ -593,6 +593,16 @@ msgctxt "Pd4dpx"
 msgid "This is taking longer than usual. It opens on its own, no need to tap again."
 msgstr "Cela prend plus de temps que d’habitude. L’ouverture se fera toute seule, inutile d’appuyer à nouveau."
 
+#: src/_components/page-tabs.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Faire défiler vers la gauche"
+
+#: src/_components/page-tabs.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Faire défiler vers la droite"
+
 #: src/_components/practice-outcome-message.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
@@ -2209,7 +2219,6 @@ msgstr "Tu verras ton résultat à la fin."
 
 #: src/challenge/challenge-labels.tsx
 #: src/challenge/challenge-moved-screen.tsx
-#: src/completed-lessons/completed-lessons-screen.tsx
 #: src/essay/essay-closed.tsx
 #: src/essay/essay-feedback.tsx
 #: src/journey/journey-phase-events.tsx
@@ -2583,20 +2592,42 @@ msgid "Do a lesson again"
 msgstr "Refaire une leçon"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
-msgctxt "6dIxDP"
-msgid "Yesterday"
-msgstr "Hier"
+#: src/focus-test/focus-test-subjects.tsx
+#: src/mock/mock-chooser-picked.tsx
+#: src/syllabus/syllabus-section.tsx
+msgctxt "ay-crl"
+msgid "Subjects"
+msgstr "Matières"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
-msgctxt "qckJsw"
-msgid "Lessons you finish show up here, so you can do them again anytime."
-msgstr "Les leçons terminées s’affichent ici pour que tu puisses les refaire quand tu veux."
+#: src/syllabus/syllabus-section.tsx
+msgctxt "TwcPrx"
+msgid "Modules"
+msgstr "Modules"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/roadmap-full.tsx
+#: src/onboarding/steps/plan-shape.tsx
+msgctxt "P7djTu"
+msgid "Phases"
+msgstr "Phases"
+
+#. The first choice of the filter on Completed lessons, before the subjects: every lesson.
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "completedLessonsAll"
+msgid "All"
+msgstr "Toutes"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/mistakes/mistakes-notebook.tsx
 msgctxt "aWpBzj"
 msgid "Show more"
 msgstr "Afficher plus"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "qckJsw"
+msgid "Lessons you finish show up here, so you can do them again anytime."
+msgstr "Les leçons terminées s’affichent ici pour que tu puisses les refaire quand tu veux."
 
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
@@ -3954,13 +3985,6 @@ msgctxt "a9uRoF"
 msgid "See all subjects"
 msgstr "Voir toutes les matières"
 
-#: src/focus-test/focus-test-subjects.tsx
-#: src/mock/mock-chooser-picked.tsx
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ay-crl"
-msgid "Subjects"
-msgstr "Matières"
-
 #. A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade.
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "lJ7_om"
@@ -5228,12 +5252,6 @@ msgstr "Date de fin"
 msgctxt "VnP0TP"
 msgid "You finish"
 msgstr "Tu termines"
-
-#: src/journey/roadmap-full.tsx
-#: src/onboarding/steps/plan-shape.tsx
-msgctxt "P7djTu"
-msgid "Phases"
-msgstr "Phases"
 
 #. After a date on the plan's timeline, naming what happens that day.
 #: src/journey/roadmap-lane.tsx
@@ -13028,11 +13046,6 @@ msgstr "Pour {course} à {institution}, {parts} comptent davantage. Ton plan leu
 msgctxt "qCmEbu"
 msgid "{course} at {institution} counts every part of the exam the same. Weights from <link>{publisher}</link>."
 msgstr "Pour {course} à {institution}, toutes les parties de l’examen ont le même poids. Pondérations selon <link>{publisher}</link>."
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "TwcPrx"
-msgid "Modules"
-msgstr "Modules"
 
 #: src/syllabus/syllabus-section.tsx
 msgctxt "Cw_XA_"
