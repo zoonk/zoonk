@@ -18,7 +18,6 @@ export function SectionPage({
   hub,
   measure,
   nav,
-  note,
   parents,
 }: {
   children: React.ReactNode;
@@ -27,8 +26,6 @@ export function SectionPage({
   /** The section's one column: its bar's actions, title, tabs and pages all end on its edge. */
   measure?: PageMeasure;
   nav: React.ReactNode;
-  /** A detail at the end of the section's name's row, from a tablet up, such as the account's email. */
-  note?: React.ReactNode;
   /** Pages with pages of their own: those go back to them rather than to the hub. */
   parents?: SectionLink[];
 }) {
@@ -53,11 +50,10 @@ export function SectionPage({
         )}
       >
         <div className={cn(TAB_ROW_GAP_CLASS, "hidden md:flex")}>
-          <div className={cn(PAGE_HEADER_CLASS, "flex-row items-center justify-between gap-4")}>
+          <div className={PAGE_HEADER_CLASS}>
             <p className="text-title" data-slot="section-title">
               {hub.title}
             </p>
-            {note && <PageSubtitle className="block min-w-0 truncate pt-0">{note}</PageSubtitle>}
           </div>
           {nav}
         </div>

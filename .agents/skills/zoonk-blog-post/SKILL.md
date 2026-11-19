@@ -45,7 +45,7 @@ Every feature section shows the real product. Pictures are what make a reader wa
 - **Light and dark:** every screenshot, clip and cover comes in both versions (`<name>.webp` and `<name>-dark.webp`).
 - **Alt text:** describe what each picture shows, including any text the reader would read on it.
 
-Capture from the running app (`pnpm start`), using sample learners only (`pnpm dev:persona`, see the [development guide](../../guides/development.md#persona-passes)), never a real learner's data. `pnpm pr:capture --steps <file> --schemes light,dark --viewports phone` shoots the 390×844 phone screen. Save each shot as a WebP at 780×1688 in `apps/blog/public/blog/<year>/<slug>/`. When a post needs many screens, delegate the capture.
+Capture from the running app (`pnpm start`), using sample learners only (`pnpm dev:persona`, see the [development guide](../zoonk-persona-walkthrough/references/passes.md)), never a real learner's data. `pnpm pr:capture --steps <file> --schemes light,dark --viewports phone` shoots the 390×844 phone screen. Save each shot as a WebP at 780×1688 in `apps/blog/public/blog/<year>/<slug>/`. When a post needs many screens, delegate the capture.
 
 ## 4. Put it together
 

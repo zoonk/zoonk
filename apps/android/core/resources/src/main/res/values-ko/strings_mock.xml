@@ -32,8 +32,8 @@
   "mock_left_blank": "e7dc8b1ae9c9d3a0b526e1a2adf22d1ea14fcf2254d115b80006a27a79542f67",
   "mock_left_blank_and_flagged": "bbd2b295859cc3c8265b84aadf36bf08c5dbb7c42957589ce9f71d633d1cc1a0",
   "mock_left_blank_only": "10c2792f3c1ae4a4cec30f78d7c72ab9847aedb2721a7114d3b75a1853f44464",
-  "mock_left_flagged": "496c80f1fd75aaf5b2da4deee471a8397abe0d9e808868b74a1a459d903ce983",
-  "mock_left_flagged_only": "9fc0b153b96fd9417219c47e66e2df436d2ba2cbe4c0124dcff748110bf02fbc",
+  "mock_left_flagged": "2e46f6e86aa980506bd6f6c819e565cdb515f2751de4b81bacf382c44c987cad",
+  "mock_left_flagged_only": "32ad6a45b5ba4637304f2d69c9aa2c5a37f3cc006e3b92338044b9557f2e76f3",
   "mock_moves_forward": "8dcdc9bddc870333d656d8ab2aa8def3e1009e7a49d7471e6e9ee0d1f5bbc424",
   "mock_moves_forward_must": "a1c9af05b1e09fe98ff2aa86a845464b79c6bd494e1068a19a317085e2c84384",
   "mock_moves_must": "ef5964c28d37c31d36d27a4f03ed47ffd4577111d87e3fb98cefb90960ac90a1",
@@ -89,6 +89,7 @@
   "mock_time_up": "33dfcc946087707fb0c1fc363d8a343d4b30ec6150caaf91cf742c5452ebea77",
   "mock_title": "aeafa0d58a77b0113cb0599a4741f3227bd99bdbbe8f911094da1b751e4260e4",
   "mock_try_again": "9f06fc629d5af40785b77beaede7da853c25fbd78be827502e12da8f4d6a6b88",
+  "mock_unflag": "3eca056ba6c65665884c82e9ddc714239d4f86851535605898a0e93b98549879",
   "mock_words": "2789057cce340b7601e0721915cac98f9f3ffc79bdd8b30a5c5d841f36a4029c",
   "mock_written_part": "dd88d03af827d99b9d67544619aacbb005cc7678405f18e596ac81b2bfb662dd",
   "mock_written_part_area": "2657b965d01d5054a56c9b7857125c85e73df9d7f5e05c9950a47fb55fb33793",
@@ -129,6 +130,7 @@
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">문제 %1$d/%2$d · %3$s</string>
     <string name="mock_flag">표시하기</string>
+    <string name="mock_unflag">표시 해제</string>
     <string name="mock_next">다음</string>
     <string name="mock_hand_in_section">파트 제출하기</string>
     <string name="mock_moves_review_any">답안 검토: 어느 문제로든 돌아갈 수 있어요.</string>
@@ -141,12 +143,12 @@
     <string name="mock_moves_must">다음으로 넘어가려면 각 문제에 답하세요.</string>
     <string name="mock_hand_in_mock_title">모의고사를 제출할까요?</string>
     <string name="mock_hand_in_section_title">이 파트를 제출할까요?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
     <plurals name="mock_left_blank">
         <item quantity="other">답하지 않은 문제가 %d개</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="other">표시한 문제가 %d개예요</item>
+        <item quantity="other">다시 볼 문제로 표시한 문제가 %d개 있어요</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s이고 %2$s.</string>
@@ -154,7 +156,7 @@
         <item quantity="other">답하지 않은 문제가 %d개예요.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="other">표시한 문제가 %d개예요.</item>
+        <item quantity="other">다시 볼 문제로 표시한 문제가 %d개 있어요.</item>
     </plurals>
     <string name="mock_every_answered">모든 문제에 답했어요.</string>
     <string name="mock_essay_blank">에세이 내용이 없어요.</string>

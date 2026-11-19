@@ -5,7 +5,7 @@ How a Zoonk screen is drawn, as rules with a number. The [taste bar](../SKILL.md
 The design system is the reference. A fault is one of two kinds:
 
 - **The screen departs from the system.** Fix the screen, or the shared piece when the fault is the piece's, so every screen gets the fix.
-- **The system departs from a rule here.** Report it once, against the token or component, never once per screen. Changing a token or a shared piece's look is the user's decision.
+- **The system departs from a rule here.** Report it once, against the token or component, never once per screen. A builder who changes a token or a shared piece's look lists it for the user to accept or overrule ([when a rule looks wrong](../../../guides/exceptions.md)).
 
 The [deliberate choices](#deliberate-choices) at the end are neither.
 
@@ -118,9 +118,9 @@ A box that holds content (a card, a panel, a composer) gives it the same room on
 
 ### S5. The gutter is the frame's
 
-Content keeps the frame's gutter from the screen's edge: 16px on a phone and 24px from a tablet up, beside the sidebar too (`FRAME_GUTTER_CLASS`). The bottom bar's room over and under its buttons is the same number on purpose (Z4), so the main action's corner is even, and the right column and a task's frame on a computer keep it too. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
+Content keeps the frame's gutter from the screen's edge: 16px on a phone and 20px from a tablet up, beside the sidebar too (`FRAME_GUTTER_CLASS`, from the one token `--spacing-frame`). The bottom bar's room over and under its buttons is the same number on purpose (Z4), so the main action's corner is even, and the right column, a task's frame on a computer (its sides, ✕ and end controls, its side panel) and the toasts keep it too. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
 
-- **Check.** The main region's leftmost and rightmost ink against the screen's edges: 16px at 390, 24px at 768 and beside the sidebar at 1440.
+- **Check.** The main region's leftmost and rightmost ink against the screen's edges: 16px at 390, 20px at 768 and beside the sidebar at 1440.
 - **Usual break.** A box drawn with an outside ring, 1px wider than the field above it. A frame or a column that pads by its own number instead of `--page-gutter`.
 
 ## Shape
@@ -183,9 +183,9 @@ Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#wh
 
 ### Z4. Two actions in a bar
 
-In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The bar's room over and under its buttons is the frame's gutter, the same number as at its sides ([S5](#s5-the-gutter-is-the-frames), `BOTTOM_BAR_ROOM_CLASS`): a button alone in a corner reads right only with one inset from both edges. That makes the bar 77px tall on a phone and 93px from a tablet up; the gutter stays small enough that the bar never reads as chrome taller than what it holds. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
+In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The bar's room over and under its buttons is the frame's gutter, the same number as at its sides ([S5](#s5-the-gutter-is-the-frames), `BOTTOM_BAR_ROOM_CLASS`): a button alone in a corner reads right only with one inset from both edges. That makes the bar 77px tall on a phone and 85px from a tablet up; the gutter stays small enough that the bar never reads as chrome taller than what it holds. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
 
-- **Check.** Equal visible heights; the bar's one gap; two button styles at most; the main action as far from the bar's bottom as from its end (16px at 390, 24px at 1440); the bar's height and its buttons' places the same with and without an error line.
+- **Check.** Equal visible heights; the bar's one gap; two button styles at most; the main action as far from the bar's bottom as from its end (16px at 390, 20px at 1440); the bar's height and its buttons' places the same with and without an error line.
 - **Usual break.** A corner with two insets (16px under the button, 24px beside it). A gutter grown to 40px, so the bar grows to 125px. An outline, a filled and a gray button in one bar. An error line as a second row in the bar. A stacked button only as wide as its words over a full-width one.
 
 ## Type
@@ -505,7 +505,7 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 
 ### Exceptions the user granted
 
-Each is one named place where a rule above doesn't hold, by the user's decision. Leave them, and don't extend one to a neighbor. A case not listed here follows the rule: ask in your handoff (in a task split among subagents, in [its exceptions file](../../../guides/orchestration.md#exceptions)), and add it here only once the user has accepted it.
+Each is one named place where a rule above doesn't hold, by the user's decision. Leave them, and don't extend one to a neighbor. A case not listed here is handled as [when a rule looks wrong](../../../guides/exceptions.md) says, and is added here only once the user has accepted it.
 
 - The landing page's hero headline and a blog post's title keep their own weight and line height (T1, T3).
 - A lesson question's picture is centered in the column (E9).

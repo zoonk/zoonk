@@ -35,6 +35,7 @@
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Question %1$d of %2$d · %3$s</string>
     <string name="mock_flag">Flag</string>
+    <string name="mock_unflag">Remove flag</string>
     <string name="mock_next">Next</string>
     <string name="mock_hand_in_section">Hand in section</string>
     <string name="mock_moves_review_any">Review: you can go back to any question.</string>
@@ -48,14 +49,14 @@
     <string name="mock_moves_must">Answer each question to move on.</string>
     <string name="mock_hand_in_mock_title">Hand in the mock exam?</string>
     <string name="mock_hand_in_section_title">Hand in this section?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d question is blank</item>
         <item quantity="other">%d questions are blank</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="one">%d is flagged</item>
-        <item quantity="other">%d are flagged</item>
+        <item quantity="one">%d is marked for review</item>
+        <item quantity="other">%d are marked for review</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s and %2$s.</string>
@@ -64,8 +65,8 @@
         <item quantity="other">%d questions are blank.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d question is flagged.</item>
-        <item quantity="other">%d questions are flagged.</item>
+        <item quantity="one">%d question is marked for review.</item>
+        <item quantity="other">%d questions are marked for review.</item>
     </plurals>
     <string name="mock_every_answered">Every question is answered.</string>
     <string name="mock_essay_blank">The essay is blank.</string>

@@ -38,12 +38,17 @@ function isTeaching(item: PlanItemView): boolean {
   return item.kind === "lesson" || item.kind === "chapter";
 }
 
+/** Each day's share of lessons still to be written is new lessons, unlike a split written lesson. */
+function fillsEachDay(item: PlanItemView): boolean {
+  return isTeaching(item) && item.lessonId === null;
+}
+
 /**
  * The reveal's Today and the six days after it, so each lesson shows once. Today lists what its
  * session holds; a lesson the plan laid out today that Today leaves out (reviews took its time)
- * moves to tomorrow; after that, a lesson split across days is listed on its first day only. A day
- * with time but nothing left to list (past the plan's end, or only finishing an earlier lesson)
- * isn't listed.
+ * moves to tomorrow; after that, a lesson split across days is listed on its first day only, while
+ * lessons still to be written are listed on every day they fill. A day with time but nothing left
+ * to list (past the plan's end, or only finishing an earlier lesson) isn't listed.
  */
 export function composeRevealDays({
   blocks,
@@ -63,13 +68,18 @@ export function composeRevealDays({
   const listed = new Set<string>();
 
   const nextDays = ahead.map((day, index) => {
+    const listedOnDay = new Set<string>();
+
     const items = [...(index === 0 ? left : []), ...day.items].filter((item) => {
-      if (listsItem({ blocks, item }) || (item.id !== null && listed.has(item.id))) {
+      const eachDay = fillsEachDay(item);
+      const seen = eachDay ? listedOnDay : listed;
+
+      if ((item.id !== null && seen.has(item.id)) || (!eachDay && listsItem({ blocks, item }))) {
         return false;
       }
 
       if (item.id !== null) {
-        listed.add(item.id);
+        seen.add(item.id);
       }
 
       return true;

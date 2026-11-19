@@ -1,6 +1,6 @@
 # Reviewing as a security researcher
 
-Start from what the change opens: new input, a new entry point, new data shown or stored, new spend. For each, ask how someone who isn't the learner, or a learner acting in bad faith, would use it, and check the answer in the code or the running app. `pnpm verify:diff` lists the lines to start from; `pnpm verify:pages --email <learner> --intruder <another learner>` checks the pages themselves.
+The builder sends the bad requests first ([attack it](attack.md)); this review asks what they missed. Start from what the change opens: new input, a new entry point, new data shown or stored, new spend. For each, ask how someone who isn't the learner, or a learner acting in bad faith, would use it, and check the answer in the code or the running app. `pnpm verify:diff` lists the lines to start from; `pnpm verify:pages --email <learner> --intruder <another learner>` checks the pages themselves.
 
 ## Entry points
 
@@ -37,4 +37,4 @@ Start from what the change opens: new input, a new entry point, new data shown o
 
 ## Where to run it
 
-In Claude Code, `/security-review` reviews the branch in a fresh subagent; give it this checklist. Any other agent runs it as a separate reviewer that didn't write the change ([orchestration guide](../../../guides/orchestration.md)). Report findings with the entry point, the attacker's steps and the consequence, and keep unproven concerns apart from confirmed ones.
+In Claude Code, `/security-review` reviews the branch in a fresh subagent; give it this checklist. Any other agent runs it as a separate reviewer that didn't write the change ([models](../../../guides/models.md)). Report findings with the entry point, the attacker's steps and the consequence, and keep unproven concerns apart from confirmed ones.

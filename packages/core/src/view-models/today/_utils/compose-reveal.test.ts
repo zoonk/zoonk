@@ -94,6 +94,38 @@ describe(composeRevealDays, () => {
     });
   });
 
+  it("lists lessons still to be written on every day they fill, and counts each of those days", () => {
+    const written = lesson("greetings", { minutes: 3 });
+
+    const unwritten = (minutes: number) =>
+      lesson("moreGreetings", { lessonId: null, minutes, skillId: "greetings", writing: true });
+
+    const days = [
+      day("2026-11-19", [written]),
+      day("2026-11-20", [unwritten(15)]),
+      day("2026-11-21", [], 0),
+      day("2026-11-22", [], 0),
+      day("2026-11-23", [unwritten(15)]),
+      day("2026-11-24", [unwritten(15)]),
+      day("2026-11-25", [unwritten(15)]),
+    ];
+
+    const reveal = composeRevealDays({ blocks: [block("lesson-greetings", 15)], days });
+
+    expect(
+      reveal.nextDays.map(({ date, items }) => [date, items.map(({ id }) => id)]),
+    ).toStrictEqual([
+      ["2026-11-20", ["moreGreetings"]],
+      ["2026-11-21", []],
+      ["2026-11-22", []],
+      ["2026-11-23", ["moreGreetings"]],
+      ["2026-11-24", ["moreGreetings"]],
+      ["2026-11-25", ["moreGreetings"]],
+    ]);
+
+    expect(reveal.week).toStrictEqual({ days: 5, minutes: 15 * 5 });
+  });
+
   it("matches a lesson still being written by its chapter, and never moves a finished one", () => {
     const days = [
       day("2026-11-08", [

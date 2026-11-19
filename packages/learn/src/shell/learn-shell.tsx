@@ -166,7 +166,7 @@ export function PageWithAside({
           aria-label={asideLabel}
           className={cn(
             "flex min-w-0 flex-col gap-7 outline-none min-[72rem]:gap-9",
-            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:pt-3 min-[72rem]:pb-8 xl:w-80",
+            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:px-frame min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:pt-3 min-[72rem]:pb-8 xl:w-80",
             asideClassName,
           )}
           data-slot="page-aside"

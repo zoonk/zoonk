@@ -138,7 +138,7 @@ FAIL: 1 unresolved; scenarios not listed yet; 0 discovery leads; 0 not measured
 
 **When you add or change a shared piece:**
 
-- Name its parts with `data-slot` (group, rows, and their mark, lead, label, note, value and end) as the table's selectors read them; on Apple, the shared row's `layoutRow` and `layoutPart` ([measuring the Apple app](apple.md#layout-capture)).
+- Name its parts with `data-slot` (group, rows, and their mark, lead, label, note, value and end) as the table's selectors read them; on Apple, the shared row's `layoutRow` and `layoutPart` ([measuring the Apple app](apple-layout-capture.md)).
 - Declare the piece and the relationships its design holds in `PIECES`. A relationship left out is never measured, so leave one out only with the reason beside it, as `journey-path` does for `gap` and `type`.
 - Give a button its piece draws more than once the same `data-action-name`, so `one-filled` counts it once. A card's filled answer, in the page or its aside, counts with the page's main action: beside one, it steps down to outline (craft D4, `useMainActionVariant`).
 - A part name a platform's capture doesn't write yet goes into `ELEMENT_PARTS` (`alignment-capture.mts`), the one schema every capture is read by. `alignment-validate.test.mts` reads each writer's part names from its source (the web's probe, Android's `LayoutParts.kt` and `LayoutCapture.kt`, Apple's `LayoutReport.swift` and `LayoutCapture.swift`) and fails until the reader has the new one.
