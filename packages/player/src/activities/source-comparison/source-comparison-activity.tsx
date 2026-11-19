@@ -43,10 +43,10 @@ function passageState({
 const PASSAGE_CLASS: Record<PassageState, string> = {
   correct: "bg-success/15 text-foreground",
   incorrect: "bg-destructive/15 text-foreground",
-  marked: "bg-selected-tint text-foreground ring-selected ring-2 ring-inset",
+  marked: "bg-selected-tint text-foreground",
   missed: "decoration-success-text underline decoration-2 decoration-dashed underline-offset-4",
   unmarked:
-    "bg-muted decoration-viz-accent/60 hover:bg-accent underline decoration-dotted decoration-2 underline-offset-4",
+    "decoration-viz-accent/60 hover:bg-accent underline decoration-dotted decoration-2 underline-offset-4",
 };
 
 function Passage({

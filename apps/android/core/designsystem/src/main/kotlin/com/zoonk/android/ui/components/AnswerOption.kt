@@ -101,7 +101,13 @@ fun AnswerOption(
                     },
                 ).padding(horizontal = 16.dp, vertical = 13.dp),
         content = { ProvideTextStyle(MaterialTheme.typography.labelLarge, content) },
-        tag = tag ?: { if (result != null) AnswerTag(picked, result, guessed = guessed) },
+        tag =
+            tag ?: {
+                when {
+                    result != null -> AnswerTag(picked, result, guessed = guessed)
+                    picked && role != Role.Button -> PickedTag(guessed)
+                }
+            },
         leading =
             if (key ==
                 AnswerKey.None

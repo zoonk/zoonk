@@ -326,14 +326,20 @@ final class MockBarNoteTests: XCTestCase {
 
 @MainActor
 final class MockAnswerSheetTests: XCTestCase {
-  func testTheKeySaysHowManyQuestionsAreMarkedForReview() {
-    XCTAssertEqual(String(localized: MockLabels.markedForReview(0)), "Marked for review")
-    XCTAssertEqual(String(localized: MockLabels.markedForReview(1)), "1 marked for review")
-    XCTAssertEqual(String(localized: MockLabels.markedForReview(2)), "2 marked for review")
+  /// The web's one sentence for blank and flagged questions, each counted in its own plural.
+  func testHandingInSaysBlankAndFlaggedInOneSentence() {
+    func leftOpen(blank: Int, flagged: Int, locale: String = "en") -> String {
+      var sentence = LocalizedStringResource(
+        "\(blank) questions are blank and \(flagged) are flagged.", table: "Mock")
+      sentence.locale = Locale(identifier: locale)
+      return String(localized: sentence)
+    }
 
-    var japanese = MockLabels.markedForReview(2)
-    japanese.locale = Locale(identifier: "ja")
-    XCTAssertEqual(String(localized: japanese), "2問が見直し対象", "The web's words")
+    XCTAssertEqual(leftOpen(blank: 2, flagged: 1), "2 questions are blank and 1 is flagged.")
+    XCTAssertEqual(leftOpen(blank: 1, flagged: 3), "1 question is blank and 3 are flagged.")
+    XCTAssertEqual(
+      leftOpen(blank: 1, flagged: 2, locale: "pt"),
+      "1 questão está em branco e 2 estão marcadas.", "The web's words")
   }
 
   /// Beside the sheet's title, as the web's: how many of the section's questions are answered.

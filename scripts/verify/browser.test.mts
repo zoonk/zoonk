@@ -13,6 +13,7 @@ const target: TargetSample = {
   blockTextLength: 3,
   clipPath: "none",
   display: "block",
+  finePointer: true,
   firstLineHeight: 38,
   height: 38,
   inactive: false,
@@ -72,5 +73,15 @@ test("leaves out the parts of Today's day bar and only them", () => {
 
   assert.deepEqual(findSmallTargets([{ ...dayBarPart, slot: "today-day-progress" }]), [
     '<button data-slot="today-day-progress"> "Day" is 90×38 px',
+  ]);
+});
+
+test("lets a menu's row be 36 px with a mouse, never on touch", () => {
+  const row = { ...target, height: 36, role: "menuitem", slot: "dropdown-menu-item" };
+
+  assert.deepEqual(findSmallTargets([row]), []);
+
+  assert.deepEqual(findSmallTargets([{ ...row, finePointer: false }]), [
+    '<menuitem data-slot="dropdown-menu-item"> "Day" is 90×36 px',
   ]);
 });

@@ -4,7 +4,6 @@ import { getMenu } from "@/lib/menu";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { SettingsAccountAction } from "./_components/settings-account-action";
-import { SettingsAccountEmail } from "./_components/settings-account-email";
 import { SettingsNavbar, SettingsNavbarSkeleton } from "./_components/settings-navbar";
 
 export default async function Layout({ children }: LayoutProps<"/[lang]">) {
@@ -23,11 +22,6 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
         nav={
           <Suspense fallback={<SettingsNavbarSkeleton />}>
             <SettingsNavbar />
-          </Suspense>
-        }
-        note={
-          <Suspense fallback={null}>
-            <SettingsAccountEmail />
           </Suspense>
         }
         parents={[{ href: getMenu("aboutYou").url, title: t("About you") }]}

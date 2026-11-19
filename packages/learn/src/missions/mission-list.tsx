@@ -22,14 +22,15 @@ export function ProgressCount({ done, total }: { done: number; total: number }) 
   return countOf(done, total);
 }
 
-export function MissionsDoneCount({ done, total }: { done: number; total: number }) {
+export function useMissionsDoneCount() {
   const t = useExtracted();
 
-  return t({
-    description: "Under the title Today's missions: how many of today's missions are done.",
-    message: "{done} of {total} done",
-    values: { done: String(done), total: String(total) },
-  });
+  return ({ done, total }: { done: number; total: number }): string =>
+    t({
+      description: "Under the title Today's missions: how many of today's missions are done.",
+      message: "{done} of {total} done",
+      values: { done: String(done), total: String(total) },
+    });
 }
 
 /**

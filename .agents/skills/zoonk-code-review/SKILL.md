@@ -4,7 +4,7 @@ description: Review Zoonk diffs or assess supplied review comments against actua
 license: MIT
 metadata:
   author: zoonk
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
 # Zoonk code review
@@ -38,28 +38,11 @@ Before reporting a race, stale state or a missing guard, look for what already p
 
 ## Follow the changed behavior
 
-Choose the relevant areas below rather than running a fixed audit of every subsystem:
-
-- **Product and correctness:** Trace input through validation, persistence, side effects, caching, and output. Examine retries, cancellation, concurrency, stale state, and partial failure where the changed path permits them. Preserve the product contract and remove leftovers from superseded requirements.
-- **Architecture and simplicity:** Check the core/app boundary, API parity, ownership of shared rules, and whether the added abstraction solves an actual need. Evaluate reused abstractions against the guarantees their callers require. Establish those guarantees from their implementations and actual usage, rather than their names, proximity, or existing adoption. Reject competing sources of truth and unnecessary compatibility layers. For each constant, helper, component or class list the diff adds, find where the product already does the same thing: the code the PR names, the same words, icon or classes ([find the piece](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one)), and `verify:diff`'s duplication leads, which are starting points, not an exhaustive search. Report each copy the diff adds or leaves drifted with both paths and what differs, and name the owning module. Matching values alone do not establish shared semantics. Check every relevant consumer when moving symbols or changing contracts, and preserve dependency direction.
-- **Permissions and privacy:** Check authorization beside protected reads/writes, including resource ownership and publication state. Review cache scope, input handling, and exposure of private data through responses, logs, analytics, or client bundles. UI visibility is not authorization. For each decision that spends, publishes, grants, cancels, or limits, name the data it reads and who can write that data, then where its check runs: before the work it limits, on every path that reaches it, and where the effect happens.
-- **Performance:** Preserve independent async work; examine added queries, model calls, unbounded results, reads whose cost grows with a learner's history or the catalog, or client payloads. Repeated cheap translation calls are expected. Require evidence before proposing performance machinery.
-- **Data and workflows:** Check uniqueness, transactions, retry safety, freshness, and invalidation. Public API changes must preserve the OpenAPI contract; distinguish public product endpoints from the same-origin transport exception in [API guidance](../../../apps/api/AGENTS.md).
-- **UI and native behavior:** Judge the whole changed flow, including accessibility and recovery states, in the actual application when relevant. Distinguish rendered observations from static inference.
-- **Learner experience:** When the diff changes what learners see or do, walk the affected journeys on the running app with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md): two or three personas from its catalog, including at least one bad-day path. You didn't build the change, so you have the fresh eyes the walk needs. Use the PR's Verification section to choose what it didn't cover, not as a reason to skip the walk. Report experience problems as findings with the persona, the journey and what they saw. When the app can't run, say so as a limitation. A finding that a learner can't tell or doesn't know something comes with the fix order in zoonk-design's [Words](../zoonk-design/SKILL.md#words): remove, rename, show, move, and only then a sentence. Never propose "add a line saying…" first. Don't ask a screen to state a caveat because it is true: say what a learner would do wrong without it, or drop the finding. On an app screen, gained words, a label that names the next screen or a consequence, and a term no earlier screen taught are findings too. A marketing page (the landing page, the catalog and its course pages, pricing, the blog) is judged by zoonk-design's [Marketing pages](../zoonk-design/SKILL.md#marketing-pages) instead: not by how many words it has, but by whether each section answers a question a visitor has.
-- **Coverage:** Check whether assertions would catch the real defect and whether fixtures isolate persisted state. Do not request tests that only mirror copy, styles, schemas, or library behavior.
-
-## Conditional references
-
-- For a disputed Next.js API or caching behavior, consult the relevant installed docs in `apps/<app>/node_modules/next/dist/docs/`. Apply the [core Cache Component contract](../../../packages/core/AGENTS.md); do not prescribe React `cache` for every read. Its object-argument identity and per-request scope matter when it is actually used.
-- For component architecture, use [compound components](../zoonk-compound-components/SKILL.md); for visual or interaction judgment, use [design guidance](../zoonk-design/SKILL.md), which routes native platform work.
-- For effect or React performance questions, consult the relevant [React best practices](../vercel-react-best-practices/SKILL.md). Load [next-dev-loop](../next-dev-loop/SKILL.md) when runtime investigation is needed, not for every TSX diff.
-- For test design or fixture questions, use [testing guidance](../zoonk-testing/SKILL.md). Internal app exclusions and the prohibition on React component unit tests still apply.
-- For user-facing copy, consult zoonk-design's [Words](../zoonk-design/SKILL.md#words) and the [shared](../../../packages/i18n/.eloqnt/styleguide.md) and [English](../../../packages/i18n/.eloqnt/styleguide.en.md) style guides. Check translations against the [translation rules](../../guides/translations.md).
+Trace the areas the change reaches rather than running a fixed audit of every subsystem: product and correctness, architecture and simplicity, permissions and privacy, performance, data and workflows, UI and native behavior, the learner's experience, and test coverage. [Review areas](references/areas.md) says what to check in each and where to look things up.
 
 ## Checks and output
 
-Start from `pnpm verify:diff --base <base>`, which lists the lines a principal engineer, a security researcher and a designer would each question; the [verify skill's checklists](../verify/references/review.md) say how to check them. Use current CI results when available. Run local checks to answer a concrete question, reproduce a defect, or close a coverage gap. In read-only reviews use check-only commands. Do not repeat the entire pipeline by default or treat an intermittent failure as a pass.
+Start from `pnpm verify:diff --base <base>`, which lists the lines a principal engineer, a security researcher and a designer would each question; the verify skill's checklists for the [engineer](../verify/references/review-engineer.md), the [designer](../verify/references/review-designer.md) and the [security researcher](../verify/references/security.md) say how to check them. Use current CI results when available. Run local checks to answer a concrete question, reproduce a defect, or close a coverage gap. In read-only reviews use check-only commands. Do not repeat the entire pipeline by default or treat an intermittent failure as a pass.
 
 Lead with actionable findings ordered by impact: P0 for immediate catastrophic impact, P1 for high-impact failures, P2 for functional or architectural defects, and P3 for small real defects. Severity describes impact, not certainty, and does not excuse leaving an authorized confirmed fix unfinished.
 

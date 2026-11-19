@@ -57,7 +57,6 @@ export function TodayScreen({
   banner = null,
   buddy,
   completedLessons = false,
-  knownLessons = 0,
   language = null,
   missions = null,
   mistakes = NO_MISTAKES,
@@ -74,7 +73,6 @@ export function TodayScreen({
   banner?: React.ReactNode;
   buddy: LearnBuddy | null;
   completedLessons?: boolean;
-  knownLessons?: number;
   language?: Pick<LanguageTodayView, "level" | "targetLanguage"> | null;
   missions?: MissionsDay | null;
   mistakes?: MistakeAvailability;
@@ -120,11 +118,7 @@ export function TodayScreen({
               </TodayNotice>
               <TodayMissions className={ASIDE_LEAD_CLASS} />
               <TodayWeek className={ASIDE_LEAD_CLASS} />
-              <TodayPreparation
-                className={ASIDE_LEAD_CLASS}
-                knownLessons={knownLessons}
-                language={language}
-              />
+              <TodayPreparation className={ASIDE_LEAD_CLASS} language={language} />
               <TodayPractice
                 completedLessons={completedLessons}
                 completedLessonsHref={actions.completedLessonsHref}

@@ -1,11 +1,13 @@
 import SwiftUI
 
 /// Main's `MissionTrack`: a segment per mission, the furthest along first. With `from`, the
-/// segments this work moved fill from where they were.
+/// segments this work moved fill from where they were. With a `label`, VoiceOver reads the track
+/// as that; without one it hides, for words that already say it.
 struct MissionTrack: View {
   let missions: [StudyMission]
   var from: [StudyMission]?
   var delay: TimeInterval = 0
+  var label: Text?
 
   private static func fill(_ mission: StudyMission) -> Double {
     mission.total > 0 ? min(1, Double(mission.done) / Double(mission.total)) : 0
@@ -28,6 +30,8 @@ struct MissionTrack: View {
       }
     }
     .frame(height: 6)
-    .accessibilityHidden(true)
+    .accessibilityElement()
+    .accessibilityLabel(label ?? Text(verbatim: ""))
+    .accessibilityHidden(label == nil)
   }
 }

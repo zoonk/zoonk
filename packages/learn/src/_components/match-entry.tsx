@@ -89,7 +89,7 @@ export function MatchEntry({
       className={cn(
         ANSWER_BOX_CLASS,
         "items-center gap-2 px-3",
-        "focus-visible:outline-ring press outline-none select-none [--press-scale:0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:cursor-default",
+        "focus-visible:outline-ring/50 press outline-none select-none [--press-scale:0.99] focus-visible:outline-3 focus-visible:outline-solid disabled:cursor-default",
         ENTRY_TONE[state],
         className,
       )}

@@ -57,7 +57,7 @@ function WeekDayRow({
   const t = useExtracted();
   const itemTitle = useItemTitle();
   const formatDuration = useFormatDuration();
-  const lessons = day.items.filter((item) => isTeaching(item)).length;
+  const lessons = day.items.reduce((total, item) => total + item.lessons, 0);
 
   const others = new Set(
     day.items.filter((item) => !isTeaching(item)).map((item) => itemTitle(item)),

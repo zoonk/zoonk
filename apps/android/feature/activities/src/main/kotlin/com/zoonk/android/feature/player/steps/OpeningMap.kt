@@ -47,6 +47,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.LocalMoreContrast
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.LessonMapIdeasInner
@@ -138,7 +139,13 @@ private fun OpeningIdea(
     val scope = rememberCoroutineScope()
     val ground = MaterialTheme.colorScheme.surface
     val ink = MaterialTheme.colorScheme.onSurface
-    val ring = if (tooltip.isVisible || LocalMoreContrast.current) ink else ink.copy(alpha = RING_ALPHA)
+    val ring =
+        when {
+            LocalMoreContrast.current -> ink
+            tooltip.isVisible -> ink.copy(alpha = OPEN_RING_ALPHA)
+            else -> ink.copy(alpha = RING_ALPHA)
+        }
+    val openFill = MaterialTheme.zoonk.selectedTint
     val showLabel = stringResource(R.string.player_opening_map_show)
     val below = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below)
 
@@ -150,6 +157,7 @@ private fun OpeningIdea(
                     .drawBehind {
                         val width = RING.toPx()
                         drawCircle(ground)
+                        if (tooltip.isVisible) drawCircle(openFill)
                         drawCircle(
                             ring,
                             radius = (size.minDimension - width) / 2,
@@ -237,3 +245,4 @@ private val RING = 2.dp
 private val RING_DASH = 6.dp
 private val RING_GAP = 4.dp
 private const val RING_ALPHA = 0.3f
+private const val OPEN_RING_ALPHA = 0.6f

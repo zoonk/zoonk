@@ -186,7 +186,6 @@ class TodayFlowTest {
                         buddyName = "Zu",
                         language = null,
                         onboarding = onboarding,
-                        plans = PlanStore(plans, cache),
                         snackbars = AppSnackbars(),
                         refreshIfChanged = store::refreshIfChanged,
                     )

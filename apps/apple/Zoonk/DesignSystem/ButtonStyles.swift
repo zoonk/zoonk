@@ -107,6 +107,7 @@ private struct ZoonkButton: View {
   @Environment(\.controlsShareHeight) private var sharesHeight
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.buttonTone) private var tone
 
   let configuration: ButtonStyleConfiguration
   let variant: ZoonkButtonStyle.Variant
@@ -137,7 +138,7 @@ private struct ZoonkButton: View {
       }
       .overlay {
         if variant == .outline && !isDestructive {
-          shape.strokeBorder(Color(.input))
+          shape.strokeBorder(tone == .warning ? Color.warning : Color(.input))
         }
       }
       .opacity(isEnabled || variant == .main ? 1 : 0.5)
@@ -184,7 +185,7 @@ private struct ZoonkButton: View {
       return isEnabled ? Color(.primaryForeground) : .mutedForeground
     }
 
-    return Color(.foreground)
+    return tone == .warning ? .warningText : Color(.foreground)
   }
 
   private var fill: Color {
@@ -219,8 +220,22 @@ extension View {
   }
 }
 
+/// Main's toned outline (`border-warning text-warning-text`), for a toggle whose on state is a
+/// warning, such as a mock exam's flagged question.
+enum ButtonTone {
+  case neutral
+  case warning
+}
+
+extension View {
+  func buttonTone(_ tone: ButtonTone) -> some View {
+    environment(\.buttonTone, tone)
+  }
+}
+
 extension EnvironmentValues {
   @Entry fileprivate var controlsShareHeight = false
+  @Entry fileprivate var buttonTone = ButtonTone.neutral
 
   /// One main action per screen: set where the screen's bar holds it, so a button that would be the
   /// main action elsewhere (a notice's retry, a suggestion's answer) is secondary beside it. Each

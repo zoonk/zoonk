@@ -77,20 +77,31 @@ struct AnswerOption: View {
       Text(resultLabel(result))
         .typeStyle(.tag)
         .foregroundStyle(tagColor(result))
+    } else if isPicked {
+      // Unspoken: VoiceOver already says the option is selected.
+      Text(isGuessed ? yourGuess : yourAnswer)
+        .typeStyle(.tag)
+        .foregroundStyle(Color(.foreground))
+        .accessibilityHidden(true)
     }
   }
 
-  private var hasTag: Bool { tag != nil || result != nil }
+  private var hasTag: Bool { tag != nil || result != nil || isPicked }
+
+  private var yourGuess: LocalizedStringResource {
+    LocalizedStringResource(
+      "Your guess", table: "Practice",
+      comment: "Mark beside the learner's pick when it counts as neither right nor wrong.")
+  }
+
+  private var yourAnswer: LocalizedStringResource {
+    LocalizedStringResource(
+      "Your answer", table: "Practice",
+      comment: "Mark beside the learner's wrong pick once a question is graded.")
+  }
 
   /// A right pick says whose it is, so it isn't called correct twice under its verdict.
   private func resultLabel(_ result: AnswerOptionResult) -> LocalizedStringResource {
-    let yourGuess = LocalizedStringResource(
-      "Your guess", table: "Practice",
-      comment: "Mark beside the learner's pick when it counts as neither right nor wrong.")
-    let yourAnswer = LocalizedStringResource(
-      "Your answer", table: "Practice",
-      comment: "Mark beside the learner's wrong pick once a question is graded.")
-
     switch result {
     case .guess:
       return yourGuess

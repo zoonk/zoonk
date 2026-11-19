@@ -9,7 +9,7 @@
   "mock_break_detail": "1c2f3f869e85c4a746d8d13cfb535396bdc5ce24b60fa84796b6d71f61ffaae4",
   "mock_break_time_left": "d70678f380db1785ea5d06114df142d294b954482f360b6028fb824a6c6ec7bb",
   "mock_cell_answered": "852f5756e5ba7f72ae947e20be16ca933aa43f36c9239f6067f1b19adc5d06d6",
-  "mock_cell_marked_for_review": "a128669d57c7543e8469a0a4c5677beb72470b245a727c76daa0df88359810fc",
+  "mock_cell_flagged": "89e14ee09a8b1ff18ea424548cf929c116ba281bef8ee35fcae038a34e9f114d",
   "mock_continue": "8fdb544d63b79b7e2a2f57ba5eea4d52a5cef2beb4d7be5087cc15fb4b292bcf",
   "mock_continue_section": "cf11cdc71796562873e389f24c5481314e6c36f67fe4e12ea687f8a8ff434516",
   "mock_essay_blank": "ce8543c6a4ee0cb7164c70ab1e1b17dded3472d63352408adb2786f5cfa24caf",
@@ -89,6 +89,7 @@
   "mock_time_up": "1d2f1055addcb7de40d79cb451c1d101999fcdc723fb554b0dd0cfb4166123d8",
   "mock_title": "1a485ee81fa8768280e2623036e4fb8c8c17cbe5f434bb20ea2dcd91333e9ecb",
   "mock_try_again": "a6136a161dc66c2148306249e4a5b51705e969d6b8f56a8b62c9b5884d50823f",
+  "mock_unflag": "df0f424b0bc15572a51edadd2dd607996223ab905c6fd8bcd23488ea7b1a0737",
   "mock_words": "9bd58c4117d1e040f106a9933c0febac60ad9395ed9acf89b78dd4ae526e393d",
   "mock_written_part": "9b5f77ac09eb3cee5926b9f04662514e38f6c7327a2694865fec56b6731df542",
   "mock_written_part_area": "b81bf0f873a17832f5bee8477d1b990232e570d1b92a63845c51b39479130cad",
@@ -133,6 +134,7 @@
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Question %1$d sur %2$d · %3$s</string>
     <string name="mock_flag">Marquer</string>
+    <string name="mock_unflag">Retirer le marquage</string>
     <string name="mock_next">Suivant</string>
     <string name="mock_hand_in_section">Rendre la partie</string>
     <string name="mock_moves_review_any">Vérification : tu peux revenir à n’importe quelle question.</string>
@@ -193,8 +195,8 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">réponse donnée</string>
-    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_marked_for_review">%1$s, marquée pour révision</string>
+    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_flagged">%1$s, marquée</string>
     <string name="mock_sections">Parties</string>
     <string name="mock_section_number">Partie %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

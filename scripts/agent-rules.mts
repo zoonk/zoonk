@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 import { join, relative, resolve } from "node:path";
 import { z } from "zod";
 import { committedSourceProblems } from "./verify/committed-source.mts";
+import { instructionFileProblems } from "./verify/instruction-files.mts";
 
 const ROOT = resolve(import.meta.dirname, "..");
 
@@ -80,6 +81,12 @@ if (process.argv.includes("--check")) {
 
   if (problems.length > 0) {
     throw new Error(`Committed source checks failed:\n${problems.join("\n")}`);
+  }
+
+  const instructionProblems = instructionFileProblems(ROOT);
+
+  if (instructionProblems.length > 0) {
+    throw new Error(`Instruction file checks failed:\n${instructionProblems.join("\n")}`);
   }
 
   const stale = findStaleAgentRules();

@@ -45,9 +45,9 @@ fun SelectionChip(
                 enabled = enabled,
                 selected = selected,
                 borderColor = colors.outline,
-                selectedBorderColor = colors.primary,
-                disabledSelectedBorderColor = colors.primary,
-                selectedBorderWidth = 2.dp,
+                selectedBorderColor = colors.outline,
+                disabledSelectedBorderColor = colors.outline,
+                selectedBorderWidth = 1.dp,
             ),
     )
 }

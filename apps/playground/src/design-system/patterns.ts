@@ -55,7 +55,7 @@ export const PATTERNS: readonly Pattern[] = [
     follow: [
       "The current tab is the navigation's `muted` fill, the same mark as the sidebar's current page: `Tabs`, or `TAB_CLASS` and `TAB_LIST_CLASS` for tabs that are links.",
       "The current tab's fill reaches 10px past the column, like a highlighted row, so the first tab's label starts on the title's edge.",
-      "A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`).",
+      "A pick is a soft fill darker than a hover (`selected-tint`) with the piece's own mark (a radio's dot, a check, \"Your answer\"), never a ring (`ChoiceList`, `AnswerOption`).",
       "A state change moves nothing: hover, focus, current, busy and disabled keep a control's size and its neighbors' place.",
     ],
     id: "current",
@@ -88,7 +88,7 @@ export const PATTERNS: readonly Pattern[] = [
       "`BottomBar` holds a screen's one main action, pinned at the bottom on a phone and a computer; `BottomBarActions` is its row, buttons 8px apart, the main action last. On a phone the row gives the main action what the other buttons leave, on a computer its own width at the end, so a screen never sizes it.",
       "What the last action couldn't do goes in `note`: it shows over the screen above the bar, and the buttons stay where they were.",
       "The frame tells the bar its padding and what is docked under it (`--page-gutter`, `--page-bottom`, `--page-dock`), so the same piece works in the app's shell and in a task.",
-      "The buttons have 16px over and under them at every size and the frame's gutter at their sides: the bar sets both, never a screen.",
+      "The buttons have the frame's gutter at their sides and over and under them, one number so the main action's corner is even: the bar sets it, never a screen.",
     ],
     id: "bottom-bar",
     summary: "The main action has one home: the bar at the bottom of the screen.",
@@ -101,7 +101,7 @@ export const PATTERNS: readonly Pattern[] = [
       "Color without its word: a checked option always says Correct or Your answer.",
     ],
     follow: [
-      "At rest the stronger line; picked a 2px ring in the text color on its tint.",
+      "At rest the stronger line; picked, the pick's fill and \"Your answer\" in the text color.",
       "Checked: the right answer's ring and tint in blue, a wrong pick's in pink-red, each with its word.",
     ],
     id: "answers",

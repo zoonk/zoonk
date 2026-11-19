@@ -78,6 +78,7 @@
   "today_preparation": "dd5aec3ef046a8b777c1cba95f415b17ff7d383ffa61e156db9acc444fde4c97",
   "today_progress": "0c42c709629587d78a177998aa6b151d8c7ca889d06ace5b9940ec10678ae3dc",
   "today_progress_lessons_today": "e1084d1a35342dc4b92d76cd03b782e9087f83a40833b1d9b450541f96d77870",
+  "today_progress_meaning": "daee577234c4b6fc170434601f5764b2135aacc8c5d5ae670dd502651c7aa283",
   "today_quick_explanation": "1b0c7639e5d108584fe559606cd0fceb3d6a2102f3c8a30d4266f29c78ad32af",
   "today_rest": "8b1c127e35c4cab1698ac3a9a0c5d619a5422f627e0d6b5977efc00399ba553d",
   "today_rest_enjoy": "082c84ad293204a93509d307773095f5af97ced388d877ed4bf6d35e1359a6d7",
@@ -352,6 +353,8 @@
     <string name="today_behind_kept">Okej. Twój czas nauki się nie zmienia.</string>
     <!-- The title of a card beside Today's page: how much of the goal is done, as a percent. -->
     <string name="today_progress">Postęp</string>
+    <!-- What the goal's progress number is made of -->
+    <string name="today_progress_meaning">Lekcje przerobione lub znane wcześniej spośród wszystkich lekcji w planie.</string>
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
     <string name="today_preparation">Przygotowanie</string>
     <!-- A link at the end of the progress card that opens the learner's plan. -->

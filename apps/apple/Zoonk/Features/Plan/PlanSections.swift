@@ -715,9 +715,9 @@ func studyDaysText(_ weekdayMinutes: [Int]) -> String {
   return days.map(symbol).formatted(.list(type: .and, width: .narrow))
 }
 
-/// The line under a goal's progress percent, on the Plan and on Today. The percent counts lessons
-/// studied and those the learner already knew, so once there are known ones the line names both.
-func lessonsProgressLine(studied: Int, known: Int) -> String {
+/// The line under the Plan's progress percent. The percent counts lessons studied and those the
+/// learner already knew, so once there are known ones the line names both.
+private func lessonsProgressLine(studied: Int, known: Int) -> String {
   if known > 0 {
     return [
       studied > 0

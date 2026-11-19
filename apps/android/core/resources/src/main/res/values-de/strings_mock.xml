@@ -9,7 +9,7 @@
   "mock_break_detail": "4a2fd50be93cf8682291729de2150f03ad4feeb79a0f68e9bf3ec4d3ea882dda",
   "mock_break_time_left": "d0d583ef1f721ef6afe5cd51cc304dac780c65f961537e6a431ab24fc3e09616",
   "mock_cell_answered": "54c0769e569f82484ed0630821996817e51dea945cb8faa40ac1f4766a843f70",
-  "mock_cell_marked_for_review": "fc28da3772c74b45c3088e67313b324a6f95e20cff7dbc132026ee7255569a37",
+  "mock_cell_flagged": "162b2ec4ea77336158b4fffaabd44764665f2271bc97a907f3c5238eb98a76b4",
   "mock_continue": "8070e48e065069e0eea5e6091113ae8af12721bd7b3de437712a0c01fb68c95c",
   "mock_continue_section": "f4c54908fdc13388c7c72283863cdbbcc07d605292dda053a726bb0e1553a721",
   "mock_essay_blank": "4a5f860ee5cb5a10194f32b2a4d495e96ad5f31a098e3b3095f5782ea7bd241c",
@@ -32,7 +32,7 @@
   "mock_left_blank": "ce8ffd8b2a3c6e0ce03e9e381be9c08a032a5f0c7a8faa2f931485760b8a8e7c",
   "mock_left_blank_and_flagged": "7e1b60c99b954904fa52efc4a07d28b4cbe481cd34c1c7a56ea1dacf7cad0be8",
   "mock_left_blank_only": "0ad26202901e6cf83ae4c407d3b21599a6491ca2dc60710385b5d385dfb587fa",
-  "mock_left_flagged": "5040a62448e43dc657d6b799477ca5fa26892665fc4758d51a63ea96dbf84008",
+  "mock_left_flagged": "9872854a9fa82369200409f5a92db3fc50e654c965f20a87271921b8e673e067",
   "mock_left_flagged_only": "ca7828fdfdac2c0b622c198cf6a5c5f06069f37a02eced319a87d3473ba96f5e",
   "mock_moves_forward": "cdc3ee0dd0e95a8c1e555be879946bcb9fee3b0062dab7aff5de72a4c4f3c4ed",
   "mock_moves_forward_must": "6556d0a8534c0513fce04ec7429e886d4d7ec87aec8b30723a573adf9c212592",
@@ -89,6 +89,7 @@
   "mock_time_up": "f1ab42d6017d2038843a23a2c07513aeca1c01b83379317f75bd70bb5b6ed288",
   "mock_title": "b402c6c3a77c0c06124a494ca6874f10d9d9307361d36ee12baafc501dba301b",
   "mock_try_again": "98d297e50a37d27896ec382bb0506080459ca438f9db8fd243974c40b862d234",
+  "mock_unflag": "f314c9f505d9f3d26168801dfca335e4eb7f9774cffcfb557aa11f15142c5a2a",
   "mock_words": "7b17f89d2d812afd31dc837584004d26ab0ea6399ed8de1d63ef364cb71534ac",
   "mock_written_part": "6496121dab5e7ae4edfbab325cf0a3874a934c61b1ec32ab94b94eb071ab6439",
   "mock_written_part_area": "1cca1b0572584c071b81d022d16b3f0d29da31a22a25a485686f4fd3b7566579",
@@ -131,6 +132,7 @@
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Frage %1$d von %2$d · %3$s</string>
     <string name="mock_flag">Markieren</string>
+    <string name="mock_unflag">Markierung entfernen</string>
     <string name="mock_next">Weiter</string>
     <string name="mock_hand_in_section">Abschnitt abgeben</string>
     <string name="mock_moves_review_any">Überprüfung: Du kannst zu jeder Frage zurückgehen.</string>
@@ -150,8 +152,8 @@
         <item quantity="other">%d Fragen sind unbeantwortet</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="one">%d markiert</item>
-        <item quantity="other">%d markiert</item>
+        <item quantity="one">%d ist markiert</item>
+        <item quantity="other">%d sind markiert</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s und %2$s.</string>
@@ -184,8 +186,8 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Frage %1$d</string>
     <string name="mock_cell_answered">beantwortet</string>
-    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_marked_for_review">%1$s, zur Überprüfung markiert</string>
+    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_flagged">%1$s, markiert</string>
     <string name="mock_sections">Abschnitte</string>
     <string name="mock_section_number">Abschnitt %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

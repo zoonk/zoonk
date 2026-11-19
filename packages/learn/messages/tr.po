@@ -1110,17 +1110,6 @@ msgctxt "UAppyx"
 msgid "{count, plural, =0 {atoms} one {atom} other {atoms}}"
 msgstr "{count, plural, =0 {atom} other {atom}}"
 
-#: src/_utils/use-lessons-progress-line.ts
-msgctxt "l25yqY"
-msgid "{studied, number} studied · {known, number} already known"
-msgstr "{studied, number} ders çalışıldı · {known, number} ders zaten biliniyordu"
-
-#. A short line under the progress percent, in a small tile.
-#: src/_utils/use-lessons-progress-line.ts
-msgctxt "Z1VCaI"
-msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
-msgstr "{studied, plural, =0 {Henüz ders çalışılmadı} other {# ders çalışıldı}}"
-
 #: src/_utils/use-pass-marks-note.ts
 msgctxt "Yc8HfI"
 msgid "In {language}, as the exam's documents say it."
@@ -4804,6 +4793,17 @@ msgid "Preparation"
 msgstr "Hazırlık"
 
 #: src/journey/journey-hero.tsx
+msgctxt "l25yqY"
+msgid "{studied, number} studied · {known, number} already known"
+msgstr "{studied, number} ders çalışıldı · {known, number} ders zaten biliniyordu"
+
+#. A short line under the progress percent, in a small tile.
+#: src/journey/journey-hero.tsx
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Henüz ders çalışılmadı} other {# ders çalışıldı}}"
+
+#: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/session/summary/summary-parts.tsx
 #: src/today/today-lessons-card.tsx
@@ -7934,9 +7934,9 @@ msgstr "Bir cevap kaydedilmedi."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "2_2n3w"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
-msgstr "{blank, plural, other {# soru boş}} ve {flagged, plural, other {# soru tekrar bakmak için işaretlendi}}."
+msgctxt "Beu7ZD"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
+msgstr "{blank, plural, one {# soru boş bırakıldı} other {# soru boş bırakıldı}} ve {flagged, plural, one {# soru işaretlendi} other {# soru işaretlendi}}."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7946,9 +7946,9 @@ msgstr "{count, plural, other {# soru boş.}}"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "gaB5_0"
-msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
-msgstr "{count, plural, other {# soru tekrar bakmak için işaretlendi.}}"
+msgctxt "GCYYkV"
+msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
+msgstr "{count, plural, one {# soru işaretlendi.} other {# soru işaretlendi.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8721,11 +8721,11 @@ msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "{score} / {total} net"
 
-#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}, tekrar bakmak için işaretlendi"
+msgctxt "ETtb7q"
+msgid "{question}, flagged"
+msgstr "{question}, işaretli"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -13350,6 +13350,12 @@ msgstr "Not aldık."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Son cevaplarına göre"
+
+#. What the goal's progress number is made of
+#: src/today/today-lessons-card.tsx
+msgctxt "sUCOex"
+msgid "Lessons you've studied or already knew, out of your plan's."
+msgstr "Çalıştığın veya zaten bildiğin derslerin planındaki tüm derslere oranı."
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

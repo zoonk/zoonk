@@ -16,7 +16,6 @@ import {
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
-import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import {
   type TodayView,
   type TodayViewResult,
@@ -30,7 +29,6 @@ export type TodayScreenData = {
   brainPower: number | null;
   buddy: LearnerBuddy;
   completedLessons: boolean;
-  knownLessons: number;
   language: LanguageTodayView | null;
   mistakes: MistakeAvailability;
   mocks: MockOptionsView | null;
@@ -82,11 +80,6 @@ async function loadTodayMocks(goal: TodayView["goal"]) {
 }
 
 /** Lessons the plan skipped because the learner already knew them, for Today's progress cells. */
-async function loadKnownLessons(goalId: string): Promise<number> {
-  const result = await getSyllabusView({ goalId });
-  return result.status === "ready" ? result.syllabus.lessons.known : 0;
-}
-
 async function countOpenMistakes(goalId: string): Promise<MistakeAvailability> {
   const result = await listCurrentUserMistakes({ goalId, limit: 1, offset: 0, status: "open" });
   return result.status === "ready" ? result.availability : { ready: 0, tomorrow: 0 };
@@ -111,18 +104,15 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
 
   const { today } = result;
 
-  const [buddy, planEnd, readAt, mocks, practice, language, knownLessons, belt] = await Promise.all(
-    [
-      getLearnerBuddy(),
-      loadPlanEnd(today),
-      getReadAt(),
-      loadTodayMocks(today.goal),
-      loadTodayPractice(today.goal.id),
-      loadLanguageToday(today.goal),
-      loadKnownLessons(today.goal.id),
-      getBeltLevel(),
-    ],
-  );
+  const [buddy, planEnd, readAt, mocks, practice, language, belt] = await Promise.all([
+    getLearnerBuddy(),
+    loadPlanEnd(today),
+    getReadAt(),
+    loadTodayMocks(today.goal),
+    loadTodayPractice(today.goal.id),
+    loadLanguageToday(today.goal),
+    getBeltLevel(),
+  ]);
 
   const steps = today.session.blocks.map((block) => ({
     ref: toDayBlockRef(block),
@@ -134,7 +124,6 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
       brainPower: belt?.totalBrainPower ?? 0,
       buddy,
       ...practice,
-      knownLessons,
       language,
       mocks,
       planEnd,

@@ -88,7 +88,7 @@ export function CategorizeMoveRow({
         <DropdownMenuTrigger
           className={cn(
             ROW_CLASS,
-            "focus-visible:outline-ring cursor-grab touch-manipulation outline-none select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid active:cursor-grabbing",
+            "focus-visible:outline-ring/50 cursor-grab touch-manipulation outline-none select-none focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-solid active:cursor-grabbing",
             !isDragging && "hover:bg-muted/60",
           )}
           id={id}

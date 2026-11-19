@@ -29,13 +29,13 @@ export type PlusViewerState =
 const PERIODS = ["monthly", "yearly"] as const;
 
 /**
- * Not the tab piece: two joined buttons. The one to press is an outlined button, and the chosen one
- * is filled, so which is which shows without comparing them.
+ * Not the tab piece: two joined outlined buttons, the chosen one on the pick's fill, so both plainly
+ * press.
  */
 const BILLING_SWITCH_CLASS = "flex";
 
 const BILLING_OPTION_CLASS =
-  "text-compact border-input bg-background has-checked:border-foreground has-checked:bg-foreground has-checked:text-background has-focus-visible:ring-ring/50 hit-area not-has-checked:hover:bg-muted flex h-8 items-center gap-1.5 border px-3 font-medium whitespace-nowrap transition-colors first:rounded-l-lg last:-ml-px last:rounded-r-lg has-focus-visible:z-10 has-focus-visible:ring-[3px]";
+  "text-compact border-input bg-background text-muted-foreground hover:text-foreground has-checked:bg-selected-tint has-checked:text-foreground has-focus-visible:ring-ring/50 hit-area not-has-checked:hover:bg-muted flex h-8 items-center gap-1.5 border px-3 font-medium whitespace-nowrap transition-colors first:rounded-l-lg last:-ml-px last:rounded-r-lg has-focus-visible:z-10 has-focus-visible:ring-[3px]";
 
 const DEFAULT_PERIOD = "monthly";
 const PLUS_PLAN_ID = "plus-plan";

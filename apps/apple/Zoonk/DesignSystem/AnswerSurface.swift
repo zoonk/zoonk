@@ -11,8 +11,8 @@ enum AnswerTone {
 }
 
 extension View {
-  /// An answer option's or a tile's ground: at rest the stronger line; the learner's pick a 2pt ink
-  /// ring on its tint; checked, a ring in its verdict's color on that color's tint.
+  /// An answer option's or a tile's ground: at rest the stronger line; the learner's pick the same
+  /// line on the pick's fill, never a ring; checked, a ring in its verdict's color on that color's tint.
   func answerSurface(
     _ tone: AnswerTone, cornerRadius: CGFloat = Radius.option, isPressed: Bool = false
   )
@@ -39,7 +39,7 @@ private func fill(_ tone: AnswerTone, isPressed: Bool) -> Color {
 private func stroke(_ tone: AnswerTone) -> Color {
   switch tone {
   case .idle: .input
-  case .picked: Color(.foreground)
+  case .picked: .input
   case .guess: Color(.foreground).opacity(0.4)
   case .right: .success
   case .wrong: .destructive
@@ -48,8 +48,7 @@ private func stroke(_ tone: AnswerTone) -> Color {
 
 private func lineWidth(_ tone: AnswerTone) -> CGFloat {
   switch tone {
-  case .idle: 1
-  case .picked: 2
+  case .idle, .picked: 1
   case .guess, .right, .wrong: 1.5
   }
 }

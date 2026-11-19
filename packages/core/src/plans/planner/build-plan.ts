@@ -95,6 +95,8 @@ export type BuildPlanInput = {
   setAsideLeftWork?: boolean;
   readiness: ReadonlyMap<string, SkillReadiness>;
   settings: PlanSettings;
+  /** The lesson already being written for the learner to open first, which stays first while the plan holds it. */
+  startLessonId?: string | null;
   strongAreas?: ReadonlySet<string>;
   today: Date;
   todayShown?: boolean;

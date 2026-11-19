@@ -27,15 +27,28 @@ const isTestedOut = (item: Pick<PlanReadItem, "status">) =>
 
 export type SkillAreas = ReadonlyMap<string, string | null>;
 
+/**
+ * What a skill whose lessons are still being written is named by: its area, unless that's the goal's
+ * own course. Every topic of a language plan has the language as its area, so it's named by its own
+ * situation instead, which is how the learner knows the topic.
+ */
 export function getSkillAreas({
   courseTitle,
+  goalKind,
   skills,
 }: {
   courseTitle: string | null;
-  skills: readonly { area: string | null; skillId: string }[];
+  goalKind: Goal["kind"];
+  skills: readonly { area: string | null; name: string; skillId: string }[];
 }): SkillAreas {
   return new Map(
-    skills.map((skill) => [skill.skillId, skill.area === courseTitle ? null : skill.area]),
+    skills.map((skill) => {
+      if (goalKind === "language") {
+        return [skill.skillId, skill.name];
+      }
+
+      return [skill.skillId, skill.area === courseTitle ? null : skill.area];
+    }),
   );
 }
 

@@ -8,27 +8,16 @@ import { useId, useState } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SURFACE_CLASS, Surface } from "../_components/surface";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
-import { BuddyArt } from "../buddies/buddy-art";
 import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { BrainPowerReward } from "./brain-power-reward";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
 import { type MissionLinks, type MissionView, useMissionOpen } from "./mission-links";
-import { MissionListRow, MissionsDoneCount, ProgressCount } from "./mission-list";
+import { MissionListRow, useMissionsDoneCount } from "./mission-list";
 import { MissionMark } from "./mission-mark";
 import { MissionTrack } from "./mission-track";
 
 export type MissionsDay = Pick<BuddyToday, "fullMeal"> & { missions: readonly MissionView[] };
-
-function MissionsStatus({ missions }: { missions: readonly MissionView[] }) {
-  const done = countDoneMissions(missions);
-
-  if (done === missions.length) {
-    return null;
-  }
-
-  return <MissionsDoneCount done={done} total={missions.length} />;
-}
 
 function MissionRow({
   buddy,
@@ -87,40 +76,6 @@ function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
   );
 }
 
-/** The title keeps its own line, so it stays whole beside the buddy in a side column. */
-function MissionsHeading({
-  fold,
-  missions,
-  reward,
-  titleId,
-  won,
-}: {
-  fold: RowsFold | null;
-  missions: readonly MissionView[];
-  reward: React.ReactNode;
-  titleId: string;
-  won: boolean;
-}) {
-  return (
-    <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-      <h2 className="text-sm leading-snug font-semibold text-balance wrap-break-word" id={titleId}>
-        <MissionsTitle fold={fold} won={won} />
-      </h2>
-      <div className={cn(TITLE_ROW_CLASS, "gap-y-0.5")}>
-        <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums empty:hidden">
-          <MissionsStatus missions={missions} />
-        </p>
-        {reward}
-      </div>
-      {isFullMeal(missions) && (
-        <span className="sr-only">
-          <ProgressCount done={missions.length} total={missions.length} />
-        </span>
-      )}
-    </div>
-  );
-}
-
 function MissionsLine({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <Surface
@@ -140,7 +95,6 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
 export function MissionsCard({
   buddy,
   className,
-  showBuddy = true,
   collapseWhenDone = false,
   foldRows = false,
   links,
@@ -151,11 +105,11 @@ export function MissionsCard({
   collapseWhenDone?: boolean;
   foldRows?: boolean;
   links: MissionLinks;
-  showBuddy?: boolean;
   today: MissionsDay | null;
 }) {
   const t = useExtracted();
   const missionName = useMissionName(buddy);
+  const missionsDoneCount = useMissionsDoneCount();
   const titleId = useId();
   const listId = useId();
   const [unfolded, setUnfolded] = useState(false);
@@ -191,24 +145,23 @@ export function MissionsCard({
       className={cn(SURFACE_CLASS, "flex flex-col px-4 pt-4", open ? "pb-1.25" : "pb-4", className)}
       data-slot="missions-card"
     >
-      <div className="flex items-start gap-3">
-        {/* As tall as the title's line and the line under it, so the buddy centers on those two
-            lines however many more a long title takes. */}
-        {showBuddy && (
-          <span className="flex h-10 w-4 shrink-0 items-center justify-center">
-            <BuddyArt buddy={buddy} className="size-4" view="face" />
-          </span>
-        )}
-        <MissionsHeading
+      <h2 className="text-sm leading-snug font-semibold text-balance wrap-break-word" id={titleId}>
+        <MissionsTitle
           fold={foldRows ? { listId, onToggle: () => setUnfolded((value) => !value), open } : null}
-          missions={missions}
-          reward={<BrainPowerReward earned={won} points={points} />}
-          titleId={titleId}
           won={won}
         />
-      </div>
+      </h2>
 
-      <MissionTrack className="mt-3.5" missions={missions} />
+      <div className="mt-3 flex items-center gap-3">
+        <MissionTrack
+          className="flex-1"
+          label={missionsDoneCount({ done: countDoneMissions(missions), total: missions.length })}
+          missions={missions}
+        />
+        <span className="shrink-0">
+          <BrainPowerReward earned={won} points={points} />
+        </span>
+      </div>
 
       <ListGroup className="mt-1.5" hidden={!open} id={listId}>
         <ul>

@@ -5,19 +5,22 @@ const ROW_CLASS =
   "w-full max-w-[calc(var(--page-measure,100%)+2*var(--page-gutter))] px-(--page-gutter) lg:max-w-none";
 
 /**
- * The frame's side padding: 16px on a phone and 24px from `sm`, the room a page's corners keep
- * across from the bottom bar's and the page top's 16px, and the sidebar's own inset. Every frame
- * that draws app pages takes it from here: the app's shell, a full page drawn without it, the
- * internal tools' pages.
+ * The frame's gutter, 16px on a phone and 20px from `sm` (`--spacing-frame`): its side padding, and the bottom bar's
+ * room over and under its buttons (`BOTTOM_BAR_ROOM_CLASS`). The two are one number on purpose: a
+ * button alone in the bar's corner reads right only with the same inset from both edges. Every
+ * frame that draws app pages takes it from here: the app's shell, a full page drawn without it,
+ * the internal tools' pages.
  */
-export const FRAME_GUTTER_CLASS = "[--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(6)]";
+export const FRAME_GUTTER_CLASS =
+  "[--page-gutter:--spacing(4)] sm:[--page-gutter:var(--spacing-frame)]";
 
 /**
- * The bar's room over and under its buttons, 16px at every size, so the bar stays as compact on a
- * computer as on a phone (77px with its hairline), plus the home indicator's inset where nothing is
- * docked under it. A foot drawn level with the bar (a task's side panel) takes the same room.
+ * The bar's room over and under its buttons: the frame's gutter, 16px where the frame names none,
+ * and the home indicator's inset where nothing is docked under it. A foot drawn level with the bar
+ * (a task's side panel) takes the same room under the same gutter.
  */
-export const BOTTOM_BAR_ROOM_CLASS = "pt-4 pb-[max(1rem,var(--page-safe-bottom))]";
+export const BOTTOM_BAR_ROOM_CLASS =
+  "pt-[max(1rem,var(--page-gutter))] pb-[max(1rem,var(--page-gutter),var(--page-safe-bottom))]";
 
 /**
  * The one home of a screen's main action, on a phone and a computer: pinned to the bottom of its
@@ -28,8 +31,8 @@ export const BOTTOM_BAR_ROOM_CLASS = "pt-4 pb-[max(1rem,var(--page-safe-bottom))
  *
  * It reaches the frame's edges by the frame's own padding (`--page-gutter`, `--page-bottom`) and
  * rests on what the frame docks under it (`--page-dock`), so it's the same piece in the app's
- * shell and in a full-screen task. Its sides are the frame's gutter; over and under its buttons it
- * keeps its own 16px (`BOTTOM_BAR_ROOM_CLASS`), whatever the gutter. On a phone and a tablet its
+ * shell and in a full-screen task. The frame's gutter is the room at its sides and over and under
+ * its buttons alike (`BOTTOM_BAR_ROOM_CLASS`), so the main action's corner is even. On a phone and a tablet its
  * buttons fill the content's measure; on a computer the main action sits at the bar's end, one
  * gutter in from its edge, wherever the content's column ends, and the note ends on that edge too.
  * `className` is for the frame's wrapper, to give the row the frame's gutter; a screen passes none.
@@ -55,7 +58,15 @@ function BottomBar({
         {note && (
           <div className="bg-background border-border border-t">
             {/* The bar's own room over its buttons, so the note sits as far from its line as the buttons sit from the note. */}
-            <div className={cn(ROW_CLASS, "pt-4 text-sm lg:text-end", className)}>{note}</div>
+            <div
+              className={cn(
+                ROW_CLASS,
+                "pt-[max(1rem,var(--page-gutter))] text-sm lg:text-end",
+                className,
+              )}
+            >
+              {note}
+            </div>
           </div>
         )}
       </div>

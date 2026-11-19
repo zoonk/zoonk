@@ -54,7 +54,7 @@ function OpeningMapIdea({
     <Popover>
       <PopoverTrigger
         aria-label={ideaOfTotal}
-        className="bg-background border-foreground/30 hover:border-foreground/60 data-popup-open:border-foreground contrast-more:border-foreground absolute grid size-16 -translate-1/2 place-items-center rounded-full border-2 border-dashed transition-colors"
+        className="bg-background border-foreground/30 hover:border-foreground/60 data-popup-open:border-foreground/60 data-popup-open:bg-selected-tint contrast-more:border-foreground absolute grid size-16 -translate-1/2 place-items-center rounded-full border-2 border-dashed transition-colors"
         data-slot="opening-map-idea"
         style={position}
       >

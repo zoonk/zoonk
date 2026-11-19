@@ -89,7 +89,7 @@ private fun DayToggle(
         shape = MaterialTheme.shapes.small,
         color = if (on) MaterialTheme.zoonk.selectedTint else Color.Transparent,
         contentColor = if (enabled) content else content.copy(alpha = DISABLED_ALPHA),
-        border = if (on) BorderStroke(2.dp, colors.primary) else BorderStroke(1.dp, colors.outline),
+        border = BorderStroke(1.dp, colors.outline),
     ) {
         Box(Modifier.padding(horizontal = DAY_PADDING), contentAlignment = Alignment.Center) {
             Text(

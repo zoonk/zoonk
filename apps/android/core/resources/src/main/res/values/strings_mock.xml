@@ -35,6 +35,7 @@
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Question %1$d of %2$d · %3$s</string>
     <string name="mock_flag">Flag</string>
+    <string name="mock_unflag">Remove flag</string>
     <string name="mock_next">Next</string>
     <string name="mock_hand_in_section">Hand in section</string>
     <string name="mock_moves_review_any">Review: you can go back to any question.</string>
@@ -88,8 +89,8 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">answered</string>
-    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_marked_for_review">%1$s, marked for review</string>
+    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_flagged">%1$s, flagged</string>
     <string name="mock_sections">Sections</string>
     <string name="mock_section_number">Section %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

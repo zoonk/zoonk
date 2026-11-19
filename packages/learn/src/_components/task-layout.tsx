@@ -10,11 +10,13 @@ export const TASK_COLUMN_CLASS =
   "max-w-column mx-auto w-full px-[16px] in-data-[slot=task-body]:px-0";
 
 /**
- * A bar's buttons keep the task's gutter at their sides: 16px, and 24px from `lg`. Named as the
- * row's `--page-gutter`, so the bar's note above it takes the same sides.
+ * A task's gutter: 16px, and the frame's inset from `lg` (`--spacing-frame`). Set on the bar's row and
+ * on what sits level with it, never above the bar, which would pull it out by its margin.
  */
-const TASK_BAR_ROW_CLASS =
-  "max-w-column mx-auto w-full [--page-gutter:16px] lg:max-w-none lg:[--page-gutter:24px]";
+export const TASK_GUTTER_CLASS = "[--page-gutter:16px] lg:[--page-gutter:var(--spacing-frame)]";
+
+/** The bar's row on the task's column: the gutter at its sides and over and under its buttons. */
+const TASK_BAR_ROW_CLASS = cn("max-w-column mx-auto w-full lg:max-w-none", TASK_GUTTER_CLASS);
 
 export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -27,7 +29,7 @@ export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 export const TASK_HEADER_BAR_CLASS =
-  "flex w-full items-center gap-2 px-[16px] py-2 lg:px-[24px] xl:py-3";
+  "flex w-full items-center gap-2 px-[16px] py-2 lg:px-frame xl:py-3";
 
 /**
  * A side keeps the bar's first 36 px line, so a taller middle (a clock) never moves the close
@@ -52,7 +54,7 @@ export const TASK_ASIDE_TOGGLE_ROOM_CLASS =
   "hidden lg:group-data-aside/task:without-aside:inline-flex";
 
 export const TASK_ASIDE_TOGGLE_CLASS =
-  "fixed top-0 right-0 z-40 hidden h-(--task-bar) items-center pr-[24px] lg:group-data-aside/task:flex";
+  "fixed top-0 right-0 z-40 hidden h-(--task-bar) items-center pr-frame lg:group-data-aside/task:flex";
 
 /** The kit's bottom bar on a task's column. */
 export function TaskActionBar(props: Omit<React.ComponentProps<typeof BottomBar>, "className">) {
@@ -88,7 +90,7 @@ const ASIDE_WIDTH_CLASS: Record<TaskAsideWidth, string> = {
 
 /**
  * `--task-bar` is the header row's height (36px buttons in `py-2`, `py-3` from `xl`) and
- * `--task-aside-bottom` the action bar's row (77px), or the buddy's dock when it's taller.
+ * `--task-aside-bottom` the action bar (its 44px row, the inset over and under it and its hairline), or the buddy's dock when it's taller.
  * Lay out what depends on the aside with the `with-aside` and `without-aside` variants, not `lg`:
  * once the learner collapses it from the header (`TaskHeaderSide`), the task lays out as below `lg`.
  */
@@ -96,7 +98,7 @@ export function getTaskAsideRootProps({ width = "default" }: { width?: TaskAside
   return {
     className: cn(
       "group/task with-aside:pr-(--task-aside)",
-      "lg:[--task-aside-bottom:max(4.8125rem,var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
+      "lg:[--task-aside-bottom:max(calc(2*var(--spacing-frame)+2.75rem+1px),var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
       ASIDE_WIDTH_CLASS[width],
     ),
     "data-aside": width,
@@ -125,7 +127,7 @@ export function TaskAsideHeader({
   return (
     <div
       className={cn(
-        "flex h-13 shrink-0 items-center justify-between gap-3 px-6 xl:h-15",
+        "px-frame flex h-13 shrink-0 items-center justify-between gap-3 xl:h-15",
         TASK_ASIDE_HEADER_ROOM_CLASS,
         className,
       )}
@@ -176,7 +178,7 @@ export function TaskAside({
       <div
         aria-labelledby={scrollsByKeyboard ? titleId : undefined}
         className={cn(
-          "flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-6 pb-6",
+          "px-frame flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto pb-6",
           scrollsByKeyboard &&
             "focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px] focus-visible:ring-inset",
         )}
@@ -191,8 +193,9 @@ export function TaskAside({
       {footer && (
         <div
           className={cn(
-            "bg-background flex flex-col gap-2 px-6 lg:bottom-0",
+            "bg-background px-frame flex flex-col gap-2 lg:bottom-0",
             TASK_ASIDE_PLACE_CLASS,
+            TASK_GUTTER_CLASS,
             BOTTOM_BAR_ROOM_CLASS,
           )}
           data-slot="task-aside-footer"
@@ -212,7 +215,7 @@ export function TaskAsideContent({ className, ...props }: React.ComponentProps<"
   return (
     <div
       className={cn(
-        "with-aside:group-data-aside/task:scroll-fade-b with-aside:top-(--task-bar) with-aside:right-0 with-aside:bottom-(--task-aside-bottom) with-aside:w-[calc(var(--task-aside)-1px)] with-aside:group-has-data-[slot$=docked-conversation]/task:invisible with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:z-30 with-aside:group-data-aside/task:overflow-y-auto with-aside:group-data-aside/task:px-6 with-aside:group-data-aside/task:pt-[calc(--spacing(4)+1px)] with-aside:group-data-aside/task:pb-6",
+        "with-aside:group-data-aside/task:scroll-fade-b with-aside:top-(--task-bar) with-aside:right-0 with-aside:bottom-(--task-aside-bottom) with-aside:w-[calc(var(--task-aside)-1px)] with-aside:group-has-data-[slot$=docked-conversation]/task:invisible with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:z-30 with-aside:group-data-aside/task:overflow-y-auto with-aside:group-data-aside/task:px-frame with-aside:group-data-aside/task:pt-[calc(--spacing(4)+1px)] with-aside:group-data-aside/task:pb-6",
         className,
       )}
       data-slot="task-aside-content"
@@ -328,7 +331,9 @@ export function TaskSkeleton({
       </div>
 
       {aside && (
-        <div className={cn("with-aside:flex hidden flex-col gap-4 px-6", TASK_ASIDE_RAIL_CLASS)}>
+        <div
+          className={cn("with-aside:flex px-frame hidden flex-col gap-4", TASK_ASIDE_RAIL_CLASS)}
+        >
           {aside !== true && (
             <>
               <div className="flex h-13 shrink-0 items-center xl:h-15">

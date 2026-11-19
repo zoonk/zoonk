@@ -4,12 +4,12 @@ description: Design, add, or debug Zoonk E2E, lesson player browser, database in
 license: MIT
 metadata:
   author: zoonk
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Zoonk testing
 
-Choose the cheapest boundary that exercises the behavior under investigation. Scope, failing-first regressions, completion, and reruns follow the [root verification policy](../../../AGENTS.md#verification).
+Choose the cheapest boundary that exercises the behavior under investigation. A behavior change starts with a failing regression test when practical. Which checks to run, and when to repeat one, is in [checks for a change](../../guides/checks.md).
 
 ## Choose coverage
 
@@ -32,32 +32,11 @@ E2E is our most expensive test: a build, a browser, servers, a database and seed
 
 Failure paths count as much as happy paths: a lost answer on a bad connection can matter more than the screen that shows it. These don't earn an E2E test: wording and which notice shows, layout and sizes, accessibility scans, SEO (metadata, structured data, sitemaps), analytics events, speed-only checks (prefetching, no skeleton) and keyboard or focus niceties. A bug in one of those gets fixed and checked in the persona walkthrough and the [verify skill](../verify/SKILL.md)'s page measurements, without a permanent test. The `instant()` test the Next.js optimizer skills ask for proves an optimization while you make it; it ships as a permanent test only when that route clears this bar.
 
-An `instant()` test guards the chosen prefetched UI under the network lock, not a blanket ban on skeletons. Preserve Today's learner-day and Start-button contract. Hard loads and incomplete or absent prefetches may show skeletons: the static shell must respond immediately while content streams. Check blank screens, slow paints and frozen taps in production page measurements and filmstrips.
-
 Do not write React component unit tests or add tests for `admin`, `evals`, or `blog`. Do not test static configuration against itself, CSS, copy, prompt wording, Zod internals, or framework behavior. Do not export implementation details solely to test them.
 
 ## The native bar
 
-A screen test in the Apple or Android app breaks whenever the screen's copy or layout changes, while the bugs it would pin turn up in reviews, parity audits and walks on a device. A native test earns its place only by guarding a risk that would hurt a learner and that a check on a device can't see, or can't practically see. Weigh impact, likelihood and cheaper coverage as for E2E, with failure paths counting as much as happy ones. In doubt, cut a screen test and keep a data-layer or race test. A test written to reproduce a bug ships only when it clears this bar.
-
-Worth a test:
-
-- **The shared data layer:** resources and keyed caches, mutations and queued saves, session identity (signing out on unauthorized, dropping a response whose session ended), generation streams and their resume, request counts, private image loading and API error mapping.
-- **State machines and races the app owns:** transitions driven by a write, a failure, a session change or responses out of order, such as a purchase, the lesson player's state, a live call or a mock run.
-- **Native-only logic:** layout math our code computes (pane splits and fold geometry, checked on the values it returns, not on where a screen's parts land), formatting it does itself (dates, numbers, durations, plurals across locales), parsing and transforms (rich text, sandbox output, chart and music data), and regexes on the device's engine.
-- **What the learner made:** answers, drafts, progress or recordings kept across recreation, rotation, folding, process death or a failed save.
-- **A thin smoke layer:** a few Apple UI tests (the accessibility audit across the tabs and Statistics, recovery from auth loss on a pushed screen, and a free account reaching the subscription store) and Android device tests only for what the JVM can't run.
-- **Checks fed by the source of truth:** tests that fail when fixtures exported from main or core drift, contract tests for hand-written wire models, and the Android lint-check detectors.
-
-Not worth one:
-
-- Screen tests of copy, labels, which notice shows, TalkBack or VoiceOver strings, icons, colors, sizes, pane or fold placement, scroll position, what's expanded or where a tap leads.
-- A rule core or the API decides (day state, plan rules, scoring, limits, eligibility) when the app only shows the answer.
-- Hand-written JSON fed to the generated API client, which is the contract.
-- Framework behavior, static catalogs, config or analytics event names.
-- A second test of what another already guards; keep the cheaper.
-
-A wording, layout or styling fix is checked on the device and in on-demand renders, without a permanent test. Android's renders (`-Pzoonk.shots`) skip in the suite and are a review tool, never goldens.
+A screen test in the Apple or Android app breaks whenever the screen's copy or layout changes, while the bugs it would pin turn up in reviews, parity audits and walks on a device. A native test earns its place only by guarding a risk that would hurt a learner and that a check on a device can't see, or can't practically see. Weigh impact, likelihood and cheaper coverage as for E2E, with failure paths counting as much as happy ones. In doubt, cut a screen test and keep a data-layer or race test. A test written to reproduce a bug ships only when it clears this bar. [What is and isn't worth a native test](references/native.md) lists both sides.
 
 ## Data and external boundaries
 
@@ -68,9 +47,7 @@ A wording, layout or styling fix is checked on the device and in on-demand rende
 
 ## Running tests
 
-Use the owning package's scripts and isolated database from the [development guide](../../guides/development.md). Vitest files in one run still share rows; a fresh run does not replace test-owned fixtures. Confirm setup/reset commands target the intended disposable database.
-
-A timed-out test keeps running after Vitest moves on. In a shared worker it moves the clock, session mock and rows of whatever runs next, later files included, so core's and the API's setups skip every later test in that worker (`skipAfterTimeout`). Those skips are untested, not passed: fix the timed-out test, or rerun once the machine is less loaded, before trusting the run.
+Use the owning package's scripts and its isolated database ([running tests locally](../../guides/local-tests.md), which also covers a timed-out test's skips). Vitest files in one run still share rows; a fresh run does not replace test-owned fixtures. Confirm setup and reset commands target the intended disposable database.
 
 Keep each E2E test well under 20 seconds locally: CI splits work by test, so one long test sets its shard's time. Test only what the assertion needs (a database simulation names its asserted `rules`; use fake timers, not real waits).
 

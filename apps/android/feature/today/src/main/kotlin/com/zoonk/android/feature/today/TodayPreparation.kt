@@ -19,8 +19,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.goalcontent.CoverageBar
-import com.zoonk.android.feature.plan.lessonsProgressLine
-import com.zoonk.android.feature.plan.lessonsStudied
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
@@ -29,7 +27,6 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.TodayProgress
 import com.zoonk.api.models.TodayProgressOneOf
 import com.zoonk.api.models.TodayProgressOneOf1
@@ -41,14 +38,13 @@ import kotlin.math.roundToInt
 @Composable
 internal fun TodayPreparation(
     progress: TodayProgress?,
-    syllabus: Syllabus?,
     onOpenPlan: () -> Unit,
     modifier: Modifier = Modifier,
     goalTitle: String? = null,
 ) {
     when (progress) {
         is TodayProgress.TodayProgressOneOfValue -> PreparationCard(progress.value, onOpenPlan, modifier, goalTitle)
-        is TodayProgress.TodayProgressOneOf1Value -> LessonsCard(progress.value, syllabus, onOpenPlan, modifier)
+        is TodayProgress.TodayProgressOneOf1Value -> LessonsCard(progress.value, onOpenPlan, modifier)
         null -> Unit
     }
 }
@@ -72,21 +68,20 @@ private fun PreparationCard(
 @Composable
 private fun LessonsCard(
     progress: TodayProgressOneOf1,
-    syllabus: Syllabus?,
     onOpenPlan: () -> Unit,
     modifier: Modifier,
 ) {
     val lessons = progress.lessons
-    val counts = LessonCounts.of(lessons.done, lessons.today, lessons.total, syllabusKnown = syllabus?.lessons?.known ?: 0)
 
     ProgressCard(
         title = stringResource(R.string.today_progress),
-        detail = lessonsProgressLine(lessons.done, counts.known),
+        detail = null,
         value = formatProgressShare(progress.value, currentLocale()),
+        spoken = stringResource(R.string.today_progress_meaning),
         onOpenPlan = onOpenPlan,
         modifier = modifier,
     ) {
-        if (counts.total > 0) LessonsBar(counts)
+        if (lessons.total > 0) LessonsBar(lessons.done, lessonsLeftToday(lessons.done, lessons.today, lessons.total), lessons.total)
     }
 }
 
@@ -97,6 +92,7 @@ private fun ProgressCard(
     value: String,
     onOpenPlan: () -> Unit,
     modifier: Modifier,
+    spoken: String? = null,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -116,7 +112,11 @@ private fun ProgressCard(
                 )
             }
         }
-        Text(value, style = MaterialTheme.typography.headlineMedium.withTabularFigures())
+        Text(
+            value,
+            Modifier.semantics { spoken?.let { contentDescription = "$value. $it" } },
+            style = MaterialTheme.typography.headlineMedium.withTabularFigures(),
+        )
         content()
         TextButton(onClick = onOpenPlan, forward = true, edge = ButtonEdge.Start) { Text(stringResource(R.string.today_see_your_plan)) }
     }
@@ -133,42 +133,27 @@ private fun weekGain(gain: Double): String? {
     }
 }
 
-internal data class LessonCounts(
-    val known: Long,
-    val studied: Long,
-    val today: Long,
-    val total: Long,
-) {
-    companion object {
-        /** Today's lessons and the syllabus come from different reads, so the syllabus's known lessons never outnumber those done. */
-        fun of(
-            done: Long,
-            today: Long,
-            total: Long,
-            syllabusKnown: Long,
-        ): LessonCounts {
-            val known = min(done, syllabusKnown)
-            return LessonCounts(
-                known = known,
-                studied = lessonsStudied(done, known),
-                today = min(today, max(0, total - done)),
-                total = total,
-            )
-        }
-    }
-}
+/** Today's lessons never outnumber those the plan has left. */
+internal fun lessonsLeftToday(
+    done: Long,
+    today: Long,
+    total: Long,
+): Long = min(today, max(0, total - done))
 
 /** Main's `CoverageBar` with today's lessons said to TalkBack, which only main's screen-reader summary says. */
 @Composable
-private fun LessonsBar(counts: LessonCounts) {
+private fun LessonsBar(
+    done: Long,
+    today: Long,
+    total: Long,
+) {
     val summary =
-        counts.today.takeIf { it > 0 }?.let {
+        today.takeIf { it > 0 }?.let {
             pluralStringResource(R.plurals.today_progress_lessons_today, it.toInt(), formatNumber(it.toDouble(), currentLocale()))
         }
 
     Box(Modifier.semantics { summary?.let { contentDescription = it } }) {
-        // One fill for what's done, studied or already known, as the percent counts them.
-        CoverageBar(studied = (counts.studied + counts.known).toDouble() / counts.total)
+        CoverageBar(studied = done.toDouble() / total)
     }
 }
 
