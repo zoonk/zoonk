@@ -359,7 +359,6 @@ private fun ColumnScope.ScheduleTime(
                 missing = missingDays(days),
                 times = timeChoices.map { it.minutes },
                 minutes = choice.weekendPicked ?: minutes ?: recommendedMinutes,
-                weekdayMinutes = minutes ?: recommendedMinutes,
                 onCheckedChange = { onChoiceChange(choice.copy(weekendOn = it, weekendPicked = null)) },
                 onPick = { onChoiceChange(choice.copy(weekendPicked = it)) },
                 labelStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.Medium),

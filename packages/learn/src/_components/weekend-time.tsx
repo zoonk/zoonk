@@ -35,10 +35,9 @@ function useMissingDayReason() {
 }
 
 /**
- * The weekend's time field is always there, off until the switch is on, so turning it on or off
- * moves nothing. Off, it shows the weekdays' time, which the weekend takes then. While the switch
- * can't turn on (`missing` names the days it needs), the field's room says why: both share one
- * cell, so changing the days moves nothing either.
+ * The weekend's time field shows only while the switch is on, right under it: off, the weekend
+ * takes the weekdays' time. While the switch can't turn on (`missing` names the days it needs),
+ * that place says why.
  */
 export function WeekendTime({
   checked,
@@ -49,7 +48,7 @@ export function WeekendTime({
   readOnly,
 }: {
   checked: boolean;
-  children: (on: boolean, label: string) => React.ReactNode;
+  children: (label: string) => React.ReactNode;
   className?: string;
   missing?: MissingDays | null;
   onCheckedChange: (checked: boolean) => void;
@@ -58,8 +57,10 @@ export function WeekendTime({
   const t = useExtracted();
   const switchId = useId();
   const reasonId = useId();
+  const fieldId = useId();
   const missingDayReason = useMissingDayReason();
   const disabled = missing !== null;
+  const on = checked && !disabled;
   const timeLabel = t("Weekend time");
 
   return (
@@ -75,8 +76,9 @@ export function WeekendTime({
           })}
         </label>
         <Switch
+          aria-controls={on ? fieldId : undefined}
           aria-describedby={missing ? reasonId : undefined}
-          checked={checked && !disabled}
+          checked={on}
           disabled={disabled}
           id={switchId}
           onCheckedChange={onCheckedChange}
@@ -84,18 +86,18 @@ export function WeekendTime({
         />
       </div>
 
-      <div className="grid *:col-start-1 *:row-start-1">
-        <div className={cn("flex flex-col gap-1", missing && "invisible")}>
-          <span className="text-sm font-medium">{timeLabel}</span>
-          {children(checked, timeLabel)}
-        </div>
-        <p
-          className={cn("text-muted-foreground text-sm text-pretty", !missing && "invisible")}
-          id={reasonId}
-        >
-          {missingDayReason(missing ?? "weekend")}
+      {missing && (
+        <p className="text-muted-foreground text-sm text-pretty" id={reasonId}>
+          {missingDayReason(missing)}
         </p>
-      </div>
+      )}
+
+      {on && (
+        <div className="flex flex-col gap-1" id={fieldId}>
+          <span className="text-sm font-medium">{timeLabel}</span>
+          {children(timeLabel)}
+        </div>
+      )}
     </div>
   );
 }

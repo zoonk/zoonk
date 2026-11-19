@@ -1,7 +1,6 @@
 package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,11 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextStyle
@@ -37,9 +34,9 @@ fun missingDays(days: Collection<Int>): MissingDays? =
 private fun isWeekendDay(day: Int) = day == 0 || day == 6
 
 /**
- * Main's `WeekendTime`: always there, so a switch or a day's pick moves nothing. Off, its time is disabled and
- * shows [weekdayMinutes], which the weekend takes then. While the switch can't turn on ([missing] names the days
- * it needs), the time's room says why, and the switch's state reads it. [timeEnabled] off waits for a save.
+ * Main's `WeekendTime`: the weekend's time shows only while the switch is on, right under it; off, the weekend
+ * takes the weekdays' time. While the switch can't turn on ([missing] names the days it needs), that place says
+ * why, and the switch's state reads it. [timeEnabled] off waits for a save.
  */
 @Composable
 fun WeekendTime(
@@ -47,7 +44,6 @@ fun WeekendTime(
     missing: MissingDays?,
     times: List<Long>,
     minutes: Int,
-    weekdayMinutes: Int,
     onCheckedChange: (Boolean) -> Unit,
     onPick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -79,19 +75,17 @@ fun WeekendTime(
             )
             Switch(checked = on, onCheckedChange = null, enabled = missing == null)
         }
-        // The time stays laid out under the reason, so a day's pick moves nothing.
-        Box(contentAlignment = Alignment.BottomStart) {
+        reason?.let {
+            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        }
+        if (on) {
             TimeSelect(
                 label = stringResource(R.string.weekend_time_label),
                 times = times,
-                value = if (on) minutes else weekdayMinutes,
+                value = minutes,
                 onPick = onPick,
-                modifier = if (reason == null) Modifier else Modifier.alpha(0f).clearAndSetSemantics {},
-                enabled = on && timeEnabled,
+                enabled = timeEnabled,
             )
-            reason?.let {
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-            }
         }
     }
 }

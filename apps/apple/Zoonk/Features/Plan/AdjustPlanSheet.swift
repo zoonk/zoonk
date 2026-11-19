@@ -215,7 +215,7 @@ struct AdjustPlanSheet: View {
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
-      } else {
+      } else if on {
         Picker(
           selection: Binding(
             get: { current },
@@ -235,7 +235,6 @@ struct AdjustPlanSheet: View {
         } label: {
           Text("Weekend time", tableName: "Plan")
         }
-        .disabled(!on)
       }
     }
     .tint(.success)
