@@ -1,9 +1,9 @@
 "use client";
 
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
-import { CheckIcon, CircleDashedIcon, MinusIcon, XIcon } from "lucide-react";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
-import { StatTile, StatTiles } from "../_components/stat-tile";
 
 type AnswerCounts = { blank: number; partial: number; right: number; wrong: number };
 
@@ -24,15 +24,64 @@ function getAnswerCounts(result: MockResult): AnswerCounts | null {
   };
 }
 
-const THREE_ANSWER_TILES_CLASS = "sm:grid-cols-3 sm:[&>li:last-child:nth-child(odd)]:col-span-1";
-
 export function hasAnswerCounts(result: MockResult): boolean {
   return getAnswerCounts(result) !== null || (!result.net && result.blank > 0);
 }
 
+function useAnswerParts(counts: AnswerCounts) {
+  const t = useExtracted();
+
+  const partial = {
+    count: counts.partial,
+    dot: "bg-muted-foreground/70",
+    label: t("Partly right"),
+    part: "bg-muted-foreground/70",
+  };
+
+  return [
+    { count: counts.right, dot: "bg-success", label: t("Right"), part: "bg-success" },
+    { count: counts.wrong, dot: "bg-destructive", label: t("Wrong"), part: "bg-destructive" },
+    ...(counts.partial > 0 ? [partial] : []),
+    {
+      count: counts.blank,
+      dot: "ring-muted-foreground/70 ring-1 ring-inset",
+      label: t("Blank"),
+      part: "",
+    },
+  ];
+}
+
+function AnswerMeter({ counts }: { counts: AnswerCounts }) {
+  const format = useFormatter();
+  const parts = useAnswerParts(counts);
+
+  return (
+    <div className="flex w-full flex-col gap-2" data-slot="mock-answers">
+      <MeterParts>
+        {parts
+          .filter((part) => part.count > 0)
+          .map((part) => (
+            <MeterPart className={part.part} key={part.label} weight={part.count} />
+          ))}
+      </MeterParts>
+
+      <ul className="text-muted-foreground text-2xs flex flex-wrap items-center gap-x-3 gap-y-1">
+        {parts.map((part) => (
+          <li className="flex items-center gap-1.5" key={part.label}>
+            <span aria-hidden="true" className={cn("size-1.5 rounded-full", part.dot)} />
+            {part.label}
+            <span className="text-foreground font-mono tabular-nums">
+              {format.number(part.count)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function MockResultAnswers({ result }: { result: MockResult }) {
   const t = useExtracted();
-  const format = useFormatter();
   const counts = getAnswerCounts(result);
 
   if (!hasAnswerCounts(result)) {
@@ -41,30 +90,7 @@ export function MockResultAnswers({ result }: { result: MockResult }) {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      {counts && (
-        <StatTiles className={counts.partial === 0 ? THREE_ANSWER_TILES_CLASS : undefined}>
-          <StatTile
-            icon={<CheckIcon />}
-            label={t("Right")}
-            tone="success"
-            value={format.number(counts.right)}
-          />
-          <StatTile
-            icon={<XIcon />}
-            label={t("Wrong")}
-            tone="danger"
-            value={format.number(counts.wrong)}
-          />
-          {counts.partial > 0 && (
-            <StatTile
-              icon={<CircleDashedIcon />}
-              label={t("Partly right")}
-              value={format.number(counts.partial)}
-            />
-          )}
-          <StatTile icon={<MinusIcon />} label={t("Blank")} value={format.number(counts.blank)} />
-        </StatTiles>
-      )}
+      {counts && <AnswerMeter counts={counts} />}
       {!result.net && result.blank > 0 && (
         <p className="text-muted-foreground text-xs">{t("Blank answers count as wrong.")}</p>
       )}

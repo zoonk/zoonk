@@ -8188,6 +8188,12 @@ msgid "Review mistakes"
 msgstr "Rivedi gli errori"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "Parzialmente corrette"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8199,11 +8205,7 @@ msgid "Wrong"
 msgstr "Errate"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "Parzialmente corrette"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Senza risposta"
@@ -8240,21 +8242,6 @@ msgid "By topic"
 msgstr "Per argomento"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "Vedi le risposte"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "Vedi i dettagli"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Risposte"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "Su questa simulazione"
@@ -8280,7 +8267,6 @@ msgid "Grade it"
 msgstr "Valutalo"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "Non hai risposto."
@@ -8563,25 +8549,20 @@ msgid "{change} since the last one"
 msgstr "{change} rispetto all’ultima simulazione"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "Risposte"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Dopo questa simulazione"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "Domanda {number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Domanda {number}"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "Parzialmente corretta: hai ottenuto una parte dei punti."
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"

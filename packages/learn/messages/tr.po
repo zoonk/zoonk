@@ -8188,6 +8188,12 @@ msgid "Review mistakes"
 msgstr "Yanlışlarını incele"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "Kısmen doğru"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8199,11 +8205,7 @@ msgid "Wrong"
 msgstr "Yanlış"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "Kısmen doğru"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Boş"
@@ -8240,21 +8242,6 @@ msgid "By topic"
 msgstr "Konulara göre"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "Cevapları gör"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "Ayrıntıları gör"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Cevaplar"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "Bu deneme sınavı hakkında"
@@ -8280,7 +8267,6 @@ msgid "Grade it"
 msgstr "Not ver"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "Boş bıraktın."
@@ -8563,25 +8549,20 @@ msgid "{change} since the last one"
 msgstr "Son deneme sınavına göre {change}"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "Cevaplar"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Bu deneme sınavından sonra"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "Soru {number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Soru {number}"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "Kısmen doğru: bu sorudan kısmi puan aldın."
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"

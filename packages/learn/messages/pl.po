@@ -8188,6 +8188,12 @@ msgid "Review mistakes"
 msgstr "Przejrzyj błędy"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "Częściowo poprawne"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8199,11 +8205,7 @@ msgid "Wrong"
 msgstr "Błędne"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "Częściowo poprawne"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Bez odpowiedzi"
@@ -8240,21 +8242,6 @@ msgid "By topic"
 msgstr "Według tematów"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "Zobacz odpowiedzi"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "Zobacz szczegóły"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Odpowiedzi"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "O tym egzaminie próbnym"
@@ -8280,7 +8267,6 @@ msgid "Grade it"
 msgstr "Oceń"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "Nie udzielono odpowiedzi."
@@ -8563,25 +8549,20 @@ msgid "{change} since the last one"
 msgstr "{change} w porównaniu z poprzednim wynikiem"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "Odpowiedzi"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Po tym egzaminie próbnym"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "Pytanie {number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Pytanie {number}"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "Częściowo poprawna odpowiedź: przyznano za nią część punktów."
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"

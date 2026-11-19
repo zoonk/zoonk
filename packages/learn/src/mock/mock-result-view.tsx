@@ -19,6 +19,7 @@ import { type TaskFrameAside } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { useMockNumber, useMockTitle } from "./mock-labels";
 import { MockResultActions, MockResultContinue } from "./mock-result-actions";
+import { MockResultAnswers, hasAnswerCounts } from "./mock-result-answers";
 import { MockResultBreakdown, hasBreakdown, useMockRange } from "./mock-result-breakdown";
 import { MockResultDetails } from "./mock-result-details";
 import { useEssayItems } from "./mock-result-essays";
@@ -34,8 +35,10 @@ import {
   usePlanChange,
 } from "./mock-result-plan";
 import { reachedEveryMinimum, useMissedMinimum } from "./mock-result-points";
+import { ResultSection } from "./mock-result-section";
 import { useSpeakingItems } from "./mock-result-speaking";
 import { type MockResultPart, getResultAsideParts, getResultSteps } from "./mock-result-steps";
+import { MockReview } from "./mock-review";
 import { getVerdictAreas } from "./mock-verdict";
 
 /** The number the result leads with, and the one line that names it. */
@@ -136,6 +139,29 @@ function MockDayMoment() {
   );
 }
 
+function hasSummary(result: MockResult): boolean {
+  return hasAnswerCounts(result) || hasBreakdown(result);
+}
+
+/**
+ * What supports the number: how the answers went and each subject's share of it. Beside the page
+ * on a wide screen, and before the questions under it.
+ */
+function MockResultSummary({ result }: { result: MockResult }) {
+  const t = useExtracted();
+
+  return (
+    <>
+      {hasAnswerCounts(result) && (
+        <ResultSection title={t("Answers")}>
+          <MockResultAnswers result={result} />
+        </ResultSection>
+      )}
+      {hasBreakdown(result) && <MockResultBreakdown result={result} />}
+    </>
+  );
+}
+
 function ScoreStep({ result }: { result: MockResult }) {
   const title = useMockTitle();
   const { runner } = useMockScreen();
@@ -168,9 +194,13 @@ function ScoreStep({ result }: { result: MockResult }) {
         {!missed && <MockDayMoment />}
       </div>
 
-      {hasBreakdown(result) && <MockResultBreakdown result={result} />}
+      {hasSummary(result) && (
+        <div className="with-aside:hidden flex w-full flex-col gap-8" data-slot="mock-summary">
+          <MockResultSummary result={result} />
+        </div>
+      )}
 
-      <MockResultDetails result={result} />
+      <MockReview review={runner.view.review} trueFalseLabels={runner.view.trueFalseLabels} />
     </StepCard>
   );
 }
@@ -179,20 +209,28 @@ function useResultAside({
   change,
   has,
   preparation,
+  result,
 }: {
   change: PlanChange;
   has: Record<MockResultPart, boolean>;
   preparation: MockResult["preparation"];
+  result: MockResult;
 }): TaskFrameAside | null {
   const t = useExtracted();
+  const title = useMockTitle();
+  const { runner } = useMockScreen();
+  const summary = has.score && hasSummary(result);
+  const after = getResultAsideParts(has).length > 0;
 
-  if (getResultAsideParts(has).length === 0) {
+  if (!summary && !after) {
     return null;
   }
 
   return {
     children: (
       <>
+        {summary && <MockResultSummary result={result} />}
+
         {preparation && (
           <TaskAsideSection title={t("Your preparation")}>
             <p className="flex flex-col items-start gap-1.5 [&>span:first-child]:text-3xl">
@@ -209,8 +247,9 @@ function useResultAside({
         )}
       </>
     ),
-    label: t("After this mock exam"),
-    title: t("After this mock exam"),
+    // Its blocks name themselves once the answers lead it, so the rail's own line would repeat them.
+    label: summary ? title(runner.view) : t("After this mock exam"),
+    title: summary ? undefined : t("After this mock exam"),
   };
 }
 
@@ -234,7 +273,7 @@ function useResultSteps(result: MockResult) {
     speaking: speaking.length > 0,
   };
 
-  const aside = useResultAside({ change, has, preparation });
+  const aside = useResultAside({ change, has, preparation, result });
 
   const parts: Record<MockResultPart, StepsItem[]> = {
     essays,
@@ -282,6 +321,7 @@ function MockResultSteps({ result }: { result: MockResult }) {
       exitHref={hrefs.exit}
       finalAction={<MockResultActions />}
       finalSecondAction={<MockResultContinue />}
+      headerEnd={<MockResultDetails result={result} />}
       items={items.map((item) => ({
         ...item,
         action: (

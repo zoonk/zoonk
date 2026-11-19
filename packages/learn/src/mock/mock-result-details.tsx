@@ -6,11 +6,9 @@ import { DetailsDrawer } from "../_components/details-drawer";
 import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { useMockScreen } from "./mock-context";
 import { useMockAbout } from "./mock-notes";
-import { MockResultAnswers, hasAnswerCounts } from "./mock-result-answers";
 import { MockResultInsights, useHasInsights } from "./mock-result-insights";
 import { MockResultPoints, hasTestRows } from "./mock-result-points";
 import { ResultSection } from "./mock-result-section";
-import { MockReviewSection } from "./mock-review";
 
 function PassMarks() {
   const t = useExtracted();
@@ -37,35 +35,23 @@ function PassMarks() {
 }
 
 /**
- * The result's first step answers "how did it go?" in one number and one sentence. Every count,
- * table and caveat behind that answer waits here, for the learner who asks.
+ * The result answers "how did it go?" and "what did I miss?" on the page. Every table and caveat
+ * behind the number waits here, for the learner who asks.
  */
 export function MockResultDetails({ result }: { result: MockResult }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const about = useMockAbout(runner.view);
   const hasInsights = useHasInsights();
-  const hasReview = runner.view.review.length > 0;
-  const hasAnswers = hasAnswerCounts(result);
   const hasPoints = hasTestRows(result.points);
 
-  if (!hasReview && !hasAnswers && !hasPoints && !runner.view.passMarks && !hasInsights && !about) {
+  if (!hasPoints && !runner.view.passMarks && !hasInsights && !about) {
     return null;
   }
 
   return (
-    <DetailsDrawer
-      label={hasReview ? t("See answers") : t("See details")}
-      title={t("Details")}
-      trigger="small"
-    >
+    <DetailsDrawer label={t("Details")} title={t("Details")} trigger="small">
       <div className="flex flex-col gap-8 pb-2">
-        {hasAnswers && (
-          <ResultSection title={t("Answers")}>
-            <MockResultAnswers result={result} />
-          </ResultSection>
-        )}
-        <MockReviewSection />
         {hasPoints && result.points && <MockResultPoints points={result.points} />}
         <PassMarks />
         {hasInsights && <MockResultInsights />}

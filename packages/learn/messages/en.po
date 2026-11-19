@@ -8188,6 +8188,12 @@ msgid "Review mistakes"
 msgstr "Review mistakes"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
+msgctxt "EVKFmp"
+msgid "Partly right"
+msgstr "Partly right"
+
+#: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8199,11 +8205,7 @@ msgid "Wrong"
 msgstr "Wrong"
 
 #: src/mock/mock-result-answers.tsx
-msgctxt "EVKFmp"
-msgid "Partly right"
-msgstr "Partly right"
-
-#: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Blank"
@@ -8240,21 +8242,6 @@ msgid "By topic"
 msgstr "By topic"
 
 #: src/mock/mock-result-details.tsx
-msgctxt "xVvJB7"
-msgid "See answers"
-msgstr "See answers"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "RQfEXO"
-msgid "See details"
-msgstr "See details"
-
-#: src/mock/mock-result-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Answers"
-
-#: src/mock/mock-result-details.tsx
 msgctxt "zRzcwu"
 msgid "About this mock exam"
 msgstr "About this mock exam"
@@ -8280,7 +8267,6 @@ msgid "Grade it"
 msgstr "Grade it"
 
 #: src/mock/mock-result-essays.tsx
-#: src/mock/mock-review.tsx
 msgctxt "f31iBH"
 msgid "You left it blank."
 msgstr "You left it blank."
@@ -8563,25 +8549,20 @@ msgid "{change} since the last one"
 msgstr "{change} since the last one"
 
 #: src/mock/mock-result-view.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "Answers"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "After this mock exam"
-
-#: src/mock/mock-review.tsx
-msgctxt "S0XNnB"
-msgid "Question {number} · {area}"
-msgstr "Question {number} · {area}"
 
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Question {number}"
-
-#: src/mock/mock-review.tsx
-msgctxt "lN9qqG"
-msgid "Partly right: it earned part of its points."
-msgstr "Partly right: it earned part of its points."
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
