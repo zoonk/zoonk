@@ -101,8 +101,10 @@ private struct SubjectContent: View {
         chaptersSection
       }
     } secondary: {
+      // As on the web, only the side pane names the questions and the next date.
       ZoonkList {
         numbers
+        SubjectDetails(subject: subject, edition: syllabus.questionsSource?.edition)
         topics
       }
     } single: {
@@ -145,18 +147,53 @@ private struct SubjectContent: View {
 
   private var sharedExams: [GoalSyllabus.SharedExam] { syllabus.sharedExams(of: subject) }
 
-  /// Main's subject facts: its questions on the exam. Topics and chapters count themselves over
-  /// their lists.
+  /// Main's `SubjectFacts`: where the subject comes from when its name doesn't say, its weight when
+  /// the exam gives no question count, and how much is done while lessons teach it. Topics and
+  /// chapters count themselves over their lists.
   private var facts: [String] {
-    guard let questions = subject.questions, questions > 0 else {
-      return []
+    let inLessons = subject.notPlannedReason == nil && subject.preparation == nil
+    return [origin, examShare, inLessons ? doneShare : nil].compactMap(\.self)
+  }
+
+  private var origin: String? {
+    if let group = subject.group {
+      return group
     }
 
-    return [
-      String(
-        localized: "\(questions) questions from past exams", table: "Plan",
-        comment: "Past exam questions available for a subject")
-    ]
+    if subject.source == "notice" {
+      return syllabus.fromMaterial ? String(localized: "From your material", table: "Plan") : nil
+    }
+
+    return syllabus.kind == "notice" ? String(localized: "Also in your plan", table: "Plan") : nil
+  }
+
+  private var examShare: String? {
+    guard (subject.questions ?? 0) == 0, let share = subject.share else {
+      return nil
+    }
+
+    return String(
+      localized: "\(share.formatted(.percent.precision(.fractionLength(0)))) of the exam",
+      table: "Exam", comment: "A subject's weight")
+  }
+
+  /// Nothing until some is done, since "0% done" says nothing.
+  private var doneShare: String? {
+    let percent = Int((min(max(subject.lessonShare, 0), 1) * 100).rounded())
+    return percent > 0 ? String(localized: "\(percent)% done", table: "Plan") : nil
+  }
+
+  private var knownLine: Text? {
+    if let topicsKnown = subject.topicsKnown, !subject.topics.isEmpty {
+      return topicsKnown > 0
+        ? Text(
+          "\(topicsKnown) topics you already know", tableName: "Plan",
+          comment: "A row of topics placement showed the learner knows")
+        : nil
+    }
+
+    return subject.lessonsKnown > 0
+      ? Text("\(subject.lessonsKnown) lessons you already know", tableName: "Plan") : nil
   }
 
   private var header: some View {
@@ -164,6 +201,13 @@ private struct SubjectContent: View {
       PageHeader(
         Text(subject.shortName),
         facts: facts)
+
+      if let knownLine {
+        knownLine
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+          .listRowSeparator(.hidden)
+      }
 
       if !sharedExams.isEmpty {
         AlsoInExams(exams: sharedExams)
@@ -192,14 +236,6 @@ private struct SubjectContent: View {
           label: Text(
             "Lessons studied", tableName: "Plan", comment: "Label of a subject's lessons studied"),
           share: subject.lessonShare)
-
-        if subject.lessonsKnown > 0 {
-          Text(
-            "\(subject.lessonsKnown) lessons skipped", tableName: "Plan",
-            comment: "Lessons of a subject the learner skipped because they already knew them"
-          )
-          .foregroundStyle(.mutedForeground)
-        }
       }
     }
   }
@@ -399,6 +435,74 @@ private struct SubjectPreparation: View {
     }
     .padding(.vertical, 4)
     .accessibilityElement(children: .combine)
+  }
+}
+
+/// Main's `SubjectDetails`: the subject's questions on the exam, when the plan studies it next and
+/// the lessons it skips.
+private struct SubjectDetails: View {
+  let subject: SyllabusSubject
+  let edition: String?
+
+  var body: some View {
+    let questions = subject.questions ?? 0
+    let nextDate = subject.nextDate
+
+    if questions > 0 || nextDate != nil || subject.lessonsKnown > 0 {
+      Section {
+        if questions > 0 {
+          row(questionsLabel) {
+            Text(questions, format: .number)
+              .typeStyle(.data)
+          }
+        }
+
+        if let nextDate {
+          row(Text("Next date", tableName: "Plan")) {
+            Text(PlanDate.text(nextDate, today: PlanDate.today()))
+              .typeStyle(.data)
+          }
+        }
+
+        if subject.lessonsKnown > 0 {
+          row(
+            Text(
+              "Skipped", tableName: "Plan",
+              comment: "Label of a subject's lessons the learner already knew")
+          ) {
+            Text(
+              "\(subject.lessonsKnown) lessons", tableName: "Plan",
+              comment: "How many lessons a chapter has")
+          }
+        }
+      } header: {
+        SectionTitle(Text("Details", tableName: "Plan"))
+      }
+    }
+  }
+
+  private var questionsLabel: Text {
+    if let edition {
+      return Text(
+        "Questions · \(edition)", tableName: "Plan",
+        comment:
+          "Labels a subject's count of questions from a past exam. The exam's name and year go last, after the separator, with no article before them."
+      )
+    }
+
+    return Text(
+      "Questions", tableName: "Plan",
+      comment: "Labels the number of questions in an exam or a mock exam.")
+  }
+
+  private func row(_ label: Text, @ViewBuilder value: () -> some View) -> some View {
+    LabeledContent {
+      value()
+        .foregroundStyle(Color(.foreground))
+    } label: {
+      label
+        .foregroundStyle(.mutedForeground)
+    }
   }
 }
 
