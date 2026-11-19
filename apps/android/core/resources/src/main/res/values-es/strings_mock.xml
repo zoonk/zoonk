@@ -40,7 +40,7 @@
   "mock_moves_review_any": "a70ed00ce56907341a1ff2b1541a1de7e9a11a782fd458014d0715fb11095344",
   "mock_moves_review_changes": "0adf2848b2bfd454de27a88e88393be790d9a4b1d642ba9863b6159136dcb695",
   "mock_moves_review_none": "146bbd60b70b1038609cd3ee73795ff9a8222c0b797128a8492efaa08b923ab8",
-  "mock_net_score": "cb3f4ada8d3eca41d5c257f73c6ac3f4c3c6962317418fe7d321c95ac0253036",
+  "mock_net_score": "f9868a7fa3ecc585a0cae1d63e806499b1e6b9f2d60b2ce93dd37c09ba3b0557",
   "mock_next": "aa576fbce6dca6734f5c8d469049686539f01d855ce026d736d3985b45bbfb55",
   "mock_next_named": "9904de3c8f18c8c05149969dea521ca098ef6c5561e21c35795cd211b3180211",
   "mock_next_section": "b5db20232403377ed300a790a1f6c31254537dae31f6558ef55540fb54b867fd",
@@ -97,8 +97,8 @@
 -->
 <resources>
     <string name="mock_title">Simulacro %1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s de %2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Puntaje neto: %1$s de %2$d</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s acierto de %2$d</item>

@@ -40,7 +40,7 @@
   "mock_moves_review_any": "0a7d14dd9f794322fbccc7c53433771277a22e336b91ecc308526378bb78d4bf",
   "mock_moves_review_changes": "8898fc3f209942d16bb732cd8ce90c3a636f9987b39409413e8c35144a352641",
   "mock_moves_review_none": "493b79ffa59f68543161993a6725d3d683773eb087c95724f3c2958782a341d5",
-  "mock_net_score": "8cbc832b9bef250726450c6358d6fb85205a5a0b0a4aaba440f02afd86053aeb",
+  "mock_net_score": "4e4ae87705791be9779af5db3e6e6b5633bafb74559c102c6a9846ba0dd4e61b",
   "mock_next": "30bfed0fd45a7dda4859985d6196ec013685316695a46ef9ed39c2ca9f429a23",
   "mock_next_named": "7cadca0650766e03bc0a6e545bccccf2eecfe26068b446e314cb52434a8a00fb",
   "mock_next_section": "9accd0524c41c7ed9dabd437a95d03c394676217cab43dc1ae687d696acd7532",
@@ -97,8 +97,8 @@
 -->
 <resources>
     <string name="mock_title">Deneme sınavı %1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s / %2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Net %1$s / %2$d</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s / %2$d doğru</item>

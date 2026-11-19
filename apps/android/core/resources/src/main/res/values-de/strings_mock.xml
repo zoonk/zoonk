@@ -40,7 +40,7 @@
   "mock_moves_review_any": "816232287a18165e3eabbd33b83894693e17af983016431c61cdab6d62db26ef",
   "mock_moves_review_changes": "00d29f642eede855ae88ad9ada6c622978830e16853c915f6af1dc7395385ca2",
   "mock_moves_review_none": "96db436317cd166eac09c6695b24472038d3fe4e7cfc4f4034dcfeeb7f01d15c",
-  "mock_net_score": "d3bbdadf83ff4c07622a0782809a113f4a69845f77701e7ba3d4a0859d8a351b",
+  "mock_net_score": "fcfb176b55442794718d1eb76a4db465c23c7aa6c01acabc03f717c250181215",
   "mock_next": "9b5702e63bcd99224087fd05bc1fe318455a8eb7cb4f1a45377d965345b3cdfc",
   "mock_next_named": "779c2b9a5b3a2327ec473c706968a5e07a15f86ab7ced1bc91493b29933bd596",
   "mock_next_section": "43e7009d87a154e642198b4c8390381f4549aca9562cb30c421f1c2ebf85f08e",
@@ -97,8 +97,8 @@
 -->
 <resources>
     <string name="mock_title">Probeprüfung %1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s von %2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Netto %1$s von %2$d</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s von %2$d richtig</item>

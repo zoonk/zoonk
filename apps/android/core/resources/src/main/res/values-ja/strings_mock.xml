@@ -40,7 +40,7 @@
   "mock_moves_review_any": "d0511a3546c4cc289847820322cfe2a716a0fe278a40023c103c6e2528851f76",
   "mock_moves_review_changes": "515c268b80c2e69a5e54396d5b84c235460cc90927689070e56de9292cc65c8a",
   "mock_moves_review_none": "068c4c4f39c107e215f57d65bbfddab8f5e230d59bd2b5592a0e04a177f23321",
-  "mock_net_score": "3e3dc2b69256fb6d31a8a29ed9a22c9a3e0009ef22b02858d0b0866b1f018eae",
+  "mock_net_score": "d4db5314a422a311ae367c44a330322a79d54d4f6360504e0ea92fd1e4019792",
   "mock_next": "01a02e5f1fd4ed9dda65c2b90cf65a4c6922bf2dac1866d8d958acbff1227cbf",
   "mock_next_named": "feda83fe7c18a7717b4281f20721c29cbfcce562c9e7af4ecb2f66a496236e1a",
   "mock_next_section": "ff464d8b7c8aca10ff628a7398007c2a954ebc76be2822af58d952a59eec34ed",
@@ -97,8 +97,8 @@
 -->
 <resources>
     <string name="mock_title">模試%1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s／%2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">減点後 %1$s / %2$d</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="other">%1$s問正解（全%2$d問）</item>

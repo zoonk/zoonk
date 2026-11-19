@@ -40,7 +40,7 @@
   "mock_moves_review_any": "0a5398f3b60435acb9b36d5799e5dc9f45b0db0d867e576a22eb5b01eeceda8a",
   "mock_moves_review_changes": "638a4e45f5c394d24881788b9bd0a45d0fd61b246d36c39ad931fcbcf67d6e0f",
   "mock_moves_review_none": "557b8ce9a46bd97f9899dd16fb5a92aaad1159ae8d920a2bc6dbb170f9f67a3c",
-  "mock_net_score": "ec320145685868ab8b3ca792e09f81d014346215e6174c5d6933fb78d7d4a229",
+  "mock_net_score": "b5ef84b4a57a568a1dee6f30b20bfca76c1e3b1841842a581cdeeee9f445ea33",
   "mock_next": "196d2edd8803ac72db314e8a20d5c9b06090d74e64aab784ed96f751e708a1b0",
   "mock_next_named": "c802127b08bf5e9b79484c7a5e35c9b608bc0c85fe6d55462b17ee55cb3da664",
   "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
@@ -97,8 +97,8 @@
 -->
 <resources>
     <string name="mock_title">모의고사 %1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s / %2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">감점 반영 %1$s/%2$d점</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="other">%1$s/%2$d개 정답</item>

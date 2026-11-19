@@ -40,7 +40,7 @@
   "mock_moves_review_any": "11362d5fb77ae66c7351ef3136f5f171b402ad09d0fe7e53e5156cc531493a3c",
   "mock_moves_review_changes": "84f6ff2cba4a7778f1021012f914bf288a668e953ed1d576ef8cc9e7f180b2fa",
   "mock_moves_review_none": "6028a559c259d9a44b1805e132fbe7875cd7d4ef10c5d312b428eed1e0a76cdf",
-  "mock_net_score": "44dc97ac83c5bcf7f9500f2358f55aaf76e3aca4e54519d15a4f674da39d28a7",
+  "mock_net_score": "4f6d8b6fd0241e716a2f2db36a0aeb2ff9090fa6af07f9140104216a00011770",
   "mock_next": "5acbf216b383d47af8cd48391191286c1570cdb431cf6b0913d45753bcd858e6",
   "mock_next_named": "b1132c4ae736e121ac950be7f672eca6a2a075eb13971fd09564418f4c53ba73",
   "mock_next_section": "953ee7b107af6dd2e8eb6dac7679fd57bac86728f9378c0468518e66a00c59dd",
@@ -97,8 +97,8 @@
 -->
 <resources>
     <string name="mock_title">Simulazione %1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s su %2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Punteggio netto: %1$s su %2$d</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s risposta corretta su %2$d</item>
