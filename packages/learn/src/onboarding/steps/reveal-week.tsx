@@ -54,7 +54,7 @@ function WeekRow({
   return (
     <ListRow data-slot="week-day">
       <ListRowLeading
-        className="text-muted-foreground font-mono text-xs whitespace-nowrap tabular-nums"
+        className="text-muted-foreground justify-start font-mono text-xs whitespace-nowrap tabular-nums"
         data-slot="week-day-date"
         style={{ minWidth: `${dateWidth}ch` }}
       >
