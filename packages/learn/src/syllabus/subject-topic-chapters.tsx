@@ -23,7 +23,7 @@ function TopicChapterLink({
   chapterHref,
 }: {
   chapter: SyllabusChapter;
-  chapterHref: (chapterId: string) => string;
+  chapterHref: ((chapterId: string) => string) | null;
 }) {
   const writingLine = useWritingLine();
   const outlineActions = useTopicOutlineActions();
@@ -35,16 +35,18 @@ function TopicChapterLink({
     </>
   );
 
-  if (!chapter.chapterId) {
-    const words = writingLine({
-      far: chapter.far,
-      lessons: chapter.plannedLessons,
-      nextDate: chapter.nextDate,
-    });
+  if (!chapterHref || !chapter.chapterId) {
+    const words = chapter.chapterId
+      ? null
+      : writingLine({
+          far: chapter.far,
+          lessons: chapter.plannedLessons,
+          nextDate: chapter.nextDate,
+        });
 
     const line = words && <span className="shrink-0 text-xs">{words}</span>;
 
-    if (chapter.writing && chapter.skillId && outlineActions) {
+    if (chapterHref && chapter.writing && chapter.skillId && outlineActions) {
       return (
         <FarTopicSheet
           actions={outlineActions}
@@ -79,11 +81,12 @@ function TopicChapterLink({
   );
 }
 
+/** Without `chapterHref` the chapters only say what's there: none opens. */
 export function TopicChapters({
   chapterHref,
   chapters,
 }: {
-  chapterHref: (chapterId: string) => string;
+  chapterHref: ((chapterId: string) => string) | null;
   chapters: readonly SyllabusChapter[];
 }) {
   return (

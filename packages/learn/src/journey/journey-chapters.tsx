@@ -58,6 +58,11 @@ function isWritingAhead(chapter: PlanChapterView): boolean {
   return chapter.writing && !chapter.far && chapter.skills.length === 0;
 }
 
+/** Whether the list would name any chapter: lessons being written right now aren't rows yet. */
+export function hasListedChapters(chapters: readonly PlanChapterView[]): boolean {
+  return chapters.some((chapter) => !isWritingAhead(chapter));
+}
+
 function ChapterRow({
   chapter,
   isNext,
@@ -65,7 +70,7 @@ function ChapterRow({
 }: {
   chapter: PlanChapterView;
   isNext: boolean;
-  links: JourneyPathLinks;
+  links: JourneyPathLinks | null;
 }) {
   const t = useExtracted();
   const title = useChapterTitle();
@@ -102,7 +107,7 @@ function ChapterRow({
     </>
   );
 
-  if (chapter.writing && chapter.skillId && outlineActions) {
+  if (links && chapter.writing && chapter.skillId && outlineActions) {
     return (
       <FarTopicSheet
         actions={outlineActions}
@@ -146,7 +151,7 @@ function ChapterRow({
     );
   }
 
-  if (!chapter.chapterId) {
+  if (!links || !chapter.chapterId) {
     return (
       <div className={PATH_ROW_CLASS} data-slot="path-row">
         {content}
@@ -182,6 +187,7 @@ function useShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolea
     : t("{count, plural, one {# more chapter} other {# more chapters}}", { count: hidden });
 }
 
+/** Without `links` the rows only say what's there, every one of them, and none opens anything. */
 export function JourneyChapters({
   chapters,
   checkpoint,
@@ -189,12 +195,16 @@ export function JourneyChapters({
 }: {
   chapters: PlanChapterView[];
   checkpoint: PlanPhaseCheckpointView | null;
-  links: JourneyPathLinks;
+  links: JourneyPathLinks | null;
 }) {
   const [showAll, setShowAll] = useState(false);
   const listId = useId();
   const rows = chapters.filter((chapter) => !isWritingAhead(chapter));
-  const range = getChapterWindow({ states: rows.map((chapter) => chapter.state) });
+
+  const range = links
+    ? getChapterWindow({ states: rows.map((chapter) => chapter.state) })
+    : { end: rows.length, start: 0 };
+
   const hidden = rows.length - (range.end - range.start);
   const shown = showAll ? rows : rows.slice(range.start, range.end);
   const showMoreLabel = useShowMoreLabel({ hidden, showAll });
@@ -219,7 +229,7 @@ export function JourneyChapters({
         </li>
       )}
 
-      {checkpoint && (
+      {checkpoint && links && (
         <li>
           <CheckpointRow checkpoint={checkpoint} links={links} />
         </li>

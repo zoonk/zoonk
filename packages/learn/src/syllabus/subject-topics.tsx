@@ -205,7 +205,7 @@ function TopicGroupRow({
   group,
   showFrequency,
 }: {
-  chapterHref: (chapterId: string) => string;
+  chapterHref: ((chapterId: string) => string) | null;
   group: Group;
   showFrequency: boolean;
 }) {
@@ -266,7 +266,7 @@ export function SubjectTopics({
   labelledBy,
   topics,
 }: {
-  chapterHref: (chapterId: string) => string;
+  chapterHref: ((chapterId: string) => string) | null;
   labelledBy: string;
   topics: readonly SyllabusTopic[];
 }) {

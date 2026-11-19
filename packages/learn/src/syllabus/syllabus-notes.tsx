@@ -9,9 +9,29 @@ import { getSourceHost } from "../_utils/source-host";
 import { type SubjectGroup } from "./group-subjects";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 
-export function useGroupName(group: SubjectGroup<SyllabusSectionSubject>): string | null {
+/** Over a list's group of subjects: the notice's own grouping, or the ones the plan adds. */
+export function SubjectGroupHeading({
+  group,
+  id,
+}: {
+  group: Pick<SubjectGroup<SyllabusSectionSubject>, "extra" | "name">;
+  id: string;
+}) {
   const t = useExtracted();
-  return group.extra ? t("Also in your plan") : group.name;
+  const name = group.extra ? t("Also in your plan") : group.name;
+
+  if (!name) {
+    return null;
+  }
+
+  return (
+    <h3
+      className="text-muted-foreground flex min-h-9 items-center pt-2 text-xs font-medium"
+      id={id}
+    >
+      {name}
+    </h3>
+  );
 }
 
 export function QuestionsSourceNote({ source }: { source: SyllabusView["questionsSource"] }) {

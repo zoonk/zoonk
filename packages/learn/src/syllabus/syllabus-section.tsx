@@ -22,9 +22,9 @@ import {
 import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionCount } from "../exam/use-exam-question-count";
-import { type SubjectGroup, groupSubjects } from "./group-subjects";
+import { groupSubjects } from "./group-subjects";
 import { SharedExamsNote, useAlsoIn } from "./shared-exams";
-import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
+import { CourseWeightsNote, QuestionsSourceNote, SubjectGroupHeading } from "./syllabus-notes";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 import { getSubjectShare, useSubjectProgress } from "./use-subject-progress";
 
@@ -147,23 +147,6 @@ function getGroupId(index: number): string {
   return `${SECTION_TITLE_ID}-group-${index}`;
 }
 
-function GroupHeading({ group, id }: { group: SubjectGroup<SyllabusSectionSubject>; id: string }) {
-  const name = useGroupName(group);
-
-  if (!name) {
-    return null;
-  }
-
-  return (
-    <h3
-      className="text-muted-foreground flex min-h-9 items-center pt-2 text-xs font-medium"
-      id={id}
-    >
-      {name}
-    </h3>
-  );
-}
-
 export function SyllabusSection({
   subjectHref,
   syllabus,
@@ -194,7 +177,7 @@ export function SyllabusSection({
           // A group's heading and its rows are one item of the list, so a rule sits above the
           // heading and none between it and its rows.
           <div key={group.extra ? "extra" : (group.name ?? "all")}>
-            <GroupHeading group={group} id={getGroupId(index)} />
+            <SubjectGroupHeading group={group} id={getGroupId(index)} />
 
             <ul
               aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}
