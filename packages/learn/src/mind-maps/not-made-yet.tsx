@@ -6,7 +6,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Disclosure } from "../_components/disclosure";
 import { MindMapLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
@@ -20,7 +20,7 @@ import { StatusRegion } from "../_components/status-region";
 import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { FoldRow } from "../today/today-fold-row";
+import { FoldRow, focusRevealedRow } from "../today/today-fold-row";
 import {
   type MindMapsPageChapter,
   countChapterMaps,
@@ -126,22 +126,26 @@ function NotMadeLine({
   return null;
 }
 
+type RowsProps = {
+  library: MindMapsLibrary;
+  /** The line saying what writing lessons costs, which each Create that writes some points to. */
+  lessonsWarningId?: string;
+  plus: boolean;
+};
+
 function NotMadeRows({
   chapters,
   label,
+  lessonsWarningId,
   library,
   plus,
-}: {
-  chapters: readonly MindMapsPageChapter[];
-  label?: string;
-  library: MindMapsLibrary;
-  plus: boolean;
-}) {
+}: RowsProps & { chapters: readonly MindMapsPageChapter[]; label?: string }) {
   return (
     <ul aria-label={label} className={LIST_GROUP_CLASS}>
       {chapters.map((chapter) => (
         <li key={chapter.chapterId}>
           <MindMapRowView
+            createDescribedBy={chapter.lessonsToWrite > 0 ? lessonsWarningId : undefined}
             place="library"
             plus={plus}
             request={library.row(chapter)}
@@ -155,17 +159,22 @@ function NotMadeRows({
 
 function RestBySubject({
   chapters,
-  library,
-  plus,
-}: {
-  chapters: readonly MindMapsPageChapter[];
-  library: MindMapsLibrary;
-  plus: boolean;
-}) {
+  ...rows
+}: RowsProps & { chapters: readonly MindMapsPageChapter[] }) {
   const t = useExtracted();
   const listId = useId();
   const [open, setOpen] = useState(false);
+  const revealed = useRef<HTMLDivElement>(null);
+  const focusOnOpen = useRef(false);
   const groups = groupBySubject(chapters);
+
+  useEffect(() => {
+    if (open && focusOnOpen.current) {
+      focusRevealedRow(revealed.current?.querySelector("li"));
+    }
+
+    focusOnOpen.current = false;
+  }, [open]);
 
   if (groups.every((group) => group.name !== null)) {
     return (
@@ -178,7 +187,7 @@ function RestBySubject({
             key={group.key}
             title={group.name ?? ""}
           >
-            <NotMadeRows chapters={group.rows} library={library} plus={plus} />
+            <NotMadeRows chapters={group.rows} {...rows} />
           </Disclosure>
         ))}
       </ListGroup>
@@ -187,8 +196,8 @@ function RestBySubject({
 
   return (
     <>
-      <div className="contents" id={listId}>
-        {open && <NotMadeRows chapters={chapters} library={library} plus={plus} />}
+      <div className="contents" id={listId} ref={revealed}>
+        {open && <NotMadeRows chapters={chapters} {...rows} />}
       </div>
       <FoldRow
         controls={listId}
@@ -200,7 +209,10 @@ function RestBySubject({
                 count: chapters.length,
               })
         }
-        onToggle={() => setOpen(!open)}
+        onToggle={() => {
+          focusOnOpen.current = !open;
+          setOpen(!open);
+        }}
         open={open}
       />
     </>
@@ -228,7 +240,9 @@ export function NotMadeYet({
   const { next, rest } = orderNotMade({ chapters, studied });
   const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
   const titleId = useId();
+  const lessonsWarningId = useId();
   const warnsLessons = !plus && needLessons > 0 && stop === null;
+  const rows = { lessonsWarningId: warnsLessons ? lessonsWarningId : undefined, library, plus };
 
   return (
     <PageSection aria-labelledby={titleId} className="gap-3" data-slot="maps-not-made">
@@ -243,12 +257,14 @@ export function NotMadeYet({
       </PageSectionHeader>
 
       {warnsLessons && (
-        <p className={LINE_CLASS}>{t("Writing lessons counts toward your free lessons.")}</p>
+        <p className={LINE_CLASS} id={lessonsWarningId}>
+          {t("Writing lessons counts toward your free lessons.")}
+        </p>
       )}
 
       <div className="flex flex-col">
-        <NotMadeRows chapters={next} library={library} plus={plus} />
-        {rest.length > 0 && <RestBySubject chapters={rest} library={library} plus={plus} />}
+        <NotMadeRows chapters={next} {...rows} />
+        {rest.length > 0 && <RestBySubject chapters={rest} {...rows} />}
       </div>
 
       <div

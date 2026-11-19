@@ -85,6 +85,53 @@ function failedView(which: "both" | "underFold" | "written"): GoalMindMapsView {
   };
 }
 
+const MANY_TITLES = [
+  "Atoms",
+  "Bonds",
+  "Reactions",
+  "Acids",
+  "Gases",
+  "Solutions",
+  "Energy",
+  "Rates",
+  "Polymers",
+] as const;
+
+function subjectOf(index: number): GoalMindMapView["subject"] {
+  return index < 5
+    ? { key: "general", name: "General chemistry" }
+    : { key: "organic", name: "Organic chemistry" };
+}
+
+/** More chapters than the list shows before its fold; `subjects` splits them into two. */
+function manyView({
+  stop = null,
+  subjects = false,
+}: { stop?: MindMapAllowanceStop | null; subjects?: boolean } = {}): GoalMindMapsView {
+  const served = view(stop);
+
+  return {
+    ...served,
+    chapters: MANY_TITLES.map((title, index) => ({
+      ...chapter(title, index + 1),
+      subject: subjects ? subjectOf(index) : null,
+    })),
+    createOffer: { eligible: 9, needLessons: 0, startable: stop ? 0 : 9, stop },
+  };
+}
+
+/** The many chapters with the last one, last in the syllabus, writing its lessons. */
+function manyWritingView(stop: MindMapAllowanceStop | null): GoalMindMapsView {
+  const served = manyView({ stop });
+
+  return {
+    ...served,
+    chapters: served.chapters.map((row, index) =>
+      index === 8 ? { ...row, lessonsToWrite: 1, status: "writingLessons" } : row,
+    ),
+  };
+}
+
 function actionsWith(overrides: Partial<MindMapLibraryActions>): MindMapLibraryActions {
   return {
     list: vi.fn(async () => view(null)),
@@ -117,10 +164,10 @@ const createAll = () => notMade().getByRole("button", { name: "Create all" });
 
 const onTheWay = () => notMade().getByText("1 on the way.", { exact: false });
 
-const writingRow = () =>
+const writingRow = (title = "Reactions") =>
   notMade()
     .getByRole("listitem")
-    .filter({ hasText: "Reactions" })
+    .filter({ hasText: title })
     .getByText("Writing the lessons, then the mind map…");
 
 const rowCreate = (title: string) =>
@@ -135,12 +182,12 @@ describe("the Mind maps page's gate is the list's offer", () => {
 
     await expect.element(notMade().getByRole("heading", { name: "No map yet" })).toBeVisible();
 
-    await expect.element(notMade().getByText("3 chapters", { exact: true })).toBeVisible();
+    await expect.element(notMade().getByText("3", { exact: true })).toBeVisible();
     await expect.element(rowCreate("Atoms")).toBeVisible();
   });
 
-  it("says how many chapters wait under the rows it shows, and opens them there", async () => {
-    const served = view(null);
+  it("shows the next five chapters, and says how many wait behind a fold that opens them there", async () => {
+    const served = manyView();
 
     render(
       <Screen
@@ -148,33 +195,114 @@ describe("the Mind maps page's gate is the list's offer", () => {
         served={{
           ...served,
           chapters: served.chapters.map((row, index) =>
-            index === 2 ? { ...row, lessonsToWrite: 1 } : row,
+            index === 0 ? { ...row, lessonsToWrite: 1 } : row,
           ),
-          createOffer: { eligible: 2, needLessons: 1, startable: 2, stop: null },
+          createOffer: { eligible: 9, needLessons: 1, startable: 9, stop: null },
         }}
       />,
     );
 
-    await expect.element(notMade().getByText("3 chapters", { exact: true })).toBeVisible();
+    await expect.element(notMade().getByText("9", { exact: true })).toBeVisible();
+
+    // Atoms writes its lessons first, so the five chapters made at once come before it.
+    for (const title of ["Bonds", "Reactions", "Acids", "Gases", "Solutions"]) {
+      // oxlint-disable-next-line no-await-in-loop -- One row after the other.
+      await expect.element(rowCreate(title)).toBeVisible();
+    }
+
+    await expect.element(notMade().getByText("Atoms")).not.toBeInTheDocument();
+
+    await notMade().getByRole("button", { name: "4 more chapters" }).click();
+    await expect.element(rowCreate("Atoms")).toHaveFocus();
 
     await expect
-      .element(notMade().getByRole("button", { name: "No map yet" }))
-      .not.toBeInTheDocument();
-
-    await expect.element(rowCreate("Atoms")).toBeVisible();
-    await expect.element(notMade().getByText("Reactions")).not.toBeInTheDocument();
-
-    await notMade().getByRole("button", { name: "1 more chapter" }).click();
-    await expect.element(notMade().getByText("Reactions")).toBeVisible();
-    await expect.element(rowCreate("Reactions")).toHaveFocus();
-
-    await expect
-      .element(rowCreate("Reactions"))
+      .element(rowCreate("Atoms"))
       .toHaveAccessibleDescription(/counts toward your free lessons/iu);
 
     await expect
       .element(notMade().getByRole("button", { name: "Show fewer chapters" }))
       .toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("folds the chapters after the first five by subject, each with its count", async () => {
+    render(<Screen actions={actionsWith({})} served={manyView({ subjects: true })} />);
+
+    await expect.element(rowCreate("Gases")).toBeVisible();
+    await expect.element(notMade().getByText("Solutions")).not.toBeInTheDocument();
+
+    const organic = notMade().getByRole("button", { name: /^Organic chemistry/u });
+    await expect.element(organic.getByText("4", { exact: true })).toBeVisible();
+    await expect.element(organic).toHaveAttribute("aria-expanded", "false");
+
+    await organic.click();
+    await expect.element(rowCreate("Solutions")).toBeVisible();
+    await expect.element(rowCreate("Polymers")).toBeVisible();
+  });
+
+  it("keeps a row where it is while its map is made, so nothing under it moves", async () => {
+    const served = view(null);
+
+    const drawing = {
+      ...served,
+      chapters: served.chapters.map((row, index) =>
+        index === 0 ? { ...row, status: "drawing" as const } : row,
+      ),
+    };
+
+    render(<Screen actions={actionsWith({ list: vi.fn(async () => drawing) })} served={served} />);
+
+    await expect.element(rowCreate("Bonds")).toBeVisible();
+
+    const box = (title: string) =>
+      notMade().getByRole("listitem").filter({ hasText: title }).element().getBoundingClientRect();
+
+    const heading = notMade().getByRole("heading", { name: "No map yet" });
+    const before = [heading.element().getBoundingClientRect(), box("Atoms"), box("Bonds")];
+
+    await rowCreate("Atoms").click();
+    await expect.element(rowCreate("Atoms")).not.toBeInTheDocument();
+
+    const after = [heading.element().getBoundingClientRect(), box("Atoms"), box("Bonds")];
+
+    expect(after.map(({ height, top }) => [top, height])).toStrictEqual(
+      before.map(({ height, top }) => [top, height]),
+    );
+  });
+
+  it("moves a chapter from the list to the learner's maps once its map is ready", async () => {
+    const ready = view(null);
+
+    const actions = actionsWith({
+      list: vi.fn(async () => ({
+        ...ready,
+        chapters: ready.chapters.map((row, index) =>
+          index === 2 ? { ...row, status: "ready" as const } : row,
+        ),
+      })),
+    });
+
+    const drawing = {
+      ...ready,
+      chapters: ready.chapters.map((row, index) =>
+        index === 2 ? { ...row, status: "drawing" as const } : row,
+      ),
+    };
+
+    render(<Screen actions={actions} served={drawing} />);
+
+    await expect.element(rowCreate("Reactions")).not.toBeInTheDocument();
+
+    await expect
+      .element(notMade().getByText("Reactions"), { timeout: 10_000 })
+      .not.toBeInTheDocument();
+
+    await expect.element(page.getByRole("list", { name: "Chapter maps" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("list", { name: "Chapter maps" }).getByText("Reactions"))
+      .toBeVisible();
+
+    await expect.element(notMade().getByText("2", { exact: true })).toBeVisible();
   });
 
   it("shows the chapters that need their lessons first when no other chapter is listed", async () => {
@@ -340,15 +468,19 @@ describe("the Mind maps page's gate is the list's offer", () => {
       stop: null,
     },
   ])(
-    "opens the group a map on its way sits in, on arrival: $name",
+    "puts a map on its way first, in sight on arrival, however far down the syllabus: $name",
     async ({ hidden, line, stop }) => {
-      render(<Screen actions={actionsWith({})} served={writingView(stop)} />);
+      render(<Screen actions={actionsWith({})} served={manyWritingView(stop)} />);
 
       await expect
-        .element(notMade().getByRole("button", { name: "Show fewer chapters" }))
-        .toHaveAttribute("aria-expanded", "true");
+        .element(notMade().getByRole("listitem").first().getByText("Polymers"))
+        .toBeVisible();
 
-      await expect.element(writingRow()).toBeVisible();
+      await expect
+        .element(notMade().getByRole("button", { name: "4 more chapters" }))
+        .toHaveAttribute("aria-expanded", "false");
+
+      await expect.element(writingRow("Polymers")).toBeVisible();
       await expect.element(line()).toBeVisible();
       await expect.element(hidden()).not.toBeInTheDocument();
     },
