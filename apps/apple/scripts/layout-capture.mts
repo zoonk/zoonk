@@ -14,6 +14,8 @@ import { existsSync } from "node:fs";
 import { copyFile, mkdir, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
+import { carryReads } from "../../../scripts/pr/carry.mts";
+import { type CaptureItem } from "../../../scripts/pr/media.mts";
 import { type Capture as AlignmentCapture } from "../../../scripts/verify/alignment-capture.mts";
 import { readCommand } from "./simulators.mts";
 
@@ -264,13 +266,6 @@ export async function saveCapture({
 
   alignment.captures = mergeCapture(alignment.captures, capture);
   const alignmentText = `${JSON.stringify(alignment, null, 2)}\n`;
-
-  const manifestText = `${JSON.stringify(
-    [...manifest.filter((existing) => existing.file !== file), manifestItem(capture)],
-    null,
-    2,
-  )}\n`;
-
   await mkdir(out, { recursive: true });
 
   // A save stopped before it moved its picture in left its staged copy behind, named by its process.
@@ -287,6 +282,7 @@ export async function saveCapture({
 
   // The picture is the app's own drawing of the frame it measured; its hash proves it is that one.
   const staged = path.join(out, `.${file}.${process.pid}.staged`);
+  let manifestText = "";
 
   try {
     await copyFile(picture, staged);
@@ -295,6 +291,17 @@ export async function saveCapture({
       throw new Error(`${file} isn't the frame the capture measured; capture it again.`);
     }
 
+    // While the earlier picture is still here: a retake keeps its read, or it and its picture.
+    const items = await carryReads({
+      folder: out,
+      items: asItems([manifestItem(capture)]),
+      now: () => staged,
+      previous: asItems(manifest.filter((existing) => existing.file === file)),
+      previousFolder: out,
+    });
+
+    const kept = manifest.filter((existing) => existing.file !== file);
+    manifestText = `${JSON.stringify([...kept, ...items], null, 2)}\n`;
     await rename(staged, path.join(out, file));
   } finally {
     await rm(staged, { force: true });
@@ -314,6 +321,12 @@ function isRunning(pid: number): boolean {
     // Running, but another user's.
     return error instanceof Error && "code" in error && error.code === "EPERM";
   }
+}
+
+/** The folder's records, typed as `pr:media` reads them: only `pr:media` writes their reads. */
+function asItems(records: object[]): CaptureItem[] {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- See above.
+  return records as CaptureItem[];
 }
 
 /** The picture's record in the folder's `capture.json`. */

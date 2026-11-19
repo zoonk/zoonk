@@ -4,8 +4,10 @@ import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import sharp from "sharp";
 import { describe, it, test } from "vitest";
 import { checkPictures } from "../../../scripts/pr/check.mts";
+import { type Read, isRecorded, readManifest, writeManifest } from "../../../scripts/pr/media.mts";
 import { type Capture, mergeCapture, parseCapture, saveCapture } from "./layout-capture.mts";
 
 function capture(overrides: Partial<Capture>): Capture {
@@ -59,18 +61,53 @@ describe(mergeCapture, () => {
   });
 });
 
-/** A capture the app wrote, with its picture's bytes. */
-async function answer(folder: string, bytes: string, overrides: Partial<Capture> = {}) {
-  const picture = path.join(folder, `${bytes}.png`);
+/** A capture the app wrote, with its picture's bytes, named `name` (`bytes` when they're text). */
+async function answer(
+  folder: string,
+  bytes: Buffer | string,
+  overrides: Partial<Capture> = {},
+  name = String(bytes),
+) {
+  const picture = path.join(folder, `${name}.png`);
   await writeFile(picture, bytes);
 
   return {
     answer: capture({
-      picture: { file: `${bytes}.png`, sha256: createHash("sha256").update(bytes).digest("hex") },
+      picture: { file: `${name}.png`, sha256: createHash("sha256").update(bytes).digest("hex") },
       ...overrides,
     }),
     picture,
   };
+}
+
+/** A plain frame; `effort` changes the bytes, never the pixels. */
+async function frame({ background = "#fff", effort = 7 } = {}) {
+  return sharp({ create: { background, channels: 4, height: 40, width: 40 } })
+    .png({ effort })
+    .toBuffer();
+}
+
+const READ: Read = { at: "2026-11-14T12:00:00.000Z", by: "reader", findings: [] };
+
+/** Saves `first`, records a read on it, then saves `again` over it, as the app would answer each. */
+async function readThenRetake(first: Buffer, again: Buffer) {
+  const { app, out } = await folders();
+
+  const save = async (bytes: Buffer, name: string) =>
+    saveCapture({ ...(await answer(app, bytes, {}, name)), out, scenario: "plan", side: "after" });
+
+  await save(first, "first");
+  const items = (await readManifest(out)) ?? [];
+
+  await writeManifest(
+    out,
+    items.map((item) => ({ ...item, read: READ })),
+  );
+
+  await save(again, "again");
+
+  const [saved] = (await readManifest(out)) ?? [];
+  return { item: saved && isRecorded(saved) ? saved : undefined, out };
 }
 
 async function folders() {
@@ -174,6 +211,22 @@ describe(saveCapture, () => {
     await saveCapture({ ...(await answer(app, "plan")), out, scenario: "plan", side: "after" });
 
     assert.equal(existsSync(left), false);
+  });
+
+  it("keeps a read when a retake shows the same pixels", async () => {
+    const { item } = await readThenRetake(await frame(), await frame({ effort: 1 }));
+
+    assert.equal(item?.read?.by, READ.by);
+    assert.equal(item?.retakes, undefined);
+  });
+
+  it("keeps the read and the picture a retake with other pixels replaces, for a check of its fixes", async () => {
+    const { item, out } = await readThenRetake(await frame(), await frame({ background: "#eee" }));
+    const file = "earlier/plan.after.png";
+
+    assert.equal(item?.read, undefined);
+    assert.deepEqual(item?.retakes, { file, read: READ });
+    assert.deepEqual(await readFile(path.join(out, file)), await frame());
   });
 
   it("refuses an answer that isn't a capture before counting it", async () => {

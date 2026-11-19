@@ -51,18 +51,21 @@ async function retakeOf({
 /**
  * A picture captured again with the same pixels shows what was read, so its read and its
  * findings' states carry over. One whose pixels changed keeps the read it retakes, with that
- * picture copied into `keep` (`folder` unless given), so its new read checks only the fixes.
+ * picture copied into `keep` (`folder` unless given), so its new read checks only the fixes. Each
+ * new picture is its file in `folder`, or where `now` says.
  */
 export async function carryReads({
   folder,
   items,
   keep = folder,
+  now = (item) => join(folder, item.file),
   previous,
   previousFolder,
 }: {
   folder: string;
   items: CaptureItem[];
   keep?: string;
+  now?: (item: CaptureItem) => string;
   previous: CaptureItem[];
   previousFolder: string;
 }): Promise<CaptureItem[]> {
@@ -79,7 +82,7 @@ export async function carryReads({
       earlier?.read &&
       (earlier.sha256 === item.sha256 ||
         (item.kind === "shot" &&
-          (await samePixels(join(previousFolder, earlier.file), join(folder, item.file)))));
+          (await samePixels(join(previousFolder, earlier.file), now(item)))));
 
     if (same && earlier.read) {
       const carriedFrom = earlier.read.carriedFrom ?? earlier.sha256;

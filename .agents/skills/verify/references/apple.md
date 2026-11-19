@@ -73,7 +73,7 @@ A Debug build measures what the shared pieces laid out (each part's frame in poi
 3. Capture it: `node apps/apple/scripts/layout-capture.mts --udid $UDID --scenario <id> --side <before|after> --out <folder> [--screen <path or name>]`. The app draws its window once, measures that frame and returns it as the picture, so the picture and its numbers are one frame of one build. It saves `<id>.<side>.png`, adds the capture to the folder's `alignment.json` and the picture's record to its `capture.json`, and prints how many parts it measured and couldn't, and the build's commit.
 4. `pnpm verify:alignment <folder>` judges the folder's captures. Its pictures go in the PR like the web's ([show the change](../../zoonk-commit/SKILL.md#every-picture-is-captured-current-and-read)). A picture this capture can't take comes from `pnpm pr:media device --platform apple --device $UDID --name <shot>`, which refuses a build whose stamp isn't this checkout's head built clean, and goes in the PR as `pnpm pr:media device-section <picture>` prints it.
 
-Capturing the same scenario, side, screen and configuration again replaces it. One process writes a folder at a time: two captures into one folder at once can leave a picture its records don't describe, which `pnpm pr:media check` refuses until you retake it.
+Capturing the same scenario, side, screen and configuration again replaces it and keeps its read, as the web's capture does ([current](../../zoonk-commit/SKILL.md#every-picture-is-captured-current-and-read)). One process writes a folder at a time: two captures into one folder at once can leave a picture its records don't describe, which `pnpm pr:media check` refuses until you retake it.
 
 ## Report
 
