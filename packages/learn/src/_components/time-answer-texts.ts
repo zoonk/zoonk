@@ -34,27 +34,6 @@ export function useTimeAnswerTexts() {
         });
   };
 
-  /** Under a time picker, whose number is the sentence's subject. */
-  const share = ({ date, exam, value }: { date: GoalDate; exam: boolean; value: number }) => {
-    const shareValues = { ...goalDate(date), share: formatShare(value) };
-
-    return exam
-      ? t({
-          description:
-            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-          message:
-            "{dateKind, select, month {Covers about {share} of your exam topics by {date}.} other {Covers about {share} of your exam topics by {date}.}}",
-          values: shareValues,
-        })
-      : t({
-          description:
-            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-          message:
-            "{dateKind, select, month {Covers about {share} of your goal by {date}.} other {Covers about {share} of your goal by {date}.}}",
-          values: shareValues,
-        });
-  };
-
   /** The same fact where no picker shows the time. */
   const timeCovers = ({
     exam,
@@ -74,7 +53,6 @@ export function useTimeAnswerTexts() {
 
   return {
     everythingTakes,
-    share,
     suggestTitle: (minutes: number) =>
       t({
         description:

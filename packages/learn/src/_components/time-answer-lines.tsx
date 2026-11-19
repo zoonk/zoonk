@@ -1,9 +1,10 @@
 import { useExtracted } from "next-intl";
 import { useGoalDateValues } from "../_utils/iso-date";
+import { useFormatShare } from "../_utils/percent";
 import { type TimeLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { useFinishSentence } from "./finish-sentence";
-import { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
+import { type GoalDate } from "./time-answer-texts";
 
 type DatedLine = Extract<TimeLine, { kind: "everything" | "focus" | "pastDate" | "share" }>;
 
@@ -20,9 +21,37 @@ function isFinishLine(line: TimeLine): line is FinishLine {
   return FINISH_KINDS.has(line.kind);
 }
 
+/** Under a time picker, whose number is the sentence's subject; the share stands out in it. */
+function ShareWords({ date, exam, value }: { date: GoalDate; exam: boolean; value: number }) {
+  const t = useExtracted();
+  const goalDate = useGoalDateValues();
+  const formatShare = useFormatShare();
+
+  const values = {
+    ...goalDate(date),
+    b: (chunks: React.ReactNode) => <strong className="font-semibold">{chunks}</strong>,
+    share: formatShare(value),
+  };
+
+  return exam
+    ? t.rich({
+        description:
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message:
+          "{dateKind, select, month {Covers about <b>{share}</b> of your exam topics by {date}.} other {Covers about <b>{share}</b> of your exam topics by {date}.}}",
+        values,
+      })
+    : t.rich({
+        description:
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message:
+          "{dateKind, select, month {Covers about <b>{share}</b> of your goal by {date}.} other {Covers about <b>{share}</b> of your goal by {date}.}}",
+        values,
+      });
+}
+
 function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {
   const t = useExtracted();
-  const texts = useTimeAnswerTexts();
   const goalDate = useGoalDateValues();
   const shown = goalDate(date);
 
@@ -44,9 +73,9 @@ function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line:
             values: shown,
           });
     case "focus":
-      return texts.share({ date, exam, value: line.coveredShare });
+      return <ShareWords date={date} exam={exam} value={line.coveredShare} />;
     case "share":
-      return texts.share({ date, exam, value: line.share });
+      return <ShareWords date={date} exam={exam} value={line.share} />;
     case "pastDate":
       return t({
         description:

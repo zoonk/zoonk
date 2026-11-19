@@ -817,6 +817,18 @@ msgstr "테스트를 보고 단원 건너뛰기"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
+msgctxt "cMciMa"
+msgid "{dateKind, select, month {Covers about <b>{share}</b> of your exam topics by {date}.} other {Covers about <b>{share}</b> of your exam topics by {date}.}}"
+msgstr "{dateKind, select, month {시험 주제의 약 <b>{share}</b>를 {date}까지 학습할 수 있어요.} other {시험 주제의 약 <b>{share}</b>를 {date}까지 학습할 수 있어요.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
+msgctxt "YjPM2d"
+msgid "{dateKind, select, month {Covers about <b>{share}</b> of your goal by {date}.} other {Covers about <b>{share}</b> of your goal by {date}.}}"
+msgstr "{dateKind, select, month {목표 학습량의 약 <b>{share}</b>를 {date}까지 채울 수 있어요.} other {목표 학습량의 약 <b>{share}</b>를 {date}까지 채울 수 있어요.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
 msgctxt "wtnatU"
 msgid "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}"
 msgstr "{dateKind, select, month {{date}까지 시험에 나오는 모든 주제를 다뤄요.} other {{date}까지 시험에 나오는 모든 주제를 다뤄요.}}"
@@ -889,18 +901,6 @@ msgstr "하루 약 {time}씩 공부하면 전부 학습할 수 있어요."
 msgctxt "nLHTU9"
 msgid "The most any time covers is about {share}, at {time} a day."
 msgstr "학습할 수 있는 최대 분량은 약 {share}이고, 하루 {time}씩 공부하면 돼요."
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/_components/time-answer-texts.ts
-msgctxt "9JM38y"
-msgid "{dateKind, select, month {Covers about {share} of your exam topics by {date}.} other {Covers about {share} of your exam topics by {date}.}}"
-msgstr "{dateKind, select, month {시험 주제의 약 {share}를 {date}까지 학습할 수 있어요.} other {시험 주제의 약 {share}를 {date}까지 학습할 수 있어요.}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/_components/time-answer-texts.ts
-msgctxt "qmspFK"
-msgid "{dateKind, select, month {Covers about {share} of your goal by {date}.} other {Covers about {share} of your goal by {date}.}}"
-msgstr "{dateKind, select, month {목표 학습량의 약 {share}를 {date}까지 채울 수 있어요.} other {목표 학습량의 약 {share}를 {date}까지 채울 수 있어요.}}"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "LfzIDC"
@@ -1227,6 +1227,7 @@ msgid "So examples and exams match your country"
 msgstr "예시와 시험을 국가에 맞춰 드려요"
 
 #: src/appearance/home-country-setting.tsx
+#: src/plan/plan-exam-choices.tsx
 msgctxt "p5LNtB"
 msgid "Not set"
 msgstr "설정 안 됨"
@@ -3332,7 +3333,6 @@ msgstr "{number, number}일차"
 
 #: src/exam/exam-format-section.tsx
 #: src/journey/journey-path.tsx
-#: src/journey/next-on-path.tsx
 msgctxt "8sxDix"
 msgid "Date to be confirmed"
 msgstr "날짜 미정"
@@ -4996,11 +4996,6 @@ msgstr "보통 1~2분 걸려요. 계획이 완성되면 여기에서 바로 열�
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
 msgstr "내 계획 한눈에 보기"
-
-#: src/journey/next-on-path.tsx
-msgctxt "F1DaXB"
-msgid "Next on your path"
-msgstr "다음 단계"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -12134,11 +12129,6 @@ msgstr "푸시 알림"
 msgctxt "vBM5w1"
 msgid "To get notifications on your phone, turn them on in the Zoonk phone app."
 msgstr "휴대폰으로 푸시 알림을 받으려면 Zoonk 모바일 앱에서 켜세요."
-
-#: src/reminders/reminders-screen.tsx
-msgctxt "6eLTbX"
-msgid "Reminders are off."
-msgstr "알림이 꺼져 있어요."
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"

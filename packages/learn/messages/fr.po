@@ -817,6 +817,18 @@ msgstr "Passer le test et sauter l’unité"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
+msgctxt "cMciMa"
+msgid "{dateKind, select, month {Covers about <b>{share}</b> of your exam topics by {date}.} other {Covers about <b>{share}</b> of your exam topics by {date}.}}"
+msgstr "{dateKind, select, month {Tu peux étudier environ <b>{share}</b> des sujets de ton examen d’ici {date}.} other {Tu peux étudier environ <b>{share}</b> des sujets de ton examen d’ici le {date}.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
+msgctxt "YjPM2d"
+msgid "{dateKind, select, month {Covers about <b>{share}</b> of your goal by {date}.} other {Covers about <b>{share}</b> of your goal by {date}.}}"
+msgstr "{dateKind, select, month {Tu peux atteindre environ <b>{share}</b> de ton objectif d’ici {date}.} other {Tu peux atteindre environ <b>{share}</b> de ton objectif d’ici le {date}.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
 msgctxt "wtnatU"
 msgid "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}"
 msgstr "{dateKind, select, month {Couvre tous les sujets de ton examen d’ici {date}.} other {Couvre tous les sujets de ton examen d’ici le {date}.}}"
@@ -889,18 +901,6 @@ msgstr "Pour tout étudier, il faut environ {time} par jour."
 msgctxt "nLHTU9"
 msgid "The most any time covers is about {share}, at {time} a day."
 msgstr "Au maximum, tu peux étudier environ {share} du contenu, avec {time} par jour."
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/_components/time-answer-texts.ts
-msgctxt "9JM38y"
-msgid "{dateKind, select, month {Covers about {share} of your exam topics by {date}.} other {Covers about {share} of your exam topics by {date}.}}"
-msgstr "{dateKind, select, month {Tu peux étudier environ {share} des sujets de ton examen d’ici {date}.} other {Tu peux étudier environ {share} des sujets de ton examen d’ici le {date}.}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/_components/time-answer-texts.ts
-msgctxt "qmspFK"
-msgid "{dateKind, select, month {Covers about {share} of your goal by {date}.} other {Covers about {share} of your goal by {date}.}}"
-msgstr "{dateKind, select, month {Tu peux atteindre environ {share} de ton objectif d’ici {date}.} other {Tu peux atteindre environ {share} de ton objectif d’ici le {date}.}}"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "LfzIDC"
@@ -1227,6 +1227,7 @@ msgid "So examples and exams match your country"
 msgstr "Pour adapter les exemples et les examens à ton pays"
 
 #: src/appearance/home-country-setting.tsx
+#: src/plan/plan-exam-choices.tsx
 msgctxt "p5LNtB"
 msgid "Not set"
 msgstr "Non défini"
@@ -3332,7 +3333,6 @@ msgstr "Jour {number, number}"
 
 #: src/exam/exam-format-section.tsx
 #: src/journey/journey-path.tsx
-#: src/journey/next-on-path.tsx
 msgctxt "8sxDix"
 msgid "Date to be confirmed"
 msgstr "Date à confirmer"
@@ -4996,11 +4996,6 @@ msgstr "Cela prend généralement une ou deux minutes. Ton plan s’ouvrira ici 
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
 msgstr "Ton plan en un coup d’œil"
-
-#: src/journey/next-on-path.tsx
-msgctxt "F1DaXB"
-msgid "Next on your path"
-msgstr "La suite de ton parcours"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -12134,11 +12129,6 @@ msgstr "Notifications push"
 msgctxt "vBM5w1"
 msgid "To get notifications on your phone, turn them on in the Zoonk phone app."
 msgstr "Pour recevoir des notifications push sur ton téléphone, active-les dans l’application mobile Zoonk."
-
-#: src/reminders/reminders-screen.tsx
-msgctxt "6eLTbX"
-msgid "Reminders are off."
-msgstr "Les rappels sont désactivés."
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"
