@@ -45,13 +45,15 @@ export function OnboardingSectionFrame({
 /** From 72rem, beside the column. */
 const RAIL_CLASS = "hidden min-[72rem]:flex";
 
-const SCREEN_MEASURE_CLASS = "lg:max-w-column";
+/**
+ * A screen asks one thing, so its column is centered in the room its bars span, as a task's is:
+ * Back or ✕, "…" and the main action sit in that room's corners. A row of the bottom bar that
+ * belongs to the column (`bar-lead`) sits on it.
+ */
+const SCREEN_COLUMN_CLASS = "lg:max-w-column lg:mx-auto";
 
-/** The top bar's row sits on the screen's measured column: Back, ✕ and "…" on its edges. */
-const BAR_AT_MEASURE_CLASS = cn(
-  "lg:**:data-[slot=page-top-bar]:*:max-w-column lg:**:data-[slot=page-top-bar]:*:me-auto",
-  "lg:**:data-[slot=bar-lead]:max-w-column lg:**:data-[slot=bar-lead]:me-auto lg:**:data-[slot=bar-lead]:w-full",
-);
+const BAR_LEAD_ON_COLUMN_CLASS =
+  "lg:**:data-[slot=bar-lead]:max-w-column lg:**:data-[slot=bar-lead]:mx-auto lg:**:data-[slot=bar-lead]:w-full";
 
 export function OnboardingScreenPage({
   backHref,
@@ -74,11 +76,11 @@ export function OnboardingScreenPage({
       aside={rail}
       asideClassName={RAIL_CLASS}
       asideLabel={t("Getting started")}
-      className={cn("flex-1 gap-1 lg:gap-4", BAR_AT_MEASURE_CLASS)}
+      className={cn("flex-1 gap-1 lg:gap-4", BAR_LEAD_ON_COLUMN_CLASS)}
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} />
 
-      <Page className={cn("flex-1 gap-6", SCREEN_MEASURE_CLASS)}>
+      <Page className={cn("flex-1 gap-6", SCREEN_COLUMN_CLASS)}>
         {notice}
         {children}
       </Page>
