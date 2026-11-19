@@ -149,7 +149,7 @@ internal fun ColumnScope.StudyEverythingBody(
             title,
             description,
             applied,
-            R.drawable.ic_local_library,
+            R.drawable.ic_library,
             onUndo = { edits.undo(applied.change) },
             onDone = onDone,
         )

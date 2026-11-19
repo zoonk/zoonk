@@ -221,7 +221,7 @@ private fun PlanItems(
     if (exam) MenuItem(R.drawable.ic_school, stringResource(R.string.plan_about_exam), closing(links::exam))
     libraryCourse?.let { course ->
         MenuItem(
-            R.drawable.ic_local_library,
+            R.drawable.ic_library,
             stringResource(R.string.plan_full_course),
             closing { links.course(course.courseId.toString()) },
         )

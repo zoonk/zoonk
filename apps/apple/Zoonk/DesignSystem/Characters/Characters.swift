@@ -39,10 +39,12 @@ struct TricksterCharacter: View {
   var cracks = 0
   var delay: TimeInterval = .beat
   var cue: ActCue<TricksterAct>?
+  /// Main's `view="face"`, for a mark the size of an icon.
+  var faceOnly = false
 
   var body: some View {
     CharacterActor(
-      art: TricksterArt(cracks: cracks),
+      art: TricksterArt(cracks: cracks, faceOnly: faceOnly),
       expression: reacts ? .sly : beaten ? .defeated : won ? .smug : .sly,
       reaction: reacts
         ? ActReaction(act: beaten ? .defeat : won ? .triumph : .smug, delay: delay) : nil,

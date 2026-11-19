@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -98,7 +100,7 @@ internal fun PathSection(
                 ListRow(
                     headline = { Text(stringResource(R.string.plan_full_course)) },
                     onClick = { links.course(it.courseId.toString()) },
-                    leading = { MarkIcon(R.drawable.ic_local_library) },
+                    leading = { MarkIcon(R.drawable.ic_library) },
                 )
             }
         }
@@ -448,6 +450,19 @@ internal fun ChapterRow(
     )
 }
 
+/** Main's `PhaseCheckpointMark`: what ends a phase, a call for a language and the Trickster's face otherwise, wherever the plan shows it. */
+@Composable
+internal fun PhaseCheckpointMark(
+    page: PlanPageState,
+    modifier: Modifier,
+) {
+    if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) {
+        Icon(painterResource(R.drawable.ic_mic), contentDescription = null, modifier = modifier)
+    } else {
+        Trickster(modifier, face = true)
+    }
+}
+
 /** A phase's challenge by its one name: the Trickster, or a language plan's call. */
 @Composable
 internal fun challengeName(page: PlanPageState): String =
@@ -519,7 +534,7 @@ internal fun CheckpointRow(
         },
         onClick = planItemId?.let { { links.challenge(it) } },
         indent = indent,
-        leading = { Trickster(Modifier.size(markSize())) },
+        leading = { PhaseCheckpointMark(page, Modifier.size(markSize())) },
         supporting = if (lines.isEmpty()) null else ({ lines.forEach { Text(it) } }),
         meta =
             trailing?.let { { TrailingText(it) } },
