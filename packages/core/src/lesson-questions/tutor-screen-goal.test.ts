@@ -29,7 +29,7 @@ const NOW = new Date("2020-09-28T12:00:00Z");
 const MODEL = "openai/gpt-6-luna";
 
 const ANSWER_RUN = {
-  answer: "Prepared it: tap Apply when you're ready.",
+  answer: "Prepared it: nothing changes until you confirm it on the card.",
   finishReason: "stop",
   generatedAt: NOW.toISOString(),
   model: MODEL,

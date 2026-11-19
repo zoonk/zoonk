@@ -46,6 +46,7 @@ import { isMockAnswerPresent } from "./mock-answer-presence";
 import { type MockConditions, type MockView, mockResultSchema } from "./mock-contract";
 import { type MockTypedPart, listSatMockLeftOut } from "./mock-left-out";
 import { getMockDays } from "./mock-plan";
+import { getMockVerdict } from "./mock-verdict";
 import { type MockQuestion } from "./mock-view-contract";
 
 const keptReachedSchema = z.object({ reached: reachedSchema });
@@ -326,6 +327,9 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       startTime: conditions.startTime,
       status: getStatus(mock),
       timeZone: conditions.timeZone,
+      verdict:
+        finished.result &&
+        getMockVerdict({ result: finished.result, subjects: owned.structure?.subjects ?? [] }),
     },
     status: "ready",
   };
