@@ -238,7 +238,10 @@ private struct PlanContent: View {
           rebuildNotice
           BlockGridSection {
             PageSection {
-              PageHeader(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab")) {
+              PageHeader(
+                Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"),
+                supporting: daysLeft(context)
+              ) {
                 PlanHeaderActions(context: context)
               }
               .rowSeparatorHiddenBelow()
@@ -250,7 +253,7 @@ private struct PlanContent: View {
             } header: {
               EmptyView()
             }
-            PlanNumbersSection(context: context, syllabus: syllabus)
+            PlanNumbersSection(context: context, syllabus: syllabus, timeShownBeside: true)
           }
           BlockGridSection {
             VStack(alignment: .leading, spacing: 24) {
@@ -346,9 +349,19 @@ private struct PlanContent: View {
     }
   }
 
+  /// Main's `PlanHeader` subtitle: the days left to the goal's date, under the title.
+  private func daysLeft(_ context: PlanContext) -> Text? {
+    planDaysLeft(context.plan).map {
+      Text(verbatim: $0.shown).accessibilityLabel(Text(verbatim: $0.spoken))
+    }
+  }
+
   private func header(_ context: PlanContext, structure: GoalSyllabus?) -> some View {
     Section {
-      PageHeader(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab")) {
+      PageHeader(
+        Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"),
+        supporting: daysLeft(context)
+      ) {
         PlanHeaderActions(context: context)
       }
       .listRowSeparator(.hidden)

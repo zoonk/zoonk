@@ -103,6 +103,7 @@ private struct PlanPhaseRow: View {
       ) {
         header(next: own.state == .current)
       }
+      .currentRow(own.state == .current)
 
       if isOpen {
         events
@@ -293,6 +294,7 @@ struct PlanChapterRow: View {
       PlanRouteLink(route: route(chapterId)) {
         content(isMuted: false)
       }
+      .currentRow(chapter.state == .current)
     } else if chapter.far, let skillId = chapter.skillId {
       // Past the weeks the plan writes ahead: its outline is the learner's to ask for.
       Button {
@@ -694,17 +696,18 @@ struct SyllabusSubjectRow: View {
   }
 }
 
-/// A topic whose lessons aren't ready: how many it has and when it starts, else "Not ready yet".
+/// Main's `useFarTopicLine`: a topic whose lessons aren't ready, how many it has and when it starts
+/// (its day this month, else its month), else "Not ready yet".
 func planNotReadyLine(lessons: Int, start: String?, today: String) -> Text {
   guard lessons > 0, let start else {
     return Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
   }
 
-  if PlanDate.days(from: today, to: start) > 31 {
+  if start.prefix(7) != today.prefix(7) {
     return Text(
-      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today))",
+      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today, wide: true))",
       tableName: "Plan",
-      comment: "A topic not ready yet: its lessons and the month they start, like 'Jan'")
+      comment: "A topic not ready yet: its lessons and the month they start, like 'January'")
   }
 
   return Text(

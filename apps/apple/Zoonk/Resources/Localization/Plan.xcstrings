@@ -344,43 +344,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec %1$@ par jour, tu couvres environ %2$@ des sujets de ton examen"
+            "value" : "Avec %1$@ par jour, tu peux étudier environ %2$@ des sujets de ton examen"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con %1$@ al giorno copri circa un %2$@ degli argomenti d’esame"
+            "value" : "Con %1$@ al giorno studi circa il %2$@ degli argomenti del tuo esame"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1日%1$@で試験のトピックを約%2$@カバーできます"
+            "value" : "1日%1$@で試験に出るトピックの約%2$@を学習できます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "하루 %1$@이면 시험 주제 중 약 %2$@를 다룰 수 있어요"
+            "value" : "하루 %1$@씩 공부하면 시험 주제의 약 %2$@를 학습할 수 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przy %1$@ dziennie plan obejmuje około %2$@ tematów egzaminacyjnych"
+            "value" : "Przy %1$@ nauki dziennie plan obejmuje około %2$@ tematów egzaminacyjnych"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %1$@ por dia, você cobre cerca de %2$@ dos tópicos da sua prova"
+            "value" : "Com %1$@ por dia, dá para estudar cerca de %2$@ dos tópicos da sua prova"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Günde %1$@ ile sınav konularının yaklaşık %2$@ kadarı planına sığar"
+            "value" : "Günde %1$@ çalışarak sınav konularının yaklaşık %2$@ kadarını bitirebilirsin"
           }
         }
       }
@@ -391,7 +391,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit %1$@ pro Tag deckst du etwa %2$@ der Inhalte für dein Ziel ab"
+            "value" : "Mit %1$@ pro Tag erreichst du etwa %2$@ deines Ziels"
           }
         },
         "en" : {
@@ -409,43 +409,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec %1$@ par jour, tu couvres environ %2$@ de ton objectif"
+            "value" : "Avec %1$@ par jour, tu peux atteindre environ %2$@ de ton objectif"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con %1$@ al giorno copri circa un %2$@ del tuo obiettivo"
+            "value" : "Con %1$@ al giorno raggiungi circa il %2$@ del tuo obiettivo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1日%1$@で目標の学習範囲を約%2$@カバーできます"
+            "value" : "1日%1$@で目標に必要な内容の約%2$@を学習できます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "하루 %1$@이면 목표 범위의 약 %2$@를 다룰 수 있어요"
+            "value" : "하루 %1$@씩 공부하면 목표 학습량의 약 %2$@를 채울 수 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przy %1$@ dziennie plan obejmuje około %2$@ materiału"
+            "value" : "Przy %1$@ nauki dziennie plan obejmuje około %2$@ materiału"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %1$@ por dia, você cobre cerca de %2$@ do seu objetivo"
+            "value" : "Com %1$@ por dia, dá para estudar cerca de %2$@ do conteúdo do seu objetivo"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Günde %1$@ ile hedefinin yaklaşık %2$@ kadarı planına sığar"
+            "value" : "Günde %1$@ çalışarak hedefinin yaklaşık %2$@ kadarını tamamlayabilirsin"
           }
         }
       }
@@ -4710,7 +4710,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · Beginn am %2$@"
+            "value" : "%#@count@ · beginnt am %2$@"
           },
           "substitutions" : {
             "count" : {
@@ -4794,7 +4794,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · début le %2$@"
+            "value" : "%#@count@ · commence le %2$@"
           },
           "substitutions" : {
             "count" : {
@@ -4822,7 +4822,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · inizio il %2$@"
+            "value" : "%#@count@ · inizio: %2$@"
           },
           "substitutions" : {
             "count" : {
@@ -4850,7 +4850,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · %2$@開始"
+            "value" : "%#@count@・%2$@に開始"
           },
           "substitutions" : {
             "count" : {
@@ -4872,7 +4872,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · %2$@ 시작"
+            "value" : "%#@count@ · %2$@ 시작"
           },
           "substitutions" : {
             "count" : {
@@ -4978,12 +4978,12 @@
       }
     },
     "%lld lessons · starts in %@" : {
-      "comment" : "A topic not ready yet: its lessons and the month they start, like 'Jan'",
+      "comment" : "A topic not ready yet: its lessons and the month they start, like January",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · Beginn im %2$@"
+            "value" : "%#@count@ · beginnt im %2$@"
           },
           "substitutions" : {
             "count" : {
@@ -5067,7 +5067,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · début en %2$@"
+            "value" : "%#@count@ · commence en %2$@"
           },
           "substitutions" : {
             "count" : {
@@ -5095,7 +5095,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · inizio a %2$@"
+            "value" : "%#@count@ · inizio: %2$@"
           },
           "substitutions" : {
             "count" : {
@@ -5123,7 +5123,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · %2$@開始"
+            "value" : "%#@count@・%2$@に開始"
           },
           "substitutions" : {
             "count" : {
@@ -5145,7 +5145,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@count@ · %2$@ 시작"
+            "value" : "%#@count@ · %2$@에 시작"
           },
           "substitutions" : {
             "count" : {
@@ -11794,6 +11794,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ civarı"
+          }
+        }
+      }
+    },
+    "About %@ a day" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa %@ am Tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente %@ al día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environ %@ par jour"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Circa %@ al giorno"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1日約%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하루 약 %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Około %@ dziennie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de %@ por dia"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günde yaklaşık %@"
           }
         }
       }

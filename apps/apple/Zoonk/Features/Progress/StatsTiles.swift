@@ -33,6 +33,7 @@ struct StatTile<Icon: View, Value: View>: View {
 
   @Environment(\.statTileOpens) private var opens
   @Environment(\.statTileLone) private var lone
+  @Environment(\.statTileTitled) private var labelIsTitle
 
   var body: some View {
     VStack(alignment: .leading, spacing: lone ? 10 : 6) {
@@ -50,8 +51,8 @@ struct StatTile<Icon: View, Value: View>: View {
             DisclosureChevron()
           }
         }
-        .typeStyle(.label)
-        .foregroundStyle(.faint)
+        .typeStyle(labelIsTitle ? .sectionTitle : .label)
+        .foregroundStyle(labelIsTitle ? Color(.foreground) : .faint)
       }
 
       value
@@ -164,6 +165,8 @@ extension EnvironmentValues {
   @Entry var statTileOpens = false
   /// Main's lone stat: a grid of one tile draws it as its block's readout, with no box around it.
   @Entry var statTileLone = false
+  /// Main's plan tiles title their number as a section does, where a stats tile labels it.
+  @Entry var statTileTitled = false
 }
 
 /// Main's `StatTiles`: every row one height, so tiles of one grid match, and a lone tile drawn as
@@ -194,7 +197,7 @@ private struct StatTileRows: Layout {
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     let width = proposal.width ?? CGFloat(columns.first ?? 1) * minimumWidth
     let rows = rows(count: subviews.count, width: width)
-    let height = rowHeight(rows, subviews: subviews, width: width) * CGFloat(rows.count)
+    let height = rows.reduce(0) { $0 + rowHeight($1, subviews: subviews, width: width) }
 
     return CGSize(width: width, height: height + spacing * CGFloat(max(rows.count - 1, 0)))
   }
@@ -203,10 +206,9 @@ private struct StatTileRows: Layout {
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
     var y = bounds.minY
-    let rows = rows(count: subviews.count, width: bounds.width)
-    let height = rowHeight(rows, subviews: subviews, width: bounds.width)
 
-    for row in rows {
+    for row in rows(count: subviews.count, width: bounds.width) {
+      let height = rowHeight(row, subviews: subviews, width: bounds.width)
       let itemWidth = itemWidth(in: row, width: bounds.width)
       var x = bounds.minX
 
@@ -231,12 +233,11 @@ private struct StatTileRows: Layout {
     (width - spacing * CGFloat(row.count - 1)) / CGFloat(row.count)
   }
 
-  private func rowHeight(_ rows: [Range<Int>], subviews: Subviews, width: CGFloat) -> CGFloat {
-    rows.flatMap { row -> [CGFloat] in
-      let proposal = ProposedViewSize(width: itemWidth(in: row, width: width), height: nil)
-      return row.map { subviews[$0].sizeThatFits(proposal).height }
-    }
-    .max() ?? 0
+  /// Each row as tall as its tallest tile, as main's grid rows: tiles side by side end level, and a
+  /// tile on a row of its own keeps its own height.
+  private func rowHeight(_ row: Range<Int>, subviews: Subviews, width: CGFloat) -> CGFloat {
+    let proposal = ProposedViewSize(width: itemWidth(in: row, width: width), height: nil)
+    return row.map { subviews[$0].sizeThatFits(proposal).height }.max() ?? 0
   }
 }
 
