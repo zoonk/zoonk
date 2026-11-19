@@ -170,7 +170,7 @@ A control's height is one of `Button`'s, and each height has one label size: 44p
 
 ### Z2. The same control is the same size everywhere
 
-A page's "…", its way back, a sheet's close and a list's row are one size and one style on every page of a kind. Every menu draws its rows with `DropdownMenuItem`: 14px, 36px tall with a mouse and 44px on touch, the goal switcher's included.
+A page's "…", its way back, a sheet's close and a list's row are one size and one style on every page of a kind. Every menu draws its rows with `DropdownMenuItem`: 14px and 44px tall with a mouse or on touch ([Z3](#z3-targets-are-44px-and-dont-overlap)), the goal switcher's included.
 
 - **Check.** Compare this screen's back, close and "…" with its sibling pages'.
 
