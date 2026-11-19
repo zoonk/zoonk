@@ -8,8 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -82,16 +82,20 @@ class MockResultScreenshots {
         capture("result-phone-2-plan", continues = 1)
     }
 
+    /** Opens every question to review, each row in place. */
+    private fun openQuestions() {
+        val rows = compose.onAllNodesWithText("Question ", substring = true)
+        repeat(rows.fetchSemanticsNodes().size) { rows[it].performClick() }
+        compose.waitForIdle()
+    }
+
     private fun reviewMath(
         name: String,
         dark: Boolean = false,
-        inline: Boolean = false,
     ) {
         show(finishedMock(extra = """"review":$MATH_REVIEW"""), dark = dark)
-        if (inline) return capture(name)
-        compose.onNodeWithText("See answers").performClick()
-        compose.waitForIdle()
-        write(name, compose.onNode(isDialog()).captureRender().asAndroidBitmap())
+        openQuestions()
+        capture(name)
     }
 
     @Test
@@ -108,15 +112,21 @@ class MockResultScreenshots {
 
     @Test
     @Config(qualifiers = "w1280dp-h2400dp-night-xhdpi")
-    fun tabletReviewMathDark() = reviewMath("result-math-tablet-dark", dark = true, inline = true)
+    fun tabletReviewMathDark() = reviewMath("result-math-tablet-dark", dark = true)
 
     @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
     fun phoneReview() {
         show(enem())
-        compose.onNodeWithText("See answers").performClick()
-        compose.waitForIdle()
-        write("result-phone-review-sheet", compose.onNode(isDialog()).captureRender().asAndroidBitmap())
+        capture("result-phone-review")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h2400dp-xxhdpi")
+    fun phoneReviewOpen() {
+        show(enem())
+        openQuestions()
+        capture("result-phone-review-open")
     }
 
     @Test

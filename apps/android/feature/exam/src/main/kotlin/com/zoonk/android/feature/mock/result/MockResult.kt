@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -46,7 +47,6 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.ModalBottomSheet
@@ -64,6 +64,7 @@ import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamReviewInner
+import com.zoonk.api.models.MockResult
 import com.zoonk.api.models.MockResultPreparation
 
 private class ResultStep(
@@ -126,9 +127,10 @@ internal fun MockResult(
             val asideFits = supportingPaneBeside(maxWidth, panesTouch = true)
             // An open book reads how it went before the fold, and what's next after it, with the way on.
             val nextAfterFold = MockResultPart.Score in has && fold != null && asideFits
-            // Main's aside, under its title: the preparation and the plan. A fold adds the page after it even without them.
+            // Main's aside: what supports the number, then the preparation and the plan. A fold adds the page after it even without them.
             val mainAside = resultAsideParts(has).isNotEmpty()
-            val hasAside = mainAside || nextAfterFold
+            val hasSummary = result != null && MockResultPart.Score in has && (hasAnswerCounts(result) || hasBreakdown(result))
+            val hasAside = mainAside || nextAfterFold || hasSummary
             // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
             val wide =
                 if (hasAside) {
@@ -145,33 +147,35 @@ internal fun MockResult(
                             listOfNotNull(
                                 result?.let {
                                     ResultStep(SCORE, part.beside) {
-                                        val inline = wide || nextAfterFold
                                         ScoreStep(
                                             view,
                                             it,
                                             dayMoment = { MockDayMoment(view, buddy) },
-                                            breakdown = { if (hasBreakdown(it)) Breakdown(it, opened, toggle) },
-                                            details =
-                                                if (hasDetails(view, it, about)) {
-                                                    {
-                                                        OutlinedButton(onClick = { detailsOpen = true }, size = ButtonSize.Small) {
-                                                            Text(stringResource(R.string.mock_result_see_details))
-                                                        }
-                                                    }
+                                            // An open book keeps the numbers the score is made of on the page before the fold.
+                                            summary =
+                                                if (hasSummary &&
+                                                    (!wide || nextAfterFold)
+                                                ) {
+                                                    ({ ResultSummary(it, opened, toggle) })
                                                 } else {
                                                     null
                                                 },
-                                            answers =
-                                                if (!inline && view.review.isNotEmpty()) {
-                                                    {
-                                                        OutlinedButton(onClick = review::openSheet, size = ButtonSize.Small) {
-                                                            Text(stringResource(R.string.mock_result_see_answers))
-                                                        }
-                                                    }
-                                                } else {
+                                            review =
+                                                if (nextAfterFold) {
                                                     null
+                                                } else {
+                                                    (
+                                                        {
+                                                            ReviewSection(
+                                                                view,
+                                                                app,
+                                                                review,
+                                                                opened,
+                                                                toggle,
+                                                            )
+                                                        }
+                                                    )
                                                 },
-                                            review = if (wide && !nextAfterFold) ({ ReviewSection(view, app, review) }) else null,
                                         )
                                     }
                                 },
@@ -295,15 +299,33 @@ internal fun MockResult(
                 TaskScaffold(
                     onClose = if (placement) onContinue else navigator::closeTask,
                     title = { StepDots(shown.size, position) },
-                    actions = { Box(Modifier.barButtonEnd()) { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) } },
+                    actions = {
+                        if (result != null && hasDetails(view, result, about)) {
+                            TextButton(onClick = { detailsOpen = true }) { Text(stringResource(R.string.mock_result_details)) }
+                        }
+                        Box(Modifier.barButtonEnd()) { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) }
+                    },
                     bottomBar = actions.takeUnless { nextAfterFold },
                     aside =
                         if (hasAside) {
                             TaskAside(
-                                title = stringResource(R.string.mock_result_after).takeIf { mainAside },
+                                // Its blocks name themselves once the answers lead it, so the rail's own line would repeat them.
+                                title = stringResource(R.string.mock_result_after).takeIf { mainAside && (!hasSummary || nextAfterFold) },
                                 footer = actions.takeIf { nextAfterFold },
                             ) {
-                                ResultAside(preparation) {
+                                ResultAside(
+                                    summary =
+                                        result?.takeIf { hasSummary && !nextAfterFold }?.let {
+                                            {
+                                                ResultSummary(
+                                                    it,
+                                                    opened,
+                                                    toggle,
+                                                )
+                                            }
+                                        },
+                                    preparation,
+                                ) {
                                     if (offered.isNotEmpty()) {
                                         view.adapt?.let { adapt ->
                                             AsideSection(stringResource(R.string.mock_result_your_plan)) {
@@ -319,7 +341,7 @@ internal fun MockResult(
                                             }
                                         }
                                     }
-                                    if (nextAfterFold) ReviewSection(view, app, review)
+                                    if (nextAfterFold) ReviewSection(view, app, review, opened, toggle)
                                 }
                             }
                         } else {
@@ -328,7 +350,6 @@ internal fun MockResult(
                 ) { padding -> Box(Modifier.padding(padding)) { step() } }
             }
 
-            if (review.open && !wide) ReviewSheet(view, app, review)
             if (detailsOpen && result != null) {
                 DetailsSheet(onDismiss = { detailsOpen = false }) { ScoreDetails(view, result, about) }
             }
@@ -379,12 +400,27 @@ private fun AppNavigator.continueAfter(
     }
 }
 
+/** Main's `MockResultSummary`: how the answers went, then each subject or topic. */
+@Composable
+private fun ResultSummary(
+    result: MockResult,
+    opened: List<String>,
+    onToggle: (String) -> Unit,
+) {
+    if (hasAnswerCounts(result)) {
+        ResultSection(stringResource(R.string.mock_result_answers)) { AnswerMeter(result) }
+    }
+    if (hasBreakdown(result)) Breakdown(result, opened, onToggle)
+}
+
 @Composable
 private fun ResultAside(
+    summary: (@Composable () -> Unit)?,
     preparation: MockResultPreparation?,
     rest: @Composable ColumnScope.() -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+        summary?.invoke()
         preparation?.let {
             AsideSection(stringResource(R.string.mock_result_your_preparation)) {
                 PreparationReadout(it, MaterialTheme.typography.headlineMedium)
