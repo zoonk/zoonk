@@ -30,12 +30,12 @@ import {
   PathRowBody,
 } from "./journey-phase-events";
 
-export function getChapterKey(chapter: PlanChapterView): string {
+function getChapterKey(chapter: PlanChapterView): string {
   return chapter.chapterId ?? `${chapter.writing ? "writing" : "settled"}:${chapter.title}`;
 }
 
 /** Core leaves the title empty for lessons being written in the goal's own course. */
-export function useChapterTitle() {
+function useChapterTitle() {
   const t = useExtracted();
 
   return (chapter: PlanChapterView): string => {
@@ -54,7 +54,7 @@ function isSkipped(chapter: PlanChapterView): boolean {
   return chapter.skills.length > 0 || chapter.testedOut;
 }
 
-export function isWritingAhead(chapter: PlanChapterView): boolean {
+function isWritingAhead(chapter: PlanChapterView): boolean {
   return chapter.writing && !chapter.far && chapter.skills.length === 0;
 }
 
