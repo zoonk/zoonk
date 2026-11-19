@@ -814,6 +814,12 @@ msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "사이드바 펼치기"
 
+#. A row at the end of the sidebar that folds the sidebar to a narrow column of icons. One word.
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+msgctxt "W_V6-Y"
+msgid "Collapse"
+msgstr "접기"
+
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
