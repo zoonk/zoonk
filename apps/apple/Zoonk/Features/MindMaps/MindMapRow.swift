@@ -104,7 +104,7 @@ struct MindMapRow: View {
   }
 
   private func markedRow(_ now: Date) -> some View {
-    MarkedRow(alignment: .center) {
+    MarkedRow(alignment: place.isMindMapsPage ? .center : .firstTextBaseline) {
       slot
     } content: {
       words
@@ -138,19 +138,29 @@ struct MindMapRow: View {
     }
   }
 
+  /// The list's small mark, so the title starts where the rows beside it start (a chapter's
+  /// summary, a lesson end's "Up next"). A map's picture leads only on the Mind maps page, where
+  /// every row is a map.
   @ViewBuilder
   private var slot: some View {
-    if shown == .ready, let thumbnail {
-      MindMapSlot(picture: thumbnail)
-    } else {
-      MindMapSlot {
-        switch shown {
-        case .writingLessons, .drawing:
-          ProgressView().controlSize(.small)
-        default:
-          KindMark(kind: .mindMap)
-        }
+    if place.isMindMapsPage {
+      if shown == .ready, let thumbnail {
+        MindMapSlot(picture: thumbnail)
+      } else {
+        MindMapSlot { mark }
       }
+    } else {
+      mark.markColumn()
+    }
+  }
+
+  @ViewBuilder
+  private var mark: some View {
+    switch shown {
+    case .writingLessons, .drawing:
+      ProgressView().controlSize(.small)
+    default:
+      KindMark(kind: .mindMap)
     }
   }
 
@@ -450,7 +460,7 @@ struct FinishedChapterSection: View {
       goalId: chapter.goalId, map: store.map(goalId: chapter.goalId, chapterId: chapter.chapterId),
       place: .finish, placeholder: Text(chapter.title), loadsMap: true
     ) {
-      SectionTitle(
+      SectionLabel(
         Text(
           "Chapter finished", tableName: "MindMaps",
           comment: "Over the map of the chapter the learner just finished"))
@@ -502,7 +512,7 @@ struct MindMapRowContent: View {
     if let value = map.value {
       MindMapRow(goalId: goalId, map: value, place: place)
     } else {
-      MarkedRow(alignment: .center) {
+      MarkedRow(alignment: place.isMindMapsPage ? .center : .firstTextBaseline) {
         MindMapSlot {
           if case .failed = map.state {
             KindMark(kind: .mindMap)

@@ -377,8 +377,6 @@ private struct ChapterReferenceSection: View {
           "For reference", tableName: "Plan",
           comment: "Section of a chapter with its mind map and summaries, to look back at"))
     }
-    // The summary's label starts where the mind map's does, after its thumbnail.
-    .environment(\.rowMarkWidth, map == nil ? nil : MindMapSlotMetrics.side)
   }
 
   @ViewBuilder

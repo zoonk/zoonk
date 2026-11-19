@@ -47,6 +47,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionLabel
@@ -208,9 +209,10 @@ internal fun rowLocal(
     }
 
 /**
- * One map's row, the same on the chapter's page, where a chapter ends and on the Mind maps page:
- * its thumbnail once ready, otherwise a dashed slot with the map's mark or a spinner while it's on its
- * way; then what to do about it. A plan out of new maps ([cap]) or a
+ * One map's row, the same on the chapter's page, where a chapter ends and on the Mind maps page. It leads
+ * with the list's small mark, or a spinner while the map is on its way, so its words start where the rows
+ * beside it start; on the Mind maps page, where every row is a map, its thumbnail once ready or a dashed
+ * slot leads instead. Then what to do about it. A plan out of new maps ([cap]) or a
  * refused tap shows why under the row instead of Create; the Mind maps page says the cap once, above
  * its rows, and puts the chapter's number before its line where the row is [numbered].
  */
@@ -248,6 +250,13 @@ internal fun MindMapRow(
     val rowClick =
         actions.open.takeIf { library && shown == MindMapShown.Ready }
 
+    val wordsStart =
+        when {
+            compact -> LIST_ITEM_INSET
+            library -> LIST_ITEM_INSET + MARK_SIZE + MARK_GAP
+            else -> listRowWordsStart()
+        }
+
     Column(modifier) {
         Box {
             ListRow(
@@ -256,7 +265,12 @@ internal fun MindMapRow(
                 onClick = rowClick,
                 onLongClickLabel = toggleSave?.let { stringResource(if (saved) R.string.mindmaps_unsave else R.string.mindmaps_save) },
                 onLongClick = toggleSave?.let { { menu = true } },
-                leading = if (compact) null else ({ MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) }),
+                leading =
+                    when {
+                        compact -> null
+                        library -> ({ MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) })
+                        else -> ({ SmallMapMark(shown) })
+                    },
                 supporting = listRowDescription(if (failed) (chapterNumber(map.position).takeIf { numbered }) else supporting),
                 trailing =
                     if (saved) {
@@ -284,7 +298,7 @@ internal fun MindMapRow(
         if (failed) {
             Column(
                 Modifier.padding(
-                    start = LIST_ITEM_INSET + if (compact) 0.dp else MARK_SIZE + MARK_GAP,
+                    start = wordsStart,
                     end = LIST_ITEM_INSET,
                     bottom = 12.dp,
                 ),
@@ -301,7 +315,7 @@ internal fun MindMapRow(
                     local?.subject ?: LimitSubject.MindMaps,
                     actions.navigate,
                     Modifier.padding(
-                        start = LIST_ITEM_INSET + if (compact) 0.dp else MARK_SIZE + MARK_GAP,
+                        start = wordsStart,
                         end = LIST_ITEM_INSET,
                         bottom = 12.dp,
                     ),
@@ -492,6 +506,16 @@ internal fun MapMark(
                 MapGlyph()
             }
         }
+    }
+}
+
+/** The list's small mark: the map's glyph, or a spinner while the map is on its way. */
+@Composable
+private fun SmallMapMark(shown: MindMapShown) {
+    if (shown.onItsWay) {
+        CircularProgressIndicator(Modifier.size(16.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, strokeWidth = 2.dp)
+    } else {
+        MapGlyph()
     }
 }
 

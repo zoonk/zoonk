@@ -57,21 +57,16 @@ extension View {
 
 private struct MarkColumn: ViewModifier {
   @Environment(\.stacksContent) private var isStacked
-  @Environment(\.rowMarkWidth) private var rowWidth
   @ScaledMetric(relativeTo: .body) private var width = MarkColumnMetrics.width
 
   func body(content: Content) -> some View {
-    content.frame(minWidth: rowWidth ?? width, alignment: isStacked ? .leading : .center)
+    content.frame(minWidth: width, alignment: isStacked ? .leading : .center)
   }
 }
 
 private enum MarkColumnMetrics {
   static let width = 20.0
   static let gap = 12.0
-}
-
-extension EnvironmentValues {
-  @Entry var rowMarkWidth: CGFloat?
 }
 
 extension View {
@@ -83,12 +78,11 @@ extension View {
 }
 
 private struct RowLabelColumn: ViewModifier {
-  @Environment(\.rowMarkWidth) private var rowWidth
   @ScaledMetric(relativeTo: .body) private var width = MarkColumnMetrics.width
 
   func body(content: Content) -> some View {
     content
-      .labelReservedIconWidth(rowWidth ?? width)
+      .labelReservedIconWidth(width)
       .labelIconToTitleSpacing(MarkColumnMetrics.gap)
   }
 }
