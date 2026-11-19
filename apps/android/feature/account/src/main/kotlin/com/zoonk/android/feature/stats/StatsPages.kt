@@ -664,7 +664,14 @@ internal fun PatternsPage(context: StatsContext) {
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
-        Text(patternsSentence(summary), style = MaterialTheme.typography.titleMedium)
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(patternsSentence(summary), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.stats_past_90_days),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
 
         BoxWithConstraints {
             if (maxWidth >= PATTERNS_BESIDE) {

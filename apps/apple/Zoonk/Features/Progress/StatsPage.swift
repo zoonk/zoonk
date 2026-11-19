@@ -9,7 +9,7 @@ struct StatsPage<Content: View>: View {
     ScrollView {
       VStack(alignment: .leading, spacing: 28) {
         if let section {
-          PageHeader(Text(section.title), supporting: section.supporting.map { Text($0) })
+          PageHeader(Text(section.title))
         }
 
         content

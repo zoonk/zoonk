@@ -30,23 +30,6 @@ enum StatsSection: Hashable {
         comment: "Title of the stat with when the learner answers best")
     }
   }
-
-  var supporting: LocalizedStringResource? {
-    switch self {
-    case .level:
-      LocalizedStringResource(
-        "You earn Brain Power for everything you study, and it never goes down.",
-        table: "Progress", comment: "Under the Belt page's title: how Brain Power grows")
-    case .energy:
-      LocalizedStringResource(
-        "Energy goes up with every lesson and drops a little on days off.",
-        table: "Progress", comment: "Under the Energy page's title: how Energy moves")
-    case .patterns:
-      LocalizedStringResource("When you answer best, over the last 90 days.", table: "Progress")
-    case .activity, .score:
-      nil
-    }
-  }
 }
 
 extension EnvironmentValues {

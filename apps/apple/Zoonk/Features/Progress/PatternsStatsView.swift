@@ -98,10 +98,16 @@ struct PatternsStatsView: View {
   var body: some View {
     StatsContent(state: progress.patterns.state, retry: { await progress.patterns.refresh() }) {
       patterns in
-      Text(patterns.summary)
-        .typeStyle(.section.weight(.medium))
-        .foregroundStyle(Color(.foreground))
-        .frame(maxWidth: .infinity, alignment: .leading)
+      VStack(alignment: .leading, spacing: 4) {
+        Text(patterns.summary)
+          .typeStyle(.section.weight(.medium))
+          .foregroundStyle(Color(.foreground))
+
+        Text("Past 90 days", tableName: "Progress")
+          .typeStyle(.small)
+          .foregroundStyle(.mutedForeground)
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
 
       StatsColumns(minimumWidth: 760) {
         WeekPatterns(patterns: patterns)

@@ -26,7 +26,6 @@
     <string name="stats_brain_power_amount">%1$s Brain Power</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Every belt earned</string>
-    <string name="stats_belt_line">You earn Brain Power for everything you study, and it never goes down.</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->
     <string name="stats_brain_power_to">%1$s Brain Power to %2$s</string>
     <!-- %1$s and %2$s are belt names, such as "Yellow belt" and "White belt"; %3$s is a belt's last number, 10. -->
@@ -51,7 +50,6 @@
 
     <string name="stats_today">Today</string>
     <string name="stats_days_at_full">Days at 100%</string>
-    <string name="stats_energy_line">Energy goes up with every lesson and drops a little on days off.</string>
     <string name="stats_low">Low</string>
     <string name="stats_high">High</string>
 
@@ -60,6 +58,7 @@
     <string name="stats_past_year">Past 12 months</string>
     <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
     <string name="stats_past_6_months">Past 6 months</string>
+    <string name="stats_past_90_days">Past 90 days</string>
     <!-- Under a chart of bars: what a hollow dashed bar means. -->
     <string name="stats_few_answers_legend">A dashed bar has too few answers to count yet.</string>
     <string name="stats_less">Less</string>
@@ -97,7 +96,6 @@
         <item quantity="other">%1$s: %2$s across %3$s answers</item>
     </plurals>
 
-    <string name="stats_patterns_intro">When you answer best, over the last 90 days.</string>
     <plurals name="stats_answer_count">
         <item quantity="one">%1$s answer</item>
         <item quantity="other">%1$s answers</item>
