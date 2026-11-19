@@ -46,7 +46,7 @@ test.describe("Placement and the plan", () => {
     await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Start" }).click();
     await expect(page).toHaveURL(/\/today$/u);
-    await expect(page.getByRole("link", { name: "See plan" })).toBeHidden();
+    await expect(page.getByRole("link", { exact: true, name: "See plan" })).toBeHidden();
 
     const [attempts, saved] = await Promise.all([
       prisma.attempt.count({ where: { itemId: { not: null }, userId: noProgressUser.id } }),
