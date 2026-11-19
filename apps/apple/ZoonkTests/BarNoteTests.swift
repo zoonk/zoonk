@@ -7,7 +7,7 @@ import XCTest
 @MainActor
 final class BarNoteTests: XCTestCase {
   func testTheNoteEndsAboveTheButton() async throws {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     for width in [402.0, 1032.0] {
       let window = try show(

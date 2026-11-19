@@ -233,7 +233,7 @@ final class BuddyDayOpeningTests: XCTestCase {
     await store.status.load()
     let today = TodayStore(api: api, cache: dependencies.cache)
     let opened = OpenedMissions()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       NavigationStack { BuddyScreen() }
         .environment(store)
@@ -282,7 +282,7 @@ extension BuddyDayOpeningTests {
     let window = try show(
       NavigationStack { BuddyScreen() }.environment(store).appDependencies(dependencies)
         .environment(AppRouter()).zoonkStyles())
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
       window.frame = CGRect(x: 0, y: 0, width: width, height: height)
       window.rootViewController?.traitOverrides.horizontalSizeClass =

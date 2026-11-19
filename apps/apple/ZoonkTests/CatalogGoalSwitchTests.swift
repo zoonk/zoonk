@@ -24,7 +24,7 @@ final class CatalogGoalSwitchTests: XCTestCase {
     let goal = LearnerGoal(
       dailyMinutes: 30, id: "goal", kind: .exam, language: "en", status: .active,
       targetDate: "2027-11-14", displayName: "ENEM", title: "ENEM")
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       PaneSplit {

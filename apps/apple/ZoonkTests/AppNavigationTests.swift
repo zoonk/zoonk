@@ -165,7 +165,7 @@ extension AppNavigationTests {
     router.sidebarTabs = [.mistakes]
     router.open(.session)
     router.open(.lesson(lessonId: "lesson"))
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       LessonUnavailableView(refusal: .limitReached(tier: .free, period: .day), retry: {})
         .environment(router).zoonkStyles())
@@ -178,7 +178,7 @@ extension AppNavigationTests {
   func testTheMissionBonusOpensLevel() async throws {
     let router = AppRouter()
     router.sidebarTabs = [.stats(.level)]
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       BrainPowerReward(points: 50, earned: false).environment(router).zoonkStyles())
     try await activate("50 Brain Power for finishing them", in: window)
@@ -198,7 +198,7 @@ extension AppNavigationTests {
     await dependencies.learnerSummaryStore.summary.load()
     let router = AppRouter()
     router.sidebarTabs = [.stats(.level)]
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       NavigationStack { Color.clear.modifier(ShellToolbar(isShown: true)) }
         .appDependencies(dependencies).environment(router).zoonkStyles())

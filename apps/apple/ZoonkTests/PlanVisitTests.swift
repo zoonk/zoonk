@@ -168,7 +168,7 @@ final class PlanVisitTests: XCTestCase {
   private func showPlan(
     api: PlanAPIStub, summary: RebuildSummary, tabs: PlanVisitTabs, wide: Bool = false
   ) async throws -> UIWindow {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let dependencies = AppDependencies(
       clients: APIClientFactory(
         baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),

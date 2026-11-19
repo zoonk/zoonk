@@ -18,8 +18,11 @@ extension XCTestCase {
   /// SwiftUI builds what VoiceOver reads only while the simulator has app accessibility on, which
   /// a simulator an automation tool has driven keeps and a new one lacks, so a test that reads or
   /// taps the screen as VoiceOver does turns it on for itself through the system's accessibility
-  /// library, as accessibility snapshot tests do.
-  func readsWhatVoiceOverReads() throws {
+  /// library, as accessibility snapshot tests do. UIKit loads its accessibility bundle a moment
+  /// later; until then, VoiceOver's activation of a UIKit control, such as a menu's button, does
+  /// nothing, so this returns once it has loaded.
+  @MainActor
+  func readsWhatVoiceOverReads() async throws {
     typealias Enabled = @convention(c) () -> Bool
     typealias SetEnabled = @convention(c) (Bool) -> Void
     let library = try XCTUnwrap(dlopen("/usr/lib/libAccessibility.dylib", RTLD_NOW))
@@ -30,6 +33,11 @@ extension XCTestCase {
     let wasOn = enabled()
     setEnabled(true)
     addTeardownBlock { setEnabled(wasOn) }
+    try await waitForTestCondition("UIKit's accessibility bundle didn't load") {
+      Bundle.allBundles.contains {
+        $0.bundleURL.lastPathComponent == "UIKit.axbundle" && $0.isLoaded
+      }
+    }
   }
 
   /// What VoiceOver can read on the screen.

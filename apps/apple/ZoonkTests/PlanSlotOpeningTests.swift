@@ -119,7 +119,7 @@ final class PlanSlotOpeningTests: XCTestCase {
         return .certificates
       },
       showClaim: { _ in router.present(.account(.certificates)) })
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       ClaimOpening(context: context)
         .environment(PlanStore(api: try await finishedPlan(), cache: dependencies.cache))
@@ -588,7 +588,7 @@ final class PlanSlotOpeningTests: XCTestCase {
   private func showPlan(
     api: PlanAPIStub, width: Width, claims: HeldClaims? = nil, router: AppRouter = AppRouter()
   ) async throws -> UIWindow {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let dependencies = AppDependencies(
       clients: APIClientFactory(
         baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),

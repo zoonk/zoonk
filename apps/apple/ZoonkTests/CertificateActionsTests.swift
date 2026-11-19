@@ -29,7 +29,7 @@ final class CertificateActionsTests: XCTestCase {
   }
 
   private func actionFrames(width: CGFloat) async throws -> [String: CGRect] {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       ZoonkList {
         Section {

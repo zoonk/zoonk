@@ -294,7 +294,7 @@ private struct PausedToday {
     await learner.summary.load()
     let tabs = PausedTabs()
 
-    try test.readsWhatVoiceOverReads()
+    try await test.readsWhatVoiceOverReads()
     let window = try test.show(
       PausedTodayHost(tabs: tabs)
         .environment(TodayStore(api: StudyAPIStub(), cache: cache))

@@ -15,7 +15,7 @@ final class GoalStartVisitTests: XCTestCase {
       session: .preview(account: .planTestAccount), imageLoader: .live(),
       subscriptionStore: .live(), learnerSummaryAPI: NoGoalSummary())
     await dependencies.learnerSummaryStore.summary.load()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       GoalStartScreen()
         .appDependencies(dependencies)

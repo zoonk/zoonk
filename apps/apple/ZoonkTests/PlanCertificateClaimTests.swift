@@ -16,7 +16,7 @@ final class PlanCertificateClaimTests: XCTestCase {
         targetDate: "2026-01-04", displayName: "ENEM", title: "ENEM"),
       plan: try goalPlanFixture(), adjust: { _ in }, show: { _ in },
       claimCertificate: { await claim.answer() }, showClaim: { shown.append($0) })
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       PaneSplit {

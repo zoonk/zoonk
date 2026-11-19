@@ -72,7 +72,7 @@ final class ExamDateNoteTests: XCTestCase {
     exam.prepared = true
     exam.speakingMock = .ielts
     let dependencies = AppDependencies.hosted(transport: transport)
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       TabView {
@@ -93,7 +93,7 @@ final class ExamDateNoteTests: XCTestCase {
   }
 
   func testEstimatedExamDaysReadAsAboutADay() async throws {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let exam = try Self.exam()
     let window = try show(
       NavigationStack {
@@ -125,7 +125,7 @@ final class ExamDateNoteTests: XCTestCase {
   private func staysOpen(from: CGFloat, to: CGFloat) async throws {
     let dependencies = AppDependencies.hosted()
     let exam = try Self.exam()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       NavigationStack {

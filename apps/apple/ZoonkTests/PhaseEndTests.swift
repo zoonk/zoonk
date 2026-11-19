@@ -271,8 +271,8 @@ func goalPlanFixture(
 
 extension PhaseEndTests {
   @MainActor
-  func testEveryOutsideReasonKeepsTheSyllabusMeaning() throws {
-    try readsWhatVoiceOverReads()
+  func testEveryOutsideReasonKeepsTheSyllabusMeaning() async throws {
+    try await readsWhatVoiceOverReads()
     for (reason, expected) in [
       ("pastBasics", "Skipped · you already know the basics"),
       ("known", "Skipped · you already know it"),
@@ -293,7 +293,7 @@ extension PhaseEndTests {
   @MainActor
   func testAChallengeLeftOutDoesNotExcludeTheWholePhase() async throws {
     let dependencies = AppDependencies.hosted()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     for language in [false, true] {
       let left = phase(0, kind: "learn", state: "leftOut", end: nil).replacingOccurrences(
         of: "\"notPlannedReason\":null", with: "\"notPlannedReason\":\"skippedBase\"")
@@ -329,7 +329,7 @@ extension PhaseEndTests {
   @MainActor
   func testAKnownLeftOutPhaseSaysItWasSkippedAsKnown() async throws {
     let dependencies = AppDependencies.hosted()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let left = phase(0, kind: "learn", state: "leftOut", end: nil).replacingOccurrences(
       of: "\"notPlannedReason\":null", with: "\"notPlannedReason\":\"known\"")
     let shaped = try plan(phases: [left, phase(1, kind: "learn", state: "current", end: nil)])

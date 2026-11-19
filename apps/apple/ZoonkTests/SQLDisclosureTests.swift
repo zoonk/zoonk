@@ -6,7 +6,7 @@ import XCTest
 @MainActor
 final class SQLDisclosureTests: XCTestCase {
   func testTableReportsItsExpandedAndCollapsedStateToVoiceOver() async throws {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let payload = try JSONDecoder().decode(
       JSONValue.self,
       from: Data(

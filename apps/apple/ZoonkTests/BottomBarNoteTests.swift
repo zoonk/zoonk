@@ -30,7 +30,7 @@ final class BottomBarNoteTests: XCTestCase {
   private func note(_ message: String, size: DynamicTypeSize) async throws -> (
     line: CGRect, button: CGRect
   ) {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       NavigationStack {
         ZoonkList {

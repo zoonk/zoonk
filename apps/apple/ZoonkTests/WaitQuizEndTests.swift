@@ -25,7 +25,7 @@ final class WaitQuizEndTests: XCTestCase {
     let run = Run()
     let session = SessionStore.preview(account: .planTestAccount)
     let warmUps = WarmUpStore(api: DeckStub(), cache: AppCache(session: session))
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       NavigationStack {
         RunWait(run: run)

@@ -6,7 +6,7 @@ import XCTest
 @MainActor
 final class MoleculeLayoutTests: XCTestCase {
   func testCheckingKeepsTheDrawingFrame() async throws {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let phase = Phase()
     let window = try show(
       Canvas(phase: phase)
@@ -23,7 +23,7 @@ final class MoleculeLayoutTests: XCTestCase {
   }
 
   func testKeyboardHeadingNamesTheStartingChord() async throws {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let payload = try JSONDecoder().decode(
       JSONValue.self,
       from: Data(

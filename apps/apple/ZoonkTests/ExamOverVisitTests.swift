@@ -9,7 +9,7 @@ final class ExamOverVisitTests: XCTestCase {
     let api = PlanAPIStub()
     await api.hold(.change)
     let tabs = Tabs()
-    let window = try showPlan(api: api, tabs: tabs)
+    let window = try await showPlan(api: api, tabs: tabs)
     try await activate(String(localized: "Keep studying", table: "Plan"), in: window)
     try await api.waitForHeldCall()
     try await leaveAndComeBack(tabs, in: window)
@@ -28,7 +28,7 @@ final class ExamOverVisitTests: XCTestCase {
     let api = PlanAPIStub()
     await api.setChangeError(APIError.network)
     let tabs = Tabs()
-    let window = try showPlan(api: api, tabs: tabs)
+    let window = try await showPlan(api: api, tabs: tabs)
     try await activate(String(localized: "Keep studying", table: "Plan"), in: window)
     try await waitForTestCondition("Expected state did not arrive") {
       spoken(in: window).contains(Self.failure)
@@ -42,7 +42,7 @@ final class ExamOverVisitTests: XCTestCase {
     let api = PlanAPIStub()
     await api.hold(.change)
     let tabs = Tabs()
-    let window = try showPlan(api: api, tabs: tabs)
+    let window = try await showPlan(api: api, tabs: tabs)
     try await activate(String(localized: "Keep studying", table: "Plan"), in: window)
     try await api.waitForHeldCall()
     tabs.selected = 1
@@ -69,7 +69,7 @@ final class ExamOverVisitTests: XCTestCase {
     let api = PlanAPIStub()
     await api.setStatusFails(true)
     let tabs = Tabs()
-    let window = try showPlan(api: api, tabs: tabs)
+    let window = try await showPlan(api: api, tabs: tabs)
     try await archive(in: window)
     try await waitForTestCondition("Archive failure did not appear") {
       spoken(in: window).contains(Self.failure)
@@ -85,7 +85,7 @@ final class ExamOverVisitTests: XCTestCase {
     let api = PlanAPIStub()
     await api.hold(.setStatus)
     let tabs = Tabs()
-    let window = try showPlan(api: api, tabs: tabs)
+    let window = try await showPlan(api: api, tabs: tabs)
     try await archive(in: window)
     try await api.waitForHeldCall()
     tabs.selected = 1
@@ -126,8 +126,8 @@ final class ExamOverVisitTests: XCTestCase {
     }
   }
 
-  private func showPlan(api: PlanAPIStub, tabs: Tabs) throws -> UIWindow {
-    try readsWhatVoiceOverReads()
+  private func showPlan(api: PlanAPIStub, tabs: Tabs) async throws -> UIWindow {
+    try await readsWhatVoiceOverReads()
     let session = SessionStore.preview(account: .planTestAccount)
     let window = try show(
       PastDatePlan(tabs: tabs)

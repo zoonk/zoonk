@@ -132,7 +132,7 @@ final class PlanSlotCheckTests: XCTestCase {
     from: Width, to: Width, tap: String.LocalizationValue, api: PlanAPIStub,
     @ViewBuilder card: () -> some View, completed: () -> Bool
   ) async throws -> UIWindow {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let shown = card()
     let session = SessionStore.preview(account: .planTestAccount)
     let window = try show(

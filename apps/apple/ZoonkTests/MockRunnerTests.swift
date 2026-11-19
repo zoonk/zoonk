@@ -345,7 +345,7 @@ final class MockAnswerSheetTests: XCTestCase {
 
   /// A question the learner can't go back to reads as dimmed, as it's drawn.
   func testALockedQuestionReadsAsDimmed() async throws {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       List {
         MockSheetRow(

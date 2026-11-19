@@ -29,7 +29,7 @@ final class TutorPracticeCallTests: XCTestCase {
     let router = AppRouter()
     let session = SessionStore.preview(account: Self.account)
     let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       PaneSplit {

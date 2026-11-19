@@ -17,7 +17,7 @@ final class SetupLessonStartTests: XCTestCase {
     let consumed = dependencies.cache.resource(audience: .signedIn, domains: [.goals]) { _ in 1 }
     await consumed.load()
     let setup = Shown()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       SetupHost(shown: setup)
@@ -41,7 +41,7 @@ final class SetupLessonStartTests: XCTestCase {
     let server = HeldAnswer()
     let router = AppRouter()
     let dependencies = AppDependencies.hosted(transport: server)
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       SetupHost(shown: Shown())

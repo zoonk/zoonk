@@ -11,7 +11,7 @@ final class PlanResumeFailureTests: XCTestCase {
     let api = PlanAPIStub()
     await api.setStatusFails(true)
     let tabs = Tabs()
-    let window = try showPlan(api: api, tabs: tabs)
+    let window = try await showPlan(api: api, tabs: tabs)
 
     try await activate(String(localized: "Resume", table: "Plan"), in: window)
     try await waitForTestCondition("Expected state did not arrive") {
@@ -30,7 +30,7 @@ final class PlanResumeFailureTests: XCTestCase {
     await api.setStatusFails(true)
     await api.hold(.setStatus)
     let tabs = Tabs()
-    let window = try showPlan(api: api, tabs: tabs)
+    let window = try await showPlan(api: api, tabs: tabs)
 
     try await activate(String(localized: "Resume", table: "Plan"), in: window)
     try await api.waitForHeldCall()
@@ -64,8 +64,8 @@ final class PlanResumeFailureTests: XCTestCase {
     }
   }
 
-  private func showPlan(api: PlanAPIStub, tabs: Tabs) throws -> UIWindow {
-    try readsWhatVoiceOverReads()
+  private func showPlan(api: PlanAPIStub, tabs: Tabs) async throws -> UIWindow {
+    try await readsWhatVoiceOverReads()
     let session = SessionStore.preview(account: .planTestAccount)
     let window = try show(
       PausedPlan(tabs: tabs)

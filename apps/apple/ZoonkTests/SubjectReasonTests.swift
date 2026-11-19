@@ -54,7 +54,7 @@ final class SubjectReasonTests: XCTestCase {
     await resource.load()
     XCTAssertNotNil(resource.value)
     resource.update { _ in syllabus }
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       NavigationStack { SubjectScreen(subjectKey: PageServer.subjectKey) }.appDependencies(
         dependencies

@@ -138,7 +138,7 @@ struct PageVisit {
     // The app's shell reads the summary before any page, which takes its goal from it.
     await dependencies.learnerSummaryStore.summary.load()
 
-    try test.readsWhatVoiceOverReads()
+    try await test.readsWhatVoiceOverReads()
     let window = try test.show(
       VisitHost(tabs: tabs, page: page)
         .appDependencies(dependencies)

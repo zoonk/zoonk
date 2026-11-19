@@ -80,7 +80,7 @@ final class FactsLayoutTests: XCTestCase {
   }
 
   func testRowFactsRemainReadableAndActionableToVoiceOver() async throws {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     var opens = 0
     let window = try show(
       Button {

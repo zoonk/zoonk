@@ -59,7 +59,7 @@ final class DraftCreationTests: XCTestCase {
     await server.answerCreates(.unavailable)
     await server.holdNextCreate()
     let page = Page(shown: Self.draftID)
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try host(page, cards: [Self.draftID: card], store: store, router: AppRouter())
     // Sent here, the question's explanation starts by itself.

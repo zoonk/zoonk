@@ -64,7 +64,7 @@ extension SubscriptionPageTests {
   @MainActor
   func testTwoSubscriptionsEachShowTheirOwnManagementAction() async throws {
     let dependencies = AppDependencies.hosted(transport: UnpaidWebsiteTransport())
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       PlusStatusView(
         subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")
@@ -118,7 +118,7 @@ extension SubscriptionPageTests {
   @MainActor
   private func websiteAction(state: String, label: String) async throws {
     let dependencies = AppDependencies.hosted(transport: UnpaidWebsiteTransport(state: state))
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       PlusStatusView(
         subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")

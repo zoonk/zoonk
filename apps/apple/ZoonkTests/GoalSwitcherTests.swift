@@ -56,7 +56,7 @@ final class GoalSwitcherTests: XCTestCase {
   }
 
   private func hints(_ summary: LearnerSummary) async throws -> [String] {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       GoalSwitcher(summary: summary, isCompact: false, maxTitleWidth: 240)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

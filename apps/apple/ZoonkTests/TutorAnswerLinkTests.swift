@@ -70,7 +70,7 @@ final class TutorAnswerLinkTests: XCTestCase {
       openBlock: AppRouter.openingTodayBlocks(today: TodayStore(api: api, cache: cache)))
     router.select(.buddy)
     let tabs = AnswerTabs()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(AnswerHost(tabs: tabs).environment(router))
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
     try await waitForLayout(in: window)

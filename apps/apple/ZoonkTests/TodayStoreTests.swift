@@ -1017,7 +1017,7 @@ final class SuggestedGoalAnswerTests: XCTestCase {
     let suggestion = SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics")
     let answer = SuggestedGoalAnswer()
     await api.holdNextSuggestedAnswer()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       PaneSplit {
@@ -1121,7 +1121,7 @@ final class BuddyMissionTapTests: XCTestCase {
     let tap = BuddyMissionTap()
     var opened = 0
     let places = TutorPlaces { _ in opened += 1 }
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       PaneSplit {
@@ -1226,7 +1226,7 @@ final class TodayExamSheetTests: XCTestCase {
 
   private func staysOpen(from: CGFloat, to: CGFloat) async throws {
     let dependencies = AppDependencies.hosted()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       TodayDayView(view: try examDay())

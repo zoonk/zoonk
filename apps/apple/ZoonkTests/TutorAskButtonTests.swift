@@ -19,7 +19,7 @@ final class TutorAskButtonTests: XCTestCase {
     let dependencies = AppDependencies.hosted()
     let router = AppRouter()
     let scope = TutorScope.plan(goalId: "goal")
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
 
     let window = try show(
       PaneSplit {

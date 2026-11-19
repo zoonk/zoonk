@@ -171,7 +171,7 @@ final class VisitOutcomeTests: XCTestCase {
     let session = await accounts.signedIn(as: "learner")
     let account = try XCTUnwrap(session.account)
     let tabs = VisitTabs()
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       VisitTabsView(tabs: tabs) {
         ProfileEditorView(account: account, isRequiredSetup: false)
@@ -206,7 +206,7 @@ final class VisitOutcomeTests: XCTestCase {
       api: api, cache: AppCache(session: .preview(account: .planTestAccount)))
     await store.status.load()
     let status = try XCTUnwrap(store.status.value)
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       GlassesSheet(opening: opening, status: status)
         .environment(store)
@@ -310,7 +310,7 @@ final class VisitOutcomeTests: XCTestCase {
   private func host(
     _ page: some View, dependencies: AppDependencies, tabs: VisitTabs
   ) async throws -> UIWindow {
-    try readsWhatVoiceOverReads()
+    try await readsWhatVoiceOverReads()
     let window = try show(
       VisitTabsView(tabs: tabs) { page }
         .appDependencies(dependencies)
