@@ -208,6 +208,7 @@ describe(searchStoredExam, () => {
           source: officialSource,
         },
       ],
+      pastYear: false,
     };
 
     const [named, unnamed] = await Promise.all([
@@ -263,6 +264,7 @@ describe(searchStoredExam, () => {
           source: null,
         },
       ],
+      pastYear: false,
     });
   });
 
@@ -285,12 +287,16 @@ describe(searchStoredExam, () => {
     ]);
   });
 
-  it("has no dates for a year that has passed", async () => {
+  it("takes the next sitting for a year whose exam is already over", async () => {
     const { blueprint, examName } = await storedExam({ days: ["2026-11-08"], year: 2026 });
 
     await expect(
       findStoredExam({ language: "en", lookup: lookupFor({ examName, examYear: 2025 }) }),
-    ).resolves.toStrictEqual({ blueprintId: blueprint.id, dates: [] });
+    ).resolves.toMatchObject({
+      blueprintId: blueprint.id,
+      dates: [{ date: "2026-11-08", estimated: false }],
+      pastYear: true,
+    });
   });
 });
 
@@ -436,12 +442,21 @@ describe(searchExamDates, () => {
     const day = { date: "2026-11-08", label: "Day 1", registrationClosed: false, source: null };
 
     await expect(
-      searchFor(lookup, { blueprintId: randomUUID(), dates: [{ ...day, estimated: false }] }),
+      searchFor(lookup, {
+        blueprintId: randomUUID(),
+        dates: [{ ...day, estimated: false }],
+        pastYear: false,
+      }),
     ).resolves.toStrictEqual([]);
 
     expect(findExamDate).not.toHaveBeenCalled();
 
-    await searchFor(lookup, { blueprintId: randomUUID(), dates: [{ ...day, estimated: true }] });
+    await searchFor(lookup, {
+      blueprintId: randomUUID(),
+      dates: [{ ...day, estimated: true }],
+      pastYear: false,
+    });
+
     expect(findExamDate).toHaveBeenCalledOnce();
   });
 
@@ -494,7 +509,12 @@ describe(toExamFacts, () => {
         searched: [found],
         stored: null,
       }),
-    ).toStrictEqual({ blueprintId: null, dates: [found], targetDate: "2027-01-10" });
+    ).toStrictEqual({
+      blueprintId: null,
+      dates: [found],
+      pastYear: false,
+      targetDate: "2027-01-10",
+    });
 
     expect(
       toExamFacts({
@@ -502,14 +522,23 @@ describe(toExamFacts, () => {
         searched: [found],
         stored: null,
       }),
-    ).toStrictEqual({ blueprintId: null, dates: [found], targetDate: null });
+    ).toStrictEqual({ blueprintId: null, dates: [found], pastYear: false, targetDate: null });
   });
 
   it("keeps a stored notice's days when the search found none", () => {
-    const stored = { blueprintId: randomUUID(), dates: [{ ...found, estimated: true }] };
+    const stored = {
+      blueprintId: randomUUID(),
+      dates: [{ ...found, estimated: true }],
+      pastYear: false,
+    };
 
     expect(
       toExamFacts({ lookup: lookupFor({ examName: "ENEM" }), searched: [], stored }),
-    ).toStrictEqual({ blueprintId: stored.blueprintId, dates: stored.dates, targetDate: null });
+    ).toStrictEqual({
+      blueprintId: stored.blueprintId,
+      dates: stored.dates,
+      pastYear: false,
+      targetDate: null,
+    });
   });
 });
