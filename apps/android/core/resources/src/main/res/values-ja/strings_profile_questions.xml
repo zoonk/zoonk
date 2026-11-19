@@ -5,7 +5,6 @@
   "profile_questions_activities_placeholder": "c566837c0a3e30dbf23e1377f9b65f14425bd23f1bcad18c4ba4ef1309ccdb63",
   "profile_questions_activities_title": "43c3accc8578746ecd5516a4e06ca3bfe4fc0b409ab479ef5c4459a45fa81730",
   "profile_questions_add": "7f3b24371ea3cfb893d2e197d71a4b20f5cfea19669d052ccae333d1cca1dcdf",
-  "profile_questions_address_description": "f0dc2a03e3e4921c0791810054fd5e71c66cb34a7cf90d7b9b378a3811b20df2",
   "profile_questions_address_title": "681eda92c42a26e80731eeea53b70b3b39633e8f580accf5368caf0651bb6a1d",
   "profile_questions_cap": "d53c70b37d98e52129481b1805214d325022d2b08769b8ed9dfc104f79218a95",
   "profile_questions_condition_note": "501c6125d895fab57aa884cad89a346bf60b11bb85487b4c9b491c3938a4150b",
@@ -128,7 +127,6 @@
     <string name="profile_questions_support_description">役立つものをいくつでも選べます。特性に名前がついていなくても、診断を受けていなくても大丈夫です。</string>
     <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">どんな表現で話しかけてほしいですか？</string>
-    <string name="profile_questions_address_description">このように話しかけます。</string>
     <string name="profile_questions_suggested">選んだ内容をもとに、どんな工夫が役立つことが多いかを調べました。自由に変更できます。</string>
     <string name="profile_questions_something_else">+ ほかに役立つこと</string>
     <string name="profile_questions_support_note">学びやすくなることを自分の言葉で（任意）</string>

@@ -9979,12 +9979,6 @@ msgctxt "5Imb5S"
 msgid "Your plan skips their basics."
 msgstr "Planın seçtiğin branşların temel konularını atlar."
 
-#. Answers the question when the learner knows none of the subjects yet.
-#: src/onboarding/steps/subjects-level-step.tsx
-msgctxt "8F5ajW"
-msgid "I'm new"
-msgstr "Yeni başlıyorum"
-
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "OpYINI"
 msgid "Which subjects do you already know well?"
@@ -11857,11 +11851,6 @@ msgstr "Sana yardımcı olan her şeyi seç."
 msgctxt "toYiVg"
 msgid "Pick up to 3."
 msgstr "En fazla 3 tane seç."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "xI6I3Q"
-msgid "We'll talk to you this way."
-msgstr "Sana böyle hitap edeceğiz."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

@@ -5,7 +5,6 @@
   "profile_questions_activities_placeholder": "2c67021814bafbbb8340e4a443f52f923f8641dfddd15ff1d87095dd3162f160",
   "profile_questions_activities_title": "1507a54ad10080a8c924a8a7bb2f92ac3ad598d5b8fca17c90fdd61bfc8e0fa9",
   "profile_questions_add": "0fd998da3b65a469530a359efff2e62a65379c76926359b53cf3953868dd2ad2",
-  "profile_questions_address_description": "ad3b14ec6f08ae7bba3a3622da551a6748346b61d72f987e3ae3bd29400bb2b0",
   "profile_questions_address_title": "8f1bb2143c099398d3113af0fa933da2c6674f18a9509a0829597a355f0b6244",
   "profile_questions_cap": "b5c73dbd62eca612e60bbda65c13d9dddaee0e418058d73ce2538bd9d014e1c8",
   "profile_questions_condition_note": "625f2c3951e7ca14d6ae7d21ac4931686d36a8218e0ee75f2128c8132eeb1918",
@@ -128,7 +127,6 @@
     <string name="profile_questions_support_description">Scegli tutto ciò che ti aiuta. Non servono etichette o diagnosi.</string>
     <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Come preferisci che ci rivolgiamo a te?</string>
-    <string name="profile_questions_address_description">Ci rivolgeremo a te così.</string>
     <string name="profile_questions_suggested">Abbiamo verificato cosa aiuta di solito in base alle tue scelte. Cambia quello che vuoi.</string>
     <string name="profile_questions_something_else">+ Qualcos’altro che mi aiuta</string>
     <string name="profile_questions_support_note">Cosa ti aiuta, con parole tue (facoltativo)</string>

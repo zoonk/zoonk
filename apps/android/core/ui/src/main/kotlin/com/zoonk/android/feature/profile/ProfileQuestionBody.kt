@@ -59,8 +59,8 @@ fun profileQuestionTitle(question: ProfileQuestion): String =
 fun profileQuestionDescription(
     question: ProfileQuestion,
     inSettings: Boolean = false,
-): String =
-    stringResource(
+): String? {
+    val line =
         when (question) {
             ProfileQuestion.WORK -> {
                 R.string.profile_questions_work_description
@@ -87,14 +87,15 @@ fun profileQuestionDescription(
             }
 
             ProfileQuestion.ADDRESS_FORM -> {
-                R.string.profile_questions_address_description
+                null
             }
 
             else -> {
                 R.string.profile_questions_interest_description
             }
-        },
-    )
+        }
+    return line?.let { stringResource(it) }
+}
 
 @Composable
 fun ProfileQuestionBody(

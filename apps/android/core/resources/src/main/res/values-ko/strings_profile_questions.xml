@@ -5,7 +5,6 @@
   "profile_questions_activities_placeholder": "76572fa9e5acc0ba5069605db3003dea72e47f00e0bb9496d3232c735f79e7d2",
   "profile_questions_activities_title": "98bafbf978de934c2f01913fea46e1c9d7d8b63d7b848064418655b157599685",
   "profile_questions_add": "84a9dfa8332523c01f1228b875fa9c1e6ba5b65ca9c46756c7bfb1be0526a133",
-  "profile_questions_address_description": "ef379534c6ea4173d6e951e3a4126de2d9d846d04381b0b67193b595805a0840",
   "profile_questions_address_title": "618aebe3788d8c734e107d63129be001670cdf52e6da5964a90a5db7eba967a6",
   "profile_questions_cap": "fa71a9486bd5782b82710874fd3ac914ce7b7296c0b02ab048a34052c1eaff7e",
   "profile_questions_condition_note": "94b84b91fcb7ffb267f80babf4b30638946c1d7d1c6c57ffb5fc9496c937baef",
@@ -128,7 +127,6 @@
     <string name="profile_questions_support_description">도움이 되는 건 모두 고르세요. 특정 유형에 해당하지 않아도, 진단을 받지 않았어도 괜찮아요.</string>
     <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">여성형, 남성형, 중립형 중 어떤 표현이 좋을까요?</string>
-    <string name="profile_questions_address_description">이렇게 이야기할게요.</string>
     <string name="profile_questions_suggested">고른 항목에 보통 어떤 방법이 도움이 되는지 알아봤어요. 원하는 대로 바꿔 보세요.</string>
     <string name="profile_questions_something_else">+ 그 밖에 도움이 되는 방법</string>
     <string name="profile_questions_support_note">도움이 되는 방법을 자유롭게 적어 주세요 (선택 사항)</string>

@@ -87,7 +87,7 @@ export function useProfileQuestionDescription(
     case "activities":
       return t("Pick up to 3.");
     case "addressForm":
-      return t("We'll talk to you this way.");
+      return null;
     default:
       return question satisfies never;
   }

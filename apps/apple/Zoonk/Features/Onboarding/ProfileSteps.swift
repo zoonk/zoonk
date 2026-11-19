@@ -367,12 +367,10 @@ enum ProfileCopy {
   }
 
   /// Shown before the learner has met their buddy, so it says "we".
-  static func description(_ question: ProfileQuestion, inSettings: Bool) -> Text {
+  static func description(_ question: ProfileQuestion, inSettings: Bool) -> Text? {
     switch question {
     case .addressForm:
-      Text(
-        "We'll talk to you this way.", tableName: "AboutYou",
-        comment: "Under How should we address you?")
+      nil
     case .work:
       Text(
         "We use this to pick examples you'll care about.", tableName: "AboutYou",

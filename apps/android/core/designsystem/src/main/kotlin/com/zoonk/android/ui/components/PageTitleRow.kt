@@ -69,13 +69,13 @@ internal fun HeadingRow(
     }
 }
 
-/** Main's `PageHeader` with its `PageSubtitle`: a page's title and the line under it. */
+/** Main's `PageHeader` with its `PageSubtitle`: a page's title and the line under it, when it has one. */
 @Composable
 fun PageHeader(
     title: String,
-    supporting: String,
+    supporting: String?,
     modifier: Modifier = Modifier,
-) = PageHeader(title, AnnotatedString(supporting), modifier)
+) = PageHeader(title, supporting?.let(::AnnotatedString), modifier)
 
 /**
  * [PageHeader] whose line may hold a link, a [androidx.compose.ui.text.LinkAnnotation] in [supporting] (main's `PageSubtitle`
@@ -84,11 +84,13 @@ fun PageHeader(
 @Composable
 fun PageHeader(
     title: String,
-    supporting: AnnotatedString,
+    supporting: AnnotatedString?,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         PageTitleRow(title)
-        Text(supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        if (supporting != null) {
+            Text(supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }

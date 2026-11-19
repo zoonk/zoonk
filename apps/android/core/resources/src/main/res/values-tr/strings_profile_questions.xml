@@ -5,7 +5,6 @@
   "profile_questions_activities_placeholder": "fdd40cca761222e5632bc44a79a3d4d144ab45cbe1f66dcb9c5a341b64208848",
   "profile_questions_activities_title": "61f58f998b64f088580cd78ebaabcbf6d61755ec5da99fa50d232b7697a1f975",
   "profile_questions_add": "4238e8fa919a305c4f74c19bf8c197c18de1696a7e4ce9abb25af15bf27d1e90",
-  "profile_questions_address_description": "8f147636e5d0991fa1d8fc1b02bdfb29933886e4f41af2c619e4c0ace842f504",
   "profile_questions_address_title": "e71d318fde0e986d61f15900981456887390aa0cf5494e8451e839884e062f88",
   "profile_questions_cap": "8a9fb1ca1e5b0404ad8b1c9a2afbe6603f8fb338197bcc8b208902c938e64b14",
   "profile_questions_condition_note": "e2afcfb8dc366b8d5242621ff58d9f10e105e50a2641c356ae45916ff1a11747",
@@ -128,7 +127,6 @@
     <string name="profile_questions_support_description">Sana yardımcı olan her şeyi seç. Herhangi bir durum belirtmen ya da tanı almış olman gerekmez.</string>
     <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Sana nasıl hitap edelim?</string>
-    <string name="profile_questions_address_description">Sana böyle hitap edeceğiz.</string>
     <string name="profile_questions_suggested">Seçtiğin durumlarda genelde nelerin işe yaradığına baktık. İstediğini değiştirebilirsin.</string>
     <string name="profile_questions_something_else">+ İşime yarayan başka bir şey</string>
     <string name="profile_questions_support_note">Sana neyin yardımcı olduğunu kendi sözlerinle anlat (isteğe bağlı)</string>
