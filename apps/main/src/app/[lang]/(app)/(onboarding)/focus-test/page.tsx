@@ -66,7 +66,7 @@ async function FocusTestContent({ searchParams }: Props) {
         backHref={backHref}
         goalId={goal.id}
         started={query[FOCUS_TEST_STARTED_PARAM] !== undefined}
-        subject={getGoalSubject(goal)}
+        subject={getGoalSubject(goal, locale)}
       />
     </OnboardingPage>
   );

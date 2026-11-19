@@ -6,6 +6,7 @@ import {
   type OnboardingStep,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { useAppLocale } from "../_utils/locale";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
@@ -187,7 +188,7 @@ function StepScreen({
   toToday: () => void;
   view: OnboardingView;
 }) {
-  const subject = getGoalSubject(view.goal);
+  const subject = getGoalSubject(view.goal, useAppLocale());
   const props = { onAnswer, pending };
 
   usePreloadedDeck({ readDeck: actions.readWarmUp, warmUpId: run?.warmUpId });

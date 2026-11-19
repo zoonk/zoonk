@@ -608,9 +608,12 @@ private struct StepScreen: View {
       let subject: String?
     }
 
-    let subject = (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.subject
-    return subject?.trimmingCharacters(in: .whitespaces).isEmpty == false
-      ? subject ?? view.goal.displayName : view.goal.displayName
+    // Written to sit mid-sentence ("inglês"); the chip starts a line, so it starts with a capital.
+    guard
+      let subject = (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.subject,
+      !subject.trimmingCharacters(in: .whitespaces).isEmpty
+    else { return view.goal.displayName }
+    return subject.prefix(1).uppercased(with: .current) + subject.dropFirst()
   }
 }
 

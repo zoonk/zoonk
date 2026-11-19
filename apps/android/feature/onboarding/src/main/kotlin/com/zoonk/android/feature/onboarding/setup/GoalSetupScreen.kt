@@ -95,6 +95,7 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import java.util.Locale
 import java.util.UUID
 
 @Composable
@@ -344,7 +345,7 @@ private fun ColumnScope.SetupStep(
     onReportPlacement: () -> Unit,
     onReportLevelTest: () -> Unit,
 ) {
-    val subject = view.subject()
+    val subject = view.subject(currentLocale())
     val pending = vm.isSaving
     val onRetryRun = vm.follower::retry.takeIf { run.failure == GenerationFailure.Connection || vm.follower.canRestart }
     val onboardingId = view.goal.details.text("onboardingId")
@@ -689,7 +690,9 @@ private fun MenuText(
     }
 }
 
-private fun Onboarding.subject(): String = goal.details.text("subject") ?: goal.displayName
+/** Written to sit mid-sentence ("inglês"); the chip starts a line, so it starts with a capital. */
+private fun Onboarding.subject(locale: Locale): String =
+    goal.details.text("subject")?.replaceFirstChar { it.titlecase(locale) } ?: goal.displayName
 
 private fun Goal.levelChoice(): LevelChoice? {
     val level =
