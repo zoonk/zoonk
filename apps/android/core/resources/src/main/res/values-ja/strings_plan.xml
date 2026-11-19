@@ -417,6 +417,7 @@
   "plan_skills_you_know": "09150d9b7313d9a1dffd3d701caf658299b96017e7a7f21fb31e437c00d5efb6",
   "plan_skipped": "f2ec8ebeb085a46e5351f009d3ac2d5d1d4ee5e2900542e0eec5a4564bc4b43f",
   "plan_skipped_known": "0ccb7daa5200f64766a14f71c442fba9dc6697ae31a1080921634bfb3527aa19",
+  "plan_sources": "abd3e3d97c51bd74fb32ddb59fea5cd88412a2875c2d5bf3aae93f1e256a92cf",
   "plan_stays_as_it_is": "c8a2b7c39f6b20740e7efda0e62813cd2ab29ddb62c26e52b9153ce29185b543",
   "plan_still_first_challenge": "fa2f49ea9d03e251ec5389a17160b1aa275649492dcc6c84ea1241c860bab329",
   "plan_still_first_mock": "6a37a14cb21bfcb131a41b90bad02c399898208c811914c71c2486c479d83738",
@@ -676,6 +677,7 @@
     </plurals>
     <string name="plan_date_to_be_confirmed">日程未定</string>
     <string name="plan_more">多い</string>
+    <string name="plan_sources">出典</string>
     <string name="plan_mind_maps">マインドマップ</string>
     <string name="plan_your_plan">学習計画</string>
     <string name="plan_exam_date">試験日</string>

@@ -417,6 +417,7 @@
   "plan_skills_you_know": "b959418e292a9c918336c259cf1d705cdc32bb6f7cafb627883ddc6d380c87fd",
   "plan_skipped": "65c73cc6179833e0845f7072bfb46f92abaf046d71e69c2a565510c13c951ed2",
   "plan_skipped_known": "8b004075fdfb4bc428e7d62f13ea9d7984c8aa4c154b95edd576e6e195438a66",
+  "plan_sources": "7b46164ddf4d4bfa7be00b854ebff3dad6d77d252d80c7b80745d96ef94388fd",
   "plan_stays_as_it_is": "84a1e70fda784ceddc957528b94ead1000dda12273b0b52572bbecb1b6965f59",
   "plan_still_first_challenge": "dff573a594c1197e3ae45c34efef7ae65aa1a6cb4cdd08074a91a5f545e15972",
   "plan_still_first_mock": "58505cbbad53215559e72ed5355260ce66a1b0e05396c7f9f09e01048b8d2806",
@@ -688,6 +689,7 @@
     </plurals>
     <string name="plan_date_to_be_confirmed">Tarih henüz kesinleşmedi</string>
     <string name="plan_more">Çok</string>
+    <string name="plan_sources">Kaynaklar</string>
     <string name="plan_mind_maps">Zihin haritaları</string>
     <string name="plan_your_plan">Planın</string>
     <string name="plan_exam_date">Sınav tarihi</string>

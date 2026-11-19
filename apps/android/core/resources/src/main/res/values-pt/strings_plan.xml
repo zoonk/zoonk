@@ -417,6 +417,7 @@
   "plan_skills_you_know": "97d318d8d73f0469537b37be755500aa4593adb21cb3622573082f35a1856d15",
   "plan_skipped": "57af5682488225642aa7973e204c5b397431dfb73714266e37e936201ae4296c",
   "plan_skipped_known": "0dfc2b0e46da396f01ca299576e0119558d810741bb66b8dd279bf0b7520668a",
+  "plan_sources": "4612656a652af7880f59864af22ba9d22923a5a26fbd0ca1ca9a61643ff3b62c",
   "plan_stays_as_it_is": "9a6f994e17a1a0d66428d3f35f158cb452c32a340fced25a698eb89455d10d9e",
   "plan_still_first_challenge": "765efd18633e1ebc51e8b8ac84a31208953294b5128bd7778300c5a6bff938d6",
   "plan_still_first_mock": "103f315228c277449f29ffb10b2a1157ac4b25570d2da34d899363549fe78f25",
@@ -700,6 +701,7 @@
     </plurals>
     <string name="plan_date_to_be_confirmed">Data a confirmar</string>
     <string name="plan_more">Mais</string>
+    <string name="plan_sources">Fontes</string>
     <string name="plan_mind_maps">Mapas mentais</string>
     <string name="plan_your_plan">Seu plano</string>
     <string name="plan_exam_date">Data da prova</string>

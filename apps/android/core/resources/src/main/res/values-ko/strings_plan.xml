@@ -417,6 +417,7 @@
   "plan_skills_you_know": "25d280be6eb31e4eb9f197572375065f1f0a51d1147e400ff0b339eaa1f4d0af",
   "plan_skipped": "d6c4b3a5c7deb80a3876fe1e5262b3e108fa87aded474f0293a0ddd5b027d125",
   "plan_skipped_known": "7928674c9ad62b78afa253934c7d4b50373df7cb3c69d804da58a6a0fdceb36b",
+  "plan_sources": "6864e8a17836d54085857921166ddb2adceb0593282a7693f43e9e9150c26491",
   "plan_stays_as_it_is": "53503b25cc1394f04e130fd175f12ff255a7c32be4db61d98b58e0faba91b619",
   "plan_still_first_challenge": "56191bf91178d52a9005e21ad9f39826c9e6b4eff09a5beb69d84ba33af31910",
   "plan_still_first_mock": "191be5b6a198ffd87b80b30e6b2315625f567948cdcd1e8c72cd53130e885c28",
@@ -676,6 +677,7 @@
     </plurals>
     <string name="plan_date_to_be_confirmed">날짜 미정</string>
     <string name="plan_more">많음</string>
+    <string name="plan_sources">출처</string>
     <string name="plan_mind_maps">마인드맵</string>
     <string name="plan_your_plan">내 계획</string>
     <string name="plan_exam_date">시험일</string>

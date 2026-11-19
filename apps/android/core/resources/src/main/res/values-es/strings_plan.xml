@@ -417,6 +417,7 @@
   "plan_skills_you_know": "ad76f28bb48e243af26eff74b72b1e6954928303ffce5a9781ce53c6c92f2b0d",
   "plan_skipped": "fe316707a8b15656b19010f645712b759c973e945514545987131b2e3bfbd23e",
   "plan_skipped_known": "bdf451625b160b4e5318c35346248570a5f6d288c3094669d7b05c974dc44818",
+  "plan_sources": "aac1e74ae9bdccaf156d8a2908f47a762545cf7b7cd836defb2d2ec2f2cc5eb4",
   "plan_stays_as_it_is": "732371f9627cfacd889cbb88810c9e700910f2796f7fc0188983edf6413203f5",
   "plan_still_first_challenge": "b333032b1e820f1a5b23206bcfe8c100c10d7fe3a828c0a6d00a8d2552952844",
   "plan_still_first_mock": "206432c56a767b8a125257ec4ac0dab2be42702176f817a9ce5303a5f6f6aaec",
@@ -700,6 +701,7 @@
     </plurals>
     <string name="plan_date_to_be_confirmed">Fecha por confirmar</string>
     <string name="plan_more">Más</string>
+    <string name="plan_sources">Fuentes</string>
     <string name="plan_mind_maps">Mapas mentales</string>
     <string name="plan_your_plan">Tu plan</string>
     <string name="plan_exam_date">Fecha del examen</string>
