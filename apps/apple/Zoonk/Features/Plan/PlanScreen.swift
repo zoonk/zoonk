@@ -261,10 +261,13 @@ private struct PlanContent: View {
                 context: context, structure: structure, namesChoices: false,
                 includesFocusTest: structure == nil)
             }
-            PlanSettingsSection(context: context)
+            // Main's aside: the numbers, then the suggestion, then the plan's settings.
+            VStack(alignment: .leading, spacing: 32) {
+              PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
+              PlanSettingsSection(context: context)
+            }
           }
           BlockGridSection {
-            PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
             PlanMoreSection(goal: goal)
           }
         }

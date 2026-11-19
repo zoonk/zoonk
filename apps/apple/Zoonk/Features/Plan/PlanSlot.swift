@@ -218,9 +218,8 @@ struct PlanSuggestionSection: View {
           }
         }
         .padding(.vertical, isInline ? 4 : 0)
-        // In the page's column a change to the plan is main's card on its panel; beside the page
-        // it's the panel's words.
-        .modifier(PlanChangePanel(isShown: !isInline && isPlanChange(item)))
+        // A change to the plan is main's card on its panel, in the page's column and beside it.
+        .modifier(PlanChangePanel(isShown: isPlanChange(item)))
         .environment(\.isPlanChangeCard, isPlanChange(item))
         // Beside the page a card's actions sit beside its words, so they're small, as main's
         // panel draws them; the sheet a line opens draws them large.

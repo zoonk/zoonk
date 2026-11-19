@@ -342,13 +342,18 @@ struct PlanNumbersSection: View {
 
     if standing != nil || schedule != nil {
       PageSection {
-        StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
-          if let standing {
-            tile(standing) { context.show(.standing) }
-          }
-
-          if let schedule {
-            tile(schedule) { context.show(.schedule) }
+        Group {
+          // Main's aside draws the numbers as stats, one under the other with no box; the page's
+          // column draws them as tiles.
+          if timeShownBeside {
+            VStack(alignment: .leading, spacing: 24) {
+              numbers(standing: standing, schedule: schedule)
+            }
+            .environment(\.statTileLone, true)
+          } else {
+            StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
+              numbers(standing: standing, schedule: schedule)
+            }
           }
         }
         .buttonStyle(.plain)
@@ -358,6 +363,17 @@ struct PlanNumbersSection: View {
       }
       // Main's numbers and the suggestion under them share one block, a row's room apart.
       .listSectionSpacing(0)
+    }
+  }
+
+  @ViewBuilder
+  private func numbers(standing: PlanNumber?, schedule: PlanNumber?) -> some View {
+    if let standing {
+      tile(standing) { context.show(.standing) }
+    }
+
+    if let schedule {
+      tile(schedule) { context.show(.schedule) }
     }
   }
 
