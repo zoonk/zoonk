@@ -322,7 +322,7 @@ A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`
 
 ### X3. A state change moves nothing
 
-Hover, focus, selected, busy and disabled never change a control's size or shift its neighbors.
+Hover, focus, selected, busy and disabled never change a control's size or shift its neighbors. The one exception, granted by the user: a switch that shows a field depending on it ("Different time on weekends" and its weekend time) reveals that field directly under itself while it's on, and only what follows it moves.
 
 A screen that changes height or moves a neighbor when data, a picture or a font arrives after the first paint breaks it too.
 
