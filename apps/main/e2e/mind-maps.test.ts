@@ -153,8 +153,12 @@ test.describe("Mind maps", () => {
         viewer.getByRole("img", { name: `Mind map: ${STRUCTURE.title}. ${STRUCTURE.centralIdea}` }),
       ).toBeVisible();
 
-      // The outline is also in a hidden description for screen readers.
-      await expect(viewer.getByText(STRUCTURE.summary).filter({ visible: true })).toBeVisible();
+      const summary = viewer.getByText(STRUCTURE.summary).filter({ visible: true });
+
+      // The picture or its text, not both: the text waits for "As text".
+      await expect(summary).toBeHidden();
+      await viewer.getByRole("button", { name: "As text" }).click();
+      await expect(summary).toBeVisible();
     } finally {
       await page.context().close();
     }
@@ -311,6 +315,42 @@ test.describe("Mind maps", () => {
       await expect(heading(first.chapter.title)).toBeVisible();
       await page.getByRole("button", { name: "Next" }).click();
       await expect(heading(second.chapter.title)).toBeVisible();
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("the study screen shows a map or its text, and keeps the learner's pick from map to map", async ({
+    browser,
+  }) => {
+    const { first, second, user } = await createLearner();
+
+    await drawMap(first.chapter.id);
+    await drawMap(second.chapter.id);
+
+    const page = await openAs(browser, user);
+    const heading = (title: string) => page.getByRole("heading", { level: 1, name: title });
+    const asText = page.getByRole("tab", { name: "Text" });
+    const summary = page.getByText(STRUCTURE.summary).filter({ visible: true });
+    const picture = page.getByRole("button", { name: new RegExp(STRUCTURE.title, "u") });
+
+    try {
+      await page.goto("/mind-maps");
+      await page.getByRole("link", { exact: true, name: "Study maps" }).click();
+      await expect(heading(first.chapter.title)).toBeVisible();
+
+      await expect(page.getByRole("tab", { name: "Map" })).toHaveAttribute("aria-selected", "true");
+      await expect(picture).toBeVisible();
+      await expect(summary).toBeHidden();
+
+      await asText.click();
+      await expect(summary).toBeVisible();
+      await expect(picture).toBeHidden();
+
+      await page.getByRole("button", { name: "Next" }).click();
+      await expect(heading(second.chapter.title)).toBeVisible();
+      await expect(asText).toHaveAttribute("aria-selected", "true");
+      await expect(summary).toBeVisible();
     } finally {
       await page.context().close();
     }

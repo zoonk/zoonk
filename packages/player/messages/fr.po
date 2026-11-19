@@ -3682,6 +3682,26 @@ msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "L’image contenait des erreurs, voici donc la carte mentale sous forme de texte."
 
 #: src/mind-maps/mind-map-slides.tsx
+msgctxt "J2sgEz"
+msgid "Show the map as"
+msgstr "Afficher la carte en"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "zuqMfZ"
+msgid "Map"
+msgstr "Carte"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "aA8bDw"
+msgid "Text"
+msgstr "Texte"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "nonkuT"
+msgid "Tap the map to zoom in"
+msgstr "Touchez la carte pour l’agrandir"
+
+#: src/mind-maps/mind-map-slides.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
 msgstr "Impossible de joindre le serveur. Vérifie ta connexion."

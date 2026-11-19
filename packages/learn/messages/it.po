@@ -7141,6 +7141,16 @@ msgid "Show all {count, number}"
 msgstr "Mostra tutte e {count, number}"
 
 #: src/mind-maps/mind-map-outline.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Scorri a sinistra"
+
+#: src/mind-maps/mind-map-outline.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Scorri a destra"
+
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "In breve:"

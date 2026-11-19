@@ -3682,6 +3682,26 @@ msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "図に間違いがあったため、マインドマップをテキストで表示しています。"
 
 #: src/mind-maps/mind-map-slides.tsx
+msgctxt "J2sgEz"
+msgid "Show the map as"
+msgstr "マップの表示方法"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "zuqMfZ"
+msgid "Map"
+msgstr "マップ"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "aA8bDw"
+msgid "Text"
+msgstr "テキスト"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "nonkuT"
+msgid "Tap the map to zoom in"
+msgstr "マップをタップすると拡大できます"
+
+#: src/mind-maps/mind-map-slides.tsx
 msgctxt "7FWazb"
 msgid "We couldn't reach the server. Check your connection."
 msgstr "サーバーに接続できませんでした。インターネット接続を確認してください。"

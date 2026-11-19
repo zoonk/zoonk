@@ -1,5 +1,6 @@
 "use client";
 
+import { MindMapDescription } from "@zoonk/learn/mind-maps/description";
 import { MindMapOutline } from "@zoonk/learn/mind-maps/outline";
 import { type MindMapSave } from "@zoonk/learn/mind-maps/save";
 import { MindMapThumbnail } from "@zoonk/learn/mind-maps/thumbnail";
@@ -7,9 +8,10 @@ import { MindMapViewer } from "@zoonk/learn/mind-maps/viewer";
 import { TASK_COLUMN_CLASS } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { SCREEN_TURN_CLASS, type ScreenTurn } from "../components/screen-turn";
 import { LessonMap } from "../lesson/_components/lesson-map";
 import { SWIPE_THROUGH } from "../lesson/use-swipe-navigation";
@@ -17,6 +19,13 @@ import { type ChapterSlide, type LessonMindMap } from "./mind-map-deck";
 
 const COLUMN_CLASS = cn(TASK_COLUMN_CLASS, "flex flex-col gap-5 pt-4 pb-8");
 const NOTE_CLASS = "text-muted-foreground text-sm text-pretty";
+
+/**
+ * The map as big as the window lets it be while the whole map stays in view under the header, the
+ * switch and the bar, so a window that's wide but short doesn't push its bottom out of sight.
+ */
+const MAP_FRAME_CLASS =
+  "mx-auto w-full max-w-[max(20rem,min(64rem,calc(100dvh-12.5rem)))] px-[16px]";
 
 /** One map of the deck, arriving from the side it was turned from, at the top of the screen. */
 export function SlideFrame({
@@ -44,12 +53,26 @@ export function SlideFrame({
   );
 }
 
+export type ChapterMapView = "map" | "text";
+
 /**
- * The picture, then its outline under it. From 72rem they sit side by side, the picture held in
- * view at the height the window leaves it while the outline scrolls.
+ * The map's picture or its text, one at a time: the picture at its full width, so its writing reads
+ * without zooming, or the text as a single reading column. Either way a screen reader gets the
+ * text once, as the picture's description or as the text itself.
  */
-export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: ChapterSlide }) {
+export function ChapterMapSlide({
+  onViewChange,
+  save,
+  slide,
+  view,
+}: {
+  onViewChange: (view: ChapterMapView) => void;
+  save: MindMapSave;
+  slide: ChapterSlide;
+  view: ChapterMapView;
+}) {
   const t = useExtracted();
+  const descriptionId = useId();
   const [isZoomed, setIsZoomed] = useState(false);
   const { image, outline, title } = slide;
 
@@ -65,30 +88,48 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
   }
 
   return (
-    <div
-      className={cn(
-        TASK_COLUMN_CLASS,
-        "grid gap-6 pt-4 pb-8 min-[72rem]:max-w-304 min-[72rem]:grid-cols-[minmax(0,calc(100dvh-13rem))_22rem] min-[72rem]:items-start min-[72rem]:justify-center min-[72rem]:gap-10 min-[72rem]:px-6",
-      )}
+    <Tabs
+      className="w-full gap-2 pb-8"
       data-slot="chapter-map-slide"
+      onValueChange={(value: ChapterMapView) => onViewChange(value)}
+      value={view}
     >
-      <button
-        aria-haspopup="dialog"
-        className="focus-visible:ring-ring/50 w-full cursor-zoom-in rounded-xl outline-none focus-visible:ring-[3px] min-[72rem]:sticky min-[72rem]:top-4"
-        onClick={() => setIsZoomed(true)}
-        type="button"
-        {...SWIPE_THROUGH}
-      >
-        <MindMapThumbnail
-          className="outline-border bg-card aspect-square h-auto w-full rounded-xl object-contain outline -outline-offset-1"
-          image={image}
-          outline={outline}
-          sizes="(min-width: 72rem) 50rem, 100vw"
-          title={title}
-        />
-      </button>
+      <div className="bg-background sticky top-0 z-10 flex justify-center py-2">
+        <TabsList aria-label={t("Show the map as")}>
+          <TabsTrigger value="map">{t("Map")}</TabsTrigger>
+          <TabsTrigger value="text">{t("Text")}</TabsTrigger>
+        </TabsList>
+      </div>
 
-      <MindMapOutline outline={outline} />
+      <TabsContent className={MAP_FRAME_CLASS} value="map">
+        <button
+          aria-describedby={descriptionId}
+          aria-haspopup="dialog"
+          className="focus-visible:ring-ring/50 w-full cursor-zoom-in rounded-xl outline-none focus-visible:ring-[3px]"
+          onClick={() => setIsZoomed(true)}
+          type="button"
+          {...SWIPE_THROUGH}
+        >
+          <MindMapThumbnail
+            className="outline-border bg-card aspect-square h-auto w-full rounded-xl object-contain outline -outline-offset-1"
+            image={image}
+            outline={outline}
+            sizes="(min-width: 72rem) 64rem, 100vw"
+            title={title}
+          />
+        </button>
+        <p
+          aria-hidden="true"
+          className="text-muted-foreground mt-3 hidden text-center text-sm pointer-coarse:block"
+        >
+          {t("Tap the map to zoom in")}
+        </p>
+        <MindMapDescription id={descriptionId} outline={outline} />
+      </TabsContent>
+
+      <TabsContent className={TASK_COLUMN_CLASS} value="text">
+        <MindMapOutline outline={outline} titled />
+      </TabsContent>
 
       <MindMapViewer
         image={image}
@@ -98,7 +139,7 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
         save={save}
         title={title}
       />
-    </div>
+    </Tabs>
   );
 }
 

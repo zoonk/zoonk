@@ -7141,6 +7141,16 @@ msgid "Show all {count, number}"
 msgstr "{count, number}개 모두 보기"
 
 #: src/mind-maps/mind-map-outline.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "왼쪽으로 스크롤하기"
+
+#: src/mind-maps/mind-map-outline.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "오른쪽으로 스크롤하기"
+
+#: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
 msgid "In short:"
 msgstr "요약:"
