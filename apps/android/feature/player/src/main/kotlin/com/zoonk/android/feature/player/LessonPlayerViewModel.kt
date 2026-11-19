@@ -235,6 +235,8 @@ class LessonPlayerViewModel(
     private val now: () -> Long = System::currentTimeMillis,
     private val opening: String? = null,
     private val tapped: Boolean = false,
+    /** A host that plays the lesson its own way, as an explanation without its summary, keeps its copy. */
+    private val hosted: Boolean = false,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
     private val mutableEnding = MutableStateFlow(LessonEnding(inSession = studySessionId != null))
@@ -791,7 +793,7 @@ class LessonPlayerViewModel(
                         heldDeviceVerdicts.clear()
                         reading.await()
                         if (sessions.current != owner) return@launch
-                        val lesson = (read.state.value.value as? LessonLoad.Ready)?.lesson ?: opened
+                        val lesson = (read.state.value.value as? LessonLoad.Ready)?.lesson?.takeUnless { hosted } ?: opened
                         this@LessonPlayerViewModel.lesson = lesson
                         studySessionId = outcome.run.sessionId?.toString()
                         sessionMover = sessionSteps?.let { steps -> outcome.run.sessionId?.let { SessionMover(steps, it, viewModelScope) } }

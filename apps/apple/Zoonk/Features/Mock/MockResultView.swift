@@ -111,6 +111,16 @@ struct MockResultView: View {
     .navigationTitle(MockLabels.title(number: view.number))
     .completionMoments(view.day)
     .toolbar {
+      if hasDetails {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button {
+            choices.showsDetails = true
+          } label: {
+            Text("Details", tableName: "Mock")
+          }
+        }
+      }
+
       if view.purpose != .placement {
         TutorAskToolbarItem(scope: .mock(blockId: view.blockId))
       }
@@ -133,10 +143,12 @@ struct MockResultView: View {
     }
   }
 
-  /// The areas and what the mock showed.
+  /// How the answers went, then the areas.
   @ViewBuilder
   private var diagnosisSections: some View {
     if let result = view.result {
+      MockAnswersSection(result: result)
+
       if result.areas.count > 1 {
         MockAreaSection(result: result, opened: $choices.opened)
       } else if result.topics.count > 1 {
@@ -146,22 +158,21 @@ struct MockResultView: View {
           SectionTitle(Text("By topic", tableName: "Mock", comment: "Each topic's result"))
         }
       }
-
-      Section {
-        Button {
-          choices.showsDetails = true
-        } label: {
-          Text("See details", tableName: "Mock")
-        }
-        .buttonStyle(.outline)
-        .controlSize(.small)
-        .listRowSeparator(.hidden)
-      }
     }
   }
 
-  /// Main's `Details` drawer: the answers, each test, what it takes to pass, what stood out and
-  /// every caveat, said once.
+  /// Main's `Details` holds something only then; a mock with nothing behind its number has no way in.
+  private var hasDetails: Bool {
+    guard let result = view.result else { return false }
+
+    return result.points?.hasTests == true || view.passMarks != nil
+      || MockInsightsSection(result: result).hasInsights
+      || MockScoreSections(view: view, result: result, part: .details).hasScoreNote
+      || MockNotesSection(view: view).hasNotes
+  }
+
+  /// Main's `Details` drawer: each test, what it takes to pass, what stood out and every caveat,
+  /// said once.
   private var details: some View {
     NavigationStack {
       ZoonkList {
@@ -235,25 +246,124 @@ struct MockResultView: View {
     view.review.filter { $0.outcome != .blank }.count
   }
 
-  private var mainAction: some View {
-    Button {
-      dismiss()
-    } label: {
-      Text("Continue", tableName: "Mock", comment: "Leaves a mock's result")
-    }
-    .buttonStyle(.mainAction)
-    .keyboardShortcut(.defaultAction)
-  }
+  /// With mistakes to fix, reviewing them is the way on and leaving the other one, as on main.
+  private var reviewsMistakes: Bool { mistakes > 0 && view.purpose != .placement }
 
   @ViewBuilder
-  private var secondaryAction: some View {
-    if mistakes > 0, view.purpose != .placement {
+  private var mainAction: some View {
+    if reviewsMistakes {
       Button {
         router.open(.mistakes)
       } label: {
         Text("Review mistakes", tableName: "Mock", comment: "Opens the notebook")
       }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
+    } else {
+      Button {
+        dismiss()
+      } label: {
+        Text("Continue", tableName: "Mock", comment: "Leaves a mock's result")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
+    }
+  }
+
+  @ViewBuilder
+  private var secondaryAction: some View {
+    if reviewsMistakes {
+      Button {
+        dismiss()
+      } label: {
+        Text("Continue", tableName: "Mock", comment: "Leaves a mock's result")
+      }
       .buttonStyle(.outline)
+    }
+  }
+}
+
+/// Main's `MockResultAnswers`: how the answers went as one meter, each part named with its count
+/// under it.
+private struct MockAnswersSection: View {
+  let result: MockResult
+
+  private struct Part: Identifiable {
+    let id: Int
+    let label: Text
+    let count: Double
+    /// Nil for a blank answer: its part is the meter's track and its dot a ring.
+    let color: Color?
+  }
+
+  private var parts: [Part] {
+    guard let counts = result.answerCounts else { return [] }
+
+    return [
+      Part(
+        id: 0, label: Text("Right", tableName: "Mock", comment: "Right answers"),
+        count: counts.right, color: Color.success),
+      Part(
+        id: 1, label: Text("Wrong", tableName: "Mock", comment: "Wrong answers"),
+        count: counts.wrong, color: Color.destructive),
+      Part(
+        id: 2, label: Text("Partly right", tableName: "Mock", comment: "Partly right answers"),
+        count: Double(counts.partial), color: Color.mutedForeground),
+      Part(
+        id: 3, label: Text("Blank", tableName: "Mock", comment: "Blank answers"),
+        count: Double(counts.blank), color: nil),
+    ]
+    .filter { $0.id != 2 || $0.count > 0 }
+  }
+
+  private var blankCountsAsWrong: Bool { result.net == nil && result.blank > 0 }
+
+  var body: some View {
+    let parts = parts
+
+    if !parts.isEmpty || blankCountsAsWrong {
+      Section {
+        if !parts.isEmpty {
+          VStack(alignment: .leading, spacing: 8) {
+            MeterParts(
+              parts: parts.filter { $0.count > 0 }.map {
+                MeterParts.Part(
+                  weight: $0.count, fill: $0.color.map { MeterParts.Part.Fill.color($0) } ?? .track)
+              }
+            )
+            .accessibilityHidden(true)
+
+            FlowLayout(spacing: 12) {
+              ForEach(parts) { part in
+                HStack(spacing: 6) {
+                  Circle()
+                    .fill(part.color ?? Color.clear)
+                    .strokeBorder(
+                      part.color == nil ? Color.mutedForeground : Color.clear, lineWidth: 1
+                    )
+                    .frame(width: 6, height: 6)
+                    .accessibilityHidden(true)
+                  part.label.foregroundStyle(.mutedForeground)
+                  Text(part.count, format: .number).monospacedDigit()
+                }
+                .typeStyle(.note)
+                .accessibilityElement(children: .combine)
+              }
+            }
+          }
+          .padding(.vertical, 4)
+        }
+      } header: {
+        SectionTitle(Text("Answers", tableName: "Mock"))
+      } footer: {
+        if blankCountsAsWrong {
+          SectionFooter {
+            Text(
+              "Blank answers count as wrong.", tableName: "Mock",
+              comment: "Blank answers in a score")
+          }
+        }
+      }
     }
   }
 }
@@ -321,57 +431,6 @@ private struct MockScoreSections: View {
 
   @ViewBuilder
   private var detailSections: some View {
-    if let counts {
-      Section {
-        IconLabeledContent {
-          Text(counts.right, format: .number)
-        } title: {
-          Text("Right", tableName: "Mock", comment: "Right answers")
-        } icon: {
-          Image(systemName: "checkmark").foregroundStyle(.success)
-        }
-        IconLabeledContent {
-          Text(counts.wrong, format: .number)
-        } title: {
-          Text("Wrong", tableName: "Mock", comment: "Wrong answers")
-        } icon: {
-          Image(systemName: "xmark").foregroundStyle(.destructive)
-        }
-        if counts.partial > 0 {
-          IconLabeledContent {
-            Text(counts.partial, format: .number)
-          } title: {
-            Text("Partly right", tableName: "Mock", comment: "Partly right answers")
-          } icon: {
-            Image(systemName: "circle.dashed")
-          }
-        }
-        IconLabeledContent {
-          Text(counts.blank, format: .number)
-        } title: {
-          Text("Blank", tableName: "Mock", comment: "Blank answers")
-        } icon: {
-          Image(systemName: "minus")
-        }
-      } footer: {
-        SectionFooter {
-          if result.net == nil, result.blank > 0 {
-            blankNote
-          }
-        }
-      }
-      .monospacedDigit()
-    }
-
-    if counts == nil, result.net == nil, result.blank > 0 {
-      Section {
-      } footer: {
-        SectionFooter {
-          blankNote
-        }
-      }
-    }
-
     if let points = result.points, points.hasTests {
       MockPointsSection(points: points)
     }
@@ -400,9 +459,7 @@ private struct MockScoreSections: View {
     }
   }
 
-  private var blankNote: Text {
-    Text("Blank answers count as wrong.", tableName: "Mock", comment: "Blank answers in a score")
-  }
+  var hasScoreNote: Bool { scoreNote != nil }
 
   /// Main's one sentence under the number: every minimum reached, or the best and worst subjects.
   /// A missed minimum's headline stands alone.
@@ -415,17 +472,10 @@ private struct MockScoreSections: View {
       }
     }
 
-    let shares = result.areas.filter { $0.total > 0 }.map {
-      (name: $0.name, share: $0.correct / Double($0.total))
-    }
-    .sorted { $0.share > $1.share }
-
-    guard shares.count > 1, let best = shares.first, let worst = shares.last,
-      shares[1].share < best.share, shares[shares.count - 2].share > worst.share
-    else { return nil }
+    guard let areas = result.verdictAreas else { return nil }
 
     return String(
-      localized: "Strongest: \(best.name). Work on: \(worst.name).", table: "Mock",
+      localized: "Strongest: \(areas.best.name). Work on: \(areas.worst.name).", table: "Mock",
       comment: "Under a mock exam's score: its best and worst subjects")
   }
 
@@ -488,17 +538,6 @@ private struct MockScoreSections: View {
           comment: "Score went down since the learner's previous mock exam"),
         false
       )
-  }
-
-  private var counts: (right: Double, wrong: Double, partial: Int, blank: Int)? {
-    if let net = result.net {
-      return (Double(net.right), Double(net.wrong), net.partial, net.blank)
-    }
-
-    guard result.irt != nil else { return nil }
-    return (
-      result.correct, Double(result.total) - result.correct - Double(result.blank), 0, result.blank
-    )
   }
 
   private var scoreNote: String? {
@@ -658,7 +697,7 @@ private struct MockInsightsSection: View {
   var body: some View {
     let slowest = slowestArea
 
-    if slowest != nil || result.unansweredAtTimeout > 0 || incoherent != nil || unsure != nil {
+    if hasInsights {
       Section {
         if slowest != nil || result.unansweredAtTimeout > 0 {
           insight(
@@ -718,6 +757,10 @@ private struct MockInsightsSection: View {
           Text("What stood out", tableName: "Mock", comment: "The mock's insights"))
       }
     }
+  }
+
+  var hasInsights: Bool {
+    slowestArea != nil || result.unansweredAtTimeout > 0 || incoherent != nil || unsure != nil
   }
 
   private var slowestArea: MockResult.Area? {
@@ -1201,12 +1244,9 @@ private struct MockReviewSection: View {
             if let context = item.context {
               LessonTextBlocks(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
-            LessonTextBlocks(item.question).typeStyle(.reading.weight(.semibold))
-            if item.outcome == .blank {
-              Text("You left it blank.", tableName: "Mock", comment: "A blank question")
-                .foregroundStyle(.mutedForeground)
-            } else if let answer = TrueFalseWords.savedAnswer(
-              item.learnerAnswer, format: item.format, labels: labels)
+            if item.outcome != .blank,
+              let answer = TrueFalseWords.savedAnswer(
+                item.learnerAnswer, format: item.format, labels: labels)
             {
               MistakeAnswerRow(text: answer, isRight: false, isLiteral: item.format == "typed")
             }
@@ -1215,41 +1255,22 @@ private struct MockReviewSection: View {
             {
               MistakeAnswerRow(text: correct, isRight: true, isLiteral: item.format == "typed")
             }
-            if item.outcome == .partial {
-              Text(
-                "Partly right: it earned part of its points.", tableName: "Mock",
-                comment: "A partly right answer"
-              )
-              .foregroundStyle(.mutedForeground)
-            }
             if let explanation = item.explanation {
-              LessonTextBlocks(explanation).typeStyle(.reading).foregroundStyle(.mutedForeground)
+              LessonTextBlocks(explanation).typeStyle(.reading)
             }
             if let citation = item.citation {
               CitationNote(citation: citation)
             }
           }
         } label: {
+          // What it asked, then which question it was and how it went: a wrong answer needs no
+          // word, the list is of them.
           VStack(alignment: .leading, spacing: 2) {
-            Group {
-              if let area = item.area {
-                Chip(
-                  Text(
-                    "Question \(item.number)\u{00A0}· \(area)", tableName: "Mock",
-                    comment: "Review"))
-              } else {
-                Chip(
-                  Text(
-                    "Question \(item.number)", tableName: "Mock", comment: "A question by number")
-                )
-              }
-            }
-            .padding(.bottom, 4)
-            // Open, the whole question shows under it.
-            if !opened.contains("review:\(item.id)") {
-              LessonRichText(item.question)
-                .lineLimit(2)
-            }
+            LessonRichText(item.question)
+              .typeStyle(.body.weight(.medium))
+            FactSegments(facts(item))
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .id(item.id)
@@ -1258,9 +1279,27 @@ private struct MockReviewSection: View {
     } header: {
       SectionTitle(
         Text("Questions to review", tableName: "Mock", comment: "The mock's questions to review")
-      )
+      ) {
+        Text(items.count, format: .number)
+      }
       .onScrollVisibilityChange(threshold: 0.5) { rows?.update(reviewHeader, isShown: $0) }
     }
+  }
+
+  private func facts(_ item: MockReviewItem) -> [String] {
+    let outcome: String? =
+      switch item.outcome {
+      case .blank: String(localized: "Blank", table: "Mock", comment: "A blank question")
+      case .partial:
+        String(localized: "Partly right", table: "Mock", comment: "Partly right answers")
+      case .wrong: nil
+      }
+
+    return [
+      String(localized: "Question \(item.number)", table: "Mock", comment: "A question by number"),
+      item.area, outcome,
+    ]
+    .compactMap { $0 }
   }
 }
 
@@ -1270,10 +1309,7 @@ private struct MockNotesSection: View {
   var body: some View {
     let lines = view.leftOut.compactMap(MockLabels.leftOut)
 
-    if !lines.isEmpty || short != nil || view.sizeSource.pastEdition != nil
-      || view.sizeSource.questions != .notice || view.sizeSource.time != .notice
-      || view.sizeSource.subjects == .even || view.sizeSource.formats == .even
-    {
+    if hasNotes {
       Section {
       } footer: {
         SectionFooter {
@@ -1287,6 +1323,13 @@ private struct MockNotesSection: View {
         }
       }
     }
+  }
+
+  var hasNotes: Bool {
+    !view.leftOut.compactMap(MockLabels.leftOut).isEmpty || short != nil
+      || view.sizeSource.pastEdition != nil
+      || view.sizeSource.questions != .notice || view.sizeSource.time != .notice
+      || view.sizeSource.subjects == .even || view.sizeSource.formats == .even
   }
 
   private var short: String? {

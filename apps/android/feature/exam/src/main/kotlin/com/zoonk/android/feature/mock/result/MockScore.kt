@@ -1,10 +1,14 @@
 package com.zoonk.android.feature.mock.result
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,11 +31,9 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.MeterPart
+import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.Readout
-import com.zoonk.android.ui.components.StatTile
-import com.zoonk.android.ui.components.StatTiles
-import com.zoonk.android.ui.components.StatTone
-import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -43,17 +45,15 @@ import com.zoonk.api.models.MockResultAreasInner
 import kotlin.math.roundToInt
 
 /**
- * Main's score step: how it went in one number and one sentence, the day's moment, the subjects,
- * and the two small ways on: [details] and, where the review isn't inline, [answers].
+ * Main's score step: how it went in one number and one sentence, the day's moment, then what supports
+ * the number ([summary], where no aside holds it) and the questions to review.
  */
 @Composable
 internal fun ScoreStep(
     view: MockExam,
     result: MockResult,
     dayMoment: @Composable () -> Unit,
-    breakdown: @Composable () -> Unit,
-    details: (@Composable () -> Unit)?,
-    answers: (@Composable () -> Unit)?,
+    summary: (@Composable () -> Unit)?,
     review: (@Composable () -> Unit)?,
 ) {
     val missed = missedMinimum(result.points)
@@ -65,17 +65,11 @@ internal fun ScoreStep(
         // A miss's headline isn't followed by a celebration; the day's summary still shows the belt.
         if (missed == null) dayMoment()
     }
-    breakdown()
-    if (details != null || answers != null) {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            details?.invoke()
-            answers?.invoke()
-        }
-    }
+    summary?.invoke()
     review?.invoke()
 }
 
-/** Main's `MockResultDetails`: every count, table and caveat behind the score, for the learner who asks. */
+/** Main's `MockResultDetails`: every table and caveat behind the score, for the learner who asks. */
 @Composable
 internal fun ScoreDetails(
     view: MockExam,
@@ -83,9 +77,6 @@ internal fun ScoreDetails(
     about: List<String>,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
-        if (answerCounts(result) != null) {
-            ResultSection(stringResource(R.string.mock_result_answers)) { AnswerTiles(result) }
-        }
         result.points?.takeIf { hasTestRows(it) }?.let { PointsByTest(it) }
         PassMarks(view)
         if (hasInsights(result)) Insights(result)
@@ -100,8 +91,7 @@ internal fun hasDetails(
     result: MockResult,
     about: List<String>,
 ): Boolean =
-    answerCounts(result) != null ||
-        hasTestRows(result.points) ||
+    hasTestRows(result.points) ||
         view.passMarks != null ||
         hasInsights(result) ||
         about.isNotEmpty() ||
@@ -109,14 +99,25 @@ internal fun hasDetails(
 
 private fun areaMeasure(area: MockResultAreasInner): Double = area.score?.score ?: if (area.total > 0) area.correct / area.total else 0.0
 
+/**
+ * Main's `getVerdictAreas`: the subject that went best and the one to work on, only where the answers
+ * tell them apart. An estimate ranks subjects even when nothing was answered, so a subject is the
+ * strongest only with a right answer in it, and the one to work on only with a miss.
+ */
+internal fun verdictAreas(areas: List<MockResultAreasInner>): Pair<MockResultAreasInner, MockResultAreasInner>? {
+    val ranked = areas.sortedByDescending(::areaMeasure)
+    val best = ranked.firstOrNull() ?: return null
+    val worst = ranked.last()
+    if (areaMeasure(best) == areaMeasure(worst)) return null
+    if (best.correct <= 0 || worst.correct >= worst.total) return null
+    return best to worst
+}
+
 /** One sentence on what the number means for the learner's next days, or nothing. */
 @Composable
 private fun verdict(result: MockResult): String? {
     if (reachedEveryMinimum(result.points)) return stringResource(R.string.mock_result_every_minimum)
-    val ranked = result.areas.sortedByDescending(::areaMeasure)
-    val best = ranked.firstOrNull() ?: return null
-    val worst = ranked.last()
-    if (areaMeasure(best) == areaMeasure(worst)) return null
+    val (best, worst) = verdictAreas(result.areas) ?: return null
     return stringResource(R.string.mock_result_strongest, best.name, worst.name)
 }
 
@@ -315,77 +316,67 @@ private fun answerCounts(result: MockResult): AnswerCounts? {
     return AnswerCounts(result.correct, result.total - result.correct - result.blank, 0, result.blank)
 }
 
+internal fun hasAnswerCounts(result: MockResult): Boolean = answerCounts(result) != null || (result.net == null && result.blank > 0)
+
+/** Main's `MockResultAnswers`: how the answers went as one meter, each part named with its count under it. */
 @Composable
-private fun AnswerTiles(result: MockResult) {
-    val counts = answerCounts(result) ?: return
-    val blankNote = result.net == null && result.blank > 0
+internal fun AnswerMeter(result: MockResult) {
+    val counts = answerCounts(result)
     val locale = currentLocale()
+    val right = MaterialTheme.colorScheme.tertiary
+    val wrong = MaterialTheme.colorScheme.error
+    val quiet = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        counts.let {
-            val tiles =
-                listOfNotNull<@Composable (Modifier) -> Unit>(
-                    { modifier ->
-                        AnswerTile(
-                            R.string.mock_result_right,
-                            formatNumber(it.right, locale),
-                            R.drawable.ic_check,
-                            StatTone.Success.color,
-                            modifier,
-                        )
-                    },
-                    { modifier ->
-                        AnswerTile(
-                            R.string.mock_result_wrong,
-                            formatNumber(it.wrong, locale),
-                            R.drawable.ic_close,
-                            MaterialTheme.colorScheme.error,
-                            modifier,
-                        )
-                    },
-                    if (it.partial > 0) {
-                        { modifier ->
-                            AnswerTile(
-                                R.string.mock_result_partly_right,
-                                formatNumber(it.partial.toDouble(), locale),
-                                R.drawable.ic_radio_button_partial,
-                                StatTone.Neutral.color,
-                                modifier,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    { modifier ->
-                        AnswerTile(
-                            R.string.mock_result_blank,
-                            formatNumber(it.blank.toDouble(), locale),
-                            R.drawable.ic_remove,
-                            StatTone.Neutral.color,
-                            modifier,
-                        )
+        counts?.let {
+            val parts =
+                listOfNotNull(
+                    AnswerPart(R.string.mock_result_right, it.right, right),
+                    AnswerPart(R.string.mock_result_wrong, it.wrong, wrong),
+                    AnswerPart(R.string.mock_result_partly_right, it.partial.toDouble(), quiet).takeIf { part -> part.count > 0 },
+                    AnswerPart(R.string.mock_result_blank, it.blank.toDouble(), null),
+                )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                MeterParts(
+                    parts.filter { part -> part.count > 0 }.map { part ->
+                        MeterPart(part.color?.let { color -> MeterPart.Fill.Solid(color) } ?: MeterPart.Fill.Track, part.count.toFloat())
                     },
                 )
-            StatTiles(columns = tiles.size, tiles = tiles)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    parts.forEach { part -> AnswerLegendItem(part, formatNumber(part.count, locale), quiet) }
+                }
+            }
         }
-        if (blankNote) NoteLines(listOf(stringResource(R.string.mock_result_blank_wrong)))
+        if (result.net == null && result.blank > 0) NoteLines(listOf(stringResource(R.string.mock_result_blank_wrong)))
     }
 }
 
+/** A blank answer has no [color]: its part is the meter's track and its dot a ring. */
+private class AnswerPart(
+    val label: Int,
+    val count: Double,
+    val color: Color?,
+)
+
 @Composable
-private fun AnswerTile(
-    label: Int,
+private fun AnswerLegendItem(
+    part: AnswerPart,
     value: String,
-    icon: Int,
-    tint: Color,
-    modifier: Modifier,
+    ring: Color,
 ) {
-    StatTile(
-        label = stringResource(label),
-        value = value,
-        modifier = modifier,
-        icon = { iconModifier -> Icon(painterResource(icon), contentDescription = null, modifier = iconModifier, tint = tint) },
-    )
+    Row(
+        Modifier.semantics(mergeDescendants = true) {},
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            Modifier.size(6.dp).then(
+                part.color?.let { Modifier.background(it, CircleShape) } ?: Modifier.border(1.dp, ring, CircleShape),
+            ),
+        )
+        Text(stringResource(part.label), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+        Text(value, style = MaterialTheme.typography.labelMedium.withTabularFigures())
+    }
 }
 
 @Composable
