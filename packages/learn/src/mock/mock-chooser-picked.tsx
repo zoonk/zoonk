@@ -93,16 +93,17 @@ export function PickedMock({
 }) {
   const t = useExtracted();
   const name = useMockOptionName();
+  const title = name({ option, severalDays });
 
   return (
     <DetailAsideSection
       className="max-[72rem]:hidden"
-      title={name({ option, severalDays })}
+      title={title}
       titleId="mock-chooser-picked-title"
     >
       <ChooserPicked
         asks={{
-          names: option.covers ?? option.areas,
+          names: (option.covers ?? option.areas).filter((asked) => asked !== title),
           title: option.covers ? t("Parts") : t("Subjects"),
         }}
         size={option}
