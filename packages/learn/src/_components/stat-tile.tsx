@@ -16,7 +16,7 @@ type StatTone = keyof typeof STAT_TONE;
 
 /** A lone stat is its block's one number: a readout, with no box stretched around it. */
 export const LONE_STAT_CLASS =
-  "[&>:only-child]:rounded-none [&>:only-child]:p-0 [&>:only-child]:ring-0 [&>:only-child_[data-slot=stat-detail]]:text-compact [&>:only-child_[data-slot=stat-value]]:pt-0.5 [&>:only-child_[data-slot=stat-value]]:text-3xl";
+  "[&>:only-child]:gap-2.5 [&>:only-child]:rounded-none [&>:only-child]:p-0 [&>:only-child]:ring-0 [&>:only-child_[data-slot=stat-detail]]:text-compact [&>:only-child_[data-slot=stat-value]]:pt-0.5 [&>:only-child_[data-slot=stat-value]]:text-3xl";
 
 export function StatTiles({ className, ...props }: React.ComponentProps<"ul">) {
   return (
