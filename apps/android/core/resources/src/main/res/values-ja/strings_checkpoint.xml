@@ -38,10 +38,10 @@
   "checkpoint_removed_title": "28b75b4b0ccdd1674ce230c96a5082cad6b50131c4ebcf2aff64bd4242a8c66c",
   "checkpoint_retry_after_lessons": "7210ed2233a304fb381696a1da634816356cc9f445e250dac3ad1032f8c27112",
   "checkpoint_retry_tomorrow": "292ed46903cf0233b70fcbda842306ddd5fc8e6a9fa53c37b33feba54543f0b7",
-  "checkpoint_review": "a7195be1c7202c61227338d59a63848d7fc17e0a383d9e741a00d66e50e637e4",
+  "checkpoint_review": "430917fed3712aa4d1f4de2b3072c98105f1b5b0fecb2c2c682d18dd741b9b54",
   "checkpoint_rewards": "960bf0019ad89bb81ebb1a69d5ba4c393b209053c68d3c907e4ad4bb88b4931b",
   "checkpoint_right_to_win": "5b4fee749a5b7862d6b2bd0e7547a4df5ca74a22a7923bfd0debd1a35cd33db4",
-  "checkpoint_see_result": "2297b2fead5811a253055b73dd791f3d564ad81070e69ab1ffd8f8c78a9fffcb",
+  "checkpoint_see_result": "edb6af8f3cc4efefae4d0c893c1d02cd6433cc2dcedaa71fb22919e3e2a52b9f",
   "checkpoint_shield": "6161a5c1dc06960591233856cc8076a669b49f07f63a198eeeb13954b93a0242",
   "checkpoint_shield_value": "11e20fa37fce152960a4c7eb3972647f210242c19d47e1b96b74a56d311bc556",
   "checkpoint_to_go": "d28e5b8fd9e000d2499c26c83e735373bbe4c004434368a55ac4805f56631171",
@@ -131,5 +131,5 @@
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">次のフェーズ「%1$s」はもう始められます。</string>
     <string name="checkpoint_answers">答え</string>
-    <string name="checkpoint_review">答えを見直す</string>
+    <string name="checkpoint_review">解答を見る</string>
 </resources>

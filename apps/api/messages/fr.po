@@ -178,9 +178,10 @@ msgid "Use 150 characters or fewer."
 msgstr "Utilise au maximum 150 caractères."
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "15PZTm"
-msgid "Go to Zoonk"
-msgstr "Aller sur Zoonk"
+#: src/lib/reminders/reminder-copy.ts
+msgctxt "l22EVR"
+msgid "Open Zoonk"
+msgstr "Ouvrir Zoonk"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "cUktz7"
@@ -258,11 +259,6 @@ msgstr "Commence par {minutes, plural, one {# minute} other {# minutes}}. Ton pl
 msgctxt "EUWgvZ"
 msgid "{minutes, plural, one {# minute} other {# minutes}} for this one, and {others, plural, one {# more goal} other {# more goals}} after it."
 msgstr "{minutes, plural, one {# minute} other {# minutes}} pour cet objectif, puis {others, plural, one {# autre objectif} other {# autres objectifs}}."
-
-#: src/lib/reminders/reminder-copy.ts
-msgctxt "l22EVR"
-msgid "Open Zoonk"
-msgstr "Ouvrir Zoonk"
 
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "wdqkFx"

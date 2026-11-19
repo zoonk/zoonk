@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "warm_up_back_to_quiz": "8587fa8e1e428b5343860b0f5d754e8469585b0cf437bbd4a96e886eb2e10ccd",
+  "warm_up_back_to_quiz": "3e91ab00a38c99d0989401d62f702fbfc7cf112b8aa789d49589e3ffb7182a76",
   "warm_up_first_lesson": "0de1f8647b32cab774e009a9a51adb27b4f9ff4d366597bbbf60e53f350a1b01",
   "warm_up_first_lesson_ready": "c415b940abfe471d93c2d55663f3ae61505b31f31cfe83d9bd47f050ee33e432",
   "warm_up_first_lesson_screens": "80814ac610a2331450c15a3f0abdec4341b50f2b11701d7d4ac31360e65b9a26",
@@ -12,10 +12,10 @@
   "warm_up_plan_ready_one_question": "fb9584f04733c18da6915a6b2a11d7b28b8ff5b0f232a2cf0b976279acbda8f5",
   "warm_up_plan_ready_whenever": "5908b6f3e4be33e7e676b0d1ea3bcc007b56a83185a29d625554db7adfd17398",
   "warm_up_plan_waiting": "53e18097f5fce4e414f11b5718d8dc8554a4790051fc8d3dc5c165306fdf8b27",
-  "warm_up_play_quiz": "7cf0a428ed2fb351743fefe88db81906afd28dcd20c4efd393e720130580dec8",
+  "warm_up_play_quiz": "3a44c2da5e34c8994177c6c3aeb3c475146136e738c465064f0361a237ce6277",
   "warm_up_questions_ready": "26378a80578f8a2f6ea28a9fc2253dba67d460b62fcb5c743b642c5a9ec36f83",
   "warm_up_ready_to_start": "9b363f48fda0e55645b736c1db76b3d744b0fbf904e02a20e8364447a3f7e61d",
-  "warm_up_start_first_lesson": "5b80743704a2507bef51ed61d13622ab6aae921bba41571eb31a3bf59dd99762",
+  "warm_up_start_first_lesson": "f107e8e8d1aa7772fc55300d6f55423562aeb51c07b45f3b81e2bccb0458da4a",
   "warm_up_title": "a41aea69a183af3f30c458d2a38218237bf90040698b3477dcdd9c118c0f9ed4",
   "warm_up_title_ready": "c3ae9fa25deb90b5e8eaad635ec4db29152b535a43d259a96ea0eb82964493b7"
 }
@@ -38,12 +38,12 @@
     <string name="warm_up_plan_ready_whenever">Découvre-le quand tu veux.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Tes questions sont prêtes</string>
-    <string name="warm_up_back_to_quiz">Revenir au quiz</string>
-    <string name="warm_up_play_quiz">Faire un quiz pour patienter</string>
+    <string name="warm_up_back_to_quiz">Retour au quiz</string>
+    <string name="warm_up_play_quiz">Faire un quiz</string>
     <string name="warm_up_first_lesson_writing">Préparation de ta première leçon : %1$s</string>
     <string name="warm_up_first_lesson_ready">Ta première leçon est prête</string>
     <string name="warm_up_plan_waiting">Ton plan t’attendra quand tu auras fini.</string>
-    <string name="warm_up_start_first_lesson">Commencer la leçon 1</string>
+    <string name="warm_up_start_first_lesson">Commencer</string>
     <string name="warm_up_first_lesson">Ta première leçon</string>
     <string name="warm_up_ready_to_start">Prêt à démarrer</string>
     <string name="warm_up_first_lesson_screens">Préparation d’environ 5 courts écrans</string>

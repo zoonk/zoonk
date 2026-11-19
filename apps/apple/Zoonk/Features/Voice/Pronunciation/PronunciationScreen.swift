@@ -187,7 +187,7 @@ private struct PronunciationRoundView: View {
       Task { await round.next() }
     } label: {
       Label {
-        Text("Skip this word", tableName: "Voice", comment: "Skips a word in the round")
+        Text("Skip", tableName: "Voice", comment: "Skips a word in the round")
       } icon: {
         Image(systemName: "forward.end")
       }
@@ -302,7 +302,7 @@ private struct PronunciationRoundView: View {
           Task { await round.next() }
         } label: {
           if round.isLast {
-            Text("See how it went", tableName: "Voice", comment: "Ends the round")
+            Text("See result", tableName: "Voice", comment: "Ends the round")
           } else {
             Text("Continue", tableName: "Voice", comment: "Goes on to the next word")
           }
@@ -317,7 +317,7 @@ private struct PronunciationRoundView: View {
         Button {
           Task { await round.next() }
         } label: {
-          Text("Skip this word", tableName: "Voice", comment: "Skips a word in the round")
+          Text("Skip", tableName: "Voice", comment: "Skips a word in the round")
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.mainAction)

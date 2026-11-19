@@ -36,7 +36,7 @@ import kotlin.math.ceil
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-/** [entry] is the small "Take a mock exam" under the list, on the days the page has no main action. */
+/** [entry] is the small "New mock" under the list, on the days the page has no main action. */
 internal fun ExamView.showsMocks(entry: Boolean): Boolean = runningMocks.isNotEmpty() || nextMock != null || mocks.isNotEmpty() || entry
 
 /** Main's `ExamMocks`: the mock exams running, the plan's next one and those taken, newest first. */

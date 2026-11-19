@@ -67,7 +67,7 @@ private val OPEN_RETRY = 2.seconds
 private enum class WaitMoment { NotReady, GettingReady, Ready, Stopped }
 
 /**
- * A lesson not ready yet (main's `LessonWaiting`): "Get it ready", then the wait, which goes on if
+ * A lesson not ready yet (main's `LessonWaiting`): "Prepare", then the wait, which goes on if
  * the learner leaves, and a lesson or review that is ready now to do meanwhile.
  */
 @Composable

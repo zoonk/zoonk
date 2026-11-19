@@ -380,7 +380,7 @@ class CheckpointScreenshots {
         rule.mainClock.advanceTimeBy(10_000)
         rule.waitForIdle()
         if (openReview) {
-            rule.onNodeWithText("Review the answers").performClick()
+            rule.onNodeWithText("See answers").performClick()
             rule.mainClock.advanceTimeBy(1_000)
             rule.waitForIdle()
         }

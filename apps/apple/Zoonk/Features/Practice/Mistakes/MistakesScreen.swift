@@ -8,12 +8,6 @@ struct MistakesScreen: View {
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
-  private var goalName: String? {
-    summary.summary.value.flatMap { learner in
-      learner.goals.first { $0.id == learner.activeGoalID }?.displayName
-    }
-  }
-
   private func mistakes(fixed: Bool) -> Resource<Components.Schemas.MistakeList> {
     practice.mistakes(goalId: goalId, fixed: fixed)
   }
@@ -62,8 +56,9 @@ struct MistakesScreen: View {
           hooks.navigate(.mistakePractice(skillId: nil))
         } label: {
           Text(
-            "Practice mistakes", tableName: "Practice",
-            comment: "Starts practicing the notebook's ready mistakes.")
+              LocalizedStringResource(
+                "practiceMistakesAction", defaultValue: "Practice mistakes", table: "Practice",
+                comment: "Opens practice on the mistakes that are ready to fix."))
         }
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
@@ -84,17 +79,12 @@ struct MistakesScreen: View {
   private func subtitle(_ list: Components.Schemas.MistakeList?) -> String? {
     let opensTomorrow =
       list.map { $0.availability.ready == 0 && $0.availability.tomorrow > 0 } ?? false
-    let facts = [
-      goalName,
-      opensTomorrow
-        ? String(
-          localized: "Practice opens tomorrow", table: "Practice",
-          comment:
-            "Under the notebook's title, after the goal's name, when no mistake is ready today and some are tomorrow"
-        ) : nil,
-    ].compactMap(\.self)
-
-    return facts.isEmpty ? nil : facts.joinedFacts()
+    return opensTomorrow
+      ? String(
+        localized: "Practice opens tomorrow", table: "Practice",
+        comment:
+          "Under the notebook's title, when no mistake is ready today and some are tomorrow")
+      : nil
   }
 
   private func picker(counts: Components.Schemas.MistakeList.CountsPayload?) -> some View {
@@ -177,6 +167,7 @@ private struct MistakeListSections: View {
           ForEach(Array(group.mistakes.enumerated()), id: \.element.id) { position, mistake in
             MistakeEntryView(
               mistake: mistake, labels: labels,
+              tomorrowOnPage: list.availability.ready == 0,
               continuesSet: position > 0 && mistake.snapshot.set != nil
                 && group.mistakes[position - 1].snapshot.set?.value1.id
                   == mistake.snapshot.set?.value1.id
@@ -279,6 +270,8 @@ private struct MistakeEntryView: View {
 
   let mistake: Components.Schemas.Mistake
   let labels: PracticeTrueFalseLabels
+  /// The page already says practice opens tomorrow, so the entry doesn't say it again.
+  let tomorrowOnPage: Bool
   let continuesSet: Bool
   @Environment(\.practiceHooks) private var hooks
 
@@ -338,10 +331,11 @@ private struct MistakeEntryView: View {
   @ViewBuilder
   private var actions: some View {
     let skillId = mistake.practiceAvailable ? mistake.skill?.id : nil
+    let tomorrow = mistake.practiceAvailableTomorrow && !tomorrowOnPage
 
-    if mistake.practiceAvailableTomorrow || skillId != nil || mistake.lesson != nil {
+    if tomorrow || skillId != nil || mistake.lesson != nil {
       ButtonRow(spacing: 12) {
-        if mistake.practiceAvailableTomorrow {
+        if tomorrow {
           Text(
             "Practice tomorrow", tableName: "Practice",
             comment: "A mistake from today, ready to practice tomorrow."

@@ -310,7 +310,6 @@
   "plan_mock_exam": "9d492ed16650185e77706fd483fef558695b2fa1c8b302ac7c7f733cb1de6cc1",
   "plan_mock_exams": "f0af37de2af30a392d8eb36dc34fc6821891d0e0e6d0480f65cfbf8661a388c5",
   "plan_mock_exams_count": "92a073898982e05523d139b5883eb15d7c3efd13648b17f4dbfc1bdf1f356288",
-  "plan_mocks_before_next_exam": "423efea8caed705412cbdba1aad3a89b8b8993d227cf8d328328ec8a39531a8d",
   "plan_mocks_every_weeks": "f79f95468d5d73460322124a170c4e98011d30f5d8dd5cdaa94511681ff921a6",
   "plan_mocks_next": "0f054df133835378a045cc9dd32dece24472a3ada7be122156891e134ef466a7",
   "plan_mondays": "b2a8176408cd8c47eaf504dabdde652f23043661c01262cae2cb64e4227984c7",
@@ -325,7 +324,6 @@
   "plan_named_month_note": "f564bc5630675166fdfce41d76043ff7172f846b57eea57f204acfdd1caaa792",
   "plan_next": "5f2798b1c49bbd03d56cb23e246f96090bd58642b9eefef073852de2acabbff1",
   "plan_next_keep_going": "cf9d66ac5f73cb68b69b106c7c1a13448c83885fb4fb309edefc07a661e0c8c5",
-  "plan_next_on_path": "a043ea3802e2c82354ff3a8f76f8cbb5a89cb9280c18bc1f929b2678eaa95f38",
   "plan_next_past_share": "0a92c3bbea3d03d351634268dfece429e035d9237b221318932e39cd69c4d270",
   "plan_next_review_every_topic": "329c1f0ff847fc2a5656feada707029c061c76f22ffaa156949d08f89545d2e8",
   "plan_next_review_forgetting": "d8dc32d02e9270665adb77ee693b15ba1c002e6df0ead1f0089ea025db30866e",
@@ -700,17 +698,11 @@
         <item quantity="other">%d simulazioni</item>
     </plurals>
     <!-- %2$s is a date, such as "Nov 8". -->
-    <plurals name="plan_mocks_before_next_exam">
-        <item quantity="one">%1$d simulazione prima del prossimo esame, il %2$s</item>
-        <item quantity="many">%1$d simulazioni prima del prossimo esame, il %2$s</item>
-        <item quantity="other">%1$d simulazioni prima del prossimo esame, il %2$s</item>
-    </plurals>
     <plurals name="plan_lessons_of">
         <item quantity="one">%1$d lezione su %2$d</item>
         <item quantity="many">%1$d lezioni su %2$d</item>
         <item quantity="other">%1$d lezioni su %2$d</item>
     </plurals>
-    <string name="plan_next_on_path">Le tue prossime tappe</string>
     <string name="plan_date_to_be_confirmed">Data da confermare</string>
     <string name="plan_more">Più</string>
     <string name="plan_mind_maps">Mappe mentali</string>

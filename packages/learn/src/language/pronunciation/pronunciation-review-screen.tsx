@@ -84,7 +84,7 @@ function WordMenu({ disabled, onSkip }: { disabled: boolean; onSkip: () => void 
     <TaskHeaderMenu>
       <DropdownMenuItem disabled={disabled} onClick={onSkip}>
         <SkipForwardIcon aria-hidden="true" />
-        {t("Skip this word")}
+        {t("Skip")}
       </DropdownMenuItem>
     </TaskHeaderMenu>
   );
@@ -223,7 +223,7 @@ function WordActions({
           </Button>
         )}
         <TaskMainButton busy={round.isPending} onClick={round.next}>
-          {isLast ? t("See how it went") : t("Continue")}
+          {isLast ? t("See result") : t("Continue")}
         </TaskMainButton>
       </TaskActions>
     );
@@ -233,7 +233,7 @@ function WordActions({
     return (
       <TaskActions>
         <TaskMainButton busy={round.isPending} onClick={round.next}>
-          {t("Skip this word")}
+          {t("Skip")}
         </TaskMainButton>
       </TaskActions>
     );

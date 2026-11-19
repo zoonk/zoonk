@@ -10,7 +10,7 @@
   "mock_break_time_left": "caf2d5097d2b6c806fb37d523031f6bbd1c512d4ded6f354e4fb5cfcdc3867d5",
   "mock_cell_answered": "e09f9582256d3801b275631b56bdfdf9a9d358390b674d5241ee92b7d337bdcc",
   "mock_cell_marked_for_review": "db845cacb9e93923509a219601ee73ad8c7b57c0d25978b95a4b8177e3c25dac",
-  "mock_continue": "01897c01a615fad3588a06fd5cae5d418ffc631a6d459cdb9a77f5dc447c9e1f",
+  "mock_continue": "1357c3012d9690c7dc533e11cd0e7a4aa8b56918e7f417625ae911555c981bd7",
   "mock_continue_section": "46ee19d55a1dab561333d0a00f8a3f4fc7b6bd627bec601ee76fbb77f57182b2",
   "mock_essay_blank": "81108836c829806b2283ab6dd5964e5985af71551f13f8041ff65ca4a9ddf848",
   "mock_essays_blank": "f4613a046d96c975ec4a832d872b63f5a8bf74f039f9050d8f6cc8b08752aac5",
@@ -34,18 +34,13 @@
   "mock_left_blank_only": "9e0a834ef9e48935965da623c1e759f580c064355e9ce1a0465b1a1e6febafcd",
   "mock_left_flagged": "7348ec63134b3fd92b157932ef2dc6f40b2c0f132e114d8393f987a0bc61152e",
   "mock_left_flagged_only": "c163ce4d0dad94b88be698638dc7e4fe5619c94c405a7cdc99b2daa5e9ce010c",
-  "mock_legend_answered": "19600b331943fa15294745210f663a0d113a3903f652d921a3d6c3a4c088f411",
-  "mock_legend_current": "2626a88d3e19c94a4e700c6fe80f3925fc42eacc23bac6cc95805a3813ba4044",
-  "mock_legend_review": "977c11ec2bde95deb07c5ac9db84c3dc6798135927203ba05dbef1306652380c",
-  "mock_legend_review_count": "c1f3dbd758da4453e70d0acbe22281be87f5d950c2e9487182f39f7f8d82beb5",
-  "mock_legend_unanswered": "632e106ba48acb97f9e2a6465b628ea8fa08e76a37b179aa072b14629fe21cd7",
   "mock_moves_forward": "acbc515bcb980cc6cbac47ce172c57723637ad055d68946c180a391a3599b894",
   "mock_moves_forward_must": "f7016cf8ca0010a0e353a4de491a0513737d0363e19af2496f192a0d504464c5",
   "mock_moves_must": "b1f4229e74544983b1da6f8e3510054082199cc69576c221e478e2e6fa84a239",
   "mock_moves_review_any": "32d12bf401918c5d8d617412b6ab2d1cb9089b1aa17e662d1b8b1818a74dc214",
   "mock_moves_review_changes": "80bbecf85dc43537bd69874775696229f2fc0fdd357e5387a6c20a08e15cc8b9",
   "mock_moves_review_none": "83ddb28a141fbb9b517c73dd1ab1596b1f36a43b8ad32d545855a68f1824087b",
-  "mock_net_score": "b57605f86104b3a83ea23bfbc51a85c35934bbc173a482f707190fde4ebb8ad5",
+  "mock_net_score": "72c5e74cf3bd604cc816ae7585a5be3952557439e229f230d081330412971c0e",
   "mock_next": "9d53dd050edcc78dcf1c772c21d55604fe9c42fa77440bba6fc2183928d4d123",
   "mock_next_named": "c15b1674b8f710b38daf2828b016021dfce9f179bf849e23b24edd95f1bb5f43",
   "mock_next_section": "7dc00763fa180dd8859f3cc3ebed44c14e78e7d2ae440907926041a9eb879464",
@@ -86,7 +81,7 @@
   "mock_step_failed": "7f0f5ef327643ad7d3e78b5e26dfcfb12afe1e3fa9053192a19c11f29a9a43a5",
   "mock_step_failed_saved": "89e3ebdd5190b5e72bb34831f944512cb384cbc8537e99887fd202847424dac3",
   "mock_step_slow": "6b369583cdca9ccbc866086e7155f0372770f259b17f66072a88d26bd8be1fd9",
-  "mock_take": "84d5714cd444ca0d01968d8cc19ccebf0475c94f3f7b1c4b47fb247370acd3b0",
+  "mock_take": "19b1190c08438fb867680e6b8b5f713fdb26062703c27c49a3acf0128e975934",
   "mock_take_another": "def30bbc689d55c3f1709d5dc33a7f5bbfd01374bb36d499b00ebf09f46039cb",
   "mock_time_left_caption": "926ffde8678231570e805dd6f8d2b65180893f59a64de3b911d4f705eac804ab",
   "mock_time_left_label": "3b346f6e45ee5261e9825340ba5eac388d6f9e7f4166a7142f0e9e7e7c3fc013",
@@ -102,8 +97,8 @@
 -->
 <resources>
     <string name="mock_title">Simulado %1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s de %2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Pontuação líquida: %1$s de %2$d</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s de %2$d respostas certas</item>
@@ -118,8 +113,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Fazer um simulado</string>
-    <string name="mock_continue">Continuar seu simulado</string>
+    <string name="mock_take">Novo simulado</string>
+    <string name="mock_continue">Continuar</string>
     <string name="mock_label">Simulado</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">Simulado · %1$s</string>
@@ -193,15 +188,6 @@
         <item quantity="one">%d respondida</item>
         <item quantity="many">%d respondidas</item>
         <item quantity="other">%d respondidas</item>
-    </plurals>
-    <string name="mock_legend_unanswered">Sem resposta</string>
-    <string name="mock_legend_answered">Respondida</string>
-    <string name="mock_legend_current">Questão atual</string>
-    <string name="mock_legend_review">Marcada para revisão</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="one">%d marcada para revisão</item>
-        <item quantity="many">%d marcadas para revisão</item>
-        <item quantity="other">%d marcadas para revisão</item>
     </plurals>
     <string name="mock_questions">Perguntas</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->

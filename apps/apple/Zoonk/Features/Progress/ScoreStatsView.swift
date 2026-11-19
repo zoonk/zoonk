@@ -13,7 +13,6 @@ struct ScoreStatsView: View {
   }
 }
 
-/// One tile, spanning its row.
 private struct ScoreTiles: View {
   let performance: ScorePerformance
   @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
@@ -21,9 +20,7 @@ private struct ScoreTiles: View {
   var body: some View {
     StatTileGrid(columns: [1], minimumWidth: minimumWidth) {
       StatTile(
-        label: Text(StatsSection.score.title),
-        value: Text(verbatim: metricPercent(performance.score)),
-        systemImage: "chart.line.uptrend.xyaxis", tone: .success,
+        quantity: metricPercent(performance.score),
         detail: Text(
           "\(performance.correctAnswers.formatted()) of \(performance.totalAnswers.formatted()) right in the last \(90) days",
           tableName: "Progress")

@@ -37,7 +37,6 @@
   "exam_format_one_day": "57913ce075937c8cff821d7b6291229adc08c9c52dd390fcb214c5bdb2d571eb",
   "exam_format_two_days": "7f4a6a842003a56a77499c342120a2f85b064ed73248b6def152f750842b6082",
   "exam_how_did_it_go": "c4b9efa43b1b3d9ba74e6fb491818e890c3277cc36f74205838b82efe1e29c54",
-  "exam_latest_mock": "111661d1db1058edf0b2a5b4176d1f8a707a348cc29de6e5b5654fbf24d1c44c",
   "exam_mock_answered": "25685b0954157e67841e7c7f7662cc3deb98ae8dd0779604df52e50ff6037013",
   "exam_mock_handed_in": "f0a4ac3cbbb9662b51e8210611c97b5911e05db40e21ff185e29f8456eff8a08",
   "exam_mock_time_left": "cf1e0e07bc535ef58ca405263e556bd0158b57fb12de2c8b5fdf601d6e7fb70c",
@@ -184,7 +183,6 @@
         <item quantity="other">%d問</item>
     </plurals>
     <string name="exam_progress_title">進み具合</string>
-    <string name="exam_latest_mock">直近の模試</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
     <string name="exam_net_score_in">%1$sのスコア</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->

@@ -10,23 +10,15 @@ const HREFS: CompletedLessonsHrefs = {
 };
 
 export function CompletedLessonsClient({
-  goalTitle,
   lessons,
   moreHref,
   today,
 }: {
-  goalTitle: string;
   lessons: CompletedLesson[];
   moreHref: string | null;
   today: string;
 }) {
   return (
-    <CompletedLessonsScreen
-      goalTitle={goalTitle}
-      hrefs={HREFS}
-      lessons={lessons}
-      moreHref={moreHref}
-      today={today}
-    />
+    <CompletedLessonsScreen hrefs={HREFS} lessons={lessons} moreHref={moreHref} today={today} />
   );
 }

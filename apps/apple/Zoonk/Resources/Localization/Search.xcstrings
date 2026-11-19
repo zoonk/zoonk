@@ -1070,7 +1070,7 @@
       }
     },
     "Practice your mistakes" : {
-      "comment" : "Search action that practices the mistakes ready for review\nA button under Subscribe on the screen that says the free lessons are used up. It opens practice on the learner's past mistakes.",
+      "comment" : "Search action that practices the mistakes ready for review",
       "localizations" : {
         "de" : {
           "stringUnit" : {

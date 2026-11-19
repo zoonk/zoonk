@@ -147,7 +147,7 @@ test("requires a selected subject to continue and lets beginners skip", async ({
   const next = page.getByRole("button", { exact: true, name: "Continue" });
   await expectHydrated(algebra);
   await expect(next).toBeDisabled();
-  await expect(page.getByRole("button", { name: "I'm new to all of them" })).toBeEnabled();
+  await expect(page.getByRole("button", { exact: true, name: "I'm new" })).toBeEnabled();
 
   await algebra.click();
   await expect(next).toBeEnabled();

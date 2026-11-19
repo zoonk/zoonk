@@ -10,7 +10,7 @@ export default async function UntrustedOriginPage() {
   return (
     <AuthFrame
       appUrl={MAIN_URL}
-      footer={<ReturnToZoonk href={MAIN_URL}>{t("Go to Zoonk")}</ReturnToZoonk>}
+      footer={<ReturnToZoonk href={MAIN_URL}>{t("Open Zoonk")}</ReturnToZoonk>}
     >
       <AuthHeader className="w-full items-start pb-8 text-start">
         <AuthTitle>{t("That link didn't work")}</AuthTitle>

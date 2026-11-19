@@ -20,8 +20,8 @@
   "pronunciation_save_failed": "ecb006eaa364b983fcada8b909196dde6d18ec2a338b573aad45c9011cddecec",
   "pronunciation_save_retry": "f2c806941631f74ac6c978a108b8136c15f35f280bd52c9ecf0e905798fca7fa",
   "pronunciation_say_it_like": "1ca7d4382e663362bdc05e04b5d9fe58d4f60cf6c6b1ec3be0ae12ee72a36f26",
-  "pronunciation_see_how": "62f77f59780ba0389699fcb5a128875318696937de620f8e3f1b03b03ff1a93b",
-  "pronunciation_skip": "87e6bb537fb07aaab00b44d7cefb0bc471b308c886556bc9cc28d885f8f5155c",
+  "pronunciation_see_how": "c6439ef9ea21c00145dfe27c208b5e535113b19a11142b5ed2f96863c8a0fdba",
+  "pronunciation_skip": "4fcb45fbf571be0a20ce47a2563dc8f44c25af5892a9e4f5cd9d71d1534b23b8",
   "pronunciation_sounded_right": "988ac8e91a686ddac7026d87017a2b15ca3ff2e084d14fa02afa03eff32dd7a7",
   "pronunciation_title": "4bf0bfe6b5662947ca4b6ef598fe3719408de9481e56c9fb615133bb04be1024",
   "pronunciation_try_again": "cf768ecf7e4b38557a4b0000d4c284e934e9979493e387e5e2130edba5a9defa"
@@ -36,7 +36,7 @@
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">Sag es wie %1$s</string>
     <string name="pronunciation_options">Seitenoptionen</string>
-    <string name="pronunciation_skip">Dieses Wort überspringen</string>
+    <string name="pronunciation_skip">Überspringen</string>
     <string name="pronunciation_press_record">Tippe auf „Aufnehmen“ und sprich das Wort laut aus</string>
     <string name="pronunciation_recording">Aufnahme läuft… Tippe auf „Stopp“, wenn du fertig bist.</string>
     <string name="pronunciation_grading">Wir hören uns deine Aussprache an…</string>

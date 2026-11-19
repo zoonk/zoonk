@@ -112,7 +112,7 @@ fun SessionEndActions(
             modifier = width,
             enabled = !move.busy,
         ) {
-            Text(stringResource(if (completed) R.string.player_see_todays_summary else R.string.player_action_continue))
+            Text(stringResource(R.string.player_action_continue))
         }
     }
 }

@@ -406,32 +406,8 @@ struct PlanNumbersSection: View {
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
       value: goalProgressPercent(share),
-      detail: studiedText(lessons.done - lessons.known, known: lessons.known), share: share)
-  }
-
-  private func studiedText(_ studied: Int, known: Int) -> String {
-    if known > 0 {
-      return [
-        studied > 0
-          ? String(
-            localized: "\(studied) studied", table: "Plan",
-            comment:
-              "Under the plan's progress percent, beside the lessons already known: the lessons studied"
-          )
-          : nil,
-        String(
-          localized: "\(known) already known", table: "Plan",
-          comment: "Under the plan's progress percent: lessons the learner already knew"),
-      ].compactMap(\.self).joinedFacts()
-    }
-
-    return studied == 0
-      ? String(
-        localized: "No lessons studied yet", table: "Plan",
-        comment: "Under the plan's progress percent, in a small tile, before any lesson is studied")
-      : String(
-        localized: "\(studied) lessons studied", table: "Plan",
-        comment: "Under the plan's progress percent, in a small tile: the lessons studied")
+      detail: lessonsProgressLine(studied: lessons.done - lessons.known, known: lessons.known),
+      share: share)
   }
 
   /// The plan's state, and the lessons left once its date passed. The time a day has its own row
@@ -508,105 +484,6 @@ func planStatusText(_ status: GoalPlan.Status, isPaused: Bool) -> String {
   case .pastDate:
     return String(
       localized: "Date passed", table: "Plan", comment: "State of a plan whose date passed")
-  }
-}
-
-struct NextOnPathSection: View {
-  @Environment(AppRouter.self) private var router
-
-  let context: PlanContext
-
-  var body: some View {
-    let plan = context.plan
-    let isExam = context.goal.kind == .exam
-    let ahead = plan.phases.filter {
-      $0.kind != .afterExam && ($0.state == .current || $0.state == .upcoming)
-    }
-    let mockDate = ahead.lazy.compactMap(\.mocks.nextDate).first
-    let checkpointPhase = ahead.first { $0.checkpoint?.state == .upcoming }
-    let checkpoint = checkpointPhase?.checkpoint
-    let chapter = isExam ? nil : plan.nextChapter
-    let chapterPhase = plan.phases.first { $0.chapters.contains { $0.state == .current } }
-    // A challenge in the next session comes before the next phase's lessons, as on Today.
-    let challengeFirst =
-      checkpoint?.when == .nextSession
-      && (checkpointPhase?.index ?? 0) < (chapterPhase?.index ?? -1)
-
-    if mockDate != nil || chapter?.chapterId != nil || checkpoint != nil || isExam {
-      PageSection {
-        if let mockDate {
-          Button {
-            router.open(.exam)
-          } label: {
-            row(
-              title: Text(
-                "Mock exam", tableName: "Plan", comment: "The next mock exam on the path"),
-              detail: .date(Text(PlanDate.text(mockDate, today: plan.today))), kind: .mock)
-          }
-        }
-
-        if challengeFirst, let checkpoint {
-          checkpointRow(checkpoint)
-        }
-
-        if let chapter, let chapterId = chapter.chapterId {
-          PageLink(route: chapterRoute(chapterId)) {
-            ListRow(Text(chapter.title)) {
-              StatusMark(status: .next)
-            }
-          }
-        }
-
-        if !challengeFirst, let checkpoint {
-          checkpointRow(checkpoint)
-        }
-
-        finishRow
-      } header: {
-        SectionTitle(
-          Text(
-            "Next on your path", tableName: "Plan",
-            comment: "Section of what comes next on the plan"))
-      }
-    }
-  }
-
-  private func checkpointRow(_ checkpoint: PlanPhase.Checkpoint) -> some View {
-    PlanRouteLink(route: .challenge(planItemId: checkpoint.planItemId)) {
-      PlanChallengeLabel(
-        when: checkpoint.when(today: context.plan.today), explains: true,
-        isLanguage: context.goal.kind == .language)
-    }
-  }
-
-  private func row(title: Text, detail: PlanWhen?, kind: LearnKind) -> some View {
-    PlanMarkedRow(title: title, when: detail) {
-      KindMark(kind: kind)
-    }
-    .disclosureChevron()
-  }
-
-  @ViewBuilder
-  private var finishRow: some View {
-    let finish = PlanMarkedRow(title: Text(context.goal.displayName), when: planFinish(context)) {
-      Image(systemName: "flag")
-    }
-
-    if context.goal.kind == .exam {
-      Button {
-        router.open(.exam)
-      } label: {
-        finish
-          .disclosureChevron()
-      }
-    } else {
-      finish
-    }
-  }
-
-  private func chapterRoute(_ chapterId: String) -> AppRoute {
-    context.goal.kind == .language
-      ? .languageUnit(chapterId: chapterId) : .chapter(chapterId: chapterId)
   }
 }
 
@@ -836,4 +713,31 @@ func studyDaysText(_ weekdayMinutes: [Int]) -> String {
   }
 
   return days.map(symbol).formatted(.list(type: .and, width: .narrow))
+}
+
+/// The line under a goal's progress percent, on the Plan and on Today. The percent counts lessons
+/// studied and those the learner already knew, so once there are known ones the line names both.
+func lessonsProgressLine(studied: Int, known: Int) -> String {
+  if known > 0 {
+    return [
+      studied > 0
+        ? String(
+          localized: "\(studied) studied", table: "Plan",
+          comment:
+            "Under the plan's progress percent, beside the lessons already known: the lessons studied"
+        )
+        : nil,
+      String(
+        localized: "\(known) already known", table: "Plan",
+        comment: "Under the plan's progress percent: lessons the learner already knew"),
+    ].compactMap(\.self).joinedFacts()
+  }
+
+  return studied == 0
+    ? String(
+      localized: "No lessons studied yet", table: "Plan",
+      comment: "Under the plan's progress percent, in a small tile, before any lesson is studied")
+    : String(
+      localized: "\(studied) lessons studied", table: "Plan",
+      comment: "Under the plan's progress percent, in a small tile: the lessons studied")
 }

@@ -144,21 +144,18 @@ internal fun SubjectCoverage(
 enum class LegendDot { Studied, Known, New }
 
 /**
- * Main's `CoverageLegend`: what the coverage bar's parts are, in its order, in one set of words wherever the bar shows;
- * "Already knew" only where some lessons are [known]. The words beside the bar say the numbers, so TalkBack skips it.
+ * Main's `CoverageLegend`: what the coverage bar's parts are, in its order. The words beside the bar say the numbers,
+ * so TalkBack skips it.
  */
 @Composable
-fun CoverageLegend(
-    modifier: Modifier = Modifier,
-    known: Boolean = true,
-) {
+fun CoverageLegend(modifier: Modifier = Modifier) {
     FlowRow(
         modifier.clearAndSetSemantics {},
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         LegendItem(LegendDot.Studied, stringResource(R.string.goalcontent_studied))
-        if (known) LegendItem(LegendDot.Known, stringResource(R.string.goalcontent_known))
+        LegendItem(LegendDot.Known, stringResource(R.string.goalcontent_known))
         LegendItem(LegendDot.New, stringResource(R.string.goalcontent_new))
     }
 }
@@ -297,19 +294,6 @@ private fun SubjectDetails(
     Column {
         if (questions != null) {
             PropertyRow(stringResource(R.string.goalcontent_questions), listOfNotNull(number(questions), edition).factsLine())
-        }
-        if (subject.topics.isNotEmpty()) {
-            PropertyRow(
-                stringResource(R.string.goalcontent_topics),
-                stringResource(R.string.goalcontent_count_of, number(subject.topicsStudied ?: 0), number(subject.topics.size)),
-            )
-        }
-        if (subject.chapters.isNotEmpty()) {
-            val done = subject.chapters.doneChapters.size
-            PropertyRow(
-                stringResource(R.string.goalcontent_chapters),
-                stringResource(R.string.goalcontent_chapters_progress, number(done), number(subject.chapters.size)),
-            )
         }
         if (nextDate != null) {
             PropertyRow(stringResource(R.string.goalcontent_next_date), formatPlanDate(nextDate.toJavaLocalDate(), today, locale))

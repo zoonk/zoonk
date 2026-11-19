@@ -716,61 +716,61 @@
         }
       }
     },
-    "Start from this plan" : {
+    "Start my own plan" : {
       "comment" : "Starts the learner's own plan from a shared one",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit diesem Plan starten"
+            "value" : "Eigenen Plan starten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar con este plan"
+            "value" : "Crear mi propio plan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer avec ce plan"
+            "value" : "Commencer mon propre plan"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia da questo piano"
+            "value" : "Inizia un piano tutto tuo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この計画をもとに始める"
+            "value" : "自分の学習計画を始める"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 계획으로 시작하기"
+            "value" : "나만의 계획 시작하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zacznij od tego planu"
+            "value" : "Rozpocznij własny plan"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar com este plano"
+            "value" : "Começar meu próprio plano"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu planla başla"
+            "value" : "Kendi planına başla"
           }
         }
       }

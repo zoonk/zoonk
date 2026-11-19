@@ -1,4 +1,3 @@
-import { AppEntryName } from "@zoonk/learn/bar";
 import {
   PAGE_COLUMN_CLASS,
   PageHeader,
@@ -20,7 +19,6 @@ export function SectionPage({
   nav,
   note,
   parents,
-  tabbedHub,
 }: {
   children: React.ReactNode;
   end?: React.ReactNode;
@@ -32,8 +30,6 @@ export function SectionPage({
   note?: React.ReactNode;
   /** Pages with pages of their own: those go back to them rather than to the hub. */
   parents?: SectionLink[];
-  /** The hub becomes the first tab from a tablet up. */
-  tabbedHub?: boolean;
 }) {
   return (
     <div
@@ -47,7 +43,7 @@ export function SectionPage({
       )}
       data-slot="section-page"
     >
-      <SectionBarFrame end={end} hub={hub} parents={parents} tabbedHub={tabbedHub} />
+      <SectionBarFrame end={end} hub={hub} parents={parents} />
 
       <div
         className={cn(
@@ -82,7 +78,6 @@ export function SectionPageHeader({
   return (
     <PageHeader className="md:contents">
       <PageHeaderContent className="md:contents">
-        <AppEntryName name={title} />
         <PageTitle className="md:sr-only">{title}</PageTitle>
         {description && <PageSubtitle className="text-pretty md:pt-0">{description}</PageSubtitle>}
       </PageHeaderContent>

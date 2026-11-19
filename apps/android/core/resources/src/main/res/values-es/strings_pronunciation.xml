@@ -20,8 +20,8 @@
   "pronunciation_save_failed": "3035e4493d803e2299d9b569b87a44c489d82584f93890578c37e9411ccfcba6",
   "pronunciation_save_retry": "1783d9a6fbea3104897944b5d47cfdc386a86e7e8f4d0803bedd0637d671cb46",
   "pronunciation_say_it_like": "1b1acd05b8d9793edec5bd70074e378a89cfc09a1e811b9b82b1d8205af176fd",
-  "pronunciation_see_how": "da5376fdfbd18b131136d28af7c78212a3facd2ff418c14de247e2be5c7a9ad7",
-  "pronunciation_skip": "c3e00ef0b4f025163a340f131b66e16a2ed82ecbff0fe4dfcc4f4de8180c3d23",
+  "pronunciation_see_how": "59396c2ce2bbb841b0f784234a4a33174fdad2a918c22303c9dcb5e464c38c57",
+  "pronunciation_skip": "3242f7af2f46911dc8934df24c6eccdba7ca22f3ca5e56b27abe964de6174f9a",
   "pronunciation_sounded_right": "8cfd5befe089612863885e77a23f33792e1b9cd30c63a2a66e2e38f34fcbee36",
   "pronunciation_title": "ed8805b8c8f6f3eda8d65372377a4459839473628c5e0cc7000b1b3063969cae",
   "pronunciation_try_again": "b2351e1435e1c1190bc5f043941014e3fb4b4f42d11b289722685ce9e8a366f8"
@@ -36,7 +36,7 @@
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">Pronúnciala así: %1$s</string>
     <string name="pronunciation_options">Opciones de pantalla</string>
-    <string name="pronunciation_skip">Saltar esta palabra</string>
+    <string name="pronunciation_skip">Saltar</string>
     <string name="pronunciation_press_record">Presiona Grabar y di la palabra en voz alta</string>
     <string name="pronunciation_recording">Grabando… Presiona Detener cuando termines.</string>
     <string name="pronunciation_grading">Escuchando cómo sonó…</string>
@@ -51,7 +51,7 @@
     <!-- Goes on to the next word. -->
     <string name="pronunciation_continue">Continuar</string>
     <!-- Ends the round after its last word. -->
-    <string name="pronunciation_see_how">Ver cómo te fue</string>
+    <string name="pronunciation_see_how">Ver resultado</string>
     <string name="pronunciation_save_failed">No se pudo guardar. Conservamos tus respuestas.</string>
     <!-- Retries saving the round. -->
     <string name="pronunciation_save_retry">Volver a intentarlo</string>

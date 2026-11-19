@@ -205,7 +205,7 @@ class PatternScreenshots {
         answer("agree")
         rule.onNodeWithText("Continue").performClick()
         answer("are agree")
-        rule.onNodeWithText("See how it went").performClick()
+        rule.onNodeWithText("See result").performClick()
     }
 
     @Test

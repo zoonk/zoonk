@@ -90,7 +90,6 @@
         <item quantity="other">%d questions</item>
     </plurals>
     <string name="exam_progress_title">Your progress</string>
-    <string name="exam_latest_mock">Latest mock exam</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
     <string name="exam_net_score_in">Score in %1$s</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->

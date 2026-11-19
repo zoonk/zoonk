@@ -95,7 +95,6 @@ test.describe("Study reminders", () => {
     const time = page.getByLabel("Time", { exact: true });
     await expectHydrated(email);
     await expect(time).toBeDisabled();
-    await expect(page.getByText("Reminders are off.", { exact: true })).toBeVisible();
 
     const guidance = page.getByText(
       "To get notifications on your phone, turn them on in the Zoonk phone app.",
@@ -109,7 +108,6 @@ test.describe("Study reminders", () => {
     await email.click();
     await expect(email).toBeChecked();
     await expect(time).toBeEnabled();
-    await expect(page.getByText("Reminders are off.", { exact: true })).toBeHidden();
     await expect.poll(guidanceTop).toBe(topWhileOff);
     await expect.poll(() => readReminder(user.id)).toMatchObject({ emailOn: true });
 

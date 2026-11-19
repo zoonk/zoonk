@@ -184,7 +184,7 @@ class PlanRevealStepFlowTest {
         restoration.emulateSavedInstanceStateRestore()
         rule.waitForIdle()
         assertEquals(1, opened)
-        rule.onNodeWithText("Start lesson 1").assertExists()
+        rule.onNodeWithText("Start").assertExists()
     }
 
     @Test

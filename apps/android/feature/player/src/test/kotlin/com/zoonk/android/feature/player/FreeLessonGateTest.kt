@@ -55,7 +55,7 @@ class FreeLessonGateTest {
         }
 
         rule.onNodeWithText("You've used your free lessons").assertExists()
-        rule.onNodeWithText("Start the lesson").assertDoesNotExist()
+        rule.onNodeWithText("Start").assertDoesNotExist()
         val title = rule.onNodeWithText("You've used your free lessons").getBoundsInRoot().top
 
         clock.passOpening()
@@ -65,7 +65,7 @@ class FreeLessonGateTest {
         rule.onNodeWithText("Subscribe").assertDoesNotExist()
         assertEquals(0, starts)
 
-        rule.onNodeWithText("Start the lesson").performClick()
+        rule.onNodeWithText("Start").performClick()
         assertEquals(1, starts)
     }
 
@@ -92,7 +92,7 @@ class FreeLessonGateTest {
                 }
             }
         }
-        rule.onNodeWithText("Practice your mistakes").performClick()
+        rule.onNodeWithText("Practice mistakes").performClick()
         assertEquals(AppRoute.Mistakes, opened)
     }
 
@@ -125,24 +125,24 @@ class FreeLessonGateTest {
         }
     }
 
-    /** As main: Start the lesson takes Subscribe's box once the lesson opens, Subscribe goes, and nothing under the notice moves. */
+    /** As main: Start takes Subscribe's box once the lesson opens, Subscribe goes, and nothing under the notice moves. */
     @Test
     fun theNoticeInPlaceOffersTheLessonWhereSubscribeWasOnceItOpens() {
         var starts = 0
         showNoticeInPlace(onRetry = { starts++ })
-        rule.onNodeWithText("Start the lesson").assertDoesNotExist()
+        rule.onNodeWithText("Start").assertDoesNotExist()
         val below = rule.onNodeWithText(BELOW).getBoundsInRoot().top
         val subscribe = rule.onNodeWithText("Subscribe").getBoundsInRoot()
 
         clock.passOpening()
         waitForReady()
 
-        val start = rule.onNodeWithText("Start the lesson").getBoundsInRoot()
+        val start = rule.onNodeWithText("Start").getBoundsInRoot()
         assertEquals(subscribe.left to subscribe.top, start.left to start.top)
         rule.onNodeWithText("Subscribe").assertDoesNotExist()
         assertEquals(below, rule.onNodeWithText(BELOW).getBoundsInRoot().top)
         assertEquals(0, starts)
-        rule.onNodeWithText("Start the lesson").performClick()
+        rule.onNodeWithText("Start").performClick()
         assertEquals(1, starts)
     }
 
@@ -151,12 +151,12 @@ class FreeLessonGateTest {
     @Config(qualifiers = "es-w320dp-h640dp")
     fun startTakesSubscribesBoxAtTheNarrowestWidthInItsLongestLanguage() {
         showNoticeInPlace()
-        val subscribe = rule.onNodeWithText("Suscribirse").getBoundsInRoot()
+        val subscribe = rule.onNodeWithText("Suscribirte").getBoundsInRoot()
 
         clock.passOpening()
-        rule.waitUntil(10_000) { rule.onAllNodesWithText("Empezar la lección").fetchSemanticsNodes().isNotEmpty() }
+        rule.waitUntil(10_000) { rule.onAllNodesWithText("Empezar").fetchSemanticsNodes().isNotEmpty() }
 
-        val start = rule.onNodeWithText("Empezar la lección").getBoundsInRoot()
+        val start = rule.onNodeWithText("Empezar").getBoundsInRoot()
         assertEquals(subscribe.left to subscribe.top, start.left to start.top)
         assertEquals(subscribe.height, start.height)
     }

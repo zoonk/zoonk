@@ -7,7 +7,6 @@
   "goalcontent_also_in_plan": "40b142a39287bf335dded0d1b18aaee0c92192bb211858ffd656a437fe31fe0e",
   "goalcontent_asked_a_lot": "6cd96110390465ff7596adab5e83f579f88e99834c7905e40775df82559b7ac5",
   "goalcontent_bring_back": "9e0fcdb79b177344330ebab800560a23d819a83c70b92cf3134f705d446605eb",
-  "goalcontent_chapter_count": "49c1500f546cc4f2104b2cf71b56139a4f44fff70ff13e588e39f8d8f4cc5966",
   "goalcontent_chapter_number": "b9a1166ee675087897c76b3af0cb159045ac1d8bade50a9de04220452d5963b1",
   "goalcontent_chapter_summary": "3afc9e3113e86b681023e29f8a19f0a6577ac572bb399bc41c22cbc02072c83b",
   "goalcontent_chapters": "dfda4415a98e07608e484f30b7fd61a169085f493a6ff8dd60c198a8295f3fa4",
@@ -82,7 +81,6 @@
   "goalcontent_topic_in_progress": "6c092bf498cac1ec7cc3e11f0358393355c1d27703fb8f487baf0c144d40ddde",
   "goalcontent_topic_known": "cd435ca42b3cd753cfd0cda5cc9673742cbc132b492b7c839073660112e62ca1",
   "goalcontent_topic_to_study": "8d345bfe22dcef619dc1784a1145a55113800f21bde951f159454c2fe7ebdd4d",
-  "goalcontent_topics": "38cd3c62311206481457771305c5539cdedd0523b87527efc69a8220573d89b4",
   "goalcontent_topics_in_guide": "778fa49f54a6ad2a3fabcf1e6bc4c8f802ebfd397c6a9ab960ab6780b1228d5f",
   "goalcontent_topics_in_material": "fb61ef1f7c93d0e572fa9a4d6b4f7aca112d6fd86f89f3d3d10dd7df601312d2",
   "goalcontent_topics_in_notice": "40daaf9976984a4e08c1ffdfdd7d76d2735edc0521e3835209c7fedd495494f3",
@@ -111,10 +109,6 @@
     <plurals name="goalcontent_material_topic_count">
         <item quantity="one">%d Thema aus deinem Material</item>
         <item quantity="other">%d Themen aus deinem Material</item>
-    </plurals>
-    <plurals name="goalcontent_chapter_count">
-        <item quantity="one">%d Kapitel</item>
-        <item quantity="other">%d Kapitel</item>
     </plurals>
     <plurals name="goalcontent_lesson_count">
         <item quantity="one">%d Lektion</item>
@@ -202,7 +196,6 @@
     <string name="goalcontent_details">Details</string>
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Fragen</string>
-    <string name="goalcontent_topics">Themen</string>
     <string name="goalcontent_chapters">Kapitel</string>
     <!-- The next day the plan studies a subject. -->
     <string name="goalcontent_next_date">Nächster Termin</string>

@@ -10,7 +10,7 @@
   "pattern_practice": "52a2b1a07c7f27d1e6219976ab56c388b6b507ec9ca90babf944733a336925fe",
   "pattern_quoted": "6411318b9eb304daa6b76d013ebba325df76ff4f42e36f11c2958f7740c0f755",
   "pattern_rule": "767d96689a01ddf44a903b7b9f0b451fd1b75869e70b0805a37a924b47ba886b",
-  "pattern_see_how_it_went": "858383cfb07f150f0ec0fbda0da337456f7f8816b8f481542a8e5089b910aff4",
+  "pattern_see_how_it_went": "ab20f311daf8b64d3937b5aa180921ed1d53ae9e7040bf3c51f7fa1e1797eb60",
   "pattern_see_rule": "172e87c00506c075ed7359d752af9fdf3eb245b9c0c79c321f35e887e7c6030f",
   "pattern_seen": "46473b85d2938f1d04de313134333af7de177fc68a6dcf353e1874108c14ae33",
   "pattern_seen_times": "c9d98fedc6456001ab08c81b1cc381df07cdfbb7fd42385742f52556f10d277d",
@@ -44,7 +44,7 @@
     <string name="pattern_where_you_slipped">Dónde te equivocaste</string>
     <string name="pattern_see_rule">Ver la regla</string>
     <!-- After the practice's last question, opens its result. -->
-    <string name="pattern_see_how_it_went">Ver cómo te fue</string>
+    <string name="pattern_see_how_it_went">Ver resultado</string>
     <string name="pattern_got_it">Ya tienes clara esta regla.</string>
     <string name="pattern_keep_going">Conocer la regla es el primer paso. Cada vez es más fácil aplicarla.</string>
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->

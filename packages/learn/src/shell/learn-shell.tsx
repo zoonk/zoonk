@@ -38,19 +38,41 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
 }
 
 /**
- * A page's bar on a computer when it holds nothing there: the sidebar holds the way back and the
- * page has no actions of its own. It keeps only its top room and hairline and scrolls away, so the
- * title centers on the sidebar's first row (`PageTopBar`'s `className`). `always` is a tab's own
- * page; `learner` and `visitor` are a page the sidebar lists in that state, which `data-signed-in`
- * says before the first paint.
+ * Where a page's way back leads nowhere the frame doesn't already show, so the bar doesn't draw it:
+ * `back` hides the link, and `bare` lets a bar that then holds nothing keep only its top room and
+ * hairline and scroll away, so the title takes the bar's row (`PageTopBar`'s `className`). A bar
+ * holds nothing when its end shows nothing: no actions, or on a computer only a phone's
+ * (`data-phone-only`). `data-signed-in` says whose frame this is before the first paint.
+ * - `computer`: from `lg`, where the sidebar holds the goal and every page it lists.
+ * - `learner`, `visitor`: from `lg`, a page the sidebar lists in that state.
+ * - `tabs`: a page whose way back is Today, the Plan or the buddy, for a learner, who reaches them by
+ *   the tab bar under `lg` and the sidebar from it. A visitor has neither and keeps the link.
+ * - `sectionTabs`: from `md`, where a section's own tabs lead to its first page.
  */
-export const BARE_ON_COMPUTER_CLASS = {
-  always: "lg:static lg:pb-0 lg:*:hidden",
-  learner:
-    "lg:[[data-signed-in]_&]:static lg:[[data-signed-in]_&]:pb-0 lg:[[data-signed-in]_&]:*:hidden",
-  visitor:
-    "lg:[:root:not([data-signed-in])_&]:static lg:[:root:not([data-signed-in])_&]:pb-0 lg:[:root:not([data-signed-in])_&]:*:hidden",
+export const NO_WAY_BACK = {
+  computer: {
+    back: "lg:hidden",
+    bare: "lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:static lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:pb-0 lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:*:hidden",
+  },
+  learner: {
+    back: "lg:[[data-signed-in]_&]:hidden",
+    bare: "lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:static lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:pb-0 lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:*:hidden",
+  },
+  sectionTabs: {
+    back: "md:hidden",
+    bare: "md:not-has-[[data-slot=page-top-end]>*]:static md:not-has-[[data-slot=page-top-end]>*]:pb-0 md:not-has-[[data-slot=page-top-end]>*]:*:hidden",
+  },
+  tabs: {
+    back: "[[data-signed-in]_&]:hidden",
+    bare: "[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>*]:static [[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>*]:pb-0 [[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>*]:*:hidden",
+  },
+  visitor: {
+    back: "lg:[:root:not([data-signed-in])_&]:hidden",
+    bare: "lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:static lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:pb-0 lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:*:hidden",
+  },
 } as const;
+
+export type NoWayBack = keyof typeof NO_WAY_BACK;
 
 /** The page's column inside the frame: the bar over a tab and the notices line up with it. */
 export const FRAME_COLUMN_CLASS =
@@ -125,12 +147,12 @@ export function PageWithAside({
 }) {
   return (
     <div
-      className="group/page-aside flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-10 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
+      className="group/page-aside flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-(--page-gutter) min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
       data-slot="page-with-aside"
     >
       <div
         className={cn(
-          "flex min-w-0 flex-col min-[72rem]:px-10 min-[72rem]:pb-16",
+          "flex min-w-0 flex-col min-[72rem]:px-(--page-gutter) min-[72rem]:pb-16",
           bottomBar && WITH_BAR_COLUMN_CLASS,
           className,
         )}

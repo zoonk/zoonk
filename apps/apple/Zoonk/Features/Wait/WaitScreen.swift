@@ -338,7 +338,7 @@ struct WaitBar<Extra: View>: View {
         visit.showsProgress = false
       } label: {
         Text(
-          "Back to the quiz", tableName: "Onboarding",
+          "Back to quiz", tableName: "Onboarding",
           comment:
             "Leaves the build's progress for the quiz under it. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it."
         )
@@ -350,7 +350,7 @@ struct WaitBar<Extra: View>: View {
         visit.playQuiz()
       } label: {
         Text(
-          "Play a quiz while you wait", tableName: "Onboarding",
+          "Play a quiz", tableName: "Onboarding",
           comment:
             "Shows a quiz once one arrived while the learner watches the build's progress. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it."
         )

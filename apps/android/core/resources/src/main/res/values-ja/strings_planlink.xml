@@ -12,7 +12,7 @@
   "planlink_phases": "cb2aa462f60d89030b6d9bbcbf48280c30b9b69ed228202a7dedf653119db2b0",
   "planlink_refused": "7b6d46eb35d18ca674af5a20a5a868ec119c25a9235df4099524dcf6ca541495",
   "planlink_skills": "e67d7e9f9afa15807ef01d3e22d4d766a514e58738b15c3330c1abe19cec2c65",
-  "planlink_start": "8c9902dcc4c949d35a7e73305ef5c1cdf529e706e86dc5de3a0074a10cba612b",
+  "planlink_start": "59502bab636873dae7c778d499b4e381290abdbad68f282d18cb6ded30739ba5",
   "planlink_study_plan": "748b255081d5732b6b9d666253809c58715c6136fe3f4b2e19c16acdc1bb9a75"
 }
 -->
@@ -23,7 +23,7 @@
     <string name="planlink_study_plan">学習計画</string>
     <string name="planlink_minutes_label">1日にどのくらい学習しますか？</string>
     <!-- Starts the learner's own plan from a shared one. -->
-    <string name="planlink_start">この計画をもとに始める</string>
+    <string name="planlink_start">自分の学習計画を始める</string>
     <string name="planlink_make_it_yours">同じ科目で自分用の学習計画を立てられます。今の知識に合ったところから始められます。</string>
     <string name="planlink_refused">今は別の目標を始められません。まず、取り組み中の目標を1つ終えるか、一時停止してください。</string>
     <string name="planlink_failed">うまくいきませんでした。少し待ってから、もう一度お試しください。</string>

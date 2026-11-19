@@ -56,7 +56,7 @@ class PatternFlowTest {
         answer("agree")
         rule.onNodeWithText("Continue").performClick()
         answer("agree")
-        rule.onNodeWithText("See how it went").performClick()
+        rule.onNodeWithText("See result").performClick()
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("Try again").performClick()
@@ -81,7 +81,7 @@ class PatternFlowTest {
         answer("agree")
         rule.onNodeWithText("Continue").performClick()
         answer("agree")
-        rule.onNodeWithText("See how it went").performClick()
+        rule.onNodeWithText("See result").performClick()
         rule.onNodeWithContentDescription("Leave").performClick()
 
         assertFalse(viewModel.closed.value)
@@ -119,7 +119,7 @@ class PatternFlowTest {
 
         show(patternViewModel(api, SavedStateHandle(saved.keys().associateWith { saved.get<Any>(it) })).also { it.begin(pattern()) })
         rule.onNodeWithText("Correct!").assertIsDisplayed()
-        rule.onNodeWithText("See how it went").performClick()
+        rule.onNodeWithText("See result").performClick()
 
         rule.onNodeWithText("You've got this rule.").assertIsDisplayed()
         assertEquals(2, api.practices.size)

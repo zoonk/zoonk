@@ -459,7 +459,7 @@ test.describe("Live call server states", () => {
       const callId = await openUnitCall({ learner, page });
       const actions = observeActions({ conversationId: callId, page });
       await page.getByRole("button", { name: "Call Linda" }).click();
-      await page.getByRole("button", { name: "Start this call" }).click();
+      await page.getByRole("button", { name: "Start here" }).click();
 
       await expect
         .poll(() => hangupRequested({ request, sessionId: original.providerSessionId }))
@@ -697,7 +697,7 @@ test.describe("Live call server states", () => {
       await page.getByRole("button", { name: "Call again" }).click();
       await expect(page.getByText("Your microphone is off")).toBeVisible();
       await expect(page.getByText("The call dropped")).toBeHidden();
-      await expect(page.getByRole("button", { name: "End the call" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "End call" })).toBeVisible();
       await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
       await page.getByRole("button", { name: "Type instead" }).click();
 
@@ -759,7 +759,7 @@ test.describe("Live call server states", () => {
       await expect(page.getByText("No more calls today")).toBeVisible();
       await expect(page.getByText("The call dropped")).toBeHidden();
       await expect(page.getByRole("button", { name: "Call again" })).toBeHidden();
-      await page.getByRole("button", { name: "End the call" }).click();
+      await page.getByRole("button", { name: "End call" }).click();
       await expect.poll(() => actions.complete.length).toBe(1);
 
       expect(actions.complete[0]).toStrictEqual({

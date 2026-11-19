@@ -252,7 +252,7 @@ struct CallButtonTitle: View {
     if let callee {
       Text("Call \(callee)", tableName: "Voice", comment: "Starts a live call with the character")
     } else {
-      Text("Start the call", tableName: "Voice", comment: "Starts a live call")
+      Text("Start call", tableName: "Voice", comment: "Starts a live call")
     }
   }
 }

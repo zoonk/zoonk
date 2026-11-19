@@ -1501,10 +1501,10 @@ final class LessonPlayerHelpTests: XCTestCase {
   func testTheOpeningGuessOffersTheRevealUntilSomethingIsPicked() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try step(guessHook), try step(check(id: "check"))])
-    XCTAssertTrue(state.revealsWithoutGuess, "\"See the answer\" reveals with nothing picked")
+    XCTAssertTrue(state.revealsWithoutGuess, "\"See answer\" reveals with nothing picked")
 
     state.select(.hookGuess(optionId: "wrong"), for: "guess")
-    XCTAssertFalse(state.revealsWithoutGuess, "\"See the answer\" checks the pick")
+    XCTAssertFalse(state.revealsWithoutGuess, "\"See answer\" checks the pick")
   }
 
   func testARevealThatCountsNothingIsNeverAWrongAnswerInTheAbandonedStreak() throws {

@@ -24,11 +24,11 @@ const TOAST_CLASS =
 
 /**
  * Toasts rise above a phone's tab bar and above a page's bottom bar, 12px over its top, so they never
- * cover its main action. The bar is its 44px row with 16px over and under it at every size.
+ * cover its main action. Away from a bar they keep the frame's gutter from the window's corner. The bar is its 44px row with 16px over and under it at every size.
  */
 const TOAST_VIEWPORT_CLASS = cn(
-  "pointer-events-none fixed inset-x-4 z-60 mx-auto w-auto max-w-[356px] outline-none sm:right-8 sm:left-auto sm:mx-0 sm:w-full",
-  "bottom-[calc(var(--toast-over-tabs)+max(var(--toast-inset),var(--toast-over-bar)))] [--toast-inset:1rem] [--toast-over-bar:0px] [--toast-over-tabs:0px] sm:[--toast-inset:2rem]",
+  "pointer-events-none fixed inset-x-4 z-60 mx-auto w-auto max-w-[356px] outline-none sm:right-6 sm:left-auto sm:mx-0 sm:w-full",
+  "bottom-[calc(var(--toast-over-tabs)+max(var(--toast-inset),var(--toast-over-bar)))] [--toast-inset:1rem] [--toast-over-bar:0px] [--toast-over-tabs:0px] sm:[--toast-inset:1.5rem]",
   "in-[body:has([data-slot=bottom-bar])]:[--toast-over-bar:calc(1rem+2.75rem+max(1rem,env(safe-area-inset-bottom))+1px+0.75rem)]",
   "max-lg:in-[body:has([data-bottom-bar])]:[--toast-over-tabs:calc(4rem+env(safe-area-inset-bottom))]",
 );

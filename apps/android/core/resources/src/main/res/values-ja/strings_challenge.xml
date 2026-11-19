@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "challenge_back_to_today": "ba7fdc178bc659c8d5be6426664c02a3a23fa03dc341728f3f6dd83cef96e25e",
+  "challenge_back_to_today": "713ca8c50dd8a5f3ff62a6969ce858c6ef960d01828dbb64c41e9d247a65ce9e",
   "challenge_call_detail": "27ffbbc1b17a94a21120d4e046a151450ce9fdf23490981718c98dd6535f4dfe",
   "challenge_call_gate": "ece6a014b67d8ccc17f921259be5a95b9ad37220a38192c3269d1c6921e85aad",
   "challenge_call_gate_line": "3ac7fa8e5d61c680a21c9a6f72729d3daeab3c17f3fa78a6c58df89fc0d8eee3",
@@ -38,7 +38,7 @@
   "challenge_result_right": "b755c534c7877bf95eda8f6388f1e7a95eb774a6d4a26ce640227ff4ba281fef",
   "challenge_section_questions": "e608345d5747ee582e2f20639f4d9392a5c5e5e3daa5bfde75f2f9a3d0bc25ad",
   "challenge_section_size": "998ed42aabd4af37fc185d105e2a27f50d5771db29d487191a36e49bbb8e44a1",
-  "challenge_see_result": "f4abaf11de8432ee852a673e3726b9ed8b0510cae07408dc45cfdca7c44bee6a",
+  "challenge_see_result": "b3b3ea627d3c184e86baea215e2280b86ce2368d3ec4ed7d6242e6cce75efef2",
   "challenge_start": "bdceea01fb6456455c41b71f3d72bfa359ec560a8fd5cefef0c3530a46df351c",
   "challenge_start_failed": "3064475a10a7dfabf1b51863183b26311dfbbec7d49e059187d1c997d4d23d7b",
   "challenge_start_slow": "5b8adfe14cfc528f62c4559492035d7ab1cc5c76f368c0fa680e3e5d5e0e9e31",
@@ -133,7 +133,7 @@
     <string name="challenge_opens_after_lessons">このフェーズのレッスンを終えると挑戦できます</string>
     <string name="challenge_not_ready">このチャレンジはまだ準備中です。</string>
     <string name="challenge_next_session">次の学習で</string>
-    <string name="challenge_back_to_today">「今日」に戻る</string>
+    <string name="challenge_back_to_today">今日</string>
     <string name="challenge_move">月曜日に移す</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
     <string name="challenge_moved_title">%1$sに移動しました</string>

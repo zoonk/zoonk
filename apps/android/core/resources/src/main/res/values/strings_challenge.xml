@@ -75,7 +75,7 @@
     <string name="challenge_start_failed">That didn\'t go through. Try again in a moment.</string>
     <string name="challenge_start_slow">Still starting. This is taking longer than usual.</string>
     <string name="challenge_continue">Continue</string>
-    <string name="challenge_see_result">See how it went</string>
+    <string name="challenge_see_result">See result</string>
     <string name="challenge_opens_tomorrow">Opens tomorrow</string>
     <plurals name="challenge_opens_in">
         <item quantity="one">Opens in %d day</item>
@@ -84,7 +84,7 @@
     <string name="challenge_opens_after_lessons">Opens after this phase\'s lessons</string>
     <string name="challenge_not_ready">This challenge isn\'t ready yet.</string>
     <string name="challenge_next_session">In your next session</string>
-    <string name="challenge_back_to_today">Back to Today</string>
+    <string name="challenge_back_to_today">Today</string>
 
     <string name="challenge_move">Move to Monday</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->

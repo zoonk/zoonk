@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "challenge_back_to_today": "3dee158537b5ab9405c4b4ee698c0277f16131b33b07100f90254c0421c69700",
+  "challenge_back_to_today": "32e8b7c00a7d08115d094648891085d68d785dbd01b2a2da48dab189cb29a31f",
   "challenge_call_detail": "8b7a3a35fba96b4d2e527bf8cf7d488f26e6bb710660b0df1fc06aa96612c499",
   "challenge_call_gate": "8993c53322363daac7da98d87838a897822a142655306c3c0120d17db2fc7ffc",
   "challenge_call_gate_line": "ae31b7fc71dbf7f386ceffdfe1a19ca11192be7a6e64d0c90375f8f73fd35590",
@@ -38,7 +38,7 @@
   "challenge_result_right": "21addbddf7d377fd6daaa14ff63254ace1a7ed1a176250f77f436c7bf759c713",
   "challenge_section_questions": "cd65c66ce28f8735ce5337d5ec6f689ad27552df62219801d223052396622db5",
   "challenge_section_size": "8ce0dbd7fe337cb509b3ac407b1064b4b84443043b64a2f4ab799674ea5374fc",
-  "challenge_see_result": "d10ec247a367921805419ed4e2cbca9377af1aef86f0b34671bc2001b91728c7",
+  "challenge_see_result": "2bbc8b02ff733fc35f1267a0ae3048eceb83d0df15ed7b908a734ffe8f0bcce1",
   "challenge_start": "02e58d339545ee85aef7f64d6df1468bef04d213987e3783aa234d55a9c26aea",
   "challenge_start_failed": "2bdf6a415bfb9631af8d973525aa9ad3d0bba27e3faad9faa64a8d3ba2c2058a",
   "challenge_start_slow": "a549d3f1f569259be481bb393f0b5ce374670f2002e58c232025a675dae47e3e",
@@ -133,7 +133,7 @@
     <string name="challenge_opens_after_lessons">이 단계의 레슨을 마치면 열려요</string>
     <string name="challenge_not_ready">아직 챌린지가 준비되지 않았어요.</string>
     <string name="challenge_next_session">다음 학습 때</string>
-    <string name="challenge_back_to_today">오늘로 돌아가기</string>
+    <string name="challenge_back_to_today">오늘</string>
     <string name="challenge_move">월요일로 옮기기</string>
     <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
     <string name="challenge_moved_title">%1$s로 옮겼어요</string>

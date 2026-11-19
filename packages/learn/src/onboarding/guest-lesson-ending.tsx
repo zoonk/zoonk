@@ -75,7 +75,7 @@ export function GuestSignUpLink({ signUpHref }: { signUpHref: string }) {
       href={signUpHref}
       icon={<UserPlusIcon aria-hidden="true" />}
     >
-      {t("Create an account to save")}
+      {t("Create a free account")}
     </PendingLink>
   );
 }

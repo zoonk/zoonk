@@ -10,7 +10,7 @@
   "mock_break_time_left": "43c60fd16bdf26e5295ff23a226c2ee92eb42722f964b57eea78442bc11620a9",
   "mock_cell_answered": "9fd1742c2543efa225945d6c78f6cfedb8b8b82e45cc0ea51c18df2edbc6adb6",
   "mock_cell_marked_for_review": "fc6498bbb1af542fccc2f39c0fbad4ebd1de4cbaf33df22189122bb754a34d5e",
-  "mock_continue": "898a1a5f9e4467c4a564855b4677047e55c83afc11dcfbee5fe37def116e3482",
+  "mock_continue": "d484d6987ce9da48a0a05d13206675acecc4674a12e960efe25a96602b7a47e2",
   "mock_continue_section": "d7518f7a6c75b5991efb4df8505e92e801635257e828e414c4a45e5b694fa5f6",
   "mock_essay_blank": "2cf7deeb67c834fb51a4b843bb6e152595d5644497d805b033a23be4c3619f6f",
   "mock_essays_blank": "c777c518171c4be3313a2d10c4eaeb6363277c9a185c9ef9ec7740199a8efc6b",
@@ -34,18 +34,13 @@
   "mock_left_blank_only": "10c2792f3c1ae4a4cec30f78d7c72ab9847aedb2721a7114d3b75a1853f44464",
   "mock_left_flagged": "496c80f1fd75aaf5b2da4deee471a8397abe0d9e808868b74a1a459d903ce983",
   "mock_left_flagged_only": "9fc0b153b96fd9417219c47e66e2df436d2ba2cbe4c0124dcff748110bf02fbc",
-  "mock_legend_answered": "1756ab93d3731eb750a1c336f9bd08c667afb1947173d083aac4a247ff6286ea",
-  "mock_legend_current": "2e1a20ec0fb58ea14a8baa6338d904660d2d9d8cb05101e56f4274b03174e400",
-  "mock_legend_review": "d48d87694f6dcf4ca91ab34b4ccbd5938086dc58d90c09c2dd8443558dfdff20",
-  "mock_legend_review_count": "3bf005f727d2d71776f6bdfce061bd4570f731a95f56b14ff70b237e11755d51",
-  "mock_legend_unanswered": "37dcfd1734c10d4b4748f32e70ad9890fe12fe2d1be7e4cad3336d7acf012262",
   "mock_moves_forward": "8dcdc9bddc870333d656d8ab2aa8def3e1009e7a49d7471e6e9ee0d1f5bbc424",
   "mock_moves_forward_must": "a1c9af05b1e09fe98ff2aa86a845464b79c6bd494e1068a19a317085e2c84384",
   "mock_moves_must": "ef5964c28d37c31d36d27a4f03ed47ffd4577111d87e3fb98cefb90960ac90a1",
   "mock_moves_review_any": "0a5398f3b60435acb9b36d5799e5dc9f45b0db0d867e576a22eb5b01eeceda8a",
   "mock_moves_review_changes": "638a4e45f5c394d24881788b9bd0a45d0fd61b246d36c39ad931fcbcf67d6e0f",
   "mock_moves_review_none": "557b8ce9a46bd97f9899dd16fb5a92aaad1159ae8d920a2bc6dbb170f9f67a3c",
-  "mock_net_score": "ec320145685868ab8b3ca792e09f81d014346215e6174c5d6933fb78d7d4a229",
+  "mock_net_score": "b5ef84b4a57a568a1dee6f30b20bfca76c1e3b1841842a581cdeeee9f445ea33",
   "mock_next": "196d2edd8803ac72db314e8a20d5c9b06090d74e64aab784ed96f751e708a1b0",
   "mock_next_named": "c802127b08bf5e9b79484c7a5e35c9b608bc0c85fe6d55462b17ee55cb3da664",
   "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
@@ -86,7 +81,7 @@
   "mock_step_failed": "3dbba610a1878387bed694571803ce0aa5efe268b4b9b657074b34daef02a0a5",
   "mock_step_failed_saved": "053cb1bded37cc0a3684e5eaf5dd2827f39b61c7134f3452d4699ea50a7f5728",
   "mock_step_slow": "900ace26a3cad048d43188a3d91398ff15e61b7089c19218c10c01297774070b",
-  "mock_take": "3ee2c74fed0163aeae21a77fbbef1cf63022fe7b5cb6db557f0079483795e0ca",
+  "mock_take": "99f2c43dc6c8b4cf617642861c5bfa824b4b37631eb2424ba04542ab15a779bd",
   "mock_take_another": "9d561cbc5bcc5263d4741d3416619f07796be695d52b0d663a3c506a8657d012",
   "mock_time_left_caption": "b493eaabd85dc13d9fe1dd01320a7c9d147ef9825650cb926d89428dc6762811",
   "mock_time_left_label": "ec3512e5be433a79317e639b1b62cac9d7a80b3afe68228c6a54d26a226e6656",
@@ -102,8 +97,8 @@
 -->
 <resources>
     <string name="mock_title">모의고사 %1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s / %2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">감점 반영 %1$s/%2$d점</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="other">%1$s/%2$d개 정답</item>
@@ -114,8 +109,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">모의고사 보기</string>
-    <string name="mock_continue">모의고사 이어서 풀기</string>
+    <string name="mock_take">새 모의고사</string>
+    <string name="mock_continue">계속하기</string>
     <string name="mock_label">모의고사</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">모의고사 · %1$s</string>
@@ -175,13 +170,6 @@
     <!-- How many of the section's questions are answered: "12 answered". -->
     <plurals name="mock_answered_count">
         <item quantity="other">%d개 풀었어요</item>
-    </plurals>
-    <string name="mock_legend_unanswered">안 푼 문제</string>
-    <string name="mock_legend_answered">푼 문제</string>
-    <string name="mock_legend_current">현재 문제</string>
-    <string name="mock_legend_review">다시 볼 문제</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="other">다시 볼 문제 %d개</item>
     </plurals>
     <string name="mock_questions">문제</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->

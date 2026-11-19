@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="mock_title">Mock exam %1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s of %2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Net %1$s of %2$d</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s of %2$d right</item>
@@ -15,8 +15,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Take a mock exam</string>
-    <string name="mock_continue">Continue your mock exam</string>
+    <string name="mock_take">New mock</string>
+    <string name="mock_continue">Continue</string>
     <string name="mock_label">Mock exam</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">Mock exam · %1$s</string>
@@ -83,14 +83,6 @@
     <plurals name="mock_answered_count">
         <item quantity="one">%d answered</item>
         <item quantity="other">%d answered</item>
-    </plurals>
-    <string name="mock_legend_unanswered">Unanswered</string>
-    <string name="mock_legend_answered">Answered</string>
-    <string name="mock_legend_current">Current question</string>
-    <string name="mock_legend_review">Marked for review</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="one">%d marked for review</item>
-        <item quantity="other">%d marked for review</item>
     </plurals>
     <string name="mock_questions">Questions</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->

@@ -296,7 +296,7 @@ private struct WorkedExampleStepView: View {
     }
   }
 
-  /// The step "Show the next step" just added; the first one is there as the screen opens.
+  /// The step "Next step" just added; the first one is there as the screen opens.
   private var newestStep: String? {
     guard shown > 1, content.steps.indices.contains(shown - 1) else {
       return nil

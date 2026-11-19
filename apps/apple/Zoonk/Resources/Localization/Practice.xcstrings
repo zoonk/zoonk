@@ -8043,7 +8043,7 @@
       }
     },
     "Practice mistakes" : {
-      "comment" : "Starts practicing the notebook's ready mistakes.\nTitle of a block that only fixes mistakes.\nTitle of the mistakes practice run.",
+      "comment" : "Title of a block that only fixes mistakes.\nTitle of the mistakes practice run.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8102,7 +8102,7 @@
       }
     },
     "Practice opens tomorrow" : {
-      "comment" : "Under the notebook's title, after the goal's name, when no mistake is ready today and some are tomorrow",
+      "comment" : "Under the notebook's title, when no mistake is ready today and some are tomorrow",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8274,6 +8274,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yarın alıştırmaya hazır"
+          }
+        }
+      }
+    },
+    "practiceMistakesAction" : {
+      "comment" : "Opens practice on the mistakes that are ready to fix.",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fehler üben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practicar errores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réviser tes erreurs"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esercitati sugli errori"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "間違えたところの練習"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "틀린 문제 연습"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ćwicz błędy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Praticar erros"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yanlışlarına çalış"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Practice mistakes"
           }
         }
       }
@@ -10105,7 +10171,7 @@
         }
       }
     },
-    "See how it went" : {
+    "See result" : {
       "comment" : "Finishes a checkpoint to see its result.\nOpens a finished checkpoint's result.",
       "localizations" : {
         "de" : {
@@ -10117,7 +10183,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver cómo te fue"
+            "value" : "Ver resultado"
           }
         },
         "fr" : {
@@ -10129,7 +10195,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guarda com’è andata"
+            "value" : "Vedi il risultato"
           }
         },
         "ja" : {
@@ -10147,19 +10213,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobacz, jak poszło"
+            "value" : "Zobacz wynik"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver como foi"
+            "value" : "Ver resultado"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sonucunu gör"
+            "value" : "Sonucu gör"
           }
         }
       }

@@ -310,7 +310,6 @@
   "plan_mock_exam": "193b0b8402cb75edc7f8f6b09f357490663989ae0c1dc77d9205e784f98ebb41",
   "plan_mock_exams": "52f3bfaf3a43f3a00dfff6939f9e3d06a00b124adc4b3e4d6ef8d273f846c099",
   "plan_mock_exams_count": "3a7263abc4bfbb012b875ed3af0dce64002a783a2170a0bbba93109d249c3ac9",
-  "plan_mocks_before_next_exam": "f74b368be7a2d42a613f1aa3a750687b8627a025ffe9d9be66f17685c7e90e3a",
   "plan_mocks_every_weeks": "c09d5687ae3a51f580eb41bcfc5d0f4ccdcdb6f4bed0056ab5c1daf31e1bf3e3",
   "plan_mocks_next": "e415949e178de5a3780a745de025e719078378b35182df7a31675ccef5ced345",
   "plan_mondays": "ad01bf8eb9de8a903ad7e399f6084ac941c177efec61d71c08373cc027438411",
@@ -325,7 +324,6 @@
   "plan_named_month_note": "26658abd47b3cf985b26d594bfe71f057f5113272c6716e0238345a4621f4cec",
   "plan_next": "7e1346b76c5aacb3165f160666885eecab44b6b76aa27e4a51899e1cc254c408",
   "plan_next_keep_going": "d9fa5cb435c7c86398dc808f95da12cb3f851f5f5dfd305399a63224f725d61c",
-  "plan_next_on_path": "f7e4883af4aee8239caba844dae4b892b3ad4161c0c3934646514ff656134534",
   "plan_next_past_share": "4377ae1bb475da3eaae9b17a225b8aaedecad34dad7aaf75726f90fa96f7cfed",
   "plan_next_review_every_topic": "a840c1eb525cbec25e29fd1b3c5799ae09f1d6c8c7a4f2a0d2ebe60b69519040",
   "plan_next_review_forgetting": "40964bb3dd876228d74b3b1a080c3e3642abc1b2afa5c106ddf96be56e1f694e",
@@ -700,17 +698,11 @@
         <item quantity="other">%d examens blancs</item>
     </plurals>
     <!-- %2$s is a date, such as "Nov 8". -->
-    <plurals name="plan_mocks_before_next_exam">
-        <item quantity="one">%1$d examen blanc avant ton prochain examen, le %2$s</item>
-        <item quantity="many">%1$d examens blancs avant ton prochain examen, le %2$s</item>
-        <item quantity="other">%1$d examens blancs avant ton prochain examen, le %2$s</item>
-    </plurals>
     <plurals name="plan_lessons_of">
         <item quantity="one">%1$d leçon sur %2$d</item>
         <item quantity="many">%1$d leçons sur %2$d</item>
         <item quantity="other">%1$d leçons sur %2$d</item>
     </plurals>
-    <string name="plan_next_on_path">La suite de ton parcours</string>
     <string name="plan_date_to_be_confirmed">Date à confirmer</string>
     <string name="plan_more">Plus</string>
     <string name="plan_mind_maps">Cartes mentales</string>

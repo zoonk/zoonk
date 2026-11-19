@@ -6,7 +6,7 @@ import XCTest
 
 @testable import Zoonk
 
-/// "Start lesson 1" from an About you question saves its answer first. The learner closes Setup
+/// "Start" from an About you question saves its answer first. The learner closes Setup
 /// while it saves: the answer lands, and nothing opens over wherever they went.
 @MainActor
 final class SetupLessonStartTests: XCTestCase {
@@ -25,7 +25,7 @@ final class SetupLessonStartTests: XCTestCase {
         .environment(router)
         .zoonkStyles())
 
-    try await activate(String(localized: "Start lesson 1", table: "AboutYou"), in: window)
+    try await activate(String(localized: "Start", table: "AboutYou"), in: window)
     try await waitUntilAnswering(server, in: window)
     setup.isShown = false
     try await waitForTestCondition("Setup did not close") { spoken(in: window).isEmpty }
@@ -49,7 +49,7 @@ final class SetupLessonStartTests: XCTestCase {
         .environment(router)
         .zoonkStyles())
 
-    try await activate(String(localized: "Start lesson 1", table: "AboutYou"), in: window)
+    try await activate(String(localized: "Start", table: "AboutYou"), in: window)
     try await waitUntilAnswering(server, in: window)
     await server.release()
     try await waitForTestCondition("Lesson one did not open") {

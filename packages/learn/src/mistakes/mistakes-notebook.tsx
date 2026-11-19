@@ -8,7 +8,6 @@ import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { Fragment, useState } from "react";
 import {
@@ -23,13 +22,11 @@ import {
   ListGroup,
   ListRowBody,
   ListRowContent,
-  ListRowLeading,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
 import { PageSubtitle } from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
-import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -73,16 +70,15 @@ function getGroupKey(group: readonly MistakeEntry[]): string {
 /** Tailwind's `lg`. */
 const INBOX_QUERY = "(min-width: 64rem)";
 
-function NotebookHero({ goalTitle, notebook }: { goalTitle: string | null; notebook: Notebook }) {
+function NotebookHero({ notebook }: { notebook: Notebook }) {
   const t = useExtracted();
   const availability = useNotebookAvailabilityText(notebook.availability);
-  const subtitle = [goalTitle, availability].filter(Boolean).join(FACT_SEPARATOR);
 
   return (
     <DetailHero>
       <DetailHeroText>
         <DetailTitle>{t("Mistakes notebook")}</DetailTitle>
-        {subtitle && <PageSubtitle>{subtitle}</PageSubtitle>}
+        {availability && <PageSubtitle>{availability}</PageSubtitle>}
       </DetailHeroText>
     </DetailHero>
   );
@@ -105,7 +101,11 @@ function PracticeBar({ hrefs, notebook }: { hrefs: MistakesHrefs; notebook: Note
           prefetch={false}
           size="lg"
         >
-          {t("Practice mistakes")}
+          {t({
+            description: "Opens practice on the mistakes that are ready to fix.",
+            id: "practiceMistakesAction",
+            message: "Practice mistakes",
+          })}
         </EnterLink>
       </BottomBarActions>
     </BottomBar>
@@ -147,10 +147,12 @@ function NotebookTabs({
 function MistakesInbox({
   groups,
   hrefs,
+  tomorrowOnPage,
   trueFalseLabels,
 }: {
   groups: MistakeEntry[][];
   hrefs: MistakesHrefs;
+  tomorrowOnPage: boolean;
   trueFalseLabels: Notebook["trueFalseLabels"];
 }) {
   const t = useExtracted();
@@ -190,7 +192,6 @@ function MistakesInbox({
               onClick={() => select(key)}
               type="button"
             >
-              <ListRowLeading>{group[0]?.status === "fixed" && <DoneMark />}</ListRowLeading>
               <ListRowBody>
                 <ListRowContent>
                   <ListRowTitle>{name}</ListRowTitle>
@@ -217,6 +218,7 @@ function MistakesInbox({
                     key={mistake.id}
                     links={getMistakeEntryLinks({ hrefs, mistake })}
                     mistake={mistake}
+                    tomorrowOnPage={tomorrowOnPage}
                     trueFalseLabels={trueFalseLabels}
                   />
                 ))}
@@ -252,13 +254,11 @@ export function MistakesNotebookBar() {
 
 export function MistakesNotebook({
   filters,
-  goalTitle = null,
   hrefs,
   notebook,
   pattern,
 }: {
   filters: MistakesFilters;
-  goalTitle?: string | null;
   hrefs: MistakesHrefs;
   notebook: Notebook;
   pattern: NoticedPattern | null;
@@ -276,7 +276,7 @@ export function MistakesNotebook({
       data-slot="mistakes-notebook"
     >
       <DetailAside>
-        <NotebookHero goalTitle={goalTitle} notebook={notebook} />
+        <NotebookHero notebook={notebook} />
       </DetailAside>
 
       <PageTabsGroup>
@@ -294,6 +294,7 @@ export function MistakesNotebook({
               <MistakesInbox
                 groups={groups}
                 hrefs={hrefs}
+                tomorrowOnPage={notebook.availability.ready === 0}
                 trueFalseLabels={notebook.trueFalseLabels}
               />
             </section>

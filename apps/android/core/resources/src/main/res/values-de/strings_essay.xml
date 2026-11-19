@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "essay_back_to_today": "0cdeb16979dacef3c9a7d880d8a3fdab160e2e224e4f0fb35977c73b0596c095",
+  "essay_back_to_today": "77d9123328be5f0cf87ef36a48fe05a353d8d1c546e7aa2c87ded98ce4888d0e",
   "essay_comments": "35c6f25591a472a947d75df09cf8747f2326e2c86d0b15271fe05a14ec14b8ac",
   "essay_criterion_addressing": "0756053ba566efbd8bcee7bebd50c286d92cdc4fd8c06e18b9206738feb3e3e6",
   "essay_criterion_argument": "d63dca4f0ba5e0935156288b5b8f00924affc0cf63fd586c63e43df02a506eeb",
@@ -23,7 +23,7 @@
   "essay_finish_failed": "ef2df8d8947761adb3749965b3fceb5512339ba38bb6c8008db63b4e30780d4f",
   "essay_for_example": "0fb360513a3e3f174d79b93dbe085bd871327d314ceda050462c5e9ccf00297e",
   "essay_full_marks": "3000b615c165a033a9dc849fdf93747efbfe479a3f26566672369d5ee479fafb",
-  "essay_grade_rewrite": "9f7f969016db55a4e980e7049085b569c43d4080efb0b502cf4e3990903de5d7",
+  "essay_grade_rewrite": "9e65465beef68476df285c57c8ece23a5d3eb7845648f4916d5c59661e448725",
   "essay_grading": "9622b2812d3cd2148e1018ac4bdf8632c8008c29f496f318767efee3714d6812",
   "essay_grading_slow": "74b44e881dfdba5ebd04042a83d7ef2d9a73c773f14158d4bbf98a30799fd8c4",
   "essay_keep_writing": "288583ef1a26e57f36c601f61909d393200f3592d2131625d7f725857b873641",
@@ -43,7 +43,7 @@
   "essay_score_of": "46bf4caf303dd8412adbf36c249e4fa54188b57b9ed1fb6b1f6dc231e0d8386c",
   "essay_see_comments": "b71f02abd84645b6230bf20fc866b414464ee5c79add077a4b30da8a329d9207",
   "essay_see_grade": "828622b9736e67ec1aabeda15aa26c90821c17ba9d5e34012a9f3b725b5c0fef",
-  "essay_send": "209c56d4a03f7265c648d70d2c0664d92091c386de0bbf621490cc3cb7040a27",
+  "essay_send": "f8ddc41deff05f4909a1ac210088575e6d0c3b0246f1daec24deea3b23a262ba",
   "essay_send_failed": "bf3f50fa0501be4fcb4cf69ea0d811505c9b59180fe235a90e72d830ab2c78d0",
   "essay_skip_rewrite": "4e09ae6f37e8f1969d54b8fffa04feb1f28e210e2f0d0765a05e1deff7ef575d",
   "essay_skipped": "b9e860e7d7db76c8a9e168e70f9a1f94b608b49f0f8973cff66a4027b945be67",
@@ -104,14 +104,14 @@
     </plurals>
     <!-- On an essay the learner skipped, opened again from a link. -->
     <string name="essay_skipped">Du hast diesen Aufsatz übersprungen.</string>
-    <string name="essay_back_to_today">Zurück zu Heute</string>
+    <string name="essay_back_to_today">Heute</string>
     <string name="essay_send_failed">Das hat nicht geklappt. Dein Text ist noch da. Versuch es gleich noch einmal.</string>
     <string name="essay_limit_reached">Du hast deine Bewertungen für heute aufgebraucht. Dein Text bleibt hier; schick ihn morgen ab.</string>
     <string name="essay_grading">Wir prüfen deinen Text anhand jedes Kriteriums. Das kann bis zu 30 Sekunden dauern.</string>
     <string name="essay_grading_slow">Wir bewerten noch. Das dauert länger als sonst.</string>
     <string name="essay_skip_rewrite">Überspringen</string>
-    <string name="essay_grade_rewrite">Überarbeitung bewerten lassen</string>
-    <string name="essay_send">Zur Bewertung abschicken</string>
+    <string name="essay_grade_rewrite">Überarbeitung bewerten</string>
+    <string name="essay_send">Aufsatz bewerten</string>
     <string name="essay_leave_title">Fürs Erste aufhören?</string>
     <string name="essay_leave_description">Dein Text bleibt auf diesem Gerät und ist noch da, wenn du zurückkommst.</string>
     <string name="essay_keep_writing">Weiterschreiben</string>

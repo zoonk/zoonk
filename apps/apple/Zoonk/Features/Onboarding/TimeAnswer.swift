@@ -22,12 +22,14 @@ struct TimeAnswer: View {
   let onRetry: () -> Void
   let onUseOffer: (Int) -> Void
 
+  @Environment(\.legibilityWeight) private var legibility
+
   var body: some View {
     let failed = line == .askFailed || line == .findFailed
 
     VStack(alignment: .leading, spacing: 8) {
       if let lineWords {
-        Text(lineWords)
+        Text(Self.sharedOut(lineWords, line: line), strong: .semibold, legibility: legibility)
           .foregroundStyle(.mutedForeground)
       }
 
@@ -90,6 +92,22 @@ struct TimeAnswer: View {
 
   private static func duration(_ minutes: Int) -> String {
     planDurationText(minutes: Double(minutes))
+  }
+
+  /// Main's share line: the share stands out in its sentence.
+  private static func sharedOut(_ words: String, line: ScheduleTime.Line) -> AttributedString {
+    var text = AttributedString(words)
+
+    switch line {
+    case .focus(let share), .share(let share):
+      if let range = text.range(of: percent(share)) {
+        text[range].inlinePresentationIntent = .stronglyEmphasized
+      }
+    default:
+      break
+    }
+
+    return text
   }
 
   nonisolated private static func percent(_ share: Double) -> String {

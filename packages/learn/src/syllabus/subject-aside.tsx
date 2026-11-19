@@ -10,7 +10,6 @@ import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionsLabel } from "../exam/use-exam-question-count";
 import { useFormatPlanDate } from "../plan/plan-date-text";
-import { getDoneChapters } from "./done-chapters";
 
 function getCoverage(subject: SyllabusSubject) {
   if (subject.lessonsTotal === 0) {
@@ -62,13 +61,6 @@ function SubjectPreparation({
       <CoverageBar studied={share} />
 
       <SubjectMastery mastery={mastery} />
-
-      {/* The page's topics and chapters count lessons, so a number they don't explain says what it counts. */}
-      {share > 0 && (
-        <p className="text-muted-foreground text-2xs">
-          {t("Counts your answers in lessons, practice and tests.")}
-        </p>
-      )}
     </div>
   );
 }
@@ -141,7 +133,6 @@ function SubjectDetails({
   const format = useFormatter();
   const edition = questionsSource?.edition;
   const questionsLabel = useExamQuestionsLabel();
-  const chaptersDone = getDoneChapters(subject.chapters).length;
 
   return (
     <DetailProperties>
@@ -163,24 +154,6 @@ function SubjectDetails({
           {format.number(subject.questions)}
         </DetailProperty>
       ) : null}
-
-      {subject.topics.length > 0 && (
-        <DetailProperty label={t("Topics")} mono>
-          {t("{done, number} of {total, number}", {
-            done: subject.topicsStudied ?? 0,
-            total: subject.topics.length,
-          })}
-        </DetailProperty>
-      )}
-
-      {subject.chapters.length > 0 && (
-        <DetailProperty label={t("Chapters")} mono>
-          {t("{done, number} of {total, number}", {
-            done: chaptersDone,
-            total: subject.chapters.length,
-          })}
-        </DetailProperty>
-      )}
 
       {subject.nextDate && (
         <DetailProperty label={t("Next date")} mono>

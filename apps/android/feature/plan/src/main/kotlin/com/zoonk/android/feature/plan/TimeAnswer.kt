@@ -14,7 +14,9 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonEdge
@@ -206,6 +208,24 @@ internal fun shareText(
         goalDateText(date, today),
     )
 
+/** Main's share line under a time picker, its share standing out. */
+@Composable
+private fun shareWords(
+    date: GoalDate,
+    exam: Boolean,
+    share: Double,
+    today: LocalDate,
+): AnnotatedString {
+    val text = shareText(date, exam, share, today)
+    val percent = formatPercent(share, currentLocale())
+    val start = text.indexOf(percent)
+
+    return buildAnnotatedString {
+        append(text)
+        if (start >= 0) addStyle(SpanStyle(fontWeight = FontWeight.SemiBold), start, start + percent.length)
+    }
+}
+
 /** Main's `timeCovers`: the same fact as the share line, where no picker shows the time. */
 @Composable
 internal fun timeCoversText(
@@ -254,12 +274,12 @@ private fun lineWords(
 
             is TimeLine.Focus -> {
                 date ?: return AnnotatedString("")
-                shareText(date, exam, line.coveredShare, today)
+                return shareWords(date, exam, line.coveredShare, today)
             }
 
             is TimeLine.Share -> {
                 date ?: return AnnotatedString("")
-                shareText(date, exam, line.share, today)
+                return shareWords(date, exam, line.share, today)
             }
 
             TimeLine.PastDate -> {

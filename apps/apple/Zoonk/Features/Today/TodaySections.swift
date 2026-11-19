@@ -971,18 +971,14 @@ struct TodayProgressSection: View {
               "Progress", tableName: "Today", comment: "Title of the goal's progress card"),
             value: goalProgressPercent(progress.value),
             // Until the syllabus says what was known, known lessons would read as studied.
-            detail: syllabus.value.map { studied(lessons, known: $0.lessons.known) }
+            detail: syllabus.value.map {
+              let known = min(lessons.done, $0.lessons.known)
+              return Text(
+                verbatim: lessonsProgressLine(studied: lessons.done - known, known: known))
+            }
           ) {
             if lessons.total > 0 {
-              let known = min(lessons.done, syllabus.value?.lessons.known ?? 0)
-              let total = Double(lessons.total)
-
-              VStack(alignment: .leading, spacing: 10) {
-                CoverageBar(
-                  studied: Double(lessons.done - known) / total, known: Double(known) / total)
-
-                CoverageLegend(states: known > 0 ? [.studied, .known, .new] : [.studied, .new])
-              }
+              CoverageBar(done: Double(lessons.done) / Double(lessons.total))
             }
           }
         }
@@ -1036,18 +1032,6 @@ struct TodayProgressSection: View {
 
   /// Only what was studied: a long plan never leads with its thousand lessons, and what the
   /// learner already knew stays in the number and the bars.
-  private func studied(_ lessons: TodayView.Progress.Lessons, known: Int) -> Text {
-    let studied = lessons.done - min(lessons.done, known)
-
-    return studied == 0
-      ? Text(
-        "No lessons studied yet", tableName: "Today",
-        comment: "Under the goal's progress, before any lesson is studied")
-      : Text(
-        "\(studied) lessons studied", tableName: "Today",
-        comment: "Lessons studied, under the goal's progress")
-  }
-
   /// Nothing in a week without a whole point either way.
   private func weekGain(_ gain: Double) -> Text? {
     let points = Int((gain * 100).rounded())

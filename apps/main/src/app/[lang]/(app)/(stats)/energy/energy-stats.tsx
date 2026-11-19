@@ -2,6 +2,7 @@ import { type EnergyData } from "@zoonk/core/progress/energy";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { BatteryFullIcon, ZapIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
+import { STAT_PAGE_TILES_CLASS } from "../_components/stats-tiles";
 
 const PERCENT = 100;
 
@@ -20,7 +21,7 @@ export async function EnergyTiles({
   const fullDays = insights ? format.number(insights.fullEnergyDays) : DASH;
 
   return (
-    <StatTiles>
+    <StatTiles className={STAT_PAGE_TILES_CLASS}>
       <StatTile
         detail={t("Today")}
         icon={<ZapIcon />}

@@ -514,7 +514,7 @@ struct ProfileStep: View {
             onStartLesson(hasAnswer ? draft.input : nil)
           } label: {
             Text(
-              "Start lesson 1", tableName: "AboutYou",
+              "Start", tableName: "AboutYou",
               comment:
                 "Opens the goal's first lesson from an About you question, saving its answer first"
             )

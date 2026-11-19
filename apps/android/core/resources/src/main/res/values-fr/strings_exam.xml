@@ -37,7 +37,6 @@
   "exam_format_one_day": "47eb82b4136f22920703cad85f9c730d6442067bddbebe784762a4162f832afc",
   "exam_format_two_days": "da17cd79d2f62d8d9cf5b3c4e1ff41130fe611e64e8b61e08e72e2631a8e8c0c",
   "exam_how_did_it_go": "9ec129092172060076cfdba6e89606ea6d22b9f6321849fe73f14a82097307d3",
-  "exam_latest_mock": "6f3342427bab438951597493500742202c5951f11078cb526afc46949d2ab1f3",
   "exam_mock_answered": "494c35e2e134f0ef9f16877cab30a991058f0b2f67d03f128d96aa831cb623e4",
   "exam_mock_handed_in": "ea99ed03755c40ced297916b1b01ce7b2d5ac899e62c3f93fb7c4ad8712cc9e1",
   "exam_mock_time_left": "614e13a3b53e6d1e36e4f63c482fa2350d22c5778851a5099123edb74375d85e",
@@ -194,7 +193,6 @@
         <item quantity="other">%d questions</item>
     </plurals>
     <string name="exam_progress_title">Ta progression</string>
-    <string name="exam_latest_mock">Dernier examen blanc</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
     <string name="exam_net_score_in">Score pour %1$s</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->

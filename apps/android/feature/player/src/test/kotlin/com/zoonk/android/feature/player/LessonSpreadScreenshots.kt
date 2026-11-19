@@ -218,7 +218,7 @@ class LessonSpreadScreenshots {
 
     @Test
     @Config(qualifiers = BOOK)
-    fun bookWorkedExampleSteps() = capture("book-worked-example-steps", workedExampleStep("worked")) { tap("Show the next step") }
+    fun bookWorkedExampleSteps() = capture("book-worked-example-steps", workedExampleStep("worked")) { tap("Next step") }
 
     @Test
     @Config(qualifiers = BOOK, fontScale = 2f)

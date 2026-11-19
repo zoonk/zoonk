@@ -54,7 +54,7 @@ test.describe("Learning tabs frame", () => {
   });
 });
 
-test("the loaded mistakes notebook still goes back to the page it was opened from", async ({
+test("on a phone the mistakes notebook leaves by the tab bar, with no way back of its own", async ({
   browser,
 }) => {
   const { user } = await createTwoGoalLearner();
@@ -71,12 +71,18 @@ test("the loaded mistakes notebook still goes back to the page it was opened fro
   await expect(page.getByText(/^Nothing to fix right now/u)).toBeVisible();
 
   await page.setViewportSize({ height: 844, width: 390 });
-  await page.getByRole("link", { exact: true, name: "Back to Plan" }).click();
+  await expect(page.getByRole("link", { name: /^Back to /u })).toBeHidden();
+
+  await page
+    .getByRole("navigation", { name: "Learning tabs" })
+    .getByRole("link", { name: "Plan" })
+    .click();
+
   await expect(page).toHaveURL(/\/plan$/u);
 });
 
 test.describe("The way back on a computer", () => {
-  test("a page the learner's sidebar lists has none, and one it doesn't list keeps it", async ({
+  test("a learner's top-level pages have none, listed in the sidebar or not", async ({
     browser,
   }) => {
     const [withGoal, withoutGoal] = await Promise.all([
@@ -100,7 +106,7 @@ test.describe("The way back on a computer", () => {
     await expect(listedBack).toBeHidden();
 
     await listed.goto("/stats");
-    await expect(listed.getByRole("link", { name: /^Back to /u })).toBeVisible();
+    await expect(listed.getByRole("link", { name: /^Back to /u })).toBeHidden();
 
     const unlisted = await openAs(browser, withoutGoal);
     await unlisted.setViewportSize({ height: 900, width: 1440 });
@@ -110,7 +116,7 @@ test.describe("The way back on a computer", () => {
       unlisted.getByRole("complementary", { name: "Sidebar" }).getByText("Completed lessons"),
     ).toHaveCount(0);
 
-    await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeVisible();
+    await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeHidden();
 
     await unlisted.goto("/mistakes");
 

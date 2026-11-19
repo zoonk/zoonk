@@ -75,7 +75,7 @@ Only three things pass the column: a highlighted or hovered row (10px each side,
 
 ### E8. One page top
 
-A page's top is `PageTop` (in the app's frame the layout draws `PageTopBar` and the page its title in `PAGE_HEADER_CLASS`): the bar with the way back and the page's actions, then the title. The first thing on every page sits on the frame's first row, the 44px row 12px from the top, which on a computer is the sidebar's first row: a bar with a way back or actions holds that row and the title starts 69px from the top, under it; a bar that holds nothing at that size (a tab's own page, or a page the sidebar lists, on a computer) gives its row to the title, which centers on it, 17px from the top. An empty bar never holds room over a title, the frame has no top padding, no page pads or pushes its own title, and nothing sits over it. A right column's first card starts on the same row, 12px from the top. The way back is `BackLink` (I4), always with the page's name. A task keeps its own header with ✕. A [marketing page](../SKILL.md#marketing-pages), the blog and the design site are outside this rule: each keeps its site's header, with its titles at one height from one layout piece and a first screen's room set once per kind of page.
+A page's top is `PageTop` (in the app's frame the layout draws `PageTopBar` and the page its title in `PAGE_HEADER_CLASS`): the bar with the way back and the page's actions, then the title. The first thing on every page sits on the frame's first row, the 44px row 12px from the top, which on a computer is the sidebar's first row: a bar with a way back or actions holds that row and the title starts 69px from the top, under it; a bar that holds nothing at that size (a tab's own page, or a page the sidebar lists, on a computer) gives its row to the title, which centers on it, 17px from the top. An empty bar never holds room over a title, the frame has no top padding, no page pads or pushes its own title, and nothing sits over it. A right column's first card starts on the same row, 12px from the top. The way back is `BackLink` (I4): it shows only when it leads somewhere the page's own tabs and the sidebar don't, names the page it leads to, and never repeats the page's title. A task keeps its own header with ✕. A [marketing page](../SKILL.md#marketing-pages), the blog and the design site are outside this rule: each keeps its site's header, with its titles at one height from one layout piece and a first screen's room set once per kind of page.
 
 - **Check.** The `h1`'s top per page and screen size: where its bar puts it, 69px under a bar with a row and 17px under a bar that holds nothing, equal within 1px among pages whose bars match (`E8 page top`, `E8 page tops across pages`, `E8 named back link`, `zoonk/no-page-top-spacing`). At 1440 the bar's row, a bare title's middle and a right column's first card sit on the sidebar's first row (look at).
 - **Usual break.** `pt-5` on a header, top padding on the frame, or an empty bar kept on a computer, so the title starts 50px below the sidebar's first row. A second header component that decides the title's place again.
@@ -118,10 +118,10 @@ A box that holds content (a card, a panel, a composer) gives it the same room on
 
 ### S5. The gutter is the frame's
 
-Content keeps the frame's gutter from the screen's edge: 16px on a phone, 32px on a tablet, 40px beside the sidebar from `lg`. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
+Content keeps the frame's gutter from the screen's edge: 16px on a phone and 24px from a tablet up, beside the sidebar too (`FRAME_GUTTER_CLASS`). It is about the room the page's corners keep across (the bottom bar's and the page top's 16px) and the sidebar's own inset, so a corner reads even and the page never looks more padded than the frame around it. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
 
-- **Check.** The main region's leftmost and rightmost ink against the screen's edges.
-- **Usual break.** A box drawn with an outside ring, 1px wider than the field above it.
+- **Check.** The main region's leftmost and rightmost ink against the screen's edges: 16px at 390, 24px at 768 and beside the sidebar at 1440.
+- **Usual break.** A box drawn with an outside ring, 1px wider than the field above it. A frame or a column that pads by its own number instead of `--page-gutter`.
 
 ## Shape
 
@@ -308,7 +308,7 @@ Each surface has one enabled filled button at most, its main action. A surface i
 
 ### X1. Every control has every state
 
-A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's shape or state apart from the page (an off switch's track, an empty radio's or checkbox's ring, a field's or a code box's outline (`border-field`), a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too. An outline button keeps the light line (`border-input`): its words say what it is.
+A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's state apart from the page (an off switch's track, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too. Every outlined control (a field, a select, a code box, a checkbox, a radio, an outline button) rests on one soft line (`border-input`) and turns dark only on focus.
 
 - **Check.** In a focus screenshot the focused control is found at a glance; a disabled one reads as off, not broken.
 - **Usual break.** A hand-built clickable `div` with a hover fill and no focus ring.
@@ -322,7 +322,7 @@ A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`
 
 ### X3. A state change moves nothing
 
-Hover, focus, selected, busy and disabled never change a control's size or shift its neighbors.
+Hover, focus, selected, busy and disabled never change a control's size or shift its neighbors. The one exception, granted by the user: a switch that shows a field depending on it ("Different time on weekends" and its weekend time) reveals that field directly under itself while it's on, and only what follows it moves.
 
 A screen that changes height or moves a neighbor when data, a picture or a font arrives after the first paint breaks it too.
 
@@ -417,7 +417,7 @@ The questions of [the craft read](../SKILL.md#the-craft-read), answered for one 
 
 1. **Proportion, at this size.** Asked at each size the screen is read at, before any ruler: does it look well made at this width? Any empty room held for nothing, chrome taller or wider than what it holds, room that grew with the gutter, a column that starts or ends somewhere odd, something sized for a phone on a wide screen? A screen that follows every rule and still looks worse for one is a finding against that rule (`departs: principle`), with the change to the rule it calls for.
 2. **Left edge.** How many places do text and boxes start, and where? In each list, does every label start on one edge, the rows without a mark included? (E1, E4)
-3. **Top bar.** Does the back arrow or the close start where the title's first letter starts, and the right-hand "…" or avatar end on the content's right edge, with no part of either past the edge? (E2)
+3. **Top bar.** Is a way back drawn only where it leads somewhere the page's tabs and the sidebar don't, named for that page and not the title under it? Does the back arrow or the close start where the title's first letter starts, and the right-hand "…" or avatar end on the content's right edge, with no part of either past the edge? (E2)
 4. **Right edge.** Do details, values, chevrons and buttons end on one line? (E3)
 5. **Rows.** In each list: marks on one axis, labels on one edge, icons level with their text, rows of one height, dividers of one length? (E4, E5, D1, D2)
 6. **Pairs.** Things side by side: same top and bottom? On each row, are a small value's or a date's capitals level with the label's and the chevron's? (E6, H4)

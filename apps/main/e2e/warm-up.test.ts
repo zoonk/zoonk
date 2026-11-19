@@ -20,7 +20,7 @@ const STILL_READING_MS = 30 * 60_000;
 
 const DAILY_MINUTES = Array.from({ length: 7 }, () => 20);
 
-const PLAY_QUIZ = "Play a quiz while you wait";
+const PLAY_QUIZ = "Play a quiz";
 
 /**
  * A goal at the time question while its plan is built, by a run that already reported its deck. A
@@ -358,7 +358,7 @@ test("a learner whose first lesson is written before the plan starts it from the
   });
 
   await expect(page.getByText("Your plan will be waiting when you finish.")).toBeVisible();
-  await page.getByRole("link", { name: "Start lesson 1" }).click();
+  await page.getByRole("link", { exact: true, name: "Start" }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}`, "u"));
 });
 

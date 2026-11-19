@@ -18,7 +18,7 @@ export type MindMapsPageChapter = Omit<GoalMindMapView, "image" | "outline"> & {
 export type MindMapsPage = Pick<
   GoalMindMapsView,
   "createOffer" | "firstTab" | "lessonGroups" | "saved"
-> & { chapters: MindMapsPageChapter[]; goal: Pick<GoalMindMapsView["goal"], "displayName" | "id"> };
+> & { chapters: MindMapsPageChapter[]; goal: Pick<GoalMindMapsView["goal"], "id"> };
 
 export function toMindMapsPage(mindMaps: GoalMindMapsView): MindMapsPage {
   const { chapters, createOffer, firstTab, goal, lessonGroups, saved } = mindMaps;
@@ -30,7 +30,7 @@ export function toMindMapsPage(mindMaps: GoalMindMapsView): MindMapsPage {
     })),
     createOffer,
     firstTab,
-    goal: { displayName: goal.displayName, id: goal.id },
+    goal: { id: goal.id },
     lessonGroups,
     saved,
   };
@@ -96,6 +96,64 @@ export function getIndexLayout<Row>(groups: readonly IndexGroup<Row>[]) {
   }
 
   return groups.some((group) => group.name !== null) ? ("folded" as const) : ("preview" as const);
+}
+
+/** A map on its way, or one that didn't finish: its row comes first, so it's in sight. */
+export function needsAttention(chapter: MindMapsPageChapter): boolean {
+  return (
+    chapter.status === "drawing" ||
+    chapter.status === "writingLessons" ||
+    chapter.status === "failed"
+  );
+}
+
+/** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
+export function canMakeNow(chapter: MindMapsPageChapter): boolean {
+  return (
+    chapter.lessonsToWrite === 0 &&
+    (chapter.status === "available" || chapter.status === "drawing" || chapter.status === "failed")
+  );
+}
+
+/** The chapters shown before any fold: the ones the learner most likely wants next. */
+const NEXT_ROWS = 5;
+
+/** A few more than the first rows aren't worth folding away. */
+const FOLD_AFTER = NEXT_ROWS + 2;
+
+function nextRank(chapter: MindMapsPageChapter, studied: ReadonlySet<string>): number {
+  if (needsAttention(chapter)) {
+    return 0;
+  }
+
+  if (canMakeNow(chapter)) {
+    return 1;
+  }
+
+  return studied.has(chapter.chapterId) ? 2 : 3;
+}
+
+/**
+ * Maps on their way or failed first, then chapters whose lessons are all written (made in half a
+ * minute), then chapters the learner finished a lesson in, then the rest; syllabus order within each.
+ */
+export function orderNotMade({
+  chapters,
+  studied,
+}: {
+  chapters: readonly MindMapsPageChapter[];
+  studied: ReadonlySet<string>;
+}) {
+  const ordered = chapters.toSorted((a, b) => nextRank(a, studied) - nextRank(b, studied));
+
+  if (ordered.length <= FOLD_AFTER) {
+    return { next: ordered, rest: [] };
+  }
+
+  const next = ordered.slice(0, NEXT_ROWS);
+  const rest = chapters.filter((chapter) => !next.includes(chapter));
+
+  return { next, rest };
 }
 
 /** Nothing can start now, not even a failed map's free retry: the page says why. */

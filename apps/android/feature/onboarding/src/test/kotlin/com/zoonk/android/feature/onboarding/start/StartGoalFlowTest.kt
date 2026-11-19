@@ -355,10 +355,10 @@ class StartGoalFlowTest {
         show(AppRoute.StartGoal(draftId = DRAFT_ID))
         api.draft = card(left = 0)
         api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = activeGoalsLimit())
-        rule.onNodeWithText("Start music basics").performClick()
+        rule.onNodeWithText("Start").performClick()
         rule.onNodeWithText("That's all the goals you can study at once").assertIsDisplayed()
 
-        rule.onNodeWithText("Join the waitlist").performClick()
+        rule.onNodeWithText("Join waitlist").performClick()
         rule.waitForIdle()
 
         rule.onNodeWithText("You're on the list", substring = true).assertIsDisplayed()
@@ -370,16 +370,16 @@ class StartGoalFlowTest {
     fun aJoinedWaitlistSurvivesARefusedMusicianshipGoal() {
         api.draft = understoodDraft(understanding = """{"status":"instrument","instrument":"guitar"}""", activeGoalsLeft = 1)
         show(AppRoute.StartGoal(draftId = DRAFT_ID))
-        rule.onNodeWithText("Join the waitlist").performClick()
+        rule.onNodeWithText("Join waitlist").performClick()
         rule.waitForIdle()
-        rule.onNodeWithText("Join the waitlist").assertIsNotEnabled()
+        rule.onNodeWithText("Join waitlist").assertIsNotEnabled()
 
         api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = activeGoalsLimit())
-        rule.onNodeWithText("Start music basics").performClick()
+        rule.onNodeWithText("Start").performClick()
         rule.onNodeWithText("That's all the goals you can study at once").assertIsDisplayed()
 
         rule.onNodeWithText("You're on the list", substring = true).assertIsDisplayed()
-        rule.onNodeWithText("Join the waitlist").assertIsNotEnabled()
+        rule.onNodeWithText("Join waitlist").assertIsNotEnabled()
     }
 
     @Test

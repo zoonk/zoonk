@@ -252,7 +252,7 @@ struct DroppedCallView: View {
   }
 
   private var endLabel: Text {
-    Text("End the call", tableName: "Voice", comment: "Ends a dropped call and saves it")
+    Text("End call", tableName: "Voice", comment: "Ends a dropped call and saves it")
   }
 }
 
@@ -307,7 +307,7 @@ private enum CallRefusal {
 
   static var takeover: Text {
     Text(
-      "Start this call", tableName: "Voice",
+      "Start here", tableName: "Voice",
       comment: "Ends the learner's other call and starts this one")
   }
 

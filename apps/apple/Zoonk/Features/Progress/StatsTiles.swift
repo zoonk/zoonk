@@ -21,7 +21,7 @@ enum StatTone {
 }
 
 struct StatTile<Icon: View, Value: View>: View {
-  let label: Text
+  let label: Text?
   let value: Value
   var tone = StatTone.neutral
   @ViewBuilder let icon: Icon
@@ -32,24 +32,27 @@ struct StatTile<Icon: View, Value: View>: View {
   let spokenValue: Text
 
   @Environment(\.statTileOpens) private var opens
+  @Environment(\.statTileLone) private var lone
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 6) {
-      HStack(spacing: 6) {
-        icon
-          .foregroundStyle(tone.color)
-          .imageScale(.small)
+    VStack(alignment: .leading, spacing: lone ? 10 : 6) {
+      if let label {
+        HStack(spacing: 6) {
+          icon
+            .foregroundStyle(tone.color)
+            .imageScale(.small)
 
-        label
-          .lineLimit(2)
+          label
+            .lineLimit(2)
 
-        if opens {
-          Spacer(minLength: 0)
-          DisclosureChevron()
+          if opens {
+            Spacer(minLength: 0)
+            DisclosureChevron()
+          }
         }
+        .typeStyle(.label)
+        .foregroundStyle(.faint)
       }
-      .typeStyle(.label)
-      .foregroundStyle(.faint)
 
       value
         .typeStyle(.readout)
@@ -62,18 +65,20 @@ struct StatTile<Icon: View, Value: View>: View {
 
       if let detail {
         detail
-          .typeStyle(.meta)
+          .typeStyle(lone ? .note : .meta)
           .foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .padding(12)
-    .overlay(
-      RoundedRectangle(cornerRadius: Radius.option, style: .continuous).strokeBorder(.border)
-    )
+    .padding(lone ? 0 : 12)
+    .overlay {
+      if !lone {
+        RoundedRectangle(cornerRadius: Radius.option, style: .continuous).strokeBorder(.border)
+      }
+    }
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(label)
-    .accessibilityValue(accessibilityValue)
+    .accessibilityLabel(label ?? accessibilityValue)
+    .accessibilityValue(label == nil ? Text(verbatim: "") : accessibilityValue)
   }
 
   private var accessibilityValue: Text {
@@ -89,7 +94,7 @@ struct StatTile<Icon: View, Value: View>: View {
 
 extension StatTile where Value == Text {
   init(
-    label: Text, value: Text, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
+    label: Text?, value: Text, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
     detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil,
     meterFill: Color = .success
   ) {
@@ -101,7 +106,7 @@ extension StatTile where Value == Text {
 
 extension StatTile where Icon == Image, Value == Text {
   init(
-    label: Text, value: Text, systemImage: String, tone: StatTone = .neutral, detail: Text? = nil,
+    label: Text?, value: Text, systemImage: String, tone: StatTone = .neutral, detail: Text? = nil,
     meter: Double? = nil, spokenValue: Text? = nil
   ) {
     self.init(
@@ -127,7 +132,7 @@ struct StatQuantity: View {
 
 extension StatTile where Value == StatQuantity {
   init(
-    label: Text, quantity: String, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
+    label: Text?, quantity: String, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
     detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil
   ) {
     self.init(
@@ -138,7 +143,7 @@ extension StatTile where Value == StatQuantity {
 
 extension StatTile where Icon == Image, Value == StatQuantity {
   init(
-    label: Text, quantity: String, systemImage: String, tone: StatTone = .neutral,
+    label: Text?, quantity: String, systemImage: String, tone: StatTone = .neutral,
     detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil
   ) {
     self.init(
@@ -147,13 +152,40 @@ extension StatTile where Icon == Image, Value == StatQuantity {
   }
 }
 
+extension StatTile where Icon == EmptyView, Value == StatQuantity {
+  /// A number with no label, for a block whose title already names it.
+  init(quantity: String, detail: Text? = nil) {
+    self.init(label: nil, quantity: quantity, icon: { EmptyView() }, detail: detail)
+  }
+}
+
 extension EnvironmentValues {
   /// A tile that opens its page ends its label with the row chevron, as main's `opens`.
   @Entry var statTileOpens = false
+  /// Main's lone stat: a grid of one tile draws it as its block's readout, with no box around it.
+  @Entry var statTileLone = false
 }
 
-/// Main's `StatTiles`: every row one height, so tiles of one grid match.
-struct StatTileGrid: Layout {
+/// Main's `StatTiles`: every row one height, so tiles of one grid match, and a lone tile drawn as
+/// its block's readout.
+struct StatTileGrid<Content: View>: View {
+  /// Widest first.
+  let columns: [Int]
+  let minimumWidth: CGFloat
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    Group(subviews: content) { tiles in
+      if tiles.count == 1 {
+        tiles.environment(\.statTileLone, true)
+      } else {
+        StatTileRows(columns: columns, minimumWidth: minimumWidth) { tiles }
+      }
+    }
+  }
+}
+
+private struct StatTileRows: Layout {
   /// Widest first.
   let columns: [Int]
   let minimumWidth: CGFloat

@@ -725,7 +725,7 @@ describe("saving answers", () => {
     document.body.append(container);
 
     const seeAnswer = container.querySelector<HTMLButtonElement>(`#${LESSON_PRIMARY_ID}`);
-    expect(seeAnswer?.textContent).toMatch(/^See the answer/u);
+    expect(seeAnswer?.textContent).toMatch(/^See answer/u);
 
     const root = hydrateRoot(container, player);
     seeAnswer?.click();

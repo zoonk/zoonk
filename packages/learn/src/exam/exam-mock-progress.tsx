@@ -4,7 +4,7 @@ import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
-import { ArrowDownRightIcon, ArrowUpRightIcon, TimerIcon } from "lucide-react";
+import { ArrowDownRightIcon, ArrowUpRightIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StatTile, StatTiles } from "../_components/stat-tile";
@@ -141,14 +141,15 @@ function LatestMock({ progress }: { progress: Progress }) {
               ? t("Score in {mock}", { mock: name })
               : t("Right answers in {mock}", { mock: name })}
             {change !== null && (
-              <span className={cn("block", change > 0 && "text-success-text")}>
-                {t("{change} since the first", { change: formatChange(change) })}
-              </span>
+              <>
+                {FACT_SEPARATOR}
+                <span className={cn(change > 0 && "text-success-text")}>
+                  {t("{change} since the first", { change: formatChange(change) })}
+                </span>
+              </>
             )}
           </>
         }
-        icon={<TimerIcon />}
-        label={t("Latest mock exam")}
         value={`${latest.percent}%`}
       />
     </StatTiles>
@@ -166,9 +167,9 @@ function ProgressCard({ progress }: { progress: Progress }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {line && <p className="text-reading font-medium text-pretty">{line}</p>}
-
       <LatestMock progress={progress} />
+
+      {line && <p className="text-reading font-medium text-pretty">{line}</p>}
 
       {first && latest && progress.mocks.length > 1 && (
         <ProgressLineChart

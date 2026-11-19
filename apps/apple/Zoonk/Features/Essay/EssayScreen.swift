@@ -171,7 +171,7 @@ private struct EssayContent: View {
         Button {
           router.showRoot(of: .today)
         } label: {
-          Text("Back to Today", tableName: "Essay", comment: "Leaves a finished essay for Today")
+          Text("Today", tableName: "Essay", comment: "Leaves a finished essay for Today")
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
@@ -206,9 +206,9 @@ private struct EssayContent: View {
           Task { await writer.send() }
         } label: {
           if essay.drafts.isEmpty {
-            Text("Send for grading", tableName: "Essay", comment: "Sends a draft")
+            Text("Grade essay", tableName: "Essay", comment: "Sends a draft")
           } else {
-            Text("Grade the rewrite", tableName: "Essay", comment: "Sends a rewrite")
+            Text("Grade rewrite", tableName: "Essay", comment: "Sends a rewrite")
           }
         }
         .buttonStyle(.mainAction)

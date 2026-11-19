@@ -13,7 +13,7 @@ export function AdminDetailPage({ children }: { children: React.ReactNode }) {
 
 /** What the shared bottom bar reads to reach the frame's edges: the body's own side and bottom room. */
 const BAR_FRAME_CLASS =
-  "flex-1 sm:flex-1 [--page-bottom:--spacing(12)] [--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)] lg:[--page-bottom:--spacing(16)] lg:[--page-gutter:--spacing(10)]";
+  "flex-1 sm:flex-1 [--page-bottom:--spacing(12)] lg:[--page-bottom:--spacing(16)]";
 
 /**
  * A record's body. A record whose page is one decision passes its `bar` (the shared `BottomBar`):

@@ -2,6 +2,7 @@
 
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -17,7 +18,6 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useStillMounted } from "../_utils/use-still-mounted";
-import { ChoiceList } from "../onboarding/choice-list";
 import { ExamChoicePicks } from "./exam-choice-picks";
 import { ExamChoiceAnswers, useExamChoiceQuestion } from "./exam-choice-question";
 import { useSharedRequest } from "./layout-shared";
@@ -76,30 +76,43 @@ function OneOptionChoice({
   choice,
   choose,
   isPending,
+  labelId,
 }: {
   choice: ExamChoiceView;
   choose: ReturnType<typeof useExamChoice>["choose"];
   isPending: boolean;
+  labelId: string;
 }) {
+  const t = useExtracted();
   const [saved = ""] = choice.subjects;
   const tapped = useTappedChoice(saved);
 
   return (
-    <ChoiceList
-      choices={choice.options.map((option) => ({
-        label: option.shortName ?? option.name,
-        value: option.name,
-      }))}
-      label={choice.group}
-      numberKeys={false}
-      onChange={(value) => {
+    <NativeSelect
+      aria-labelledby={labelId}
+      disabled={isPending}
+      focusableWhenDisabled
+      onChange={(event) => {
+        const { value } = event.target;
+
         if (value !== saved) {
           choose({ group: choice.group, subjects: [value] }, tapped.pick(value));
         }
       }}
-      readOnly={isPending}
-      value={tapped.shown || null}
-    />
+      value={tapped.shown}
+    >
+      {!tapped.shown && (
+        <NativeSelectOption disabled value="">
+          {t("Not set")}
+        </NativeSelectOption>
+      )}
+
+      {choice.options.map((option) => (
+        <NativeSelectOption key={option.name} value={option.name}>
+          {option.shortName ?? option.name}
+        </NativeSelectOption>
+      ))}
+    </NativeSelect>
   );
 }
 
@@ -120,7 +133,7 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
           pending={isPending}
         />
       ) : (
-        <OneOptionChoice choice={choice} choose={choose} isPending={isPending} />
+        <OneOptionChoice choice={choice} choose={choose} isPending={isPending} labelId={labelId} />
       )}
     </section>
   );

@@ -12,7 +12,7 @@
   "planlink_phases": "bdbafcbec535856dd8ecbad08777ae62037381da7b4b3e8fbca12f044fcdd943",
   "planlink_refused": "00a8f93b3dd7673c98b1c974613467b8dc18a0fb85b18c5c74b8355a7ad0d451",
   "planlink_skills": "dcef578d2cc44010535c7d2db16541089d38b4090b754a17878d862ae1c8e858",
-  "planlink_start": "80a5d35b130154f3ba0479085e5a803efdeefa6d45afba874c7ee469133c7072",
+  "planlink_start": "ffc16e7da44b748c3ddae7f2f52b0459ffcd9bed46ef40874c657a149fb42c18",
   "planlink_study_plan": "04f72ae9fb14d41547c3a39fde935ea06245a7ad668b41a049927cd03ccf177a"
 }
 -->
@@ -23,7 +23,7 @@
     <string name="planlink_study_plan">Çalışma planı</string>
     <string name="planlink_minutes_label">Günde ne kadar zaman?</string>
     <!-- Starts the learner's own plan from a shared one. -->
-    <string name="planlink_start">Bu planla başla</string>
+    <string name="planlink_start">Kendi planına başla</string>
     <string name="planlink_make_it_yours">Aynı konu için kendi planın olur. Zaten bildiklerini temel alır.</string>
     <string name="planlink_refused">Şu anda başka bir hedefe başlayamazsın. Önce bir hedefini bitir ya da duraklat.</string>
     <string name="planlink_failed">Bir sorun oluştu. Birazdan tekrar dene.</string>

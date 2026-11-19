@@ -310,7 +310,6 @@
   "plan_mock_exam": "1c7c332ba3f7b2cd529a17322f9af0152f3356a25b8e725a9d74ebcc871828fb",
   "plan_mock_exams": "13036099ebdc32c3afaa9ebb332643f46a6a0fbd6080ade2bdcb0bd82bfa5579",
   "plan_mock_exams_count": "8110a4ab2523a7eabbf4673ac3aa971a962839360e2cc02d14476f1ebd541a69",
-  "plan_mocks_before_next_exam": "2e180da3f97438786c7ca470789106fbe2f25c442f52e5fbbe5cdf88f5903841",
   "plan_mocks_every_weeks": "9ad3d908c5f8b1b7cce2b2e91e5a7d8865a32ec57e97a8f943e91506038e8d50",
   "plan_mocks_next": "7b0266d72bc44e7cfff9161127605de2a980ebe55a2ec46b4285b0f3848e1d65",
   "plan_mondays": "58d442f4f39a2277b3f61901ecca7dfd72e3c638ec12ff41b678606892623b19",
@@ -325,7 +324,6 @@
   "plan_named_month_note": "ef7e844baf3faf515140bb98bcd3d0b48fccf3224e943e89b24b9ca6d0f3adb7",
   "plan_next": "5ea0ab87458236eee52cd823b7b50667e28ced66505100f12e9337744ae361a1",
   "plan_next_keep_going": "232a78460f259104a0ee4e82eedf6c5a4cd2871e97896264c2e041da2ed26ef9",
-  "plan_next_on_path": "9b75830ac3ee62d9c0e31239d5e9dded848bbc964583b62e164f66c340bade92",
   "plan_next_past_share": "beb7de0117c9d8236bfe0a727d1a5783c4321b2046b41b603938bd6bc2e4a242",
   "plan_next_review_every_topic": "35f1762636384e94b486475036728bcef63260df21185d4afbf59e6ccaacc8e7",
   "plan_next_review_forgetting": "c0da8853567254bcb6a09bac1056b090585b676dd7b974c0731a018f0629c421",
@@ -688,15 +686,10 @@
         <item quantity="other">%d deneme sınavı</item>
     </plurals>
     <!-- %2$s is a date, such as "Nov 8". -->
-    <plurals name="plan_mocks_before_next_exam">
-        <item quantity="one">%1$d deneme sınavı, %2$s tarihindeki bir sonraki sınavından önce</item>
-        <item quantity="other">%1$d deneme sınavı, %2$s tarihindeki bir sonraki sınavından önce</item>
-    </plurals>
     <plurals name="plan_lessons_of">
         <item quantity="one">%1$d / %2$d ders</item>
         <item quantity="other">%1$d / %2$d ders</item>
     </plurals>
-    <string name="plan_next_on_path">Yolculuğunda sıradaki adım</string>
     <string name="plan_date_to_be_confirmed">Tarih henüz kesinleşmedi</string>
     <string name="plan_more">Çok</string>
     <string name="plan_mind_maps">Zihin haritaları</string>

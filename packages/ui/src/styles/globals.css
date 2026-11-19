@@ -137,7 +137,6 @@
   --color-success-text: var(--success-text);
   --color-border: var(--border);
   --color-input: var(--input);
-  --color-field: var(--field);
   --color-ring: var(--ring);
   --color-ground: var(--ground);
   --color-energy: var(--energy);
@@ -293,7 +292,6 @@
   --ground: oklch(0.975 0.0015 106);
   --border: oklch(0 0 0 / 7%);
   --input: oklch(0 0 0 / 13%);
-  --field: oklch(0.185 0.004 286 / 50%);
   --ring: var(--color-primary);
   --energy: oklch(0.782 0.158 72.3);
   --brain: oklch(0.64 0.17 293);
@@ -360,7 +358,6 @@
     --ground: var(--color-neutral-100);
     --border: var(--color-neutral-950);
     --input: var(--color-neutral-950);
-    --field: var(--color-neutral-950);
     --ring: var(--color-primary);
     --energy: var(--color-amber-700);
     --brain: var(--color-violet-800);
@@ -408,7 +405,6 @@
     --ground: oklch(0.16 0.003 286);
     --border: oklch(1 0 0 / 7.5%);
     --input: oklch(1 0 0 / 13%);
-    --field: oklch(0.94 0.003 286 / 50%);
     --ring: var(--color-primary);
     --energy: oklch(0.782 0.158 72.3);
     --brain: oklch(0.75 0.13 293);
@@ -467,7 +463,6 @@
       --ground: var(--color-neutral-900);
       --border: var(--color-neutral-50);
       --input: var(--color-neutral-50);
-      --field: var(--color-neutral-50);
       --ring: var(--color-primary);
       --energy: var(--color-amber-200);
       --brain: var(--color-violet-200);

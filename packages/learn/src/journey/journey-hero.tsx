@@ -13,6 +13,7 @@ import { ListGroup } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
 import { useFormatProgressShare, useFormatShare } from "../_utils/percent";
 import { useLanguageNameInSentence } from "../_utils/use-language-name";
+import { useLessonsProgressLine } from "../_utils/use-lessons-progress-line";
 import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
 import { CanDoList } from "../language/progress/can-do-list";
@@ -65,6 +66,7 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const t = useExtracted();
   const formatShare = useFormatShare();
   const formatProgressShare = useFormatProgressShare();
+  const lessonsProgressLine = useLessonsProgressLine();
   const languageName = useLanguageNameInSentence();
 
   if (standing.kind === "preparation" && standing.forExam) {
@@ -85,18 +87,7 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
     const studied = lessons.done - lessons.known;
 
     return {
-      detail:
-        lessons.known > 0
-          ? t("{studied, number} studied · {known, number} already known", {
-              known: lessons.known,
-              studied,
-            })
-          : t({
-              description: "A short line under the progress percent, in a small tile.",
-              message:
-                "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}",
-              values: { studied },
-            }),
+      detail: lessonsProgressLine({ known: lessons.known, studied }),
       label: t("Progress"),
       numeric: true,
       share,

@@ -3,7 +3,6 @@ package com.zoonk.android.feature.plan
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.MenuSelect
 import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -57,29 +57,26 @@ private fun ExamChoiceOptions(
 ) {
     val pending = edits.isPending(PlanPart.ExamChoices)
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionLabel(choice.group)
-        if (choice.take > 1) {
+    if (choice.take > 1) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            SectionLabel(choice.group)
             ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it, null) })
-        } else {
-            val shown =
-                edits
-                    .asked(PlanPart.ExamChoices)
-                    .filterIsInstance<PlanOp.ExamChoice>()
-                    .firstOrNull { it.group == choice.group }
-                    ?.subjects ?: choice.subjects
-            FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                choice.options.forEach { option ->
-                    SelectionChip(
-                        text = option.shortName ?: option.name,
-                        selected = option.name in shown,
-                        onClick = { if (option.name !in shown) edits.chooseExamOption(choice.group, listOf(option.name), null) },
-                        role = Role.RadioButton,
-                        enabled = !pending,
-                    )
-                }
-            }
         }
+    } else {
+        val shown =
+            edits
+                .asked(PlanPart.ExamChoices)
+                .filterIsInstance<PlanOp.ExamChoice>()
+                .firstOrNull { it.group == choice.group }
+                ?.subjects ?: choice.subjects
+        MenuSelect(
+            label = choice.group,
+            options = choice.options,
+            value = choice.options.firstOrNull { it.name in shown },
+            optionLabel = { it.shortName ?: it.name },
+            onPick = { if (it.name !in shown) edits.chooseExamOption(choice.group, listOf(it.name), null) },
+            enabled = !pending,
+        )
     }
 }
 

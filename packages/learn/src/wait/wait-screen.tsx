@@ -170,7 +170,7 @@ function useBackToQuizText(): string {
   return t({
     description:
       "The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
-    message: "Back to the quiz",
+    message: "Back to quiz",
   });
 }
 
@@ -207,7 +207,7 @@ export function WaitSlot({
           : t({
               description:
                 "The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
-              message: "Play a quiz while you wait",
+              message: "Play a quiz",
             })}
       </Button>
     );

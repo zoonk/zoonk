@@ -212,7 +212,7 @@ private fun GuestLessonsBar(onAccount: () -> Unit) {
 }
 
 /**
- * "Subscribe", and once the next free lesson has opened, "Start the lesson" in its place, which asks the server
+ * "Subscribe", and once the next free lesson has opened, "Start" in its place, which asks the server
  * again; it never starts by itself. Nothing ran out then, so nothing is offered to buy.
  */
 @Composable
@@ -235,7 +235,7 @@ private fun FreeLessonsBar(
                         exits.open(AppRoute.Subscription)
                     }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_subscribe)) }
                 }
-                TextButton(onClick = { exits.open(AppRoute.Mistakes) }) { Text(stringResource(R.string.missions_open_mistakes)) }
+                TextButton(onClick = { exits.open(AppRoute.Mistakes) }) { Text(stringResource(R.string.mistakes_practice)) }
             }
         }
     }

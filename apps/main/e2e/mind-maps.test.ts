@@ -835,7 +835,7 @@ test.describe("Mind maps", () => {
 
       await notMade.getByRole("link", { name: "Subscribe" }).click();
       await expect(page).toHaveURL(/\/subscription$/u);
-      await page.getByRole("link", { exact: true, name: "Back to Mind maps" }).click();
+      await page.goBack();
       await expect(page).toHaveURL(/\/mind-maps$/u);
       await expect(row).toBeVisible();
     } finally {

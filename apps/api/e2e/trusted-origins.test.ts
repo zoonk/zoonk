@@ -48,7 +48,7 @@ test.describe("Trusted Origin Validation", () => {
 
     await expect(page.getByRole("heading", { name: "That link didn't work" })).toBeVisible();
 
-    const link = page.getByRole("link", { name: "Go to Zoonk" });
+    const link = page.getByRole("link", { name: "Open Zoonk" });
     await expect(link).toHaveAttribute("href", E2E_MAIN_APP_URL);
   });
 

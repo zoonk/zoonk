@@ -39,18 +39,50 @@ const ACTION_CLASS = buttonVariants({ size: "sm", variant: "outline" });
  */
 export const MIND_MAP_ROW_CLASS = "min-h-20";
 
+function isMaking(shown: MindMapShown): boolean {
+  return shown === "drawing" || shown === "writingLessons";
+}
+
 function SlotMark({ shown }: { shown: MindMapShown }) {
-  if (shown === "drawing" || shown === "writingLessons") {
+  if (isMaking(shown)) {
     return <Spinner className="text-muted-foreground size-4" role="presentation" />;
   }
 
   return <KindIcon kind="mindMap" />;
 }
 
+function RowLeading({
+  alone,
+  shown,
+  view,
+}: {
+  alone: boolean;
+  shown: MindMapShown;
+  view: ChapterMindMapView;
+}) {
+  if (alone) {
+    return (
+      <ListRowLeading>
+        <SlotMark shown={shown} />
+      </ListRowLeading>
+    );
+  }
+
+  return (
+    <ListRowLeading className="py-2">
+      <MindMapSlot thumbnailUrl={shown === "ready" ? (view.image?.thumbnailUrl ?? null) : null}>
+        <SlotMark shown={shown} />
+      </MindMapSlot>
+    </ListRowLeading>
+  );
+}
+
 function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string }) {
   const t = useExtracted();
   const { hint, line } = useStateLines(input);
   const { place, view } = input;
+  // The Mind maps page's list shows a map on its way by its spinner, and says it once under the list.
+  const quiet = place === "library" && isMaking(input.shown);
 
   return (
     <ListRowContent aria-live="polite" className={cn(place === "finish" && "justify-start")}>
@@ -58,14 +90,19 @@ function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string 
         {place === "chapter" ? t("Mind map") : view.title}
       </ListRowTitle>
 
-      {line && <ListRowDescription className="text-pretty">{line}</ListRowDescription>}
+      {line && (
+        <ListRowDescription className={cn("text-pretty", quiet && "sr-only")}>
+          {line}
+        </ListRowDescription>
+      )}
 
-      {hint && <ListRowDescription className="text-pretty">{hint}</ListRowDescription>}
+      {hint && !quiet && <ListRowDescription className="text-pretty">{hint}</ListRowDescription>}
     </ListRowContent>
   );
 }
 
 function RowAction({
+  compact,
   createDescribedBy,
   isPending,
   onCreate,
@@ -74,6 +111,7 @@ function RowAction({
   slowDown,
   titleId,
 }: {
+  compact: boolean;
   createDescribedBy?: string;
   isPending: boolean;
   onCreate?: () => void;
@@ -83,6 +121,14 @@ function RowAction({
   titleId: string;
 }) {
   const t = useExtracted();
+
+  if (compact && isMaking(shown)) {
+    return (
+      <span className="flex size-7.5 items-center justify-center">
+        <Spinner className="text-muted-foreground size-4" role="presentation" />
+      </span>
+    );
+  }
 
   if (shown === "failed" || shown === "unreachable") {
     return (
@@ -154,22 +200,14 @@ export function MindMapRowView({
 
   // A lesson's end shows one row over "Up next", so it takes that row's mark and text edge.
   const alone = place === "finish";
+  // The Mind maps page lists many chapters without a map: their names and actions, nothing more.
+  const compact = place === "library";
   // Alone, the text starts at the row's top, so the action sits on the title's line with it.
   const trailing = alone ? "mt-1.5 self-start" : "self-center";
 
   const body = (
     <>
-      {alone ? (
-        <ListRowLeading>
-          <SlotMark shown={shown} />
-        </ListRowLeading>
-      ) : (
-        <ListRowLeading className="py-2">
-          <MindMapSlot thumbnailUrl={shown === "ready" ? (view.image?.thumbnailUrl ?? null) : null}>
-            <SlotMark shown={shown} />
-          </MindMapSlot>
-        </ListRowLeading>
-      )}
+      {!compact && <RowLeading alone={alone} shown={shown} view={view} />}
       <RowText input={input} titleId={titleId} />
     </>
   );
@@ -189,10 +227,11 @@ export function MindMapRowView({
       )}
 
       {!ready && (
-        <div className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
+        <div className={cn(LIST_ROW_CLASS, !compact && MIND_MAP_ROW_CLASS)}>
           {body}
           <span className={cn("flex shrink-0 items-center empty:hidden", alone && trailing)}>
             <RowAction
+              compact={compact}
               createDescribedBy={createDescribedBy}
               isPending={isPending}
               onCreate={create}

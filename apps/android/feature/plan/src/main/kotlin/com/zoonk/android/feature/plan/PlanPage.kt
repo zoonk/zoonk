@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -489,7 +488,7 @@ internal fun PlanContent(
                         }
                     }
                     if (!asideBeside) {
-                        item(key = "next", contentType = "next") { NextAndMore(page, links, next = structure != null) }
+                        item(key = "more", contentType = "more") { MoreSection(links) }
                     }
                     barNoteInPage(noteRoom)
                 }
@@ -514,8 +513,6 @@ internal fun PlanContent(
                 ) {
                     numbers(NumberVariant.Stats)
                     if (!examOver) suggestion(SuggestionLayout.Panel)
-                    // Without subjects the path is on the page, its highlighted row already saying what's next.
-                    if (structure != null) NextOnPath(page, links)
                     PlanProperties(page, links, onOpen = onAdjust)
                 }
             }
@@ -559,31 +556,6 @@ private fun PlaceRow(
         leading = { MarkIcon(icon) },
     )
 }
-
-@Composable
-private fun NextAndMore(
-    page: PlanPageState,
-    links: PlanLinks,
-    next: Boolean,
-) {
-    BoxWithConstraints {
-        if (!next) {
-            MoreSection(links)
-        } else if (maxWidth >= SIDE_BY_SIDE_WIDTH) {
-            Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
-                NextOnPath(page, links, Modifier.weight(1f))
-                MoreSection(links, Modifier.weight(1f))
-            }
-        } else {
-            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                NextOnPath(page, links)
-                MoreSection(links)
-            }
-        }
-    }
-}
-
-private val SIDE_BY_SIDE_WIDTH = 600.dp
 
 @Composable
 internal fun PlanEvents(

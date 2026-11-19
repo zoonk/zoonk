@@ -3,26 +3,18 @@ package com.zoonk.android.feature.plan
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.MenuSelect
 import com.zoonk.android.ui.components.SelectionChip
-import com.zoonk.android.ui.components.controlInk
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanSteering
 import com.zoonk.api.models.WrittenPractice
@@ -90,28 +82,14 @@ internal fun WrittenCadenceChoice(
     val cadences = WrittenPractice.Cadence.entries.filter { it != WrittenPractice.Cadence.FINAL_WEEKS || practice.finalWeeksFrom != null }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionLabel(stringResource(R.string.plan_when_to_practice, joinList(practice.parts)))
-        Column(Modifier.selectableGroup()) {
-            cadences.forEach { cadence ->
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 48.dp)
-                            .selectable(
-                                selected = cadence == shown,
-                                enabled = !pending,
-                                role = Role.RadioButton,
-                                onClick = { if (cadence != practice.cadence) onChange(cadence) },
-                            ),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Text(cadenceLabel(cadence), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-                    RadioButton(selected = cadence == shown, onClick = null, modifier = Modifier.controlInk(), enabled = !pending)
-                }
-            }
-        }
+        MenuSelect(
+            label = stringResource(R.string.plan_when_to_practice, joinList(practice.parts)),
+            options = cadences,
+            value = shown,
+            optionLabel = { cadenceLabel(it) },
+            onPick = { if (it != practice.cadence) onChange(it) },
+            enabled = !pending,
+        )
         Text(
             text = cadenceEffect(shown),
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },

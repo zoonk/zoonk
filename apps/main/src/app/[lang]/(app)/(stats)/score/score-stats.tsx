@@ -1,35 +1,27 @@
 import { type ScorePerformance } from "@zoonk/core/progress/score-performance";
-import { BigQuantity } from "@zoonk/ui/components/big-quantity";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Stat, StatDetail, StatValue } from "@zoonk/ui/components/stat";
+import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/date-ranges";
 import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
 import { getExtracted, getFormatter } from "next-intl/server";
+import { StatTilesSkeleton } from "../_components/stats-tiles";
 
 export async function ScoreTile({ performance }: { performance: ScorePerformance }) {
   const [t, format] = await Promise.all([getExtracted(), getFormatter()]);
 
   return (
-    <Stat>
-      <StatValue>
-        <BigQuantity>{formatMetricPercent({ format, value: performance.score })}</BigQuantity>
-      </StatValue>
-      <StatDetail>
-        {t("{correct} of {total} right in the last {days} days", {
+    <StatTiles>
+      <StatTile
+        detail={t("{correct} of {total} right in the last {days} days", {
           correct: formatWholeNumber({ format, value: performance.correctAnswers }),
           days: String(DEFAULT_PROGRESS_LOOKBACK_DAYS),
           total: formatWholeNumber({ format, value: performance.totalAnswers }),
         })}
-      </StatDetail>
-    </Stat>
+        value={formatMetricPercent({ format, value: performance.score })}
+      />
+    </StatTiles>
   );
 }
 
 export function ScoreTileSkeleton() {
-  return (
-    <Stat aria-hidden="true">
-      <Skeleton className="h-5 w-14 rounded-sm" />
-      <Skeleton className="h-3.5 w-36 rounded-sm" />
-    </Stat>
-  );
+  return <StatTilesSkeleton count={1} detailed={1} labeled={false} />;
 }

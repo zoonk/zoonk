@@ -38,10 +38,10 @@
   "checkpoint_removed_title": "374979fbdf31a4b4ecf6352a2c7812c4cb9f753d961bb48f37226219cab20ec9",
   "checkpoint_retry_after_lessons": "0c983131830a4caef9aad441c138e99f36be6b6d067df5ae79bb07cd99bc8071",
   "checkpoint_retry_tomorrow": "9a3736b4a6dd4c007ea439823521f940475a39210a307d185392d67b7c104749",
-  "checkpoint_review": "c4f0c6da627b8a4c7f7b7a2dbb9be63a057cf81594dc743de0e14a8fc1139b8a",
+  "checkpoint_review": "0def41943662eada754b4d9481cecf5bd4c7830db298e404cacfd9f00d4753b6",
   "checkpoint_rewards": "3d8fdad80047dbc54b28e5fc7c6bcd1052df02fcf84b530452724022464822aa",
   "checkpoint_right_to_win": "a9defa2ce0053b9a00f82771019cb150c969086684b14320f272d14226803a97",
-  "checkpoint_see_result": "b1a363ae6ce61691576970efd5329c38f578d9dfe98195e5c7a7acba8e13bb8c",
+  "checkpoint_see_result": "2e730f72bf7414ca063304963c9f6d4621fc2134ceb40a155c93aa961aa29eb8",
   "checkpoint_shield": "3a56e50164fb8b973dafd1b88082c4bf2bd5354204ebafb7b1c44cb7a1bf72ee",
   "checkpoint_shield_value": "8db880d9c2d564482d9d9c46af44290d7969c612543e818e6e6cd6efc9371091",
   "checkpoint_to_go": "2a684637a55fcd4f0151371e6a09e76d899856f2c755b4a6df22907694b8c1ff",
@@ -63,7 +63,7 @@
     <string name="checkpoint_phase_plain">Desafío de la fase</string>
     <string name="checkpoint_confirm">Confirmar</string>
     <string name="checkpoint_next">Siguiente</string>
-    <string name="checkpoint_see_result">Ver cómo te fue</string>
+    <string name="checkpoint_see_result">Ver resultado</string>
     <string name="checkpoint_why_later">Al final verás por qué.</string>
     <string name="checkpoint_won_line">Su escudo está roto. ¡Ganaste!</string>
     <string name="checkpoint_lost_line">Su escudo resistió esta vez.</string>
@@ -147,5 +147,5 @@
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">La siguiente fase, %1$s, ya está abierta.</string>
     <string name="checkpoint_answers">Las respuestas</string>
-    <string name="checkpoint_review">Revisar las respuestas</string>
+    <string name="checkpoint_review">Ver respuestas</string>
 </resources>

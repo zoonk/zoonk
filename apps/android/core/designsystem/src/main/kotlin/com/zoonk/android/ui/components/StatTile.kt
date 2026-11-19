@@ -1,6 +1,7 @@
 package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,6 +53,9 @@ val StatTone.color: Color
             StatTone.Brain -> MaterialTheme.zoonk.brain
         }
 
+/** Main's lone stat: a [StatTiles] row of one draws its tile as the block's readout, with no card around it. */
+private val LocalLoneStat = staticCompositionLocalOf { false }
+
 /**
  * Main's `StatTile`: an uppercase label with its symbol, a number and a line about it, read by TalkBack as one.
  * [spokenValue] is what TalkBack says for a value written for the eye, such as "45 of 60" for "45/60".
@@ -58,7 +63,7 @@ val StatTone.color: Color
  */
 @Composable
 fun StatTile(
-    label: String,
+    label: String?,
     value: String,
     modifier: Modifier = Modifier,
     detail: CharSequence? = null,
@@ -68,23 +73,26 @@ fun StatTile(
     spokenValue: String? = null,
     footer: (@Composable () -> Unit)? = null,
 ) {
+    val lone = LocalLoneStat.current
     val content = @Composable {
-        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                val labelStyle = MaterialTheme.zoonkType.label
-                CompositionLocalProvider(LocalContentColor provides tone.color) {
-                    icon?.invoke(Modifier.size(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }))
+        Column(if (lone) Modifier else Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(if (lone) 10.dp else 6.dp)) {
+            if (label != null) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    val labelStyle = MaterialTheme.zoonkType.label
+                    CompositionLocalProvider(LocalContentColor provides tone.color) {
+                        icon?.invoke(Modifier.size(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }))
+                    }
+                    Text(
+                        label.toUpperCase(LocaleList.current),
+                        Modifier.weight(1f).clearAndSetSemantics { text = AnnotatedString(label) },
+                        color = MaterialTheme.zoonk.faint,
+                        style = labelStyle,
+                    )
+                    if (onClick != null) ListRowChevron()
                 }
-                Text(
-                    label.toUpperCase(LocaleList.current),
-                    Modifier.weight(1f).clearAndSetSemantics { text = AnnotatedString(label) },
-                    color = MaterialTheme.zoonk.faint,
-                    style = labelStyle,
-                )
-                if (onClick != null) ListRowChevron()
             }
             val style =
-                MaterialTheme.typography.headlineSmall.copy(
+                (if (lone) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.headlineSmall).copy(
                     color = if (tone == StatTone.Brain) MaterialTheme.zoonk.brainText else MaterialTheme.colorScheme.onSurface,
                 )
             // A description would replace the whole merged card for TalkBack; replaced text joins the label and detail.
@@ -109,14 +117,16 @@ fun StatTile(
                 Text(
                     it as? AnnotatedString ?: AnnotatedString(it.toString()),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = if (lone) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodySmall,
                 )
             }
             footer?.invoke()
         }
     }
 
-    if (onClick == null) {
+    if (lone && onClick == null) {
+        Box(modifier.semantics(mergeDescendants = true) {}) { content() }
+    } else if (onClick == null) {
         OutlinedCard(modifier.semantics(mergeDescendants = true) {}) { content() }
     } else {
         OutlinedCard(onClick = onClick, modifier = modifier) { content() }
@@ -138,7 +148,7 @@ private fun Modifier.endAtBaseline(style: TextStyle): Modifier {
     }
 }
 
-/** Main's `StatTiles`: up to [columns] to a row, fewer when larger text leaves a tile too narrow, a last lone tile across the row. */
+/** Main's `StatTiles`: up to [columns] to a row, fewer when larger text leaves a tile too narrow, a last lone tile across the row, and a row of one as its block's readout. */
 @Composable
 fun StatTiles(
     columns: Int,
@@ -146,6 +156,10 @@ fun StatTiles(
     modifier: Modifier = Modifier,
 ) {
     if (tiles.isEmpty()) return
+    tiles.singleOrNull()?.let { tile ->
+        CompositionLocalProvider(LocalLoneStat provides true) { tile(modifier.fillMaxWidth()) }
+        return
+    }
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val narrowest = MIN_TILE_WIDTH * LocalDensity.current.fontScale
         val fitting = ((maxWidth + TILE_GAP) / (narrowest + TILE_GAP)).toInt().coerceIn(1, columns)

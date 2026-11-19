@@ -164,7 +164,7 @@ struct PatternScreen: View {
         PracticeMainButton(
           title: isLast
             ? LocalizedStringResource(
-              "See how it went", table: "Practice",
+              "See result", table: "Practice",
               comment: "Ends a pattern drill to see its result.")
             : LocalizedStringResource(
               "Continue", table: "Practice", comment: "Moves on after a grade."),

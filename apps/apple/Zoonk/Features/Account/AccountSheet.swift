@@ -274,7 +274,7 @@ struct AccountSheet: View {
     case .signedIn where signsIn && isGuest:
       LoginView()
     case .signedIn(let account):
-      // A guest's anonymous account has no name to set up: the hub offers "Create an account".
+      // A guest's anonymous account has no name to set up: the hub offers "Create a free account".
       if account.needsProfileSetup, !isGuest {
         ProfileEditorView(account: account, isRequiredSetup: true)
           .id(account.user.id)
@@ -350,7 +350,7 @@ struct AccountSheet: View {
 
 }
 
-/// A guest gets "Create an account" instead of logging out, which would lose their plan.
+/// A guest gets "Create a free account" instead of logging out, which would lose their plan.
 private struct SettingsHubView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
@@ -471,7 +471,7 @@ private struct SettingsHubView: View {
           AccountSectionLink(destination: .createAccount, sectionOpen: sectionOpen) {
             ListRow(
               Text(
-                "Create an account", tableName: "Account"))
+                "Create a free account", tableName: "Account"))
           }
         } else {
           BusyButton(isBusy: session.isWorking, role: .destructive, isRow: true) {

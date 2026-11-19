@@ -150,9 +150,9 @@ struct ExamList: View {
         }
       } label: {
         if options.running != nil {
-          Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
+          Text("Continue", tableName: "Exam", comment: "A running mock")
         } else {
-          Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
+          Text("New mock", tableName: "Exam", comment: "Opens the mock chooser")
         }
       }
       .buttonStyle(.mainAction)
@@ -709,7 +709,7 @@ private struct ExamMocksSection: View {
           Button {
             router.open(.mockChooser)
           } label: {
-            Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
+            Text("New mock", tableName: "Exam", comment: "Opens the mock chooser")
           }
           .buttonStyle(.outline)
           .controlSize(.small)
@@ -748,23 +748,19 @@ private func mockTitle(_ title: String, isNext: Bool) -> Text {
 private struct ExamProgressSection: View {
   let exam: ExamView
 
-  @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
-
   var body: some View {
     if let progress = exam.progress, !exam.mocks.isEmpty, let latest = latestMock(progress) {
       Section {
+        StatTileGrid(columns: [1], minimumWidth: 0) {
+          StatTile(
+            quantity: (Double(latest.percent) / 100).formatted(.percent),
+            detail: latestLine(progress, latest: latest))
+        }
+
         if let line = progressLine(progress) {
           Text(line)
             .typeStyle(.body.weight(.medium))
             .foregroundStyle(Color(.foreground))
-        }
-
-        StatTileGrid(columns: [1], minimumWidth: minimumWidth) {
-          StatTile(
-            label: Text(
-              "Latest mock exam", tableName: "Exam", comment: "The latest mock exam's score"),
-            quantity: (Double(latest.percent) / 100).formatted(.percent), systemImage: "timer",
-            detail: Text(latestDetail(progress, latest: latest)))
         }
 
         if progress.mocks.count > 1, let first = progress.mocks.first {
@@ -819,9 +815,7 @@ private struct ExamProgressSection: View {
     progress.mocks.last { $0.shape?.kind != .area } ?? progress.mocks.last
   }
 
-  private func latestDetail(_ progress: ExamView.Progress, latest: ExamView.Progress.Point)
-    -> String
-  {
+  private func latestLine(_ progress: ExamView.Progress, latest: ExamView.Progress.Point) -> Text {
     let name = [
       MockLabels.title(number: latest.number),
       latest.shape?.kind == .area ? latest.shape?.area : nil,
@@ -835,12 +829,15 @@ private struct ExamProgressSection: View {
       : String(
         localized: "Right answers in \(name)", table: "Exam", comment: "The latest right answers")
 
-    guard progress.mocks.count > 1, let first = progress.mocks.first else { return score }
+    guard progress.mocks.count > 1, let first = progress.mocks.first else {
+      return Text(verbatim: score)
+    }
     let change = latest.percent - first.percent
-    let since = String(
-      localized: "\(change > 0 ? "+\(change)" : "\(change)") since the first", table: "Exam",
+    let since = Text(
+      "\(change > 0 ? "+\(change)" : "\(change)") since the first", tableName: "Exam",
       comment: "The change since the first mock")
-    return "\(score)\n\(since)"
+    let shown = change > 0 ? since.foregroundStyle(.successText) : since
+    return Text("\(Text(verbatim: score))\u{00A0}· \(shown)")
   }
 
   /// Nothing when no subject moved.

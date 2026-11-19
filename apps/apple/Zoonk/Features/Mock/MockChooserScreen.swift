@@ -568,8 +568,8 @@ struct MockSummaryRow: View {
     switch mock.scoring {
     case .net:
       String(
-        localized: "\(MockLabels.number(mock.measure)) of \(mock.total)", table: "Mock",
-        comment: "A net score: the score of the most it could be, like 34 of 120")
+        localized: "Net \(MockLabels.number(mock.measure)) of \(mock.total)", table: "Mock",
+        comment: "A net score")
     // An IRT score is only an estimate, shown as a range on the Plan, so a past mock shows its
     // right answers.
     case .irt, .raw:

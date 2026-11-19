@@ -292,7 +292,7 @@ class NextStopWarmUpScreenshots {
         if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
         write("first-lesson-wait-$name")
         if (failed) return
-        compose.onNodeWithText("Play a quiz while you wait").performClick()
+        compose.onNodeWithText("Play a quiz").performClick()
         compose.waitForIdle()
         write("first-lesson-wait-quiz-$name")
         compose.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()

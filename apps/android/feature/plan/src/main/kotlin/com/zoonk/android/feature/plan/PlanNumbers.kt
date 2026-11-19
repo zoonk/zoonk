@@ -237,7 +237,7 @@ private fun standingNumber(standing: Standing): PlanNumber {
             PlanNumber(
                 label = stringResource(R.string.plan_progress),
                 value = formatProgressShare(share.toDouble(), locale),
-                detail = planLessonsLine(standing.done, standing.known),
+                detail = lessonsProgressLine(standing.done, standing.known),
                 share = share,
             )
         }
@@ -255,9 +255,8 @@ private fun standingNumber(standing: Standing): PlanNumber {
     }
 }
 
-/** [known] counts within [done]: the lessons skipped because the learner showed they know them. */
 @Composable
-fun studiedLessonsLine(
+private fun studiedLessonsLine(
     done: Long,
     known: Long,
 ): String {
@@ -269,9 +268,12 @@ fun studiedLessonsLine(
     }
 }
 
-/** The Plan names lessons already known beside those studied, once there are some. */
+/**
+ * The line under a goal's progress percent, on the Plan and on Today. The percent counts lessons studied and those the
+ * learner already knew ([known] counts within [done]), so once there are known ones the line names both.
+ */
 @Composable
-private fun planLessonsLine(
+fun lessonsProgressLine(
     done: Long,
     known: Long,
 ): String {

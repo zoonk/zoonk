@@ -16469,64 +16469,6 @@
         }
       }
     },
-    "Counts your answers in lessons, practice and tests." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Berücksichtigt deine Antworten aus Lektionen, Übungen und Tests."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toma en cuenta tus respuestas en lecciones, prácticas y pruebas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prend en compte tes réponses dans les leçons, les entraînements et les tests."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tiene conto delle tue risposte nelle lezioni, negli esercizi e nei test."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスン、練習、テストでの回答を反映しています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레슨, 연습, 테스트에서 제출한 답을 반영해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uwzględnia twoje odpowiedzi z lekcji, ćwiczeń i testów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leva em conta suas respostas em aulas, práticas e testes."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Derslerde, alıştırmalarda ve testlerde verdiğin cevapları hesaba katar."
-          }
-        }
-      }
-    },
     "Course complete" : {
       "comment" : "A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead",
       "localizations" : {
@@ -22310,65 +22252,6 @@
         }
       }
     },
-    "Mock exam" : {
-      "comment" : "The next mock exam on the path",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Probeprüfung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Simulacro"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Examen blanc"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Simulazione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模試"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모의고사"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Egzamin próbny"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Simulado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deneme sınavı"
-          }
-        }
-      }
-    },
     "Mock exams" : {
       "comment" : "A row of a plan change's details: the weekday of the weekly mock exams",
       "localizations" : {
@@ -24231,65 +24114,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonraki deneme sınavı"
-          }
-        }
-      }
-    },
-    "Next on your path" : {
-      "comment" : "Section of what comes next on the plan",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Als Nächstes auf deinem Weg"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo que sigue en tu camino"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La suite de ton plan"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le prossime tappe del tuo percorso"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "これから取り組むこと"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 학습"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kolejne kroki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Próximos passos na sua trilha"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sıradaki adımlar"
           }
         }
       }
@@ -29625,7 +29449,7 @@
         }
       }
     },
-    "Start the call" : {
+    "Start call" : {
       "comment" : "Starts the practice call",
       "localizations" : {
         "de" : {
@@ -29643,7 +29467,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lancer l’appel"
+            "value" : "Démarrer l’appel"
           }
         },
         "it" : {
@@ -29655,7 +29479,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "会話練習を始める"
+            "value" : "会話を始める"
           }
         },
         "ko" : {
@@ -29673,7 +29497,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar a conversa"
+            "value" : "Começar conversa"
           }
         },
         "tr" : {

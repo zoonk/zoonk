@@ -310,7 +310,6 @@
   "plan_mock_exam": "aae14db5ec759181eb5e70ff643d09ee345af66a4374dfc7efaeb53da88bc6cf",
   "plan_mock_exams": "c9b91607de5ee7f255fe2986a84b7e6325cbc918789aeb6b2c0ebf7dbcd9a162",
   "plan_mock_exams_count": "30a27f81a82ba77562dcfcd2d17961ed54c924d665f4c8860e4180055b6532d5",
-  "plan_mocks_before_next_exam": "6ebbfe1bda2f4038b6e3c241ca9794c7a174842105ada0bde532b79a5e8253dc",
   "plan_mocks_every_weeks": "fa8e04566551917dd3cc4d1fa3050594ba741b7061b31e258428f72faf53c8ba",
   "plan_mocks_next": "357fa3473e6c82730733483d5fbc25849807c25b406ee027887e99b179f04c97",
   "plan_mondays": "ddbabc1cf3c0b7563f89540360ed95a3ad832b2b3d53672ba9fd18c7a348d327",
@@ -325,7 +324,6 @@
   "plan_named_month_note": "1c334e496cbdd2cb68f97af1afac7a01da1241fd343985959a069ccc650d1b0b",
   "plan_next": "72a6d1f2a1c140db8ab099cf12d0fd0115e2223b851abe1e299912b5bb4a22a0",
   "plan_next_keep_going": "3ced907d92641f065ae2ada77b77a5da7502bf73b06e8f09ac94364f3e340047",
-  "plan_next_on_path": "f95bc88b5c5c5f0d4337024375e5559300cc4330d860a4d7ce61a4f14147c4a5",
   "plan_next_past_share": "058eca039a46fdf793156e06471b6673a9be9ddf1ef24b60e7fa0ac8a3934347",
   "plan_next_review_every_topic": "d14fc041b0d11eafc65f14999ae3d5557efdf32002baf0b9e8a1b8b49c1576bb",
   "plan_next_review_forgetting": "2aff0e1174885105aa8aa15de66728b416c4543886e066d9e27403eb9576fd04",
@@ -712,19 +710,12 @@
         <item quantity="other">%d egzaminu próbnego</item>
     </plurals>
     <!-- %2$s is a date, such as "Nov 8". -->
-    <plurals name="plan_mocks_before_next_exam">
-        <item quantity="one">%1$d egzamin próbny przed kolejnym terminem egzaminu: %2$s</item>
-        <item quantity="few">%1$d egzaminy próbne przed kolejnym terminem egzaminu: %2$s</item>
-        <item quantity="many">%1$d egzaminów próbnych przed kolejnym terminem egzaminu: %2$s</item>
-        <item quantity="other">%1$d egzaminu próbnego przed kolejnym terminem egzaminu: %2$s</item>
-    </plurals>
     <plurals name="plan_lessons_of">
         <item quantity="one">%1$d z %2$d lekcji</item>
         <item quantity="few">%1$d z %2$d lekcji</item>
         <item quantity="many">%1$d z %2$d lekcji</item>
         <item quantity="other">%1$d z %2$d lekcji</item>
     </plurals>
-    <string name="plan_next_on_path">Kolejne kroki na twojej ścieżce</string>
     <string name="plan_date_to_be_confirmed">Termin do potwierdzenia</string>
     <string name="plan_more">Więcej</string>
     <string name="plan_mind_maps">Mapy myśli</string>

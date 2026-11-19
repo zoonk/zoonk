@@ -67,7 +67,7 @@
   "subscription_save": "19b1dffde4ae36c8948e7e6a3d29b40f0bf1e0f67ed7aefea389008892515cba",
   "subscription_show_answer": "3d3da47a68595b4d5e3b58438207db4ee87ee3df3540565e194cf6c2d8cb69d7",
   "subscription_start_free": "c725bfb05b2f6163c4b7d4a4e9ec975b6913663c1f861cf47d1021633fdf9785",
-  "subscription_subscribe": "136def73a67f5dee2677885648da31d1c81e659c15c7f2331afbddd78cfaa79c",
+  "subscription_subscribe": "a8a4d5ec6e5168cb670b415d6e68d6e928208e1802edabf4e06c5bdde79186bc",
   "subscription_through_apple": "bd16c1a67421ef12ca6c228b0e5aa1328daa5afdf6b9be192d24497e1a778b32",
   "subscription_through_google": "6140d9d5e9e2c4447f17eba239e470281d1f67d54d753c28a8278070d2e6ba0d",
   "subscription_through_website": "6caa8fafffc364de9749a6c70f2b13dbfe8812ac9fc642148b4f3b157bb3952c",
@@ -108,7 +108,7 @@
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">Equivale a %1$s al mes.</string>
     <string name="subscription_unavailable">Por ahora no puedes comprar Plus en este dispositivo. Asegúrate de tener Google Play instalado y de haber iniciado sesión.</string>
-    <string name="subscription_subscribe">Suscribirse</string>
+    <string name="subscription_subscribe">Suscribirte</string>
     <string name="subscription_cancel_anytime">Cancela cuando quieras.</string>
     <string name="subscription_purchase_pending">Tu pago está pendiente. Plus se activa cuando Google Play lo confirma.</string>
     <string name="subscription_purchase_confirming">Activando Plus…</string>

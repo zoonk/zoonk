@@ -22,7 +22,7 @@
   "account_failure_rate_limited": "7861b00eacc01482cf1da69fd9fc65286a0f9ee6b7e1041a320767280d676eab",
   "account_failure_sign_in": "0bcfe0703e41fda5023933e7a4f8ed5ad1ebf259b39391163268e248542fba61",
   "account_failure_wrong_code": "e61818ac0bfedc11b5f089ffda833b0603627fd15bef1611b409027c83499a40",
-  "account_menu_create_account": "e82077d53d4d045e15f0957c68c426259daf244c0ceace330510b34fab4fc7e2",
+  "account_menu_create_account": "260adb26d66f13083bf41322a47e4882d0c90d362c52bf3d53b4ff00321807af",
   "account_menu_help": "d8e707cf67e52ab910665f7d1bfeaeee66d4297ce9dbab245dd2333ee4a4da44",
   "account_menu_log_out": "5a07d140254d5c0a56484ab62b212de126b55d52a9a57b71de20ed8784507390",
   "account_menu_pricing": "307c73d1554c8ce2b3eec054ee1ab8e7c030e404f82c4272196d3427801297b5",
@@ -114,7 +114,7 @@
     <string name="account_menu_pricing">Preços</string>
     <string name="account_menu_help">Ajuda</string>
     <string name="account_menu_log_out">Sair</string>
-    <string name="account_menu_create_account">Criar uma conta</string>
+    <string name="account_menu_create_account">Criar uma conta grátis</string>
     <string name="account_sign_out_failed">Não foi possível sair da sua conta. Confira sua conexão e tente de novo.</string>
     <string name="account_name_required">Nome</string>
     <string name="account_username_required">Nome de usuário</string>

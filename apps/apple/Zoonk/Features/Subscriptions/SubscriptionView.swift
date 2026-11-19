@@ -29,7 +29,7 @@ struct SubscriptionScreen: View {
             } label: {
               if isGuest {
                 Text(
-                  "Create an account", tableName: "Subscriptions")
+                  "Create a free account", tableName: "Subscriptions")
               } else {
                 Text(
                   "Log in", tableName: "Subscriptions",

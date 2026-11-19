@@ -22,6 +22,10 @@ export function useRefusalCopy() {
       title: t("Calls are paused"),
     },
     ended: { text: t("Start a new call to keep practicing."), title: t("This call has ended") },
-    takeover: t("Start this call"),
+    takeover: t({
+      description: "Starts this call on this device and ends it in the other tab or device.",
+      id: "callTakeover",
+      message: "Start here",
+    }),
   };
 }

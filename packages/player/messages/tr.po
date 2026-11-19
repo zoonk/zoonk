@@ -2986,16 +2986,16 @@ msgctxt "q5JxBr"
 msgid "You can still review and practice your mistakes."
 msgstr "Tekrar yapmaya ve yanlışların üzerinde çalışmaya devam edebilirsin."
 
-#. A button under Subscribe on the screen that says the free lessons are used up. It opens practice on the learner's past mistakes.
+#. Opens practice on the mistakes that are ready to fix.
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "AFQMLq"
-msgid "Practice your mistakes"
-msgstr "Yanlışların üzerinde çalış"
+msgctxt "practiceMistakesAction"
+msgid "Practice mistakes"
+msgstr "Yanlışlarına çalış"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "4NMpnC"
-msgid "Start the lesson"
-msgstr "Derse başla"
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Başla"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-errors.tsx

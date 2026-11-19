@@ -7,7 +7,6 @@
   "goalcontent_also_in_plan": "63280142ff0026005674a514ffcbb9f231d4173e1bbcf23eb3a06aec2f6a327d",
   "goalcontent_asked_a_lot": "43b3da3cba0dbb63bf08613564c7066d71f8ac3a5e4f0881ebec7d51e482f1a7",
   "goalcontent_bring_back": "3702c3442d73545ef2ad9376edae31044dfd89ab6636f85c66ad692f93cb682c",
-  "goalcontent_chapter_count": "ecf00553681787dc60c88a8c3f56c3f366f61f5b64b7f8e7ebcf59c436f269fd",
   "goalcontent_chapter_number": "450d37f08bc4719c86abcc83b8926a938b01b3a648351a0080a351934ffdb420",
   "goalcontent_chapter_summary": "619964db74ba71dfc5ec4111a30825cda418fb38dabaffc48918c04cc3e16125",
   "goalcontent_chapters": "18ab77bbfad5c5bced639d4751146cf8d683ef48e50db9e4274da242092f2793",
@@ -82,7 +81,6 @@
   "goalcontent_topic_in_progress": "14a9c050d273773fd34b58644e3cd54290913cd2433ece2a4aa545f966ec14e2",
   "goalcontent_topic_known": "b64a0cdee4ed67a1523d277b22d91a807088efcd23cf82b7c0ff8dc3c052ac83",
   "goalcontent_topic_to_study": "d4557cc8bc48a849f5ab4f5e13186237cdbe09ab7b7b48bfa7272e385f946288",
-  "goalcontent_topics": "fc8484e0b36f2ae6ce6e28d8c2f47c21ace99daf9b3f780aaa7b1f998aa9a749",
   "goalcontent_topics_in_guide": "bcc7ad63d095dc89da10f2448f39c3efd7d0709b7ca262da28b4f26aca41ed1a",
   "goalcontent_topics_in_material": "e7f473e0a0018fe47c7094bb5b81aabf9eb23baa0838c7946900b4be3ceabb1f",
   "goalcontent_topics_in_notice": "fd8c0976511fb3d880db550cf19f9746e4f6f66276c040c8dafaca8cbcb2ac83",
@@ -107,9 +105,6 @@
     </plurals>
     <plurals name="goalcontent_material_topic_count">
         <item quantity="other">자료에서 가져온 주제 %d개</item>
-    </plurals>
-    <plurals name="goalcontent_chapter_count">
-        <item quantity="other">챕터 %d개</item>
     </plurals>
     <plurals name="goalcontent_lesson_count">
         <item quantity="other">레슨 %d개</item>
@@ -187,7 +182,6 @@
     <string name="goalcontent_details">상세 정보</string>
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">문제</string>
-    <string name="goalcontent_topics">주제</string>
     <string name="goalcontent_chapters">챕터</string>
     <!-- The next day the plan studies a subject. -->
     <string name="goalcontent_next_date">다음 학습일</string>

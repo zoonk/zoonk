@@ -131,12 +131,11 @@ test.describe("Exam goal", () => {
     await asPersona(browser, { persona: "exam" }, async ({ page }) => {
       await page.goto("/exam");
 
-      const latest = page
-        .getByRole("region", { name: "Your progress" })
-        .getByRole("listitem")
-        .filter({ hasText: "Latest mock exam" });
-
-      await expect(latest).toHaveText(/^Latest mock exam\s*\d+%\s*Right answers in Mock exam 1$/u);
+      await expect(
+        page
+          .getByRole("region", { name: "Your progress" })
+          .getByText(/^\d+%\s*Right answers in Mock exam 1$/u),
+      ).toBeVisible();
     });
   });
 
@@ -176,7 +175,7 @@ test.describe("Exam goal", () => {
       await rewrite.fill(draft);
       await expect(page.getByText(/^\d{2,} words$/u)).toBeVisible();
 
-      const send = page.getByRole("button", { name: "Grade the rewrite" });
+      const send = page.getByRole("button", { name: "Grade rewrite" });
 
       const failed = page.getByText(
         "That didn't go through. Your text is still here. Try again in a moment.",

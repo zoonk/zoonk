@@ -2518,6 +2518,65 @@
         }
       }
     },
+    "Back to quiz" : {
+      "comment" : "Leaves the build's progress for the quiz under it. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück zum Quiz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a la trivia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour au quiz"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Torna al quiz"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クイズに戻る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "퀴즈로 돌아가기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wróć do quizu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voltar ao quiz"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kısa teste dön"
+          }
+        }
+      }
+    },
     "Back to the level I had, after a short test" : {
       "localizations" : {
         "de" : {
@@ -2572,124 +2631,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa bir testten sonra eski seviyeme dönmek"
-          }
-        }
-      }
-    },
-    "Back to the quiz" : {
-      "comment" : "Leaves the build's progress for the quiz under it. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zum Quiz zurückkehren"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volver a la trivia"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Revenir au quiz"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Torna al quiz"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "クイズに戻る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "퀴즈로 돌아가기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wróć do quizu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voltar ao jogo de perguntas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bilgi yarışmasına dön"
-          }
-        }
-      }
-    },
-    "Back to Today" : {
-      "comment" : "Leaves the start flow for Today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zurück zu Heute"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volver a Hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retour à Aujourd’hui"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Torna a Oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「今日」に戻る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘로 돌아가기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wróć do „Dziś”"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voltar para Hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün’e dön"
           }
         }
       }
@@ -5128,7 +5069,7 @@
       }
     },
     "Create a free account" : {
-      "comment" : "Opens sign-up; a guest's plan and progress come with them",
+      "comment" : "Opens sign-up; a guest's plan and progress come with them\nOpens sign-up from the plan\nOpens sign-up to add material",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5300,65 +5241,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Başka bir hedefe başlamak için ücretsiz hesap oluştur"
-          }
-        }
-      }
-    },
-    "Create an account" : {
-      "comment" : "Opens sign-up from the plan\nOpens sign-up to add material",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konto erstellen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crear una cuenta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Créer un compte"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea un account"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アカウントを作成する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계정 만들기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Załóż konto"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criar uma conta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hesap oluştur"
           }
         }
       }
@@ -6657,6 +6539,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ bilgisini düzenle"
+          }
+        }
+      }
+    },
+    "Edit goal" : {
+      "comment" : "Goes back to write the goal with more detail",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziel bearbeiten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier l’objectif"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica obiettivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標を編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표 수정"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edytuj cel"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar objetivo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedefi düzenle"
           }
         }
       }
@@ -9021,61 +8962,61 @@
         }
       }
     },
-    "I'm new to all of them" : {
+    "I'm new" : {
       "comment" : "Says the learner knows none of the exam's subjects yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Fächer sind neu für mich"
+            "value" : "Ich bin neu"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas son nuevas para mí"
+            "value" : "Estoy empezando"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je débute dans toutes ces matières"
+            "value" : "Je débute"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parto da zero in tutte"
+            "value" : "Parto da zero"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "どの科目も初めて"
+            "value" : "初めてです"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 과목이 처음이에요"
+            "value" : "저는 처음이에요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wszystko zaczynam od zera"
+            "value" : "Zaczynam od zera"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não conheço nenhuma delas"
+            "value" : "Sou iniciante"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hepsine sıfırdan başlıyorum"
+            "value" : "Yeni başlıyorum"
           }
         }
       }
@@ -9316,19 +9257,19 @@
         }
       }
     },
-    "Join the waitlist" : {
+    "Join waitlist" : {
       "comment" : "Joins the waitlist for lessons that teach playing an instrument",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auf die Warteliste setzen"
+            "value" : "In Warteliste eintragen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unirse a la lista de espera"
+            "value" : "Unirte a la lista de espera"
           }
         },
         "fr" : {
@@ -9346,19 +9287,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "順番待ちリストに登録する"
+            "value" : "待機リストに登録"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "대기 명단에 등록하기"
+            "value" : "대기자 명단 등록하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zapisz się na listę oczekujących"
+            "value" : "Dołącz do listy oczekujących"
           }
         },
         "pt" : {
@@ -9607,65 +9548,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sıfırdan müzik öğrenmek"
-          }
-        }
-      }
-    },
-    "Lessons for playing %@ are coming" : {
-      "comment" : "Title when the learner wants to play an instrument; the argument is the instrument in the learner's words, without an article, like 'guitar'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lektionen für %@ sind bald da"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pronto habrá lecciones para tocar %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bientôt des leçons pour cet instrument : %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lezioni di %@ in arrivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@の演奏レッスンを準備中です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 연주 레슨을 준비하고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Już wkrótce lekcje gry: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aulas para tocar %@ vêm aí"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ çalma dersleri yakında"
           }
         }
       }
@@ -10669,6 +10551,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "notlarım"
+          }
+        }
+      }
+    },
+    "New goal" : {
+      "comment" : "Goes back to write a different goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neues Ziel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvel objectif"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuovo obiettivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい目標"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 목표"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nowy cel"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novo objetivo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni hedef"
           }
         }
       }
@@ -13210,61 +13151,61 @@
         }
       }
     },
-    "Play a quiz while you wait" : {
+    "Play a quiz" : {
       "comment" : "Shows a quiz once one arrived while the learner watches the build's progress. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quiz spielen, während du wartest"
+            "value" : "Quiz spielen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jugar una trivia mientras esperas"
+            "value" : "Jugar una trivia"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faire un quiz pour patienter"
+            "value" : "Faire un quiz"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fai un quiz mentre aspetti"
+            "value" : "Fai un quiz"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "待ち時間にクイズをする"
+            "value" : "クイズを始める"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "기다리는 동안 퀴즈 풀기"
+            "value" : "퀴즈 풀기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rozwiąż quiz w czasie oczekiwania"
+            "value" : "Zagraj w quiz"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jogar um jogo de perguntas enquanto você espera"
+            "value" : "Jogar um quiz"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beklerken bilgi yarışması oyna"
+            "value" : "Kısa test çöz"
           }
         }
       }
@@ -16461,7 +16402,7 @@
       }
     },
     "Start" : {
-      "comment" : "Opens the plan's first step\nStarts placement's questions\nStarts the level test",
+      "comment" : "Opens the plan's first step\nStarts placement's questions\nStarts the level test\nStarts a musicianship goal\nOpens the goal's first lesson, written before its plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -16822,124 +16763,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Buradan başla"
-          }
-        }
-      }
-    },
-    "Start lesson 1" : {
-      "comment" : "Opens the goal's first lesson, written before its plan",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lektion 1 starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empezar la lección 1"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer la leçon 1"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia la lezione 1"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスン1を始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레슨 1 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij lekcję 1"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar a aula 1"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1. derse başla"
-          }
-        }
-      }
-    },
-    "Start music basics" : {
-      "comment" : "Starts a musicianship goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit musikalischen Grundlagen starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empezar con las bases de la música"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apprendre les bases de la musique"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia dalle basi della musica"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "音楽の基礎を学び始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "음악 기초 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij od podstaw muzyki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar pelo básico da música"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Müzik temellerine başla"
           }
         }
       }
@@ -19386,67 +19209,8 @@
         }
       }
     },
-    "To teach you to play, we need to hear you play, and we're still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm." : {
-      "comment" : "Why playing an instrument is a waitlist for now",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um dir das Spielen beizubringen, müssen wir dich spielen hören können. Daran arbeiten wir noch. Trag dich in die Warteliste ein und starte heute mit den musikalischen Grundlagen: Notenlesen, Gehörbildung und Rhythmus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para enseñarte a tocar, necesitamos escucharte tocar, y aún estamos desarrollando esa función. Únete a la lista de espera y empieza hoy a desarrollar tus habilidades musicales: lectura musical, entrenamiento auditivo y ritmo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour t’apprendre à jouer, nous devons pouvoir t’écouter jouer, et nous y travaillons encore. Inscris-toi sur la liste d’attente et commence dès aujourd’hui par les bases de la musique : lecture des notes, écoute et rythme."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per insegnarti a suonare dobbiamo ascoltarti mentre suoni, ma stiamo ancora sviluppando questa funzione. Iscriviti alla lista d’attesa e inizia oggi con la formazione musicale: lettura della musica, allenamento dell’orecchio e ritmo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "演奏を教えるには、実際の演奏を聴く必要があります。そのための機能はまだ開発中です。順番待ちリストに登録して、今日から楽譜の読み方や音感トレーニング、リズムといった音楽の基礎を学びましょう。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "악기 연주를 가르치려면 연주하는 소리를 들어야 하는데, 아직 그 기능을 만들고 있어요. 대기 명단에 등록하고, 오늘은 악보 읽기, 청음, 리듬 같은 음악 기초부터 시작해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Żeby uczyć cię gry, musimy słyszeć, jak grasz. Wciąż pracujemy nad tą funkcją. Dołącz do listy oczekujących i już dziś zacznij od podstaw muzyki: czytania nut, ćwiczeń słuchowych i rytmu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para te ensinar a tocar, a gente precisa ouvir você tocar, e ainda estamos criando esse recurso. Entre na lista de espera e comece hoje com fundamentos musicais: leitura de partituras, treino de ouvido e ritmo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sana enstrüman çalmayı öğretebilmek için nasıl çaldığını duymamız gerekiyor. Bu özelliği hâlâ geliştiriyoruz. Bekleme listesine katıl ve bugün müzik temelleriyle başla: nota okuma, kulak eğitimi ve ritim."
-          }
-        }
-      }
-    },
     "Today" : {
-      "comment" : "Header over the plan's lessons today",
+      "comment" : "Header over the plan's lessons today\nLeaves the start flow for Today",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -19677,65 +19441,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tekrar dene"
-          }
-        }
-      }
-    },
-    "Try another goal" : {
-      "comment" : "Goes back to write a different goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Versuch ein anderes Ziel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Probar otro objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Essayer un autre objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prova un altro obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "別の目標を試す"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다른 목표 입력하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spróbuj z innym celem"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tentar outro objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Başka bir hedef dene"
           }
         }
       }
@@ -20857,6 +20562,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu dosyayı okuyamıyoruz. PDF, fotoğraf, Word, PowerPoint veya metin dosyası dene."
+          }
+        }
+      }
+    },
+    "We can't teach %@ yet" : {
+      "comment" : "Title when the learner wants to play an instrument; the argument is the instrument in the learner's words, without an article, like 'guitar'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir können dir %@ noch nicht beibringen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no podemos enseñarte %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ : pas encore de cours"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non possiamo ancora insegnarti %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ%@は教えられません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 %@을(를) 가르쳐 드릴 수 없어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tego jeszcze nie uczymy: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente ainda não consegue ensinar %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz %@ dersleri veremiyoruz"
           }
         }
       }
@@ -23580,65 +23344,6 @@
         }
       }
     },
-    "Write my goal again" : {
-      "comment" : "Goes back to write the goal with more detail",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mein Ziel noch einmal schreiben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volver a escribir mi objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réécrire mon objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riscrivi il tuo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標を書き直す"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 목표 다시 쓰기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opisz cel ponownie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escrever meu objetivo de novo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hedefini yeniden yaz"
-          }
-        }
-      }
-    },
     "Writing" : {
       "comment" : "A language skill",
       "localizations" : {
@@ -24166,6 +23871,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bunların hepsini daha sonra değiştirebilirsin."
+          }
+        }
+      }
+    },
+    "You can start with the basics of music today: reading notes, rhythm and training your ear." : {
+      "comment" : "Why playing an instrument is a waitlist for now",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst heute mit den musikalischen Grundlagen anfangen: Noten lesen, Rhythmus üben und dein Gehör trainieren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes empezar hoy con las bases de la música: lectura de notas, ritmo y entrenamiento del oído."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu peux commencer dès aujourd’hui par les bases de la musique : lire les notes, comprendre le rythme et développer ton oreille."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puoi iniziare oggi dalle basi della musica: leggere le note, capire il ritmo e allenare l’orecchio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日から、音符の読み方やリズム、音感を鍛える練習など、音楽の基礎を学べます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘부터 악보 읽기, 리듬 익히기, 음을 듣고 구별하기 같은 음악 기초를 배울 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Już dziś możesz zacząć od podstaw muzyki: czytania nut, rytmu i ćwiczenia słuchu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você pode começar pelo básico da música hoje: ler notas, aprender ritmo e treinar o ouvido."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün müziğin temelleriyle başlayabilirsin: nota okuma, ritim ve kulak eğitimi."
           }
         }
       }
@@ -26182,7 +25946,7 @@
       }
     },
     "Your plan will be waiting when you finish." : {
-      "comment" : "Over Start lesson 1, while the plan is still built",
+      "comment" : "Over Start, while the plan is still built",
       "localizations" : {
         "de" : {
           "stringUnit" : {

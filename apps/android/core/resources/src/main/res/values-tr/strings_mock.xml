@@ -10,7 +10,7 @@
   "mock_break_time_left": "b130f4f76d1787e1c0806bb41ccd5b4caa8f56786adf15d477d21b4aa2b03376",
   "mock_cell_answered": "23ae19049484d4a490bb35bdb4a4ef2493e46d8cdb82c4797a64681f633e634a",
   "mock_cell_marked_for_review": "b4dea36983fb5a4ea8f45ef5f0f17ea6d1656f91ab03effef0191189e19e1093",
-  "mock_continue": "f43f02679569823585b117b2026fa8c338a2f363d53ecceab174c1b01b0b79b8",
+  "mock_continue": "5965ef3b8dfb02a512bfb09c3f92a8f71d18c31a47f4aae5a481ce2f5e19d343",
   "mock_continue_section": "92d4bff9c631dc4d0d43288bce514ed7726014cedb42ce5e7a973e2ebf87b7a2",
   "mock_essay_blank": "0f4c6b7edf719b845b0c39be8ddf03293dc3f5304436ac13d23c5e0c4e5e2da5",
   "mock_essays_blank": "2d8657594f92edc80cd24eddea4af4efccf77af18c69c2982d404e602b3042f8",
@@ -34,18 +34,13 @@
   "mock_left_blank_only": "08127ffb57058880ec7ce4fc9e1e0ab43f9ea0a79c3431e76c9e1b1265a65f40",
   "mock_left_flagged": "d7436fba742079f4e6d34a66821c5fa222e6a220285d9d32af0bcd8e29ca766a",
   "mock_left_flagged_only": "4efcc92ad8858a604d396b69121801c395bfc908bc1a12f1a29740bc92834358",
-  "mock_legend_answered": "2565ab2e18692a0f47ff912433369d847ee424d227c45646ff3e8e3a4028bad6",
-  "mock_legend_current": "b198b8b64b3959edf623750d7ddc1c577327b3126f622201a21dc555cdaa73cc",
-  "mock_legend_review": "df9fa22175080913fe3d5ad408041ac7cc6b7fe2c1b30707595c6945c8290a35",
-  "mock_legend_review_count": "d3d2c0f53e8aa2c8500f927ec831a23662c4358b1f335966bd07d2aebd04b322",
-  "mock_legend_unanswered": "7a57068ec3320ca634b75c564fd907502dac804aba1fa28e4e56825e5d741d76",
   "mock_moves_forward": "0fd5fbd394370caf979d32c88e2e014e8319e96e0b07fc78871182ed03346c4d",
   "mock_moves_forward_must": "8a2761fea44bcd787deff78e7461cfb9a8b109f9e66aa079defbaa804c605622",
   "mock_moves_must": "5d50fdaef2eb822824c9c8f7a82876d06e04252082640f28957afe296422a023",
   "mock_moves_review_any": "0a7d14dd9f794322fbccc7c53433771277a22e336b91ecc308526378bb78d4bf",
   "mock_moves_review_changes": "8898fc3f209942d16bb732cd8ce90c3a636f9987b39409413e8c35144a352641",
   "mock_moves_review_none": "493b79ffa59f68543161993a6725d3d683773eb087c95724f3c2958782a341d5",
-  "mock_net_score": "8cbc832b9bef250726450c6358d6fb85205a5a0b0a4aaba440f02afd86053aeb",
+  "mock_net_score": "4e4ae87705791be9779af5db3e6e6b5633bafb74559c102c6a9846ba0dd4e61b",
   "mock_next": "30bfed0fd45a7dda4859985d6196ec013685316695a46ef9ed39c2ca9f429a23",
   "mock_next_named": "7cadca0650766e03bc0a6e545bccccf2eecfe26068b446e314cb52434a8a00fb",
   "mock_next_section": "9accd0524c41c7ed9dabd437a95d03c394676217cab43dc1ae687d696acd7532",
@@ -86,7 +81,7 @@
   "mock_step_failed": "2662505ea4fe63031f234d1323bbccfe6a216b56083813a696ca6b8c5494decf",
   "mock_step_failed_saved": "9f9155d9a285a276b839f23d3edcffcdca38d25c8fb239242b59fe7f7585e5fa",
   "mock_step_slow": "0a48b08c6647383f33cc84b46e5ce4bc26cffa7267983236e03885dab2a45b06",
-  "mock_take": "3adc3d91958911877620f74e655a070ab10ab9daf85dc1b8368b4c97c5e71a6a",
+  "mock_take": "5c8b380799b86a4080b59f90589481953d7847fa5d730ff6444799c281ad1a82",
   "mock_take_another": "aa33d88a60829c2f662beb16e48a31679936bc3fc4b6447bf6c95371a73d3cfc",
   "mock_time_left_caption": "1f4ea93bc8c8d1634e04a8c184c884c2b09e99cc42a2765382d6b7592a1ed6be",
   "mock_time_left_label": "d6f4caa11e4282d386c936b138374c6bd45ef06ea6da94311894a2f3ae0693b1",
@@ -102,8 +97,8 @@
 -->
 <resources>
     <string name="mock_title">Deneme sınavı %1$d</string>
-    <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
-    <string name="mock_net_score">%1$s / %2$d</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Net %1$s / %2$d</string>
     <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s / %2$d doğru</item>
@@ -116,8 +111,8 @@
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
-    <string name="mock_take">Deneme sınavına gir</string>
-    <string name="mock_continue">Deneme sınavına devam et</string>
+    <string name="mock_take">Yeni deneme sınavı</string>
+    <string name="mock_continue">Devam et</string>
     <string name="mock_label">Deneme sınavı</string>
     <!-- %1$s is the one subject the mock exam covers, such as "Mathematics". -->
     <string name="mock_label_shape">Deneme sınavı · %1$s</string>
@@ -184,14 +179,6 @@
     <plurals name="mock_answered_count">
         <item quantity="one">%d soru cevaplandı</item>
         <item quantity="other">%d soru cevaplandı</item>
-    </plurals>
-    <string name="mock_legend_unanswered">Cevaplanmadı</string>
-    <string name="mock_legend_answered">Cevaplandı</string>
-    <string name="mock_legend_current">Şu anki soru</string>
-    <string name="mock_legend_review">Tekrar bakmak için işaretlendi</string>
-    <plurals name="mock_legend_review_count">
-        <item quantity="one">%d soru tekrar bakmak için işaretlendi</item>
-        <item quantity="other">%d soru tekrar bakmak için işaretlendi</item>
     </plurals>
     <string name="mock_questions">Sorular</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->

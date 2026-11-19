@@ -34,9 +34,9 @@ function useActionLabel(action: QuestionAction): string {
     continue: t("Continue"),
     finish: t("Finish"),
     next: t("Next"),
-    nextStep: t("Show the next step"),
-    seeAnswer: t("See the answer"),
-    seeResult: t("See how it went"),
+    nextStep: t("Next step"),
+    seeAnswer: t("See answer"),
+    seeResult: t("See result"),
     start: t("Start"),
   };
 

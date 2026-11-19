@@ -34,33 +34,6 @@ msgctxt "PlBReU"
 msgid "Log out"
 msgstr "Çıkış yap"
 
-#: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
-#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
-#: src/components/catalog/catalog-not-found.tsx
-msgctxt "s-Ncqj"
-msgid "Explore courses"
-msgstr "Kursları keşfet"
-
-#: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
-#: src/app/[lang]/(app)/(learn)/today/page.tsx
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-#: src/app/[lang]/(home)/_components/example-card.tsx
-#: src/app/[lang]/session/page.tsx
-#: src/components/catalog/catalog-not-found.tsx
-#: src/components/learn/section-layout.tsx
-#: src/components/public/not-found-message.tsx
-msgctxt "zWgbGg"
-msgid "Today"
-msgstr "Bugün"
-
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "C81_uG"
 msgid "Logout"
@@ -70,6 +43,15 @@ msgstr "Çıkış yap"
 msgctxt "U3l-Q9"
 msgid "Home page"
 msgstr "Ana sayfaya git"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
+#: src/components/catalog/catalog-not-found.tsx
+msgctxt "s-Ncqj"
+msgid "Explore courses"
+msgstr "Kursları keşfet"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "ng8fsM"
@@ -223,7 +205,20 @@ msgid "Start a new goal"
 msgstr "Yeni bir hedefe başla"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(home)/_components/example-card.tsx
+#: src/app/[lang]/session/page.tsx
+#: src/components/catalog/catalog-not-found.tsx
+#: src/components/public/not-found-message.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "Bugün"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/plan/[subject]/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
@@ -505,7 +500,6 @@ msgid "Start the lesson"
 msgstr "Derse başla"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Bu derse başla"
@@ -2617,9 +2611,9 @@ msgid "Your challenge is ready"
 msgstr "Meydan okuman hazır"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
-msgctxt "erF9ms"
-msgid "Start this challenge"
-msgstr "Bu meydan okumaya başla"
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Başla"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "NEAV17"
@@ -2657,8 +2651,8 @@ msgid "It takes a few minutes, and keeps going if you leave."
 msgstr "Birkaç dakika sürer, buradan ayrılsan da devam ederiz."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
-msgctxt "1H9PtO"
-msgid "Get it ready"
+msgctxt "SSl2nr"
+msgid "Prepare"
 msgstr "Hazırla"
 
 #: src/app/[lang]/mistakes/practice/page.tsx

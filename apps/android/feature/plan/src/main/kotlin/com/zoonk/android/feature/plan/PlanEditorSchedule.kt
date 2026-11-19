@@ -163,7 +163,6 @@ private fun WeekendMinutes(
         missing = missingDays((shape.weekdayDays + shape.weekendDays).map(Long::toInt)),
         times = times,
         minutes = shown,
-        weekdayMinutes = shape.weekdays.toInt(),
         onCheckedChange = { next ->
             if (!pending) {
                 onWeekendOn(next)

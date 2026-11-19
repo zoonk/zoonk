@@ -180,8 +180,8 @@ export function MistakePracticeRun({
   const { phase } = run.state;
   usePreloadMath(practice);
 
-  const asideRoot = tutor ? getTaskAsideRootProps() : null;
   const asking = phase.kind !== "ending" && phase.kind !== "ended" && run.step !== null;
+  const asideRoot = tutor && asking ? getTaskAsideRootProps() : null;
 
   const content = (
     <div
@@ -208,12 +208,9 @@ export function MistakePracticeRun({
         trueFalseLabels={trueFalseLabels}
       />
 
-      {tutor && (
-        <TaskAside
-          label={t("Help with this question")}
-          meta={asking ? tutor.asideMeta(null) : undefined}
-        >
-          {asking && tutor.aside}
+      {tutor && asking && (
+        <TaskAside label={t("Help with this question")} meta={tutor.asideMeta(null)}>
+          {tutor.aside}
         </TaskAside>
       )}
     </div>

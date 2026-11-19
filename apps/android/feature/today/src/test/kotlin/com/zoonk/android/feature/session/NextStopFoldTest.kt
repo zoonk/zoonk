@@ -94,7 +94,7 @@ class NextStopFoldTest {
             }
         }
         rule.waitForIdle()
-        rule.onNodeWithText("Play a quiz while you wait").performClick()
+        rule.onNodeWithText("Play a quiz").performClick()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
 
         rule.unfoldBook(folds)

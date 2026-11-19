@@ -16,7 +16,7 @@ export function useWaitWords(kind: LessonKind) {
       gettingReady: t("Getting your challenge ready"),
       notReady: t("This challenge isn't ready yet"),
       ready: t("Your challenge is ready"),
-      start: t("Start this challenge"),
+      start: t("Start"),
       stopped: t("We couldn't get this challenge ready"),
     };
   }
@@ -25,7 +25,7 @@ export function useWaitWords(kind: LessonKind) {
     gettingReady: t("Getting your lesson ready"),
     notReady: t("This lesson isn't ready yet"),
     ready: t("Your lesson is ready"),
-    start: t("Start this lesson"),
+    start: t("Start"),
     stopped: t("We couldn't get this lesson ready"),
   };
 }
@@ -69,7 +69,7 @@ export function StartLessonBar({
     <TaskActionBar>
       <TaskActions>
         <TaskMainButton busy={busy} onClick={onStart}>
-          {ready ? words.start : t("Get it ready")}
+          {ready ? words.start : t("Prepare")}
         </TaskMainButton>
       </TaskActions>
     </TaskActionBar>

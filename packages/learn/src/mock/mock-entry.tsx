@@ -80,12 +80,11 @@ export function MockEntryButton({
   return (
     <EnterLink className={DETAIL_PRIMARY_CLASS} href={target.href} size="lg">
       {target.resume
-        ? t({
-            description:
-              'An action, like "Take a mock exam" beside it: goes back into the mock exam already started.',
-            message: "Continue your mock exam",
-          })
-        : t("Take a mock exam")}
+        ? t("Continue")
+        : t({
+            description: "Opens the mock exam chooser, from the exam page.",
+            message: "New mock",
+          })}
     </EnterLink>
   );
 }

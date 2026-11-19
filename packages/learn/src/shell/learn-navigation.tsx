@@ -282,7 +282,7 @@ export function LearnBottomNavigation({
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
-      <div className="mx-auto flex h-16 items-center gap-[calc((100%-16.25rem)/3)] px-4 py-2.5 sm:max-w-3xl sm:px-8 @max-xs/tabs:px-2 @max-xs/tabs:py-0">
+      <div className="mx-auto flex h-16 items-center gap-[calc((100%-16.25rem)/3)] px-(--page-gutter) py-2.5 sm:max-w-3xl @max-xs/tabs:px-2 @max-xs/tabs:py-0">
         <ul className="flex min-w-0 flex-1 justify-between @max-xs/tabs:gap-1">
           {LEARN_TABS.map((tab) => (
             <li

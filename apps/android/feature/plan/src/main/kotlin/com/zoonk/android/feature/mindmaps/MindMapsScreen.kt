@@ -58,8 +58,8 @@ import com.zoonk.android.ui.components.LocalClock
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OpeningDay
-import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
@@ -276,7 +276,7 @@ internal fun MindMapsPage(
             BeforeFold { beforeFold ->
                 LazyColumn(beforeFold.centeredColumn(DETAIL_PAGE_WIDTH), listState, pagePadding()) {
                     item(key = "hero", contentType = "hero") {
-                        PageHeader(title, supporting = mindMaps.goal.displayName, modifier = Modifier.padding(bottom = 16.dp))
+                        PageTitleRow(title, Modifier.padding(bottom = 16.dp))
                     }
                     stickyHeader(key = "tabs", contentType = "tabs") {
                         MindMapsTabs(tab, mindMaps.tabCounts(state.saves)) { picked = it.key }

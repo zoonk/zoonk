@@ -166,7 +166,7 @@ struct PlanLinkScreen: View {
         } else {
           BusyButton(isBusy: isStarting, action: start) {
             Text(
-              "Start from this plan", tableName: "PlanLink",
+              "Start my own plan", tableName: "PlanLink",
               comment: "Starts the learner's own plan from a shared one")
           }
           .buttonStyle(.mainAction)

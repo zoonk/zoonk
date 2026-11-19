@@ -310,7 +310,6 @@
   "plan_mock_exam": "f124b7e3210a50105fd8d0558b6fd3bb14f1535f7f40d0c1eee88029e5e019d9",
   "plan_mock_exams": "8c2c0a483ecf3ac90558744531c223b1f5bb3b497e1f8223abc0c6eb51029276",
   "plan_mock_exams_count": "f7f3a076d871589b3266f403bc742b19592bafe4e16cdc005eade0771ea586b0",
-  "plan_mocks_before_next_exam": "6ef8fdc3b21b4d66f870728c38e9b99a93ccf3fdcb09a83718c6d17a724339fb",
   "plan_mocks_every_weeks": "4e145a4c42f71fbebf1059f8e8ea79e9f2db6fb56a9685144ae231a921c0a31d",
   "plan_mocks_next": "cfc98b72b92c4458d7e701c814cc306e16c6a988fe9636dd8e84374e627221cc",
   "plan_mondays": "e87fed964bf4a3aa98d34a5ba1844de381d13b22098fb96037f5f5390c9410ed",
@@ -325,7 +324,6 @@
   "plan_named_month_note": "5626a830559ce1d00c95d4ea7b1e5a61c40118f1eb70dc5639c2fc2988876fa2",
   "plan_next": "21329501b8a88e581b81bcb872e8bd336b29a6a9d5439671e783eabc668925a5",
   "plan_next_keep_going": "c4e859f37aa59c3727b11e048e8f20e7a628c1663f9114fb5a37062bb32a2825",
-  "plan_next_on_path": "fae93180eb5cbdf2f471fed6428b5c06683b16eee328b3e65ee33139a7ff4246",
   "plan_next_past_share": "424effa7a953cdbac68a86b8740bf93c27fc59147eecba6b0c0aecea1388fe0a",
   "plan_next_review_every_topic": "db7b9797d96bef3e6c8c1be0f5c4398d1389c14de6398b33bfb298c2c846ff22",
   "plan_next_review_forgetting": "472b9e9c22bdceff7d0232a47a4cf408054a62a6f8f39975b0cb28de948ac9f0",
@@ -676,13 +674,9 @@
         <item quantity="other">모의고사 %d회</item>
     </plurals>
     <!-- %2$s is a date, such as "Nov 8". -->
-    <plurals name="plan_mocks_before_next_exam">
-        <item quantity="other">모의고사 %1$d회 (다음 시험일 %2$s 전까지)</item>
-    </plurals>
     <plurals name="plan_lessons_of">
         <item quantity="other">레슨 %1$d개(총 %2$d개)</item>
     </plurals>
-    <string name="plan_next_on_path">다음 단계</string>
     <string name="plan_date_to_be_confirmed">날짜 미정</string>
     <string name="plan_more">많음</string>
     <string name="plan_mind_maps">마인드맵</string>

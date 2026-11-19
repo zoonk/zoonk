@@ -7,7 +7,6 @@
   "goalcontent_also_in_plan": "6b9fbc6d6a09382b62a2e01bf4bb8d5bb0e1bac0eea61a5de4febda9998d52dd",
   "goalcontent_asked_a_lot": "e523cd4f3af78d7f105ec2698faccd2c98066245aa8e59b2b912586d7ba601e8",
   "goalcontent_bring_back": "a9a42ab1b6759fd7ef628634a51e1ee5583d062ce763d2204fa8d495a4fe2a00",
-  "goalcontent_chapter_count": "97d732fa75ae92303664001949628e0810ecf36f8f17ebcd678cadff754221a5",
   "goalcontent_chapter_number": "f7982656cf56019f6c641d3bac304b1e0185e2ab75d9d90069b531df582e4064",
   "goalcontent_chapter_summary": "a8bbc8a83d45de89ec6d5726e93b4e5c3c02e0fa816a98d3879bee959b56bcca",
   "goalcontent_chapters": "19e9ebd2aa0bb3143ed186eddfe969ec79c695ff03cd72f85b9f089fd8835630",
@@ -82,7 +81,6 @@
   "goalcontent_topic_in_progress": "3f4c85ea2af608c27c463432fffae46f31ed9b0babfc5b83515cff6165207e6b",
   "goalcontent_topic_known": "b7f203ddbc039bb0daeb717b4b7fee5162351d45cc5d03d272c34e563b1dfe3f",
   "goalcontent_topic_to_study": "a560a0e82e1cd2470378644ec23a9db459a3cc02f421cb197b89c45be7161c8b",
-  "goalcontent_topics": "88286a0ab1e11a6b1bdb836729d649a0113cf4c450a34c8bb1f62577e34d02d1",
   "goalcontent_topics_in_guide": "de84e0b7c043ea78c0c49107ecbd564396e624e4f08904c9c3dddb56b855e578",
   "goalcontent_topics_in_material": "bf26c69c9ea7e36f40fa7ecca91cda67b153ebf41faff20f66ff5b735898c038",
   "goalcontent_topics_in_notice": "a9a79b6ef0abad57c7a60c50ae8c7e3b957a557234008b927dcd5d967446c62e",
@@ -119,12 +117,6 @@
         <item quantity="few">%d tematy z twoich materiałów</item>
         <item quantity="many">%d tematów z twoich materiałów</item>
         <item quantity="other">%d tematu z twoich materiałów</item>
-    </plurals>
-    <plurals name="goalcontent_chapter_count">
-        <item quantity="one">%d rozdział</item>
-        <item quantity="few">%d rozdziały</item>
-        <item quantity="many">%d rozdziałów</item>
-        <item quantity="other">%d rozdziału</item>
     </plurals>
     <plurals name="goalcontent_lesson_count">
         <item quantity="one">%d lekcja</item>
@@ -232,7 +224,6 @@
     <string name="goalcontent_details">Szczegóły</string>
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Pytania</string>
-    <string name="goalcontent_topics">Tematy</string>
     <string name="goalcontent_chapters">Rozdziały</string>
     <!-- The next day the plan studies a subject. -->
     <string name="goalcontent_next_date">Następny termin</string>

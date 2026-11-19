@@ -165,7 +165,6 @@ internal fun MockRunnerView(
                     if (!beside) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             QuestionMap(run, onPick = viewModel::go)
-                            SheetLegend(run.counts.flagged)
                             MovesNote(run.moves)
                         }
                     }
@@ -442,44 +441,6 @@ private fun QuestionMap(
     }
 }
 
-/** The key under the question numbers: what each cell's look means, with how many are marked for review. */
-@Composable
-internal fun SheetLegend(flagged: Int) {
-    val colors = MaterialTheme.colorScheme
-    val review =
-        if (flagged == 0) {
-            stringResource(R.string.mock_legend_review)
-        } else {
-            pluralStringResource(R.plurals.mock_legend_review_count, flagged, flagged)
-        }
-
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        LegendEntry(stringResource(R.string.mock_legend_unanswered), border = BorderStroke(1.dp, colors.outlineVariant))
-        LegendEntry(stringResource(R.string.mock_legend_answered), fill = colors.surfaceContainerHighest)
-        LegendEntry(stringResource(R.string.mock_legend_current), border = BorderStroke(2.dp, colors.onSurface))
-        LegendEntry(review, border = BorderStroke(2.dp, MaterialTheme.zoonk.warning))
-    }
-}
-
-@Composable
-private fun LegendEntry(
-    text: String,
-    fill: Color = Color.Transparent,
-    border: BorderStroke? = null,
-) {
-    val shape = RoundedCornerShape(4.dp)
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Box(
-            Modifier
-                .size(14.dp)
-                .clip(shape)
-                .background(fill)
-                .then(if (border != null) Modifier.border(border, shape) else Modifier),
-        )
-        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-    }
-}
-
 @Composable
 internal fun MovesNote(moves: SectionMoves) {
     val line =
@@ -587,7 +548,6 @@ private fun AnswerSheet(
                     }
                 }
             }
-            SheetLegend(run.counts.flagged)
             if (withMoves) MovesNote(run.moves)
         }
         SheetNotes(run)

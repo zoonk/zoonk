@@ -1,3 +1,4 @@
+import { FRAME_GUTTER_CLASS } from "@zoonk/ui/components/bottom-bar";
 import { BackLink, PageTop } from "@zoonk/ui/components/page-top";
 import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
@@ -6,8 +7,7 @@ import { AdminBarMenuButton, AdminBarSearchButton } from "./admin-bar-buttons";
 export type AdminParent = { href: string; label: string };
 
 /** The page's side room, which the bar reads to reach the frame's edges. */
-const PAGE_GUTTER_CLASS =
-  "px-4 [--page-gutter:1rem] sm:px-8 sm:[--page-gutter:2rem] lg:px-10 lg:[--page-gutter:2.5rem]";
+const PAGE_GUTTER_CLASS = cn("px-(--page-gutter)", FRAME_GUTTER_CLASS);
 
 /**
  * The top of every Admin page, list or record, on the shared page top: a bar with the way back to

@@ -213,7 +213,7 @@ struct CheckpointScreen: View {
         PracticeMainButton(
           title: state.isDone
             ? LocalizedStringResource(
-              "See how it went", table: "Practice",
+              "See result", table: "Practice",
               comment: "Finishes a checkpoint to see its result.")
             : LocalizedStringResource(
               "Next", table: "Practice", comment: "Moves to a checkpoint's next question."),
@@ -222,7 +222,7 @@ struct CheckpointScreen: View {
       } else if question == nil {
         PracticeMainButton(
           title: LocalizedStringResource(
-            "See how it went", table: "Practice",
+            "See result", table: "Practice",
             comment: "Finishes a checkpoint to see its result."),
           icon: .forward, isBusy: state.isPending
         ) { Task { await finish() } }

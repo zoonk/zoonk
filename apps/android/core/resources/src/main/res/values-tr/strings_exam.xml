@@ -37,7 +37,6 @@
   "exam_format_one_day": "760415b759a530eef091cceea1a70a2bae355f6dbf268737f05eb3ff697c501c",
   "exam_format_two_days": "122eec85e7a97093c97d755891214268ebf288d02efd546009423f337bd42f5d",
   "exam_how_did_it_go": "5f1cbc7ef2042effd91354ec569400615787d1945e0d338ad2841275431b528b",
-  "exam_latest_mock": "0b569363ae052380d38c1986353da696f5320c6d870dc435de9ab76da9b45d99",
   "exam_mock_answered": "220dbbd6b9699c4481574dd5ae5c483fe79871f0e71277db81a126f7ca3e97d7",
   "exam_mock_handed_in": "b522e8f0eb73678f5be6ebaed54df77da053b6b119bfb2abc6af10169419e701",
   "exam_mock_time_left": "2ea05a140d69d8446120d9d391bdeaab870ccc70866e24aacc29078727f6873c",
@@ -189,7 +188,6 @@
         <item quantity="other">%d soru</item>
     </plurals>
     <string name="exam_progress_title">İlerlemen</string>
-    <string name="exam_latest_mock">Son deneme sınavı</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
     <string name="exam_net_score_in">%1$s puanı</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->

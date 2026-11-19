@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "warm_up_back_to_quiz": "8205b9374698ce76b399864133c7dd280a96140f02be54b4067ae8f8e8f79137",
+  "warm_up_back_to_quiz": "f18c4723ac9291bda5479463a4ab40fd5d7b093de87fd15487cb48bce5467496",
   "warm_up_first_lesson": "d18c481c25cd831291e5d581487309ca5ee72c822fd3c2aa620a5db6fc8e0dfa",
   "warm_up_first_lesson_ready": "add1a3a5bbf376792966496d6aa5fbe55a76efe933d282698f2eaf67ab384e60",
   "warm_up_first_lesson_screens": "51e343f0299e57cf3b668a455c6ce8bb49febe2e3fff242220dc549a151f5b39",
@@ -12,10 +12,10 @@
   "warm_up_plan_ready_one_question": "b3f2f333b472ba384a087697306fa51ff71324ab5246ba7104db9240419513d9",
   "warm_up_plan_ready_whenever": "850f6cf0d13e3a25be1f4e886cde671330f83f9ccd695723c790d3320e92d1d8",
   "warm_up_plan_waiting": "a37af85b456288865fb1aaa1c2b0e1321c67cf7cd36119b0bc49c9fdc9c4dbc2",
-  "warm_up_play_quiz": "38215bbe5b7e174d695273468481365a17e59f92ea8260ade5f45f72aab2c174",
+  "warm_up_play_quiz": "08341caa7d6a5c8af66f3daf90cae50eb82d6c383fa89224ddde7ed9c25de27e",
   "warm_up_questions_ready": "696a304fc85fb10dd82f48eb20e8e73d71a6f41a2e9d1a6f1bf0932dc7ae791f",
   "warm_up_ready_to_start": "ee7d33cfe6e8965d9f427e6151e311d41658c84e67aa6838a54d01eb5b1cb199",
-  "warm_up_start_first_lesson": "01dd58ee031445f799e5ef3e74bd6813fcd58557a700ade0826d5c55b9622458",
+  "warm_up_start_first_lesson": "57cb5e98a2dc6abe33b47306d0e5cedc1f297130e7df4b96302189fd5c87bafb",
   "warm_up_title": "6589f3a0fddd5bcb9351d87fb4dc6678f4af1fc5804b759912997fea3d0a7335",
   "warm_up_title_ready": "3293a394131cfe52dab654a5895d752e3868651272a9e92760a6b0d63ed3249c"
 }
@@ -39,11 +39,11 @@
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Tus preguntas están listas</string>
     <string name="warm_up_back_to_quiz">Volver a la trivia</string>
-    <string name="warm_up_play_quiz">Jugar una trivia mientras esperas</string>
+    <string name="warm_up_play_quiz">Jugar una trivia</string>
     <string name="warm_up_first_lesson_writing">Preparando tu primera lección: %1$s</string>
     <string name="warm_up_first_lesson_ready">Tu primera lección está lista</string>
     <string name="warm_up_plan_waiting">Tu plan te estará esperando cuando termines.</string>
-    <string name="warm_up_start_first_lesson">Empezar la lección 1</string>
+    <string name="warm_up_start_first_lesson">Empezar</string>
     <string name="warm_up_first_lesson">Tu primera lección</string>
     <string name="warm_up_ready_to_start">Ya puedes crearlo</string>
     <string name="warm_up_first_lesson_screens">Preparando unas 5 pantallas con texto breve</string>

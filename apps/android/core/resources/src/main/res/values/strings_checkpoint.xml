@@ -8,7 +8,7 @@
     <string name="checkpoint_phase_plain">Phase challenge</string>
     <string name="checkpoint_confirm">Confirm</string>
     <string name="checkpoint_next">Next</string>
-    <string name="checkpoint_see_result">See how it went</string>
+    <string name="checkpoint_see_result">See result</string>
     <string name="checkpoint_why_later">You\'ll see why at the end.</string>
     <string name="checkpoint_won_line">His shield is broken. You won!</string>
     <string name="checkpoint_lost_line">His shield held this time.</string>
@@ -84,5 +84,5 @@
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">The next phase, %1$s, is already open.</string>
     <string name="checkpoint_answers">The answers</string>
-    <string name="checkpoint_review">Review the answers</string>
+    <string name="checkpoint_review">See answers</string>
 </resources>

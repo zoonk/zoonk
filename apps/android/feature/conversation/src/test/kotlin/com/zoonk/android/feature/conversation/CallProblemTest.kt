@@ -31,7 +31,7 @@ class CallProblemTest {
 
     /**
      * A call refused for the month's cap: once the day comes on the open screen, nothing ran out, so no title
-     * says it did, and the bar offers Start the call, which starts the call again.
+     * says it did, and the bar offers Start call, which starts the call again.
      */
     @Test
     fun aRefusedCallOffersStartTheCallOnceItsDayComes() {
@@ -54,13 +54,13 @@ class CallProblemTest {
         val line = compose.onNodeWithText("More later today, or subscribe to keep going.").getBoundsInRoot().top
 
         clock.passOpening()
-        compose.waitUntil(10_000) { compose.onAllNodesWithText("Start the call").fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Start call").fetchSemanticsNodes().isNotEmpty() }
         // The title's room stays, so the line under it doesn't move.
         assertEquals(line, compose.onNodeWithText("You can try again now.").getBoundsInRoot().top)
         compose.onNodeWithText("You've used your call time").assertDoesNotExist()
         compose.onNodeWithText("Your call time is back").assertExists()
         compose.onNodeWithText("Subscribe").assertDoesNotExist()
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Start call").performClick()
 
         assertEquals(1, retries)
     }

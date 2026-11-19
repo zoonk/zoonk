@@ -147,7 +147,7 @@ describe("exact lesson mistake practice", () => {
     await page.getByRole("button", { exact: true, name: "Check" }).click();
     await page.getByRole("radio").first().click();
     await page.getByRole("button", { exact: true, name: "Check" }).click();
-    await page.getByRole("button", { exact: true, name: "See how it went" }).click();
+    await page.getByRole("button", { exact: true, name: "See result" }).click();
 
     expect(actions.answer).toHaveBeenCalledWith(
       expect.objectContaining({

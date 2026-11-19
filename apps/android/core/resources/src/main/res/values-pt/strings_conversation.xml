@@ -43,7 +43,7 @@
   "conversation_dropped": "c3ff3aec0b2327efd26000adb67e3c93f8ae2691b53f348b1db3e965d95bef3d",
   "conversation_dropped_title": "92c5eb9275acdb1a48b42fc7f7b1837f1875326e57a50c5b8ec1f01a540a41c9",
   "conversation_end": "c65b8e9bfa1afd49ba73813cca591c085e425b381091b3da3215b415f12f8cd3",
-  "conversation_end_call": "3cb27086236f3a5ea10f11b52160b53713fc0b7b2788a8da2ca7e9ed6d84b261",
+  "conversation_end_call": "bf446e37d72e879780fe7f66de9f727d745689e65d529d86dd624eca9b82c223",
   "conversation_end_description": "ed907b3fd7e46aa9055963ebfab6214044671af5926af89888ac62ec853aa910",
   "conversation_end_title": "a18a7fe2ecfb885810c1de22fa21ceb9d5fc682392c0a1cc9cccd9781ed86819",
   "conversation_ended": "84f6223dfeac9c57a4683452acc11cdcdf87ed4f9e669d6d336f65bdafd6cd19",
@@ -122,12 +122,12 @@
   "conversation_sound_note": "71a5336b007b1262693829eb67dd3ce205313a033570404f01e8276e34cb7eaf",
   "conversation_stars": "cc9aa602319477eb0943df3648bd04c54a3fb3bc00472e2969498c979ee86e72",
   "conversation_stars_rule": "2119cb6c5b8581a7f7c45c143087288117dccc3291b65c16b43e61d9f5d9c785",
-  "conversation_start": "789f6d372a5e0b943e1c0ec24ea0287cecd36422017d4719fe927c7ac4f2f923",
+  "conversation_start": "829fcf69767c40da690b46b7710d285d475e43200191194aac6c27e1bfe411e9",
   "conversation_start_failed": "b8853b9fac1ca7d18db8867aa0f24fcb7b0d1c395d8c1a5ce283727c2dd1bb1a",
   "conversation_start_preparing": "7c74e9cc415cda303c82f679260370e4b14dced8b42189ec786a789a6c05f41b",
   "conversation_still_closing": "135b2915c09f7957aa9133cab8ba5f20ea41992e8b38a7d8268dc4298326891d",
   "conversation_still_to_get_across": "5b5d2a057856102c77210047dad4eefd94767a921b15904522fa0a1c0ed2f627",
-  "conversation_take_over": "915502aedca7d37c7ff9bfc8b401d9781d062020f52e8dea0974e2b3931b6d29",
+  "conversation_take_over": "c67e1ad9ff47d2dd211ca2c32c0da8b2e5b54e8a0b6c2e231fff93d20b9f7e3a",
   "conversation_take_your_time": "ef4d27273f9ebfde44351e91ef00e9d9d27a2a372529c4158d8d11171d5cb4db",
   "conversation_taken_over": "5a13ba92e3666c2402d3b76b5a9a870ef91cd3c8429e73fa3c96df102155a800",
   "conversation_talking": "d64fe6268d183ce10460e39ad4e78c45103e33e27f7a7e81fef01ac2595843d5",
@@ -183,7 +183,7 @@
     <string name="conversation_sound_note">Ative o som.</string>
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">Conversar com %1$s</string>
-    <string name="conversation_start">Começar a conversa</string>
+    <string name="conversation_start">Começar conversa</string>
     <string name="conversation_start_failed">A conversa não começou. Tente de novo em instantes.</string>
     <string name="conversation_challenge_gate_title">Para esta conversa, é preciso assinar</string>
     <string name="conversation_challenge_gate_line">Seu plano continua sem ela.</string>
@@ -248,10 +248,10 @@
     <string name="conversation_paused">Isso está acontecendo com todo mundo agora. Tente de novo mais tarde.</string>
     <string name="conversation_in_progress_title">Você está em outra conversa</string>
     <string name="conversation_in_progress">Ela está aberta em outro aparelho ou no seu navegador. Se começar esta, a outra termina sem feedback.</string>
-    <string name="conversation_take_over">Começar esta conversa</string>
+    <string name="conversation_take_over">Começar aqui</string>
     <string name="conversation_dropped_title">A conversa caiu</string>
     <string name="conversation_dropped">Comece a conversa de novo ou encerre para receber feedback sobre o que você falou.</string>
-    <string name="conversation_end_call">Encerrar a conversa</string>
+    <string name="conversation_end_call">Encerrar conversa</string>
     <string name="conversation_call_again">Conversar de novo</string>
     <string name="conversation_not_connected_title">Não foi possível iniciar a conversa</string>
     <string name="conversation_not_connected">Isso acontece às vezes. Tente de novo em instantes.</string>

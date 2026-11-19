@@ -246,7 +246,7 @@ struct ChallengeScreen: View {
 
       PracticeMainButton(
         title: LocalizedStringResource(
-          "See how it went", table: "Practice", comment: "Opens a finished checkpoint's result."),
+          "See result", table: "Practice", comment: "Opens a finished checkpoint's result."),
         icon: .forward
       ) {
         dismiss()

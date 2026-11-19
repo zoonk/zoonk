@@ -111,7 +111,7 @@ describe("a closed essay reopened from a link", () => {
       await goThroughSteps();
 
       await expect
-        .element(page.getByRole("link", { name: "Back to Today" }))
+        .element(page.getByRole("link", { name: "Today" }))
         .toHaveAttribute("href", "/today");
 
       expect(page.getByRole("button", { exact: true, name: "Rewrite" }).query()).toBeNull();
@@ -136,7 +136,7 @@ describe("a closed essay reopened from a link", () => {
     await goThroughSteps();
 
     await expect
-      .element(page.getByRole("link", { name: "Back to Today" }))
+      .element(page.getByRole("link", { name: "Today" }))
       .toHaveAttribute("href", "/today");
 
     expect(page.getByRole("textbox").query()).toBeNull();
@@ -161,11 +161,11 @@ describe("a closed essay reopened from a link", () => {
     await expect.element(page.getByText("You skipped this essay.")).toBeVisible();
 
     await expect
-      .element(page.getByRole("link", { name: "Back to Today" }))
+      .element(page.getByRole("link", { name: "Today" }))
       .toHaveAttribute("href", "/today");
 
     expect(answer().query()).toBeNull();
-    expect(page.getByRole("button", { name: "Send for grading" }).query()).toBeNull();
+    expect(page.getByRole("button", { name: "Grade essay" }).query()).toBeNull();
   });
 });
 
@@ -180,7 +180,7 @@ describe("an essay sent for grading", () => {
     renderEssay(() => graded.promise);
 
     await userEvent.type(answer(), "Charging cars clears the air.");
-    const send = page.getByRole("button", { name: "Send for grading" });
+    const send = page.getByRole("button", { name: "Grade essay" });
     await send.click();
     await expect.element(send).toHaveAttribute("aria-busy", "true");
     await expect.element(send).toBeDisabled();
@@ -188,7 +188,7 @@ describe("an essay sent for grading", () => {
     await userEvent.type(answer(), " It also funds buses.");
     graded.resolve(gradedDraft("Charging cars clears the air."));
 
-    await expect.element(page.getByRole("button", { name: "Grade the rewrite" })).toBeEnabled();
+    await expect.element(page.getByRole("button", { name: "Grade rewrite" })).toBeEnabled();
 
     await expect
       .element(rewrite())
@@ -210,14 +210,14 @@ describe("an essay sent for grading", () => {
     );
 
     await userEvent.type(answer(), "Charging cars clears the air.");
-    await page.getByRole("button", { name: "Send for grading" }).click();
+    await page.getByRole("button", { name: "Grade essay" }).click();
     await openRewrite();
     await userEvent.fill(rewrite(), "Charging cars clears the air. It also funds buses.");
-    await page.getByRole("button", { name: "Grade the rewrite" }).click();
+    await page.getByRole("button", { name: "Grade rewrite" }).click();
 
     await page.getByRole("button", { name: "See the grade" }).click();
     await openRewrite();
-    const grade = page.getByRole("button", { name: "Grade the rewrite" });
+    const grade = page.getByRole("button", { name: "Grade rewrite" });
     await expect.element(grade).toHaveAttribute("aria-busy", "true");
     await expect.element(grade).toBeDisabled();
 
@@ -228,7 +228,7 @@ describe("an essay sent for grading", () => {
 
     graded.resolve(gradedDraft("Charging cars clears the air. It also funds buses."));
 
-    await expect.element(page.getByRole("button", { name: "Grade the rewrite" })).toBeEnabled();
+    await expect.element(page.getByRole("button", { name: "Grade rewrite" })).toBeEnabled();
 
     await expect
       .element(rewrite())
@@ -254,15 +254,15 @@ describe("an essay sent for grading", () => {
 
     await userEvent.type(answer(), "Charging cars clears the air.");
     now = 20 * minute;
-    await page.getByRole("button", { name: "Send for grading" }).click();
+    await page.getByRole("button", { name: "Grade essay" }).click();
 
     now = 21 * minute;
     await userEvent.type(answer(), " It also funds buses.");
     graded.resolve(gradedDraft("Charging cars clears the air."));
-    await expect.element(page.getByRole("button", { name: "Grade the rewrite" })).toBeEnabled();
+    await expect.element(page.getByRole("button", { name: "Grade rewrite" })).toBeEnabled();
 
     now = 26 * minute;
-    await page.getByRole("button", { name: "Grade the rewrite" }).click();
+    await page.getByRole("button", { name: "Grade rewrite" }).click();
 
     expect(submit.mock.calls.map(([input]) => input.durationMs)).toStrictEqual([
       20 * minute,
@@ -274,7 +274,7 @@ describe("an essay sent for grading", () => {
     renderEssay(async ({ text }) => gradedDraft(text));
 
     await userEvent.type(answer(), "Charging cars clears the air.");
-    await page.getByRole("button", { name: "Send for grading" }).click();
+    await page.getByRole("button", { name: "Grade essay" }).click();
 
     await expect.element(page.getByText("Estimated score, from 0 to 10")).toBeVisible();
     expect(localStorage.getItem(`essay:${ESSAY.blockId}`)).toBeNull();

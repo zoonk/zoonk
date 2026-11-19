@@ -38,10 +38,10 @@
   "checkpoint_removed_title": "bf86265b5987155b564d1d395a0bee3e2862f2e32a3a6c8c808648997002595a",
   "checkpoint_retry_after_lessons": "894e7b136cc2bef212e0fa477a62e841e9208559e9087ce0fbfbe3acc81dd1b3",
   "checkpoint_retry_tomorrow": "79c52b04e15e65ec1ee170e2e1d61d729b7d8e1aa08a95e9965b4db8e1b4bdec",
-  "checkpoint_review": "a8be73e4a3f095ab252c81bff3501a2cd28a50c0a66ef6e0f9e99a08d21ac1a5",
+  "checkpoint_review": "1f56a0aa0ca5270860ab4324a6b9443bc12239bc0f2f529982527e0140038a71",
   "checkpoint_rewards": "179b94bb09d317eed2a848ef43cf678b8cff7d855e7171542a075cfa5d69f586",
   "checkpoint_right_to_win": "b2a662e62272da839bd69b5c78570db7c884d6d09698507860b8bb1f41b8a2bd",
-  "checkpoint_see_result": "848c36274a3aeae1c0a5fc32f6d9f974d2a1e4988bab539579cf3cf5777bd700",
+  "checkpoint_see_result": "0a3d0ee7bd67493465735e73c0c9f9c48dda58c9323bb1d1d83b5b0200151c0e",
   "checkpoint_shield": "fa668e1d67a0c52e1233cc2a6d9ad4c0b9adb434bae1f9f0b336c25ce571703b",
   "checkpoint_shield_value": "da514b57a4c6440ac14a8efdc89ef248e45a4f30e62e975a7d37788d74c696da",
   "checkpoint_to_go": "fc1965bd6bec863aa1b1565b938256039ec20b594b46813a75c97b3c67cdb44b",
@@ -63,7 +63,7 @@
     <string name="checkpoint_phase_plain">Wyzwanie etapu</string>
     <string name="checkpoint_confirm">Potwierdź</string>
     <string name="checkpoint_next">Dalej</string>
-    <string name="checkpoint_see_result">Zobacz, jak poszło</string>
+    <string name="checkpoint_see_result">Zobacz wynik</string>
     <string name="checkpoint_why_later">Na końcu dowiesz się dlaczego.</string>
     <string name="checkpoint_won_line">Jego tarcza jest rozbita. Zwycięstwo!</string>
     <string name="checkpoint_lost_line">Tym razem jego tarcza wytrzymała.</string>
@@ -155,5 +155,5 @@
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">Kolejny etap jest już dostępny: %1$s.</string>
     <string name="checkpoint_answers">Odpowiedzi</string>
-    <string name="checkpoint_review">Przejrzyj odpowiedzi</string>
+    <string name="checkpoint_review">Zobacz odpowiedzi</string>
 </resources>

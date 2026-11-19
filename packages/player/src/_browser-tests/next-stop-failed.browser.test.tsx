@@ -71,8 +71,6 @@ describe("the next stop's wait for a lesson whose writing failed", () => {
     await expect.element(page.getByRole("button", { name: "Try again" })).toBeVisible();
     await expect.element(page.getByText(QUESTION)).not.toBeInTheDocument();
 
-    await expect
-      .element(page.getByRole("button", { name: "Play a quiz while you wait" }))
-      .not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: "Play a quiz" })).not.toBeInTheDocument();
   });
 });

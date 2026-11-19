@@ -29,7 +29,7 @@ async function answerHook(page: Page) {
   const no = page.getByRole("radio", { name: "No" });
   await expectHydrated(no);
   await no.click();
-  await primary(page, /^See the answer/u).click();
+  await primary(page, /^See answer/u).click();
   await expectVerdict(page, "Good guess!");
   await primary(page, /^Continue/u).click();
 }
@@ -43,9 +43,9 @@ async function readExplanation(page: Page) {
 
 async function followWorkedExample(page: Page) {
   await expect(page.getByText("Reading the cloud")).toBeVisible();
-  await primary(page, /^Show the next step/u).click();
+  await primary(page, /^Next step/u).click();
   await expect(page.getByText("The darkest part sits just around the nucleus.")).toBeVisible();
-  await primary(page, /^Show the next step/u).click();
+  await primary(page, /^Next step/u).click();
 
   await expect(
     page.getByText("Most likely just around the nucleus, where the cloud is densest."),

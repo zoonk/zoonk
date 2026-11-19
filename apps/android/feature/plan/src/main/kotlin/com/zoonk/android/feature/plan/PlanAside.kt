@@ -24,7 +24,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -32,9 +31,7 @@ import com.zoonk.android.feature.country.lessonVarietyName
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkIcon
-import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -46,106 +43,8 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanMockSchedule
-import com.zoonk.api.models.PlanPhase
-import com.zoonk.api.models.PlanPhaseChaptersInner
-import com.zoonk.api.models.PlanPhaseCheckpoint
 import com.zoonk.api.models.PlanSteering
 import kotlinx.datetime.toJavaLocalDate
-
-@Composable
-internal fun NextOnPath(
-    page: PlanPageState,
-    links: PlanLinks,
-    modifier: Modifier = Modifier,
-) {
-    val plan = page.plan
-    val mockDate = plan.nextMockDate
-    val checkpoint = plan.nextCheckpoint
-    val chapter = if (page.isExam) null else plan.nextChapter
-    val afterExam = plan.phases.filter { it.kind == PlanPhase.Kind.AFTER_EXAM }
-    val hasNext = mockDate != null || chapter?.chapterId != null || checkpoint != null || afterExam.isNotEmpty()
-    if (!hasNext && !page.isExam) return
-    // A challenge in the next session comes before the next phase's lessons, as on Today.
-    val challengeFirst =
-        checkpoint?.`when` == PlanPhaseCheckpoint.`When`.NEXT_SESSION &&
-            plan.phases.indexOfFirst { it.checkpoint === checkpoint } <
-            plan.phases.indexOfFirst { phase -> phase.chapters.any { it === chapter } }
-
-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(stringResource(R.string.plan_next_on_path))
-        Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            mockDate?.let { MockRow(page, it, links) }
-            if (challengeFirst) CheckpointRow(page, checkpoint, links)
-            chapter?.let { NextChapterRow(it, links) }
-            if (!challengeFirst) checkpoint?.let { CheckpointRow(page, it, links) }
-            FinishRow(page, links)
-            afterExam.forEach { AfterExamRow(page, it) }
-        }
-    }
-}
-
-@Composable
-private fun NextChapterRow(
-    chapter: PlanPhaseChaptersInner,
-    links: PlanLinks,
-) {
-    val id = chapter.chapterId ?: return
-    ListRow(
-        headline = { Text(chapter.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
-        onClick = { links.chapter(id.toString()) },
-        leading = { ChapterMark(chapter, isNext = true) },
-    )
-}
-
-@Composable
-private fun FinishRow(
-    page: PlanPageState,
-    links: PlanLinks,
-) {
-    val finish = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
-
-    ListRow(
-        headline = { Text(page.goal.displayName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        onClick = if (links.hasExam) links::exam else null,
-        chevronSpace = true,
-        leading = { FlagMark() },
-        supporting = if (finish == null && page.isExam) ({ Text(stringResource(R.string.plan_date_to_be_confirmed)) }) else null,
-        meta = finish?.let { { TrailingText(it) } },
-    )
-}
-
-@Composable
-private fun AfterExamRow(
-    page: PlanPageState,
-    phase: PlanPhase,
-) {
-    val end = phase.end?.let { planDate(it, page.today, estimate = true, month = true) }
-    val count = phase.mocks.count.toInt()
-
-    ListRow(
-        chevronSpace = true,
-        headline = { Text(phaseName(phase, page.mocksRequirePlus)) },
-        leading = { StatusMark(MarkStatus.Todo) },
-        supporting = if (count > 0) ({ Text(mocksBeforeNextExam(page, count)) }) else null,
-        meta =
-            end?.let { { TrailingText(it) } },
-    )
-}
-
-@Composable
-private fun mocksBeforeNextExam(
-    page: PlanPageState,
-    count: Int,
-): String {
-    val sitting =
-        page.plan.schedule.nextSitting
-            ?.toJavaLocalDate()
-    return if (sitting != null) {
-        pluralStringResource(R.plurals.plan_mocks_before_next_exam, count, count, formatPlanDate(sitting, page.today, currentLocale()))
-    } else {
-        pluralStringResource(R.plurals.plan_mock_exams_count, count, count)
-    }
-}
 
 /** Other places the Plan leads; on wide windows the drawer lists them, so they show only where it doesn't. */
 @Composable

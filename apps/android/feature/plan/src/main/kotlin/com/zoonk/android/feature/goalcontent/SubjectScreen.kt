@@ -288,19 +288,12 @@ private fun subjectLead(
         }
     val questions = subject.questions
     val share = subject.share
+    // Details names the questions; the exam's share shows only where there are none.
     val weight =
-        when {
-            questions != null && questions > 0 -> {
-                pluralStringResource(R.plurals.goalcontent_question_count, questions.toInt(), questions.toInt())
-            }
-
-            share != null -> {
-                stringResource(R.string.goalcontent_share_of_exam, formatPercent(share, currentLocale()))
-            }
-
-            else -> {
-                null
-            }
+        if ((questions == null || questions <= 0) && share != null) {
+            stringResource(R.string.goalcontent_share_of_exam, formatPercent(share, currentLocale()))
+        } else {
+            null
         }
     return listOfNotNull(kind, weight)
 }
@@ -308,15 +301,8 @@ private fun subjectLead(
 @Composable
 private fun subjectFacts(subject: SyllabusSubject): List<String> {
     val inLessons = subject.notPlannedReason == null && subject.preparation == null
-    return listOfNotNull(
-        subject.topics.size
-            .takeIf { it > 0 }
-            ?.let { pluralStringResource(R.plurals.goalcontent_topic_count, it, it) },
-        subject.chapters.size
-            .takeIf { it > 0 }
-            ?.let { pluralStringResource(R.plurals.goalcontent_chapter_count, it, it) },
-        if (inLessons) percentDone(subject.bar.share) else null,
-    )
+    // Topics and chapters count themselves over their lists.
+    return listOfNotNull(if (inLessons) percentDone(subject.bar.share) else null)
 }
 
 @Composable

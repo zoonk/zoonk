@@ -159,10 +159,6 @@ export function RemindersScreen({
             })}
           </PageSectionFooter>
         )}
-
-        <PageSectionFooter aria-live="polite" className="empty:hidden">
-          {isOff && t("Reminders are off.")}
-        </PageSectionFooter>
       </div>
 
       {view.quiet && (

@@ -37,7 +37,6 @@
   "exam_format_one_day": "d06cbd296299bf7fdf298845ba2de24d6e962ab167d39d240c63e4c86686675b",
   "exam_format_two_days": "cf2916e23876ea00498ce5a9e9aab15ed6c132d0cf40ca8d3ab8612c40fdf2b2",
   "exam_how_did_it_go": "f6f3f18cdeb0d892158feefe0e9a0040a1d5ac81f2ff8a1e2b3b1372c4eaac16",
-  "exam_latest_mock": "916ac6ea62eb527639a0a99e15d75acf18b98b010e222af075e9788245d3e32c",
   "exam_mock_answered": "26de9bbe6b3b72c5beeecbb0902bdb8b9f993dedfadec28856f60fb463823d18",
   "exam_mock_handed_in": "ac27cfc533ad71e28c9c083082fcd225e332004f0e85e7b5e4d906bdaffb16ed",
   "exam_mock_time_left": "b113548b76c51db0b77eae0fc85e4794c2dc49ab0fa691893c2a6b8c5ca0ce84",
@@ -184,7 +183,6 @@
         <item quantity="other">%d문제</item>
     </plurals>
     <string name="exam_progress_title">내 진도</string>
-    <string name="exam_latest_mock">최근 모의고사</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
     <string name="exam_net_score_in">%1$s 점수</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->

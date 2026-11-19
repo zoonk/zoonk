@@ -314,9 +314,9 @@ struct PlanBuilding: View {
     return WaitReady(
       note: LocalizedStringResource(
         "Your plan will be waiting when you finish.", table: "Onboarding",
-        comment: "Over Start lesson 1, while the plan is still built"),
+        comment: "Over Start, while the plan is still built"),
       label: Text(
-        "Start lesson 1", tableName: "Onboarding",
+        "Start", tableName: "Onboarding",
         comment: "Opens the goal's first lesson, written before its plan"),
       icon: .play
     ) {
@@ -765,7 +765,8 @@ private struct PlanReveal: View {
         tone: .status,
         action: BarNote.Action(
           label: Text(
-            "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"),
+            "Create a free account", tableName: "Onboarding",
+            comment: "Opens sign-up from the plan"),
           perform: { router.present(.signIn) }))
     }
   }

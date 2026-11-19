@@ -154,7 +154,12 @@ function MistakeEntryActions({
 
       {links.lesson && (
         <LearnLink
-          className={buttonVariants({ size: "sm", variant: "ghost" })}
+          className={buttonVariants({
+            // Alone on its line, its words start on the column's edge like the text above.
+            edge: links.practiceSkill || availableTomorrow ? undefined : "start",
+            size: "sm",
+            variant: "ghost",
+          })}
           href={links.lesson}
           // The lesson may still be unwritten (it writes itself once opened), as in lesson lists.
           prefetch="auto"
@@ -170,11 +175,14 @@ export function MistakeEntryCard({
   continued = false,
   links,
   mistake,
+  tomorrowOnPage = false,
   trueFalseLabels,
 }: {
   continued?: boolean;
   links: MistakeEntryLinks;
   mistake: MistakeEntry;
+  /** The page already says practice opens tomorrow, so the entry doesn't say it again. */
+  tomorrowOnPage?: boolean;
   trueFalseLabels: TrueFalseLabels;
 }) {
   const entryDate = useFormatMomentDate();
@@ -229,7 +237,10 @@ export function MistakeEntryCard({
         <ItemText className="text-muted-foreground leading-relaxed" text={snapshot.explanation} />
       )}
 
-      <MistakeEntryActions links={links} availableTomorrow={mistake.practiceAvailableTomorrow} />
+      <MistakeEntryActions
+        availableTomorrow={mistake.practiceAvailableTomorrow && !tomorrowOnPage}
+        links={links}
+      />
     </li>
   );
 }

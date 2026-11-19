@@ -6,7 +6,7 @@
     <string name="planlink_study_plan">A study plan</string>
     <string name="planlink_minutes_label">How much time a day?</string>
     <!-- Starts the learner's own plan from a shared one. -->
-    <string name="planlink_start">Start from this plan</string>
+    <string name="planlink_start">Start my own plan</string>
     <string name="planlink_make_it_yours">You get your own plan for the same subject. It starts from what you already know.</string>
     <string name="planlink_refused">You can\'t start another goal right now. Finish or pause one first.</string>
     <string name="planlink_failed">That didn\'t work. Try again in a moment.</string>
