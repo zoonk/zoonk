@@ -9671,11 +9671,6 @@ msgid "Understand it well"
 msgstr "Bien comprendre"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "9KaXOx"
-msgid "I want to learn what I use at work"
-msgstr "Je veux apprendre ce qui me sert au travail"
-
-#: src/onboarding/steps/question-steps.tsx
 msgctxt "6SMSwM"
 msgid "Use it at work"
 msgstr "Utiliser ces connaissances au travail"
@@ -9699,11 +9694,6 @@ msgstr "Je veux retrouver mon ancien niveau"
 msgctxt "Aicr0G"
 msgid "Refresh what I studied"
 msgstr "Rafraîchir mes connaissances"
-
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "xAm26I"
-msgid "I want something different"
-msgstr "Je veux autre chose"
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx

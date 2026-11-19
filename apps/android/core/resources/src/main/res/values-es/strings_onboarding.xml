@@ -208,14 +208,12 @@
   "onboarding_purpose_description": "74496eb0ccd269810ca355036f4da5bbcf9ff8949353b0ec2da4d2df2f55da49",
   "onboarding_purpose_label": "9bacbe8c8b143913195e5eaaba46c4c4a3b84309562625a0b28ac94e81612412",
   "onboarding_purpose_other": "6579d0f80ae3cf338c89cdc3dd44c2093ae1608945dc80e69e2db21087ffa1e4",
-  "onboarding_purpose_other_description": "bbaf93672a15f88f278697343795bb372a4e97382900488ac7ac46eadec898e0",
   "onboarding_purpose_overview": "ac899783ca659f471cdf6537502bf9543bd0255a4fa7531ef7265d54bcc1f21d",
   "onboarding_purpose_overview_description": "2a9526ea90418bc2a549243a800ae0b66e6996a683105cba27690efa34ddb342",
   "onboarding_purpose_refresh": "94af33a7c13cc6ca004a4ff84faf66077e197066bf99288211e412b5052bae7b",
   "onboarding_purpose_refresh_description": "7590b5412c0def87602624ea11f19a8e997f4339a743eacd6be13cb278c8c43f",
   "onboarding_purpose_title": "a14d71f03c20f5c927458f58ae5e8db3878a111625ed8444c4d9f2b50f901f22",
   "onboarding_purpose_work": "590aae04d2701a2f5610927b093549661ed3f4154e1c61352409bb92e52be849",
-  "onboarding_purpose_work_description": "271ebcd2b2696b6a3513b450949493ee12c1562da10cefa7372a24def2c8cc4a",
   "onboarding_question_failed": "2cf1bce7491e62ffdcc3830d21c7754fc0501a3df623674483ff2dbda9167a45",
   "onboarding_question_placeholder": "e939f308d923090975684ec0cda65c9dbcb6fd9422e0f96d7b71ed79ac393bf5",
   "onboarding_question_sign_in": "81b000f326a68427a27c8f114ad9bbf0f664af89031086e777785b00aa0cbf32",
@@ -831,13 +829,11 @@
     <string name="onboarding_purpose_deep">Entenderlo a fondo</string>
     <string name="onboarding_purpose_deep_description">El recorrido completo, de lo básico a lo avanzado</string>
     <string name="onboarding_purpose_work">Usarlo en el trabajo</string>
-    <string name="onboarding_purpose_work_description">Solo lo que usas en tu trabajo, en el orden en que lo necesitas</string>
     <string name="onboarding_purpose_career_change">Cambiar de profesión</string>
     <string name="onboarding_purpose_career_change_description">Lo que necesitas para el nuevo puesto, con portafolio incluido</string>
     <string name="onboarding_purpose_refresh">Repasar lo que estudié</string>
     <string name="onboarding_purpose_refresh_description">Volver al nivel que tenía, después de una prueba corta</string>
     <string name="onboarding_purpose_other">Otra cosa</string>
-    <string name="onboarding_purpose_other_description">Cuéntanos después, con tus propias palabras</string>
     <string name="onboarding_level_title">¿Cuánto sabes ya?</string>
     <string name="onboarding_level_description">Solo cambia dónde empieza tu plan.</string>
     <string name="onboarding_level_label">Tu nivel</string>

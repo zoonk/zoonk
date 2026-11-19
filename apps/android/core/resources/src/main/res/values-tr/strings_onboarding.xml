@@ -208,14 +208,12 @@
   "onboarding_purpose_description": "3f2a664974a2525b0fb10476005817f8883cb36b6e72d2cb03a1da624e390290",
   "onboarding_purpose_label": "6ac4c360116a93de20445ae57fd9598e5503e40ae06344caf718a31ba6a053c0",
   "onboarding_purpose_other": "daf3d13e13a4d2d53391d22d0ddb01b897686f1bd678be9b133bb383c0a0c806",
-  "onboarding_purpose_other_description": "afc5e73633b7bf727e2df9851c3353e80d67419fe048063abe5ad67ac4a41729",
   "onboarding_purpose_overview": "5340f74cfb1270e8d68ecd20943b6f7c0a25dbdbd50e517fde6e12763b57b7ae",
   "onboarding_purpose_overview_description": "f99f94e64b94d4c42634ee26e036e483f3bac7935dedf013bdf906cf4275abc0",
   "onboarding_purpose_refresh": "2952d49d4949943640c530f39a34968bf77535cd3f0309e488978c1fb3bf65a7",
   "onboarding_purpose_refresh_description": "96d5ab5c58eaff0a0d3ef4b3be0a36c958706c104711ced342b35b4404ef74fc",
   "onboarding_purpose_title": "e89b998b1ccb86cdb8867d75a90ea044b047d10f99db6deb0acbb10e9035b855",
   "onboarding_purpose_work": "ca4e06be6a27ae793dd014c71d4c55ea90be2dcb9ea62de649c4757eb6e24878",
-  "onboarding_purpose_work_description": "6a62cb20fb9337c99be1e04353a6f867eba658e78ac065b6caddd0cde1c0379e",
   "onboarding_question_failed": "6ffbb901ac4489e1ca5e38c345098bc15469a389ca812fa2f4f1271c96878d54",
   "onboarding_question_placeholder": "9e6163e32b9496d7767d44dcd5eafac461a7c22caaf0afb08f57c9b325a2dd43",
   "onboarding_question_sign_in": "685c9e263159d3949820696716a02882330628942afb202512d3f3bde8652411",
@@ -818,13 +816,11 @@
     <string name="onboarding_purpose_deep">Konuyu derinlemesine anlamak</string>
     <string name="onboarding_purpose_deep_description">Temelden ileri seviyeye kapsamlı bir kurs</string>
     <string name="onboarding_purpose_work">İşimde kullanmak</string>
-    <string name="onboarding_purpose_work_description">Sadece işinde gerekenler, ihtiyaç duyduğun sırayla</string>
     <string name="onboarding_purpose_career_change">Meslek değiştirmek</string>
     <string name="onboarding_purpose_career_change_description">Yeni işin için gerekenler, portfolyo dahil</string>
     <string name="onboarding_purpose_refresh">Öğrendiklerimi tazelemek</string>
     <string name="onboarding_purpose_refresh_description">Kısa bir testten sonra eski seviyeme dönmek</string>
     <string name="onboarding_purpose_other">Başka bir şey</string>
-    <string name="onboarding_purpose_other_description">Sonra kendi sözlerinle anlat</string>
     <string name="onboarding_level_title">Bu konuda ne kadar bilgin var?</string>
     <string name="onboarding_level_description">Bu sadece planının nereden başlayacağını değiştirir.</string>
     <string name="onboarding_level_label">Seviyen</string>

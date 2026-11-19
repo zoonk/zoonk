@@ -9671,11 +9671,6 @@ msgid "Understand it well"
 msgstr "しっかり理解する"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "9KaXOx"
-msgid "I want to learn what I use at work"
-msgstr "仕事で使うことを学びたいです"
-
-#: src/onboarding/steps/question-steps.tsx
 msgctxt "6SMSwM"
 msgid "Use it at work"
 msgstr "仕事に活かす"
@@ -9699,11 +9694,6 @@ msgstr "以前の実力を取り戻したいです"
 msgctxt "Aicr0G"
 msgid "Refresh what I studied"
 msgstr "以前学んだことを復習する"
-
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "xAm26I"
-msgid "I want something different"
-msgstr "ほかの目的で学びたいです"
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx

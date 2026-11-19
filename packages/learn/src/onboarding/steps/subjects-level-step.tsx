@@ -38,11 +38,7 @@ export function SubjectsLevelStep({
       title={t("Which subjects do you already know well?")}
     >
       <CheckList
-        choices={subjects.map((item) => ({
-          description: item.shortName && item.shortName !== item.name ? item.name : undefined,
-          label: item.shortName ?? item.name,
-          value: item.name,
-        }))}
+        choices={subjects.map((item) => ({ label: item.shortName ?? item.name, value: item.name }))}
         label={t("Subjects you know well")}
         onChange={setKnown}
         value={known}

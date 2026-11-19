@@ -208,14 +208,12 @@
   "onboarding_purpose_description": "7c80c37c10dd495e7e50f5137c29ed4c7a633d0e94bd68ce12239307e3bcc6e7",
   "onboarding_purpose_label": "c9d0b6384c8319f378250222f3416333c2c121147959d41f11b806846bc58383",
   "onboarding_purpose_other": "1cc6f14c24c024d8014dafde30e94aa8c1f32b9d9f30a5f6ce913f6ad915ff4a",
-  "onboarding_purpose_other_description": "2e177dc4710b3e485c15feb29faad2c052d03f5dc397736a2fcda58950ddf56f",
   "onboarding_purpose_overview": "b4610b3f4d2fcc446b774e829ddb60aee75a264574bf68b963b63cd927b32493",
   "onboarding_purpose_overview_description": "d28b9e176a19ddbe37f23003652713f3a64776c87767cad9ed1190c6bbf3926e",
   "onboarding_purpose_refresh": "654f8c5fdcc751cad0afd304b5675ac8dae00289ea5d22e00706afccf66653a4",
   "onboarding_purpose_refresh_description": "5aef624630aa2a9b88be83f332b02b6af971f056d4d582c86963120ef3952235",
   "onboarding_purpose_title": "5769ed31ad1552f94b05dbe186dfefc41c8463e9cd4d07b6be92230c932b06d3",
   "onboarding_purpose_work": "aa8e9ed3cf94fc6f6c87d334b55f71430742a12fa2083d1363e84280b74a71e3",
-  "onboarding_purpose_work_description": "e5d9f655f511cc5ab949e4c529f55070d6bdb36d49d778a547259dd01106a11b",
   "onboarding_question_failed": "45ce04ea91eef6a93432960318ca352fd8bded097714be6c1fc05309f096b1d3",
   "onboarding_question_placeholder": "383b42f1e6b285722dab897ea8f03db13421b7ddc116d05a9ac5f70e7a6fe15a",
   "onboarding_question_sign_in": "57ff57f7ae7023d774b0eb332f8679cfe18035049a9d0bf323a25ee10a3f60a4",
@@ -805,13 +803,11 @@
     <string name="onboarding_purpose_deep">깊이 이해하고 싶어요</string>
     <string name="onboarding_purpose_deep_description">기초부터 고급까지 배우는 전체 코스</string>
     <string name="onboarding_purpose_work">업무에 활용하고 싶어요</string>
-    <string name="onboarding_purpose_work_description">일에 필요한 내용만, 필요한 순서대로</string>
     <string name="onboarding_purpose_career_change">직업을 바꾸고 싶어요</string>
     <string name="onboarding_purpose_career_change_description">새 직무에 필요한 내용부터 포트폴리오까지</string>
     <string name="onboarding_purpose_refresh">배운 내용을 다시 익히고 싶어요</string>
     <string name="onboarding_purpose_refresh_description">짧은 테스트를 보고 예전 실력을 되찾아요</string>
     <string name="onboarding_purpose_other">다른 이유가 있어요</string>
-    <string name="onboarding_purpose_other_description">나중에 자유롭게 적어 주세요</string>
     <string name="onboarding_level_title">이미 어느 정도 알고 있나요?</string>
     <string name="onboarding_level_description">계획의 시작 지점만 달라져요.</string>
     <string name="onboarding_level_label">내 수준</string>

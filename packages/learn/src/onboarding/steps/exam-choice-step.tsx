@@ -8,7 +8,6 @@ import { useState } from "react";
 import { PageSectionTitle } from "../../_components/page";
 import { CheckList, ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
-import { useAdvanceOnPick } from "./use-advance-on-pick";
 
 type Picks = Record<string, string[]>;
 
@@ -47,16 +46,11 @@ export function ExamChoiceStep({
       timeZone: getLocalTimeZone(),
     });
 
-  const { cancel, pick, submit } = useAdvanceOnPick({ answer: answerWith, pending });
-
   return (
     <StepForm
       canContinue={isComplete}
-      onContinue={() => submit(picks)}
-      onSkip={() => {
-        cancel();
-        onAnswer({ choices: null, question: "examChoice" });
-      }}
+      onContinue={() => answerWith(picks)}
+      onSkip={() => onAnswer({ choices: null, question: "examChoice" })}
       pending={pending}
       skipLabel={t("Decide later")}
       subject={subject}
@@ -67,8 +61,6 @@ export function ExamChoiceStep({
     >
       {choices.map((choice) => {
         const options = choice.options.map((option) => ({
-          description:
-            option.shortName && option.shortName !== option.name ? option.name : undefined,
           label: option.shortName ?? option.name,
           value: option.name,
         }));
@@ -99,9 +91,6 @@ export function ExamChoiceStep({
                 label={choice.group}
                 numberKeys={choices.length === 1}
                 onChange={(value) => setPicks({ ...picks, [choice.group]: [value] })}
-                onPick={
-                  takes === 1 ? (value) => pick({ ...picks, [choice.group]: [value] }) : undefined
-                }
                 readOnly={pending}
                 value={picks[choice.group]?.[0] ?? null}
               />

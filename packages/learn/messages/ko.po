@@ -9671,11 +9671,6 @@ msgid "Understand it well"
 msgstr "제대로 이해하기"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "9KaXOx"
-msgid "I want to learn what I use at work"
-msgstr "업무에 쓰는 내용을 배우고 싶어요"
-
-#: src/onboarding/steps/question-steps.tsx
 msgctxt "6SMSwM"
 msgid "Use it at work"
 msgstr "업무에 활용하고 싶어요"
@@ -9699,11 +9694,6 @@ msgstr "예전 실력을 되찾고 싶어요"
 msgctxt "Aicr0G"
 msgid "Refresh what I studied"
 msgstr "배운 내용을 다시 익히고 싶어요"
-
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "xAm26I"
-msgid "I want something different"
-msgstr "원하는 게 따로 있어요"
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx

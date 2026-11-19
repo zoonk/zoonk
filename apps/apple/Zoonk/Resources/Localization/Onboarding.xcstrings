@@ -11499,65 +11499,6 @@
         }
       }
     },
-    "Only what your work uses, in the order it needs" : {
-      "comment" : "Purpose choice detail",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nur was du im Beruf brauchst, in der passenden Reihenfolge"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solo lo que usas en tu trabajo, en el orden en que lo necesitas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seulement ce qui te sert au travail, dans l’ordre où tu en as besoin"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solo ciò che ti serve al lavoro, nell’ordine in cui ti serve"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "仕事で使うことだけを、必要な順に"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "일에 필요한 내용만, 필요한 순서대로"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tylko to, czego potrzebujesz w pracy, w odpowiedniej kolejności"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Só o que você precisa no trabalho, na ordem em que vai usar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sadece işinde gerekenler, ihtiyaç duyduğun sırayla"
-          }
-        }
-      }
-    },
     "Only what's new or hard" : {
       "comment" : "Level choice detail",
       "localizations" : {
@@ -17483,65 +17424,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kendi sözlerinle anlat. Planını biz hazırlayalım."
-          }
-        }
-      }
-    },
-    "Tell us later, in your own words" : {
-      "comment" : "Purpose choice detail",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erzähl es uns später in deinen eigenen Worten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cuéntanos después, con tus propias palabras"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nous le dire plus tard avec tes mots"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Raccontacelo più avanti, con parole tue"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "あとで自分の言葉で伝える"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "나중에 자유롭게 알려 주세요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Później opiszesz nam to własnymi słowami"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conte depois, com suas palavras"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Daha sonra kendi sözlerimle anlatacağım"
           }
         }
       }
@@ -23930,65 +23812,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu sınavın gününü randevu alırken seçersin. Randevunu aldın mı? Tarihi buradan belirle."
-          }
-        }
-      }
-    },
-    "You picked %@" : {
-      "comment" : "VoiceOver, as a one-answer question moves on: the answer picked",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast %@ ausgewählt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegiste %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as choisi %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai scelto %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@を選びました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@을(를) 골랐어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój wybór: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você escolheu %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seçimin: %@"
           }
         }
       }

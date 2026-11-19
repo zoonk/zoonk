@@ -9,7 +9,6 @@ import { getCertificateExample } from "../_utils/certificate-example";
 import { type Choice, ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
 import { TextField } from "./text-field";
-import { useAdvanceOnPick } from "./use-advance-on-pick";
 
 function asksWords(reason: LanguageReason | null): boolean {
   return reason === "certificate" || reason === "other";
@@ -56,16 +55,6 @@ export function ReasonStep({
   const [reason, setReason] = useState<LanguageReason | null>(null);
   const [words, setWords] = useState("");
 
-  const { cancel, pick, submit } = useAdvanceOnPick({
-    answer: (picked: LanguageReason) =>
-      onAnswer({
-        question: "reason",
-        reason: picked,
-        words: asksWords(picked) ? words.trim() || null : undefined,
-      }),
-    pending,
-  });
-
   const example = getCertificateExample({ language: targetLanguage, region: targetRegion });
 
   const choices: Choice<LanguageReason>[] = reasons.map((view) => ({
@@ -81,7 +70,14 @@ export function ReasonStep({
   return (
     <StepForm
       canContinue={reason !== null && (reason !== "certificate" || words.trim().length > 0)}
-      onContinue={() => reason && submit(reason)}
+      onContinue={() =>
+        reason &&
+        onAnswer({
+          question: "reason",
+          reason,
+          words: asksWords(reason) ? words.trim() || null : undefined,
+        })
+      }
       pending={pending}
       subject={subject}
       title={t("Why are you learning it?")}
@@ -90,7 +86,6 @@ export function ReasonStep({
         choices={choices}
         label={t("Why you're learning it")}
         onChange={setReason}
-        onPick={(picked) => (asksWords(picked) ? cancel() : pick(picked))}
         readOnly={pending}
         value={reason}
       />

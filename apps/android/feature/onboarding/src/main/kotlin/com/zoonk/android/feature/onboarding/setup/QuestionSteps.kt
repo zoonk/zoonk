@@ -223,11 +223,7 @@ internal fun ColumnScope.PurposeStep(
                 stringResource(R.string.onboarding_purpose_deep),
                 stringResource(R.string.onboarding_purpose_deep_description),
             ),
-            Choice(
-                OnboardingAnswerInputOneOf1.Purpose.WORK,
-                stringResource(R.string.onboarding_purpose_work),
-                stringResource(R.string.onboarding_purpose_work_description),
-            ),
+            Choice(OnboardingAnswerInputOneOf1.Purpose.WORK, stringResource(R.string.onboarding_purpose_work)),
             Choice(
                 OnboardingAnswerInputOneOf1.Purpose.CAREER_CHANGE,
                 stringResource(R.string.onboarding_purpose_career_change),
@@ -238,11 +234,7 @@ internal fun ColumnScope.PurposeStep(
                 stringResource(R.string.onboarding_purpose_refresh),
                 stringResource(R.string.onboarding_purpose_refresh_description),
             ),
-            Choice(
-                OnboardingAnswerInputOneOf1.Purpose.OTHER,
-                stringResource(R.string.onboarding_purpose_other),
-                stringResource(R.string.onboarding_purpose_other_description),
-            ),
+            Choice(OnboardingAnswerInputOneOf1.Purpose.OTHER, stringResource(R.string.onboarding_purpose_other)),
         )
 
     StepForm(
@@ -258,7 +250,6 @@ internal fun ColumnScope.PurposeStep(
             value = purpose,
             label = stringResource(R.string.onboarding_purpose_label),
             onChange = { purpose = it },
-            onPick = answer,
             readOnly = pending,
         )
     }
@@ -288,7 +279,7 @@ internal fun ColumnScope.LevelStep(
         pending = pending,
         onContinue = { level?.let(answer) },
     ) {
-        LevelChoiceList(level, testMinutes, onChange = { level = it }, onPick = answer, readOnly = pending)
+        LevelChoiceList(level, testMinutes, onChange = { level = it }, readOnly = pending)
     }
 }
 
@@ -298,7 +289,6 @@ internal fun LevelChoiceList(
     value: LevelChoice?,
     testMinutes: Int,
     onChange: (LevelChoice) -> Unit,
-    onPick: ((LevelChoice) -> Unit)? = null,
     readOnly: Boolean = false,
 ) {
     val choices: List<Choice<LevelChoice>> =
@@ -329,7 +319,7 @@ internal fun LevelChoiceList(
                 stringResource(R.string.onboarding_level_test_description, formatMinutes(testMinutes, currentLocale())),
             ),
         )
-    ChoiceList(choices, value, stringResource(R.string.onboarding_level_label), onChange = onChange, onPick = onPick, readOnly = readOnly)
+    ChoiceList(choices, value, stringResource(R.string.onboarding_level_label), onChange = onChange, readOnly = readOnly)
 }
 
 @Composable
@@ -367,14 +357,7 @@ internal fun ColumnScope.SubjectsLevelStep(
         CheckList(
             choices =
                 subjects.map { item ->
-                    Choice(
-                        item.name,
-                        item.shortName ?: item.name,
-                        item.name.takeIf {
-                            item.shortName != null &&
-                                item.shortName != it
-                        },
-                    )
+                    Choice(item.name, item.shortName ?: item.name)
                 },
             value = known,
             label = label,
@@ -802,14 +785,7 @@ internal fun ColumnScope.ExamChoiceStep(
             val picked = picks[choice.group].orEmpty()
             val options =
                 choice.options.map { option ->
-                    Choice(
-                        option.name,
-                        option.shortName ?: option.name,
-                        option.name.takeIf {
-                            option.shortName != null &&
-                                option.shortName != it
-                        },
-                    )
+                    Choice(option.name, option.shortName ?: option.name)
                 }
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
@@ -838,7 +814,6 @@ internal fun ColumnScope.ExamChoiceStep(
                         value = picked.firstOrNull(),
                         label = choice.group,
                         onChange = { picks = picks + (choice.group to listOf(it)) },
-                        onPick = if (takes == 1L) ({ answer(picks + (choice.group to listOf(it))) }) else null,
                         readOnly = pending,
                     )
                 }

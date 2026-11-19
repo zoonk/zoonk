@@ -208,14 +208,12 @@
   "onboarding_purpose_description": "6876d0971caba99456a65bf77dfb3fe9804b8ed54225f14f5b324fb367be51a0",
   "onboarding_purpose_label": "5b7b54f7f7610da309529925f6803cc9fab8330408768692ab0f4df6e73b4ed5",
   "onboarding_purpose_other": "a9f6eeecefcd5eca26cad4fa1031d81e6046cbfc3fb2174e6a64505e6a4905b6",
-  "onboarding_purpose_other_description": "f2b64b8f459de622b8b51a8f397ba4181957c6c68ece2c5537f760eb2f4a0c4b",
   "onboarding_purpose_overview": "7c16f89b6fc55b58663fec08b8086b7b238ff4053ca652712709351d973455b7",
   "onboarding_purpose_overview_description": "f5109ee58cf690029d5a1eb209dc470e7b5efebc5b827b5fed1d508b11939e35",
   "onboarding_purpose_refresh": "cf99d887660154aaa8e6bb1ab6182d4534792917f1317c0a5ba4b42061fb4c34",
   "onboarding_purpose_refresh_description": "a9c6e82633b5b8b41b3ac6ccb3c5c0ca442f2c5575afbca4f113d59a5da76511",
   "onboarding_purpose_title": "97fb47b64ebead19d3c30f8b909e46c8b02c0f2b4e4c0af484b89278c19e71e4",
   "onboarding_purpose_work": "b78b57bd3bcdf4c05d2df0e9b2e85516af7ee06d52e68c5e650e1a248dcc49d4",
-  "onboarding_purpose_work_description": "c257328c47b3e126fee2cf4dd41a84452b76ad2fbe2cb318fe9a565d2bc2c1b4",
   "onboarding_question_failed": "250545d15513859569193944ad878c5f295e43ceea298f222cacca744536a399",
   "onboarding_question_placeholder": "744a3b5030a06c86fb9e2d5f1776c4e59a8751f5d3bddd9d9464a7b99cf98cc2",
   "onboarding_question_sign_in": "51117949825e361a5a7e7aec85b62059939991ab51acb2555b695577a4d8966b",
@@ -805,13 +803,11 @@
     <string name="onboarding_purpose_deep">深く理解する</string>
     <string name="onboarding_purpose_deep_description">基礎から上級まで、ひと通り学ぶコース</string>
     <string name="onboarding_purpose_work">仕事に活かす</string>
-    <string name="onboarding_purpose_work_description">仕事で使うことだけを、必要な順に</string>
     <string name="onboarding_purpose_career_change">転職する</string>
     <string name="onboarding_purpose_career_change_description">新しい仕事に必要なことを学び、ポートフォリオも作る</string>
     <string name="onboarding_purpose_refresh">以前学んだことを復習する</string>
     <string name="onboarding_purpose_refresh_description">短いテストを受けてから、以前のレベルを取り戻します</string>
     <string name="onboarding_purpose_other">その他</string>
-    <string name="onboarding_purpose_other_description">あとで自分の言葉で教えてください</string>
     <string name="onboarding_level_title">どのくらい知っていますか？</string>
     <string name="onboarding_level_description">学習計画をどこから始めるかだけが変わります。</string>
     <string name="onboarding_level_label">レベル</string>
