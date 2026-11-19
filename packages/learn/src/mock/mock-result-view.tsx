@@ -36,8 +36,7 @@ import {
 import { reachedEveryMinimum, useMissedMinimum } from "./mock-result-points";
 import { useSpeakingItems } from "./mock-result-speaking";
 import { type MockResultPart, getResultAsideParts, getResultSteps } from "./mock-result-steps";
-
-type Area = MockResult["areas"][number];
+import { getVerdictAreas } from "./mock-verdict";
 
 /** The number the result leads with, and the one line that names it. */
 function useScore(result: MockResult): { caption: string; value: string } {
@@ -88,26 +87,18 @@ function useScore(result: MockResult): { caption: string; value: string } {
   };
 }
 
-function getAreaMeasure(area: Area): number {
-  return area.score?.score ?? (area.total > 0 ? area.correct / area.total : 0);
-}
-
 /** One sentence on what the number means for the learner's next days, or nothing. */
 function useVerdict(result: MockResult): string | null {
   const t = useExtracted();
-  const ranked = result.areas.toSorted((a, b) => getAreaMeasure(b) - getAreaMeasure(a));
-  const best = ranked[0];
-  const worst = ranked.at(-1);
+  const areas = getVerdictAreas(result.areas);
 
   if (reachedEveryMinimum(result.points)) {
     return t("You reached every minimum in this mock exam.");
   }
 
-  if (!best || !worst || getAreaMeasure(best) === getAreaMeasure(worst)) {
-    return null;
-  }
-
-  return t("Strongest: {best}. Work on: {worst}.", { best: best.name, worst: worst.name });
+  return areas
+    ? t("Strongest: {best}. Work on: {worst}.", { best: areas.best.name, worst: areas.worst.name })
+    : null;
 }
 
 function DeltaLine({ result }: { result: MockResult }) {
