@@ -145,7 +145,7 @@ export async function CurrentPlan({
       </PageSection>
 
       <PageSection aria-label={t("What's included")}>
-        <PlusBenefits />
+        <PlusBenefits summaryAs="section" />
       </PageSection>
 
       <div className="empty:hidden">

@@ -59,7 +59,7 @@ const PAGE_USES: Record<GoalTutorPage, string> = {
   activity:
     "their study days, the lessons they finished and their time spent learning. For when or how much they studied.",
   appearance:
-    'the Preferences page: their buddy ("Choose your buddy" opens its character, name and glasses; Save keeps the change), sounds when they get an answer right or finish, and the app\'s language. Light and dark mode follow their device. For changing their buddy, sounds or the language.',
+    "the Preferences page: their buddy, which they open there to change its character, name or glasses and then save; sounds when they get an answer right or finish; and the app's language. Light and dark mode follow their device. For changing their buddy, sounds or the language.",
   buddy:
     "this conversation with you, their buddy, for the goal they have open, and their buddy's day. For asking you something later.",
   courses:

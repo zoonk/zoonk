@@ -100,7 +100,8 @@
   "mock_result_skip_line": "f57646358e046b3f21fd050f4801e6b6ca3e702a1b8341ff38115e8a1896ab95",
   "mock_result_skip_them": "7d19efe8a74d9191666498cd114c872c4ab311c2c79922fbae79aacb15793966",
   "mock_result_skip_title": "1a044a47874bb4fe35890e9ce73f5b99ff5d6f0d0304abc6c443f4c6aef7286e",
-  "mock_result_strongest": "f1eb7c0ba399a11057505659000a773dae56e92b39ae383b3704a458e13f839c",
+  "mock_result_strongest": "1963c2817c1fb76df9952d442f63fbe26bc062c158410c3ef9a63abcf306b346",
+  "mock_result_strongest_only": "eb1091262a1b7179a8f7a778ca43ddad0195e96c13c72bb3a6c7a96b58d60567",
   "mock_result_task_not_graded": "82e0c3e531c5e13b6df6bc351a1f103ed0068a9179721ba71d895a9571ecd194",
   "mock_result_tests_together": "50e0e45d492d10c7f621949469b5dc8f0482ebcb9cd35a8ad520adac31653ab1",
   "mock_result_timing": "a11526a3290cfb494dd5aac516d576a2c1b907f0b1a307e7cbab6fc6627e5b6f",
@@ -118,6 +119,7 @@
   "mock_result_unjudged_together_points_decimal": "051e76e7740a1580814f355e91bc11efe5ecb645db059869e71857ed0762d566",
   "mock_result_up": "ae69b974e4429e3682eaad6b8d330f79c262bc31322c2e18e6a9aa65c5225de7",
   "mock_result_up_from": "0e25532296b24d1aa92b5394abe3ddb1a50d4914becf17abd155c3979761e0bf",
+  "mock_result_work_on": "10a1db842434f059a96ece9c915d04c76c4018d6dbd26c9276e44041821b7a5c",
   "mock_result_written_part": "dc293e3da3a197406c2b8dab00ad1e24156c6c24c5c42dcd59315ff155105968",
   "mock_result_wrong": "88c8f0f6d4e19010f01adfd7176a7a9a106cd0bf7e7cf9e4036f4ab9d885aea1",
   "mock_result_your_plan": "0b25f565f25279931ec7d2499650275a0825b52471f6d12c092c832eb38c644e",
@@ -139,7 +141,11 @@
     <string name="mock_result_down">%1$s rispetto alla precedente</string>
     <string name="mock_result_every_minimum">Hai raggiunto tutti i punteggi minimi in questa simulazione.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
-    <string name="mock_result_strongest">Punto forte: %1$s. Lavora su %2$s.</string>
+    <string name="mock_result_strongest">Punto forte: %1$s. Da migliorare: %2$s.</string>
+    <!-- Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_strongest_only">Punto forte: %1$s.</string>
+    <!-- Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_work_on">Da migliorare: %1$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Vedi i dettagli</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

@@ -206,20 +206,6 @@ struct MockResult: Hashable, Decodable, Sendable {
     return change == 0 ? nil : change
   }
 
-  /// Main's `getVerdictAreas`: the subject that went best and the one to work on, only where the
-  /// answers tell them apart. An estimate ranks subjects even when nothing was answered, so a
-  /// subject is the strongest only with a right answer in it, and the one to work on only with a
-  /// miss.
-  var verdictAreas: (best: Area, worst: Area)? {
-    let ranked = areas.sorted { $0.measure > $1.measure }
-
-    guard let best = ranked.first, let worst = ranked.last, best.measure != worst.measure,
-      best.correct > 0, worst.correct < Double(worst.total)
-    else { return nil }
-
-    return (best, worst)
-  }
-
   /// What the answers were: nil where the score already is the count of right ones.
   var answerCounts: (right: Double, wrong: Double, partial: Int, blank: Int)? {
     if let net {
@@ -228,12 +214,6 @@ struct MockResult: Hashable, Decodable, Sendable {
 
     guard irt != nil else { return nil }
     return (correct, Double(total) - correct - Double(blank), 0, blank)
-  }
-}
-
-extension MockResult.Area {
-  fileprivate var measure: Double {
-    score?.score ?? (total > 0 ? correct / Double(total) : 0)
   }
 }
 
@@ -503,6 +483,12 @@ struct MockSpeaking: Hashable, Decodable, Sendable {
   var title: String
 }
 
+/// The subjects the result names; core decides each only where its numbers stand clear of the others.
+struct MockVerdict: Hashable, Decodable, Sendable {
+  var strongest: String?
+  var weakest: String?
+}
+
 struct MockView: Hashable, Decodable, Sendable {
   enum Status: String, Decodable, Sendable {
     case ready
@@ -563,6 +549,7 @@ struct MockView: Hashable, Decodable, Sendable {
   var speaking: MockSpeaking?
   var status: Status
   var trueFalseLabels: PracticeTrueFalseLabels
+  var verdict: MockVerdict?
 
   var currentSection: MockSection? {
     sections.first { $0.status == .current }

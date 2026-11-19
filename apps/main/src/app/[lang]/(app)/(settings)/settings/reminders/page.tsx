@@ -2,6 +2,7 @@ import { SectionPageHeader } from "@/components/learn/section-page";
 import { Link } from "@/i18n/navigation";
 import { getStudyReminder } from "@zoonk/core/reminders/get";
 import { Page } from "@zoonk/learn/page";
+import { PageAsideNote } from "@zoonk/learn/side-detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -29,11 +30,15 @@ async function RemindersContent() {
   );
 }
 
+/** The phone note holds its place beside the rows, so they don't narrow as the reminder arrives. */
 function RemindersSkeleton() {
   return (
     <div className="flex flex-col gap-3">
       <Skeleton className="h-30 rounded-lg" />
-      <Skeleton className="h-4 w-60" />
+      <PageAsideNote className="flex flex-col gap-3">
+        <Skeleton className="hidden h-5 w-36 xl:in-data-signed-in:block" />
+        <Skeleton className="h-4 w-60" />
+      </PageAsideNote>
     </div>
   );
 }

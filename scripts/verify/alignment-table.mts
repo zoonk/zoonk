@@ -250,11 +250,11 @@ const SURFACES =
 
 /**
  * The page's columns (craft E7): a drawn box starts and ends on its closest column's content edges,
- * or bleeds as E7 allows. A frame's main column, the column beside an aside, the aside, `Page`, and
- * a task's body and its side pane.
+ * or bleeds as E7 allows. A frame's main column, the column beside an aside, the aside and what a
+ * page draws in its room, `Page`, and a task's body and its side pane.
  */
 const COLUMNS =
-  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page], [data-slot=task-body], [data-slot=task-aside-body], [data-slot=task-aside-content]";
+  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page-aside-note], [data-slot=page], [data-slot=task-body], [data-slot=task-aside-body], [data-slot=task-aside-content]";
 
 /** What `readAlignment` reads a web page by. */
 export const WEB_TABLE = {

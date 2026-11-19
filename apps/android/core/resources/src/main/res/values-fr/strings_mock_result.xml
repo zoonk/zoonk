@@ -100,7 +100,8 @@
   "mock_result_skip_line": "826bf652ca279c6689ab68b57c75bf910f53bd1f55fd60150d9deb21d1a826b6",
   "mock_result_skip_them": "ec6311d1afa2e2b435a56ce9d5b348edacad8a06fe71c53389706bae4253748a",
   "mock_result_skip_title": "dd05d2597240bb519e357273ce0c5e91525888b116a0ea36f62ad457378bc9d9",
-  "mock_result_strongest": "c856b4fe6bc1d7e210f30e083bae4177ba9f4593b03c65c6888ccc86fd64cab9",
+  "mock_result_strongest": "2acefc8831bb2133244cb68ec36dff3ba0fa42850f749a6871536eba636ca12e",
+  "mock_result_strongest_only": "ae2469e4b5af1d459944cd0199f88aa386530b2bd03b8ece63d77bef87e7a663",
   "mock_result_task_not_graded": "467ce34e811ce6e81f0c2284aabd41440dd15c349f584877b9cdfe98bdc17f0f",
   "mock_result_tests_together": "7a3e99435d8e7725e987d75c6248003be4877be80c03f1507d35d4a03b012553",
   "mock_result_timing": "d0762aedda9d66c325294289d1daa28a9378638356204ad7a868768ae792e477",
@@ -118,6 +119,7 @@
   "mock_result_unjudged_together_points_decimal": "ccf3f964eba6f4d360c1b42ac72641ce890510ed9f32a0050b54c341982b5095",
   "mock_result_up": "c8d4669c3f0cd70ef62564952d5fa7e0350858780cea9297a9dcf258fc93c208",
   "mock_result_up_from": "676c29b46c3d44c3fb530497f601ad08022ca033108e1b03022345d25fe55117",
+  "mock_result_work_on": "ba3251b71b39a8f628989f74b33d2c619c61c88e035ca33c09db66b29b630e25",
   "mock_result_written_part": "571360212e0d705def739bdb8c451429ceda602ebbf6515dbb27c29df60ef1e1",
   "mock_result_wrong": "818c243108b5bde4e8e96e024309590fb0840ece59e4b71a6a6e82e544f62372",
   "mock_result_your_plan": "4b87b48678c0248148e94b9151c193f7232c30b79197d060099ab5aee9207af2",
@@ -139,7 +141,11 @@
     <string name="mock_result_down">%1$s depuis le dernier examen blanc</string>
     <string name="mock_result_every_minimum">Tu as atteint tous les minimums requis dans cet examen blanc.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
-    <string name="mock_result_strongest">Point fort : %1$s. À travailler : %2$s.</string>
+    <string name="mock_result_strongest">Ton point fort : %1$s. À travailler : %2$s.</string>
+    <!-- Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_strongest_only">Ton point fort : %1$s.</string>
+    <!-- Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_work_on">À travailler : %1$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Détails</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

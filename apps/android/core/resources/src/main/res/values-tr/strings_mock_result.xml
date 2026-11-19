@@ -100,7 +100,8 @@
   "mock_result_skip_line": "8591e018a46470d0ec752c585ace60901a814d9146402a94eee7f19618e288e4",
   "mock_result_skip_them": "7abcb58644d23aa7412a92849b6f5a1432bdf93a20571f0100fb90e485d7907a",
   "mock_result_skip_title": "0e29202d9656be5278700214afb4f04991f538bac8fd51d1fb1f9f3aa3e29541",
-  "mock_result_strongest": "e958882930a87422a5d688b3cf88ddb150b857f1184b0397ca0bd3ee5b236346",
+  "mock_result_strongest": "2d24f2df3b365961b2f4c8cd6bf5c5a653a3f41b202b551617abd9eb2b8f605d",
+  "mock_result_strongest_only": "f0584afb42aa2ea04ca78bd07b518015c0669a60ac57ceec69ba845a6a91a759",
   "mock_result_task_not_graded": "e257cb7458dea75be7da3b7a7fee56a6df97f91159af57c2be46f849b737ce0c",
   "mock_result_tests_together": "31363f54f683d3baef1dded4ed8e831d91560fb38c3c1054f08472807e2bf657",
   "mock_result_timing": "92b32408930d543d2359f5b1f0eff0ab32b70d7fe3d79478161746f356be5ac8",
@@ -118,6 +119,7 @@
   "mock_result_unjudged_together_points_decimal": "fbc95adc11f82a137a67ef7fc86fc42cf7e8b896f823e615b7a5085a0567b788",
   "mock_result_up": "47418c2fda33d1ad2ce515c50643c6c37d6182c6f0af9b3cd4ca5cfad49d51f0",
   "mock_result_up_from": "a794b0683288406591152082e32a9d9ddcab6626f14f68e09e7c15d54b244166",
+  "mock_result_work_on": "ed67d38e0aafc2d95e8ea96fab3e6776e7604491cf6dfd1ee730e8b4f59e9e03",
   "mock_result_written_part": "a84b6e1a11deb5567b7c7599350b19fdb30792ce119065a9429b6024866c9987",
   "mock_result_wrong": "8bf24bc3ddd634fc87543a0fd5ec5fbd9ccc6ecb6fcdef10d870db115b8b0928",
   "mock_result_your_plan": "7bab11fffba1ccda2b2510b496c47828eeef93e79e38731fbda21eea43063420",
@@ -139,7 +141,11 @@
     <string name="mock_result_down">Son deneme sınavına göre %1$s</string>
     <string name="mock_result_every_minimum">Bu deneme sınavında tüm baraj puanlarına ulaştın.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
-    <string name="mock_result_strongest">En güçlü branşın: %1$s. Çalışman gereken branş: %2$s.</string>
+    <string name="mock_result_strongest">En güçlü alanın: %1$s. Çalışman gereken alan: %2$s.</string>
+    <!-- Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_strongest_only">En güçlü alanın: %1$s.</string>
+    <!-- Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_work_on">Çalışman gereken alan: %1$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Ayrıntıları gör</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

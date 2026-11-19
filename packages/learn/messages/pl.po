@@ -8527,16 +8527,6 @@ msgid "Score out of {max}"
 msgstr "Wynik (maks. {max})"
 
 #: src/mock/mock-result-view.tsx
-msgctxt "I3yltc"
-msgid "You reached every minimum in this mock exam."
-msgstr "Udało ci się osiągnąć wszystkie minima w tym egzaminie próbnym."
-
-#: src/mock/mock-result-view.tsx
-msgctxt "x2l-vn"
-msgid "Strongest: {best}. Work on: {worst}."
-msgstr "Najmocniejsza strona: {best}. Popracuj nad: {worst}."
-
-#: src/mock/mock-result-view.tsx
 msgctxt "uLf3MG"
 msgid "+{change} since the last one"
 msgstr "+{change} w porównaniu z poprzednim wynikiem"
@@ -8707,6 +8697,28 @@ msgstr "Każde zadanie to rozmowa na żywo z egzaminatorem, tak jak na egzaminie
 msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "Wynik netto: {score} z {total}"
+
+#: src/mock/use-mock-verdict.ts
+msgctxt "I3yltc"
+msgid "You reached every minimum in this mock exam."
+msgstr "Udało ci się osiągnąć wszystkie minima w tym egzaminie próbnym."
+
+#: src/mock/use-mock-verdict.ts
+msgctxt "x2l-vn"
+msgid "Strongest: {best}. Work on: {worst}."
+msgstr "Najmocniejsza strona: {best}. Popracuj nad: {worst}."
+
+#. Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.”
+#: src/mock/use-mock-verdict.ts
+msgctxt "ncyLyy"
+msgid "Strongest: {best}."
+msgstr "Najmocniejsza strona: {best}."
+
+#. Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.”
+#: src/mock/use-mock-verdict.ts
+msgctxt "RmMq3H"
+msgid "Work on: {worst}."
+msgstr "Popracuj nad: {worst}."
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts

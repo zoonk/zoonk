@@ -100,7 +100,8 @@
   "mock_result_skip_line": "c84cacb74203cdd21e6bb9c7a2c3f339ae8f8e14f01527666afb593601e2c406",
   "mock_result_skip_them": "278a8333c3b496d4b57795c823fb1cf19aee4f714ef4970bdda70489cdeb1108",
   "mock_result_skip_title": "14a982e8fa2f4ab0e9251eb9fb3d62dd3c852486f5307289ea14550daf724bf6",
-  "mock_result_strongest": "96ab2deb480d5634a68d4ba950b6dfc27c5c74f4313f64753ffdcc9666e7a936",
+  "mock_result_strongest": "448449f6c27229e1610d27f6a81d9f30e9e901bd2d9b54599e86da6876708b38",
+  "mock_result_strongest_only": "6e26cc265faea84f9f8cb376a76060d5128c1383d8a315a943ca28a454f59588",
   "mock_result_task_not_graded": "64bd1598d3e577bc03571be01d8958aea179ecb0ac44aef8386232cd35f45501",
   "mock_result_tests_together": "5d3630b25602d736e5f9b2d1283ad27b7b60207015a8d8b2c222b0c7b817b3c4",
   "mock_result_timing": "966bf31feed53031f7b7d2aef322f8a3102d7f55aacf45354e3b3cb2a549f86d",
@@ -118,6 +119,7 @@
   "mock_result_unjudged_together_points_decimal": "9462679088eac47d06362f3e5c8565f182794f77b252a152777c10a2d9190cba",
   "mock_result_up": "91c890ffb20d188c166e81e5f3e388695211fcb16a252ea02dd78963e7a23741",
   "mock_result_up_from": "72e832839ad39c38889c13116beb84b5eab19116c730a8c6ccc549374e65434a",
+  "mock_result_work_on": "5cbda25219a5ad54de19a46537574790f92ec1f8dc5e0e3447df3cf34167a94e",
   "mock_result_written_part": "b09758cd73deb8d5e99a8091cfce5651086e08c000f2af24cd1b28d7ab135759",
   "mock_result_wrong": "f1e545bcf2532f3b969867e67d70e680fe7e1fe35e5c400b6d1ef5c422933542",
   "mock_result_your_plan": "cb752fba892207e5a8ce59cd2f8cf3aef65ced1a6ae5a4cb2d7d5d2bee796104",
@@ -139,7 +141,11 @@
     <string name="mock_result_down">%1$s desde o último simulado</string>
     <string name="mock_result_every_minimum">Você atingiu todas as pontuações mínimas neste simulado.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
-    <string name="mock_result_strongest">Melhor desempenho em %1$s. Pratique %2$s.</string>
+    <string name="mock_result_strongest">Melhor desempenho: %1$s. Pratique: %2$s.</string>
+    <!-- Under a mock exam's score when only its best subject is named: the words of the first half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_strongest_only">Melhor desempenho: %1$s.</string>
+    <!-- Under a mock exam's score when only the subject to work on is named: the words of the second half of “Strongest: {best}. Work on: {worst}.” -->
+    <string name="mock_result_work_on">Pratique: %1$s.</string>
     <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Detalhes</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

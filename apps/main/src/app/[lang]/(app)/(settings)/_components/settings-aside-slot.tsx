@@ -4,8 +4,8 @@ import { usePathname } from "@/i18n/navigation";
 
 /**
  * What the section's aside holds, page by page: the account where it matters and what one page
- * adds under it. A page with neither leaves it empty, and the aside then shows only for what the
- * page itself says beside its rows (`PageAsideNote`).
+ * adds under it. A page with neither leaves it empty, as a visitor's account does, and the aside
+ * then shows only for what the page itself says beside its rows (`PageAsideNote`).
  */
 export function SettingsAsideSlot({
   accountOn,
@@ -24,7 +24,7 @@ export function SettingsAsideSlot({
   const account = accountOn.includes(pathname);
 
   return (
-    <div className="contents" hidden={!account && !extra}>
+    <div className="contents">
       {account && children}
       {extra?.content}
     </div>
