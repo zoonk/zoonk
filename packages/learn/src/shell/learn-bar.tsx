@@ -142,7 +142,7 @@ export function LearnPageBar({
 
   return (
     <PageTopBar
-      className={children ? undefined : hidden.bare}
+      className={hidden.bare}
       // `data-title-away` (`group-data-title-away/page-bar`) lets an action give way to the page's
       // name on a phone, as Ask (its face alone) and a visitor's links (hidden) do.
       actions={
@@ -211,12 +211,16 @@ export function LearnSectionBar({
         (end || phoneEnd) && (
           <>
             {end}
-            {phoneEnd && <div className="contents lg:hidden">{phoneEnd}</div>}
+            {phoneEnd && (
+              <div className="contents lg:hidden" data-phone-only="">
+                {phoneEnd}
+              </div>
+            )}
           </>
         )
       }
       back={<LearnBackLink className={hidden.back} href={back.href} label={back.label} />}
-      className={end ? undefined : bare}
+      className={bare}
     />
   );
 }

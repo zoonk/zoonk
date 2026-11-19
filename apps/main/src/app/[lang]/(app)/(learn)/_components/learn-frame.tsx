@@ -33,7 +33,11 @@ async function SkipToContent() {
 
 /** From `lg` the sidebar holds the goal, search and the account, so the bar holds nothing there. */
 function PhoneOnly({ children }: { children: React.ReactNode }) {
-  return <div className="contents lg:hidden">{children}</div>;
+  return (
+    <div className="contents lg:hidden" data-phone-only="">
+      {children}
+    </div>
+  );
 }
 
 /**
