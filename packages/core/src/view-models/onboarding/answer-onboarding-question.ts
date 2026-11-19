@@ -13,7 +13,7 @@ import {
   type MoveLanguageGoalResult,
   moveLanguageGoalToExam,
 } from "../../exams/move-language-goal";
-import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
+import { owePlanStartLessons } from "../../follow-ups/owe-goal-lessons";
 import { type GoalView } from "../../goals/goal-contract";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { followPlanToday } from "../../plans/_utils/follow-plan-today";
@@ -163,7 +163,7 @@ export async function answerOnboardingQuestion({
     getLearnerModelCacheTag(goal.userId),
   ]);
 
-  // Schedule is last: personalization can read every answer before the first lessons.
+  // Every question about the goal comes before the schedule, so personalization can read them all.
   if (input.question === "schedule") {
     await settleNewPlan({ goalId });
 
@@ -187,9 +187,10 @@ export async function answerOnboardingQuestion({
     await followSavedPlan(goalId);
   }
 
-  // The time a day re-plans the first days, so their lessons start being written before Today needs them.
+  // The time a day re-plans the first days and can move where the plan starts, so its first lesson
+  // is written while the learner answers the questions about them.
   if (input.question === "schedule") {
-    await oweGoalLessons({
+    await owePlanStartLessons({
       also: [{ input: { goalId }, kind: "rememberOnboarding" }],
       goalId,
       userId: goal.userId,

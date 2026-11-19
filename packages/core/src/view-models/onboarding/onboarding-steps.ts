@@ -200,7 +200,11 @@ export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
   );
 }
 
-/** Skips known answers and unnecessary placement; daily time comes last so its recommendation reflects placement results. */
+/**
+ * Skips known answers and unnecessary placement. Everything that can change where the plan starts
+ * comes before the questions about the learner, so its first lesson is written while they answer:
+ * the daily time follows placement, so its recommendation and the Focus test's focus reflect it.
+ */
 export function getOnboardingSteps({
   goal,
   profile,
@@ -225,10 +229,10 @@ export function getOnboardingSteps({
 
   return [
     ...questions.filter((question) => question !== "schedule"),
-    ...profileSteps,
-    ...(picksBuddy({ answered, profile }) ? (["buddy"] as const) : []),
     ...(isPlacementAhead(goal.details) ? (["placement"] as const) : []),
     ...questions.filter((question) => question === "schedule"),
+    ...profileSteps,
+    ...(picksBuddy({ answered, profile }) ? (["buddy"] as const) : []),
     "plan",
   ];
 }

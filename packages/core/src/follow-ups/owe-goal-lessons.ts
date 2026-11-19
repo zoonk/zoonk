@@ -36,20 +36,23 @@ export async function oweGoalLessons({
   });
 }
 
-/** For a write that moved where the plan starts, such as a placement; pass its transaction when it has one. */
+/** For a write that moved where the plan starts, such as a placement or the daily time; pass its transaction when it has one. */
 export async function owePlanStartLessons({
+  also = [],
   db,
   goalId,
   userId,
 }: {
+  also?: readonly FollowUp[];
   db?: TransactionClient;
   goalId: string;
   userId: string;
 }): Promise<void> {
   if (!db) {
-    await prisma.$transaction((tx) => owePlanStartLessons({ db: tx, goalId, userId }));
+    await prisma.$transaction((tx) => owePlanStartLessons({ also, db: tx, goalId, userId }));
     return;
   }
 
-  await oweGoalLessons({ also: await getFirstLessonWrite({ db, goalId }), db, goalId, userId });
+  const first = await getFirstLessonWrite({ db, goalId });
+  await oweGoalLessons({ also: [...first, ...also], db, goalId, userId });
 }
