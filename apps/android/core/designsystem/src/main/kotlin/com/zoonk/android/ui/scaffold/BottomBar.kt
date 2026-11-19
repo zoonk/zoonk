@@ -124,7 +124,7 @@ fun BottomBar(
                     ) {
                         CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
                             Column(
-                                Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(horizontal = columnMargin, vertical = columnMargin),
+                                Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(columnMargin),
                                 verticalArrangement = Arrangement.spacedBy(BAR_GAP),
                                 content = content,
                             )
