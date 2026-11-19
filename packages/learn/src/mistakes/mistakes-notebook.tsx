@@ -23,13 +23,11 @@ import {
   ListGroup,
   ListRowBody,
   ListRowContent,
-  ListRowLeading,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
 import { PageSubtitle } from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
-import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -190,7 +188,6 @@ function MistakesInbox({
               onClick={() => select(key)}
               type="button"
             >
-              <ListRowLeading>{group[0]?.status === "fixed" && <DoneMark />}</ListRowLeading>
               <ListRowBody>
                 <ListRowContent>
                   <ListRowTitle>{name}</ListRowTitle>
