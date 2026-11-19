@@ -139,11 +139,11 @@ msgctxt "limits.mEm9UA"
 msgid "{title}. {line}"
 msgstr "{title}. {line}"
 
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
+#. Under the title of a notice on a chapter's mind map: making the map needs every lesson of its chapter, and this chapter has more lessons than a free learner can start.
 #: src/_components/comes-back-words.ts
-msgctxt "BQZuQD"
-msgid "It writes more lessons than you get for free."
-msgstr "무료로 제공되는 것보다 더 많은 레슨을 만들어요."
+msgctxt "cfIXX0"
+msgid "This chapter has more lessons than you get for free."
+msgstr "이 챕터에는 무료로 이용할 수 있는 레슨보다 레슨이 더 많아요."
 
 #: src/_components/comes-back-words.ts
 msgctxt "PzQ0ot"
@@ -151,27 +151,27 @@ msgid "This map needs a subscription"
 msgstr "이 마인드맵을 만들려면 구독이 필요해요"
 
 #: src/_components/comes-back-words.ts
-msgctxt "Ekv-QL"
-msgid "You can make this map now"
-msgstr "이제 이 마인드맵을 만들 수 있어요"
+msgctxt "uvIiPj"
+msgid "You can create this map now"
+msgstr "지금 이 지도를 만들 수 있어요"
 
 #. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
 #: src/_components/comes-back-words.ts
-msgctxt "MU7Wx6"
-msgid "You'll have enough on {date}, or subscribe to make it now."
-msgstr "{date}에는 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+msgctxt "yBfB7k"
+msgid "You'll have enough on {date}, or subscribe to create it now."
+msgstr "{date}에는 레슨 이용 횟수가 충분해져요. 지금 만들려면 구독하세요."
 
 #. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
 #: src/_components/comes-back-words.ts
-msgctxt "HwBdEe"
-msgid "You'll have enough later today, or subscribe to make it now."
-msgstr "오늘 중에 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+msgctxt "bNi3iR"
+msgid "You'll have enough later today, or subscribe to create it now."
+msgstr "오늘 늦게면 레슨 이용 횟수가 충분해져요. 지금 만들려면 구독하세요."
 
 #. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
 #: src/_components/comes-back-words.ts
-msgctxt "CE0pGe"
-msgid "You'll have enough tomorrow, or subscribe to make it now."
-msgstr "내일이면 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+msgctxt "qA7bK-"
+msgid "You'll have enough tomorrow, or subscribe to create it now."
+msgstr "내일이면 레슨 이용 횟수가 충분해져요. 지금 만들려면 구독하세요."
 
 #: src/_components/comes-back-words.ts
 msgctxt "eFx_I9"
@@ -472,19 +472,19 @@ msgid "You've used your mind maps"
 msgstr "마인드맵 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "o0NLBw"
-msgid "No more previews today"
-msgstr "오늘 미리보기 횟수를 다 썼어요"
+msgctxt "K5TvNf"
+msgid "No more early lessons today"
+msgstr "오늘은 더 이상 레슨을 미리 이용할 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "bhVg5t"
-msgid "No more previews without an account"
-msgstr "미리보기를 더 이용하려면 계정이 필요해요"
+msgctxt "pMit-x"
+msgid "No more early lessons without an account"
+msgstr "계정 없이 레슨을 더 미리 이용할 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "-jMPMN"
-msgid "You've used your previews"
-msgstr "미리 보기 한도를 다 썼어요"
+msgctxt "mzLrh8"
+msgid "You've used your early lessons"
+msgstr "미리 이용할 수 있는 레슨을 모두 사용했어요"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -891,9 +891,9 @@ msgstr "언제 마칠지 계산하지 못했어요."
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
-msgctxt "hw11Lc"
-msgid "{dateKind, select, month {No time a day covers everything by {date}.} other {No time a day covers everything by {date}.}}"
-msgstr "{dateKind, select, month {하루에 아무리 오래 공부해도 {date}까지 전부 학습할 수는 없어요.} other {하루에 아무리 오래 공부해도 {date}까지 전부 학습할 수는 없어요.}}"
+msgctxt "OeOmHN"
+msgid "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}"
+msgstr "{dateKind, select, month {{date}까지 모든 내용을 다루기엔 시간이 부족해요.} other {{date}까지 모든 내용을 다루기엔 시간이 부족해요.}}"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "DvdMdt"
@@ -901,9 +901,9 @@ msgid "Covering everything takes about {time} a day."
 msgstr "하루 약 {time}씩 공부하면 전부 학습할 수 있어요."
 
 #: src/_components/time-answer-texts.ts
-msgctxt "nLHTU9"
-msgid "The most any time covers is about {share}, at {time} a day."
-msgstr "학습할 수 있는 최대 분량은 약 {share}이고, 하루 {time}씩 공부하면 돼요."
+msgctxt "-50pNu"
+msgid "The most you can cover is about {share}, at {time} a day."
+msgstr "하루 {time} 동안 공부하면 최대 약 {share}까지 다룰 수 있어요."
 
 #: src/_components/time-answer-texts.ts
 msgctxt "LfzIDC"
@@ -1232,9 +1232,9 @@ msgid "{buddy} is napping. Study to wake it up."
 msgstr "{buddy}(이)가 낮잠을 자고 있어요. 공부해서 깨워 주세요."
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "TTZGoJ"
-msgid "Study today to keep it up."
-msgstr "오늘 공부해서 에너지를 유지해 주세요."
+msgctxt "RgruHg"
+msgid "Study today to keep Energy up."
+msgstr "오늘 공부해서 Energy를 유지해 보세요."
 
 #: src/buddies/buddy-day-parts.tsx
 #: src/buddies/buddy-today.tsx
@@ -1856,8 +1856,8 @@ msgid "On your certificate: <strong>{name}</strong>"
 msgstr "인증서에 표시되는 이름: <strong>{name}</strong>님"
 
 #: src/certificates/certificate-moment.tsx
-msgctxt "BJKVSX"
-msgid "See your certificate"
+msgctxt "AgYb-e"
+msgid "See certificate"
 msgstr "인증서 보기"
 
 #: src/certificates/certificate-name.tsx
@@ -1909,8 +1909,8 @@ msgstr "인쇄"
 
 #. Link under a small picture of a certificate on a phone: opens the certificate's picture at full size.
 #: src/certificates/certificate-page.tsx
-msgctxt "hlcpTE"
-msgid "See the full certificate"
+msgctxt "PHJUw6"
+msgid "See full certificate"
 msgstr "인증서 크게 보기"
 
 #: src/certificates/certificate-share.tsx
@@ -2567,6 +2567,7 @@ msgid "Rematch tomorrow"
 msgstr "내일 재대결"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
+#: src/language/conversation/call-stars-step.tsx
 msgctxt "3ekog5"
 msgid "Rematch next time you study"
 msgstr "다음에 공부할 때 재대결"
@@ -2697,9 +2698,9 @@ msgid "Start a new goal"
 msgstr "새 목표 시작하기"
 
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "cNbAST"
-msgid "Another goal now needs a subscription"
-msgstr "지금 목표를 하나 더 시작하려면 구독이 필요해요"
+msgctxt "D-4lxw"
+msgid "Starting another goal needs a subscription"
+msgstr "다른 목표를 시작하려면 구독이 필요해요"
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -3435,9 +3436,8 @@ msgstr "모의고사"
 
 #. Opens the mock exam chooser, from the exam page.
 #: src/exam/exam-mocks-section.tsx
-#: src/mock/mock-entry.tsx
-msgctxt "MQXzps"
-msgid "New mock"
+msgctxt "PHC0Rp"
+msgid "New mock exam"
 msgstr "새 모의고사"
 
 #: src/exam/exam-moment-card.tsx
@@ -3908,11 +3908,11 @@ msgctxt "fkY35_"
 msgid "During your first week"
 msgstr "첫 주 동안만"
 
-#. Label of an on/off switch on the Focus test's result. “A few more” means test questions, asked while the learner studies their lessons.
+#. Label of an on/off switch on the Focus test's result: the test's questions keep coming, a few at a time, in the learner's lessons.
 #: src/focus-test/focus-test-result.tsx
-msgctxt "4ag959"
-msgid "Ask a few more as I study"
-msgstr "공부하면서 문제 몇 개 더 풀기"
+msgctxt "EEmOHD"
+msgid "Ask a few more questions as I study"
+msgstr "공부하면서 문제를 몇 개 더 풀기"
 
 #. Button on the Focus test's result: continues the test with more questions.
 #: src/focus-test/focus-test-result.tsx
@@ -5020,9 +5020,9 @@ msgstr "{total, plural, =0 {레슨 {done, number}개 완료 / 총 #개} other {�
 
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
-msgctxt "55jrFz"
-msgid "{dateKind, select, month {Ends about {date}} other {Ends about {date}}}"
-msgstr "{dateKind, select, month {{date}쯤 끝나요} other {{date}쯤 끝나요}}"
+msgctxt "fC-Q4J"
+msgid "{dateKind, select, month {Ends around {date}} other {Ends around {date}}}"
+msgstr "{dateKind, select, month {{date}쯤 종료} other {{date}쯤 종료}}"
 
 #. When a phase of the plan ends. {date} is a day, like "Dec 12".
 #: src/journey/phase-when.tsx
@@ -5419,9 +5419,9 @@ msgstr "상관없어요"
 
 #. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
 #: src/language-variety/country-field.tsx
-msgctxt "uvGkyf"
-msgid "Your practice calls and our answers to your questions use the country you choose. Lessons and their audio use {taughtVariety}."
-msgstr "선택한 나라에서 쓰는 말로 대화 연습을 하고 질문에 답해 드려요. 레슨과 음성은 {taughtVariety} 기준이에요."
+msgctxt "Sp07LQ"
+msgid "Your practice calls and our answers to your questions match the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr "연습 대화와 질문에 대한 답변은 선택한 국가에 맞춰져요. 레슨과 레슨 오디오는 {taughtVariety}를 사용해요."
 
 #. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
 #: src/language-variety/use-variety-words.ts
@@ -5693,9 +5693,9 @@ msgid "We couldn't save the call."
 msgstr "대화를 저장하지 못했어요."
 
 #: src/language/conversation/call-refusal-copy.ts
-msgctxt "0QT9qQ"
-msgid "It's open in another tab or on another device. Starting this one ends it, without its feedback."
-msgstr "다른 탭이나 기기에서 대화 중이에요. 이 대화를 시작하면 기존 대화는 피드백 없이 끝나요."
+msgctxt "M52hjU"
+msgid "That call is open in another tab or on another device. Starting this one ends it without feedback."
+msgstr "다른 탭이나 기기에서 대화가 진행 중이에요. 이 대화를 시작하면 피드백 없이 기존 대화가 종료돼요."
 
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "mWWPs0"
@@ -5745,11 +5745,6 @@ msgstr "{stars, plural, =0 {별 3개 중 #개} other {별 3개 중 #개}}"
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "목표"
-
-#: src/language/conversation/call-stars-step.tsx
-msgctxt "0z6K11"
-msgid "The call comes back so you can try again."
-msgstr "이 대화가 다시 나와서 한 번 더 도전할 수 있어요."
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
@@ -6135,9 +6130,9 @@ msgid "On these scales, {band} is the {level} level."
 msgstr "이 평가 기준에서 {band}의 수준은 {level}에 해당해요."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "2UvMo7"
-msgid "You said little, so this estimate is rough."
-msgstr "말한 내용이 적어서 대략적으로만 평가했어요."
+msgctxt "Y8Cr96"
+msgid "You didn't say much, so this estimate is rough."
+msgstr "말한 내용이 많지 않아 이 예상은 정확도가 낮아요."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "p7Ub7O"
@@ -6328,9 +6323,9 @@ msgid "Press Record and say it out loud"
 msgstr "녹음 버튼을 누르고 소리 내어 말하세요"
 
 #: src/language/level-test/level-test-preparing.tsx
-msgctxt "FMLSDB"
-msgid "Your plan starts from the level you gave, and your first sessions fine-tune it."
-msgstr "알려 준 수준에 맞춰 계획을 시작하고, 처음 몇 번의 학습을 통해 더 알맞게 조정해요."
+msgctxt "C1ojLU"
+msgid "Your plan starts from the level you gave, and your first days fine-tune it."
+msgstr "계획은 알려 주신 레벨에 맞춰 시작하고, 첫 며칠 동안 세부 내용을 조정해요."
 
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "BTL1zh"
@@ -6338,9 +6333,9 @@ msgid "Skip the test"
 msgstr "테스트 건너뛰기"
 
 #: src/language/level-test/level-test-preparing.tsx
-msgctxt "ucHaxO"
-msgid "We're writing the questions for the {language} test now. It takes a minute or two, and only this once."
-msgstr "{language} 레벨 테스트 문제를 만들고 있어요. 처음 한 번만 진행되며 1~2분 정도 걸려요."
+msgctxt "bgc90r"
+msgid "Getting the {language} test ready takes a minute or two, and only this once."
+msgstr "{language} 레벨 테스트를 준비하는 데 1~2분 정도 걸리고, 처음 한 번만 준비해요."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "-JyB5g"
@@ -6935,9 +6930,9 @@ msgstr "대화에서"
 
 #. What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.
 #: src/memory/memory-screen.tsx
-msgctxt "EDgENy"
-msgid "Personal examples, plans that fit your week and calls with {buddy} that remember your news"
-msgstr "나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 {buddy}와(과)의 대화"
+msgctxt "js54yN"
+msgid "Personal examples, plans that fit your week and calls with {buddy} that remember what you share"
+msgstr "개인 맞춤 예시, 한 주에 맞는 계획, 공유한 내용을 기억하는 {buddy}와의 대화"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
@@ -6962,9 +6957,9 @@ msgid "Couldn't undo. It changed since."
 msgstr "그사이 내용이 바뀌어서 되돌릴 수 없어요."
 
 #: src/memory/memory-screen.tsx
-msgctxt "9fUBB_"
-msgid "Nothing yet. Notes show up here as you study and chat."
-msgstr "아직 메모가 없어요. 공부하고 채팅하다 보면 여기에 메모가 생겨요."
+msgctxt "PulZNg"
+msgid "Nothing yet. What you share shows up here as you study and chat."
+msgstr "아직 아무것도 없어요. 공부하고 대화하면서 알려 주신 내용이 여기에 표시돼요."
 
 #: src/memory/memory-screen.tsx
 msgctxt "dQaH-3"
@@ -7262,9 +7257,9 @@ msgid "No map yet"
 msgstr "아직 마인드맵 없음"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "9Vf09f"
-msgid "Writing lessons counts toward your free lessons."
-msgstr "레슨을 만들면 무료 레슨 한도에서 차감돼요."
+msgctxt "_Dbnvs"
+msgid "Creating maps counts toward your free lessons."
+msgstr "맵을 만들면 무료 레슨 횟수에 포함돼요."
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
@@ -7896,6 +7891,12 @@ msgctxt "v_VKuk"
 msgid "Continue your mock exam"
 msgstr "모의고사 이어 풀기"
 
+#. Opens the mock exam chooser, from the exam page.
+#: src/mock/mock-entry.tsx
+msgctxt "MQXzps"
+msgid "New mock"
+msgstr "새 모의고사"
+
 #: src/mock/mock-expired.tsx
 msgctxt "lCUjGY"
 msgid "Take another"
@@ -8009,9 +8010,9 @@ msgstr "이 문제의 남은 시간"
 
 #. {name} is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet.
 #: src/mock/mock-notes.tsx
-msgctxt "8yPPsF"
-msgid "{name} isn't in it until you pick which one you take."
-msgstr "응시할 항목을 고르기 전까지는 {name}(이)가 포함되지 않아요."
+msgctxt "JWLTm5"
+msgid "{name} isn't in your mock exams until you pick which one you take."
+msgstr "응시할 시험을 선택해야 모의고사에 {name}이 포함돼요."
 
 #: src/mock/mock-notes.tsx
 msgctxt "9WllVa"
@@ -8434,9 +8435,9 @@ msgid "Objective tests together"
 msgstr "객관식 시험 합계"
 
 #: src/mock/mock-result-points.tsx
-msgctxt "MOzagC"
-msgid "{unit, select, percent {At {score}. It needs {minimum}.} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs.}}"
-msgstr "{unit, select, percent {현재 {score}예요. {minimum} 이상이어야 해요.} other {{short, plural, other {#점}}이 부족해 최소 기준인 {minimum}에 못 미쳤어요.}}"
+msgctxt "w-G7YW"
+msgid "{unit, select, percent {You scored {score}. The minimum is {minimum}.} other {{short, plural, one {# point} other {# points}} short of the minimum, {minimum}.}}"
+msgstr "{unit, select, percent {점수는 {score}예요. 최저 점수는 {minimum}예요.} other {{short, plural, other {최저 점수 {minimum}보다 #점 부족해요}}}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "aYENhx"
@@ -8935,9 +8936,9 @@ msgid "Write your goal again"
 msgstr "목표를 다시 써 보세요"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "M2yYBP"
-msgid "We couldn't tell what you want to learn from what you wrote."
-msgstr "적어 주신 내용만으로는 무엇을 배우고 싶은지 알기 어려웠어요."
+msgctxt "eE4lLC"
+msgid "We couldn't tell what you want to learn."
+msgstr "무엇을 배우고 싶은지 파악하지 못했어요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2P4gfK"
@@ -9545,14 +9546,9 @@ msgid "A short test finds the lessons you don't need."
 msgstr "짧은 테스트로 건너뛰어도 되는 레슨을 찾아요."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "252ZEd"
-msgid "There's no test for this goal yet. Your first few days show us what you already know."
-msgstr "아직 이 목표에 맞는 테스트가 없어요. 처음 며칠간의 학습을 통해 이미 아는 내용을 파악해요."
-
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "TxdYgo"
-msgid "We'll find your level as you study"
-msgstr "공부하면서 실력을 파악할게요"
+msgctxt "rxz4rg"
+msgid "We'll see what you know in your first few days"
+msgstr "처음 며칠 동안 알고 있는 내용을 확인해 볼게요"
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "MwxYjr"
@@ -9902,9 +9898,9 @@ msgid "Change end date"
 msgstr "종료일 바꾸기"
 
 #: src/onboarding/steps/schedule-step.tsx
-msgctxt "Td7PW4"
-msgid "Choose an end date"
-msgstr "종료일 정하기"
+msgctxt "_1vMUa"
+msgid "Set end date"
+msgstr "종료일 설정"
 
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
@@ -10280,9 +10276,9 @@ msgid "The exam's likely date is now {date}."
 msgstr "현재 예상 시험일은 {date}이에요."
 
 #: src/plan/notice-day.tsx
-msgctxt "cnlSzV"
-msgid "The official exam date is {date}. Use it as your exam date?"
-msgstr "공식 시험일은 {date}이에요. 이 날짜를 시험일로 설정할까요?"
+msgctxt "ukTc8H"
+msgid "The official exam date is {date}. Use it?"
+msgstr "공식 시험일은 {date}예요. 이 날짜를 사용할까요?"
 
 #: src/plan/notice-day.tsx
 msgctxt "78R32n"
@@ -10370,9 +10366,9 @@ msgid "Prerequisites"
 msgstr "사전 지식"
 
 #: src/plan/plan-bases-sheet.tsx
-msgctxt "hTZKqq"
-msgid "What your topics build on. Choose how much of it to study."
-msgstr "주제의 바탕이 되는 내용이에요. 얼마나 공부할지 고르세요."
+msgctxt "aDIqks"
+msgid "What your topics build on. Choose how much to study."
+msgstr "주제의 바탕이 되는 내용이에요. 학습량을 선택하세요."
 
 #: src/plan/plan-choice-lines.tsx
 msgctxt "YT4OTs"
@@ -10385,9 +10381,9 @@ msgid "Your choices"
 msgstr "내 선택"
 
 #: src/plan/plan-country.tsx
-msgctxt "4QudkV"
-msgid "Change your country?"
-msgstr "국가를 바꿀까요?"
+msgctxt "sqZp59"
+msgid "Change country?"
+msgstr "국가를 변경할까요?"
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/plan/plan-country.tsx
@@ -10446,9 +10442,9 @@ msgid "Your plan is updated."
 msgstr "계획을 수정했어요."
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "hKZBEc"
-msgid "Add to my plan"
-msgstr "내 계획에 추가하기"
+msgctxt "oRzrGu"
+msgid "Add to plan"
+msgstr "계획에 추가"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10467,14 +10463,14 @@ msgid "Only {part}"
 msgstr "{part}만"
 
 #: src/plan/plan-focus.tsx
-msgctxt "ATMYyH"
-msgid "Nothing changed. {areas} already have every lesson in your plan."
-msgstr "바뀐 내용이 없어요. {areas}의 모든 레슨이 이미 계획에 들어 있어요."
+msgctxt "9zhrfm"
+msgid "Nothing changed. All {areas} lessons are already in your plan."
+msgstr "변경된 내용이 없어요. {areas} 레슨은 모두 이미 계획에 있어요."
 
 #: src/plan/plan-focus.tsx
-msgctxt "2cb_Ay"
-msgid "Nothing changed. To fit more of {areas}, add time a day."
-msgstr "바뀐 내용이 없어요. {areas}의 레슨을 더 넣으려면 하루 학습 시간을 늘려 보세요."
+msgctxt "G4PbI_"
+msgid "Nothing changed. To fit more of {areas}, study longer each day."
+msgstr "변경된 내용이 없어요. {areas}를 더 포함하려면 매일 더 오래 공부하세요."
 
 #. Use a gender-neutral invitation to pick exam subjects manually.
 #: src/plan/plan-focus.tsx
@@ -10514,9 +10510,9 @@ msgid "{count, plural, one {Every lesson is done. Win the challenge to finish yo
 msgstr "{count, plural, other {레슨을 모두 마쳤어요. 챌린지에서 이겨 계획을 마무리하세요.}}"
 
 #: src/plan/plan-notice.tsx
-msgctxt "WaA1zn"
-msgid "You have more lessons than days left. Add time a day or pick a later date."
-msgstr "남은 날보다 레슨이 더 많아요. 하루 학습 시간을 늘리거나 날짜를 늦춰 보세요."
+msgctxt "l2BN94"
+msgid "You have more lessons than days left. Study longer each day or pick a later date."
+msgstr "남은 날짜보다 레슨이 더 많아요. 매일 더 오래 공부하거나 날짜를 늦춰 보세요."
 
 #: src/plan/plan-notice.tsx
 msgctxt "Z7cgdl"
@@ -10720,9 +10716,9 @@ msgid "Adjust"
 msgstr "조정하기"
 
 #: src/plan/plan-suggestion.tsx
-msgctxt "bgDfbl"
-msgid "Add time a day or pick a later date."
-msgstr "하루 학습 시간을 늘리거나 날짜를 늦추세요."
+msgctxt "jaCbhc"
+msgid "Study longer each day or pick a later date."
+msgstr "매일 더 오래 공부하거나 날짜를 늦춰 보세요."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "LCDh_J"
@@ -10851,9 +10847,9 @@ msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · every le
 msgstr "{count, plural, other {사전 지식 #가지}} · 모든 레슨 · {time}"
 
 #: src/plan/use-bases-texts.ts
-msgctxt "BF1KGi"
-msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · one short lesson each · {time}"
-msgstr "{count, plural, other {사전 지식 #가지}} · 짧은 레슨 하나씩 · {time}"
+msgctxt "i9Y_He"
+msgid "{count, plural, one {# prerequisite · one short lesson} other {# prerequisites · one short lesson each}} · {time}"
+msgstr "{count, plural, other {#개의 사전 지식 · 짧은 레슨 1개씩}} · {time}"
 
 #: src/plan/use-bases-texts.ts
 msgctxt "TAEj0x"
@@ -10900,9 +10896,9 @@ msgid "Done. Today's lessons changed too."
 msgstr "완료했어요. 오늘 레슨도 바뀌었어요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "fpDDO_"
-msgid "Done. It starts on your next study day."
-msgstr "완료했어요. 다음 학습일부터 적용돼요."
+msgctxt "jcVQPK"
+msgid "Done. The change starts on your next study day."
+msgstr "완료했어요. 변경 사항은 다음 학습일부터 적용돼요."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "r84WhO"
@@ -11063,9 +11059,9 @@ msgid "Study up to {level}?"
 msgstr "{level}까지 공부할까요?"
 
 #: src/plan/use-operation-question.ts
-msgctxt "etSQn0"
-msgid "Add the lessons your time fits?"
-msgstr "학습 시간에 맞춰 레슨을 추가할까요?"
+msgctxt "ZmtKF9"
+msgid "Add the lessons that fit your time?"
+msgstr "시간에 맞는 레슨을 추가할까요?"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "lhP9Vj"
@@ -11386,9 +11382,9 @@ msgid "{first} – {last}"
 msgstr "{first}~{last}"
 
 #: src/plan/use-system-change-sentence.ts
-msgctxt "6dw0H9"
-msgid "Your plan moved to fit the days you missed."
-msgstr "공부하지 못한 날을 반영해 계획을 조정했어요."
+msgctxt "3Qo-pr"
+msgid "Your plan changed to make up for the days you missed."
+msgstr "놓친 날짜를 만회할 수 있도록 계획이 변경됐어요."
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "gU3R5_"
@@ -11613,9 +11609,9 @@ msgid "Saved"
 msgstr "저장됨"
 
 #: src/profile-questions/about-you-screen.tsx
-msgctxt "qgIu-N"
-msgid "Your day and For fun need Memory."
-msgstr "‘일상’과 ‘취미’를 이용하려면 메모리를 켜야 해요."
+msgctxt "k_33XN"
+msgid "“Your day” and “For fun” need Memory."
+msgstr "“하루”와 “재미로”에는 메모리가 필요해요."
 
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "D86MHA"
@@ -11940,9 +11936,9 @@ msgid "What a pass skips"
 msgstr "통과하면 건너뛰는 내용"
 
 #: src/questions/test-out-preparing.tsx
-msgctxt "M-U3f0"
-msgid "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know."
-msgstr "이 챕터의 문제를 몇 개 풀고 나면 결과를 볼 수 있어요. 잘 풀면 이미 아는 내용은 계획에서 건너뛰어요."
+msgctxt "2L2enW"
+msgid "A few questions on this chapter. Do well, and your plan skips what you already know."
+msgstr "이 챕터에 관한 문제 몇 개예요. 잘 풀면 이미 아는 내용은 계획에서 건너뛰어요."
 
 #: src/questions/test-out-preparing.tsx
 msgctxt "gb32bG"
@@ -12054,9 +12050,9 @@ msgstr "푸시 알림"
 
 #. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx
-msgctxt "vBM5w1"
-msgid "To get notifications on your phone, turn them on in the Zoonk phone app."
-msgstr "휴대폰으로 푸시 알림을 받으려면 Zoonk 모바일 앱에서 켜세요."
+msgctxt "WqSlRv"
+msgid "To get push notifications, turn them on in the Zoonk phone app."
+msgstr "푸시 알림을 받으려면 Zoonk 휴대폰 앱에서 푸시 알림을 켜세요."
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"
@@ -12833,15 +12829,15 @@ msgstr "자주 출제"
 
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
-msgctxt "d1-Zc7"
-msgid "You study the topics shared with {exams} once."
-msgstr "{exams}에도 나오는 주제는 한 번만 공부해요."
+msgctxt "zK-7PG"
+msgid "You study the topics shared with {exams} only once."
+msgstr "{exams}에서도 다루는 주제는 한 번만 학습해요."
 
 #. On one exam's plan, when the learner has several other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
-msgctxt "U3XN4Z"
-msgid "{count, plural, one {You study the topics shared with your # other exam once.} other {You study the topics shared with your # other exams once.}}"
-msgstr "{count, plural, other {다른 시험 #개에도 나오는 주제는 한 번만 공부해요.}}"
+msgctxt "ad_ugC"
+msgid "{count, plural, one {You study the topics shared with your # other exam only once.} other {You study the topics shared with your # other exams only once.}}"
+msgstr "{count, plural, other {#개의 다른 시험과 공통으로 다루는 주제는 한 번만 학습해요.}}"
 
 #. Marks a subject on one exam's plan that the learner's other exams named in {exams} also test.
 #: src/syllabus/shared-exams.tsx
@@ -13062,13 +13058,11 @@ msgctxt "DQ_P5S"
 msgid "Not in your plan · your time doesn't cover it"
 msgstr "계획에 없어요 · 학습 시간이 부족해요"
 
+#. On a topic's row in the plan: its lessons aren't ready yet.
 #: src/syllabus/topic-note.tsx
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-#: src/topic-outline/use-far-topic-line.ts
-msgctxt "5CkyMG"
+msgctxt "topicNotReady"
 msgid "Not ready yet"
-msgstr "아직 준비되지 않았어요"
+msgstr "아직 준비되지 않음"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13145,6 +13139,13 @@ msgstr "지금 레슨 준비하기"
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "다음 레슨"
+
+#: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
+#: src/topic-outline/use-far-topic-line.ts
+msgctxt "5CkyMG"
+msgid "Not ready yet"
+msgstr "아직 준비되지 않았어요"
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -13353,9 +13354,9 @@ msgstr "최근 답변을 바탕으로"
 
 #. What the goal's progress number is made of
 #: src/today/today-lessons-card.tsx
-msgctxt "sUCOex"
-msgid "Lessons you've studied or already knew, out of your plan's."
-msgstr "계획의 전체 레슨 중 공부했거나 이미 알고 있던 레슨의 비율이에요."
+msgctxt "ZYUWJV"
+msgid "The share of your plan's lessons you've studied or already knew."
+msgstr "계획에 있는 레슨 중 이미 학습했거나 알고 있던 레슨의 비율이에요."
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"

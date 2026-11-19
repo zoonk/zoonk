@@ -155,7 +155,7 @@ function useLessonsQuestion() {
       return t("Study up to {level}?", { level: operation.aim });
     }
 
-    return operation.kind === "fitLessons" ? t("Add the lessons your time fits?") : null;
+    return operation.kind === "fitLessons" ? t("Add the lessons that fit your time?") : null;
   };
 }
 

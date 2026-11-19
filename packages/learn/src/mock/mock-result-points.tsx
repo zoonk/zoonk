@@ -146,7 +146,7 @@ export function useMissedMinimum(
 
   return {
     line: t(
-      "{unit, select, percent {At {score}. It needs {minimum}.} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs.}}",
+      "{unit, select, percent {You scored {score}. The minimum is {minimum}.} other {{short, plural, one {# point} other {# points}} short of the minimum, {minimum}.}}",
       {
         minimum: formatMinimum(first.minimum),
         score: percent(toScorePercent(first)),

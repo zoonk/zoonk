@@ -71,7 +71,7 @@ export function StartGoalOffer({
       title={t("Start a new goal")}
     >
       <OfferAction
-        gate={locked ? t("Another goal now needs a subscription") : null}
+        gate={locked ? t("Starting another goal needs a subscription") : null}
         href={hrefs.start}
       >
         {t("Start")}

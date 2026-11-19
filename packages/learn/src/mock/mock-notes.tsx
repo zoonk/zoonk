@@ -31,7 +31,7 @@ function useLeftOutLine() {
         return t({
           description:
             "{name} is a part of the exam, such as a specialty's own test, that the learner hasn't picked an option for yet.",
-          message: "{name} isn't in it until you pick which one you take.",
+          message: "{name} isn't in your mock exams until you pick which one you take.",
           values: { name: name ?? "" },
         });
       case "listening":

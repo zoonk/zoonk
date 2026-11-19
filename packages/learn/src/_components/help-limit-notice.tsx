@@ -275,9 +275,9 @@ function useOutlineLimitWords(limit: OutlineLimit): LimitWords {
   const t = useExtracted();
 
   return useCapWords(limit, {
-    day: t("No more previews today"),
-    guest: t("No more previews without an account"),
-    rolling: t("You've used your previews"),
+    day: t("No more early lessons today"),
+    guest: t("No more early lessons without an account"),
+    rolling: t("You've used your early lessons"),
   });
 }
 

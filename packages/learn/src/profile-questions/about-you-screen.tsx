@@ -187,7 +187,7 @@ function MemoryOffNotice() {
   return (
     <NoticeCard>
       <NoticeCardContent>
-        <NoticeCardDescription>{t("Your day and For fun need Memory.")}</NoticeCardDescription>
+        <NoticeCardDescription>{t("“Your day” and “For fun” need Memory.")}</NoticeCardDescription>
         <NoticeCardActions>
           <LearnLink
             className={buttonVariants({ size: "sm", variant: "outline" })}

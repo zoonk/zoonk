@@ -107,7 +107,7 @@ test.describe("Content country", () => {
       await search.fill("alem");
       await picker.getByRole("option", { name: "Alemanha" }).click();
 
-      const confirm = page.getByRole("alertdialog", { name: "Change your country?" });
+      const confirm = page.getByRole("alertdialog", { name: "Change country?" });
       await expect(confirm).toContainText("New country: Alemanha.");
       await confirm.getByRole("button", { name: "Cancel" }).click();
       await expect(confirm).toBeHidden();

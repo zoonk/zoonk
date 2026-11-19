@@ -85,7 +85,7 @@ function useEvidenceNotes({ feedback }: { feedback: ExamSpeakingFeedbackView }):
 
   return [
     !feedback.heard && t("You typed your replies, so this estimate leaves out how you sound."),
-    feedback.brief && t("You said little, so this estimate is rough."),
+    feedback.brief && t("You didn't say much, so this estimate is rough."),
   ].filter((note) => typeof note === "string");
 }
 

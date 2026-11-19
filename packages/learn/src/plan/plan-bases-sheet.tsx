@@ -261,7 +261,7 @@ export function PlanBasesSheet({
           <div className="flex flex-col gap-1">
             <DrawerTitle>{t("Prerequisites")}</DrawerTitle>
             <DrawerDescription>
-              {t("What your topics build on. Choose how much of it to study.")}
+              {t("What your topics build on. Choose how much to study.")}
             </DrawerDescription>
           </div>
         </SheetHeader>

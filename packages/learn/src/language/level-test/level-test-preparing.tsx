@@ -35,7 +35,7 @@ export function LevelTestPreparing({
         <OnboardingActions
           note={
             <OnboardingActionsNote>
-              {t("Your plan starts from the level you gave, and your first sessions fine-tune it.")}
+              {t("Your plan starts from the level you gave, and your first days fine-tune it.")}
             </OnboardingActionsNote>
           }
         >
@@ -53,10 +53,9 @@ export function LevelTestPreparing({
         <OnboardingHeading>
           <OnboardingTitle>{t("Preparing your level test")}</OnboardingTitle>
           <OnboardingDescription>
-            {t(
-              "We're writing the questions for the {language} test now. It takes a minute or two, and only this once.",
-              { language },
-            )}
+            {t("Getting the {language} test ready takes a minute or two, and only this once.", {
+              language,
+            })}
           </OnboardingDescription>
         </OnboardingHeading>
       </GenerationWait>

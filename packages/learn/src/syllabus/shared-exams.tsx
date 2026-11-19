@@ -37,14 +37,14 @@ export function SharedExamsNote({ sharedExams }: { sharedExams: SharedExams }) {
         ? t({
             description:
               "On one exam's plan. {exams} names the learner's other exams that test some of the same topics.",
-            message: "You study the topics shared with {exams} once.",
+            message: "You study the topics shared with {exams} only once.",
             values: { exams },
           })
         : t({
             description:
               "On one exam's plan, when the learner has several other exams that test some of the same topics.",
             message:
-              "{count, plural, one {You study the topics shared with your # other exam once.} other {You study the topics shared with your # other exams once.}}",
+              "{count, plural, one {You study the topics shared with your # other exam only once.} other {You study the topics shared with your # other exams only once.}}",
             values: { count },
           })}
     </PageSectionFooter>

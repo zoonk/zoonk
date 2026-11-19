@@ -155,7 +155,7 @@ export function RemindersScreen({
             {t({
               description:
                 "Stands in for the Push notifications row: name them in the same words as that row",
-              message: "To get notifications on your phone, turn them on in the Zoonk phone app.",
+              message: "To get push notifications, turn them on in the Zoonk phone app.",
             })}
           </PageSectionFooter>
         )}

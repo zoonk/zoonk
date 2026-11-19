@@ -167,7 +167,9 @@ function DoesNotFitSuggestion() {
 
       <SlotContent>
         <SuggestionHeader>{title}</SuggestionHeader>
-        <SuggestionDescription>{t("Add time a day or pick a later date.")}</SuggestionDescription>
+        <SuggestionDescription>
+          {t("Study longer each day or pick a later date.")}
+        </SuggestionDescription>
         <SuggestionActions>
           <SuggestionAction onClick={host.onAdjust}>{t("Adjust plan")}</SuggestionAction>
         </SuggestionActions>

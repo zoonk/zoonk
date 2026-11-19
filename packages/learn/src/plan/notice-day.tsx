@@ -23,9 +23,7 @@ export function useNoticeDayText() {
   return ({ date, estimated }: NoticeDay): string =>
     estimated
       ? t("The exam's likely date is now {date}.", { date: formatDate(date, "sentence") })
-      : t("The official exam date is {date}. Use it as your exam date?", {
-          date: formatDate(date, "sentence"),
-        });
+      : t("The official exam date is {date}. Use it?", { date: formatDate(date, "sentence") });
 }
 
 export function NoSittingWords({

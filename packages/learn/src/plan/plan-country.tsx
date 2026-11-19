@@ -44,7 +44,7 @@ function ChangeCountryDialog({
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("Change your country?")}</AlertDialogTitle>
+          <AlertDialogTitle>{t("Change country?")}</AlertDialogTitle>
           <AlertDialogDescription className="max-h-[50dvh] overflow-y-auto">
             {t({
               description:

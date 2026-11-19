@@ -33,7 +33,7 @@ export function usePlanStateLine(): { adjust: boolean; text: string; today: bool
   if (status?.kind === "needsAdjusting") {
     return {
       adjust: true,
-      text: t("You have more lessons than days left. Add time a day or pick a later date."),
+      text: t("You have more lessons than days left. Study longer each day or pick a later date."),
       today: false,
     };
   }

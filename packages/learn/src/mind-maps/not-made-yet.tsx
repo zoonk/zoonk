@@ -258,7 +258,7 @@ export function NotMadeYet({
 
       {warnsLessons && (
         <p className={LINE_CLASS} id={lessonsWarningId}>
-          {t("Writing lessons counts toward your free lessons.")}
+          {t("Creating maps counts toward your free lessons.")}
         </p>
       )}
 

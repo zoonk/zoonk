@@ -198,7 +198,7 @@ export function UnclearGoal({ goal, onRetry }: { goal: string; onRetry: () => vo
       <OnboardingHeading>
         <OnboardingTitle>{t("Write your goal again")}</OnboardingTitle>
         <OnboardingDescription>
-          {t("We couldn't tell what you want to learn from what you wrote.")}
+          {t("We couldn't tell what you want to learn.")}
         </OnboardingDescription>
       </OnboardingHeading>
     </OnboardingColumn>

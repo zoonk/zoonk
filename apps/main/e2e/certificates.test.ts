@@ -161,7 +161,7 @@ test.describe("Course certificates", () => {
 
     await expect(moment.getByRole("button", { name: "Share" })).toBeHidden();
 
-    await moment.getByRole("link", { name: "See your certificate" }).click();
+    await moment.getByRole("link", { name: "See certificate" }).click();
 
     await expect(
       page.getByRole("heading", { level: 1, name: "Certificates need a subscription" }),

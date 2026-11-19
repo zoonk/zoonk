@@ -185,7 +185,7 @@ export function CertificatePaper({
         {t({
           description:
             "Link under a small picture of a certificate on a phone: opens the certificate's picture at full size.",
-          message: "See the full certificate",
+          message: "See full certificate",
         })}
         <ArrowUpRightIcon aria-hidden="true" data-icon="inline-end" />
       </a>

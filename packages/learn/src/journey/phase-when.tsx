@@ -25,7 +25,7 @@ export function usePhaseEnd() {
   };
 }
 
-/** How a phase's end is read aloud: "Ends Dec 12", "Ends about Dec 12", or a short plan's days. */
+/** How a phase's end is read aloud: "Ends Dec 12", "Ends around Dec 12", or a short plan's days. */
 export function usePhaseEndSpoken() {
   const t = useExtracted();
   const phaseEnd = usePhaseEnd();
@@ -48,7 +48,7 @@ export function usePhaseEndSpoken() {
       ? t({
           description:
             'In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".',
-          message: "{dateKind, select, month {Ends about {date}} other {Ends about {date}}}",
+          message: "{dateKind, select, month {Ends around {date}} other {Ends around {date}}}",
           values: { date, dateKind: end.month ? "month" : "day" },
         })
       : t({
@@ -61,7 +61,7 @@ export function usePhaseEndSpoken() {
 
 /**
  * When a phase ends, at the end of its row or under the roadmap's bar: "Dec 12", "~Dec 12" or
- * "~Jan", read aloud as "Ends about Dec 12". The place says it's the end, so it has no "until".
+ * "~Jan", read aloud as "Ends around Dec 12". The place says it's the end, so it has no "until".
  */
 export function PhaseWhen({ className, phase }: { className?: string; phase: PlanPhaseView }) {
   const t = useExtracted();

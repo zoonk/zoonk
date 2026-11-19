@@ -82,15 +82,8 @@ export function PlacementUnavailable({
     <TestOutcome
       busy={pending}
       failed={failed}
-      lead={
-        <OnboardingDescription>
-          {t(
-            "There's no test for this goal yet. Your first few days show us what you already know.",
-          )}
-        </OnboardingDescription>
-      }
       onContinue={onContinue}
-      title={t("We'll find your level as you study")}
+      title={t("We'll see what you know in your first few days")}
     />
   );
 }

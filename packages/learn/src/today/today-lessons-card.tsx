@@ -24,7 +24,7 @@ export function LessonsCard({
 
   const meaning = t({
     description: "What the goal's progress number is made of",
-    message: "Lessons you've studied or already knew, out of your plan's.",
+    message: "The share of your plan's lessons you've studied or already knew.",
   });
 
   return (

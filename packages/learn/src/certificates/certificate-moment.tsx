@@ -150,7 +150,7 @@ export function CertificateMoment({
               className={buttonVariants({ size: "lg", variant: "outline" })}
               href={getCertificatePath(top.code)}
             >
-              {t("See your certificate")}
+              {t("See certificate")}
             </LearnLink>
           )}
         </div>

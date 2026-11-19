@@ -94,7 +94,7 @@ function FitOfferSuggestion({ item, offer }: { item: SlotItem; offer: FitOffer }
           <SuggestionActions
             main={
               <SuggestionAction action={accept} busy={isPending}>
-                {t("Add to my plan")}
+                {t("Add to plan")}
               </SuggestionAction>
             }
           >

@@ -36,7 +36,7 @@ function useEnergyLine({ name, status }: { name: string; status: BuddyStatusView
     return t("{buddy} is napping. Study to wake it up.", { buddy: name });
   }
 
-  return status.energy.studiedToday ? null : t("Study today to keep it up.");
+  return status.energy.studiedToday ? null : t("Study today to keep Energy up.");
 }
 
 function EnergyStarts({ name }: { name: string }) {

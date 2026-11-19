@@ -67,7 +67,7 @@ function DateLinkLabel({ dated, exam }: { dated: boolean; exam: boolean }) {
     return t("Change exam date");
   }
 
-  return dated ? t("Change end date") : t("Choose an end date");
+  return dated ? t("Change end date") : t("Set end date");
 }
 
 function ScheduleTime({

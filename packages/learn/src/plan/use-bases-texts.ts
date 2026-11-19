@@ -43,7 +43,7 @@ export function useSummaryText() {
 
     if (shared === "quick") {
       return t(
-        "{count, plural, one {# prerequisite} other {# prerequisites}} · one short lesson each · {time}",
+        "{count, plural, one {# prerequisite · one short lesson} other {# prerequisites · one short lesson each}} · {time}",
         values,
       );
     }

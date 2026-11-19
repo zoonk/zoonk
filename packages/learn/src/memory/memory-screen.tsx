@@ -93,7 +93,7 @@ function MemorySwitch({
           description:
             "What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it.",
           message:
-            "Personal examples, plans that fit your week and calls with {buddy} that remember your news",
+            "Personal examples, plans that fit your week and calls with {buddy} that remember what you share",
           values: { buddy: buddyName },
         })}
         descriptionId={descriptionId}
@@ -199,7 +199,7 @@ export function MemoryScreen({
 
       {groups.length === 0 && screen.enabled && (
         <p className="text-muted-foreground text-sm">
-          {t("Nothing yet. Notes show up here as you study and chat.")}
+          {t("Nothing yet. What you share shows up here as you study and chat.")}
         </p>
       )}
 

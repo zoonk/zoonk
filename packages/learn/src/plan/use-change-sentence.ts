@@ -78,7 +78,9 @@ export function useAppliedLine() {
       return t("Done. Today's lessons changed too.");
     }
 
-    return todaySession === "unchanged" ? t("Done. It starts on your next study day.") : t("Done.");
+    return todaySession === "unchanged"
+      ? t("Done. The change starts on your next study day.")
+      : t("Done.");
   };
 }
 

@@ -9,7 +9,7 @@ export function useRefusalCopy() {
   return {
     callInProgress: {
       text: t(
-        "It's open in another tab or on another device. Starting this one ends it, without its feedback.",
+        "That call is open in another tab or on another device. Starting this one ends it without feedback.",
       ),
       title: t("You're in another call"),
     },

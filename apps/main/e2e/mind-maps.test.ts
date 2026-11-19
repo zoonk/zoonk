@@ -870,7 +870,7 @@ test.describe("Mind maps", () => {
       await expect(row.getByRole("button", { name: "Create" })).toBeHidden();
 
       await expect(
-        notMade.getByText("Writing lessons counts toward your free lessons."),
+        notMade.getByText("Creating maps counts toward your free lessons."),
       ).toBeHidden();
 
       await notMade.getByRole("link", { name: "Subscribe" }).click();
@@ -886,7 +886,7 @@ test.describe("Mind maps", () => {
   for (const refusal of [
     {
       limit: { availableAt: null, limit: 20, period: "total" },
-      line: "It writes more lessons than you get for free.",
+      line: "This chapter has more lessons than you get for free.",
       title: "This map needs a subscription",
     },
     {
@@ -895,7 +895,7 @@ test.describe("Mind maps", () => {
         limit: 20,
         period: "rolling30Days",
       },
-      line: /^You'll have enough on .+, or subscribe to make it now\.$/u,
+      line: /^You'll have enough on .+, or subscribe to create it now\.$/u,
       title: "Not enough free lessons for this map yet",
     },
   ]) {

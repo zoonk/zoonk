@@ -34,7 +34,11 @@ export function useNotPlannedReason() {
           message: "Not in your plan · your time doesn't cover it",
         });
       case "missing":
-        return t("Not ready yet");
+        return t({
+          description: "On a topic's row in the plan: its lessons aren't ready yet.",
+          id: "topicNotReady",
+          message: "Not ready yet",
+        });
       default:
         return null;
     }

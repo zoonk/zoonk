@@ -13,7 +13,7 @@ export function useSystemChangeSentence() {
   return function systemChangeSentence(change: PlanChangeContent): string | null {
     switch (change.kind) {
       case "missedDays":
-        return t("Your plan moved to fit the days you missed.");
+        return t("Your plan changed to make up for the days you missed.");
       case "estimateUpdated":
         return change.effect && change.effect.lessonsAdded !== change.effect.lessonsRemoved
           ? t("Your plan changed to match the time your lessons take.")

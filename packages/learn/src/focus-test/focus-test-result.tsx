@@ -72,8 +72,8 @@ function ResultRows({
               <span className="font-normal" id={labelId}>
                 {t({
                   description:
-                    "Label of an on/off switch on the Focus test's result. “A few more” means test questions, asked while the learner studies their lessons.",
-                  message: "Ask a few more as I study",
+                    "Label of an on/off switch on the Focus test's result: the test's questions keep coming, a few at a time, in the learner's lessons.",
+                  message: "Ask a few more questions as I study",
                 })}
               </span>
             }

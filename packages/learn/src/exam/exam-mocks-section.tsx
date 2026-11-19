@@ -61,7 +61,7 @@ export function ExamMocks({ entry = false }: { entry?: boolean }) {
         >
           {t({
             description: "Opens the mock exam chooser, from the exam page.",
-            message: "New mock",
+            message: "New mock exam",
           })}
         </LearnLink>
       )}

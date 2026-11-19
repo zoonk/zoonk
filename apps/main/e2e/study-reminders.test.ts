@@ -97,7 +97,7 @@ test.describe("Study reminders", () => {
     await expect(time).toBeDisabled();
 
     const guidance = page.getByText(
-      "To get notifications on your phone, turn them on in the Zoonk phone app.",
+      "To get push notifications, turn them on in the Zoonk phone app.",
     );
 
     await expect(guidance).toBeVisible();

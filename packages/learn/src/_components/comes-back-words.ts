@@ -246,15 +246,15 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
     return {
       line: t({
         description:
-          "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.",
-        message: "It writes more lessons than you get for free.",
+          "Under the title of a notice on a chapter's mind map: making the map needs every lesson of its chapter, and this chapter has more lessons than a free learner can start.",
+        message: "This chapter has more lessons than you get for free.",
       }),
       title: t("This map needs a subscription"),
     };
   }
 
   if (opensOn === "open") {
-    return { opened: true, title: t("You can make this map now") };
+    return { opened: true, title: t("You can create this map now") };
   }
 
   return {
@@ -263,20 +263,20 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
         t({
           description:
             "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as \"November 22\" in English.",
-          message: "You'll have enough on {date}, or subscribe to make it now.",
+          message: "You'll have enough on {date}, or subscribe to create it now.",
           values: { date },
         }),
       today: () =>
         t({
           description:
             "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.",
-          message: "You'll have enough later today, or subscribe to make it now.",
+          message: "You'll have enough later today, or subscribe to create it now.",
         }),
       tomorrow: () =>
         t({
           description:
             "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.",
-          message: "You'll have enough tomorrow, or subscribe to make it now.",
+          message: "You'll have enough tomorrow, or subscribe to create it now.",
         }),
     }),
     provisional: !known,

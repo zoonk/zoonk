@@ -160,10 +160,12 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
         {unchanged && chosen.length > 0 && (
           <p className="bg-muted/60 rounded-xl p-4 text-sm text-pretty" role="status">
             {unchanged === "alreadyIn"
-              ? t("Nothing changed. {areas} already have every lesson in your plan.", {
+              ? t("Nothing changed. All {areas} lessons are already in your plan.", {
                   areas: names,
                 })
-              : t("Nothing changed. To fit more of {areas}, add time a day.", { areas: names })}
+              : t("Nothing changed. To fit more of {areas}, study longer each day.", {
+                  areas: names,
+                })}
           </p>
         )}
         {plan.focusTest && testHref && <FocusTestLink focusTest={plan.focusTest} href={testHref} />}

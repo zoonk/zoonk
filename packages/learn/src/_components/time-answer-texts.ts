@@ -19,7 +19,7 @@ export function useTimeAnswerTexts() {
         description:
           'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
         message:
-          "{dateKind, select, month {No time a day covers everything by {date}.} other {No time a day covers everything by {date}.}}",
+          "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}",
         values: goalDate(date),
       });
     }
@@ -28,7 +28,7 @@ export function useTimeAnswerTexts() {
 
     return full.everything
       ? t("Covering everything takes about {time} a day.", { time })
-      : t("The most any time covers is about {share}, at {time} a day.", {
+      : t("The most you can cover is about {share}, at {time} a day.", {
           share: formatShare(full.coveredShare),
           time,
         });
