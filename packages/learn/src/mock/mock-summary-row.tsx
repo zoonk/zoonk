@@ -22,7 +22,10 @@ function useMeasureText() {
 
   return (mock: ExamMockSummary): string => {
     if (mock.scoring === "net") {
-      return t("{score} of {total}", { score: points(mock.measure), total: String(mock.total) });
+      return t("Net {score} of {total}", {
+        score: points(mock.measure),
+        total: String(mock.total),
+      });
     }
 
     return t(

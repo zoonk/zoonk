@@ -8770,9 +8770,9 @@ msgid "Each task is a live call with an examiner, as in the exam: an AI stands i
 msgstr "Ogni compito è una conversazione in tempo reale con un esaminatore, come all’esame: un’IA svolge il ruolo dell’esaminatore."
 
 #: src/mock/mock-summary-row.tsx
-msgctxt "eBhrqS"
-msgid "{score} of {total}"
-msgstr "{score} su {total}"
+msgctxt "TyZybQ"
+msgid "Net {score} of {total}"
+msgstr "Punteggio netto: {score} su {total}"
 
 #. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
