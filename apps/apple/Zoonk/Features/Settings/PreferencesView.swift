@@ -78,6 +78,7 @@ struct PreferencesView: View {
             Text(appLanguageName)
               .typeStyle(.meta)
           }
+          .disclosureChevron()
         }
         .foregroundStyle(.primary)
 

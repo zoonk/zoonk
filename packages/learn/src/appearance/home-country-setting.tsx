@@ -1,7 +1,6 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
-import { ChevronRightIcon } from "lucide-react";
+import { NativeSelectButton } from "@zoonk/ui/components/native-select";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { SettingRow } from "../_components/setting-rows";
@@ -48,21 +47,15 @@ export function HomeCountrySetting({
       descriptionId={descriptionId}
       label={<span id={labelId}>{title}</span>}
     >
-      <Button
+      <NativeSelectButton
         aria-describedby={descriptionId}
         aria-haspopup="dialog"
         aria-labelledby={`${labelId} ${valueId}`}
-        className="h-auto min-h-11 max-w-48 py-1 text-left whitespace-normal"
+        className="max-w-56"
         onClick={() => setOpen(true)}
-        size="lg"
-        type="button"
-        variant="outline"
       >
-        <span className="min-w-0 text-pretty" id={valueId}>
-          {value?.name ?? t("Not set")}
-        </span>
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground" />
-      </Button>
+        <span id={valueId}>{value?.name ?? t("Not set")}</span>
+      </NativeSelectButton>
 
       <CountryPicker
         language={locale}

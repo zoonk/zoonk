@@ -14,6 +14,13 @@ const SMALL_SELECT_FRAME_CLASS = cn(
   "data-[size=sm]:has-[select:hover]:before:bg-muted data-[size=sm]:has-[select:focus-visible]:before:border-ring data-[size=sm]:has-[select:focus-visible]:before:ring-ring/50 data-[size=sm]:has-[select:focus-visible]:before:ring-[3px]",
 );
 
+/** A field's look at rest, hover, focus and invalid, shared by the select and the button drawn as one. */
+const FIELD_CLASS =
+  "border-input bg-background hover:bg-muted focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 h-11 min-w-0 rounded-lg border py-1 pr-8 pl-3 transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed aria-invalid:ring-[3px]";
+
+const CHEVRON_CLASS =
+  "text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 select-none";
+
 /** A native select has no `focusableWhenDisabled`, so it's added here to match Button. */
 function NativeSelect({
   className,
@@ -41,7 +48,10 @@ function NativeSelect({
     >
       <select
         aria-disabled={keepsFocus || undefined}
-        className="border-input bg-background selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hover:bg-muted data-[size=sm]:text-compact md:data-[size=default]:text-reading h-11 w-full min-w-0 appearance-none rounded-lg border py-1 pr-8 pl-3 transition-colors outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed aria-disabled:pointer-events-none aria-invalid:ring-[3px] data-[size=default]:text-base data-[size=sm]:rounded-md data-[size=sm]:border-transparent data-[size=sm]:bg-transparent data-[size=sm]:pr-7 data-[size=sm]:pl-2.5 data-[size=sm]:hover:bg-transparent data-[size=sm]:focus-visible:border-transparent data-[size=sm]:focus-visible:ring-0"
+        className={cn(
+          FIELD_CLASS,
+          "selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground data-[size=sm]:text-compact md:data-[size=default]:text-reading w-full appearance-none select-none aria-disabled:pointer-events-none data-[size=default]:text-base data-[size=sm]:rounded-md data-[size=sm]:border-transparent data-[size=sm]:bg-transparent data-[size=sm]:pr-7 data-[size=sm]:pl-2.5 data-[size=sm]:hover:bg-transparent data-[size=sm]:focus-visible:border-transparent data-[size=sm]:focus-visible:ring-0",
+        )}
         data-size={size}
         data-slot="native-select"
         disabled={keepsFocus ? false : disabled}
@@ -55,10 +65,35 @@ function NativeSelect({
       />
       <ChevronDownIcon
         aria-hidden="true"
-        className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 select-none group-data-[size=sm]/native-select:right-2 group-data-[size=sm]/native-select:size-3.5"
+        className={cn(
+          CHEVRON_CLASS,
+          "group-data-[size=sm]/native-select:right-2 group-data-[size=sm]/native-select:size-3.5",
+        )}
         data-slot="native-select-icon"
       />
     </div>
+  );
+}
+
+/**
+ * Drawn as a select, for a pick from a list too long for one (a country, with search) that opens
+ * its own picker, so the two read as one kind of field.
+ */
+function NativeSelectButton({ children, className, ...props }: React.ComponentProps<"button">) {
+  return (
+    <button
+      className={cn(
+        FIELD_CLASS,
+        "md:text-reading relative max-w-full text-left text-base",
+        className,
+      )}
+      data-slot="native-select-button"
+      type="button"
+      {...props}
+    >
+      <span className="block truncate">{children}</span>
+      <ChevronDownIcon aria-hidden="true" className={CHEVRON_CLASS} />
+    </button>
   );
 }
 
@@ -66,4 +101,4 @@ function NativeSelectOption({ ...props }: React.ComponentProps<"option">) {
   return <option data-slot="native-select-option" {...props} />;
 }
 
-export { NativeSelect, NativeSelectOption };
+export { NativeSelect, NativeSelectButton, NativeSelectOption };

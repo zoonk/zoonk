@@ -10,11 +10,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
+import { NativeSelectButton } from "@zoonk/ui/components/native-select";
 import { safeAsync } from "@zoonk/utils/error";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
 import { type CountryChoice } from "../country/country-choice";
 import { CountryPicker } from "../country/country-picker";
@@ -81,6 +80,8 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
   const [asking, setAsking] = useState<CountryChoice | null>(null);
   const saveFailed = useChangeSaveFailed();
   const [saving, startSaving] = useTransition();
+  const titleId = useId();
+  const valueId = useId();
 
   const pick = (picked: CountryChoice | null) => {
     if (!picked || picked.code === country.code) {
@@ -116,20 +117,17 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
 
   return (
     <section className="flex flex-col gap-2">
-      <h3 className="text-sm font-medium">{t("Country")}</h3>
+      <h3 className="text-sm font-medium" id={titleId}>
+        {t("Country")}
+      </h3>
 
-      <Button
+      <NativeSelectButton
         aria-haspopup="dialog"
-        className="h-auto min-h-9 justify-between py-1.5 text-left whitespace-normal"
-        onClick={() => {
-          setOpen(true);
-        }}
-        type="button"
-        variant="outline"
+        aria-labelledby={`${titleId} ${valueId}`}
+        onClick={() => setOpen(true)}
       >
-        <span className="min-w-0 text-pretty">{country.name}</span>
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground" />
-      </Button>
+        <span id={valueId}>{country.name}</span>
+      </NativeSelectButton>
 
       {lessonLanguage && <p className="text-muted-foreground text-sm">{lessonLanguage}</p>}
 
