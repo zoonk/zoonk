@@ -35,7 +35,7 @@ import androidx.window.core.layout.WindowSizeClass
  */
 @Composable
 fun DetailPage(
-    aside: @Composable ColumnScope.() -> Unit,
+    aside: (@Composable ColumnScope.() -> Unit)?,
     asideLabel: String,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
@@ -48,7 +48,8 @@ fun DetailPage(
     PageWithSupportingPane(
         modifier = modifier,
         panesTouch = true,
-        supportingPane = {
+        supportingPane = aside?.let {
+            {
             Row {
                 VerticalDivider()
                 Column(Modifier.semantics { paneTitle = asideLabel }) {
@@ -59,10 +60,11 @@ fun DetailPage(
                             .verticalScroll(rememberScrollState())
                             .padding(padding),
                         verticalArrangement = Arrangement.spacedBy(DETAIL_SECTION_GAP),
-                        content = aside,
+                        content = it,
                     )
                     asideBar?.let { bar -> BottomBar { bar() } }
                 }
+            }
             }
         },
     ) { asideBeside ->

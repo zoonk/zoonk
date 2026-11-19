@@ -40,7 +40,7 @@ export function ChooserLayout({
     <PageWithAside
       aside={aside}
       asideClassName={asideClassName}
-      asideLabel={t("The picked mock exam")}
+      asideLabel={t("Your last mock exam")}
       bottomBar={bottomBar}
     >
       <article className="flex min-w-0 flex-col">

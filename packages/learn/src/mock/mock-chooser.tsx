@@ -9,11 +9,16 @@ import { PageSectionTitle } from "../_components/page";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
 import { ChooserBar, ChooserHeader, ChooserLayout, MockWriting } from "./mock-chooser-page";
 import { type MockChooserStatus } from "./mock-chooser-parts";
-import { type MockChooserHrefs, PickedMock } from "./mock-chooser-picked";
-import { useMockOptionDetail, useMockOptionName, useMockOptionSize } from "./mock-option-labels";
+import {
+  useMockOptionDetail,
+  useMockOptionName,
+  useMockOptionSizeAndPace,
+} from "./mock-option-labels";
 import { MockShortDialog } from "./mock-short-dialog";
 
 export type { MockChooserStatus } from "./mock-chooser-parts";
+
+export type MockChooserHrefs = { mock: (id: string) => string };
 
 export function getMockOptionKey(option: MockOptionView): string {
   return [option.kind, option.day ?? "", option.area ?? ""].join(":");
@@ -28,7 +33,7 @@ function useMockChoices({
 }) {
   const name = useMockOptionName();
   const detail = useMockOptionDetail();
-  const size = useMockOptionSize();
+  const size = useMockOptionSizeAndPace();
 
   return options.map((option) => ({
     description: detail({ option, severalDays }) || undefined,
@@ -135,13 +140,7 @@ function PracticeChooser({
 
   return (
     <ChooserLayout
-      aside={
-        <>
-          {/* What a pick shows comes last, so picking moves nothing above it. */}
-          <ChooserLastMock mock={view.lastMock} resultHref={hrefs.mock} />
-          {option && <PickedMock option={option} severalDays={severalDays} />}
-        </>
-      }
+      aside={view.lastMock && <ChooserLastMock mock={view.lastMock} resultHref={hrefs.mock} />}
       bar={bar}
       bottomBar={
         <ChooserBar busy={busy} disabled={!option} gated={gated} onStart={start} status={shown} />

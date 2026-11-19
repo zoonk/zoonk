@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.api.models.MockLeftOut
 import com.zoonk.api.models.MockOption
@@ -62,11 +63,24 @@ internal fun mockOptionDetail(
     }
 }
 
-/** "90 questions · 5 hr 30 min": the time limit the mock runs on, as main's row shows it. */
+/**
+ * "90 questions · 5 hr 30 min · usually 5 hr": the time limit the mock runs on, then how long learners
+ * usually take when that's under it, as main's row shows it.
+ */
 @Composable
 internal fun mockOptionSize(option: MockOption): String {
     val questions = option.questions.toInt()
-    return pluralStringResource(R.plurals.mock_chooser_option_size, questions, questions, minutesText(option.minutes))
+    val size = pluralStringResource(R.plurals.mock_chooser_option_size, questions, questions, minutesText(option.minutes))
+    val usual = usualMinutes(option) ?: return size
+    return factsLine(size, stringResource(R.string.mock_chooser_usually, minutesText(usual)))
+}
+
+private const val ESTIMATE_STEP_MINUTES = 5.0
+
+/** Main's `usualMinutes`: to the nearest five minutes, and only when under the limit (core sends the limit when no estimate covers the whole mock). */
+internal fun usualMinutes(option: MockOption): Long? {
+    val rounded = maxOf(ESTIMATE_STEP_MINUTES, Math.round(option.estimatedMinutes / ESTIMATE_STEP_MINUTES) * ESTIMATE_STEP_MINUTES).toLong()
+    return rounded.takeIf { option.estimatedMinutes < option.minutes && it < option.minutes }
 }
 
 private const val SECONDS_PER_MINUTE = 60L

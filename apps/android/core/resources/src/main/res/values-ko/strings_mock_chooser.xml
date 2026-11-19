@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "mock_chooser_about": "032547a28251bf27e682eba458248ac52fa5f957a134a62d4748e4a3fe8bfbf9",
   "mock_chooser_day": "18a3c177f626fae2d3b5eb111edfce00d08e8b79ab6279b9dfb459dbabb5c05b",
   "mock_chooser_day_without": "869e50c36e08ebc89f4841dc57cdcf933b907ebfe291d2c9dffa849c140a7b4f",
   "mock_chooser_failed": "6af053baea0bb024cd0723150c42782f282d654b8a6d0f836c06387cda4c05d6",
@@ -15,12 +14,9 @@
   "mock_chooser_not_enough": "630ed8dbcc57a81a93edbfae1d99ce54a54b4edfd6fdb7595444b592c98bd78a",
   "mock_chooser_one_subject": "ecf1a837b56fa65fa1d930cd28ffe2b8d6f20e48c6171086022feb6dbf105782",
   "mock_chooser_option_size": "1edd91f911a679aa5146249c252e5f634c7c7a340050d69cabdb77caa1f0709b",
-  "mock_chooser_parts": "e261e5f6cda282017a437f5ff0c1c85752ef095fbd41963f349d7ab61402f513",
   "mock_chooser_pick_another": "79cc80c70d3726bf4a8d10d29342132e8859af705dda524a9a0e1b1a2086fb70",
-  "mock_chooser_picked": "9afd55f09030f7f9ad9ddfd6cbec5daac7b17c7590ef2864b8b85ddcd9e2074b",
   "mock_chooser_preparing": "326ac27a0c6adcb31b590f9315c5b3323ba401e1abb4c290657871239b1b22eb",
   "mock_chooser_preparing_detail": "02f2b67f7d9c0822e3b5eca9571d98a4a6ea3fc34f77e770779433e2ee4b7228",
-  "mock_chooser_questions": "80b12e3631e99ce80263fcf087a74271f86fb14d64e370737bc531e38ae56a27",
   "mock_chooser_short_day": "ea2aeb5ce0b46e5212f8225583f779ec471a698b21a967835b2ee568def5d878",
   "mock_chooser_short_later_today": "d4c349f4d622522ca716c74318154eb4d1ea3485d6a3f22b3bee92e8a1f8cf98",
   "mock_chooser_short_line": "039c047fa0843576c3be678f274c6217417aff315bcb583799cbd05015da6aef",
@@ -29,15 +25,12 @@
   "mock_chooser_size_latest_exam": "ddad4f18251cbfeee51b671a1d9b32a5c638d20072fca749d00939fbbdd6f24f",
   "mock_chooser_size_past_edition": "1b3237e90d3fa785003ea8d4d8d6c6e07314d2b40bf7224bb698b2ed8c1a211f",
   "mock_chooser_start": "d9503f3c347b873925fbe36a228211f591701404193c3ae726479d1064616aa7",
-  "mock_chooser_subjects": "dc92cb817b400d67b6d8db45db7af1011589961ef1b54810819f8fbcb9687f96",
   "mock_chooser_the_exam": "131cc03d39e89aa83d86d24b8c0837482a9fb08ba850d1cd8e12ddb0bdc04340",
-  "mock_chooser_time_limit": "f4a4399840a73a256ef482834af05c1708cb3a9e178a813dc64a05a393511acf",
   "mock_chooser_title": "374b1e8a7cdbc974af1754f911897365247525d8808a4cb7602876ca86e1cb75",
-  "mock_chooser_usually_takes": "f3b8d0f60d932017e76b4d75f783730d9abe330153f504c4dd3b63713da6bd86",
+  "mock_chooser_usually": "66a3c1e078a8230df0c18ba012e6d2ab7aca3267c94b58850bcb4d3712ca6c80",
   "mock_chooser_writing": "883b79869ac3ccc2b59d510ec11b9b999bf2ef16ef5822cd24c5f93b12515dec",
   "mock_chooser_writing_questions": "a4d7227776c464da6a9fc28989ce73f3d13b5c8ab3fc7dd6510ebbf7ba28b264",
-  "mock_chooser_writing_questions_line": "97e22cb6c9336afec9522291cb153cf751e14799a9a6bda17840b230cb94232d",
-  "mock_chooser_written_part": "787344bd4e5d2135300cd780d144b796a16f99b087ef233cbcc3dc364ffe866c"
+  "mock_chooser_writing_questions_line": "97e22cb6c9336afec9522291cb153cf751e14799a9a6bda17840b230cb94232d"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -81,19 +74,8 @@
     <string name="mock_chooser_writing">모의고사를 만들고 있어요</string>
     <string name="mock_chooser_writing_questions">실제 시험과 비슷한 문제를 만들고 있어요</string>
     <string name="mock_chooser_writing_questions_line">과목마다 무엇을 물어볼지 고르고 있어요…</string>
-    <!-- The panel beside the options, about the one picked. -->
-    <string name="mock_chooser_picked">선택한 모의고사</string>
-    <!-- Labels the number of questions in an exam or a mock exam. -->
-    <string name="mock_chooser_questions">문제</string>
-    <string name="mock_chooser_time_limit">제한 시간</string>
-    <string name="mock_chooser_usually_takes">보통 걸리는 시간</string>
-    <!-- %1$s is a duration, such as "1 hr 20 min". -->
-    <string name="mock_chooser_about">약 %1$s</string>
-    <string name="mock_chooser_subjects">과목</string>
-    <!-- The exam's sections a mock sits, such as Listening and Reading. -->
-    <string name="mock_chooser_parts">파트</string>
-    <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
-    <string name="mock_chooser_written_part">글쓰기 파트</string>
+    <!-- After a mock exam's size and time limit: about how long learners usually take. -->
+    <string name="mock_chooser_usually">보통 %1$s</string>
     <string name="mock_chooser_last_mock">최근 모의고사</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">%1$s의 과목별 문제 수예요. %2$s에서 집계했어요.</string>

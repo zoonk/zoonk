@@ -99,21 +99,30 @@ private struct MockChooser: View {
   private var sizeUnderWords: Bool { sizeClass == .compact || isStacked }
 
   var body: some View {
-    PaneSplit {
-      ZoonkList {
-        intro
-        choices
-      }
-    } secondary: {
-      ZoonkList {
-        pickedSections
-        lastMockSection
-      }
-    } single: {
-      ZoonkList {
-        intro
-        choices
-        lastMockSection
+    Group {
+      if view.lastMock?.blockId != nil {
+        PaneSplit {
+          ZoonkList {
+            intro
+            choices
+          }
+        } secondary: {
+          ZoonkList {
+            lastMockSection
+          }
+        } single: {
+          ZoonkList {
+            intro
+            choices
+            lastMockSection
+          }
+        }
+      } else {
+        ZoonkList {
+          intro
+          choices
+        }
+        .lonePage()
       }
     }
     .bottomBar(note: barNote) {
@@ -365,92 +374,34 @@ private struct MockChooser: View {
     }
   }
 
-  /// Main's `PickedMock`: what Start starts.
-  @ViewBuilder
-  private var pickedSections: some View {
-    if let option = pickedOption {
-      pickedSize(
-        title: MockLabels.optionName(option, severalDays: severalDays),
-        questions: option.questions, minutes: option.minutes,
-        estimatedMinutes: option.estimatedMinutes)
-      pickedAsks(
-        option.covers ?? option.areas,
-        title: option.covers == nil
-          ? Text("Subjects", tableName: "Mock", comment: "The subjects a picked mock asks")
-          : Text("Parts", tableName: "Mock", comment: "The parts of the exam a picked mock asks"),
-        written: option.written)
-    }
-  }
-
-  private func pickedSize(
-    title: String, questions: Int, minutes: Int, estimatedMinutes: Int
-  ) -> some View {
-    Section {
-      LabeledContent {
-        Text(questions, format: .number)
-      } label: {
-        Text(
-          "Questions", tableName: "Mock",
-          comment: "Labels the number of questions in an exam or a mock exam.")
-      }
-
-      LabeledContent {
-        Text(MockLabels.duration(minutes: minutes))
-      } label: {
-        Text("Time limit", tableName: "Mock", comment: "The time a picked mock allows")
-      }
-
-      // The API gives the limit when no estimate covers the whole mock (an essay, too few answers).
-      if estimatedMinutes < minutes {
-        let estimate = max(5, Int((Double(estimatedMinutes) / 5).rounded()) * 5)
-        LabeledContent {
-          Text(
-            "About \(MockLabels.duration(minutes: estimate))",
-            tableName: "Mock",
-            comment: "How long a picked mock usually takes")
-        } label: {
-          Text(
-            "Usually takes", tableName: "Mock", comment: "How long a picked mock usually takes")
-        }
-      }
-    } header: {
-      SectionTitle(Text(title))
-    }
-    .monospacedDigit()
-  }
-
-  @ViewBuilder
-  private func pickedAsks(_ names: [String], title: Text, written: [String]) -> some View {
-    if !names.isEmpty || !written.isEmpty {
-      Section {
-        ForEach(names, id: \.self) { Text($0) }
-
-        ForEach(written, id: \.self) { name in
-          VStack(alignment: .leading, spacing: 2) {
-            Text(name)
-            Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-      } header: {
-        SectionTitle(title)
-      }
-    }
-  }
-
   private func optionRow(_ option: MockOption) -> some View {
     choiceRow(
       isPicked: option.id == pickedOption?.id,
       title: MockLabels.optionName(option, severalDays: severalDays),
       detail: optionDetail(option),
-      trailing: String(
-        localized:
-          "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
-        table: "Mock", comment: "A mock exam's size: its number of questions, then its time limit.")
+      trailing: optionSize(option)
     ) {
       picked = option.id
     }
+  }
+
+  /// The size, then how long learners usually take when that's under the limit (main's
+  /// `useMockOptionSizeAndPace`).
+  private func optionSize(_ option: MockOption) -> String {
+    let size = String(
+      localized:
+        "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
+      table: "Mock", comment: "A mock exam's size: its number of questions, then its time limit.")
+
+    guard let usual = MockLabels.usualMinutes(option) else {
+      return size
+    }
+
+    let pace = String(
+      localized: "usually \(MockLabels.duration(minutes: usual))", table: "Mock",
+      comment: "After a mock exam's size and time limit: about how long learners usually take.")
+
+    return [size, pace].joinedFacts()
   }
 
   /// Main's `ChoiceRows`: the words, the mock's size under them on a phone or before the row's
