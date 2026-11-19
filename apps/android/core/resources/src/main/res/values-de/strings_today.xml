@@ -28,7 +28,7 @@
   "today_exam_speaking": "10d41cacb11516d9ae31d77fdda6a62a29ddcb21f3e84de98bbda611c15c95cd",
   "today_exam_speaking_detail": "d72de528580dc99289593610127fbde754c6eda22a1709697c10e593b2ac283a",
   "today_finished_goal": "ce5ba91f81694456cd9a56b7846ff5255a0f41a50956ba324b4fd46066f1bfbc",
-  "today_get_lessons": "4a515614377e9f62df8f3d3684227064fd3e929c81d1a4474d4fd458fc23654b",
+  "today_get_lessons": "f0116cb681c06c5ef72038b336ca6ea4398c11f0d6dee4da456ce99a18966fa1",
   "today_get_them_now": "c8fcd0b4f52778024efaafb9e7b64a2e3dcf61e3278155ade82f9044494ad6fe",
   "today_insight_add_it": "4c8f4383ad38216eb3845a705546e8dceb7131dfce0b74d54cc00cc7c539533e",
   "today_insight_got_it": "3bccb6f1196c270c1c0232cd10530f77930cbb6ea08b4ab17fb7e1fea8040bca",
@@ -88,7 +88,7 @@
   "today_see_changes": "2db2e50f4db3db3b2a2d10895f53a1702efa308176960a3f87fdc95b36d528c6",
   "today_see_day_challenge": "ad1879a691be929643904d56040e36eb26ec2a3f2f1ea7b88a3bdb2332ca60fb",
   "today_see_day_mock": "8f79da98cbe460de95df7acd805190f4a03285c7aa239dfa546b3e0b95beb816",
-  "today_see_summary": "12f863d4edde0a6b73bf9f93cf8c57876fdbeabe72066ad96c17c63f8f5a29d7",
+  "today_see_summary": "e02f7dc41f99f955ab4ccac18f279b9105284c139591805b2b756f450b487627",
   "today_see_your_plan": "4405f9a57a3f1150fc73cf3e2c6e979aa4cd13b997a77e3bdfd6f6de8145b9de",
   "today_segment_challenge_note": "18f0a71f0df1a6a4704f3db71d1cbac27c0bca165ef27398987530424d489efd",
   "today_segment_essay_note": "e0fc5b057a24181b7fff9588dbf38e975b71f0bd0cb9e8d24b8a335548a6c061",
@@ -207,7 +207,7 @@
     <string name="today_step_after_lessons">Nach den heutigen Lektionen</string>
     <string name="today_done">Für heute hast du alles geschafft.</string>
     <string name="today_done_day_off">Du hast an deinem freien Tag gelernt.</string>
-    <string name="today_see_summary">Heutige Zusammenfassung ansehen</string>
+    <string name="today_see_summary">Zusammenfassung ansehen</string>
     <string name="today_rest">Heute ist kein Lernen geplant.</string>
     <string name="today_rest_next_lessons">Wenn du lernen möchtest, findest du unten deine nächsten Lektionen.</string>
     <string name="today_rest_enjoy">Genieß deinen freien Tag!</string>
@@ -221,7 +221,7 @@
     <string name="today_keep_learning">Weiterlernen</string>
     <string name="today_practice_minutes">%1$s Min. üben</string>
     <string name="today_lessons_not_written">Die heutigen Lektionen sind noch nicht fertig.</string>
-    <string name="today_get_lessons">Heutige Lektionen vorbereiten</string>
+    <string name="today_get_lessons">Lektionen vorbereiten lassen</string>
     <string name="today_open_failed">Wir konnten den nächsten Schritt nicht öffnen. Versuch es noch einmal.</string>
     <string name="today_step_open_failed">Wir konnten diesen Schritt nicht öffnen. Versuch es noch einmal.</string>
     <string name="today_keep_learning_failed">Wir konnten deine nächsten Lektionen nicht öffnen. Versuch es noch einmal.</string>
@@ -353,7 +353,7 @@
     <string name="today_coming_writing">Wir bereiten sie vor…</string>
     <!-- Under "Your next lessons" when their writing has taken a while. -->
     <string name="today_coming_stalled">Wir brauchen länger als üblich</string>
-    <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
+    <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">Noch nicht fertig</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
     <string name="today_segment_label">%1$s: %2$s</string>

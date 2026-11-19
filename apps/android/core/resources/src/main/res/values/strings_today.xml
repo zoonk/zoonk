@@ -52,7 +52,7 @@
 
     <string name="today_done">You\'re done for today.</string>
     <string name="today_done_day_off">You studied on your day off.</string>
-    <string name="today_see_summary">See today\'s summary</string>
+    <string name="today_see_summary">See summary</string>
     <string name="today_rest">No study planned today.</string>
     <string name="today_rest_next_lessons">Your next lessons are below if you want to study.</string>
     <string name="today_rest_enjoy">Enjoy your day off!</string>
@@ -67,7 +67,7 @@
     <string name="today_keep_learning">Keep learning</string>
     <string name="today_practice_minutes">Practice %1$s min</string>
     <string name="today_lessons_not_written">Today\'s lessons aren\'t ready yet.</string>
-    <string name="today_get_lessons">Get today\'s lessons</string>
+    <string name="today_get_lessons">Get lessons</string>
     <string name="today_open_failed">We couldn\'t open the next step. Try again.</string>
     <string name="today_step_open_failed">We couldn\'t open this step. Try again.</string>
     <string name="today_keep_learning_failed">We couldn\'t open your next lessons. Try again.</string>
@@ -201,7 +201,7 @@
     <string name="today_coming_writing">Getting ready…</string>
     <!-- Under "Your next lessons" when their writing has taken a while. -->
     <string name="today_coming_stalled">Taking longer than usual</string>
-    <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
+    <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">Not ready yet</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
     <string name="today_segment_label">%1$s: %2$s</string>

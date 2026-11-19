@@ -6196,61 +6196,61 @@
         }
       }
     },
-    "Get today's lessons" : {
+    "Get lessons" : {
       "comment" : "Asks for the day's lessons, which aren't written yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heutige Lektionen erstellen"
+            "value" : "Lektionen vorbereiten lassen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparar las lecciones de hoy"
+            "value" : "Preparar lecciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparer les leçons du jour"
+            "value" : "Préparer les leçons"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prepara le lezioni di oggi"
+            "value" : "Prepara le lezioni"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日のレッスンを作成する"
+            "value" : "レッスンを用意する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘의 레슨 받기"
+            "value" : "레슨 준비하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotuj lekcje na dziś"
+            "value" : "Przygotuj lekcje"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparar as aulas de hoje"
+            "value" : "Preparar aulas"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugünkü dersleri hazırla"
+            "value" : "Dersleri hazırla"
           }
         }
       }
@@ -10064,61 +10064,61 @@
         }
       }
     },
-    "See today's summary" : {
+    "See summary" : {
       "comment" : "Opens today's summary",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heutige Zusammenfassung ansehen"
+            "value" : "Zusammenfassung ansehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver el resumen de hoy"
+            "value" : "Ver resumen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voir le résumé du jour"
+            "value" : "Voir le résumé"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vedi il riepilogo di oggi"
+            "value" : "Vedi il riepilogo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日のまとめを見る"
+            "value" : "まとめを見る"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘의 요약 보기"
+            "value" : "요약 보기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobacz dzisiejsze podsumowanie"
+            "value" : "Zobacz podsumowanie"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver o resumo de hoje"
+            "value" : "Ver resumo"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugünün özetini gör"
+            "value" : "Özeti gör"
           }
         }
       }

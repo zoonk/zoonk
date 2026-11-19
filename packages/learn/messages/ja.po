@@ -13239,9 +13239,9 @@ msgstr "{total, plural, other {{done, number} / #レッスン}}"
 
 #: src/today/today-action.tsx
 #: src/today/today-day-status.tsx
-msgctxt "sCfpTF"
-msgid "See today's summary"
-msgstr "今日のまとめを見る"
+msgctxt "jwsTHl"
+msgid "See summary"
+msgstr "まとめを見る"
 
 #: src/today/today-action.tsx
 #: src/today/today-more.tsx
@@ -13251,9 +13251,9 @@ msgstr "{minutes}分練習する"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
-msgctxt "Nb8Jg7"
-msgid "Get today's lessons"
-msgstr "今日のレッスンを準備する"
+msgctxt "vjjzth"
+msgid "Get lessons"
+msgstr "レッスンを用意する"
 
 #: src/today/today-action.tsx
 msgctxt "WKZJxb"

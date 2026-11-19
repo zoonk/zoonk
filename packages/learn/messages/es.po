@@ -13239,9 +13239,9 @@ msgstr "{total, plural, one {{done, number} de # lección} other {{done, number}
 
 #: src/today/today-action.tsx
 #: src/today/today-day-status.tsx
-msgctxt "sCfpTF"
-msgid "See today's summary"
-msgstr "Ver el resumen de hoy"
+msgctxt "jwsTHl"
+msgid "See summary"
+msgstr "Ver resumen"
 
 #: src/today/today-action.tsx
 #: src/today/today-more.tsx
@@ -13251,9 +13251,9 @@ msgstr "Practicar {minutes} min"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
-msgctxt "Nb8Jg7"
-msgid "Get today's lessons"
-msgstr "Preparar las lecciones de hoy"
+msgctxt "vjjzth"
+msgid "Get lessons"
+msgstr "Preparar lecciones"
 
 #: src/today/today-action.tsx
 msgctxt "WKZJxb"

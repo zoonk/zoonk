@@ -28,7 +28,7 @@
   "today_exam_speaking": "1222d5244052de4d91d18b4a8378b8b2617138a9c47dd764d23443b07449e8c6",
   "today_exam_speaking_detail": "92c8911bb9bbd80478f50af1be515bdbbd73eb46826c5397632ed02dffc8370d",
   "today_finished_goal": "44b37ccd0984c6b38671bff3300c85010c2933320686fa7003748fd07e525d12",
-  "today_get_lessons": "f86092e3033b873ace6b31a234db91b74dd1f8f12dd3b5b20faf8f4c3f18dd83",
+  "today_get_lessons": "3dcc7b804b8c0e679547ef1a1fea583b499cdb633f988eee333cb978f19ac3b1",
   "today_get_them_now": "78c07edb6e828ba6458034b7a09cfc93ce90ae68366687354a39832cc8df2afd",
   "today_insight_add_it": "e3e84900bd9af746c7fa6dcaa1f509f5f2b586c90330c8753e9b254ea7d7aeaf",
   "today_insight_got_it": "d4ee0c5c3ae78f299fec30b41a90f4890a489cddd7c597c420c2b600f9468ca1",
@@ -88,7 +88,7 @@
   "today_see_changes": "4b7d23d362269e8750ac37c6639175980d78ab24a8334589f3a2f3ab69b8bcf1",
   "today_see_day_challenge": "f9a1ebcc5dbee1703cc36601c1d77ab3733632b3ce1e80f985d8b7d067785177",
   "today_see_day_mock": "49c0051b552a9af1db3bf57a94fabb2f9a3e51ade0d40b849c47d475608f8971",
-  "today_see_summary": "00f4d50d9702dc15e08d746fc8ce04bb441f451e806a9a1ffe1587dac1ed2d58",
+  "today_see_summary": "a634ae42b4a81b913e97a01002e7443b97e9d8c9ec62fc97e0f75e347b5344a6",
   "today_see_your_plan": "3446780f55c43c9d5f708ed8eee6a8790594f2e8919072bc8abdac153794db78",
   "today_segment_challenge_note": "e58766748c440531efcd175f9499b1e8779b8b3d6f3ac797969622102aa337af",
   "today_segment_essay_note": "058eabe0160ea4c0a08ae8fcca690b45d4f880890423264d061e0675f3dd079d",
@@ -201,7 +201,7 @@
     <string name="today_step_after_lessons">今日のレッスンのあと</string>
     <string name="today_done">今日の学習は終わりました。</string>
     <string name="today_done_day_off">休みの日に学習しました。</string>
-    <string name="today_see_summary">今日のまとめを見る</string>
+    <string name="today_see_summary">まとめを見る</string>
     <string name="today_rest">今日は学習の予定がありません。</string>
     <string name="today_rest_next_lessons">学習したいときは、下にある次のレッスンに進めます。</string>
     <string name="today_rest_enjoy">お休みを楽しんでください！</string>
@@ -215,7 +215,7 @@
     <string name="today_keep_learning">学習を続ける</string>
     <string name="today_practice_minutes">%1$s分練習する</string>
     <string name="today_lessons_not_written">今日のレッスンはまだ準備ができていません。</string>
-    <string name="today_get_lessons">今日のレッスンを準備する</string>
+    <string name="today_get_lessons">レッスンを用意する</string>
     <string name="today_open_failed">次のステップを開けませんでした。もう一度お試しください。</string>
     <string name="today_step_open_failed">このステップを開けませんでした。もう一度お試しください。</string>
     <string name="today_keep_learning_failed">次のレッスンを開けませんでした。もう一度お試しください。</string>
@@ -343,7 +343,7 @@
     <string name="today_coming_writing">作成しています…</string>
     <!-- Under "Your next lessons" when their writing has taken a while. -->
     <string name="today_coming_stalled">いつもより時間がかかっています</string>
-    <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
+    <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">まだ準備ができていません</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
     <string name="today_segment_label">%1$s：%2$s</string>

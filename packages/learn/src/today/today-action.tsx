@@ -145,7 +145,7 @@ function SummaryLink() {
   return (
     <TodayBar>
       <EnterLink enabled={!switching} href={actions.summaryHref} prefetch={false}>
-        {t("See today's summary")}
+        {t("See summary")}
       </EnterLink>
     </TodayBar>
   );
@@ -195,7 +195,7 @@ function PrepareLessons() {
     <SaveAction action={actions.prepareLessons}>
       {t({
         description: "Button that asks for today's lessons to be made ready.",
-        message: "Get today's lessons",
+        message: "Get lessons",
       })}
     </SaveAction>
   );

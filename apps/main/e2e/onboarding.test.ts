@@ -335,7 +335,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await expect(page).toHaveURL(/\/today$/u);
 
   await expect(
-    page.getByRole("main").getByRole("button", { name: "Get today's lessons" }),
+    page.getByRole("main").getByRole("button", { name: "Get lessons" }),
   ).toBeVisible();
 
   const newSwitcher = page.getByRole("button", { name: /^Quantum physics.*Switch goal$/u });

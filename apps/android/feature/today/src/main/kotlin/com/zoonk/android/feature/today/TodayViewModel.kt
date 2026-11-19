@@ -49,7 +49,7 @@ sealed interface TodayTap {
     /** The up-next list's first row: Keep learning's request, waited on in the row. */
     data object UpNext : TodayTap
 
-    /** "Get today's lessons" on a day nobody is writing yet. */
+    /** "Get lessons" on a day nobody is writing yet. */
     data object Prepare : TodayTap
 }
 

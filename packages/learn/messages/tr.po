@@ -13239,9 +13239,9 @@ msgstr "{total, plural, other {{done, number} / # ders}}"
 
 #: src/today/today-action.tsx
 #: src/today/today-day-status.tsx
-msgctxt "sCfpTF"
-msgid "See today's summary"
-msgstr "Bugünün özetini gör"
+msgctxt "jwsTHl"
+msgid "See summary"
+msgstr "Özeti gör"
 
 #: src/today/today-action.tsx
 #: src/today/today-more.tsx
@@ -13251,9 +13251,9 @@ msgstr "{minutes} dk. çalış"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
-msgctxt "Nb8Jg7"
-msgid "Get today's lessons"
-msgstr "Bugünkü dersleri hazırlat"
+msgctxt "vjjzth"
+msgid "Get lessons"
+msgstr "Dersleri hazırla"
 
 #: src/today/today-action.tsx
 msgctxt "WKZJxb"

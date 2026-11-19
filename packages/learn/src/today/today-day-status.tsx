@@ -27,7 +27,7 @@ function DoneStatus({ className }: { className?: string }) {
           href={actions.summaryHref}
           prefetch={false}
         >
-          {t("See today's summary")}
+          {t("See summary")}
         </LearnLink>
       )}
     </TodayStatusLine>

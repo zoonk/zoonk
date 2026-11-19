@@ -335,14 +335,14 @@ struct TodayMainAction: View {
         comment: "Adds practice on a day with nothing new; the number is minutes")
     case .prepareLessons:
       Text(
-        "Get today's lessons", tableName: "Today",
+        "Get lessons", tableName: "Today",
         comment: "Asks for the day's lessons, which aren't written yet")
     case .seePlan:
       Text("See your plan", tableName: "Today", comment: "Opens the Plan")
     case .startSession:
       Text("Start", tableName: "Today", comment: "Starts today's session")
     case .summary:
-      Text("See today's summary", tableName: "Today", comment: "Opens today's summary")
+      Text("See summary", tableName: "Today", comment: "Opens today's summary")
     }
   }
 }
@@ -783,7 +783,7 @@ struct TodayDayStatus: View {
           Button {
             router.open(.session)
           } label: {
-            Text("See today's summary", tableName: "Today", comment: "Opens today's summary")
+            Text("See summary", tableName: "Today", comment: "Opens today's summary")
               .typeWeight(.semibold)
               .underline()
               .multilineTextAlignment(.leading)
