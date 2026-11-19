@@ -45,6 +45,16 @@ struct ZoonkButtonStyle: ButtonStyle {
     .layoutAction(configuration.role == .destructive ? "destructive" : variant.layoutName)
   }
 
+  /// A button's height at a control size, for text that stands in a button's place.
+  static func height(_ controlSize: ControlSize) -> CGFloat {
+    switch controlSize {
+    case .mini: 24
+    case .small: 30
+    case .regular: 36
+    default: 44
+    }
+  }
+
   static func horizontalPadding(_ controlSize: ControlSize) -> CGFloat {
     switch controlSize {
     case .mini, .small: 10
@@ -163,14 +173,7 @@ private struct ZoonkButton: View {
 
   private var isDestructive: Bool { configuration.role == .destructive }
 
-  private var height: CGFloat {
-    switch controlSize {
-    case .mini: 24
-    case .small: 30
-    case .regular: 36
-    default: 44
-    }
-  }
+  private var height: CGFloat { ZoonkButtonStyle.height(controlSize) }
 
   private var label: Color {
     if isDestructive {

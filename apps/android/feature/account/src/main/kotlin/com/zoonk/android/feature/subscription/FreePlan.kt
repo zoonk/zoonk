@@ -2,10 +2,12 @@ package com.zoonk.android.feature.subscription
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
@@ -46,6 +48,7 @@ import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.glyphInk
+import com.zoonk.android.ui.components.largeButtonHeight
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
@@ -120,14 +123,16 @@ private fun ColumnScope.StartFree(
     Note(stringResource(R.string.subscription_no_card_needed), Modifier.align(Alignment.CenterHorizontally))
 }
 
+/** In the button's place, as tall as the Plus card's button, so the two cards' rows line up. */
 @Composable
-private fun ColumnScope.CurrentPlan() {
-    Text(
-        stringResource(R.string.subscription_current_plan),
-        Modifier.align(Alignment.CenterHorizontally),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+private fun CurrentPlan() {
+    Box(Modifier.fillMaxWidth().heightIn(min = largeButtonHeight()), contentAlignment = Alignment.Center) {
+        Text(
+            stringResource(R.string.subscription_current_plan),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+        )
+    }
 }
 
 /** Main's PlusQuestions. [limits] answers the first question; without them it's left out. */

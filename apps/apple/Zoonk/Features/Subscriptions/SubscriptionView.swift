@@ -758,6 +758,9 @@ private struct FreePlanCard: View {
             comment:
               "On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan."
           )
+          .typeStyle(.body.weight(.medium))
+          .foregroundStyle(.mutedForeground)
+          .frame(maxWidth: .infinity, minHeight: ZoonkButtonStyle.height(.large))
 
           Divider()
         case .visitor, .subscribed:
