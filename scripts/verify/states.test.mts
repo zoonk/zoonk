@@ -17,6 +17,7 @@ function change(label: string, before: Place, after: Place, overrides: Partial<M
     carried: false,
     drawn: true,
     holds: false,
+    inside: false,
     isTarget: false,
     label,
     ...overrides,
@@ -25,7 +26,7 @@ function change(label: string, before: Place, after: Place, overrides: Partial<M
 
 function step(kind: Step["action"]["kind"], moved: Moved[], target: Place | null = at(100)): Step {
   return {
-    action: { id: "0", kind, label: 'button "Username"' },
+    action: { id: "0", kind, label: 'button "Username"', name: "Username", role: "button" },
     blocked: false,
     comparison: { moved, target },
     doing: "typing a character in",

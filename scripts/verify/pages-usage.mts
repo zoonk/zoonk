@@ -13,6 +13,7 @@ export const PAGE_OPTIONS = {
   nav: { default: false, type: "boolean" },
   "no-prefetch": { default: false, type: "boolean" },
   out: { type: "string" },
+  press: { default: false, type: "boolean" },
   queries: { type: "string" },
   roles: { default: false, type: "boolean" },
   schemes: { default: SCHEMES.join(","), type: "string" },
@@ -36,6 +37,8 @@ dark, and writes a report of what it found. The verify skill's "Measuring pages"
   --baseline <dir>        compare with an earlier run's folder
   --soak <laps>           walk the paths that many times in one tab and compare memory
   --queries <file>        read the statements a server started with ZOONK_QUERY_LOG=<file> logged
+  --press                 press every control that stays on the page, on a phone, a tablet and a
+                          laptop, and fail on what a press moves or draws over other text
   --roles                 also save crops and comparison sheets of shared roles (page tops, bars, overlays)
   --local-storage <n=v>   set a value the page keeps on the device; repeatable
   --viewports <list>      every screen by default (${VIEWPORT_NAMES.join(", ")})

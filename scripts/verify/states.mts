@@ -1,11 +1,12 @@
-import { type Locator, type Page } from "@playwright/test";
+import { join } from "node:path";
+import { type Browser, type Locator, type Page } from "@playwright/test";
 import { type Finding } from "./checks.mts";
 import { pressKeys } from "./keys.mts";
-import { type Target } from "./measure.mts";
-import { OVERLAY_SELECTOR } from "./overlays.mts";
+import { type Target, slug } from "./measure.mts";
 /* oxlint-disable no-await-in-loop, max-lines-per-function -- The walk acts on one page, one step at a time, and its steps share that page and its counters. */
 import { installPageHelpers } from "./page-helpers.mts";
-import { focusCameBack, inspectPanel, panelFindings } from "./panels.mts";
+import { OVERLAY, closeOverlay, focusCameBack, inspectPanel, panelFindings } from "./panels.mts";
+import { type PressCoverage, type PressRecord, pressWalk } from "./press-walk.mts";
 import { SCENARIOS } from "./scenarios/scenarios.mts";
 import { stateLeads } from "./states-checks.mts";
 import {
@@ -16,9 +17,9 @@ import {
   pickedIds,
   snapshotLayout,
 } from "./states-probe.mts";
-import { holdStill, settle } from "./states-wait.mts";
-import { LOAD_TIMEOUT_MS } from "./tap.mts";
+import { settle } from "./states-wait.mts";
 import { VIEWPORTS, type ViewportName } from "./viewports.mts";
+import { type WriteGuard, guardWrites, loadPage } from "./walk-guard.mts";
 
 /** Every anchor a scenario declares: the walk never excuses one for holding what changed. */
 const ANCHORS = [
@@ -33,33 +34,32 @@ const ANCHORS = [
  */
 export type Step = { action: Action; blocked: boolean; comparison: Comparison; doing: string };
 
-export type WalkCoverage = { actionsTried: number; actionsSkipped: number; panelsOpened: number };
-export type WalkReport = WalkCoverage & { findings: Finding[] };
+export type WalkCoverage = {
+  actionsTried: number;
+  actionsSkipped: number;
+  panelsOpened: number;
+  presses?: PressCoverage;
+};
+
+export type WalkReport = WalkCoverage & { findings: Finding[]; pressRecords: PressRecord[] };
 
 /** A field's checks can wait for a pause in typing. */
 const FIELD_SETTLE_MS = 700;
 const STEP_SETTLE_MS = 300;
 const ACT_TIMEOUT_MS = 2000;
 
-const OVERLAY =
-  `${OVERLAY_SELECTOR}, [role=dialog], [role=alertdialog], [role=menu], [role=listbox]`
-    .split(", ")
-    .map((selector) => `${selector}:visible`)
-    .join(", ");
-
-/** Only what reads: a write is aborted, so walking a page changes no data and starts no AI. */
-const READS = new Set(["GET", "HEAD", "OPTIONS"]);
-
 async function walk(
   page: Page,
   {
-    blocked,
+    guard,
     phone,
+    pressFolder,
     url,
     capture,
   }: {
-    blocked: () => number;
+    guard: WriteGuard;
     phone: boolean;
+    pressFolder?: string;
     url: string;
     capture?: (page: Page, state: string) => Promise<void>;
   },
@@ -68,35 +68,52 @@ async function walk(
   const findings: Finding[] = [];
   const coverage: WalkCoverage = { actionsSkipped: 0, actionsTried: 0, panelsOpened: 0 };
 
-  async function step(action: Action, doing: string, perform: () => Promise<unknown>, ms: number) {
-    await page.evaluate(snapshotLayout);
-    const writes = blocked();
+  async function reload() {
+    await loadPage(page, url, guard);
+    await page.evaluate(markActions, "body");
+  }
+
+  const presses = pressFolder ? pressWalk(page, { folder: pressFolder, reload }) : null;
+
+  async function step(
+    action: Action,
+    doing: string,
+    perform: () => Promise<unknown>,
+    ms: number,
+    phase?: "press" | "undo",
+  ) {
+    const judged = presses ? phase : undefined;
+    const before = judged === "press" ? await presses?.begin(action) : undefined;
+    const from = judged === "undo" ? (presses?.undoFrom() ?? "step") : "step";
+    await page.evaluate(snapshotLayout, "step");
+    const writes = guard.blocked();
     const performed = await perform();
     await settle(page, ms);
 
-    steps.push({
-      action,
-      blocked: blocked() > writes,
-      comparison: await page.evaluate(compareLayout, { anchors: ANCHORS, targetId: action.id }),
-      doing,
+    const comparison = await page.evaluate(compareLayout, {
+      anchors: ANCHORS,
+      from,
+      targetId: action.id,
     });
 
-    if (page.url() !== url) {
-      await page.goto(url, { timeout: LOAD_TIMEOUT_MS });
-      await page.waitForLoadState("networkidle").catch(() => null);
-      await page.evaluate(markActions, "body");
+    // A judged press is held to the press rules instead of X3's leads.
+    if (!judged) {
+      steps.push({ action, blocked: guard.blocked() > writes, comparison, doing });
+    }
+
+    const left = page.url() !== url;
+
+    if (left) {
+      await reload();
+    }
+
+    if (judged === "press" && before) {
+      await (left ? presses?.navigated() : presses?.pressed(action, doing, before, comparison));
+    } else if (judged === "undo") {
+      await presses?.undone(left ? null : comparison);
     }
 
     return performed;
-  }
-
-  async function closeOverlay() {
-    if ((await page.locator(OVERLAY).count()) > 0) {
-      await page.keyboard.press("Escape");
-      return true;
-    }
-
-    return false;
   }
 
   async function field(action: Action, element: Locator) {
@@ -131,6 +148,7 @@ async function walk(
       "picking",
       async () => element.click({ timeout: ACT_TIMEOUT_MS }),
       STEP_SETTLE_MS,
+      "press",
     );
 
     await step(
@@ -151,6 +169,7 @@ async function walk(
         }
       },
       STEP_SETTLE_MS,
+      "undo",
     );
   }
 
@@ -160,6 +179,7 @@ async function walk(
       "opening",
       async () => element.click({ timeout: ACT_TIMEOUT_MS }),
       STEP_SETTLE_MS,
+      "press",
     );
 
     const panel = await inspectPanel(page, phone, action.id);
@@ -183,15 +203,16 @@ async function walk(
       action,
       "closing",
       async () => {
-        const closed = await closeOverlay();
+        const closed = await closeOverlay(page);
 
-        if (!closed && !panel && action.kind === "fold") {
+        if (!closed && !panel && (action.kind === "fold" || action.kind === "panel")) {
           await element.click({ timeout: ACT_TIMEOUT_MS });
         }
 
         return closed;
       },
       STEP_SETTLE_MS,
+      "undo",
     );
 
     if (panel) {
@@ -205,6 +226,8 @@ async function walk(
   }
 
   async function control(action: Action, element: Locator) {
+    presses?.hold(action);
+
     await step(
       action,
       "hovering",
@@ -241,7 +264,7 @@ async function walk(
     );
 
     await page.mouse.up();
-    await closeOverlay();
+    await closeOverlay(page);
   }
 
   async function act(action: Action) {
@@ -256,7 +279,18 @@ async function walk(
     }
 
     coverage.actionsTried += 1;
-    const run = { control, field, fold: open, overlay: open, pick, search: field }[action.kind];
+
+    // A panel toggle is pressed only with --press: it folds a column away, which X3 leads to otherwise.
+
+    const run = {
+      control,
+      field,
+      fold: open,
+      overlay: open,
+      panel: presses ? open : control,
+      pick,
+      search: field,
+    }[action.kind];
 
     await run(action, element).catch((error: unknown) => {
       findings.push({
@@ -267,11 +301,18 @@ async function walk(
     });
   }
 
+  await presses?.overlaps("at rest", "");
+
   for (const action of await page.evaluate(markActions, "body")) {
     await act(action);
   }
 
-  return { ...coverage, findings: [...findings, ...stateLeads(steps)] };
+  return {
+    ...coverage,
+    findings: [...findings, ...(presses?.findings ?? []), ...stateLeads(steps)],
+    pressRecords: presses?.records ?? [],
+    presses: presses?.coverage,
+  };
 }
 
 /**
@@ -283,15 +324,18 @@ export async function walkStates(
   target: Target,
   {
     path,
+    pressIn,
     viewport,
     capture,
   }: {
     path: string;
+    /** With `--press`, the browser to press in; every press is then judged and pictured. */
+    pressIn?: Browser;
     viewport: ViewportName;
     capture?: (page: Page, state: string) => Promise<void>;
   },
 ): Promise<WalkReport> {
-  const context = await target.browser.newContext({
+  const context = await (pressIn ?? target.browser).newContext({
     ...VIEWPORTS[viewport],
     storageState: target.storageState,
   });
@@ -300,29 +344,22 @@ export async function walkStates(
   const page = await context.newPage();
   page.on("dialog", (dialog) => void dialog.dismiss());
 
-  let blocked = 0;
-
-  await page.route("**/*", async (route) => {
-    if (READS.has(route.request().method())) {
-      await route.continue();
-      return;
-    }
-
-    blocked += 1;
-    await route.abort();
-  });
+  const guard = await guardWrites(page);
 
   try {
     const url = new URL(path, target.baseUrl).toString();
-    await page.goto(url, { timeout: LOAD_TIMEOUT_MS });
-    await page.waitForLoadState("networkidle").catch(() => null);
-    await holdStill(page);
+    await loadPage(page, url, guard);
     await capture?.(page, "page");
     const { shortcuts } = target;
     const keys = viewport === "laptop" && shortcuts ? await pressKeys(page, url, shortcuts) : [];
-    const phone = viewport === "phone";
 
-    const walked = await walk(page, { blocked: () => blocked, capture, phone, url: page.url() });
+    const walked = await walk(page, {
+      capture,
+      guard,
+      phone: viewport === "phone",
+      pressFolder: pressIn ? join(target.out, slug(path), `${viewport}-presses`) : undefined,
+      url: page.url(),
+    });
 
     return { ...walked, findings: [...keys, ...walked.findings] };
   } finally {

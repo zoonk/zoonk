@@ -71,7 +71,7 @@ describe("state layout measurements", () => {
     </section><footer style="position:sticky" data-frame="0,700,200,44"><button data-frame="0,0,80,44">Pinned</button></footer>`;
 
     snapshotLayout();
-    assert.equal(globalThis.zoonkLayout?.length, 2);
+    assert.equal(globalThis.zoonkLayout?.step?.length, 2);
     const section = document.querySelector<HTMLElement>("section");
     const button = document.querySelector<HTMLElement>("section button");
     assert.ok(section && button);

@@ -20,6 +20,7 @@ import { measureFrames } from "./content-frames.mts";
 import { readCraft } from "./craft-probe.mts";
 import { craftFindings } from "./craft.mts";
 import { type Shortcuts } from "./keys.mts";
+import { type PressRecord } from "./press-walk.mts";
 import {
   findOverflow,
   findTruncated,
@@ -81,6 +82,7 @@ export type LoadReport = LoadMeasurement & {
   viewport: ViewportName;
   words: PageWords;
   walk?: WalkCoverage;
+  pressRecords?: PressRecord[];
 };
 
 const QUERY_HASH_LENGTH = 8;
