@@ -4,7 +4,6 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
-import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
 import { SpokenMath } from "../rich-text/spoken-math";
@@ -107,7 +106,7 @@ function useResultLabels() {
 }
 
 /** A right pick says whose it is, so it isn't called correct twice under its verdict. */
-function ResultTag({
+export function ResultTag({
   guessed,
   picked,
   result,
@@ -163,7 +162,7 @@ function ReservedTag({ children }: { children: React.ReactNode }) {
  * A number is the row's key, so a touch screen gives up its room (craft E1, B2). Once checked or
  * disabled the key does nothing, so it hides in its room and the answer stays put.
  */
-function OptionMarker({
+export function OptionMarker({
   isChecked,
   layout,
   marker,
@@ -309,31 +308,5 @@ export function TagBesideOrUnder({
         </LineMarker>
       )}
     </span>
-  );
-}
-
-/** What the learner answered over the right answer, after the fact: a mock's review, the notebook. */
-export function AnswerPair({
-  right,
-  yours,
-}: {
-  right: React.ReactNode | null;
-  yours: React.ReactNode | null;
-}) {
-  const t = useExtracted();
-
-  return (
-    <AnswerOptionGroup aria-label={t("Your answer and the right one")}>
-      {yours !== null && (
-        <AnswerOption disabled marker={<XIcon />} picked result="wrong">
-          {yours}
-        </AnswerOption>
-      )}
-      {right !== null && (
-        <AnswerOption disabled marker={<CheckIcon />} picked={false} result="right">
-          {right}
-        </AnswerOption>
-      )}
-    </AnswerOptionGroup>
   );
 }

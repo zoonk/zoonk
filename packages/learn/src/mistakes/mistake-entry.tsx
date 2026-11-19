@@ -13,7 +13,7 @@ import {
   TriangleAlertIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { AnswerPair } from "../_components/answer-option";
+import { AnswerPair } from "../_components/answer-pair";
 import { Eyebrow } from "../_components/eyebrow";
 import { QuestionTitle } from "../_components/question-title";
 import { TITLE_ROW_CLASS } from "../_components/title-row";

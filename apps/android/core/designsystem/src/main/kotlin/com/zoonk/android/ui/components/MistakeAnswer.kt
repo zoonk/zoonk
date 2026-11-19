@@ -3,7 +3,6 @@ package com.zoonk.android.ui.components
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import com.zoonk.android.ui.richtext.RichTextLine
 import com.zoonk.android.ui.richtext.SpokenText
@@ -21,8 +20,7 @@ fun MistakeAnswer(
         result = if (right) AnswerResult.Right else AnswerResult.Wrong,
         onClick = {},
         modifier = modifier,
-        enabled = false,
-        role = Role.Button,
+        role = null,
     ) { RichTextLine(text, Modifier, LocalTextStyle.current) }
 }
 

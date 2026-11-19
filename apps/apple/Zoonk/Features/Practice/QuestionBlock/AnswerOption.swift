@@ -20,9 +20,20 @@ struct AnswerOption: View {
   var tag: AnyView?
   let text: RichInline
   var detail: String?
-  let action: () -> Void
+  /// Without one, the answer is shown after the fact: the same look, with nothing to press.
+  let action: (() -> Void)?
 
   var body: some View {
+    if let action {
+      button(action)
+    } else {
+      markedContent
+        .answerOptionFrame(AnswerOptionStyle.tone(isPicked: isPicked, result: result))
+        .accessibilityElement(children: .combine)
+    }
+  }
+
+  private func button(_ action: @escaping () -> Void) -> some View {
     Button(action: action) {
       if let marker {
         ViewThatFits(in: .horizontal) {
@@ -258,21 +269,28 @@ struct AnswerOptionStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .typeStyle(.button)
-      .foregroundStyle(Color(.foreground))
-      .padding(.horizontal, 16)
-      .padding(.vertical, 13)
-      .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-      .answerSurface(tone, isPressed: configuration.isPressed)
+      .answerOptionFrame(
+        Self.tone(isPicked: isPicked, result: result), isPressed: configuration.isPressed)
   }
 
-  private var tone: AnswerTone {
+  static func tone(isPicked: Bool, result: AnswerOptionResult?) -> AnswerTone {
     switch result {
     case .guess: .guess
     case .right: .right
     case .wrong: .wrong
     case nil: isPicked ? .picked : .idle
     }
+  }
+}
+
+extension View {
+  fileprivate func answerOptionFrame(_ tone: AnswerTone, isPressed: Bool = false) -> some View {
+    typeStyle(.button)
+      .foregroundStyle(Color(.foreground))
+      .padding(.horizontal, 16)
+      .padding(.vertical, 13)
+      .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+      .answerSurface(tone, isPressed: isPressed)
   }
 }
 

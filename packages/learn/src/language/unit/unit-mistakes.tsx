@@ -5,7 +5,7 @@ import {
   type LanguageUnitView,
 } from "@zoonk/core/view-models/language/contract";
 import { useExtracted } from "next-intl";
-import { AnswerPair } from "../../_components/answer-option";
+import { AnswerPair } from "../../_components/answer-pair";
 import { Eyebrow } from "../../_components/eyebrow";
 import { ItemStem, ItemText } from "../../questions/item-text";
 

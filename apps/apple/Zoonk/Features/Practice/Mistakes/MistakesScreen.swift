@@ -423,9 +423,8 @@ struct MistakeAnswerRow: View {
     AnswerOption(
       isPicked: !isRight,
       result: isRight ? .right : .wrong,
-      isLocked: true,
       text: isLiteral ? RichInline(text: AttributedString(text)) : LessonRichText.typeset(text),
-      action: {}
+      action: nil
     )
   }
 }

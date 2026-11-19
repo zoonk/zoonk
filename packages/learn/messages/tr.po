@@ -33,7 +33,7 @@ msgctxt "ihtBFm"
 msgid "Your guess"
 msgstr "Tahminin"
 
-#: src/_components/answer-option.tsx
+#: src/_components/answer-pair.tsx
 msgctxt "9-6ClJ"
 msgid "Your answer and the right one"
 msgstr "Cevabın ve doğru cevap"

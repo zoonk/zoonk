@@ -2,7 +2,7 @@
 
 import { type MockReviewEntry } from "@zoonk/core/exams/mocks/view-contract";
 import { useExtracted } from "next-intl";
-import { AnswerPair } from "../_components/answer-option";
+import { AnswerPair } from "../_components/answer-pair";
 import { Eyebrow } from "../_components/eyebrow";
 import { ItemCitationNote } from "../_components/item-citation";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
