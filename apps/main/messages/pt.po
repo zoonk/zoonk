@@ -1553,7 +1553,7 @@ msgstr "Conferir de novo"
 #: src/app/[lang]/(app)/(settings)/support/support-content.tsx
 msgctxt "e60J1V"
 msgid "Ask a question, report a problem or share an idea. We answer by email."
-msgstr "Tire uma dúvida, conte sobre um problema ou compartilhe uma ideia. A gente responde por email."
+msgstr "Tire uma dúvida, conte sobre um problema ou compartilhe uma ideia. A gente responde por e-mail."
 
 #: src/app/[lang]/(app)/(settings)/support/support-content.tsx
 msgctxt "l1XTI5"

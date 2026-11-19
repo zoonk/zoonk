@@ -20,11 +20,11 @@
 }
 -->
 <resources>
-    <string name="feedback_help_description">Faça uma pergunta, relate um problema ou compartilhe uma ideia. A gente responde por email.</string>
+    <string name="feedback_help_description">Tire uma dúvida, conte sobre um problema ou compartilhe uma ideia. A gente responde por e-mail.</string>
     <string name="feedback_message">Mensagem</string>
     <string name="feedback_message_placeholder">Como a gente pode te ajudar?</string>
     <string name="feedback_screen_attached">Esta tela está anexada</string>
-    <string name="feedback_email">Seu email para a gente responder</string>
+    <string name="feedback_email">Seu e-mail, para respondermos</string>
     <string name="feedback_send">Enviar mensagem</string>
     <string name="feedback_sent">Mensagem enviada! A gente responde em breve.</string>
     <string name="feedback_failed">Não conseguimos enviar sua mensagem. Tente de novo ou mande um e-mail para contato@zoonk.com.</string>

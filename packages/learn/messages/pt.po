@@ -3843,7 +3843,7 @@ msgstr "Obrigado! Recebemos sua mensagem."
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.IVDs_9"
 msgid "Your email, for our reply"
-msgstr "Seu email, para respondermos"
+msgstr "Seu e-mail, para respondermos"
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.hBQCdX"
