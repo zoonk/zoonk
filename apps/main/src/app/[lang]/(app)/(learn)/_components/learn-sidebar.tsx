@@ -24,7 +24,7 @@ async function VisitorAccount() {
       <CurrentPageLoginLink
         className={cn(
           buttonVariants({ variant: "outline" }),
-          "sidebar-collapsed:my-1 sidebar-collapsed:size-8 sidebar-collapsed:p-0! w-full",
+          "sidebar-collapsed:my-0.5 sidebar-collapsed:size-8 sidebar-collapsed:p-0! w-full",
         )}
         icon={<LogInIcon aria-hidden="true" />}
       >
