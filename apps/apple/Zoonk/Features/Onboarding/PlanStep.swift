@@ -620,7 +620,9 @@ private struct PlanReveal: View {
 
   /// A finished moment says so in its title; the goal's name is the line under it.
   private func heading(_ goal: LearnerGoal) -> some View {
-    StepHeader(title: Text(.planReady), description: Text(verbatim: goal.displayName))
+    StepHeader(
+      title: Text(.planReady), description: Text(verbatim: goal.displayName),
+      linesUpWithSteps: false)
   }
 
   /// Main's `RevealPlan`: what the learner chose, to check before starting: the time a day and
