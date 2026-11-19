@@ -3,7 +3,8 @@
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 import { OVERLAY_ACTIONS_CLASS } from "@zoonk/ui/lib/overlay-actions";
 import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
-import { cn } from "@zoonk/ui/lib/utils";
+import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
+import { useRef } from "react";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import { MenuOpenerNotice, useFocusAfterMenuItem } from "./_utils/menu-handoff";
 import { PanelCloseButton } from "./_utils/panel-close";
@@ -51,8 +52,20 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
  * a short form far from where the learner was looking. Base UI needs the Viewport wrapper for
  * swipe gestures, and its keyboard provider keeps a focused field above a phone's keyboard.
  */
-function DrawerPopup({ className, children, finalFocus, ...props }: DrawerPrimitive.Popup.Props) {
+/** A panel opens on the first field a learner types in; with none, Base UI's default. */
+const FIRST_FIELD =
+  "input:not([type=hidden],[type=checkbox],[type=radio],[disabled]),textarea:not([disabled])";
+
+function DrawerPopup({
+  className,
+  children,
+  finalFocus,
+  initialFocus,
+  ref,
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Popup>) {
   const handoff = useFocusAfterMenuItem(finalFocus);
+  const popupRef = useRef<HTMLDivElement>(null);
 
   return (
     <DrawerPrimitive.VirtualKeyboardProvider>
@@ -80,6 +93,11 @@ function DrawerPopup({ className, children, finalFocus, ...props }: DrawerPrimit
             data-slot="drawer-popup"
             {...props}
             finalFocus={handoff.finalFocus}
+            initialFocus={
+              initialFocus ??
+              (() => popupRef.current?.querySelector<HTMLElement>(FIRST_FIELD) ?? true)
+            }
+            ref={mergeRefs(popupRef, ref)}
           >
             <div
               className="bg-foreground/50 mx-auto mt-3 h-1 w-10 shrink-0 rounded-full sm:hidden"
