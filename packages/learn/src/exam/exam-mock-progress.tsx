@@ -163,9 +163,9 @@ function ProgressCard({ progress }: { progress: Progress }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {line && <p className="text-reading font-medium text-pretty">{line}</p>}
-
       <LatestMock progress={progress} />
+
+      {line && <p className="text-reading font-medium text-pretty">{line}</p>}
 
       {first && latest && progress.mocks.length > 1 && (
         <ProgressLineChart
