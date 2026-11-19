@@ -11,7 +11,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { AreaOutline } from "./outline-areas";
-import { OutlineLevel, UnwrittenLevel } from "./outline-levels";
+import { LevelChapters, OutlineLevel, UnwrittenLevel } from "./outline-levels";
 
 type Params = { brandSlug: string; courseSlug: string };
 
@@ -45,6 +45,8 @@ export async function LibraryCourseOutline({
     format: courseFormat,
     written: outline.levels.map((band) => band.level),
   });
+
+  const onlyBand = levels.length === 1 ? outline.levels[0] : undefined;
 
   const titleId = `course-outline-${courseId}`;
 
@@ -107,7 +109,11 @@ export async function LibraryCourseOutline({
         <AreaOutline courseId={courseId} estimate={areas} outline={outline} params={params} />
       )}
 
-      {stats.chapterCount > 0 && !areas && (
+      {stats.chapterCount > 0 && !areas && onlyBand && (
+        <LevelChapters band={onlyBand} courseId={courseId} firstNumber={1} params={params} />
+      )}
+
+      {stats.chapterCount > 0 && !areas && !onlyBand && (
         <div className="flex flex-col gap-2">
           {levels.map((level) => {
             const index = outline.levels.findIndex((band) => band.level === level);
