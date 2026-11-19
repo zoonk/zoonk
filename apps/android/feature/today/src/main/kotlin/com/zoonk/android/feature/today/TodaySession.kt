@@ -326,48 +326,6 @@ private fun TestOutLink(
     )
 }
 
-/** A fold's mark slot, so its words start where the rows' do. */
-@Composable
-private fun RowMark(content: @Composable () -> Unit) {
-    Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { content() }
-}
-
-@Composable
-private fun FoldRow(
-    label: String,
-    done: Boolean,
-    open: Boolean,
-    onToggle: () -> Unit,
-    modifier: Modifier,
-) {
-    Row(
-        modifier =
-            modifier
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(role = Role.Button, onClick = onToggle)
-                .semantics {
-                    if (open) {
-                        collapse { onToggle().let { true } }
-                    } else {
-                        expand { onToggle().let { true } }
-                    }
-                }.heightIn(min = 48.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RowMark { if (done) DoneMark() }
-        Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(text = label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleSmall)
-            Icon(
-                painter = painterResource(R.drawable.ic_expand_more),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp).rotate(if (open) 180f else 0f),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
 /** Skipped steps fold in with the done ones, so the row says which is which. */
 @Composable
 private fun doneFoldLabel(done: List<DayStep>): String {

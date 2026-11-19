@@ -9,7 +9,7 @@ import { ComingLessonsRow } from "./today-coming-lessons";
 import { useTodayScreen } from "./today-context";
 import { DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
-import { FoldRow, focusRevealedRow } from "./today-fold-row";
+import { FoldRow, focusRevealedRow, useMoreLabel } from "./today-fold-row";
 import { SESSION_LIST_ID } from "./today-ids";
 import { UPCOMING_ROWS, getFoldedRows, splitTodayQueue } from "./today-queue";
 import { TodayUpNext } from "./today-up-next";
@@ -40,14 +40,6 @@ function useDoneFoldLabel(done: readonly DayStep[]): string {
       "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}",
     values: { completed, skipped },
   });
-}
-
-function useMoreLabel({ count, lessonsOnly }: ReturnType<typeof getFoldedRows>): string {
-  const t = useExtracted();
-
-  return lessonsOnly
-    ? t("{count, plural, one {# more lesson} other {# more lessons}}", { count })
-    : t("{count, plural, one {# more} other {# more}}", { count });
 }
 
 function SessionQueue({ next }: { next: DayStep | null }) {

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.HorizontalDivider
@@ -15,7 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
@@ -57,6 +62,7 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanItem
+import com.zoonk.api.models.StudyBlock
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
@@ -191,7 +197,12 @@ internal fun RevealToday(
     failedStep: Long? = null,
 ) {
     val started = day.steps.any { it.isFinished }
-    val ordered = day.steps.filter { it.isFinished } + day.steps.filterNot { it.isFinished }
+    val unfinished = day.steps.filterNot { it.isFinished }
+    val nextIndex = unfinished.indexOfFirst { it.position == day.nextPosition }
+    val after = if (nextIndex < 0) emptyList() else unfinished.drop(nextIndex + 1)
+    var moreOpen by rememberSaveable { mutableStateOf(false) }
+    val hidden = (after.size - com.zoonk.android.feature.today.UPCOMING_ROWS).coerceAtLeast(0)
+    val ordered = day.steps.filter { it.isFinished } + unfinished.dropLast(if (moreOpen) 0 else hidden)
     Column {
         SectionHeader(
             stringResource(R.string.today_title),
@@ -228,6 +239,29 @@ internal fun RevealToday(
                         },
                 )
             }
+            if (hidden > 0) {
+                com.zoonk.android.feature.today.FoldRow(
+                    label =
+                        if (moreOpen) {
+                            stringResource(R.string.today_show_less)
+                        } else {
+                            val lessonsOnly =
+                                after.drop(com.zoonk.android.feature.today.UPCOMING_ROWS).all {
+                                    it.kind ==
+                                        StudyBlock.Kind.LEARN
+                                }
+                            pluralStringResource(
+                                if (lessonsOnly) R.plurals.today_more_lessons else R.plurals.today_more_count,
+                                hidden,
+                                hidden,
+                            )
+                        },
+                    done = false,
+                    open = moreOpen,
+                    onToggle = { moreOpen = !moreOpen },
+                    modifier = Modifier.padding(horizontal = LIST_ITEM_INSET),
+                )
+            }
         }
     }
 }
@@ -244,9 +278,9 @@ internal data class RevealWeekCount(
 )
 
 /**
- * Main's `RevealWeek`: the six days after today, counted from those days alone. Each row reads as a table row: the
- * date is a lead as wide as the week's longest, never wrapping, and it and the first name share the first line; the
- * names follow one per line, with no kind marks (Today's rows lead with theirs).
+ * Main's `RevealWeek`: the six days after today, counted from those days alone. Each row is one line: the date, as wide
+ * as the week's longest and never wrapping, then how many lessons, anything else the day holds and how long. The names
+ * wait for the Plan.
  */
 @Composable
 internal fun RevealWeek(days: List<PlanDay>) {
@@ -267,8 +301,17 @@ internal fun RevealWeek(days: List<PlanDay>) {
         )
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             days.forEachIndexed { index, day ->
-                val teaching = day.items.filter { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
-                val names = teaching.ifEmpty { day.items }
+                val lessons = day.items.count { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
+                val others =
+                    day.items
+                        .filterNot {
+                            it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER
+                        }.map { revealItemTitle(it) }
+                        .distinct()
+                val facts =
+                    listOfNotNull(lessons.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.onboarding_course_lessons, it, it) }) +
+                        others +
+                        listOfNotNull(day.minutes.takeIf { it > 0 }?.let { formatMinutes(it.roundToInt(), locale) })
                 ListRow(
                     leading = {
                         Text(
@@ -280,7 +323,6 @@ internal fun RevealWeek(days: List<PlanDay>) {
                             softWrap = false,
                         )
                     },
-                    leadOnFirstLine = true,
                     headline = {
                         if (day.items.isEmpty()) {
                             Text(
@@ -288,12 +330,7 @@ internal fun RevealWeek(days: List<PlanDay>) {
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         } else {
-                            // Names sit further apart than a name's own lines, so a title that wraps reads as one lesson.
-                            Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) {
-                                names.forEach { item ->
-                                    Text(revealItemTitle(item))
-                                }
-                            }
+                            Text(facts.factsLine())
                         }
                     },
                 )
@@ -302,9 +339,6 @@ internal fun RevealWeek(days: List<PlanDay>) {
         }
     }
 }
-
-/** Main's `gap-1.5` between a day's names. */
-private val NAME_GAP = 6.dp
 
 @Composable
 private fun revealItemTitle(item: PlanItem): String =

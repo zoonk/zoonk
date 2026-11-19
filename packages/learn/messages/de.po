@@ -2346,6 +2346,7 @@ msgstr "Kapitel {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
@@ -8239,6 +8240,7 @@ msgid "{correct} of {total}"
 msgstr "{correct} von {total}"
 
 #: src/mock/mock-result-breakdown.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/questions/item-set-stimulus.tsx
 #: src/today/today-session-card.tsx
 msgctxt "qyJtWy"
@@ -10253,7 +10255,7 @@ msgstr "{count, plural, other {# weniger}}"
 
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-suggestion-context.tsx
-#: src/today/today-session-card.tsx
+#: src/today/today-fold-row.tsx
 msgctxt "GYQ3G4"
 msgid "{count, plural, one {# more} other {# more}}"
 msgstr "{count, plural, other {# mehr}}"
@@ -13322,6 +13324,11 @@ msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "Alles klar. Du kannst den Test über deinen Plan machen."
 
+#: src/today/today-fold-row.tsx
+msgctxt "AHBKOX"
+msgid "{count, plural, one {# more lesson} other {# more lessons}}"
+msgstr "{count, plural, one {# weitere Lektion} other {# weitere Lektionen}}"
+
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
 msgid "Not enough time left for all your lessons."
@@ -13476,11 +13483,6 @@ msgstr "{count, plural, other {# erledigt}}"
 msgctxt "DIDXQf"
 msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
 msgstr "{completed, plural, other {# erledigt}} · {skipped, plural, other {# übersprungen}}"
-
-#: src/today/today-session-card.tsx
-msgctxt "AHBKOX"
-msgid "{count, plural, one {# more lesson} other {# more lessons}}"
-msgstr "{count, plural, one {# weitere Lektion} other {# weitere Lektionen}}"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "wF_58q"

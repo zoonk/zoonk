@@ -183,11 +183,14 @@ struct RevealToday: View {
   let open: ((StudyBlock) -> Void)?
   /// Inside the first week's section, as main nests it, its header is a row of that section.
   var isInWeek = false
+  /// Today's own fold: the first few lessons, the rest behind one row, so the list fits a screen.
+  @State private var showsMore = false
 
   var body: some View {
     let next = day.nextBlock
     let (before, after) = day.queue(next: next)
-    let rows = day.blocks.filter(\.isFinished) + before + (next.map { [$0] } ?? []) + after
+    let shown = showsMore ? after : Array(after.prefix(StudyDay.upcomingRows))
+    let rows = day.blocks.filter(\.isFinished) + before + (next.map { [$0] } ?? []) + shown
     let tag =
       day.blocks.contains(where: \.isFinished)
       ? Text("Up next", tableName: "Onboarding", comment: "Tags the plan's next lesson today")
@@ -199,9 +202,11 @@ struct RevealToday: View {
           .listRowSeparator(.hidden)
 
         list(rows, next: next, tag: tag)
+        fold(after)
       } else {
         Section {
           list(rows, next: next, tag: tag)
+          fold(after)
         } header: {
           header
         }
@@ -224,6 +229,17 @@ struct RevealToday: View {
           PlanDate.text(day.localDate, today: day.localDate, weekday: true),
           planDurationText(minutes: Double(minutes)),
         ])
+    }
+  }
+
+  @ViewBuilder
+  private func fold(_ after: [StudyBlock]) -> some View {
+    if after.count > StudyDay.upcomingRows {
+      DayFoldRow(
+        isOpen: $showsMore, isDone: false, count: after.count - StudyDay.upcomingRows,
+        more: StudyDay.moreLabel(
+          hidden: Array(after.dropFirst(StudyDay.upcomingRows)), lessonsAhead: false),
+        minutes: nil)
     }
   }
 
@@ -300,7 +316,7 @@ struct RevealWeekPlaceholder: View {
 }
 
 /// Main's `RevealWeek`: the week the learner is in, Today first, then the six days after it, each
-/// day's lessons by name. A phone's short rows leave out the lessons' marks.
+/// one line: how many lessons, anything else it holds and how long. The names wait for the Plan.
 struct RevealWeek: View {
   let days: [RevealDay]
   let week: PlanRevealRead.Week
@@ -350,11 +366,6 @@ struct RevealWeek: View {
     }.max() ?? 0
   }
 
-  /// A row is read from its first lesson's line: the date and the kinds sit centered on it.
-  private var firstLine: CGFloat {
-    TypeStyle.body.uiFont(dynamicTypeSize, legibility: legibility).lineHeight
-  }
-
   @ViewBuilder
   private func row(_ day: RevealDay) -> some View {
     let date = Text(dateText(day))
@@ -366,15 +377,14 @@ struct RevealWeek: View {
       if isStacked {
         VStack(alignment: .leading, spacing: 2) {
           date
-          names(day)
+          summary(day)
         }
       } else {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
           date
-            .frame(width: dateWidth, height: firstLine, alignment: .leading)
+            .frame(width: dateWidth, alignment: .leading)
 
-          names(day)
-
+          summary(day)
         }
       }
     }
@@ -382,27 +392,36 @@ struct RevealWeek: View {
     .accessibilityElement(children: .combine)
   }
 
-  /// A wrapped title steps a line; the next lesson steps further, so a wrap doesn't read as one.
-  private func names(_ day: RevealDay) -> some View {
-    let teaching = day.items.filter(\.isTeaching)
-    let names = (teaching.isEmpty ? day.items : teaching).map(\.revealTitle)
+  private func summary(_ day: RevealDay) -> some View {
+    let lessons = day.items.filter(\.isTeaching).count
+    var others: [String] = []
 
-    return VStack(alignment: .leading, spacing: 6) {
+    for item in day.items where !item.isTeaching && !others.contains(item.revealTitle) {
+      others.append(item.revealTitle)
+    }
+
+    let facts =
+      (lessons > 0
+        ? [
+          String(
+            localized: "\(lessons) lessons", table: "Plan",
+            comment: "How many lessons a day of a new plan has")
+        ] : [])
+      + others + (day.minutes > 0 ? [planDurationText(minutes: day.minutes)] : [])
+
+    return Group {
       if day.items.isEmpty {
         Text("Rest day", tableName: "Onboarding", comment: "A day of the plan with no lessons")
           .foregroundStyle(.mutedForeground)
           .layoutPart(.label)
       } else {
-        ForEach(Array(names.enumerated()), id: \.offset) { _, name in
-          Text(name)
-            .layoutPart(.label, text: Text(verbatim: name))
-        }
+        FactSegments(facts)
+          .layoutPart(.label)
       }
     }
     .typeStyle(.body)
     .frame(maxWidth: .infinity, alignment: .leading)
   }
-
 }
 
 extension RevealDay.Item {

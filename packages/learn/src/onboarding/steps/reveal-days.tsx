@@ -31,8 +31,11 @@ import { BlockMark } from "../../session/block-mark";
 import { DayStepOpener } from "../../session/day-step-opener";
 import { type DayStep } from "../../session/session-types";
 import { useBlockTitle } from "../../session/use-block-copy";
-import { isFinished, splitTodayQueue } from "../../today/today-queue";
+import { FoldRow, useMoreLabel } from "../../today/today-fold-row";
+import { UPCOMING_ROWS, getFoldedRows, isFinished, splitTodayQueue } from "../../today/today-queue";
 import { useStepLabel } from "../../today/use-row-label";
+
+const REVEAL_TODAY_LIST_ID = "reveal-today-list";
 
 /** Lands on the moment's third beat, after the check and the lesson count. */
 function NextTag({ children }: { children: string }) {
@@ -179,15 +182,19 @@ export function RevealToday({
   const formatDate = useFormatIsoDate();
   const formatDuration = useFormatDuration();
   const label = useStepLabel();
+  const [moreOpen, setMoreOpen] = useState(false);
   const next = session?.blocks.find((block) => block.position === session.nextPosition);
+
+  const { after, before, done } = next
+    ? splitTodayQueue({ blocks: session?.blocks ?? [], nextPosition: next.position })
+    : { after: [], before: [], done: session?.blocks ?? [] };
+
+  const folded = getFoldedRows({ after, lessonsAhead: false });
+  const moreLabel = useMoreLabel(folded);
 
   if (!reveal || !session || session.blocks.length === 0) {
     return null;
   }
-
-  const { after, before, done } = next
-    ? splitTodayQueue({ blocks: session.blocks, nextPosition: next.position })
-    : { after: [], before: [], done: session.blocks };
 
   const nextTag = done.length > 0 ? t("Up next") : t("Start here");
 
@@ -201,8 +208,13 @@ export function RevealToday({
       </PageSectionHeader>
 
       <form className="contents">
-        <ListGroup>
-          {[...done, ...before, ...(next ? [next] : []), ...after].map((block) => (
+        <ListGroup id={REVEAL_TODAY_LIST_ID}>
+          {[
+            ...done,
+            ...before,
+            ...(next ? [next] : []),
+            ...(moreOpen ? after : after.slice(0, UPCOMING_ROWS)),
+          ].map((block) => (
             <TodayRow
               block={block}
               key={block.position}
@@ -214,6 +226,16 @@ export function RevealToday({
           ))}
         </ListGroup>
       </form>
+
+      {folded.count > 0 && (
+        <FoldRow
+          controls={REVEAL_TODAY_LIST_ID}
+          done={false}
+          label={moreOpen ? t("Show less") : moreLabel}
+          onToggle={() => setMoreOpen((isOpen) => !isOpen)}
+          open={moreOpen}
+        />
+      )}
     </PageSection>
   );
 }

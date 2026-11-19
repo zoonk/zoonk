@@ -30,9 +30,6 @@ val DayView.queue: TodayQueue
         )
     }
 
-/** How many rows follow the next one before "+N more" folds the rest. */
-internal const val UPCOMING_ROWS = 4
-
 internal fun DayView.minutesAfter(shown: List<DayStep>): Double =
     (minutes.left - shown.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }).coerceAtLeast(0.0)
 

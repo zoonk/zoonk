@@ -1,7 +1,9 @@
 "use client";
 
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
+import { useExtracted } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
+import { type getFoldedRows } from "./today-queue";
 
 /** Opened rows land above the fold row, so focus moves to the first of them. */
 export function focusRevealedRow(row: Element | null | undefined) {
@@ -50,4 +52,13 @@ export function FoldRow({
       </span>
     </button>
   );
+}
+
+/** What the fold row says while it hides the rest of a day. */
+export function useMoreLabel({ count, lessonsOnly }: ReturnType<typeof getFoldedRows>): string {
+  const t = useExtracted();
+
+  return lessonsOnly
+    ? t("{count, plural, one {# more lesson} other {# more lessons}}", { count })
+    : t("{count, plural, one {# more} other {# more}}", { count });
 }
