@@ -52,9 +52,12 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
  * a short form far from where the learner was looking. Base UI needs the Viewport wrapper for
  * swipe gestures, and its keyboard provider keeps a focused field above a phone's keyboard.
  */
-/** A panel opens on the first field a learner types in; with none, Base UI's default. */
+/**
+ * A panel opens on its first field, a choice included (the checked radio of a group is the one it
+ * can focus); with none, Base UI's default. Choice pieces carry a hidden input that never takes focus.
+ */
 const FIRST_FIELD =
-  "input:not([type=hidden],[type=checkbox],[type=radio],[disabled]),textarea:not([disabled])";
+  "input:not([type=hidden],[disabled],[tabindex='-1']),textarea:not([disabled]),select:not([disabled]),[role=radio][tabindex='0'],[role=checkbox]:not([aria-disabled=true])";
 
 function DrawerPopup({
   className,
