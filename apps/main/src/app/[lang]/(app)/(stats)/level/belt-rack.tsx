@@ -73,7 +73,7 @@ export async function BeltRack({
             aria-label={`${belt.label}, ${index <= currentIndex ? t("Earned") : t("Coming")}`}
             className={cn(
               "flex h-6.5 w-full max-w-8 items-center justify-center rounded-md md:h-9.5 md:max-w-13 md:rounded-lg",
-              index === currentIndex && "ring-foreground ring-[1.5px] ring-inset",
+              index === currentIndex && "bg-selected-tint",
             )}
             role="img"
             style={{ color: `var(--belt-${belt.key})` }}

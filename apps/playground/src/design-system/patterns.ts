@@ -55,7 +55,7 @@ export const PATTERNS: readonly Pattern[] = [
     follow: [
       "The current tab is the navigation's `muted` fill, the same mark as the sidebar's current page: `Tabs`, or `TAB_CLASS` and `TAB_LIST_CLASS` for tabs that are links.",
       "The current tab's fill reaches 10px past the column, like a highlighted row, so the first tab's label starts on the title's edge.",
-      "A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`).",
+      "A pick is a soft fill darker than a hover (`selected-tint`) with the piece's own mark (a radio's dot, a check, \"Your answer\"), never a ring (`ChoiceList`, `AnswerOption`).",
       "A state change moves nothing: hover, focus, current, busy and disabled keep a control's size and its neighbors' place.",
     ],
     id: "current",
@@ -101,7 +101,7 @@ export const PATTERNS: readonly Pattern[] = [
       "Color without its word: a checked option always says Correct or Your answer.",
     ],
     follow: [
-      "At rest the stronger line; picked a 2px ring in the text color on its tint.",
+      "At rest the stronger line; picked, the pick's fill and \"Your answer\" in the text color.",
       "Checked: the right answer's ring and tint in blue, a wrong pick's in pink-red, each with its word.",
     ],
     id: "answers",

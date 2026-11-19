@@ -5,7 +5,7 @@ export type AnswerOptionResult = "guess" | "right" | "wrong";
 export const ANSWER_TONE = {
   guess: "ring-foreground/40 ring-[1.5px] ring-inset",
   idle: "ring-input ring-1 ring-inset",
-  picked: "bg-selected-tint ring-selected ring-2 ring-inset",
+  picked: "bg-selected-tint ring-input ring-1 ring-inset",
   right: "bg-success/9 ring-success ring-[1.5px] ring-inset",
   wrong: "bg-destructive/9 ring-destructive ring-[1.5px] ring-inset",
 } as const;

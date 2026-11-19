@@ -36,7 +36,8 @@ function useSheetCountLine(): string {
 const CELL_FILLED_CLASS =
   "bg-surface-3 text-foreground enabled:hover:bg-surface-3 ring-transparent";
 
-const CELL_CURRENT_CLASS = "ring-foreground ring-2";
+const CELL_CURRENT_CLASS =
+  "after:bg-foreground after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full";
 
 const CELL_FLAGGED_CLASS = "text-warning-text ring-warning ring-2";
 
@@ -61,7 +62,7 @@ function QuestionCell({
       aria-current={isCurrent ? "true" : undefined}
       aria-label={label}
       className={cn(
-        "focus-visible:outline-ring text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
+        "focus-visible:outline-ring/50 text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-3 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
         countsTowardMockProgress(runner, question.itemId) && CELL_FILLED_CLASS,
         draft?.flagged && CELL_FLAGGED_CLASS,
         isCurrent && cn(CELL_CURRENT_CLASS, !draft?.flagged && "text-foreground"),

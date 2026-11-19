@@ -94,7 +94,7 @@ export function PianoKeyboard({
               })}
               className={cn(
                 "@container flex items-end justify-center pb-2 outline-none",
-                "focus-visible:ring-ring/60 focus-visible:ring-[3px] focus-visible:ring-inset",
+                "focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:ring-inset",
                 isInteractive && !disabled && "cursor-pointer",
                 key.isBlack
                   ? "absolute top-0 z-10 h-[60%] rounded-b-lg bg-neutral-900 pb-1.5 dark:bg-neutral-950 dark:ring-1 dark:ring-neutral-600"

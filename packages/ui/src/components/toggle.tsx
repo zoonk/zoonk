@@ -5,7 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 
 const toggleVariants = cva(
-  "group/toggle hit-area hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-pressed:bg-muted aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 relative inline-flex items-center justify-center gap-1 rounded-lg text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/toggle hit-area hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-pressed:bg-selected-tint aria-pressed:hover:bg-selected-tint aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 relative inline-flex items-center justify-center gap-1 rounded-lg text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
@@ -17,7 +17,7 @@ const toggleVariants = cva(
       variant: {
         default: "bg-transparent",
         outline:
-          "border-input hover:bg-muted aria-pressed:bg-selected-tint aria-pressed:hover:bg-selected-tint aria-pressed:outline-selected border bg-transparent aria-pressed:border-transparent aria-pressed:outline-2 aria-pressed:-outline-offset-2 aria-pressed:outline-solid",
+          "border-input border bg-transparent",
       },
     },
   },

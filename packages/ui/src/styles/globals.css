@@ -286,7 +286,8 @@
   --destructive-text: oklch(0.5 0.2 4);
   --selected: var(--foreground);
   --selected-foreground: var(--background);
-  --selected-tint: color-mix(in srgb, var(--selected) 5%, transparent);
+  /* A pick's whole look with its mark (a radio's dot, a check): darker than a hover's `muted`, never a ring. */
+  --selected-tint: color-mix(in srgb, var(--selected) 10%, transparent);
   --warning: oklch(0.74 0.14 70);
   --warning-text: oklch(0.482 0.11 60);
   --success: oklch(0.66 0.14 252);
@@ -351,8 +352,7 @@
     --accent-foreground: var(--color-black);
     --destructive: var(--color-pink-800);
     --destructive-text: oklch(0.432526 0.174094 3.815);
-    /* A pick needs a fill as well as its thicker line, so it never rests on line weight alone. */
-    --selected-tint: var(--muted);
+    --selected-tint: var(--color-neutral-300);
     --warning: var(--color-amber-800);
     --warning-text: oklch(0.421874 0.118216 46.201);
     --success: var(--color-blue-800);
@@ -399,7 +399,7 @@
     --accent-foreground: oklch(0.94 0.003 286);
     --destructive: oklch(0.74 0.15 6);
     --destructive-text: oklch(0.76 0.15 6);
-    --selected-tint: color-mix(in srgb, var(--selected) 10%, transparent);
+    --selected-tint: color-mix(in srgb, var(--selected) 17%, transparent);
     --warning: oklch(0.83 0.12 80);
     --warning-text: var(--warning);
     --success: oklch(0.77 0.11 248);
@@ -457,7 +457,7 @@
       --accent-foreground: var(--color-white);
       --destructive: var(--color-pink-300);
       --destructive-text: var(--color-pink-50);
-      --selected-tint: var(--muted);
+      --selected-tint: var(--color-neutral-500);
       --warning: var(--color-amber-300);
       --warning-text: var(--color-amber-50);
       --success: var(--color-blue-200);

@@ -154,10 +154,10 @@ Two controls of one size look one size: a filled and an outline button side by s
 
 ### H5. One line weight, no shadows on content
 
-Borders and dividers are 1px. A 2px line means a pick or focus. Content casts no shadow; only overlays do.
+Borders and dividers are 1px. A thicker line means focus or a checked answer's verdict, never a pick. Content casts no shadow; only overlays do.
 
 - **Check.** No heavier divider or border; no shadow outside a menu, a sheet, a dialog or the palette.
-- **Usual break.** A selected chip with a 1px dark border beside picks with a 2px ring.
+- **Usual break.** A picked chip drawn with a dark border or ring instead of its fill.
 
 ## Control sizes
 
@@ -308,17 +308,17 @@ Each surface has one enabled filled button at most, its main action. A surface i
 
 ### X1. Every control has every state
 
-A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's state apart from the page (an off switch's track, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too. Every outlined control (a field, a select, a code box, a checkbox, a radio, an outline button) rests on one soft line (`border-input`) and turns dark only on focus.
+A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is one ring everywhere, the fields' soft one: 3px of the ring color at half strength (`ring-ring/50`, or the same outline on a control whose ring draws its line), 3:1 against what's around it, never clipped. What tells a control's state apart from the page (an off switch's track, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too. Every outlined control (a field, a select, a code box, a checkbox, a radio, an outline button) rests on one soft line (`border-input`) and turns dark only on focus.
 
 - **Check.** In a focus screenshot the focused control is found at a glance; a disabled one reads as off, not broken.
 - **Usual break.** A hand-built clickable `div` with a hover fill and no focus ring.
 
 ### X2. A state is drawn one way
 
-A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`). The current item in navigation is the `muted` fill. The current tab has one look in every app, the navigation's `muted` fill (`TAB_CLASS`).
+A pick is a soft fill darker than a hover (`selected-tint`) with the mark the piece already has (a radio's dot, a checkbox's check, an answer's "Your answer"), never a ring or an outline, so seven picks on one screen stay calm. The current item in navigation is the `muted` fill; the open question on a mock's answer sheet is a short bar under its number. The current tab has one look in every app, the navigation's `muted` fill (`TAB_CLASS`).
 
 - **Check.** No two kinds of "selected" on one screen drawn differently.
-- **Usual break.** A toggle chip "on" with a 1px border beside radio cards "on" with a 2px ring.
+- **Usual break.** A dark ring or outline marking a pick or the current item.
 
 ### X3. A state change moves nothing
 

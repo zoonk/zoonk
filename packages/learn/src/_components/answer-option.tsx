@@ -131,6 +131,21 @@ function ResultTag({
   );
 }
 
+/** Before Check, a pick says it's the learner's in the words its verdict keeps. Unspoken: the radio is checked. */
+function PickedTag({ guessed }: { guessed: boolean }) {
+  const { yourAnswer, yourGuess } = useResultLabels();
+
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(ANSWER_TAG_CLASS, "text-foreground")}
+      data-slot="answer-option-tag"
+    >
+      {guessed ? yourGuess : yourAnswer}
+    </span>
+  );
+}
+
 /**
  * Before Check, the room of the widest tag a verdict can bring, unseen and the same on every
  * option, so the tag fills it later and the answer's words never move. The labels are CSS content,
@@ -187,6 +202,24 @@ function OptionMarker({
   );
 }
 
+function defaultTag({
+  guessed,
+  picked,
+  picks,
+  result,
+}: {
+  guessed: boolean;
+  picked: boolean;
+  picks: boolean;
+  result: AnswerOptionResult | null;
+}): React.ReactNode {
+  if (result) {
+    return <ResultTag guessed={guessed} picked={picked} result={result} />;
+  }
+
+  return picked && picks ? <PickedTag guessed={guessed} /> : undefined;
+}
+
 export function AnswerOption({
   children,
   className,
@@ -211,19 +244,14 @@ export function AnswerOption({
   // A submit option sends its form on the tap, so it's a plain button: nothing stays picked.
   const picks = type !== "submit";
 
-  const shownTag =
-    tag === undefined && result ? (
-      <ResultTag guessed={guessed} picked={picked} result={result} />
-    ) : (
-      tag
-    );
+  const shownTag = tag === undefined ? defaultTag({ guessed, picked, picks, result }) : tag;
 
   return (
     <button
       aria-checked={picks ? picked : undefined}
       className={cn(
         ANSWER_OPTION_CLASS,
-        "focus-visible:outline-ring enabled:hover:bg-muted/60 press outline-none select-none [--press-scale:0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:cursor-default",
+        "focus-visible:outline-ring/50 enabled:hover:bg-muted/60 press outline-none select-none [--press-scale:0.99] focus-visible:outline-3 focus-visible:outline-solid disabled:cursor-default",
         ANSWER_TONE.idle,
         layout === "row" && "flex-wrap",
         layout === "stacked" && "flex-col items-stretch p-2",
