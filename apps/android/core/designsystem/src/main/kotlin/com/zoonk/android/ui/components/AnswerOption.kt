@@ -114,7 +114,7 @@ fun AnswerOption(
             ) {
                 null
             } else {
-                { NumberKey(marker, glyph, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f)) }
+                { NumberKey(marker, glyph, picked && result == null, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f)) }
             },
         leadingAtTop = keyAtTop,
         readingContent = readingContent?.let { reading -> { ProvideTextStyle(MaterialTheme.typography.labelLarge, reading) } },
@@ -126,15 +126,18 @@ fun AnswerOption(
 private fun NumberKey(
     number: Int,
     glyph: Painter?,
+    picked: Boolean,
     modifier: Modifier,
 ) {
+    // A picked option's key turns ink: the option's mark, as a radio's dot is.
+    val ink = MaterialTheme.colorScheme.onSurface
     Box(
         modifier =
             modifier
                 .clearAndSetSemantics {}
                 .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)
-                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.04f), RoundedCornerShape(ZoonkRadius.sm))
-                .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f), RoundedCornerShape(ZoonkRadius.sm)),
+                .background(if (picked) ink else ink.copy(alpha = 0.04f), RoundedCornerShape(ZoonkRadius.sm))
+                .border(1.dp, if (picked) Color.Transparent else ink.copy(alpha = 0.12f), RoundedCornerShape(ZoonkRadius.sm)),
         contentAlignment = Alignment.Center,
     ) {
         // A glyph keeps the digit's size and baseline, so its key lines up with the option's words. Every key is as
@@ -151,7 +154,16 @@ private fun NumberKey(
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = 4.dp).widthIn(min = with(LocalDensity.current) { widest.toDp() }),
-            color = if (glyph == null) MaterialTheme.colorScheme.onSurfaceVariant else Color.Transparent,
+            color =
+                if (glyph !=
+                    null
+                ) {
+                    Color.Transparent
+                } else if (picked) {
+                    MaterialTheme.colorScheme.surface
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
             textAlign = TextAlign.Center,
             style = style,
         )
@@ -160,7 +172,7 @@ private fun NumberKey(
                 it,
                 contentDescription = null,
                 modifier = Modifier.size(14.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = if (picked) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
