@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+  <!-- Main's lucide Library and Apple's books.vertical: books on a shelf, which no Material Symbol draws. -->
+  <path
+      android:fillColor="@android:color/black"
+      android:pathData="M120,160L120,800A40,40 0,0 0,200,800L200,160A40,40 0,0 0,120,160ZM280,320L280,800A40,40 0,0 0,360,800L360,320A40,40 0,0 0,280,320ZM440,240L440,800A40,40 0,0 0,520,800L520,240A40,40 0,0 0,440,240ZM601.54,250.99L761.54,810.99A40,40 0,0 0,838.46,789.01L678.46,229.01A40,40 0,0 0,601.54,250.99Z"/>
+</vector>

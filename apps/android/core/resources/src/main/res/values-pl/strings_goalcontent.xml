@@ -35,9 +35,6 @@
   "goalcontent_lessons_done": "a2f4f8236c5c05063c28b1209e3a978315a6aaab137ec05ab32e020aff1edd6a",
   "goalcontent_lessons_known_skipped": "ae82511b83f534b6295c014badc5e73754e63da090afdabd820b1e25c3279022",
   "goalcontent_lessons_skipped": "cf63ae1afff04b24f1845158a88dbb389ba3409553d422d60a403e0d13b6db21",
-  "goalcontent_mastery": "2ddea7abf50c4468cd3691e668dc145d92a3b33a2281d0ee42ed08ec53b329cd",
-  "goalcontent_mastery_pending": "9e53bfc2c77e8a67aaa174fc397e2e221672a9e80cef364544815fc5220dc5cb",
-  "goalcontent_mastery_right": "4d17e5b0af1df61f6e40209ce7746d75a3d85b703263a5bde75c238419c0db16",
   "goalcontent_material_topic_count": "c3f00110e7a67662e020712f05b245e39897985f52586ab4dd3ea235718f7b22",
   "goalcontent_matrix_title": "5779db7d2667d2cd91b0b95fb9f39ddb3e8a0faa434f796925e8655156f3a9f4",
   "goalcontent_module_count": "02563ecedbd88323ed99d948b2cd44d860e869a8e79e5cee1be0271c7c39e137",
@@ -162,10 +159,6 @@
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Przygotowanie</string>
     <string name="goalcontent_coverage">Przerobiony materiał</string>
-    <string name="goalcontent_mastery">Opanowanie</string>
-    <!-- A subject's first answers to unseen questions that were right: "6 of 8 right". -->
-    <string name="goalcontent_mastery_right">Poprawnie: %1$s z %2$s</string>
-    <string name="goalcontent_mastery_pending">Pojawi się po kilku pytaniach w ćwiczeniach</string>
     <string name="goalcontent_not_in_plan">Poza twoim planem</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Także w twoim planie</string>

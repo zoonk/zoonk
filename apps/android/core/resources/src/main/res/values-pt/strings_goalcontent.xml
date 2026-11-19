@@ -35,9 +35,6 @@
   "goalcontent_lessons_done": "6bcdf489e3444a00658f8fe89659397008ccc26a15eaabc123beb5b7f5893e0d",
   "goalcontent_lessons_known_skipped": "79ef8ff1aba8d6932bbd9f600e1ff4a1c1bd9d86d9f74226853f6a11329d5778",
   "goalcontent_lessons_skipped": "fa97ebe3e9f829538b96fd45c07ec7bb48e7678f8c8872bc0f232b0eac8ecf9c",
-  "goalcontent_mastery": "d87c308e32fd94e0cfb0a91b4e827f7f1372a170570851be08b723f78bacab7f",
-  "goalcontent_mastery_pending": "1370b2f5a6b22d4de6bee2ee61e570ec598c67841df0724810ff17df32f75a78",
-  "goalcontent_mastery_right": "884bfb963b4891fc7baf556817561dbe31dd9d74be0a4c0da09108505ee275b2",
   "goalcontent_material_topic_count": "50f5a370a95bbae5f505b26701a1bfa517db47fac018c52485bb8fb440f5db89",
   "goalcontent_matrix_title": "46bcaa0e747857251f532bcf886bb2296bee27486689465d630d9208136c56dd",
   "goalcontent_module_count": "6113870db1e5a86795b38ebeef7e15f038d027932e2c6f84dce280975f25f248",
@@ -153,10 +150,6 @@
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Preparo</string>
     <string name="goalcontent_coverage">Cobertura</string>
-    <string name="goalcontent_mastery">Domínio</string>
-    <!-- A subject's first answers to unseen questions that were right: "6 of 8 right". -->
-    <string name="goalcontent_mastery_right">%1$s de %2$s corretas</string>
-    <string name="goalcontent_mastery_pending">Aparece depois de algumas perguntas de prática</string>
     <string name="goalcontent_not_in_plan">Fora do seu plano</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Também no seu plano</string>
