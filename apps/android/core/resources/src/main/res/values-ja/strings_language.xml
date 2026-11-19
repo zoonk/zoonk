@@ -43,7 +43,6 @@
   "language_skill_writing": "5314473fa0ee39209b326d00d3a2e48d829c95c7318fa34c837c1a6ff779dda3",
   "language_unit_about": "d3aa12703c5899b06fd4cb3769529b9f1ea4d6092a2a47193ca808284129fd10",
   "language_unit_continue": "d3b022ecf730f9414eb1cba0a14bb6ebf3693d25a227524d182690e21d5fa367",
-  "language_unit_done_share": "348672644996ec1f7953534365a99e3cf91975624918430c72b0dfaefe89170f",
   "language_unit_eyebrow": "e12308adfb5721ff95b21b0421b1253233554d3b72694bbc50ce0095a49fea14",
   "language_unit_grammar_tips": "9a6d80f19eaef534116f07de565a390590f7f41b83877f5214e87188f84cda27",
   "language_unit_lessons": "b73c4df0a7356f45d63bc8851cf19a55b2419841a94558fcfc8cc95e2acb0523",
@@ -65,7 +64,6 @@
         <item quantity="other">%dレッスン</item>
     </plurals>
     <!-- How much of the unit is done, the unit being the subject: "33% done". -->
-    <string name="language_unit_done_share">%1$s完了</string>
     <string name="language_unit_start">始める</string>
     <string name="language_unit_continue">続ける</string>
     <string name="language_unit_objectives">このユニットで身につくこと</string>

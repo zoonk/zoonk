@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -46,8 +45,9 @@ import com.zoonk.android.ui.scaffold.supportingPaneBeside
  * Main's detail page: [hero] heads it, its title marked with `pageTitle()`, which the top app bar
  * shows once it has scrolled under the bar. Where the page splits into panes, [aside] runs beside it
  * behind a hairline (main's aside from 72rem, an unfolded book's second page); otherwise [content]
- * places what it needs of it in the page. [ask] sits in the bar at every width, as the buddy's face on a narrow page. The page's "⋯" goes in its [DetailHero]; its one main action, [action], in the bottom bar at
- * the foot of the page's own column, never under the aside.
+ * places what it needs of it in the page. [ask] sits in the bar at every width, as the buddy's face on a narrow page, then
+ * the page's "⋯", [menu]; its one main action, [action], in the bottom bar at the foot of the page's own column, never
+ * under the aside.
  */
 @Composable
 internal fun DetailPage(
@@ -57,6 +57,7 @@ internal fun DetailPage(
     modifier: Modifier = Modifier,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
+    menu: (@Composable () -> Unit)? = null,
     action: (@Composable (Modifier) -> Unit)? = null,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
@@ -72,9 +73,10 @@ internal fun DetailPage(
             actions = {
                 when {
                     ask == null -> Unit
-                    wide -> Box(Modifier.barButtonEnd()) { ask(AskTutorAppearance.Button) }
+                    wide -> Box(if (menu == null) Modifier.barButtonEnd() else Modifier) { ask(AskTutorAppearance.Button) }
                     else -> ask(AskTutorAppearance.Icon)
                 }
+                menu?.invoke()
             },
         ) { padding ->
             DetailPageContent(listState, padding, if (asideBeside) aside else null, hero, action, content)
@@ -144,20 +146,10 @@ private fun DetailPageContent(
     ) { beside -> page(beside) }
 }
 
-/** The page's name and facts, with its [menu] ("⋯") at their end (main's `DetailHero`); the main action is the bottom bar's. */
+/** The page's name and facts (main's `DetailHero`); its "⋯" is the bar's and its main action the bottom bar's. */
 @Composable
-internal fun DetailHero(
-    menu: (@Composable () -> Unit)?,
-    text: @Composable ColumnScope.() -> Unit,
-) {
-    Row(
-        Modifier.fillMaxWidth().padding(horizontal = PAGE_PADDING),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp), content = text)
-        menu?.invoke()
-    }
+internal fun DetailHero(text: @Composable ColumnScope.() -> Unit) {
+    Column(Modifier.fillMaxWidth().padding(horizontal = PAGE_PADDING), verticalArrangement = Arrangement.spacedBy(4.dp), content = text)
 }
 
 /** A block of the aside: its title, then what it holds. */

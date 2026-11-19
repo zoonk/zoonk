@@ -45,7 +45,7 @@ struct SubjectScreen: View {
           }
         }
       }
-      .barTitleAfterHero(subject?.name ?? String(localized: AppTab.plan.title))
+      .barTitleAfterHero(subject?.shortName ?? String(localized: AppTab.plan.title))
       .toolbar {
         TutorAskToolbarItem(scope: .subject(goalId: goal.id, subjectKey: subjectKey))
 
@@ -162,7 +162,7 @@ private struct SubjectContent: View {
   private var header: some View {
     Section {
       PageHeader(
-        Text(subject.name),
+        Text(subject.shortName),
         facts: facts)
 
       if !sharedExams.isEmpty {
@@ -247,13 +247,15 @@ private struct SubjectContent: View {
         }
       } header: {
         SectionTitle(
-          done.isEmpty
-            ? Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
-            : Text(
-              "\(done.count) of \(chapters.count) chapters", tableName: "Plan",
-              comment: "Chapters done of the subject's chapters"),
+          Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters"),
           alignment: .center
         ) {
+          Text(
+            "\(done.count) of \(chapters.count) chapters", tableName: "Plan",
+            comment: "Chapters done of the subject's chapters"
+          )
+          .monospacedDigit()
+
           if learner.summary.value?.places.mindMaps == true {
             Button {
               router.open(.mindMaps(subjectKey: subject.key))
@@ -261,7 +263,8 @@ private struct SubjectContent: View {
               Label {
                 Text("Mind maps", tableName: "Plan", comment: "Opens the subject's mind maps")
               } icon: {
-                KindMark(kind: .mindMap)
+                // Main's quiet lucide Network, as on Android: the header's action, not a kind's mark.
+                Image(systemName: LearnKind.mindMap.systemImage)
               }
             }
             .buttonStyle(.ghost.endsRow)

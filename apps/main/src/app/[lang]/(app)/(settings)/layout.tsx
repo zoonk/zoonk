@@ -3,6 +3,7 @@ import { LearnerSummarySeed } from "@/components/learner/learner-summary-seed";
 import { getMenu } from "@/lib/menu";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { FollowUs } from "./_components/follow-us";
 import { SettingsAccountAction } from "./_components/settings-account-action";
 import { SettingsAside, SettingsAsideSkeleton } from "./_components/settings-aside";
 import { SettingsAsideSlot } from "./_components/settings-aside-slot";
@@ -15,7 +16,11 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
     <>
       <SectionPage
         aside={
-          <SettingsAsideSlot detailsUnder={[getMenu("aboutYou").url]}>
+          <SettingsAsideSlot
+            accountOn={[getMenu("settings").url, getMenu("profile").url, getMenu("support").url]}
+            extras={[{ content: <FollowUs />, href: getMenu("support").url }]}
+            filledBy={[getMenu("settings").url, getMenu("appearance").url]}
+          >
             <Suspense fallback={<SettingsAsideSkeleton />}>
               <SettingsAside />
             </Suspense>

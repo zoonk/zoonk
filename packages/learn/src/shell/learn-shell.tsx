@@ -43,7 +43,7 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
  * hairline and scroll away, so the title takes the bar's row (`PageTopBar`'s `className`). A bar
  * holds nothing when its end shows nothing: no actions, or on a computer only a phone's
  * (`data-phone-only`). `data-signed-in` says whose frame this is before the first paint.
- * - `beside`: from 72rem for whoever has a session, where the page it goes back to stays on screen
+ * - `beside`: from `xl` for whoever has a session, where the page it goes back to stays on screen
  *   and this one opens in the aside.
  * - `computer`: from `lg`, where the sidebar holds the goal and every page it lists.
  * - `learner`, `visitor`: from `lg`, a page the sidebar lists in that state.
@@ -53,8 +53,8 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
  */
 export const NO_WAY_BACK = {
   beside: {
-    back: "min-[72rem]:in-data-signed-in:hidden",
-    bare: "min-[72rem]:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:static min-[72rem]:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:pb-0 min-[72rem]:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:*:hidden",
+    back: "xl:in-data-signed-in:hidden",
+    bare: "xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:static xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:pb-0 xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:*:hidden",
   },
   computer: {
     back: "lg:hidden",

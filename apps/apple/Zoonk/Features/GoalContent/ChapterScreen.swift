@@ -178,8 +178,14 @@ private struct ChapterContent: View {
           .currentRow(lesson.state == .next)
         }
       } header: {
-        // How much is done is said once, in the header's facts.
         SectionTitle(Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons"))
+        {
+          Text(
+            "\(done) of \(lessons.count)", tableName: "Plan",
+            comment: "Lessons done of the chapter's lessons"
+          )
+          .monospacedDigit()
+        }
       }
     }
   }
@@ -244,10 +250,9 @@ private struct ChapterContent: View {
     }
   }
 
-  /// Where the chapter sits, then its lessons, their time and how much is done.
+  /// Where the chapter sits, then its lessons and their time; the lesson list counts how many are done.
   private var facts: [String] {
     let minutes = lessons.reduce(0) { $0 + $1.minutes }
-    let share = Double(done) / Double(max(lessons.count, 1))
     let place =
       chapter.chapter.subject.map { subject in
         String(
@@ -268,9 +273,6 @@ private struct ChapterContent: View {
         localized: "\(lessons.count) lessons", table: "Plan",
         comment: "How many lessons a chapter has"),
       planDurationText(minutes: Double(minutes)),
-      String(
-        localized: "\(share.formatted(.percent.precision(.fractionLength(0)))) done", table: "Plan",
-        comment: "The share of a chapter's lessons done"),
     ]
   }
 

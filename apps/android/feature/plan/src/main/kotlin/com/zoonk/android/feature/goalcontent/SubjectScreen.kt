@@ -84,7 +84,7 @@ fun SubjectScreen(
             syllabus = app.plans.syllabus[goal.id],
             plans = app.plans,
             navigator = navigator,
-            menu = { ReportProblemMenu(report, inPage = true) },
+            menu = { ReportProblemMenu(report) },
             ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
             mindMaps = summary.value?.places?.mindMaps == true,
         )
@@ -98,7 +98,7 @@ internal fun SubjectContent(
     syllabus: Resource<Syllabus>,
     plans: PlanStore,
     navigator: AppNavigator,
-    menu: @Composable () -> Unit = {},
+    menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
     mindMaps: Boolean = false,
 ) {
@@ -218,15 +218,16 @@ internal fun SubjectPage(
     writes: SubjectWrites,
     actions: SubjectActions,
     today: LocalDate = LocalDate.now(),
-    menu: @Composable () -> Unit = {},
+    menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
 ) {
     DetailPage(
-        title = subject.name,
+        title = subject.shortName,
         onBack = actions.back,
-        hero = { SubjectHero(syllabus, subject, actions, menu) },
+        hero = { SubjectHero(syllabus, subject) },
         aside = { SubjectAside(syllabus, subject, today) },
         ask = ask,
+        menu = menu,
         action =
             subject.nextChapterId?.let { next ->
                 { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(next) }, modifier) }
@@ -253,12 +254,10 @@ internal fun SubjectPage(
 private fun SubjectHero(
     syllabus: Syllabus,
     subject: SyllabusSubject,
-    actions: SubjectActions,
-    menu: @Composable () -> Unit,
 ) {
-    DetailHero(menu) {
+    DetailHero {
         Text(
-            text = subject.name,
+            text = subject.shortName,
             modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.headlineMedium,
         )
@@ -305,9 +304,10 @@ private fun subjectFacts(subject: SyllabusSubject): List<String> {
     return listOfNotNull(if (inLessons) percentDone(subject.bar.share) else null)
 }
 
+/** How much is done, as a whole percent; nothing until there is some, since "0% done" says nothing. */
 @Composable
-internal fun percentDone(share: Double): String =
-    stringResource(R.string.goalcontent_percent_done, (share.coerceIn(0.0, 1.0) * PERCENT).roundToInt())
+private fun percentDone(share: Double): String? =
+    (share.coerceIn(0.0, 1.0) * PERCENT).roundToInt().takeIf { it > 0 }?.let { stringResource(R.string.goalcontent_percent_done, it) }
 
 @Composable
 internal fun knownLine(subject: SyllabusSubject): String? {

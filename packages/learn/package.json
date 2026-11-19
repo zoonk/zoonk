@@ -143,6 +143,7 @@
     "./onboarding/understanding-start": "./src/onboarding/entry/understanding-start.ts",
     "./keep-focus": "./src/_utils/use-keep-focus.ts",
     "./page": "./src/_components/page.tsx",
+    "./side-detail": "./src/_components/side-detail.tsx",
     "./plan/phase-name": "./src/plan/plan-phase-name.tsx",
     "./plan-diff": "./src/plan-diff/plan-effect-diff.tsx",
     "./poll": "./src/_utils/use-poll.ts",

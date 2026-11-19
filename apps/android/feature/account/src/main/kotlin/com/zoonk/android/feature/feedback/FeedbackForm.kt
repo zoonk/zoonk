@@ -52,7 +52,6 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MoreButton
-import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.flow.first
@@ -274,34 +273,23 @@ fun ReportProblemItem(
     )
 }
 
-/**
- * A "More" button with only Report a problem, for a screen without a menu of its own: in its top app
- * bar, or [inPage] as main's "⋯" beside a detail page's main action.
- */
+/** A "More" button with only Report a problem, in the top app bar of a screen without a menu of its own. */
 @Composable
 fun ReportProblemMenu(
     app: AppContainer,
     target: FeedbackTarget,
-    inPage: Boolean = false,
-) = ReportProblemMenu(rememberReportProblem(app, target), inPage)
+) = ReportProblemMenu(rememberReportProblem(app, target))
 
 /**
  * [ReportProblemMenu] for a [report] remembered above a layout the window size changes, so resizing
  * while writing keeps the sheet open with its draft.
  */
 @Composable
-fun ReportProblemMenu(
-    report: FeedbackSheet,
-    inPage: Boolean = false,
-) {
+fun ReportProblemMenu(report: FeedbackSheet) {
     var isOpen by rememberSaveable { mutableStateOf(false) }
 
     Box {
-        if (inPage) {
-            OptionsButton(onClick = { isOpen = true }, contentDescription = stringResource(R.string.feedback_more), size = ButtonSize.Large)
-        } else {
-            MoreButton(onClick = { isOpen = true }, contentDescription = stringResource(R.string.feedback_more))
-        }
+        MoreButton(onClick = { isOpen = true }, contentDescription = stringResource(R.string.feedback_more))
         DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }) {
             ReportProblemItem(report) { isOpen = false }
         }

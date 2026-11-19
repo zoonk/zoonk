@@ -200,6 +200,8 @@ private struct LanguageUnitContent: View {
   /// Above the split: folding iPhone Duo recreates its panes, and the call's picker is in one.
   @State private var callMinutes: Int?
   @State private var callStart = CallStart()
+  @State private var isCallOpen = false
+  @ScaledMetric(relativeTo: .body) private var markSize = 14.0
 
   let unit: LanguageUnit
 
@@ -244,13 +246,7 @@ private struct LanguageUnitContent: View {
     let done = lessons.filter { $0.state == .done }.count
 
     Section {
-      PageHeader(Text(unit.unit.title), supporting: place, supportingIsFacts: true)
-
-      if let description = unit.unit.description, !description.isEmpty {
-        Text(description)
-          .foregroundStyle(.mutedForeground)
-          .listRowSeparator(.hidden)
-      }
+      PageHeader(Text(unit.unit.title), facts: facts)
     }
 
     if !lessons.isEmpty {
@@ -288,7 +284,7 @@ private struct LanguageUnitContent: View {
           Label {
             Text(objective)
           } icon: {
-            StatusMark(status: finished ? .done : .todo)
+            CanDoMark(done: finished)
           }
         }
       } header: {
@@ -310,151 +306,255 @@ private struct LanguageUnitContent: View {
 
   @ViewBuilder
   private var practice: some View {
-    if let conversation = unit.conversation {
-      PracticeCallSection(
-        conversation: conversation, chapterId: unit.unit.chapterId, goalId: unit.goalId,
-        minutes: $callMinutes, start: callStart
-      ) { router.open(.conversation(conversationId: $0)) }
-    }
-
-    if !unit.grammarTips.isEmpty {
+    if unit.conversation != nil || unit.canTestOut || !unit.mistakes.isEmpty || unit.pattern != nil
+      || unit.pronunciation != nil
+    {
       Section {
-        ForEach(unit.grammarTips, id: \.self) { tip in
-          DisclosureGroup {
-            Text(
-              (try? AttributedString(markdown: tip.text)) ?? AttributedString(tip.text),
-              legibility: legibilityWeight
-            )
-            .foregroundStyle(.mutedForeground)
+        if let conversation = unit.conversation {
+          conversationRow(conversation)
+        }
+
+        if unit.canTestOut {
+          Button {
+            router.open(.testOut(chapterId: unit.unit.chapterId))
           } label: {
-            Text(tip.title)
+            ListRow(
+              Text(
+                "Already know this?", tableName: "Plan", comment: "Offers the chapter's test-out"),
+              description: Text(
+                "Take the test and skip the unit", tableName: "Plan",
+                comment: "What the unit's test-out does")
+            ) {
+              KindDot(kind: .practice)
+            }
+            .disclosureChevron()
           }
         }
+
+        if !unit.mistakes.isEmpty {
+          DisclosureGroup {
+            ForEach(unit.mistakes) { mistake in
+              mistakeRow(mistake)
+            }
+          } label: {
+            ListRow(
+              Text("Your mistakes", tableName: "Plan", comment: "Section of a unit's mistakes")
+            ) {
+              KindDot(kind: .mistakes)
+            } trailing: {
+              Text(unit.mistakes.count, format: .number)
+            }
+          }
+        }
+
+        patternAndPronunciation
       } header: {
         SectionTitle(
-          Text("Grammar tips", tableName: "Plan", comment: "Section of a unit's grammar tips"))
+          Text("Practice", tableName: "Plan", comment: "Section of a chapter's practice"))
       }
     }
 
-    if let words = unit.words, words.count > 0 {
-      Section {
-        Text(words.sample.formatted(.list(type: .and)))
+    reference
+  }
+
+  /// Main's `PracticeConversation`: a row that opens the call's setup, or says calls are paused.
+  @ViewBuilder
+  private func conversationRow(_ conversation: LanguageUnit.Conversation) -> some View {
+    let title = Text(
+      "Practice a conversation", tableName: "Plan", comment: "Section of the unit's practice call")
+
+    if conversation.paused {
+      ListRow(
+        title,
+        description: Text(
+          "Calls are paused", tableName: "Plan", comment: "Practice calls are paused for everyone")
+      ) {
+        KindDot(kind: .conversation)
+      }
+    } else {
+      Button {
+        isCallOpen = true
+      } label: {
+        ListRow(
+          title,
+          description: conversation.character.map { character in
+            Text(
+              "with \(character.name)\u{00A0}· \(character.role)", tableName: "Plan",
+              comment: "Who the practice call is with: the character's name and role")
+          }
+        ) {
+          KindDot(kind: .conversation)
+        }
+      }
+      .sheet(isPresented: $isCallOpen) {
+        NavigationStack {
+          ZoonkList {
+            PracticeCallSection(
+              conversation: conversation, chapterId: unit.unit.chapterId, goalId: unit.goalId,
+              minutes: $callMinutes, start: callStart
+            ) { conversationId in
+              isCallOpen = false
+              router.open(.conversation(conversationId: conversationId))
+            }
+          }
+        }
+        .presentationDetents([.medium, .large])
+      }
+    }
+  }
+
+  private func mistakeRow(_ mistake: LanguageUnit.Mistake) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      skillName(mistake.skill)
+        .typeStyle(.meta.weight(.medium))
+        .foregroundStyle(.mutedForeground)
+
+      LessonTextBlocks(mistake.question)
+        .typeStyle(.body.weight(.medium))
+
+      if let answer = mistake.answer {
+        MistakeAnswerRow(text: answer, isRight: false, isLiteral: true)
+      }
+
+      if let correctAnswer = mistake.correctAnswer {
+        MistakeAnswerRow(text: correctAnswer, isRight: true, isLiteral: true)
+      }
+
+      if let explanation = mistake.explanation {
+        LessonTextBlocks(explanation)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
+      }
+    }
+    .padding(.vertical, 4)
+  }
+
+  @ViewBuilder
+  private var patternAndPronunciation: some View {
+    if let pattern = unit.pattern {
+      Button {
+        router.open(.pattern(patternId: pattern.id))
+      } label: {
+        if pattern.kind == "typos" {
+          practiceRow(
+            title: Text("Just typos", tableName: "Plan", comment: "Recent mistakes were slips"),
+            detail: Text(
+              "Your recent mistakes were typos, not a rule to learn.", tableName: "Plan"),
+            systemImage: "keyboard")
+        } else {
+          practiceRow(
+            title: Text(
+              "We noticed a pattern", tableName: "Plan",
+              comment: "A rule the learner keeps getting wrong, noticed in the unit's mistakes"),
+            detail: Text(pattern.title), systemImage: "sparkles")
+        }
+      }
+    }
+
+    if let pronunciation = unit.pronunciation {
+      Button {
+        router.open(.pronunciation(goalId: unit.goalId))
+      } label: {
+        practiceRow(
+          title: Text(
+            "Say \(pronunciation.count) words again", tableName: "Plan",
+            comment: "Mispronounced words due to be said again today"),
+          detail: Text(pronunciation.words.formatted(.list(type: .and))),
+          systemImage: "mic")
+      }
+    }
+  }
+
+  /// Main's "For reference": the unit's grammar tips, its words and its lessons' summaries, folded.
+  @ViewBuilder
+  private var reference: some View {
+    let words = unit.words.flatMap { $0.count > 0 ? $0 : nil }
+
+    if !unit.grammarTips.isEmpty || words != nil || !unit.summaries.isEmpty {
+      Section {
+        if !unit.grammarTips.isEmpty {
+          DisclosureGroup {
+            ForEach(unit.grammarTips, id: \.self) { tip in
+              VStack(alignment: .leading, spacing: 4) {
+                Text(tip.title)
+                  .typeStyle(.body.weight(.semibold))
+                  .accessibilityAddTraits(.isHeader)
+                Text(
+                  (try? AttributedString(markdown: tip.text)) ?? AttributedString(tip.text),
+                  legibility: legibilityWeight
+                )
+                .foregroundStyle(.mutedForeground)
+              }
+            }
+          } label: {
+            ListRow(
+              Text("Grammar tips", tableName: "Plan", comment: "Section of a unit's grammar tips")
+            ) {
+              referenceMark("book.pages")
+            } trailing: {
+              Text(unit.grammarTips.count, format: .number)
+            }
+          }
+        }
+
+        if let words {
+          DisclosureGroup {
+            Text(wordsLine(words))
+              .foregroundStyle(.mutedForeground)
+          } label: {
+            ListRow(
+              Text(
+                "Words in this unit", tableName: "Plan",
+                comment: "Folds a few of the words a unit teaches")
+            ) {
+              referenceMark("translate")
+            } trailing: {
+              Text(words.count, format: .number)
+            }
+          }
+        }
+
+        if !unit.summaries.isEmpty {
+          DisclosureGroup {
+            LessonSummaries(summaries: unit.summaries)
+          } label: {
+            ListRow(
+              Text("Unit summary", tableName: "Plan", comment: "Folds a unit's lesson summaries")
+            ) {
+              // Main's lucide NotebookText, as on the chapter page.
+              referenceMark("text.book.closed")
+            }
+          }
+        }
       } header: {
         SectionTitle(
           Text(
-            "\(words.count) words", tableName: "Plan",
-            comment: "Section of a unit's words, with how many it teaches"))
+            "For reference", tableName: "Plan",
+            comment: "Section of a chapter with its mind map and summaries, to look back at"))
       }
     }
+  }
 
-    if !unit.summaries.isEmpty {
-      Section {
-        DisclosureGroup {
-          LessonSummaries(summaries: unit.summaries)
-        } label: {
-          Label {
-            Text("Unit summary", tableName: "Plan", comment: "Folds a unit's lesson summaries")
-          } icon: {
-            Image(systemName: "checklist")
-          }
-        }
-      }
+  private func referenceMark(_ systemImage: String) -> some View {
+    Image(systemName: systemImage)
+      .resizable()
+      .scaledToFit()
+      .frame(width: markSize, height: markSize)
+      .accessibilityHidden(true)
+  }
+
+  /// A few of the unit's words, then how many more it teaches: "hola · gracias · adiós and 12 more".
+  private func wordsLine(_ words: LanguageUnit.Words) -> String {
+    let sample = words.sample.joined(separator: "\u{00A0}· ")
+    let more = words.count - words.sample.count
+
+    guard more > 0 else {
+      return sample
     }
 
-    if unit.canTestOut {
-      Section {
-        Button {
-          router.open(.testOut(chapterId: unit.unit.chapterId))
-        } label: {
-          VStack(alignment: .leading, spacing: 2) {
-            Text(
-              "Already know this?", tableName: "Plan", comment: "Offers the chapter's test-out"
-            )
-            .foregroundStyle(.primary)
-
-            Text(
-              "Take the test and skip the unit", tableName: "Plan",
-              comment: "What the unit's test-out does"
-            )
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-          }
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .disclosureChevron()
-        }
-      }
-    }
-
-    if !unit.mistakes.isEmpty {
-      Section {
-        ForEach(unit.mistakes) { mistake in
-          VStack(alignment: .leading, spacing: 8) {
-            skillName(mistake.skill)
-              .typeStyle(.meta.weight(.medium))
-              .foregroundStyle(.mutedForeground)
-
-            LessonTextBlocks(mistake.question)
-              .typeStyle(.body.weight(.medium))
-
-            if let answer = mistake.answer {
-              MistakeAnswerRow(text: answer, isRight: false, isLiteral: true)
-            }
-
-            if let correctAnswer = mistake.correctAnswer {
-              MistakeAnswerRow(text: correctAnswer, isRight: true, isLiteral: true)
-            }
-
-            if let explanation = mistake.explanation {
-              LessonTextBlocks(explanation)
-                .typeStyle(.note)
-                .foregroundStyle(.mutedForeground)
-            }
-          }
-          .padding(.vertical, 4)
-        }
-      } header: {
-        SectionTitle(
-          Text("Your mistakes", tableName: "Plan", comment: "Section of a unit's mistakes"))
-      }
-    }
-
-    if unit.pattern != nil || unit.pronunciation != nil {
-      Section {
-        if let pattern = unit.pattern {
-          Button {
-            router.open(.pattern(patternId: pattern.id))
-          } label: {
-            if pattern.kind == "typos" {
-              practiceRow(
-                title: Text("Just typos", tableName: "Plan", comment: "Recent mistakes were slips"),
-                detail: Text(
-                  "Your recent mistakes were typos, not a rule to learn.", tableName: "Plan"),
-                systemImage: "keyboard")
-            } else {
-              practiceRow(
-                title: Text(
-                  "We noticed a pattern", tableName: "Plan",
-                  comment: "A rule the learner keeps getting wrong, noticed in the unit's mistakes"),
-                detail: Text(pattern.title), systemImage: "sparkles")
-            }
-          }
-        }
-
-        if let pronunciation = unit.pronunciation {
-          Button {
-            router.open(.pronunciation(goalId: unit.goalId))
-          } label: {
-            practiceRow(
-              title: Text(
-                "Say \(pronunciation.count) words again", tableName: "Plan",
-                comment: "Mispronounced words due to be said again today"),
-              detail: Text(pronunciation.words.formatted(.list(type: .and))),
-              systemImage: "mic")
-          }
-        }
-      }
-    }
+    return String(
+      localized: "\(sample) and \(more.formatted()) more", table: "Plan",
+      comment: "A few of a unit's words, then how many more it teaches")
   }
 
   private func practiceRow(title: Text, detail: Text, systemImage: String) -> some View {
@@ -481,21 +581,37 @@ private struct LanguageUnitContent: View {
     }
   }
 
+  /// Where the unit sits, then its lessons and their time; the lesson list counts how many are done.
+  private var facts: [String] {
+    let lessons = unit.lessons
+    let minutes = lessons.reduce(0) { $0 + $1.minutes }
+
+    return [
+      place,
+      lessons.isEmpty
+        ? nil
+        : String(
+          localized: "\(lessons.count) lessons", table: "Plan",
+          comment: "How many lessons a chapter has"),
+      minutes > 0 ? planDurationText(minutes: Double(minutes)) : nil,
+    ].compactMap { $0 }
+  }
+
   /// A unit outside the learner's plan has no number.
-  private var place: Text? {
+  private var place: String? {
     let range = unit.unit.levelRange.flatMap { $0.isEmpty ? nil : $0 }
 
     guard let position = unit.unit.position else {
-      return range.map { Text($0) }
+      return range
     }
 
     if let range {
-      return Text(
-        "Unit \(position)\u{00A0}· \(range)", tableName: "Plan",
+      return String(
+        localized: "Unit \(position)\u{00A0}· \(range)", table: "Plan",
         comment: "A unit's number and its level range")
     }
 
-    return Text("Unit \(position)", tableName: "Plan", comment: "A unit's number")
+    return String(localized: "Unit \(position)", table: "Plan", comment: "A unit's number")
   }
 }
 
@@ -664,5 +780,19 @@ enum PracticeCallAction: Equatable {
     } else {
       self = .start(isEnabled: limit == nil)
     }
+  }
+}
+
+/// Main's `CanDoMark`: a ring for what a unit will teach, filled green once it has.
+private struct CanDoMark: View {
+  let done: Bool
+
+  var body: some View {
+    Image(systemName: done ? "circle.fill" : "circle")
+      .imageScale(.small)
+      .typeStyle(.small)
+      .foregroundStyle(done ? Color.success : Color(.foreground).opacity(0.3))
+      .markColumn()
+      .accessibilityHidden(true)
   }
 }

@@ -1112,20 +1112,6 @@ msgctxt "95pnlV"
 msgid "Your account"
 msgstr "Tu cuenta"
 
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-#: src/components/pricing/plus-adds.tsx
-#: src/components/pricing/plus-plan.tsx
-msgctxt "lOdoIb"
-msgid "Plus"
-msgstr "Plus"
-
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-adds.tsx
-msgctxt "tf1lIh"
-msgid "Free"
-msgstr "Gratis"
-
 #. The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
@@ -1310,12 +1296,6 @@ msgctxt "40quiV"
 msgid "Your answers shape your examples and your buddy. Everything is optional."
 msgstr "Tus respuestas nos ayudan a personalizar los ejemplos y tu compañero. Todo es opcional."
 
-#: src/app/[lang]/(app)/(settings)/settings/about-you/about-you-split.tsx
-#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Cerrar"
-
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "uOIiKt"
 msgid "Language and region"
@@ -1477,6 +1457,14 @@ msgstr "No pudimos procesar tu último pago de renovación."
 msgctxt "gTWrWX"
 msgid "Through the website"
 msgstr "A través del sitio web"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+#: src/components/pricing/plus-adds.tsx
+#: src/components/pricing/plus-plan.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "1y_a8B"
@@ -2420,6 +2408,11 @@ msgctxt "ugxven"
 msgid "While you study"
 msgstr "Mientras estudias"
 
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Cerrar"
+
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 #: src/app/[lang]/c/[code]/page.tsx
 msgctxt "kgqbTN"
@@ -3039,6 +3032,12 @@ msgstr "Lo que tienes ahora"
 msgctxt "gptbpf"
 msgid "Included in Plus"
 msgstr "Incluido en Plus"
+
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-adds.tsx
+msgctxt "tf1lIh"
+msgid "Free"
+msgstr "Gratis"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "NynllM"

@@ -43,7 +43,6 @@
   "language_skill_writing": "a69ec6108866703316e7eb2b197a5a1b0da25ee1dee7c47fb382ef4bd67a7a21",
   "language_unit_about": "206d860f7266ac8b89527bea711f2f9a972072f4f8b7c9e27c6ca830f6e418bd",
   "language_unit_continue": "52e48c19941addb535cb06c888d4069e41fa2cedb1c795eb98c39d8ff8344496",
-  "language_unit_done_share": "0702a50a0126b6ef28697d440f965a1c48ac31916f639709e3a1a2bfb492c6e7",
   "language_unit_eyebrow": "6d29a70f1f688dcd42808eaa05d1d7cc5181813b88c61a626cab614500fec34d",
   "language_unit_grammar_tips": "9a3999302c86b05ebe5017195d2b00eb593c9a07c391281d5ae993e4514a8009",
   "language_unit_lessons": "616749498bc60c5f6b01cce121ce6d35ba62d2c6d8a7e3ae49f9128d9a44432b",
@@ -65,7 +64,6 @@
         <item quantity="other">레슨 %d개</item>
     </plurals>
     <!-- How much of the unit is done, the unit being the subject: "33% done". -->
-    <string name="language_unit_done_share">%1$s 완료</string>
     <string name="language_unit_start">시작하기</string>
     <string name="language_unit_continue">계속하기</string>
     <string name="language_unit_objectives">이 단원을 마치면</string>

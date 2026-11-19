@@ -10,9 +10,10 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ListGroup,
   ListRow,
@@ -21,6 +22,7 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
+import { SIDE_DETAIL_PLACE_CLASS, SideDetail, useSideColumn } from "../_components/side-detail";
 import { type BuddyGlassesOption, BuddyGlassesPicker } from "../buddies/buddy-glasses-picker";
 import { BUDDY_GLASSES } from "../buddies/buddy-labels";
 import { type BuddyChoice, type BuddyLook, BuddyPicker } from "../buddies/buddy-picker";
@@ -33,6 +35,7 @@ function toGlassesOptions(available: BuddyGlasses[]): BuddyGlassesOption[] {
 }
 
 export function BuddyEditor({
+  beside = false,
   glasses,
   initial,
   look,
@@ -40,6 +43,8 @@ export function BuddyEditor({
   onSave,
   picked,
 }: {
+  /** Open in the settings' aside, beside the row that opened it, instead of over the page. */
+  beside?: boolean;
   glasses?: BuddyGlassesOption[];
   initial: BuddyChoice;
   look: BuddyLook;
@@ -64,6 +69,44 @@ export function BuddyEditor({
     choice.glasses !== initial.glasses ||
     name !== initial.name;
 
+  const picker = (
+    <>
+      <BuddyPicker
+        choice={choice}
+        look={look}
+        onChange={setChoice}
+        showDefaultName={!initial.name}
+      />
+
+      {glasses && (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-medium">{t("Glasses")}</p>
+          <BuddyGlassesPicker
+            kind={choice.kind}
+            look={look}
+            onChange={(next) => setChoice({ ...choice, glasses: next })}
+            options={glasses}
+            value={choice.glasses}
+          />
+        </div>
+      )}
+    </>
+  );
+
+  const save = (
+    <Button disabled={!changed} onClick={() => onSave({ ...choice, name })} size="lg">
+      {t("Save")}
+    </Button>
+  );
+
+  if (beside) {
+    return (
+      <SideDetail footer={save} onClose={onClose} title={t("Your buddy")}>
+        {picker}
+      </SideDetail>
+    );
+  }
+
   return (
     <Drawer
       onOpenChange={(open) => {
@@ -78,36 +121,34 @@ export function BuddyEditor({
           <DrawerTitle>{t("Your buddy")}</DrawerTitle>
         </SheetHeader>
 
-        {/* One gap between the cards, the name and the glasses, the picker's own. */}
-        <DrawerContent className="flex flex-col gap-5 pt-2">
-          <BuddyPicker
-            choice={choice}
-            look={look}
-            onChange={setChoice}
-            showDefaultName={!initial.name}
-          />
+        <DrawerContent className="flex flex-col gap-5 pt-2">{picker}</DrawerContent>
 
-          {glasses && (
-            <div className="flex flex-col gap-2">
-              <p className="text-sm font-medium">{t("Glasses")}</p>
-              <BuddyGlassesPicker
-                kind={choice.kind}
-                look={look}
-                onChange={(next) => setChoice({ ...choice, glasses: next })}
-                options={glasses}
-                value={choice.glasses}
-              />
-            </div>
-          )}
-        </DrawerContent>
-
-        <DrawerFooter>
-          <Button disabled={!changed} onClick={() => onSave({ ...choice, name })} size="lg">
-            {t("Save")}
-          </Button>
-        </DrawerFooter>
+        <DrawerFooter>{save}</DrawerFooter>
       </DrawerPopup>
     </Drawer>
+  );
+}
+
+/**
+ * The learner's buddy, whole, in the section's aside until its editor opens there. The row beside
+ * it names it, so this only shows it.
+ */
+function BuddyBeside({ buddy, look }: { buddy: AppearanceBuddy; look: BuddyLook }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(SIDE_DETAIL_PLACE_CLASS, "hidden items-center pt-16")}
+      data-slot="buddy-beside"
+    >
+      <Buddy
+        beltColor={look.beltColor}
+        className="size-44"
+        energy={look.energy}
+        glasses={buddy.glasses}
+        kind={buddy.kind}
+        studiedToday={look.studiedToday}
+      />
+    </div>
   );
 }
 
@@ -147,32 +188,45 @@ export function BuddySettings({
 }) {
   const t = useExtracted();
   const [isEditing, setIsEditing] = useState(false);
+  const beside = useSideColumn();
+  const trigger = useRef<HTMLButtonElement>(null);
+
+  const close = () => {
+    setIsEditing(false);
+    trigger.current?.focus();
+  };
 
   return (
-    <ListGroup>
-      <ListRow className="items-center">
-        <CurrentBuddy look={look} buddy={buddy} />
+    <>
+      <ListGroup>
+        <ListRow className="items-center">
+          <CurrentBuddy look={look} buddy={buddy} />
 
-        <Button
-          aria-haspopup="dialog"
-          className="shrink-0"
-          onClick={() => setIsEditing(true)}
-          size="lg"
-          variant="outline"
-        >
-          {buddy.picked ? t("Change") : t("Choose your buddy")}
-        </Button>
-      </ListRow>
+          <Button
+            aria-haspopup={beside ? undefined : "dialog"}
+            className="shrink-0"
+            onClick={() => setIsEditing(true)}
+            ref={trigger}
+            size="lg"
+            variant="outline"
+          >
+            {buddy.picked ? t("Change") : t("Choose your buddy")}
+          </Button>
+        </ListRow>
+      </ListGroup>
+
+      {!isEditing && <BuddyBeside buddy={buddy} look={look} />}
 
       {isEditing && (
         <BuddyEditor
+          beside={beside}
           glasses={toGlassesOptions(availableGlasses)}
           initial={{ glasses: buddy.glasses, kind: buddy.kind, name: buddy.name ?? "" }}
           look={look}
-          onClose={() => setIsEditing(false)}
+          onClose={close}
           picked={buddy.picked}
           onSave={(choice) => {
-            setIsEditing(false);
+            close();
 
             onSave({
               glasses: choice.glasses,
@@ -182,6 +236,6 @@ export function BuddySettings({
           }}
         />
       )}
-    </ListGroup>
+    </>
   );
 }

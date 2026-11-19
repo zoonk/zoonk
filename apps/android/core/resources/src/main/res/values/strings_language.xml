@@ -7,7 +7,6 @@
         <item quantity="other">%d lessons</item>
     </plurals>
     <!-- How much of the unit is done, the unit being the subject: "33% done". -->
-    <string name="language_unit_done_share">%1$s done</string>
     <string name="language_unit_start">Start</string>
     <string name="language_unit_continue">Continue</string>
     <string name="language_unit_objectives">By the end of this unit</string>

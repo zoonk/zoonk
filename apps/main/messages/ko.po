@@ -1112,20 +1112,6 @@ msgctxt "95pnlV"
 msgid "Your account"
 msgstr "내 계정"
 
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-#: src/components/pricing/plus-adds.tsx
-#: src/components/pricing/plus-plan.tsx
-msgctxt "lOdoIb"
-msgid "Plus"
-msgstr "Plus"
-
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-adds.tsx
-msgctxt "tf1lIh"
-msgid "Free"
-msgstr "무료"
-
 #. The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
@@ -1310,12 +1296,6 @@ msgctxt "40quiV"
 msgid "Your answers shape your examples and your buddy. Everything is optional."
 msgstr "답변에 맞춰 예시와 짝꿍이 달라져요. 모든 항목은 선택 사항이에요."
 
-#: src/app/[lang]/(app)/(settings)/settings/about-you/about-you-split.tsx
-#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "닫기"
-
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "uOIiKt"
 msgid "Language and region"
@@ -1477,6 +1457,14 @@ msgstr "최근 갱신 결제에 실패했어요."
 msgctxt "gTWrWX"
 msgid "Through the website"
 msgstr "웹사이트에서 구독"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+#: src/components/pricing/plus-adds.tsx
+#: src/components/pricing/plus-plan.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "1y_a8B"
@@ -2420,6 +2408,11 @@ msgctxt "ugxven"
 msgid "While you study"
 msgstr "학습 중"
 
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "닫기"
+
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 #: src/app/[lang]/c/[code]/page.tsx
 msgctxt "kgqbTN"
@@ -3039,6 +3032,12 @@ msgstr "현재 이용 중"
 msgctxt "gptbpf"
 msgid "Included in Plus"
 msgstr "Plus에 포함된 혜택"
+
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-adds.tsx
+msgctxt "tf1lIh"
+msgid "Free"
+msgstr "무료"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "NynllM"

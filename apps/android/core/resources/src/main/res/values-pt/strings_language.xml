@@ -43,7 +43,6 @@
   "language_skill_writing": "0c211ff3a1c65eaef79721fbc548294edca918698c607c0df36a5e5f3936a04a",
   "language_unit_about": "17e20e9672ddb81670fa8928a32341702b3f16fb7639bcae45441b7cbd4ac816",
   "language_unit_continue": "bcb5d8e1fab57510bef013b78c766dc70a6ad5d864fce9d09525e3dff37575b8",
-  "language_unit_done_share": "2e9d0ba3def927cbe7205bc3010c3c50f7948762ee48ac4581f6946c6c38ecd5",
   "language_unit_eyebrow": "51cec455112746f41263b276d000127545c5cfc26d83ec6c222070c97110f007",
   "language_unit_grammar_tips": "6d7be2db23e0dba54c01be83a2a7d224b9950555a3ee7374ca96f53815aa99ee",
   "language_unit_lessons": "d3ddb6533a4a00f3100f0825494847dac8048f8327a098648a41bc6fbd4dbfd5",
@@ -67,7 +66,6 @@
         <item quantity="other">%d aulas</item>
     </plurals>
     <!-- How much of the unit is done, the unit being the subject: "33% done". -->
-    <string name="language_unit_done_share">%1$s concluído</string>
     <string name="language_unit_start">Começar</string>
     <string name="language_unit_continue">Continuar</string>
     <string name="language_unit_objectives">Ao final desta unidade</string>

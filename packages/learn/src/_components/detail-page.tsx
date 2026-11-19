@@ -127,11 +127,14 @@ export function DetailContinueLink({
   );
 }
 
+/** How much is done, as a whole percent; nothing until there is some, since "0% done" says nothing. */
 export function useDoneShare() {
   const t = useExtracted();
 
-  return (share: number): string =>
-    t("{percent}% done", { percent: String(Math.round(Math.min(Math.max(share, 0), 1) * 100)) });
+  return function doneShare(share: number): string | null {
+    const percent = Math.round(Math.min(Math.max(share, 0), 1) * 100);
+    return percent > 0 ? t("{percent}% done", { percent: String(percent) }) : null;
+  };
 }
 
 export function DetailAsideSection({

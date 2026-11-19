@@ -43,7 +43,6 @@
   "language_skill_writing": "24e9096a44e57bb07166d4be69ae50c99628c985d964d8875af55520aca30319",
   "language_unit_about": "6d26f5301ce2c86ffb86820315fae713a29c084110b66ab7d9ed95265ac997e2",
   "language_unit_continue": "3eb55a530d73733bf7eba1a36e36490dc1fedb6d32254553f5f30de4166046b8",
-  "language_unit_done_share": "d104804f3b0296422fd774f89871dc6b7f135f76062aada54e768a182b015b84",
   "language_unit_eyebrow": "6e29a323892ee5773d593a84ee45cbadd023a6b0b76490854a99df6eeabfd525",
   "language_unit_grammar_tips": "717a1af8ba1961a01eb098d46adc2483dbaec62b64a342731c29928a532ea8b6",
   "language_unit_lessons": "eea8aff3a7c974320d22a722d219d5aff938cf93ffc568e317652631e298980f",
@@ -67,7 +66,6 @@
         <item quantity="other">%d lezioni</item>
     </plurals>
     <!-- How much of the unit is done, the unit being the subject: "33% done". -->
-    <string name="language_unit_done_share">Completata al %1$s</string>
     <string name="language_unit_start">Inizia</string>
     <string name="language_unit_continue">Continua</string>
     <string name="language_unit_objectives">Alla fine di questa unità</string>
