@@ -16,17 +16,13 @@ const MS_PER_DAY = 86_400_000;
 const TODAY = new Date("2026-11-03T00:00:00Z");
 const STARTED = new Date("2026-09-14T00:00:00Z");
 
-/** The (stats) layout: the section bar on phones, "All goals" and the tabs from a tablet up. */
+/** The (stats) layout: the section bar on phones, the tabs from a tablet up. */
 function StatsSection({ children, path }: { children: React.ReactNode; path: string }) {
   const t = useExtracted();
   (globalThis as any).__BUDDY_PATH = path;
 
   return (
-    <SectionPage
-      eyebrow={t("All goals")}
-      hub={{ href: "/stats", title: t("Statistics") }}
-      nav={null}
-    >
+    <SectionPage hub={{ href: "/stats", title: t("Statistics") }} measure="list" nav={null}>
       {children}
     </SectionPage>
   );
