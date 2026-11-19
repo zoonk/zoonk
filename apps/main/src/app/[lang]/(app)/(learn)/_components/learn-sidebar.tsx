@@ -6,7 +6,7 @@ import {
   SidebarBody,
   SidebarFooter,
   SidebarHeader,
-  SidebarHeaderRow,
+  SidebarToggleRow,
 } from "@zoonk/ui/components/sidebar";
 import { SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -41,11 +41,12 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
   return (
     <Sidebar aria-label={t("Sidebar")} className="gap-4">
       <SidebarHeader className="gap-4">
-        {/* 44px, as tall as a page's bar, so the goal and the page's way back share a line. */}
-        <SidebarHeaderRow className="min-h-11">
-          <LearnGoalMenu placement="sidebar" />
+        <SidebarToggleRow>
           <SidebarToggle collapseLabel={t("Collapse sidebar")} expandLabel={t("Expand sidebar")} />
-        </SidebarHeaderRow>
+        </SidebarToggleRow>
+        <div className="flex h-8 min-w-0 items-center">
+          <LearnGoalMenu placement="sidebar" />
+        </div>
         <LearnSidebarSearch />
       </SidebarHeader>
 
@@ -54,13 +55,7 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
         <LearnerSections />
       </SidebarBody>
 
-      {/* The footer sits on the bottom edge, so its first row grows upward and moves nothing. */}
       <SidebarFooter>
-        <SidebarToggle
-          className="sidebar-collapsed:flex hidden"
-          collapseLabel={t("Collapse sidebar")}
-          expandLabel={t("Expand sidebar")}
-        />
         <VisitorStartButton />
         <LearnSidebarFeedback />
         <SidebarAccount visitor={<VisitorAccount />} />

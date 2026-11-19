@@ -175,7 +175,7 @@ const TOGGLE = {
     ),
     tooltipSide: "bottom",
   },
-  // A sidebar item's square: its glyph ends where the items' counts and keycaps end.
+  // A sidebar item's square: its glyph sits on the line of the items' icons.
   start: {
     Icon: PanelLeftIcon,
     className: cn(SIDEBAR_ITEM_CLASS, "w-8 shrink-0 justify-center px-0"),

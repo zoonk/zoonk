@@ -52,18 +52,15 @@ export function SidebarHeader({ className, ...props }: React.ComponentProps<"div
 }
 
 /**
- * Its last child (the toggle) ends the row. Collapsed, the toggle hides and the rest draw their
- * icon-only form in place, so the row keeps its height and nothing under it moves; the sidebar
- * draws its expand toggle elsewhere (`SidebarFooter`'s first child).
+ * The sidebar's first row, as tall as a page's bar, so the toggle and a page's way back share a
+ * line. The toggle holds it alone at both widths, in the window's start corner, so pressing it
+ * never moves it and a second press needs no aim.
  */
-export function SidebarHeaderRow({ className, ...props }: React.ComponentProps<"div">) {
+export function SidebarToggleRow({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "sidebar-collapsed:*:last:hidden flex min-w-0 items-center justify-between gap-1",
-        className,
-      )}
-      data-slot="sidebar-header-row"
+      className={cn("flex h-11 items-center", className)}
+      data-slot="sidebar-toggle-row"
       {...props}
     />
   );
