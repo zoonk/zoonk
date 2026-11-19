@@ -2,9 +2,34 @@
 
 import { type ProfileQuestionsView } from "@zoonk/core/profile/questions/contract";
 import { AboutYouScreen } from "@zoonk/learn/about-you";
+import { isFocusLost } from "@zoonk/learn/focus-lost";
 import { useSideColumn } from "@zoonk/learn/side-detail";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useSelectedLayoutSegment } from "next/navigation";
+import { createContext, use, useCallback, useLayoutEffect, useRef } from "react";
+
+/** Tells the tab which question its detail shows now, and hears back whether it replaced another. */
+const ShowQuestionContext = createContext<(question: string | null) => boolean>(() => false);
+
+/**
+ * Save leaves with the question it saved, so the one that takes its place beside the list takes
+ * focus on its title. A question nobody can see is the list alone: nothing has taken a place.
+ */
+export function useFocusQuestionThatReplaced(question: string) {
+  const show = use(ShowQuestionContext);
+
+  useLayoutEffect(() => {
+    const title = document.querySelector<HTMLElement>(
+      '[data-slot="settings-detail"] [data-slot="page-title"]',
+    );
+
+    const replaced = show(title?.checkVisibility() ? question : null);
+
+    if (replaced && isFocusLost(document.activeElement)) {
+      title?.focus({ preventScroll: true });
+    }
+  }, [question, show]);
+}
 
 /**
  * From `xl`, for whoever has a session, the questions are a list at the start and the open one
@@ -28,15 +53,27 @@ export function AboutYouSplit({
   list: React.ReactNode;
 }) {
   const picked = useSelectedLayoutSegment() !== null;
+  const shown = useRef<string | null>(null);
+
+  const show = useCallback((question: string | null) => {
+    const replaced = shown.current !== null && question !== null && shown.current !== question;
+    shown.current = question;
+    return replaced;
+  }, []);
 
   return (
-    <div className={SPLIT_CLASS}>
-      <div className={picked ? LIST_WHILE_PICKED_CLASS : "contents"}>{list}</div>
+    <ShowQuestionContext value={show}>
+      <div className={SPLIT_CLASS}>
+        <div className={picked ? LIST_WHILE_PICKED_CLASS : "contents"}>{list}</div>
 
-      <div className={cn(picked ? "contents" : "hidden", DETAIL_CLASS)} data-slot="settings-detail">
-        {children}
+        <div
+          className={cn(picked ? "contents" : "hidden", DETAIL_CLASS)}
+          data-slot="settings-detail"
+        >
+          {children}
+        </div>
       </div>
-    </div>
+    </ShowQuestionContext>
   );
 }
 
