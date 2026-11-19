@@ -144,7 +144,7 @@ function SkipProfileButton({ disabled, onSkip }: { disabled: boolean; onSkip: ()
         aria-describedby={descriptionId}
         disabled={disabled}
         onClick={onSkip}
-        size="sm"
+        size="bar"
         variant="ghost"
       >
         {t({
