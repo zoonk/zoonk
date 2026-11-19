@@ -122,7 +122,8 @@ export function CompletedLessonsScreen({
       <DetailHero>
         <DetailHeroText>
           <DetailTitle>{t("Completed lessons")}</DetailTitle>
-          <PageSubtitle>{goalTitle}</PageSubtitle>
+          {/* The sidebar names the goal from `lg`; under it the bar is the way back, so the page does. */}
+          <PageSubtitle className="lg:hidden">{goalTitle}</PageSubtitle>
         </DetailHeroText>
       </DetailHero>
 
