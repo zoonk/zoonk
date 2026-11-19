@@ -212,7 +212,7 @@ export async function PatternChart({
   const bestIndex = columns.findIndex((column) => getPatternState(column) === "best");
 
   return (
-    <PageSection aria-labelledby={id} className="gap-1">
+    <PageSection aria-labelledby={id}>
       <PageSectionHeader>
         <PageSectionTitle id={id}>{title}</PageSectionTitle>
       </PageSectionHeader>
@@ -268,7 +268,7 @@ export function PatternChartSkeleton({
   titleClassName: string;
 }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-3">
       <Skeleton className={cn("my-1 h-4", titleClassName)} />
 
       <div className={CHART_CLASS} style={getColumnsStyle(columns)}>

@@ -682,7 +682,7 @@
     <string name="plan_goal_paused">Your %1$s goal is paused</string>
     <string name="plan_no_longer_fits">More lessons than days left</string>
     <string name="plan_adjust">Adjust</string>
-    <string name="plan_go_to_today">Go to Today</string>
+    <string name="plan_go_to_today">Today</string>
     <string name="plan_suggestion">Plan suggestion</string>
     <string name="plan_updated">Plan updated</string>
     <string name="plan_updated_sentence">Your plan is updated.</string>

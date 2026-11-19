@@ -73,7 +73,7 @@
     <string name="mindmaps_zoom_out">Zoom out</string>
     <string name="mindmaps_fit">Fit to screen</string>
     <string name="mindmaps_viewer_hint">Pinch, scroll or use + and - to zoom; drag or use the arrows to move.</string>
-    <string name="mindmaps_study">Study mind maps</string>
+    <string name="mindmaps_study">Study maps</string>
     <string name="mindmaps_create_all">Create all</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">No map yet</string>

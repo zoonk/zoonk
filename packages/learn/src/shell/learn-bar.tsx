@@ -16,6 +16,7 @@ import {
   nameAppEntry,
   subscribeToHistory,
 } from "./app-history";
+import { BARE_ON_COMPUTER_CLASS } from "./learn-shell";
 
 /** `PageTopBar`'s height: a title above this line is under the bar. */
 const BAR_HEIGHT_PX = 65;
@@ -185,6 +186,7 @@ export function LearnPageBar({
 
   return (
     <PageTopBar
+      className={listed && !children ? BARE_ON_COMPUTER_CLASS[listed] : undefined}
       // `data-title-away` (`group-data-title-away/page-bar`) lets an action give way to the page's
       // name on a phone, as Ask (its face alone) and a visitor's links (hidden) do.
       actions={
@@ -231,11 +233,14 @@ export function LearnSectionBar({
   end,
   history = "origin",
   listed,
+  phoneEnd,
   tabletBack,
   title,
 }: {
   back: { href: string; label?: string };
   end?: React.ReactNode;
+  /** The bar's end under `lg` only, where no sidebar holds it. */
+  phoneEnd?: React.ReactNode;
   /** A section entry returns to the page outside the section that opened it. */
   history?: "destination" | "origin" | "section-entry";
   listed?: ListedBy;
@@ -252,7 +257,15 @@ export function LearnSectionBar({
 
   return (
     <PageTopBar
-      actions={end}
+      actions={
+        (end || phoneEnd) && (
+          <>
+            {end}
+            {phoneEnd && <div className="contents lg:hidden">{phoneEnd}</div>}
+          </>
+        )
+      }
+      className={listed && !end ? BARE_ON_COMPUTER_CLASS[listed] : undefined}
       back={
         <>
           <LearnBackLink

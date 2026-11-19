@@ -135,67 +135,52 @@ struct BeltRack: View {
     let currentIndex = ProgressBelt.allCases.firstIndex(of: current) ?? 0
     let beltWidth: CGFloat = sizeClass == .regular ? 52 : 32
 
-    VStack(alignment: .leading, spacing: 8) {
-      VStack(spacing: 6) {
-        // The first and last belts sit on the column's edges, as the page's other parts do.
-        HStack(spacing: 0) {
-          ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
-            if index > 0 {
-              Spacer(minLength: 0)
-            }
+    VStack(spacing: 6) {
+      // The first and last belts sit on the column's edges, as the page's other parts do.
+      HStack(spacing: 0) {
+        ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
+          if index > 0 {
+            Spacer(minLength: 0)
+          }
 
-            RackBelt(belt: belt, isTied: index <= currentIndex)
-              .frame(width: beltWidth, height: sizeClass == .regular ? 38 : 26)
-              .overlay {
-                if index == currentIndex {
-                  RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(.primary, lineWidth: 1.5)
-                }
+          RackBelt(belt: belt, isTied: index <= currentIndex)
+            .frame(width: beltWidth, height: sizeClass == .regular ? 38 : 26)
+            .overlay {
+              if index == currentIndex {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                  .strokeBorder(.primary, lineWidth: 1.5)
               }
-              .accessibilityElement(children: .ignore)
-              .accessibilityLabel(Text(belt.localizedTitle))
-              .accessibilityValue(
-                index <= currentIndex
-                  ? Text("Earned", tableName: "Progress") : Text("Coming", tableName: "Progress")
-              )
-              .accessibilityAddTraits(index == currentIndex ? .isSelected : [])
-          }
-        }
-
-        // Every belt is named only when no name would crowd its neighbor's column; otherwise only
-        // the learner's, kept inside the row. The key says which are earned.
-        ViewThatFits(in: .horizontal) {
-          BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth) {
-            ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
-              name(belt, index: index, currentIndex: currentIndex)
             }
-          }
-
-          BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth, only: currentIndex)
-          {
-            name(current, index: currentIndex, currentIndex: currentIndex)
-          }
-        }
-        .accessibilityHidden(true)
-      }
-      .accessibilityElement(children: .contain)
-      .accessibilityLabel(
-        Text(
-          "Belt progression", tableName: "Progress", comment: "Title of the belts on the Level page"
-        ))
-
-      HStack(spacing: 12) {
-        keyItem(isTied: true) {
-          Text("Earned", tableName: "Progress")
-        }
-        keyItem(isTied: false) {
-          Text("Coming", tableName: "Progress")
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(belt.localizedTitle))
+            .accessibilityValue(
+              index <= currentIndex
+                ? Text("Earned", tableName: "Progress") : Text("Coming", tableName: "Progress")
+            )
+            .accessibilityAddTraits(index == currentIndex ? .isSelected : [])
         }
       }
-      .typeStyle(.small)
-      .foregroundStyle(.mutedForeground)
+
+      // Every belt is named only when no name would crowd its neighbor's column; otherwise only
+      // the learner's, kept inside the row.
+      ViewThatFits(in: .horizontal) {
+        BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth) {
+          ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
+            name(belt, index: index, currentIndex: currentIndex)
+          }
+        }
+
+        BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth, only: currentIndex) {
+          name(current, index: currentIndex, currentIndex: currentIndex)
+        }
+      }
       .accessibilityHidden(true)
     }
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel(
+      Text(
+        "Belt progression", tableName: "Progress", comment: "Title of the belts on the Level page"
+      ))
   }
 
   private func name(_ belt: ProgressBelt, index: Int, currentIndex: Int) -> some View {
@@ -207,14 +192,6 @@ struct BeltRack: View {
           : index < currentIndex ? AnyShapeStyle(.mutedForeground) : AnyShapeStyle(.faint)
       )
       .lineLimit(1)
-  }
-
-  private func keyItem(isTied: Bool, @ViewBuilder label: () -> Text) -> some View {
-    HStack(spacing: 4) {
-      RackBelt(belt: .gray, isTied: isTied)
-        .frame(width: 20, height: 20)
-      label()
-    }
   }
 }
 

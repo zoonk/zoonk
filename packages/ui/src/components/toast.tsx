@@ -12,7 +12,6 @@ import {
   XIcon,
 } from "lucide-react";
 import { type ReactNode } from "react";
-import { FRAME_GUTTER_CLASS } from "./bottom-bar";
 import { Button } from "./button";
 
 const toast = ToastPrimitive.createToastManager();
@@ -25,14 +24,12 @@ const TOAST_CLASS =
 
 /**
  * Toasts rise above a phone's tab bar and above a page's bottom bar, 12px over its top, so they never
- * cover its main action. The bar is as tall as its 44px row plus the frame's gutter over and under
- * it, so the viewport takes the frame's gutter too and the lift follows it at every size.
+ * cover its main action. The bar is its 44px row with 16px over and under it at every size.
  */
 const TOAST_VIEWPORT_CLASS = cn(
   "pointer-events-none fixed inset-x-4 z-60 mx-auto w-auto max-w-[356px] outline-none sm:right-8 sm:left-auto sm:mx-0 sm:w-full",
-  FRAME_GUTTER_CLASS,
   "bottom-[calc(var(--toast-over-tabs)+max(var(--toast-inset),var(--toast-over-bar)))] [--toast-inset:1rem] [--toast-over-bar:0px] [--toast-over-tabs:0px] sm:[--toast-inset:2rem]",
-  "in-[body:has([data-slot=bottom-bar])]:[--toast-over-bar:calc(max(1rem,var(--page-gutter))+2.75rem+max(1rem,var(--page-gutter),env(safe-area-inset-bottom))+1px+0.75rem)]",
+  "in-[body:has([data-slot=bottom-bar])]:[--toast-over-bar:calc(1rem+2.75rem+max(1rem,env(safe-area-inset-bottom))+1px+0.75rem)]",
   "max-lg:in-[body:has([data-bottom-bar])]:[--toast-over-tabs:calc(4rem+env(safe-area-inset-bottom))]",
 );
 

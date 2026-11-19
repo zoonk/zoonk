@@ -338,7 +338,7 @@ struct TodayMainAction: View {
         "Get lessons", tableName: "Today",
         comment: "Asks for the day's lessons, which aren't written yet")
     case .seePlan:
-      Text("See your plan", tableName: "Today", comment: "Opens the Plan")
+      Text("See plan", tableName: "Today", comment: "Opens the Plan")
     case .startSession:
       Text("Start", tableName: "Today", comment: "Starts today's session")
     case .summary:

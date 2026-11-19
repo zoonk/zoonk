@@ -88,7 +88,7 @@
   "onboarding_full_course_finish_month": "d8943854399fa7f2f47538bf01be69004ed2eca43ec37584dab7fa16f9d9187c",
   "onboarding_full_course_rule": "a3887ad5a7578776f312c8b6c0c32ce3fe2ac492f99dccc95ee643a76d0412d2",
   "onboarding_full_course_until_exam": "75f4bd42efbe40d7d90ff5c7ffb50ca828df83d68446a7b24ed27f726213d421",
-  "onboarding_go_to_plan": "05909fa8e4abc0fd08aaeb34bbec6beac9ba37eac9a1f8c9eefd7e611948604d",
+  "onboarding_go_to_plan": "5b41b9c6e811cf919b5034c1d19aa38d3c24d2074be445e3acce322c021c28ee",
   "onboarding_goals_at_once_line": "c7d0eb2251c2fa6c0e14a20b0c88e43f33cbcc656a96f113387cbb7860b4fa53",
   "onboarding_goals_at_once_title": "0b0e0088b309f79845abc33808bb1ea0d512d48d1efae0aa94df1b39a6037dcd",
   "onboarding_guest_gate_description": "3afe2e7693a14358b5610639fefdcb8a63c7ac0ed5864f6eba399ca6aff54551",
@@ -180,7 +180,7 @@
   "onboarding_placement_question_number": "d7d3b5a65553ceec49c944c0b8275bfdb1a23244b247e2861589c0f3d4ba9ad4",
   "onboarding_placement_ready": "2d36e8b4313365d598fe0f9b19b80852dbd7f5718d911feab5b5e25ecf6120f9",
   "onboarding_placement_right": "7a7b2d286ea906414e15037e344704ed4f686ae27b67623738c5a868d42c1db9",
-  "onboarding_placement_see_plan": "c370b9770736a2cbc27b15ef75969fc56d8cbee3cb20fb4fd1b5fa4253b057a5",
+  "onboarding_placement_see_plan": "d76005d79e553a8ebba612693fe601f0ba25b489e6658e2e4669a5c51cad94c9",
   "onboarding_placement_set_description": "64030e1a3d26b4c9c07ef224c3cd6473e06d8ea45d1fdf0984c65926f14c2afb",
   "onboarding_placement_set_title": "3aaedfc3bc054f835048286060e62e80947c3e9a6b747103c6d01aca00673eae",
   "onboarding_placement_skip_basics": "58d34b064d42f8231ffc5f011f5c75dc8f0f63b9120c34780372ccfb2a574d73",
@@ -376,13 +376,13 @@
   "onboarding_schedule_title": "05af4a62b9f97d4bccc783fabda2afb2f0008166e10eabac25b50768668a5663",
   "onboarding_score_placeholder": "bd30796be1ab8593eeb3cb9e82e8b15f47d8f526ced7d4bbf43f101de5bf0083",
   "onboarding_score_title": "c750bbbc95e8601c677fdd8c62e72dd3f42f86a06260f730e5a42bf03cf193c1",
-  "onboarding_see_plan": "9826b62bbfc4681ef2a0d4f744d01f124f1813c9bfdef5c33a5719a582cba970",
+  "onboarding_see_plan": "04a507a31e92750b17cc7897c61e89a7c3ad7bb54b5469d2259dd2952e8e0b68",
   "onboarding_skip": "21912bb22a12f3ce214f727508fece15c7c1d793584a37ef9fb595cd4b66d93b",
   "onboarding_source": "11dcbda09c33491dba7d678c3191be2a9878f9f33b0dfa2457fc44cd201811c8",
   "onboarding_start_description": "5c0a660c683e72d2f1284a4927cc863ca7c5f37be96ccf23c2d92227359bcd54",
   "onboarding_start_description_shared": "34e9f7ee09a6350d29f17ba9f3507a7ff639463677b6872bd5e41ab185e4b928",
   "onboarding_start_free": "081b3898192a307b55922f77a141164987f96bce877508f95c63334cb0ec9d3c",
-  "onboarding_start_musicianship": "c81d72fbbd63c0e0dcfdafcd447ac8fa095d57ba0d8725cea81d0d19cd249390",
+  "onboarding_start_musicianship": "ba22af40b81c4e07c1f1b3cfe341ac1255d486f87bf26581b0121b63b7c2e868",
   "onboarding_start_over": "43287ea27e367ea08c2c6ff679960d5a5b2ef0b326fda0c51f0627e37a5a5e3b",
   "onboarding_start_over_confirm": "b53fd871360be0e9bc1c9d6db9024b5a4bf756d0272263adb1958a72a474891d",
   "onboarding_start_over_description": "942dfe59dba0267e294e6c04e03186cc32b91b424322004d9054d09858893c54",
@@ -478,7 +478,7 @@
     <plurals name="onboarding_day_too_short">
         <item quantity="other">하루 %1$s 이상으로 설정하세요. 목표 %2$d개를 함께 진행하는 데 필요한 시간이에요.</item>
     </plurals>
-    <string name="onboarding_go_to_plan">내 계획으로 이동</string>
+    <string name="onboarding_go_to_plan">계획 보기</string>
     <!-- The new-goal page for a learner already studying as many goals at once as they can. -->
     <string name="onboarding_goals_at_once_title">동시에 학습할 수 있는 목표 수를 다 채웠어요</string>
     <string name="onboarding_goals_at_once_line">계획에서 목표 하나를 일시 중지해 주세요. 구독하면 더 많은 목표를 동시에 학습할 수 있어요.</string>
@@ -646,7 +646,7 @@
     <string name="onboarding_placement_right">맞아요</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">틀려요</string>
-    <string name="onboarding_placement_see_plan">내 계획 보기</string>
+    <string name="onboarding_placement_see_plan">계획 보기</string>
     <plurals name="onboarding_placement_answered">
         <item quantity="other">%d문제에 답했어요</item>
     </plurals>
@@ -940,7 +940,7 @@
     <string name="onboarding_reveal_reading_line_guide">공식 안내서에 나온 파트와 주제를 찾고 있어요…</string>
     <string name="onboarding_reveal_reading_line_dates">시험 날짜와 방식을 확인하고 있어요…</string>
     <string name="onboarding_reveal_reading_line_fit">계획에 반영하고 있어요…</string>
-    <string name="onboarding_see_plan">내 계획 보기</string>
+    <string name="onboarding_see_plan">계획 보기</string>
     <string name="onboarding_plan_ready_goal">%1$s 계획이 준비됐어요.</string>
     <string name="onboarding_reveal_start_here">여기서 시작</string>
     <string name="onboarding_reveal_up_next">다음 레슨</string>

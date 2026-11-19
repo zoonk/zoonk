@@ -3,7 +3,10 @@ import { type PageWords } from "./words.mts";
 export function pageTopComparisons(loads: { path: string; viewport: string; words: PageWords }[]) {
   const pages = loads.filter(({ words }) => words.kind !== "marketing" && words.titleTop !== null);
 
-  return [...Map.groupBy(pages, ({ viewport }) => viewport)].flatMap(([, group]) => {
+  // A bar that holds nothing gives its row to the title, so those titles compare with each other.
+  return [
+    ...Map.groupBy(pages, ({ viewport, words }) => `${viewport} ${words.titleTop?.bare}`),
+  ].flatMap(([, group]) => {
     const offsets = group.map(({ words }) => words.titleTop?.actual ?? 0);
 
     const common = [...Map.groupBy(offsets, (offset) => Math.round(offset))].toSorted(
@@ -19,7 +22,7 @@ export function pageTopComparisons(loads: { path: string; viewport: string; word
               finding: {
                 check: "E8 page tops across pages",
                 level: "warn" as const,
-                message: `the title starts ${actual} px below its frame; the most common start across this screen's pages is ${common} px`,
+                message: `the title starts ${actual} px below its frame; the most common start across this screen's pages with a bar like it is ${common} px`,
                 unit: "px",
                 value: actual - common,
               },

@@ -153,7 +153,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await expect(page.getByRole("textbox", { name: "I want to" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
 
-    await page.getByRole("link", { name: "Go to your Plan" }).click();
+    await page.getByRole("link", { name: "See plan" }).click();
     await page.getByRole("button", { name: "Plan options" }).click();
     await page.getByRole("menuitem", { name: "Pause goal" }).click();
 
@@ -187,7 +187,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await expect(page.getByText(LOCKED_NOTE)).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
 
-    await page.getByRole("link", { name: "Go to your Plan" }).click();
+    await page.getByRole("link", { name: "See plan" }).click();
     await page.getByRole("button", { name: "Plan options" }).click();
     await page.getByRole("menuitem", { name: "Pause goal" }).click();
 

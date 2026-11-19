@@ -56,8 +56,8 @@ import com.zoonk.android.ui.components.LocalButtonSize
 
 /**
  * Main's `BottomBar`: the one home of a screen's main action, pinned to the bottom over a hairline. It
- * keeps the page's margin ([pageMargin]) on all four sides of its buttons, clear of the system bars and
- * the keyboard, with its lines 8dp apart and its buttons [ButtonSize.Large]; [columnWidth] keeps them
+ * keeps the page's margin ([pageMargin]) at the sides of its buttons and [BAR_ROOM] over and under them at
+ * every window size, clear of the system bars and the keyboard, with its lines 8dp apart and its buttons [ButtonSize.Large]; [columnWidth] keeps them
  * under a page's column, which a page whose column starts at its pane's edge or keeps another side margin says
  * with [columnAtStart] and [columnMargin], so the buttons end where the column does. A [note] (an error, a status) draws over the page
  * just above the bar, so the bar never grows and its buttons never move; [noteRoom] tells the page how tall it is, for its scrolling
@@ -124,7 +124,7 @@ fun BottomBar(
                     ) {
                         CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
                             Column(
-                                Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(horizontal = columnMargin, vertical = margin),
+                                Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(horizontal = columnMargin, vertical = BAR_ROOM),
                                 verticalArrangement = Arrangement.spacedBy(BAR_GAP),
                                 content = content,
                             )
@@ -243,6 +243,9 @@ private const val BAR_NOTE_KEY = "bar-note"
 
 /** Main's gap between a bar's buttons. */
 val BAR_GAP = 8.dp
+
+/** Main's room over and under a bar's buttons: the same on a phone and a wide window, so the bar never grows with the page margin. */
+val BAR_ROOM = 16.dp
 
 /** A [BottomBar] note for what its last tap couldn't do, such as a failed save: read out as the note's slot appears. */
 @Composable

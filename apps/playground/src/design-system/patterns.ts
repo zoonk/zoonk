@@ -69,7 +69,7 @@ export const PATTERNS: readonly Pattern[] = [
       "An arrow for back.",
     ],
     follow: [
-      "`PageTop` (or `PageTopBar` in a layout with `PAGE_HEADER_CLASS` in the page): 12px, the 44px bar, 12px, then the title, the same on a phone and a computer, whether or not the bar holds anything.",
+      "`PageTop` (or `PageTopBar` in a layout with `PAGE_HEADER_CLASS` in the page): 12px, the 44px bar, 12px, then the title. A bar that holds nothing at a size (a tab's own page on a computer, where the sidebar holds the goal and the way back) gives its row to the title, which centers on it, level with the sidebar's first row.",
       "`BackLink`: a chevron and the name of the page it goes back to, the mirror of a See all row, so both keep one gap between words and chevron.",
       "The link's chevron lines up with the title's first letter; the pull follows the title's type role, so no page sets it.",
       "A full-screen task keeps ✕ instead.",
@@ -88,7 +88,7 @@ export const PATTERNS: readonly Pattern[] = [
       "`BottomBar` holds a screen's one main action, pinned at the bottom on a phone and a computer; `BottomBarActions` is its row, buttons 8px apart, the main action last. On a phone the row gives the main action what the other buttons leave, on a computer its own width at the end, so a screen never sizes it.",
       "What the last action couldn't do goes in `note`: it shows over the screen above the bar, and the buttons stay where they were.",
       "The frame tells the bar its padding and what is docked under it (`--page-gutter`, `--page-bottom`, `--page-dock`), so the same piece works in the app's shell and in a task.",
-      "The buttons have the frame's gutter on all four sides: the bar sets the room over and under them from `--page-gutter`, never a screen.",
+      "The buttons have 16px over and under them at every size and the frame's gutter at their sides: the bar sets both, never a screen.",
     ],
     id: "bottom-bar",
     summary: "The main action has one home: the bar at the bottom of the screen.",

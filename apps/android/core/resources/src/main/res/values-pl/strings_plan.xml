@@ -286,7 +286,7 @@
   "plan_full_course": "822024d11469ba6763c6b86c1aed7430ea0f8740f4223782e6d3bcb40c7931ae",
   "plan_full_course_switch": "6455c22c755ca086817d98614f6ddfd8d6c4267209657615aa6c969d7f791c18",
   "plan_gain_this_week": "a3bcc74fcd68138e71516f7dd00263672bb2ff47fe7b1208c6f93ce72cacf080",
-  "plan_go_to_today": "29b18f35a7dd5a9252a006122ff9e37a71b245b5a94deb90f5d226330b1ac15a",
+  "plan_go_to_today": "d57ac6bd9ad4516ca29eaabeea9306f0568df13c5bc0efb572971864ab7955ff",
   "plan_goal_date": "64d9f89975e54efe1862e1630e8c8c750c5dfba4639cdda302578d698ca8aba8",
   "plan_goal_limit_reached": "c11e1906d98f421aa5b101ef0a17ceb1d173733bba28401658f7d4c24c5c38ea",
   "plan_goal_paused": "933537f92adfccf676899e3895b8d778520b827afea33f261f0c054f9f39d0fd",
@@ -1317,7 +1317,7 @@
     <string name="plan_goal_paused">Twój cel jest wstrzymany: %1$s</string>
     <string name="plan_no_longer_fits">Więcej lekcji niż dni do końca</string>
     <string name="plan_adjust">Dostosuj</string>
-    <string name="plan_go_to_today">Przejdź do zakładki Dziś</string>
+    <string name="plan_go_to_today">Dziś</string>
     <string name="plan_suggestion">Propozycja planu</string>
     <string name="plan_updated">Plan zaktualizowany</string>
     <string name="plan_updated_sentence">Zaktualizowano twój plan.</string>

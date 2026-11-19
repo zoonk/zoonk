@@ -36,7 +36,7 @@ export async function ScoreTrend({
   const format = await getFormatter();
 
   return (
-    <PageSection aria-labelledby="overview-score" className="gap-1">
+    <PageSection aria-labelledby="overview-score">
       <PageSectionHeader>
         <PageSectionTitle id="overview-score">{t("Score · 90 days")}</PageSectionTitle>
         {history && (

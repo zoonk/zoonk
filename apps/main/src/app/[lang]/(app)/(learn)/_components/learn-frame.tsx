@@ -5,6 +5,7 @@ import { LearnerSeedChannel } from "@/components/learner/learner-seed-provider";
 import { VisitorBarLinks } from "@/components/login-bar-link";
 import { TabMissionsProvider } from "@/lib/learn/tab-missions-provider";
 import {
+  BARE_ON_COMPUTER_CLASS,
   FRAME_COLUMN_CLASS,
   LearnShell,
   LearnShellContent,
@@ -30,7 +31,7 @@ async function SkipToContent() {
   return <LearnSkipLink>{t("Skip to content")}</LearnSkipLink>;
 }
 
-/** From `lg` the sidebar holds the goal, search and the account, and the bar stays as room. */
+/** From `lg` the sidebar holds the goal, search and the account, so the bar holds nothing there. */
 function PhoneOnly({ children }: { children: React.ReactNode }) {
   return <div className="contents lg:hidden">{children}</div>;
 }
@@ -48,6 +49,7 @@ function LearnTopBar() {
         data-slot="learn-frame-bar"
       >
         <PageTopBar
+          className={BARE_ON_COMPUTER_CLASS.always}
           actions={
             <PhoneOnly>
               <LearnBarEnd visitor={<VisitorBarLinks />} />
@@ -65,12 +67,13 @@ function LearnTopBar() {
 }
 
 /**
- * The frame's bar is `PageTopBar`'s height; a page's aside reaches up beside it. The second rule is
- * the first paint's, before the path is known (`TabRootOnly`).
+ * The frame's bar's height where a page's aside reaches up beside it: on a computer, where the bar
+ * holds nothing and keeps only its 12px top room and hairline. The second rule is the first
+ * paint's, before the path is known (`TabRootOnly`).
  */
 const FRAME_BAR_VAR_CLASS = cn(
-  "[--frame-bar:0px] [&:has(>[data-slot=learn-frame-bar])]:[--frame-bar:calc(4rem+1px)]",
-  "[&:has(>div>[data-slot=learn-frame-bar]):not(:has([data-slot=learn-shell-main]_[data-slot=page-top-bar]))]:[--frame-bar:calc(4rem+1px)]",
+  "[--frame-bar:0px] [&:has(>[data-slot=learn-frame-bar])]:[--frame-bar:calc(0.75rem+1px)]",
+  "[&:has(>div>[data-slot=learn-frame-bar]):not(:has([data-slot=learn-shell-main]_[data-slot=page-top-bar]))]:[--frame-bar:calc(0.75rem+1px)]",
 );
 
 /**

@@ -15,13 +15,13 @@
   "goal_switcher_quick_explanations": "0ff14f269bde13b0ebb7773f754a998a49a2c11b03b5a535094889d48b517bea",
   "goal_switcher_ready_to_start": "4e810a4ce5094384edc4e71079a04b6a636451f187cff473738f7d04b2e1270e",
   "goal_switcher_start_failed": "108f83a8ec761ec346e3f80326824f93938ba52816ba5de73576f3471eeb2e9c",
-  "goal_switcher_start_goal": "11ad4758b3aece2a7c92c2e4b34f921a2d77cf4228eb5bc36e4ff3c962d26f40",
+  "goal_switcher_start_goal": "41926f036ea65181941e643de57120585099af602e68c26677234a60ee9d917c",
   "goal_switcher_starts_with_free_account": "9ece3685b7f73660d0ec5e8a4b839a5f7a194c7b3df7f48255ee4c333dc60eb1",
   "goal_switcher_your_goals": "189aec31990202f801326be80f3366653bd4780c4a08d23816bb3cf11f7f79eb"
 }
 -->
 <resources>
-    <string name="goal_switcher_start_goal">Wyznacz cel</string>
+    <string name="goal_switcher_start_goal">Nowy cel</string>
     <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
     <string name="goal_switcher_current_goal">%1$s, aktualny cel. Zmień cel</string>
     <string name="goal_switcher_your_goals">Twoje cele</string>

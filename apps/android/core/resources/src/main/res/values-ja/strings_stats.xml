@@ -18,7 +18,6 @@
   "stats_belt_gray": "ad8d6cbbeba616954c734069171db4e31c9b3ebf2ab722dab9819a6527c0f72c",
   "stats_belt_green": "29703de4a35b304c7bed084d3f4867a4a579fd15355dc3f2d098546086191808",
   "stats_belt_level": "f2e0ddbad712459747bb974e64f42640ee4f469b345847fcbf6cff3a1bae6509",
-  "stats_belt_line": "7b42915a88f4edad2a7ac5d6c0c22644a88d3b81b8c08a1ed77642dfe23404cb",
   "stats_belt_orange": "00c56a716129568fe5abf975df18b7aa990ecb8dbf724d2c9861f7699cc8bb29",
   "stats_belt_purple": "c1acaa95a66a30a4c8b064b751160771b2def233e43a6e6a473c7bbcde4a65ee",
   "stats_belt_red": "78aedf2dd8385487d8c6a114f7214125c063e14ae87809f7bdcc0129bacae9e7",
@@ -40,11 +39,10 @@
   "stats_empty_title": "5b10e4d61ccfbcb8d2c8acfcf3a8ec87e1b0da531e05eb37120c74ecaaab9d4e",
   "stats_energy": "32f6033d4147aad3f397aca196e1f62ebe9ff078d11e21339611dabf4d7baa33",
   "stats_energy_amount": "2c67628c9cdeee90eadcf4bdfdcf0d4c7edd37ca9a102bee401d490c88228b8a",
-  "stats_energy_line": "59091f231fcafd5815f584e83997330dedcc4ea2cbc384943769ba5798c33f26",
   "stats_evening": "9fafdf75fd6bb534c280dd23b1e7ddfcb2cf3217c79f6918bb727a3f5c0950ef",
   "stats_every_belt": "db1fecb6e5a872f11142316319c09b9364026a3ab23ce97fb7d38ca6fac8a62a",
   "stats_few_answers_legend": "aaa86b18ad022fa8d4cfed93b8c6a54ebaed7b8dfcba4aac9402c4418cea5bb7",
-  "stats_go_to_today": "8f3b656edcaa34f60b3bd16fbcfe84d8fe40eb6c13923e9cb4259de7e5cd57f1",
+  "stats_go_to_today": "3e126eb48fd545ab60a7a6bcbf2163cfd101bf724a8197632327379af86f4b6d",
   "stats_high": "423deceb4a8595c6156023ad5d9576cf57efd123a1c65fbfa38b5cf7cb849612",
   "stats_less": "55d81bc74b9e9c247cc6e2804addec280454530f46f2ae6bfbc0bcc3b5db6a69",
   "stats_lesson_count": "456c12604ee2c4f93bfeca801bc59f14e1aaf67fe874ceea0e22ca81ce4d7b27",
@@ -61,10 +59,10 @@
   "stats_overview": "6a925434d0b1d487401a59d62acffa8cbba73d4e2a414d681be122bfa9fae96b",
   "stats_part_failed": "d39faf0cf964e62bb471882921e130b0b041971d8be3e7fbf7c1d042d4c02b09",
   "stats_past_6_months": "ec6186a9175d188054d8845103210b8eb0b71733cc7ce56674083bfb148fde3a",
+  "stats_past_90_days": "090a65789422149adb592d194e3334e67ef57b5cd6a35c2810a40ae79d90e074",
   "stats_past_year": "60b4f68f9ccb1cebf1a7cb0bd79d7a0f19f52fa3718e85e1082a09ea3ca09a24",
   "stats_patterns": "b1a33fe2f3a09a16bdeeb25cbf42271526ef17154dcadea7cff8e3d100543df4",
   "stats_patterns_90": "2cfaee4381fd68a357e11b95e033d56ef0a93688ec5cabd3b47ebd6083b6ac2d",
-  "stats_patterns_intro": "f46d52a8619ef2295a2349bc8e21c3ff9d2a2c51a689dc6dd76dab84195d9694",
   "stats_right_in_last_days": "436e06fa1223cf6c94f56738cbdc619377d15975962f8356c771b0a570cec7f7",
   "stats_score": "34dd9931db33d2e5b227c3e81e243d95ad086b6a42e4f5b894a565c8b31f9329",
   "stats_score_90": "587d3223d7e80d5cf5099e21842863a90ffab04ec5114fad3fb98af97662e8c2",
@@ -91,7 +89,7 @@
     <string name="stats_patterns">傾向</string>
     <string name="stats_empty_title">まだ統計データがありません</string>
     <string name="stats_empty_line">最初のレッスンを終えると表示されます。</string>
-    <string name="stats_go_to_today">「今日」へ移動する</string>
+    <string name="stats_go_to_today">今日</string>
     <string name="stats_not_yet">まだ</string>
     <string name="stats_part_failed">この部分を読み込めませんでした。</string>
     <string name="stats_days_studied">学習日数</string>
@@ -107,7 +105,6 @@
     <string name="stats_brain_power_amount">脳力%1$s</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">すべての帯を獲得済み</string>
-    <string name="stats_belt_line">学習するたびに脳力がたまり、減ることはありません。</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->
     <string name="stats_brain_power_to">あと%1$s脳力で%2$s</string>
     <!-- %1$s and %2$s are belt names, such as "Yellow belt" and "White belt"; %3$s is a belt's last number, 10. -->
@@ -131,7 +128,6 @@
     <string name="stats_belt_black">黒帯</string>
     <string name="stats_today">今日</string>
     <string name="stats_days_at_full">100%だった日数</string>
-    <string name="stats_energy_line">エネルギーはレッスンごとに増え、休みの日には少し減ります。</string>
     <string name="stats_low">低い</string>
     <string name="stats_high">高い</string>
     <string name="stats_lessons">レッスン</string>
@@ -139,6 +135,7 @@
     <string name="stats_past_year">過去12か月</string>
     <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
     <string name="stats_past_6_months">過去6か月</string>
+    <string name="stats_past_90_days">過去90日間</string>
     <!-- Under a chart of bars: what a hollow dashed bar means. -->
     <string name="stats_few_answers_legend">破線の棒は、まだ回答数が少なく集計できないことを表します。</string>
     <string name="stats_less">少ない</string>
@@ -169,7 +166,6 @@
     <plurals name="stats_score_week">
         <item quantity="other">%1$s：%2$s（%3$s件の回答）</item>
     </plurals>
-    <string name="stats_patterns_intro">過去90日間で、正答率が最も高かった曜日や時間帯です。</string>
     <plurals name="stats_answer_count">
         <item quantity="other">%1$s件の回答</item>
     </plurals>

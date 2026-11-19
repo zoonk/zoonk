@@ -44,7 +44,7 @@ export async function TodayOnboardingLeft({
         bottomBar={
           <BottomBar>
             <BottomBarActions>
-              <EnterLink href={href}>{t("See your plan")}</EnterLink>
+              <EnterLink href={href}>{t("See plan")}</EnterLink>
             </BottomBarActions>
           </BottomBar>
         }

@@ -37,7 +37,7 @@
   "gate_session_ended_description": "b59523da90cecd55cefdac19a297a9dfdfb869598ae315f1d48b053f833b7f72",
   "gate_session_ended_title": "be938fc77b9739081b98f546303c1a70eeec86156f161dcbb62e82cc5a593910",
   "gate_sign_in_title": "8a5e135549f45f9240e7f441a9eb2a59fcfa757ecf0061bf024cdfae6eb85e49",
-  "gate_start_goal": "f82275fe95452c39957ca373ced73406c90be17c5f226858fb0e249567668ad8",
+  "gate_start_goal": "17821e7c9587bbb4ac48675905e0771c0e872a17101e2a77286b2a9628d498fd",
   "gate_start_goal_description": "c50cea4f46376451aace50b56fbdfd00dc8de2455f3468c23c43528acf4df4a9",
   "gate_start_goal_title": "9eb2e139f9c41b9b08c46b6b972cb6d96481cbd16cca5aa2099958458fe50cd6",
   "goal_with_variety": "70862f927a401b687ca5e7170e639cb884043f678f16027d898cd87538cfb27c",
@@ -65,7 +65,7 @@
   "navigation_today": "394c9afd2080d1e22c9243cc06d2b54686494f03178b7df2c63f3782e7f8cb49",
   "navigation_user_menu": "0890331c80033fc75f70933760ad3841b8565014e674905a167f20d02e1e528f",
   "not_found_description": "8191ddd8f0b473232b5bd8b6fc8c6b573bb0f82c899b46561c343c59e59995e7",
-  "not_found_go_home": "ddbe09e03c2b853b4e24f22b1fe8dedf77b5f6166e086b1257c5391e3c56460c",
+  "not_found_go_home": "fc41ce91d9c1d35a82a8ec96e825ed75324dad1efc63d0d9ab530b2ab39b1d0c",
   "not_found_title": "12326177841bbc90578b294f5e0784ea93661a9b3e09d3fefdc431cd05ce4c8b",
   "player_not_saved": "d66bc9b5d3048a476b8fa0a70340508de4847c91762ade0c9c1f925137275e0e",
   "player_not_saved_description": "376547f3d52ee0220c01d7d7ca993d5d6b6d5f7a25ebc1c1feb7d4a5dbd61b9a",
@@ -108,7 +108,7 @@
     <string name="gate_build_plan">내 계획 만들기</string>
     <string name="gate_start_goal_title">목표부터 시작하기</string>
     <string name="gate_start_goal_description">배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요.</string>
-    <string name="gate_start_goal">목표 시작하기</string>
+    <string name="gate_start_goal">새 목표</string>
     <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
     <string name="goal_with_variety">%1$s, %2$s</string>
     <string name="belt_white">흰띠</string>
@@ -166,7 +166,7 @@
     <string name="test_out_skip_unit">테스트를 보고 단원 건너뛰기</string>
     <string name="not_found_title">페이지를 찾을 수 없어요</string>
     <string name="not_found_description">오래된 링크이거나 주소가 잘못 입력되었을 수 있어요.</string>
-    <string name="not_found_go_home">오늘의 학습으로 이동하기</string>
+    <string name="not_found_go_home">오늘</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->

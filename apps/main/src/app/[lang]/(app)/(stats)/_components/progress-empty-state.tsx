@@ -38,7 +38,7 @@ export async function ProgressEmptyState({
       </Empty>
       <BottomBar>
         <BottomBarActions>
-          <EnterLink href={getMenu("today").url}>{t("Go to Today")}</EnterLink>
+          <EnterLink href={getMenu("today").url}>{t("Today")}</EnterLink>
         </BottomBarActions>
       </BottomBar>
     </>

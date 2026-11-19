@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="goal_switcher_start_goal">Start a goal</string>
+    <string name="goal_switcher_start_goal">New goal</string>
     <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
     <string name="goal_switcher_current_goal">%1$s, current goal. Switch goal</string>
     <string name="goal_switcher_your_goals">Your goals</string>

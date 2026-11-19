@@ -9,7 +9,7 @@ struct StatsPage<Content: View>: View {
     ScrollView {
       VStack(alignment: .leading, spacing: 28) {
         if let section {
-          PageHeader(Text(section.title), supporting: section.supporting.map { Text($0) })
+          PageHeader(Text(section.title))
         }
 
         content
@@ -67,7 +67,7 @@ struct StatsEmpty: View {
         router.showRoot(of: .today)
       } label: {
         Text(
-          "Go to Today", tableName: "Progress"
+          "Today", tableName: "Progress"
         )
       }
       .buttonStyle(.mainAction)

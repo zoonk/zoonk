@@ -40,7 +40,7 @@
         <item quantity="other">Choose at least %1$s a day for your %2$d goals.</item>
     </plurals>
 
-    <string name="onboarding_go_to_plan">Go to your Plan</string>
+    <string name="onboarding_go_to_plan">See plan</string>
     <!-- The new-goal page for a learner already studying as many goals at once as they can. -->
     <string name="onboarding_goals_at_once_title">That\'s all the goals you can study at once</string>
     <string name="onboarding_goals_at_once_line">Pause one in your Plan, or subscribe to study more at once.</string>
@@ -139,7 +139,7 @@
     <string name="onboarding_instrument_title">Lessons for playing %1$s are coming</string>
     <string name="onboarding_instrument_description">To teach you to play, we need to hear you play, and we\'re still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.</string>
     <string name="onboarding_musicianship_card">Musicianship for %1$s: hear chords, read short melodies and keep the beat. No microphone needed.</string>
-    <string name="onboarding_start_musicianship">Start musicianship</string>
+    <string name="onboarding_start_musicianship">Start music basics</string>
     <string name="onboarding_join_waitlist">Join the waitlist</string>
     <string name="onboarding_waitlist_joined">You\'re on the list. We\'ll let you know when lessons for playing are ready.</string>
     <string name="onboarding_waitlist_sign_in">Create an account so we can let you know.</string>
@@ -217,7 +217,7 @@
     <string name="onboarding_placement_right">Right</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Wrong</string>
-    <string name="onboarding_placement_see_plan">See your plan</string>
+    <string name="onboarding_placement_see_plan">See plan</string>
     <plurals name="onboarding_placement_answered">
         <item quantity="one">%d question answered</item>
         <item quantity="other">%d questions answered</item>
@@ -529,7 +529,7 @@
     <string name="onboarding_reveal_reading_line_guide">Finding the parts and topics the official guide lists…</string>
     <string name="onboarding_reveal_reading_line_dates">Checking the exam\'s dates and format…</string>
     <string name="onboarding_reveal_reading_line_fit">Fitting them into your plan…</string>
-    <string name="onboarding_see_plan">See your plan</string>
+    <string name="onboarding_see_plan">See plan</string>
     <string name="onboarding_plan_ready_goal">Your %1$s plan is ready.</string>
     <string name="onboarding_reveal_start_here">Start here</string>
     <string name="onboarding_reveal_up_next">Up next</string>

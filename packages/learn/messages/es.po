@@ -47,7 +47,6 @@ msgstr "Poder Mental"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
-#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -77,7 +76,6 @@ msgstr "Saltado"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
-#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 #: src/week/logbook-screen.tsx
@@ -202,6 +200,8 @@ msgstr "Estudiado"
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-lane.tsx
+#: src/journey/schedule-details.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -592,11 +592,6 @@ msgstr "{correct, plural, =0 {<number>#</number> de {answered} se pronunciaron b
 msgctxt "mA2Wor"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
 msgstr "{correct, plural, =0 {<number>#</number> de {answered} acertadas} one {<number>#</number> de {answered} correcta} other {<number>#</number> de {answered} correctas}}"
-
-#: src/_components/moment-readouts.tsx
-msgctxt "cYiR5r"
-msgid "Points for what you learn."
-msgstr "Puntos por lo que aprendes."
 
 #: src/_components/name-hint.tsx
 msgctxt "zW5SM4"
@@ -5298,7 +5293,7 @@ msgid "today"
 msgstr "hoy"
 
 #: src/journey/schedule-details.tsx
-#: src/today/today-day-progress.tsx
+#: src/today/today-segment-popover.tsx
 #: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
@@ -5336,12 +5331,6 @@ msgstr "{count, plural, one {# lección pendiente} other {# lecciones pendientes
 msgctxt "dVA-0b"
 msgid "About {time} a day"
 msgstr "Aproximadamente {time} al día"
-
-#: src/journey/schedule-details.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Ir a Hoy"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -7218,10 +7207,11 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "Junta o separa dos dedos, desplázate o usa + y - para acercar o alejar; arrastra o usa las flechas para mover el mapa."
 
+#. Button on the Mind maps page that starts studying its maps.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "RNV4nB"
-msgid "Study mind maps"
-msgstr "Estudiar mapas mentales"
+msgctxt "Ktc-vQ"
+msgid "Study maps"
+msgstr "Estudiar mapas"
 
 #. A tab's name: the mind maps of the goal's chapters, one per chapter.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -8993,9 +8983,12 @@ msgid "For example: <example></example>"
 msgstr "Por ejemplo: <example></example>"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "MO6156"
-msgid "Go to your Plan"
-msgstr "Ir a tu Plan"
+#: src/onboarding/steps/plan-wait.tsx
+#: src/today/today-action.tsx
+#: src/today/today-progress-card.tsx
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "Ver plan"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
@@ -9712,13 +9705,6 @@ msgstr "Capítulos"
 msgctxt "rXkqB0"
 msgid "Your plan didn't start"
 msgstr "Tu plan no se inició"
-
-#: src/onboarding/steps/plan-wait.tsx
-#: src/today/today-action.tsx
-#: src/today/today-progress-card.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "Ver tu plan"
 
 #: src/onboarding/steps/plan-wait.tsx
 msgctxt "x4Kcgs"
@@ -12858,9 +12844,9 @@ msgid "Paused"
 msgstr "En pausa"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.ng8fsM"
-msgid "Start a goal"
-msgstr "Crear un objetivo"
+msgctxt "goalSwitcher.Q25Oon"
+msgid "New goal"
+msgstr "Nuevo objetivo"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.JIzivc"

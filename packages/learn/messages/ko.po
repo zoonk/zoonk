@@ -47,7 +47,6 @@ msgstr "두뇌력"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
-#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -77,7 +76,6 @@ msgstr "건너뜀"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
-#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 #: src/week/logbook-screen.tsx
@@ -202,6 +200,8 @@ msgstr "학습함"
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-lane.tsx
+#: src/journey/schedule-details.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -592,11 +592,6 @@ msgstr "{correct, plural, =0 {정확하게 발음한 단어는 <number>#</number
 msgctxt "mA2Wor"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
 msgstr "{correct, plural, =0 {맞힌 문제는 <number>#</number>개예요 (전체 {answered}개)} other {문제 <number>#</number>개를 맞혔어요 (전체 {answered}개)}}"
-
-#: src/_components/moment-readouts.tsx
-msgctxt "cYiR5r"
-msgid "Points for what you learn."
-msgstr "배운 만큼 쌓이는 포인트예요."
 
 #: src/_components/name-hint.tsx
 msgctxt "zW5SM4"
@@ -5298,7 +5293,7 @@ msgid "today"
 msgstr "오늘"
 
 #: src/journey/schedule-details.tsx
-#: src/today/today-day-progress.tsx
+#: src/today/today-segment-popover.tsx
 #: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
@@ -5336,12 +5331,6 @@ msgstr "{count, plural, other {레슨 #개 남음}}"
 msgctxt "dVA-0b"
 msgid "About {time} a day"
 msgstr "하루 약 {time}"
-
-#: src/journey/schedule-details.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "오늘의 학습으로 이동하기"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -7218,10 +7207,11 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "두 손가락을 오므리거나 벌리거나, 스크롤하거나, +와 -를 눌러 확대·축소하세요. 드래그하거나 방향키로 이동하세요."
 
+#. Button on the Mind maps page that starts studying its maps.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "RNV4nB"
-msgid "Study mind maps"
-msgstr "마인드맵 공부하기"
+msgctxt "Ktc-vQ"
+msgid "Study maps"
+msgstr "마인드맵 학습하기"
 
 #. A tab's name: the mind maps of the goal's chapters, one per chapter.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -8993,9 +8983,12 @@ msgid "For example: <example></example>"
 msgstr "예: <example></example>"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "MO6156"
-msgid "Go to your Plan"
-msgstr "내 계획으로 이동"
+#: src/onboarding/steps/plan-wait.tsx
+#: src/today/today-action.tsx
+#: src/today/today-progress-card.tsx
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "계획 보기"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
@@ -9712,13 +9705,6 @@ msgstr "챕터"
 msgctxt "rXkqB0"
 msgid "Your plan didn't start"
 msgstr "계획을 시작하지 못했어요"
-
-#: src/onboarding/steps/plan-wait.tsx
-#: src/today/today-action.tsx
-#: src/today/today-progress-card.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "내 계획 보기"
 
 #: src/onboarding/steps/plan-wait.tsx
 msgctxt "x4Kcgs"
@@ -12858,9 +12844,9 @@ msgid "Paused"
 msgstr "일시 중지됨"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.ng8fsM"
-msgid "Start a goal"
-msgstr "목표 시작하기"
+msgctxt "goalSwitcher.Q25Oon"
+msgid "New goal"
+msgstr "새 목표"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.JIzivc"

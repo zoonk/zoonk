@@ -18,7 +18,6 @@
   "stats_belt_gray": "b484955db62623ea2fab2929860dc904cb6b598b0e4fdec215bb88cbfed2a2b6",
   "stats_belt_green": "69ed693c2bf88aa558e28cf2ff0e66e3fdf97555b89b8d1392da303a514eaacb",
   "stats_belt_level": "3978cf8c7fcff32347c987a05bfbe5f86ceaa7aadbac424d7f61c0e3f4e58ae5",
-  "stats_belt_line": "960b12f6063abb9bbf93a3f4f43da796e494c7094d9921b0b01577d36b2ba62b",
   "stats_belt_orange": "35745b6c61976f9bb37799fa1086be791899ddbb11b71369b47ba094ba5a5ee6",
   "stats_belt_purple": "1a5b8c1216affae9fd09865400cd65a1db224889c75001543182629f3be168ca",
   "stats_belt_red": "f7e410831465d8945a8e00dfaaf1e75f3b16430b28913e1e3f2c8fd628a50d20",
@@ -40,11 +39,10 @@
   "stats_empty_title": "dc3d817c628335a37836eb3f5a7dd5a74e65cf97ad36decac40438398de10c71",
   "stats_energy": "73534fdb9bd3608fb404b70b0d1fe9298e84def4568a628b32ef1dd183d84866",
   "stats_energy_amount": "52cceb1e38ce69d228da962941166fb033dfbefc9415d04da70327a20316c829",
-  "stats_energy_line": "aaa612eb096cf8fb62b5ec9153e6d34aae1cae5c613eb52195b015c7238eabf4",
   "stats_evening": "6fb4c6c24f9b72e1262a316b19058393d347211593a27b7a6a02786a5872ad38",
   "stats_every_belt": "dfedc7353796d921c54e61c6003bd8aaaaa5960470bb65449d958d3f8dcb73f8",
   "stats_few_answers_legend": "a86669eb99ab7dc803d3e1063de96ba419a125939e68da6f03c76cfe97525082",
-  "stats_go_to_today": "192933e718deb923dfa720d8c96c28bfcf75a7cbe13cff613295731a6e913934",
+  "stats_go_to_today": "4dd01130956e4dc351ecd1f3eaf5ee24410006fe9178305ce4fd2ae8266962a5",
   "stats_high": "6546a791b74a622d5fb729e5e4d70e7bef7a98f8461a061b717f9410d32124cd",
   "stats_less": "3ad27b458c80e5860d3f8bdbe8999ce29d101055479d15dc981d8a5691091434",
   "stats_lesson_count": "47537d2103beb39ff8f51e1db6738ff8a3e7b354fb15a4e92e8b387d0ca1333a",
@@ -61,10 +59,10 @@
   "stats_overview": "000999212061caf6368e40fb3058b5656244d5f0981bc122d63e40415b904e3e",
   "stats_part_failed": "1e7e9b8b89e6bf65b34f10aa470b6230cc7d2cc4f15beecbeb81894025c01eb0",
   "stats_past_6_months": "65add819be97eb1f84fd2d5a48a241aa3811e4a3335daf1085c60a213e97bd02",
+  "stats_past_90_days": "2256985390535cc7bb260767cf30e8ebb95bf2b6a2d50e1feec46bceb1b6bdd3",
   "stats_past_year": "dce7d65c57127e48433d6c8dc047ffed43005205d962adeac4b3470d4e231403",
   "stats_patterns": "7e162b1016577fc1c02154d8c398689db28c7681ce5e15c5d6d1f1133e792e9a",
   "stats_patterns_90": "d01c08de755d64b60bd8b9eb1fc5780a0a7f78ec836e2c0575724cec50b66372",
-  "stats_patterns_intro": "625849ccad869fab805fbd3dc1076930ad1bba826cc10e06bc24d22bb7c65e3a",
   "stats_right_in_last_days": "0ab96d8a41cdd44bf99f9066469c7f05b83416e02ffa3eced938b0b252e0a3b9",
   "stats_score": "c0ab55b6a771bf442c31058071ee4994f4eddddce50eafbd9b5402bd9284b380",
   "stats_score_90": "99bea3b40e1b4c964201f4a88c704d3adb86940d52590c7e41bb811ae4627dff",
@@ -91,7 +89,7 @@
     <string name="stats_patterns">Muster</string>
     <string name="stats_empty_title">Noch keine Statistiken</string>
     <string name="stats_empty_line">Sie erscheinen nach deiner ersten Lektion.</string>
-    <string name="stats_go_to_today">Zu Heute</string>
+    <string name="stats_go_to_today">Heute</string>
     <string name="stats_not_yet">Noch nicht</string>
     <string name="stats_part_failed">Diesen Teil konnten wir nicht laden.</string>
     <string name="stats_days_studied">Lerntage</string>
@@ -107,7 +105,6 @@
     <string name="stats_brain_power_amount">%1$s Brain Power</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Alle Gürtel erreicht</string>
-    <string name="stats_belt_line">Für alles, was du lernst, bekommst du Brain Power. Sie nimmt nie ab.</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->
     <string name="stats_brain_power_to">%1$s Brain Power bis „%2$s“</string>
     <!-- %1$s and %2$s are belt names, such as "Yellow belt" and "White belt"; %3$s is a belt's last number, 10. -->
@@ -131,7 +128,6 @@
     <string name="stats_belt_black">Schwarz</string>
     <string name="stats_today">Heute</string>
     <string name="stats_days_at_full">Tage bei 100 %</string>
-    <string name="stats_energy_line">Deine Energie steigt mit jeder Lektion und sinkt an Pausentagen ein wenig.</string>
     <string name="stats_low">Niedrig</string>
     <string name="stats_high">Hoch</string>
     <string name="stats_lessons">Lektionen</string>
@@ -139,6 +135,7 @@
     <string name="stats_past_year">Letzte 12 Monate</string>
     <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
     <string name="stats_past_6_months">Letzte 6 Monate</string>
+    <string name="stats_past_90_days">Letzte 90 Tage</string>
     <!-- Under a chart of bars: what a hollow dashed bar means. -->
     <string name="stats_few_answers_legend">Bei gestrichelten Balken gibt es noch zu wenige Antworten für eine Auswertung.</string>
     <string name="stats_less">Weniger</string>
@@ -174,7 +171,6 @@
         <item quantity="one">%1$s: %2$s bei %3$s Antwort</item>
         <item quantity="other">%1$s: %2$s bei %3$s Antworten</item>
     </plurals>
-    <string name="stats_patterns_intro">Wann du in den letzten 90 Tagen am besten geantwortet hast.</string>
     <plurals name="stats_answer_count">
         <item quantity="one">%1$s Antwort</item>
         <item quantity="other">%1$s Antworten</item>

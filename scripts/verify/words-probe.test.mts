@@ -8,6 +8,7 @@ import { pageKind, placeFindings, readWords, summarizeWords, titleTopFindings } 
 const CONTROL_HEIGHT = 44;
 const BAR_HEIGHT = 65;
 const TALL_BAR_HEIGHT = 85;
+const BARE_BAR_HEIGHT = 13;
 const TITLE_TOP = 101;
 const HEADER_TOP = 4;
 
@@ -110,6 +111,7 @@ describe("reading an app title's top", () => {
 
     assert.deepEqual(readWords().titleTop, {
       actual: TITLE_TOP,
+      bare: false,
       expected: BAR_HEIGHT + HEADER_TOP,
     });
   });
@@ -128,7 +130,7 @@ describe("reading an app title's top", () => {
   it("reports a missing bar instead of skipping a title at 4 px on both sizes", () => {
     document.body.innerHTML = `<main><header data-slot="page-header" style="padding-top:4px"><h1 data-top="${HEADER_TOP}">Focus test</h1></header></main>`;
     const facts = summarizeWords(readWords(), "app");
-    assert.deepEqual(facts.titleTop, { actual: HEADER_TOP, expected: null });
+    assert.deepEqual(facts.titleTop, { actual: HEADER_TOP, bare: false, expected: null });
     assert.ok(titleTopFindings(facts)[0]?.message.includes("no visible shared page-top-bar"));
   });
 
@@ -174,6 +176,36 @@ describe("page tops across a run", () => {
     const first = loads[0];
     assert.ok(first);
     assert.deepEqual(pageTopComparisons([first, { ...first, viewport: "laptop" }]), []);
+  });
+
+  it("compares a title under a bar that holds nothing only with titles like it", () => {
+    const loads = [BAR_HEIGHT, BARE_BAR_HEIGHT].map((height, index) => {
+      document.body.innerHTML = `<main><div data-slot="page-top-bar"></div><header style="padding-top:4px"><h1 data-top="${height + HEADER_TOP}">Page</h1></header></main>`;
+
+      vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function measured(
+        this: HTMLElement,
+      ) {
+        return new DOMRect(
+          0,
+          Number(this.dataset.top ?? 0),
+          100,
+          this.dataset.slot === "page-top-bar" ? height : CONTROL_HEIGHT,
+        );
+      });
+
+      return {
+        path: `/page-${index}`,
+        viewport: "laptop",
+        words: summarizeWords(readWords(), "app"),
+      };
+    });
+
+    assert.deepEqual(
+      loads.map(({ words }) => words.titleTop?.bare),
+      [false, true],
+    );
+
+    assert.deepEqual(pageTopComparisons(loads), []);
   });
 });
 

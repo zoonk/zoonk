@@ -57,7 +57,7 @@ export function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal
   });
 }
 
-/** Whether the frame's goal menu is the plain "Start a goal" link. */
+/** Whether the frame's goal menu is the plain "New goal" link. */
 export function useMenuStartsGoal(): boolean {
   const learner = useFrameLearner();
 

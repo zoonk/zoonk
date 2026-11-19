@@ -56,7 +56,7 @@
   "mindmaps_show_all": "2d897bb618e4efb10c876e77cc387a4b2a663f9695f7b8d8c73927e7965c5402",
   "mindmaps_shown_as_text": "943d780a5d4f23ca742bc022487dfa29f0f12af9736f2549efc8baf29f9cddba",
   "mindmaps_start_from_first": "5f8da31bdab99ba9fa5cada678c6c9dc0b8c09a4d2b3a33a5636d10c534939ba",
-  "mindmaps_study": "103e831985153751f044ac6decf0b326b64a22f0c0128a7b53c83b10d9e76d51",
+  "mindmaps_study": "9306a8076d4b064cd9040644e80b05aae44875a70207393cb39ada2c1679e5de",
   "mindmaps_tab_chapters": "47524aa55d18f05919df4d931193ad530876c6615d6a7b42816298a7f3850610",
   "mindmaps_tab_lessons": "7b4543e8225ff1a28ff06e9d83d7f5c8cd8c40193b1036791777dda72f44c807",
   "mindmaps_tab_saved": "b106b39c89f05511dd5716564f29d4326276a21f274042c5bbe4162b5d38573b",
@@ -143,7 +143,7 @@
     <string name="mindmaps_zoom_out">축소</string>
     <string name="mindmaps_fit">화면에 맞추기</string>
     <string name="mindmaps_viewer_hint">두 손가락을 오므리거나 벌리거나, 스크롤하거나, +와 -를 눌러 확대·축소하세요. 드래그하거나 방향키로 이동하세요.</string>
-    <string name="mindmaps_study">마인드맵 공부하기</string>
+    <string name="mindmaps_study">마인드맵 학습하기</string>
     <string name="mindmaps_create_all">모두 만들기</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">아직 마인드맵 없음</string>

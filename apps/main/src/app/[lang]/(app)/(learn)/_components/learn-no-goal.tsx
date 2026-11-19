@@ -56,7 +56,7 @@ export async function LearnNoGoal({
 
         <BottomBar>
           <BottomBarActions>
-            <EnterLink href="/today">{t("Start a goal")}</EnterLink>
+            <EnterLink href="/today">{t("New goal")}</EnterLink>
           </BottomBarActions>
         </BottomBar>
       </GatedPage>

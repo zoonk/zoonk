@@ -34,10 +34,13 @@ export function useBlockAside({
   const t = useExtracted();
   const materialTitle = useMaterialTitle();
 
-  const queue = useSessionQueueAside({
-    left: session.minutes.left,
-    rows: getSessionQueue({ blocks: session.blocks, nextId: detail.block.id }),
-  });
+  const queue = useSessionQueueAside(
+    {
+      left: session.minutes.left,
+      rows: getSessionQueue({ blocks: session.blocks, nextId: detail.block.id }),
+    },
+    { named: true },
+  );
 
   const material = question ? getQuestionMaterial(question) : null;
 

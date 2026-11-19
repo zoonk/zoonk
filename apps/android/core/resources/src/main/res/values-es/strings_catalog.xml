@@ -64,7 +64,7 @@
   "catalog_show_fewer_chapters": "fa8a485bd19c7ce75defa12655e70f3548d76556238ec652e1dfe94b86c6efe0",
   "catalog_show_more_chapters": "e63c46970d71efba80a94901357aedb01f8b1e7df8604f7dbd867e9692082ed6",
   "catalog_start_free": "df701108d0948617446fca8616b52b71c14e9dcac83b3821ae62bd7a1c232ef0",
-  "catalog_start_goal": "890dd7d42ef69f7f0c32633daa63c7181f7a37972373eb50e9d5ef445f3a43bb",
+  "catalog_start_goal": "03cfa510585d543d8e2fa17aef3ade667387350d92a3f2ebc6f0d1bb980bda52",
   "catalog_start_lesson": "f3f8cc0a9e9ee3163dd779787c7047a53e626897b91920a8f997098fabf2421f",
   "catalog_start_this_lesson": "dcf5c69521603da9c075d27351dbb2c60cb4437d3b45951c82b551424e04a4b2",
   "catalog_subject_arts": "48d06f90ff925d55ccbce96a3da0dd75692bf270173ef1c5030a233dc2a06f90",
@@ -124,7 +124,7 @@
     </plurals>
     <string name="catalog_empty_title">No hay cursos</string>
     <string name="catalog_empty_description">Aún no hay cursos disponibles.</string>
-    <string name="catalog_start_goal">Crear un objetivo</string>
+    <string name="catalog_start_goal">Nuevo objetivo</string>
     <string name="catalog_loading_more">Cargando más cursos…</string>
     <string name="catalog_load_more_failed">Algo salió mal. Inténtalo de nuevo.</string>
     <string name="catalog_edition_notice">Este curso también está disponible en tu idioma.</string>

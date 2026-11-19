@@ -270,7 +270,7 @@ private struct TodayPreparing: View {
             router.open(.goalSetup(goalId: goalID))
           } label: {
             Text(
-              "See your plan", tableName: "Today",
+              "See plan", tableName: "Today",
               comment: "Opens the goal's plan before its first day")
           }
           .buttonStyle(.mainAction)
@@ -454,7 +454,7 @@ private struct TodayGoalPaused: View {
     let button = Button {
       router.open(.startGoal())
     } label: {
-      Text("Start a goal", tableName: "Navigation")
+      Text("New goal", tableName: "Navigation")
     }
 
     if prominent {

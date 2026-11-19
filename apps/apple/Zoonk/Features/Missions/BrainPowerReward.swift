@@ -49,47 +49,25 @@ struct BrainPowerReward: View {
   }
 }
 
-/// What a task's end earned, under its title: "+12 Brain Power". The first time a learner earns it
-/// on this device, one line says what it is (B2's R3); after that the number stands alone.
+/// What a task's end earned, under its title: "+12 Brain Power".
 struct EarnedBrainPower: View {
   let points: Int
 
-  /// Decided when the moment opens, so it never leaves a moment it was drawn on.
-  @State private var introduces = UserDefaults.standard.integer(forKey: Self.introKey) < 1
-
-  private static let introKey = "brain-power-intro"
-
   var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      HStack(alignment: .firstTextBaseline, spacing: 0) {
-        EarnedNumber(value: points)
-          .typeStyle(.readout)
-          .foregroundStyle(.brainText)
-          .padding(.trailing, 0.1 * 24)
+    HStack(alignment: .firstTextBaseline, spacing: 0) {
+      EarnedNumber(value: points)
+        .typeStyle(.readout)
+        .foregroundStyle(.brainText)
+        .padding(.trailing, 0.1 * 24)
 
-        Text("Brain Power", tableName: "Session", comment: "Beside the Brain Power a task earned")
-          .typeStyle(.body)
-          .foregroundStyle(.mutedForeground)
-      }
-      .accessibilityElement(children: .ignore)
-      .accessibilityLabel(
-        Text(
-          "+\(points) Brain Power", tableName: "Session",
-          comment: "Spoken: the Brain Power a task earned"))
-
-      if introduces {
-        Text(
-          "Points for what you learn.", tableName: "Session",
-          comment: "Under a learner's first Brain Power on a device: what it is"
-        )
+      Text("Brain Power", tableName: "Session", comment: "Beside the Brain Power a task earned")
         .typeStyle(.body)
         .foregroundStyle(.mutedForeground)
-      }
     }
-    .onAppear {
-      if introduces {
-        UserDefaults.standard.set(1, forKey: Self.introKey)
-      }
-    }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      Text(
+        "+\(points) Brain Power", tableName: "Session",
+        comment: "Spoken: the Brain Power a task earned"))
   }
 }

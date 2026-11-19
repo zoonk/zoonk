@@ -35,7 +35,7 @@
   "language_practice_estimates": "81f166302659b1559f221eb1867ea0e894f85e8bfc035e812df0d8bcf5504025",
   "language_say_again": "8e0c0407eb0cc69c21203bc62484cdd281dcb96188cc79649fa452f14299e18e",
   "language_say_them": "5d1f501eafeed368990a47b624f83ba02c2d8beb53db9dbdf66917533114acf3",
-  "language_see_your_plan": "c6eb78019bd77b5d1e924417a4d14d7a7616b9ed263d1561be2ce75c808132de",
+  "language_see_your_plan": "5703469ecd24c3e3f233c418877e203e20d4cf0fa9bad3fc2ffd8bfe453675a8",
   "language_skill_listening": "1a91a0a9bb4f4ad4ee3bfaec6d5660b936e600474a69983a511761c9090b04fe",
   "language_skill_reading": "f2c31f000909f7b9e7af0b9c698cc3321dab5c067e99dc52e683901b8ddbc8d0",
   "language_skill_speaking": "a94d8d2d399f7eafef3247e0d78407bfa8e2daf3866b12c94555b5d8217aead9",
@@ -153,5 +153,5 @@
     <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
     <string name="language_level_toward_spoken">%1$s, objetivo %2$s</string>
     <!-- Opens the Plan from Today's level. -->
-    <string name="language_see_your_plan">Ver seu plano</string>
+    <string name="language_see_your_plan">Ver plano</string>
 </resources>

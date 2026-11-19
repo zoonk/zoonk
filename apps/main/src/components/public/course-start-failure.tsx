@@ -46,7 +46,7 @@ function FailureAction({
       <>
         {remedy === "upgrade" && (
           <Link className={secondaryClassName} href="/plan" prefetch>
-            {t("Go to your Plan")}
+            {t("See plan")}
           </Link>
         )}
         <Link className={className} href="/subscription" prefetch={false}>
@@ -123,7 +123,7 @@ export function CourseStartBlockedAction({ failure }: { failure: CourseStartFail
       action={
         getCourseStartRemedy(failure) === "upgrade" && (
           <Link className={ONBOARDING_ACTION_LINK_CLASS.other} href="/plan" prefetch>
-            {t("Go to your Plan")}
+            {t("See plan")}
           </Link>
         )
       }

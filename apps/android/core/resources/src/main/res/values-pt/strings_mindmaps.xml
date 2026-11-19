@@ -56,7 +56,7 @@
   "mindmaps_show_all": "422ac56c45fa3e82c9b52206e579d85d7029e9bd0cbb3b8352fd21e890806570",
   "mindmaps_shown_as_text": "1081d6bdc78761e0d65f227dfc59c7e335719b0c60e5d3fddff4a9bfe339ce8f",
   "mindmaps_start_from_first": "48ef663e42ffe30474e65999e643acecd468fde58a7f5758e53360a1f5ae3864",
-  "mindmaps_study": "cd0b255047cb19e8fe586f09d3ee41e7ac0f3781f04911260c81a13b26e14cba",
+  "mindmaps_study": "f3561f96bf89a177f45edc15fe3eef5e24e835d4ba32dea96052656bf31e6ea2",
   "mindmaps_tab_chapters": "fe2e13b180dade8c4262428a067c63c523ccf281318fca384774c65855a771c8",
   "mindmaps_tab_lessons": "c9ad434779da240be1ea5af987519d19f550f9ec511155a518faf739aa10ebc2",
   "mindmaps_tab_saved": "739f550b6c51485808e02529a5017e2036cfcef3978638871bdbde5f897023bf",
@@ -151,7 +151,7 @@
     <string name="mindmaps_zoom_out">Reduzir</string>
     <string name="mindmaps_fit">Ajustar à tela</string>
     <string name="mindmaps_viewer_hint">Faça um gesto de pinça, role ou use + e - para ajustar o zoom; arraste ou use as setas para mover.</string>
-    <string name="mindmaps_study">Estudar mapas mentais</string>
+    <string name="mindmaps_study">Estudar mapas</string>
     <string name="mindmaps_create_all">Criar todos</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">Ainda não há mapa</string>

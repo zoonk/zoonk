@@ -28,7 +28,7 @@ function PlanLink({ className }: { className: string }) {
 
   return (
     <LearnLink className={className} href={routes.journey}>
-      {t("Go to your Plan")}
+      {t("See plan")}
     </LearnLink>
   );
 }

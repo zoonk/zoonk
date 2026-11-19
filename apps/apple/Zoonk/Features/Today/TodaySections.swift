@@ -1016,7 +1016,7 @@ struct TodayProgressSection: View {
 
           // Main's: the words, then the chevron that says the card opens the Plan.
           HStack(spacing: 4) {
-            Text("See your plan", tableName: "Today", comment: "Opens the Plan")
+            Text("See plan", tableName: "Today", comment: "Opens the Plan")
 
             Image(systemName: "chevron.forward")
               .imageScale(.small)

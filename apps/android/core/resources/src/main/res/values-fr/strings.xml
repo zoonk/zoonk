@@ -37,7 +37,7 @@
   "gate_session_ended_description": "e1bdd1b9885c82e9ee364548e3071c47e918e49fd36b70691762330b0b78f0bd",
   "gate_session_ended_title": "33ecf2a179a0b2dc11865d6d197669bf012e26e90a262f1ff7e7f53a15fbd045",
   "gate_sign_in_title": "8bbd2ce8f8340d34865d1f8803d6ed87ce5b653b180490aa9fbaec6e41db8783",
-  "gate_start_goal": "ef60eb2e195f8065aee0100a3008cdfd990c4801540c526871a12141df9e2516",
+  "gate_start_goal": "af89e6340ab4c6b0adfe2292f8bb23b56828178745a0af553c719685b5a6328c",
   "gate_start_goal_description": "6ec328d6fe6b489110fec2198628aa97aaeb271240491119b18b88624609bba1",
   "gate_start_goal_title": "fd9d9bfd827ac3b238fdc222e8514da99e0bd14792235d7fdf18446b22583085",
   "goal_with_variety": "2e011c347c3cde32ced44ef5a5e2e8b388c3c6bc894b3ce7da55f2bbd0cf7bc7",
@@ -65,7 +65,7 @@
   "navigation_today": "9f041d69008467bfb5a3641f61fcc944b933c7323a7a2c1fd8a4429d2ce836fa",
   "navigation_user_menu": "519d13f66fa303b0080c9da45526bea41f4150663f8b1fc3e7674624fdb89b94",
   "not_found_description": "f9a92ace3b35477b3397f0b09141177936313d20e52aa4379a4393bfd6009c02",
-  "not_found_go_home": "32e5ee5a87ab90abcb9eb9b9a8695ac1f91c5004dbc5d2ee15f6a827fd87dedf",
+  "not_found_go_home": "56b08d16a634771d7522c278d957118866622717c77a1ffe203b45f805fc9810",
   "not_found_title": "8283917f147ffb6ad6c3f29743501f2e31d2ae3b0fb93bd98a9eab2eb8055eb9",
   "player_not_saved": "f28c4879fbe8daab9ec7864d2c5dece90fcd8ee23714b04db3d711e509750ac5",
   "player_not_saved_description": "4412cb778f504ae495be61b409893447cfabc3b92f1fd5ed9ebade72ef71264b",
@@ -108,7 +108,7 @@
     <string name="gate_build_plan">Préparer mon plan</string>
     <string name="gate_start_goal_title">Commence par un objectif</string>
     <string name="gate_start_goal_description">Dis-nous ce que tu veux apprendre et nous préparerons ton plan jour après jour jusqu’à ton objectif.</string>
-    <string name="gate_start_goal">Commencer un objectif</string>
+    <string name="gate_start_goal">Nouvel objectif</string>
     <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
     <string name="goal_with_variety">%1$s, %2$s</string>
     <string name="belt_white">Ceinture blanche</string>
@@ -166,7 +166,7 @@
     <string name="test_out_skip_unit">Passer le test et sauter l’unité</string>
     <string name="not_found_title">Nous n’avons pas trouvé cette page</string>
     <string name="not_found_description">Le lien est peut-être ancien ou mal saisi.</string>
-    <string name="not_found_go_home">Aller à Aujourd’hui</string>
+    <string name="not_found_go_home">Aujourd’hui</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->

@@ -87,7 +87,7 @@ struct ShellGate<Content: View>: View {
         router.showRoot(of: .today)
       } label: {
         Text(
-          "Start a goal", tableName: "Navigation",
+          "New goal", tableName: "Navigation",
           comment: "Opens Today, where the learner starts a goal")
       }
       .buttonStyle(.mainAction)

@@ -120,7 +120,7 @@ export function PronunciationReviewScreen({
           footer={
             <TaskActions>
               <TaskMainLink href={exitHref} toApp>
-                {total === 0 ? t("Go to Today") : t("Done")}
+                {total === 0 ? t("Today") : t("Done")}
               </TaskMainLink>
             </TaskActions>
           }

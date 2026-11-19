@@ -40,7 +40,7 @@ A control with a bezel lines up by its bezel. A bare one takes `Button`'s `edge`
 
 ### E3. One end edge
 
-Trailing things end on the column's end edge: a header's detail, a row's value or chevron, a button's bezel, a meter. In one list, rows with and without a chevron end their values on one edge, and so do values and glyphs at a row's end: a row without a chevron keeps the chevron's room.
+Trailing things end on the column's end edge: a header's detail, a row's value or chevron, a button's bezel, a meter. The bottom bar's buttons are the bar's, not the column's (R2). In one list, rows with and without a chevron end their values on one edge, and so do values and glyphs at a row's end: a row without a chevron keeps the chevron's room.
 
 - **Check.** Ruler down the right side: details, values, chevrons and buttons end on one line (glyph ink within 2px), and in a list every row's value ends where the others' do (`end-edge`).
 - **Usual break.** A chevron whose box is flush and whose ink stops 5px short, under a detail that ends on the edge. A date that runs to the edge on the one row with nothing to open.
@@ -75,10 +75,10 @@ Only three things pass the column: a highlighted or hovered row (10px each side,
 
 ### E8. One page top
 
-A page's top is `PageTop` (in the app's frame the layout draws `PageTopBar` and the page its title in `PAGE_HEADER_CLASS`): the bar with the way back and the page's actions, then the title, 69px from the top on every page, on a phone and a computer. The bar keeps its room when it holds nothing, the frame has no top padding, no page pads or pushes its own title, and nothing sits over it. The way back is `BackLink` (I4), always with the page's name. A task keeps its own header with ✕. A [marketing page](../SKILL.md#marketing-pages), the blog and the design site are outside this rule: each keeps its site's header, with its titles at one height from one layout piece and a first screen's room set once per kind of page.
+A page's top is `PageTop` (in the app's frame the layout draws `PageTopBar` and the page its title in `PAGE_HEADER_CLASS`): the bar with the way back and the page's actions, then the title. The first thing on every page sits on the frame's first row, the 44px row 12px from the top, which on a computer is the sidebar's first row: a bar with a way back or actions holds that row and the title starts 69px from the top, under it; a bar that holds nothing at that size (a tab's own page, or a page the sidebar lists, on a computer) gives its row to the title, which centers on it, 17px from the top. An empty bar never holds room over a title, the frame has no top padding, no page pads or pushes its own title, and nothing sits over it. A right column's first card starts on the same row, 12px from the top. The way back is `BackLink` (I4), always with the page's name. A task keeps its own header with ✕. A [marketing page](../SKILL.md#marketing-pages), the blog and the design site are outside this rule: each keeps its site's header, with its titles at one height from one layout piece and a first screen's room set once per kind of page.
 
-- **Check.** The `h1`'s top per page and screen size: 69px from the frame's top, equal within 1px (`E8 page top`, `E8 page tops across pages`, `E8 named back link`, `zoonk/no-page-top-spacing`).
-- **Usual break.** `pt-5` on a header, top padding on the frame, or a bar hidden on a computer, so one page's title sits higher or lower. A second header component that decides the title's place again.
+- **Check.** The `h1`'s top per page and screen size: where its bar puts it, 69px under a bar with a row and 17px under a bar that holds nothing, equal within 1px among pages whose bars match (`E8 page top`, `E8 page tops across pages`, `E8 named back link`, `zoonk/no-page-top-spacing`). At 1440 the bar's row, a bare title's middle and a right column's first card sit on the sidebar's first row (look at).
+- **Usual break.** `pt-5` on a header, top padding on the frame, or an empty bar kept on a computer, so the title starts 50px below the sidebar's first row. A second header component that decides the title's place again.
 
 ### E9. Start-aligned or centered, never both
 
@@ -111,7 +111,7 @@ A title is closer to what it names than to what precedes it: the space above a s
 
 ### S4. Padding is even
 
-A box that holds content (a card, a panel, a composer, a bar) gives it the same room on all four sides. A control (a button, a chip, a field) is wider than tall, with equal left and right padding. Text is never closer than 8px to a bordered or filled edge (12px in a panel), and two containers of one kind have the same padding.
+A box that holds content (a card, a panel, a composer) gives it the same room on all four sides. A bar pinned to the frame's edge is a strip of the frame, not a box: its sides are the frame's gutter and its room over and under is its own (Z4). A control (a button, a chip, a field) is wider than tall, with equal left and right padding. Text is never closer than 8px to a bordered or filled edge (12px in a panel), and two containers of one kind have the same padding.
 
 - **Check.** In a box: content ink to each of the four edges, equal within 2px (`S4 padding is even`, for a panel 44px or taller). Text ink to the nearest bordered or filled edge is 8px or more.
 - **Usual break.** 16px at a card's sides and 12px over and under it. Two rails of one width with different inner padding.
@@ -183,10 +183,10 @@ Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#wh
 
 ### Z4. Two actions in a bar
 
-In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The buttons have the same room over and under them as at their sides: the frame's gutter ([S5](#s5-the-gutter-is-the-frames)), which one class sets for the frame, its bar and the toast that rises over the bar (`FRAME_GUTTER_CLASS`), so no screen gives any of them a number. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
+In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. When their labels don't fit on one line, each takes a line of its own at full width, the main one last, and no label wraps to stay beside the other (`bar-actions`). The bar keeps 16px over and under its buttons at every size (`BOTTOM_BAR_ROOM_CLASS`), so it is 77px tall on a phone and a computer alike; at its sides it takes the frame's gutter ([S5](#s5-the-gutter-is-the-frames)). The room doesn't grow with the gutter: a bar as tall as a computer's gutter makes chrome taller than what it holds. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
 
-- **Check.** Equal visible heights; the bar's one gap; two button styles at most; the bar's height and its buttons' places the same with and without an error line.
-- **Usual break.** An outline, a filled and a gray button in one bar. An error line as a second row in the bar. A stacked button only as wide as its words over a full-width one.
+- **Check.** Equal visible heights; the bar's one gap; two button styles at most; 16px over and under a row of buttons at 390 and 1440; the bar's height and its buttons' places the same with and without an error line.
+- **Usual break.** The bar's room taken from the gutter, so it grows to 125px on a computer. An outline, a filled and a gray button in one bar. An error line as a second row in the bar. A stacked button only as wide as its words over a full-width one.
 
 ## Type
 
@@ -392,10 +392,10 @@ Each role is drawn by its shared piece, with nothing added around it by the scre
 
 ### R2. The main action is in the bottom bar
 
-An app screen's one main action sits in `BottomBar`, pinned to the bottom of the screen on a phone and a computer, where the thumb is and where Enter's hint is found. A task's record or check button is its main action and sits there too. A screen with no main action has no bar; what opens over a page keeps its own footer. On a [marketing page](../SKILL.md#marketing-pages) the one action sits in the page, and the bar shows it once the page's own has scrolled away.
+An app screen's one main action sits in `BottomBar`, pinned to the bottom of the screen on a phone and a computer, where the thumb is and where Enter's hint is found. On a phone and a tablet the buttons fill the content's measure; on a computer the main action sits at the bar's end, one gutter in from its edge, wherever the content's column ends, as in the player, and the bar's note ends on that edge too. A task's record or check button is its main action and sits there too. A screen with no main action has no bar; what opens over a page keeps its own footer. On a [marketing page](../SKILL.md#marketing-pages) the one action sits in the page, and the bar shows it once the page's own has scrolled away.
 
-- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440 (`R2 main action pinned`, `R2 primary action in page`).
-- **Usual break.** The action under the content on one screen, beside the title on the next, at the top on a computer.
+- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440 (`R2 main action pinned`, `R2 primary action in page`). At 1440 the main action ends one gutter from the bar's end (look at).
+- **Usual break.** The action under the content on one screen, beside the title on the next, at the top on a computer. The main action ending on a narrow column's edge, with empty bar beyond it.
 
 ### R3. The line over a title is `Eyebrow`
 
@@ -413,24 +413,25 @@ A row, card, tab or button for a paid feature looks like its free neighbors: no 
 
 ## The craft read
 
-The questions of [the craft read](../SKILL.md#the-craft-read), answered for one screenshot, in this order, each with "fine" or a finding you can point at:
+The questions of [the craft read](../SKILL.md#the-craft-read), answered for one screenshot, in this order, each with "fine" or a finding you can point at. A rule serves how the screen looks, so the first question is the screen's, not a rule's:
 
-1. **Left edge.** How many places do text and boxes start, and where? In each list, does every label start on one edge, the rows without a mark included? (E1, E4)
-2. **Top bar.** Does the back arrow or the close start where the title's first letter starts, and the right-hand "…" or avatar end on the content's right edge, with no part of either past the edge? (E2)
-3. **Right edge.** Do details, values, chevrons and buttons end on one line? (E3)
-4. **Rows.** In each list: marks on one axis, labels on one edge, icons level with their text, rows of one height, dividers of one length? (E4, E5, D1, D2)
-5. **Pairs.** Things side by side: same top and bottom? On each row, are a small value's or a date's capitals level with the label's and the chevron's? (E6, H4)
-6. **Gaps.** In each group, is any gap unlike its neighbors? Is each title nearer its own content than what's above? (S2, S3, S4)
-7. **Corners.** Which radii can you tell apart, and what wears each? Any box of one job with other corners, any inner corner too round or too square, any pill? (H1, H2, H3)
-8. **Control sizes.** Which heights are on the screen? Any row with two? Any control unlike the same control elsewhere? (Z1, Z2, Z4)
-9. **Type.** Which sizes are in each block? More than three, or two you can barely tell apart? Any other face, any bold, any uppercase heading? (T1, T2, T3, T6)
-10. **Numbers.** Do columns of numbers line up and end together? (T4)
-11. **Icons.** One family, one line weight, sizes that match their text, the usual glyph for back, close, more and forward, and no button with two glyphs? (I1 to I6)
-12. **Balance.** One enabled filled button on each surface? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
-13. **States, if shown.** Is the selected, focused, disabled or busy thing drawn the system's way, and did anything move? (X1 to X3)
-14. **Siblings, if given.** Does each piece here look and act like the same piece on the existing screen that does the same thing: words, icon, size, place, state?
-15. **Roles.** Is the title close under its bar, with the page's name beside the back chevron? Is the main action in the bar at the bottom? Is anything over a title a chip? Does any row, chip or card say something is paid, or any action that leads to paying say anything but "Subscribe"? (E8, R2, R3, R4)
-16. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom? On a phone, does everything that opens over the page sit on the bottom edge, a question that needs an answer with its two answers stacked and no ✕? (B2, B4)
+1. **Proportion, at this size.** Asked at each size the screen is read at, before any ruler: does it look well made at this width? Any empty room held for nothing, chrome taller or wider than what it holds, room that grew with the gutter, a column that starts or ends somewhere odd, something sized for a phone on a wide screen? A screen that follows every rule and still looks worse for one is a finding against that rule (`departs: principle`), with the change to the rule it calls for.
+2. **Left edge.** How many places do text and boxes start, and where? In each list, does every label start on one edge, the rows without a mark included? (E1, E4)
+3. **Top bar.** Does the back arrow or the close start where the title's first letter starts, and the right-hand "…" or avatar end on the content's right edge, with no part of either past the edge? (E2)
+4. **Right edge.** Do details, values, chevrons and buttons end on one line? (E3)
+5. **Rows.** In each list: marks on one axis, labels on one edge, icons level with their text, rows of one height, dividers of one length? (E4, E5, D1, D2)
+6. **Pairs.** Things side by side: same top and bottom? On each row, are a small value's or a date's capitals level with the label's and the chevron's? (E6, H4)
+7. **Gaps.** In each group, is any gap unlike its neighbors? Is each title nearer its own content than what's above? (S2, S3, S4)
+8. **Corners.** Which radii can you tell apart, and what wears each? Any box of one job with other corners, any inner corner too round or too square, any pill? (H1, H2, H3)
+9. **Control sizes.** Which heights are on the screen? Any row with two? Any control unlike the same control elsewhere? (Z1, Z2, Z4)
+10. **Type.** Which sizes are in each block? More than three, or two you can barely tell apart? Any other face, any bold, any uppercase heading? (T1, T2, T3, T6)
+11. **Numbers.** Do columns of numbers line up and end together? (T4)
+12. **Icons.** One family, one line weight, sizes that match their text, the usual glyph for back, close, more and forward, and no button with two glyphs? (I1 to I6)
+13. **Balance.** One enabled filled button on each surface? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
+14. **States, if shown.** Is the selected, focused, disabled or busy thing drawn the system's way, and did anything move? (X1 to X3)
+15. **Siblings, if given.** Does each piece here look and act like the same piece on the existing screen that does the same thing: words, icon, size, place, state?
+16. **Roles.** Does the page's first thing (its bar's way back or actions, or a title whose bar holds nothing) sit on the sidebar's first row, with no empty bar over a title? Is the title close under a bar that holds something, with the page's name beside the back chevron? Is the main action in the bar at the bottom? Is anything over a title a chip? Does any row, chip or card say something is paid, or any action that leads to paying say anything but "Subscribe"? (E8, R2, R3, R4)
+17. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom? On a phone, does everything that opens over the page sit on the bottom edge, a question that needs an answer with its two answers stacked and no ✕? (B2, B4)
 
 A still picture can't show what a key does, where focus goes or whether Esc asks first (B1, B3, B5, B6): say so, and leave them to the walk in the running app.
 

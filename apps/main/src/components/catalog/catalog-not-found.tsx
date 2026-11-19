@@ -16,7 +16,7 @@ export async function CatalogNotFound() {
   return (
     <>
       <CatalogPageBar back={{ href: "/courses", label: courses }} />
-      <PageNotFound action={<CatalogNotFoundAction courses={courses} today={t("Go to Today")} />} />
+      <PageNotFound action={<CatalogNotFoundAction courses={courses} today={t("Today")} />} />
     </>
   );
 }

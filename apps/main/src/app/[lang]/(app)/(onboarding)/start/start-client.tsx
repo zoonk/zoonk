@@ -17,7 +17,7 @@ import {
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 /**
- * The goal menu's own "Start a goal" shows in a phone's bar and in the open sidebar; the page says
+ * The goal menu's own "New goal" shows in a phone's bar and in the open sidebar; the page says
  * it only where the menu doesn't, with the sidebar collapsed.
  */
 const BESIDE_START_MENU_CLASS = "hidden in-data-[sidebar-collapsed]:lg:block";

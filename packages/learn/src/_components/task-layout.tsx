@@ -1,4 +1,4 @@
-import { BottomBar } from "@zoonk/ui/components/bottom-bar";
+import { BOTTOM_BAR_ROOM_CLASS, BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
@@ -9,8 +9,8 @@ export const TASK_COLUMN_CLASS =
   "max-w-column mx-auto w-full px-[16px] in-data-[slot=task-body]:px-0";
 
 /**
- * A bar's buttons have the task's gutter on all four sides: 16px, and 24px from `lg`. Named as the
- * row's `--page-gutter`, so the bar's note above it takes the sides alone.
+ * A bar's buttons keep the task's gutter at their sides: 16px, and 24px from `lg`. Named as the
+ * row's `--page-gutter`, so the bar's note above it takes the same sides.
  */
 const TASK_BAR_ROW_CLASS =
   "max-w-column mx-auto w-full [--page-gutter:16px] lg:max-w-none lg:[--page-gutter:24px]";
@@ -48,9 +48,6 @@ export const TASK_HEADER_SIDE_CLASS = {
 export const TASK_HEADER_END_CLASS =
   "flex min-h-9 items-center justify-end *:-my-1 lg:group-data-aside/task:fixed lg:group-data-aside/task:top-0 lg:group-data-aside/task:right-0 lg:group-data-aside/task:h-(--task-bar) lg:group-data-aside/task:pr-[24px] lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0";
 
-/** The bar's room over and under its buttons, for a foot that sits level with it. */
-export const BAR_PADDING_CLASS = "pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] lg:py-6";
-
 /** The kit's bottom bar on a task's column. */
 export function TaskActionBar(props: Omit<React.ComponentProps<typeof BottomBar>, "className">) {
   return <BottomBar className={TASK_BAR_ROW_CLASS} {...props} />;
@@ -85,7 +82,7 @@ const ASIDE_WIDTH_CLASS: Record<TaskAsideWidth, string> = {
 
 /**
  * `--task-bar` is the header row's height (36px buttons in `py-2`, `py-3` from `xl`) and
- * `--task-aside-bottom` the action bar's row (93px), or the buddy's dock when it's taller.
+ * `--task-aside-bottom` the action bar's row (77px), or the buddy's dock when it's taller.
  * Lay out what depends on the aside with the `with-aside` and `without-aside` variants, not `lg`:
  * once the learner collapses it from the header (`TaskHeaderSide`), the task lays out as below `lg`.
  */
@@ -93,7 +90,7 @@ export function getTaskAsideRootProps({ width = "default" }: { width?: TaskAside
   return {
     className: cn(
       "group/task with-aside:pr-(--task-aside)",
-      "lg:[--task-aside-bottom:max(5.8125rem,var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
+      "lg:[--task-aside-bottom:max(4.8125rem,var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
       ASIDE_WIDTH_CLASS[width],
     ),
     "data-aside": width,
@@ -194,7 +191,7 @@ export function TaskAside({
           className={cn(
             "bg-background flex flex-col gap-2 px-6 lg:bottom-0",
             TASK_ASIDE_PLACE_CLASS,
-            BAR_PADDING_CLASS,
+            BOTTOM_BAR_ROOM_CLASS,
           )}
           data-slot="task-aside-footer"
         >
@@ -315,7 +312,7 @@ export function TaskSkeleton({
           className={cn(
             TASK_BAR_ROW_CLASS,
             "flex gap-2 px-(--page-gutter) lg:justify-end",
-            BAR_PADDING_CLASS,
+            BOTTOM_BAR_ROOM_CLASS,
           )}
         >
           {actions}

@@ -146,12 +146,7 @@ private fun StatsPageArea(
                 contentPadding = pagePadding(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item(key = "title") {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        PageTitleRow(stringResource(page.title))
-                        page.line?.let { StatsLine(stringResource(it)) }
-                    }
-                }
+                item(key = "title") { PageTitleRow(stringResource(page.title)) }
                 item(key = "content") {
                     when (state) {
                         LoadState.Idle, LoadState.Loading -> {
@@ -254,21 +249,11 @@ internal fun StatsEmpty(context: StatsContext) {
     }
 }
 
-/** Main's `StatsLine`: one quiet sentence under a page that says how its number moves. */
+/** One quiet sentence on a statistics page, such as what its empty state means. */
 @Composable
 internal fun StatsLine(text: String) {
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
-
-/** What makes the page's number move, said under its title. */
-private val StatsPage.line: Int?
-    get() =
-        when (this) {
-            StatsPage.Level -> R.string.stats_belt_line
-            StatsPage.Energy -> R.string.stats_energy_line
-            StatsPage.Patterns -> R.string.stats_patterns_intro
-            else -> null
-        }
 
 /** The overview is the section itself, so the bar names it "Statistics". */
 private val StatsPage.title: Int

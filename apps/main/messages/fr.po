@@ -50,10 +50,13 @@ msgstr "Explorer les cours"
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(home)/_components/example-card.tsx
 #: src/app/[lang]/session/page.tsx
+#: src/components/catalog/catalog-not-found.tsx
 #: src/components/learn/section-layout.tsx
+#: src/components/public/not-found-message.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Aujourd’hui"
@@ -69,7 +72,6 @@ msgid "Home page"
 msgstr "Page d’accueil"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
 msgstr "Commencer un objectif"
@@ -182,6 +184,7 @@ msgid "Ask"
 msgstr "Poser une question"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "Q25Oon"
 msgid "New goal"
@@ -1003,9 +1006,10 @@ msgid "Nothing is planned until you resume it."
 msgstr "Rien n’est prévu tant que tu ne reprends pas cet objectif."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "Voir ton plan"
+#: src/components/public/course-start-failure.tsx
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "Voir le plan"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "_V80Fi"
@@ -1567,13 +1571,6 @@ msgctxt "EpdL-z"
 msgid "They show up after your first lesson."
 msgstr "Elles apparaîtront après ta première leçon."
 
-#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-#: src/components/catalog/catalog-not-found.tsx
-#: src/components/public/not-found-message.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Aller à Aujourd’hui"
-
 #: src/app/[lang]/(app)/(stats)/_components/stats-calendar.tsx
 msgctxt "o0vS8L"
 msgid "Past 12 months"
@@ -1722,17 +1719,6 @@ msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
 msgstr "Ton Énergie actuelle et son évolution sur les 12 derniers mois."
 
-#: src/app/[lang]/(app)/(stats)/energy/page.tsx
-msgctxt "1lqd7i"
-msgid "Energy goes up with every lesson and drops a little on days off."
-msgstr "L’Énergie augmente à chaque leçon et baisse un peu les jours de pause."
-
-#: src/app/[lang]/(app)/(stats)/layout.tsx
-#: src/app/[lang]/(app)/(stats)/stats/page.tsx
-msgctxt "bNNnKJ"
-msgid "Across all your goals"
-msgstr "Tous tes objectifs confondus"
-
 #: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
 msgctxt "CIQa5T"
 msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
@@ -1790,20 +1776,10 @@ msgctxt "Wzw2i9"
 msgid "Your belt, level and Brain Power."
 msgstr "Ta ceinture, ton niveau et ta Puissance Mentale."
 
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "IxxQzi"
-msgid "You earn Brain Power for everything you study, and it never goes down."
-msgstr "Tout ce que tu étudies te rapporte de la Puissance Mentale, et tu n’en perds jamais."
-
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
 msgid "See when you perform best over the past 90 days."
 msgstr "Découvre quand tu obtiens les meilleurs résultats sur les 90 derniers jours."
-
-#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
-msgctxt "SXjWkq"
-msgid "When you answer best, over the last 90 days."
-msgstr "Les moments où tu réponds le mieux, sur les 90 derniers jours."
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
 msgctxt "VcCKQU"
@@ -1899,6 +1875,11 @@ msgstr "Le moment de la journée ne change rien."
 msgctxt "IrWIWh"
 msgid "Answer more questions to see when you do best."
 msgstr "Réponds à plus de questions pour savoir quand tu réussis le mieux."
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "ZOWtIg"
+msgid "Past 90 days"
+msgstr "Ces 90 derniers jours"
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -3341,11 +3322,6 @@ msgstr "Tu as déjà Plus."
 msgctxt "qQDa8p"
 msgid "Unable to start checkout. Contact us at hello@zoonk.com"
 msgstr "Impossible de commencer le paiement. Contacte-nous à hello@zoonk.com"
-
-#: src/components/public/course-start-failure.tsx
-msgctxt "MO6156"
-msgid "Go to your Plan"
-msgstr "Voir ton plan"
 
 #: src/components/public/course-start-failure.tsx
 msgctxt "6qTSET"

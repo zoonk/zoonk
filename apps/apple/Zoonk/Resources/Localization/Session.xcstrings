@@ -5289,65 +5289,6 @@
         }
       }
     },
-    "Points for what you learn." : {
-      "comment" : "Under a learner's first Brain Power on a device: what it is",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punkte für das, was du lernst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puntos por lo que aprendes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Des points pour ce que tu apprends."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punti per ciò che impari."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学ぶともらえるポイントです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "배운 만큼 쌓이는 점수예요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punkty za to, czego się uczysz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pontos pelo que você aprende."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Öğrendiklerin için kazandığın puanlar."
-          }
-        }
-      }
-    },
     "Practice %lld more min" : {
       "comment" : "Adds practice once the day is done; the number is minutes",
       "localizations" : {

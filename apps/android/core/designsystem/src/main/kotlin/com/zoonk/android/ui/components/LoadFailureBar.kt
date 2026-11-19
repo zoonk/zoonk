@@ -23,7 +23,7 @@ private val LocalStatusAction = compositionLocalOf<StatusAction?> { null }
 
 /**
  * A page's status (a load that failed, a page that's missing) uses its screen's action slot only when the screen has no
- * main action of its own: "Try again", else "Go to Today", as main's error and not-found pages put them in the bar.
+ * main action of its own: "Try again", else "Today", as main's error and not-found pages put them in the bar.
  */
 @Composable
 fun WithStatusAction(
@@ -78,7 +78,7 @@ fun LoadFailureRetry(
     }
 }
 
-/** A missing page's "Go to Today": in the page's bar where it's free, else under the message. */
+/** A missing page's "Today": in the page's bar where it's free, else under the message. */
 @Composable
 internal fun NotFoundGoHome(onGoHome: () -> Unit) {
     if (!inStatusAction(onGoHome, { goHome })) {

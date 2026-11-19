@@ -3039,10 +3039,10 @@ msgid "We couldn't open this lesson"
 msgstr "このレッスンを開けませんでした"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "「今日」へ移動する"
+#: src/questions/tutor-conversation-parts.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "今日"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "EdX_cR"
@@ -3085,6 +3085,11 @@ msgid "Next lesson"
 msgstr "次のレッスン"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "「今日」へ移動する"
+
+#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"
 msgid "You already knew this"
 msgstr "もともと知っていた内容でした"
@@ -3110,9 +3115,9 @@ msgid "Building your plan"
 msgstr "学習計画を作成しています"
 
 #: src/lesson/completion/lesson-completion-plan.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "学習計画を見る"
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "プランを見る"
 
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
@@ -3957,11 +3962,6 @@ msgstr "以前の質問を読み込む"
 msgctxt "LIVM_k"
 msgid "Your question"
 msgstr "質問"
-
-#: src/questions/tutor-conversation-parts.tsx
-msgctxt "zWgbGg"
-msgid "Today"
-msgstr "今日"
 
 #: src/questions/tutor-conversation-parts.tsx
 msgctxt "6dIxDP"

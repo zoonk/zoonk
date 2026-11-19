@@ -286,7 +286,7 @@
   "plan_full_course": "8c9b172a4bdff7bb62395347fa9d5d5be3131c67add484ff5c8f71556725992c",
   "plan_full_course_switch": "2ebef4584c23c7f1bf358133ba5935261d8154d5f81c650dc4bd40bbb8a55444",
   "plan_gain_this_week": "3e2d63de1e39c1386a902dea424bc14fc2f79c257d5d655a98701a83075173f6",
-  "plan_go_to_today": "36a158089e1823ea76dd08fbfa52cb9f8b722bd54bcb9ac4e36f86fbe50d0d50",
+  "plan_go_to_today": "b4d10b99e23e90272fe92b226ea28f0d183b6238ac890118a54cb246c3655194",
   "plan_goal_date": "5aa8e7d3452151e824211fc2878e8ce22f4ea819d96b9ed87bd3ad28903fad46",
   "plan_goal_limit_reached": "144c776a2644eea115c77fac6ed4e6653475b449d4613d3e6320e1b8aa556d44",
   "plan_goal_paused": "1045372d879d08c975679cc0279b44a73830d65339e66049f0126f6049bea082",
@@ -1152,7 +1152,7 @@
     <string name="plan_goal_paused">目標「%1$s」は一時停止中です</string>
     <string name="plan_no_longer_fits">残りの日数よりレッスン数が多い</string>
     <string name="plan_adjust">調整する</string>
-    <string name="plan_go_to_today">「今日」へ移動する</string>
+    <string name="plan_go_to_today">今日</string>
     <string name="plan_suggestion">学習計画の提案</string>
     <string name="plan_updated">学習計画を更新しました</string>
     <string name="plan_updated_sentence">学習計画を更新しました。</string>

@@ -239,7 +239,7 @@ function SeePlanLink() {
   return (
     <TodayBar>
       <EnterLink enabled={!switching} href={routes.journey}>
-        {t("See your plan")}
+        {t("See plan")}
       </EnterLink>
     </TodayBar>
   );

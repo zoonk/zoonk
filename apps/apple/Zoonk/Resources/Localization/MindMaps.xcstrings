@@ -3585,18 +3585,18 @@
         }
       }
     },
-    "Study mind maps" : {
+    "Study maps" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Mindmaps lernen"
+            "value" : "Karten lernen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudiar mapas mentales"
+            "value" : "Estudiar mapas"
           }
         },
         "fr" : {
@@ -3608,37 +3608,37 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Studia le mappe mentali"
+            "value" : "Studia le mappe"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "マインドマップで学習する"
+            "value" : "マップを学習する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "마인드맵 공부하기"
+            "value" : "마인드맵 학습하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ucz się z map myśli"
+            "value" : "Ucz się z map"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudar mapas mentais"
+            "value" : "Estudar mapas"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zihin haritalarıyla çalış"
+            "value" : "Haritaları öğren"
           }
         }
       }

@@ -89,7 +89,7 @@
   "today_see_day_challenge": "ca6aa2a829ddc9f567279d64cc0919d123b5e3df52d64721fa814f54d287123c",
   "today_see_day_mock": "4e965831c20b2a60123b4e46fa5ddd8039fede0194d6a3a58d73d419b70ecc44",
   "today_see_summary": "ddb5c404c62ff5a3a33c30bbf65bc65a7c810c42559a4cf7ac09b02eda55e92f",
-  "today_see_your_plan": "62ee8faa0cafebfcff3d0fc1cfa829cfb7b9e6fba07353f60e783397d829fa55",
+  "today_see_your_plan": "4d5f97fcc451c8d12507ea3195361af6d4ddbb9482dc3fe90114672c6ced1617",
   "today_segment_challenge_note": "358ddf6ddd9a016f37e5b3b9b48a21d425e52cf5e44382e8035165a10ca5d38f",
   "today_segment_essay_note": "e1257ad78ecb3ea08a0cf54112cdb9f012685d54da051e3e525b4e33b8877293",
   "today_segment_label": "9aebc6cf4376aa79de17554c6609e061d12994519c4b00cb4437128766ded89d",
@@ -337,7 +337,7 @@
     <!-- The title of a card beside Today's page: how ready the learner is for their exam, as a percent. -->
     <string name="today_preparation">Hazırlık</string>
     <!-- A link at the end of the progress card that opens the learner's plan. -->
-    <string name="today_see_your_plan">Planını gör</string>
+    <string name="today_see_your_plan">Planı gör</string>
     <!-- A short line beside the preparation percent: %1$s is how many points it rose this week, such as "5". -->
     <string name="today_week_gain">Bu hafta +%1$s</string>
     <!-- A short line beside the preparation percent: %1$s is how many points it fell this week, a negative number such as "-3". -->

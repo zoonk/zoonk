@@ -62,55 +62,38 @@ export async function BeltRack({
     );
 
   return (
-    <div className="flex flex-col gap-2">
-      <ol aria-label={t("Belts")} className="flex">
-        {beltColors.map((belt, index) => (
-          <li
-            aria-current={index === currentIndex ? "step" : undefined}
-            className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
-            key={belt.key}
+    <ol aria-label={t("Belts")} className="flex">
+      {beltColors.map((belt, index) => (
+        <li
+          aria-current={index === currentIndex ? "step" : undefined}
+          className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
+          key={belt.key}
+        >
+          <span
+            aria-label={`${belt.label}, ${index <= currentIndex ? t("Earned") : t("Coming")}`}
+            className={cn(
+              "flex h-6.5 w-full max-w-8 items-center justify-center rounded-md md:h-9.5 md:max-w-13 md:rounded-lg",
+              index === currentIndex && "ring-foreground ring-[1.5px] ring-inset",
+            )}
+            role="img"
+            style={{ color: `var(--belt-${belt.key})` }}
           >
-            <span
-              aria-label={`${belt.label}, ${index <= currentIndex ? t("Earned") : t("Coming")}`}
-              className={cn(
-                "flex h-6.5 w-full max-w-8 items-center justify-center rounded-md md:h-9.5 md:max-w-13 md:rounded-lg",
-                index === currentIndex && "ring-foreground ring-[1.5px] ring-inset",
-              )}
-              role="img"
-              style={{ color: `var(--belt-${belt.key})` }}
-            >
-              <RackBelt color={belt.key} isTied={index <= currentIndex} />
-            </span>
-
-            <span
-              aria-hidden="true"
-              className={cn(
-                "text-2xs leading-tight",
-                index === currentIndex ? "text-foreground font-medium" : "hidden md:block",
-                index < currentIndex && "text-muted-foreground",
-                index > currentIndex && "text-faint",
-              )}
-            >
-              {shortName(belt.key)}
-            </span>
-          </li>
-        ))}
-      </ol>
-
-      <div className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 text-xs">
-        <span className="flex items-center gap-1">
-          <span className="flex size-5 items-center justify-center">
-            <RackBelt color="gray" isTied />
+            <RackBelt color={belt.key} isTied={index <= currentIndex} />
           </span>
-          {t("Earned")}
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="flex size-5 items-center justify-center">
-            <RackBelt color="gray" isTied={false} />
+
+          <span
+            aria-hidden="true"
+            className={cn(
+              "text-2xs leading-tight",
+              index === currentIndex ? "text-foreground font-medium" : "hidden md:block",
+              index < currentIndex && "text-muted-foreground",
+              index > currentIndex && "text-faint",
+            )}
+          >
+            {shortName(belt.key)}
           </span>
-          {t("Coming")}
-        </span>
-      </div>
-    </div>
+        </li>
+      ))}
+    </ol>
   );
 }

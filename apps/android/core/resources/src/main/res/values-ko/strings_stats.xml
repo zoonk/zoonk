@@ -18,7 +18,6 @@
   "stats_belt_gray": "1b063c55b88978f371c77f4225a98280df5561c86425e63501edb4edb91d9ae8",
   "stats_belt_green": "34881691004b34af2965c54712c2d30deb1a55d6be5eb1689087fb635c94c253",
   "stats_belt_level": "36c9ca8b57b224adc55aa8f891875891f8d89e08a195928cd3029d5dc204622d",
-  "stats_belt_line": "4ef7c177ce4745438a652cbd269ef5174a5705a75dd6fbd720b3e128772cc015",
   "stats_belt_orange": "7b581e688f85d2448e10b2c57fa69e8bc36a6704b0f403900de7f33bfb9dc0ec",
   "stats_belt_purple": "95ad0d814e74100ba837eb602b1ac16fd9b6d45295821521c6b5b274816967eb",
   "stats_belt_red": "d2f9351bb1ef029c150ea9d131ebc2a91b20809bfae51a953edd597a6bdd6bd3",
@@ -40,11 +39,10 @@
   "stats_empty_title": "d6dab6971f6c6c73df87d6d7004718a10721a9f4eb5b3a2e307caa2e88f70c9a",
   "stats_energy": "d22491c2910a2442d1fd85e975d2d897c4adf2ca914187f2858b3cfb5002250c",
   "stats_energy_amount": "e2f98b4b7ca49f99885c5894bf70874a4be898f9b685ce9bc41414c167e4c653",
-  "stats_energy_line": "063fa730a59a909e92ed3c402f46dabaa8138be31a2ad67611d12bddf4458dbe",
   "stats_evening": "c8df8e6c13ceee7afc1329c9792b632abf1a96b960113e55f21aa3a85875e696",
   "stats_every_belt": "57b79a02c67e45c91c12cd56956b771e069b3095c7270c0d459e1b7e735147e5",
   "stats_few_answers_legend": "cf0e33bc3f2d88b4b380a1f3371261d7722df8dd3d4b96fdc2ff0857096c2e74",
-  "stats_go_to_today": "6af3f2f55fd6873ddf66241d49d8b3fae5228605b9ff322ff78442023cb817b2",
+  "stats_go_to_today": "4271a6a28487ec64610c4d35b5d5fe4fe6932ad361d36f97da7873275575cc9f",
   "stats_high": "d4517e0e55e27d773f68da1e72efe94cef30807ca005f734baf71ace91746dbb",
   "stats_less": "bdcb21d895d63930bd80ed0109afcfab3df8d92b1ef34fdc91acaf7c58741651",
   "stats_lesson_count": "5a04a1bf8d9bb55f440ae3f5690b8bf8d0bdb157b81e2559515878966e567e82",
@@ -61,10 +59,10 @@
   "stats_overview": "a6a615115eb749bc9c117fc5cec6cd9071c0218cef4b63cd75287e03b563d8d9",
   "stats_part_failed": "bb8f42070e64c2f4d76b2e4e6186514bd85a3c0e858e2d124d3a3e03c0481723",
   "stats_past_6_months": "3c73d4b58b785792e0d9c6505624b55346cb9f142df1f8544fbb919f9ce3fe81",
+  "stats_past_90_days": "d7a1ec146ef2524cfb94cb6dc1b7aedadb6607d5654f1680754d71b05be093cc",
   "stats_past_year": "299c03e60c939909aa7f332bb39db08f6b083658705d3eed0d93fe535dbbc072",
   "stats_patterns": "82e493daf98856c796c25c39b42b83f7e99d90e33e7f1d85b3d667296e612dca",
   "stats_patterns_90": "822cfec41472122e6e01f56148d0378d28b3e9940c1806302fb5ad3d3b96e0d4",
-  "stats_patterns_intro": "9fb4a9f2cfdf6cd6d5b67ef44d97766e222acef87d198cf4a9cf187caaada6b3",
   "stats_right_in_last_days": "dde05a89d3196422b65c682a3314c8ef47953571d0582b61579bc98d50c62689",
   "stats_score": "6061e6f2fe44399177a1dcd7cffa8e6573c04a7c1d1b019da68aec8bc66a7c5b",
   "stats_score_90": "066fc06bd8c45df42720b4eb978790412c9da1b0bd15856c262034e1f06d2214",
@@ -91,7 +89,7 @@
     <string name="stats_patterns">학습 패턴</string>
     <string name="stats_empty_title">아직 통계가 없어요</string>
     <string name="stats_empty_line">첫 레슨을 마치면 볼 수 있어요.</string>
-    <string name="stats_go_to_today">오늘의 학습으로 이동하기</string>
+    <string name="stats_go_to_today">오늘</string>
     <string name="stats_not_yet">아직</string>
     <string name="stats_part_failed">이 부분을 불러오지 못했어요.</string>
     <string name="stats_days_studied">학습 일수</string>
@@ -107,7 +105,6 @@
     <string name="stats_brain_power_amount">두뇌력 %1$s</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">모든 띠 획득</string>
-    <string name="stats_belt_line">공부할 때마다 두뇌력이 쌓이고, 쌓인 두뇌력은 줄어들지 않아요.</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->
     <string name="stats_brain_power_to">두뇌력 %1$s 더 모으면 %2$s</string>
     <!-- %1$s and %2$s are belt names, such as "Yellow belt" and "White belt"; %3$s is a belt's last number, 10. -->
@@ -131,7 +128,6 @@
     <string name="stats_belt_black">검은띠</string>
     <string name="stats_today">오늘</string>
     <string name="stats_days_at_full">100%인 날</string>
-    <string name="stats_energy_line">레슨을 할 때마다 에너지가 올라가고, 쉬는 날에는 조금 줄어들어요.</string>
     <string name="stats_low">낮음</string>
     <string name="stats_high">높음</string>
     <string name="stats_lessons">레슨</string>
@@ -139,6 +135,7 @@
     <string name="stats_past_year">지난 12개월</string>
     <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
     <string name="stats_past_6_months">최근 6개월</string>
+    <string name="stats_past_90_days">지난 90일</string>
     <!-- Under a chart of bars: what a hollow dashed bar means. -->
     <string name="stats_few_answers_legend">점선 막대는 통계를 내기에 아직 답한 문제가 적다는 뜻이에요.</string>
     <string name="stats_less">적음</string>
@@ -169,7 +166,6 @@
     <plurals name="stats_score_week">
         <item quantity="other">%1$s: %2$s, 답변 %3$s개 기준</item>
     </plurals>
-    <string name="stats_patterns_intro">최근 90일 동안 정답률이 가장 높았던 때예요.</string>
     <plurals name="stats_answer_count">
         <item quantity="other">답변 %1$s개</item>
     </plurals>

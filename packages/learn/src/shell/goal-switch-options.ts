@@ -1,5 +1,5 @@
 /**
- * With no goal to follow or start, the switcher is the plain "Start a goal" link. One quick
+ * With no goal to follow or start, the switcher is the plain "New goal" link. One quick
  * explanation Today already shows needs no menu; two or more keep it, which lists them.
  */
 export function hasNothingToSwitch({

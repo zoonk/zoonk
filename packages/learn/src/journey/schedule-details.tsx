@@ -214,7 +214,7 @@ export function ScheduleDetails({
             className={cn(buttonVariants({ size: "sm", variant: "outline" }), "mt-1 self-start")}
             href={routes.today}
           >
-            {t("Go to Today")}
+            {t("Today")}
           </LearnLink>
         )}
       </div>

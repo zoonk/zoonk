@@ -47,7 +47,6 @@ msgstr "脳力"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
-#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -77,7 +76,6 @@ msgstr "スキップ"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
-#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 #: src/week/logbook-screen.tsx
@@ -202,6 +200,8 @@ msgstr "学習済み"
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-lane.tsx
+#: src/journey/schedule-details.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -592,11 +592,6 @@ msgstr "{correct, plural, =0 {正しく発音できたのは<number>#</number>�
 msgctxt "mA2Wor"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
 msgstr "{correct, plural, =0 {正解は<number>#</number>問でした（全{answered}問）} other {<number>#</number>問に正解しました（全{answered}問）}}"
-
-#: src/_components/moment-readouts.tsx
-msgctxt "cYiR5r"
-msgid "Points for what you learn."
-msgstr "学ぶともらえるポイントです。"
 
 #: src/_components/name-hint.tsx
 msgctxt "zW5SM4"
@@ -5298,7 +5293,7 @@ msgid "today"
 msgstr "今日"
 
 #: src/journey/schedule-details.tsx
-#: src/today/today-day-progress.tsx
+#: src/today/today-segment-popover.tsx
 #: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
@@ -5336,12 +5331,6 @@ msgstr "{count, plural, other {あと#レッスン}}"
 msgctxt "dVA-0b"
 msgid "About {time} a day"
 msgstr "1日約{time}"
-
-#: src/journey/schedule-details.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "「今日」へ移動する"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -7218,10 +7207,11 @@ msgctxt "Mxc7gH"
 msgid "Pinch, scroll or use + and - to zoom; drag or use the arrows to move."
 msgstr "ピンチ操作やスクロール、+と-で拡大・縮小できます。ドラッグや矢印キーで移動できます。"
 
+#. Button on the Mind maps page that starts studying its maps.
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "RNV4nB"
-msgid "Study mind maps"
-msgstr "マインドマップで学習する"
+msgctxt "Ktc-vQ"
+msgid "Study maps"
+msgstr "マップを学習する"
 
 #. A tab's name: the mind maps of the goal's chapters, one per chapter.
 #: src/mind-maps/mind-maps-screen.tsx
@@ -8993,9 +8983,12 @@ msgid "For example: <example></example>"
 msgstr "例：<example></example>"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "MO6156"
-msgid "Go to your Plan"
-msgstr "学習計画を見る"
+#: src/onboarding/steps/plan-wait.tsx
+#: src/today/today-action.tsx
+#: src/today/today-progress-card.tsx
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "プランを見る"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
@@ -9712,13 +9705,6 @@ msgstr "章"
 msgctxt "rXkqB0"
 msgid "Your plan didn't start"
 msgstr "学習計画の作成を始められませんでした"
-
-#: src/onboarding/steps/plan-wait.tsx
-#: src/today/today-action.tsx
-#: src/today/today-progress-card.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "学習計画を見る"
 
 #: src/onboarding/steps/plan-wait.tsx
 msgctxt "x4Kcgs"
@@ -12858,9 +12844,9 @@ msgid "Paused"
 msgstr "一時停止中"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.ng8fsM"
-msgid "Start a goal"
-msgstr "目標を始める"
+msgctxt "goalSwitcher.Q25Oon"
+msgid "New goal"
+msgstr "新しい目標"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.JIzivc"

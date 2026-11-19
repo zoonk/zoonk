@@ -35,7 +35,7 @@
   "language_practice_estimates": "5435822ac733b8d92ed7e49b6e5571121ad636a8e6ede346ee9e196e2c1ee0c3",
   "language_say_again": "58d6935d2daa875351dd8c05a482cbff55b0e65b7f14118bed773235178bed0a",
   "language_say_them": "37507d13b8085934269bfe6490fabd11e6fa5c91b173e08376d1f4edbe5a77e7",
-  "language_see_your_plan": "f6f3b40bd69f3029dca85db177261b70abb02d3281937da8ad34960f6102ff23",
+  "language_see_your_plan": "5c1692d128d56c59b49be8ef53e35f7590020730882843807e7657d418ca9fc2",
   "language_skill_listening": "078b8e2fa84338defa11c3e88128759446994662aba55d4f84a540788ae8e29d",
   "language_skill_reading": "41a1d5b295edd476481183c4f868c99cf070bedaa5964861c7c9b259956fc2de",
   "language_skill_speaking": "eaa67ab659ed7f2d709259d7b5e2909b1aaaedfb24361ff7e7b147925c076ab4",
@@ -156,5 +156,5 @@
     <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
     <string name="language_level_toward_spoken">%1$s, cel: %2$s</string>
     <!-- Opens the Plan from Today's level. -->
-    <string name="language_see_your_plan">Zobacz swój plan</string>
+    <string name="language_see_your_plan">Zobacz plan</string>
 </resources>

@@ -1,5 +1,6 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { MemoryUpdated } from "@zoonk/learn/memory-updated";
+import { TaskAsideContent } from "@zoonk/learn/task-layout";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
@@ -145,28 +146,6 @@ describe("asking the tutor", () => {
         page.getByRole("dialog").getByRole("heading", { name: "Ask Pip with a free account" }),
       )
       .toBeVisible();
-  });
-
-  it("keeps the tutor in the aside at the lesson's end, where the host draws its own moment", async () => {
-    await atViewport({ height: 900, width: 1440 }, async () => {
-      const { lesson } = lessonWithTutor();
-
-      renderLessonPlayer({
-        lesson,
-        slots: { completion: () => <h2>Block done</h2> },
-        tutor: buildTutor(),
-      });
-
-      await page
-        .getByRole("radio", { name: "Where the electron is most likely to be found" })
-        .click();
-
-      await page.getByRole("button", { name: /^Check/u }).click();
-      await page.getByRole("button", { name: /^Continue/u }).click();
-
-      await expect.element(page.getByRole("heading", { name: "Block done" })).toBeVisible();
-      await expect.element(asideComposer()).toBeVisible();
-    });
   });
 
   it("keeps a late history preload in its own step and restores it on return", async () => {
@@ -1736,6 +1715,12 @@ function dockedConversation() {
   return page.getByRole("region", { name: "Questions to Pip" });
 }
 
+async function askFromAside() {
+  await asideComposer().fill("Why does the cloud show chances?");
+  await press("Enter");
+  await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+}
+
 const WHY_MISSED = "Why isn't it the size?";
 
 async function missAndAskWhy() {
@@ -1747,6 +1732,50 @@ async function missAndAskWhy() {
 }
 
 describe("docked beside the lesson", () => {
+  it.each([
+    { buddy: "closed", setUp: async () => {} },
+    { buddy: "open", setUp: askFromAside },
+  ])(
+    "gives the aside to the host's own panel at the lesson's end, with the buddy $buddy before it",
+    async ({ setUp }) => {
+      const { lesson } = lessonWithTutor();
+
+      renderLessonPlayer({
+        lesson,
+        slots: {
+          completion: () => (
+            <>
+              <TaskAsideContent>
+                <h2>Today</h2>
+              </TaskAsideContent>
+              <h1>Block done</h1>
+            </>
+          ),
+        },
+        tutor: buildTutor(),
+      });
+
+      await setUp();
+
+      await page
+        .getByRole("radio", { name: "Where the electron is most likely to be found" })
+        .click();
+
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
+
+      await expect.element(page.getByRole("heading", { name: "Block done" })).toBeVisible();
+      await expect.element(page.getByRole("heading", { name: "Today" })).toBeVisible();
+      await expect.element(page.getByText("Pip is an AI study buddy")).not.toBeInTheDocument();
+
+      await expect
+        .element(page.getByRole("textbox", { name: /^Ask Pip/u }))
+        .not.toBeInTheDocument();
+
+      await expect.element(dockedConversation()).not.toBeInTheDocument();
+    },
+  );
+
   it("asks from the aside's composer and shows the answer beside the question", async () => {
     const { api, lesson } = lessonWithTutor();
     const [check] = lesson.steps;

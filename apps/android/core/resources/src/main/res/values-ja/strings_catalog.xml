@@ -64,7 +64,7 @@
   "catalog_show_fewer_chapters": "d8eab3eaaaf00fe4654bf3d3209792571e517f8cc9181e4a7ac8ddc2d93aba43",
   "catalog_show_more_chapters": "0150a1e2ea398f314bf93327b8ebeabe74620192395157ad1861cd814d28c38c",
   "catalog_start_free": "28b5a11f37e31f2a44b298bf343040b44ca9d61a0e93a782175f13c612c2dba9",
-  "catalog_start_goal": "7fd0c771c93e22b1831d35487d5e23e86fc072989761ae45447165428b4c413b",
+  "catalog_start_goal": "dcf60113642433b957f6d8a5c64c04e38aca987de7be3258747a742d6de568c8",
   "catalog_start_lesson": "df5c100e35a1d26d76c071db97e03e42527bb5f93e6c62ff1a7c66267809a498",
   "catalog_start_this_lesson": "b6029b0ccb6261eb92a3f3ff0fbbe8169fb99d9598688b7a1ca7c5bdbee5a70f",
   "catalog_subject_arts": "bdafcc4de219a92186e8ef8791ef094e02e1943d8a52e2472da728b5a69d263a",
@@ -122,7 +122,7 @@
     </plurals>
     <string name="catalog_empty_title">コースがありません</string>
     <string name="catalog_empty_description">利用できるコースはまだありません。</string>
-    <string name="catalog_start_goal">目標を始める</string>
+    <string name="catalog_start_goal">新しい目標</string>
     <string name="catalog_loading_more">さらにコースを読み込んでいます…</string>
     <string name="catalog_load_more_failed">うまくいきませんでした。もう一度お試しください。</string>
     <string name="catalog_edition_notice">このコースは、お使いの言語でも学べます。</string>

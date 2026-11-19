@@ -88,7 +88,7 @@
   "onboarding_full_course_finish_month": "c8653f44622cc7b43524391024d15a8daaa9f82669fffbc6eece6aa1aa930e5e",
   "onboarding_full_course_rule": "b5bfdfb3a84c19b6d3de1359b9264d8a6d0a083b6e212ec1ca2b7ffb45eaa09f",
   "onboarding_full_course_until_exam": "ecd14b4c1b0701697f521656a116ca5080a75effbc7c0086f285a316f6454246",
-  "onboarding_go_to_plan": "6f0985d126e41527c2b03b54aa0d3a868482e16cec4f8b8f02583705f920a8e5",
+  "onboarding_go_to_plan": "0a1348e01cf2d254f57b1891a60f63cb719b555024f349b3c95ed34bb9a32d9d",
   "onboarding_goals_at_once_line": "f0caec688addcf53eca359bd1d303e2b26a8ea6624bc2b59c7c758c00ba2f790",
   "onboarding_goals_at_once_title": "0e2302c019021c846cba8aec0a49e04d2a4bacda0e11107ff642c9870ccda7e1",
   "onboarding_guest_gate_description": "4d9fcc75436db8ab8c6327871482102dcda00ea7283ca98f166d38f163eaa4f5",
@@ -180,7 +180,7 @@
   "onboarding_placement_question_number": "dfd9886f88c4803b84b7a46203796f3e7a234a94db8b88b49d1be22693ef3784",
   "onboarding_placement_ready": "d40f60d6674bb7da6afd002a133fd0feab63e9ae255465d7a236637045e5e9aa",
   "onboarding_placement_right": "ac264ec61c94109946f5de9be6dfd9129ae85977ebaa3234074248ad1bd663ed",
-  "onboarding_placement_see_plan": "939537cfaca97a29edfa850be3504b5d070cb451efab32dd5c051bbf8dc76ddd",
+  "onboarding_placement_see_plan": "3248fb203e37b0bdfef0aa6a498af2ffc3083f927187f398fb7cfacde697fcc5",
   "onboarding_placement_set_description": "5e5c8097dd406141b4d25cc09c77fec5e874568dbfde7cd0858a6da23879b011",
   "onboarding_placement_set_title": "38ec728be0cc8ff034ee8cd0e767276d0ac3715a435c030b51ea4dd7617488c2",
   "onboarding_placement_skip_basics": "76b629affbff8a5f51230202d28c446f0d6a33f50359edb7c2eafbf94dc67ba0",
@@ -376,13 +376,13 @@
   "onboarding_schedule_title": "1068b369a4d968250a4b8b24ef968dada9675e53e66dd961921ce8613d01cc50",
   "onboarding_score_placeholder": "976c17a4be8307eb615c058cb32933c1b198e23cb65fc8ed2a2d983e01e456cb",
   "onboarding_score_title": "65ed83818ed251e7e4fe3793ed3df4caea4c5fe3f75eb38c0be5b8f24f5479b5",
-  "onboarding_see_plan": "cf95d969f5467edc90acf634060cca9b1f7dfa2de3fb829c8732c379d2f90c8a",
+  "onboarding_see_plan": "7f96c648e281157ce91a3536fee9a3d4b30cd7020abeef7717be67f44252cfca",
   "onboarding_skip": "9970bbd186f0a59c6958adacf80161f7f8c8a867a89c4109f199ad389a48e217",
   "onboarding_source": "ff59000a3ce9b03de7772fc2392d9a2f4bc9440d21f91a42513eb368a9dd88cc",
   "onboarding_start_description": "2071e4c89b97676c76840ca37edd080ff1f407da39f952b614207ae617843da6",
   "onboarding_start_description_shared": "6fdc1c4407331a23a79f18844b18305693d0f121fc776e9ded06f7d04b877e43",
   "onboarding_start_free": "697ac893ad75fef1ed1795fbcd602afe0dd5c83fab60226982d1a38a3da557ea",
-  "onboarding_start_musicianship": "a71d492ef35a06999c4127a70fe2180b141d3969e502446e630437293b606948",
+  "onboarding_start_musicianship": "105026fa50ab6d69c757d4c35f6bd17528d557de48d2974e963640f9e4227fea",
   "onboarding_start_over": "4d7c22ec3d07d58cc87f75e582953af130f1b95af0c554f68cfdfb4558a28f34",
   "onboarding_start_over_confirm": "c3c6c859cff999e9587a0c125ac4783d5dcb3f38a8f10ca36c4276af2fd11412",
   "onboarding_start_over_description": "c016c746202f8148bc857885feef66c803822418b12105feba7fa5ca3eb5a4f7",
@@ -481,7 +481,7 @@
         <item quantity="many">Przeznacz co najmniej %1$s dziennie na %2$d celów.</item>
         <item quantity="other">Przeznacz co najmniej %1$s dziennie na %2$d celów.</item>
     </plurals>
-    <string name="onboarding_go_to_plan">Przejdź do swojego planu</string>
+    <string name="onboarding_go_to_plan">Zobacz plan</string>
     <!-- The new-goal page for a learner already studying as many goals at once as they can. -->
     <string name="onboarding_goals_at_once_title">Masz już maksymalną liczbę aktywnych celów</string>
     <string name="onboarding_goals_at_once_line">Wstrzymaj jeden z nich w Planie lub wykup subskrypcję, by realizować więcej celów naraz.</string>
@@ -578,7 +578,7 @@
     <string name="onboarding_instrument_title">Lekcje już wkrótce: %1$s</string>
     <string name="onboarding_instrument_description">Żeby nauczyć cię grać, musimy słyszeć, jak grasz, a nad tą funkcją jeszcze pracujemy. Zapisz się na listę oczekujących i zacznij dziś od podstaw muzyki: czytania nut, kształcenia słuchu i rytmu.</string>
     <string name="onboarding_musicianship_card">Podstawy muzyki: %1$s. Rozpoznawaj akordy ze słuchu, czytaj krótkie melodie i trzymaj rytm. Nie potrzebujesz mikrofonu.</string>
-    <string name="onboarding_start_musicianship">Zacznij naukę podstaw muzyki</string>
+    <string name="onboarding_start_musicianship">Zacznij od podstaw muzyki</string>
     <string name="onboarding_join_waitlist">Dołącz do listy oczekujących</string>
     <string name="onboarding_waitlist_joined">Jesteś na liście. Damy ci znać, gdy lekcje gry będą gotowe.</string>
     <string name="onboarding_waitlist_sign_in">Załóż konto, żebyśmy mogli dać ci znać.</string>
@@ -655,7 +655,7 @@
     <string name="onboarding_placement_right">Poprawne</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Błędne</string>
-    <string name="onboarding_placement_see_plan">Zobacz swój plan</string>
+    <string name="onboarding_placement_see_plan">Zobacz plan</string>
     <plurals name="onboarding_placement_answered">
         <item quantity="one">Odpowiedziano na %d pytanie</item>
         <item quantity="few">Odpowiedziano na %d pytania</item>
@@ -997,7 +997,7 @@
     <string name="onboarding_reveal_reading_line_guide">Szukamy części i tematów wymienionych w informatorze…</string>
     <string name="onboarding_reveal_reading_line_dates">Sprawdzamy terminy i formę egzaminu…</string>
     <string name="onboarding_reveal_reading_line_fit">Dopasowujemy je do twojego planu…</string>
-    <string name="onboarding_see_plan">Zobacz swój plan</string>
+    <string name="onboarding_see_plan">Zobacz plan</string>
     <string name="onboarding_plan_ready_goal">Twój plan jest gotowy: %1$s.</string>
     <string name="onboarding_reveal_start_here">Zacznij tutaj</string>
     <string name="onboarding_reveal_up_next">Następne</string>

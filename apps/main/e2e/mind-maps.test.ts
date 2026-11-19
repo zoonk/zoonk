@@ -287,7 +287,7 @@ test.describe("Mind maps", () => {
     await drawMap(first.chapter.id);
 
     const page = await openAs(browser, user);
-    const study = page.getByRole("link", { exact: true, name: "Study mind maps" });
+    const study = page.getByRole("link", { exact: true, name: "Study maps" });
     const heading = (title: string) => page.getByRole("heading", { level: 1, name: title });
 
     try {

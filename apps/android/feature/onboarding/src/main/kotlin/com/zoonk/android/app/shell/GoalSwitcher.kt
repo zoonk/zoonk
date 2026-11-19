@@ -156,7 +156,7 @@ fun GoalSwitcher(
 }
 
 /**
- * With no goal to follow or start, the switcher is the plain "Start a goal" row. One quick explanation is on Today
+ * With no goal to follow or start, the switcher is the plain "New goal" row. One quick explanation is on Today
  * already; two or more keep the menu, so the older ones stay in reach.
  */
 internal fun showsStartRow(
@@ -165,7 +165,7 @@ internal fun showsStartRow(
     explanations: Int,
 ): Boolean = followed == 0 && waiting == 0 && explanations <= 1
 
-/** What the trigger says with no goal selected: the menu it opens, so Start a goal shows only inside it. */
+/** What the trigger says with no goal selected: the menu it opens, so New goal shows only inside it. */
 internal enum class TriggerTitle(
     val label: Int,
 ) {

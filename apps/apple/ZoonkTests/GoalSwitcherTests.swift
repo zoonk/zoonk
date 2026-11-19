@@ -3,7 +3,7 @@ import XCTest
 
 @testable import Zoonk
 
-/// The goal menu is the plain "Start a goal" row only when there's nothing in it to choose: one
+/// The goal menu is the plain "New goal" row only when there's nothing in it to choose: one
 /// quick explanation doesn't need a menu, two or more are listed in it.
 @MainActor
 final class GoalSwitcherTests: XCTestCase {

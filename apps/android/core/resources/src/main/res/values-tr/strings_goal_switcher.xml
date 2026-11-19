@@ -15,13 +15,13 @@
   "goal_switcher_quick_explanations": "b8752c7ae4d3085793773cbe2fbf89344fd93998fd789dcaa1f52b10c251b9ae",
   "goal_switcher_ready_to_start": "8db9438c16f8f2aa21862edbc6130030413508547674c030e2c09bb7c24a07e1",
   "goal_switcher_start_failed": "ee729b8b952c8e1cfcae76a8dd178e0cbe83c77f8aefbc11e71c1112fb3d88ed",
-  "goal_switcher_start_goal": "c457ad26a6239d908b7d3ba114f0270209278daace9aef6175c02fdf427bb66c",
+  "goal_switcher_start_goal": "ed7c4a84803c51fc8c122f3f620cfd2764dfc665aa6d1b6019801f668d98ab76",
   "goal_switcher_starts_with_free_account": "db1fdc6a88c2fab71dde55695a85845fbee1b0371c53129e6791909932ccae65",
   "goal_switcher_your_goals": "9090922cd9f88968b1922e33499c038cbdbc5303038e34a745b2fe56e97facc1"
 }
 -->
 <resources>
-    <string name="goal_switcher_start_goal">Bir hedefe başla</string>
+    <string name="goal_switcher_start_goal">Yeni hedef</string>
     <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
     <string name="goal_switcher_current_goal">%1$s, şu anki hedefin. Hedef değiştir</string>
     <string name="goal_switcher_your_goals">Hedeflerin</string>

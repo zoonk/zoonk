@@ -56,7 +56,7 @@
   "mindmaps_show_all": "aabee69a32bec86245a15714a802e9620945f417f7cf7e0fba920cd5b5d713a0",
   "mindmaps_shown_as_text": "f00a49b56cffc684be6a97e171eafd85ca69ceaf2420d075db928660334b5f60",
   "mindmaps_start_from_first": "24dbf9a6205f26d9d8f14da576dab842792801123fc518796fa9d760a1a71697",
-  "mindmaps_study": "ef35081034fd73ad828241428b89cb3a5add93e38d9061980366f9f6dc05ab40",
+  "mindmaps_study": "a9e12f5a153de7783e70dea509b372db733704a6f017b873f17b85b2919f6d14",
   "mindmaps_tab_chapters": "098162f5a70f26e1fd6296b07fcdac063904d0a6a42b6ffadf601691a514d128",
   "mindmaps_tab_lessons": "c61f7891f664d64f6fc513cd5639ae4fad54a5cb5ebafe12f6ebe6f0f46d27d3",
   "mindmaps_tab_saved": "6d47c87a9bcb0bde560f6ed64005992336da6c65ddda51fb9299aa781b37b4c5",
@@ -147,7 +147,7 @@
     <string name="mindmaps_zoom_out">Verkleinern</string>
     <string name="mindmaps_fit">An Bildschirm anpassen</string>
     <string name="mindmaps_viewer_hint">Ziehe zwei Finger zusammen oder auseinander, scrolle oder nutze + und - zum Zoomen; ziehe das Bild oder nutze die Pfeile zum Verschieben.</string>
-    <string name="mindmaps_study">Mit Mindmaps lernen</string>
+    <string name="mindmaps_study">Karten lernen</string>
     <string name="mindmaps_create_all">Alle erstellen</string>
     <!-- Heading over the chapters whose mind map hasn't been made yet. -->
     <string name="mindmaps_other_chapters">Noch keine Mindmap</string>

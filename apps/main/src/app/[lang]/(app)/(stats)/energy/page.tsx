@@ -14,10 +14,7 @@ export default async function EnergyPage() {
   const t = await getExtracted();
 
   return (
-    <StatsPage
-      description={t("Energy goes up with every lesson and drops a little on days off.")}
-      title={t("Energy")}
-    >
+    <StatsPage title={t("Energy")}>
       <Suspense fallback={<EnergyContentSkeleton />}>
         <EnergyContent />
       </Suspense>

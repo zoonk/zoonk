@@ -19953,65 +19953,6 @@
         }
       }
     },
-    "Go to Today" : {
-      "comment" : "Opens Today, which puts what's behind first",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu Heute"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir a Hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aller à Aujourd’hui"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vai a Oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「今日」を開く"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘로 이동하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przejdź do „Dziś”"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir para Hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün’e git"
-          }
-        }
-      }
-    },
     "Grammar tips" : {
       "comment" : "Section of a unit's grammar tips",
       "localizations" : {
@@ -32858,7 +32799,7 @@
       }
     },
     "Today" : {
-      "comment" : "When the learner's current phase starts",
+      "comment" : "When the learner's current phase starts\nOpens Today, which puts what's behind first",
       "localizations" : {
         "de" : {
           "stringUnit" : {

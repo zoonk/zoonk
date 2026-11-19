@@ -44,5 +44,5 @@ export async function ScoreChart({
 }
 
 export function ScoreChartSkeleton() {
-  return <Skeleton aria-hidden="true" className="h-60 w-full rounded-lg" />;
+  return <Skeleton aria-hidden="true" className="h-55 w-full rounded-lg" />;
 }

@@ -88,7 +88,7 @@
   "onboarding_full_course_finish_month": "f4e70e1dce7a38501ebdf578d43796512a6b1aab167c3671bc044058f115f07d",
   "onboarding_full_course_rule": "528c457fb13e665475ef87a1310243474b87578e0b45e1118b2d42b8be1624b8",
   "onboarding_full_course_until_exam": "eebc4fd2e91dab5d964c4dd3bf711e89e294e1edf1f40afcc53269c4bd7ee98c",
-  "onboarding_go_to_plan": "b25e289288e46adc4c951d2b060625b88ddc130ea393d480e4fbdfa835f70ae8",
+  "onboarding_go_to_plan": "31f47954a7cf9a7e32407b429f606c3d81b80fff4fb03461be33145b01d8f6f2",
   "onboarding_goals_at_once_line": "87a0d8370ac6791830c49587c646ef6eef7a0432eb89a475f25f2ec51c12c801",
   "onboarding_goals_at_once_title": "06f524ad0e183bdab032784ef6b5d9ec85c317cd8878da3d43e189cab2fa9978",
   "onboarding_guest_gate_description": "4282982b118ead8b7f1362f97d503ad3a5a8e6ac7717a48c8cb00ede780b01cc",
@@ -180,7 +180,7 @@
   "onboarding_placement_question_number": "0244ad899e4231a04fb7ad16a4792e1d12cf52c742f9ac2b319d44370358932f",
   "onboarding_placement_ready": "cde26a55f41ce9f8ddadf3962e4072d710f834cc60803d909064e37da537905f",
   "onboarding_placement_right": "74455806749c008c649b1b9db826b74ac9885ceac3221638b023e660ac0673fe",
-  "onboarding_placement_see_plan": "6d73347363c95d46408205df816cd5dc4c2040a014f087ceea289f0cf225beff",
+  "onboarding_placement_see_plan": "5e74b1811cc7a0d192fbf35a4052d8196f9ade217ece2b8ccdb9a8269d50d499",
   "onboarding_placement_set_description": "1ca773ed5e7585be5100f1ab9b349791c8ef878d85f898ae800de79c4706056d",
   "onboarding_placement_set_title": "7004fc3c5295ca665521b01ce508e3f0cdefb095a0b5897eb2d07c957d7cf2ff",
   "onboarding_placement_skip_basics": "191048db53c7ae758a3e44e524a7d45cbe9880ee863a4540fccc661e3e703a4d",
@@ -376,13 +376,13 @@
   "onboarding_schedule_title": "9e8a3a34f7db68122470c17e8ce91ea0e9225618db97e0305b44f0ce2bdb0dec",
   "onboarding_score_placeholder": "66d39f5ad8076bbca960622a3fa74412801aa9c41c2813fbd07bb16fab3962f9",
   "onboarding_score_title": "504f695d6346346de89a53037391ff37b3cc866c463162acb8a9ec888341adaa",
-  "onboarding_see_plan": "07bb2bb3926036bdeb961e5eb6886dd7fb73f774387cd4bdd1671ad9a43d77e8",
+  "onboarding_see_plan": "ecdd7b28b2915bb713848bd7ba198028734afc73af834948a8181a4211f3322c",
   "onboarding_skip": "fc3fd337290fc745602b20ff836a9834a526b8ed8e96d21ae2e74fe8144534dd",
   "onboarding_source": "a34616c9a5adf8b01f59af9e0145f0e857d878a45b596788126733360cbf1d4a",
   "onboarding_start_description": "3cec8181d16375056b8a68b820c0f937d1dec68b8a03ce616a37ea79d44d3df4",
   "onboarding_start_description_shared": "cf989841d2837f1cb9ea4a1994af9d5f56ce3c9e0b40f787e3f17695f3f9f5bf",
   "onboarding_start_free": "45d16ce8bc5fc18d645260b772de640873483e407fd4413aa4e9c9552a87ad9c",
-  "onboarding_start_musicianship": "1758cb0e09f1a1acbcb4e62bd7dd34518d129d0569d647ffbe7a18c9d27c29b8",
+  "onboarding_start_musicianship": "48f5945cf19c824248a202a94c8af08ecbfe334bf7b57b7c2ab686cbc58a853b",
   "onboarding_start_over": "bddf6fb9e6eeb9211d71bc0f918d92322fcb74c572f972d84d5c6665a71a44be",
   "onboarding_start_over_confirm": "a5b9590e7085988657cb1b447548111c3630e6158a2c03c897bec84462bbe9f8",
   "onboarding_start_over_description": "09dd2cb34889bad37e65b4dc6c2430f45720448b3f667d29199c13386fc99a4c",
@@ -479,7 +479,7 @@
         <item quantity="one">Günlük süreyi en az %1$s olarak seç. %2$d hedefin için bu süre gerekli.</item>
         <item quantity="other">Günlük süreyi en az %1$s olarak seç. %2$d hedefin için bu süre gerekli.</item>
     </plurals>
-    <string name="onboarding_go_to_plan">Planına git</string>
+    <string name="onboarding_go_to_plan">Planı gör</string>
     <!-- The new-goal page for a learner already studying as many goals at once as they can. -->
     <string name="onboarding_goals_at_once_title">Aynı anda çalışabileceğin hedef sınırına ulaştın</string>
     <string name="onboarding_goals_at_once_line">Plan bölümünde bir hedefi duraklat veya aynı anda daha fazla hedef üzerinde çalışmak için abone ol.</string>
@@ -649,7 +649,7 @@
     <string name="onboarding_placement_right">Doğru</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Yanlış</string>
-    <string name="onboarding_placement_see_plan">Planını gör</string>
+    <string name="onboarding_placement_see_plan">Planı gör</string>
     <plurals name="onboarding_placement_answered">
         <item quantity="one">%d soru cevaplandı</item>
         <item quantity="other">%d soru cevaplandı</item>
@@ -959,7 +959,7 @@
     <string name="onboarding_reveal_reading_line_guide">Resmî kılavuzdaki bölümleri ve konuları buluyoruz…</string>
     <string name="onboarding_reveal_reading_line_dates">Sınavın tarihlerini ve formatını kontrol ediyoruz…</string>
     <string name="onboarding_reveal_reading_line_fit">Bunları planına yerleştiriyoruz…</string>
-    <string name="onboarding_see_plan">Planını gör</string>
+    <string name="onboarding_see_plan">Planı gör</string>
     <string name="onboarding_plan_ready_goal">%1$s planın hazır.</string>
     <string name="onboarding_reveal_start_here">Buradan başla</string>
     <string name="onboarding_reveal_up_next">Sıradaki</string>
