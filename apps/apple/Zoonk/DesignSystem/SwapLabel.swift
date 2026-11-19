@@ -6,9 +6,10 @@ import SwiftUI
 struct SwapLabel: View {
   let labels: [Text]
   let shown: Int
+  var alignment = Alignment.center
 
   var body: some View {
-    ZStack {
+    ZStack(alignment: alignment) {
       ForEach(labels.indices, id: \.self) { index in
         labels[index]
           .opacity(index == shown ? 1 : 0)

@@ -18,8 +18,9 @@ fun SwapLabel(
     labels: List<String>,
     shown: Int,
     modifier: Modifier = Modifier,
+    alignment: Alignment = Alignment.Center,
 ) {
-    Box(modifier, contentAlignment = Alignment.Center) {
+    Box(modifier, contentAlignment = alignment) {
         labels.forEachIndexed { index, label ->
             if (index == shown) {
                 Text(label)

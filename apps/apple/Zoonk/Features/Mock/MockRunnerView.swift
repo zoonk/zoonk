@@ -394,7 +394,7 @@ private struct FlagButton: View {
             Text(
               "Remove flag", tableName: "Mock", comment: "Takes the flag off a flagged question"),
           ],
-          shown: flagged ? 1 : 0)
+          shown: flagged ? 1 : 0, alignment: .leading)
       } icon: {
         Image(systemName: flagged ? "flag.fill" : "flag")
       }
@@ -404,7 +404,7 @@ private struct FlagButton: View {
     )
     .buttonStyle(.outline)
     .controlSize(.large)
-    .tint(flagged ? .warning : nil)
+    .buttonTone(flagged ? .warning : .neutral)
     .disabled(run.timeUp || run.pending)
   }
 }

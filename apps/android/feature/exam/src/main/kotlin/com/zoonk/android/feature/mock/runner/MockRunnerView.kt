@@ -404,6 +404,7 @@ private fun RunnerActions(
                     labels = listOf(stringResource(R.string.mock_flag), stringResource(R.string.mock_unflag)),
                     shown = if (flagged) 1 else 0,
                     modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
+                    alignment = Alignment.CenterStart,
                 )
             }
             MockMainButton(
