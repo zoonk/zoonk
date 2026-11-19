@@ -6,8 +6,8 @@ import { usePathname } from "@/i18n/navigation";
 import { getActiveTab } from "@/lib/learn/active-tab";
 import { useTabMissions } from "@/lib/learn/tab-missions-provider";
 import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
-import { markAppEntry, nameAppEntry } from "@zoonk/learn/bar";
-import { type LearnBuddy, useBuddyName } from "@zoonk/learn/buddy-name";
+import { markAppEntry } from "@zoonk/learn/bar";
+import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { useGoalSwitchPending } from "@zoonk/learn/goal-switcher";
 import {
   LearnBottomNavigation,
@@ -19,7 +19,6 @@ import { LearnShellMain } from "@zoonk/learn/shell";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useLayoutEffect } from "react";
 import { VisitorSideLinks } from "./learn-sidebar-learner";
@@ -240,35 +239,15 @@ export function TabRootOnly({ children }: { children: React.ReactNode }) {
 /** Sections leave as a whole; onboarding's way out skips its own screens, which would only lead back into it. */
 const APP_SECTIONS = new Set(["(settings)", "(stats)", "(catalog)", "(onboarding)"]);
 
-/** A tab's own page has the frame's bar, so the frame names it for a way back to it. */
-function useTabRootName(): string | undefined {
-  const t = useExtracted();
-  const [, first = "", ...rest] = usePathname().split("/");
-  const learner = useFrameLearner();
-  const buddyName = useBuddyName(learner.status === "ready" ? learner.summary.buddy : null);
-
-  if (rest.length > 0) {
-    return undefined;
-  }
-
-  const names: Record<string, string> = { buddy: buddyName, plan: t("Plan"), today: t("Today") };
-  return names[first];
-}
-
 function MarkAppEntry() {
   const pathname = usePathname();
   const section = useSelectedLayoutSegments().find((segment) => APP_SECTIONS.has(segment));
-  const tabName = useTabRootName();
 
   // In the commit that writes the page's history entry, so no tap finds the entry unmarked.
   useLayoutEffect(() => {
     markAppEntry(section);
-
-    if (tabName) {
-      nameAppEntry(tabName);
-    }
     // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Each page is a new history entry to mark.
-  }, [pathname, section, tabName]);
+  }, [pathname, section]);
 
   return null;
 }

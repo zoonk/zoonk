@@ -38,19 +38,34 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
 }
 
 /**
- * A page's bar on a computer when it holds nothing there: the sidebar holds the way back and the
- * page has no actions of its own. It keeps only its top room and hairline and scrolls away, so the
- * title centers on the sidebar's first row (`PageTopBar`'s `className`). `always` is a tab's own
- * page; `learner` and `visitor` are a page the sidebar lists in that state, which `data-signed-in`
- * says before the first paint.
+ * Where a page's way back leads nowhere the frame doesn't already show, so the bar doesn't draw it:
+ * `back` hides the link, and `bare`, for a bar that then holds nothing, keeps only its top room and
+ * hairline and scrolls away, so the title takes the bar's row (`PageTopBar`'s `className`).
+ * `data-signed-in` says whose frame this is before the first paint.
+ * - `computer`: from `lg`, where the sidebar holds the goal and every page it lists.
+ * - `learner`, `visitor`: from `lg`, a page the sidebar lists in that state.
+ * - `tabs`: a page whose way back is Today, the Plan or the buddy, for a learner, who reaches them by
+ *   the tab bar under `lg` and the sidebar from it. A visitor has neither and keeps the link.
+ * - `sectionTabs`: from `md`, where a section's own tabs lead to its first page.
  */
-export const BARE_ON_COMPUTER_CLASS = {
-  always: "lg:static lg:pb-0 lg:*:hidden",
-  learner:
-    "lg:[[data-signed-in]_&]:static lg:[[data-signed-in]_&]:pb-0 lg:[[data-signed-in]_&]:*:hidden",
-  visitor:
-    "lg:[:root:not([data-signed-in])_&]:static lg:[:root:not([data-signed-in])_&]:pb-0 lg:[:root:not([data-signed-in])_&]:*:hidden",
+export const NO_WAY_BACK = {
+  computer: { back: "lg:hidden", bare: "lg:static lg:pb-0 lg:*:hidden" },
+  learner: {
+    back: "lg:[[data-signed-in]_&]:hidden",
+    bare: "lg:[[data-signed-in]_&]:static lg:[[data-signed-in]_&]:pb-0 lg:[[data-signed-in]_&]:*:hidden",
+  },
+  sectionTabs: { back: "md:hidden", bare: "md:static md:pb-0 md:*:hidden" },
+  tabs: {
+    back: "[[data-signed-in]_&]:hidden",
+    bare: "[[data-signed-in]_&]:static [[data-signed-in]_&]:pb-0 [[data-signed-in]_&]:*:hidden",
+  },
+  visitor: {
+    back: "lg:[:root:not([data-signed-in])_&]:hidden",
+    bare: "lg:[:root:not([data-signed-in])_&]:static lg:[:root:not([data-signed-in])_&]:pb-0 lg:[:root:not([data-signed-in])_&]:*:hidden",
+  },
 } as const;
+
+export type NoWayBack = keyof typeof NO_WAY_BACK;
 
 /** The page's column inside the frame: the bar over a tab and the notices line up with it. */
 export const FRAME_COLUMN_CLASS =

@@ -5,11 +5,11 @@ import { LearnerSeedChannel } from "@/components/learner/learner-seed-provider";
 import { VisitorBarLinks } from "@/components/login-bar-link";
 import { TabMissionsProvider } from "@/lib/learn/tab-missions-provider";
 import {
-  BARE_ON_COMPUTER_CLASS,
   FRAME_COLUMN_CLASS,
   LearnShell,
   LearnShellContent,
   LearnSkipLink,
+  NO_WAY_BACK,
 } from "@zoonk/learn/shell";
 import { PageTopBar } from "@zoonk/ui/components/page-top";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -49,7 +49,7 @@ function LearnTopBar() {
         data-slot="learn-frame-bar"
       >
         <PageTopBar
-          className={BARE_ON_COMPUTER_CLASS.always}
+          className={NO_WAY_BACK.computer.bare}
           actions={
             <PhoneOnly>
               <LearnBarEnd visitor={<VisitorBarLinks />} />

@@ -3,30 +3,22 @@
 import { LevelLink, PendingBarEnd } from "@/app/[lang]/(app)/(learn)/_components/learn-bar-end";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { LearnSectionBar } from "@zoonk/learn/bar";
-import { useExtracted } from "next-intl";
 import { UserAvatarMenu } from "./user-avatar-menu";
 
 export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
-  const t = useExtracted();
   const learner = useLearnerSummary();
 
   if (learner.status === "visitor") {
     return (
       <div className="**:data-[slot=back-link]:text-foreground contents">
-        <LearnSectionBar
-          back={{ href: "/", label: "Zoonk" }}
-          history="destination"
-          listed="visitor"
-          phoneEnd={visitor}
-          title={t("Explore courses")}
-        />
+        <LearnSectionBar back={{ href: "/", label: "Zoonk" }} listed="visitor" phoneEnd={visitor} />
       </div>
     );
   }
 
   return (
     <LearnSectionBar
-      back={{ href: "/today", label: t("Today") }}
+      back={{ href: "/today" }}
       listed="visitor"
       phoneEnd={
         learner.status === "ready" ? (
@@ -38,7 +30,7 @@ export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
           <PendingBarEnd visitor={visitor} />
         )
       }
-      title={t("Explore courses")}
+      root
     />
   );
 }

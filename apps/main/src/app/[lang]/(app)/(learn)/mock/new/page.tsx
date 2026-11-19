@@ -26,7 +26,6 @@ async function ChooserBar({ label, listed = false }: { label?: string; listed?: 
     <LearnPageBar
       back={{ href: "/exam", label }}
       listed={listed ? "learner" : undefined}
-      root
       title={t("Take a mock exam")}
     />
   );

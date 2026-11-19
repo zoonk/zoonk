@@ -2,7 +2,7 @@ import { instant } from "@next/playwright";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 
-test("Settings goes back to Today after opening from Certificates", async ({
+test("a section's first page has no way back: the sidebar and the tab bar lead out", async ({
   userWithoutProgress: page,
 }) => {
   await page.setViewportSize({ height: 900, width: 1440 });
@@ -15,12 +15,17 @@ test("Settings goes back to Today after opening from Certificates", async ({
   await page.getByRole("menuitem", { exact: true, name: "Settings" }).click();
   await expect(page).toHaveURL(/\/settings$/u);
 
-  const back = page.getByRole("link", { exact: true, name: "Back to Today" });
-  await expect(back).toBeVisible();
+  const back = page.getByRole("link", { name: /^Back to /u });
+  await expect(back).toBeHidden();
 
   await page.setViewportSize({ height: 844, width: 390 });
-  await expect(back).toBeVisible();
-  await back.click();
+  await expect(back).toBeHidden();
+
+  await page
+    .getByRole("navigation", { name: "Learning tabs" })
+    .getByRole("link", { name: "Today" })
+    .click();
+
   await expect(page).toHaveURL(/\/today$/u);
 });
 
@@ -35,34 +40,30 @@ test("on a phone settings pages go back to the settings list", async ({
   await reminders.click();
   await expect(page).toHaveURL(/\/settings\/reminders$/u);
 
+  const settingsEntry = await page.evaluate(() => globalThis.navigation.entries().at(-2)?.key);
   await page.getByRole("link", { exact: true, name: "Back to Settings" }).click();
   await expect(page).toHaveURL(/\/settings$/u);
+
+  await expect
+    .poll(() => page.evaluate(() => globalThis.navigation.currentEntry?.key))
+    .toBe(settingsEntry);
 });
 
-test("a Settings tab on a tablet returns to Today in one step", async ({
+test("on a tablet a Settings tab has no way back: the section's tabs lead between its pages", async ({
   userWithoutProgress: page,
 }) => {
-  await page.setViewportSize({ height: 900, width: 1024 });
-  await page.goto("/today");
-
-  const accountMenu = page.getByRole("button", { name: /User menu/u });
-  await expectHydrated(accountMenu);
-  const todayEntry = () => page.evaluate(() => globalThis.navigation.currentEntry?.key);
-  const original = await todayEntry();
-  expect(original).toBeTruthy();
-
-  await accountMenu.click();
-  await page.getByRole("menuitem", { exact: true, name: "Settings" }).click();
-  await expect(page).toHaveURL(/\/settings$/u);
+  await page.setViewportSize({ height: 1180, width: 820 });
+  await page.goto("/settings");
 
   const tabs = page.getByRole("navigation", { name: "Settings" });
-  await tabs.getByRole("link", { exact: true, name: "Reminders" }).click();
+  const reminders = tabs.getByRole("link", { exact: true, name: "Reminders" });
+  await expectHydrated(reminders);
+  await reminders.click();
   await expect(page).toHaveURL(/\/settings\/reminders$/u);
-  await expect(page.getByRole("link", { exact: true, name: "Back to Settings" })).toBeHidden();
+  await expect(page.getByRole("link", { name: /^Back to /u })).toBeHidden();
 
-  await page.getByRole("link", { exact: true, name: "Back to Today" }).click();
-  await expect(page).toHaveURL(/\/today$/u);
-  await expect.poll(todayEntry).toBe(original);
+  await tabs.getByRole("link", { exact: true, name: "Preferences" }).click();
+  await expect(page).toHaveURL(/\/settings(?:\/appearance)?$/u);
 });
 
 test("on a phone statistics pages go back to the overview", async ({
@@ -72,27 +73,6 @@ test("on a phone statistics pages go back to the overview", async ({
   await page.goto("/energy");
   await page.getByRole("link", { exact: true, name: "Back to Statistics" }).click();
   await expect(page).toHaveURL(/\/stats$/u);
-});
-
-test("returning from Settings restores the original Today entry", async ({
-  userWithoutProgress: page,
-}) => {
-  await page.setViewportSize({ height: 900, width: 1440 });
-  await page.goto("/today");
-
-  const accountMenu = page.getByRole("button", { name: /User menu/u });
-  await expectHydrated(accountMenu);
-  const todayEntry = () => page.evaluate(() => globalThis.navigation.currentEntry?.key);
-  const original = await todayEntry();
-  expect(original).toBeTruthy();
-
-  await accountMenu.click();
-  await page.getByRole("menuitem", { exact: true, name: "Settings" }).click();
-  await expect(page).toHaveURL(/\/settings$/u);
-  await page.getByRole("link", { exact: true, name: "Back to Today" }).click();
-
-  await expect(page).toHaveURL(/\/today$/u);
-  await expect.poll(todayEntry).toBe(original);
 });
 
 test("Settings reserves the profile column while its contents load", async ({
