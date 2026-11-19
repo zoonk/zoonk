@@ -20,7 +20,7 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
             accountOn={[getMenu("settings").url, getMenu("profile").url, getMenu("support").url]}
             extras={[{ content: <FollowUs />, href: getMenu("support").url }]}
           >
-            <Suspense fallback={<SettingsAsideSkeleton hub={getMenu("settings").url} />}>
+            <Suspense fallback={<SettingsAsideSkeleton on={getMenu("profile").url} />}>
               <SettingsAside />
             </Suspense>
           </SettingsAsideSlot>

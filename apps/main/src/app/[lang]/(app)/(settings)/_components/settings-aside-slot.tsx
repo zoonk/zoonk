@@ -4,9 +4,11 @@ import { usePathname } from "@/i18n/navigation";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 
 /**
- * What the section's aside holds, page by page: the account where it matters and what one page
- * adds under it. A page with neither leaves it empty, as a visitor's account does, and the aside
- * then shows only for what the page itself says beside its rows (`PageAsideNote`).
+ * What the section's aside holds, page by page: what one page adds, which is the same for
+ * everyone, and under it the account where it matters, so an account that arrives late or turns
+ * out to be nobody's moves nothing. A page with neither leaves it empty, as a visitor's account
+ * does, and the aside then shows only for what the page itself says beside its rows
+ * (`PageAsideNote`).
  */
 export function SettingsAsideSlot({
   accountOn,
@@ -17,7 +19,7 @@ export function SettingsAsideSlot({
   accountOn: string[];
   /** The account. */
   children: React.ReactNode;
-  /** What one page shows beside it. */
+  /** What one page shows over it. */
   extras: { content: React.ReactNode; href: string }[];
 }) {
   const pathname = usePathname();
@@ -26,21 +28,21 @@ export function SettingsAsideSlot({
 
   return (
     <div className="contents">
-      {account && children}
       {extra?.content}
+      {account && children}
     </div>
   );
 }
 
 /**
- * Holds the account's place while it loads, as tall as the account is, except on the section's
- * first page: there a guest's page fills the room with no aside, so nothing is drawn until the
- * account says whose page it is.
+ * Holds the account's place while it loads, as tall as the account is, only on the page that
+ * only an account holder is led to. Anywhere else a guest has none, so nothing is drawn until
+ * the account says whose page it is.
  */
-export function SettingsAsideSkeleton({ hub }: { hub: string }) {
+export function SettingsAsideSkeleton({ on }: { on: string }) {
   const pathname = usePathname();
 
-  if (pathname === hub) {
+  if (pathname !== on) {
     return null;
   }
 
