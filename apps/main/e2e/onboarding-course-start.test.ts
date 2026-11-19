@@ -217,9 +217,11 @@ test.describe("Starting a course from its page", () => {
     await expect(gate).toBeVisible();
 
     await expect(
-      page.getByText(
-        `More on ${moreOn.toLocaleDateString("en-US", { day: "numeric", month: "long", timeZone: "UTC" })}, or subscribe to keep going.`,
-      ),
+      page
+        .getByText(
+          `More on ${moreOn.toLocaleDateString("en-US", { day: "numeric", month: "long", timeZone: "UTC" })}, or subscribe to keep going.`,
+        )
+        .filter({ visible: true }),
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: "Subscribe" })).toHaveAttribute(
