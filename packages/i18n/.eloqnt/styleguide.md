@@ -17,6 +17,7 @@ Zoonk helps anyone learn anything, especially first-time learners in small towns
 - “Known” and “Known before” mean the learner knew it before studying it in Zoonk.
 - Against the Trickster, “broken” counts shield plates broken by right answers; “held” means the shield withstood the attempt. A second go is a “Rematch”.
 - “Sure” and “unsure” are the learner's confidence in an answer.
+- In a mock exam, “Flag”, “Remove flag” and “flagged” are one word family: a flagged question is one the learner marked with the Flag button, so use that button's word.
 - “q” abbreviates “questions” only in English: write the word.
 - English grammar topics keep the English names their learners use, such as “phrasal verbs”, “present perfect” and “past continuous”.
 

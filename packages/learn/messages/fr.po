@@ -7962,9 +7962,9 @@ msgstr "Une réponse n’a pas été enregistrée."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "2_2n3w"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
-msgstr "{blank, plural, one {# question est sans réponse} other {# questions sont sans réponse}} et {flagged, plural, one {# est marquée pour révision} other {# sont marquées pour révision}}."
+msgctxt "Beu7ZD"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
+msgstr "{blank, plural, one {# question est sans réponse} other {# questions sont sans réponse}} et {flagged, plural, one {# est marquée} other {# sont marquées}}."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7974,9 +7974,9 @@ msgstr "{count, plural, one {# question est sans réponse.} other {# questions s
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "gaB5_0"
-msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
-msgstr "{count, plural, one {# question est marquée pour révision.} other {# questions sont marquées pour révision.}}"
+msgctxt "GCYYkV"
+msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
+msgstr "{count, plural, one {# question est marquée.} other {# questions sont marquées.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8741,11 +8741,11 @@ msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "Net : {score} sur {total}"
 
-#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}, marquée pour révision"
+msgctxt "ETtb7q"
+msgid "{question}, flagged"
+msgstr "{question}, marquée"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"

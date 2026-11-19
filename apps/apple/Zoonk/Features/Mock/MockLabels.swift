@@ -1,13 +1,6 @@
 import SwiftUI
 
 enum MockLabels {
-  /// The answer sheet's key for the questions marked for review, with how many there are.
-  static func markedForReview(_ count: Int) -> LocalizedStringResource {
-    count == 0
-      ? LocalizedStringResource("Marked for review", table: "Mock")
-      : LocalizedStringResource("\(count) marked for review", table: "Mock")
-  }
-
   /// How many of the section's questions are answered, beside the answer sheet's title.
   static func answered(_ count: Int) -> LocalizedStringResource {
     count == 0

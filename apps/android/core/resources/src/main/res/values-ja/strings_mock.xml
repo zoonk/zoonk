@@ -9,7 +9,7 @@
   "mock_break_detail": "d5dbd2f5f4633d5183aac47f3d4e2e9f4f0f2e7827d383a4bda1a1007bb916c4",
   "mock_break_time_left": "c242660b660cd52ce630a0983d01149f104f45ee1ffaf62624ed12d07a9e0b81",
   "mock_cell_answered": "104bdd3ddf561f40b8299398f49ded7effef14828ed816aa146b7579fb9857d3",
-  "mock_cell_marked_for_review": "9119cde7ec6b9d27af87a36ea5c2556c9eb0c75dc63907f207552f3ea1b9f54d",
+  "mock_cell_flagged": "2a1cdb397390f3fecbdc5716700f17442b0249cd6966756eb3a219ae4dec7750",
   "mock_continue": "d1eed4bd1214e1028b8fa6e5ca751d7782d93a8ff8c852df2f0960293f592731",
   "mock_continue_section": "b756f1009d5558f0fa38b9c2972ed8a7e14d8ad928bfcd6e9e1dd126af55be97",
   "mock_essay_blank": "c8766822cc7ca0a22fee1e791dc4f12ba6f55b7ea56f73ad48cd8b187f9b7633",
@@ -29,11 +29,11 @@
   "mock_keep_going": "b0cc0512ae16c92012710a2b6456dcfcd41ec79294144d13ac912bbbff81b856",
   "mock_label": "bffdece59ec6c657d417adf077d448efdd270e451c67eda8aa70dec72ba628cb",
   "mock_label_shape": "034242280bd96c59c6a094571d00716aae7aed09c4260090203b91eba97fafc2",
-  "mock_left_blank": "4dfe1c8291d373ecc06daa021307705b4b0682f6782a8af60a4921847d8aa8b9",
-  "mock_left_blank_and_flagged": "d98c7c22a26cb358ec963eb630f9dea368a5be59e065645a9c624a4b2ffcbe33",
-  "mock_left_blank_only": "e75e9c821e5d71c5efcbad626f1073702cba2a4360763246c48f6bbf9260686a",
-  "mock_left_flagged": "ba47030e5d06b855af643154968e7571b83704464cf56deca234fc0ae6402f42",
-  "mock_left_flagged_only": "a9e509948241f6f471b943e1e492f06564d88a1978a2a9acc49a6b900e8442b9",
+  "mock_left_blank": "dc873129f06ed57fa0ed16a49069d135432abb9739b8f3bf85d500a89ddfd82a",
+  "mock_left_blank_and_flagged": "28879f2dff189b9c621e2e545fb7abd17fbac3b830c9c6b52ed682661265f66b",
+  "mock_left_blank_only": "cdf3c19a07513bb9722031b3b3337fd1f3b8aef9782c51c1115fb08a7a1902f9",
+  "mock_left_flagged": "499ed3460887e429cd81b2cd647cdad99a882b958c8114319ec7bfb6a1143f34",
+  "mock_left_flagged_only": "6f98420c553cf8bb5e45e157ca17aed596342136811e169e1ca505d32349366d",
   "mock_moves_forward": "2fda31c05d0e03b5f3ed4a2eae6467f654f2689a9a006e03a8045d53eea84384",
   "mock_moves_forward_must": "642453c7caf8ef66cf664ab9d4929b44e185f2dcf3dc9a77b9e960b7f1ec5ada",
   "mock_moves_must": "b98cbd713a6e6ce4ff44b2783a443d23489bd34247009c91c2dadd9f3a7b8e23",
@@ -143,17 +143,17 @@
     <string name="mock_moves_must">次に進むには各問題への回答が必要です。</string>
     <string name="mock_hand_in_mock_title">模試を提出しますか？</string>
     <string name="mock_hand_in_section_title">このセクションを提出しますか？</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are marked for review." -->
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
     <plurals name="mock_left_blank">
-        <item quantity="other">%d問が未回答</item>
+        <item quantity="other">空欄の問題が%d問あります</item>
     </plurals>
     <plurals name="mock_left_flagged">
-        <item quantity="other">見直し対象の問題が%d問</item>
+        <item quantity="other">見直し対象の問題が%d問あります</item>
     </plurals>
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
-    <string name="mock_left_blank_and_flagged">%1$sで、%2$sです。</string>
+    <string name="mock_left_blank_and_flagged">%1$s、%2$s。</string>
     <plurals name="mock_left_blank_only">
-        <item quantity="other">%d問が未回答です。</item>
+        <item quantity="other">未回答の問題が%d問あります。</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
         <item quantity="other">見直し対象の問題が%d問あります。</item>
@@ -177,8 +177,8 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">問題%1$d</string>
     <string name="mock_cell_answered">回答済み</string>
-    <!-- A cell of the mock exam's answer sheet the learner marked to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_marked_for_review">%1$s、見直し対象</string>
+    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_flagged">%1$s（見直し）</string>
     <string name="mock_sections">セクション</string>
     <string name="mock_section_number">セクション%1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

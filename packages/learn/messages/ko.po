@@ -7962,9 +7962,9 @@ msgstr "답변이 저장되지 않았어요."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "2_2n3w"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is marked for review} other {# are marked for review}}."
-msgstr "{blank, plural, other {안 푼 문제가 #개 있고}} {flagged, plural, other {다시 볼 문제로 표시한 문제가 #개 있어요}}."
+msgctxt "Beu7ZD"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
+msgstr "{blank, plural, other {빈 문제 #개}}, {flagged, plural, other {표시한 문제 #개}}입니다."
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
@@ -7974,9 +7974,9 @@ msgstr "{count, plural, other {답하지 않은 문제가 #개 있어요.}}"
 
 #. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
-msgctxt "gaB5_0"
-msgid "{count, plural, one {# question is marked for review.} other {# questions are marked for review.}}"
-msgstr "{count, plural, other {다시 볼 문제로 표시한 문제가 #개 있어요.}}"
+msgctxt "GCYYkV"
+msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
+msgstr "{count, plural, other {표시한 문제 #개입니다.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -8741,11 +8741,11 @@ msgctxt "TyZybQ"
 msgid "Net {score} of {total}"
 msgstr "순점수 {score} / {total}"
 
-#. A cell of the mock exam's answer sheet the learner marked to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "HmJ6DK"
-msgid "{question}, marked for review"
-msgstr "{question}, 다시 볼 문제로 표시됨"
+msgctxt "ETtb7q"
+msgid "{question}, flagged"
+msgstr "{question} (표시)"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"

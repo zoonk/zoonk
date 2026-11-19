@@ -316,7 +316,7 @@ internal fun QuestionCell(
             stringResource(R.string.mock_question_number, question.number)
         }
     // Flagged is read in the key's words, as the web's cell is.
-    val name = if (flagged) stringResource(R.string.mock_cell_marked_for_review, number) else number
+    val name = if (flagged) stringResource(R.string.mock_cell_flagged, number) else number
     val states = if (answered) stringResource(R.string.mock_cell_answered) else ""
     // The current one has a bar under its number, the web's; a flagged one keeps its amber ring.
     val border =
