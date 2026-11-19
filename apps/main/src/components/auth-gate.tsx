@@ -73,6 +73,13 @@ async function getGateWords(gate: Gate): Promise<{ description?: string; title: 
   }[gate.kind];
 }
 
+/**
+ * On a computer the bar's ways in sit in its end corner, so a gate that is the page's whole content
+ * is centered in the bar's width, as a not-found message is.
+ */
+const GATE_UNDER_BAR_CLASS =
+  "lg:items-center lg:justify-center lg:text-center lg:*:data-[slot=empty-header]:items-center";
+
 async function GateMessage({
   children,
   className,
@@ -126,7 +133,11 @@ export async function AuthGate({
   if (bar) {
     return (
       <>
-        <GateMessage className={cn("flex-1", className)} gate={gate} heading={heading} />
+        <GateMessage
+          className={cn("flex-1", GATE_UNDER_BAR_CLASS, className)}
+          gate={gate}
+          heading={heading}
+        />
         <GateBar gate={gate} />
       </>
     );
@@ -250,7 +261,7 @@ export async function AuthGatePage({
 
   return (
     <GatedPage description={description} title={title}>
-      <GateMessage gate={gate} />
+      <GateMessage className={GATE_UNDER_BAR_CLASS} gate={gate} />
 
       <GateBar gate={gate} />
     </GatedPage>
