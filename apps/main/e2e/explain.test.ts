@@ -170,7 +170,7 @@ test.describe("Quick explanations", () => {
     });
   });
 
-  test(`a learner with only quick explanations starts a goal on Today, and one plays its story to "Now you know"`, async ({
+  test(`a learner with only quick explanations starts a goal on Today, and one plays its story to "Now you know", past a save that failed`, async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
@@ -193,7 +193,27 @@ test.describe("Quick explanations", () => {
       await page.keyboard.press("1");
       await page.keyboard.press("Enter");
       await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+
+      let failedSave = false;
+
+      await page.route(`**/explain/${persona.goalId}`, async (route) => {
+        if (route.request().method() === "POST" && !failedSave) {
+          failedSave = true;
+          await route.abort("failed");
+        } else {
+          await route.fallback();
+        }
+      });
+
       await page.keyboard.press("Enter");
+
+      await expect(
+        page.getByRole("heading", { name: "Your lesson isn't saved yet" }),
+      ).toBeVisible();
+
+      await expect(page.getByText("Now you know")).not.toBeVisible();
+
+      await page.getByRole("button", { name: "Try again" }).click();
 
       await expect(page.getByText("Now you know")).toBeVisible();
     });
