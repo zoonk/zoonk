@@ -455,7 +455,7 @@ The independent review of [screen captures](../../verify/SKILL.md#7-capture-and-
 5. **Leave the [deliberate choices](#deliberate-choices) and the [exceptions the user granted](#exceptions-the-user-granted).** A dialog or a sheet pictured alone, on transparent corners, is how the capture draws it. On Apple and Android, the platform's chrome isn't judged ([iOS and Android](../SKILL.md#ios-and-android)).
 6. **Write each fault as [a finding](#a-finding)** as you go, with `confidence` `measured` where you took the numbers from the pixels. A word or a format fault that no rule names takes `rule: none` and the principle. Report only what you can point at.
 
-End with the counts (pictures read, findings by rule), one line per picture ("fine" or its findings), and the ten findings a first-time learner would trip on first.
+End with the counts (pictures read, findings by rule) and one line per picture ("fine" or its findings). A retaken picture comes with the one read before and the findings fixed since: answer only whether each is gone and whether anything else got worse.
 
 ### A finding
 
@@ -470,7 +470,9 @@ End with the counts (pictures read, findings by rule), one line per picture ("fi
   "kind": "systemic",
   "component": "packages/learn/src/shell/learn-bar.tsx",
   "fix": "Pull the bar's back link out by its padding and the glyph's blank side, in the shared bar.",
-  "confidence": "measured"
+  "confidence": "measured",
+  "before": false,
+  "misleads": false
 }
 ```
 
@@ -479,6 +481,7 @@ End with the counts (pictures read, findings by rule), one line per picture ("fi
 - `departs`: `system` (the screen departs from the system) or `principle` (the system departs from a rule).
 - `kind`: `systemic` (a shared component or token: fix once) or `screen` (this screen's own layout). `component`: the file, when known.
 - `confidence`: `measured` (numbers from the page or the pixels), `seen` (visible, not measured) or `suspected`.
+- `before` and `misleads`, marked only after the blind pass, from the before pictures: whether one shows it too (`false` on a new screen), and whether it stops or misleads a learner (wrong or missing information, an action they can't find or use, text cut so its meaning is lost).
 
 ## Deliberate choices
 

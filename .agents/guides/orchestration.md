@@ -52,7 +52,7 @@ Only the user grants an exception to a rule ([scope and completion](../../AGENTS
 
 - A lane that thinks a rule is wrong for one of its screens follows the rule and adds a line to the file: the screen, the rule, what it asks to keep and what it does if the answer is no.
 - The lead answers under it. A case the rule was never about (a marketing page under an app-screen rule) is answered as scope, and the rule's text is changed to say so. A true exception goes to the user; when the user has asked not to be stopped for questions, the lead answers it and says why.
-- The pull request lists every answer the lead gave, granted and refused, under its own heading, so the user accepts or overrules each one. Only what the user has accepted goes into the rule's own list, such as [craft's exceptions](../skills/zoonk-design/references/craft.md#exceptions-the-user-granted).
+- The pull request lists every answer the lead gave, granted and refused, under its own heading, beside the read's findings closed without a fix ([the picture gate](../skills/zoonk-commit/SKILL.md#every-picture-is-captured-current-and-read)), so the user accepts or overrules each one. Only what the user has accepted goes into the rule's own list, such as [craft's exceptions](../skills/zoonk-design/references/craft.md#exceptions-the-user-granted).
 
 ## Design debate
 

@@ -83,5 +83,5 @@ Hand back with:
 
 - the PR link and its head commit
 - the preview's URLs, when it has one
-- the check results, `pnpm pr:media check`'s last line included, and any picture it still fails (such as a pending native picture), and the device pictures it lists as not measured
+- the check results, `pnpm pr:media check`'s findings line and last line included, and any picture it still fails (such as a pending native picture), and the device pictures it lists as not measured
 - each review comment and what you did: fixed (with the commit), declined (with the reason) or left for the user to decide
