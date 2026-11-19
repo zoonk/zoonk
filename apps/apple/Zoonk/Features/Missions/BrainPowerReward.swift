@@ -40,6 +40,7 @@ struct BrainPowerReward: View {
       }
     }
     .buttonStyle(.plain)
+    .help(Text("Brain Power", tableName: "Session", comment: "Beside the Brain Power a task earned"))
     .accessibilityLabel(
       earned
         ? Text(

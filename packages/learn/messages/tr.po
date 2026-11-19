@@ -50,13 +50,6 @@ msgctxt "_Q0taG"
 msgid "BP"
 msgstr "BG"
 
-#: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Beyin Gücü"
-
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -5753,6 +5746,13 @@ msgstr "{stars, plural, =0 {3 yıldızdan # tanesi} other {3 üzerinden # yıld�
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Hedefler"
+
+#: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Beyin Gücü"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"

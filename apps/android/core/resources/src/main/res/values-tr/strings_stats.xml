@@ -28,7 +28,7 @@
   "stats_best_on": "dcb314b8f9d977e160f36c5cf6eb75c8247c4b1d7b4bebf10159ebe9c20f694a",
   "stats_best_time": "0c081b4588643196ae572582798030434576fc062aaa462a8e3d075108fd8a0a",
   "stats_best_time_is": "292afc996c5819abd02f2ee208adb03e9016186cf08ee1f6750d8aa5d5e489c2",
-  "stats_brain_power_amount": "54ddb7714c945739493857d85dc79556f1c939d1beea4d212a634a265fadb015",
+  "stats_brain_power_amount": "905925cdd51de9cbc73704f3a76662bf67dd21e8ab5245febdb5511d5afff7a0",
   "stats_brain_power_to": "6ada5811349723697b2a6210a807017ae8222245f98203df59ed55225cdda1fb",
   "stats_calendar_activity_summary": "3fa551a7af988d575161e7442b60cc6d8d5f1dc5c6676ad6caae21ffa57bf91a",
   "stats_calendar_energy_summary": "5424fee25e2af84cfce5c81cffe813948d5578d87ed8bdc4cde9b3a3e92bf792",
@@ -102,7 +102,8 @@
     <string name="stats_see_all">Tümünü gör</string>
     <string name="stats_best_day">En iyi gün</string>
     <string name="stats_best_time">En verimli saat</string>
-    <string name="stats_brain_power_amount">%1$s Beyin Gücü</string>
+    <!-- The learner's Brain Power atop the Level page, with the unit's short form from the style guide in parentheses, so learners link the two. Where the short form is the full name, leave the parentheses out. -->
+    <string name="stats_brain_power_amount">%1$s Beyin Gücü (BG)</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Tüm kuşaklar kazanıldı</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->

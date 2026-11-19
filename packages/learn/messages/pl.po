@@ -50,13 +50,6 @@ msgctxt "_Q0taG"
 msgid "BP"
 msgstr "MU"
 
-#: src/_components/brain-power-amount.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Moc Umysłu"
-
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -5753,6 +5746,13 @@ msgstr "{stars, plural, =0 {# z 3 gwiazdek} other {# z 3 gwiazdek}}"
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Cele"
+
+#: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Moc Umysłu"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
