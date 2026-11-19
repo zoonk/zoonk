@@ -474,7 +474,7 @@ private struct SettingsHubView: View {
                 "Create a free account", tableName: "Account"))
           }
         } else {
-          BusyButton(isBusy: session.isWorking, role: .destructive, isRow: true) {
+          BusyButton(isBusy: session.isWorking, isRow: true) {
             Task {
               await session.signOut()
             }
@@ -482,7 +482,7 @@ private struct SettingsHubView: View {
             Text("Log out", tableName: "Account", comment: "Account log-out action")
               .typeStyle(.rowTitle)
           }
-          .foregroundStyle(.destructiveText)
+          .foregroundStyle(.primary)
         }
       }
 

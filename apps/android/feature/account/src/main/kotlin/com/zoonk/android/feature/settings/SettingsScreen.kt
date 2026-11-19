@@ -162,7 +162,7 @@ fun SettingsScreen(
 
                 if (account != null) {
                     ListRow(
-                        headline = { Text(stringResource(R.string.account_menu_log_out), color = MaterialTheme.colorScheme.error) },
+                        headline = { Text(stringResource(R.string.account_menu_log_out)) },
                         onClick = {
                             app.scope.launch {
                                 when (app.sessions.signOut()) {

@@ -103,7 +103,7 @@ function LogoutGroup() {
     <ListGroup>
       <ListRowButton chevron={false} onClick={() => void logout()}>
         <ListRowContent>
-          <ListRowTitle className="text-destructive-text">{t("Log out")}</ListRowTitle>
+          <ListRowTitle>{t("Log out")}</ListRowTitle>
         </ListRowContent>
       </ListRowButton>
     </ListGroup>
