@@ -37,13 +37,7 @@ export async function SupportContent() {
         title={t("Help")}
       />
 
-      <Suspense
-        fallback={
-          <FeedbackFormSkeleton>
-            <FollowUsOnPage />
-          </FeedbackFormSkeleton>
-        }
-      >
+      <Suspense fallback={<FeedbackFormSkeleton />}>
         <ContactSupport>
           <FollowUsOnPage />
         </ContactSupport>

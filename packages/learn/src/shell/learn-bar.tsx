@@ -194,6 +194,11 @@ export function LearnSectionBar({
   sectionTabs = false,
 }: {
   back: { href: string; label?: string };
+  /**
+   * An action that may turn out to be nothing, such as a guest's. It sits in the bar only where
+   * the bar keeps its way back, so the bar's row never comes or goes with it; where the way back
+   * isn't drawn the section draws it at its title's end.
+   */
   end?: React.ReactNode;
   listed?: ListedBy;
   /** The bar's end under `lg` only, where no sidebar holds it. */
@@ -211,7 +216,11 @@ export function LearnSectionBar({
       actions={
         (end || phoneEnd) && (
           <>
-            {end}
+            {end && (
+              <div className={cn("contents", hidden.back)} data-with-back="">
+                {end}
+              </div>
+            )}
             {phoneEnd && (
               <div className="contents lg:hidden" data-phone-only="">
                 {phoneEnd}

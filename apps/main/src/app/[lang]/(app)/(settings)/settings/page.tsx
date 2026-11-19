@@ -14,6 +14,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { SettingsAccountRow } from "../_components/settings-account-button";
 import { SettingsHubLists } from "../_components/settings-links";
 import { getSettingsPagesShown } from "../_components/settings-pages-shown";
 import ProfilePage from "../profile/page";
@@ -27,8 +28,12 @@ export async function generateMetadata(): Promise<Metadata> {
 async function AccountRow() {
   const session = await getSession();
 
-  if (!session || session.user.isAnonymous) {
+  if (!session) {
     return null;
+  }
+
+  if (session.user.isAnonymous) {
+    return <SettingsAccountRow />;
   }
 
   return (
@@ -75,7 +80,10 @@ async function FirstSettingsPage() {
   return session && !session.user.isAnonymous ? <ProfilePage /> : <AppearancePage />;
 }
 
-/** The server can't tell the screen's width, so the hub and the first page both render and CSS shows one. */
+/**
+ * The server can't tell the screen's width, so the hub and the first page both render and CSS shows
+ * one. Nothing stands in for the first page while it loads: whose it is decides which page it is.
+ */
 export default async function SettingsPage() {
   const t = await getExtracted();
 
@@ -95,13 +103,7 @@ export default async function SettingsPage() {
 
       {/* Not a box of its own, so the first page sits in the section like on its own URL. */}
       <div className="hidden md:contents">
-        <Suspense
-          fallback={
-            <Page>
-              <SettingsHubSkeleton />
-            </Page>
-          }
-        >
+        <Suspense fallback={null}>
           <FirstSettingsPage />
         </Suspense>
       </div>

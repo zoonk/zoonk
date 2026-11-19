@@ -5,8 +5,8 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { FollowUs } from "./_components/follow-us";
 import { SettingsAccountAction } from "./_components/settings-account-action";
-import { SettingsAside, SettingsAsideSkeleton } from "./_components/settings-aside";
-import { SettingsAsideSlot } from "./_components/settings-aside-slot";
+import { SettingsAside } from "./_components/settings-aside";
+import { SettingsAsideSkeleton, SettingsAsideSlot } from "./_components/settings-aside-slot";
 import { SettingsNavbar, SettingsNavbarSkeleton } from "./_components/settings-navbar";
 
 export default async function Layout({ children }: LayoutProps<"/[lang]">) {
@@ -20,7 +20,7 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
             accountOn={[getMenu("settings").url, getMenu("profile").url, getMenu("support").url]}
             extras={[{ content: <FollowUs />, href: getMenu("support").url }]}
           >
-            <Suspense fallback={<SettingsAsideSkeleton />}>
+            <Suspense fallback={<SettingsAsideSkeleton on={getMenu("profile").url} />}>
               <SettingsAside />
             </Suspense>
           </SettingsAsideSlot>

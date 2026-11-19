@@ -41,8 +41,10 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
  * Where a page's way back leads nowhere the frame doesn't already show, so the bar doesn't draw it:
  * `back` hides the link, and `bare` lets a bar that then holds nothing keep only its top room and
  * hairline and scroll away, so the title takes the bar's row (`PageTopBar`'s `className`). A bar
- * holds nothing when its end shows nothing: no actions, or on a computer only a phone's
- * (`data-phone-only`). `data-signed-in` says whose frame this is before the first paint.
+ * holds nothing when its end shows nothing: no actions, on a computer only a phone's
+ * (`data-phone-only`), or only one that leaves with the way back (`data-with-back`), which is so
+ * while that action is still loading too. `data-signed-in` says whose frame this is before the
+ * first paint.
  * - `beside`: from `xl` for whoever has a session, where the page it goes back to stays on screen
  *   and this one opens in the aside.
  * - `computer`: from `lg`, where the sidebar holds the goal and every page it lists.
@@ -54,27 +56,27 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
 export const NO_WAY_BACK = {
   beside: {
     back: "xl:in-data-signed-in:hidden",
-    bare: "xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:static xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:pb-0 xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>*]:*:hidden",
+    bare: "xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:static xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:pb-0 xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:*:hidden",
   },
   computer: {
     back: "lg:hidden",
-    bare: "lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:static lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:pb-0 lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:*:hidden",
+    bare: "lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:static lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:pb-0 lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:*:hidden",
   },
   learner: {
     back: "lg:[[data-signed-in]_&]:hidden",
-    bare: "lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:static lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:pb-0 lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:*:hidden",
+    bare: "lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:static lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:pb-0 lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:*:hidden",
   },
   sectionTabs: {
     back: "md:hidden",
-    bare: "md:not-has-[[data-slot=page-top-end]>*]:static md:not-has-[[data-slot=page-top-end]>*]:pb-0 md:not-has-[[data-slot=page-top-end]>*]:*:hidden",
+    bare: "md:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:static md:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:pb-0 md:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:*:hidden",
   },
   tabs: {
     back: "[[data-signed-in]_&]:hidden",
-    bare: "[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>*]:static [[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>*]:pb-0 [[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>*]:*:hidden",
+    bare: "[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:static [[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:pb-0 [[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:*:hidden",
   },
   visitor: {
     back: "lg:[:root:not([data-signed-in])_&]:hidden",
-    bare: "lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:static lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:pb-0 lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only])]:*:hidden",
+    bare: "lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:static lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:pb-0 lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:*:hidden",
   },
 } as const;
 
