@@ -22,7 +22,6 @@ import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { type MindMapActions } from "./mind-map-actions";
 import { type MindMapCopyInput, type MindMapRowPlace, useStateLines } from "./mind-map-copy";
-import { MindMapSlot } from "./mind-map-slot";
 import { MindMapViewer } from "./mind-map-viewer";
 import {
   type MindMapRequest,
@@ -43,36 +42,19 @@ function isMaking(shown: MindMapShown): boolean {
   return shown === "drawing" || shown === "writingLessons";
 }
 
-function SlotMark({ shown }: { shown: MindMapShown }) {
-  if (isMaking(shown)) {
-    return <Spinner className="text-muted-foreground size-4" role="presentation" />;
-  }
-
-  return <KindIcon kind="mindMap" />;
-}
-
-function RowLeading({
-  alone,
-  shown,
-  view,
-}: {
-  alone: boolean;
-  shown: MindMapShown;
-  view: ChapterMindMapView;
-}) {
-  if (alone) {
-    return (
-      <ListRowLeading>
-        <SlotMark shown={shown} />
-      </ListRowLeading>
-    );
-  }
-
+/**
+ * The row's mark is the list's own small one, so its title starts where the rows beside it start:
+ * a chapter's summary, a lesson end's "Up next". A map's picture leads only on the Mind maps page,
+ * where every row is a map (`MindMapSlot`).
+ */
+function RowLeading({ shown }: { shown: MindMapShown }) {
   return (
-    <ListRowLeading className="py-2">
-      <MindMapSlot thumbnailUrl={shown === "ready" ? (view.image?.thumbnailUrl ?? null) : null}>
-        <SlotMark shown={shown} />
-      </MindMapSlot>
+    <ListRowLeading>
+      {isMaking(shown) ? (
+        <Spinner className="text-muted-foreground size-4" role="presentation" />
+      ) : (
+        <KindIcon kind="mindMap" />
+      )}
     </ListRowLeading>
   );
 }
@@ -198,7 +180,7 @@ export function MindMapRowView({
     return null;
   }
 
-  // A lesson's end shows one row over "Up next", so it takes that row's mark and text edge.
+  // A lesson's end shows one row over "Up next", so its text starts at the row's top as that row's does.
   const alone = place === "finish";
   // The Mind maps page lists many chapters without a map: their names and actions, nothing more.
   const compact = place === "library";
@@ -207,7 +189,7 @@ export function MindMapRowView({
 
   const body = (
     <>
-      {!compact && <RowLeading alone={alone} shown={shown} view={view} />}
+      {!compact && <RowLeading shown={shown} />}
       <RowText input={input} titleId={titleId} />
     </>
   );
