@@ -284,7 +284,7 @@ private fun NotebookList(
             onTab = { onTab?.invoke(it) },
             onPick = { groupKey, open ->
                 if (open) memory.picked = groupKey
-                memory.opened = ArrayList(opened.filter { it != groupKey } + listOfNotNull(groupKey.takeIf { open }))
+                memory.opened = opened.filter { it != groupKey } + listOfNotNull(groupKey.takeIf { open })
             },
             onRetry = { scope.launch { store.notebooks[key].refresh() } },
             onPattern = { navigator.open(AppRoute.Pattern(it.toString())) },
@@ -313,7 +313,7 @@ private fun NotebookList(
 private class ListMemory(
     val scroll: LazyListState,
     picked: MutableState<String?>,
-    opened: MutableState<ArrayList<String>?>,
+    opened: MutableState<List<String>?>,
 ) {
     var picked by picked
     var opened by opened
@@ -323,7 +323,7 @@ private class ListMemory(
 private fun rememberListMemory(): ListMemory {
     val scroll = rememberLazyListState()
     val picked = rememberSaveable { mutableStateOf<String?>(null) }
-    val opened = rememberSaveable { mutableStateOf<ArrayList<String>?>(null) }
+    val opened = rememberSaveable { mutableStateOf<List<String>?>(null) }
     return remember(scroll) { ListMemory(scroll, picked, opened) }
 }
 
