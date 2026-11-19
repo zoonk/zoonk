@@ -69,6 +69,7 @@
 - “Step” the learner takes or follows (the next step, a solution’s or worked example’s steps, a run’s steps): “passo” (“Próximo passo”, “Passo 2”); “etapa” only for a stage of a process or a flow (“as etapas da fotossíntese”, “nas próximas etapas”)
 - “Weekly challenge”: “Desafio semanal”
 - “Mock exam”, including speaking mocks: “Simulado”, not “prova simulada” or “simulação”
+- A mock exam’s “Flag” / “Remove flag” / “flagged”: “Marcar” / “Remover marcação” / “marcada”, not “sinalizada” or “com dúvida”
 - “Logbook”: “Diário de bordo”
 - “Fading” (needs review): “Para revisar”
 - “Focus test”: “Teste de foco”
@@ -82,6 +83,7 @@
 - “Date passed”, “Exam date passed” (formerly “Past date”): “Passou da data”, not “Encerrado”, “Expirado”, or “Vencido”
 - “Needs adjusting”: “Precisa de ajustes”
 - “Too tight”: “Apertado demais”
+- “End date” (a plan’s): “data final”, not “data de término”
 - “left out”: “ficar de fora”, not “pulado” or “ignorado”
 - “skipped” (known through placement): “pulado”, not “ignorado”
 - “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Tempo diário”, not “Tempo por dia”
