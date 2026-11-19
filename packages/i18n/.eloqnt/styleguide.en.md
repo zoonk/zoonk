@@ -53,7 +53,7 @@
 
 - A name is a term: "your buddy", "Zu", "Plus" and a feature's name appear only after the screen that introduces them. Onboarding, up to the screen that introduces the buddy, and every marketing page (its FAQ too) speak as "we" and describe a feature by what it does.
 - One word per thing, in every state and on every platform. "Plan" is always the study plan, never a subscription. A "test" finds what someone knows; a "mock exam" is the real exam's format; an exam's day is its "exam date".
-- In the app, buttons are one to three words the learner already knows: "Start", "Continue", "Skip", "Save". Never a destination, a duration or a consequence. The action that leads to paying is "Subscribe" on every screen. A marketing page's call to action may name what the visitor gets.
+- In the app, buttons are one to three words the learner already knows: "Start", "Continue", "Skip", "Save". A screen's main action, the one in the bottom bar, is one or two. Never a destination, a duration or a consequence. The action that leads to paying is "Subscribe" on every screen. A marketing page's call to action may name what the visitor gets.
 - Honest doesn't mean hedged. Write "for now", "so far", "may", "up to" or "about" only where a learner would be misled without it, and never two in one line.
 - A translator note that explains a word means the learner doesn't know it either: rewrite the string.
 - How long, how many and how a string is laid out on its screen follow zoonk-design's [Words](../../../.agents/skills/zoonk-design/SKILL.md#words) for the app and its [Marketing pages](../../../.agents/skills/zoonk-design/SKILL.md#marketing-pages) for public pages.
