@@ -155,12 +155,12 @@ function MistakesInbox({
 }) {
   const t = useExtracted();
   const keys = groups.map((group) => getGroupKey(group));
-  const { isShown, select } = useMistakesInbox(keys);
+  const { isInbox, isShown, select } = useMistakesInbox(keys);
   const rowsStyle: CSSPropertiesWithVariables = { "--skills": groups.length };
 
   return (
     <div
-      className="flex flex-col lg:grid lg:grid-cols-[minmax(20rem,1fr)_minmax(0,calc(var(--container-column)+2rem+1px))] lg:grid-rows-[repeat(var(--skills),auto)_1fr] lg:items-start lg:gap-x-8 lg:*:aria-expanded:border-t-transparent lg:[&>[aria-expanded=true]+section+button]:border-t-transparent [&>button+button]:border-t [&>section+button]:border-t"
+      className="flex flex-col lg:grid lg:grid-cols-[minmax(20rem,1fr)_minmax(0,calc(var(--container-column)+2rem+1px))] lg:grid-rows-[repeat(var(--skills),auto)_1fr] lg:items-start lg:gap-x-8 lg:*:data-shown:border-t-transparent lg:[&>[data-shown]+section+button]:border-t-transparent [&>button+button]:border-t [&>section+button]:border-t"
       data-slot="mistakes-inbox"
       style={rowsStyle}
     >
@@ -174,8 +174,11 @@ function MistakesInbox({
           <Fragment key={key}>
             <button
               aria-controls={panelId}
-              aria-current={open || undefined}
-              aria-expanded={open}
+              // Beside its mistakes a skill is picked, and pressing it again changes nothing: only
+              // a fold says it opens and closes.
+              aria-current={isInbox && open ? "true" : undefined}
+              aria-expanded={isInbox ? undefined : open}
+              data-shown={open || undefined}
               className={cn(
                 LIST_ROW_INTERACTIVE_CLASS,
                 "group/skill lg:col-start-1",

@@ -204,4 +204,30 @@ test.describe("Mistakes notebook", () => {
 
     await page.context().close();
   });
+
+  test("a skill is a pick beside its mistakes on a computer and a fold on a phone", async ({
+    browser,
+  }) => {
+    const { user } = await createMistakeLearner({ causes: ["trap"] });
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    await page.goto("/mistakes");
+    const skill = page.locator('[data-slot="mistakes-inbox"] > button').first();
+    const mistake = page.locator('[data-slot="mistake-entry"]').first();
+
+    await expect(skill).toHaveAttribute("aria-current", "true");
+    await expect(skill).not.toHaveAttribute("aria-expanded");
+    await skill.click();
+    await expect(mistake).toBeVisible();
+
+    await page.setViewportSize({ height: 800, width: 390 });
+    await expect(skill).toHaveAttribute("aria-expanded", "true");
+    await expect(skill).not.toHaveAttribute("aria-current");
+    await skill.click();
+    await expect(skill).toHaveAttribute("aria-expanded", "false");
+    await expect(mistake).toBeHidden();
+
+    await page.context().close();
+  });
 });

@@ -36,5 +36,9 @@ export function useMistakesInbox(keys: readonly string[]) {
     );
   };
 
-  return { isShown: (key: string) => (isInbox ? current === key : opened.has(key)), select };
+  return {
+    isInbox,
+    isShown: (key: string) => (isInbox ? current === key : opened.has(key)),
+    select,
+  };
 }
