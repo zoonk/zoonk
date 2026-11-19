@@ -30,7 +30,7 @@ struct ActivityTileStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     content(configuration)
-      .typeStyle(.body.weight(mark == .selected || mark == .wrong ? .semibold : .regular))
+      .typeStyle(.body.weight(mark == .wrong ? .semibold : .regular))
       .foregroundStyle(foreground)
       .padding(.horizontal, isCompact ? 4 : 12)
       .padding(.vertical, isCompact ? 6 : 10)

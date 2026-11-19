@@ -92,7 +92,7 @@ private struct ProcessOrderCanvas: View {
     .buttonStyle(ActivityTileStyle(mark: isSelected ? .selected : .plain))
     .overlay {
       if targetedId == step.id {
-        RoundedRectangle(cornerRadius: Radius.option).strokeBorder(.primary, lineWidth: 2)
+        RoundedRectangle(cornerRadius: Radius.option).fill(.selectedTint)
       }
     }
     .draggable(ActivityDragItem(id: step.id))

@@ -110,15 +110,16 @@ extension View {
       .listRowSeparator(isCurrent ? .hidden : .automatic)
   }
 
-  /// The learner's pick among a few choices, as main's `ChoiceRows`: the answer surface's pick, an
-  /// ink ring on its tint, where the current row's highlight would be. For `ZoonkList`'s rows.
+  /// The learner's pick among a few choices, as main's `ChoiceRows`: the pick's fill where the current
+  /// row's highlight would be, with the row's own mark. For `ZoonkList`'s rows.
   func pickedRow(_ isPicked: Bool) -> some View {
     // Behind the row's content rather than in `listRowBackground`, which keeps the colors it first
     // drew in: a row picked before a switch to dark mode stayed near-white under white text.
     frame(maxWidth: .infinity, alignment: .leading)
       .background {
         if isPicked {
-          Color.clear.answerSurface(.picked, cornerRadius: Radius.lg)
+          RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+            .fill(.selectedTint)
             .padding(-10)
         }
       }
