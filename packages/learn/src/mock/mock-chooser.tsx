@@ -19,7 +19,7 @@ import { MockShortDialog } from "./mock-short-dialog";
 
 export type { MockChooserStatus } from "./mock-chooser-parts";
 
-export type MockChooserHrefs = { mock: (id: string) => string };
+type MockChooserHrefs = { mock: (id: string) => string };
 
 export function getMockOptionKey(option: MockOptionView): string {
   return [option.kind, option.day ?? "", option.area ?? ""].join(":");

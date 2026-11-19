@@ -58,7 +58,7 @@ const ESTIMATE_STEP_MINUTES = 5;
  * How long learners usually take, to the nearest five minutes, when that's under the time limit.
  * Core gives the limit itself when no estimate covers the whole mock (an essay, too few answers).
  */
-export function usualMinutes({
+function usualMinutes({
   estimatedMinutes,
   minutes,
 }: Pick<MockOptionView, "estimatedMinutes" | "minutes">): number | null {
@@ -71,7 +71,7 @@ export function usualMinutes({
 }
 
 /** The mock's questions and time limit, as the exam page and the plan show them. */
-export function useMockOptionSize() {
+function useMockOptionSize() {
   const t = useExtracted();
   const duration = useFormatDuration();
 
