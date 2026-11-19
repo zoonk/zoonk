@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -8,6 +9,8 @@ import { carryReads } from "./carry.mts";
 import { type CaptureItem, type Read } from "./media.mts";
 
 const SIZE = 40;
+
+const sha256 = (bytes: Buffer) => createHash("sha256").update(bytes).digest("hex");
 
 /** Where a retake keeps the picture it replaced. */
 const RETAKEN = "earlier/phone/light/today.png";
@@ -79,7 +82,7 @@ async function recapture({
   const [carried] = await carryReads({
     folder,
     items: [item(now)],
-    previous: [item({ read: READ, sha256: "old", ...before })],
+    previous: [item({ read: READ, sha256: sha256(await png()), ...before })],
     previousFolder,
   });
 
@@ -87,10 +90,27 @@ async function recapture({
 }
 
 describe("a re-capture keeps the read of pictures whose pixels didn't change", () => {
+  it("asks for a read when the picture read was overwritten in place, keeping its findings", async () => {
+    const folder = mkdtempSync(join(tmpdir(), "pr-media-carry-"));
+    mkdirSync(join(folder, "phone/light"), { recursive: true });
+    const moved = await png({ left: 11 });
+    writeFileSync(join(folder, "phone/light/today.png"), moved);
+
+    const [carried] = await carryReads({
+      folder,
+      items: [item({ sha256: sha256(moved) })],
+      previous: [item({ read: READ, sha256: sha256(await png()) })],
+      previousFolder: folder,
+    });
+
+    assert.equal(carried?.read, undefined);
+    assert.deepEqual(carried?.retakes, { read: READ });
+  });
+
   it("carries the read and its findings' states to the same pixels in different bytes", async () => {
     const { read } = await recapture({ picture: await png({ effort: 1 }) });
 
-    assert.deepEqual(read, { ...READ, carriedFrom: "old" });
+    assert.deepEqual(read, { ...READ, carriedFrom: sha256(await png()) });
   });
 
   it("asks for a read of the fixes when the picture moved by one pixel, keeping the one it retakes", async () => {

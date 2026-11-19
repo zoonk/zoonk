@@ -138,4 +138,18 @@ describe("the reader's sheet", () => {
     assert.ok(!sheet.includes("## Then sort each finding"));
     assert.ok(!sheet.includes("goal"));
   });
+
+  it("gives a whole read to a retake whose earlier picture was gone", async () => {
+    const earlier: Read = { at: "2026-11-14T12:00:00.000Z", by: "reader", findings: [] };
+
+    const root = await capturedRoot({
+      after: [{ ...item("today", "after"), retakes: { read: earlier } }],
+    });
+
+    const { path } = await writeReadingSheet({ root, sheet: join(root, "read") });
+    const sheet = await readFile(path, "utf8");
+
+    assert.ok(sheet.includes("## 1. after/today.png"));
+    assert.ok(!sheet.includes("## Check the fixes"));
+  });
 });

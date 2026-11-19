@@ -71,9 +71,10 @@ export type Read = {
 
 /**
  * The read of the picture a retake replaced, and that picture kept at `file` beside the retake's
- * own, so the retake's read checks only the fixes against it.
+ * own, so the retake's read checks only the fixes against it. With no `file`, that picture was
+ * gone, so the retake gets a whole read that keeps these findings.
  */
-export type Retake = { file: string; read: Read };
+export type Retake = { file?: string; read: Read };
 
 /**
  * `file` is relative to its manifest's folder, with forward slashes, since Markdown links use it.

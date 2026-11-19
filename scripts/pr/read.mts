@@ -105,7 +105,7 @@ export async function recordReads({
         );
 
         const findings = [...new Map([...kept, ...added].map((one) => [one.id, one])).values()];
-        const read: Read = { at, by, findings, ...(retakes && { retake: true }) };
+        const read: Read = { at, by, findings, ...(retakes?.file && { retake: true }) };
         return { ...item, read };
       });
 

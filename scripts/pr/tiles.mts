@@ -192,18 +192,20 @@ function marksOf({ before, misleads, rule }: Finding): string {
 
 /** A retake's section: the picture, the one read before it and the findings fixed since. */
 async function fixesSection({
+  file,
   link,
   picture,
   retakes,
   sheet,
 }: {
+  file: string;
   link: (path: string) => string;
   picture: Picture;
   retakes: Retake;
   sheet: string;
 }): Promise<string[]> {
   const fixed = retakes.read.findings.filter((finding) => finding.state === "fixed");
-  const earlier = resolve(picture.folder, retakes.file);
+  const earlier = resolve(picture.folder, file);
 
   return [
     ...(await pictureSection({ heading: `Fixed: ${picture.id}`, link, picture, sheet })),
@@ -303,19 +305,20 @@ export async function writeReadingSheet({ root, sheet }: { root: string; sheet: 
   const { measured, pictures } = await collect(root);
   const unread = pictures.filter(({ item }) => item.side === "after" && !readOf(item));
 
+  // A retake whose earlier picture was gone gets a whole read.
   const retaken = unread.flatMap((picture) => {
     const retakes = "retakes" in picture.item ? picture.item.retakes : undefined;
-    return retakes ? [{ picture, retakes }] : [];
+    return retakes?.file ? [{ file: retakes.file, picture, retakes }] : [];
   });
 
-  const blind = unread.filter(({ item }) => !("retakes" in item && item.retakes));
+  const blind = unread.filter((picture) => !retaken.some((one) => one.picture === picture));
 
   await rm(join(sheet, "tiles"), { force: true, recursive: true });
   const link = (path: string) => relative(sheet, path).replaceAll("\\", "/");
   const fixes: string[] = [];
 
-  for (const { picture, retakes } of retaken) {
-    fixes.push(...(await fixesSection({ link, picture, retakes, sheet })));
+  for (const { file, picture, retakes } of retaken) {
+    fixes.push(...(await fixesSection({ file, link, picture, retakes, sheet })));
   }
 
   const markdown = [
