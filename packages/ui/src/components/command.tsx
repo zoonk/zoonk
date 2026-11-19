@@ -105,7 +105,7 @@ function CommandSearchField({
   return (
     <div
       className={cn(
-        "ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg px-3 ring-[1.5px] ring-inset",
+        "border-input bg-background has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-ring/50 flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg border px-3 transition-colors has-[input:focus-visible]:ring-[3px]",
         className,
       )}
       data-slot="command-search-field"
@@ -136,7 +136,7 @@ function CommandInput({
     >
       <CommandSearchField
         autoFocus
-        className="sm:h-13 sm:gap-3 sm:rounded-none sm:px-5 sm:ring-0 sm:focus-within:ring-0"
+        className="sm:h-13 sm:gap-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-5 sm:has-[input:focus-visible]:ring-0"
         {...props}
       >
         <DialogClose
