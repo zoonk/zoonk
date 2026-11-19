@@ -3179,9 +3179,9 @@ msgid "per year"
 msgstr "／年"
 
 #: src/components/pricing/plus-plan.tsx
-msgctxt "8fp1TZ"
-msgid "That's <mono>{amount}</mono> a month."
-msgstr "月額換算で<mono>{amount}</mono>です。"
+msgctxt "x0atec"
+msgid "That's {amount} a month."
+msgstr ""
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "u2XWYU"

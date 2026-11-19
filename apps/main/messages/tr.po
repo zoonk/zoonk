@@ -3179,9 +3179,9 @@ msgid "per year"
 msgstr "yıllık"
 
 #: src/components/pricing/plus-plan.tsx
-msgctxt "8fp1TZ"
-msgid "That's <mono>{amount}</mono> a month."
-msgstr "Ayda <mono>{amount}</mono> eder."
+msgctxt "x0atec"
+msgid "That's {amount} a month."
+msgstr ""
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "u2XWYU"

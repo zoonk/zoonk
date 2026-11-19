@@ -1,4 +1,3 @@
-import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { Variant, VariantSwitch, VariantSwitchOption } from "@/components/public/variant-switch";
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
@@ -83,10 +82,6 @@ export async function PlusLoginLink({
       </PendingLink>
     </Variant>
   ));
-}
-
-function renderMono(chunks: React.ReactNode) {
-  return <span className={NUMERIC_CLASS}>{chunks}</span>;
 }
 
 async function PlusAction({
@@ -177,9 +172,8 @@ async function PlusPrices({
           per={t("per year")}
         />
         <p className="text-muted-foreground text-compact">
-          {t.rich("That's <mono>{amount}</mono> a month.", {
+          {t("That's {amount} a month.", {
             amount: formatPrice(monthlyEquivalent.amount, monthlyEquivalent.currency, locale),
-            mono: renderMono,
           })}
         </p>
       </Variant>
