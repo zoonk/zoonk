@@ -28,7 +28,8 @@ export function SettingRow({
   return (
     <ListRow
       className={cn(
-        "items-center gap-x-4",
+        // Its control has an outline or a fill of its own, so no hairline is drawn over it too.
+        "items-center gap-x-4 border-t-0!",
         stacks && "flex-col items-stretch gap-y-0 pb-3 sm:flex-row sm:items-center sm:pb-0",
         className,
       )}
