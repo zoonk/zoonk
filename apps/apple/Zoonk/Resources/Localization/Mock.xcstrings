@@ -2579,7 +2579,7 @@
         }
       }
     },
-    "%lld questions marked for review." : {
+    "%lld questions are marked for review." : {
       "comment" : "Before handing in a mock exam: how many of its questions are blank or flagged.",
       "localizations" : {
         "de" : {
@@ -2588,13 +2588,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Frage zur Überprüfung markiert."
+                  "value" : "%lld Frage ist zur Überprüfung markiert."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Fragen zur Überprüfung markiert."
+                  "value" : "%lld Fragen sind zur Überprüfung markiert."
                 }
               }
             }
@@ -2606,13 +2606,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "%lld question marked for review."
+                  "value" : "%lld question is marked for review."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "%lld questions marked for review."
+                  "value" : "%lld questions are marked for review."
                 }
               }
             }
@@ -2642,13 +2642,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld question marquée pour révision."
+                  "value" : "%lld question est marquée pour révision."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld questions marquées pour révision."
+                  "value" : "%lld questions sont marquées pour révision."
                 }
               }
             }
@@ -2660,13 +2660,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld domanda contrassegnata da rivedere."
+                  "value" : "%lld domanda è contrassegnata per la revisione."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld domande contrassegnate da rivedere."
+                  "value" : "%lld domande sono contrassegnate per la revisione."
                 }
               }
             }
@@ -2678,7 +2678,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld問が見直し対象です。"
+                  "value" : "見直し対象の問題が%lld問あります。"
                 }
               }
             }
@@ -2690,7 +2690,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "다시 볼 문제 %lld개가 표시되어 있어요."
+                  "value" : "다시 볼 문제로 표시한 문제가 %lld개 있어요."
                 }
               }
             }
@@ -2699,28 +2699,22 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "few" : {
+              "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pytania oznaczone do przejrzenia."
+                  "value" : "%lld pytanie oznaczono do sprawdzenia."
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pytań oznaczonych do przejrzenia."
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld pytanie oznaczone do przejrzenia."
+                  "value" : "%lld pytań oznaczono do sprawdzenia."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pytania oznaczonego do przejrzenia."
+                  "value" : "%lld pytania oznaczono do sprawdzenia."
                 }
               }
             }
@@ -2732,13 +2726,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld questão marcada para revisão."
+                  "value" : "%lld questão está marcada para revisão."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld questões marcadas para revisão."
+                  "value" : "%lld questões estão marcadas para revisão."
                 }
               }
             }
@@ -2750,7 +2744,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld soru gözden geçirilmek üzere işaretlendi."
+                  "value" : "%lld soru tekrar bakmak için işaretlendi."
                 }
               }
             }
@@ -6027,7 +6021,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "見直しに追加"
+            "value" : "見直し"
           }
         },
         "ko" : {
@@ -7346,65 +7340,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "Mark for review" : {
-      "comment" : "Flags a question to come back to",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zur Überprüfung markieren"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Marcar para revisar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Marquer pour y revenir"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contrassegna per dopo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "見直しに追加"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다시 볼 문제로 표시하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oznacz do przejrzenia"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Marcar para revisão"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrar bakmak için işaretle"
           }
         }
       }
@@ -9982,6 +9917,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gereken %@ eşiğine ulaştı"
+          }
+        }
+      }
+    },
+    "Remove flag" : {
+      "comment" : "Takes the flag off a flagged question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Markierung entfernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar marca"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirer le marquage"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi il contrassegno"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見直しを解除する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "표시 해제"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń oznaczenie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover marcação"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşareti kaldır"
           }
         }
       }

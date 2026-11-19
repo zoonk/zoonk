@@ -388,7 +388,13 @@ private struct FlagButton: View {
       run.toggleFlag()
     } label: {
       Label {
-        Text("Mark for review", tableName: "Mock", comment: "Flags a question to come back to")
+        SwapLabel(
+          labels: [
+            Text("Flag", tableName: "Mock", comment: "Flags a question to come back to"),
+            Text(
+              "Remove flag", tableName: "Mock", comment: "Takes the flag off a flagged question"),
+          ],
+          shown: flagged ? 1 : 0)
       } icon: {
         Image(systemName: flagged ? "flag.fill" : "flag")
       }
@@ -400,7 +406,6 @@ private struct FlagButton: View {
     .controlSize(.large)
     .tint(flagged ? .warning : nil)
     .disabled(run.timeUp || run.pending)
-    .accessibilityAddTraits(flagged ? .isSelected : [])
   }
 }
 
@@ -515,7 +520,7 @@ struct MockSectionCounts {
     if flagged > 0 {
       parts.append(
         String(
-          localized: "\(flagged) questions marked for review.", table: "Mock",
+          localized: "\(flagged) questions are marked for review.", table: "Mock",
           comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
       )
     }

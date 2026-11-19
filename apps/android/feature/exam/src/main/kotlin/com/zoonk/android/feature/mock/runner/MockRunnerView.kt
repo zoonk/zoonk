@@ -59,8 +59,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -73,6 +71,7 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.SwapLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
@@ -382,7 +381,6 @@ private fun RunnerActions(
         TaskActions { width ->
             OutlinedButton(
                 onClick = viewModel::toggleFlag,
-                modifier = Modifier.semantics { toggleableState = ToggleableState(flagged) },
                 border =
                     if (flagged) {
                         BorderStroke(
@@ -402,7 +400,11 @@ private fun RunnerActions(
                     contentDescription = null,
                     modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
-                Text(stringResource(R.string.mock_flag), Modifier.padding(start = ButtonDefaults.IconSpacing))
+                SwapLabel(
+                    labels = listOf(stringResource(R.string.mock_flag), stringResource(R.string.mock_unflag)),
+                    shown = if (flagged) 1 else 0,
+                    modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
+                )
             }
             MockMainButton(
                 text =
