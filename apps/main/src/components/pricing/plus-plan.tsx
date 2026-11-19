@@ -156,12 +156,22 @@ async function PlusPrices({
   }
 
   return (
-    <>
-      <Variant className="flex flex-col gap-2" name={billingSwitch} value="monthly">
+    <div className="grid">
+      <Variant
+        className="col-start-1 row-start-1 flex flex-col gap-2"
+        name={billingSwitch}
+        stacked
+        value="monthly"
+      >
         {monthly}
       </Variant>
 
-      <Variant className="flex flex-col gap-2" name={billingSwitch} value="yearly">
+      <Variant
+        className="col-start-1 row-start-1 flex flex-col gap-2"
+        name={billingSwitch}
+        stacked
+        value="yearly"
+      >
         <PlanPrice
           amount={formatPrice(yearlyPrice.amount, yearlyPrice.currency, locale)}
           per={t("per year")}
@@ -173,7 +183,7 @@ async function PlusPrices({
           })}
         </p>
       </Variant>
-    </>
+    </div>
   );
 }
 
