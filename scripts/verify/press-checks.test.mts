@@ -78,7 +78,7 @@ describe("a press that swaps one content for another", () => {
       press("pick", {
         appeared: [region('div "$96 per year"', 150)],
         gone: [region('div "$10 per month"', 150)],
-        moved: [card, footer],
+        moved: [footer, card],
       }),
     );
 

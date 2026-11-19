@@ -189,7 +189,11 @@ export function pressFindings(press: Press): Finding[] {
   const findings: Finding[] = [];
   const moves = pressMoves(press);
   const itself = moves.find((change) => change.isTarget);
-  const others = moves.filter((change) => !change.isTarget);
+  // The box holding the control comes first: a card beside it that only stretched to its row's
+  // height says nothing about which control did it.
+  const others = moves
+    .filter((change) => !change.isTarget)
+    .toSorted((first, second) => Number(second.holds) - Number(first.holds));
 
   if (itself) {
     findings.push({
