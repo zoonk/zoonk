@@ -1,10 +1,12 @@
 /* oxlint-disable max-lines-per-function, max-statements, unicorn/consistent-function-scoping -- Each function is sent to the page on its own, so its helpers live inside it (`probe.mts`). */
 
 /**
- * One line of visible text, in viewport pixels, cut to its line height (so tight leading doesn't
- * reach the next line) and to the boxes that clip it. `element` is its element's place in
- * `zoonkTextElements` and `within` its ancestors' there; `layer` is the floating layer it's drawn
- * in, if any: an `overlay` (a menu, dialog, popover or tooltip) or a pinned (fixed or sticky) box.
+ * Where a visible text is drawn, in viewport pixels: a block's whole box (a paragraph, a row's
+ * title), or each line of a text inside a line of other text, cut to its line height so tight
+ * leading doesn't reach the next line; either cut to the boxes that clip it. `element` is its
+ * element's place in `zoonkTextElements` and `within` its ancestors' there; `layer` is the floating
+ * layer it's drawn in, if any: an `overlay` (a menu, dialog, popover or tooltip) or a pinned (fixed
+ * or sticky) box.
  */
 export type TextLine = {
   bottom: number;
@@ -143,21 +145,41 @@ export function readTextLines(): TextLine[] {
     return { layer: null, overlay: false };
   }
 
+  /**
+   * The boxes that clip what it draws: its own and its ancestors' `overflow`, except where it
+   * escapes them, as a positioned box does: an absolute one is clipped only from its containing
+   * block up (its nearest positioned or transformed ancestor), and a fixed one by none of them.
+   */
   function clipOf(element: Element): Box {
     const box: Box = { bottom: Infinity, left: -Infinity, right: Infinity, top: -Infinity };
+    let escaping: "absolute" | "fixed" | null = null;
 
     for (let current: Element | null = element; current; current = current.parentElement) {
       const style = getComputedStyle(current);
-      const rect = current.getBoundingClientRect();
+      const containing = style.position !== "static" || style.transform !== "none";
 
-      if (CLIPS.has(style.overflowX)) {
-        box.left = Math.max(box.left, rect.left);
-        box.right = Math.min(box.right, rect.right);
+      if (current !== element && escaping === "absolute" && containing) {
+        escaping = null;
       }
 
-      if (CLIPS.has(style.overflowY)) {
-        box.top = Math.max(box.top, rect.top);
-        box.bottom = Math.min(box.bottom, rect.bottom);
+      if (escaping === null) {
+        const rect = current.getBoundingClientRect();
+
+        if (CLIPS.has(style.overflowX)) {
+          box.left = Math.max(box.left, rect.left);
+          box.right = Math.min(box.right, rect.right);
+        }
+
+        if (CLIPS.has(style.overflowY)) {
+          box.top = Math.max(box.top, rect.top);
+          box.bottom = Math.min(box.bottom, rect.bottom);
+        }
+      }
+
+      if (style.position === "fixed") {
+        escaping = "fixed";
+      } else if (style.position === "absolute" && escaping === null) {
+        escaping = "absolute";
       }
     }
 
@@ -165,6 +187,7 @@ export function readTextLines(): TextLine[] {
   }
 
   const lines: TextLine[] = [];
+  const seen = new Set<Element>();
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 
   const nodes: Node[] = [];
@@ -177,7 +200,7 @@ export function readTextLines(): TextLine[] {
     (node) =>
       node.parentElement &&
       node.textContent?.trim() &&
-      !node.parentElement.closest("script, style, noscript, [aria-hidden=true], [inert]") &&
+      !node.parentElement.closest("script, style, noscript") &&
       shown(node.parentElement),
   );
 
@@ -200,8 +223,18 @@ export function readTextLines(): TextLine[] {
 
     const name = `${element.tagName.toLowerCase()} "${(label(element, true) || (node.textContent ?? "").trim()).slice(0, NAME_LENGTH)}"`;
 
-    for (const rect of range.getClientRects()) {
-      const inset = Math.max(0, (rect.height - lineHeight) / 2);
+    const inline = style.display === "inline";
+    const boxes = inline ? [...range.getClientRects()] : [element.getBoundingClientRect()];
+
+    if (!inline && seen.has(element)) {
+      // oxlint-disable-next-line no-continue -- A block with several texts is one box.
+      continue;
+    }
+
+    seen.add(element);
+
+    for (const rect of boxes) {
+      const inset = inline ? Math.max(0, (rect.height - lineHeight) / 2) : 0;
 
       const box = {
         bottom: Math.min(rect.bottom - inset, clip.bottom),
