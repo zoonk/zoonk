@@ -3,10 +3,11 @@ import {
   type PlanTimeToCoverInput,
 } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
-import { holdScripts } from "@zoonk/e2e/hydration";
+import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
+import { asPersona } from "./learn-personas";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 import { createStudyDay, openAs } from "./study-day";
 
@@ -58,33 +59,40 @@ test.describe("Placement and the plan", () => {
     expect(saved.planRevealedAt).not.toBeNull();
   });
 
-  test("a lesson tapped in the reveal's Today before the page hydrates opens, and Today counts the plan as seen", async ({
+  test("the new plan lists everything it holds, and a phase opens in place to its chapters", async ({
     browser,
   }) => {
-    const { goal, lesson, user } = await createStudyDay();
-    const details = isJsonObject(goal.details) ? goal.details : {};
-    const setup = Array.isArray(details.answered) ? details.answered : [];
+    await asPersona(browser, { persona: "stocks" }, async ({ page, user }) => {
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+      const details = isJsonObject(goal.details) ? goal.details : {};
 
-    await prisma.goal.update({
-      data: { details: { ...details, answered: [...setup, ...ANSWERED] }, planRevealedAt: null },
-      where: { id: goal.id },
+      await prisma.goal.update({
+        data: {
+          details: { ...details, answered: [...ANSWERED, "placement"] },
+          planRevealedAt: null,
+        },
+        where: { id: goal.id },
+      });
+
+      await page.goto(`/start/${goal.id}`);
+
+      const path = page.getByRole("region", { name: "Your path" });
+      const phases = path.getByRole("button", { expanded: false });
+      await expect(phases).toHaveCount(4);
+      await expect(page.getByRole("region", { name: "Today" })).toHaveCount(0);
+
+      const first = path.getByRole("button").first();
+      await expectHydrated(first);
+      await first.click();
+
+      await expect(first).toHaveAttribute("aria-expanded", "true");
+      await expect(path.getByRole("list").last().getByRole("listitem").first()).toBeVisible();
+      await expect(path.getByRole("link")).toHaveCount(0);
+      await expect(page).toHaveURL(new RegExp(`/start/${goal.id}$`, "u"));
     });
-
-    const page = await openAs(browser, user);
-    const release = await holdScripts(page);
-    await page.goto(`/start/${goal.id}`, { waitUntil: "domcontentloaded" });
-
-    const today = page.getByRole("region", { name: "Today" });
-    await today.getByRole("button", { name: new RegExp(lesson.title, "u") }).click();
-    await release();
-
-    await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
-
-    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-    expect(saved.planRevealedAt).not.toBeNull();
   });
 
-  test("Start pressed before the page hydrates opens the step tagged to start, not Today", async ({
+  test("Start pressed before the page hydrates opens the day's next step, not Today", async ({
     browser,
   }) => {
     const { goal, user } = await createStudyDay();

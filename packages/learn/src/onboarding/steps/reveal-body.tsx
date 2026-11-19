@@ -1,5 +1,6 @@
 "use client";
 
+import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
@@ -24,9 +25,10 @@ import { OnboardingRailSection } from "../onboarding-rail";
 import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
 import { RevealCoverage } from "./reveal-coverage";
-import { RevealDayOpener, RevealToday, findRevealStart } from "./reveal-days";
 import { RevealNoticeDay } from "./reveal-notice-day";
 import { RevealReadouts } from "./reveal-readouts";
+import { RevealDayOpener, findRevealStart } from "./reveal-start";
+import { RevealStructure } from "./reveal-structure";
 
 function RevealActions({
   failure,
@@ -81,7 +83,7 @@ type StartFailure = "open" | "save";
 /**
  * What the learner chose, to check before starting: the time a day and where the plan ends, an
  * exam's options, and the lines that only show when the plan needs something from them. Under the
- * title, and beside today's lessons from 72rem. Everything else about the plan waits for the Plan.
+ * title, and beside what the plan holds from 72rem.
  */
 function RevealPlan({ onAdjust }: { onAdjust: (section: PlanEditorSection) => void }) {
   const { plan } = usePlanScreen();
@@ -102,6 +104,7 @@ type RevealBodyProps = {
   onStart: () => Promise<boolean>;
   reveal: PlanRevealDays | null;
   signUpHref: string;
+  syllabus: SyllabusView | null;
 };
 
 function RevealColumn({
@@ -111,6 +114,7 @@ function RevealColumn({
   openStep,
   reveal,
   signUpHref,
+  syllabus,
 }: RevealBodyProps & {
   markRevealed: () => Promise<boolean>;
   openStep: ((step: DayStep) => Promise<boolean>) | null;
@@ -135,7 +139,7 @@ function RevealColumn({
   const [starting, startTransition] = useTransition();
   const [startFailure, setStartFailure] = useState<StartFailure | null>(null);
 
-  // Busy until the next page opens, with the rows waiting; a failed start keeps the learner here.
+  // Busy until the next page opens; a failed start keeps the learner here.
   const start = () => {
     setStartFailure(null);
 
@@ -185,7 +189,7 @@ function RevealColumn({
         <RevealPlan onAdjust={adjust} />
       </div>
 
-      <RevealToday locked={starting} open={openStep} reveal={reveal} />
+      <RevealStructure syllabus={syllabus} />
 
       <PlanEditor
         onOpenChange={(open) => setEditor({ ...editor, open })}
@@ -196,7 +200,7 @@ function RevealColumn({
   );
 }
 
-/** Start opens the step its tagged row opens, and goes to Today only when there's none. */
+/** Start opens the day's next step, and goes to Today only when none can open yet. */
 export function RevealBody({
   goalId,
   markRevealed,

@@ -10,10 +10,8 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { redirect } from "@/i18n/navigation";
 import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
-import { getGoalPlan } from "@zoonk/core/plans/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
-import { getPlanRevealToday } from "@zoonk/core/view-models/today/plan-reveal";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -31,6 +29,7 @@ import { getExtracted } from "next-intl/server";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { OnboardingNotFound } from "../../_components/onboarding-not-found";
+import { readRevealedPlan } from "../revealed-plan";
 import { StepsClient } from "./steps-client";
 
 type Props = PageProps<"/[lang]/start/[goalId]">;
@@ -103,21 +102,15 @@ async function StepsContent({ params }: Props) {
 
   // A planner failure must not block the earlier answers, and a deck that can't be read leaves the
   // wait without its card until the run names it.
-  const [plan, today, deck] = await Promise.all([
-    ...((result.onboarding.steps[0] ?? "plan") === "plan"
-      ? ([getGoalPlan(goalId), getPlanRevealToday(goalId)] as const)
-      : ([null, null] as const)),
+  const [initialPlan, deck] = await Promise.all([
+    (result.onboarding.steps[0] ?? "plan") === "plan" ? readRevealedPlan(goalId) : null,
     warmUp?.status === "ready" ? safeAsync(() => getWarmUp(warmUp.id)) : null,
   ]);
 
   return (
     <OnboardingPage backHref="/today">
       <StepsClient
-        initialPlan={
-          plan?.status === "ready"
-            ? { plan: plan.plan, reveal: today?.status === "ready" ? today.reveal : null }
-            : null
-        }
+        initialPlan={initialPlan}
         deck={deck?.data?.status === "ready" ? deck.data.deck : null}
         {...toShownLearner(session)}
         onboarding={result.onboarding}

@@ -25,3 +25,16 @@ export function toSyllabusSection(syllabus: SyllabusView): SyllabusSectionView {
     })),
   };
 }
+
+/**
+ * For a screen that lists a subject's chapters under its topics: drops the subject's own list, which
+ * for a big exam is half the payload. A subject without topics keeps it.
+ */
+export function toSyllabusOutline(syllabus: SyllabusView): SyllabusView {
+  return {
+    ...syllabus,
+    subjects: syllabus.subjects.map((subject) =>
+      subject.topics.length > 0 ? { ...subject, chapters: [] } : subject,
+    ),
+  };
+}

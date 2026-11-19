@@ -52,7 +52,6 @@ msgstr "BG"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
-#: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
@@ -82,7 +81,6 @@ msgstr "Atlandı"
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-speaking.tsx
-#: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
@@ -2234,7 +2232,6 @@ msgstr "Sonucunu en sonda göreceksin."
 #: src/journey/schedule-details.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
-#: src/onboarding/steps/reveal-days.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -2600,12 +2597,14 @@ msgstr "Bir dersi yeniden çalış"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/focus-test/focus-test-subjects.tsx
+#: src/onboarding/steps/reveal-structure.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "ay-crl"
 msgid "Subjects"
 msgstr "Branşlar"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
+#: src/onboarding/steps/reveal-structure.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "TwcPrx"
 msgid "Modules"
@@ -4897,6 +4896,7 @@ msgstr "Planı paylaş"
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
+#: src/onboarding/steps/reveal-structure.tsx
 msgctxt "4WP0V_"
 msgid "Your path"
 msgstr "Yolun"
@@ -8217,7 +8217,6 @@ msgid "{correct} of {total}"
 msgstr "{correct} / {total}"
 
 #: src/mock/mock-result-breakdown.tsx
-#: src/onboarding/steps/reveal-days.tsx
 #: src/questions/item-set-stimulus.tsx
 #: src/today/today-session-card.tsx
 msgctxt "qyJtWy"
@@ -9717,11 +9716,6 @@ msgctxt "sS7-IQ"
 msgid "Add time"
 msgstr "Süre ekle"
 
-#: src/onboarding/steps/reveal-days.tsx
-msgctxt "xmtnm9"
-msgid "Start here"
-msgstr "Buradan başla"
-
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx
 msgctxt "xYZ4fs"
@@ -9773,6 +9767,17 @@ msgstr "{month} tarihine kadar"
 msgctxt "x0b1HZ"
 msgid "estimated finish"
 msgstr "tahmini bitiş"
+
+#: src/onboarding/steps/reveal-structure.tsx
+#: src/syllabus/use-subject-progress.ts
+msgctxt "gdK5-t"
+msgid "{total, plural, one {# topic} other {# topics}}"
+msgstr "{total, plural, other {# konu}}"
+
+#: src/onboarding/steps/reveal-structure.tsx
+msgctxt "GG6-cA"
+msgid "{count, plural, one {# chapter} other {# chapters}}"
+msgstr "{count, plural, other {# ünite}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -13014,11 +13019,6 @@ msgstr "{count, plural, other {Zaten bildiğin # konu}}"
 msgctxt "0O99bA"
 msgid "{count, plural, one {# lesson you already know} other {# lessons you already know}}"
 msgstr "{count, plural, other {Zaten bildiğin # ders}}"
-
-#: src/syllabus/use-subject-progress.ts
-msgctxt "gdK5-t"
-msgid "{total, plural, one {# topic} other {# topics}}"
-msgstr "{total, plural, other {# konu}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "jrDQIZ"
