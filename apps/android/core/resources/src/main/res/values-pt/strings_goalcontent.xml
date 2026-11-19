@@ -77,7 +77,7 @@
   "goalcontent_subject_time": "ac06724381c5dd041897cd89fe5b3c88e1884c3a10e32da676543f6ab6a3a813",
   "goalcontent_subjects": "b538496e9ae30dda7aa4aa45c3abe518db0b61590554c5d39dfb853f2fef4368",
   "goalcontent_to_review": "e781eb9464829b9f8f8be585b781cda91b61b78f339b09730b6060af53912a74",
-  "goalcontent_topic_count": "493b8208e0f94a8750bfa2f889969f93a60c1e4ff820999b4369e9e649ef83b0",
+  "goalcontent_topic_count": "d4c1d18b50cd244595eddd865024cd340109cfdb38d0bff4fbf76eeec0768328",
   "goalcontent_topic_in_progress": "f56f84949eb15f44cbd2b7c8a8089b4c02c9f07d88888b0d9a7bad96875a69a2",
   "goalcontent_topic_known": "9b7dcb25c5fce90201af98884135fad9971c62e2fc1f3aa3069a4da825913556",
   "goalcontent_topic_to_study": "9c86ac4fe60e5cd782098f2feeeecfc61f05e2378d925cbc0f03bf51c7efc706",
@@ -105,9 +105,9 @@
         <item quantity="other">%d módulos</item>
     </plurals>
     <plurals name="goalcontent_topic_count">
-        <item quantity="one">Tópicos: %d</item>
-        <item quantity="many">Tópicos: %d</item>
-        <item quantity="other">Tópicos: %d</item>
+        <item quantity="one">%d tópico</item>
+        <item quantity="many">%d tópicos</item>
+        <item quantity="other">%d tópicos</item>
     </plurals>
     <plurals name="goalcontent_material_topic_count">
         <item quantity="one">Tópicos do seu material: %d</item>

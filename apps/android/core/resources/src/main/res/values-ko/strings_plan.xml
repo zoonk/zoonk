@@ -164,7 +164,7 @@
   "plan_change_writing_weekly": "c6dff348283b7ebfed77472f1c54381620d00fdfbd6a7914b84fb9fc16a770cc",
   "plan_check_failed": "53c6132b38858b042beef4c4534b57756c3d9061b3bead9237c904111255ee10",
   "plan_checking_changes": "40d8014cc20eaba54b3e284287df11e5c35d53014ea42fe7eaf6332161a48027",
-  "plan_choice_change": "69c52a07519d731a98076e0d3c1411ba0f4b27e6da3288c99f5317a818dc3763",
+  "plan_choice_change": "7950db0b573e6df83f00092483510f9cd1d6af6b7591cf0ba2ec2a15425cd81b",
   "plan_choice_picked": "23e3cf07e62ad2962b76952f52e69de90f44f3547496eb454fb6b370a488c9fa",
   "plan_choose": "98f12ce043134f99ab12e19fcbd1c2de6e7b7614a9c8fe2c666a3adb61e678e8",
   "plan_choose_by_subject": "baf2e15cdb8c810f458506dd72878e0cc7f24e7ae13373cba436ed5284e2a517",
@@ -689,7 +689,7 @@
     <!-- On the plan, which option of an exam's choice it follows. %1$s is the choice's group, such as Foreign language; %2$s is the option or options picked, such as Inglês. -->
     <string name="plan_choice_picked">%1$s: %2$s</string>
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
-    <string name="plan_choice_change">변경하기</string>
+    <string name="plan_choice_change">바꾸기</string>
     <string name="plan_practice">연습하기</string>
     <string name="plan_everything">모두</string>
     <string name="plan_to_be_confirmed">추후 확정</string>
