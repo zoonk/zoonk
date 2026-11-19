@@ -54,7 +54,13 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
         <LearnerSections />
       </SidebarBody>
 
+      {/* The footer sits on the bottom edge, so its first row grows upward and moves nothing. */}
       <SidebarFooter>
+        <SidebarToggle
+          className="sidebar-collapsed:flex hidden"
+          collapseLabel={t("Collapse sidebar")}
+          expandLabel={t("Expand sidebar")}
+        />
         <VisitorStartButton />
         <LearnSidebarFeedback />
         <SidebarAccount visitor={<VisitorAccount />} />
