@@ -433,16 +433,15 @@ final class PlanSlotOpeningTests: XCTestCase {
     try await waitForTestCondition("The old coverage preview disappears") {
       !shows(Self.changePlan, in: window)
     }
-    try await activate(String(localized: "View", table: "Plan"), in: window)
-    try await waitForTestCondition("The updated coverage opens") {
+    try await waitForTestCondition("The updated coverage shows") {
       shows(String(localized: "See what changes", table: "Plan"), in: window)
     }
     let changes = await api.calls.changes
     XCTAssertEqual(changes, [])
   }
 
+  /// The card shows in place, as main's, so its one button finds the time and previews it.
   private func previewCoverage(in window: UIWindow) async throws {
-    try await activate(String(localized: "View", table: "Plan"), in: window)
     try await activate(String(localized: "See what changes", table: "Plan"), in: window)
   }
 

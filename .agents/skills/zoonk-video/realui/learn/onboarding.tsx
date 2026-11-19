@@ -11,7 +11,7 @@ import { BAR_MIDDLE_CLASS } from "@repo/packages/learn/src/onboarding/onboarding
 import { OnboardingFrame } from "@repo/packages/learn/src/onboarding/onboarding-frame.tsx";
 import { OnboardingRailProvider } from "@repo/packages/learn/src/onboarding/onboarding-rail.tsx";
 import { PlanReceipt } from "@repo/packages/learn/src/onboarding/plan-receipt.tsx";
-import { StartOverMenu } from "@repo/packages/learn/src/onboarding/start-over-menu.tsx";
+import { StepsBarEnd } from "@repo/packages/learn/src/onboarding/start-over-menu.tsx";
 import { PlacementQuestionScreen } from "@repo/packages/learn/src/onboarding/steps/placement-question.tsx";
 import { PlanReveal } from "@repo/packages/learn/src/onboarding/steps/plan-reveal.tsx";
 import { ScheduleStep } from "@repo/packages/learn/src/onboarding/steps/schedule-step.tsx";
@@ -73,7 +73,15 @@ function StepsBar({
     <OnboardingRailProvider rail={<PlanReceipt goal={goal} />}>
       <OnboardingFrame
         bar={{
-          end: <StartOverMenu disabled={false} onStartOver={noop} />,
+          end: (
+            <StepsBarEnd
+              canSkipAll={false}
+              disabled={false}
+              onSkipProfile={noop}
+              onStartOver={noop}
+              profile={false}
+            />
+          ),
           middle: progress && (
             <StepDots
               className={BAR_MIDDLE_CLASS}
@@ -197,13 +205,7 @@ function ScheduleView({ lang, state }: ViewProps) {
       >
         <ScheduleStep
           dated
-          draft={{
-            days: [1, 2, 3, 4, 5],
-            fullCourse: false,
-            picked,
-            weekendOn: false,
-            weekendPicked: null,
-          }}
+          draft={{ days: [1, 2, 3, 4, 5], picked, weekendOn: false, weekendPicked: null }}
           findTimeToCover={async () => timeToCover(lang)}
           firstLesson={null}
           getTimeAdvice={async (week) => timeAdvice(lang, week.dailyMinutes)}

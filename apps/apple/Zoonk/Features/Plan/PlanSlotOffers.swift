@@ -13,6 +13,7 @@ struct PlanSlotActions {
 struct PlanSlotCard<Content: View, Actions: View>: View {
   @Environment(\.isInSuggestionSheet) private var isInSheet
   @Environment(\.suggestionSheetNote) private var sheetNote
+  @Environment(\.isPlanChangeCard) private var isPlanChange
 
   let title: Text
   let mark: SuggestionMark.Kind
@@ -54,10 +55,15 @@ struct PlanSlotCard<Content: View, Actions: View>: View {
   }
 
   @ViewBuilder private var words: some View {
-    Label {
+    // Main's change to the plan is titled alone, its card saying what it is.
+    if isPlanChange {
       title.typeStyle(.body.weight(.semibold))
-    } icon: {
-      SuggestionMark(kind: mark)
+    } else {
+      Label {
+        title.typeStyle(.body.weight(.semibold))
+      } icon: {
+        SuggestionMark(kind: mark)
+      }
     }
 
     if let description {
@@ -68,6 +74,11 @@ struct PlanSlotCard<Content: View, Actions: View>: View {
 
     content
   }
+}
+
+extension EnvironmentValues {
+  /// Main's `PlanChangeSuggestion`: a change to the plan's card, titled without a mark.
+  @Entry var isPlanChangeCard = false
 }
 
 extension PlanSlotCard where Content == EmptyView {
@@ -308,8 +319,8 @@ struct PlanOtherOptions<Items: View>: View {
   }
 }
 
-/// Main's coverage sheet: it names the time that covers everything itself. Only the line's "View"
-/// opens it, so it asks at once.
+/// Main's coverage card: finding the time that covers everything plans the goal many times, so only
+/// "See what changes" asks, then shows what that time changes.
 struct PlanCoverageSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
@@ -323,6 +334,7 @@ struct PlanCoverageSlot: View {
   }
 
   enum Found: Equatable {
+    case unasked
     case asking
     case failed
     case time(TimeToCover)
@@ -330,7 +342,6 @@ struct PlanCoverageSlot: View {
 
   var body: some View {
     card
-      .loads(time, refreshable: false)
   }
 
   private var time: Resource<TimeToCover> {
@@ -342,11 +353,12 @@ struct PlanCoverageSlot: View {
   }
 
   static func found(_ time: Resource<TimeToCover>) -> Found {
-    if let value = time.freshValue {
-      return .time(value)
+    switch time.freshState {
+    case .loaded(let value): .time(value)
+    case .failed: .failed
+    case .loading: .asking
+    case .idle, .empty: .unasked
     }
-
-    return if case .failed = time.freshState { .failed } else { .asking }
   }
 
   @ViewBuilder private var card: some View {
@@ -369,7 +381,7 @@ struct PlanCoverageSlot: View {
 
         if found == .failed {
           Button {
-            check.run { await time.refresh() }
+            check.run { await seeChanges() }
           } label: {
             Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
           }
@@ -436,6 +448,8 @@ struct PlanCoverageSlot: View {
 
   private var line: String? {
     switch found {
+    case .unasked:
+      return nil
     case .asking:
       return String(
         localized: "Finding the time that covers everything…", table: "Plan",
@@ -540,8 +554,13 @@ struct PlanCoverageSlot: View {
     }
   }
 
+  /// Finds the time first when it isn't found yet, as main's one tap does, then previews it.
   private func seeChanges() async {
     let check = check
+
+    if time.freshValue == nil {
+      await time.refresh()
+    }
 
     guard !Task.isCancelled, let minutes = offerMinutes else {
       return

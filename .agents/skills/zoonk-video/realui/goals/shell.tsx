@@ -43,30 +43,33 @@ export function switcherGoals(lang: Lang) {
   return [
     {
       dailyMinutes: s.exam.minutesPerDay,
+      displayName: s.exam.title,
       id: "exam",
       kind: "exam",
       status: "active",
       targetDate: s.exam.date,
+      targetDateEstimated: false,
       targetLanguage: null,
-      title: s.exam.title,
     },
     {
       dailyMinutes: 20,
+      displayName: s.language.title,
       id: "language",
       kind: "language",
       status: "active",
       targetDate: null,
+      targetDateEstimated: false,
       targetLanguage: s.language.target,
-      title: s.language.title,
     },
     {
       dailyMinutes: s.career.minutesPerDay,
+      displayName: s.career.title,
       id: "career",
       kind: "learn",
       status: "active",
       targetDate: s.career.date,
+      targetDateEstimated: false,
       targetLanguage: null,
-      title: s.career.title,
     },
   ];
 }

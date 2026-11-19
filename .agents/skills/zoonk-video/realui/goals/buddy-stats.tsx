@@ -6,9 +6,8 @@ import { useExtracted } from "next-intl";
 import { type Lang } from "../story";
 import { DEFAULT_BP, buddyStatus, tabBuddy } from "./buddy-energy";
 import { EnergyChart } from "./buddy-main-energy-chart";
-import { EnergyLine, EnergyTiles } from "./buddy-main-energy-stats";
+import { EnergyTiles } from "./buddy-main-energy-stats";
 import { LevelProgression } from "./buddy-main-level-progression";
-import { LevelLine, LevelTiles } from "./buddy-main-level-stats";
 import { SectionPage } from "./buddy-main-section-page";
 import { StatsPage } from "./buddy-main-stats-page";
 import { AppFrame } from "./shell";
@@ -17,17 +16,13 @@ const MS_PER_DAY = 86_400_000;
 const TODAY = new Date("2026-11-03T00:00:00Z");
 const STARTED = new Date("2026-09-14T00:00:00Z");
 
-/** The (stats) layout: the section bar on phones, "All goals" and the tabs from a tablet up. */
+/** The (stats) layout: the section bar on phones, the tabs from a tablet up. */
 function StatsSection({ children, path }: { children: React.ReactNode; path: string }) {
   const t = useExtracted();
   (globalThis as any).__BUDDY_PATH = path;
 
   return (
-    <SectionPage
-      eyebrow={t("All goals")}
-      hub={{ href: "/stats", title: t("Statistics") }}
-      nav={null}
-    >
+    <SectionPage hub={{ href: "/stats", title: t("Statistics") }} measure="list" nav={null}>
       {children}
     </SectionPage>
   );
@@ -76,9 +71,7 @@ function LevelBody({ bp }: { bp: number }) {
   return (
     <StatsPage title={t("Level")}>
       <ProgressContent>
-        <LevelTiles level={level} />
         <LevelProgression currentBelt={level} />
-        <LevelLine />
       </ProgressContent>
     </StatsPage>
   );
@@ -131,8 +124,7 @@ function EnergyBody({ current }: { current: number }) {
           currentEnergy={current}
           insights={{ averageEnergy: average, fullEnergyDays: full }}
         />
-        <EnergyChart days={days as any} />
-        <EnergyLine />
+        <EnergyChart days={days} />
       </ProgressContent>
     </StatsPage>
   );

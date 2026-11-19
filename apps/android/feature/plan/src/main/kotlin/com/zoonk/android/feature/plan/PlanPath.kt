@@ -154,7 +154,8 @@ private fun PhaseItem(
             phaseMeta(page, phase, open),
             onClick = { expanded = !expanded },
             expanded = expanded,
-            byPlace = byPlace && expanded,
+            // The current phase keeps its name open, as main's does.
+            byPlace = byPlace && expanded && phase.state != PlanPhase.State.CURRENT,
         )
         if (expanded) PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief)
     }

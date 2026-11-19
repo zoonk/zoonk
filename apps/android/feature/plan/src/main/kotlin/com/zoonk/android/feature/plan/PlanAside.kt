@@ -46,18 +46,33 @@ import com.zoonk.api.models.PlanMockSchedule
 import com.zoonk.api.models.PlanSteering
 import kotlinx.datetime.toJavaLocalDate
 
-/** Other places the Plan leads; on wide windows the drawer lists them, so they show only where it doesn't. */
+/**
+ * Main's "More": the lessons already done and the mind maps, which the drawer lists on wide windows instead, then the
+ * exam's page, which the page's menu holds beside the aside.
+ */
 @Composable
 internal fun MoreSection(
     links: PlanLinks,
+    completedLessons: Boolean,
+    mindMaps: Boolean,
+    exam: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    if (!links.hasExam) return
+    val showsExam = exam && links.hasExam
+    if (!completedLessons && !mindMaps && !showsExam) return
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_more))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            LinkRow(R.drawable.ic_school, stringResource(R.string.plan_about_exam), links::exam)
+            if (completedLessons) {
+                LinkRow(
+                    R.drawable.ic_history,
+                    stringResource(R.string.navigation_completed_lessons),
+                    links::completedLessons,
+                )
+            }
+            if (mindMaps) LinkRow(R.drawable.ic_lan, stringResource(R.string.plan_mind_maps), links::mindMaps)
+            if (showsExam) LinkRow(R.drawable.ic_school, stringResource(R.string.plan_about_exam), links::exam)
         }
     }
 }

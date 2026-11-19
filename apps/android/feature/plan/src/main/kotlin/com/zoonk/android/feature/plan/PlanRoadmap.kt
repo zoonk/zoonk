@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.plan
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +35,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -185,6 +183,7 @@ private fun RoadmapCompact(
 private fun RoadmapMeter(phases: List<PlanPhase>) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val fill = MaterialTheme.colorScheme.tertiary
+    val ink = MaterialTheme.colorScheme.onSurface
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     Canvas(
@@ -195,7 +194,6 @@ private fun RoadmapMeter(phases: List<PlanPhase>) {
     ) {
         val gap = 2.dp.toPx()
         val minimum = 24.dp.toPx()
-        val ring = 1.5.dp.toPx()
         val radius = CornerRadius(size.height / 2)
         val widths = weightedWidths(phases.map { it.weight() }, size.width, List(phases.size) { minimum }, gap)
         var start = 0f
@@ -203,24 +201,30 @@ private fun RoadmapMeter(phases: List<PlanPhase>) {
         phases.forEachIndexed { index, phase ->
             val width = widths[index]
             val left = if (rtl) size.width - start - width else start
+            val current = phase.state == PlanPhase.State.CURRENT
             drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
             val done = width * phase.lessonShare()
             if (done > 0) {
-                drawRoundRect(fill, Offset(if (rtl) left + width - done else left, 0f), Size(done, size.height), radius)
-            }
-            if (phase.state == PlanPhase.State.CURRENT) {
                 drawRoundRect(
-                    color = fill,
-                    topLeft = Offset(left + ring / 2, ring / 2),
-                    size = Size(width - ring, size.height - ring),
-                    cornerRadius = radius,
-                    style = Stroke(ring),
+                    if (current) fill.copy(alpha = CURRENT_FILL_ALPHA) else fill,
+                    Offset(if (rtl) left + width - done else left, 0f),
+                    Size(done, size.height),
+                    radius,
                 )
+            }
+            // Main's `CurrentPhaseMark` in the current phase's middle: an ink dot in a faint ring.
+            if (current) {
+                val middle = Offset(left + width / 2, size.height / 2)
+                drawCircle(ink.copy(alpha = CURRENT_RING_ALPHA), radius = 3.dp.toPx(), center = middle)
+                drawCircle(ink, radius = 2.dp.toPx(), center = middle)
             }
             start += width + gap
         }
     }
 }
+
+private const val CURRENT_FILL_ALPHA = 0.3f
+private const val CURRENT_RING_ALPHA = 0.15f
 
 /** Each part gets its minimum, then its share of what's left by weight, as main's flex rows do. */
 internal fun weightedWidths(
@@ -358,17 +362,19 @@ private fun bandName(
 ): BandName {
     // Each part keeps its words together, so a band is as wide as its widest part and breaks only between parts.
     val shown = if (keepParts) bandNameParts(name).joinToString(" ") { it.replace(' ', NO_BREAK_SPACE) } else name
-    return if (phase.state == PlanPhase.State.DONE) {
-        val text =
-            buildAnnotatedString {
-                appendInlineContent(CHECK, "✓")
-                append(WORD_JOINER)
-                append(shown)
-            }
-        BandName(name, text, listOf(AnnotatedString.Range(CHECK_MARK, 0, 1)))
-    } else {
-        BandName(name, AnnotatedString(shown), emptyList())
-    }
+    val (mark, placeholder) =
+        when (phase.state) {
+            PlanPhase.State.DONE -> CHECK to CHECK_MARK
+            PlanPhase.State.CURRENT -> CURRENT to CURRENT_MARK
+            else -> return BandName(name, AnnotatedString(shown), emptyList())
+        }
+    val text =
+        buildAnnotatedString {
+            appendInlineContent(mark, "•")
+            append(WORD_JOINER)
+            append(shown)
+        }
+    return BandName(name, text, listOf(AnnotatedString.Range(placeholder, 0, 1)))
 }
 
 /** Main's `splitBandName`: a short name is one part; a longer one is cut between words where its longer part is shortest. */
@@ -468,6 +474,8 @@ private val BAND_PADDING_Y = 4.dp
 private val MIN_BAND_WIDTH = 72.dp
 private const val CHECK = "check"
 private val CHECK_MARK = Placeholder(1.5.em, 1.2.em, PlaceholderVerticalAlign.TextCenter)
+private const val CURRENT = "current"
+private val CURRENT_MARK = Placeholder(1.em, 1.2.em, PlaceholderVerticalAlign.TextCenter)
 
 @Composable
 private fun PhaseBand(
@@ -509,7 +517,6 @@ private fun PhaseBand(
         shape = MaterialTheme.shapes.small,
         color = container,
         contentColor = content,
-        border = if (current) BorderStroke(1.5.dp, colors.tertiary) else null,
     ) {
         // The part already covered, tinted under the name: a line at the band's edge read as a thicker ring.
         Box(
@@ -529,6 +536,15 @@ private fun PhaseBand(
                 style = bandStyle(),
                 inlineContent =
                     mapOf(
+                        // Main's `CurrentPhaseMark` before the current phase's name: an ink dot in a faint ring.
+                        CURRENT to
+                            InlineTextContent(CURRENT_MARK) {
+                                Canvas(Modifier.fillMaxSize()) {
+                                    val middle = Offset(5.dp.toPx(), size.height / 2)
+                                    drawCircle(ink.copy(alpha = CURRENT_RING_ALPHA), radius = 5.dp.toPx(), center = middle)
+                                    drawCircle(ink, radius = 3.dp.toPx(), center = middle)
+                                }
+                            },
                         CHECK to
                             InlineTextContent(CHECK_MARK) {
                                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
