@@ -13,6 +13,7 @@ import { getLevelFloor } from "./level-bands";
 import { loadExamFacts } from "./planner-exam-facts";
 import { loadGoalPlannerLessons } from "./planner-lessons";
 import { loadStrongAreas } from "./strong-areas";
+import { findWrittenStartLessonId } from "./written-start";
 
 export async function resolveMergedSkills(graph: PlanGraph): Promise<PlanGraph> {
   const survivorOf = await loadSkillSurvivors(graph.skills.map((skill) => skill.skillId));
@@ -92,7 +93,10 @@ export async function loadPlannerInputs({
 }: {
   difficultyBias: DifficultyBias;
   examPicks?: ExamPicks;
-  goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "kind" | "primaryCourseId">;
+  goal: Pick<
+    Goal,
+    "details" | "examBlueprintId" | "id" | "kind" | "planRevealedAt" | "primaryCourseId"
+  >;
   graph: PlanGraph;
   targetDate: Date | null;
   userId: string;
@@ -100,14 +104,16 @@ export async function loadPlannerInputs({
   const skillIds = graph.skills.map((skill) => skill.skillId);
   const isExam = goal.kind === "exam";
 
-  const [lessons, prerequisites, readiness, exam, evidence, bands] = await Promise.all([
-    loadGoalPlannerLessons({ goal, graph, userId }),
-    loadSkillPrerequisites(skillIds),
-    loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
-    loadExamFacts({ goal, graph, picks: examPicks }),
-    loadSkillEvidence({ goalId: goal.id, skillIds, userId }),
-    isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
-  ]);
+  const [lessons, prerequisites, readiness, exam, evidence, bands, startLessonId] =
+    await Promise.all([
+      loadGoalPlannerLessons({ goal, graph, userId }),
+      loadSkillPrerequisites(skillIds),
+      loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
+      loadExamFacts({ goal, graph, picks: examPicks }),
+      loadSkillEvidence({ goalId: goal.id, skillIds, userId }),
+      isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
+      findWrittenStartLessonId(goal),
+    ]);
 
   const { answeredWrong, claims, known: knownSkillIds } = evidence;
   const missedSkillIds = listClaimed({ claim: "gap", claims });
@@ -126,6 +132,7 @@ export async function loadPlannerInputs({
     missedSkillIds: new Set([...missedSkillIds].toSorted()),
     prerequisites: new Map([...prerequisites].toSorted(([a], [b]) => a.localeCompare(b))),
     readiness,
+    startLessonId,
     strongAreas: new Set([...strongAreas].toSorted()),
     ...exam,
   };

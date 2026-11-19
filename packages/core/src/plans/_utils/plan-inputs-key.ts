@@ -43,6 +43,7 @@ const KEYED_FIELDS = {
   readiness: true,
   setAsideLeftWork: "Only a new day's settling sets work aside, and the plan it saved holds it.",
   settings: true,
+  startLessonId: "The lesson the saved plan already opens with, kept there.",
   strongAreas: true,
   today:
     "Raw day rollover is not news; missed work settles separately and rescue eligibility is keyed.",
