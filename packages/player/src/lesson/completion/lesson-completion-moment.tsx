@@ -193,7 +193,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
 
   return (
     <>
-      <TaskBody className="justify-center" data-slot="lesson-completion">
+      <TaskBody data-slot="lesson-completion">
         <MomentHeader
           detail={isSaved && !planReveal && !slots.completionActions && nextStep}
           title={isSaved ? title : <MomentSavingTitle />}

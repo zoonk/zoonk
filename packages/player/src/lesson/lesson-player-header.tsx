@@ -151,7 +151,7 @@ export function LessonPlayerHeader() {
         </TaskHeaderSide>
       </TaskHeaderBar>
 
-      <LessonProgress />
+      {state.phase !== "completed" && <LessonProgress />}
     </TaskHeader>
   );
 }
