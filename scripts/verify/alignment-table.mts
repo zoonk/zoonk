@@ -267,16 +267,16 @@ export const WEB_TABLE = {
 
 /**
  * Exceptions to a declared relationship. A detector's correction belongs in the read itself; an
- * exception to a craft rule is the user's alone to grant, so each names who granted it, the rule,
- * the piece, the scenario and the configuration it covers.
+ * exception to a craft rule is the user's alone to grant, so each names who granted it, or, for a
+ * failure the base's capture of the same screen has too, the open issue that tracks its fix. Each
+ * names the rule, the piece, the scenario and the configuration it covers.
  */
 export type AlignmentException = {
   configuration: string;
-  grantedBy: "user";
   piece: string;
   reason: string;
   relation: Relation | "one-filled";
   scenario: string;
-};
+} & ({ grantedBy: "user" } | { issue: number });
 
 export const EXCEPTIONS: AlignmentException[] = [];

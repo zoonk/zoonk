@@ -306,4 +306,20 @@ describe("printing and the summary line", () => {
     assert.equal(findings[0]?.exception, "granted");
     assert.equal(summarize(findings).unresolved, 0);
   });
+
+  it("resolves a fault the base has too, tracked in an issue, as it does a granted one", () => {
+    const findings = applyExceptions(failures(real("plan roadmap before 5ae2e06daa, phone")), [
+      {
+        configuration: "phone touch",
+        issue: 2790,
+        piece: "plan-roadmap",
+        reason: "on main too, fixed by #2790",
+        relation: "end-edge",
+        scenario: "/plan",
+      },
+    ]);
+
+    assert.equal(findings[0]?.exception, "on main too, fixed by #2790");
+    assert.equal(summarize(findings).unresolved, 0);
+  });
 });
