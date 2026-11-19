@@ -195,32 +195,6 @@ msgctxt "cMaydB"
 msgid "Studied"
 msgstr "Studiato"
 
-#: src/_components/coverage-bar.tsx
-#: src/challenge/challenge-labels.tsx
-#: src/challenge/challenge-moved-screen.tsx
-#: src/completed-lessons/completed-lessons-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-lane.tsx
-#: src/journey/schedule-details.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/onboarding/steps/reveal-days.tsx
-#: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
-#: src/session/session-queue.tsx
-#: src/session/summary/summary-steps.tsx
-#: src/shell/learn-bar.tsx
-#: src/shell/learn-navigation.tsx
-#: src/today/today-heading.tsx
-#: src/today/today-lessons-card.tsx
-#: src/today/today-preparing.tsx
-#: src/today/today-shell.tsx
-msgctxt "zWgbGg"
-msgid "Today"
-msgstr "Oggi"
-
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
 #: src/language/unit/practice-conversation.tsx
@@ -1144,6 +1118,17 @@ msgstr "{count, plural, =0 {secondi} one {secondo} other {secondi}}"
 msgctxt "UAppyx"
 msgid "{count, plural, =0 {atoms} one {atom} other {atoms}}"
 msgstr "{count, plural, =0 {atomi} one {atomo} other {atomi}}"
+
+#: src/_utils/use-lessons-progress-line.ts
+msgctxt "l25yqY"
+msgid "{studied, number} studied · {known, number} already known"
+msgstr "{studied, number} studiate · {known, number} già note"
+
+#. A short line under the progress percent, in a small tile.
+#: src/_utils/use-lessons-progress-line.ts
+msgctxt "Z1VCaI"
+msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
+msgstr "{studied, plural, =0 {Ancora nessuna lezione studiata} one {# lezione studiata} other {# lezioni studiate}}"
 
 #: src/_utils/use-pass-marks-note.ts
 msgctxt "Yc8HfI"
@@ -2244,6 +2229,31 @@ msgstr "Simulazione {number}"
 msgctxt "JbcAGc"
 msgid "You see your result at the end."
 msgstr "Vedrai il risultato alla fine."
+
+#: src/challenge/challenge-labels.tsx
+#: src/challenge/challenge-moved-screen.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-lane.tsx
+#: src/journey/schedule-details.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
+#: src/onboarding/steps/reveal-days.tsx
+#: src/session/open-next-step.tsx
+#: src/session/session-header.tsx
+#: src/session/session-queue.tsx
+#: src/session/summary/summary-steps.tsx
+#: src/shell/learn-bar.tsx
+#: src/shell/learn-navigation.tsx
+#: src/today/today-heading.tsx
+#: src/today/today-lessons-card.tsx
+#: src/today/today-preparing.tsx
+#: src/today/today-shell.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "Oggi"
 
 #: src/challenge/challenge-labels.tsx
 #: src/session/summary/summary-parts.tsx
@@ -4813,18 +4823,6 @@ msgstr "{points, number} questa settimana"
 msgctxt "Kus9gk"
 msgid "Preparation"
 msgstr "Preparazione"
-
-#: src/journey/journey-hero.tsx
-msgctxt "l25yqY"
-msgid "{studied, number} studied · {known, number} already known"
-msgstr "{studied, number} studiate · {known, number} già note"
-
-#. A short line under the progress percent, in a small tile.
-#: src/journey/journey-hero.tsx
-#: src/today/today-lessons-card.tsx
-msgctxt "Z1VCaI"
-msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
-msgstr "{studied, plural, =0 {Ancora nessuna lezione studiata} one {# lezione studiata} other {# lezioni studiate}}"
 
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
