@@ -254,9 +254,12 @@ export function readPanel({
       return null;
     }
 
+    // A fixed panel centers in the page's room, which a classic scrollbar narrows.
+    const { clientHeight, clientWidth } = document.documentElement;
+
     return (
-      Math.abs((box.left + box.right) / 2 - innerWidth / 2) <= 2 &&
-      Math.abs((box.top + box.bottom) / 2 - innerHeight / 2) <= 2 &&
+      Math.abs((box.left + box.right) / 2 - clientWidth / 2) <= 2 &&
+      Math.abs((box.top + box.bottom) / 2 - clientHeight / 2) <= 2 &&
       ![...(panel?.querySelectorAll("[data-slot=drawer-handle]") ?? [])].some(shown)
     );
   }

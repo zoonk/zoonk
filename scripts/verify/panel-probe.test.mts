@@ -11,6 +11,7 @@ const HALF_PANEL = 50;
 let dark = false;
 
 beforeEach(() => {
+  setRoom(ROOM);
   installPageHelpers();
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 0, 100, 100));
   const box = new DOMRect(0, 0, 100, 100);
@@ -145,6 +146,21 @@ function panel(slot: string, content = "") {
   document.querySelector<HTMLElement>(`[data-slot="${slot}"]`)?.focus();
 }
 
+/** The page's room inside a laptop's viewport once a classic scrollbar takes its 15 px. */
+const ROOM = { height: 900, width: 1425 };
+
+function setRoom({ height, width }: { height: number; width: number }) {
+  Object.defineProperty(document.documentElement, "clientHeight", {
+    configurable: true,
+    value: height,
+  });
+
+  Object.defineProperty(document.documentElement, "clientWidth", {
+    configurable: true,
+    value: width,
+  });
+}
+
 describe("shared panel readings", () => {
   it.each(["side-panel-content", "drawer-popup"])(
     "reads a portaled menu inside %s and requires its own focus and close",
@@ -231,10 +247,10 @@ describe("shared panel readings", () => {
     assert.equal(returned(), false);
   });
 
-  it("requires a drawer centered on a laptop without a visible handle", () => {
+  it("requires a drawer centered on a laptop, in the room a scrollbar leaves, without a visible handle", () => {
     panel("drawer-popup");
     assert.equal(read()?.centered, false);
-    const box = new DOMRect(innerWidth / 2 - HALF_PANEL, innerHeight / 2 - HALF_PANEL, 100, 100);
+    const box = new DOMRect(ROOM.width / 2 - HALF_PANEL, ROOM.height / 2 - HALF_PANEL, 100, 100);
     vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue(box);
     assert.equal(read()?.centered, true);
 
