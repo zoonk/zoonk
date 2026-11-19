@@ -2,6 +2,8 @@ import SwiftUI
 
 struct StatusMark: View {
   enum Status {
+    /// Main's `CurrentPhaseMark`: where the learner is in the plan, an ink dot in a faint ring.
+    case currentPhase
     case done
     case next
     case skipped
@@ -11,6 +13,8 @@ struct StatusMark: View {
   let status: Status
 
   @ScaledMetric(relativeTo: .body) private var nextSize = 12.0
+  @ScaledMetric(relativeTo: .body) private var currentDot = 10.0
+  @ScaledMetric(relativeTo: .body) private var currentRing = 4.0
 
   var body: some View {
     mark
@@ -21,6 +25,12 @@ struct StatusMark: View {
   @ViewBuilder
   private var mark: some View {
     switch status {
+    case .currentPhase:
+      Circle()
+        .fill(Color(.foreground))
+        .frame(width: currentDot, height: currentDot)
+        .padding(currentRing)
+        .background(Circle().fill(Color(.foreground).opacity(0.15)))
     case .done:
       Image(systemName: "checkmark")
         .fontWeight(.bold)
