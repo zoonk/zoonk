@@ -389,13 +389,11 @@
     <string name="onboarding_purpose_deep">Understand it in depth</string>
     <string name="onboarding_purpose_deep_description">The full path, from the basics to advanced</string>
     <string name="onboarding_purpose_work">Use it at work</string>
-    <string name="onboarding_purpose_work_description">Only what your work uses, in the order it needs</string>
     <string name="onboarding_purpose_career_change">Change careers</string>
     <string name="onboarding_purpose_career_change_description">What the new role needs, portfolio included</string>
     <string name="onboarding_purpose_refresh">Refresh what I studied</string>
     <string name="onboarding_purpose_refresh_description">Back to the level I had, after a short test</string>
     <string name="onboarding_purpose_other">Something else</string>
-    <string name="onboarding_purpose_other_description">Tell us later, in your own words</string>
     <string name="onboarding_level_title">How much do you already know?</string>
     <string name="onboarding_level_description">It only changes where your plan starts.</string>
     <string name="onboarding_level_label">Your level</string>
@@ -440,7 +438,6 @@
     <string name="onboarding_subjects_title">Which subjects do you already know well?</string>
     <string name="onboarding_subjects_description">Your plan starts past their basics. A quick test places you in the rest.</string>
     <string name="onboarding_subjects_label">Subjects you know well</string>
-    <string name="onboarding_subjects_from_scratch">I\'m new</string>
     <string name="onboarding_admission_title">Which course and score are you aiming for?</string>
     <string name="onboarding_target_label">Your target</string>
     <string name="onboarding_admission_placeholder">E.g., medicine, 750 points</string>

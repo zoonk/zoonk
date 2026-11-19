@@ -62,7 +62,7 @@ struct LoginView: View {
             .background(.background)
             .overlay {
               RoundedRectangle(cornerRadius: authenticationButtonCornerRadius)
-                .strokeBorder(.mutedForeground, lineWidth: 1)
+                .strokeBorder(Color(.input), lineWidth: 1)
             }
             .clipShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
             .contentShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))

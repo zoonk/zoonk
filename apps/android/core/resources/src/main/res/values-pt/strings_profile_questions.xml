@@ -5,7 +5,6 @@
   "profile_questions_activities_placeholder": "3801687916e095e656c19d64633a4cfec93ac64ac3638c98302c31e2075b7186",
   "profile_questions_activities_title": "476e9670979bb098f4706c3837fe42947f57703706c66fe5f1811bcc9980120c",
   "profile_questions_add": "ae2c0b9b21af3e9609b5f63ae611574edf0b81603c06fb0fa19f715f6704c66e",
-  "profile_questions_address_description": "17ab53e7db279f9818fa0c15b3f46ccabfad1b8a551b3d62e43adc9abb174aaa",
   "profile_questions_address_title": "3d2bcb096439c110d24c108e436ec0f7c84e2beb9041236105d9fdd1cfcc75b9",
   "profile_questions_cap": "da7e186d98419ace31df1961b1dfa7a46efda65b136aa1db35126908ef2897e8",
   "profile_questions_condition_note": "76522f184770230755d7be3f40717040041a18d1cae99186f43c8b4e1c7bc537",
@@ -13,7 +12,6 @@
   "profile_questions_conditions_description_settings": "8abe097b9debf16ceca455ac93c1f634f7be15480e3cfd30345fd83a095c26a4",
   "profile_questions_conditions_saved": "400e40d4888a672ae7c1e95a4c34bbd9ba42e608c3c376470484b2d70355c8e2",
   "profile_questions_conditions_title": "a2b418c6612ea166df3b50804cee5532aa7f1908f6bf2f82b2dc90ed20a8dd76",
-  "profile_questions_count": "f619b7b52d01b48abcb7c0a6a8e5db39a436fb5a637e2632205d3a4c46490d78",
   "profile_questions_description": "d5e4962a793317e8a5cf78afff0e17e1ca30daef5790d0787c4cc8523f112a3e",
   "profile_questions_earlier_answer": "db03489c94dcc62d96cbceebcb1284bf4038f88319bc14e7c1eb6714ed8e2535",
   "profile_questions_for_fun": "7610c12486196101942815f86379413f320c213a5a2da2b61dc588b06c41b145",
@@ -83,7 +81,6 @@
 <resources>
     <string name="profile_questions_title">Sobre você</string>
     <string name="profile_questions_description">O que você conta aqui ajuda a personalizar seus exemplos e seu parceiro. Tudo é opcional.</string>
-    <string name="profile_questions_count">%1$d de %2$d</string>
     <string name="profile_questions_skip_all">Pular tudo</string>
     <string name="profile_questions_skip_all_label">Pular o resto das perguntas sobre você</string>
     <string name="profile_questions_never_ask">Não me faça essas perguntas de novo</string>
@@ -128,7 +125,6 @@
     <string name="profile_questions_support_description">Escolha tudo o que te ajuda. Não precisa de rótulo nem diagnóstico.</string>
     <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Como a gente fala com você?</string>
-    <string name="profile_questions_address_description">A gente vai falar com você assim.</string>
     <string name="profile_questions_suggested">A gente pesquisou o que costuma ajudar com as opções que você escolheu. Mude o que quiser.</string>
     <string name="profile_questions_something_else">+ Algo mais que ajuda</string>
     <string name="profile_questions_support_note">O que te ajuda, nas suas palavras (opcional)</string>

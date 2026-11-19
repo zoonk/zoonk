@@ -479,8 +479,9 @@ private val NO_PADDING = PaddingValues()
 
 private fun Modifier.action(variant: LayoutPart.Variant): Modifier = layoutPart(LayoutPart.ACTIONS, LayoutPart.Part.Action, variant)
 
+/** A screen action's height, for text that stands in a button's place. */
 @Composable
-private fun largeButtonHeight(): Dp =
+fun largeButtonHeight(): Dp =
     with(LocalDensity.current) {
         maxOf(
             44.dp,

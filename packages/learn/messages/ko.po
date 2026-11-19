@@ -997,18 +997,6 @@ msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "이번에는 답을 확인하지 않았어요"
 
-#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
-#: src/_components/weekend-time.tsx
-msgctxt "MuKIuz"
-msgid "Add Saturday or Sunday to your study days."
-msgstr "학습 요일에 토요일이나 일요일을 추가하세요."
-
-#. Why a switch for a different study time on weekends is off: only weekend days are study days.
-#: src/_components/weekend-time.tsx
-msgctxt "dQytAa"
-msgid "Add a weekday to your study days."
-msgstr "학습 요일에 평일 중 하루를 추가하세요."
-
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
 msgid "Weekend time"
@@ -1187,7 +1175,6 @@ msgstr "언어 및 지역"
 
 #: src/appearance/appearance-screen.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
-#: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 #: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
@@ -2350,6 +2337,7 @@ msgstr "챕터 {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
@@ -3260,6 +3248,8 @@ msgid "Leave for now?"
 msgstr "잠시 나갈까요?"
 
 #: src/essay/essay-skip-button.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-screens.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
@@ -3886,12 +3876,6 @@ msgstr "메시지를 보냈어요! 곧 답변해 드릴게요."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "메시지를 보내지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
-
-#: src/focus-test/focus-test-flow.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "WYzHAI"
-msgid "Skip for now"
-msgstr "일단 건너뛰기"
 
 #: src/focus-test/focus-test-flow.tsx
 msgctxt "BGeoDm"
@@ -8219,6 +8203,7 @@ msgid "{correct} of {total}"
 msgstr "{correct} / {total}"
 
 #: src/mock/mock-result-breakdown.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/questions/item-set-stimulus.tsx
 #: src/today/today-session-card.tsx
 msgctxt "qyJtWy"
@@ -8871,29 +8856,14 @@ msgid "Tell us in your own words. We'll build the plan."
 msgstr "원하는 내용을 자유롭게 적어 주세요. 계획을 세워 드릴게요."
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "Xy7a7A"
-msgid "Exam"
-msgstr "시험"
-
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "MhhJ4B"
 msgid "Speak {language} for a job interview"
 msgstr "취업 면접에서 {language} 말하기"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "UdtpV7"
-msgid "Topic"
-msgstr "주제"
-
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "Zqp_hg"
 msgid "Understand quantum physics"
 msgstr "양자 물리학 이해하기"
-
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "79lLl-"
-msgid "Music"
-msgstr "음악"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "PSyWa0"
@@ -9234,12 +9204,6 @@ msgstr "이용 방법"
 msgctxt "UdYIBZ"
 msgid "Or start this ready-made course now"
 msgstr "또는 미리 준비된 코스 바로 시작하기"
-
-#: src/onboarding/onboarding-bar.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number}/{total, number}"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9665,11 +9629,6 @@ msgid "Understand it well"
 msgstr "제대로 이해하기"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "9KaXOx"
-msgid "I want to learn what I use at work"
-msgstr "업무에 쓰는 내용을 배우고 싶어요"
-
-#: src/onboarding/steps/question-steps.tsx
 msgctxt "6SMSwM"
 msgid "Use it at work"
 msgstr "업무에 활용하고 싶어요"
@@ -9693,11 +9652,6 @@ msgstr "예전 실력을 되찾고 싶어요"
 msgctxt "Aicr0G"
 msgid "Refresh what I studied"
 msgstr "배운 내용을 다시 익히고 싶어요"
-
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "xAm26I"
-msgid "I want something different"
-msgstr "원하는 게 따로 있어요"
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx
@@ -9970,12 +9924,6 @@ msgstr "학습 일수"
 msgctxt "5Imb5S"
 msgid "Your plan skips their basics."
 msgstr "선택한 과목의 기초는 건너뛰어요."
-
-#. Answers the question when the learner knows none of the subjects yet.
-#: src/onboarding/steps/subjects-level-step.tsx
-msgctxt "8F5ajW"
-msgid "I'm new"
-msgstr "저는 처음이에요"
 
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "OpYINI"
@@ -10255,7 +10203,7 @@ msgstr "{count, plural, other {#개 감소}}"
 
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-suggestion-context.tsx
-#: src/today/today-session-card.tsx
+#: src/today/today-fold-row.tsx
 msgctxt "GYQ3G4"
 msgid "{count, plural, one {# more} other {# more}}"
 msgstr "{count, plural, other {#개 더}}"
@@ -10406,6 +10354,7 @@ msgstr "변경 사항을 확인하고 있어요…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
+#: src/plan/plan-choices.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "사전 지식"
@@ -11850,11 +11799,6 @@ msgctxt "toYiVg"
 msgid "Pick up to 3."
 msgstr "3개까지 골라 주세요."
 
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "xI6I3Q"
-msgid "We'll talk to you this way."
-msgstr "앞으로 이렇게 이야기할게요."
-
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
 msgid "What should we know?"
@@ -11889,6 +11833,11 @@ msgstr "이 내용을 기억해 둘게요. 언제든 설정에서 삭제할 수 
 msgctxt "opT2q1"
 msgid "We checked what often helps with what you picked. Change anything you like."
 msgstr "선택한 내용에 맞춰 도움이 되는 경우가 많은 방법을 미리 골라 뒀어요. 원하는 대로 바꿔 보세요."
+
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number}/{total, number}"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"
@@ -13329,6 +13278,11 @@ msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "알겠어요. 계획에서 테스트를 볼 수 있어요."
 
+#: src/today/today-fold-row.tsx
+msgctxt "AHBKOX"
+msgid "{count, plural, one {# more lesson} other {# more lessons}}"
+msgstr "{count, plural, other {레슨 #개 더 보기}}"
+
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
 msgid "Not enough time left for all your lessons."
@@ -13483,11 +13437,6 @@ msgstr "{count, plural, other {#개 완료}}"
 msgctxt "DIDXQf"
 msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
 msgstr "{completed, plural, other {#개 완료}} · {skipped, plural, other {#개 건너뜀}}"
-
-#: src/today/today-session-card.tsx
-msgctxt "AHBKOX"
-msgid "{count, plural, one {# more lesson} other {# more lessons}}"
-msgstr "{count, plural, other {레슨 #개 더 보기}}"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "wF_58q"

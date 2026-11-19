@@ -95,6 +95,7 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import java.util.Locale
 import java.util.UUID
 
 @Composable
@@ -189,8 +190,6 @@ fun GoalSetupScreen(
                 !first.stopped,
         key = run.id,
     ) { store.onboardings[vm.goalId].refreshed() }
-    val profileSteps = (vm.flow.history + listOfNotNull(step) + view?.steps.orEmpty()).filter { it.profileQuestion != null }.distinct()
-    val profileIndex = profileSteps.indexOf(step)
     val inQuestions = step != null && step != OnboardingStep.PLAN
     val testing = vm.placementProgress.takeIf { step == OnboardingStep.PLACEMENT }
     val back = { vm.back() }.takeIf { inQuestions && testing == null && vm.flow.goingBack() != null }
@@ -221,12 +220,6 @@ fun GoalSetupScreen(
             when {
                 testing != null -> {
                     Text(vm.placementProgressLabel ?: stringResource(R.string.onboarding_placement_progress))
-                }
-
-                profileIndex >= 0 -> {
-                    if (profileSteps.size > 1) {
-                        Text(stringResource(R.string.profile_questions_count, profileIndex + 1, profileSteps.size))
-                    }
                 }
 
                 else -> {
@@ -344,7 +337,7 @@ private fun ColumnScope.SetupStep(
     onReportPlacement: () -> Unit,
     onReportLevelTest: () -> Unit,
 ) {
-    val subject = view.subject()
+    val subject = view.subject(currentLocale())
     val pending = vm.isSaving
     val onRetryRun = vm.follower::retry.takeIf { run.failure == GenerationFailure.Connection || vm.follower.canRestart }
     val onboardingId = view.goal.details.text("onboardingId")
@@ -689,7 +682,9 @@ private fun MenuText(
     }
 }
 
-private fun Onboarding.subject(): String = goal.details.text("subject") ?: goal.displayName
+/** Written to sit mid-sentence ("inglês"); the chip starts a line, so it starts with a capital. */
+private fun Onboarding.subject(locale: Locale): String =
+    goal.details.text("subject")?.replaceFirstChar { it.titlecase(locale) } ?: goal.displayName
 
 private fun Goal.levelChoice(): LevelChoice? {
     val level =

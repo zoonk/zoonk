@@ -110,13 +110,12 @@ extension SetupProgress {
   ]
 
   /// Nil on a screen that isn't one of the questions, placement included. The About you screens
-  /// count as one, so the count keeps its scale.
+  /// count as one, so the count keeps its scale, and show it too: one count for the whole setup.
   init?(
     current: Components.Schemas.OnboardingStep, history: [Components.Schemas.OnboardingStep],
     steps: [Components.Schemas.OnboardingStep]
   ) {
-    guard current.profileQuestion == nil,
-      !([current] + steps).contains(where: Self.questionsThatAddQuestions.contains)
+    guard !([current] + steps).contains(where: Self.questionsThatAddQuestions.contains)
     else {
       return nil
     }
@@ -287,19 +286,7 @@ private struct GoalSteps: View {
         }
       }
 
-      if step.profileQuestion != nil {
-        var seen = Set<Components.Schemas.OnboardingStep>()
-        let questions = (history + [step] + view.steps).filter {
-          $0.profileQuestion != nil && seen.insert($0).inserted
-        }
-        if questions.count > 1, let index = questions.firstIndex(of: step) {
-          ToolbarItem(placement: .principal) {
-            Text("\(index + 1) of \(questions.count)", tableName: "AboutYou")
-              .typeStyle(.data)
-              .foregroundStyle(.secondary)
-          }
-        }
-      } else if let progress {
+      if let progress {
         ToolbarItem(placement: .principal) {
           Text(
             "Step \(progress.step) of \(progress.total)", tableName: "Onboarding",
@@ -608,9 +595,12 @@ private struct StepScreen: View {
       let subject: String?
     }
 
-    let subject = (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.subject
-    return subject?.trimmingCharacters(in: .whitespaces).isEmpty == false
-      ? subject ?? view.goal.displayName : view.goal.displayName
+    // Written to sit mid-sentence ("inglês"); the chip starts a line, so it starts with a capital.
+    guard
+      let subject = (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.subject,
+      !subject.trimmingCharacters(in: .whitespaces).isEmpty
+    else { return view.goal.displayName }
+    return subject.prefix(1).uppercased(with: .current) + subject.dropFirst()
   }
 }
 

@@ -180,23 +180,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
 
       return studied.contains { !isWeekend($0) } ? nil : .weekdays
     }
-
-    var reason: String {
-      switch self {
-      case .weekend:
-        String(
-          localized: "Add Saturday or Sunday to your study days.", table: "Plan",
-          comment:
-            "Why a switch for a different study time on weekends is off: no weekend day is a study day."
-        )
-      case .weekdays:
-        String(
-          localized: "Add a weekday to your study days.", table: "Plan",
-          comment:
-            "Why a switch for a different study time on weekends is off: only weekend days are study days."
-        )
-      }
-    }
   }
 
   /// Sunday counted 0.

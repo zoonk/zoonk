@@ -997,18 +997,6 @@ msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Esta vez no comprobamos tu respuesta"
 
-#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
-#: src/_components/weekend-time.tsx
-msgctxt "MuKIuz"
-msgid "Add Saturday or Sunday to your study days."
-msgstr "Agrega el sábado o el domingo a tus días de estudio."
-
-#. Why a switch for a different study time on weekends is off: only weekend days are study days.
-#: src/_components/weekend-time.tsx
-msgctxt "dQytAa"
-msgid "Add a weekday to your study days."
-msgstr "Agrega un día entre semana a tus días de estudio."
-
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
 msgid "Weekend time"
@@ -1187,7 +1175,6 @@ msgstr "Idioma y región"
 
 #: src/appearance/appearance-screen.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
-#: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 #: src/plan/plan-properties.tsx
 msgctxt "y1Z3or"
@@ -2350,6 +2337,7 @@ msgstr "Capítulo {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
@@ -3260,6 +3248,8 @@ msgid "Leave for now?"
 msgstr "¿Salir por ahora?"
 
 #: src/essay/essay-skip-button.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-screens.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
@@ -3886,12 +3876,6 @@ msgstr "¡Mensaje enviado con éxito! Te responderemos pronto."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "No pudimos enviar tu mensaje. Inténtalo de nuevo o escríbenos a contacto@zoonk.com."
-
-#: src/focus-test/focus-test-flow.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "WYzHAI"
-msgid "Skip for now"
-msgstr "Saltar por ahora"
 
 #: src/focus-test/focus-test-flow.tsx
 msgctxt "BGeoDm"
@@ -8219,6 +8203,7 @@ msgid "{correct} of {total}"
 msgstr "{correct} de {total}"
 
 #: src/mock/mock-result-breakdown.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/questions/item-set-stimulus.tsx
 #: src/today/today-session-card.tsx
 msgctxt "qyJtWy"
@@ -8871,29 +8856,14 @@ msgid "Tell us in your own words. We'll build the plan."
 msgstr "Cuéntanos con tus propias palabras. Prepararemos el plan."
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "Xy7a7A"
-msgid "Exam"
-msgstr "Examen"
-
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "MhhJ4B"
 msgid "Speak {language} for a job interview"
 msgstr "Hablar {language} en una entrevista de trabajo"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "UdtpV7"
-msgid "Topic"
-msgstr "Tema"
-
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "Zqp_hg"
 msgid "Understand quantum physics"
 msgstr "Entender la física cuántica"
-
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "79lLl-"
-msgid "Music"
-msgstr "Música"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "PSyWa0"
@@ -9234,12 +9204,6 @@ msgstr "Cómo funciona"
 msgctxt "UdYIBZ"
 msgid "Or start this ready-made course now"
 msgstr "O empezar ahora este curso que ya está listo"
-
-#: src/onboarding/onboarding-bar.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number} de {total, number}"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9665,11 +9629,6 @@ msgid "Understand it well"
 msgstr "Entenderlo bien"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "9KaXOx"
-msgid "I want to learn what I use at work"
-msgstr "Quiero aprender lo que uso en el trabajo"
-
-#: src/onboarding/steps/question-steps.tsx
 msgctxt "6SMSwM"
 msgid "Use it at work"
 msgstr "Usarlo en el trabajo"
@@ -9693,11 +9652,6 @@ msgstr "Quiero recuperar el nivel que tenía"
 msgctxt "Aicr0G"
 msgid "Refresh what I studied"
 msgstr "Repasar lo que estudié"
-
-#: src/onboarding/steps/question-steps.tsx
-msgctxt "xAm26I"
-msgid "I want something different"
-msgstr "Quiero algo diferente"
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx
@@ -9970,12 +9924,6 @@ msgstr "Días de estudio"
 msgctxt "5Imb5S"
 msgid "Your plan skips their basics."
 msgstr "Tu plan se salta lo básico de esas materias."
-
-#. Answers the question when the learner knows none of the subjects yet.
-#: src/onboarding/steps/subjects-level-step.tsx
-msgctxt "8F5ajW"
-msgid "I'm new"
-msgstr "Estoy empezando"
 
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "OpYINI"
@@ -10255,7 +10203,7 @@ msgstr "{count, plural, other {# menos}}"
 
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-suggestion-context.tsx
-#: src/today/today-session-card.tsx
+#: src/today/today-fold-row.tsx
 msgctxt "GYQ3G4"
 msgid "{count, plural, one {# more} other {# more}}"
 msgstr "{count, plural, other {# más}}"
@@ -10406,6 +10354,7 @@ msgstr "Revisando los cambios…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
+#: src/plan/plan-choices.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "Requisitos previos"
@@ -11850,11 +11799,6 @@ msgctxt "toYiVg"
 msgid "Pick up to 3."
 msgstr "Elige hasta 3."
 
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "xI6I3Q"
-msgid "We'll talk to you this way."
-msgstr "Así te hablaremos."
-
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
 msgid "What should we know?"
@@ -11889,6 +11833,11 @@ msgstr "Lo recordaremos. Puedes eliminarlo cuando quieras en Configuración."
 msgctxt "opT2q1"
 msgid "We checked what often helps with what you picked. Change anything you like."
 msgstr "Marcamos las opciones que suelen ayudar según lo que elegiste. Cambia lo que quieras."
+
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number} de {total, number}"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"
@@ -13329,6 +13278,11 @@ msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "Entendido. Puedes hacer la prueba desde tu plan."
 
+#: src/today/today-fold-row.tsx
+msgctxt "AHBKOX"
+msgid "{count, plural, one {# more lesson} other {# more lessons}}"
+msgstr "{count, plural, one {# lección más} other {# lecciones más}}"
+
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
 msgid "Not enough time left for all your lessons."
@@ -13483,11 +13437,6 @@ msgstr "{count, plural, one {# completado} other {# completados}}"
 msgctxt "DIDXQf"
 msgid "{completed, plural, one {# done} other {# done}} · {skipped, plural, one {# skipped} other {# skipped}}"
 msgstr "{completed, plural, one {# completado} other {# completados}} · {skipped, plural, one {# saltado} other {# saltados}}"
-
-#: src/today/today-session-card.tsx
-msgctxt "AHBKOX"
-msgid "{count, plural, one {# more lesson} other {# more lessons}}"
-msgstr "{count, plural, one {# lección más} other {# lecciones más}}"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "wF_58q"

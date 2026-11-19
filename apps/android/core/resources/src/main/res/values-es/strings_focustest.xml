@@ -56,7 +56,6 @@
   "focustest_see_your_result": "cb898c52b0fea4db6776aef3331fb8a09229f0c56f9202a07044c318a6c2a769",
   "focustest_session_questions": "46109fc45cee13aa95b0c2c49662dfdba705d745d121cd2bd61fd2bf95bc2bed",
   "focustest_session_questions_when": "7e5d2be040c867f2f345a8e1f51acc3cc872c157a756376f1108b4b47e6b5609",
-  "focustest_skip_for_now": "a8e2424172e9a554e9cfb22cfc0e4154deb81c18fc8c9036d803997d7958ecfb",
   "focustest_skip_note": "3b7ee250072313275f52494839bf24dcab10c6ed9744f0fbe9318301050bec22",
   "focustest_speaking_not_checked": "0abf10cefc67a686a60693dba04b7dafe7bf7c350cdb500d6d30fb407728ea11",
   "focustest_start": "2ebb8ee454da0cbc73909ea2f5d7e04bed3e1c51a49339871c71198b3bfe8c21",
@@ -101,7 +100,6 @@
     <string name="focustest_how_sessions_title">Unas preguntas más en tu primera semana</string>
     <string name="focustest_how_sessions">En tus sesiones de estudio verás algunas preguntas más de esta prueba. Puedes pausarlas.</string>
     <string name="focustest_start">Comenzar la prueba</string>
-    <string name="focustest_skip_for_now">Saltar por ahora</string>
     <string name="focustest_skip_note">Puedes hacer la prueba más adelante, desde tu plan.</string>
     <string name="focustest_not_now">Ahora no</string>
     <string name="focustest_resume_title">Continuar tu prueba</string>

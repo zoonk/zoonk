@@ -57,7 +57,8 @@ internal data class SetupProgress(
 )
 
 /**
- * Placement is optional and the plan isn't a question, so neither counts, and placement shows no dots.
+ * Placement is optional and the plan isn't a question, so neither counts, and placement shows no dots. The questions
+ * about the learner share one dot, so the setup keeps one display throughout.
  * Each question counts once, where the learner meets it: an earlier one opened again from a later
  * screen keeps its place, and the screen it was opened from is still ahead. Until the count is known
  * there are no dots: a question whose answer can add one (core's `QUESTIONS_THAT_ADD_QUESTIONS`) is
@@ -68,7 +69,6 @@ internal fun setupProgress(
     steps: List<OnboardingStep>,
 ): SetupProgress? {
     val current = flow.current?.takeIf(::countsAsQuestion) ?: return null
-    if (current.profileQuestion != null) return null
     if ((steps + current).any { it in QUESTIONS_THAT_ADD_QUESTIONS }) return null
     val ahead = steps.filter(::countsAsQuestion)
     val behind = flow.history.filter { countsAsQuestion(it) && (it == current || it !in ahead) }

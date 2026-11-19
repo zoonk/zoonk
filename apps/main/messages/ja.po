@@ -3080,21 +3080,6 @@ msgctxt "ag_ax6"
 msgid "Example · {time} a day, about {count, plural, one {# short lesson} other {# short lessons}}"
 msgstr "例・1日{time}、{count, plural, other {短いレッスンを約#レッスン}}"
 
-#: src/components/pricing/plus-adds.tsx
-msgctxt "EGA7KK"
-msgid "One block is one study day"
-msgstr "1ブロックは1日分の学習です"
-
-#: src/components/pricing/plus-adds.tsx
-msgctxt "tbnyhv"
-msgid "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}"
-msgstr "{lessons, plural, other {#レッスン}}：{days, plural, =5 {最初の約1週間分} =10 {最初の約2週間分} other {最初の約#日分}}"
-
-#: src/components/pricing/plus-adds.tsx
-msgctxt "kFIKxT"
-msgid "Every lesson, all month"
-msgstr "1か月間、すべてのレッスン"
-
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "v0Vpb-"
 msgid "Your whole study plan, every day to your deadline"

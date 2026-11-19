@@ -78,13 +78,11 @@ export function OnboardingColumn({
   children,
   className,
   rail,
-  wide = false,
   ...props
 }: React.ComponentProps<"main"> & {
   /** The screen's actions, the only place they go. Pass `OnboardingActions`. */
   bar?: ReactNode;
   rail?: ReactNode;
-  wide?: boolean;
 }) {
   const host = useOnboardingHost();
   const flowRail = useOnboardingRail();
@@ -96,7 +94,6 @@ export function OnboardingColumn({
         barEnd={host.barEnd}
         bottomBar={bar}
         rail={rail === undefined ? flowRail : rail}
-        wide={wide}
       >
         <section
           className={cn(

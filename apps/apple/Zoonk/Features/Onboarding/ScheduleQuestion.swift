@@ -475,20 +475,20 @@ struct ScheduleQuestion: View {
             }))
       }
 
-      // The switch keeps its place, off until a weekend day is studied, so picking one moves nothing.
-      Toggle(
-        isOn: Binding(
-          get: { studiesOnWeekends && weekendOn },
-          set: { on in
-            weekendOn = on
-            weekendPicked = nil
-          })
-      ) {
-        Text(
-          "Different time on weekends", tableName: "Onboarding",
-          comment: "Switch giving Saturday and Sunday their own study time")
+      if studiesOnWeekends {
+        Toggle(
+          isOn: Binding(
+            get: { weekendOn },
+            set: { on in
+              weekendOn = on
+              weekendPicked = nil
+            })
+        ) {
+          Text(
+            "Different time on weekends", tableName: "Onboarding",
+            comment: "Switch giving Saturday and Sunday their own study time")
+        }
       }
-      .disabled(!studiesOnWeekends)
 
       if studiesOnWeekends, weekendOn {
         let current = weekendPicked ?? shown.minutes ?? view.recommendedMinutes

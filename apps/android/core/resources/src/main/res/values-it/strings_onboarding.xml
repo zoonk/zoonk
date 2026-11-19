@@ -208,14 +208,12 @@
   "onboarding_purpose_description": "ae0a597870cbdc76284b2bf2d75c34eca074d80988a4ee2f802a615b8b43a973",
   "onboarding_purpose_label": "73ef5084f1fb48f192689432fa9f7466d7983df8422404b9647253a0cdbad655",
   "onboarding_purpose_other": "cc92a28c24ecf0ee2a05973a1a636e753572d4b9b8eb9698d24cee56cbc5ffce",
-  "onboarding_purpose_other_description": "e5b586ca77a2361d51fd747c3f56875657bc99c2f1c9f6811dbb2cf1c6cd2248",
   "onboarding_purpose_overview": "a5b505b20b11de3599188e4027865176be553598223f3566cf883cf4747b3663",
   "onboarding_purpose_overview_description": "b551c6d881e0b1548e9ea32d194f62728b854620823c8973afc668c7abb9c853",
   "onboarding_purpose_refresh": "b4f32c7e03e9a1b96ede125907dc7907af55dee57022a4b63575b2d3a22965e5",
   "onboarding_purpose_refresh_description": "f5eb684207fdf792cc2e0207070079bfa17813fe268204b24f889c92219750f9",
   "onboarding_purpose_title": "3293a61d95cd646865336676f11dfefb96106a736c6557348ed58c7e20bc843e",
   "onboarding_purpose_work": "04f0e221150924dac0ac4e2c3a86a41e7dbac578db0188663648b92e233bf5db",
-  "onboarding_purpose_work_description": "ab2988e703a68a320219946a7e852ce6025fa9352e18a37d0aebab98b509dd7c",
   "onboarding_question_failed": "11886bad6ea8ca97c0eaab3d5bcc60683da3328c772393a4f7f8bb2f1d10683b",
   "onboarding_question_placeholder": "f5c7a0837a73226dc76f7a5dc4bc9c4f6f992462ba8fe9c89394c1595744c68b",
   "onboarding_question_sign_in": "e860c382ec5014835c558a772af002dd717d7dbb74035cd95153846f2862f6b3",
@@ -392,7 +390,6 @@
   "onboarding_study_days": "62cc9554b517a1d3609a078f7c72dfcdb72bf6abca6d0bd79ac64b6c241a3c6e",
   "onboarding_study_material": "334b3b8df8ec6aba9493ce9bc57a58551304948afeac732347dacebac545c4b5",
   "onboarding_subjects_description": "9c24a0b25175b64154469c7707c2f44e7600f1dcc6ce880e5c373f774380690b",
-  "onboarding_subjects_from_scratch": "8959ffc8916b1fd3ac3a3a20fba7dd9ccea70373425647ad427ecf1f6fa7082e",
   "onboarding_subjects_label": "53d6b52bec3c2a9b15ccc8df9c57fa02a998bb647bcecf40dc19e3ec6e4793f4",
   "onboarding_subjects_title": "386c8efad9d330e2124d3117beebde4ed01f8d9d76eaa740dadc7631bb577a5c",
   "onboarding_target_label": "48ca6936ffac4ad3042e9cb3806b34dba8b050f9e0020dfd052947ebcd1ccba5",
@@ -832,13 +829,11 @@
     <string name="onboarding_purpose_deep">Capire a fondo l’argomento</string>
     <string name="onboarding_purpose_deep_description">Il percorso completo, dalle basi al livello avanzato</string>
     <string name="onboarding_purpose_work">Usare ciò che imparo al lavoro</string>
-    <string name="onboarding_purpose_work_description">Solo ciò che ti serve al lavoro, nell’ordine in cui ti serve</string>
     <string name="onboarding_purpose_career_change">Cambiare carriera</string>
     <string name="onboarding_purpose_career_change_description">Quello che serve per il nuovo ruolo, portfolio incluso</string>
     <string name="onboarding_purpose_refresh">Ripassare quello che ho studiato</string>
     <string name="onboarding_purpose_refresh_description">Tornare al livello di prima, dopo un breve test</string>
     <string name="onboarding_purpose_other">Altro</string>
-    <string name="onboarding_purpose_other_description">Diccelo più avanti, con parole tue</string>
     <string name="onboarding_level_title">Quanto ne sai già?</string>
     <string name="onboarding_level_description">Cambia solo il punto di partenza del tuo piano.</string>
     <string name="onboarding_level_label">Il tuo livello</string>
@@ -887,7 +882,6 @@
     <string name="onboarding_subjects_title">Quali materie conosci già bene?</string>
     <string name="onboarding_subjects_description">Il tuo piano salta le basi di queste materie. Un breve test stabilisce da dove iniziare nelle altre.</string>
     <string name="onboarding_subjects_label">Materie che conosci bene</string>
-    <string name="onboarding_subjects_from_scratch">Parto da zero</string>
     <string name="onboarding_admission_title">A quale corso vuoi accedere e con quale punteggio?</string>
     <string name="onboarding_target_label">Il tuo obiettivo</string>
     <string name="onboarding_admission_placeholder">Es. medicina, 80 punti</string>

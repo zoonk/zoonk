@@ -8,11 +8,7 @@
   "goal_box_example_pick": "81eb31653c36cd9193161b58fa7833e46c4fef0265f8ed367e32e0ac2567e3c4",
   "goal_box_example_topic": "31476036117cfa704e3d7326abe08e7edb1fa9ace94d828b36dabfd1e3860023",
   "goal_box_examples": "3e7d03ff2ddcbb589ce02550e555dac808783de5a7eb84168a148436ba2011b4",
-  "goal_box_kind_exam": "4d131a762d394aa5b4302f853eeda1aa8bd0ee5f9d3fe23ce7be86b3ebafcc74",
-  "goal_box_kind_language": "48dc5c7a7d1ee27c20f4462e602df2a6692c241f08158c9130249d86126de42e",
-  "goal_box_kind_music": "073065caac8f6d686d773cbaedfa57730967a85ff846dadc917b4c7dc7900a38",
   "goal_box_kind_quick_explanation": "90af747bd0f5c0ae279badd4167a8ac8e1302010f2a52c7e72308e04c3e8a8f1",
-  "goal_box_kind_topic": "942c27a41544559812559bfa2c9e3e0e99dd7c7d123ef2a8af02887beadb01ce",
   "goal_box_label": "dbaec0f372f90ad4f52d3c288ba23f5d89e152ab54cec28f3aea0a087f47737c",
   "goal_box_placeholder": "b9cebca52c41105a2f5640c2dd1a2d9adb0c0fca413f57f14b2440209f9f3e2a",
   "goal_box_submit": "d5815ba2324ca90de748871a9e68eef23e20728873057fd0b4e671efd5b084ac",
@@ -35,10 +31,6 @@
     <string name="goal_box_example_topic">Comprendre la physique quantique</string>
     <string name="goal_box_example_music">Apprendre la musique en partant de zéro</string>
     <string name="goal_box_example_explanation">Comment fonctionne l’inflation ?</string>
-    <string name="goal_box_kind_exam">Examen</string>
-    <string name="goal_box_kind_language">Langue</string>
-    <string name="goal_box_kind_topic">Sujet</string>
-    <string name="goal_box_kind_music">Musique</string>
     <!-- %1$s is a duration, like "5 min". -->
     <string name="goal_box_kind_quick_explanation">Explication rapide · %1$s</string>
 </resources>

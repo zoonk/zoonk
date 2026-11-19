@@ -84,6 +84,48 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
   );
 }
 
+/** The questions about paying, on pricing and the subscription page. */
+export async function PlusQuestionItems({ viewerState }: { viewerState?: PlusViewerState }) {
+  const t = await getExtracted();
+
+  return (
+    <>
+      <PublicDisclosure summary={t("What's free?")}>
+        <FreePlanAnswer viewerState={viewerState} />
+      </PublicDisclosure>
+
+      <PublicDisclosure summary={t("Is Plus really unlimited?")}>
+        <p className={DISCLOSURE_ANSWER_CLASS}>
+          {t.rich(
+            "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>.",
+            { link: renderFairUseLink },
+          )}
+        </p>
+      </PublicDisclosure>
+
+      <PublicDisclosure summary={t("What happens if I cancel?")}>
+        <p className={DISCLOSURE_ANSWER_CLASS}>
+          {t({
+            description:
+              "“Back to free” means using Zoonk without paying again. Don't call it a “free plan” or use your language's word for the learner's study plan.",
+            message:
+              "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you.",
+          })}
+        </p>
+      </PublicDisclosure>
+
+      <PublicDisclosure summary={t("Can I get a refund?")}>
+        <p className={DISCLOSURE_ANSWER_CLASS}>
+          {t.rich(
+            "<link>Write to us</link> and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
+            { link: renderHelpLink },
+          )}
+        </p>
+      </PublicDisclosure>
+    </>
+  );
+}
+
 /** Speaking calls have daily and monthly limits, said honestly but never in minutes, on any plan. */
 export async function PlusQuestions({
   className,
@@ -94,8 +136,6 @@ export async function PlusQuestions({
   titleClassName?: string;
   viewerState?: PlusViewerState;
 }) {
-  const t = await getExtracted();
-
   return (
     <section aria-labelledby={PLUS_QUESTIONS_ID} className={cn("flex flex-col gap-4", className)}>
       <div className="flex flex-col gap-1">
@@ -107,38 +147,7 @@ export async function PlusQuestions({
       </div>
 
       <div>
-        <PublicDisclosure summary={t("What's free?")}>
-          <FreePlanAnswer viewerState={viewerState} />
-        </PublicDisclosure>
-
-        <PublicDisclosure summary={t("Is Plus really unlimited?")}>
-          <p className={DISCLOSURE_ANSWER_CLASS}>
-            {t.rich(
-              "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>.",
-              { link: renderFairUseLink },
-            )}
-          </p>
-        </PublicDisclosure>
-
-        <PublicDisclosure summary={t("What happens if I cancel?")}>
-          <p className={DISCLOSURE_ANSWER_CLASS}>
-            {t({
-              description:
-                "“Back to free” means using Zoonk without paying again. Don't call it a “free plan” or use your language's word for the learner's study plan.",
-              message:
-                "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you.",
-            })}
-          </p>
-        </PublicDisclosure>
-
-        <PublicDisclosure summary={t("Can I get a refund?")}>
-          <p className={DISCLOSURE_ANSWER_CLASS}>
-            {t.rich(
-              "<link>Write to us</link> and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
-              { link: renderHelpLink },
-            )}
-          </p>
-        </PublicDisclosure>
+        <PlusQuestionItems viewerState={viewerState} />
       </div>
     </section>
   );

@@ -10,32 +10,14 @@ import { type ReactNode } from "react";
 import { StepDots } from "../_components/step-dots";
 import { TaskClose } from "../_components/task-close";
 import { useAppLocale } from "../_utils/locale";
-import { type getProfileProgress, getSetupProgress } from "./_utils/setup-progress";
+import { getSetupProgress } from "./_utils/setup-progress";
 import { type OnboardingBar } from "./onboarding-host";
 import { testProgressPercent } from "./test-progress";
 
 export const BAR_MIDDLE_CLASS = "w-24 sm:w-32";
 
-function ProfileCount({ current, total }: { current: number; total: number }) {
-  const t = useExtracted();
-
-  return (
-    <span className="text-muted-foreground text-xs whitespace-nowrap">
-      {t("{current, number} of {total, number}", { current, total })}
-    </span>
-  );
-}
-
-export function stepBarProgress(
-  state: Parameters<typeof getSetupProgress>[0],
-  profile: ReturnType<typeof getProfileProgress>,
-) {
-  if (profile) {
-    return profile.total > 1 ? (
-      <ProfileCount current={profile.current} total={profile.total} />
-    ) : null;
-  }
-
+/** One display for the whole setup: the questions about the learner share one dash. */
+export function stepBarProgress(state: Parameters<typeof getSetupProgress>[0]) {
   const setup = getSetupProgress(state);
 
   return (

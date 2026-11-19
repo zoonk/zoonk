@@ -40,13 +40,11 @@ export function useOwnLevelLabels(): Record<OnboardingOwnLevel, string> {
 
 export function LevelChoiceList({
   onChange,
-  onPick,
   readOnly,
   testMinutes,
   value,
 }: {
   onChange: (value: LevelChoice) => void;
-  onPick?: (value: LevelChoice) => void;
   readOnly?: boolean;
   testMinutes: number;
   value: LevelChoice | null;
@@ -76,7 +74,6 @@ export function LevelChoiceList({
       choices={choices}
       label={t("Your level")}
       onChange={onChange}
-      onPick={onPick}
       readOnly={readOnly}
       value={value}
     />

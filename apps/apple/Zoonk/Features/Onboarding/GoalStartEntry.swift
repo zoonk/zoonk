@@ -275,7 +275,7 @@ struct GoalExamplesSection: View {
         Button {
           onPick(String(localized: example.label))
         } label: {
-          ListRow(Text(example.label), description: Text(example.kind))
+          ListRow(Text(example.label), description: example.kind.map { Text($0) })
             .disclosureChevron()
         }
       }
@@ -287,7 +287,7 @@ struct GoalExamplesSection: View {
     }
   }
 
-  private var examples: [(label: LocalizedStringResource, kind: LocalizedStringResource)] {
+  private var examples: [(label: LocalizedStringResource, kind: LocalizedStringResource?)] {
     let exam: LocalizedStringResource =
       switch LocalExample.exam {
       case .abitur:
@@ -320,28 +320,22 @@ struct GoalExamplesSection: View {
       }
 
     return [
-      (
-        exam,
-        LocalizedStringResource("Exam", table: "Onboarding", comment: "The kind of an example goal")
-      ),
+      (exam, nil),
       (
         LocalizedStringResource(
           "Speak \(LocalExample.language) for a job interview", table: "Onboarding",
           comment: "An example goal; the language is one the learner could speak"),
-        LocalizedStringResource(
-          "Language", table: "Onboarding", comment: "The kind of an example goal")
+        nil
       ),
       (
         LocalizedStringResource(
           "Understand quantum physics", table: "Onboarding", comment: "An example goal"),
-        LocalizedStringResource(
-          "Topic", table: "Onboarding", comment: "The kind of an example goal")
+        nil
       ),
       (
         LocalizedStringResource(
           "Learn music from scratch", table: "Onboarding", comment: "An example goal"),
-        LocalizedStringResource(
-          "Music", table: "Onboarding", comment: "The kind of an example goal")
+        nil
       ),
       (
         LocalizedStringResource(

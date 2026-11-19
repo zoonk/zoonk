@@ -208,14 +208,12 @@
   "onboarding_purpose_description": "7c80c37c10dd495e7e50f5137c29ed4c7a633d0e94bd68ce12239307e3bcc6e7",
   "onboarding_purpose_label": "c9d0b6384c8319f378250222f3416333c2c121147959d41f11b806846bc58383",
   "onboarding_purpose_other": "1cc6f14c24c024d8014dafde30e94aa8c1f32b9d9f30a5f6ce913f6ad915ff4a",
-  "onboarding_purpose_other_description": "2e177dc4710b3e485c15feb29faad2c052d03f5dc397736a2fcda58950ddf56f",
   "onboarding_purpose_overview": "b4610b3f4d2fcc446b774e829ddb60aee75a264574bf68b963b63cd927b32493",
   "onboarding_purpose_overview_description": "d28b9e176a19ddbe37f23003652713f3a64776c87767cad9ed1190c6bbf3926e",
   "onboarding_purpose_refresh": "654f8c5fdcc751cad0afd304b5675ac8dae00289ea5d22e00706afccf66653a4",
   "onboarding_purpose_refresh_description": "5aef624630aa2a9b88be83f332b02b6af971f056d4d582c86963120ef3952235",
   "onboarding_purpose_title": "5769ed31ad1552f94b05dbe186dfefc41c8463e9cd4d07b6be92230c932b06d3",
   "onboarding_purpose_work": "aa8e9ed3cf94fc6f6c87d334b55f71430742a12fa2083d1363e84280b74a71e3",
-  "onboarding_purpose_work_description": "e5d9f655f511cc5ab949e4c529f55070d6bdb36d49d778a547259dd01106a11b",
   "onboarding_question_failed": "45ce04ea91eef6a93432960318ca352fd8bded097714be6c1fc05309f096b1d3",
   "onboarding_question_placeholder": "383b42f1e6b285722dab897ea8f03db13421b7ddc116d05a9ac5f70e7a6fe15a",
   "onboarding_question_sign_in": "57ff57f7ae7023d774b0eb332f8679cfe18035049a9d0bf323a25ee10a3f60a4",
@@ -392,7 +390,6 @@
   "onboarding_study_days": "bb962da4eb90c1b0004491cc3d95c64249f3f7af1e0700a2a2a792ea63210a4c",
   "onboarding_study_material": "eb3295262c00852ba35340e530d4ac683bcf23fda26e8c7df17516c9491798d8",
   "onboarding_subjects_description": "4d7dee7ebe9da7dfc71b5c2c9556378e4a38fb778f4830fe459d2af8c7b61464",
-  "onboarding_subjects_from_scratch": "17418f41c79232bad677232ed8bc51bdf5ff6c7f4cdb0afb79ba7652acef7f02",
   "onboarding_subjects_label": "648c31ee2e6e42f77a38d949ba7555bdd8ef40bf275d296cdded0b2fbaf79f98",
   "onboarding_subjects_title": "aa87d7116ac91ad8fe4be8afcdf13d1c55426653118bb54242aca8cebb9f39a6",
   "onboarding_target_label": "a315606475a97e740383a983027a9a1c109e3ed9d733f20cd6f849be46638e96",
@@ -806,13 +803,11 @@
     <string name="onboarding_purpose_deep">깊이 이해하고 싶어요</string>
     <string name="onboarding_purpose_deep_description">기초부터 고급까지 배우는 전체 코스</string>
     <string name="onboarding_purpose_work">업무에 활용하고 싶어요</string>
-    <string name="onboarding_purpose_work_description">일에 필요한 내용만, 필요한 순서대로</string>
     <string name="onboarding_purpose_career_change">직업을 바꾸고 싶어요</string>
     <string name="onboarding_purpose_career_change_description">새 직무에 필요한 내용부터 포트폴리오까지</string>
     <string name="onboarding_purpose_refresh">배운 내용을 다시 익히고 싶어요</string>
     <string name="onboarding_purpose_refresh_description">짧은 테스트를 보고 예전 실력을 되찾아요</string>
     <string name="onboarding_purpose_other">다른 이유가 있어요</string>
-    <string name="onboarding_purpose_other_description">나중에 자유롭게 적어 주세요</string>
     <string name="onboarding_level_title">이미 어느 정도 알고 있나요?</string>
     <string name="onboarding_level_description">계획의 시작 지점만 달라져요.</string>
     <string name="onboarding_level_label">내 수준</string>
@@ -853,7 +848,6 @@
     <string name="onboarding_subjects_title">이미 잘 아는 과목은 무엇인가요?</string>
     <string name="onboarding_subjects_description">잘 아는 과목은 기초를 건너뛰어요. 나머지 과목은 간단한 테스트로 어디서 시작할지 정해요.</string>
     <string name="onboarding_subjects_label">잘 아는 과목</string>
-    <string name="onboarding_subjects_from_scratch">저는 처음이에요</string>
     <string name="onboarding_admission_title">목표 학과와 점수는 어떻게 되나요?</string>
     <string name="onboarding_target_label">내 목표</string>
     <string name="onboarding_admission_placeholder">예: 의예과, 750점</string>

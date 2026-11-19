@@ -46,6 +46,7 @@ test.describe("Refreshing mid-onboarding", () => {
     const purpose = page.getByRole("radio", { name: /Understand it well/u });
     await expectHydrated(purpose);
     await purpose.click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     const level = page.getByRole("heading", { name: "How much do you already know?" });
     await expect(level).toBeVisible();
@@ -195,6 +196,7 @@ test.describe("When a wait can't go on", () => {
     await expectHydrated(deep);
     await deep.click();
     await expect(deep).toBeChecked();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     // The clock jumps past the limit rather than running through it, which would fire the 2 s ask
     // for the run's id some 20 times at once.
@@ -244,6 +246,7 @@ test.describe("Why a language learner studies it", () => {
     const travel = page.getByRole("radio", { name: /^Travel/u });
     await expectHydrated(travel);
     await travel.click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(page.getByRole("heading", { name: "Why are you learning it?" })).toBeHidden();
 

@@ -48,7 +48,7 @@ struct TodaySessionSection: View {
     let shownUpcoming = disclosures.showsMore ? upcomingCount : StudyDay.upcomingRows
 
     if foldsDone {
-      FoldRow(
+      DayFoldRow(
         isOpen: $disclosures.showsDone, isDone: true, count: done.count,
         skipped: done.filter { $0.status == .skipped }.count, minutes: nil)
     }
@@ -101,7 +101,7 @@ struct TodaySessionSection: View {
     }
 
     if upcomingCount > StudyDay.upcomingRows {
-      FoldRow(
+      DayFoldRow(
         isOpen: $disclosures.showsMore, isDone: false, count: upcomingCount - StudyDay.upcomingRows,
         more: StudyDay.moreLabel(
           hidden: Array(upcoming.dropFirst(StudyDay.upcomingRows)), lessonsAhead: coming != nil),
@@ -594,7 +594,7 @@ extension StudyDay {
   }
 }
 
-private struct FoldRow: View {
+struct DayFoldRow: View {
   @Binding var isOpen: Bool
   let isDone: Bool
   let count: Int

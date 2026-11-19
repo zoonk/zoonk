@@ -61,11 +61,13 @@ final class SetupProgressTests: XCTestCase {
       SetupProgress(step: 3, total: 4))
   }
 
-  func testAboutYouScreensHaveTheirOwnProgressCount() {
-    XCTAssertNil(
+  /// Main's `getSetupProgress`: the About you screens share one place in the setup's one count.
+  func testAboutYouScreensShareOnePlaceInTheCount() {
+    XCTAssertEqual(
       SetupProgress(
         current: .watch, history: [.purpose, .level, .work, .tools],
-        steps: [.watch, .listen, .buddy, .schedule, .plan]))
+        steps: [.watch, .listen, .buddy, .schedule, .plan]),
+      SetupProgress(step: 3, total: 5))
     XCTAssertEqual(
       SetupProgress(
         current: .buddy, history: [.purpose, .level, .work, .tools, .watch, .listen],

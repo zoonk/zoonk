@@ -2,6 +2,8 @@
 
 import { type PlanDayView, type PlanItemView } from "@zoonk/core/plans/view-contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
+import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { ListGroup, ListRow, ListRowContent, ListRowLeading } from "../../_components/list-group";
@@ -39,10 +41,9 @@ function useItemTitle() {
 }
 
 /**
- * The dates never wrap, and each row's column is as wide as the longest, so the names line up. The
- * date sits on the first name's line, so the names start under the row's top room even when a day
- * has one line, rather than centered in it. Names sit further apart than a name's own
- * lines, so a title that wraps reads as one lesson.
+ * One line per day: how many lessons, anything else it holds (a review, a mock exam) and how long.
+ * The names wait for the Plan, so the week stays a glance. The dates never wrap, and each row's
+ * column is as wide as the longest, so the lines start together.
  */
 function WeekDayRow({
   date,
@@ -55,33 +56,36 @@ function WeekDayRow({
 }) {
   const t = useExtracted();
   const itemTitle = useItemTitle();
-  const teaching = day.items.filter((item) => isTeaching(item));
-  const names = (teaching.length > 0 ? teaching : day.items).map((item) => itemTitle(item));
+  const formatDuration = useFormatDuration();
+  const lessons = day.items.filter((item) => isTeaching(item)).length;
+
+  const others = new Set(
+    day.items.filter((item) => !isTeaching(item)).map((item) => itemTitle(item)),
+  );
+
+  const facts = [
+    lessons > 0 && t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons }),
+    ...others,
+    day.minutes > 0 && formatDuration(day.minutes),
+  ].filter(Boolean);
 
   return (
     <ListRow data-slot="week-day">
       <ListRowLeading
         className="text-muted-foreground font-mono text-xs whitespace-nowrap tabular-nums"
         data-slot="week-day-date"
-        firstLine
         style={{ minWidth: `${dateWidth}ch` }}
       >
         {date}
       </ListRowLeading>
 
-      <ListRowContent className="justify-start gap-1.5">
-        {day.items.length === 0 ? (
-          <span className="text-muted-foreground text-sm" data-slot="week-day-item">
-            {t("Rest day")}
-          </span>
-        ) : (
-          names.map((name, index) => (
-            // oxlint-disable-next-line react/no-array-index-key -- two lessons can share a title
-            <span className="text-sm text-pretty" data-slot="week-day-item" key={index}>
-              {name}
-            </span>
-          ))
-        )}
+      <ListRowContent>
+        <span
+          className={cn("text-sm", day.items.length === 0 && "text-muted-foreground")}
+          data-slot="week-day-item"
+        >
+          {day.items.length === 0 ? t("Rest day") : facts.join(FACT_SEPARATOR)}
+        </span>
       </ListRowContent>
     </ListRow>
   );

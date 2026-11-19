@@ -3080,21 +3080,6 @@ msgctxt "ag_ax6"
 msgid "Example · {time} a day, about {count, plural, one {# short lesson} other {# short lessons}}"
 msgstr "예시 · 하루 {time}, {count, plural, other {짧은 레슨 약 #개}}"
 
-#: src/components/pricing/plus-adds.tsx
-msgctxt "EGA7KK"
-msgid "One block is one study day"
-msgstr "한 칸은 하루 학습을 뜻해요"
-
-#: src/components/pricing/plus-adds.tsx
-msgctxt "tbnyhv"
-msgid "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}"
-msgstr "{lessons, plural, other {레슨 #개}}: {days, plural, =5 {처음 일주일 정도} =10 {처음 2주 정도} other {처음 #일간의 학습}}"
-
-#: src/components/pricing/plus-adds.tsx
-msgctxt "kFIKxT"
-msgid "Every lesson, all month"
-msgstr "한 달 내내 모든 레슨"
-
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "v0Vpb-"
 msgid "Your whole study plan, every day to your deadline"

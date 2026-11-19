@@ -112,7 +112,7 @@ function RevealActions({
 function RevealRailBlock({ children, title }: { children: React.ReactNode; title: string }) {
   return (
     <div className="flex flex-col gap-2 not-has-[>:nth-child(2)]:hidden">
-      <PageSectionTitle className="hidden min-[72rem]:block">{title}</PageSectionTitle>
+      <PageSectionTitle>{title}</PageSectionTitle>
       {children}
     </div>
   );
@@ -197,7 +197,6 @@ function RevealColumn({
           <PlanChoices />
         </RevealRailBlock>
       }
-      wide
     >
       <header className="flex min-w-0 flex-col gap-5 pt-2">
         <div className="flex items-start justify-between gap-4">
@@ -226,6 +225,11 @@ function RevealColumn({
         <PlanPhasesBar />
         <PlanChapterList />
         {plan.notice === "usual" && <UsualStructureNote />}
+      </div>
+
+      {/* Without room for the rail, its one choice ends the column. */}
+      <div className="min-[72rem]:hidden">
+        <PlanChoices />
       </div>
 
       <PlanEditor

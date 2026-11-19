@@ -299,7 +299,7 @@ export function StepsFlow({
               onStartOver={startOver}
             />
           ),
-          middle: stepBarProgress(state, profile.progress),
+          middle: stepBarProgress(state),
           // Answers change in "Adjust" now, not by going back through the questions.
           onBack: state.history.length > 0 && !isPlan ? back : undefined,
         }}

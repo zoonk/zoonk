@@ -56,7 +56,6 @@
   "focustest_see_your_result": "aa8d9ff8e7f12c89b3e3dc7735827faf94fd17c3105eaa9ef3ccb3b478892484",
   "focustest_session_questions": "45c18cdc7552b89a90f585a6ea059ea4b26ae48f53c3e78255bd16af5cfd7a23",
   "focustest_session_questions_when": "d59099207f830d8a844f9494ca40044c8a254700bc0d4cddcf0ddcbd7bcaad87",
-  "focustest_skip_for_now": "2f66588b56824ec2ed537eb46a1b1a27b0b8d66cda2f37314ba1f2eafb6be20a",
   "focustest_skip_note": "15aa1704095a99c11ba66db9285b071dcd445c51fcce1ef8957bbc74b1bfb21b",
   "focustest_speaking_not_checked": "17613384c33a6bc8356feb2e6fbce37c4551a369d193bfd40df914a1601bfbc1",
   "focustest_start": "981a3c1cfb728429a2883cf8ea0ae8cbc0b194368ed546ebb1eb7368c863039d",
@@ -101,7 +100,6 @@
     <string name="focustest_how_sessions_title">最初の1週間は追加で数問</string>
     <string name="focustest_how_sessions">学習中にも、重点診断の問題が追加で数問出ます。出題は一時停止できます。</string>
     <string name="focustest_start">テストを始める</string>
-    <string name="focustest_skip_for_now">今はスキップする</string>
     <string name="focustest_skip_note">あとで学習計画からテストを受けられます。</string>
     <string name="focustest_not_now">今はしない</string>
     <string name="focustest_resume_title">テストを続ける</string>

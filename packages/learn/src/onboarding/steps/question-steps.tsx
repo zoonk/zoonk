@@ -10,7 +10,6 @@ import { type Choice, ChoiceList } from "../choice-list";
 import { type LevelChoice, LevelChoiceList, toLevelAnswer } from "./level-choices";
 import { StepForm } from "./step-form";
 import { TextField } from "./text-field";
-import { useAdvanceOnPick } from "./use-advance-on-pick";
 
 type StepProps = {
   onAnswer: (input: OnboardingAnswerInput) => void;
@@ -21,11 +20,6 @@ type StepProps = {
 export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
   const t = useExtracted();
   const [purpose, setPurpose] = useState<OnboardingPurpose | null>(null);
-
-  const { pick, submit } = useAdvanceOnPick({
-    answer: (picked: OnboardingPurpose) => onAnswer({ purpose: picked, question: "purpose" }),
-    pending,
-  });
 
   const choices: Choice<OnboardingPurpose>[] = [
     {
@@ -38,11 +32,7 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
       label: t("Understand it well"),
       value: "deep",
     },
-    {
-      description: t("I want to learn what I use at work"),
-      label: t("Use it at work"),
-      value: "work",
-    },
+    { label: t("Use it at work"), value: "work" },
     {
       description: t("I want to learn what I need for a new role and build a portfolio"),
       label: t("Change careers"),
@@ -53,14 +43,14 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
       label: t("Refresh what I studied"),
       value: "refresh",
     },
-    { description: t("I want something different"), label: t("Something else"), value: "other" },
+    { label: t("Something else"), value: "other" },
   ];
 
   return (
     <StepForm
       canContinue={purpose !== null}
       subject={subject}
-      onContinue={() => purpose && submit(purpose)}
+      onContinue={() => purpose && onAnswer({ purpose, question: "purpose" })}
       pending={pending}
       title={t({
         description: "Asks what the learner hopes to get out of learning this subject.",
@@ -74,7 +64,6 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
           message: "What you want from it",
         })}
         onChange={setPurpose}
-        onPick={pick}
         readOnly={pending}
         value={purpose}
       />
@@ -92,22 +81,16 @@ export function LevelStep({
   const t = useExtracted();
   const [level, setLevel] = useState<LevelChoice | null>(initialLevel);
 
-  const { pick, submit } = useAdvanceOnPick({
-    answer: (picked: LevelChoice) => onAnswer({ level: toLevelAnswer(picked), question: "level" }),
-    pending,
-  });
-
   return (
     <StepForm
       canContinue={level !== null}
       subject={subject}
-      onContinue={() => level && submit(level)}
+      onContinue={() => level && onAnswer({ level: toLevelAnswer(level), question: "level" })}
       pending={pending}
       title={t("How much do you already know?")}
     >
       <LevelChoiceList
         onChange={setLevel}
-        onPick={pick}
         readOnly={pending}
         testMinutes={testMinutes}
         value={level}

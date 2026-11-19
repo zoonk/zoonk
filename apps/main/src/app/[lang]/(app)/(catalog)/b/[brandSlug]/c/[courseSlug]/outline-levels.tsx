@@ -70,6 +70,37 @@ export async function UnwrittenLevel({
   );
 }
 
+/** A level's chapters, numbered across the whole course. */
+export function LevelChapters({
+  band,
+  courseId,
+  firstNumber,
+  params,
+}: {
+  band: OutlineBand;
+  courseId: string;
+  firstNumber: number;
+  params: OutlineParams;
+}) {
+  return (
+    <OutlineChapterList
+      courseId={courseId}
+      rows={band.chapters.map((chapter, index) => ({
+        chapterId: chapter.id,
+        row: (
+          <OutlineChapterRow
+            chapter={chapter}
+            courseId={courseId}
+            key={chapter.id}
+            number={firstNumber + index}
+            params={params}
+          />
+        ),
+      }))}
+    />
+  );
+}
+
 export async function OutlineLevel({
   band,
   courseId,
@@ -98,21 +129,7 @@ export async function OutlineLevel({
       level={band.level}
       summary={<LevelLabel courseId={courseId} label={label} level={band.level} />}
     >
-      <OutlineChapterList
-        courseId={courseId}
-        rows={band.chapters.map((chapter, index) => ({
-          chapterId: chapter.id,
-          row: (
-            <OutlineChapterRow
-              chapter={chapter}
-              courseId={courseId}
-              key={chapter.id}
-              number={firstNumber + index}
-              params={params}
-            />
-          ),
-        }))}
-      />
+      <LevelChapters band={band} courseId={courseId} firstNumber={firstNumber} params={params} />
     </CourseLevelZone>
   );
 }

@@ -182,9 +182,8 @@ struct AdjustPlanSheet: View {
     weekendChoice ?? (plan.schedule.shape.weekend != nil)
   }
 
-  /// Always there, so changing the days moves nothing: off, the time shows the weekdays' time
-  /// the weekend takes; while the week has no weekend day or no weekday, the switch can't turn on
-  /// and the time's row says which days it needs (main's `WeekendTime`).
+  /// Main's `WeekendTime`: the switch shows once the week has a weekend day and a weekday; off,
+  /// the weekend takes the weekdays' time.
   private var weekendSection: some View {
     let shape = plan.schedule.shape
     let missing = GoalPlan.WeekendMissingDays.of(plan.schedule.weekdayMinutes)
@@ -192,48 +191,43 @@ struct AdjustPlanSheet: View {
     let current = on ? shape.weekend ?? shape.weekdays : shape.weekdays
 
     return SwiftUI.Section {
-      Toggle(
-        isOn: Binding(
-          get: { on },
-          set: { on in
-            weekendChoice = on
+      if missing == nil {
+        Toggle(
+          isOn: Binding(
+            get: { on },
+            set: { on in
+              weekendChoice = on
 
-            if !on, shape.weekend != nil {
-              editor.run { await setWeekend(shape.weekdays) }
-            }
-          })
-      ) {
-        Text(
-          "Different time on weekends", tableName: "Plan",
-          comment: "Setting: Saturday and Sunday get their own study time")
-      }
-      .disabled(missing != nil)
-      .accessibilityHint(Text(verbatim: missing?.reason ?? ""))
-
-      if let missing {
-        Text(missing.reason)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .accessibilityHidden(true)
-      } else if on {
-        Picker(
-          selection: Binding(
-            get: { current },
-            set: { minutes in
-              guard minutes != current else {
-                return
+              if !on, shape.weekend != nil {
+                editor.run { await setWeekend(shape.weekdays) }
               }
-
-              editor.run { await setWeekend(minutes) }
             })
         ) {
-          ForEach(ScheduleTime.dailyTimes(plan.schedule.dailyTimes, with: current), id: \.self) {
-            minutes in
-            Text(planDurationText(minutes: Double(minutes)))
-              .tag(minutes)
+          Text(
+            "Different time on weekends", tableName: "Plan",
+            comment: "Setting: Saturday and Sunday get their own study time")
+        }
+
+        if on {
+          Picker(
+            selection: Binding(
+              get: { current },
+              set: { minutes in
+                guard minutes != current else {
+                  return
+                }
+
+                editor.run { await setWeekend(minutes) }
+              })
+          ) {
+            ForEach(ScheduleTime.dailyTimes(plan.schedule.dailyTimes, with: current), id: \.self) {
+              minutes in
+              Text(planDurationText(minutes: Double(minutes)))
+                .tag(minutes)
+            }
+          } label: {
+            Text("Weekend time", tableName: "Plan")
           }
-        } label: {
-          Text("Weekend time", tableName: "Plan")
         }
       }
     }

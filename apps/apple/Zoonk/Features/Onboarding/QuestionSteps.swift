@@ -254,8 +254,6 @@ struct ChoiceRows<Value: Hashable>: View {
   let choices: [Choice]
   var picked: Value?
   var header: Text?
-  /// The next question replaces this one, so VoiceOver says what was picked as it goes.
-  var movesOn = false
   let onPick: (Value) -> Void
 
   var body: some View {
@@ -265,13 +263,6 @@ struct ChoiceRows<Value: Hashable>: View {
           Text(verbatim: choice.label), detail: choice.detail, isPicked: picked == choice.value
         ) {
           onPick(choice.value)
-
-          if movesOn {
-            announcePolitely(
-              String(
-                localized: "You picked \(choice.label)", table: "Onboarding",
-                comment: "VoiceOver, as a one-answer question moves on: the answer picked"))
-          }
         }
       }
     } header: {
@@ -431,10 +422,7 @@ private struct PurposeQuestion: View {
           .init(
             value: "work",
             label: String(
-              localized: "Use it at work", table: "Onboarding", comment: "Purpose choice"),
-            detail: Text(
-              "Only what your work uses, in the order it needs", tableName: "Onboarding",
-              comment: "Purpose choice detail")),
+              localized: "Use it at work", table: "Onboarding", comment: "Purpose choice")),
           .init(
             value: "careerChange",
             label: String(
@@ -450,16 +438,11 @@ private struct PurposeQuestion: View {
           .init(
             value: "other",
             label: String(
-              localized: "Something else", table: "Onboarding", comment: "Purpose choice"),
-            detail: Text(
-              "Tell us later, in your own words", tableName: "Onboarding",
-              comment: "Purpose choice detail")),
+              localized: "Something else", table: "Onboarding", comment: "Purpose choice")),
         ],
-        picked: picked,
-        movesOn: true
+        picked: picked
       ) { purpose in
         picked = purpose
-        answer(purpose)
       }
       .locksWhileSaving()
     } buttons: {
@@ -539,12 +522,11 @@ private struct ReasonQuestion: View {
       }
 
     } buttons: {
-      if let picked, Self.asksWords(picked) {
-        StepButtons(
-          canContinue: picked != "certificate" || !trimmed(words).isEmpty, canSkip: false
-        ) {
-          answer(picked)
-        }
+      StepButtons(
+        canContinue: picked.map { $0 != "certificate" || !trimmed(words).isEmpty } ?? false,
+        canSkip: false
+      ) {
+        picked.map(answer)
       }
     }
   }
@@ -555,14 +537,6 @@ private struct ReasonQuestion: View {
 
   private func pick(_ reason: String) {
     picked = reason
-
-    if !Self.asksWords(reason) {
-      announcePolitely(
-        String(
-          localized: "You picked \(Self.copy(reason).label)", table: "Onboarding",
-          comment: "VoiceOver, as a one-answer question moves on: the answer picked"))
-      answer(reason)
-    }
   }
 
   private func answer(_ reason: String) {
@@ -1184,18 +1158,12 @@ private struct ExamChoiceQuestion: View {
               .init(
                 value: option.name,
                 label: option.shortName ?? option.name,
-                detail: option.shortName.flatMap { $0 == option.name ? nil : Text(option.name) })
+                detail: nil)
             },
             picked: picks[choice.group]?.first,
-            header: Text(choice.group),
-            movesOn: takes == 1
+            header: Text(choice.group)
           ) { name in
             picks[choice.group] = [name]
-
-            // One option to pick moves on once it's picked; more wait for Continue.
-            if takes == 1 {
-              submit()
-            }
           }
         }
       }
@@ -1242,10 +1210,9 @@ private struct LevelQuestion: View {
         description: nil)
 
       ChoiceRows(
-        choices: LevelChoices.all(testMinutes: testMinutes), picked: picked, movesOn: true
+        choices: LevelChoices.all(testMinutes: testMinutes), picked: picked
       ) { level in
         picked = level
-        answer(level)
       }
       .locksWhileSaving()
     } buttons: {
@@ -1359,20 +1326,13 @@ private struct SubjectsLevelQuestion: View {
               })
           ) {
             Text(item.shortName ?? item.name)
-            if let short = item.shortName, short != item.name {
-              Text(item.name)
-            }
           }
         }
       }
       .locksWhileSaving()
 
     } buttons: {
-      StepButtons(
-        skipLabel: Text(
-          "I'm new", tableName: "Onboarding",
-          comment: "Says the learner knows none of the exam's subjects yet")
-      ) {
+      StepButtons {
         onAnswer([
           "knownSubjects": subjects.map(\.name).filter(known.contains), "level": NSNull(),
           "question": "level",

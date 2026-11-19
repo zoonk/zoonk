@@ -41,8 +41,7 @@ struct FocusTestInvitation: View {
         continueLabel: Text(FocusTestCopy.start),
         skipLabel: host == .onboarding
           ? Text(
-            "Skip for now", tableName: "FocusTest",
-            comment: "Postpones the Focus test; it can be taken later from the plan")
+            "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
           : Text(FocusTestCopy.notNow),
         onContinue: onStart, onSkip: onSkip)
     }

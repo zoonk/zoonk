@@ -372,7 +372,7 @@ private fun Fields() {
         GoalBox(value = "", onValueChange = {}, onSubmit = {})
         GoalBox(value = "Speak Spanish for a job interview", onValueChange = {}, onSubmit = {})
         GoalExamples(
-            listOf(GoalExample("Pass the ENEM", "Exam"), GoalExample("Understand quantum physics", "Learn a topic")),
+            listOf(GoalExample("Pass the ENEM"), GoalExample("How does inflation work?", "Quick explanation · 5 min")),
             onPick = {},
         )
     }

@@ -3,11 +3,11 @@
 {
   "account_agreement": "2090ec036d9d83f9eac4de990bf97d5f1dbe4b0bd4542dc11550c28c9dee8b1f",
   "account_change": "f7e9bbd16ed668b3f807a98baa558f92d526b686b25c67e22860f3fb69a4306c",
-  "account_change_email": "cd107de16bfa185a52b00abe929faf84ed9b0ea7b45f75e022c6259baddb9fe5",
+  "account_change_email": "0ce87d348f38be019626ac7e90eccd4714a9dc45ba12632cdcf5cea59e19fcbd",
   "account_change_username": "5f629f67997b13ea243da6bc09bb04b139c42be1e57d2a84ac937b9db0aa09b1",
   "account_check_email_description": "4c5b79c53273c3ce86adc905939923ced6fa28ddcc938e0adf5025156b3007af",
-  "account_check_email_title": "1151ff326dfc2c4a83560266508967c92299f4dcaf2b0a72bd3ba767f839e4f2",
-  "account_code_label": "22e9d39173cef5f21a8e4534eaac7e60a8b175b2de8f177aca029f9e203b3979",
+  "account_check_email_title": "eeaeefc6882f91fbe343ec64b7daed63991706253a79ae36d66fe9e1fd229fdb",
+  "account_code_label": "8bd9fb9ddecc4ae2c2c84a074506777321d4c7b2b9f5a9271aadbf476c87e9d7",
   "account_continue": "e460fc1054f34203be1b706b8e44ac828bdae06ad9ddf9f82f91fc89904fbd37",
   "account_continue_with_apple": "d30dddb5927d524eba3fc076ee2e64798ae588105c8271f1fce28a1ea99725f9",
   "account_continue_with_google": "c8a1bf0aaf5a753e87a29f472a39ac06c9a9f711ea67752c6e02689af80d527d",
@@ -17,7 +17,7 @@
   "account_failure_code_expired": "876f4fef442b4e8b45ca5996e6a7e4e5d712295105dbc24310e4725a8bdd61e2",
   "account_failure_code_locked": "62ef957d7020eebf06035a0d624b9e3a28749d790be1d1ea0f4434bdf6b0d3cd",
   "account_failure_disposable_email": "d5d7553c1c1c5ea930cd921e22f44ce0a7ec833a994583f13b3b476478366209",
-  "account_failure_invalid_email": "3b19da51e7e0636302a2f5865274195b1f448f122cbe5ce5291a11170d33afc0",
+  "account_failure_invalid_email": "56e8708e9ba46372c1ccc5ccd82c1a7e39ccf8e149196b03333021b4f6d327d7",
   "account_failure_network": "104f49f21ff1ea057476af63412fc56e0e5b536473650e958efc8536b23ff0f4",
   "account_failure_rate_limited": "7861b00eacc01482cf1da69fd9fc65286a0f9ee6b7e1041a320767280d676eab",
   "account_failure_sign_in": "0bcfe0703e41fda5023933e7a4f8ed5ad1ebf259b39391163268e248542fba61",
@@ -73,19 +73,19 @@
     <string name="account_continue">Continuar</string>
     <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
     <string name="account_agreement">Ao continuar, você concorda com os %1$s e com a %2$s do Zoonk.</string>
-    <string name="account_check_email_title">Confira seu email</string>
+    <string name="account_check_email_title">Confira seu e-mail</string>
     <!-- %1$s is an email address. -->
     <string name="account_check_email_description">Digite o código que enviamos para %1$s.</string>
-    <string name="account_code_label">Código do email</string>
+    <string name="account_code_label">Código do e-mail</string>
     <string name="account_send_new_code">Enviar um novo código</string>
     <string name="account_did_not_get_it">Não recebeu?</string>
     <string name="account_send_again">Enviar de novo</string>
-    <string name="account_change_email">Trocar email</string>
+    <string name="account_change_email">Trocar e-mail</string>
     <!-- %1$s is an email address. -->
     <string name="account_new_code_sent">Enviamos um novo código para %1$s.</string>
     <string name="account_new_code_wait">Espere um minuto antes de pedir outro código.</string>
     <string name="account_new_code_failed">Não conseguimos enviar um novo código. Tente de novo.</string>
-    <string name="account_failure_invalid_email">Digite um email válido</string>
+    <string name="account_failure_invalid_email">Digite um e-mail válido</string>
     <string name="account_failure_disposable_email">E-mails temporários não funcionam aqui. Use outro e-mail.</string>
     <string name="account_failure_network">O Zoonk não conseguiu se conectar. Confira sua conexão e tente de novo.</string>
     <string name="account_failure_rate_limited">Muitas tentativas. Espere um minuto e tente de novo.</string>

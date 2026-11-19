@@ -120,7 +120,7 @@ msgstr "Esse código não está certo. Tente de novo."
 #: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "5UeJRL"
 msgid "Code from the email"
-msgstr "Código do email"
+msgstr "Código do e-mail"
 
 #: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "gdlGkp"
@@ -140,7 +140,7 @@ msgstr "Enviar de novo"
 #: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "ChATeO"
 msgid "Change email"
-msgstr "Trocar email"
+msgstr "Trocar e-mail"
 
 #: src/app/auth/[locale]/otp/page.tsx
 msgctxt "xNDAQj"
@@ -150,7 +150,7 @@ msgstr "Digite o código que enviamos para <address>{email}</address>."
 #: src/app/auth/[locale]/otp/page.tsx
 msgctxt "zx7CKB"
 msgid "Check your email"
-msgstr "Confira seu email"
+msgstr "Confira seu e-mail"
 
 #: src/app/auth/[locale]/setup/page.tsx
 msgctxt "CjpGzJ"

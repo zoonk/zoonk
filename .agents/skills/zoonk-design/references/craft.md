@@ -170,7 +170,7 @@ A control's height is one of `Button`'s, and each height has one label size: 44p
 
 ### Z2. The same control is the same size everywhere
 
-A page's "…", its way back, a sheet's close and a list's row are one size and one style on every page of a kind. Every menu draws its rows with `DropdownMenuItem`: 14px, 36px tall with a mouse and 44px on touch, the goal switcher's included.
+A page's "…", its way back, a sheet's close and a list's row are one size and one style on every page of a kind. Every menu draws its rows with `DropdownMenuItem`: 14px and 44px tall with a mouse or on touch ([Z3](#z3-targets-are-44px-and-dont-overlap)), the goal switcher's included.
 
 - **Check.** Compare this screen's back, close and "…" with its sibling pages'.
 
@@ -367,7 +367,7 @@ What opens decides its panel, and the screen's size decides its place. On a phon
 
 ### B5. Focus goes in, and comes back
 
-A panel opens with focus on its first field, or on itself when it has none, and closes with focus back on what opened it. A task's "…" is the one exception: when it closes, focus goes back into the task (its main action when it can be pressed, otherwise its body), so Enter goes on with the task and doesn't reopen the menu.
+A panel opens with focus on its first field, or on itself when it has none or opens to show something first (a saved conversation over its composer, whose keyboard would cover it on a phone), and closes with focus back on what opened it. A task's "…" is the one exception: when it closes, focus goes back into the task (its main action when it can be pressed, otherwise its body), so Enter goes on with the task and doesn't reopen the menu.
 
 - **Check.** After opening, Tab stays inside the panel. After closing, the focused element is the trigger (`Behavior: panels`).
 - **Usual break.** Focus left on the page behind a dialog, or dropped to the top of the page on close.

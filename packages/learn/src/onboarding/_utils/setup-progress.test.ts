@@ -109,10 +109,10 @@ describe(getSetupProgress, () => {
 describe("profile steps", () => {
   const steps = ["work", "tools", "conditions", "learningSupport", "schedule", "plan"] as const;
 
-  it("show their own count instead of setup dashes", () => {
+  it("share one dash of the setup's dashes", () => {
     expect(
       getSetupProgress({ current: "tools", history: ["level", "work"], view: { steps } }),
-    ).toBeNull();
+    ).toStrictEqual({ current: 1, total: 3 });
 
     expect(
       getSetupProgress({

@@ -2,7 +2,6 @@
 <resources>
     <string name="profile_questions_title">About you</string>
     <string name="profile_questions_description">What you tell us here shapes your examples and your buddy. Everything is optional.</string>
-    <string name="profile_questions_count">%1$d of %2$d</string>
     <string name="profile_questions_skip_all">Skip all</string>
     <string name="profile_questions_skip_all_label">Skip the rest of the questions about you</string>
     <string name="profile_questions_never_ask">Don\'t ask me these again</string>
@@ -47,7 +46,6 @@
     <string name="profile_questions_support_description">Pick anything that helps. No label or diagnosis needed.</string>
     <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">How should we address you?</string>
-    <string name="profile_questions_address_description">We\'ll talk to you this way.</string>
     <string name="profile_questions_suggested">We checked what often helps with what you picked. Change anything you like.</string>
     <string name="profile_questions_something_else">+ Something else that helps</string>
     <string name="profile_questions_support_note">What helps you, in your words (optional)</string>

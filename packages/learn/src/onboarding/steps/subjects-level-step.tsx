@@ -34,20 +34,11 @@ export function SubjectsLevelStep({
       onContinue={() => onAnswer({ knownSubjects: known, level: null, question: "level" })}
       onSkip={() => onAnswer({ level: "none", question: "level" })}
       pending={pending}
-      skipIcon={null}
-      skipLabel={t({
-        description: "Answers the question when the learner knows none of the subjects yet.",
-        message: "I'm new",
-      })}
       subject={subject}
       title={t("Which subjects do you already know well?")}
     >
       <CheckList
-        choices={subjects.map((item) => ({
-          description: item.shortName && item.shortName !== item.name ? item.name : undefined,
-          label: item.shortName ?? item.name,
-          value: item.name,
-        }))}
+        choices={subjects.map((item) => ({ label: item.shortName ?? item.name, value: item.name }))}
         label={t("Subjects you know well")}
         onChange={setKnown}
         value={known}

@@ -208,14 +208,12 @@
   "onboarding_purpose_description": "88c4dc469f6ffe8058311aaf22d2d2c14f80f5eea6fe2d4ce74c3710019f7797",
   "onboarding_purpose_label": "6a3de24a2b9708cdbeefa134e92c27c560a2b6c49c2b98b4c1962c54269c412c",
   "onboarding_purpose_other": "e902f583ead38f071fec555e19ea63dcaed0bf64c157426d0d1af36885be2c10",
-  "onboarding_purpose_other_description": "51f278dff9042312e87e67a4222dac55c80df547bb22a725e632dcdd961092fe",
   "onboarding_purpose_overview": "b9302151f917163b1015654542f3289907ad95cd958eb9d4ab8c7399996c4329",
   "onboarding_purpose_overview_description": "2cea6368fd7f1a1df5a45d4f400bda28bd1b5a3eb2dbe34c3debf1a7a7bb72e4",
   "onboarding_purpose_refresh": "ff2e56ffea9a46013d5c163db2b50fa2d65cfa690cd9cef90fc7a6b310e9a265",
   "onboarding_purpose_refresh_description": "d38beee61aa6e7106307b73a0aeae6591d2d25b71b3d5ebffb5560aae8f40ad5",
   "onboarding_purpose_title": "a601f89cd9cc7fdf27d40bc1a3bda5ded6669b541886c5ac51d0e08ac15ef34d",
   "onboarding_purpose_work": "ec4ca21698cd77f03fa4b37ffa52a4f9c07c4579955af7337d148cc3817b13be",
-  "onboarding_purpose_work_description": "078780ccaf434b33755d47677eff08826a7d48dad703ee7a04c77a4659dd34b6",
   "onboarding_question_failed": "a143e6921ace338451770a4fdf17092825bba940903fa56e9b272803c23ef5d2",
   "onboarding_question_placeholder": "e0b66da452700d8e257b42cad31424993cba7e854d84e7554ae66c5e8627d481",
   "onboarding_question_sign_in": "dc2ff0a1ad5327f6b6faea6c23afa1cc14e9df71dda7dbfb73fcb14c686a2a40",
@@ -392,7 +390,6 @@
   "onboarding_study_days": "5844468366721bbb6aed11552424891aaf34af5e404d4c8f230a93c743d4037b",
   "onboarding_study_material": "e6f69576dabaa04fa6b8d4d0a0fd8b4af6948134ce3971bf218bedeb7ab8735c",
   "onboarding_subjects_description": "46aed052b73c2efe3fbedb4fdb4e8aab9da60a8e9c4aa53f851f3f6b326062d2",
-  "onboarding_subjects_from_scratch": "253548fe402531edae39f4fcfc2c98d97343f5c4b40787f9bcbcc1762520ecf4",
   "onboarding_subjects_label": "3d4489133679f47c7262517f1d799221e2286ae72158396bd3ce0b9449b86367",
   "onboarding_subjects_title": "86047de2813437df70984e9a8f4818af73eebf0f5e9f7635f5da014585377fba",
   "onboarding_target_label": "57d6472247724c7a657dcbdfecd6c3245162c82b17110ad858e43dcdb574b58f",
@@ -845,13 +842,11 @@
     <string name="onboarding_purpose_deep">Dogłębnie zrozumieć temat</string>
     <string name="onboarding_purpose_deep_description">Pełna ścieżka, od podstaw po poziom zaawansowany</string>
     <string name="onboarding_purpose_work">Wykorzystać wiedzę w pracy</string>
-    <string name="onboarding_purpose_work_description">Tylko to, czego potrzebujesz w pracy, w odpowiedniej kolejności</string>
     <string name="onboarding_purpose_career_change">Zmienić zawód</string>
     <string name="onboarding_purpose_career_change_description">To, czego wymaga nowe stanowisko, w tym portfolio</string>
     <string name="onboarding_purpose_refresh">Odświeżę swoją wiedzę</string>
     <string name="onboarding_purpose_refresh_description">Powrót do dawnego poziomu po krótkim teście</string>
     <string name="onboarding_purpose_other">Coś innego</string>
-    <string name="onboarding_purpose_other_description">Opisz to później własnymi słowami</string>
     <string name="onboarding_level_title">Ile już wiesz?</string>
     <string name="onboarding_level_description">To decyduje tylko o tym, od czego zacznie się twój plan.</string>
     <string name="onboarding_level_label">Twój poziom</string>
@@ -904,7 +899,6 @@
     <string name="onboarding_subjects_title">Które przedmioty znasz już dobrze?</string>
     <string name="onboarding_subjects_description">Twój plan pomija podstawy tych przedmiotów. Krótki test określa twój poziom z pozostałych.</string>
     <string name="onboarding_subjects_label">Przedmioty, które dobrze znasz</string>
-    <string name="onboarding_subjects_from_scratch">Zaczynam od zera</string>
     <string name="onboarding_admission_title">Jaki kierunek wybierasz i jaki wynik chcesz osiągnąć?</string>
     <string name="onboarding_target_label">Twój cel</string>
     <string name="onboarding_admission_placeholder">Np. medycyna, 750 punktów</string>

@@ -92,14 +92,15 @@ function FlagButton() {
         "shrink-0",
         flagged && "border-warning text-warning-text hover:text-warning-text",
       )}
-      icon={<FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />}
       onClick={runner.toggleFlag}
       size="xl"
       variant="outline"
     >
-      <span className="*:justify-items-start">
-        <SwapLabel current={flagged ? unflag : flag} labels={[flag, unflag]} />
-      </span>
+      <SwapLabel
+        current={flagged ? unflag : flag}
+        icon={<FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />}
+        labels={[flag, unflag]}
+      />
     </Button>
   );
 }

@@ -6,6 +6,7 @@ import {
   ListGroup,
   ListRowButton,
   ListRowContent,
+  ListRowDescription,
   ListRowIcon,
   ListRowLeading,
   ListRowTitle,
@@ -32,7 +33,8 @@ export function PlanChoices() {
           </ListRowIcon>
         </ListRowLeading>
         <ListRowContent>
-          <ListRowTitle>{summaryText(bases)}</ListRowTitle>
+          <ListRowTitle>{t("Prerequisites")}</ListRowTitle>
+          <ListRowDescription>{summaryText(bases)}</ListRowDescription>
         </ListRowContent>
       </ListRowButton>
 

@@ -19,20 +19,12 @@ const WEEKDAYS_IN_WEEK = 5;
 const WEEKS = Array.from({ length: WEEKS_IN_PICTURE }, (_, week) => week);
 const WEEKDAYS = Array.from({ length: WEEKDAYS_IN_WEEK }, (_, day) => day);
 
-const MONTH_ROW_CLASS = "grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-x-4 gap-y-1.5";
+const MONTH_ROW_CLASS = "grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-x-4";
 
 const WEEKS_CLASS = "grid grid-cols-4 gap-2";
 
 /** One mark is one weekday of study. */
-function MonthRow({
-  caption,
-  daysCovered,
-  name,
-}: {
-  caption: string;
-  daysCovered: number;
-  name: string;
-}) {
+function MonthRow({ daysCovered, name }: { daysCovered: number; name: string }) {
   return (
     <div className={MONTH_ROW_CLASS}>
       <p className="text-sm font-semibold">{name}</p>
@@ -49,8 +41,6 @@ function MonthRow({
           </MeterParts>
         ))}
       </div>
-
-      <p className="text-muted-foreground text-compact col-start-2">{caption}</p>
     </div>
   );
 }
@@ -108,24 +98,10 @@ export async function PlusAdds() {
             </p>
           </div>
 
-          <p className="text-muted-foreground text-compact">{t("One block is one study day")}</p>
-
           <WeekLabels />
 
-          <MonthRow
-            caption={t(
-              "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}",
-              { days: freeDays, lessons },
-            )}
-            daysCovered={freeDays}
-            name={t("Free")}
-          />
-
-          <MonthRow
-            caption={t("Every lesson, all month")}
-            daysCovered={WEEKS.length * WEEKDAYS.length}
-            name={t("Plus")}
-          />
+          <MonthRow daysCovered={freeDays} name={t("Free")} />
+          <MonthRow daysCovered={WEEKS.length * WEEKDAYS.length} name={t("Plus")} />
         </ProductWindow>
       </StopBody>
     </Stop>

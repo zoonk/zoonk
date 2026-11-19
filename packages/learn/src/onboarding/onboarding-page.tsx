@@ -42,9 +42,8 @@ export function OnboardingSectionFrame({
   );
 }
 
-/** Hides the aside when none of the rail's blocks has more than its label. */
-const WIDE_ASIDE_CLASS =
-  "not-has-[>div>:nth-child(2)]:hidden min-[72rem]:not-has-[>div>:nth-child(2)]:hidden";
+/** From 72rem, beside the column, unless none of the rail's blocks has more than its label. */
+const RAIL_CLASS = "hidden min-[72rem]:flex min-[72rem]:not-has-[>div>:nth-child(2)]:hidden";
 
 const SCREEN_MEASURE_CLASS = "lg:max-w-column";
 
@@ -60,14 +59,12 @@ export function OnboardingScreenPage({
   bottomBar,
   children,
   rail,
-  wide,
 }: {
   backHref: string;
   barEnd: ReactNode;
   bottomBar?: ReactNode;
   children: ReactNode;
   rail: ReactNode;
-  wide: boolean;
 }) {
   const t = useExtracted();
   const { bar, notice } = useOnboardingScreen();
@@ -75,13 +72,13 @@ export function OnboardingScreenPage({
   return (
     <PageWithAside
       aside={rail}
-      asideClassName={wide ? WIDE_ASIDE_CLASS : "hidden min-[72rem]:flex"}
+      asideClassName={RAIL_CLASS}
       asideLabel={t("Getting started")}
-      className={cn("flex-1 gap-1 lg:gap-4", !wide && BAR_AT_MEASURE_CLASS)}
+      className={cn("flex-1 gap-1 lg:gap-4", BAR_AT_MEASURE_CLASS)}
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} />
 
-      <Page className={cn("flex-1 gap-6", !wide && SCREEN_MEASURE_CLASS)}>
+      <Page className={cn("flex-1 gap-6", SCREEN_MEASURE_CLASS)}>
         {notice}
         {children}
       </Page>

@@ -5,7 +5,6 @@
   "profile_questions_activities_placeholder": "fdd40cca761222e5632bc44a79a3d4d144ab45cbe1f66dcb9c5a341b64208848",
   "profile_questions_activities_title": "61f58f998b64f088580cd78ebaabcbf6d61755ec5da99fa50d232b7697a1f975",
   "profile_questions_add": "4238e8fa919a305c4f74c19bf8c197c18de1696a7e4ce9abb25af15bf27d1e90",
-  "profile_questions_address_description": "8f147636e5d0991fa1d8fc1b02bdfb29933886e4f41af2c619e4c0ace842f504",
   "profile_questions_address_title": "e71d318fde0e986d61f15900981456887390aa0cf5494e8451e839884e062f88",
   "profile_questions_cap": "8a9fb1ca1e5b0404ad8b1c9a2afbe6603f8fb338197bcc8b208902c938e64b14",
   "profile_questions_condition_note": "e2afcfb8dc366b8d5242621ff58d9f10e105e50a2641c356ae45916ff1a11747",
@@ -13,7 +12,6 @@
   "profile_questions_conditions_description_settings": "8922208c59406c12e480d7034a6d0b4c151e2cf9511d91a1103d54d2434702dc",
   "profile_questions_conditions_saved": "d02301ea727807ab8ab8bcdebe5f53d7a4664a334020b076280acde3e3310489",
   "profile_questions_conditions_title": "cadb145425011809388e2f2954eeae01a2623c2f822159185a52edce89777602",
-  "profile_questions_count": "954c70a62b971e700adf2b024e459ef13263b25aedaceb7ac35a52bff463f415",
   "profile_questions_description": "e4dd3264821529a6cf32dfbefe7576c1b99cbdde5c277f5127b5ba2738090cd4",
   "profile_questions_earlier_answer": "90b240362418afb2f966535b67754f0f46c9edcb53c90845a6308dc2481255d6",
   "profile_questions_for_fun": "269be49c952b69e4ab195380d92c2ba5f6822059022cd071344a98296f2772e9",
@@ -83,7 +81,6 @@
 <resources>
     <string name="profile_questions_title">Seni tanıyalım</string>
     <string name="profile_questions_description">Burada anlattıkların, sana sunulan örnekleri ve arkadaşını şekillendirir. Her şey isteğe bağlı.</string>
-    <string name="profile_questions_count">%1$d / %2$d</string>
     <string name="profile_questions_skip_all">Tümünü atla</string>
     <string name="profile_questions_skip_all_label">Seninle ilgili kalan soruları atla</string>
     <string name="profile_questions_never_ask">Bu soruları bir daha sorma</string>
@@ -128,7 +125,6 @@
     <string name="profile_questions_support_description">Sana yardımcı olan her şeyi seç. Herhangi bir durum belirtmen ya da tanı almış olman gerekmez.</string>
     <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Sana nasıl hitap edelim?</string>
-    <string name="profile_questions_address_description">Sana böyle hitap edeceğiz.</string>
     <string name="profile_questions_suggested">Seçtiğin durumlarda genelde nelerin işe yaradığına baktık. İstediğini değiştirebilirsin.</string>
     <string name="profile_questions_something_else">+ İşime yarayan başka bir şey</string>
     <string name="profile_questions_support_note">Sana neyin yardımcı olduğunu kendi sözlerinle anlat (isteğe bağlı)</string>

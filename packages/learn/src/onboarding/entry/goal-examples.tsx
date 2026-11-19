@@ -14,7 +14,8 @@ import { PageSectionTitle } from "../../_components/page";
 import { useQuickExplanationLabel } from "../../explain/quick-explanation-label";
 import { useLocalExamGoal, useLocalGoalExample } from "./use-local-goal-example";
 
-type GoalExample = { kind: string; label: string };
+/** Only a quick explanation says what it is: the other examples' own words already do. */
+type GoalExample = { kind?: string; label: string };
 
 /** The one set of example goals, a learner's own exam and language first. */
 export function useGoalExamples(): GoalExample[] {
@@ -24,10 +25,10 @@ export function useGoalExamples(): GoalExample[] {
   const exam = useLocalExamGoal();
 
   return [
-    { kind: t("Exam"), label: exam },
-    { kind: t("Language"), label: t("Speak {language} for a job interview", { language }) },
-    { kind: t("Topic"), label: t("Understand quantum physics") },
-    { kind: t("Music"), label: t("Learn music from scratch") },
+    { label: exam },
+    { label: t("Speak {language} for a job interview", { language }) },
+    { label: t("Understand quantum physics") },
+    { label: t("Learn music from scratch") },
     { kind: quickExplanation, label: t("How does inflation work?") },
   ];
 }
@@ -52,7 +53,7 @@ export function GoalExamples({
           <ListRowButton key={example.label} onClick={() => onPick(example.label)}>
             <ListRowContent>
               <ListRowTitle>{example.label}</ListRowTitle>
-              <ListRowDescription>{example.kind}</ListRowDescription>
+              {example.kind && <ListRowDescription>{example.kind}</ListRowDescription>}
             </ListRowContent>
           </ListRowButton>
         ))}
