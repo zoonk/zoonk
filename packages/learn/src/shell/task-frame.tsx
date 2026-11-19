@@ -102,7 +102,7 @@ export function TaskFrame({
       ref={frame}
     >
       <TaskHeader className="bg-background sticky top-0">
-        <TaskHeaderBar className="max-w-column mx-auto lg:px-[16px]">
+        <TaskHeaderBar>
           <TaskHeaderSide align="start">
             <TaskClose
               beforeExit={beforeExit}
@@ -114,9 +114,7 @@ export function TaskFrame({
           <div className="text-foreground flex min-w-0 shrink justify-center text-center text-sm font-medium text-balance">
             {headerTitle}
           </div>
-          <TaskHeaderSide align="end" inColumn>
-            {headerEnd}
-          </TaskHeaderSide>
+          <TaskHeaderSide align="end">{headerEnd}</TaskHeaderSide>
         </TaskHeaderBar>
 
         {progress && "bar" in progress && progress.bar}

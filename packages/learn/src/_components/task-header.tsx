@@ -50,17 +50,14 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
 
 /**
  * On the end side the aside's toggle, on a task that has one, is the outermost control, with "…"
- * just inside it. `inColumn` is for a bar that ends at its column, short of the window's corner,
- * so it needs no room for the toggle.
+ * just inside it.
  */
 export function TaskHeaderSide({
   align,
   children,
-  inColumn = false,
 }: {
   align: "end" | "start";
   children?: React.ReactNode;
-  inColumn?: boolean;
 }) {
   const t = useExtracted();
 
@@ -72,7 +69,7 @@ export function TaskHeaderSide({
     <>
       <div className={TASK_HEADER_SIDE_CLASS.end}>
         {children}
-        {!inColumn && <SidebarToggleRoom className={TASK_ASIDE_TOGGLE_ROOM_CLASS} />}
+        <SidebarToggleRoom className={TASK_ASIDE_TOGGLE_ROOM_CLASS} />
       </div>
       <div className={TASK_ASIDE_TOGGLE_CLASS}>
         <SidebarToggle
