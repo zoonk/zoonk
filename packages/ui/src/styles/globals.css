@@ -660,7 +660,13 @@
 @layer base {
   :root {
     color-scheme: light dark;
-    /* A page that gets shorter drops its scrollbar: with its room kept, nothing beside it moves. */
+  }
+
+  /*
+   * An app page that gets shorter drops its scrollbar: with its room kept, nothing beside it moves.
+   * A lesson or task fills the window and scrolls inside itself, so it keeps the whole width.
+   */
+  :root:has([data-slot="learn-shell"]) {
     scrollbar-gutter: stable;
   }
 
