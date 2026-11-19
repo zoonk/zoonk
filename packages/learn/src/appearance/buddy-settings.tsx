@@ -197,21 +197,23 @@ export function BuddySettings({
   };
 
   return (
-    <ListGroup>
-      <ListRow className="items-center">
-        <CurrentBuddy look={look} buddy={buddy} />
+    <>
+      <ListGroup>
+        <ListRow className="items-center">
+          <CurrentBuddy look={look} buddy={buddy} />
 
-        <Button
-          aria-haspopup={beside ? undefined : "dialog"}
-          className="shrink-0"
-          onClick={() => setIsEditing(true)}
-          ref={trigger}
-          size="lg"
-          variant="outline"
-        >
-          {buddy.picked ? t("Change") : t("Choose your buddy")}
-        </Button>
-      </ListRow>
+          <Button
+            aria-haspopup={beside ? undefined : "dialog"}
+            className="shrink-0"
+            onClick={() => setIsEditing(true)}
+            ref={trigger}
+            size="lg"
+            variant="outline"
+          >
+            {buddy.picked ? t("Change") : t("Choose your buddy")}
+          </Button>
+        </ListRow>
+      </ListGroup>
 
       {!isEditing && <BuddyBeside buddy={buddy} look={look} />}
 
@@ -234,6 +236,6 @@ export function BuddySettings({
           }}
         />
       )}
-    </ListGroup>
+    </>
   );
 }
