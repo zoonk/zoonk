@@ -8,11 +8,17 @@ import {
   TAB_ROW_GAP_CLASS,
   pageMeasureClass,
 } from "@zoonk/learn/page";
+import { PageWithAside } from "@zoonk/learn/shell";
 import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SectionBarFrame, type SectionLink } from "./section-layout";
 
+/** From 72rem, beside every page of the section, for whoever has a session. */
+const ASIDE_CLASS = "hidden min-[72rem]:hidden min-[72rem]:in-data-signed-in:flex";
+
 export function SectionPage({
+  aside,
+  asideLabel = "",
   children,
   end,
   hub,
@@ -20,6 +26,9 @@ export function SectionPage({
   nav,
   parents,
 }: {
+  /** What supports every page of the section; the pages' main column then ends where it starts. */
+  aside?: React.ReactNode;
+  asideLabel?: string;
   children: React.ReactNode;
   end?: React.ReactNode;
   hub: SectionLink;
@@ -29,7 +38,7 @@ export function SectionPage({
   /** Pages with pages of their own: those go back to them rather than to the hub. */
   parents?: SectionLink[];
 }) {
-  return (
+  const section = (
     <div
       className={cn(
         PAGE_COLUMN_CLASS,
@@ -61,6 +70,19 @@ export function SectionPage({
         {children}
       </div>
     </div>
+  );
+
+  return aside ? (
+    <PageWithAside
+      aside={aside}
+      asideClassName={ASIDE_CLASS}
+      asideLabel={asideLabel}
+      className="flex-1"
+    >
+      {section}
+    </PageWithAside>
+  ) : (
+    section
   );
 }
 

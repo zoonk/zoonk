@@ -223,6 +223,7 @@ msgstr "Dziś"
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
+#: src/app/[lang]/(app)/(settings)/_components/settings-aside.tsx
 #: src/components/learn/journey-page-bar.tsx
 msgctxt "fz0z4c"
 msgid "Plan"
@@ -330,6 +331,7 @@ msgstr "Profil"
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/layout.tsx
 #: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
+#: src/app/[lang]/(app)/(settings)/settings/about-you/about-you-list.tsx
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "c2z6MR"
 msgid "About you"
@@ -1099,6 +1101,34 @@ msgctxt "G4ZsrK"
 msgid "Start with your goal"
 msgstr "Zacznij od swojego celu"
 
+#: src/app/[lang]/(app)/(settings)/_components/follow-us.tsx
+msgctxt "l1XTI5"
+msgid "Follow us"
+msgstr "Obserwuj nas"
+
+#: src/app/[lang]/(app)/(settings)/_components/settings-aside.tsx
+#: src/app/[lang]/(app)/(settings)/layout.tsx
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "95pnlV"
+msgid "Your account"
+msgstr "Twoje konto"
+
+#: src/app/[lang]/(app)/(settings)/_components/settings-aside.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+#: src/components/pricing/plus-adds.tsx
+#: src/components/pricing/plus-plan.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
+
+#: src/app/[lang]/(app)/(settings)/_components/settings-aside.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-adds.tsx
+msgctxt "tf1lIh"
+msgid "Free"
+msgstr "Free"
+
 #. The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
@@ -1277,10 +1307,17 @@ msgctxt "jvo0vs"
 msgid "Save"
 msgstr "Zapisz"
 
+#: src/app/[lang]/(app)/(settings)/settings/about-you/about-you-list.tsx
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "40quiV"
 msgid "Your answers shape your examples and your buddy. Everything is optional."
 msgstr "Twoje odpowiedzi pomagają dopasować przykłady i kumpla do ciebie. Wszystko jest opcjonalne."
+
+#: src/app/[lang]/(app)/(settings)/settings/about-you/about-you-split.tsx
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Zamknij"
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "uOIiKt"
@@ -1296,11 +1333,6 @@ msgstr "Zobacz, popraw lub usuń to, co Zoonk o tobie pamięta."
 msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "To, co Zoonk pamięta, by dopasować przykłady i plany do twojego życia."
-
-#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "95pnlV"
-msgid "Your account"
-msgstr "Twoje konto"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "wyxJrL"
@@ -1450,14 +1482,6 @@ msgid "Through the website"
 msgstr "Przez stronę internetową"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-#: src/components/pricing/plus-adds.tsx
-#: src/components/pricing/plus-plan.tsx
-msgctxt "lOdoIb"
-msgid "Plus"
-msgstr "Plus"
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "1y_a8B"
 msgid "Ending"
 msgstr "Wygasa"
@@ -1549,11 +1573,6 @@ msgstr "Sprawdź ponownie"
 msgctxt "e60J1V"
 msgid "Ask a question, report a problem or share an idea. We answer by email."
 msgstr "Zadaj pytanie, zgłoś problem lub podziel się pomysłem. Odpowiadamy e-mailem."
-
-#: src/app/[lang]/(app)/(settings)/support/support-content.tsx
-msgctxt "l1XTI5"
-msgid "Follow us"
-msgstr "Obserwuj nas"
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 msgctxt "40z5xB"
@@ -2404,11 +2423,6 @@ msgctxt "ugxven"
 msgid "While you study"
 msgstr "Podczas nauki"
 
-#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Zamknij"
-
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 #: src/app/[lang]/c/[code]/page.tsx
 msgctxt "kgqbTN"
@@ -3028,12 +3042,6 @@ msgstr "Z tego teraz korzystasz"
 msgctxt "gptbpf"
 msgid "Included in Plus"
 msgstr "W pakiecie Plus"
-
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-adds.tsx
-msgctxt "tf1lIh"
-msgid "Free"
-msgstr "Free"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "NynllM"

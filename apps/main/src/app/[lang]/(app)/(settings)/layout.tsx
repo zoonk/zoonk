@@ -4,6 +4,8 @@ import { getMenu } from "@/lib/menu";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { SettingsAccountAction } from "./_components/settings-account-action";
+import { SettingsAside, SettingsAsideSkeleton } from "./_components/settings-aside";
+import { SettingsAsideSlot } from "./_components/settings-aside-slot";
 import { SettingsNavbar, SettingsNavbarSkeleton } from "./_components/settings-navbar";
 
 export default async function Layout({ children }: LayoutProps<"/[lang]">) {
@@ -12,6 +14,14 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
   return (
     <>
       <SectionPage
+        aside={
+          <SettingsAsideSlot detailsUnder={[getMenu("aboutYou").url]}>
+            <Suspense fallback={<SettingsAsideSkeleton />}>
+              <SettingsAside />
+            </Suspense>
+          </SettingsAsideSlot>
+        }
+        asideLabel={t("Your account")}
         end={
           <Suspense fallback={null}>
             <SettingsAccountAction />
