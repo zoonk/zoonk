@@ -115,6 +115,9 @@ private struct RevealSubjectRow: View {
   let subject: SyllabusSubject
   @Binding var open: Set<String>
 
+  /// Main shows the exam's question count from a 32rem column: a phone's has no room for it.
+  @Environment(\.horizontalSizeClass) private var sizeClass
+
   var body: some View {
     if subject.topics.isEmpty && subject.chapters.isEmpty {
       label
@@ -136,6 +139,8 @@ private struct RevealSubjectRow: View {
               SubjectTopicRow(
                 goal: goal, topic: topic,
                 isExpanded: $open.contains("topic:\(subject.key)/\(topic.id)"), opens: false)
+                // A fold inside a fold's rows gets the system's style unless told again.
+                .disclosureGroupStyle(.fold)
             }
           }
         }
@@ -152,7 +157,7 @@ private struct RevealSubjectRow: View {
       description: line
     ) {
     } trailing: {
-      if let questions = subject.questions, questions > 0 {
+      if sizeClass == .regular, let questions = subject.questions, questions > 0 {
         Text(
           "\(questions) questions", tableName: "Plan",
           comment: "The number of questions in an exam or a mock exam.")
