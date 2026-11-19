@@ -25,12 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -102,7 +99,7 @@ internal fun PathSection(
                 ListRow(
                     headline = { Text(stringResource(R.string.plan_full_course)) },
                     onClick = { links.course(it.courseId.toString()) },
-                    leading = { MarkIcon(R.drawable.ic_local_library) },
+                    leading = { MarkIcon(R.drawable.ic_library) },
                 )
             }
         }
@@ -327,49 +324,26 @@ internal fun ChapterMark(
 }
 
 /**
- * Main's list footer that shows the chapters left out: its small plus in the marks' column, so its words start where theirs do.
- * With [open] it folds them away again, and TalkBack hears whether it's open and can open or close it.
+ * Main's list footer that shows the chapters left out: its words start where the rows' titles do, and it ends in the
+ * fold arrow every fold row ends in. With [open] it folds them away again, and TalkBack hears whether it's open.
  */
 @Composable
 internal fun MoreChaptersRow(
     text: String,
-    open: Boolean? = null,
+    open: Boolean = false,
     indent: Dp = 0.dp,
     onClick: () -> Unit,
 ) {
-    val openWords = stringResource(if (open == true) R.string.disclosure_expanded else R.string.disclosure_collapsed)
-
     ListRow(
         headline = { Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant) },
-        modifier =
-            Modifier.semantics {
-                if (open != null) {
-                    stateDescription = openWords
-                    val toggle = {
-                        onClick()
-                        true
-                    }
-                    if (open) collapse(action = toggle) else expand(action = toggle)
-                }
-            },
         onClick = onClick,
         indent = indent,
-        leading = {
-            Box(Modifier.size(MARK_COLUMN), contentAlignment = Alignment.Center) {
-                Icon(
-                    painterResource(if (open == true) R.drawable.ic_remove else R.drawable.ic_add),
-                    contentDescription = null,
-                    modifier = Modifier.size(FOOTER_PLUS),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        },
-        chevron = false,
+        expanded = open,
+        leading = { Box(Modifier.size(MARK_COLUMN)) },
     )
 }
 
 private val MARK_COLUMN = 24.dp
-private val FOOTER_PLUS = 16.dp
 
 /** A chapter's mark wherever it's listed: next, part done as a ring, skipped, done or ahead. */
 @Composable
@@ -481,6 +455,19 @@ internal fun ChapterRow(
     )
 }
 
+/** Main's `PhaseCheckpointMark`: what ends a phase, a call for a language and the Trickster's face otherwise, wherever the plan shows it. */
+@Composable
+internal fun PhaseCheckpointMark(
+    page: PlanPageState,
+    modifier: Modifier,
+) {
+    if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) {
+        Icon(painterResource(R.drawable.ic_mic), contentDescription = null, modifier = modifier)
+    } else {
+        Trickster(modifier, face = true)
+    }
+}
+
 /** A phase's challenge by its one name: the Trickster, or a language plan's call. */
 @Composable
 internal fun challengeName(page: PlanPageState): String =
@@ -552,7 +539,7 @@ internal fun CheckpointRow(
         },
         onClick = planItemId?.let { { links.challenge(it) } },
         indent = indent,
-        leading = { Trickster(Modifier.size(markSize())) },
+        leading = { PhaseCheckpointMark(page, Modifier.size(markSize())) },
         supporting = if (lines.isEmpty()) null else ({ lines.forEach { Text(it) } }),
         meta =
             trailing?.let { { TrailingText(it) } },

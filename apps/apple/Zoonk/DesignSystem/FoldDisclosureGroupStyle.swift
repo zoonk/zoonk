@@ -40,7 +40,9 @@ private struct Fold: View {
         : Text("Collapsed", tableName: "DesignSystem", comment: "VoiceOver: a fold that is closed"))
 
     if configuration.isExpanded {
+      // A style's content gets the system's style back, so a fold inside one keeps this one.
       configuration.content
+        .disclosureGroupStyle(.fold)
         .padding(.leading, indent)
     }
   }

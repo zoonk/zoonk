@@ -628,20 +628,6 @@ private struct EmptyTab<Title: View, Description: View>: View {
 
 // MARK: - Index
 
-/// A row that shows the rows after it: they follow it as rows of their own, on the page's left
-/// edge, where a `DisclosureGroup`'s content would sit indented under it.
-private struct FoldRow<Label: View>: View {
-  @Binding var isUnfolded: Bool
-  @ViewBuilder let label: Label
-
-  var body: some View {
-    DisclosureGroup(isExpanded: $isUnfolded) {
-    } label: {
-      label
-    }
-  }
-}
-
 /// Main's bounded index: sections stay open while there are 12 maps or fewer, past that each
 /// subject folds to its header; without subjects, the first 8 and "Show all".
 private struct MindMapIndex<Item: Identifiable, Row: View>: View {

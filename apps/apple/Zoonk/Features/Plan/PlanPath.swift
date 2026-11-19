@@ -133,18 +133,15 @@ private struct PlanPhaseRow: View {
     }
 
     if hidden > 0 {
-      Button {
-        store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
-          $0.showsAllChapters.toggle()
-        }
-      } label: {
-        Label {
-          foldLabel(hidden: hidden, showsAll: showsAll)
-        } icon: {
-          Image(systemName: showsAll ? "minus" : "plus")
-        }
-      }
-      .foregroundStyle(.mutedForeground)
+      MoreRowsFold(
+        words: foldLabel(hidden: hidden, showsAll: showsAll),
+        isUnfolded: Binding {
+          showsAll
+        } set: { shows in
+          store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
+            $0.showsAllChapters = shows
+          }
+        })
     }
   }
 
@@ -741,6 +738,29 @@ struct PlanMarkedRow<Mark: View>: View {
 }
 
 /// Says what a challenge is under its row, since a learner meets one before they've ever taken one.
+/// Main's `PhaseCheckpointMark`: what ends a phase, a call for a language and the Trickster's face
+/// otherwise.
+struct PhaseCheckpointMark: View {
+  let isLanguage: Bool
+
+  @ScaledMetric(relativeTo: .body) private var faceSize = 20.0
+
+  var body: some View {
+    Group {
+      if isLanguage {
+        Image(systemName: "mic")
+          .typeStyle(.rowTitle)
+          .imageScale(.medium)
+          .foregroundStyle(Color(.foreground))
+      } else {
+        TricksterCharacter(faceOnly: true)
+          .frame(width: faceSize, height: faceSize)
+      }
+    }
+    .accessibilityHidden(true)
+  }
+}
+
 struct PlanChallengeLabel: View {
   let when: PlanWhen?
   let explains: Bool
@@ -748,7 +768,7 @@ struct PlanChallengeLabel: View {
 
   var body: some View {
     ListRow(name, description: explains ? explanation : nil) {
-      KindMark(kind: isLanguage ? .conversation : .challenge)
+      PhaseCheckpointMark(isLanguage: isLanguage)
     } trailing: {
       when
     }

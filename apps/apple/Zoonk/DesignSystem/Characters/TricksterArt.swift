@@ -44,11 +44,16 @@ private let pupilInk = ArtPaint.color(Color(art: 0x16123a))
 private let violet = ArtPaint.color(Color(art: 0x7c3aed))
 
 /// He carries a shield the learner's right answers crack (`cracks`: none, one or two) and a win
-/// breaks in two.
+/// breaks in two. `faceOnly` is main's `view="face"`: his head for icon sizes, with no body or shield.
 struct TricksterArt: CharacterArt {
   var cracks = 0
+  var faceOnly = false
 
-  var viewBox: CGRect { CGRect(x: 0, y: 0, width: 160, height: 160) }
+  var viewBox: CGRect {
+    faceOnly
+      ? CGRect(x: 25.5, y: 51.5, width: 93, height: 93)
+      : CGRect(x: 0, y: 0, width: 160, height: 160)
+  }
   var overflow: CGFloat { 0.1 }
 
   static func act(_ name: TricksterAct) -> CharacterAct<TricksterExpression> { name.act }
@@ -59,18 +64,24 @@ struct TricksterArt: CharacterArt {
   static var openEyes: Set<TricksterExpression> { Set(TricksterExpression.allCases) }
 
   func draw(_ painter: ArtPainter, face: TricksterExpression) {
-    painter.part(.shadow, pivot: CGPoint(x: 72, y: 150)) {
-      $0.fill(ArtShape.ellipse(72, 150, 26, 4), .color(.black), opacity: 0.22)
+    if !faceOnly {
+      painter.part(.shadow, pivot: CGPoint(x: 72, y: 150)) {
+        $0.fill(ArtShape.ellipse(72, 150, 26, 4), .color(.black), opacity: 0.22)
+      }
     }
     painter.part(.body, pivot: CGPoint(x: 72, y: 142)) { body in
-      body.part(.armLeft, pivot: CGPoint(x: 46, y: 116)) {
-        $0.fill(ArtShape.ellipse(38, 124, 6.5, 8.5).rotated(38, around: 38, 124), violet)
-      }
-      body.part(.armRight, pivot: CGPoint(x: 98, y: 116)) {
-        $0.fill(ArtShape.ellipse(106, 124, 6.5, 8.5).rotated(-38, around: 106, 124), violet)
+      if !faceOnly {
+        body.part(.armLeft, pivot: CGPoint(x: 46, y: 116)) {
+          $0.fill(ArtShape.ellipse(38, 124, 6.5, 8.5).rotated(38, around: 38, 124), violet)
+        }
+        body.part(.armRight, pivot: CGPoint(x: 98, y: 116)) {
+          $0.fill(ArtShape.ellipse(106, 124, 6.5, 8.5).rotated(-38, around: 106, 124), violet)
+        }
       }
       body.part(.head, pivot: CGPoint(x: 72, y: 140)) { head in
-        head.part(.tail, pivot: CGPoint(x: 86, y: 88), tail)
+        if !faceOnly {
+          head.part(.tail, pivot: CGPoint(x: 86, y: 88), tail)
+        }
         head.fill(
           ArtShape.circle(72, 106, 36),
           .radial(
@@ -88,7 +99,9 @@ struct TricksterArt: CharacterArt {
         head.part(.crown, pivot: CGPoint(x: 51, y: 66), crown)
       }
     }
-    shield(painter)
+    if !faceOnly {
+      shield(painter)
+    }
   }
 
   private func tail(_ painter: ArtPainter) {

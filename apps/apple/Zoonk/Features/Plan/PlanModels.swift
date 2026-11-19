@@ -556,12 +556,18 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
     let name: String
   }
 
+  /// Where the subjects' `questions` come from when the notice gives none.
+  struct QuestionsSource: Decodable, Equatable, Sendable {
+    let edition: String?
+  }
+
   let examDocument: ExamDocument
   let fromMaterial: Bool
   let goal: Goal
   /// `notice` (an exam's own subjects) or `modules`.
   let kind: String
   let lessons: Lessons
+  let questionsSource: QuestionsSource?
   /// The learner's other exams whose plans teach some of these subjects with the same lessons.
   let sharedExams: [SharedExam]
   let subjects: [SyllabusSubject]
@@ -677,11 +683,14 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   let notPlannedReason: String?
   let preparation: Double?
   let questions: Int?
+  /// Its share of the exam.
+  let share: Double?
   /// Goal ids from the syllabus's `sharedExams`.
   let sharedWith: [String]
   let shortName: String
   let source: String
   let topics: [Topic]
+  let topicsKnown: Int?
   let topicsStudied: Int?
 
   var id: String { key }

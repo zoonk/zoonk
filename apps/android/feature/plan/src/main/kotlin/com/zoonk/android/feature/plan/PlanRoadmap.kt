@@ -62,7 +62,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.zoonk.android.R
-import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRowChevron
@@ -318,7 +317,7 @@ private fun RoadmapLegend(
         }
         if (hasChallenges) {
             LegendPair(
-                { Trickster(Modifier.size(16.dp * glyphScale()), face = true) },
+                { PhaseCheckpointMark(page, Modifier.size(16.dp * glyphScale())) },
             ) { Text(challengeName(page), style = style, color = color) }
         }
         if (page.finish != null) {
@@ -594,7 +593,7 @@ private fun PhaseLane(
                     } else {
                         Anchor.Center
                     },
-                ) { Trickster(Modifier.size(16.dp), face = true) }
+                ) { PhaseCheckpointMark(page, Modifier.size(16.dp)) }
             }
             overrun?.let {
                 At(

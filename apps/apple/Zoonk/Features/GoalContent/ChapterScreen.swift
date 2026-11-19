@@ -253,15 +253,9 @@ private struct ChapterContent: View {
   /// Where the chapter sits, then its lessons and their time; the lesson list counts how many are done.
   private var facts: [String] {
     let minutes = lessons.reduce(0) { $0 + $1.minutes }
-    let place =
-      chapter.chapter.subject.map { subject in
-        String(
-          localized: "\(subject.name)\u{00A0}· Chapter \(chapter.chapter.position)", table: "Plan",
-          comment: "A chapter's subject and its number there")
-      }
-      ?? String(
-        localized: "Chapter \(chapter.chapter.position)", table: "Plan",
-        comment: "A chapter's number")
+    let place = String(
+      localized: "Chapter \(chapter.chapter.position)", table: "Plan",
+      comment: "A chapter's number")
 
     guard !lessons.isEmpty else {
       return [place]

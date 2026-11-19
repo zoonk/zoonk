@@ -103,23 +103,20 @@ internal fun SubjectCoverage(
                         .withTabularFigures(),
             )
             CoverageBar(studied = preparation)
-            Column {
-                Text(stringResource(R.string.goalcontent_mastery), style = MaterialTheme.typography.labelSmall)
-                val mastery = subject.mastery
-                Text(
-                    text =
-                        if (mastery == null) {
-                            stringResource(R.string.goalcontent_mastery_pending)
-                        } else {
+            subject.mastery?.let { mastery ->
+                Column {
+                    Text(stringResource(R.string.plan_right_answers), style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        text =
                             stringResource(
-                                R.string.goalcontent_mastery_right,
+                                R.string.plan_done_of_total,
                                 formatNumber(mastery.correct.toDouble(), locale),
                                 formatNumber(mastery.answered.toDouble(), locale),
-                            )
-                        },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall.withTabularFigures(),
-                )
+                            ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+                    )
+                }
             }
         }
         return
