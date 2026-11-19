@@ -2232,7 +2232,6 @@ msgstr "Tu verras ton résultat à la fin."
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -2338,7 +2337,6 @@ msgstr "Chapitre {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
@@ -2611,7 +2609,6 @@ msgstr "Modules"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/roadmap-full.tsx
-#: src/onboarding/steps/plan-shape.tsx
 msgctxt "P7djTu"
 msgid "Phases"
 msgstr "Phases"
@@ -4756,7 +4753,6 @@ msgid "{count, plural, one {# chapter you already know} other {# chapters you al
 msgstr "{count, plural, one {# chapitre que tu connais déjà} other {# chapitres que tu connais déjà}}"
 
 #: src/journey/journey-chapters.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "2DMbJf"
 msgid "More lessons"
 msgstr "D’autres leçons"
@@ -4791,7 +4787,6 @@ msgstr "Afficher moins de chapitres"
 
 #: src/journey/journey-chapters.tsx
 #: src/mind-maps/not-made-yet.tsx
-#: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "E7pYSQ"
 msgid "{count, plural, one {# more chapter} other {# more chapters}}"
@@ -4976,7 +4971,6 @@ msgstr "{count, plural, one {# examen blanc avant ton prochain examen} other {# 
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/mock/mock-frame.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "6ppMud"
@@ -5061,16 +5055,6 @@ msgstr "Fin le {date}"
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number} sur {total, plural, one {# phase terminée} other {# phases terminées}}"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "mElWfu"
-msgid "You are here"
-msgstr "Tu es ici"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "yPg8s6"
-msgid "Until"
-msgstr "Jusqu’au"
 
 #. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
@@ -8402,6 +8386,7 @@ msgstr "En hausse par rapport à {before}"
 
 #: src/mock/mock-result-plan.tsx
 #: src/mock/mock-result-view.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-properties.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
@@ -9504,6 +9489,7 @@ msgstr "{document, select, notice {Ton plan suivra les matières, les sujets et 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/reveal-body.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "Ton plan est prêt"
@@ -9590,12 +9576,6 @@ msgstr "Nous choisissons quoi apprendre en premier et le répartissons dans tes 
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "La préparation de ton plan s’est arrêtée"
-
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "Chapitres"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"
@@ -9736,16 +9716,6 @@ msgctxt "GJAhWB"
 msgid "Why you're learning it"
 msgstr "Pourquoi tu apprends cette langue"
 
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "v9nycX"
-msgid "Plan created"
-msgstr "Plan créé"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "7T47RX"
-msgid "Choices"
-msgstr "Choix"
-
 #: src/onboarding/steps/reveal-coverage.tsx
 #: src/today/today-falling-behind.tsx
 msgctxt "sS7-IQ"
@@ -9808,33 +9778,6 @@ msgstr "d’ici {month}"
 msgctxt "x0b1HZ"
 msgid "estimated finish"
 msgstr "fin estimée"
-
-#: src/onboarding/steps/reveal-week.tsx
-#: src/session/use-review-title.ts
-#: src/today/today-week-challenge.tsx
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "Réviser"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Défi"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "Gg5U7i"
-msgid "Rest day"
-msgstr "Jour de repos"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "tWAtPK"
-msgid "Your first week"
-msgstr "Ta première semaine"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "V9hgFL"
-msgid "{days, plural, one {# study day} other {# study days}}"
-msgstr "{days, plural, one {# jour d’étude} other {# jours d’étude}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10363,7 +10306,6 @@ msgstr "Vérification des changements…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
-#: src/plan/plan-choices.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "Prérequis"
@@ -10377,11 +10319,6 @@ msgstr "Ce sur quoi reposent tes sujets. Choisis combien en étudier."
 msgctxt "YT4OTs"
 msgid "{group}: {option}"
 msgstr "{group} : {option}"
-
-#: src/plan/plan-choices.tsx
-msgctxt "pNi2vP"
-msgid "Your choices"
-msgstr "Tes choix"
 
 #: src/plan/plan-country.tsx
 msgctxt "4QudkV"
@@ -12677,6 +12614,12 @@ msgctxt "ql88uE"
 msgid "Review done"
 msgstr "Révision terminée"
 
+#: src/session/use-review-title.ts
+#: src/today/today-week-challenge.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Réviser"
+
 #. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
 #: src/shell/goal-mark.tsx
 msgctxt "goalSwitcher.4dyYDe"
@@ -12879,6 +12822,11 @@ msgstr "{count, plural, one {# chapitre terminé} other {# chapitres terminés}}
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, one {# chapitre terminé} other {# chapitres terminés}}, {known, plural, one {# déjà connu} other {# déjà connus}}"
+
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "Chapitres"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "tDrkTA"

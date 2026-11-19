@@ -2232,7 +2232,6 @@ msgstr "You see your result at the end."
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/onboarding/steps/reveal-days.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
@@ -2338,7 +2337,6 @@ msgstr "Chapter {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
@@ -2611,7 +2609,6 @@ msgstr "Modules"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/roadmap-full.tsx
-#: src/onboarding/steps/plan-shape.tsx
 msgctxt "P7djTu"
 msgid "Phases"
 msgstr "Phases"
@@ -4756,7 +4753,6 @@ msgid "{count, plural, one {# chapter you already know} other {# chapters you al
 msgstr "{count, plural, one {# chapter you already know} other {# chapters you already know}}"
 
 #: src/journey/journey-chapters.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "2DMbJf"
 msgid "More lessons"
 msgstr "More lessons"
@@ -4791,7 +4787,6 @@ msgstr "Show fewer chapters"
 
 #: src/journey/journey-chapters.tsx
 #: src/mind-maps/not-made-yet.tsx
-#: src/onboarding/steps/plan-shape.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "E7pYSQ"
 msgid "{count, plural, one {# more chapter} other {# more chapters}}"
@@ -4976,7 +4971,6 @@ msgstr "{count, plural, one {# mock exam before your next exam date} other {# mo
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/mock/mock-frame.tsx
-#: src/onboarding/steps/reveal-week.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "6ppMud"
@@ -5061,16 +5055,6 @@ msgstr "Ends {date}"
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number} of {total, plural, one {# phase} other {# phases}} done"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "mElWfu"
-msgid "You are here"
-msgstr "You are here"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "yPg8s6"
-msgid "Until"
-msgstr "Until"
 
 #. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
@@ -8402,6 +8386,7 @@ msgstr "Up from {before}"
 
 #: src/mock/mock-result-plan.tsx
 #: src/mock/mock-result-view.tsx
+#: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-properties.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
@@ -9504,6 +9489,7 @@ msgstr "{document, select, notice {Your plan will follow the exam's subjects, to
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/reveal-body.tsx
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "Your plan is ready"
@@ -9590,12 +9576,6 @@ msgstr "We're choosing what to learn first and fitting it into your days. A new 
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "Building your plan stopped"
-
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Do1Pfd"
-msgid "Chapters"
-msgstr "Chapters"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"
@@ -9736,16 +9716,6 @@ msgctxt "GJAhWB"
 msgid "Why you're learning it"
 msgstr "Why you're learning it"
 
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "v9nycX"
-msgid "Plan created"
-msgstr "Plan created"
-
-#: src/onboarding/steps/reveal-body.tsx
-msgctxt "7T47RX"
-msgid "Choices"
-msgstr "Choices"
-
 #: src/onboarding/steps/reveal-coverage.tsx
 #: src/today/today-falling-behind.tsx
 msgctxt "sS7-IQ"
@@ -9808,33 +9778,6 @@ msgstr "by {month}"
 msgctxt "x0b1HZ"
 msgid "estimated finish"
 msgstr "estimated finish"
-
-#: src/onboarding/steps/reveal-week.tsx
-#: src/session/use-review-title.ts
-#: src/today/today-week-challenge.tsx
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "Review"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Challenge"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "Gg5U7i"
-msgid "Rest day"
-msgstr "Rest day"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "tWAtPK"
-msgid "Your first week"
-msgstr "Your first week"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "V9hgFL"
-msgid "{days, plural, one {# study day} other {# study days}}"
-msgstr "{days, plural, one {# study day} other {# study days}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10363,7 +10306,6 @@ msgstr "Checking what changes…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
-#: src/plan/plan-choices.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "Prerequisites"
@@ -10377,11 +10319,6 @@ msgstr "What your topics build on. Choose how much of it to study."
 msgctxt "YT4OTs"
 msgid "{group}: {option}"
 msgstr "{group}: {option}"
-
-#: src/plan/plan-choices.tsx
-msgctxt "pNi2vP"
-msgid "Your choices"
-msgstr "Your choices"
 
 #: src/plan/plan-country.tsx
 msgctxt "4QudkV"
@@ -12677,6 +12614,12 @@ msgctxt "ql88uE"
 msgid "Review done"
 msgstr "Review done"
 
+#: src/session/use-review-title.ts
+#: src/today/today-week-challenge.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Review"
+
 #. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
 #: src/shell/goal-mark.tsx
 msgctxt "goalSwitcher.4dyYDe"
@@ -12879,6 +12822,11 @@ msgstr "{count, plural, one {# chapter done} other {# chapters done}}"
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
+
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "Chapters"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "tDrkTA"
