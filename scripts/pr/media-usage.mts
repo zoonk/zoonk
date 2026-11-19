@@ -2,7 +2,9 @@
 export const USAGE = `Usage: pnpm pr:media check <body.md> [--root <dir>] [--manifests <dir>]...
        pnpm pr:media tiles [<dir>]
        pnpm pr:media read --by <reader> [--findings <file.json>] [<dir>]
-       pnpm pr:media resolve <finding id> (--fixed <commit> | --exception <who granted it>) [<dir>]
+       pnpm pr:media resolve <finding id> (--fixed <commit> | --issue <number> | --not-a-fault <why>
+                                           | --exception <who granted it>) [<dir>]
+       pnpm pr:media closed [<dir>]
        pnpm pr:media pending --platform <android|apple> [--to <dir>] <file>...
        pnpm pr:media before --platform <web|android|apple> --source <where> [--to <dir>] <file>...
        pnpm pr:media adopt <before|after> [--to <dir>] <render.json>...
@@ -27,8 +29,12 @@ Checks that every picture a PR body shows was captured, from which build, and re
   tiles    cuts every after picture under <dir> into original-size tiles and writes
            <dir>/read/READ.md, the reader's sheet: pictures first, numbers second, then words.
   read     records a read on every after picture under <dir> that has none: clean, or the
-           findings in the file, a JSON array of { "file", "text" } with files as READ.md lists them.
-  resolve  marks a finding fixed in a commit, or an exception the user granted.
+           findings in the file, a JSON array of { "file", "text", "rule", "before", "misleads" }
+           with files as READ.md lists them, sorted by the reader after its blind pass.
+  resolve  closes a finding: fixed in a commit; filed in an issue, when it was already on the
+           before picture or no rule names it, and it doesn't mislead a learner; not a fault, with
+           the rule, choice or capture fault that explains it; or an exception the user granted.
+  closed   prints the PR body's list of the findings under <dir> closed without a fix.
   pending  records native after pictures with neither a capture nor a device record; they keep
            failing the check as pending.
   device   takes an after picture from a booted simulator (--device its udid) or emulator (its

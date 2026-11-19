@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { describe, it } from "vitest";
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
 import { type ManifestItem, type Read } from "./media.mts";
+import { formatCheck } from "./report.mts";
 
 const fixture = checkFixture();
 const { capture, shot } = fixture;
@@ -82,6 +83,8 @@ describe("pr:media check", () => {
         { id: "a-1", state: "open", text: "the date stops short of the edge" },
         { commit: fixture.current, id: "a-2", state: "fixed", text: "the gap is 12 px" },
         { grantedBy: "the user", id: "a-3", state: "exception", text: "the day bar is 40 px" },
+        { id: "a-4", issue: 2790, state: "issue", text: "the chevrons end 4 px apart" },
+        { id: "a-5", reason: "the seed's date", state: "not-a-fault", text: "the date is Nov 16" },
       ],
     };
 
@@ -89,6 +92,33 @@ describe("pr:media check", () => {
     const result = await capture([shot({ build, file: "a.png", read })]).check();
 
     assert.deepEqual(kinds(result), ["stale", "finding", "fixed-not-retaken"]);
+  });
+
+  it("passes the records written before findings were sorted, and counts how each closed", async () => {
+    const read: Read = {
+      ...CLEAN,
+      findings: [
+        { commit: fixture.current, id: "a-1", state: "fixed", text: "the gap is 12 px" },
+        { grantedBy: "the user", id: "a-2", state: "exception", text: "the day bar is 40 px" },
+        { id: "a-3", issue: 2790, state: "issue", text: "the chevrons end 4 px apart" },
+      ],
+    };
+
+    const { check, folder } = capture([
+      shot({ file: "a.png", read }),
+      shot({ file: "b.png", read: { ...read, findings: read.findings.slice(0, 1) } }),
+    ]);
+
+    const result = await check();
+    const lines = formatCheck(result, folder).split("\n");
+
+    assert.deepEqual(result.problems, []);
+
+    assert.ok(
+      lines.includes(
+        "Findings: 1 fixed, 1 filed in an issue, 1 by an exception the user granted; pnpm pr:media closed prints the PR's list of those not fixed",
+      ),
+    );
   });
 
   it("holds a native picture with no capture record as pending, never as passed", async () => {

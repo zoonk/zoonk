@@ -1,5 +1,6 @@
 import { relative } from "node:path";
 import { isRemote } from "./locate.mts";
+import { type Finding, type FindingState } from "./media.mts";
 
 /** In the order they print: what can't be bound first, then what a retake fixes, then the read. */
 const KINDS = [
@@ -89,12 +90,36 @@ export type CheckResult = {
   checked: number;
   /** The pictures under the device heading with a device record, and what was verified of each. */
   devices?: { line: string; picture: string }[];
+  /** The findings on the after pictures, a finding several pictures show once for each. */
+  findings?: Finding[];
   nothingDeclared?: number;
   limits?: string[];
   notMeasured: number;
   problems: Problem[];
   reads: Reads;
 };
+
+/** In the order they print: open, then how the rest closed, the ones without a fix last. */
+const STATES = [
+  ["open", "open"],
+  ["fixed", "fixed"],
+  ["issue", "filed in an issue"],
+  ["not-a-fault", "not a fault"],
+  ["exception", "by an exception the user granted"],
+] as const satisfies [FindingState["state"], string][];
+
+function findingsLine(findings: Finding[] = []): string | false {
+  const states = [...new Map(findings.map((finding) => [finding.id, finding.state])).values()];
+
+  const counts = STATES.flatMap(([state, label]) => {
+    const count = states.filter((found) => found === state).length;
+    return count > 0 ? [`${count} ${label}`] : [];
+  });
+
+  const unfixed = states.some((state) => !["fixed", "open"].includes(state));
+  const list = unfixed ? "; pnpm pr:media closed prints the PR's list of those not fixed" : "";
+  return counts.length > 0 && `Findings: ${counts.join(", ")}${list}`;
+}
 
 function kindOf(kind: Kind) {
   const index = KINDS.findIndex((entry) => entry.kind === kind);
@@ -106,6 +131,7 @@ export function formatCheck(
   {
     checked,
     devices = [],
+    findings,
     limits = [],
     nothingDeclared = 0,
     notMeasured,
@@ -180,5 +206,7 @@ export function formatCheck(
 
   const limitLine = limits.length > 0 && `Layout limits: ${[...new Set(limits)].join("; ")}`;
 
-  return [...lines, ...deviceLines, limitLine, readLine, summary].filter(Boolean).join("\n");
+  return [...lines, ...deviceLines, limitLine, readLine, findingsLine(findings), summary]
+    .filter(Boolean)
+    .join("\n");
 }

@@ -29,17 +29,32 @@ type NativeStamp = {
   uncommitted?: string;
 };
 
+/**
+ * Fixed and exception are the only ways a blocking finding closes. A real fault already on the
+ * base, or polish no rule names, goes to an issue; one a rule, a deliberate choice or the capture
+ * explains is not a fault, with the reason.
+ */
 export type FindingState =
   | { state: "open" }
   | { commit: string; state: "fixed" }
-  | { grantedBy: string; state: "exception" };
+  | { grantedBy: string; state: "exception" }
+  | { issue: number; state: "issue" }
+  | { reason: string; state: "not-a-fault" };
 
-export type Finding = FindingState & {
-  crop?: string;
-  id: string;
-  measurement?: string;
-  text: string;
-};
+/**
+ * The reader's sort after its blind pass: the craft rule broken (`none` for polish no rule names),
+ * whether the before picture shows it too, and whether it stops or misleads a learner. Findings
+ * recorded before the sort have none.
+ */
+type Sort = { before?: boolean; misleads?: boolean; rule?: string };
+
+export type Finding = FindingState &
+  Sort & { crop?: string; id: string; measurement?: string; text: string };
+
+/** The PR fixes what misleads a learner, whoever brought it, and a named rule it broke itself. */
+export function blocks({ before, misleads, rule }: Finding): boolean {
+  return misleads === true || (before === false && rule !== undefined && rule !== "none");
+}
 
 /**
  * A read by someone who built none of it; no findings means the read was clean. `carriedFrom` is

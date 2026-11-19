@@ -179,6 +179,7 @@ export async function writeReadingSheet({ root, sheet }: { root: string; sheet: 
   await rm(join(sheet, "tiles"), { force: true, recursive: true });
   const link = (path: string) => relative(sheet, path).replaceAll("\\", "/");
   const sections: string[] = [];
+  const befores: string[] = [];
 
   for (const [index, picture] of after.entries()) {
     const key = pairKey(picture.item);
@@ -193,7 +194,12 @@ export async function writeReadingSheet({ root, sheet }: { root: string; sheet: 
       "",
       ...(await cutPicture({ link, picture, sheet })),
       "",
-      ...(pair ? [`Before, for comparison: [${pair.id}](${link(pair.path)})`, ""] : []),
+    );
+
+    befores.push(
+      pair
+        ? `- ${picture.id}: [${pair.id}](${link(pair.path)})`
+        : `- ${picture.id}: no before, so everything on it is this change's`,
     );
   }
 
@@ -222,13 +228,19 @@ export async function writeReadingSheet({ root, sheet }: { root: string; sheet: 
     "",
     ...scenarioGroups(after),
     "",
+    "## Then sort each finding",
+    "",
+    "Only now open the before pictures. For each finding, mark whether the before picture shows it too, and whether it stops or misleads a learner: wrong or missing information, an action they can't find or use, text cut so the meaning is lost.",
+    "",
+    ...befores,
+    "",
     "## Record the read",
     "",
     "```sh",
     `pnpm pr:media read --by "<who read>" --findings <findings.json> ${displayPath(root)}`,
     "```",
     "",
-    'Each finding is `{ "file": "<a picture as listed above>", "text": "<what is off>" }` in a JSON array. Leave out `--findings` for a clean read. Each finding gets an id; resolve it later with `pnpm pr:media resolve <id> --fixed <commit>` or, for an exception the user granted, `--exception "<who granted it>"`.',
+    'Each finding is `{ "file": "<a picture as listed above>", "text": "<what is off>", "rule": "<craft rule id, or none>", "before": <true or false>, "misleads": <true or false> }` in a JSON array. Leave out `--findings` for a clean read.',
     "",
   ].join("\n");
 

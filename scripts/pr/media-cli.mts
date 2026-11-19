@@ -7,10 +7,10 @@ import { adoptRenders } from "./adopt.mts";
 import { checkBody } from "./body-check.mts";
 import { deviceSection, readDeviceShots } from "./device-section.mts";
 import { DEVICE_BRIDGES, takeDevicePicture } from "./device.mts";
+import { closedSection, resolveFinding } from "./findings.mts";
 import { findManifests, manifestsAbove } from "./locate.mts";
 import { USAGE } from "./media-usage.mts";
 import {
-  type Finding,
   type FindingState,
   MANIFEST,
   NATIVE_PLATFORMS,
@@ -20,9 +20,7 @@ import {
   displayPath,
   pathWithin,
   readManifest,
-  readOf,
   registerItems,
-  writeManifest,
 } from "./media.mts";
 import { resolveCommit, sha256File } from "./provenance.mts";
 import { type ReadFinding, parseFindings, recordReads } from "./read.mts";
@@ -45,8 +43,10 @@ function readArguments() {
         findings: { type: "string" },
         fixed: { type: "string" },
         help: { default: false, short: "h", type: "boolean" },
+        issue: { type: "string" },
         manifests: { default: [], multiple: true, type: "string" },
         name: { type: "string" },
+        "not-a-fault": { type: "string" },
         platform: { type: "string" },
         root: { type: "string" },
         source: { type: "string" },
@@ -98,7 +98,7 @@ async function readFindingsFile(path: string | undefined): Promise<ReadFinding[]
   return (
     parseFindings(parsed) ??
     fail(
-      `${path} must be a JSON array of { "file", "text" }, where "file" may list several pictures and "measurement" and "crop" are optional.`,
+      `${path} must be a JSON array of { "file", "text", "rule", "before", "misleads" }, where "file" may list several pictures, "before" and "misleads" are true or false, and "measurement" and "crop" are optional.`,
     )
   );
 }
@@ -120,59 +120,48 @@ async function recordRead({ positionals: [folder], values }: Arguments) {
 }
 
 async function resolutionOf(values: Arguments["values"]): Promise<FindingState> {
-  if (Boolean(values.fixed) === Boolean(values.exception)) {
-    fail("Give --fixed <commit> or --exception <who granted it>, not both.");
+  const { exception, fixed, issue } = values;
+  const reason = values["not-a-fault"]?.trim();
+  const given = [exception, fixed, issue, reason].filter(Boolean);
+
+  if (given.length !== 1 || (issue && !/^#?[1-9]\d*$/u.test(issue))) {
+    fail(
+      'Give one of --fixed <commit>, --issue <number>, --not-a-fault "<why>" or --exception "<who granted it>".',
+    );
   }
 
-  return values.fixed
-    ? { commit: await resolveCommit({ repository, revision: values.fixed }), state: "fixed" }
-    : { grantedBy: values.exception ?? "", state: "exception" };
+  if (fixed) {
+    return { commit: await resolveCommit({ repository, revision: fixed }), state: "fixed" };
+  }
+
+  if (issue) {
+    return { issue: Number(issue.replace("#", "")), state: "issue" };
+  }
+
+  return reason
+    ? { reason, state: "not-a-fault" }
+    : { grantedBy: exception ?? "", state: "exception" };
 }
 
-function resolveIn(findings: Finding[], id: string, state: FindingState): Finding[] {
-  return findings.map((finding) => (finding.id === id ? { ...finding, ...state } : finding));
-}
-
-async function resolveFinding({ positionals: [id, folder], values }: Arguments) {
+async function recordResolution({ positionals: [id, folder], values }: Arguments) {
   if (!id) {
     fail("Name the finding to resolve.");
   }
 
   const state = await resolutionOf(values);
   const root = resolve(folder ?? CAPTURE);
-  const folders = await findManifests(root);
 
-  const changed = await Promise.all(
-    folders.map(async (manifest) => {
-      const items = (await readManifest(manifest)) ?? [];
-
-      const found = items.some((item) =>
-        readOf(item)?.findings.some((finding) => finding.id === id),
-      );
-
-      if (found) {
-        await writeManifest(
-          manifest,
-          items.map((item) => {
-            const read = readOf(item);
-
-            return read
-              ? { ...item, read: { ...read, findings: resolveIn(read.findings, id, state) } }
-              : item;
-          }),
-        );
-      }
-
-      return found;
-    }),
+  await resolveFinding({ id, root, state }).catch((error: unknown) =>
+    fail(error instanceof Error ? error.message : String(error)),
   );
-
-  if (!changed.includes(true)) {
-    fail(`No finding ${id} under ${root}.`);
-  }
 
   console.log(`${id}: ${state.state}`);
   return refreshSection(root);
+}
+
+async function printClosed({ positionals: [folder] }: Arguments) {
+  console.log(await closedSection(resolve(folder ?? CAPTURE)));
+  return true;
 }
 
 const VIDEO_EXTENSIONS = new Set([".mov", ".mp4", ".webm"]);
@@ -334,11 +323,12 @@ const COMMANDS = {
   adopt,
   before: recordBefore,
   check,
+  closed: printClosed,
   device: recordDevice,
   "device-section": printDeviceSection,
   pending: recordPending,
   read: recordRead,
-  resolve: resolveFinding,
+  resolve: recordResolution,
   tiles,
 };
 

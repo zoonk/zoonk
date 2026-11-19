@@ -18,23 +18,33 @@ function toReadFinding(entry: unknown): ReadFinding | undefined {
 
   const field = (key: string): unknown => Reflect.get(entry, key);
 
-  const [crop, file, measurement, text] = ["crop", "file", "measurement", "text"].map((key) =>
-    field(key),
-  );
+  const [before, crop, file, measurement, misleads, rule, text] = [
+    "before",
+    "crop",
+    "file",
+    "measurement",
+    "misleads",
+    "rule",
+    "text",
+  ].map((key) => field(key));
 
   const listed: unknown[] = Array.isArray(file) ? file : [file];
   const files = listed.filter((name) => isText(name));
+  const sorted = typeof before === "boolean" && typeof misleads === "boolean" && isText(rule);
 
-  if (!isText(text) || files.length === 0 || files.length !== listed.length) {
+  if (!isText(text) || !sorted || files.length === 0 || files.length !== listed.length) {
     return undefined;
   }
 
   const extra = { ...(isText(measurement) && { measurement }), ...(isText(crop) && { crop }) };
   const id = sha256Text(JSON.stringify([files, text])).slice(0, FINDING_ID_LENGTH);
-  return { files, finding: { id, state: "open", text, ...extra } };
+  return { files, finding: { before, id, misleads, rule, state: "open", text, ...extra } };
 }
 
-/** The findings a reader wrote, or nothing when any entry isn't `{ "file", "text" }`. */
+/**
+ * The findings a reader wrote, or nothing when any entry isn't
+ * `{ "file", "text", "rule", "before", "misleads" }`.
+ */
 export function parseFindings(parsed: unknown): ReadFinding[] | undefined {
   const entries = Array.isArray(parsed) ? parsed.map((entry) => toReadFinding(entry)) : [undefined];
   const valid = entries.filter((entry) => entry !== undefined);

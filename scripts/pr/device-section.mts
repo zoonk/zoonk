@@ -23,7 +23,7 @@ const NOT_IN_PATH = /[^\p{L}\p{M}\p{N}/._-]/u;
  * Any text as literal words in a table cell or an image's description: every ASCII punctuation
  * character escaped, as CommonMark allows, and line breaks folded into a space.
  */
-function literal(text: string): string {
+export function literal(text: string): string {
   return text
     .replaceAll(/\s+/gu, " ")
     .trim()

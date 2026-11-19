@@ -15,6 +15,9 @@ import {
 } from "./media.mts";
 import { parseFindings, recordReads } from "./read.mts";
 
+/** The reader's sort, made after its blind pass. */
+const SORTED = { before: false, misleads: false, rule: "E9" };
+
 /** A repository whose HEAD built two pictures with the same bytes, nobody's read yet. */
 function twoEqualPictures() {
   const root = mkdtempSync(join(tmpdir(), "pr-media-read-"));
@@ -65,11 +68,26 @@ function twoEqualPictures() {
 }
 
 describe("recording a read", () => {
+  it("takes a finding only once the reader has sorted it", () => {
+    const entry = { file: "after/first.png", text: "The spinner sits off center" };
+
+    const [parsed] = parseFindings([{ ...entry, ...SORTED }]) ?? [];
+    const { before, misleads, rule, state } = parsed?.finding ?? {};
+
+    assert.deepEqual(parsed?.files, [entry.file]);
+    assert.deepEqual({ before, misleads, rule, state }, { ...SORTED, state: "open" });
+
+    assert.equal(parseFindings([entry]), undefined);
+    assert.equal(parseFindings([{ ...entry, ...SORTED, before: "yes" }]), undefined);
+  });
+
   it("attaches a finding to the picture the reader named, and the gate holds its pixels to it", async () => {
     const { folder, root } = twoEqualPictures();
 
     const entries =
-      parseFindings([{ file: "after/first.png", text: "The spinner sits off center" }]) ?? [];
+      parseFindings([
+        { ...SORTED, file: "after/first.png", text: "The spinner sits off center" },
+      ]) ?? [];
 
     await recordReads({ by: "reader", entries, root });
 
@@ -145,7 +163,9 @@ describe("recording a read", () => {
     await registerItems(folder, [pending]);
 
     const entries =
-      parseFindings([{ file: "native/after.png", text: "The note sits under the status" }]) ?? [];
+      parseFindings([
+        { ...SORTED, file: "native/after.png", text: "The note sits under the status" },
+      ]) ?? [];
 
     await recordReads({ by: "reader", entries, root });
     await registerItems(folder, [pending]);
