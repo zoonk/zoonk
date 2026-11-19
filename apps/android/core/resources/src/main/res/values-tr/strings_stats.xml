@@ -18,7 +18,6 @@
   "stats_belt_gray": "199208e46befce3fa0623cf685bea812f7c87da7ddb753514148e585a2dc0970",
   "stats_belt_green": "95f0f9f70c5e07b5029b8b6a26b4c002c230c8caefcaf1d3f5398985dc458e01",
   "stats_belt_level": "6efc09db7697428dc63c952565c3919ee22f93f8423827dda60e88fc48b7cdf4",
-  "stats_belt_line": "6fb0ad0958766d3022dce61dc348d1e628c99d62fd4ecec37fead35857b53074",
   "stats_belt_orange": "d91d5fab61032c60e01eada356d64f151065662eb5997f9a6359c406217b1aba",
   "stats_belt_purple": "f74a086727ac2c39a43daceedb12234232d75a4fd2216e766cd0ef7ac0c97c63",
   "stats_belt_red": "b7b95e129f7a6f9476a5c191ac55a4a7b3d1c3b114cec7ab18ffd982bcbacb9b",
@@ -40,7 +39,6 @@
   "stats_empty_title": "90882f66476fc1c0153e90576be6e7e37ad67201fba6432caef47fa5c5cb23a9",
   "stats_energy": "c6e3bd516586d1d1d4aa0dab6b3cb4eb798e3bd7b636d33dd59dcd3807c08ca5",
   "stats_energy_amount": "01fc97c7452938a2e15eafd22cb0f9e539cc7f8f03f868299d5447ea9b580209",
-  "stats_energy_line": "edffd19c7adffe1dcba0470aa26a7e25d1a542969dfcb8a26005469a062a475b",
   "stats_evening": "3673cc394ffc60e6d19ee53990973d095a6acee28d1ea69eb38cdf20d8360c43",
   "stats_every_belt": "3dab0c06d72eb08253063ad48a6d92709bcfcc1af342197e8107754c4b6bde08",
   "stats_few_answers_legend": "b31deda86d6cf1f11d1e3222b86d5d3a0790510847293dc1ceee8c273d3b29bd",
@@ -61,10 +59,10 @@
   "stats_overview": "f27afc28473f6042c82fe3ab032bb7bcdcaeac8bfb96b9090da8ef0b80aa221c",
   "stats_part_failed": "a8f3ccc7646186fa41386b7aae753f32161eea3b67bee75be6e5587058f94ed2",
   "stats_past_6_months": "92482f8b07e7f6050a9dfac4a6524b63c15b3e318792e07a38742d41ade58d73",
+  "stats_past_90_days": "2cd4e87582b7b9ec94a6f7e42a08bdf3bd8f1c50e8e4a2e8c1de703b74140a39",
   "stats_past_year": "97d58686f2b9b25987315cbd1378a370ab1c38e487d062a60862b3d670cb0405",
   "stats_patterns": "80aff82d785203b325a0ccb5281eb8dc9960d8635112c4388ebb1db89a530f31",
   "stats_patterns_90": "8aa9700fd386fc9428f8ff9ab420b176a75e158aa13faa8f52cb41e159c0a73d",
-  "stats_patterns_intro": "73a09be348f7748f02f864c3fb8909cccdc210ca9cb21b1b6ddc69d15c8ab3ab",
   "stats_right_in_last_days": "21232b162c196a1ff48877e5380791588fbdb7727d6a77db4b85f14a2e94d5d7",
   "stats_score": "f8b6fee8bd3d8e0a57a5569ae35ec1f2e1a96c3039ebf7bcad7f91677a6fec2a",
   "stats_score_90": "07db224a8ca43cd642599d57cf1e1028fe29ac4c943e3596359ebd3e0e2daec2",
@@ -107,7 +105,6 @@
     <string name="stats_brain_power_amount">%1$s Beyin Gücü</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Tüm kuşaklar kazanıldı</string>
-    <string name="stats_belt_line">Çalıştığın her şey için Beyin Gücü kazanırsın ve Beyin Gücün hiç azalmaz.</string>
     <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->
     <string name="stats_brain_power_to">%1$s Beyin Gücü daha kazanınca %2$s seviyesine ulaşırsın</string>
     <!-- %1$s and %2$s are belt names, such as "Yellow belt" and "White belt"; %3$s is a belt's last number, 10. -->
@@ -131,7 +128,6 @@
     <string name="stats_belt_black">Siyah</string>
     <string name="stats_today">Bugün</string>
     <string name="stats_days_at_full">Enerjinin %100 olduğu günler</string>
-    <string name="stats_energy_line">Enerji her dersle artar, ara verdiğin günlerde biraz azalır.</string>
     <string name="stats_low">Düşük</string>
     <string name="stats_high">Yüksek</string>
     <string name="stats_lessons">Dersler</string>
@@ -139,6 +135,7 @@
     <string name="stats_past_year">Son 12 ay</string>
     <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
     <string name="stats_past_6_months">Son 6 ay</string>
+    <string name="stats_past_90_days">Son 90 gün</string>
     <!-- Under a chart of bars: what a hollow dashed bar means. -->
     <string name="stats_few_answers_legend">Kesik çizgili çubukta henüz hesaplamaya yetecek kadar cevap yok.</string>
     <string name="stats_less">Az</string>
@@ -174,7 +171,6 @@
         <item quantity="one">%1$s: %2$s (%3$s cevap)</item>
         <item quantity="other">%1$s: %2$s (%3$s cevap)</item>
     </plurals>
-    <string name="stats_patterns_intro">Son 90 günde en iyi cevap verdiğin zamanlar.</string>
     <plurals name="stats_answer_count">
         <item quantity="one">%1$s cevap</item>
         <item quantity="other">%1$s cevap</item>

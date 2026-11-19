@@ -1719,17 +1719,6 @@ msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
 msgstr "지금의 에너지와 지난 12개월간의 에너지 기록이에요."
 
-#: src/app/[lang]/(app)/(stats)/energy/page.tsx
-msgctxt "1lqd7i"
-msgid "Energy goes up with every lesson and drops a little on days off."
-msgstr "에너지는 레슨을 할 때마다 올라가고 쉬는 날에는 조금 내려가요."
-
-#: src/app/[lang]/(app)/(stats)/layout.tsx
-#: src/app/[lang]/(app)/(stats)/stats/page.tsx
-msgctxt "bNNnKJ"
-msgid "Across all your goals"
-msgstr "전체 목표 기준"
-
 #: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
 msgctxt "CIQa5T"
 msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
@@ -1787,20 +1776,10 @@ msgctxt "Wzw2i9"
 msgid "Your belt, level and Brain Power."
 msgstr "띠와 레벨, 두뇌력을 확인해 보세요."
 
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "IxxQzi"
-msgid "You earn Brain Power for everything you study, and it never goes down."
-msgstr "무엇을 공부하든 두뇌력이 쌓이고, 쌓인 두뇌력은 줄어들지 않아요."
-
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
 msgid "See when you perform best over the past 90 days."
 msgstr "최근 90일 동안 정답률이 가장 높았던 때를 확인해 보세요."
-
-#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
-msgctxt "SXjWkq"
-msgid "When you answer best, over the last 90 days."
-msgstr "최근 90일 동안 문제를 가장 잘 풀었던 요일과 시간대예요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
 msgctxt "VcCKQU"
@@ -1896,6 +1875,11 @@ msgstr "시간대에 따른 차이는 없어요."
 msgctxt "IrWIWh"
 msgid "Answer more questions to see when you do best."
 msgstr "언제 가장 잘 푸는지 확인하려면 문제를 더 풀어 보세요."
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "ZOWtIg"
+msgid "Past 90 days"
+msgstr "지난 90일"
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"

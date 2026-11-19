@@ -1719,17 +1719,6 @@ msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
 msgstr "Your Energy now and over the past 12 months."
 
-#: src/app/[lang]/(app)/(stats)/energy/page.tsx
-msgctxt "1lqd7i"
-msgid "Energy goes up with every lesson and drops a little on days off."
-msgstr "Energy goes up with every lesson and drops a little on days off."
-
-#: src/app/[lang]/(app)/(stats)/layout.tsx
-#: src/app/[lang]/(app)/(stats)/stats/page.tsx
-msgctxt "bNNnKJ"
-msgid "Across all your goals"
-msgstr "Across all your goals"
-
 #: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
 msgctxt "CIQa5T"
 msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
@@ -1787,20 +1776,10 @@ msgctxt "Wzw2i9"
 msgid "Your belt, level and Brain Power."
 msgstr "Your belt, level and Brain Power."
 
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "IxxQzi"
-msgid "You earn Brain Power for everything you study, and it never goes down."
-msgstr "You earn Brain Power for everything you study, and it never goes down."
-
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
 msgid "See when you perform best over the past 90 days."
 msgstr "See when you perform best over the past 90 days."
-
-#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
-msgctxt "SXjWkq"
-msgid "When you answer best, over the last 90 days."
-msgstr "When you answer best, over the last 90 days."
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
 msgctxt "VcCKQU"
@@ -1896,6 +1875,11 @@ msgstr "The time of day makes no difference."
 msgctxt "IrWIWh"
 msgid "Answer more questions to see when you do best."
 msgstr "Answer more questions to see when you do best."
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "ZOWtIg"
+msgid "Past 90 days"
+msgstr "Past 90 days"
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"

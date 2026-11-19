@@ -1719,17 +1719,6 @@ msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
 msgstr "La tua Energia adesso e negli ultimi 12 mesi."
 
-#: src/app/[lang]/(app)/(stats)/energy/page.tsx
-msgctxt "1lqd7i"
-msgid "Energy goes up with every lesson and drops a little on days off."
-msgstr "L’Energia aumenta con ogni lezione e cala un po’ nei giorni di pausa."
-
-#: src/app/[lang]/(app)/(stats)/layout.tsx
-#: src/app/[lang]/(app)/(stats)/stats/page.tsx
-msgctxt "bNNnKJ"
-msgid "Across all your goals"
-msgstr "Per tutti i tuoi obiettivi"
-
 #: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
 msgctxt "CIQa5T"
 msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
@@ -1787,20 +1776,10 @@ msgctxt "Wzw2i9"
 msgid "Your belt, level and Brain Power."
 msgstr "La tua cintura, il tuo livello e la tua Potenza Mentale."
 
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "IxxQzi"
-msgid "You earn Brain Power for everything you study, and it never goes down."
-msgstr "Guadagni punti di Potenza Mentale per tutto ciò che studi e non ne perdi mai."
-
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
 msgid "See when you perform best over the past 90 days."
 msgstr "Scopri quando hai ottenuto i risultati migliori negli ultimi 90 giorni."
-
-#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
-msgctxt "SXjWkq"
-msgid "When you answer best, over the last 90 days."
-msgstr "Quando hai risposto meglio negli ultimi 90 giorni."
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
 msgctxt "VcCKQU"
@@ -1896,6 +1875,11 @@ msgstr "Il momento della giornata non fa differenza."
 msgctxt "IrWIWh"
 msgid "Answer more questions to see when you do best."
 msgstr "Rispondi ad altre domande per scoprire quando rendi meglio."
+
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "ZOWtIg"
+msgid "Past 90 days"
+msgstr "Ultimi 90 giorni"
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"

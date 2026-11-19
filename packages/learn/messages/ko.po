@@ -47,7 +47,6 @@ msgstr "두뇌력"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
-#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -77,7 +76,6 @@ msgstr "건너뜀"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
-#: src/today/today-day-progress.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 #: src/week/logbook-screen.tsx
@@ -5300,7 +5298,7 @@ msgid "today"
 msgstr "오늘"
 
 #: src/journey/schedule-details.tsx
-#: src/today/today-day-progress.tsx
+#: src/today/today-segment-popover.tsx
 #: src/today/today-week-day.tsx
 msgctxt "sl8z6d"
 msgid "planned"
