@@ -50,25 +50,18 @@ internal fun ExamMockProgressSection(
     progress: ExamMockProgress,
     method: ExamViewScoring.Method,
 ) {
-    val latest = latestMock(progress, method)
-
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            SectionHeader(stringResource(R.string.exam_progress_title))
-            // With one mock exam, what the rows measure is the section's own line.
-            if (latest != null && latest.change == null) {
-                Text(latest.measure, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-            }
-        }
-        ProgressCard(progress, latest)
+        SectionHeader(stringResource(R.string.exam_progress_title))
+        ProgressCard(progress, method)
     }
 }
 
 @Composable
 private fun ProgressCard(
     progress: ExamMockProgress,
-    latest: LatestMock?,
+    method: ExamViewScoring.Method,
 ) {
+    val latest = latestMock(progress, method)
     val first = progress.mocks.firstOrNull()
     val last = progress.mocks.lastOrNull()
     val trends = progress.subjects.any { it.change != null }
@@ -77,7 +70,7 @@ private fun ProgressCard(
         Text(it, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
     }
 
-    if (latest?.change != null) LatestMockTile(latest)
+    if (latest != null) LatestMockTile(latest)
 
     if (first != null && last != null && progress.mocks.size > 1) {
         val points =
@@ -138,8 +131,6 @@ private fun latestMock(
 
 @Composable
 private fun LatestMockTile(latest: LatestMock) {
-    val change = latest.change ?: return
-
     StatTiles(
         columns = 1,
         tiles =
@@ -150,23 +141,16 @@ private fun LatestMockTile(latest: LatestMock) {
                     modifier = modifier,
                     detail = latest.measure,
                     icon = { Icon(painterResource(R.drawable.ic_timer), contentDescription = null, modifier = it) },
-                    footer = {
-                        Text(
-                            stringResource(R.string.exam_since_first, signedChange(change)),
-                            color =
-                                if (change >
-                                    0
-                                ) {
-                                    MaterialTheme.colorScheme.onTertiaryContainer
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                },
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    },
+                    footer = latest.change?.let { { SinceFirst(it) } },
                 )
             },
     )
+}
+
+@Composable
+private fun SinceFirst(change: Long) {
+    val color = if (change > 0) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+    Text(stringResource(R.string.exam_since_first, signedChange(change)), color = color, style = MaterialTheme.typography.bodySmall)
 }
 
 @Composable
