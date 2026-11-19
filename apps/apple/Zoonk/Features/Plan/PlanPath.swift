@@ -524,10 +524,21 @@ struct PlanSyllabusSection: View {
     PageSection {
       SharedExamsNote(exams: syllabus.sharedExams)
 
-      ForEach(syllabus.subjects) { subject in
-        NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
-          SyllabusSubjectRow(
-            subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
+      // Main's groups: the notice's in its order, then what the plan adds outside it.
+      ForEach(syllabus.subjectGroups) { group in
+        if group.extra {
+          SectionLabel(Text("Also in your plan", tableName: "Plan"))
+            .listRowSeparator(.hidden)
+        } else if let name = group.name {
+          SectionLabel(Text(name))
+            .listRowSeparator(.hidden)
+        }
+
+        ForEach(group.subjects) { subject in
+          NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
+            SyllabusSubjectRow(
+              subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
+          }
         }
       }
     } header: {
@@ -550,17 +561,39 @@ struct PlanSyllabusSection: View {
       }
     } footer: {
       SectionFooter {
-        if isExam {
-          Text(
-            "\(syllabus.subjects.count) subjects", tableName: "Plan",
-            comment: "How many subjects the exam has")
-        } else {
-          Text(
-            "\(syllabus.subjects.count) modules", tableName: "Plan",
-            comment: "How many modules the plan has")
-        }
+        count
       }
     }
+  }
+
+  /// Main's `useSectionCount`: the notice's own subjects, as the reveal counts them, with its topics;
+  /// the learner's material counts its topics.
+  @ViewBuilder private var count: some View {
+    let subjects = syllabus.subjects.filter { $0.source == "notice" }.count
+
+    if syllabus.fromMaterial {
+      Text(
+        "\(syllabus.topicCount > 0 ? syllabus.topicCount : subjects) topics from your material",
+        tableName: "Plan",
+        comment: "How many topics a plan built from the learner's own material holds")
+    } else if syllabus.kind == "notice" && syllabus.topicCount > 0 {
+      FactSegments([
+        subjectsText(subjects),
+        String(
+          localized: "\(syllabus.topicCount) topics", table: "Plan",
+          comment: "How many topics a subject has"),
+      ])
+    } else if goalKind == .exam {
+      Text(verbatim: subjectsText(syllabus.kind == "notice" ? subjects : syllabus.subjects.count))
+    } else {
+      Text(
+        "\(syllabus.subjects.count) modules", tableName: "Plan",
+        comment: "How many modules the plan has")
+    }
+  }
+
+  private func subjectsText(_ count: Int) -> String {
+    String(localized: "\(count) subjects", table: "Plan", comment: "How many subjects the exam has")
   }
 }
 
@@ -659,12 +692,12 @@ struct SyllabusSubjectRow: View {
     } words: {
       VStack(alignment: .leading, spacing: 6) {
         VStack(alignment: .leading, spacing: 2) {
-          Text(subject.name)
+          Text(subject.shortName)
             .typeStyle(.rowTitle)
             .foregroundStyle(
               subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground
             )
-            .layoutPart(.label, text: Text(subject.name))
+            .layoutPart(.label, text: Text(subject.shortName))
 
           AlsoInExams(exams: sharedExams)
         }
