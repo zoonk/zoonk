@@ -1,9 +1,9 @@
 "use client";
 
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
+import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { useExtracted, useFormatter } from "next-intl";
 import { useId } from "react";
-import { ChoiceList } from "../onboarding/choice-list";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
@@ -61,21 +61,25 @@ export function WrittenCadenceChoice({
         {title}
       </h3>
 
-      <ChoiceList
-        choices={cadences.map((cadence) => ({
-          label: cadence === "weekly" ? t("Every week (recommended)") : words.label(cadence),
-          value: cadence,
-        }))}
-        label={title}
-        numberKeys={false}
-        onChange={(cadence) => {
-          if (cadence !== practice.cadence) {
+      <NativeSelect
+        aria-labelledby={labelId}
+        disabled={pending}
+        focusableWhenDisabled
+        onChange={(event) => {
+          const cadence = cadences.find((option) => option === event.target.value);
+
+          if (cadence && cadence !== practice.cadence) {
             onChange(cadence, choice.pick(cadence));
           }
         }}
-        readOnly={pending}
         value={choice.shown}
-      />
+      >
+        {cadences.map((cadence) => (
+          <NativeSelectOption key={cadence} value={cadence}>
+            {cadence === "weekly" ? t("Every week (recommended)") : words.label(cadence)}
+          </NativeSelectOption>
+        ))}
+      </NativeSelect>
     </section>
   );
 }

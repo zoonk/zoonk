@@ -6,14 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -140,7 +135,6 @@ fun DailyTimePicker(
 }
 
 /** Main's time select: the time a day [label] names, picked from every daily time. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeSelect(
     label: String,
@@ -150,33 +144,17 @@ fun TimeSelect(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
     val locale = currentLocale()
 
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }, modifier = modifier) {
-        OutlinedTextField(
-            value = value?.let { formatMinutes(it, locale) }.orEmpty(),
-            onValueChange = {},
-            modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled),
-            enabled = enabled,
-            readOnly = true,
-            label = label,
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-            singleLine = true,
-        )
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            pickerTimes(times, value).forEach { minutes ->
-                DropdownMenuItem(
-                    text = { Text(formatMinutes(minutes, locale)) },
-                    onClick = {
-                        expanded = false
-                        onPick(minutes)
-                    },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                )
-            }
-        }
-    }
+    MenuSelect(
+        label = label,
+        options = pickerTimes(times, value),
+        value = value,
+        optionLabel = { formatMinutes(it, locale) },
+        onPick = onPick,
+        modifier = modifier,
+        enabled = enabled,
+    )
 }
 
 private val MENU_ITEM_HEIGHT = 48.dp
