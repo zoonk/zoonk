@@ -190,8 +190,6 @@ fun GoalSetupScreen(
                 !first.stopped,
         key = run.id,
     ) { store.onboardings[vm.goalId].refreshed() }
-    val profileSteps = (vm.flow.history + listOfNotNull(step) + view?.steps.orEmpty()).filter { it.profileQuestion != null }.distinct()
-    val profileIndex = profileSteps.indexOf(step)
     val inQuestions = step != null && step != OnboardingStep.PLAN
     val testing = vm.placementProgress.takeIf { step == OnboardingStep.PLACEMENT }
     val back = { vm.back() }.takeIf { inQuestions && testing == null && vm.flow.goingBack() != null }
@@ -222,12 +220,6 @@ fun GoalSetupScreen(
             when {
                 testing != null -> {
                     Text(vm.placementProgressLabel ?: stringResource(R.string.onboarding_placement_progress))
-                }
-
-                profileIndex >= 0 -> {
-                    if (profileSteps.size > 1) {
-                        Text(stringResource(R.string.profile_questions_count, profileIndex + 1, profileSteps.size))
-                    }
                 }
 
                 else -> {

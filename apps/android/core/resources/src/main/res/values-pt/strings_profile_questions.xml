@@ -12,7 +12,6 @@
   "profile_questions_conditions_description_settings": "8abe097b9debf16ceca455ac93c1f634f7be15480e3cfd30345fd83a095c26a4",
   "profile_questions_conditions_saved": "400e40d4888a672ae7c1e95a4c34bbd9ba42e608c3c376470484b2d70355c8e2",
   "profile_questions_conditions_title": "a2b418c6612ea166df3b50804cee5532aa7f1908f6bf2f82b2dc90ed20a8dd76",
-  "profile_questions_count": "f619b7b52d01b48abcb7c0a6a8e5db39a436fb5a637e2632205d3a4c46490d78",
   "profile_questions_description": "d5e4962a793317e8a5cf78afff0e17e1ca30daef5790d0787c4cc8523f112a3e",
   "profile_questions_earlier_answer": "db03489c94dcc62d96cbceebcb1284bf4038f88319bc14e7c1eb6714ed8e2535",
   "profile_questions_for_fun": "7610c12486196101942815f86379413f320c213a5a2da2b61dc588b06c41b145",
@@ -82,7 +81,6 @@
 <resources>
     <string name="profile_questions_title">Sobre você</string>
     <string name="profile_questions_description">O que você conta aqui ajuda a personalizar seus exemplos e seu parceiro. Tudo é opcional.</string>
-    <string name="profile_questions_count">%1$d de %2$d</string>
     <string name="profile_questions_skip_all">Pular tudo</string>
     <string name="profile_questions_skip_all_label">Pular o resto das perguntas sobre você</string>
     <string name="profile_questions_never_ask">Não me faça essas perguntas de novo</string>

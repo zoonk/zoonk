@@ -12,7 +12,6 @@
   "profile_questions_conditions_description_settings": "7ee65e4b742d0d622a8f11a92daecbb1ccc65875a32b56830fe2a47715749d69",
   "profile_questions_conditions_saved": "642ac4860fb448cfe551ff752a93f84b06f6ebb05f57fd00749c349918420a00",
   "profile_questions_conditions_title": "f8e222e2ff5f428cd85f9b8646558a48412a8b9feaf801862e9ef3d2b570e899",
-  "profile_questions_count": "acf30063dd54e7faf9a3743fae1acaa3a96333ca318b6d17667da66a5f190072",
   "profile_questions_description": "cd68a2bf08dafdf6f82043e5cc73fc0aad29eb5be3bb129ec121f2b31856c5b6",
   "profile_questions_earlier_answer": "817c74f735a4040672f6a2e425e0fa8a8dc8de4473d8d713f9d48bd2792e03eb",
   "profile_questions_for_fun": "297a17d7b0a150255b77025c0518e58a7a88e4f27542c143102cf5c7d590cccb",
@@ -82,7 +81,6 @@
 <resources>
     <string name="profile_questions_title">À propos de toi</string>
     <string name="profile_questions_description">Ce que tu nous dis ici nous aide à personnaliser tes exemples et ton compagnon. Tout est facultatif.</string>
-    <string name="profile_questions_count">%1$d sur %2$d</string>
     <string name="profile_questions_skip_all">Tout sauter</string>
     <string name="profile_questions_skip_all_label">Sauter les questions restantes sur toi</string>
     <string name="profile_questions_never_ask">Ne plus me poser ces questions</string>

@@ -48,14 +48,14 @@ export function getSetupProgress({
     QUESTIONS_THAT_ADD_QUESTIONS.includes(step),
   );
 
-  if (!isSetupQuestion(current) || isProfileQuestion(current) || !countKnown) {
+  if (!isSetupQuestion(current) || !countKnown) {
     return null;
   }
 
   return getPlace({
     ahead: view.steps.filter((step) => isSetupQuestion(step)).map((step) => toDot(step)),
     behind: history.filter((step) => isSetupQuestion(step)).map((step) => toDot(step)),
-    current,
+    current: toDot(current),
   });
 }
 

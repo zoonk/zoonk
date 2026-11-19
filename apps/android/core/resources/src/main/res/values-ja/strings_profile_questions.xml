@@ -12,7 +12,6 @@
   "profile_questions_conditions_description_settings": "e25154d0f0cec5a2d73d437455a426f9e62f9ddc81cd57b09d41e95e40ba824c",
   "profile_questions_conditions_saved": "82d6ffa267e60758d035ab23b19a3da241abc942d04aa4d45613e295a5b3388f",
   "profile_questions_conditions_title": "699c506c665fa9ab545d11496be345aeb1786479ad8879bcb2541a9cce1a57f1",
-  "profile_questions_count": "97c78a0b2d2022c9acb858a181d64449e3144ae3202a133e17d96eca94e121fb",
   "profile_questions_description": "79c3dbfa373a2988476187c57ffc1f408071828a2b8f39ff84d204cf631cb8fd",
   "profile_questions_earlier_answer": "d49b1cf755b54bd53204342560383dc0dd42b8c65b7492f980fd037bb014534a",
   "profile_questions_for_fun": "ef909e3db5f0e38b4e291c231ed27e3d67dd1bcddedca291653e3da8e46b2882",
@@ -82,7 +81,6 @@
 <resources>
     <string name="profile_questions_title">プロフィール</string>
     <string name="profile_questions_description">ここで教えてくれたことを、学習で使う例や相棒とのやり取りに反映します。回答はすべて任意です。</string>
-    <string name="profile_questions_count">%1$d / %2$d</string>
     <string name="profile_questions_skip_all">すべてスキップする</string>
     <string name="profile_questions_skip_all_label">プロフィールに関する残りの質問をスキップする</string>
     <string name="profile_questions_never_ask">今後これらの質問を表示しない</string>

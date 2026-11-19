@@ -12,7 +12,6 @@
   "profile_questions_conditions_description_settings": "0a0f12c9f9ab27028017dcd86096828f7edb91acd5147fc701678f568d742842",
   "profile_questions_conditions_saved": "86ec00d74d7376305826ab16e72230ac4696a80d1b6e49bffc06d6faa40b27b4",
   "profile_questions_conditions_title": "99566990e145924f88e9f0572425f61bbeac8231772071820417c64545d5f7c7",
-  "profile_questions_count": "096cadeef04cde06ef37553f7a3622802af78244c0009d5342ac775a98a540ff",
   "profile_questions_description": "eff7545ef4c45ab4756611f5f39c776e07f544fb4ec1e527336f86a79e93f27f",
   "profile_questions_earlier_answer": "5bc8c6f824ab9ff113e54a0bed254166ff467a9539ea289abd76fa3b44d7f352",
   "profile_questions_for_fun": "d18f084b9524305cad455cb36112c39e7d7629da45ea8e6562001a227dddb9cb",
@@ -82,7 +81,6 @@
 <resources>
     <string name="profile_questions_title">O tobie</string>
     <string name="profile_questions_description">Twoje odpowiedzi pomogą nam dopasować przykłady i twojego kumpla do ciebie. Możesz pominąć dowolne pytanie.</string>
-    <string name="profile_questions_count">%1$d z %2$d</string>
     <string name="profile_questions_skip_all">Pomiń wszystkie</string>
     <string name="profile_questions_skip_all_label">Pomiń pozostałe pytania o tobie</string>
     <string name="profile_questions_never_ask">Nie chcę ponownie widzieć tych pytań</string>

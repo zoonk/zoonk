@@ -12,7 +12,6 @@
   "profile_questions_conditions_description_settings": "a6c67f54d835de1e0588ec492736336617ebcff26a0e7176eedb224806c5030a",
   "profile_questions_conditions_saved": "4b6ad5691478e86710740421c422a3ccbbec9a7677ccab100914f44dfd476ec3",
   "profile_questions_conditions_title": "8d166896a970fc3bb9dce6e5c91c574ccc863ac7838f64131c78aa9a5e6cbba1",
-  "profile_questions_count": "3cb52ebe63cd7d35b1a37dabbb07936450429cc5ea4f827527e878413b4e0152",
   "profile_questions_description": "2b7e129301372058e29449306ae0baae192ce5639ec384dda022cd9a7d595301",
   "profile_questions_earlier_answer": "2181daf0095cda194d9d7db77e0671fc05f07ead9e87702b4771c9c6ee5ce866",
   "profile_questions_for_fun": "07e6fb1fc47529659580a5003d92b07e7b4ef1e022344009772681114300b26d",
@@ -82,7 +81,6 @@
 <resources>
     <string name="profile_questions_title">내 소개</string>
     <string name="profile_questions_description">여기서 알려 주신 내용은 예시와 짝꿍에 반영돼요. 모든 항목은 선택 사항이에요.</string>
-    <string name="profile_questions_count">%1$d / %2$d</string>
     <string name="profile_questions_skip_all">모두 건너뛰기</string>
     <string name="profile_questions_skip_all_label">나에 대한 나머지 질문 건너뛰기</string>
     <string name="profile_questions_never_ask">이 질문들 다시 묻지 않기</string>
