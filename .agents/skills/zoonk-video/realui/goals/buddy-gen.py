@@ -14,12 +14,11 @@ MAIN = f"{R}/apps/main/src"
 # source file -> copy name (without the buddy-main- prefix)
 FILES = {
     f"{MAIN}/lib/belt-colors.ts": "belt-colors",
-    f"{STATS}/level/level-stats.tsx": "level-stats",
     f"{STATS}/level/level-progression.tsx": "level-progression",
     f"{STATS}/level/belt-rack.tsx": "belt-rack",
     f"{STATS}/energy/energy-stats.tsx": "energy-stats",
     f"{STATS}/energy/energy-chart.tsx": "energy-chart",
-    f"{MAIN}/components/progress/progress-day-count-label.ts": "progress-day-count-label",
+    f"{STATS}/_components/stats-calendar.tsx": "stats-calendar",
     f"{MAIN}/components/learn/section-page.tsx": "section-page",
     f"{MAIN}/components/learn/section-layout.tsx": "section-layout",
     f"{STATS}/_components/stats-page.tsx": "stats-page",

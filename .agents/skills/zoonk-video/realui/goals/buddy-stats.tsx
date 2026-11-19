@@ -6,9 +6,8 @@ import { useExtracted } from "next-intl";
 import { type Lang } from "../story";
 import { DEFAULT_BP, buddyStatus, tabBuddy } from "./buddy-energy";
 import { EnergyChart } from "./buddy-main-energy-chart";
-import { EnergyLine, EnergyTiles } from "./buddy-main-energy-stats";
+import { EnergyTiles } from "./buddy-main-energy-stats";
 import { LevelProgression } from "./buddy-main-level-progression";
-import { LevelLine, LevelTiles } from "./buddy-main-level-stats";
 import { SectionPage } from "./buddy-main-section-page";
 import { StatsPage } from "./buddy-main-stats-page";
 import { AppFrame } from "./shell";
@@ -76,9 +75,7 @@ function LevelBody({ bp }: { bp: number }) {
   return (
     <StatsPage title={t("Level")}>
       <ProgressContent>
-        <LevelTiles level={level} />
         <LevelProgression currentBelt={level} />
-        <LevelLine />
       </ProgressContent>
     </StatsPage>
   );
@@ -131,8 +128,7 @@ function EnergyBody({ current }: { current: number }) {
           currentEnergy={current}
           insights={{ averageEnergy: average, fullEnergyDays: full }}
         />
-        <EnergyChart days={days as any} />
-        <EnergyLine />
+        <EnergyChart days={days} />
       </ProgressContent>
     </StatsPage>
   );
