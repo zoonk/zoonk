@@ -33,13 +33,13 @@ export const planItemSchema = z
       .string()
       .meta({
         description:
-          "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)",
+          "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course), or in a language plan the topic's own name",
       }),
     writing: z
       .boolean()
       .meta({
         description:
-          "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name",
+          "A stand-in for a skill whose lessons are still being written: `title` is its course's, or in a language plan its topic's",
       }),
   })
   .meta({ id: "PlanItem" });

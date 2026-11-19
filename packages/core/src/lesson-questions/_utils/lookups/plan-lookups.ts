@@ -153,6 +153,7 @@ async function lookUpSchedule({
     plan,
     skillAreas: getSkillAreas({
       courseTitle: plan.course?.title ?? null,
+      goalKind: goal.kind,
       skills: parsePlanGraph(saved.graph).skills,
     }),
   };

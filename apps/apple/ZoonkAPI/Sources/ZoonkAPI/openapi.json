@@ -84807,11 +84807,11 @@
                 },
                 "title": {
                   "type": "string",
-                  "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)"
+                  "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course), or in a language plan the topic's own name"
                 },
                 "writing": {
                   "type": "boolean",
-                  "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name"
+                  "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, or in a language plan its topic's"
                 }
               },
               "required": [
@@ -86052,11 +86052,11 @@
           },
           "title": {
             "type": "string",
-            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)"
+            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course), or in a language plan the topic's own name"
           },
           "writing": {
             "type": "boolean",
-            "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name"
+            "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, or in a language plan its topic's"
           }
         },
         "required": [
