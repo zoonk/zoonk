@@ -40,9 +40,13 @@ export function SettingsAccountButton({ status }: { status: "guest" | "visitor" 
   const askedClass = useAskedClass();
   const className = buttonVariants({ className: askedClass, size: "bar", variant: "outline" });
 
+  // From `lg` the sidebar ends with its own "Log in".
   if (status === "visitor") {
     return (
-      <CurrentPageLoginLink className={className} icon={<LogInIcon aria-hidden="true" />}>
+      <CurrentPageLoginLink
+        className={cn(className, "lg:hidden")}
+        icon={<LogInIcon aria-hidden="true" />}
+      >
         {t("Log in")}
       </CurrentPageLoginLink>
     );
