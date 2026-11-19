@@ -7,7 +7,6 @@
   "goalcontent_also_in_plan": "f06b362de814c0f403dfc4cf0f63457b5519ae4088da6cbb6bf2cb1792e98749",
   "goalcontent_asked_a_lot": "d86f0fc3be1c1058005d7138c4655856f166cbb3c0bd3f6a9a80fdac5e574aff",
   "goalcontent_bring_back": "6b56364d43374b204e1335e4a7d479d9063773e4e7a6f32d18227570c59bbb82",
-  "goalcontent_chapter_count": "33d5b50ba36acea5b6fbf72dd589e5a41de2797168a8c959792cea6fab77469f",
   "goalcontent_chapter_number": "b6b348989a6bf77bf906cf671fed9e8bf7b828116d05c72319c4a023774a6634",
   "goalcontent_chapter_summary": "3b6fe51dbe80a012e8548101ba312ff4cfd58cfb3780ed2336a24ab822f53c49",
   "goalcontent_chapters": "9808ea48186216bb6102e993d09ab1307fd40d70c12f829ebae9b1c40e014f6e",
@@ -82,7 +81,6 @@
   "goalcontent_topic_in_progress": "557e9f9903691af0336a30728f99be8ad3d1740061080bdbee24c9f285556582",
   "goalcontent_topic_known": "a560c347e01f60132b992252bb7adf30dfcbde4a8e90980525869918dd8f7ef3",
   "goalcontent_topic_to_study": "594ae4f73a4c816aed5570eac05673c77805f6f36653af97a3c9bc5e0a38a445",
-  "goalcontent_topics": "bdc95d2b67a278160123ad024fef2ea2182b21a66ffb348804ae10f10fa6d65e",
   "goalcontent_topics_in_guide": "870035af437beca0bf99113f87adf181e8440bc73972bc7bfce856fecf5624fb",
   "goalcontent_topics_in_material": "18ecf2183cec428aa6acea84843ad1bf45f51652082b37365d251991cd181d6e",
   "goalcontent_topics_in_notice": "f55c4fb83916ce5ef63311452b1f8e8de1aa09e1187fae2e830a9eba8c21fd8e",
@@ -111,10 +109,6 @@
     <plurals name="goalcontent_material_topic_count">
         <item quantity="one">Materyalinden %d konu</item>
         <item quantity="other">Materyalinden %d konu</item>
-    </plurals>
-    <plurals name="goalcontent_chapter_count">
-        <item quantity="one">%d ünite</item>
-        <item quantity="other">%d ünite</item>
     </plurals>
     <plurals name="goalcontent_lesson_count">
         <item quantity="one">%d ders</item>
@@ -202,7 +196,6 @@
     <string name="goalcontent_details">Ayrıntılar</string>
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Sorular</string>
-    <string name="goalcontent_topics">Konular</string>
     <string name="goalcontent_chapters">Üniteler</string>
     <!-- The next day the plan studies a subject. -->
     <string name="goalcontent_next_date">Sonraki çalışma günü</string>

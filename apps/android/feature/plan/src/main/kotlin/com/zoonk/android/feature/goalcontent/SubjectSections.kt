@@ -295,19 +295,6 @@ private fun SubjectDetails(
         if (questions != null) {
             PropertyRow(stringResource(R.string.goalcontent_questions), listOfNotNull(number(questions), edition).factsLine())
         }
-        if (subject.topics.isNotEmpty()) {
-            PropertyRow(
-                stringResource(R.string.goalcontent_topics),
-                stringResource(R.string.goalcontent_count_of, number(subject.topicsStudied ?: 0), number(subject.topics.size)),
-            )
-        }
-        if (subject.chapters.isNotEmpty()) {
-            val done = subject.chapters.doneChapters.size
-            PropertyRow(
-                stringResource(R.string.goalcontent_chapters),
-                stringResource(R.string.goalcontent_chapters_progress, number(done), number(subject.chapters.size)),
-            )
-        }
         if (nextDate != null) {
             PropertyRow(stringResource(R.string.goalcontent_next_date), formatPlanDate(nextDate.toJavaLocalDate(), today, locale))
         }

@@ -145,23 +145,18 @@ private struct SubjectContent: View {
 
   private var sharedExams: [GoalSyllabus.SharedExam] { syllabus.sharedExams(of: subject) }
 
-  /// Main's subject facts: its questions on the exam, its topics and chapters, and how much is done
-  /// while it's taught in lessons.
+  /// Main's subject facts: its questions on the exam. Topics and chapters count themselves over
+  /// their lists.
   private var facts: [String] {
-    [
-      subject.questions.flatMap { questions in
-        questions > 0
-          ? String(
-            localized: "\(questions) questions from past exams", table: "Plan",
-            comment: "Past exam questions available for a subject")
-          : nil
-      },
-      subject.topics.isEmpty
-        ? nil
-        : String(
-          localized: "\(subject.topics.count) topics", table: "Plan",
-          comment: "How many topics a subject has"),
-    ].compactMap(\.self)
+    guard let questions = subject.questions, questions > 0 else {
+      return []
+    }
+
+    return [
+      String(
+        localized: "\(questions) questions from past exams", table: "Plan",
+        comment: "Past exam questions available for a subject")
+    ]
   }
 
   private var header: some View {
@@ -397,14 +392,6 @@ private struct SubjectPreparation: View {
           .foregroundStyle(.mutedForeground)
         }
         .typeStyle(.meta)
-      }
-
-      // The page's topics and chapters count lessons, so a number they don't explain says what it
-      // counts.
-      if share > 0 {
-        Text("Counts your answers in lessons, practice and tests.", tableName: "Plan")
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
       }
     }
     .padding(.vertical, 4)

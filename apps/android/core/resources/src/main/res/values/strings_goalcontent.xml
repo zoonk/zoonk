@@ -20,10 +20,6 @@
         <item quantity="one">%d topic from your material</item>
         <item quantity="other">%d topics from your material</item>
     </plurals>
-    <plurals name="goalcontent_chapter_count">
-        <item quantity="one">%d chapter</item>
-        <item quantity="other">%d chapters</item>
-    </plurals>
     <plurals name="goalcontent_lesson_count">
         <item quantity="one">%d lesson</item>
         <item quantity="other">%d lessons</item>
@@ -111,7 +107,6 @@
     <string name="goalcontent_details">Details</string>
     <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Questions</string>
-    <string name="goalcontent_topics">Topics</string>
     <string name="goalcontent_chapters">Chapters</string>
     <!-- The next day the plan studies a subject. -->
     <string name="goalcontent_next_date">Next date</string>

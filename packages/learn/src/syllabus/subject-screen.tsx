@@ -18,7 +18,6 @@ import {
   PageSectionTitle,
 } from "../_components/page";
 import { FactSegments } from "../_components/task-meta";
-import { useExamQuestionCount } from "../exam/use-exam-question-count";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { useAlsoIn } from "./shared-exams";
@@ -66,22 +65,12 @@ function useOriginFact({
   return kind === "notice" ? t("Also in your plan") : null;
 }
 
-function useWeightFact({
-  fromPastExams,
-  subject,
-}: {
-  fromPastExams: boolean;
-  subject: SyllabusSubject;
-}): string | null {
+/** A subject's weight when the exam gives no question count, which Details shows otherwise. */
+function useShareFact(subject: SyllabusSubject): string | null {
   const t = useExtracted();
   const format = useFormatter();
-  const questionCount = useExamQuestionCount();
 
-  if (subject.questions) {
-    return questionCount(subject.questions, fromPastExams);
-  }
-
-  if (subject.share === null) {
+  if (subject.questions || subject.share === null) {
     return null;
   }
 
@@ -92,32 +81,26 @@ function useWeightFact({
 
 function SubjectFacts({
   fromMaterial,
-  fromPastExams,
   kind,
   sharedExams,
   subject,
 }: {
   fromMaterial: boolean;
-  fromPastExams: boolean;
   kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
 }) {
-  const t = useExtracted();
   const doneShare = useDoneShare();
   const origin = useOriginFact({ fromMaterial, kind, subject });
-  const weight = useWeightFact({ fromPastExams, subject });
+  const share = useShareFact(subject);
   const known = useKnownLine()(subject);
   const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const inLessons = !subject.notPlannedReason && subject.preparation === null;
 
+  // Topics and chapters count themselves over their lists, and Details names the questions.
   const facts = [
     origin,
-    weight,
-    subject.topics.length > 0 &&
-      t("{count, plural, one {# topic} other {# topics}}", { count: subject.topics.length }),
-    subject.chapters.length > 0 &&
-      t("{count, plural, one {# chapter} other {# chapters}}", { count: subject.chapters.length }),
+    share,
     inLessons && doneShare(getSubjectShare(getSubjectBar(subject))),
   ].filter(Boolean);
 
@@ -160,13 +143,11 @@ function SubjectBottomBar({
 
 function SubjectHeader({
   fromMaterial,
-  fromPastExams,
   kind,
   sharedExams,
   subject,
 }: {
   fromMaterial: boolean;
-  fromPastExams: boolean;
   kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
@@ -177,7 +158,6 @@ function SubjectHeader({
         <DetailTitle>{subject.shortName ?? subject.name}</DetailTitle>
         <SubjectFacts
           fromMaterial={fromMaterial}
-          fromPastExams={fromPastExams}
           kind={kind}
           sharedExams={sharedExams}
           subject={subject}
@@ -262,7 +242,6 @@ export function SubjectScreen({
       <DetailAside>
         <SubjectHeader
           fromMaterial={syllabus.fromMaterial}
-          fromPastExams={syllabus.questionsSource !== null}
           kind={syllabus.kind}
           sharedExams={syllabus.sharedExams}
           subject={subject}
