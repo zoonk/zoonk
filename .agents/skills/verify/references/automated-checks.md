@@ -4,7 +4,7 @@ Step 2 of [verify](../SKILL.md): the change's checks, the owner of each shared r
 
 ## Run the change's checks
 
-Format and lint the touched files (lint after format), typecheck their packages and run the affected tests, with the containing suites when the reach is broad: [checks for a change](../../../guides/checks.md) has the table. Before a PR, run them for the whole branch on the final tree. A check that fails is investigated and fixed, never rerun until green.
+Format and lint the touched files (lint after format), typecheck their packages and run the affected tests, with the containing suites when the reach is broad: [checks for a change](../../../guides/checks.md) has the table. Before a PR, run them for the whole branch on the final tree.
 
 ## Find the owner of a shared rule
 
