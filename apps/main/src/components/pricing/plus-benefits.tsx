@@ -2,7 +2,7 @@ import { getExtracted } from "next-intl/server";
 import { PlanIncludes } from "./plan-includes";
 
 /** Call minutes stay off it, with or without Plus: Plus has higher call limits, never a number. */
-export async function PlusBenefits() {
+export async function PlusBenefits({ summaryAs }: { summaryAs?: "card" | "section" }) {
   const t = await getExtracted();
 
   return (
@@ -15,6 +15,7 @@ export async function PlusBenefits() {
         { id: "certificates", text: t("A certificate for every level you finish") },
       ]}
       summary={t("Every goal · every lesson")}
+      summaryAs={summaryAs}
     />
   );
 }
