@@ -151,9 +151,15 @@ export async function makePiece(world: HTMLElement, spec: PieceSpec): Promise<Pi
         range.selectNodeContents(node);
         return [...range.getClientRects()];
       });
-      const controls = [...doc.querySelectorAll("button")].map((node) =>
-        node.getBoundingClientRect(),
-      );
+      // A control's own edge or fill reaches past its words; a bare one (a full-width trigger) is only its words.
+      const drawn = (node: Element) => {
+        const style = win.getComputedStyle(node);
+        const fill = style.backgroundColor !== "rgba(0, 0, 0, 0)";
+        return fill || Number.parseFloat(style.borderRightWidth) > 0;
+      };
+      const controls = [...doc.querySelectorAll("button")]
+        .filter(drawn)
+        .map((node) => node.getBoundingClientRect());
       const inside = [...words, ...controls].filter(
         (at) => at.width > 0 && at.left >= box.x && at.top >= box.y && at.bottom <= box.y + box.h,
       );

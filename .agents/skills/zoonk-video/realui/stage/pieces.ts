@@ -21,7 +21,12 @@ export type PieceOptions = {
 };
 
 function base(screen: Screen, who: LearnerId, { query, w, wide }: PieceOptions, wideWidth: number) {
-  const view = [`view=learner-${screen}`, `learner=${who}`, `lang=${LEARNERS[who].lang}`, query]
+  const view = [
+    `views=learners&view=learner-${screen}`,
+    `learner=${who}`,
+    `lang=${LEARNERS[who].lang}`,
+    query,
+  ]
     .filter(Boolean)
     .join("&");
   return { view, w: w ?? (wide ? wideWidth : PHONE) };
