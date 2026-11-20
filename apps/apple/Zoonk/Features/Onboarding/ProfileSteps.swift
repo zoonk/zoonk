@@ -47,7 +47,9 @@ struct ProfileQuestionSections: View {
         conditions
       case .learningSupport:
         learningSupport
-      case .tools, .watch, .listen, .play, .read, .activities:
+      case .tools:
+        tools
+      case .watch, .listen, .play, .read, .activities:
         interests
       }
     }
@@ -113,9 +115,32 @@ struct ProfileQuestionSections: View {
     Section {
       LabeledField(
         label: ProfileCopy.favoritesLabel(view.id), prompt: ProfileCopy.favoritesPrompt(view.id),
-        text: limited($draft.text, to: 120))
+        text: limited($draft.text, to: ProfileDraft.favoritesLimit))
+    }
+  }
+
+  /// Typed tools become chips under the field, so adding one moves nothing above it.
+  @ViewBuilder private var tools: some View {
+    Section {
+      chips
     }
 
+    Section {
+      ToolField(
+        label: ProfileCopy.favoritesLabel(view.id), prompt: ProfileCopy.favoritesPrompt(view.id),
+        draft: $draft)
+
+      if !draft.typedTools.isEmpty {
+        FlowLayout(spacing: 8) {
+          ForEach(draft.typedTools, id: \.self) { name in
+            TypedToolChip(name: name) {
+              draft.removeTypedTool(name)
+            }
+          }
+        }
+        .listRowSeparator(.hidden)
+      }
+    }
   }
 
   @ViewBuilder private var studies: some View {
@@ -247,18 +272,12 @@ struct ProfileQuestionSections: View {
 
   // MARK: Parts
 
-  /// Once three are picked, the others dim until one is let go, as the line under the title says.
   private var chips: some View {
-    let isFull = view.id.pickLimit.map { draft.picks.count >= $0 } ?? false
-
-    return FlowLayout(spacing: 8) {
+    FlowLayout(spacing: 8) {
       ForEach(view.options, id: \.id) { option in
-        let isOn = draft.picks.contains(option.id)
-
-        ProfileChip(label: Text(option.label), isOn: isOn) {
+        ProfileChip(label: Text(option.label), isOn: draft.picks.contains(option.id)) {
           draft.toggle(option.id)
         }
-        .disabled(isFull && !isOn)
       }
     }
     .listRowSeparator(.hidden)
@@ -294,8 +313,8 @@ private func limited(_ text: Binding<String>, to limit: Int) -> Binding<String> 
 }
 
 /// Main's profile chip: picked, its tint and ink line, so picking it never changes its width.
-private struct ProfileChip: View {
-  let label: Text
+private struct ProfileChip<Label: View>: View {
+  let label: Label
   let isOn: Bool
   let action: () -> Void
 
@@ -312,6 +331,61 @@ private struct ProfileChip: View {
     }
     .buttonStyle(.plain)
     .accessibilityAddTraits(isOn ? .isSelected : [])
+  }
+}
+
+/// A typed tool: a picked chip that removes it when tapped.
+private struct TypedToolChip: View {
+  let name: String
+  let remove: () -> Void
+
+  var body: some View {
+    ProfileChip(
+      label: HStack(spacing: 6) {
+        Text(verbatim: name)
+        Image(systemName: "xmark")
+          .imageScale(.small)
+          .foregroundStyle(.mutedForeground)
+      },
+      isOn: true, action: remove
+    )
+    .accessibilityLabel(
+      Text("Remove \(name)", tableName: "AboutYou", comment: "Removes a tool the learner typed")
+    )
+    .accessibilityRemoveTraits(.isSelected)
+  }
+}
+
+/// The tools field with its Add button. Add, Return, a comma or a semicolon turn what's typed into
+/// chips, and the field keeps focus for the next one.
+private struct ToolField: View {
+  let label: Text
+  let prompt: Text
+  @Binding var draft: ProfileDraft
+
+  @FocusState private var isFocused: Bool
+
+  var body: some View {
+    FormField(title: label, isFocused: isFocused) {
+      HStack(spacing: 8) {
+        MultilineTextField(
+          text: $draft.text, prompt: prompt, label: label, onSubmit: { draft.addTypedTools() }
+        )
+        .focused($isFocused)
+        .onChange(of: draft.text) {
+          draft.settleToolText()
+        }
+
+        Button {
+          draft.addTypedTools()
+        } label: {
+          Text("Add", tableName: "AboutYou", comment: "Adds the tool typed in the box as a chip")
+        }
+        .buttonStyle(.ghost)
+        .controlSize(.small)
+        .disabled(ProfileDraft.favorites(in: draft.text).isEmpty)
+      }
+    }
   }
 }
 
@@ -369,7 +443,7 @@ enum ProfileCopy {
   /// Shown before the learner has met their buddy, so it says "we".
   static func description(_ question: ProfileQuestion, inSettings: Bool) -> Text? {
     switch question {
-    case .addressForm:
+    case .addressForm, .tools, .watch, .listen, .play, .read, .activities:
       nil
     case .work:
       Text(
@@ -377,12 +451,8 @@ enum ProfileCopy {
         comment: "Under What do you do now?")
     case .studies:
       Text(
-        "Past or present, finished or not. Pick up to 3.", tableName: "AboutYou",
+        "Past or present, finished or not.", tableName: "AboutYou",
         comment: "Under What have you studied?")
-    case .tools, .watch, .listen, .play, .read, .activities:
-      Text(
-        "Pick up to 3.", tableName: "AboutYou",
-        comment: "Under the questions whose chips take up to three picks")
     case .conditions:
       inSettings
         ? Text(
