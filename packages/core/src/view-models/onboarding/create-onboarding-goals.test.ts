@@ -113,7 +113,7 @@ describe(createOnboardingGoals, () => {
       ).resolves.toMatchObject({ activeGoalId: studied });
     });
 
-    it("reports the runs a goal it found saved, each on its own, so only missing work starts", async () => {
+    it("reports the runs each goal saved, each on its own, so only missing work starts", async () => {
       const user = await userFixture();
       const card = await onboardingDraftFixture({ userId: user.id });
       mockSession(user.id);
@@ -135,7 +135,7 @@ describe(createOnboardingGoals, () => {
 
       const started = await send();
 
-      expect(first).toMatchObject({ saved: [] });
+      expect(first).toMatchObject({ saved: [{ generationId: null, goalId, researchId: null }] });
 
       expect(unstarted).toMatchObject({
         saved: [{ generationId: null, goalId, researchId: null }],

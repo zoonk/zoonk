@@ -29,7 +29,7 @@ import { type GoalCreateInput, type GoalDraft, type GoalView } from "./goal-cont
 
 export type GoalRefusal = { decision: RefusedUsage; index: number };
 
-/** The runs a goal a confirm already made saved, which a replay follows instead of paying again. */
+/** The runs each goal has saved, which a card confirmed again follows instead of paying again. */
 export type SavedRuns = { generationId: string | null; goalId: string; researchId: string | null };
 
 export type GoalCreateResult =
@@ -293,13 +293,11 @@ export async function createGoals(
   return {
     goals: await loadGoalViews({ activeGoalId, goals }),
     refused: results.refused,
-    saved: goals
-      .filter((goal) => !results.created.includes(goal.id))
-      .map((goal) => ({
-        generationId: goal.generationRunId,
-        goalId: goal.id,
-        researchId: goal.researchRunId,
-      })),
+    saved: goals.map((goal) => ({
+      generationId: goal.generationRunId,
+      goalId: goal.id,
+      researchId: goal.researchRunId,
+    })),
     status: "created",
   };
 }
