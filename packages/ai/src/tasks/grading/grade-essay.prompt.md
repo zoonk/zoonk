@@ -41,7 +41,7 @@ List in `errors` each passage that breaks the formal written standard of the ans
 
 ## Zero
 
-`zeroRuleIndex` is the index in `SCORING_BASIS.zeroing` of a rule the answer plainly falls under, such as an answer about another topic altogether or a different kind of text than the one asked. A zero wipes out every point the answer earned, so set it only when any examiner would agree: an answer that deals with the topic at all, however weakly, briefly or partly, isn't off the topic. Null otherwise.
+`zeroRuleIndex` is the index in `SCORING_BASIS.zeroing` of a rule the answer plainly falls under, such as an answer about another topic altogether or a different kind of text than the one asked. A zero wipes out every point the answer earned, so set it only when any examiner would agree: an answer that deals with the topic at all, however weakly, briefly or partly, isn't off the topic. When you set it, the criteria the rule leaves `missing` quote the passage that shows it, such as the sentence that states the answer's real topic. Null otherwise.
 
 ## Next step
 
