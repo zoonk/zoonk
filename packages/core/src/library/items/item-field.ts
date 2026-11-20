@@ -72,7 +72,16 @@ export function getAskedItemFilter({
           OR: [
             { mockOnly: false },
             { mockOnly: null },
-            ...(userId ? [{ mockUses: { some: { spentAt: { lte: new Date() }, userId } } }] : []),
+            ...(userId
+              ? [
+                  {
+                    AND: [
+                      { mockUses: { some: { mockExam: { status: "finished" as const }, userId } } },
+                      { attempts: { some: { mockExam: { status: "finished" as const }, userId } } },
+                    ],
+                  },
+                ]
+              : []),
           ],
         },
       ];

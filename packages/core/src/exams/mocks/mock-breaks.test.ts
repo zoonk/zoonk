@@ -5,11 +5,12 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { getItemAudienceFilter } from "../../library/items/item-field";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import { endMockBreak } from "./end-mock-break";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
-import { type MockView } from "./mock-contract";
+import { type MockView, mockConditionsSchema } from "./mock-contract";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
@@ -121,7 +122,7 @@ async function breakSetup() {
     throw new Error(`Expected a started mock, got ${started.status}`);
   }
 
-  return { id: started.id };
+  return { id: started.id, userId: user.id };
 }
 
 async function readMock(id: string): Promise<MockView> {
@@ -215,18 +216,86 @@ describe("a mock with the notice's breaks, tools and penalty", () => {
     await expect(endMockBreak({ blockId: id })).resolves.toStrictEqual({ status: "notOnBreak" });
   });
 
-  it("releases a section the learner finishes the mock before seeing", async () => {
+  it("spends unopened questions when the finished review shows their keys", async () => {
     const { id } = await breakSetup();
     await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 0 });
     await finishMock({ blockId: id, input: { timeZone: UTC } });
 
-    await expect(prisma.mockItemUse.count({ where: { mockExamId: id, section: 1 } })).resolves.toBe(
-      0,
-    );
+    await expect(
+      prisma.mockItemUse.count({
+        where: { mockExamId: id, section: 1, spentAt: { lte: SESSION_NOW } },
+      }),
+    ).resolves.toBe(6);
 
     await expect(prisma.mockItemUse.count({ where: { mockExamId: id, section: 0 } })).resolves.toBe(
       6,
     );
+  });
+
+  it("admits only questions from the paper the learner finished to practice", async () => {
+    const { id, userId } = await breakSetup();
+    const mock = await prisma.mockExam.findUniqueOrThrow({ where: { id } });
+    const conditions = mockConditionsSchema.parse(mock.conditions);
+    const [opening, second] = conditions.sections;
+    const first = opening?.itemIds[0];
+    const chosen = second?.itemIds[0];
+
+    if (!opening || !second || !first || !chosen) {
+      throw new Error("Expected two mock sections with questions");
+    }
+
+    const chosenItem = await prisma.item.findUniqueOrThrow({ where: { id: chosen } });
+
+    const alternative = await itemFixture({
+      content: choiceItemContent(),
+      examBlueprintId: mock.examBlueprintId,
+      mockOnly: true,
+      skillId: chosenItem.skillId,
+    });
+
+    await prisma.mockExam.update({
+      data: {
+        conditions: {
+          ...conditions,
+          sections: [
+            opening,
+            {
+              ...second,
+              itemIds: [],
+              routing: { easier: second.itemIds, harder: [alternative.id] },
+            },
+          ],
+        },
+      },
+      where: { id },
+    });
+
+    await prisma.mockItemUse.create({
+      data: { itemId: alternative.id, mockExamId: id, section: 1, userId },
+    });
+
+    const practiceItems = () =>
+      prisma.item.findMany({
+        orderBy: { id: "asc" },
+        select: { id: true },
+        where: {
+          ...getItemAudienceFilter({ examBlueprintId: mock.examBlueprintId, userId }),
+          id: { in: [first, chosen, alternative.id] },
+        },
+      });
+
+    await expect.soft(practiceItems()).resolves.toStrictEqual([]);
+    await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 0 });
+    await endMockBreak({ blockId: id });
+    await finishMock({ blockId: id, input: { timeZone: UTC } });
+
+    await expect(practiceItems()).resolves.toStrictEqual(
+      [first, chosen].toSorted().map((itemId) => ({ id: itemId })),
+    );
+
+    await expect(
+      prisma.mockItemUse.findFirst({ where: { itemId: alternative.id, userId } }),
+    ).resolves.toMatchObject({ spentAt: expect.any(Date) });
   });
 
   it("starts the next section by itself when the break runs out", async () => {
