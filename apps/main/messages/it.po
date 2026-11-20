@@ -1082,6 +1082,12 @@ msgctxt "9m9h0p"
 msgid "Start a course"
 msgstr "Inizia un corso"
 
+#. Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+msgctxt "qHRoxo"
+msgid "This course is in {courseLanguage}. Your lessons will be in {language}."
+msgstr "Questo corso è in {courseLanguage}. Le tue lezioni saranno in {language}."
+
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 #: src/components/pricing/plus-pricing.tsx

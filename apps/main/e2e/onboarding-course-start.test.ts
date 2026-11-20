@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   courseBandsFixture,
@@ -283,5 +284,63 @@ test.describe("Starting a course from its page", () => {
     expect(await start.release(GOAL_URL)).toBe(false);
     await expect(page).toHaveURL((url) => url.pathname === coursePath);
     await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(1);
+  });
+});
+
+test.describe("Starting a course in another language", () => {
+  test("opens the course's version in the app's language when there is one", async ({ page }) => {
+    const { course } = await createOutlinedCourse();
+    const family = await prisma.courseFamily.create({ data: {} });
+
+    const edition = await courseFixture({
+      familyId: family.id,
+      isPublished: true,
+      language: "pt",
+      organizationId: course.organizationId,
+      slug: `${course.slug}-pt`,
+      title: `Robótica ${course.slug}`,
+    });
+
+    await prisma.course.update({ data: { familyId: family.id }, where: { id: course.id } });
+    const chapter = await prisma.courseChapter.findFirstOrThrow({ where: { courseId: course.id } });
+
+    await page.goto(`/pt/start/course/${course.id}?minutes=15&chapter=${chapter.chapterId}`);
+
+    await expect(page).toHaveURL(
+      (url) => url.pathname === `/pt/start/course/${edition.id}` && url.search === "?minutes=15",
+    );
+
+    await expect(page.getByText(edition.title, { exact: true })).toBeVisible();
+    await expect(page.getByText(course.title, { exact: true })).toBeHidden();
+  });
+
+  test("says the lessons will be in the app's language, and opens that goal again", async ({
+    page,
+  }) => {
+    const { course } = await createOutlinedCourse();
+    const chapter = await prisma.courseChapter.findFirstOrThrow({ where: { courseId: course.id } });
+
+    await page.goto(`/pt/start/course/${course.id}?minutes=15&chapter=${chapter.chapterId}`);
+
+    await expect(page.getByRole("heading", { level: 1, name: "Quanto você já sabe?" })).toBeVisible();
+    await expect(page.getByText(/inglês.*português/u)).toBeVisible();
+    await expect(page.getByRole("list").getByText(/What robots are made of/u)).toBeHidden();
+
+    const level = page.getByRole("radio", { name: /^O básico/u });
+    await expectHydrated(level);
+    await level.click();
+    await page.getByRole("button", { name: "Criar meu plano" }).click();
+
+    await expect(page).toHaveURL(/\/pt\/start\/[0-9a-f-]{36}$/u);
+    const goalId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject({
+      details: { courseStartSourceId: course.id },
+      language: "pt",
+      primaryCourseId: null,
+    });
+
+    await page.goto(`/pt/start/course/${course.id}?minutes=15`);
+    await expect(page).toHaveURL((url) => url.pathname === `/pt/start/${goalId}`);
   });
 });

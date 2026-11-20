@@ -4,11 +4,18 @@ import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
 import { redirect } from "@/i18n/navigation";
 import { getGoalLimit } from "@/lib/goals/goal-limit-reason";
-import { CHAPTER_PARAM, MINUTES_PARAM, readDailyMinutes } from "@/lib/public/public-hrefs";
+import {
+  CHAPTER_PARAM,
+  MINUTES_PARAM,
+  getCourseStartHref,
+  readDailyMinutes,
+} from "@/lib/public/public-hrefs";
 import { getAllowanceCacheTag, getGoalsCacheTag } from "@zoonk/core/cache-tags";
+import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
 import { getCourseQuickTestMinutes } from "@zoonk/core/goals/course-quick-test";
+import { resolveCourseStartLanguage } from "@zoonk/core/goals/course-start-language";
 import { findCourseGoalStart } from "@zoonk/core/goals/start-course";
 import { getLibraryCourse } from "@zoonk/core/library/courses/get";
 import { getSession } from "@zoonk/core/users/session";
@@ -20,6 +27,7 @@ import {
   OnboardingPage,
 } from "@zoonk/learn/onboarding/frame";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -80,7 +88,7 @@ function toLimitFailure(limit: AllowanceLimit | null): CourseStartFailure | null
 }
 
 /** Kept for the browser so the page opens from its prefetch; starting checks both learner facts again. */
-async function loadCourseStart(courseId: string) {
+async function loadCourseStart(courseId: string, language: string) {
   "use cache: private";
 
   const session = await getSession();
@@ -89,16 +97,21 @@ async function loadCourseStart(courseId: string) {
     cacheTag(getGoalsCacheTag(session.user.id), getAllowanceCacheTag(session.user.id));
   }
 
-  const [course, existing, limit] = await Promise.all([
+  const [course, editions, existing, limit] = await Promise.all([
     loadStartableCourse(courseId).then(
       async (found) =>
         found && { ...found, quickTestMinutes: await getCourseQuickTestMinutes(found) },
     ),
-    findCourseGoalStart(courseId),
+    listPublishedCourseEditions({ courseId }),
+    findCourseGoalStart(courseId, language),
     findGoalStartLimit(),
   ]);
 
-  return { course, existing, hasSession: Boolean(session), limit };
+  const start = course
+    ? resolveCourseStartLanguage({ course: { editions, language: course.language }, language })
+    : null;
+
+  return { course, existing, hasSession: Boolean(session), limit, start };
 }
 
 type CourseStartViewProps = {
@@ -122,7 +135,7 @@ async function FreshCourseStart({ locale, ...view }: CourseStartViewProps & { lo
   await connection();
 
   const [existing, limit] = await Promise.all([
-    findCourseGoalStart(view.screen.course.id),
+    findCourseGoalStart(view.screen.course.id, locale),
     findGoalStartLimit(),
   ]);
 
@@ -138,9 +151,9 @@ async function FreshCourseStart({ locale, ...view }: CourseStartViewProps & { lo
 async function CourseStartContent({ params, searchParams }: Props) {
   const t = await getExtracted();
   const [{ courseId, lang }, query] = await Promise.all([params, searchParams]);
-  const { course, existing, hasSession, limit } = await loadCourseStart(courseId);
+  const { course, existing, hasSession, limit, start } = await loadCourseStart(courseId, lang);
 
-  if (!course) {
+  if (!course || !start) {
     return (
       <NotFoundPage>
         <OnboardingNotFound />
@@ -155,7 +168,16 @@ async function CourseStartContent({ params, searchParams }: Props) {
     });
   }
 
-  const chapterId = readParam(query[CHAPTER_PARAM]);
+  const dailyMinutes = readDailyMinutes(query[MINUTES_PARAM]);
+
+  if (start.kind === "edition") {
+    redirect({
+      href: getCourseStartHref({ courseId: start.edition.id, minutes: dailyMinutes }),
+      locale: lang,
+    });
+  }
+
+  const chapterId = start.kind === "same" ? readParam(query[CHAPTER_PARAM]) : null;
   const chapters = course.levels.flatMap((band) => band.chapters);
   const chapter = chapters.find((item) => item.id === chapterId && item.lessons.length > 0);
   const planned = chapter ? chapters.slice(chapters.indexOf(chapter)) : chapters;
@@ -168,8 +190,26 @@ async function CourseStartContent({ params, searchParams }: Props) {
       title: item.title,
     })),
     course: { id: course.id, quickTestMinutes: course.quickTestMinutes, title: course.title },
-    dailyMinutes: readDailyMinutes(query[MINUTES_PARAM]),
+    dailyMinutes,
     initialFailure: toLimitFailure(limit) ?? toFailure(readParam(query[COURSE_START_ERROR_PARAM])),
+    languageNote:
+      start.kind === "learnerLanguage"
+        ? t({
+            description:
+              "Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence",
+            message: "This course is in {courseLanguage}. Your lessons will be in {language}.",
+            values: {
+              courseLanguage: getLanguageNameInSentence({
+                targetLanguage: course.language,
+                userLanguage: lang,
+              }),
+              language: getLanguageNameInSentence({
+                targetLanguage: start.language,
+                userLanguage: lang,
+              }),
+            },
+          })
+        : null,
     note: (
       <p className="text-muted-foreground text-sm lg:text-right">
         {t("Start free, no account needed.")}
