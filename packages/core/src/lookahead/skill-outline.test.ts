@@ -112,7 +112,11 @@ describe(requestSkillOutline, () => {
     mockSession(user.id);
 
     const request = await requestSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" });
-    expect(request).toMatchObject({ ask: { goalId: goal.id, skillId: first?.id }, status: "start" });
+
+    expect(request).toMatchObject({
+      ask: { goalId: goal.id, skillId: first?.id },
+      status: "start",
+    });
 
     await expect(
       getSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" }),

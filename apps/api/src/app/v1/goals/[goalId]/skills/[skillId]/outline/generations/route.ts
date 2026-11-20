@@ -5,6 +5,7 @@ import { goalSkillPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { courseOutlineWorkflow } from "@/workflows/courses/course-outline-workflow";
 import { requestSkillOutline } from "@zoonk/core/lookahead/skill-outline";
+import { endSkillOutlineAsk } from "@zoonk/core/lookahead/skill-outline-ask";
 import { NextResponse } from "next/server";
 import { start } from "workflow/api";
 
@@ -64,7 +65,11 @@ async function createOutlineGeneration(
       forGuest: result.forGuest,
       waitedSkillId: path.skillId,
     },
-  ]);
+  ]).catch(async (error: unknown) => {
+    // A retry would otherwise read this ask as being written while no run writes it.
+    await endSkillOutlineAsk(result.ask);
+    throw error;
+  });
 
   return writing(run.runId);
 }

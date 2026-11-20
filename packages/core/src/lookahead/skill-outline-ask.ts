@@ -31,26 +31,18 @@ export async function takeSkillOutlineAsk({
   now: Date;
   skillId: string;
 }): Promise<SkillOutlineAskRef | null> {
-  const created = await prisma.skillOutlineAsk.createMany({
-    data: { askedAt: now, goalId, skillId },
-    skipDuplicates: true,
-  });
+  const taken = await prisma.$queryRaw<unknown[]>`
+    INSERT INTO skill_outline_asks (goal_id, skill_id, asked_at)
+    VALUES (${goalId}::uuid, ${skillId}::uuid, ${now})
+    ON CONFLICT (goal_id, skill_id) DO UPDATE SET asked_at = EXCLUDED.asked_at
+    WHERE skill_outline_asks.asked_at <= ${getOutlineStaleBefore(now)}
+    RETURNING 1
+  `;
 
-  const ask = { askedAt: now.getTime(), goalId, skillId };
-
-  if (created.count > 0) {
-    return ask;
-  }
-
-  const renewed = await prisma.skillOutlineAsk.updateMany({
-    data: { askedAt: now },
-    where: { askedAt: { lte: getOutlineStaleBefore(now) }, goalId, skillId },
-  });
-
-  return renewed.count > 0 ? ask : null;
+  return taken.length > 0 ? { askedAt: now.getTime(), goalId, skillId } : null;
 }
 
-/** Workflow bridge: the outline run the ask started ended, written or not. */
+/** The outline run the ask started ended, written or not, or never started. */
 export async function endSkillOutlineAsk({ askedAt, goalId, skillId }: SkillOutlineAskRef) {
   await prisma.skillOutlineAsk.deleteMany({
     where: { askedAt: new Date(askedAt), goalId, skillId },

@@ -281,6 +281,7 @@ export async function courseOutlineWorkflow(
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
+  let handedOn = false;
 
   try {
     const { conflict } = await claimRunToken(`course-outline:${input.courseId}`);
@@ -292,24 +293,20 @@ export async function courseOutlineWorkflow(
     );
 
     const result = await outlineCourse({ conflict, context: { ...input, workflowRunId }, input });
-
-    if (input.ask && !("nextRunId" in result && result.nextRunId)) {
-      await endSkillOutlineAskStep(input.ask);
-    }
-
+    handedOn = Boolean("nextRunId" in result && result.nextRunId);
     await courseOutlineProgressStep(getLastEvent(result), { last: true });
     return result;
   } catch (error) {
-    if (input.ask) {
-      await endSkillOutlineAskStep(input.ask);
-    }
-
     await courseOutlineProgressStep(
       { reason: "aiGenerationFailed", status: "error", step: WORKFLOW_ERROR_STEP },
       { last: true },
     );
 
     throw error;
+  } finally {
+    if (input.ask && !handedOn) {
+      await endSkillOutlineAskStep(input.ask);
+    }
   }
 }
 

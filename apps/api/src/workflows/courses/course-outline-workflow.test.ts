@@ -1742,6 +1742,22 @@ describe(courseOutlineWorkflow, () => {
 
     await expect(askRows()).resolves.toBe(1);
 
+    // The next turn owns the ask even when this turn fails after handing it on.
+    workflowWriteMock.mockImplementation(async (chunk: unknown) => {
+      if (String(chunk).includes("joinCourseOutline")) {
+        throw new Error("Stream closed");
+      }
+
+      return null;
+    });
+
+    await expect(courseOutlineWorkflow({ ask, bands, courseId: course.id, scope })).rejects.toThrow(
+      "Stream closed",
+    );
+
+    workflowWriteMock.mockResolvedValue(null);
+    await expect(askRows()).resolves.toBe(1);
+
     await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } });
 
     await expect(
