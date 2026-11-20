@@ -146,8 +146,15 @@ async function loadRowLabels(changes: readonly StoredChange[]): Promise<Map<stri
     loadVocabularyLabels(changes),
   ]);
 
+  const versionedScreens = changes.flatMap((change) =>
+    change.op === "setScreens" ? change.before.screens : [],
+  );
+
   return new Map([
-    ...steps.map((step): [string, string] => [step.id, screenLabel(step)]),
+    ...[...steps, ...versionedScreens].map((step): [string, string] => [
+      step.id,
+      screenLabel(step),
+    ]),
     ...variants.map((variant): [string, string] => [
       variant.id,
       `${screenLabel(variant.step)} · ${toWords(variant.kind)}${variant.key ? ` ${variant.key}` : ""} version`,

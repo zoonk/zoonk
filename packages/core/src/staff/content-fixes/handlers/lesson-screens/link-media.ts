@@ -23,14 +23,29 @@ function linkIdeaIcon({
   }
 }
 
-export function linkScreenMedia(change: StoredScreens, context: FixContext): ScreenSnapshot {
-  if (!change.mediaLinks?.length) {
-    return change.after;
-  }
+export function resolvePublishedScreens(change: StoredScreens, context: FixContext) {
+  const provenance = {
+    generatedAt: context.now.toISOString(),
+    model: "staff",
+    promptVersion: "setScreens",
+    runId: context.fixId,
+  };
 
-  const after = structuredClone(change.after);
+  const snapshot = structuredClone(change.after);
 
-  for (const link of change.mediaLinks) {
+  const after = {
+    ...snapshot,
+    screens: snapshot.screens.map((screen) => ({
+      ...screen,
+      provenance: screen.provenance ?? provenance,
+      variants: screen.variants.map((variant) => ({
+        ...variant,
+        provenance: variant.provenance ?? provenance,
+      })),
+    })),
+  };
+
+  for (const link of change.mediaLinks ?? []) {
     const media = context.media.get(link.key);
 
     if (media?.kind === "picture" && link.target === "picture") {
@@ -98,6 +113,7 @@ export async function linkVocabularyMedia(
                 ...provenance,
                 id: word.id,
                 organizationId: word.organizationId,
+                romanization: word.romanization,
                 targetLanguage: link.language,
                 word: word.word,
               },
@@ -128,6 +144,7 @@ export async function linkVocabularyMedia(
                 ...provenance,
                 id: sentence.id,
                 organizationId: sentence.organizationId,
+                romanization: sentence.romanization,
                 sentence: sentence.sentence,
                 targetLanguage: link.language,
               },

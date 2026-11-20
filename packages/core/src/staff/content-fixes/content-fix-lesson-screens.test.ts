@@ -80,10 +80,10 @@ describe("publishing one reviewed lesson screen version", () => {
       throw new Error("missing steps");
     }
 
-    await Promise.all([
+    const [variant] = await Promise.all([
+      stepVariantFixture({ content: intro, stepId: reading.id }),
       answerExplanationFixture({ stepId: reading.id }),
       answerExplanationFixture({ stepId: edited.id }),
-      stepVariantFixture({ content: intro, stepId: reading.id }),
     ]);
 
     const { fix, key } = await apply([
@@ -102,15 +102,36 @@ describe("publishing one reviewed lesson screen version", () => {
       next.every(
         (screen) =>
           screen.version === 2 &&
-          screen.model === "staff" &&
-          screen.runId === fix.id &&
           ![reading.id, check.id, edited.id, removed.id].includes(screen.id),
       ),
     ).toBe(true);
 
-    expect(next[0]).toMatchObject({ answerExplanations: [], content: { title: "Numbers" } });
+    expect(next[0]).toMatchObject({
+      answerExplanations: [],
+      content: { title: "Numbers" },
+      model: "staff",
+      promptVersion: "setScreens",
+      runId: fix.id,
+    });
+
+    expect(next[1]).toMatchObject({
+      generatedAt: reading.generatedAt,
+      model: reading.model,
+      promptVersion: reading.promptVersion,
+      runId: reading.runId,
+    });
+
+    expect(next[3]).toMatchObject({ model: "staff", runId: fix.id });
     expect(next[1]?.answerExplanations).toHaveLength(1);
-    expect(next[1]?.variants).toHaveLength(1);
+
+    const variantProvenance = {
+      generatedAt: variant.generatedAt,
+      model: variant.model,
+      promptVersion: variant.promptVersion,
+      runId: variant.runId,
+    };
+
+    expect(next[1]?.variants).toMatchObject([variantProvenance]);
     expect(next[2]?.content).toMatchObject({ basis: { position: 1, quote: question.basis.quote } });
 
     await prisma.step.updateMany({
@@ -136,9 +157,124 @@ describe("publishing one reviewed lesson screen version", () => {
     expect(generateLessonIconImage).not.toHaveBeenCalled();
     const restored = await current(lesson.id);
     expect(restored.map((screen) => screen.content)).toStrictEqual([intro, question, intro, intro]);
-    expect(restored[0]?.variants).toHaveLength(1);
-    expect(restored[2]?.answerExplanations).toHaveLength(1);
+    expect(restored[0]?.variants).toMatchObject([variantProvenance]);
+
+    expect(restored[2]).toMatchObject({
+      answerExplanations: [],
+      generatedAt: edited.generatedAt,
+      model: edited.model,
+      promptVersion: edited.promptVersion,
+      runId: edited.runId,
+    });
+
     expect(restored.every((screen) => screen.version === 3)).toBe(true);
+  });
+
+  it("approves after learners cache answers on a kept screen", async () => {
+    const { lesson, reading, check } = await publishedLesson();
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [change(lesson.id, [{ id: reading.id }, { id: check.id }])],
+      reason,
+    });
+
+    const explanation = await answerExplanationFixture({ stepId: check.id });
+
+    const tutor = await prisma.tutorSharedAnswer.create({
+      data: {
+        answer: "Think of a number line.",
+        model: "test",
+        promptVersion: "1",
+        question: "Can you make it simpler?",
+        runId: "test",
+        stepId: check.id,
+        suggestion: "simpler",
+      },
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    const screens = await current(lesson.id);
+    const next = screens.find(({ kind }) => kind === "check");
+
+    expect(next).toMatchObject({
+      answerExplanations: [{ explanation: explanation.explanation }],
+      sharedTutorAnswers: [{ answer: tutor.answer }],
+      version: 2,
+    });
+  });
+
+  it("reverts after a learner caches an explanation on the published fix", async () => {
+    const { lesson, reading, check } = await publishedLesson();
+    const { fix, key } = await apply([change(lesson.id, [{ id: reading.id }, { id: check.id }])]);
+
+    const next = await prisma.step.findFirstOrThrow({
+      where: { kind: "check", lessonId: lesson.id, ...CURRENT_STEPS },
+    });
+
+    await answerExplanationFixture({ stepId: next.id });
+
+    const inverse = await revertInAdmin({ fixId: fix.id, reason: "Restore the previous screens" });
+
+    if (inverse.status !== "proposed") {
+      throw new Error(JSON.stringify(inverse));
+    }
+
+    await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    const screens = await current(lesson.id);
+    const restored = screens.find(({ kind }) => kind === "check");
+    expect(restored).toMatchObject({ answerExplanations: [], version: 3 });
+  });
+
+  it("reports unedited variants and preserves their provenance", async () => {
+    const { lesson, reading, check } = await publishedLesson();
+
+    const [edited, kept] = await Promise.all([
+      stepVariantFixture({ content: intro, key: "law", kind: "field", stepId: reading.id }),
+      stepVariantFixture({ content: intro, key: "nursing", kind: "field", stepId: reading.id }),
+    ]);
+
+    const { fix } = await apply([
+      change(lesson.id, [
+        {
+          content: { ...intro, title: "Numbers" },
+          id: reading.id,
+          variants: [{ content: { ...intro, title: "Counting" }, id: edited.id }],
+        },
+        { id: check.id },
+      ]),
+    ]);
+
+    expect(fix.effects).toContainEqual({ count: 1, kind: "variantsKept", stepId: reading.id });
+
+    const [screen] = await current(lesson.id);
+
+    expect(screen?.variants).toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          content: { ...intro, title: "Counting" },
+          key: edited.key,
+          model: "staff",
+          promptVersion: "setScreens",
+          runId: fix.id,
+        }),
+        expect.objectContaining({
+          content: intro,
+          key: kept.key,
+          model: kept.model,
+          promptVersion: kept.promptVersion,
+          runId: kept.runId,
+        }),
+      ]),
+    );
   });
 
   it("refuses both a lost quote and an unknown skill and rejects overlapping batch writes", async () => {
@@ -227,7 +363,13 @@ describe("publishing one reviewed lesson screen version", () => {
 
     const additions = [
       { distractors: ["ma", "mà"], key: "rising", translation: "mom", word: "má" },
-      { distractors: ["ma", "má"], key: "falling", translation: "but", word: "mà" },
+      {
+        distractors: ["ma", "má"],
+        key: "falling",
+        romanization: " mà ",
+        translation: "but",
+        word: "mà",
+      },
     ];
 
     const existing = await prisma.word.create({
@@ -321,7 +463,11 @@ describe("publishing one reviewed lesson screen version", () => {
       id: existing.id,
     });
 
-    expect(words[2]?.word.audioUrl).toContain("blob.test");
+    expect(words[2]?.word).toMatchObject({
+      audioUrl: expect.stringContaining("blob.test"),
+      romanization: "mà",
+    });
+
     expect(words[2]?.word.audioUrl).not.toBe(words[1]?.word.audioUrl);
 
     const inverse = await revertInAdmin({

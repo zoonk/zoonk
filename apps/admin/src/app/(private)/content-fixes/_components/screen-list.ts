@@ -265,20 +265,3 @@ export function readScreenRows(change: StoredScreens): ScreenRow[] {
   placeRemoved(Number.POSITIVE_INFINITY);
   return rows;
 }
-
-/** What approving deletes because it was written from a screen this fix changes. */
-export function writtenFromChangedScreens(rows: readonly ScreenRow[]) {
-  return rows.flatMap((row) => {
-    if (row.status !== "changed") {
-      return [];
-    }
-
-    const explanations =
-      row.before.answerExplanations.length - row.screen.answerExplanations.length;
-
-    const tutorAnswers =
-      row.before.sharedTutorAnswers.length - row.screen.sharedTutorAnswers.length;
-
-    return explanations > 0 || tutorAnswers > 0 ? [{ explanations, row, tutorAnswers }] : [];
-  });
-}

@@ -32,8 +32,7 @@ export async function checkScreenReferences(
   const [media, sources, items, words, sentences] = await Promise.all([
     mediaIds.length > 0
       ? db.mediaAsset.findMany({
-          orderBy: { id: "asc" },
-          select: { alt: true, checkOwedAt: true, id: true, reuseKey: true, url: true },
+          select: { checkOwedAt: true, id: true },
           where: { id: { in: mediaIds }, kind: "image", ownerId: null, visibility: "public" },
         })
       : [],
@@ -44,11 +43,7 @@ export async function checkScreenReferences(
         })
       : [],
     itemIds.length > 0
-      ? db.item.findMany({
-          orderBy: { id: "asc" },
-          select: { content: true, id: true, skillId: true },
-          where: { id: { in: itemIds } },
-        })
+      ? db.item.findMany({ select: { id: true }, where: { id: { in: itemIds } } })
       : [],
     after.words.length > 0
       ? db.word.findMany({ where: { id: { in: after.words.map(({ id }) => id) } } })
@@ -134,11 +129,6 @@ export async function checkScreenReferences(
       );
     }
   }
-
-  return {
-    items,
-    media: media.map((row) => ({ ...row, checkOwedAt: row.checkOwedAt?.toISOString() ?? null })),
-  };
 }
 
 export function changedRows(

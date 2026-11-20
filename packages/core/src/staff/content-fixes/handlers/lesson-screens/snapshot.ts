@@ -1,6 +1,15 @@
-import { type TransactionClient } from "@zoonk/db";
+import { type Step, type TransactionClient } from "@zoonk/db";
 import { CURRENT_STEPS } from "../../../../library/lessons/lesson-versions";
 import { snapshotSchema } from "./schema";
+
+function provenanceOf({
+  generatedAt,
+  model,
+  promptVersion,
+  runId,
+}: Pick<Step, "generatedAt" | "model" | "promptVersion" | "runId">) {
+  return { generatedAt: generatedAt.toISOString(), model, promptVersion, runId };
+}
 
 export async function readLessonScreens(db: TransactionClient, id: string) {
   const lesson = await db.lesson.findUnique({
@@ -10,9 +19,7 @@ export async function readLessonScreens(db: TransactionClient, id: string) {
       skills: { select: { skillId: true } },
       steps: {
         include: {
-          answerExplanations: { orderBy: [{ language: "asc" }, { normalizedAnswer: "asc" }] },
           optionPictures: { orderBy: { optionId: "asc" } },
-          sharedTutorAnswers: { orderBy: { suggestion: "asc" } },
           sources: { orderBy: { sourceId: "asc" } },
           variants: { orderBy: [{ kind: "asc" }, { key: "asc" }] },
         },
@@ -35,6 +42,8 @@ export async function readLessonScreens(db: TransactionClient, id: string) {
       ...step,
       pictureAvailableAt: step.pictureAvailableAt?.toISOString() ?? null,
       pictureRemovedAt: step.pictureRemovedAt?.toISOString() ?? null,
+      provenance: provenanceOf(step),
+      variants: step.variants.map((variant) => ({ ...variant, provenance: provenanceOf(variant) })),
     })),
     sentences: lesson.sentences.map((link) => ({
       ...link,

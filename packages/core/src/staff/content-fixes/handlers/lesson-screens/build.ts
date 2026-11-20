@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import { STEP_CONTRACT_VERSION } from "../../../../library/steps/contract/step-contract";
+import { type ContentFixEffect } from "../../contract";
 import { prepareAdded } from "./added";
 import { checkBasis, remapBasis } from "./basis";
 import { editVariants, setContent } from "./content";
@@ -16,7 +17,6 @@ type Vocabulary = Awaited<ReturnType<typeof resolveVocabulary>>;
 
 function blankScreen(entry: Extract<Entry, { kind: string }>): Screen {
   return {
-    answerExplanations: [],
     content: {},
     contractVersion: STEP_CONTRACT_VERSION,
     id: "",
@@ -28,8 +28,8 @@ function blankScreen(entry: Extract<Entry, { kind: string }>): Screen {
     pictureAvailableAt: null,
     pictureRemovedAt: null,
     position: 0,
+    provenance: null,
     sentenceId: null,
-    sharedTutorAnswers: [],
     skillId: entry.skillId ?? null,
     sourceId: null,
     sourcePage: null,
@@ -39,36 +39,62 @@ function blankScreen(entry: Extract<Entry, { kind: string }>): Screen {
   };
 }
 
-function clearChangedAnswers({
-  screen,
+function draftScreen({
   base,
+  entry,
+  id,
+  position,
+}: {
+  base: Screen;
+  entry: Entry;
+  id: string;
+  position: number;
+}): Screen {
+  return {
+    ...base,
+    content: entry.content ?? base.content,
+    id,
+    position,
+    ...(entry.citation !== undefined && {
+      sourceId: entry.citation?.sourceId ?? null,
+      sourcePage: entry.citation?.page ?? null,
+    }),
+    ...(entry.mediaAssetId !== undefined &&
+      entry.mediaAssetId !== base.mediaAssetId && {
+        mediaAssetId: entry.mediaAssetId,
+        pictureAvailableAt: null,
+        pictureRemovedAt: null,
+      }),
+  };
+}
+
+function screenWasEdited({
+  base,
+  changedSentenceIds,
+  changedWordIds,
   contentChanged,
   entry,
-  changedWordIds,
-  changedSentenceIds,
+  screen,
 }: {
-  screen: Screen;
   base: Screen;
+  changedSentenceIds: string[];
+  changedWordIds: string[];
   contentChanged: boolean;
   entry: Entry;
-  changedWordIds: string[];
-  changedSentenceIds: string[];
+  screen: Screen;
 }) {
-  const changedScreen =
+  return (
     contentChanged ||
-    ("variants" in entry && Boolean(entry.variants?.length)) ||
+    screen.variants.some(({ provenance }) => provenance === null) ||
     Boolean(entry.picture) ||
-    (screen.wordId && changedWordIds.includes(screen.wordId)) ||
-    (screen.sentenceId && changedSentenceIds.includes(screen.sentenceId)) ||
+    (screen.wordId !== null && changedWordIds.includes(screen.wordId)) ||
+    (screen.sentenceId !== null && changedSentenceIds.includes(screen.sentenceId)) ||
     screen.mediaAssetId !== base.mediaAssetId ||
     screen.sourceId !== base.sourceId ||
-    screen.sourcePage !== base.sourcePage;
-
-  if (changedScreen) {
-    screen.answerExplanations = [];
-    screen.sharedTutorAnswers = [];
-  }
+    screen.sourcePage !== base.sourcePage
+  );
 }
+
 export function buildScreens({
   lesson,
   list,
@@ -83,6 +109,7 @@ export function buildScreens({
   problems: string[];
 }) {
   const map = mapIdeas({ lesson, list, problems });
+  const effects: ContentFixEffect[] = [];
   const newItems: StoredScreens["newItems"] = [];
   const used = new Set<string>();
 
@@ -109,22 +136,7 @@ export function buildScreens({
     used.add(base.id);
     const allocatedScreen = allocated?.after.screens[position];
 
-    const screen: Screen = {
-      ...base,
-      content: entry.content ?? base.content,
-      id: allocatedScreen?.id ?? randomUUID(),
-      position,
-      ...(entry.citation !== undefined && {
-        sourceId: entry.citation?.sourceId ?? null,
-        sourcePage: entry.citation?.page ?? null,
-      }),
-      ...(entry.mediaAssetId !== undefined &&
-        entry.mediaAssetId !== base.mediaAssetId && {
-          mediaAssetId: entry.mediaAssetId,
-          pictureAvailableAt: null,
-          pictureRemovedAt: null,
-        }),
-    };
+    const screen = draftScreen({ base, entry, id: allocatedScreen?.id ?? randomUUID(), position });
 
     if ("kind" in entry) {
       prepareAdded({
@@ -144,14 +156,24 @@ export function buildScreens({
     screen.variants = editVariants({ allocatedScreen, base, entry, lesson, list, path, problems });
     const contentChanged = !isDeepStrictEqual(screen.content, base.content);
 
-    clearChangedAnswers({
+    screen.provenance = screenWasEdited({
       base,
       changedSentenceIds,
       changedWordIds,
       contentChanged,
       entry,
       screen,
-    });
+    })
+      ? null
+      : base.provenance;
+
+    if ("id" in entry && entry.content) {
+      const count = base.variants.length - (entry.variants?.length ?? 0);
+
+      if (count > 0) {
+        effects.push({ count, kind: "variantsKept", stepId: base.id });
+      }
+    }
 
     screen.content = remapBasis({
       content: screen.content,
@@ -195,5 +217,5 @@ export function buildScreens({
     }
   }
 
-  return { newItems, screens, summary: map.summary };
+  return { effects, newItems, screens, summary: map.summary };
 }

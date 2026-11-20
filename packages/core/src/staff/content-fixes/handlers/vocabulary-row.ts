@@ -39,6 +39,8 @@ export async function loadRow(
   return sentence && { ...sentence, text: sentence.sentence };
 }
 
+export const romanizationSchema = z.string().trim().min(1).nullable().optional();
+
 export const clipSchema = z.object({
   audioGeneratedAt: z.iso.datetime().nullable(),
   audioModel: z.string().nullable(),

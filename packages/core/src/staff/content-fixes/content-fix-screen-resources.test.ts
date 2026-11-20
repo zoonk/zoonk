@@ -34,63 +34,78 @@ import {
 import { proposeContentFix } from "./propose-content-fix";
 
 describe("resources reviewed with a screen list", () => {
-  it("adds a picture to a kept screen and remaps the question that quotes it", async () => {
-    const { lesson, reading, check } = await publishedLesson();
-    const picture = { alt: "Two apples", prompt: "Two apples on a plate" };
+  it.each([false, true])(
+    "draws a picture for a kept screen (has a picture: %s)",
+    async (hasPicture) => {
+      const { lesson, reading, check } = await publishedLesson();
+      const picture = { alt: "Two apples", prompt: "Two apples on a plate" };
 
-    await signInProposer();
+      if (hasPicture) {
+        const previous = await mediaAssetFixture({ checkOwedAt: null });
 
-    const fix = await proposeFix({
-      changes: [
-        {
-          id: lesson.id,
-          model: "Lesson",
-          setScreens: {
-            screens: [
-              { content: intro, kind: "explanation" },
-              { id: reading.id, picture },
-              { id: check.id },
-            ],
-            version: 1,
+        await prisma.step.update({
+          data: {
+            content: { ...intro, image: { alt: "Three pears", prompt: "Three pears on a plate" } },
+            mediaAssetId: previous.id,
           },
-        },
-      ],
-      reason: "Illustrate the explanation.",
-    });
+          where: { id: reading.id },
+        });
+      }
 
-    const [need] = await listPendingFixMedia(fix.id);
+      await signInProposer();
 
-    expect(need).toMatchObject({ kind: "picture", request: picture.prompt });
+      const fix = await proposeFix({
+        changes: [
+          {
+            id: lesson.id,
+            model: "Lesson",
+            setScreens: {
+              screens: [
+                { content: intro, kind: "explanation" },
+                { id: reading.id, picture },
+                { id: check.id },
+              ],
+              version: 1,
+            },
+          },
+        ],
+        reason: "Illustrate the explanation.",
+      });
 
-    if (!need) {
-      throw new Error("Expected a pending picture");
-    }
+      const [need] = await listPendingFixMedia(fix.id);
 
-    const asset = await mediaAssetFixture({ checkOwedAt: null });
+      expect(need).toMatchObject({ kind: "picture", request: picture.prompt });
 
-    await recordFixMedia({
-      fixId: fix.id,
-      key: need.key,
-      result: { key: need.key, kind: "picture", mediaAssetId: asset.id, url: asset.url },
-    });
+      if (!need) {
+        throw new Error("Expected a pending picture");
+      }
 
-    const { key } = await signInApprover();
+      const asset = await mediaAssetFixture({ checkOwedAt: null });
 
-    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
-      fix: { status: "applied" },
-    });
+      await recordFixMedia({
+        fixId: fix.id,
+        key: need.key,
+        result: { key: need.key, kind: "picture", mediaAssetId: asset.id, url: asset.url },
+      });
 
-    await expect(
-      prisma.step.findMany({
-        orderBy: { position: "asc" },
-        where: { lessonId: lesson.id, ...CURRENT_STEPS },
-      }),
-    ).resolves.toMatchObject([
-      { content: intro },
-      { content: { ...intro, image: picture }, mediaAssetId: asset.id, version: 2 },
-      { content: { ...question, basis: { ...question.basis, position: 1 } } },
-    ]);
-  });
+      const { key } = await signInApprover();
+
+      await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+        fix: { status: "applied" },
+      });
+
+      await expect(
+        prisma.step.findMany({
+          orderBy: { position: "asc" },
+          where: { lessonId: lesson.id, ...CURRENT_STEPS },
+        }),
+      ).resolves.toMatchObject([
+        { content: intro },
+        { content: { ...intro, image: picture }, mediaAssetId: asset.id, version: 2 },
+        { content: { ...question, basis: { ...question.basis, position: 1 } } },
+      ]);
+    },
+  );
 
   it("refuses a proposal before storing work when its new icons and alphabet clips exceed ten units", async () => {
     const [{ lesson, steps }, proposer] = await Promise.all([
@@ -410,6 +425,7 @@ describe("resources reviewed with a screen list", () => {
                 key: "acorn",
                 otherSentenceOrders: [],
                 otherTranslationOrders: [],
+                romanization: " I found an acorn ",
                 sentence: "I found an acorn.",
                 translation: "Achei uma bolota.",
                 translationDistractors: [],
@@ -451,7 +467,10 @@ describe("resources reviewed with a screen list", () => {
       }),
     ).resolves.toMatchObject({
       ordersOwedAt: null,
-      sentence: { audioUrl: expect.stringContaining("blob.test") },
+      sentence: {
+        audioUrl: expect.stringContaining("blob.test"),
+        romanization: "I found an acorn",
+      },
     });
   });
 

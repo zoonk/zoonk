@@ -5,7 +5,7 @@ import { formatMinutes } from "@/lib/format-duration";
 import { type ContentFixEffect } from "@zoonk/core/staff/content-fixes/contract";
 import { TriangleAlertIcon } from "lucide-react";
 import { readMapIdeas } from "./content-fix-map";
-import { readScreenRows, writtenFromChangedScreens } from "./screen-list";
+import { readScreenRows } from "./screen-list";
 
 function countOf({ count, many, one }: { count: number; many: string; one: string }): string {
   return `${String(count)} ${count === 1 ? one : many}`;
@@ -126,10 +126,6 @@ function screenName(row: { position: number; screen: { content: unknown; kind: s
   return `screen ${String(row.position)} · ${screenKindLabel(row.screen)}`;
 }
 
-/**
- * What a new screen list does besides what it shows, read from the screens it stores: a changed
- * right answer, what was written from a changed screen, and the summary's new ideas.
- */
 function screenListLines(changes: ContentFixDetail["changes"]): Line[] {
   return changes.flatMap((change) => {
     if (change.model !== "Lesson" || change.op !== "setScreens") {
@@ -149,25 +145,12 @@ function screenListLines(changes: ContentFixDetail["changes"]): Line[] {
         : [],
     );
 
-    const written = writtenFromChangedScreens(rows).flatMap(({ explanations, row, tutorAnswers }) =>
-      [
-        explanations > 0 && { count: explanations, kind: "answerExplanationsDeleted" as const },
-        tutorAnswers > 0 && { count: tutorAnswers, kind: "tutorAnswersDeleted" as const },
-      ]
-        .filter((entry) => entry !== false)
-        .map((entry) => ({
-          text: describeWrittenFromScreen({ ...entry, screen: `screen ${String(row.position)}` }),
-          warning: false,
-        })),
-    );
-
     const summary =
       readMapIdeas(change).some((idea) => idea.status !== "same") &&
       change.after.screens.some((screen) => screen.kind === "summary");
 
     return [
       ...answerKeys,
-      ...written,
       ...(summary
         ? [{ text: "The summary screen shows the map's new ideas.", warning: false }]
         : []),

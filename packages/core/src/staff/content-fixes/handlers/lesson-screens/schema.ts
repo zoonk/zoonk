@@ -3,8 +3,9 @@ import { StepKind, StepVariantKind } from "@zoonk/db";
 import { z } from "zod";
 import { stepImageRequestSchema } from "../../../../library/steps/contract/content-schemas";
 import { idSchema } from "../fix-handler";
+import { sourcePageSchema } from "../source-page";
+import { romanizationSchema } from "../vocabulary-row";
 
-const MAX_SOURCE_PAGE = 32_767;
 const text = z.string().trim().min(1);
 const texts = z.array(text);
 const content = z.record(z.string(), z.json());
@@ -61,10 +62,7 @@ const numeric = GENERATED_ITEM_SCHEMAS.numeric
   .extend({ correctReason: text });
 
 const common = {
-  citation: z
-    .strictObject({ page: z.int().min(1).max(MAX_SOURCE_PAGE).nullable(), sourceId: idSchema })
-    .nullable()
-    .optional(),
+  citation: z.strictObject({ page: sourcePageSchema, sourceId: idSchema }).nullable().optional(),
   content: content.optional(),
   idea: z.int().nonnegative().nullable().optional(),
   mediaAssetId: idSchema.nullable().optional(),
@@ -93,7 +91,9 @@ export const setScreensSchema = z.strictObject({
     .array(
       z.union([
         sentenceFields.partial().extend({ id: idSchema }).strict(),
-        sentenceFields.extend({ key: text, sentence: text }).strict(),
+        sentenceFields
+          .extend({ key: text, romanization: romanizationSchema, sentence: text })
+          .strict(),
       ]),
     )
     .optional(),
@@ -102,23 +102,22 @@ export const setScreensSchema = z.strictObject({
     .array(
       z.union([
         wordFields.partial().extend({ id: idSchema }).strict(),
-        wordFields.extend({ key: text, word: text }).strict(),
+        wordFields.extend({ key: text, romanization: romanizationSchema, word: text }).strict(),
       ]),
     )
     .optional(),
 });
 
-const provenance = { model: z.string(), promptVersion: z.string(), runId: z.string() };
+const provenance = z
+  .object({
+    generatedAt: z.iso.datetime(),
+    model: z.string(),
+    promptVersion: z.string(),
+    runId: z.string(),
+  })
+  .nullable();
 
 const screen = z.object({
-  answerExplanations: z.array(
-    z.object({
-      ...provenance,
-      explanation: z.string(),
-      language: z.string(),
-      normalizedAnswer: z.string(),
-    }),
-  ),
   content,
   contractVersion: z.int(),
   id: idSchema,
@@ -130,15 +129,8 @@ const screen = z.object({
   pictureAvailableAt: z.string().nullable(),
   pictureRemovedAt: z.string().nullable(),
   position: z.int(),
+  provenance,
   sentenceId: idSchema.nullable(),
-  sharedTutorAnswers: z.array(
-    z.object({
-      ...provenance,
-      answer: z.string(),
-      question: z.string(),
-      suggestion: z.enum(["simpler", "deeper", "example"]),
-    }),
-  ),
   skillId: idSchema.nullable(),
   sourceId: idSchema.nullable(),
   sourcePage: z.int().nullable(),
@@ -150,6 +142,7 @@ const screen = z.object({
       id: idSchema,
       key: z.string(),
       kind: z.enum(StepVariantKind),
+      provenance,
     }),
   ),
   wordId: idSchema.nullable(),
@@ -180,7 +173,6 @@ export type ScreenMediaLink = z.infer<typeof mediaLink>;
 export const storedScreensSchema = z.object({
   after: snapshotSchema,
   before: snapshotSchema,
-  beforeReferences: z.json(),
   changedSentenceIds: z.array(idSchema),
   changedWordIds: z.array(idSchema),
   id: idSchema,
@@ -191,7 +183,6 @@ export const storedScreensSchema = z.object({
   ),
   op: z.literal("setScreens"),
   proposal: setScreensSchema.nullable(),
-  references: z.json(),
 });
 export type Screen = z.infer<typeof screen>;
 export type ScreenSnapshot = z.infer<typeof snapshotSchema>;

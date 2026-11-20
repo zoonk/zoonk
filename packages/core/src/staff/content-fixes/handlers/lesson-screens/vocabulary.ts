@@ -72,6 +72,28 @@ function editSentence(
   };
 }
 
+function declarationRomanization({
+  entry,
+  row,
+  model,
+  path,
+  problems,
+}: {
+  entry: { romanization?: string | null };
+  row?: { romanization: string | null };
+  model: "Word" | "Sentence";
+  path: string;
+  problems: string[];
+}) {
+  if (row && entry.romanization !== undefined && entry.romanization !== row.romanization) {
+    problems.push(
+      `${path}.romanization: this text already exists. Use ${model} set to change its shared romanization.`,
+    );
+  }
+
+  return row ? row.romanization : (entry.romanization ?? null);
+}
+
 export async function resolveVocabulary(
   db: TransactionClient,
   {
@@ -180,7 +202,7 @@ export async function resolveVocabulary(
           id,
           note: entry.note ?? null,
           organizationId: organization.id,
-          romanization: row?.romanization ?? null,
+          romanization: declarationRomanization({ entry, model: "Word", path, problems, row }),
           translation: entry.translation,
           word: entry.word,
         },
@@ -236,7 +258,7 @@ export async function resolveVocabulary(
           id,
           ordersOwedAt: null,
           organizationId: organization.id,
-          romanization: row?.romanization ?? null,
+          romanization: declarationRomanization({ entry, model: "Sentence", path, problems, row }),
         },
       ];
     }) ?? before.sentences;

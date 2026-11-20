@@ -3,11 +3,11 @@ import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient, sql } from "@zoonk/db";
 import { z } from "zod";
 import { lessonProblem } from "../../_utils/lesson-problem";
-import { type Resolution, refuse, toJson } from "../../_utils/resolved-change";
+import { type Resolution, refuse } from "../../_utils/resolved-change";
 import { defineFixHandler, idSchema } from "../fix-handler";
 import { applyLessonScreens } from "./apply";
 import { buildScreens } from "./build";
-import { linkScreenMedia } from "./link-media";
+import { resolvePublishedScreens } from "./link-media";
 import { checkProposedMedia } from "./media";
 import { changedRows, checkScreenReferences, screenItemIds } from "./references";
 import {
@@ -72,7 +72,7 @@ async function resolve(
         version,
       };
 
-      return { after, media: [], mediaLinks: [], newItems: [], proposal: null };
+      return { after, effects: [], media: [], mediaLinks: [], newItems: [], proposal: null };
     }
 
     const list = proposed.setScreens;
@@ -85,7 +85,7 @@ async function resolve(
 
     const vocabulary = await resolveVocabulary(db, { allocated, lesson, list, problems });
 
-    const { screens, summary, newItems } = buildScreens({
+    const { effects, screens, summary, newItems } = buildScreens({
       allocated,
       lesson,
       list,
@@ -103,6 +103,7 @@ async function resolve(
         version,
         words: vocabulary.words,
       },
+      effects,
       media: [...vocabulary.media, ...pending.map(({ need }) => need)],
       mediaLinks: [...vocabulary.mediaLinks, ...pending.map(({ link }) => link)],
       newItems,
@@ -110,31 +111,21 @@ async function resolve(
     };
   };
 
-  const { after, media, mediaLinks, newItems, proposal } = await build();
+  const { after, effects, media, mediaLinks, newItems, proposal } = await build();
 
-  const [references, beforeReferences] = await Promise.all([
-    checkScreenReferences(db, { after, before, mediaLinks, newItems, problems }),
-    checkScreenReferences(db, { after: before, before, newItems: [], problems: [] }),
-  ]);
-
-  if ("restore" in proposed && !isDeepStrictEqual(references, proposed.restore.beforeReferences)) {
-    problems.push(
-      "references: an original picture or practice question changed. Review the current item before restoring it.",
-    );
-  }
+  await checkScreenReferences(db, { after, before, mediaLinks, newItems, problems });
 
   if (problems.length > 0) {
     return refuse(problems.map((problem) => `setScreens.${problem}`).join("\n"));
   }
 
   return {
-    effects: [],
+    effects,
     media,
     ok: true,
     stored: {
       after,
       before,
-      beforeReferences: toJson(beforeReferences),
       changedSentenceIds: changedRows(before.sentences, after.sentences),
       changedWordIds: changedRows(before.words, after.words),
       id,
@@ -143,7 +134,6 @@ async function resolve(
       newItems,
       op: "setScreens",
       proposal,
-      references: toJson(references),
     },
     unit: { id, kind: "lesson" },
   };
@@ -193,13 +183,13 @@ export const lessonSetScreens = defineFixHandler({
       },
     },
     rules:
-      "version is the lesson's current version from pnpm zoonk staff lesson. screens is the final ordered list: {id} keeps a screen, an id with content, variants (by id), citation, mediaAssetId or idea edits it, {kind, …} adds one, and a screen left out is removed. vocabulary and translation screens take word; reading, listening and a linked spokenAnswer take sentence: a lesson word or sentence id, or a declared key. words, sentences and ideas, when sent, are the final lists. A word or sentence entry is {id} to keep, {id, …fields} to edit, or {key, word or sentence, …all fields} to declare; a sentence declares its reviewed otherSentenceOrders and otherTranslationOrders ([] when none). Every row needs a screen. An idea is {from} to keep, {from, text, label} to reword, or {text, label} to add; a screen's idea is an index in the final list. A numeric check is {kind: check, skillId, numeric: {context, question, math, correctReason}}, its question showing each math variable as {name}. picture: {prompt, alt} draws a new screen picture. New ideas' icons, new pictures and declared words or sentences without audio are produced at proposal; an alphabet card with audioUrl null gets a clip. A kept question's basis.position follows its quoted screen; a new one counts in the final list.",
+      "version is the lesson's current version from pnpm zoonk staff lesson. screens is the final ordered list: {id} keeps a screen, an id with content, variants (by id), citation, mediaAssetId or idea edits it, {kind, …} adds one, and a screen left out is removed. vocabulary and translation screens take word; reading, listening and a linked spokenAnswer take sentence: a lesson word or sentence id, or a declared key. words, sentences and ideas, when sent, are the final lists. A word or sentence entry is {id} to keep, {id, …fields} to edit, or {key, word or sentence, …all fields} to declare; a new shared word or sentence may declare romanization, and a sentence declares its reviewed otherSentenceOrders and otherTranslationOrders ([] when none). Every row needs a screen. An idea is {from} to keep, {from, text, label} to reword, or {text, label} to add; a screen's idea is an index in the final list. A numeric check is {kind: check, skillId, numeric: {context, question, math, correctReason}}, its question showing each math variable as {name}. picture: {prompt, alt} draws a new screen picture. New ideas' icons, new pictures and declared words or sentences without audio are produced at proposal; an alphabet card with audioUrl null gets a clip. A kept question's basis.position follows its quoted screen; a new one counts in the final list.",
     schema: proposal,
   },
   resolve: (db, input: Proposal & { allocated?: StoredScreens }) =>
     resolve(db, input, input.allocated),
   revert: (db, stored, context) => {
-    const after = linkScreenMedia(stored, context);
+    const after = resolvePublishedScreens(stored, context);
 
     const before = {
       ...stored.before,
@@ -257,12 +247,6 @@ export const lessonSetScreens = defineFixHandler({
       : {
           allocated: stored,
           id: stored.id,
-          restore: {
-            ...stored,
-            after: stored.before,
-            before: stored.after,
-            beforeReferences: stored.references,
-            references: stored.beforeReferences,
-          },
+          restore: { ...stored, after: stored.before, before: stored.after },
         },
 });

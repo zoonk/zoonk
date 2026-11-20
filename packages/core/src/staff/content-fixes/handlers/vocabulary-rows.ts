@@ -25,6 +25,7 @@ import {
   clipSchema,
   loadClip,
   loadRow,
+  romanizationSchema,
   toClipData,
 } from "./vocabulary-row";
 
@@ -85,7 +86,7 @@ async function tilesProblem(
 }
 
 const setValuesSchema = z.strictObject({
-  romanization: z.string().trim().min(1).nullable().optional(),
+  romanization: romanizationSchema,
   sentence: z.string().optional(),
   word: z.string().optional(),
 });

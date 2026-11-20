@@ -1,14 +1,44 @@
 import { isDeepStrictEqual } from "node:util";
-import { DbNull, type TransactionClient } from "@zoonk/db";
+import { DbNull, type TransactionClient, sql } from "@zoonk/db";
 import { toStoredItem } from "../../../../library/items/item-content";
 import {
   retireUnaskedQuestions,
   startLessonVersion,
 } from "../../../../library/lessons/lesson-versions";
 import { type FixContext } from "../fix-handler";
-import { linkScreenMedia, linkVocabularyMedia } from "./link-media";
+import { linkVocabularyMedia, resolvePublishedScreens } from "./link-media";
 import { screenItemIds } from "./references";
 import { type StoredScreens } from "./schema";
+
+async function copyKeptAnswers(tx: TransactionClient, { after, proposal }: StoredScreens) {
+  const copies = (proposal?.screens ?? []).flatMap((entry, position) => {
+    const next = after.screens[position];
+    return "id" in entry && next?.provenance ? [{ from: entry.id, to: next.id }] : [];
+  });
+
+  if (copies.length === 0) {
+    return;
+  }
+
+  await tx.$executeRaw(sql`
+    WITH screen_copies AS (
+      SELECT * FROM unnest(${copies.map(({ from }) => from)}::uuid[], ${copies.map(({ to }) => to)}::uuid[])
+        AS copies(source_id, target_id)
+    ),
+    copied_explanations AS (
+      INSERT INTO answer_explanations
+        (step_id, language, normalized_answer, explanation, model, prompt_version, run_id, generated_at)
+      SELECT target_id, language, normalized_answer, explanation, model, prompt_version, run_id, generated_at
+      FROM answer_explanations
+      JOIN screen_copies ON step_id = source_id
+    )
+    INSERT INTO tutor_shared_answers
+      (step_id, suggestion, question, answer, model, prompt_version, run_id, generated_at)
+    SELECT target_id, suggestion, question, answer, model, prompt_version, run_id, generated_at
+    FROM tutor_shared_answers
+    JOIN screen_copies ON step_id = source_id
+  `);
+}
 
 export async function applyLessonScreens(
   tx: TransactionClient,
@@ -16,13 +46,9 @@ export async function applyLessonScreens(
   context: FixContext,
 ) {
   const { id: lessonId, before } = change;
-  const after = linkScreenMedia(change, context);
+  const after = resolvePublishedScreens(change, context);
   const provenance = { model: "staff", promptVersion: "setScreens", runId: context.fixId };
   const version = await startLessonVersion(tx, lessonId);
-
-  if (version !== after.version) {
-    throw new Error("Lesson screen version changed during approval");
-  }
 
   if (change.newItems.length > 0) {
     const { language } = await tx.lesson.findUniqueOrThrow({
@@ -124,18 +150,17 @@ export async function applyLessonScreens(
         variants: _variants,
         sources: _sources,
         optionPictures: _pictures,
-        answerExplanations: _answers,
-        sharedTutorAnswers: _tutor,
         marks,
+        provenance: origin,
         ...screen
-      }) => ({ ...screen, lessonId, marks: marks ?? DbNull, version, ...provenance }),
+      }) => ({ ...screen, ...origin, lessonId, marks: marks ?? DbNull, version }),
     ),
   });
 
   await Promise.all([
     tx.stepVariant.createMany({
       data: after.screens.flatMap(({ id, variants }) =>
-        variants.map((row) => ({ ...row, ...provenance, stepId: id })),
+        variants.map(({ provenance: origin, ...row }) => ({ ...row, ...origin, stepId: id })),
       ),
     }),
     tx.stepOptionPicture.createMany({
@@ -148,16 +173,7 @@ export async function applyLessonScreens(
         sources.map((row) => ({ ...row, stepId: id })),
       ),
     }),
-    tx.answerExplanation.createMany({
-      data: after.screens.flatMap(({ id, answerExplanations }) =>
-        answerExplanations.map((row) => ({ ...row, stepId: id })),
-      ),
-    }),
-    tx.tutorSharedAnswer.createMany({
-      data: after.screens.flatMap(({ id, sharedTutorAnswers }) =>
-        sharedTutorAnswers.map((row) => ({ ...row, stepId: id })),
-      ),
-    }),
+    copyKeptAnswers(tx, change),
   ]);
 
   const removed = screenItemIds(before).filter((id) => !screenItemIds(after).includes(id));

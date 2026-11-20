@@ -225,6 +225,8 @@ export function editVariants({
         original: variant.content,
       }),
       id: allocatedScreen?.variants[index]?.id ?? randomUUID(),
+      provenance:
+        edit && !isDeepStrictEqual(edit.content, variant.content) ? null : variant.provenance,
     };
   });
 }
