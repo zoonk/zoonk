@@ -1,8 +1,8 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { isScheduledPaperComplete } from "../../exams/mocks/_utils/mock-complete";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { readScheduledStructure } from "../../exams/mocks/_utils/read-mock-structure";
-import { countPlannedQuestions } from "../../exams/mocks/mock-plan";
 import { readBlockPayload } from "../block-payload";
 import { type DayBlockInput } from "./day-block-view";
 
@@ -65,7 +65,7 @@ export async function loadPreparingMockPositions({
         userId: goal.userId,
       });
 
-      return countPlannedQuestions(plan) < countPlannedQuestions(plan.outline) ? [position] : [];
+      return !isScheduledPaperComplete(plan) ? [position] : [];
     }),
   );
 

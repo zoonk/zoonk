@@ -14,6 +14,7 @@ import {
   findRunningAnytimeMock,
   listMissingRecordings,
 } from "./anytime-mock-setup";
+import { isPaperComplete } from "./mock-complete";
 import { getExamStartTime } from "./mock-conditions";
 import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
 import { planFromBank } from "./plan-from-bank";
@@ -33,10 +34,11 @@ export function isCompleteMock({
   setup: AnytimeMockSetup;
   plan: MockPlan;
 }) {
-  return (
-    countPlannedQuestions(plan) === option.questions &&
-    listMissingRecordings({ option, setup }).length === 0 &&
-    option.written.length === plan.sections.reduce((sum, section) => sum + section.essays.length, 0)
+  return isPaperComplete(
+    plan,
+    option.questions,
+    option.written.length,
+    listMissingRecordings({ option, setup }).length,
   );
 }
 

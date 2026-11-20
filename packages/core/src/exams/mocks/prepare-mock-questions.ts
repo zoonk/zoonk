@@ -18,6 +18,7 @@ import {
 } from "./_utils/anytime-mock-setup";
 import { canReuseMockItems, isCompleteMock, planFromBank } from "./_utils/create-anytime-mock";
 import { planMockWrites } from "./_utils/mock-writes";
+import { planScheduledFromBank } from "./_utils/plan-from-bank";
 import {
   SCHEDULED_SUPPLY_PLAN_SELECT,
   listScheduledSupplyOptions,
@@ -128,6 +129,7 @@ async function getSupplyTargets({
 
   const scheduled = upcoming.map(({ option, scheduledFor }) => ({
     option,
+    scheduledFor,
     reuse: false,
     urgent: scheduledFor.getTime() <= Date.now() + 3 * MS_PER_DAY,
   }));
@@ -141,7 +143,7 @@ async function getSupplyTargets({
   const targets = [
     ...scheduled,
     ...(asked && (shape || !reuseRequested)
-      ? [{ option: asked, reuse: reuseRequested, urgent: Boolean(shape) }]
+      ? [{ option: asked, scheduledFor: null, reuse: reuseRequested, urgent: Boolean(shape) }]
       : []),
   ];
 
@@ -175,18 +177,21 @@ export async function listMockPrepWrites({
 
   /* oxlint-disable no-await-in-loop -- Each target reserves the questions that later targets must exclude. */
   for (const target of targets) {
-    const { option, reuse } = target;
+    const input = { goal, setup, option: target.option, exclude: used, userId: goal.userId };
+    const scheduled =
+      target.scheduledFor &&
+      (await planScheduledFromBank({
+        ...input,
+        paperPlan: goal.plan,
+        scheduledFor: target.scheduledFor,
+      }));
+    const planned = scheduled ?? (await planFromBank({ ...input, reuse: target.reuse }));
+    const option = scheduled?.option ?? target.option;
+    const complete =
+      scheduled?.complete ??
+      isCompleteMock({ option, plan: planned.plan, setup: planned.available });
 
-    const planned = await planFromBank({
-      exclude: used,
-      goal,
-      option,
-      reuse,
-      setup,
-      userId: goal.userId,
-    });
-
-    if (!isCompleteMock({ option, plan: planned.plan, setup: planned.available })) {
+    if (!complete) {
       const sections = listMissingRecordings({ option, setup: planned.available });
 
       missingParts.push(
@@ -195,7 +200,14 @@ export async function listMockPrepWrites({
 
       urgentShort ||= target.urgent;
 
-      const batch = await planMockWrites({ goal, option, planned, setup, userId: goal.userId });
+      const batch = await planMockWrites({
+        goal,
+        option,
+        planned,
+        skillIds: scheduled?.skillIds,
+        setup: planned.available,
+        userId: goal.userId,
+      });
       writes.push(...(batch ?? []));
     }
 

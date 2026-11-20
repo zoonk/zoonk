@@ -7,6 +7,7 @@ import { type MockConditions } from "../mock-contract";
 import { markPlannedItems } from "../mock-marking";
 import { type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { listLeftOutChoices } from "../mock-unpicked";
+import { isScheduledPaperComplete } from "./mock-complete";
 import { type OwnedMock } from "./owned-mock";
 import { planWeeklyMock } from "./plan-weekly-mock";
 
@@ -31,7 +32,7 @@ export async function buildMockConditions(
     "blueprint" | "goal" | "payload" | "sessionDate" | "structure" | "unpicked" | "userId"
   >,
   client?: TransactionClient,
-): Promise<MockConditions> {
+) {
   const { goal, payload, sessionDate, structure, userId } = owned;
 
   const identity = payload.checkpoint?.mockIdentity;
@@ -51,7 +52,15 @@ export async function buildMockConditions(
     userId,
   });
 
-  return toPlannedConditions({ ...owned, bank, plan: client ? bank : bank.outline });
+  return {
+    complete: isScheduledPaperComplete(bank),
+    conditions: toPlannedConditions({
+      ...owned,
+      structure: bank.structure,
+      bank,
+      plan: client ? bank : bank.outline,
+    }),
+  };
 }
 
 export function toPlannedConditions({

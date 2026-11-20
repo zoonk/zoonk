@@ -14,6 +14,7 @@ export const SCHEDULED_SUPPLY_PLAN_SELECT = {
     take: 2,
     where: { kind: "mock", status: "todo" },
   },
+  graph: true,
   phases: true,
   settings: true,
 } as const;
@@ -26,7 +27,9 @@ export async function listScheduledSupplyOptions({
 }: {
   client?: TransactionClient;
   goal: Pick<Goal, "id" | "targetDate">;
-  plan: (Pick<Plan, "settings" | "phases"> & { items: Pick<PlanItem, "scheduledFor">[] }) | null;
+  plan:
+    | (Pick<Plan, "graph" | "settings" | "phases"> & { items: Pick<PlanItem, "scheduledFor">[] })
+    | null;
   setup: AnytimeMockSetup;
 }) {
   const funding = parsePlanSettings(plan?.settings).mockFunding;

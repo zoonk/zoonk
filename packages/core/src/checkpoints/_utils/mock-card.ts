@@ -1,10 +1,10 @@
 import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
+import { isScheduledPaperComplete } from "../../exams/mocks/_utils/mock-complete";
 import { getExamStartTime } from "../../exams/mocks/_utils/mock-conditions";
 import { getBankTypedParts } from "../../exams/mocks/_utils/mock-typed-parts";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { readScheduledStructure } from "../../exams/mocks/_utils/read-mock-structure";
-import { countPlannedQuestions } from "../../exams/mocks/mock-plan";
 import { type GoalPlanSource } from "../../learner/_utils/goal-plan-source";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { readFinishedMockCount } from "../../learner/facts/finished-mocks";
@@ -74,10 +74,8 @@ export async function loadMockCard({
   const plan = planned.outline;
 
   return {
-    conditions: toMockConditions({ plan, structure, typed }),
-    preparing:
-      date.getTime() <= today.getTime() &&
-      countPlannedQuestions(planned) !== countPlannedQuestions(plan),
+    conditions: toMockConditions({ plan, structure: planned.structure, typed }),
+    preparing: date.getTime() <= today.getTime() && !isScheduledPaperComplete(planned),
     startTime: getExamStartTime({ day: plan.day, edition: content?.edition ?? null }),
     timeZone: content?.edition.timeZone ?? null,
   };
