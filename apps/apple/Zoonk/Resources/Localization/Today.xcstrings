@@ -1,65 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "**Get them now**" : {
-      "comment" : "Under Your next lessons: asks for the day's next lessons, which nobody has asked for yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Jetzt holen**"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Pedirlas ahora**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Les demander maintenant**"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Richiedile ora**"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**今すぐ受け取る**"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**지금 받기**"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Poproś o nie teraz**"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Pedir agora**"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**Şimdi iste**"
-          }
-        }
-      }
-    },
     "%@ · every topic" : {
       "comment" : "When a review of every topic is; the argument is a weekday",
       "localizations" : {
@@ -4707,65 +4648,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Neye odaklanacağını seç"
-          }
-        }
-      }
-    },
-    "Come back in a few minutes." : {
-      "comment" : "The day's lessons are taking long to outline",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Komm in ein paar Minuten noch einmal vorbei."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuelve en unos minutos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reviens dans quelques minutes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Torna tra qualche minuto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "数分後にまた確認してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "몇 분 후에 다시 와 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wróć za kilka minut."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volte em alguns minutos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Birkaç dakika sonra tekrar gel."
           }
         }
       }
@@ -10539,65 +10421,6 @@
         }
       }
     },
-    "Taking longer than usual" : {
-      "comment" : "The day's next lessons are taking long to outline",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir brauchen länger als üblich"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Está tardando más de lo habitual"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ça prend plus de temps que d’habitude"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo impiegando più tempo del solito"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "いつもより時間がかかっています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "평소보다 오래 걸리고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zajmuje nam to więcej czasu niż zwykle"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Demorando mais que o normal"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hazırlamamız normalden uzun sürüyor"
-          }
-        }
-      }
-    },
     "Thanks. We're reading it now, and your plan will update in a few minutes." : {
       "comment" : "After the learner uploaded the document research asked for",
       "localizations" : {
@@ -11184,65 +11007,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugün yüklenemedi"
-          }
-        }
-      }
-    },
-    "Today's lessons are taking longer than usual." : {
-      "comment" : "The day's lessons are taking long to outline",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die heutigen Lektionen brauchen länger als üblich."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparar las lecciones de hoy está tardando más de lo normal."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La préparation des leçons du jour prend plus de temps que prévu."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo impiegando più tempo del solito per preparare le lezioni di oggi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日のレッスンの作成に、いつもより時間がかかっています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 레슨을 만드는 데 평소보다 오래 걸리고 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotowujemy dzisiejsze lekcje dłużej niż zwykle."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As aulas de hoje estão demorando mais que o normal."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü dersleri hazırlamamız normalden uzun sürüyor."
           }
         }
       }

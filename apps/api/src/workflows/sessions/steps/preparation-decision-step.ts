@@ -36,7 +36,7 @@ type Access = GoalPreparationAccess | SessionPreparationAccess;
 type ReadyAccess = Extract<Access, { status: "ready" }>;
 
 export type PreparationDecision =
-  | { goalId: string | null; lesson: LessonContentInput | null; status: "guest" }
+  | { goalId: string; status: "guest"; timeZone: string }
   | { status: "skipped" }
   | {
       challengeQuestions: ChallengeQuestions | null;
@@ -81,19 +81,16 @@ async function hasListeningToPrepare({ goalId, userId }: ReadyAccess): Promise<b
   return Boolean(toPrepare && toPrepare.parts.length > 0);
 }
 
-/** Guests may prepare only their next lesson, counted as its start, and the outlines their plan reaches. */
-async function requestGuestLesson({
+export async function requestGuestLessonStep({
   lessonId,
   platform,
   userId,
 }: {
-  lessonId: string | null;
+  lessonId: string;
   platform: AnalyticsPlatform | null;
   userId: string;
 }): Promise<LessonContentInput | null> {
-  if (!lessonId) {
-    return null;
-  }
+  "use step";
 
   const writing = await requestLiveLessonWriting({
     lessonId,
@@ -128,8 +125,7 @@ export async function decidePreparationStep(
   const access = await readAccess(request);
 
   if (access.status === "guest") {
-    const lesson = await requestGuestLesson({ ...access, platform: request.platform ?? null });
-    return { goalId: access.goalId, lesson, status: "guest" };
+    return { goalId: access.goalId, status: "guest", timeZone: access.timeZone };
   }
 
   if (access.status !== "ready") {

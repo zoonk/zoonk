@@ -48,6 +48,11 @@ struct StudyDay: Decodable, Equatable, Sendable {
     let earned: Bool
   }
 
+  /// The plan topic whose lessons the day keeps time for before they're written.
+  struct LessonPlaceholder: Decodable, Equatable, Sendable {
+    let title: String
+  }
+
   typealias Minutes = Components.Schemas.StudySessionMinutes
 
   let id: String?
@@ -62,6 +67,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let freshStart: FreshStart?
   let fullMeal: FullMeal
   let goalId: String?
+  let lessonPlaceholder: LessonPlaceholder?
   let lessonsComing: Bool
   let lessonsToPrepare: Bool
   /// The learner's calendar day, `YYYY-MM-DD`.
@@ -94,6 +100,14 @@ struct StudyDay: Decodable, Equatable, Sendable {
     }
 
     return lessonsComing ? .beingWritten : nil
+  }
+
+  /// Main's `useComingLessons`: the held time is named by the plan topic it's for.
+  var comingLessonsTitle: String {
+    lessonPlaceholder?.title
+      ?? String(
+        localized: "Your next lessons", table: "Today",
+        comment: "Holds the place of the day's lessons that aren't written yet")
   }
 
   /// The day as a block's completion says it now stands, before the session is read again: the
@@ -164,7 +178,9 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
     if let comingLessons {
       let held = foldedMinutes(showing: blocks)
-      if held > 0 { segments.append(.held(minutes: held, comingLessons)) }
+      if held > 0 {
+        segments.append(.held(minutes: held, comingLessons, title: comingLessonsTitle))
+      }
     }
 
     return segments
@@ -180,7 +196,7 @@ enum DaySegment {
   }
 
   case block(StudyBlock, State)
-  case held(minutes: Double, ComingLessons)
+  case held(minutes: Double, ComingLessons, title: String)
 
   /// How the part is drawn: done, next up, or waiting in its kind's color.
   var mark: DaySegments.Segment {
@@ -197,6 +213,27 @@ enum DaySegment {
 enum ComingLessons {
   case beingWritten
   case toPrepare
+
+  /// Main's `useComingLessons`: once the wait for them runs out, the learner asks for them.
+  func asked(writingStalled: Bool) -> ComingLessons {
+    writingStalled ? .toPrepare : self
+  }
+
+  /// What the held time's row and its part of the meter say about its lessons.
+  var note: String {
+    switch self {
+    case .toPrepare:
+      String(
+        localized: "Not ready yet", table: "Today",
+        comment: "The day's next lessons, which nobody has asked for yet")
+    case .beingWritten:
+      String(
+        localized: "Getting ready…", table: "Today",
+        comment:
+          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
+      )
+    }
+  }
 }
 
 /// Core decides where the day stands.
