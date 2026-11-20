@@ -29,8 +29,9 @@ function setToday(isoDate: string) {
   });
 }
 
-async function examGoal(userId: string, dailyMinutes = 30) {
+async function examGoal(userId: string, { chapterPerSkill = false } = {}) {
   const library = await planLibraryFixture({
+    chapterPerSkill,
     skills: [
       { area: "Math", lessons: 20, weight: 5 },
       { area: "Law", lessons: 20, weight: 3 },
@@ -39,7 +40,7 @@ async function examGoal(userId: string, dailyMinutes = 30) {
   });
 
   const { goal, plan } = await unplannedGoalFixture({
-    dailyMinutes,
+    dailyMinutes: 30,
     kind: "exam",
     settings: { startDate: "2020-09-28" },
     targetDate: new Date("2020-11-29T00:00:00Z"),
@@ -256,7 +257,7 @@ describe("work an earlier day left", () => {
 
   it("puts a missed day's lessons first even when today's lessons come earlier in the plan", async () => {
     const user = await learner();
-    const { goal, plan } = await examGoal(user.id);
+    const { goal, plan } = await examGoal(user.id, { chapterPerSkill: true });
 
     const monday = await openToday(goal.id);
 

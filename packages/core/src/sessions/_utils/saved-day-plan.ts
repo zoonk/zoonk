@@ -9,7 +9,6 @@ import { addsLessonsAfterLessonsDone } from "../../plans/_utils/plan-refresh-adm
 import { readPlanSummary } from "../../plans/_utils/plan-summary";
 import { computePlan } from "../../plans/_utils/replan";
 import { type SelectedSummary } from "../../plans/_utils/selected-summary-contract";
-import { putLeftWorkFirst } from "./left-work-first";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { getSessionItemIdentity } from "./session-plan-item";
@@ -68,13 +67,10 @@ function selectSavedDay({
 }): SelectedDayPlan {
   const selection = savedSelection({ context, summary });
 
-  const items = putLeftWorkFirst({
-    items: dropSettledEvents({
-      items: selection.items,
-      settings: context.state.settings,
-      today: context.today,
-    }),
-    left,
+  const items = dropSettledEvents({
+    items: selection.items,
+    settings: context.state.settings,
+    today: context.today,
   });
 
   return { ...selection, items, left, source: toSource({ ...selection, items }) };
