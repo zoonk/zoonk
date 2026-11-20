@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-statistics-field-nursing",
+        "claimId": "2a3fb1b34ae11559",
+        "criterion": "realism",
+        "observationId": "833671dad45e37ecaa8ccb05c8ec445cdb39f9ca0b00c517962e12aacb10fe7b.first.22836e0b-7e12-4e16-bb9f-4df15b61760e.0",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00378305,
+    "id": "f57d66236ed811da5d435fda30a10c485e702f7cf70cd49fa14ac789b6e2e8cf",
+    "packet": [
+      {
+        "A": {
+          "blob": "ed185f3b680482eb3932d671264620ed7b54215ea5b2f2c4abbe10175fa85d20",
+          "format": "text"
+        },
+        "B": {
+          "blob": "402197dbf10aab4e8238ffaeb43aa3f0d2ba5b2a020cf75917b7b406376beb98",
+          "format": "text"
+        },
+        "claim": "The case centers on changing blanket-card wording and making a print decision, rather than a nursing routine or outcome such as falls, rest, or hand hygiene. It therefore misses the requested hospital-ward nursing work scenario.",
+        "claimId": "2a3fb1b34ae11559",
+        "criterion": "realism",
+        "expectations": {
+          "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
+          "format": "json"
+        },
+        "location": {
+          "detail": "mission, panels, choices, and endings throughout",
+          "kind": "whole"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
+          "format": "text"
+        },
+        "B": {
+          "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
+          "format": "text"
+        },
+        "claim": "The product manager's first message uses the term 'statistical power' without explaining it.",
+        "claimId": "b90b95da2be37cf2",
+        "criterion": "plainLanguage",
+        "expectations": {
+          "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2a3fb1b34ae11559",
+          "finding": "doesn't hold",
+          "reason": "Output B is set on a hospital ward (Birchmere Medical Ward) with nursing colleagues (a bedside trial nurse and a charge nurse) and a patient-comfort routine, the blanket request card used on comfort rounds. The expectations' fall-prevention and hand-hygiene examples are illustrative rather than required, so the claim that the case misses a nursing ward scenario is overstated."
+        },
+        {
+          "claimId": "b90b95da2be37cf2",
+          "finding": "doesn't hold",
+          "reason": "The product manager's first message in output A reads \"B got 10 more purchases with the same number of visitors. The change is cheap to release. Can we call it a winner today?\" and does not use the term \"statistical power.\" Nowhere in output A does that term appear; the \"80% chance\" wording is plain, and the only instance of the symbol-based power notation is in output B."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

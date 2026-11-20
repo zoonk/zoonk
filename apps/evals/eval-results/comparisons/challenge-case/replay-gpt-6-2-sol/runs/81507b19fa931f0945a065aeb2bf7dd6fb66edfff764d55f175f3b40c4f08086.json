@@ -1,0 +1,17 @@
+{
+  "caseId": "pt-nursing-dose-work",
+  "challenger": {
+    "costUsd": 0.09502190000000002,
+    "durationMs": 112065.33583300002,
+    "hash": "44414750a083dc188a3411875bdb584be365c46558b401a4cdec0f301ef4dab3",
+    "userPromptHash": "4aa1b10bbefa0ee10115c9c08d2e1a798a8c6f484a3fbb19567a2942b9709ae9"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.14401850000000002,
+    "durationMs": 197406.17670900002,
+    "hash": "d8e0cd29e8941b2243d994b261700ec22fe424d1d1293292e4c3bf9e1f74201a",
+    "userPromptHash": "4aa1b10bbefa0ee10115c9c08d2e1a798a8c6f484a3fbb19567a2942b9709ae9"
+  },
+  "run": 1
+}

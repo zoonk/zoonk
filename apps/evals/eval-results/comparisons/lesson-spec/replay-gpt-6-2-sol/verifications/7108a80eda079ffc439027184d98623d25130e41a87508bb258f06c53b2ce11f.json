@@ -1,0 +1,87 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-circuito-serie-paralelo",
+        "claimId": "df414627c6f5197f",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "e8ca7ef0568714e239ca9f24c62267c0d14cca9bd8b6060003b5286699c6c118.first.ca634745-d964-4aa1-a405-ce810cf10e74.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0028503499999999998,
+    "id": "7108a80eda079ffc439027184d98623d25130e41a87508bb258f06c53b2ce11f",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "1347e46329506684",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "39b3863c21eebec3cb2075e9c28b7f44523ed2b0c992be556e2620fe42fae7a5",
+          "format": "text"
+        },
+        "B": {
+          "blob": "208110edf75c30edda90864cb7271190bc52e5921863cfb073a5e06620a90c48",
+          "format": "text"
+        },
+        "claim": "A descrição visual do circuito em paralelo na explicação da cozinha não inclui uma pilha nem identifica a fonte como parte desenhada do circuito.",
+        "claimId": "df414627c6f5197f",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "c2ad90b5d602b118d1a7f6d7ad538ea59e46c51f04f17fb79ad5525b85a620fe",
+          "format": "text"
+        },
+        "input": {
+          "blob": "c32d2b011c58b6b5f9ae9822efc60ccf49a7e3a97923160061fbc8706bdb3137",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Tela de explicação sobre a cozinha: “Esquema simples da cozinha, com dois fios de alimentação e dois caminhos entre eles”.",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": false,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "df414627c6f5197f",
+          "finding": "holds",
+          "reason": "The visual brief for the kitchen explanation in output A describes a simple kitchen schematic with two supply wires (\"dois fios de alimentação\") and two paths, one through the ceiling lamp and one through the counter lamp. It never mentions a pilha (battery) or any source drawn as a part of the circuit, so the claim is accurate."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

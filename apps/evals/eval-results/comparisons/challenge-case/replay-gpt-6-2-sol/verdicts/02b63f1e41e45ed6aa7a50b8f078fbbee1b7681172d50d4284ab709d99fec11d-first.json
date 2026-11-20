@@ -1,0 +1,220 @@
+{
+  "attempt": "first",
+  "costUsd": 0.01234969,
+  "failures": [],
+  "packetId": "02b63f1e41e45ed6aa7a50b8f078fbbee1b7681172d50d4284ab709d99fec11d",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither serves its learner better on realism.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the decision design is the same.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the team design is the same.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the debrief notes are the same.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and their numbers check out, so accuracy is the same.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so depth and language are the same.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so plain-language quality is the same.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are the same text, so neither serves its reader better."
+        },
+        "pairId": "06dede9b-f93e-4b6b-a82f-715e0c1b8d7c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A has a branching sales-update task with a clear deadline and a colleague who pushes back, which feels like a real day at work; B's meal-kit staging is also work-like but more crowded with overlapping roles.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's choices lead to different outputs (unsupported average, scoped average, pending notice), and the strong path is not simply the first option.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give a small, clear set of colleagues with distinct roles who push back and an AI helper that is useful when asked.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both debriefs praise specific strategies and say what to do instead with examples where useful.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "I checked the arithmetic in both: A's 560/7 = 80 and 560/8 = 70 and its row counts add up, and B's 112 kits, 106 timed and 6 unbooked orders are consistent, so neither teaches a wrong fact.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are beginner-level and stay within the work variant without promising results.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses everyday words and short lines, while B leans on terms like staging, handoff and register with little explanation.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A colleague's reply leaks game mechanics into the scene by describing the checks as using team capacity.",
+            "criterion": "realism",
+            "learnerCost": "The learner is pulled out of the work scene and reminded they are playing a game, which weakens the sense of a real job.",
+            "location": {
+              "detail": "the checks used some of our other-work time",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The term staging is used repeatedly without explanation for a beginner who may not know what it means in a packing context.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A new analyst may not follow what the crew is being asked to do, slowing understanding of the cleaning decisions.",
+            "location": {
+              "detail": "for a rough staging layout",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A is easier to follow for a beginner and offers more realistic trade-offs in a sales update, with the same accurate numbers as B."
+        },
+        "pairId": "13d17cdb-fb19-4353-a92f-46441adc706f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A is set on a ward with a charge nurse, a quality analyst and a shift huddle, with a supply deadline; B is a training-day review of a simulation.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "A",
+            "reason": "A's choices change the trial path and the outcome, and the strong choices are not always the first or the most cautious.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "A",
+            "reason": "A has a charge nurse and a quality analyst with different concerns plus an AI helper, all pushing the decision in realistic ways.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give specific, kind notes that praise a method and say what to do instead.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "B",
+            "reason": "B's numbers hold up: the Fisher p-value of about 0.30 and the 82-per-format sample size both check out, whereas A invents a savings figure and a redness rate that no panel supports.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A explains terms in the chat for a beginner and uses plain comparisons like a coin toss, while B's jargon is less explained.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A puts the statistics into patient counts and everyday comparisons, which a non-data reader can follow more easily than B's terminology.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The ending invents a $5,400 yearly saving and a 6.5% redness rate from swabs; no panel, test or message in the case supports either number.",
+            "criterion": "accuracy",
+            "learnerCost": "A nurse could carry away a false belief that a specific swab product cuts redness to 6.5% and a budget figure that was never measured.",
+            "location": {
+              "detail": "that cut redness to 6.5%",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The 50% chance of luck for a 6-versus-4 split in 80 patients looks too low for a two-sided test on those counts; my rough check puts it nearer 70%, so this should be verified.",
+            "criterion": "accuracy",
+            "learnerCost": "The coin-toss comparison teaches an inaccurate size of chance, which could mislead the learner about how strong the evidence is.",
+            "location": {
+              "detail": "Chance of luck (p-value)",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The case is set in a training-day simulation with two randomly assigned groups, not on a hospital ward with a unit decision, which breaks the required ward setting and turns the task into reviewing training.",
+            "criterion": "realism",
+            "learnerCost": "The learner practices reviewing a training design rather than the ward-level judgment the course is meant to build.",
+            "location": {
+              "detail": "Training day at Willow Bay Clinic",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Technical terms like Fisher's exact test and false-alarm limit are used with no plain explanation for a beginner.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A reader without a stats background may not follow why the test is valid or what the limit means, and may stop reading.",
+            "location": {
+              "detail": "Fisher's exact test, which works with small counts",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Both outputs carry a major problem, but A's invented savings and redness figure would teach a false patient-care fact, while B's accurate statistics outweigh its off-ward setting even though it is harder to read."
+        },
+        "pairId": "dc64103e-a95d-4cdf-a2c6-e4967ab58100"
+      }
+    ]
+  }
+}

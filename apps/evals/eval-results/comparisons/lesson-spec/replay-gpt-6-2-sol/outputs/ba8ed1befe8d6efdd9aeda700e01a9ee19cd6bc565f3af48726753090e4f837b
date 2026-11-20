@@ -1,0 +1,120 @@
+{
+  "lessons": [
+    {
+      "canDo": "Explicar e representar uma ligação em que dois átomos compartilham elétrons",
+      "description": "Veja como dois átomos se ligam ao compartilhar elétrons e como um traço representa essa ligação em moléculas como a água.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma gota de água cai do copo e se espalha na mesa. Lá dentro, o que mantém juntos os átomos de hidrogênio e oxigênio?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Esquema de um átomo de hidrogênio com o símbolo H e, ao lado, um ponto com a legenda «elétron».",
+          "visualKind": "picture",
+          "brief": "Um átomo de hidrogênio sozinho tem uma única partícula chamada elétron. No desenho, H é o símbolo do hidrogênio, e o ponto representa seu elétron.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Quando dois átomos de hidrogênio se unem, o que acontece com seus elétrons? Opções: «Ficam em comum» (certa), «Passam para um só átomo» (tentadora) ou «Continuam separados».",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Esquema com dois símbolos H e dois pontos entre eles, envolvidos por um contorno suave com a legenda «elétrons compartilhados pelos dois átomos».",
+          "visualKind": "picture",
+          "brief": "Quando dois átomos dividem o uso de elétrons, isso é uma ligação covalente. No caso dos dois hidrogênios, nenhum fica com os elétrons só para si: os dois são compartilhados.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Quando dois átomos compartilham um único par de elétrons, a ligação é simples: cada traço vale pelo par inteiro. Por isso, os dois hidrogênios ligados ficam H–H.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Represente a união de um hidrogênio (H) com um cloro (Cl) que compartilham dois elétrons. Revele os passos: os dois elétrons formam um par; troque o par por um traço; escreva H–Cl.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Dois átomos de flúor (F) compartilham um par de elétrons: qual desenho representa a ligação? Resposta: F–F; inclua F=F como erro tentador de usar um traço por elétron.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Mostre no modelo da água um oxigênio (O) ligado por um traço a cada hidrogênio (H). O mesmo átomo de oxigênio participa de duas ligações simples, cada uma com seu próprio par de elétrons.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "moleculeBuilder",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Monte a molécula de água (H₂O) com dois H e um O, usando apenas ligações simples. Ao final, pergunte quantos pares de elétrons foram usados nas ligações: dois, um por traço, não um só por haver apenas um oxigênio.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Para ilustrar a substância ativa da água oxigenada, compare H–O–O–H com H–O–H–O: em qual desenho cada H tem uma ligação e cada O tem duas? Escolha H–O–O–H e indique quantos elétrons os traços representam ao todo: seis, não três.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Representar um par de elétrons compartilhado por dois átomos com um traço entre seus símbolos.",
+          "example": "Em H–H, o traço mostra que os dois átomos de hidrogênio compartilham um par de elétrons.",
+          "hard": true,
+          "name": "Representar uma ligação covalente simples",
+          "topic": "Ligação covalente",
+          "useCase": "Ler desenhos de moléculas como a água em materiais de química."
+        }
+      ],
+      "title": "Ligação covalente"
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Ana passou no concurso da prefeitura e tomou posse. Os colegas dizem que, com o tempo, ela ganha uma garantia de não ser mandada embora à toa. Quanto tempo ela precisa trabalhar até chegar lá?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Três anos e uma aprovação",
+      "text": "Ana tomou posse em 2023. Se trabalhar de fato no cargo por três anos, em 2026 ela ganha a proteção contra demissão sem motivo. Mas só se uma comissão avaliar o trabalho dela e aprovar. Isso se chama **estabilidade**.",
+      "exampleLineIdea": "alguém que o aluno conhece e que passou num concurso e está nos primeiros anos do cargo",
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Pedro passou num concurso e já completou três anos trabalhando no cargo. A comissão ainda não fez a avaliação especial do trabalho dele.",
+      "question": "Pedro já é estável?",
+      "options": [
+        {
+          "text": "Sim, os três anos já bastam",
+          "isCorrect": false,
+          "reason": "O tempo sozinho não basta. Ele também precisa ser aprovado na avaliação da comissão.",
+          "picture": null
+        },
+        {
+          "text": "Não, falta a aprovação da comissão",
+          "isCorrect": true,
+          "reason": "A estabilidade pede as duas coisas: três anos de trabalho e aprovação na avaliação especial. A segunda ainda não aconteceu.",
+          "picture": null
+        },
+        {
+          "text": "Não, ele precisa de cinco anos",
+          "isCorrect": false,
+          "reason": "O prazo é de três anos, e Pedro já cumpriu. O que falta é a avaliação da comissão.",
+          "picture": null
+        },
+        {
+          "text": "Só se o chefe dele concordar",
+          "isCorrect": false,
+          "reason": "Não é o chefe sozinho quem decide. Quem avalia é uma comissão criada para isso.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Mas só se uma comissão avaliar o trabalho dela e aprovar."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Estável também pode sair",
+      "text": "Estável não quer dizer intocável. Por falta grave ou mau desempenho, o servidor perde o cargo por decisão definitiva da Justiça, por uma apuração no próprio órgão ou por avaliações regulares do trabalho. Em todos os casos, ele pode se defender. Isso se chama **ampla defesa**.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Sabrina é servidora estável da Prefeitura do Recife. Ela é acusada de faltar ao trabalho por semanas sem justificativa, uma falta grave.",
+      "question": "O chefe dela pode demiti-la no mesmo dia, sem nenhuma apuração?",
+      "options": [
+        {
+          "text": "Sim, falta grave permite demissão na hora",
+          "isCorrect": false,
+          "reason": "Mesmo com falta grave, a servidora estável tem direito de se defender antes. A ideia de punição imediata é tentadora, mas não vale aqui.",
+          "picture": null
+        },
+        {
+          "text": "Não, antes vem uma apuração com defesa",
+          "isCorrect": true,
+          "reason": "Uma servidora estável só perde o cargo por falta grave depois de uma apuração no órgão em que ela possa apresentar a sua versão.",
+          "picture": null
+        },
+        {
+          "text": "Não, servidor estável nunca é demitido",
+          "isCorrect": false,
+          "reason": "Estável não quer dizer intocável. Ela pode perder o cargo, desde que antes possa se defender.",
+          "picture": null
+        },
+        {
+          "text": "Sim, se o prefeito assinar junto",
+          "isCorrect": false,
+          "reason": "A assinatura de uma autoridade não substitui a apuração. Sem direito de defesa, a demissão não vale.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 4,
+        "quote": "Em todos os casos, ele pode se defender."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Três anos de trabalho",
+        "text": "O servidor concursado só pode ficar estável depois de três anos trabalhando de fato no cargo."
+      },
+      {
+        "label": "Aprovação da comissão",
+        "text": "Além do tempo, a estabilidade exige que uma comissão avalie o trabalho do servidor e o aprove."
+      },
+      {
+        "label": "Como perder o cargo",
+        "text": "Por falta grave ou mau desempenho, o servidor estável perde o cargo por decisão definitiva da Justiça, por apuração no órgão ou por avaliações regulares do trabalho."
+      },
+      {
+        "label": "Ampla defesa",
+        "text": "Em todos os caminhos para a perda do cargo, o servidor estável tem direito de se defender."
+      }
+    ],
+    "shape": "hub"
+  }
+}

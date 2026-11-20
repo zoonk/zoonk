@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-brain-lobes",
+        "claimId": "182710cb2506f12b",
+        "criterion": "screenPlan",
+        "observationId": "48f11ea37aa840764709abc0ee74009f727c27b640af3dd8abd27a5dfd6afa9c.first.bf376485-f1ce-460a-bed4-acfbd6a5999c.2",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0031533499999999996,
+    "id": "853a1152aa4cfd5438e3ee721cd6e54249cc7d57cd758bc916e3392a4db36dec",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "15a5947857de92e7",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+          "format": "text"
+        },
+        "claim": "The guess brief states the correct answer and identifies the tempting answer, so it does not leave the prediction unanswered.",
+        "claimId": "182710cb2506f12b",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "6e25e90035f327f7fde1c3cf8f81fbfc845ef2829845eab55744811e0ce727b8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "bc9895e13431c1934d9bef0bebfe69eba568f87c870f4ae901d85dc7546fb912",
+          "format": "json"
+        },
+        "location": {
+          "detail": "“near the back of the head is right, and near the forehead is tempting”",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "15a5947857de92e7",
+          "finding": "doesn't hold",
+          "reason": "Output A says the opposite: the guess screen answers 'O valor inteiro' and the explanation says the monthly rent 'continua devido mesmo sem fazer nenhum bolo'. Nowhere does it say the R$ 900,00 rent stops being paid in a month without production."
+        },
+        {
+          "claimId": "182710cb2506f12b",
+          "finding": "holds for both",
+          "reason": "The guess brief in A says 'near the back of the head is right, and near the forehead is tempting', which states the correct answer and the tempting one. B's guess brief also says 'Answer: the back; the tempting choice is the front', so the same is true of both outputs."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

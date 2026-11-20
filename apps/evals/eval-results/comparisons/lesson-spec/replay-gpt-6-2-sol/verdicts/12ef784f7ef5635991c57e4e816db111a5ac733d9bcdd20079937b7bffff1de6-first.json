@@ -1,0 +1,187 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00483514,
+  "failures": [],
+  "packetId": "12ef784f7ef5635991c57e4e816db111a5ac733d9bcdd20079937b7bffff1de6",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs define one action skill for calculating percent change and keep the lesson focused on that idea.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives the correct 15% answer and identifies dividing by the new fee as the tempting error; A reverses those, teaching the check incorrectly.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Their screens and visuals are otherwise the same, and neither plans activities.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in US English and stay within the percent-change lesson’s scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The check marks 13.04%—the result of dividing the $6 increase by the new $46 fee—as the tempting error, and incorrectly calls 15% the result of dividing by the old fee. The correct percent increase is 6 ÷ 40 × 100 = 15%.",
+            "criterion": "screenPlan",
+            "learnerCost": "A learner could be taught to reject the correct method and answer, or to trust an incorrect answer key.",
+            "location": {
+              "detail": "Ask the learner to calculate the percent increase when a monthly service fee rises from $40 to $46: 13.04%. Include 15% as the tempting answer from dividing by the old fee.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B has the correct answer and misconception in the percent-increase check; A reverses them, which could directly mislead the learner."
+        },
+        "pairId": "a6f4f2e6-3fda-43be-8f02-240da69aaeb8"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and both keep the lesson to the related skills of grouping sentence phrases and drawing their tree.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The screen plans are identical; both put the first explanation before the guess and include worked examples and follow-up checks.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both leave the guess about how the tree changes without a picture of the tree it asks the learner to interpret.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The identical plans use US English and remain within the syntax-tree topic.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess refers to a drawing and asks how the verb group changes, but supplies no picture of either tree for the learner to inspect.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is asked to reason about a visual structure that is not shown, contrary to the plan’s visual requirement.",
+            "location": {
+              "detail": "A drawing of “The dog barked” puts “barked” in its own group; what happens to that group if you change the sentence to “The dog barked a warning”?",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess refers to a drawing and asks how the verb group changes, but supplies no picture of either tree for the learner to inspect.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is asked to reason about a visual structure that is not shown, contrary to the plan’s visual requirement.",
+            "location": {
+              "detail": "A drawing of “The dog barked” puts “barked” in its own group; what happens to that group if you change the sentence to “The dog barked a warning”?",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, including the missing visual for the guess."
+        },
+        "pairId": "b7ed31cf-1f07-465c-85b8-8394a6321361"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B combines the closely linked grouping and tree-drawing actions into one focused skill, while A adds a separate skill and expands into determiner and noun branches beyond the stated NP–VP skill.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives a more focused progression for drawing phrase-level trees, while A introduces extra tree detail; both include a guess that refers to a tree without showing it.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both omit a tree picture for the guess about the sentence’s direct branches. B also puts a visual on the opening scene, where the plan calls for text only.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "B",
+            "reason": "B stays closer to the stated NP-and-VP scope; A also teaches Det and N branches, adding a smaller scope expansion.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess asks what happens to a drawing of “The dog barked” when the sentence changes, but provides no tree picture to inspect.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must interpret a visual tree that the screen does not show.",
+            "location": {
+              "detail": "A drawing of “The dog barked” puts “barked” in its own group; what happens to that group if you change the sentence to “The dog barked a warning”?",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess asks how many groups sit directly below the whole sentence in a tree, but provides no tree picture to inspect.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is asked to judge the arrangement of a visual structure that is not shown.",
+            "location": {
+              "detail": "Ask: “How many groups will sit directly below the whole sentence in our tree for ‘The puppy chewed the slipper’?”",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The opening hook includes a picture despite the requirement that the opening scene stay text-only.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The opening uses a visual where the plan requires the scene to be carried by text alone.",
+            "location": {
+              "detail": "The hook screen’s visual description of a top point and branches.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The hook’s visual description first specifies six branches for five displayed words, then says to use five branches.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "A writer cannot tell which branch count to draw, so the opening visual may be inconsistent or confusing.",
+            "location": {
+              "detail": "An unlabeled top point with six equal branches ending, from left to right, in The, puppy, chewed, the, slipper; use five branches, one for each displayed word, with no grouping or grammatical labels.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B is more focused on the requested NP–VP tree skill and avoids A’s added Det/N scope. Both still leave the guess without the tree it asks the learner to interpret."
+        },
+        "pairId": "ed04e563-a90a-4ea6-a0ae-3073608a2e96"
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "caseId": "en-plot-reading-field-research",
+  "challenger": {
+    "costUsd": 0.12428550000000001,
+    "durationMs": 129768.193333,
+    "hash": "05ec4aefce19947ecfcc9f6976adf54eaeeb372137e19a858ec8d414d112d384",
+    "userPromptHash": "8b6878a682fb1b69ec76127610e0c09ee7310b8da9fc98324dadfcf18618fa68"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.1410006,
+    "durationMs": 220875.225083,
+    "hash": "038a2919d8dea9cde9110d31da93dba3b1c5979d96fb0670cb74a32bc9db24ce",
+    "userPromptHash": "8b6878a682fb1b69ec76127610e0c09ee7310b8da9fc98324dadfcf18618fa68"
+  },
+  "run": 2
+}

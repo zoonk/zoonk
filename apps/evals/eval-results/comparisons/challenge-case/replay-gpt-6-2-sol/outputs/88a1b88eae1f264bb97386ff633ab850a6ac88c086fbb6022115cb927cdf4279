@@ -1,0 +1,488 @@
+{
+  "deadline": "Send the recommendation to {{lead}} by 3:00 p.m.",
+  "endings": [
+    {
+      "id": "clear",
+      "outcome": "{{lead}} receives a recommendation to repeat 14 ns, a separately labeled curve estimate of about 250 counts at 13 ns, and an accurate increase of 20 counts between the original measured endpoints. The caption explains why the cropped axis makes the change look larger."
+    },
+    {
+      "id": "incomplete",
+      "outcome": "The recommendation identifies 14 ns and labels about 250 counts at 13 ns as a curve estimate. The endpoint readings of 220 and 240 counts are included, but {{lead}} still needs the requested comparison before reusing the summary."
+    },
+    {
+      "id": "overstated",
+      "outcome": "The recommendation to repeat 14 ns and the curve estimate of about 250 counts at 13 ns are usable, but the summary says the signal roughly doubled. {{methods}} flags that comparison for correction before reuse; the checked readings remain in the draft."
+    }
+  ],
+  "meters": [
+    {
+      "id": "reliability",
+      "label": "Report reliability",
+      "start": 35,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Scan capacity left",
+      "start": 65,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Prepare **a plot-based recommendation for the next detector run**: choose the strongest measured setting, estimate the curve at the requested setting, and describe the change without overstating it.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 15
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "use-dots",
+          "next": "estimate",
+          "notes": [
+            {
+              "skill": "read-values",
+              "kind": "good",
+              "text": "You read the dots against the count-axis labels, including the halfway position at 12 ns, rather than judging their height by eye.",
+              "example": null
+            },
+            {
+              "skill": "data-points",
+              "kind": "good",
+              "text": "You chose 14 ns from the measured dots. The higher curve can suggest somewhere to explore, but it cannot supply the strongest measured setting.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "methods",
+              "text": "The dots read 220 counts at 10 ns, 230 counts at 12 ns, and 240 counts at 14 ns. The strongest measured setting is 14 ns, with 240 counts."
+            },
+            {
+              "from": "methods",
+              "text": "The smooth curve is a guide drawn to follow the measurements, not another measurement. Checking the dots took some scan-prep time, but the recommendation now has a measured basis."
+            }
+          ],
+          "text": "Read the measured dots and propose the setting with the highest count in the scan.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "use-curve",
+          "next": "estimate",
+          "notes": [
+            {
+              "skill": "data-points",
+              "kind": "improve",
+              "text": "The curve gave you a promising exploratory target, but the draft needed a measured result. Choose the highest measured dot for that part of the recommendation.",
+              "example": "“For the strongest measured setting, I'll compare the dots.”"
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "lead",
+              "text": "That gives me a target quickly and frees up some prep time. But I asked for the strongest measured setting, and there's no measured dot at 13 ns."
+            },
+            {
+              "from": "methods",
+              "text": "The smooth curve is a guide drawn through the pattern of measurements. It suggests where to explore, but its height isn't a detector reading."
+            }
+          ],
+          "text": "Use the higher smooth curve at 13 ns to propose a promising next detector setting.",
+          "timeJump": null
+        }
+      ],
+      "id": "select",
+      "messages": [
+        {
+          "from": "lead",
+          "text": "The curve looks higher at 13 ns. That could give us a promising target without tying up another scan."
+        },
+        {
+          "from": "methods",
+          "text": "I can help check the display, though I'm also preparing the next detector run. What do you want to put in the draft?"
+        }
+      ],
+      "prompt": "Which setting do you propose for the next detector run?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -35
+            }
+          ],
+          "id": "take-reading",
+          "next": "describe",
+          "notes": [
+            {
+              "skill": "between-ticks",
+              "kind": "good",
+              "text": "You read the halfway position between 240 and 260 counts as about 250 counts and kept that estimate separate from the fresh reading of 249 counts.",
+              "example": null
+            },
+            {
+              "skill": "curve",
+              "kind": "improve",
+              "text": "Labeling the curve estimate and checking the measured dots secured the requested results. The additional acquisition answered a different question and used a slot the plot-based request didn't need.",
+              "example": "“I'll report the curve estimate separately and leave the acquisition slot available.”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "methods",
+              "text": "The plot check is done, and the new reading is separate from the curve estimate. Halfway between 240 and 260 counts gives about 250 counts."
+            },
+            {
+              "from": "lead",
+              "text": "The draft now matches the original measured scan. The extra acquisition used the slot for the next detector run; the plot estimate would have covered my request."
+            }
+          ],
+          "text": "Read and label the curve estimate, request a new acquisition, and check the draft against the measured dots.",
+          "timeJump": {
+            "label": "20 minutes later",
+            "panel": {
+              "title": "Plot check and new acquisition",
+              "metrics": [
+                {
+                  "label": "Original measured readings",
+                  "value": "220, 230, 240 counts",
+                  "note": "At 10 ns, 12 ns, and 14 ns; strongest measured setting: 14 ns, with 240 counts."
+                },
+                {
+                  "label": "Count-axis interval",
+                  "value": "20 counts",
+                  "note": null
+                },
+                {
+                  "label": "Curve estimate at 13 ns",
+                  "value": "About 250 counts",
+                  "note": "Not a measured reading."
+                },
+                {
+                  "label": "New acquisition at 13 ns",
+                  "value": "249 counts",
+                  "note": "Finished at 2:50 p.m."
+                }
+              ],
+              "note": "The new acquisition used a slot otherwise available for the next detector run."
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "ask-ai",
+          "next": "describe",
+          "notes": [
+            {
+              "skill": "between-ticks",
+              "kind": "good",
+              "text": "You supplied the tick positions for a check: halfway between 240 and 260 counts gives about 250 counts. Verifying those positions against the display kept the check grounded in the plot.",
+              "example": null
+            },
+            {
+              "skill": "curve",
+              "kind": "good",
+              "text": "You kept the curve estimate separate from the measured-dot recommendation. That completed the plot-reading request without using another acquisition slot.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Each count-axis interval is 20 counts. At 13 ns, halfway between 240 and 260 gives about 250 counts—a curve estimate, not a measured reading."
+            },
+            {
+              "from": "ai",
+              "text": "The measured readings are 220 counts at 10 ns, 230 counts at 12 ns, and 240 counts at 14 ns. The strongest measured setting is 14 ns, with 240 counts."
+            },
+            {
+              "from": "methods",
+              "text": "Those supplied positions match the display, and the draft now matches the dots. Checking them used some prep time, but the acquisition slot stays available."
+            }
+          ],
+          "text": "Ask {{ai}} to work out the curve estimate from the ticks and check the draft against the measured dots.",
+          "timeJump": null
+        }
+      ],
+      "id": "estimate",
+      "messages": [
+        {
+          "from": "methods",
+          "text": "I can get an actual reading at 13 ns in 20 minutes. I'd feel better having a detector result beside the estimate."
+        },
+        {
+          "from": "lead",
+          "text": "I need the curve estimate at 13 ns and a check that the proposed setting matches the measured dots. How do you want to finish the draft?"
+        }
+      ],
+      "prompt": "How do you get the curve estimate and check the recommendation?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": -20
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "heights",
+          "next": "overstated",
+          "notes": [
+            {
+              "skill": "truncated",
+              "kind": "improve",
+              "text": "The short summary treated height above the displayed bottom as the whole measured count. With the axis starting at 200 counts, compare the labeled readings instead.",
+              "example": "“The measured reading increased from 220 to 240 counts.”"
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "methods",
+              "text": "That's quick to pass along, but “roughly doubled” doesn't match 220 counts and 240 counts. The axis starts at 200 counts, so the visible heights aren't the full readings."
+            },
+            {
+              "from": "lead",
+              "text": "The checked settings are usable, but that comparison needs correcting before I reuse the summary."
+            }
+          ],
+          "text": "Send the checked settings and readings with a short summary saying the measured signal roughly doubled.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "difference",
+          "next": "clear",
+          "notes": [
+            {
+              "skill": "intervals",
+              "kind": "good",
+              "text": "You used the 20-count tick interval to describe the increase from 220 to 240 counts. That gives {{lead}} the requested comparison in the plot's units.",
+              "example": null
+            },
+            {
+              "skill": "truncated",
+              "kind": "good",
+              "text": "You explained why the displayed heights double while the measured count does not. Naming the 200-count baseline prevents the cropped display from exaggerating the change.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "methods",
+              "text": "From 220 to 240 counts is an increase of 20 counts, matching a count-axis interval. The reading at 14 ns is 20 counts higher than at 10 ns, not twice as large."
+            },
+            {
+              "from": "lead",
+              "text": "I'll keep the extra caption: above the 200-count baseline, the heights at 10 ns and 14 ns are 20 and 40 counts. The displayed height doubles, but the measured count doesn't."
+            }
+          ],
+          "text": "Report the increase from 220 to 240 counts as 20 counts, with a caption explaining the cropped axis.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 5
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "values-only",
+          "next": "incomplete",
+          "notes": [
+            {
+              "skill": "truncated",
+              "kind": "good",
+              "text": "You preserved the labeled readings rather than turning the dots' visible heights into a claim that the signal doubled.",
+              "example": null
+            },
+            {
+              "skill": "intervals",
+              "kind": "improve",
+              "text": "The source values are correct, but {{lead}} still has to finish the requested comparison. Use the 20-count interval to state the increase between the endpoint readings.",
+              "example": "“Compare 240 counts with 220 counts using the count-axis spacing.”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "lead",
+              "text": "The 220-count reading at 10 ns and the 240-count reading at 14 ns are clear, and this is quick to send. I still need the comparison before I can reuse the summary."
+            },
+            {
+              "from": "methods",
+              "text": "The labels avoid a misleading claim about visible height. The count-axis interval gives us what we need to finish the comparison."
+            }
+          ],
+          "text": "Send the checked settings with the labeled endpoint readings, leaving the change comparison open for discussion.",
+          "timeJump": null
+        }
+      ],
+      "id": "describe",
+      "messages": [
+        {
+          "from": "lead",
+          "text": "The draft has 14 ns as the strongest measured setting in the original scan and about 250 counts as the curve estimate at 13 ns. I still need the change from 10 ns to 14 ns."
+        },
+        {
+          "from": "lead",
+          "text": "The higher dot looks twice as tall from the bottom—“roughly doubled” would be easy to pass along. I need a short comparison for the recommendation."
+        }
+      ],
+      "prompt": "How do you describe the change between the measured readings at 10 ns and 14 ns?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Detector scan: measured dots",
+      "metrics": [
+        {
+          "label": "Count-axis ticks",
+          "value": "200, 220, 240, 260 counts",
+          "note": "Displayed axis begins at 200 counts."
+        },
+        {
+          "label": "Dot at 10 ns",
+          "value": "On the 220-count tick",
+          "note": null
+        },
+        {
+          "label": "Dot at 12 ns",
+          "value": "Halfway between 220 and 240",
+          "note": "Vertical position in counts."
+        },
+        {
+          "label": "Dot at 14 ns",
+          "value": "On the 240-count tick",
+          "note": null
+        }
+      ],
+      "note": "These are the scan's measured dots. All readings use equal collection periods."
+    },
+    {
+      "title": "Detector scan: fitted curve",
+      "metrics": [
+        {
+          "label": "Curve at 13 ns",
+          "value": "Halfway between 240 and 260",
+          "note": "Vertical position in counts; no measured dot at this setting."
+        }
+      ],
+      "note": "The smooth fitted curve uses the same count axis as the measured dots."
+    }
+  ],
+  "setting": "Afternoon at Lumen Reach Lab",
+  "skills": [
+    {
+      "id": "read-values",
+      "name": "Read experimental plot values",
+      "practice": "Read the axis label, unit, and value for a marked location on an experimental plot."
+    },
+    {
+      "id": "between-ticks",
+      "name": "Estimate between axis ticks",
+      "practice": "Estimate the values of three marks placed halfway between labeled ticks."
+    },
+    {
+      "id": "data-points",
+      "name": "Read plotted data points",
+      "practice": "Pick the highest measured dot on a plot and explain why a nearby curve is a different source."
+    },
+    {
+      "id": "curve",
+      "name": "Estimate from a plotted curve",
+      "practice": "Estimate a curve's height at a requested horizontal position and label the answer as an estimate."
+    },
+    {
+      "id": "truncated",
+      "name": "Read a truncated axis",
+      "practice": "Compare two plotted readings using their labels rather than their heights above the plot's bottom edge."
+    },
+    {
+      "id": "intervals",
+      "name": "Interpret axis intervals",
+      "practice": "Find the value of one tick interval and use it to calculate the difference between two readings."
+    }
+  ],
+  "startNodeId": "select",
+  "summary": [
+    "Use measured dots to identify the strongest measured setting; a smooth curve is a guide, not another measurement.",
+    "A position halfway between labeled ticks has a value halfway between their labels.",
+    "When an axis starts above zero, compare the labeled readings rather than their heights above the displayed bottom."
+  ],
+  "team": [
+    {
+      "id": "methods",
+      "role": "Research scientist",
+      "expertise": "Knows how the detector plots are produced and wants measured readings kept separate from curve estimates.",
+      "ai": false
+    },
+    {
+      "id": "lead",
+      "role": "Experiment lead",
+      "expertise": "Assigns detector runs and wants a usable recommendation without spending another acquisition slot.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Plot-check assistant",
+      "expertise": "Checks supplied tick positions and arithmetic; cannot turn a curve estimate into a measurement.",
+      "ai": true
+    }
+  ],
+  "title": "Which detector setting should you repeat?"
+}

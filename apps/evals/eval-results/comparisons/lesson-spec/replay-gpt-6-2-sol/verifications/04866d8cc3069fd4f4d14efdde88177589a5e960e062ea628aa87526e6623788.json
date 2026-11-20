@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-soccer-formation",
+        "claimId": "ff6da98d5f276825",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "fb924d52187fc372acc12e4222aca7e413fa9097b685e56f9ee81277c71345f2.first.c7bf8d7c-c7d8-44ac-bd1d-3876e264fde1.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00297285,
+    "id": "04866d8cc3069fd4f4d14efdde88177589a5e960e062ea628aa87526e6623788",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "54b9fa3d8b065acf",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "5570b3704b2488614761a77cba5717e2fcd791b5037d0b5664d83fb03a53d529",
+          "format": "text"
+        },
+        "B": {
+          "blob": "93d007cf86e8fdfdc3bdeb1233d4836262c7b6a5eef73ab850d899ceb3ba58d1",
+          "format": "text"
+        },
+        "claim": "The hook describes players spread across a field but provides no field or player picture, although the scene depends on visualizing their arrangement.",
+        "claimId": "ff6da98d5f276825",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "dccc089b38eb45036a7c5a8d6e2cbd2731dca0f8f6228734d0755773c85e5e5b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "756d8ec6f2be545a0529ebd3f962e1f5bab37f9a3fa86a7648537d47891cf61f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The opening hook screen.",
+          "kind": "range"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "54b9fa3d8b065acf",
+          "finding": "doesn't hold",
+          "reason": "Output A says the opposite: the screen states that the monthly rent 'continua devido mesmo sem fazer nenhum bolo' and the application screen keeps aluguel de R$ 900,00 in the month's reserve. The app never says the rent stops being paid."
+        },
+        {
+          "claimId": "ff6da98d5f276825",
+          "finding": "doesn't hold",
+          "reason": "The hook in output A does have visual null and visualKind none, so the factual part is right. But the hook's question asks only what the three numbers mean, which words can answer, and the next explanation screen gives the field picture, so the opening scene does not need a visual under the criterion."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -1,0 +1,371 @@
+{
+  "cases": [
+    {
+      "caseId": "en-ab-test-work",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "pt-quantum-what-if",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "pt-nursing-dose-work",
+      "language": "pt",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "en-career-change-data-cleaning",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "split"
+      }
+    },
+    {
+      "caseId": "en-statistics-field-nursing",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "pt-porcentagem-field-retail",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "challenger"
+      }
+    },
+    {
+      "caseId": "en-plot-reading-field-research",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "openai": "incumbent"
+      }
+    }
+  ],
+  "outcome": "insufficient evidence",
+  "readers": [
+    {
+      "failedPackets": 4,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 2,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "google",
+      "model": "google/gemini-4-neon",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "Unresolved cases need an independent read.",
+  "rows": [
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "en": 4,
+        "pt": 3
+      },
+      "costPer1000": 126.29142857142857,
+      "date": "2026-11-20T13:03:34.949Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 135.7175375,
+          "p50": 188.342631291,
+          "p95": 269.94706104200003,
+          "successful": 8
+        },
+        "pt": {
+          "costPer1000": 113.72328333333336,
+          "p50": 158.917337583,
+          "p95": 197.40617670900002,
+          "successful": 6
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 184.47416704100002,
+      "p95": 269.94706104200003,
+      "quality": [
+        {
+          "affected": [
+            "en-plot-reading-field-research"
+          ],
+          "both": [
+            "en-plot-reading-field-research"
+          ],
+          "criterion": "realism",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "decisions",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "team",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "debrief",
+          "language": "en"
+        },
+        {
+          "affected": [
+            "en-career-change-data-cleaning"
+          ],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en"
+        },
+        {
+          "affected": [
+            "en-ab-test-work",
+            "en-plot-reading-field-research"
+          ],
+          "both": [],
+          "criterion": "depth",
+          "language": "en"
+        },
+        {
+          "affected": [
+            "en-ab-test-work"
+          ],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "realism",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "decisions",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "team",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "debrief",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "depth",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt"
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 5,
+      "wins": 2
+    },
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "en": 4,
+        "pt": 3
+      },
+      "costPer1000": 116.89489285714288,
+      "date": "2026-11-20T13:03:34.949Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 127.17353750000002,
+          "p50": 126.54816416699998,
+          "p95": 183.672351416,
+          "successful": 8
+        },
+        "pt": {
+          "costPer1000": 103.19003333333335,
+          "p50": 111.34198133300006,
+          "p95": 170.03287074999994,
+          "successful": 6
+        }
+      },
+      "losses": 2,
+      "missingMatches": 0,
+      "p50": 126.23203125,
+      "p95": 183.672351416,
+      "quality": [
+        {
+          "affected": [
+            "en-career-change-data-cleaning",
+            "en-plot-reading-field-research"
+          ],
+          "both": [
+            "en-plot-reading-field-research"
+          ],
+          "criterion": "realism",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "decisions",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "team",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "debrief",
+          "language": "en"
+        },
+        {
+          "affected": [
+            "en-plot-reading-field-research"
+          ],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "depth",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "realism",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "decisions",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "team",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "debrief",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "depth",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt"
+        }
+      ],
+      "side": "challenger",
+      "status": "eligible",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 5,
+      "wins": 0
+    }
+  ]
+}

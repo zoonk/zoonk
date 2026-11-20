@@ -1,0 +1,416 @@
+{
+  "cases": [
+    {
+      "caseId": "en-tax-deadlines-sourced",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "pt-estabilidade-sourced",
+      "language": "pt",
+      "owner": null,
+      "result": "challenger",
+      "votes": {
+        "anthropic": "tie",
+        "openai": "challenger",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-en-brain-lobes",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "tie",
+        "openai": "incumbent",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-en-water-cycle",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-mapa-imperio-romano",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "split",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-en-lever",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-deslocamento-demanda",
+      "language": "pt",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-en-syntax-tree",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-ligacao-covalente",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "challenger",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-en-soccer-formation",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "challenger",
+        "google": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-juros-compostos",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "challenger",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-pt-circuito-serie-paralelo",
+      "language": "pt",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-partes-da-flor",
+      "language": "pt",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-en-contour-lines",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    }
+  ],
+  "outcome": "insufficient evidence",
+  "readers": [
+    {
+      "failedPackets": 10,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 2,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "google",
+      "model": "google/gemini-4-neon",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "Unresolved cases need an independent read.",
+  "rows": [
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "en": 7,
+        "pt": 7
+      },
+      "costPer1000": 47.83060000000001,
+      "date": "2026-11-20T13:04:04.999Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 46.586400000000005,
+          "p50": 80.83184466600001,
+          "p95": 100.75379733300001,
+          "successful": 7
+        },
+        "pt": {
+          "costPer1000": 49.074799999999996,
+          "p50": 86.825352833,
+          "p95": 128.086574958,
+          "successful": 7
+        }
+      },
+      "losses": 1,
+      "missingMatches": 0,
+      "p50": 80.83184466600001,
+      "p95": 128.086574958,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "oneIdea",
+          "language": "en"
+        },
+        {
+          "affected": [
+            "visual-en-brain-lobes"
+          ],
+          "both": [
+            "visual-en-brain-lobes"
+          ],
+          "criterion": "screenPlan",
+          "language": "en"
+        },
+        {
+          "affected": [
+            "visual-en-brain-lobes",
+            "visual-en-water-cycle",
+            "visual-en-lever",
+            "visual-en-soccer-formation",
+            "visual-en-contour-lines"
+          ],
+          "both": [
+            "visual-en-brain-lobes",
+            "visual-en-water-cycle",
+            "visual-en-lever",
+            "visual-en-soccer-formation"
+          ],
+          "criterion": "activitiesAndVisuals",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "levelAndScope",
+          "language": "en"
+        },
+        {
+          "affected": [
+            "visual-pt-ligacao-covalente"
+          ],
+          "both": [],
+          "criterion": "oneIdea",
+          "language": "pt"
+        },
+        {
+          "affected": [
+            "pt-estabilidade-sourced",
+            "visual-pt-ligacao-covalente"
+          ],
+          "both": [
+            "pt-estabilidade-sourced"
+          ],
+          "criterion": "screenPlan",
+          "language": "pt"
+        },
+        {
+          "affected": [
+            "visual-pt-mapa-imperio-romano",
+            "visual-pt-circuito-serie-paralelo",
+            "visual-pt-partes-da-flor"
+          ],
+          "both": [
+            "visual-pt-mapa-imperio-romano",
+            "visual-pt-circuito-serie-paralelo",
+            "visual-pt-partes-da-flor"
+          ],
+          "criterion": "activitiesAndVisuals",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "levelAndScope",
+          "language": "pt"
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 5,
+      "wins": 8
+    },
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "en": 7,
+        "pt": 7
+      },
+      "costPer1000": 40.59002857142857,
+      "date": "2026-11-20T13:04:04.999Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 38.663085714285714,
+          "p50": 39.18764595800004,
+          "p95": 57.38831424999999,
+          "successful": 7
+        },
+        "pt": {
+          "costPer1000": 42.51697142857142,
+          "p50": 52.340869999999995,
+          "p95": 61.84251887500001,
+          "successful": 7
+        }
+      },
+      "losses": 8,
+      "missingMatches": 0,
+      "p50": 40.910047542000015,
+      "p95": 61.84251887500001,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "oneIdea",
+          "language": "en"
+        },
+        {
+          "affected": [
+            "visual-en-brain-lobes"
+          ],
+          "both": [
+            "visual-en-brain-lobes"
+          ],
+          "criterion": "screenPlan",
+          "language": "en"
+        },
+        {
+          "affected": [
+            "visual-en-brain-lobes",
+            "visual-en-water-cycle",
+            "visual-en-lever",
+            "visual-en-syntax-tree",
+            "visual-en-soccer-formation"
+          ],
+          "both": [
+            "visual-en-brain-lobes",
+            "visual-en-water-cycle",
+            "visual-en-lever",
+            "visual-en-soccer-formation"
+          ],
+          "criterion": "activitiesAndVisuals",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "levelAndScope",
+          "language": "en"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "oneIdea",
+          "language": "pt"
+        },
+        {
+          "affected": [
+            "pt-estabilidade-sourced"
+          ],
+          "both": [
+            "pt-estabilidade-sourced"
+          ],
+          "criterion": "screenPlan",
+          "language": "pt"
+        },
+        {
+          "affected": [
+            "visual-pt-mapa-imperio-romano",
+            "visual-pt-juros-compostos",
+            "visual-pt-circuito-serie-paralelo",
+            "visual-pt-partes-da-flor"
+          ],
+          "both": [
+            "visual-pt-mapa-imperio-romano",
+            "visual-pt-circuito-serie-paralelo",
+            "visual-pt-partes-da-flor"
+          ],
+          "criterion": "activitiesAndVisuals",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "levelAndScope",
+          "language": "pt"
+        }
+      ],
+      "side": "challenger",
+      "status": "eligible",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 5,
+      "wins": 1
+    }
+  ]
+}

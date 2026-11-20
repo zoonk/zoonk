@@ -1,0 +1,17 @@
+{
+  "caseId": "pt-estabilidade-sourced",
+  "challenger": {
+    "costUsd": 0.046235500000000006,
+    "durationMs": 23197.736166999995,
+    "hash": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
+    "userPromptHash": "321491937482ccbcb82e20bd1920308ff9333478b04a6ac0488502c5cf202772"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.17150700000000002,
+    "durationMs": 37644.49575,
+    "hash": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
+    "userPromptHash": "321491937482ccbcb82e20bd1920308ff9333478b04a6ac0488502c5cf202772"
+  },
+  "run": 1
+}

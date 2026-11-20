@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-juros-compostos",
+        "claimId": "4495602532443184",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "68e29afa358249028477a008d0500e7ada45c831c01d0cfe4eb62c203bfb230a.first.bf67c7cc-09d2-44d6-bf01-c01d9077b9b9.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0031398499999999996,
+    "id": "cede1d55c5336b15a8799625595fe2237cac6185aa5d1c784f6ef43535f3e397",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "2b566ada2aef54fc",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "320fd609f961604737471a5ddb87c3036d17788bcdc9b230a40bf033aabb9897",
+          "format": "text"
+        },
+        "B": {
+          "blob": "21f040ef8f1426bfd908ff8204b2110b257ed34b31a846203d900b96a1b91e8a",
+          "format": "text"
+        },
+        "claim": "A tabela compara os saldos apenas nos meses 0, 1 e 2, em vez de mostrar o crescimento ano a ano como exigido.",
+        "claimId": "4495602532443184",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "971015ca59b57b94e7a94542039865598d4fce17b0194575b14799c0d106fcfd",
+          "format": "text"
+        },
+        "input": {
+          "blob": "10728946981695791410e8b2198a572247d8ca8d1a3a5363508a973a7d2697ff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Tela da comparação entre juros simples e compostos; a tabela lista os meses 0, 1 e 2.",
+          "kind": "range"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2b566ada2aef54fc",
+          "finding": "doesn't hold",
+          "reason": "Output A never says the R$ 900,00 rent stops in a month without production. Its guess screen gives \"O valor inteiro\" as the answer, and its explanation says the monthly rent stays due even with no cakes made. The claim is the reverse of what A says."
+        },
+        {
+          "claimId": "4495602532443184",
+          "finding": "doesn't hold",
+          "reason": "The comparison table in A does list only months 0, 1 and 2 with correct values (R$ 1.020,00 simple versus R$ 1.020,10 compound). But the expectations require year-by-year growth data only where growth over years is the subject, and this monthly lesson does not present that, so 'as required' overstates the requirement."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

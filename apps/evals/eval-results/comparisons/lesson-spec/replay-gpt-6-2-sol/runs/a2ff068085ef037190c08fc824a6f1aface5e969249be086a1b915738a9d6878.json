@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-pt-partes-da-flor",
+  "challenger": {
+    "costUsd": 0.045831800000000006,
+    "durationMs": 61842.51887500001,
+    "hash": "2135040d4559f8786a4ae28f350f2b3aa4400316d273dbf3a4ed962793eb1653",
+    "userPromptHash": "1702847c50bcfbfd2b7341df153d2cc7b66054b880f65ac684885069d42f1d8d"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.049602600000000004,
+    "durationMs": 89641.167292,
+    "hash": "2efe01467da1ffa9ee4eb0ef950e4c5a044dc10397874177aed854267063224e",
+    "userPromptHash": "1702847c50bcfbfd2b7341df153d2cc7b66054b880f65ac684885069d42f1d8d"
+  },
+  "run": 1
+}

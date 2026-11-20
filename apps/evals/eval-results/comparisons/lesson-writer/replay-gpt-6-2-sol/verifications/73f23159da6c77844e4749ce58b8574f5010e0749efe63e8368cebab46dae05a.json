@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "a5dbe379e42efda9",
+        "criterion": "clarity",
+        "observationId": "75077874121734f81383f44d148fe5aa8598870663da78027bd9e0f23daf31f1.first.a84478dd-c25e-4964-a1e9-15dcc0794451.4",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00179525,
+    "id": "73f23159da6c77844e4749ce58b8574f5010e0749efe63e8368cebab46dae05a",
+    "packet": [
+      {
+        "A": {
+          "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
+          "format": "text"
+        },
+        "claim": "A expressão técnica «processo administrativo» aparece sem uma explicação cotidiana do procedimento em si; a explicação de ampla defesa não basta para definir o termo.",
+        "claimId": "a5dbe379e42efda9",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
+          "format": "json"
+        },
+        "location": {
+          "detail": "um processo administrativo, se cometer uma falta",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
+          "format": "text"
+        },
+        "B": {
+          "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
+          "format": "text"
+        },
+        "claim": "A tela 2 diz que a estabilidade vem depois de três anos, mas a fonte do input fala em dois anos de exercício.",
+        "claimId": "ee6f53cb859e57cd",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
+          "format": "text"
+        },
+        "input": {
+          "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "a5dbe379e42efda9",
+          "finding": "holds",
+          "reason": "In B, \"processo administrativo\" appears only as \"um processo administrativo, se cometer uma falta\", with no everyday explanation of how the procedure works; ampla defesa is explained as \"se explicar e apresentar provas\", which does not define the procedure. A explains it as \"uma apuração feita pelo próprio órgão, em que ele pode se defender\", so the problem is in B and not A."
+        },
+        {
+          "claimId": "ee6f53cb859e57cd",
+          "finding": "doesn't hold",
+          "reason": "The source (Art. 41 da Constituição) says \"três anos de efetivo exercício\", so A's screen 2 saying three years is correct. The two-year figure (24 meses) is in B, not A, so the claim is false of the named output."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

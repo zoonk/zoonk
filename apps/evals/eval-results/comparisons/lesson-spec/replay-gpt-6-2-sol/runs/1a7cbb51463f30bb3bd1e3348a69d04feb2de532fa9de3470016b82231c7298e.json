@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-pt-deslocamento-demanda",
+  "challenger": {
+    "costUsd": 0.060746,
+    "durationMs": 58465.470583999995,
+    "hash": "06331ee798cfdae5825c6492dcf78036f7ceb23678566159b089a293c4bc0db8",
+    "userPromptHash": "da4469332f3ef1261a071879e0deab3dc9fef61f3ef8d735cb6f9fe5486e5f3d"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.075546,
+    "durationMs": 117681.724375,
+    "hash": "41a018c234986f9d011d6c2dbefc1ad5c5061b9a06c81221aebdc7f46e14a6a9",
+    "userPromptHash": "da4469332f3ef1261a071879e0deab3dc9fef61f3ef8d735cb6f9fe5486e5f3d"
+  },
+  "run": 1
+}

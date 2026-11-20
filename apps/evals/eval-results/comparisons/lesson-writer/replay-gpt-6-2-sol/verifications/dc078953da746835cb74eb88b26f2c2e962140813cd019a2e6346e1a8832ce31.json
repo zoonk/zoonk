@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "2a819b3194ab2147",
+        "criterion": "clarity",
+        "observationId": "544f87b1f20a3d20e32ca4a167644cf2ec62bc2d7a164aec93f21cb2f65f75b5.first.d0e673dc-620a-4c74-aab0-9133dac51c6a.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00197995,
+    "id": "dc078953da746835cb74eb88b26f2c2e962140813cd019a2e6346e1a8832ce31",
+    "packet": [
+      {
+        "A": {
+          "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
+          "format": "text"
+        },
+        "B": {
+          "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
+          "format": "text"
+        },
+        "claim": "Breaks the expectation to explain processo administrativo in everyday words when it first appears; the sentence explains ampla defesa but never explains what a processo administrativo is.",
+        "claimId": "2a819b3194ab2147",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Mesmo estável, Ana pode perder o cargo por falta grave após processo administrativo com ampla defesa: ela pode dar sua versão e apresentar provas.",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
+          "format": "text"
+        },
+        "B": {
+          "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
+          "format": "text"
+        },
+        "claim": "A tela 2 diz que a estabilidade vem depois de três anos, mas a fonte do input fala em dois anos de exercício.",
+        "claimId": "4543180a84f6c744",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
+          "format": "text"
+        },
+        "input": {
+          "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2a819b3194ab2147",
+          "finding": "holds",
+          "reason": "In output B, the quoted sentence uses 'processo administrativo' without explaining what it is in everyday words; it only describes ampla defesa (giving her version and presenting proof). Output A, by contrast, defines it on screen 3 as 'uma apuração feita pelo próprio órgão, em que ele pode se defender'."
+        },
+        {
+          "claimId": "4543180a84f6c744",
+          "finding": "doesn't hold",
+          "reason": "Output A's screen 2 says stability comes after three years of effective exercise, which matches Art. 41 of the Constituição. The two-year figure appears in output B, not A, so the problem isn't in the named output."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

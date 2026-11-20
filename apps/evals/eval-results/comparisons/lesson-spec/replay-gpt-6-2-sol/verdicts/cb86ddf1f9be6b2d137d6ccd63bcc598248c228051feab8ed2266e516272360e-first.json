@@ -1,0 +1,167 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00935149,
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "cb86ddf1f9be6b2d137d6ccd63bcc598248c228051feab8ed2266e516272360e",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both lessons teach one idea: reading contour spacing to tell steep ground from gentle ground.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both follow the same screen plan with a hook, a guess right after the first explanation, a worked example, checks and an application.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "B shows the same trail map on five screens with nothing new added, while A reuses its picture on fewer screens.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use everyday words and stay at beginner level within the contour lesson's scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The same top-down trail map appears on the hook, the first explanation, the guess and two more explanations, with nothing new added to it on the repeats.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same picture five times, and the repeats add nothing to the lesson.",
+            "location": {
+              "detail": "hook, first explanation, guess and two later explanation screens",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A teaches the same single idea with the same plan, but it repeats its picture less and so gives the writer a cleaner visual plan."
+        },
+        "pairId": "6e1e9875-7cbb-4147-93d7-758cf21326dc"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A teaches one idea, calculating percent change from the starting value; B adds percentage-point change and logarithmic returns as extra ideas.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens with a salary scene that ends on a question; B opens with a formula, so its first screen is not a scene.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use text and a table in the same way; the activity choices are the same.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses plain words and everyday cases for a beginner; B opens with notation and brings in advanced terms.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The first screen is a formula with notation and symbols and no everyday scene, so it does not give the beginner a moment to start from.",
+            "criterion": "screenPlan",
+            "learnerCost": "A beginner meets an unexplained formula before any intuition and is likely to stop reading at the first screen.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100, where V₀ is the reference value and V₁ the terminal value.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Percentage-point change belongs to another lesson in this chapter and logarithmic returns are outside a beginner lesson, so the plan goes beyond one idea.",
+            "criterion": "oneIdea",
+            "learnerCost": "The learner is pulled toward ideas that will confuse them and are not used in this lesson.",
+            "location": {
+              "detail": "distinguish it from percentage-point change and from logarithmic returns.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the same correct calculations and checks as B, but B's opening formula and extra ideas would lose a beginner reader at the start."
+        },
+        "pairId": "8fd53310-d245-4505-8ffb-b8d3a21bf599"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they teach the same single idea.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the screen plan is the same.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the visuals and activities are the same.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the level and scope are the same.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The same trail map appears on five screens with nothing new added to it on the repeats.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same picture again and again, and the repeats add nothing to the lesson.",
+            "location": {
+              "detail": "hook, first explanation, guess and two later explanation screens",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The same trail map appears on five screens with nothing new added to it on the repeats.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same picture again and again, and the repeats add nothing to the lesson.",
+            "location": {
+              "detail": "hook, first explanation, guess and two later explanation screens",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "cfc97923-4936-4fab-bf58-cd606c256bc0"
+      }
+    ]
+  }
+}
