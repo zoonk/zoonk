@@ -75,8 +75,16 @@ describe(loadMockWritingSkills, () => {
       }),
     ]);
 
+    await itemFixture({ content: choiceItemContent("Practice question?"), skillId: skill.id });
+
+    await itemFixture({
+      content: choiceItemContent("New reserve?"),
+      mockOnly: true,
+      skillId: skill.id,
+    });
+
     const [writing] = await loadMockWritingSkills({ goalId: goal.id, skillIds: [skill.id] });
-    expect(writing?.earlier).toHaveLength(2);
+    expect(writing?.earlier).toHaveLength(4);
 
     expect(writing?.earlier).toStrictEqual(
       expect.arrayContaining([
@@ -84,6 +92,11 @@ describe(loadMockWritingSkills, () => {
         { answer: "cloud", question: expect.stringContaining("The electron forms a [BLANK].") },
       ]),
     );
+
+    expect(writing?.earlier.slice(0, 2).map((entry) => entry.question)).toStrictEqual([
+      expect.stringContaining("Practice question?"),
+      expect.stringContaining("The electron forms a [BLANK]."),
+    ]);
 
     expect(writing?.exam?.pastQuestions).toStrictEqual([]);
     expect(writing?.wrongPenalty).toBe(1);

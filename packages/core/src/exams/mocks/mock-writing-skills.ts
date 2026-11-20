@@ -33,7 +33,12 @@ async function loadSkillHistory(
   const [items, steps] = await Promise.all([
     prisma.item.findMany({
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      select: { content: true, format: true, set: { select: { content: true, kind: true } } },
+      select: {
+        content: true,
+        format: true,
+        mockOnly: true,
+        set: { select: { content: true, kind: true } },
+      },
       where: {
         ...(ownerId
           ? {}
@@ -85,15 +90,28 @@ async function loadSkillHistory(
 
     const question = toRecallQuestion(parsed.data);
     const stimulus = item.set && toItemSetStimulus(parseItemSetContent(item.set));
-    return [{ ...question, question: [stimulus, question.question].filter(Boolean).join("\n") }];
+
+    return [
+      {
+        example: {
+          ...question,
+          question: [stimulus, question.question].filter(Boolean).join("\n"),
+        },
+        reserve: item.mockOnly,
+      },
+    ];
   });
 
+  const practice = questions.filter((item) => !item.reserve).map((item) => item.example);
   const lessons = steps.flatMap((step) => readLessonRecallQuestions(step));
 
   return {
-    earlier: Array.from({ length: Math.max(questions.length, lessons.length) }, (_, index) =>
-      [questions[index], lessons[index]].filter((entry) => entry !== undefined),
-    ).flat(),
+    earlier: [
+      ...Array.from({ length: Math.max(practice.length, lessons.length) }, (_, index) =>
+        [practice[index], lessons[index]].filter((entry) => entry !== undefined),
+      ).flat(),
+      ...questions.filter((item) => item.reserve).map((item) => item.example),
+    ],
     usedSituations: [
       ...new Set([
         ...items.flatMap((item) => getItemSituation(item) ?? []),
