@@ -33,7 +33,7 @@ const OWNERS: Record<string, string> = {
   "Features/FocusTest/FocusTestFlow.swift: tasks": "The focus test has no split.",
   "Features/GoalContent/ChapterScreen.swift: practicing":
     "The chapter page, which holds its PaneSplit.",
-  "Features/GoalContent/LanguageUnitScreen.swift: callStart":
+  "Features/GoalContent/LanguageUnitScreen.swift: callSetup.start":
     "The unit page, which holds its PaneSplit.",
   "Features/GoalContent/SubjectScreen.swift: restoring":
     "The subject page, which holds its PaneSplit; the notice drawn in a pane only borrows it.",
