@@ -38,6 +38,7 @@ async function loadPracticePlan(goalId: string | null) {
 /** Null without an askable question; never reuses questions already asked by the session. */
 export async function buildExtraPractice({
   areaId = null,
+  includeUnstudied,
   minutes,
   refresh = false,
   session,
@@ -46,10 +47,13 @@ export async function buildExtraPractice({
   userId,
 }: {
   areaId?: string | null;
+  includeUnstudied?: boolean;
   minutes: number;
   /** Content's "Review" of the goal's fading and due skills. */
   refresh?: boolean;
-  session: ExtraDay;
+  session: Pick<ExtraDay, "goal" | "goalId"> & {
+    blocks: readonly Pick<DayBlockInput, "payload">[];
+  };
   skillIds: string[];
   title?: string | null;
   userId: string;
@@ -67,6 +71,7 @@ export async function buildExtraPractice({
     examBlueprintId: session.goal?.examBlueprintId ?? null,
     excludeItemIds: used,
     field: getGoalField(session.goal?.details),
+    includeUnstudied,
     listeningSkillIds,
     maxMinutes: minutes,
     now: new Date(),

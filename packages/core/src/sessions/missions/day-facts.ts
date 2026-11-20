@@ -164,6 +164,7 @@ export async function loadDayMissionFacts({
   localDate,
   now = new Date(),
   plannedMinutes,
+  preparing: knownPreparing,
   readMistakes,
   readPreparation,
   readSubscription,
@@ -180,6 +181,7 @@ export async function loadDayMissionFacts({
   localDate: Date;
   now?: Date;
   plannedMinutes: number;
+  preparing?: ReadonlySet<number>;
   /** A GET's request-wide practice mistakes; without it, they're read fresh. */
   readMistakes?: () => Promise<PracticeMistake[]>;
   readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
@@ -240,9 +242,10 @@ export async function loadDayMissionFacts({
       userId,
     }),
     loadExamStructure(goal, { blueprint, picks: readExamPicks(plan?.settings) }),
-    tier === "plus"
-      ? loadPreparingMockPositions({ blocks, blueprint, goal, localDate })
-      : new Set<number>(),
+    knownPreparing ??
+      (tier === "plus"
+        ? loadPreparingMockPositions({ blocks, blueprint, goal, localDate })
+        : new Set<number>()),
   ]);
 
   const chapter = finishChapterCandidate({ blocks, goalPlan, items });

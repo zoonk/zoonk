@@ -23452,6 +23452,9 @@
                                   "mistakesOnly": {
                                     "type": "boolean"
                                   },
+                                  "mockPreparationReview": {
+                                    "type": "boolean"
+                                  },
                                   "refresh": {
                                     "type": "boolean"
                                   },
@@ -23649,6 +23652,9 @@
                                     "type": "boolean"
                                   },
                                   "mistakesOnly": {
+                                    "type": "boolean"
+                                  },
+                                  "mockPreparationReview": {
                                     "type": "boolean"
                                   },
                                   "refresh": {
@@ -27273,6 +27279,9 @@
                                   "mistakesOnly": {
                                     "type": "boolean"
                                   },
+                                  "mockPreparationReview": {
+                                    "type": "boolean"
+                                  },
                                   "refresh": {
                                     "type": "boolean"
                                   },
@@ -27470,6 +27479,9 @@
                                     "type": "boolean"
                                   },
                                   "mistakesOnly": {
+                                    "type": "boolean"
+                                  },
+                                  "mockPreparationReview": {
                                     "type": "boolean"
                                   },
                                   "refresh": {
@@ -76817,6 +76829,10 @@
             "type": "boolean",
             "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions), unlike mixed practice"
           },
+          "mockPreparationReview": {
+            "description": "Whether this review is offered while the scheduled mock is preparing. Include the flag in its work reference when opening the review.",
+            "type": "boolean"
+          },
           "netScored": {
             "type": "boolean",
             "description": "Practice scored net (a wrong answer cancels a right one, as in Cebraspe exams): statements can be answered with dontKnow to leave them blank. Swipe capsules are scored net on their own"
@@ -92930,7 +92946,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons or scheduled mock are being prepared; see `waitingFor`), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -92947,6 +92963,15 @@
               "planned",
               "active",
               "completed"
+            ]
+          },
+          "waitingFor": {
+            "nullable": true,
+            "description": "What the learner is waiting for when the day has no next step to open. Null unless the day state is `waiting`.",
+            "type": "string",
+            "enum": [
+              "lessons",
+              "mock"
             ]
           },
           "week": {
@@ -93000,6 +93025,7 @@
           "sessionBar",
           "state",
           "status",
+          "waitingFor",
           "week"
         ],
         "additionalProperties": false
@@ -93210,7 +93236,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons or scheduled mock are being prepared; see `waitingFor`), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -93219,6 +93245,15 @@
               "rest",
               "underway",
               "waiting"
+            ]
+          },
+          "waitingFor": {
+            "nullable": true,
+            "description": "What the learner is waiting for when the day has no next step to open. Null unless the day state is `waiting`.",
+            "type": "string",
+            "enum": [
+              "lessons",
+              "mock"
             ]
           },
           "week": {
@@ -93382,6 +93417,10 @@
                 "mistakesOnly": {
                   "type": "boolean",
                   "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions), unlike mixed practice"
+                },
+                "mockPreparationReview": {
+                  "description": "Whether this review is offered while the scheduled mock is preparing. Include the flag in its work reference when opening the review.",
+                  "type": "boolean"
                 },
                 "netScored": {
                   "type": "boolean",
@@ -93767,6 +93806,9 @@
                                 "mistakesOnly": {
                                   "type": "boolean"
                                 },
+                                "mockPreparationReview": {
+                                  "type": "boolean"
+                                },
                                 "refresh": {
                                   "type": "boolean"
                                 },
@@ -93995,6 +94037,7 @@
           "pauseSuggested",
           "sessionBar",
           "state",
+          "waitingFor",
           "week",
           "blocks",
           "catchUp",

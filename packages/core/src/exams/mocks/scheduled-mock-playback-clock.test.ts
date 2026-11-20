@@ -262,6 +262,12 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
       ),
     );
 
+    await itemFixture({
+      content: choiceItemContent(),
+      examBlueprintId: fixture.goal.examBlueprintId,
+      skillId: fixture.library.skills[0]!.id,
+    });
+
     vi.setSystemTime(new Date(`${fixture.date}T12:00:00Z`));
     const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
 
@@ -276,7 +282,12 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
     }
 
     expect.soft(block).toMatchObject({ preparing: true });
-    expect.soft(today.today.session.nextPosition).not.toBe(block.position);
+
+    const next = today.today.session.blocks.find(
+      (entry) => entry.position === today.today.session.nextPosition,
+    );
+
+    expect.soft(next).toMatchObject({ kind: "practice", questions: 1, status: "pending" });
     expect.soft(today.today.session.nextBlockId).not.toBe(block.id);
 
     await expect(

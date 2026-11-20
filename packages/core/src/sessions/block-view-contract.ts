@@ -72,6 +72,9 @@ export const studyBlockSchema = z
         description:
           "A practice block that only fixes the learner's mistakes (their drills, no practice questions), unlike mixed practice",
       }),
+    mockPreparationReview: dayBlockRefSchema.shape.flags.shape.mockPreparationReview.describe(
+      "Whether this review is offered while the scheduled mock is preparing. Include the flag in its work reference when opening the review.",
+    ),
     netScored: z
       .boolean()
       .meta({

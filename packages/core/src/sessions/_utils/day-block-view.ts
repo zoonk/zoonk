@@ -117,6 +117,7 @@ export function toDayBlockView({
     lessonId: block.lessonId,
     mistakesOnly:
       block.kind === "practice" && payload.drills.length > 0 && payload.itemIds.length === 0,
+    ...(payload.mockPreparationReview && { mockPreparationReview: true }),
     netScored: payload.netScored,
     oftenTested: teaches && payload.skillIds.some((skillId) => oftenTestedSkillIds.has(skillId)),
     opensInPlayer: false,

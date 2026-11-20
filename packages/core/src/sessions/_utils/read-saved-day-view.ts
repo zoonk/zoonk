@@ -14,10 +14,11 @@ import { getExtraTime } from "../extra-time";
 import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
-import { toDayBlockView } from "./day-block-view";
+import { type DayBlockInput, toDayBlockView } from "./day-block-view";
 import { getNextDayBlock } from "./day-view-fields";
 import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { loadStudySessionView } from "./load-session-view";
+import { planSavedMockReview } from "./saved-mock-review";
 import { getSessionBar } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -38,7 +39,7 @@ export async function readSavedDayView({
   const { goalId } = session;
   const readCatchUp = goalId ? () => readCatchUpItems(userId, goalId) : undefined;
 
-  const [view, refill] = await Promise.all([
+  const [view, entitlement] = await Promise.all([
     loadStudySessionView({
       blueprint,
       readCatchUp,
@@ -59,7 +60,37 @@ export async function readSavedDayView({
       : null,
   ]);
 
-  if (!refill || !view.current || !session.goalId) {
+  if (!view.current || !session.goalId) {
+    return view;
+  }
+
+  const review =
+    !entitlement && view.nextBlockId === null
+      ? await planSavedMockReview({
+          preparing: new Set(
+            view.blocks.filter((block) => block.preparing).map((block) => block.position),
+          ),
+          session,
+          timeZone,
+        })
+      : null;
+
+  const refill: { blocks: DayBlockInput[]; plannedMinutes: number } | null =
+    entitlement ??
+    (review && {
+      blocks: [
+        ...session.blocks,
+        {
+          ...review,
+          brainPower: 0,
+          position: Math.max(-1, ...session.blocks.map((block) => block.position)) + 1,
+          status: "pending" as const,
+        },
+      ],
+      plannedMinutes: session.plannedMinutes + review.estimatedMinutes,
+    });
+
+  if (!refill) {
     return view;
   }
 
@@ -108,7 +139,7 @@ export async function readSavedDayView({
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
 
-  return withDayState<Omit<UnstartedDayView, "state">>({
+  return withDayState<Omit<UnstartedDayView, "state" | "waitingFor">>({
     ...fields,
     blocks,
     catchUp: catchUp

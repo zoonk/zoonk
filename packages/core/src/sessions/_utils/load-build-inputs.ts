@@ -57,13 +57,13 @@ function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
   ];
 }
 
-function toReviewInput({
+export function toReviewInput({
   context: { goal, localDate, timeZone, userId },
   field,
   netScored,
   plan,
 }: {
-  context: BuildContext;
+  context: Pick<BuildContext, "goal" | "localDate" | "timeZone" | "userId">;
   field: string | null;
   netScored: boolean;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;

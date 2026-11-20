@@ -18,6 +18,7 @@ import { getNextDayBlock } from "./day-view-fields";
 import { loadExamPrepAccess } from "./load-exam-access";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { getDayOutlines } from "./outlining-stand-ins";
+import { persistSavedMockReview } from "./saved-mock-review";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { getSessionBar } from "./session-view";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
@@ -122,10 +123,12 @@ export async function loadCompletionQueue({
   timeZone: string;
   userId: string;
 }) {
-  const stored = await prisma.studySession.findFirstOrThrow({
+  const beforeReview = await prisma.studySession.findFirstOrThrow({
     include: STUDY_SESSION_INCLUDE,
     where: { id: sessionId, userId },
   });
+
+  const stored = await persistSavedMockReview({ session: beforeReview, timeZone });
 
   const [{ minutes, plan, reserved, session }, carriedItemIds] = await Promise.all([
     loadSessionTime({ stored, userId }),

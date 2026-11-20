@@ -12,7 +12,7 @@ import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill
 import { readLessonScreens } from "./_utils/lesson-screens";
 import { openSessionBlock, openingResult } from "./_utils/open-session-block";
 import { loadPreparingMockPositions } from "./_utils/preparing-mock-blocks";
-import { followSavedDay } from "./_utils/refresh-study-day-selection";
+import { openSavedDay } from "./_utils/saved-mock-review";
 import { type StudyBlockView, toStudyBlockView } from "./_utils/session-view";
 import {
   STUDY_SESSION_INCLUDE,
@@ -89,7 +89,7 @@ async function openSavedSession({
     current &&
     refilled.goal &&
     (!target || (target.status !== "pending" && target.status !== "active"))
-      ? await followSavedDay({ session: refilled, timeZone })
+      ? await openSavedDay({ session: refilled, timeZone })
       : refilled;
 
   const blocks = withoutLockedPhaseChallenges({

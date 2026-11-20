@@ -2,7 +2,7 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { type z } from "zod";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type studyBlockSchema } from "../block-view-contract";
-import { type DayState, withDayState } from "../day-state";
+import { type DAY_WAIT_REASONS, type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
 import { type SessionMinutes } from "../session-minutes";
@@ -66,6 +66,7 @@ export type StudySessionView = {
   sessionBar: { completed: number; total: number };
   /** Where the day stands, which decides what Today offers. */
   state: DayState;
+  waitingFor: (typeof DAY_WAIT_REASONS)[number] | null;
   status: StudySessionRow["status"];
   week: SessionWeek;
 };

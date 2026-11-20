@@ -1,4 +1,4 @@
-import { DAY_STATES } from "@zoonk/core/sessions/day-state";
+import { DAY_STATES, DAY_WAIT_REASONS } from "@zoonk/core/sessions/day-state";
 import { z } from "zod";
 
 export const emptyDaySchema = z
@@ -30,10 +30,18 @@ export const examTomorrowSchema = z
       "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up)",
   });
 
+export const waitingForSchema = z
+  .enum(DAY_WAIT_REASONS)
+  .nullable()
+  .meta({
+    description:
+      "What the learner is waiting for when the day has no next step to open. Null unless the day state is `waiting`.",
+  });
+
 export const dayStateSchema = z
   .enum(DAY_STATES)
   .default("underway")
   .meta({
     description:
-      "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+      "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons or scheduled mock are being prepared; see `waitingFor`), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
   });
