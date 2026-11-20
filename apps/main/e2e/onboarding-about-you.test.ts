@@ -3,6 +3,7 @@ import { BIOGRAPHY_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
 import { mapGoalSkills } from "./onboarding-fixtures";
 
@@ -12,12 +13,12 @@ const TIME_QUESTION = "How much time can you study each day?";
 
 /** What Skip all left on the first goal, asked again on the next one, in order. */
 const SKIPPED_ALL = [
-  "What have you studied?",
   "What do you like to watch?",
   "What do you like to listen to?",
   "What do you like to play?",
   "What do you like to read?",
   "What do you like to do?",
+  "Which apps and tools do you use most?",
   "Do any of these apply to you?",
   "What helps you learn?",
 ];
@@ -51,12 +52,10 @@ test("questions about the learner lead to the plan; a skipped one isn't asked ag
   await page.getByLabel("Your job (optional)").fill("nurse");
   await page.getByRole("button", { name: "Continue" }).press("Enter");
 
-  await expect(
-    page.getByRole("heading", { name: "Which apps and tools do you use most?" }),
-  ).toBeFocused();
+  await expect(page.getByRole("heading", { name: "What have you studied?" })).toBeFocused();
 
   await page.getByRole("button", { exact: true, name: "Skip" }).click();
-  await expect(page.getByRole("heading", { name: "What have you studied?" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What do you like to watch?" })).toBeVisible();
 
   await page.getByRole("button", { exact: true, name: "Skip all" }).click();
 
@@ -72,7 +71,7 @@ test("questions about the learner lead to the plan; a skipped one isn't asked ag
 
   expect(answers.map(({ outcome, question }) => ({ outcome, question }))).toStrictEqual([
     { outcome: "answered", question: "work" },
-    { outcome: "declined", question: "tools" },
+    { outcome: "declined", question: "studies" },
   ]);
 
   expect(facts.map((fact) => fact.statement)).toStrictEqual(["Works as: nurse"]);
@@ -88,6 +87,74 @@ test("questions about the learner lead to the plan; a skipped one isn't asked ag
   }
 
   await expect(page.getByRole("heading", { name: TIME_QUESTION })).toBeVisible();
+});
+
+test("the tools question comes last with the learner's own list, takes any number of chips, and saves typed tools, the one left in the field too", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await learningProfileFixture({
+    suggestedTools: ["Tasy", "MV Soul", "UpToDate", "Whitebook", "Excel"],
+    userId: noProgressUser.id,
+  });
+
+  const goal = await createGoalAtAboutYou(noProgressUser.id, [
+    ...BEFORE_ABOUT_YOU,
+    ...BIOGRAPHY_QUESTIONS.filter((question) => question !== "tools"),
+  ]);
+
+  await page.goto(`/start/${goal.id}`);
+
+  const title = page.getByRole("heading", { name: "Which apps and tools do you use most?" });
+  const tasy = page.getByRole("button", { exact: true, name: "Tasy" });
+  await expect(title).toBeVisible();
+  await expect(page.getByText("Pick up to 3.")).toBeHidden();
+  await expectHydrated(tasy);
+
+  for (const name of ["Tasy", "MV Soul", "UpToDate", "Whitebook"]) {
+    const chip = page.getByRole("button", { exact: true, name });
+    // oxlint-disable-next-line no-await-in-loop -- One tap after another, as a learner taps.
+    await chip.click();
+    // oxlint-disable-next-line no-await-in-loop -- Each tap shows before the next.
+    await expect(chip).toHaveAttribute("aria-pressed", "true");
+  }
+
+  const field = page.getByLabel("Others (optional)");
+  const typed = page
+    .getByRole("listitem")
+    .filter({ has: page.getByRole("button", { name: /^Remove /u }) });
+
+  await field.fill("ClinicalKey");
+  await page.getByRole("button", { exact: true, name: "Add" }).click();
+  await field.fill("Medscape");
+  await field.press("Enter");
+
+  await expect(title).toBeVisible();
+  await expect(field).toHaveValue("");
+  await expect(typed).toHaveText(["ClinicalKey", "Medscape"]);
+
+  await page.getByRole("button", { name: "Remove ClinicalKey" }).click();
+  await expect(typed).toHaveText(["Medscape"]);
+  await expect(field).toBeFocused();
+
+  await field.pressSequentially("tasy,");
+  await expect(typed).toHaveText(["Medscape"]);
+  await expect(tasy).toHaveAttribute("aria-pressed", "true");
+
+  await field.fill("Epocrates");
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+
+  await expect(page.getByRole("heading", { name: "Do any of these apply to you?" })).toBeVisible();
+
+  await expect
+    .poll(async () => {
+      const facts = await prisma.memoryFact.findMany({
+        where: { status: "active", userId: noProgressUser.id },
+      });
+
+      return facts.map((fact) => fact.statement);
+    })
+    .toStrictEqual(["Uses MV Soul, Tasy, UpToDate, Whitebook, Medscape, and Epocrates"]);
 });
 
 function createGoalAtConditions(userId: string) {

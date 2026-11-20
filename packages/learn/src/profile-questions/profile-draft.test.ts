@@ -6,18 +6,20 @@ import { assert, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
   type ProfileDraft,
+  addTypedTools,
   canSendProfileDraft,
   getPrecheckedSupports,
   getProfileJobPrefill,
   toProfileAnswer,
   toProfileDraft,
+  toProfileInput,
   toggleProfileExclusive,
   toggleProfilePick,
   withPrecheckedSupports,
 } from "./profile-draft";
 
 function draft(overrides: Partial<ProfileDraft> = {}): ProfileDraft {
-  return { exclusive: null, picks: [], studies: [], text: "", ...overrides };
+  return { exclusive: null, picks: [], studies: [], text: "", typed: [], ...overrides };
 }
 
 function view(overrides: Partial<ProfileQuestionView> & Pick<ProfileQuestionView, "id">) {
@@ -71,13 +73,6 @@ describe(getProfileJobPrefill, () => {
 });
 
 describe(toggleProfilePick, () => {
-  it("a fourth chip is refused and says so", () => {
-    const full = draft({ picks: ["sports", "anime", "drama"] });
-    const result = toggleProfilePick({ draft: full, id: "comedy", question: "watch" });
-
-    expect(result).toStrictEqual({ capped: true, draft: full });
-  });
-
   it("a pick clears the decline row", () => {
     const result = toggleProfilePick({
       draft: draft({ exclusive: "ratherNot" }),
@@ -85,7 +80,7 @@ describe(toggleProfilePick, () => {
       question: "work",
     });
 
-    expect(result.draft).toStrictEqual(draft({ picks: ["student"] }));
+    expect(result).toStrictEqual(draft({ picks: ["student"] }));
   });
 
   it("work keeps one status", () => {
@@ -95,34 +90,32 @@ describe(toggleProfilePick, () => {
       question: "work",
     });
 
-    expect(result.draft.picks).toStrictEqual(["work"]);
+    expect(result.picks).toStrictEqual(["work"]);
   });
 
-  it("studies keep their pick order and cap at three", () => {
+  it("studies keep their pick order, however many there are", () => {
     let current = draft();
 
-    for (const field of ["law", "media", "health"]) {
-      current = toggleProfilePick({ draft: current, id: field, question: "studies" }).draft;
+    for (const field of ["law", "media", "health", "other"]) {
+      current = toggleProfilePick({ draft: current, id: field, question: "studies" });
     }
 
-    expect(current.studies.map((study) => study.field)).toStrictEqual(["law", "media", "health"]);
-
-    expect(toggleProfilePick({ draft: current, id: "other", question: "studies" }).capped).toBe(
-      true,
-    );
+    expect(current.studies.map((study) => study.field)).toStrictEqual([
+      "law",
+      "media",
+      "health",
+      "other",
+    ]);
   });
 
-  it("condition rows have no cap", () => {
+  it("chips have no cap", () => {
     const picked = toggleProfilePick({
-      draft: draft({ picks: ["adhd", "autism", "dyslexia"] }),
-      id: "anxiety",
-      question: "conditions",
+      draft: draft({ picks: ["sports", "anime", "drama"] }),
+      id: "comedy",
+      question: "watch",
     });
 
-    expect(picked).toStrictEqual({
-      capped: false,
-      draft: draft({ picks: ["adhd", "autism", "dyslexia", "anxiety"] }),
-    });
+    expect(picked).toStrictEqual(draft({ picks: ["sports", "anime", "drama", "comedy"] }));
   });
 });
 
@@ -240,10 +233,10 @@ describe(toProfileAnswer, () => {
 
   it("the address form sends one form, and I'd rather not say declines it", () => {
     const picked = toggleProfilePick({
-      draft: toggleProfilePick({ draft: draft(), id: "feminine", question: "addressForm" }).draft,
+      draft: toggleProfilePick({ draft: draft(), id: "feminine", question: "addressForm" }),
       id: "neutral",
       question: "addressForm",
-    }).draft;
+    });
 
     expect(
       toProfileAnswer({ draft: picked, memoryEnabled: false, question: "addressForm" }),
@@ -348,6 +341,77 @@ describe(toProfileDraft, () => {
         }),
       ),
     ).toStrictEqual(draft({ picks: ["noSoundEffects"] }));
+  });
+});
+
+const TOOLS = [
+  { description: null, id: "excel", label: "Excel" },
+  { description: null, id: "Tasy", label: "Tasy" },
+];
+
+describe(addTypedTools, () => {
+  it("each typed name becomes a chip and the field empties", () => {
+    expect(
+      addTypedTools({ draft: draft({ text: "ClinicalKey; Whitebook," }), options: TOOLS }),
+    ).toStrictEqual(draft({ typed: ["ClinicalKey", "Whitebook"] }));
+  });
+
+  it("an offered name picks its chip, and a name already typed is left out", () => {
+    expect(
+      addTypedTools({
+        draft: draft({ picks: ["Tasy"], text: "excel, tasy, whitebook", typed: ["Whitebook"] }),
+        options: TOOLS,
+      }),
+    ).toStrictEqual(draft({ picks: ["Tasy", "excel"], typed: ["Whitebook"] }));
+  });
+
+  it("a name that would pass the saved limit is dropped", () => {
+    const typed = ["a".repeat(113)];
+
+    expect(
+      addTypedTools({ draft: draft({ text: "Python, R", typed }), options: TOOLS }).typed,
+    ).toStrictEqual([...typed, "R"]);
+  });
+});
+
+describe(toProfileInput, () => {
+  const tools = view({ id: "tools", options: TOOLS });
+
+  it("text left in the tools field is saved with the typed tools", () => {
+    expect(
+      toProfileInput({
+        draft: draft({ picks: ["Tasy"], text: "Excel, UpToDate", typed: ["Whitebook"] }),
+        from: "onboarding",
+        memoryEnabled: true,
+        question: tools,
+      }),
+    ).toStrictEqual({
+      answer: { declined: false, favorites: "Whitebook, UpToDate", picks: ["Tasy", "excel"] },
+      question: "tools",
+    });
+  });
+
+  it("onboarding can't send a tools screen with nothing on it", () => {
+    expect(
+      toProfileInput({
+        draft: draft({ text: " , " }),
+        from: "onboarding",
+        memoryEnabled: true,
+        question: tools,
+      }),
+    ).toBeNull();
+  });
+
+  it("saved typed tools come back as chips", () => {
+    expect(
+      toProfileDraft(
+        view({
+          id: "tools",
+          saved: { picks: [], studies: [], text: "ClinicalKey, Whitebook" },
+          status: "answered",
+        }),
+      ),
+    ).toStrictEqual(draft({ typed: ["ClinicalKey", "Whitebook"] }));
   });
 });
 

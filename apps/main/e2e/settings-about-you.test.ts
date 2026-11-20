@@ -63,16 +63,60 @@ test("saving the question a wide screen opened marks it in the list and opens th
   await work.click();
   await detail.getByRole("button", { exact: true, name: "Save" }).click();
 
-  await expect(
-    detail.getByRole("heading", { name: "Which apps and tools do you use most?" }),
-  ).toBeVisible();
+  await expect(detail.getByRole("heading", { name: "What have you studied?" })).toBeVisible();
 
   await expect(page.getByRole("link", { name: /^What you do now/u })).toContainText("I work");
 
-  await expect(page.getByRole("link", { name: /^Apps and tools/u })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: /^What you've studied/u })).toHaveAttribute(
     "aria-current",
     "page",
   );
 
   await expect(page).toHaveURL(/\/settings\/about-you$/u);
+});
+
+test("every chip stays tappable, so more than three are saved", async ({
+  userWithoutProgress: page,
+}) => {
+  await page.goto("/settings/about-you/watch");
+
+  const picks = ["Anime", "Comedy", "Drama", "Sports"];
+  await expectHydrated(page.getByRole("button", { exact: true, name: "Anime" }));
+
+  for (const name of picks) {
+    // oxlint-disable-next-line no-await-in-loop -- One tap after another, as a learner taps.
+    await page.getByRole("button", { exact: true, name }).click();
+  }
+
+  await page.getByRole("button", { exact: true, name: "Save" }).click();
+
+  const row = page.getByRole("link", { name: /^What you watch/u });
+  await expect(row).toContainText("Anime, Comedy, Drama, Sports");
+});
+
+test("typed tools come back as chips, and a removed one is gone once saved", async ({
+  userWithoutProgress: page,
+}) => {
+  await page.goto("/settings/about-you/tools");
+
+  const field = page.getByLabel("Others (optional)");
+  await expectHydrated(field);
+  await field.fill("Kinvo");
+  await field.press("Enter");
+  await field.fill("Trademap");
+  await page.getByRole("button", { exact: true, name: "Save" }).click();
+
+  const row = page.getByRole("link", { name: /^Apps and tools/u });
+  await expect(row).toContainText("Kinvo, Trademap");
+
+  await row.click();
+  await expect(
+    page.getByRole("listitem").filter({ has: page.getByRole("button", { name: /^Remove /u }) }),
+  ).toHaveText(["Kinvo", "Trademap"]);
+
+  await page.getByRole("button", { name: "Remove Kinvo" }).click();
+  await page.getByRole("button", { exact: true, name: "Save" }).click();
+
+  await expect(row).toContainText("Trademap");
+  await expect(row).not.toContainText("Kinvo");
 });

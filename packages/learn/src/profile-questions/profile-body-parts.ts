@@ -24,7 +24,7 @@ export type Picker = {
 export function usePicker({ draft, onChange, question }: BodyProps): Picker {
   return {
     exclusive: (exclusive) => onChange(toggleProfileExclusive({ draft, exclusive })),
-    toggle: (id) => onChange(toggleProfilePick({ draft, id, question: question.id }).draft),
+    toggle: (id) => onChange(toggleProfilePick({ draft, id, question: question.id })),
   };
 }
 
