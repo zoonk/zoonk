@@ -2,6 +2,7 @@ import { gradeWritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { writeWritingPrompt } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -13,6 +14,7 @@ import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
 import { CGU } from "../mocks/_test-utils/cgu-written";
 import { pickWrittenTestDays } from "../mocks/written-test-schedule";
+import { loadSessionProduce } from "./_utils/load-produce";
 import { getEssay } from "./get-essay";
 import { saveWritingDraft } from "./save-writing-draft";
 import { startWriting } from "./start-writing";
@@ -265,7 +267,8 @@ describe("CGU written exam preparation", () => {
   });
 
   it("gives a free learner a whole-answer block on a date chosen for a written test", async () => {
-    const { goal } = await setup();
+    const { goal, user, writing } = await setup();
+    useModelFixtures(writing.id);
 
     const studyDays = Array.from({ length: 28 }, (_, offset) => ({
       date: new Date(NOW.getTime() + offset * DAY_MS).toISOString().slice(0, 10),
@@ -274,7 +277,49 @@ describe("CGU written exam preparation", () => {
 
     const [middle] = pickWrittenTestDays({ sectionMinutes: 210, studyDays, targetDate: TARGET });
     expect(middle).toBe("2026-10-14");
+    const today = new Date(`${middle}T00:00:00Z`);
+    const itemId = getWritingPromptId(crypto.randomUUID(), 0);
+
+    await writeWritingItem(
+      { count: 1, goalId: goal.id, taskKey: "long", unit: "answer", userId: user.id },
+      itemId,
+    );
+
+    await attemptFixture({
+      answer: {
+        conditions: {
+          admissionId: crypto.randomUUID(),
+          estimatedLines: 8,
+          origin: "block",
+          timed: false,
+          version: "firstDraft",
+        },
+        grade: {
+          criteria: [],
+          errors: [],
+          ignoredFrom: null,
+          kind: "levels",
+          nextStep: null,
+          progress: null,
+        },
+        text: TEXT,
+      },
+      answeredAt: new Date(today.getTime() - DAY_MS),
+      itemId,
+      userId: user.id,
+    });
+
     vi.setSystemTime(new Date(`${middle}T12:00:00Z`));
+
+    await expect(
+      loadSessionProduce({
+        goal,
+        planSettings: { startDate: "2026-09-30" },
+        today,
+        userId: user.id,
+      }),
+    ).resolves.toBeNull();
+
     const { block, sessionId } = await openWritingDay(goal.id);
     const blocks = await prisma.studySessionBlock.findMany({ where: { sessionId } });
 
