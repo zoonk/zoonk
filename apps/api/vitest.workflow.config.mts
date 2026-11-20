@@ -32,7 +32,8 @@ export default defineConfig({
     server: { deps: { inline: [/@workflow\/vitest/u] } },
     setupFiles: ["./setup-workflow-tests.ts"],
     // The Workflow runtime waits at least 1 s before each step retry, so a step that uses all 3 of
-    // its retries holds its test for 3 s.
-    testTimeout: 15_000,
+    // its retries holds its test for 3 s. A file's first run also loads the workflow bundle, which
+    // with 3 files at once on CI took a first test up to 15 s.
+    testTimeout: 30_000,
   },
 });
