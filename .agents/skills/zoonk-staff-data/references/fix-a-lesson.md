@@ -8,7 +8,7 @@ How to fix any Library lesson: its plan, its screens, its words and sentences, a
 
 - `version`: the screens' current version, the base a `setScreens` names.
 - `plan`: the lesson plan, the brief Zoonk writes and repairs the screens from.
-- `screens` in order: each one's `id`, `kind`, `content`, `skillId`, `ideaIndex`, and for a word or sentence screen its `wordId` or `sentenceId` with the text.
+- `screens` in order: each one's `id`, `kind`, `content`, `skillId`, `ideaIndex`, and `variants` with each variant's `id` and full `content`. A word or sentence screen includes its `wordId` or `sentenceId` and text.
 - `ideas`: the lesson map's ideas, by index.
 - `words` and `sentences`: the lesson's rows (translation, distractors, note or explanation, accepted orders) with the shared text and whether it has audio.
 
@@ -39,7 +39,7 @@ Copy `plan` from `staff lesson`, change only what's wrong, and send the whole pl
 
 `pnpm zoonk staff fixes propose --check fix.json` prepares the fix without storing it. Exit 0 prints each change's `before` and `after`, its `effects`, and `media`: the clips, pictures and icons proposing will produce. Exit 2 lists every problem with its path, such as `setScreens.screens[3].word: …`; fix them all and check again. Then propose without `--check`. The media is produced after proposing, and the approver hears and sees it before approving.
 
-A fix holds up to 10 review units: each change is one, and so is each word or sentence a `setScreens` declares and each picture it draws; kept and edited entries cost nothing. Two fixes can't change one lesson in the same batch, so a lesson that needs more goes in a second fix once the first is approved.
+A fix holds up to 10 review units. Each change, new word or sentence declaration, and newly generated clip, picture or idea icon counts one. Kept entries and reused media add no units. Two fixes can't change one lesson in the same batch, so a lesson that needs more goes in a second fix once the first is approved.
 
 ## What learners get
 
@@ -49,7 +49,7 @@ Approving a `setScreens` publishes a new version of the lesson's screens. Learne
 
 **A wrong fact in the plan.** A law lesson's screens cite "art. 4º, § 2º", but one plan brief still says "(Lei nº 12.813/2013, art. 4º, § 1º)". Copy the plan, change `§ 1º` to `§ 2º` in that brief, and propose one `setPlan`.
 
-**Missing words.** A Vietnamese tones lesson teaches only `ma` ("ghost") as a word, while its map already has ideas for `má` ("mom", rising tone) and `mà` ("but", falling tone). One `setScreens` keeps every screen, adds a vocabulary and a translation screen for each new word next to `ma`'s, marks them with their ideas, and declares the words (3 review units):
+**Missing words.** A Vietnamese tones lesson teaches only `ma` ("ghost") as a word, while its map already has ideas for `má` ("mom", rising tone) and `mà` ("but", falling tone). One `setScreens` keeps every screen, adds a vocabulary and a translation screen for each new word next to `ma`'s, marks them with their ideas, and declares the words. That uses 3 review units and up to 2 more for new recordings:
 
 ```json
 {

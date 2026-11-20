@@ -10,7 +10,7 @@ Staff (production data)
                                            fields, relations and each change a fix may make
   staff users find <email|username|id>     One account by exact email, username or id
   staff users search <text> [--limit n]    Accounts whose name, email or username contain the text
-  staff lesson <id>                        A lesson's plan, ideas, current screens and vocabulary
+  staff lesson <id>                        A lesson's plan, ideas, screens, variants and vocabulary
   staff get <model> <id> [--fields ...]    One record by id
   staff list <model> [options]             Records matching every --where
       --where "<field> <op> [value]"       Repeatable. Ops: eq ne gt gte lt lte, in notIn

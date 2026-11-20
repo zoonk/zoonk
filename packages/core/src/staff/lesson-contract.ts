@@ -4,6 +4,11 @@ import { z } from "zod";
 const id = uuidSchema();
 const text = z.string();
 
+const screenVariantSchema = z.object({
+  content: z.unknown().meta({ description: "Stored JSON for this variant" }),
+  id,
+});
+
 export const staffLessonParamsSchema = z.strictObject({ lessonId: id });
 
 const vocabulary = z.object({
@@ -31,6 +36,7 @@ export const staffLessonSchema = z.object({
       sentence: text.nullable(),
       sentenceId: id.nullable(),
       skillId: id.nullable(),
+      variants: z.array(screenVariantSchema),
       word: text.nullable(),
       wordId: id.nullable(),
     }),

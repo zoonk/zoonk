@@ -1,6 +1,6 @@
 import { STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { prisma } from "@zoonk/db";
-import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { describe, expect, it } from "vitest";
 import { signInProposer } from "./content-fixes/_test-utils/content-fix-steps";
@@ -64,7 +64,8 @@ describe("staff lesson", () => {
       libraryStepFixture({ lessonId: lesson.id, position: 0, staged: true, version: 3 }),
     ]);
 
-    await Promise.all([
+    const [variant] = await Promise.all([
+      stepVariantFixture({ content: { text: "Rent for a storefront." }, stepId: first.id }),
       libraryStepFixture({ lessonId: lesson.id, position: 0, retiredAt: new Date(), version: 1 }),
       prisma.step.update({
         data: {
@@ -118,11 +119,16 @@ describe("staff lesson", () => {
       wordId: word.id,
     });
 
+    expect(result.screens[0]?.variants).toStrictEqual([
+      { content: variant.content, id: variant.id },
+    ]);
+
     expect(result.screens[2]).toMatchObject({
       ideaIndex: null,
       kind: "reading",
       sentence: sentence.sentence,
       sentenceId: sentence.id,
+      variants: [],
     });
   });
 });

@@ -43,6 +43,7 @@ async function readLesson(lessonId: string) {
               sentence: { select: { sentence: true } },
               sentenceId: true,
               skillId: true,
+              variants: { orderBy: { id: "asc" }, select: { content: true, id: true } },
               version: true,
               word: { select: { word: true } },
               wordId: true,
@@ -101,7 +102,8 @@ async function readLesson(lessonId: string) {
     })),
   } satisfies z.infer<typeof staffLessonSchema>;
 
-  return { data, rows: 1 + steps.length + words.length + sentences.length };
+  const variants = steps.reduce((total, step) => total + step.variants.length, 0);
+  return { data, rows: 1 + steps.length + variants + words.length + sentences.length };
 }
 
 export function getStaffLesson(input: unknown) {
