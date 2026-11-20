@@ -3,6 +3,7 @@ import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { getExamView } from "@zoonk/core/exams/view/get";
+import { ExamOptionsMenu } from "@zoonk/learn/exam";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -46,7 +47,18 @@ async function ExamContent() {
 
 export default function ExamPage() {
   return (
-    <Suspense fallback={<DetailSkeleton bar={<JourneyPageBar listed root />} />}>
+    <Suspense
+      fallback={
+        <DetailSkeleton
+          bar={
+            <JourneyPageBar listed root>
+              <ExamOptionsMenu />
+            </JourneyPageBar>
+          }
+          bottomBar
+        />
+      }
+    >
       <ExamContent />
     </Suspense>
   );

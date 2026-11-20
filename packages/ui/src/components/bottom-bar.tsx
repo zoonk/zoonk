@@ -1,3 +1,4 @@
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 
 /** Under `lg` the buttons fill the content's measure; from `lg` the main action ends at the bar's end. */
@@ -105,4 +106,15 @@ function BottomBarActions({ className, ...props }: React.ComponentProps<"div">) 
   );
 }
 
-export { BottomBar, BottomBarActions };
+/** A loading page's bar, holding the room of the one main action its page pins there. */
+function BottomBarSkeleton() {
+  return (
+    <BottomBar>
+      <BottomBarActions>
+        <Skeleton className="h-11 w-full rounded-lg lg:w-40" />
+      </BottomBarActions>
+    </BottomBar>
+  );
+}
+
+export { BottomBar, BottomBarActions, BottomBarSkeleton };

@@ -1,6 +1,6 @@
 "use client";
 
-import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { BottomBarSkeleton } from "@zoonk/ui/components/bottom-bar";
 import { METER_PARTS_CLASS } from "@zoonk/ui/components/meter";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
@@ -70,13 +70,7 @@ export function TodayShell() {
       aside={<TodayAsideSkeleton />}
       asideClassName={TODAY_ASIDE_CLASS}
       asideLabel={t("Your week")}
-      bottomBar={
-        <BottomBar>
-          <BottomBarActions>
-            <Skeleton className="h-11 w-full rounded-lg lg:w-40" />
-          </BottomBarActions>
-        </BottomBar>
-      }
+      bottomBar={<BottomBarSkeleton />}
     >
       <Page>
         <div className={TODAY_MAIN_CLASS}>

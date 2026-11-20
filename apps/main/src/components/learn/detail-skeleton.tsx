@@ -6,6 +6,7 @@ import {
   pageMeasureClass,
 } from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
+import { BottomBarSkeleton } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText } from "@zoonk/ui/components/detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -19,11 +20,14 @@ import { JourneyPageBar } from "./journey-page-bar";
 export async function DetailSkeleton({
   aside = true,
   bar,
+  bottomBar = false,
   measure,
   title,
 }: {
   aside?: boolean;
   bar?: React.ReactNode;
+  /** The page usually pins a main action at its bottom, so the bar holds its room from the start. */
+  bottomBar?: boolean;
   measure?: PageMeasure;
   /** The page's own title when it's always the same words. */
   title?: string;
@@ -51,14 +55,21 @@ export async function DetailSkeleton({
     </div>
   );
 
+  const pinned = bottomBar && <BottomBarSkeleton />;
+
   if (!aside) {
-    return column;
+    return (
+      <>
+        {column}
+        {pinned}
+      </>
+    );
   }
 
   const t = await getExtracted();
 
   return (
-    <PageWithAside aside={<div aria-hidden="true" />} asideLabel={t("Loading")}>
+    <PageWithAside aside={<div aria-hidden="true" />} asideLabel={t("Loading")} bottomBar={pinned}>
       {column}
     </PageWithAside>
   );

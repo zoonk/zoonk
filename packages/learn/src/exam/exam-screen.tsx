@@ -93,13 +93,18 @@ function useExamDays(): string[] {
     : dates;
 }
 
-function ExamBar() {
+/** The exam page's "…", in its bar and its placeholder's, so the bar's row is there from the start. */
+export function ExamOptionsMenu() {
   const t = useExtracted();
+  return <ReportProblemMenu label={t("Exam options")} screen="exam" />;
+}
+
+function ExamBar() {
   const { exam, hrefs } = useExamScreen();
 
   return (
     <LearnPageBar back={{ href: hrefs.back }} listed="learner" root title={exam.examName}>
-      <ReportProblemMenu label={t("Exam options")} screen="exam" />
+      <ExamOptionsMenu />
     </LearnPageBar>
   );
 }

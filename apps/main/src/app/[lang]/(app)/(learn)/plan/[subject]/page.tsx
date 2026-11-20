@@ -78,7 +78,7 @@ async function SubjectBody({ params }: Props) {
 
 export default function SubjectPage(props: Props) {
   return (
-    <Suspense fallback={<DetailSkeleton />}>
+    <Suspense fallback={<DetailSkeleton bottomBar />}>
       <SubjectBody {...props} />
     </Suspense>
   );

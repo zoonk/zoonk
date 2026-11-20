@@ -75,7 +75,7 @@ async function MockChooserContent() {
 
 async function MockChooserSkeleton() {
   const t = await getExtracted();
-  return <DetailSkeleton bar={<ChooserBar listed />} title={t("Take a mock exam")} />;
+  return <DetailSkeleton bar={<ChooserBar listed />} bottomBar title={t("Take a mock exam")} />;
 }
 
 export default function MockChooserPage() {
