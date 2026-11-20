@@ -1,7 +1,7 @@
 "use server";
 
 import { importVerdicts } from "@/lib/comparisons/packets";
-import { type Packet, identifier } from "@/lib/comparisons/schemas";
+import { type Packet, type PacketOutput, identifier } from "@/lib/comparisons/schemas";
 import { listComparisons, loadComparison } from "@/lib/comparisons/storage";
 import { parseFormField } from "@zoonk/utils/form";
 import { logError } from "@zoonk/utils/logger";
@@ -20,12 +20,15 @@ function field(formData: FormData, pair: Pair, name: string): string {
   return parseFormField(formData, `${pair.pairId}:${name}`) ?? "";
 }
 
-function location(where: string, output: string) {
+/** A picture has no words to quote, so its part is always described. */
+function location(where: string, output: PacketOutput | null) {
   if (!where) {
     return { detail: WHOLE_ANSWER, kind: "whole" as const };
   }
 
-  return { detail: where, kind: output.includes(where) ? ("quote" as const) : ("range" as const) };
+  const quoted = typeof output === "string" && output.includes(where);
+
+  return { detail: where, kind: quoted ? ("quote" as const) : ("range" as const) };
 }
 
 /** The problems a pair's form lists, in the order they were added. */
@@ -43,10 +46,7 @@ function observations(formData: FormData, pair: Pair) {
       claim: field(formData, pair, `${key}:claim`),
       criterion: field(formData, pair, `${key}:criterion`),
       learnerCost: field(formData, pair, `${key}:cost`),
-      location: location(
-        field(formData, pair, `${key}:where`),
-        output === "B" ? (pair.B ?? "") : pair.A,
-      ),
+      location: location(field(formData, pair, `${key}:where`), output === "B" ? pair.B : pair.A),
       output,
       severity: field(formData, pair, `${key}:severity`),
     };

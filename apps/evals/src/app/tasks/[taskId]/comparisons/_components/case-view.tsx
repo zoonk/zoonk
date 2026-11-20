@@ -1,5 +1,5 @@
 import { Fold } from "@/components/fold";
-import { type Comparison } from "@/lib/comparisons/schemas";
+import { type Comparison, type PacketOutput } from "@/lib/comparisons/schemas";
 import { Badge } from "@zoonk/ui/components/badge";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
@@ -18,6 +18,8 @@ import {
   modelName,
   variantName,
 } from "../_utils/labels";
+import { imagePath } from "../_utils/paths";
+import { OutputImage, type ShownImage } from "./output-image";
 import { type OutputMark, ReadableOutput } from "./readable-output";
 
 type CriterionLabels = Record<string, string>;
@@ -100,8 +102,19 @@ function CheckReasons({ results }: { results: CheckResult[] }) {
   );
 }
 
-function Location({ observation }: { observation: ObservationView["observation"] }) {
+/** A reader names a part of a picture in words, whatever kind it gives, so a picture shows those words. */
+function Location({
+  observation,
+  picture,
+}: {
+  observation: ObservationView["observation"];
+  picture: boolean;
+}) {
   const { detail, kind } = observation.location;
+
+  if (picture && kind !== "quote") {
+    return <p className="text-muted-foreground text-xs">Where: {detail}</p>;
+  }
 
   if (kind === "quote") {
     return (
@@ -118,7 +131,15 @@ function Location({ observation }: { observation: ObservationView["observation"]
   );
 }
 
-function ProblemItem({ criteria, view }: { criteria: CriterionLabels; view: NumberedObservation }) {
+function ProblemItem({
+  criteria,
+  picture,
+  view,
+}: {
+  criteria: CriterionLabels;
+  picture: boolean;
+  view: NumberedObservation;
+}) {
   const { observation } = view;
   const major = observation.severity === "major";
 
@@ -141,7 +162,7 @@ function ProblemItem({ criteria, view }: { criteria: CriterionLabels; view: Numb
       </p>
       <p className="text-sm">{observation.claim}</p>
       <p className="text-muted-foreground text-xs">For the learner: {observation.learnerCost}</p>
-      <Location observation={observation} />
+      <Location observation={observation} picture={picture} />
       {view.check && <CheckReasons results={view.check.results} />}
     </li>
   );
@@ -149,26 +170,34 @@ function ProblemItem({ criteria, view }: { criteria: CriterionLabels; view: Numb
 
 function OutputColumn({
   criteria,
+  imageIndex,
+  images,
   label,
   observations,
   output,
 }: {
   criteria: CriterionLabels;
+  imageIndex: number;
+  images: ShownImage[];
   label: React.ReactNode;
   observations: NumberedObservation[];
-  output: string | null;
+  output: PacketOutput | null;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <p className="text-sm font-medium">{label}</p>
 
-      <div className="rounded-xl border p-4">
-        {output === null ? (
-          <p className="text-muted-foreground text-sm">No output for this run.</p>
-        ) : (
-          <ReadableOutput marks={marksFor(observations)} text={output} />
-        )}
-      </div>
+      {imageIndex === -1 ? (
+        <div className="rounded-xl border p-4">
+          {typeof output === "string" ? (
+            <ReadableOutput marks={marksFor(observations)} text={output} />
+          ) : (
+            <p className="text-muted-foreground text-sm">No output for this run.</p>
+          )}
+        </div>
+      ) : (
+        <OutputImage images={images} index={imageIndex} />
+      )}
 
       {observations.length > 0 && (
         <div className="flex flex-col">
@@ -179,13 +208,22 @@ function OutputColumn({
           </p>
           <ul className="flex flex-col">
             {observations.map((view) => (
-              <ProblemItem criteria={criteria} key={view.anchor} view={view} />
+              <ProblemItem
+                criteria={criteria}
+                key={view.anchor}
+                picture={imageIndex !== -1}
+                view={view}
+              />
             ))}
           </ul>
         </div>
       )}
     </div>
   );
+}
+
+function isImage(output: PacketOutput | null): output is { image: string } {
+  return output !== null && typeof output !== "string";
 }
 
 function choiceLabel(choice: Side | "tie"): string {
@@ -253,6 +291,21 @@ function RunSection({
   const sides: Side[] = incumbent ? ["incumbent", "challenger"] : ["challenger"];
   const preferences = run.reads.filter((read) => read.overall);
 
+  const pictured = sides.flatMap((side) => {
+    const output = run.outputs[side];
+
+    return isImage(output)
+      ? [
+          {
+            alt: `The ${SIDE_LABELS[side].toLowerCase()} model’s picture`,
+            label: SIDE_LABELS[side],
+            side,
+            src: imagePath({ hash: output.image, id: manifest.id, taskId: manifest.taskId }),
+          },
+        ]
+      : [];
+  });
+
   return (
     <div className="flex flex-col gap-4">
       {showRun && <p className="text-muted-foreground font-mono text-xs">Run {run.run}</p>}
@@ -264,6 +317,8 @@ function RunSection({
           return (
             <OutputColumn
               criteria={criteria}
+              imageIndex={pictured.findIndex((image) => image.side === side)}
+              images={pictured}
               key={side}
               label={
                 <>

@@ -1,6 +1,11 @@
 import { type Decision, type Direction } from "@/lib/comparisons/decision-schema";
 import { acceptedReads, opposite, verifiedClaims } from "@/lib/comparisons/evidence";
-import { type Comparison, type Reader, type SealedPacket } from "@/lib/comparisons/schemas";
+import {
+  type Comparison,
+  type PacketOutput,
+  type Reader,
+  type SealedPacket,
+} from "@/lib/comparisons/schemas";
 import { type Side } from "./labels";
 
 type Read = ReturnType<typeof acceptedReads>[number];
@@ -30,7 +35,11 @@ export type ReadView = {
   reverse: boolean;
 };
 
-export type RunView = { outputs: Record<Side, string | null>; reads: ReadView[]; run: number };
+export type RunView = {
+  outputs: Record<Side, PacketOutput | null>;
+  reads: ReadView[];
+  run: number;
+};
 
 function sideOf(label: "A" | "B", first: Side): Side {
   return label === "A" ? first : opposite(first);
@@ -104,7 +113,16 @@ function readView(comparison: Comparison, claims: Claim[], read: Read): ReadView
 export function caseRuns(comparison: Comparison, caseId: string): RunView[] {
   const reads = acceptedReads(comparison);
   const claims = verifiedClaims(comparison);
-  const output = (slot: { hash: string } | null) => (slot && comparison.outputs[slot.hash]) ?? null;
+
+  const output = (slot: { hash: string } | null): PacketOutput | null => {
+    const stored = slot ? comparison.outputs[slot.hash] : undefined;
+
+    if (!slot || stored === undefined) {
+      return null;
+    }
+
+    return typeof stored === "string" ? stored : { image: slot.hash };
+  };
 
   return comparison.manifest.runsCompared
     .filter((run) => run.caseId === caseId)
