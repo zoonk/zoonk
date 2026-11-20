@@ -33,7 +33,7 @@
   "account_name_required": "d55d5b7e30ba59d48f2b52c1a7be420690121a7cbd23dbb12f10bb8fe30237f2",
   "account_name_too_long": "50859025621593213cc448c74ba13555118cd7c301feb888ea68948c4b6893ca",
   "account_new_code_failed": "4ce90ea9af144aa9347712b4802278d71643ec73d96b2825fdf5eac5e0f6ad89",
-  "account_new_code_sent": "c5444ca2d3e3bd6049ad58283f06bcaba9ce6b9aaf8af9617e8a60afda77d6d8",
+  "account_new_code_sent": "12a575e7db168e38a17e4cf11c6a6e77bdad9293360c2de377476eaba83ee5c9",
   "account_new_code_wait": "918f69c3a19597298642548d2957aab949919428989499f3b102e56a98c1702c",
   "account_or": "2f02de2f70c6cccba857ef3a0f77dcc1bcd480fc1f99d2b519d1730affcd2377",
   "account_privacy": "9c6c2ec2cf831df808fbbf237bd641bea6f81b4ccc84c843d15d9c454e9cc10b",
@@ -82,7 +82,7 @@
     <string name="account_send_again">Wyślij ponownie</string>
     <string name="account_change_email">Zmień adres e-mail</string>
     <!-- %1$s is an email address. -->
-    <string name="account_new_code_sent">Wysłaliśmy nowy kod na adres %1$s.</string>
+    <string name="account_new_code_sent">Ponownie wysłaliśmy wiadomość na adres %1$s.</string>
     <string name="account_new_code_wait">Poczekaj minutę, zanim poprosisz o kolejny kod.</string>
     <string name="account_new_code_failed">Nie udało się wysłać nowego kodu. Spróbuj ponownie.</string>
     <string name="account_failure_invalid_email">Wpisz poprawny adres e-mail</string>
