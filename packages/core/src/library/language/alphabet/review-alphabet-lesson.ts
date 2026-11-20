@@ -144,20 +144,15 @@ export async function reviewAlphabetLesson(
     source: "review" as const,
   }));
 
-  const failedOutcome = context.lesson ? "heldBack" : "needsFix";
-
-  await recordLessonQualityDecision({
-    evidence: {
-      attemptKey: `version:${context.version}:${published.writerRunId}`,
+  if (!context.lesson) {
+    await recordLessonQualityDecision({
       blocking: problems,
-      phase: context.lesson ? "recheck" : "firstReview",
+      lessonId: context.lessonId,
+      phase: "firstReview",
       reviewerRunId: provenance.runId,
       writerRunId: published.writerRunId,
-    },
-    lessonId: context.lessonId,
-    outcome: problems.length === 0 ? "passed" : failedOutcome,
-    version: context.version,
-  });
+    });
+  }
 
   return problems;
 }
@@ -250,21 +245,7 @@ export async function publishAlphabetFix({
         throw new AlphabetFixLostError();
       }
 
-      const nextVersion = await saveAlphabetVersion(tx, { lesson, lessonId, steps });
-
-      await recordLessonQualityDecision({
-        db: tx,
-        evidence: {
-          attemptKey: provenance.runId,
-          phase: "disposition",
-          writerRunId: provenance.runId,
-        },
-        lessonId,
-        outcome: "published",
-        version: nextVersion,
-      });
-
-      return nextVersion;
+      return saveAlphabetVersion(tx, { lesson, lessonId, steps });
     }),
   );
 

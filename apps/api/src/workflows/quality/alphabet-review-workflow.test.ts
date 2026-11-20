@@ -156,9 +156,7 @@ describe(alphabetReviewWorkflow, () => {
 
     await expect(
       prisma.lessonQualityDecision.findMany({ where: { lessonId, phase: "firstReview" } }),
-    ).resolves.toMatchObject([
-      { outcome: "passed", reviewerRunId: expect.any(String), version: 1 },
-    ]);
+    ).resolves.toMatchObject([{ outcome: "passed", reviewerRunId: expect.any(String) }]);
 
     expect(checkLessonQuality).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({

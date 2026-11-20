@@ -168,13 +168,7 @@ describe(writeLessonContent, () => {
     await expect(
       prisma.lessonQualityDecision.findMany({ where: { lessonId: lesson.id } }),
     ).resolves.toMatchObject([
-      {
-        outcome: "publishUnchecked",
-        phase: "codeCheck",
-        reviewerRunId: null,
-        version: 1,
-        writerRunId: draft.runId,
-      },
+      { outcome: "passed", phase: "codeCheck", reviewerRunId: null, writerRunId: draft.runId },
     ]);
 
     const [steps, stored] = await Promise.all([
@@ -313,12 +307,43 @@ describe(writeLessonContent, () => {
         outcome: "needsFix",
         phase: "codeCheck",
       },
-      {
-        blocking: [expect.objectContaining({ screen: 4, source: "code" })],
-        outcome: "heldBack",
-        phase: "codeRecheck",
-        version: null,
-      },
+    ]);
+  });
+
+  it("records code checks for both drafts in the same workflow run", async () => {
+    const { lesson, workflowRunId } = await createClaimedLesson();
+
+    const filler = withScreen(
+      writtenTemperatureLesson(),
+      4,
+      explanation("It's worth noting that zero is a mark."),
+    );
+
+    const first = mockDraft(filler);
+    mockFix({ changedScreens: [], lesson: filler });
+
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { status: "heldBack" },
+    );
+
+    await expect(
+      claimLibraryGeneration({ id: lesson.id, target: "lessonContent", workflowRunId }),
+    ).resolves.toBe("claimed");
+
+    const second = mockDraft(writtenTemperatureLesson());
+
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { status: "published" },
+    );
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({
+        orderBy: { id: "asc" },
+        where: { lessonId: lesson.id, phase: "codeCheck" },
+      }),
+    ).resolves.toMatchObject([
+      { outcome: "needsFix", writerRunId: first.runId },
+      { outcome: "passed", writerRunId: second.runId },
     ]);
   });
 

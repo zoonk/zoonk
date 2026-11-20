@@ -459,13 +459,7 @@ describe(checkPublishedLesson, () => {
         where: { lessonId: lesson.id, phase: "firstReview" },
       }),
     ).resolves.toMatchObject([
-      {
-        blocking: [],
-        outcome: "passed",
-        reviewerRunId: reviewer.runId,
-        version: 1,
-        writerRunId: draft.runId,
-      },
+      { blocking: [], outcome: "passed", reviewerRunId: reviewer.runId, writerRunId: draft.runId },
     ]);
 
     const steps = await listSteps(lesson.id);
@@ -662,10 +656,6 @@ describe(redraftPublishedLesson, () => {
     ).resolves.toMatchObject({ status: "republished" });
 
     expect(checkLessonQuality).toHaveBeenCalledOnce();
-
-    await expect(
-      prisma.lessonQualityDecision.findMany({ where: { lessonId: lesson.id, phase: "recheck" } }),
-    ).resolves.toMatchObject([{ outcome: "passed", reviewerRunId: null }]);
   });
 
   it("replaces a version no fix put right with a fresh draft, told what held the first back", async () => {
@@ -1038,10 +1028,6 @@ describe("set-aside selection admission", () => {
       holder.release();
       await Promise.all([holder.done, calls]);
     }
-
-    await expect(
-      prisma.lessonQualityDecision.findMany({ where: { lessonId: lesson.id } }),
-    ).resolves.toMatchObject([{ outcome: "setAside", phase: "disposition", version: 1 }]);
 
     const outcomes = await calls;
     expect(outcomes.toSorted((a, b) => Number(a) - Number(b))).toStrictEqual([false, true]);

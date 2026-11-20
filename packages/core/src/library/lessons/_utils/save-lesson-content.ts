@@ -7,10 +7,6 @@ import { getLibraryLessonCacheTag } from "../../../cache/tags";
 import { type LibraryProvenance } from "../../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
 import {
-  type QualityEvidence,
-  recordLessonQualityDecision,
-} from "../../quality/lesson-quality-decision";
-import {
   type SourceRead,
   reconcileLessonReviewFlags,
   saveStepSources,
@@ -129,14 +125,12 @@ async function publishVersion(
  * ready (`completeLessonContent`). Returns null when the claim was lost; otherwise the version.
  */
 export async function saveLessonContent({
-  evidence,
   language,
   lessonId,
   screens,
   summary,
   workflowRunId,
 }: {
-  evidence?: QualityEvidence;
   language: string;
   lessonId: string;
   screens: LessonScreenToSave[];
@@ -164,17 +158,7 @@ export async function saveLessonContent({
       throw new LessonPublicationLostError();
     }
 
-    const version = await writeScreens(tx, { language, lessonId, screens: prepared });
-
-    await recordLessonQualityDecision({
-      db: tx,
-      evidence,
-      lessonId,
-      outcome: "publishUnchecked",
-      version,
-    });
-
-    return version;
+    return writeScreens(tx, { language, lessonId, screens: prepared });
   });
 }
 
@@ -183,14 +167,12 @@ export async function saveLessonContent({
  * `publishStagedLessonVersion`. Returns null if `replaces` is no longer current.
  */
 export async function stageLessonVersion({
-  evidence,
   language,
   lessonId,
   replaces,
   screens,
   summary,
 }: {
-  evidence?: QualityEvidence;
   language: string;
   lessonId: string;
   replaces: number;
@@ -216,9 +198,7 @@ export async function stageLessonVersion({
     }
 
     await tx.lesson.update({ data: { stagedSummary: summary }, where: { id: lessonId } });
-    const version = await writeScreens(tx, { language, lessonId, screens: prepared, staged: true });
-    await recordLessonQualityDecision({ db: tx, evidence, lessonId, outcome: "staged", version });
-    return version;
+    return writeScreens(tx, { language, lessonId, screens: prepared, staged: true });
   });
 }
 
@@ -299,25 +279,6 @@ export async function publishStagedLessonVersion({
       data: { stagedSummary: DbNull, summary: lesson.stagedSummary ?? DbNull },
       where: { id: lessonId },
     });
-
-    const decision = await tx.lessonQualityDecision.findFirst({
-      select: { writerRunId: true },
-      where: { lessonId, outcome: "staged", phase: "disposition", version },
-    });
-
-    if (decision) {
-      await recordLessonQualityDecision({
-        db: tx,
-        evidence: {
-          attemptKey: `published:${version}:${decision.writerRunId}`,
-          phase: "disposition",
-          writerRunId: decision.writerRunId,
-        },
-        lessonId,
-        outcome: "published",
-        version,
-      });
-    }
 
     return version;
   });

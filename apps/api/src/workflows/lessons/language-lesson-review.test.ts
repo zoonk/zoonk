@@ -46,7 +46,9 @@ function withDistractors(lesson: LanguageLessonContent, index: number, distracto
   };
 }
 
-async function writeLanguageLesson() {
+async function writeLanguageLesson(
+  drafts: Awaited<ReturnType<typeof generateLanguageLesson>>[] = [],
+) {
   await aiOrganizationFixture();
 
   const chapter = await libraryChapterFixture({
@@ -63,6 +65,10 @@ async function writeLanguageLesson() {
   });
 
   vi.mocked(generateLanguageLesson).mockResolvedValue(taskResult(DRAFT, "openai/gpt-6.1-terra"));
+
+  for (const draft of drafts) {
+    vi.mocked(generateLanguageLesson).mockResolvedValueOnce(draft);
+  }
 
   const result = await lessonContentWorkflow({ lessonId: lesson.id });
   return { lessonId: lesson.id, result };
@@ -93,8 +99,7 @@ describe("a language lesson's review", () => {
     await expect(
       prisma.lessonQualityDecision.findMany({ orderBy: { id: "asc" }, where: { lessonId } }),
     ).resolves.toMatchObject([
-      { outcome: "passed", phase: "firstReview", reviewerRunId: expect.any(String), version: null },
-      { outcome: "published", phase: "disposition", version: 1 },
+      { outcome: "passed", phase: "firstReview", reviewerRunId: expect.any(String) },
     ]);
 
     expect(checkLanguageLesson).toHaveBeenCalledExactlyOnceWith(
@@ -181,11 +186,7 @@ describe("a language lesson's review", () => {
 
     await expect(
       prisma.lessonQualityDecision.findMany({ orderBy: { id: "asc" }, where: { lessonId } }),
-    ).resolves.toMatchObject([
-      { outcome: "needsFix", phase: "firstReview" },
-      { outcome: "heldBack", phase: "recheck", reviewerRunId: expect.any(String) },
-      { outcome: "heldBack", phase: "disposition" },
-    ]);
+    ).resolves.toMatchObject([{ outcome: "needsFix", phase: "firstReview" }]);
 
     expect(held.contentStatus).not.toBe("completed");
     expect(held.words).toStrictEqual([]);
@@ -202,5 +203,32 @@ describe("a language lesson's review", () => {
         }),
       ]),
     );
+  });
+
+  it("records both first reviews when a language lesson needs a redraft", async () => {
+    const flagged = { problem: "The option is right too.", screen: FIRST_WORD_CHOICE };
+
+    vi.mocked(checkLanguageLesson)
+      .mockResolvedValueOnce(review([flagged]))
+      .mockResolvedValueOnce(review([flagged]))
+      .mockResolvedValueOnce(review([]));
+
+    fixWith((lesson) => withDistractors(lesson, 0, ["the fee", "a rent", "the bill"]));
+
+    const first = taskResult(DRAFT, "openai/gpt-6.1-terra");
+    const second = taskResult(DRAFT, "openai/gpt-6.1-terra");
+    const { lessonId, result } = await writeLanguageLesson([first, second]);
+
+    expect(result.status).toBe("ready");
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({
+        orderBy: { id: "asc" },
+        where: { lessonId, phase: "firstReview" },
+      }),
+    ).resolves.toMatchObject([
+      { outcome: "needsFix", writerRunId: first.provenance.runId },
+      { outcome: "passed", writerRunId: second.provenance.runId },
+    ]);
   });
 });

@@ -27,15 +27,12 @@ import {
   loadCheck,
   loadVersionSteps,
   readVersionWriterRunId,
+  stageFixedVersion,
   toHeldBackDraft,
   toProvenance,
   toTaskAnalytics,
 } from "./_utils/published-versions";
-import {
-  recordPublishedReview,
-  stageFixedVersion,
-  writerRunIdOf,
-} from "./_utils/save-published-review";
+import { recordLessonQualityDecision } from "./lesson-quality-decision";
 import { runLessonQualityGate } from "./lesson-quality-gate";
 import { repairWrittenLesson } from "./lesson-repairs";
 
@@ -82,27 +79,33 @@ export async function checkPublishedLesson({
   const writerRunId =
     plan.writerRunId ?? previous[0]?.runId ?? (await readVersionWriterRunId(versionKey));
 
-  const state: PublishedDraftState = {
-    context,
-    gate,
-    inputs,
-    live: true,
-    replaces: plan.version,
-    version: {
-      lesson: plan.lesson,
-      provenanceByScreen: previous.map((step) => toProvenance(step)),
-    },
-    writerRunId,
-  };
-
-  await recordPublishedReview({
-    checked,
-    needsFix: first.blocking.length > 0,
+  await recordLessonQualityDecision({
+    blocking: first.blocking,
+    lessonId: context.lessonId,
     phase: "firstReview",
-    state,
+    reviewerRunId: checked.reviewerRunId,
+    writerRunId,
   });
 
-  return first.blocking.length === 0 ? { status: "passed" } : { first, state, status: "needsFix" };
+  if (first.blocking.length === 0) {
+    return { status: "passed" };
+  }
+
+  return {
+    first,
+    state: {
+      context,
+      gate,
+      inputs,
+      live: true,
+      replaces: plan.version,
+      version: {
+        lesson: plan.lesson,
+        provenanceByScreen: previous.map((step) => toProvenance(step)),
+      },
+    },
+    status: "needsFix",
+  };
 }
 
 export type PublishedDraftOutcome =
@@ -130,18 +133,9 @@ export async function fixPublishedDraft({
     .filter((problem) => problem.source === "review")
     .map((problem) => problem.screen);
 
-  if (state.live && isDeepStrictEqual(before, after)) {
-    await recordPublishedReview({
-      checked: { blocking: [], minor: [], reviewerRunId: null },
-      needsFix: false,
-      phase: "recheck",
-      state,
-    });
-
-    return { status: "passed" };
-  }
-
-  return { before, flaggedScreens, state: { ...state, version }, status: "fixed" };
+  return state.live && isDeepStrictEqual(before, after)
+    ? { status: "passed" }
+    : { before, flaggedScreens, state: { ...state, version }, status: "fixed" };
 }
 
 export async function checkPublishedDraft({
@@ -161,12 +155,25 @@ export async function checkPublishedDraft({
     review: true,
   });
 
-  await recordPublishedReview({
-    checked,
-    needsFix: checked.blocking.length > 0,
-    phase: "firstReview",
-    state,
-  });
+  const writerRunId = state.writerRunId ?? state.version.provenanceByScreen[0]?.runId;
+  const { lessonId } = state.context;
+
+  await Promise.all([
+    recordLessonQualityDecision({
+      blocking: checked.blocking.filter((problem) => problem.source === "code"),
+      lessonId,
+      minor: checked.minor,
+      phase: "codeCheck",
+      writerRunId,
+    }),
+    recordLessonQualityDecision({
+      blocking: checked.blocking.filter((problem) => problem.source === "review"),
+      lessonId,
+      phase: "firstReview",
+      reviewerRunId: checked.reviewerRunId,
+      writerRunId,
+    }),
+  ]);
 
   return checked.blocking.length > 0
     ? { first: checked, state, status: "needsFix" }
@@ -211,8 +218,6 @@ export async function recheckPublishedDraft({
       ),
   );
 
-  await recordPublishedReview({ checked, needsFix: blocking.length > 0, phase: "recheck", state });
-
   return blocking.length > 0
     ? {
         draft: toHeldBackDraft({
@@ -242,7 +247,6 @@ export async function stagePublishedDraft({
       context: state.context,
       inputs: state.inputs,
       replaces: state.replaces,
-      writerRunId: writerRunIdOf(state),
     })
   );
 }

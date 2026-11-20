@@ -192,18 +192,6 @@ describe(writeAlphabetLesson, () => {
 
     await expect(publishAlphabetLesson({ ...publish, workflowRunId })).resolves.toBe(false);
 
-    await expect(
-      prisma.lessonQualityDecision.findMany({ where: { lessonId: written.lessonId } }),
-    ).resolves.toMatchObject([
-      {
-        outcome: "publishUnchecked",
-        phase: "codeCheck",
-        reviewerRunId: null,
-        version: 1,
-        writerRunId: written.provenance.runId,
-      },
-    ]);
-
     await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
       {
         input: { lessonId: written.lessonId, version: 1 },
@@ -234,11 +222,7 @@ describe(writeAlphabetLesson, () => {
     await expect(
       prisma.lessonQualityDecision.findMany({ where: { lessonId } }),
     ).resolves.toMatchObject([
-      {
-        blocking: [expect.objectContaining({ code: "emptyAlphabet" })],
-        outcome: "heldBack",
-        version: null,
-      },
+      { blocking: [expect.objectContaining({ code: "emptyAlphabet" })], outcome: "needsFix" },
     ]);
 
     mockContent(HANGUL);

@@ -1,36 +1,29 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
-import { type LessonQualityOutcome, type LessonQualityPhase } from "@zoonk/db/enums";
+import { prisma } from "@zoonk/db";
+import { type LessonQualityPhase } from "@zoonk/db/enums";
 
 type Problem = { code?: string; problem: string; screen: number | null; source: "code" | "review" };
 
-export type QualityEvidence = {
-  attemptKey: string;
-  phase: LessonQualityPhase;
-  writerRunId: string;
-  reviewerRunId?: string | null;
-  blocking?: Problem[];
-  minor?: Problem[];
-};
-
 export async function recordLessonQualityDecision({
-  db = prisma,
-  evidence,
+  blocking = [],
   lessonId,
-  outcome,
-  version,
+  minor = [],
+  phase,
+  reviewerRunId,
+  writerRunId,
 }: {
-  db?: TransactionClient;
-  evidence?: QualityEvidence;
+  blocking?: Problem[];
   lessonId: string;
-  outcome: LessonQualityOutcome;
-  version?: number;
+  minor?: Problem[];
+  phase: LessonQualityPhase;
+  reviewerRunId?: string | null;
+  writerRunId?: string;
 }): Promise<void> {
-  if (!evidence?.writerRunId) {
+  if (!writerRunId) {
     return;
   }
 
-  const shared = await db.lesson.findFirst({
+  const shared = await prisma.lesson.findFirst({
     select: { id: true },
     where: { id: lessonId, ownerId: null, visibility: "public" },
   });
@@ -39,10 +32,16 @@ export async function recordLessonQualityDecision({
     return;
   }
 
-  const { blocking = [], minor = [], ...decision } = evidence;
-
-  await db.lessonQualityDecision.createMany({
-    data: { ...decision, blocking, lessonId, minor, outcome, version },
+  await prisma.lessonQualityDecision.createMany({
+    data: {
+      blocking,
+      lessonId,
+      minor,
+      outcome: blocking.length === 0 ? "passed" : "needsFix",
+      phase,
+      reviewerRunId,
+      writerRunId,
+    },
     skipDuplicates: true,
   });
 }

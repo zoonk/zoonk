@@ -12,7 +12,8 @@ import {
   normalizeWordKey,
 } from "../../player/contracts/build-word-bank-options";
 import { type LibraryProvenance } from "../_utils/library-rows";
-import { holdBackUnusableLesson } from "../claims/generation-claim";
+import { finishLibraryGeneration } from "../claims/generation-claim";
+import { recordLessonQualityDecision } from "../quality/lesson-quality-decision";
 import { cleanLanguageLesson } from "./_utils/clean-language-lesson";
 import { fillMissingAudio } from "./_utils/language-audio";
 import {
@@ -188,12 +189,25 @@ export async function writeLanguageLessonDraft({
   const lesson = cleanWrittenLanguageLesson({ content: written.data, inputs });
 
   if (!lesson) {
-    await holdBackUnusableLesson({
-      code: "insufficientLanguageContent",
+    await recordLessonQualityDecision({
+      blocking: [
+        {
+          code: "insufficientLanguageContent",
+          problem: "The lesson could not supply enough usable language exercises.",
+          screen: null,
+          source: "code",
+        },
+      ],
       lessonId,
-      problem: "The lesson could not supply enough usable language exercises.",
-      workflowRunId,
+      phase: "codeCheck",
       writerRunId: written.provenance.runId,
+    });
+
+    await finishLibraryGeneration({
+      id: lessonId,
+      status: "failed",
+      target: "lessonContent",
+      workflowRunId,
     });
 
     return { status: "heldBack" };

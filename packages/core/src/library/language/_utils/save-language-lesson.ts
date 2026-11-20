@@ -9,7 +9,6 @@ import { resolvePlanInputDependents } from "../../../plans/_utils/plan-input-dep
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
 import { toStepData } from "../../lessons/_utils/step-data";
 import { startLessonVersion } from "../../lessons/lesson-versions";
-import { recordLessonQualityDecision } from "../../quality/lesson-quality-decision";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type LanguageStepToSave } from "./language-lesson-steps";
 
@@ -136,18 +135,6 @@ export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promis
           })),
         }),
       ]);
-
-      await recordLessonQualityDecision({
-        db: tx,
-        evidence: {
-          attemptKey: workflowRunId,
-          phase: "disposition",
-          writerRunId: provenance.runId,
-        },
-        lessonId,
-        outcome: "published",
-        version,
-      });
 
       return true;
     }),

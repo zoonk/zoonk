@@ -4,10 +4,7 @@ import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { logError } from "@zoonk/utils/logger";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
-import {
-  type QualityEvidence,
-  recordLessonQualityDecision,
-} from "../quality/lesson-quality-decision";
+import { recordLessonQualityDecision } from "../quality/lesson-quality-decision";
 import { type LessonGateProblem, runLessonQualityGate } from "../quality/lesson-quality-gate";
 import { repairWrittenLesson } from "../quality/lesson-repairs";
 import {
@@ -163,26 +160,24 @@ export async function checkLessonContent({
 
   const writerRunId = draft.writerRunId ?? written.provenanceByScreen[0]?.runId;
 
-  const evidence: QualityEvidence | undefined = writerRunId
-    ? {
-        attemptKey: workflowRunId,
-        blocking: checked.blocking,
-        minor: checked.minor,
-        phase: previous ? "codeRecheck" : "codeCheck",
-        writerRunId,
-      }
-    : undefined;
+  if (!previous) {
+    await recordLessonQualityDecision({
+      blocking: checked.blocking,
+      lessonId,
+      minor: checked.minor,
+      phase: "codeCheck",
+      writerRunId,
+    });
+  }
 
   if (checked.blocking.length > 0) {
     if (draft.remainingFixes > 0) {
-      await recordLessonQualityDecision({ evidence, lessonId, outcome: "needsFix" });
       return { draft, first: checked, status: "needsFix" };
     }
 
     logError(`[lessons] Lesson ${lessonId} held back after its fix pass:`, checked.blocking);
 
     await holdBackLessonDraft({
-      evidence,
       lessonId,
       model: gate.writerModel,
       problems: checked.blocking.map(({ problem, screen }) => ({ problem, screen })),
@@ -200,7 +195,6 @@ export async function checkLessonContent({
   });
 
   const version = await saveLessonContent({
-    evidence,
     language: inputs.language,
     lessonId,
     screens,

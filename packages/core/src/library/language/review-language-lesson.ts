@@ -47,7 +47,9 @@ function listScreens({
 }
 
 /** Internal workflow bridge: the errors in a written lesson, before anyone sees it. */
-async function checkLanguageDraft(context: ReviewContext) {
+export async function reviewLanguageLessonDraft(
+  context: ReviewContext & { lessonId?: string },
+): Promise<LessonProblem[]> {
   const { draft } = context;
 
   const { data, provenance } = await checkLanguageLesson({
@@ -58,59 +60,17 @@ async function checkLanguageDraft(context: ReviewContext) {
     writerModel: draft.provenance.model,
   });
 
-  return { problems: toReviewProblems(data.issues), reviewerRunId: provenance.runId };
-}
+  const problems = toReviewProblems(data.issues);
 
-function toEvidenceProblem({ problem, screen, source }: LessonProblem) {
-  return { problem, screen, source: source === "check" ? ("code" as const) : ("review" as const) };
-}
-
-type LessonClaim = { lessonId: string; workflowRunId: string };
-type ClaimedReview = ReviewContext & { claim?: LessonClaim };
-
-function recordLanguageReview({
-  blocking,
-  claim,
-  outcome,
-  phase,
-  reviewerRunId,
-  writerRunId,
-}: {
-  blocking?: LessonProblem[];
-  claim?: LessonClaim;
-  outcome: "passed" | "needsFix" | "heldBack";
-  phase: "firstReview" | "recheck";
-  reviewerRunId?: string;
-  writerRunId: string;
-}) {
-  if (!claim) {
-    return;
+  if (context.lessonId) {
+    await recordLessonQualityDecision({
+      blocking: problems,
+      lessonId: context.lessonId,
+      phase: "firstReview",
+      reviewerRunId: provenance.runId,
+      writerRunId: draft.provenance.runId,
+    });
   }
-
-  return recordLessonQualityDecision({
-    evidence: {
-      attemptKey: claim.workflowRunId,
-      blocking: blocking?.map((problem) => toEvidenceProblem(problem)),
-      phase,
-      reviewerRunId,
-      writerRunId,
-    },
-    lessonId: claim.lessonId,
-    outcome,
-  });
-}
-
-export async function reviewLanguageLessonDraft(context: ClaimedReview): Promise<LessonProblem[]> {
-  const { problems, reviewerRunId } = await checkLanguageDraft(context);
-
-  await recordLanguageReview({
-    blocking: problems,
-    claim: context.claim,
-    outcome: problems.length === 0 ? "passed" : "needsFix",
-    phase: "firstReview",
-    reviewerRunId,
-    writerRunId: context.draft.provenance.runId,
-  });
 
   return problems;
 }
@@ -123,7 +83,7 @@ export async function fixLanguageLessonDraft({
   problems,
   speed,
   ...context
-}: ClaimedReview & { problems: LessonProblem[]; speed?: ServedSpeed }): Promise<LanguageLessonFix> {
+}: ReviewContext & { problems: LessonProblem[]; speed?: ServedSpeed }): Promise<LanguageLessonFix> {
   const { draft } = context;
 
   const { data, provenance } = await fixLanguageLesson({
@@ -143,18 +103,9 @@ export async function fixLanguageLessonDraft({
     return { status: "unfixed" };
   }
 
-  if (isDeepStrictEqual(lesson, draft.lesson)) {
-    await recordLanguageReview({
-      claim: context.claim,
-      outcome: "passed",
-      phase: "recheck",
-      writerRunId: draft.provenance.runId,
-    });
-
-    return { status: "unchanged" };
-  }
-
-  return { draft: { ...draft, lesson, provenance }, status: "fixed" };
+  return isDeepStrictEqual(lesson, draft.lesson)
+    ? { status: "unchanged" }
+    : { draft: { ...draft, lesson, provenance }, status: "fixed" };
 }
 
 /**
@@ -165,30 +116,19 @@ export async function reviewLanguageLessonFix({
   fixed,
   flaggedScreens,
   ...context
-}: ClaimedReview & { fixed: LanguageLessonDraft; flaggedScreens: (number | null)[] }): Promise<
+}: ReviewContext & { fixed: LanguageLessonDraft; flaggedScreens: (number | null)[] }): Promise<
   LessonProblem[]
 > {
   const before = listScreens(context.draft);
   const after = listScreens(fixed);
-  const { problems, reviewerRunId } = await checkLanguageDraft({ ...context, draft: fixed });
+  const problems = await reviewLanguageLessonDraft({ ...context, draft: fixed });
 
-  const remaining = problems.filter(
+  return problems.filter(
     ({ screen }) =>
       screen === null ||
       !flaggedScreens.includes(screen) ||
       !isDeepStrictEqual(before[screen], after[screen]),
   );
-
-  await recordLanguageReview({
-    blocking: problems,
-    claim: context.claim,
-    outcome: remaining.length === 0 ? "passed" : "heldBack",
-    phase: "recheck",
-    reviewerRunId,
-    writerRunId: context.draft.provenance.runId,
-  });
-
-  return remaining;
 }
 
 /** Internal workflow bridge: keeps a lesson its fix couldn't clear from learners, for a redraft. */
@@ -204,12 +144,6 @@ export async function holdBackLanguageLessonDraft({
   workflowRunId: string;
 }): Promise<void> {
   await holdBackLessonDraft({
-    evidence: {
-      attemptKey: workflowRunId,
-      blocking: problems.map((problem) => toEvidenceProblem(problem)),
-      phase: "disposition",
-      writerRunId: draft.provenance.runId,
-    },
     lessonId,
     model: draft.provenance.model,
     problems: problems.map(({ problem, screen }) => ({ problem, screen })),

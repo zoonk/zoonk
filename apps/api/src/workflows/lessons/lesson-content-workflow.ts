@@ -158,14 +158,13 @@ async function reviewLanguageDraft({
   stage: LanguageDraftStage;
 }): Promise<LessonWriteOutcome> {
   const { draft } = stage;
-  const claim = { lessonId: input.lessonId, workflowRunId: input.workflowRunId };
-  const problems = await reviewLanguageDraftStep(stage, claim);
+  const problems = await reviewLanguageDraftStep(stage, input.lessonId);
 
   if (problems.length === 0) {
     return publishLanguageDraftStep({ draft, input });
   }
 
-  const fix = await fixLanguageDraftStep({ claim, problems, stage });
+  const fix = await fixLanguageDraftStep({ problems, stage });
 
   if (fix.status === "unchanged") {
     return publishLanguageDraftStep({ draft, input });
@@ -176,7 +175,6 @@ async function reviewLanguageDraft({
   }
 
   const remaining = await reviewLanguageFixStep({
-    claim,
     fixed: fix.draft,
     flaggedScreens: problems.map((problem) => problem.screen),
     stage,

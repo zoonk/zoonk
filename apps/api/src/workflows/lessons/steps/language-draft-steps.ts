@@ -23,8 +23,6 @@ import {
   type WriteInput,
 } from "./write-lesson-content-step";
 
-type Claim = Pick<WriteInput, "lessonId" | "workflowRunId">;
-
 const PUBLISHED: LessonWriteOutcome = {
   check: null,
   imageScope: null,
@@ -38,41 +36,37 @@ function toReviewContext({ analytics, draft, serviceTier }: LanguageDraftStage) 
 
 export async function reviewLanguageDraftStep(
   stage: LanguageDraftStage,
-  claim?: Claim,
+  lessonId?: string,
 ): Promise<LessonProblem[]> {
   "use step";
 
-  return reviewLanguageLessonDraft({ ...toReviewContext(stage), claim });
+  return reviewLanguageLessonDraft({ ...toReviewContext(stage), lessonId });
 }
 
 export async function fixLanguageDraftStep({
-  claim,
   problems,
   stage,
 }: {
-  claim?: Claim;
   problems: LessonProblem[];
   stage: LanguageDraftStage;
 }): Promise<LanguageLessonFix> {
   "use step";
 
-  return fixLanguageLessonDraft({ ...toReviewContext(stage), claim, problems, speed: stage.speed });
+  return fixLanguageLessonDraft({ ...toReviewContext(stage), problems, speed: stage.speed });
 }
 
 export async function reviewLanguageFixStep({
-  claim,
   fixed,
   flaggedScreens,
   stage,
 }: {
   fixed: LanguageLessonDraft;
   flaggedScreens: (number | null)[];
-  claim?: Claim;
   stage: LanguageDraftStage;
 }): Promise<LessonProblem[]> {
   "use step";
 
-  return reviewLanguageLessonFix({ ...toReviewContext(stage), claim, fixed, flaggedScreens });
+  return reviewLanguageLessonFix({ ...toReviewContext(stage), fixed, flaggedScreens });
 }
 
 export async function publishLanguageDraftStep({

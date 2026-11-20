@@ -15,7 +15,6 @@ import {
   readStagedLessonVersion,
   retireUnaskedQuestions,
 } from "../lessons/lesson-versions";
-import { recordLessonQualityDecision } from "./lesson-quality-decision";
 
 class PublishedLessonReplacedError extends Error {
   override name = "PublishedLessonReplacedError";
@@ -34,12 +33,7 @@ export async function setAsidePublishedLesson({
   const { data: heldBack, error } = await safeAsync(() =>
     writePlanInputs(async (tx) => {
       const existing = await tx.step.findFirst({
-        orderBy: { position: "asc" },
-        select: {
-          lesson: { select: { contentStatus: true, setAsideAt: true } },
-          runId: true,
-          version: true,
-        },
+        select: { lesson: { select: { contentStatus: true, setAsideAt: true } }, version: true },
         where: { lessonId, ...CURRENT_STEPS },
       });
 
@@ -66,18 +60,6 @@ export async function setAsidePublishedLesson({
       await tx.lesson.update({
         data: { contentStatus: "failed", setAsideAt: new Date() },
         where: { id: lessonId },
-      });
-
-      await recordLessonQualityDecision({
-        db: tx,
-        evidence: {
-          attemptKey: `setAside:${version}:${existing.runId}`,
-          phase: "disposition",
-          writerRunId: existing.runId,
-        },
-        lessonId,
-        outcome: "setAside",
-        version,
       });
 
       await retireUnaskedQuestions(tx, { lessonId });
