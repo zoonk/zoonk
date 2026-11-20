@@ -129,7 +129,7 @@ function toCourseGoalDraft({
       ...(input.level && { level: input.level }),
     },
     displayName: course.title,
-    examBlueprintId,
+    examBlueprintId: decision.kind === "learnerLanguage" ? undefined : examBlueprintId,
     kind: getCourseGoalKind({
       format: course.format,
       hasExam: Boolean(examBlueprintId),
@@ -167,7 +167,7 @@ async function setDefaultExamDate({
   userId: string;
 }): Promise<GoalView> {
   const day =
-    goal.kind === "exam" && input.targetDate === undefined ? findDefaultExamDay(exam) : null;
+    goal.examBlueprintId && input.targetDate === undefined ? findDefaultExamDay(exam) : null;
 
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
   const today = toIsoDate(getDateInTimeZone({ date: new Date(), timeZone }));
@@ -231,7 +231,7 @@ export async function startCourseGoal({
 
   const [outline, exam] = await Promise.all([
     chapterId ? loadCourseOutline({ courseId: course.id, userId }) : [],
-    decision.kind === "learnerLanguage" ? null : loadCourseExam(course.id),
+    loadCourseExam(course.id),
   ]);
 
   if (chapterId && !outline.some((chapter) => chapter.chapterId === chapterId)) {

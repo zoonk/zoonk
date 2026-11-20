@@ -81,7 +81,7 @@ export type GoalCurriculumInputs = {
   /** Research decided whether the goal is about a product, linked or not; the graph waits for it. */
   productChecked: boolean;
   product: GoalProduct | null;
-  sourceCourse?: StartedCourse | null;
+  sourceCourse?: (StartedCourse & Pick<Course, "format">) | null;
   startedCourse: StartedCourse | null;
 };
 
@@ -226,10 +226,18 @@ export function getReferenceSyllabusNeed(
 }
 
 function toSourceCourse(
-  course: Pick<Course, "id" | "title" | "userId"> | null,
+  course: Pick<Course, "format" | "id" | "title" | "userId"> | null,
   country: string | null,
-): StartedCourse | null {
-  return course && { country, id: course.id, ownerId: course.userId, title: course.title };
+) {
+  return (
+    course && {
+      country,
+      format: course.format,
+      id: course.id,
+      ownerId: course.userId,
+      title: course.title,
+    }
+  );
 }
 
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */
@@ -243,7 +251,7 @@ export async function loadGoalCurriculumInputs(
       primaryCourse: {
         select: { country: true, id: true, title: true, userId: true, visibility: true },
       },
-      sourceCourse: { select: { id: true, title: true, userId: true } },
+      sourceCourse: { select: { format: true, id: true, title: true, userId: true } },
       ...GOAL_PRODUCT_SELECT,
       user: { select: { isAnonymous: true } },
     },

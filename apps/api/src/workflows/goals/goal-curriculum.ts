@@ -191,7 +191,7 @@ function saveBuiltGraph({
     : findGoalCourses({
         ...context,
         courses: orderGoalCourses(graph),
-        examCourseStart: Boolean(inputs.sourceCourse && goal.kind === "exam"),
+        examCourseStart: inputs.sourceCourse?.format === "exam",
         goal,
         product: inputs.product,
         provenance,

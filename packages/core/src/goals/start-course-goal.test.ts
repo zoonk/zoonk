@@ -719,9 +719,9 @@ describe(startCourseGoal, () => {
     },
   );
 
-  it("marks the default exam date with its notice setting and leaves a repeated start unchanged", async () => {
+  it("keeps a linked core course's exam kind in either language and its notice only in the original", async () => {
     const [course, user, blueprint] = await Promise.all([
-      publicCourse({ format: "exam" }),
+      publicCourse({ format: "core" }),
       userFixture(),
       examBlueprintFixture({
         edition: {
@@ -762,7 +762,7 @@ describe(startCourseGoal, () => {
     const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({
-      goal: { kind: "exam", targetDate: "2020-11-08" },
+      goal: { examBlueprintId: blueprint.id, kind: "exam", targetDate: "2020-11-08" },
       status: "created",
     });
 
@@ -774,6 +774,28 @@ describe(startCourseGoal, () => {
     });
 
     await startCourseWithPlan({ courseId: course.id, input: {} });
+
+    const other = await userFixture();
+    mockSession(other.id);
+    const translated = await startCourseGoal({ courseId: course.id, input: { language: "pt" } });
+
+    expect(translated).toMatchObject({
+      goal: {
+        examBlueprintId: null,
+        kind: "exam",
+        language: "pt",
+        primaryCourseId: null,
+        targetDate: null,
+      },
+      status: "created",
+    });
+
+    const translatedId = translated.status === "created" ? translated.goal.id : "";
+
+    await expect(loadGoalCurriculumInputs(translatedId)).resolves.toMatchObject({
+      sourceCourse: { format: "core", id: course.id },
+      startedCourse: null,
+    });
   });
 
   it("starts an exam course without a stored exam as an exam goal, which research reads", async () => {

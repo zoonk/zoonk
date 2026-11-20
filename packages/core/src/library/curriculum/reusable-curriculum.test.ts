@@ -991,7 +991,13 @@ describe("a shared language goal's graph", () => {
       findReusableCurriculum({
         inputs: {
           ...later,
-          sourceCourse: { country: null, id: source.id, ownerId: null, title: source.title },
+          sourceCourse: {
+            country: null,
+            format: source.format,
+            id: source.id,
+            ownerId: null,
+            title: source.title,
+          },
         },
         scope: { ...sharedScope(later), generalGoal: source.title },
       }),
