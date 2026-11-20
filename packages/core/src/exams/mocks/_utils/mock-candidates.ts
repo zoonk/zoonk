@@ -182,18 +182,6 @@ export async function loadMockCandidates({
       ? await listMockItemClaims(client, userId, [...mockIds], now)
       : null;
 
-  const lastRead = (use: (typeof items)[number]["mockUses"][number] | undefined) => {
-    if (!use?.spentAt) {
-      return;
-    }
-
-    const current = claims?.readable.get(use.mockExamId);
-
-    return current?.section === use.section
-      ? Math.max(use.spentAt.getTime(), current.since.getTime())
-      : use.spentAt.getTime();
-  };
-
   return items
     .filter((item) => {
       const use = item.mockUses[0];
@@ -214,7 +202,7 @@ export async function loadMockCandidates({
       format: getItemFormatKey({ item, mix }),
       itemFormat: item.format,
       itemId: item.id,
-      lastMockUse: lastRead(item.mockUses[0]),
+      lastMockUse: item.mockUses[0]?.spentAt?.getTime(),
       skillId: item.skillId,
       ...(item.set &&
         item.setId && {
