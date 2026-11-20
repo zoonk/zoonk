@@ -123,10 +123,10 @@ async function formatsSetup() {
   const items = await Promise.all(
     ITEMS.map((item) =>
       itemFixture({
-        mockOnly: true,
         content: item.content,
         examBlueprintId: blueprint.id,
         format: item.format,
+        mockOnly: true,
         skillId: skill.id,
       }),
     ),

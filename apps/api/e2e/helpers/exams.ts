@@ -73,6 +73,7 @@ export async function createExamGoal(userId: string) {
       itemFixture({
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,
+        mockOnly: true,
         skillId: skill.id,
       }),
     ),
@@ -172,6 +173,7 @@ export async function createBreakExamGoal(
         itemFixture({
           content: choiceItemContent(),
           examBlueprintId: blueprint.id,
+          mockOnly: true,
           skillId: skill.id,
         }),
       ),

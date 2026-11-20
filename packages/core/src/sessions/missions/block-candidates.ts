@@ -66,6 +66,7 @@ export function blockCandidates({
     (block, position) =>
       !preparing?.has(position) && !block.payload.extra && !block.payload.reinforcement,
   );
+
   const reviews = planned.filter((block) => block.kind === "review");
   const review = reviews[0];
   const lessons = planned.filter((block) => block.kind === "learn");

@@ -38,7 +38,7 @@ export const mockPaths = {
   "/goals/{goalId}/mocks": {
     get: {
       description:
-        "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; and the diagnostic mock onboarding offers instead of the quick placement, in its lengths.",
+        "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; the last requested option and whether it is ready to start; and the diagnostic mock offered during onboarding.",
       operationId: "listMocks",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -79,7 +79,7 @@ export const mockPaths = {
         "409": { ...conflictResponse, description: "The goal is paused" },
         "422": {
           ...unprocessableEntityResponse,
-          description: "Not an exam, not one of its mocks, or too few questions for one",
+          description: "The goal is not an exam or does not offer the requested option",
         },
       },
       security: AUTHENTICATED_SECURITY,
@@ -186,10 +186,11 @@ export const mockPaths = {
       requestParams: { path: mockPathParamsSchema },
       responses: {
         "200": {
-          description: "The scheduled mock needs questions before it can start",
           content: { "application/json": { schema: z.object({ status: z.literal("preparing") }) } },
+          description: "The scheduled mock needs questions before it can start",
         },
         "204": { description: "Running" },
+        "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
         ...commonErrors,
         "409": {
           ...conflictResponse,

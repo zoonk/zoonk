@@ -236,6 +236,7 @@ describe("build-time mission facts and selection against the real database", () 
 
   it("leaves a mock out of a paid learner's missions while its questions are preparing", async () => {
     const input = await fixture();
+
     await prisma.subscription.create({
       data: { plan: "plus", provider: "zoonk", referenceId: input.userId, status: "active" },
     });

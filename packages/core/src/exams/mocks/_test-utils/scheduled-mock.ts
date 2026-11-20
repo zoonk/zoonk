@@ -58,9 +58,10 @@ export async function scheduledMockSetup(
   });
 
   await prisma.item.updateMany({
+    data: { examBlueprintId: blueprint.id, mockOnly: true },
     where: { skillId: { in: fixture.skills.map((skill) => skill.id) } },
-    data: { mockOnly: true, examBlueprintId: blueprint.id },
   });
+
   const [mockItem] = await Promise.all([
     checkpointItemFixture({
       kind: "mock",

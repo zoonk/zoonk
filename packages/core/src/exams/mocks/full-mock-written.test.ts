@@ -143,9 +143,9 @@ async function writtenExamSetup({
     ...skills.flatMap((skill) =>
       Array.from({ length: 4 }, () =>
         itemFixture({
-          mockOnly: true,
-          examBlueprintId: blueprint.id,
           content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          mockOnly: true,
           skillId: skill.id,
         }),
       ),

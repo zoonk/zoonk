@@ -90,6 +90,7 @@ async function navigationSetup(navigation: SectionNavigation) {
       itemFixture({
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,
+        mockOnly: true,
         skillId: skill.id,
       }),
     ),

@@ -19591,7 +19591,7 @@
     },
     "/goals/{goalId}/mocks": {
       "get": {
-        "description": "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; and the diagnostic mock onboarding offers instead of the quick placement, in its lengths.",
+        "description": "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; the last requested option and whether it is ready to start; and the diagnostic mock offered during onboarding.",
         "operationId": "listMocks",
         "security": [
           {
@@ -19803,7 +19803,7 @@
             }
           },
           "422": {
-            "description": "Not an exam, not one of its mocks, or too few questions for one",
+            "description": "The goal is not an exam or does not offer the requested option",
             "content": {
               "application/json": {
                 "schema": {
@@ -20299,6 +20299,16 @@
           },
           "401": {
             "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Mock exams come with Plus",
             "content": {
               "application/json": {
                 "schema": {
