@@ -100,13 +100,12 @@ export const pieces = {
     }),
   },
   today: {
-    /** "Today", the minutes left, the day's bar and its lessons. */
+    /** "Today", the minutes left, the day's bar and its lessons, with the row for the ones still being prepared. */
     day: (who, o) => ({
       ...base("today", who, o, PHONE),
       crop: ['[data-slot="page-header"]', '[data-slot="today-session"]'],
       pad: [10, 12, 4, 12],
       hide: TAB_CHROME,
-      css: '[data-slot="today-coming-lessons"] { display: none !important; }',
       radius: 0,
     }),
     /** "This week", the day's place in it. */
