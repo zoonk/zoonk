@@ -459,8 +459,9 @@ struct PracticeAPI: Sendable {
     }
   }
 
+  /// Nil while a mock's questions are still being written: nothing started.
   func startChallenge(token: String, planItemId: String, afterWriting: Bool) async throws
-    -> Components.Schemas.ChallengeStart
+    -> Components.Schemas.ChallengeStart?
   {
     try await perform(token) { client in
       switch try await client.startChallenge(
@@ -468,6 +469,7 @@ struct PracticeAPI: Sendable {
         body: .json(.init(afterWriting: afterWriting ? true : nil, timeZone: timeZone)))
       {
       case .ok(let response): return try response.body.json
+      case .accepted: return nil
       case .code402: throw PracticeAPIError.plusRequired
       case .conflict(let response):
         throw PracticeAPIError.conflict(code: try? response.body.json.error.code)

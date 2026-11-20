@@ -116,14 +116,14 @@ struct TodaySessionSection: View {
   }
 
   /// A block still to do opens from its row, in whatever order the learner likes; one waiting for
-  /// earlier work doesn't.
+  /// earlier work, or a mock still being prepared, doesn't.
   @ViewBuilder
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
       isBusy: busy == .block(block.position), failed: failed == .block(block.position))
 
-    if block.waitReason == nil {
+    if block.waitReason == nil && !block.preparing {
       Button {
         open(block, false)
       } label: {
@@ -477,7 +477,7 @@ struct BlockRow: View {
 
   /// A row is its title and at most one short line.
   private var line: String? {
-    if let view, today.isBeingWritten(block, in: view) {
+    if block.preparing || view.map({ today.isBeingWritten(block, in: $0) }) == true {
       return String(
         localized: "Getting ready…", table: "Today",
         comment:

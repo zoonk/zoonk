@@ -521,6 +521,7 @@ private struct NextStopView: View {
   private var alternative: StudyBlock? {
     day.blocks.first {
       $0.id != next?.id && $0.status == .pending && $0.kind != .learn && $0.waitReason == nil
+        && !$0.preparing
     }
   }
 

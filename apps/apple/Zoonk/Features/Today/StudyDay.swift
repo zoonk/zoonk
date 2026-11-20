@@ -282,6 +282,9 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let planItemId: String?
   let planItemKey: String?
   let position: Int
+  /// A mock whose questions are still being written: it shows its time and doesn't open, and the
+  /// day goes on with its next step.
+  let preparing: Bool
   let questions: Int
   let refresh: Bool
   let reinforcement: Bool

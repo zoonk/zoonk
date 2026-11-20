@@ -52,26 +52,9 @@ private struct MockChooserContent: View {
         await options.refresh()
       }
     case .loaded(let view):
-      MockChooser(goalId: goalId, view: view) { id in
+      MockChooser(goalId: goalId, view: view, readAgain: options.refresh) { id in
         router.open(.mock(blockId: id))
       }
-      .task(id: view.requested?.status == .preparing) {
-        await rereadWhilePreparing()
-      }
-    }
-  }
-
-  /// The questions are written in the background, so the page reads the request again to bring
-  /// Start back once they're ready; it never starts the mock itself.
-  private func rereadWhilePreparing() async {
-    while options.value?.requested?.status == .preparing {
-      do {
-        try await Task.sleep(for: .seconds(10))
-      } catch {
-        return
-      }
-
-      await options.refresh()
     }
   }
 }
@@ -99,6 +82,7 @@ private struct MockChooser: View {
 
   let goalId: String
   let view: MockOptions
+  let readAgain: () async -> Void
   let onStarted: (String) -> Void
 
   private var isOpen: Bool { view.access == .open }
@@ -148,8 +132,25 @@ private struct MockChooser: View {
     .bottomBar(note: barNote) {
       startAction
     }
+    .task(id: isPreparing) {
+      await readAgainWhilePreparing()
+    }
     .onDisappear {
       starting.leave()
+    }
+  }
+
+  /// The questions are written in the background, so the page reads the request again (main's
+  /// 15 seconds) to bring Start back once they're ready; it never starts the mock itself.
+  private func readAgainWhilePreparing() async {
+    while isPreparing {
+      do {
+        try await Task.sleep(for: .seconds(15))
+      } catch {
+        return
+      }
+
+      await readAgain()
     }
   }
 
@@ -226,7 +227,7 @@ private struct MockChooser: View {
       Button {
         router.showRoot(of: .today)
       } label: {
-        Text("Keep studying", tableName: "Mock", comment: "Leaves a mock exam being prepared")
+        Text(MockPreparing.keepStudying)
       }
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)
@@ -257,13 +258,7 @@ private struct MockChooser: View {
     }
 
     if isPreparing {
-      return BarNote(
-        heading: LocalizedStringResource(
-          "Your mock exam is being prepared", table: "Mock",
-          comment: "Over Keep studying, while a mock exam's questions are written"),
-        LocalizedStringResource(
-          "Come back to this page to start it.", table: "Mock",
-          comment: "Under: Your mock exam is being prepared"))
+      return BarNote(heading: MockPreparing.title, MockPreparing.line)
     }
 
     return failure.map { BarNote($0) }
@@ -405,6 +400,19 @@ private struct MockChooser: View {
       }
     }
   }
+}
+
+/// Main's `MockPreparingWords`: said beside "Keep studying" while a mock's questions are written,
+/// on the chooser and on a scheduled mock's intro. It never starts by itself.
+enum MockPreparing {
+  static let title = LocalizedStringResource(
+    "Your mock exam is being prepared", table: "Mock",
+    comment: "Over Keep studying, while a mock exam's questions are written")
+  static let line = LocalizedStringResource(
+    "Come back to this page to start it.", table: "Mock",
+    comment: "Under: Your mock exam is being prepared")
+  static let keepStudying = LocalizedStringResource(
+    "Keep studying", table: "Mock", comment: "Leaves a mock exam being prepared")
 }
 
 struct MockSummaryRow: View {

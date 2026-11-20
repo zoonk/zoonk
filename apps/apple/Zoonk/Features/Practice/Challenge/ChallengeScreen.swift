@@ -17,6 +17,8 @@ struct ChallengeScreen: View {
   @State private var isWriting = false
   @State private var writeLimit: HelpLimit?
   @State private var startProblem: LocalizedStringResource?
+  /// A start found the mock's questions still being written, though the page said it was open.
+  @State private var startFoundPreparing = false
   @State private var isMoving = false
   @State private var moveProblem: LocalizedStringResource?
   @State private var moved: Moved?
@@ -255,6 +257,23 @@ struct ChallengeScreen: View {
             ? .mock(blockId: blockId, sessionId: sessionId)
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
+    } else if isPreparing(challenge) {
+      GateWords(title: Text(MockPreparing.title), line: Text(MockPreparing.line))
+
+      PracticeActionRow {
+        if challenge.canMove, moved == nil {
+          PracticeSecondaryButton(
+            title: LocalizedStringResource(
+              "Move to Monday", table: "Practice",
+              comment: "Moves the weekly challenge to next Monday."),
+            icon: .setDate, isBusy: isMoving
+          ) { run { await move() } }
+        }
+
+        PracticeMainButton(title: MockPreparing.keepStudying, icon: .forward) {
+          dismiss()
+        }
+      }
     } else if canStart(challenge) {
       // The gate takes the buttons' place until its day has come, then they take it back.
       OpeningClock(availableAt: writeLimit?.availableAt) { now in
@@ -301,6 +320,11 @@ struct ChallengeScreen: View {
         ) { run { await move() } }
       }
     }
+  }
+
+  /// A scheduled mock whose questions are still being written: it never starts short.
+  private func isPreparing(_ challenge: Components.Schemas.Challenge) -> Bool {
+    canStart(challenge) && (challenge.access == .preparing || startFoundPreparing)
   }
 
   private func canStart(_ challenge: Components.Schemas.Challenge) -> Bool {
@@ -658,7 +682,9 @@ struct ChallengeScreen: View {
     }
 
     switch started {
-    case .done(let start):
+    case .done(nil):
+      startFoundPreparing = true
+    case .done(let start?):
       // Closed while the start was answered: nothing opens behind the learner.
       guard !Task.isCancelled else { return }
       dismiss()

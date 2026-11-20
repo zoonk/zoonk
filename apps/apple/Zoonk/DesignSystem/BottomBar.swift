@@ -209,13 +209,7 @@ struct BarNote: View {
 
   var body: some View {
     if let heading {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(heading)
-          .fontWeight(.semibold)
-        Text(message)
-          .foregroundStyle(.mutedForeground)
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
+      GateWords(title: Text(heading), line: Text(message))
     } else {
       line
     }
