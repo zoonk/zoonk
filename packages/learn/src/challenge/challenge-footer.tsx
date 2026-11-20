@@ -175,6 +175,7 @@ function KeepStudyingLink() {
 
   return (
     <TaskActions>
+      <MoveToMondayButton />
       <TaskMainLink href={hrefs.exit}>{t("Keep studying")}</TaskMainLink>
     </TaskActions>
   );
@@ -214,7 +215,8 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
   }
 
-  if (start.problem === "preparing") {
+  // A start can find it preparing too, when the page was read before its questions ran short.
+  if (challenge.access === "preparing" || start.problem === "preparing") {
     return { actions: <KeepStudyingLink />, line: <MockPreparingWords /> };
   }
 

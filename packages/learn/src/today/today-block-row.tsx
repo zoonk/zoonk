@@ -106,7 +106,7 @@ function RowLines({
   const { actions } = useTodayScreen();
   const isGettingReady = useLessonGettingReady();
   const stepLabel = useStepLabel({ includeSubject: false });
-  const line = isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
+  const line = block.preparing || isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
 
   return (
     <>
@@ -141,7 +141,7 @@ function RowTarget({
     );
   }
 
-  if (isFinished(block) || block.waitReason || !opens) {
+  if (isFinished(block) || block.waitReason || block.preparing || !opens) {
     return name;
   }
 
