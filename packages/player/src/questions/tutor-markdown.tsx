@@ -1,7 +1,7 @@
 "use client";
 
 import { isTutorAppPath, readTutorBlockLink } from "@zoonk/core/lesson-questions/app-links";
-import { CodeBlock, InlineCode } from "@zoonk/learn/code";
+import { CodeBlock, CodeListing, InlineCode } from "@zoonk/learn/code";
 import { DisplayMath } from "@zoonk/learn/rich-text/display-math";
 import {
   AlertDialog,
@@ -175,21 +175,39 @@ function AnswerSpan({ node, ...props }: ComponentProps<"span"> & ExtraProps) {
 /** Whether Streamdown can draw a diagram yet; until then its source shows as code. */
 const DiagramsReadyContext = createContext(false);
 
+/** What code's parts are called, where no translations load. */
+export type TutorCodeLabels = { code: string; scroll: { left: string; right: string } };
+
+const CodeLabelsContext = createContext<TutorCodeLabels | undefined>(undefined);
+
 const FENCE_LANGUAGE = /language-(?<name>\S+)/u;
 const TRAILING_LINE_BREAKS = /\n+$/u;
 
 /** A fenced block in an answer, drawn as lessons draw code. */
 function AnswerCodeBlock(props: ComponentProps<"code"> & ExtraProps) {
   const diagramsReady = use(DiagramsReadyContext);
+  const labels = use(CodeLabelsContext);
   const language = FENCE_LANGUAGE.exec(props.className ?? "")?.groups?.name?.toLowerCase() ?? null;
+  const written = typeof props.children === "string" ? props.children : "";
+  const code = written.replace(TRAILING_LINE_BREAKS, "");
 
   if (language === "mermaid" && diagramsReady) {
     return <defaultComponents.code {...props} />;
   }
 
-  const code = typeof props.children === "string" ? props.children : "";
+  if (labels) {
+    return (
+      <CodeListing
+        code={code}
+        label={labels.code}
+        language={language}
+        scrollLabels={labels.scroll}
+        variant="panel"
+      />
+    );
+  }
 
-  return <CodeBlock code={code.replace(TRAILING_LINE_BREAKS, "")} language={language} />;
+  return <CodeBlock code={code} language={language} />;
 }
 
 function AnswerInlineCode({ children }: ComponentProps<"code"> & ExtraProps) {
@@ -239,17 +257,19 @@ const TUTOR_MARKDOWN_CLASS = cn(
 );
 
 /**
- * Admin renders answers without translations: code takes its labels from Admin, and other parts
- * that translate show only after a click.
+ * Admin renders answers without translations, so it names code's parts (`codeLabels`), and other
+ * parts that translate show only after a click.
  */
 export function TutorMarkdown({
   answer,
   appLinks,
+  codeLabels,
   isAnimating,
   isStreaming,
 }: {
   answer: string;
   appLinks?: TutorAnswerLinks;
+  codeLabels?: TutorCodeLabels;
   isAnimating: boolean;
   isStreaming: boolean;
 }) {
@@ -286,23 +306,25 @@ export function TutorMarkdown({
 
   return (
     <TutorAnswerLinksContext value={links}>
-      <DiagramsReadyContext value={plugins.mermaid !== undefined}>
-        <Streamdown
-          animated={isAnimating}
-          className={TUTOR_MARKDOWN_CLASS}
-          components={appLinks ? TUTOR_ANSWER_COMPONENTS : ANSWER_COMPONENTS}
-          controls={false}
-          disallowedElements={DISALLOWED_ANSWER_ELEMENTS}
-          isAnimating={isAnimating}
-          linkSafety={appLinks ? undefined : LESSON_QUESTION_LINK_SAFETY}
-          mode={isStreaming ? "streaming" : "static"}
-          plugins={plugins}
-          rehypePlugins={appLinks ? BUDDY_REHYPE_PLUGINS : undefined}
-          urlTransform={getSafeLessonQuestionUrl}
-        >
-          {answer}
-        </Streamdown>
-      </DiagramsReadyContext>
+      <CodeLabelsContext value={codeLabels}>
+        <DiagramsReadyContext value={plugins.mermaid !== undefined}>
+          <Streamdown
+            animated={isAnimating}
+            className={TUTOR_MARKDOWN_CLASS}
+            components={appLinks ? TUTOR_ANSWER_COMPONENTS : ANSWER_COMPONENTS}
+            controls={false}
+            disallowedElements={DISALLOWED_ANSWER_ELEMENTS}
+            isAnimating={isAnimating}
+            linkSafety={appLinks ? undefined : LESSON_QUESTION_LINK_SAFETY}
+            mode={isStreaming ? "streaming" : "static"}
+            plugins={plugins}
+            rehypePlugins={appLinks ? BUDDY_REHYPE_PLUGINS : undefined}
+            urlTransform={getSafeLessonQuestionUrl}
+          >
+            {answer}
+          </Streamdown>
+        </DiagramsReadyContext>
+      </CodeLabelsContext>
 
       {opened === false && <BlockOpenFailed />}
 
