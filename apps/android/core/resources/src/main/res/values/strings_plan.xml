@@ -63,8 +63,8 @@
     </plurals>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
-    <string name="plan_exam_day">Exam day</string>
-    <string name="plan_goal_date">Goal date</string>
+    <!-- In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date. -->
+    <string name="plan_roadmap_you_finish">You finish</string>
     <string name="plan_exam_date_label">%1$s · exam</string>
     <string name="plan_you_are_here_suffix">, you are here</string>
     <string name="plan_done_suffix">, done</string>

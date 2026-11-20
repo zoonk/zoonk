@@ -109,7 +109,7 @@ internal fun PlanProperties(
         SectionHeader(stringResource(R.string.plan_your_plan))
         Column {
             PropertyRow(
-                label = stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_goal_date),
+                label = stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_deadline),
                 value = goalDateValue(page),
                 onClick = onOpen?.let { { it(PlanSection.Date) } },
                 onClickLabel = adjust,

@@ -331,7 +331,13 @@ private fun RoadmapLegend(
                     )
                 },
             ) {
-                Text(stringResource(if (page.isExam) R.string.plan_exam_day else R.string.plan_goal_date), style = style, color = color)
+                val finish =
+                    when {
+                        page.isExam -> R.string.plan_exam_date
+                        page.plan.schedule.targetDate != null -> R.string.plan_deadline
+                        else -> R.string.plan_roadmap_you_finish
+                    }
+                Text(stringResource(finish), style = style, color = color)
             }
         }
     }

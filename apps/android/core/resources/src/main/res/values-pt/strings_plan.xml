@@ -252,7 +252,6 @@
   "plan_exam_choice_question_several": "5f4e8927cd7a559ffbbc80d166822b40e3a2091c43dd93ccffbcee582607cf3d",
   "plan_exam_date": "3a8e4929b3e01122fc6050233fe6a01195ccbf0648bb1af65108ab4df9f1667d",
   "plan_exam_date_label": "0bec5c646db8aefa6a54db9c6fc6282c09470fd6083bec33ad7f6b715fe51a28",
-  "plan_exam_day": "0b032c6ce85e563879c4ab61fd3d9f6d945fc2d358ab739fdd881466c56cc8a6",
   "plan_exam_over_ask": "f9fc999b981008d3b79f8acb63ac4dec5dcb4646545f6de71f169a36ff835f51",
   "plan_far_count_from": "8dc90635cfe325cc204f228e8203b97103910c28eb0c05c53de04d34bfd140e5",
   "plan_far_count_from_month": "eba0483d63f4c45a6e59f19522556b851d9ca373d078e9d15420fc78b8acdf3f",
@@ -286,7 +285,6 @@
   "plan_full_course": "4eed2bbba60b7d4344863bf97cd9cfc000e1fd0d45f420634dafe627e57a2660",
   "plan_full_course_switch": "30f416806f444f1422364917938bc21285a4bed62551893653199b4bdc9d1378",
   "plan_go_to_today": "993950485b0204261f33119d07bda282dd7f03401c7ce2641e02de1e5ea53fe0",
-  "plan_goal_date": "48914f2d960646bbfcb3d1aab53a61443583fcfed5fb3c88e7868cab5f255dd0",
   "plan_goal_limit_reached": "b59deff5fb4667f03cb66b0de6248f7f6309928b260d9be765c4655fde15aaec",
   "plan_goal_paused": "751bf1e9d619412bc9f613f7ee8035cbefce6ec11f73871deaeb6bbae08c8383",
   "plan_going_deeper": "96976af3c3af0fdc25023e378a1df3248578b96103ea989f28ac4bd942c973bb",
@@ -389,6 +387,7 @@
   "plan_reviews_of_every_topic": "edb25902827a35157073f3181327f6a745dc5b7088c38e79bb7132c4fe87da47",
   "plan_right_answers": "6e397011fbbf3f492f041b882d357616f5547ace845839a0fb6f70d80275940e",
   "plan_roadmap_phase_number": "ed5abc42bd54f532822fdc6bf6b66e03ce0082d15e6d32f7a36a794f01ca585a",
+  "plan_roadmap_you_finish": "ff5da06f85fa08608df2cdc438e8bc2b850a228db0f160b26e2d2940c6d1464f",
   "plan_saturdays": "d8b5e0ad5a5c1f11cf732fbce06f29177a517b408a3a95cd93d7eb59e7f768e8",
   "plan_save": "b746fd3096b5f52a50a681d3a035872b698ea22fd5970dfed2a85dd8b31af6fa",
   "plan_save_failed": "9c4a8c15718f5000ed76e083ce4419018e6e5195afe7831835b7b75da91c0c51",
@@ -602,8 +601,8 @@
     </plurals>
     <string name="plan_today">Hoje</string>
     <string name="plan_mock_exam">Simulado</string>
-    <string name="plan_exam_day">Dia da prova</string>
-    <string name="plan_goal_date">Data do objetivo</string>
+    <!-- In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date. -->
+    <string name="plan_roadmap_you_finish">Você termina</string>
     <string name="plan_exam_date_label">%1$s · prova</string>
     <string name="plan_you_are_here_suffix">, você está aqui</string>
     <string name="plan_done_suffix">, concluído</string>
