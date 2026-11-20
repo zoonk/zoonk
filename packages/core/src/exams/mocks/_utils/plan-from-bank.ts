@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
 import { getMockFormatMix } from "../mock-format-mix";
 import { planOptionMock } from "../mock-option-plan";
 import { type MockOption } from "../mock-options";
@@ -12,7 +13,10 @@ import {
 import { countReused } from "../mock-reuse";
 import { type AnytimeMockSetup, loadMockSkillIds } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
+import { isScheduledPaperComplete } from "./mock-complete";
 import { loadListeningCandidates } from "./mock-listening";
+import { planWeeklyMock } from "./plan-weekly-mock";
+import { readScheduledStructure } from "./read-mock-structure";
 import {
   SCHEDULED_SUPPLY_PLAN_SELECT,
   listScheduledSupplyOptions,
@@ -32,9 +36,18 @@ type MockBank = {
   setup: AnytimeMockSetup;
   userId: string;
   reuse?: boolean;
+  now?: Date;
 };
 
-async function loadAvailableSetup({ client, exclude, goalId, reuse, setup, userId }: MockBank) {
+async function loadAvailableSetup({
+  client,
+  exclude,
+  goalId,
+  reuse,
+  now,
+  setup,
+  userId,
+}: MockBank) {
   if (setup.missingParts.length === 0 && setup.listening.size === 0) {
     return setup;
   }
@@ -44,6 +57,7 @@ async function loadAvailableSetup({ client, exclude, goalId, reuse, setup, userI
     exclude: [...exclude],
     goalId,
     mix: getMockFormatMix(setup.structure),
+    now,
     reuse,
     userId,
   });
@@ -56,18 +70,84 @@ async function loadAvailableSetup({ client, exclude, goalId, reuse, setup, userI
   };
 }
 
+export async function planScheduledFromBank({
+  client = prisma,
+  exclude,
+  goal,
+  identity,
+  finishedMocks,
+  paperPlan,
+  scheduledFor,
+  now,
+  setup,
+}: {
+  client?: TransactionClient;
+  exclude: ReadonlySet<string>;
+  goal: Goal;
+  identity: Parameters<typeof planWeeklyMock>[0]["identity"];
+  finishedMocks: number;
+  paperPlan: { graph: unknown; settings: unknown } | null;
+  scheduledFor: Date;
+  now?: Date;
+  setup: AnytimeMockSetup;
+}) {
+  const structure = readScheduledStructure({
+    blueprint: setup.blueprint,
+    date: scheduledFor,
+    goal,
+    settings: paperPlan?.settings,
+  });
+
+  const goalPlan = await loadGoalPlan(goal.id, undefined, { tx: client });
+
+  const plan = await planWeeklyMock({
+    client,
+    essays: setup.essays,
+    exclude,
+    finishedMocks: Promise.resolve(finishedMocks),
+    goal,
+    identity,
+    now,
+    paperPlan: paperPlan ?? undefined,
+    skillIds: goalPlan.skills.filter((skill) => !skill.removed).map((skill) => skill.id),
+    structure,
+    today: scheduledFor,
+    userId: goal.userId,
+  });
+
+  return {
+    available: {
+      ...setup,
+      listening: plan.audio.recordings,
+      missingParts: plan.audio.missingParts,
+      structure: plan.structure,
+      unvoiced: plan.audio.unvoiced,
+    },
+    candidates: plan.candidates,
+    complete: isScheduledPaperComplete(plan),
+    option: {
+      area: null,
+      areas: [],
+      day: plan.day,
+      kind: plan.fullLength ? ("full" as const) : ("half" as const),
+      questions: countPlannedQuestions(plan.outline),
+    },
+    plan,
+    reuse: false,
+    skillIds: plan.skillIds,
+  };
+}
+
 async function reserveScheduled({
-  candidates,
   client,
   goal,
   setup,
-  userId,
+  now,
 }: {
-  candidates: readonly MockCandidate[];
+  now?: Date;
   client: TransactionClient;
   goal: Goal;
   setup: AnytimeMockSetup;
-  userId: string;
 }) {
   const plan = await client.plan.findUnique({
     select: SCHEDULED_SUPPLY_PLAN_SELECT,
@@ -75,25 +155,21 @@ async function reserveScheduled({
   });
 
   const reserved = new Set<string>();
-  const scheduled = await listScheduledSupplyOptions({ client, goal, plan, setup });
+  const scheduled = await listScheduledSupplyOptions({ client, goal, plan });
 
-  for (const { option } of scheduled) {
-    // eslint-disable-next-line no-await-in-loop -- Each paper subtracts the recordings held for the one before it.
-    const available = await loadAvailableSetup({
+  for (const paper of scheduled) {
+    // oxlint-disable-next-line no-await-in-loop -- Each paper draws from what the previous paper left.
+    const planned = await planScheduledFromBank({
       client,
       exclude: reserved,
-      goalId: goal.id,
+      goal,
+      ...paper,
+      now,
+      paperPlan: plan,
       setup,
-      userId,
     });
 
-    const planned = planOptionMock({
-      ...available,
-      candidates: candidates.filter((item) => !item.answered && !reserved.has(item.itemId)),
-      option,
-    });
-
-    for (const id of getPlannedItemIds(planned)) {
+    for (const id of getPlannedItemIds(planned.plan)) {
       reserved.add(id);
     }
   }
@@ -103,6 +179,7 @@ async function reserveScheduled({
 
 export async function planFromBank({
   client = prisma,
+  now,
   reuse = false,
   exclude,
   goal,
@@ -116,12 +193,14 @@ export async function planFromBank({
   userId: string;
   client?: TransactionClient;
   reuse?: boolean;
+  now?: Date;
   exclude?: ReadonlySet<string>;
 }): Promise<BankPlan> {
   const loaded = await loadMockCandidates({
     client,
     goal,
     itemIds: null,
+    now,
     reuse,
     skillIds: await loadMockSkillIds(goal.id),
     structure: setup.structure,
@@ -129,10 +208,7 @@ export async function planFromBank({
   });
 
   const protectedIds =
-    exclude ??
-    (reuse
-      ? await reserveScheduled({ candidates: loaded, client, goal, setup, userId })
-      : new Set<string>());
+    exclude ?? (reuse ? await reserveScheduled({ client, goal, now, setup }) : new Set<string>());
 
   const available =
     reuse || protectedIds.size > 0 || client !== prisma
@@ -140,6 +216,7 @@ export async function planFromBank({
           client,
           exclude: protectedIds,
           goalId: goal.id,
+          now,
           reuse,
           setup,
           userId,

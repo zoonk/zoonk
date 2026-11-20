@@ -8,6 +8,7 @@ export async function listMockItemClaims(
   client: TransactionClient,
   userId: string,
   mockIds?: readonly string[],
+  instant = new Date(),
 ) {
   const sittings = await client.mockExam.findMany({
     select: {
@@ -25,16 +26,11 @@ export async function listMockItemClaims(
     },
   });
 
-  const now = Date.now();
+  const now = instant.getTime();
   const expired = new Set<string>();
   const held = new Set<string>();
-  const readable = new Map<string, { section: number; since: Date }>();
 
   for (const mock of sittings) {
-    if (mock.sectionStartedAt.getTime() <= now) {
-      readable.set(mock.id, { section: mock.sectionIndex, since: mock.sectionStartedAt });
-    }
-
     if (hasStoredTimeRunOutAway({ mock, now })) {
       expired.add(mock.id);
     } else {
@@ -49,7 +45,7 @@ export async function listMockItemClaims(
     }
   }
 
-  return { expired, held, readable };
+  return { expired, held };
 }
 
 function sectionItemIds(section: MockConditions["sections"][number]) {
@@ -81,17 +77,13 @@ export async function claimMockItems({
   mockExamId: string;
   now: Date;
 }) {
-  const lastRead = new Map(
-    candidates.flatMap(({ itemId, lastMockUse }) =>
-      lastMockUse === undefined ? [] : [[itemId, new Date(lastMockUse)] as const],
-    ),
-  );
+  const repeats = new Set(candidates.filter((item) => item.answered).map((item) => item.itemId));
 
   const uses = conditions.sections.flatMap((part, section) =>
     sectionItemIds(part).map((itemId) => ({
       item_id: itemId,
       section,
-      spent_at: section === 0 ? now : (lastRead.get(itemId) ?? null),
+      spent_at: section === 0 || repeats.has(itemId) ? now : null,
     })),
   );
 
@@ -126,9 +118,9 @@ export async function spendSection({
   if (!conditions.sections[section]) {
     return;
   }
-  // During a break, a repeat keeps its past readable date until the next section actually opens.
+
   await tx.mockItemUse.updateMany({
     data: { spentAt: now },
-    where: { mockExamId, section, userId, ...(now.getTime() > Date.now() && { spentAt: null }) },
+    where: { mockExamId, section, userId },
   });
 }

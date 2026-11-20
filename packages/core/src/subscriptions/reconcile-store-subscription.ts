@@ -13,6 +13,7 @@ import { getCertificatesCacheTag, getUserSubscriptionCacheTag } from "../cache/t
 import { type FollowUp } from "../follow-ups/follow-up-contract";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { owePlusMocks } from "./owe-plus-mocks";
 import { StoreSubscriptionChangedError } from "./store-subscription-changed-error";
 
 type StoreProvider = "apple" | "google";
@@ -202,6 +203,10 @@ async function findPlusSettlements(
   }
 
   const startsPlus = !existing || !isActiveStoreSubscription(existing);
+
+  if (startsPlus) {
+    await owePlusMocks(tx, chain.referenceId);
+  }
 
   const { orderBy, where } = getActiveSubscriptionQuery({
     now: new Date(),

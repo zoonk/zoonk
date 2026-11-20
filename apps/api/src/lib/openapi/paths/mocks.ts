@@ -13,7 +13,6 @@ import {
   anytimeMockResponseSchema,
   mockOptionsResponseSchema,
   mockPlanOfferResultSchema,
-  preparingMockResponseSchema,
 } from "../schemas/mocks";
 import { goalPathParamsSchema, mockPathParamsSchema } from "../schemas/paths";
 import {
@@ -172,34 +171,6 @@ export const mockPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Change the plan from a mock",
-      tags: TAGS,
-    },
-  },
-  "/mocks/{blockId}/starts": {
-    post: {
-      description:
-        "Starts the mock when the learner takes it on (or resumes it): its session block starts, the sections are fixed and the first section's clock starts. The plan's mock whose time ran out while the learner was away starts again in a new sitting; one taken any time stays expired (`MOCK_EXPIRED`): start a new one from the goal's mocks.",
-      operationId: "startMock",
-      requestBody: {
-        content: { "application/json": { schema: mockTimeZoneInputSchema } },
-        required: true,
-      },
-      requestParams: { path: mockPathParamsSchema },
-      responses: {
-        "200": {
-          content: { "application/json": { schema: preparingMockResponseSchema } },
-          description: "The scheduled mock needs questions before it can start",
-        },
-        "204": { description: "Running" },
-        "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
-        ...commonErrors,
-        "409": {
-          ...conflictResponse,
-          description: "The mock or its block already finished, or the mock expired",
-        },
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Start a mock exam",
       tags: TAGS,
     },
   },

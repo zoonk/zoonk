@@ -130,6 +130,7 @@ export async function loadMockCandidates({
   structure = null,
   userId,
   reuse = false,
+  now = new Date(),
 }: {
   client?: TransactionClient;
   goal: Pick<Goal, "examBlueprintId"> & { id: string | null };
@@ -139,6 +140,7 @@ export async function loadMockCandidates({
   structure?: ExamStructure | null;
   userId: string;
   reuse?: boolean;
+  now?: Date;
 }): Promise<MockCandidate[]> {
   const typed = listTypedFormats(structure);
   const mix = getMockFormatMix(structure);
@@ -146,11 +148,18 @@ export async function loadMockCandidates({
 
   const [items, areas] = await Promise.all([
     client.item.findMany({
-      include: {
+      orderBy: { id: "asc" },
+      select: {
+        content: true,
+        difficulty: true,
+        format: true,
+        id: true,
         mockUses: { select: { mockExamId: true, section: true, spentAt: true }, where: { userId } },
         set: { select: { _count: { select: { items: true } } } },
+        setId: true,
+        setPosition: true,
+        skillId: true,
       },
-      orderBy: { id: "asc" },
       where: {
         ...getFormatFilter(typed),
         ...(itemIds
@@ -176,21 +185,9 @@ export async function loadMockCandidates({
   );
 
   const claims =
-    !itemIds && mockIds.size > 0 ? await listMockItemClaims(client, userId, [...mockIds]) : null;
-
-  const now = new Date();
-
-  const lastRead = (use: (typeof items)[number]["mockUses"][number] | undefined) => {
-    if (!use?.spentAt) {
-      return;
-    }
-
-    const current = claims?.readable.get(use.mockExamId);
-
-    return current?.section === use.section
-      ? Math.max(use.spentAt.getTime(), current.since.getTime())
-      : use.spentAt.getTime();
-  };
+    !itemIds && mockIds.size > 0
+      ? await listMockItemClaims(client, userId, [...mockIds], now)
+      : null;
 
   return items
     .filter((item) => {
@@ -212,7 +209,7 @@ export async function loadMockCandidates({
       format: getItemFormatKey({ item, mix }),
       itemFormat: item.format,
       itemId: item.id,
-      lastMockUse: lastRead(item.mockUses[0]),
+      lastMockUse: item.mockUses[0]?.spentAt?.getTime(),
       skillId: item.skillId,
       ...(item.set &&
         item.setId && {

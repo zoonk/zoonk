@@ -193,6 +193,7 @@ export async function loadSessionBuildInput(
       mockFunding: context.selection?.state.settings.mockFunding,
       mockSkillIds: testSkillIds,
       now,
+      paperPlan: plan,
       skillIds: textSkillIds,
       structure: plan.structure,
       today: localDate,

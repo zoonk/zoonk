@@ -39,6 +39,7 @@ export type AnytimeMockSetup = {
 };
 
 type AnytimeMockPage = {
+  now?: Date;
   essays: Promise<MockEssayCandidate[]>;
   plan: Promise<SavedPlan | null>;
   typed: Promise<MockTypedPart[]>;
@@ -70,6 +71,7 @@ export async function loadAnytimeMockSetup(
   const { recordings, unvoiced, missingParts } = await loadListeningCandidates({
     goalId: goal.id,
     mix: getMockFormatMix(structure),
+    now: page?.now,
     userId: goal.userId,
   });
 
@@ -105,7 +107,7 @@ export function listMissingRecordings({
   option,
   setup,
 }: {
-  option: MockOption;
+  option: Pick<MockOption, "kind" | "day">;
   setup: AnytimeMockSetup;
 }): string[] {
   if (option.kind === "area" || setup.unvoiced.size === 0) {

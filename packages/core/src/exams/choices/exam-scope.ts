@@ -245,8 +245,13 @@ export function scopeExamStructure({
     return structure;
   }
 
-  const kept = addParts({ named, subjects: structure.subjects });
+  return keepExamSubjects(structure, addParts({ named, subjects: structure.subjects }));
+}
 
+export function keepExamSubjects(
+  structure: ExamStructure,
+  kept: ReadonlySet<string>,
+): ExamStructure {
   return {
     ...structure,
     mock: scopeMock({ kept, structure }),
