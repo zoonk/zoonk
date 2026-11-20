@@ -8,6 +8,8 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { SESSION_NOW, daysAgo } from "../../sessions/_test-utils/session-goal";
+import { scheduledMockSetup } from "./_test-utils/scheduled-mock";
+import { mockPaperKey } from "./_utils/mock-supply-request";
 import { adaptPlanFromMock } from "./adapt-plan-from-mock";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
@@ -15,9 +17,8 @@ import { getMockOptions } from "./get-mock-options";
 import { type MockShape, type MockView, mockConditionsSchema } from "./mock-contract";
 import { listMockPrepWrites } from "./prepare-mock-questions";
 import { saveMockAnswer } from "./save-mock-answer";
-import { scheduledMockSetup } from "./_test-utils/scheduled-mock";
-import { startMock } from "./start-mock";
 import { startAnytimeMock } from "./start-anytime-mock";
+import { startMock } from "./start-mock";
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const AREAS = ["Mathematics", "Languages"] as const;
@@ -658,7 +659,12 @@ describe("mocks taken any time", () => {
       status: "preparing",
     });
 
-    const { writes } = await listMockPrepWrites({ goalId: goal.id });
+    const { papers } = await listMockPrepWrites({
+      goalId: goal.id,
+      priority: mockPaperKey(input.shape),
+    });
+    expect(papers.map((paper) => paper.later)).toStrictEqual([true]);
+    const writes = papers.flatMap((paper) => paper.writes);
 
     expect(
       writes.reduce((sum, write) => sum + write.questionsPerSkill * write.skillIds.length, 0),

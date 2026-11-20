@@ -17,6 +17,7 @@ import {
 import { isPaperComplete } from "./mock-complete";
 import { getExamStartTime } from "./mock-conditions";
 import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
+import { mockPaperKey } from "./mock-supply-request";
 import { planFromBank } from "./plan-from-bank";
 
 export { planFromBank } from "./plan-from-bank";
@@ -132,7 +133,12 @@ export async function createAnytimeMock({
         db: tx,
         followUps: [
           {
-            input: { examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: reuse },
+            input: {
+              examBlueprintId: goal.examBlueprintId,
+              goalId: goal.id,
+              later: reuse,
+              paper: mockPaperKey(option),
+            },
             kind: "prepareMockSupply",
           },
         ],

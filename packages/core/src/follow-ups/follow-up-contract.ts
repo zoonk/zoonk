@@ -109,6 +109,7 @@ export const followUpSchema = z.discriminatedUnion("kind", [
       examBlueprintId: uuidSchema().nullable(),
       goalId: uuidSchema(),
       later: z.boolean(),
+      paper: z.string().optional(),
     }),
     kind: z.literal("prepareMockSupply"),
   }),

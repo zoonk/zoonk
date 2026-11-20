@@ -86,7 +86,12 @@ export async function startScheduledSitting({
     db: tx,
     followUps: [
       {
-        input: { examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: complete },
+        input: {
+          examBlueprintId: goal.examBlueprintId,
+          goalId: goal.id,
+          later: complete,
+          ...(!complete && { paper: sessionDate.toISOString() }),
+        },
         kind: "prepareMockSupply",
       },
     ],

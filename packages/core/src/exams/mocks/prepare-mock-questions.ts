@@ -17,6 +17,7 @@ import {
   resolveAnytimeOption,
 } from "./_utils/anytime-mock-setup";
 import { canReuseMockItems, isCompleteMock, planFromBank } from "./_utils/create-anytime-mock";
+import { mockPaperKey } from "./_utils/mock-supply-request";
 import { planMockWrites } from "./_utils/mock-writes";
 import { planScheduledFromBank } from "./_utils/plan-from-bank";
 import {
@@ -30,8 +31,8 @@ import { type MockFormatShortfall } from "./mock-shortfall";
 export type MockQuestionWrites = {
   recordings?: PartsToPrepare;
   allowStimulusSets?: boolean;
-  learnerWaiting?: boolean;
-  urgentShort?: boolean;
+  later: boolean;
+  key: string;
   quickFormat: PlacementQuickFormat;
   writes: MockFormatShortfall[];
 };
@@ -115,7 +116,7 @@ export async function checkMockSupply(goalId: string) {
     });
   }
 
-  return !result.urgentShort && result.writes.length === 0 && !result.recordings;
+  return result.papers.length === 0;
 }
 
 async function getSupplyTargets({
@@ -130,6 +131,7 @@ async function getSupplyTargets({
   const upcoming = await listScheduledSupplyOptions({ goal, plan: goal.plan });
 
   const scheduled = upcoming.map((paper) => ({
+    key: paper.scheduledFor.toISOString(),
     paper,
     urgent: paper.scheduledFor.getTime() <= Date.now() + 3 * MS_PER_DAY,
   }));
@@ -143,18 +145,20 @@ async function getSupplyTargets({
   const targets = [
     ...scheduled,
     ...(asked && (shape || !reuseRequested)
-      ? [{ option: asked, reuse: reuseRequested, urgent: Boolean(shape) }]
+      ? [{ key: mockPaperKey(asked), option: asked, reuse: reuseRequested, urgent: Boolean(shape) }]
       : []),
   ];
 
-  return { learnerWaiting: Boolean(shape) && !reuseRequested, reuseRequested, targets };
+  return { reuseRequested, targets };
 }
 
 export async function listMockPrepWrites({
   goalId,
+  priority,
 }: {
   goalId: string;
-}): Promise<MockQuestionWrites> {
+  priority?: string;
+}): Promise<{ papers: MockQuestionWrites[]; urgentShort: boolean }> {
   const goal = await prisma.goal.findUnique({
     include: { plan: { select: SCHEDULED_SUPPLY_PLAN_SELECT } },
     where: { id: goalId },
@@ -165,15 +169,16 @@ export async function listMockPrepWrites({
     goal.status !== "active" ||
     !(await findActiveSubscriptionForUser({ now: new Date(), userId: goal.userId }))
   ) {
-    return { quickFormat: "multipleChoice", writes: [] };
+    return { papers: [], urgentShort: false };
   }
 
   const setup = await loadAnytimeMockSetup(goal);
-  const { learnerWaiting, reuseRequested, targets } = await getSupplyTargets({ goal, setup });
+  const { reuseRequested, targets } = await getSupplyTargets({ goal, setup });
   const used = new Set<string>();
-  const writes: MockFormatShortfall[] = [];
+  const papers: MockQuestionWrites[] = [];
+  const exam = toListeningExam({ ...goal, examBlueprint: setup.blueprint });
+  const quickFormat = getPlacementQuickFormat(setup.structure);
   let urgentShort = false;
-  const missingParts: PartsToPrepare["parts"] = [];
 
   /* oxlint-disable no-await-in-loop -- Each target reserves the questions that later targets must exclude. */
   for (const target of targets) {
@@ -200,8 +205,8 @@ export async function listMockPrepWrites({
     if (!complete) {
       const sections = listMissingRecordings({ option, setup: planned.available });
 
-      missingParts.push(
-        ...planned.available.missingParts.filter((part) => sections.includes(part.sectionName)),
+      const missingParts = planned.available.missingParts.filter((part) =>
+        sections.includes(part.sectionName),
       );
 
       urgentShort ||= target.urgent;
@@ -214,7 +219,14 @@ export async function listMockPrepWrites({
         skillIds: planned.skillIds,
       });
 
-      writes.push(...(batch ?? []));
+      papers.push({
+        key: target.key,
+        later: priority !== target.key || ("reuse" in target && target.reuse),
+        quickFormat,
+        writes: batch ?? [],
+        ...(batch && batch.length > 0 && !reuseRequested ? { allowStimulusSets: true } : {}),
+        ...(exam && missingParts.length > 0 && { recordings: { exam, parts: missingParts } }),
+      });
     }
 
     for (const id of getPlannedItemIds(planned.plan)) {
@@ -224,16 +236,7 @@ export async function listMockPrepWrites({
 
   /* oxlint-enable no-await-in-loop */
 
-  const exam = toListeningExam({ ...goal, examBlueprint: setup.blueprint });
-
-  return {
-    ...(learnerWaiting && { learnerWaiting }),
-    ...(writes.length > 0 && !reuseRequested && { allowStimulusSets: true }),
-    ...(exam && missingParts.length > 0 && { recordings: { exam, parts: missingParts } }),
-    quickFormat: getPlacementQuickFormat(setup.structure),
-    urgentShort,
-    writes,
-  };
+  return { papers, urgentShort };
 }
 
 export { pickMockSetTargets } from "./mock-set-targets";
