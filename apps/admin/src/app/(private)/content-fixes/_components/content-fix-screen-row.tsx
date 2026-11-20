@@ -1,4 +1,5 @@
-import { ScreenWords, screenKindLabel, textOf } from "@/components/content-words";
+import { textOf } from "@/components/content-words";
+import { ScreenWords, screenKindLabel } from "@/components/screen-words";
 import { StateMark } from "@/components/state-mark";
 import { formatCount } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
@@ -7,7 +8,7 @@ import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { isJsonObject } from "@zoonk/utils/json";
 import Link from "next/link";
 import { type readMapIdeas } from "./content-fix-map";
-import { type MediaItem, ScreenPicture } from "./content-fix-media-item";
+import { type MediaItem, ReviewClip, ScreenPicture } from "./content-fix-media-item";
 import {
   type ScreenRow,
   type ScreenSnapshot,
@@ -67,6 +68,7 @@ export function screenHeadline({
   return (
     sentence ??
     textOf(content.title) ??
+    textOf(content.symbol) ??
     textOf(content.question) ??
     textOf(content.text) ??
     textOf(content.problem) ??
@@ -94,45 +96,69 @@ function IdeaLine({ context, screen }: { context: Context; screen: SnapshotScree
   );
 }
 
-function ScreenBody({
+function ScreenAttachments({
   context,
-  muted,
-  position,
+  proposed,
+  screen,
+}: {
+  context: Context;
+  proposed?: boolean;
+  screen: SnapshotScreen;
+}) {
+  const links = proposed ? context.change.mediaLinks : undefined;
+
+  const picture = links?.find(
+    (link) => link.target === "picture" && link.position === screen.position,
+  );
+
+  const clip = links?.find(
+    (link) => link.target === "alphabet" && link.position === screen.position,
+  );
+
+  const pictureItem = picture ? context.media.get(picture.key) : undefined;
+  const clipItem = clip ? context.media.get(clip.key) : undefined;
+
+  return (
+    <>
+      {pictureItem ? <ScreenPicture item={pictureItem} /> : null}
+      {!pictureItem && screen.mediaAssetId ? (
+        <Link className={cn(LINK_CLASS, "w-fit text-xs")} href={`/media/${screen.mediaAssetId}`}>
+          See the picture
+        </Link>
+      ) : null}
+      {screen.kind === "alphabet" && (
+        <ReviewClip
+          audioUrl={textOf(screen.content.audioUrl)}
+          item={clipItem}
+          text={textOf(screen.content.audioText) ?? ""}
+        />
+      )}
+    </>
+  );
+}
+
+function ScreenBody({
+  className = "max-w-prose",
+  context,
+  proposed,
   screen,
   snapshot,
 }: {
+  className?: string;
   context: Context;
-  muted?: boolean;
-  /** Where a new screen sits, which its picture is linked by. */
-  position?: number;
+  proposed?: boolean;
   screen: SnapshotScreen;
   snapshot: ScreenSnapshot;
 }) {
-  const picture = context.change.mediaLinks?.find(
-    (link) => link.target === "picture" && link.position + 1 === position,
-  );
-
-  const item = picture ? context.media.get(picture.key) : undefined;
-
   return (
-    <div
-      className={cn(
-        "flex max-w-prose flex-col gap-3 text-sm leading-6",
-        muted && "text-muted-foreground",
-      )}
-    >
+    <div className={cn("flex flex-col gap-3 text-sm leading-6", className)}>
       <ScreenWords
         content={screen.content}
         kind={screen.kind}
         lang={context.lang}
         {...vocabularyOf(snapshot, screen)}
       />
-      {item ? <ScreenPicture item={item} /> : null}
-      {!item && screen.mediaAssetId && position !== undefined ? (
-        <Link className={cn(LINK_CLASS, "w-fit text-xs")} href={`/media/${screen.mediaAssetId}`}>
-          See the picture
-        </Link>
-      ) : null}
+      <ScreenAttachments context={context} proposed={proposed} screen={screen} />
     </div>
   );
 }
@@ -167,25 +193,26 @@ function RowHeader({
 function ScreenCard({
   context,
   label,
+  proposed,
   screen,
   snapshot,
 }: {
   context: Context;
   label: string;
+  proposed?: boolean;
   screen: SnapshotScreen;
   snapshot: ScreenSnapshot;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-1">
       <span className="text-muted-foreground text-xs">{label}</span>
-      <div className="flex flex-1 flex-col gap-3 rounded-lg border px-3 py-2 text-sm leading-6">
-        <ScreenWords
-          content={screen.content}
-          kind={screen.kind}
-          lang={context.lang}
-          {...vocabularyOf(snapshot, screen)}
-        />
-      </div>
+      <ScreenBody
+        className="flex-1 rounded-lg border px-3 py-2"
+        context={context}
+        proposed={proposed}
+        screen={screen}
+        snapshot={snapshot}
+      />
     </div>
   );
 }
@@ -227,12 +254,7 @@ export function ShownRow({
     case "new":
       return (
         <RowFrame position={row.position} screen={row.screen} status="New" tone="added">
-          <ScreenBody
-            context={context}
-            position={row.position}
-            screen={row.screen}
-            snapshot={after}
-          />
+          <ScreenBody context={context} proposed screen={row.screen} snapshot={after} />
           <IdeaLine context={context} screen={row.screen} />
         </RowFrame>
       );
@@ -244,7 +266,12 @@ export function ShownRow({
           status={`Removed, was ${String(row.was)}`}
           tone="removed"
         >
-          <ScreenBody context={context} muted screen={row.screen} snapshot={before} />
+          <ScreenBody
+            className="text-muted-foreground max-w-prose"
+            context={context}
+            screen={row.screen}
+            snapshot={before}
+          />
         </RowFrame>
       );
     case "moved":
@@ -275,7 +302,13 @@ export function ShownRow({
           )}
           <div className="grid gap-3 md:grid-cols-2">
             <ScreenCard context={context} label="Before" screen={row.before} snapshot={before} />
-            <ScreenCard context={context} label="After" screen={row.screen} snapshot={after} />
+            <ScreenCard
+              context={context}
+              label="After"
+              proposed
+              screen={row.screen}
+              snapshot={after}
+            />
           </div>
           <IdeaLine context={context} screen={row.screen} />
         </RowFrame>

@@ -1,5 +1,4 @@
 import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
-import { toWords } from "@/lib/format";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -23,7 +22,7 @@ function strings(value: unknown): string[] {
 const CODE_CHIP_CLASS =
   "**:data-[streamdown=inline-code]:inline-block **:data-[streamdown=inline-code]:max-w-full";
 
-function Prose({ children, quiet }: { children: string | null; quiet?: boolean }) {
+export function Prose({ children, quiet }: { children: string | null; quiet?: boolean }) {
   if (!children) {
     return null;
   }
@@ -36,7 +35,7 @@ function Prose({ children, quiet }: { children: string | null; quiet?: boolean }
 }
 
 /** The answers a learner picks from: a check on the right one, and why each is right or wrong. */
-function Options({ options }: { options: Fields[] }) {
+export function Options({ options }: { options: Fields[] }) {
   if (options.length === 0) {
     return null;
   }
@@ -156,90 +155,6 @@ export function ContentWords({ content }: { content: unknown }) {
           ? textOf(content.feedback)
           : (textOf(content.translation) ?? textOf(content.feedback))}
       </Prose>
-    </>
-  );
-}
-
-/** "Hook · Guess", "Activity · Chart reader": the kind, then what tells its variants apart. */
-export function screenKindLabel({ content, kind }: { content: unknown; kind: string }): string {
-  const fields = isJsonObject(content) ? content : {};
-  const variant = kind === "activity" ? fields.template : fields.variant;
-
-  return [kind, typeof variant === "string" && variant !== "text" ? variant : null]
-    .filter((part) => part !== null)
-    .map((part) => toWords(part))
-    .join(FACT_SEPARATOR);
-}
-
-/** A lesson in the learner's own language translates a word to itself, which says nothing. */
-function otherWords(translation: string | null | undefined, word: string): string | null {
-  return translation && translation !== word ? translation : null;
-}
-
-/** A vocabulary screen shows the word and its meaning; a translation screen asks for the word. */
-function WordScreen({
-  kind,
-  lang,
-  translation,
-  word,
-}: {
-  kind: string;
-  lang?: string;
-  translation?: string | null;
-  word: string;
-}) {
-  const meaning = otherWords(translation, word);
-
-  if (kind === "vocabulary") {
-    return (
-      <>
-        <p lang={lang}>{word}</p>
-        <ContentAnswer label="Translation">{meaning}</ContentAnswer>
-      </>
-    );
-  }
-
-  if (kind !== "translation") {
-    return null;
-  }
-
-  return meaning ? (
-    <>
-      <p>{meaning}</p>
-      <ContentAnswer label="Answer" lang={lang}>
-        {word}
-      </ContentAnswer>
-    </>
-  ) : (
-    <p lang={lang}>{word}</p>
-  );
-}
-
-/** A lesson screen the way a learner reads it, with the word or sentence it shows. */
-export function ScreenWords({
-  content,
-  kind,
-  lang,
-  sentence,
-  translation,
-  word,
-}: {
-  content: unknown;
-  kind: string;
-  /** The language the word or sentence is in. */
-  lang?: string;
-  sentence?: string | null;
-  /** The lesson's translation of the screen's word. */
-  translation?: string | null;
-  word?: string | null;
-}) {
-  return (
-    <>
-      {word ? <WordScreen kind={kind} lang={lang} translation={translation} word={word} /> : null}
-      {sentence && (kind === "reading" || kind === "listening") ? (
-        <p lang={lang}>{sentence}</p>
-      ) : null}
-      <ContentWords content={content} />
     </>
   );
 }

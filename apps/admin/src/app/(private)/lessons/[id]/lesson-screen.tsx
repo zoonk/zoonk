@@ -1,5 +1,5 @@
 import { AdminJson } from "@/components/admin-json";
-import { ScreenWords, screenKindLabel } from "@/components/content-words";
+import { ScreenWords, screenKindLabel } from "@/components/screen-words";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatPercent, toWords } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";

@@ -2,6 +2,8 @@ import { isDeepStrictEqual } from "node:util";
 import { AdminJson } from "@/components/admin-json";
 import { jsonObjects, textOf } from "@/components/content-words";
 import { toWords } from "@/lib/format";
+import { parseChallengeLessonSpec } from "@zoonk/core/library/challenges/lesson-spec";
+import { parseStoredLessonSpec } from "@zoonk/core/library/lessons/stored-spec";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { NO_NAMES, ValueChange } from "./content-fix-values";
@@ -117,10 +119,14 @@ function planPassages(before: Fields, after: Fields): Passage[] {
   );
 }
 
+function normalizedPlan(plan: Fields) {
+  return parseChallengeLessonSpec(plan) ?? parseStoredLessonSpec(plan) ?? plan;
+}
+
 /** The plan's passages that change, each in context, and the whole plan behind a toggle. */
 export function PlanChange({ change }: { change: StoredPlan }) {
   const [spec] = change.fields;
-  const passages = planPassages(spec.before, spec.after);
+  const passages = planPassages(normalizedPlan(spec.before), normalizedPlan(spec.after));
 
   const wholePlan = (
     <div className="grid gap-x-3 md:grid-cols-2">

@@ -7,7 +7,13 @@ import { SIDES } from "./content-fix-values";
 import { type ScreenRow, type StoredScreens, ideaIndexOf, ideaSources } from "./screen-list";
 
 type IdeaStatus = "new" | "removed" | "reworded" | "same";
-type MapIdea = { before: string | null; index: number; status: IdeaStatus; text: string };
+type Idea = { label?: string; text: string };
+
+type MapIdea = Idea & {
+  before: (Idea & { index: number }) | null;
+  index: number;
+  status: IdeaStatus;
+};
 
 export function readMapIdeas(change: StoredScreens): MapIdea[] {
   const ideas = readSavedLessonMap(change.after.summary)?.ideas ?? [];
@@ -16,21 +22,26 @@ export function readMapIdeas(change: StoredScreens): MapIdea[] {
 
   return ideas.map((idea, index) => {
     const from = sources[index] ?? null;
+    const previous = from === null ? undefined : old[from];
 
-    if (from === null) {
-      return { before: null, index, status: "new", text: idea.text };
+    if (from === null || !previous) {
+      return { ...idea, before: null, index, status: "new" };
     }
 
-    const before = old[from]?.text ?? null;
-    return { before, index, status: before === idea.text ? "same" : "reworded", text: idea.text };
+    return {
+      ...idea,
+      before: { ...previous, index: from },
+      index,
+      status: previous.text === idea.text && previous.label === idea.label ? "same" : "reworded",
+    };
   });
 }
 
-function removedIdeas(change: StoredScreens): string[] {
+function removedIdeas(change: StoredScreens) {
   const sources = new Set(ideaSources(change));
   const old = readSavedLessonMap(change.before.summary)?.ideas ?? [];
 
-  return old.filter((_, index) => !sources.has(index)).map((idea) => idea.text);
+  return old.flatMap((idea, index) => (sources.has(index) ? [] : [{ ...idea, index }]));
 }
 
 /** Screens a learner meets this idea on now: new screens, and kept ones newly marked with it. */
@@ -76,25 +87,29 @@ function Marked({ side, text }: { side: keyof typeof SIDES; text: string }) {
   return <mark className={cn("text-foreground", SIDES[side].mark)}>{text}</mark>;
 }
 
-function IdeaText({ idea }: { idea: Pick<MapIdea, "before" | "status" | "text"> }) {
+function ideaWords({ label, text }: Idea) {
+  return label && label !== text ? [label, text].join(FACT_SEPARATOR) : text;
+}
+
+function IdeaText({ idea }: { idea: MapIdea }) {
+  const words = ideaWords(idea);
+
   switch (idea.status) {
     case "new":
-      return <Marked side="after" text={idea.text} />;
+      return <Marked side="after" text={words} />;
     case "removed":
-      return <Marked side="before" text={idea.text} />;
+      return <Marked side="before" text={words} />;
     case "reworded":
       return (
         <span className="flex flex-col gap-1">
+          <span>{idea.before && <Marked side="before" text={ideaWords(idea.before)} />}</span>
           <span>
-            <Marked side="before" text={idea.before ?? ""} />
-          </span>
-          <span>
-            <Marked side="after" text={idea.text} />
+            <Marked side="after" text={words} />
           </span>
         </span>
       );
     case "same":
-      return idea.text;
+      return words;
     default:
       return idea.status satisfies never;
   }
@@ -107,10 +122,12 @@ function IdeaRow({
   screens,
 }: {
   context: ScreenContext;
-  idea: Pick<MapIdea, "before" | "status" | "text"> & { index: number | null };
+  idea: MapIdea;
   number: number | null;
   screens: { marked: boolean; position: number }[];
 }) {
+  const from = idea.before?.index;
+  const movedFrom = from === undefined || from === idea.index ? null : from + 1;
   const status = STATUS_WORDS[idea.status];
 
   const icon =
@@ -135,7 +152,9 @@ function IdeaRow({
             {status && (
               <span className={cn("text-xs font-medium", status.className)}>{status.word}</span>
             )}
-            {status && screens.length > 0 && FACT_SEPARATOR}
+            {status && movedFrom !== null && FACT_SEPARATOR}
+            {movedFrom !== null && <>Moved from {movedFrom}</>}
+            {(status || movedFrom !== null) && screens.length > 0 && FACT_SEPARATOR}
             <ScreenNumbers screens={screens} />
           </span>
         </span>
@@ -152,10 +171,12 @@ function IdeaRow({
 function headline({ ideas, removed }: { ideas: readonly MapIdea[]; removed: number }) {
   const count = (status: IdeaStatus) => ideas.filter((idea) => idea.status === status).length;
   const reworded = count("reworded");
+  const moved = ideas.filter((idea) => idea.before && idea.before.index !== idea.index).length;
 
   const parts = [
     reworded > 0 && `${String(reworded)} ${reworded === 1 ? "idea" : "ideas"} reworded`,
     count("new") > 0 && `${String(count("new"))} new`,
+    moved > 0 && `${String(moved)} moved`,
     removed > 0 && `${String(removed)} removed`,
   ].filter(Boolean);
 
@@ -184,7 +205,10 @@ export function ContentFixMap({
   const changes =
     removed.length > 0 ||
     shown.some(
-      ({ idea, screens }) => idea.status !== "same" || screens.some(({ marked }) => marked),
+      ({ idea, screens }) =>
+        idea.status !== "same" ||
+        (idea.before && idea.before.index !== idea.index) ||
+        screens.some(({ marked }) => marked),
     );
 
   if (!changes) {
@@ -207,12 +231,12 @@ export function ContentFixMap({
             screens={screens}
           />
         ))}
-        {removed.map((text) => (
+        {removed.map((idea) => (
           <IdeaRow
             context={context}
-            idea={{ before: null, index: null, status: "removed", text }}
-            key={`removed:${text}`}
-            number={null}
+            idea={{ ...idea, before: null, status: "removed" }}
+            key={`removed:${String(idea.index)}`}
+            number={idea.index + 1}
             screens={[]}
           />
         ))}

@@ -1,5 +1,5 @@
 import { AdminJson } from "@/components/admin-json";
-import { screenKindLabel } from "@/components/content-words";
+import { screenKindLabel } from "@/components/screen-words";
 import { formatCount } from "@/lib/format";
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";

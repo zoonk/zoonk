@@ -393,6 +393,7 @@
     "./library/language/write-owed-sentence-orders": "./src/library/language/write-owed-sentence-orders.ts",
     "./library/lessons/laws": "./src/library/lessons/lesson-laws.ts",
     "./library/lessons/map": "./src/library/lessons/lesson-map.ts",
+    "./library/lessons/stored-spec": "./src/library/lessons/_utils/stored-lesson-spec.ts",
     "./library/lessons/public": "./src/library/lessons/get-public-library-lesson.ts",
     "./library/lessons/regenerate": "./src/library/lessons/regenerate-lessons.ts",
     "./library/lessons/regeneration-filter": "./src/library/lessons/regeneration-filter.ts",

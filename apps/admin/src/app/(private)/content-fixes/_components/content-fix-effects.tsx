@@ -1,5 +1,5 @@
 import { AdminSectionEmpty } from "@/components/admin-section";
-import { screenKindLabel } from "@/components/content-words";
+import { screenKindLabel } from "@/components/screen-words";
 import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
 import { formatMinutes } from "@/lib/format-duration";
 import { type ContentFixEffect } from "@zoonk/core/staff/content-fixes/contract";

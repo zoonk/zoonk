@@ -17,8 +17,7 @@ export function ClipPlayer({ url }: { url: string }) {
   );
 }
 
-/** A word's or sentence's clip: the one it has, or the one this fix records first. */
-export function VocabularyClip({
+export function ReviewClip({
   audioUrl,
   item,
   text,

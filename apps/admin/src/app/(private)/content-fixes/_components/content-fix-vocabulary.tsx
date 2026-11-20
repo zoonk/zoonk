@@ -1,7 +1,7 @@
 import { isDeepStrictEqual } from "node:util";
 import { ContentAnswer } from "@/components/content-words";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
-import { VocabularyClip } from "./content-fix-media-item";
+import { ReviewClip } from "./content-fix-media-item";
 import { type ScreenMedia } from "./content-fix-screen-row";
 import { NO_NAMES, ValueChange } from "./content-fix-values";
 import { type ScreenSnapshot, type StoredScreens } from "./screen-list";
@@ -140,7 +140,7 @@ function VocabularyRow({
         </ul>
       )}
 
-      <VocabularyClip
+      <ReviewClip
         audioUrl={row.audioUrl}
         item={link ? media.get(link.key) : undefined}
         text={row.text}
