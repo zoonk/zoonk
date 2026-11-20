@@ -44,12 +44,16 @@ function PopoverContent({
   className,
   align = "center",
   alignOffset = 0,
+  anchor,
   backdrop = true,
   side = "bottom",
   sideOffset = 4,
   ...props
 }: PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+  Pick<
+    PopoverPrimitive.Positioner.Props,
+    "align" | "alignOffset" | "anchor" | "side" | "sideOffset"
+  > & {
     /** The backdrop takes the click that closes the popover; without it, the click also lands. */
     backdrop?: boolean;
   }) {
@@ -59,6 +63,7 @@ function PopoverContent({
       <PopoverPositioner
         align={align}
         alignOffset={alignOffset}
+        anchor={anchor}
         className="isolate z-50"
         side={side}
         sideOffset={sideOffset}

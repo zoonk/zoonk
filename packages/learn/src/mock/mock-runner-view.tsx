@@ -2,23 +2,24 @@
 
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { SwapLabel } from "@zoonk/ui/components/swap-label";
+import { Popover, PopoverContent, PopoverDescription } from "@zoonk/ui/components/popover";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon } from "lucide-react";
+import { BookmarkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Eyebrow } from "../_components/eyebrow";
 import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
 import { TaskHeaderProgress } from "../_components/task-header";
 import { TASK_COLUMN_CLASS } from "../_components/task-layout";
+import { deviceStorage } from "../_utils/device-storage";
 import { MockAnswerSheet, MockQuestionMap, useMockSheetAside } from "./mock-answer-sheet";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
-import { useMockTitle } from "./mock-labels";
+import { useMockTitle, useUnsureLabel } from "./mock-labels";
 import { ItemClock, MovesNote } from "./mock-moves";
 import { getSectionPlace } from "./mock-place";
 import { MockQuestionCard, MockRecording, useQuestionPlace } from "./mock-question";
@@ -75,33 +76,79 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
   );
 }
 
-function FlagButton() {
+const UNSURE_TIP_SEEN_KEY = "zoonk:mock-unsure-tip-seen";
+
+/** The first time a learner marks an answer on this device, a tip says what the mark is for. */
+function useUnsureTip(itemId: string | undefined) {
+  const [tipFor, setTipFor] = useState<string | null>(null);
+
+  return {
+    close: () => setTipFor(null),
+    // Kept per question, so moving to another one closes it.
+    open: tipFor === itemId,
+    toggled: (marking: boolean) => {
+      const show = marking && deviceStorage.get(UNSURE_TIP_SEEN_KEY) === null;
+
+      if (show) {
+        deviceStorage.set(UNSURE_TIP_SEEN_KEY, "1");
+      }
+
+      setTipFor(show && itemId ? itemId : null);
+    },
+  };
+}
+
+function UnsureButton() {
   const t = useExtracted();
+  const label = useUnsureLabel();
   const { runner } = useMockScreen();
   const question = runner.view.current?.questions[runner.position];
-  const flagged = Boolean(question && runner.drafts[question.itemId]?.flagged);
-  const flag = t("Flag");
-  const unflag = t("Remove flag");
+  const unsure = Boolean(question && runner.drafts[question.itemId]?.flagged);
+  const button = useRef<HTMLButtonElement>(null);
+  const tip = useUnsureTip(question?.itemId);
+  const tipId = useId();
 
-  useShortcut("flag", runner.toggleFlag);
+  function toggle() {
+    tip.toggled(!unsure);
+    runner.toggleUnsure();
+  }
+
+  useShortcut("unsure", toggle);
 
   return (
-    <Button
-      aria-keyshortcuts={shortcutKeys("flag")}
-      className={cn(
-        "shrink-0",
-        flagged && "border-warning text-warning-text hover:text-warning-text",
-      )}
-      onClick={runner.toggleFlag}
-      size="xl"
-      variant="outline"
-    >
-      <SwapLabel
-        current={flagged ? unflag : flag}
-        icon={<FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />}
-        labels={[flag, unflag]}
-      />
-    </Button>
+    <>
+      <Button
+        aria-describedby={tip.open ? tipId : undefined}
+        aria-keyshortcuts={shortcutKeys("unsure")}
+        aria-pressed={unsure}
+        className={cn(
+          "shrink-0",
+          unsure && "border-warning text-warning-text hover:text-warning-text",
+        )}
+        onClick={toggle}
+        ref={button}
+        size="xl"
+        variant="outline"
+      >
+        <BookmarkIcon aria-hidden="true" className={cn(unsure && "fill-current")} />
+        {label}
+      </Button>
+
+      <Popover onOpenChange={(open) => !open && tip.close()} open={tip.open}>
+        <PopoverContent
+          anchor={button}
+          backdrop={false}
+          className="w-64 max-w-(--available-width)"
+          finalFocus={false}
+          initialFocus={false}
+          side="top"
+        >
+          <PopoverDescription className="text-pretty" id={tipId}>
+            {t("Check it again before you hand in. Your result shows how these answers went.")}
+          </PopoverDescription>
+        </PopoverContent>
+      </Popover>
+    </>
   );
 }
 
@@ -138,7 +185,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
       {/* In the bar, so the numbers stay in one place whatever a question's length. */}
       <MockQuestionMap className="with-aside:hidden w-full" />
       <QuestionActions className="w-full lg:w-auto">
-        <FlagButton />
+        <UnsureButton />
         {isLastQuestion ? (
           <QuestionMainAction
             action="finish"
@@ -162,7 +209,6 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   );
 }
 
-/** What the flag is for, said once: where the learner first meets the button. */
 function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
   const t = useExtracted();
   const [confirming, setConfirming] = useState(false);

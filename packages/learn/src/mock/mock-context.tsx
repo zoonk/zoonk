@@ -76,7 +76,7 @@ export type MockRunner = {
   submitSection: () => Promise<void>;
   timeOutQuestion: () => void;
   timeUp: boolean;
-  toggleFlag: () => void;
+  toggleUnsure: () => void;
   view: MockView;
   write: (answer: MockAnswer | null) => void;
 };

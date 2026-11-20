@@ -84,6 +84,27 @@ describe("a mock exam's questions to review", () => {
     await expect.element(answers.getByText("Your answer")).not.toBeInTheDocument();
   });
 
+  it("ends a row the learner wasn't sure of with it, and shows a right one's answer once", async () => {
+    const review = [
+      entry({ number: 4, unsure: true }),
+      entry({ learnerAnswer: "The right option", number: 12, outcome: "right", unsure: true }),
+    ];
+
+    render(<MockReview review={review} trueFalseLabels="trueFalse" />);
+
+    await expect.element(row(12)).toBeVisible();
+
+    expect(row(4).element().textContent).toMatch(/Question 4.+Languages.+Not sure$/u);
+    expect(row(12).element().textContent).toMatch(/Question 12.+Languages.+Right.+Not sure$/u);
+
+    await row(12).click();
+
+    const answers = page.getByRole("group", { name: "Your answer and the right one" });
+
+    await expect.element(answers.getByText("The right option")).toBeVisible();
+    expect(answers.element().textContent?.match(/The right option/gu)).toHaveLength(1);
+  });
+
   it("draws nothing when every answer was right", async () => {
     const { container } = render(<MockReview review={[]} trueFalseLabels="trueFalse" />);
 

@@ -17,20 +17,35 @@ import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
+import { FactSegments } from "../_components/task-meta";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { countsTowardMockProgress } from "./mock-answer-progress";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
+import { UnsureMark } from "./mock-labels";
 import { MovesNote } from "./mock-moves";
 import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
 import { useQuestionCellLabel } from "./use-question-cell-label";
 
-function useSheetCountLine(): string {
+function SheetCountLine() {
   const t = useExtracted();
-  const { answered } = useSectionCounts();
+  const { answered, unsure } = useSectionCounts();
 
-  return t("{answered, plural, =0 {# answered} one {# answered} other {# answered}}", { answered });
+  return (
+    <FactSegments
+      facts={[
+        t("{answered, plural, =0 {# answered} one {# answered} other {# answered}}", { answered }),
+        unsure > 0 &&
+          t({
+            description:
+              'On the mock exam\'s answer sheet: how many answers the learner marked with the "Not sure" button.',
+            message: "{unsure, plural, one {# not sure} other {# not sure}}",
+            values: { unsure },
+          }),
+      ]}
+    />
+  );
 }
 
 const CELL_FILLED_CLASS =
@@ -39,8 +54,8 @@ const CELL_FILLED_CLASS =
 const CELL_CURRENT_CLASS =
   "after:bg-foreground after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full";
 
-/** A flag is a tint in its own color, never a ring; an answered one keeps its number in ink. */
-const CELL_FLAGGED_CLASS =
+/** A "Not sure" mark is a tint in its own color, never a ring; an answered one keeps its number in ink. */
+const CELL_UNSURE_CLASS =
   "bg-warning/14 enabled:hover:bg-warning/14 contrast-more:ring-warning ring-transparent contrast-more:ring-2";
 
 function QuestionCell({
@@ -58,7 +73,8 @@ function QuestionCell({
   const isCurrent = index === runner.position;
   const isAnswered = countsTowardMockProgress(runner, question.itemId);
 
-  const label = useQuestionCellLabel({ flagged: Boolean(draft?.flagged), question });
+  const unsure = Boolean(draft?.flagged);
+  const label = useQuestionCellLabel({ question, unsure });
 
   return (
     <button
@@ -67,20 +83,15 @@ function QuestionCell({
       className={cn(
         "focus-visible:outline-ring/50 text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-3 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
         isAnswered && CELL_FILLED_CLASS,
-        draft?.flagged && cn(CELL_FLAGGED_CLASS, !isAnswered && "text-warning-text"),
-        isCurrent && cn(CELL_CURRENT_CLASS, !draft?.flagged && "text-foreground"),
+        unsure && cn(CELL_UNSURE_CLASS, !isAnswered && "text-warning-text"),
+        isCurrent && cn(CELL_CURRENT_CLASS, !unsure && "text-foreground"),
       )}
       disabled={!runner.moves.canOpen(index)}
       onClick={() => onPick(index)}
       type="button"
     >
       {isEssay ? <PenLineIcon aria-hidden="true" className="size-4" /> : question.number}
-      {draft?.flagged && (
-        <span
-          aria-hidden="true"
-          className="bg-warning absolute inset-e-1 top-1 size-1 rounded-full"
-        />
-      )}
+      {unsure && <UnsureMark className="text-warning absolute inset-e-1.5 top-0" />}
     </button>
   );
 }
@@ -230,7 +241,6 @@ export function useMockSheetAside({
 }): TaskFrameAside {
   const t = useExtracted();
   const { runner } = useMockScreen();
-  const counts = useSheetCountLine();
 
   return {
     children: (
@@ -241,7 +251,7 @@ export function useMockSheetAside({
     ),
     footer: <SheetHandIn onHandIn={onHandIn} />,
     label: t("Answer sheet"),
-    meta: counts,
+    meta: <SheetCountLine />,
     title: t("Answer sheet"),
   };
 }
@@ -250,7 +260,6 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const [open, setOpen] = useState(false);
-  const counts = useSheetCountLine();
 
   return (
     <Drawer onOpenChange={setOpen} open={open}>
@@ -270,7 +279,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
           <div className="flex min-w-0 flex-col gap-1">
             <DrawerTitle>{t("Answer sheet")}</DrawerTitle>
             <DrawerDescription className="font-mono text-xs tabular-nums">
-              {counts}
+              <SheetCountLine />
             </DrawerDescription>
           </div>
         </SheetHeader>

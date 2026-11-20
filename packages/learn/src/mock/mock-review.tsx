@@ -32,10 +32,11 @@ import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
+import { UnsureMark, useUnsureLabel } from "./mock-labels";
 
 function ReviewAnswers({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
   const { answerText } = useTrueFalseLabels(labels);
-  const yours = entry.learnerAnswer;
+  const yours = entry.outcome === "right" ? null : entry.learnerAnswer;
   const right = entry.correctAnswer;
 
   const line = (text: string) =>
@@ -60,8 +61,21 @@ function useEntryFacts() {
   return (entry: MockReviewEntry): (string | null)[] => [
     t("Question {number}", { number: String(entry.number) }),
     entry.area,
-    { blank: t("Blank"), partial: t("Partly right"), right: null, wrong: null }[entry.outcome],
+    { blank: t("Blank"), partial: t("Partly right"), right: t("Right"), wrong: null }[
+      entry.outcome
+    ],
   ];
+}
+
+function UnsureFact() {
+  const label = useUnsureLabel();
+
+  return (
+    <span className="text-warning-text inline-flex items-center gap-1">
+      <UnsureMark />
+      {label}
+    </span>
+  );
 }
 
 function ReviewEntryBody({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
@@ -94,6 +108,7 @@ function ReviewEntryBody({ entry, labels }: { entry: MockReviewEntry; labels: Tr
 
 function ReviewEntry({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
   const facts = useEntryFacts();
+  const unsure = entry.unsure ? <UnsureFact /> : null;
 
   return (
     <li data-slot="mock-review-entry">
@@ -104,7 +119,7 @@ function ReviewEntry({ entry, labels }: { entry: MockReviewEntry; labels: TrueFa
               <ItemLine text={entry.question} />
             </ListRowTitle>
             <ListRowDescription>
-              <FactSegments facts={facts(entry)} />
+              <FactSegments extra={unsure} facts={facts(entry)} />
             </ListRowDescription>
           </ListRowContent>
           <FoldChevron />
@@ -118,8 +133,8 @@ function ReviewEntry({ entry, labels }: { entry: MockReviewEntry; labels: TrueFa
 }
 
 /**
- * Every question the learner missed, as rows of one list: what each asked, and which it was. A row
- * opens in place to its passage, the two answers and why.
+ * Every question the learner missed or wasn't sure of, as rows of one list: what each asked, and
+ * which it was. A row opens in place to its passage, the answers and why.
  */
 export function MockReview({
   review,
