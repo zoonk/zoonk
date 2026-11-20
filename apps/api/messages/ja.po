@@ -93,9 +93,9 @@ msgid "Wait a minute, then ask for a new code."
 msgstr "1分待ってから、新しいコードをリクエストしてください。"
 
 #: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "s0lBqy"
-msgid "We sent you a new code."
-msgstr "新しいコードを送信しました。"
+msgctxt "eHPJeo"
+msgid "We emailed you again."
+msgstr "確認メールを再送しました。"
 
 #: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "_8e0dn"

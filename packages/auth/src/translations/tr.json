@@ -4,7 +4,7 @@
   "otpDisclaimer": "Bu kodu sen istemediysen bu mesajı yok sayabilirsin.",
   "otpExpiry": "Bu kodun süresi 5 dakika içinde dolar.",
   "otpIntro": "Zoonk’a giriş kodun:",
-  "otpSubject": "Zoonk giriş kodun",
+  "otpSubject": "Zoonk giriş kodun: {code}",
   "plusAccountLabel": "Hesap",
   "plusAlreadyActiveSubject": "Zoonk Plus’ın zaten var",
   "plusEmailLegal": "Aboneliğin {termsLink} ve {privacyLink} kapsamındadır.",
