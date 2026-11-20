@@ -99,23 +99,32 @@ private struct BottomBar<Actions: View>: View {
       width = $0
     }
     .barColumn(column, listMargins: listMargins, isTask: isTask)
+    .scenePadding(.vertical)
     .background(ListMarginsReader { listMargins = $0 })
     .keepsOffFold()
     // Main's bar: the page's background from its hairline to the screen's edge. The system's edge
     // effect alone leaves a list's section header sharp under the buttons, drawn above it.
     .background {
       Color(.background)
-        .overlay(alignment: .top) { Divider() }
+        .overlay(alignment: .top) {
+          if note == nil { Divider() }
+        }
         .ignoresSafeArea(edges: .bottom)
     }
+    // Main's note is the bar's own top: its hairline moves above the note, which lines up with
+    // the buttons.
     .floatingAbove {
       if let note {
         note
           .typeStyle(.body)
           .frame(maxWidth: .infinity)
-          .padding(.horizontal, 16)
-          .padding(.vertical, 8)
-          .background(.background)
+          .barColumn(column, listMargins: listMargins, isTask: isTask)
+          .padding(.top, 12)
+          .padding(.bottom, 4)
+          .background {
+            Color(.background)
+              .overlay(alignment: .top) { Divider() }
+          }
       }
     }
   }
@@ -243,7 +252,8 @@ struct BarNote: View {
 
 extension View {
   /// The bar lines up with the screen's one readable column, such as a list's 768pt one on iPad,
-  /// so its buttons end where the rows do; without one it keeps main's 680pt task column.
+  /// so its buttons and its note end where the rows do; without one it keeps main's 680pt task
+  /// column. Only the sides: the buttons add the scene's room above and below.
   @ViewBuilder
   fileprivate func barColumn(
     _ column: ColumnMargins?, listMargins: NSDirectionalEdgeInsets?, isTask: Bool
@@ -254,21 +264,21 @@ extension View {
       if let listMargins {
         padding(.leading, column.leading + listMargins.leading)
           .padding(.trailing, column.trailing + listMargins.trailing)
-          .scenePadding(.vertical)
       } else {
         padding(.leading, column.leading)
           .padding(.trailing, column.trailing)
-          .scenePadding()
+          .scenePadding(.horizontal)
       }
     } else if isTask {
-      taskColumn()
+      frame(maxWidth: 680)
+        .frame(maxWidth: .infinity)
+        .scenePadding(.horizontal)
     } else {
       // A page without a list, such as an empty state, keeps the page's column, where its list
       // would end.
       padding(.leading, listMargins?.leading ?? 16)
         .padding(.trailing, listMargins?.trailing ?? 16)
         .pageColumnFrame()
-        .scenePadding(.vertical)
     }
   }
 
