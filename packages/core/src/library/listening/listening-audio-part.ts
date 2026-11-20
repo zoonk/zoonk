@@ -6,7 +6,6 @@ import { type ServiceTier } from "@zoonk/ai/provider-options";
 import {
   type ListeningPart,
   getListeningVoicePromptVersion,
-  isSpeechModelName,
   voiceListeningPart,
 } from "@zoonk/ai/tasks/audio/listening";
 import { z } from "zod";
@@ -18,7 +17,7 @@ type PartAddress = { index: number; part: ListeningPart; reuseKey: string };
 const storedPart = z.object({
   audio: z.string(),
   generatedAt: z.iso.datetime(),
-  model: z.string().refine(isSpeechModelName),
+  model: z.string().min(1),
   promptVersion: z.string(),
   runId: z.string(),
 });

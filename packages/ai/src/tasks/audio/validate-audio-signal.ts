@@ -1,5 +1,3 @@
-import { type SpeechModelName } from "./speech-models";
-
 const MIN_AUDIBLE_AMPLITUDE = 0.005;
 const MIN_AUDIBLE_DURATION_SECONDS = 0.04;
 
@@ -55,7 +53,7 @@ export function assertAudibleAudioSignal({
 }: {
   audio: DecodedAudio;
   maxSeconds: number;
-  model: SpeechModelName;
+  model: string;
 }): void {
   const durationSeconds = audio.samplesDecoded / audio.sampleRate;
 

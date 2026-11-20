@@ -37,7 +37,6 @@ type ListeningLine = { accent: string; text: string; voice: TTSVoice };
 export type ListeningPart = ListeningLine & { turn: number };
 
 export { getListeningVoicePromptVersion } from "./listening-voice-prompt";
-export { isSpeechModelName } from "./speech-models";
 
 type ListeningScript = { language: string; lines: readonly ListeningLine[] };
 
@@ -61,7 +60,7 @@ function listeningModels(language: string) {
   return getSpeakingModels({ candidates: LISTENING_SPEECH_MODELS, language });
 }
 
-type RecordedPart = { audio: Uint8Array; text: string; model: SpeechModelName; turn: number };
+type RecordedPart = { audio: Uint8Array; text: string; model: string; turn: number };
 
 function decodePart({ audio, model, text }: Omit<RecordedPart, "turn">) {
   const maxSeconds = getMaxSeconds(text);

@@ -14,7 +14,7 @@ import {
 const provenance = {
   generatedAt: new Date().toISOString(),
   latencyMs: 9000,
-  model: "google/gemini-3.8-flash-lite-tts",
+  model: "retired-speech-model",
   promptVersion: "test-version",
   provider: "vertex",
   requestedModel: "google/gemini-3.8-flash-lite-tts",
