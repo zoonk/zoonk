@@ -1,13 +1,9 @@
 import { CodeSnippet } from "@zoonk/learn/code";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { type RichInlineSegment, RichInlineSegments } from "@zoonk/learn/rich-text/inline";
-import {
-  markRichInline,
-  parseRichInline,
-  parseRichLine,
-  readWholeCodeBlock,
-} from "@zoonk/learn/rich-text/parser";
+import { markRichInline, parseRichInline, parseRichLine } from "@zoonk/learn/rich-text/parser";
 import { typesetNumbers, typesetProse } from "@zoonk/learn/rich-text/typography";
+import { readWholeCodeFence } from "@zoonk/utils/code-fence";
 import { toOneLine } from "@zoonk/utils/math-spans";
 
 function typeset({
@@ -30,7 +26,7 @@ export function LessonRichText({
   text: string;
 }) {
   const locale = useAppLocale();
-  const code = readWholeCodeBlock(text);
+  const code = readWholeCodeFence(text);
 
   if (code) {
     return <CodeSnippet code={code.code} language={code.language} />;

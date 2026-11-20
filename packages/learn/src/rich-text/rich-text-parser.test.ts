@@ -5,7 +5,6 @@ import {
   parseRichBlocks,
   parseRichInline,
   parseRichLine,
-  readWholeCodeBlock,
 } from "./rich-text-parser";
 
 function words(value: string): RichInlineSegment[] {
@@ -82,21 +81,6 @@ describe(markRichBlocks, () => {
         ],
       },
     ]);
-  });
-});
-
-describe(readWholeCodeBlock, () => {
-  it("reads an answer that is one closed code block", () => {
-    expect(readWholeCodeBlock("```java\nclass A {\n  int n;\n}\n```\n")).toStrictEqual({
-      code: "class A {\n  int n;\n}",
-      language: "java",
-    });
-  });
-
-  it("leaves text with words around its code, or a block that never closes, to the text", () => {
-    expect(readWholeCodeBlock("This one:\n```java\nclass A {}\n```")).toBeNull();
-    expect(readWholeCodeBlock("```java\nclass A {}")).toBeNull();
-    expect(readWholeCodeBlock("`class A {}`")).toBeNull();
   });
 });
 

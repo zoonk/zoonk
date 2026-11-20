@@ -1,12 +1,12 @@
 import { type LessonVisual as LessonVisualData } from "@zoonk/core/library/steps/contract";
 import { cn } from "@zoonk/ui/lib/utils";
+import { readWholeCodeFence } from "@zoonk/utils/code-fence";
 import { Fragment } from "react";
 import { RichTable } from "../_components/rich-table";
 import { useAppLocale } from "../_utils/locale";
 import { CodeBlock, CodeSnippet } from "../code/code-listing";
 import { type RichInlineSegment, RichInlineSegments } from "../rich-text/rich-inline-segments";
 import { RichTextBlocks } from "../rich-text/rich-text-blocks";
-import { readWholeCodeBlock } from "../rich-text/rich-text-parser";
 import { speakSegments } from "../rich-text/rich-text-speech";
 import { typesetNumbers, typesetProse } from "../rich-text/rich-text-typography";
 import { SpokenMath } from "../rich-text/spoken-math";
@@ -91,7 +91,7 @@ export function ItemText({ className, text }: { className?: string; text: string
  */
 export function ItemLine({ text }: { text: string }) {
   const typeset = useQuestionTypesetting();
-  const code = readWholeCodeBlock(text);
+  const code = readWholeCodeFence(text);
 
   if (code) {
     return <CodeSnippet code={code.code} language={code.language} />;

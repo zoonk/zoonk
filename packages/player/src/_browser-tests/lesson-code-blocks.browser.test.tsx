@@ -88,10 +88,12 @@ describe("code in a lesson", () => {
 
     const frame = page.getByRole("group", { name: "Code" });
     await expect.element(frame).toBeVisible();
+
     expect(codeLines(frame.element())).toStrictEqual([
       "const total = 1 + 2;",
       "console.log(total);",
     ]);
+
     expect(frame.element().closest("[data-slot='example-box']")).not.toBeNull();
     await expect.element(page.getByText("It prints 3.")).toBeVisible();
   });

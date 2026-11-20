@@ -58,18 +58,6 @@ export function parseRichInline(text: string): RichInlineSegment[] {
   ];
 }
 
-export type WholeCodeBlock = { code: string; language: string | null };
-
-/** Text that is one closed code block and nothing else, such as an answer option that is a program. */
-export function readWholeCodeBlock(text: string): WholeCodeBlock | null {
-  const lines = text.trim().split(/\r?\n/u);
-  const fence = readCodeFence(lines, 0);
-
-  return fence?.closed && fence.end === lines.length
-    ? { code: fence.code, language: fence.language }
-    : null;
-}
-
 function toInlineCode(code: string): RichInlineSegment {
   const text = code
     .split("\n")
