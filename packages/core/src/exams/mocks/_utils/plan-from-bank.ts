@@ -31,9 +31,10 @@ type MockBank = {
   goalId: string;
   setup: AnytimeMockSetup;
   userId: string;
+  reuse?: boolean;
 };
 
-async function loadAvailableSetup({ client, exclude, goalId, setup, userId }: MockBank) {
+async function loadAvailableSetup({ client, exclude, goalId, reuse, setup, userId }: MockBank) {
   if (setup.missingParts.length === 0 && setup.listening.size === 0) {
     return setup;
   }
@@ -43,6 +44,7 @@ async function loadAvailableSetup({ client, exclude, goalId, setup, userId }: Mo
     exclude: [...exclude],
     goalId,
     mix: getMockFormatMix(setup.structure),
+    reuse,
     userId,
   });
 
@@ -133,25 +135,38 @@ export async function planFromBank({
       : new Set<string>());
 
   const available =
-    protectedIds.size > 0 || client !== prisma
-      ? await loadAvailableSetup({ client, exclude: protectedIds, goalId: goal.id, setup, userId })
+    reuse || protectedIds.size > 0 || client !== prisma
+      ? await loadAvailableSetup({
+          client,
+          exclude: protectedIds,
+          goalId: goal.id,
+          reuse,
+          setup,
+          userId,
+        })
       : setup;
 
-  const candidates = loaded.filter((item) => !protectedIds.has(item.itemId));
+  const text = loaded.filter((item) => !protectedIds.has(item.itemId));
+  const candidates = [...text, ...[...available.listening.values()].flat()];
 
   const freshPlan = planOptionMock({
     ...available,
-    candidates: candidates.filter((item) => !item.answered),
+    candidates: text.filter((item) => !item.answered),
     option,
   });
 
   if (!reuse || countPlannedQuestions(freshPlan) === option.questions) {
-    return { available, candidates, plan: freshPlan, reuse };
+    return {
+      available,
+      candidates,
+      plan: { ...freshPlan, reused: countReused({ candidates, sections: freshPlan.sections }) },
+      reuse,
+    };
   }
   // The full-day planner normally excludes repeats. Fair use admits them after reserving the scheduled papers.
   const plan = planOptionMock({
     ...available,
-    candidates: candidates.map((item) => ({ ...item, answered: false })),
+    candidates: text.map((item) => ({ ...item, answered: false })),
     option,
   });
 

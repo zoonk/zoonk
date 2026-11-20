@@ -72,11 +72,7 @@ function toConditions({
     day: plan.day,
     examQuestions: asked < option.questions ? option.questions : null,
     fullLength: option.kind === "full",
-    ...markPlannedItems({
-      candidates: [...candidates, ...[...setup.listening.values()].flat()],
-      plan,
-      structure: setup.structure,
-    }),
+    ...markPlannedItems({ candidates, plan, structure: setup.structure }),
     partialCredit: getPartialCredit(setup.structure),
     purpose: "practice",
     reused: plan.reused,

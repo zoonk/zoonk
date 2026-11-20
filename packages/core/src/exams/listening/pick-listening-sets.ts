@@ -28,11 +28,16 @@ export function getPartSetsFilter({
   };
 }
 
-export type ListeningPartPick = { part: ListeningPart; setId: string | null; needsSet: boolean };
+export type ListeningPartPick = {
+  part: ListeningPart;
+  setId: string | null;
+  needsSet: boolean;
+  lastMockUse?: number;
+};
 
 type StoredSet = {
   id: string;
-  items: { attempts: { answeredAt: Date }[] }[];
+  items: { attempts: { answeredAt: Date }[]; mockUses: { spentAt: Date | null }[] }[];
   mediaAssetId: string | null;
 };
 
@@ -58,6 +63,14 @@ function pickSet(sets: readonly StoredSet[]): Omit<ListeningPartPick, "part"> {
   };
 }
 
+function getLastMockUse(set: StoredSet): number | undefined {
+  const spent = set.items.flatMap((item) =>
+    item.mockUses.flatMap((use) => (use.spentAt ? [use.spentAt.getTime()] : [])),
+  );
+
+  return spent.length > 0 ? Math.max(...spent) : (getLastAnswered(set) ?? undefined);
+}
+
 /** Internal: the caller must derive `userId` from the authenticated session. */
 export async function pickListeningSets({
   client = prisma,
@@ -65,6 +78,7 @@ export async function pickListeningSets({
   exclude = [],
   examBlueprintId,
   parts,
+  reuse = false,
   scriptLanguage,
   userId,
 }: {
@@ -73,6 +87,7 @@ export async function pickListeningSets({
   exclude?: readonly string[];
   client?: TransactionClient;
   parts: readonly ListeningPart[];
+  reuse?: boolean;
   scriptLanguage: string;
   userId: string;
 }): Promise<ListeningPartPick[]> {
@@ -93,6 +108,7 @@ export async function pickListeningSets({
                 take: 1,
                 where: { userId },
               },
+              mockUses: { select: { spentAt: true }, where: { userId } },
             },
           },
           mediaAssetId: true,
@@ -106,12 +122,19 @@ export async function pickListeningSets({
                   {
                     mockUses: {
                       some: {
-                        OR: [{ spentAt: { not: null } }, { mockExamId: { notIn: expired } }],
+                        ...(reuse
+                          ? {
+                              mockExam: { status: "active" as const },
+                              mockExamId: { notIn: expired },
+                            }
+                          : {
+                              OR: [{ spentAt: { not: null } }, { mockExamId: { notIn: expired } }],
+                            }),
                         userId,
                       },
                     },
                   },
-                  { attempts: { some: { userId } } },
+                  ...(reuse ? [] : [{ attempts: { some: { userId } } }]),
                   { id: { in: [...exclude] } },
                   { mockOnly: false },
                   { mockOnly: null },
@@ -135,17 +158,16 @@ export async function pickListeningSets({
       return { part, ...pickSet(sets) };
     }
 
-    const set = sets.find(
-      (recording) =>
-        recording.mediaAssetId &&
-        recording.items.length === part.count &&
-        !selected.has(recording.id),
-    );
+    const [recording] = sets
+      .filter((set) => set.mediaAssetId && set.items.length === part.count && !selected.has(set.id))
+      .map((set) => ({ id: set.id, lastMockUse: getLastMockUse(set) }))
+      .toSorted((first, second) => (first.lastMockUse ?? 0) - (second.lastMockUse ?? 0));
 
-    if (set) {
-      selected.add(set.id);
+    if (!recording) {
+      return { needsSet: true, part, setId: null };
     }
 
-    return { needsSet: !set, part, setId: set?.id ?? null };
+    selected.add(recording.id);
+    return { lastMockUse: recording.lastMockUse, needsSet: false, part, setId: recording.id };
   });
 }

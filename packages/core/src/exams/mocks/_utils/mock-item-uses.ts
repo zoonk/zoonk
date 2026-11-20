@@ -21,7 +21,7 @@ export async function listMockItemClaims(
     where: {
       status: "active",
       userId,
-      ...(mockIds ? { id: { in: [...mockIds] } } : { itemUses: { some: { spentAt: null } } }),
+      ...(mockIds ? { id: { in: [...mockIds] } } : { itemUses: { some: {} } }),
     },
   });
 

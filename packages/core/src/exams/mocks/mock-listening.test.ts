@@ -12,6 +12,7 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { listListeningParts } from "../listening/listening-parts";
 import { pickListeningSets } from "../listening/pick-listening-sets";
+import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
 import { mockConditionsSchema } from "./mock-contract";
@@ -115,6 +116,54 @@ describe("a mock's listening section", () => {
     expect(result.status === "ready" && result.mock.leftOut.map((part) => part.part)).not.toContain(
       "listening",
     );
+  });
+
+  it("fills a fair-use paper from heard recordings without preparing new ones", async () => {
+    const { goal, recordings } = await listeningSetup();
+    const start = () => startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
+    const first = await start();
+
+    if (first.status !== "started") {
+      throw new Error(`Expected a started mock, got ${first.status}`);
+    }
+
+    await expect(finishMock({ blockId: first.id, input: {} })).resolves.toMatchObject({
+      status: "finished",
+    });
+
+    const original = await prisma.mockExam.findUniqueOrThrow({ where: { id: first.id } });
+
+    await prisma.mockExam.createMany({
+      data: Array.from({ length: 9 }, () => ({
+        conditions: original.conditions as object,
+        examBlueprintId: original.examBlueprintId,
+        goalId: goal.id,
+        sectionStartedAt: original.startedAt,
+        status: "finished",
+        userId: goal.userId,
+      })),
+    });
+
+    await prisma.goal.update({ data: { requestedMock: FULL }, where: { id: goal.id } });
+    const writing = await listMockPrepWrites({ goalId: goal.id });
+    expect(writing).toMatchObject({ urgentShort: false, writes: [] });
+    expect(writing).not.toHaveProperty("recordings");
+
+    const repeated = await start();
+
+    if (repeated.status !== "started") {
+      throw new Error(`Expected a started fair-use mock, got ${repeated.status}`);
+    }
+
+    const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { id: repeated.id } });
+    const { reused, sections } = mockConditionsSchema.parse(sitting.conditions);
+    const audio = sections.find((section) => section.kind === "listening");
+
+    expect(audio?.itemIds).toStrictEqual(
+      recordings.flatMap((recording) => recording.questions.map((question) => question.id)),
+    );
+
+    expect(reused).toBe(READING_QUESTIONS + 4);
   });
 
   it("requests the missing recording and keeps the full mock preparing", async () => {

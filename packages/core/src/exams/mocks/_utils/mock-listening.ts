@@ -17,12 +17,14 @@ export async function loadListeningCandidates({
   exclude,
   goalId,
   mix,
+  reuse,
   userId,
 }: {
   client?: TransactionClient;
   exclude?: readonly string[];
   goalId: string;
   mix: readonly MockFormat[];
+  reuse?: boolean;
   userId: string;
 }): Promise<MockListening> {
   const exam = await loadListeningExam(goalId, client);
@@ -37,6 +39,7 @@ export async function loadListeningCandidates({
     exclude,
     mockOnly: true,
     parts: exam.parts,
+    reuse,
     scriptLanguage: exam.scriptLanguage,
     userId,
   });
@@ -64,12 +67,13 @@ export async function loadListeningCandidates({
         const members = bySet.get(pick.setId ?? "") ?? [];
 
         return members.map((member, position) => ({
-          answered: false,
+          answered: pick.lastMockUse !== undefined,
           area: sectionName,
           difficulty: member.difficulty,
           format: getItemFormatKey({ item: member, mix }),
           itemFormat: member.format,
           itemId: member.id,
+          lastMockUse: pick.lastMockUse,
           set: { id: pick.setId ?? "", position, size: members.length },
           skillId: member.skillId,
         }));
