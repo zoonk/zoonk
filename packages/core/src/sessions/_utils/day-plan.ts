@@ -18,7 +18,6 @@ import { getSessionChallenges } from "./day-stretch";
 import { loadExamStructure } from "./exam-structure";
 import { loadIdleListeningSkillIds } from "./load-practice";
 import { getDayOutlines } from "./outlining-stand-ins";
-import { getSkippedSkillIds } from "./review-skills";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { type SessionPlanItem } from "./session-plan-item";
@@ -102,8 +101,7 @@ export async function loadDayPlan({
   const items: SessionPlanItem[] = plan?.items ?? [];
   const graph = parsePlanGraph(plan?.graph);
   const phases = parsePlanPhases(plan?.phases);
-  const skipped = getSkippedSkillIds({ graph, settings: plan?.settings });
-  const skills = goalPlan.skills.filter((skill) => !skipped.has(skill.id));
+  const skills = goalPlan.skills.filter((skill) => !skill.removed);
 
   const [structure, prerequisites, idleSkillIds] = await Promise.all([
     loadExamStructure(goal, { blueprint, dayMinutes, picks: readExamPicks(plan?.settings) }),

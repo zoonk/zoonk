@@ -64,9 +64,7 @@ export async function loadMeasuredSkills({
     ...graphSections,
   ]);
 
-  const planSkills = plan.skills.filter(
-    (node) => !skipped.has(sectionOf.get(node.id) ?? node.sectionTitle ?? ""),
-  );
+  const planSkills = plan.skills.filter((node) => !node.removed);
 
   const planned = new Set(planSkills.map((node) => node.id));
 

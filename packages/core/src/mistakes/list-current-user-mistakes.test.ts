@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { mistakeListInputSchema } from "./contract";
+import { countGoalMistakes } from "./count-goal-mistakes";
 import { listCurrentUserMistakes } from "./list-current-user-mistakes";
 
 const query = (input: object = {}) => mistakeListInputSchema.parse(input);
@@ -134,6 +135,123 @@ describe(listCurrentUserMistakes, () => {
     );
 
     expect(result.status === "ready" && result.counts.open).toBe(1);
+  });
+
+  it("leaves out a subject the learner took out of the plan until it's back", async () => {
+    const user = await userFixture();
+
+    const { goal, plan, planItems, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [1, 1],
+      userId: user.id,
+    });
+
+    const [removed, kept] = skills;
+    const finer = await skillFixture();
+
+    const setRemovedAreas = (skippedAreas: string[]) =>
+      prisma.plan.update({ data: { settings: { skippedAreas } }, where: { id: plan.id } });
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: planItems[0]?.lessonId ?? "", skillId: finer.id }),
+      prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ name: "Removed" }, { name: "Kept" }],
+            skills: [removed, kept].map((skill, phase) => ({
+              lessons: 1,
+              name: skill?.name,
+              phase,
+              skillId: skill?.id,
+            })),
+          },
+        },
+        where: { id: plan.id },
+      }),
+    ]);
+
+    await setRemovedAreas(["Removed"]);
+    mockSession(user.id);
+
+    const [inKept, ...inRemoved] = await Promise.all([
+      mistakeFixture({ skillId: kept?.id, userId: user.id }),
+      mistakeFixture({ skillId: removed?.id, userId: user.id }),
+      mistakeFixture({ skillId: finer.id, status: "fixed", userId: user.id }),
+    ]);
+
+    const [withoutSubject, countWithout] = await Promise.all([
+      listCurrentUserMistakes(query({ goalId: goal.id })),
+      countGoalMistakes({ goalId: goal.id }),
+    ]);
+
+    expect(withoutSubject).toMatchObject({
+      counts: { fixed: 0, open: 1 },
+      mistakes: [{ id: inKept?.id }],
+    });
+
+    expect(countWithout).toStrictEqual({ fixed: 0, open: 1, status: "ready" });
+
+    await expect(
+      listCurrentUserMistakes(query({ goalId: goal.id, skillId: removed?.id })),
+    ).resolves.toMatchObject({ counts: { open: 0 }, mistakes: [] });
+
+    await setRemovedAreas([]);
+
+    const withSubject = await listCurrentUserMistakes(query({ goalId: goal.id }));
+
+    expect(
+      withSubject.status === "ready" &&
+        withSubject.mistakes.map((mistake) => mistake.id).toSorted(),
+    ).toStrictEqual([inKept, ...inRemoved].map((mistake) => mistake?.id).toSorted());
+  });
+
+  it("keeps a skill a kept subject teaches too, whichever lesson comes first", async () => {
+    const user = await userFixture();
+
+    const { goal, plan, planItems, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [1, 1],
+      userId: user.id,
+    });
+
+    const [shared, onlyRemoved] = await Promise.all([skillFixture(), skillFixture()]);
+
+    await Promise.all([
+      ...planItems.map((item) =>
+        lessonSkillFixture({ lessonId: item.lessonId ?? "", skillId: shared.id }),
+      ),
+      lessonSkillFixture({ lessonId: planItems[0]?.lessonId ?? "", skillId: onlyRemoved.id }),
+      prisma.planItem.updateMany({ data: { skillId: null }, where: { planId: plan.id } }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ name: "Removed" }, { name: "Kept" }],
+            skills: skills.map((skill, phase) => ({
+              lessons: 1,
+              name: skill.name,
+              phase,
+              skillId: skill.id,
+            })),
+          },
+          settings: { skippedAreas: ["Removed"] },
+        },
+        where: { id: plan.id },
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const [kept] = await Promise.all([
+      mistakeFixture({ skillId: shared.id, userId: user.id }),
+      mistakeFixture({ skillId: onlyRemoved.id, userId: user.id }),
+    ]);
+
+    const result = await listCurrentUserMistakes(query({ goalId: goal.id }));
+
+    expect(result.status === "ready" && result.mistakes.map((mistake) => mistake.id)).toStrictEqual(
+      [kept.id],
+    );
   });
 
   it("names the lesson each mistake opens: where it was made, else one teaching its skill", async () => {
