@@ -15,7 +15,9 @@ export async function verifyClaims(comparison: Comparison, attempt: string) {
   const { manifest } = comparison;
   const dir = directory(manifest.taskId, manifest.id);
 
-  await runInOrder(majorClaims(comparison), async (claim) => {
+  const claims = majorClaims(comparison).filter((claim) => claim.source === "verification");
+
+  await runInOrder(claims, async (claim) => {
     if (
       comparison.verifications.some(
         (verification) =>

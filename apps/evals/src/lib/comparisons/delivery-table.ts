@@ -70,11 +70,20 @@ export function deliveryTable(
           const affected = onSide(subject);
           const other = new Set(onSide(opposite(subject)));
 
+          const ownerAffected = [
+            ...new Set(
+              relevant
+                .filter((claim) => claim.source === "owner" && claim.side === subject)
+                .map((claim) => claim.caseId),
+            ),
+          ];
+
           return {
             affected,
             both: affected.filter((caseId) => other.has(caseId)),
             criterion,
             language,
+            ...(ownerAffected.length > 0 && { ownerAffected }),
           };
         }),
       );

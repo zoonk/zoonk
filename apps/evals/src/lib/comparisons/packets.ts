@@ -3,6 +3,7 @@ import path from "node:path";
 import { hash, hashJson } from "./identity";
 import {
   type Comparison,
+  type FailureCode,
   type Manifest,
   type PacketOutput,
   type Reader,
@@ -11,6 +12,7 @@ import {
   blindOutputs,
   identifier,
   manifestSchema,
+  ownerResponseSchema,
   responseSchema,
   type runSchema,
 } from "./schemas";
@@ -23,11 +25,90 @@ type PacketInput = Pick<
   | "criteria"
   | "controls"
   | "cases"
+  | "id"
   | "runsCompared"
   | "readers"
   | "variants"
   | "protocols"
 >;
+
+function ownerPacket({
+  selection,
+  run,
+  testCase,
+  challenger,
+  incumbent,
+  reader,
+}: {
+  selection: PacketInput;
+  run: PacketInput["runsCompared"][number];
+  testCase: PacketInput["cases"][number];
+  challenger: PacketOutput;
+  incumbent: PacketOutput | null;
+  reader: Reader;
+}): SealedPacket {
+  const seed = hashJson([selection.id, testCase.id, "owner"]);
+  const incumbentFirst = incumbent !== null && Number.parseInt(seed[0] ?? "0", 16) < 8;
+  const pairId = randomUUID();
+
+  const packet = {
+    criteria: selection.criteria,
+    pairs: [
+      {
+        ...blindOutputs(
+          incumbentFirst ? incumbent : challenger,
+          incumbentFirst ? challenger : incumbent,
+        ),
+        expectations: testCase.expectations,
+        input: testCase.input,
+        pairId,
+      },
+    ],
+    reads: selection.priorities.reads,
+  };
+
+  return {
+    id: hashJson([packet, reader, selection.protocols.reader]),
+    mapping: [
+      {
+        caseId: testCase.id,
+        clean: null,
+        criterion: null,
+        first: incumbentFirst ? "incumbent" : "challenger",
+        kind: "real",
+        pairId,
+        run: run.run,
+      },
+    ],
+    packet,
+    reader,
+    reverse: false,
+  };
+}
+
+function withoutControls(sealed: SealedPacket): SealedPacket {
+  const mapping = sealed.mapping.filter((entry) => entry.kind === "real");
+
+  const pairs = sealed.packet.pairs.filter((pair) =>
+    mapping.some((entry) => entry.pairId === pair.pairId),
+  );
+
+  return { ...sealed, mapping, packet: { ...sealed.packet, pairs } };
+}
+
+export function ownerPackets(manifest: Manifest): SealedPacket[] {
+  const packets = manifest.packets
+    .filter((packet) => packet.reader.channel === "owner" && !packet.reverse)
+    .map((packet) => withoutControls(packet));
+
+  return manifest.cases.flatMap(({ id }) => {
+    const first = packets
+      .filter((packet) => packet.mapping[0]?.caseId === id)
+      .toSorted((left, right) => (left.mapping[0]?.run ?? 0) - (right.mapping[0]?.run ?? 0))[0];
+
+    return first ? [first] : [];
+  });
+}
 
 function toPacketOutput(
   slot: z.infer<typeof runSchema>["challenger"],
@@ -54,9 +135,23 @@ export function buildPackets(
       return [];
     }
 
-    return selection.readers.flatMap((reader, readerIndex) =>
-      (incumbent ? [false, true] : [false]).map((reverse) => {
-        const familyIndex = ["anthropic", "openai", "google", "owner"].indexOf(reader.family);
+    return selection.readers.flatMap((reader, readerIndex) => {
+      if (reader.channel === "owner") {
+        const earlier = selection.runsCompared.some(
+          (entry) =>
+            entry.caseId === run.caseId &&
+            entry.run < run.run &&
+            toPacketOutput(entry.challenger, outputs) &&
+            (!selection.variants.incumbent || toPacketOutput(entry.incumbent, outputs)),
+        );
+
+        return earlier
+          ? []
+          : [ownerPacket({ challenger, incumbent, reader, run, selection, testCase })];
+      }
+
+      return (incumbent ? [false, true] : [false]).map((reverse) => {
+        const familyIndex = ["anthropic", "openai", "google"].indexOf(reader.family);
         const flip = Boolean((run.run - 1 + familyIndex + Number(reverse)) % 2);
         const first = incumbent && !flip ? "incumbent" : "challenger";
         const controlIndex = index + readerIndex + Number(reverse);
@@ -133,16 +228,18 @@ export function buildPackets(
           reader,
           reverse,
         };
-      }),
-    );
+      });
+    });
   });
 }
-export function gradePacket(sealed: SealedPacket, response: z.infer<typeof responseSchema>) {
-  const failures: string[] = [];
+type PacketFailure = { code: FailureCode; reason: string };
+
+export function gradePacket(sealed: SealedPacket, response: z.infer<typeof ownerResponseSchema>) {
+  const failures: PacketFailure[] = [];
   const keys = sealed.packet.criteria.map((criterion) => criterion.id).toSorted();
 
   if (response.verdicts.length !== sealed.mapping.length) {
-    failures.push("Unexpected verdict count.");
+    failures.push({ code: "missing_verdicts", reason: "Unexpected verdict count." });
   }
 
   sealed.mapping.forEach((mapping) => {
@@ -150,7 +247,7 @@ export function gradePacket(sealed: SealedPacket, response: z.infer<typeof respo
     const verdict = votes[0];
 
     if (votes.length !== 1 || !verdict) {
-      failures.push("Missing or repeated pair.");
+      failures.push({ code: "missing_verdicts", reason: "Missing or repeated pair." });
       return;
     }
 
@@ -165,7 +262,10 @@ export function gradePacket(sealed: SealedPacket, response: z.infer<typeof respo
           !keys.includes(observation.criterion) || (audit && observation.output === "B"),
       )
     ) {
-      failures.push("Verdict does not cover the sealed criteria or outputs.");
+      failures.push({
+        code: "invalid_response",
+        reason: "Verdict does not cover the sealed criteria or outputs.",
+      });
     }
 
     if (
@@ -173,7 +273,7 @@ export function gradePacket(sealed: SealedPacket, response: z.infer<typeof respo
       (verdict.overall?.preference !== "tie" ||
         verdict.criteria.some((criterion) => criterion.preference !== "tie"))
     ) {
-      failures.push("Preferred one of two identical outputs.");
+      failures.push({ code: "failed_controls", reason: "Preferred one of two identical outputs." });
     }
 
     if (
@@ -186,7 +286,7 @@ export function gradePacket(sealed: SealedPacket, response: z.infer<typeof respo
             observation.criterion === mapping.criterion,
         ))
     ) {
-      failures.push("Missed the control bank defect.");
+      failures.push({ code: "failed_controls", reason: "Missed the control bank defect." });
     }
   });
 
@@ -213,23 +313,45 @@ export async function saveResponse(args: ImportArgs, costUsd: number, channel: R
     throw new Error("Unknown packet or reader channel.");
   }
 
-  const response = responseSchema.parse(args.response);
-  const failures = gradePacket(sealed, response);
+  const file = path.join(dir, "verdicts", `${sealed.id}-${identifier.parse(args.attempt)}.json`);
+  const previous = await readOptional(file, attemptSchema);
+  const owner = channel === "owner";
+  const parsed = (owner ? ownerResponseSchema : responseSchema).safeParse(args.response);
+  const response = parsed.success ? parsed.data : { verdicts: [] };
+  const packet = owner ? ownerPackets(manifest).find((entry) => entry.id === sealed.id) : sealed;
 
-  return writeRecord(
-    path.join(dir, "verdicts", `${sealed.id}-${identifier.parse(args.attempt)}.json`),
-    attemptSchema,
-    {
-      attempt: args.attempt,
-      costUsd,
-      failures,
-      packetId: sealed.id,
-      passed: failures.length === 0,
-      protocolHash: hash(manifest.protocols.reader),
-      reader: { ...sealed.reader, channel },
-      response,
-    },
-  );
+  if (
+    parsed.success &&
+    previous?.reader.channel === channel &&
+    previous.costUsd === costUsd &&
+    hashJson(previous.response) === hashJson(response)
+  ) {
+    return previous;
+  }
+
+  if (!packet) {
+    throw new Error("Unknown owner packet.");
+  }
+
+  const failures = parsed.success
+    ? gradePacket(packet, response)
+    : [{ code: "invalid_response", reason: "Response does not match the verdict schema." }];
+
+  if (owner && failures.length > 0) {
+    throw new Error(failures.map(({ reason }) => reason).join(" "));
+  }
+
+  return writeRecord(file, attemptSchema, {
+    attempt: args.attempt,
+    costUsd,
+    ...(failures.length > 0 && { failureCodes: failures.map(({ code }) => code) }),
+    failures: failures.map(({ reason }) => reason),
+    packetId: sealed.id,
+    passed: failures.length === 0,
+    protocolHash: hash(manifest.protocols.reader),
+    reader: { ...sealed.reader, channel },
+    response,
+  });
 }
 export function importVerdicts(args: ImportArgs) {
   return saveResponse(args, 0, "owner");

@@ -16,13 +16,19 @@ export function formatDecision(decision: Decision, comparison: Comparison) {
     ...decision.rows.flatMap((row) =>
       row.quality.map(
         (item) =>
-          `${row.side}, ${item.language}, ${item.criterion}: ${item.affected.length} major-affected cases (${item.both.length} on both).`,
+          `${row.side}, ${item.language}, ${item.criterion}: ${item.affected.length} major-affected cases (${item.both.length} on both).${
+            item.ownerAffected ? ` Owner findings: ${item.ownerAffected.join(", ")}.` : ""
+          }`,
       ),
     ),
     "",
     ...decision.cases.map(
       (item) =>
-        `${item.language} [${item.caseId}](/tasks/${manifest.taskId}/comparisons/${manifest.id}#${encodeURIComponent(item.caseId)}): ${item.result}; families ${JSON.stringify(item.votes)}; owner ${item.owner ?? "unread"}.`,
+        `${item.language} [${item.caseId}](/tasks/${manifest.taskId}/comparisons/${manifest.id}#${encodeURIComponent(item.caseId)}): ${item.result}; families ${JSON.stringify(item.votes)}; owner ${item.owner ?? "unread"}.${
+          item.adjudication
+            ? ` Owner ruling after seeing the evidence: ${item.adjudication.direction}. ${item.adjudication.reason}`
+            : ""
+        }`,
     ),
     ...decision.readers.map(
       (reader) =>

@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { decisionSchema } from "./decision";
+import { decisionSchema } from "./decision-schema";
 import { hash } from "./identity";
 import {
   type Comparison,
   type Manifest,
+  adjudicationSchema,
   attemptSchema,
   checkSchema,
   digest,
@@ -163,14 +164,15 @@ export async function loadComparison(taskId: string, id: string): Promise<Compar
     throw new Error("Comparison has no matching sealed manifest.");
   }
 
-  const [outputs, attempts, checks, verifications] = await Promise.all([
+  const [outputs, attempts, checks, verifications, adjudications] = await Promise.all([
     readOutputs(dir, manifest),
     records(path.join(dir, "verdicts"), attemptSchema),
     records(path.join(dir, "checks"), checkSchema),
     records(path.join(dir, "verifications"), verificationAttemptSchema),
+    records(path.join(dir, "adjudications"), adjudicationSchema),
   ]);
 
-  return { attempts, checks, manifest, outputs, verifications };
+  return { adjudications, attempts, checks, manifest, outputs, verifications };
 }
 export function loadDecision(taskId: string, id: string) {
   return readOptional(path.join(directory(taskId, id), "decision.json"), decisionSchema);

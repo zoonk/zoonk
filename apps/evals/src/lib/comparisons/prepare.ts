@@ -262,7 +262,7 @@ async function freeze(options: PrepareOptions) {
             prices,
             usage: { inputTokens, outputTokens: 3000 },
           }),
-    packets: slots.length,
+    packets: reader.channel === "owner" ? selection.cases.length : slots.length,
     reader,
   }));
 

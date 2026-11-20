@@ -1,4 +1,4 @@
-import { type Direction } from "./decision-schema";
+import { type Decision, type Direction } from "./decision-schema";
 import { type Comparison } from "./schemas";
 
 export const sides = ["incumbent", "challenger"] as const;
@@ -38,19 +38,33 @@ export function acceptedReads(comparison: Comparison) {
       });
   });
 }
+type Read = ReturnType<typeof acceptedReads>[number];
+
+function isControlFreeOwnerRead({ attempt, packet }: Read) {
+  return (
+    packet.reader.channel === "owner" &&
+    !packet.mapping.some(
+      (entry) =>
+        entry.kind !== "real" &&
+        attempt.response.verdicts.some((verdict) => verdict.pairId === entry.pairId),
+    )
+  );
+}
+
 function majorClaimsIncludingMissingPairs(comparison: Comparison) {
-  return acceptedReads(comparison).flatMap(({ packet, attempt, mapping, verdict }) =>
-    verdict.observations.flatMap((observation, index) =>
+  return acceptedReads(comparison).flatMap((read) =>
+    read.verdict.observations.flatMap((observation, index) =>
       observation.severity === "major"
         ? [
             {
-              caseId: mapping.caseId,
-              id: [packet.id, attempt.attempt, mapping.pairId, index].join("."),
+              caseId: read.mapping.caseId,
+              id: [read.packet.id, read.attempt.attempt, read.mapping.pairId, index].join("."),
               observation,
-              pair: packet.packet.pairs.find((pair) => pair.pairId === mapping.pairId),
-              reader: packet.reader,
-              run: mapping.run,
-              side: observation.output === "A" ? mapping.first : opposite(mapping.first),
+              pair: read.packet.packet.pairs.find((pair) => pair.pairId === read.mapping.pairId),
+              reader: read.packet.reader,
+              run: read.mapping.run,
+              side: observation.output === "A" ? read.mapping.first : opposite(read.mapping.first),
+              source: isControlFreeOwnerRead(read) ? ("owner" as const) : ("verification" as const),
             },
           ]
         : [],
@@ -103,26 +117,57 @@ export function caseVotes(comparison: Comparison, reads: ReturnType<typeof accep
           record.mapping.caseId === caseId && record.packet.reader.family === family && record.vote,
       );
 
+      const complete =
+        family === "owner" ? ballots.filter((record) => !isControlFreeOwnerRead(record)) : ballots;
+
       if (
         matches.length > 0 &&
-        matches.every((run) => ballots.some((next) => next.mapping.run === run.run))
+        matches.every((run) => complete.some((next) => next.mapping.run === run.run))
       ) {
         votes[family] = summarizeVotes(
-          ballots.flatMap((record) => (record.vote ? [record.vote] : [])),
+          complete.flatMap((record) => (record.vote ? [record.vote] : [])),
         );
       }
     }
 
-    const { owner, ...families } = votes;
+    const { owner: legacyOwner, ...families } = votes;
+
+    const blindOwner = reads.find(
+      (record) =>
+        record.mapping.caseId === caseId &&
+        !record.packet.reverse &&
+        isControlFreeOwnerRead(record),
+    );
+
+    const modelResult = settle(Object.values(families));
+
+    const adjudication = canAdjudicate(manifest, { result: modelResult, votes: families })
+      ? comparison.adjudications.find((entry) => entry.caseId === caseId)
+      : undefined;
 
     return {
+      ...(adjudication && { adjudication }),
       caseId,
       language,
-      owner: owner ?? null,
-      result: settle(Object.values(families)),
+      legacyOwner: legacyOwner ?? null,
+      owner: blindOwner?.vote ?? legacyOwner ?? null,
+      result: adjudication?.direction ?? modelResult,
       votes: families,
     };
   });
+}
+
+export function canAdjudicate(
+  manifest: Comparison["manifest"],
+  item: Pick<Decision["cases"][number], "result" | "votes">,
+) {
+  const readers = manifest.readers.filter((reader) => reader.channel !== "owner");
+
+  return (
+    item.result === "unresolved" &&
+    readers.length >= 2 &&
+    readers.every((reader) => Object.hasOwn(item.votes, reader.family))
+  );
 }
 export function readerRecords(comparison: Comparison, reads: ReturnType<typeof acceptedReads>) {
   const { manifest } = comparison;
@@ -162,7 +207,7 @@ export function readerRecords(comparison: Comparison, reads: ReturnType<typeof a
 }
 export function verifiedClaims(comparison: Comparison) {
   return majorClaims(comparison).map((claim) => {
-    const findings = comparison.verifications
+    const checks = comparison.verifications
       .filter((vote) => vote.passed && vote.reader.family !== claim.reader.family)
       .flatMap((vote) =>
         vote.response.results.filter((record) =>
@@ -171,11 +216,16 @@ export function verifiedClaims(comparison: Comparison) {
           ),
         ),
       )
-      .map((record) => record.finding)
-      .filter((finding) => finding !== "unsure");
+      .map((record) => record.finding);
 
+    const findings = checks.filter((finding) => finding !== "unsure");
     const verified = new Set(findings);
+    const finding = verified.size === 1 ? (findings[0] ?? "unsure") : "unsure";
 
-    return { ...claim, finding: verified.size === 1 ? (findings[0] ?? "unsure") : "unsure" };
+    return {
+      ...claim,
+      checked: checks.length > 0,
+      finding: claim.source === "owner" ? ("holds" as const) : finding,
+    };
   });
 }

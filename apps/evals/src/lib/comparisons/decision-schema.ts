@@ -1,5 +1,5 @@
 import z from "zod";
-import { side } from "./schemas";
+import { adjudicationSchema, side } from "./schemas";
 
 const direction = z.enum(["incumbent", "challenger", "tie", "split", "unresolved"]);
 export type Direction = z.infer<typeof direction>;
@@ -8,6 +8,7 @@ const qualitySchema = z.object({
   both: z.array(z.string()),
   criterion: z.string(),
   language: z.string(),
+  ownerAffected: z.array(z.string()).optional(),
 });
 
 const deliverySchema = z.object({
@@ -19,6 +20,7 @@ const deliverySchema = z.object({
 export const decisionSchema = z.object({
   cases: z.array(
     z.object({
+      adjudication: adjudicationSchema.optional(),
       caseId: z.string(),
       language: z.string(),
       owner: direction.nullable(),

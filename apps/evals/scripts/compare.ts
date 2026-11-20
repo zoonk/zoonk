@@ -3,7 +3,7 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import { checkRuns } from "@/lib/comparisons/checks";
 import { decide, decisionSchema } from "@/lib/comparisons/decision";
-import { importVerdicts, saveResponse } from "@/lib/comparisons/packets";
+import { importVerdicts, ownerPackets, saveResponse } from "@/lib/comparisons/packets";
 import { prepare } from "@/lib/comparisons/prepare";
 import { imageContent, readPacket } from "@/lib/comparisons/readers";
 import { formatDecision } from "@/lib/comparisons/report";
@@ -13,6 +13,7 @@ import {
   type SealedPacket,
   identifier,
   manifestSchema,
+  ownerResponseSchema,
   readerSchema,
   responseSchema,
 } from "@/lib/comparisons/schemas";
@@ -107,7 +108,11 @@ function readers(image: boolean) {
 }
 
 async function exchange(manifest: Manifest) {
-  const available = manifest.packets.filter((packet) => packet.reader.channel !== "seat");
+  const available = [
+    ...manifest.packets.filter((packet) => packet.reader.channel === "gateway"),
+    ...ownerPackets(manifest),
+  ];
+
   const packet = available.find((entry) => entry.id === options.packet);
 
   if (!packet) {
@@ -124,6 +129,8 @@ async function exchange(manifest: Manifest) {
   }
 
   if (options.export) {
+    const owner = packet.reader.channel === "owner";
+
     const keys = new Set(
       packet.packet.pairs.flatMap((pair) =>
         [pair.A, pair.B].flatMap((item) => (item && typeof item !== "string" ? [item.image] : [])),
@@ -145,8 +152,10 @@ async function exchange(manifest: Manifest) {
         {
           ...(Object.keys(images).length > 0 ? { images } : {}),
           packet: packet.packet,
-          protocol: manifest.protocols.reader,
-          schema: z.toJSONSchema(responseSchema),
+          protocol: owner
+            ? `${manifest.protocols.reader}\nFor the owner’s read, give one overall reason. Reasons per criterion are optional.\n`
+            : manifest.protocols.reader,
+          schema: z.toJSONSchema(owner ? ownerResponseSchema : responseSchema),
         },
         null,
         2,
@@ -198,6 +207,7 @@ async function readOne(packet: SealedPacket, { manifest, outputs }: Comparison) 
       costUsd,
       packet: packet.id,
       passed: saved.passed,
+      ...(saved.failureCodes && { failureCodes: saved.failureCodes, failures: saved.failures }),
       reader: saved.reader,
     })}\n`,
   );

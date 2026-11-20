@@ -60,7 +60,7 @@ export function decide(comparison: Comparison): Decision {
 type Facts = {
   manifest: Comparison["manifest"];
   rows: Decision["rows"];
-  cases: Decision["cases"];
+  cases: ReturnType<typeof caseVotes>;
   claims: ReturnType<typeof verifiedClaims>;
   missing: boolean;
   languages: string[];
@@ -99,7 +99,7 @@ function choose({ manifest, rows, cases, claims, missing, languages, rules }: Fa
     cases.some(
       (item) =>
         item.result === "unresolved" &&
-        (!item.owner || item.owner === "split" || Object.keys(item.votes).length < 2),
+        (!item.legacyOwner || item.legacyOwner === "split" || Object.keys(item.votes).length < 2),
     )
   ) {
     return result("insufficient evidence", "Unresolved cases need an independent read.");
@@ -136,13 +136,15 @@ function eligibleChoice({
   seconds,
   priorities,
 }: {
-  cases: Decision["cases"];
+  cases: ReturnType<typeof caseVotes>;
   incumbent: TableRow;
   savings: number;
   seconds: number;
   priorities: Comparison["manifest"]["priorities"];
 }) {
-  const votes = cases.map((item) => (item.result === "unresolved" ? item.owner : item.result));
+  const votes = cases.map((item) =>
+    item.result === "unresolved" ? item.legacyOwner : item.result,
+  );
 
   if (
     (priorities.comparison?.preference === "canBlock" || savings === 0) &&
@@ -153,7 +155,10 @@ function eligibleChoice({
     return result("retain", "More cases prefer the incumbent.");
   }
 
-  if (priorities.distribution === "shared" && cases.some((item) => !item.owner)) {
+  if (
+    priorities.distribution === "shared" &&
+    cases.some((item) => !item.owner && !item.adjudication)
+  ) {
     return result("insufficient evidence", "Shared content awaits the owner’s blind read.");
   }
 
@@ -173,7 +178,16 @@ function eligibleChoice({
     return result("retain", "No demonstrated improvement.");
   }
 
-  return result("switch", "The challenger meets the accepted trade in every language.");
+  if (priorities.comparison?.trade) {
+    return result("switch", "The challenger meets the accepted trade in every language.");
+  }
+
+  const cost = savings > 0 ? " It costs less per successful delivery." : "";
+
+  return result(
+    "switch",
+    `The challenger has no more cases with a confirmed major problem in any language.${cost}`,
+  );
 }
 
 function result(outcome: Decision["outcome"], reason: string) {
@@ -247,11 +261,15 @@ function evaluateTrades({
       return allowed(known.size)
         ? result(
             "insufficient evidence",
-            "Outstanding major claims together could exceed the accepted trade.",
+            trade
+              ? "Outstanding major claims together could exceed the accepted trade."
+              : `Outstanding major claims could give the challenger more affected cases in ${language}.`,
           )
         : result(
             "retain",
-            `The verified quality deficit exceeds the accepted trade in ${language}.`,
+            trade
+              ? `The confirmed quality deficit exceeds the accepted trade in ${language}.`
+              : `The challenger has more cases with a confirmed major problem in ${language}.`,
           );
     }
   }

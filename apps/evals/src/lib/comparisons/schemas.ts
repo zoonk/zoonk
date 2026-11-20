@@ -51,6 +51,10 @@ export const verdictSchema = z.object({
   pairId: text,
 });
 export const responseSchema = z.object({ verdicts: z.array(verdictSchema) });
+const ownerVerdictSchema = verdictSchema.extend({
+  criteria: z.array(preferenceSchema.extend({ criterion: text, reason: text.optional() })),
+});
+export const ownerResponseSchema = z.object({ verdicts: z.array(ownerVerdictSchema) });
 export const verificationSchema = z.object({
   results: z.array(
     z.object({
@@ -160,17 +164,27 @@ export const manifestSchema = selectionSchema.extend({
 });
 export type Manifest = z.infer<typeof manifestSchema>;
 export type SealedPacket = z.infer<typeof sealedPacketSchema>;
+const failureCode = z.enum(["failed_controls", "invalid_response", "missing_verdicts"]);
+export type FailureCode = z.infer<typeof failureCode>;
 export const attemptSchema = z.object({
   attempt: identifier,
   costUsd: z.number().nonnegative(),
+  failureCodes: z.array(failureCode).optional(),
   failures: z.array(text),
   packetId: digest,
   passed: z.boolean(),
   protocolHash: digest,
   reader: readerSchema,
-  response: responseSchema,
+  response: ownerResponseSchema,
 });
 export type Attempt = z.infer<typeof attemptSchema>;
+export const adjudicationSchema = z.object({
+  blind: z.literal(false),
+  caseId: text,
+  direction: z.enum(["incumbent", "challenger", "tie"]),
+  reason: z.string().trim().min(1),
+});
+export type Adjudication = z.infer<typeof adjudicationSchema>;
 export const checkSchema = z.object({
   caseId: text,
   costUsd: z.number().nonnegative(),
@@ -201,6 +215,7 @@ export const verificationAttemptSchema = z.object({
   response: verificationSchema,
 });
 export type Comparison = {
+  adjudications: Adjudication[];
   manifest: Manifest;
   outputs: Record<string, string | Buffer>;
   attempts: Attempt[];
