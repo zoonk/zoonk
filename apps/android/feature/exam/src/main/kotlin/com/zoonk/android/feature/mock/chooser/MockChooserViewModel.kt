@@ -38,6 +38,9 @@ sealed interface ChooserStatus {
     data class Refused(
         val limit: Limit,
     ) : ChooserStatus
+
+    /** The written test would be graded as it starts, and today's extra grades are used. */
+    data object GradesUsed : ChooserStatus
 }
 
 /**
@@ -234,6 +237,7 @@ class MockChooserViewModel(
                 MockStartOutcome.NotEnoughQuestions -> ChooserStatus.Failed(notEnoughQuestions = true)
                 MockStartOutcome.NeedsQuestions -> ChooserStatus.Failed(notEnoughQuestions = false)
                 MockStartOutcome.PlusRequired -> ChooserStatus.Choosing.also { metTheLock() }
+                MockStartOutcome.GradesUsed -> ChooserStatus.GradesUsed
             }
     }
 

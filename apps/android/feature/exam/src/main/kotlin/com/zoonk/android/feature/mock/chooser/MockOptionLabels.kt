@@ -22,13 +22,27 @@ internal val MockOption.shape: MockShape
 @Composable
 internal fun minutesText(minutes: Long): String = formatDuration(minutes * SECONDS_PER_MINUTE, currentLocale())
 
-/** "Day 1", "Half of day 2", "The full exam", "Half the exam", or a subject. */
+/** An exam of several tests (an objective test in the morning, a written one in the afternoon), when each is offered on its own. */
+internal fun examTests(options: List<MockOption>): Int {
+    val offersEachTest = options.any { it.kind == MockOption.Kind.OBJECTIVE || it.kind == MockOption.Kind.WRITTEN }
+    return if (offersEachTest) options.firstOrNull { it.kind == MockOption.Kind.FULL }?.sections?.size ?: 0 else 0
+}
+
+/** "Day 1", "Half of day 2", "The full exam", "Half the exam", a subject, or one test of several as the notice names it. */
 @Composable
 internal fun mockOptionName(
     option: MockOption,
     severalDays: Boolean,
+    tests: Int = 0,
 ): String {
     val day = (option.day ?: 1).toInt()
+    val section = option.sections?.firstOrNull()
+    if (!severalDays && (option.kind == MockOption.Kind.OBJECTIVE || option.kind == MockOption.Kind.WRITTEN) && section != null) {
+        return section.name
+    }
+    if (!severalDays && option.kind == MockOption.Kind.FULL && tests > 1) {
+        return if (tests == 2) stringResource(R.string.mock_chooser_both_tests) else stringResource(R.string.mock_chooser_all_tests, tests)
+    }
     if (option.kind == MockOption.Kind.AREA) {
         return option.areas.firstOrNull() ?: option.area ?: stringResource(R.string.mock_chooser_one_subject)
     }
@@ -54,6 +68,11 @@ internal fun mockOptionDetail(
     option: MockOption,
     severalDays: Boolean,
 ): String? {
+    // A test of an exam of several says when it happens, if the notice says; its name says the rest.
+    val sections = option.sections.orEmpty()
+    if (sections.isNotEmpty() && option.kind != MockOption.Kind.HALF) {
+        return sections.mapNotNull { it.session }.takeIf { it.isNotEmpty() }?.let { formatList(it, currentLocale()) }
+    }
     val subjects = option.areas.takeIf { severalDays && option.kind != MockOption.Kind.AREA }.orEmpty()
     val parts = option.covers ?: (subjects + option.written)
     return when {
@@ -69,7 +88,8 @@ internal fun mockOptionDetail(
  */
 @Composable
 internal fun mockOptionSize(option: MockOption): String {
-    val questions = option.questions.toInt()
+    // A written test's questions are its tasks, which the objective count leaves out.
+    val questions = (option.sections?.takeIf { it.isNotEmpty() }?.sumOf { it.questions ?: 0 } ?: option.questions).toInt()
     val size = pluralStringResource(R.plurals.mock_chooser_option_size, questions, questions, minutesText(option.minutes))
     val usual = usualMinutes(option) ?: return size
     // Each fact stays on one line, so a narrow row breaks only between them.
