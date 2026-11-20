@@ -7,6 +7,7 @@ import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
 import { type SessionMinutes } from "../session-minutes";
 import { toDayBlockView } from "./day-block-view";
+import { inDayOrder } from "./day-order";
 import { type DayViewFieldsInput, getNextDayBlock, toDayViewFields } from "./day-view-fields";
 import { type ExamPrepAccess } from "./exam-access";
 import { type StudySessionRow } from "./study-session-access";
@@ -36,16 +37,18 @@ export function toStudyBlockViews({
 }): StudyBlockView[] {
   const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
 
-  return blocks.map((block) =>
-    toStudyBlockView({
-      answeredItemIds,
-      block,
-      blockedTestOutChapters,
-      blocks,
-      oftenTestedSkillIds,
-      preparing: preparing.has(block.position),
-      subject: subjects?.get(block.position),
-    }),
+  return inDayOrder(
+    blocks.map((block) =>
+      toStudyBlockView({
+        answeredItemIds,
+        block,
+        blockedTestOutChapters,
+        blocks,
+        oftenTestedSkillIds,
+        preparing: preparing.has(block.position),
+        subject: subjects?.get(block.position),
+      }),
+    ),
   );
 }
 

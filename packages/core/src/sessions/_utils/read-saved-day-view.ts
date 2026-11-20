@@ -15,6 +15,7 @@ import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { type DayBlockInput, toDayBlockView } from "./day-block-view";
+import { inDayOrder } from "./day-order";
 import { getNextDayBlock } from "./day-view-fields";
 import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { loadStudySessionView } from "./load-session-view";
@@ -118,22 +119,24 @@ export async function readSavedDayView({
 
   const savedViews = new Map(view.blocks.map((block) => [block.id, block]));
 
-  const blocks = refill.blocks.map((block) => {
-    const saved = block.id ? savedViews.get(block.id) : undefined;
+  const blocks = inDayOrder(
+    refill.blocks.map((block) => {
+      const saved = block.id ? savedViews.get(block.id) : undefined;
 
-    if (saved) {
-      const { id: _id, ...fields } = saved;
-      return fields;
-    }
+      if (saved) {
+        const { id: _id, ...fields } = saved;
+        return fields;
+      }
 
-    return toDayBlockView({
-      answeredItemIds: new Set(),
-      block,
-      blockedTestOutChapters,
-      blocks: refill.blocks,
-      subject: subjects.get(block.position) ?? null,
-    });
-  });
+      return toDayBlockView({
+        answeredItemIds: new Set(),
+        block,
+        blockedTestOutChapters,
+        blocks: refill.blocks,
+        subject: subjects.get(block.position) ?? null,
+      });
+    }),
+  );
 
   const next = getNextDayBlock(blocks);
 

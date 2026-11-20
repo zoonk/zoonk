@@ -174,6 +174,11 @@ async function openNext({
     return openSessionBlock({ block: next, sessionId: session.id, timeZone, userId });
   }
 
+  // The day isn't over while a mock is still being prepared, so there's no summary yet: Today says when to come back.
+  if (session.blocks.some((block) => block.preparing && block.status === "pending")) {
+    return openingResult({ kind: "today" });
+  }
+
   const seenWithoutPendingRewards = await prisma.studySummaryVisit.findUnique({
     select: { visitId: true },
     where: {

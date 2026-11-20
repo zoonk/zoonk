@@ -20,6 +20,7 @@ import { toBlockPayload } from "./block-payload";
 import { toDayBlockRef } from "./day-block";
 import { getSessionPageView } from "./get-session-page-view";
 import { getStudySessionSummary } from "./get-study-session-summary";
+import { openStudyBlock } from "./open-block";
 import { openStudyDay } from "./open-study-day";
 
 async function savedDay() {
@@ -218,10 +219,20 @@ describe("a saved day whose last scheduled mock becomes unavailable", () => {
 
     const readSummary = () => getStudySessionSummary({ input: {}, sessionId: session.id });
 
-    await expect(getSessionPageView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+    const waiting = await getSessionPageView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(waiting).toMatchObject({
       session: { nextBlockId: null, state: "waiting", waitingFor: "mock" },
       status: "ready",
     });
+
+    expect(
+      waiting.status === "ready" && waiting.session.blocks.map((block) => block.position),
+    ).toStrictEqual([0, 2, 1]);
+
+    await expect(
+      openStudyBlock({ target: { kind: "next", sessionId: session.id }, timeZone: "UTC" }),
+    ).resolves.toStrictEqual({ opening: { kind: "today" }, status: "ready" });
 
     await expect(readSummary()).resolves.toMatchObject({
       status: "ready",
