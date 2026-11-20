@@ -1,8 +1,8 @@
 "use client";
 
 import { FoldRowTitle } from "@/components/fold-row-title";
-import { getScoreClassName } from "@/lib/score";
 import { calculateScore } from "@/lib/score-calculation";
+import { getScoreClassName } from "@/lib/score-class-name";
 import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import {
   type CategoryScore,

@@ -1,4 +1,3 @@
-import { cn } from "@zoonk/ui/lib/utils";
 import { Output, generateText } from "ai";
 import z from "zod";
 import { keyFlawsFor } from "./key-check";
@@ -27,8 +26,6 @@ import {
  */
 const SCORING_JUDGE_MODEL_ID = "openai/gpt-6.2-astra";
 
-const BAD_SCORE = 8;
-const GOOD_SCORE = 9.2;
 const SCORE_STEP_KINDS = ["majorErrors", "minorErrors", "potentialImprovements"] as const;
 
 export function createFixedScore({ conclusion, score }: { conclusion: string; score: number }) {
@@ -134,15 +131,3 @@ function resolveKeyFlaws({
 function getJudgeRun(usage: Parameters<typeof toTokenUsage>[0]): JudgeRun {
   return { modelId: SCORING_JUDGE_MODEL_ID, usage: toTokenUsage(usage) };
 }
-
-export const getScoreClassName = (score: number) => {
-  const isBadScore = score < BAD_SCORE;
-  const isAverageScore = score >= BAD_SCORE && score < GOOD_SCORE;
-  const isGoodScore = score >= GOOD_SCORE;
-
-  return cn({
-    "text-destructive-text": isBadScore,
-    "text-success-text": isGoodScore,
-    "text-warning-text": isAverageScore,
-  });
-};
