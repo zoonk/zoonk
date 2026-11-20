@@ -1,11 +1,8 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
 import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import {
-  listListeningPartsToPrepareStep,
-  preparePartSet,
-  voiceListeningSetStep,
-} from "./steps/listening-sets-steps";
+import { listListeningPartsToPrepareStep, preparePartSet } from "./steps/listening-sets-steps";
+import { voiceListeningRecording } from "./voice-listening-recording";
 
 export type ListeningSetsInput = {
   analytics?: ContentAnalytics;
@@ -21,14 +18,10 @@ export function getListeningSetsToken(goalId: string): string {
   return `listening-sets:${goalId}`;
 }
 
-export async function listeningSetsWorkflow(
-  input: ListeningSetsInput,
+export async function prepareListeningRecordings(
+  { analytics, goalId, userId, wait }: ListeningSetsInput,
+  workflowRunId: string,
 ): Promise<ListeningSetsResult> {
-  "use workflow";
-
-  const { analytics, goalId, userId, wait } = input;
-  const { workflowRunId } = getWorkflowMetadata();
-
   const unready = await listListeningPartsToPrepareStep({ goalId, userId });
 
   if (!unready || unready.parts.length === 0) {
@@ -40,7 +33,7 @@ export async function listeningSetsWorkflow(
   const voiced = await Promise.allSettled(
     unready.parts.map(async (part) => {
       const setId = await preparePartSet({ ...context, exam: unready.exam, part });
-      return setId ? voiceListeningSetStep({ ...context, setId }) : false;
+      return setId ? voiceListeningRecording({ ...context, setId }) : false;
     }),
   );
 
@@ -48,4 +41,12 @@ export async function listeningSetsWorkflow(
     status: "prepared",
     voiced: voiced.filter((result) => result.status === "fulfilled" && result.value).length,
   };
+}
+
+export async function listeningSetsWorkflow(
+  input: ListeningSetsInput,
+): Promise<ListeningSetsResult> {
+  "use workflow";
+
+  return prepareListeningRecordings(input, getWorkflowMetadata().workflowRunId);
 }
