@@ -1,5 +1,5 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
-import { splitLinesAndCells } from "./markdown-table";
+import { mapTextCells, readTextCells } from "./markdown-table";
 import { type MathSpan, findMathSpans, hideMath, toOneLine } from "./math-spans";
 import { type TextLayout } from "./text-flaws";
 
@@ -152,9 +152,9 @@ function wrapLine(line: string): string {
   return hasSameMath(findMathSpans(wrapped), expected) ? wrapped : line;
 }
 
-/** The player reads block text line by line and each table cell on its own. */
+/** The player reads block text line by line and each table cell on its own, and never reads code as math. */
 function toLines({ layout, text }: { layout: TextLayout; text: string }): string[] {
-  return layout === "inline" ? [toOneLine(text)] : splitLinesAndCells(text).flat();
+  return layout === "inline" ? [toOneLine(text)] : readTextCells(text);
 }
 
 function describe({ latex, written }: Pick<BareLatex, "latex" | "written">): string {
@@ -190,7 +190,5 @@ export function wrapBareLatex({ layout, text }: { layout: TextLayout; text: stri
     return wrapped === line ? text : wrapped;
   }
 
-  return splitLinesAndCells(text)
-    .map((cells) => cells.map((cell) => wrapLine(cell)).join("|"))
-    .join("\n");
+  return mapTextCells(text, wrapLine);
 }

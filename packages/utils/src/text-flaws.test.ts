@@ -43,16 +43,43 @@ describe(findUnrenderedMarkdown, () => {
     ]);
   });
 
-  it("finds headings, links, HTML, code fences and quote marks", () => {
+  it("finds headings, links, HTML and quote marks", () => {
     const text = [
       "## Resumo",
       "Veja [a lei](https://example.com/lei).",
       "Linha um<br>linha dois",
-      "```",
       "> citação",
     ].join("\n");
 
-    expect(findUnrenderedMarkdown({ layout: "blocks", text })).toHaveLength(5);
+    expect(findUnrenderedMarkdown({ layout: "blocks", text })).toHaveLength(4);
+  });
+
+  it("reads a code block as code, whatever marks its lines hold", () => {
+    const text = [
+      "O que esta função mostra?",
+      "```python",
+      "# soma tudo",
+      "def total(*args, **kwargs):",
+      "    return sum(args)  # [ver](https://docs.python.org)",
+      "```",
+      "```html",
+      "<div>> oi</div>",
+      "```",
+    ].join("\n");
+
+    expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([]);
+  });
+
+  it("finds a code block that never closes, and one where only a line shows", () => {
+    const open = "Veja:\n```js\nconsole.log(1);\nO console mostra 1.";
+
+    expect(findUnrenderedMarkdown({ layout: "blocks", text: open })).toStrictEqual([
+      expect.stringContaining("never closes"),
+    ]);
+
+    expect(
+      findUnrenderedMarkdown({ layout: "inline", text: "```js\nconsole.log(1);\n```" }),
+    ).toStrictEqual([expect.stringContaining("code fence"), expect.stringContaining("code fence")]);
   });
 
   it("finds a table in a field that shows one line, and rows without a header row", () => {
@@ -78,10 +105,12 @@ describe(findUnrenderedMarkdown, () => {
 });
 
 describe(findPlaceholderText, () => {
-  it("passes real text and quotes with elisions", () => {
+  it("passes real text, quotes with elisions and a template's slots in code", () => {
     expect(
       findPlaceholderText(String.raw`O texto diz que [...] a lei vale, e $\frac{1}{2}$ basta.`),
     ).toStrictEqual([]);
+
+    expect(findPlaceholderText("O Vue mostra:\n```html\n<p>{{ nome }}</p>\n```")).toStrictEqual([]);
   });
 
   it("finds empty text, template slots and instructions left for a writer", () => {

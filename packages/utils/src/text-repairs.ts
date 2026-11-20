@@ -1,3 +1,4 @@
+import { findCodeFenceLines } from "./code-fence";
 import { type InlineMarkupRange, parseInlineMarkupRanges } from "./inline-markup";
 import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
 import { splitAtMath } from "./math-spans";
@@ -70,18 +71,30 @@ function removeInlineMarks({ breakAs, line }: { breakAs: string; line: string })
     .join("\n");
 }
 
+function repairLine({
+  index,
+  line,
+  tableLines,
+}: {
+  index: number;
+  line: string;
+  tableLines: ReadonlySet<number>;
+}): string {
+  return tableLines.has(index)
+    ? splitTableCells(line)
+        .map((cell) => removeInlineMarks({ breakAs: " ", line: cell }))
+        .join("|")
+    : removeInlineMarks({ breakAs: "\n", line: removeLineMarks(line) });
+}
+
+/** Code keeps every character: a `#` comment, `**kwargs` and `<div>` are code, never marks. */
 function repairBlocks(text: string): string {
   const lines = text.split("\n");
   const tableLines = findMarkdownTableLines(lines);
+  const code = findCodeFenceLines(lines);
 
   return lines
-    .map((line, index) =>
-      tableLines.has(index)
-        ? splitTableCells(line)
-            .map((cell) => removeInlineMarks({ breakAs: " ", line: cell }))
-            .join("|")
-        : removeInlineMarks({ breakAs: "\n", line: removeLineMarks(line) }),
-    )
+    .map((line, index) => (code.has(index) ? line : repairLine({ index, line, tableLines })))
     .join("\n");
 }
 
@@ -97,7 +110,7 @@ function repairInline(text: string): string {
 
 /**
  * What code can't repair safely stays for a writer: a table where one line shows, rows with no
- * header, a code fence and other HTML.
+ * header, a code fence where one line shows or one never closed, and other HTML.
  */
 export function repairMarkdown({ layout, text }: { layout: TextLayout; text: string }): string {
   if (findUnrenderedMarkdown({ layout, text }).length === 0) {

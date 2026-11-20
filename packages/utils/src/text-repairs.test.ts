@@ -169,6 +169,14 @@ describe(repairMarkdown, () => {
     );
   });
 
+  it("repairs marks around a code block and keeps every character of the code", () => {
+    const code = ["```python", "# soma", "def f(*args, **kwargs):", "    return [a](b)", "```"];
+
+    expect(repairMarkdown({ layout: "blocks", text: ["## Veja **isto", ...code].join("\n") })).toBe(
+      ["Veja isto", ...code].join("\n"),
+    );
+  });
+
   it("leaves what code can't repair for a writer", () => {
     const table = "| Sensor | mm |\n|---|---:|\n| A | 49,8 |";
     const rows = "| A | 49,8 |\n| B | 50,1 |";

@@ -16,7 +16,40 @@ describe(isUnderlineQuote, () => {
   });
 });
 
+const code = [
+  "O `.then()` espera a vez.",
+  "Neste código, o valor já existe:",
+  "```javascript",
+  "if (pronto) {",
+  "  console.log('fim');",
+  "}",
+  "```",
+  "Mesmo assim, o console mostra fim primeiro.",
+].join("\n");
+
+describe(isUnderlineQuote, () => {
+  it("never points inside code, which the app never marks", () => {
+    expect(isUnderlineQuote({ quote: "console.log('fim');", text: code })).toBe(false);
+    expect(isUnderlineQuote({ quote: "o console mostra fim primeiro", text: code })).toBe(true);
+  });
+});
+
 describe(isExampleQuote, () => {
+  it("takes a code block whole, from the sentence before it to its closing fence", () => {
+    const example = code.split("\n").slice(1, 7).join("\n");
+
+    expect(isExampleQuote({ quote: example, text: code })).toBe(true);
+    expect(isExampleQuote({ quote: code.split("\n").slice(1).join("\n"), text: code })).toBe(true);
+  });
+
+  it("never splits a code block", () => {
+    const halfCode = code.split("\n").slice(1, 5).join("\n");
+    const fromInside = code.split("\n").slice(5).join("\n");
+
+    expect(isExampleQuote({ quote: halfCode, text: code })).toBe(false);
+    expect(isExampleQuote({ quote: fromInside, text: code })).toBe(false);
+  });
+
   it("takes whole sentences with their markup, from a sentence's start to its end", () => {
     expect(isExampleQuote({ quote: "Ana ganha **R$ 3.000** por mês.", text })).toBe(true);
 

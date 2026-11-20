@@ -1,3 +1,4 @@
+import { findCodeFenceLines, findCodeFences, removeCodeFences } from "./code-fence";
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { collectJsonStrings } from "./json";
 import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
@@ -115,11 +116,26 @@ function isStrayRow(line: string): boolean {
   return trimmed.startsWith("|") && (trimmed.match(/\|/gu)?.length ?? 0) >= 2;
 }
 
+function findOpenFences(lines: readonly string[]): string[] {
+  return findCodeFences(lines).flatMap(({ closed, start }) =>
+    closed
+      ? []
+      : [
+          `Opens a code block it never closes, so every line after it shows as code: ${quote(lines[start] ?? "")}. End the code with a line of three backticks.`,
+        ],
+  );
+}
+
 function findBlockProblems(text: string): string[] {
   const lines = text.split(/\r?\n/u);
   const tableLines = findMarkdownTableLines(lines);
+  const code = findCodeFenceLines(lines);
 
-  return lines.flatMap((line, index) => {
+  const problems = lines.flatMap((line, index) => {
+    if (code.has(index)) {
+      return [];
+    }
+
     if (tableLines.has(index)) {
       return splitTableCells(line).flatMap((cell) => findLineProblems(cell));
     }
@@ -134,6 +150,8 @@ function findBlockProblems(text: string): string[] {
       ...findLineProblems(line),
     ];
   });
+
+  return [...problems, ...findOpenFences(lines)];
 }
 
 export function hasTableRows(text: string): boolean {
@@ -154,8 +172,8 @@ function findInlineProblems(text: string): string[] {
 }
 
 /**
- * Must match what the player renders: emphasis, inline code, `$...$` math, short lists and GFM
- * tables in block text, and one line of emphasis, code and math in inline text.
+ * Must match what the player renders: emphasis, inline code, `$...$` math, short lists, GFM tables
+ * and fenced code blocks in block text, and one line of emphasis, code and math in inline text.
  */
 export function findUnrenderedMarkdown({
   layout,
@@ -203,14 +221,16 @@ const PLACEHOLDERS: readonly RegExp[] = [
   /<\s*(?:insert|inserir|insira|placeholder|nome|name)\b[^>]*>/iu,
 ];
 
-/** An elision in a quote ("[...]") is real text. */
+/** An elision in a quote ("[...]") is real text, and so is code (a template's `{{ name }}`). */
 export function findPlaceholderText(text: string): string[] {
   if (EMPTY.test(text)) {
     return ["The text is empty."];
   }
 
+  const prose = removeCodeFences(text);
+
   return PLACEHOLDERS.flatMap((pattern) => {
-    const match = pattern.exec(text);
+    const match = pattern.exec(prose);
     return match ? [`Has a placeholder a writer left: ${quote(match[0])}.`] : [];
   });
 }

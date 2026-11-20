@@ -1,6 +1,6 @@
 import { isJsonObject } from "./json";
 import { getFormattingLocale } from "./locale";
-import { splitLinesAndCells } from "./markdown-table";
+import { readTextCells } from "./markdown-table";
 import { splitAtMath } from "./math-spans";
 
 /**
@@ -69,9 +69,7 @@ function splitText({ latex, text }: { latex: boolean; text: string }): TextParts
     return { math: [written], prose: "" };
   }
 
-  const segments = splitLinesAndCells(written)
-    .flat()
-    .flatMap((cell) => splitAtMath(cell));
+  const segments = readTextCells(written).flatMap((cell) => splitAtMath(cell));
 
   return {
     math: segments.flatMap((segment) => (segment.kind === "text" ? [] : [segment.text])),

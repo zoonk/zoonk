@@ -1,3 +1,5 @@
+import { findCodeFences, removeCodeFences } from "@zoonk/utils/code-fence";
+
 /** A `$` after a capital is a currency sign ("R$ 30"), which the rich text leaves as text. */
 const MARKUP = /[*`|\n]|(?<!\p{Lu})\$/u;
 const SENTENCE_END = /[.!?…:;]["'”’»)\]」』]*$/u;
@@ -6,6 +8,8 @@ const CJK_SENTENCE_END = /[。！？]$/u;
 const CJK_SENTENCE_BREAK = /[。！？]\s*$/u;
 const SENTENCE_BREAK = /[.!?…:;]["'”’»)\]」』]*\s+$/u;
 const LINE_BREAK = /\n\s*$/u;
+/** A code block ends where its closing fence does, and the next line starts a new block. */
+const CLOSING_FENCE = /(?:^|\n) {0,3}`{3,}$/u;
 /** In cased scripts a sentence never starts lowercase: "She said “Hello.” and left." */
 const LOWERCASE_START = /^\p{Ll}/u;
 const BOLD = "**";
@@ -19,7 +23,7 @@ export function isUnderlineQuote({ quote, text }: { quote: string; text: string 
     quote.length > 0 &&
     quote.trim() === quote &&
     !MARKUP.test(quote) &&
-    text.replaceAll(BOLD, "").includes(quote)
+    removeCodeFences(text).replaceAll(BOLD, "").includes(quote)
   );
 }
 
@@ -47,7 +51,39 @@ function endsSentence({ after, quote }: { after: string; quote: string }): boole
 
   return (
     !LOWERCASE_START.test(next) &&
-    ((SENTENCE_END.test(quote) && /^\s/u.test(after)) || CJK_SENTENCE_END.test(quote))
+    ((SENTENCE_END.test(quote) && /^\s/u.test(after)) ||
+      CJK_SENTENCE_END.test(quote) ||
+      (CLOSING_FENCE.test(quote) && after.startsWith("\n")))
+  );
+}
+
+/** Where each code block starts and ends in the text, counted in characters. */
+function findCodeSpans(text: string): { end: number; start: number }[] {
+  const lines = text.split("\n");
+
+  const starts = lines.reduce<number[]>(
+    (offsets, line, index) => [...offsets, (offsets[index] ?? 0) + line.length + 1],
+    [0],
+  );
+
+  return findCodeFences(lines).map(({ end, start }) => ({
+    end: (starts[end] ?? text.length + 1) - 1,
+    start: starts[start] ?? 0,
+  }));
+}
+
+/** The example box splits the text around the quote, so it takes a code block whole or not at all. */
+function keepsCodeWhole({
+  end,
+  start,
+  text,
+}: {
+  end: number;
+  start: number;
+  text: string;
+}): boolean {
+  return findCodeSpans(text).every(
+    (code) => end <= code.start || start >= code.end || (start <= code.start && end >= code.end),
   );
 }
 
@@ -65,7 +101,8 @@ export function isExampleQuote({ quote, text }: { quote: string; text: string })
   const after = text.slice(start + quote.length);
 
   return (
-    countBold(quote) % 2 === 0 &&
+    countBold(removeCodeFences(quote)) % 2 === 0 &&
+    keepsCodeWhole({ end: start + quote.length, start, text }) &&
     startsSentence({ before: text.slice(0, start), quote }) &&
     endsSentence({ after, quote })
   );
