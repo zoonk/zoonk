@@ -1,21 +1,22 @@
 "use client";
 
+import { CodeLabelsContext } from "@zoonk/learn/code";
 import { LessonQuestionMarkdown } from "@zoonk/player/tutor/markdown";
-import { NextIntlClientProvider } from "next-intl";
 import Link from "next/link";
 
 const appLinks = { Link, verified: false };
 
-/** Admin reads in English, so the answer's labels, such as a code block's, show as written. */
+const CODE_LABELS = { code: "Code", scrollLeft: "Scroll left", scrollRight: "Scroll right" };
+
 export function AdminAnswerMarkdown({ answer }: { answer: string }) {
   return (
-    <NextIntlClientProvider locale="en">
+    <CodeLabelsContext value={CODE_LABELS}>
       <LessonQuestionMarkdown
         answer={answer}
         appLinks={appLinks}
         isAnimating={false}
         isStreaming={false}
       />
-    </NextIntlClientProvider>
+    </CodeLabelsContext>
   );
 }

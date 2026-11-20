@@ -238,6 +238,10 @@ const TUTOR_MARKDOWN_CLASS = cn(
   "**:data-[streamdown=table-wrapper]:bg-background [&_[data-streamdown=table-wrapper]>div:has(>table)]:scroll-fade-x **:data-[streamdown=table-wrapper]:wrap-normal [&_[data-streamdown=table-wrapper]>div:has(>table)]:border-0 [&_[data-streamdown=table-wrapper]>div:has(>table)]:bg-transparent",
 );
 
+/**
+ * Admin renders answers without translations: code takes its labels from Admin, and other parts
+ * that translate show only after a click.
+ */
 export function TutorMarkdown({
   answer,
   appLinks,

@@ -1,7 +1,7 @@
 import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { Fragment } from "react";
+import { Fragment, createContext, use } from "react";
 import { breaksBetween, withBreakPoints } from "./code-breaks";
 import { type CodeTokenKind } from "./code-languages";
 import { type CodeToken, codeLineText, highlightCode } from "./highlight-code";
@@ -140,24 +140,54 @@ export function CodeLine({
  */
 type CodeFrameVariant = "inset" | "panel";
 
+type CodeLabels = { code: string; scrollLeft: string; scrollRight: string };
+
 /**
- * Lines of code under one sideways scroller, for when a line is wider than the room (`label` says
- * what scrolls). `field` sizes it for a field inside it.
+ * Code's labels, given where no translations load, such as Admin; elsewhere code names them in the
+ * learner's language.
  */
-export function CodeFrame({
-  children,
-  className,
-  field = false,
-  label,
-  variant = "inset",
-}: {
+export const CodeLabelsContext = createContext<CodeLabels | null>(null);
+
+function TranslatedCodeLabels({ children }: { children: React.ReactNode }) {
+  const t = useExtracted();
+
+  const labels = {
+    code: t({
+      description:
+        "Name of a block of program code in a lesson or a question, read by screen readers.",
+      message: "Code",
+    }),
+    scrollLeft: t("Scroll left"),
+    scrollRight: t("Scroll right"),
+  };
+
+  return <CodeLabelsContext value={labels}>{children}</CodeLabelsContext>;
+}
+
+type CodeFrameProps = {
   children: React.ReactNode;
   className?: string;
   field?: boolean;
   label: string;
   variant?: CodeFrameVariant;
-}) {
-  const t = useExtracted();
+};
+
+/**
+ * Lines of code under one sideways scroller, for when a line is wider than the room (`label` says
+ * what scrolls). `field` sizes it for a field inside it.
+ */
+export function CodeFrame(props: CodeFrameProps) {
+  const labels = use(CodeLabelsContext);
+
+  if (!labels) {
+    return (
+      <TranslatedCodeLabels>
+        <CodeFrame {...props} />
+      </TranslatedCodeLabels>
+    );
+  }
+
+  const { children, className, field = false, label, variant = "inset" } = props;
 
   return (
     <HorizontalScroll
@@ -170,7 +200,7 @@ export function CodeFrame({
         className,
       )}
       data-variant={variant}
-      labels={{ left: t("Scroll left"), right: t("Scroll right") }}
+      labels={{ left: labels.scrollLeft, right: labels.scrollRight }}
     >
       <div
         className={cn(
@@ -274,18 +304,15 @@ export function InlineCode({ children }: { children: React.ReactNode }) {
 
 /** A fenced block in a lesson's or a question's text. */
 export function CodeBlock({ code, language }: { code: string; language: string | null }) {
-  const t = useExtracted();
+  const labels = use(CodeLabelsContext);
 
-  return (
-    <CodeListing
-      code={code}
-      label={t({
-        description:
-          "Name of a block of program code in a lesson or a question, read by screen readers.",
-        message: "Code",
-      })}
-      language={language}
-      variant="panel"
-    />
-  );
+  if (!labels) {
+    return (
+      <TranslatedCodeLabels>
+        <CodeBlock code={code} language={language} />
+      </TranslatedCodeLabels>
+    );
+  }
+
+  return <CodeListing code={code} label={labels.code} language={language} variant="panel" />;
 }
