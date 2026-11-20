@@ -1,10 +1,15 @@
 // The Trickster phase challenge: its intro (/challenge), a question mid-duel and the win (/checkpoint).
 import { ChallengeScreen } from "@repo/packages/learn/src/challenge/challenge-screen.tsx";
 import { CheckpointScreen } from "@repo/packages/learn/src/checkpoints/checkpoint-screen.tsx";
-import { useEffect } from "react";
+import { type ComponentProps, useEffect } from "react";
+import { actions } from "../learn/common";
 import { type Lang, story } from "../story";
 import { buddyStatus, tabBuddy } from "./buddy-energy";
-import { Learn, NOOP_ASYNC } from "./shell";
+import { Learn } from "./shell";
+
+type ChallengeProps = ComponentProps<typeof ChallengeScreen>;
+type CheckpointProps = ComponentProps<typeof CheckpointScreen>;
+type Checkpoint = CheckpointProps["checkpoint"];
 
 /**
  * Answer options for story.exam.mistakes, by the same index; `right` is the correct option.
@@ -48,7 +53,7 @@ function topics(lang: Lang) {
   );
 }
 
-function challengeView(lang: Lang, won: boolean) {
+function challengeView(lang: Lang, won: boolean): ChallengeProps["challenge"] {
   return {
     blockId: "block",
     call: null,
@@ -64,7 +69,6 @@ function challengeView(lang: Lang, won: boolean) {
     minutes: 12,
     mock: false,
     netScored: false,
-    nextStudyDate: null,
     number: null,
     passMark: PASS_MARK,
     phase: { index: 0, name: "" },
@@ -85,14 +89,14 @@ function challengeView(lang: Lang, won: boolean) {
     waitReason: null,
     written: [],
     wrongPenalty: 0,
-  } as any;
+  };
 }
 
 function question(
   lang: Lang,
   index: number,
   answered: { blank: boolean; isCorrect: boolean } | null,
-) {
+): Checkpoint["questions"][number] {
   const [text] = story[lang].exam.mistakes[index]!;
   const choice = OPTIONS[lang][index];
 
@@ -102,22 +106,26 @@ function question(
     citation: null,
     context: null,
     drill: null,
+    entry: null,
     format: "multipleChoice",
     image: null,
     itemId: `item-${index}`,
     mistakeId: null,
-    options: choice?.options ?? null,
+    options: choice?.options ?? [],
     placement: false,
+    left: null,
     question: text,
     quoted: false,
+    right: null,
     select: 1,
     set: null,
     skillId: `skill-${index}`,
+    unit: null,
     visual: null,
   };
 }
 
-function checkpointView(lang: Lang, won: boolean) {
+function checkpointView(lang: Lang, won: boolean): Checkpoint {
   const verdicts = [true, true, false];
   const asked = ORDER.map((index, position) =>
     question(
@@ -159,11 +167,11 @@ function checkpointView(lang: Lang, won: boolean) {
     retry: null,
     reward: REWARD,
     sessionId: "session",
-    status: won ? "completed" : "inProgress",
+    status: won ? "completed" : "active",
     timeLimitMinutes: null,
     title: null,
     trueFalseLabels: "trueFalse",
-  } as any;
+  };
 }
 
 /** Picks an option, then confirms it, as the learner's taps would. */
@@ -197,24 +205,23 @@ function Duel({ lang, q, won }: { lang: Lang; q: URLSearchParams; won: boolean }
   const pick = q.get("pick") ? Number(q.get("pick")) : null;
   const buddy = tabBuddy(buddyStatus({ energy: 82, lang, studied: true }));
 
-  const actions = {
-    answer: async ({ answer, itemId }: any) => {
+  const checkpointActions = actions<CheckpointProps["actions"]>({
+    answer: async ({ answer, itemId }) => {
       const index = Number(itemId.split("-")[1]);
       const right = OPTIONS[lang][index]?.right;
       return {
-        isCorrect: answer.selectedIndex === right,
+        isCorrect: "selectedIndex" in answer && answer.selectedIndex === right,
         reinforcementLessons: null,
         transcript: null,
       };
     },
-    finish: NOOP_ASYNC,
-  };
+  });
 
   return (
     <>
       <CheckpointScreen
-        actions={actions as any}
-        buddy={buddy as any}
+        actions={checkpointActions}
+        buddy={buddy}
         checkpoint={checkpoint}
         hrefs={{ continue: "/today", exit: "/today" }}
       />
@@ -226,7 +233,7 @@ function Duel({ lang, q, won }: { lang: Lang; q: URLSearchParams; won: boolean }
 function Intro({ lang, won }: { lang: Lang; won: boolean }) {
   return (
     <ChallengeScreen
-      actions={{ move: NOOP_ASYNC, start: NOOP_ASYNC, undoMove: NOOP_ASYNC }}
+      actions={actions<ChallengeProps["actions"]>({})}
       challenge={challengeView(lang, won)}
       hrefs={{ exit: "/today", open: won ? "/checkpoint/block" : null }}
       moved={null}

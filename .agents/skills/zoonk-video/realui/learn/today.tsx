@@ -15,7 +15,16 @@ import {
 } from "@repo/packages/learn/src/today/today-context.tsx";
 import { TodayScreen } from "@repo/packages/learn/src/today/today-screen.tsx";
 import { useEffect } from "react";
-import { CAREER_GOAL_ID, S, TabShell, ZU, actions, noop, type ViewProps } from "./common";
+import {
+  CAREER_GOAL_ID,
+  MISSION_LINKS,
+  S,
+  TabShell,
+  ZU,
+  actions,
+  noop,
+  type ViewProps,
+} from "./common";
 
 const DAY_MS = 86_400_000;
 const utc = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
@@ -352,19 +361,7 @@ const ACTIONS = actions<TodayActions>({
   examHref: "/exam",
   lessonAgainHref: (id: string) => `/learn/${id}`,
   lessonHref: () => null,
-  missionLinks: {
-    hrefs: {
-      areaPractice: (areaId: string) => `/practice/${areaId}`,
-      buddy: "/buddy",
-      call: (chapterId: string) => `/call/${chapterId}`,
-      mistakesPractice: "/mistakes/practice",
-      mockChooser: "/mock/new",
-      pattern: (patternId: string) => `/pattern/${patternId}`,
-      pronunciation: "/pronunciation",
-    },
-    openBlock: async () => true,
-    openStep: async () => true,
-  },
+  missionLinks: MISSION_LINKS,
   mistakesHref: "/mistakes",
   plusHref: "/subscription",
   refresh: noop,

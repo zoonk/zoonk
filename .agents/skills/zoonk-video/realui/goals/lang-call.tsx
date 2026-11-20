@@ -1,17 +1,19 @@
 import { ConversationLive } from "@repo/packages/learn/src/language/conversation/conversation-live.tsx";
 // The practice call (/conversation/[id]) mid-call and after it, plus the IELTS speaking mock result.
 import { ConversationScreen } from "@repo/packages/learn/src/language/conversation/conversation-screen.tsx";
-import { useEffect } from "react";
+import { type ComponentProps, useEffect } from "react";
+import { actions } from "../learn/common";
 import { story, type Lang } from "../story";
 import { LangLearn as Learn } from "./lang-frame";
-import { NOOP, NOOP_ASYNC } from "./shell";
+import { NOOP } from "./shell";
+
+type ScreenProps = ComponentProps<typeof ConversationScreen>;
+type LiveProps = ComponentProps<typeof ConversationLive>;
+type Conversation = ScreenProps["conversation"];
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 
-/**
- * Call details story.ts doesn't hold yet (objective labels, the learner's line the fix quotes, the
- * second word's respelling). Values in story.language.call of the same name win.
- */
+/** Call details story.ts doesn't hold: objective labels, the learner's line the fix quotes, the second word's respelling. */
 const CALL_EXTRA = {
   en: {
     objectives: [
@@ -51,14 +53,13 @@ const CALL_EXTRA = {
 
 function callParts(lang: Lang) {
   const language = story[lang].language;
-  const call = language.call as any;
-  const extra = CALL_EXTRA[lang] as any;
-  const [role, place = ""] = String(call.role).split(" · ");
-  const objectives: [string, string][] = call.objectives ?? extra.objectives;
-  return { call, extra, language, objectives, place, role };
+  const call = language.call;
+  const extra = CALL_EXTRA[lang];
+  const [role = "", place = ""] = String(call.role).split(" · ");
+  return { call, extra, language, objectives: extra.objectives, place, role };
 }
 
-function conversationView(lang: Lang, met: number[]) {
+function conversationView(lang: Lang, met: readonly number[]): Conversation {
   const { call, language, objectives, place, role } = callParts(lang);
 
   return {
@@ -84,33 +85,49 @@ function conversationView(lang: Lang, met: number[]) {
     targetLanguage: language.target,
     title: language.units[0][0],
     unit: { chapterId: id(3), title: language.units[0][0] },
-  } as any;
+  };
 }
 
 const HREFS = { exit: "/today", next: "/today" };
-const ACTIONS = { complete: NOOP_ASYNC } as any;
+const ACTIONS = actions<ScreenProps["actions"]>({});
 
 export function CallLive({ lang }: { lang: Lang }) {
   const { call, extra, objectives } = callParts(lang);
   const conversation = conversationView(lang, []);
 
-  const live = {
+  const turns = call.lines.map(([who, text]) => ({
+    speaker: who === "me" ? ("learner" as const) : ("character" as const),
+    text,
+  }));
+  const metLabels = [objectives[extra.met]?.[0] ?? ""];
+  const live: LiveProps["call"] = {
+    cancel: NOOP,
+    cancelStart: NOOP,
+    continuing: false,
     elapsedSeconds: 74,
     error: null,
-    finish: NOOP_ASYNC,
+    finish: async () => null,
+    getCallSoFar: () => ({
+      connectionId: null,
+      examCuesSent: 0,
+      metLabels,
+      spokenMs: 74_000,
+      turns: turns.map((turn) => ({ ...turn, endMs: null, startMs: null })),
+      usedHelp: false,
+    }),
     hangUp: NOOP,
-    isCapturing: true,
-    isPlaying: true,
     limit: null,
-    limitNear: null,
-    limitSeconds: 300,
-    metLabels: [objectives[extra.met]?.[0]],
+    markHelpUsed: NOOP,
+    metLabels,
     micBlocked: false,
+    microphoneProblem: null,
     muted: false,
+    onTyping: NOOP,
     phase: "live",
     reconnecting: false,
     sendText: NOOP,
-    start: NOOP_ASYNC,
+    settle: async () => null,
+    start: async () => {},
     toggleMute: NOOP,
     turn: {
       characterSpeaking: false,
@@ -121,11 +138,9 @@ export function CallLive({ lang }: { lang: Lang }) {
       saidGoodbye: false,
       spokeOutLoud: true,
     },
-    turns: call.lines.map(([who, text]: [string, string]) => ({
-      speaker: who === "me" ? "learner" : "character",
-      text,
-    })),
-  } as any;
+    turns,
+    usedHelp: false,
+  };
 
   return (
     <Learn>
@@ -163,10 +178,10 @@ export function CallFeedback({ lang, state }: { lang: Lang; state: string }) {
   const { call, extra, language, objectives } = callParts(lang);
   useAdvance(Math.max(0, FEEDBACK_STEPS.indexOf(state)));
 
-  const respellings: Record<string, [string, string]> = { ...extra.respellings };
+  const respellings: Record<string, readonly [string, string]> = { ...extra.respellings };
   respellings[language.word.word] = [language.word.respelling, language.word.tip];
 
-  const pronunciation = (call.words as string[]).map((word) => {
+  const pronunciation = call.words.map((word) => {
     const known =
       respellings[word] ??
       (word.startsWith(language.word.word)
@@ -175,22 +190,16 @@ export function CallFeedback({ lang, state }: { lang: Lang; state: string }) {
     return { respelling: known?.[0] ?? "", tip: known?.[1] ?? "", word };
   });
 
-  const conversation = {
+  const conversation: Conversation = {
     ...conversationView(lang, extra.metAfter),
     result: {
       brainPower: 30,
       feedback: {
         encouragement: call.wentWell,
-        improve: {
-          better: call.better ?? extra.better,
-          said: call.said ?? extra.said,
-          why: call.improve,
-        },
+        improve: { better: extra.better, said: extra.said, why: call.improve },
         kind: "call",
         pronunciation,
-        wentWell: call.lines
-          .filter(([who]: [string]) => who === "me")
-          .map(([, text]: [string, string]) => text),
+        wentWell: call.lines.filter(([who]) => who === "me").map(([, text]) => text),
       },
       passed: true,
       spokenSeconds: 160,
@@ -216,11 +225,9 @@ const SPEAKING_STEPS = ["band", "criteria", "focus"];
 /** Story's band range ("6.5–7.0"), with criteria around it (fluency the focus). */
 export function SpeakingResult({ lang, state }: { lang: Lang; state: string }) {
   useAdvance(Math.max(0, SPEAKING_STEPS.indexOf(state)));
-  const speaking = ((story[lang].exam as any).speaking ?? story.en.exam.speaking) as {
-    band: string;
-    exam: string;
-  };
-  const [low, high = low] = speaking.band.split(/[–-]/).map(Number);
+  // The IELTS mock belongs to the English story's exam; both languages show its band.
+  const { speaking } = story.en.exam;
+  const [low = 0, high = low] = speaking.band.split(/[–-]/).map(Number);
   const language = story[lang].language;
 
   const criteria = [
@@ -228,7 +235,8 @@ export function SpeakingResult({ lang, state }: { lang: Lang; state: string }) {
     ["lexicalResource", low, high],
     ["grammar", low, low],
     ["pronunciation", high, high],
-  ].map(([criterion, bandLow, bandHigh]) => ({
+  ] as const;
+  const scored = criteria.map(([criterion, bandLow, bandHigh]) => ({
     bandHigh,
     bandLow,
     criterion,
@@ -236,7 +244,7 @@ export function SpeakingResult({ lang, state }: { lang: Lang; state: string }) {
     tip: "",
   }));
 
-  const conversation = {
+  const conversation: Conversation = {
     ...conversationView(lang, []),
     exam: "ielts",
     kind: "speakingMock",
@@ -244,7 +252,7 @@ export function SpeakingResult({ lang, state }: { lang: Lang; state: string }) {
     result: {
       brainPower: 40,
       feedback: {
-        criteria,
+        criteria: scored,
         exam: "ielts",
         focus: "fluencyCoherence",
         kind: "speakingMock",
@@ -264,7 +272,7 @@ export function SpeakingResult({ lang, state }: { lang: Lang; state: string }) {
       <ConversationScreen
         actions={ACTIONS}
         buddy={null}
-        conversation={conversation as any}
+        conversation={conversation}
         hrefs={HREFS}
       />
     </Learn>

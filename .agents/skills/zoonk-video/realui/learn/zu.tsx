@@ -14,7 +14,7 @@ import { type LessonTutorConfig } from "@repo/packages/player/src/lesson/tutor/l
 import { TutorConversation } from "@repo/packages/player/src/questions/tutor-conversation.tsx";
 import { useEffect, useMemo } from "react";
 import { buddyGrowth } from "../goals/buddy-energy";
-import { CAREER_GOAL_ID, S, TabShell, actions, type ViewProps } from "./common";
+import { CAREER_GOAL_ID, MISSION_LINKS, S, TabShell, actions, type ViewProps } from "./common";
 
 const TODAY_ISO = "2026-11-03";
 
@@ -194,18 +194,7 @@ function ZuTab({ lang, q, state }: ViewProps) {
             const change = planChange(decided === "applied");
             return decided === "seen" ? { ...change, seen: true } : { ...change, status: decided };
           },
-          missionLinks: {
-            hrefs: {
-              areaPractice: noopHref,
-              buddy: "/buddy",
-              call: noopHref,
-              mistakesPractice: "/mistakes",
-              mockChooser: "/mock/new",
-              pattern: noopHref,
-              pronunciation: "/speaking",
-            },
-            openBlock: async () => false,
-          },
+          missionLinks: MISSION_LINKS,
           saveBuddy: async () => true,
           tools: actions<TutorToolActions>({
             hrefs: {

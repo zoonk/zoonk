@@ -1,9 +1,14 @@
+import { type SyllabusView } from "@repo/packages/core/src/view-models/syllabus/syllabus-contract.ts";
 // The exam goal's Plan tab, built from story.exam.
 import { JourneyScreen } from "@repo/packages/learn/src/journey/journey-screen.tsx";
 import { getPlanTopics } from "@repo/packages/learn/src/journey/preparation/study-counts.ts";
-import { useEffect } from "react";
+import { type ComponentProps, useEffect } from "react";
+import { actions } from "../learn/common";
+import { preparationAt } from "../learn/plan";
 import { story, type Lang } from "../story";
-import { AppFrame, NOOP, NOOP_ASYNC } from "./shell";
+import { AppFrame, NOOP } from "./shell";
+
+type Props = ComponentProps<typeof JourneyScreen>;
 
 const TODAY = "2026-11-03";
 const WEEK = [
@@ -30,15 +35,17 @@ function addDays(iso: string, days: number) {
   return date.toISOString().slice(0, 10);
 }
 
+type Phase = Props["plan"]["phases"][number];
+
 function phase(
   index: number,
-  kind: string,
-  state: string,
+  kind: Phase["kind"],
+  state: Phase["state"],
   startDate: string,
   endDate: string,
   done: number,
   total: number,
-) {
+): Phase {
   return {
     challengeLeftOut: false,
     chapterCount: 6,
@@ -48,7 +55,7 @@ function phase(
       locked: false,
       planItemId: `boss-${index}`,
       state: "upcoming",
-      when: "later",
+      when: "date",
     },
     endDate,
     hours: 20,
@@ -59,20 +66,21 @@ function phase(
     milestone: null,
     mocks: { count: 0, nextDate: null },
     name: "",
+    notPlannedReason: null,
     short: null,
     startDate,
     state,
   };
 }
 
-export function examPlanView(lang: Lang) {
+export function examPlanView(lang: Lang): Props["plan"] {
   const exam = story[lang].exam;
   const date = exam.date;
   const span = Math.round((new Date(date).getTime() - new Date(TODAY).getTime()) / 86400000);
   const q = Math.round(span / 4);
 
   return {
-    access: { freeUntil: null, freeWeekOver: false, mocksRequirePlus: false },
+    access: { mocksRequirePlus: false },
     areas: exam.subjects.map((subject) => ({
       focusPart: null,
       focused: false,
@@ -109,6 +117,7 @@ export function examPlanView(lang: Lang) {
     },
     end: null,
     goalId: "exam",
+    languageAim: null,
     notice: null,
     ownLevel: null,
     fitOffer: null,
@@ -136,7 +145,13 @@ export function examPlanView(lang: Lang) {
       targetDateEstimated: false,
       targetDateNamedMonth: false,
       weekdayMinutes: [0, 45, 45, 45, 45, 45, 0],
-      shape: "weekdays",
+      shape: {
+        canDiffer: true,
+        weekdayDays: [1, 2, 3, 4, 5],
+        weekdays: exam.minutesPerDay,
+        weekend: null,
+        weekendDays: [0, 6],
+      },
     },
     status: { kind: "onTrack" },
     steering: {
@@ -155,22 +170,22 @@ export function examPlanView(lang: Lang) {
         state:
           day < TODAY ? (day === WEEK[0] ? "rest" : "done") : day === TODAY ? "today" : "upcoming",
       })),
-      endDate: WEEK[6],
-      startDate: WEEK[0],
+      endDate: "2026-11-07",
+      startDate: "2026-11-01",
     },
-    weekTime: { goalMinutes: 225, studiedMinutes: 52 },
+    weekTime: { studiedMinutes: 52, targetMinutes: 225 },
     writtenPractice: null,
-  } as any;
+  };
 }
 
-export function examSyllabus(lang: Lang) {
+export function examSyllabus(lang: Lang): SyllabusView {
   const exam = story[lang].exam;
 
   return {
     courseWeights: null,
     examDocument: "notice",
     fromMaterial: false,
-    goal: { id: "exam", kind: "exam", title: exam.title },
+    goal: { displayName: exam.title, id: "exam", kind: "exam", title: exam.title },
     kind: "notice",
     knownTopicsReturn: "practice",
     lessons: { done: 14, known: 2, total: 120 },
@@ -207,7 +222,7 @@ export function examSyllabus(lang: Lang) {
     topicCount: 0,
     topicsMapped: true,
     writtenPractice: null,
-  } as any;
+  };
 }
 
 /** Taps the first element matching `selector` once the screen has painted (opens a sheet for a still). */
@@ -228,31 +243,21 @@ export function ExamPlan({ lang, state }: { lang: Lang; state?: string }) {
   return (
     <AppFrame goal="exam" lang={lang} tab="journey">
       <JourneyScreen
-        actions={{
-          adviseOnBases: NOOP_ASYNC,
-          change: NOOP_ASYNC,
-          chooseExamOption: NOOP_ASYNC,
-          chooseTools: NOOP_ASYNC,
-          decide: NOOP_ASYNC,
-          findTimeToCover: NOOP_ASYNC,
-          preview: NOOP_ASYNC,
-        }}
+        actions={actions<Props["actions"]>({})}
         end={{ certificates: null, next: null }}
         goal={{ displayName: exam.title, kind: "exam" }}
-        goalStatus={{ onSetStatus: NOOP_ASYNC, resume: false, status: "active" } as any}
-        links={
-          {
-            challenge: (id: string) => `/challenge/${id}`,
-            chapter: (id: string) => `/content/chapters/${id}`,
-            completedLessons: null,
-            course: () => "/course",
-            exam: "/exam",
-            focusTest: "/focus-test",
-            logbook: "/logbook",
-            mindMaps: null,
-            subject: (key: string) => `/plan/${key}`,
-          } as any
-        }
+        goalStatus={{ onSetStatus: async () => "saved", resume: false, status: "active" }}
+        links={{
+          challenge: (id: string) => `/challenge/${id}`,
+          chapter: (id: string) => `/content/chapters/${id}`,
+          completedLessons: null,
+          course: () => "/course",
+          exam: "/exam",
+          focusTest: "/focus-test",
+          logbook: "/logbook",
+          mindMaps: null,
+          subject: (key: string) => `/plan/${key}`,
+        }}
         plan={plan}
         refresh={NOOP}
         shareHref="/plan-link/plan"
@@ -260,19 +265,7 @@ export function ExamPlan({ lang, state }: { lang: Lang; state?: string }) {
           forExam: true,
           kind: "preparation",
           lessons: syllabus.lessons,
-          preparation: {
-            areas: [],
-            components: {},
-            estimatedScore: null,
-            goalId: "exam",
-            sections: [],
-            skills: {},
-            stage: "learning",
-            status: null,
-            value: exam.preparation,
-            weakestAreaId: null,
-            weekGain: 0.03,
-          } as any,
+          preparation: preparationAt({ goalId: "exam", value: exam.preparation, weekGain: 0.03 }),
           stillNeeded: { areas: [], left: 0, minutes: 0, rule: "examWeighted" },
           topics: getPlanTopics(syllabus),
         }}

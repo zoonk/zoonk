@@ -6,6 +6,7 @@ import {
   type PlanChapterView,
   type PlanDayView,
 } from "@repo/packages/core/src/plans/plan-view-contract.ts";
+import { getPreparationStage } from "@repo/packages/core/src/preparation/preparation-math.ts";
 import { measurePreparation } from "@repo/packages/core/src/preparation/section-preparation.ts";
 import {
   type SyllabusView,
@@ -403,33 +404,54 @@ const LINKS: JourneyLinks = {
   subject: (key) => `/plan/${key}`,
 };
 
-/** A learner on the plan's first day: core's measure of no studied skills yet. */
-function standingFor(
-  goalId: string,
-  lessons: SyllabusView["lessons"] | null,
-  topics: PlanTopics | null,
-): JourneyStanding {
+type Preparation = Extract<JourneyStanding, { kind: "preparation" }>["preparation"];
+
+/**
+ * A goal's preparation as core measures it with no skill evidence yet, at the story's value when it
+ * has one; the stage is core's for that value.
+ */
+export function preparationAt({
+  goalId,
+  value,
+  weekGain = 0,
+}: {
+  goalId: string;
+  value?: number;
+  weekGain?: number;
+}): Preparation {
   const measured = measurePreparation({
     answers: [],
     asOf: new Date(`${TODAY}T12:00:00Z`),
     mocks: [],
     skills: [],
   });
+  const at = value ?? measured.value;
 
+  return {
+    ...measured,
+    areas: [],
+    estimatedScore: null,
+    goalId,
+    skills: countSkillStates([]),
+    stage: getPreparationStage({ components: measured.components, value: at }),
+    status: null,
+    value: at,
+    weakestAreaId: null,
+    weekGain,
+  };
+}
+
+/** A learner on the plan's first day. */
+function standingFor(
+  goalId: string,
+  lessons: SyllabusView["lessons"] | null,
+  topics: PlanTopics | null,
+): JourneyStanding {
   return {
     forExam: false,
     kind: "preparation",
     lessons,
-    preparation: {
-      ...measured,
-      areas: [],
-      estimatedScore: null,
-      goalId,
-      skills: countSkillStates([]),
-      status: null,
-      weakestAreaId: null,
-      weekGain: 0,
-    },
+    preparation: preparationAt({ goalId }),
     stillNeeded: { areas: [], left: 0, minutes: 0, rule: "solid" },
     topics,
   };

@@ -1,7 +1,11 @@
 import { SubjectScreen } from "@repo/packages/learn/src/syllabus/subject-screen.tsx";
+import { type ComponentProps } from "react";
+import { actions } from "../learn/common";
 import { story, type Lang } from "../story";
 import { examSyllabus } from "./plan";
-import { AppFrame, NOOP_ASYNC } from "./shell";
+import { AppFrame } from "./shell";
+
+type Props = ComponentProps<typeof SubjectScreen>;
 
 /** The subjects' other topics, from the real syllabi (the story only names the often-asked ones). */
 const OTHER_TOPICS: Record<Lang, string[][]> = {
@@ -17,15 +21,27 @@ const OTHER_TOPICS: Record<Lang, string[][]> = {
   ],
 };
 
-const STATUSES = ["studied", "inProgress", "toStudy", "toStudy", "toStudy", "toStudy", "toStudy"];
+const STATUSES = [
+  "studied",
+  "inProgress",
+  "toStudy",
+  "toStudy",
+  "toStudy",
+  "toStudy",
+  "toStudy",
+] as const;
 
-export function examSubject(lang: Lang, index: number) {
+export function examSubject(lang: Lang, index: number): Props["subject"] {
   const subjects = story[lang].exam.subjects;
   const at = Math.min(index, subjects.length - 1);
   const subject = subjects[at] ?? subjects[0];
   const base = examSyllabus(lang).subjects[at];
-  const often = subject.often.map((name) => ({ frequency: "high", name }));
-  const others = (OTHER_TOPICS[lang][at] ?? []).map((name) => ({ frequency: "medium", name }));
+  if (!base) throw new Error(`no subject ${at}`);
+  const often = subject.often.map((name) => ({ frequency: "high" as const, name }));
+  const others = (OTHER_TOPICS[lang][at] ?? []).map((name) => ({
+    frequency: "medium" as const,
+    name,
+  }));
   const ordered = [often[0], others[0], others[1], often[1], ...others.slice(2)].filter(
     (topic) => topic !== undefined,
   );
@@ -39,11 +55,11 @@ export function examSubject(lang: Lang, index: number) {
       name: topic.name,
       nextDate: STATUSES[i] === "studied" ? null : "2026-11-04",
       notPlannedReason: null,
-      status: STATUSES[i],
+      status: STATUSES[i] ?? "toStudy",
     })),
     topicsKnown: 0,
     topicsStudied: 1,
-  } as any;
+  };
 }
 
 export function ExamSubject({ lang, q }: { lang: Lang; q: URLSearchParams }) {
@@ -53,24 +69,20 @@ export function ExamSubject({ lang, q }: { lang: Lang; q: URLSearchParams }) {
   return (
     <AppFrame goal="exam" lang={lang} tab="journey" topBar={false}>
       <SubjectScreen
-        actions={{ restore: NOOP_ASYNC, setWrittenCadence: NOOP_ASYNC } as any}
+        actions={actions<Props["actions"]>({})}
         hrefs={{
           adjust: "/plan",
           back: "/plan",
           chapter: (id: string) => `/content/chapters/${id}`,
         }}
         subject={subject}
-        syllabus={
-          {
-            examDocument: "notice",
-            fromMaterial: false,
-            kind: "notice",
-            knownTopicsReturn: "practice",
-            questionsSource: null,
-            sharedExams: [],
-            writtenPractice: null,
-          } as any
-        }
+        syllabus={{
+          fromMaterial: false,
+          kind: "notice",
+          questionsSource: null,
+          sharedExams: [],
+          writtenPractice: null,
+        }}
       />
     </AppFrame>
   );

@@ -6,6 +6,7 @@ import {
   type LearnLinkComponentProps,
 } from "@repo/packages/learn/src/learn-context.tsx";
 import { LearnProvider } from "@repo/packages/learn/src/learn-provider.tsx";
+import { type MissionLinks } from "@repo/packages/learn/src/missions/mission-links.ts";
 import { OnboardingPage } from "@repo/packages/learn/src/onboarding/onboarding-host.tsx";
 import {
   type DayStepOpenerProps,
@@ -59,6 +60,21 @@ export function Link({
 }
 
 export const noop = () => {};
+
+/** Where a mission's button goes; a still never follows one. */
+export const MISSION_LINKS: MissionLinks = {
+  hrefs: {
+    areaPractice: (areaId) => `/practice/${areaId}`,
+    buddy: "/buddy",
+    call: (chapterId) => `/call/${chapterId}`,
+    mistakesPractice: "/mistakes/practice",
+    mockChooser: "/mock/new",
+    pattern: (patternId) => `/pattern/${patternId}`,
+    pronunciation: "/pronunciation",
+  },
+  openBlock: async () => true,
+  openStep: async () => true,
+};
 
 /** Actions are behavior, not data: a still screen never calls them, so each is a no-op unless given. */
 export function actions<T extends object>(given: Partial<T>): T {
