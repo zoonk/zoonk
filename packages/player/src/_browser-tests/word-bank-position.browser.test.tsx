@@ -16,7 +16,9 @@ function bankTop(): number {
 
 /** The answer grows into the room between it and the bank, so that room is above the bank, not under it. */
 function roomUnderBank(): number {
-  return check().element().getBoundingClientRect().top - bank().element().getBoundingClientRect().bottom;
+  return (
+    check().element().getBoundingClientRect().top - bank().element().getBoundingClientRect().bottom
+  );
 }
 
 function roomAboveBank(): number {
