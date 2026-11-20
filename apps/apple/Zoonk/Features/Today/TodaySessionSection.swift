@@ -359,7 +359,7 @@ struct TodayDayLead: View {
 
   var body: some View {
     if session.showsDayProgress {
-      DayProgressRow(session: session, writingStalled: writingStalled)
+      DayProgressRow(view: view, writingStalled: writingStalled)
     }
   }
 }
@@ -477,7 +477,7 @@ struct BlockRow: View {
 
   /// A row is its title and at most one short line.
   private var line: String? {
-    if block.preparing || view.map({ today.isBeingWritten(block, in: $0) }) == true {
+    if today.isGettingReady(block, in: view) {
       return String(
         localized: "Getting ready…", table: "Today",
         comment:

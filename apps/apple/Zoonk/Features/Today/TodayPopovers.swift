@@ -62,22 +62,31 @@ struct TodayFactsPopover: View {
 
 /// Main's `DayProgress`: the day's meter, where each part opens what it stands for.
 struct DayProgressRow: View {
-  let session: StudyDay
+  @Environment(TodayStore.self) private var today
+
+  let view: TodayView
   let writingStalled: Bool
 
   /// The bar is thin, so each part's control reaches above and below it.
   private let tapHeight = 44.0
 
+  private var session: StudyDay { view.session }
+
+  private func isGettingReady(_ segment: DaySegment) -> Bool {
+    segment.block.map { today.isGettingReady($0, in: view) } ?? false
+  }
+
   var body: some View {
     let segments = session.daySegments
 
-    DaySegments(segments: segments.map(\.mark))
+    DaySegments(segments: segments.map(\.progressMark))
       .overlay {
         // Equal parts, so the controls line up with them the way the bar lays them out.
         HStack(spacing: DaySegments.gap) {
           ForEach(segments.indices, id: \.self) { index in
             DaySegmentButton(
               segment: segments[index], writingStalled: writingStalled,
+              gettingReady: isGettingReady(segments[index]),
               barHeight: DaySegments.height
             )
             .frame(maxWidth: .infinity)
@@ -96,6 +105,7 @@ struct DayProgressRow: View {
 private struct DaySegmentButton: View {
   let segment: DaySegment
   let writingStalled: Bool
+  let gettingReady: Bool
   let barHeight: Double
 
   @State private var isShown = false
@@ -109,22 +119,37 @@ private struct DaySegmentButton: View {
     }
     .buttonStyle(.plain)
     .accessibilityLabel(segment.title)
-    .accessibilityValue(segment.facts.joinedFacts())
+    .accessibilityValue(facts.joinedFacts())
     .background {
       // Points the popover at the bar rather than the taller control around it.
       Color.clear
         .frame(height: barHeight)
         .popover(isPresented: $isShown, arrowEdge: .top) {
           TodayFactsPopover(
-            title: segment.title, kind: segment.kind, facts: segment.facts,
+            title: segment.title, kind: segment.kind, facts: facts,
             note: segment.note(writingStalled: writingStalled))
         }
     }
   }
+
+  private var facts: [String] { segment.facts(gettingReady: gettingReady) }
 }
 
 // Mirrors main's `today-segment-popover.tsx`.
 extension DaySegment {
+  /// Today's bar draws only progress: a part still ahead is on the track, whatever its kind.
+  fileprivate var progressMark: DaySegments.Segment {
+    switch self {
+    case .block(_, .done): .done
+    case .block(_, .current): .current
+    case .block(_, .ahead), .held: .ahead
+    }
+  }
+
+  fileprivate var block: StudyBlock? {
+    if case .block(let block, _) = self { block } else { nil }
+  }
+
   var kind: LearnKind {
     switch self {
     case .block(let block, _): block.learnKind
@@ -143,10 +168,20 @@ extension DaySegment {
     }
   }
 
-  var facts: [String] {
+  /// `gettingReady` says the block's row reads "Getting ready…", so its part says it too.
+  func facts(gettingReady: Bool) -> [String] {
     switch self {
     case .block(_, .done):
       return [String(localized: "Done", table: "Today", comment: "A finished block")]
+    case .block(let block, _) where gettingReady:
+      return [
+        String(
+          localized: "Getting ready…", table: "Today",
+          comment:
+            "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
+        ),
+        studyDuration(minutes: block.estimatedMinutes),
+      ]
     case .block(let block, .ahead):
       return [
         String(localized: "planned", table: "Today", comment: "A day's status").labelCased(),
