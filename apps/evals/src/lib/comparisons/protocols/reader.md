@@ -38,13 +38,15 @@ For `overall` and for every criterion in the packet, give a `preference` (`A`, `
 
 A tie is a real answer. Use it when the outputs are identical, or when neither would serve its reader noticeably better. Don't pick a side to avoid a tie; some pairs are the same output twice.
 
+A major problem outweighs strengths. When only one output has a major problem, prefer the other overall: a livelier scene, a warmer voice, more practice or more polish doesn't make up for teaching something wrong or losing the reader. When both have major problems, weigh what each costs the reader.
+
 ## Observations
 
 Each observation is one problem in one output:
 
 - `output`: `A` or `B`.
 - `criterion`: the id of the criterion it falls under.
-- `severity`: `major` when it would mislead the reader (a wrong fact, a wrong answer key, a false rule), breaks a written expectation, or loses the target reader (they couldn't follow it, or would stop reading). Everything else is `minor`.
+- `severity`: `major` when it would mislead the reader (a wrong fact, a wrong answer key, a false rule, an invented number taught as true, wherever it appears, a feedback note included), breaks a written expectation, or loses the target reader (they couldn't follow it, or would stop reading). Everything else is `minor`.
 - `location`: where it is. `quote` with the exact words copied from the output; `range` with the part it covers, such as "screens 3 to 5" or "options of question 2"; or `whole` when the problem is an absence or a pattern (no worked example anywhere, every example generic, academic tone throughout), with a short description in `detail`.
 - `claim`: what is wrong, specific enough that someone else could check it.
 - `learnerCost`: what it costs the reader, in a sentence.
