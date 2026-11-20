@@ -35861,6 +35861,15 @@
       "Challenge": {
         "type": "object",
         "properties": {
+          "access": {
+            "type": "string",
+            "enum": [
+              "open",
+              "plusRequired",
+              "preparing"
+            ],
+            "description": "A scheduled mock is preparing until every question is available."
+          },
           "blockId": {
             "nullable": true,
             "description": "Today's block for it, or the last one it was played in; null before its day",
@@ -36197,6 +36206,7 @@
           }
         },
         "required": [
+          "access",
           "blockId",
           "call",
           "canMove",
@@ -76826,6 +76836,10 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "preparing": {
+            "type": "boolean",
+            "description": "A pending mock still needs questions. Show its time and offer the next available study activity."
+          },
           "questions": {
             "type": "integer",
             "minimum": 0,
@@ -76913,6 +76927,7 @@
           "planItemId",
           "planItemKey",
           "position",
+          "preparing",
           "questions",
           "refresh",
           "reinforcement",
@@ -93387,6 +93402,10 @@
                   "minimum": 0,
                   "maximum": 9007199254740991
                 },
+                "preparing": {
+                  "type": "boolean",
+                  "description": "A pending mock still needs questions. Show its time and offer the next available study activity."
+                },
                 "questions": {
                   "type": "integer",
                   "minimum": 0,
@@ -93473,6 +93492,7 @@
                 "planItemId",
                 "planItemKey",
                 "position",
+                "preparing",
                 "questions",
                 "refresh",
                 "reinforcement",

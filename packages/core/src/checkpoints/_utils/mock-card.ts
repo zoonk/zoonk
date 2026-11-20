@@ -12,7 +12,7 @@ import { readFinishedMockCount } from "../../learner/facts/finished-mocks";
 import { readMockEssays } from "../../learner/facts/mock-essays";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
-import { findScheduledMock } from "../../plans/planner/mock-identity";
+import { type MockIdentity, findScheduledMock } from "../../plans/planner/mock-identity";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
@@ -24,6 +24,7 @@ export async function loadMockCard({
   blueprint,
   date,
   goal,
+  identity: selected,
   source,
   today,
 }: {
@@ -31,6 +32,7 @@ export async function loadMockCard({
   /** The mock's day, as a UTC-midnight label. */
   date: Date;
   goal: Goal;
+  identity?: MockIdentity;
   source?: Pick<GoalPlanSource, "graph" | "settings">;
   /** The learner-local date, as a UTC-midnight label. */
   today: Date;
@@ -52,10 +54,12 @@ export async function loadMockCard({
     ? readMockStructure({ blueprint, dayMinutes, picks: readExamPicks(goalPlan?.settings) })
     : null;
 
-  const identity = findScheduledMock({
-    date: toIsoDate(date),
-    funding: parsePlanSettings(goalPlan?.settings).mockFunding,
-  });
+  const identity =
+    selected ??
+    findScheduledMock({
+      date: toIsoDate(date),
+      funding: parsePlanSettings(goalPlan?.settings).mockFunding,
+    });
 
   const planned = await planWeeklyMock({
     essays,
@@ -74,11 +78,12 @@ export async function loadMockCard({
   });
 
   const plan = planned.outline;
+
   return {
+    conditions: toMockConditions({ plan, structure, typed }),
     preparing:
       date.getTime() <= today.getTime() &&
       countPlannedQuestions(planned) !== countPlannedQuestions(plan),
-    conditions: toMockConditions({ plan, structure, typed }),
     startTime: getExamStartTime({ day: plan.day, edition: content?.edition ?? null }),
     timeZone: content?.edition.timeZone ?? null,
   };

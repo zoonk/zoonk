@@ -15,6 +15,7 @@ import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
+import { getNextDayBlock } from "./day-view-fields";
 import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { loadStudySessionView } from "./load-session-view";
 import { getSessionBar } from "./session-view";
@@ -103,9 +104,7 @@ export async function readSavedDayView({
     });
   });
 
-  const next =
-    blocks.find((block) => block.status === "active") ??
-    blocks.find((block) => block.status === "pending");
+  const next = getNextDayBlock(blocks);
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
 

@@ -11,10 +11,11 @@ import { asDayMission, loadMissionDayViews } from "../missions/mission-day-views
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
-import { toDayViewFields } from "./day-view-fields";
+import { getNextDayBlock, toDayViewFields } from "./day-view-fields";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { type PlannedStudyDay, toUnstartedBlocks } from "./plan-study-day";
+import { loadPreparingMockPositions } from "./preparing-mock-blocks";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionDayContext } from "./session-placement";
@@ -38,7 +39,7 @@ export async function loadUnstartedDayView({
   const { dayMinutes, examPrep } = day.plan;
   const examAccess = getExamPrepAccess({ examPrep, goal });
 
-  const [week, subjects, oftenTestedSkillIds, blockedTestOutChapters, missionViews] =
+  const [week, subjects, oftenTestedSkillIds, blockedTestOutChapters, missionViews, preparing] =
     await Promise.all([
       loadStudyWeek({ goal, localDate, planSettings: selection.state.settings }),
       loadBlockSubjects({ blocks, blueprint, goal }),
@@ -58,6 +59,7 @@ export async function loadUnstartedDayView({
         through: now,
         timeZone,
       }),
+      loadPreparingMockPositions({ blocks, blueprint, goal, localDate }),
     ]);
 
   const missions = missionViews.map((mission) => asDayMission(mission));
@@ -121,21 +123,25 @@ export async function loadUnstartedDayView({
     ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
     : null;
 
+  const views = blocks.map((block) =>
+    toDayBlockView({
+      answeredItemIds: new Set(),
+      block,
+      blockedTestOutChapters,
+      blocks,
+      oftenTestedSkillIds,
+      preparing: preparing.has(block.position),
+      subject: subjects.get(block.position) ?? null,
+    }),
+  );
+
   return withDayState<Omit<UnstartedDayView, "state">>({
     ...fields,
-    blocks: blocks.map((block) =>
-      toDayBlockView({
-        answeredItemIds: new Set(),
-        block,
-        blockedTestOutChapters,
-        blocks,
-        oftenTestedSkillIds,
-        subject: subjects.get(block.position) ?? null,
-      }),
-    ),
+    blocks: views,
     catchUp: previewCatchUp,
     extraTime,
     missions,
+    nextPosition: getNextDayBlock(views)?.position ?? null,
     status: "unstarted",
   });
 }

@@ -7,6 +7,7 @@ import { readBlockPayload } from "../block-payload";
 import { loadBlockSubjects } from "./block-subjects";
 import { isCurrentSession } from "./current-session";
 import { type LessonStatesReader, readLessonScreens } from "./lesson-screens";
+import { loadPreparingMockPositions } from "./preparing-mock-blocks";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
 import { toStudyBlockView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
@@ -30,7 +31,7 @@ export async function loadSessionBlockViews({
 }) {
   const now = new Date();
 
-  const [answers, subjects, blockedChapters, oftenTestedSkillIds] = await Promise.all([
+  const [answers, subjects, blockedChapters, oftenTestedSkillIds, preparing] = await Promise.all([
     knownAnswers ?? loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
     loadBlockSubjects({ blocks: session.blocks, blueprint, goal: session.goal }),
     session.goalId
@@ -50,6 +51,7 @@ export async function loadSessionBlockViews({
         })
       : new Set<string>(),
     loadOftenTestedSkillIds(session.goal),
+    loadPreparingMockPositions({ ...session, blueprint }),
   ]);
 
   const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
@@ -64,6 +66,7 @@ export async function loadSessionBlockViews({
           blockedTestOutChapters: blockedChapters,
           blocks: session.blocks,
           oftenTestedSkillIds,
+          preparing: preparing.has(block.position),
           subject: subjects.get(block.position) ?? null,
         }),
       ),

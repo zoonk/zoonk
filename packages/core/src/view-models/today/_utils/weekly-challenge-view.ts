@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { findNextWeeklyItem } from "../../../checkpoints/_utils/load-weekly-challenge";
 import { loadMockCard } from "../../../checkpoints/_utils/mock-card";
+import { getChallengeAccess } from "../../../checkpoints/challenge-contract";
 import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
 import {
   type WeeklyChallengeResult,
@@ -59,12 +60,10 @@ async function readSelectedCard({
     : null;
 
   return {
-    access:
-      isMock && !session.examAccess.includesMockExams
-        ? "plusRequired"
-        : card?.preparing
-          ? "preparing"
-          : "open",
+    access: getChallengeAccess({
+      plusRequired: isMock && !session.examAccess.includesMockExams,
+      preparing: card?.preparing,
+    }),
     date: item.scheduledFor,
     kind: isMock ? "mock" : "mixed",
     planItemId: item.id,
@@ -110,13 +109,12 @@ export async function readTodayWeeklyChallenge({
       candidate.questions >= MIN_CHECKPOINT_QUESTIONS,
   );
 
-  if (
-    block?.checkpoint &&
-    (!block.checkpoint.mock || block.status === "active" || block.status === "completed")
-  ) {
+  if (block?.checkpoint) {
     return {
-      access:
-        block.checkpoint.mock && !session.examAccess.includesMockExams ? "plusRequired" : "open",
+      access: getChallengeAccess({
+        plusRequired: block.checkpoint.mock && !session.examAccess.includesMockExams,
+        preparing: block.preparing,
+      }),
       date: item.scheduledFor,
       kind: block.checkpoint.mock ? "mock" : "mixed",
       planItemId: item.id,

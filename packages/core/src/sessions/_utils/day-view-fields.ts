@@ -37,14 +37,12 @@ export type DayViewFieldsInput = {
   week: SessionWeek;
 };
 
-function getNextPosition(
-  blocks: readonly Pick<DayBlockInput, "status" | "position">[],
-): number | null {
+export function getNextDayBlock<
+  Block extends { status: DayBlockInput["status"]; preparing: boolean },
+>(blocks: readonly Block[]): Block | undefined {
   return (
-    (
-      blocks.find((block) => block.status === "active") ??
-      blocks.find((block) => block.status === "pending")
-    )?.position ?? null
+    blocks.find((block) => block.status === "active") ??
+    blocks.find((block) => block.status === "pending" && !block.preparing)
   );
 }
 
@@ -64,7 +62,7 @@ export function toDayViewFields({
   week,
 }: DayViewFieldsInput): Omit<
   StudySessionView,
-  "blocks" | "id" | "missions" | "nextBlockId" | "state" | "status"
+  "blocks" | "id" | "missions" | "nextBlockId" | "nextPosition" | "state" | "status"
 > {
   const streak = scoreAnswers({ answers }).streak;
   const lessons = getDayLessons({ blocks: session.blocks, dayMinutes, lessonRoom, outlines });
@@ -98,7 +96,6 @@ export function toDayViewFields({
       planned: session.plannedMinutes,
       reserved: lessonRoom,
     }),
-    nextPosition: getNextPosition(session.blocks),
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
     sessionBar,
     week: { days: week.days, nextStudyDate: week.nextStudyDate },

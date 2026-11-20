@@ -91,6 +91,11 @@ export const studyBlockSchema = z
       "Logical plan work identity; never a database UUID",
     ),
     position: z.number().int().min(0),
+    preparing: z
+      .boolean()
+      .describe(
+        "A pending mock still needs questions. Show its time and offer the next available study activity.",
+      ),
     questions: z.number().int().min(0),
     refresh: z
       .boolean()

@@ -7,7 +7,7 @@ import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
 import { type SessionMinutes } from "../session-minutes";
 import { toDayBlockView } from "./day-block-view";
-import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
+import { type DayViewFieldsInput, getNextDayBlock, toDayViewFields } from "./day-view-fields";
 import { type ExamPrepAccess } from "./exam-access";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -82,14 +82,6 @@ export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status">
   };
 }
 
-export function getNextBlockId(blocks: readonly StudySessionBlock[]): string | null {
-  const next =
-    blocks.find((block) => block.status === "active") ??
-    blocks.find((block) => block.status === "pending");
-
-  return next?.id ?? null;
-}
-
 /** Adds only persisted session and block ids to the shared display projection. */
 export function toStudySessionView(
   input: Omit<DayViewFieldsInput, "session" | "missions" | "sessionBar"> & {
@@ -110,23 +102,28 @@ export function toStudySessionView(
 
   const answeredItemIds = new Set(input.answers.flatMap((answer) => answer.itemId ?? []));
 
+  const blocks =
+    input.blockViews ??
+    session.blocks.map((block) =>
+      toStudyBlockView({
+        answeredItemIds,
+        block,
+        blockedTestOutChapters,
+        blocks: session.blocks,
+        oftenTestedSkillIds,
+        subject: blockSubjects.get(block.position) ?? null,
+      }),
+    );
+
+  const next = getNextDayBlock(blocks);
+
   return withDayState({
     ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
-    blocks:
-      input.blockViews ??
-      session.blocks.map((block) =>
-        toStudyBlockView({
-          answeredItemIds,
-          block,
-          blockedTestOutChapters,
-          blocks: session.blocks,
-          oftenTestedSkillIds,
-          subject: blockSubjects.get(block.position) ?? null,
-        }),
-      ),
+    blocks,
     id: session.id,
     missions: input.missions,
-    nextBlockId: getNextBlockId(session.blocks),
+    nextBlockId: next?.id ?? null,
+    nextPosition: next?.position ?? null,
     status: session.status,
   });
 }

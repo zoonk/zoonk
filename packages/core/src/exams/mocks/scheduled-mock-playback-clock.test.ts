@@ -248,34 +248,49 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("keeps 60 minutes when only the first of two objective sections has six questions", async () => {
+  it("keeps a short 60-minute mock preparing and offers the next available study block", async () => {
     const fixture = await setup({ structure: TWO_OBJECTIVE });
 
     await Promise.all(
       Array.from({ length: 6 }, () =>
         itemFixture({
-          mockOnly: true,
-          examBlueprintId: fixture.goal.examBlueprintId,
           content: choiceItemContent(),
+          examBlueprintId: fixture.goal.examBlueprintId,
+          mockOnly: true,
           skillId: fixture.library.skills[0]?.id ?? "",
         }),
       ),
     );
 
-    vi.setSystemTime(new Date(fixture.date + "T12:00:00Z"));
+    vi.setSystemTime(new Date(`${fixture.date}T12:00:00Z`));
     const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
-    if (today.status !== "ready") throw new Error(today.status);
+    if (today.status !== "ready") {
+      throw new Error(today.status);
+    }
     const block = today.today.session.blocks.find((b) => b.checkpoint?.mock);
-    if (!block) throw new Error("Expected scheduled block");
+    if (!block) {
+      throw new Error("Expected scheduled block");
+    }
+    expect.soft(block).toMatchObject({ preparing: true });
+    expect.soft(today.today.session.nextPosition).not.toBe(block.position);
+    expect.soft(today.today.session.nextBlockId).not.toBe(block.id);
+
+    await expect(
+      getChallenge({ input: {}, planItemId: block.planItemId ?? "" }),
+    ).resolves.toMatchObject({ challenge: { access: "preparing" } });
+
     expect(today.today.weeklyChallenge).toMatchObject({
       access: "preparing",
       questions: 40,
       timeLimitMinutes: 60,
     });
-    await expect(startMock({ blockId: block.id, input: {} })).resolves.toEqual({
+
+    await expect(startMock({ blockId: block.id, input: {} })).resolves.toStrictEqual({
       status: "preparing",
     });
+
     await expect(prisma.mockExam.count({ where: { blockId: block.id } })).resolves.toBe(0);
+
     await expect(
       prisma.studySessionBlock.findUnique({ where: { id: block.id } }),
     ).resolves.toMatchObject({ startedAt: null });
@@ -296,18 +311,18 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
         const media = await mediaAssetFixture();
 
         const set = await listeningSetFixture({
-          mockOnly: true,
           content: { ...listeningContent(), task: part.task },
           examBlueprintId: blueprint.id,
           mediaAssetId: media.id,
+          mockOnly: true,
         });
 
         await Promise.all(
           [0, 1].map((setPosition) =>
             itemFixture({
-              mockOnly: true,
               content: choiceItemContent(),
               examBlueprintId: blueprint.id,
+              mockOnly: true,
               setId: set.id,
               setPosition,
               skillId: fixture.library.skills[1]?.id ?? "",
@@ -322,9 +337,9 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
     await Promise.all(
       Array.from({ length: 40 }, () =>
         itemFixture({
-          mockOnly: true,
           content: choiceItemContent(),
           examBlueprintId: blueprint.id,
+          mockOnly: true,
           skillId,
         }),
       ),
@@ -364,9 +379,9 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
     await Promise.all(
       Array.from({ length: 40 }, () =>
         itemFixture({
-          mockOnly: true,
-          examBlueprintId: fixture.goal.examBlueprintId,
           content: choiceItemContent(),
+          examBlueprintId: fixture.goal.examBlueprintId,
+          mockOnly: true,
           skillId: fixture.library.skills[0]?.id ?? "",
         }),
       ),

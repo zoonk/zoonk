@@ -45,7 +45,9 @@ function getEstimateOutcome(block: DayBlockInput): { outcome: BlockOutcome; ques
 }
 
 function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["checkpoint"] {
-  if (!checkpoint) return null;
+  if (!checkpoint) {
+    return null;
+  }
   const { mockQuestions: _mockQuestions, ...view } = checkpoint;
   return studyCheckpointSchema.parse(view);
 }
@@ -56,6 +58,7 @@ export function toDayBlockView({
   blocks = [block],
   blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
+  preparing = false,
   subject = null,
 }: {
   answeredItemIds: ReadonlySet<string>;
@@ -64,6 +67,7 @@ export function toDayBlockView({
   blockedTestOutChapters?: ReadonlySet<string>;
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
+  preparing?: boolean;
   subject?: string | null;
 }): DayBlockView {
   const payload = readBlockPayload(block);
@@ -112,6 +116,7 @@ export function toDayBlockView({
     planItemId: payload.planItemId,
     planItemKey: payload.planItemKey,
     position: block.position,
+    preparing,
     questions:
       checkpoint?.mockQuestions ??
       (waitsForQuestions ? getPlannedQuestions(itemIds.length) : itemIds.length),

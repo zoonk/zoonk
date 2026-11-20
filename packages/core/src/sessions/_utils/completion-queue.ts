@@ -14,11 +14,12 @@ import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadCarriedItemIds } from "./catch-up";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getDayCatchUp, getDayProgress } from "./day-progress";
+import { getNextDayBlock } from "./day-view-fields";
 import { loadExamPrepAccess } from "./load-exam-access";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { getDayOutlines } from "./outlining-stand-ins";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
-import { getNextBlockId, getSessionBar } from "./session-view";
+import { getSessionBar } from "./session-view";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /**
@@ -136,8 +137,8 @@ export async function loadCompletionQueue({
     areLessonsComing({ plan, reserved, session }),
   ]);
 
-  const nextBlockId = getNextBlockId(session.blocks);
-  const nextBlock = projection.blocks.find((block) => block.id === nextBlockId) ?? null;
+  const nextBlock = getNextDayBlock(projection.blocks);
+  const nextBlockId = nextBlock?.id ?? null;
   const sessionBar = getSessionBar(session.blocks);
   const sessionCompleted = session.status === "completed" && nextBlockId === null;
 
