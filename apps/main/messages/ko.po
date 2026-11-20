@@ -2402,7 +2402,7 @@ msgstr "음악 문제에서 리듬에 맞춰 두드리기"
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "HmGSbZ"
 msgid "Mark an answer as not sure in a mock exam"
-msgstr ""
+msgstr "모의고사에서 답을 ‘헷갈려요’로 표시"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"

@@ -9,6 +9,7 @@
   "mock_break_detail": "fa66b05003c70d083de4b61ac45f07679aa330c6f62df6bdd99de3e3774c1ef5",
   "mock_break_time_left": "43c60fd16bdf26e5295ff23a226c2ee92eb42722f964b57eea78442bc11620a9",
   "mock_cell_answered": "9fd1742c2543efa225945d6c78f6cfedb8b8b82e45cc0ea51c18df2edbc6adb6",
+  "mock_cell_unsure": "cf050ba62e33089cd85ffbb91a4db5dfd02ef8362b9da7c40ebee4eba44deb75",
   "mock_continue": "d484d6987ce9da48a0a05d13206675acecc4674a12e960efe25a96602b7a47e2",
   "mock_continue_section": "d7518f7a6c75b5991efb4df8505e92e801635257e828e414c4a45e5b694fa5f6",
   "mock_essay_blank": "2cf7deeb67c834fb51a4b843bb6e152595d5644497d805b033a23be4c3619f6f",
@@ -28,7 +29,10 @@
   "mock_label": "3066dc588bc3f8268b7830f124b64b4c0181cac79a9e7bcf866d2a68c509759e",
   "mock_label_shape": "b7e72d245210fc6353a484f7edb86f7517dedbe101f60c5b0e9df6821e23b218",
   "mock_left_blank": "f0cdffb8f8dd39002dfeb812cd23af7184d1e793b82bfb38a0990f5d6938781f",
+  "mock_left_blank_and_unsure": "6213eb9f890c8c2b4817979f420a6aba0b2a31ff402aab823e049bd1f5b9c229",
   "mock_left_blank_only": "f8aeb4b5416e71388da551b94ead015a4028341a1d7e597018b3c4c978129135",
+  "mock_left_unsure": "e2698dc14e08d36c76dad43acfced562d2021ab0e42076ab5190c332662d70c1",
+  "mock_left_unsure_only": "ae96fa4cfa94bd6de157e63556cc53c8ca7a168f11ec2e19cba9164892780530",
   "mock_moves_forward": "8dcdc9bddc870333d656d8ab2aa8def3e1009e7a49d7471e6e9ee0d1f5bbc424",
   "mock_moves_forward_must": "a1c9af05b1e09fe98ff2aa86a845464b79c6bd494e1068a19a317085e2c84384",
   "mock_moves_must": "ef5964c28d37c31d36d27a4f03ed47ffd4577111d87e3fb98cefb90960ac90a1",
@@ -39,6 +43,8 @@
   "mock_next": "196d2edd8803ac72db314e8a20d5c9b06090d74e64aab784ed96f751e708a1b0",
   "mock_next_named": "c802127b08bf5e9b79484c7a5e35c9b608bc0c85fe6d55462b17ee55cb3da664",
   "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
+  "mock_not_sure": "ee8d186ca2278700ff52a2a339907c8978e5f91f825969ebb16631e0251257b4",
+  "mock_not_sure_tip": "16bf5e9389e4eb54b51062907c56dfe0b8c110c9a28453bd5e6f85d8453cc81e",
   "mock_place": "e9eb53d1a8f80f75c0aff53b6fff21a0aa6b92046162912249e65e7c46c24be9",
   "mock_points_of": "1aa58bf2af61be9fe59464bc294e6e57a013a10c70094b514347408e4fe544a5",
   "mock_progress_label": "20e066bfe67d7fe655e19a34d7e7e62286a6a323a07662fc095e5c239844d21b",
@@ -84,6 +90,7 @@
   "mock_time_up": "33dfcc946087707fb0c1fc363d8a343d4b30ec6150caaf91cf742c5452ebea77",
   "mock_title": "aeafa0d58a77b0113cb0599a4741f3227bd99bdbbe8f911094da1b751e4260e4",
   "mock_try_again": "9f06fc629d5af40785b77beaede7da853c25fbd78be827502e12da8f4d6a6b88",
+  "mock_unsure_count": "e3eaf630f2856038d65cd9d5aaccd8de4202c5d2b87657bad93f4e044956b3aa",
   "mock_words": "2789057cce340b7601e0721915cac98f9f3ffc79bdd8b30a5c5d841f36a4029c",
   "mock_written_part": "dd88d03af827d99b9d67544619aacbb005cc7678405f18e596ac81b2bfb662dd",
   "mock_written_part_area": "2657b965d01d5054a56c9b7857125c85e73df9d7f5e05c9950a47fb55fb33793",
@@ -123,6 +130,10 @@
     <string name="mock_question_place">%1$d번 문제 (총 %2$d문제)</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">문제 %1$d/%2$d · %3$s</string>
+    <!-- A button beside "Next" the learner turns on for a question whose answer they aren't sure of, to check it again before handing in; the result shows how those answers went. -->
+    <string name="mock_not_sure">헷갈려요</string>
+    <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
+    <string name="mock_not_sure_tip">제출하기 전에 다시 확인해 보세요. 결과에서 이 답들이 어땠는지 확인할 수 있어요.</string>
     <string name="mock_next">다음</string>
     <string name="mock_hand_in_section">파트 제출하기</string>
     <string name="mock_moves_review_any">답안 검토: 어느 문제로든 돌아갈 수 있어요.</string>
@@ -135,12 +146,22 @@
     <string name="mock_moves_must">다음으로 넘어가려면 각 문제에 답하세요.</string>
     <string name="mock_hand_in_mock_title">모의고사를 제출할까요?</string>
     <string name="mock_hand_in_section_title">이 파트를 제출할까요?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_unsure: "3 questions are blank and you're not sure of 2." -->
     <plurals name="mock_left_blank">
         <item quantity="other">빈 문제 %d개</item>
     </plurals>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), read after mock_left_blank: "3 questions are blank and you're not sure of 2." -->
+    <plurals name="mock_left_unsure">
+        <item quantity="other">헷갈리는 문제는 %d개예요</item>
+    </plurals>
+    <!-- %1$s is mock_left_blank, %2$s is mock_left_unsure. -->
+    <string name="mock_left_blank_and_unsure">%1$s, %2$s.</string>
     <plurals name="mock_left_blank_only">
         <item quantity="other">답하지 않은 문제가 %d개 있어요.</item>
+    </plurals>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), when none is blank. -->
+    <plurals name="mock_left_unsure_only">
+        <item quantity="other">헷갈리는 답은 %d개예요.</item>
     </plurals>
     <string name="mock_every_answered">모든 문제에 답했어요.</string>
     <string name="mock_essay_blank">에세이 내용이 없어요.</string>
@@ -157,10 +178,16 @@
     <plurals name="mock_answered_count">
         <item quantity="other">%d개 풀었어요</item>
     </plurals>
+    <!-- On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more. -->
+    <plurals name="mock_unsure_count">
+        <item quantity="other">헷갈린 답 %d개</item>
+    </plurals>
     <string name="mock_questions">문제</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">%1$d번 문제</string>
     <string name="mock_cell_answered">답안 작성 완료</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked "Not sure" (mock_not_sure). %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_unsure">%1$s, 헷갈려요</string>
     <string name="mock_sections">파트</string>
     <string name="mock_section_number">파트 %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

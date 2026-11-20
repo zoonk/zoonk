@@ -3622,17 +3622,17 @@ msgstr "{answered, number}問に回答済み（全{questions, number}問）"
 #: src/exam/exam-scoring-section.tsx
 msgctxt "FvTaDr"
 msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
-msgstr ""
+msgstr "模試での結果：自信があるときは{sureRight, plural, =0 {全{sureAnswered}問中#問正解} other {#問正解（全{sureAnswered}問中）}}、自信がないときは{unsureRight, plural, =0 {全{unsureAnswered}問中#問正解} other {#問正解（全{unsureAnswered}問中）}}です。"
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "kJlaFe"
 msgid "When you're not sure, leave it blank: those answers cost more than they earn."
-msgstr ""
+msgstr "自信がないときは、空欄にしておきましょう。正解して得られる点より、間違えたときに失う点のほうが多いからです。"
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "FxZzRf"
 msgid "When you're not sure, still answer: those answers earn points."
-msgstr ""
+msgstr "自信がなくても答えましょう。正解すれば点がもらえます。"
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -7778,11 +7778,11 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {#問に回答済み} other {#問に回答済み}}"
 
-#. On the mock exam's answer sheet: how many answers the learner marked with the "Not sure" button.
+#. On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "q_puC8"
 msgid "{unsure, plural, one {# not sure} other {# not sure}}"
-msgstr ""
+msgstr "{unsure, plural, other {自信なし：#問}}"
 
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "7SPhv2"
@@ -7953,7 +7953,7 @@ msgstr "答えを保存できませんでした。"
 #: src/mock/mock-hand-in.tsx
 msgctxt "INKJBm"
 msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
-msgstr ""
+msgstr "{blank, plural, other {空欄が#問}}で、自信なしが{unsure, plural, other {#問}}あります。"
 
 #. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
@@ -7965,7 +7965,7 @@ msgstr "{count, plural, other {未回答の問題が#問あります。}}"
 #: src/mock/mock-hand-in.tsx
 msgctxt "MVVQnK"
 msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
-msgstr ""
+msgstr "{count, plural, other {自信なしが#問あります。}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -7998,7 +7998,7 @@ msgstr "解答を続ける"
 #: src/mock/mock-labels.tsx
 msgctxt "BsQPJC"
 msgid "Not sure"
-msgstr ""
+msgstr "自信なし"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8316,22 +8316,22 @@ msgstr "簡単な問題で{count, plural, other {#問}}間違いがありまし�
 #: src/mock/mock-result-insights.tsx
 msgctxt "v-WZ1x"
 msgid "Answers you weren't sure of"
-msgstr ""
+msgstr "自信なしで答えた問題"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "eQCLMt"
 msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr ""
+msgstr "自信あり：{sureRight, plural, =0 {全{sureAnswered}問中#問正解} other {#問正解（全{sureAnswered}問中）}}。自信なし：{unsureRight, plural, =0 {全{unsureAnswered}問中#問正解} other {#問正解（全{unsureAnswered}問中）}}。"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "BxnoFo"
 msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
-msgstr ""
+msgstr "自信がなかった問題を空欄にしていれば、{points, plural, other {#点}}多く得られていました。"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "riHnND"
 msgid "The answers you weren't sure of still earned points, so keep answering them."
-msgstr ""
+msgstr "自信がなかった問題でも点が取れているので、これからも答えましょう。"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8583,7 +8583,7 @@ msgstr "{number} / {total}"
 #: src/mock/mock-runner-view.tsx
 msgctxt "d9n-z1"
 msgid "Check it again before you hand in. Your result shows how these answers went."
-msgstr ""
+msgstr "提出する前にもう一度答えを見直しましょう。結果を見ると、これらの答えがどうだったかわかります。"
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8732,7 +8732,7 @@ msgstr "{worst}に力を入れましょう。"
 #: src/mock/use-question-cell-label.ts
 msgctxt "n8sv3N"
 msgid "{question}, not sure"
-msgstr ""
+msgstr "{question}（自信なし）"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"

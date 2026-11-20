@@ -12,12 +12,12 @@
   "mock_result_below_minimum_points_decimal": "8d4e099a01a60b2ea68c533333e88b05a036b08fe3898b1e9fedc8b6ac003854",
   "mock_result_below_percent": "67d6df0b39ef7f96f70a124eb2d2da95e397b1a4a8aff63f55467d90c6b5724e",
   "mock_result_blank": "c697e23d0c1843460cc34b9277ecb2165f4232a822fdd9a378f00b3a13b56233",
-  "mock_result_blank_gain": "4b0f95dee68d72896b4e8ad56ec4a63d969f09f3797659bc371f029d2e1227b3",
+  "mock_result_blank_gain": "c24a280def52c0ceec1b7727cc6c9adb648fc35bf3f9ef127594afb72d277976",
   "mock_result_blank_wrong": "e33f1eaeb44f9308e623c9b7c6a284d6e199603ff5911067f795a6b396d9761c",
   "mock_result_by_area": "c99606d493222acd005456c68c9dc22c780a8bad32093371b38a79777b97d0b8",
   "mock_result_by_test": "0ad4a9d94547a5ab0e6b2d2b4e003f84ea13022e76eb29a3c7cfb7312272c6d7",
   "mock_result_by_topic": "a0263608958011cc23b5e2e693dd194cf1e64b1b63d293a8c9a68d6a0bed4975",
-  "mock_result_calibration_detail": "205c581fae64eb5073f43cd24015cc34ad6113e4c207313719d5cfc6d1f18977",
+  "mock_result_calibration_detail": "aa1298e17225141bb7421b73ebf775a70f489f109ed2db07a7ac030803280c4e",
   "mock_result_change_plan": "e985660f7f3e3a444a1da2e13ee698b8b9aa7c35991d475fcce6733f67e1df4b",
   "mock_result_continue": "136a0f124f5fffd12d3db8ca8692a23bff460ba0d4caf5de815acf22d90e29f5",
   "mock_result_details": "a6282d97c0a190678d2ae84ae132afa45f6c409535c02f67a339c8e05dde3902",
@@ -39,7 +39,7 @@
   "mock_result_grading_slow": "71a35ccaac6c8f4977c34317b58fce65bd097288cc0e24c8931a965600f7cf13",
   "mock_result_had_of": "a7482922765b8da1d03eb4da48a92094b4e45b6d0118fa8ae7b0b817c51df0a4",
   "mock_result_insights": "93481743cf692490b3cf1f523171b2c2d91ae87926fe42486975fdf5cb099833",
-  "mock_result_keep_answering": "e266329cff3b3c31f0a1a1a7ff4fb70b3635998ec19521191212a4f7010e55c2",
+  "mock_result_keep_answering": "78ce9ed7c9e1f82b10b2f3bcb61daeb55a14353d8c6d4ac06f4306040a0c6ccf",
   "mock_result_keep_them": "9598c8f1ff6b2cef1b433641299f42f225289428e8b2da607beb481a0630e467",
   "mock_result_left_at_timeout": "46d8d7129e9a40e5c69899eb14a98391a734cb5ddc67a4ddfb70ee71936fe7f9",
   "mock_result_left_blank": "561d26a1259414528e352598af4a1fc14986fdcb3599c069a1ca34f4b34d65a8",
@@ -116,6 +116,7 @@
   "mock_result_unjudged_together_percent": "ed5bca782099369da65f2b05aa7fb024e2320fd3eecfd71c6ec97a95880b61d2",
   "mock_result_unjudged_together_points": "639d136934b463e926e7e00cd6edf67da6b02a8c2f827f59ad01d8f3b8e08211",
   "mock_result_unjudged_together_points_decimal": "0146f5f6a6c3d1a391e4bbd4fe9b4d720c35966742b5bce3848af368cbbada91",
+  "mock_result_unsure_answers": "67661f67196aad198852e0cb1878031b08d18319fe7196bd2eb21217029cb980",
   "mock_result_up": "85b2d9f40fa091b25115b3b70de8d4f213295782c33cc21300eaede456888bfc",
   "mock_result_up_from": "7ba34496369ac61f08440de2c0e9b86997c84f329bbd902a475c024862c1e7dc",
   "mock_result_work_on": "e8d8c9ff0ff02b7915cb6a167453102afe157a8719771c5ecf07938cf8f1b6cb",
@@ -276,17 +277,19 @@
     <plurals name="mock_result_easy_missed">
         <item quantity="other">やさしい問題を%d問間違えました。まずはその問題を復習しましょう。</item>
     </plurals>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure) while taking the mock exam. -->
+    <string name="mock_result_unsure_answers">自信なしで答えた問題</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="other">%1$d問正解（全%2$d問）</item>
     </plurals>
-    <!-- %1$s is how the answers the learner didn't flag went, %2$s how the flagged ones went, each a mock_result_right_of. -->
-    <string name="mock_result_calibration_detail">見直しなし：%1$s。見直しあり：%2$s。</string>
+    <!-- %1$s is how the answers the learner was sure of went, %2$s how the ones they marked "Not sure" went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">自信あり：%1$s。自信なし：%2$s。</string>
     <!-- %1$s can be a decimal, such as "1.5". -->
     <plurals name="mock_result_blank_gain">
-        <item quantity="other">見直しを付けた問題を未回答にしていれば、スコアが%1$s点高くなっていました。</item>
+        <item quantity="other">自信がなかった答えを空欄にしていれば、%1$s点加算されていました。</item>
     </plurals>
-    <string name="mock_result_keep_answering">見直しを付けた回答でも得点できたので、これからも答えていきましょう。</string>
+    <string name="mock_result_keep_answering">自信がなかった問題でも点が取れているので、これからも答えましょう。</string>
     <string name="mock_result_review">見直す問題</string>
     <string name="mock_result_question">第%1$d問</string>
     <string name="mock_result_left_blank">未回答でした。</string>

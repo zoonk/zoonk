@@ -3622,17 +3622,17 @@ msgstr "{answered, number}문제 답변 완료 (전체 {questions, number}문제
 #: src/exam/exam-scoring-section.tsx
 msgctxt "FvTaDr"
 msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
-msgstr ""
+msgstr "모의고사에서 확신했을 때는 {sureRight, plural, =0 {#개/{sureAnswered}개 정답} other {#개/{sureAnswered}개 정답}}, 헷갈렸을 때는 {unsureRight, plural, =0 {#개/{unsureAnswered}개 정답} other {#개/{unsureAnswered}개 정답}}이에요."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "kJlaFe"
 msgid "When you're not sure, leave it blank: those answers cost more than they earn."
-msgstr ""
+msgstr "헷갈릴 때는 답을 비워 두세요. 맞혀서 얻는 점수보다 틀려서 잃는 점수가 더 커요."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "FxZzRf"
 msgid "When you're not sure, still answer: those answers earn points."
-msgstr ""
+msgstr "헷갈려도 답을 고르세요. 그런 답도 점수를 얻을 수 있어요."
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -7778,11 +7778,11 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {답한 문제 #개} other {답한 문제 #개}}"
 
-#. On the mock exam's answer sheet: how many answers the learner marked with the "Not sure" button.
+#. On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "q_puC8"
 msgid "{unsure, plural, one {# not sure} other {# not sure}}"
-msgstr ""
+msgstr "{unsure, plural, other {헷갈린 답 #개}}"
 
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "7SPhv2"
@@ -7953,7 +7953,7 @@ msgstr "답변이 저장되지 않았어요."
 #: src/mock/mock-hand-in.tsx
 msgctxt "INKJBm"
 msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
-msgstr ""
+msgstr "{blank, plural, other {빈 문제 #개}}이고 헷갈리는 답이 {unsure, plural, other {#개}} 있어요."
 
 #. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
@@ -7965,7 +7965,7 @@ msgstr "{count, plural, other {답하지 않은 문제가 #개 있어요.}}"
 #: src/mock/mock-hand-in.tsx
 msgctxt "MVVQnK"
 msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
-msgstr ""
+msgstr "{count, plural, other {헷갈리는 답이 #개 있어요.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -7998,7 +7998,7 @@ msgstr "계속 풀기"
 #: src/mock/mock-labels.tsx
 msgctxt "BsQPJC"
 msgid "Not sure"
-msgstr ""
+msgstr "헷갈려요"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8316,22 +8316,22 @@ msgstr "쉬운 문제 {count, plural, other {#개}}를 틀렸어요. 이 문제�
 #: src/mock/mock-result-insights.tsx
 msgctxt "v-WZ1x"
 msgid "Answers you weren't sure of"
-msgstr ""
+msgstr "‘헷갈려요’로 표시한 답"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "eQCLMt"
 msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr ""
+msgstr "확신한 답: {sureRight, plural, =0 {#개/{sureAnswered}개 정답} other {#개/{sureAnswered}개 정답}}. 헷갈려요로 표시한 답: {unsureRight, plural, =0 {#개/{unsureAnswered}개 정답} other {#개/{unsureAnswered}개 정답}}."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "BxnoFo"
 msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
-msgstr ""
+msgstr "헷갈렸던 답을 비워 뒀다면 {points, plural, other {#점}}을 더 얻었을 거예요."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "riHnND"
 msgid "The answers you weren't sure of still earned points, so keep answering them."
-msgstr ""
+msgstr "헷갈렸던 답으로도 점수를 얻었으니 계속 답을 골라 보세요."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8583,7 +8583,7 @@ msgstr "{number} / {total}"
 #: src/mock/mock-runner-view.tsx
 msgctxt "d9n-z1"
 msgid "Check it again before you hand in. Your result shows how these answers went."
-msgstr ""
+msgstr "제출하기 전에 다시 확인해 보세요. 결과에서 이 답들이 어땠는지 확인할 수 있어요."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8732,7 +8732,7 @@ msgstr "더 공부할 부분: {worst}."
 #: src/mock/use-question-cell-label.ts
 msgctxt "n8sv3N"
 msgid "{question}, not sure"
-msgstr ""
+msgstr "{question}, 헷갈려요"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"

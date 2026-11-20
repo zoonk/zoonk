@@ -3622,17 +3622,17 @@ msgstr "Odpowiedziano na {answered, number} z {questions, number}"
 #: src/exam/exam-scoring-section.tsx
 msgctxt "FvTaDr"
 msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
-msgstr ""
+msgstr "W egzaminach próbnych: {sureRight, plural, =0 {# z {sureAnswered} poprawnych odpowiedzi} one {# z {sureAnswered} poprawnych odpowiedzi} few {# z {sureAnswered} poprawnych odpowiedzi} many {# z {sureAnswered} poprawnych odpowiedzi} other {# z {sureAnswered} poprawnych odpowiedzi}} odpowiedzi, co do których masz pewność, oraz {unsureRight, plural, =0 {# z {unsureAnswered} poprawnych odpowiedzi} one {# z {unsureAnswered} poprawnych odpowiedzi} few {# z {unsureAnswered} poprawnych odpowiedzi} many {# z {unsureAnswered} poprawnych odpowiedzi} other {# z {unsureAnswered} poprawnych odpowiedzi}} odpowiedzi, co do których nie masz pewności."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "kJlaFe"
 msgid "When you're not sure, leave it blank: those answers cost more than they earn."
-msgstr ""
+msgstr "Jeśli nie masz pewności, zostaw odpowiedź pustą: takie odpowiedzi kosztują więcej punktów, niż przynoszą."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "FxZzRf"
 msgid "When you're not sure, still answer: those answers earn points."
-msgstr ""
+msgstr "Jeśli nie masz pewności, i tak odpowiedz: za takie odpowiedzi dostajesz punkty."
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -7778,11 +7778,11 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# udzielonych odpowiedzi} one {# udzielona odpowiedź} few {# udzielone odpowiedzi} other {# udzielonych odpowiedzi}}"
 
-#. On the mock exam's answer sheet: how many answers the learner marked with the "Not sure" button.
+#. On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "q_puC8"
 msgid "{unsure, plural, one {# not sure} other {# not sure}}"
-msgstr ""
+msgstr "{unsure, plural, one {# niepewna} few {# niepewne} many {# niepewnych} other {# niepewnych}}"
 
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "7SPhv2"
@@ -7953,7 +7953,7 @@ msgstr "Nie udało się zapisać odpowiedzi."
 #: src/mock/mock-hand-in.tsx
 msgctxt "INKJBm"
 msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
-msgstr ""
+msgstr "{blank, plural, one {# pytanie jest bez odpowiedzi} few {# pytania są bez odpowiedzi} many {# pytań jest bez odpowiedzi} other {# pytania są bez odpowiedzi}} i nie masz pewności co do {unsure, plural, one {# odpowiedzi} few {# odpowiedzi} many {# odpowiedzi} other {# odpowiedzi}}."
 
 #. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
@@ -7965,7 +7965,7 @@ msgstr "{count, plural, one {# pytanie pozostaje bez odpowiedzi.} few {# pytania
 #: src/mock/mock-hand-in.tsx
 msgctxt "MVVQnK"
 msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
-msgstr ""
+msgstr "{count, plural, one {Niepewne: # odpowiedź.} few {Niepewne: # odpowiedzi.} many {Niepewne: # odpowiedzi.} other {Niepewne: # odpowiedzi.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -7998,7 +7998,7 @@ msgstr "Odpowiadaj dalej"
 #: src/mock/mock-labels.tsx
 msgctxt "BsQPJC"
 msgid "Not sure"
-msgstr ""
+msgstr "Niepewne"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8316,22 +8316,22 @@ msgstr "Nie udało ci się poprawnie odpowiedzieć na {count, plural, one {# ła
 #: src/mock/mock-result-insights.tsx
 msgctxt "v-WZ1x"
 msgid "Answers you weren't sure of"
-msgstr ""
+msgstr "Odpowiedzi oznaczone jako „Niepewne”"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "eQCLMt"
 msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr ""
+msgstr "Pewne: {sureRight, plural, =0 {# z {sureAnswered} poprawnych odpowiedzi} one {# z {sureAnswered} poprawnych odpowiedzi} few {# z {sureAnswered} poprawnych odpowiedzi} many {# z {sureAnswered} poprawnych odpowiedzi} other {# z {sureAnswered} poprawnych odpowiedzi}}. Niepewne: {unsureRight, plural, =0 {# z {unsureAnswered} poprawnych odpowiedzi} one {# z {unsureAnswered} poprawnych odpowiedzi} few {# z {unsureAnswered} poprawnych odpowiedzi} many {# z {unsureAnswered} poprawnych odpowiedzi} other {# z {unsureAnswered} poprawnych odpowiedzi}}."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "BxnoFo"
 msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
-msgstr ""
+msgstr "Pozostawienie bez odpowiedzi tych, co do których nie masz pewności, dałoby {points, plural, one {# punkt} few {# punkty} many {# punktów} other {# punktu}} więcej."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "riHnND"
 msgid "The answers you weren't sure of still earned points, so keep answering them."
-msgstr ""
+msgstr "Za odpowiedzi, co do których nie masz pewności, też dostajesz punkty, więc odpowiadaj na nie."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8583,7 +8583,7 @@ msgstr "{number} z {total}"
 #: src/mock/mock-runner-view.tsx
 msgctxt "d9n-z1"
 msgid "Check it again before you hand in. Your result shows how these answers went."
-msgstr ""
+msgstr "Sprawdź ją jeszcze raz przed oddaniem. Wynik pokaże, jak poszło."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8732,7 +8732,7 @@ msgstr "Popracuj nad: {worst}."
 #: src/mock/use-question-cell-label.ts
 msgctxt "n8sv3N"
 msgid "{question}, not sure"
-msgstr ""
+msgstr "{question}, Niepewne"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"

@@ -539,7 +539,7 @@ struct MockSectionCounts {
           localized: "\(blank) questions are blank and you're not sure of \(unsure).",
           table: "Mock",
           comment:
-            "Before handing in a mock exam: how many of its questions are blank, or marked with the \"Not sure\" button."
+            "Before handing in a mock exam: how many of its questions are blank, or marked with the \"Not sure\" button. Both numbers are 1 or more."
         )
       )
     } else if blank > 0 {

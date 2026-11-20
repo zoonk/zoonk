@@ -89,7 +89,7 @@
         <item quantity="one">%d answered</item>
         <item quantity="other">%d answered</item>
     </plurals>
-    <!-- How many of the section's questions the learner marked "Not sure" (mock_not_sure), after mock_answered_count: "34 answered · 3 not sure". -->
+    <!-- On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more. -->
     <plurals name="mock_unsure_count">
         <item quantity="one">%d not sure</item>
         <item quantity="other">%d not sure</item>

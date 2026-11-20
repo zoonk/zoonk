@@ -12,12 +12,12 @@
   "mock_result_below_minimum_points_decimal": "6bdd2c03020a5b192c0aaa7556ff9a6daf27fda0479e3ba57e1df1a146dcc5f1",
   "mock_result_below_percent": "05c5df80face03ae215e6544886da3ffe2b3e68f15f6a56524deff3cf19dd293",
   "mock_result_blank": "eaaca4de33a23a3f3f67e8bed6f78096e9717448e04a3de7a31b1d50050e352c",
-  "mock_result_blank_gain": "498dede2da144550f8855414bcdc7449d00ead8e1b27bf8cc6f9c25121d5be9a",
+  "mock_result_blank_gain": "23aa664445b33491ba115dcffea849182fbfe33517513e18fdd5f89ea582dd83",
   "mock_result_blank_wrong": "52f42a1cee24e8042ebaa037502bd3eeb11051258db6ad21ba375c808b18a990",
   "mock_result_by_area": "bea2820e1421dd7d5214daf9e4965cf55f1927c626dd701f6e68eaef2c10f17d",
   "mock_result_by_test": "2a70771d17426a23326622b384fb23fcc1147b2b4997d17c55eb73e0415eb629",
   "mock_result_by_topic": "cb28acfb034e935c1b14e26b040541bf0e7800e8bcdf925da422284ee90a8cb6",
-  "mock_result_calibration_detail": "be983bb501aa3006a40bc2d20e982873eb0ef54e7f467d512d8793c00f04a870",
+  "mock_result_calibration_detail": "79fd68c6552b25d3cb171c8122e4612fedf7ac377ef5b5994933957b0533d443",
   "mock_result_change_plan": "80f44aeb8180e1c1212c86e54d22c03568be430861fa2c6652fcc0151c784bae",
   "mock_result_continue": "627c1cbf52d9cdb907e22bf318b0ab8fc856ff00252f81fb37a95b9dfa43b4c1",
   "mock_result_details": "f108bc5a2b02847f5f4429bb2e4d10732dd54315ccff1fe705996c0c2b1df04e",
@@ -39,7 +39,7 @@
   "mock_result_grading_slow": "8d10c2349e8842478062bed2a90a5281083127c62e1649bee7aba7e4ee34259e",
   "mock_result_had_of": "1130a5e6287d437c7c92cabf1b04809eadc94e6ca2760394bc0c6a2c9fd6ee05",
   "mock_result_insights": "177a7501b87ed9b6dab3c1478cf1531b3a2c74623884ea7d52011057a9590592",
-  "mock_result_keep_answering": "3deeae6968b0e52b0f1332227b68b2a441ccc98c3a12e6b84fcaa678e23fe97a",
+  "mock_result_keep_answering": "a7b6ad3e54bcf56a150fca1c2edb5b7862cd00346572ad88817b0f5153c914ad",
   "mock_result_keep_them": "cbd0208134dd8006e8b26cafd2cf2333b3fe047f3729a9c1f1a2c80d0cc4fea3",
   "mock_result_left_at_timeout": "fbd18da8915e7e26c69484c23125a62526c8aa4550db5d37f37b06c02a655d33",
   "mock_result_left_blank": "df018ebd7a131459b756918f4622c94004eb7a66764e737efe5b5884f9f392cb",
@@ -116,6 +116,7 @@
   "mock_result_unjudged_together_percent": "ccb4f1d1389ab7bab513935f63f9f929752ea113a05a5070d1236e8e651bc6d2",
   "mock_result_unjudged_together_points": "e98462fd8be0fff82ffd48dac663880c2135161eb2dbf273f0625799aece3dc8",
   "mock_result_unjudged_together_points_decimal": "9462679088eac47d06362f3e5c8565f182794f77b252a152777c10a2d9190cba",
+  "mock_result_unsure_answers": "53b2c9ea996e56f4096ae5946aa5737718146456cce90200cd076737ee974d3f",
   "mock_result_up": "91c890ffb20d188c166e81e5f3e388695211fcb16a252ea02dd78963e7a23741",
   "mock_result_up_from": "72e832839ad39c38889c13116beb84b5eab19116c730a8c6ccc549374e65434a",
   "mock_result_work_on": "5cbda25219a5ad54de19a46537574790f92ec1f8dc5e0e3447df3cf34167a94e",
@@ -304,21 +305,23 @@
         <item quantity="many">Você errou %d questões fáceis. Revise essas primeiro.</item>
         <item quantity="other">Você errou %d questões fáceis. Revise essas primeiro.</item>
     </plurals>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure) while taking the mock exam. -->
+    <string name="mock_result_unsure_answers">Respostas sobre as quais você estava em dúvida</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d de %2$d certa</item>
         <item quantity="many">%1$d de %2$d certas</item>
         <item quantity="other">%1$d de %2$d certas</item>
     </plurals>
-    <!-- %1$s is how the answers the learner didn't flag went, %2$s how the flagged ones went, each a mock_result_right_of. -->
-    <string name="mock_result_calibration_detail">Não marcadas: %1$s. Marcadas: %2$s.</string>
+    <!-- %1$s is how the answers the learner was sure of went, %2$s how the ones they marked "Not sure" went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">Com certeza: %1$s. Em dúvida: %2$s.</string>
     <!-- %1$s can be a decimal, such as "1.5". -->
     <plurals name="mock_result_blank_gain">
-        <item quantity="one">Deixar as questões marcadas em branco teria rendido %1$s ponto a mais.</item>
-        <item quantity="many">Deixar as questões marcadas em branco teria rendido %1$s pontos a mais.</item>
-        <item quantity="other">Deixar as questões marcadas em branco teria rendido %1$s pontos a mais.</item>
+        <item quantity="one">Deixar em branco as respostas sobre as quais você estava em dúvida teria acrescentado %1$s ponto.</item>
+        <item quantity="many">Deixar em branco as respostas sobre as quais você estava em dúvida teria acrescentado %1$s pontos.</item>
+        <item quantity="other">Deixar em branco as respostas sobre as quais você estava em dúvida teria acrescentado %1$s pontos.</item>
     </plurals>
-    <string name="mock_result_keep_answering">Suas respostas marcadas ainda renderam pontos, então continue respondendo a essas questões.</string>
+    <string name="mock_result_keep_answering">As respostas sobre as quais você estava em dúvida ainda valeram pontos, então continue respondendo.</string>
     <string name="mock_result_review">Questões para revisar</string>
     <string name="mock_result_question">Questão %1$d</string>
     <string name="mock_result_left_blank">Você deixou em branco.</string>

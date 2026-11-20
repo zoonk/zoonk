@@ -7778,7 +7778,7 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 
-#. On the mock exam's answer sheet: how many answers the learner marked with the "Not sure" button.
+#. On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "q_puC8"
 msgid "{unsure, plural, one {# not sure} other {# not sure}}"

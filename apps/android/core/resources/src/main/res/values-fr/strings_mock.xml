@@ -9,6 +9,7 @@
   "mock_break_detail": "1c2f3f869e85c4a746d8d13cfb535396bdc5ce24b60fa84796b6d71f61ffaae4",
   "mock_break_time_left": "d70678f380db1785ea5d06114df142d294b954482f360b6028fb824a6c6ec7bb",
   "mock_cell_answered": "852f5756e5ba7f72ae947e20be16ca933aa43f36c9239f6067f1b19adc5d06d6",
+  "mock_cell_unsure": "ad2d8913b825513ef80c8ffae202522696db8f3f37dd100c2011c2acba7cdd0c",
   "mock_continue": "8fdb544d63b79b7e2a2f57ba5eea4d52a5cef2beb4d7be5087cc15fb4b292bcf",
   "mock_continue_section": "cf11cdc71796562873e389f24c5481314e6c36f67fe4e12ea687f8a8ff434516",
   "mock_essay_blank": "ce8543c6a4ee0cb7164c70ab1e1b17dded3472d63352408adb2786f5cfa24caf",
@@ -28,7 +29,10 @@
   "mock_label": "99ee9836c7b33a07c7a37db48090ba9592ac50f1641910281cceea1ec15e8f02",
   "mock_label_shape": "6cb83fe97605ea7385e8e9d0ac6254dcf3fd8ae514e13aa2778d22dbb35b155f",
   "mock_left_blank": "ed5b2b753c98801fe9cff37a97806c46dcc024fedbd27ec506971ad41b88cad3",
+  "mock_left_blank_and_unsure": "683615f4f0d7be5531d378151ceda255bddc5d566172aa5064712e64c42dc85f",
   "mock_left_blank_only": "8cce4729aaf592fc82f0c0bfa098c0dc29b2e1373a73d87688446f4cdb90b0d1",
+  "mock_left_unsure": "ad89e49711483b98e5bc9cd4d5093abe9fba5b5a3fd95325d15c4347707ea22f",
+  "mock_left_unsure_only": "a90a2e20acfdf0c13e920f47c6021e21ca2d6acc8a1901a910e92de10c809de2",
   "mock_moves_forward": "f2ee8c32e084f26e3979d6806bfbf7d0902a47669c17b5e1dfffa28ae1c1a8af",
   "mock_moves_forward_must": "9d75f80209b554e5fb16fc276043ea153d3c7f4a750fc366dfdfe6d19d34451d",
   "mock_moves_must": "31a19be81dc0a9973fe1b8e4dfa88fbf17db4d643a92b3ac2ca27552dec7c20e",
@@ -39,6 +43,8 @@
   "mock_next": "52950ba51810ebb97e4a3bb6610a90910924b83cab9c14c28fc7dedc054d07ef",
   "mock_next_named": "4f84160efa1dfb61f764f9bc0015c1c5ddd0dc830f5c964215054f2501a35e08",
   "mock_next_section": "bfa3e6ee5502569bbaf87be606ac356dcf4d197446027339bebd51af63b5452f",
+  "mock_not_sure": "6a57eed27d8fdbf97285bd8b096bcff0b54bdbf3e5449cb961c9b8e622d9c81d",
+  "mock_not_sure_tip": "e803845c73f5e63a21485a4320d8a284e7c29333be6dc3ff291cc47d08f49a9b",
   "mock_place": "bfd44e514b37acddfd1cba0b38791b1360749df5d1dc3eeb8818889f3944d4bf",
   "mock_points_of": "ca41e3ca261b4ede73f3a487fc59f004c22b08e824658c49b6cfac0c6f8eb614",
   "mock_progress_label": "b2fe95a753be7a84831b820738c5ea21eaf7670b4793a9d4dd8a2512c90a6bce",
@@ -84,6 +90,7 @@
   "mock_time_up": "1d2f1055addcb7de40d79cb451c1d101999fcdc723fb554b0dd0cfb4166123d8",
   "mock_title": "1a485ee81fa8768280e2623036e4fb8c8c17cbe5f434bb20ea2dcd91333e9ecb",
   "mock_try_again": "a6136a161dc66c2148306249e4a5b51705e969d6b8f56a8b62c9b5884d50823f",
+  "mock_unsure_count": "47a182ac96851f6f61bb34ba5c5687e2fa87454acec743b4206d0ab5c92aebf7",
   "mock_words": "9bd58c4117d1e040f106a9933c0febac60ad9395ed9acf89b78dd4ae526e393d",
   "mock_written_part": "9b5f77ac09eb3cee5926b9f04662514e38f6c7327a2694865fec56b6731df542",
   "mock_written_part_area": "b81bf0f873a17832f5bee8477d1b990232e570d1b92a63845c51b39479130cad",
@@ -127,6 +134,10 @@
     <string name="mock_question_place">Question %1$d sur %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Question %1$d sur %2$d · %3$s</string>
+    <!-- A button beside "Next" the learner turns on for a question whose answer they aren't sure of, to check it again before handing in; the result shows how those answers went. -->
+    <string name="mock_not_sure">J’hésite</string>
+    <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
+    <string name="mock_not_sure_tip">Vérifie à nouveau avant de rendre l’examen. Ton résultat montre comment tu as répondu à ces questions.</string>
     <string name="mock_next">Suivant</string>
     <string name="mock_hand_in_section">Rendre la partie</string>
     <string name="mock_moves_review_any">Vérification : tu peux revenir à n’importe quelle question.</string>
@@ -141,16 +152,30 @@
     <string name="mock_moves_must">Réponds à chaque question pour continuer.</string>
     <string name="mock_hand_in_mock_title">Rendre l’examen blanc ?</string>
     <string name="mock_hand_in_section_title">Rendre cette partie ?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_unsure: "3 questions are blank and you're not sure of 2." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d question est sans réponse</item>
         <item quantity="many">%d questions sont sans réponse</item>
         <item quantity="other">%d questions sont sans réponse</item>
     </plurals>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), read after mock_left_blank: "3 questions are blank and you're not sure of 2." -->
+    <plurals name="mock_left_unsure">
+        <item quantity="one">tu hésites sur %d</item>
+        <item quantity="many">tu as des doutes sur %d</item>
+        <item quantity="other">tu as des doutes sur %d</item>
+    </plurals>
+    <!-- %1$s is mock_left_blank, %2$s is mock_left_unsure. -->
+    <string name="mock_left_blank_and_unsure">%1$s et %2$s.</string>
     <plurals name="mock_left_blank_only">
         <item quantity="one">%d question est sans réponse.</item>
         <item quantity="many">%d questions sont sans réponse.</item>
         <item quantity="other">%d questions sont sans réponse.</item>
+    </plurals>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), when none is blank. -->
+    <plurals name="mock_left_unsure_only">
+        <item quantity="one">Tu hésites sur %d réponse.</item>
+        <item quantity="many">Tu hésites sur %d réponses.</item>
+        <item quantity="other">Tu hésites sur %d réponses.</item>
     </plurals>
     <string name="mock_every_answered">Toutes les questions ont une réponse.</string>
     <string name="mock_essay_blank">La rédaction est vide.</string>
@@ -171,10 +196,18 @@
         <item quantity="many">%d réponses données</item>
         <item quantity="other">%d réponses données</item>
     </plurals>
+    <!-- On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more. -->
+    <plurals name="mock_unsure_count">
+        <item quantity="one">%d réponse « J’hésite »</item>
+        <item quantity="many">%d réponses « J’hésite »</item>
+        <item quantity="other">%d réponses « J’hésite »</item>
+    </plurals>
     <string name="mock_questions">Questions</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">réponse donnée</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked "Not sure" (mock_not_sure). %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_unsure">%1$s, « J’hésite »</string>
     <string name="mock_sections">Parties</string>
     <string name="mock_section_number">Partie %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

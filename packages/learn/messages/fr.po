@@ -3622,17 +3622,17 @@ msgstr "Réponses : {answered, number} sur {questions, number}"
 #: src/exam/exam-scoring-section.tsx
 msgctxt "FvTaDr"
 msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
-msgstr ""
+msgstr "Dans tes examens blancs : {sureRight, plural, =0 {# bonnes réponses sur {sureAnswered}} one {# bonne réponse sur {sureAnswered}} other {# bonnes réponses sur {sureAnswered}}} quand tu es sûr·e, {unsureRight, plural, =0 {# bonnes réponses sur {unsureAnswered}} one {# bonne réponse sur {unsureAnswered}} other {# bonnes réponses sur {unsureAnswered}}} quand tu hésites."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "kJlaFe"
 msgid "When you're not sure, leave it blank: those answers cost more than they earn."
-msgstr ""
+msgstr "Quand tu hésites, laisse la réponse vide : ces réponses coûtent plus qu’elles ne rapportent."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "FxZzRf"
 msgid "When you're not sure, still answer: those answers earn points."
-msgstr ""
+msgstr "Quand tu hésites, réponds quand même : ces réponses rapportent des points."
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -7778,11 +7778,11 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# réponse} one {# réponse} other {# réponses}}"
 
-#. On the mock exam's answer sheet: how many answers the learner marked with the "Not sure" button.
+#. On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "q_puC8"
 msgid "{unsure, plural, one {# not sure} other {# not sure}}"
-msgstr ""
+msgstr "{unsure, plural, one {# réponse « J’hésite »} other {# réponses « J’hésite »}}"
 
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "7SPhv2"
@@ -7953,7 +7953,7 @@ msgstr "Une réponse n’a pas été enregistrée."
 #: src/mock/mock-hand-in.tsx
 msgctxt "INKJBm"
 msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
-msgstr ""
+msgstr "{blank, plural, one {# question est sans réponse} other {# questions sont sans réponse}} et tu hésites pour {unsure, plural, one {# autre} other {# autres}}."
 
 #. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
@@ -7965,7 +7965,7 @@ msgstr "{count, plural, one {# question est sans réponse.} other {# questions s
 #: src/mock/mock-hand-in.tsx
 msgctxt "MVVQnK"
 msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
-msgstr ""
+msgstr "{count, plural, one {Tu hésites pour # réponse.} other {Tu hésites pour # réponses.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -7998,7 +7998,7 @@ msgstr "Continuer à répondre"
 #: src/mock/mock-labels.tsx
 msgctxt "BsQPJC"
 msgid "Not sure"
-msgstr ""
+msgstr "J’hésite"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8316,22 +8316,22 @@ msgstr "Tu as raté {count, plural, one {# question facile} other {# questions f
 #: src/mock/mock-result-insights.tsx
 msgctxt "v-WZ1x"
 msgid "Answers you weren't sure of"
-msgstr ""
+msgstr "Réponses pour lesquelles tu as hésité"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "eQCLMt"
 msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr ""
+msgstr "Sûr·e : {sureRight, plural, =0 {# bonnes réponses sur {sureAnswered}} one {# bonne réponse sur {sureAnswered}} other {# bonnes réponses sur {sureAnswered}}}. J’hésite : {unsureRight, plural, =0 {# bonnes réponses sur {unsureAnswered}} one {# bonne réponse sur {unsureAnswered}} other {# bonnes réponses sur {unsureAnswered}}}."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "BxnoFo"
 msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
-msgstr ""
+msgstr "Laisser sans réponse celles où tu as hésité t’aurait rapporté {points, plural, one {# point} other {# points}} de plus."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "riHnND"
 msgid "The answers you weren't sure of still earned points, so keep answering them."
-msgstr ""
+msgstr "Les réponses où tu as hésité t’ont quand même rapporté des points, alors continue à répondre."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8583,7 +8583,7 @@ msgstr "{number} sur {total}"
 #: src/mock/mock-runner-view.tsx
 msgctxt "d9n-z1"
 msgid "Check it again before you hand in. Your result shows how these answers went."
-msgstr ""
+msgstr "Vérifie à nouveau avant de rendre l’examen. Ton résultat montre comment tu as répondu à ces questions."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8732,7 +8732,7 @@ msgstr "À travailler : {worst}."
 #: src/mock/use-question-cell-label.ts
 msgctxt "n8sv3N"
 msgid "{question}, not sure"
-msgstr ""
+msgstr "{question}, « J’hésite »"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"

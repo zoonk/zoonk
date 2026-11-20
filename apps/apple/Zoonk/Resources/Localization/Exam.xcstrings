@@ -3006,10 +3006,64 @@
     },
     "In your mock exams: %lld of %lld right when sure, %lld of %lld right when not sure." : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In deinen Probeprüfungen: %1$lld von %2$lld richtig, wenn du sicher warst, %3$lld von %4$lld richtig, wenn du unsicher warst."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "In your mock exams: %1$lld of %2$lld right when sure, %3$lld of %4$lld right when not sure."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En tus simulacros: %1$lld de %2$lld correctas cuando tenías confianza y %3$lld de %4$lld correctas cuando tenías dudas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans tes examens blancs : %1$lld bonnes réponses sur %2$lld quand tu étais sûr de ta réponse, %3$lld bonnes réponses sur %4$lld quand tu as répondu « J’hésite »."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nelle simulazioni: %1$lld su %2$lld corrette con sicurezza, %3$lld su %4$lld corrette pur avendo dubbi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模試では、自信があるときは%1$lld/%2$lld問正解、自信なしのときは%3$lld/%4$lld問正解でした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모의고사에서 확신한 답은 %1$lld/%2$lld개 맞혔고, 헷갈린 답은 %3$lld/%4$lld개 맞혔어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W egzaminach próbnych: %1$lld z %2$lld poprawnych odpowiedzi, gdy masz pewność, i %3$lld z %4$lld poprawnych, gdy wybierasz „Niepewne”."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nos seus simulados: %1$lld de %2$lld respostas certas quando você tinha certeza, %3$lld de %4$lld quando estava em dúvida."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deneme sınavlarında: Emin olduğun cevaplarda %1$lld / %2$lld doğru, emin olmadığın cevaplarda %3$lld / %4$lld doğru."
           }
         }
       }
@@ -5662,8 +5716,122 @@
         }
       }
     },
-    "When you're not sure, leave it blank: those answers cost more than they earn." : {},
-    "When you're not sure, still answer: those answers earn points." : {},
+    "When you're not sure, leave it blank: those answers cost more than they earn." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du dir unsicher bist, lass die Antwort leer: Diese Antworten kosten mehr, als sie einbringen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando tengas dudas, déjala en blanco: esas respuestas te quitan más puntos de los que te dan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand tu hésites, laisse la réponse vide : ces réponses coûtent plus qu’elles ne rapportent."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se hai un dubbio, lascia la risposta in bianco: quelle risposte fanno perdere più punti di quanti ne facciano guadagnare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自信がないときは、空欄にしておきましょう。正解して得られる点より、間違えたときに失う点のほうが多いからです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "헷갈릴 때는 답을 비워 두세요. 맞혀서 얻는 점수보다 틀려서 잃는 점수가 더 커요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeśli nie masz pewności, zostaw odpowiedź pustą: takie odpowiedzi kosztują więcej punktów, niż przynoszą."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando estiver em dúvida, deixe em branco: essas respostas tiram mais pontos do que dão."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emin değilsen boş bırak: bu cevaplar kazandırdıklarından fazlasını kaybettiriyor."
+          }
+        }
+      }
+    },
+    "When you're not sure, still answer: those answers earn points." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du dir unsicher bist, beantworte die Frage trotzdem: Dafür gibt es Punkte."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando tengas dudas, responde de todos modos: esas respuestas suman puntos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand tu hésites, réponds quand même : ces réponses rapportent des points."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se hai un dubbio, rispondi comunque: quelle risposte fanno guadagnare punti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自信がなくても答えましょう。正解すれば点がもらえます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "헷갈려도 답을 고르세요. 그런 답도 점수를 얻을 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeśli nie masz pewności, i tak odpowiedz: za takie odpowiedzi dostajesz punkty."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando estiver em dúvida, responda mesmo assim: essas respostas valem pontos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emin olmasan da cevapla: bu cevaplar puan kazandırıyor."
+          }
+        }
+      }
+    },
     "Work on %@." : {
       "comment" : "Mock trends",
       "localizations" : {

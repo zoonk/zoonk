@@ -39,7 +39,7 @@ function SheetCountLine() {
         unsure > 0 &&
           t({
             description:
-              'On the mock exam\'s answer sheet: how many answers the learner marked with the "Not sure" button.',
+              'On the mock exam\'s answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.',
             message: "{unsure, plural, one {# not sure} other {# not sure}}",
             values: { unsure },
           }),

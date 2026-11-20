@@ -2402,7 +2402,7 @@ msgstr "Marcar el ritmo en una pregunta de música"
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "HmGSbZ"
 msgid "Mark an answer as not sure in a mock exam"
-msgstr ""
+msgstr "Marcar una respuesta como “Tengo dudas” en un simulacro"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"

@@ -12,12 +12,12 @@
   "mock_result_below_minimum_points_decimal": "71201c6a0c741ae65bd8a69256e984f165c77081e8a67fab5b8f35b566d1269d",
   "mock_result_below_percent": "6b2f7277eb78ffec8d796c0d7afe0ff36ca08ce117a5209fa60506f5ea845f20",
   "mock_result_blank": "6a20d73e618cb9f8be11638dc675584605cee36d678d80d27504a330d13c5c52",
-  "mock_result_blank_gain": "e6fbb493c1595f183d781fff83a2389f34361b1dbc6b472bf4b3aeef4c1c0b5d",
+  "mock_result_blank_gain": "32e5e42bf28af63d49fea706a21b093bf70b69f145a8625dcffaf13ef497efd4",
   "mock_result_blank_wrong": "5b909bdcef93f95a8eedad4a856a20860c811f2a6b5b5f9a63d6634b26606f32",
   "mock_result_by_area": "5cfb7330518f0598122eec342772e5a6cb07d448decb819187ca32774558b1ba",
   "mock_result_by_test": "f6cf0251356e3618c9ee48049f953ba8bcbae200446d1a47b4e124953eb2b353",
   "mock_result_by_topic": "1e662e36c3a0898434f112d6b207cf553dcacd1bf86f94d071e3b514561ce208",
-  "mock_result_calibration_detail": "c920cf053ca5caa9f1c3101df3729b1aba6bfbf3c7ad0e8b1ae724a24029019b",
+  "mock_result_calibration_detail": "1b20222428d0f730bac31bc805e2aedb91f8a5bc5aaa92f3806a930125bb8ba4",
   "mock_result_change_plan": "9678845cab0a74e0fcd6a06672cff2cc916be8c2b88265de8d845e7611ca9990",
   "mock_result_continue": "0897f75959b4f02efc8abda3b02612b48cedd47220d35f321b6ad773d5c58177",
   "mock_result_details": "771d274b25ec292496d20e08b992ceef1949766952ce19e5e5a1cdbae9ae3db0",
@@ -39,7 +39,7 @@
   "mock_result_grading_slow": "1225a45cdd1069e72f4580ac1419257a63a4608f656f57818cf4ec6fa48adacc",
   "mock_result_had_of": "62085b88d84d8e3b3cbcec2513744bd9db7db5ebd5d99de41b1d80ab26751466",
   "mock_result_insights": "058a75a17ab4287d0ba91ee2c218d374cf24f84e973b936deaede6feff469167",
-  "mock_result_keep_answering": "5948a68b3d445935db3bf54c15ca0b26b25cd901037db6dad0856b22413e662f",
+  "mock_result_keep_answering": "648750f73fc47830ea8f6ea4fd920aa13b444d7c500f1bd7d1a5918c1b0751c6",
   "mock_result_keep_them": "27a333538d390f2625ae253b2fa835a935274d6fa04e2c2e133b3615ceb5639c",
   "mock_result_left_at_timeout": "c07d8fdd7ef8c7a78bce8b470edd479225f2d589f50db8bc8092b81271dd7ffe",
   "mock_result_left_blank": "5cef8730f6afcb44f2d729387e7198c7181e2824e54a514f847f8f0bbb00639d",
@@ -116,6 +116,7 @@
   "mock_result_unjudged_together_percent": "95328ab616560735da0e4c8c6871ce4a61792dd8693ac72e5454d1ff71a7d5cc",
   "mock_result_unjudged_together_points": "941cbfb196d3a7c0aba2435ca1cdfafcd8989bd12ae94328762dea7cf621d737",
   "mock_result_unjudged_together_points_decimal": "fbc95adc11f82a137a67ef7fc86fc42cf7e8b896f823e615b7a5085a0567b788",
+  "mock_result_unsure_answers": "a239730246e5fd68af840f253318c1726b83706512d5c9ad1d2c80399892c11d",
   "mock_result_up": "47418c2fda33d1ad2ce515c50643c6c37d6182c6f0af9b3cd4ca5cfad49d51f0",
   "mock_result_up_from": "a794b0683288406591152082e32a9d9ddcab6626f14f68e09e7c15d54b244166",
   "mock_result_work_on": "ed67d38e0aafc2d95e8ea96fab3e6776e7604491cf6dfd1ee730e8b4f59e9e03",
@@ -290,19 +291,21 @@
         <item quantity="one">%d kolay soruyu kaçırdın. Önce bunları gözden geçir.</item>
         <item quantity="other">%d kolay soruyu kaçırdın. Önce bunları gözden geçir.</item>
     </plurals>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure) while taking the mock exam. -->
+    <string name="mock_result_unsure_answers">Emin olmadığın cevaplar</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d / %2$d doğru</item>
         <item quantity="other">%1$d / %2$d doğru</item>
     </plurals>
-    <!-- %1$s is how the answers the learner didn't flag went, %2$s how the flagged ones went, each a mock_result_right_of. -->
-    <string name="mock_result_calibration_detail">İşaretlenmeyenler: %1$s. İşaretlenenler: %2$s.</string>
+    <!-- %1$s is how the answers the learner was sure of went, %2$s how the ones they marked "Not sure" went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">Emin oldukların: %1$s. Emin olmadıkların: %2$s.</string>
     <!-- %1$s can be a decimal, such as "1.5". -->
     <plurals name="mock_result_blank_gain">
-        <item quantity="one">İşaretlediklerini boş bıraksaydın %1$s puan daha alırdın.</item>
-        <item quantity="other">İşaretlediklerini boş bıraksaydın %1$s puan daha alırdın.</item>
+        <item quantity="one">Emin olmadığın cevapları boş bıraksaydın %1$s puan daha kazanırdın.</item>
+        <item quantity="other">Emin olmadığın cevapları boş bıraksaydın %1$s puan daha kazanırdın.</item>
     </plurals>
-    <string name="mock_result_keep_answering">İşaretlediğin cevaplar yine de puan kazandırdı, bu yüzden bu soruları cevaplamaya devam et.</string>
+    <string name="mock_result_keep_answering">Emin olmadığın cevaplar da puan kazandırdı, cevaplamaya devam et.</string>
     <string name="mock_result_review">Gözden geçirilecek sorular</string>
     <string name="mock_result_question">Soru %1$d</string>
     <string name="mock_result_left_blank">Boş bıraktın.</string>
