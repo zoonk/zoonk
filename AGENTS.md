@@ -85,6 +85,7 @@ When you're:
 - **Building or changing React or Next.js UI:** [Web UI](.agents/guides/web.md), which routes to rendering, links, the frame, actions and localization
 - **Deciding or judging how a screen looks, reads or moves:** [zoonk-design](.agents/skills/zoonk-design/SKILL.md), [zoonk-motion](.agents/skills/zoonk-motion/SKILL.md)
 - **Changing copy a person reads, or translating it:** [Translations](.agents/guides/translations.md); a new language: [adding a language](.agents/guides/adding-a-language.md)
+- **Writing a social post, or making its images or demo clip:** [zoonk-social-post](.agents/skills/zoonk-social-post/SKILL.md), [zoonk-video](.agents/skills/zoonk-video/SKILL.md)
 - **Querying with Prisma:** [Prisma queries](.agents/guides/prisma.md)
 - **Changing the schema or a migration:** [Database package](packages/db/AGENTS.md)
 - **Changing a core capability, a read, caching, admission or follow-ups:** [Core package](packages/core/AGENTS.md)
