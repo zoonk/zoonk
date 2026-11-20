@@ -152,7 +152,7 @@ describe("an overdue scheduled mock's canonical identity", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("fills an ordinary day around a carried mock and reserves lessons still being written", async () => {
+  it("gives a lesson day that a missed mock carries into only that mock", async () => {
     const { goal, languages, math, mock, plan, user } = await overduePlan({
       dailyMinutes: 60,
       mockMinutes: 20,
@@ -202,27 +202,9 @@ describe("an overdue scheduled mock's canonical identity", () => {
     const built = buildSessionBlocks(input);
 
     expect.soft(input.freshStart).toBeNull();
-    expect.soft(input.mockReplacesDay).toBe(false);
-
-    expect
-      .soft(built.blocks.map((block) => block.kind))
-      .toStrictEqual(["learn", "learn", "learn", "learn", "learn", "learn", "checkpoint"]);
-
-    expect.soft(built.plannedMinutes).toBe(60);
-    expect.soft(built.blocks.at(-1)?.payload.planItemId).toBe(mock.id);
-
-    const blocks = built.blocks.filter(
-      (block, index) => index < 2 || block.payload.checkpoint?.mock,
-    );
-
-    const held = new Set(blocks.flatMap((block) => block.lessonId ?? []));
-
-    await prisma.planItem.updateMany({
-      data: { lessonId: null, scheduledFor: new Date("2020-10-12") },
-      where: {
-        lessonId: { in: lessons.filter((lesson) => !held.has(lesson.id)).map(({ id }) => id) },
-      },
-    });
+    expect.soft(input.mockReplacesDay).toBe(true);
+    expect.soft(built.blocks.map((block) => block.kind)).toStrictEqual(["checkpoint"]);
+    expect.soft(built.blocks[0]?.payload.planItemId).toBe(mock.id);
 
     const saved = await prisma.plan.findUniqueOrThrow({
       include: { items: { orderBy: { position: "asc" } } },
@@ -234,14 +216,14 @@ describe("an overdue scheduled mock's canonical identity", () => {
         access: { includesMockExams: true },
         plan: saved,
         session: {
-          blocks: blocks.map((block) => ({ ...block, status: "completed" })),
+          blocks: built.blocks.map((block) => ({ ...block, status: "pending" })),
           freshStart: null,
           goal,
           localDate: new Date("2020-10-12"),
           plannedMinutes: 60,
         },
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it("keeps its announced day-two clock and sections when returning after a skipped mock", async () => {

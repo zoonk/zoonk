@@ -11308,9 +11308,9 @@ msgid "Full review"
 msgstr "Ripasso generale"
 
 #: src/plan/use-short-plan.ts
-msgctxt "jzXhpt"
-msgid "Short mock and review"
-msgstr "Simulazione breve e ripasso"
+msgctxt "0zXviI"
+msgid "Short mock"
+msgstr "Simulazione breve"
 
 #: src/plan/use-short-plan.ts
 msgctxt "FTIL8p"

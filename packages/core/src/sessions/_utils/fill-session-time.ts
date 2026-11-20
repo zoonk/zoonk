@@ -61,7 +61,7 @@ export function fillRemainingLessonTime({
 
   const candidates = getNewLessons({
     ...input,
-    lessons: input.mockReplacesDay ? [] : [...input.lessons, ...(input.fillLessons ?? [])],
+    lessons: [...input.lessons, ...(input.fillLessons ?? [])],
   });
 
   const unique = [
@@ -104,9 +104,7 @@ export function fillRemainingLessonTime({
   const newLessonsAllowed = canAddSessionLessons({ reviewDay: isSessionReviewDay(input) });
 
   const holdsMore =
-    !input.mockReplacesDay &&
-    newLessonsAllowed &&
-    ((input.writingMinutes ?? 0) > 0 || candidates.length > fill.length);
+    newLessonsAllowed && ((input.writingMinutes ?? 0) > 0 || candidates.length > fill.length);
 
   const deliberateOverflow =
     isFullReviewDay(input) ||

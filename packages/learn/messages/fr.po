@@ -11308,9 +11308,9 @@ msgid "Full review"
 msgstr "Révision complète"
 
 #: src/plan/use-short-plan.ts
-msgctxt "jzXhpt"
-msgid "Short mock and review"
-msgstr "Examen blanc court et révision"
+msgctxt "0zXviI"
+msgid "Short mock"
+msgstr "Examen blanc court"
 
 #: src/plan/use-short-plan.ts
 msgctxt "FTIL8p"

@@ -13,55 +13,23 @@ describe(isMockOnlyDay, () => {
   it.each([
     { hasMock: true, onlyMock: true, settings: {} },
     { hasMock: false, onlyMock: false, settings: {} },
-    { hasMock: true, onlyMock: false, settings: { shortMockMinutes: 10, startDate: "2026-10-06" } },
     { hasMock: true, onlyMock: true, settings: { shortMockMinutes: 10, startDate: "2026-10-05" } },
     { hasMock: true, onlyMock: true, settings: { shortMockMinutes: 20, startDate: "2026-10-06" } },
   ])(
-    "respects the planner's mock event: $settings, mock $hasMock",
+    "gives a day with a mock only the mock: $settings, mock $hasMock",
     ({ hasMock, onlyMock, settings }) => {
-      expect(
-        isMockOnlyDay({
-          goal,
-          hasMock,
-          items: [{ kind: "mock", scheduledFor: today }],
-          planSettings: settings,
-          today,
-        }),
-      ).toBe(onlyMock);
+      expect(isMockOnlyDay({ goal, hasMock, planSettings: settings, today })).toBe(onlyMock);
     },
   );
 
-  it.each([null, new Date("2026-10-05"), new Date("2026-10-07")])(
-    "does not replace today with a mock scheduled for %s",
-    (scheduledFor) => {
-      expect(
-        isMockOnlyDay({
-          goal,
-          hasMock: true,
-          items: [{ kind: "mock", scheduledFor }],
-          planSettings: {},
-          today,
-        }),
-      ).toBe(false);
-    },
-  );
-
-  it.each([
-    { from: "2026-10-06", onlyMock: false },
-    { from: "2026-10-05", onlyMock: true },
-  ])("keeps a moved mock's original day rule: $from", ({ from, onlyMock }) => {
+  it("shares a class test's only study day between its short mock and lessons", () => {
     expect(
       isMockOnlyDay({
         goal,
         hasMock: true,
-        items: [{ kind: "mock", scheduledFor: new Date("2026-10-08T00:00:00Z") }],
-        planSettings: {
-          movedEvents: [{ from, to: "2026-10-08" }],
-          shortMockMinutes: 10,
-          startDate: "2026-10-06",
-        },
-        today: new Date("2026-10-08T00:00:00Z"),
+        planSettings: { shortMockMinutes: 10, startDate: "2026-10-06" },
+        today,
       }),
-    ).toBe(onlyMock);
+    ).toBe(false);
   });
 });
