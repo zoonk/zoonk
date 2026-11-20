@@ -103,7 +103,7 @@ export function AppearanceScreen({
 
       <div className="flex flex-col gap-7 xl:in-data-signed-in:col-start-1 xl:in-data-signed-in:row-start-1">
         {view.canPersonalize && (
-          <PageSection className="gap-0.5">
+          <PageSection>
             <SectionTitle>{t("Lessons")}</SectionTitle>
             <ListGroup>
               <SwitchSettingRow
