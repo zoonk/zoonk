@@ -30,12 +30,18 @@ type LessonLinesInput = {
   context: ExampleLineContext;
   language: string;
   lessonId: string;
-  lessonTitle: string;
   userId: string;
   version: number;
 };
 
 const EARLIER_LINE_LIMIT = 8;
+
+/**
+ * Names no lesson topic: a topic pulls the check toward facts about that subject, so a developer's
+ * coding lessons only ever got their software work, which repeats the screen.
+ */
+const EXAMPLE_LINE_NEED =
+  "Write a personal example that shows a lesson's idea in a familiar part of the learner's life: their work, routine, home, hobbies or the sports and interests they follow";
 
 const writing = new Map<string, Promise<LessonLines>>();
 
@@ -55,7 +61,6 @@ async function findExplanation(stepId: string) {
           homeChapter: { select: { homeCourse: { select: { country: true } } } },
           language: true,
           ownerId: true,
-          title: true,
           visibility: true,
         },
       },
@@ -73,7 +78,6 @@ async function findExplanation(stepId: string) {
     hasSlot: Boolean(getSlot(step.content)),
     language: step.lesson.language,
     lessonId: step.lessonId,
-    lessonTitle: step.lesson.title,
     version: step.version,
   };
 }
@@ -127,7 +131,6 @@ async function writeLessonLines({
   context,
   language,
   lessonId,
-  lessonTitle,
   userId,
   version,
 }: LessonLinesInput): Promise<LessonLines> {
@@ -150,7 +153,7 @@ async function writeLessonLines({
     analytics: { contentScope: "personal", distinctId: userId },
     candidateIds: context.facts.map((fact) => fact.id),
     categories: Object.values(MemoryCategory),
-    need: `Example lines for the lesson "${lessonTitle}": ${missing.map((screen) => screen.idea).join("; ")}`,
+    need: EXAMPLE_LINE_NEED,
     userId,
   });
 
@@ -284,7 +287,6 @@ async function resolveStepExampleLine({
     country: screen.country,
     language: screen.language,
     lessonId: screen.lessonId,
-    lessonTitle: screen.lessonTitle,
     userId,
     version: screen.version,
   });
