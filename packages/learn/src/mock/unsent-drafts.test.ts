@@ -84,7 +84,7 @@ describe("unsent mock drafts", () => {
     });
   });
 
-  it("keeps per-question drafts across tabs and drops only the version acknowledged", () => {
+  it("stores each question under its own key and drops only the version acknowledged", () => {
     const q1v1: MockDraft = {
       answer: { selectedIndex: 0 },
       durationMs: 1000,
@@ -106,9 +106,11 @@ describe("unsent mock drafts", () => {
       itemId: "q2",
     };
 
-    // Two open tabs answering different questions keep both entries.
+    // Two tabs answering different questions write independent keys without overwriting each other.
     keepUnsentMockDraft({ blockId: "mock-1", draft: q1v1 });
     keepUnsentMockDraft({ blockId: "mock-1", draft: q2 });
+    expect(globalThis.localStorage.getItem("mock:mock-1:q1")).not.toBeNull();
+    expect(globalThis.localStorage.getItem("mock:mock-1:q2")).not.toBeNull();
 
     expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
       q1v1,
@@ -120,16 +122,16 @@ describe("unsent mock drafts", () => {
     dropUnsentMockDraft({ blockId: "mock-1", draft: q1v1 });
 
     expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
-      q1v2,
       q2,
+      q1v2,
     ]);
 
     dropUnsentMockDraft({ blockId: "mock-1", draft: q1v2 });
     dropUnsentMockDraft({ blockId: "mock-1", draft: q2 });
-    expect(globalThis.localStorage.getItem("mock:mock-1")).toBeNull();
+    expect(globalThis.localStorage).toHaveLength(0);
   });
 
-  it("ignores malformed entries and clears on finished mocks", () => {
+  it("ignores malformed entries and clears all keys on finished mocks", () => {
     const kept: MockDraft = {
       answer: { selectedIndex: 1 },
       durationMs: 2500,
@@ -137,10 +139,8 @@ describe("unsent mock drafts", () => {
       itemId: "q1",
     };
 
-    globalThis.localStorage.setItem(
-      "mock:mock-1",
-      JSON.stringify([kept, { bad: true }, { answer: { selectedIndex: -1 }, itemId: "q2" }]),
-    );
+    keepUnsentMockDraft({ blockId: "mock-1", draft: kept });
+    globalThis.localStorage.setItem("mock:mock-1:bad", JSON.stringify({ bad: true }));
 
     expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([kept]);
 
@@ -148,7 +148,7 @@ describe("unsent mock drafts", () => {
       restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView({ status: "finished" }) }),
     ).toStrictEqual([]);
 
-    expect(globalThis.localStorage.getItem("mock:mock-1")).toBeNull();
+    expect(globalThis.localStorage).toHaveLength(0);
   });
 
   it("preserves another section's drafts while dropping already-stored and handed-in entries", () => {
@@ -180,11 +180,8 @@ describe("unsent mock drafts", () => {
     // An older tab on section 1 restores only section 1 and preserves tab B's section 2 draft.
     const section1 = makeView({ drafts: [stored], questionIds: ["q1", "q2"] });
     expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: section1 })).toStrictEqual([unsent]);
-
-    expect(JSON.parse(globalThis.localStorage.getItem("mock:mock-1") ?? "[]")).toStrictEqual([
-      unsent,
-      nextSection,
-    ]);
+    expect(globalThis.localStorage.getItem("mock:mock-1:q1")).toBeNull();
+    expect(globalThis.localStorage.getItem("mock:mock-1:q-next")).not.toBeNull();
 
     // Reverting back to the opening draft offline stays unsent once a newer draft was stored.
     const reverted: MockDraft = {
@@ -211,11 +208,11 @@ describe("unsent mock drafts", () => {
       }),
     ).toStrictEqual([unsent, reverted]);
 
-    // Handing in section 1 removes section 1's entries while keeping section 2's unsent draft.
+    // Handing in section 1 removes section 1's keys while keeping section 2's unsent draft.
     const section2 = makeView({ questionIds: ["q-next"] });
     clearHandedInMockDrafts({ blockId: "mock-1", next: section2, previous: section1 });
 
-    expect(JSON.parse(globalThis.localStorage.getItem("mock:mock-1") ?? "[]")).toStrictEqual([
+    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: section2 })).toStrictEqual([
       nextSection,
     ]);
 
@@ -223,7 +220,7 @@ describe("unsent mock drafts", () => {
       restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView({ status: "expired" }) }),
     ).toStrictEqual([]);
 
-    expect(globalThis.localStorage.getItem("mock:mock-1")).toBeNull();
+    expect(globalThis.localStorage).toHaveLength(0);
   });
 
   it("advances reached to the furthest recovered draft in forward-only sections only", () => {

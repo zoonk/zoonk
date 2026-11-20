@@ -120,8 +120,14 @@ test.describe("Mock answers on a bad connection", () => {
     await expect.poll(() => countStoredAnswers(user.id)).toBe(1);
 
     await expect
-      .poll(() => page.evaluate((key) => globalThis.localStorage.getItem(key), `mock:${blockId}`))
-      .toBeNull();
+      .poll(() =>
+        page.evaluate(
+          (prefix) =>
+            Object.keys(globalThis.localStorage).filter((key) => key.startsWith(prefix)).length,
+          `mock:${blockId}:`,
+        ),
+      )
+      .toBe(0);
 
     await page.context().close();
   });

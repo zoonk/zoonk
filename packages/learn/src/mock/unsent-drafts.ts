@@ -11,8 +11,22 @@ const unsentMockDraftSchema = z.object({
   itemId: z.string().min(1),
 });
 
-function getUnsentKey(blockId: string): string {
-  return `mock:${blockId}`;
+const storedMockDraftSchema = z.object({ draft: unsentMockDraftSchema, savedAt: z.int().min(0) });
+
+let lastSavedAt = 0;
+
+function nextSavedAt(): number {
+  const now = Date.now();
+  lastSavedAt = now > lastSavedAt ? now : lastSavedAt + 1;
+  return lastSavedAt;
+}
+
+function getPrefix(blockId: string): string {
+  return `mock:${blockId}:`;
+}
+
+function getDraftKey({ blockId, itemId }: { blockId: string; itemId: string }): string {
+  return `${getPrefix(blockId)}${itemId}`;
 }
 
 function isSameDraft(first: MockDraft, second: MockDraft | undefined): boolean {
@@ -24,67 +38,33 @@ function isSameDraft(first: MockDraft, second: MockDraft | undefined): boolean {
   );
 }
 
-function writeRaw({ blockId, drafts }: { blockId: string; drafts: readonly MockDraft[] }) {
-  if (drafts.length === 0) {
-    deviceStorage.remove(getUnsentKey(blockId));
-    return;
-  }
-
-  deviceStorage.set(getUnsentKey(blockId), JSON.stringify(drafts));
-}
-
-/** Malformed entries are ignored so a corrupt value never blocks reopening the mock. */
-function readUnsentMockDrafts(blockId: string): MockDraft[] {
-  const stored = deviceStorage.getJson(getUnsentKey(blockId));
-
-  if (!Array.isArray(stored)) {
-    return [];
-  }
-
-  return stored.flatMap((entry) => {
-    const parsed = unsentMockDraftSchema.safeParse(entry);
-    return parsed.success ? [parsed.data] : [];
-  });
-}
-
-/**
- * Re-reads storage before updating one question's entry, so two open tabs for the same mock never
- * overwrite each other's unsent answers.
- */
+/** One key per question avoids cross-tab read-modify-write races on a shared array. */
 export function keepUnsentMockDraft({ blockId, draft }: { blockId: string; draft: MockDraft }) {
-  const current = readUnsentMockDrafts(blockId);
-  const index = current.findIndex((entry) => entry.itemId === draft.itemId);
-
-  if (index === -1) {
-    current.push(draft);
-  } else {
-    current[index] = draft;
-  }
-
-  writeRaw({ blockId, drafts: current });
+  deviceStorage.set(
+    getDraftKey({ blockId, itemId: draft.itemId }),
+    JSON.stringify({ draft, savedAt: nextSavedAt() }),
+  );
 }
 
-/** Removes an entry only if storage still holds this exact version, keeping any newer edit. */
+/** Removes the question's entry only if storage still holds this exact version. */
 export function dropUnsentMockDraft({ blockId, draft }: { blockId: string; draft: MockDraft }) {
-  const current = readUnsentMockDrafts(blockId);
+  const key = getDraftKey({ blockId, itemId: draft.itemId });
+  const parsed = storedMockDraftSchema.safeParse(deviceStorage.getJson(key));
 
-  const next = current.filter(
-    (entry) => !(entry.itemId === draft.itemId && isSameDraft(entry, draft)),
-  );
-
-  if (next.length !== current.length) {
-    writeRaw({ blockId, drafts: next });
+  if (parsed.success && isSameDraft(parsed.data.draft, draft)) {
+    deviceStorage.remove(key);
   }
 }
 
 function clearUnsentMockDrafts(blockId: string) {
-  deviceStorage.remove(getUnsentKey(blockId));
+  for (const key of deviceStorage.keys(getPrefix(blockId))) {
+    deviceStorage.remove(key);
+  }
 }
 
 /**
- * Returns unsent drafts for the current section that differ from `storedDrafts`, removing only
- * already-stored copies for this section (never deleting entries from another section that a
- * second tab may have moved on to). Terminal states clear the key.
+ * Returns unsent drafts for the current section (oldest first) that differ from `storedDrafts`,
+ * removing only already-stored copies for this section. Terminal states clear the mock's keys.
  */
 export function restoreUnsentMockDrafts({
   blockId,
@@ -104,23 +84,33 @@ export function restoreUnsentMockDrafts({
     return [];
   }
 
-  const kept = readUnsentMockDrafts(blockId);
   const questionIds = new Set(view.current.questions.map((question) => question.itemId));
 
   const storedByItem = storedDrafts
     ? new Map(Object.entries(storedDrafts))
     : new Map(view.current.drafts.map((draft) => [draft.itemId, draft]));
 
-  const remaining = kept.filter(
-    (draft) =>
-      !questionIds.has(draft.itemId) || !isSameDraft(draft, storedByItem.get(draft.itemId)),
-  );
+  const entries = deviceStorage
+    .keys(getPrefix(blockId))
+    .flatMap((key) => {
+      const parsed = storedMockDraftSchema.safeParse(deviceStorage.getJson(key));
+      return parsed.success ? [{ ...parsed.data, key }] : [];
+    })
+    .toSorted((first, second) => first.savedAt - second.savedAt);
 
-  if (remaining.length !== kept.length) {
-    writeRaw({ blockId, drafts: remaining });
+  const kept: MockDraft[] = [];
+
+  for (const entry of entries) {
+    if (questionIds.has(entry.draft.itemId)) {
+      if (isSameDraft(entry.draft, storedByItem.get(entry.draft.itemId))) {
+        deviceStorage.remove(entry.key);
+      } else {
+        kept.push(entry.draft);
+      }
+    }
   }
 
-  return remaining.filter((draft) => questionIds.has(draft.itemId));
+  return kept;
 }
 
 /** Drops entries belonging to a section that was just handed in, or clears a finished/expired mock. */
@@ -138,17 +128,8 @@ export function clearHandedInMockDrafts({
     return;
   }
 
-  const handedInIds = new Set(previous.current?.questions.map((question) => question.itemId));
-
-  if (handedInIds.size === 0) {
-    return;
-  }
-
-  const kept = readUnsentMockDrafts(blockId);
-  const remaining = kept.filter((draft) => !handedInIds.has(draft.itemId));
-
-  if (remaining.length !== kept.length) {
-    writeRaw({ blockId, drafts: remaining });
+  for (const question of previous.current?.questions ?? []) {
+    deviceStorage.remove(getDraftKey({ blockId, itemId: question.itemId }));
   }
 }
 
