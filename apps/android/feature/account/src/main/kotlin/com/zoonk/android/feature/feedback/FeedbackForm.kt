@@ -14,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -50,27 +49,34 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
-import com.zoonk.android.ui.components.OptionsButton
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.flow.first
 import java.util.UUID
 
-/** Main's message to the team: the message, an email for the reply when there's no account, and Send. */
+/** The signed-in account's email, which a reply goes to; null for a guest or a visitor, who type one. */
+@Composable
+fun accountEmail(app: AppContainer): String? {
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    return (session as? SessionState.SignedIn)
+        ?.takeUnless { it.isGuest }
+        ?.account
+        ?.user
+        ?.email
+}
+
+/** Main's message to the team: the message, an email for the reply when there's no account, and Send unless a bottom bar holds it. */
 @Composable
 fun FeedbackForm(
     app: AppContainer,
     form: FeedbackViewModel,
     modifier: Modifier = Modifier,
+    withSend: Boolean = true,
 ) {
-    val session by app.sessions.state.collectAsStateWithLifecycle()
-    val accountEmail =
-        (session as? SessionState.SignedIn)
-            ?.takeUnless { it.isGuest }
-            ?.account
-            ?.user
-            ?.email
+    val accountEmail = accountEmail(app)
     val isSending = form.status == FeedbackStatus.Sending
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -125,15 +131,24 @@ fun FeedbackForm(
             FeedbackStatus.Idle, FeedbackStatus.Sending -> {}
         }
 
-        Button(
-            busy = isSending,
-            onClick = { form.send(accountEmail) },
-            modifier = Modifier.align(Alignment.End),
-            enabled = form.canSend(accountEmail),
-            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
-            size = ButtonSize.Small,
-        ) { Text(stringResource(R.string.feedback_send)) }
+        if (withSend) SendButton(form, accountEmail, Modifier.align(Alignment.End), ButtonSize.Small)
     }
+}
+
+@Composable
+fun SendButton(
+    form: FeedbackViewModel,
+    accountEmail: String?,
+    modifier: Modifier = Modifier,
+    size: ButtonSize = LocalButtonSize.current,
+) {
+    Button(
+        busy = form.status == FeedbackStatus.Sending,
+        onClick = { form.send(accountEmail) },
+        modifier = modifier,
+        enabled = form.canSend(accountEmail),
+        size = size,
+    ) { Text(stringResource(R.string.feedback_send)) }
 }
 
 @Composable
@@ -227,7 +242,7 @@ private fun rememberFeedbackSheet(
                         )
                         if (!isReport) {
                             Text(
-                                text = stringResource(R.string.feedback_send_feedback_description),
+                                text = stringResource(R.string.feedback_help_description),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.bodyMedium,
                             )
@@ -258,36 +273,23 @@ fun ReportProblemItem(
     )
 }
 
-/**
- * A "More" button with only Report a problem, for a screen without a menu of its own: in its top app
- * bar, or [inPage] as main's "⋯" beside a detail page's main action.
- */
+/** A "More" button with only Report a problem, in the top app bar of a screen without a menu of its own. */
 @Composable
 fun ReportProblemMenu(
     app: AppContainer,
     target: FeedbackTarget,
-    inPage: Boolean = false,
-) = ReportProblemMenu(rememberReportProblem(app, target), inPage)
+) = ReportProblemMenu(rememberReportProblem(app, target))
 
 /**
  * [ReportProblemMenu] for a [report] remembered above a layout the window size changes, so resizing
  * while writing keeps the sheet open with its draft.
  */
 @Composable
-fun ReportProblemMenu(
-    report: FeedbackSheet,
-    inPage: Boolean = false,
-) {
+fun ReportProblemMenu(report: FeedbackSheet) {
     var isOpen by rememberSaveable { mutableStateOf(false) }
 
     Box {
-        if (inPage) {
-            OptionsButton(onClick = { isOpen = true }, contentDescription = stringResource(R.string.feedback_more), size = ButtonSize.Large)
-        } else {
-            IconButton(onClick = { isOpen = true }) {
-                Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.feedback_more))
-            }
-        }
+        MoreButton(onClick = { isOpen = true }, contentDescription = stringResource(R.string.feedback_more))
         DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }) {
             ReportProblemItem(report) { isOpen = false }
         }

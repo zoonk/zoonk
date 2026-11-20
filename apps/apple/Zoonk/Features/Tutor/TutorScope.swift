@@ -64,6 +64,11 @@ enum TutorScope: Hashable, Sendable {
     }
   }
 
+  /// The lesson screen a question asked here is about.
+  var step: TutorTurn.Step? {
+    if case .step(_, let stepId, _, _, _, _) = self { .id(stepId) } else { nil }
+  }
+
   var mistakeId: String? {
     switch self {
     case .step(_, _, _, _, _, let id), .item(_, _, _, _, let id): id

@@ -17,8 +17,9 @@ extension View {
   /// For a whole screen with nothing to face, such as a status, a gate or one decision: on iPhone
   /// Duo it keeps to the page before the hinge, flat or folded, and the page after it stays blank
   /// under the same background.
-  func lonePage() -> some View {
-    modifier(LonePage())
+  /// `isAlone` false while the page shares the screen with a pane of its own.
+  func lonePage(_ isAlone: Bool = true) -> some View {
+    modifier(LonePage(isAlone: isAlone))
   }
 }
 
@@ -63,9 +64,11 @@ private struct HingeEnd: ViewModifier {
 private struct LonePage: ViewModifier {
   @State private var space = PaneSpace(width: 0)
 
+  let isAlone: Bool
+
   func body(content: Content) -> some View {
     content
-      .safeAreaPadding(.trailing, space.lonePageInset)
+      .safeAreaPadding(.trailing, isAlone ? space.lonePageInset : 0)
       .atOfferedWidth()
       .onGeometryChange(for: PaneSpace.self, of: PaneSpace.init) { space = $0 }
   }

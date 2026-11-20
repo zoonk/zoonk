@@ -9,17 +9,18 @@ final class BuddyStore {
 
   /// Waits in the Buddy tab's composer for the learner's own send.
   var broughtQuestion: String?
-  private(set) var saveFailed = false
   private(set) var isLoadingOlder = false
   private(set) var olderFailed = false
 
   @ObservationIgnored private let api: any BuddyAPIClient
   @ObservationIgnored private let cache: AppCache
+  @ObservationIgnored private let saves: LearnerSaves
   @ObservationIgnored private var latestSave = 0
 
   init(api: any BuddyAPIClient, cache: AppCache) {
     self.api = api
     self.cache = cache
+    saves = LearnerSaves(cache: cache)
 
     status = cache.resource(
       audience: .signedIn, domains: [.goals, .learningProfile, .userProgress, .userSession]
@@ -45,12 +46,13 @@ final class BuddyStore {
       })
   }
 
-  /// A failed save puts the buddy before back, and only the latest save can report a failure.
-  func save(_ choice: BuddyChoice) async {
+  /// Saves even when the screen that asked goes away first. A failed save puts the buddy before
+  /// back, and only the latest save can report a failure: false when it did.
+  @discardableResult
+  func save(_ choice: BuddyChoice) async -> Bool {
     latestSave += 1
     let request = latestSave
     let previous = status.value?.buddy
-    saveFailed = false
     status.update { status in
       var status = status
       status.buddy = .init(
@@ -61,23 +63,27 @@ final class BuddyStore {
       return status
     }
 
-    let result = await cache.mutate(invalidating: [.learningProfile]) { identity in
-      try await api.save(choice, token: identity.bearerToken)
+    let result = await saves.save { [api, cache] in
+      let result = await cache.mutate(invalidating: [.learningProfile]) { identity in
+        try await api.save(choice, token: identity.bearerToken)
+      }
+
+      if request == self.latestSave, case .failed = result, let previous {
+        self.status.update { status in
+          var status = status
+          status.buddy = previous
+          return status
+        }
+      }
+
+      return result
     }
 
     guard request == latestSave, case .failed = result else {
-      return
+      return true
     }
 
-    saveFailed = true
-
-    if let previous {
-      status.update { status in
-        var status = status
-        status.buddy = previous
-        return status
-      }
-    }
+    return false
   }
 
   func loadOlderQuestions() async {
@@ -108,9 +114,14 @@ final class BuddyStore {
     }
   }
 
-  func answer(_ insight: MemoryInsight, accepted: Bool) async -> MutationResult<Void> {
-    await cache.mutate(invalidating: [.goals, .learnerModel, .memory, .userSession]) { identity in
-      try await api.answer(insightId: insight.id, accepted: accepted, token: identity.bearerToken)
+  /// Saves even when the screen that asked goes away first, which then gets `.obsolete`.
+  func answer(_ insight: MemoryInsight, accepted: Bool) async -> MutationResult<MemoryInsight?> {
+    await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.goals, .learnerModel, .memory, .userSession]) { identity in
+        try await api.answer(
+          insightId: insight.id, accepted: accepted, quote: insight.planChange?.quote,
+          token: identity.bearerToken)
+      }
     }
   }
 }

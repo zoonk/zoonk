@@ -86,6 +86,10 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data object Memory : AppRoute
 
+    /** Settings' Privacy page; [Privacy] is the policy on the web. */
+    @Serializable
+    data object PrivacySettings : AppRoute
+
     @Serializable
     data object Reminders : AppRoute
 
@@ -166,7 +170,6 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data class GoalSetup(
         val goalId: String,
-        val revealMoment: Boolean = false,
     ) : AppRoute
 
     /** `dailyMinutes` is the time a day the course's example plan showed. */
@@ -383,7 +386,7 @@ val AppRoute.presentation: Presentation
             -> Presentation.Push
 
             AppRoute.Settings, AppRoute.Preferences, AppRoute.Memory, AppRoute.Reminders, AppRoute.Profile, AppRoute.AboutYou,
-            is AppRoute.ProfileQuestionEdit,
+            is AppRoute.ProfileQuestionEdit, AppRoute.PrivacySettings,
             AppRoute.Subscription, AppRoute.Help, AppRoute.Licenses,
             -> Presentation.Section(AppSection.Settings)
 
@@ -416,7 +419,7 @@ val AppRoute.requirement: Requirement
             AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
             -> Requirement.Goal
 
-            is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Reminders, AppRoute.Profile,
+            is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.PrivacySettings, AppRoute.Reminders, AppRoute.Profile,
             AppRoute.AboutYou, is AppRoute.ProfileQuestionEdit, AppRoute.Statistics,
             AppRoute.StatsLevel, AppRoute.StatsEnergy, AppRoute.StatsActivity, AppRoute.StatsScore,
             AppRoute.StatsPatterns, is AppRoute.GoalSetup,
@@ -433,7 +436,7 @@ val AppRoute.section: AppSection?
     get() = (presentation as? Presentation.Section)?.section
 
 /**
- * The tab a page belongs to (main's `TAB_PATHS`), where a link from outside the app opens it: the
+ * The tab a page belongs to (main's `getActiveTab`), where a link from outside the app opens it: the
  * Plan's pages on the Plan, the buddy's on the buddy, everything else on Today.
  */
 val AppRoute.homeTab: AppTab

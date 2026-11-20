@@ -102,6 +102,7 @@ fun PageLoading(
 fun LoadFailedMessage(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    inBar: Boolean = true,
     actions: @Composable ColumnScope.() -> Unit = {},
 ) {
     StatusMessage(
@@ -110,15 +111,7 @@ fun LoadFailedMessage(
         description = stringResource(R.string.load_failed_description),
         modifier = modifier,
     ) {
-        Button(onClick = onRetry, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
-            Icon(
-                painter = painterResource(R.drawable.ic_refresh),
-                contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(stringResource(R.string.load_failed_try_again))
-        }
+        LoadFailureRetry(onRetry, inBar)
         actions()
     }
 }
@@ -134,7 +127,7 @@ fun NotFoundMessage(
         description = stringResource(R.string.not_found_description),
         modifier = modifier,
     ) {
-        Button(onClick = onGoHome) { Text(stringResource(R.string.not_found_go_home)) }
+        NotFoundGoHome(onGoHome)
     }
 }
 
@@ -150,6 +143,7 @@ fun EmptyState(
         Icon(
             painter = painterResource(icon),
             contentDescription = null,
+            modifier = Modifier.glyphInk(icon),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.size(12.dp))

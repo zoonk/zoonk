@@ -1,4 +1,5 @@
 import {
+  CHECKPOINT_PASS_MARK,
   CHECKPOINT_QUESTIONS,
   answerDuelQuestion,
   createCheckpointLearner,
@@ -68,6 +69,18 @@ test.describe("A checkpoint from today's session", () => {
     await page.context().close();
   });
 
+  test("a challenge link that isn't the learner's says the page wasn't found", async ({
+    browser,
+  }) => {
+    const { user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+
+    await page.goto("/challenge/0f3a9c1e-5b7d-4e2a-9c61-7d8e4b2a1f30");
+    await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+
+    await page.context().close();
+  });
+
   test("Back from the checkpoint its challenge opened finds the challenge ready to start", async ({
     browser,
   }) => {
@@ -107,6 +120,39 @@ test.describe("A checkpoint from today's session", () => {
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page).toHaveURL(checkpointUrl);
     await expect(page.getByRole("progressbar", { name: question(2) })).toBeAttached();
+
+    await page.context().close();
+  });
+
+  test("keeps the last question on screen while its result loads", async ({ browser }) => {
+    const { block, boss, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+    await page.goto(`/challenge/${boss.id}`);
+    await page.getByRole("button", { name: "Start" }).click();
+
+    for (let number = 1; number < CHECKPOINT_PASS_MARK; number += 1) {
+      // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
+      await answerDuelQuestion(page, number);
+    }
+
+    await page.keyboard.press("1");
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
+
+    const finish = await holdActionAnswer(page, `/checkpoint/${block.id}`);
+    await page.getByRole("button", { name: /^See result/u }).click();
+    await finish.held;
+
+    await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
+    await expect(page.getByRole("radio", { name: "Right answer" })).toBeVisible();
+
+    await expect(
+      page.getByRole("progressbar", { name: question(CHECKPOINT_PASS_MARK) }),
+    ).toBeAttached();
+
+    await finish.release(/\/session/u);
+    // The plan's last challenge finishes the course, so its certificate plays first.
+    await expect(page.getByRole("dialog", { name: "Course complete!" })).toBeVisible();
 
     await page.context().close();
   });

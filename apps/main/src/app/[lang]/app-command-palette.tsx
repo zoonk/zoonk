@@ -3,6 +3,7 @@
 import { getLearnerSummaryState, subscribeToLearnerSummary } from "@/lib/learner/learner-store";
 import { hasSessionHint } from "@/lib/learner/session-hint";
 import { runWhenIdle } from "@/lib/run-when-idle";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import {
   listenForCommandPaletteRequest,
   openCommandPalette,
@@ -29,7 +30,7 @@ export function CommandPaletteScope() {
 }
 
 /** Anyone with a session has the palette everywhere; a visitor has it only in the app's frame. */
-function canOpenPalette(): boolean {
+export function canOpenPalette(): boolean {
   return frameScopes.count > 0 || hasSessionHint() || getLearnerSummaryState().status === "ready";
 }
 
@@ -43,12 +44,8 @@ function subscribeToPaletteScope(listener: () => void): () => void {
   };
 }
 
-function usePaletteAllowed(): boolean {
+export function usePaletteAllowed(): boolean {
   return useSyncExternalStore(subscribeToPaletteScope, canOpenPalette, () => false);
-}
-
-function isPaletteShortcut(event: KeyboardEvent): boolean {
-  return (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k";
 }
 
 function usePreloadOnIdle() {
@@ -69,31 +66,20 @@ export function AppCommandPalette() {
 
   usePreloadOnIdle();
 
+  // Until the palette mounts and takes the key itself, the key asks for it.
+  useShortcut("search", () => (canOpenPalette() ? openCommandPalette() : false), {
+    enabled: !mounted,
+  });
+
   useEffect(() => {
     if (mounted) {
       return;
     }
 
-    function onKeyDown(event: KeyboardEvent) {
-      if (!isPaletteShortcut(event) || !canOpenPalette()) {
-        return;
-      }
-
-      event.preventDefault();
-      openCommandPalette();
-    }
-
-    const stopListening = listenForCommandPaletteRequest(() => {
+    return listenForCommandPaletteRequest(() => {
       void paletteDialog.load();
       setRequested(true);
     });
-
-    globalThis.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      stopListening();
-      globalThis.removeEventListener("keydown", onKeyDown);
-    };
   }, [mounted]);
 
   return Dialog ? <Dialog /> : null;

@@ -7,6 +7,8 @@ struct SectionTitle<Trailing: View>: View {
   var alignment: VerticalAlignment = .firstTextBaseline
   @ViewBuilder let trailing: Trailing
 
+  @Environment(\.stacksContent) private var isStacked
+
   init(
     _ title: Text, alignment: VerticalAlignment = .firstTextBaseline,
     @ViewBuilder trailing: () -> Trailing
@@ -25,6 +27,7 @@ struct SectionTitle<Trailing: View>: View {
       trailing
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
+        .multilineTextAlignment(isStacked ? .leading : .trailing)
     }
     .textCase(nil)
   }
@@ -36,6 +39,24 @@ extension View {
   func sectionTitleStyle() -> some View {
     typeStyle(.sectionTitle)
       .foregroundStyle(Color(.foreground))
+      .textCase(nil)
+      .accessibilityAddTraits(.isHeader)
+  }
+}
+
+/// Main's `PageSectionLabel`: a quiet label naming a group inside a section, such as what a
+/// lesson leads to or a run of topics. It's still a heading for VoiceOver.
+struct SectionLabel: View {
+  let text: Text
+
+  init(_ text: Text) {
+    self.text = text
+  }
+
+  var body: some View {
+    text
+      .typeStyle(.sectionLabel)
+      .foregroundStyle(.mutedForeground)
       .textCase(nil)
       .accessibilityAddTraits(.isHeader)
   }

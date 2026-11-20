@@ -7,9 +7,9 @@
     <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
     <string name="focustest_about_left">About %1$s left</string>
     <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
-    <string name="focustest_find_focus">Find out where to focus</string>
+    <string name="focustest_find_focus">Find what to study most</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
-    <string name="focustest_find_start">Find out where to start</string>
+    <string name="focustest_find_start">Already know some of this?</string>
     <string name="focustest_offer_description_focus">Quick questions on your exam\'s subjects. Your plan skips what you already know, so your time goes where you need it most.</string>
     <string name="focustest_offer_description">Quick questions on your exam\'s subjects. Your plan skips what you already know.</string>
     <string name="focustest_how_it_works">How it works</string>
@@ -25,7 +25,6 @@
     <string name="focustest_how_sessions_title">A few more in your first week</string>
     <string name="focustest_how_sessions">Your study sessions ask a few more of these questions. You can pause that.</string>
     <string name="focustest_start">Start the test</string>
-    <string name="focustest_skip_for_now">Skip for now</string>
     <string name="focustest_skip_note">You can take the test later, from your plan.</string>
     <string name="focustest_not_now">Not now</string>
     <string name="focustest_resume_title">Continue your test</string>
@@ -41,8 +40,6 @@
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Haven\'t studied most of this yet? That\'s fine. You can stop here and start learning.</string>
     <string name="focustest_answers_saved_title">Your answers are saved</string>
-    <!-- Above the test's result: nothing the learner answered was lost. -->
-    <string name="focustest_answers_saved">Answers saved</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">Here\'s where to focus</string>
     <string name="focustest_result_description">Based on your answers and what counts most in your exam. Focusing never removes a subject.</string>
@@ -65,7 +62,7 @@
     <string name="focustest_see_all_subjects">See all subjects</string>
     <string name="focustest_subjects">Subjects</string>
     <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
-    <string name="focustest_session_questions">Ask a few more in my sessions</string>
+    <string name="focustest_session_questions">Ask a few more questions as I study</string>
     <string name="focustest_session_questions_when">During your first week</string>
     <string name="focustest_done">Done</string>
     <string name="focustest_answer_more">Answer more questions</string>
@@ -84,13 +81,11 @@
         <item quantity="one">%1$d of %2$d right</item>
         <item quantity="other">%1$d of %2$d right</item>
     </plurals>
-    <!-- A subject the test hasn't asked a question about yet. -->
-    <string name="focustest_not_asked_yet">Not asked yet</string>
-    <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
-    <string name="focustest_written_not_checked">Writing: not checked here</string>
-    <string name="focustest_listening_not_checked">Listening: not checked here</string>
-    <string name="focustest_speaking_not_checked">Speaking: not checked here</string>
-    <string name="focustest_practical_not_checked">Practical part: not checked here</string>
+    <!-- Parts of the exam the Focus test's questions can't ask about, such as the essay. -->
+    <string name="focustest_written_not_checked">Writing: not in this test</string>
+    <string name="focustest_listening_not_checked">Listening: not in this test</string>
+    <string name="focustest_speaking_not_checked">Speaking: not in this test</string>
+    <string name="focustest_practical_not_checked">Practical part: not in this test</string>
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">In progress</string>
     <string name="focustest_see_your_result">See your result</string>
@@ -99,9 +94,6 @@
     <string name="focustest_take_test">Take the Focus test</string>
     <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
     <string name="focustest_schedule_focus">With this time, we suggest giving %1$s more attention.</string>
-    <!-- On the plan reveal: %1$s is a daily study time, such as "4 hr"; %2$s a date, such as "Dec 10"; %3$s lists up to three exam subjects. -->
-    <string name="focustest_reveal_trade_off">At %1$s a day, some topics won\'t fit before %2$s. This plan gives %3$s more time.</string>
-    <string name="focustest_what_test_changed">What your test changed</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">The Focus test shows what to study most.</string>
     <!-- %1$s is a duration, such as "15 min". -->

@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -43,6 +44,7 @@ import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.theme.ZoonkRadius
 
 @Composable
@@ -56,21 +58,17 @@ internal fun TutorComposer(
     focus: FocusRequester = remember { FocusRequester() },
 ) {
     val limit = turns?.let(state::limit)
+    val lifted = limitLifted(limit)
+    if (lifted) LaunchedEffect(limit) { vm.limitLifted() }
 
-    if (limit != null) {
-        Surface(
-            modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.large,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        ) {
-            LimitNotice(
-                limit = limit,
-                subject = LimitSubject.Help,
-                onCreateAccount = routes.createAccount,
-                onSeePlus = routes.seePlus,
-                modifier = Modifier.padding(16.dp).semantics { liveRegion = LiveRegionMode.Polite },
-            )
-        }
+    if (limit != null && !lifted) {
+        LimitNotice(
+            limit = limit,
+            subject = LimitSubject.Messages,
+            onCreateAccount = routes.createAccount,
+            onSubscribe = routes.subscribe,
+            modifier = modifier.fillMaxWidth(),
+        )
         return
     }
 

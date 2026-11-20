@@ -1,5 +1,7 @@
 import { AuthGateScreen } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { withQuery } from "@/lib/with-query";
@@ -24,7 +26,6 @@ function ChallengeSkeleton() {
   return (
     <TaskSkeleton aside={<Skeleton className="h-24 w-full" />}>
       <div className="flex flex-col gap-2">
-        <Skeleton className="h-3 w-32" />
         <Skeleton className="h-8 w-2/3" />
         <Skeleton className="h-5 w-5/6" />
       </div>
@@ -52,7 +53,11 @@ async function ChallengeContent({ params, searchParams }: Props) {
   }
 
   if (result.status !== "ready") {
-    return redirect({ href: "/today", locale: lang });
+    return (
+      <NotFoundPage>
+        <TaskNotFound />
+      </NotFoundPage>
+    );
   }
 
   const { challenge } = result;

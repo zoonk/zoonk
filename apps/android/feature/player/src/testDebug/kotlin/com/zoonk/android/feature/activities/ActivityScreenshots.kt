@@ -44,6 +44,7 @@ import com.zoonk.android.feature.player.steps.activityRenderers
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,11 +66,17 @@ private class Shot(
     val fixture: String,
     val answer: ActivityAnswer?,
     val isCorrect: Boolean,
+    val name: String = fixture,
 )
 
 /** Every fixture of a template with a renderer, checked right, and one wrong guess to show a miss. */
 private val shots =
-    listOf(Shot("guessReveal", numericAnswer(40.0), isCorrect = false)) +
+    listOf(
+        Shot("guessReveal", numericAnswer(40.0), isCorrect = false),
+        Shot("guessReveal", numericAnswer(1.0), false, "guess-one"),
+        Shot("guessReveal", numericAnswer(10.0), false, "guess-off"),
+        Shot("guessReveal.money", numericAnswer(900.0), false, "guess-money"),
+    ) +
         ActivityFixtures.names
             .filter { it.substringBefore('.') in activityRenderers }
             .sorted()
@@ -112,6 +119,13 @@ class ActivityScreenshots {
     @Config(qualifiers = "w1280dp-h1000dp-land-xhdpi")
     fun tablet() = capture("tablet")
 
+    @Test
+    @Config(qualifiers = "w320dp-h2400dp-xxhdpi")
+    fun narrowPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("narrow-phone-font200")
+    }
+
     private fun started(step: LessonStep) =
         reduce(
             LessonPlayerState.initial(LESSON_ID, listOf(step), now = 0),
@@ -149,12 +163,19 @@ class ActivityScreenshots {
                 val step = ActivityFixtures.exploreStep(name, id = "explore")
                 Triple("$name-explore", playable(listOf(step)), started(step))
             }
+        val captureFilter = System.getenv("ZOONK_ACTIVITY_CAPTURE_FILTER")?.toRegex()
         val screens =
-            shots.flatMap { shot ->
-                states(shot).map { (state, player) ->
-                    Triple(state, playable(listOf(ActivityFixtures.step(shot.fixture, id = "act"))), player)
-                }
-            } + explored
+            (
+                shots.flatMap { shot ->
+                    states(shot).map { (state, player) ->
+                        Triple(
+                            state.replace(shot.fixture, shot.name),
+                            playable(listOf(ActivityFixtures.step(shot.fixture, id = "act"))),
+                            player,
+                        )
+                    }
+                } + explored
+            ).filter { captureFilter?.containsMatchIn(it.first) != false }
         val viewModel =
             LessonPlayerViewModel(
                 LESSON_ID,
@@ -199,7 +220,7 @@ class ActivityScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 }

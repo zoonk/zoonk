@@ -6,7 +6,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -25,6 +27,7 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +62,10 @@ class MockChooserScreenshots {
     fun phone() = capture("chooser-phone")
 
     @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h1400dp-xxhdpi")
+    fun phoneInPortuguese() = capture("chooser-phone-pt")
+
+    @Test
     @Config(qualifiers = "w411dp-h1400dp-night-xxhdpi")
     fun phoneDarkMoreContrast() = capture("chooser-phone-dark-more-contrast", dark = true, moreContrast = true)
 
@@ -71,9 +78,26 @@ class MockChooserScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
-    fun phoneShort() {
+    fun phoneShort() = captureShort("chooser-phone-short")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun tabletShort() = captureShort("chooser-tablet-short")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun phoneShortAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureShort("chooser-phone-short-font200")
+    }
+
+    /** The shorter mock's dialog, offered when the full mock can't start. */
+    private fun captureShort(name: String) {
         starts.starts = listOf { short() }
-        capture("chooser-phone-short") { compose.onNodeWithText("Start").performClick() }
+        capture(name) {
+            compose.onNodeWithText("Day 1").performClick()
+            compose.onNodeWithText("Start").performClick()
+        }
     }
 
     @Test
@@ -95,6 +119,11 @@ class MockChooserScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expanded() = capture("chooser-expanded")
+
+    /** A mock of questions only: its usual time shows under the limit. */
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedQuestionsOnly() = capture("chooser-expanded-day-2") { compose.onNodeWithText("Day 2").performClick() }
 
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
@@ -170,7 +199,14 @@ class MockChooserScreenshots {
         compose.waitForIdle()
         act()
         compose.waitForIdle()
-        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+        write(
+            name,
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap(),
+        )
     }
 
     private fun write(
@@ -178,7 +214,7 @@ class MockChooserScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 
     private companion object {
@@ -187,7 +223,7 @@ class MockChooserScreenshots {
         val OPTIONS =
             """
             "examName":"ENEM",
-            "options":[{"area":null,"day":1,"kind":"full","areas":["Languages","Human Sciences"],"covers":null,"estimatedMinutes":300,"leftOut":[],
+            "options":[{"area":null,"day":1,"kind":"full","areas":["Languages","Human Sciences"],"covers":null,"estimatedMinutes":330,"leftOut":[],
               "minutes":330,"objectiveOnly":false,"questions":90,"written":["Essay"]},
              {"area":null,"day":1,"kind":"half","areas":["Languages"],"covers":null,"estimatedMinutes":140,"leftOut":[],
               "minutes":165,"objectiveOnly":true,"questions":45,"written":[]},

@@ -14,6 +14,8 @@ struct ActivityProgress: Codable, Equatable, Sendable {
 struct ActivityProgressDay: Codable, Equatable, Identifiable, Sendable {
   let activitiesCompleted: Int
   let date: ProgressDate
+  let lessonCompletions: Int
+  let timeSpentSeconds: Int
 
   var id: ProgressDate { date }
 }
@@ -96,7 +98,6 @@ struct ScorePatterns: Codable, Equatable, Sendable {
   let strongestWeekday: WeekdayScorePattern?
   let timeVerdict: PatternVerdict<DaypartScorePattern>
   let weekdays: [WeekdayScorePattern]
-  let weekSpread: ScoreSpread?
 }
 
 enum PatternVerdict<Pattern: Codable & Equatable & Sendable>: Codable, Equatable, Sendable {
@@ -111,11 +112,6 @@ enum PatternVerdict<Pattern: Codable & Equatable & Sendable>: Codable, Equatable
 
     return nil
   }
-}
-
-struct ScoreSpread: Codable, Equatable, Sendable {
-  let high: Double
-  let low: Double
 }
 
 struct DaypartScorePattern: Codable, Equatable, Identifiable, Sendable {

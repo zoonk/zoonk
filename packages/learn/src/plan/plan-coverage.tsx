@@ -4,8 +4,8 @@ import { Button } from "@zoonk/ui/components/button";
 import { CalendarCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
-import { useTimeAnswerTexts } from "../_components/time-answer";
+import { useChangeSaveFailed } from "../_components/save-error";
+import { TIME_ANSWER_BUTTON_CLASS, useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
@@ -45,21 +45,14 @@ export function useCoveredText() {
   const formatDuration = useFormatDuration();
   const texts = useTimeAnswerTexts();
   const { plan } = usePlanScreen();
-  const { dailyMinutes, targetDate, targetDateNamedMonth } = plan.schedule;
+  const { dailyMinutes } = plan.schedule;
 
-  return ({ coveredShare, measure }: Pick<Coverage, "coveredShare" | "measure">): string => {
-    if (coveredShare < MIN_SHOWN_SHARE || !targetDate) {
-      return t("{time} a day isn't enough time to cover your goal.", {
-        time: formatDuration(dailyMinutes),
-      });
-    }
-
-    return texts.share({
-      date: { isoDate: targetDate, namedMonth: targetDateNamedMonth },
-      exam: measure === "exam",
-      value: coveredShare,
-    });
-  };
+  return ({ coveredShare, measure }: Pick<Coverage, "coveredShare" | "measure">): string =>
+    coveredShare < MIN_SHOWN_SHARE
+      ? t("{time} a day isn't enough time to cover your goal.", {
+          time: formatDuration(dailyMinutes),
+        })
+      : texts.timeCovers({ exam: measure === "exam", minutes: dailyMinutes, value: coveredShare });
 }
 
 export function useCanMoveDate(): boolean {
@@ -75,7 +68,7 @@ type MoveOutcome = "building" | "failed" | "noDate" | null;
  * Until the date is known, a tap finds it and the control names it; once named, one tap moves it.
  * Saved as any change (S1).
  */
-export function useMoveDate({
+function useMoveDate({
   onMoved,
   onMoving,
   planChange,
@@ -85,11 +78,12 @@ export function useMoveDate({
   planChange?: ReturnType<typeof usePlanChange>;
 } = {}) {
   const own = usePlanChange();
-  const { change, failed, isPending } = planChange ?? own;
+  const { change, isPending } = planChange ?? own;
   const { changes, keepFocus } = usePlanScreen();
   const { answered, find } = useTimeToCover();
   const [finding, setFinding] = useState(false);
   const [outcome, setOutcome] = useState<MoveOutcome>(null);
+  const saveFailed = useChangeSaveFailed();
   const date = answered?.fittingDate ?? null;
 
   const findDate = async () => {
@@ -105,6 +99,10 @@ export function useMoveDate({
     }
 
     setOutcome(found.status === "stale" ? null : found.status);
+
+    if (found.status === "failed") {
+      saveFailed();
+    }
   };
 
   const move = async () => {
@@ -134,26 +132,20 @@ export function useMoveDate({
     keepFocus(() => findSectionControl("time"));
   };
 
-  return {
-    date,
-    failed: failed || outcome === "failed",
-    move,
-    outcome,
-    pending: finding || isPending,
-  };
+  return { date, move, outcome, pending: finding || isPending };
 }
 
-export function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }) {
+function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
   return move.date
-    ? t("Move your date to {date}", { date: formatDate(move.date, "long") })
+    ? t("Move your date to {date}", { date: formatDate(move.date, "sentence") })
     : t("Move your date to cover everything");
 }
 
 /** `live={false}` inside a block that's a live region already, so it's said once. */
-export function MoveDateFailure({
+function MoveDateFailure({
   live = true,
   move,
 }: {
@@ -161,10 +153,6 @@ export function MoveDateFailure({
   move: ReturnType<typeof useMoveDate>;
 }) {
   const texts = useTimeToCoverTexts();
-
-  if (move.failed) {
-    return <ChangeSaveError />;
-  }
 
   if (move.outcome === "building" || move.outcome === "noDate") {
     return (
@@ -192,7 +180,7 @@ export function MoveDateSwitch({
     <>
       <Button
         busy={move.pending}
-        className="self-start"
+        className={TIME_ANSWER_BUTTON_CLASS}
         icon={<CalendarCheckIcon aria-hidden="true" />}
         id={id}
         onClick={() => void move.move()}

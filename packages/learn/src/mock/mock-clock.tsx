@@ -52,8 +52,8 @@ export function useRefreshPastMockDeadline({
 }
 
 const CLOCK_CLASS = {
-  aside: { box: "items-start", time: "text-[1.75rem] leading-8" },
-  header: { box: "items-center", time: "text-[1.625rem] leading-8" },
+  aside: { box: "items-start", time: "text-2xl leading-8" },
+  header: { box: "items-center", time: "text-2xl leading-9" },
 } as const;
 
 /** A timer isn't a live region, so it never reads every second. */
@@ -80,7 +80,7 @@ export function SectionClock({
       >
         {formatClock(remaining)}
       </p>
-      <p aria-hidden="true" className="text-muted-foreground text-[0.6875rem] leading-3.5">
+      <p aria-hidden="true" className="text-muted-foreground text-2xs leading-3.5">
         {t("time left")}
       </p>
     </div>

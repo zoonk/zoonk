@@ -6,7 +6,7 @@ import {
   PlanLine,
 } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
-import { CourseExamEyebrow } from "@/components/catalog/course-exam-eyebrow";
+import { CourseExamDate } from "@/components/catalog/course-exam-date";
 import { CourseMark } from "@/components/catalog/course-mark";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseGoalSwitch, CourseProgressScope } from "@/components/catalog/course-progress";
@@ -16,64 +16,37 @@ import { JsonLd } from "@/components/public/json-ld";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
 import { type LibraryCourseRoute, type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { getCourseHref } from "@/data/courses/course-href";
-import { Link } from "@/i18n/navigation";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getLibraryOutlineStats } from "@/lib/public/library-outline";
 import { getCourseUrl } from "@/lib/public/public-canonical";
-import { getIsoDayFormatter, getLevelLabels } from "@/lib/public/public-labels";
+import { getLevelLabels } from "@/lib/public/public-labels";
 import { breadcrumbJsonLd, courseJsonLd } from "@/lib/public/structured-data";
 import { getCoursePlanExample } from "@zoonk/core/catalog/course-plan-example";
-import { type CoursePlanExample } from "@zoonk/core/catalog/course-plan-example-contract";
+import {
+  type CoursePlanExample,
+  isDatedEstimate,
+} from "@zoonk/core/catalog/course-plan-example-contract";
 import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
-import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
-import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
+import { getCoursePromise, parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page } from "@zoonk/learn/page";
-import { Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
+import { ROUTE_CLASS, Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { type Subject, getSubject } from "@zoonk/learn/subject-label";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
-import { ArrowRightIcon, LanguagesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { ContentCountryLine } from "./content-country-line";
 import { CourseFit } from "./course-fit";
 import { CourseStart } from "./course-start";
+import { EditionNotice } from "./edition-notice";
 import { LibraryCourseOutline } from "./library-course-outline";
 
 type Params = { brandSlug: string; courseSlug: string };
 type Course = LibraryCourseRoute["course"];
 
 const STOP_CLASS = "pb-16 sm:pb-24";
-
-async function EditionNotice({ courseId, locale }: { courseId: string; locale: SupportedLocale }) {
-  const t = await getExtracted();
-  const editions = await listPublishedCourseEditions({ courseId });
-  const edition = editions.find((item) => getContentLocale(item.language) === locale);
-
-  if (!edition) {
-    return null;
-  }
-
-  return (
-    <Link
-      className="bg-card ring-border hover:bg-muted focus-visible:ring-ring/50 mb-6 flex min-h-11 max-w-[560px] gap-3 rounded-xl px-4 py-3 text-sm leading-snug ring-1 transition-colors outline-none focus-visible:ring-[3px]"
-      href={getCourseHref(edition)}
-      prefetch
-    >
-      <LineMarker>
-        <LanguagesIcon aria-hidden="true" className="text-muted-foreground size-4" />
-      </LineMarker>
-      <span className="flex-1 text-pretty">
-        {t("This course is also available in your language.")}
-      </span>
-      <LineMarker>
-        <ArrowRightIcon aria-hidden="true" className="size-4" />
-      </LineMarker>
-    </Link>
-  );
-}
 
 function CourseHero({
   contentCountry,
@@ -99,26 +72,35 @@ function CourseHero({
   const titleId = `course-title-${course.id}`;
 
   return (
-    <section aria-labelledby={titleId} className="max-w-column flex min-w-0 flex-col">
+    <section
+      aria-labelledby={titleId}
+      className={cn(
+        PAGE_HEADER_CLASS,
+        "max-w-column w-full gap-0 wrap-anywhere",
+        // On a phone the route starts below the title block, which keeps the page's edge.
+        "max-sm:bg-background max-sm:relative max-sm:z-2 max-sm:-ms-(--route-inset) max-sm:w-[calc(100%+var(--route-inset))] max-sm:max-w-none",
+      )}
+    >
       {isOtherLanguage && <EditionNotice courseId={course.id} locale={locale} />}
 
-      <CourseMark course={course} loading="eager" locale={locale} />
+      <CourseMark align="start" course={course} loading="eager" locale={locale} />
 
-      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
+      <div className="mt-5 flex">
         <CourseSubjectLabel subject={subject} />
-        {exam && <CourseExamEyebrow exam={exam} />}
       </div>
 
       <h1 className={cn(COURSE_TITLE_CLASS, "relative mt-3")} id={titleId}>
-        <RouteMark down />
+        <RouteMark className="max-sm:hidden" down />
         {course.title}
       </h1>
+
+      {exam && <CourseExamDate exam={exam} />}
 
       {promise && <p className={HERO_LEAD_CLASS}>{promise}</p>}
 
       <ContentCountryLine country={contentCountry} />
 
-      <PlanLine />
+      <PlanLine start={exam ? "exam" : "known"} />
 
       <CourseStart courseId={course.id} pace={pace} tryId={tryId} />
     </section>
@@ -138,7 +120,14 @@ function CourseFirstScreen({
 
   return (
     <RouteStop className={STOP_CLASS}>
-      <div className={cn(COURSE_HERO_CLASS, side && COURSE_HERO_PAIR_CLASS)}>
+      <div
+        className={cn(
+          COURSE_HERO_CLASS,
+          side && COURSE_HERO_PAIR_CLASS,
+          // Stacked, the plan is the route's next stop: it takes a stop's gap and its mark.
+          !tryCard && plan && "gap-16 sm:gap-24",
+        )}
+      >
         {hero}
         {side}
       </div>
@@ -158,7 +147,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
 
   return (
     <RouteStop aria-labelledby={titleId} className="flex flex-col gap-1.5">
-      <RouteTitle id={titleId} station="end">
+      <RouteTitle id={titleId}>
         <CourseGoalSwitch
           continueLink={t("Your plan follows this course")}
           courseId={courseId}
@@ -174,13 +163,13 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
         continueLink={null}
         courseId={courseId}
         startLinks={
-          <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">
+          <p className="text-muted-foreground max-w-column text-reading leading-relaxed text-pretty">
             {t("A few quick questions, then your plan and your first lesson.")}
           </p>
         }
       />
 
-      <CourseStart className="mt-5 sm:mt-6" courseId={courseId} pace={pace} />
+      <CourseStart className="mt-5 sm:mt-6" courseId={courseId} pace={pace} pricing />
     </RouteStop>
   );
 }
@@ -199,12 +188,11 @@ export async function LibraryCoursePage({
   const landingPage = parseCourseLandingPageContent(course.landingPage);
   const courseUrl = getCourseUrl({ ...params, language: course.language });
   const isOtherLanguage = getContentLocale(course.language) !== locale;
-  const promise = landingPage?.valueProposition || course.description;
+  const promise = getCoursePromise(course);
   const outlineLead = promise === course.description ? null : course.description;
 
   const t = await getExtracted();
   const levelLabels = await getLevelLabels();
-  const formatDay = await getIsoDayFormatter();
 
   const [tryLesson, plan] = await Promise.all([
     pickTryLesson(outline.levels.flatMap((band) => band.chapters)),
@@ -213,20 +201,21 @@ export async function LibraryCoursePage({
 
   const subject = getSubject(course.categories);
   const tryId = getTryLessonId(course.id);
-  const examDay = plan.exam?.days[0];
-  const examDate = examDay ? formatDay(examDay) : null;
   const pace = plan.pace?.minutes ?? null;
+  const estimate = plan.pace?.estimate;
+  const weeks = estimate && !isDatedEstimate(estimate) ? estimate : null;
+  const areas = estimate && isDatedEstimate(estimate) ? estimate : null;
 
   const planTitleId = `course-plan-${course.id}`;
 
   const planWindow = (onRoute: boolean) =>
-    plan.pace && (
+    weeks &&
+    pace && (
       <CoursePlanWindow
         chapterTitles={getChapterTitles(outline)}
-        examDate={examDate}
-        isExam={course.format === "exam"}
+        estimate={weeks}
+        minutes={pace}
         onRoute={onRoute}
-        plan={plan}
         titleId={planTitleId}
       />
     );
@@ -237,21 +226,27 @@ export async function LibraryCoursePage({
 
   return (
     <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
-      <div className="flex flex-col gap-8" data-subject={subject}>
+      {/* The way back starts where the title does, past the route's line. */}
+      <div
+        className={cn(
+          ROUTE_CLASS,
+          "flex flex-col sm:**:data-[slot=page-top-start]:ps-(--route-inset)",
+        )}
+        data-subject={subject}
+      >
         <CatalogPageBar
           back={{ href: "/courses", label: t("Explore courses") }}
           options={
             <ContentFeedbackMenu
               label={t("Course options")}
               screen="course"
-              size="icon-bar"
               target={{ contentId: course.id, contentKind: "course" }}
             />
           }
           title={course.title}
         />
 
-        <Page className="gap-0 pt-2 sm:pt-4">
+        <Page className="gap-0">
           <PublicViewTracker contentId={course.id} page="course" />
 
           <JsonLd
@@ -293,7 +288,7 @@ export async function LibraryCoursePage({
               tryCard={tryCard}
             />
 
-            {tryCard && plan.pace && (
+            {tryCard && weeks && (
               <RouteStop aria-labelledby={planTitleId} className={STOP_CLASS}>
                 {planWindow(true)}
               </RouteStop>
@@ -308,7 +303,7 @@ export async function LibraryCoursePage({
               lead={outlineLead}
               outline={outline}
               params={params}
-              plan={{ examDate, pace: plan.pace }}
+              areas={areas}
             />
 
             <CourseClosing courseId={course.id} pace={pace} />

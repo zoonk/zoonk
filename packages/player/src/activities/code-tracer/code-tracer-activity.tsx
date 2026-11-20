@@ -1,11 +1,16 @@
 "use client";
 
 import { useSentenceSpace } from "@zoonk/learn/locale";
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import {
+  ACTIVITY_BOX_CLASS,
+  ActivityCanvas,
+  ActivityTextAlternative,
+} from "../_components/activity-canvas";
+import { ActivityCheckQuestion } from "../_components/activity-check-question";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -44,12 +49,24 @@ function optionText(pause: Pause, optionId: string | undefined): string {
   return pause.options.find((option) => option.id === optionId)?.text ?? "";
 }
 
-function RunHint({ isExploring, isLastStep }: { isExploring: boolean; isLastStep: boolean }) {
+function RunHint({
+  asksAhead,
+  isExploring,
+  isLastStep,
+}: {
+  asksAhead: boolean;
+  isExploring: boolean;
+  isLastStep: boolean;
+}) {
   const t = useExtracted();
 
   if (!isLastStep) {
     return (
-      <p className="text-muted-foreground text-xs">{t("Step forward to run the next line.")}</p>
+      asksAhead && (
+        <p className="text-muted-foreground text-xs">
+          {t("We'll stop for you to predict a value.")}
+        </p>
+      )
     );
   }
 
@@ -60,6 +77,17 @@ function RunHint({ isExploring, isLastStep }: { isExploring: boolean; isLastStep
         : t("That's the whole run. Check your predictions when you're ready.")}
     </p>
   );
+}
+
+/** A screen opened again already checked shows the trace as it ended. */
+function openingStep({
+  fields,
+  isChecked,
+}: {
+  fields: CodeTracerProps["content"]["fields"];
+  isChecked: boolean;
+}): number {
+  return isChecked ? fields.trace.length - 1 : firstStep(fields.pauses);
 }
 
 export function CodeTracerActivity({
@@ -78,15 +106,15 @@ export function CodeTracerActivity({
   const space = useSentenceSpace();
   const asksNothing = isChecked || isExploring;
   const start = firstStep(fields.pauses);
-  const [step, setStep] = useState(start);
-  const [furthest, setFurthest] = useState(start);
+  const lastStep = fields.trace.length - 1;
+  const [step, setStep] = useState(() => openingStep({ fields, isChecked }));
+  const [furthest, setFurthest] = useState(() => openingStep({ fields, isChecked }));
 
   const [predictions, setPredictions] = useState<Record<string, string>>(() =>
     answer?.kind === "assignment" ? answer.pairs : {},
   );
 
   const expectedPairs = expectedInteraction(expected, "assignment")?.pairs ?? null;
-  const lastStep = fields.trace.length - 1;
   const blocking = asksNothing ? null : blockingPause({ pauses: fields.pauses, predictions, step });
   const upcoming = asksNothing ? null : upcomingPause({ pauses: fields.pauses, predictions, step });
   const isRevealed = (pause: Pause) => isChecked || furthest >= pause.step;
@@ -128,16 +156,14 @@ export function CodeTracerActivity({
     <ActivityCanvas className="gap-3" labelId={labelId}>
       <TracerVariables values={values} />
 
-      <div className="bg-background flex flex-col gap-1 rounded-2xl border px-2 pt-2 pb-2.5">
-        <div className="pl-2">
-          <TracerControls
-            canGoBack={step > start}
-            canGoForward={step < lastStep && !blocking}
-            label={position}
-            onBack={() => goTo(step - 1)}
-            onForward={() => goTo(step + 1)}
-          />
-        </div>
+      <div className={cn(ACTIVITY_BOX_CLASS, "flex flex-col gap-1 px-2 pt-2 pb-2.5")}>
+        <TracerControls
+          canGoBack={step > start}
+          canGoForward={step < lastStep && !blocking}
+          label={position}
+          onBack={() => goTo(step - 1)}
+          onForward={() => goTo(step + 1)}
+        />
 
         <TracerCode
           code={fields.code}
@@ -148,9 +174,7 @@ export function CodeTracerActivity({
 
       {upcoming && !isRevealed(upcoming.pause) && (
         <div className="flex flex-col gap-2 pt-1" data-slot="code-tracer-prediction">
-          <div className="text-base leading-snug font-medium">
-            <RichTextBlocks text={upcoming.pause.question} />
-          </div>
+          <ActivityCheckQuestion>{upcoming.pause.question}</ActivityCheckQuestion>
 
           <ActivitySelectGrid
             className="font-mono"
@@ -177,7 +201,11 @@ export function CodeTracerActivity({
       )}
 
       {!isChecked && !(upcoming && !isRevealed(upcoming.pause)) && (
-        <RunHint isExploring={isExploring} isLastStep={step >= lastStep} />
+        <RunHint
+          asksAhead={!asksNothing && tracerAnswer(fields.pauses, predictions) === null}
+          isExploring={isExploring}
+          isLastStep={step >= lastStep}
+        />
       )}
 
       <TracerPredictionLog results={revealed} />

@@ -1,4 +1,5 @@
 import { act } from "@testing-library/react";
+import { collectMathMarkup } from "@zoonk/learn/rich-text/math";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
@@ -37,9 +38,19 @@ const SMALL_PHONE = { height: 700, width: 320 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const SUMMARY_IDEA = "Electrons live in clouds.";
 
-function openLesson({ steps }: { steps: PlayableLibraryStep[] }) {
+/** `drawnMath`: the lesson's formulas arrive drawn, as a lesson from the server does. */
+function openLesson({
+  drawnMath = false,
+  steps,
+}: {
+  drawnMath?: boolean;
+  steps: PlayableLibraryStep[];
+}) {
+  const lesson = buildLesson(steps, { summary: { ideas: [{ text: SUMMARY_IDEA }], shape: "hub" } });
+
   return renderLessonPlayer({
-    lesson: buildLesson(steps, { summary: { ideas: [{ text: SUMMARY_IDEA }], shape: "hub" } }),
+    lesson,
+    ...(drawnMath ? { mathMarkup: collectMathMarkup(lesson) } : {}),
   });
 }
 
@@ -118,6 +129,11 @@ function countPlays() {
   return plays;
 }
 
+/** A formula becomes a tab stop once it has been measured against its column. */
+function formulaStops() {
+  return document.querySelectorAll("[data-slot='display-math'] > [tabindex]");
+}
+
 describe("lesson by keyboard", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -140,7 +156,7 @@ describe("lesson by keyboard", () => {
       await expect.element(page.getByRole("menu")).toBeVisible();
       await press("Escape");
       await expect.element(page.getByRole("menu")).not.toBeInTheDocument();
-      await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
+      await expect.element(page.getByRole("button", { name: /^Continue/u })).toHaveFocus();
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
 
       await press("ArrowRight");
@@ -210,6 +226,7 @@ describe("lesson by keyboard", () => {
       const worked = teachingStep("workedExample");
 
       openLesson({
+        drawnMath: true,
         steps: [
           {
             ...worked,
@@ -217,7 +234,8 @@ describe("lesson by keyboard", () => {
               ...worked.content,
               steps: [
                 {
-                  math: String.raw`1.200{,}00 + 600{,}00 + 250{,}00 = 2.050{,}00`,
+                  // Still wider than the column once drawn.
+                  math: String.raw`1.200{,}00 + 600{,}00 + 250{,}00 + 75{,}00 + 30{,}00 = 2.155{,}00`,
                   text: "Add the three bills.",
                 },
                 { math: "a + b = c", text: "A line that fits." },
@@ -231,16 +249,22 @@ describe("lesson by keyboard", () => {
       await press("Enter");
       await expect.element(page.getByText("A line that fits.")).toBeVisible();
 
-      const stops = document.querySelectorAll("[data-slot='display-math'] > [tabindex]");
-      expect(stops).toHaveLength(1);
+      // The stop comes from a ResizeObserver, a frame or more after the formula draws.
+      await expect.poll(() => formulaStops()).toHaveLength(1);
 
-      const formula = page.elementLocator(stops[0]!);
+      // The stop itself, since nothing but the formula's text would name it in a locator.
+      const [formula] = formulaStops();
+
+      if (!(formula instanceof HTMLElement)) {
+        throw new TypeError("The wide formula has no tab stop");
+      }
+
       await tabTo(formula);
-      expect(formula.element().scrollLeft).toBe(0);
+      expect(formula.scrollLeft).toBe(0);
 
       await press("ArrowRight");
 
-      await expect.poll(() => formula.element().scrollLeft).toBeGreaterThan(0);
+      await expect.poll(() => formula.scrollLeft).toBeGreaterThan(0);
       await expect.element(page.getByText("A line that fits.")).toBeVisible();
     });
   });
@@ -339,7 +363,7 @@ describe("lesson by keyboard", () => {
         ],
       });
 
-      const next = page.getByRole("button", { name: /^Next/u }).element();
+      const next = page.getByRole("button", { name: /^Continue/u }).element();
 
       // Checked within the click's task: a frame would let the browser drop the focus itself.
       next.focus();
@@ -364,7 +388,7 @@ describe("lesson by keyboard", () => {
         ],
       });
 
-      await tabTo(page.getByRole("button", { name: /^Next/u }));
+      await tabTo(page.getByRole("button", { name: /^Continue/u }));
       await press("Enter");
 
       await expect.element(page.getByRole("radiogroup")).toBeVisible();
@@ -384,7 +408,7 @@ describe("lesson by keyboard", () => {
       await answer.click();
       await userEvent.keyboard(RIGHT_TYPED);
 
-      await page.getByRole("button", { name: "Close lesson" }).click();
+      await page.getByRole("link", { exact: true, name: "Leave" }).click();
       const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
       await expect.element(leave).toBeVisible();
       await leave.getByRole("button", { name: "Keep writing" }).click();
@@ -424,7 +448,7 @@ describe("lesson by keyboard", () => {
     await expect.poll(() => checkStep.mock.calls.length).toBe(1);
     await expect.element(check).toHaveAttribute("aria-busy", "true");
     await expect.element(check).toBeDisabled();
-    await page.getByRole("button", { name: "Close lesson" }).click();
+    await page.getByRole("link", { exact: true, name: "Leave" }).click();
     const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
     await expect.element(leave).toBeVisible();
     await leave.getByRole("button", { name: "Keep writing" }).click();
@@ -439,7 +463,7 @@ describe("lesson by keyboard", () => {
     });
 
     await expect.element(answer).toHaveValue(RIGHT_TYPED);
-    await page.getByRole("button", { name: "Close lesson" }).click();
+    await page.getByRole("link", { exact: true, name: "Leave" }).click();
     await expect.element(leave).toBeVisible();
     await leave.getByRole("button", { name: "Keep writing" }).click();
     await pressOnPage("Escape");
@@ -449,7 +473,7 @@ describe("lesson by keyboard", () => {
 
     await page.getByRole("button", { exact: true, name: "Check" }).click();
     await expect.element(verdict("Correct!")).toBeVisible();
-    await expect.element(page.getByRole("link", { name: "Close lesson" })).toBeVisible();
+    await expect.element(page.getByRole("link", { exact: true, name: "Leave" })).toBeVisible();
     await pressOnPage("Escape");
     expect(onExit).toHaveBeenCalledOnce();
     await expect.element(leave).not.toBeInTheDocument();
@@ -613,7 +637,7 @@ describe("lesson by keyboard", () => {
     openLesson({ steps: [teachingStep("explanation")] });
 
     await expect
-      .element(page.getByRole("link", { name: "Close lesson" }))
+      .element(page.getByRole("link", { exact: true, name: "Leave" }))
       .toHaveAttribute("aria-keyshortcuts", "Escape");
   });
 
@@ -638,7 +662,7 @@ describe("lesson by keyboard", () => {
     await atViewport(DESKTOP, async () => {
       openLesson({ steps: [activityStep({ content: activityContentFixtures.numberLine })] });
 
-      const value = page.getByRole("textbox", { name: "What is the value?" });
+      const value = page.getByRole("textbox", { name: /\?$/u });
       await value.fill("");
       await userEvent.type(value, "5");
       await expect.element(value).toHaveValue("5");

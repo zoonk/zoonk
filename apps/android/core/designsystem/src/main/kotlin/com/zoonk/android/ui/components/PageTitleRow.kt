@@ -3,6 +3,7 @@ package com.zoonk.android.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.scaffold.pageTitle
@@ -30,14 +32,20 @@ fun PageTitleRow(
     verticalAlignment: Alignment.Vertical = Alignment.Bottom,
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
-    HeadingRow(title, MaterialTheme.typography.headlineMedium, modifier, verticalAlignment, Modifier.pageTitle()) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically, content = trailing)
+    HeadingRow(title, MaterialTheme.typography.headlineMedium, modifier, verticalAlignment, Modifier.pageTitle(), byBaseline = true) {
+        Row(
+            Modifier.alignByBaseline(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            content = trailing,
+        )
     }
 }
 
 /**
  * A heading with what sits at its end, which moves under it when both don't fit, so the heading
- * keeps its words whole (main's `flex-wrap`).
+ * keeps its words whole (main's `flex-wrap`). [byBaseline] when what's at the end is words that share the
+ * title's line (a readout); otherwise the title sits at [verticalAlignment] beside it, as a button's middle.
  */
 @Composable
 internal fun HeadingRow(
@@ -46,7 +54,8 @@ internal fun HeadingRow(
     modifier: Modifier,
     verticalAlignment: Alignment.Vertical,
     titleModifier: Modifier = Modifier.semantics { heading() },
-    trailing: @Composable () -> Unit,
+    byBaseline: Boolean = false,
+    trailing: @Composable FlowRowScope.() -> Unit,
 ) {
     FlowRow(
         modifier = modifier.fillMaxWidth(),
@@ -54,20 +63,34 @@ internal fun HeadingRow(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         itemVerticalAlignment = verticalAlignment,
     ) {
-        Text(title, Modifier.padding(end = 12.dp).then(titleModifier), style = style)
+        val line = if (byBaseline) Modifier.alignByBaseline() else Modifier.align(verticalAlignment)
+        Text(title, line.padding(end = 12.dp).then(titleModifier), style = style)
         trailing()
     }
 }
 
-/** Main's `PageHeader` with its `PageSubtitle`: a page's title and the line under it. */
+/** Main's `PageHeader` with its `PageSubtitle`: a page's title and the line under it, when it has one. */
 @Composable
 fun PageHeader(
     title: String,
-    supporting: String,
+    supporting: String?,
+    modifier: Modifier = Modifier,
+) = PageHeader(title, supporting?.let(::AnnotatedString), modifier)
+
+/**
+ * [PageHeader] whose line may hold a link, a [androidx.compose.ui.text.LinkAnnotation] in [supporting] (main's `PageSubtitle`
+ * with a link in it): TalkBack reaches it and reads its words, and a tap runs it.
+ */
+@Composable
+fun PageHeader(
+    title: String,
+    supporting: AnnotatedString?,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         PageTitleRow(title)
-        Text(supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        if (supporting != null) {
+            Text(supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }

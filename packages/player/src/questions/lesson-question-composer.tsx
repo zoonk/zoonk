@@ -1,7 +1,7 @@
 "use client";
 
 import { MAX_LESSON_QUESTION_LENGTH } from "@zoonk/core/lesson-questions/contract";
-import { type HelpLimit } from "@zoonk/learn/help-limit";
+import { type HelpLimit, useLiveLimit } from "@zoonk/learn/help-limit";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import {
   InputGroup,
@@ -14,6 +14,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type KeyboardEvent, type Ref, useId, useLayoutEffect, useRef } from "react";
+import { EnterHint } from "../components/enter-hint";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import {
   QuestionErrorAction,
@@ -55,61 +56,20 @@ type ComposerVariant = "compact" | "page";
 const FOCUS_CLASS =
   "has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot=input-group-control]:focus-visible]:ring-foreground/35 contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-foreground";
 
-const FRAME_CLASS: Record<ComposerVariant, string> = {
-  compact: cn(
-    "bg-card ring-input rounded-option! items-end border-0 ring-1 ring-inset",
-    FOCUS_CLASS,
-  ),
-  page: cn(
-    TUTOR_COMPOSER_FRAME_CLASS,
-    "items-end rounded-[0.875rem]! border-transparent",
-    FOCUS_CLASS,
-  ),
-};
-
-const LIMIT_FRAME_CLASS: Record<ComposerVariant, string> = {
-  compact: "bg-card ring-input rounded-option ring-1 ring-inset",
-  page: TUTOR_COMPOSER_FRAME_CLASS,
-};
+const FRAME_CLASS = cn(TUTOR_COMPOSER_FRAME_CLASS, "items-end rounded-xl! border-0", FOCUS_CLASS);
 
 const ONE_LINE_PLACEHOLDER_CLASS = "placeholder-shown:truncate placeholder:truncate";
 
-const TEXTAREA_CLASS: Record<ComposerVariant, string> = {
-  compact: cn(
-    "max-h-[min(8rem,25dvh)] min-h-11 py-3 pl-3 text-base md:text-sm",
-    ONE_LINE_PLACEHOLDER_CLASS,
-  ),
-  page: cn(
-    "max-h-40 min-h-12 py-3 pl-3.5 text-[0.9375rem] md:text-[0.9375rem]",
-    ONE_LINE_PLACEHOLDER_CLASS,
-  ),
+const TEXTAREA_MAX_CLASS: Record<ComposerVariant, string> = {
+  compact: "max-h-[min(8rem,25dvh)]",
+  page: "max-h-40",
 };
 
-const SEND_ADDON_CLASS: Record<ComposerVariant, string> = { compact: "py-1.75", page: "pb-2.25" };
-
-function useComposerPlaceholder(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
-  const t = useExtracted();
-
-  switch (contextKind) {
-    case "chapter":
-      return t("Ask about this chapter…");
-    case "mock":
-      return t("Ask about this mock exam…");
-    case "plan":
-      return t("Ask about your plan…");
-    case "subject":
-      return t("Ask about this subject…");
-    case "item":
-      return t("Ask about this question…");
-    case "answer":
-      return t("Ask about your answer…");
-    case "lesson":
-    case "step":
-      return t("Ask about the lesson content…");
-    default:
-      return contextKind satisfies never;
-  }
-}
+/** 44px at every width: 16px text on a phone, so it doesn't zoom, takes 2px less padding. */
+const TEXTAREA_CLASS = cn(
+  "min-h-11 py-2.5 pl-3 text-base md:py-3 md:text-sm",
+  ONE_LINE_PLACEHOLDER_CLASS,
+);
 
 function getComposerAvailability({
   isResolvingPreviousQuestion,
@@ -137,7 +97,7 @@ function getComposerAvailability({
   };
 }
 
-function ComposerLimit({ limit, variant }: { limit: HelpLimit; variant: ComposerVariant }) {
+function ComposerLimit({ limit }: { limit: HelpLimit }) {
   const ref = useRef<HTMLDivElement>(null);
 
   // A layout effect: it runs before the sheet's popup takes focus for the removed composer, and
@@ -149,20 +109,15 @@ function ComposerLimit({ limit, variant }: { limit: HelpLimit; variant: Composer
   }, []);
 
   return (
+    // Focused only so a screen reader reads it where the composer was: no key reaches it, so no ring.
     <div
-      className={cn(
-        LIMIT_FRAME_CLASS[variant],
-        "focus-visible:outline-ring flex min-h-11 items-center py-2 pr-2 pl-3.5 outline-none focus-visible:outline-2 focus-visible:outline-solid",
-      )}
+      className="outline-none"
       data-slot="question-composer-limit"
       ref={ref}
       role="alert"
       tabIndex={-1}
     >
-      <QuestionLimitNotice
-        className="flex-1 flex-row items-center justify-between gap-3 [&>p]:min-w-0"
-        limit={limit}
-      />
+      <QuestionLimitNotice limit={limit} />
     </div>
   );
 }
@@ -173,7 +128,7 @@ export function QuestionComposer({
   controller,
   inputRef,
   label,
-  placeholder: hostPlaceholder,
+  placeholder,
   variant = "compact",
 }: {
   avatar?: React.ReactNode;
@@ -181,7 +136,7 @@ export function QuestionComposer({
   controller: LessonQuestionController;
   inputRef?: Ref<HTMLTextAreaElement>;
   label?: string;
-  placeholder?: string;
+  placeholder: string;
   variant?: ComposerVariant;
 }) {
   const t = useExtracted();
@@ -195,10 +150,8 @@ export function QuestionComposer({
     state,
   });
 
-  const limit = getQuestionLimit(state);
+  const limit = useLiveLimit(getQuestionLimit(state));
   const submitLabel = isResolvingPreviousQuestion ? t("Retry last question") : t("Send");
-  const contextPlaceholder = useComposerPlaceholder(state.context.kind);
-  const placeholder = hostPlaceholder ?? contextPlaceholder;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing || !canSend) {
@@ -212,7 +165,7 @@ export function QuestionComposer({
   if (limit) {
     return (
       <div className={className}>
-        <ComposerLimit limit={limit} variant={variant} />
+        <ComposerLimit limit={limit} />
       </div>
     );
   }
@@ -222,7 +175,7 @@ export function QuestionComposer({
       <label className="sr-only" htmlFor={inputId}>
         {label ?? t("Ask a question")}
       </label>
-      <InputGroup className={FRAME_CLASS[variant]}>
+      <InputGroup className={FRAME_CLASS}>
         {avatar && (
           <InputGroupAddon align="inline-start" className="pr-0 pb-2.75 pl-2.5">
             <span
@@ -234,7 +187,7 @@ export function QuestionComposer({
           </InputGroupAddon>
         )}
         <InputGroupTextarea
-          className={cn(TEXTAREA_CLASS[variant], avatar && "pl-2")}
+          className={cn(TEXTAREA_CLASS, TEXTAREA_MAX_CLASS[variant], avatar && "pl-2")}
           id={inputId}
           maxLength={MAX_LESSON_QUESTION_LENGTH}
           onChange={(event) => controller.changeDraft(event.target.value)}
@@ -244,11 +197,11 @@ export function QuestionComposer({
           ref={inputRef}
           value={state.draft}
         />
-        <InputGroupAddon align="inline-end" className={SEND_ADDON_CLASS[variant]}>
+        <InputGroupAddon align="inline-end" className="py-1.75">
           <InputGroupButton
             aria-label={submitLabel}
             busy={state.creating !== null}
-            className="size-7.5 rounded-lg"
+            data-slot="composer-send"
             disabled={!canSend || createNavigationError}
             focusableWhenDisabled
             icon={<SubmitIcon isResolvingPreviousQuestion={isResolvingPreviousQuestion} />}
@@ -278,11 +231,7 @@ export function QuestionComposer({
         </div>
       )}
 
-      {variant === "page" && (
-        <p className="text-faint mt-2 hidden px-1 font-mono text-[0.6875rem] leading-4 pointer-fine:block">
-          {t("⏎ send · ⇧⏎ new line")}
-        </p>
-      )}
+      {variant === "page" && <EnterHint action="send" className="mt-2" />}
     </div>
   );
 }

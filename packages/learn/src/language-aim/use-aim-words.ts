@@ -1,13 +1,14 @@
 "use client";
 
-import { type LanguageAim, isLanguageAim } from "@zoonk/core/language/aims";
-import { useExtracted, useFormatter } from "next-intl";
+import { type LanguageAim, toLanguageAimBand } from "@zoonk/core/language/aims";
+import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 
 export function useAimWords() {
   const t = useExtracted();
-  const format = useFormatter();
   const formatDate = useFormatIsoDate();
+  const languageName = useLanguageNameInSentence();
 
   const labels: Record<LanguageAim, string> = {
     A2: t("Get by on trips"),
@@ -17,27 +18,24 @@ export function useAimWords() {
   };
 
   return {
-    hours: (hours: number) => format.number(hours),
-    label: (aim: string | null): string | null => (isLanguageAim(aim) ? labels[aim] : null),
-    left: ({ endDate, hours }: { endDate: string | null; hours: number }) =>
+    /** When the plan reaches that level at the learner's time; nothing while it isn't known. */
+    around: (endDate: string | null): string | undefined =>
       endDate
+        ? t("Around {month}", { month: formatDate(endDate, "sentenceMonth", { year: "always" }) })
+        : undefined,
+    label: (aim: string | null): string | null => {
+      const band = toLanguageAimBand(aim);
+      return band ? labels[band] : null;
+    },
+    /** Named with its language, so it isn't read as the game's level. */
+    title: (targetLanguage: string | null): string =>
+      targetLanguage
         ? t({
             description:
-              'Under a language level to aim for: the hours of study still needed to reach it, then when. {month} is a month and year, like "Nov 2027".',
-            message: "About {hours} h more · around {month}",
-            values: { hours: format.number(hours), month: formatDate(endDate, "month") },
+              'Titles the language level a learner picks to reach, like "B2". {language} is a language name as in a sentence, like "English".',
+            message: "{language} level to reach",
+            values: { language: languageName(targetLanguage) },
           })
-        : t({
-            description:
-              "Under a language level to aim for: the hours of study still needed to reach it.",
-            message: "About {hours} h more",
-            values: { hours: format.number(hours) },
-          }),
-    study: (hours: number) => t("About {hours} h of study", { hours: format.number(hours) }),
-    title: t({
-      description:
-        "The language level a course goes up to, like B1. Not the learner's goal: say it as the level they aim for.",
-      message: "Your aim",
-    }),
+        : t("How far do you want to go?"),
   };
 }

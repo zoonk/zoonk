@@ -94,10 +94,14 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(reservation(503, "CALLS_PAUSED"), .callsPaused)
     XCTAssertEqual(reservation(402, "PLUS_REQUIRED"), .plusRequired)
     XCTAssertEqual(
-      reservation(429, "CONVERSATION_LIMIT_REACHED", #"{"period":"month","tier":"free"}"#),
-      .limit(CallLimit(period: .month, tier: .free)))
+      reservation(
+        429, "CONVERSATION_LIMIT_REACHED",
+        #"{"limit":{"period":"rolling30Days","tier":"free","availableAt":"2026-11-22T09:30:00.000Z"}}"#
+      ),
+      .limit(.usedUp(tier: .free, availableAt: Date(timeIntervalSince1970: 1_795_339_800))))
     XCTAssertEqual(
-      reservation(403, "SIGN_UP_REQUIRED"), .limit(CallLimit(period: .total, tier: .guest)))
+      reservation(403, "SIGN_UP_REQUIRED"),
+      .limit(HelpLimit.limitReached(period: .total, tier: .guest)))
     XCTAssertEqual(
       reservation(429, "CONNECTION_LIMIT_REACHED", #"{"period":"conversation"}"#), .ended)
     XCTAssertEqual(reservation(500, "SOMETHING_NEW"), .failed)
@@ -110,10 +114,20 @@ final class LiveCallTests: XCTestCase {
       .slowDown(retryAfterSeconds: 120)
     )
     XCTAssertEqual(
-      refusal(402, "USAGE_LIMIT_REACHED", #"{"limit":{"period":"month","tier":"free"}}"#).limit,
-      .limitReached(period: .month, tier: .free))
+      refusal(402, "USAGE_LIMIT_REACHED", #"{"limit":{"period":"day","tier":"free"}}"#).limit,
+      .limitReached(period: .day, tier: .free))
     XCTAssertEqual(
       refusal(403, "USAGE_LIMIT_REACHED").limit, .limitReached(period: .day, tier: .guest))
+    XCTAssertEqual(
+      refusal(
+        402, "USAGE_LIMIT_REACHED",
+        #"{"limit":{"period":"rolling30Days","tier":"free","availableAt":"2026-11-22T09:30:00.000Z"}}"#
+      ).limit,
+      .usedUp(tier: .free, availableAt: Date(timeIntervalSince1970: 1_795_339_800)))
+    XCTAssertEqual(
+      refusal(402, "USAGE_LIMIT_REACHED", #"{"limit":{"period":"rolling30Days","tier":"free"}}"#)
+        .limit,
+      .usedUp(tier: .free, availableAt: nil))
     XCTAssertNil(refusal(422, "NO_SPEECH").limit)
     XCTAssertTrue(refusal(422, "NO_SPEECH").isNoSpeech)
   }
@@ -186,7 +200,9 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(transport.cues("goodbye").map(\.channel), [.thinking])
 
     transport.speaking = false
-    try? await Task.sleep(for: .milliseconds(700))
+    // A cue reply must not create a gap even after the learner has been silent.
+    let silentReplyWindow: Duration = .milliseconds(700)
+    try? await Task.sleep(for: silentReplyWindow)
     transport.onEvent?(
       .transcript(speaker: .character, delta: "Sorry, I have to go.", startMs: 5000, endMs: 6000))
 
@@ -211,10 +227,13 @@ final class LiveCallTests: XCTestCase {
       .transcript(speaker: .learner, delta: " there", startMs: 2500, endMs: 2900))
 
     // The check waits for the transcript to settle after its last fragment.
-    try? await Task.sleep(for: .milliseconds(200))
+    let transcriptQuietWindow: Duration = .milliseconds(200)
+    try? await Task.sleep(for: transcriptQuietWindow)
     XCTAssertEqual(server.checkedConnections, [])
     await waitUpTo(5) { !server.checkedConnections.isEmpty }
-    try? await Task.sleep(for: .milliseconds(750))
+    // No duplicate check may follow the settled transcript.
+    let duplicateCheckWindow: Duration = .milliseconds(750)
+    try? await Task.sleep(for: duplicateCheckWindow)
 
     XCTAssertEqual(server.checkedConnections, ["connection-1"])
   }
@@ -321,7 +340,7 @@ final class LiveCallTests: XCTestCase {
 
   func testARefusedReservationSaysWhy() async {
     let server = FakeServer(reservations: [
-      .limit(CallLimit(period: .day, tier: .free))
+      .limit(HelpLimit.limitReached(period: .day, tier: .free))
     ])
     let transport = FakeTransport()
     let call = LiveCall(conversation: .fixture(), client: server.client(transport))
@@ -330,7 +349,7 @@ final class LiveCallTests: XCTestCase {
 
     XCTAssertEqual(call.phase, .failed)
     XCTAssertEqual(call.failure, .limit)
-    XCTAssertEqual(call.limit, CallLimit(period: .day, tier: .free))
+    XCTAssertEqual(call.limit, HelpLimit.limitReached(period: .day, tier: .free))
     XCTAssertEqual(transport.offers, 0)
   }
 
@@ -462,7 +481,7 @@ final class LiveCallTests: XCTestCase {
 
     let refused = LiveCall(
       conversation: .fixture(),
-      client: FakeServer(reservations: [.limit(CallLimit(period: .day, tier: .free))])
+      client: FakeServer(reservations: [.limit(HelpLimit.limitReached(period: .day, tier: .free))])
         .client(FakeTransport()),
       soFar: first.soFar)
     await refused.start()
@@ -490,16 +509,20 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(reserved?.spokenSeconds, 2)
   }
 
-  func testCancellingAReconnectWhileItRingsLeavesTheCallDropped() async {
+  func testEndingAReconnectWhileItRingsEndsTheCallOnWhatWasSaid() async {
     let first = await droppedCall()
+    let server = FakeServer(continuesCall: true)
     let reconnect = LiveCall(
-      conversation: .fixture(), client: FakeServer(continuesCall: true).client(FakeTransport()),
-      soFar: first.soFar)
+      conversation: .fixture(), client: server.client(FakeTransport()), soFar: first.soFar)
 
     await reconnect.start()
-    reconnect.cancel()
+    reconnect.hangUp()
 
-    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
+    XCTAssertEqual(reconnect.phase, .ended)
+    XCTAssertNil(reconnect.dropped)
+
+    let saved = await reconnect.finish()
+    XCTAssertEqual(saved?.turns, Self.droppedTurns)
 
     // A new call has nothing to save, not even a reply typed while it rang: the screen takes it
     // back to its intro, to start over.
@@ -513,9 +536,9 @@ final class LiveCallTests: XCTestCase {
     XCTAssertNil(new.soFar)
   }
 
-  func testAReservationAnsweringAfterTheCancelIsTheConnectionTheCallSavesUnder() async {
+  func testAReservationAnsweringAfterTheEndIsTheConnectionTheCallSavesUnder() async {
     let first = await droppedCall()
-    // Even one that would have opened a new call: it never went live, so the call stays dropped.
+    // Even one that would have opened a new call: it never went live.
     let server = FakeServer(
       reservations: [.ready(.fixture(connectionId: "late", continuesCall: false))],
       holdsConnects: true)
@@ -524,18 +547,20 @@ final class LiveCallTests: XCTestCase {
 
     Task { await reconnect.start() }
     await settle { server.isHoldingConnect }
-    reconnect.cancel()
-    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
+    reconnect.hangUp()
+    XCTAssertEqual(reconnect.phase, .ended)
 
     let finishing = Task { await reconnect.finish() }
-    try? await Task.sleep(for: .milliseconds(50))
+    await Task.yield()
     server.answerConnect()
     let summary = await finishing.value
+    await settle { server.ended == ["late"] }
 
     XCTAssertEqual(summary?.connectionId, "late")
     XCTAssertEqual(summary?.turns, Self.droppedTurns)
-    XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
-    XCTAssertEqual(server.ended, ["late"])
+    XCTAssertEqual(reconnect.phase, .ended)
+    // The ended call never connects the reservation that came late.
+    XCTAssertEqual(server.redeemed, [])
 
     // Called again and refused: the call still saves under the late connection.
     let refused = LiveCall(
@@ -551,10 +576,10 @@ final class LiveCallTests: XCTestCase {
 
   func testADroppedCallSaysWhyItsReconnectCantGoOnAndHowToGetBackIn() {
     let shown: [(LiveCall.Failure, DroppedCall)] = [
-      // Also a reconnect the learner cancelled while it rang.
       (.connect, .init(reason: nil, retry: .callAgain)),
       (.dropped, .init(reason: nil, retry: .callAgain)),
-      (.callsPaused, .init(reason: .callsPaused, retry: .callAgain)),
+      // Paused for everyone: calling again now can't work.
+      (.callsPaused, .init(reason: .callsPaused, retry: nil)),
       (.callInProgress, .init(reason: .callInProgress, retry: .takeover)),
       (.limit, .init(reason: .limit, retry: nil)),
       (.plusRequired, .init(reason: .plusRequired, retry: nil)),
@@ -574,6 +599,19 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(
       DroppedCall(continuing: true, phase: .failed, failure: .limit, micBlocked: true),
       .init(reason: .limit, retry: nil))
+  }
+
+  /// The cap's day came while the screen was open: Call again is back, and the server decides.
+  func testACallTheCapStoppedCanBeCalledAgainOnceItsDayHasCome() {
+    let opens = Date(timeIntervalSince1970: 1_795_339_800)
+    let dropped = DroppedCall(reason: .limit, retry: nil)
+    let monthly = HelpLimit.usedUp(tier: .free, availableAt: opens)
+
+    XCTAssertNil(dropped.retryNow(limit: monthly, at: opens.addingTimeInterval(-60)))
+    XCTAssertEqual(dropped.retryNow(limit: monthly, at: opens), .callAgain)
+    XCTAssertNil(
+      dropped.retryNow(limit: .limitReached(period: .day, tier: .free), at: opens),
+      "a day's cap has no instant to wait for")
   }
 
   func testWithoutADroppedCallToSaveOnlyACallThatWentLiveShowsAsDropped() {
@@ -1168,18 +1206,15 @@ final class LiveCallTests: XCTestCase {
   }
 
   private func settle(until condition: () -> Bool) async {
-    for _ in 0..<100 where !condition() {
-      await Task.yield()
-      try? await Task.sleep(for: .milliseconds(5))
-    }
+    _ = try? await waitForTestCondition("The call state never arrived") { condition() }
   }
 
   /// For the call's own clocks, which run on real time.
   private func waitUpTo(_ seconds: Double, until condition: () -> Bool) async {
-    let end = Date.now.addingTimeInterval(seconds)
-
-    while !condition(), Date.now < end {
-      try? await Task.sleep(for: .milliseconds(50))
+    _ = try? await waitForTestCondition(
+      "The call clock did not advance", timeout: .seconds(seconds)
+    ) {
+      condition()
     }
   }
 }
@@ -1195,7 +1230,7 @@ private final class FakeTransport: LiveCallTransport {
   /// What the microphone hears at every reading.
   var speaking = false
   private let holdsOffer: Bool
-  private var offerWait: CheckedContinuation<Void, any Error>?
+  private var offerWait: TestContinuation<Void>?
 
   /// `holdsOffer`: ICE gathering never finishes, and only closing ends the wait, as in WebRTC.
   init(holdsOffer: Bool = false) {
@@ -1210,7 +1245,7 @@ private final class FakeTransport: LiveCallTransport {
     offers += 1
 
     if holdsOffer {
-      try await withCheckedThrowingContinuation { offerWait = $0 }
+      try await withTestContinuation { offerWait = $0 }
     }
 
     return "offer"
@@ -1261,9 +1296,9 @@ private final class FakeServer {
   private(set) var takeovers: [Bool] = []
   private(set) var checkedConnections: [String] = []
   private let holdsChecks: Bool
-  private var pendingCheck: CheckedContinuation<ObjectiveCheck?, Never>?
+  private var pendingCheck: TestContinuation<ObjectiveCheck?>?
   private let holdsConnects: Bool
-  private var pendingConnect: CheckedContinuation<Void, Never>?
+  private var pendingConnect: TestContinuation<Void>?
   private(set) var microphoneRequests = 0
   private(set) var redeemed: [String] = []
   /// The earlier turns each redeem sent.
@@ -1308,7 +1343,7 @@ private final class FakeServer {
         self.takeovers.append(takeover)
 
         if self.holdsConnects {
-          await withCheckedContinuation { self.pendingConnect = $0 }
+          await withTestVoidContinuation { self.pendingConnect = $0 }
         }
 
         let next = self.reservations.isEmpty ? nil : self.reservations.removeFirst()
@@ -1334,7 +1369,7 @@ private final class FakeServer {
           return nil
         }
 
-        let check = await withCheckedContinuation { self.pendingCheck = $0 }
+        let check = await withTestOptionalContinuation { self.pendingCheck = $0 }
         // As the app's cache does: a write whose task was cancelled has no answer.
         return Task.isCancelled ? nil : check
       },

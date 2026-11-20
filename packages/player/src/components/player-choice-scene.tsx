@@ -3,10 +3,10 @@
 import { AnswerOption, AnswerOptionGroup } from "@zoonk/learn/answer-option";
 import { type AnswerOptionResult } from "@zoonk/learn/answer-tone";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { usePlayerInteractionState } from "../player-context";
-import { getNumberKeyShortcut } from "../player-shortcuts";
 import { PlayerRichText } from "./player-rich-text";
 import { ContextText, QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
@@ -99,10 +99,11 @@ export function PlayerChoiceSceneOptions({
   const t = useExtracted();
   const interactionState = usePlayerInteractionState();
   const isDisabled = isLocked || isChecked;
+  const hasKeys = !isDisabled && interactionState !== "paused";
 
   useNumberKeys({
     count: options.length,
-    enabled: !isDisabled && interactionState !== "paused",
+    enabled: hasKeys,
     onPick: (index) => {
       const option = options[index];
 
@@ -134,7 +135,7 @@ export function PlayerChoiceSceneOptions({
 
         return (
           <AnswerOption
-            aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
+            aria-keyshortcuts={hasKeys ? shortcutKeys("pick", index) : undefined}
             disabled={isDisabled}
             guessed={isGuess}
             key={option.key}

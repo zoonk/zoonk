@@ -52,7 +52,7 @@ export function UnderstoodWords({
       <textarea
         aria-describedby={hintId}
         autoFocus
-        className="field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-[17px] leading-snug outline-none"
+        className="field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-lg leading-snug outline-none"
         id={inputId}
         maxLength={MAX_GOAL_PROMPT_LENGTH}
         onChange={(event) => setValue(event.target.value)}
@@ -78,10 +78,10 @@ export function UnderstoodWords({
       </p>
 
       <div className="flex flex-wrap gap-2">
-        <Button disabled={!trimmed || disabled} focusableWhenDisabled size="sm" type="submit">
+        <Button disabled={!trimmed || disabled} focusableWhenDisabled size="lg" type="submit">
           {t("Read it again")}
         </Button>
-        <Button onClick={onCancel} size="sm" type="button" variant="ghost">
+        <Button onClick={onCancel} size="lg" type="button" variant="ghost">
           {t("Cancel")}
         </Button>
       </div>

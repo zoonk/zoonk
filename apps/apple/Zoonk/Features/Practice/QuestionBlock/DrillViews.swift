@@ -131,7 +131,7 @@ struct DrillCountdownView: View {
       } currentValueLabel: {
         EmptyView()
       }
-      Text(timerInterval: start...end, countsDown: true)
+      PlanDate.countdown(to: end, from: start)
         .typeStyle(.body.weight(.medium).monospaced())
         .frame(minWidth: 44, alignment: .trailing)
         .accessibilityLabel(

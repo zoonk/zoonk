@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.Visit
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -46,17 +47,16 @@ import com.zoonk.android.ui.components.SuggestionFrame
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
-import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
-import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.StudyNext
 import kotlinx.coroutines.delay
 
@@ -96,29 +96,21 @@ internal sealed interface SlotItem {
         override val key = "finished"
     }
 
-    data class Pace(
-        val tooTight: Boolean,
-        val text: String,
-    ) : SlotItem {
-        override val key get() = if (tooTight) "tooTight" else "behind"
-    }
-
-    data object FreeWeekOver : SlotItem {
-        override val key = "freeWeekOver"
+    data object NotEnoughTime : SlotItem {
+        override val key = "tooTight"
     }
 }
 
-/** [finished] once what to study next is known, [courseComplete] while a finished unit's certificate isn't written; [fix] is the pace's sentence. */
+/** [finished] once what to study next is known, [courseComplete] while a finished unit's certificate isn't written. */
 internal fun slotItems(
     page: PlanPageState,
-    fix: PaceFix?,
     finished: Boolean,
     courseComplete: Boolean,
 ): List<SlotItem> {
     val plan = page.plan
     val pace = plan.status?.pace
     val pastDate = pace as? Pace.PastDate
-    val open = !plan.access.freeWeekOver && pastDate == null
+    val open = pastDate == null
     val time =
         listOfNotNull(
             SlotItem.FitLessons.takeIf { open && plan.fitOffer != null },
@@ -128,18 +120,16 @@ internal fun slotItems(
     return buildList {
         if (!finished && courseComplete) add(SlotItem.CourseComplete)
         if (page.isPaused) add(SlotItem.Paused)
+        pastDate?.let { add(SlotItem.PastDate(it.lessons)) }
         plan.examChoices
             .filter { it.subjects.isEmpty() }
             .forEach { add(SlotItem.Choice(it)) }
-        pastDate?.let { add(SlotItem.PastDate(it.lessons)) }
         if (finished) {
             addAll(time)
             add(SlotItem.Finished)
         }
-        if (pace is Pace.NeedsAdjusting && fix != null) add(SlotItem.Pace(tooTight = true, fix.text))
-        if (pace is Pace.Behind && fix != null) add(SlotItem.Pace(tooTight = false, fix.text))
+        if (pace is Pace.NeedsAdjusting) add(SlotItem.NotEnoughTime)
         if (!finished) addAll(time)
-        if (plan.access.freeWeekOver) add(SlotItem.FreeWeekOver)
     }
 }
 
@@ -162,15 +152,25 @@ internal class SlotState(
     position: Int = 0,
     dismissed: List<String> = emptyList(),
     intent: CoverageIntent = CoverageIntent.Time,
+    private val visit: Visit = Visit(),
 ) {
+    private val shownResult = visit.outcome<SlotResult>()
+    private val failure = visit.outcome<String>()
+
     var position by mutableIntStateOf(position)
 
     /** Keys put off with Not now until the Plan is opened again. */
     var dismissed by mutableStateOf(dismissed)
-    var result by mutableStateOf<SlotResult?>(null)
 
-    /** The key of the item whose change didn't save. */
-    var failed by mutableStateOf<String?>(null)
+    /** What the slot's save did, on the Plan's visit that asked. */
+    var result: SlotResult?
+        get() = shownResult.value
+        set(value) = if (value == null) shownResult.clear() else shownResult.send(visit.number, value)
+
+    /** The key of the item whose change didn't save, on the Plan's visit that asked. */
+    var failed: String?
+        get() = failure.value
+        set(value) = if (value == null) failure.clear() else failure.send(visit.number, value)
     var intent by mutableStateOf(intent)
     var dateSearch by mutableStateOf<DateSearch?>(null)
 
@@ -199,6 +199,7 @@ internal class SlotHost(
     val preview: PlanPreviewState = PlanPreviewState.Idle,
     val requestPreview: (List<PlanOp>) -> Unit = {},
     val clearPreview: () -> Unit = {},
+    val addFitOffer: (PlanFitOffer) -> Unit = {},
     val next: StudyNext? = null,
     val nextLevel: NextLevelStart = NextLevelStart.Idle,
     val onContinue: () -> Unit = {},
@@ -257,18 +258,7 @@ internal class Slot(
         operations: List<PlanOp>,
     ) {
         state.failed = null
-        edits.change(PlanPart.Suggestion, operations) { saved ->
-            when {
-                saved == null -> {
-                    state.failed = item.key
-                }
-
-                saved.status == PlanChangeResult.Status.APPLIED -> {
-                    host.clearPreview()
-                    state.result = SlotResult(item, saved.change)
-                }
-            }
-        }
+        edits.change(PlanPart.Suggestion, operations, PlanAsker.Suggestion(item))
     }
 
     private fun leave() {
@@ -284,16 +274,12 @@ private fun slotItemsLeft(
     host: SlotHost,
     state: SlotState,
 ): List<SlotItem> {
-    val fix =
-        page.plan.status
-            ?.pace
-            ?.let { paceFix(it, page.isExam) }
     val courseComplete =
         host.certificates
             ?.unclaimed
             .orEmpty()
             .isNotEmpty()
-    return slotItems(page, fix, finished = host.next != null, courseComplete).filter { it.key !in state.dismissed }
+    return slotItems(page, finished = host.next != null, courseComplete).filter { it.key !in state.dismissed }
 }
 
 /** Whether the slot shows anything, so a page leaves no room for it when it doesn't. */
@@ -315,8 +301,6 @@ internal fun PlanSuggestionSlot(
     edits: PlanEdits,
     links: PlanLinks,
     resume: Resume,
-    isSaving: Boolean,
-    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onAdjust: (PlanSection?) -> Unit,
     layout: SuggestionLayout,
     modifier: Modifier = Modifier,
@@ -359,7 +343,7 @@ internal fun PlanSuggestionSlot(
         }
     val suggestion: @Composable () -> Unit = {
         Box(Modifier.focusRequester(focus.suggestion)) {
-            key(item.key) { SlotSuggestion(item, slot, resume, isSaving, onSetStatus, onAdjust) }
+            key(item.key) { SlotSuggestion(item, slot, resume, onAdjust) }
         }
     }
 
@@ -379,18 +363,13 @@ private fun SlotSuggestion(
     item: SlotItem,
     slot: Slot,
     resume: Resume,
-    isSaving: Boolean,
-    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onAdjust: (PlanSection?) -> Unit,
 ) {
     val layout = slot.layout
     val links = slot.links
     when (item) {
         SlotItem.Paused -> {
-            PausedSuggestion(slot.page, layout, resume, isSaving) {
-                slot.focus.next = true
-                onSetStatus(it)
-            }
+            PausedSuggestion(slot.page, layout, resume)
         }
 
         is SlotItem.Choice -> {
@@ -401,13 +380,7 @@ private fun SlotSuggestion(
                 failed = edits.hasFailed(PlanPart.ExamChoices),
                 pending = edits.isPending(PlanPart.ExamChoices),
                 answer = slot.shownAnswer(item),
-                onChoose = { subjects ->
-                    edits.chooseExamOption(item.choice.group, subjects) { answer ->
-                        answer?.change?.takeIf { answer.status == PlanChangeResult.Status.APPLIED }?.let {
-                            slot.state.result = SlotResult(item, it)
-                        }
-                    }
-                },
+                onChoose = { subjects -> edits.chooseExamOption(item.choice.group, subjects, PlanAsker.SuggestedChoice(item)) },
             )
         }
 
@@ -431,12 +404,8 @@ private fun SlotSuggestion(
             slot.host.next?.let { StudyNextSuggestion(it, slot) }
         }
 
-        is SlotItem.Pace -> {
-            PaceSuggestion(item, layout, links, onAdjust)
-        }
-
-        SlotItem.FreeWeekOver -> {
-            FreeWeekSuggestion(layout, links)
+        SlotItem.NotEnoughTime -> {
+            NotEnoughTimeSuggestion(layout, onAdjust)
         }
     }
 }
@@ -488,15 +457,15 @@ internal class SlotAnswer(
 ) {
     private val tracked: EditorChange? get() = change?.let { edits.changes[it.id] }
 
-    /** The line's summary. */
-    @Composable
-    fun summary(): String = if (tracked?.undoFailed == true) stringResource(R.string.suggestion_save_failed) else text
+    /** Undo didn't save: a line reads the save error in place of [text], with no done mark. */
+    val failed: Boolean get() = tracked?.undoFailed == true
 
     @Composable
     fun Undo() {
         val change = change?.takeIf { it.canUndo } ?: return
+        val action = planNoticeActions(failed = failed, canUndo = true).first()
         SuggestionAction(
-            text = stringResource(R.string.plan_undo),
+            text = stringResource(action.label),
             onClick = {
                 onUndo()
                 edits.undo(change)
@@ -511,8 +480,8 @@ internal class SlotAnswer(
     @Composable
     fun Result() {
         SuggestionResult(text)
+        if (failed) SuggestionSaveError(stringResource(R.string.plan_undo_failed))
         SuggestionActions { Undo() }
-        if (tracked?.undoFailed == true) SuggestionSaveError()
     }
 }
 
@@ -520,28 +489,28 @@ internal class SlotAnswer(
 @Composable
 internal fun Slot.shownAnswer(item: SlotItem): SlotAnswer? {
     val answer = answer(item) ?: return null
-    val text = answer.change?.let { planChangeSentence(it) } ?: stringResource(R.string.plan_updated_sentence)
+    val text = answer.change?.let { planChangeSentence(it, page.dateKind) } ?: stringResource(R.string.plan_updated_sentence)
     return SlotAnswer(text, answer.change, edits) { focus.next = true }
 }
 
-/** Main's `PlanChangeSuggestion`: a change to offer, which says what it did, with Undo, once applied. */
+/**
+ * Main's `PlanChangeSuggestion`: a change to offer, one card at every width with what it changes and its
+ * answers in place, which says what it did, with Undo, once applied.
+ */
 @Composable
 internal fun PlanChangeSuggestion(
     item: SlotItem,
     title: String,
     slot: Slot,
-    mark: SuggestionMark = SuggestionMark.New,
     content: @Composable SuggestionContentScope.() -> Unit,
 ) {
     val answer = slot.shownAnswer(item)
 
     Suggestion(
         label = stringResource(R.string.plan_suggestion),
-        summary = answer?.summary() ?: title,
-        layout = slot.layout,
-        mark = if (answer != null) SuggestionMark.Done else mark,
+        summary = answer?.text ?: title,
+        layout = SuggestionLayout.Panel,
         answered = answer != null,
-        lineAction = if (answer != null) ({ answer.Undo() }) else ({ SuggestionOpen() }),
     ) {
         if (answer != null) {
             SuggestionHeader(stringResource(R.string.plan_updated))
@@ -554,100 +523,58 @@ internal fun PlanChangeSuggestion(
     }
 }
 
+/** Main's `GoalPausedSuggestion`: what pausing means; the page's bottom bar holds Resume. */
 @Composable
 private fun PausedSuggestion(
     page: PlanPageState,
     layout: SuggestionLayout,
     resume: Resume,
-    isSaving: Boolean,
-    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
 ) {
     val title = stringResource(R.string.plan_goal_paused, page.goal.displayName)
-    val resumeAction =
-        @Composable {
-            SuggestionAction(
-                text = stringResource(R.string.plan_resume),
-                onClick = { onSetStatus(LearnerSummaryGoal.Status.ACTIVE) },
-                enabled = !isSaving && resume != Resume.Pending,
-            )
-        }
+    val description =
+        stringResource(
+            if (resume ==
+                Resume.Confirm
+            ) {
+                R.string.plan_resume_effect
+            } else {
+                R.string.plan_nothing_planned_until_resume
+            },
+        )
 
     Suggestion(
         label = title,
         summary = title,
         layout = layout,
         mark = SuggestionMark.Symbol(R.drawable.ic_pause),
-        lineAction = if (resume == Resume.Confirm) ({ SuggestionOpen() }) else resumeAction,
+        lineAction = null,
+        lineDescription = description,
     ) {
         SuggestionHeader(title)
-        SuggestionDescription(
-            stringResource(if (resume == Resume.Confirm) R.string.plan_resume_effect else R.string.plan_nothing_planned_until_resume),
-        )
-        SuggestionActions { resumeAction() }
+        SuggestionDescription(description)
     }
 }
 
 @Composable
-private fun PaceSuggestion(
-    item: SlotItem.Pace,
+private fun NotEnoughTimeSuggestion(
     layout: SuggestionLayout,
-    links: PlanLinks,
     onAdjust: (PlanSection?) -> Unit,
 ) {
-    val title = stringResource(if (item.tooTight) R.string.plan_no_longer_fits else R.string.plan_catch_up)
-
-    Suggestion(
-        label = title,
-        summary = item.text,
-        layout = layout,
-        mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
-        lineAction =
-            if (item.tooTight) {
-                { SuggestionAction(stringResource(R.string.plan_adjust), onClick = { onAdjust(null) }) }
-            } else {
-                { SuggestionOpen() }
-            },
-    ) {
-        SuggestionHeader(title)
-        if (item.tooTight) {
-            SuggestionActions {
-                SuggestionAction(stringResource(R.string.plan_adjust_plan), onClick = {
-                    close()
-                    onAdjust(null)
-                })
-            }
-        } else {
-            SuggestionDescription(item.text)
-            SuggestionActions {
-                SuggestionAction(stringResource(R.string.plan_go_to_today), onClick = {
-                    close()
-                    links.today()
-                })
-            }
-        }
-    }
-}
-
-@Composable
-private fun FreeWeekSuggestion(
-    layout: SuggestionLayout,
-    links: PlanLinks,
-) {
-    val title = stringResource(R.string.subscription_free_week_over_title)
+    val title = stringResource(R.string.plan_no_longer_fits)
 
     Suggestion(
         label = title,
         summary = title,
         layout = layout,
-        mark = SuggestionMark.Symbol(R.drawable.ic_auto_awesome),
-        lineAction = { SuggestionAction(stringResource(R.string.subscription_see_plus), onClick = links::plus) },
+        mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
+        lineAction = { SuggestionAction(stringResource(R.string.plan_adjust), onClick = { onAdjust(null) }) },
     ) {
         SuggestionHeader(title)
-        SuggestionDescription(stringResource(R.string.subscription_free_week_over_description))
+        SuggestionDescription(stringResource(R.string.plan_add_time_or_later_date))
         SuggestionActions {
-            SuggestionAction(stringResource(R.string.subscription_see_plus), onClick = {
+            SuggestionAction(stringResource(R.string.plan_adjust_plan), onClick = {
                 close()
-                links.plus()
+                onAdjust(null)
             })
         }
     }

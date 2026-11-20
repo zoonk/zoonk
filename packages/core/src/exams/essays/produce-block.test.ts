@@ -13,7 +13,6 @@ const PRODUCE = {
 describe(toProduceBlock, () => {
   it("plans the essay when the day has room for it", () => {
     const block = toProduceBlock({
-      examTrialEnded: false,
       freshStart: null,
       minBlockMinutes: 3,
       produce: PRODUCE,
@@ -24,24 +23,8 @@ describe(toProduceBlock, () => {
     expect(block?.payload.itemIds).toStrictEqual(["essay"]);
   });
 
-  it("leaves it out on short or light days and after a free exam trial", () => {
-    const base = {
-      examTrialEnded: false,
-      freshStart: null,
-      minBlockMinutes: 3,
-      produce: PRODUCE,
-      room: 45,
-    };
-
-    expect(toProduceBlock({ ...base, room: ESSAY_BLOCK_MINUTES })).toBeNull();
-    expect(toProduceBlock({ ...base, freshStart: "welcomeBack" })).toBeNull();
-    expect(toProduceBlock({ ...base, examTrialEnded: true })).toBeNull();
-    expect(toProduceBlock({ ...base, produce: null })).toBeNull();
-  });
-
   it("takes the essay's own minutes: a class test's discursive answer fits a short day", () => {
     const block = toProduceBlock({
-      examTrialEnded: false,
       freshStart: null,
       minBlockMinutes: 3,
       produce: { ...PRODUCE, minutes: 8 },

@@ -134,7 +134,7 @@ async function moveGuestData({
       // Lifetime progress before the day, in the order settlements lock them.
       await mergeUserProgress(context);
       await mergeDailyProgress(context);
-      await mergeLearningProfile({ ...context, ...guestAnswers });
+      await mergeLearningProfile({ ...context, ...guestAnswers, sessionId });
       await mergeStudyReminder({ ...context, guestSessionId, sessionId });
 
       // Removed here, not in Better Auth's post-link cleanup, so no course is created for the guest in between.

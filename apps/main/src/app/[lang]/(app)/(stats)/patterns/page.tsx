@@ -17,10 +17,7 @@ export default async function PatternsPage() {
   const t = await getExtracted();
 
   return (
-    <StatsPage
-      description={t("When you answer best, over the last 90 days.")}
-      title={t("Patterns")}
-    >
+    <StatsPage title={t("Patterns")}>
       <Suspense fallback={<PatternsContentSkeleton />}>
         <PatternsContent />
       </Suspense>

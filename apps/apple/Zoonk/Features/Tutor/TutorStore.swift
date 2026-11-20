@@ -57,6 +57,8 @@ final class TutorConversation {
   @ObservationIgnored private var draftSuggestion: TutorSuggestion?
   @ObservationIgnored private var preparedOffers: Set<UUID> = []
   /// A question whose reply never came, sent again with its request id so it's asked once.
+  /// The time limits are read at; a test sets it.
+  var now: () -> Date = { .now }
   private var unresolved: (question: String, suggestion: String?, id: String)?
 
   init(scope: TutorScope, api: any TutorAPIClient, cache: AppCache) {
@@ -86,13 +88,14 @@ final class TutorConversation {
     return turns.filter { $0.about != .answer || $0.status != .completed }
   }
 
-  /// Nothing can be asked until it resets, so it takes the composer's place.
+  /// Nothing can be asked until its day has come, so it takes the composer's place; then the
+  /// composer is back and the server decides again.
   var limit: TutorFailure? {
-    if let askFailure, askFailure.isLimit {
-      return askFailure
-    }
+    let failure =
+      askFailure?.isLimit == true
+      ? askFailure : turns.last.flatMap { answerFailures[$0.id] }.flatMap { $0.isLimit ? $0 : nil }
 
-    return turns.last.flatMap { answerFailures[$0.id] }.flatMap { $0.isLimit ? $0 : nil }
+    return failure?.helpLimit?.isOpen(at: now()) == true ? nil : failure
   }
 
   var isAsking: Bool {
@@ -133,13 +136,15 @@ final class TutorConversation {
   }
 
   /// While an earlier question still needs its answer, the suggestion waits in the composer, unless
-  /// the learner typed there while the thread loaded. A learner who left meanwhile isn't asked for.
+  /// the learner typed there while the thread loaded. A learner who left meanwhile isn't asked for;
+  /// the offer is taken only once the thread is read, so a panel drawn again in the left one's place
+  /// (a pane turned sheet) still asks it, once.
   func ask(_ draft: TutorDraft) async {
-    guard preparedOffers.insert(draft.offer).inserted else { return }
+    guard !preparedOffers.contains(draft.offer) else { return }
     let typed = self.draft
     await thread.load()
 
-    if Task.isCancelled {
+    guard !Task.isCancelled, preparedOffers.insert(draft.offer).inserted else {
       return
     }
 
@@ -220,7 +225,8 @@ final class TutorConversation {
       invalidating: decision == .declined ? [] : [.goals, .userSession]
     ) { identity in
       try await api.decidePlanChange(
-        goalId: goalId, changeId: change.id, decision: decision, token: identity.bearerToken)
+        goalId: goalId, changeId: change.id, decision: decision, quote: change.quote,
+        token: identity.bearerToken)
     }
 
     switch result {
@@ -267,7 +273,7 @@ final class TutorConversation {
     unresolved = request
     asking = TutorTurn(
       id: request.id, question: request.question, status: .pending, createdAt: .now,
-      about: scope.about)
+      about: scope.about, step: scope.step)
     askFailure = nil
 
     if !taken.isEmpty {

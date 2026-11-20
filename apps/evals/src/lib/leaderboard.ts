@@ -1,7 +1,7 @@
 import { type LanguageSummary, summarizeByLanguage } from "@/lib/case-languages";
 import { type EvalSummary, aggregateEvalResults } from "@/lib/eval-summary";
 import { meetsLatencyBudget } from "@/lib/latency";
-import { getModelById, getModelFamily, getReasoningLabel } from "@/lib/models";
+import { getModelById, getModelDisplayName, getModelFamily, getReasoningLabel } from "@/lib/models";
 import { summarizeCategoryScores } from "@/lib/score-categories";
 import { getStatsFromResults } from "@/lib/stats";
 import { type CategoryScoreSummary, type RegisteredTask, type TaskEvalResults } from "@/lib/types";
@@ -10,6 +10,8 @@ import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 export type LeaderboardEntry = {
   modelId: string;
   modelName: string;
+  /** The name with its reasoning level when the run set one, as the model's page titles it. */
+  displayName: string;
   provider: string;
   reasoning: string;
   averageScore: number | null;
@@ -51,6 +53,7 @@ export function getLeaderboardEntries({
           result.results.map((evalResult) => evalResult.categoryScores),
         ),
         costPer1000Runs: stats.costPer1000Runs,
+        displayName: getModelDisplayName(model),
         judgeCost: stats.judgeCost,
         languages: summarizeByLanguage({ results: result.results, testCases: task.testCases }),
         latencyP50: stats.latencyP50,

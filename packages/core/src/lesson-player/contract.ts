@@ -88,14 +88,14 @@ export const lessonStepCheckResultSchema = z
       .boolean()
       .meta({
         description:
-          "False when the answer wasn't checked, so show it as not checked, never as wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise.",
+          "False when the answer wasn't checked: it was neither right nor wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise.",
       }),
     correctAnswer: z
       .string()
       .nullable()
       .meta({
         description:
-          "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order",
+          "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order. A numeric activity's is rounded to its step's `roundedAnswer`",
       }),
     corrections: z
       .array(
@@ -143,7 +143,7 @@ export const lessonStepCheckResultSchema = z
       .nullable()
       .meta({
         description:
-          "A typed answer that was right apart from a typo: the right spelling to show. A typo isn't a mistake.",
+          "A typed answer that was right apart from a typo: the right spelling. A typo isn't a mistake.",
       }),
   })
   .meta({ id: "LessonStepCheckResult" });
@@ -162,7 +162,7 @@ const restoredCheckResultSchema = lessonStepCheckResultSchema
   })
   .meta({
     description:
-      "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
+      "The saved answer's result, built again from what was saved, so a resumed run needs no new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
     id: "LessonRunAnswerResult",
   });
 
@@ -172,7 +172,7 @@ const lessonRunAnswerSchema = z.object({
     .nullable()
     .meta({
       description:
-        "What the learner answered, to show on the screen with `result`. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
+        "What the learner answered, which `result` judged. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
     }),
   answeredAt: z.iso
     .datetime()
@@ -213,7 +213,7 @@ export const libraryLessonRunSchema = z
       })
       .meta({
         description:
-          "Where Hyperdrive stood when the run started, to show it live with the server's rule (a resumed run replays its `answers` on top)",
+          "Where Hyperdrive stood when the run started, so it can be followed live with the server's rule (a resumed run replays its `answers` on top)",
       }),
     optionalStepIds: z
       .array(uuidSchema())
@@ -223,7 +223,7 @@ export const libraryLessonRunSchema = z
       .boolean()
       .meta({
         description:
-          "True when the learner already finished this lesson: its end offers no next lesson",
+          "True when the learner already finished this lesson, so no next lesson follows it",
       }),
     runId: uuidSchema().meta({ description: "Send it with every answer and with the completion" }),
     sessionId: uuidSchema()
@@ -266,7 +266,7 @@ export const libraryLessonCompletionSchema = z
       .nullable()
       .meta({
         description:
-          "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See your plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
+          "Set when this was the goal's first lesson, started before the learner saw their plan: the lesson end's one action is \"See plan\", which goes on with the goal's onboarding (`GET /goals/{goalId}/onboarding`), the plan's wait while it's built, then daily time when it's unanswered, then the reveal. Null otherwise",
       }),
     seconds: z.int().min(0),
     studyBlock: studyBlockCompletionSchema

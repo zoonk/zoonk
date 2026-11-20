@@ -20,7 +20,6 @@
   "search_group_goals": "aba7f069ca5500de0ddf8638daa01da80afd226114c23959fc50959177280d5a",
   "search_group_help": "cc506056a312766c5b29ac37f702a8b55768d9acc7d590941e8e14f8ac15bae2",
   "search_group_mocks": "1559eaf30f8e6bac4a4dc8d6d1e6e190e12ab33e9ff43b132c2461f10ce4404d",
-  "search_group_new_goal": "686385f744ff363b73630a8dc90a03ec3f3c4257b31774844ba21ece4c8c7c74",
   "search_group_plan": "f0bb66aecbe3043ad05c4ef684ea01bee7fdd5c562fc3990c62d49ec25f9e848",
   "search_help": "606152ce10e66be5591e2f0a1f772a01798dac344a8571cef848d46476182574",
   "search_home": "cc5fc812c3a0c89f727ed1077281020d43f0891c5cf8da8db5af3a02ce422c74",
@@ -33,7 +32,7 @@
   "search_mock_exam": "3a81d6e2d577c67afa543d33c0edf211cd8e2c08f89bf93a63a7ac32101b1b42",
   "search_open": "89e3cf9d420317b7fcfa0d683d88f2bb2c1cdf2d536bb2c033f696555d98ef65",
   "search_placeholder": "fdc4082c96e04d6da2e5234afb5ab0d12706ee3dbe3354498a3bab4cdf34a44a",
-  "search_practice_mistakes": "0a809854fb2b6babb5a709666d7359f005c9aa9319cf7ad5dd94a72a6fa1c2ad",
+  "search_practice_mistakes": "170b7dd83e866c4eb8bb7f0f4e6c11cbe0a9f7c5d70cd8a039fd26d8b681c7dc",
   "search_preferences": "26fd9309528aa3920cc821f635033aef2e1235536064112f98daa949e150465a",
   "search_pricing": "555357d2ce7abe9bdcc8e452aa105f7f07bc1c72f231912b8c25787fc8cee1b2",
   "search_profile": "06347ec5f37a123eba79cafd943c62be8296027b0b555935f203d263ba6726e2",
@@ -65,12 +64,11 @@
     <string name="search_group_account">Mon compte</string>
     <string name="search_group_help">Aide</string>
     <string name="search_group_ask">Poser une question</string>
-    <string name="search_group_new_goal">Nouvel objectif</string>
     <string name="search_continue">Continuer la séance du jour</string>
     <string name="search_take_mock">Passer un examen blanc</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
     <string name="search_take_mock_detail">Journée complète, demi-journée ou une matière</string>
-    <string name="search_practice_mistakes">Réviser tes erreurs</string>
+    <string name="search_practice_mistakes">Corriger tes erreurs</string>
     <string name="search_ask_buddy">Demander à %1$s…</string>
     <string name="search_start_new_goal">Commencer un nouvel objectif</string>
     <string name="search_buddy_keyword">Compagnon</string>

@@ -1,7 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { realpathSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, realpathSync } from "node:fs";
 import { homedir } from "node:os";
+import { join } from "node:path";
 import { updateDevelopmentDatabase } from "../worktree/databases.mts";
 import {
   getMailboxCaptureUrl,
@@ -16,6 +17,7 @@ import {
   runForegroundCommand,
 } from "./process.mts";
 import { waitForTurn } from "./queue.mts";
+import { type Service, announceWhenReady, formatServices, sortServices } from "./ready.mts";
 import { writeAndroidDevelopmentConfiguration } from "./write-android-configuration.mts";
 import { writeAppleDevelopmentConfiguration } from "./write-apple-configuration.mts";
 
@@ -28,6 +30,21 @@ const pnpmCommand = getPnpmCommand(process.env);
 // Sign-in codes go to the mailbox, so it runs with any app list.
 const apps = process.argv.slice(2).filter((argument) => !argument.startsWith("--"));
 const filters = apps.length > 0 ? [...apps, "mailbox"].map((app) => `--filter=${app}`) : [];
+
+/** With no app named, Turbo starts every app whose `dev` script is a service. */
+function getStartedApps(): string[] {
+  if (apps.length > 0) {
+    return [...new Set([...apps, "mailbox"])];
+  }
+
+  const appsDirectory = join(currentDirectory, "apps");
+
+  return readdirSync(appsDirectory).filter((app) => {
+    const manifest = join(appsDirectory, app, "package.json");
+
+    return existsSync(manifest) && readFileSync(manifest, "utf8").includes("run-service.mts");
+  });
+}
 
 async function runDevelopmentCommand({
   args,
@@ -53,7 +70,8 @@ function startProxy(environment: NodeJS.ProcessEnv): void {
   execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "proxy", "start"], {
     cwd: currentDirectory,
     env: environment,
-    stdio: "inherit",
+    // Its "already running" notice and restart advice answer nothing a `pnpm dev` asked; errors still show.
+    stdio: ["ignore", "ignore", "inherit"],
   });
 }
 
@@ -95,9 +113,14 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   const apiUrl = getServiceUrl({ ...service, serviceName: "api" });
   const mailboxUrl = getServiceUrl({ ...service, serviceName: "mailbox" });
 
+  const services: Service[] = sortServices(getStartedApps()).map((name) => ({
+    name,
+    url: getServiceUrl({ ...service, serviceName: name }),
+  }));
+
   writeAppleDevelopmentConfiguration({ apiUrl, currentDirectory });
   writeAndroidDevelopmentConfiguration({ apiUrl, currentDirectory });
-  process.stdout.write(`Main: ${mainUrl}\nAPI: ${apiUrl}\nMailbox: ${mailboxUrl}\n`);
+  process.stdout.write(`Starting\n${formatServices(services)}\n\n`);
 
   const stackEnvironment = {
     ...environment,
@@ -112,23 +135,27 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
     ZOONK_DEV_PROJECT: projectName,
   };
 
-  if (!productionMode) {
-    return runDevelopmentCommand({
-      args: ["exec", "turbo", "dev", ...filters],
+  if (productionMode) {
+    const build = await buildForProduction(stackEnvironment);
+
+    if (build.code !== 0 || build.signal) {
+      return build;
+    }
+  }
+
+  const stopped = new AbortController();
+  void announceWhenReady({ services, signal: stopped.signal });
+
+  try {
+    return await runDevelopmentCommand({
+      args: productionMode
+        ? ["exec", "turbo", "start", "--only", ...filters]
+        : ["exec", "turbo", "dev", ...filters],
       environment: stackEnvironment,
     });
+  } finally {
+    stopped.abort();
   }
-
-  const build = await buildForProduction(stackEnvironment);
-
-  if (build.code !== 0 || build.signal) {
-    return build;
-  }
-
-  return runDevelopmentCommand({
-    args: ["exec", "turbo", "start", "--only", ...filters],
-    environment: stackEnvironment,
-  });
 }
 
 await updateDevelopmentDatabase(realpathSync(currentDirectory));

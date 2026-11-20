@@ -36,7 +36,7 @@ export const examIdentityDecisionTask: Task<
   evaluate: decidePair,
   generate: decidePair,
   id: "exam-identity-decision",
-  name: "Exam Identity Decision",
+  name: "Exam identity decision",
   score: createDeterministicStringFieldScorer<ExamIdentityExpected>({
     expectedLabel: "Expected",
     field: "same",

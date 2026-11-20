@@ -3,7 +3,7 @@
 {
   "activities_geometry_badge_build_it": "a48d336bb9072cfc20fb73aa7ec593b837bc875a293acedd2b6968676e147d3e",
   "activities_geometry_badge_drag_corner": "ea26cf7aa102fe555102bb85066b0f03d68b6afe6e5f5a4e0b21c3e9d7b0a948",
-  "activities_geometry_badge_move_curve": "abbe633126f23297eba2e229fb7c284e5f7c023cc9b6f14400747efe0c990d4e",
+  "activities_geometry_badge_move_curve": "f13888587f98f4fd11b27672e4ae1c40b13574bf92b49af9e4c509da09fc8e69",
   "activities_geometry_badge_turn_it": "050f58a68b678db1f64e14ff75a28739e760fbe8939c9b41aeb5be8ae29439f0",
   "activities_geometry_board_angles": "f666ca327896b24f77adbe5a38b453e6d4f2c9138dcf9fe0e63ba1bfd47a4cf1",
   "activities_geometry_board_angles_total": "a5dcb565ec091baea685bcac719114a40b4955fb9250e528963fce9393c633ec",
@@ -78,7 +78,7 @@
   "activities_geometry_molecule_selected": "866b8e8290a39d35f7fe557cad2eb5f98d32824f43be612c5c33c9b80a73ac67",
   "activities_geometry_molecule_selected_hint": "697ffa2d41dc168f77ff33f2a2729ca2914460ff86a6e5137318d9d9466f127a",
   "activities_geometry_molecule_single_bond": "42a4d31867b726515d3bd73858919e4585ed4018946ae4c1c9342fb6ebc97303",
-  "activities_geometry_molecule_start": "a140dd349894802b73d98224838e04845f57342bbee26aa6237b7177fba7b1b0",
+  "activities_geometry_molecule_start": "9ef9b6c1c9189eec637a2ee81fa12aa1ea99b988d0e1c858ed9892cd6d1b40b0",
   "activities_geometry_molecule_target": "2e2259ed9102ea0d29813d7d41c697e67a4f056e56cd83f62ea66556e0af6c3c",
   "activities_geometry_molecule_triple_bond": "676cce6584dbb2d5ba2b2c7449dd2ba9f316bb66562c0de9f14212aa9d7e7e61",
   "activities_geometry_molecule_undo": "b1764c9b686ccd48b5a401462ce3b26f47239d97435f8b9d982118565726a0fd",
@@ -196,7 +196,7 @@
     <!-- Removes the selected atom, like "Remove Oxygen 2". -->
     <string name="activities_geometry_molecule_remove">Rimuovi %1$s</string>
     <string name="activities_geometry_molecule_remove_selected">Rimuovi l’atomo selezionato</string>
-    <string name="activities_geometry_molecule_start">Tocca un elemento per aggiungerne il primo atomo.</string>
+    <string name="activities_geometry_molecule_start">Tocca un elemento per iniziare la tua molecola.</string>
     <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
     <string name="activities_geometry_molecule_over">%1$s ha più legami di quanti ne può formare.</string>
     <plurals name="activities_geometry_molecule_open">
@@ -236,7 +236,7 @@
         <item quantity="other">%1$d legami in totale, contando un legame doppio come due.</item>
     </plurals>
     <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
-    <string name="activities_geometry_badge_move_curve">Sposta una curva</string>
+    <string name="activities_geometry_badge_move_curve">Sposta una linea</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">Sposta la linea %1$s</string>
     <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->

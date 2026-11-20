@@ -46,6 +46,7 @@ import com.zoonk.android.ui.characters.BuddyActor
 import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyExpression
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltTicks
@@ -55,6 +56,7 @@ import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
@@ -65,6 +67,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.celebrates
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -118,6 +121,7 @@ internal fun SessionSummary(
     busy: SessionAction?,
     failed: SessionAction?,
     actions: SummaryActions,
+    reminderOffer: (@Composable () -> Unit)? = null,
 ) {
     ResultScreen {
         var onRewards by rememberSaveable { mutableStateOf(false) }
@@ -169,7 +173,7 @@ internal fun SessionSummary(
                             SessionNumbers(summary, facts, brainPowerTile = false)
                             EarnedToday(summary, facts, buddy, buddyName)
                         },
-                        next = { Onward(summary, facts) },
+                        next = { Onward(summary, facts, reminderOffer) },
                     )
                 } else {
                     Column(
@@ -186,7 +190,7 @@ internal fun SessionSummary(
                                     if (rewardsShown) {
                                         RewardsStep(summary, facts, buddy, buddyName)
                                     } else {
-                                        DoneStep(summary, facts, wide)
+                                        DoneStep(summary, facts, wide, reminderOffer)
                                     }
                                 }
                             }
@@ -204,11 +208,12 @@ private fun DoneStep(
     summary: StudySessionSummary,
     facts: SummaryFacts,
     wide: Boolean,
+    reminderOffer: (@Composable () -> Unit)?,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         DoneTitle(summary, facts)
         SessionNumbers(summary, facts, brainPowerTile = !wide)
-        Onward(summary, facts)
+        Onward(summary, facts, reminderOffer)
     }
 }
 
@@ -242,6 +247,7 @@ private fun DoneTitle(
 private fun Onward(
     summary: StudySessionSummary,
     facts: SummaryFacts,
+    reminderOffer: (@Composable () -> Unit)?,
 ) {
     SkillRises(summary)
     summary.tomorrow?.takeIf { !facts.stopped }?.let { tomorrow ->
@@ -249,6 +255,7 @@ private fun Onward(
             SummaryRow(R.drawable.ic_menu_book) { Text(tomorrow.title, style = MaterialTheme.typography.bodyLarge) }
         }
     }
+    reminderOffer?.invoke()
 }
 
 @Composable
@@ -259,8 +266,8 @@ private fun EarnedToday(
     buddyName: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SectionLabel(stringResource(R.string.session_summary_earned_today))
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(stringResource(R.string.session_summary_earned_today))
         Rewards(summary, facts, buddy, buddyName, title = null)
     }
 }
@@ -274,7 +281,6 @@ private fun SessionNumbers(
     val locale = currentLocale()
     val goalNumber = goalNumber(summary, facts.goalKind)
     val right = stringResource(R.string.session_summary_right)
-    val reviewLabel = stringResource(R.string.session_summary_to_review)
     val brainLabel = stringResource(R.string.session_summary_brain_power)
     val answers =
         summary.takeIf { it.questions > 0 }?.let {
@@ -314,17 +320,16 @@ private fun SessionNumbers(
                         modifier = modifier,
                         detail =
                             goalNumber.before?.let { before ->
-                                val change = "$before → ${goalNumber.after}"
-                                if (goalNumber.dropped) change else successText(change)
+                                if (goalNumber.dropped) {
+                                    stringResource(R.string.session_summary_down_from, before)
+                                } else {
+                                    successText(stringResource(R.string.session_summary_up_from, before))
+                                }
                             },
                         tone = if (goalNumber.dropped) StatTone.Neutral else StatTone.Success,
                         icon = summaryIcon(if (goalNumber.dropped) R.drawable.ic_trending_down else R.drawable.ic_trending_up),
                     )
                 }
-            }
-            add { modifier ->
-                val skills = summary.comesBack.sumOf { it.skills }
-                StatTile(reviewLabel, formatNumber(skills.toDouble(), locale), modifier, icon = summaryIcon(R.drawable.ic_replay))
             }
             if (brainPowerTile) {
                 add { modifier -> StatTile(brainLabel, earned, modifier, belt, StatTone.Brain, summaryIcon(R.drawable.ic_psychology)) }
@@ -334,7 +339,8 @@ private fun SessionNumbers(
     StatTiles(columns = 2, tiles = tiles)
 }
 
-private fun summaryIcon(icon: Int): @Composable (Modifier) -> Unit = { modifier -> Icon(painterResource(icon), null, modifier) }
+private fun summaryIcon(icon: Int): @Composable (Modifier) -> Unit =
+    { modifier -> Icon(painterResource(icon), null, Modifier.glyphInk(icon).then(modifier)) }
 
 @Composable
 private fun rightDetail(summary: StudySessionSummary): CharSequence? {
@@ -439,11 +445,10 @@ private fun Rewards(
     val streak = summary.bestStreak.takeIf { it >= SHOWN_STREAK }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        BuddyActor(
+        StandingBuddy(
             look = buddy,
-            modifier = Modifier.size(96.dp),
+            height = 96.dp,
             expression = BuddyExpression.Happy,
-            crop = BuddyCrop.Whole,
             reaction = if (celebrates()) ActReaction(BuddyAct.Proud, ZoonkMotion.BEAT_MILLIS) else null,
             label = stringResource(R.string.session_summary_buddy_happy, buddyName),
         )
@@ -528,7 +533,7 @@ private fun SummaryList(
     rows: @Composable () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        title?.let { SectionLabel(it) }
+        title?.let { SectionHeader(it) }
         OutlinedCard(Modifier.fillMaxWidth()) { rows() }
     }
 }
@@ -568,12 +573,15 @@ private fun SummaryBar(
     val crowded = seesMistakes && facts.stopped
     val options: @Composable () -> Unit = {
         if (seesMistakes) {
-            OutlinedButton(onClick = actions.seeMistakes) { Text(stringResource(R.string.session_summary_see_mistakes)) }
+            OutlinedButton(onClick = actions.seeMistakes, modifier = Modifier.taskOption()) {
+                Text(stringResource(R.string.session_summary_see_mistakes))
+            }
         }
         if (facts.stopped) {
             OutlinedButton(
                 busy = busy == SessionAction.KeepGoing,
                 onClick = actions.keepGoing,
+                modifier = Modifier.taskOption(),
                 enabled = busy == null,
                 leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) { Text(stringResource(R.string.session_summary_keep_going)) }
@@ -594,7 +602,7 @@ private fun SummaryBar(
             TextButton(
                 busy = busy == SessionAction.ExtraTime,
                 onClick = actions.extraTime,
-                modifier = Modifier.taskOption(),
+                modifier = Modifier.fillMaxWidth(),
                 enabled = busy == null,
                 leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
@@ -627,30 +635,21 @@ private fun SummaryBar(
     }
 }
 
-/**
- * Main's `SHARED_ROW_ACTION_CLASS` grows each button from its label's width; a `FlowRow` weight would
- * split the line evenly and wrap the longer label.
- */
+/** Main's `SHARED_ROW_ACTION_CLASS`: a `FlowRow` weight would split the line evenly and wrap the longer label. */
 @Composable
 private fun SharedRow(
     modifier: Modifier,
     content: @Composable () -> Unit,
 ) {
     Layout(content, modifier) { measurables, constraints ->
-        val gap = 12.dp.roundToPx()
+        val gap = 8.dp.roundToPx()
         val labels = measurables.map { it.maxIntrinsicWidth(constraints.maxHeight) }
-        val row = labels.sum() + gap * (labels.size - 1)
+        val widths = sharedRowWidths(labels, gap, constraints.minWidth, constraints.maxWidth)
 
-        if (row <= constraints.maxWidth) {
-            val width = max(row, constraints.minWidth)
-            val rest = width - row
-            val placeables =
-                measurables.mapIndexed { index, measurable ->
-                    val share = rest / labels.size + if (index < rest % labels.size) 1 else 0
-                    measurable.measure(Constraints.fixedWidth(labels[index] + share))
-                }
+        if (widths != null) {
+            val placeables = measurables.zip(widths) { measurable, width -> measurable.measure(Constraints.fixedWidth(width)) }
             val height = placeables.maxOf { it.height }
-            layout(width, height) {
+            layout(widths.sum() + gap * (widths.size - 1), height) {
                 var x = 0
                 placeables.forEach {
                     it.placeRelative(x, (height - it.height) / 2)
@@ -668,6 +667,22 @@ private fun SharedRow(
             }
         }
     }
+}
+
+/**
+ * Each button's width on one line, [gap] apart: its label's, each grown by an equal share of what [minWidth] leaves (main's
+ * `grow` on a phone's bar); null when the labels don't fit in [maxWidth] together and stack.
+ */
+internal fun sharedRowWidths(
+    labels: List<Int>,
+    gap: Int,
+    minWidth: Int,
+    maxWidth: Int,
+): List<Int>? {
+    val row = labels.sum() + gap * (labels.size - 1)
+    if (row > maxWidth) return null
+    val share = (max(row, minWidth) - row) / labels.size
+    return labels.map { it + share }
 }
 
 @Composable

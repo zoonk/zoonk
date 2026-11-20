@@ -1,18 +1,13 @@
 "use client";
 
 import { type CeremonyMilestone, MilestoneCeremony } from "@zoonk/learn/ceremony";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { DayMoment, StepWithDayMoment } from "@zoonk/learn/session/day-moment";
 import { MomentSavingTitle } from "@zoonk/learn/session/moment-header";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
-import {
-  StepCard,
-  StepDetail,
-  StepHeader,
-  StepTitleLabel,
-  StepTitleNumber,
-} from "@zoonk/learn/step-card";
+import { StepCard, StepDetail, StepHeader, StepTitleNumber } from "@zoonk/learn/step-card";
 import { TricksterArt } from "@zoonk/learn/trickster-art";
 import { Button } from "@zoonk/ui/components/button";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
@@ -247,8 +242,8 @@ export function MockEndSpecimen() {
     <LearnProvider adapters={ADAPTERS}>
       <div className="max-w-column flex flex-col items-start gap-6">
         <div className="flex flex-col items-start gap-1.5">
-          <p className="text-title flex flex-col items-start gap-1.5">
-            <StepTitleLabel>Mock exam 2 done</StepTitleLabel>
+          <Eyebrow>Mock exam 2 done</Eyebrow>
+          <p className="text-title">
             <StepTitleNumber>610–690</StepTitleNumber>
           </p>
           <StepDetail className="text-sm">Estimated score · ENEM · Natural Sciences</StepDetail>
@@ -273,7 +268,7 @@ export function ChallengeWonSpecimen() {
   return (
     <LearnProvider adapters={ADAPTERS}>
       <div className="max-w-column flex flex-col items-start gap-6">
-        <TricksterArt beaten reacts />
+        <TricksterArt cracks={2} outcome="won" reacts />
         <div className="flex flex-col items-start gap-3">
           <p className="text-title">You beat the Trickster!</p>
           <MomentReadouts brainPower={0} score={{ answered: 6, correct: 5 }} />

@@ -8,8 +8,11 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
+import { FactSegments } from "../_components/task-meta";
+import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { type DayStepPart } from "../session/day-meter-parts";
 import { type DayStep } from "../session/session-types";
@@ -19,9 +22,12 @@ import { useTodayScreen } from "./today-context";
 
 export const DAY_SEGMENT_SLOT = "today-day-segment";
 
-/** Its hit area reaches past the thin bar so a finger can land on it. */
+/**
+ * Its hit area reaches past the thin bar so a finger can land on it: up to the heading and down to
+ * the first row, 38px in all, since any taller it would cover one of them.
+ */
 const TRIGGER_CLASS =
-  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-[3px] outline-none transition-[filter] before:absolute before:-inset-x-px before:-inset-y-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
+  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-meter outline-none transition-[filter] before:absolute before:-inset-x-px before:-top-5 before:-bottom-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
 
 function useKindNote() {
   const t = useExtracted();
@@ -38,28 +44,37 @@ function useKindNote() {
   return (kind: LearnKind): string | undefined => notes[kind];
 }
 
+/** A state is a word, set in the text face; a time or a count is data, set in mono. */
+type SegmentFacts = { data?: string; status?: string };
+
 function useSegmentFacts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
 
-  return ({ block, state }: { block: DayStep; state: DaySegmentState }): string => {
+  return ({ block, state }: { block: DayStep; state: DaySegmentState }): SegmentFacts => {
     const time = formatDuration(block.estimatedMinutes);
 
     if (state === "done") {
-      return t("Done");
+      return { status: t("Done") };
     }
 
     if (state === "ahead") {
-      return time;
+      return { data: time, status: toLabelCase(t("planned")) };
     }
 
     return block.status === "active" && block.answered > 0
-      ? t("{answered, number} of {count, plural, one {# question} other {# questions}}", {
-          answered: block.answered,
-          count: block.questions,
-        })
-      : [t("Up next"), time].join(" · ");
+      ? {
+          data: t("{answered, number} of {count, plural, one {# question} other {# questions}}", {
+            answered: block.answered,
+            count: block.questions,
+          }),
+        }
+      : { data: time, status: t("Up next") };
   };
+}
+
+function factsLabel({ data, status }: SegmentFacts): string {
+  return [status, data].filter(Boolean).join(FACT_SEPARATOR);
 }
 
 function SegmentPopover({
@@ -89,7 +104,7 @@ function SegmentContent({
   note,
   title,
 }: {
-  facts: string;
+  facts: SegmentFacts;
   kind: LearnKind;
   note?: string;
   title: string;
@@ -101,7 +116,12 @@ function SegmentContent({
           <KindMark kind={kind} />
           <span className="min-w-0">{title}</span>
         </PopoverTitle>
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">{facts}</p>
+        <p className="text-muted-foreground font-mono text-xs tabular-nums">
+          <FactSegments
+            facts={[facts.data]}
+            lead={facts.status && <span className="font-sans">{facts.status}</span>}
+          />
+        </p>
       </PopoverHeader>
       {note && <PopoverDescription>{note}</PopoverDescription>}
     </PopoverContent>
@@ -117,8 +137,8 @@ export function BlockSegment({ focusable, part }: { focusable: boolean; part: Da
 
   return (
     <Popover>
-      <SegmentPopover focusable={focusable} label={`${title}: ${facts}`}>
-        <DaySegment kind={part.kind} share={part.share} state={part.state} />
+      <SegmentPopover focusable={focusable} label={`${title}: ${factsLabel(facts)}`}>
+        <DaySegment share={part.share} state={part.state} />
       </SegmentPopover>
       <SegmentContent facts={facts} kind={part.kind} note={kindNote(part.kind)} title={title} />
     </Popover>
@@ -133,15 +153,15 @@ export function HeldSegment({ minutes }: { minutes: number }) {
   const title = t("Your next lessons");
   const time = formatDuration(minutes);
 
-  const writing = writingStalled ? t("Taking longer than usual") : t("Being written for you…");
-  const note = today.session.lessonsToPrepare ? t("Not written yet.") : writing;
+  const coming = writingStalled ? t("Taking longer than usual") : t("Getting ready…");
+  const note = today.session.lessonsToPrepare ? t("Not ready yet") : coming;
 
   return (
     <Popover>
       <SegmentPopover focusable={false} label={`${title}: ${time}`}>
         <DaySegment kind="lesson" state="ahead" />
       </SegmentPopover>
-      <SegmentContent facts={time} kind="lesson" note={note} title={title} />
+      <SegmentContent facts={{ data: time }} kind="lesson" note={note} title={title} />
     </Popover>
   );
 }

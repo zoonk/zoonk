@@ -15,7 +15,7 @@ export const placementItemsTask: Task<
     "Write placement questions for several skills in one call: a quick one (multiple choice, or true/false for an exam that judges assertions) and a typed one per skill. Code checks per skill, then the generate-items judge rubric, so scores compare with single-skill writing",
   generate: (input) => generatePlacementItems({ ...input, country: input.country ?? null }),
   id: "placement-items",
-  name: "Placement Items",
+  name: "Placement items",
   score: scorePlacementItems,
   scoreCategories: GENERATE_ITEMS_SCORE_CATEGORIES,
   testCases: TEST_CASES,

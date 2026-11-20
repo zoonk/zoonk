@@ -6,6 +6,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
+import { createUnstartedDay } from "./unstarted-day-fixtures";
 
 async function createTwoGoalLearner() {
   const user = await createE2EUser(getBaseURL());
@@ -52,3 +53,136 @@ test.describe("Learning tabs frame", () => {
     await page.context().close();
   });
 });
+
+test("on a phone the mistakes notebook leaves by the tab bar, with no way back of its own", async ({
+  browser,
+}) => {
+  const { user } = await createTwoGoalLearner();
+  const page = await openAs(browser, user);
+  await page.setViewportSize({ height: 900, width: 1440 });
+  await page.goto("/plan");
+
+  const notebook = page
+    .getByRole("complementary", { name: "Sidebar" })
+    .getByRole("link", { name: "Mistakes notebook" });
+
+  await expectHydrated(notebook);
+  await notebook.click();
+  await expect(page.getByText(/^Nothing to fix right now/u)).toBeVisible();
+
+  await page.setViewportSize({ height: 844, width: 390 });
+  await expect(page.getByRole("link", { name: /^Back to /u })).toBeHidden();
+
+  await page
+    .getByRole("navigation", { name: "Learning tabs" })
+    .getByRole("link", { name: "Plan" })
+    .click();
+
+  await expect(page).toHaveURL(/\/plan$/u);
+});
+
+test.describe("The way back on a computer", () => {
+  test("a learner's top-level pages have none, listed in the sidebar or not", async ({
+    browser,
+  }) => {
+    const [withGoal, withoutGoal] = await Promise.all([
+      createTwoGoalLearner(),
+      createE2EUser(getBaseURL()),
+    ]);
+
+    const listed = await openAs(browser, withGoal.user);
+    await listed.setViewportSize({ height: 900, width: 1440 });
+    await listed.goto("/mistakes");
+
+    const sidebar = listed.getByRole("complementary", { name: "Sidebar" });
+
+    await expect(sidebar.getByRole("link", { name: "Mistakes notebook" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+
+    const listedBack = listed.getByRole("link", { includeHidden: true, name: "Back to Today" });
+    await expect(listedBack).toHaveCount(1);
+    await expect(listedBack).toBeHidden();
+
+    await listed.goto("/stats");
+    await expect(listed.getByRole("link", { name: /^Back to /u })).toBeHidden();
+
+    const unlisted = await openAs(browser, withoutGoal);
+    await unlisted.setViewportSize({ height: 900, width: 1440 });
+    await unlisted.goto("/completed-lessons");
+
+    await expect(
+      unlisted.getByRole("complementary", { name: "Sidebar" }).getByText("Completed lessons"),
+    ).toHaveCount(0);
+
+    await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeHidden();
+
+    await unlisted.goto("/mistakes");
+
+    await expect(
+      unlisted.getByText(
+        "The questions you got wrong, why, and practice until you get them right.",
+      ),
+    ).toBeVisible();
+
+    await expect(
+      unlisted
+        .getByRole("complementary", { name: "Sidebar" })
+        .getByRole("link", { name: "Mistakes notebook" }),
+    ).toHaveAttribute("aria-current", "page");
+
+    await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeHidden();
+  });
+});
+
+for (const textScale of [1, 2]) {
+  // oxlint-disable-next-line vitest/prefer-each -- Playwright does not provide test.each.
+  for (const buddyName of ["Professor Bartholomew Jr", "abcdefghijklmnopqrstuvwx"]) {
+    test(`a 24-character buddy name keeps the action above the tabs at text x${textScale}: ${buddyName}`, async ({
+      browser,
+    }) => {
+      const day = await createUnstartedDay();
+      await learningProfileFixture({ buddyKind: "zu", buddyName, userId: day.user.id });
+      const page = await openAs(browser, day.user);
+      await page.setViewportSize({ height: 844, width: 390 });
+      const standardTextPx = 16;
+      const cdp = await page.context().newCDPSession(page);
+      await cdp.send("Page.setFontSizes", { fontSizes: { standard: standardTextPx * textScale } });
+      await page.goto("/today");
+      const navigation = page.getByRole("navigation", { name: "Learning tabs" });
+
+      await expect(
+        navigation.getByRole("link", { name: new RegExp(buddyName, "u") }),
+      ).toBeVisible();
+
+      const action = page.getByRole("button", { name: /^Start\b/u });
+      await expect(action).toBeVisible();
+      const bar = await navigation.boundingBox();
+
+      if (!bar) {
+        throw new Error("The bottom navigation must be present");
+      }
+
+      const geometry = await action.evaluate((button) => {
+        const box = button.getBoundingClientRect();
+        const fractions = [0.25, 0.5, 0.75];
+
+        const exposed = fractions.every((part) => {
+          const hit = document.elementFromPoint(box.left + box.width * part, box.bottom - 2);
+          return hit === button || (hit !== null && button.contains(hit));
+        });
+
+        return { actionBottom: box.bottom, actionTop: box.top, exposed };
+      });
+
+      const tabBarRem = 4;
+      const borderPx = 1;
+      expect(bar.height).toBeCloseTo(tabBarRem * standardTextPx * textScale + borderPx, 1);
+      expect(geometry.actionTop).toBeGreaterThanOrEqual(0);
+      expect(geometry.actionBottom).toBeLessThanOrEqual(bar.y);
+      expect(geometry.exposed).toBe(true);
+      await page.context().close();
+    });
+  }
+}

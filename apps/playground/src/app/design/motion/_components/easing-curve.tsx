@@ -1,5 +1,6 @@
 "use client";
 
+import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import {
   type MotionDuration,
   type MotionEasing,
@@ -8,6 +9,8 @@ import {
 } from "@zoonk/ui/lib/motion";
 import { useEffect, useRef, useState } from "react";
 import { useReducedPreview } from "./motion-preview";
+
+const PLAY_LABELS = ["Play", "Play (reduced)"];
 
 const SAMPLES = 48;
 
@@ -89,15 +92,15 @@ export function EasingCurve({
       </svg>
 
       <div className="flex items-center gap-3">
-        <span className="bg-muted relative h-2 w-40 rounded-full">
+        <span className="bg-muted relative h-2 w-40 shrink-0 rounded-full">
           <span className="bg-foreground absolute top-0 left-0 size-2 rounded-full" ref={dot} />
         </span>
         <button
-          className="text-muted-foreground hover:text-foreground hit-area relative text-xs font-medium underline-offset-2 hover:underline"
+          className="text-muted-foreground hover:text-foreground hit-area relative text-xs font-medium whitespace-nowrap underline-offset-2 hover:underline"
           onClick={play}
           type="button"
         >
-          {reduced ? "Play (reduced)" : "Play"}
+          <SwapLabel current={reduced ? "Play (reduced)" : "Play"} labels={PLAY_LABELS} />
         </button>
       </div>
     </div>

@@ -1,7 +1,8 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type CourseLevel } from "@zoonk/db";
+import { formatIsoDate } from "@zoonk/utils/date-format";
 import { formatDuration } from "@zoonk/utils/duration";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { getTotalDuration } from "./total-duration";
 
 const MINUTES_PER_HOUR = 60;
@@ -12,33 +13,19 @@ export async function getMinutesFormatter(): Promise<(minutes: number) => string
   return (minutes) => formatDuration({ locale, totalSeconds: minutes * SECONDS_PER_MINUTE });
 }
 
-/** Read at UTC midnight so no time zone moves the day. */
-export async function getIsoDayFormatter(): Promise<(isoDate: string) => string> {
-  const format = await getFormatter();
-
-  return (isoDate) =>
-    format.dateTime(new Date(`${isoDate}T00:00:00Z`), {
-      day: "numeric",
-      month: "short",
-      timeZone: "UTC",
-    });
-}
-
-export async function getTotalDurationFormatter(): Promise<(totalMinutes: number) => string> {
-  const formatMinutes = await getMinutesFormatter();
-
-  return (totalMinutes) => {
-    const duration = getTotalDuration(Math.round(totalMinutes));
-
-    return "minutes" in duration
-      ? formatMinutes(duration.minutes)
-      : `~${formatMinutes(duration.hours * MINUTES_PER_HOUR)}`;
-  };
+/** A data row's date on a public page; a day in another year than `today` names it. */
+export async function getIsoDayFormatter(today: string): Promise<(isoDate: string) => string> {
+  const locale = await getAppLocale();
+  return (isoDate) => formatIsoDate({ isoDate, locale, today });
 }
 
 export async function getTotalDurationLabel(totalMinutes: number): Promise<string> {
-  const durationText = await getTotalDurationFormatter();
-  return durationText(totalMinutes);
+  const formatMinutes = await getMinutesFormatter();
+  const duration = getTotalDuration(Math.round(totalMinutes));
+
+  return "minutes" in duration
+    ? formatMinutes(duration.minutes)
+    : `~${formatMinutes(duration.hours * MINUTES_PER_HOUR)}`;
 }
 
 /** Read once: looking each up on its own would run the translations inside `Promise.all`. */

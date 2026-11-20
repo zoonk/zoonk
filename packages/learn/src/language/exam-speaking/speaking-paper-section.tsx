@@ -4,7 +4,6 @@ import { type SpeakingPaperView } from "@zoonk/core/language/exam-speaking/contr
 import { PhoneOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
-import { type CallLimit } from "../../_components/help-limit-notice";
 import { ListGroup } from "../../_components/list-group";
 import {
   NoticeCard,
@@ -19,14 +18,10 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../../_components/page";
-import { PlusNotice } from "../../_components/plus-lock";
-import { useSentenceSpace } from "../../_utils/locale";
 import { WritingWait } from "../../generation/writing-wait";
-import { CallLimitMessage } from "../conversation/call-limit-message";
+import { CallStartNote } from "../conversation/call-limit-message";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 import { TaskRow, getTaskRowId } from "./speaking-task-row";
-
-export type ExamTaskStart = CallStartOutcome | { limit: CallLimit };
 
 function useOpenTask(openTask: string | null) {
   useEffect(() => {
@@ -41,13 +36,15 @@ function useOpenTask(openTask: string | null) {
 }
 
 export function SpeakingPaperSection({
+  barHasMainAction,
   onStart,
   openTask = null,
   paper,
   resultHref,
   title,
 }: {
-  onStart: (task: string) => Promise<ExamTaskStart>;
+  barHasMainAction?: boolean;
+  onStart: (task: string) => Promise<CallStartOutcome>;
   openTask?: string | null;
   paper: SpeakingPaperView;
   resultHref: (conversationId: string) => string;
@@ -55,23 +52,11 @@ export function SpeakingPaperSection({
 }) {
   const t = useExtracted();
   const titleId = useId();
-  const space = useSentenceSpace();
   const selected = useRef<string | null>(null);
   const [startedTask, setStartedTask] = useState<string | null>(null);
-  const [limit, setLimit] = useState<CallLimit | null>(null);
-  const locked = paper.access === "plusRequired";
 
   const call = useCallStart({
-    onStart: async () => {
-      const started = selected.current ? await onStart(selected.current) : false;
-
-      if (typeof started === "boolean" || started === "paused" || "generationId" in started) {
-        return started;
-      }
-
-      setLimit(started.limit);
-      return false;
-    },
+    onStart: () => (selected.current ? onStart(selected.current) : Promise.resolve(false)),
   });
 
   const paused = paper.access === "callsPaused";
@@ -84,14 +69,6 @@ export function SpeakingPaperSection({
         <PageSectionTitle id={titleId}>{title ?? t("Speaking")}</PageSectionTitle>
         {!title && <PageSectionDetail>{paper.title}</PageSectionDetail>}
       </PageSectionHeader>
-
-      {locked && (
-        <PlusNotice>
-          {t(
-            "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
-          )}
-        </PlusNotice>
-      )}
 
       {(paused || call.paused) && (
         <NoticeCard>
@@ -121,11 +98,18 @@ export function SpeakingPaperSection({
                 index={index}
                 language={paper.language}
                 level={paper.level}
-                locked={locked || paused}
+                needsSubscription={paper.access === "plusRequired"}
+                note={
+                  startedTask === task.key && (
+                    <CallStartNote
+                      call={call}
+                      failed={t("The task didn't start. Try again in a moment.")}
+                    />
+                  )
+                }
                 onStart={() => {
                   selected.current = task.key;
                   setStartedTask(task.key);
-                  setLimit(null);
                   call.start();
                 }}
                 paused={paused}
@@ -140,30 +124,15 @@ export function SpeakingPaperSection({
 
       {call.writing && (
         <WritingWait
+          barHasMainAction={barHasMainAction}
           hint={t("Your task opens as soon as its card is ready.")}
           kind="examSpeaking"
           writing={call.writing}
         />
       )}
 
-      {call.failed && limit && <CallLimitMessage className="py-4" limit={limit} />}
-
-      {call.failed && !limit && (
-        <p className="text-destructive-text px-1 text-sm" role="alert">
-          {t("The task didn't start. Try again in a moment.")}
-        </p>
-      )}
-
       <PageSectionFooter>
-        {paper.tasks.some((task) => task.role === "partner")
-          ? t(
-              "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-            )
-          : t(
-              "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-            )}
-        {space}
-        <a href={paper.source} rel="noreferrer" target="_blank">
+        <a className="hit-area relative" href={paper.source} rel="noreferrer" target="_blank">
           {t("Official format")}
         </a>
       </PageSectionFooter>

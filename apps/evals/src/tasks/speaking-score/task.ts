@@ -10,7 +10,7 @@ export const speakingScoreTask: Task<ScoreSpeakingParams, SpeakingGrade, Speakin
     "Estimate an IELTS or TOEFL iBT speaking mock, or one task of a DELE, DELF, Goethe or Cambridge speaking paper, on the exam's official criteria: bands on each exam's scale checked against labeled transcripts, then a judge for evidence, tips and accent-neutral honesty",
   generate: scoreSpeaking,
   id: "speaking-score",
-  name: "Speaking Score",
+  name: "Speaking score",
   score: scoreSpeakingOutput,
   scoreCategories: SPEAKING_SCORE_CATEGORIES,
   testCases: TEST_CASES,

@@ -1,5 +1,6 @@
 /** Run it through `pnpm dev:persona`, which passes the URLs `pnpm dev` serves. */
 import { parseArgs } from "node:util";
+import { SCENARIO_STATES } from "@zoonk/core/seed";
 import { prisma } from "@zoonk/db";
 import { SEED_LANGUAGES, type SeedLanguage } from "@zoonk/db/seed/localize";
 import { MS_PER_DAY } from "@zoonk/utils/date";
@@ -16,7 +17,7 @@ import {
 import { getTestLearnerRefusal } from "./_utils/test-learners";
 
 const USAGE = [
-  "Usage: pnpm dev:persona <name> [--day <n>] [--away <days>] [--plus|--free] [--tz <zone>] [--locale en|pt]",
+  "Usage: pnpm dev:persona <name> [--day <n>] [--away <days>] [--plus|--free] [--tz <zone>] [--locale en|pt] [--state <state>]",
   "       pnpm dev:persona --from <email> [--day <n> | --away <days>] [--plus|--free] [--tz <zone>]",
 ].join("\n");
 
@@ -63,6 +64,7 @@ function parseRequest(): ParsedRequest {
       from: { type: "string" },
       locale: { type: "string" },
       plus: { type: "boolean" },
+      state: { type: "string" },
       tz: { type: "string" },
     },
   });
@@ -80,9 +82,17 @@ function parseRequest(): ParsedRequest {
     timeZone: values.tz,
   };
 
+  const state = SCENARIO_STATES.find((known) => known === values.state);
+
+  if (values.state !== undefined && !state) {
+    throw new Error(`--state takes ${SCENARIO_STATES.join(", ")}, not "${values.state}".`);
+  }
+
   if (values.from !== undefined) {
-    if (name || values.locale !== undefined) {
-      throw new Error("--from copies a learner as they are: pass no persona name or --locale.");
+    if (name || values.locale !== undefined || state) {
+      throw new Error(
+        "--from copies a learner as they are: pass no persona name, --locale or --state.",
+      );
     }
 
     return { kind: "clone", request: { ...options, from: values.from } };
@@ -98,7 +108,7 @@ function parseRequest(): ParsedRequest {
 
   return {
     kind: "seeded",
-    request: { ...options, language: values.locale, name: name.toLowerCase() },
+    request: { ...options, language: values.locale, name: name.toLowerCase(), state },
   };
 }
 
@@ -143,8 +153,12 @@ async function describePersona({ email, goalId }: { email: string; goalId: strin
     `${goal.user.name}: ${goal.title} (${goal.kind}), ${plus > 0 ? "Plus" : "Free"}, ${timeZone}, ${goal.language}`,
     `Today is day ${daysSince(goal.createdAt, timeZone) + 1} of the plan; ${describeLastStudy(lastStudy?.endedAt, timeZone)}.`,
     "",
-    `Sign in: open ${getMainPageUrl({ locale: goal.language, path: "/login" })}, enter ${email} and type the code sent to it (newest message in the dev mailbox${mailbox ? `, ${mailbox}` : ""}).`,
+    "Sign in",
+    `  Open   ${getMainPageUrl({ locale: goal.language, path: "/login" })}`,
+    `  Email  ${email}`,
+    `  Code   the newest message in the dev mailbox${mailbox ? `, ${mailbox}` : ""}`,
     `Then open ${getMainPageUrl({ locale: goal.language, path: "" })}`,
+    "",
     "Remove it with every other test learner: pnpm dev:remove-test-learners --yes",
   ].join("\n");
 }

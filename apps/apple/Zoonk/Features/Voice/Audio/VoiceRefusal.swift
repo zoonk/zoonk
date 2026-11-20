@@ -2,34 +2,43 @@ import Foundation
 import OpenAPIRuntime
 
 /// Mirrors main's `HelpLimit`.
-enum HelpLimit: Equatable, Sendable {
+enum HelpLimit: Hashable, Sendable {
+  /// A monthly cap is `usedUp`, never a period.
   enum Period: String, Sendable {
     case day
-    case month
     case total
   }
 
   case slowDown(retryAfterSeconds: Int)
+  /// The day's cap, or what a guest gets for good.
   case limitReached(period: Period, tier: LearnerTier)
+  /// A monthly cap: each use comes back 30 days after it was made, and `availableAt` is when the
+  /// next one does.
+  case usedUp(tier: LearnerTier, availableAt: Date?)
   case signUpRequired
 
-  var needsAccount: Bool {
-    switch self {
-    case .signUpRequired:
-      true
-    case .limitReached(_, let tier):
-      tier == .guest
-    case .slowDown:
-      false
+  /// A reached limit as the server names it.
+  static func reached(period: String?, tier: LearnerTier, availableAt: Date?) -> HelpLimit {
+    switch period {
+    case "rolling30Days": .usedUp(tier: tier, availableAt: availableAt)
+    case "total": .limitReached(period: .total, tier: tier)
+    default: .limitReached(period: .day, tier: tier)
     }
   }
 
-  var offersPlus: Bool {
-    if case .limitReached(_, .free) = self {
-      return true
+  var tier: LearnerTier? {
+    switch self {
+    case .limitReached(_, let tier), .usedUp(let tier, _): tier
+    case .slowDown, .signUpRequired: nil
     }
+  }
 
-    return false
+  var needsAccount: Bool {
+    self == .signUpRequired || tier == .guest
+  }
+
+  var offersSubscription: Bool {
+    tier == .free
   }
 
   /// It passes on its own, so the learner tries again from the same screen.
@@ -40,12 +49,43 @@ enum HelpLimit: Equatable, Sendable {
 
     return false
   }
+
+  var isMonthly: Bool {
+    if case .usedUp = self {
+      return true
+    }
+
+    return false
+  }
+
+  /// When a monthly cap's next use comes back.
+  var availableAt: Date? {
+    if case .usedUp(_, let availableAt) = self {
+      return availableAt
+    }
+
+    return nil
+  }
+
+  /// Main's opening day `"open"`: the instant has passed, so only the server can say whether the
+  /// learner is still at the limit. Only their tap asks again.
+  func isOpen(at now: Date) -> Bool {
+    availableAt.map { $0 <= now } ?? false
+  }
+
+  /// The way to try is on the screen: a short break passes, and a cap's day has come. The server
+  /// decides again.
+  func letsTry(at now: Date) -> Bool {
+    isShortBreak || isOpen(at: now)
+  }
 }
 
 struct VoiceRefusal: Error, Equatable, Sendable {
   let status: Int
   let code: String
   let details: OpenAPIValueContainer?
+  /// When this device received it, which its instant is read against.
+  var receivedAt = Date.now
 
   var isNoSpeech: Bool {
     code == "NO_SPEECH"
@@ -56,7 +96,7 @@ struct VoiceRefusal: Error, Equatable, Sendable {
   }
 
   /// Mirrors main's `readRefusedLimit`: 403 asks a guest to sign up, 402 a free learner to wait or
-  /// get Plus, a 429 is a short break or Plus's cap for today.
+  /// subscribe, a 429 is a short break or a subscriber's cap for today.
   var limit: HelpLimit? {
     guard [402, 403, 429].contains(status), !isPlusRequired else {
       return nil
@@ -75,13 +115,41 @@ struct VoiceRefusal: Error, Equatable, Sendable {
     }
 
     let limit = (object?["limit"] ?? nil) as? [String: (any Sendable)?] ?? object
-    let period = ((limit?["period"] ?? nil) as? String).flatMap(HelpLimit.Period.init) ?? .day
 
     let tier =
       ((limit?["tier"] ?? nil) as? String).flatMap(LearnerTier.init)
       ?? (status == 403 ? .guest : status == 402 ? .free : .plus)
 
-    return .limitReached(period: period, tier: tier)
+    return .reached(
+      period: (limit?["period"] ?? nil) as? String, tier: tier,
+      availableAt: Date(
+        opening: (limit?["availableAt"] ?? object?["availableAt"] ?? nil) as? String,
+        receivedAt: receivedAt))
+  }
+}
+
+extension Date {
+  /// An instant the server sends as ISO 8601 text, with or without fractions of a second.
+  init?(serverInstant text: String) {
+    guard
+      let date = (try? Date(text, strategy: .iso8601))
+        ?? (try? Date(text, strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true)))
+    else {
+      return nil
+    }
+
+    self = date
+  }
+
+  /// Main's `useOpeningDay` with `receivedAt`: a refusal's instant as this device received it. One
+  /// already past by then came from a server whose clock is behind this device's, so its day can't
+  /// be told here: there is none, and the refusal stands until the next try.
+  init?(opening text: String?, receivedAt: Date) {
+    guard let text, let date = Date(serverInstant: text), date > receivedAt else {
+      return nil
+    }
+
+    self = date
   }
 }
 

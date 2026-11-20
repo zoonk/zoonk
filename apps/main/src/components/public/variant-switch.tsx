@@ -129,11 +129,3 @@ export function Variant({
     </Element>
   );
 }
-
-export const SEGMENTED_TRACK_CLASS = "bg-muted inline-flex rounded-lg p-[3px]";
-
-export const SEGMENTED_OPTION_CLASS = cn(
-  "text-muted-foreground hover:text-foreground inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-transparent px-3 text-[0.8125rem] font-medium whitespace-nowrap transition-colors motion-reduce:transition-none pointer-coarse:h-11",
-  "has-checked:bg-background has-checked:text-foreground has-checked:border-input dark:has-checked:bg-surface-3",
-  "has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
-);

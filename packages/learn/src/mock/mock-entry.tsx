@@ -4,101 +4,87 @@ import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
-import { KindDot } from "../_components/kind-tile";
+import { EnterLink } from "../_components/enter-button";
 import {
-  ListRowBody,
   ListRowContent,
   ListRowDescription,
+  ListRowIcon,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
-  ListRowTrailing,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
-import { LearnLink } from "../learn-link";
+import { type MockEntryHrefs, getMockEntryTarget } from "./mock-entry-target";
+
+export { getMockEntryTarget } from "./mock-entry-target";
 
 export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): string {
   const t = useExtracted();
 
   return bySubject
-    ? t("Whenever you want: a full exam day, half a day or one subject")
-    : t("Whenever you want: a full exam day or half a day");
+    ? t("The full exam, half of it or one subject")
+    : t("The full exam or half of it");
 }
 
-export function MockEntryRow({
-  hrefs,
-  view,
-}: {
-  hrefs: { choose: string; mock: (id: string) => string };
-  view: MockOptionsView;
-}) {
+export function MockEntryRow({ hrefs, view }: { hrefs: MockEntryHrefs; view: MockOptionsView }) {
   const t = useExtracted();
+  const target = getMockEntryTarget({ hrefs, view });
 
   const description = useMockEntryDescription({
     bySubject: view.options.some((option) => option.kind === "area"),
   });
 
-  if (!view.running && view.options.length === 0) {
+  if (!target) {
     return null;
   }
 
-  if (view.running) {
-    return (
-      <ListRowLink href={hrefs.mock(view.running.id)}>
-        <ListRowLeading>
-          <KindDot kind="mock" />
-        </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>{t("Continue your mock exam")}</ListRowTitle>
-          <ListRowDescription>{t("It's where you left it")}</ListRowDescription>
-        </ListRowContent>
-      </ListRowLink>
-    );
-  }
-
   return (
-    <ListRowLink href={hrefs.choose}>
+    <ListRowLink href={target.href}>
       <ListRowLeading>
-        <KindDot kind="mock" />
+        <ListRowIcon>
+          <TimerIcon />
+        </ListRowIcon>
       </ListRowLeading>
-      <ListRowBody>
-        <ListRowContent>
-          <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
-          <ListRowDescription>{description}</ListRowDescription>
-        </ListRowContent>
-        {view.access === "plusRequired" && (
-          <ListRowTrailing>
-            <PlusMark />
-          </ListRowTrailing>
-        )}
-      </ListRowBody>
+      <ListRowContent>
+        <ListRowTitle>
+          {target.resume
+            ? t({
+                description:
+                  'An action, like "Take a mock exam" beside it: goes back into the mock exam already started.',
+                message: "Continue your mock exam",
+              })
+            : t("Take a mock exam")}
+        </ListRowTitle>
+        {!target.resume && <ListRowDescription>{description}</ListRowDescription>}
+      </ListRowContent>
     </ListRowLink>
   );
 }
 
+/** `runningId`: a mock the plan started, which the exam page lists and the chooser's view doesn't. */
 export function MockEntryButton({
   hrefs,
+  runningId,
   view,
 }: {
-  hrefs: { choose: string; mock: (id: string) => string };
+  hrefs: MockEntryHrefs;
+  runningId?: string | null;
   view: MockOptionsView;
 }) {
   const t = useExtracted();
+  const target = getMockEntryTarget({ hrefs, runningId, view });
 
-  if (!view.running && view.options.length === 0) {
+  if (!target) {
     return null;
   }
 
   return (
-    <LearnLink
-      className={DETAIL_PRIMARY_CLASS}
-      href={view.running ? hrefs.mock(view.running.id) : hrefs.choose}
-    >
-      <TimerIcon aria-hidden="true" className="size-4" />
-      {view.running ? t("Continue your mock exam") : t("Take a mock exam")}
-      {view.access === "plusRequired" && !view.running && (
-        <PlusMark className="bg-primary-foreground/15 text-primary-foreground" />
-      )}
-    </LearnLink>
+    <EnterLink className={DETAIL_PRIMARY_CLASS} href={target.href} size="lg">
+      {target.resume
+        ? t("Continue")
+        : t({
+            description: "Opens the mock exam chooser, from the exam page.",
+            message: "New mock",
+          })}
+    </EnterLink>
   );
 }

@@ -27,10 +27,10 @@ function getStartsKey(goalId: string): string {
   return `zoonk:review-intro-starts:${goalId}`;
 }
 
-/** A daily learner reads it open a few times, then it folds to one row they can reopen. */
-const OPEN_FOR_STARTS = 3;
+/** A review says what it is the first few times a learner starts one, then names its topics. */
+const INTRO_FOR_STARTS = 3;
 
-/** Counted per goal, so a learner sharing the device starts with it open. */
+/** Counted per goal, so a learner sharing the device still gets the line. */
 function readStarts(goalId: string): number {
   return Number(deviceStorage.get(getStartsKey(goalId))) || 0;
 }
@@ -41,12 +41,39 @@ export function noteReviewStart({ block, goalId }: { block: DayStep; goalId: str
   }
 }
 
-function useOpenAtFirst(goalId: string): boolean {
+function useIsNewToReviews(goalId: string): boolean {
   return useSyncExternalStore(
     subscribeToDeviceStorage,
-    () => readStarts(goalId) < OPEN_FOR_STARTS,
+    () => readStarts(goalId) < INTRO_FOR_STARTS,
     () => true,
   );
+}
+
+/**
+ * The one line under a review's name: what a review is at first, then what's in it (`detail`). The
+ * first week's warm-up is only test questions: it checks, it doesn't review.
+ */
+export function useReviewLine({
+  block,
+  detail,
+  goalId,
+}: {
+  block: DayStep;
+  detail: string | null;
+  goalId: string;
+}): string | null {
+  const t = useExtracted();
+  const isNew = useIsNewToReviews(goalId);
+
+  if (block.kind !== "review") {
+    return detail;
+  }
+
+  if (!hasCapsules(block)) {
+    return t("A short test, so your plan skips what you know.");
+  }
+
+  return isNew ? t("Questions on what you studied before, so it stays with you.") : detail;
 }
 
 function IntroRow({
@@ -95,34 +122,22 @@ function WhyRow({ weakest }: { weakest: boolean }) {
   );
 }
 
-/** What a review is and how it picks its questions, for a learner who never asked. */
-export function ReviewIntro({ block, goalId }: { block: DayStep; goalId: string }) {
+/** How a review picks its questions, behind one row, for the learner who asks. */
+export function ReviewIntro({ block }: { block: DayStep }) {
   const t = useExtracted();
-  const open = useOpenAtFirst(goalId);
 
-  if (block.kind !== "review") {
-    return null;
-  }
-
-  // The first week's warm-up is only placement's questions: it checks, it doesn't review.
   if (!hasCapsules(block)) {
-    return (
-      <p className="text-muted-foreground text-sm text-pretty">
-        {t("A few quick questions to check what you already know.")}
-      </p>
-    );
+    return null;
   }
 
   return (
     <ListGroup>
       <Disclosure
-        defaultOpen={open}
         icon={
           <ListRowIcon>
             <RotateCcwIcon />
           </ListRowIcon>
         }
-        key={open ? "open" : "closed"}
         title={t("How reviews work")}
       >
         <ListGroup>

@@ -5,6 +5,7 @@ import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
 import { describe, expect, it, vi } from "vitest";
+import { seenQuote } from "../../plans/_test-utils/seen-quote";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import * as proposals from "../../plans/propose-plan-change";
@@ -216,7 +217,7 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
       decidePlanChange({
         changeId: focus!.proposal!.id,
         goalId: goal.id,
-        input: { status: "applied" },
+        input: { quote: await seenQuote(focus!.proposal!.id), status: "applied" },
       }),
     ).resolves.toMatchObject({ status: "updated" });
 
@@ -263,7 +264,7 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
       decidePlanChange({
         changeId: focus!.proposal!.id,
         goalId: goal.id,
-        input: { status: "applied" },
+        input: { quote: await seenQuote(focus!.proposal!.id), status: "applied" },
       }),
     ).resolves.toMatchObject({ status: "updated" });
 
@@ -339,7 +340,7 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
       decidePlanChange({
         changeId: focus!.proposal!.id,
         goalId: goal.id,
-        input: { status: "applied" },
+        input: { quote: await seenQuote(focus!.proposal!.id), status: "applied" },
       }),
     ).resolves.toMatchObject({ status: "updated" });
 
@@ -381,7 +382,7 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
     await decidePlanChange({
       changeId: focus!.proposal!.id,
       goalId: goal.id,
-      input: { status: "applied" },
+      input: { quote: await seenQuote(focus!.proposal!.id), status: "applied" },
     });
 
     const edited = await changeGoalPlan({
@@ -435,7 +436,7 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
       decidePlanChange({
         changeId: earlier.changeId,
         goalId: goal.id,
-        input: { status: "applied" },
+        input: { quote: await seenQuote(earlier.changeId), status: "applied" },
       }),
     ).resolves.toMatchObject({ status: "updated" });
 
@@ -446,7 +447,7 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
       decidePlanChange({
         changeId: focus!.proposal!.id,
         goalId: goal.id,
-        input: { status: "applied" },
+        input: { quote: await seenQuote(focus!.proposal!.id), status: "applied" },
       }),
     ).resolves.toMatchObject({ status: "updated" });
 
@@ -508,7 +509,7 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
           const applied = await decidePlanChange({
             changeId,
             goalId: goal.id,
-            input: { status: "applied" },
+            input: { quote: await seenQuote(changeId), status: "applied" },
           });
 
           if (applied.status !== "updated") {

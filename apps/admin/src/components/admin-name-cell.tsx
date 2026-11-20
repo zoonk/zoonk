@@ -1,0 +1,43 @@
+import { AdminTableRowLink } from "@/components/admin-table-row";
+import { TableCell } from "@zoonk/ui/components/table";
+import { type Route } from "next";
+
+/**
+ * A row's first cell: what the record is, then a quiet line that tells it from its neighbors. Each
+ * may take two lines, so a narrow column cuts neither short.
+ * It is the row's link, so the whole row opens the record.
+ */
+export function AdminNameCell<Href extends string>({
+  href,
+  icon,
+  note,
+  title,
+}: {
+  href: Route<Href>;
+  /** What kind of record it is, before its name. */
+  icon?: React.ReactNode;
+  note?: React.ReactNode;
+  title: React.ReactNode;
+}) {
+  return (
+    <TableCell>
+      <AdminTableRowLink className="flex min-w-0 items-start gap-2.5" href={href} prefetch>
+        {icon ? (
+          <span className="text-muted-foreground flex h-5 shrink-0 items-center [&_svg]:size-4">
+            {icon}
+          </span>
+        ) : null}
+        <span className="min-w-0 self-baseline">
+          <span className="text-foreground line-clamp-2 font-medium text-balance whitespace-normal">
+            {title}
+          </span>
+          {note ? (
+            <span className="text-muted-foreground line-clamp-2 text-xs text-balance wrap-break-word whitespace-normal">
+              {note}
+            </span>
+          ) : null}
+        </span>
+      </AdminTableRowLink>
+    </TableCell>
+  );
+}

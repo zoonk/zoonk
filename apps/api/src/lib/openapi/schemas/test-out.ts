@@ -15,6 +15,7 @@ export const nothingToSkipSchema = z
 export const chapterTestOutResponseSchema = z
   .object({
     chapterId: uuidSchema(),
+    chapterTitle: z.string().meta({ description: "The chapter's name" }),
     needsItems: z
       .array(skillIdSchema)
       .meta({

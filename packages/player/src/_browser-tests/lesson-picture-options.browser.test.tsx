@@ -7,7 +7,7 @@ import { atViewport } from "../_test-utils/browser-viewport";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
-import { inlineImage, pictureCheckStep } from "../preview/preview-steps";
+import { contentStep, inlineImage, pictureCheckStep } from "../preview/preview-steps";
 
 const [GOTHIC, ROMANESQUE, BAROQUE] = pictureCheckContent.options;
 const PHONE = { height: 812, width: 375 };
@@ -83,6 +83,54 @@ describe("picture options", () => {
     await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
 
     await expect.element(page.getByRole("img", { name: BAROQUE?.picture.alt })).toBeVisible();
+  });
+
+  it("shows the drawing status and icon on a pending option", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson([
+        pictureCheckStep({ drawn: ["gothic", "romanesque"], imagePending: true }),
+      ]),
+    });
+
+    const status = option(BAROQUE?.picture.alt ?? "").getByRole("status");
+    await expect.element(status).toHaveTextContent("Drawing the picture…");
+    const message = status.element();
+    expect(message.getBoundingClientRect().width).toBeGreaterThan(1);
+    const icon = message.closest("[data-slot='media-pending']")?.querySelector("svg");
+    expect(icon?.getBoundingClientRect().width).toBeGreaterThan(0);
+  });
+
+  it("shows the full description of an option while its picture is drawing on a phone", async () => {
+    const alt = "A red apple beside a sliced green pear and a bowl of plums on a wooden table";
+
+    await atViewport(PHONE, async () => {
+      const step = contentStep("check", {
+        content: {
+          ...pictureCheckContent,
+          options: pictureCheckContent.options.map((choice) =>
+            choice.id === "baroque" ? { ...choice, picture: { ...choice.picture, alt } } : choice,
+          ),
+        },
+        imagePending: true,
+        optionPictures: pictureCheckStep({ drawn: ["gothic", "romanesque"] }).optionPictures,
+      });
+
+      renderLessonPlayer({ lesson: buildLesson([step]) });
+
+      const description = option(alt).getByText(alt, { exact: true });
+      await expect.element(description).toBeVisible();
+      const paragraph = description.element();
+      const placeholder = paragraph.closest("[data-slot='media-pending']")!;
+      expect(paragraph.scrollHeight).toBe(paragraph.clientHeight);
+
+      expect(paragraph.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+        placeholder.getBoundingClientRect().bottom,
+      );
+
+      expect(paragraph.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        placeholder.getBoundingClientRect().top,
+      );
+    });
   });
 
   it("describes a picture that never came, so the question still plays", async () => {

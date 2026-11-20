@@ -3,17 +3,8 @@ package com.zoonk.android.feature.onboarding
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -23,7 +14,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +27,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationFailure
@@ -59,6 +50,9 @@ import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
 import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
+import com.zoonk.android.feature.onboarding.setup.SetupColumn
+import com.zoonk.android.feature.onboarding.start.AttachPanel
+import com.zoonk.android.feature.onboarding.start.MaterialAnswer
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
@@ -69,9 +63,12 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -87,7 +84,9 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import org.robolectric.util.ReflectionHelpers
 import java.io.File
+import java.time.Instant
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 /**
@@ -224,7 +223,7 @@ class OnboardingScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 
@@ -245,6 +244,7 @@ class OnboardingScreenshots {
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
             listOf(
                 "start" to { Start(FakeOnboardingApi(), AppRoute.StartGoal()) },
+                "start-visitor" to { Start(FakeOnboardingApi(), AppRoute.StartGoal(), visitor = true) },
                 "reading" to {
                     Column(Modifier.padding(24.dp)) {
                         GenerationWait(
@@ -445,7 +445,7 @@ class OnboardingScreenshots {
                                         listOf("schedule", "plan"),
                                         kind = "language",
                                         targetLanguage = "fr",
-                                        languageAim = languageAimOf("B1"),
+                                        languageAim = languageAimOf("B1", targetLanguage = "fr"),
                                     )
                                 }
                             advice = { adviceOf(null, endDate = kotlinx.datetime.LocalDate(2029, 11, 6), targetDate = null) }
@@ -506,6 +506,9 @@ class OnboardingScreenshots {
                 "plan-link" to { PlanLink(FakeOnboardingApi()) },
                 "course-start" to { CourseStart(AppRoute.CourseStart(COURSE)) },
                 "course-start-chapter" to { CourseStart(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_ONE, dailyMinutes = 15)) },
+                "course-start-goals-at-once" to { CourseStart(AppRoute.CourseStart(COURSE), AT_THE_LIMIT) },
+                "course-start-monthly-goals" to { CourseStart(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_ONE), MONTHLY_GOALS_USED) },
+                "material-notices" to { MaterialNotices() },
                 "research-notices" to { ResearchNotices(SuggestionLayout.Panel) },
                 "research-notices-line" to { ResearchNotices(SuggestionLayout.Line) },
                 "level-test-intro" to { LevelTest(FakeOnboardingApi(), targetLanguage = "ja", native = "pt") },
@@ -594,21 +597,53 @@ class OnboardingScreenshots {
         private fun ResearchNotices(layout: SuggestionLayout) {
             val store = rememberStore(FakeOnboardingApi())
             Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                UploadRequestNotice(UUID.fromString(GOAL_ID), uploadAskOf(), store, visit = 0, layout = layout)
+                UploadRequestNotice(
+                    UUID.fromString(GOAL_ID),
+                    uploadAskOf(),
+                    store,
+                    visit = 0,
+                    layout = layout,
+                    onCreateAccount = {},
+                    onSubscribe = {},
+                )
                 SourceChangeNotice("The 2027 notice moves the exam to March 14 and adds Statistics to what it covers.", layout)
             }
         }
 
+        /** A refused upload and a refused question about attached material: the shared dated notice, and a day's cap. */
         @Composable
-        private fun CourseStart(route: AppRoute.CourseStart) {
+        private fun MaterialNotices() {
+            val opens = Instant.now().plus(9, ChronoUnit.DAYS).toString()
+
+            fun refused(
+                resource: String,
+                period: String,
+                availableAt: String?,
+            ) = WriteOutcome.Refused(Refusal.Limit(UsageLimit(period, resource, "free", availableAt).received(Instant.now())))
+            Column(Modifier.padding(horizontal = pageMargin(), vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                AttachPanel(false, refused("upload", "rolling30Days", opens), {}, {}, {}, onCreateAccount = {}, onSubscribe = {})
+                MaterialAnswer(refused("materialQuestion", "rolling30Days", opens), onCreateAccount = {}, onSubscribe = {})
+                MaterialAnswer(refused("materialQuestion", "day", null), onCreateAccount = {}, onSubscribe = {})
+            }
+        }
+
+        @Composable
+        private fun CourseStart(
+            route: AppRoute.CourseStart,
+            limit: AllowanceResponse? = null,
+        ) {
             val session = remember { FakeSession(AuthenticatedSession("ana", "token-a", "local-a")) }
             val cache = remember { AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)) }
             CourseStartScreen(
                 route = route,
                 catalog = remember { CatalogStore(FakeCatalogApi(), cache) },
                 store = remember { OnboardingStore(FakeOnboardingApi(), cache, session) { SignInResult.SignedIn } },
-                allowance = remember { cache.noAllowance() },
-                signedIn = false,
+                allowance =
+                    remember {
+                        limit?.let { value -> cache.resource<AllowanceResponse>(Audience.SignedIn) { value } }
+                            ?: cache.noAllowance()
+                    },
+                signedIn = limit != null,
                 existingGoalId = null,
                 navigator = rememberAppNavigator(),
             )
@@ -633,6 +668,7 @@ class OnboardingScreenshots {
         private fun Start(
             api: FakeOnboardingApi,
             route: AppRoute.StartGoal,
+            visitor: Boolean = false,
         ) {
             val session = remember { FakeSession(AuthenticatedSession("ana", "token-a", "local-a")) }
             val cache = remember { AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)) }
@@ -641,8 +677,8 @@ class OnboardingScreenshots {
                 route,
                 store,
                 remember { cache.noAllowance() },
-                sessionKey = "local-a",
-                canAttach = true,
+                sessionKey = if (visitor) null else "local-a",
+                canAttach = !visitor,
                 rememberAppNavigator(),
             )
         }
@@ -687,7 +723,6 @@ class OnboardingScreenshots {
                     onRetryRun = {},
                     rememberPlans(api),
                     rememberAppNavigator(),
-                    AppRoute.GoalSetup(GOAL_ID),
                     today = preview,
                 )
             }
@@ -716,27 +751,6 @@ class OnboardingScreenshots {
                     session,
                 ) { SignInResult.SignedIn }
             }
-
-        /** The setup's column: at least the window's height, so actions sit at its bottom on phones. */
-        @Composable
-        private fun SetupColumn(content: @Composable ColumnScope.() -> Unit) {
-            BoxWithConstraints(Modifier.fillMaxSize()) {
-                val height = maxHeight
-                Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-                    Column(
-                        modifier =
-                            Modifier
-                                .widthIn(
-                                    max = 640.dp,
-                                ).fillMaxWidth()
-                                .heightIn(min = height)
-                                .padding(horizontal = 24.dp, vertical = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(24.dp),
-                        content = content,
-                    )
-                }
-            }
-        }
     }
 }
 
@@ -765,3 +779,27 @@ private fun focusedPlan(
         focusTest = ApiJson.decodeFromString(focusTest),
     )
 }
+
+/** At the goals-at-once limit: three goals studied at once. */
+private val AT_THE_LIMIT: AllowanceResponse =
+    ApiJson.decodeFromString(
+        """
+        {"tier":"free","activeGoals":{"limit":3,"used":3},
+         "examPrep":{"includesMockExams":false},"generatedLessons":null,
+         "resets":{"day":"2026-10-29T00:00:00Z"},
+         "items":[{"kind":"goal","dailyLimit":null,"rollingLimit":3,"totalLimit":null,"usedToday":0,"usedLast30Days":1,
+           "usedTotal":1,"fairUseDailyLimit":null,"remaining":null,"availableAt":null}]}
+        """.trimIndent(),
+    )
+
+/** A free learner's new goals over the last 30 days used up, the next one nine days away. */
+private val MONTHLY_GOALS_USED: AllowanceResponse =
+    ApiJson.decodeFromString(
+        """
+        {"tier":"free","activeGoals":{"limit":3,"used":1},
+         "examPrep":{"includesMockExams":false},"generatedLessons":null,
+         "resets":{"day":"2026-10-29T00:00:00Z"},
+         "items":[{"kind":"goal","dailyLimit":null,"rollingLimit":3,"totalLimit":null,"usedToday":0,"usedLast30Days":3,
+           "usedTotal":3,"fairUseDailyLimit":null,"remaining":0,"availableAt":"${Instant.now().plus(9, ChronoUnit.DAYS)}"}]}
+        """.trimIndent(),
+    )

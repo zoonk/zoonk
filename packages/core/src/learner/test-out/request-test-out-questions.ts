@@ -19,10 +19,9 @@ export type TestOutQuestionsRequest =
   | { decision: RefusedUsage; status: "refused" }
   | { status: "notFound" }
   | { status: "nothingToSkip" }
-  | { status: "plusRequired" }
   | { status: "unauthorized" };
 
-/** Learner action only; claims AI help before requesting missing questions and writes nothing for complete or Plus-gated tests. */
+/** Learner action only; claims AI help before requesting missing questions and writes nothing for complete tests. */
 export async function requestTestOutQuestions({
   chapterId,
   goalId,

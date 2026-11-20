@@ -55,29 +55,38 @@ function getPlanDecision({
 
 /**
  * The plan is the source of truth: when its change already moved on, the planner refuses and the
- * answer is still recorded.
+ * answer is still recorded. Returns true when accepting applied nothing because the change's
+ * numbers moved: the insight then waits for the learner's answer to today's.
  */
 async function applyAnswer({
   answer,
   goalId,
   insight,
+  quote,
 }: {
   answer: Answer;
   goalId: string;
   insight: MemoryInsight;
-}): Promise<void> {
+  quote: MemoryInsightAnswerInput["quote"];
+}): Promise<boolean> {
   const payload = readInsightPayload(insight.payload);
 
   const decision = insight.kind === "planChange" ? getPlanDecision({ answer, payload }) : null;
 
-  if (decision && payload.planChangeId) {
-    await decidePlanChange({
-      changeId: payload.planChangeId,
-      goalId,
-      input: { status: decision },
-      trackAnalytics: false,
-    });
+  if (!decision || !payload.planChangeId) {
+    return false;
   }
+
+  const result = await decidePlanChange({
+    changeId: payload.planChangeId,
+    goalId,
+    input: decision === "applied" ? { quote, status: decision } : { status: decision },
+    trackAnalytics: false,
+  });
+
+  return (
+    decision === "applied" && result.status === "updated" && result.change.status === "proposed"
+  );
 }
 
 export async function respondToMemoryInsight({
@@ -113,8 +122,18 @@ export async function respondToMemoryInsight({
 
   const before = await toMemoryInsightView(insight);
 
-  if (insight.goalId) {
-    await applyAnswer({ answer: input.status, goalId: insight.goalId, insight });
+  const asksAgain =
+    insight.goalId !== null &&
+    (await applyAnswer({
+      answer: input.status,
+      goalId: insight.goalId,
+      insight,
+      quote: input.quote,
+    }));
+
+  if (asksAgain) {
+    const repriced = await toMemoryInsightView(insight);
+    return repriced ? { insight: repriced, status: "updated" } : { status: "notFound" };
   }
 
   const updated = await writeLearnerChange({ userId }, async (tx) => {

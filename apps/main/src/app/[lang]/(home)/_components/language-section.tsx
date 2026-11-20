@@ -1,5 +1,5 @@
 import { getExtracted } from "next-intl/server";
-import { ExampleCard, ExampleDay } from "./example-card";
+import { ExampleDayCard } from "./example-card";
 import { GoalSection } from "./goal-section";
 import { getExampleSet } from "./landing-examples";
 import { getLanguageDay } from "./language-day";
@@ -39,9 +39,7 @@ export async function LanguageSection() {
       })}
       titleId={TITLE_ID}
     >
-      <ExampleCard className="pb-1.5 sm:pb-1.5">
-        <ExampleDay detail={day.name} steps={day.steps} />
-      </ExampleCard>
+      <ExampleDayCard steps={day.steps} title={day.name} />
     </GoalSection>
   );
 }

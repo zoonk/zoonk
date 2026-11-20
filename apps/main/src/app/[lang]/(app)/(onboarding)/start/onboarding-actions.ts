@@ -20,11 +20,8 @@ import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
 import { startPlacementSitting } from "@zoonk/core/learner/placement/sitting";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
-import { getGoalPlan } from "@zoonk/core/plans/get";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
-import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
-import { getPlanRevealToday } from "@zoonk/core/view-models/today/plan-reveal";
 import {
   type AnswerOutcome,
   type CreateGoalsOutcome,
@@ -35,6 +32,7 @@ import {
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
+import { readRevealedPlan } from "./revealed-plan";
 
 /** Failures become outcomes the screens can say, never thrown errors. */
 
@@ -232,22 +230,8 @@ export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
     return { status: "failed" };
   }
 
-  const [result, syllabus, today] = await Promise.all([
-    getGoalPlan(goalId),
-    getSyllabusView({ goalId }),
-    getPlanRevealToday(goalId),
-  ]);
-
-  if (result.status !== "ready") {
-    return { status: "failed" };
-  }
-
-  return {
-    plan: result.plan,
-    reveal: today.status === "ready" ? today.reveal : null,
-    status: "ready",
-    syllabus: syllabus.status === "ready" ? syllabus.syllabus : null,
-  };
+  const revealed = await readRevealedPlan(goalId);
+  return revealed ? { ...revealed, status: "ready" } : { status: "failed" };
 }
 
 /** Null when there's no ready deck to show: the card is optional. */

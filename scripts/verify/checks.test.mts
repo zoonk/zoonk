@@ -21,6 +21,7 @@ const FIRST_PAINT_MS = 800;
 const BLOCKED_MS = 70;
 const STRADDLE_BLOCKED_MS = 150;
 const HEAVY_RSC_BYTES = 409_600;
+const HEADER_DROP_PX = 18;
 
 function requestTo(path: string, overrides: Partial<RequestRecord> = {}): RequestRecord {
   return { headers: {}, method: "GET", resourceType: "fetch", url: `${PAGE}${path}`, ...overrides };
@@ -108,9 +109,14 @@ describe("judging a page load", () => {
     ]);
   });
 
-  it("lists any shift, and fails past Core Web Vitals' line", () => {
-    const shift = { at: 500, sources: ['div[data-slot=page-header] "Today"'], value: 0.02 };
-    assert.deepEqual(checks(load({ shifts: [shift] })), ["warn layout shift"]);
+  it("leads to any shift as X3 with what moved and how far, and fails past Core Web Vitals' line", () => {
+    const header = { down: HEADER_DROP_PX, node: 'div[data-slot=page-header] "Today"', right: 0 };
+    const shift = { at: 500, sources: [header], value: 0.02 };
+    const [jump] = judgeLoad(load({ shifts: [shift] }));
+
+    assert.equal(jump?.check, "X3 a state change moves nothing");
+    assert.equal(jump?.value, HEADER_DROP_PX);
+    assert.match(jump?.message ?? "", /"Today" moved 18 px down/u);
     assert.deepEqual(checks(load({ shifts: [{ ...shift, value: 0.3 }] })), ["fail layout shift"]);
   });
 

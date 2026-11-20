@@ -20,7 +20,7 @@ const STILL_READING_MS = 30 * 60_000;
 
 const DAILY_MINUTES = Array.from({ length: 7 }, () => 20);
 
-const PLAY_QUIZ = "Play a quiz while you wait";
+const PLAY_QUIZ = "Play a quiz";
 
 /**
  * A goal at the time question while its plan is built, by a run that already reported its deck. A
@@ -136,6 +136,33 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   await expect(
     page.getByRole("radiogroup", { name: "How many eyes does a honey bee have?" }),
   ).toBeVisible();
+
+  // The title says the lesson is getting ready, so the strip under it says the step it's on.
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Getting your lesson ready" }),
+  ).toBeVisible();
+
+  await expect(page.getByRole("button", { name: /^Planning the lesson/u })).toBeVisible();
+});
+
+test("closing the plan's progress on a phone returns to the quiz instead of leaving setup", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await page.setViewportSize({ height: 844, width: 390 });
+  const { goal } = await openPlanWait({ page, userId: noProgressUser.id });
+  await page.getByRole("button", { name: PLAY_QUIZ }).click();
+
+  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
+  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await page.getByRole("button", { name: /^Building your plan/u }).click();
+  await expect(page.getByText("Good guess!")).toBeHidden();
+
+  await page.keyboard.press("Escape");
+  await expect(page.getByText("Good guess!")).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(`/start/${goal.id}`, "u"));
 });
 
 test("blocked tab storage leaves the wait quiz playable", async ({
@@ -219,7 +246,7 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await expect(page.getByText("Good guess!")).toBeVisible();
 
   const steps = page.getByRole("list", { name: "Writing your lesson" }).getByRole("listitem");
-  await page.getByRole("button", { name: /^Writing your lesson/u }).click();
+  await page.getByRole("button", { name: /^Getting your lesson ready/u }).click();
 
   await expect(steps).toHaveText([
     /^Planning the lesson, done/u,
@@ -252,16 +279,19 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await page.context().close();
 });
 
-test("a learner who guessed while the exam's notice is read stays once it's read", async ({
+test("a learner who guessed while the exam notice is read stays once it is ready", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
-  const [deck, goal] = await Promise.all([warmUpFixture(), createMappedGoal(noProgressUser.id)]);
+  const [deck, goal] = await Promise.all([
+    warmUpFixture(),
+    createMappedGoal(noProgressUser.id, { exam: true }),
+  ]);
 
   await Promise.all([
     prisma.goal.update({
       data: {
-        details: { answered: [...ANSWERED, "placement"], subject: "algebra" },
+        details: { answered: [...ANSWERED, "placement", "target"], subject: "algebra" },
         generationRunId: goal.id,
       },
       where: { id: goal.id },
@@ -299,8 +329,8 @@ test("a learner who guessed while the exam's notice is read stays once it's read
   });
 
   await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
-  await page.getByRole("button", { name: "See your plan" }).click();
-  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+  await page.getByRole("button", { exact: true, name: "See plan" }).click();
+  await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
 });
 
 test("a learner whose first lesson is written before the plan starts it from the wait", async ({
@@ -328,7 +358,7 @@ test("a learner whose first lesson is written before the plan starts it from the
   });
 
   await expect(page.getByText("Your plan will be waiting when you finish.")).toBeVisible();
-  await page.getByRole("link", { name: "Start lesson 1" }).click();
+  await page.getByRole("link", { exact: true, name: "Start" }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}`, "u"));
 });
 

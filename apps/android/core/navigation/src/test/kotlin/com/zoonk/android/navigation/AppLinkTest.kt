@@ -31,6 +31,7 @@ class AppLinkTest {
             "/settings" to AppRoute.Settings,
             "/settings/appearance" to AppRoute.Preferences,
             "/settings/memory" to AppRoute.Memory,
+            "/settings/privacy" to AppRoute.PrivacySettings,
             "/settings/reminders" to AppRoute.Reminders,
             "/settings/about-you" to AppRoute.AboutYou,
             "/settings/about-you/watch" to AppRoute.ProfileQuestionEdit("watch"),
@@ -185,8 +186,8 @@ class AppLinkTest {
 
     @Test
     fun anyPageOfMainHasItsUrlInTheAppsLanguage() {
-        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "en"))
-        assertEquals("https://www.zoonk.com/pt/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "pt"))
-        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "ar"))
+        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.webUrl("/plan-link/abc", "en"))
+        assertEquals("https://www.zoonk.com/pt/plan-link/abc", AppLink.webUrl("/plan-link/abc", "pt"))
+        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.webUrl("/plan-link/abc", "ar"))
     }
 }

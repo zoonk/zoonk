@@ -1,14 +1,15 @@
 "use client";
 
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { LESSON_BODY_CLASS, RichTextBlocks } from "@zoonk/learn/rich-text";
 import { RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { LESSON_BODY_CLASS, useTermHighlighter } from "../_components/lesson-step-text";
+import { LessonStepHeading, useTermHighlighter } from "../_components/lesson-step-text";
 import { MarkedText } from "../_components/marked-text";
+import { NumberedLine } from "../_components/numbered-line";
 import { type StepOf } from "./lesson-step-view-props";
 
 type WorkedExampleContentData = StepOf<"workedExample">["content"];
@@ -23,23 +24,13 @@ function WorkedExampleLine({
   step: WorkedExampleContentData["steps"][number];
 }) {
   return (
-    <li
-      className={cn(
-        "flex gap-3",
-        entering && "animate-in fade-in slide-in-from-bottom-1 duration-base ease-out",
-      )}
+    <NumberedLine
+      className={cn(entering && "animate-in fade-in slide-in-from-bottom-1 duration-base ease-out")}
+      number={number}
     >
-      <span
-        aria-hidden="true"
-        className="text-muted-foreground w-4 shrink-0 pt-0.5 font-mono text-sm leading-relaxed tabular-nums sm:text-base"
-      >
-        {number}
-      </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-1 pt-0.5 text-base leading-relaxed sm:text-lg">
-        <RichTextBlocks text={step.text} />
-        {step.math && <RichInlineSegments segments={[{ kind: "displayMath", text: step.math }]} />}
-      </div>
-    </li>
+      <RichTextBlocks text={step.text} />
+      {step.math && <RichInlineSegments segments={[{ kind: "displayMath", text: step.math }]} />}
+    </NumberedLine>
   );
 }
 
@@ -80,14 +71,15 @@ export function WorkedExampleContent({
   const [openedWith] = useState(revealed);
 
   return (
-    <div
-      className={cn(highlighter, "flex w-full flex-col gap-5 lg:max-w-xl")}
-      data-slot="worked-example"
-    >
-      <MarkedText className={LESSON_BODY_CLASS} marks={marks} text={content.problem} />
+    <div className={cn(highlighter, "flex w-full flex-col gap-5")} data-slot="worked-example">
+      {/* The title heads the problem as an explanation's heads its text. */}
+      <div className="lg:max-w-xl">
+        {content.title && <LessonStepHeading>{content.title}</LessonStepHeading>}
+        <MarkedText className={LESSON_BODY_CLASS} marks={marks} text={content.problem} />
+      </div>
       {figure}
 
-      <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3">
+      <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3 lg:max-w-xl">
         {content.steps.slice(0, revealed).map((step, index) => {
           const key = `step-${index}`;
 
@@ -105,7 +97,7 @@ export function WorkedExampleContent({
       {isDone && (
         <div className={cn(SURFACE_CLASS, "flex flex-col gap-1 p-4")}>
           <p className="text-muted-foreground text-sm font-medium">{t("Result")}</p>
-          <RichTextBlocks className="text-base leading-relaxed sm:text-lg" text={content.result} />
+          <RichTextBlocks className={LESSON_BODY_CLASS} text={content.result} />
         </div>
       )}
 

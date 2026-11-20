@@ -12,7 +12,11 @@ import { useNoteNames } from "../_utils/use-music-labels";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { GuitarMirror } from "./guitar-mirror";
 import { GuitarOnlyBoard } from "./guitar-only-board";
-import { KeyboardFretboardHeader } from "./keyboard-fretboard-header";
+import {
+  KeyboardFretboardHeader,
+  KeyboardFretboardInstruction,
+  KeyboardHalfStepHint,
+} from "./keyboard-fretboard-header";
 import {
   KEYBOARD_FROM,
   KEYBOARD_TO,
@@ -20,6 +24,7 @@ import {
   checkedMarks,
   expectedPitches,
   initialPitches,
+  keyboardHeading,
   pitchSpelling,
   pitchesToNotes,
   targetPitches,
@@ -27,7 +32,7 @@ import {
   targetSpelling,
   togglePitch,
 } from "./keyboard-fretboard-notes";
-import { SoundAsText, useCantListen } from "./sound-as-text";
+import { CantListenSwitch, SoundAsText, useKeyboardListening } from "./sound-as-text";
 
 type KeyboardFretboardProps = ActivityRendererProps<"keyboardFretboard">;
 
@@ -40,9 +45,9 @@ function PianoBoard(props: KeyboardFretboardProps) {
   const { content, expected, labelId, onAnswerChange, phase } = props;
   const { check, fields } = content;
   const piano = useInstrument("piano");
-  const [cantListen, setCantListen] = useCantListen();
   const [pressed, setPressed] = useState(() => initialPitches(props));
   const isChecked = phase === "checked";
+  const showKeyboard = phase === "explore" || !fields.byEar || check.kind !== "choice";
   const start = targetPitches(fields.start);
   const target = targetPitches(fields.target);
   const spell = pitchSpelling([fields.target, fields.start]);
@@ -69,63 +74,77 @@ function PianoBoard(props: KeyboardFretboardProps) {
     }
   }
 
+  const listening = useKeyboardListening({
+    byEar: fields.byEar,
+    onPlay: () => void piano.play(targetSound(fields.target)),
+    phase,
+    unavailable: piano.status === "unavailable",
+  });
+
   return (
-    <ActivityCanvas labelId={labelId}>
-      <KeyboardFretboardHeader
-        byEar={
-          fields.byEar
-            ? {
-                isRevealed: phase !== "answering",
-                onPlay: cantListen ? null : () => void piano.play(targetSound(fields.target)),
-              }
-            : null
-        }
-        notes={showAnswer ? shown.map((pitch) => spell(pitch)) : notes}
-        onHear={() =>
-          void piano.play(
-            together(
-              (showAnswer ? shown : pressed).map((pitch) => KEYBOARD_FROM + pitch),
-              { gap: CHORD_GAP },
-            ),
-          )
-        }
-        target={fields.target}
-      />
-
-      <PianoKeyboard
-        disabled={isChecked}
-        from={KEYBOARD_FROM}
-        label={t("Piano keys")}
-        marks={marks}
-        nameOf={(midi) => display(spell(midi))}
-        onPress={isChecked ? undefined : handlePress}
-        pressed={(midi) => pressed.includes(midi % OCTAVE)}
-        spokenNameOf={(midi) => spoken(spell(midi))}
-        to={KEYBOARD_TO}
-      />
-
-      {fields.byEar && !isChecked && (
-        <SoundAsText
-          cantListen={cantListen}
-          isAnswering={phase === "answering"}
-          notes={targetSpelling(fields.target)}
-          onCantListenChange={setCantListen}
-          soundUnavailable={piano.status === "unavailable"}
+    <>
+      <ActivityCanvas labelId={labelId}>
+        <KeyboardFretboardHeader
+          byEar={listening.earControls}
+          checked={isChecked}
+          heading={keyboardHeading({ content, phase, shown })}
+          notes={showAnswer ? shown.map((pitch) => spell(pitch)) : notes}
+          onHear={
+            showKeyboard
+              ? () =>
+                  void piano.play(
+                    together(
+                      (showAnswer ? shown : pressed).map((pitch) => KEYBOARD_FROM + pitch),
+                      { gap: CHORD_GAP },
+                    ),
+                  )
+              : undefined
+          }
+          start={fields.start}
+          target={fields.target}
         />
+
+        {showKeyboard && (
+          <PianoKeyboard
+            disabled={isChecked}
+            from={KEYBOARD_FROM}
+            label={t("Piano keys")}
+            marks={marks}
+            nameOf={(midi) => display(spell(midi))}
+            onPress={isChecked ? undefined : handlePress}
+            pressed={(midi) => pressed.includes(midi % OCTAVE)}
+            spokenNameOf={(midi) => spoken(spell(midi))}
+            to={KEYBOARD_TO}
+          />
+        )}
+
+        {listening.showText && <SoundAsText notes={targetSpelling(fields.target)} />}
+
+        {showKeyboard && fields.instruments.includes("guitar") && (
+          <GuitarMirror
+            kindOf={(pitch) => marks.get(KEYBOARD_FROM + pitch) ?? "new"}
+            pitches={shown}
+            spell={spell}
+          />
+        )}
+
+        {listening.showInstruction && <KeyboardFretboardInstruction />}
+        <KeyboardHalfStepHint start={start} target={target} />
+        <ActivitySoundNote status={piano.status} />
+
+        {showKeyboard && (
+          <ActivityTextAlternative>
+            {t("A piano keyboard from C to B. Pressed: {notes}.", {
+              notes: notes.length > 0 ? notes.map((note) => spoken(note)).join(", ") : t("none"),
+            })}
+          </ActivityTextAlternative>
+        )}
+      </ActivityCanvas>
+
+      {listening.offersWayOut && (
+        <CantListenSwitch cantListen={listening.cantListen} onChange={listening.setCantListen} />
       )}
-
-      {fields.instruments.includes("guitar") && (
-        <GuitarMirror isChecked={showAnswer} pitches={shown} spell={spell} />
-      )}
-
-      <ActivitySoundNote status={piano.status} />
-
-      <ActivityTextAlternative>
-        {t("A piano keyboard from C to B. Pressed: {notes}.", {
-          notes: notes.length > 0 ? notes.map((note) => spoken(note)).join(", ") : t("none"),
-        })}
-      </ActivityTextAlternative>
-    </ActivityCanvas>
+    </>
   );
 }
 

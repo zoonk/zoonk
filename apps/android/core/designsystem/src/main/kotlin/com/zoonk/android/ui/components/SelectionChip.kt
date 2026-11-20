@@ -1,21 +1,21 @@
 package com.zoonk.android.ui.components
 
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.zoonk.android.R
 import com.zoonk.android.ui.theme.zoonk
 
+/**
+ * A pick among a few short answers, picked as main's toggles and the week's days are: an ink line on the picked
+ * tint, with no check, so every picked option on a screen reads one way.
+ */
 @Composable
 fun SelectionChip(
     text: String,
@@ -33,25 +33,22 @@ fun SelectionChip(
         enabled = enabled,
         label = { Text(text) },
         modifier = if (role != null) modifier.semantics { this.role = role } else modifier,
-        leadingIcon =
-            if (selected) {
-                { Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(FilterChipDefaults.IconSize)) }
-            } else {
-                null
-            },
         colors =
             FilterChipDefaults.filterChipColors(
                 selectedContainerColor = MaterialTheme.zoonk.selectedTint,
+                labelColor = colors.onSurfaceVariant,
                 selectedLabelColor = colors.onSurface,
-                selectedLeadingIconColor = colors.onSurface,
+                // While a save runs, the pick stays drawn, as a weekday's does.
+                disabledSelectedContainerColor = MaterialTheme.zoonk.selectedTint,
             ),
         border =
             FilterChipDefaults.filterChipBorder(
                 enabled = enabled,
                 selected = selected,
                 borderColor = colors.outline,
-                selectedBorderColor = colors.primary,
-                selectedBorderWidth = 2.dp,
+                selectedBorderColor = pickedBorderColor(),
+                disabledSelectedBorderColor = pickedBorderColor(),
+                selectedBorderWidth = 1.dp,
             ),
     )
 }

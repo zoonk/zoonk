@@ -42,7 +42,7 @@ describe("the plan's course", () => {
 
     await setStatuses(["done", "testedOut", "testedOut", "done"]);
     const finished = await readPlan();
-    expect(finished?.end).toStrictEqual({ kind: "finished" });
+    expect(finished?.end).toStrictEqual({ finishedOn: null, kind: "finished" });
 
     await Promise.all([
       setStatuses(["done", "skipped", "testedOut", "done"]),

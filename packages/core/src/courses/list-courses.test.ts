@@ -154,6 +154,7 @@ describe(listCourses, () => {
       "language",
       "lessonCount",
       "organization",
+      "promise",
       "slug",
       "targetLanguage",
       "title",
@@ -169,6 +170,37 @@ describe(listCourses, () => {
         "name",
         "slug",
       ]);
+    }
+  });
+
+  it("gives each card the promise its course page leads with, and the description when the page has none", async () => {
+    const language = createTestLanguage();
+    const organization = await organizationFixture({ kind: "brand" });
+    const listed = { isPublished: true, language, organizationId: organization.id };
+
+    const [withPromise, withoutPromise] = await Promise.all([
+      courseFixture({
+        ...listed,
+        description: "Academic reading is the practice of reading scholarly texts.",
+        landingPage: {
+          audience: [],
+          outcomes: [],
+          valueProposition: "Read academic articles without losing the point.",
+        },
+      }),
+      courseFixture({ ...listed, description: "Statistics is the study of data." }),
+    ]);
+
+    const [list, page] = await Promise.all([
+      listCourses({ language, limit: 100 }),
+      listCoursesPage({ language, limit: 100 }),
+    ]);
+
+    for (const courses of [list, page.courses]) {
+      const promises = new Map(courses.map((course) => [course.id, course.promise]));
+
+      expect(promises.get(withPromise.id)).toBe("Read academic articles without losing the point.");
+      expect(promises.get(withoutPromise.id)).toBe("Statistics is the study of data.");
     }
   });
 

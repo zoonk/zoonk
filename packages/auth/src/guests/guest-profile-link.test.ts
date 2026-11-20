@@ -116,6 +116,34 @@ describe("guest profile linking", () => {
     },
   );
 
+  it.each([
+    { account: "PT", expected: "PT", guest: "BR", profileRow: true },
+    { account: null, expected: "BR", guest: "BR", profileRow: true },
+    { account: null, expected: "BR", guest: "BR", profileRow: false },
+    { account: "PT", expected: "PT", guest: null, profileRow: true },
+  ] as const)(
+    "keeps the account's country, else takes the guest's: $account, guest $guest, profile row $profileRow",
+    async ({ account, expected, guest, profileRow }) => {
+      const { userId, guestUserId } = await learners();
+
+      await Promise.all([
+        profileRow
+          ? prisma.userLearningProfile.update({ data: { homeCountry: account }, where: { userId } })
+          : prisma.userLearningProfile.delete({ where: { userId } }),
+        prisma.userLearningProfile.update({
+          data: { homeCountry: guest },
+          where: { userId: guestUserId },
+        }),
+      ]);
+
+      await linkGuestAccount({ account: { id: userId }, guestUserId });
+
+      await expect(
+        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } }),
+      ).resolves.toMatchObject({ homeCountry: expected });
+    },
+  );
+
   it("honors an account decline before moving conditions, facts and question rows", async () => {
     const { userId, guestUserId } = await learners();
 

@@ -6,6 +6,8 @@ struct SuggestionMark: View {
   enum Kind {
     case sparkle
     case done
+    /// In the done mark's place on a line whose save failed.
+    case alert
     case symbol(String)
   }
 
@@ -18,6 +20,10 @@ struct SuggestionMark: View {
         .foregroundStyle(.warning)
     case .done:
       StatusMark(status: .done)
+    case .alert:
+      Image(systemName: "exclamationmark.circle")
+        .foregroundStyle(.destructiveText)
+        .accessibilityLabel(Text(SuggestionSaveError.message))
     case .symbol(let name):
       Image(systemName: name)
         .foregroundStyle(.mutedForeground)
@@ -25,10 +31,12 @@ struct SuggestionMark: View {
   }
 }
 
-/// Main's `SuggestionLine`: a panel with the suggestion's mark, its summary in two lines at most,
-/// and one small action at its end; stacked, the whole summary and the action under it.
+/// Main's `SuggestionLine`: a panel with the suggestion's mark, its title in two lines at most, and
+/// one small action at its end; stacked, the whole title and the action under it.
 struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
   @Environment(\.stacksContent) private var isStacked
+
+  var alignment = VerticalAlignment.center
 
   @ViewBuilder let mark: Mark
   @ViewBuilder let summary: Summary
@@ -43,47 +51,54 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
       : AnyLayout(HStackLayout(spacing: 10))
 
     layout {
-      HStack(alignment: isStacked ? .firstTextBaseline : .center, spacing: 10) {
+      HStack(alignment: isStacked ? .firstTextBaseline : alignment, spacing: 10) {
         mark
           .accessibilityHidden(true)
 
         summary
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          .typeStyle(.body)
           .lineLimit(isStacked ? nil : 2)
           .frame(maxWidth: .infinity, alignment: .leading)
       }
 
       action
     }
-    .padding(.leading, 12)
-    .padding(.trailing, 8)
-    .padding(.vertical, 8)
+    // The same room on every side, as main's card: the mark sits as far from its edge as the
+    // action from its own.
+    .padding(8)
     .frame(minHeight: 48)
     .panel()
   }
 }
 
-/// Main's `SuggestionOpen`: "View", which opens the whole suggestion in a sheet. An answer that
-/// replaces the line takes the button away, and the sheet closes with it. `isOpen` keeps it open
-/// across a fold where the screen owns that state.
-struct SuggestionOpen<Content: View>: View {
+/// Main's `SuggestionOpen`: "View", which opens the whole suggestion in a sheet, its answers
+/// ending the sheet in its bottom bar. An answer that replaces the line takes the button away, and
+/// the sheet closes with it. `isOpen` keeps it open across a fold where the screen owns that state.
+struct SuggestionOpen<Content: View, Actions: View>: View {
   var isOpen: Binding<Bool>?
+  var note: BarNote?
+  /// What opening it leads to, where "View" would say less, such as the exam card's.
+  var label: Text?
   @ViewBuilder let content: Content
+  @ViewBuilder let actions: Actions
 
   @State private var isOpenHere = false
 
   private var shown: Binding<Bool> { isOpen ?? $isOpenHere }
 
   var body: some View {
-    SuggestionViewButton {
+    SuggestionViewButton(label: label) {
       shown.wrappedValue = true
     }
     .sheet(isPresented: shown) {
       SuggestionSheet {
-        content
+        SuggestionSheetBody(note: note) {
+          content
+        } actions: {
+          actions
+        }
       }
-      .zoonkStyles()
+      .zoonkSheet()
     }
   }
 }
@@ -91,11 +106,12 @@ struct SuggestionOpen<Content: View>: View {
 /// `SuggestionOpen`'s "View", for a screen that presents the sheet itself, above panes that a
 /// resize or a fold rebuilds.
 struct SuggestionViewButton: View {
+  var label: Text?
   let action: () -> Void
 
   var body: some View {
     Button(action: action) {
-      Text("View", tableName: "Plan", comment: "Opens the Plan's suggestion in full")
+      label ?? Text("View", tableName: "Plan", comment: "Opens the Plan's suggestion in full")
     }
     .buttonStyle(.outline)
     .controlSize(.small)
@@ -103,7 +119,8 @@ struct SuggestionViewButton: View {
 }
 
 /// `SuggestionOpen`'s sheet: the whole suggestion, closed with its close button or by any place
-/// opened from it, such as a finished plan's next course.
+/// opened from it, such as a finished plan's next course. Its content is a `SuggestionSheetBody`, so
+/// it ends the way the app's other sheets do.
 struct SuggestionSheet<Content: View>: View {
   @Environment(\.dismiss) private var dismiss
 
@@ -111,30 +128,64 @@ struct SuggestionSheet<Content: View>: View {
 
   var body: some View {
     NavigationStack {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 8) {
-          content
-        }
-        .controlSize(.large)
-        .padding()
-      }
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          Button(role: .close) {
-            dismiss()
-          }
-        }
-      }
+      content
+        .environment(\.isInSuggestionSheet, true)
+        .sheetClose { dismiss() }
     }
     .presentationDetents([.medium, .large])
     .closesOnNavigation()
   }
 }
 
+/// A suggestion's sheet: its words scroll and its answers are the sheet's bottom bar, the main one
+/// last, as the app's other sheets end. A failed answer is the bar's line.
+struct SuggestionSheetBody<Content: View, Actions: View>: View {
+  var note: BarNote?
+  @ViewBuilder let content: Content
+  @ViewBuilder let actions: Actions
+
+  var body: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 8) {
+        content
+      }
+      .controlSize(.large)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding()
+    }
+    .bottomBar(note: note) {
+      actions
+    }
+  }
+}
+
+extension SuggestionSheetBody where Actions == EmptyView {
+  init(@ViewBuilder content: () -> Content) {
+    self.init(content: content) {
+      EmptyView()
+    }
+  }
+}
+
+extension SuggestionOpen where Actions == EmptyView {
+  init(isOpen: Binding<Bool>? = nil, @ViewBuilder content: () -> Content) {
+    self.init(isOpen: isOpen, content: content) {
+      EmptyView()
+    }
+  }
+}
+
+extension EnvironmentValues {
+  /// Inside a suggestion's sheet, where a suggestion's card draws the whole `SuggestionSheetBody`.
+  @Entry var isInSuggestionSheet = false
+  /// What failed in that sheet, for its bar's line.
+  @Entry var suggestionSheetNote: BarNote?
+}
+
 /// Main's `SuggestionSaveError`: an answer or its Undo didn't save. It sits with the buttons that
 /// made it, in the sheet when they're there, and VoiceOver hears it as it appears.
 struct SuggestionSaveError: View {
-  private static let message = LocalizedStringResource(
+  static let message = LocalizedStringResource(
     "That didn't save. Try again.", table: "Plan",
     comment: "A plan suggestion's change or its Undo didn't save; trying again may work")
 

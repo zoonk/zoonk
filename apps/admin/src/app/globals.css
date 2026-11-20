@@ -1,2 +1,9 @@
 @import "@zoonk/ui/globals.css";
 @import "@zoonk/player/questions/styles.css";
+
+/* A row is its name, then facts about it: the facts are muted, and the numbers compared down a column keep the text color. In the base layer, so a cell's own color (a tint, a date to act on) wins. */
+@layer base {
+  [data-slot="table-row"] > td + td:not(.font-mono) {
+    color: var(--color-muted-foreground);
+  }
+}

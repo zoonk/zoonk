@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fitInside
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +39,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.profile.ProfileDraft
 import com.zoonk.android.feature.profile.ProfileQuestionBody
@@ -48,6 +48,8 @@ import com.zoonk.android.feature.profile.profileQuestionDescription
 import com.zoonk.android.feature.profile.profileQuestionTitle
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -61,7 +63,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.BeforeFold
-import com.zoonk.android.ui.scaffold.DockedActionBar
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
@@ -187,10 +189,11 @@ fun ProfileQuestionScreen(
     id: String,
     app: AppContainer,
     navigator: AppNavigator,
+    store: ProfileQuestionsStore = app.profileQuestions,
 ) {
-    val state by app.profileQuestions.questions.collectShown()
+    val state by store.questions.collectShown()
     val fresh =
-        app.profileQuestions.questions.freshState
+        store.questions.freshState
             .collectAsStateWithLifecycle()
             .value
     val editorState =
@@ -202,14 +205,16 @@ fun ProfileQuestionScreen(
         }
     val loaded = (editorState as? LoadState.Loaded)?.value
     val question = loaded?.questions?.find { it.id.value == id }
-    val editor = question?.let { viewModel(key = id) { ProfileQuestionViewModel(app.profileQuestions, it, createSavedStateHandle()) } }
+    val editor = viewModel(key = id) { ProfileQuestionViewModel(store, question, createSavedStateHandle()) }
+    VisitOf(editor.visit)
+    ActOn(editor.answered) { navigator.back() }
     val memoryEnabled = loaded?.memoryEnabled == true
     val canEdit = memoryEnabled || question?.id in HOW_YOU_LEARN
     ProfilePage(
         navigator,
         stringResource(R.string.profile_questions_title),
         bar =
-            if (question != null && editor != null) {
+            if (question != null) {
                 {
                     if (editor.failed) {
                         Text(
@@ -218,12 +223,11 @@ fun ProfileQuestionScreen(
                             color = MaterialTheme.colorScheme.error,
                         )
                     }
-                    val empty = editor.draft.empty(question.id, memoryEnabled)
                     Button(
-                        onClick = { editor.save(question.id, memoryEnabled) { navigator.back() } },
+                        onClick = { editor.save(question.id, memoryEnabled) },
                         busy = editor.saving,
                         enabled =
-                            canEdit && (empty || editor.draft.valid(question.id, memoryEnabled)) && !editor.saving &&
+                            canEdit && editor.canSave(memoryEnabled) && !editor.saving &&
                                 editor.source == question,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
@@ -235,11 +239,11 @@ fun ProfileQuestionScreen(
             },
     ) {
         when {
-            question != null && editor != null -> {
+            question != null -> {
                 LaunchedEffect(question) { editor.read(question) }
                 PageHeader(
                     profileQuestionTitle(question.id),
-                    profileQuestionDescription(question.id),
+                    profileQuestionDescription(question.id, inSettings = true),
                     Modifier.padding(horizontal = LIST_ITEM_INSET),
                 )
                 Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -252,6 +256,7 @@ fun ProfileQuestionScreen(
                         editor::change,
                         enabled = canEdit && !editor.saving && editor.source == question,
                         memoryEnabled = memoryEnabled,
+                        inSettings = true,
                     )
                 }
             }
@@ -261,7 +266,7 @@ fun ProfileQuestionScreen(
             }
 
             editorState is LoadState.Failed -> {
-                LoadFailedMessage(onRetry = { app.scope.launch { app.profileQuestions.questions.refresh() } })
+                LoadFailedMessage(onRetry = { app.scope.launch { store.questions.refresh() } })
             }
 
             else -> {
@@ -288,20 +293,28 @@ private fun MemoryOffNotice(navigator: AppNavigator) {
 
 internal class ProfileQuestionViewModel(
     private val store: ProfileQuestionsStore,
-    question: ProfileQuestionView,
+    question: ProfileQuestionView?,
     handle: SavedStateHandle,
 ) : ViewModel() {
     private var saved by handle.saved<ProfileDraft?> { null }
-    var draft by mutableStateOf(saved ?: ProfileDraft.from(question))
+    var draft by mutableStateOf(saved ?: question?.let(ProfileDraft::from) ?: ProfileDraft())
         private set
     var source by mutableStateOf(question)
         private set
     private var edited = saved != null
-    private val privateConditions = question.id == ProfileQuestion.CONDITIONS
     var saving by mutableStateOf(false)
         private set
-    var failed by mutableStateOf(false)
-        private set
+
+    /** This visit to the question: what its save leads to shows only on it. */
+    val visit = Visit()
+
+    /** The answer saved: the page goes back. */
+    val answered = visit.outcome<Unit>()
+
+    private val failure = visit.outcome<Unit>()
+
+    /** The answer didn't save, on this visit. */
+    val failed get() = failure.value != null
 
     fun read(question: ProfileQuestionView) {
         if (!edited) draft = ProfileDraft.from(question)
@@ -311,23 +324,30 @@ internal class ProfileQuestionViewModel(
     fun change(value: ProfileDraft) {
         edited = true
         draft = value
-        if (!privateConditions) saved = value
+        if (source?.id != ProfileQuestion.CONDITIONS) saved = value
+    }
+
+    fun canSave(memoryEnabled: Boolean): Boolean {
+        val question = source ?: return false
+        if (!draft.empty(question.id, memoryEnabled)) return draft.valid(question.id, memoryEnabled)
+        return question.status == ProfileQuestionView.Status.ANSWERED ||
+            (draft.declined && (question.id == ProfileQuestion.WORK || question.id == ProfileQuestion.ADDRESS_FORM))
     }
 
     fun save(
         question: ProfileQuestion,
         memoryEnabled: Boolean,
-        onSaved: () -> Unit,
     ) {
-        if (saving) return
+        if (saving || source?.id != question || !canSave(memoryEnabled)) return
         saving = true
-        failed = false
+        failure.clear()
         val answer = if (draft.empty(question, memoryEnabled)) draft.copy(declined = true) else draft
+        val started = visit.number
         viewModelScope.launch {
             when (store.answer(answer.input(question, memoryEnabled))) {
-                is MutationResult.Done -> onSaved()
+                is MutationResult.Done -> answered.send(started, Unit)
                 MutationResult.Obsolete -> Unit
-                is MutationResult.Failed -> failed = true
+                is MutationResult.Failed -> failure.send(started, Unit)
             }
             saving = false
         }
@@ -341,7 +361,7 @@ private fun ProfilePage(
     bar: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    PageScaffold(onBack = { navigator.back() }, title = { Text(title) }) { padding ->
+    PageScaffold(onBack = { navigator.back() }, title = { Text(title) }, columnWidth = SETTINGS_COLUMN_WIDTH) { padding ->
         BeforeFold {
             Column(
                 it
@@ -358,24 +378,14 @@ private fun ProfilePage(
                     contentAlignment = Alignment.TopCenter,
                 ) {
                     Column(
-                        Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(vertical = 16.dp),
+                        Modifier.settingsColumn(),
                         verticalArrangement = Arrangement.spacedBy(24.dp),
                     ) {
                         content()
                     }
                 }
                 if (bar != null) {
-                    DockedActionBar {
-                        Column(
-                            Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .widthIn(max = PAGE_WIDTH)
-                                .fillMaxWidth()
-                                .padding(horizontal = LIST_ITEM_INSET, vertical = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            content = bar,
-                        )
-                    }
+                    BottomBar(columnWidth = PAGE_WIDTH, content = bar)
                 }
             }
         }

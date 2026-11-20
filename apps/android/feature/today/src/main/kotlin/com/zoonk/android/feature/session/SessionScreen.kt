@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +54,9 @@ import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.LessonWritingProgress
+import com.zoonk.android.feature.player.lessonWaitWords
 import com.zoonk.android.feature.today.TodayRead
+import com.zoonk.android.feature.today.heldMinutes
 import com.zoonk.android.feature.today.stepsDone
 import com.zoonk.android.feature.warmup.WaitContent
 import com.zoonk.android.feature.warmup.WaitQuizAction
@@ -65,6 +67,8 @@ import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
@@ -72,14 +76,12 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.TaskSegment
-import com.zoonk.android.ui.components.TaskSegments
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -93,6 +95,7 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyDay
+import com.zoonk.api.models.StudyReminderOffer
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.delay
@@ -127,11 +130,10 @@ fun SessionScreen(
             )
         }
 
-    LaunchedEffect(viewModel) {
-        viewModel.routes.collect {
-            navigator.closeTask()
-            navigator.open(it)
-        }
+    OnVisitEnd(viewModel, onEnd = viewModel::endVisit)
+    ActOn(viewModel.route) {
+        navigator.closeTask()
+        navigator.open(it)
     }
 
     when {
@@ -299,6 +301,9 @@ private fun SessionSummaryContent(
     val firstVisit = remember(summary.sessionId, summary.brainPower) { app.studySessions.firstVisit(summary.sessionId, summary.brainPower) }
     val day = session.toDayView()
     val goalId = session.goalId
+    // Showing the offer claims it, so a re-read summary comes back without one; it stays for this visit.
+    val offered = rememberSaveable(summary.sessionId) { summary.reminderOffer?.let { listOf(it.time, it.timeZone) }.orEmpty() }
+    val reminderOffer = offered.takeIf { it.size == 2 }?.let { (time, zone) -> StudyReminderOffer(time = time, timeZone = zone) }
 
     CelebrationScope(play = firstVisit) {
         SessionSummary(
@@ -322,6 +327,7 @@ private fun SessionSummaryContent(
                     signUp = { navigator.open(AppRoute.Login) },
                     finish = navigator::closeTask,
                 ),
+            reminderOffer = reminderOffer?.let { offer -> { ReminderOfferCard(app, offer) } },
         )
     }
 }
@@ -330,7 +336,7 @@ private fun SessionSummaryContent(
  * The day's next step, or the one a tap opened when its lesson isn't made yet. That wait reads the
  * day again until the lesson is there, or only the lesson's readiness while a run writes it, then
  * says it's ready and focuses Start, never opening it on its own: the learner may be reading, or
- * doing what "While you wait" offered. [notWritten] says,
+ * doing the other step it offers. [notWritten] says,
  * in place of Start, why the API wouldn't write the lesson the tap asked for; [alternative] is work
  * to do meanwhile or instead. [refresh] is null on a day not opened yet, which has no lesson to
  * wait for; [onStop] once the session has work done. A goal's first lesson deals its guesses while
@@ -389,7 +395,6 @@ internal fun NextStop(
         val reviewStarts = rememberReviewStarts()
         val opening = rememberWaitState(viewModel.busy == SessionAction.Start)
         val instead = alternative?.takeIf { !ready && goalId != null }
-        val insteadLabel = if (refusal != null || failure != null) R.string.session_next_instead else R.string.session_next_while_waiting
 
         LaunchedEffect(step.position, waiting, step.screen) {
             when {
@@ -425,13 +430,15 @@ internal fun NextStop(
             modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus }.then(guessing),
             title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
             bottomBar =
-                if ((waiting && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext)) || startsFor != null || instead != null ||
+                if ((waiting && failure == null && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext)) || startsFor != null ||
+                    instead != null ||
                     onStop != null ||
                     viewModel.failed != null
                 ) {
                     {
                         TaskActionBar {
-                            if (!ready) WaitQuizAction(quiz, hold)
+                            // A failed run waits for nothing: Try again and the way back are its only ways on.
+                            if (!ready && failure == null) WaitQuizAction(quiz, hold)
                             when (viewModel.failed) {
                                 SessionAction.Start -> ErrorLine(stringResource(R.string.today_open_failed))
                                 SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
@@ -459,7 +466,6 @@ internal fun NextStop(
                                         },
                                         modifier = main.focusRequester(startFocus),
                                         enabled = !busy,
-                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(
                                             stringResource(
@@ -478,10 +484,9 @@ internal fun NextStop(
                                         onClick = { goalId?.let { viewModel.start(day, other, it) } },
                                         modifier = main,
                                         enabled = !busy,
-                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(
-                                            stringResource(insteadLabel, blockTitle(other)),
+                                            alternativeLabel(other),
                                         )
                                     }
                                 }
@@ -502,7 +507,6 @@ internal fun NextStop(
                         day,
                         step,
                         Modifier.width(fold.start).padding(horizontal = 16.dp, vertical = 24.dp).semantics { isTraversalGroup = true },
-                        counted = true,
                     )
                 }
                 // What's next keeps its place in the composition, only padded past a fold, so folding keeps a guess on its card.
@@ -513,17 +517,17 @@ internal fun NextStop(
                     if (fold ==
                         null
                     ) {
-                        SessionSegments(day, step, Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth().padding(horizontal = 16.dp))
+                        SessionSegments(day, step, Modifier.taskColumn())
                     }
                     Column(
                         modifier =
                             Modifier
                                 .fillMaxSize()
                                 .verticalScroll(rememberScrollState())
-                                .padding(horizontal = 16.dp, vertical = 24.dp),
+                                .padding(vertical = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Eyebrow(stringResource(R.string.session_next_eyebrow))
                             Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
                             blockDetail(step)?.let {
@@ -568,13 +572,14 @@ internal fun NextStop(
                                         waitKind,
                                         shown,
                                     )
+                                val words = lessonWaitWords(waitKind)
                                 WaitContent(
                                     quiz,
                                     hold,
                                     AnalyticsEvent.WarmUpSurface.LessonWait,
                                     waitKind,
                                     shown,
-                                    stringResource(if (ready) R.string.session_next_lesson_ready else R.string.session_next_writing_note),
+                                    stringResource(if (ready) words.ready else words.gettingReady),
                                     goalId = goalId?.toString(),
                                     progressShare = share,
                                     onRetry = { retry() },
@@ -591,7 +596,7 @@ internal fun NextStop(
                                                 retry()
                                             }
                                         },
-                                        stringResource(R.string.session_next_writing_note),
+                                        stringResource(R.string.session_next_writing_note).takeUnless { ready },
                                         progressShare = share,
                                     )
                                 }
@@ -604,38 +609,19 @@ internal fun NextStop(
     }
 }
 
-/**
- * Main's session header segments: the day's work by its minutes, done in blue and the shown step as
- * the learner's place. [counted] says how many are done above them, for a page of their own.
- */
 @Composable
 private fun SessionSegments(
     day: DayView,
     step: DayStep,
     modifier: Modifier,
-    counted: Boolean = false,
 ) {
-    val steps = day.steps.filter { it.status != StudyBlock.Status.SKIPPED }
-    if (steps.isEmpty()) return
+    val parts = dayParts(day.steps, isNext = { it.position == step.position })
+    val held = day.heldMinutes > 0
+    if (parts.isEmpty() && !held) return
 
-    val segments =
-        steps.map {
-            when {
-                it.status == StudyBlock.Status.COMPLETED -> TaskSegment.Done
-                it.position == step.position -> TaskSegment.Current
-                else -> TaskSegment.Ahead
-            }
-        }
-    val weights = steps.map { it.estimatedMinutes.toFloat() }
-    val progress = stepsDone(day.sessionBar)
-
-    if (counted) {
-        Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(progress, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
-            TaskSegments(segments, weights = weights)
-        }
-    } else {
-        TaskSegments(segments, modifier, weights = weights, contentDescription = progress)
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(stepsDone(day.sessionBar), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
+        if (drawsDayProgress(parts.size, held)) DayProgress(parts, held)
     }
 }
 
@@ -663,6 +649,15 @@ private fun SessionLoading(onClose: () -> Unit) {
     TaskScaffold(onClose = onClose) { padding -> PageLoading(Modifier.padding(padding)) }
 }
 
+/** Main's `useAlternativeLabel`: a verb for what [step] starts; only a challenge needs its name. */
+@Composable
+private fun alternativeLabel(step: DayStep): String =
+    when {
+        step.checkpointFacts != null -> stringResource(R.string.session_next_start_title, blockTitle(step))
+        step.kind == StudyBlock.Kind.REVIEW -> stringResource(R.string.session_next_review_now)
+        else -> stringResource(R.string.session_next_practice_now)
+    }
+
 /** Main's `findAlternativeStudyBlock`: other work to do while [step]'s lesson waits, never work that waits itself. */
 private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
     blocks
@@ -674,4 +669,3 @@ private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
 
 /** Main's `STUCK_AFTER_MS`: when a wait that hasn't moved says so, with Try again. */
 private val STUCK_AFTER_MILLIS = mapOf(NextStopLesson.NotStarted to 20_000L, NextStopLesson.Writing to 600_000L)
-private val CONTENT_WIDTH = 640.dp

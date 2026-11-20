@@ -1,17 +1,18 @@
 "use client";
 
+import { BUDDY_NAME_CLASS, BuddyIdentityRow } from "@zoonk/learn/buddy-identity-row";
 import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
-import { Button } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { XIcon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
+import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
 import { useExtracted } from "next-intl";
 import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
 import { QuestionComposer } from "./lesson-question-composer";
@@ -21,6 +22,7 @@ import {
 } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
+import { THREAD_SIDE_CLASS } from "./lesson-question-thread-viewport";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function LessonQuestionPanelDescription({
@@ -62,33 +64,24 @@ function LessonQuestionPanelHeader({
   const t = useExtracted();
 
   return (
-    <DrawerHeader className="border-border gap-0 border-b px-4 pt-2.5 pb-3">
-      <div className="flex items-center gap-2.5">
-        <span
-          aria-hidden="true"
-          className="flex size-7 shrink-0 items-center justify-center *:size-7!"
+    <DrawerHeader
+      className={cn(THREAD_SIDE_CLASS, "border-border items-center border-b")}
+      closeLabel={t("Close questions")}
+    >
+      {controller.canAskQuestions ? (
+        <BuddyIdentityRow
+          face={identity.avatar}
+          title={<DrawerTitle className={BUDDY_NAME_CLASS}>{identity.name}</DrawerTitle>}
         >
-          {identity.avatar}
-        </span>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <DrawerTitle className="truncate text-sm font-semibold">{identity.name}</DrawerTitle>
           <DrawerDescription className="text-xs">
             <LessonQuestionPanelDescription context={controller.state.context} />
           </DrawerDescription>
-        </div>
-        <DrawerClose
-          render={
-            <Button
-              aria-label={t("Close questions")}
-              className="-mr-1.5"
-              size="icon-sm"
-              variant="ghost"
-            />
-          }
-        >
-          <XIcon aria-hidden="true" />
-        </DrawerClose>
-      </div>
+        </BuddyIdentityRow>
+      ) : (
+        <DrawerTitle className={BUDDY_NAME_CLASS}>
+          {t("Ask {name} with a free account", { name: identity.name })}
+        </DrawerTitle>
+      )}
     </DrawerHeader>
   );
 }
@@ -117,6 +110,9 @@ function keepThreadInView(body: HTMLDivElement | null) {
   return () => observer.disconnect();
 }
 
+/** Where the composer goes, and a guest's way to an account in its place. */
+const FOOT_CLASS = cn(THREAD_SIDE_CLASS, "pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]");
+
 export function LessonQuestionDrawer({
   identity,
   navigation,
@@ -128,6 +124,7 @@ export function LessonQuestionDrawer({
   open: boolean;
   quote?: React.ReactNode;
 }) {
+  const t = useExtracted();
   const controller = useLessonQuestionController();
   const { canAskQuestions } = controller;
 
@@ -135,10 +132,10 @@ export function LessonQuestionDrawer({
     <LessonQuestionNavigationContext value={navigation}>
       <Drawer onOpenChange={(next) => !next && controller.close()} open={open}>
         <DrawerPopup
-          backdropClassName="[--backdrop-opacity:0.4] dark:[--backdrop-opacity:0.4]"
           className="h-[max(70dvh,27rem)] max-h-[calc(100dvh-1rem)] outline-none sm:max-h-[calc(100dvh-2rem)]"
           data-slot="lesson-question-drawer"
           finalFocus={getFinalFocus}
+          opensOnField={false}
         >
           {/* When the sheet is short (landscape, large text, a keyboard), the header and quote scroll away instead of leaving the thread no room. */}
           <div
@@ -154,11 +151,21 @@ export function LessonQuestionDrawer({
             </DrawerContent>
           </div>
 
-          {canAskQuestions && (
+          {canAskQuestions ? (
             <QuestionComposer
-              className="px-3 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+              className={FOOT_CLASS}
               controller={controller}
+              placeholder={t("Ask {name}", { name: identity.name })}
             />
+          ) : (
+            <div className={FOOT_CLASS}>
+              <DocumentLink
+                className={cn(buttonVariants({ size: "lg" }), "w-full")}
+                href={navigation.loginHref}
+              >
+                {t("Create a free account")}
+              </DocumentLink>
+            </div>
           )}
         </DrawerPopup>
       </Drawer>

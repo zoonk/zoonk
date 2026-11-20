@@ -8,7 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -24,6 +26,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
@@ -40,18 +43,18 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
-import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
@@ -81,7 +84,7 @@ fun SubjectScreen(
             syllabus = app.plans.syllabus[goal.id],
             plans = app.plans,
             navigator = navigator,
-            menu = { ReportProblemMenu(report, inPage = true) },
+            menu = { ReportProblemMenu(report) },
             ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
             mindMaps = summary.value?.places?.mindMaps == true,
         )
@@ -95,7 +98,7 @@ internal fun SubjectContent(
     syllabus: Resource<Syllabus>,
     plans: PlanStore,
     navigator: AppNavigator,
-    menu: @Composable () -> Unit = {},
+    menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
     mindMaps: Boolean = false,
 ) {
@@ -103,57 +106,43 @@ internal fun SubjectContent(
     val state by syllabus.collectShown()
     val scope = rememberCoroutineScope()
 
-    when (val shown = state) {
-        is LoadState.Loaded -> {
-            val subject = shown.value.subjects.firstOrNull { it.key == subjectKey }
-            if (subject == null) {
-                PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
-            } else {
-                val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
-                val farTopics = viewModel(key = "far-topics-$goalId") { FarTopicViewModel(plans, goalId) }
-                SubjectPage(
-                    syllabus = shown.value,
-                    subject = subject,
-                    writes = writes.state.collectAsStateWithLifecycle().value,
-                    menu = menu,
-                    ask = ask,
-                    actions =
-                        SubjectActions(
-                            back = back,
-                            openChapter = { navigator.open(AppRoute.Chapter(it.toString())) },
-                            adjustPlan = { navigator.open(AppRoute.Plan()) },
-                            restore = writes::restore,
-                            setCadence = writes::setCadence,
-                            openFarTopic = { chapter ->
-                                chapter.skillId?.let {
-                                    farTopics.open(
-                                        FarTopic(it, chapter.title, chapter.plannedLessons, chapter.nextDate),
-                                    )
-                                }
-                            },
-                            openMindMaps = { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf { mindMaps },
-                        ),
-                )
-                FarTopicSheet(farTopics, navigator) { navigator.open(AppRoute.Chapter(it.toString())) }
-            }
-        }
-
-        is LoadState.Failed -> {
-            PageScaffold(onBack = back) { padding ->
-                if (shown.error == ApiError.NotFound) {
-                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(padding))
-                } else {
-                    LoadFailedMessage(onRetry = { scope.launch { syllabus.refresh() } }, modifier = Modifier.padding(padding))
-                }
-            }
-        }
-
-        LoadState.Empty -> {
+    ResourceScaffold(
+        state,
+        onBack = back,
+        onRetry = { scope.launch { syllabus.refresh() } },
+        onGoHome = { navigator.showRoot(AppTab.Today) },
+    ) { value ->
+        val subject = value.subjects.firstOrNull { it.key == subjectKey }
+        if (subject == null) {
             PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
-        }
-
-        LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
+        } else {
+            val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
+            VisitOf(writes.visit)
+            val farTopics = viewModel(key = "far-topics-$goalId") { FarTopicViewModel(plans, goalId) }
+            SubjectPage(
+                syllabus = value,
+                subject = subject,
+                writes = writes.state,
+                menu = menu,
+                ask = ask,
+                actions =
+                    SubjectActions(
+                        back = back,
+                        openChapter = { navigator.open(AppRoute.Chapter(it.toString())) },
+                        adjustPlan = { navigator.open(AppRoute.Plan()) },
+                        restore = writes::restore,
+                        setCadence = writes::setCadence,
+                        openFarTopic = { chapter ->
+                            chapter.skillId?.let {
+                                farTopics.open(
+                                    FarTopic(it, chapter.title, chapter.plannedLessons, chapter.nextDate),
+                                )
+                            }
+                        },
+                        openMindMaps = { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf { mindMaps },
+                    ),
+            )
+            FarTopicSheet(farTopics, navigator) { navigator.open(AppRoute.Chapter(it.toString())) }
         }
     }
 }
@@ -182,24 +171,36 @@ internal class SubjectViewModel(
     private val syllabus: Resource<Syllabus>,
     private val goalId: UUID,
 ) : ViewModel() {
-    private val writes = MutableStateFlow(SubjectWrites())
-    val state: StateFlow<SubjectWrites> = writes.asStateFlow()
+    /** The subject's visit: a change that didn't save says so only on it. */
+    val visit = Visit()
+
+    private var restoring by mutableStateOf(false)
+    private var tappedCadence by mutableStateOf<WrittenPractice.Cadence?>(null)
+    private val restoreFailure = visit.outcome<Unit>()
+    private val cadenceFailure = visit.outcome<Unit>()
+
+    /** What's saving, and what didn't save on this visit. */
+    val state get() = SubjectWrites(restoring, restoreFailure.value != null, tappedCadence, cadenceFailure.value != null)
 
     fun restore(areas: List<String>) {
-        if (writes.value.restoring) return
-        writes.update { it.copy(restoring = true, restoreFailed = false) }
+        if (restoring) return
+        restoring = true
+        restoreFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            val result = change(PlanOp.RestoreAreas(areas))
-            writes.update { it.copy(restoring = false, restoreFailed = result is MutationResult.Failed) }
+            if (change(PlanOp.RestoreAreas(areas)) is MutationResult.Failed) restoreFailure.send(started, Unit)
+            restoring = false
         }
     }
 
     fun setCadence(cadence: WrittenPractice.Cadence) {
-        if (writes.value.tappedCadence != null) return
-        writes.update { it.copy(tappedCadence = cadence, cadenceFailed = false) }
+        if (tappedCadence != null) return
+        tappedCadence = cadence
+        cadenceFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            val result = change(PlanOp.WrittenCadence(cadence.value))
-            writes.update { it.copy(tappedCadence = null, cadenceFailed = result is MutationResult.Failed) }
+            if (change(PlanOp.WrittenCadence(cadence.value)) is MutationResult.Failed) cadenceFailure.send(started, Unit)
+            tappedCadence = null
         }
     }
 
@@ -217,16 +218,20 @@ internal fun SubjectPage(
     writes: SubjectWrites,
     actions: SubjectActions,
     today: LocalDate = LocalDate.now(),
-    menu: @Composable () -> Unit = {},
+    menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
 ) {
     DetailPage(
-        title = subject.name,
+        title = subject.shortName,
         onBack = actions.back,
-        hero = { SubjectHero(syllabus, subject, actions, menu) },
-        aside = { SubjectAside(syllabus, subject, today, ask) },
+        hero = { SubjectHero(syllabus, subject) },
+        aside = { SubjectAside(syllabus, subject, today) },
         ask = ask,
-        askInAside = true,
+        menu = menu,
+        action =
+            subject.nextChapterId?.let { next ->
+                { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(next) }, modifier) }
+            },
     ) { asideBeside ->
         if (!asideBeside && (subject.notPlannedReason == null || subject.preparation != null)) {
             item(key = "coverage", contentType = "coverage") {
@@ -249,22 +254,15 @@ internal fun SubjectPage(
 private fun SubjectHero(
     syllabus: Syllabus,
     subject: SyllabusSubject,
-    actions: SubjectActions,
-    menu: @Composable () -> Unit,
 ) {
-    val next = subject.nextChapterId
-    val action: (@Composable (Modifier) -> Unit)? =
-        next?.let { { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(it) }, modifier) } }
-
-    DetailHero(action, menu) {
-        Eyebrow(subjectEyebrow(syllabus, subject))
+    DetailHero {
         Text(
-            text = subject.name,
+            text = subject.shortName,
             modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.headlineMedium,
         )
 
-        subjectFacts(subject)?.let { Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle()) }
+        (subjectLead(syllabus, subject) + subjectFacts(subject)).takeIf { it.isNotEmpty() }?.let { Facts(it) }
         listOfNotNull(knownLine(subject), alsoInLine(syllabus.sharedExams, subject.sharedWith)).forEach {
             Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
@@ -274,68 +272,42 @@ private fun SubjectHero(
 @Composable
 internal fun factsStyle() = MaterialTheme.zoonkType.data
 
+/** What used to sit over the name leads its facts: its area, where it comes from when that's news, and its weight. */
 @Composable
-private fun subjectEyebrow(
+private fun subjectLead(
     syllabus: Syllabus,
     subject: SyllabusSubject,
-): String {
+): List<String> {
     val kind =
         when {
             subject.group != null -> subject.group
             subject.source == SyllabusSubject.Source.NOTICE && syllabus.fromMaterial -> stringResource(R.string.goalcontent_from_material)
-            subject.source == SyllabusSubject.Source.NOTICE -> stringResource(R.string.goalcontent_subject)
-            syllabus.kind != Syllabus.Kind.NOTICE -> stringResource(R.string.goalcontent_module)
-            else -> beyondGroupName(syllabus)
+            subject.source == SyllabusSubject.Source.NOTICE || syllabus.kind != Syllabus.Kind.NOTICE -> null
+            else -> stringResource(R.string.goalcontent_also_in_plan)
         }
     val questions = subject.questions
     val share = subject.share
+    // Details names the questions; the exam's share shows only where there are none.
     val weight =
-        when {
-            questions != null && questions > 0 -> {
-                pluralStringResource(R.plurals.goalcontent_question_count, questions.toInt(), questions.toInt())
-            }
-
-            share != null -> {
-                stringResource(R.string.goalcontent_share_of_exam, formatPercent(share, currentLocale()))
-            }
-
-            else -> {
-                null
-            }
+        if ((questions == null || questions <= 0) && share != null) {
+            stringResource(R.string.goalcontent_share_of_exam, formatPercent(share, currentLocale()))
+        } else {
+            null
         }
-    return listOfNotNull(kind, weight).factsLine()
+    return listOfNotNull(kind, weight)
 }
 
-/** The group a plan adds outside the learner's material or the exam's own documents. */
 @Composable
-internal fun beyondGroupName(syllabus: Syllabus): String =
-    stringResource(
-        when {
-            syllabus.fromMaterial -> R.string.goalcontent_also_in_plan
-            syllabus.examDocument == ExamDocument.NOTICE -> R.string.goalcontent_beyond_notice
-            else -> R.string.goalcontent_beyond_guide
-        },
-    )
-
-@Composable
-private fun subjectFacts(subject: SyllabusSubject): String? {
+private fun subjectFacts(subject: SyllabusSubject): List<String> {
     val inLessons = subject.notPlannedReason == null && subject.preparation == null
-    val facts =
-        listOfNotNull(
-            subject.topics.size
-                .takeIf { it > 0 }
-                ?.let { pluralStringResource(R.plurals.goalcontent_topic_count, it, it) },
-            subject.chapters.size
-                .takeIf { it > 0 }
-                ?.let { pluralStringResource(R.plurals.goalcontent_chapter_count, it, it) },
-            if (inLessons) percentDone(subject.bar.share) else null,
-        )
-    return facts.takeIf { it.isNotEmpty() }?.factsLine()
+    // Topics and chapters count themselves over their lists.
+    return listOfNotNull(if (inLessons) percentDone(subject.bar.share) else null)
 }
 
+/** How much is done, as a whole percent; nothing until there is some, since "0% done" says nothing. */
 @Composable
-internal fun percentDone(share: Double): String =
-    stringResource(R.string.goalcontent_percent_done, (share.coerceIn(0.0, 1.0) * PERCENT).roundToInt())
+private fun percentDone(share: Double): String? =
+    (share.coerceIn(0.0, 1.0) * PERCENT).roundToInt().takeIf { it > 0 }?.let { stringResource(R.string.goalcontent_percent_done, it) }
 
 @Composable
 internal fun knownLine(subject: SyllabusSubject): String? {

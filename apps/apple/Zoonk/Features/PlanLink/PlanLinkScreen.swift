@@ -30,7 +30,7 @@ struct PlanLinkScreen: View {
                 }
               }
           case .failed(.notFound):
-            ContentUnavailableView {
+            StateMessage {
               Label {
                 Text(
                   "This plan isn't available", tableName: "PlanLink",
@@ -41,18 +41,13 @@ struct PlanLinkScreen: View {
             }
             .lonePage()
           case .failed:
-            ContentUnavailableView {
+            PageLoadFailure {
               Text(
                 "We couldn't load this plan", tableName: "PlanLink",
                 comment: "A shared plan failed to load")
-            } actions: {
-              Button {
-                Task { await resource.refresh() }
-              } label: {
-                Text("Try again", tableName: "PlanLink", comment: "Loads the shared plan again")
-              }
+            } retry: {
+              await resource.refresh()
             }
-            .lonePage()
           case .idle, .loading, .empty:
             ProgressView()
           }
@@ -87,69 +82,48 @@ struct PlanLinkScreen: View {
 
     return ZoonkList {
       Section {
-        VStack(alignment: .leading, spacing: 6) {
-          Text(
-            "A study plan someone shared with you", tableName: "PlanLink",
-            comment: "Eyebrow over a shared plan's subject"
-          )
-          .typeStyle(.rowTitle)
-          .foregroundStyle(.mutedForeground)
-          Group {
-            if let subject = outline.subject?.title {
-              Text(subject)
-            } else {
+        PageHeader(
+          outline.subject.map { Text($0.title) }
+            ?? Text(
+              "A study plan", tableName: "PlanLink", comment: "A shared plan without a subject"),
+          chip: Chip(
+            Text(
+              "Shared with you", tableName: "PlanLink",
+              comment: "Chip over a study plan someone shared with the learner")),
+          supporting: outline.subject?.description.map { Text($0) })
+
+        OpeningClock(availableAt: error?.limit?.availableAt) { now in
+          if let gate = GoalLimitGate(error?.limit, at: now) {
+            // Main's: a start the limit would refuse again leaves the screen to its words and ways on.
+            GateWords(title: gate.title, line: gate.line)
+              .announcesAlert(gate.said)
+              .listRowSeparator(.hidden)
+          } else {
+            Text(
+              "You get your own plan for the same subject. It starts from what you already know.",
+              tableName: "PlanLink"
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+            .listRowSeparator(.hidden)
+          }
+        }
+      }
+
+      OpeningClock(availableAt: error?.limit?.availableAt) { now in
+        if GoalLimitGate(error?.limit, at: now) == nil {
+          Section {
+            Picker(selection: $dailyMinutes) {
+              ForEach(ScheduleTime.dailyTimes(link.dailyTimes), id: \.self) { minutes in
+                Text(studyDuration(minutes: minutes)).tag(minutes)
+              }
+            } label: {
               Text(
-                "A study plan", tableName: "PlanLink", comment: "A shared plan without a subject")
+                "How much time a day?", tableName: "PlanLink",
+                comment: "Label of the daily time picker for a shared plan")
             }
           }
-          .typeStyle(.heroTitle)
-          .accessibilityAddTraits(.isHeader)
-
-          if let description = outline.subject?.description {
-            Text(description)
-              .typeStyle(.lead)
-              .foregroundStyle(.mutedForeground)
-          }
-
-          Text(
-            "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know.",
-            tableName: "PlanLink", comment: "What starting from a shared plan does"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
         }
-        .listRowBackground(Color.clear)
-      }
-
-      Section {
-        Picker(selection: $dailyMinutes) {
-          ForEach(ScheduleTime.dailyTimes(link.dailyTimes), id: \.self) { minutes in
-            Text(studyDuration(minutes: minutes)).tag(minutes)
-          }
-        } label: {
-          Text(
-            "How much time a day?", tableName: "PlanLink",
-            comment: "Label of the daily time picker for a shared plan")
-        }
-      }
-
-      if let error {
-        Section {
-          FailureLine(message: error.message)
-        }
-      }
-
-      Section {
-        BusyButton(isBusy: isStarting, icon: .forward, action: start) {
-          Text(
-            "Start from this plan", tableName: "PlanLink",
-            comment: "Starts the learner's own plan from a shared one")
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .buttonSizing(.flexible)
-        .listRowInsets(.vertical, 0)
-        .listRowBackground(Color.clear)
       }
 
       Section {
@@ -177,9 +151,26 @@ struct PlanLinkScreen: View {
       } footer: {
         SectionFooter {
           Text(
-            "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study\u{00A0}· \(outline.phases.count) phases\u{00A0}· \(outline.skillCount) skills",
+            "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study\u{00A0}· \(outline.phases.count) phases\u{00A0}· \(outline.skillCount) topics",
             tableName: "PlanLink",
-            comment: "A shared plan's size: its study time, phases and skills")
+            comment: "A shared plan's size: its study time, phases and topics")
+        }
+      }
+    }
+    .bottomBar(note: error.flatMap { $0.limit?.isPlusLimit == true ? nil : BarNote($0.message) }) {
+      OpeningClock(availableAt: error?.limit?.availableAt) { now in
+        if let limit = error?.limit, GoalLimitGate(limit, at: now) != nil {
+          GoalLimitActions(limit: limit)
+        } else if error?.needsAccount == true {
+          CreateAccountButton()
+        } else {
+          BusyButton(isBusy: isStarting, action: start) {
+            Text(
+              "Start my own plan", tableName: "PlanLink",
+              comment: "Starts the learner's own plan from a shared one")
+          }
+          .buttonStyle(.mainAction)
+          .keyboardShortcut(.defaultAction)
         }
       }
     }
@@ -205,16 +196,17 @@ struct PlanLinkScreen: View {
           router.showRoot(of: .plan)
         }
       } catch is CancellationError {
-      } catch OnboardingError.goalLimit, OnboardingError.signUpRequired, OnboardingError.slowDown {
-        error = GoalError(
-          message: LocalizedStringResource(
-            "You can't start another goal right now. Finish or pause one first.", table: "PlanLink",
-            comment: "A goal limit refused starting from a shared plan"))
       } catch {
-        self.error = GoalError(
-          message: LocalizedStringResource(
-            "That didn't work. Try again in a moment.", table: "PlanLink",
-            comment: "Starting from a shared plan failed"))
+        // A limit says itself, as everywhere a goal starts.
+        let refused = GoalError.creating(error)
+
+        self.error =
+          refused.limit != nil
+          ? refused
+          : GoalError(
+            message: LocalizedStringResource(
+              "That didn't work. Try again in a moment.", table: "PlanLink",
+              comment: "Starting from a shared plan failed"))
       }
     }
   }

@@ -2,12 +2,16 @@
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
-import { daysBetween } from "../_utils/iso-date";
-import { getPhaseDay, getShareInPhase } from "../plan/phase-weight";
+import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
-
-const NEAR_ESTIMATE_DAYS = 42;
+import {
+  type PlanDate,
+  getAxisDatedPhases,
+  getAxisFinish,
+  getPlanFinish,
+  getRoadmapPhases,
+} from "./phase-dates";
 
 export function getLessonShare(phase: PlanPhaseView): number {
   if (phase.state === "done") {
@@ -18,36 +22,30 @@ export function getLessonShare(phase: PlanPhaseView): number {
 }
 
 export function useRoadmapPhases() {
-  const { plan, today } = usePlanScreen();
+  const { goal, plan, today } = usePlanScreen();
 
-  const phases = plan.phases.filter(
-    (phase) => phase.kind !== "afterExam" && phase.state !== "leftOut",
-  );
+  const phases = getRoadmapPhases(plan.phases, goal.kind === "exam" ? null : plan.end?.finishedOn);
 
   const currentIndex = phases.findIndex((phase) => phase.state === "current");
 
   return { currentIndex, phases, today };
 }
 
-export function useRoadmapFinish(): { estimate: boolean; isoDate: string; month: boolean } | null {
-  const { goal, plan } = usePlanScreen();
-  const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
+export function useRoadmapFinish(): PlanDate | null {
+  const { goal, paused, plan } = usePlanScreen();
+  return getPlanFinish({ goalKind: goal.kind, paused, plan });
+}
 
-  if (targetDate) {
-    return { estimate: targetDateEstimated, isoDate: targetDate, month: targetDateNamedMonth };
-  }
+/** The goal's date under the timeline's axis (`getAxisFinish`). */
+export function useAxisFinish(): PlanDate | null {
+  const { goal, plan, today } = usePlanScreen();
+  return getAxisFinish({ goalKind: goal.kind, plan, today });
+}
 
-  const { endDate } = plan.estimate;
-
-  if (goal.kind === "exam" || !endDate) {
-    return null;
-  }
-
-  return {
-    estimate: true,
-    isoDate: endDate,
-    month: daysBetween(plan.week.startDate, endDate) > NEAR_ESTIMATE_DAYS,
-  };
+/** The phases whose end the timeline's axis dates (`getAxisDatedPhases`). */
+export function useAxisDatedPhases(): Set<number> {
+  const { goal, plan, today } = usePlanScreen();
+  return getAxisDatedPhases({ goalKind: goal.kind, plan, today });
 }
 
 export function useRoadmapOverrun(): { phaseIndex: number; share: number } | null {
@@ -65,26 +63,26 @@ export function useRoadmapOverrun(): { phaseIndex: number; share: number } | nul
   return phase && share !== null ? { phaseIndex: phase.index, share } : null;
 }
 
+/** The phase's place leads; its own name follows only when it has one. */
 export function useRoadmapPosition() {
   const t = useExtracted();
   const phaseName = usePhaseName();
   const { plan } = usePlanScreen();
-  const { currentIndex, phases, today } = useRoadmapPhases();
+  const { currentIndex, phases } = useRoadmapPhases();
   const current = phases[currentIndex];
 
   if (!current) {
     return null;
   }
 
-  const day = getPhaseDay({ phase: current, today });
-  const number = currentIndex + 1;
-  const total = phases.length;
+  const name = phaseName(current, { mocksRequirePlus: plan.access.mocksRequirePlus });
 
   return {
-    day: day && t("day {day, number} of {days, number}", day),
-    name: phaseName(current, { mocksRequirePlus: plan.access.mocksRequirePlus }),
-    number,
-    place: t("phase {number, number} of {total, number}", { number, total }),
-    total,
+    name: name === phaseName(current, { byPlace: true }) ? null : name,
+    phase: current,
+    place: t("Phase {number, number} of {total, number}", {
+      number: currentIndex + 1,
+      total: phases.length,
+    }),
   };
 }

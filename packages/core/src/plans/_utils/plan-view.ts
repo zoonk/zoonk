@@ -1,5 +1,5 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
+import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { getAllowance } from "../../entitlements/get-allowance";
@@ -15,9 +15,9 @@ import { readFocusTestSummary } from "../../learner/placement/focus-test-summary
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
-import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
+import { readSyllabusInput } from "../../view-models/syllabus/_utils/read-syllabus-input";
 import { getNoticeWaitState } from "../notice-wait";
-import { type PlanDayView, type PlanView } from "../plan-view-contract";
+import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
 import { getPlanCalendar, toIsoDate } from "../planner/plan-calendar";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
@@ -29,7 +29,7 @@ import { listPlanAreaNames } from "./plan-area-order";
 import { loadPlanChangeViews } from "./plan-change-view";
 import { type PlanContext } from "./plan-context";
 import { loadPlanCourse } from "./plan-course";
-import { isPlanFinished } from "./plan-end";
+import { getPlanEnd } from "./plan-end";
 import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath, readPlanToday } from "./plan-path-view";
@@ -68,24 +68,13 @@ function buildAreas({
 
 async function getAccess(context: PlanReadContext): Promise<PlanView["access"]> {
   if (context.goal.kind !== "exam") {
-    return { freeUntil: null, freeWeekOver: false, mocksRequirePlus: false };
+    return { mocksRequirePlus: false };
   }
 
   const allowance = await getAllowance();
   const examPrep = allowance?.examPrep ?? null;
 
-  const freeUntil = getFreeWeekEnd({ examPrep, goal: context.goal, timeZone: context.timeZone });
-
-  return {
-    freeUntil: freeUntil ? toIsoDate(freeUntil) : null,
-    freeWeekOver: getExamPrepAccess({
-      examPrep,
-      goal: context.goal,
-      timeZone: context.timeZone,
-      today: context.today,
-    }).trialEnded,
-    mocksRequirePlus: !(examPrep?.includesMockExams ?? false),
-  };
+  return { mocksRequirePlus: !(examPrep?.includesMockExams ?? false) };
 }
 
 async function loadChapterTitles(chapterIds: string[]): Promise<Map<string, string>> {
@@ -101,20 +90,18 @@ function readPlanStatus({
   phaseChallengesRequired,
   catchUp,
   context,
-  freeWeekOver,
   studiesPastTarget,
 }: {
   phaseChallengesRequired: boolean;
   catchUp: number;
   context: PlanReadContext;
-  freeWeekOver: boolean;
   studiesPastTarget: boolean;
 }): PlanView["status"] {
   const { goal, items, phases, plan, today } = context;
 
   return getPlanStatus({
     catchUp,
-    freeWeekOver,
+
     goalKind: goal.kind,
     items,
     minutesPerItem: getMinutesPerItem({
@@ -165,7 +152,7 @@ function isPlanReady(context: PlanContext): boolean {
 export async function buildPlanView({
   context: savedContext,
   now,
-}: PlanViewInput): Promise<PlanView & { nextDays: PlanDayView[] }> {
+}: PlanViewInput): Promise<PlanView> {
   const {
     catchUp: selectedCatchUp,
     context,
@@ -203,14 +190,9 @@ export async function buildPlanView({
     partAreas,
     taughtSkillIds,
     challengeResults,
+    syllabus,
   ] = await Promise.all([
-    loadPlanChangeViews({
-      context: savedContext,
-      goal,
-      now,
-      planId: context.plan.id,
-      planVersion: context.plan.version,
-    }),
+    loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
     getAccess(context),
     loadChapterTitles(chapterIds),
     loadPlanCourse({ goal, items }),
@@ -234,10 +216,12 @@ export async function buildPlanView({
         item.kind === "boss" && item.id && item.status === "todo" ? [item.id] : [],
       ),
     ),
+    readSyllabusInput(goal.userId, goal.id),
   ]);
 
   const skillAreas = getSkillAreas({
     courseTitle: course?.title ?? null,
+    goalKind: goal.kind,
     skills: state.graph.skills,
   });
 
@@ -251,7 +235,6 @@ export async function buildPlanView({
   const status = readPlanStatus({
     catchUp: catchUp.length,
     context,
-    freeWeekOver: access.freeWeekOver,
     phaseChallengesRequired,
     studiesPastTarget: fullCourse,
   });
@@ -270,17 +253,16 @@ export async function buildPlanView({
     changes: changes.map((change) => foldChangeAreas({ change, partAreas })),
     course,
     currentPhase,
-    end: isPlanFinished({
+    end: getPlanEnd({
       goalKind: goal.kind,
       items,
       phaseChallengesRequired,
       phases,
       studiesPastTarget: fullCourse,
       targetDate: goal.targetDate,
+      timeZone: context.timeZone,
       today: context.today,
-    })
-      ? { kind: "finished" }
-      : null,
+    }),
     estimate: buildEstimateView({ context }),
     examChoices,
     examDocument: getExamDocument(goal),
@@ -293,7 +275,7 @@ export async function buildPlanView({
     goalId: goal.id,
     languageAim:
       goal.kind === "language" && isJsonObject(goal.details)
-        ? toLanguageAimView(goal.details)
+        ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage })
         : null,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
     numbers: summary ? buildSavedPlanNumbersView(context) : null,
@@ -309,6 +291,7 @@ export async function buildPlanView({
       phaseChallengesRequired,
       shortPlan,
       skillAreas,
+      syllabus,
       taughtSkillIds,
       today,
     }),

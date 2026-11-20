@@ -48,7 +48,6 @@ struct AboutYouView: View {
           [.addressForm, .conditions, .learningSupport], in: profile)
       }
     }
-    .navigationTitle(aboutYouTitle)
     .barTitleAfterHero(
       String(localized: "About you", table: "AboutYou", comment: "Title of the About you page")
     )
@@ -96,7 +95,6 @@ private var aboutYouTitle: Text {
   Text("About you", tableName: "AboutYou", comment: "Title of the About you page")
 }
 
-/// One About you question with Save and no Skip. Saving it empty records it as not shared.
 struct AboutYouQuestionView: View {
   let question: ProfileQuestion
 
@@ -122,14 +120,15 @@ struct AboutYouQuestionView: View {
 
         QuestionForm {
           ProfileQuestionSections(
-            view: view, context: ProfileScreenContext(memoryEnabled: profile.memoryEnabled),
+            view: view,
+            context: ProfileScreenContext(memoryEnabled: profile.memoryEnabled, inSettings: true),
             draft: draft)
         } buttons: {
           StepButtons(
-            canContinue: canEdit && draft.wrappedValue.isComplete,
+            canContinue: canEdit
+              && draft.wrappedValue.savesAChange(view, memoryEnabled: profile.memoryEnabled),
             continueLabel: Text(
-              "Save", tableName: "AboutYou", comment: "Saves an About you answer"),
-            continueIcon: nil
+              "Save", tableName: "AboutYou", comment: "Saves an About you answer")
           ) {
             save(draft.wrappedValue)
           }
@@ -143,7 +142,8 @@ struct AboutYouQuestionView: View {
         }
       }
     }
-    .navigationTitle(AboutYouCopy.rowName(question))
+    // The question heads the screen, so the bar doesn't repeat its row's name over it.
+    .barName(AboutYouCopy.rowName(question))
     .loads(settings.profileQuestions)
   }
 
@@ -160,6 +160,52 @@ struct AboutYouQuestionView: View {
         failed = true
       }
     }
+  }
+}
+
+extension ProfileDraft {
+  /// About you's Save: an answer that can be saved and saves something other than what's saved,
+  /// so one opened and put back as it was never saves again. It compares what saving sends (hidden
+  /// fields dropped, text trimmed), with picks in any order except studies, whose order is their
+  /// fields' order. Nothing saved (never answered, or its facts deleted in Memory) isn't a
+  /// decline, so anything picked, typed or declined changes it.
+  func savesAChange(_ view: ProfileQuestionView, memoryEnabled: Bool = true) -> Bool {
+    let saved = ProfileDraft(view, memoryEnabled: memoryEnabled)
+    let keepsOrder = question == .studies
+
+    guard canSave(view) else {
+      return false
+    }
+
+    if saved.isEmpty && view.status != .declined {
+      return !isEmpty
+    }
+
+    return Self.canonical(answer, keepsOrder: keepsOrder)
+      != Self.canonical(saved.answer, keepsOrder: keepsOrder)
+  }
+
+  /// An answer as sorted-key JSON, its lists sorted unless their order is part of the answer.
+  private static func canonical(_ answer: [String: Any], keepsOrder: Bool) -> Data? {
+    func sorted(_ value: Any) -> Any {
+      switch value {
+      case let list as [Any]:
+        let items = list.map(sorted)
+        return keepsOrder ? items : items.sorted { json($0) < json($1) }
+      case let object as [String: Any]:
+        return object.mapValues(sorted)
+      default:
+        return value
+      }
+    }
+
+    func json(_ value: Any) -> String {
+      (try? JSONSerialization.data(
+        withJSONObject: value, options: [.sortedKeys, .fragmentsAllowed]))
+        .flatMap { String(data: $0, encoding: .utf8) } ?? ""
+    }
+
+    return try? JSONSerialization.data(withJSONObject: sorted(answer), options: .sortedKeys)
   }
 }
 

@@ -9,14 +9,19 @@ struct CalendarDay: Equatable, Sendable {
 }
 
 enum CalendarSteps {
-  /// Relative steps, so a learner tells quieter days from busier ones even while their counts are
-  /// small.
-  static func activity(_ count: Int, maximum: Int) -> Int {
-    guard count > 0, maximum > 0 else {
+  /// Relative steps of time studied, so a learner tells shorter days from longer ones even while
+  /// their minutes are few. A study day with no recorded time (older imported days) takes the
+  /// lightest step.
+  static func activity(studied: Bool, seconds: Int, maximumSeconds: Int) -> Int {
+    guard studied else {
       return 0
     }
 
-    return max(1, Int((Double(count) / Double(maximum) * 4).rounded(.up)))
+    guard maximumSeconds > 0 else {
+      return 1
+    }
+
+    return max(1, Int((Double(seconds) / Double(maximumSeconds) * 4).rounded(.up)))
   }
 
   static func energy(_ energy: Double?) -> Int {
@@ -50,56 +55,76 @@ enum CalendarSteps {
   }
 }
 
+struct StatsCalendarWindow: Equatable {
+  let weeks: Int
+  let months: Int
+
+  init(width: Double, compact: Bool, availableWeeks: Int) {
+    let short = compact || width < 52 * 12 - 2
+    weeks = min(availableWeeks, short ? 26 : 52)
+    months = short ? 6 : 12
+  }
+}
+
 /// The grid is one control, so the squares stay small without hundreds of tiny targets. Tapping a
 /// day shows its detail in a tooltip beside it (`ChartInspection`).
 struct StatsCalendar: View {
-  let title: Text
+  @Environment(\.horizontalSizeClass) private var sizeClass
   let gridLabel: Text
+  let legendTitle: Text
   let legendLabel: Text
   let low: Text
   let high: Text
   let shades: [Color]
   let days: [CalendarDay]
   let chartTitle: String
-  let chartSummary: String
+  /// How the Audio Graph speaks a day's value.
+  let valueText: (Double) -> String
+  let chartSummary: ([CalendarDay], Int) -> String
 
   @Environment(ChartInspection.self) private var inspection
   @Namespace private var chart
   @State private var width = 0.0
-  @State private var scroll = CalendarScroll()
-  @State private var position = ScrollPosition()
   @ScaledMetric(relativeTo: .caption2) private var headerHeight = 16.0
   @ScaledMetric(relativeTo: .caption2) private var swatchSize = 10.0
 
   private let gap = 2.0
 
+  private var window: StatsCalendarWindow {
+    StatsCalendarWindow(
+      width: width, compact: sizeClass == .compact, availableWeeks: (days.count + 6) / 7)
+  }
+
+  private var visibleDays: [CalendarDay] {
+    guard let last = days.last?.date.date(in: .gmt) else { return [] }
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = .gmt
+    let weekday = (calendar.component(.weekday, from: last) + 5) % 7
+    return Array(days.suffix(max(window.weeks - 1, 0) * 7 + weekday + 1))
+  }
+
+  private var title: Text {
+    window.months == 6
+      ? Text("Past 6 months", tableName: "Progress")
+      : Text("Past 12 months", tableName: "Progress")
+  }
+
   private var inspected: Int? {
-    inspection.index(in: chart).flatMap { days.indices.contains($0) ? $0 : nil }
+    inspection.index(in: chart).flatMap { visibleDays.indices.contains($0) ? $0 : nil }
   }
 
   private var activeIndex: Int {
-    inspected ?? CalendarSteps.defaultIndex(days)
+    inspected ?? CalendarSteps.defaultIndex(visibleDays)
   }
 
-  private var weeks: Int {
-    (days.count + 6) / 7
-  }
+  private var weeks: Int { (visibleDays.count + 6) / 7 }
 
   private var cell: Double {
-    let fitted = ((width + gap) / Double(max(weeks, 1)) - gap).rounded(.down)
-    return fitted >= 10 ? min(fitted, 16) : 20
-  }
-
-  private var fits: Bool {
-    gridWidth(step: cell + gap) <= width
+    min(max(((width + gap) / Double(max(weeks, 1)) - gap).rounded(.down), 1), 16)
   }
 
   private var step: Double {
-    guard fits, weeks > 1 else {
-      return cell + gap
-    }
-
-    return (width - cell) / Double(weeks - 1)
+    weeks > 1 ? max(cell + gap, (width - cell) / Double(weeks - 1)) : cell + gap
   }
 
   var body: some View {
@@ -117,13 +142,12 @@ struct StatsCalendar: View {
         }
       }
 
-      viewport
+      grid
         .background {
           CalendarTooltip(
-            detail: inspected.map { days[$0].detail }, square: square(inspected ?? 0),
-            scroll: fits ? nil : scroll)
+            detail: inspected.map { visibleDays[$0].detail }, square: square(inspected ?? 0))
         }
-        .frame(maxWidth: .infinity, alignment: fits ? .leading : .trailing)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .onGeometryChange(for: Double.self) {
@@ -131,36 +155,32 @@ struct StatsCalendar: View {
     } action: {
       width = $0
     }
-    .onChange(of: inspected) { _, inspected in
-      if let inspected, !fits {
-        reveal(square(inspected))
-      }
-    }
   }
 
-  /// What shows of the grid: all of it, or the weeks that fit with the rest a swipe away.
-  @ViewBuilder
-  private var viewport: some View {
-    if fits {
-      grid
-    } else {
-      // Capped rather than fixed, here and on the grid, so a narrower width (a fold, a rotation,
-      // a smaller window) can still reach the measurement the widths come from.
-      ScrollView(.horizontal) {
-        grid
-          .onGeometryChange(for: Double.self) {
-            -$0.frame(in: .scrollView(axis: .horizontal)).minX
-          } action: {
-            scroll.offset = $0
-          }
-      }
-      .defaultScrollAnchor(.trailing)
-      .scrollPosition($position)
-      .frame(maxWidth: wholeWeeksWidth)
-    }
-  }
-
+  /// The key's title beside its scale, or over it when both don't fit one line.
   private var legend: some View {
+    ViewThatFits(in: .horizontal) {
+      HStack(spacing: 8) {
+        legendTitle
+          .foregroundStyle(.foreground)
+          .fixedSize()
+        scale
+      }
+
+      VStack(alignment: .leading, spacing: 4) {
+        legendTitle
+          .foregroundStyle(.foreground)
+          .fixedSize(horizontal: false, vertical: true)
+        scale
+      }
+    }
+    .typeStyle(.small)
+    .foregroundStyle(.mutedForeground)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(legendLabel)
+  }
+
+  private var scale: some View {
     HStack(spacing: 4) {
       low.fixedSize()
 
@@ -178,15 +198,11 @@ struct StatsCalendar: View {
 
       high.fixedSize()
     }
-    .typeStyle(.small)
-    .foregroundStyle(.mutedForeground)
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(legendLabel)
   }
 
   private var grid: some View {
     Canvas { context, _ in
-      for (index, day) in days.enumerated() {
+      for (index, day) in visibleDays.enumerated() {
         let path = Path(roundedRect: square(index), cornerRadius: 2)
         context.fill(path, with: .color(shades[0]))
 
@@ -195,8 +211,6 @@ struct StatsCalendar: View {
         }
       }
 
-      // Inside the square, where a scrolling grid's edge can't cut it; the page-colored line keeps
-      // the ring readable on every shade.
       if let inspected {
         let square = square(inspected)
         context.stroke(
@@ -230,15 +244,17 @@ struct StatsCalendar: View {
     .chartPointKeys(
       [.upArrow, .downArrow, .leftArrow, .rightArrow], in: chart, from: activeIndex
     ) { index, key in
-      CalendarSteps.index(from: index, key: key, count: days.count)
+      CalendarSteps.index(from: index, key: key, count: visibleDays.count)
     }
     .accessibilityElement()
     .accessibilityLabel(gridLabel)
-    .accessibilityValue(days.indices.contains(activeIndex) ? days[activeIndex].detail.spoken : "")
+    .accessibilityValue(
+      visibleDays.indices.contains(activeIndex) ? visibleDays[activeIndex].detail.spoken : ""
+    )
     .accessibilityAdjustableAction { direction in
       switch direction {
       case .increment:
-        inspection.inspect(min(activeIndex + 1, days.count - 1), in: chart)
+        inspection.inspect(min(activeIndex + 1, visibleDays.count - 1), in: chart)
       case .decrement:
         inspection.inspect(max(activeIndex - 1, 0), in: chart)
       @unknown default:
@@ -250,7 +266,7 @@ struct StatsCalendar: View {
         "Next week", tableName: "Progress",
         comment: "VoiceOver action moving a calendar's picked day a week later")
     ) {
-      inspection.inspect(min(activeIndex + 7, days.count - 1), in: chart)
+      inspection.inspect(min(activeIndex + 7, visibleDays.count - 1), in: chart)
     }
     .accessibilityAction(
       named: Text(
@@ -260,13 +276,9 @@ struct StatsCalendar: View {
       inspection.inspect(max(activeIndex - 7, 0), in: chart)
     }
     .accessibilityChartDescriptor(
-      CalendarChartDescriptor(title: chartTitle, summary: chartSummary, days: days))
-  }
-
-  /// A whole number of weeks, so no week is cut at the oldest edge.
-  private var wholeWeeksWidth: Double {
-    let columns = max(((width + gap) / (cell + gap)).rounded(.down), 1)
-    return columns * (cell + gap) - gap
+      CalendarChartDescriptor(
+        title: chartTitle, summary: chartSummary(visibleDays, window.months), days: visibleDays,
+        valueText: valueText))
   }
 
   private func gridWidth(step: Double) -> Double {
@@ -285,17 +297,18 @@ struct StatsCalendar: View {
     var utc = Calendar(identifier: .gregorian)
     utc.timeZone = .gmt
 
-    return days.indices.compactMap { index in
-      let day = days[index]
+    return visibleDays.indices.compactMap { index in
+      let day = visibleDays[index]
       let week = index / 7
 
       guard day.date.day == 1, week >= 2, let date = day.date.date(in: .gmt) else {
         return nil
       }
 
-      var format = Date.FormatStyle.dateTime.month(.abbreviated)
-      format.timeZone = .gmt
-      return (week, date.formatted(format), week == weeks - 1)
+      return (
+        week, PlanDate.format(PlanDate.isoDate(date), .rowMonth, today: "", year: .never),
+        week == weeks - 1
+      )
     }
   }
 
@@ -305,40 +318,21 @@ struct StatsCalendar: View {
     let weekday = Int(((location.y - headerHeight) / (cell + gap)).rounded(.down))
     let index = week * 7 + weekday
 
-    if (0..<7).contains(weekday), week >= 0, days.indices.contains(index) {
+    if (0..<7).contains(weekday), week >= 0, visibleDays.indices.contains(index) {
       inspection.inspect(index, in: chart)
     } else {
       inspection.close(chart)
     }
   }
 
-  /// Scrolls a day the arrow keys or VoiceOver moved to into sight, where its tooltip shows.
-  private func reveal(_ square: CGRect) {
-    if square.minX < scroll.offset {
-      position.scrollTo(x: square.minX)
-    } else if square.maxX > scroll.offset + wholeWeeksWidth {
-      position.scrollTo(x: square.maxX - wholeWeeksWidth)
-    }
-  }
 }
 
-/// How far a calendar wider than its column is scrolled. Only the tooltip reads it, so scrolling
-/// redraws the tooltip and not the grid.
-@MainActor
-@Observable
-private final class CalendarScroll {
-  var offset = 0.0
-}
-
-/// Spans what shows of the grid, so the page's tooltip follows its day as the calendar scrolls
-/// and stays inside the visible weeks.
 private struct CalendarTooltip: View {
   let detail: ChartPointDetail?
   let square: CGRect
-  let scroll: CalendarScroll?
 
   var body: some View {
-    Color.clear.chartTooltip(detail, at: square.offsetBy(dx: -(scroll?.offset ?? 0), dy: 0))
+    Color.clear.chartTooltip(detail, at: square)
   }
 }
 
@@ -346,6 +340,7 @@ private struct CalendarChartDescriptor: AXChartDescriptorRepresentable {
   let title: String
   let summary: String
   let days: [CalendarDay]
+  let valueText: (Double) -> String
 
   func makeChartDescriptor() -> AXChartDescriptor {
     let values = days.compactMap(\.value)
@@ -365,7 +360,7 @@ private struct CalendarChartDescriptor: AXChartDescriptorRepresentable {
       range: 0...max(values.max() ?? 1, 1),
       gridlinePositions: []
     ) { value in
-      value.formatted()
+      valueText(value)
     }
 
     let points = days.enumerated().compactMap { index, day in
@@ -375,20 +370,5 @@ private struct CalendarChartDescriptor: AXChartDescriptorRepresentable {
     return AXChartDescriptor(
       title: title, summary: summary, xAxis: xAxis, yAxis: yAxis, additionalAxes: [],
       series: [AXDataSeriesDescriptor(name: title, isContinuous: false, dataPoints: points)])
-  }
-}
-
-func calendarDayFormatter(newest: ProgressDate?) -> (ProgressDate) -> String {
-  var sameYear = Date.FormatStyle.dateTime.month(.abbreviated).day()
-  sameYear.timeZone = .gmt
-  var otherYear = Date.FormatStyle.dateTime.month(.abbreviated).day().year()
-  otherYear.timeZone = .gmt
-
-  return { day in
-    guard let date = day.date(in: .gmt) else {
-      return ""
-    }
-
-    return date.formatted(day.year == newest?.year ? sameYear : otherYear)
   }
 }

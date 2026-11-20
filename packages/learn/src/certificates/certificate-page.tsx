@@ -2,13 +2,15 @@
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { BackLink, PageTitle, PageTop } from "@zoonk/ui/components/page-top";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
-import { BadgeCheckIcon, ChevronLeftIcon, DownloadIcon, PrinterIcon } from "lucide-react";
+import { ArrowUpRightIcon, BadgeCheckIcon, DownloadIcon, PrinterIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { Eyebrow } from "../_components/eyebrow";
 import { LearnLink } from "../learn-link";
+import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import { useCertificateDate, useCertificateSentence } from "./certificate-labels";
-import { CertificatePlusNotice, LockedCertificateSheet } from "./certificate-lock";
 import { CertificateNameField, type SaveCertificateName } from "./certificate-name";
 import {
   AddToLinkedInButton,
@@ -20,53 +22,88 @@ import { CertificateSheet } from "./certificate-sheet";
 /** What only the certificate's owner sees on its page. */
 export type CertificateOwner = { saveName: SaveCertificateName };
 
-export function CertificatesBackLink({ href }: { href: string }) {
+/** Only the owner has a way back: to their list. A visitor's page starts at the title's height too. */
+function CertificateTop({ backHref, children }: { backHref?: string; children: React.ReactNode }) {
   const t = useExtracted();
+  const parent = t("Certificates");
 
   return (
-    <LearnLink
-      className={buttonVariants({
-        className: "text-muted-foreground mb-3.5 -ml-2",
-        size: "sm",
-        variant: "ghost",
-      })}
-      href={href}
+    <PageTop
+      back={
+        backHref && (
+          <BackLink
+            aria-label={t("Back to {page}", { page: parent })}
+            render={<LearnLink href={backHref} />}
+          >
+            {parent}
+          </BackLink>
+        )
+      }
     >
-      <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
-      {t("Your certificates")}
-    </LearnLink>
+      {children}
+    </PageTop>
   );
 }
 
-export function CertificateVerified() {
+/**
+ * What a certificate's owner sees at its address without a subscription: the gate is the page, and
+ * the blank sheet under it says which certificate is waiting. The page puts `SubscribeMainAction`
+ * in its bottom bar.
+ */
+export function CertificateGate({ facts, href }: { facts: CertificateFacts; href: string }) {
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground inline-flex items-center gap-1.5 text-[0.8125rem]">
-      <BadgeCheckIcon aria-hidden="true" className="text-success size-4" />
-      {t("Verified certificate · issued by Zoonk")}
-    </p>
+    <div className="flex flex-col" data-slot="certificate-gate">
+      <CertificateTop backHref={href}>
+        <PageTitle className="max-w-4xl" variant="headline">
+          {t("Certificates need a subscription")}
+        </PageTitle>
+      </CertificateTop>
+      <BlankCertificateSheet className="mt-8 max-w-150 rounded-xl" facts={facts} />
+    </div>
   );
 }
 
-/** A locked certificate (only its owner sees it) isn't issued yet, so it claims neither. */
-export function CertificateIntro({ facts, locked }: { facts: CertificateFacts; locked: boolean }) {
+export function CertificateVerified({ className }: { className?: string }) {
+  const t = useExtracted();
+
+  return (
+    <Eyebrow className={className} icon={<BadgeCheckIcon aria-hidden="true" />} tone="success">
+      {t("Verified certificate · issued by Zoonk")}
+    </Eyebrow>
+  );
+}
+
+/** A date never breaks across two lines. */
+function keepWhole(chunks: React.ReactNode) {
+  return <span className="whitespace-nowrap">{chunks}</span>;
+}
+
+export function CertificateIntro({
+  backHref,
+  facts,
+}: {
+  backHref?: string;
+  facts: CertificateFacts;
+}) {
   const t = useExtracted();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
 
   return (
-    <div className="flex flex-col">
-      {!locked && <CertificateVerified />}
-      <h1 className={cn("text-headline max-w-4xl", !locked && "mt-3.5")}>{sentence(facts)}</h1>
-      {!locked && (
-        <p className="text-lead mt-2.5">
-          {t("Certificate of completion, issued on {date}.", {
-            date: date.long(facts.completedOn),
-          })}
-        </p>
-      )}
-    </div>
+    <CertificateTop backHref={backHref}>
+      <CertificateVerified className="mb-2" />
+      <PageTitle className="max-w-4xl" variant="headline">
+        {sentence(facts)}
+      </PageTitle>
+      <p className="text-lead mt-1.5">
+        {t.rich("Certificate of completion, issued on <whole>{date}</whole>.", {
+          date: date.short(facts.completedOn),
+          whole: keepWhole,
+        })}
+      </p>
+    </CertificateTop>
   );
 }
 
@@ -77,14 +114,10 @@ export function CertificateOwnerActions({
   owner,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks | null;
+  links: CertificateLinks;
   owner: CertificateOwner;
 }) {
   const t = useExtracted();
-
-  if (!links) {
-    return <CertificatePlusNotice className="max-w-xl" />;
-  }
 
   if (!facts.recipientName) {
     return <CertificateNameField current={null} save={owner.saveName} />;
@@ -120,28 +153,42 @@ export function CertificatePaper({
   links,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks | null;
+  links: CertificateLinks;
 }) {
+  const t = useExtracted();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
 
-  if (!links) {
-    return <LockedCertificateSheet className="rounded-lg" facts={facts} />;
-  }
-
   return (
-    <a
-      className="focus-visible:ring-ring/50 block rounded-md outline-none focus-visible:ring-[3px]"
-      href={links.imageUrls.print}
-      rel="noopener"
-      target="_blank"
-    >
-      <CertificateSheet
-        alt={`${sentence(facts)} · ${date.long(facts.completedOn)}`}
-        className="rounded-lg"
-        loading="eager"
-        images={links.imageUrls}
-      />
-    </a>
+    <div className="flex flex-col items-start gap-3">
+      <a
+        className="focus-visible:ring-ring/50 block w-full rounded-xl outline-none focus-visible:ring-[3px]"
+        href={links.imageUrls.print}
+        rel="noopener"
+        target="_blank"
+      >
+        <CertificateSheet
+          alt={`${sentence(facts)} · ${date.long(facts.completedOn)}`}
+          className="rounded-xl"
+          loading="eager"
+          images={links.imageUrls}
+        />
+      </a>
+
+      {/* A phone draws the sheet too small to read its fine print; the details below repeat it. */}
+      <a
+        className={cn(buttonVariants({ variant: "link" }), "inline-flex gap-1 text-sm sm:hidden")}
+        href={links.imageUrls.print}
+        rel="noopener"
+        target="_blank"
+      >
+        {t({
+          description:
+            "Link under a small picture of a certificate on a phone: opens the certificate's picture at full size.",
+          message: "See full certificate",
+        })}
+        <ArrowUpRightIcon aria-hidden="true" data-icon="inline-end" />
+      </a>
+    </div>
   );
 }

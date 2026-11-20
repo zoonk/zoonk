@@ -2,6 +2,7 @@ package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
@@ -11,10 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
+import com.zoonk.android.ui.scaffold.BAR_GAP
 import com.zoonk.android.ui.scaffold.isOnBookPage
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
@@ -31,7 +35,7 @@ fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
         CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
             Column(
                 if (wide) Modifier.fillMaxWidth() else Modifier.taskBarColumn(),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(BAR_GAP),
                 horizontalAlignment = if (wide) Alignment.End else Alignment.Start,
                 content = content,
             )
@@ -40,33 +44,47 @@ fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
 }
 
 /**
- * Main's `TaskActions`: the main one at the end on a wide layout ([isWideLayout]), [back] at the
- * start. On a narrow one the main action fills its line and moves to a line of its own when the
- * others don't leave it room, so a large font never breaks its word.
+ * Main's `TaskActions`: [back] at the start and the main action last. Where the bar has room (a tablet,
+ * a tablet's page in a spread, a wide window), the main action sits at the end at its own width; on a
+ * phone or a book's page it fills its line, and moves to a line of its own when the others don't leave
+ * it room, so a large font never breaks its word. The bar's measured width decides, never the window's.
  */
 @Composable
 fun TaskActions(
     back: (@Composable () -> Unit)? = null,
     content: @Composable FlowRowScope.(main: Modifier) -> Unit,
 ) {
-    val wide = isWideLayout()
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        val roomy = maxWidth >= ROOMY_BAR_WIDTH
+        val singleAction = maxWidth < MAIN_ACTION_WIDTH * 2 * LocalDensity.current.fontScale
 
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp, if (wide) Alignment.End else Alignment.Start),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        itemVerticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (back != null) {
-            if (wide) Box(Modifier.weight(1f)) { back() } else back()
+        CompositionLocalProvider(LocalRoomyBar provides roomy) {
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(BAR_GAP, if (roomy) Alignment.End else Alignment.Start),
+                verticalArrangement = Arrangement.spacedBy(BAR_GAP),
+                itemVerticalAlignment = Alignment.CenterVertically,
+                maxItemsInEachRow = if (singleAction) 1 else Int.MAX_VALUE,
+            ) {
+                if (back != null) {
+                    if (roomy) Box(Modifier.weight(1f)) { back() } else back()
+                }
+                content(if (roomy) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f))
+            }
         }
-        content(if (wide) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f))
     }
 }
 
-/** Main's `TASK_OPTION_CLASS`: an action beside the main one that takes a line of its own on a narrow layout ([isWideLayout]). */
+/** Whether the [TaskActions] around this has room for its buttons side by side; null outside one. */
+private val LocalRoomyBar = compositionLocalOf<Boolean?> { null }
+
+/**
+ * Main's `TASK_OPTION_CLASS`: an action beside the main one. In [TaskActions] it follows the main action: at its own
+ * width where the bar has room, on a line of its own where the main action fills its line, so a bar's buttons never
+ * have two widths. Outside one it takes a line of its own on a narrow layout ([isWideLayout]).
+ */
 @Composable
-fun Modifier.taskOption(): Modifier = if (isWideLayout()) this else fillMaxWidth()
+fun Modifier.taskOption(): Modifier = if (LocalRoomyBar.current ?: isWideLayout()) this else fillMaxWidth()
 
 /**
  * Main's `lg` for a task: an expanded window, where its actions line up at its end and what a phone
@@ -85,3 +103,6 @@ fun Modifier.taskBarColumn(): Modifier = widthIn(max = TASK_COLUMN_WIDTH - TASK_
 private val TASK_COLUMN_WIDTH = 640.dp
 internal val TASK_MARGIN = 16.dp
 private val MAIN_ACTION_WIDTH = 160.dp
+
+/** Wider than any phone's or book page's bar (about 400dp), narrower than a tablet's page in a spread. */
+private val ROOMY_BAR_WIDTH = 480.dp

@@ -27,7 +27,7 @@ test("central login keeps its form on an error and rejects a revoked cached sess
   try {
     await page.goto("/auth/login?error=expired");
     await expect(page.getByLabel("Email")).toBeVisible();
-    await expect(page.getByText("That sign-in expired. Try again.")).toBeVisible();
+    await expect(page.getByText("Logging in took too long. Try again.")).toBeVisible();
 
     await prisma.session.deleteMany({ where: { userId: user.id } });
     await page.goto("/auth/login");

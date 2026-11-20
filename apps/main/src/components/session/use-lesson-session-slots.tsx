@@ -3,7 +3,6 @@
 import { MainFinishedChapterMaps } from "@/components/learn/main-finished-chapter-map";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useRouter } from "@/i18n/navigation";
-import { useReminderOfferActions } from "@/lib/reminders/use-reminder-offer-actions";
 import { getCompletionLessonHref } from "@/lib/session/lesson-opening";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
@@ -66,7 +65,6 @@ function SessionLessonMoment({
   const moment = completion.result?.studyBlock;
   const navigation = useStudyNavigation(moment?.sessionId ?? "");
   const startTestOut = useStartTestOut();
-  const reminderActions = useReminderOfferActions();
 
   return (
     <LessonMoment
@@ -81,7 +79,6 @@ function SessionLessonMoment({
           : Promise.resolve({ status: "failed" })
       }
       onStop={navigation.stop}
-      reminderActions={reminderActions}
     />
   );
 }

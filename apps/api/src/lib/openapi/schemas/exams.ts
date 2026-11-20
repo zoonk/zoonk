@@ -84,7 +84,7 @@ export const examMomentSchema = z
       .boolean()
       .meta({
         description:
-          "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished): say they prepared only when true",
+          "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished)",
       }),
     resultReported: z.boolean(),
     sessionsDone: z.number().int().min(0),
@@ -161,7 +161,7 @@ export const examViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The last published cut-off of the learner's target (a course at an institution, a position) for the general list, with its source: show it as where the bar was, never as a promise. Null when none was found",
+          "The last published cut-off of the learner's target (a course at an institution, a position) for the general list, with its source: a past figure, not a forecast. Null when none was found",
       }),
     dayBefore: dayBeforeSchema,
     days: z.array(examDaySchema),
@@ -188,13 +188,13 @@ export const examViewResponseSchema = z
       .boolean()
       .meta({
         description:
-          "Mock exams come with Plus and the learner's plan doesn't include them: show them (the next one too) locked, with a way to Plus, never hidden",
+          "True when mock exams come with Plus and the learner's plan doesn't include them: starting one answers 402",
       }),
     namedMonth: z
       .boolean()
       .meta({
         description:
-          "The one day is the start of the month the learner named, standing for that month: show the month, not the day",
+          "The one day is the start of the month the learner named, standing for that month, not that day",
       }),
     nextMock: z
       .object({
@@ -224,13 +224,13 @@ export const examViewResponseSchema = z
       .boolean()
       .meta({
         description:
-          "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished): say they prepared only when true",
+          "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished)",
       }),
     progress: examMockProgressSchema
       .nullable()
       .meta({
         description:
-          "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and when mocks need Plus (`mocksRequirePlus`): show it locked, never hidden",
+          "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and null when mocks need Plus and the learner's plan doesn't include them (`mocksRequirePlus`)",
       }),
     result: examResultResponseSchema.nullable(),
     runningMocks: z
@@ -274,7 +274,7 @@ export const examViewResponseSchema = z
       )
       .meta({
         description:
-          "The mocks the learner started and hasn't finished: the one taken any time first (GET /v1/goals/{goalId}/mocks `running` continues it), then the plan's weekly one, which can run beside it. Lead the exam's mocks with them, with what's answered and the time left, each opening its own sitting. Empty when none is running; one whose time ran out while the learner was away isn't",
+          "The mocks the learner started and hasn't finished: the one taken any time first (GET /v1/goals/{goalId}/mocks `running` continues it), then the plan's weekly one, which can run beside it, each with what's answered, the time left and its own sitting. Empty when none is running; one whose time ran out while the learner was away isn't",
       }),
     scoring: examScoringSchema,
     sessionsDone: z.number().int().min(0),
@@ -282,7 +282,7 @@ export const examViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. Tasks come with Plus (`access`); show them locked, never hidden. Null for other exams",
+          "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. The tasks are returned whatever the learner's plan; `access` says whether they can start one, as tasks come with Plus. Null for other exams",
       }),
     speakingMock: speakingMockExamSchema
       .nullable()

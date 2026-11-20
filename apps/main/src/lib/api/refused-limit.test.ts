@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { readRefusedLimit } from "./refused-limit";
 
 function limitReached(limit: object) {
@@ -12,13 +12,72 @@ function limitReached(limit: object) {
 }
 
 describe(readRefusedLimit, () => {
-  it("reads which cap it was and when it starts over", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("stamps a refusal it reads with the moment it arrived, which tells a server clock behind this one", () => {
+    vi.useFakeTimers({ now: new Date("2026-12-02T09:00:30.000Z"), toFake: ["Date"] });
+
     expect(
       readRefusedLimit({
-        body: limitReached({ limit: 40, period: "month", resource: "lessonStart", tier: "free" }),
+        body: limitReached({
+          availableAt: "2026-12-02T09:00:00.000Z",
+          limit: 20,
+          period: "rolling30Days",
+          resource: "lessonStart",
+          tier: "free",
+        }),
         status: 402,
       }),
-    ).toStrictEqual({ period: "month", status: "limitReached", tier: "free" });
+    ).toMatchObject({ receivedAt: Date.parse("2026-12-02T09:00:30.000Z") });
+  });
+
+  it("reads which cap it was and when more comes back", () => {
+    expect(
+      readRefusedLimit({
+        body: limitReached({
+          availableAt: "2026-12-02T09:00:00.000Z",
+          limit: 10,
+          period: "rolling30Days",
+          resource: "mindMap",
+          tier: "free",
+        }),
+        status: 402,
+      }),
+    ).toStrictEqual({
+      availableAt: "2026-12-02T09:00:00.000Z",
+      period: "rolling30Days",
+      receivedAt: expect.any(Number),
+      status: "limitReached",
+      tier: "free",
+    });
+
+    expect(
+      readRefusedLimit({
+        body: limitReached({
+          availableAt: "2026-11-20T12:00:00.000Z",
+          limit: 20,
+          period: "rolling30Days",
+          resource: "lessonStart",
+          tier: "free",
+        }),
+        status: 402,
+      }),
+    ).toStrictEqual({
+      availableAt: "2026-11-20T12:00:00.000Z",
+      period: "rolling30Days",
+      receivedAt: expect.any(Number),
+      status: "limitReached",
+      tier: "free",
+    });
+
+    expect(
+      readRefusedLimit({
+        body: limitReached({ limit: 200, period: "day", resource: "lessonStart", tier: "plus" }),
+        status: 429,
+      }),
+    ).toStrictEqual({ period: "day", status: "limitReached", tier: "plus" });
 
     expect(
       readRefusedLimit({

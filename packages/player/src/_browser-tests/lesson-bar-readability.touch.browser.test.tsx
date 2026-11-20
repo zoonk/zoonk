@@ -43,11 +43,13 @@ function visibleText(button: HTMLElement) {
 }
 
 function cutOffLabels() {
-  const bar = document.querySelector(
-    "[data-slot='lesson-action-bar'], [data-slot='task-action-bar']",
-  );
+  const bar = document.querySelector("[data-slot='bottom-bar']");
 
-  const buttons = [...(bar?.querySelectorAll<HTMLElement>("a, button") ?? [])];
+  if (!bar) {
+    return ["the lesson has no bottom bar"];
+  }
+
+  const buttons = [...bar.querySelectorAll<HTMLElement>("a, button")];
   const cutOff: string[] = [];
 
   for (const button of buttons.filter((item) => item.getClientRects().length > 0)) {
@@ -79,7 +81,7 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
     stubTutorApi({ lesson });
     renderLessonPlayer({ lesson, tutor: buildTutor() });
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await page.getByRole("radio", { name: "The electron's size" }).click();
     await expect.element(page.getByRole("button", { name: "Previous screen" })).toBeVisible();
 
@@ -138,6 +140,7 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
       routes: {
         exit: "/chapter",
         exitTo: "chapter",
+        mistakes: "/mistakes",
         nextLesson: "/learn/next",
         seePlan: (goalId) => `/start/${goalId}`,
         signUp: "/login",

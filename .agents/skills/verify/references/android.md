@@ -1,20 +1,6 @@
 # Measuring the Android app
 
-How to look at screens and measure requests, memory, leaks, CPU and jank for the Android app. JVM renders need no emulator; everything else runs on an emulator from `apps/android/README.md`. Measure the screens a change touches, before and after, on the same emulator, and put the numbers in the report.
-
-## Look at it without an emulator
-
-Robolectric renders real screens on the JVM in seconds. Use it to check every window size, dark theme, more contrast and large text before opening an emulator. `app/src/testDebug/kotlin/com/zoonk/android/gallery/GalleryScreenshots.kt` is the pattern: `@GraphicsMode(NATIVE)`, Compose UI test v2's `createAndroidComposeRule`, one test per `@Config(qualifiers = "w411dp-h891dp-xxhdpi")` size (`-night` for dark, `RuntimeEnvironment.setFontScale(2f)` for 200%), and the shared `com.zoonk.android.ui.testing.captureRender` from `:core:designsystem` test fixtures, written to a folder only when one is passed:
-
-```sh
-./gradlew :feature:today:testDebugUnitTest --tests '*Screenshots*' --rerun -Pzoonk.shots=/path/to/folder
-```
-
-Use `captureRender()` on one selected Compose root, tagged node, or dialog for JVM captures. When several roots are open, select the intended root explicitly. It settles composition and layout, invalidates the selected Compose view, then lets Compose’s capture idle pass draw before PixelCopy reads the window surface. `captureToImage()` alone can copy an empty first frame on SDK 37 even after `waitForIdle()`; extra waits and repeated captures do not establish that a new frame was drawn.
-
-Run the test task of the module that owns the screen (`:app` for the gallery and the shell); each module writes its reports under its own `build/`.
-
-Read the PNGs. Images aren't committed and CI doesn't compare pixels. A render shows layout, color and type; it doesn't show system bars, timing or TalkBack, so the emulator check still follows for runtime behavior.
+How to measure requests, memory, leaks, CPU and jank for the Android app on an emulator from `apps/android/README.md`. Measure the screens a change touches, before and after, on the same emulator, and put the numbers in the report. Looking at a screen and measuring its layout need no emulator: [Android screens without an emulator](android-renders.md).
 
 ## Set up the emulator
 
@@ -100,3 +86,5 @@ TalkBack: boot the emulator with a window (without `-no-window`), turn TalkBack 
 ## Report
 
 For each screen or flow the change touches: the JVM renders you checked (sizes, dark, contrast, font scale), requests on first open, on return and on each tab switch (before and after), `TOTAL PSS` after one and ten loops, LeakCanary's result, idle CPU ticks, janky frames for scrolls and tab switches, and what survived rotation and process death. Save the commands' output next to the screenshots.
+
+Version 2 also records each exposed text's actual `TextLayoutResult` line strings, its known role (heading, shared label or value, button; no role for running text), and button and editable-field control frames regardless of button look. It records detectable text overflow and horizontal scrollers without `fadingHorizontalScroll`'s Debug marker. The text and control nodes' clipped bounds include containers without semantics; scroller ancestors and `TextLayoutInput.maxLines` or ellipsis declare allowed overflow. A node whose own layout and control semantics were erased by `clearAndSetSemantics` is recorded as an `unmeasured` area with its reason; the page rules stay measured for every other element on the screen. Its unmerged descendants are still read, so a cleared legend container does not hide its text from the capture. The recorder always declares all four rules in `measuredRules` (Android has no page-level limit), so an old capture or a missing required record still fails. Chart axis captions and multi-series legends intentionally clear their semantics because the chart supplies a complete TalkBack summary.

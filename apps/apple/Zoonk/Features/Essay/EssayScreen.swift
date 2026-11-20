@@ -19,21 +19,15 @@ struct EssayScreen: View {
         case .empty, .failed(.notFound):
           NotFoundView()
         case .failed:
-          ContentUnavailableView {
+          PageLoadFailure {
             Label {
               Text("The essay didn't load", tableName: "Essay", comment: "Loading failed")
             } icon: {
               Image(systemName: "wifi.exclamationmark")
             }
-          } actions: {
-            Button {
-              Task { await essay.refresh() }
-            } label: {
-              Text("Try again", tableName: "Essay", comment: "Button to retry loading")
-            }
-            .buttonStyle(.outline)
+          } retry: {
+            await essay.refresh()
           }
-          .lonePage()
         case .loaded(let view):
           EssayContent(store: store, essay: view)
         }
@@ -177,7 +171,7 @@ private struct EssayContent: View {
         Button {
           router.showRoot(of: .today)
         } label: {
-          Text("Back to Today", tableName: "Essay", comment: "Leaves a finished essay for Today")
+          Text("Today", tableName: "Essay", comment: "Leaves a finished essay for Today")
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
@@ -200,7 +194,7 @@ private struct EssayContent: View {
         Button {
           Task { await finish() }
         } label: {
-          Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
+          Text("Skip", tableName: "Essay", comment: "Goes on without rewriting")
         }
         .buttonStyle(.outline)
         .controlSize(.large)
@@ -208,13 +202,13 @@ private struct EssayContent: View {
       }
 
       if writer.isWriting {
-        BusyButton(isBusy: writer.status == .grading, icon: .send) {
+        BusyButton(isBusy: writer.status == .grading) {
           Task { await writer.send() }
         } label: {
           if essay.drafts.isEmpty {
-            Text("Send for grading", tableName: "Essay", comment: "Sends a draft")
+            Text("Grade essay", tableName: "Essay", comment: "Sends a draft")
           } else {
-            Text("Grade the rewrite", tableName: "Essay", comment: "Sends a rewrite")
+            Text("Grade rewrite", tableName: "Essay", comment: "Sends a rewrite")
           }
         }
         .buttonStyle(.mainAction)
@@ -325,7 +319,7 @@ private struct EssayContent: View {
             table: "Essay", comment: "Grading failed"),
           onReport: { showsSaveReport = true })
       } else if writer.isWriting, writer.status == .signUpRequired {
-        HelpLimitNotice(limit: .signUpRequired)
+        LimitNotice(limit: .signUpRequired)
       } else if let statusNote {
         VStack(alignment: .leading, spacing: 2) {
           Text(statusNote)
@@ -344,7 +338,7 @@ private struct EssayContent: View {
     }
 
     if writer.isWriting, writer.status == .signUpRequired {
-      return HelpLimit.signUpRequired.message
+      return HelpLimit.signUpRequired.words().said
     }
 
     if writer.isWriting, writer.status == .limitReached || essay.gradesLeft == 0 {

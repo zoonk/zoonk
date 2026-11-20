@@ -40,13 +40,11 @@ export function useOwnLevelLabels(): Record<OnboardingOwnLevel, string> {
 
 export function LevelChoiceList({
   onChange,
-  onPick,
   readOnly,
   testMinutes,
   value,
 }: {
   onChange: (value: LevelChoice) => void;
-  onPick?: (value: LevelChoice) => void;
   readOnly?: boolean;
   testMinutes: number;
   value: LevelChoice | null;
@@ -59,14 +57,14 @@ export function LevelChoiceList({
     { description: t("From scratch, with everyday examples"), label: labels.none, value: "none" },
     { description: t("I know a few things"), label: labels.basic, value: "basic" },
     {
-      description: t("We'll skip what you already know"),
+      description: t("Skip what I already know"),
       label: labels.intermediate,
       value: "intermediate",
     },
     { description: t("Only what's new or hard"), label: labels.advanced, value: "advanced" },
     {
-      description: t("Adapts to your answers, about {time}", { time: formatDuration(testMinutes) }),
-      label: t("Not sure, give me a quick test"),
+      description: t("About {time}", { time: formatDuration(testMinutes) }),
+      label: t("Not sure, give me a short test"),
       value: QUICK_TEST,
     },
   ];
@@ -76,7 +74,6 @@ export function LevelChoiceList({
       choices={choices}
       label={t("Your level")}
       onChange={onChange}
-      onPick={onPick}
       readOnly={readOnly}
       value={value}
     />

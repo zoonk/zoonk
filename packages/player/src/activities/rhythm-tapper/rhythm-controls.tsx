@@ -18,12 +18,12 @@ export function RhythmStatus({
   return (
     <p aria-live="polite" className="text-muted-foreground text-sm tabular-nums">
       {round
-        ? t("{tempo} bpm · Round {round} of {rounds}", {
+        ? t("{tempo} beats a minute · Round {round} of {rounds}", {
             round: String(round),
             rounds: String(rounds),
             tempo: String(tempo),
           })
-        : t("{tempo} bpm · {rounds, plural, one {# round} other {# rounds}}", {
+        : t("{tempo} beats a minute · {rounds, plural, one {# round} other {# rounds}}", {
             rounds,
             tempo: String(tempo),
           })}
@@ -52,10 +52,13 @@ export function RhythmControls({
           {t("Listen first")}
         </Button>
 
-        <Button onClick={onStart} size="lg" type="button">
-          {hasTried && <RotateCcw aria-hidden="true" data-icon="inline-start" />}
-          {hasTried ? t("Try again") : t("Start tapping")}
-        </Button>
+        {/* A try is an answer, so Check takes the bar once there is one; until then the bar starts it. */}
+        {hasTried && (
+          <Button onClick={onStart} size="lg" type="button" variant="outline">
+            <RotateCcw aria-hidden="true" data-icon="inline-start" />
+            {t("Try again")}
+          </Button>
+        )}
       </div>
 
       <Button onClick={onCalibrate} size="sm" type="button" variant="ghost">

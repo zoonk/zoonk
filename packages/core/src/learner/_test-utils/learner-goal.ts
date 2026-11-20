@@ -31,7 +31,6 @@ export async function learnerGoalFixture({
   phases: number[];
   userId: string;
 }) {
-  // Decline placement rather than aging the goal, which would also end a free exam trial.
   const goal = await goalFixture({ details: { placementDeclined: true }, userId });
 
   const chapters = await Promise.all(

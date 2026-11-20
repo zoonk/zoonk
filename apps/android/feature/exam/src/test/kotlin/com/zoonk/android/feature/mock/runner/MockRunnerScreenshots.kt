@@ -24,6 +24,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -237,7 +238,12 @@ class MockRunnerScreenshots {
     private fun speakingSection(paper: String = SPEAKING.replaceFirst("\"completed\"}]}", "\"ready\"}]}")) =
         runningMock(
             current = currentSection(questions = "", kind = "\"speaking\""),
-            extra = """"speaking":$paper""",
+            extra =
+                """
+                "speaking":$paper,
+                "sections":[{"breakAfterMinutes":null,"essays":0,"index":0,"minutes":60,"name":"Spanish speaking",
+                  "navigation":null,"questions":0,"status":"current","tools":null}]
+                """.trimIndent(),
         )
 
     private fun onBreak() = runningMock(current = "null", extra = """"breakUntil":"${Clock.System.now() + 9.minutes}"""")
@@ -295,7 +301,7 @@ class MockRunnerScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(shots, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 
     private companion object {

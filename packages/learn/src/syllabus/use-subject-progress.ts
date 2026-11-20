@@ -3,6 +3,7 @@
 import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted } from "next-intl";
 import { type SyllabusSectionSubject } from "./syllabus-section-view";
+import { useNotPlannedReason } from "./topic-note";
 
 export type SubjectBar = { known: number; studied: number };
 
@@ -35,18 +36,16 @@ export function useKnownLine() {
   return function knownLine(subject: SyllabusSectionSubject): string | null {
     if (subject.topicsKnown !== null && subject.topics.length > 0) {
       return subject.topicsKnown > 0
-        ? t(
-            "{count, plural, one {# topic skipped because you already know it} other {# topics skipped because you already know them}}",
-            { count: subject.topicsKnown },
-          )
+        ? t("{count, plural, one {# topic you already know} other {# topics you already know}}", {
+            count: subject.topicsKnown,
+          })
         : null;
     }
 
     return subject.lessonsKnown > 0
-      ? t(
-          "{count, plural, one {# lesson skipped because you already know it} other {# lessons skipped because you already know them}}",
-          { count: subject.lessonsKnown },
-        )
+      ? t("{count, plural, one {# lesson you already know} other {# lessons you already know}}", {
+          count: subject.lessonsKnown,
+        })
       : null;
   };
 }
@@ -54,12 +53,13 @@ export function useKnownLine() {
 export function useSubjectProgress() {
   const t = useExtracted();
   const knownLine = useKnownLine();
+  const reasonText = useNotPlannedReason();
 
   return (subject: SyllabusSectionSubject): SubjectProgress => {
     const total = subject.topics.length;
 
     if (subject.notPlannedReason) {
-      return { bar: null, known: null, label: t("Not in your plan") };
+      return { bar: null, known: null, label: reasonText(subject.notPlannedReason) ?? "" };
     }
 
     const known = knownLine(subject);

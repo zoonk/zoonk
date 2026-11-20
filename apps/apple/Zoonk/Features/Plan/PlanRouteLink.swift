@@ -26,11 +26,12 @@ struct PlanRouteLink<Label: View>: View {
         sheetOpen.open(route)
       } label: {
         label
+          .frame(maxWidth: .infinity, alignment: .leading)
           .disclosureChevron()
       }
       .foregroundStyle(.primary)
     } else if route.presentation == .push {
-      NavigationLink(value: route) {
+      PageLink(route: route) {
         label
       }
     } else {
@@ -38,6 +39,7 @@ struct PlanRouteLink<Label: View>: View {
         router.open(route)
       } label: {
         label
+          .frame(maxWidth: .infinity, alignment: .leading)
           .disclosureChevron()
       }
       .foregroundStyle(.primary)

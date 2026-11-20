@@ -60,7 +60,7 @@ function useResultDetail({ outcome, undone }: { outcome: GradedTestOut; undone: 
   return t({
     description: 'The learner passed this chapter\'s test. "It" is the chapter.',
     message:
-      "{lessons, plural, =0 {Your plan already skips it.} one {# lesson is off your plan.} other {# lessons are off your plan.}}",
+      "{lessons, plural, =0 {Your plan already skips it.} one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}",
     values: { lessons: outcome.skippedLessons },
   });
 }
@@ -94,7 +94,7 @@ function ResultStep({
       <StepCard aria-live="polite" role="status">
         <StepHeader>
           <StepTitle>
-            {outcome.passed ? t("You already know this") : t("Not yet, and that's fine")}
+            {outcome.passed ? t("You passed the test") : t("Not yet, and that's fine")}
           </StepTitle>
           <StepDetail>{detail}</StepDetail>
         </StepHeader>
@@ -146,11 +146,13 @@ function TestOutResult({
   return (
     <Steps
       exitHref={closeHref}
-      finalAction={<TaskMainLink href={closeHref}>{t("Continue")}</TaskMainLink>}
-      finalOptions={
-        changeId && undo !== "done" ? (
-          <UndoButton failed={undo === "failed"} onUndo={runUndo} pending={isPending} />
-        ) : null
+      finalAction={
+        <>
+          {changeId && undo !== "done" && (
+            <UndoButton failed={undo === "failed"} onUndo={runUndo} pending={isPending} />
+          )}
+          <TaskMainLink href={closeHref}>{t("Continue")}</TaskMainLink>
+        </>
       }
       items={[
         {
@@ -183,7 +185,7 @@ function TestOutQuestions({
   unsent: UnsentAnswers<ChoiceQuestionAnswer[]> | null;
 }) {
   const t = useExtracted();
-  const rule = useTestOutRule(test.passMark);
+  const { label, rule } = useTestOutRule(test.passMark);
   const aside = useTestOutAside({ chapterTitle, lessonsLeft, rule });
 
   return (
@@ -193,9 +195,9 @@ function TestOutQuestions({
       header={{
         closeHref,
         screen: "test-out",
-        title: t("Test out: {chapter}", { chapter: chapterTitle }),
+        title: t("Test: {chapter}", { chapter: chapterTitle }),
       }}
-      hint={() => rule}
+      hint={(question) => (question === test.questions[0] ? label : null)}
       onFinish={onFinish}
       pending={pending}
       questions={test.questions}

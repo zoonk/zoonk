@@ -4,134 +4,141 @@ struct EmailLoginView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
   @State private var code = ""
-  @State private var email = ""
+  @State private var email = LoginEmail()
   @State private var hasSentCode = false
-  @FocusState private var isCodeFocused: Bool
+  @FocusState private var focusedField: Field?
+
+  private enum Field {
+    case email
+    case code
+  }
 
   var body: some View {
-    QuestionForm {
+    ZoonkList {
       Section {
-        TextField(
-          text: $email,
-          prompt: Text(
-            "you@example.com",
-            tableName: "Account",
-            comment:
-              "Example email address in the sign-in field: localize \"you\" and keep example.com")
-        ) {
-          Text("Email", tableName: "Account", comment: "Email sign-in field label")
-        }
-        .textInputAutocapitalization(.never)
-        .keyboardType(.emailAddress)
-        .autocorrectionDisabled()
-        .textContentType(.emailAddress)
-        .submitLabel(.continue)
-        .onSubmit(sendEmailCode)
-        .accessibilityLabel(
-          Text("Email", tableName: "Account", comment: "Email sign-in field label")
-        )
-        .disabled(hasSentCode || session.isWorking)
-
-        if hasSentCode {
-          TextField(
-            text: $code,
-            prompt: Text(
-              "6-digit code",
-              tableName: "Account",
-              comment: "Placeholder for the email sign-in code")
-          ) {
-            Text(
-              "Verification code",
-              tableName: "Account",
-              comment: "Email sign-in code field label")
-          }
-          .keyboardType(.numberPad)
-          .textContentType(.oneTimeCode)
-          .focused($isCodeFocused)
-          .onSubmit(signIn)
-          .accessibilityLabel(
-            Text(
-              "Verification code",
-              tableName: "Account",
-              comment: "Email sign-in code field label")
-          )
-          .disabled(session.isWorking)
-        }
-      } footer: {
-        SectionFooter {
+        Group {
           if hasSentCode {
-            Text(
-              "We sent a sign-in code to your email. It expires in 5 minutes.",
-              tableName: "Account",
-              comment: "Explains where the email code was sent and when it expires")
+            FormField(
+              title: Text("Code from the email", tableName: "Account"),
+              isFocused: focusedField == .code
+            ) {
+              TextField(
+                text: $code,
+                prompt: Text(
+                  "6-digit code",
+                  tableName: "Account",
+                  comment: "Placeholder for the email sign-in code")
+              ) {
+                Text("Code from the email", tableName: "Account")
+              }
+              .keyboardType(.numberPad)
+              .textContentType(.oneTimeCode)
+              .focused($focusedField, equals: .code)
+              .onSubmit(signIn)
+              .disabled(session.isWorking)
+            } hint: {
+              Text(
+                "Enter the code we sent to \(normalizedEmail).", tableName: "Account",
+                comment: "Under the code field; the argument is the learner's email address")
+            }
+          } else {
+            FormField(
+              title: Text("Email", tableName: "Account", comment: "Email sign-in field label"),
+              isFocused: focusedField == .email, isInvalid: email.failure != nil
+            ) {
+              TextField(
+                text: $email.text,
+                prompt: Text(
+                  "you@example.com",
+                  tableName: "Account",
+                  comment:
+                    "Example email address in the sign-in field: localize \"you\" and keep example.com"
+                )
+              ) {
+                Text("Email", tableName: "Account", comment: "Email sign-in field label")
+              }
+              .textInputAutocapitalization(.never)
+              .keyboardType(.emailAddress)
+              .autocorrectionDisabled()
+              .textContentType(.emailAddress)
+              .submitLabel(.continue)
+              .focused($focusedField, equals: .email)
+              .onSubmit(sendEmailCode)
+              .disabled(session.isWorking)
+            }
           }
         }
+        .listRowSeparator(.hidden)
+
+        // Sign-in's one exception to the bottom bar: Continue stays under its field, in its
+        // section.
+        VStack(spacing: 12) {
+          if hasSentCode {
+            BusyButton(isBusy: session.isWorking, action: signIn) {
+              Text("Continue", tableName: "Account", comment: "Button that verifies an email code")
+            }
+            .buttonStyle(.mainAction)
+            .disabled(!isCodeValid && !session.isWorking)
+            .keyboardShortcut(.defaultAction)
+
+            Button {
+              code = ""
+              hasSentCode = false
+              session.clearFailure()
+            } label: {
+              Text(
+                "Change email", tableName: "Account",
+                comment: "Button that returns to the email entry step")
+            }
+            .buttonStyle(.ghost)
+            .disabled(session.isWorking)
+          } else {
+            BusyButton(isBusy: session.isWorking, action: sendEmailCode) {
+              Text(
+                "Continue", tableName: "Account", comment: "Button that sends an email log in code")
+            }
+            .buttonStyle(.mainAction)
+            .disabled(normalizedEmail.isEmpty && !session.isWorking)
+            .keyboardShortcut(.defaultAction)
+          }
+        }
+        .controlSize(.large)
+        .buttonSizing(.flexible)
+        .listRowSeparator(.hidden)
       }
-    } buttons: {
-      AccountFailureMessage(failure: session.failure)
 
-      Group {
-        if hasSentCode {
-          BusyButton(isBusy: session.isWorking, icon: .forward, action: signIn) {
-            Text(
-              "Sign in",
-              tableName: "Account",
-              comment: "Button that verifies an email code")
-          }
-          .buttonStyle(.mainAction)
-          .disabled(!isCodeValid && !session.isWorking)
-
-          Button {
-            code = ""
-            hasSentCode = false
-            session.clearFailure()
-          } label: {
-            Text(
-              "Use a different email",
-              tableName: "Account",
-              comment: "Button that returns to the email entry step")
-          }
-          .buttonStyle(.ghost)
-          .disabled(session.isWorking)
-        } else {
-          BusyButton(isBusy: session.isWorking, icon: .send, action: sendEmailCode) {
-            Text(
-              "Send code",
-              tableName: "Account",
-              comment: "Button that sends an email sign-in code")
-          }
-          .buttonStyle(.mainAction)
-          .disabled(!isEmailValid && !session.isWorking)
+      if let failure = hasSentCode ? session.failure : email.failure ?? session.failure {
+        Section {
+          AccountFailureMessage(failure: failure)
         }
       }
-      .buttonSizing(.flexible)
-      .controlSize(.large)
     }
+    .readableColumn(480)
     .navigationTitle(
-      Text("Email sign-in", tableName: "Account", comment: "Email login navigation title")
+      Text("Log in", tableName: "Account", comment: "Email login navigation title")
     )
     .toolbarTitleDisplayMode(.inline)
+    .onChange(of: hasSentCode) { _, sent in
+      focusedField = sent ? .code : .email
+    }
+    .onChange(of: focusedField) { previous, _ in
+      if previous == .email {
+        email.leave()
+      }
+    }
     .onChange(of: session.state) { _, state in
       dismissAfterSignIn(state)
     }
-    .onChange(of: hasSentCode) {
-      isCodeFocused = hasSentCode
-    }
-    // The number pad has no Return key, so a complete code signs in on its own, as on main.
+    // The number pad has no Return key, so a complete code signs in on its own.
     .onChange(of: normalizedCode, signIn)
   }
 
   private var normalizedEmail: String {
-    email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    email.normalized
   }
 
   private var normalizedCode: String {
     code.filter(\.isNumber)
-  }
-
-  private var isEmailValid: Bool {
-    let parts = normalizedEmail.split(separator: "@", omittingEmptySubsequences: false)
-    return parts.count == 2 && !parts[0].isEmpty && parts[1].contains(".")
   }
 
   private var isCodeValid: Bool {
@@ -139,7 +146,7 @@ struct EmailLoginView: View {
   }
 
   private func sendEmailCode() {
-    guard isEmailValid, !session.isWorking else {
+    guard !session.isWorking, !normalizedEmail.isEmpty, email.submit() else {
       return
     }
 
@@ -174,4 +181,35 @@ struct EmailLoginView: View {
     EmailLoginView()
   }
   .environment(SessionStore.preview())
+}
+
+/// The address the learner logs in with. A wrong one says so under its field once they leave it or
+/// press Continue, as main's login says it on Continue, and from then on as they fix it.
+struct LoginEmail {
+  var text = ""
+  private var isChecked = false
+
+  var normalized: String {
+    text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+  }
+
+  var isValid: Bool {
+    let parts = normalized.split(separator: "@", omittingEmptySubsequences: false)
+    return parts.count == 2 && !parts[0].isEmpty && parts[1].contains(".")
+  }
+
+  var failure: AccountFailure? {
+    isChecked && !isValid ? .invalidEmail : nil
+  }
+
+  /// Leaving an empty field says nothing.
+  mutating func leave() {
+    isChecked = isChecked || !normalized.isEmpty
+  }
+
+  /// Whether the address can be sent.
+  mutating func submit() -> Bool {
+    isChecked = true
+    return isValid
+  }
 }

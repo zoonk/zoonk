@@ -193,7 +193,7 @@ private fun TracerVariables(values: List<WatchedValue>) {
                     .clip(RoundedCornerShape(ZoonkRadius.option))
                     .then(if (item.changed) Modifier.background(highlight.copy(alpha = SOFT_ALPHA)) else Modifier)
                     .semantics(mergeDescendants = true) {}
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .padding(vertical = 6.dp),
             ) {
                 Text(
                     item.name,
@@ -241,11 +241,11 @@ private fun TracerPanel(
             .clip(shape)
             .background(colors.surface)
             .border(1.dp, colors.outlineVariant, shape)
-            .padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
-            Modifier.padding(start = 8.dp),
+            Modifier,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
@@ -257,8 +257,8 @@ private fun TracerPanel(
                 color = colors.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium,
             )
-            StepButton(stringResource(R.string.activities_code_step_back), R.drawable.ic_skip_previous, canGoBack, onBack)
-            StepButton(stringResource(R.string.activities_code_step_forward), R.drawable.ic_skip_next, canGoForward, onForward)
+            StepButton(stringResource(R.string.activities_code_step_back), R.drawable.ic_arrow_back, canGoBack, onBack)
+            StepButton(stringResource(R.string.activities_code_step_forward), R.drawable.ic_arrow_forward, canGoForward, onForward)
         }
         CodeListing(code, language, stringResource(R.string.activities_code_code), currentLine = currentLine)
     }

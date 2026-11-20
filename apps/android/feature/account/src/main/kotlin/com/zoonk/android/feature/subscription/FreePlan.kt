@@ -2,12 +2,16 @@ package com.zoonk.android.feature.subscription
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,67 +40,77 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.glyphInk
+import com.zoonk.android.ui.components.largeButtonHeight
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
-import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 
-/** Main's FreePlan card: how a visitor starts, how a guest keeps going, or a Free account's use of it today. */
-@Composable
-internal fun FreePlanCard(
-    limits: FreePlan,
+/**
+ * Main's FreePlan card: how a visitor starts, how a guest keeps going, or a Free account's use of it today.
+ * Only what it includes waits for [limits], so the rows above it are in place from the start and the card
+ * beside it, which shares their heights, doesn't move when they arrive.
+ */
+internal fun freePlanRows(
+    limits: LoadState<FreePlan>,
     currency: String?,
     viewer: PlanViewer,
     navigator: AppNavigator,
-    modifier: Modifier = Modifier,
-    messagesUsed: AllowanceItem? = null,
-) {
-    OutlinedCard(modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(stringResource(R.string.subscription_free), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-            if (currency != null) Text(money(0, currency, currentLocale()), style = MaterialTheme.typography.headlineMedium)
+): PlanRows =
+    listOf(
+        { PlanNameRow(stringResource(R.string.subscription_free)) },
+        { if (currency != null) Text(money(0, currency, currentLocale()), style = MaterialTheme.typography.headlineMedium) },
+        {
             when (viewer) {
                 PlanViewer.Visitor -> StartFree(stringResource(R.string.subscription_start_free)) { navigator.showRoot(AppTab.Today) }
                 PlanViewer.Guest -> StartFree(stringResource(R.string.limit_create_account)) { navigator.open(AppRoute.Login) }
-                PlanViewer.Free -> CurrentPlanUse(messagesUsed)
+                PlanViewer.Free -> CurrentPlan()
             }
-            HorizontalDivider()
-            PlanIncludes(
-                summary =
-                    stringResource(
-                        R.string.subscription_free_summary,
-                        goals(limits.activeGoals),
-                        pluralStringResource(
-                            R.plurals.subscription_free_lessons_a_month,
-                            count(limits.lessonsPerMonth),
-                            count(limits.lessonsPerMonth),
-                        ),
+        },
+        {
+            when (limits) {
+                is LoadState.Loaded -> {
+                    FreePlanIncludes(limits.value)
+                }
+
+                LoadState.Idle, LoadState.Loading -> {
+                    PlanIncludesRow { CircularProgressIndicator(Modifier.size(24.dp)) }
+                }
+
+                else -> {}
+            }
+        },
+    )
+
+@Composable
+private fun FreePlanIncludes(limits: FreePlan) {
+    PlanIncludesRow {
+        PlanIncludes(
+            summary =
+                stringResource(
+                    R.string.subscription_free_summary,
+                    goals(limits.activeGoals),
+                    pluralStringResource(
+                        R.plurals.subscription_free_lessons_a_month,
+                        count(limits.lessonsPer30Days),
+                        count(limits.lessonsPer30Days),
                     ),
-                items =
-                    listOfNotNull(
-                        stringResource(R.string.subscription_free_plan),
-                        limits.examPrepDays?.let {
-                            examPrep(
-                                it.toInt(),
-                                R.string.subscription_free_exam_week,
-                                R.string.subscription_free_exam_day,
-                                R.plurals.subscription_free_exam,
-                            )
-                        },
-                        pluralStringResource(
-                            R.plurals.subscription_free_buddy,
-                            count(limits.tutorMessagesPerDay),
-                            count(limits.tutorMessagesPerDay),
-                        ),
-                        stringResource(R.string.subscription_free_calls),
-                    ),
-            )
-        }
+                ),
+            items =
+                listOfNotNull(
+                    stringResource(R.string.subscription_free_plan),
+                    buddySentence(limits),
+                    stringResource(R.string.subscription_free_calls),
+                ),
+        )
     }
 }
 
@@ -109,19 +123,16 @@ private fun ColumnScope.StartFree(
     Note(stringResource(R.string.subscription_no_card_needed), Modifier.align(Alignment.CenterHorizontally))
 }
 
+/** In the button's place, as tall as the Plus card's button, so the two cards' rows line up. */
 @Composable
-private fun ColumnScope.CurrentPlanUse(messagesUsed: AllowanceItem?) {
-    Text(
-        stringResource(R.string.subscription_current_plan),
-        Modifier.align(Alignment.CenterHorizontally),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
-    val limit = messagesUsed?.dailyLimit?.toInt() ?: return
-    Note(
-        pluralStringResource(R.plurals.subscription_messages_used, limit, messagesUsed.usedToday.toInt(), limit),
-        Modifier.align(Alignment.CenterHorizontally),
-    )
+private fun CurrentPlan() {
+    Box(Modifier.fillMaxWidth().heightIn(min = largeButtonHeight()), contentAlignment = Alignment.Center) {
+        Text(
+            stringResource(R.string.subscription_current_plan),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+        )
+    }
 }
 
 /** Main's PlusQuestions. [limits] answers the first question; without them it's left out. */
@@ -193,27 +204,11 @@ private fun FreePlanAnswer(
             goals(limits.activeGoals, R.plurals.subscription_answer_free_goals),
             pluralStringResource(
                 R.plurals.subscription_answer_free_lessons,
-                count(limits.lessonsPerMonth),
-                count(limits.lessonsPerMonth),
-                count(limits.lessonsPerDay),
+                count(limits.lessonsPer30Days),
+                count(limits.lessonsPer30Days),
             ),
-            limits.examPrepDays?.let {
-                examPrep(
-                    it.toInt(),
-                    R.string.subscription_answer_free_exam_week,
-                    R.string.subscription_answer_free_exam_day,
-                    R.plurals.subscription_answer_free_exam,
-                )
-            },
-            stringResource(
-                R.string.subscription_answer_free_buddy_uploads,
-                pluralStringResource(
-                    R.plurals.subscription_answer_free_buddy,
-                    count(limits.tutorMessagesPerDay),
-                    count(limits.tutorMessagesPerDay),
-                ),
-                pluralStringResource(R.plurals.subscription_answer_free_uploads, count(limits.uploadsPerDay), count(limits.uploadsPerDay)),
-            ),
+            buddySentence(limits),
+            pluralStringResource(R.plurals.subscription_answer_free_material, count(limits.uploadsPerDay), count(limits.uploadsPerDay)),
             stringResource(R.string.subscription_answer_free_calls),
         )
 
@@ -254,7 +249,13 @@ private fun Question(
         Icon(
             painterResource(R.drawable.ic_expand_more),
             contentDescription = null,
-            modifier = if (open) Modifier.rotate(180f) else Modifier,
+            // The chevron's ink ends where the divider does, as the question starts where it does.
+            modifier =
+                Modifier
+                    .glyphInk(
+                        R.drawable.ic_expand_more,
+                        edge = ButtonEdge.End,
+                    ).then(if (open) Modifier.rotate(180f) else Modifier),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -282,20 +283,12 @@ private fun goals(
     plural: Int = R.plurals.subscription_free_goals,
 ): String = pluralStringResource(plural, count(activeGoals), count(activeGoals))
 
-/** Main's "=7" and "one" cases: a week of exam prep reads as a week, and one day as a day. */
-@Composable
-private fun examPrep(
-    days: Int,
-    week: Int,
-    day: Int,
-    plural: Int,
-): String =
-    when (days) {
-        DAYS_IN_WEEK -> stringResource(week)
-        1 -> stringResource(day)
-        else -> pluralStringResource(plural, days, days)
-    }
-
 private fun count(limit: Long?): Int = limit?.toInt() ?: 0
 
-private const val DAYS_IN_WEEK = 7
+/** Main's buddy line: messages a day, and the most over 30 days where the plan has a monthly cap. */
+@Composable
+private fun buddySentence(limits: FreePlan): String {
+    val day = count(limits.tutorMessagesPerDay)
+    val month = limits.tutorMessagesPer30Days ?: return pluralStringResource(R.plurals.subscription_free_buddy, day, day)
+    return pluralStringResource(R.plurals.subscription_free_buddy_monthly, day, day, formatNumber(month.toDouble(), currentLocale()))
+}

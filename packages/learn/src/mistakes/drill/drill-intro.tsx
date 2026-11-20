@@ -1,7 +1,6 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   ExternalLinkIcon,
@@ -57,8 +56,6 @@ function LessonLink({
 
 function StartButton({ onStart }: { onStart: () => void }) {
   const t = useExtracted();
-
-  useEnterKey(onStart);
 
   return <EnterButton onClick={onStart}>{t("Start the questions")}</EnterButton>;
 }

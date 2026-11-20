@@ -17,9 +17,9 @@ import {
   SuggestionResult,
   SuggestionSaveError,
   SuggestionSummary,
+  useMainActionVariant,
 } from "../_components/suggestion";
-import { useFormatDuration } from "../_utils/time-format";
-import { useFocusTestTitle } from "../focus-test/use-focus-test-texts";
+import { useFocusTestLine, useFocusTestTitle } from "../focus-test/use-focus-test-texts";
 import { useTodayScreen } from "./today-context";
 
 function FocusTestNotice({
@@ -30,9 +30,10 @@ function FocusTestNotice({
   onDismiss: (kept: FocusTestOffer | null) => void;
 }) {
   const t = useExtracted();
+  const mainVariant = useMainActionVariant();
   const { actions } = useTodayScreen();
   const title = useFocusTestTitle();
-  const formatDuration = useFormatDuration();
+  const line = useFocusTestLine();
   const [state, setState] = useState<"dismissed" | "failed" | null>(null);
   // Stays busy after the start is saved, until the test's page replaces this one.
   const [starting, setStarting] = useState(false);
@@ -70,13 +71,7 @@ function FocusTestNotice({
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <>
-            <SuggestionSummary>
-              {t({
-                description:
-                  "One line on the Today page that suggests taking the Focus test: it shows which exam subjects need most study time.",
-                message: "The Focus test shows what to study most.",
-              })}
-            </SuggestionSummary>
+            <SuggestionSummary>{t("The Focus test shows what to study most.")}</SuggestionSummary>
             <SuggestionOpen />
           </>
         )}
@@ -89,21 +84,20 @@ function FocusTestNotice({
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <>
-            <SuggestionDescription>
-              {t({
-                description:
-                  "{time} is a duration with its unit, such as “15 min”: how long the Focus test takes. “Your time” is the study time the learner has before the exam.",
-                message:
-                  "Your time can't cover everything before your exam. In about {time}, the Focus test shows what to study most.",
-                values: { time: formatDuration(offer.minutes) },
-              })}
-            </SuggestionDescription>
+            <SuggestionDescription>{line.timed(offer.minutes)}</SuggestionDescription>
 
-            <SuggestionActions>
-              <SuggestionAction action={start} busy={starting} disabled={busy}>
-                {t("Start the test")}
-              </SuggestionAction>
-
+            <SuggestionActions
+              main={
+                <SuggestionAction
+                  action={start}
+                  busy={starting}
+                  disabled={busy}
+                  variant={mainVariant}
+                >
+                  {t("Start the test")}
+                </SuggestionAction>
+              }
+            >
               <SuggestionAction action={dismiss} disabled={busy} variant="outline">
                 {t("Not now")}
               </SuggestionAction>

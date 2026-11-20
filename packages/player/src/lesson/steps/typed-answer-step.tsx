@@ -1,40 +1,18 @@
 "use client";
 
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { LessonVisual } from "@zoonk/learn/visual";
-import { Button } from "@zoonk/ui/components/button";
-import { HelpCircleIcon, PenLineIcon, PenOffIcon } from "lucide-react";
+import { PenLineIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../components/step-layouts";
-import { LessonContext, LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
+import { InteractiveStepLayout } from "../../components/step-layouts";
+import { LessonContext, LessonQuestion } from "../_components/lesson-step-text";
 import { ScreenSupport } from "../_components/screen-support";
 import { splitQuestionData } from "../_utils/lesson-aside";
-import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { isNumberAnswer } from "../_utils/number-answer";
 import { ExplainFirstButton } from "../controls/explain-first-button";
-import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonAnswerField } from "./lesson-answer-field";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
-
-function SkipWritingButton() {
-  const t = useExtracted();
-  const { actions } = useLessonPlayer();
-
-  return (
-    <Button
-      className={COLUMN_GHOST_ACTION_CLASS}
-      onClick={() => {
-        actions.skipWriting();
-        focusLessonAfterTurn();
-      }}
-      size="sm"
-      variant="ghost"
-    >
-      <PenOffIcon aria-hidden="true" />
-      {t("Can't write now")}
-    </Button>
-  );
-}
 
 export function TypedAnswerStepView({
   answer,
@@ -45,8 +23,6 @@ export function TypedAnswerStepView({
   const t = useExtracted();
   const spoken = useSpokenText();
   const text = answer?.kind === "typedAnswer" ? answer.text : "";
-  const { actions, screen } = useLessonPlayer();
-  const { showWritingAlternatives = true } = useLessonPlayerConfig();
   const isNumber = isNumberAnswer(step.content.acceptedAnswers);
   const isExplanation = !isNumber && (step.content.acceptedAnswers ?? []).length === 0;
   const { data, question } = splitQuestionData(step.content.question);
@@ -55,9 +31,7 @@ export function TypedAnswerStepView({
     <InteractiveStepLayout>
       <div className="flex flex-col gap-3">
         {isExplanation && (
-          <LessonEyebrow icon={<PenLineIcon aria-hidden="true" />}>
-            {t("In your own words")}
-          </LessonEyebrow>
+          <Eyebrow icon={<PenLineIcon aria-hidden="true" />}>{t("In your own words")}</Eyebrow>
         )}
         <ScreenSupport>
           <LessonContext>{step.content.context}</LessonContext>
@@ -76,28 +50,7 @@ export function TypedAnswerStepView({
         value={text}
       />
 
-      <div className="flex flex-col gap-3.5 empty:hidden">
-        <ExplainFirstButton />
-        {!isLocked && !isNumber && showWritingAlternatives && (
-          <>
-            {!screen.canExplainFirst && (
-              <Button
-                className={COLUMN_GHOST_ACTION_CLASS}
-                onClick={() => {
-                  actions.dontKnow(step.id);
-                  focusLessonAfterTurn();
-                }}
-                size="sm"
-                variant="ghost"
-              >
-                <HelpCircleIcon aria-hidden="true" />
-                {t("I don't know yet")}
-              </Button>
-            )}
-            <SkipWritingButton />
-          </>
-        )}
-      </div>
+      <ExplainFirstButton />
     </InteractiveStepLayout>
   );
 }

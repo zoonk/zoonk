@@ -28,6 +28,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.StepState
 import com.zoonk.android.data.StepTimes
+import com.zoonk.android.feature.onboarding.setup.LocalSetupWait
 import com.zoonk.android.feature.onboarding.setup.LocalSetupWarmUp
 import com.zoonk.android.feature.onboarding.setup.NoticeReading
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
@@ -36,6 +37,7 @@ import com.zoonk.android.feature.onboarding.setup.PlanNext
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.setup.PlanSoFar
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
+import com.zoonk.android.feature.onboarding.setup.SetupWaitContext
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.WARM_UP_ID
@@ -46,8 +48,10 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.ExamDocument
+import com.zoonk.api.models.OnboardingLibraryCourse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -82,6 +86,23 @@ class WarmUpScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun compact() = capture("compact")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun libraryCourseOffer() {
+        val course =
+            OnboardingLibraryCourse("zoonk", 2, java.util.UUID.fromString("11111111-1111-4111-8111-111111111111"), "atoms", "Atoms")
+        compose.setContent {
+            ZoonkTheme {
+                Surface {
+                    CompositionLocalProvider(LocalSetupWait provides SetupWaitContext(course = course, onOpenCourse = {})) {
+                        SetupColumn(null) { PlanBuilding(MAPPING, onRetry = null) }
+                    }
+                }
+            }
+        }
+        write("library-course-offer-phone")
+    }
 
     @Test
     @Config(qualifiers = "w700dp-h1200dp-xhdpi")
@@ -148,7 +169,6 @@ class WarmUpScreenshots {
                                             onRetryRun = {},
                                             plans = plans,
                                             navigator = rememberAppNavigator(),
-                                            here = AppRoute.GoalSetup(GOAL_ID),
                                         )
                                     }
 
@@ -166,7 +186,6 @@ class WarmUpScreenshots {
                                                 onRetryRun = {},
                                                 plans = readingPlans,
                                                 navigator = rememberAppNavigator(),
-                                                here = AppRoute.GoalSetup(GOAL_ID),
                                             )
                                         }
                                     }
@@ -247,7 +266,7 @@ class WarmUpScreenshots {
 
         scene = 4
         compose.waitForIdle()
-        compose.onNodeWithText("Start").performScrollTo().performClick()
+        compose.onNodeWithText("Start").performClick()
         compose.waitForIdle()
         write("placement-wait-$name")
         compose.onNodeWithText("A summer worker").performScrollTo().performClick()
@@ -260,7 +279,7 @@ class WarmUpScreenshots {
     private fun write(name: String) {
         val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 

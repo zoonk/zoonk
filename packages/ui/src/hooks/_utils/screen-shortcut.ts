@@ -1,6 +1,5 @@
 import { canScrollAlong } from "@zoonk/ui/lib/scroll-overflow";
-
-const MAX_NUMBER_KEY = 9;
+import { SHORTCUTS } from "@zoonk/ui/lib/shortcuts";
 
 export const POPUP_SELECTOR =
   "[role='dialog'], [role='alertdialog'], [role='menu'], [role='listbox']";
@@ -128,7 +127,7 @@ export function getNumberKeyIndex(event: KeyboardEvent): number | null {
     return null;
   }
 
-  const number = Number(event.key);
+  const index = (SHORTCUTS.pick.keys as readonly string[]).indexOf(event.key);
 
-  return Number.isInteger(number) && number >= 1 && number <= MAX_NUMBER_KEY ? number - 1 : null;
+  return index === -1 ? null : index;
 }

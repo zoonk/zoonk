@@ -1,14 +1,15 @@
 "use client";
 
-import { Buddy } from "@zoonk/ui/components/buddy";
 import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
-import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { BarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useAppLocale } from "../_utils/locale";
+import { BuddyArt } from "../buddies/buddy-art";
 import { BuddyTabName } from "../buddies/buddy-labels";
 import { type MissionsCount, MissionsRing } from "../buddies/missions-ring";
-import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { LEARN_TABS, type LearnTab } from "./learn-tabs";
@@ -29,9 +30,14 @@ type LearnNavigationProps = {
   activeTab: LearnTab | null;
   buddy?: TabBuddy;
   missions?: LearnTabMissions;
+  renderBuddyPlaceholder?: (className: string) => React.ReactNode;
 };
 
-function TabLabel({ buddy, tab }: { buddy: TabBuddy; tab: LearnTab }) {
+function TabLabel({
+  buddy,
+  renderBuddyPlaceholder,
+  tab,
+}: Pick<LearnNavigationProps, "buddy" | "renderBuddyPlaceholder"> & { tab: LearnTab }) {
   const t = useExtracted();
 
   if (tab === "today") {
@@ -44,12 +50,15 @@ function TabLabel({ buddy, tab }: { buddy: TabBuddy; tab: LearnTab }) {
 
   if (buddy === undefined) {
     return (
-      <>
+      <span className="relative">
         <span className={LOADING_BUDDY_CLASS}>
           <BuddyTabName buddy={null} />
         </span>
+        {renderBuddyPlaceholder?.(
+          "signed-in:inline-block absolute start-0 top-1/2 hidden h-3 w-full -translate-y-1/2 rounded-sm",
+        )}
         <span className="signed-in:inline sr-only hidden">{t("Buddy")}</span>
-      </>
+      </span>
     );
   }
 
@@ -70,18 +79,17 @@ function MissionsLabel({ missions }: { missions: MissionsCount }) {
 }
 
 const GLYPH_SIZES = {
-  md: { face: "size-7", icon: "size-5", ring: "size-8", ringedFace: "size-6" },
-  sm: { face: "size-5", icon: "size-4", ring: "size-6", ringedFace: "size-4" },
+  md: { face: "size-5", icon: "size-5", ring: "size-5 shrink-0", ringedFace: "size-4" },
+  sm: { face: "size-4", icon: "size-4", ring: "size-4 shrink-0", ringedFace: "size-3" },
 } as const;
 
 function TabIcon({
   buddy,
   missions,
+  renderBuddyPlaceholder,
   size,
   tab,
-}: {
-  buddy: TabBuddy;
-  missions?: LearnTabMissions;
+}: Pick<LearnNavigationProps, "buddy" | "missions" | "renderBuddyPlaceholder"> & {
   size: "md" | "sm";
   tab: LearnTab;
 }) {
@@ -97,19 +105,24 @@ function TabIcon({
     return <MapIcon aria-hidden="true" className={sizes.icon} />;
   }
 
-  const resolved = resolveLearnBuddy(buddy ?? null);
-
   const face = (
-    <Buddy
-      beltColor={resolved.beltColor}
+    <BuddyArt
+      buddy={buddy ?? null}
       className={cn(faceClass, buddy === undefined && LOADING_BUDDY_CLASS)}
-      crop="face"
-      energy={resolved.energy}
-      glasses={resolved.glasses}
-      kind={resolved.kind}
-      studiedToday={resolved.studiedToday}
+      view="face"
     />
   );
+
+  if (buddy === undefined) {
+    return (
+      <span className="relative">
+        {face}
+        {renderBuddyPlaceholder?.(
+          cn("signed-in:block absolute inset-0 hidden rounded-full", faceClass),
+        )}
+      </span>
+    );
+  }
 
   if (!missions) {
     return face;
@@ -124,7 +137,8 @@ function TabIcon({
 
 function NavigationRoot({ ...props }: React.ComponentProps<"nav">) {
   const t = useExtracted();
-  return <nav aria-label={t("Learning tabs")} {...props} />;
+  const locale = useAppLocale();
+  return <nav aria-label={t("Learning tabs")} lang={locale} {...props} />;
 }
 
 /**
@@ -142,46 +156,45 @@ const SIDE_TAB_ITEM_CLASS = cn(
 const PENDING_NAVIGATION_CLASS =
   "[&:has([data-link-pending])_[aria-current=page]]:bg-transparent [&:has([data-link-pending])_[aria-current=page]]:text-muted-foreground";
 
-type SideNavigationProps = LearnNavigationProps & { todayCount?: React.ReactNode };
-
 function SideTab({
   activeTab,
   buddy,
   missions,
+  renderBuddyPlaceholder,
   tab,
-  todayCount,
-}: SideNavigationProps & { tab: LearnTab }) {
+}: LearnNavigationProps & { tab: LearnTab }) {
   const routes = useLearnRoutes();
 
   return (
     <SidebarTooltip
-      label={
-        <>
-          <TabLabel buddy={buddy} tab={tab} />
-          {tab === "today" && todayCount}
-        </>
-      }
+      label={<TabLabel buddy={buddy} renderBuddyPlaceholder={renderBuddyPlaceholder} tab={tab} />}
     >
       <LearnLink
         aria-current={tab === activeTab ? "page" : undefined}
         className={SIDE_TAB_ITEM_CLASS}
+        data-slot="sidebar-item"
         href={routes[tab]}
       >
         <span className="flex size-4 shrink-0 items-center justify-center">
-          <TabIcon buddy={buddy} missions={missions} size="sm" tab={tab} />
+          <TabIcon
+            buddy={buddy}
+            missions={missions}
+            renderBuddyPlaceholder={renderBuddyPlaceholder}
+            size="sm"
+            tab={tab}
+          />
         </span>
         <span className="min-w-0 flex-1 truncate">
-          <TabLabel buddy={buddy} tab={tab} />
+          <TabLabel buddy={buddy} renderBuddyPlaceholder={renderBuddyPlaceholder} tab={tab} />
         </span>
         {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
-        {tab === "today" && todayCount}
       </LearnLink>
     </SidebarTooltip>
   );
 }
 
 /** Place it inside `Sidebar`. */
-export function LearnSideNavigation(props: SideNavigationProps) {
+export function LearnSideNavigation(props: LearnNavigationProps) {
   return (
     <NavigationRoot className={PENDING_NAVIGATION_CLASS} data-slot="learn-side-navigation">
       <ul className="flex flex-col gap-0.5">
@@ -195,47 +208,96 @@ export function LearnSideNavigation(props: SideNavigationProps) {
   );
 }
 
-/**
- * The bar's hairline, its padding around its 52px tabs, and the home indicator's inset: change it
- * with the bar.
- */
-export const ABOVE_BOTTOM_TABS_CLASS = "bottom-[calc(4rem+1px+env(safe-area-inset-bottom))]";
+function TabBarSearch({ onSearch }: { onSearch: () => void }) {
+  const t = useExtracted();
+
+  return (
+    <BarSearch
+      className="text-muted-foreground"
+      label={t({
+        description: "The search button at the end of the phone's tab bar, after the tabs.",
+        message: "Search",
+      })}
+      onClick={onSearch}
+      variant="outline"
+    />
+  );
+}
+
+function BottomTab({
+  activeTab,
+  buddy,
+  missions,
+  renderBuddyPlaceholder,
+  tab,
+}: LearnNavigationProps & { tab: LearnTab }) {
+  const routes = useLearnRoutes();
+  const customName = tab === "buddy" && Boolean(buddy?.name);
+
+  return (
+    <LearnLink
+      aria-current={tab === activeTab ? "page" : undefined}
+      className={cn(
+        TAB_ITEM_CLASS,
+        "text-2xs flex min-h-11 w-full min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1 @max-xs/tabs:min-w-[44px] @max-xs/tabs:px-0",
+      )}
+      href={routes[tab]}
+    >
+      <span className="flex h-6 items-center justify-center">
+        <TabIcon
+          buddy={buddy}
+          missions={missions}
+          renderBuddyPlaceholder={renderBuddyPlaceholder}
+          size="md"
+          tab={tab}
+        />
+      </span>
+      <span
+        className={cn(
+          "max-w-full overflow-clip text-center text-balance hyphens-auto whitespace-nowrap [hyphenate-limit-chars:5_2_2] @max-xs/tabs:min-h-[2lh] @max-xs/tabs:overflow-visible @max-xs/tabs:whitespace-normal",
+          customName &&
+            "truncate @max-xs/tabs:line-clamp-2 @max-xs/tabs:max-h-[2lh] @max-xs/tabs:overflow-hidden @max-xs/tabs:text-wrap @max-xs/tabs:wrap-anywhere @max-xs/tabs:hyphens-none",
+        )}
+        data-custom={customName || undefined}
+        data-slot="tab-title"
+      >
+        <TabLabel buddy={buddy} renderBuddyPlaceholder={renderBuddyPlaceholder} tab={tab} />
+      </span>
+      {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
+    </LearnLink>
+  );
+}
 
 /** Place it after `LearnShellMain`; toasts rise above it (`data-bottom-bar`). */
-export function LearnBottomNavigation({ activeTab, buddy, missions }: LearnNavigationProps) {
-  const routes = useLearnRoutes();
-
+export function LearnBottomNavigation({
+  onSearch,
+  ...props
+}: LearnNavigationProps & { onSearch?: () => void }) {
   return (
     <NavigationRoot
       className={cn(
-        "bg-background sticky bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] lg:hidden",
+        "bg-background @container/tabs sticky bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] lg:hidden",
         PENDING_NAVIGATION_CLASS,
       )}
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
-      <ul className="mx-auto flex justify-around px-4 py-1.5 sm:max-w-3xl sm:px-8">
-        {LEARN_TABS.map((tab) => (
-          <li className="flex" key={tab}>
-            <LearnLink
-              aria-current={tab === activeTab ? "page" : undefined}
+      <div className="mx-auto flex h-16 items-center gap-[calc((100%-16.25rem)/3)] px-(--page-gutter) py-2.5 sm:max-w-3xl @max-xs/tabs:px-2 @max-xs/tabs:py-0">
+        <ul className="flex min-w-0 flex-1 justify-between @max-xs/tabs:gap-1">
+          {LEARN_TABS.map((tab) => (
+            <li
               className={cn(
-                TAB_ITEM_CLASS,
-                "flex min-h-13 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-[0.625rem] px-1 text-[0.6875rem]",
+                "flex max-w-18 min-w-0 flex-1",
+                tab !== "buddy" && "@max-xs/tabs:min-w-max @max-xs/tabs:flex-none",
               )}
-              href={routes[tab]}
+              key={tab}
             >
-              <span className="flex h-7 items-center justify-center">
-                <TabIcon buddy={buddy} missions={missions} size="md" tab={tab} />
-              </span>
-              <span className="max-w-full truncate">
-                <TabLabel buddy={buddy} tab={tab} />
-              </span>
-              {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
-            </LearnLink>
-          </li>
-        ))}
-      </ul>
+              <BottomTab {...props} tab={tab} />
+            </li>
+          ))}
+        </ul>
+        {onSearch && <TabBarSearch onSearch={onSearch} />}
+      </div>
     </NavigationRoot>
   );
 }

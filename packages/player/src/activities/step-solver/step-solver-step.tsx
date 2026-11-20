@@ -14,9 +14,6 @@ import { type ActivityRendererProps } from "../activity-renderer";
 type SolverStep = ActivityRendererProps<"stepSolver">["content"]["fields"]["steps"][number];
 export type StepStatus = "done" | "current" | "later";
 
-const BAR_MIN_PERCENT = 4;
-const PERCENT = 100;
-
 function StepMarker({
   index,
   isFirstPickWrong,
@@ -35,7 +32,7 @@ function StepMarker({
         status === "done" && isFirstPickWrong && "bg-destructive-text text-background",
         status === "current" && "bg-primary text-primary-foreground",
         status === "later" &&
-          "border-border bg-background text-muted-foreground border-2 border-dashed",
+          "border-border bg-background text-muted-foreground border border-dashed",
       )}
     >
       {status === "done" && !isFirstPickWrong && <Check className="size-4" />}
@@ -45,22 +42,14 @@ function StepMarker({
   );
 }
 
-function StepWork({ maxValue, step }: { maxValue: number; step: SolverStep }) {
+function StepWork({ step }: { step: SolverStep }) {
   const format = useFormatNumber();
-
-  const width =
-    maxValue === 0
-      ? BAR_MIN_PERCENT
-      : Math.max((Math.abs(step.value) / maxValue) * PERCENT, BAR_MIN_PERCENT);
 
   return (
     <div className="bg-muted/60 flex flex-col gap-2 rounded-xl p-3">
-      <div aria-hidden="true" className="flex items-center gap-2">
-        <div className="bg-viz-accent-soft h-7 rounded-lg" style={{ width: `${width}%` }} />
-        <span className="text-viz-accent shrink-0 text-sm font-semibold tabular-nums">
-          {format(step.value, { unit: step.unit })}
-        </span>
-      </div>
+      <p className="text-viz-accent text-sm font-semibold tabular-nums">
+        {format(step.value, { unit: step.unit })}
+      </p>
 
       <p className="text-sm tabular-nums">
         <LessonRichText text={step.math} />
@@ -79,7 +68,6 @@ function FirstPick({ text }: { text: string }) {
 export function StepSolverStep({
   index,
   isChecked,
-  maxValue,
   onPick,
   picks,
   status,
@@ -87,7 +75,6 @@ export function StepSolverStep({
 }: {
   index: number;
   isChecked: boolean;
-  maxValue: number;
   onPick: (choiceId: string) => void;
   picks: readonly string[];
   status: StepStatus;
@@ -106,7 +93,10 @@ export function StepSolverStep({
   const firstWrongPick = isFirstPickWrong ? wrongPicks[0] : undefined;
 
   return (
-    <li className="relative flex gap-3" data-slot="step-solver-step">
+    <li
+      className="not-last:before:bg-border relative isolate flex gap-3 not-last:before:absolute not-last:before:top-4 not-last:before:-bottom-9 not-last:before:left-[15px] not-last:before:-z-10 not-last:before:w-0.5"
+      data-slot="step-solver-step"
+    >
       <StepMarker index={index} isFirstPickWrong={isChecked && isFirstPickWrong} status={status} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
@@ -116,15 +106,14 @@ export function StepSolverStep({
             status === "later" && "text-muted-foreground font-normal",
           )}
         >
-          {status === "done" && correct ? (
-            <LessonRichText text={correct.text} />
-          ) : (
-            <RichTextBlocks text={step.prompt} />
-          )}
+          <RichTextBlocks text={step.prompt} />
         </div>
 
-        {status === "done" && (
-          <RichTextBlocks className="text-muted-foreground text-sm" text={step.prompt} />
+        {/* The question keeps its place and its answer goes under it, so nothing reads backwards. */}
+        {status === "done" && correct && (
+          <p className="text-sm leading-snug font-medium">
+            <LessonRichText text={correct.text} />
+          </p>
         )}
 
         {status === "current" && !isChecked && (
@@ -151,7 +140,7 @@ export function StepSolverStep({
 
         {status === "done" && correct && (
           <>
-            <StepWork maxValue={maxValue} step={step} />
+            <StepWork step={step} />
             <p className="text-sm leading-snug">
               <span className="text-success-text font-semibold">{t("Right:")}</span>{" "}
               <LessonRichText text={correct.reason} />

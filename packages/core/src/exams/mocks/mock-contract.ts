@@ -174,7 +174,7 @@ export const mockResultSchema = z
       .optional()
       .meta({
         description:
-          "Lead the result with `earned` of `asked`; null for an exam not scored in points, such as one scored by item response theory or on a scale",
+          "The result in points, `earned` of `asked`; null for an exam not scored in points, such as one scored by item response theory or on a scale",
       }),
     preparation: z.object({ after: z.number(), before: z.number() }).nullable(),
     previous: z.number().nullable(),
@@ -186,6 +186,9 @@ export const mockResultSchema = z
   .meta({ id: "MockResult" });
 
 export type MockResult = z.infer<typeof mockResultSchema>;
+
+/** The subjects the result names, each only where its numbers stand clear of every other subject's. */
+export type MockVerdict = { strongest: string | null; weakest: string | null };
 
 export type MockView = {
   adapt: MockAdaptView | null;
@@ -231,6 +234,7 @@ export type MockView = {
   status: "expired" | "finished" | "ready" | "running";
   timeZone: string | null;
   trueFalseLabels: TrueFalseLabels;
+  verdict: MockVerdict | null;
 };
 
 const anytimeMockChoiceSchema = z.object({
@@ -252,7 +256,14 @@ export const anytimeMockInputSchema = anytimeMockChoiceSchema
       .optional()
       .meta({
         description:
-          "Start with the questions there are when the bank holds fewer than the option asks; send it after a question-writing run finished",
+          "Start with the questions there are when the bank holds fewer than the option asks; send it only after the learner agreed to the `short` answer's numbers",
+      }),
+    afterWriting: z
+      .boolean()
+      .optional()
+      .meta({
+        description:
+          "This start follows a question-writing run (or a writing request that answered `ready`): never answers `needsQuestions`, so a mock still well short of its questions answers `short`",
       }),
   })
   .strict()

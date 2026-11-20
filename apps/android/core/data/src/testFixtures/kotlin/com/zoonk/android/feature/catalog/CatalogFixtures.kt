@@ -31,7 +31,7 @@ private fun courseResult(
 ): CourseResult =
     ApiJson.decodeFromString(
         """{"description":"A first sentence. A second one.","estimatedMinutes":90,"id":"$id","language":"en",
-            "lessonCount":6,"organization":{"id":"$ORG","name":"Zoonk","slug":"zoonk"},"slug":"s","subject":"science",
+            "lessonCount":6,"organization":{"id":"$ORG","name":"Zoonk","slug":"zoonk"},"promise":"A first sentence. A second one.","slug":"s","subject":"science",
             "title":"$title"}""",
     )
 
@@ -46,7 +46,7 @@ fun course(): CourseResource =
             "generationStatus":"completed","id":"$COURSE","language":"en","levels":[{"level":"overview","written":true}],"quickTestMinutes":2,"slug":"atoms","title":"Atoms",
             "landingPage":{"audience":["Curious people"],"outcomes":["Explain what an atom is"],"valueProposition":"See what matter is made of."},
             "examplePlan":{"pace":{"minutes":15,"estimate":{"chapters":[{"chapterId":"$CHAPTER_ONE","week":1,"endWeek":1,"workKinds":[]}],
-              "endDate":"2027-03-01","firstDay":[{"chapterId":"$CHAPTER_ONE","dayMinutes":10,"estimatedMinutes":10,"lessonId":"$LESSON_ONE","title":"Inside an atom"}],
+              "endDate":"2027-03-01","firstDay":[{"chapterId":"$CHAPTER_ONE","dayMinutes":7,"estimatedMinutes":7,"lessonId":"$LESSON_ONE","title":"Inside an atom"}],
               "numbers":{"context":{"dailyMinutes":15,"fromDate":"2026-10-28","fullCourse":true,"paceFactor":1,"weekdayMinutes":[0,15,15,15,15,15,0]},
                 "scheduledMinutes":120,"workload":{"checkpointMinutes":10,"lessonMinutes":90,"practiceMinutes":20,"unwrittenLessonMinutes":0}},
               "publishedContent":{"lessons":3,"minutes":90},"weeks":2,
@@ -69,7 +69,7 @@ fun chapter(
     lessons: List<Pair<String, String>>,
 ): CourseChapter =
     ApiJson.decodeFromString(
-        """{"courseId":"$COURSE","description":"What $title covers.","generationStatus":"completed","id":"$id","language":"en",
+        """{"courseId":"$COURSE","description":"${if (title == "Bonds") "How atoms share or transfer electrons to form bonds." else "The nucleus, electrons, and how they make up an atom."}","generationStatus":"completed","id":"$id","language":"en",
             "level":"$level","objectives":["Name the parts"],"position":$position,"slug":"c","title":"$title","lessonCount":${lessons.size},
             "lessons":[${lessons.joinToString(
             ",",

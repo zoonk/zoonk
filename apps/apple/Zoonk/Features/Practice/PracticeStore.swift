@@ -8,10 +8,12 @@ final class PracticeStore {
   private let cache: AppCache
   private var mistakeLists: [String: Resource<Components.Schemas.MistakeList>] = [:]
   private var patterns: [String: Resource<NoticedPattern>] = [:]
+  @ObservationIgnored private let saves: LearnerSaves
 
   init(api: PracticeAPI, cache: AppCache) {
     self.api = api
     self.cache = cache
+    saves = LearnerSaves(cache: cache)
   }
 
   func mistakes(goalId: String?, fixed: Bool) -> Resource<Components.Schemas.MistakeList> {
@@ -57,17 +59,23 @@ final class PracticeStore {
   }
 
   /// Returns `.obsolete` (never publish, navigate or start the next write) when the learner or the
-  /// screen is gone. Refusals the screens name (`PracticeAPIError`) come back as values.
+  /// screen is gone. Refusals the screens name (`PracticeAPIError`) come back as values. A write
+  /// the learner made on purpose (`onPurpose`), such as stopping, saves even when its screen goes
+  /// away first (`LearnerSaves`).
   func write<Value: Sendable>(
-    _ change: PracticeChange, _ operation: @escaping (AuthenticatedSession) async throws -> Value
+    _ change: PracticeChange, onPurpose: Bool = false,
+    _ operation: @escaping (AuthenticatedSession) async throws -> Value
   ) async -> PracticeWrite<Value> {
-    let result = await cache.mutate(invalidating: change.domains) { identity in
-      do {
-        return Result<Value, PracticeAPIError>.success(try await operation(identity))
-      } catch let refusal as PracticeAPIError {
-        return .failure(refusal)
+    let save: @MainActor () async -> MutationResult<Result<Value, PracticeAPIError>> = {
+      await self.cache.mutate(invalidating: change.domains) { identity in
+        do {
+          return Result<Value, PracticeAPIError>.success(try await operation(identity))
+        } catch let refusal as PracticeAPIError {
+          return .failure(refusal)
+        }
       }
     }
+    let result = onPurpose ? await saves.save(save) : await save()
 
     switch result {
     case .done(.success(let value)): return .done(value)

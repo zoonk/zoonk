@@ -331,7 +331,7 @@ describe("reverting a batch", () => {
     await expect(
       proposeContentFixRevert({ batchId: batch.batchId, reason: "The old titles were right." }),
     ).resolves.toMatchObject({
-      message: expect.stringContaining("already reverted or has a revert waiting"),
+      message: expect.stringContaining("already undone or has an undo waiting"),
       status: "invalid",
     });
   });

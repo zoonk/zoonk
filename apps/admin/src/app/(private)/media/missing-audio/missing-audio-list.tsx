@@ -10,16 +10,17 @@ import {
   type MissingAudioResource,
   listMissingAudio,
 } from "@/data/media/list-missing-audio";
+import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { type MissingAudioResourceKind } from "./_actions/upload-missing-audio";
 import { MissingAudioUploadForm } from "./missing-audio-upload-form";
 
+/** The upload sits under its text, so a phone shows the row's action without scrolling sideways. */
 const MISSING_AUDIO_COLUMNS: AdminTableColumn[] = [
-  { label: "Text" },
+  { label: "Text", twoLines: true },
   { label: "Language" },
-  { label: "Used in" },
-  { align: "right", label: "Audio" },
+  { label: "Used in", size: "text" },
 ];
 
 function getQueueDescription(total: number): string | undefined {
@@ -74,19 +75,19 @@ function MissingAudioTable({
     >
       {resources.map((resource) => (
         <AdminTableRow key={resource.id}>
-          <TableCell className="max-w-80 min-w-48 font-medium whitespace-normal">
-            {resource.text}
+          <TableCell className="whitespace-normal" data-stacked>
+            <div className="flex flex-col items-start gap-2">
+              <span className="font-medium">{resource.text}</span>
+              <MissingAudioUploadForm
+                resourceId={resource.id}
+                resourceKind={kind}
+                text={resource.text}
+              />
+            </div>
           </TableCell>
-          <TableCell className="uppercase">{resource.targetLanguage}</TableCell>
-          <TableCell className="max-w-80 min-w-48 whitespace-normal">
+          <TableCell>{languageName(resource.targetLanguage)}</TableCell>
+          <TableCell className="whitespace-normal">
             <MissingAudioLessons resource={resource} />
-          </TableCell>
-          <TableCell>
-            <MissingAudioUploadForm
-              resourceId={resource.id}
-              resourceKind={kind}
-              text={resource.text}
-            />
           </TableCell>
         </AdminTableRow>
       ))}

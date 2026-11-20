@@ -5,94 +5,90 @@ import { VisitorLook } from "@/components/learner/visitor-look";
 import { PublicHomeLink } from "@/components/public/public-top-bar";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { answerHere, openingHere } from "@/lib/session/tap-answer";
-import {
-  type LearnerSummaryGoal,
-  type LearnerSummaryWaitingGoal,
-} from "@zoonk/core/learner/summary/contract";
 import { GoalSwitcher } from "@zoonk/learn/goal-switcher";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { Suspense } from "react";
 import { createOnboardingGoalsAction } from "../../(onboarding)/start/onboarding-actions";
 import { useOnboardingNavigation } from "../../(onboarding)/start/use-onboarding-navigation";
+import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 import { switchGoal } from "./switch-goal";
+import { toSwitcherGoals, toSwitcherWaitingGoals } from "./switcher-goals";
 
 type Placement = "bar" | "sidebar";
 
-function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
-  return goals.flatMap(
-    ({
-      dailyMinutes,
-      displayName,
-      id,
-      kind,
-      languageFlag,
-      status,
-      targetDate,
-      targetLanguage,
-      targetRegion,
-    }) =>
-      status === "archived" || (kind === "explain" && status === "completed")
-        ? []
-        : [
-            {
-              dailyMinutes,
-              displayName,
-              id,
-              kind,
-              languageFlag,
-              status,
-              targetDate,
-              targetLanguage,
-              targetRegion,
-            },
-          ],
+/** In the sidebar the logo starts on the items' icon edge. */
+function SidebarHomeLink() {
+  return (
+    <span className="flex px-2">
+      <PublicHomeLink />
+    </span>
   );
 }
 
-function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
-  return goals.flatMap(({ id, input, languageFlag, locked, displayName }) => {
-    const [goal] = input.goals;
+type GoalMenuProps = {
+  placement?: Placement;
+  /** What someone without a session gets in the menu's place; the logo when left out. */
+  visitor?: React.ReactNode;
+};
 
-    return goal
-      ? [
-          {
-            displayName,
-            id,
-            languageFlag,
-            locked,
-            targetLanguage: goal.targetLanguage ?? null,
-            targetRegion: goal.targetRegion ?? null,
-          },
-        ]
-      : [];
-  });
+function getVisitorStart({ placement, visitor }: GoalMenuProps): React.ReactNode {
+  if (visitor) {
+    return visitor;
+  }
+
+  return placement === "sidebar" ? <SidebarHomeLink /> : <PublicHomeLink />;
 }
 
-function PendingGoalMenu({ placement = "bar" }: { placement?: Placement }) {
+/** Holds the menu's room while the learner loads; a browser with no session shows `visitor` there. */
+export function PendingGoalMenu({
+  placement = "bar",
+  skeleton,
+  visitor,
+}: GoalMenuProps & { skeleton?: React.ReactNode }) {
   return (
     <>
-      <VisitorLook>
-        <PublicHomeLink />
-      </VisitorLook>
+      <VisitorLook>{getVisitorStart({ placement, visitor })}</VisitorLook>
       <div
         aria-hidden="true"
-        className={cn("signed-in:block hidden", placement === "sidebar" ? "h-8 w-full" : "h-9")}
-      />
+        className={cn(
+          "signed-in:block hidden",
+          placement === "sidebar" ? "h-8 w-full px-2" : "h-9",
+        )}
+      >
+        {skeleton}
+      </div>
     </>
   );
 }
 
-function GoalMenu({ placement }: { placement?: Placement }) {
+function PendingAppGoalMenu(props: GoalMenuProps) {
+  return (
+    <PendingGoalMenu
+      {...props}
+      skeleton={
+        <PrivateShellPlaceholder>
+          <div className="flex h-full items-center gap-2.5">
+            <Skeleton className="size-4 shrink-0 rounded-sm" />
+            <Skeleton className="h-3 w-24 rounded-sm" />
+          </div>
+        </PrivateShellPlaceholder>
+      }
+    />
+  );
+}
+
+function GoalMenu({ placement, visitor }: GoalMenuProps) {
   const learner = useFrameLearner();
   const navigation = useOnboardingNavigation();
 
   if (learner.status === "visitor") {
-    return <PublicHomeLink />;
+    return getVisitorStart({ placement, visitor });
   }
 
   if (learner.status !== "ready") {
-    return <PendingGoalMenu placement={placement} />;
+    return <PendingAppGoalMenu placement={placement} visitor={visitor} />;
   }
 
   const { waitingGoals } = learner.summary;
@@ -152,10 +148,10 @@ function GoalMenu({ placement }: { placement?: Placement }) {
 }
 
 /** An explanation read to the end leaves the switcher: search finds it again. */
-export function LearnGoalMenu({ placement }: { placement?: Placement }) {
+export function LearnGoalMenu(props: GoalMenuProps) {
   return (
-    <Suspense fallback={<PendingGoalMenu placement={placement} />}>
-      <GoalMenu placement={placement} />
+    <Suspense fallback={<PendingAppGoalMenu {...props} />}>
+      <GoalMenu {...props} />
     </Suspense>
   );
 }

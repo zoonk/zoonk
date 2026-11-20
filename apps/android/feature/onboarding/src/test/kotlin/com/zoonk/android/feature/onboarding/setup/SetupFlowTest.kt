@@ -5,6 +5,7 @@ import com.zoonk.api.models.OnboardingStep.FOLLOW_UPS
 import com.zoonk.api.models.OnboardingStep.LEVEL
 import com.zoonk.api.models.OnboardingStep.PLAN
 import com.zoonk.api.models.OnboardingStep.PURPOSE
+import com.zoonk.api.models.OnboardingStep.REASON
 import com.zoonk.api.models.OnboardingStep.SCHEDULE
 import com.zoonk.api.models.OnboardingStep.TARGET_DATE
 import org.junit.Assert.assertEquals
@@ -43,6 +44,18 @@ class SetupFlowTest {
     }
 
     @Test
+    fun noDashesWhileTheQuestionThatCanAddOneIsCurrentOrAhead() {
+        assertNull(setupProgress(SetupFlow(GOAL, LEVEL), listOf(PURPOSE, SCHEDULE, PLAN)))
+        assertNull(setupProgress(SetupFlow(GOAL, PURPOSE, listOf(LEVEL)), listOf(SCHEDULE, PLAN)))
+        assertEquals(SetupProgress(answered = 1, total = 3), setupProgress(SetupFlow(GOAL, LEVEL, listOf(PURPOSE)), listOf(SCHEDULE, PLAN)))
+    }
+
+    @Test
+    fun noDashesWhileTheLanguageReasonCanAddExamQuestions() {
+        assertNull(setupProgress(SetupFlow(GOAL, REASON, listOf(LEVEL, FOLLOW_UPS, TARGET_DATE, SCHEDULE)), listOf(PLAN)))
+    }
+
+    @Test
     fun theDateOpenedFromTheTimeHoldsItsFirstPlaceAndCountsOnce() {
         val steps = listOf(SCHEDULE, BUDDY, PLAN)
 
@@ -73,15 +86,15 @@ class SetupFlowTest {
     }
 
     @Test
-    fun allProfileQuestionsShareOneProgressDot() {
-        val profile =
-            com.zoonk.api.models.OnboardingStep.entries.filter {
-                it.value in
-                    com.zoonk.api.models.ProfileQuestion.entries
-                        .map { question -> question.value }
-            }
-        val current = SetupFlow(GOAL, com.zoonk.api.models.OnboardingStep.WATCH, listOf(PURPOSE) + profile.take(3))
-        assertEquals(SetupProgress(answered = 1, total = 3), setupProgress(current, profile.drop(3) + SCHEDULE + PLAN))
+    fun aboutYouScreensShareOnePlaceInTheCount() {
+        val work = com.zoonk.api.models.OnboardingStep.WORK
+        val tools = com.zoonk.api.models.OnboardingStep.TOOLS
+        val watch = com.zoonk.api.models.OnboardingStep.WATCH
+        val listen = com.zoonk.api.models.OnboardingStep.LISTEN
+        val onWatch = SetupFlow(GOAL, watch, listOf(PURPOSE, LEVEL, work, tools))
+        assertEquals(SetupProgress(answered = 2, total = 5), setupProgress(onWatch, listOf(watch, listen, BUDDY, SCHEDULE, PLAN)))
+        val onBuddy = SetupFlow(GOAL, BUDDY, listOf(PURPOSE, LEVEL, work, tools, watch, listen))
+        assertEquals(SetupProgress(answered = 3, total = 5), setupProgress(onBuddy, listOf(BUDDY, SCHEDULE, PLAN)))
     }
 
     @Test

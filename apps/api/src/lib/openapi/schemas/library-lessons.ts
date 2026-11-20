@@ -44,9 +44,7 @@ const stepCitationSchema = z
     z.object({
       checkedAt: z.iso
         .datetime()
-        .meta({
-          description: 'When the document was last fetched and found current ("Checked Sep 2026")',
-        }),
+        .meta({ description: "When the document was last fetched and found current" }),
       kind: z.literal("source"),
       publisher: z.string().nullable(),
       title: z.string(),
@@ -57,7 +55,7 @@ const stepCitationSchema = z
   .nullable()
   .meta({
     description:
-      "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+      "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
   });
 
 const screenPictureSchema = z
@@ -66,7 +64,7 @@ const screenPictureSchema = z
       .string()
       .meta({
         description:
-          "What the picture shows, with every detail its question needs: show it in the picture's place until the picture is drawn and loaded",
+          "What the picture shows, with every detail its question needs, so the question can be answered without it",
       }),
     required: z
       .boolean()
@@ -143,6 +141,24 @@ const activityStepSchema = teachingStepSchema("activity").extend({
       description:
         "How far a `numeric` answer may always be from the right one on this template, when the check's own tolerance is tighter (a guess on a slider can't land closer than its steps): right within either. Null when the template has none",
     }),
+  roundedAnswer: z
+    .object({
+      places: z
+        .int()
+        .nonnegative()
+        .nullable()
+        .meta({
+          description:
+            "The decimal places the answer is rounded to, the coarsest rounding the check accepts. Null when the answer is a whole number, so it needs no rounding",
+        }),
+      value: z.number().meta({ description: "The answer rounded to `places`" }),
+    })
+    .nullable()
+    .meta({
+      description:
+        "A `numeric` check's answer rounded as far as the check still accepts it. Its `places` are the precision of the answer's text in a check result: `correctAnswer`, and the learner's `answerText` when rounding it to them keeps its grade; otherwise `answerText` has the fewest digits that keep its grade. A check result's `expected` stays exact. Null on other checks",
+      id: "ActivityRoundedAnswer",
+    }),
 });
 
 // A ref to the named union needs an allOf wrapper to be optional, which strict clients can't decode; its options stay refs.
@@ -201,7 +217,7 @@ export const playableLibraryLessonResponseSchema = z
           .nullable()
           .meta({
             description:
-              "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
+              "The lesson map, which comes after the last screen (except after testing out) and stays in the lesson's menu once the lesson ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
           }),
         targetLanguage: z.string().nullable(),
       }),
@@ -210,7 +226,7 @@ export const playableLibraryLessonResponseSchema = z
         .array(lessonTutorSuggestionSchema)
         .meta({
           description:
-            "The tutor's suggestions for the lesson's screens, worded in the lesson's language: show `label` on the chip and send `id` as `suggestion` when the learner taps it (`POST /v1/lessons/{lessonId}/questions`). The question is stored in these same words",
+            "The tutor's suggestions for the lesson's screens, worded in the lesson's language: `label` is the suggestion's words, and `id` is what `POST /v1/lessons/{lessonId}/questions` takes as `suggestion` when the learner picks it. The question is stored in these same words",
         }),
     }),
     z.object({ lesson: z.object(lessonOutlineShape), status: z.literal("notGenerated") }),

@@ -5,6 +5,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
   ActivityCanvas,
+  ActivityCanvasLabel,
   ActivityReadout,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
@@ -19,7 +20,8 @@ type AreaModelProps = ActivityRendererProps<"areaModel">;
 type Fields = AreaModelProps["content"]["fields"];
 type Side = { parts: number[]; total: number };
 
-const GRID_PADDING = { bottom: 4, left: 36, right: 8, top: 28 };
+// The rows' numbers start on the card's text edge, with room for three digits before the split handle.
+const GRID_PADDING = { bottom: 4, left: 44, right: 44, top: 33 };
 const BAR_PADDING = { bottom: 8, left: 8, right: 8, top: 32 };
 const BAR_HEIGHT = 88;
 const MIN_GRID_HEIGHT = 140;
@@ -87,6 +89,7 @@ export function AreaModelActivity({ content, labelId, phase }: AreaModelProps) {
 
   return (
     <ActivityCanvas labelId={labelId}>
+      {!isChecked && <ActivityCanvasLabel>{t("Drag to split")}</ActivityCanvasLabel>}
       <ActivityPlot
         height={gridHeight(fields)}
         padding={fields.model === "area" ? GRID_PADDING : BAR_PADDING}

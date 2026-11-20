@@ -20,158 +20,59 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.country.lessonVarietyName
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.planWeekday
 import com.zoonk.android.ui.format.varietyName
+import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanMockSchedule
-import com.zoonk.api.models.PlanPhase
-import com.zoonk.api.models.PlanPhaseChaptersInner
-import com.zoonk.api.models.PlanPhaseCheckpoint
 import com.zoonk.api.models.PlanSteering
 import kotlinx.datetime.toJavaLocalDate
-import java.time.DayOfWeek
-import java.time.format.TextStyle
 
-@Composable
-internal fun NextOnPath(
-    page: PlanPageState,
-    links: PlanLinks,
-    modifier: Modifier = Modifier,
-) {
-    val plan = page.plan
-    val mockDate = plan.nextMockDate
-    val checkpoint = plan.nextCheckpoint
-    val chapter = if (page.isExam) null else plan.nextChapter
-    val afterExam = plan.phases.filter { it.kind == PlanPhase.Kind.AFTER_EXAM }
-    val hasNext = mockDate != null || chapter?.chapterId != null || checkpoint != null || afterExam.isNotEmpty()
-    if (!hasNext && !page.isExam) return
-    // A challenge in the next session comes before the next phase's lessons, as on Today.
-    val challengeFirst =
-        checkpoint?.`when` == PlanPhaseCheckpoint.`When`.NEXT_SESSION &&
-            plan.phases.indexOfFirst { it.checkpoint === checkpoint } <
-            plan.phases.indexOfFirst { phase -> phase.chapters.any { it === chapter } }
-
-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(stringResource(R.string.plan_next_on_path))
-        Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            mockDate?.let { MockRow(page, it, links) }
-            if (challengeFirst) CheckpointRow(page, checkpoint, links)
-            chapter?.let { NextChapterRow(it, links) }
-            if (!challengeFirst) checkpoint?.let { CheckpointRow(page, it, links) }
-            FinishRow(page, links)
-            afterExam.forEach { AfterExamRow(page, it) }
-        }
-    }
-}
-
-@Composable
-private fun NextChapterRow(
-    chapter: PlanPhaseChaptersInner,
-    links: PlanLinks,
-) {
-    val id = chapter.chapterId ?: return
-    val count =
-        PlanDateWords(
-            stringResource(R.string.plan_lessons_count, chapter.lessonsDone.toInt(), chapter.lessonsTotal.toInt()),
-            lessonsDoneSpoken(chapter.lessonsDone, chapter.lessonsTotal),
-        )
-    ListRow(
-        headline = { Text(chapter.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
-        onClick = { links.chapter(id.toString()) },
-        leading = { ChapterMark(chapter, isNext = true) },
-        meta = { TrailingText(count) },
-    )
-}
-
-@Composable
-private fun FinishRow(
-    page: PlanPageState,
-    links: PlanLinks,
-) {
-    val finish = page.finish
-    val date =
-        when {
-            finish != null -> planDate(finish.date, page.today, finish.estimate, finish.month).text
-            page.isExam -> stringResource(R.string.plan_date_to_be_confirmed)
-            else -> null
-        }
-
-    ListRow(
-        headline = { Text(page.goal.displayName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        onClick = if (links.hasExam) links::exam else null,
-        leading = { FlagMark() },
-        supporting = date?.let { { Text(it) } },
-    )
-}
-
-@Composable
-private fun AfterExamRow(
-    page: PlanPageState,
-    phase: PlanPhase,
-) {
-    val end = phase.end?.let { planDate(it, page.today, estimate = true, month = true) }
-    val count = phase.mocks.count.toInt()
-    val locked = count > 0 && page.mocksRequirePlus
-
-    ListRow(
-        headline = { Text(phaseName(phase, page.mocksRequirePlus)) },
-        leading = { StatusMark(MarkStatus.Todo) },
-        supporting = if (count > 0) ({ Text(mocksForNextSitting(page, count)) }) else null,
-        meta =
-            if (locked || end != null) {
-                {
-                    if (locked) PlusMark()
-                    end?.let { TrailingText(it) }
-                }
-            } else {
-                null
-            },
-    )
-}
-
-@Composable
-private fun mocksForNextSitting(
-    page: PlanPageState,
-    count: Int,
-): String {
-    val sitting =
-        page.plan.schedule.nextSitting
-            ?.toJavaLocalDate()
-    return if (sitting != null) {
-        pluralStringResource(R.plurals.plan_mocks_next_sitting_on, count, count, formatPlanDate(sitting, page.today, currentLocale()))
-    } else {
-        pluralStringResource(R.plurals.plan_mocks_next_sitting, count, count)
-    }
-}
-
-/** Other places the Plan leads; on wide windows the drawer lists them, so they show only where it doesn't. */
+/**
+ * Main's "More": the lessons already done and the mind maps, which the drawer lists on wide windows instead, then the
+ * exam's page, which the page's menu holds beside the aside.
+ */
 @Composable
 internal fun MoreSection(
     links: PlanLinks,
+    completedLessons: Boolean,
+    mindMaps: Boolean,
+    exam: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    if (!links.hasExam) return
+    val showsExam = exam && links.hasExam
+    if (!completedLessons && !mindMaps && !showsExam) return
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_more))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            LinkRow(R.drawable.ic_school, stringResource(R.string.plan_about_exam), links::exam)
+            if (completedLessons) {
+                LinkRow(
+                    R.drawable.ic_history,
+                    stringResource(R.string.navigation_completed_lessons),
+                    links::completedLessons,
+                )
+            }
+            if (mindMaps) LinkRow(R.drawable.ic_lan, stringResource(R.string.plan_mind_maps), links::mindMaps)
+            if (showsExam) LinkRow(R.drawable.ic_school, stringResource(R.string.plan_about_exam), links::exam)
         }
     }
 }
@@ -185,7 +86,7 @@ private fun LinkRow(
     ListRow(
         headline = { Text(text) },
         onClick = onClick,
-        leading = { Icon(painterResource(icon), contentDescription = null) },
+        leading = { MarkIcon(icon) },
     )
 }
 
@@ -208,24 +109,26 @@ internal fun PlanProperties(
         SectionHeader(stringResource(R.string.plan_your_plan))
         Column {
             PropertyRow(
-                label = stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_goal_date),
+                label = stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_deadline),
                 value = goalDateValue(page),
                 onClick = onOpen?.let { { it(PlanSection.Date) } },
                 onClickLabel = adjust,
             )
             PropertyRow(
-                stringResource(R.string.plan_time_a_day_label),
+                stringResource(R.string.plan_daily_study_time),
                 dailyTimeValue(page),
                 onOpen?.let { { it(PlanSection.Time) } },
                 onClickLabel = adjust,
             )
             PropertyRow(
                 stringResource(R.string.plan_study_days),
-                studyDaysWords(
-                    schedule.weekdayMinutes.map {
-                        it.toInt()
-                    },
-                    locale,
+                AnnotatedString(
+                    studyDaysWords(
+                        schedule.weekdayMinutes.map {
+                            it.toInt()
+                        },
+                        locale,
+                    ),
                 ),
                 onOpen?.let { { it(PlanSection.Days) } },
                 onClickLabel = adjust,
@@ -236,14 +139,13 @@ internal fun PlanProperties(
                     value = mockScheduleValue(page, mocks),
                     onClick = if (links.hasExam) links::exam else null,
                     onClickLabel = stringResource(R.string.plan_about_exam),
-                    plus = page.mocksRequirePlus,
                 )
             }
             page.plan.examChoices.forEach { choice ->
                 val picked = choice.pickedNames()
                 PropertyRow(
                     label = choice.group,
-                    value = if (picked.isEmpty()) stringResource(R.string.plan_choose) else joinList(picked),
+                    value = AnnotatedString(if (picked.isEmpty()) stringResource(R.string.plan_choose) else joinList(picked)),
                     onClick = onOpen?.let { { it(PlanSection.Choices) } },
                     onClickLabel = adjust,
                     warning = picked.isEmpty(),
@@ -252,7 +154,7 @@ internal fun PlanProperties(
             page.variety?.let { variety ->
                 PropertyRow(
                     stringResource(R.string.onboarding_row_language),
-                    varietyName(variety.language, variety.region, locale),
+                    AnnotatedString(varietyName(variety.language, variety.region, locale)),
                     onOpen?.let { { it(PlanSection.Language) } },
                     onClickLabel = adjust,
                 )
@@ -267,11 +169,13 @@ internal fun PlanProperties(
                     PropertyRow(
                         label = stringResource(R.string.plan_practice),
                         value =
-                            if (practiced.size == PlanSteering.SkippedActivities.entries.size) {
-                                stringResource(R.string.plan_everything)
-                            } else {
-                                practiced.map { activityName(it) }.factsLine()
-                            },
+                            AnnotatedString(
+                                if (practiced.size == PlanSteering.SkippedActivities.entries.size) {
+                                    stringResource(R.string.plan_everything)
+                                } else {
+                                    practiced.map { activityName(it) }.factsLine()
+                                },
+                            ),
                         onClick = onOpen?.let { { it(PlanSection.Practice) } },
                         onClickLabel = adjust,
                     )
@@ -306,23 +210,24 @@ private fun CountryRows(
                     R.string.country_content_label
                 },
             ),
-            country.name,
+            AnnotatedString(country.name),
             onOpen.takeIf { editable },
             onClickLabel = adjust,
         )
-        country.lessonVariety?.let { PropertyRow(stringResource(R.string.country_lesson_language_label), lessonVarietyName(it), null) }
+        country.lessonVariety?.let {
+            PropertyRow(stringResource(R.string.country_lesson_language_label), AnnotatedString(lessonVarietyName(it)), null)
+        }
     }
-    goal.examplesCountry?.let { PropertyRow(stringResource(R.string.country_lesson_examples_label), it.name, null) }
+    goal.examplesCountry?.let { PropertyRow(stringResource(R.string.country_lesson_examples_label), AnnotatedString(it.name), null) }
 }
 
 /** A label and its value on one line, the value at the end; when both don't fit (large text, a long country name), the value goes under the label. */
 @Composable
 private fun PropertyRow(
     label: String,
-    value: String,
+    value: AnnotatedString,
     onClick: (() -> Unit)?,
     onClickLabel: String? = null,
-    plus: Boolean = false,
     warning: Boolean = false,
 ) {
     FlowRow(
@@ -349,7 +254,6 @@ private fun PropertyRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (plus) PlusMark()
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
@@ -361,18 +265,33 @@ private fun PropertyRow(
 }
 
 @Composable
-private fun goalDateValue(page: PlanPageState): String {
-    val schedule = page.plan.schedule
-    val target = schedule.targetDate ?: return stringResource(if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_no_date)
-    return planDate(target.toJavaLocalDate(), page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text
+private fun goalDateValue(page: PlanPageState): AnnotatedString {
+    val finish = page.finish
+    if (finish == null) {
+        val unset = if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_end_none_set
+        return AnnotatedString(stringResource(unset))
+    }
+    val date = planDate(finish.date, page.today, finish.estimate, finish.month).text
+    if (finish.estimate && page.plan.schedule.targetDate == null) {
+        // No date set, so the estimate goes under it as its own line, never read as the date.
+        val estimate = withData(stringResource(R.string.plan_estimated_finish, date), date)
+        val muted = SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = MaterialTheme.typography.bodySmall.fontSize)
+        return buildAnnotatedString {
+            append(stringResource(R.string.plan_end_none_set))
+            append("\n")
+            withStyle(muted) { append(estimate) }
+        }
+    }
+    return withData(date, date)
 }
 
 @Composable
-private fun dailyTimeValue(page: PlanPageState): String {
+private fun dailyTimeValue(page: PlanPageState): AnnotatedString {
     val locale = currentLocale()
     val shape = page.plan.schedule.shape
     val weekdays = formatMinutes(shape.weekdays.toInt(), locale)
-    return shape.weekend?.let { stringResource(R.string.plan_time_weekends, weekdays, formatMinutes(it.toInt(), locale)) } ?: weekdays
+    val weekend = shape.weekend?.let { formatMinutes(it.toInt(), locale) } ?: return withData(weekdays, weekdays)
+    return withData(stringResource(R.string.plan_time_weekends, weekdays, weekend), weekdays, weekend)
 }
 
 internal fun studyDaysText(
@@ -384,7 +303,7 @@ internal fun studyDaysText(
     val mondayFirst = (0 until DAYS_PER_WEEK).map { (it + 1) % DAYS_PER_WEEK }
     val days = mondayFirst.filter { weekdayMinutes.getOrElse(it) { 0 } > 0 }
 
-    fun short(day: Int) = DayOfWeek.of(if (day == 0) DAYS_PER_WEEK else day).getDisplayName(TextStyle.SHORT, locale)
+    fun short(day: Int) = weekdayNames(locale).shortInSentence.getValue(planWeekday(day))
     val positions = days.map(mondayFirst::indexOf)
     val oneRun = positions.zipWithNext().all { (a, b) -> b == a + 1 }
     return when {
@@ -411,15 +330,23 @@ private const val MIN_RANGE_DAYS = 3
 private fun mockScheduleValue(
     page: PlanPageState,
     mocks: PlanMockSchedule,
-): String {
+): AnnotatedString {
     val weekday = mocks.weekday?.toInt()
     if (weekday != null) {
         val days = weekdaysWord(weekday)
         val every = mocks.everyWeeks?.toInt()
-        return if (every != null && every > 1) pluralStringResource(R.plurals.plan_mocks_every_weeks, every, days, every) else days
+        return AnnotatedString(
+            if (every != null &&
+                every > 1
+            ) {
+                pluralStringResource(R.plurals.plan_mocks_every_weeks, every, days, every)
+            } else {
+                days
+            },
+        )
     }
     val date = formatPlanDate(mocks.nextDate.toJavaLocalDate(), page.today, currentLocale())
-    return if (mocks.count > 1) stringResource(R.string.plan_mocks_next, date) else date
+    return withData(if (mocks.count > 1) stringResource(R.string.plan_mocks_next, date) else date, date)
 }
 
 /** "Sundays" … "Saturdays", Sunday counted 0 as the API counts it. */

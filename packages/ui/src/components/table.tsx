@@ -1,22 +1,27 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { HorizontalScroll } from "./horizontal-scroll";
 import type * as React from "react";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+/** Wider than its room, it scrolls with the scroll sign; `scrollLabels` name the box and its buttons. */
+function Table({
+  className,
+  scrollLabels,
+  ...props
+}: React.ComponentProps<"table"> & { scrollLabels: { box: string; left: string; right: string } }) {
   return (
-    <div
-      className="relative w-full overflow-x-auto overscroll-x-contain"
-      data-slot="table-container"
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Overflowing tables need a keyboard scroll target.
-      tabIndex={0}
+    <HorizontalScroll
+      box={{ label: scrollLabels.box }}
+      className="w-full min-w-0"
+      labels={scrollLabels}
     >
       <table
         className={cn("w-full caption-bottom text-sm tabular-nums", className)}
         data-slot="table"
         {...props}
       />
-    </div>
+    </HorizontalScroll>
   );
 }
 
@@ -44,11 +49,19 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   );
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+/** A column of numbers that are compared: Geist Mono, digit under digit, ending on one edge (craft T4). */
+const NUMERIC_CLASS = "text-right font-mono tabular-nums";
+
+function TableHead({
+  className,
+  numeric = false,
+  ...props
+}: React.ComponentProps<"th"> & { numeric?: boolean }) {
   return (
     <th
       className={cn(
         "text-muted-foreground h-9 px-3 text-left align-middle text-xs font-medium whitespace-nowrap first:pl-0 last:pr-0 has-[[role=checkbox]]:pr-0",
+        numeric && "text-right",
         className,
       )}
       data-slot="table-head"
@@ -57,11 +70,16 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   );
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+function TableCell({
+  className,
+  numeric = false,
+  ...props
+}: React.ComponentProps<"td"> & { numeric?: boolean }) {
   return (
     <td
       className={cn(
         "px-3 py-2 align-middle whitespace-nowrap first:pl-0 last:pr-0 has-[[role=checkbox]]:pr-0",
+        numeric && cn(NUMERIC_CLASS, "text-compact leading-5"),
         className,
       )}
       data-slot="table-cell"
@@ -70,14 +88,4 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   );
 }
 
-function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
-  return (
-    <caption
-      className={cn("text-muted-foreground mt-4 text-sm", className)}
-      data-slot="table-caption"
-      {...props}
-    />
-  );
-}
-
-export { Table, TableHeader, TableBody, TableHead, TableRow, TableCell, TableCaption };
+export { Table, TableHeader, TableBody, TableHead, TableRow, TableCell };

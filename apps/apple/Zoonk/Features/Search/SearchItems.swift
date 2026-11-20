@@ -68,7 +68,7 @@ func searchFallback(question: String, summary: LearnerSummary?) -> SearchGroup {
     return SearchGroup(
       id: "fallback",
       title: String(
-        localized: "New goal", table: "Search", comment: "Search group to start a goal"),
+        localized: "Start a goal", table: "Search"),
       items: [startGoal])
   }
 
@@ -97,7 +97,7 @@ private func actions(_ summary: LearnerSummary) -> SearchGroup {
         title: String(
           localized: "Continue today's session", table: "Search",
           comment: "Search action that continues the day's session"),
-        systemImage: "play.fill",
+        systemImage: "play",
         action: .open(.session)))
   }
 
@@ -186,10 +186,10 @@ private func places(_ summary: LearnerSummary) -> SearchGroup {
     SearchItem(
       id: "logbook",
       title: String(
-        localized: "Logbook", table: "Search", comment: "Search row for the weekly recap"),
+        localized: "Weekly summary", table: "Search", comment: "Search row for the weekly summary"),
       systemImage: "book.closed",
       action: .open(.logbook)),
-    place(.statistics, route: .statistics),
+    place(.statistics, route: .statistics()),
     SearchItem(
       id: "courses",
       title: String(

@@ -120,8 +120,4 @@ export {
   MessageScrollerViewport,
 };
 
-export {
-  useMessageScroller,
-  useMessageScrollerScrollable,
-  useMessageScrollerVisibility,
-} from "@shadcn/react/message-scroller";
+export { useMessageScroller } from "@shadcn/react/message-scroller";

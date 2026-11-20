@@ -332,15 +332,33 @@ importers:
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.65.1
+      '@types/mdast':
+        specifier: 4.0.4
+        version: 4.0.4
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:packages/tsconfig
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.10.2
+      jsdom:
+        specifier: 'catalog:'
+        version: 31.0.1(@napi-rs/canvas@1.1.1)(@noble/hashes@2.4.0)
       knip:
         specifier: 6.45.1
         version: 6.45.1
+      mdast-util-from-markdown:
+        specifier: 2.1.0
+        version: 2.1.0(supports-color@10.2.2)
+      mdast-util-gfm:
+        specifier: 3.1.0
+        version: 3.1.0(supports-color@10.2.2)
+      micromark-extension-gfm:
+        specifier: 3.0.0
+        version: 3.0.0
       neon:
         specifier: 9.5.0
         version: 9.5.0(hono@4.13.18)(rollup@4.68.3)(supports-color@10.2.2)
@@ -389,6 +407,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/learn':
+        specifier: workspace:*
+        version: link:../../packages/learn
       '@zoonk/player':
         specifier: workspace:*
         version: link:../../packages/player
@@ -777,6 +798,12 @@ importers:
 
   apps/mailbox:
     dependencies:
+      '@fontsource-variable/geist':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@fontsource-variable/geist-mono':
+        specifier: 5.3.0
+        version: 5.3.0
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -1657,6 +1684,9 @@ importers:
       jsdom:
         specifier: 'catalog:'
         version: 31.0.1(@napi-rs/canvas@1.1.1)(@noble/hashes@2.4.0)
+      next:
+        specifier: 'catalog:'
+        version: 16.4.6(@opentelemetry/api@1.10.0)(@playwright/test@1.65.1)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       tailwindcss:
         specifier: 4.3.5
         version: 4.3.5
@@ -2409,6 +2439,12 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@fontsource-variable/geist-mono@5.3.0':
+    resolution: {integrity: sha512-vBbuwDEo9AkrqADMXOrlAR3DFcJi4/JxeuU43FoiQERnNwsfXNnvxvReZG02cQKmyk4DZkZdBZX3oTDvy2zBAw==}
+
+  '@fontsource-variable/geist@5.3.0':
+    resolution: {integrity: sha512-j0m+vLQuG5XAYoHtGCVu0spvlGreR3EzpECUVzkFmI1mTVnAO38l/NEPDCFgZ177JxzYJCLSmTQibIiYPilGrA==}
 
   '@formatjs/fast-memoize@3.1.7':
     resolution: {integrity: sha512-zXfhLpvA6T7+efdt9JLbBwZ00tT7NsBMDVnDu8rpHeNNv8KfRZAMo2gkG0k9lK/Nzc//3kJ9pImsfuJxk3KhUA==}
@@ -9708,6 +9744,10 @@ snapshots:
       react-dom: 19.3.1(react@19.3.1)
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@fontsource-variable/geist-mono@5.3.0': {}
+
+  '@fontsource-variable/geist@5.3.0': {}
 
   '@formatjs/fast-memoize@3.1.7': {}
 

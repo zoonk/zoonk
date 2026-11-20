@@ -1,16 +1,13 @@
 import "server-only";
 import { type MasteryState, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { loadAnswersReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
-import { addDays } from "../../plans/planner/plan-calendar";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay } from "../capsules";
 import { isExamTomorrow } from "./exam-tomorrow";
 import { getLessonComesBack } from "./lesson-block";
 import { loadPlanLessons } from "./load-plan-lessons";
-import { loadExamPrepAccess } from "./plus-only-lessons";
 import { type SessionAnswer, getDueItemIds } from "./session-answers";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -118,7 +115,6 @@ export async function loadBuddyMeal({
   };
 }
 
-/** Returns no next lesson on the exam eve or once tomorrow's free exam coverage ends. */
 export async function loadTomorrow({
   session,
 }: {
@@ -127,18 +123,6 @@ export async function loadTomorrow({
   const { goalId } = session;
 
   if (!goalId || isExamTomorrow({ day: session.localDate, goal: session.goal })) {
-    return null;
-  }
-
-  const access = session.goal
-    ? await loadExamPrepAccess({
-        goal: session.goal,
-        readViewer: readEntitlementViewer,
-        today: addDays(session.localDate, 1),
-      })
-    : null;
-
-  if (access?.trialEnded) {
     return null;
   }
 

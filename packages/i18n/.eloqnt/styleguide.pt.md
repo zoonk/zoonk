@@ -35,6 +35,7 @@
 - “learning path”: “trilha”
 - “prerequisite”: “base”, not “pré-requisito”
 - “Brain Power”: “Poder Mental”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “PM”
 - “score”, including an exam's “band”: “pontuação”, not “nota” or “faixa”; the admission cut-off stays “nota de corte”
 - “again”, including “Retry”: “de novo”, not “novamente”
 - “listening”: “escuta”
@@ -59,7 +60,7 @@
 - “Mistakes notebook”: “Caderno de erros”
 - “Saved to your mistakes”: “Salvo no seu caderno de erros”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Para corrigir” / “Corrigidos”
-- “practice mistakes”: “praticar o que você errou”
+- “Practice mistakes” (the notebook’s practice, as a button or a title): “Corrigir erros”, matching the tabs “Para corrigir” / “Corrigidos”; in a sentence, “praticar o que você errou”
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Novo” / “Aprendendo” / “Firme” / “Dominado”
 - “Known before”: “Você já sabia”; “Known” (progress legend): “Já sabia”
 - “Preparation”: “Preparo”
@@ -69,6 +70,7 @@
 - “Step” the learner takes or follows (the next step, a solution’s or worked example’s steps, a run’s steps): “passo” (“Próximo passo”, “Passo 2”); “etapa” only for a stage of a process or a flow (“as etapas da fotossíntese”, “nas próximas etapas”)
 - “Weekly challenge”: “Desafio semanal”
 - “Mock exam”, including speaking mocks: “Simulado”, not “prova simulada” or “simulação”
+- A mock exam’s “Flag” / “Remove flag” / “flagged”: “Marcar” / “Remover marcação” / “marcada”, not “sinalizada” or “com dúvida”
 - “Logbook”: “Diário de bordo”
 - “Fading” (needs review): “Para revisar”
 - “Focus test”: “Teste de foco”
@@ -76,14 +78,16 @@
 
 ## Plan terminology
 
-- “Paused” (pace): “Em pausa”; paused goal: “Pausado”
+- “Paused” (a plan's state): “Em pausa”; paused goal: “Pausado”
 - “Finished” (plan or goal): “Concluído”
-- “Past date”: “Passou da data”, not “Encerrado”, “Expirado”, or “Vencido”
+- “Up to date” (a plan's state): “Em dia”, not “Atualizado”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “Passou da data”, not “Encerrado”, “Expirado”, or “Vencido”
 - “Needs adjusting”: “Precisa de ajustes”
 - “Too tight”: “Apertado demais”
+- “End date” (a plan’s): “data final”, not “data de término”
 - “left out”: “ficar de fora”, not “pulado” or “ignorado”
 - “skipped” (known through placement): “pulado”, not “ignorado”
-- “Daily time”: “Tempo diário”, not “Tempo por dia”
+- “Daily study time”, the setting's name, and “Time a day” as a label (how long the learner studies each day): “Tempo diário”, not “Tempo por dia”
 
 ## Buddy names
 

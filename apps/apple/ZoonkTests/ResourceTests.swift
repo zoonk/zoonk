@@ -514,6 +514,21 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(resource.state, .loaded(5))
   }
 
+  /// A server's refusal written into the shown value (a subscription needed) stays when the read
+  /// after it fails, and the next good read replaces it.
+  func testAnUpdateOutlivesAFailedReadUntilAGoodOne() async {
+    let resource = makeResource(
+      requests: Requests(results: [.success(1), .failure(APIError.network), .success(1)]))
+    await resource.load()
+
+    resource.update { _ in 0 }
+    await resource.refresh()
+    XCTAssertEqual(resource.state, .loaded(0))
+
+    await resource.refresh()
+    XCTAssertEqual(resource.state, .loaded(1))
+  }
+
   private func makeResource(
     requests: Requests,
     session: SessionStore = .preview(account: .resourceTestAccount),
@@ -532,7 +547,7 @@ private final class Requests {
   var suspends: Bool
   private(set) var sessions: [AuthenticatedSession?] = []
   private var results: [Result<Int?, Error>]
-  private var pending: [Int: CheckedContinuation<Int?, Error>] = [:]
+  private var pending: [Int: TestContinuation<Int?>] = [:]
 
   init(results: [Result<Int?, Error>] = [], suspends: Bool = false) {
     self.results = results
@@ -551,19 +566,17 @@ private final class Requests {
       return try results.isEmpty ? nil : results.removeFirst().get()
     }
 
-    return try await withCheckedThrowingContinuation { pending[index] = $0 }
+    return try await withTestContinuation { pending[index] = $0 }
   }
 
   func resolve(_ index: Int, with result: Result<Int?, Error>) {
     pending.removeValue(forKey: index)?.resume(with: result)
   }
 
-  func waitForCount(_ count: Int) async {
-    for _ in 0..<1_000 where sessions.count < count {
-      await Task.yield()
+  func waitForCount(_ count: Int, file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("Expected resource requests", file: file, line: line) {
+      sessions.count >= count
     }
-
-    XCTAssertGreaterThanOrEqual(sessions.count, count)
   }
 }
 

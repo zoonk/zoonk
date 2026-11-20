@@ -9,10 +9,10 @@ import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identit
 import { Button } from "@zoonk/ui/components/button";
 import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useMemo, useState } from "react";
+import { createContext, use, useMemo, useState } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
+import { AskTutorFace } from "./ask-tutor-face";
 import {
   LessonQuestionHostProvider,
   useLessonQuestionController,
@@ -64,17 +64,17 @@ type AskTutorSize = "bar" | "sm" | "task";
 
 const TASK_ASK_CLASS = cn(
   "size-11 shrink-0 px-0 lg:w-auto lg:px-4 lg:pl-2",
-  "with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:right-5 with-aside:group-data-aside/task:bottom-[max(1rem,env(safe-area-inset-bottom))] with-aside:group-data-aside/task:w-[calc(var(--task-aside)-2.5rem-1px)] with-aside:group-data-aside/task:justify-start",
+  "with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:right-frame with-aside:group-data-aside/task:bottom-[max(var(--spacing-frame),env(safe-area-inset-bottom))] with-aside:group-data-aside/task:w-[calc(var(--task-aside)-2*var(--spacing-frame)-1px)] with-aside:group-data-aside/task:justify-start",
 );
 
 const BAR_ASK_CLASS = cn(
   "min-w-11 shrink",
-  "@max-3xs/page-bar:w-11 @max-3xs/page-bar:px-0",
+  "max-[18rem]:w-11 max-[18rem]:px-0",
   "max-sm:group-data-title-away/page-bar:w-11 max-sm:group-data-title-away/page-bar:px-0",
 );
 
 const BAR_ASK_LABEL_CLASS =
-  "truncate @max-3xs/page-bar:hidden max-sm:group-data-title-away/page-bar:hidden";
+  "truncate max-[18rem]:hidden max-sm:group-data-title-away/page-bar:hidden";
 
 function AskTutorRow({
   identity,
@@ -87,7 +87,7 @@ function AskTutorRow({
   const label = useAskLabel({ kind, name: identity.name });
 
   return (
-    <ListRowButton {...PRELOAD_ON_INTENT} onClick={openDrawer}>
+    <ListRowButton aria-haspopup="dialog" {...PRELOAD_ON_INTENT} onClick={openDrawer}>
       <ListRowLeading>
         <span aria-hidden="true" className="flex size-5 items-center justify-center *:size-5!">
           {identity.avatar}
@@ -118,6 +118,7 @@ function AskTutorButton({
   if (size === "task") {
     return (
       <Button
+        aria-haspopup="dialog"
         {...PRELOAD_ON_INTENT}
         aria-label={label}
         className={TASK_ASK_CLASS}
@@ -126,13 +127,7 @@ function AskTutorButton({
         type="button"
         variant="outline"
       >
-        <MessageCircleQuestionIcon aria-hidden="true" className="lg:hidden" />
-        <span
-          aria-hidden="true"
-          className="flex size-6 items-center justify-center *:size-6! max-lg:hidden"
-        >
-          {identity.avatar}
-        </span>
+        <AskTutorFace identity={identity} />
         <span className="truncate max-lg:hidden">{name}</span>
       </Button>
     );
@@ -140,6 +135,7 @@ function AskTutorButton({
 
   return (
     <Button
+      aria-haspopup="dialog"
       {...PRELOAD_ON_INTENT}
       aria-label={label}
       className={cn("pl-1.5", size === "bar" && BAR_ASK_CLASS)}
@@ -148,9 +144,7 @@ function AskTutorButton({
       type="button"
       variant="outline"
     >
-      <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
-        {identity.avatar}
-      </span>
+      <AskTutorFace identity={identity} />
       <span className={BAR_ASK_LABEL_CLASS}>{name}</span>
     </Button>
   );
@@ -205,6 +199,55 @@ function AskTutorProvider({
       {children}
       <ScreenTutorDrawer identity={identity} navigation={tutor.navigation} />
     </LessonQuestionHostProvider>
+  );
+}
+
+type SharedTutor = { identity: TutorIdentity; kind: ScreenTarget["kind"] };
+
+const SharedTutorContext = createContext<SharedTutor | null>(null);
+
+/**
+ * One conversation for a screen that places the tutor's entry more than once (a bar on a phone, a
+ * row in the side column from wide screens): every `AskTutorEntry` inside opens this one, so a
+ * layout change that swaps the entry keeps what the learner asked. Keep `target` and `tutor` stable.
+ */
+export function AskTutorScope({
+  children,
+  target,
+  tutor,
+}: {
+  children: React.ReactNode;
+  target: ScreenTarget;
+  tutor: LessonTutorConfig;
+}) {
+  const identity = useTutorIdentity(tutor.buddy);
+  const shared = useMemo(() => ({ identity, kind: target.kind }), [identity, target.kind]);
+
+  return (
+    <AskTutorProvider identity={identity} target={target} tutor={tutor}>
+      <SharedTutorContext value={shared}>{children}</SharedTutorContext>
+    </AskTutorProvider>
+  );
+}
+
+/** An entry to the conversation of the `AskTutorScope` around it. */
+export function AskTutorEntry({
+  appearance = "button",
+  size = "sm",
+}: {
+  appearance?: "button" | "row";
+  size?: AskTutorSize;
+}) {
+  const shared = use(SharedTutorContext);
+
+  if (!shared) {
+    throw new Error("AskTutorEntry needs an AskTutorScope around it");
+  }
+
+  return appearance === "row" ? (
+    <AskTutorRow identity={shared.identity} kind={shared.kind} />
+  ) : (
+    <AskTutorButton identity={shared.identity} kind={shared.kind} size={size} />
   );
 }
 

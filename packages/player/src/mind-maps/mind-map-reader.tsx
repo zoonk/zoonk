@@ -5,25 +5,25 @@ import { keepMindMapPlace } from "@zoonk/learn/mind-maps/resume";
 import { type MindMapSave, MindMapSaveButton } from "@zoonk/learn/mind-maps/save";
 import { type SavedMapTarget, toSavedMapKey, useMindMapSaves } from "@zoonk/learn/mind-maps/saves";
 import { type MindMapTab, buildStudyHref } from "@zoonk/learn/mind-maps/urls";
+import { QuestionBack } from "@zoonk/learn/question-actions";
 import { StatusRegion } from "@zoonk/learn/status-region";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "@zoonk/learn/task-frame";
 import { TaskHeaderTitle } from "@zoonk/learn/task-header";
-import { TASK_BACK_ACTION_CLASS, TaskActions } from "@zoonk/learn/task-layout";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
-import { CheckIcon, ChevronLeftIcon } from "lucide-react";
+import { TaskActions } from "@zoonk/learn/task-layout";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { type ScreenTurn } from "../components/screen-turn";
 import { useSwipeNavigation } from "../lesson/use-swipe-navigation";
 import { type DeckSlide, type LessonMindMap, findLessonMap } from "./mind-map-deck";
 import { type MindMapReaderHrefs, MindMapReaderMenu } from "./mind-map-reader-menu";
-import { ChapterMapSlide, LessonMapSlide, SlideFrame } from "./mind-map-slides";
+import {
+  ChapterMapSlide,
+  type ChapterMapView,
+  LessonMapSlide,
+  SlideFrame,
+} from "./mind-map-slides";
 import { type ChapterLessons, type LoadLessonMaps, useChapterLessons } from "./use-chapter-lessons";
-
-const SCREEN_KEY = { mode: "none", screen: true } as const;
-
-const SAVE_KEY = "s";
 
 export type MindMapReaderActions = { lessonMaps: LoadLessonMaps; save: SaveMindMap };
 
@@ -68,12 +68,11 @@ function EmptyDeck({ exit }: { exit: string }) {
 
   return (
     <TaskFrame
-      closeOnEscape
       exitHref={exit}
       exitToApp
       footer={
         <TaskActions>
-          <TaskMainLink href={exit} icon={<CheckIcon aria-hidden="true" />} toApp>
+          <TaskMainLink href={exit} toApp>
             {t("Done")}
           </TaskMainLink>
         </TaskActions>
@@ -103,6 +102,8 @@ function Reader({
   const t = useExtracted();
   const body = useRef<HTMLDivElement>(null);
   const [at, setAt] = useState<ReaderPlace>({ index: start, turn: null });
+  // Kept from map to map while the learner studies, so one who reads the text keeps reading it.
+  const [mapView, setMapView] = useState<ChapterMapView>("map");
   const [stored, setStored] = useState<ReadonlyMap<string, boolean>>(new Map());
   const chapters = useChapterLessons({ deck, index: at.index, load: actions.lessonMaps, loaded });
 
@@ -156,39 +157,25 @@ function Reader({
 
   useKeptPlace({ chapterId: shown.chapterId, goalId, isLast, lessonId, view });
   useSwipeNavigation({ onBack: previous, onForward: next, ref: body });
-  useKeyboardCallback("ArrowRight", () => next() && undefined, SCREEN_KEY);
-  useKeyboardCallback("ArrowLeft", () => previous() && undefined, SCREEN_KEY);
-  useLetterKey(SAVE_KEY, () => (save ? save.onToggle() : false));
+  useShortcut("next", () => next() && undefined);
+  useShortcut("previous", () => previous() && undefined);
+  useShortcut("save", () => (save ? save.onToggle() : false));
 
   return (
     <TaskFrame
-      closeOnEscape
       exitHref={hrefs.exit}
       exitToApp
       fit="always"
       footer={
         <TaskActions data-slot="mind-map-reader-actions">
-          {!isFirst && (
-            <Button
-              aria-keyshortcuts="ArrowLeft"
-              className={TASK_BACK_ACTION_CLASS}
-              onClick={previous}
-              size="icon"
-              variant="outline"
-            >
-              <ChevronLeftIcon aria-hidden="true" />
-              <span className="sr-only">{t("Previous map")}</span>
-            </Button>
-          )}
+          {!isFirst && <QuestionBack label={t("Previous map")} onClick={previous} />}
 
           {isLast ? (
-            <TaskMainLink href={hrefs.exit} icon={<CheckIcon aria-hidden="true" />} toApp>
+            <TaskMainLink href={hrefs.exit} toApp>
               {t("Done")}
             </TaskMainLink>
           ) : (
-            <TaskMainButton {...FORWARD_ICON} onClick={next}>
-              {t("Next")}
-            </TaskMainButton>
+            <TaskMainButton onClick={next}>{t("Next")}</TaskMainButton>
           )}
         </TaskActions>
       }
@@ -196,11 +183,11 @@ function Reader({
         <>
           {save && (
             <MindMapSaveButton
-              aria-keyshortcuts={SAVE_KEY}
+              shortcut
               {...save}
               className="shrink-0"
               labelled={false}
-              size="icon"
+              size="icon-bar"
               variant="ghost"
             />
           )}
@@ -228,7 +215,15 @@ function Reader({
       >
         <SlideFrame key={`${at.index}`} turn={at.turn}>
           {shown.kind === "chapter" && save ? (
-            <ChapterMapSlide save={save} slide={shown} />
+            <ChapterMapSlide
+              onViewChange={(changed) => {
+                setMapView(changed);
+                body.current?.scrollTo({ top: 0 });
+              }}
+              save={save}
+              slide={shown}
+              view={mapView}
+            />
           ) : (
             <LessonMapSlide
               lesson={lesson}

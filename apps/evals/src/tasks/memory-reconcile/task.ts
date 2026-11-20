@@ -87,7 +87,7 @@ export const memoryReconcileTask: Task<
   evaluate: reconcileFact,
   generate: reconcileFact,
   id: "memory-reconcile",
-  name: "Memory Reconcile",
+  name: "Memory reconcile",
   score: scoreMemoryReconcile,
   testCases: [...TEST_CASES, ...PERSONA_TEST_CASES],
 };

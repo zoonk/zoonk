@@ -2,7 +2,10 @@
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
+import { useStillMounted } from "../_utils/use-still-mounted";
+import { useSharedRequest } from "./layout-shared";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 
@@ -12,27 +15,35 @@ export function usePlanChange() {
   const { actions, keepFocus } = usePlanScreen();
   const editor = useReportEditorChange();
   const [isPending, startTransition] = useTransition();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
+  const isMounted = useStillMounted();
+  const request = useSharedRequest("change", isPending);
 
   /**
    * `answer` runs in the change's transition, so what it shows arrives with the re-planned page,
-   * never over the old plan.
+   * never over the old plan, and only while the screen that asked is still there: a sheet the
+   * learner closed doesn't close the one they opened since.
    */
   const change = (
     operations: LearnerPlanOperation[],
     answer?: PlanChangeAnswer,
   ): Promise<PlanChangeOutcome | null> => {
-    setFailed(false);
     keepFocus();
     const done = Promise.withResolvers<PlanChangeOutcome | null>();
 
     startTransition(async () => {
+      request.start();
       const { data: outcome } = await safeAsync(() => actions.change(operations));
 
       // Updates after an `await` join the transition only when started in one again.
       startTransition(() => {
-        setFailed(!outcome);
-        answer?.(outcome ?? null);
+        if (!outcome) {
+          saveFailed();
+        }
+
+        if (isMounted()) {
+          answer?.(outcome ?? null);
+        }
 
         if (outcome?.status === "applied" && outcome.change) {
           editor.report(outcome.change);
@@ -45,5 +56,5 @@ export function usePlanChange() {
     return done.promise;
   };
 
-  return { change, failed, isPending };
+  return { change, isPending: request.busy };
 }

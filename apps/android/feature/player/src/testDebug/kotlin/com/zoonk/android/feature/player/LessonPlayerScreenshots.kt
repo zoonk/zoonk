@@ -46,6 +46,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.feature.player.model.toStepResult
+import com.zoonk.android.feature.player.steps.LocalChallengeTeam
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -56,6 +57,7 @@ import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonMap
@@ -242,7 +244,7 @@ class LessonPlayerScreenshots {
                         .decodeFromString(
                             SpokenAnswerGrade.serializer(),
                             """
-                            {"attemptId":"00000000-0000-4000-8000-000000000021","explanation":"Say the h softly, almost silent.","isCorrect":false,"score":0.5,
+                            {"attemptId":"00000000-0000-4000-8000-000000000021","explanation":"Keep the h silent and start with the vowel sound.","isCorrect":false,"score":0.5,
                              "transcript":"Tengo ambre","words":[{"heard":"Tengo","status":"correct","text":"Tengo"},{"heard":"ambre","status":"different","text":"hambre"}],
                              "wordsToPractice":[{"audioUrl":null,"heard":"ambre","respelling":"AHM-breh","status":"different","text":"hambre","tip":"The h is silent in Spanish."}]}
                             """.trimIndent(),
@@ -382,7 +384,11 @@ class LessonPlayerScreenshots {
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalPrivatePictures provides pictures) {
+                CompositionLocalProvider(
+                    LocalSnackbarHostState provides SnackbarHostState(),
+                    LocalPrivatePictures provides pictures,
+                    LocalChallengeTeam provides listOf("Priya"),
+                ) {
                     key(index) {
                         LessonPlayer(
                             lesson,
@@ -439,7 +445,7 @@ class LessonPlayerScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 }

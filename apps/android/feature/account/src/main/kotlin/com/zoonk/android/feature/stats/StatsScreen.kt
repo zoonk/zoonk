@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -35,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,12 +48,14 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ChartInspector
-import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.holdsChartTooltips
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageDirective
+import com.zoonk.android.ui.scaffold.pageListMargin
+import com.zoonk.android.ui.scaffold.pagePadding
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -84,7 +85,7 @@ internal class StatsContext(
 }
 
 /**
- * Main's stats layout: the page's name in the bar and "All goals" over its content. On phones the
+ * Main's stats layout: the page's name in the bar and over its content, with the line that says how its number moves. On phones the
  * overview's tiles lead to each page, as on main; where the page splits into panes (expanded widths,
  * an unfolded book foldable) the section's list sits beside the page, and the page lays out by the
  * room its own pane has. Pull to refresh reads every read the page shows again.
@@ -142,15 +143,10 @@ private fun StatsPageArea(
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             LazyColumn(
                 modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = if (context.wide) 24.dp else 16.dp, vertical = 16.dp),
+                contentPadding = pagePadding(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item(key = "title") {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Eyebrow(stringResource(R.string.stats_all_goals))
-                        PageTitleRow(stringResource(page.title))
-                    }
-                }
+                item(key = "title") { PageTitleRow(stringResource(page.title)) }
                 item(key = "content") {
                     when (state) {
                         LoadState.Idle, LoadState.Loading -> {
@@ -181,7 +177,7 @@ private fun shownBy(
     wide: Boolean,
 ): List<Resource<*>> =
     when (page) {
-        StatsPage.Overview -> listOfNotNull(stats.progress, stats.energy, stats.activity, stats.score.takeIf { wide }, stats.patterns)
+        StatsPage.Overview -> listOfNotNull(stats.progress, stats.activity, stats.score.takeIf { wide }, stats.patterns)
         StatsPage.Level -> listOf(stats.progress)
         StatsPage.Energy -> listOf(stats.energy)
         StatsPage.Activity -> listOf(stats.activity)
@@ -214,20 +210,23 @@ private fun StatsNavList(
     Column(
         modifier
             .verticalScroll(rememberScrollState())
-            .padding(12.dp)
+            .padding(horizontal = pageListMargin(), vertical = 12.dp)
             .selectableGroup()
             .semantics { isTraversalGroup = true },
     ) {
         StatsPage.entries.forEach { entry ->
-            NavigationDrawerItem(
-                label = { Text(stringResource(entry.label)) },
-                selected = entry == page,
+            val selected = entry == page
+            ListRow(
+                headline = { Text(stringResource(entry.label)) },
+                modifier = Modifier.semantics { this.selected = selected },
                 onClick = {
-                    if (entry != page) {
+                    if (!selected) {
                         if (page != StatsPage.Overview) navigator.back()
                         navigator.open(entry.route)
                     }
                 },
+                highlighted = selected,
+                chevron = false,
             )
         }
     }
@@ -238,16 +237,19 @@ private fun StatsNavList(
 internal fun StatsEmpty(context: StatsContext) {
     Column(Modifier.padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Icon(painterResource(R.drawable.ic_bar_chart), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(
-            stringResource(R.string.stats_empty_title),
-            modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                stringResource(R.string.stats_empty_title),
+                modifier = Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleMedium,
+            )
+            StatsLine(stringResource(R.string.stats_empty_line))
+        }
         Button(onClick = { context.navigator.showRoot(AppTab.Today) }) { Text(stringResource(R.string.stats_go_to_today)) }
     }
 }
 
-/** Main's `StatsLine`: one quiet sentence under a page that says how its number moves. */
+/** One quiet sentence on a statistics page, such as what its empty state means. */
 @Composable
 internal fun StatsLine(text: String) {
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)

@@ -68,6 +68,9 @@ jobs:
       - name: Check for i18n errors
         run: pnpm i18n:lint
 
+      - name: Check catalog wording gates
+        run: pnpm verify:catalog
+
       - name: Check eval language coverage
         run: pnpm --filter evals eval:languages
 

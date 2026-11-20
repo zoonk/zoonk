@@ -38,7 +38,7 @@ Use semantic drag handles and a deterministic target. If the pointer sensor requ
 
 ## Commands
 
-Run from the repository root with an existing test path; the [development guide](../../../guides/development.md) owns build, database, and sandbox setup.
+Run from the repository root with an existing test path; the [development guide](../../../guides/local-tests.md#e2e) owns build, database, and sandbox setup.
 
 ```bash
 pnpm e2e:main e2e/path/to/test.test.ts
@@ -46,3 +46,7 @@ pnpm e2e:api e2e/path/to/test.test.ts
 ```
 
 For a demonstrated timing or isolation concern, use `--repeat-each=2` or another repetition count justified by the failure; a pass after an unexplained failure is insufficient.
+
+## `instant()` tests
+
+An `instant()` test guards the chosen prefetched UI under the network lock, not a blanket ban on skeletons. Preserve Today's learner-day and Start-button contract. Hard loads and incomplete or absent prefetches may show skeletons: the static shell must respond immediately while content streams. Check blank screens, slow paints and frozen taps in production page measurements and filmstrips.

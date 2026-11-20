@@ -80,13 +80,13 @@ describe("a challenge in the lesson player", () => {
     expect(primaryOf([start])).toStrictEqual({
       action: "continue",
       disabled: true,
-      label: "confirm",
+      label: "check",
     });
 
     expect(primaryOf([start, pick(["ask"])])).toStrictEqual({
       action: "continue",
       disabled: false,
-      label: "confirm",
+      label: "check",
     });
 
     const finished: LessonPlayerAction[] = [
@@ -102,7 +102,7 @@ describe("a challenge in the lesson player", () => {
     expect(primaryOf(finished)).toStrictEqual({
       action: "check",
       disabled: false,
-      label: "seeHowItWent",
+      label: "seeResult",
     });
   });
 

@@ -63,9 +63,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
-import com.zoonk.android.ui.components.LabelChip
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.plainText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -79,7 +77,6 @@ val LocalChallengeTeam = staticCompositionLocalOf<List<String>?> { null }
 
 private const val BIG_METER_CHANGE = 25L
 private const val METER_MAX = 100f
-private const val PRACTICE_SECONDS = 300L
 
 private class ChallengeNames(
     val names: Map<String, String>,
@@ -139,7 +136,7 @@ private fun ChallengeIntro(
 
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            LabelChip(
+            Eyebrow(
                 stringResource(
                     if (content.variant ==
                         Variant.WHAT_IF
@@ -203,12 +200,6 @@ private fun ChallengeIntro(
                 }
             }
         }
-
-        Text(
-            stringResource(if (content.team.any { it.ai }) R.string.player_challenge_help_ai else R.string.player_challenge_help),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 }
 
@@ -238,49 +229,51 @@ private fun ChallengeConversation(
 
     LaunchedEffect(moves.size) { if (moves.isNotEmpty()) newest.bringIntoView() }
     // Main's conversation log reads out what a decision brings, in the order it shows.
-    if (part.showsScreen) {
-        ActivityAnnouncement(
-            if (latest == null) {
-                ""
-            } else {
-                val shown = (listOfNotNull(jump?.label) + panel.orEmpty()).map(names::fill)
-                (latest.choice.replies.map(::said) + shown + upcoming?.messages.orEmpty().map(::said)).joinToString(" ")
-            },
-        )
-    }
+    Box {
+        if (part.showsScreen) {
+            ActivityAnnouncement(
+                if (latest == null) {
+                    ""
+                } else {
+                    val shown = (listOfNotNull(jump?.label) + panel.orEmpty()).map(names::fill)
+                    (latest.choice.replies.map(::said) + shown + upcoming?.messages.orEmpty().map(::said)).joinToString(" ")
+                },
+            )
+        }
 
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        if (part.showsScreen) ChallengeMoves(content, names, moves, progress)
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            if (part.showsScreen) ChallengeMoves(content, names, moves, progress)
 
-        Box(Modifier.bringIntoViewRequester(newest)) {
-            if (progress is ChallengeProgress.Deciding) {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (part.showsScreen) {
-                        RichText(
-                            text = names.fill(progress.walk.node.prompt),
-                            modifier = Modifier.semantics { heading() },
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                        )
+            Box(Modifier.bringIntoViewRequester(newest)) {
+                if (progress is ChallengeProgress.Deciding) {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        if (part.showsScreen) {
+                            RichText(
+                                text = names.fill(progress.walk.node.prompt),
+                                modifier = Modifier.semantics { heading() },
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                            )
+                        }
+                        if (part.showsTurn) {
+                            ChoiceOptions(
+                                options =
+                                    progress.walk.node.choices
+                                        .map { ChoiceOption(it.id, names.fill(it.text), isCorrect = false) },
+                                selectedId = progress.pendingChoiceId,
+                                isChecked = false,
+                                isGuess = false,
+                                locked = state.phase != LessonPhase.Playing,
+                                onSelect = { id -> actions.select(pickChallengeChoice(id, progress.confirmed)) },
+                                label = stringResource(R.string.player_challenge_your_options),
+                            )
+                        }
                     }
-                    if (part.showsTurn) {
-                        ChoiceOptions(
-                            options =
-                                progress.walk.node.choices
-                                    .map { ChoiceOption(it.id, names.fill(it.text), isCorrect = false) },
-                            selectedId = progress.pendingChoiceId,
-                            isChecked = false,
-                            isGuess = false,
-                            locked = state.phase != LessonPhase.Playing,
-                            onSelect = { id -> actions.select(pickChallengeChoice(id, progress.confirmed)) },
-                            label = stringResource(R.string.player_challenge_your_options),
-                        )
-                    }
-                }
-            } else if (progress is ChallengeProgress.Ended && showsOutcome) {
-                Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.large) {
-                    Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ChallengeLabel(stringResource(R.string.player_challenge_what_happened), heading = true)
-                        RichText(text = names.fill(progress.walk.ending.outcome), style = MaterialTheme.typography.bodyLarge)
+                } else if (progress is ChallengeProgress.Ended && showsOutcome) {
+                    Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.large) {
+                        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            ChallengeLabel(stringResource(R.string.player_challenge_what_happened), heading = true)
+                            RichText(text = names.fill(progress.walk.ending.outcome), style = MaterialTheme.typography.bodyLarge)
+                        }
                     }
                 }
             }
@@ -435,8 +428,15 @@ private fun ChallengeMessageView(
         ChallengeAvatar(name, slot)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(name, style = MaterialTheme.typography.labelLarge)
-                role?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
+                Text(name, Modifier.alignByBaseline(), style = MaterialTheme.typography.labelLarge)
+                role?.let {
+                    Text(
+                        it,
+                        Modifier.alignByBaseline(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
             RichText(text = names.fill(message.text), style = MaterialTheme.typography.bodyLarge)
         }
@@ -636,14 +636,7 @@ private fun ChallengeDebriefView(
         debrief.practice?.let { practice ->
             Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.large) {
                 Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    ChallengeLabel(
-                        stringResource(
-                            R.string.player_challenge_practice,
-                            names.fill(practice.name),
-                            formatDuration(PRACTICE_SECONDS, currentLocale()),
-                        ),
-                        heading = true,
-                    )
+                    ChallengeLabel(stringResource(R.string.player_challenge_practice), heading = true)
                     RichText(text = names.fill(practice.practice), style = MaterialTheme.typography.bodyLarge)
                 }
             }

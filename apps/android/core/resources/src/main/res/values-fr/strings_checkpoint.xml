@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "checkpoint_after_lessons": "a6d85f1541cac90f2a0a4b15c51c6ea68e37f396fa5d67bed50859047158d032",
-  "checkpoint_answer": "63cb7c9b6a2274773f40defe4a0c6a0e71316ceede6a2c62846b2123adf1483a",
   "checkpoint_answers": "da1cdf6699266d33d54e4308cdda7e7cad8a6dcf972a0fe61934e176f400bec7",
   "checkpoint_badge": "d9e75d5b37006b573cbe20621e5996da5dbdd1b0efb3215f812c0c6f7cbddfaf",
   "checkpoint_beat": "4cb07057a6acd4f595197f1bd0d616dd3ddf0a905baa97a09338ebe4eb9ede02",
@@ -14,6 +13,7 @@
   "checkpoint_finishing": "dad78378039770c6d5d09dcbf379666119bc4e964076fbc66f250273762221ac",
   "checkpoint_held": "34def1691f3b5f9cca420414b478aaf28ccc94dcb1d309b75bcf3a95fec8c6a8",
   "checkpoint_lost_line": "48eff89e237c80cca7651d8df7dc6be8ec32d2f17d4733b0309c573bca3652bc",
+  "checkpoint_needed_to_win": "78a64fc29b9717dec20ef743f3199a43f69abe641d7b5b2de0bd7c29fd6d0575",
   "checkpoint_new_try_next": "05b4dd0f51f30e6b75755686d02c2c01eed839e3df1899dbfe504b3fdbb8242b",
   "checkpoint_new_try_tomorrow": "fc8b04b53e43edc850d91a32e941cc06ed638b007e380d1ac75647617dc55d80",
   "checkpoint_next": "89f185607ce7221e250191743d48f4133f05a96f1ec8ebb32b9659440b81b190",
@@ -36,13 +36,12 @@
   "checkpoint_questions_left": "4528d3fa97ebc525eb7bb5a5d0ed695be3ea228742af9133a14d4161c2797387",
   "checkpoint_removed_detail": "ba2ead8dfc5127253911680c112a608e147389d45fa0136d2e464c06e5ebcfad",
   "checkpoint_removed_title": "e948b8e86eaed46c6a21003f7e29e3f34a745505ff3895c1545f4b1616dcbd89",
-  "checkpoint_retry_after_lessons": "4bfec004709a547ccfd64b561744d1d8b8bb113b6a2e61f47925e8ffb5f9b2df",
-  "checkpoint_retry_tomorrow": "2d71230126545f13498c4082b81fa326a510984cd9bf4dbfdc182dc0e8788c98",
-  "checkpoint_review": "1665041ef6a964f88d635ad7c60591f6fe9850c6652e1bc9c339c3cb81a12922",
+  "checkpoint_retry_after_lessons": "e8d5a508c809ed896ed04154ccda8f09ed0bdeeda4d450703def43d8f11c649b",
+  "checkpoint_retry_tomorrow": "f0920e59ff92d4bbb21186b227e6b380649dfb4a98d3376d5baf60368bd55644",
+  "checkpoint_review": "1f2c07dd40b6ddbfd1708569233096973c461849ee39ca07940556c963483be4",
   "checkpoint_rewards": "02f04ebf1fba86fbba5e736b13d8510808cef28ed7316e6c0988073a67992303",
   "checkpoint_right_to_win": "ce40b357c66a7be0d5d5e5b54183c23d17ec206a19e104cba98d9141858f5aaf",
-  "checkpoint_right_to_win_of": "dfe0cdc3b55553eb6047b6d12fc8d58ce7411e627339d8cbe02a88dca1b53477",
-  "checkpoint_see_result": "cf43e634c9cd5929b4cf7da6542b9502596649fa9fd91eaa66570bd650f55678",
+  "checkpoint_see_result": "2332220c291b83f58ef08cfc038d000a1abc60ca6bdd63f9acdf2c33ce6d000d",
   "checkpoint_shield": "252c5a33f4c4823ecc72bf42b97f3e3cd228d0bdb101709c865a31cbcfdebda3",
   "checkpoint_shield_value": "b9828d7ebe699d1bcc0767b55448e8b3df0ef7abd58cc0a574862b468734076e",
   "checkpoint_to_go": "f40a614b2a0b7d4ad7e6395db180765da3c8489bb6d7b47ac105b084a7bfb781",
@@ -68,11 +67,11 @@
     <string name="checkpoint_why_later">Tu découvriras pourquoi à la fin.</string>
     <string name="checkpoint_won_line">Son bouclier est brisé. Tu as gagné !</string>
     <string name="checkpoint_lost_line">Son bouclier a tenu cette fois.</string>
-    <string name="checkpoint_retry_tomorrow">Nouvel essai demain. Rien n’est perdu.</string>
+    <string name="checkpoint_retry_tomorrow">Revanche demain.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">Nouvel essai demain, après %d courte leçon. Rien n’est perdu.</item>
-        <item quantity="many">Nouvel essai demain, après %d courtes leçons. Rien n’est perdu.</item>
-        <item quantity="other">Nouvel essai demain, après %d courtes leçons. Rien n’est perdu.</item>
+        <item quantity="one">Revanche demain, après %d courte leçon.</item>
+        <item quantity="many">Revanche demain, après %d courtes leçons.</item>
+        <item quantity="other">Revanche demain, après %d courtes leçons.</item>
     </plurals>
     <string name="checkpoint_every_answered">Tu as répondu à toutes les questions.</string>
     <string name="checkpoint_shield">Le bouclier du Farceur</string>
@@ -121,11 +120,10 @@
     <string name="checkpoint_weekly_done">Défi hebdomadaire terminé</string>
     <string name="checkpoint_beat">Tu as battu le Farceur !</string>
     <string name="checkpoint_not_this_time">Pas cette fois</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">%1$d bonne réponse sur %2$d pour gagner</item>
-        <item quantity="many">%1$d bonnes réponses sur %2$d pour gagner</item>
-        <item quantity="other">%1$d bonnes réponses sur %2$d pour gagner</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">Il te fallait %d bonne réponse pour gagner.</item>
+        <item quantity="many">Il te fallait %d bonnes réponses pour gagner.</item>
+        <item quantity="other">Il te fallait %d bonnes réponses pour gagner.</item>
     </plurals>
     <string name="checkpoint_rewards">Récompenses</string>
     <!-- %1$s is the phase's number. -->
@@ -149,7 +147,5 @@
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">La phase suivante, %1$s, est déjà ouverte.</string>
     <string name="checkpoint_answers">Les réponses</string>
-    <string name="checkpoint_review">Revoir les réponses</string>
-    <!-- %1$s is the right answer. -->
-    <string name="checkpoint_answer">Réponse : %1$s</string>
+    <string name="checkpoint_review">Voir les réponses</string>
 </resources>

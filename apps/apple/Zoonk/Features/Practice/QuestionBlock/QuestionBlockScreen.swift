@@ -55,14 +55,14 @@ struct QuestionBlockScreen: View {
     .task(id: session.authenticatedSession) { await read() }
   }
 
-  private var title: LocalizedStringResource {
+  private var title: String {
     guard case .loaded(let run) = load else {
-      return LocalizedStringResource(
-        "Today's session", table: "Practice",
+      return String(
+        localized: "Today's session", table: "Practice",
         comment: "Names a block of today's session until the block loads")
     }
 
-    return PracticeBlockTitle.title(for: run.detail.block)
+    return run.detail.block.displayTitle
   }
 
   /// After it, the block as the day now has it: one left with no questions is skipped, so gone from the day.
@@ -147,8 +147,9 @@ struct QuestionBlockView: View {
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
-  @State private var stopFailed = false
-  @State private var isStopping = false
+  private var stopFailed: Bool { stopping.outcome ?? false }
+  private var isStopping: Bool { stopping.isRunning }
+  @State private var stopping = VisitRequest<Bool>()
   @State private var showsSaveReport = false
   @FocusState private var focus: PracticeFocus?
   @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
@@ -193,6 +194,9 @@ struct QuestionBlockView: View {
     )
     .onChange(of: run.needsRefresh) { _, needsRefresh in
       if needsRefresh { onRefresh() }
+    }
+    .onDisappear {
+      stopping.leave()
     }
   }
 
@@ -292,7 +296,9 @@ struct QuestionBlockView: View {
         correctLine(feedback, question: question).map {
           PracticeAnswerText.rightAnswerLine($0).said
         },
-        run.detail.isNetScored(question) ? run.state.netTally.line : nil,
+        run.detail.isNetScored(question)
+          ? (run.state.netTally.line + [run.state.netTally.spokenScore]).joinedFacts()
+          : nil,
       ].compactMap(\.self).joined(separator: "\n")
     default:
       return nil
@@ -331,7 +337,9 @@ struct QuestionBlockView: View {
       }
 
       if feedback.pauseSuggested {
-        PauseSuggestionView(isStopping: isStopping, failed: stopFailed) { Task { await stop() } }
+        PauseSuggestionView(isStopping: isStopping, failed: stopFailed) {
+          stopping.run { await stop() }
+        }
       }
     }
   }
@@ -390,6 +398,14 @@ struct QuestionBlockView: View {
           title: LocalizedStringResource(
             "I'm not sure", table: "Practice",
             comment: "Honest way out of a guess in a no-guessing drill."),
+          icon: .notSure, isBusy: phase.checking == .notSure,
+          isDisabled: !accepts, action: notSure
+        )
+        .practiceFocus(.notSure)
+      } else if let question, run.detail.isNetScored(question), question.format != .trueFalse {
+        PracticeSecondaryButton(
+          title: LocalizedStringResource(
+            "Leave blank", table: "Practice", comment: "Leaves an exam question unanswered."),
           icon: .notSure, isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
@@ -471,32 +487,37 @@ struct QuestionBlockView: View {
       "Finish", table: "Practice", comment: "Finishes a block opened with every answer in.")
   }
 
-  private func stop() async {
-    isStopping = true
-    stopFailed = false
-    defer { isStopping = false }
+  private func stop() async -> Bool? {
+    var outcome: Bool = false
 
     if let onStop {
-      stopFailed = !(await onStop())
-      return
+      return !(await onStop())
     }
 
     let sessionId = sessionId
-    switch await practice.write(
-      .finished,
+    let result = await practice.write(
+      .finished, onPurpose: true,
       { identity in
         try await practice.api.stopSession(token: identity.bearerToken, sessionId: sessionId)
       })
-    {
+    guard !Task.isCancelled else { return nil }
+    switch result {
     case .done: dismiss()
-    case .refused, .failed: stopFailed = true
+    case .refused, .failed: outcome = true
     case .obsolete: break
     }
+
+    return outcome
   }
 }
 
 extension NetTally {
-  fileprivate var line: String {
+  fileprivate var spokenScore: String {
+    let label = String(localized: "Score after wrong answers cancel right ones", table: "Practice")
+    return "\(label): \(net.formatted())"
+  }
+
+  fileprivate var line: [String] {
     [
       right == 0
         ? String(
@@ -512,11 +533,8 @@ extension NetTally {
         : String(
           localized: "\(wrong) wrong", table: "Practice",
           comment: "A net-scored block's wrong answers so far."),
-      String(
-        localized: "net \(net)", table: "Practice",
-        comment: "A net-scored block's score: right answers minus wrong ones."),
+
     ]
-    .joinedFacts()
   }
 }
 
@@ -525,7 +543,14 @@ private struct NetScoreLine: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(tally.line)
+      LabeledContent {
+        Text(tally.net, format: .number)
+          .typeStyle(.data)
+      } label: {
+        Text("Score after wrong answers cancel right ones", tableName: "Practice")
+      }
+
+      FactSegments(tally.line)
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
 
@@ -635,67 +660,6 @@ private struct BlockFinishedView: View {
       LocalizedStringResource("Review done", table: "Practice", comment: "End of a review block.")
     default:
       LocalizedStringResource("Practice done", table: "Practice", comment: "End of a practice run.")
-    }
-  }
-}
-
-enum PracticeBlockTitle {
-  static func title(for block: PracticeBlock) -> LocalizedStringResource {
-    if let checkpoint = block.checkpoint {
-      switch checkpoint.kind {
-      case .weekly:
-        return checkpoint.mock
-          ? LocalizedStringResource(
-            "Mock exam", table: "Practice", comment: "Title of a weekly mock exam block.")
-          : LocalizedStringResource(
-            "Weekly challenge", table: "Practice", comment: "Title of the weekly challenge block.")
-      case .finalBoss:
-        return LocalizedStringResource(
-          "Final challenge", table: "Practice", comment: "Title of the final challenge block.")
-      case .boss:
-        return checkpoint.rematch
-          ? LocalizedStringResource(
-            "Challenge, second try", table: "Practice",
-            comment: "Title of a lost phase challenge's rematch.")
-          : LocalizedStringResource(
-            "Phase challenge", table: "Practice", comment: "Title of a phase challenge block.")
-      }
-    }
-
-    switch block.kind {
-    case .review where block.capsules.isEmpty:
-      return LocalizedStringResource(
-        "What you already know", table: "Practice",
-        comment: "Title of the first week's placement questions block.")
-    case .review:
-      return block.estimatedMinutes > 5
-        ? LocalizedStringResource(
-          "Reviews", table: "Practice", comment: "Title of a long review block.")
-        : LocalizedStringResource(
-          "Quick review", table: "Practice", comment: "Title of a short review block.")
-    case .learn:
-      return block.title.map { LocalizedStringResource(stringLiteral: $0) }
-        ?? LocalizedStringResource(
-          "New lesson", table: "Practice", comment: "Title of a lesson block without a title yet.")
-    case .produce:
-      return block.title.map { LocalizedStringResource(stringLiteral: $0) }
-        ?? LocalizedStringResource(
-          "Writing practice", table: "Practice", comment: "Title of a writing block.")
-    case .practice, .checkpoint:
-      if block.fullReview {
-        return LocalizedStringResource(
-          "Full review", table: "Practice", comment: "Title of a full review block.")
-      }
-      if block.mistakesOnly {
-        return LocalizedStringResource(
-          "Practice mistakes", table: "Practice",
-          comment: "Title of a block that only fixes mistakes.")
-      }
-      return block.extra
-        ? LocalizedStringResource(
-          "Bonus practice", table: "Practice", comment: "Title of an extra practice block.")
-        : LocalizedStringResource(
-          "Mixed practice", table: "Practice", comment: "Title of a mixed practice block.")
     }
   }
 }

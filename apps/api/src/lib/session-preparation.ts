@@ -34,10 +34,6 @@ export async function startSessionPreparation({
     return access;
   }
 
-  if (access.status === "plusRequired") {
-    return { preparationId: null, status: "started" };
-  }
-
   const run = await start(sessionPreparationWorkflow, [
     { platform, sessionId, userId: access.userId },
   ]);
@@ -58,10 +54,6 @@ export async function startGoalPreparation({
 
   if (access.status === "notFound" || access.status === "unauthorized") {
     return access;
-  }
-
-  if (access.status === "plusRequired") {
-    return { preparationId: null, status: "started" };
   }
 
   const lessonsAskedAt = await askForLessons({ goalId });

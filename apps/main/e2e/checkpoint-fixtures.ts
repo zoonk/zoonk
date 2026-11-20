@@ -16,7 +16,7 @@ const SKILL_NAMES = ["Discounts", "Ratios"];
 const QUESTIONS_PER_SKILL = 3;
 
 export const CHECKPOINT_QUESTIONS = SKILL_NAMES.length * QUESTIONS_PER_SKILL;
-const CHECKPOINT_PASS_MARK = 5;
+export const CHECKPOINT_PASS_MARK = 5;
 
 /** A course written for the learner certifies their plan whole, named by its title. */
 async function createGoalLearner() {

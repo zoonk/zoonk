@@ -9,7 +9,7 @@ export function CheckpointFrame(props: Omit<React.ComponentProps<typeof TaskFram
   return <TaskFrame {...props} exitHref={hrefs.exit} />;
 }
 
-export function CheckpointError() {
+export function useCheckpointError(): React.ReactNode {
   const { duel } = useCheckpointScreen();
 
   return duel.state.error ? (

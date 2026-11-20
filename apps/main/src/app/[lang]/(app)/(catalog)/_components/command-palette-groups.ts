@@ -3,12 +3,11 @@
 import { getMenu } from "@/lib/menu";
 import { useBuddyName } from "@zoonk/learn/buddy-name";
 import { useExtracted } from "next-intl";
+import { createChapterPaletteItem, createCoursePaletteItem } from "./command-palette-catalog-items";
 import {
   type PaletteGroup,
   createAskPaletteItem,
-  createChapterPaletteItem,
-  createCoursePaletteItem,
-  createFeedbackPaletteItem,
+  createHelpPaletteItem,
   createLogoutPaletteItem,
   createMockPaletteItem,
   createNavigationPaletteItem,
@@ -80,28 +79,47 @@ export function usePaletteGroups({
   // A learner reaches their account and help pages from the avatar's menu: here they're found by name.
   const showsAccount = searching || !learner;
 
-  const sendFeedback = createFeedbackPaletteItem({
+  const sendFeedback = createHelpPaletteItem({
     keywords: t({
       description:
         "Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language.",
       message: "bug, problem, report, idea, suggestion, feature request, contact",
     }),
+    kind: "feedback",
     label: t("Send feedback"),
   });
+
+  // Found by name: a phone has no keys to list, so it isn't offered before the learner types.
+  const shortcuts = searching
+    ? [
+        createHelpPaletteItem({
+          keywords: t({
+            description:
+              "Words people type to find Keyboard shortcuts in the search, never shown. Add the words people use in this language.",
+            message: "keys, hotkeys, keyboard",
+          }),
+          kind: "shortcuts",
+          label: t("Keyboard shortcuts"),
+        }),
+      ]
+    : [];
 
   const helpItems = showsAccount
     ? [
         createNavigationPaletteItem({ id: "blog", label: t("Blog"), menu: getMenu("blog") }),
         sendFeedback,
         createNavigationPaletteItem({ id: "support", label: t("Help"), menu: getMenu("support") }),
+        ...shortcuts,
       ]
-    : [sendFeedback];
+    : [sendFeedback, ...shortcuts];
 
   const plan: PaletteGroup = {
     id: "plan",
     items: [
       ...results.plan.subjects.map((subject) => createSubjectPaletteItem(subject)),
-      ...results.plan.chapters.map((chapter) => createPlanChapterPaletteItem(chapter)),
+      ...results.plan.chapters.map((chapter) =>
+        createPlanChapterPaletteItem({ ...chapter, showsSubject: results.plan.showsSubject }),
+      ),
     ],
     label: t("Your plan"),
   };
@@ -139,7 +157,9 @@ export function usePaletteGroups({
 
   const catalogItems = [
     ...results.catalog.courses.map((course) => createCoursePaletteItem(course)),
-    ...results.catalog.chapters.map((chapter) => createChapterPaletteItem(chapter)),
+    ...results.catalog.chapters.map((chapter) =>
+      createChapterPaletteItem({ chapter, showsCourse: results.catalog.showsCourse }),
+    ),
   ].toSorted(
     (left, right) =>
       Number(matchesPaletteSearch({ query, value: right.label })) -

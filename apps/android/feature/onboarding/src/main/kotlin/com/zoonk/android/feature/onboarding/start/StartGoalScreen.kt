@@ -4,23 +4,16 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,17 +55,25 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.goalStartLimit
+import com.zoonk.android.feature.onboarding.lifted
+import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -121,7 +122,7 @@ fun StartGoalScreen(
     val actions =
         StartActions(
             createAccount = { navigator.open(AppRoute.Login) },
-            seePlus = { navigator.open(AppRoute.Subscription) },
+            subscribe = { navigator.open(AppRoute.Subscription) },
             openPlan = { navigator.open(AppRoute.Plan()) },
             toSetup = { goalId ->
                 navigator.closeSection()
@@ -132,6 +133,13 @@ fun StartGoalScreen(
                 navigator.open(AppRoute.Explain(goalId))
             },
         )
+    VisitOf(vm.visit)
+    ActOn(vm.created) {
+        when (it.opens) {
+            GoalOpens.Setup -> actions.toSetup(it.id)
+            GoalOpens.Explanation -> actions.toExplanation(it.id)
+        }
+    }
     val backInFlow: (() -> Unit)? =
         when (screen) {
             StartScreen.Questions -> {
@@ -154,30 +162,44 @@ fun StartGoalScreen(
             }
         }
 
-    BackHandler(enabled = backInFlow != null) { backInFlow?.invoke() }
+    // While a goal is being made from the card, Back waits with the card's other controls (system, bar and
+    // predictive back alike), so the goal is made once and its setup opens from the card the learner confirmed.
+    val creating = vm.isCreating
+    BackHandler(enabled = backInFlow != null || creating) { if (!creating) backInFlow?.invoke() }
 
     PageScaffold(
-        onBack = { backInFlow?.invoke() ?: navigator.back() },
+        onBack = { if (!creating) backInFlow?.invoke() ?: navigator.back() },
+        backEnabled = !creating,
         actions = {
             if (!hasSession) TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
         },
     ) { padding ->
+        val draft =
+            (screen as? StartScreen.Draft)?.let {
+                store.drafts[it.id]
+                    .collectShown()
+                    .value.value
+            }
         PageWithSupportingPane(
-            supportingPane = { HowItWorks(hasAccount = canAttach) },
+            supportingPane = if (showsHowItWorks(upFront, draft)) ({ HowItWorks(hasAccount = canAttach) }) else null,
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
-        ) { _ ->
-            StartColumn {
+        ) { paneBeside ->
+            SetupColumn {
                 when {
                     upFront == GoalLimitReason.Guest && screen == StartScreen.Entry -> {
                         GuestGoalGate(actions.createAccount, onBackToToday = { navigator.showRoot(AppTab.Today) })
                     }
 
+                    upFront == GoalLimitReason.ActiveGoals && screen == StartScreen.Entry -> {
+                        GoalLimitScreen(onSubscribe = actions.subscribe, onOpenPlan = actions.openPlan)
+                    }
+
                     screen == StartScreen.Entry -> {
-                        Entry(vm, route, canAttach, upFront, language, actions)
+                        Entry(vm, route, canAttach, language, actions, freeNote = !canAttach && !paneBeside)
                     }
 
                     screen == StartScreen.Questions -> {
-                        MaterialQuestions(vm, language)
+                        MaterialQuestions(vm, language, actions)
                     }
 
                     screen is StartScreen.Sending -> {
@@ -202,40 +224,20 @@ fun StartGoalScreen(
 
 private class StartActions(
     val createAccount: () -> Unit,
-    val seePlus: () -> Unit,
+    val subscribe: () -> Unit,
     val openPlan: () -> Unit,
     val toSetup: (String) -> Unit,
     val toExplanation: (String) -> Unit,
 )
-
-/** At least the window's height, so a screen's actions can sit at its bottom. */
-@Composable
-private fun StartColumn(content: @Composable ColumnScope.() -> Unit) {
-    BoxWithConstraints(Modifier.fillMaxSize().imePadding()) {
-        val windowHeight = maxHeight
-        Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-            Column(
-                modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .heightIn(min = windowHeight)
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                content = content,
-            )
-        }
-    }
-}
 
 @Composable
 private fun ColumnScope.Entry(
     vm: StartGoalViewModel,
     route: AppRoute.StartGoal,
     canAttach: Boolean,
-    upFront: GoalLimitReason?,
     language: String,
     actions: StartActions,
+    freeNote: Boolean,
 ) {
     val flow = vm.flow
     val materialGoal = materialGoal(flow)
@@ -246,8 +248,6 @@ private fun ColumnScope.Entry(
         stringResource(if (route.planId != null) R.string.onboarding_start_description_shared else R.string.onboarding_start_description),
     )
 
-    upFront?.let { GoalLimitNotice(it, upFront = true, onOpenPlan = actions.openPlan, onSeePlus = actions.seePlus) }
-
     GoalBox(
         value = flow.words,
         onValueChange = vm::setWords,
@@ -255,7 +255,13 @@ private fun ColumnScope.Entry(
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
         leading = {
             IconButton(onClick = vm::toggleAttach) {
-                Icon(painterResource(R.drawable.ic_attach_file), contentDescription = stringResource(R.string.onboarding_study_material))
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
+                    Icon(
+                        painterResource(R.drawable.ic_attach_file),
+                        contentDescription = stringResource(R.string.onboarding_study_material),
+                        modifier = Modifier.glyphInk(R.drawable.ic_attach_file).size(24.dp),
+                    )
+                }
             }
         },
     )
@@ -266,14 +272,18 @@ private fun ColumnScope.Entry(
     if (vm.isAttachOpen && canAttach) {
         AttachPanel(
             pending = vm.isAttaching,
-            error = vm.attachFailure?.let { attachErrorMessage(it) },
+            failure = vm.attachFailure,
             onFile = { vm.attachFile(it, language) },
             onText = { vm.attachText(it, language) },
             onLink = { vm.attachLink(it, language) },
+            onCreateAccount = actions.createAccount,
+            onSubscribe = actions.subscribe,
         )
     }
 
-    GoalErrorAlert(vm.entryError, actions.createAccount, actions.openPlan, actions.seePlus)
+    GoalErrorAlert(vm.entryError, actions.createAccount, actions.openPlan, actions.subscribe)
+
+    if (freeNote) StartFreeNote()
 
     GoalExamples(examples = rememberGoalExamples(), onPick = submit)
 }
@@ -321,10 +331,16 @@ private fun ColumnScope.Draft(
 ) {
     val resource = store.drafts[id]
     val state by resource.collectShown()
+    // A draft not read since a create this device didn't learn the outcome of is waiting for its read again.
+    val fresh by resource.freshState.collectAsStateWithLifecycle()
 
     when (val shown = state) {
         is LoadState.Loaded -> {
-            DraftContent(vm, shown.value, hasAccount, upFront, language, actions)
+            if (fresh is LoadState.Failed) {
+                LoadFailedMessage(onRetry = vm::readDraftAgain)
+            } else {
+                DraftContent(vm, shown.value, rereading = fresh !is LoadState.Loaded, hasAccount, upFront, language, actions)
+            }
         }
 
         is LoadState.Failed -> {
@@ -358,6 +374,7 @@ private fun ColumnScope.Draft(
 private fun ColumnScope.DraftContent(
     vm: StartGoalViewModel,
     draft: OnboardingDraft,
+    rereading: Boolean,
     hasAccount: Boolean,
     upFront: GoalLimitReason?,
     language: String,
@@ -371,12 +388,12 @@ private fun ColumnScope.DraftContent(
 
     LaunchedEffect(draft.id, draft.status, draft.generationId) { vm.follow(draft) }
     LaunchedEffect(draft.id, draft.status) {
-        vm.settle(draft, explanation = { read, question -> explanationInput(read, question, language) }, onCreated = actions.toExplanation)
+        vm.settle(draft) { read, question -> explanationInput(read, question, language) }
     }
     LaunchedEffect(draft.activeGoalsLeft) { vm.readRoom(draft.activeGoalsLeft) }
 
     val back = { vm.backToEntry(draft.prompt) }
-    val limit = vm.draftLimit
+    val limit = vm.draftLimit?.takeUnless { it.lifted() }
 
     when (val understanding = draft.understanding) {
         null -> {
@@ -384,7 +401,7 @@ private fun ColumnScope.DraftContent(
                 limit != null -> {
                     TypedGoal(draft.prompt)
                     OnboardingHeading(stringResource(R.string.onboarding_understanding_title))
-                    GoalErrorAlert(limit, actions.createAccount, actions.openPlan, actions.seePlus)
+                    GoalErrorAlert(limit, actions.createAccount, actions.openPlan, actions.subscribe)
                 }
 
                 vm.readFailed -> {
@@ -454,7 +471,7 @@ private fun ColumnScope.DraftContent(
                 timeZone = draft.timeZone,
                 material = vm.flow.attached.map { it.title },
                 hasAccount = hasAccount,
-                isCreating = vm.isCreating,
+                isCreating = vm.isCreating || rereading,
                 error = vm.creationError,
                 goalLimit = upFront,
                 onConfirm = {
@@ -467,13 +484,12 @@ private fun ColumnScope.DraftContent(
                             flow.intent.takeIf { flow.attached.isNotEmpty() },
                             flow.attached.map { it.id },
                         ),
-                        onCreated = actions.toSetup,
                     )
                 },
                 edits = FactEdits(vm.editing, vm.savingEdit, vm.failedEdit, vm::edit, vm::revise),
                 onRewrite = { vm.rewrite(it, language) },
                 onCreateAccount = actions.createAccount,
-                onSeePlus = actions.seePlus,
+                onSubscribe = actions.subscribe,
                 onOpenPlan = actions.openPlan,
             )
         }
@@ -482,12 +498,12 @@ private fun ColumnScope.DraftContent(
             ExplainGoal(
                 goal = draft.prompt,
                 question = understanding.value.question,
-                isStarting = vm.isOpeningExplanation(draft),
+                isStarting = vm.isOpeningExplanation(draft) || rereading,
                 error = vm.creationError,
-                onStart = { vm.create(explanationInput(draft, understanding.value.question, language), actions.toExplanation) },
+                onStart = { vm.create(explanationInput(draft, understanding.value.question, language), GoalOpens.Explanation) },
                 onCreateAccount = actions.createAccount,
                 onOpenPlan = actions.openPlan,
-                onSeePlus = actions.seePlus,
+                onSubscribe = actions.subscribe,
             )
         }
 
@@ -498,15 +514,15 @@ private fun ColumnScope.DraftContent(
             InstrumentGoal(
                 goal = draft.prompt,
                 instrument = instrument,
-                isStarting = vm.isCreating,
+                isStarting = vm.isCreating || rereading,
                 error = vm.creationError,
                 waitlist = vm.waitlist,
                 isJoining = vm.isJoining,
-                onStartMusicianship = { vm.create(musicianshipInput(draft, instrument, title, subject, language), actions.toSetup) },
+                onStartMusicianship = { vm.create(musicianshipInput(draft, instrument, title, subject, language), GoalOpens.Setup) },
                 onJoinWaitlist = { vm.joinWaitlist(instrument, language) },
                 onCreateAccount = actions.createAccount,
                 onOpenPlan = actions.openPlan,
-                onSeePlus = actions.seePlus,
+                onSubscribe = actions.subscribe,
             )
         }
 
@@ -526,6 +542,7 @@ private fun failedRun(failure: GenerationFailure) = GenerationRun(status = Gener
 private fun ColumnScope.MaterialQuestions(
     vm: StartGoalViewModel,
     language: String,
+    actions: StartActions,
 ) {
     var question by rememberSaveable { mutableStateOf("") }
     val ask = {
@@ -541,7 +558,7 @@ private fun ColumnScope.MaterialQuestions(
         vm.turns.forEach { turn ->
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 TypedGoal(turn.question)
-                MaterialAnswer(turn.outcome)
+                MaterialAnswer(turn.outcome, actions.createAccount, actions.subscribe)
             }
         }
     }
@@ -557,7 +574,6 @@ private fun ColumnScope.MaterialQuestions(
         }
     }
 
-    if (isCompactWidth()) Spacer(Modifier.weight(1f))
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
             value = question,
@@ -587,41 +603,32 @@ private fun HowItWorks(hasAccount: Boolean) {
     Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(stringResource(R.string.onboarding_how_it_works))
         steps.forEachIndexed { index, step ->
-            // The first step is where the learner is.
-            Row(
-                modifier =
-                    Modifier
-                        .semantics(mergeDescendants = true) { if (index == 0) stateDescription = current }
-                        .fillMaxWidth()
-                        .background(
-                            if (index ==
-                                0
-                            ) {
-                                MaterialTheme.colorScheme.surfaceContainerHigh
-                            } else {
-                                Color.Transparent
-                            },
-                            MaterialTheme.shapes.small,
-                        ).padding(horizontal = 8.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    text = (index + 1).toString(),
-                    modifier = Modifier.alignByBaseline().clearAndSetSemantics {},
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
-                Text(stringResource(step), modifier = Modifier.alignByBaseline(), style = MaterialTheme.typography.bodyMedium)
-            }
-        }
-        if (!hasAccount) {
-            Text(
-                stringResource(R.string.onboarding_start_free),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
+            ListRow(
+                headline = { Text(stringResource(step)) },
+                modifier = Modifier.bleed(LIST_ITEM_INSET),
+                highlighted = index == 0,
+                stateDescription = current.takeIf { index == 0 },
+                leading = { Text((index + 1).toString(), style = MaterialTheme.typography.labelMedium.withTabularFigures()) },
+                leadOnFirstLine = true,
             )
         }
+        if (!hasAccount) StartFreeNote()
     }
 }
 
+@Composable
+private fun StartFreeNote() {
+    Text(
+        stringResource(R.string.onboarding_start_free),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodySmall,
+    )
+}
+
 private const val MAX_QUESTION_LENGTH = 500
+
+/** "How it works" describes making a plan, so it isn't beside the goals-at-once gate or an explanation offer. */
+internal fun showsHowItWorks(
+    upFront: GoalLimitReason?,
+    draft: OnboardingDraft?,
+): Boolean = upFront != GoalLimitReason.ActiveGoals && draft?.understanding !is GoalUnderstanding.GoalUnderstandingOneOf1Value

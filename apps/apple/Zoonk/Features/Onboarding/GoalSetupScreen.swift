@@ -53,18 +53,13 @@ struct GoalLoadFailure: View {
   let retry: () async -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    PageLoadFailure {
       Text(
         "We couldn't load your goal", tableName: "Onboarding",
         comment: "A goal's onboarding failed to load")
-    } actions: {
-      Button {
-        Task { await retry() }
-      } label: {
-        Text("Try again", tableName: "Onboarding", comment: "Loads the goal's onboarding again")
-      }
+    } retry: {
+      await retry()
     }
-    .lonePage()
   }
 }
 
@@ -95,31 +90,39 @@ extension [Components.Schemas.OnboardingStep] {
 struct SetupProgress: Equatable {
   let step: Int
   let total: Int
+
+  /// Main's `getProfileProgress`: while another question about the learner is still ahead.
+  static func showsSkipAll(
+    current: Components.Schemas.OnboardingStep, steps: [Components.Schemas.OnboardingStep]
+  ) -> Bool {
+    current.profileQuestion != nil
+      && steps.contains { $0.profileQuestion != nil && $0 != current }
+  }
 }
 
 extension SetupProgress {
   /// Placement is optional, so it never counts: the total can't jump when a beginner skips it.
   private static let questions = stepScreens.subtracting([.placement])
 
+  /// Core's `QUESTIONS_THAT_ADD_QUESTIONS`: until they're answered, the count could still grow.
+  private static let questionsThatAddQuestions: Set<Components.Schemas.OnboardingStep> = [
+    .purpose, .reason,
+  ]
+
   /// Nil on a screen that isn't one of the questions, placement included. The About you screens
-  /// count as one, so the count keeps its scale.
+  /// count as one, so the count keeps its scale, and show it too: one count for the whole setup.
   init?(
     current: Components.Schemas.OnboardingStep, history: [Components.Schemas.OnboardingStep],
     steps: [Components.Schemas.OnboardingStep]
   ) {
+    guard !([current] + steps).contains(where: Self.questionsThatAddQuestions.contains)
+    else {
+      return nil
+    }
+
     self.init(current: current, history: history, steps: steps) { step in
       let counted = step.profileQuestion == nil ? step : .work
       return Self.questions.contains(counted) ? counted : nil
-    }
-  }
-
-  /// "About you · 4 of 10": where an About you screen is among this run's.
-  static func aboutYou(
-    current: Components.Schemas.OnboardingStep, history: [Components.Schemas.OnboardingStep],
-    steps: [Components.Schemas.OnboardingStep]
-  ) -> SetupProgress? {
-    SetupProgress(current: current, history: history, steps: steps) {
-      $0.profileQuestion == nil ? nil : $0
     }
   }
 
@@ -160,12 +163,15 @@ private struct GoalSteps: View {
   @State private var revisiting: Components.Schemas.OnboardingStep?
   @State private var scheduleDraft: ScheduleQuestion.Draft?
   @State private var isSaving = false
-  @State private var failed = false
+  @State private var failures = GoalSetupFailures()
   /// Why the last save was refused, when the answer itself was.
   @State private var refusal: OnboardingError?
   @State private var confirmingStartOver = false
+  /// Lesson 1, set once the answer saved before it lands. This screen opens it while it's there, so
+  /// a Setup closed meanwhile keeps the answer and opens nothing.
+  @State private var savedBeforeLesson: String?
   /// Start over's request, cancelled if the screen goes away first, so it never acts after.
-  @State private var startingOver: Task<Void, Never>?
+  private var startingOver: VisitRequest<Bool> { failures.startingOver }
   @State private var conditionPicks: [String] = []
 
   init(
@@ -227,7 +233,8 @@ private struct GoalSteps: View {
 
   var body: some View {
     StepScreen(
-      step: step, view: view, isSaving: isSaving, failed: failed, refusal: refusal,
+      step: step, view: view, isSaving: isSaving, failed: failures.failed,
+      refusal: refusal,
       scheduleDraft: scheduleDraft,
       profile: profile,
       onAnswer: { answer($0) },
@@ -261,7 +268,7 @@ private struct GoalSteps: View {
         }
       }
 
-      if step.profileQuestion != nil {
+      if SetupProgress.showsSkipAll(current: step, steps: view.steps) {
         ToolbarItem(placement: .primaryAction) {
           Button {
             answer(["question": "skipProfile"])
@@ -305,7 +312,7 @@ private struct GoalSteps: View {
       isPresented: $confirmingStartOver, titleVisibility: .visible
     ) {
       Button(role: .destructive) {
-        startingOver = Task { await startOver() }
+        startingOver.run { await startOver() }
       } label: {
         Text(
           "Start over", tableName: "Onboarding",
@@ -317,7 +324,16 @@ private struct GoalSteps: View {
         tableName: "Onboarding",
         comment: "What starting over does")
     }
-    .onDisappear { startingOver?.cancel() }
+    .onDisappear {
+      startingOver.leave()
+      isSaving = false
+    }
+    .onChange(of: savedBeforeLesson) { _, lesson in
+      if let lesson {
+        savedBeforeLesson = nil
+        router.open(.lesson(lessonId: lesson))
+      }
+    }
     .taskThroughPush(id: view.generationId) { await preloadDeck() }
   }
 
@@ -337,24 +353,24 @@ private struct GoalSteps: View {
   }
 
   /// One answer saves at a time; a save that fails keeps the learner on this screen with what they
-  /// picked. `then` runs once it's saved.
-  private func answer(_ input: [String: Any], then: (() -> Void)? = nil) {
+  /// picked.
+  private func answer(_ input: [String: Any], beforeLesson lesson: String? = nil) {
     guard !isSaving else {
       return
     }
 
     isSaving = true
-    failed = false
+    failures.clear()
 
     Task {
       defer { isSaving = false }
 
       do {
         try await save(input)
-        then?()
+        savedBeforeLesson = lesson
       } catch is CancellationError {
       } catch {
-        failed = true
+        failures.answerFailed = true
         refusal = error as? OnboardingError
       }
     }
@@ -367,12 +383,10 @@ private struct GoalSteps: View {
       return
     }
 
-    let open = { router.open(.lesson(lessonId: lesson.id)) }
-
     if let input {
-      answer(input, then: open)
+      answer(input, beforeLesson: lesson.id)
     } else {
-      open()
+      router.open(.lesson(lessonId: lesson.id))
     }
   }
 
@@ -387,12 +401,10 @@ private struct GoalSteps: View {
     let memoryEnabled = view.profile.memoryEnabled
     var draft = ProfileDraft(saved, memoryEnabled: memoryEnabled)
     var context = ProfileScreenContext(
-      eyebrow: SetupProgress.aboutYou(current: step, history: history, steps: view.steps).map {
-        String(
-          localized: "About you · \($0.step) of \($0.total)", table: "AboutYou",
-          comment: "Over an About you question in onboarding: which one it is of how many")
-      },
-      memoryEnabled: memoryEnabled)
+      eyebrow: String(
+        localized: "About you", table: "AboutYou",
+        comment: "Over an About you question in onboarding"),
+      skipDeclines: true, memoryEnabled: memoryEnabled)
 
     // Only a question met for the first time takes these: one the learner answered keeps their answer.
     switch question {
@@ -401,8 +413,6 @@ private struct GoalSteps: View {
         draft.text = role
         context.jobFromEarlierAnswer = true
       }
-    case .addressForm:
-      context.skipDeclines = true
     case .learningSupport where revisiting == nil && history.last == .conditions:
       context.prechecked = draft.precheck(for: conditionPicks)
     default:
@@ -459,7 +469,7 @@ private struct GoalSteps: View {
       scheduleDraft = nil
     }
 
-    failed = false
+    failures.clear()
     revisiting = previous
   }
 
@@ -467,20 +477,20 @@ private struct GoalSteps: View {
   private func changeDate(_ draft: ScheduleQuestion.Draft) {
     scheduleDraft = draft
     history.append(step)
-    failed = false
+    failures.clear()
     revisiting = .targetDate
   }
 
-  private func startOver() async {
+  private func startOver() async -> Bool? {
     isSaving = true
-    defer { isSaving = false }
+    defer { if !Task.isCancelled { isSaving = false } }
 
     do {
       try await onboarding.startOver(goalIDs: view.goalIds.isEmpty ? [view.goal.id] : view.goalIds)
 
       // Closed meanwhile: whatever is on screen now isn't this setup's to replace.
       guard !Task.isCancelled else {
-        return
+        return nil
       }
 
       if let onStartOver {
@@ -492,8 +502,9 @@ private struct GoalSteps: View {
       }
     } catch is CancellationError {
     } catch {
-      failed = true
+      return true
     }
+    return nil
   }
 
   /// So Back returns to them after coming back later.
@@ -584,9 +595,12 @@ private struct StepScreen: View {
       let subject: String?
     }
 
-    let subject = (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.subject
-    return subject?.trimmingCharacters(in: .whitespaces).isEmpty == false
-      ? subject ?? view.goal.displayName : view.goal.displayName
+    // Written to sit mid-sentence ("inglês"); the chip starts a line, so it starts with a capital.
+    guard
+      let subject = (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.subject,
+      !subject.trimmingCharacters(in: .whitespaces).isEmpty
+    else { return view.goal.displayName }
+    return subject.prefix(1).uppercased(with: .current) + subject.dropFirst()
   }
 }
 
@@ -602,5 +616,18 @@ extension View {
             goalID: view.goal.id, onboardingID: view.onboardingID, question: step.rawValue),
           at: .now))
     }
+  }
+}
+
+@MainActor
+@Observable
+final class GoalSetupFailures {
+  var answerFailed = false
+  let startingOver = VisitRequest<Bool>()
+  var failed: Bool { answerFailed || startingOver.outcome == true }
+
+  func clear() {
+    answerFailed = false
+    startingOver.outcome = nil
   }
 }

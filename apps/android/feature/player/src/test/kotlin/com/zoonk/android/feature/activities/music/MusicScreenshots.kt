@@ -23,6 +23,7 @@ import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -66,7 +67,7 @@ class MusicScreenshots {
     private fun save(name: String) {
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     private fun play(
@@ -171,6 +172,39 @@ class MusicScreenshots {
         }
         save(name)
     }
+
+    /** The controls before a try, and after one, when Check is enabled and "Try again" steps down. */
+    private fun rhythmControls(
+        name: String,
+        taps: List<Double>?,
+    ) {
+        rule.setContent {
+            ZoonkTheme {
+                Surface {
+                    rhythmTapperRenderer.canvas(
+                        ActivityProps(
+                            content = ActivityFixtures.content("rhythmTapper"),
+                            answer = taps?.let { rhythmAnswer(it, deviceDelayMs = null) },
+                            expected = null,
+                            isCorrect = null,
+                            phase = ActivityPhase.Answering,
+                            isLocked = false,
+                            onAnswerChange = {},
+                        ),
+                    )
+                }
+            }
+        }
+        save(name)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun rhythmBeforeATryPhone() = rhythmControls("rhythm-before-a-try-phone", taps = null)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun rhythmAfterATryPhone() = rhythmControls("rhythm-after-a-try-phone", taps = listOf(0.0, 500.0))
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

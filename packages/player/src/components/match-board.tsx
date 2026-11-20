@@ -1,6 +1,7 @@
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
-import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import { Fragment, type ReactNode } from "react";
+import { ActivityCanvasLabel } from "../activities/_components/activity-canvas";
 
 type Side = "left" | "right";
 type RenderItem<Item> = (side: Side, item: Item, index: number) => ReactNode;
@@ -48,7 +49,7 @@ function BoardLayout<Item extends { id: string }>({
 }: BoardProps<Item>) {
   if (solvedRows) {
     return (
-      <div className="grid grid-cols-1 gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-x-2.5 @min-[20.5em]:gap-y-2">
+      <div className="grid grid-cols-1 gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-2">
         {solvedRows.map((row, index) => (
           <div
             className="grid grid-cols-1 gap-y-2 @min-[20.5em]:col-span-2 @min-[20.5em]:grid-cols-subgrid"
@@ -72,7 +73,7 @@ function BoardLayout<Item extends { id: string }>({
 
     return (
       <div
-        className="grid grid-cols-1 gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-x-2.5 @min-[20.5em]:gap-y-2"
+        className="grid grid-cols-1 gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-2"
         style={rowCount(Math.max(left.length, right.length))}
       >
         <Column className={column} items={left} renderItem={renderItem} side="left" />
@@ -82,7 +83,7 @@ function BoardLayout<Item extends { id: string }>({
   }
 
   return (
-    <div className="grid grid-cols-1 items-start gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-2.5">
+    <div className="grid grid-cols-1 items-start gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-2">
       <Column className="flex flex-col gap-2" items={left} renderItem={renderItem} side="left" />
       <Column className="flex flex-col gap-2" items={right} renderItem={renderItem} side="right" />
     </div>
@@ -90,22 +91,51 @@ function BoardLayout<Item extends { id: string }>({
 }
 
 /**
- * `className` sets the cards' text size. The board stays side by side while it's 20.5em of that text
- * wide, about ten letters beside each card's mark, so larger text stacks the right column under the
- * left and each card gets the board's width, as Apple's board does at accessibility sizes.
+ * The board stays side by side while it's 20.5em of its text wide, about ten letters beside each
+ * card's mark, so larger text stacks the right column under the left and each card gets the board's
+ * width, as Apple's board does at accessibility sizes.
  */
 export function MatchBoard<Item extends { id: string }>({
-  className,
   label,
   ...board
-}: BoardProps<Item> & { className: string; label?: string }) {
+}: BoardProps<Item> & { label?: string }) {
   return (
     <div
       aria-label={label}
-      className={cn("@container", className)}
+      className="@container text-sm sm:text-base"
       role={label ? "group" : undefined}
     >
       <BoardLayout {...board} />
     </div>
+  );
+}
+
+export function MatchBoardCount({
+  matched,
+  total,
+  traps = 0,
+}: {
+  matched: number;
+  total: number;
+  traps?: number;
+}) {
+  const t = useExtracted();
+
+  return (
+    <ActivityCanvasLabel className="tabular-nums">
+      {t("{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}", {
+        matched,
+        total: String(total),
+      })}
+
+      {traps > 0 && (
+        <>
+          {" · "}
+          {t("{count, plural, one {# card has no match} other {# cards have no match}}", {
+            count: traps,
+          })}
+        </>
+      )}
+    </ActivityCanvasLabel>
   );
 }

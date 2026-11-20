@@ -16,14 +16,14 @@ import com.zoonk.android.R
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.MockStore
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -31,29 +31,31 @@ import com.zoonk.api.models.LanguageTodaySpeaking
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOption
 import com.zoonk.api.models.MockOptions
-import com.zoonk.api.models.TodayGoal
+import java.util.UUID
 
 /** Reads only what the goal's kind can offer, and only where the section shows. */
 @Composable
 internal fun TodayPractice(
     store: TodayStore,
     mocks: MockStore,
-    goal: TodayGoal,
+    goalId: UUID,
+    isExam: Boolean,
+    isLanguage: Boolean,
     completedLessons: Boolean,
     navigate: (AppRoute) -> Unit,
 ) {
-    val mistakes by store.mistakes[goal.id].collectShown()
+    val mistakes by store.mistakes[goalId].collectShown()
     val mocks =
-        if (goal.kind == TodayGoal.Kind.EXAM) {
-            mocks.options[goal.id]
+        if (isExam) {
+            mocks.options[goalId]
                 .collectShown()
                 .value.value
         } else {
             null
         }
     val speaking =
-        if (goal.kind == TodayGoal.Kind.LANGUAGE) {
-            store.language[goal.id]
+        if (isLanguage) {
+            store.language[goalId]
                 .collectShown()
                 .value.value
                 ?.speaking
@@ -87,7 +89,7 @@ fun TodayPracticeRows(
                     PracticeRow(
                         kind = LearnKind.Lesson,
                         title = stringResource(R.string.navigation_completed_lessons),
-                        description = stringResource(R.string.today_completed_lessons_detail),
+                        description = stringResource(R.string.today_completed_lessons_line),
                     ) { navigate(AppRoute.CompletedLessons) }
                 }
             }
@@ -125,7 +127,6 @@ private fun MockRow(
         kind = LearnKind.Mock,
         title = stringResource(R.string.today_take_mock),
         description = stringResource(if (bySubject) R.string.today_take_mock_detail_by_subject else R.string.today_take_mock_detail),
-        trailing = { if (mocks.access == MockOptions.Access.PLUS_REQUIRED) PlusMark() },
     ) { navigate(AppRoute.MockChooser) }
 }
 
@@ -138,7 +139,6 @@ private fun SpeakingRow(
         kind = LearnKind.Conversation,
         title = stringResource(R.string.today_exam_speaking),
         description = stringResource(R.string.today_exam_speaking_detail, speaking.title),
-        trailing = { if (speaking.access == LanguageTodaySpeaking.Access.PLUS_REQUIRED) PlusMark() },
     ) { navigate(AppRoute.Speaking()) }
 }
 
@@ -190,7 +190,7 @@ private fun MistakesRow(
 private fun PracticeRow(
     kind: LearnKind,
     title: String,
-    description: String,
+    description: String? = null,
     trailing: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
 ) {
@@ -198,8 +198,8 @@ private fun PracticeRow(
         headline = { Text(title) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onClick,
-        leading = { KindDot(kind) },
-        supporting = { Text(description) },
+        leading = { KindMark(kind) },
+        supporting = listRowDescription(description),
         meta = trailing,
     )
 }

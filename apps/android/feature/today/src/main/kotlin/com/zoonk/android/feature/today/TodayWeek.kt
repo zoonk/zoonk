@@ -34,6 +34,9 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.WEEK_RING
+import com.zoonk.android.ui.components.WeekDayCell
+import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.WeekdayNames
@@ -42,12 +45,13 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.weekdayNames
-import com.zoonk.api.models.StudySessionWeekDaysInner
+import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.StudyWeekDay
 import com.zoonk.api.models.TodayWeeklyChallenge
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 
-private typealias WeekDay = StudySessionWeekDaysInner
+private typealias WeekDay = StudyWeekDay
 
 @Composable
 internal fun TodayWeek(
@@ -55,8 +59,10 @@ internal fun TodayWeek(
     challenge: TodayWeeklyChallenge?,
     onOpen: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
+    exam: Boolean = false,
 ) {
     val week = day.week
+    if (!showsWeek(week.days)) return
     // The week marks the current local day even while a lesson carries the previous day's session.
     val weekDate = week.days.firstOrNull { it.isToday }?.date ?: day.localDate
     val inWeek = challenge?.date != null && week.days.any { it.date == challenge.date }
@@ -64,15 +70,31 @@ internal fun TodayWeek(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         WeekHeader()
 
-        val names = weekdayNames(currentLocale())
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        val locale = currentLocale()
+        val names = weekdayNames(locale)
+        WeekDaysRow {
             week.days.forEach { weekDay ->
                 val challengeDay = challenge?.takeIf { it.date == weekDay.date }
-                DayCell(weekDay, weekDate, challengeDay, names, Modifier.weight(1f))
+                DayCell(weekDay, weekDate, challengeDay, names, exam)
             }
         }
 
         if (challenge != null && inWeek) ChallengeRow(challenge, onOpen)
+
+        if (week.days.any { it.isMissed(weekDate) }) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                GoalRing(share = 0f, track = GoalRingTrack.Missed, size = 12.dp)
+                val label = stringResource(R.string.today_week_not_studied)
+                Text(
+                    label.replaceFirstChar { it.titlecase(locale) },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
     }
 }
 
@@ -81,7 +103,7 @@ private fun WeekHeader() {
     Text(
         stringResource(R.string.today_week_title),
         modifier = Modifier.semantics { heading() },
-        style = MaterialTheme.typography.titleMedium,
+        style = MaterialTheme.zoonkType.sectionTitle,
     )
 }
 
@@ -91,11 +113,11 @@ private fun DayCell(
     weekDate: LocalDate,
     challenge: TodayWeeklyChallenge?,
     names: WeekdayNames,
-    modifier: Modifier,
+    exam: Boolean,
 ) {
     val dayOfWeek = day.date.toJavaLocalDate().dayOfWeek
     val weekday = names.full.getValue(dayOfWeek)
-    val status = dayStatus(day, weekDate)
+    val status = dayStatus(day, weekDate, exam)
     val description =
         when {
             challenge == null -> stringResource(R.string.today_week_day, weekday, status)
@@ -107,29 +129,20 @@ private fun DayCell(
         title = weekday,
         facts = dayTime(day),
         note = dayNote(day, weekDate, status),
-        modifier = modifier,
         footer = { if (challenge != null) ChallengeLine(challenge) },
     ) { open ->
-        Column(
+        WeekDayCell(
+            letter = names.narrow.getValue(dayOfWeek),
+            today = day.isToday,
             modifier =
                 Modifier
-                    .fillMaxWidth()
                     .clip(MaterialTheme.shapes.small)
                     .then(open)
-                    .clearAndSetSemantics { contentDescription = description }
-                    .heightIn(min = 48.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+                    .clearAndSetSemantics { contentDescription = description },
         ) {
             DayRing(day, weekDate) {
                 if (challenge != null && day.share == 0f) KindMark(challenge.kind())
             }
-            Text(
-                text = names.narrow.getValue(dayOfWeek),
-                color = if (day.isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = if (day.isToday) FontWeight.Medium else null,
-                style = MaterialTheme.typography.labelSmall,
-            )
         }
     }
 }
@@ -172,7 +185,7 @@ private fun dayNote(
     val locale = currentLocale()
     val saidByTime =
         !day.hitGoal &&
-            (day.minutes > 0 || (day.goalMinutes > 0 && day.kind == StudySessionWeekDaysInner.Kind.STUDY && !day.isMissed(weekDate)))
+            (day.minutes > 0 || (day.goalMinutes > 0 && day.kind == StudyWeekDay.Kind.STUDY && !day.isMissed(weekDate)))
 
     return if (saidByTime) null else status.replaceFirstChar { it.titlecase(locale) }
 }
@@ -186,9 +199,10 @@ private fun ChallengeLine(challenge: TodayWeeklyChallenge) {
     }
 }
 
+/** A day's ring as Today draws it, which the weekly recap draws for its days too. */
 @Composable
-private fun DayRing(
-    day: WeekDay,
+internal fun DayRing(
+    day: StudyWeekDay,
     weekDate: LocalDate,
     content: @Composable () -> Unit,
 ) {
@@ -199,12 +213,12 @@ private fun DayRing(
         return
     }
 
-    val isTarget = !day.studied && (day.kind == StudySessionWeekDaysInner.Kind.EXAM || day.kind == StudySessionWeekDaysInner.Kind.DEADLINE)
+    val isTarget = !day.studied && (day.kind == StudyWeekDay.Kind.EXAM || day.kind == StudyWeekDay.Kind.DEADLINE)
     val track =
         when {
             day.isToday -> GoalRingTrack.Today
             day.isMissed(weekDate) -> GoalRingTrack.Missed
-            day.kind == StudySessionWeekDaysInner.Kind.REST -> GoalRingTrack.Rest
+            day.kind == StudyWeekDay.Kind.REST -> GoalRingTrack.Rest
             else -> GoalRingTrack.Default
         }
 
@@ -226,29 +240,59 @@ private val WeekDay.share: Float
             else -> (minutes / goalMinutes).toFloat().coerceAtMost(1f)
         }
 
-private fun WeekDay.isMissed(weekDate: LocalDate) = kind == StudySessionWeekDaysInner.Kind.STUDY && !studied && !isToday && date < weekDate
+private fun WeekDay.isMissed(weekDate: LocalDate) = kind == StudyWeekDay.Kind.STUDY && !studied && !isToday && date < weekDate
 
 private val WeekDay.isOutsidePlan get() =
     !studied &&
-        (kind == StudySessionWeekDaysInner.Kind.BEFORE_START || kind == StudySessionWeekDaysInner.Kind.AFTER_END)
+        (kind == StudyWeekDay.Kind.BEFORE_START || kind == StudyWeekDay.Kind.AFTER_END)
 
 @Composable
 private fun dayStatus(
     day: WeekDay,
     weekDate: LocalDate,
+    exam: Boolean,
 ): String =
     stringResource(
         when {
-            day.hitGoal -> R.string.today_week_goal_reached
-            day.studied -> R.string.today_week_studied
-            day.kind == StudySessionWeekDaysInner.Kind.EXAM -> R.string.today_week_exam_day
-            day.kind == StudySessionWeekDaysInner.Kind.DEADLINE -> R.string.today_week_deadline
-            day.kind == StudySessionWeekDaysInner.Kind.BEFORE_START -> R.string.today_week_before_plan
-            day.kind == StudySessionWeekDaysInner.Kind.AFTER_END -> R.string.today_week_after_date
-            day.kind == StudySessionWeekDaysInner.Kind.REST -> R.string.today_week_rest_day
-            day.isToday -> R.string.today_week_today
-            day.date > weekDate -> R.string.today_week_planned
-            else -> R.string.today_week_not_studied
+            day.hitGoal -> {
+                R.string.today_week_goal_reached
+            }
+
+            day.studied -> {
+                R.string.today_week_studied
+            }
+
+            day.kind == StudyWeekDay.Kind.EXAM -> {
+                R.string.today_week_exam_day
+            }
+
+            day.kind == StudyWeekDay.Kind.DEADLINE -> {
+                R.string.today_week_deadline
+            }
+
+            day.kind == StudyWeekDay.Kind.BEFORE_START -> {
+                R.string.today_week_before_plan
+            }
+
+            day.kind == StudyWeekDay.Kind.AFTER_END -> {
+                if (exam) R.string.today_week_after_exam else R.string.today_week_after_date
+            }
+
+            day.kind == StudyWeekDay.Kind.REST -> {
+                R.string.today_week_rest_day
+            }
+
+            day.isToday -> {
+                R.string.today_week_today
+            }
+
+            day.date > weekDate -> {
+                R.string.today_week_planned
+            }
+
+            else -> {
+                R.string.today_week_not_studied
+            }
         },
     )
 
@@ -287,7 +331,7 @@ private fun ChallengeRow(
     val facts: List<String>
 
     if (challenge.isFullReview) {
-        name = stringResource(R.string.session_block_full_review)
+        name = stringResource(R.string.session_block_review)
         facts = listOf(weekday, stringResource(R.string.today_week_full_review_detail))
     } else {
         name =
@@ -323,4 +367,6 @@ private fun ChallengeRow(
     }
 }
 
-private val RING = 30.dp
+private val RING = WEEK_RING
+
+internal fun showsWeek(days: List<StudyWeekDay>): Boolean = days.isNotEmpty()

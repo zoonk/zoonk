@@ -14,7 +14,7 @@ enum UsageKind {
   mockQuestions @map("mock_questions")
 }
 
-/// A lesson counts the first time a learner starts it, reused or generated. `targetId` is a plain
+/// Lessons count at first start or explicit map preparation; automatic preparation is uncounted. `targetId` is a plain
 /// id, so usage survives content changes. `seconds` is a live call's time: the most it may run when
 /// it connects, then how long it ran once it ends; 0 for every other use.
 model UsageRecord {
@@ -24,12 +24,15 @@ model UsageRecord {
   kind       UsageKind
   targetId   String    @map("target_id") @db.Uuid
   generated  Boolean   @default(false)
+  /// A lesson start or explicitly requested map admission; null while only prepared.
+  countedAt  DateTime? @map("counted_at")
   costMicros Int       @default(0) @map("cost_micros")
   seconds    Int       @default(0)
   createdAt  DateTime  @default(now()) @map("created_at")
 
   @@unique([userId, kind, targetId], name: "userUsageTarget")
   @@index([userId, createdAt])
+  @@index([userId, kind, countedAt])
   @@map("usage_records")
 }
 

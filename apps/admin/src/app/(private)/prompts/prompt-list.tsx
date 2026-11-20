@@ -11,12 +11,11 @@ import { parsePromptOutcome } from "./_utils/prompt-labels";
 import { PromptRow } from "./prompt-row";
 
 const columns: AdminTableColumn[] = [
-  { label: "Prompt" },
-  { label: "Outcome" },
-  { label: "Read as" },
-  { label: "Learner" },
-  { label: "Language" },
-  { label: "Date" },
+  { label: "They typed", twoLines: true },
+  { label: "Zoonk read it as", size: "long", twoLines: true },
+  { label: "Outcome", size: "wide" },
+  { label: "Who", size: "text", twoLines: true },
+  { align: "right", label: "Date" },
 ];
 
 export async function PromptList({ searchParams }: Pick<PageProps<"/prompts">, "searchParams">) {
@@ -55,7 +54,7 @@ async function CachedPromptList({
     <>
       <AdminTableColumns
         columns={columns}
-        emptyLabel={outcome || search ? "No prompts match." : "No prompts yet."}
+        emptyLabel={outcome || search ? "No requests match." : "No requests yet."}
         isEmpty={prompts.length === 0}
       >
         {prompts.map((prompt) => (

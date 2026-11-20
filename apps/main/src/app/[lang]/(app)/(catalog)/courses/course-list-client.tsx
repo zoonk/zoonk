@@ -8,10 +8,9 @@ import { type CourseWithOrg } from "@zoonk/core/courses/list";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { SubjectLabel, getSubject } from "@zoonk/learn/subject-label";
 import { useFormatDuration } from "@zoonk/learn/time-format";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -20,7 +19,7 @@ import {
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { getFirstSentence } from "@zoonk/utils/string";
-import { Loader2Icon, NotebookPenIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
+import { Loader2Icon, PencilLineIcon, RefreshCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { loadMoreCourses } from "./actions";
 import {
@@ -33,7 +32,7 @@ const MINUTES_PER_HOUR = 60;
 
 /** The focus ring sits inside its edges, which the grid's frame clips. */
 const COURSE_LINK_CLASS =
-  "hover:bg-muted/60 focus-visible:ring-ring/50 relative flex h-full min-w-0 items-start gap-3.5 px-4 py-4 transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-inset sm:px-5 lg:flex-col lg:gap-4 lg:py-5 motion-reduce:transition-none";
+  "hover:bg-muted/60 focus-visible:ring-ring/50 relative flex h-full min-w-0 items-start gap-3.5 px-4 py-4 transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-inset sm:px-2.5 lg:flex-col lg:gap-4 lg:py-5 motion-reduce:transition-none";
 
 function useDurationLabel(totalMinutes: number) {
   const formatDuration = useFormatDuration();
@@ -87,21 +86,20 @@ function CourseItem({
         <CourseMark course={course} locale={locale} />
 
         <span className="flex min-w-0 flex-1 flex-col self-stretch">
-          <span className="flex items-start justify-between gap-3">
-            <span className="min-w-0 text-[0.9375rem] leading-snug font-semibold text-pretty">
-              {course.title}
-            </span>
+          {/* The row carries the title's type, so the chip's box is one of its lines (`h-lh`) and the chip centers on the first. */}
+          <span className="text-reading flex items-start justify-between gap-3 leading-snug">
+            <span className="min-w-0 font-semibold text-pretty">{course.title}</span>
 
             {subjectName && (
-              <SubjectLabel className="lg:hidden" subject={subject}>
-                {subjectName}
-              </SubjectLabel>
+              <span className="flex h-lh shrink-0 items-center lg:hidden">
+                <SubjectLabel subject={subject}>{subjectName}</SubjectLabel>
+              </span>
             )}
           </span>
 
-          {course.description && (
-            <span className="text-muted-foreground mt-1 line-clamp-2 text-[0.8125rem] leading-snug">
-              {getFirstSentence(course.description, course.language)}
+          {course.promise && (
+            <span className="text-muted-foreground text-compact mt-1 line-clamp-2 leading-snug">
+              {getFirstSentence(course.promise, course.language)}
             </span>
           )}
 
@@ -110,7 +108,7 @@ function CourseItem({
 
         {subjectName && (
           <SubjectLabel
-            className="absolute top-7.25 right-5 hidden lg:inline-flex"
+            className="absolute top-7.25 right-2.5 hidden lg:inline-flex"
             subject={subject}
           >
             {subjectName}
@@ -154,20 +152,18 @@ export function CourseListClient({
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <NotebookPenIcon aria-hidden="true" />
+            <PencilLineIcon aria-hidden="true" />
           </EmptyMedia>
-          <EmptyTitle>{t("No courses")}</EmptyTitle>
-          <EmptyDescription>{t("No courses available yet.")}</EmptyDescription>
+          <EmptyTitle>{t("No courses here yet")}</EmptyTitle>
+          <EmptyDescription>
+            {t({
+              description:
+                "Under “No courses here yet” on a list of courses with nothing in it. “The box above” is the goal box at the top of the same page, where the visitor types what they want to learn and presses “Build my plan”.",
+              message:
+                "Write what you want to learn in the box above, and we'll build a plan for it.",
+            })}
+          </EmptyDescription>
         </EmptyHeader>
-
-        {category && (
-          <EmptyContent>
-            <Link className={buttonVariants({ variant: "outline" })} href="/start" prefetch>
-              <PlusIcon aria-hidden="true" />
-              {t("Start a goal")}
-            </Link>
-          </EmptyContent>
-        )}
       </Empty>
     );
   }

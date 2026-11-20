@@ -1,3 +1,4 @@
+import { LINK_CLASS } from "@/lib/link-class";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
 import { RestoredClip } from "./content-fix-voice";
 
@@ -11,7 +12,7 @@ function RestoredPicture({ change }: { change: StoredChange }) {
   return restored.imageUrl ? (
     <p className="text-sm">
       Puts back the picture it had before.{" "}
-      <a className="hit-area relative underline" href={restored.imageUrl}>
+      <a className={LINK_CLASS} href={restored.imageUrl}>
         See the picture
       </a>
     </p>

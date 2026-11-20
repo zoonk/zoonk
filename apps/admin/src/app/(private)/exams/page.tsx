@@ -1,11 +1,4 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { ExamList, ExamListSkeleton } from "./exam-list";
@@ -14,21 +7,14 @@ export const metadata: Metadata = { title: "Exams" };
 
 export default function ExamsPage({ searchParams }: PageProps<"/exams">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Exams</ContainerTitle>
-          <ContainerDescription>
-            Exam blueprints, their current edition and how many goals and items depend on them.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <AdminPage>
+      <AdminPageHeader title="Exams" />
 
-      <ContainerBody>
+      <AdminPageBody>
         <Suspense fallback={<ExamListSkeleton />}>
           <ExamList searchParams={searchParams} />
         </Suspense>
-      </ContainerBody>
-    </Container>
+      </AdminPageBody>
+    </AdminPage>
   );
 }

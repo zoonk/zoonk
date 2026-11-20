@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.today
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,11 +15,16 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.settle
 import com.zoonk.android.data.waitFor
+import com.zoonk.android.feature.focustest.unusedFocusTests
 import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.android.feature.mock.MockStore
+import com.zoonk.android.feature.plan.FakePlanApi
+import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.session.FakeStudyApi
+import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.TodayGoal
+import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -45,22 +51,12 @@ class TodayMockReadsTest {
         val cache = AppCache(FakeSession(AuthenticatedSession(ANA, "token-a", "local-a")), scope)
         val today = TodayStore(LiveTodayApi(api.clients), cache, scope, timeZone = { "UTC" })
         val mocks = MockStore(LiveMockApi(api.clients), cache)
-        val goal =
-            TodayGoal(
-                dateEstimated = false,
-                daysLeft = null,
-                id = GOAL,
-                kind = TodayGoal.Kind.EXAM,
-                targetDate = null,
-                title = "ENEM 2026",
-                displayName = "ENEM",
-            )
         var examPage by mutableStateOf(false)
 
         rule.setContent {
             ZoonkTheme {
                 Column {
-                    TodayPractice(today, mocks, goal, completedLessons = false) {}
+                    TodayPractice(today, mocks, GOAL, isExam = true, isLanguage = false, completedLessons = false) {}
                     if (examPage) mocks.options[GOAL].collectShown()
                 }
             }
@@ -72,8 +68,63 @@ class TodayMockReadsTest {
         assertEquals(1, api.requests(MOCKS))
     }
 
+    @Test
+    fun aPausedExamGoalsTodayNeverReadsItsMocks() {
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        val cache = AppCache(FakeSession(AuthenticatedSession(ANA, "token-a", "local-a")), scope)
+        val today = TodayStore(LiveTodayApi(api.clients), cache, scope, timeZone = { "UTC" })
+        val mocks = MockStore(LiveMockApi(api.clients), cache)
+
+        val study = FakeStudyApi()
+        val viewModel =
+            TodayViewModel(
+                StudyOpener(study, study::writeLesson, cache, timeZone = { "UTC" }),
+                today,
+                PlanStore(FakePlanApi(), cache),
+                unusedFocusTests(cache),
+            )
+
+        rule.setContent {
+            ZoonkTheme {
+                GoalAtRestPage(PAUSED_EXAM, completedLessons = true, viewModel, today, mocks, PaddingValues(), navigate = {})
+            }
+        }
+        rule.waitFor { api.requests(MISTAKES) == 1 }
+        rule.waitForIdle()
+
+        assertEquals(0, api.requests(MOCKS))
+    }
+
     private companion object {
         val GOAL: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00")
         val MOCKS = "/goals/$GOAL/mocks"
+        const val MISTAKES = "/me/mistakes"
+        val PAUSED_EXAM =
+            LearnerSummaryGoal(
+                courseChapterId = null,
+                courseId = null,
+                courseLevel = null,
+                dailyMinutes = 20,
+                id = GOAL,
+                isActive = true,
+                isSettingUp = false,
+                kind = LearnerSummaryGoal.Kind.EXAM,
+                language = "en",
+                languageFlag = null,
+                regionChoices = emptyList(),
+                contentCountry = null,
+                countryDependent = false,
+                examCountry = null,
+                examplesCountry = null,
+                languageCountry = null,
+                suggested = emptyList(),
+                status = LearnerSummaryGoal.Status.PAUSED,
+                targetDate = null,
+                targetDateEstimated = false,
+                targetLanguage = null,
+                targetRegion = null,
+                title = "ENEM 2026",
+                displayName = "ENEM",
+            )
     }
 }

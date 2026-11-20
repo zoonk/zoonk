@@ -420,9 +420,37 @@ private fun turn(
     status = TutorTurn.Status.entries.first { it.name.equals(status, ignoreCase = true) },
     createdAt = createdAt,
     about = about(context),
+    topic = topic(context),
     planChange = planChange,
     toolOffer = toolOffer,
 )
+
+private fun topic(context: LessonQuestionContext): String =
+    when (context) {
+        is LessonQuestionContext.LessonQuestionContextOneOf1Value -> {
+            itemTopic(context.value.answered)
+        }
+
+        is LessonQuestionContext.LessonQuestionContextOneOf2Value -> {
+            stepTopic(
+                TutorTurn.About.Step,
+                context.value.stepId?.toString(),
+                context.value.stepNumber,
+            )
+        }
+
+        is LessonQuestionContext.LessonQuestionContextOneOf3Value -> {
+            stepTopic(
+                TutorTurn.About.Answer,
+                context.value.stepId?.toString(),
+                context.value.stepNumber,
+            )
+        }
+
+        else -> {
+            about(context).name
+        }
+    }
 
 private fun about(context: LessonQuestionContext): TutorTurn.About =
     when (context) {

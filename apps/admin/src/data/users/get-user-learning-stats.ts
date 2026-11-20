@@ -15,27 +15,34 @@ export type UserLearningKindStat = {
   totalDurationSeconds: number;
 };
 
-export const getUserLearningStats = cacheAdminData(async (userId: string) => {
-  const [completedLessons, learningDays] = await Promise.all([
-    prisma.learningEvent.findMany({ where: { endedAt: { not: null }, kind: "lesson", userId } }),
-    prisma.dailyProgress.findMany({
-      where: {
-        OR: [
-          { interactiveCompleted: { gt: 0 } },
-          { lessonsCompleted: { gt: 0 } },
-          { staticCompleted: { gt: 0 } },
-        ],
-        userId,
-      },
-    }),
-  ]);
+/** A learner's totals, counted from their days with study in them. */
+export const getUserLearningTotals = cacheAdminData(async (userId: string) => {
+  const totals = await prisma.dailyProgress.aggregate({
+    _count: { id: true },
+    _sum: { lessonsCompleted: true, timeSpentSeconds: true },
+    where: {
+      OR: [
+        { interactiveCompleted: { gt: 0 } },
+        { lessonsCompleted: { gt: 0 } },
+        { staticCompleted: { gt: 0 } },
+      ],
+      userId,
+    },
+  });
 
   return {
-    completedLessons: learningDays.reduce((total, row) => total + row.lessonsCompleted, 0),
-    learningDays: learningDays.length,
-    lessonKinds: buildLessonKindStats(completedLessons),
-    totalLearningSeconds: learningDays.reduce((total, row) => total + row.timeSpentSeconds, 0),
+    completedLessons: totals._sum.lessonsCompleted ?? 0,
+    learningDays: totals._count.id,
+    totalLearningSeconds: totals._sum.timeSpentSeconds ?? 0,
   };
+});
+
+export const listUserLessonKinds = cacheAdminData(async (userId: string) => {
+  const completedLessons = await prisma.learningEvent.findMany({
+    where: { endedAt: { not: null }, kind: "lesson", userId },
+  });
+
+  return buildLessonKindStats(completedLessons);
 });
 
 function buildLessonKindStats(rows: LearningEvent[]): UserLearningKindStat[] {

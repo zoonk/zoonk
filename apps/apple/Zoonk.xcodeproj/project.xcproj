@@ -120,6 +120,13 @@
         "resources",
         {
           "kind": "script",
+          "name": "Stamp Debug Build",
+          "run-on-every-build": true,
+          "shell": "/bin/sh",
+          "script": "scripts/stamp-debug-build.sh",
+        },
+        {
+          "kind": "script",
           "name": "Upload Debug Symbols to Sentry",
           "input-paths": [
             "$(DWARF_DSYM_FOLDER_PATH)/$(DWARF_DSYM_FILE_NAME)/Contents/Resources/DWARF/$(EXECUTABLE_NAME)",

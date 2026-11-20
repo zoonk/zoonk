@@ -1,0 +1,192 @@
+import { AdminSectionEmpty } from "@/components/admin-section";
+import {
+  STAT_TILES_CLASS,
+  STAT_TILE_ROWS_CLASS,
+  StatTile,
+  StatTileSkeleton,
+} from "@/components/stat-tile";
+import { formatUsd } from "@/lib/ai-format";
+import { formatDate } from "@/lib/format";
+import { formatDuration } from "@/lib/format-duration";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { Stat, StatIcon, StatLabel } from "@zoonk/ui/components/stat";
+import { cn } from "@zoonk/ui/lib/utils";
+import {
+  CheckIcon,
+  ChevronRightIcon,
+  ClockIcon,
+  CpuIcon,
+  type LucideIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { adminPages } from "./admin-navigation";
+import { type AttentionItem, WEEK_DAYS, type WeekNumber, type loadWeek } from "./home-data";
+
+const formatNumber = (value: number) => value.toLocaleString("en");
+
+/** A tile wears its page's icon, the one the sidebar and the palette show for it. */
+function pageIcon(href: string): LucideIcon {
+  const path = href.split("?")[0];
+  return adminPages.find((page) => page.url === path)?.icon ?? CpuIcon;
+}
+
+/**
+ * What waits, as one tile each: its page's icon and name, how many, and since when. Something that
+ * failed is pink-red, the color failure has on every page; work waiting its turn is neutral.
+ */
+export function AttentionTiles({ items }: { items: AttentionItem[] }) {
+  if (items.length === 0) {
+    return (
+      <AdminSectionEmpty>
+        <CheckIcon
+          aria-hidden="true"
+          className="text-success me-1.5 inline size-4 align-[-0.2em]"
+        />
+        Nothing needs attention.
+      </AdminSectionEmpty>
+    );
+  }
+
+  return (
+    <ul className={STAT_TILES_CLASS}>
+      {items.map((item) => {
+        const Icon = pageIcon(item.href);
+
+        return (
+          <li className={STAT_TILE_ROWS_CLASS} key={item.href}>
+            <Stat
+              className={cn(
+                STAT_TILE_ROWS_CLASS,
+                "group hover:bg-muted/50 gap-2 transition-colors",
+              )}
+              render={<Link href={item.href} prefetch />}
+            >
+              {/* Labeled as the week's tiles under them are; the chevron says it opens the queue. */}
+              <StatLabel className="items-start">
+                <StatIcon className={item.failed ? "text-destructive" : "text-muted-foreground"}>
+                  <Icon />
+                </StatIcon>
+                <span className="min-w-0 flex-1">{item.title}</span>
+                <ChevronRightIcon
+                  aria-hidden="true"
+                  className="text-faint group-hover:text-foreground size-4 shrink-0"
+                />
+              </StatLabel>
+              <span className="flex min-w-0 flex-col gap-2">
+                <span
+                  className={cn("text-readout text-3xl", item.failed && "text-destructive-text")}
+                >
+                  {formatNumber(item.count)}
+                </span>
+                <AttentionDetail item={item} />
+              </span>
+            </Stat>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function AttentionDetail({ item }: { item: AttentionItem }) {
+  return (
+    <span className="text-muted-foreground text-compact text-pretty">
+      {item.detail}
+      {item.oldest && (
+        <>
+          {", the oldest from "}
+          <span className="whitespace-nowrap">{formatDate(item.oldest)}</span>
+        </>
+      )}
+    </span>
+  );
+}
+
+const SKELETON_TILES = 3;
+
+export function AttentionTilesSkeleton() {
+  return (
+    <div aria-hidden="true" className={STAT_TILES_CLASS}>
+      {Array.from({ length: SKELETON_TILES }, (_, index) => (
+        <Stat className="gap-2" key={index}>
+          <span className="flex h-4 items-center">
+            <Skeleton className="h-3 w-28" />
+          </span>
+          <span className="flex h-7.5 items-center">
+            <Skeleton className="h-7 w-10" />
+          </span>
+          <span className="flex h-5 items-center">
+            <Skeleton className="h-3 w-48 max-w-full" />
+          </span>
+        </Stat>
+      ))}
+    </div>
+  );
+}
+
+function trendOf(number: WeekNumber, title: string) {
+  return { before: WEEK_DAYS, label: `${title} a day, the last 14 days`, values: number.daily };
+}
+
+export function WeekTiles({
+  className = STAT_TILES_CLASS,
+  week,
+}: {
+  className?: string;
+  week: Awaited<ReturnType<typeof loadWeek>>;
+}) {
+  return (
+    <div className={className}>
+      <StatTile
+        change={{ ...week.activeLearners, fall: "watch", format: formatNumber, rise: "good" }}
+        help="Users who completed at least 1 lesson"
+        href="/stats/engagement?view=active-learners"
+        icon={<UsersIcon />}
+        title="Active learners"
+        trend={trendOf(week.activeLearners, "Active learners")}
+        value={formatNumber(week.activeLearners.current)}
+      />
+
+      <StatTile
+        change={{ ...week.signups, fall: "watch", format: formatNumber, rise: "good" }}
+        href="/stats/growth?view=new-signups"
+        icon={<UserPlusIcon />}
+        title="New signups"
+        trend={trendOf(week.signups, "New signups")}
+        value={formatNumber(week.signups.current)}
+      />
+
+      <StatTile
+        change={{ ...week.time, fall: "watch", format: formatDuration, rise: "good" }}
+        help="Recorded study time across all learners"
+        href="/stats/engagement?view=total-learning-time"
+        icon={<ClockIcon />}
+        title="Learning time"
+        trend={trendOf(week.time, "Learning time")}
+        value={formatDuration(week.time.current)}
+      />
+
+      <StatTile
+        change={{ ...week.spend, format: formatUsd, rise: "watch" }}
+        href="/ai"
+        icon={<CpuIcon />}
+        plainValue
+        title="AI spend"
+        trend={trendOf(week.spend, "AI spend")}
+        value={formatUsd(week.spend.current)}
+      />
+    </div>
+  );
+}
+
+export function WeekTilesSkeleton({ className = STAT_TILES_CLASS }: { className?: string }) {
+  return (
+    <div className={className}>
+      {Array.from({ length: 4 }, (_, index) => (
+        <StatTileSkeleton key={index} trend />
+      ))}
+    </div>
+  );
+}

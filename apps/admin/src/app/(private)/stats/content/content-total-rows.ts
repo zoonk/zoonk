@@ -18,7 +18,7 @@ export function getContentTotalRows({
     { title: "Lesson outlines", total: totals.lessonOutlines },
     { created: created.steps, title: "Steps", total: totals.steps },
     { created: created.skills, title: "Skills", total: totals.skills },
-    { created: created.items, title: "Items", total: totals.items },
+    { created: created.items, title: "Practice questions", total: totals.items },
     { created: created.images, title: "Images", total: totals.images },
     { created: created.audio, title: "Audio", total: totals.audio },
     { created: created.sources, title: "Sources", total: totals.sources },

@@ -1,4 +1,4 @@
-import { getGoalLimitReason } from "@/lib/goals/goal-limit-reason";
+import { getGoalLimit } from "@/lib/goals/goal-limit-reason";
 import {
   getAllowanceCacheTag,
   getGoalsCacheTag,
@@ -40,7 +40,7 @@ export async function loadStartView(draftId: string | null) {
   return {
     canAttach: Boolean(session && !session.user.isAnonymous),
     draft,
-    goalLimit: goalLimit && !isGuestLimit ? getGoalLimitReason(goalLimit) : null,
+    goalLimit: goalLimit && !isGuestLimit ? getGoalLimit(goalLimit) : null,
     hasSession: Boolean(session),
     needsAccount: isGuestLimit,
   };

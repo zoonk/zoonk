@@ -22,13 +22,11 @@ type ProduceBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"> & {
 };
 
 export function toProduceBlock({
-  examTrialEnded,
   freshStart,
   minBlockMinutes,
   produce,
   room,
 }: {
-  examTrialEnded: boolean;
   freshStart: StudyFreshStart | null;
   minBlockMinutes: number;
   produce: PlannedProduce | null;
@@ -36,7 +34,7 @@ export function toProduceBlock({
 }): ProduceBlock | null {
   const fits = produce !== null && room >= produce.minutes + minBlockMinutes;
 
-  if (!produce || examTrialEnded || freshStart === "welcomeBack" || !fits) {
+  if (!produce || freshStart === "welcomeBack" || !fits) {
     return null;
   }
 

@@ -1,12 +1,16 @@
 "use client";
 
+import { ButtonSkeleton } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { TASK_MAIN_ACTION_CLASS } from "../_components/task-layout";
+import { GoalEntrySubmit } from "./entry/goal-entry-submit";
 import { SendingGoal } from "./entry/understanding-wait";
 import { OnboardingHowItWorks } from "./how-it-works";
 import { BAR_MIDDLE_CLASS } from "./onboarding-bar";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFrame,
@@ -50,7 +54,7 @@ function RailSkeleton() {
 function HeadingSkeleton({ eyebrow = false }: { eyebrow?: boolean }) {
   return (
     <OnboardingHeading>
-      {eyebrow && <Skeleton className="h-4 w-32" data-slot="page-eyebrow" />}
+      {eyebrow && <Skeleton className="h-5.5 w-32" data-slot="onboarding-subject" />}
       <Skeleton className="h-16.5 w-4/5 sm:h-8.25" />
       <Skeleton className="mt-1 h-5 w-3/5" />
     </OnboardingHeading>
@@ -63,15 +67,15 @@ export function StartEntrySkeleton() {
   return (
     <OnboardingRailProvider rail={<RailSkeleton />}>
       <OnboardingFrame>
-        <OnboardingColumn aria-busy="true">
+        <OnboardingColumn aria-busy="true" bar={<GoalEntrySubmit disabled pinned />}>
           <OnboardingHeading>
-            <OnboardingTitle>{t("What do you want to achieve?")}</OnboardingTitle>
+            <OnboardingTitle>{t("What's your goal?")}</OnboardingTitle>
             <OnboardingDescription>
               {t("Tell us in your own words. We'll build the plan.")}
             </OnboardingDescription>
           </OnboardingHeading>
 
-          <Skeleton className="@container w-full p-1.5 pl-4">
+          <Skeleton className="@container w-full px-3 py-2">
             <div className="h-24 @xl:h-11" />
           </Skeleton>
 
@@ -127,6 +131,19 @@ export function StartWaitSkeleton() {
   );
 }
 
+/** A step's bar holds one main action, so the skeleton holds its place. */
+function StepActionSkeleton() {
+  const t = useExtracted();
+
+  return (
+    <OnboardingActions>
+      <ButtonSkeleton className={TASK_MAIN_ACTION_CLASS} size="xl">
+        {t("Continue")}
+      </ButtonSkeleton>
+    </OnboardingActions>
+  );
+}
+
 export function StepsSkeleton() {
   return (
     <OnboardingRailProvider rail={<RailSkeleton />}>
@@ -136,7 +153,7 @@ export function StepsSkeleton() {
           middle: <Skeleton className={cn("h-1", BAR_MIDDLE_CLASS)} />,
         }}
       >
-        <OnboardingColumn aria-busy="true">
+        <OnboardingColumn aria-busy="true" bar={<StepActionSkeleton />}>
           <HeadingSkeleton eyebrow />
           <RowsSkeleton rows={4} twoLines />
         </OnboardingColumn>

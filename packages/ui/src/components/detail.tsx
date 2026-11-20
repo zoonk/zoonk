@@ -1,19 +1,10 @@
-import { Button } from "@zoonk/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import { EllipsisIcon } from "lucide-react";
+import { PAGE_HEADER_CLASS } from "./page-header-class";
 
 export function DetailHero({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn(
-        "flex min-w-0 flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
-        className,
-      )}
+      className={cn(PAGE_HEADER_CLASS, "gap-4", className)}
       data-slot="detail-hero"
       {...props}
     />
@@ -52,34 +43,5 @@ export function DetailFacts({ className, ...props }: React.ComponentProps<"p">) 
       data-slot="detail-facts"
       {...props}
     />
-  );
-}
-
-export function DetailActions({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("flex flex-wrap items-center gap-2 md:shrink-0", className)}
-      data-slot="detail-actions"
-      {...props}
-    />
-  );
-}
-
-export const DETAIL_MENU_TRIGGER_CLASS = "size-11 shrink-0";
-
-export function DetailMenu({ children, label }: { children: React.ReactNode; label: string }) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
-      >
-        <EllipsisIcon aria-hidden="true" />
-        <span className="sr-only">{label}</span>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="end" className="w-60">
-        {children}
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

@@ -9,7 +9,7 @@ metadata:
 
 # Blog posts
 
-A reader should finish a Zoonk post understanding what something does for them and thinking "this is really cool, I want to use it". A release post shows what each feature is and how it solves the reader's problem. Everything else stays out.
+A reader should finish a Zoonk post understanding what something does for them and thinking "this is really cool, I want to use it". A release post shows what each feature is and how it solves the reader's problem. Everything else stays out. A post is a marketing page, so zoonk-design's [Marketing pages](../zoonk-design/SKILL.md#marketing-pages) applies to it.
 
 [The 2.0 launch post](<../../../apps/blog/src/app/(post)/2026/zoonk-2/page.mdx>) is the model. Read it and look at its pictures before you write.
 
@@ -45,11 +45,11 @@ Every feature section shows the real product. Pictures are what make a reader wa
 - **Light and dark:** every screenshot, clip and cover comes in both versions (`<name>.webp` and `<name>-dark.webp`).
 - **Alt text:** describe what each picture shows, including any text the reader would read on it.
 
-Capture from the running app (`pnpm start`), using sample learners only (`pnpm dev:persona`, see the [development guide](../../guides/development.md#persona-passes)), never a real learner's data. `pnpm pr:capture --steps <file> --schemes light,dark --viewports phone` shoots the 390×844 phone screen. Save each shot as a WebP at 780×1688 in `apps/blog/public/blog/<year>/<slug>/`. When a post needs many screens, delegate the capture.
+Capture from the running app (`pnpm start`), using sample learners only (`pnpm dev:persona`, see the [development guide](../zoonk-persona-walkthrough/references/passes.md)), never a real learner's data. `pnpm pr:capture --steps <file> --schemes light,dark --viewports phone` shoots the 390×844 phone screen. Save each shot as a WebP at 780×1688 in `apps/blog/public/blog/<year>/<slug>/`. When a post needs many screens, delegate the capture.
 
 ## 4. Put it together
 
-- The post goes in `apps/blog/src/app/(post)/<year>/<slug>/page.mdx`, with `metadata` (`title` and `description`) and `PostMeta`. Add it to the top of `apps/blog/src/app/posts.json` with the same date.
+- The post goes in `apps/blog/src/app/(post)/<year>/<slug>/page.mdx`, with `metadata` (`title` and `description`) and `PostMeta` (its `date` written `2026-11-12`). Add it to the top of `apps/blog/src/app/posts.json` with the same date.
 - A release post's title is "Zoonk <version>: <what the reader gets>". The intro is two or three sentences on what's new for the reader.
 - End with `<StartCta />`, as the 2.0 post does.
 - The components are in `apps/blog/src/components`: `Cover`, `Screens` and `Screen`, `CardLinks` and `StartCta`.

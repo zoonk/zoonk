@@ -14,6 +14,8 @@ private enum PracticeTaskKind {
 
 struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
+  @Environment(\.stacksContent) private var isStacked
+  @State private var barWidth: CGFloat = 0
   private let kind: PracticeTaskKind
   private let segments: [TaskSegment]?
   private let index: Int
@@ -47,10 +49,19 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 
   var body: some View {
+    // A top bar around nothing takes the page's free height, so a screen without segments gets none.
+    if let segmentsBar {
+      layout.taskSegmentsBar(segmentsBar)
+    } else {
+      layout
+    }
+  }
+
+  private var layout: some View {
     Group {
       if kind == .oneDecision {
         QuestionColumn(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
-          segmentsBar
+          EmptyView()
         } content: {
           stimulus()
         } actions: {
@@ -61,7 +72,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
         QuestionSpread(
           readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: kind == .spread
         ) {
-          segmentsBar
+          EmptyView()
         } stimulus: {
           stimulus()
         } response: {
@@ -74,20 +85,15 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
     .background(Color(.systemBackground))
   }
 
-  @ViewBuilder private var segmentsBar: some View {
-    if let segments, !segments.isEmpty {
-      TaskSegments(
-        segments: segments,
-        label: Text(
-          "Question \(min(index + 1, segments.count)) of \(segments.count)", tableName: "Practice",
-          comment:
-            "VoiceOver label of a run's progress: the question in view and how many there are.")
-      )
-      .frame(maxWidth: PracticeLayout.readableWidth)
-      .padding(.horizontal)
-      .padding(.vertical, 8)
-      .frame(maxWidth: .infinity)
-    }
+  private var segmentsBar: TaskSegments? {
+    guard let segments, !segments.isEmpty else { return nil }
+
+    return TaskSegments(
+      segments: segments,
+      label: Text(
+        "Question \(min(index + 1, segments.count)) of \(segments.count)", tableName: "Practice",
+        comment:
+          "VoiceOver label of a run's progress: the question in view and how many there are."))
   }
 
   @ViewBuilder private var actionsBar: some View {
@@ -95,9 +101,13 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
       VStack(spacing: 10) {
         actions()
       }
+      // Main's `BottomBar`: wide, the main action sits at the bar's end at its own width.
+      .environment(\.practiceBarIsWide, barWidth >= WideBar.width && !isStacked)
+      .frame(maxWidth: .infinity)
+      .onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
       .frame(maxWidth: PracticeLayout.readableWidth)
-      .padding(.horizontal)
-      .padding(.vertical, 12)
+      // The bottom bar's inset, so a run's actions sit where every screen's do.
+      .scenePadding()
       .frame(maxWidth: .infinity)
     }
   }
@@ -207,6 +217,9 @@ extension View {
 /// screen to screen. While busy it ignores `isDisabled`: the button that sent the request keeps its
 /// look and its focus.
 struct PracticeMainButton: View {
+  @Environment(\.practiceBarIsWide) private var isWide
+  @Environment(\.practiceActionsSideBySide) private var sideBySide
+
   let title: LocalizedStringResource
   let icon: ActionIcon
   var isBusy = false
@@ -219,31 +232,36 @@ struct PracticeMainButton: View {
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
-    .buttonSizing(.flexible)
+    .buttonSizing(isWide ? .automatic : .flexible)
+    .environment(\.mainActionMinWidth, isWide ? WideBar.mainActionMinWidth : nil)
     .disabled(isDisabled && !isBusy)
     .keyboardShortcut(.defaultAction)
+    .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
   }
 }
 
 struct PracticeActionRow<Content: View>: View {
+  @Environment(\.practiceBarIsWide) private var isWide
   @ViewBuilder let content: Content
 
   var body: some View {
     ViewThatFits(in: .horizontal) {
-      HStack(spacing: 12) {
+      HStack(spacing: 8) {
         content
       }
       .environment(\.practiceActionsSideBySide, true)
 
-      VStack(spacing: 10) {
+      VStack(spacing: 8) {
         content
       }
     }
+    .frame(maxWidth: isWide ? .infinity : nil, alignment: .trailing)
   }
 }
 
 extension EnvironmentValues {
   @Entry var practiceActionsSideBySide = false
+  @Entry var practiceBarIsWide = false
 }
 
 enum PracticeFocus: Hashable {
@@ -296,6 +314,7 @@ private struct PracticeFocusTag: ViewModifier {
 
 struct PracticeSecondaryButton: View {
   @Environment(\.practiceActionsSideBySide) private var sideBySide
+  @Environment(\.practiceBarIsWide) private var isWide
 
   let title: LocalizedStringResource
   let icon: ActionIcon
@@ -312,8 +331,9 @@ struct PracticeSecondaryButton: View {
     .fixedSize(horizontal: sideBySide, vertical: false)
     .buttonStyle(.outline)
     .controlSize(.large)
-    .buttonSizing(sideBySide ? .fitted : .flexible)
+    .buttonSizing(sideBySide || isWide ? .fitted : .flexible)
     .disabled(isDisabled && !isBusy)
+    .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
   }
 }
 
@@ -420,24 +440,21 @@ struct PracticeResultNumbers: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
-        if let correct, let total, total > 0 {
+        // With no total, a count alone: a duel stops once it's decided, so a total reads wrong.
+        if let correct, total.map({ $0 > 0 }) ?? true {
           MomentReadout {
-            Text("\(correct)/\(total)")
+            Text(total.map { "\(correct)/\($0)" } ?? "\(correct)")
           } words: {
             Text(
               "Right", tableName: "Practice",
               comment: "Readout label: right answers out of the total.")
           }
         }
+      }
 
-        if brainPower > 0 {
-          MomentReadout(tint: .brainText) {
-            EarnedNumber(value: brainPower)
-          } words: {
-            Text(
-              "Brain Power", tableName: "Practice", comment: "Readout label: Brain Power earned.")
-          }
-        }
+      // What it earned, the same line at every task's end (B2's R1).
+      if brainPower > 0 {
+        EarnedBrainPower(points: brainPower)
       }
 
       ForEach(facts, id: \.self) { fact in
@@ -473,13 +490,15 @@ struct PracticeRedirect: View {
 
 struct PracticeLoadFailureView: View {
   let error: APIError
+  /// False inside a screen whose own main action stays, such as the notebook's list.
+  var inBar = true
   let retry: () -> Void
 
   var body: some View {
     if error == .notFound {
       NotFoundView()
     } else {
-      ContentUnavailableView {
+      PageLoadFailure(inBar: inBar) {
         Label {
           if error == .network {
             Text(
@@ -497,13 +516,9 @@ struct PracticeLoadFailureView: View {
         Text(
           "Check your connection and try again.", tableName: "Practice",
           comment: "Description when a practice screen can't load.")
-      } actions: {
-        Button(action: retry) {
-          Text("Try again", tableName: "Practice", comment: "Loads a practice screen again.")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        retry()
       }
-      .lonePage()
     }
   }
 }

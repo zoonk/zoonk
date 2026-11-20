@@ -43,7 +43,7 @@ export const questionGeneralityTask: Task<
   evaluate: route,
   generate: route,
   id: "question-generality",
-  name: "Question Generality",
+  name: "Question generality",
   score: scoreQuestionGenerality,
   testCases: TEST_CASES,
 };

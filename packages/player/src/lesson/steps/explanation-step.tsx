@@ -1,15 +1,15 @@
 "use client";
 
+import { LESSON_BODY_CLASS } from "@zoonk/learn/rich-text";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
-import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
-import { ActivityExplore } from "../../activities/activity-explore";
+import { ActivityBadge } from "../../activities/_components/activity-badge";
+import { ActivityExplore, exploreBadge } from "../../activities/activity-explore";
 import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonStepPicture, useIsExploredPictureLost } from "../_components/lesson-pictures";
-import { LessonRichText } from "../_components/lesson-rich-text";
-import { LESSON_BODY_CLASS, useTermHighlighter } from "../_components/lesson-step-text";
+import { LessonStepHeading, useTermHighlighter } from "../_components/lesson-step-text";
 import { CornerIcon, MarkedText, hasExampleFrame } from "../_components/marked-text";
 import { ExplainingScreenHelp } from "../controls/ask-buddy-offer";
 import { ExampleLine } from "./example-line";
@@ -23,18 +23,19 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
   const spoken = useSpokenText();
   const highlighter = useTermHighlighter();
   const idea = content.title ? `${content.title}\n\n${content.text}` : content.text;
+  const explored = content.explore && !exploredPictureLost ? content.explore : null;
+  const badge = explored ? exploreBadge(explored) : null;
 
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
       <div className="flow-root w-full lg:max-w-xl" data-slot="lesson-text">
         {cornerIcon && <CornerIcon className="-me-2 -mt-1 mb-2" icon={cornerIcon} />}
-        {content.title && (
-          <h2 className="text-foreground mb-2 text-[0.9375rem] leading-snug font-semibold sm:mb-3">
-            <SpokenMath>
-              <LessonRichText text={content.title} />
-            </SpokenMath>
-          </h2>
+        {badge && (
+          <div className="mb-3 empty:hidden">
+            <ActivityBadge kind={badge} over={[content.title ?? "", content.text]} />
+          </div>
         )}
+        {content.title && <LessonStepHeading>{content.title}</LessonStepHeading>}
         <MarkedText
           className={cn(LESSON_BODY_CLASS, highlighter)}
           marks={marks}
@@ -42,14 +43,19 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
         />
       </div>
 
-      <LessonStepPicture className="order-first" hero priority step={step} />
+      <LessonStepPicture
+        className={explored ? undefined : "order-first"}
+        hero
+        priority
+        step={step}
+      />
       <LessonVisual visual={content.visual} />
-      {content.explore && !exploredPictureLost && (
+      {explored && (
         <>
           <span hidden id={ideaId}>
             {spoken.blocks(idea)}
           </span>
-          <ActivityExplore content={content.explore} labelId={ideaId} />
+          <ActivityExplore content={explored} labelId={ideaId} />
         </>
       )}
       {content.exampleLineSlot && <ExampleLine key={step.id} stepId={step.id} />}

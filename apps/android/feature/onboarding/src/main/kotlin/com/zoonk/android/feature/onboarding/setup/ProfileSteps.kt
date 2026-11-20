@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -18,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.profile.ProfileDraft
 import com.zoonk.android.feature.profile.ProfileQuestionBody
@@ -26,7 +24,6 @@ import com.zoonk.android.feature.profile.profileJobPrefill
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.profile.profileQuestionDescription
 import com.zoonk.android.feature.profile.profileQuestionTitle
-import com.zoonk.android.feature.profile.profileSkip
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.TextButton
@@ -34,7 +31,6 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.ProfileQuestion
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun ColumnScope.ProfileStep(
@@ -46,13 +42,10 @@ internal fun ColumnScope.ProfileStep(
     val question = view.profile.questions.first { it.id == id }
     val role = profileJobPrefill(view.goal.details.text("role"))
     val draft = vm.profileDraft(question, role)
-    val scope = rememberCoroutineScope()
     val memory = view.profile.memoryEnabled
-    val declinesOnSkip = id == ProfileQuestion.ADDRESS_FORM
     val valid = draft.valid(id, memory)
     val holdsAnswer = draft.declined || !draft.empty(id, memory)
     val save = { vm.answer(draft.onboardingInput(id, memory), profileAnswer = draft) }
-    val order = (vm.flow.history + step + view.steps).filter { it.profileQuestion != null }.distinct()
     val wait = LocalSetupWait.current
     var startingLesson by rememberSaveable(id) { mutableStateOf(false) }
     LaunchedEffect(vm.isSaving) { if (!vm.isSaving) startingLesson = false }
@@ -60,15 +53,13 @@ internal fun ColumnScope.ProfileStep(
     StepForm(
         title = profileQuestionTitle(id),
         description = profileQuestionDescription(id),
-        subject = stringResource(R.string.profile_questions_progress, order.indexOf(step) + 1, order.size),
+        subject = stringResource(R.string.profile_questions_title),
         pending = vm.isSaving,
         canContinue = valid,
         onContinue = { save() },
-        onSkip = {
-            val declines = declinesOnSkip || id == ProfileQuestion.CONDITIONS
-            vm.answer(if (declines) ProfileDraft(declined = true).onboardingInput(id, memory) else profileSkip(id))
-        },
-        skipLabel = stringResource(R.string.profile_questions_prefer_not).takeIf { declinesOnSkip },
+        // Skip is the "none" answer (rule 10): it declines, so the question isn't asked again at the next goal.
+        onSkip = { vm.answer(ProfileDraft(declined = true).onboardingInput(id, memory)) },
+        skipLabel = stringResource(R.string.profile_questions_prefer_not).takeIf { id == ProfileQuestion.ADDRESS_FORM },
         notice = {
             if (view.goal.kind == Goal.Kind.LEARN && wait.firstLesson?.ready == true && wait.onStartLesson != null) {
                 FlowRow(
@@ -86,8 +77,8 @@ internal fun ColumnScope.ProfileStep(
                         onClick = {
                             if (holdsAnswer && valid) {
                                 startingLesson = true
-                                val saving = save()
-                                scope.launch { if (saving?.await() is WriteOutcome.Done) wait.onStartLesson.invoke() }
+                                // The view model owns the start that follows the save: a layout change mid-save can't drop it.
+                                vm.answerThenStartLesson(draft.onboardingInput(id, memory), draft)
                             } else {
                                 wait.onStartLesson.invoke()
                             }
@@ -96,7 +87,7 @@ internal fun ColumnScope.ProfileStep(
                         busy = vm.isSaving && startingLesson,
                         focusableWhenDisabled = vm.isSaving,
                         size = ButtonSize.Small,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_chevron_right) },
+                        forward = true,
                     ) {
                         Text(
                             stringResource(
@@ -122,7 +113,7 @@ internal fun ColumnScope.ProfileStep(
             memoryEnabled = memory,
             role = role,
             suggested = id == ProfileQuestion.LEARNING_SUPPORT && vm.supportsSuggested,
-            declineAsSkip = declinesOnSkip,
+            declineAsSkip = true,
         )
     }
 }

@@ -4,7 +4,6 @@ import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import { LockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
@@ -15,53 +14,78 @@ import {
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
-  ListRowLink,
   ListRowTitle,
-  ListRowTrailing,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
+import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { type MindMapActions } from "./mind-map-actions";
 import { type MindMapCopyInput, type MindMapRowPlace, useStateLines } from "./mind-map-copy";
-import { MindMapSlot } from "./mind-map-slot";
 import { MindMapViewer } from "./mind-map-viewer";
-import { type MindMapRequest, type MindMapShown, useMindMapRequest } from "./use-mind-map-request";
+import {
+  type MindMapRequest,
+  type MindMapShown,
+  useLiveRefusal,
+  useMindMapRequest,
+} from "./use-mind-map-request";
 
 const ACTION_CLASS = buttonVariants({ size: "sm", variant: "outline" });
 
-function SlotMark({ shown }: { shown: MindMapShown }) {
-  if (shown === "drawing" || shown === "writingLessons") {
-    return <Spinner className="text-muted-foreground size-4" role="presentation" />;
-  }
+/**
+ * Room for a title and the two lines a map being made shows, so pressing Create, or a row a
+ * lesson's end reads in late, moves nothing under it.
+ */
+export const MIND_MAP_ROW_CLASS = "min-h-20";
 
-  if (shown === "plusRequired") {
-    return <LockIcon className="text-muted-foreground size-4" />;
-  }
+function isMaking(shown: MindMapShown): boolean {
+  return shown === "drawing" || shown === "writingLessons";
+}
 
-  return <KindIcon kind="mindMap" />;
+/**
+ * The row's mark is the list's own small one, so its title starts where the rows beside it start:
+ * a chapter's summary, a lesson end's "Up next". A map's picture leads only on the Mind maps page,
+ * where every row is a map (`MindMapSlot`).
+ */
+function RowLeading({ shown }: { shown: MindMapShown }) {
+  return (
+    <ListRowLeading>
+      {isMaking(shown) ? (
+        <Spinner className="text-muted-foreground size-4" role="presentation" />
+      ) : (
+        <KindIcon kind="mindMap" />
+      )}
+    </ListRowLeading>
+  );
 }
 
 function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string }) {
   const t = useExtracted();
   const { hint, line } = useStateLines(input);
   const { place, view } = input;
+  // The Mind maps page's list shows a map on its way by its spinner, and says it once under the list.
+  const quiet = place === "library" && isMaking(input.shown);
 
   return (
-    <ListRowContent aria-live="polite">
+    <ListRowContent aria-live="polite" className={cn(place === "finish" && "justify-start")}>
       <ListRowTitle className="wrap-break-word" id={titleId}>
         {place === "chapter" ? t("Mind map") : view.title}
       </ListRowTitle>
 
-      {line && <ListRowDescription className="text-pretty">{line}</ListRowDescription>}
+      {line && (
+        <ListRowDescription className={cn("text-pretty", quiet && "sr-only")}>
+          {line}
+        </ListRowDescription>
+      )}
 
-      {hint && <ListRowDescription className="text-pretty">{hint}</ListRowDescription>}
+      {hint && !quiet && <ListRowDescription className="text-pretty">{hint}</ListRowDescription>}
     </ListRowContent>
   );
 }
 
 function RowAction({
+  compact,
+  createDescribedBy,
   isPending,
   onCreate,
   onRetry,
@@ -69,6 +93,8 @@ function RowAction({
   slowDown,
   titleId,
 }: {
+  compact: boolean;
+  createDescribedBy?: string;
   isPending: boolean;
   onCreate?: () => void;
   onRetry: () => void;
@@ -77,6 +103,14 @@ function RowAction({
   titleId: string;
 }) {
   const t = useExtracted();
+
+  if (compact && isMaking(shown)) {
+    return (
+      <span className="flex size-7.5 items-center justify-center">
+        <Spinner className="text-muted-foreground size-4" role="presentation" />
+      </span>
+    );
+  }
 
   if (shown === "failed" || shown === "unreachable") {
     return (
@@ -95,7 +129,7 @@ function RowAction({
   if (onCreate && (shown === "available" || (shown === "refused" && slowDown))) {
     return (
       <Button
-        aria-describedby={titleId}
+        aria-describedby={createDescribedBy ? `${titleId} ${createDescribedBy}` : titleId}
         busy={isPending}
         onClick={onCreate}
         size="sm"
@@ -119,12 +153,14 @@ export type MindMapRowRequest = Pick<MindMapRequest, "isPending" | "limit" | "re
 /** The row for a map whose request someone else follows, like a page that shows it twice. */
 export function MindMapRowView({
   className,
+  createDescribedBy,
   place,
   plus,
   request,
   view,
 }: {
   className?: string;
+  createDescribedBy?: string;
   place: MindMapRowPlace;
   plus: boolean;
   request: MindMapRowRequest;
@@ -134,7 +170,9 @@ export function MindMapRowView({
   const routes = useLearnRoutes();
   const titleId = useId();
   const [open, setOpen] = useState(false);
-  const { create, isPending, limit, retry, save, shown } = request;
+  const { create, isPending, retry, save } = request;
+  const { limit, shown } = useLiveRefusal(request, view.status);
+  const slot = useHeldSlot<HTMLDivElement>(limit !== null && !isPending);
   const input: MindMapCopyInput = { place, plus, shown, view };
   const ready = shown === "ready" && view.outline !== null && save !== undefined;
 
@@ -142,42 +180,41 @@ export function MindMapRowView({
     return null;
   }
 
-  const locked = shown === "plusRequired";
+  // A lesson's end shows one row over "Up next", so its text starts at the row's top as that row's does.
+  const alone = place === "finish";
+  // The Mind maps page lists many chapters without a map: their names and actions, nothing more.
+  const compact = place === "library";
+  // Alone, the text starts at the row's top, so the action sits on the title's line with it.
+  const trailing = alone ? "mt-1.5 self-start" : "self-center";
 
   const body = (
     <>
-      <ListRowLeading className="py-2">
-        <MindMapSlot thumbnailUrl={shown === "ready" ? (view.image?.thumbnailUrl ?? null) : null}>
-          <SlotMark shown={shown} />
-        </MindMapSlot>
-      </ListRowLeading>
+      {!compact && <RowLeading shown={shown} />}
       <RowText input={input} titleId={titleId} />
     </>
   );
 
   return (
-    <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row">
+    <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row" ref={slot}>
       {ready && (
-        <button className={LIST_ROW_INTERACTIVE_CLASS} onClick={() => setOpen(true)} type="button">
+        <button
+          aria-haspopup="dialog"
+          className={cn(LIST_ROW_INTERACTIVE_CLASS, MIND_MAP_ROW_CLASS)}
+          onClick={() => setOpen(true)}
+          type="button"
+        >
           {body}
-          <span className={cn(ACTION_CLASS, "self-center")}>{t("Open")}</span>
+          <span className={cn(ACTION_CLASS, trailing)}>{t("Open")}</span>
         </button>
       )}
 
-      {locked && (
-        <ListRowLink href={routes.upgrade}>
+      {!ready && (
+        <div className={cn(LIST_ROW_CLASS, !compact && MIND_MAP_ROW_CLASS)}>
           {body}
-          <ListRowTrailing>
-            <PlusMark className="font-sans" />
-          </ListRowTrailing>
-        </ListRowLink>
-      )}
-
-      {!ready && !locked && (
-        <div className={LIST_ROW_CLASS}>
-          {body}
-          <span className="flex shrink-0 items-center empty:hidden">
+          <span className={cn("flex shrink-0 items-center empty:hidden", alone && trailing)}>
             <RowAction
+              compact={compact}
+              createDescribedBy={createDescribedBy}
               isPending={isPending}
               onCreate={create}
               onRetry={retry}
@@ -189,7 +226,7 @@ export function MindMapRowView({
         </div>
       )}
 
-      <StatusRegion>
+      <StatusRegion className="pb-4">
         {limit && !isPending && (
           <MindMapLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
         )}

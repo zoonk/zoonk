@@ -21,7 +21,7 @@ export const lessonMarksTask: Task<MarksCaseInput, LessonMarksEvalOutput> = {
     "Tag a written lesson: each screen's idea, underline, example and icon need, and each map idea's about line and icon need",
   generate: generateLessonMarks,
   id: "lesson-marks",
-  name: "Lesson Marks",
+  name: "Lesson marks",
   score: scoreLessonMarks,
   scoreCategories: LESSON_MARKS_SCORE_CATEGORIES,
   testCases: TEST_CASES,

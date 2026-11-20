@@ -54,7 +54,7 @@ type SessionFacts = Pick<SessionPageView, "goal" | "localDate" | "userId">;
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
-  return { robots: { follow: false, index: false }, title: t("Today's session") };
+  return { robots: { follow: false, index: false }, title: t("Today") };
 }
 
 function isQuestionBlock(block: DayStep): boolean {

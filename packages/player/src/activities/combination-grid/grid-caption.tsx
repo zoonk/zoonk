@@ -22,10 +22,12 @@ export function GridCaption({
 
   function text() {
     if (counted !== null && outputName !== null) {
-      return t(
-        "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}",
-        { count: String(counted), total, what: outputName },
-      );
+      return t({
+        description:
+          'How many squares of the grid show one result, such as "Squares showing 7: 6 of 36". {what} is that result.',
+        message: "Squares showing {what}: {count} of {total}",
+        values: { count: String(counted), total: String(total), what: outputName },
+      });
     }
 
     if (expected.length > 0) {
@@ -60,7 +62,7 @@ export function GridCaption({
   }
 
   return (
-    <p aria-live="polite" className="text-muted-foreground text-center text-sm tabular-nums">
+    <p aria-live="polite" className="text-muted-foreground text-sm tabular-nums">
       {text()}
     </p>
   );

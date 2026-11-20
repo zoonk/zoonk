@@ -33,7 +33,7 @@ function buildWeek({
   studiedDates?: string[];
 }) {
   return buildWeekView({
-    access: { freeUntil: null, mocksRequirePlus: false },
+    access: { mocksRequirePlus: false },
     calendar: { dailyMinutes: 30, firstDay: null, lightWeeks: [], weekdayMinutes: null },
     exam: null,
     items,
@@ -118,6 +118,42 @@ describe(buildWeekView, () => {
     expect(days[2]?.items.map(({ title, writing }) => ({ title, writing }))).toStrictEqual([
       { title: "Stock market", writing: true },
       { title: "Percentages", writing: false },
+    ]);
+  });
+
+  it("counts the lessons each day holds, estimating a day's share of lessons still to be written", () => {
+    const standIn = {
+      ...lesson("2026-09-28", "todo"),
+      facts: {
+        days: [
+          ["2026-09-23", 15, 7.5],
+          ["2026-09-24", 15, 7.5],
+          ["2026-09-28", 5, 2.5],
+        ],
+        minutes: 200,
+        parts: { checkpoint: 0, practice: 100, unwritten: 100, written: 0 },
+        schemaVersion: 1,
+        skillIds: ["skill-stock"],
+      },
+      lessons: 25,
+      minutes: 200,
+      skillId: "skill-stock",
+    };
+
+    const written = { ...lesson("2026-09-25", "todo"), id: "written", lessonId: "lesson-1" };
+
+    const challenge = {
+      ...lesson("2026-09-25", "todo"),
+      id: "challenge",
+      kind: "checkpoint" as const,
+    };
+
+    const { days } = buildWeek({ items: [standIn, written, challenge] });
+
+    expect(days.slice(2, 5).map(({ items }) => items.map((item) => item.lessons))).toStrictEqual([
+      [2],
+      [2],
+      [1, 0],
     ]);
   });
 });

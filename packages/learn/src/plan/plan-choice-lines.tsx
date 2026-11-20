@@ -5,7 +5,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { usePickedNames } from "./use-picked-names";
 
 function PlanChoiceLine({
@@ -19,33 +18,27 @@ function PlanChoiceLine({
 }) {
   const t = useExtracted();
   const id = useId();
-  const leftOutLine = useChoiceLeftOutLine();
   const picked = usePickedNames(choice);
+
+  if (!picked) {
+    return null;
+  }
 
   return (
     <p
       className={cn("text-muted-foreground text-sm text-pretty", className)}
       data-slot="plan-choice-line"
     >
-      <span id={id}>
-        {picked
-          ? t({
-              description:
-                "{option} is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it",
-              message: "Following the {option} syllabus",
-              values: { option: picked },
-            })
-          : leftOutLine(choice)}
-      </span>
-      {picked ? <span aria-hidden="true">{"\u00A0·\u00A0"}</span> : " "}
+      <span id={id}>{t("{group}: {option}", { group: choice.group, option: picked })}</span>
+      <span aria-hidden="true">{"\u00A0·\u00A0"}</span>
       <Button aria-describedby={id} onClick={onChange} variant="link">
-        {picked ? t("Change") : t("Choose")}
+        {t("Change")}
       </Button>
     </p>
   );
 }
 
-/** Which option of each exam choice the plan follows, or what it leaves out until one is picked. */
+/** Which option of each exam choice the plan follows. */
 export function PlanChoiceLines({
   choices,
   className,

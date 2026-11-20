@@ -1,6 +1,7 @@
 import { ChapterLessonRows } from "@/components/public/chapter-lesson-rows";
 import { type LibraryChapterRoute } from "@/data/catalog/resolve-catalog-route";
 import { getTotalDurationLabel } from "@/lib/public/public-labels";
+import { FactSegments } from "@zoonk/learn/facts";
 import { PageSection } from "@zoonk/learn/page";
 import { getExtracted } from "next-intl/server";
 
@@ -11,17 +12,14 @@ export async function ChapterLessons({
   params: { brandSlug: string; courseSlug: string };
   route: LibraryChapterRoute;
 }) {
-  const { chapter, number, total } = route;
+  const { chapter } = route;
   const minutes = chapter.lessons.reduce((sum, lesson) => sum + lesson.estimatedMinutes, 0);
 
   const t = await getExtracted();
   const durationLabel = await getTotalDurationLabel(minutes);
 
   const facts = [
-    t("Chapter {number} of {total}", { number: String(number), total: String(total) }),
-    t("{count, plural, one {# short lesson} other {# short lessons}}", {
-      count: chapter.lessons.length,
-    }),
+    t("{count, plural, one {# lesson} other {# lessons}}", { count: chapter.lessons.length }),
     durationLabel,
   ];
 
@@ -34,11 +32,11 @@ export async function ChapterLessons({
           {t("Lessons")}
         </h2>
         <span className="text-muted-foreground font-mono text-xs tabular-nums">
-          {facts.join(" · ")}
+          <FactSegments facts={facts} />
         </span>
       </div>
 
-      <ChapterLessonRows chapter={chapter} params={params} />
+      <ChapterLessonRows chapter={chapter} className="-mb-3" params={params} />
     </PageSection>
   );
 }

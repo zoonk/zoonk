@@ -290,7 +290,6 @@ fun timeZone(): String = ZoneId.systemDefault().id
 /** The API's refusals main's access screens tell apart; null for anything worth retrying. */
 fun ApiException.toLessonRefusal(): LessonRefusal? =
     when {
-        code == "PLUS_REQUIRED" -> LessonRefusal.PlusRequired
         error == ApiError.NotFound -> LessonRefusal.NotFound
         else -> Limit.of(this)?.let(LessonRefusal::Limited)
     }

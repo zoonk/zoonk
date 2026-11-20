@@ -97,6 +97,9 @@ sealed interface CallStart {
 
     /** Calls are paused for everyone. */
     data object Paused : CallStart
+
+    /** An exam speaking task needs a subscription now; its paper reads again, locked. */
+    data object PlusRequired : CallStart
 }
 
 /** A checkpoint call's start, read as main's `startCheckpointCallAction` reads it: only [Failed] is worth another try. */
@@ -258,6 +261,7 @@ class ConversationStore(
                 when (val refused = CallReservation.refused(started.code, started.details)) {
                     is CallReservation.Limited -> CallStart.Limited(refused.limit)
                     CallReservation.CallsPaused -> CallStart.Paused
+                    CallReservation.PlusRequired -> CallStart.PlusRequired.also { cache.invalidate(setOf(DataDomain.UserSubscription)) }
                     else -> CallStart.Failed
                 }
             }

@@ -1,74 +1,73 @@
 "use client";
 
-import { PlayIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { StatSkeleton } from "@zoonk/ui/components/stat";
+import { useExtracted } from "next-intl";
 import { useEffect } from "react";
-import { Steps, type StepsItem } from "../_components/steps";
+import { StepCard, StepHeader } from "../_components/step-card";
+import { TaskActions } from "../_components/task-layout";
+import { toIsoDay, useFormatIsoRange } from "../_utils/iso-date";
 import { useLearnAnalytics } from "../learn-context";
-import { TaskMainLink } from "../shell/task-frame";
+import { TaskFrame, TaskMainLink } from "../shell/task-frame";
 import {
   type LogbookHrefs,
   LogbookProvider,
   type WeeklyRecapView,
   useLogbook,
 } from "./logbook-context";
-import {
-  LearnedStep,
-  NextWeekStep,
-  QuietWeekStep,
-  TurnaroundStep,
-  WeekStep,
-  hasLearned,
-} from "./logbook-sections";
+import { WeekHeader, WeekRings, WeekRingsSkeleton, WeekRows, WeekTiles } from "./logbook-sections";
 
-/**
- * Node's ICU puts thin spaces around the dash and browsers plain ones, so the spaces are normalized
- * to hydrate cleanly.
- */
 function useWeekRange(): string {
-  const format = useFormatter();
+  const formatRange = useFormatIsoRange();
   const { recap } = useLogbook();
-
-  return format
-    .dateTimeRange(recap.weekStart, recap.weekEnd, {
-      day: "numeric",
-      month: "short",
-      timeZone: "UTC",
-    })
-    .replaceAll("\u2009", " ");
+  return formatRange({ end: toIsoDay(recap.weekEnd), start: toIsoDay(recap.weekStart) });
 }
 
-function useWeekItems(): StepsItem[] {
-  const { recap } = useLogbook();
-  const range = useWeekRange();
-
-  if (!recap.ready || recap.week.daysStudied.length === 0) {
-    return [{ content: <QuietWeekStep range={range} />, id: "week" }];
-  }
-
-  return [
-    { content: <WeekStep range={range} />, id: "week" },
-    recap.turnaround && { content: <TurnaroundStep />, id: "turnaround" },
-    hasLearned(recap) && { content: <LearnedStep />, id: "learned" },
-    recap.nextFocus && { content: <NextWeekStep title={recap.nextFocus.title} />, id: "next" },
-  ].filter((item) => item !== null && item !== false);
-}
-
-function WeeklySummarySteps() {
+function WeeklySummary() {
   const t = useExtracted();
-  const { hrefs } = useLogbook();
-  const items = useWeekItems();
+  const { hrefs, recap } = useLogbook();
+  const range = useWeekRange();
+  const studied = recap.ready && recap.week.daysStudied.length > 0;
 
   return (
-    <Steps
+    <TaskFrame
       exitHref={hrefs.close}
-      finalAction={
-        <TaskMainLink href={hrefs.start} icon={<PlayIcon aria-hidden="true" />}>
-          {t("Let's go")}
-        </TaskMainLink>
+      footer={
+        <TaskActions>
+          <TaskMainLink href={hrefs.start}>{t("Done")}</TaskMainLink>
+        </TaskActions>
       }
-      items={items}
-    />
+    >
+      <StepCard>
+        <WeekRings />
+        <WeekHeader range={range} />
+        {studied && <WeekTiles />}
+        {studied && <WeekRows />}
+      </StepCard>
+    </TaskFrame>
+  );
+}
+
+/** The summary's own parts with blank lines, so nothing moves when the week arrives. */
+export function LogbookSkeleton() {
+  return (
+    <StepCard aria-hidden="true">
+      <WeekRingsSkeleton />
+      <StepHeader className="w-full">
+        <Skeleton className="h-5.5 w-40 rounded-sm" data-slot="eyebrow" />
+        <Skeleton className="text-title w-2/3">{"\u00A0"}</Skeleton>
+        <Skeleton className="w-1/2">{"\u00A0"}</Skeleton>
+      </StepHeader>
+      <div className="grid w-full grid-cols-2 gap-2">
+        <StatSkeleton />
+        <StatSkeleton />
+      </div>
+      <div className="flex w-full flex-col gap-6 py-3">
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-5 w-full" />
+      </div>
+    </StepCard>
   );
 }
 
@@ -90,7 +89,7 @@ export function LogbookScreen({
 
   return (
     <LogbookProvider value={{ hrefs, learnerName, recap }}>
-      <WeeklySummarySteps />
+      <WeeklySummary />
     </LogbookProvider>
   );
 }

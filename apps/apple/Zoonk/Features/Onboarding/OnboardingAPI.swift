@@ -39,6 +39,15 @@ enum OnboardingError: Error, Equatable, Sendable {
   /// (`UPLOAD_ALREADY_READ`).
   case alreadyRead
   case failed(APIError)
+
+  /// The server's own answer, as opposed to a request that may or may not have reached it.
+  var isAnswer: Bool {
+    if case .failed = self {
+      return false
+    }
+
+    return true
+  }
 }
 
 struct AttachedSource: Decodable, Equatable, Identifiable, Sendable {
@@ -152,14 +161,12 @@ private struct BlobPresignRequest: Encodable {
 struct ScheduleWeek: Hashable, Sendable {
   var studyDays: [Int]
   var weekendMinutes: Int?
-  var fullCourse = false
 }
 
 private struct ScheduleWeekInput: Encodable {
   let studyDays: [Int]
   let weekendMinutes: Int?
   let dailyMinutes: Int?
-  let fullCourse: Bool?
   /// A language goal's other aim, answered as picking it would lay the plan out.
   let aim: String?
 
@@ -167,7 +174,6 @@ private struct ScheduleWeekInput: Encodable {
     studyDays = week.studyDays
     weekendMinutes = week.weekendMinutes
     self.dailyMinutes = dailyMinutes
-    fullCourse = week.fullCourse ? true : nil
     self.aim = aim
   }
 }
@@ -329,6 +335,13 @@ struct OnboardingLimit: Decodable, Equatable, Sendable {
   let period: String
   let resource: String
   let tier: String
+  var availableAt: String?
+
+  var help: HelpLimit {
+    .reached(
+      period: period, tier: LearnerTier(rawValue: tier) ?? .free,
+      availableAt: availableAt.flatMap(Date.init(serverInstant:)))
+  }
 
   /// A guest's one goal and the free plan's active goals are lifted by an account or Plus, not by waiting.
   var isGoalLimit: Bool { ["activeGoals", "goal"].contains(resource) }
@@ -1010,12 +1023,16 @@ struct OnboardingAPI: Sendable {
       let limit: OnboardingLimit
     }
 
-    guard let details, let data = try? JSONEncoder().encode(details) else {
+    guard let details, let data = try? JSONEncoder().encode(details),
+      var limit = nested
+        ? try? JSONDecoder().decode(Details.self, from: data).limit
+        : try? JSONDecoder().decode(OnboardingLimit.self, from: data)
+    else {
       return nil
     }
 
-    return nested
-      ? try? JSONDecoder().decode(Details.self, from: data).limit
-      : try? JSONDecoder().decode(OnboardingLimit.self, from: data)
+    // Read as this device received it, as every refusal is.
+    limit.availableAt = Date(opening: limit.availableAt, receivedAt: .now)?.ISO8601Format()
+    return limit
   }
 }

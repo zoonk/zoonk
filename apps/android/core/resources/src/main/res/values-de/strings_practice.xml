@@ -23,7 +23,7 @@
   "practice_progress": "4707ca12868e3de449fba552a619c8e4e338c13064623ff54b6cf36c17fbb674",
   "practice_save_error": "778cf93d508dc4084568a49aaabb120db91ad01f5828dd04ec26b01a94a00e8a",
   "practice_save_error_repeat": "efaeb3f5433f1712bd9eb668ad39de61576217520221aa824d396e013d1afb48",
-  "practice_try_again": "fc903144519d24a306f3c2b37321bcdad3cf52c3de46141c386a645a2153eddf",
+  "practice_try_again": "c7adf520102d74767cc90274836afe4c1a2ff3aa76babd84d35aa76c7ada06eb",
   "practice_undo": "a7c761e56c979c59a363592921d4e0cbf8d00405b969beb041767736f6eed86c",
   "practice_undo_failed": "8eb85cb411faf58bdab2eeaa261eb5c73c46a5c0e0ed94d23fc467e8b281c9ca"
 }
@@ -41,7 +41,7 @@
     <string name="practice_undo_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- Where the learner is in a test, such as "3 of 10". -->
     <string name="practice_count">%1$d von %2$d</string>
-    <string name="practice_try_again">Versuch es noch einmal</string>
+    <string name="practice_try_again">Noch einmal versuchen</string>
     <string name="practice_finish_ready_title">Keine Fragen mehr offen</string>
     <string name="practice_finish_ready_detail">Schließ die Übung ab, um zu sehen, wie es lief.</string>
     <string name="practice_already_answered">Du hast diese Frage bereits beantwortet.</string>

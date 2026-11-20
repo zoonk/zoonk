@@ -1,8 +1,9 @@
 import SwiftUI
 
 extension ActivityRenderer {
-  static let guessReveal = ActivityRenderer(template: "guessReveal", badge: .always(.estimateFirst))
-  { context in
+  static let guessReveal = ActivityRenderer(
+    template: "guessReveal", badge: .always(.estimateFirst), answersOnCanvas: true
+  ) { context in
     if let fields = try? context.fields(as: GuessRevealFields.self) {
       GuessRevealCanvas(fields: fields, context: context)
     }
@@ -48,42 +49,50 @@ private struct GuessRevealCanvas: View {
 
   var body: some View {
     let guess = context.answer?.number
-    let actual: Double? =
-      if case .checked = context.phase { checkAnswer ?? fields.trueValue } else { nil }
+    let actual = checkAnswer ?? fields.trueValue
+    let isRevealed = if case .checked = context.phase { true } else { false }
 
     VStack(alignment: .leading, spacing: 16) {
       ActivityGuessScaleView(
-        scale: fields.guessScale, unit: fields.unit, guess: guess, actual: actual
+        scale: fields.guessScale, unit: fields.unit, guess: guess, actual: actual,
+        isRevealed: isRevealed
       ) { value in
         context.setAnswer(.numeric(value))
       }
 
-      if let actual {
+      if isRevealed, let actual {
         VStack(alignment: .leading, spacing: 10) {
           if let guess {
-            comparisonText(GuessScale.compare(guess: guess, actual: actual, isCorrect: isCorrect))
-              .typeStyle(.body.weight(.semibold))
+            comparisonText(
+              GuessScale.compare(
+                guess: guess, actual: actual, isCorrect: isCorrect, unit: fields.unit),
+              actual: actual
+            )
+            .typeStyle(.body.weight(.semibold))
           }
 
           if let workings = fields.truth.workings, fields.truth.kind == "computed" {
-            VStack(alignment: .leading, spacing: 4) {
+            Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 8, verticalSpacing: 4) {
               ForEach(Array(workings.enumerated()), id: \.offset) { _, working in
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                  if let value = ActivityExpression.evaluate(working.expression) {
-                    Text(ActivityNumberFormat.format(value))
-                      .typeWeight(.semibold)
-                      .monospacedDigit()
-                  }
+                GridRow {
+                  Text(
+                    verbatim: ActivityExpression.evaluate(working.expression).map {
+                      ActivityNumberFormat.format($0)
+                    } ?? ""
+                  )
+                  .typeWeight(.semibold)
+                  .monospacedDigit()
+                  .gridColumnAlignment(.trailing)
                   Text(working.label)
                     .foregroundStyle(.mutedForeground)
                 }
-                .typeStyle(.note)
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .combine)
               }
             }
+            .typeStyle(.note)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(12)
-            .panel(cornerRadius: Radius.option)
+            .activityBox(cornerRadius: Radius.option)
           }
 
           if let comparison = fields.comparison {
@@ -107,25 +116,27 @@ private struct GuessRevealCanvas: View {
     if case .checked(let isCorrect) = context.phase { isCorrect } else { false }
   }
 
-  private func comparisonText(_ comparison: GuessScale.Comparison) -> Text {
+  private func comparisonText(_ comparison: GuessScale.Comparison, actual: Double) -> Text {
     switch comparison {
     case .close:
-      Text(
+      return Text(
         "Your guess is close to the real value.", tableName: "Activities",
         comment: "After the check: the guess was close enough")
     case .tooBig(let times):
-      Text(
+      return Text(
         "Your guess is about \(ActivityNumberFormat.format(times)) times too big.",
         tableName: "Activities",
         comment: "After the check: how many times bigger the guess was than the real value")
     case .tooSmall(let times):
-      Text(
+      return Text(
         "Your guess is about \(ActivityNumberFormat.format(times)) times too small.",
         tableName: "Activities",
         comment: "After the check: how many times smaller the guess was than the real value")
     case .off(let difference):
-      Text(
-        "Your guess is off by \(ActivityNumberFormat.format(abs(difference), unit: fields.unit)).",
+      let digits = ActivityNumberFormat.displayDigits(actual, unit: fields.unit)
+      let shown = ActivityNumberFormat.guess(abs(difference), unit: fields.unit, digits: digits)
+      return Text(
+        "Your guess is off by \(shown).",
         tableName: "Activities",
         comment: "After the check: how far the guess was from the real value")
     }

@@ -11,18 +11,37 @@ enum AnswerTone {
 }
 
 extension View {
-  /// An answer option's or a tile's ground: at rest the stronger line; the learner's pick a 2pt ink
-  /// ring on its tint; checked, a ring in its verdict's color on that color's tint.
+  /// An answer option's or a tile's ground: at rest the stronger line; the learner's pick the pick's
+  /// soft fill in the line's place, never a ring; checked, a ring in its verdict's color on that
+  /// color's tint.
   func answerSurface(
     _ tone: AnswerTone, cornerRadius: CGFloat = Radius.option, isPressed: Bool = false
   )
     -> some View
   {
+    modifier(AnswerSurface(tone: tone, cornerRadius: cornerRadius, isPressed: isPressed))
+  }
+}
+
+private struct AnswerSurface: ViewModifier {
+  let tone: AnswerTone
+  let cornerRadius: CGFloat
+  let isPressed: Bool
+
+  @Environment(\.colorSchemeContrast) private var contrast
+
+  func body(content: Content) -> some View {
     let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
-    return background(fill(tone, isPressed: isPressed), in: shape)
-      .overlay(shape.strokeBorder(stroke(tone), lineWidth: lineWidth(tone)))
+    content
+      .background(fill(tone, isPressed: isPressed), in: shape)
+      .overlay(shape.strokeBorder(line, lineWidth: lineWidth(tone)))
       .contentShape(shape)
+  }
+
+  /// A pick's line comes back only when the device asks for more contrast.
+  private var line: Color {
+    tone == .picked && contrast != .increased ? .clear : stroke(tone)
   }
 }
 
@@ -39,7 +58,7 @@ private func fill(_ tone: AnswerTone, isPressed: Bool) -> Color {
 private func stroke(_ tone: AnswerTone) -> Color {
   switch tone {
   case .idle: .input
-  case .picked: Color(.foreground)
+  case .picked: .input
   case .guess: Color(.foreground).opacity(0.4)
   case .right: .success
   case .wrong: .destructive
@@ -48,8 +67,7 @@ private func stroke(_ tone: AnswerTone) -> Color {
 
 private func lineWidth(_ tone: AnswerTone) -> CGFloat {
   switch tone {
-  case .idle: 1
-  case .picked: 2
+  case .idle, .picked: 1
   case .guess, .right, .wrong: 1.5
   }
 }

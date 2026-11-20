@@ -13,13 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -31,7 +29,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -49,8 +46,11 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.Subject
-import com.zoonk.android.ui.components.SubjectGlyph
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.colors
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
@@ -92,7 +92,15 @@ fun ChapterScreen(
     val report = FeedbackTarget("chapter", FeedbackSubmissionContext.ContentKind.CHAPTER, route.chapterId.toUuidOrNull())
 
     if (shown is LoadState.Loaded) TrackShown(AnalyticsEvent.PublicPageViewed(route.chapterId, AnalyticsEvent.PublicPage.Chapter))
-    CatalogPage(app, navigator, detail, shown, place?.chapter?.title, report, alsoShown = listOf(chapter)) { value, layout ->
+    CatalogPage(
+        app,
+        navigator,
+        detail,
+        shown,
+        place?.chapter?.title,
+        report,
+        alsoShown = listOf(chapter),
+    ) { value, layout ->
         placeOf(
             value,
             route.chapterId,
@@ -181,7 +189,7 @@ private fun chapterBlocks(
                     val lessons = @Composable { modifier: Modifier -> ChapterLessons(navigator, courseId, place, modifier) }
 
                     if (layout.beside && chapter.objectives.isNotEmpty()) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
                             lessons(Modifier.weight(1f))
                             ChapterObjectives(chapter.objectives, Modifier.weight(1f))
                         }
@@ -199,12 +207,16 @@ private fun chapterBlocks(
         add(
             CatalogBlock("closing", trailing = true) {
                 Column(Modifier.widthIn(max = COLUMN_WIDTH).padding(bottom = 24.dp)) {
-                    HorizontalDivider()
-                    Spacer(Modifier.size(48.dp))
-                    Text(
-                        stringResource(if (startChapterId != null) R.string.catalog_chapter_closing else R.string.catalog_closing_start),
-                        modifier = Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleMedium,
+                    SectionTitle(
+                        stringResource(
+                            if (startChapterId !=
+                                null
+                            ) {
+                                R.string.catalog_chapter_closing
+                            } else {
+                                R.string.catalog_closing_start
+                            },
+                        ),
                     )
                     Spacer(Modifier.size(8.dp))
                     Text(
@@ -221,7 +233,7 @@ private fun chapterBlocks(
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Spacer(Modifier.size(24.dp))
-                    ChapterStart(app, navigator, courseId, startChapterId, hasLesson)
+                    ChapterStart(app, navigator, courseId, startChapterId, hasLesson, secondary = true)
                 }
             },
         )
@@ -247,42 +259,32 @@ private fun ChapterStart(
     courseId: String,
     startChapterId: String?,
     hasLesson: Boolean,
+    secondary: Boolean = false,
 ) {
     StartActions(
         app = app,
         navigator = navigator,
         courseId = courseId,
         chapterId = startChapterId,
+        secondary = secondary,
         note = if (hasLesson) null else stringResource(R.string.catalog_chapter_writes_lessons),
     )
 }
 
-/** The subject's glyph and the course's name, which opens the course. */
+/** The course's name over the chapter's title, as its chip, which opens the course. */
 @Composable
 internal fun CourseEyebrow(
     navigator: AppNavigator,
     detail: CourseDetail,
 ) {
-    val subject =
-        Subject.of(
-            detail.course.categories
-                .firstOrNull()
-                ?.value,
-        )
-
-    Row(
+    Eyebrow(
+        text = detail.course.title,
         modifier =
             Modifier
-                .minimumInteractiveComponentSize()
                 .clickable(onClickLabel = stringResource(R.string.catalog_open_course)) {
                     navigator.open(AppRoute.CatalogCourse(detail.course.id.toString()))
                 },
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        SubjectGlyph(subject)
-        Text(detail.course.title, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-    }
+    )
 }
 
 /** Main's `ChapterStrip`: where the chapter sits among the course's levels, and the chapters after it on the course's route. */
@@ -460,22 +462,25 @@ internal fun ChapterLessons(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionTitle(stringResource(R.string.catalog_lessons), facts = chapterFacts(place))
+        SectionTitle(stringResource(R.string.catalog_lessons), facts = chapterFacts(place, withPosition = false))
         ChapterLessonRows(navigator, courseId, place, currentLessonId = null)
     }
 }
 
 @Composable
-internal fun chapterFacts(place: ChapterPlace): String {
+internal fun chapterFacts(
+    place: ChapterPlace,
+    withPosition: Boolean = true,
+): String {
     val locale = currentLocale()
     val lessons = place.chapter.lessons
 
-    return listOf(
+    return listOfNotNull(
         stringResource(
             R.string.catalog_chapter_position,
             formatNumber(place.number.toDouble(), locale),
             formatNumber(place.total.toDouble(), locale),
-        ),
+        ).takeIf { withPosition },
         pluralStringResource(R.plurals.catalog_short_lessons, lessons.size, lessons.size),
         formatTotalDuration(lessons.sumOf { it.estimatedMinutes }.toDouble(), locale),
     ).factsLine()
@@ -492,45 +497,31 @@ internal fun ChapterLessonRows(
     val locale = currentLocale()
     val chapter = place.chapter
 
-    Column(Modifier.widthIn(max = COLUMN_WIDTH)) {
+    Column(Modifier.widthIn(max = COLUMN_WIDTH).bleed(LIST_ITEM_INSET)) {
         chapter.lessons.forEachIndexed { index, lesson ->
             val lessonId = lesson.id.toString()
             val isCurrent = lessonId == currentLessonId
 
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .background(
-                            if (isCurrent) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface,
-                            MaterialTheme.shapes.small,
-                        ).then(
-                            if (isCurrent) {
-                                Modifier.semantics { selected = true }
-                            } else {
-                                Modifier.clickable { navigator.open(AppRoute.CatalogLesson(lessonId, chapter.id.toString(), courseId)) }
-                            },
-                        ).padding(horizontal = 8.dp, vertical = 14.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    formatNumber((index + 1).toDouble(), locale),
-                    modifier = Modifier.widthIn(min = 16.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
-                Text(
-                    lesson.title,
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                )
-                Text(
-                    formatMinutes(lesson.estimatedMinutes.toInt(), locale),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
-            }
+            ListRow(
+                headline = { Text(lesson.title) },
+                modifier = if (isCurrent) Modifier.semantics { selected = true } else Modifier,
+                onClick =
+                    if (isCurrent) {
+                        null
+                    } else {
+                        { navigator.open(AppRoute.CatalogLesson(lessonId, chapter.id.toString(), courseId)) }
+                    },
+                highlighted = isCurrent,
+                leading = {
+                    Text(
+                        formatNumber((index + 1).toDouble(), locale),
+                        style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+                    )
+                },
+                leadOnFirstLine = true,
+                meta = { Text(formatMinutes(lesson.estimatedMinutes.toInt(), locale)) },
+                chevronSpace = true,
+            )
         }
     }
 }

@@ -1,6 +1,6 @@
 import { BusyIcon } from "@zoonk/ui/components/button";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon } from "lucide-react";
 import { type LearnLinkComponentProps } from "../learn-context";
 import { LearnLink, type LearnPrefetch } from "../learn-link";
 import { SURFACE_CLASS } from "./surface";
@@ -30,26 +30,33 @@ export function ListGroup({
   );
 }
 
+/** A row under an indent (`nested-rows`, a route) reaches back to the column with its fill (craft E7). */
 export const LIST_ROW_CLASS = cn(
   "relative isolate flex w-full min-w-0 items-stretch gap-3 text-left",
-  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors",
+  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:inset-y-0.5 before:-inset-s-[(--spacing(2.5)+var(--row-indent,0px))] before:-inset-e-2.5 before:-z-10 before:rounded-lg before:transition-colors",
   "in-data-[list=panel]:px-4 in-data-[list=panel]:before:inset-0 in-data-[list=panel]:before:rounded-none",
 );
 
 export const LIST_ROW_INTERACTIVE_CLASS = cn(
   LIST_ROW_CLASS,
-  "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none select-none [--press-scale:0.99] focus-visible:before:ring-[3px]",
+  "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none select-none [--press-scale:0.99] focus-visible:before:ring-[3px] focus-visible:before:ring-inset",
 );
+
+/** A fold's panel clips what it folds, so it reaches as far as its rows' fills do (craft E7). */
+export const ROW_FOLD_CLASS = "-mx-2.5 px-2.5";
 
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
-function ListRowChevron({ className }: { className?: string }) {
-  return (
-    <ChevronRightIcon
-      aria-hidden="true"
-      className={cn("text-muted-foreground/60 size-4 shrink-0 self-center", className)}
-    />
-  );
+/** The same chevron after a 12px line, such as a header's "1 of 4". */
+export const SMALL_CHEVRON_CLASS =
+  "edge -me-(--edge-pull) size-3.5 shrink-0 [--icon-size:--spacing(3.5)]";
+
+/**
+ * The chevron's slot, empty, at the end of a row that can't be opened: the value before it ends
+ * where the other rows' values do.
+ */
+export function ListRowChevronSpace() {
+  return <span aria-hidden="true" className="size-4 shrink-0" />;
 }
 
 export function ListRow({ className, ...props }: React.ComponentProps<"div">) {
@@ -59,6 +66,7 @@ export function ListRow({ className, ...props }: React.ComponentProps<"div">) {
 export function ListRowLink({
   children,
   className,
+  current,
   href,
   lessonWritten,
   onClick,
@@ -66,6 +74,8 @@ export function ListRowLink({
 }: {
   children: React.ReactNode;
   className?: string;
+  /** The page it opens is the one showing beside the list. */
+  current?: boolean;
   href: string;
   lessonWritten?: boolean;
   onClick?: LearnLinkComponentProps["onClick"];
@@ -73,6 +83,7 @@ export function ListRowLink({
 }) {
   return (
     <LearnLink
+      aria-current={current ? "page" : undefined}
       className={cn(LIST_ROW_INTERACTIVE_CLASS, className)}
       href={href}
       lessonWritten={lessonWritten}
@@ -81,7 +92,7 @@ export function ListRowLink({
     >
       {children}
       <BusyIcon className="text-muted-foreground self-center">
-        <ListRowChevron />
+        <RowChevron />
       </BusyIcon>
     </LearnLink>
   );
@@ -115,17 +126,32 @@ export function ListRowButton({
       {children}
       {chevron && (
         <BusyIcon className="text-muted-foreground self-center">
-          <ListRowChevron />
+          <RowChevron />
         </BusyIcon>
       )}
     </button>
   );
 }
 
-export function ListRowLeading({ className, ...props }: React.ComponentProps<"span">) {
+/**
+ * Beside three lines or more a mark sits on the first (craft E5), centered on the first line's box.
+ * A mark taller than the line starts level with the text.
+ */
+const MARK_ALIGN_CLASS = "self-center beside-three-lines:row-first-line";
+
+/** `firstLine`: a lead, such as a date before a day's lessons, sits on the first line however many follow. */
+export function ListRowLeading({
+  className,
+  firstLine = false,
+  ...props
+}: React.ComponentProps<"span"> & { firstLine?: boolean }) {
   return (
     <span
-      className={cn("flex shrink-0 items-center self-center empty:hidden", className)}
+      className={cn(
+        "flex min-w-4 shrink-0 items-center justify-center empty:hidden",
+        firstLine ? "row-first-line" : MARK_ALIGN_CLASS,
+        className,
+      )}
       data-slot="list-row-leading"
       {...props}
     />
@@ -137,7 +163,8 @@ export function ListRowIcon({ className, ...props }: React.ComponentProps<"span"
     <span
       aria-hidden="true"
       className={cn(
-        "text-muted-foreground flex size-4 shrink-0 items-center justify-center self-center [&_svg]:size-4",
+        "text-muted-foreground flex size-4 shrink-0 items-center justify-center [&_svg]:size-4",
+        MARK_ALIGN_CLASS,
         className,
       )}
       data-slot="list-row-icon"
@@ -152,7 +179,7 @@ export function ListRowBody({ className, ...props }: React.ComponentProps<"span"
     <span
       className={cn(
         TITLE_ROW_CLASS,
-        "min-h-11 min-w-0 flex-1 gap-y-0.5 py-2.75",
+        "min-h-control min-w-0 flex-1 gap-y-0.5 py-(--row-pad)",
         "*:data-[slot=list-row-content]:min-h-0 *:data-[slot=list-row-content]:py-0",
         className,
       )}
@@ -166,7 +193,7 @@ export function ListRowContent({ className, ...props }: React.ComponentProps<"sp
   return (
     <span
       className={cn(
-        "flex min-h-11 min-w-0 flex-1 flex-col justify-center gap-px py-2.75",
+        "min-h-control flex min-w-0 flex-1 flex-col justify-center gap-px py-(--row-pad)",
         className,
       )}
       data-slot="list-row-content"
@@ -178,38 +205,47 @@ export function ListRowContent({ className, ...props }: React.ComponentProps<"sp
 export function ListRowTitle({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-sm leading-snug font-medium text-pretty wrap-break-word", className)}
+      className={cn("text-sm font-medium text-balance wrap-break-word", className)}
       data-slot="list-row-title"
       {...props}
     />
   );
 }
 
+/**
+ * The number starts on the edge every other row's text does, and the title and its `description`
+ * keep a column of their own after it, so a wrapped line starts under the title's first word.
+ */
 export function ListRowNumberedTitle({
   children,
   className,
+  description,
   number,
   textClassName,
 }: {
   children: React.ReactNode;
   className?: string;
+  description?: React.ReactNode;
   number: number;
   textClassName?: string;
 }) {
   return (
-    <ListRowTitle className={cn("flex items-baseline gap-1.5", className)}>
-      <span className="text-muted-foreground shrink-0 font-mono text-xs font-normal tabular-nums">
-        {`${number}.`}
+    <span className={cn("flex items-baseline", className)}>
+      <span className="text-muted-foreground shrink-0 font-mono text-xs whitespace-pre tabular-nums">
+        {`${number}. `}
       </span>
-      <span className={cn("min-w-0", textClassName)}>{children}</span>
-    </ListRowTitle>
+      <span className="flex min-w-0 flex-col">
+        <ListRowTitle className={textClassName}>{children}</ListRowTitle>
+        {description && <span className="flex flex-col pt-px empty:hidden">{description}</span>}
+      </span>
+    </span>
   );
 }
 
 export function ListRowDescription({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-muted-foreground text-xs leading-snug", className)}
+      className={cn("text-muted-foreground text-xs", className)}
       data-slot="list-row-description"
       {...props}
     />

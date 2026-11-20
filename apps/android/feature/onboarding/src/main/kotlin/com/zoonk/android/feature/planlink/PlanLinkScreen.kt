@@ -1,26 +1,21 @@
 package com.zoonk.android.feature.planlink
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -45,18 +40,26 @@ import com.zoonk.android.feature.plan.phaseKindName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.EmptyState
+import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
-import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.pageMargin
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
@@ -86,6 +89,8 @@ internal fun PlanLinkScreen(
     navigator: AppNavigator,
 ) {
     val vm = viewModel { PlanLinkViewModel(store, createSavedStateHandle()) }
+    VisitOf(vm.visit)
+    ActOn(vm.started) { navigator.showRoot(AppTab.Plan) }
     val resource = store.planLinks[route.planId]
     val state by resource.collectShown()
     val link = (state as? LoadState.Loaded)?.value
@@ -93,33 +98,53 @@ internal fun PlanLinkScreen(
 
     LaunchedEffect(link?.owner) { if (link?.owner != null) navigator.showRoot(AppTab.Plan) }
 
-    PageScaffold(onBack = navigator::back) { padding ->
+    PageScaffold(
+        onBack = navigator::back,
+        barWidth = FORM_WIDTH + 48.dp,
+        bottomBar =
+            link?.takeIf { it.owner == null }?.let { shared ->
+                {
+                    Button(busy = vm.isStarting, modifier = Modifier.fillMaxWidth(), onClick = {
+                        if (signedIn) {
+                            vm.start(route.planId)
+                        } else {
+                            navigator.open(
+                                AppRoute.StartGoal(
+                                    goal =
+                                        shared.outline.subject
+                                            ?.title
+                                            .orEmpty(),
+                                    planId = route.planId,
+                                ),
+                            )
+                        }
+                    }) { Text(stringResource(R.string.planlink_start)) }
+                }
+            },
+    ) { padding ->
         when (val shown = state) {
             is LoadState.Loaded -> {
                 if (shown.value.owner != null) return@PageScaffold
                 TrackShown(AnalyticsEvent.PlanLinkOpened(route.planId))
                 PageWithSupportingPane(
-                    supportingPane = { Phases(shown.value.outline, Modifier.verticalScroll(rememberScrollState()).padding(24.dp)) },
+                    supportingPane = {
+                        Phases(
+                            shown.value.outline,
+                            Modifier.verticalScroll(rememberScrollState()).padding(horizontal = pageMargin(), vertical = 24.dp),
+                        )
+                    },
+                    panesTouch = true,
+                    halfWidth = true,
                     modifier = Modifier.padding(padding),
                 ) { beside ->
                     Column(
-                        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 24.dp),
+                        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = pageMargin(), vertical = 24.dp),
                         verticalArrangement = Arrangement.spacedBy(24.dp),
                     ) {
                         Heading(shown.value)
                         if (signedIn) {
-                            StartForm(vm, shown.value.dailyTimes, onStart = { vm.start(route.planId) { navigator.showRoot(AppTab.Plan) } })
+                            StartForm(vm, shown.value.dailyTimes)
                         } else {
-                            val title =
-                                shown.value.outline.subject
-                                    ?.title
-                                    .orEmpty()
-                            Button(
-                                onClick = { navigator.open(AppRoute.StartGoal(goal = title, planId = route.planId)) },
-                                modifier = Modifier.widthIn(max = FORM_WIDTH).fillMaxWidth(),
-                            ) {
-                                Text(stringResource(R.string.planlink_start))
-                            }
                             MakeItYours()
                         }
                         if (!beside) Phases(shown.value.outline)
@@ -153,7 +178,7 @@ private fun NotFound(padding: PaddingValues) {
             icon = R.drawable.ic_link,
             title = stringResource(R.string.planlink_not_found),
             description = stringResource(R.string.planlink_not_found_description),
-            modifier = beforeFold.padding(detailPagePadding()),
+            modifier = beforeFold.padding(pagePadding()),
         )
     }
 }
@@ -161,11 +186,7 @@ private fun NotFound(padding: PaddingValues) {
 @Composable
 private fun Heading(link: PlanLink) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            stringResource(R.string.planlink_eyebrow),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleSmall,
-        )
+        Eyebrow(stringResource(R.string.planlink_eyebrow))
         Text(
             link.outline.subject?.title ?: stringResource(R.string.planlink_study_plan),
             modifier = Modifier.pageTitle(),
@@ -181,19 +202,10 @@ private fun Heading(link: PlanLink) {
 private fun StartForm(
     vm: PlanLinkViewModel,
     times: List<Long>,
-    onStart: () -> Unit,
 ) {
     Column(Modifier.widthIn(max = FORM_WIDTH), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.planlink_minutes_label), fontWeight = FontWeight.Medium)
         DailyTimePicker(times, vm.minutes, stringResource(R.string.onboarding_schedule_time_label), vm::pick)
-        Button(
-            busy = vm.isStarting,
-            onClick = onStart,
-            modifier = Modifier.fillMaxWidth(),
-            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
-        ) {
-            Text(stringResource(R.string.planlink_start))
-        }
         vm.failure?.let {
             Text(
                 stringResource(if (it == StartFailure.Refused) R.string.planlink_refused else R.string.planlink_failed),
@@ -236,9 +248,11 @@ private fun Phases(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall.withTabularFigures(),
         )
-        outline.phases.forEachIndexed { index, phase ->
-            if (index > 0) HorizontalDivider()
-            PhaseRow(index, phase)
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            outline.phases.forEachIndexed { index, phase ->
+                if (index > 0) ListDivider()
+                PhaseRow(index, phase)
+            }
         }
     }
 }
@@ -253,37 +267,20 @@ private fun PhaseRow(
     val name = phase.name.ifEmpty { phaseKindName(PlanPhase.Kind.LEARN, number) }
     val minutes = approximateMinutes(phase.hours)
 
-    // The plan starts at its first phase, marked as the row the learner is on.
-    val start = if (index == 0) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .semantics(mergeDescendants = true) {}
-            .background(start, MaterialTheme.shapes.small)
-            .padding(horizontal = 8.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        Text(
-            number.toString(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge.withTabularFigures(),
-        )
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(name, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium)
-            phase.milestone?.let {
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-            }
-        }
-        // A phase too small to measure shows no size, so nothing ever reads "~0 min".
-        if (minutes > 0) {
+    ListRow(
+        headline = { Text(name) },
+        leading = {
             Text(
-                stringResource(R.string.planlink_about, formatMinutes(minutes, locale)),
+                number.toString(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+                style = MaterialTheme.typography.labelLarge.withTabularFigures(),
             )
-        }
-    }
+        },
+        leadOnFirstLine = true,
+        supporting = phase.milestone?.let { { Text(it) } },
+        // A phase too small to measure shows no size, so nothing ever reads "~0 min".
+        meta = if (minutes > 0) ({ Text(stringResource(R.string.planlink_about, formatMinutes(minutes, locale))) }) else null,
+    )
 }
 
 /** Under an hour in minutes, from an hour in whole hours, as main rounds a plan's size. */

@@ -10,14 +10,15 @@ typealias TricksterActorState = ActorState<TricksterExpression, TricksterAct>
 @Composable
 fun rememberTricksterActorState(): TricksterActorState = rememberActorState(TricksterActing)
 
-/** The Trickster, still: in marks, rows and the roadmap. */
+/** The Trickster, still: in marks, rows and the roadmap; [face] crops to his face, for icon sizes. */
 @Composable
 fun Trickster(
     modifier: Modifier = Modifier,
     expression: TricksterExpression = TricksterExpression.Sly,
     label: String? = null,
+    face: Boolean = false,
 ) {
-    val drawing = remember { TricksterDrawing(holdsSign = false) }
+    val drawing = remember(face) { TricksterDrawing(holdsSign = false, faceOnly = face) }
     CharacterStill(drawing, expression, label, modifier)
 }
 

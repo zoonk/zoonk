@@ -3,6 +3,7 @@ import {
   getActiveLearnerRhythmTrend,
 } from "@/data/stats/get-active-learner-rhythm";
 import { getStudySessionTrend } from "@/data/stats/get-study-session-trend";
+import { formatChartValue } from "@/lib/chart-format";
 import { formatPercent } from "@/lib/format";
 import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
 import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
@@ -18,12 +19,11 @@ type Rhythm = "daily" | "weekly";
 const RHYTHM_COPY = {
   daily: {
     description:
-      "Average learners per day who finished a lesson, review, practice, checkpoint or session, or logged study time. Each bar averages the days in its bucket.",
+      "Learners who finished a lesson, review, practice, checkpoint or session, or logged study time, on an average day.",
     label: "Daily active learners",
   },
   weekly: {
-    description:
-      "Average learners active in the 7 days ending on each day. Each bar averages the days in its bucket.",
+    description: "Learners active at least once in the past 7 days, on an average day.",
     label: "Weekly active learners",
   },
 } as const satisfies Record<Rhythm, { description: string; label: string }>;
@@ -87,7 +87,7 @@ async function ActiveLearnerRhythmAnalysis({
     <AdminAnalysisTrend
       comparison={{ comparisonLabel, current: value, previous: previousAverages[rhythm] }}
       description={RHYTHM_COPY[rhythm].description}
-      value={value.toLocaleString("en", { maximumFractionDigits: 1 })}
+      value={formatChartValue({ format: "number", value })}
     >
       <AdminMetricTrendChart
         dataPoints={dataPoints}

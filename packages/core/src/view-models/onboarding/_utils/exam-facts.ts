@@ -15,6 +15,8 @@ import { type OnboardingExamDate } from "../onboarding-contract";
 export type ExamFacts = {
   blueprintId: string | null;
   dates: OnboardingExamDate[];
+  /** The year the learner named has no sitting left, so `dates` are the next sitting's. */
+  pastYear: boolean;
   /** The official first day a lookup found, so the plan has its date before research runs. */
   targetDate: string | null;
 };
@@ -40,7 +42,12 @@ export type ExamLookup = {
   today: string;
 };
 
-export type StoredExam = { blueprintId: string; dates: OnboardingExamDate[] };
+export type StoredExam = {
+  blueprintId: string;
+  dates: OnboardingExamDate[];
+  /** The year the learner named has no sitting left, so `dates` are the next sitting's. */
+  pastYear: boolean;
+};
 
 export type ExamCandidate = ExamDescription & { id: string };
 
@@ -133,7 +140,7 @@ async function withSources(days: EditionExamDay[]): Promise<OnboardingExamDate[]
 }
 
 /** Reuses official dates only for the matching edition; otherwise estimates timing within the learner's requested month. */
-async function findStoredDates({
+async function findEditionDates({
   edition,
   examMonth,
   examYear,
@@ -164,6 +171,23 @@ async function findStoredDates({
     : withSources(ahead);
 }
 
+/** A year whose exam is already over can't be the one the learner sits, so the next sitting stands in. */
+async function findStoredDates(edition: {
+  edition: unknown;
+  examMonth: number | null;
+  examYear: number | null;
+  today: string;
+}): Promise<Pick<StoredExam, "dates" | "pastYear">> {
+  const dates = await findEditionDates(edition);
+
+  if (dates.length > 0 || edition.examYear === null) {
+    return { dates, pastYear: false };
+  }
+
+  const next = await findEditionDates({ ...edition, examMonth: null, examYear: null });
+  return { dates: next, pastYear: next.length > 0 };
+}
+
 async function readStoredExam({
   blueprint,
   lookup: { exam, today },
@@ -171,14 +195,14 @@ async function readStoredExam({
   blueprint: Pick<ExamBlueprint, "edition" | "id">;
   lookup: ExamLookup;
 }): Promise<StoredExam> {
-  const dates = await findStoredDates({
+  const found = await findStoredDates({
     edition: blueprint.edition,
     examMonth: exam.examMonth ?? null,
     examYear: exam.examYear ?? null,
     today,
   });
 
-  return { blueprintId: blueprint.id, dates };
+  return { blueprintId: blueprint.id, ...found };
 }
 
 /** The stored notice in one language when no model call is needed, or the candidates to decide on. */
@@ -301,10 +325,11 @@ export async function searchExamDates({
 
 export function toExamFacts({ lookup, searched, stored }: FoundExam): ExamFacts {
   const blueprintId = stored?.blueprintId ?? null;
+  const pastYear = stored?.pastYear ?? false;
   const [first] = searched;
 
   if (!first) {
-    return { blueprintId, dates: stored?.dates ?? [], targetDate: null };
+    return { blueprintId, dates: stored?.dates ?? [], pastYear, targetDate: null };
   }
 
   // A conflicting month may be another sitting; preserve the month the learner chose.
@@ -314,5 +339,5 @@ export function toExamFacts({ lookup, searched, stored }: FoundExam): ExamFacts 
     today: lookup.today,
   });
 
-  return { blueprintId, dates: searched, targetDate: keptMonth ? null : first.date };
+  return { blueprintId, dates: searched, pastYear, targetDate: keptMonth ? null : first.date };
 }

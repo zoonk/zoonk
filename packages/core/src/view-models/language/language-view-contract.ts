@@ -1,6 +1,7 @@
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { USAGE_PERIODS } from "../../entitlements/contract";
 import { speakingMockExamSchema } from "../../language/conversations/conversation-contract";
 import { speakingPaperViewSchema } from "../../language/exam-speaking/speaking-contract";
 import { LANGUAGE_SKILLS } from "../../language/levels/skill-level-rules";
@@ -102,7 +103,7 @@ export type NoticedPattern = z.infer<typeof noticedPatternSchema>;
 
 const duePronunciationSchema = z.object({
   count: z.int().min(1),
-  words: z.array(z.string()).meta({ description: "The first few, to name on the row" }),
+  words: z.array(z.string()).meta({ description: "The first few" }),
 });
 
 export const practiceCallSchema = z
@@ -114,13 +115,21 @@ export const practiceCallSchema = z
     defaultMinutes: z.int(),
     limit: z
       .object({
-        period: z.enum(["day", "month", "total"]),
+        availableAt: z.iso
+          .datetime()
+          .nullable()
+          .optional()
+          .meta({
+            description:
+              "For `rolling30Days`: when call time comes back; null when none does. Absent for other periods",
+          }),
+        period: z.enum(USAGE_PERIODS),
         tier: z.enum(["free", "guest", "plus"]),
       })
       .nullable()
       .meta({
         description:
-          "When no call time is left: the call time that's used (today's, this month's, or a guest's plan without calls), to say until when calls come back. Never show how much call time a plan has",
+          "When no call time is left: which call time is used up (today's, the last 30 days', or a guest's plan without calls), which is when calls come back",
       }),
     minutes: z
       .array(z.int())
@@ -131,12 +140,9 @@ export const practiceCallSchema = z
     paused: z
       .boolean()
       .meta({
-        description:
-          "Calls are currently paused for this learner; show this before choosing a call length",
+        description: "Calls are currently paused for this learner, whatever the call length",
       }),
-    plusMinutes: z
-      .array(z.int())
-      .meta({ description: "Longer lengths that come with Plus, shown locked with the Plus mark" }),
+    plusMinutes: z.array(z.int()).meta({ description: "Longer lengths that come with Plus" }),
   })
   .meta({ id: "LanguagePracticeCall" });
 
@@ -146,7 +152,7 @@ export const languageUnitViewSchema = z
       .boolean()
       .meta({
         description:
-          "Offer the unit's chapter test while lessons remain, unless it was failed today without a lesson studied in this unit since; available again on the next learner-local day",
+          "True while the unit's chapter test is available: lessons remain, and it wasn't failed today without a lesson studied in this unit since. A failed one is available again on the next learner-local day",
       }),
     conversation: practiceCallSchema,
     goalId: uuidSchema().nullable(),
@@ -221,6 +227,9 @@ export const languageTodayViewSchema = z
         description:
           "The speaking paper of the exam the goal names in its language (DELE, DELF or DALF, Goethe-Zertifikat, Cambridge English), to practice any time at its target level; null when it names none of them",
       }),
+    targetLanguage: z
+      .string()
+      .meta({ description: "The language the goal learns, whose level the goal measures" }),
   })
   .meta({ id: "LanguageToday" });
 

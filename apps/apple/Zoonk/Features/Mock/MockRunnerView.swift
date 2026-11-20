@@ -43,12 +43,13 @@ struct MockRunnerView: View {
             answerSheetInSheet = !fitsTwoPages
           }
         } label: {
-          Label {
-            Text("Answer sheet", tableName: "Mock", comment: "Opens the mock's answer sheet")
-          } icon: {
-            Image(systemName: "list.number")
-          }
+          Text(
+            "Sheet", tableName: "Mock",
+            comment:
+              "Short label of a small button that opens the mock exam's answer sheet. Screen readers and voice control call the button \"Answer sheet\", so the label must be a word copied letter for letter from your translation of \"Answer sheet\", such as its first word."
+          )
         }
+        .accessibilityLabel(Text("Answer sheet", tableName: "Mock"))
       }
     }
     .deadline(current.deadline, run: run)
@@ -61,7 +62,7 @@ struct MockRunnerView: View {
         })
     ) {
       answerSheet(isBeside: false).presentationDetents([.medium, .large])
-        .zoonkStyles()
+        .zoonkSheet()
     }
     .onChange(of: fitsTwoPages) { _, fits in
       if fits { answerSheetInSheet = false }
@@ -139,7 +140,7 @@ struct MockRunnerView: View {
     let counts = MockSectionCounts(run: run)
 
     return Meter(
-      value: Double(counts.answered + counts.essays - counts.blankEssays),
+      value: Double(counts.answered),
       total: Double(max(counts.total, 1)), height: 4
     )
     .accessibilityLabel(
@@ -176,7 +177,7 @@ struct MockRunnerView: View {
   }
 
   private var nextButton: some View {
-    BusyButton(isBusy: run.busy == .submit, icon: isLastQuestion ? .send : .forward) {
+    BusyButton(isBusy: run.busy == .submit) {
       if isLastQuestion {
         confirmsHandIn = true
       } else {
@@ -186,9 +187,9 @@ struct MockRunnerView: View {
       if !isLastQuestion {
         Text("Next", tableName: "Mock", comment: "The next question")
       } else if view.isLastSectionCurrent {
-        Text("Hand in the mock exam", tableName: "Mock", comment: "Hands in the last section")
+        Text("Hand in", tableName: "Mock", comment: "Hands in the last section")
       } else {
-        Text("Hand in this section", tableName: "Mock", comment: "Hands in a section")
+        Text("Hand in section", tableName: "Mock", comment: "Hands in a section")
       }
     }
     .buttonStyle(.mainAction)
@@ -205,15 +206,15 @@ struct MockRunnerView: View {
 }
 
 private struct MockQuestionMeta: View {
-  @Environment(\.stacksContent) private var isStacked
   let run: MockRun
   let view: MockView
   let question: MockQuestion
 
   var body: some View {
     AccessibilityStack {
-      Text(question.area ?? "")
-        .lineLimit(isStacked ? nil : 1)
+      if let area = question.area {
+        Chip(Text(area))
+      }
       Spacer(minLength: 0)
       if question.format == .essay {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
@@ -387,7 +388,13 @@ private struct FlagButton: View {
       run.toggleFlag()
     } label: {
       Label {
-        Text("Flag", tableName: "Mock", comment: "Flags a question to come back to")
+        SwapLabel(
+          labels: [
+            Text("Flag", tableName: "Mock", comment: "Flags a question to come back to"),
+            Text(
+              "Remove flag", tableName: "Mock", comment: "Takes the flag off a flagged question"),
+          ],
+          shown: flagged ? 1 : 0, alignment: .leading)
       } icon: {
         Image(systemName: flagged ? "flag.fill" : "flag")
       }
@@ -397,9 +404,8 @@ private struct FlagButton: View {
     )
     .buttonStyle(.outline)
     .controlSize(.large)
-    .tint(flagged ? .warning : nil)
+    .buttonTone(flagged ? .warning : .neutral)
     .disabled(run.timeUp || run.pending)
-    .accessibilityAddTraits(flagged ? .isSelected : [])
   }
 }
 
@@ -447,7 +453,7 @@ private struct ItemClock: ViewModifier {
           if let deadline {
             HStack {
               Spacer()
-              Text(timerInterval: Date.now...max(deadline, .now), countsDown: true)
+              PlanDate.countdown(to: deadline)
                 .typeStyle(.data)
                 .foregroundStyle(.mutedForeground)
                 .accessibilityLabel(
@@ -475,6 +481,7 @@ private struct ItemClock: ViewModifier {
 
 @MainActor
 struct MockSectionCounts {
+  /// Main's: every question counted as answered, essays included.
   var answered = 0
   var blank = 0
   var blankEssays = 0
@@ -487,32 +494,39 @@ struct MockSectionCounts {
       let draft = run.drafts[question.itemId]
       total += 1
 
+      if draft?.flagged == true { flagged += 1 }
+
       if question.format == .essay {
         essays += 1
-        if draft?.isAnswered != true { blankEssays += 1 }
+        if run.isCountedAsAnswered(question.itemId) { answered += 1 } else { blankEssays += 1 }
         continue
       }
 
-      if draft?.isAnswered == true { answered += 1 } else { blank += 1 }
-      if draft?.flagged == true { flagged += 1 }
+      if run.isCountedAsAnswered(question.itemId) { answered += 1 } else { blank += 1 }
     }
   }
 
   var leftOpen: String {
     var parts: [String] = []
 
-    if blank > 0 {
+    if blank > 0, flagged > 0 {
+      parts.append(
+        String(
+          localized: "\(blank) questions are blank and \(flagged) are flagged.", table: "Mock",
+          comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
+      )
+    } else if blank > 0 {
       parts.append(
         String(
           localized: "\(blank) questions are blank.", table: "Mock",
-          comment: "Blank questions when handing in"))
-    }
-
-    if flagged > 0 {
+          comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
+      )
+    } else if flagged > 0 {
       parts.append(
         String(
           localized: "\(flagged) questions are flagged.", table: "Mock",
-          comment: "Flagged questions when handing in"))
+          comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
+      )
     }
 
     if blank == 0, flagged == 0, total > essays {
@@ -546,7 +560,8 @@ private struct MockAnswerSheet: View {
     } else {
       NavigationStack {
         sheet
-          .navigationTitle(Text("Answer sheet", tableName: "Mock", comment: "The answer sheet"))
+          .navigationTitle(Text("Answer sheet", tableName: "Mock"))
+          .navigationSubtitle(Text(MockLabels.answered(MockSectionCounts(run: run).answered)))
           .navigationBarTitleDisplayMode(.inline)
       }
     }
@@ -555,10 +570,16 @@ private struct MockAnswerSheet: View {
   private var sheet: some View {
     ZoonkList {
       if isBeside {
-        Text("Answer sheet", tableName: "Mock", comment: "The answer sheet")
-          .typeStyle(.body.weight(.semibold))
-          .accessibilityAddTraits(.isHeader)
-          .listRowBackground(Color.clear)
+        VStack(alignment: .leading, spacing: 4) {
+          Text("Answer sheet", tableName: "Mock")
+            .typeStyle(.body.weight(.semibold))
+            .accessibilityAddTraits(.isHeader)
+          Text(MockLabels.answered(MockSectionCounts(run: run).answered))
+            .typeStyle(.note)
+            .monospacedDigit()
+            .foregroundStyle(.mutedForeground)
+        }
+        .listRowBackground(Color.clear)
       }
 
       Section {
@@ -566,12 +587,13 @@ private struct MockAnswerSheet: View {
           row(question, at: index)
         }
       } header: {
-        SectionTitle(Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
+        SectionTitle(
+          Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
       } footer: {
-        SectionFooter {
-          Text(
-            "No feedback until the end, like on exam day.", tableName: "Mock",
-            comment: "Under the answer sheet")
+        if let tools = view.currentSection?.tools {
+          SectionFooter {
+            Label(tools, systemImage: "pencil.and.ruler")
+          }
         }
       }
 
@@ -617,41 +639,67 @@ private struct MockAnswerSheet: View {
 
   private func row(_ question: MockQuestion, at index: Int) -> some View {
     let draft = run.drafts[question.itemId]
-    let answered = draft?.isAnswered ?? false
-    let flagged = draft?.flagged ?? false
-    let isCurrent = index == run.position
 
-    return Button {
+    return MockSheetRow(
+      name: question.format == .essay
+        ? String(localized: "Written part", table: "Mock", comment: "A full mock's essay part")
+        : String(
+          localized: "Question \(question.number)", table: "Mock", comment: "A question by number"),
+      answered: run.isCountedAsAnswered(question.itemId),
+      flagged: draft?.flagged ?? false,
+      isCurrent: index == run.position,
+      canOpen: run.moves.canOpen(index) && !run.timeUp
+    ) {
       onPick(index)
-    } label: {
+    }
+  }
+}
+
+/// A question on the answer sheet: its number, whether it's answered or marked, and the one the
+/// learner is on.
+struct MockSheetRow: View {
+  let name: String
+  let answered: Bool
+  let flagged: Bool
+  let isCurrent: Bool
+  let canOpen: Bool
+  let onPick: () -> Void
+
+  var body: some View {
+    Button(action: onPick) {
       HStack {
-        Group {
-          if question.format == .essay {
-            Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
-          } else {
-            Text("Question \(question.number)", tableName: "Mock", comment: "A question by number")
-          }
-        }
-        .typeWeight(isCurrent ? .semibold : .regular)
-        .foregroundStyle(.primary)
+        Text(name)
+          .typeWeight(isCurrent ? .semibold : .regular)
+          .foregroundStyle(.primary)
 
         Spacer()
 
         if flagged {
           Image(systemName: "flag.fill")
             .foregroundStyle(.warning)
-            .accessibilityLabel(Text("Flagged", tableName: "Mock", comment: "A flagged question"))
         }
 
         Image(systemName: answered ? "circle.fill" : "circle")
           .foregroundStyle(answered ? Color(.foreground) : .faint)
-          .accessibilityLabel(
-            answered
-              ? Text("Answered", tableName: "Mock", comment: "An answered question")
-              : Text("Blank", tableName: "Mock", comment: "A blank question"))
       }
     }
-    .disabled(!run.moves.canOpen(index) || run.timeUp)
+    .accessibilityLabel(
+      flagged
+        ? Text(
+          "\(name), flagged", tableName: "Mock",
+          comment:
+            "A cell of the mock exam's answer sheet the learner flagged to look at again. %@ is \"Question 12\" or \"Written part\", so use a form that agrees with both."
+        )
+        : Text(name)
+    )
+    .accessibilityValue(answered ? MockAnswerMark.answered : MockAnswerMark.blank)
+    .accessibilityAddTraits(isCurrent ? .isSelected : [])
+    .disabled(!canOpen)
     .currentRow(isCurrent)
   }
+}
+
+private enum MockAnswerMark {
+  static var answered: Text { Text("Answered", tableName: "Mock") }
+  static var blank: Text { Text("Unanswered", tableName: "Mock") }
 }

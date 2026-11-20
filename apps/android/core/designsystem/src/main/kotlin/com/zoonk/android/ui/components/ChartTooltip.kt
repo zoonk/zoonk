@@ -110,10 +110,10 @@ fun ChartTooltip(
 /**
  * [tooltip] beside the chart point whose bounds [anchor] gives from this layout's start edge, hidden
  * while it gives `null` or the point is outside the part of the page [inspector]'s [holdsChartTooltips]
- * area shows: above the point, below it when that doesn't fit, beside it when neither does, and never
- * past the layout's sides or out of that part of the page. With [riseAbove] it may cover what comes
- * before the chart, which draws under it. It takes no touches and TalkBack skips it, since the points
- * say their own detail.
+ * area shows: above the point, below it when that doesn't fit, beside it when neither does. It may rise past
+ * the chart's top over what's above it on the page, as main's tooltip does, but never below the chart's bottom,
+ * past the layout's sides or out of that part of the page.
+ * It takes no touches and TalkBack skips it, since the points say their own detail.
  */
 @Composable
 fun ChartTooltipArea(
@@ -121,7 +121,6 @@ fun ChartTooltipArea(
     anchor: Density.(area: IntSize) -> IntRect?,
     inspector: ChartInspector,
     modifier: Modifier = Modifier,
-    riseAbove: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     var shown by remember { mutableStateOf<IntRange?>(null) }
@@ -141,8 +140,7 @@ fun ChartTooltipArea(
         layout(area.width, area.height) {
             chart.place(0, 0)
             val point = card?.let { anchor(area) } ?: return@layout
-            val top = if (riseAbove) Int.MIN_VALUE else 0
-            val room = shown?.let { maxOf(top, it.first)..minOf(area.height, it.last) } ?: 0..area.height
+            val room = tooltipRoom(shown, area.height)
             val offset = tooltipOffset(point, IntSize(card.width, card.height), area.width, room, gap) ?: return@layout
             card.placeRelative(offset, zIndex = 1f)
         }
@@ -155,6 +153,15 @@ private fun ChartInspector.shownRows(layout: LayoutCoordinates): IntRange? {
     val shown = layout.localBoundingBoxOf(page, clipBounds = false)
     return ceil(shown.top).toInt()..floor(shown.bottom).toInt()
 }
+
+/**
+ * The rows a tooltip may use, in this layout's coordinates: up into the part of the page [shown] above the chart, as
+ * main's tooltip opens over what's above it, and down to the chart's own bottom, past which the page's next part draws over it.
+ */
+internal fun tooltipRoom(
+    shown: IntRange?,
+    height: Int,
+): IntRange = shown?.let { it.first..minOf(height, it.last) } ?: 0..height
 
 /**
  * Where a [card] goes beside [point] in a layout [width] wide, kept within the rows of [room], or

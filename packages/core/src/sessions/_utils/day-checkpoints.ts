@@ -6,25 +6,18 @@ import { type loadDayPlan } from "./day-plan";
 import { getLeadingChallenges } from "./day-stretch";
 import { type SessionDayContext } from "./session-placement";
 
-type DayAccess = { trialEnded: boolean };
 type DayBosses = Awaited<ReturnType<typeof loadSessionBosses>>;
 
 /** Locked challenges must not reserve questions away from the free learner's review and practice. */
 export async function loadDayBosses({
-  access,
   ahead,
   context: { goal, localDate, readSubscription, userId },
   plan,
 }: {
-  access: DayAccess;
   ahead: ReadonlySet<string>;
   context: SessionDayContext;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
 }): Promise<DayBosses> {
-  if (access.trialEnded) {
-    return { checkpoints: [] };
-  }
-
   return loadSessionBosses({
     ahead,
     examBlueprintId: goal.examBlueprintId,
@@ -44,21 +37,15 @@ export async function loadDayBosses({
 
 /** Mocks may share a funded day with bosses; weekly mixed challenges wait for a boss-free day. */
 export function listDayCheckpoints({
-  access,
   boss,
   items = [],
   weekly,
 }: {
-  access: DayAccess;
   boss: Pick<DayBosses, "checkpoints">;
   items?: readonly ChallengeReachItem[];
   weekly: { checkpoint: PlannedCheckpoint | null };
 }): PlannedCheckpoint[] {
   const { checkpoint: week } = weekly;
-
-  if (access.trialEnded) {
-    return [];
-  }
 
   return week &&
     (week.mock || getLeadingChallenges({ checkpoints: boss.checkpoints, items }).length === 0)

@@ -1,5 +1,4 @@
 import "server-only";
-import { readFinishedMockCount } from "../../learner/facts/finished-mocks";
 import { readMockEssays } from "../../learner/facts/mock-essays";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
@@ -39,7 +38,6 @@ export async function getMockOptions({
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
       {
         essays: readMockEssays(goal.userId, goal.id, goal.examBlueprintId),
-        finishedMocks: readFinishedMockCount(goal.userId, goal.id),
         plan: readSavedPlan(goal.userId, goal.id),
         typed: getBankTypedParts(goal.examBlueprintId),
       },

@@ -205,6 +205,16 @@ struct MockResult: Hashable, Decodable, Sendable {
     let change = Int((current - previous + 0.5).rounded(.down))
     return change == 0 ? nil : change
   }
+
+  /// What the answers were: nil where the score already is the count of right ones.
+  var answerCounts: (right: Double, wrong: Double, partial: Int, blank: Int)? {
+    if let net {
+      return (Double(net.right), Double(net.wrong), net.partial, net.blank)
+    }
+
+    guard irt != nil else { return nil }
+    return (correct, Double(total) - correct - Double(blank), 0, blank)
+  }
 }
 
 struct PointsMinimum: Hashable, Decodable, Sendable {
@@ -251,9 +261,12 @@ struct MockPoints: Hashable, Decodable, Sendable {
 
   /// Each test, and the tests together when they have a minimum. Misses come first, so what would
   /// eliminate the learner is read before what went fine.
+  /// Misses first, so what would eliminate the learner is read before what went fine. The total
+  /// joins the tests when it has a minimum to judge, or when a missed minimum takes the result's
+  /// headline, which is where the total showed.
   var tests: [Test] {
     let together =
-      minimum == nil
+      minimum == nil && !parts.contains(where: { $0.met == false })
       ? []
       : [
         Test(
@@ -266,6 +279,11 @@ struct MockPoints: Hashable, Decodable, Sendable {
   }
 
   var hasTests: Bool { !parts.isEmpty || minimum != nil || !unjudged.isEmpty }
+
+  /// The mock exam checked at least one minimum and every one was reached.
+  var reachedEveryMinimum: Bool {
+    tests.contains { $0.met == true } && !tests.contains { $0.met == false }
+  }
 }
 
 struct NetCalibration: Hashable, Decodable, Sendable {
@@ -465,6 +483,12 @@ struct MockSpeaking: Hashable, Decodable, Sendable {
   var title: String
 }
 
+/// The subjects the result names; core decides each only where its numbers stand clear of the others.
+struct MockVerdict: Hashable, Decodable, Sendable {
+  var strongest: String?
+  var weakest: String?
+}
+
 struct MockView: Hashable, Decodable, Sendable {
   enum Status: String, Decodable, Sendable {
     case ready
@@ -525,6 +549,7 @@ struct MockView: Hashable, Decodable, Sendable {
   var speaking: MockSpeaking?
   var status: Status
   var trueFalseLabels: PracticeTrueFalseLabels
+  var verdict: MockVerdict?
 
   var currentSection: MockSection? {
     sections.first { $0.status == .current }

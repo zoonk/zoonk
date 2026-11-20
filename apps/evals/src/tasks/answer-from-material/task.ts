@@ -67,7 +67,7 @@ export const answerFromMaterialTask: Task<
   description: "Answer a question from the learner's own material, citing its pages",
   generate: answerFromMaterial,
   id: "answer-from-material",
-  name: "Answer From Material",
+  name: "Answer from material",
   score: scoreAnswer,
   testCases: TEST_CASES,
 };

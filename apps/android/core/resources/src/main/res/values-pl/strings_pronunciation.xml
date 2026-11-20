@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "1cea2640d6c581f2face062159b8c3482491c90aa0e05789776f1ac972f02a65",
   "pronunciation_continue": "7e051510faf0bf48f0dec4ff82a40a92fb8df56b32a0b9b2e5b62dce8c51910d",
   "pronunciation_done": "50eaa4b0dc3fad50c09e56b44407fb995ef11e76d32226f5b726777dd4973e5f",
   "pronunciation_failed": "6dd05364a9db1e7d9b53bf6f52560960480612f405c68b79dad4039f91899dad",
@@ -21,8 +20,8 @@
   "pronunciation_save_failed": "62ab2164cd00ca23cd7e70720bd6807366906df16dcd1e128dceeb9bfc94d4aa",
   "pronunciation_save_retry": "36901e2dcd4dc8619a2653de58a25422545e6b38a4fe9feb741b7b7a9761d5ba",
   "pronunciation_say_it_like": "e5777cfbebc09f2c3c32e6b2954d928aaf6c6488162a193d6d28659e61155e86",
-  "pronunciation_see_how": "10a5646e993a7c0f5c1324d4fe6853e5ad974acb6a8ea6cb70ef979f07dc9b33",
-  "pronunciation_skip": "267f83936af0af2da25e1b2556f4c73755fbf58ca803c03d08eccf58c548bb72",
+  "pronunciation_see_how": "b23d768bb164ed2e26c63f86b069932401e448755ecf2f4a2d6467ec200e8502",
+  "pronunciation_skip": "12b0228d430d7ffe613f051b16d72206f73db33514e3a218a920945145a448fb",
   "pronunciation_sounded_right": "ffc355c69c2aadd7a93b845f86a20309d9363e08a9f6fcd2bc137bc912271571",
   "pronunciation_title": "fcfb76fd0088bad39834665b068cf289f34c6a69e2f9a5fbb8e6d553a310d82b",
   "pronunciation_try_again": "04bc3f5377d6c614562ecb64a11739c03568e19eb9b938507e60ea049f4fbf96"
@@ -37,7 +36,7 @@
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">Powiedz to tak: %1$s</string>
     <string name="pronunciation_options">Opcje ekranu</string>
-    <string name="pronunciation_skip">Pomiń to słowo</string>
+    <string name="pronunciation_skip">Pomiń</string>
     <string name="pronunciation_press_record">Naciśnij „Nagraj” i powiedz słowo na głos</string>
     <string name="pronunciation_recording">Nagrywamy… Naciśnij „Zatrzymaj”, gdy skończysz.</string>
     <string name="pronunciation_grading">Słuchamy, jak to zabrzmiało…</string>
@@ -52,14 +51,13 @@
     <!-- Goes on to the next word. -->
     <string name="pronunciation_continue">Kontynuuj</string>
     <!-- Ends the round after its last word. -->
-    <string name="pronunciation_see_how">Sprawdź, jak poszło</string>
+    <string name="pronunciation_see_how">Zobacz wynik</string>
     <string name="pronunciation_save_failed">Nie udało się przesłać odpowiedzi. Nic nie przepadło.</string>
     <!-- Retries saving the round. -->
     <string name="pronunciation_save_retry">Spróbuj ponownie</string>
     <string name="pronunciation_no_words">Dziś nie ma słów do powtórzenia na głos.</string>
     <string name="pronunciation_practice_done">Ćwiczenia ukończone</string>
     <string name="pronunciation_nothing_said">Tym razem bez słów</string>
-    <string name="pronunciation_accent">Akcent nigdy nie jest przeszkodą.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Zakończ</string>
 </resources>

@@ -17,6 +17,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -27,6 +28,7 @@ import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.feature.country.CountryStore
 import com.zoonk.android.feature.country.LocalCountryCatalog
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearningProfile
@@ -104,6 +106,7 @@ class HomeCountryScreenshots {
                     },
                     cache,
                 ),
+                SavedStateHandle(),
             )
         var home by mutableStateOf(false)
 
@@ -131,6 +134,6 @@ class HomeCountryScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 }

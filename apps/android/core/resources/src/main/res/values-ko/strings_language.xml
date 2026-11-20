@@ -18,7 +18,7 @@
   "language_estimate_writing": "e98428c0e533a474919ce4a3f24e0e89707fd1c7758809fa9b0b21b5fb93d7b6",
   "language_estimates_note": "b42974d14d0c8d89c471490d20e66774d5b6b1cb0d93b2acfa99e670877bcf8d",
   "language_estimates_rose": "cf41c32aa87aa8ddb28897bb515ea8352654ca490528e578d7f01ec847c03739",
-  "language_level": "b6c3666eca9fdf93f22fcdf029b55c3d5d8dae816a22531de698eec8666c0cad",
+  "language_level": "3e9f864be80fa15c41bd78decaa2e6720c05f84596e31c1637a9ceca4bfd7196",
   "language_level_down": "c149f52ebc71324b500c01f91dd134120a87c6a5897ef338ab1bc4195a28b48c",
   "language_level_goal": "45fe4b27a6163c8eb7418d5758e0d4dada7205efb37de94edbb72f78f2880171",
   "language_level_goal_by": "d5963be10f24db1ec7b830bcd109d3fc5f52708ca36eabdc4e46cded9971bac9",
@@ -31,20 +31,18 @@
   "language_pattern_noticed_summary": "96cd5b758b251c04a015a28ef279e2cc2d88ddbd0bb931f93acf26081b7ea6fa",
   "language_pattern_practice": "eacc019f44f222d871bbfdd6dc329e43236d0e1b8e229779315528567d7c5954",
   "language_pattern_typos": "21b82ee8be32eb3aabe744d75a3eeac39c8bc5f29759262ab9eabfce140109ed",
-  "language_pattern_typos_description": "470619276719549a5b573c2c2a678773b09f63b2362d17271db785d3102787f1",
+  "language_pattern_typos_description": "1ab8d6332bc73837a2d71f36de15c1705046f9aec919fa53af54d5658ea157e9",
   "language_practice_estimates": "830ba9947f608b06dee627b08d6f72ec44ceaad5f7384dc0c0572356adc53973",
   "language_say_again": "e2f83bec3563132ebb674616db6ad3ba4103661a6828c81a2918bc68932cbd6c",
   "language_say_them": "f25ef5b5d58001fc70e2a7d236e1fae55ca6daa4d45ddb3883dc019102759b88",
-  "language_see_your_plan": "8027ed63df1d2615592369bed66b54b1056efd5b295847707a36c61194da8839",
+  "language_see_your_plan": "72f27705374d4837927902923824d603aa7c195c168989912beb9cef634626c6",
   "language_skill_listening": "ed834032508f537c30d9b522436422e5770f2575b4586362b84f5cd33ef4b460",
   "language_skill_reading": "cf9e79cca950b6730ca2e116aef255e5975795743fc1478ee6a0456db044a148",
   "language_skill_speaking": "3b64736f06c3e565e85097a2662fd6d916208c810326532a97415d42b35eef8e",
   "language_skill_words": "67c828a6169e53ca5aefc45bab8640784f3c16dae9bbcb1b12daead7d9ed9e5d",
   "language_skill_writing": "a69ec6108866703316e7eb2b197a5a1b0da25ee1dee7c47fb382ef4bd67a7a21",
-  "language_typos_open": "d9678fe8f5a9860017056dc8b765dc79030c633f84091a61da1aa9cdba502e99",
   "language_unit_about": "206d860f7266ac8b89527bea711f2f9a972072f4f8b7c9e27c6ca830f6e418bd",
   "language_unit_continue": "52e48c19941addb535cb06c888d4069e41fa2cedb1c795eb98c39d8ff8344496",
-  "language_unit_done_share": "0702a50a0126b6ef28697d440f965a1c48ac31916f639709e3a1a2bfb492c6e7",
   "language_unit_eyebrow": "6d29a70f1f688dcd42808eaa05d1d7cc5181813b88c61a626cab614500fec34d",
   "language_unit_grammar_tips": "9a3999302c86b05ebe5017195d2b00eb593c9a07c391281d5ae993e4514a8009",
   "language_unit_lessons": "616749498bc60c5f6b01cce121ce6d35ba62d2c6d8a7e3ae49f9128d9a44432b",
@@ -66,7 +64,6 @@
         <item quantity="other">레슨 %d개</item>
     </plurals>
     <!-- How much of the unit is done, the unit being the subject: "33% done". -->
-    <string name="language_unit_done_share">%1$s 완료</string>
     <string name="language_unit_start">시작하기</string>
     <string name="language_unit_continue">계속하기</string>
     <string name="language_unit_objectives">이 단원을 마치면</string>
@@ -124,7 +121,7 @@
     <string name="language_level_toward_goal">%1$s, 목표 %2$s</string>
     <string name="language_pattern_noticed">실수 패턴을 발견했어요</string>
     <string name="language_pattern_typos">단순한 오타</string>
-    <string name="language_pattern_typos_description">최근에 틀린 건 규칙을 몰라서가 아니라 단순한 실수였어요.</string>
+    <string name="language_pattern_typos_description">최근 실수는 오타였어요. 새로 배울 규칙은 없어요.</string>
     <!-- A practice row. %d is how many words are due to be said out loud again, a count, never a word's number: "Say 2 words again" means repeat two words. -->
     <plurals name="language_say_again">
         <item quantity="other">단어 %d개 다시 소리 내어 말하기</item>
@@ -138,17 +135,15 @@
     <string name="language_alphabet_skip_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">소리 내어 말하기</string>
-    <!-- Opens the noticed typos. -->
-    <string name="language_typos_open">열기</string>
     <!-- %1$s names the rule the learner keeps getting wrong. -->
     <string name="language_pattern_noticed_summary">이런 실수 패턴을 발견했어요: %1$s</string>
     <!-- Opens the noticed pattern. -->
     <string name="language_pattern_practice">연습하기</string>
-    <string name="language_level">레벨</string>
+    <string name="language_level">%1$s 레벨</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>
     <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
     <string name="language_level_toward_spoken">%1$s, 목표 %2$s</string>
     <!-- Opens the Plan from Today's level. -->
-    <string name="language_see_your_plan">내 계획 보기</string>
+    <string name="language_see_your_plan">계획 보기</string>
 </resources>

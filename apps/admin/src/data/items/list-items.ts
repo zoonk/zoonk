@@ -1,7 +1,19 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { ITEM_PROMPT_KEYS } from "@/lib/item-label";
 import { type ItemFormat, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
+
+/** A question's own words: its `question`, or the claim a true-or-false one states. */
+function promptContains(search: string) {
+  return ITEM_PROMPT_KEYS.map((key) => ({
+    content: { mode: "insensitive" as const, path: [key], string_contains: search },
+  }));
+}
+
+function skillNameContains(search: string) {
+  return { skill: { normalizedName: { contains: normalizeString(search) } } };
+}
 
 const cachedListItems = cacheAdminData(
   async (
@@ -14,7 +26,7 @@ const cachedListItems = cacheAdminData(
     const where = {
       format,
       language,
-      ...(search ? { skill: { normalizedName: { contains: normalizeString(search) } } } : {}),
+      ...(search ? { OR: [...promptContains(search), skillNameContains(search)] } : {}),
     };
 
     const [items, total] = await Promise.all([

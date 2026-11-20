@@ -1,29 +1,18 @@
 package com.zoonk.android.feature.mock
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.subscription.ButtonPlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.bleed
@@ -31,25 +20,32 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamMockSummary
 import com.zoonk.api.models.MockOptions
 
-/** A finished mock: its number, when and what it covered, and how it went; [onOpen] opens its result. [stacked] puts how it went under the line. */
+/**
+ * A finished mock exam: its number, when (and its subject when it had one), and how it went; [onOpen] opens its result.
+ * [stacked] puts how it went under the line; [chevronSpace] keeps a chevron's room on a row that can't open in a list
+ * whose other rows can.
+ */
 @Composable
 fun MockSummaryRow(
     mock: ExamMockSummary,
     onOpen: (() -> Unit)?,
     stacked: Boolean,
     modifier: Modifier = Modifier,
+    points: Boolean = mock.hasPartMarks,
+    chevronSpace: Boolean = false,
 ) {
-    val label = mockSummaryLabel(mock)
+    val subject = mockSubject(mock.shape)
     val date = mockDate(mock.finishedAt)
 
     MockListRow(
         headline = { Text(mockTitle(mock.number)) },
-        supporting = if (label.isEmpty()) date else stringResource(R.string.mock_row_detail, date, label),
-        trailing = mockMeasure(mock),
+        supporting = if (subject.isEmpty()) date else stringResource(R.string.mock_row_detail, date, subject),
+        trailing = mockMeasure(mock, points),
         leading = { StatusMark(MarkStatus.Done) },
         onClick = onOpen,
         modifier = modifier,
         stacked = stacked,
+        chevronSpace = chevronSpace,
     )
 }
 
@@ -68,6 +64,7 @@ fun MockListRow(
     stacked: Boolean,
     modifier: Modifier = Modifier,
     current: Boolean = false,
+    chevronSpace: Boolean = false,
 ) {
     ListRow(
         headline = headline,
@@ -77,13 +74,12 @@ fun MockListRow(
         stateDescription = if (current) stringResource(R.string.exam_current) else null,
         leading = leading,
         supporting = {
-            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                Text(supporting)
-                // Under the line, the fact is the row's quietest words.
-                if (trailing != null && stacked) Text(trailing, style = factStyle())
-            }
+            Text(supporting)
+            // Under the line, the fact is the row's quietest words.
+            if (trailing != null && stacked) Text(trailing, style = factStyle())
         },
         meta = if (trailing != null && !stacked) ({ Text(trailing) }) else null,
+        chevronSpace = chevronSpace,
     )
 }
 
@@ -109,26 +105,18 @@ private fun factStyle() = MaterialTheme.zoonkType.data
 fun mockEntryRoute(options: MockOptions): AppRoute? =
     options.running?.let { AppRoute.Mock(it.id.toString()) } ?: AppRoute.MockChooser.takeIf { options.options.isNotEmpty() }
 
-/** The page's main action: take a mock, or go back to the one running. Free learners see it marked Plus. */
+/** The page's main action: take a mock exam, or go back to the one running. */
 @Composable
 fun MockEntryButton(
     options: MockOptions,
     onOpen: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
-    size: ButtonSize = LocalButtonSize.current,
 ) {
     val route = mockEntryRoute(options) ?: return
     val running = options.running != null
 
-    Button(onClick = { onOpen(route) }, modifier = modifier, size = size, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
-        Icon(painterResource(R.drawable.ic_timer), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-        Text(
-            text = stringResource(if (running) R.string.mock_continue else R.string.mock_take),
-            modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
-        )
-        if (!running && options.access == MockOptions.Access.PLUS_REQUIRED) {
-            ButtonPlusMark()
-        }
+    Button(onClick = { onOpen(route) }, modifier = modifier) {
+        Text(stringResource(if (running) R.string.mock_continue else R.string.mock_take))
     }
 }
 

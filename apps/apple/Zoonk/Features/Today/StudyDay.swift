@@ -32,11 +32,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
     let positions: [Int]
   }
 
-  struct ExamAccess: Decodable, Equatable, Sendable {
-    let includesMockExams: Bool
-    let trialEnded: Bool
-  }
-
   struct ExtraTime: Decodable, Equatable, Sendable {
     struct Lesson: Decodable, Equatable, Sendable {
       let minutes: Int
@@ -55,10 +50,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   typealias Minutes = Components.Schemas.StudySessionMinutes
 
-  struct PlusLesson: Decodable, Equatable, Sendable {
-    let title: String
-  }
-
   let id: String?
   var blocks: [StudyBlock]
   let brainPower: Int
@@ -67,7 +58,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
   /// Epoch milliseconds.
   let dayEndsAt: Int
   let emptyDay: EmptyDay?
-  let examAccess: ExamAccess
   let extraTime: ExtraTime
   let freshStart: FreshStart?
   let fullMeal: FullMeal
@@ -80,7 +70,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let missions: [StudyMission]
   var nextBlockId: String?
   var nextPosition: Int?
-  let plusLessons: [PlusLesson]
   var state: DayState
   let status: Status
   let week: StudyWeek
@@ -140,9 +129,10 @@ struct StudyDay: Decodable, Equatable, Sendable {
   /// Rows the queue shows after its next block before "+N more".
   static let upcomingRows = 4
 
-  /// Mirrors main's `getFoldedBlocks`: the blocks "+N more" holds while the queue is folded.
-  var foldedBlocks: [StudyBlock] {
-    Array(queue(next: nextBlock).after.dropFirst(Self.upcomingRows))
+  /// Mirrors main's `getFoldedRows`: how many of the `count` rows after the next block show while
+  /// folded. A single row past the first few shows: folding it would cost a tap to save one row.
+  static func shownUpcomingRows(_ count: Int) -> Int {
+    count - upcomingRows > 1 ? upcomingRows : count
   }
 
   func foldedMinutes(showing blocks: [StudyBlock]) -> Double {

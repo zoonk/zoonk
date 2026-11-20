@@ -10,6 +10,7 @@ import {
 } from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { respondToMemoryInsight } from "../../memory/insights/respond-to-memory-insight";
+import { seenInsightQuote } from "../../plans/_test-utils/seen-quote";
 import { respondToSuggestedGoal } from "./respond-to-suggested-goal";
 
 describe("Today card writes", () => {
@@ -43,7 +44,7 @@ describe("Today card writes", () => {
       });
 
       mockSession(user.id);
-      const answer = { input: { status: "accepted" }, insightId: insight.id } as const;
+      const answer = { input: { quote: null, status: "accepted" }, insightId: insight.id } as const;
       await expect(respondToMemoryInsight(answer)).resolves.toMatchObject({ status: "updated" });
 
       await expect(respondToMemoryInsight(answer)).resolves.toMatchObject({
@@ -85,7 +86,10 @@ describe("Today card writes", () => {
       const answer = () =>
         kind === "suggestion"
           ? respondToSuggestedGoal({ input: { status: "dismissed" }, suggestionId: row.id })
-          : respondToMemoryInsight({ input: { status: "dismissed" }, insightId: row.id });
+          : respondToMemoryInsight({
+              input: { quote: null, status: "dismissed" },
+              insightId: row.id,
+            });
 
       const writes = Promise.all([answer(), answer()]);
 
@@ -125,7 +129,11 @@ describe("Today card writes", () => {
     });
 
     const pid = await holder.pid;
-    const answer = respondToMemoryInsight({ input: { status: "accepted" }, insightId: insight.id });
+
+    const answer = respondToMemoryInsight({
+      input: { quote: await seenInsightQuote(insight.id), status: "accepted" },
+      insightId: insight.id,
+    });
 
     try {
       await waitForBlockedStatement(pid, LEARNER_LOCK);

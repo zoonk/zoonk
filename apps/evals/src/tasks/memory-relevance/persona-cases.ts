@@ -41,14 +41,14 @@ export const PERSONA_TEST_CASES: TestCase<MemoryRelevanceExpected, MemoryRelevan
     relevant: true,
   }),
   personaCase({
-    fact: "Studies at 7:30 am",
+    fact: "Studies at 7:30 AM",
     id: "tutor-study-time",
     learnerKey: "maya",
     need: tutorNeed("Why is 10⁻³ a small number and not a negative one?"),
     relevant: false,
   }),
   personaCase({
-    fact: "Studies at 7:30 am",
+    fact: "Studies at 7:30 AM",
     id: "plan-after-night-shift",
     learnerKey: "maya",
     need: PLAN_WEEK,

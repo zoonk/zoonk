@@ -10,6 +10,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onFirst
@@ -24,6 +27,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -133,7 +137,11 @@ class StatsScreenshots {
             INSPECTED[page].orEmpty().forEach { (state, point) ->
                 compose
                     .onAllNodes(
-                        hasContentDescription(point, substring = true),
+                        SemanticsMatcher("chart point $point") { node ->
+                            node.config.getOrNull(SemanticsProperties.ContentDescription).orEmpty().any {
+                                it.replace('\u00a0', ' ').replace('\u202f', ' ').contains(point)
+                            }
+                        },
                     ).onFirst()
                     .performSemanticsAction(SemanticsActions.OnClick)
                 capture("$name-$state")
@@ -145,6 +153,6 @@ class StatsScreenshots {
         compose.waitForIdle()
         val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 }

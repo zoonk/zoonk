@@ -27,7 +27,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.StudyBlock
 
 /**
- * Main's `DayProgress`: one equal part per counted block, the ones ahead in their kind's color.
+ * Main's `DayProgress`: one equal part per counted block with an empty track for the ones ahead.
  * Tapping a block opens what it is and where the learner stands in it.
  */
 @Composable
@@ -39,7 +39,9 @@ internal fun TodayDayProgress(
     val next = day.steps.firstOrNull { it.position == day.nextPosition }
     val parts = dayParts(day.steps, isNext = { it.position == day.nextPosition }, nextShare = next?.share ?: 0f)
 
-    DayProgress(parts, held = day.heldMinutes > 0, modifier, contentDescription = stepsDone(day.sessionBar)) { index ->
+    val held = day.heldMinutes > 0
+
+    DayProgress(parts, held = held, contentDescription = stepsDone(day.sessionBar), modifier = modifier) { index ->
         val part = parts.getOrNull(index)
         if (part != null) StepSegment(part) else HeldSegment(model, day.heldMinutes)
     }
@@ -110,7 +112,7 @@ private fun segmentFacts(part: DayPart): String {
         }
 
         DayPart.State.Ahead -> {
-            time
+            listOf(stringResource(R.string.today_week_planned).replaceFirstChar { it.titlecase(locale) }, time).factsLine()
         }
 
         DayPart.State.Current -> {

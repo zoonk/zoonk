@@ -9,16 +9,12 @@ import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, StarIcon, TargetIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { Eyebrow } from "../../_components/eyebrow";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
-import {
-  StepCard,
-  StepDetail,
-  StepEyebrow,
-  StepHeader,
-  StepTitle,
-} from "../../_components/step-card";
-import { ChallengeCallPlusNotice } from "../../challenge/challenge-plus-lock";
+import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
+import { useCountOf } from "../../_utils/count-of";
 import { StepWithDayMoment } from "../../session/day-moment";
+import { ChallengeCallGate } from "./challenge-call-gate";
 import { useConversationTitle } from "./conversation-labels";
 
 type Result = NonNullable<LanguageConversationView["result"]>;
@@ -29,14 +25,12 @@ function Stars({ lost, stars }: { lost: boolean; stars: number }) {
   const t = useExtracted();
   const celebrate = useCelebration();
 
+  const label = t("{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}}", {
+    stars,
+  });
+
   return (
-    <p
-      aria-label={t("{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}}", {
-        stars,
-      })}
-      className="text-readout flex items-center gap-1.5 text-2xl"
-      role="img"
-    >
+    <p aria-label={label} className="text-readout flex items-center gap-1.5 text-2xl" role="img">
       <StarIcon
         aria-hidden="true"
         className={cn(
@@ -44,10 +38,7 @@ function Stars({ lost, stars }: { lost: boolean; stars: number }) {
           celebrate && !lost && stars > 0 && "animate-settle",
         )}
       />
-      <span aria-hidden="true">
-        {stars}
-        <span className="text-muted-foreground">{`/${MAX_STARS}`}</span>
-      </span>
+      {label}
     </p>
   );
 }
@@ -82,6 +73,7 @@ function CallFacts({
 }) {
   const t = useExtracted();
   const format = useFormatter();
+  const countOf = useCountOf();
   const total = conversation.objectives.length;
   const met = conversation.objectives.filter((objective) => objective.met).length;
   const showsBrainPower = result.brainPower > 0;
@@ -91,23 +83,13 @@ function CallFacts({
   }
 
   return (
-    <StatTiles className={cn((total === 0 || !showsBrainPower) && "grid-cols-1")}>
+    <StatTiles>
       {total > 0 && (
         <StatTile
           icon={<TargetIcon />}
           label={t("Goals")}
           tone="success"
-          value={
-            <>
-              <span aria-hidden="true">
-                {met}
-                <span className="text-muted-foreground">{`/${total}`}</span>
-              </span>
-              <span className="sr-only">
-                {t("{done, number} of {total, number}", { done: met, total })}
-              </span>
-            </>
-          }
+          value={countOf(met, total)}
         />
       )}
       {showsBrainPower && (
@@ -148,9 +130,7 @@ export function StarsStep({
       <StepCard>
         <Stars lost={lost} stars={result.stars} />
         <StepHeader>
-          <StepEyebrow>
-            {conversation.kind === "checkpoint" ? conversation.title : title}
-          </StepEyebrow>
+          <Eyebrow>{conversation.kind === "checkpoint" ? conversation.title : title}</Eyebrow>
           <StepTitle>{headline}</StepTitle>
           {feedback?.encouragement && <StepDetail>{feedback.encouragement}</StepDetail>}
         </StepHeader>
@@ -158,16 +138,16 @@ export function StarsStep({
 
       <CallFacts conversation={conversation} result={result} />
 
-      {lost && conversation.locked && <ChallengeCallPlusNotice cta />}
+      {lost && conversation.locked && <ChallengeCallGate form="inPlace" />}
 
       {lost && !conversation.locked && (
-        <p className="text-muted-foreground text-[0.8125rem] text-pretty">
-          {t("Nothing is lost: the call comes back so you can try again.")}
+        <p className="text-muted-foreground text-compact text-pretty">
+          {t("Rematch next time you study")}
         </p>
       )}
 
       {!lost && result.stars < MAX_STARS && (
-        <p className="text-muted-foreground text-[0.8125rem] text-pretty">
+        <p className="text-muted-foreground text-compact text-pretty">
           {t("A star for finishing, one for getting everything across and one without Help.")}
         </p>
       )}

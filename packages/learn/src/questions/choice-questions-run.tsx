@@ -1,25 +1,23 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HelpCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Eyebrow } from "../_components/eyebrow";
+import {
+  QuestionActions,
+  QuestionDontKnow,
+  QuestionMainAction,
+} from "../_components/question-actions";
 import { AnswersSaveError, type UnsentAnswers } from "../_components/save-error";
 import { TaskHeaderTitle } from "../_components/task-header";
-import { TaskActions } from "../_components/task-layout";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { type AnswerSender } from "../mistakes/drill/drill-types";
 import { usePreloadMath } from "../rich-text/use-preload-math";
-import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
+import { TaskFrame, type TaskFrameAside } from "../shell/task-frame";
 import { getResumableAnswers, readAnswerDraft, writeAnswerDraft } from "./_utils/answer-draft";
-import {
-  CHOICE_QUESTION_TITLE_SLOT,
-  type ChoiceAnswer,
-  ChoiceQuestion,
-  type ChoiceQuestionView,
-} from "./choice-question";
+import { type ChoiceAnswer, ChoiceQuestion, type ChoiceQuestionView } from "./choice-question";
 
 const PERCENT = 100;
 
@@ -101,7 +99,7 @@ function useFocusNewQuestion({
     shownId.current = itemId;
 
     container.current
-      ?.querySelector<HTMLElement>(`[data-slot="${CHOICE_QUESTION_TITLE_SLOT}"]`)
+      ?.querySelector<HTMLElement>("[data-slot=question-title]")
       ?.focus({ preventScroll: true });
   }, [container, itemId]);
 }
@@ -120,7 +118,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   aside?: TaskFrameAside | null;
   draftKey?: string;
   header: QuestionsHeader;
-  hint?: (question: Question) => string;
+  hint?: (question: Question) => string | null;
   onFinish: (answers: ChoiceQuestionAnswer[]) => void;
   pending: boolean;
   questions: readonly Question[];
@@ -137,6 +135,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   const question = questions[index];
   const total = questions.length;
   const itemId = question?.itemId ?? null;
+  const hintText = question && hint ? hint(question) : null;
   const questionIds = useMemo(() => questions.map((entry) => entry.itemId), [questions]);
 
   const resume = useCallback((saved: ChoiceQuestionAnswer[]) => {
@@ -210,7 +209,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
           <ContentFeedbackMenu
             label={t("Question options")}
             screen={header.screen}
-            size="task"
             target={{ contentId: itemId, contentKind: "item" }}
           />
         )
@@ -227,10 +225,10 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
     >
       {question && (
         <div className="flex flex-col gap-4" ref={questionRef}>
-          <div className="text-muted-foreground flex items-baseline justify-between gap-3 text-sm">
-            <p className={cn("min-w-0 text-pretty", aside && "with-aside:hidden")}>
-              {hint?.(question)}
-            </p>
+          <div className="text-muted-foreground flex items-center justify-between gap-3">
+            {hintText && (
+              <Eyebrow className={cn("min-w-0", aside && "with-aside:hidden")}>{hintText}</Eyebrow>
+            )}
             <p className="ml-auto shrink-0 font-mono text-xs tabular-nums">
               {t("{current, number} of {total, number}", { current, total })}
             </p>
@@ -267,30 +265,19 @@ function QuestionsFooter({
   selected: boolean;
   sender: AnswerSender | null;
 }) {
-  const t = useExtracted();
-
   return (
-    <TaskActions>
-      <Button
+    <QuestionActions>
+      <QuestionDontKnow
         busy={pending && sender === "notSure"}
-        className="shrink-0"
         disabled={locked}
-        focusableWhenDisabled
-        icon={<HelpCircleIcon aria-hidden="true" />}
-        onClick={onDontKnow}
-        size="xl"
-        variant="outline"
-      >
-        {t("I don't know yet")}
-      </Button>
-      <TaskMainButton
+        onPress={onDontKnow}
+      />
+      <QuestionMainAction
+        action={isLast ? "finish" : "next"}
         busy={pending && sender === "check"}
         disabled={locked || !selected}
-        onClick={onNext}
-        {...FORWARD_ICON}
-      >
-        {isLast ? t("Finish") : t("Next")}
-      </TaskMainButton>
-    </TaskActions>
+        onPress={onNext}
+      />
+    </QuestionActions>
   );
 }

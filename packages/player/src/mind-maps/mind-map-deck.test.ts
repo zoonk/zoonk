@@ -27,7 +27,7 @@ function chapter(id: string, overrides: Partial<GoalMindMapView> = {}): GoalMind
 function lesson(id: string, overrides: Partial<LessonMindMap> = {}): LessonMindMap {
   return {
     lessonId: id,
-    locked: false,
+
     map: { ideas: [{ text: "An idea." }], shape: "hub" },
     position: 1,
     saved: false,
@@ -55,7 +55,7 @@ describe(buildMindMapDeck, () => {
         chapters: [
           chapter("a"),
           chapter("b", { outline: null, status: "drawing" }),
-          chapter("c", { outline: null, status: "plusRequired" }),
+          chapter("c", { outline: null, status: "failed" }),
           chapter("d"),
         ],
       }),
@@ -70,8 +70,8 @@ describe(buildMindMapDeck, () => {
       mindMaps: mindMaps({
         chapters: [chapter("a"), chapter("b")],
         lessonGroups: [
-          { chapterId: "a", count: 3, lessonIds: ["l1", "l3"], locked: 1 },
-          { chapterId: "b", count: 1, lessonIds: ["l4"], locked: 0 },
+          { chapterId: "a", count: 2, lessonIds: ["l1", "l3"] },
+          { chapterId: "b", count: 1, lessonIds: ["l4"] },
         ],
       }),
       view: "lessons",
@@ -109,7 +109,7 @@ describe(findLessonMap, () => {
   const deck = buildMindMapDeck({
     mindMaps: mindMaps({
       chapters: [chapter("a")],
-      lessonGroups: [{ chapterId: "a", count: 2, lessonIds: ["l2", "l3"], locked: 0 }],
+      lessonGroups: [{ chapterId: "a", count: 2, lessonIds: ["l2", "l3"] }],
     }),
     view: "lessons",
   });
@@ -122,7 +122,7 @@ describe(findLessonMap, () => {
   });
 
   it("finds nothing for a map that no longer opens", () => {
-    expect(read([lesson("l2", { locked: true, map: null })])).toStrictEqual([undefined, undefined]);
+    expect(read([])).toStrictEqual([undefined, undefined]);
   });
 });
 
@@ -131,8 +131,8 @@ describe(findDeckStart, () => {
     mindMaps: mindMaps({
       chapters: [chapter("a"), chapter("b")],
       lessonGroups: [
-        { chapterId: "a", count: 2, lessonIds: ["l1", "l2"], locked: 0 },
-        { chapterId: "b", count: 2, lessonIds: ["l3", "l4"], locked: 0 },
+        { chapterId: "a", count: 2, lessonIds: ["l1", "l2"] },
+        { chapterId: "b", count: 2, lessonIds: ["l3", "l4"] },
       ],
     }),
     view: "lessons",

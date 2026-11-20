@@ -6,6 +6,10 @@ plugins {
 android {
     namespace = "com.zoonk.android.designsystem"
     testFixtures.enable = true
+    // LayoutParts.kt reads DEBUG, so a release build keeps none of the render tests' part markers.
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -36,6 +40,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testFixturesApi(libs.androidx.window.testing)
+    testFixturesImplementation(project(":core:resources"))
     testFixturesImplementation(composeBom)
     testFixturesImplementation(libs.androidx.compose.ui.test.junit4)
 

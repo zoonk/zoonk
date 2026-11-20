@@ -3,8 +3,9 @@ import { getLearningActivity } from "@zoonk/core/progress/get-learning-activity"
 import { getSession } from "@zoonk/core/users/session";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
+import { StatsCalendarSkeleton } from "../_components/stats-calendar";
 import { StatTilesSkeleton } from "../_components/stats-tiles";
-import { ActivityChart, ActivityChartSkeleton } from "./activity-chart";
+import { ActivityChart } from "./activity-chart";
 import { ActivityTiles } from "./activity-stats";
 
 /** Any learning day counts, a day of only reviews or practice too. */
@@ -27,7 +28,7 @@ export function ActivityContentSkeleton() {
   return (
     <ProgressContent>
       <StatTilesSkeleton count={3} />
-      <ActivityChartSkeleton />
+      <StatsCalendarSkeleton />
     </ProgressContent>
   );
 }

@@ -128,7 +128,7 @@ describe("withdrawing a proposal", () => {
     });
 
     await expect(withdrawContentFixes({ fixId: applied })).resolves.toStrictEqual({
-      message: `Nothing in ContentFix ${applied} waits for review (1 applied), so nothing was withdrawn. To undo what applied, propose a revert: pnpm zoonk staff fixes revert ${applied} --reason "…".`,
+      message: `Nothing in fix ${applied} waits for review (1 applied), so nothing was withdrawn. To undo what's applied: pnpm zoonk staff fixes revert ${applied} --reason "…"`,
       status: "nothingToWithdraw",
     });
 

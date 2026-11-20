@@ -18,7 +18,9 @@ protocol BuddyAPIClient: Sendable {
   func status(timeZone: String, token: String) async throws -> BuddyStatus
   func save(_ buddy: BuddyChoice, token: String) async throws
   func earlierQuestions(cursor: String?, token: String) async throws -> EarlierQuestionsPage
-  func answer(insightId: String, accepted: Bool, token: String) async throws
+  /// The insight as the answer left it; nil when it was answered elsewhere.
+  func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
+    async throws -> MemoryInsight?
 }
 
 struct BuddyAPI: BuddyAPIClient {
@@ -73,16 +75,22 @@ struct BuddyAPI: BuddyAPIClient {
     }
   }
 
-  func answer(insightId: String, accepted: Bool, token: String) async throws {
-    try await clients.perform(token: token) { client in
+  func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
+    async throws -> MemoryInsight?
+  {
+    let body: Components.Schemas.MemoryInsightAnswer = try StudyJSON.recode(
+      InsightAnswerBody(status: accepted ? "accepted" : "dismissed", quote: quote))
+
+    return try await clients.perform(token: token) { client in
       let output = try await client.answerMemoryInsight(
-        path: .init(insightId: insightId),
-        body: .json(.init(status: accepted ? .accepted : .dismissed)))
+        path: .init(insightId: insightId), body: .json(body))
 
       switch output {
-      case .ok, .conflict:
+      case .ok(let response):
+        return try response.body.json.insight
+      case .conflict:
         // An insight answered elsewhere is answered: Today reads it again either way.
-        return
+        return nil
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
@@ -92,4 +100,10 @@ struct BuddyAPI: BuddyAPIClient {
       }
     }
   }
+}
+
+/// `MemoryInsightAnswer`: accepting a plan change insight sends back the quote the learner saw.
+private struct InsightAnswerBody: Encodable {
+  let status: String
+  let quote: PlanChangeQuote?
 }

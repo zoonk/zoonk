@@ -57,6 +57,9 @@ struct WaitScreen<Status: View, Progress: View, Extra: View>: View {
   let progressTitle: Text
   var ready: WaitReady?
   var library: WaitLibraryCourse?
+  /// The run failed, so the wait is over: its quiz goes whole (the card, its question and its
+  /// answer) and the progress says what happened. A lost connection may still finish, so it isn't.
+  var ended = false
   @ViewBuilder let status: () -> Status
   /// The progress's sections: its heading, its steps.
   @ViewBuilder let progress: () -> Progress
@@ -68,7 +71,7 @@ struct WaitScreen<Status: View, Progress: View, Extra: View>: View {
   @Environment(\.onboardingAside) private var onboardingAside
 
   var body: some View {
-    let deal = WaitDeal(deck: deck, visit: visit, warmUps: warmUps)
+    let deal = WaitDeal(deck: ended ? WaitDeck() : deck, visit: visit, warmUps: warmUps)
     let page = deal.page(visit)
 
     Group {
@@ -84,6 +87,12 @@ struct WaitScreen<Status: View, Progress: View, Extra: View>: View {
       }
     }
     .waitProgress(deal, title: progressTitle, progress: progress, bar: bar(.pushed, deal))
+    .environment(\.barHoldsMainAction, ready != nil)
+    .onChange(of: ended) {
+      if ended {
+        visit.endQuiz()
+      }
+    }
   }
 
   private func list(_ deal: WaitDeal) -> some View {
@@ -174,6 +183,7 @@ private struct WaitProgressPush<Progress: View, Extra: View>: ViewModifier {
         .waitBar(bar)
         // A pushed page takes the stack's environment, not the wait's.
         .environment(visit)
+        .environment(\.barHoldsMainAction, bar.ready != nil)
       }
       .loads(deal.deck.map { [$0] } ?? [], refreshable: false)
       // A deck that comes after this is offered in the bar, never swapped in under the learner.
@@ -202,7 +212,7 @@ extension EnvironmentValues {
 /// Main's `WaitHeading`: the progress's title as the page's, or as a block's in the aside.
 struct WaitHeading: View {
   let title: Text
-  let description: Text
+  var description: Text?
 
   @Environment(\.isWaitAside) private var isAside
 
@@ -214,9 +224,11 @@ struct WaitHeading: View {
             .typeStyle(.sectionTitle)
             .accessibilityAddTraits(.isHeader)
 
-          description
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          if let description {
+            description
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
+          }
         }
         .listRowBackground(Color.clear)
       }
@@ -326,7 +338,7 @@ struct WaitBar<Extra: View>: View {
         visit.showsProgress = false
       } label: {
         Text(
-          "Back to the quiz", tableName: "Onboarding",
+          "Back to quiz", tableName: "Onboarding",
           comment:
             "Leaves the build's progress for the quiz under it. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it."
         )
@@ -338,7 +350,7 @@ struct WaitBar<Extra: View>: View {
         visit.playQuiz()
       } label: {
         Text(
-          "Play a quiz while you wait", tableName: "Onboarding",
+          "Play a quiz", tableName: "Onboarding",
           comment:
             "Shows a quiz once one arrived while the learner watches the build's progress. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it."
         )
@@ -391,7 +403,7 @@ private struct LibraryCourseRow: View {
             .lineLimit(1)
 
           Text(
-            "A Library course fits your goal. Start it now", tableName: "Onboarding",
+            "A course on this is ready now", tableName: "Onboarding",
             comment: "Under a Library course offered while the learner's plan is built"
           )
           .typeStyle(.meta)
@@ -430,11 +442,12 @@ extension WaitScreen where Extra == EmptyView {
     progressTitle: Text,
     ready: WaitReady? = nil,
     library: WaitLibraryCourse? = nil,
+    ended: Bool = false,
     @ViewBuilder status: @escaping () -> Status,
     @ViewBuilder progress: @escaping () -> Progress
   ) {
     self.init(
       deck: deck, goalID: goalID, progressTitle: progressTitle, ready: ready,
-      library: library, status: status, progress: progress, extra: { EmptyView() })
+      library: library, ended: ended, status: status, progress: progress, extra: { EmptyView() })
   }
 }

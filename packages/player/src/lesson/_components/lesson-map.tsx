@@ -120,7 +120,7 @@ function MindMap({ ideas, title }: { ideas: readonly MapIdea[]; title: string })
 
       <div className="relative grid grid-cols-1 gap-x-3 gap-y-5 @[22rem]/lesson-map:grid-cols-2 @[22rem]/lesson-map:gap-y-7">
         <p
-          className="bg-muted relative w-fit max-w-64 justify-self-center rounded-[9px] px-3 py-2 text-center text-[15px] leading-5 font-semibold tracking-tight text-balance @[22rem]/lesson-map:col-span-2 @[22rem]/lesson-map:row-(--map-row)"
+          className="bg-muted text-reading relative w-fit max-w-64 justify-self-center rounded-lg px-3 py-2 text-center leading-5 font-semibold tracking-tight text-balance @[22rem]/lesson-map:col-span-2 @[22rem]/lesson-map:row-(--map-row)"
           data-slot="lesson-map-center"
           style={{ "--map-row": 1 - first } as CSSPropertiesWithVariables}
         >
@@ -136,7 +136,7 @@ function MindMap({ ideas, title }: { ideas: readonly MapIdea[]; title: string })
               slot && (
                 <li
                   className={cn(
-                    "bg-card ring-border relative flex flex-col rounded-xl p-3 ring-1",
+                    "bg-card ring-border relative flex flex-col rounded-xl p-3 ring-1 ring-inset",
                     "@[22rem]/lesson-map:col-(--map-column) @[22rem]/lesson-map:row-(--map-row)",
                     slot.column === 0 &&
                       "@[22rem]/lesson-map:w-[calc((100%-0.75rem)/2)] @[22rem]/lesson-map:justify-self-center",

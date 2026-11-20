@@ -52,7 +52,7 @@ export const solveItemsTask: Task<SolveItemsInput, SolveItemsOutput, SolveItemsE
     "Solve multiple-choice and true/false items without their keys, so code drops each item whose key the solve doesn't reproduce: catch wrong keys, items with no right option and true/false keys a board would mark the other way, and keep hard right items",
   generate: solveItems,
   id: "solve-items",
-  name: "Solve Items (key check)",
+  name: "Solve items (key check)",
   score: scoreSolveItems,
   testCases: TEST_CASES,
 };

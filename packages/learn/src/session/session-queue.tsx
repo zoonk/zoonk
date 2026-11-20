@@ -18,33 +18,39 @@ import { BlockMark } from "./block-mark";
 import { type SessionQueueRow } from "./session-queue-rows";
 import { useBlockTitle } from "./use-block-copy";
 
-function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
+/** One block as a list row; the next one is highlighted. */
+export function BlockRow({ block, state }: SessionQueueRow) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const blockTitle = useBlockTitle();
 
   return (
+    <ListRow
+      aria-current={state === "next" ? "step" : undefined}
+      data-state={state}
+      role="listitem"
+    >
+      <ListRowLeading>
+        <BlockMark block={block} done={state === "done"} />
+      </ListRowLeading>
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle className={cn(state === "done" && "text-muted-foreground")}>
+            {blockTitle(block)}
+            {state === "done" && <span className="sr-only">{t(", done")}</span>}
+          </ListRowTitle>
+        </ListRowContent>
+        <ListRowTrailing>{formatDuration(block.estimatedMinutes)}</ListRowTrailing>
+      </ListRowBody>
+    </ListRow>
+  );
+}
+
+function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
+  return (
     <ListGroup role="list">
-      {rows.map(({ block, state }) => (
-        <ListRow
-          aria-current={state === "next" ? "step" : undefined}
-          data-state={state}
-          key={block.position}
-          role="listitem"
-        >
-          <ListRowLeading className="w-3 justify-center">
-            <BlockMark block={block} done={state === "done"} />
-          </ListRowLeading>
-          <ListRowBody>
-            <ListRowContent>
-              <ListRowTitle className={cn(state === "done" && "text-muted-foreground")}>
-                {blockTitle(block)}
-                {state === "done" && <span className="sr-only">{t(", done")}</span>}
-              </ListRowTitle>
-            </ListRowContent>
-            <ListRowTrailing>{formatDuration(block.estimatedMinutes)}</ListRowTrailing>
-          </ListRowBody>
-        </ListRow>
+      {rows.map((row) => (
+        <BlockRow key={row.block.position} {...row} />
       ))}
     </ListGroup>
   );
@@ -52,25 +58,42 @@ function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
 
 type SessionQueueView = { left: number; rows: readonly SessionQueueRow[] };
 
-export function useSessionQueueAside({ left, rows }: SessionQueueView): TaskFrameAside {
+/**
+ * Under a header that already says "Today", the time left heads the list; a screen whose header
+ * names something else asks for `named`.
+ */
+export function useSessionQueueAside(
+  { left, rows }: SessionQueueView,
+  { named = false }: { named?: boolean } = {},
+): TaskFrameAside {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
+  const timeLeft = left > 0 ? t("{time} left", { time: formatDuration(left) }) : undefined;
+  const children = <SessionQueue rows={rows} />;
 
-  return {
-    children: <SessionQueue rows={rows} />,
-    label: t("Today's session"),
-    meta: left > 0 ? t("{time} left", { time: formatDuration(left) }) : undefined,
-    title: t("Today"),
-  };
+  if (named) {
+    return { children, label: t("Today"), meta: timeLeft, title: t("Today") };
+  }
+
+  return { children, label: t("Today"), title: timeLeft };
 }
 
-export function SessionQueueAsideContent({ queue }: { queue: SessionQueueView }) {
-  const aside = useSessionQueueAside(queue);
-
+export function SessionQueueSection({ aside }: { aside: TaskFrameAside }) {
   return (
-    <TaskAsideContent className="without-aside:hidden with-aside:top-0 with-aside:group-data-aside/task:px-0">
+    <section aria-label={aside.label} className="with-aside:hidden flex flex-col gap-2">
+      {(aside.title || aside.meta) && (
+        <TaskAsideHeader className="h-auto px-0 xl:h-auto" meta={aside.meta} title={aside.title} />
+      )}
+      {aside.children}
+    </section>
+  );
+}
+
+export function SessionQueueAsideContent({ aside }: { aside: TaskFrameAside }) {
+  return (
+    <TaskAsideContent className="without-aside:hidden with-aside:top-0 with-aside:group-data-aside/task:px-0 with-aside:group-data-aside/task:pt-0">
       <TaskAsideHeader meta={aside.meta} title={aside.title} />
-      <div className="px-5">{aside.children}</div>
+      <div className="px-6">{aside.children}</div>
     </TaskAsideContent>
   );
 }

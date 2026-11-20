@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -40,6 +41,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -75,7 +77,14 @@ fun LessonScreen(
     if (shown is LoadState.Loaded && lessonState is LoadState.Loaded) {
         TrackShown(AnalyticsEvent.PublicPageViewed(route.lessonId, AnalyticsEvent.PublicPage.Lesson))
     }
-    CatalogPage(app, navigator, detail, shown, outlineLesson?.title, alsoShown = listOf(lesson)) { value, layout ->
+    CatalogPage(
+        app,
+        navigator,
+        detail,
+        shown,
+        outlineLesson?.title,
+        alsoShown = listOf(lesson),
+    ) { value, layout ->
         placeOf(value, route.chapterId)
             ?.let {
                 lessonBlocks(app, navigator, value, it, route.lessonId, lesson, lessonState, started, layout)
@@ -102,7 +111,7 @@ private fun lessonBlocks(
     return buildList {
         add(
             CatalogBlock("lesson") {
-                Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(ASIDE_GAP)) {
                     Column(Modifier.weight(1f).widthIn(max = COLUMN_WIDTH)) {
                         CourseEyebrow(navigator, detail)
                         Spacer(Modifier.size(8.dp))
@@ -159,7 +168,7 @@ private fun lessonBlocks(
                             courseId,
                             place,
                             lessonId,
-                            Modifier.weight(1f).widthIn(max = ASIDE_WIDTH),
+                            Modifier.width(ASIDE_WIDTH),
                         )
                     }
                 }
@@ -170,7 +179,14 @@ private fun lessonBlocks(
             add(CatalogBlock("chapter", trailing = true) { LessonChapterAside(navigator, courseId, place, lessonId) })
         }
 
-        add(CatalogBlock("plan-day", trailing = true) { LessonPlanDay(app, navigator, detail, place, lessonId) })
+        add(
+            CatalogBlock("plan-day", trailing = true) {
+                // Beside the chapter's aside, the day ends where the lesson's column above it does.
+                Box(if (layout.beside) Modifier.padding(end = ASIDE_WIDTH + ASIDE_GAP) else Modifier) {
+                    LessonPlanDay(app, navigator, detail, place, lessonId)
+                }
+            },
+        )
     }
 }
 
@@ -186,7 +202,7 @@ private fun LessonFirstScreen(
     val note =
         listOfNotNull(
             pluralStringResource(R.plurals.catalog_lesson_minutes, minutes, minutes),
-            if (isVisitor(app)) stringResource(R.string.catalog_no_sign_up) else null,
+            null,
         ).joinSentences()
     val start = @Composable {
         // A lesson not written yet says it starts writing; one with a first screen, that it opens.
@@ -267,10 +283,12 @@ private fun LessonMore(
             ) {
                 Column(Modifier.padding(bottom = 16.dp)) {
                     ChapterLessonRows(navigator, courseId, place, currentLessonId = lessonId)
-                    TextButton(onClick = { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), courseId)) }) {
+                    TextButton(
+                        onClick = { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), courseId)) },
+                        forward = true,
+                        edge = ButtonEdge.Start,
+                    ) {
                         Text(stringResource(R.string.catalog_go_to_chapter))
-                        Spacer(Modifier.size(8.dp))
-                        Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null, Modifier.size(18.dp))
                     }
                 }
             }
@@ -301,7 +319,7 @@ private fun LessonChapterAside(
     }
 }
 
-/** Main's `LessonPlanDay`: the lesson among its neighbors as a day of a plan would hold them. */
+/** The lesson among its neighbors as a day of a plan would hold them. */
 @Composable
 private fun LessonPlanDay(
     app: AppContainer,
@@ -324,7 +342,7 @@ private fun LessonPlanDay(
                 minutes = lesson.estimatedMinutes.toDouble(),
                 state =
                     when {
-                        position < index -> DayStepState.Done
+                        position < index -> DayStepState.Ahead
                         position == index -> DayStepState.Current
                         else -> DayStepState.Ahead
                     },
@@ -340,7 +358,7 @@ private fun LessonPlanDay(
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             FactsRow(
-                title = stringResource(R.string.catalog_example_plan),
+                title = stringResource(R.string.catalog_lesson_example_plan),
                 facts =
                     pluralStringResource(R.plurals.catalog_plan_lessons, steps.size, steps.size) + FACT_SEPARATOR +
                         formatTotalDuration(steps.sumOf { it.minutes }, locale),
@@ -368,3 +386,4 @@ private fun LessonPlanDay(
 
 private const val DAY_LESSONS = 3
 private val ASIDE_WIDTH = 360.dp
+private val ASIDE_GAP = 48.dp

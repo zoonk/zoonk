@@ -33,7 +33,7 @@ async function TopicCourse() {
         ))}
       </ListGroup>
 
-      <p className="text-muted-foreground pt-2.5 text-[0.8125rem]">
+      <p className="text-muted-foreground text-compact pt-2.5">
         {t("{count, plural, one {And # more chapter} other {And # more chapters}}", {
           count: topic.laterChapters,
         })}
@@ -63,7 +63,7 @@ export async function TopicSection() {
       subject="science"
       title={t({
         description: "In Brazilian Portuguese: “Por curiosidade, um curso do zero.”",
-        message: "Just curious? A course from scratch.",
+        message: "Just curious? A\u00A0course from scratch.",
       })}
       titleId={TITLE_ID}
     >

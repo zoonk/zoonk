@@ -44,8 +44,7 @@ struct ReminderOfferCard: View {
         if offer.failed {
           FailureLine(
             message: LocalizedStringResource(
-              "That didn't save. Try again.", table: "Reminders",
-              comment: "Turning reminders on failed"))
+              "That didn't save. Try again.", table: "Reminders"))
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -71,8 +70,7 @@ struct ReminderOfferCard: View {
     case .asking:
       words(
         title: Text(
-          "Want a study reminder?", tableName: "Reminders",
-          comment: "Title of the offer below a finished lesson"),
+          "Want a study reminder?", tableName: "Reminders"),
         line: promise(time), symbol: "bell")
 
       if offer.claim == .claimed {
@@ -100,8 +98,7 @@ struct ReminderOfferCard: View {
     case .emailOn:
       words(
         title: Text(
-          "Email reminders are on.", tableName: "Reminders",
-          comment: "Email study reminders were just turned on"),
+          "Email reminders are on.", tableName: "Reminders"),
         line: promise(time), symbol: "envelope")
     case .dismissed:
       EmptyView()
@@ -113,7 +110,7 @@ struct ReminderOfferCard: View {
     DatePicker(selection: timeBinding, displayedComponents: .hourAndMinute) {
       ListRow(
         Text("Time", tableName: "Reminders", comment: "Row for the time reminders go out"),
-        description: Text(ReminderTime.zoneName(offer.timeZone)))
+        description: ReminderTime.zoneName(offer.timeZone).map { Text($0) })
     }
     .environment(\.timeZone, .gmt)
     .disabled(offer.isSaving)
@@ -147,11 +144,11 @@ struct ReminderOfferCard: View {
     .disabled(offer.isSaving)
   }
 
-  /// The offer's own promise, kept once it's on: a reminder only comes when learning is left.
+  /// The offer's own promise, kept once it's on.
   private func promise(_ time: String) -> Text {
     Text(
-      "At \(time) on your study days, when you still have learning left.",
-      tableName: "Reminders", comment: "What the reminder offer below a lesson promises")
+      "At \(time) on your study days.", tableName: "Reminders",
+      comment: "What the reminder offer promises, before and after it's on; the argument is a time")
   }
 
   private func words(title: Text, line: Text, symbol: String) -> some View {

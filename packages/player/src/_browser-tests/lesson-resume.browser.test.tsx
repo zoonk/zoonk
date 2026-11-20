@@ -131,7 +131,7 @@ describe("coming back to a lesson", () => {
     await expect.element(page.getByText("Reading it")).toBeVisible();
     expect(adapters.checkStep).not.toHaveBeenCalled();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answerRight();
     await page.getByRole("button", { name: /^Continue/u }).click();
 
@@ -162,7 +162,7 @@ describe("coming back to a lesson", () => {
 
       renderLessonPlayer({ adapters, lesson, resume: [] });
 
-      await expect.element(page.getByRole("button", { name: /^Next/u })).toBeVisible();
+      await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
       await activate();
 
       start.resolve(
@@ -180,7 +180,7 @@ describe("coming back to a lesson", () => {
       await expect.poll(() => startLesson.mock.calls.length).toBeGreaterThan(0);
       await expect.element(page.getByText("Reading it")).not.toBeInTheDocument();
 
-      await page.getByRole("button", { name: /^Next/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
       await expect.element(page.getByRole("radio", { name: RIGHT_OPTION })).toBeChecked();
       await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
     },
@@ -251,6 +251,56 @@ describe("coming back to a lesson", () => {
 
     await expect.element(page.getByText("Your first pick: Add the tax")).toBeVisible();
     expect(adapters.checkStep).not.toHaveBeenCalled();
+  });
+
+  it("shows a reopened code runner's right output beside a program that prints it", async () => {
+    const runner = activityStep({ content: activityContentFixtures.codeRunner });
+    const lesson = buildLesson([runner, teachingStep("explanation"), teachingStep("check")]);
+
+    const resume = [
+      runAnswer({
+        answer: { answer: { kind: "output", output: "5050" }, kind: "activity" },
+        stepId: runner.id,
+      }),
+    ];
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect
+      .element(
+        page
+          .getByRole("group", { name: "Code" })
+          .getByText("for n in range(1, 101):", { exact: true }),
+      )
+      .toBeVisible();
+  });
+
+  it("shows a reopened code tracer as its trace ended", async () => {
+    const tracer = activityStep({ content: activityContentFixtures.codeTracer });
+    const lesson = buildLesson([tracer, teachingStep("explanation"), teachingStep("check")]);
+
+    const resume = [
+      runAnswer({
+        answer: { answer: { kind: "assignment", pairs: { "0": "b" } }, kind: "activity" },
+        stepId: tracer.id,
+      }),
+    ];
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect.element(page.getByText("Step 4 of 4", { exact: true })).toBeVisible();
   });
 
   it("continues a lesson left days ago, with Hyperdrive counting only this sitting's answers", async () => {
@@ -325,10 +375,10 @@ describe("coming back to a lesson", () => {
       lesson,
     });
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answerRight();
     await page.getByRole("button", { name: /^Continue/u }).click();
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await answerRight();
     await page.getByRole("button", { name: /^Continue/u }).click();
 

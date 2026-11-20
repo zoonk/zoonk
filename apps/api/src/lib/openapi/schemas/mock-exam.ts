@@ -28,7 +28,13 @@ import {
 import { clockTimeSchema } from "./exams";
 import { itemSetSchema } from "./item-set";
 import { mockLeftOutSchema } from "./mock-left-out";
-import { mockScoreNotesSchema, mockSectionSchema, mockSizeSourceSchema } from "./mock-parts";
+import {
+  mockAdaptSchema,
+  mockScoreNotesSchema,
+  mockSectionSchema,
+  mockSizeSourceSchema,
+  mockVerdictSchema,
+} from "./mock-parts";
 import { logicalDateSchema } from "./study-sessions";
 
 const MOCK_QUESTION_FORMATS = ["multipleChoice", "numeric", "trueFalse", "typed"] as const;
@@ -55,7 +61,7 @@ const mockQuestionSchema = z.object({
     .nullable()
     .meta({
       description:
-        "The text, case or chart it shares with its set's other questions, asked together in the set's order: show it with each of them",
+        "The text, case or chart it shares with its set's other questions, asked together in the set's order",
     }),
   skillId: uuidSchema(),
   unit: questionUnitSchema,
@@ -86,27 +92,6 @@ export const mockPurposeSchema = z
       "`planned`: the plan's weekly mock. `practice`: one taken any time. `placement`: a diagnostic mock taken in onboarding instead of the quick placement",
   });
 
-const mockAdaptSchema = z
-  .object({
-    focus: z
-      .object({ area: z.string(), correct: z.number(), total: z.number().int() })
-      .nullable()
-      .meta({ description: "The area that went worst, to give more of the plan's time" }),
-    skip: z
-      .object({ lessons: z.number().int().min(1), topics: z.array(z.string()) })
-      .nullable()
-      .meta({
-        description:
-          "The lessons of the topics the mock showed the learner knows (every question right), to skip",
-      }),
-  })
-  .nullable()
-  .meta({
-    description:
-      "What the finished mock offers to change in the plan, each applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null before it's over and for a placement mock",
-    id: "MockAdapt",
-  });
-
 export const mockViewResponseSchema = z
   .object({
     adapt: mockAdaptSchema,
@@ -124,7 +109,7 @@ export const mockViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "Once it's over, the one milestone the learner hasn't been shown yet (a belt it crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null before it's over and once it's been shown",
+          "Once it's over, the one milestone the learner hasn't been shown yet (a belt it crossed, new glasses), until POST /me/milestones/{milestoneId}/views marks it shown; null before it's over and once it's been shown",
       }),
     certificates: unshownCertificatesSchema,
     checklist: z.array(z.enum(EXAM_DAY_CHECKLIST)),
@@ -198,7 +183,7 @@ export const mockViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The exam's questions for what a mock taken any time sits, when it asks fewer (the bank had too few new ones, and a full mock never repeats answered ones): say how many of them it asks. Null when it asks them all",
+          "The exam's questions for what a mock taken any time sits, when it asks fewer (the bank had too few new ones, and a full mock never repeats answered ones). Null when it asks them all",
       }),
     fullLength: z.boolean(),
     goalId: uuidSchema().nullable(),
@@ -218,7 +203,7 @@ export const mockViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "What it takes to pass, in the notice's own words, for a mock of the whole exam: show it beside the score, saying its language when it isn't the learner's; null otherwise",
+          "What it takes to pass, in the notice's own words, in their language (`language`), for a mock of the whole exam; null otherwise",
       }),
     planItemId: uuidSchema()
       .nullable()
@@ -236,7 +221,7 @@ export const mockViewResponseSchema = z
       .min(0)
       .meta({
         description:
-          "Questions it asks that the learner answered before, because the bank had no new ones left for them (the missed ones first, then the ones answered longest ago): say so on the mock's screen when above 0",
+          "Questions it asks that the learner answered before, because the bank had no new ones left for them (the missed ones first, then the ones answered longest ago); 0 when every question is new",
       }),
     review: z.array(
       z.object({
@@ -284,10 +269,11 @@ export const mockViewResponseSchema = z
       .enum(["ready", "running", "finished", "expired"])
       .meta({
         description:
-          "`expired`: its time ran out while the learner was away with most of it unanswered (the clock ran out over ten minutes before anything handed it in, under half of its questions answered), so it isn't scored or counted toward preparation: say so calmly and offer a new one (its challenge for the plan's mock, the goal's mocks for one taken any time). One mostly answered is graded as it stands; a placement mock never expires",
+          "`expired`: its time ran out while the learner was away with most of it unanswered (the clock ran out over ten minutes before anything handed it in, under half of its questions answered), so it isn't scored or counted toward preparation; a new one starts from its challenge for the plan's mock, or from the goal's mocks for one taken any time. One mostly answered is graded as it stands; a placement mock never expires",
       }),
     timeZone: z.string().nullable(),
     trueFalseLabels: trueFalseLabelsSchema,
+    verdict: mockVerdictSchema,
   })
   .meta({ id: "MockExam" });
 

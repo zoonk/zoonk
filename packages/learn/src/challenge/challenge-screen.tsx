@@ -17,7 +17,7 @@ import {
   type ChallengeWriting,
   useChallengeScreen,
 } from "./challenge-context";
-import { ChallengeFooter } from "./challenge-footer";
+import { ChallengeFooter, useChallengeFooterNote } from "./challenge-footer";
 import { ChallengeIntro, useChallengeIntroAside } from "./challenge-intro";
 import { ChallengeMovedScreen } from "./challenge-moved-screen";
 import { useChallengeMove } from "./use-challenge-move";
@@ -34,7 +34,7 @@ function ChallengeWritingScreen({ run }: { run: GenerationRun }) {
       <GenerationWait kind="challengeQuestions" run={run}>
         <GenerationTimelineTitle>{t("Getting your challenge ready")}</GenerationTimelineTitle>
         <GenerationTimelineDescription>
-          {t("We're writing its questions. It starts here when they're ready.")}
+          {t("It starts here when it's ready.")}
         </GenerationTimelineDescription>
       </GenerationWait>
     </TaskFrame>
@@ -44,9 +44,10 @@ function ChallengeWritingScreen({ run }: { run: GenerationRun }) {
 function ChallengeIntroScreen() {
   const { hrefs } = useChallengeScreen();
   const aside = useChallengeIntroAside();
+  const note = useChallengeFooterNote();
 
   return (
-    <TaskFrame aside={aside} closeOnEscape exitHref={hrefs.exit} footer={<ChallengeFooter />}>
+    <TaskFrame aside={aside} exitHref={hrefs.exit} footer={<ChallengeFooter />} footerNote={note}>
       <ChallengeIntro />
     </TaskFrame>
   );

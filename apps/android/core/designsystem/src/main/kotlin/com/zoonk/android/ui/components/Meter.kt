@@ -1,27 +1,43 @@
 package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.theme.layoutEnd
+import com.zoonk.android.ui.theme.withTabularFigures
 import kotlin.math.roundToInt
 
 /**
@@ -45,9 +61,55 @@ fun Meter(
                 .meterSemantics(contentDescription),
         color = color,
         trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        // Main's meter is one track with its fill in it, no gap between them as Material draws.
+        gapSize = 0.dp,
         drawStopIndicator = {},
     )
 }
+
+/** One line of [MeasureRows]: what's measured, its [share] on the meter and its [value] in words. */
+@Immutable
+data class Measure(
+    val name: String,
+    val share: Float,
+    val value: String,
+)
+
+/**
+ * A list of measures (an essay's criteria, an exam's areas): each name, its share on a meter and its value at the
+ * row's end, on hairlines. Every value takes the widest one's room and every meter one width, so the bars share
+ * their edges whatever each value reads.
+ */
+@Composable
+fun MeasureRows(
+    measures: List<Measure>,
+    modifier: Modifier = Modifier,
+) {
+    val valueStyle = MaterialTheme.typography.labelMedium.withTabularFigures()
+    val measurer = rememberTextMeasurer()
+    val valueWidth =
+        with(LocalDensity.current) {
+            measures.maxOfOrNull { measurer.measure(it.value, valueStyle, softWrap = false).size.width }?.toDp()
+                ?: 0.dp
+        }
+
+    Column(modifier) {
+        measures.forEachIndexed { index, measure ->
+            if (index > 0) HorizontalDivider()
+            Row(
+                Modifier.fillMaxWidth().semantics(mergeDescendants = true) {},
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(measure.name, Modifier.weight(1f).padding(vertical = 12.dp), style = MaterialTheme.typography.bodyMedium)
+                Meter(measure.share, Modifier.width(MEASURE_METER_WIDTH))
+                Text(measure.value, Modifier.width(valueWidth), style = valueStyle, textAlign = layoutEnd(), softWrap = false)
+            }
+        }
+    }
+}
+
+private val MEASURE_METER_WIDTH = 72.dp
 
 @Immutable
 data class MeterPart(

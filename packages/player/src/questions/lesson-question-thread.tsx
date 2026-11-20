@@ -2,7 +2,6 @@
 
 import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
   EmptyContent,
@@ -79,6 +78,37 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
   }
 }
 
+export function TutorIntro({
+  guest = false,
+  identity,
+}: {
+  guest?: boolean;
+  identity: TutorIdentity;
+}) {
+  const t = useExtracted();
+
+  return (
+    <EmptyHeader>
+      <EmptyMedia aria-hidden="true" className={guest ? "-ms-1" : undefined}>
+        {identity.figure}
+      </EmptyMedia>
+      {guest && (
+        <>
+          <EmptyTitle className="in-data-[slot=lesson-question-drawer]:hidden">
+            {t("Ask {name}", { name: identity.name })}
+          </EmptyTitle>
+          <EmptyDescription>
+            {t("With a free account, you can ask about anything in a lesson.")}
+          </EmptyDescription>
+        </>
+      )}
+      <EmptyDescription>
+        {t("{name} is an AI study buddy and can make mistakes.", { name: identity.name })}
+      </EmptyDescription>
+    </EmptyHeader>
+  );
+}
+
 function EmptyThread({
   context,
   identity,
@@ -90,48 +120,15 @@ function EmptyThread({
   lessonSuggestions: readonly LessonTutorSuggestion[] | null;
   onSelect: (suggestion: OfferedSuggestion) => void;
 }) {
-  const t = useExtracted();
-
   const offered = useTutorSuggestions({ context, lessonSuggestions: lessonSuggestions ?? [] });
 
   const suggestions = lessonSuggestions ? offered : [];
 
   return (
     <Empty className="min-h-full">
-      <EmptyHeader>
-        <EmptyMedia aria-hidden="true" className="[&_svg]:size-auto">
-          <span className="flex size-12 items-center justify-center *:size-12!">
-            {identity.avatar}
-          </span>
-        </EmptyMedia>
-        <EmptyTitle className="text-base">{t("What would you like help with?")}</EmptyTitle>
-        <EmptyDescription>
-          {t("{name} is an AI study buddy and can make mistakes.", { name: identity.name })}
-        </EmptyDescription>
-      </EmptyHeader>
+      <TutorIntro identity={identity} />
       <EmptyContent>
         <TutorSuggestions onSelect={onSelect} suggestions={suggestions} />
-      </EmptyContent>
-    </Empty>
-  );
-}
-
-function GuestThread() {
-  const t = useExtracted();
-  const { loginHref } = useLessonQuestionNavigation();
-
-  return (
-    <Empty className="min-h-full">
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <MessageSquareTextIcon />
-        </EmptyMedia>
-        <EmptyTitle className="text-base">{t("Create a free account to ask questions")}</EmptyTitle>
-      </EmptyHeader>
-      <EmptyContent>
-        <a className={buttonVariants()} href={loginHref}>
-          {t("Create a free account")}
-        </a>
       </EmptyContent>
     </Empty>
   );
@@ -151,7 +148,7 @@ function ThreadTurns({ identity }: { identity: TutorIdentity }) {
     >
       <MessageScrollerContent role="presentation">
         <EarlierTurns />
-        {state.questions.map((question) => (
+        {state.questions.map((question, index) => (
           <MessageScrollerItem
             className="[content-visibility:visible]"
             key={question.id}
@@ -163,6 +160,7 @@ function ThreadTurns({ identity }: { identity: TutorIdentity }) {
                 question.planChange &&
                 renderPlanChange?.({ change: question.planChange, onAnswered: answerPlanChange })
               }
+              previous={state.questions[index - 1] ?? null}
               question={question}
               toolOffer={question.toolOffer && renderToolOffer?.(question.toolOffer)}
             />
@@ -186,7 +184,9 @@ export function QuestionThread({ identity }: { identity: TutorIdentity }) {
   if (!controller.canAskQuestions) {
     return (
       <ThreadPanel>
-        <GuestThread />
+        <Empty className="min-h-full">
+          <TutorIntro guest identity={identity} />
+        </Empty>
       </ThreadPanel>
     );
   }

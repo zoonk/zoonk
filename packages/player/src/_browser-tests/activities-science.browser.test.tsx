@@ -4,7 +4,7 @@ import {
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import {
   checkActivity,
   expectCount,
@@ -15,6 +15,7 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 
 const FILL_THE_SQUARE = { ...activityContentFixtures.combinationGrid, check: interactionCheck };
 
@@ -39,23 +40,18 @@ async function labelSpots(names: readonly string[]) {
   }
 }
 
-function cellOption({ square, value }: { square: number; value: string }) {
+function cellOption(value: string) {
   const isGenotype = /^[A-Za-z]+$/u.test(value);
 
-  const question = isGenotype
-    ? `Which genotype goes in square ${square}?`
-    : `What goes in square ${square}?`;
-
   return page
-    .getByRole("group", { name: question })
-    .getByRole("button")
-    .filter({ hasText: new RegExp(isGenotype ? `^${value}` : `^${value}$`, "u") });
+    .getByRole("group", { name: "What goes in the highlighted square?" })
+    .getByRole("button", { name: new RegExp(isGenotype ? `^${value}` : `^${value}$`, "u") });
 }
 
 async function fillSquare(values: readonly string[]) {
-  for (const [index, value] of values.entries()) {
+  for (const value of values) {
     // oxlint-disable-next-line no-await-in-loop -- The palette fills one square at a time.
-    await cellOption({ square: index + 1, value }).click();
+    await cellOption(value).click();
   }
 }
 
@@ -154,61 +150,87 @@ describe("science activities", () => {
     await expectVerdict("Not quite");
 
     await expect
-      .poll(() => document.querySelector("[data-slot='activity-plot']")?.textContent)
-      .toContain("40.77");
+      .poll(() =>
+        document
+          .querySelector("[data-slot='activity-plot']")
+          ?.textContent.replaceAll("\u00A0", " "),
+      )
+      .toContain("41 m");
   });
 
-  it("formula model simulation: the chart writes the right answer as the feedback does", async () => {
+  it("formula model simulation: the chart and feedback follow the hint after a slider miss", async () => {
     const simulation = engineModeFixtures.formulaModel.simulation;
 
     openActivity({
-      content: { ...simulation, check: { ...simulation.check, answer: 40.7747 } },
+      content: {
+        ...simulation,
+        check: {
+          ...simulation.check,
+          answer: 40.7747,
+          explanation: simulation.check.explanation.replace("40.77", "40.775"),
+        },
+      },
       template: "formulaModel",
     });
 
     await pressOnSlider("Launch angle", "ArrowRight", 14);
+    await expect.element(valueInput()).toHaveValue("40.75");
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(page.getByText("40.775", { exact: true }).first()).toBeVisible();
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback.getByText("41 m", { exact: true })).toBeVisible();
+
+    expect(feedback.getByText(/farther than at any other angle/u).element().textContent).toContain(
+      "40.775",
+    );
 
     await expect
       .poll(() =>
-        [...document.querySelectorAll("[data-slot='activity-plot'] text")].map(
-          (text) => text.textContent,
+        [...document.querySelectorAll("[data-slot='activity-plot'] text")].map((text) =>
+          text.textContent.replaceAll("\u00A0", " "),
         ),
       )
-      .toContain("40.775");
+      .toContain("41 m");
   });
 
-  it("formula model simulation: the chart writes the right answer with the digits a typed answer needs", async () => {
+  it("formula model simulation: a near miss stays distinct from the chart's right answer", async () => {
     const simulation = engineModeFixtures.formulaModel.simulation;
 
     openActivity({
-      content: { ...simulation, check: { ...simulation.check, answer: 40.7747 } },
+      content: {
+        ...simulation,
+        check: {
+          ...simulation.check,
+          answer: 40.7747,
+          explanation: simulation.check.explanation.replace("40.77", "40.7747"),
+        },
+      },
       template: "formulaModel",
     });
 
-    await valueInput().fill("40.75");
+    await valueInput().fill("40.7849");
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(page.getByText("40.775", { exact: true }).first()).toBeVisible();
+    await expect.element(valueInput()).toHaveValue("40.785");
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback.getByText("41 m", { exact: true })).toBeVisible();
 
     await expect
       .poll(() =>
-        [...document.querySelectorAll("[data-slot='activity-plot'] text")].map(
-          (text) => text.textContent,
+        [...document.querySelectorAll("[data-slot='activity-plot'] text")].map((text) =>
+          text.textContent.replaceAll("\u00A0", " "),
         ),
       )
-      .toContain("40.775");
+      .toContain("41 m");
   });
 
   it("labeled diagram: every name on its part is right", async () => {
     openActivity({ template: "labeledDiagram" });
-    await expect.element(page.getByRole("img", { name: /five numbered parts/u })).toBeVisible();
+    await expect.element(page.getByRole("img", { name: /five numbered spots/u })).toBeVisible();
     await labelSpots(HEART_SPOTS);
 
     await expect
-      .element(page.getByText("Every spot has a name. Tap a spot to change it."))
+      .element(page.getByText("Every spot has a name. Pick a spot to change it."))
       .toBeVisible();
 
     await checkActivity();
@@ -250,6 +272,50 @@ describe("science activities", () => {
     await expect.element(page.getByText(/You had it at/u).first()).toBeVisible();
   });
 
+  it("molecule builder: the first atom keeps the build status in place", async () => {
+    openActivity({ template: "moleculeBuilder" });
+    const card = page.getByRole("figure");
+
+    const statusTop = (text: string) =>
+      page.getByText(text, { exact: true }).element().getBoundingClientRect().top -
+      card.element().getBoundingClientRect().top;
+
+    const initialStatus = "Pick an element to start your molecule.";
+    await expect.element(page.getByText(initialStatus, { exact: true })).toBeVisible();
+    const top = statusTop(initialStatus);
+
+    await page.getByRole("button", { name: "Add Carbon" }).click();
+    await expect.element(page.getByText("Built: C", { exact: true })).toBeVisible();
+    expect(statusTop("1 atom has open bonds, shown as dots.")).toBe(top);
+  });
+
+  it("molecule builder: selecting an atom keeps the tools in place on a phone", async () => {
+    await atViewport({ height: 844, width: 320 }, async () => {
+      openActivity({ template: "moleculeBuilder" });
+      const card = page.getByRole("figure");
+      const undo = page.getByRole("button", { exact: true, name: "Undo" });
+      const addCarbon = page.getByRole("button", { name: /^Add Carbon/u });
+      const atom = page.getByRole("button", { name: "Carbon 1: 0 of 4 bonds" });
+
+      const toolsTop = () =>
+        undo.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+      await expect.element(undo).toBeVisible();
+      const beforeAdding = toolsTop();
+      await addCarbon.click();
+      await expect.element(atom).toHaveAttribute("aria-pressed", "true");
+
+      await atom.click();
+      await expect.element(atom).toHaveAttribute("aria-pressed", "false");
+      const beforeSelecting = toolsTop();
+
+      await atom.click();
+      await expect.element(atom).toHaveAttribute("aria-pressed", "true");
+      expect(toolsTop()).toBe(beforeSelecting);
+      expect(toolsTop()).toBe(beforeAdding);
+    });
+  });
+
   it("molecule builder: two double bonds make carbon dioxide", async () => {
     openActivity({ template: "moleculeBuilder" });
     await buildCarbonDioxide({ doubleBonds: true });
@@ -282,7 +348,58 @@ describe("science activities", () => {
     await page.getByRole("radio", { name: /1 in 2/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("2 of 4 squares: White")).toBeVisible();
+    await expect.element(page.getByText("Squares showing White: 2 of 4")).toBeVisible();
+  });
+
+  it("Punnett grid: the share is asked once the square is filled, one question at a time", async () => {
+    openActivity({ template: "combinationGrid" });
+    const share = page.getByText("What share of the seeds grow white flowers?");
+
+    await expect
+      .element(page.getByRole("group", { name: "What goes in the highlighted square?" }))
+      .toBeVisible();
+
+    await expect.element(share).not.toBeInTheDocument();
+
+    await fillSquare(["Pp", "Pp", "pp", "pp"]);
+    await expect.element(share).toBeVisible();
+  });
+
+  it("Punnett grid: number keys fill a square picked to change, not the share question", async () => {
+    openActivity({ template: "combinationGrid" });
+    await fillSquare(["Pp", "Pp", "pp", "pp"]);
+
+    await expect
+      .element(page.getByText("What share of the seeds grow white flowers?"))
+      .toBeVisible();
+
+    const square = page.getByRole("button", { name: /^Square 1,/u });
+    const before = square.element().textContent;
+    await square.click();
+
+    const choiceKeys = [
+      ...document.querySelectorAll('[data-slot="player-choice-scene-options"] [data-slot="kbd"]'),
+    ];
+
+    expect(choiceKeys.length).toBeGreaterThan(0);
+    expect(choiceKeys.map((key) => getComputedStyle(key).visibility)).not.toContain("visible");
+
+    expect(
+      page
+        .getByRole("radio")
+        .elements()
+        .map((radio) => radio.getAttribute("aria-keyshortcuts")),
+    ).toStrictEqual(
+      page
+        .getByRole("radio")
+        .elements()
+        .map(() => null),
+    );
+
+    await userEvent.keyboard("1");
+
+    await expect.element(page.getByRole("radio", { checked: true })).not.toBeInTheDocument();
+    await expect.poll(() => square.element().textContent).not.toBe(before);
   });
 
   it("Punnett grid: a wrong square in a fill-the-square check is wrong", async () => {
@@ -291,6 +408,7 @@ describe("science activities", () => {
     await fillSquare(["Pp", "pp", "pp", "pp"]);
     await checkActivity();
     await expectVerdict("Not quite");
+    await expect.element(page.getByText("3 of 4 squares right", { exact: true })).toBeVisible();
   });
 
   it("times table grid: filling every product is right", async () => {
@@ -309,13 +427,13 @@ describe("science activities", () => {
     openActivity({ content: engineModeFixtures.combinationGrid.dice, template: "combinationGrid" });
 
     await expect
-      .element(page.getByRole("group", { name: /goes in square/u }))
+      .element(page.getByRole("group", { name: /goes in the highlighted square/u }))
       .not.toBeInTheDocument();
 
     await valueInput().fill("0.1667");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("6 of 36 squares: 7")).toBeVisible();
+    await expect.element(page.getByText("Squares showing 7: 6 of 36")).toBeVisible();
   });
 });
 
@@ -336,6 +454,16 @@ describe("science activities with a keyboard only", () => {
 
     await focusOn(page.getByRole("button", { name: "Check" }));
     await press("Enter");
+    await expectVerdict("Correct!");
+  });
+});
+
+describe("numeric answer guidance", () => {
+  it("numeric checks say how many decimal places the dice answer needs", async () => {
+    openActivity({ content: engineModeFixtures.combinationGrid.dice, template: "combinationGrid" });
+    await expect.element(page.getByText("Round to 2 decimal places.")).toBeVisible();
+    await valueInput().fill("0.17");
+    await checkActivity();
     await expectVerdict("Correct!");
   });
 });

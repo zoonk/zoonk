@@ -82,6 +82,8 @@ struct FormulaModelCanvas: View {
         )
         .typeStyle(.data)
         .foregroundStyle(.vizHighlight)
+        // At the compared input it would repeat the readout, so it keeps its room and says nothing.
+        .opacity(compared.x == view.x ? 0 : 1)
         .accessibilityHidden(true)
       }
 
@@ -206,25 +208,21 @@ struct FormulaModelCanvas: View {
     }
     .chartXScale(domain: view.axis.min...view.axis.max)
     .chartYScale(domain: domain)
-    .chartXAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let x = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(x, unit: view.axis.unit))
-          }
-        }
+    .chartsXAxis {
+      ChartsAxis.bottom(
+        ticks: [view.axis.min, view.axis.max], showsGrid: false
+      ) {
+        ActivityNumberFormat.format($0, unit: view.axis.unit)
       }
     }
     .chartYAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let y = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(y, unit: view.charted.unit, compact: true))
-          }
-        }
+      let ticks = ChartsAxis.ticks(domain, count: 3)
+      let format = { (value: Double, isShort: Bool) in
+        ActivityNumberFormat.format(value, unit: view.charted.unit, compact: isShort)
       }
+      let isShort = ChartsAxis.isShort(ticks, format: format)
+
+      ChartsAxis.values(ticks: ticks) { format($0, isShort) }
     }
     .frame(minHeight: 200)
     .chartsMarksHidden()
@@ -240,9 +238,14 @@ struct FormulaModelCanvas: View {
     }
 
     let x = fields.start(at: inputs ?? []).sliders[view.axis.name] ?? view.axis.initial
-    let digits = exactFractionDigitsFor(
+    let rounded = context.roundedAnswer
+    let exactDigits = exactFractionDigitsFor(
       expected: answer, tolerance: tolerance, value: context.answer?.number)
-    return (x, answer, ActivityNumberFormat.format(answer, unit: unit, digits: digits))
+    let digits = rounded?.places ?? exactDigits
+    return (
+      x, answer,
+      ActivityNumberFormat.format(rounded?.value ?? answer, unit: unit, digits: digits)
+    )
   }
 
   private func legend(_ kind: FormulaModelView.BaselineKind) -> some View {
@@ -284,7 +287,7 @@ struct FormulaModelCanvas: View {
         Text(verbatim: variable.label).typeStyle(.body)
         Spacer()
         Text(verbatim: ActivityNumberFormat.format(value, unit: variable.unit))
-          .typeStyle(.body.weight(.medium).monospaced())
+          .typeStyle(.body.weight(.semibold).monospacedDigit())
       }
       .accessibilityHidden(true)
 
@@ -301,16 +304,6 @@ struct FormulaModelCanvas: View {
         in: variable.min...variable.max
       ) {
         Text(verbatim: variable.label)
-      } minimumValueLabel: {
-        Text(verbatim: ActivityNumberFormat.format(variable.min, unit: variable.unit))
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-          .accessibilityHidden(true)
-      } maximumValueLabel: {
-        Text(verbatim: ActivityNumberFormat.format(variable.max, unit: variable.unit))
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-          .accessibilityHidden(true)
       }
       .disabled(isChecked)
       .accessibilityValue(
@@ -318,6 +311,13 @@ struct FormulaModelCanvas: View {
           "\(ActivityNumberFormat.format(value, unit: variable.unit)). \(view.charted.label): \(output)",
           tableName: "ActivitiesCharts",
           comment: "A model slider's spoken value with the output it drives"))
+
+      // A lone slider for the chart's input is scaled by the chart's axis right above it.
+      if fields.variables.count > 1 || variable.name != view.axis.name {
+        ChartsSliderScale(
+          min: ActivityNumberFormat.format(variable.min, unit: variable.unit),
+          max: ActivityNumberFormat.format(variable.max, unit: variable.unit))
+      }
     }
   }
 

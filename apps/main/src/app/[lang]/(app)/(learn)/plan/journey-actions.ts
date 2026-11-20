@@ -4,12 +4,12 @@ import { postAsLearner } from "@/lib/api/learner-api";
 import { chooseExamOption } from "@zoonk/core/exams/choices/choose";
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
 import { changeGoalPlan } from "@zoonk/core/plans/change";
-import {
-  type PlanChangeDecisionInput,
-  planChangeDecisionInputSchema,
-  planChangeInputSchema,
-} from "@zoonk/core/plans/contract";
+import { planChangeInputSchema } from "@zoonk/core/plans/contract";
 import { decidePlanChange } from "@zoonk/core/plans/decide-change";
+import {
+  type PlanChangeAnswer,
+  planChangeDecisionInputSchema,
+} from "@zoonk/core/plans/decision-contract";
 import { previewPlanChange } from "@zoonk/core/plans/preview";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { planToolChoiceInputSchema } from "@zoonk/core/plans/tool-choice-contract";
@@ -57,13 +57,9 @@ export async function previewPlanChangeAction(
 
 export async function answerPlanChangeAction(
   goalId: string,
-  {
-    changeId,
-    status,
-    surface,
-  }: { changeId: string; status: unknown; surface?: PlanChangeDecisionInput["surface"] },
+  { changeId, quote, status, surface }: PlanChangeAnswer,
 ): Promise<PlanChangeView | null> {
-  const input = planChangeDecisionInputSchema.safeParse({ status, surface });
+  const input = planChangeDecisionInputSchema.safeParse({ quote: quote ?? null, status, surface });
 
   if (!input.success) {
     return null;
@@ -80,7 +76,7 @@ export async function answerPlanChangeAction(
 
 export async function decidePlanChangeAction(
   goalId: string,
-  answer: { changeId: string; status: unknown },
+  answer: PlanChangeAnswer,
 ): Promise<boolean> {
   return (await answerPlanChangeAction(goalId, answer)) !== null;
 }

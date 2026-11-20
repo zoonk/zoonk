@@ -2,10 +2,10 @@ import SwiftUI
 
 enum ChartsActivities {
   static let renderers: [ActivityRenderer] = [
-    ActivityRenderer(template: "chartReader", badge: .always(.readChart)) { context in
+    ActivityRenderer(template: "chartReader") { context in
       ChartsFields(context: context) { ChartReaderCanvas(context: context, fields: $0) }
     },
-    ActivityRenderer(template: "distributionExplorer", badge: .always(.explore)) { context in
+    ActivityRenderer(template: "distributionExplorer") { context in
       ChartsFields(context: context) { DistributionExplorerCanvas(context: context, fields: $0) }
     },
     ActivityRenderer(
@@ -14,7 +14,7 @@ enum ChartsActivities {
         if case .chance = try? content.fields(as: RandomSimulationFields.self) {
           return .predictFirst
         }
-        return .simulate
+        return nil
       },
       // Chance mode asks for a guess first, then runs.
       showsCheckFirst: { content in
@@ -25,11 +25,11 @@ enum ChartsActivities {
         ChartsFields(context: context) { RandomSimulationCanvas(context: context, fields: $0) }
       }
     ),
-    ActivityRenderer(template: "numberLine", badge: .always(.placeIt)) { context in
+    ActivityRenderer(template: "numberLine") { context in
       ChartsFields(context: context) { NumberLineCanvas(context: context, fields: $0) }
     },
     ActivityRenderer(
-      template: "lineCrossing", badge: .always(.moveCurve),
+      template: "lineCrossing", badge: .always(.moveLine),
       grade: { content, answer in
         (try? content.fields(as: LineCrossingFields.self)).map {
           LineCrossingModel.grade($0, answer)
@@ -39,11 +39,11 @@ enum ChartsActivities {
         ChartsFields(context: context) { LineCrossingCanvas(context: context, fields: $0) }
       }
     ),
-    ActivityRenderer(template: "formulaModel", badge: .always(.tryIt)) { context in
+    ActivityRenderer(template: "formulaModel") { context in
       ChartsFields(context: context) { FormulaModelCanvas(context: context, fields: $0) }
     },
     ActivityRenderer(
-      template: "patternTable", badge: .always(.spotPattern),
+      template: "patternTable",
       grade: { content, answer in
         (try? content.fields(as: PatternTableFields.self))?.grade(answer) ?? false
       },
@@ -51,13 +51,13 @@ enum ChartsActivities {
         ChartsFields(context: context) { PatternTableCanvas(context: context, fields: $0) }
       }
     ),
-    ActivityRenderer(template: "patternTester", badge: .always(.testPattern)) { context in
+    ActivityRenderer(template: "patternTester") { context in
       ChartsFields(context: context) { PatternTesterCanvas(context: context, fields: $0) }
     },
-    ActivityRenderer(template: "areaModel", badge: .always(.splitIt)) { context in
+    ActivityRenderer(template: "areaModel") { context in
       ChartsFields(context: context) { AreaModelCanvas(context: context, fields: $0) }
     },
-    ActivityRenderer(template: "balance", badge: .always(.handsOn)) { context in
+    ActivityRenderer(template: "balance") { context in
       ChartsFields(context: context) { BalanceCanvas(context: context, fields: $0) }
     },
     ActivityRenderer(template: "unitCircle", badge: .always(.turnIt)) { context in
@@ -67,7 +67,7 @@ enum ChartsActivities {
       ChartsFields(context: context) { GeometryBoardCanvas(context: context, fields: $0) }
     },
     ActivityRenderer(
-      template: "moleculeBuilder", badge: .always(.buildIt),
+      template: "moleculeBuilder",
       grade: { content, answer in
         guard let fields = try? content.fields(as: MoleculeBuilderFields.self),
           let target = MoleculeModel.parse(fields.formula),

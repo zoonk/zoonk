@@ -34,7 +34,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -75,7 +74,6 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.ModalBottomSheet
@@ -85,8 +83,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.api.models.MistakePattern
 import com.zoonk.api.models.MistakePatternContrastInner
 import com.zoonk.api.models.MistakePatternDrillInner
@@ -94,8 +91,6 @@ import com.zoonk.api.models.MistakePatternExamplesInner
 import com.zoonk.api.models.MistakePatternPracticeResult
 import kotlinx.coroutines.launch
 import java.util.UUID
-
-private const val DRILL_MINUTES = 3
 
 @Composable
 fun PatternScreen(
@@ -194,15 +189,13 @@ private fun PatternIntroPage(
     onStart: () -> Unit,
     onClose: () -> Unit,
 ) {
-    val time = formatMinutes(DRILL_MINUTES, currentLocale())
-
     RunPage(
         onClose = onClose,
         title = { LessonTitle(stringResource(R.string.pattern_title)) },
         bottomBar = {
             TaskActionBar {
                 TaskActions { width ->
-                    Button(onClick = onStart, modifier = width) { Text(stringResource(R.string.pattern_practice, time)) }
+                    Button(onClick = onStart, modifier = width) { Text(stringResource(R.string.pattern_practice)) }
                 }
             }
         },
@@ -217,7 +210,6 @@ private fun PatternIntroPage(
                 pluralStringResource(R.plurals.pattern_seen_times, count, count)
             }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Eyebrow(stringResource(R.string.pattern_noticed))
             Text(pattern.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
             Text(seen, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }
@@ -278,16 +270,14 @@ private fun PatternQuestion(
                         busy = drill.saving,
                         onClick = viewModel::next,
                         modifier = width,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     ) {
-                        Text(stringResource(if (last) R.string.pattern_see_how_you_did else R.string.practice_continue))
+                        Text(stringResource(if (last) R.string.pattern_see_how_it_went else R.string.practice_continue))
                     }
                 } else {
                     Button(
                         onClick = viewModel::check,
                         enabled = drill.picked != null,
                         modifier = width,
-                        leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                     ) {
                         Text(stringResource(R.string.practice_check))
                     }
@@ -400,7 +390,7 @@ private fun ContrastRows(contrast: List<MistakePatternContrastInner>) {
                     row.example,
                     Modifier.weight(1f).alignByBaseline(),
                     color = quiet,
-                    textAlign = TextAlign.End,
+                    textAlign = layoutEnd(),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -453,7 +443,6 @@ private fun PatternResult(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.pattern_done),
             saving = false,
-            actionLeadingIcon = { ButtonIcon(R.drawable.ic_check) },
             onClose = onClose,
             headerTitle = title,
             detail = stringResource(if (result.correct == result.total) R.string.pattern_got_it else R.string.pattern_keep_going),

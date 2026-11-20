@@ -1,4 +1,5 @@
 import { SHARE, SHEET, lineBox } from "./certificate-spec";
+import { type CertificateGraph } from "./certificate-view";
 
 /*
  * Heights of the sheet's and the post's parts, so the renderer knows before drawing whether they fit
@@ -44,16 +45,25 @@ function estimateLines({
 
 export type SheetCovered = { topics: readonly string[] } | null;
 
-export type SheetGraphKind = "ladder" | "labelledRoute" | "route";
+export type SheetGraphKind = "ladder" | "route";
+
+/** A share picture draws a language's ladder or names a course's level; the route reads only beside its topics. */
+export type ShareGraphKind = "ladder" | "level" | "none";
+
+export function getShareGraphKind(graph: CertificateGraph): ShareGraphKind {
+  if (graph.kind === "ladder") {
+    return "ladder";
+  }
+
+  return graph.label ? "level" : "none";
+}
 
 function getGraphHeight(graph: SheetGraphKind): number {
   if (graph === "ladder") {
     return SHEET.ladder.cellHeight + SHEET.ladder.labelGap + lineBox(SHEET.ladder.labelSize);
   }
 
-  const labels = graph === "labelledRoute" ? SHEET.route.labelHeight + SHEET.route.labelGap : 0;
-
-  return labels + SHEET.route.height;
+  return SHEET.route.height;
 }
 
 function getTopicRowLines(topics: readonly string[]): number[] {
@@ -147,20 +157,23 @@ export function getLinkOverflow({
   nameHeight,
   titleHeight,
 }: {
-  graph: "ladder" | "route";
+  graph: ShareGraphKind;
   nameHeight: number;
   titleHeight: number;
 }): number {
-  const graphHeight =
+  const ladder =
     graph === "ladder"
-      ? link.ladder.cellHeight + link.ladder.labelGap + lineBox(link.ladder.labelSize)
-      : link.route.height;
+      ? link.graph.above +
+        link.ladder.cellHeight +
+        link.ladder.labelGap +
+        lineBox(link.ladder.labelSize)
+      : 0;
 
   const height = [
     Math.max(link.brand.logo, lineBox(link.brand.size), lineBox(link.kind.size)),
     nameHeight,
     link.title.above + titleHeight,
-    link.graph.above + graphHeight,
+    ladder,
     link.bottom.above + lineBox(link.bottom.size),
   ].reduce((sum, part) => sum + part, 0);
 
@@ -169,12 +182,17 @@ export function getLinkOverflow({
 
 const POST_CONTENT_HEIGHT = post.height - post.inset * 2 - post.padding.top - post.padding.bottom;
 
-function getPostGraphHeight(graph: "ladder" | "route"): number {
+function getPostGraphHeight(graph: ShareGraphKind): number {
   if (graph === "ladder") {
-    return post.ladder.cellHeight + post.ladder.labelGap + lineBox(post.ladder.labelSize);
+    return (
+      post.graph.above +
+      post.ladder.cellHeight +
+      post.ladder.labelGap +
+      lineBox(post.ladder.labelSize)
+    );
   }
 
-  return post.route.labelHeight + post.route.labelGap + post.route.height;
+  return graph === "level" ? post.graph.above + post.route.labelHeight + post.route.labelGap : 0;
 }
 
 /** How far the post's parts run past its sheet, in px; zero or less fits. */
@@ -184,7 +202,7 @@ export function getPostOverflow({
   nameHeight,
   titleHeight,
 }: {
-  graph: "ladder" | "route";
+  graph: ShareGraphKind;
   hasStats: boolean;
   nameHeight: number;
   titleHeight: number;
@@ -200,7 +218,7 @@ export function getPostOverflow({
     lineBox(post.kind.size),
     post.name.above + nameHeight,
     post.title.above + titleHeight,
-    post.graph.above + getPostGraphHeight(graph),
+    getPostGraphHeight(graph),
     hasStats ? stats : 0,
     bottom,
   ].reduce((sum, part) => sum + part, 0);

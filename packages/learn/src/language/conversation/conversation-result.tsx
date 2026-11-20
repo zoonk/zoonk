@@ -106,9 +106,7 @@ function BetterWay({
         />
       </div>
       <div className="flex items-start justify-between gap-3">
-        <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">
-          {improve.why}
-        </p>
+        <p className="text-muted-foreground text-compact leading-snug text-pretty">{improve.why}</p>
         <SpeakButton language={language} personal text={improve.better} />
       </div>
     </div>

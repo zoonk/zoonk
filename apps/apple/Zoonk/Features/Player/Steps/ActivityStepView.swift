@@ -30,13 +30,10 @@ struct ActivityStepView: View {
   var body: some View {
     switch part {
     case .screen:
-      if let badge = activityRenderers.renderer(for: content.template)?.badge.badge(for: content) {
-        Label {
-          Text(badge.title)
-        } icon: {
-          Image(systemName: badge.systemImage)
-        }
-        .chip()
+      if let badge = activityRenderers.renderer(for: content.template)?.badge?.badge(for: content),
+        badge.isShown(over: content.prompt)
+      {
+        Chip(Text(badge.title), systemImage: badge.systemImage)
       }
 
       LessonQuestionText(text: content.prompt)
@@ -81,7 +78,7 @@ struct ActivityStepView: View {
         if !context.isLocked {
           context.select(value.map(LessonAnswer.activity))
         }
-      }, baseMap: content.baseMap)
+      }, baseMap: content.baseMap, roundedAnswer: content.roundedAnswer)
 
     // As on main, nothing on the canvas answers (taps, menus, number keys) until a required
     // picture is drawn.
@@ -109,18 +106,41 @@ struct ActivityStepView: View {
         isChecked: context.result != nil,
         isLocked: context.isLocked
       ) { context.select(.activity(.choice(optionId: $0))) }
-    case .numeric(let question, let expected, let tolerance, let unit, _, _, _):
-      LessonRichText(question)
-        .typeStyle(.body.weight(.semibold))
-      NumericAnswerField(
-        value: answer?.number, expected: expected, tolerance: tolerance, unit: unit,
-        isLocked: context.isLocked
-      ) { number in
-        context.select(number.map { .activity(.numeric($0)) })
+    case .numeric:
+      if activityRenderers.renderer(for: content.template)?.answersOnCanvas != true {
+        numericQuestion
       }
     case .interaction:
       EmptyView()
     }
+  }
+
+  @ViewBuilder
+  private var numericQuestion: some View {
+    if case .numeric(let question, let expected, let tolerance, let unit, _, _, _) = content.check {
+      LessonRichText(question)
+        .typeStyle(.body.weight(.semibold))
+      NumericAnswerField(
+        value: answer?.number, expected: expected, tolerance: tolerance, unit: unit,
+        checkedText: checkedText, isLocked: context.isLocked
+      ) { number in
+        context.select(number.map { .activity(.numeric($0)) })
+      }
+      if let places = content.roundedAnswer?.places {
+        Text(decimalEntryRule(places))
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
+    }
+  }
+}
+
+extension ActivityStepView {
+  /// After Check, the learner's number as the verdict writes it, whoever set it.
+  fileprivate var checkedText: String? {
+    guard let result = context.result, let value = answer?.number else { return nil }
+    let checked = LessonGrading.checkedNumber(value, in: content, isCorrect: result.isCorrect)
+    return ActivityNumberFormat.format(checked.value, digits: checked.digits, grouping: false)
   }
 }
 
@@ -169,6 +189,7 @@ private struct NumericAnswerField: View {
   let expected: Double
   let tolerance: ActivityCheck.Tolerance
   let unit: String?
+  let checkedText: String?
   let isLocked: Bool
   let onChange: (Double?) -> Void
 
@@ -180,7 +201,7 @@ private struct NumericAnswerField: View {
         Text(unit).foregroundStyle(.mutedForeground).accessibilityHidden(true)
       }
 
-      TextField(text: Binding(get: { typed ?? shown }, set: type)) {
+      TextField(text: Binding(get: { checkedText ?? typed ?? shown }, set: type)) {
         Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
       }
       .keyboardType(.decimalPad)

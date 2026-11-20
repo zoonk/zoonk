@@ -4,6 +4,7 @@ import {
   type SerializedStep,
   type TranslationOption,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
@@ -15,7 +16,6 @@ import {
   PlayerChoiceSceneQuestion,
 } from "./player-choice-scene";
 import { RomanizationText } from "./romanization-text";
-import { ScreenChip } from "./screen-chip";
 
 function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   if (selectedAnswer?.kind !== "translation") {
@@ -29,6 +29,7 @@ function TranslationOptionContent({ word }: { word: TranslationOption }) {
   return (
     <>
       <PlayerChoiceSceneOptionText>{word.word}</PlayerChoiceSceneOptionText>
+      {word.romanization && <br />}
       <RomanizationText>{word.romanization}</RomanizationText>
     </>
   );
@@ -67,7 +68,7 @@ export function TranslationStep({
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
-        <ScreenChip>{definesWords ? t("Which one means this?") : t("Translate")}</ScreenChip>
+        <Eyebrow>{definesWords ? t("Which one means this?") : t("Translate")}</Eyebrow>
         <PlayerChoiceSceneQuestion>{correctWord.translation}</PlayerChoiceSceneQuestion>
       </PlayerChoiceScenePrompt>
 

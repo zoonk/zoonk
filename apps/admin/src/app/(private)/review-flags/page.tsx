@@ -1,35 +1,23 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { ReviewFlagList, ReviewFlagListSkeleton } from "./review-flag-list";
 
-export const metadata: Metadata = { title: "Needs review" };
+export const metadata: Metadata = { title: "Source changes" };
 
 export default function ReviewFlagsPage() {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Needs review</ContainerTitle>
-          <ContainerDescription>
-            Lessons and questions built on a source that changed. The daily sweep rewrites lessons
-            and law drills from the new text; dismiss what is still right.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <AdminPage>
+      <AdminPageHeader title="Source changes">
+        Content that cites a source that changed. Rewrite what&apos;s now wrong, dismiss what&apos;s
+        still right.
+      </AdminPageHeader>
 
-      <ContainerBody>
+      <AdminPageBody>
         <Suspense fallback={<ReviewFlagListSkeleton />}>
           <ReviewFlagList />
         </Suspense>
-      </ContainerBody>
-    </Container>
+      </AdminPageBody>
+    </AdminPage>
   );
 }

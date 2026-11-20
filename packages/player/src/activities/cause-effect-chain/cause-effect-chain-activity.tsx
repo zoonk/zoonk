@@ -5,6 +5,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_PRESS_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
@@ -44,7 +46,9 @@ function NodeCard({
       <button
         aria-pressed={isCause}
         className={cn(
-          "bg-background focus-visible:ring-ring/50 flex min-h-11 w-full flex-col items-start gap-0.5 rounded-xl border px-3 py-2 text-left outline-none select-none focus-visible:ring-[3px] motion-safe:transition-colors",
+          ACTIVITY_CARD_CLASS,
+          ACTIVITY_PRESS_CLASS,
+          "flex h-full w-full flex-col items-start gap-0.5 motion-safe:transition-colors",
           isCause && "border-viz-highlight ring-viz-highlight/30 ring-2",
           isCandidate && "hover:border-viz-highlight border-dashed",
           !disabled && !isCause && !isCandidate && "hover:bg-accent",
@@ -162,27 +166,32 @@ export function CauseEffectChainActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      {!isLessonChain && (
-        <div className="flex items-baseline justify-between gap-3">
-          <ActivityCanvasLabel className="text-sm">
-            {t("Pick a cause, then pick what it led to.")}
-          </ActivityCanvasLabel>
-
-          {check.kind === "interaction" && (
-            <ActivityCanvasLabel className="shrink-0 tabular-nums">
-              {t("{count} of {total, plural, one {# link} other {# links}}", {
-                count: format(links.length),
-                total: fields.links.length,
-              })}
-            </ActivityCanvasLabel>
-          )}
-        </div>
+      {!isExploring && (
+        <p
+          aria-hidden={isChecked}
+          aria-live="polite"
+          className={cn("text-muted-foreground text-sm text-pretty", isChecked && "invisible")}
+        >
+          {notice || t("Pick a cause, then pick what it led to.")}
+        </p>
+      )}
+      {!isLessonChain && check.kind === "interaction" && (
+        <ActivityCanvasLabel className="self-end tabular-nums">
+          {t("{count} of {total, plural, one {# link} other {# links}}", {
+            count: format(links.length),
+            total: fields.links.length,
+          })}
+        </ActivityCanvasLabel>
       )}
 
       <div className="relative" style={{ paddingLeft: ARC_GUTTER }}>
         <CauseEffectArcs centers={centers} links={arcs} order={order} />
 
-        <ol aria-label={t("Causes and effects")} className="flex flex-col gap-2" ref={containerRef}>
+        <ol
+          aria-label={t("Causes and effects")}
+          className="grid auto-rows-fr gap-2"
+          ref={containerRef}
+        >
           {nodes.map((node) => (
             <NodeCard
               cardRef={register(node.id)}
@@ -204,19 +213,18 @@ export function CauseEffectChainActivity({
         </ol>
       </div>
 
-      <p aria-live="polite" className="text-muted-foreground min-h-5 text-sm">
-        {isLocked ? "" : notice}
-      </p>
-
-      <CauseEffectLinkList
-        isLessonChain={isLessonChain}
-        canRemove={!isLocked && !isGuided}
-        explanations={fields.links}
-        labelOf={labelOf}
-        links={arcs}
-        onRemove={(link) => update(toggleLink(links, link))}
-        showWhy={isGuided || isLocked}
-      />
+      {/* The chain's rows share the cards' edge; the arrows keep the room before it. */}
+      <div className="flex flex-col gap-3 empty:hidden" style={{ paddingLeft: ARC_GUTTER }}>
+        <CauseEffectLinkList
+          isLessonChain={isLessonChain}
+          canRemove={!isLocked && !isGuided}
+          explanations={fields.links}
+          labelOf={labelOf}
+          links={arcs}
+          onRemove={(link) => update(toggleLink(links, link))}
+          showWhy={isGuided || isLocked}
+        />
+      </div>
 
       <ActivityTextAlternative>
         {t("Causes and effects in time order: {nodes}.", {

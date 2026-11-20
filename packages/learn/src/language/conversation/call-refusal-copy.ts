@@ -9,9 +9,9 @@ export function useRefusalCopy() {
   return {
     callInProgress: {
       text: t(
-        "It's open in another tab or on another device. Ending it from here skips its feedback.",
+        "That call is open in another tab or on another device. Starting this one ends it without feedback.",
       ),
-      title: t("You're already in a call"),
+      title: t("You're in another call"),
     },
     callsPaused: {
       text: t({
@@ -23,9 +23,9 @@ export function useRefusalCopy() {
     },
     ended: { text: t("Start a new call to keep practicing."), title: t("This call has ended") },
     takeover: t({
-      description:
-        "Another call is still running: this ends it and starts the call on this screen.",
-      message: "End that call and start this one",
+      description: "Starts this call on this device and ends it in the other tab or device.",
+      id: "callTakeover",
+      message: "Start here",
     }),
   };
 }

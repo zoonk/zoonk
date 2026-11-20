@@ -4,15 +4,15 @@ import { toPracticeCallLengths } from "./call-lengths";
 
 function lengths({
   tier,
-  usedThisMonth = 0,
+  usedLast30Days = 0,
   usedToday = 0,
 }: {
   tier: "free" | "guest" | "plus";
-  usedThisMonth?: number;
+  usedLast30Days?: number;
   usedToday?: number;
 }) {
   return toPracticeCallLengths({
-    left: getCallTimeLeft({ kind: "conversation", tier, usedThisMonth, usedToday }),
+    left: getCallTimeLeft({ kind: "conversation", tier, usedLast30Days, usedToday }),
     tier,
   });
 }
@@ -31,22 +31,22 @@ describe(toPracticeCallLengths, () => {
     const free = { defaultMinutes: 2, limit: null, minutes: [1, 2], plusMinutes: [3, 5] };
 
     expect([
-      lengths({ tier: "free", usedThisMonth: 110, usedToday: 110 }),
-      lengths({ tier: "free", usedThisMonth: 290 }),
+      lengths({ tier: "free", usedLast30Days: 110, usedToday: 110 }),
+      lengths({ tier: "free", usedLast30Days: 290 }),
     ]).toStrictEqual([free, free]);
   });
 
   it("says until when calls come back once no call time is left", () => {
-    expect(lengths({ tier: "free", usedThisMonth: 120, usedToday: 120 })).toStrictEqual({
+    expect(lengths({ tier: "free", usedLast30Days: 120, usedToday: 120 })).toStrictEqual({
       defaultMinutes: 2,
       limit: { period: "day", tier: "free" },
       minutes: [],
       plusMinutes: [],
     });
 
-    expect(lengths({ tier: "free", usedThisMonth: 300 })).toStrictEqual({
+    expect(lengths({ tier: "free", usedLast30Days: 300 })).toStrictEqual({
       defaultMinutes: 2,
-      limit: { period: "month", tier: "free" },
+      limit: { period: "rolling30Days", tier: "free" },
       minutes: [],
       plusMinutes: [],
     });

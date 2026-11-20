@@ -24,7 +24,7 @@ function PronunciationSkeleton() {
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
       <Skeleton className="size-9 rounded-lg" />
       <div className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-24 rounded-md" />
+        <Skeleton className="h-5.5 w-24 rounded-sm" />
         <Skeleton className="h-8 w-1/2 rounded-lg" />
         <Skeleton className="h-4 w-40 rounded-md" />
       </div>

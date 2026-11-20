@@ -8,7 +8,7 @@ Jobs's emphasis on the customer's experience and Saarinen's emphasis on context 
 
 ## Simplicity comes from understanding
 
-Ive describes simplicity as bringing order to complexity. Clear concepts, relationships, and behavior make an interface understandable. Removing decoration cannot repair a confusing structure; sometimes a label or additional context makes the experience simpler. [Ive](https://www.apple.com/newsroom/2013/06/10Apple-Unveils-iOS-7/), [Apple's design principles](https://developer.apple.com/videos/play/wwdc2026/250/).
+Ive describes simplicity as bringing order to complexity. Clear concepts, relationships, and behavior make an interface understandable. Removing decoration cannot repair a confusing structure, and neither can a sentence that explains it: fix the structure, and a label is enough. [Ive](https://www.apple.com/newsroom/2013/06/10Apple-Unveils-iOS-7/), [Apple's design principles](https://developer.apple.com/videos/play/wwdc2026/250/).
 
 ## Spend attention deliberately
 
@@ -20,7 +20,7 @@ Rams and Lubs's Braun ET66 calculator has a gray body, and color only on the key
 
 ## Reduce uncertainty and effort
 
-The difficulty of choosing matters more than a fixed number of options or clicks. Give people clear destinations, helpful defaults, and enough information to decide confidently. Sequence separable decisions; keep comparisons together. Hide optional complexity only when its entry point remains easy to find. Repeated tasks should become efficient as people gain familiarity. [Krug](https://sensible.com/downloads/DMMT-Revisited-sample-chapter.pdf), [Nielsen](https://www.nngroup.com/articles/progressive-disclosure/).
+The difficulty of choosing matters more than a fixed number of options or clicks. Give people clear destinations, helpful defaults, and what they need to decide, at the moment they decide. Sequence separable decisions; keep comparisons together. Hide optional complexity only when its entry point remains easy to find. Repeated tasks should become efficient as people gain familiarity. [Krug](https://sensible.com/downloads/DMMT-Revisited-sample-chapter.pdf), [Nielsen](https://www.nngroup.com/articles/progressive-disclosure/).
 
 ## Make care tangible
 

@@ -25,10 +25,17 @@ import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions } from "../onboarding-actions";
 import { useOnboardingWait } from "../onboarding-clock";
 import { OnboardingColumn, OnboardingPrimaryButton } from "../onboarding-frame";
-import { FirstLessonReadContext, useOnboardingHost } from "../onboarding-host";
+import {
+  FirstLessonReadContext,
+  NO_BAR,
+  OnboardingScreenProvider,
+  useOnboardingHost,
+  useOnboardingScreen,
+} from "../onboarding-host";
 import { useOnboardingRail } from "../onboarding-rail";
 import { NoticeReading, useNoticeProgress, useNoticeTitle } from "./notice-reading";
 import { PlanBuilding, type PlanNext } from "./plan-building";
+import { PlanStartNoticeProvider } from "./plan-start-notice";
 import { WaitBackToQuiz, WaitBar, WaitLinkAction } from "./wait-parts";
 import { type PlanWaitScreen, type WaitStop } from "./wait-run";
 
@@ -59,7 +66,7 @@ function useShownScreen(wait: PlanWaitScreen | null): PlanWaitScreen {
   return noticeShown ? "notice" : "building";
 }
 
-/** A failure takes the strip's place, so the quiz below it stays playable. */
+/** A failure takes the strip's place; a stopped run takes the quiz away too (`useDeck`). */
 function getStop({ notice, run }: { notice: Notice | null; run: GenerationRun }): WaitStop | null {
   if (notice) {
     return notice.stopped;
@@ -137,8 +144,8 @@ function PlanWaitBar({
             : undefined
         }
       >
-        <OnboardingPrimaryButton className="lg:w-auto lg:min-w-40" onClick={release}>
-          {next === "plan" ? t("See your plan") : t("Continue")}
+        <OnboardingPrimaryButton onClick={release}>
+          {next === "plan" ? t("See plan") : t("Continue")}
         </OnboardingPrimaryButton>
       </WaitBar>
     );
@@ -147,7 +154,7 @@ function PlanWaitBar({
   if (lessonReady) {
     return (
       <WaitBar note={t("Your plan will be waiting when you finish.")}>
-        <WaitLinkAction href={lessonHref(firstLesson.id)}>{t("Start lesson 1")}</WaitLinkAction>
+        <WaitLinkAction href={lessonHref(firstLesson.id)}>{t("Start")}</WaitLinkAction>
       </WaitBar>
     );
   }
@@ -177,17 +184,39 @@ function PlanWaitPage({
 }) {
   const since = useMountTime().getTime();
   const flowRail = useOnboardingRail();
+  const screen = useOnboardingScreen();
   const stop = holding ? null : getStop({ notice, run });
+  // "Start" is the bar's main action then.
+  const barHasMainAction = firstLesson?.status === "ready";
 
   const progress = notice ? (
-    <NoticeReading {...notice} holding={holding} next={next} since={since} />
+    <NoticeReading
+      {...notice}
+      barHasMainAction={barHasMainAction}
+      holding={holding}
+      next={next}
+      since={since}
+    />
   ) : (
-    <PlanBuilding firstLesson={firstLesson} holding={holding} next={next} run={run} since={since} />
+    <PlanBuilding
+      barHasMainAction={barHasMainAction}
+      firstLesson={firstLesson}
+      holding={holding}
+      next={next}
+      run={run}
+      since={since}
+    />
   );
 
   const status = (() => {
     if (stop) {
-      return <GenerationFailureNotice failure={stop.failure} retry={stop.retry} />;
+      return (
+        <GenerationFailureNotice
+          barHasMainAction={barHasMainAction}
+          failure={stop.failure}
+          retry={stop.retry}
+        />
+      );
     }
 
     return notice ? (
@@ -198,28 +227,33 @@ function PlanWaitPage({
   })();
 
   return (
-    <WaitBackToQuiz>
-      {use(FirstLessonReadContext)}
-      <OnboardingColumn
-        bar={
-          <PlanWaitBar
-            firstLesson={firstLesson}
-            holding={holding}
-            lessonHref={lessonHref}
-            library={library}
-            next={next}
-          />
-        }
-        rail={
-          <>
-            <WaitAside>{progress}</WaitAside>
-            {flowRail}
-          </>
-        }
-      >
-        <WaitContent progress={progress} status={status} />
-      </OnboardingColumn>
-    </WaitBackToQuiz>
+    // The wait says its own run stopped, so its bar doesn't say it again.
+    <PlanStartNoticeProvider run={null}>
+      <OnboardingScreenProvider value={{ ...screen, bar: NO_BAR }}>
+        <WaitBackToQuiz>
+          {use(FirstLessonReadContext)}
+          <OnboardingColumn
+            bar={
+              <PlanWaitBar
+                firstLesson={firstLesson}
+                holding={holding}
+                lessonHref={lessonHref}
+                library={library}
+                next={next}
+              />
+            }
+            rail={
+              <>
+                <WaitAside>{progress}</WaitAside>
+                {flowRail}
+              </>
+            }
+          >
+            <WaitContent progress={progress} status={status} />
+          </OnboardingColumn>
+        </WaitBackToQuiz>
+      </OnboardingScreenProvider>
+    </PlanStartNoticeProvider>
   );
 }
 

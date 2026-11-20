@@ -3,6 +3,8 @@ package com.zoonk.android.feature.settings
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStore
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -17,19 +19,45 @@ import com.zoonk.api.models.ProfileQuestions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class ProfileQuestionViewModelTest {
-    private fun question(picks: List<String>) =
-        ProfileQuestionView(ProfileQuestion.TOOLS, emptyList(), ProfileQuestionViewSaved(picks, emptyList(), ""), null, 1)
+    private fun question(
+        picks: List<String>,
+        status: ProfileQuestionView.Status? = null,
+    ) = ProfileQuestionView(ProfileQuestion.TOOLS, emptyList(), ProfileQuestionViewSaved(picks, emptyList(), ""), status, 1)
+
+    @Test
+    fun anUnansweredProfileQuestionDoesNotSaveAnEmptyDraft() =
+        editing(question(emptyList())) { editor, api ->
+            editor.change(ProfileDraft(text = "  "))
+            editor.save(ProfileQuestion.TOOLS, true)
+            advanceUntilIdle()
+
+            assertNull(api.saved)
+        }
+
+    @Test
+    fun anAnsweredProfileQuestionCanBeCleared() =
+        editing(question(listOf("figma"), ProfileQuestionView.Status.ANSWERED)) { editor, api ->
+            editor.change(ProfileDraft())
+            editor.save(ProfileQuestion.TOOLS, true)
+            advanceUntilIdle()
+
+            assertEquals(ProfileDraft(declined = true).input(ProfileQuestion.TOOLS, true), api.saved)
+        }
 
     @Test
     fun aFreshReadRemovesDeletedFactsAndAddsNewAnswersBeforeSaving() =
@@ -44,7 +72,7 @@ class ProfileQuestionViewModelTest {
                     val editor = ProfileQuestionViewModel(store, question(old), SavedStateHandle())
                     models.put("editor", editor)
                     editor.read(question(fresh))
-                    editor.save(ProfileQuestion.TOOLS, true) {}
+                    editor.save(ProfileQuestion.TOOLS, true)
                     advanceUntilIdle()
                     assertEquals(ProfileDraft(picks = fresh).input(ProfileQuestion.TOOLS, true), api.saved)
                 }
@@ -81,8 +109,67 @@ class ProfileQuestionViewModelTest {
             }
         }
 
+    @Test
+    fun anAnswerSavedWhileThePageIsRecreatedGoesBackOnce() =
+        editing { editor, _ ->
+            // No page shows while the save is out, as when the window is recreated.
+            editor.save(ProfileQuestion.TOOLS, true)
+            advanceUntilIdle()
+
+            assertEquals(Unit, editor.answered.value?.also(editor.answered::acted))
+            assertNull(editor.answered.value)
+        }
+
+    @Test
+    fun anAnswerSavedAfterThePageLeftLeadsNowhereOnReturn() =
+        editing { editor, api ->
+            editor.save(ProfileQuestion.TOOLS, true)
+            editor.visit.end()
+            advanceUntilIdle()
+
+            assertNotNull(api.saved)
+            assertNull(editor.answered.value)
+        }
+
+    @Test
+    fun anAnswerThatFailsAfterThePageLeftSaysNothingOnReturn() =
+        editing { editor, api ->
+            api.failure = ApiException(ApiError.Network)
+
+            editor.save(ProfileQuestion.TOOLS, true)
+            editor.visit.end()
+            advanceUntilIdle()
+
+            assertFalse(editor.failed)
+            assertFalse(editor.saving)
+        }
+
+    private fun editing(
+        source: ProfileQuestionView = question(listOf("figma")),
+        test: suspend TestScope.(ProfileQuestionViewModel, FakeProfileApi) -> Unit,
+    ) = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val models = ViewModelStore()
+        try {
+            val api = FakeProfileApi()
+            val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+            val editor =
+                ProfileQuestionViewModel(
+                    ProfileQuestionsStore(api, AppCache(session, backgroundScope)),
+                    source,
+                    SavedStateHandle(),
+                )
+            models.put("editor", editor)
+            test(editor, api)
+        } finally {
+            models.clear()
+            Dispatchers.resetMain()
+        }
+    }
+
     private class FakeProfileApi : ProfileQuestionsApi {
         var saved: ProfileAnswerInput? = null
+        var failure: ApiException? = null
 
         override suspend fun questions(session: AuthenticatedSession) = ProfileQuestions(true, emptyList())
 
@@ -90,6 +177,7 @@ class ProfileQuestionViewModelTest {
             session: AuthenticatedSession,
             input: ProfileAnswerInput,
         ): ProfileQuestionView {
+            failure?.let { throw it }
             saved = input
             return ProfileQuestionView(ProfileQuestion.TOOLS, emptyList(), ProfileQuestionViewSaved(emptyList(), emptyList(), ""), null, 1)
         }

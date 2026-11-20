@@ -1,21 +1,21 @@
 "use client";
 
 import { type PlanBasesAdvice } from "@zoonk/core/plans/bases-advice-contract";
-import {
-  type LearnerPlanOperation,
-  type PlanChangeDecisionInput,
-} from "@zoonk/core/plans/contract";
+import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
+import { type PlanChangeAnswer } from "@zoonk/core/plans/decision-contract";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { type RegionChoice } from "@zoonk/utils/language-regions";
-import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { isFocusLost } from "../_utils/is-focus-lost";
+import { createContext, use, useEffect, useMemo, useRef, useState } from "react";
+import { type FocusTarget, useKeepFocus } from "../_utils/use-keep-focus";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type CountryName, type SuggestedCountry } from "../country/country-choice";
 import { type LessonVariety } from "../country/use-country-lines";
-import { getTimeToCoverRevision } from "./time-to-cover-revision";
+import { type BasesAdviceStore, useBasesAdviceStore } from "./bases-advice-store";
+import { LayoutSharedProvider } from "./layout-shared";
+import { getPlanAdviceRevision, getPlanToday } from "./plan-advice-revision";
 
 /** `change` is null while the plan isn't built yet. */
 export type PlanChangeOutcome =
@@ -33,10 +33,7 @@ export type PlanActions = {
    */
   findTimeToCover: () => Promise<PlanTimeToCover | null>;
   adviseOnBases: () => Promise<PlanBasesAdvice | null>;
-  decide: (input: {
-    changeId: string;
-    status: PlanChangeDecisionInput["status"];
-  }) => Promise<boolean>;
+  decide: (answer: PlanChangeAnswer) => Promise<boolean>;
   /** The change it made: null when the pick changed nothing or the plan isn't built yet. */
   chooseExamOption: (input: {
     group: string;
@@ -94,6 +91,7 @@ type PlanScreenValue = {
   goal: PlanGoal;
   tutor?: PlanTutor;
   plan: PlanView;
+  paused?: boolean;
   focusTestHref?: string;
   openFocus?: boolean;
   /** A path on the host; sharing adds the origin. */
@@ -118,8 +116,6 @@ type TimeToCoverStore = {
 
 export const PLAN_TITLE_ID = "plan-title";
 
-type FocusTarget = () => HTMLElement | null;
-
 /** Read it in handlers, never while rendering. */
 type PlanChanges = { isSaving: () => boolean };
 
@@ -128,6 +124,7 @@ type PlanScreenContextValue = PlanScreenValue & {
   today: string;
   changes: PlanChanges;
   timeToCover: TimeToCoverStore;
+  basesAdvice: BasesAdviceStore;
   /**
    * Call as a save starts: if the save takes the focused control away, focus moves to `target` or
    * the plan's title.
@@ -135,44 +132,15 @@ type PlanScreenContextValue = PlanScreenValue & {
   keepFocus: (target?: FocusTarget) => void;
 };
 
-type Saving = { control: Element | null; plan: PlanView; target?: FocusTarget };
-
 export const PlanScreenContext = createContext<PlanScreenContextValue | null>(null);
 
-function findFallback(target?: FocusTarget): HTMLElement | null {
-  return target?.() ?? document.querySelector<HTMLElement>(`#${PLAN_TITLE_ID}`);
-}
-
-function useKeepFocus(plan: PlanView) {
-  const saving = useRef<Saving | null>(null);
-
-  // The saved plan arrives as a new view model, in the same render that removes the control.
-  useEffect(() => {
-    const saved = saving.current;
-
-    if (!saved || saved.plan === plan) {
-      return;
-    }
-
-    saving.current = null;
-
-    if (saved.control && !saved.control.isConnected && isFocusLost(document.activeElement)) {
-      findFallback(saved.target)?.focus();
-    }
-  }, [plan]);
-
-  return useCallback(
-    (target?: FocusTarget) => {
-      saving.current = { control: document.activeElement, plan, target };
-    },
-    [plan],
-  );
+function findPlanTitle() {
+  return document.querySelector<HTMLElement>(`#${PLAN_TITLE_ID}`);
 }
 
 const IDLE: TimeToCoverState = { status: "idle" };
 
-function useTimeToCoverStore(plan: PlanView): TimeToCoverStore {
-  const revision = useMemo(() => getTimeToCoverRevision(plan), [plan]);
+function useTimeToCoverStore(revision: string): TimeToCoverStore {
   const [stored, setStored] = useState<TimeToCoverState>(IDLE);
   const latest = useRef(revision);
   const search = useRef<TimeToCoverSearch | null>(null);
@@ -263,16 +231,25 @@ export function PlanScreenProvider({
   children: React.ReactNode;
   value: PlanScreenValue;
 }) {
-  const today =
-    value.plan.week.days.find((day) => day.state === "today")?.date ?? value.plan.week.startDate;
+  const today = getPlanToday(value.plan);
 
-  const keepFocus = useKeepFocus(value.plan);
-  const timeToCover = useTimeToCoverStore(value.plan);
+  const keepFocus = useKeepFocus(value.plan, findPlanTitle);
+
+  const revision = useMemo(
+    () => getPlanAdviceRevision({ plan: value.plan, today }),
+    [today, value.plan],
+  );
+
+  const timeToCover = useTimeToCoverStore(revision);
+  const basesAdvice = useBasesAdviceStore({ advise: value.actions.adviseOnBases, revision });
   const { actions, changes } = useCountedChanges(value.actions);
 
   return (
-    <PlanScreenContext value={{ ...value, actions, changes, keepFocus, timeToCover, today }}>
-      {children}
+    <PlanScreenContext
+      value={{ ...value, actions, basesAdvice, changes, keepFocus, timeToCover, today }}
+    >
+      {/* One goal's: another goal's Plan starts with nothing of this one's requests. */}
+      <LayoutSharedProvider key={value.plan.goalId}>{children}</LayoutSharedProvider>
     </PlanScreenContext>
   );
 }

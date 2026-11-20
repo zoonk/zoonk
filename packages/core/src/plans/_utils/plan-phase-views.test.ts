@@ -53,6 +53,24 @@ function boss(position: number, phaseIndex: number, status: "done" | "todo", day
 describe(buildPhaseViews, () => {
   const items = [lesson(0, 0), lesson(1, 0), lesson(2, 0), lesson(3, 1)];
 
+  it("carries the syllabus reason for a phase with no scheduled work", () => {
+    const views = buildPhaseViews({
+      chapterTitles: new Map(),
+      currentPhase: 0,
+      goalKind: "learn",
+      items: [lesson(0, 0)],
+      phaseReasons: new Map([
+        [1, "time"],
+        [2, "skipped"],
+      ]),
+      phases: [phase(), phase(), phase()],
+      skillAreas: new Map(),
+      upNextItemId: null,
+    });
+
+    expect(views.map((view) => view.notPlannedReason)).toStrictEqual([null, "time", "skipped"]);
+  });
+
   it("uses the planner's minutes for each phase", () => {
     const views = buildPhaseViews({
       chapterTitles: new Map(),
@@ -147,9 +165,10 @@ describe(buildPhaseViews, () => {
       phases: [phase()],
       skillAreas: getSkillAreas({
         courseTitle: "Quantum physics from scratch",
+        goalKind: "learn",
         skills: [
-          { area: "Quantum physics from scratch", skillId: "skill-1" },
-          { area: "Statistics", skillId: "skill-2" },
+          { area: "Quantum physics from scratch", name: "Superposition", skillId: "skill-1" },
+          { area: "Statistics", name: "Read a distribution", skillId: "skill-2" },
         ],
       }),
       upNextItemId: null,
@@ -158,6 +177,30 @@ describe(buildPhaseViews, () => {
     expect(view?.chapters.map(({ title, writing }) => ({ title, writing }))).toStrictEqual([
       { title: "", writing: true },
       { title: "Statistics", writing: true },
+    ]);
+  });
+
+  it("names a language plan's topics still being written by their own names, one row each", () => {
+    const [view] = buildPhaseViews({
+      chapterTitles: new Map(),
+      currentPhase: 0,
+      goalKind: "language",
+      items: [lesson(1, 0), lesson(2, 0)],
+      phases: [phase()],
+      skillAreas: getSkillAreas({
+        courseTitle: "Inglês americano",
+        goalKind: "language",
+        skills: [
+          { area: "Inglês", name: "Cumprimentar e despedir-se", skillId: "skill-1" },
+          { area: "Inglês", name: "Apresentar-se e conhecer pessoas", skillId: "skill-2" },
+        ],
+      }),
+      upNextItemId: null,
+    });
+
+    expect(view?.chapters.map(({ title, writing }) => ({ title, writing }))).toStrictEqual([
+      { title: "Cumprimentar e despedir-se", writing: true },
+      { title: "Apresentar-se e conhecer pessoas", writing: true },
     ]);
   });
 

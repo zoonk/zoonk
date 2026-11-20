@@ -1,10 +1,9 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { isStartBlocked } from "@/components/public/course-start-remedy";
-import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
 import { redirect } from "@/i18n/navigation";
-import { getGoalLimitReason } from "@/lib/goals/goal-limit-reason";
+import { getGoalLimit } from "@/lib/goals/goal-limit-reason";
 import { CHAPTER_PARAM, MINUTES_PARAM, readDailyMinutes } from "@/lib/public/public-hrefs";
 import { getAllowanceCacheTag, getGoalsCacheTag } from "@zoonk/core/cache-tags";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
@@ -77,7 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function toLimitFailure(limit: AllowanceLimit | null): CourseStartFailure | null {
-  return limit ? { reason: getGoalLimitReason(limit), status: "limitReached" } : null;
+  return limit ? { ...getGoalLimit(limit), status: "limitReached" } : null;
 }
 
 /** Kept for the browser so the page opens from its prefetch; starting checks both learner facts again. */
@@ -111,7 +110,7 @@ function CourseStartView({ hasSession, screen }: CourseStartViewProps) {
   return (
     <OnboardingPage
       backHref="/courses"
-      barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" />}
+      barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" edge="end" />}
     >
       <CourseStartScreen {...screen} />
     </OnboardingPage>
@@ -170,13 +169,11 @@ async function CourseStartContent({ params, searchParams }: Props) {
     })),
     course: { id: course.id, quickTestMinutes: course.quickTestMinutes, title: course.title },
     dailyMinutes: readDailyMinutes(query[MINUTES_PARAM]),
-    initialFailure: toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit),
+    initialFailure: toLimitFailure(limit) ?? toFailure(readParam(query[COURSE_START_ERROR_PARAM])),
     note: (
-      <NoAccountNote>
-        <p className="text-muted-foreground text-center text-sm" data-slot="start-note">
-          {t("Start free, no account needed.")}
-        </p>
-      </NoAccountNote>
+      <p className="text-muted-foreground text-sm lg:text-right">
+        {t("Start free, no account needed.")}
+      </p>
     ),
   };
 
@@ -197,7 +194,7 @@ function CourseStartSkeleton() {
       <OnboardingFrame>
         <OnboardingColumn aria-busy="true">
           <OnboardingHeading>
-            <Skeleton className="h-4 w-32" data-slot="page-eyebrow" />
+            <Skeleton className="h-5.5 w-32" data-slot="onboarding-subject" />
             <Skeleton className="h-16.5 w-4/5 sm:h-8.25" />
             <Skeleton className="mt-1 h-5 w-3/5" />
           </OnboardingHeading>

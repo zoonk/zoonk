@@ -5,6 +5,7 @@ import {
   PendingAccountAvatar,
 } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
 import { UserDropdownMenu } from "@/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu";
+import { useStatsPages } from "@/app/[lang]/(app)/(stats)/_components/stats-pages";
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { useBeltLabel } from "@/lib/belt-label";
@@ -13,45 +14,125 @@ import {
   type LearnerSummaryPlaces,
 } from "@zoonk/core/learner/summary/contract";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
-import { SIDEBAR_ACCOUNT_CLASS } from "@zoonk/ui/components/sidebar";
+import {
+  SIDEBAR_ACCOUNT_CLASS,
+  SIDEBAR_ITEM_CLASS,
+  SidebarSection,
+} from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
+import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 
-function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
+function StudyLinksView({ places }: { places: LearnerSummaryPlaces }) {
   const t = useExtracted();
 
   return (
     <>
       <LearnSidebarLink
-        count={places?.readyMistakes}
+        count={places.readyMistakes}
         label={t("Mistakes notebook")}
         menu="mistakes"
       />
-      {places?.completedLessons && (
+      {places.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
+      {places.exam && <LearnSidebarLink label={t("Mock exam")} menu="mock" />}
+      {places.exam && <LearnSidebarLink label={t("Your exam")} menu="exam" />}
+      {places.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
+      {places.completedLessons && (
         <LearnSidebarLink label={t("Completed lessons")} menu="completedLessons" />
       )}
-      {places?.certificates && <LearnSidebarLink label={t("Certificates")} menu="certificates" />}
-      {places?.exam && <LearnSidebarLink label={t("Exam")} menu="exam" />}
-      {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
-      {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
-      <LearnSidebarLink label={t("Statistics")} menu="stats" />
     </>
   );
 }
 
-function FrameStudyLinks() {
-  const learner = useFrameLearner();
-  return <StudyLinksView places={learner.status === "ready" ? learner.summary.places : null} />;
+/** Every number on these pages covers all of the learner's goals, so the group never changes with the goal. */
+function StatsLinks() {
+  const t = useExtracted();
+  const pages = useStatsPages();
+
+  return (
+    <SidebarSection aria-label={t("Statistics")} label={t("Statistics")}>
+      {pages.map((page) => (
+        <LearnSidebarLink key={page.menu} label={page.label} menu={page.menu} />
+      ))}
+    </SidebarSection>
+  );
 }
 
-export function StudyLinks() {
+function StudySectionView({ places }: { places: LearnerSummaryPlaces }) {
+  const t = useExtracted();
+
   return (
-    <Suspense fallback={<StudyLinksView places={null} />}>
-      <FrameStudyLinks />
+    <>
+      <SidebarSection aria-label={t("Study")} label={t("Study")}>
+        <StudyLinksView places={places} />
+      </SidebarSection>
+      <StatsLinks />
+    </>
+  );
+}
+
+function SectionSkeleton({ label, rows }: { label: string; rows: string[] }) {
+  return (
+    <SidebarSection label={label}>
+      {rows.map((row) => (
+        <div className={cn(SIDEBAR_ITEM_CLASS, "pointer-events-none")} key={row}>
+          <Skeleton className="size-4 shrink-0 rounded-sm" />
+          <Skeleton className="h-3 w-24 max-w-full rounded-sm" />
+        </div>
+      ))}
+    </SidebarSection>
+  );
+}
+
+/**
+ * Only the row every learner has: how many more Study rows come isn't known yet, so Statistics,
+ * which follows them, appears with them rather than moving down.
+ */
+function LearnerSectionsSkeleton() {
+  const t = useExtracted();
+
+  return (
+    <PrivateShellPlaceholder>
+      <div aria-hidden="true">
+        <SectionSkeleton label={t("Study")} rows={["mistakes"]} />
+      </div>
+    </PrivateShellPlaceholder>
+  );
+}
+
+/** Every link here opens a learner's own page, so someone without a session gets none of them. */
+function FrameStudySection() {
+  const learner = useFrameLearner();
+
+  if (learner.status === "ready") {
+    return <StudySectionView places={learner.summary.places} />;
+  }
+
+  return learner.status === "visitor" ? null : <LearnerSectionsSkeleton />;
+}
+
+export function LearnerSections() {
+  return (
+    <Suspense fallback={<LearnerSectionsSkeleton />}>
+      <FrameStudySection />
     </Suspense>
+  );
+}
+
+/** What someone without a session can use: the catalog and the prices. */
+export function VisitorSideLinks() {
+  const t = useExtracted();
+
+  return (
+    <SidebarSection aria-label={t("Menu")}>
+      <LearnSidebarLink label={t("Courses")} menu="courses" />
+      <LearnSidebarLink label={t("Pricing")} menu="pricing" />
+    </SidebarSection>
   );
 }
 
@@ -105,8 +186,12 @@ function AccountTriggerWithLevel({
 
   return (
     <AccountTrigger name={name} said={said}>
-      <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 pr-1 font-mono text-xs font-normal tabular-nums">
-        <BeltLevel belt={belt} color={level.color} level={levelNumber} />
+      <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 text-xs font-normal tabular-nums">
+        <BeltLevel
+          belt={belt}
+          color={level.color}
+          level={t("Level {level}", { level: levelNumber })}
+        />
       </span>
     </AccountTrigger>
   );

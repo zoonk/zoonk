@@ -1,11 +1,4 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { SkillFilters, SkillFiltersSkeleton } from "./skill-filters";
@@ -15,17 +8,10 @@ export const metadata: Metadata = { title: "Skills" };
 
 export default function SkillsPage({ searchParams }: PageProps<"/skills">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Skills</ContainerTitle>
-          <ContainerDescription>
-            Browse Library skills, where they are taught and how many learners practice them.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <AdminPage>
+      <AdminPageHeader title="Skills" />
 
-      <ContainerBody>
+      <AdminPageBody>
         <Suspense fallback={<SkillFiltersSkeleton />}>
           <SkillFilters searchParams={searchParams} />
         </Suspense>
@@ -33,7 +19,7 @@ export default function SkillsPage({ searchParams }: PageProps<"/skills">) {
         <Suspense fallback={<SkillListSkeleton />}>
           <SkillList searchParams={searchParams} />
         </Suspense>
-      </ContainerBody>
-    </Container>
+      </AdminPageBody>
+    </AdminPage>
   );
 }

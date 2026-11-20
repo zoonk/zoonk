@@ -20,10 +20,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,16 +35,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.characters.BuddyKind
+import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
@@ -57,16 +63,17 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageListMargin
 import com.zoonk.api.models.Memory
 import com.zoonk.api.models.MemoryCategory
 import com.zoonk.api.models.MemoryFact
 import com.zoonk.api.models.MemorySource
 import kotlinx.coroutines.launch
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 /** Main's memory page: the switch, what Zoonk remembers by label, and the download. */
 @Composable
@@ -75,10 +82,25 @@ fun MemoryScreen(
     navigator: AppNavigator,
 ) {
     val memory by app.memory.memory.collectShown()
-    val screen = viewModel { MemoryViewModel(app.memory) }
+    val learner by app.learnerSummary.summary.collectShown()
+    val name =
+        buddyName(
+            BuddyKind.of(
+                learner.value
+                    ?.buddy
+                    ?.kind
+                    ?.value ?: "zu",
+            ),
+            learner.value?.buddy?.name,
+        )
+    val files = LocalContext.current.applicationContext.contentResolver
+    val screen = viewModel { MemoryViewModel(app.memory, files::openOutputStream, createSavedStateHandle()) }
     val scope = rememberCoroutineScope()
+    VisitOf(screen.visit)
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_memory)) }) { padding ->
+    PageScaffold(onBack = {
+        navigator.back()
+    }, title = { Text(stringResource(R.string.settings_memory)) }, columnWidth = COLUMN_WIDTH) { padding ->
         Box(
             modifier =
                 Modifier
@@ -90,9 +112,9 @@ fun MemoryScreen(
             Column(
                 modifier =
                     Modifier
-                        .widthIn(max = 640.dp)
+                        .widthIn(max = COLUMN_WIDTH)
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                        .padding(horizontal = pageListMargin(), vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
                 PageHeader(
@@ -103,7 +125,7 @@ fun MemoryScreen(
 
                 when (val state = memory) {
                     is LoadState.Loaded -> {
-                        Loaded(state.value, screen, navigator)
+                        Loaded(state.value, screen, navigator, name)
                     }
 
                     is LoadState.Failed -> {
@@ -127,11 +149,11 @@ private fun Loaded(
     memory: Memory,
     screen: MemoryViewModel,
     navigator: AppNavigator,
+    buddyName: String,
 ) {
-    val context = LocalContext.current
     val export =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-            if (uri != null) screen.export { context.contentResolver.openOutputStream(uri) }
+            if (uri != null) screen.export(uri)
         }
     val groups =
         MemoryCategory.entries
@@ -141,7 +163,7 @@ private fun Loaded(
 
     ListRow(
         headline = { Text(stringResource(R.string.memory_use)) },
-        supporting = { Text(stringResource(if (memory.enabled) R.string.memory_use_on else R.string.memory_use_off)) },
+        supporting = { Text(stringResource(R.string.memory_use_description, buddyName)) },
         trailing = { Switch(checked = memory.enabled, onCheckedChange = null) },
         modifier = Modifier.toggleable(value = memory.enabled, role = Role.Switch, onValueChange = screen::setEnabled),
     )
@@ -160,12 +182,14 @@ private fun Loaded(
     }
 
     if (groups.isEmpty()) {
-        Text(
-            text = stringResource(if (memory.enabled) R.string.memory_empty_on else R.string.memory_empty_off),
-            modifier = Modifier.padding(horizontal = LIST_ITEM_INSET),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (memory.enabled) {
+            Text(
+                text = stringResource(R.string.memory_empty),
+                modifier = Modifier.padding(horizontal = LIST_ITEM_INSET),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     } else {
         groups.forEach { (category, facts) ->
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -174,7 +198,7 @@ private fun Loaded(
                     if (index > 0) ListDivider()
                     FactRow(
                         fact,
-                        onEdit = { screen.updateFact(fact.id, it) },
+                        onEdit = { screen.openEdit(fact.id) },
                         onDelete = { screen.deleteFact(fact.id) },
                         onEditProfile =
                             fact.source?.takeIf { it.kind == MemorySource.Kind.PROFILE }?.id?.let { id ->
@@ -186,12 +210,19 @@ private fun Loaded(
         }
     }
 
+    screen.factEdit?.let { edit ->
+        memory.facts.find { it.id == edit.id }?.let { fact ->
+            key(edit.id) { EditFactDialog(fact, edit, onClose = screen::closeEdit, onSave = screen::saveEdit) }
+        }
+    }
+
     ListRow(
         headline = { Text(stringResource(R.string.memory_download)) },
-        supporting = { Text(stringResource(R.string.memory_download_description)) },
         trailing = {
+            val spoken = stringResource(R.string.memory_download_your_memory)
             OutlinedButton(
                 onClick = { export.launch(EXPORT_FILE_NAME) },
+                modifier = Modifier.semantics { contentDescription = spoken },
                 busy = screen.isExporting,
                 leadingIcon = { ButtonIcon(R.drawable.ic_download) },
                 size = ButtonSize.Small,
@@ -220,12 +251,11 @@ private fun Loaded(
 @Composable
 private fun FactRow(
     fact: MemoryFact,
-    onEdit: (String) -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
     onEditProfile: (() -> Unit)? = null,
 ) {
     var isMenuOpen by rememberSaveable { mutableStateOf(false) }
-    var isEditing by rememberSaveable { mutableStateOf(false) }
 
     ListRow(
         headline = { Text(fact.statement) },
@@ -247,7 +277,7 @@ private fun FactRow(
                         leadingIcon = { Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
                         onClick = {
                             isMenuOpen = false
-                            if (onEditProfile != null) onEditProfile() else isEditing = true
+                            if (onEditProfile != null) onEditProfile() else onEdit()
                         },
                     )
                     DropdownMenuItem(
@@ -267,27 +297,19 @@ private fun FactRow(
             }
         },
     )
-
-    if (isEditing) {
-        EditFactDialog(
-            fact = fact,
-            onClose = { isEditing = false },
-            onSave = {
-                isEditing = false
-                onEdit(it)
-            },
-        )
-    }
 }
 
 @Composable
 private fun EditFactDialog(
     fact: MemoryFact,
+    edit: FactEdit,
     onClose: () -> Unit,
     onSave: (String) -> Unit,
 ) {
     var statement by rememberSaveable { mutableStateOf(fact.statement) }
+    val original = rememberSaveable { fact.statement }
     val trimmed = statement.trim()
+    val changed = trimmed.isNotEmpty() && trimmed != original
 
     AlertDialog(
         onDismissRequest = onClose,
@@ -299,15 +321,17 @@ private fun EditFactDialog(
                     value = statement,
                     onValueChange = { statement = it.take(MAX_STATEMENT_LENGTH) },
                     label = stringResource(R.string.memory_edit_label),
+                    supportingText = if (edit.failed) ({ Text(stringResource(R.string.memory_save_failed)) }) else null,
+                    isError = edit.failed,
                 )
             }
         },
         confirmButton = {
-            TextButton(onClick = { onSave(trimmed) }, enabled = trimmed.isNotEmpty() && trimmed != fact.statement) {
+            TextButton(onClick = { onSave(trimmed) }, enabled = changed, busy = edit.saving) {
                 Text(stringResource(R.string.settings_save))
             }
         },
-        dismissButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) } },
+        dismissButton = { TextButton(onClick = onClose, enabled = !edit.saving) { Text(stringResource(R.string.settings_cancel)) } },
     )
 }
 
@@ -329,30 +353,22 @@ private fun sourceName(fact: MemoryFact): String =
     stringResource(
         when {
             fact.origin == MemoryFact.Origin.NOTICED -> R.string.memory_source_noticed
-            fact.source == null -> R.string.memory_source_you
+            fact.source == null || fact.source?.kind == MemorySource.Kind.ONBOARDING -> R.string.memory_source_you
             fact.source?.kind == MemorySource.Kind.CALL -> R.string.memory_source_call
             fact.source?.kind == MemorySource.Kind.CHAT -> R.string.memory_source_chat
-            fact.source?.kind == MemorySource.Kind.ONBOARDING -> R.string.memory_source_onboarding
             fact.source?.kind == MemorySource.Kind.PROFILE -> R.string.profile_questions_you_told_us
             else -> R.string.memory_source_session
         },
     )
 
 @Composable
-private fun factDate(fact: MemoryFact): String =
-    DateTimeFormatter
-        .ofPattern(
-            android.text.format.DateFormat
-                .getBestDateTimePattern(currentLocale(), "MMMd"),
-            currentLocale(),
-        ).format(
-            java.time.Instant
-                .ofEpochMilli(fact.createdAt.toEpochMilliseconds())
-                .atZone(ZoneId.systemDefault()),
-        )
+private fun factDate(fact: MemoryFact): String = formatMomentDay(fact.createdAt, currentLocale())
 
 private val ICON = 16.dp
 
 /** Core's `MAX_MEMORY_STATEMENT_LENGTH`. */
 private const val MAX_STATEMENT_LENGTH = 300
 private const val EXPORT_FILE_NAME = "zoonk-memory.json"
+
+/** Memory's column, its margins included; its rows' words sit on the page's margin, as its way back does. */
+private val COLUMN_WIDTH = 640.dp

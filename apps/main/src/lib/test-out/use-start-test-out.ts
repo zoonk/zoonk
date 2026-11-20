@@ -32,8 +32,8 @@ export function useStartTestOut() {
         return writing;
       }
 
-      if (writing.status === "failed" || writing.status === "plusRequired") {
-        return { status: writing.status };
+      if (writing.status === "failed") {
+        return { status: "failed" };
       }
 
       const query = new URLSearchParams([

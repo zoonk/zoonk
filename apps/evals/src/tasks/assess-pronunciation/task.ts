@@ -85,7 +85,7 @@ export const assessPronunciationTask: Task<
     "Judge from the audio whether a listener would understand each word of a spoken sentence (correct, different or missed, with sound or stress issues), never flagging an accent, against labeled text-to-speech clips. Run a transcription model from the CLI for the transcript-and-compare baseline",
   generate: assessClip,
   id: "assess-pronunciation",
-  name: "Assess Pronunciation",
+  name: "Assess pronunciation",
   score: scorePronunciation,
   testCases: TEST_CASES,
 };

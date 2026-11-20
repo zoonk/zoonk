@@ -21,8 +21,11 @@ final class LessonPlayerDependencies {
     self.sessionStarted = sessionStarted
   }
 
-  func lesson(id: String) -> Resource<LessonLoad> {
-    if let lesson = lessons[id] {
+  /// A host that plays the lesson its own way, as an explanation, reshapes what's played; the tutor's
+  /// suggestions still come with the lesson.
+  func lesson(id: String, hostedAs host: LessonHost? = nil) -> Resource<LessonLoad> {
+    let key = host.map { "\($0.title):\(id)" } ?? id
+    if let lesson = lessons[key] {
       return lesson
     }
 
@@ -30,11 +33,24 @@ final class LessonPlayerDependencies {
     // A lesson follows the learner's goals and active goal: a language plan's skipped activities, and
     // the active goal's versions for a lesson in no plan.
     let lesson = cache.resource(audience: .viewer, domains: [.goals, .learningProfile]) { session in
-      try await api.getLesson(id: id, token: session?.bearerToken)
+      let load = try await api.getLesson(id: id, token: session?.bearerToken)
+      guard let host, case .ready(let lesson) = load else { return load }
+      return .ready(
+        PlayableLesson(
+          id: lesson.id, title: host.title, language: lesson.language,
+          targetLanguage: lesson.targetLanguage, chapterTitle: lesson.chapterTitle,
+          steps: host.steps, summary: lesson.summary, tutorSuggestions: lesson.tutorSuggestions))
     }
-    lessons[id] = lesson
+    lessons[key] = lesson
     return lesson
   }
+}
+
+/// What a host plays of a lesson: an explanation goes by its question's title, as Today names it,
+/// and leaves out the summary it shows as its recap.
+struct LessonHost: Sendable {
+  let title: String
+  let steps: [LessonStep]
 }
 
 extension EnvironmentValues {
@@ -49,6 +65,8 @@ struct LessonPlayerScreen: View {
   var fromCatalog = false
   var opening: LessonOpening?
   var activated = false
+  var host: LessonHost?
+  var ending: LessonEndSlot?
   @Environment(AppRouter.self) private var router
 
   var body: some View {
@@ -66,8 +84,10 @@ struct LessonPlayerScreen: View {
             router.openStudy(destination == .changed ? .today : destination)
           },
           api: player.api, cache: player.cache, preferences: player.preferences,
-          lessonResource: player.lesson(id: lessonId), blockFinished: player.blockFinished,
-          sessionStarted: player.sessionStarted)
+          lessonResource: player.lesson(id: lessonId, hostedAs: host),
+          blockFinished: player.blockFinished,
+          sessionStarted: player.sessionStarted),
+        ending: ending
       )
       .id(lessonId)
     }
@@ -82,35 +102,31 @@ private struct LessonPlayerContent: View {
   @Environment(SessionStore.self) private var session
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
   @State private var store: LessonPlayerStore
+  let ending: LessonEndSlot?
   @State private var isLeaving = false
   @State private var isShowingMap = false
   @State private var soundOwner = UUID().uuidString
 
-  init(store: LessonPlayerStore) {
+  init(store: LessonPlayerStore, ending: LessonEndSlot?) {
     _store = State(initialValue: store)
+    self.ending = ending
   }
 
   var body: some View {
     NavigationStack {
       content
         // Main's task header: the title in the bar, the lesson's segments under it.
-        .safeAreaBar(edge: .top) {
-          if let segments {
+        .taskSegmentsBar(
+          segments.map {
             TaskSegments(
-              segments: segments,
+              segments: $0,
               label: Text(
                 "Lesson progress", tableName: "Player", comment: "Progress bar of the lesson"),
               value: Text(
-                store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0)))
-            )
-            // The lesson's column; on iPhone Duo, the page before the hinge.
-            .frame(maxWidth: 680)
-            .lonePage()
-            .scenePadding(.horizontal)
-            .padding(.bottom, 4)
+                store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0))))
           }
-        }
-        .taskTitle(title)
+        )
+        .taskTitle(title, isShown: !endShowsTitle)
         .taskClose { closeButton }
         .toolbar {
           if showsUnsavedAnswers {
@@ -120,7 +136,7 @@ private struct LessonPlayerContent: View {
           }
         }
         .taskOptions(
-          isShown: store.screen == .playing && store.state != nil,
+          isShown: store.screen == .playing && store.state != nil && !isRefused,
           label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")
         ) {
           if let state = store.state {
@@ -136,12 +152,12 @@ private struct LessonPlayerContent: View {
     }
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
-        .zoonkStyles()
+        .zoonkSheet()
     }
     .sheet(isPresented: $isShowingMap) {
       if let lesson = store.lesson, let summary = lesson.summary {
         LessonMapSheet(title: lesson.title, summary: summary)
-          .zoonkStyles()
+          .zoonkSheet()
       }
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
@@ -221,14 +237,14 @@ private struct LessonPlayerContent: View {
     if let warmUp = store.warmUp, case .waiting(_, let writing) = store.screen {
       WaitHold(
         surface: .lessonWait, isReady: writing == .written,
-        announcement: LessonWaitingView.lessonReady
+        announcement: LessonWaitWords(store.writingKind).ready
       ) { stage in
         switch stage {
         case .waiting(let holding):
           LessonWaitingView(
-            outline: warmUp.outline, writing: writing, progress: store.writingProgress,
-            alternative: store.alternative, warmUpID: warmUp.deckID, goalID: store.goalID,
-            holding: holding
+            outline: warmUp.outline, kind: LessonWaitWords(store.writingKind), writing: writing,
+            progress: store.writingProgress, alternative: store.alternative,
+            warmUpID: warmUp.deckID, goalID: store.goalID, holding: holding
           ) {
             Task { await store.writeLesson() }
           }
@@ -268,8 +284,8 @@ private struct LessonPlayerContent: View {
       .lonePage()
     case .waiting(let outline, let writing):
       LessonWaitingView(
-        outline: outline, writing: writing, progress: store.writingProgress,
-        alternative: store.alternative, goalID: store.goalID
+        outline: outline, kind: LessonWaitWords(store.writingKind), writing: writing,
+        progress: store.writingProgress, alternative: store.alternative, goalID: store.goalID
       ) {
         Task { await store.writeLesson() }
       }
@@ -284,7 +300,8 @@ private struct LessonPlayerContent: View {
         } else if state.phase == .completed, let completion = state.completion {
           LessonCompletionView(
             completion: completion, correct: state.correctCount, answered: state.answeredCount,
-            soundsEnabled: store.soundsEnabled, guestEnding: guestEnding, lesson: store.lesson
+            soundsEnabled: store.soundsEnabled, guestEnding: guestEnding, lesson: store.lesson,
+            ending: ending
           ) {
             Task { await store.finish() }
           } close: {
@@ -377,6 +394,20 @@ private struct LessonPlayerContent: View {
       }
     }
 
+    if state.canSkipWriting {
+      Button {
+        store.skipWriting()
+      } label: {
+        Label {
+          Text(
+            "Skip writing questions today", tableName: "Player",
+            comment: "In the lesson's menu: leaves written answers out for the rest of today")
+        } icon: {
+          Image(systemName: "pencil.slash")
+        }
+      }
+    }
+
     if state.canKnowThis {
       Button {
         store.knowThis()
@@ -404,6 +435,12 @@ private struct LessonPlayerContent: View {
     }
   }
 
+  /// A host's end titles the screen with the lesson's own name, as main's `completionTitled`.
+  private var endShowsTitle: Bool {
+    guard ending != nil, let state = store.state, state.phase == .completed else { return false }
+    return state.completion?.status == .saving || state.completion?.status == .saved
+  }
+
   private var title: Text {
     if let lesson = store.lesson {
       Text(lesson.title)
@@ -419,15 +456,16 @@ private struct LessonPlayerContent: View {
   }
 
   private var segments: [TaskSegment]? {
-    guard let state = store.state, store.screen == .playing, state.phase != .completed else {
-      return nil
-    }
-
-    if case .refused = state.run {
+    guard let state = store.state, store.screen == .playing, state.phase != .completed, !isRefused
+    else {
       return nil
     }
 
     return state.segments
+  }
+
+  private var isRefused: Bool {
+    if case .refused = store.state?.run { true } else { false }
   }
 
   /// Words on the screen stay protected until their check saves; every other answer is already kept.

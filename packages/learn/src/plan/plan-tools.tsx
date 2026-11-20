@@ -2,17 +2,11 @@
 
 import { type PlanToolView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import {
-  CalculatorIcon,
-  ChevronDownIcon,
-  CodeIcon,
-  SheetIcon,
-  TerminalIcon,
-  WrenchIcon,
-} from "lucide-react";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
+import { cn } from "@zoonk/ui/lib/utils";
+import { CalculatorIcon, CodeIcon, SheetIcon, TerminalIcon, WrenchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
 import { PlanToolSheet } from "./plan-tool-sheet";
 import { useSystemName } from "./use-system-name";
@@ -28,10 +22,15 @@ const ICONS = [
   { icon: CodeIcon, pattern: /python|code|código|javascript|sql|editor|\bR\b/iu },
 ] as const;
 
-function ToolIcon({ name }: { name: string }) {
+/** Centered beside a name and its status, on the name's line once the choices add a third line. */
+function ToolIcon({ firstLine, name }: { firstLine: boolean; name: string }) {
   const Icon = ICONS.find((entry) => entry.pattern.test(name))?.icon ?? WrenchIcon;
 
-  return <Icon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />;
+  return (
+    <span aria-hidden="true" className={cn("flex h-5 items-center", firstLine && "self-start")}>
+      <Icon className="text-muted-foreground size-4 shrink-0" />
+    </span>
+  );
 }
 
 function ToolStatus({ tool }: { tool: PlanToolView }) {
@@ -60,7 +59,7 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
 
   return (
     <li className="grid min-h-14 grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-2 py-2 @max-2xs:grid-cols-[auto_1fr]">
-      <ToolIcon name={tool.name} />
+      <ToolIcon firstLine={Boolean(match?.choices)} name={tool.name} />
 
       <div className="flex min-w-0 flex-col gap-0.5">
         <p className="text-sm font-medium">{match?.tool ?? tool.name}</p>
@@ -71,6 +70,7 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
       </div>
 
       <Button
+        aria-haspopup="dialog"
         aria-label={
           tool.choice
             ? t("Change how you'll use {tool}", { tool: tool.name })
@@ -78,7 +78,7 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
         }
         className="@max-2xs:col-start-2 @max-2xs:justify-self-start"
         onClick={onChoose}
-        size="sm"
+        size="lg"
         variant={tool.choice ? "ghost" : "outline"}
       >
         {tool.choice ? t("Change") : t("Choose")}
@@ -121,30 +121,27 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
           tabIndex={-1}
         >
           {t(
-            "You won't practice on your own computer. Lessons use examples and simulations instead.",
+            "You won't practice on your own device. Lessons use examples and simulations instead.",
           )}
         </p>
       ) : (
-        <>
-          <Button
-            busy={isPending}
-            className="self-start"
-            onClick={() => {
-              chose.current = true;
-              holderRef.current?.focus();
-              choose({ choice: "none", system: null, tools: tools.map((tool) => tool.name) });
-            }}
-            ref={buttonRef}
-            variant="link"
-          >
-            {t({
-              description:
-                "A link that switches the plan to learning from examples, without installing tools.",
-              message: "No tools? You can do it all with examples.",
-            })}
-          </Button>
-          {failed && <ChangeSaveError />}
-        </>
+        <Button
+          busy={isPending}
+          className="self-start"
+          onClick={() => {
+            chose.current = true;
+            holderRef.current?.focus();
+            choose({ choice: "none", system: null, tools: tools.map((tool) => tool.name) });
+          }}
+          ref={buttonRef}
+          variant="link"
+        >
+          {t({
+            description:
+              "A link that switches the plan to learning from examples, without installing tools.",
+            message: "No tools? You can do it all with examples.",
+          })}
+        </Button>
       )}
     </div>
   );
@@ -166,16 +163,17 @@ function LaterTools({
   return (
     <details className="group flex flex-col open:gap-2">
       {/* A flex summary drops the native triangle, so the chevron says it opens. */}
-      <summary className="text-muted-foreground flex min-h-11 cursor-pointer items-center gap-1 text-sm [&::-webkit-details-marker]:hidden">
-        {t("More later: {tools}", {
-          tools: tools
-            .map((tool) => CHOICES_PATTERN.exec(tool.name)?.groups?.tool ?? tool.name)
-            .join(", "),
-        })}
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="size-4 shrink-0 transition-transform group-open:rotate-180 motion-reduce:transition-none"
-        />
+      <summary className="text-muted-foreground min-h-control flex cursor-pointer items-center gap-1 text-sm [&::-webkit-details-marker]:hidden">
+        {t(
+          "{count, plural, one {# more tool later: {tools}} other {# more tools later: {tools}}}",
+          {
+            count: tools.length,
+            tools: tools
+              .map((tool) => CHOICES_PATTERN.exec(tool.name)?.groups?.tool ?? tool.name)
+              .join(", "),
+          },
+        )}
+        <FoldChevron inline />
       </summary>
 
       <ul className="divide-border flex flex-col divide-y">

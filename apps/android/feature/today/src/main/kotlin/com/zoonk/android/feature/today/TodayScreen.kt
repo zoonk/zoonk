@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,33 +36,49 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.VisitorWelcome
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.questionsLeft
+import com.zoonk.android.feature.plan.ResumeFailure
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.android.navigation.SignInGate
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.Suggestion
+import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMark
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.rememberGoalExamples
+import com.zoonk.android.ui.scaffold.BarError
+import com.zoonk.android.ui.scaffold.BarNoteInPage
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
+import com.zoonk.android.ui.scaffold.barNoteViewport
+import com.zoonk.android.ui.scaffold.pagePadding
+import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.SuggestedGoal
@@ -78,13 +94,13 @@ fun TodayScreen(
     val access by app.learnerAccess.collectAsStateWithLifecycle()
     val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans, app.focusTests) }
 
-    LaunchedEffect(viewModel, navigator) {
-        viewModel.routes.collect { tapped ->
-            // A goal switch or a new day since the tap: what it opened belongs to the day no longer shown.
-            val shown = app.today.today.state.value.value as? TodayRead.Day
-            val same = tapped.goalId == null || (shown?.today?.goal?.id == tapped.goalId && shown.day.localDate == tapped.localDate)
-            if (same && app.goalSwitch.pending.value == null) navigator.open(tapped.route)
-        }
+    // A suggestion answered off the day (no goal yet) ends its visit here, where no day does.
+    OnVisitEnd(viewModel, onEnd = viewModel::endVisit)
+    ActOn(viewModel.route) { tapped ->
+        // A goal switch or a new day since the tap: what it opened belongs to the day no longer shown.
+        val shown = app.today.today.state.value.value as? TodayRead.Day
+        val same = tapped.goalId == null || (shown?.today?.goal?.id == tapped.goalId && shown.day.localDate == tapped.localDate)
+        if (same && app.goalSwitch.pending.value == null) navigator.open(tapped.route)
     }
 
     TabRootScaffold { padding ->
@@ -154,7 +170,6 @@ private fun TodayRead(
                     }
 
                     val buddy = summary.value?.buddy?.look() ?: BuddyLook()
-                    val brainPower by app.today.brainPower.collectShown()
                     val language =
                         if (read.today.goal.kind == TodayGoal.Kind.LANGUAGE) {
                             app.today.language[read.today.goal.id]
@@ -172,17 +187,18 @@ private fun TodayRead(
                         padding = padding,
                         buddy = buddy,
                         buddyName = buddyName(buddy.kind, summary.value?.buddy?.name),
-                        brainPower = brainPower.value,
                         practice = {
                             TodayPractice(
                                 app.today,
                                 app.mocks,
-                                read.today.goal,
+                                read.today.goal.id,
+                                isExam = read.today.goal.kind == TodayGoal.Kind.EXAM,
+                                isLanguage = read.today.goal.kind == TodayGoal.Kind.LANGUAGE,
                                 completedLessons = summary.value?.places?.completedLessons == true,
                                 navigate = navigator::open,
                             )
                         },
-                        plans = app.plans,
+                        snackbars = app.snackbars,
                         refreshIfChanged = app.today::refreshIfChanged,
                         language = language,
                         onboarding = app.onboarding,
@@ -211,30 +227,41 @@ private fun TodayRead(
 }
 
 @Composable
-private fun WelcomeBack(
+internal fun WelcomeBack(
     suggestion: SuggestedGoal,
     viewModel: TodayViewModel,
     padding: PaddingValues,
 ) {
-    TodayPage(padding) {
-        TodayPageHeader(state = null, title = stringResource(R.string.today_welcome_back))
+    TodayPage(
+        padding,
+        note = if (viewModel.answerFailed) ({ BarError(stringResource(R.string.today_save_failed)) }) else null,
+        bottomBar = {
+            TaskActions(
+                back = {
+                    OutlinedButton(
+                        enabled = !viewModel.isAnswering,
+                        onClick = { viewModel.answer(suggestion, accepted = false, hasGoal = false) },
+                    ) {
+                        Text(stringResource(R.string.today_not_now))
+                    }
+                },
+            ) { main ->
+                Button(
+                    enabled = !viewModel.isAnswering,
+                    onClick = { viewModel.answer(suggestion, accepted = true, hasGoal = false) },
+                    modifier = main,
+                ) {
+                    Text(stringResource(R.string.today_suggested_goal_accept))
+                }
+            }
+        },
+    ) {
+        TodayPageHeader(stringResource(R.string.today_welcome_back))
         TodayStatusLine(
             icon = R.drawable.ic_explore,
             sentence = stringResource(R.string.today_suggested_goal_question, suggestion.title),
             clause = stringResource(R.string.today_suggested_goal_detail),
         )
-        TodayActions {
-            Button(enabled = !viewModel.isAnswering, onClick = { viewModel.answer(suggestion, accepted = true, hasGoal = false) }) {
-                Text(stringResource(R.string.today_suggested_goal_accept))
-            }
-            OutlinedButton(
-                enabled = !viewModel.isAnswering,
-                onClick = { viewModel.answer(suggestion, accepted = false, hasGoal = false) },
-            ) {
-                Text(stringResource(R.string.today_not_now))
-            }
-        }
-        if (viewModel.answerFailed) SaveFailed(stringResource(R.string.today_save_failed))
     }
 }
 
@@ -266,7 +293,7 @@ private fun FirstGoal(
         modifier = Modifier.padding(padding),
     ) { examplesBeside ->
         TodayPage(PaddingValues()) {
-            TodayPageHeader(state = null, title = stringResource(R.string.today_title))
+            TodayPageHeader(stringResource(R.string.today_title))
             if (explanation != null) ExplanationContinue(explanation, navigator)
             UnfinishedGoal(onboarding, navigator::open)
             GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = start)
@@ -280,17 +307,16 @@ private fun ExplanationContinue(
     explanation: LearnerSummaryGoal,
     navigator: AppNavigator,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(title = stringResource(R.string.today_quick_explanation))
         ListRow(
             headline = { Text(explanation.displayName) },
             modifier = Modifier.bleed(LIST_ITEM_INSET),
             highlighted = true,
             leading = { androidx.compose.material3.Icon(painterResource(R.drawable.ic_play_arrow), contentDescription = null) },
-            supporting = { Text(stringResource(R.string.today_quick_explanation)) },
+            supporting = { Text(stringResource(R.string.today_continue_draft)) },
+            onClick = { navigator.open(AppRoute.Explain(explanation.id.toString())) },
         )
-        Button(onClick = { navigator.open(AppRoute.Explain(explanation.id.toString())) }) {
-            Text(stringResource(R.string.today_continue_explanation))
-        }
     }
 }
 
@@ -309,7 +335,7 @@ internal fun UnfinishedGoal(
             modifier = Modifier.bleed(LIST_ITEM_INSET),
             highlighted = true,
             leading = { androidx.compose.material3.Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
-            supporting = { Text(stringResource(R.string.onboarding_what_you_wrote)) },
+            supporting = { Text(stringResource(R.string.today_unfinished_setup)) },
         )
         OutlinedButton(onClick = { navigate(AppRoute.StartGoal(draftId = draft.draftId.toString())) }) {
             Text(stringResource(R.string.today_continue_draft))
@@ -326,44 +352,80 @@ private fun GoalAtRest(
     summary: LearnerSummary?,
     padding: PaddingValues,
 ) {
-    val goal = summary?.goals?.firstOrNull { it.id == summary.activeGoalId }
+    GoalAtRestPage(
+        goal = summary?.goals?.firstOrNull { it.id == summary.activeGoalId },
+        completedLessons = summary?.places?.completedLessons == true,
+        viewModel = viewModel,
+        today = app.today,
+        mocks = app.mocks,
+        padding = padding,
+        navigate = navigator::open,
+        banner = { UnfinishedGoal(app.onboarding, navigator::open) },
+        resume = { ResumeEffect(app, it) },
+    )
+}
+
+/** [goal] is the active one, finished or paused; [resume] keeps a paused one's resume preview in step. */
+@Composable
+internal fun GoalAtRestPage(
+    goal: LearnerSummaryGoal?,
+    completedLessons: Boolean,
+    viewModel: TodayViewModel,
+    today: TodayStore,
+    mocks: MockStore,
+    padding: PaddingValues,
+    navigate: (AppRoute) -> Unit,
+    banner: @Composable () -> Unit = {},
+    resume: @Composable (LearnerSummaryGoal) -> Unit = {},
+) {
+    val newGoal = { navigate(AppRoute.StartGoal()) }
 
     if (goal?.status == LearnerSummaryGoal.Status.COMPLETED) {
         TodayAtRest(
             padding = padding,
-            state = stringResource(R.string.today_finished),
             icon = R.drawable.ic_flag,
             sentence = stringResource(R.string.today_finished_goal, goal.displayName),
-            clause = stringResource(R.string.today_finished_detail),
-        ) {
-            Button(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.today_start_new_goal)) }
-        }
+        ) { main -> Button(onClick = newGoal, modifier = main) { Text(stringResource(R.string.gate_start_goal)) } }
         return
     }
 
     TodayAtRest(
         padding = padding,
-        banner = { UnfinishedGoal(app.onboarding, navigator::open) },
-        state = stringResource(R.string.today_paused),
+        banner = banner,
         icon = R.drawable.ic_pause,
         sentence =
             goal?.let { stringResource(R.string.today_paused_goal, it.displayName) } ?: stringResource(R.string.today_paused_this_goal),
         clause = stringResource(R.string.today_paused_detail),
-        detail = { if (goal?.status == LearnerSummaryGoal.Status.PAUSED) ResumeEffect(app, goal) },
+        statusAsCard = true,
+        detail = {
+            if (goal?.status == LearnerSummaryGoal.Status.PAUSED) {
+                resume(goal)
+                // A mock or a call starts only on an active goal, so a paused one offers neither.
+                TodayPractice(
+                    today,
+                    mocks,
+                    goal.id,
+                    isExam = false,
+                    isLanguage = false,
+                    completedLessons = completedLessons,
+                    navigate = navigate,
+                )
+            }
+        },
         failure =
             when (viewModel.resumeFailure) {
-                ResumeFailure.GoalLimit -> stringResource(R.string.today_resume_goal_limit)
+                ResumeFailure.GoalLimit -> stringResource(R.string.plan_goal_limit_reached)
                 ResumeFailure.Failed -> stringResource(R.string.today_save_failed)
                 null -> null
             },
-    ) {
+        other = if (goal != null) ({ OutlinedButton(onClick = newGoal) { Text(stringResource(R.string.gate_start_goal)) } }) else null,
+    ) { main ->
         if (goal != null) {
-            Button(enabled = viewModel.resuming == null, onClick = { viewModel.resume(goal.id) }) {
-                Text(stringResource(R.string.today_resume_goal, goal.displayName), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Button(busy = viewModel.resuming != null, onClick = { viewModel.resume(goal.id) }, modifier = main) {
+                Text(stringResource(R.string.today_resume))
             }
-            OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.today_new_goal)) }
         } else {
-            Button(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.today_new_goal)) }
+            Button(onClick = newGoal, modifier = main) { Text(stringResource(R.string.gate_start_goal)) }
         }
     }
 }
@@ -396,12 +458,10 @@ private fun Preparing(
     if (setup.value?.planRevealed == false && setup.value?.planReadiness?.ready == true) {
         TodayAtRest(
             padding = padding,
-            state = stringResource(R.string.onboarding_plan_ready),
             icon = R.drawable.ic_check,
             sentence = stringResource(R.string.onboarding_plan_ready_goal, read.displayName),
-            clause = stringResource(R.string.onboarding_plan_look_over),
-        ) {
-            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString(), revealMoment = true)) }) {
+        ) { main ->
+            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }, modifier = main) {
                 Text(stringResource(R.string.onboarding_see_plan))
             }
         }
@@ -412,13 +472,11 @@ private fun Preparing(
     if (setup.value?.questionsLeft == true) {
         TodayAtRest(
             padding = padding,
-            state = stringResource(R.string.today_setting_up),
             icon = R.drawable.ic_checklist,
             sentence = stringResource(R.string.today_setting_up_goal, read.displayName),
-            clause = stringResource(R.string.today_setting_up_detail),
-        ) {
-            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }) {
-                Text(stringResource(R.string.today_continue_setting_up))
+        ) { main ->
+            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }, modifier = main) {
+                Text(stringResource(R.string.today_continue_draft))
             }
         }
         return
@@ -437,7 +495,7 @@ private fun Preparing(
     val poll = pollWhile(active = setup.value?.questionsLeft == false, read = app.today.today, context = read.goalId)
 
     TodayPage(padding) {
-        TodayPageHeader(state = stringResource(R.string.today_building_plan), title = stringResource(R.string.today_title))
+        TodayPageHeader(stringResource(R.string.today_title))
         if (poll.stalled) PlanWaitStalled(poll.restart) else TodayPlanWait(read.displayName)
     }
 }
@@ -445,29 +503,11 @@ private fun Preparing(
 /** Polling gave up: it may still be building, so Reconnect starts reading again. */
 @Composable
 private fun PlanWaitStalled(onReconnect: () -> Unit) {
-    Column(
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            stringResource(R.string.today_connection_lost),
-            modifier =
-                Modifier.semantics {
-                    heading()
-                },
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Text(
-            text = stringResource(R.string.today_connection_lost_detail),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        OutlinedButton(onClick = onReconnect) { Text(stringResource(R.string.today_reconnect)) }
-    }
+    GenerationFailureNotice(GenerationFailure.Connection, onReconnect)
 }
 
 @Composable
-private fun TodayPlanWait(goalTitle: String) {
+internal fun TodayPlanWait(goalTitle: String) {
     Column(
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -482,65 +522,79 @@ private fun TodayPlanWait(goalTitle: String) {
     }
 }
 
+/** A goal with no day: what it is in the page, what to do about it in the bottom bar, the main action last. */
 @Composable
-private fun TodayAtRest(
+internal fun TodayAtRest(
     padding: PaddingValues,
-    banner: @Composable () -> Unit = {},
-    state: String,
     @DrawableRes icon: Int,
     sentence: String,
-    clause: String,
+    clause: String? = null,
+    statusAsCard: Boolean = false,
+    banner: @Composable () -> Unit = {},
     detail: @Composable () -> Unit = {},
     failure: String? = null,
-    actions: @Composable () -> Unit,
+    other: (@Composable () -> Unit)? = null,
+    main: @Composable (Modifier) -> Unit,
 ) {
-    TodayPage(padding) {
+    TodayPage(
+        padding,
+        note = failure?.let { { BarError(it) } },
+        bottomBar = { TaskActions(back = other) { modifier -> main(modifier) } },
+    ) {
         banner()
-        TodayPageHeader(state = state, title = stringResource(R.string.today_title))
-        TodayStatusLine(icon = icon, sentence = sentence, clause = clause)
+        TodayPageHeader(stringResource(R.string.today_title))
+        if (statusAsCard) {
+            Suggestion(
+                label = sentence,
+                summary = sentence,
+                layout = SuggestionLayout.Line,
+                mark = SuggestionMark.Symbol(icon),
+                lineAction = null,
+                lineDescription = clause,
+            ) {}
+        } else {
+            TodayStatusLine(icon = icon, sentence = sentence, clause = clause)
+        }
         detail()
-        TodayActions(actions)
-        if (failure != null) SaveFailed(failure)
     }
 }
 
-/** One readable column, scrolled, as main's `Page`. */
+/** One readable column, scrolled, as main's `Page`, over the page's [bottomBar] when it has one. */
 @Composable
 internal fun TodayPage(
     padding: PaddingValues,
+    note: (@Composable () -> Unit)? = null,
+    bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
+    val noteRoom = rememberBarNoteRoom()
     BeforeFold { beforeFold ->
-        Box(
-            modifier = beforeFold.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
-            contentAlignment = Alignment.TopCenter,
-        ) {
-            Column(
-                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp, vertical = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
+        Column(beforeFold.fillMaxSize().padding(padding)) {
+            Box(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .barNoteViewport(noteRoom)
+                        .verticalScroll(rememberScrollState()),
+                contentAlignment = Alignment.TopCenter,
             ) {
-                content()
+                Column(
+                    modifier =
+                        Modifier
+                            .widthIn(max = PAGE_WIDTH)
+                            .fillMaxWidth()
+                            .padding(pagePadding())
+                            .padding(bottom = noteRoom.height),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    content()
+                    BarNoteInPage(noteRoom)
+                }
             }
+            if (bottomBar != null) BottomBar(note = note, columnWidth = PAGE_WIDTH, noteRoom = noteRoom, content = bottomBar)
         }
     }
-}
-
-@Composable
-internal fun TodayActions(content: @Composable () -> Unit) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { content() }
-}
-
-@Composable
-private fun SaveFailed(
-    message: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = message,
-        modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = MaterialTheme.colorScheme.error,
-        style = MaterialTheme.typography.bodyMedium,
-    )
 }
 
 internal val PAGE_WIDTH = 720.dp

@@ -131,7 +131,6 @@ export type OpeningLessonRequest = { cache: NonNullable<OnboardingProgress["cach
   | { status: "generating" | "other" | "ready" }
 );
 
-/** The learner's lesson start admits it, so the goal's run writes it only as their own start would. */
 export async function requestOpeningLessonStep({
   analytics,
   lessonId,

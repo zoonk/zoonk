@@ -39,6 +39,8 @@ struct BuddyEditor: View {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .cancel) {
             dismiss()
+          } label: {
+            Text("Cancel", tableName: "Buddy", comment: "Closes the buddy editor without saving")
           }
         }
 
@@ -59,37 +61,11 @@ struct BuddyEditor: View {
     let isEarned = availableGlasses.contains(glasses)
     let isWorn = choice.glasses == glasses
 
-    return Button {
+    return ChoiceRow(isPicked: isWorn, isLocked: !isEarned) {
       choice.glasses = glasses
-    } label: {
-      HStack {
-        VStack(alignment: .leading) {
-          glasses.name
-            .foregroundStyle(isEarned ? Color(.foreground) : .mutedForeground)
-
-          if !isEarned {
-            glasses.howToEarn
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-
-        Spacer()
-
-        if isWorn {
-          Image(systemName: "checkmark")
-            .fontWeight(.semibold)
-            .accessibilityHidden(true)
-        } else if !isEarned {
-          Image(systemName: "lock")
-            .foregroundStyle(.mutedForeground)
-            .accessibilityHidden(true)
-        }
-      }
+    } words: {
+      ChoiceWords(title: glasses.name, detail: isEarned ? nil : glasses.howToEarn)
     }
-    .foregroundStyle(.primary)
-    .disabled(!isEarned)
-    .accessibilityAddTraits(isWorn ? .isSelected : [])
   }
 }
 
@@ -101,42 +77,40 @@ struct BuddyPickerSections: View {
   @Binding var name: String
   var glasses: BuddyGlasses = .round
 
+  @FocusState private var isNameFocused: Bool
+
   var body: some View {
     Section {
-      Picker(selection: $kind) {
-        ForEach(buddyKinds, id: \.self) { kind in
+      ForEach(buddyKinds, id: \.self) { option in
+        ChoiceRow(isPicked: kind == option) {
+          kind = option
+        } words: {
           Label {
-            VStack(alignment: .leading) {
-              Text(buddyName(kind: kind, name: nil))
-              kind.tagline
-                .typeStyle(.note)
-                .foregroundStyle(.mutedForeground)
-            }
+            ChoiceWords(title: Text(buddyName(kind: option, name: nil)), detail: option.tagline)
           } icon: {
-            BuddyFace(kind: kind, glasses: glasses)
+            BuddyFace(kind: option, glasses: glasses)
           }
-          .tag(kind)
         }
-      } label: {
-        Text("Buddy", tableName: "Buddy", comment: "Choosing which buddy")
       }
-      .pickerStyle(.inline)
-      .labelsHidden()
     }
 
     Section {
-      TextField(text: $name, prompt: Text(buddyName(kind: kind, name: nil))) {
-        Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
-      }
-      .textInputAutocapitalization(.words)
-      .autocorrectionDisabled()
-      .onChange(of: name) { _, newName in
-        if newName.count > buddyNameMaxLength {
-          name = String(newName.prefix(buddyNameMaxLength))
+      FormField(
+        title: Text("Name", tableName: "Buddy", comment: "The buddy's custom name"),
+        isFocused: isNameFocused
+      ) {
+        TextField(text: $name, prompt: Text(buddyName(kind: kind, name: nil))) {
+          Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
+        }
+        .textInputAutocapitalization(.words)
+        .autocorrectionDisabled()
+        .focused($isNameFocused)
+        .onChange(of: name) { _, newName in
+          if newName.count > buddyNameMaxLength {
+            name = String(newName.prefix(buddyNameMaxLength))
+          }
         }
       }
-    } header: {
-      SectionTitle(Text("Name", tableName: "Buddy", comment: "The buddy's custom name"))
     }
   }
 }
@@ -146,13 +120,15 @@ struct BuddyPickerSections: View {
 struct BuddyGlassesPicker: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(BuddyStore.self) private var store
+  /// Says a pair didn't go on, while the sheet is open.
+  @State private var saving = VisitRequest<Bool>()
 
   let status: BuddyStatus
 
   var body: some View {
     NavigationStack {
       ZoonkList {
-        if store.saveFailed {
+        if saving.outcome == false {
           FailureLine(
             message: LocalizedStringResource(
               "We couldn't save your buddy. Try again.", table: "Buddy",
@@ -162,13 +138,11 @@ struct BuddyGlassesPicker: View {
         ForEach(status.glasses, id: \.glasses) { option in
           let isWorn = store.status.value?.buddy.glasses == option.glasses.worn
 
-          Button {
-            Task {
-              await store.save(
-                BuddyChoice(
-                  kind: status.buddy.kind, name: status.buddy.name, glasses: option.glasses.worn))
-            }
-          } label: {
+          ChoiceRow(isPicked: isWorn, isLocked: !option.earned) {
+            let choice = BuddyChoice(
+              kind: status.buddy.kind, name: status.buddy.name, glasses: option.glasses.worn)
+            saving.run { [store] in await store.save(choice) }
+          } words: {
             HStack(spacing: 12) {
               BuddyFace(kind: status.buddy.kind, glasses: option.glasses.worn)
                 .typeStyle(.pageTitle.weight(.regular))
@@ -176,26 +150,15 @@ struct BuddyGlassesPicker: View {
 
               VStack(alignment: .leading, spacing: 4) {
                 option.glasses.name
-                  .typeStyle(.body.weight(.semibold))
+                  .typeStyle(.rowTitle)
+                  .foregroundStyle(Color(.foreground))
 
                 if !option.earned {
                   lockedDetail(option)
                 }
               }
-
-              Spacer()
-
-              if isWorn {
-                Image(systemName: "checkmark")
-                  .fontWeight(.semibold)
-                  .accessibilityHidden(true)
-              }
             }
-            .contentShape(.rect)
           }
-          .foregroundStyle(.primary)
-          .disabled(!option.earned)
-          .accessibilityAddTraits(isWorn ? .isSelected : [])
         }
       }
       .navigationTitle(Text("Glasses", tableName: "Buddy", comment: "Title of the buddy's glasses"))
@@ -206,22 +169,18 @@ struct BuddyGlassesPicker: View {
             Text("Glasses", tableName: "Buddy", comment: "Title of the buddy's glasses")
               .typeStyle(.body.weight(.semibold))
             Text(
-              "Pick a pair you've earned to wear it.", tableName: "Buddy",
+              "Pick a pair you've earned.", tableName: "Buddy",
               comment: "What the glasses list does"
             )
             .typeStyle(.meta)
             .foregroundStyle(.mutedForeground)
           }
         }
-
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
-        }
       }
+      .sheetClose { dismiss() }
     }
     .presentationDetents([.medium, .large])
+    .onDisappear { saving.leave() }
   }
 
   @ViewBuilder

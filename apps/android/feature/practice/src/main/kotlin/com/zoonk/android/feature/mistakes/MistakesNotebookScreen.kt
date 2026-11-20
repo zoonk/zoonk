@@ -42,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
@@ -70,29 +69,33 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.CountTab
+import com.zoonk.android.ui.components.CountTabs
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.DoneMark
-import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkIcon
+import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
-import com.zoonk.android.ui.scaffold.detailPagePadding
-import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
@@ -103,7 +106,6 @@ import com.zoonk.api.models.MistakeList
 import com.zoonk.api.models.MistakeStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.ZoneId
 import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -123,7 +125,7 @@ fun MistakesNotebookScreen(
         Box(Modifier.fillMaxSize().padding(padding)) {
             when {
                 goal != null -> {
-                    Notebook(goal.id, goal.displayName, app.mistakesNotebook, navigator, read.nextChangeAt)
+                    Notebook(goal.id, app.mistakesNotebook, navigator, read.nextChangeAt)
                 }
 
                 summary is LoadState.Failed -> {
@@ -152,7 +154,6 @@ fun MistakesNotebookScreen(
 @Composable
 internal fun Notebook(
     goalId: UUID,
-    goalTitle: String,
     store: MistakesNotebookStore,
     navigator: AppNavigator,
     nextChangeAt: Long? = null,
@@ -162,42 +163,59 @@ internal fun Notebook(
     val toFix = rememberListMemory()
     val fixedOnes = rememberListMemory()
     var span by remember { mutableStateOf<PageSpan?>(null) }
+    val ready =
+        store.notebooks[NotebookKey(goalId, false)]
+            .collectShown()
+            .value.value
+            ?.availability
+            ?.ready ?: 0L
 
-    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val fold = spreadFold(maxWidth, span)
-        val beforeFold = pageFold(maxWidth, span)?.start
-        val wide = beforeFold == null && maxWidth >= INBOX_WIDTH
-        val first = if (fold == null && fixed) fixedOnes else toFix
+    Column {
+        BoxWithConstraints(Modifier.weight(1f).onPageSpan { span = it }) {
+            val fold = spreadFold(maxWidth, span)
+            val beforeFold = pageFold(maxWidth, span)?.start
+            val wide = beforeFold == null && maxWidth >= INBOX_WIDTH
+            val first = if (fold == null && fixed) fixedOnes else toFix
 
-        // The first list keeps its place either way, so what's open in it stays as the book opens or closes.
-        Row(Modifier.fillMaxSize()) {
-            NotebookList(
-                goalId = goalId,
-                goalTitle = goalTitle,
-                fixed = fixed && fold == null,
-                store = store,
-                navigator = navigator,
-                memory = first,
-                nextChangeAt = nextChangeAt,
-                hero = true,
-                onTab = if (fold == null) ({ fixed = it }) else null,
-                wide = wide,
-                modifier = beforeFold?.let { Modifier.width(it) } ?: Modifier.weight(1f),
-            )
-            if (fold != null) {
+            // The first list keeps its place either way, so what's open in it stays as the book opens or closes.
+            Row(Modifier.fillMaxSize()) {
                 NotebookList(
                     goalId = goalId,
-                    goalTitle = goalTitle,
-                    fixed = true,
+                    fixed = fixed && fold == null,
                     store = store,
                     navigator = navigator,
-                    memory = fixedOnes,
+                    memory = first,
                     nextChangeAt = nextChangeAt,
-                    hero = false,
-                    onTab = null,
-                    wide = false,
-                    modifier = Modifier.weight(1f).padding(start = fold.end - fold.start),
+                    hero = true,
+                    onTab = if (fold == null) ({ fixed = it }) else null,
+                    wide = wide,
+                    hasMainAction = ready > 0,
+                    modifier = beforeFold?.let { Modifier.width(it) } ?: Modifier.weight(1f),
                 )
+                if (fold != null) {
+                    NotebookList(
+                        goalId = goalId,
+                        fixed = true,
+                        store = store,
+                        navigator = navigator,
+                        memory = fixedOnes,
+                        nextChangeAt = nextChangeAt,
+                        hero = false,
+                        onTab = null,
+                        wide = false,
+                        hasMainAction = ready > 0,
+                        modifier = Modifier.weight(1f).padding(start = fold.end - fold.start),
+                    )
+                }
+            }
+        }
+        if (ready > 0) {
+            BottomBar {
+                TaskActions { main ->
+                    Button(onClick = { navigator.open(AppRoute.MistakePractice()) }, modifier = main) {
+                        Text(stringResource(R.string.mistakes_practice))
+                    }
+                }
             }
         }
     }
@@ -207,7 +225,6 @@ internal fun Notebook(
 @Composable
 private fun NotebookList(
     goalId: UUID,
-    goalTitle: String,
     fixed: Boolean,
     store: MistakesNotebookStore,
     navigator: AppNavigator,
@@ -216,6 +233,7 @@ private fun NotebookList(
     hero: Boolean,
     onTab: ((Boolean) -> Unit)?,
     wide: Boolean,
+    hasMainAction: Boolean,
     modifier: Modifier,
 ) {
     val key = NotebookKey(goalId, fixed)
@@ -239,7 +257,7 @@ private fun NotebookList(
     if (head == null) {
         Box(modifier) {
             if (loaded is LoadState.Failed) {
-                LoadFailedMessage(onRetry = { scope.launch { store.notebooks[key].refresh() } })
+                LoadFailedMessage(onRetry = { scope.launch { store.notebooks[key].refresh() } }, inBar = !hasMainAction)
             } else {
                 PageLoading()
             }
@@ -249,7 +267,6 @@ private fun NotebookList(
 
     val page =
         NotebookPage(
-            goalTitle = goalTitle,
             head = head,
             list = list,
             failed = loaded is LoadState.Failed,
@@ -260,15 +277,16 @@ private fun NotebookList(
         )
     val keys = page.groups.map { it.groupKey() }
     val selectedKey = memory.picked?.takeIf { it in keys } ?: keys.firstOrNull()
+    // Narrow, each skill opens and closes on its own, so opening one never moves the row tapped.
+    val opened = memory.opened ?: listOfNotNull(keys.firstOrNull())
     val actions =
         NotebookActions(
             onTab = { onTab?.invoke(it) },
             onPick = { groupKey, open ->
                 if (open) memory.picked = groupKey
-                memory.collapsed = !open
+                memory.opened = opened.filter { it != groupKey } + listOfNotNull(groupKey.takeIf { open })
             },
             onRetry = { scope.launch { store.notebooks[key].refresh() } },
-            onPractice = { navigator.open(AppRoute.MistakePractice()) },
             onPattern = { navigator.open(AppRoute.Pattern(it.toString())) },
             onPracticeSkill = { navigator.open(AppRoute.MistakePractice(it.toString())) },
             onLesson = { navigator.open(AppRoute.Lesson(it.toString())) },
@@ -286,31 +304,30 @@ private fun NotebookList(
         if (wide && page.groups.isNotEmpty()) {
             WideNotebook(page, actions, lead, selectedKey, memory.scroll)
         } else {
-            NarrowNotebook(page, actions, lead, selectedKey.takeUnless { memory.collapsed }, memory.scroll)
+            NarrowNotebook(page, actions, lead, opened.toSet(), memory.scroll)
         }
     }
 }
 
-/** What's open in one of the notebook's lists and where it's scrolled. */
+/** What's open in one of the notebook's lists and where it's scrolled: [opened] is null until a fold is tapped. */
 private class ListMemory(
     val scroll: LazyListState,
     picked: MutableState<String?>,
-    collapsed: MutableState<Boolean>,
+    opened: MutableState<List<String>?>,
 ) {
     var picked by picked
-    var collapsed by collapsed
+    var opened by opened
 }
 
 @Composable
 private fun rememberListMemory(): ListMemory {
     val scroll = rememberLazyListState()
     val picked = rememberSaveable { mutableStateOf<String?>(null) }
-    val collapsed = rememberSaveable { mutableStateOf(false) }
-    return remember(scroll) { ListMemory(scroll, picked, collapsed) }
+    val opened = rememberSaveable { mutableStateOf<List<String>?>(null) }
+    return remember(scroll) { ListMemory(scroll, picked, opened) }
 }
 
 private class NotebookPage(
-    val goalTitle: String,
     /** The counts and availability: the same on both tabs, so a tab that's loading keeps showing them. */
     val head: MistakeList,
     val list: MistakeList?,
@@ -340,7 +357,6 @@ private class NotebookActions(
     val onTab: (Boolean) -> Unit,
     val onPick: (groupKey: String, open: Boolean) -> Unit,
     val onRetry: () -> Unit,
-    val onPractice: () -> Unit,
     val onPattern: (UUID) -> Unit,
     val onPracticeSkill: (UUID) -> Unit,
     val onLesson: (UUID) -> Unit,
@@ -352,19 +368,19 @@ private fun NarrowNotebook(
     page: NotebookPage,
     actions: NotebookActions,
     lead: NotebookLead,
-    open: String?,
+    open: Set<String>,
     listState: LazyListState,
 ) {
-    LazyColumn(Modifier.fillMaxSize(), listState, detailPagePadding()) {
+    LazyColumn(Modifier.fillMaxSize(), listState, pagePadding()) {
         notebookHead(page, actions, lead)
         notebookBody(page, actions) {
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
                 page.groups.forEachIndexed { index, group ->
-                    if (index > 0) HorizontalDivider()
+                    if (index > 0) ListDivider()
                     val groupKey = group.groupKey()
                     DisclosureRow(
                         title = group.skillName(),
-                        expanded = open == groupKey,
+                        expanded = groupKey in open,
                         onExpandedChange = { actions.onPick(groupKey, it) },
                         leading = group.fixedMark(),
                         count = group.size,
@@ -384,7 +400,7 @@ private fun WideNotebook(
     selectedKey: String?,
     listState: LazyListState,
 ) {
-    val padding = detailPagePadding()
+    val padding = pagePadding()
 
     Row(Modifier.fillMaxSize()) {
         LazyColumn(
@@ -396,7 +412,7 @@ private fun WideNotebook(
             notebookBody(page, actions) {
                 Column(Modifier.bleed(LIST_ITEM_INSET)) {
                     page.groups.forEachIndexed { index, group ->
-                        if (index > 0) HorizontalDivider()
+                        if (index > 0) ListDivider()
                         val groupKey = group.groupKey()
                         ListRow(
                             headline = { Text(group.skillName()) },
@@ -431,7 +447,7 @@ private fun LazyListScope.notebookBody(
         Box(Modifier.padding(top = ITEM_GAP)) {
             when {
                 page.list == null && page.failed -> {
-                    LoadFailedMessage(onRetry = actions.onRetry)
+                    LoadFailedMessage(onRetry = actions.onRetry, inBar = false)
                 }
 
                 page.list == null -> {
@@ -457,7 +473,7 @@ private fun LazyListScope.notebookHead(
 ) {
     // The same items with or without the hero, so a list's scroll keeps its place as the book opens or closes. Each
     // item brings its own gap: a list's spacing would also follow the hero's empty slot.
-    item { if (lead.hero) Box(Modifier.padding(bottom = ITEM_GAP)) { NotebookHero(page, actions.onPractice) } }
+    item { if (lead.hero) Box(Modifier.padding(bottom = ITEM_GAP)) { NotebookHero(page) } }
     item { if (lead.tabs) NotebookTabs(page, actions.onTab) else NotebookListTitle(page) }
     page.pattern?.let { pattern ->
         item {
@@ -492,82 +508,32 @@ private fun LazyListScope.notebookMore(
 }
 
 @Composable
-private fun NotebookHero(
-    page: NotebookPage,
-    onPractice: () -> Unit,
-) {
+private fun NotebookHero(page: NotebookPage) {
     val availability = page.head.availability
-    val ready = availability.ready.toInt()
-    val tomorrow = availability.tomorrow.toInt()
-    val fixedCount =
-        page.head.counts.fixed
-            .toInt()
+    val opensTomorrow = availability.ready == 0L && availability.tomorrow > 0
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Eyebrow(page.goalTitle)
-            PageTitleRow(stringResource(R.string.mistakes_notebook_title))
-        }
-        Facts(
-            listOfNotNull(
-                pluralStringResource(R.plurals.mistakes_ready, ready, ready).takeIf { ready > 0 || tomorrow == 0 },
-                pluralStringResource(R.plurals.mistakes_tomorrow, tomorrow, tomorrow).takeIf { tomorrow > 0 },
-                pluralStringResource(R.plurals.mistakes_fixed_count, fixedCount, fixedCount),
-            ),
-        )
-        if (ready == 0 && tomorrow > 0) {
-            Text(
-                stringResource(R.string.mistakes_come_back_tomorrow),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        if (ready > 0) {
-            Button(onClick = onPractice, modifier = Modifier.padding(top = 8.dp).mainActionWidth()) {
-                Text(stringResource(R.string.mistakes_practice))
-            }
-        }
-    }
+    val title = stringResource(R.string.mistakes_notebook_title)
+
+    if (opensTomorrow) PageHeader(title, supporting = stringResource(R.string.mistakes_opens_tomorrow)) else PageTitleRow(title)
 }
 
-/** Main's small "To fix / Fixed" toggle: Material's segmented buttons, the current one on `muted` in ink. */
+/** Main's "To fix / Fixed" toggle, as the app's tabs. */
 @Composable
 private fun NotebookTabs(
     page: NotebookPage,
     onTab: (Boolean) -> Unit,
 ) {
     val counts = page.head.counts
-    val colors =
-        SegmentedButtonDefaults.colors(
-            activeContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            activeContentColor = MaterialTheme.colorScheme.onSurface,
-            activeBorderColor = Color.Transparent,
-            inactiveContainerColor = Color.Transparent,
-            inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            inactiveBorderColor = Color.Transparent,
-        )
 
-    SingleChoiceSegmentedButtonRow(space = 4.dp) {
-        listOf(false to counts.open, true to counts.fixed).forEach { (fixed, count) ->
-            SegmentedButton(
-                selected = page.fixed == fixed,
-                onClick = { onTab(fixed) },
-                shape = RoundedCornerShape(ZoonkRadius.md),
-                colors = colors,
-                icon = {},
-                contentPadding = PaddingValues(horizontal = 10.dp),
-                modifier = Modifier.heightIn(min = TOGGLE_HEIGHT),
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        stringResource(if (fixed) R.string.mistakes_tab_fixed else R.string.mistakes_tab_open),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                    Text(count.toString(), style = MaterialTheme.zoonkType.data)
-                }
-            }
-        }
-    }
+    CountTabs(
+        tabs =
+            listOf(
+                CountTab(stringResource(R.string.mistakes_tab_open), counts.open.toInt()),
+                CountTab(stringResource(R.string.mistakes_tab_fixed), counts.fixed.toInt()),
+            ),
+        selected = if (page.fixed) 1 else 0,
+        onPick = { onTab(it == 1) },
+    )
 }
 
 @Composable
@@ -621,8 +587,9 @@ private fun Entries(
                         ?.snapshot
                         ?.set
                         ?.id == setId,
+                tomorrowOnPage = page.head.availability.ready == 0L,
                 actions = actions,
-                modifier = Modifier.padding(top = if (index == 0) 0.dp else 16.dp, bottom = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp),
             )
         }
     }
@@ -633,24 +600,21 @@ private fun MistakeEntry(
     mistake: Mistake,
     words: TrueFalseWords,
     continued: Boolean,
+    /** The page already says practice opens tomorrow, so the entry doesn't say it again. */
+    tomorrowOnPage: Boolean,
     actions: NotebookActions,
     modifier: Modifier = Modifier,
 ) {
     val snapshot = mistake.snapshot
     val fixed = mistake.status == MistakeStatus.FIXED
     val instant = mistake.fixedAt?.takeIf { fixed } ?: mistake.createdAt
-    val date =
-        java.time.Instant
-            .ofEpochMilli(instant.toEpochMilliseconds())
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
     val skillId = mistake.skill?.id?.takeIf { mistake.practiceAvailable }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            CauseLabel(mistake.cause, fixed, Modifier.weight(1f))
+            Box(Modifier.weight(1f)) { mistake.cause?.let { CauseLabel(it) } }
             Text(
-                formatDate(date, currentLocale(), DateStyle.Day),
+                formatMomentDay(instant, currentLocale()),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.zoonkType.data,
             )
@@ -672,9 +636,10 @@ private fun MistakeEntry(
         snapshot.explanation?.let {
             ItemText(it, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
         }
-        if (mistake.practiceAvailableTomorrow || skillId != null || mistake.lesson != null) {
+        val tomorrow = mistake.practiceAvailableTomorrow && !tomorrowOnPage
+        if (tomorrow || skillId != null || mistake.lesson != null) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-                if (mistake.practiceAvailableTomorrow) {
+                if (tomorrow) {
                     Text(
                         stringResource(R.string.mistakes_practice_tomorrow),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -684,7 +649,7 @@ private fun MistakeEntry(
                 skillId?.let {
                     OutlinedButton(
                         onClick = { actions.onPracticeSkill(it) },
-                    ) { Text(stringResource(R.string.mistakes_practice_skill)) }
+                    ) { Text(stringResource(R.string.mistakes_practice_topic)) }
                 }
                 mistake.lesson?.let { lesson ->
                     TextButton(onClick = { actions.onLesson(lesson.id) }) { Text(stringResource(R.string.mistakes_open_lesson)) }
@@ -696,26 +661,18 @@ private fun MistakeEntry(
 
 @Composable
 private fun CauseLabel(
-    cause: MistakeCause?,
-    fixed: Boolean,
+    cause: MistakeCause,
     modifier: Modifier = Modifier,
 ) {
     val label = causeLabel(cause)
 
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            painterResource(cause.icon),
-            contentDescription = null,
-            Modifier.size(
-                with(LocalDensity.current) {
-                    MaterialTheme.typography.labelMedium.lineHeight
-                        .toDp()
-                },
-            ),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+    MarkedLine(
+        firstLine = MaterialTheme.typography.labelMedium,
+        mark = { MarkIcon(cause.icon, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+        modifier = modifier,
+    ) {
         Text(
-            if (fixed) stringResource(R.string.mistakes_cause_fixed, label) else label,
+            label,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium,
         )
@@ -723,7 +680,7 @@ private fun CauseLabel(
 }
 
 @Composable
-internal fun causeLabel(cause: MistakeCause?): String =
+private fun causeLabel(cause: MistakeCause): String =
     stringResource(
         when (cause) {
             MistakeCause.GAP -> R.string.mistakes_cause_gap
@@ -731,12 +688,11 @@ internal fun causeLabel(cause: MistakeCause?): String =
             MistakeCause.TRAP -> R.string.mistakes_cause_trap
             MistakeCause.TIME -> R.string.mistakes_cause_time
             MistakeCause.GUESS -> R.string.mistakes_cause_guess
-            null -> R.string.mistakes_cause_unsorted
         },
     )
 
 @get:DrawableRes
-private val MistakeCause?.icon: Int
+private val MistakeCause.icon: Int
     get() =
         when (this) {
             MistakeCause.GAP -> R.drawable.ic_lightbulb
@@ -744,7 +700,6 @@ private val MistakeCause?.icon: Int
             MistakeCause.TRAP -> R.drawable.ic_warning
             MistakeCause.TIME -> R.drawable.ic_timer
             MistakeCause.GUESS -> R.drawable.ic_back_hand
-            null -> R.drawable.ic_radio_button_partial
         }
 
 @Composable

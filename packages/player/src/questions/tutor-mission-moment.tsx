@@ -33,20 +33,13 @@ export function useConversationMissionMoment({
   return { moment: latest?.goalId === goalId ? latest.moment : null, receive };
 }
 
-export function ConversationMissionMoment({
-  buddyName,
-  moment,
-}: {
-  buddyName: string;
-  moment: MissionMomentView | null;
-}) {
+export function ConversationMissionMoment({ moment }: { moment: MissionMomentView | null }) {
   if (!moment) {
     return null;
   }
 
   return (
     <MissionMoment
-      buddyName={buddyName}
       completed={moment.completed}
       fullMeal={moment.fullMeal}
       missions={moment.missions}

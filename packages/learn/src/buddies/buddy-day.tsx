@@ -5,7 +5,6 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import {
   ListGroup,
-  ListRow,
   ListRowBody,
   ListRowButton,
   ListRowContent,
@@ -14,6 +13,7 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { PAGE_SECTION_TITLE_CLASS, PageSectionTitle } from "../_components/page";
+import { useCountOf } from "../_utils/count-of";
 import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
 import { MissionsCard } from "../missions/missions-card";
@@ -24,16 +24,8 @@ import { type LearnBuddy } from "./use-buddy-name";
 export type BuddyDayHrefs = { energy: string; logbook: string; memory: string };
 
 function GlassesCount({ status }: { status: BuddyStatusView }) {
-  const t = useExtracted();
-  const earned = String(status.glasses.filter((item) => item.earned).length);
-  const total = String(status.glasses.length);
-
-  return (
-    <>
-      <span aria-hidden="true">{`${earned}/${total}`}</span>
-      <span className="sr-only">{t("{earned} of {total}", { earned, total })}</span>
-    </>
-  );
+  const countOf = useCountOf();
+  return countOf(status.glasses.filter((item) => item.earned).length, status.glasses.length);
 }
 
 function BuddyRows({
@@ -57,13 +49,9 @@ function BuddyRows({
     <section aria-labelledby={titleId} className="flex flex-col gap-1">
       <PageSectionTitle id={titleId}>{name}</PageSectionTitle>
 
-      <ListGroup>
-        <ListRow>
-          <ListRowContent>
-            <ListRowTitle>{growth}</ListRowTitle>
-          </ListRowContent>
-        </ListRow>
+      <p className="text-muted-foreground text-xs text-pretty">{growth}</p>
 
+      <ListGroup>
         <ListRowLink href={hrefs.memory}>
           <ListRowBody>
             <ListRowContent>
@@ -76,7 +64,14 @@ function BuddyRows({
         <ListRowButton aria-haspopup="dialog" onClick={onGlasses}>
           <ListRowBody>
             <ListRowContent>
-              <ListRowTitle>{t("Glasses")}</ListRowTitle>
+              <ListRowTitle>
+                {t({
+                  description:
+                    "Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.",
+                  message: "{buddy}'s glasses",
+                  values: { buddy: name },
+                })}
+              </ListRowTitle>
             </ListRowContent>
             <ListRowTrailing>
               <GlassesCount status={status} />
@@ -114,13 +109,7 @@ export function BuddyDay({
   return (
     <>
       <BuddyEnergy className="-my-2" href={hrefs.energy} name={name} status={status} />
-      <MissionsCard
-        brainPower={status.belt.totalBrainPower}
-        showBuddy={false}
-        buddy={buddy}
-        links={missionLinks}
-        today={status.today}
-      />
+      <MissionsCard buddy={buddy} links={missionLinks} today={status.today} />
       <FirstStepsSection buddy={buddy} firstSteps={status.firstSteps} links={missionLinks} />
       <BuddyRows
         hrefs={hrefs}
@@ -143,7 +132,7 @@ export function BuddyDaySkeleton() {
           <span className={PAGE_SECTION_TITLE_CLASS}>{t("Energy")}</span>
           <Skeleton className="h-3 w-8 rounded-sm" />
         </span>
-        <Skeleton className="h-1.5 w-full rounded-[3px]" />
+        <Skeleton className="rounded-meter h-1.5 w-full" />
         <Skeleton className="h-3 w-4/5" />
       </div>
       <div className="flex flex-col gap-3">

@@ -13,10 +13,13 @@ final class StudySessionStore {
   /// Ceremonies already shown here, so a milestone a block and the summary both carry shows once.
   @ObservationIgnored private var shownCeremonies: Set<String> = []
 
+  @ObservationIgnored private let saves: LearnerSaves
+
   init(api: any StudyAPIClient, cache: AppCache, today: TodayStore) {
     self.api = api
     self.cache = cache
     self.today = today
+    saves = LearnerSaves(cache: cache)
   }
 
   func session(id: String) -> Resource<StudyDay> {
@@ -78,10 +81,16 @@ final class StudySessionStore {
     return resource
   }
 
+  /// Stopped even when the screen that asked goes away first; then its playback is left as it is
+  /// (`LearnerSaves`).
   func stop(sessionID: String, in playback: SessionPlayback) async -> MutationResult<Void> {
-    let result = await cache.mutate(invalidating: [.userProgress, .userSession]) { identity in
-      try await api.stop(
-        token: identity.bearerToken, sessionID: sessionID, timeZone: TimeZone.current.identifier)
+    let api = api
+    let result = await saves.save {
+      await self.cache.mutate(invalidating: [.userProgress, .userSession]) { identity in
+        try await api.stop(
+          token: identity.bearerToken, sessionID: sessionID,
+          timeZone: TimeZone.current.identifier)
+      }
     }
 
     if case .done = result {

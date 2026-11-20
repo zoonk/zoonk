@@ -12,6 +12,7 @@ import {
   NoticeCardTitle,
 } from "../../_components/notice-card";
 import { WritingWait } from "../../generation/writing-wait";
+import { CallStartNote } from "../conversation/call-limit-message";
 import { useSpeakingMockTitle } from "../conversation/conversation-labels";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 
@@ -31,10 +32,12 @@ function useSpeakingMockDescription() {
 }
 
 export function SpeakingMockCard({
+  barHasMainAction,
   exam,
   onStart,
   paused,
 }: {
+  barHasMainAction?: boolean;
   exam: SpeakingMockExam;
   onStart: () => Promise<CallStartOutcome>;
   paused: boolean;
@@ -49,10 +52,10 @@ export function SpeakingMockCard({
       <div className="flex items-baseline gap-3">
         <KindDot className="-translate-y-px" kind="conversation" />
         <div className="flex min-w-0 flex-col gap-0.5">
-          <h2 className="text-[0.9375rem] font-medium" id="language-speaking-mock">
+          <h2 className="text-reading font-medium" id="language-speaking-mock">
             {title(exam)}
           </h2>
-          <p className="text-muted-foreground text-[0.8125rem]">{description(exam)}</p>
+          <p className="text-muted-foreground text-compact">{description(exam)}</p>
         </div>
       </div>
 
@@ -75,6 +78,7 @@ export function SpeakingMockCard({
       {!paused &&
         (call.writing ? (
           <WritingWait
+            barHasMainAction={barHasMainAction}
             className="pt-2"
             hint={t("Your mock opens as soon as it's ready.")}
             kind="speakingMock"
@@ -90,14 +94,13 @@ export function SpeakingMockCard({
               size="lg"
               variant="outline"
             >
-              {t("Start the mock")}
+              {t("Start")}
             </Button>
 
-            {call.failed && (
-              <p className="text-destructive-text text-sm" role="alert">
-                {t("The mock didn't start. Try again in a moment.")}
-              </p>
-            )}
+            <CallStartNote
+              call={call}
+              failed={t("The mock didn't start. Try again in a moment.")}
+            />
           </>
         ))}
     </section>

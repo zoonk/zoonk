@@ -46,7 +46,7 @@ describe("numeric answer precision", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
-    await expect.element(feedback.getByText("0,1254", { exact: true })).toBeVisible();
-    await expect.element(feedback.getByText("0,125", { exact: true })).toBeVisible();
+    await expect.element(valueInput()).toHaveValue("0,1254");
+    await expect.element(feedback.getByText("0,13", { exact: true })).toBeVisible();
   });
 });

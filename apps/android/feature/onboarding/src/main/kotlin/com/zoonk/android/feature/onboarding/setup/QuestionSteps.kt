@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -49,7 +48,6 @@ import com.zoonk.android.feature.onboarding.CheckList
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
-import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.toggled
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyPicker
@@ -102,6 +100,7 @@ internal fun ColumnScope.StepForm(
     onContinue: () -> Unit,
     description: String? = null,
     subject: String? = null,
+    chips: List<String> = listOfNotNull(subject),
     canContinue: Boolean = true,
     continueLabel: String? = null,
     onSkip: (() -> Unit)? = null,
@@ -119,7 +118,7 @@ internal fun ColumnScope.StepForm(
         }
         val continueStep = { send(StepSender.Continue, onContinue) }
 
-        StepHeading(title, description, subject)
+        StepHeading(title, description, chips = chips)
         content(continueStep)
         PlanStartNotice()
         PageActions {
@@ -130,7 +129,6 @@ internal fun ColumnScope.StepForm(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = canContinue && !pending,
                 focusableWhenDisabled = pending,
-                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
                 Text(continueLabel ?: stringResource(R.string.onboarding_continue))
             }
@@ -187,9 +185,14 @@ internal fun StepHeading(
     title: String,
     description: String? = null,
     subject: String? = null,
+    chips: List<String> = listOfNotNull(subject),
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (subject != null) Eyebrow(subject)
+        if (chips.isNotEmpty()) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                chips.forEach { Eyebrow(it) }
+            }
+        }
         OnboardingHeading(title, description)
     }
 }
@@ -220,11 +223,7 @@ internal fun ColumnScope.PurposeStep(
                 stringResource(R.string.onboarding_purpose_deep),
                 stringResource(R.string.onboarding_purpose_deep_description),
             ),
-            Choice(
-                OnboardingAnswerInputOneOf1.Purpose.WORK,
-                stringResource(R.string.onboarding_purpose_work),
-                stringResource(R.string.onboarding_purpose_work_description),
-            ),
+            Choice(OnboardingAnswerInputOneOf1.Purpose.WORK, stringResource(R.string.onboarding_purpose_work)),
             Choice(
                 OnboardingAnswerInputOneOf1.Purpose.CAREER_CHANGE,
                 stringResource(R.string.onboarding_purpose_career_change),
@@ -235,11 +234,7 @@ internal fun ColumnScope.PurposeStep(
                 stringResource(R.string.onboarding_purpose_refresh),
                 stringResource(R.string.onboarding_purpose_refresh_description),
             ),
-            Choice(
-                OnboardingAnswerInputOneOf1.Purpose.OTHER,
-                stringResource(R.string.onboarding_purpose_other),
-                stringResource(R.string.onboarding_purpose_other_description),
-            ),
+            Choice(OnboardingAnswerInputOneOf1.Purpose.OTHER, stringResource(R.string.onboarding_purpose_other)),
         )
 
     StepForm(
@@ -255,7 +250,6 @@ internal fun ColumnScope.PurposeStep(
             value = purpose,
             label = stringResource(R.string.onboarding_purpose_label),
             onChange = { purpose = it },
-            onPick = answer,
             readOnly = pending,
         )
     }
@@ -285,7 +279,7 @@ internal fun ColumnScope.LevelStep(
         pending = pending,
         onContinue = { level?.let(answer) },
     ) {
-        LevelChoiceList(level, testMinutes, onChange = { level = it }, onPick = answer, readOnly = pending)
+        LevelChoiceList(level, testMinutes, onChange = { level = it }, readOnly = pending)
     }
 }
 
@@ -295,7 +289,6 @@ internal fun LevelChoiceList(
     value: LevelChoice?,
     testMinutes: Int,
     onChange: (LevelChoice) -> Unit,
-    onPick: ((LevelChoice) -> Unit)? = null,
     readOnly: Boolean = false,
 ) {
     val choices: List<Choice<LevelChoice>> =
@@ -326,7 +319,7 @@ internal fun LevelChoiceList(
                 stringResource(R.string.onboarding_level_test_description, formatMinutes(testMinutes, currentLocale())),
             ),
         )
-    ChoiceList(choices, value, stringResource(R.string.onboarding_level_label), onChange = onChange, onPick = onPick, readOnly = readOnly)
+    ChoiceList(choices, value, stringResource(R.string.onboarding_level_label), onChange = onChange, readOnly = readOnly)
 }
 
 @Composable
@@ -344,8 +337,7 @@ internal fun ColumnScope.SubjectsLevelStep(
         title = stringResource(R.string.onboarding_subjects_title),
         description = stringResource(R.string.onboarding_subjects_description),
         subject = subject,
-        continueLabel = stringResource(if (known.isEmpty()) R.string.onboarding_subjects_none else R.string.onboarding_continue),
-        skipLabel = stringResource(R.string.onboarding_subjects_from_scratch),
+        canContinue = known.isNotEmpty(),
         pending = pending,
         onContinue = {
             onAnswer(
@@ -365,14 +357,7 @@ internal fun ColumnScope.SubjectsLevelStep(
         CheckList(
             choices =
                 subjects.map { item ->
-                    Choice(
-                        item.name,
-                        item.shortName ?: item.name,
-                        item.name.takeIf {
-                            item.shortName != null &&
-                                item.shortName != it
-                        },
-                    )
+                    Choice(item.name, item.shortName ?: item.name)
                 },
             value = known,
             label = label,
@@ -386,7 +371,6 @@ internal enum class TextQuestion { Admission, Position, Score }
 
 private data class TextQuestionCopy(
     @StringRes val title: Int,
-    @StringRes val description: Int,
     @StringRes val label: Int,
     @StringRes val placeholder: Int?,
 )
@@ -407,12 +391,11 @@ internal fun ColumnScope.TextStep(
             ),
         )
     }
-    val (title, description, label, placeholder) =
+    val (title, label, placeholder) =
         when (question) {
             TextQuestion.Admission -> {
                 TextQuestionCopy(
                     R.string.onboarding_admission_title,
-                    R.string.onboarding_target_description,
                     R.string.onboarding_target_label,
                     R.string.onboarding_admission_placeholder,
                 )
@@ -421,7 +404,6 @@ internal fun ColumnScope.TextStep(
             TextQuestion.Position -> {
                 TextQuestionCopy(
                     R.string.onboarding_position_title,
-                    R.string.onboarding_position_description,
                     R.string.onboarding_position_label,
                     placeholder = null,
                 )
@@ -430,7 +412,6 @@ internal fun ColumnScope.TextStep(
             TextQuestion.Score -> {
                 TextQuestionCopy(
                     R.string.onboarding_score_title,
-                    R.string.onboarding_target_description,
                     R.string.onboarding_target_label,
                     R.string.onboarding_score_placeholder,
                 )
@@ -439,7 +420,6 @@ internal fun ColumnScope.TextStep(
 
     StepForm(
         title = stringResource(title),
-        description = stringResource(description),
         subject = subject,
         canContinue = value.isNotBlank(),
         pending = pending,
@@ -785,30 +765,9 @@ internal fun ColumnScope.ExamChoiceStep(
             ),
         )
     }
-    val only = choices.singleOrNull()
 
     StepForm(
         title = stringResource(if (takes == 1L) R.string.onboarding_exam_choice_title_one else R.string.onboarding_exam_choice_title_other),
-        description =
-            when {
-                only == null -> {
-                    pluralStringResource(R.plurals.onboarding_exam_choice_choices, choices.size, choices.size)
-                }
-
-                only.take > 1 -> {
-                    pluralStringResource(
-                        R.plurals.onboarding_exam_choice_options_take,
-                        only.options.size,
-                        only.options.size,
-                        only.group,
-                        only.take,
-                    )
-                }
-
-                else -> {
-                    pluralStringResource(R.plurals.onboarding_exam_choice_options, only.options.size, only.options.size, only.group)
-                }
-            },
         subject = subject,
         canContinue = choices.all { !picks[it.group].isNullOrEmpty() },
         skipLabel = stringResource(R.string.onboarding_decide_later),
@@ -826,14 +785,7 @@ internal fun ColumnScope.ExamChoiceStep(
             val picked = picks[choice.group].orEmpty()
             val options =
                 choice.options.map { option ->
-                    Choice(
-                        option.name,
-                        option.shortName ?: option.name,
-                        option.name.takeIf {
-                            option.shortName != null &&
-                                option.shortName != it
-                        },
-                    )
+                    Choice(option.name, option.shortName ?: option.name)
                 }
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
@@ -862,15 +814,9 @@ internal fun ColumnScope.ExamChoiceStep(
                         value = picked.firstOrNull(),
                         label = choice.group,
                         onChange = { picks = picks + (choice.group to listOf(it)) },
-                        onPick = if (takes == 1L) ({ answer(picks + (choice.group to listOf(it))) }) else null,
                         readOnly = pending,
                     )
                 }
-                Text(
-                    examChoiceLeftOut(choice),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
             }
         }
     }

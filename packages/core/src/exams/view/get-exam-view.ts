@@ -77,6 +77,7 @@ async function loadMap({
   const states = new Map(learnerSkills.map((row) => [row.skillId, row.state]));
 
   return buildExamMap({
+    examName: blueprint.name,
     frequency: content.topicFrequency,
     skills: [...areas].map(([skillId, area]) => ({ area, state: states.get(skillId) ?? "new" })),
     structure,
@@ -223,12 +224,7 @@ export async function getExamView({
     getAllowance(),
   ]);
 
-  const { includesMockExams } = getExamPrepAccess({
-    examPrep: allowance?.examPrep ?? null,
-    goal,
-    timeZone,
-    today,
-  });
+  const { includesMockExams } = getExamPrepAccess({ examPrep: allowance?.examPrep ?? null, goal });
 
   const [
     map,

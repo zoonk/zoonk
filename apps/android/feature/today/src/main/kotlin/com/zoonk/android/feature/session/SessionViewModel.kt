@@ -12,16 +12,14 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -69,17 +67,23 @@ class SessionViewModel(
     /** The run writing the shown step's lesson. */
     val run: StateFlow<GenerationRun> = follower.run
 
-    var failed by mutableStateOf<SessionAction?>(null)
-        private set
+    /** A tap's answer that comes back after the learner left the screen opens and says nothing. */
+    private val visit = Visit()
+
+    /** Where a tap leads, in place of the session screen. */
+    val route = visit.outcome<AppRoute>()
+
+    private val failure = visit.outcome<SessionAction>()
+
+    /** The action that failed on this visit. */
+    val failed get() = failure.value
 
     private var heldCeremony by mutableStateOf<Milestone?>(null)
     private var ceremonyClosed by mutableStateOf(false)
     private var rereading: Job? = null
 
-    private val opened = Channel<AppRoute>(Channel.BUFFERED)
-
-    /** Where a tap leads, in place of the session screen. */
-    val routes: Flow<AppRoute> = opened.receiveAsFlow()
+    /** The screen left for real (a task over it): what its taps would open or say belongs to that visit. */
+    fun endVisit() = visit.end()
 
     /**
      * The ceremony to show over a summary whose read has [read], held from [holdCeremony] until
@@ -104,6 +108,7 @@ class SessionViewModel(
     fun readUnfinished(sessionId: UUID) {
         if (rereading?.isActive == true) return
 
+        val started = visit.number
         rereading =
             viewModelScope.launch {
                 val day = sessions.day[sessionId]
@@ -112,7 +117,7 @@ class SessionViewModel(
                 summary.refresh()
                 val dayNow = day.state.value.value
                 val summaryNow = summary.state.value.value
-                if (dayNow?.nextBlockId == null && summaryNow?.finished == false) opened.send(AppRoute.Today)
+                if (dayNow?.nextBlockId == null && summaryNow?.finished == false) route.send(started, AppRoute.Today)
             }
     }
 
@@ -232,18 +237,19 @@ class SessionViewModel(
     ) {
         if (busy != null) return
         busy = action
-        failed = null
+        failure.clear()
+        val started = visit.number
 
         viewModelScope.launch {
             val result = write()
             busy = null
             when (result) {
                 is MutationResult.Done -> {
-                    opened.send(result.value ?: AppRoute.Today)
+                    route.send(started, result.value ?: AppRoute.Today)
                 }
 
                 is MutationResult.Failed -> {
-                    failed = action
+                    failure.send(started, action)
                 }
 
                 MutationResult.Obsolete -> {}

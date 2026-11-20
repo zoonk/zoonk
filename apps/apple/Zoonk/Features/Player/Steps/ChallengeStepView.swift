@@ -46,8 +46,8 @@ struct ChallengeStepView: View {
 
   private var intro: some View {
     VStack(alignment: .leading, spacing: 16) {
-      LessonEyebrow(
-        title: content.variant == .whatIf
+      Chip(
+        content.variant == .whatIf
           ? Text(
             "What if\u{00A0}· \(named(content.setting))", tableName: "Player",
             comment: "Above a what-if scenario's title")
@@ -79,9 +79,8 @@ struct ChallengeStepView: View {
         self.panel(panel)
       }
 
-      Text("Your team", tableName: "Player", comment: "Above the people in a challenge")
-        .typeStyle(.meta.weight(.medium))
-        .foregroundStyle(.mutedForeground)
+      SectionLabel(
+        Text("Your team", tableName: "Player", comment: "Above the people in a challenge"))
 
       ForEach(Array(content.team.enumerated()), id: \.offset) { _, slot in
         let name = name(for: slot.id)
@@ -102,22 +101,6 @@ struct ChallengeStepView: View {
         }
         .accessibilityElement(children: .combine)
       }
-
-      Group {
-        if content.team.contains(where: \.ai) {
-          Text(
-            "You can ask the team or the AI for help. Your decisions change the outcome.",
-            tableName: "Player",
-            comment: "Under a challenge's team with an AI assistant")
-        } else {
-          Text(
-            "You can ask the team for help. Your decisions change the outcome.",
-            tableName: "Player",
-            comment: "Under a challenge's team")
-        }
-      }
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -525,11 +508,10 @@ struct ChallengeStepView: View {
       }
 
       if !content.skills.isEmpty {
-        Text(
-          "Skills practiced", tableName: "Player", comment: "Above the skills a challenge trains"
-        )
-        .typeStyle(.note.weight(.medium))
-        .foregroundStyle(.mutedForeground)
+        SectionLabel(
+          Text(
+            "What you practiced", tableName: "Player",
+            comment: "Above the skills a challenge trains"))
         FlowLayout(spacing: 8) {
           ForEach(content.skills) { skill in
             Text(skill.name)

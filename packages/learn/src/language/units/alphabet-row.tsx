@@ -51,9 +51,7 @@ export function AlphabetRow({
             <ListRowTitle>{alphabet.title}</ListRowTitle>
             <ListRowDescription>
               {alphabet.pending
-                ? t("First in your next session · {time}", {
-                    time: formatDuration(alphabet.minutes),
-                  })
+                ? t("Your first lesson · {time}", { time: formatDuration(alphabet.minutes) })
                 : t("Practice anytime · {time}", { time: formatDuration(alphabet.minutes) })}
             </ListRowDescription>
           </ListRowContent>

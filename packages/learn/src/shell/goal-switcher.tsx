@@ -19,17 +19,14 @@ import { safeAsync } from "@zoonk/utils/error";
 import { ChevronDownIcon, LayoutGridIcon, LightbulbIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "react";
+import { DaysLeft } from "../_components/days-left";
+import { FactSegments } from "../_components/task-meta";
 import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
-import { GoalCountryName, GoalMark } from "./goal-mark";
-import {
-  GOAL_ROW_CLASS,
-  type GoalKind,
-  MENU_ROW_CLASS,
-  type WaitingGoal,
-  WaitingOption,
-} from "./goal-menu-row";
+import { GoalCountryName, GoalMark, NoGoalMark } from "./goal-mark";
+import { type GoalKind, type WaitingGoal, WaitingOption } from "./goal-menu-row";
+import { hasNothingToSwitch } from "./goal-switch-options";
 import { MakeRoomSheet, type WaitingStart, useMakeRoom } from "./make-room-sheet";
 
 type SwitcherGoal = {
@@ -39,6 +36,7 @@ type SwitcherGoal = {
   languageFlag: string | null;
   status: "active" | "completed" | "paused";
   targetDate: string | null;
+  targetDateEstimated: boolean;
   targetLanguage: string | null;
   targetRegion: string | null;
   displayName: string;
@@ -96,28 +94,30 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
       ? daysUntilIsoDate({ isoDate: goal.targetDate, today })
       : null;
 
-  const active = [
-    t("{time} a day", { time: formatDuration(goal.dailyMinutes) }),
-    days !== null &&
-      t("{days, plural, =0 {The day is here} one {# day left} other {# days left}}", { days }),
-  ]
-    .filter(Boolean)
-    .join(" · ");
-
-  const line = { active, completed: t("Finished"), paused: t("Paused") }[goal.status];
+  const facts = {
+    active: [t("{time} a day", { time: formatDuration(goal.dailyMinutes) })],
+    completed: [t("Finished")],
+    paused: [t("Paused")],
+  }[goal.status];
 
   return (
-    <span className="text-muted-foreground font-mono text-[0.71875rem] tabular-nums">{line}</span>
+    <span className="text-muted-foreground text-2xs font-mono tabular-nums">
+      <FactSegments
+        extra={
+          goal.status === "active" &&
+          days !== null && <DaysLeft days={days} estimated={goal.targetDateEstimated} />
+        }
+        facts={facts}
+      />
+    </span>
   );
 }
 
-const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-[0.71875rem] font-[550]";
-
 function GoalOption({ goal }: { goal: SwitcherGoal }) {
   return (
-    <DropdownMenuRadioItem className={GOAL_ROW_CLASS} closeOnClick value={goal.id}>
+    <DropdownMenuRadioItem closeOnClick value={goal.id}>
       <GoalMark goal={goal} />
-      <span className="flex min-w-0 flex-col">
+      <span className="flex min-w-0 flex-col text-pretty">
         <span>
           {goal.displayName}
           <GoalCountryName goal={goal} />
@@ -130,23 +130,21 @@ function GoalOption({ goal }: { goal: SwitcherGoal }) {
 
 function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string }) {
   return (
-    <DropdownMenuItem
-      className={cn(MENU_ROW_CLASS, "items-start py-2 pr-2")}
-      render={<LearnLink href={href} />}
-    >
+    <DropdownMenuItem className="items-start" render={<LearnLink href={href} />}>
       <LineMarker aria-hidden="true">
         <LightbulbIcon className="text-muted-foreground size-4 shrink-0" />
       </LineMarker>
-      <span className="min-w-0">{goal.displayName}</span>
+      <span className="min-w-0 text-pretty">{goal.displayName}</span>
     </DropdownMenuItem>
   );
 }
 
-/** The bar's trigger hangs 8px into the gutter (`-ml-2`), so it may be that much wider than its slot. */
+/** The bar's trigger hangs 10px into the gutter like a highlighted row, so it may be that much wider than its slot. */
 const TRIGGER_CLASS = {
-  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2 flex h-9 max-w-[calc(100%+0.5rem)] min-w-0 items-center gap-2 rounded-lg px-2 text-[0.9375rem] font-semibold outline-none focus-visible:ring-[3px]",
+  // The end's padding plus the chevron's blank side match the start's padding, so the fill is even by ink.
+  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2.5 flex h-9 max-w-[calc(100%+0.625rem)] min-w-0 items-center gap-1 rounded-lg ps-2.5 pe-1.5 text-reading font-semibold outline-none focus-visible:ring-[3px]",
   sidebar:
-    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-1.5 text-[0.84375rem] font-semibold outline-none focus-visible:ring-[3px]",
+    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-1 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px]",
 } as const;
 
 type SwitcherPlacement = keyof typeof TRIGGER_CLASS;
@@ -162,8 +160,10 @@ function NoGoalLink({
 
   return (
     <LearnLink className={TRIGGER_CLASS[placement]} href={newGoalHref}>
-      <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
-      <span className="truncate">{t("Start a goal")}</span>
+      <span className="me-1.5 flex shrink-0">
+        <NoGoalMark />
+      </span>
+      <span className="truncate">{t("New goal")}</span>
     </LearnLink>
   );
 }
@@ -200,11 +200,13 @@ export function GoalSwitcher({
   const [isPending, startTransition] = useGoalSwitchTransition();
   const followed = goals.filter((goal) => goal.kind !== "explain");
   const explanations = goals.filter((goal) => goal.kind === "explain");
-  const [selectedId, setSelectedId] = useOptimistic(activeGoalId ?? followed[0]?.id ?? null);
+  const [selectedId, setSelectedId] = useOptimistic(activeGoalId);
   const room = useMakeRoom({ isStarting: isPending, onStartWaiting, startTransition });
-  const selected = followed.find((goal) => goal.id === selectedId) ?? followed[0];
+  const selected = followed.find((goal) => goal.id === selectedId);
+  const hasGoalOptions = followed.length > 0 || waitingGoals.length > 0;
+  const unselectedLabel = hasGoalOptions ? t("Your goals") : t("Quick explanations");
 
-  if (!selected && explanations.length === 0) {
+  if (hasNothingToSwitch({ goals, waitingGoals })) {
     return <NoGoalLink newGoalHref={newGoalHref} placement={placement} />;
   }
 
@@ -232,13 +234,13 @@ export function GoalSwitcher({
           className={TRIGGER_CLASS[placement]}
           title={selected?.displayName}
         >
-          {selected ? (
-            <GoalMark goal={selected} />
-          ) : (
-            <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
+          {selected && (
+            <span className={cn("flex shrink-0", placement === "bar" ? "me-2" : "me-1.5")}>
+              <GoalMark goal={selected} />
+            </span>
           )}
           <span className="min-w-0 flex-1 truncate text-left">
-            {selected?.displayName ?? t("Start a goal")}
+            {selected?.displayName ?? unselectedLabel}
           </span>
           {/* After the title, so the trigger's name starts with the words on screen. */}
           {selected && <GoalCountryName goal={selected} />}
@@ -246,16 +248,12 @@ export function GoalSwitcher({
           <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent
-          className="w-72 max-w-[calc(100vw-2rem)] p-1.5"
-          collisionPadding={16}
-          sideOffset={6}
-        >
-          {selected && (
+        <DropdownMenuContent className="w-72 max-w-[calc(100vw-2rem)]">
+          {hasGoalOptions && (
             <DropdownMenuGroup>
-              <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("Your goals")}</DropdownMenuLabel>
 
-              <DropdownMenuRadioGroup onValueChange={select} value={selected.id}>
+              <DropdownMenuRadioGroup onValueChange={select} value={selected?.id ?? ""}>
                 {followed.map((goal) => (
                   <GoalOption goal={goal} key={goal.id} />
                 ))}
@@ -285,10 +283,8 @@ export function GoalSwitcher({
 
           {explanations.length > 0 && (
             <DropdownMenuGroup>
-              {selected && <DropdownMenuSeparator className="-mx-1.5" />}
-              <DropdownMenuLabel className={MENU_LABEL_CLASS}>
-                {t("Quick explanations")}
-              </DropdownMenuLabel>
+              {hasGoalOptions && <DropdownMenuSeparator />}
+              <DropdownMenuLabel>{t("Quick explanations")}</DropdownMenuLabel>
 
               {explanations.map((goal) => (
                 <ExplanationOption
@@ -300,20 +296,14 @@ export function GoalSwitcher({
             </DropdownMenuGroup>
           )}
 
-          <DropdownMenuSeparator className="-mx-1.5" />
+          <DropdownMenuSeparator />
 
-          <DropdownMenuItem
-            className={cn(MENU_ROW_CLASS, "pr-2")}
-            render={<LearnLink href={newGoalHref} />}
-          >
+          <DropdownMenuItem render={<LearnLink href={newGoalHref} />}>
             <PlusIcon aria-hidden="true" className="text-muted-foreground" />
-            {t("Start a new goal")}
+            {t("New goal")}
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            className={cn(MENU_ROW_CLASS, "pr-2")}
-            render={<LearnLink href={exploreHref} />}
-          >
+          <DropdownMenuItem render={<LearnLink href={exploreHref} />}>
             <LayoutGridIcon aria-hidden="true" className="text-muted-foreground" />
             {t("Explore courses")}
           </DropdownMenuItem>

@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "c16cf10e23d6994238d8bbfb4ff5daf2bc778d9b41761537e58320784ca2d96b",
-  "activities_badge_estimate_first": "75254b54fa15ffaae13500528f7b9d2052c8302fb416d8fce86aa28a7004d13b",
+  "activities_badge_estimate_first": "688dd0dd17381e07964482e095777aa9b5946e741f917b73a6f90501fdffb064",
   "activities_badge_find_error": "bbb1cda2c14e4286211582f948a82bbe440142e508bcdf8a4bf46406498d8788",
   "activities_badge_read_chart": "c5d57e0bacd234bbc55de680556c62a632a6627e11431001595e88a35cab217b",
   "activities_badge_reply": "7ed79040956633b7437351e953ff86af02be52249f0979e3b5fc093c24b2b4d3",
@@ -15,8 +15,8 @@
   "activities_chart_description": "253b4683dd2b81707d5cc361ceeb5fecac6887997d98d3ebd7007f077c71a853",
   "activities_chart_rate": "6625996054a7b1cf35a1f5e3ab917059457cb4ae12e70153cc8ec14253eb30c2",
   "activities_chart_span": "94f91c6df068c07f7dd5e75958a00a69999fe566d038e4b5a67564d01a15bb81",
-  "activities_chart_spans": "5e745e02e81f73552601557c19d9c0e823ccccb2ad731e9cfead2855c4a1a3c0",
-  "activities_chart_tap_span": "9c374ef3e7249beed9ff7faee6239cc80c945137d5676bbb9ad296ae0f28c9c4",
+  "activities_chart_spans": "34b1c8b4c74c04cbe4e4efe4569b33998b083de4ce77a8654efb8b893b877e13",
+  "activities_chart_tap_span": "3be563406508a73d7aac04b83776e0d31ac095f4fe960e85efbb6d1f806df371",
   "activities_dialogue_conversation": "2aeb1ad6d332a7905d21ec5ee561f4ab5b98ae3fa0edb57f859d5268a00ac0e9",
   "activities_dialogue_hear_best": "a431e8916d66861bebbb5ae966f32e1b2292bef6c6f755d55600d2d7b918375a",
   "activities_dialogue_hear_line": "a165f8e666d0b09b2037d48f9603b70dd69c0f8316b0ce80d965373de3a07c80",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Schätze zuerst</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">Deine Schätzung zählt</string>
     <string name="activities_badge_read_chart">Lies das Diagramm</string>
     <string name="activities_badge_before_after">Vergleiche vorher und nachher</string>
     <string name="activities_badge_find_error">Finde den Fehler</string>
@@ -96,9 +97,8 @@
     <string name="activities_chart_description">Ein Liniendiagramm von %1$s nach %2$s, von %3$s bei %4$s bis %5$s bei %6$s.</string>
     <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
     <string name="activities_chart_span">%1$s: %2$s.</string>
-    <string name="activities_chart_tap_span">Tippe auf einen Abschnitt, um ihn zu messen</string>
-    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
-    <string name="activities_chart_spans">Abschnitte zum Messen</string>
+    <string name="activities_chart_tap_span">Tippe auf einen Bereich des Diagramms, um ihn zu messen</string>
+    <string name="activities_chart_spans">Teile des Diagramms zum Messen</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s pro %2$s</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->

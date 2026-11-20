@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "66651e1b49163c0ab77322cb4af3c819b635eef765a571e117389a5f740f9078",
-  "activities_badge_estimate_first": "ccae6ae3ace1e778ea1e207c8143f7c712e9b271b22d1060fd96e68186dc5cbf",
+  "activities_badge_estimate_first": "6e5b9a57a4afc70abb8595771fa869190710308dca91014a27b60ab40aacfdbe",
   "activities_badge_find_error": "4d2ff11e3c85011d466d02625030036b186918ff8a746742d9d38a60749aed31",
   "activities_badge_read_chart": "f810eccb61c526a4a230dedd54a1c0c228dd40794280d22bf21dfd77eaab914d",
   "activities_badge_reply": "20e14c63f889309e5432f1713ddf937fe29be2ac92f8194a0559c88c1be15bc5",
@@ -15,8 +15,8 @@
   "activities_chart_description": "cd44d4630f22cec98711d8a4a6aeff7088950943f681acfdaa6391c8cb6c6766",
   "activities_chart_rate": "3c3f91bb66987798a0e1073bd239d32b7f2eb08a15f5b472976e1f2c3caa1032",
   "activities_chart_span": "23b7e14b624c3af484e264bd0d62fab36658ba602546604cef71165d9b8cdc8d",
-  "activities_chart_spans": "29f7625fa7be78c41efb402acb9cc4c8d288c47209673c702c3accd2c037952f",
-  "activities_chart_tap_span": "619e2c3c7cece7faa732696aa06be508dacaca99e9d18b451d7ff6a24836e30e",
+  "activities_chart_spans": "843870970e6f73a398943fbbf827bfd5aeb543ba8346651cae40677c92ba1e83",
+  "activities_chart_tap_span": "efd7696a5f77b0936bacd6cb8b8294efdfa62aacce940b9515a672ee422b0d48",
   "activities_dialogue_conversation": "60dd8cb33493f22ae6f5b0328a517fed98448b9c7b6b9838b3dc97af2e937415",
   "activities_dialogue_hear_best": "898508abaf14d71118600d1dbdec1a2a574ebb635b6724ca0cc3b9a14cc6e75b",
   "activities_dialogue_hear_line": "0cd69d17bd81691a425a531ecce7662e086a252ffdd1b379028bd9936a1c2b9c",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Estima primero</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">Tu suposición cuenta</string>
     <string name="activities_badge_read_chart">Lee la gráfica</string>
     <string name="activities_badge_before_after">Antes y después</string>
     <string name="activities_badge_find_error">Encuentra el error</string>
@@ -96,9 +97,8 @@
     <string name="activities_chart_description">Una gráfica de líneas de %1$s por %2$s, desde %3$s en %4$s hasta %5$s en %6$s.</string>
     <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
     <string name="activities_chart_span">%1$s: %2$s.</string>
-    <string name="activities_chart_tap_span">Toca un tramo para medirlo</string>
-    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
-    <string name="activities_chart_spans">Intervalos para medir</string>
+    <string name="activities_chart_tap_span">Toca una parte de la gráfica para medirla</string>
+    <string name="activities_chart_spans">Partes de la gráfica para medir</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s por %2$s</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->

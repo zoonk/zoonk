@@ -193,7 +193,7 @@ function LessonOutline() {
             <CircleHelpIcon aria-hidden="true" className="text-muted-foreground size-4" />
           </ListRowLeading>
           <ListRowContent>
-            <ListRowTitle className="text-muted-foreground font-normal">
+            <ListRowTitle className="text-muted-foreground">
               {t(
                 "{count, plural, one {# quick question at the end} other {# quick questions at the end}}",
                 { count: questions },
@@ -216,14 +216,10 @@ function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   const { mark, recap } = useScreenRecap();
   const showsOutline = useShowsOutline(step);
 
-  const screenNumber = recap
-    ? t("screen {number}", { number: String(recap.position + 1) })
-    : undefined;
-
   return (
     <TaskAside
       label={t("Help with this screen")}
-      meta={<TutorConversationLink fallback={screenNumber} />}
+      meta={<TutorConversationLink />}
       title={
         (recap &&
           t({
@@ -241,43 +237,39 @@ function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   );
 }
 
-function CompletionAside() {
+function BuddyAside() {
   const t = useExtracted();
-  const { lesson } = useLessonPlayerConfig();
-
-  if (!lesson.summary) {
-    return <TaskAside label={t("Help with this screen")} />;
-  }
 
   return (
-    <TaskAside label={t("Lesson map")} scrollsByKeyboard title={t("Lesson map")}>
-      <LessonMap map={lesson.summary} title={lesson.title} />
+    <TaskAside label={t("Help with this screen")}>
+      <TutorDock />
     </TaskAside>
   );
 }
 
 export function LessonAside() {
   const t = useExtracted();
-  const { slots } = useLessonPlayerConfig();
+  const { lesson, slots } = useLessonPlayerConfig();
   const { screen, state } = useLessonPlayer();
 
-  if (state.phase === "map") {
+  // The host's moment draws its own panel over this rail, such as the day's lessons.
+  if (state.phase === "completed" && slots.completion) {
+    return <TaskAside label={t("Help with this screen")} />;
+  }
+
+  if (state.phase === "completed" && lesson.summary) {
     return (
-      <TaskAside label={t("Help with this screen")}>
-        <TutorDock />
+      <TaskAside label={t("Lesson map")} scrollsByKeyboard title={t("Lesson map")}>
+        <LessonMap map={lesson.summary} title={lesson.title} />
       </TaskAside>
     );
   }
 
-  if (state.phase === "completed") {
-    return slots.completion ? (
-      <TaskAside label={t("Help with this screen")} />
-    ) : (
-      <CompletionAside />
-    );
+  if (state.phase === "map" || state.phase === "completed") {
+    return <BuddyAside />;
   }
 
-  if (state.run.status === "refused" || !screen.step) {
+  if (!screen.step) {
     return <TaskAside label={t("Help with this screen")} />;
   }
 

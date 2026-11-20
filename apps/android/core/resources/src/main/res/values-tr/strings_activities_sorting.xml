@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "7959f1cc491a99bcd915086d477d6c4b88f6add7a6624f886e8fb24b503b8638",
   "activities_sorting_drag_onto_timeline": "e2e72f38045925e44754acb7dcd91c8845430d6a08fd6634915509a3f3110eda",
   "activities_sorting_drag_steps": "39c7f97cf18f7e9bf434c891f64ac0279663384f73e9ee42582abc46ad7b6721",
-  "activities_sorting_events_to_place": "9bdf4123823656e20b24c9486e4e9fe0529f8402950672fd0e116897b7cd32a5",
+  "activities_sorting_events_placed": "b0369b0fdb7fea5a7dd405fd6d546f1108cf21f48c81325cab49f1dc0e43ed96",
   "activities_sorting_every_spot_named": "22683f75117be1b5b5d5899d0ce4459c4b2175d266cdf4e4fac6466235c81c4b",
   "activities_sorting_gap_between": "24752f2160cbc46466634de06c757f1d8dafff7f4d362fa73bd2d02efe957501",
   "activities_sorting_goes_with": "4e9474df023579d14530bc1a38d2cded04afe62b7633c4a0b515513845e79610",
@@ -54,7 +54,6 @@
   "activities_sorting_put_on_spot": "b8b05d7eb5377bdc8d263ebea6a517eee8e553a89e505ca4f2c02725e12d0699",
   "activities_sorting_remove_link": "ee2fc7dc9520a620dd0ea4f3c84fab36c111f5ef10ae740716e320b3d5d427f1",
   "activities_sorting_removed": "9a3f335556b5fbb97ac9ca2be5a469cdc6af098d498f8519dc0929d5699bab7e",
-  "activities_sorting_right_count": "56e066997d354c1173625b7e9afb2360c764fa3bd112ca60d4a6c0c3c8cab07e",
   "activities_sorting_right_group": "4d278612ec191e2632dbe9ed6ec40260c3851fc040a3da2cd8b697c7b9a68310",
   "activities_sorting_right_order": "aeeb67e0056c484ca7321bf722a06fcbdbbbedf068d6db655751a698fb474ade",
   "activities_sorting_show_real_dates": "776f0e573446237f69731efd0f73b47db79512abfcc5dbab1b5f4454703a8bee",
@@ -110,7 +109,6 @@
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s, yanlış grupta</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">%1$d / %2$d öğe doğru grupta</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s öğesi %2$s grubunda olmalı.</string>
     <string name="activities_sorting_badge_put_in_order">Sıraya koy</string>
@@ -195,9 +193,10 @@
     <string name="activities_sorting_year_and_guess">%1$s. Tahminin: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">Tahminin: %1$s</string>
-    <plurals name="activities_sorting_events_to_place">
-        <item quantity="one">Yerleştirilecek %d olay</item>
-        <item quantity="other">Yerleştirilecek %d olay</item>
+    <!-- How many of a timeline's events the learner placed, of all of them, like "2 of 5 events placed". -->
+    <plurals name="activities_sorting_events_placed">
+        <item quantity="one">%1$d / %2$d etkinlik yerleştirildi</item>
+        <item quantity="other">%1$d / %2$d etkinlik yerleştirildi</item>
     </plurals>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">%1$s olayını zaman çizelgesine yerleştir</string>

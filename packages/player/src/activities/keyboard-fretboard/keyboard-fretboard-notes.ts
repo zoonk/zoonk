@@ -41,6 +41,20 @@ export function targetPitches(target?: NoteTarget): number[] {
   return pitches ?? [];
 }
 
+export function changesOneHalfStep(start: readonly number[], target: readonly number[]): boolean {
+  const removed = start.filter((pitch) => !target.includes(pitch));
+  const added = target.filter((pitch) => !start.includes(pitch));
+  const [from] = removed;
+  const [to] = added;
+
+  if (removed.length !== 1 || added.length !== 1 || from === undefined || to === undefined) {
+    return false;
+  }
+
+  const distance = Math.abs(from - to);
+  return distance === 1 || distance === OCTAVE - 1;
+}
+
 export function targetSpelling(target: NoteTarget | undefined): string[] {
   if (!target) {
     return [];
@@ -63,6 +77,51 @@ export function pitchSpelling(targets: readonly (NoteTarget | undefined)[]) {
   );
 
   return (pitch: number): string => spelled.get(pitch % OCTAVE) ?? pitchClassName(pitch);
+}
+
+function pitchSet(pitches: readonly number[]): string {
+  return pitches.toSorted((x, y) => x - y).join(",");
+}
+
+function samePitches(a: readonly number[], b: readonly number[]): boolean {
+  return pitchSet(a) === pitchSet(b);
+}
+
+export type KeyboardHeading = "byEar" | "start" | "target" | "yours";
+
+/**
+ * What the card's heading names: always what the keys show. The target is named only once
+ * nothing is being built toward it, so the heading never tells the learner they got there.
+ */
+export function keyboardHeading({
+  content: { check, fields },
+  phase,
+  shown,
+}: {
+  content: {
+    check: { kind: string };
+    fields: { byEar?: boolean; start?: NoteTarget; target: NoteTarget };
+  };
+  phase: ActivityPhase;
+  shown: readonly number[];
+}): KeyboardHeading {
+  const isAnswering = phase === "answering";
+
+  if (fields.byEar && isAnswering) {
+    return "byEar";
+  }
+
+  const isBuilding = isAnswering && check.kind === "interaction";
+
+  if (!isBuilding && samePitches(shown, targetPitches(fields.target))) {
+    return "target";
+  }
+
+  if (fields.start && samePitches(shown, targetPitches(fields.start))) {
+    return "start";
+  }
+
+  return "yours";
 }
 
 export function togglePitch(pitches: readonly number[], pitch: number): number[] {

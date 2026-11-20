@@ -10,13 +10,11 @@ import {
 import {
   type OnboardingExamDate,
   type UnderstoodGoalView,
-  type UnderstoodSchedule,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { type RegionChoice } from "@zoonk/utils/language-regions";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
-import { useFormatDuration, useFormatTimeOfDay } from "../../_utils/time-format";
 import { type SuggestedCountry } from "../../country/country-choice";
 import { useCutoffWords } from "../../exam/target-cutoff";
 import { useAimWords } from "../../language-aim/use-aim-words";
@@ -163,9 +161,9 @@ function useTargetRow() {
         aimChoices: languageAim.choices,
         editable: { key: "targetScore", kind: "aim" },
         id: "targetScore",
-        label: t("Level you're aiming for"),
+        label: words.title(languageAim.targetLanguage),
         note: words.label(languageAim.aim) ?? undefined,
-        value: languageAim.aim,
+        value: languageAim.label ?? languageAim.aim,
       };
     }
 
@@ -246,9 +244,9 @@ export function useDetailRows() {
   };
 }
 
-export function useUnderstoodRows() {
+export function useUnderstoodRows(timeZone: string) {
   const t = useExtracted();
-  const dateRow = useDateRow();
+  const dateRow = useDateRow(timeZone);
   const languageRows = useLanguageRows();
   const detailRows = useDetailRows();
   const contentCountryRow = useContentCountryRow();
@@ -286,41 +284,16 @@ export function useUnderstoodRows() {
       Boolean(levelNote) && {
         badge: t("you said"),
         id: "level",
-        label: t("Level"),
+        label: t({
+          description:
+            'Row with what the learner said they already know about their goal\'s subject, such as "I know a few things".',
+          message: "What you know",
+        }),
         value: levelNote ?? "",
       },
     ];
 
     return rows.filter((row): row is UnderstoodRow => Boolean(row));
-  };
-}
-
-export function useScheduleRow() {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const formatTime = useFormatTimeOfDay();
-
-  return function toScheduleRow(
-    schedule: UnderstoodSchedule,
-    minutesSaid: boolean,
-  ): UnderstoodRow | null {
-    const when =
-      schedule.studyTimeNote ?? (schedule.studyTime ? formatTime(schedule.studyTime) : null);
-
-    const parts = [
-      when,
-      minutesSaid ? t("{time} a day", { time: formatDuration(schedule.dailyMinutes) }) : null,
-    ].filter(Boolean);
-
-    return parts.length > 0
-      ? {
-          editDefault: schedule.studyTime ?? "",
-          editable: { key: "studyTime", kind: "time" },
-          id: "schedule",
-          label: t("When you study"),
-          value: parts.join(" · "),
-        }
-      : null;
   };
 }
 

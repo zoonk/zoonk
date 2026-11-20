@@ -24,6 +24,7 @@ export type LearningActivityDay = {
   activitiesCompleted: number;
   date: Date;
   lessonCompletions: number;
+  timeSpentSeconds: number;
 };
 
 export type LearningActivityData = LearningActivityTotals & { days: LearningActivityDay[] };
@@ -48,6 +49,7 @@ function buildActivityByDate(rows: LearningActivityRow[]): ActivityByDate {
       {
         activitiesCompleted: countActivitiesCompleted(row),
         lessonCompletions: row.lessonsCompleted,
+        timeSpentSeconds: row.timeSpentSeconds,
       },
     ]),
   );
@@ -66,6 +68,7 @@ function buildLearningActivityDay({
     activitiesCompleted: activity?.activitiesCompleted ?? 0,
     date,
     lessonCompletions: activity?.lessonCompletions ?? 0,
+    timeSpentSeconds: activity?.timeSpentSeconds ?? 0,
   };
 }
 

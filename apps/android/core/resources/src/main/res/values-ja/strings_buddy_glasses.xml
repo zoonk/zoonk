@@ -6,10 +6,10 @@
   "buddy_glasses_cat_eye": "dabf969ce803c34b6943413bf787dd70c0c6a2e025f5b50f52082e554bb241f3",
   "buddy_glasses_earn_aviator": "36ddf2b3271155a78e95d18abdfd71cb64773106af43ba6290ab9f303c472aa4",
   "buddy_glasses_earn_cat_eye": "1e66817f420b60f940c9e97681aae74c0090b16754ccda2fcdf581729d36f05d",
-  "buddy_glasses_earn_monocle": "3be195f6897413977bacd7909f8f14c0ae62b9ab186b241c8f002858d4a9c06b",
+  "buddy_glasses_earn_monocle": "ef81dcb5f1efb4d451c4f8ea50431e47c7622ee276f32dd9cc9b9b5832ea9403",
   "buddy_glasses_earn_retro": "9a01a061c649da7a1e26a457335714ef4a9163694d1c58537ddb113b590e2d9d",
   "buddy_glasses_earn_round": "f3b53b29f8bc7416a04c12ada276e45f616f2e801e33f8f35722864ca7bf0f02",
-  "buddy_glasses_earn_star": "9ac7c973c96c401eaa4eec514c8f751d4ed3df9984d3a5abc06c71429898101b",
+  "buddy_glasses_earn_star": "90151618525e3d31cbcc42a40d6209bf996fc0cef825232db44c6bd0719ae0dc",
   "buddy_glasses_monocle": "90e78b5606a55308d60db9f7f0a663f829b4c3ce1823e3a0abc8482789001385",
   "buddy_glasses_retro": "d306b2335d9dbaaf54eee16e4affffef91e2627f9812d07acae122444df109e8",
   "buddy_glasses_round": "da6186cf3e89607d2610172d7aa02262fddc0a33bc47b95eab6d14fbe0a1ff11",
@@ -40,11 +40,11 @@
     <string name="buddy_glasses_worn_retro">レトロなメガネ</string>
     <string name="buddy_glasses_worn_monocle">片眼鏡</string>
     <string name="buddy_glasses_earn_round">相棒が最初から持っています</string>
-    <string name="buddy_glasses_earn_star">フェーズチャレンジで初めて勝つ</string>
+    <string name="buddy_glasses_earn_star">初めてチャレンジに勝つ</string>
     <string name="buddy_glasses_earn_aviator">週間チャレンジを初めて終える</string>
     <string name="buddy_glasses_earn_cat_eye">1日のミッションをすべて終える日を合計7日つくる</string>
     <string name="buddy_glasses_earn_retro">復習を50回終える</string>
-    <string name="buddy_glasses_earn_monocle">最後のチャレンジに勝つ</string>
+    <string name="buddy_glasses_earn_monocle">学習計画の最後のチャレンジに勝つ</string>
     <string name="buddy_stage_baby">赤ちゃん</string>
     <string name="buddy_stage_young">こども</string>
     <string name="buddy_stage_adult">おとな</string>

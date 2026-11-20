@@ -28,6 +28,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.EarlierQuestions
 import com.zoonk.api.models.LearnerSummaryBuddy
@@ -174,7 +175,12 @@ class BuddyTabScreenshots {
                                 ).copy(question = "Why does salt dissolve in water but not in oil?"),
                                 earlierQuestion(2, answer = null, courseTitle = null, lessonTitle = "Covalent bonds")
                                     .copy(question = "Is a covalent bond stronger?"),
-                                earlierQuestion(3, courseTitle = null, lessonTitle = null).copy(question = "What's an electron shell?"),
+                                earlierQuestion(
+                                    3,
+                                    answer = "An electron shell is a group of orbitals with the same main energy level.",
+                                    courseTitle = null,
+                                    lessonTitle = null,
+                                ).copy(question = "What's an electron shell?"),
                             ),
                     )
                 setUp()
@@ -193,13 +199,7 @@ class BuddyTabScreenshots {
     private fun save(name: String) {
         compose.waitForIdle()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use {
-            compose
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private companion object {

@@ -170,10 +170,10 @@ export function lessonPlayerElement({
           adapters={adapters ?? buildAdapters(lesson)}
           lesson={lesson}
           linkComponent={TestLink}
-          onExit={vi.fn()}
           routes={{
-            exit: "/",
+            exit: EXIT_HREF,
             exitTo: null,
+            mistakes: "/mistakes",
             nextLesson: null,
             seePlan: (goalId: string) => `/start/${goalId}`,
             signUp: "/login",
@@ -189,8 +189,32 @@ export function lessonPlayerElement({
   );
 }
 
+const EXIT_HREF = "/";
+
+/** Calls `onExit` when the lesson's ✕ link is followed, which is how a learner leaves. */
+function exitSpyLink(onExit: () => void): PlayerLinkComponent {
+  return function ExitSpyLink(props) {
+    return (
+      <TestLink
+        {...props}
+        onClick={(event) => {
+          props.onClick?.(event);
+
+          if (!event.defaultPrevented && props.href === EXIT_HREF) {
+            onExit();
+          }
+        }}
+      />
+    );
+  };
+}
+
 export function renderLessonPlayer(props: LessonPlayerTestProps) {
   const onExit = vi.fn();
-  const view = render(lessonPlayerElement({ onExit, ...props }), { reactStrictMode: true });
+
+  const view = render(lessonPlayerElement({ linkComponent: exitSpyLink(onExit), ...props }), {
+    reactStrictMode: true,
+  });
+
   return { ...view, onExit };
 }

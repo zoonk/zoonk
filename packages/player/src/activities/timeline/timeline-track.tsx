@@ -2,6 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Ref } from "react";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { CARD_LEFT, EventCard, type TrackEvent } from "./timeline-event-card";
 import { spreadLabels, yearTicks } from "./timeline-scale";
 import { type TimelineAxis, yearToY } from "./use-timeline-axis";
@@ -29,7 +30,7 @@ function TickLabels({
   return yearTicks(axis.start, axis.end).map((tick) => (
     <span
       aria-hidden="true"
-      className="text-muted-foreground absolute right-[calc(100%-4.25rem)] -translate-y-1/2 text-xs whitespace-nowrap tabular-nums"
+      className="text-muted-foreground absolute left-0 -translate-y-1/2 text-xs whitespace-nowrap tabular-nums"
       key={tick}
       style={{ top: yearToY(tick, axis) }}
     >
@@ -130,10 +131,15 @@ function AnchorCard({
 }) {
   return (
     <div
-      className="bg-background absolute right-0 flex min-h-11 -translate-y-1/2 flex-col justify-center rounded-xl border px-3 py-1.5"
+      className={cn(
+        ACTIVITY_BOX_CLASS,
+        "absolute right-0 flex min-h-11 -translate-y-1/2 flex-col justify-center px-3 py-1.5",
+      )}
       style={{ left: CARD_LEFT, top }}
     >
-      <p className="text-muted-foreground text-xs tabular-nums">{formatYear(item.shownYear)}</p>
+      <p className="text-foreground text-xs font-semibold tabular-nums">
+        {formatYear(item.shownYear)}
+      </p>
       <p className="text-sm leading-snug">{item.label}</p>
     </div>
   );
@@ -182,10 +188,10 @@ export function TimelineTrack({
   ];
 
   const cardYs = spreadLabels({
-    bottom: axis.height - cardGap / 2,
+    bottom: axis.height - axis.inset,
     gap: cardGap,
     positions: items.map((item) => yearToY(item.shownYear, axis)),
-    top: cardGap / 2,
+    top: axis.inset,
   });
 
   return (

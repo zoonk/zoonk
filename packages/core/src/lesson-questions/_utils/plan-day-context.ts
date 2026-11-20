@@ -222,7 +222,6 @@ export async function loadCatchUp({
   goal,
   items,
   limit = CATCH_UP_LESSONS,
-  plan,
   scope,
 }: {
   day: SavedDay | null;
@@ -233,7 +232,7 @@ export async function loadCatchUp({
   plan: PlanView;
   scope: LinkScope;
 }): Promise<CatchUpLessons | null> {
-  const left = items ?? (await loadCatchUpLessons({ goal, plan }));
+  const left = items ?? (await loadCatchUpLessons({ goal }));
 
   if (left.length === 0) {
     return null;
@@ -258,8 +257,8 @@ export async function loadCatchUp({
   };
 }
 
-async function loadCatchUpLessons({ goal, plan }: { goal: Goal; plan: PlanView }) {
-  return plan.access.freeWeekOver ? [] : loadCatchUpItems(goal.id);
+async function loadCatchUpLessons({ goal }: { goal: Goal }) {
+  return loadCatchUpItems(goal.id);
 }
 
 export function toWeeklyChallenge({
@@ -344,7 +343,7 @@ export async function loadPlanDayContext({
   const [day, challenges, catchUpItems] = await Promise.all([
     loadSavedDay(goal),
     loadChallenges({ goal, plan }),
-    loadCatchUpLessons({ goal, plan }),
+    loadCatchUpLessons({ goal }),
   ]);
 
   return {

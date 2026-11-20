@@ -144,13 +144,13 @@ internal fun searchGroups(
                 stringResource(R.string.search_group_help),
                 if (showsAccount) {
                     listOf(
-                        SearchItem("blog", stringResource(R.string.search_blog), SearchAction.Open(AppRoute.Blog), R.drawable.ic_newsmode),
+                        SearchItem("blog", stringResource(R.string.search_blog), SearchAction.Open(AppRoute.Blog), R.drawable.ic_newspaper),
                         sendFeedback,
                         SearchItem(
                             "support",
                             stringResource(R.string.search_help),
                             SearchAction.Open(AppRoute.Help),
-                            R.drawable.ic_support,
+                            R.drawable.ic_help,
                         ),
                     )
                 } else {
@@ -408,7 +408,7 @@ private fun settingsItems(isLoggedIn: Boolean): List<SearchItem> {
             "language",
             stringResource(R.string.search_language),
             SearchAction.Open(AppRoute.Preferences),
-            R.drawable.ic_palette,
+            R.drawable.ic_translate,
             keywords = keyword,
         ),
     )
@@ -537,7 +537,7 @@ private fun fallbackGroup(
 
     return SearchGroup(
         FALLBACK_GROUP,
-        stringResource(if (ask != null) R.string.search_group_ask else R.string.search_group_new_goal),
+        stringResource(if (ask != null) R.string.search_group_ask else R.string.search_start_goal),
         listOfNotNull(ask, start),
     )
 }

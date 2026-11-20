@@ -11,8 +11,10 @@ import {
 } from "@zoonk/core/exams/kept-month";
 import { type GoalDraft } from "@zoonk/core/goals/contract";
 import { type OnboardingExamDate } from "@zoonk/core/view-models/onboarding/contract";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted, useFormatter } from "next-intl";
-import { daysUntilIsoDate, toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { useDaysLeftText } from "../../_components/days-left";
+import { daysBetween, getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
 import { toLabelCase } from "../../_utils/label-case";
 import { useNoticeDayText } from "../../plan/notice-day";
 import { type UnderstoodRow } from "./use-understood-rows";
@@ -40,7 +42,7 @@ function readExamMonth(draft: GoalDraft): number | null {
 
 function useToBeConfirmed() {
   const t = useExtracted();
-  const format = useFormatter();
+  const formatDate = useFormatIsoDate();
 
   return ({ month, year }: { month: number | null; year: number | null }): string => {
     if (year === null) {
@@ -51,13 +53,11 @@ function useToBeConfirmed() {
       return t("{year}, to be confirmed", { year: String(year) });
     }
 
-    const date = format.dateTime(new Date(Date.UTC(year, month - 1, 1)), {
-      month: "long",
-      timeZone: "UTC",
-      year: "numeric",
-    });
+    const isoMonth = `${year}-${String(month).padStart(2, "0")}-01`;
 
-    return t("{date}, to be confirmed", { date });
+    return t("{date}, to be confirmed", {
+      date: toLabelCase(formatDate(isoMonth, "rowMonth", { year: "always" })),
+    });
   };
 }
 
@@ -69,11 +69,12 @@ function useKeptMonthRow() {
   return function keptMonthRow({
     draft,
     examDates,
+    today,
   }: {
     draft: GoalDraft;
     examDates: OnboardingExamDate[];
+    today: string;
   }): UnderstoodRow | null {
-    const today = toLocalIsoDate(new Date());
     const details = draft.details;
     const noticeDay = findMeantExamDay({ days: examDates, details, from: today, goalDate: null });
 
@@ -90,16 +91,10 @@ function useKeptMonthRow() {
       editable: { key: "targetDate", kind: "date" },
       id: "targetDate",
       label: t("Exam date"),
-      note: noticeDay
-        ? noticeDayText({
-            date: noticeDay.date,
-            document: getExamDocument(draft),
-            estimated: false,
-          })
-        : undefined,
+      note: noticeDay ? noticeDayText({ date: noticeDay.date, estimated: false }) : undefined,
       source: noticeDay?.source ?? null,
       suggestedDate: noticeDay?.date,
-      value: toLabelCase(formatDate(keptMonth, "month")),
+      value: toLabelCase(formatDate(keptMonth, "rowMonth", { year: "always" })),
     };
   };
 }
@@ -131,10 +126,9 @@ function useExamDaysValue() {
 
     return format.list(
       dates.map((date, index) =>
-        formatDate(date.date, sameYear && index < last ? "dayMonth" : "longYear").replaceAll(
-          " ",
-          NO_BREAK_SPACE,
-        ),
+        formatDate(date.date, "row", {
+          year: sameYear && index < last ? "never" : "always",
+        }).replaceAll(" ", NO_BREAK_SPACE),
       ),
       { type: "conjunction" },
     );
@@ -161,12 +155,13 @@ function useSittingChoiceRow() {
   return function sittingChoiceRow({
     draft,
     examDates,
+    today,
   }: {
     draft: GoalDraft;
     examDates: OnboardingExamDate[];
+    today: string;
   }): UnderstoodRow | null {
-    const from = toLocalIsoDate(new Date());
-    const open = listOpenSittings({ count: SITTING_CHOICES, days: examDates, from });
+    const open = listOpenSittings({ count: SITTING_CHOICES, days: examDates, from: today });
     const [first] = open;
 
     if (
@@ -197,14 +192,15 @@ function useSittingChoiceRow() {
 function findMeantSitting({
   draft,
   examDates,
+  today,
 }: {
   draft: GoalDraft;
   examDates: OnboardingExamDate[];
+  today: string;
 }): OnboardingExamDate[] {
-  const from = toLocalIsoDate(new Date());
-  const goalDate = getNamedMonthStart({ details: draft.details, from });
+  const goalDate = getNamedMonthStart({ details: draft.details, from: today });
 
-  return findLearnerSitting({ days: examDates, from, goalDate }) ?? examDates;
+  return findLearnerSitting({ days: examDates, from: today, goalDate }) ?? examDates;
 }
 
 /**
@@ -214,14 +210,16 @@ function findMeantSitting({
 function findSuggestedDay({
   draft,
   examDates,
+  today,
 }: {
   draft: GoalDraft;
   examDates: OnboardingExamDate[];
+  today: string;
 }): OnboardingExamDate | null {
   const day = findMeantExamDay({
     days: examDates,
     details: draft.details,
-    from: toLocalIsoDate(new Date()),
+    from: today,
     goalDate: draft.targetDate ?? null,
   });
 
@@ -234,6 +232,7 @@ function findSuggestedDay({
 
 function useOwnDateRow() {
   const t = useExtracted();
+  const daysLeftText = useDaysLeftText();
   const formatDate = useFormatIsoDate();
   const noticeDayText = useNoticeDayText();
 
@@ -241,40 +240,42 @@ function useOwnDateRow() {
     draft,
     examDates,
     targetDate,
+    today,
   }: {
     draft: GoalDraft;
     examDates: OnboardingExamDate[];
     targetDate: string;
+    today: string;
   }): UnderstoodRow {
     const official = findOfficialDay({ draft, examDates });
-    const suggested = official ? null : findSuggestedDay({ draft, examDates });
+    const suggested = official ? null : findSuggestedDay({ draft, examDates, today });
 
     const note = official
-      ? t("{days, plural, one {# day left} other {# days left}}", {
-          days: daysUntilIsoDate({ isoDate: official.date, today: new Date() }),
-        })
-      : suggested &&
-        noticeDayText({ date: suggested.date, document: getExamDocument(draft), estimated: false });
+      ? daysLeftText(Math.max(0, daysBetween(today, official.date)))
+      : suggested && noticeDayText({ date: suggested.date, estimated: false });
 
     return {
       editable: { key: "targetDate", kind: "date" },
       id: "targetDate",
-      label: draft.kind === "exam" ? t("Exam date") : t("Deadline"),
+      label: draft.kind === "exam" ? t("Exam date") : t("End date"),
       note: note ?? undefined,
       source: official?.source ?? suggested?.source ?? null,
       suggestedDate: suggested?.date,
-      value: formatDate(targetDate, "longYear"),
+      value: formatDate(targetDate, "row", { year: "always" }),
     };
   };
 }
 
-export function useDateRow() {
+export function useDateRow(timeZone: string) {
   const t = useExtracted();
+  const daysLeftText = useDaysLeftText();
   const examDaysValue = useExamDaysValue();
   const toBeConfirmed = useToBeConfirmed();
   const keptMonthRow = useKeptMonthRow();
   const sittingChoiceRow = useSittingChoiceRow();
   const ownDateRow = useOwnDateRow();
+  // The draft's zone, as core counts a goal's days and as the date editor bounds them.
+  const today = getTodayInZone({ now: useMountTime(), timeZone });
 
   return function toDateRow({
     draft,
@@ -284,7 +285,7 @@ export function useDateRow() {
     examDates: OnboardingExamDate[];
   }): UnderstoodRow | null {
     if (draft.targetDate) {
-      return ownDateRow({ draft, examDates, targetDate: draft.targetDate });
+      return ownDateRow({ draft, examDates, targetDate: draft.targetDate, today });
     }
 
     if (draft.kind !== "exam") {
@@ -316,13 +317,14 @@ export function useDateRow() {
 
     const kept = estimated
       ? null
-      : (keptMonthRow({ draft, examDates }) ?? sittingChoiceRow({ draft, examDates }));
+      : (keptMonthRow({ draft, examDates, today }) ??
+        sittingChoiceRow({ draft, examDates, today }));
 
     if (kept) {
       return kept;
     }
 
-    const sitting = estimated ? examDates : findMeantSitting({ draft, examDates });
+    const sitting = estimated ? examDates : findMeantSitting({ draft, examDates, today });
     const [day = first] = sitting;
 
     return {
@@ -333,9 +335,7 @@ export function useDateRow() {
       label: t("{count, plural, one {Exam date} other {Exam dates}}", { count: sitting.length }),
       note: estimated
         ? t("From its usual dates. We'll tell you when the official ones are out.")
-        : t("{days, plural, one {# day left} other {# days left}}", {
-            days: daysUntilIsoDate({ isoDate: day.date, today: new Date() }),
-          }),
+        : daysLeftText(Math.max(0, daysBetween(today, day.date))),
       source: estimated ? null : day.source,
       value: examDaysValue(sitting),
     };

@@ -19,6 +19,7 @@
   "questions_entry_decimals": "03e7f48c9fca35941a2ff73b133e024ff0e54357870bcb62b445e165d71dcf05",
   "questions_entry_fraction": "cf3405730397e69622f700873f4f2783ee0bbe34187cb590e1d7b7f7741b47fb",
   "questions_entry_integer": "96e5be57f412258544296577b9c9a849bc22116b41e5c7fa90811154bd97217b",
+  "questions_entry_round_to_whole": "c3b6b86b159a7c25f3fc99d51608deec9e3335def7d81a1a7079cc249b7eed2f",
   "questions_false": "97a5439a132b9c4e005c09d540cd08db106b685238b429ba1f90330f4e11f76b",
   "questions_feedback_label": "bbd3247f75e7752510ceb0822d1a0f43b766ce8d076891a1a37913896b416e83",
   "questions_invalid_fraction": "7a732fc826e2f44c123e7c7497113a140f9429998dc50e8ed9387af50f013449",
@@ -81,6 +82,7 @@
     <string name="questions_your_answer">Tu respuesta</string>
     <string name="questions_mark_correct">Correcta</string>
     <string name="questions_mark_wrong">Incorrectas</string>
+    <string name="questions_entry_round_to_whole">Redondea al número entero más cercano.</string>
     <plurals name="questions_entry_decimals">
         <item quantity="one">Redondea a %d decimal.</item>
         <item quantity="many">Redondea a %d decimales.</item>

@@ -5,6 +5,182 @@ import org.junit.Test
 
 /** Main's `map-viewport.test.ts`, with the values its `fitViewport` and `spreadPins` return. */
 class MapViewportTest {
+    @Test fun translatedCourseMatchesEitherTheSourceOrTranslatedName() {
+        for (references in listOf("Onde fica a América do Norte?", "Onde fica North America?")) {
+            org.junit.Assert.assertTrue(isMapLabelNamed(references, "North America", "América do Norte"))
+        }
+        org.junit.Assert.assertFalse(isMapLabelNamed("Onde fica a Europa?", "North America", "América do Norte"))
+    }
+
+    private val named = MapLabelSpot(MapPoint(160.0, 120.0), 80.0, 12.0, 0.0, true, true, listOf(MapPoint(160.0, 120.0)))
+
+    @Test fun namedStreetStaysBesideItsOwnPathAtNormalAndTwiceTheTextSize() {
+        for (width in listOf(100.0, 200.0)) {
+            val broad = named.copy(width = width, height = width * 0.12, positions = listOf(MapPoint(20.0, 120.0), MapPoint(300.0, 120.0)))
+            val oxford =
+                broad.copy(
+                    center = MapPoint(160.0, 83.0),
+                    priority = false,
+                    positions = listOf(MapPoint(20.0, 83.0), MapPoint(300.0, 83.0)),
+                )
+            val spot = placeMapLabels(listOf(broad, oxford), listOf(MapPoint(160.0, 120.0)), 320.0, 240.0)[0]
+            org.junit.Assert.assertNotNull(spot)
+            spot!!
+            org.junit.Assert.assertTrue(kotlin.math.abs(spot.y - 120) <= 40)
+            org.junit.Assert.assertTrue(kotlin.math.abs(spot.y - 120) < kotlin.math.abs(spot.y - 83))
+            org.junit.Assert.assertTrue(
+                kotlin.math.abs(spot.x - 160) >= width * spot.scale / 2 + 20 ||
+                    kotlin.math.abs(spot.y - 120) >= broad.height * spot.scale / 2 + 20,
+            )
+        }
+    }
+
+    @Test fun narrowFrameKeepsStreetMarginOrInlineLabel() = verifyStreetMargin(192.0, 120.0)
+
+    @Test fun widenedFrameKeepsStreetMarginOrInlineLabel() = verifyStreetMargin(320.0, 220.0)
+
+    private fun verifyStreetMargin(
+        width: Double,
+        labelWidth: Double,
+    ) {
+        val center = MapPoint(width / 2, 62.0)
+        val labels =
+            listOf(90.0, 25.0, 105.0).mapIndexed { index, y ->
+                named.copy(
+                    center = MapPoint(center.x, if (index == 0) 98.0 else y),
+                    width = labelWidth,
+                    height = 24.0,
+                    priority = index == 0,
+                    positions = listOf(MapPoint(0.0, y), MapPoint(width, y)),
+                )
+            }
+        val spot =
+            placeMapLabels(
+                labels,
+                listOf(center),
+                width,
+                180.0,
+                pinNumbers = listOf(MapBox(center.x - 8, center.y - 10, 16.0, 20.0)),
+            )[0]
+        org.junit.Assert.assertNotNull(spot)
+        spot!!
+        val own = kotlin.math.abs(spot.y - 90)
+        val other = minOf(kotlin.math.abs(spot.y - 25), kotlin.math.abs(spot.y - 105))
+        org.junit.Assert.assertTrue(own < 0.01 || own + 12 * spot.scale <= other)
+        org.junit.Assert.assertTrue(
+            kotlin.math.abs(spot.x - center.x) >= labelWidth * spot.scale / 2 + 8 ||
+                kotlin.math.abs(spot.y - center.y) >= 12 * spot.scale + 10,
+        )
+        org.junit.Assert.assertTrue(spot.scale >= 0.8)
+    }
+
+    @Test fun namedLabelBoxesClearEveryPinBox() {
+        val pins = listOf(MapPoint(160.0, 120.0), MapPoint(190.0, 155.0))
+        val spot =
+            placeMapLabels(
+                listOf(named.copy(positions = listOf(MapPoint(150.0, 120.0), MapPoint(170.0, 120.0)))),
+                pins,
+                320.0,
+                240.0,
+            )[0]!!
+        pins.forEach { pin -> org.junit.Assert.assertTrue(kotlin.math.abs(spot.x - pin.x) >= 60 || kotlin.math.abs(spot.y - pin.y) >= 26) }
+    }
+
+    @Test fun threeNamedRegionsPackWithoutBoxOverlap() {
+        val labels = List(3) { named.copy(center = MapPoint(100.0, 20.0), width = 110.0, street = false) }
+        val spots = placeMapLabels(labels, emptyList(), 200.0, 40.0)
+        org.junit.Assert.assertTrue(spots.all { it != null })
+        for (i in spots.indices) {
+            for (j in i + 1 until spots.size) {
+                org.junit.Assert.assertTrue(
+                    kotlin.math.abs(spots[i]!!.x - spots[j]!!.x) >= 55 * (spots[i]!!.scale + spots[j]!!.scale) ||
+                        kotlin.math.abs(spots[i]!!.y - spots[j]!!.y) >= 6 * (spots[i]!!.scale + spots[j]!!.scale),
+                )
+            }
+        }
+    }
+
+    @Test fun questionNamesOutrankAnswerOnlyNamesAtMinimumSize() {
+        val choice = named.copy(center = MapPoint(50.0, 10.0), width = 110.0, street = false)
+        val spots = placeMapLabels(listOf(choice, choice.copy(question = true)), emptyList(), 100.0, 20.0)
+        org.junit.Assert.assertNull(spots[0])
+        org.junit.Assert.assertNotNull(spots[1])
+        org.junit.Assert.assertTrue(spots[1]!!.scale >= 0.8)
+    }
+
+    @Test fun namedStreetSurvivesItsOnlySpotBeingUnderAPin() {
+        org.junit.Assert.assertNotNull(placeMapLabels(listOf(named), listOf(named.center), 320.0, 240.0)[0])
+    }
+
+    @Test fun twoNamedLabelsOnOneSegmentStayReadable() {
+        val spots = placeMapLabels(listOf(named, named), emptyList(), 320.0, 240.0)
+        org.junit.Assert.assertTrue(spots.all { it != null })
+        org.junit.Assert.assertNotEquals(spots[0], spots[1])
+    }
+
+    @Test fun namedRegionSurvivesAPinAtItsSpot() {
+        org.junit.Assert.assertNotNull(placeMapLabels(listOf(named.copy(street = false)), listOf(named.center), 320.0, 240.0)[0])
+    }
+
+    @Test
+    fun namedStreetMovesOffItsPinBeforeAnOptionalLabel() {
+        val labels =
+            listOf(
+                MapLabelSpot(MapPoint(138.0, 100.0), 80.0, 12.0, 0.0, false, false),
+                MapLabelSpot(MapPoint(70.0, 100.0), 80.0, 12.0, 0.0, true, true, listOf(MapPoint(70.0, 100.0), MapPoint(138.0, 100.0))),
+            )
+        val spots = placeMapLabels(labels, listOf(MapPoint(70.0, 100.0)), 210.0, 200.0)
+        org.junit.Assert.assertNotNull(spots[1])
+        org.junit.Assert.assertTrue(spots[1]!!.x > 130)
+        org.junit.Assert.assertNull(spots[0])
+    }
+
+    @Test
+    fun droppedLabelFreesItsSpaceAndOneEdgeRuleKeepsWhatFits() {
+        val labels =
+            listOf(
+                MapLabelSpot(MapPoint(100.0, 100.0), 500.0, 12.0, 0.0, false, false),
+                MapLabelSpot(MapPoint(100.0, 100.0), 40.0, 12.0, 0.0, false, false),
+                MapLabelSpot(MapPoint(12.0, 30.0), 20.0, 12.0, 0.0, false, false),
+            )
+        assertEquals(
+            listOf(null, MapPoint(100.0, 100.0), MapPoint(12.0, 30.0)),
+            placeMapLabels(labels, emptyList(), 210.0, 200.0).map {
+                it?.center
+            },
+        )
+    }
+
+    @Test
+    fun streetCanSlideFartherThanItsTextWidthIntoTheVisibleFrame() {
+        val labels =
+            listOf(
+                MapLabelSpot(
+                    MapPoint(70.0, 300.0),
+                    80.0,
+                    12.0,
+                    90.0,
+                    true,
+                    false,
+                    listOf(MapPoint(70.0, 50.0), MapPoint(70.0, 124.0), MapPoint(70.0, 300.0)),
+                ),
+            )
+        val spots = placeMapLabels(labels, listOf(MapPoint(70.0, 190.0)), 210.0, 200.0)
+        org.junit.Assert.assertNotNull(spots[0])
+        org.junit.Assert.assertTrue(spots[0]!!.y < 130)
+    }
+
+    @Test
+    fun shortStreetLabelFitsBesideItsPathWhenAPinFillsTheInlineSpace() {
+        val labels =
+            listOf(MapLabelSpot(MapPoint(70.0, 100.0), 80.0, 12.0, 90.0, true, false, listOf(MapPoint(70.0, 50.0), MapPoint(70.0, 120.0))))
+        val spots = placeMapLabels(labels, listOf(MapPoint(70.0, 100.0)), 210.0, 250.0)
+        val spot = requireNotNull(spots[0])
+        org.junit.Assert.assertTrue(kotlin.math.abs(spot.x - 70) <= 32)
+        org.junit.Assert.assertTrue(spot.y in 50.0..120.0)
+        org.junit.Assert.assertTrue(kotlin.math.abs(spot.x - 70) > 12 / 2 + 20)
+    }
+
     private fun assertPoints(
         expected: List<MapPoint>,
         actual: List<MapPoint>,

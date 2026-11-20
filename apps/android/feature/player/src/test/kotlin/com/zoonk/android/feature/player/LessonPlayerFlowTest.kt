@@ -112,6 +112,27 @@ class LessonPlayerFlowTest {
         api.lessonGate?.complete(Unit)
     }
 
+    /** A written answer is given up from the bar, beside Check, and shows its sample answer. */
+    @Test
+    fun aWrittenAnswerIsGivenUpFromTheBar() {
+        play(listOf(typedAnswerStep("write"), summaryStep("end")))
+
+        tap("I don't know yet")
+
+        rule.waitUntil {
+            viewModel.state.value
+                ?.results
+                ?.get("write") != null
+        }
+        assertEquals(
+            "Because it maps chances.",
+            viewModel.state.value
+                ?.results
+                ?.get("write")
+                ?.correctAnswer,
+        )
+    }
+
     /** Android closing the app in the background keeps a typed answer the learner hasn't checked. */
     @Test
     fun aTypedAnswerComesBackAfterAndroidClosesTheAppInTheBackground() {
@@ -263,7 +284,7 @@ class LessonPlayerFlowTest {
     fun aWorkedExamplesShownStepsComeBackAfterAndroidClosesTheAppInTheBackground() {
         val restoration = StateRestorationTester(rule)
         harness.play(listOf(workedExampleStep("worked"), summaryStep("end")), restoration = restoration)
-        tap("Show the next step")
+        tap("Next step")
         rule.onNodeWithText("Each part is 20", substring = true).assertExists()
 
         harness.viewModel = openAgain()

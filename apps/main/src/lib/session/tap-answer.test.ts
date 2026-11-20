@@ -55,6 +55,14 @@ describe(answerHere, () => {
     await expect(waiting).resolves.toBe("left");
   });
 
+  it("counts a trip away and back before the answer as leaving, though the page is the same", async () => {
+    const here = stayingHere();
+    noteNavigationStart();
+    noteNavigationStart();
+
+    await expect(here()).resolves.toBe(false);
+  });
+
   it("stops waiting the moment the learner leaves while a visitor's guest sign-in is still out", async () => {
     const waiting = answerHere(NEVER, openingAsGuest(NEVER));
     noteNavigationStart();

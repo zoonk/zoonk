@@ -12,7 +12,8 @@ protocol MindMapsAPIClient: Sendable {
   /// Desired state: saving twice keeps one save. Answers whether it's saved now.
   func save(token: String, goalId: String, key: MindMapKey, saved: Bool) async throws -> Bool
   /// What started and what didn't shows in the list read again.
-  func createAll(token: String, goalId: String) async throws
+  /// The allowance's stop when it started nothing.
+  func createAll(token: String, goalId: String) async throws -> MindMapAllowanceStop?
 }
 
 struct MindMapsAPI: MindMapsAPIClient {
@@ -87,8 +88,7 @@ struct MindMapsAPI: MindMapsAPIClient {
     }
   }
 
-  /// A map that doesn't open anymore, or one locked for Plus, can't be saved: the screen says it
-  /// couldn't.
+  /// A map that doesn't open anymore can't be saved: the screen says it couldn't.
   func save(token: String, goalId: String, key: MindMapKey, saved: Bool) async throws -> Bool {
     try await clients.perform(token: token) { client in
       switch try await client.saveMindMap(
@@ -100,16 +100,18 @@ struct MindMapsAPI: MindMapsAPIClient {
       {
       case .ok(let response): return try response.body.json.saved
       case .unauthorized: throw APIError.unauthorized
-      case .notFound, .code402: throw APIError.notFound
+      case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }
   }
 
-  func createAll(token: String, goalId: String) async throws {
+  func createAll(token: String, goalId: String) async throws -> MindMapAllowanceStop? {
     try await clients.perform(token: token) { client in
       switch try await client.createGoalMindMapGenerations(path: .init(goalId: goalId)) {
-      case .accepted: return
+      case .accepted(let response):
+        let started: MindMapGenerations = try PracticeJSON.recode(try response.body.json)
+        return started.accepted.isEmpty ? started.stop : nil
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
@@ -117,8 +119,12 @@ struct MindMapsAPI: MindMapsAPIClient {
     }
   }
 
-  /// `PLUS_REQUIRED` is the map's own status, which the row reads; a limit names what ran out in
-  /// `details.limit.resource`.
+  private struct MindMapGenerations: Decodable {
+    let accepted: [String]
+    let stop: MindMapAllowanceStop?
+  }
+
+  /// A limit names what ran out in `details.limit.resource`.
   private static func refusal(_ error: Components.Schemas._Error?, status: Int) -> MindMapRequest {
     let refusal = voiceRefusal(status: status, error: error)
 
@@ -132,6 +138,7 @@ struct MindMapsAPI: MindMapsAPIClient {
     let ranOut: MindMapLimit.Resource =
       switch resource as? String {
       case "aiSpend": .aiSpend
+      case "chapterLessons": .chapterLessons
       case "lessonStart", "generatedLessons": .lessons
       default: .mindMap
       }

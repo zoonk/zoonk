@@ -153,19 +153,15 @@ struct CallLoadFailed: View {
   let retry: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    PageLoadFailure {
       Label {
         Text("The call didn't load", tableName: "Voice", comment: "Loading a conversation failed")
       } icon: {
         Image(systemName: "wifi.exclamationmark")
       }
-    } actions: {
-      Button(action: retry) {
-        Text("Try again", tableName: "Voice", comment: "Button to retry loading")
-      }
-      .buttonStyle(.outline)
+    } retry: {
+      retry()
     }
-    .lonePage()
   }
 }
 
@@ -309,13 +305,16 @@ private struct LiveCallRun: View {
         handle(action, call: call)
       }
     } else if conversation.locked || call.failure == .plusRequired {
-      ConversationIntro(intro: CallIntro(conversation)) {
+      ConversationIntro(intro: CallIntro(conversation), isLocked: true) {
         CallStartFooter(isLocked: true, callee: nil) {}
       }
     } else if call.phase == .idle, !call.continuing {
-      ConversationIntro(intro: CallIntro(conversation)) {
+      ConversationIntro(
+        intro: CallIntro(conversation),
+        microphoneOff: call.micBlocked ? conversation.character.name : nil
+      ) {
         if call.micBlocked {
-          CallMicrophoneOff(name: conversation.character.name) {
+          CallMicrophoneOff {
             Task { await call.startTyping() }
           }
         } else {
@@ -337,14 +336,11 @@ private struct LiveCallRun: View {
     ConversationLiveView(
       call: call, conversation: conversation, saving: saving,
       onEnd: {
-        if call.phase == .connecting {
+        // A reconnect's End ends the call, on what was said; a first call's, with nothing to save,
+        // goes back to its intro.
+        if call.phase == .connecting, !call.continuing {
           call.cancel()
-
-          // A dropped call stays dropped, to end or call again; a new one, with nothing to save,
-          // goes back to its intro.
-          if !call.continuing {
-            restart(callNow: false)
-          }
+          restart(callNow: false)
         } else {
           call.hangUp()
         }

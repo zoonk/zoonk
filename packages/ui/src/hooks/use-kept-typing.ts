@@ -2,14 +2,22 @@ import { type ComponentProps, useEffectEvent, useId, useLayoutEffect, useState }
 import { KEEP_TYPING_ATTRIBUTE } from "../lib/kept-typing-script";
 
 type FieldValue = ComponentProps<"input">["value"];
+type KeptField = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 /**
  * React hydrates a text field with its value tracker holding the words on screen, so an input event
  * carrying them reads as no change. Writing the field's own value through the tracker first makes
  * them a change, which the event hands to the field's handlers. Those writes move the caret to the
- * end, so it goes back where the learner left it.
+ * end, so it goes back where the learner left it. A select has no tracker, and React hears its
+ * picks as `change`.
  */
-function typeAgain(field: HTMLInputElement | HTMLTextAreaElement, own: string, typed: string) {
+function typeAgain(field: KeptField, own: string, typed: string) {
+  if (field instanceof HTMLSelectElement) {
+    field.value = typed;
+    field.dispatchEvent(new Event("change", { bubbles: true }));
+    return;
+  }
+
   const { selectionDirection, selectionEnd, selectionStart } = field;
 
   field.value = own;
@@ -22,8 +30,9 @@ function typeAgain(field: HTMLInputElement | HTMLTextAreaElement, own: string, t
 }
 
 /**
- * Spread last on a text field. With `KEEP_TYPING_SCRIPT` in the page's `<head>`, words typed before
- * the field hydrated stay on screen as it does, then reach its `onChange` as if typed just then.
+ * Spread last on a text field or a select. With `KEEP_TYPING_SCRIPT` in the page's `<head>`, words
+ * typed or an option picked before the field hydrated stay on screen as it does, then reach its
+ * `onChange` as if typed or picked just then.
  */
 export function useKeptTyping({
   defaultValue,
@@ -38,7 +47,7 @@ export function useKeptTyping({
   const handOver = useEffectEvent((last: string) => {
     const own = String(value ?? defaultValue ?? "");
 
-    const field = document.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+    const field = document.querySelector<KeptField>(
       `[${KEEP_TYPING_ATTRIBUTE}="${CSS.escape(key)}"]`,
     );
 
@@ -69,7 +78,7 @@ export function useKeptTyping({
   return { [KEEP_TYPING_ATTRIBUTE]: key, ...drawTyped({ typed, value }) };
 }
 
-/** Hydration puts a textarea back to its server text, so the hydrating render draws the typed words. */
+/** Hydration puts a textarea or a select back to its server value, so the hydrating render draws the typed one. */
 function drawTyped({ typed, value }: { typed: string | undefined; value: FieldValue }) {
   if (typed === undefined) {
     return {};

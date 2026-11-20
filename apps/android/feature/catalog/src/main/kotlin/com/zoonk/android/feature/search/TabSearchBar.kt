@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -57,11 +58,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
-import com.zoonk.android.app.shell.GoalSwitcherViewModel
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignOutResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.CatalogQuery
@@ -74,9 +74,12 @@ import com.zoonk.android.feature.today.nextStep
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -88,6 +91,7 @@ import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamMockSummary
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
@@ -116,11 +120,14 @@ fun TabSearchBar(
 
     SearchPanel(app, navigator, state, docked) { inputField ->
         // Docked results open at the bar's width, so a wide window's bar keeps Material's docked width.
-        val width = if (docked) Modifier.widthIn(max = DOCKED_WIDTH) else Modifier.fillMaxWidth()
+        val width = Modifier.fillMaxWidth()
         BeforeFold { beforeFold ->
             SearchBar(
                 state = state,
                 inputField = inputField,
+                shape =
+                    androidx.compose.foundation.shape
+                        .RoundedCornerShape(com.zoonk.android.ui.theme.ZoonkRadius.xl),
                 modifier = modifier.then(beforeFold).then(width).padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
             )
         }
@@ -159,10 +166,8 @@ internal fun SearchPanel(
 ) {
     val text = rememberTextFieldState()
     val scope = rememberCoroutineScope()
-    val snackbars = LocalSnackbarHostState.current
-    val switcher = viewModel { GoalSwitcherViewModel(app) }
+    val switching = viewModel(key = "search-goal-switch") { SearchGoalSwitch(app.scope, app::switchGoal) }
     val search = viewModel { SearchViewModel(app.today, app.studyOpener) }
-    val continueFailed = stringResource(R.string.search_continue_failed)
     val expanded = state.currentValue == SearchBarValue.Expanded
     val sendFeedback = rememberSendFeedback(app, "command-palette")
 
@@ -182,7 +187,7 @@ internal fun SearchPanel(
             }
 
             is SearchAction.SwitchGoal -> {
-                switcher.select(action.goalId)
+                switching.switchTo(action.goalId)
             }
 
             SearchAction.SignOut -> {
@@ -201,11 +206,19 @@ internal fun SearchPanel(
             }
 
             SearchAction.Continue -> {
-                search.continueToday(
-                    open = { route -> if (route == null) navigator.showRoot(AppTab.Today) else navigator.open(route) },
-                    failed = { scope.launch { snackbars.showSnackbar(continueFailed) } },
-                )
+                search.continueToday()
             }
+        }
+    }
+
+    VisitOf(switching.visit)
+    ActOn(switching.failed) { app.snackbars.show(R.string.goal_switcher_failed) }
+
+    VisitOf(search.visit)
+    ActOn(search.continued) { continued ->
+        when (continued) {
+            is Continued.Open -> if (continued.route == null) navigator.showRoot(AppTab.Today) else navigator.open(continued.route)
+            Continued.Failed -> app.snackbars.show(R.string.search_continue_failed)
         }
     }
 
@@ -227,7 +240,7 @@ internal fun SearchPanel(
                 placeholder = { Text(stringResource(R.string.search_placeholder), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 leadingIcon = {
                     if (expanded) {
-                        IconButton(onClick = close) {
+                        IconButton(onClick = close, modifier = Modifier.offset(x = -FIELD_ICON_PULL)) {
                             Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.search_close))
                         }
                     } else {
@@ -236,7 +249,7 @@ internal fun SearchPanel(
                 },
                 trailingIcon = {
                     if (expanded && text.text.isNotEmpty()) {
-                        IconButton(onClick = { text.clearText() }) {
+                        IconButton(onClick = { text.clearText() }, modifier = Modifier.offset(x = FIELD_ICON_PULL)) {
                             Icon(painterResource(R.drawable.ic_close), contentDescription = stringResource(R.string.search_clear))
                         }
                     }
@@ -297,26 +310,53 @@ private fun Modifier.atBarWidth(state: SearchBarState): Modifier =
         layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
 
+internal class SearchGoalSwitch(
+    private val appScope: CoroutineScope,
+    private val switch: suspend (UUID) -> Boolean?,
+) : ViewModel() {
+    val visit = Visit()
+    val failed = visit.outcome<Unit>()
+
+    fun switchTo(goalId: UUID) {
+        val asked = visit.number
+        appScope.launch {
+            if (switch(goalId) == false) failed.send(asked, Unit)
+        }
+    }
+}
+
+/** Where Continue leads: [Open] today's next step, or Today itself with no route; or that it didn't open. */
+internal sealed interface Continued {
+    data class Open(
+        val route: AppRoute?,
+    ) : Continued
+
+    data object Failed : Continued
+}
+
 class SearchViewModel(
     private val today: TodayStore,
     private val opener: StudyOpener,
 ) : ViewModel() {
     private var opening = false
 
+    /** This visit to the page search shows on: where Continue leads shows only on it. */
+    val visit = Visit()
+
+    internal val continued = visit.outcome<Continued>()
+
     /**
-     * Opens today's next step as Today's Start does. With no day read to start from, [open] gets
-     * null and Today shows where the day stands; the same when the day changed meanwhile.
+     * Opens today's next step as Today's Start does. With no day read to start from, it leads to
+     * Today, which shows where the day stands; the same when the day changed meanwhile.
      */
-    internal fun continueToday(
-        open: (AppRoute?) -> Unit,
-        failed: () -> Unit,
-    ) {
+    internal fun continueToday() {
         if (opening) return
         val read = today.today.state.value.value as? TodayRead.Day
         val step = read?.day?.nextStep
+        val started = visit.number
 
         if (read == null || step == null) {
-            open(null)
+            continued.send(started, Continued.Open(null))
             return
         }
 
@@ -324,8 +364,8 @@ class SearchViewModel(
         viewModelScope.launch {
             try {
                 when (val result = opener.open(read.day, step, next = true, read.today.goal.id)) {
-                    is MutationResult.Done -> open(result.value)
-                    is MutationResult.Failed -> failed()
+                    is MutationResult.Done -> continued.send(started, Continued.Open(result.value))
+                    is MutationResult.Failed -> continued.send(started, Continued.Failed)
                     MutationResult.Obsolete -> Unit
                 }
             } finally {
@@ -411,14 +451,13 @@ private fun SearchResults(
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
-    val tint = MaterialTheme.colorScheme.surfaceContainerHighest
-    val label = MaterialTheme.zoonkType.label
+    val label = MaterialTheme.typography.labelMedium
 
     LazyColumn(modifier.fillMaxSize()) {
         groups.forEach { group ->
             item(key = "group-${group.id}", contentType = "header") {
                 Text(
-                    group.label.uppercase(locale),
+                    group.label,
                     modifier =
                         Modifier
                             .padding(start = LIST_ITEM_INSET, end = LIST_ITEM_INSET, top = 14.dp, bottom = 6.dp)
@@ -436,9 +475,11 @@ private fun SearchResults(
                     ListDivider()
                     ListRow(
                         headline = { Text(item.label, maxLines = 2, overflow = TextOverflow.Ellipsis) },
-                        modifier = Modifier.background(if (item == highlighted) tint else Color.Transparent),
                         onClick = { onOpen(item) },
-                        leading = { Icon(painterResource(item.icon), contentDescription = null) },
+                        highlighted = item == highlighted,
+                        // The search view is on the tint a highlighted row has elsewhere.
+                        highlightColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        leading = { MarkIcon(item.icon) },
                         supporting =
                             item.detail?.let { detail ->
                                 { Text(detail.replaceFirstChar { it.titlecase(locale) }, maxLines = 1, overflow = TextOverflow.Ellipsis) }
@@ -455,3 +496,6 @@ private fun SearchResults(
 private const val QUERY_SETTLE_MS = 250L
 private const val MIN_SERVER_QUERY = 2
 private val DOCKED_WIDTH = 560.dp
+
+/** Material's field sets its back arrow and clear button 4dp inside the edges the results' marks and dividers keep. */
+private val FIELD_ICON_PULL = 4.dp

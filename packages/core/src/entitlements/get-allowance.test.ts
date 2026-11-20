@@ -25,7 +25,7 @@ describe(getAllowance, () => {
     await expect(getAllowance()).resolves.toBeNull();
   });
 
-  it("shows a free learner's lessons today and this month with when they reset", async () => {
+  it("shows rolling lesson usage and next eligibility alongside daily resets", async () => {
     const user = await userFixture();
 
     await Promise.all([
@@ -39,26 +39,27 @@ describe(getAllowance, () => {
 
     expect(allowance).toMatchObject({
       activeGoals: { limit: 3, used: 1 },
-      examPrep: { includesMockExams: false, studyDays: 7 },
+      examPrep: { includesMockExams: false },
       generatedLessons: null,
-      resets: { day: new Date("2026-09-16T00:00:00Z"), month: new Date("2026-10-01T00:00:00Z") },
+      resets: { day: new Date("2026-09-16T00:00:00Z") },
       tier: "free",
     });
 
     expect(allowance?.items.find((item) => item.kind === "lessonStart")).toStrictEqual({
-      dailyLimit: 20,
+      availableAt: new Date("2026-10-03T09:00:00Z"),
+      dailyLimit: null,
       fairUseDailyLimit: null,
       kind: "lessonStart",
-      monthlyLimit: 40,
-      remaining: 7,
+      remaining: 0,
+      rollingLimit: 20,
       totalLimit: null,
-      usedThisMonth: 33,
+      usedLast30Days: 33,
       usedToday: 3,
       usedTotal: 33,
     });
   });
 
-  it("shows the call time used today and this month beside the plan's caps", async () => {
+  it("shows the call time used today and the rolling window beside the plan's caps", async () => {
     const user = await userFixture();
 
     await Promise.all([
@@ -80,13 +81,14 @@ describe(getAllowance, () => {
 
     mockSession(user.id);
 
-    await expect(getAllowance()).resolves.toMatchObject({
-      callTime: {
-        limitSeconds: 120,
-        monthLimitSeconds: 300,
-        usedSeconds: 60,
-        usedSecondsThisMonth: 240,
-      },
+    const allowance = await getAllowance();
+
+    expect(allowance?.items.find((item) => item.kind === "conversation")).toMatchObject({
+      availableAt: null,
+      dailyLimit: 120,
+      rollingLimit: 300,
+      usedLast30Days: 240,
+      usedToday: 60,
     });
   });
 
@@ -100,10 +102,7 @@ describe(getAllowance, () => {
     mockSession(user.id);
     const allowance = await getAllowance();
 
-    expect(allowance).toMatchObject({
-      examPrep: { includesMockExams: true, studyDays: null },
-      tier: "plus",
-    });
+    expect(allowance).toMatchObject({ examPrep: { includesMockExams: true }, tier: "plus" });
 
     expect(allowance?.items.find((item) => item.kind === "lessonStart")).toMatchObject({
       dailyLimit: null,

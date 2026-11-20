@@ -91,16 +91,19 @@ export async function seed(): Promise<void> {
   await runSeed([]);
 }
 
+/** `state` is one of core's `SCENARIO_STATES`, which core's seed command checks. */
 export async function seedPersonaCopy({
   copyKey,
   email,
   persona,
+  state,
 }: {
   copyKey: string;
   email: string;
   persona: SeedPersonaName;
+  state?: string;
 }): Promise<{ goalId: string; userId: string }> {
-  const copy = await requestCopy({ copyKey, email, persona });
+  const copy = await requestCopy({ copyKey, email, persona, state });
 
   if (!isJsonObject(copy) || typeof copy.goalId !== "string" || typeof copy.userId !== "string") {
     throw new Error(`The seed command wrote no copy of ${persona}: ${JSON.stringify(copy)}`);

@@ -7,14 +7,6 @@ import { parseFormField } from "@zoonk/utils/form";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidatePath } from "next/cache";
 
-export type UpdateCourseState = {
-  error: string | null;
-  slug: string;
-  status: "idle" | "error" | "success";
-  submissionId: number;
-  title: string;
-};
-
 const ERRORS = {
   forbidden: "You can't edit courses.",
   invalidSlug: "Enter a slug with at least one letter or number.",
@@ -23,47 +15,32 @@ const ERRORS = {
   unauthorized: "You can't edit courses.",
 } as const;
 
-export async function updateCourseAction(
-  previousState: UpdateCourseState,
-  formData: FormData,
-): Promise<UpdateCourseState> {
+/** Answers why it couldn't save, for the dialog that asked; no error means it saved. */
+export async function updateCourseAction(formData: FormData): Promise<{ error: string | null }> {
   await assertAdmin();
 
-  const submissionId = previousState.submissionId + 1;
   const id = parseFormField(formData, "id");
   const title = parseFormField(formData, "title");
-  const submittedSlug = parseFormField(formData, "slug");
+  const slug = parseFormField(formData, "slug");
 
-  if (!(isUuid(id) && title && submittedSlug)) {
-    return {
-      ...previousState,
-      error: "Title and slug are required.",
-      status: "error",
-      submissionId,
-    };
+  if (!(isUuid(id) && title && slug)) {
+    return { error: "Title and slug are required." };
   }
 
-  const submittedState = { slug: submittedSlug, title };
-
   const { data: result, error } = await safeAsync(() =>
-    renameCourseForAdmin({ courseId: id, slug: submittedSlug, title }),
+    renameCourseForAdmin({ courseId: id, slug, title }),
   );
 
   if (error) {
-    return {
-      ...submittedState,
-      error: "Could not save this course. Please try again.",
-      status: "error",
-      submissionId,
-    };
+    return { error: "Could not save this course. Please try again." };
   }
 
   if (result.status !== "renamed") {
-    return { ...submittedState, error: ERRORS[result.status], status: "error", submissionId };
+    return { error: ERRORS[result.status] };
   }
 
   revalidatePath("/courses");
   revalidatePath(`/courses/${id}`);
 
-  return { error: null, slug: result.slug, status: "success", submissionId, title };
+  return { error: null };
 }

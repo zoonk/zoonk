@@ -2,9 +2,11 @@ import { type LessonVisual as LessonVisualData } from "@zoonk/core/library/steps
 import { cn } from "@zoonk/ui/lib/utils";
 import { Fragment } from "react";
 import { RichTable } from "../_components/rich-table";
+import { useAppLocale } from "../_utils/locale";
 import { type RichInlineSegment, RichInlineSegments } from "../rich-text/rich-inline-segments";
 import { RichTextBlocks } from "../rich-text/rich-text-blocks";
 import { speakSegments } from "../rich-text/rich-text-speech";
+import { typesetNumbers, typesetProse } from "../rich-text/rich-text-typography";
 import { SpokenMath } from "../rich-text/spoken-math";
 import { useMathWords } from "../rich-text/use-spoken-text";
 import { LessonVisual } from "../visuals/lesson-visual";
@@ -13,7 +15,21 @@ import { ItemPicture, type ItemPictureData } from "./item-picture";
 
 type ItemTable = Extract<ItemTextBlock, { kind: "table" }>;
 
+/** Keep a question's own digits as written, including codes and IDs. */
+function useQuestionTypesetting() {
+  const locale = useAppLocale();
+
+  return (segments: RichInlineSegment[]) =>
+    typesetProse({
+      locale,
+      segments,
+      typeset: (text) => typesetNumbers({ group: false, locale, text }),
+    });
+}
+
 function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
+  const typeset = useQuestionTypesetting();
+
   return (
     <p>
       {lines.map((line, index) => {
@@ -22,7 +38,7 @@ function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
         return (
           <Fragment key={key}>
             {index > 0 && <br />}
-            <RichInlineSegments segments={line} />
+            <RichInlineSegments segments={typeset(line)} />
           </Fragment>
         );
       })}
@@ -32,13 +48,14 @@ function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
 
 function ItemTableView({ table }: { table: ItemTable }) {
   const words = useMathWords();
+  const typeset = useQuestionTypesetting();
 
   return (
     <RichTable
       align={table.align}
       header={table.header}
       label={table.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
-      renderCell={(cell) => <RichInlineSegments segments={cell} />}
+      renderCell={(cell) => <RichInlineSegments segments={typeset(cell)} />}
       rows={table.rows}
     />
   );
@@ -46,7 +63,7 @@ function ItemTableView({ table }: { table: ItemTable }) {
 
 export function ItemText({ className, text }: { className?: string; text: string }) {
   return (
-    <div className={cn("flex min-w-0 flex-col gap-3", className)} data-slot="item-text">
+    <div className={cn("flex min-w-0 flex-col gap-3 text-pretty", className)} data-slot="item-text">
       {parseItemText(text).map((block, index) => {
         const key = `${block.kind}-${index}`;
 
@@ -60,18 +77,17 @@ export function ItemText({ className, text }: { className?: string; text: string
   );
 }
 
-export const QUESTION_TEXT_CLASS =
-  "text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty";
-
 /**
  * One element, so a flex parent such as an answer option wraps the line as text instead of stacking
  * each styled word. A line usually names a control (an option, a pair, a step), so its formulas
  * read in words.
  */
 export function ItemLine({ text }: { text: string }) {
+  const typeset = useQuestionTypesetting();
+
   return (
     <SpokenMath>
-      <RichInlineSegments segments={parseItemLine(text)} />
+      <RichInlineSegments segments={typeset(parseItemLine(text))} />
     </SpokenMath>
   );
 }
@@ -90,7 +106,7 @@ export function ItemSupport({
   return (
     <>
       {context && (
-        <ItemText className={cn("text-base leading-relaxed", className)} text={context} />
+        <ItemText className={cn("text-reading leading-relaxed", className)} text={context} />
       )}
       {image && <ItemPicture image={image} />}
       <LessonVisual visual={visual} />

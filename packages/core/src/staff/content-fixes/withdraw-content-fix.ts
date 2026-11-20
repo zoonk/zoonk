@@ -8,6 +8,7 @@ import { closeProposed } from "./_utils/close-proposed";
 import { logContentFix } from "./_utils/content-fix-view";
 import { getContentFixBatchReviewUrl } from "./batches";
 import { contentFixWithdrawalSchema } from "./contract";
+import { contentFixStatusLabels } from "./status-labels";
 
 type Target = { batchId?: string; fixId?: string };
 
@@ -24,14 +25,14 @@ type Withdrawal =
 type WithdrawResult = Withdrawal | { status: "forbidden" | "missingScope" | "unauthorized" };
 
 function targetName({ batchId, fixId }: Target): string {
-  return fixId ? `ContentFix ${fixId}` : `batch ${batchId ?? ""}`;
+  return fixId ? `fix ${fixId}` : `batch ${batchId ?? ""}`;
 }
 
 function revertCommand({ batchId, fixId }: Target): string {
   return `pnpm zoonk staff fixes revert ${fixId ?? `--batch ${batchId ?? ""}`} --reason "…"`;
 }
 
-/** Why nothing could be withdrawn, and what undoes a fix that's past review. */
+/** Why nothing could be withdrawn, and how to undo a fix that's past review. */
 function nothingWaits({
   fixes,
   target,
@@ -40,16 +41,19 @@ function nothingWaits({
   target: Target;
 }): string {
   const counts = [...Map.groupBy(fixes, (fix) => fix.status)]
-    .map(([status, entries]) => `${String(entries.length)} ${status}`)
-    .join(", ");
+    .map(
+      ([status, entries]) =>
+        `${String(entries.length)} ${contentFixStatusLabels[status].toLowerCase()}`,
+    )
+    .join("; ");
 
   const statuses = new Set(fixes.map((fix) => fix.status));
 
   return [
     `Nothing in ${targetName(target)} waits for review (${counts}), so nothing was withdrawn.`,
-    statuses.has("applied") && `To undo what applied, propose a revert: ${revertCommand(target)}.`,
     statuses.has("approved") &&
-      "An approved fix finishes applying in Admin; once it's applied, propose a revert.",
+      "An approved fix finishes applying in Admin; once it's applied, you can undo it.",
+    statuses.has("applied") && `To undo what's applied: ${revertCommand(target)}`,
   ]
     .filter(Boolean)
     .join(" ");

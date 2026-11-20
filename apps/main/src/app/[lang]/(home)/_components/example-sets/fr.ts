@@ -8,7 +8,7 @@ export const fr: ExampleSet = {
     topics: [
       { lessons: 6, title: "Les jointures en SQL" },
       { lessons: 8, title: "Agrégations et GROUP BY" },
-      { lessons: 20, title: "Python pour l’analyse de données" },
+      { lessons: 20, title: "Python pour l'analyse de données" },
       { lessons: 10, title: "Tableaux de bord Power BI" },
       { lessons: 6, title: "Portfolio et entretiens techniques" },
     ],
@@ -23,8 +23,8 @@ export const fr: ExampleSet = {
     goal: (month) => `me préparer au bac en ${month}`,
     headline: "Réussir le bac",
     mock: {
-      details: "4 h",
       firm: ["Probabilités", "Fonction exponentielle"],
+      minutes: 240,
       mistakes: 3,
       name: "Mathématiques",
       review: ["Dérivation", "Suites"],
@@ -39,12 +39,12 @@ export const fr: ExampleSet = {
     chapters: [
       "Pourquoi la physique classique ne suffisait plus",
       "La lumière : onde ou particule ?",
-      "L’atome de Bohr",
-      "Le principe d’incertitude",
-      "L’intrication quantique",
+      "L'atome de Bohr",
+      "Le principe d'incertitude",
+      "L'intrication quantique",
     ],
     laterChapters: 7,
     name: "La physique quantique en partant de zéro",
-    subjects: "La physique quantique, l’histoire de l’art, le fonctionnement de la Bourse",
+    subjects: "La physique quantique, l'histoire de l'art, le fonctionnement de la Bourse",
   },
 };

@@ -27,7 +27,6 @@ export function PasteLink({ onAdd, pending }: { onAdd: (url: string) => void; pe
       </label>
       <Input
         autoFocus
-        className="h-11"
         id={inputId}
         inputMode="url"
         onChange={(event) => setUrl(event.target.value)}
@@ -41,6 +40,7 @@ export function PasteLink({ onAdd, pending }: { onAdd: (url: string) => void; pe
         focusableWhenDisabled
         size="sm"
         type="submit"
+        variant="outline"
       >
         {t("Add link")}
       </Button>

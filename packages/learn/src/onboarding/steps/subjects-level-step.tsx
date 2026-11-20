@@ -29,21 +29,16 @@ export function SubjectsLevelStep({
 
   return (
     <StepForm
-      continueLabel={known.length > 0 ? t("Continue") : t("None of them yet")}
-      description={t("Your plan starts past their basics. A quick test places you in the rest.")}
+      canContinue={known.length > 0}
+      description={t("Your plan skips their basics.")}
       onContinue={() => onAnswer({ knownSubjects: known, level: null, question: "level" })}
       onSkip={() => onAnswer({ level: "none", question: "level" })}
       pending={pending}
-      skipLabel={t("I'm starting from scratch")}
       subject={subject}
       title={t("Which subjects do you already know well?")}
     >
       <CheckList
-        choices={subjects.map((item) => ({
-          description: item.shortName && item.shortName !== item.name ? item.name : undefined,
-          label: item.shortName ?? item.name,
-          value: item.name,
-        }))}
+        choices={subjects.map((item) => ({ label: item.shortName ?? item.name, value: item.name }))}
         label={t("Subjects you know well")}
         onChange={setKnown}
         value={known}

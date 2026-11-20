@@ -6,6 +6,7 @@ import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -52,10 +53,14 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
-import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.feature.onboarding.uploadLimit
+import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.LimitNotice
+import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.materialCitationLabel
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.MaterialCitation
@@ -73,39 +78,32 @@ private val ACCEPTED_TYPES =
         "image/webp",
     )
 
+/** A refused or failed attempt: a cap is the shared dated notice (its day, Subscribe); anything else is a line. */
 @Composable
-fun attachErrorMessage(outcome: WriteOutcome<*>): String =
-    stringResource(
-        when (val refusal = (outcome as? WriteOutcome.Refused)?.refusal) {
-            is Refusal.Limit -> {
-                when {
-                    refusal.limit.tier == "plus" -> R.string.onboarding_attach_limit_plus
-                    refusal.limit.period == "month" -> R.string.onboarding_attach_limit_month
-                    else -> R.string.onboarding_attach_limit_day
-                }
-            }
-
-            Refusal.SlowDown -> {
-                R.string.onboarding_attach_slow_down
-            }
-
-            Refusal.Unsupported -> {
-                R.string.onboarding_attach_unsupported
-            }
-
-            Refusal.SignUpRequired -> {
-                R.string.onboarding_attach_sign_in
-            }
-
-            Refusal.AlreadyRead -> {
-                R.string.onboarding_attach_already_read
-            }
-
-            is Refusal.DayTooShort, null -> {
-                R.string.onboarding_attach_failed
-            }
-        },
+private fun AttachFailure(
+    failure: WriteOutcome<*>,
+    onCreateAccount: () -> Unit,
+    onSubscribe: () -> Unit,
+) {
+    val refusal = (failure as? WriteOutcome.Refused)?.refusal
+    if (refusal is Refusal.Limit) {
+        LimitNotice(refusal.limit.reached, LimitSubject.Uploads, onCreateAccount, onSubscribe)
+        return
+    }
+    Text(
+        stringResource(
+            when (refusal) {
+                Refusal.SlowDown -> R.string.onboarding_attach_slow_down
+                Refusal.Unsupported -> R.string.onboarding_attach_unsupported
+                Refusal.SignUpRequired -> R.string.onboarding_attach_sign_in
+                Refusal.AlreadyRead -> R.string.onboarding_attach_already_read
+                else -> R.string.onboarding_attach_failed
+            },
+        ),
+        color = MaterialTheme.colorScheme.error,
+        style = MaterialTheme.typography.bodyMedium,
     )
+}
 
 enum class Pasting { Text, Link }
 
@@ -138,19 +136,23 @@ class AttachDraft(
 @Composable
 fun rememberAttachDraft() = rememberSaveable(saver = AttachDraft.Saver) { AttachDraft() }
 
-/** Shared with Today's research ask. [error] is the last attempt's, in words; [pendingText] says what [pending] waits for. */
+/** Shared with Today's research ask. [failure] is the last attempt's; [pendingText] says what [pending] waits for. */
 @Composable
 fun AttachControls(
     pending: Boolean,
-    error: String?,
+    failure: WriteOutcome<*>?,
     onFile: (PickedFile) -> Unit,
     onText: (String) -> Unit,
     onLink: (String) -> Unit,
+    onCreateAccount: () -> Unit,
+    onSubscribe: () -> Unit,
     pendingText: String? = null,
     draft: AttachDraft = rememberAttachDraft(),
 ) {
     val resolver = LocalContext.current.contentResolver
     val pasting = draft.pasting
+    val limit = failure.uploadLimit
+    val enabled = !pending && (limit == null || limitLifted(limit.reached))
     val chipColors = FilterChipDefaults.filterChipColors(labelColor = MaterialTheme.colorScheme.onSurface)
     val picker =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -158,17 +160,17 @@ fun AttachControls(
         }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             AssistChip(
                 onClick = { picker.launch(ACCEPTED_TYPES) },
-                enabled = !pending,
+                enabled = enabled,
                 label = { Text(stringResource(R.string.onboarding_upload_file)) },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_upload), contentDescription = null, Modifier.size(18.dp)) },
             )
             FilterChip(
                 selected = pasting == Pasting.Text,
                 onClick = { draft.pasting = if (pasting == Pasting.Text) null else Pasting.Text },
-                enabled = !pending,
+                enabled = enabled,
                 colors = chipColors,
                 label = { Text(stringResource(R.string.onboarding_paste_text)) },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_description), contentDescription = null, Modifier.size(18.dp)) },
@@ -176,7 +178,7 @@ fun AttachControls(
             FilterChip(
                 selected = pasting == Pasting.Link,
                 onClick = { draft.pasting = if (pasting == Pasting.Link) null else Pasting.Link },
-                enabled = !pending,
+                enabled = enabled,
                 colors = chipColors,
                 label = { Text(stringResource(R.string.onboarding_paste_link)) },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_link), contentDescription = null, Modifier.size(18.dp)) },
@@ -191,7 +193,7 @@ fun AttachControls(
                     label = stringResource(R.string.onboarding_your_text),
                     placeholder = stringResource(R.string.onboarding_paste_text_placeholder),
                     action = stringResource(R.string.onboarding_add_text),
-                    pending = pending,
+                    enabled = enabled,
                     minLines = 4,
                     keyboardType = KeyboardType.Text,
                     onAdd = onText,
@@ -205,7 +207,7 @@ fun AttachControls(
                     label = stringResource(R.string.onboarding_link),
                     placeholder = stringResource(R.string.onboarding_paste_link_placeholder),
                     action = stringResource(R.string.onboarding_add_link),
-                    pending = pending,
+                    enabled = enabled,
                     minLines = 1,
                     keyboardType = KeyboardType.Uri,
                     onAdd = onLink,
@@ -226,13 +228,8 @@ fun AttachControls(
             }
         }
 
-        if (error != null) {
-            Text(
-                error,
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+        if (failure != null) {
+            Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { AttachFailure(failure, onCreateAccount, onSubscribe) }
         }
     }
 }
@@ -244,7 +241,7 @@ private fun PasteField(
     label: String,
     placeholder: String,
     action: String,
-    pending: Boolean,
+    enabled: Boolean,
     minLines: Int,
     keyboardType: KeyboardType,
     onAdd: (String) -> Unit,
@@ -260,17 +257,19 @@ private fun PasteField(
             maxLines = 10,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         )
-        Button(onClick = { onAdd(value.trim()) }, enabled = !pending && value.isNotBlank()) { Text(action) }
+        OutlinedButton(onClick = { onAdd(value.trim()) }, enabled = enabled && value.isNotBlank()) { Text(action) }
     }
 }
 
 @Composable
 internal fun AttachPanel(
     pending: Boolean,
-    error: String?,
+    failure: WriteOutcome<*>?,
     onFile: (PickedFile) -> Unit,
     onText: (String) -> Unit,
     onLink: (String) -> Unit,
+    onCreateAccount: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     PanelCard {
         Text(stringResource(R.string.onboarding_study_material), fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyLarge)
@@ -279,7 +278,7 @@ internal fun AttachPanel(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        AttachControls(pending, error, onFile, onText, onLink)
+        AttachControls(pending, failure, onFile, onText, onLink, onCreateAccount, onSubscribe)
     }
 }
 
@@ -292,7 +291,7 @@ internal fun SignUpPrompt(onCreateAccount: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
+        TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account)) }
     }
 }
 
@@ -381,35 +380,26 @@ data class MaterialTurn(
 )
 
 @Composable
-internal fun MaterialAnswer(outcome: WriteOutcome<com.zoonk.api.models.MaterialQuestionAnswer>) {
+internal fun MaterialAnswer(
+    outcome: WriteOutcome<com.zoonk.api.models.MaterialQuestionAnswer>,
+    onCreateAccount: () -> Unit,
+    onSubscribe: () -> Unit,
+) {
     val answer = (outcome as? WriteOutcome.Done)?.value
     if (answer == null) {
         val refusal = (outcome as? WriteOutcome.Refused)?.refusal
+        if (refusal is Refusal.Limit) {
+            LimitNotice(refusal.limit.reached, LimitSubject.Questions, onCreateAccount, onSubscribe)
+            return
+        }
         Text(
-            text =
-                stringResource(
-                    when (refusal) {
-                        is Refusal.Limit -> {
-                            when {
-                                refusal.limit.tier == "plus" -> R.string.onboarding_question_limit_plus
-                                refusal.limit.period == "month" -> R.string.onboarding_question_limit_month
-                                else -> R.string.onboarding_question_limit_day
-                            }
-                        }
-
-                        Refusal.SignUpRequired -> {
-                            R.string.onboarding_question_sign_in
-                        }
-
-                        Refusal.SlowDown -> {
-                            R.string.onboarding_question_slow_down
-                        }
-
-                        else -> {
-                            R.string.onboarding_question_failed
-                        }
-                    },
-                ),
+            stringResource(
+                when (refusal) {
+                    Refusal.SignUpRequired -> R.string.onboarding_question_sign_in
+                    Refusal.SlowDown -> R.string.onboarding_question_slow_down
+                    else -> R.string.onboarding_question_failed
+                },
+            ),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -423,7 +413,7 @@ internal fun MaterialAnswer(outcome: WriteOutcome<com.zoonk.api.models.MaterialQ
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     answer.citations.forEach { citation ->
                         val label = materialCitationLabel(citation.title, citation.page, citation.unit == MaterialCitation.Unit.SLIDE)
-                        LabelChip(text = label, icon = R.drawable.ic_description)
+                        Eyebrow(text = label, icon = R.drawable.ic_description)
                     }
                 }
             }

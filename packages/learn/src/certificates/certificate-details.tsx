@@ -2,36 +2,44 @@
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { showSuccessToast } from "@zoonk/ui/components/toast";
-import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  type CertificateLinks,
-  formatCertificateCode,
-  getCertificateDisplayUrl,
-} from "@zoonk/utils/certificate-links";
+import { type CertificateLinks, formatCertificateCode } from "@zoonk/utils/certificate-links";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
 import { useLevelName } from "../course/use-level-name";
+import { CertificateLinkCopy } from "./certificate-copy-button";
 import { useCertificateDate, useStudyTime } from "./certificate-labels";
 import { CertificateNameDialog } from "./certificate-name";
 import { type CertificateOwner } from "./certificate-page";
 
 function DetailRow({
   children,
+  className,
   label,
+  layout = "inline",
   mono,
 }: {
   children: React.ReactNode;
+  className?: string;
   label: string;
+  layout?: "inline" | "stacked";
   mono?: boolean;
 }) {
   return (
-    <div className="border-border flex items-baseline justify-between gap-4 border-t py-2.5 text-[0.8125rem]">
+    <div
+      className={cn(
+        "flex",
+        layout === "stacked"
+          ? "flex-col gap-1.5 text-xs"
+          : "border-border text-compact min-h-11 items-baseline justify-between gap-4 border-t py-3",
+        className,
+      )}
+    >
       <dt className="text-muted-foreground shrink-0">{label}</dt>
       <dd
         className={cn(
-          "min-w-0 text-right",
+          "min-w-0",
+          layout === "inline" && "text-end",
           mono ? "font-mono text-xs tabular-nums" : "font-medium",
         )}
       >
@@ -41,8 +49,7 @@ function DetailRow({
   );
 }
 
-/** A locked certificate's code isn't the learner's to share yet. */
-function useFactRows({ facts, locked }: { facts: CertificateFacts; locked: boolean }) {
+function useFactRows(facts: CertificateFacts) {
   const t = useExtracted();
   const format = useFormatter();
   const date = useCertificateDate();
@@ -59,7 +66,7 @@ function useFactRows({ facts, locked }: { facts: CertificateFacts; locked: boole
       ? { label: t("Passed by test"), mono: true, value: format.number(facts.lessonsTestedOut) }
       : null,
     facts.minutes ? { label: t("Study time"), mono: true, value: studyTime(facts.minutes) } : null,
-    !locked && { label: t("Certificate ID"), mono: true, value: formatCertificateCode(facts.code) },
+    { label: t("Certificate ID"), mono: true, value: formatCertificateCode(facts.code) },
   ];
 
   return rows.filter((row) => typeof row === "object" && row !== null);
@@ -82,7 +89,12 @@ function OwnerNameRow({ facts, owner }: { facts: CertificateFacts; owner: Certif
       })}
     >
       {facts.recipientName}
-      <Button className="ml-2 font-[550]" onClick={() => setOpen(true)} variant="link">
+      <Button
+        aria-haspopup="dialog"
+        className="ml-2 font-medium"
+        onClick={() => setOpen(true)}
+        variant="link"
+      >
         {t("Change")}
       </Button>
       <CertificateNameDialog
@@ -95,41 +107,39 @@ function OwnerNameRow({ facts, owner }: { facts: CertificateFacts; owner: Certif
   );
 }
 
-function OwnerLinkRow({ links }: { links: CertificateLinks }) {
+export function CertificateLinkRow({
+  layout,
+  url,
+}: {
+  layout?: "inline" | "stacked";
+  url: string;
+}) {
   const t = useExtracted();
-  const { copy } = useClipboard();
-  const shown = getCertificateDisplayUrl(links.url);
 
   return (
-    <DetailRow label={t("Link")} mono>
-      <span className="break-all">{shown}</span>
-      <Button
-        className="ml-2 font-sans font-[550]"
-        onClick={() => void copy(links.url).then(() => showSuccessToast(t("Link copied")))}
-        variant="link"
-      >
-        {t("Copy")}
-      </Button>
+    <DetailRow
+      // Centers its taller Copy button, so the row stays as tall as the others.
+      className={layout === "stacked" ? undefined : "items-center py-1.5"}
+      label={t("Link")}
+      layout={layout}
+    >
+      <CertificateLinkCopy url={url} />
     </DetailRow>
   );
 }
 
-/**
- * Also the picture's text equivalent: everything the certificate says, as text. A locked one
- * (`links` null) shows what was done, without the name, code or link that make it a credential.
- */
+/** Also the picture's text equivalent: everything the certificate says, as text. */
 export function CertificateDetails({
   facts,
   links,
   owner,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks | null;
+  links: CertificateLinks;
   owner: CertificateOwner | null;
 }) {
   const t = useExtracted();
-  const rows = useFactRows({ facts, locked: !links });
-  const shared = owner && links;
+  const rows = useFactRows(facts);
 
   return (
     <section aria-labelledby="certificate-details" className="flex flex-col">
@@ -137,17 +147,17 @@ export function CertificateDetails({
         {t("Details")}
       </h2>
       <dl className="flex flex-col">
-        {shared && <OwnerNameRow facts={facts} owner={owner} />}
+        {owner && <OwnerNameRow facts={facts} owner={owner} />}
         {rows.map((row) => (
           <DetailRow key={row.label} label={row.label} mono={row.mono}>
             {row.value}
           </DetailRow>
         ))}
-        {shared && <OwnerLinkRow links={links} />}
+        {owner && <CertificateLinkRow url={links.url} />}
       </dl>
-      {shared && (
+      {owner && (
         <p className="text-muted-foreground border-border border-t pt-2.5 text-xs text-pretty">
-          {t("Anyone with the link can see this certificate. Its page doesn't show up in search.")}
+          {t("Anyone with the link can see this certificate.")}
         </p>
       )}
     </section>

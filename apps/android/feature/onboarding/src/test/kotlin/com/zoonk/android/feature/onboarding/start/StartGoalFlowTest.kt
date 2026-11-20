@@ -1,9 +1,14 @@
 package com.zoonk.android.feature.onboarding.start
 
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -11,6 +16,14 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -21,12 +34,14 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.DRAFT_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
+import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.failedDraft
 import com.zoonk.android.feature.onboarding.goalsUnderstanding
 import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.readingDraft
 import com.zoonk.android.feature.onboarding.understoodDraft
+import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -57,19 +72,56 @@ class StartGoalFlowTest {
     private var sessionKey by mutableStateOf<String?>("local-a")
     private var hasAccount by mutableStateOf(true)
 
+    private lateinit var navigator: AppNavigator
+    private lateinit var backDispatcher: OnBackPressedDispatcher
+
+    /** Owns the screen's view model, as its back stack entry does: null while the learner is elsewhere. */
+    private var owner by mutableStateOf<ViewModelStoreOwner?>(entry())
+
+    /** The activity's extras, which give each entry's view model its saved state. */
+    private lateinit var hostExtras: CreationExtras
+
+    private fun entry(): ViewModelStoreOwner = Entry { hostExtras }
+
+    private class Entry(
+        private val host: () -> CreationExtras,
+    ) : ViewModelStoreOwner,
+        HasDefaultViewModelProviderFactory {
+        override val viewModelStore = ViewModelStore()
+        override val defaultViewModelProviderFactory get() = SavedStateViewModelFactory()
+        override val defaultViewModelCreationExtras
+            get() = MutableCreationExtras(host()).apply { set(VIEW_MODEL_STORE_OWNER_KEY, this@Entry) }
+    }
+
+    /** The learner leaves the screen, which clears its view model, and opens the same link again. */
+    private fun leaveAndOpenAgain() {
+        val left = requireNotNull(owner)
+        owner = null
+        rule.waitForIdle()
+        rule.runOnUiThread { left.viewModelStore.clear() }
+        owner = entry()
+    }
+
     private fun show(route: AppRoute.StartGoal = AppRoute.StartGoal()) {
         cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         rule.setContent {
+            backDispatcher = requireNotNull(LocalOnBackPressedDispatcherOwner.current).onBackPressedDispatcher
+            hostExtras = (LocalViewModelStoreOwner.current as HasDefaultViewModelProviderFactory).defaultViewModelCreationExtras
             ZoonkTheme {
-                StartGoalScreen(
-                    route,
-                    store,
-                    cache.noAllowance(),
-                    sessionKey = sessionKey,
-                    canAttach = sessionKey != null && hasAccount,
-                    rememberAppNavigator(),
-                )
+                val appNavigator = rememberAppNavigator().also { navigator = it }
+                owner?.let {
+                    CompositionLocalProvider(LocalViewModelStoreOwner provides it) {
+                        StartGoalScreen(
+                            route,
+                            store,
+                            cache.noAllowance(),
+                            sessionKey = sessionKey,
+                            canAttach = sessionKey != null && hasAccount,
+                            appNavigator,
+                        )
+                    }
+                }
             }
         }
     }
@@ -93,7 +145,7 @@ class StartGoalFlowTest {
     fun anotherLearnerSeesNoneOfThePreviousOnesWork() {
         show()
         sendGoal("pass the bar exam")
-        rule.onNodeWithText("Here's what I understood").assertIsDisplayed()
+        rule.onNodeWithText("Here's what we understood").assertIsDisplayed()
 
         sessionKey = "local-b"
 
@@ -138,6 +190,129 @@ class StartGoalFlowTest {
     }
 
     @Test
+    fun backWaitsWhileTheGoalIsBeingMade() {
+        api.draft = understoodDraft()
+        val create = CompletableDeferred<Unit>()
+        api.createGate = create
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+
+        rule.onNodeWithContentDescription("Back").assertIsNotEnabled()
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
+        rule.onNodeWithText("What do you want to achieve?").assertDoesNotExist()
+        create.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(1, api.created.size)
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+    }
+
+    @Test
+    fun aCardOpenedAgainWhileItsCreateWasOutSendsNoCreateBeforeItsDraftIsReadAgain() {
+        api.draft = understoodDraft()
+        api.createGate = CompletableDeferred()
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        api.draftGate = CompletableDeferred()
+        leaveAndOpenAgain()
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        assertEquals(1, api.created.size)
+    }
+
+    @Test
+    fun aDraftReadAgainThatNamesTheGoalOpensItsSetupWithOneCreateSent() {
+        api.draft = understoodDraft()
+        api.createGate = CompletableDeferred()
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        val read = CompletableDeferred<Unit>()
+        api.draftGate = read
+        leaveAndOpenAgain()
+        rule.onNodeWithText("Looks right").performClick()
+        api.draft = understoodDraft().copy(goalId = java.util.UUID.fromString(GOAL_ID))
+        read.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+        assertEquals(1, api.created.size)
+    }
+
+    @Test
+    fun aCreateThatGotNoAnswerReadsTheDraftAgainBeforeTheNextTapCreates() {
+        api.draft = understoodDraft()
+        api.refusal = ApiException(ApiError.Network)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.waitForIdle()
+        val readsBefore = api.drafts.size
+        val read = CompletableDeferred<Unit>()
+        api.draftGate = read
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        api.refusal = null
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        assertEquals(readsBefore + 1, api.drafts.size)
+        assertEquals(1, api.created.size)
+        read.complete(Unit)
+        rule.waitForIdle()
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+        assertEquals(2, api.created.size)
+    }
+
+    @Test
+    fun aDraftReadAgainThatFailsOffersTheReadAgainNotTheCreate() {
+        api.draft = understoodDraft()
+        api.createGate = CompletableDeferred()
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        api.draftFailure = ApiException(ApiError.Network)
+        leaveAndOpenAgain()
+        rule.waitForIdle()
+        rule.onNodeWithText("Looks right").assertDoesNotExist()
+
+        api.draftFailure = null
+        rule.onNodeWithText("Try again").performClick()
+        rule.waitForIdle()
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+        assertEquals(2, api.created.size)
+    }
+
+    @Test
+    fun aRefusedCreateGivesBackItsUse() {
+        api.draft = understoodDraft()
+        api.refusal = ApiException(ApiError.Network)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithContentDescription("Back").assertIsEnabled()
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
+        rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
+    }
+
+    @Test
+    fun aDraftWhoseGoalWasCreatedOpensItsSetupInsteadOfCreatingItAgain() {
+        api.draft = understoodDraft().copy(goalId = java.util.UUID.fromString(GOAL_ID))
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+        assertTrue(api.created.isEmpty())
+    }
+
+    @Test
     fun aReadIsStartedAgainOnceHoweverOftenTryAgainIsTapped() {
         api.draft = failedDraft()
         api.readAgainGate = CompletableDeferred()
@@ -162,7 +337,7 @@ class StartGoalFlowTest {
         rule.onNodeWithText("Looks right").performClick()
 
         rule.onNodeWithText("Looks right").assertDoesNotExist()
-        rule.onNodeWithText("See Plus").assertIsDisplayed()
+        rule.onNodeWithText("Subscribe").assertIsDisplayed()
         assertEquals(listOf(listOf("Pass the bar exam")), api.created.map { input -> input.goals.map { it.title } })
 
         api.refusal = null
@@ -172,11 +347,46 @@ class StartGoalFlowTest {
         rule.onNodeWithText("Looks right").assertIsDisplayed()
     }
 
+    /** A newer tap's result replaces the older one's: joining the waitlist after a refusal shows only that it worked. */
     @Test
-    fun aFullCardOpensEveryGoalOnceTheLearnerGetsPlus() {
+    fun joiningTheWaitlistAfterARefusalLeavesOnlyItsConfirmation() {
+        fun card(left: Int) = understoodDraft(understanding = """{"status":"instrument","instrument":"guitar"}""", activeGoalsLeft = left)
+        api.draft = card(left = 1)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        api.draft = card(left = 0)
+        api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = activeGoalsLimit())
+        rule.onNodeWithText("Start").performClick()
+        rule.onNodeWithText("That's all the goals you can study at once").assertIsDisplayed()
+
+        rule.onNodeWithText("Join waitlist").performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithText("You're on the list", substring = true).assertIsDisplayed()
+        rule.onNodeWithText("That's all the goals you can study at once").assertDoesNotExist()
+    }
+
+    /** Joining is done once it worked: a refused goal after it clears only the goal's own feedback. */
+    @Test
+    fun aJoinedWaitlistSurvivesARefusedMusicianshipGoal() {
+        api.draft = understoodDraft(understanding = """{"status":"instrument","instrument":"guitar"}""", activeGoalsLeft = 1)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Join waitlist").performClick()
+        rule.waitForIdle()
+        rule.onNodeWithText("Join waitlist").assertIsNotEnabled()
+
+        api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = activeGoalsLimit())
+        rule.onNodeWithText("Start").performClick()
+        rule.onNodeWithText("That's all the goals you can study at once").assertIsDisplayed()
+
+        rule.onNodeWithText("You're on the list", substring = true).assertIsDisplayed()
+        rule.onNodeWithText("Join waitlist").assertIsNotEnabled()
+    }
+
+    @Test
+    fun aFullCardOpensEveryGoalOnceTheLearnerSubscribes() {
         api.draft = understoodDraft(understanding = twoGoals(), activeGoalsLeft = 0)
         show(AppRoute.StartGoal(draftId = DRAFT_ID))
-        rule.onNodeWithText("See Plus").assertIsDisplayed()
+        rule.onNodeWithText("Subscribe").assertIsDisplayed()
         rule.onNodeWithText("Looks right").assertDoesNotExist()
 
         api.draft = understoodDraft(understanding = twoGoals(), activeGoalsLeft = null)

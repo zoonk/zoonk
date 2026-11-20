@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -81,7 +82,7 @@ internal fun PatternChart(
     fullBar: Dp,
     inspector: ChartInspector,
     modifier: Modifier = Modifier,
-    footer: String? = null,
+    legend: Boolean = true,
 ) {
     if (columns.isEmpty()) return
 
@@ -100,7 +101,6 @@ internal fun PatternChart(
                 }
             },
             inspector = inspector,
-            riseAbove = true,
         ) {
             Row(Modifier.fillMaxWidth()) {
                 columns.forEachIndexed { index, column ->
@@ -116,7 +116,7 @@ internal fun PatternChart(
             }
         }
 
-        footer?.let { StatsLine(it) }
+        if (legend && columns.any { it.state == PatternState.Few }) StatsLine(stringResource(R.string.stats_few_answers_legend))
     }
 }
 
@@ -131,7 +131,6 @@ private fun PatternColumnView(
 ) {
     val scheme = MaterialTheme.colorScheme
     val best = column.state == PatternState.Best
-    val quiet = column.state == PatternState.Few || column.state == PatternState.None
     val spoken = listOfNotNull(bestLabel.takeIf { best }, column.name, column.hours, column.value, column.note).joinToString()
 
     Column(
@@ -155,12 +154,7 @@ private fun PatternColumnView(
                     painterResource(it),
                     contentDescription = null,
                     modifier = Modifier.size(CHIP_ICON),
-                    tint =
-                        when {
-                            best -> scheme.background
-                            quiet -> scheme.onSurfaceVariant
-                            else -> scheme.onSurface
-                        },
+                    tint = if (best) scheme.background else scheme.onSurfaceVariant,
                 )
             }
         }

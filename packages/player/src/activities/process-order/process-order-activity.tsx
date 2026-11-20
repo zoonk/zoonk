@@ -1,10 +1,16 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
-import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_LINE_CLASS,
+  ActivityCanvas,
+  ActivityTextAlternative,
+} from "../_components/activity-canvas";
 import { ActivitySortableList } from "../_components/activity-sortable-list";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { type StepResult, shuffleSteps, stepResults } from "./process-order-model";
@@ -24,8 +30,8 @@ function PositionBadge({
     <span
       aria-hidden="true"
       className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold tabular-nums",
-        state === null && "bg-muted text-foreground",
+        "text-compact flex size-7 shrink-0 items-center justify-center rounded-full font-semibold tabular-nums",
+        state === null && "bg-foreground text-background",
         state === "correct" && "bg-success-text text-background",
         state === "incorrect" && "bg-destructive-text text-white",
       )}
@@ -41,12 +47,13 @@ function StepMarks({
   state,
 }: {
   icon: ProcessStep["icon"] | undefined;
-  position: number;
+  /** `null` while the steps are still being ordered: a number there would read as the answer. */
+  position: number | null;
   state: "correct" | "incorrect" | null;
 }) {
   return (
     <span className="flex h-8 shrink-0 items-center gap-3">
-      <PositionBadge position={position} state={state} />
+      {position !== null && <PositionBadge position={position} state={state} />}
       <ProcessStepIcon icon={icon} />
     </span>
   );
@@ -67,19 +74,20 @@ function OrderedStep({
   return (
     <li
       className={cn(
-        "flex gap-3 rounded-xl border px-3 py-2.5",
-        state === "correct" && "border-success/50 bg-success/5",
-        state === "incorrect" && "border-destructive/50 bg-destructive/5",
+        ACTIVITY_CARD_CLASS,
+        "flex gap-3 text-sm leading-snug",
+        state === "correct" && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
+        state === "incorrect" && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
       )}
     >
       <StepMarks icon={step.icon} position={position} state={state ?? null} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1.5">
-        <p className="text-sm leading-snug font-medium">
+        <p className="font-medium text-pretty">
           <LessonRichText text={step.text} />
         </p>
 
-        {step.why && <p className="text-muted-foreground text-sm leading-snug">{step.why}</p>}
+        {step.why && <p className="text-muted-foreground text-pretty">{step.why}</p>}
 
         {state === "incorrect" && result?.learnerPosition && (
           <p className="text-destructive-text text-xs font-medium">
@@ -87,6 +95,12 @@ function OrderedStep({
           </p>
         )}
       </div>
+      {state === "correct" && (
+        <Check aria-hidden="true" className="text-success-text mt-2 size-4 shrink-0" />
+      )}
+      {state === "incorrect" && (
+        <X aria-hidden="true" className="text-destructive-text mt-2 size-4 shrink-0" />
+      )}
     </li>
   );
 }
@@ -146,17 +160,17 @@ export function ProcessOrderActivity({
         })}
         label={t("Steps, in your order")}
         onReorder={handleReorder}
-        renderItem={(item, index) => (
+        renderItem={(item) => (
           <span className="flex min-w-0 flex-1 items-start gap-3">
-            <StepMarks icon={byId.get(item.id)?.icon} position={index + 1} state={null} />
-            <span className="min-w-0 flex-1 pt-1.5 text-sm leading-snug font-medium">
+            <StepMarks icon={byId.get(item.id)?.icon} position={null} state={null} />
+            <span className="min-w-0 flex-1 pt-1.5 text-sm leading-snug font-medium text-pretty">
               <LessonRichText text={item.label} />
             </span>
           </span>
         )}
       />
 
-      <p className="text-muted-foreground text-xs">{t("Drag the steps into order.")}</p>
+      <p className="text-muted-foreground text-sm">{t("Drag the steps into order.")}</p>
 
       <ActivityTextAlternative>
         {t("{count, plural, one {# step} other {# steps}} to put in order.", {

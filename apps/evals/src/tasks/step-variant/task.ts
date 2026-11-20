@@ -18,7 +18,7 @@ export const stepVariantTask: Task<
     "Rewrite one lesson screen for the learner's field or tool, faithful to the original",
   generate: (input) => generateStepVariant({ ...input, country: input.country ?? null }),
   id: "step-variant",
-  name: "Step Variant",
+  name: "Step variant",
   scoreCategories: STEP_VARIANT_SCORE_CATEGORIES,
   testCases: TEST_CASES,
 };

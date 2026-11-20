@@ -69,8 +69,7 @@ export type SessionBuildInput = {
   /** Whether the learner started each phase challenge of their last session (`getSessionChallenges`). */
   lastSessionChallenges?: ReadonlyMap<string, boolean>;
   dailyMinutes: number;
-  /** A free exam plan past its first days: reviews and fixes stay, new work waits for Plus. */
-  examTrialEnded: boolean;
+
   /** First-week placement opens before capsules. */
   placementItemIds: string[];
   freshStart: StudyFreshStart | null;
@@ -184,7 +183,7 @@ function getPracticeMinutes({
   remaining: number;
 }): number {
   const share = isSessionReviewDay(input) ? 1 : input.practiceShare;
-  const practice = input.examTrialEnded ? [] : input.practice;
+  const practice = input.practice;
   const opened = input.openedPractice;
 
   // Multiplied before dividing, so a day that keeps its minutes gets its practice's exactly.
@@ -201,7 +200,6 @@ function fundSessionChallenges(input: SessionBuildInput, budget: number) {
   const available = canHoldPhaseChallenges({
     mockOnlyDay: input.mockReplacesDay ?? false,
     reviewDay: isSessionReviewDay(input),
-    trialEnded: input.examTrialEnded,
   })
     ? input.checkpoints.filter((checkpoint) => isPhaseChallenge(checkpoint))
     : [];
@@ -212,10 +210,7 @@ function fundSessionChallenges(input: SessionBuildInput, budget: number) {
     overflow: !input.usedMinutes,
   });
 
-  const calendar = input.examTrialEnded
-    ? []
-    : input.checkpoints.filter((checkpoint) => !isPhaseChallenge(checkpoint));
-
+  const calendar = input.checkpoints.filter((checkpoint) => !isPhaseChallenge(checkpoint));
   return { available, calendar, checkpoints: [...leading, ...calendar], leading, planItems };
 }
 
@@ -293,13 +288,11 @@ export function buildSessionBlocks(day: SessionBuildInput): {
 
   const remaining = Math.max(open, fullReviewMinutes);
 
-  const reinforcement = input.examTrialEnded
-    ? []
-    : takeLessons({
-        budget: remaining,
-        lessons: leading.flatMap((checkpoint) => checkpoint.reinforcement ?? []),
-        overflow: false,
-      });
+  const reinforcement = takeLessons({
+    budget: remaining,
+    lessons: leading.flatMap((checkpoint) => checkpoint.reinforcement ?? []),
+    overflow: false,
+  });
 
   const learnBudget =
     remaining - getPracticeMinutes({ budget, input, remaining }) - getLessonMinutes(reinforcement);
@@ -340,7 +333,7 @@ export function buildSessionBlocks(day: SessionBuildInput): {
       netScored: input.netScored,
       planItemId: input.reviewPlanItemId,
       planItemKey: input.reviewPlanItemKey,
-      practice: input.examTrialEnded ? [] : input.practice,
+      practice: input.practice,
       reviewedSkillIds: review?.payload.skillIds ?? [],
       topics: input.topics,
     }),

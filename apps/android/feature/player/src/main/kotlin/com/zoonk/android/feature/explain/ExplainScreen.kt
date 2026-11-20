@@ -46,6 +46,8 @@ import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.ceremonies.MomentBuddy
+import com.zoonk.android.feature.ceremonies.momentBuddy
 import com.zoonk.android.feature.player.LessonColumnBeforeFold
 import com.zoonk.android.feature.player.LessonEndSlot
 import com.zoonk.android.feature.player.LessonPlayerExits
@@ -55,6 +57,7 @@ import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toPlayableLesson
+import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -64,14 +67,17 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.LoadFailureRetry
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.SuccessEyebrow
+import com.zoonk.android.ui.components.QUICK_EXPLANATION_MINUTES
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.taskBarColumn
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.ResultPages
@@ -84,7 +90,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-private const val QUICK_EXPLANATION_SECONDS = 300L
 private const val OUTLINE_PLACEHOLDERS = 5
 
 /** The first screen usually shows within about 20 seconds. */
@@ -123,7 +128,7 @@ fun ExplainScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(stringResource(R.string.explain_load_failed), style = MaterialTheme.typography.titleMedium)
-                        Button(onClick = { scope.launch { resource.refresh() } }) { Text(stringResource(R.string.explain_try_again)) }
+                        LoadFailureRetry(onRetry = { scope.launch { resource.refresh() } })
                     }
                 }
             }
@@ -156,7 +161,8 @@ private fun ExplanationView(
     LaunchedEffect(explanation, (session as? SessionState.SignedIn)?.session) { viewModel.show(explanation) }
 
     if (lesson != null && (readsAtOnce || started)) {
-        val playable = remember(lesson) { lesson.toPlayableLesson() }
+        // The lesson goes by the question's title, as Today and the goal list name it.
+        val playable = remember(lesson, explanation.title) { lesson.toPlayableLesson().copy(title = explanation.title) }
         val exits = remember(navigator) { explainExits(navigator) }
 
         PlayingLesson(
@@ -167,7 +173,7 @@ private fun ExplanationView(
             exits = exits,
             endSlot =
                 LessonEndSlot(
-                    body = { state -> ExplainEnding(explanation, state, navigator, readAgain) },
+                    body = { state -> ExplainEnding(explanation, state, momentBuddy(app), navigator, readAgain) },
                     done = { finish(explanation, navigator) },
                 ),
         )
@@ -245,7 +251,7 @@ internal fun ExplainWaiting(
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             LessonColumnBeforeFold {
-                ExplainHeading(explanation.title, subtitle = stringResource(R.string.explain_no_plan))
+                ExplainHeading(explanation.title)
                 if (!ready) GenerationWait(GenerationKind.Explanation, run, onRetry = viewModel::retry)
                 Outline(explanation.outline)
                 DeeperRow(explanation, navigator)
@@ -256,7 +262,7 @@ internal fun ExplainWaiting(
 }
 
 @Composable
-private fun quickExplanationLabel() = stringResource(R.string.explain_quick, formatDuration(QUICK_EXPLANATION_SECONDS, currentLocale()))
+private fun quickExplanationLabel() = stringResource(R.string.explain_quick, formatMinutes(QUICK_EXPLANATION_MINUTES, currentLocale()))
 
 @Composable
 private fun ExplainHeading(
@@ -273,17 +279,12 @@ private fun ExplainHeading(
     }
 }
 
-/** Main's `Outline`: what's coming, numbered, with placeholders until the run names the screens. */
+/** Main's `Outline`: the screens to come, numbered, with placeholders until the run names them. */
 @Composable
 private fun Outline(titles: List<String>) {
     val locale = currentLocale()
 
     Column {
-        Text(
-            stringResource(R.string.explain_coming),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
-        )
         val rows = titles.ifEmpty { List(OUTLINE_PLACEHOLDERS) { null } }
         rows.forEachIndexed { index, title ->
             if (index > 0) HorizontalDivider()
@@ -315,12 +316,7 @@ private fun Outline(titles: List<String>) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painterResource(R.drawable.ic_help),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            MarkIcon(R.drawable.ic_help)
             Text(
                 stringResource(R.string.explain_one_question),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -378,21 +374,19 @@ private fun GoFurtherRow(
         headline = { Text(title) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onClick,
-        leading = { Icon(painterResource(icon), contentDescription = null) },
+        leading = { MarkIcon(icon) },
         supporting = { Text(description) },
     )
 }
 
 /** Main's `SlowWait`: after a while, a way to ask again; once asked, it says the explanation is still coming. */
 @Composable
-private fun SlowWait(
+internal fun SlowWait(
     explanation: Explanation,
     viewModel: ExplainViewModel,
 ) {
     var slow by remember { mutableStateOf(false) }
-    var retrying by remember { mutableStateOf(false) }
-    var joined by rememberSaveable { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+    val retry = viewModel.slowRetry
 
     LaunchedEffect(Unit) {
         delay(SLOW)
@@ -403,36 +397,35 @@ private fun SlowWait(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
-            stringResource(if (joined || retrying) R.string.explain_still_writing else R.string.explain_slow),
+            stringResource(if (retry == ExplainViewModel.SlowRetry.Idle) R.string.explain_slow else R.string.explain_still_writing),
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        if (!joined) {
+        if (retry != ExplainViewModel.SlowRetry.Asked) {
             OutlinedButton(
-                busy = retrying,
-                onClick = {
-                    retrying = true
-                    scope.launch {
-                        joined = viewModel.retrySlow(explanation)
-                        retrying = false
-                    }
-                },
+                busy = retry == ExplainViewModel.SlowRetry.Asking,
+                onClick = { viewModel.retrySlow(explanation) },
                 leadingIcon = { ButtonIcon(R.drawable.ic_refresh) },
             ) { Text(stringResource(R.string.explain_try_again)) }
         }
     }
 }
 
+/** Main's ending spaces its sections 28px apart, 8 more than the result's own spacing. */
+private val SECTION_GAP = 8.dp
+
 /** Main's `ExplainEnding`: what the learner now knows, the explanation in a few sentences, and where to go further. */
 @Composable
 internal fun ExplainEnding(
     explanation: Explanation,
     state: LessonPlayerState,
+    buddy: MomentBuddy,
     navigator: AppNavigator,
     readAgain: suspend () -> Unit,
 ) {
     val saving = state.completion?.status == CompletionStatus.Saving
+    val result = state.completion?.result
     val locale = currentLocale()
 
     // The course to go further is linked a few seconds after the explanation can be read.
@@ -442,9 +435,7 @@ internal fun ExplainEnding(
         withMoment = !saving,
         columnModifier = Modifier.taskColumn(),
         done = {
-            ExplainHeading(explanation.title) {
-                SuccessEyebrow(stringResource(R.string.explain_now_you_know))
-            }
+            ExplainHeading(stringResource(R.string.explain_now_you_know), subtitle = explanation.title, eyebrow = {})
 
             if (saving) {
                 Text(stringResource(R.string.player_saving_progress), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -452,26 +443,28 @@ internal fun ExplainEnding(
                 LessonReadouts(state, withFacts = false)
             }
 
-            if (explanation.recap.isNotEmpty()) {
-                Column {
-                    Text(
+            if (!saving && result != null) DayMoment(result, buddy.look, buddy.name)
+
+            if (!saving && explanation.recap.isNotEmpty()) {
+                Column(Modifier.padding(top = SECTION_GAP), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    SectionHeader(
                         pluralStringResource(
                             R.plurals.explain_recap,
                             explanation.recap.size,
                             formatNumber(explanation.recap.size.toDouble(), locale),
                         ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelLarge,
                     )
-                    explanation.recap.forEachIndexed { index, sentence ->
-                        if (index > 0) HorizontalDivider()
-                        Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text(
-                                formatNumber((index + 1).toDouble(), locale),
-                                color = MaterialTheme.zoonk.faint,
-                                style = MaterialTheme.zoonkType.data,
-                            )
-                            Text(sentence, style = MaterialTheme.typography.bodyMedium)
+                    Column {
+                        explanation.recap.forEachIndexed { index, sentence ->
+                            if (index > 0) HorizontalDivider()
+                            Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                Text(
+                                    formatNumber((index + 1).toDouble(), locale),
+                                    color = MaterialTheme.zoonk.faint,
+                                    style = MaterialTheme.zoonkType.data,
+                                )
+                                Text(sentence, style = MaterialTheme.typography.bodyMedium)
+                            }
                         }
                     }
                 }
@@ -479,12 +472,8 @@ internal fun ExplainEnding(
         },
         next = {
             if (!saving) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        stringResource(R.string.explain_go_further),
-                        modifier = Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                Column(Modifier.padding(top = SECTION_GAP), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    SectionHeader(stringResource(R.string.explain_go_further))
                     DeeperRow(explanation, navigator)
                     explanation.goFurther.questions.forEach { question ->
                         GoFurtherRow(R.drawable.ic_help, question, quickExplanationLabel()) { startGoal(question, navigator) }

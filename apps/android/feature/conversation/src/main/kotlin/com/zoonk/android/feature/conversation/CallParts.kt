@@ -50,7 +50,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -270,15 +272,15 @@ fun ChecklistRow(
     description: String? = null,
 ) {
     val state = stringResource(if (done) R.string.conversation_goal_done else R.string.conversation_goal_not_yet)
-    Row(
-        modifier.fillMaxWidth().padding(vertical = 10.dp).semantics(mergeDescendants = true) { stateDescription = state },
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    MarkedLine(
+        firstLine = MaterialTheme.typography.bodyMedium,
+        mark = { StatusMark(if (done) MarkStatus.Done else MarkStatus.Todo) },
+        modifier = modifier.fillMaxWidth().padding(vertical = 10.dp).semantics(mergeDescendants = true) { stateDescription = state },
     ) {
-        StatusMark(if (done) MarkStatus.Done else MarkStatus.Todo)
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(label, style = MaterialTheme.typography.bodyMedium)
             description?.let {
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
             }
         }
     }
@@ -290,10 +292,8 @@ internal fun SectionTitle(
     modifier: Modifier = Modifier,
     trailing: String? = null,
 ) {
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(text, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleSmall)
-        trailing?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium) }
-    }
+    com.zoonk.android.ui.components
+        .SectionHeader(text, modifier = modifier, detail = trailing)
 }
 
 /** Main's `CallNote` and `MicNote`: a small line with its icon. */
@@ -318,20 +318,22 @@ internal fun CallNote(
     }
 }
 
-/** A call that can't go on: what happened, as a headline and a line. */
+/**
+ * A call that can't go on: what happened, as a headline and a line. A headline that goes while the
+ * screen shows (a limit's day came) leaves its room, so the words under it stay where they were.
+ */
 @Composable
 internal fun CallOffMessage(
-    title: String,
+    title: String?,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(
-        modifier.padding(vertical = 24.dp).semantics {
-            liveRegion = LiveRegionMode.Polite
-        },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-        content()
+    Column(modifier.padding(vertical = 24.dp).semantics { liveRegion = LiveRegionMode.Polite }) {
+        HeldSlot(gated = title != null) {
+            title?.let {
+                Text(it, Modifier.padding(bottom = 8.dp).semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            }
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = content)
     }
 }

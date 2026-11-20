@@ -1,26 +1,22 @@
 "use client";
 
+import { isWeekend } from "@zoonk/core/plans/week-shape";
+import { WEEKDAYS_FROM_MONDAY } from "@zoonk/utils/calendar-day";
 import { useExtracted } from "next-intl";
 import { TimeSelect } from "../../_components/daily-time-picker";
-import { WeekdayToggle } from "../../_components/weekday-toggle";
+import { WeekdayGrid, WeekdayToggle } from "../../_components/weekday-toggle";
 import { WeekendTime } from "../../_components/weekend-time";
 
-const DAYS_PER_WEEK = 7;
+export const EVERY_DAY = WEEKDAYS_FROM_MONDAY;
 
-/** Sunday is 0, as the plan numbers weekdays. */
-export const EVERY_DAY = Array.from({ length: DAYS_PER_WEEK }, (_, day) => day);
-
-const MONDAY = 1;
-const SATURDAY = 6;
-
-const WEEKDAYS = EVERY_DAY.filter((day) => day >= MONDAY && day < SATURDAY);
+const WEEKDAYS = EVERY_DAY.filter((day) => !isWeekend(day));
 
 /**
  * A new goal's every-day week was never chosen, so the question opens on Monday to Friday unless
  * someone chose fewer days.
  */
 export function getStartingDays(goalDays: number[]): number[] {
-  return goalDays.length > 0 && goalDays.length < DAYS_PER_WEEK ? goalDays : WEEKDAYS;
+  return goalDays.length > 0 && goalDays.length < EVERY_DAY.length ? goalDays : WEEKDAYS;
 }
 
 export function WeekdayToggles({
@@ -35,11 +31,9 @@ export function WeekdayToggles({
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="mb-2 text-sm font-medium">{t("Study days")}</legend>
-      <div className="grid max-w-sm grid-cols-7 gap-1.5">
+      <WeekdayGrid>
         {EVERY_DAY.map((day) => (
           <WeekdayToggle
-            className="h-11 w-full min-w-0 rounded-lg px-0 font-mono text-[0.8125rem] font-medium uppercase"
-            display="narrow"
             key={day}
             onPressedChange={(next) =>
               onChange(
@@ -49,11 +43,10 @@ export function WeekdayToggles({
               )
             }
             pressed={days.includes(day)}
-            variant="outline"
             weekday={day}
           />
         ))}
-      </div>
+      </WeekdayGrid>
     </fieldset>
   );
 }
@@ -61,23 +54,24 @@ export function WeekdayToggles({
 export function WeekendMinutes({
   checked,
   minutes,
+  missing,
   onChange,
   onCheckedChange,
 }: {
   checked: boolean;
   minutes: number;
+  missing: React.ComponentProps<typeof WeekendTime>["missing"];
   onChange: (minutes: number) => void;
   onCheckedChange: (checked: boolean) => void;
 }) {
-  const t = useExtracted();
-
   return (
     <WeekendTime
       checked={checked}
       className="text-sm font-medium"
+      missing={missing}
       onCheckedChange={onCheckedChange}
     >
-      <TimeSelect label={t("Time on weekends")} onChange={onChange} value={minutes} />
+      {(label) => <TimeSelect label={label} onChange={onChange} value={minutes} />}
     </WeekendTime>
   );
 }

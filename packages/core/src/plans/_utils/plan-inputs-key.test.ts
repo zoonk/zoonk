@@ -77,6 +77,7 @@ const input: Required<BuildPlanInput> = {
   ]),
   setAsideLeftWork: true,
   settings: parsePlanSettings({ startDate: "2026-10-12" }),
+  startLessonId: "fractions-0",
   strongAreas: new Set(["Math"]),
   today: TODAY,
   todayShown: true,
@@ -97,6 +98,7 @@ const RUN_FIELDS = new Set([
   "openedKeys",
   "phaseEnds",
   "setAsideLeftWork",
+  "startLessonId",
   "today",
   "todayShown",
 ]);

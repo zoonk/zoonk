@@ -1,37 +1,40 @@
 export const HELP = `Usage: pnpm zoonk <command> [--api <url>]
 
 Account
-  login                                   Log in through your browser (once per machine)
-  logout                                  End this machine's login
-  whoami                                  Show who is logged in
+  login                                    Log in through your browser (once per machine)
+  logout                                   End this machine's login
+  whoami                                   Show who is logged in
 
 Staff (production data)
-  staff models [model...]                 Readable and fixable model names, or the named models'
-                                          fields, relations and each fix operation with its rules
-  staff users find <email|username|id>    One account by exact email, username or id
-  staff users search <text> [--limit n]   Accounts whose name, email or username contain the text
-  staff get <model> <id> [--fields ...]   One record by id
-  staff list <model> [options]            Records matching every --where
-      --where "<field> <op> [value]"      Repeatable. Ops: eq ne gt gte lt lte, in notIn
-                                          (comma-separated values), isNull notNull (no value)
+  staff models [model...]                  The models you can read or fix, or the named models'
+                                           fields, relations and each change a fix may make
+  staff users find <email|username|id>     One account by exact email, username or id
+  staff users search <text> [--limit n]    Accounts whose name, email or username contain the text
+  staff get <model> <id> [--fields ...]    One record by id
+  staff list <model> [options]             Records matching every --where
+      --where "<field> <op> [value]"       Repeatable. Ops: eq ne gt gte lt lte, in notIn
+                                           (comma-separated values), isNull notNull (no value)
       --order <field>[:asc|desc]
-      --limit <n>                         Default 20, at most 100
+      --limit <n>                          Default 20, at most 100
       --offset <n>
-      --fields <field>,<field>...         Print only these fields of each record
-  staff count <model> [--where ...]       Number of records matching every --where
+      --fields <field>,<field>...          Print only these fields of each record
+  staff count <model> [--where ...]        Number of records matching every --where
 
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
-  staff fixes propose <file.json>         Propose { reason, feedbackId?, changes: [...] }, or a batch
-                                          { reason, fixes: [{ changes, reason? }, ...] } of up to 250,
-                                          and print the batch's review link and each fix: each
-                                          field's before and after, and its effects. Nothing changes
-                                          until it's approved.
-  staff fixes revert <fixId> --reason "…" Propose putting back what an applied fix replaced
-  staff fixes revert --batch <batchId> --reason "…"
-                                          The same for every applied fix of a batch, as a new batch
-  staff fixes withdraw <fixId>            Take back a fix you proposed that nobody approved yet
-  staff fixes withdraw --batch <batchId>  The same for every fix of your batch still waiting for
-                                          review. An approved or applied fix stays; revert it.
+  staff fixes propose <file.json>          Propose the fix or batch in the file, and print its review
+                                           link and each fix's changes and effects. Nothing changes
+                                           until it's approved.
+                                           One fix: { reason, feedbackId?, changes: [...] }
+                                           A batch of up to 250 fixes:
+                                           { reason, fixes: [{ changes, reason? }, ...] }
+  staff fixes revert <fixId> --reason "…"  Propose undoing an applied fix: what it replaced comes
+                                           back once the undo is approved
+      --batch <batchId>                    In place of <fixId>: undo every applied fix of a batch
+                                           that isn't undone yet, proposed as a new batch
+  staff fixes withdraw <fixId>             Take back a fix you proposed that nobody approved yet
+      --batch <batchId>                    In place of <fixId>: every fix of your batch still waiting
+                                           for review. Approved and applied fixes stay; undo those
+                                           with revert.
 
 Data commands print JSON on stdout; messages and errors go to stderr.
 
@@ -40,3 +43,10 @@ Each API keeps its own login.
 
 Exit codes: 0 done, 1 failed, 2 wrong usage, 3 not logged in (run pnpm zoonk login).
 `;
+
+export function commandUsage(name: string): string {
+  const line = HELP.split("\n").find((entry) => entry.startsWith(`  ${name} `));
+  const [usage = name] = line?.trim().split(/\s{2,}/u) ?? [];
+
+  return `pnpm zoonk ${usage}`;
+}

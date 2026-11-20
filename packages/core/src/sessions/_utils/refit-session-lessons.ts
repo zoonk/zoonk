@@ -150,11 +150,7 @@ async function orderRefilledBlocks({
 /** The learner lock is already held; only the completion may remove unstarted tail lessons. */
 export async function refitSessionLessons(
   tx: TransactionClient,
-  {
-    sessionId,
-    completedBlockId,
-    timeZone,
-  }: { sessionId: string; completedBlockId?: string; timeZone: string },
+  { sessionId, completedBlockId }: { sessionId: string; completedBlockId?: string },
 ): Promise<{ reserved: boolean }> {
   const session = await lockSessionQueue({ sessionId, tx });
 
@@ -192,8 +188,6 @@ export async function refitSessionLessons(
   const access = getExamPrepAccess({
     examPrep: getTierExamPrep(subscription ? "plus" : "free"),
     goal: session.goal,
-    timeZone,
-    today: session.localDate,
   });
 
   const candidates = getSessionLessonCandidates({

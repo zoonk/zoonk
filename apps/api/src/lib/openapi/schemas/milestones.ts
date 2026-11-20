@@ -9,7 +9,7 @@ import {
 import { BuddyGlasses, MasteryState } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { logicalDateSchema } from "./study-sessions";
+import { logicalDateSchema, studyWeekDaySchema } from "./study-sessions";
 
 const countSchema = z.number().int().min(0);
 
@@ -57,7 +57,7 @@ const firstStepsSchema = z
       .optional()
       .meta({
         description:
-          "The learner-local day the last step was done, present only on that day: the finished list is returned once more so it can say so, and is null from the next day.",
+          "The learner-local day the last step was done, present only on that day: the finished list is returned once more that day, and is null from the next day.",
       }),
     done: countSchema,
     steps: z.array(
@@ -86,6 +86,7 @@ export const weeklyRecapResponseSchema = z
       minutes: z.number().int(),
       questions: z.number().int(),
     }),
+    days: z.array(studyWeekDaySchema),
     lastWeek: weekNumbersSchema,
     nextFocus: z.object({ title: z.string() }).nullable(),
     phasesFinished: z.array(z.object({ name: z.string(), phase: countSchema })),

@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "d107c0786e62c8c0388970ce4de68b52e7639c009297c9158bd102b1fa99d3c5",
   "activities_sorting_drag_onto_timeline": "f196a1e4dbccc11fe9e41619152c4f9c35f29287ebe6ae9e9a62b11433872bb3",
   "activities_sorting_drag_steps": "18a1b07cc073c683371b60c196c9bbd751c439f29e233aeba9b470d193ff7fac",
-  "activities_sorting_events_to_place": "6412944df29c44c63a5a8e546908f4b56ced0604bfb7dd51a1b57e396b16648a",
+  "activities_sorting_events_placed": "41a28109df20cac92146f3d8de7915c6cc48aedfdd4c403cc329b4d783a1b6df",
   "activities_sorting_every_spot_named": "8636a00a13a3eb7c7f8df3aec826a59c7b5fbda24ccfcbbe6932c6b3c61d00ff",
   "activities_sorting_gap_between": "1a8534b0af76d2db7d24a3f67da22da3b3b4321085bb937e6c2fbe59c6024e0f",
   "activities_sorting_goes_with": "9a53d73969200ea2b86bdca5cebad3bf82e7bdc13bbd6fdad4929a3a6077ae01",
@@ -54,7 +54,6 @@
   "activities_sorting_put_on_spot": "477af6b25286f58b29ae4f2db39e5853b7e30f68abfe44f8f963767af6a90bc9",
   "activities_sorting_remove_link": "5a21cbbbb194ce7af80b7ad5ff4f6033138c3a6e31538732a4e7b51f567f5099",
   "activities_sorting_removed": "363abe1b857874c9bc2416bd9526673e6687f4d375f19fbc61357abdf65fc58c",
-  "activities_sorting_right_count": "e466ad50d7d0deb44392b6dcf0a04221e008392cd1503701652d20cde9554a0d",
   "activities_sorting_right_group": "19888db56d7055262e4aedba99e9d0514b5b60516c234e7212c8a0b5da8414c0",
   "activities_sorting_right_order": "b54ed1d7c23faca96c1abec0d151d211ff8594532b069b825b1c0a287341336d",
   "activities_sorting_show_real_dates": "58904fde12f242c63a08aaca3f1044c61033ef1584fbfdf27e6ccff0b12e9e66",
@@ -110,7 +109,6 @@
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s, falsche Gruppe</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">%1$d von %2$d in der richtigen Gruppe</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s gehört zu %2$s.</string>
     <string name="activities_sorting_badge_put_in_order">Bring es in die richtige Reihenfolge</string>
@@ -195,9 +193,10 @@
     <string name="activities_sorting_year_and_guess">%1$s. Deine Schätzung: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">Deine Schätzung: %1$s</string>
-    <plurals name="activities_sorting_events_to_place">
-        <item quantity="one">Noch %d Ereignis einzuordnen</item>
-        <item quantity="other">Noch %d Ereignisse einzuordnen</item>
+    <!-- How many of a timeline's events the learner placed, of all of them, like "2 of 5 events placed". -->
+    <plurals name="activities_sorting_events_placed">
+        <item quantity="one">Platziertes Ereignis: %1$d von %2$d</item>
+        <item quantity="other">Platzierte Ereignisse: %1$d von %2$d</item>
     </plurals>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">Platziere %1$s auf dem Zeitstrahl</string>

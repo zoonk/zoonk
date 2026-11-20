@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let labeledDiagram = ActivityRenderer(
-    template: "labeledDiagram", badge: .always(.labelIt),
+    template: "labeledDiagram",
     grade: ActivityExpectedAnswer.grader(LabeledDiagramFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: LabeledDiagramFields.self) {
@@ -54,7 +54,6 @@ private struct LabeledDiagramCanvas: View {
   @ActivityState private var placements: [String: String]
   @ActivityState private var activeKey: String?
   @State private var targetedKey: String?
-  @ScaledMetric(relativeTo: .subheadline) private var nameWidth = 110.0
 
   init(fields: LabeledDiagramFields, context: ActivityCanvasContext) {
     self.fields = fields
@@ -101,10 +100,8 @@ private struct LabeledDiagramCanvas: View {
                 "Every spot has a name. Tap a spot to change it.", tableName: "Activities",
                 comment: "Every numbered spot of a picture has a name"))
 
-          LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: nameWidth), spacing: 8, alignment: .top)],
-            alignment: .leading, spacing: 8
-          ) {
+          // Each name as wide as its words, so a long one stays on one line beside the others.
+          FlowLayout {
             ForEach(unplaced, id: \.self) { name in
               nameTile(name, activeNumber: activeNumber)
             }

@@ -1,14 +1,14 @@
 "use client";
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
-import { BigQuantity } from "../_components/big-quantity";
+import { useExtracted, useFormatter } from "next-intl";
 import { CoverageBar } from "../_components/coverage-bar";
 import { DetailAsideSection, DetailProperties, DetailProperty } from "../_components/detail-page";
-import { ListGroup } from "../_components/list-group";
 import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
+import { useExamQuestionsLabel } from "../exam/use-exam-question-count";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 
 function getCoverage(subject: SyllabusSubject) {
@@ -25,13 +25,15 @@ function getCoverage(subject: SyllabusSubject) {
 function SubjectMastery({ mastery }: { mastery: SyllabusSubject["mastery"] }) {
   const t = useExtracted();
 
+  if (!mastery) {
+    return null;
+  }
+
   return (
-    <p className="flex flex-col gap-0.5 text-[0.71875rem]" data-slot="subject-mastery">
-      <span className="font-medium">{t("Mastery")}</span>
-      <span className="text-muted-foreground tabular-nums">
-        {mastery
-          ? t("{correct, number} of {answered, number} right", mastery)
-          : t("Shows after a few practice questions")}
+    <p className="text-2xs flex flex-col gap-0.5" data-slot="subject-mastery">
+      <span className="font-medium">{t("Right answers")}</span>
+      <span className="text-muted-foreground font-mono tabular-nums">
+        {t("{done, number} of {total, number}", { done: mastery.correct, total: mastery.answered })}
       </span>
     </p>
   );
@@ -55,9 +57,7 @@ function SubjectPreparation({
     <div className={cn("flex flex-col gap-2", className)} data-slot="subject-preparation">
       {labelled && <span className={PAGE_SECTION_TITLE_CLASS}>{t("Preparation")}</span>}
 
-      <BigQuantity className={labelled ? "text-2xl" : "text-[2rem]"}>
-        {formatShare(share)}
-      </BigQuantity>
+      <BigQuantity className={labelled ? "text-2xl" : "text-3xl"}>{formatShare(share)}</BigQuantity>
       <CoverageBar studied={share} />
 
       <SubjectMastery mastery={mastery} />
@@ -99,14 +99,14 @@ export function SubjectCoverage({
 
   const parts = [
     { dot: "bg-success", label: t("Studied"), share: coverage.studied },
-    { dot: "bg-muted-foreground/70", label: t("Known"), share: coverage.known },
+    { dot: "bg-muted-foreground/70", label: t("Already knew"), share: coverage.known },
     { dot: "ring-muted-foreground/70 ring-1 ring-inset", label: t("New"), share: coverage.new },
   ];
 
   return (
     <div className={cn("flex flex-col gap-2", className)} data-slot="subject-coverage">
       <CoverageBar known={coverage.known} studied={coverage.studied} />
-      <ul className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.71875rem]">
+      <ul className="text-muted-foreground text-2xs flex flex-wrap items-center gap-x-3 gap-y-1">
         {parts.map((part) => (
           <li className="flex items-center gap-1.5" key={part.label}>
             <span aria-hidden="true" className={cn("size-1.5 rounded-full", part.dot)} />
@@ -121,20 +121,6 @@ export function SubjectCoverage({
   );
 }
 
-function useQuestionsValue({
-  source,
-  subject,
-}: {
-  source: SyllabusView["questionsSource"];
-  subject: SyllabusSubject;
-}): string | null {
-  if (!subject.questions) {
-    return null;
-  }
-
-  return source?.edition ? `${subject.questions} · ${source.edition}` : String(subject.questions);
-}
-
 function SubjectDetails({
   questionsSource,
   subject,
@@ -144,34 +130,30 @@ function SubjectDetails({
 }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
-  const questions = useQuestionsValue({ source: questionsSource, subject });
-  const chaptersDone = subject.chapters.filter((chapter) => chapter.state === "done").length;
+  const format = useFormatter();
+  const edition = questionsSource?.edition;
+  const questionsLabel = useExamQuestionsLabel();
 
   return (
     <DetailProperties>
-      {questions && (
-        <DetailProperty label={t("Questions")} mono>
-          {questions}
+      {subject.questions ? (
+        <DetailProperty
+          label={
+            edition
+              ? t({
+                  description:
+                    "Labels a subject's count of questions from a past exam. The exam's name and year go last, after the separator, with no article before them.",
+                  id: "questionsNamedExamEdition",
+                  message: "Questions · {exam}",
+                  values: { exam: edition },
+                })
+              : questionsLabel
+          }
+          mono
+        >
+          {format.number(subject.questions)}
         </DetailProperty>
-      )}
-
-      {subject.topics.length > 0 && (
-        <DetailProperty label={t("Topics")} mono>
-          {t("{done, number} of {total, number}", {
-            done: subject.topicsStudied ?? 0,
-            total: subject.topics.length,
-          })}
-        </DetailProperty>
-      )}
-
-      {subject.chapters.length > 0 && (
-        <DetailProperty label={t("Chapters")} mono>
-          {t("{done, number} of {total, number}", {
-            done: chaptersDone,
-            total: subject.chapters.length,
-          })}
-        </DetailProperty>
-      )}
+      ) : null}
 
       {subject.nextDate && (
         <DetailProperty label={t("Next date")} mono>
@@ -180,10 +162,8 @@ function SubjectDetails({
       )}
 
       {subject.lessonsKnown > 0 && (
-        <DetailProperty label={t("Known before")}>
-          {t("{count, plural, one {# lesson skipped} other {# lessons skipped}}", {
-            count: subject.lessonsKnown,
-          })}
+        <DetailProperty label={t("Skipped")}>
+          {t("{count, plural, one {# lesson} other {# lessons}}", { count: subject.lessonsKnown })}
         </DetailProperty>
       )}
     </DetailProperties>
@@ -191,11 +171,9 @@ function SubjectDetails({
 }
 
 export function SubjectAside({
-  ask,
   questionsSource,
   subject,
 }: {
-  ask?: React.ReactNode;
   questionsSource: SyllabusView["questionsSource"];
   subject: SyllabusSubject;
 }) {
@@ -220,16 +198,6 @@ export function SubjectAside({
       >
         <SubjectDetails questionsSource={questionsSource} subject={subject} />
       </DetailAsideSection>
-
-      {ask && (
-        <DetailAsideSection
-          className="hidden min-[72rem]:flex"
-          title={t("Also")}
-          titleId="subject-also-title"
-        >
-          <ListGroup>{ask}</ListGroup>
-        </DetailAsideSection>
-      )}
     </>
   );
 }

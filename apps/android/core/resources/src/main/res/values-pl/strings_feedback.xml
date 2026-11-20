@@ -14,7 +14,6 @@
   "feedback_screen_attached": "291c9268b2172d5bc6327e91d0ff3ad245ec221eca1ace06736ca3c4bbf0110e",
   "feedback_send": "1d5f2e33b6be99830afbddc7be7df42afaedb557c60f11038eef4ea3af9e5678",
   "feedback_send_feedback": "993682308c79221659fa10ba0b871cc20607e6d97471f2bf82e80753b2bc7cb2",
-  "feedback_send_feedback_description": "d564827269f485b4b7cf6d69f415226df1406897cd77c64bd0b30897c7262bcf",
   "feedback_sent": "efc738d9d98bd95265d0446411029bd10f9c4c441c23242814e647fcd4d338fe",
   "feedback_thanks": "d2b72c7bf96b4ba898ce355dd38173a996e18de2365418a408826c6ca1b6a81b"
 }
@@ -31,7 +30,6 @@
     <string name="feedback_follow_us">Obserwuj nas</string>
     <string name="feedback_report_problem">Zgłoś problem</string>
     <string name="feedback_send_feedback">Wyślij opinię</string>
-    <string name="feedback_send_feedback_description">Coś nie działa lub masz pomysł? Napisz do nas poniżej lub na hello@zoonk.com.</string>
     <string name="feedback_thanks">Dzięki! Twoja wiadomość dotarła.</string>
     <string name="feedback_more">Więcej opcji</string>
     <string name="feedback_save_failure_message">Nie udało mi się zapisać odpowiedzi.</string>

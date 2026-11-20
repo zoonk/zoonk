@@ -4,19 +4,16 @@ import {
   AdminDetailHeaderSkeleton,
   AdminDetailPage,
 } from "@/components/admin-detail";
-import {
-  AdminEditFormSkeleton,
-  AdminEditFormSkeletonActions,
-  AdminEditFormSkeletonField,
-} from "@/components/admin-edit-form";
-import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
+import { AdminSectionSkeleton } from "@/components/admin-section";
 import { getCourse } from "@/data/courses/get-course";
+import { formatCount } from "@/lib/format";
+import { languagePairName } from "@/lib/language-filter";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CourseCurriculum } from "./course-curriculum";
-import { CourseForm } from "./course-form";
+import { CourseEditButton } from "./course-edit-button";
 
 export async function generateMetadata({ params }: PageProps<"/courses/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -62,23 +59,20 @@ async function CourseContent({ params }: Pick<PageProps<"/courses/[id]">, "param
   return (
     <>
       <AdminDetailHeader
+        actions={
+          <CourseEditButton course={{ id: course.id, slug: course.slug, title: course.title }} />
+        }
         facts={[
-          course.targetLanguage
-            ? `${course.language.toUpperCase()} → ${course.targetLanguage.toUpperCase()}`
-            : course.language.toUpperCase(),
-          course.isPublished ? "Published" : "Not published",
+          languagePairName(course),
+          course.isPublished ? "Published" : "Hidden from learners",
           course.visibility === "private" && "Private",
-          `${course.userCount.toLocaleString()} ${course.userCount === 1 ? "learner" : "learners"}`,
+          formatCount(course.userCount, "learner"),
         ]}
         parents={COURSE_PARENTS}
         title={course.title}
       />
 
       <AdminDetailBody>
-        <AdminSection title="Title and slug">
-          <CourseForm course={{ id: course.id, slug: course.slug, title: course.title }} />
-        </AdminSection>
-
         <Suspense fallback={<AdminSectionSkeleton description />}>
           <CourseCurriculum courseId={course.id} />
         </Suspense>
@@ -90,19 +84,10 @@ async function CourseContent({ params }: Pick<PageProps<"/courses/[id]">, "param
 function CourseSkeleton() {
   return (
     <>
-      <AdminDetailHeaderSkeleton parents={COURSE_PARENTS} />
+      <AdminDetailHeaderSkeleton actions="buttons" parents={COURSE_PARENTS} />
 
       <AdminDetailBody>
-        <AdminSectionSkeleton>
-          <AdminEditFormSkeleton>
-            <div className="flex flex-col gap-7">
-              <AdminEditFormSkeletonField />
-              <AdminEditFormSkeletonField descriptionClassName="h-[2lh] sm:h-lh" />
-            </div>
-            <AdminEditFormSkeletonActions />
-          </AdminEditFormSkeleton>
-        </AdminSectionSkeleton>
-        <AdminSectionSkeleton />
+        <AdminSectionSkeleton description />
       </AdminDetailBody>
     </>
   );

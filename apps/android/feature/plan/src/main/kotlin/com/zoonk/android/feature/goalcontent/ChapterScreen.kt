@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,6 +41,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
@@ -55,8 +55,10 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.DisclosureRow
-import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -64,9 +66,11 @@ import com.zoonk.android.ui.components.LessonList
 import com.zoonk.android.ui.components.LessonProgress
 import com.zoonk.android.ui.components.LessonSummaries
 import com.zoonk.android.ui.components.LessonSummary
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
@@ -75,10 +79,10 @@ import com.zoonk.android.ui.components.TestOutRow
 import com.zoonk.android.ui.components.TestOutScope
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ChapterLesson
@@ -130,7 +134,7 @@ fun ChapterScreen(
                     key = key,
                     store = app.goalContent,
                     navigator = navigator,
-                    menu = { ReportProblemMenu(report, inPage = true) },
+                    menu = { ReportProblemMenu(report) },
                     ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
                     mindMap = { ChapterMapSlot(chapterMindMapShown(key, app)) { ChapterMindMapRow(key, app, navigator::open, it) } },
                 )
@@ -139,10 +143,7 @@ fun ChapterScreen(
     }
 }
 
-/**
- * The chapter's map row, and whether it shows one. A narrow page puts the row under the hero; with
- * the sidebar beside it, the row sits in "For reference" there instead.
- */
+/** The chapter's map row, and whether it shows one: it sits in "For reference", wherever that section is. */
 internal class ChapterMapSlot(
     val shown: Boolean,
     val row: @Composable (Modifier) -> Unit,
@@ -153,7 +154,7 @@ internal fun ChapterContent(
     key: ChapterKey,
     store: GoalContentStore,
     navigator: AppNavigator,
-    menu: @Composable () -> Unit = {},
+    menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
     mindMap: @Composable () -> ChapterMapSlot? = { null },
 ) {
@@ -162,52 +163,30 @@ internal fun ChapterContent(
     val scope = rememberCoroutineScope()
     val back: () -> Unit = { navigator.back() }
 
-    when (val shown = state) {
-        is LoadState.Loaded -> {
-            val practice = viewModel(key = "chapter-${key.goalId}-${key.chapterId}") { ChapterViewModel(store, key) }
-            val practiceState by practice.state.collectAsStateWithLifecycle()
-            val opened = (practiceState.outcome as? PracticeOutcome.Opened)?.route
+    ResourceScaffold(
+        state,
+        onBack = back,
+        onRetry = { scope.launch { resource.refresh() } },
+        onGoHome = { navigator.showRoot(AppTab.Today) },
+    ) { value ->
+        val practice = viewModel(key = "chapter-${key.goalId}-${key.chapterId}") { ChapterViewModel(store, key) }
+        VisitOf(practice.visit)
+        ActOn(practice.opened, navigator::open)
 
-            LaunchedEffect(opened) {
-                if (opened != null) {
-                    practice.consumeOpened()
-                    navigator.open(opened)
-                }
-            }
-
-            ChapterPage(
-                chapter = shown.value,
-                practice = practiceState,
-                menu = menu,
-                ask = ask,
-                mindMap = mindMap(),
-                actions =
-                    ChapterActions(
-                        back = back,
-                        openLesson = { navigator.open(AppRoute.Lesson(it.toString())) },
-                        testOut = { navigator.open(AppRoute.TestOut(key.chapterId.toString())) },
-                        practice = practice::practice,
-                    ),
-            )
-        }
-
-        is LoadState.Failed -> {
-            PageScaffold(onBack = back) { padding ->
-                if (shown.error == ApiError.NotFound) {
-                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(padding))
-                } else {
-                    LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }, modifier = Modifier.padding(padding))
-                }
-            }
-        }
-
-        LoadState.Empty -> {
-            PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
-        }
-
-        LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
-        }
+        ChapterPage(
+            chapter = value,
+            practice = practice.state,
+            menu = menu,
+            ask = ask,
+            mindMap = mindMap(),
+            actions =
+                ChapterActions(
+                    back = back,
+                    openLesson = { navigator.open(AppRoute.Lesson(it.toString())) },
+                    testOut = { navigator.open(AppRoute.TestOut(key.chapterId.toString())) },
+                    practice = practice::practice,
+                ),
+        )
     }
 }
 
@@ -227,17 +206,38 @@ internal class ChapterViewModel(
     private val store: GoalContentStore,
     private val key: ChapterKey,
 ) : ViewModel() {
-    private val practiceState = MutableStateFlow(PracticeState())
-    val state: StateFlow<PracticeState> = practiceState.asStateFlow()
+    /** The chapter's visit: a practice opens, or says it can't, only on it. */
+    val visit = Visit()
+
+    /** Where the practice opens, for the chapter's frame to open. */
+    val opened = visit.outcome<AppRoute>()
+
+    private val said = visit.outcome<PracticeOutcome>()
+
+    private var running by mutableStateOf(false)
+
+    /** Running, or what the practice said on this visit (nothing to practice, or a failure). */
+    val state get() = PracticeState(running, said.value)
 
     fun practice() {
-        if (practiceState.value.running) return
-        practiceState.value = PracticeState(running = true)
-        viewModelScope.launch { practiceState.value = PracticeState(outcome = store.practice(key)) }
-    }
+        if (running) return
+        running = true
+        said.clear()
+        val started = visit.number
+        viewModelScope.launch {
+            when (val outcome = store.practice(key)) {
+                is PracticeOutcome.Opened -> {
+                    opened.send(started, outcome.route)
+                }
 
-    fun consumeOpened() {
-        practiceState.update { it.copy(outcome = null) }
+                PracticeOutcome.NothingToPractice, PracticeOutcome.Failed -> {
+                    said.send(started, outcome)
+                }
+
+                null -> {}
+            }
+            running = false
+        }
     }
 }
 
@@ -246,28 +246,30 @@ internal fun ChapterPage(
     chapter: GoalChapter,
     practice: PracticeState,
     actions: ChapterActions,
-    menu: @Composable () -> Unit = {},
+    menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
     mindMap: ChapterMapSlot? = null,
 ) {
     val shownMap = mindMap?.takeIf { it.shown }
     val lessons = remember(chapter.lessons) { chapter.lessons.map { it.listed() } }
+    val next = chapter.lessons.firstOrNull { it.state == ChapterLesson.State.NEXT }
 
     DetailPage(
         title = chapter.chapter.title,
         onBack = actions.back,
-        hero = { ChapterHero(chapter, actions, menu) },
+        hero = { ChapterHero(chapter) },
         ask = ask,
+        menu = menu,
+        action =
+            next?.let {
+                { modifier -> ContinueButton(started = lessons.any { it.done }, onClick = { actions.openLesson(it.lessonId) }, modifier) }
+            },
         aside = {
             ChapterProgress(lessons)
             ChapterPractice(chapter, practice, actions)
-            ChapterReference(chapter, shownMap)
+            ChapterReference(chapter, shownMap, mapFirst = true)
         },
     ) { asideBeside ->
-        if (shownMap != null && !asideBeside) {
-            item(key = "mind-map", contentType = "mind-map") { shownMap.row(Modifier.padding(top = SECTION_GAP)) }
-        }
-
         if (lessons.isNotEmpty()) {
             item(key = "lessons", contentType = "lessons") {
                 LessonList(lessons, upNext = true, onOpen = actions.openLesson, modifier = Modifier.padding(top = SECTION_GAP))
@@ -279,7 +281,7 @@ internal fun ChapterPage(
                 key = "practice",
                 contentType = "practice",
             ) { ChapterPractice(chapter, practice, actions, Modifier.padding(top = SECTION_GAP)) }
-            item(key = "reference", contentType = "reference") { ChapterReference(chapter, null, Modifier.padding(top = SECTION_GAP)) }
+            item(key = "reference", contentType = "reference") { ChapterReference(chapter, shownMap, Modifier.padding(top = SECTION_GAP)) }
         }
     }
 }
@@ -291,51 +293,32 @@ private fun ChapterLesson.listed() =
         minutes = minutes.toInt(),
         done = state == ChapterLesson.State.DONE,
         next = state == ChapterLesson.State.NEXT,
-        plusRequired = plusRequired,
     )
 
 @Composable
-private fun ChapterHero(
-    chapter: GoalChapter,
-    actions: ChapterActions,
-    menu: @Composable () -> Unit,
-) {
+private fun ChapterHero(chapter: GoalChapter) {
     val locale = currentLocale()
     val lessons = chapter.lessons
-    val done = lessons.count { it.state == ChapterLesson.State.DONE }
-    val next = lessons.firstOrNull { it.state == ChapterLesson.State.NEXT }
     val number = formatNumber(chapter.chapter.position.toDouble(), locale)
-    val subject = chapter.chapter.subject
     val minutes = lessons.sumOf { it.minutes }.toInt()
-    val facts =
+    val counts =
         if (lessons.isEmpty()) {
-            null
+            emptyList()
         } else {
             listOfNotNull(
                 pluralStringResource(R.plurals.goalcontent_lesson_count, lessons.size, lessons.size),
                 minutes.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
-                percentDone(done.toDouble() / lessons.size),
-            ).factsLine()
+            )
         }
+    val facts = listOf(stringResource(R.string.goalcontent_chapter_number, number)) + counts
 
-    val action: (@Composable (Modifier) -> Unit)? =
-        next?.let { { modifier -> ContinueButton(started = done > 0, onClick = { actions.openLesson(it.lessonId) }, modifier) } }
-
-    DetailHero(action, menu) {
-        Eyebrow(
-            text =
-                if (subject == null) {
-                    stringResource(R.string.goalcontent_chapter_number, number)
-                } else {
-                    stringResource(R.string.goalcontent_subject_chapter, subject.name, number)
-                },
-        )
+    DetailHero {
         Text(
             text = chapter.chapter.title,
             modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.headlineMedium,
         )
-        if (facts != null) Text(text = facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle())
+        Facts(facts)
     }
 }
 
@@ -370,9 +353,9 @@ private fun ChapterPractice(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.goalcontent_practice), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
-            if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut, plusRequired = chapter.testOut.plusRequired)
+            if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut)
             if (mistakes) {
-                if (canTestOut) HorizontalDivider()
+                if (canTestOut) ListDivider()
                 PracticeChapterRow(practice, onPractice = actions.practice)
             }
         }
@@ -380,7 +363,7 @@ private fun ChapterPractice(
 }
 
 @Composable
-private fun PracticeChapterRow(
+internal fun PracticeChapterRow(
     practice: PracticeState,
     onPractice: () -> Unit,
 ) {
@@ -392,19 +375,22 @@ private fun PracticeChapterRow(
             )
         },
         onClick = onPractice,
+        leadOnFirstLine = true,
         busy = practice.running,
         leading = { KindDot(LearnKind.Practice) },
     )
     practiceMessage(practice.outcome)?.let {
-        Text(
-            text = it,
-            modifier =
-                Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp).semantics {
-                    liveRegion = LiveRegionMode.Polite
-                },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (practice.outcome == PracticeOutcome.Failed) {
+            com.zoonk.android.ui.components
+                .InlineFailure(it, Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp))
+        } else {
+            Text(
+                it,
+                Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp).semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
 }
 
@@ -417,14 +403,15 @@ private fun practiceMessage(outcome: PracticeOutcome?): String? =
     }
 
 /**
- * What the chapter leaves to look back at: its map, when the sidebar holds it, and its skills and
- * their summaries.
+ * What the chapter leaves to look back at: its skills and their summaries, and its map. As main, the map leads only
+ * beside the page ([mapFirst]), where it stands in for main's picture.
  */
 @Composable
 private fun ChapterReference(
     chapter: GoalChapter,
     mindMap: ChapterMapSlot?,
     modifier: Modifier = Modifier,
+    mapFirst: Boolean = false,
 ) {
     val hasSummary = chapter.skills.isNotEmpty() || chapter.summaries.isNotEmpty()
     if (mindMap == null && !hasSummary) return
@@ -436,24 +423,40 @@ private fun ChapterReference(
             stringResource(R.string.goalcontent_for_reference),
             Modifier.padding(horizontal = PAGE_PADDING).padding(bottom = 12.dp),
         )
-        mindMap?.row?.invoke(Modifier)
-        if (!hasSummary) return@Column
-        if (mindMap != null) Spacer(Modifier.height(12.dp))
-        DisclosureRow(
-            stringResource(R.string.goalcontent_chapter_summary),
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-            leading = { Icon(painterResource(R.drawable.ic_checklist), contentDescription = null) },
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                if (chapter.skills.isNotEmpty()) {
-                    Column {
-                        SectionLabel(stringResource(R.string.goalcontent_skills), Modifier.padding(bottom = 4.dp))
-                        chapter.skills.forEach { SkillRow(it) }
-                    }
+        val map = mindMap?.row
+        if (mapFirst && map != null) map(Modifier)
+        if (hasSummary) {
+            if (mapFirst && map != null) ListDivider()
+            ChapterSummary(chapter, expanded) { expanded = it }
+        }
+        if (!mapFirst && map != null) {
+            if (hasSummary) ListDivider()
+            map(Modifier)
+        }
+    }
+}
+
+@Composable
+private fun ChapterSummary(
+    chapter: GoalChapter,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+) {
+    DisclosureRow(
+        stringResource(R.string.goalcontent_chapter_summary),
+        expanded = expanded,
+        onExpandedChange = onExpandedChange,
+        // Main's lucide NotebookText; Apple's text.book.closed.
+        leading = { MarkIcon(R.drawable.ic_book_2) },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            if (chapter.skills.isNotEmpty()) {
+                Column {
+                    SectionLabel(stringResource(R.string.goalcontent_skills), Modifier.padding(bottom = 4.dp))
+                    chapter.skills.forEach { SkillRow(it) }
                 }
-                LessonSummaries(chapter.summaries.map { LessonSummary(it.title, it.ideas) })
             }
+            LessonSummaries(chapter.summaries.map { LessonSummary(it.title, it.ideas) })
         }
     }
 }
@@ -465,8 +468,9 @@ private fun SkillRow(skill: MapSkill) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { SkillDot(skill.state) }
-        Text(skill.name, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+        Text(skill.name, modifier = Modifier.weight(1f).alignByBaseline(), style = MaterialTheme.typography.bodyMedium)
         Text(
+            modifier = Modifier.alignByBaseline(),
             text = if (skill.fading) stringResource(R.string.goalcontent_to_review) else skillStateLabel(skill.state),
             color = if (skill.fading) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,

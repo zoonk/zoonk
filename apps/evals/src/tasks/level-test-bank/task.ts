@@ -14,7 +14,7 @@ export const levelTestBankTask: Task<GenerateLevelTestBankParams, GenerateLevelT
     "Write the placement test bank for a language pair: 2 reading and 2 listening questions per level from A1 to C1 and one sentence per level to say: code checks, then a judge",
   generate: generateLevelTestBank,
   id: "level-test-bank",
-  name: "Level Test Bank",
+  name: "Level test bank",
   score: scoreLevelTestBank,
   scoreCategories: LEVEL_TEST_BANK_SCORE_CATEGORIES,
   testCases: TEST_CASES,

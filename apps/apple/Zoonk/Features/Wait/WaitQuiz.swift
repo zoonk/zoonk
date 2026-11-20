@@ -46,13 +46,12 @@ struct WaitQuiz: View {
 
     Section {
       VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "Quiz while you wait", tableName: "Onboarding",
-          comment:
-            "Eyebrow over a question shown while the learner waits for their course. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it."
-        )
-        .typeStyle(.eyebrow)
-        .foregroundStyle(.faint)
+        Chip(
+          Text(
+            "Quiz while you wait", tableName: "Onboarding",
+            comment:
+              "Eyebrow over a question shown while the learner waits for their course. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it."
+          ))
 
         Text(card.question)
           .typeStyle(.question)

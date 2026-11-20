@@ -1,13 +1,11 @@
 import { render as renderInBrowser } from "@testing-library/react";
+import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { NextIntlClientProvider } from "next-intl";
 import { type ReactNode } from "react";
 
 export function TestIntl({ children }: { children: ReactNode }) {
   return (
-    <NextIntlClientProvider
-      locale="en"
-      timeZone={new Intl.DateTimeFormat().resolvedOptions().timeZone}
-    >
+    <NextIntlClientProvider locale="en" timeZone={getLocalTimeZone()}>
       {children}
     </NextIntlClientProvider>
   );

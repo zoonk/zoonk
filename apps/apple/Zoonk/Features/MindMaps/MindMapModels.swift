@@ -5,8 +5,6 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
     case available
     case drawing
     case failed
-    /// The chapter's lessons are Plus-only for this learner, so its map is too.
-    case plusRequired
     case ready
     /// A language's unit, or nothing in its outline to draw from: no row at all.
     case unavailable
@@ -15,6 +13,18 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
     var isOnItsWay: Bool {
       self == .writingLessons || self == .drawing
     }
+  }
+
+  /// Main's `canMakeNow`: its lessons are written, so its map is made, or being made, without
+  /// writing any.
+  var canMakeNow: Bool {
+    lessonsToWrite == 0 && [.available, .drawing, .failed].contains(status)
+  }
+
+  /// Main's `needsAttention`: a map on its way, or one that didn't finish with its Try again, so
+  /// its row leads "No map yet".
+  var needsAttention: Bool {
+    status.isOnItsWay || status == .failed
   }
 
   struct Image: Decodable, Equatable, Sendable {
@@ -77,14 +87,9 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
 /// A chapter with written lesson maps, as the Lessons tab lists it.
 struct LessonMapGroup: Decodable, Equatable, Sendable {
   let chapterId: String
-  /// Locked ones included.
   let count: Int
-  /// How many of them a free exam plan past its first week keeps for Plus.
-  let locked: Int
-  /// The ones that open, in chapter order: a reader opened with this list keeps these.
+  /// In chapter order: a reader opened with this list keeps these.
   let lessonIds: [String]
-
-  var opens: Int { lessonIds.count }
 }
 
 enum SavedMindMapKind: String, Codable, Hashable, Sendable {
@@ -113,8 +118,6 @@ struct SavedMindMap: Decodable, Equatable, Sendable {
 struct MindMapCreateOffer: Decodable, Equatable, Sendable {
   /// Chapters without a ready map or one on its way whose lessons are all written.
   let eligible: Int
-  /// Chapters without a map whose lessons aren't all written: each writes them from its own row.
-  let needLessons: Int
   /// How many of `eligible` one tap would start now, a failed map's free retry included.
   let startable: Int
   /// What stops a new map now; nil while the allowance has room for one more.
@@ -131,27 +134,111 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
     case aiSpend, mindMap
   }
 
-  let period: HelpLimit.Period?
+  let availableAt: Date?
+  let period: String?
   let reason: Reason
-  let resetsAt: Date?
   let resource: Resource?
+
+  /// Its instant has passed by this device's clock, so the page reads the list again; the stop
+  /// holds until a read says it's gone.
+  func isOver(at now: Date) -> Bool {
+    availableAt.map { $0 <= now } ?? false
+  }
 
   func limit(tier: LearnerTier, now: Date = .now) -> MindMapLimit {
     let limit: HelpLimit =
       switch reason {
       case .signUpRequired: .signUpRequired
       case .slowDown:
-        .slowDown(retryAfterSeconds: max(1, Int((resetsAt ?? now).timeIntervalSince(now))))
-      case .limitReached: .limitReached(period: period ?? .day, tier: tier)
+        .slowDown(retryAfterSeconds: max(1, Int((availableAt ?? now).timeIntervalSince(now))))
+      // A day already past here can't be told: the stop shows no day until a read lifts it.
+      case .limitReached:
+        .reached(
+          period: period, tier: tier, availableAt: availableAt.flatMap { $0 > now ? $0 : nil })
       }
 
-    return MindMapLimit(limit: limit, resource: resource == .aiSpend ? .aiSpend : .mindMap)
+    let ranOut: MindMapLimit.Resource =
+      switch resource {
+      case .aiSpend: .aiSpend
+      case .mindMap, nil: .mindMap
+      }
+
+    return MindMapLimit(limit: limit, resource: ranOut)
   }
 }
 
-extension HelpLimit.Period: Decodable {}
+/// Main's `orderNotMade`: maps on their way or failed first, then chapters whose lessons are all
+/// written (made in half a minute), then chapters the learner finished a lesson in, then the rest,
+/// syllabus order within each. Five show; the rest fold by subject, unless a few more would do.
+struct NotMadeOrder {
+  struct Group {
+    let key: String
+    /// Nil when the goal's chapters have no subjects: the rest fold under one row.
+    let name: String?
+    let chapters: [ChapterMindMap]
+  }
+
+  private static let nextRows = 5
+  private static let foldAfter = nextRows + 2
+
+  let next: [ChapterMindMap]
+  let restGroups: [Group]
+
+  init(_ chapters: [ChapterMindMap], studied: Set<String>) {
+    func rank(_ chapter: ChapterMindMap) -> Int {
+      if chapter.needsAttention { return 0 }
+      if chapter.canMakeNow { return 1 }
+      return studied.contains(chapter.chapterId) ? 2 : 3
+    }
+
+    let ordered = chapters.enumerated()
+      .sorted { (rank($0.element), $0.offset) < (rank($1.element), $1.offset) }
+      .map(\.element)
+
+    guard ordered.count > Self.foldAfter else {
+      next = ordered
+      restGroups = []
+      return
+    }
+
+    next = Array(ordered.prefix(Self.nextRows))
+    let shown = Set(next.map(\.chapterId))
+    let rest = chapters.filter { !shown.contains($0.chapterId) }
+
+    guard rest.allSatisfy({ $0.subject != nil }) else {
+      restGroups = [Group(key: "", name: nil, chapters: rest)]
+      return
+    }
+
+    var keys: [String] = []
+    var bySubject: [String: [ChapterMindMap]] = [:]
+
+    for chapter in rest {
+      let key = chapter.subject?.key ?? ""
+
+      if bySubject[key] == nil {
+        keys.append(key)
+      }
+
+      bySubject[key, default: []].append(chapter)
+    }
+
+    restGroups = keys.map { key in
+      let grouped = bySubject[key] ?? []
+      return Group(key: key, name: grouped.first?.subject?.name, chapters: grouped)
+    }
+  }
+}
 
 struct GoalMindMaps: Decodable, Equatable, Sendable {
+  /// The list as a refusal answered it: nothing starts until a read says otherwise.
+  func stopped(by stop: MindMapAllowanceStop) -> GoalMindMaps {
+    GoalMindMaps(
+      chapters: chapters,
+      createOffer: MindMapCreateOffer(eligible: createOffer.eligible, startable: 0, stop: stop),
+      firstTab: firstTab, lessonGroups: lessonGroups, saved: saved)
+  }
+
   enum Tab: String, Decodable, Hashable, Sendable, CaseIterable {
     case chapters, lessons, saved
   }
@@ -167,8 +254,9 @@ struct GoalMindMaps: Decodable, Equatable, Sendable {
   let saved: [SavedMindMap]
 
   /// A save that can no longer open still shows, so the learner can remove it.
+  /// A list with nothing in it but a stop is still a list: the page's empty state reads the stop.
   var isEmpty: Bool {
-    chapters.isEmpty && saved.isEmpty
+    chapters.isEmpty && saved.isEmpty && createOffer.stop == nil
   }
 
   func chapter(_ id: String) -> ChapterMindMap? {
@@ -186,9 +274,7 @@ struct ChapterLessonMaps: Decodable, Equatable, Sendable {
 
   struct Lesson: Decodable, Equatable, Identifiable, Sendable {
     let lessonId: String
-    let locked: Bool
-    /// Nil while it's locked.
-    let map: LessonSummary?
+    let map: LessonSummary
     let position: Int
     let saved: Bool
     let title: String
@@ -197,8 +283,7 @@ struct ChapterLessonMaps: Decodable, Equatable, Sendable {
 
     func saving(_ saved: Bool) -> Self {
       Self(
-        lessonId: lessonId, locked: locked, map: map, position: position, saved: saved, title: title
-      )
+        lessonId: lessonId, map: map, position: position, saved: saved, title: title)
     }
   }
 
@@ -206,15 +291,40 @@ struct ChapterLessonMaps: Decodable, Equatable, Sendable {
   let lessons: [Lesson]
 }
 
-/// Main's `MindMapLimit`, and what ran out: the maps, the lessons a map writes first, or the day's
-/// AI spend.
+/// Main's `MindMapLimit`, and what ran out: the maps, the lessons a map writes first (one start, or
+/// the whole map's that don't fit), or the day's AI spend.
 struct MindMapLimit: Equatable, Sendable {
   enum Resource: Hashable, Sendable {
-    case aiSpend, lessons, mindMap
+    case aiSpend, chapterLessons, lessons, mindMap
   }
 
   let limit: HelpLimit
   let resource: Resource
+
+  /// The page's stop when this refusal stops every new map (the maps cap, the day's AI spend, a
+  /// guest's account); a map's own lessons or a short break stop only its row.
+  var pageStop: MindMapAllowanceStop? {
+    let ranOut: MindMapAllowanceStop.Resource
+    switch resource {
+    case .mindMap: ranOut = .mindMap
+    case .aiSpend: ranOut = .aiSpend
+    case .chapterLessons, .lessons: return nil
+    }
+
+    let period: String
+    switch limit {
+    case .usedUp: period = "rolling30Days"
+    case .limitReached(.day, _): period = "day"
+    case .limitReached(.total, _): period = "total"
+    case .signUpRequired:
+      return MindMapAllowanceStop(
+        availableAt: nil, period: nil, reason: .signUpRequired, resource: ranOut)
+    case .slowDown: return nil
+    }
+
+    return MindMapAllowanceStop(
+      availableAt: limit.availableAt, period: period, reason: .limitReached, resource: ranOut)
+  }
 }
 
 /// What a tap or following a run got that the map's own status doesn't say. It stands for the read
@@ -222,10 +332,32 @@ struct MindMapLimit: Equatable, Sendable {
 enum MindMapRequestFailure: Equatable, Sendable {
   case refused(MindMapLimit)
   case unreachable
+
+  /// A refusal while it holds; a cap's day that has come ends it, and the server decides again.
+  func holdingLimit(at now: Date) -> MindMapLimit? {
+    guard case .refused(let refusal) = self, !refusal.limit.isOpen(at: now) else {
+      return nil
+    }
+
+    return refusal
+  }
+
+  /// The refusal takes Create's place while it holds, except a short break: the learner taps
+  /// again once it passes.
+  func hidesCreate(at now: Date) -> Bool {
+    holdingLimit(at: now).map { !$0.limit.isShortBreak } ?? false
+  }
 }
 
 enum MindMapRequest: Equatable, Sendable {
-  /// Ready, on its way, Plus-only or a chapter without one: reading it again says which.
+  /// Ready, on its way or a chapter without one: reading it again says which.
   case read
   case refused(MindMapLimit)
+}
+
+extension GoalMindMaps {
+  /// The chapters without a map yet, in the syllabus's order.
+  var notMade: [ChapterMindMap] {
+    chapters.filter { [.available, .failed, .writingLessons, .drawing].contains($0.status) }
+  }
 }

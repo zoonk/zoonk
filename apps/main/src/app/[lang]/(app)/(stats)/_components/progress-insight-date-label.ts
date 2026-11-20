@@ -1,4 +1,10 @@
-import { getFormattingLocale } from "@zoonk/utils/locale";
+import { formatIsoDate } from "@zoonk/utils/date-format";
+
+const ISO_DAY_LENGTH = "YYYY-MM-DD".length;
+
+function toIsoDay(date: Date): string {
+  return date.toISOString().slice(0, ISO_DAY_LENGTH);
+}
 
 /**
  * Keeps the persisted UTC date-only value. The year shows only for an earlier year than the newest
@@ -11,20 +17,13 @@ export function getProgressDayFormatter({
   locale: string;
   newest: Date | undefined;
 }): (date: Date) => string {
-  const sameYear = new Intl.DateTimeFormat(getFormattingLocale(locale), {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  });
+  const latest = newest ? toIsoDay(newest) : null;
 
-  const otherYear = new Intl.DateTimeFormat(getFormattingLocale(locale), {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-    year: "numeric",
-  });
-
-  const year = newest?.getUTCFullYear();
-
-  return (date: Date) => (date.getUTCFullYear() === year ? sameYear : otherYear).format(date);
+  return (date: Date) =>
+    formatIsoDate({
+      isoDate: toIsoDay(date),
+      locale,
+      today: latest ?? toIsoDay(date),
+      ...(!latest && { year: "always" as const }),
+    });
 }

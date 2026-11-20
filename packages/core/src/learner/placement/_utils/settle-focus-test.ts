@@ -79,7 +79,7 @@ export async function settleFocusTest({
     return { offer, state };
   }
 
-  const proposal = await loadPlanChangeView(proposed.changeId, { timeZone });
+  const proposal = await loadPlanChangeView(proposed.changeId);
   const { plan, rows, subjects } = focusTest;
 
   return {

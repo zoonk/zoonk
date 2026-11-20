@@ -14,6 +14,6 @@ export const lessonQuestionTask: Task<
   description: "Answer learner questions using lesson, step, and validated answer context",
   generate: generateLessonQuestionAnswer,
   id: "lesson-question",
-  name: "Lesson Question",
+  name: "Lesson question",
   testCases: [...TEST_CASES, ...LEARNER_NEEDS_CASES],
 };

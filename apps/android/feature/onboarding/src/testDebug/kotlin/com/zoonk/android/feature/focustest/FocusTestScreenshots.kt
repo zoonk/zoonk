@@ -39,7 +39,6 @@ import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.completionOf
 import com.zoonk.android.feature.onboarding.focusCheckpointOf
 import com.zoonk.android.feature.onboarding.focusOf
@@ -52,6 +51,7 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.NotToday
 import com.zoonk.android.feature.questions.PlacementNote
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FocusTest
@@ -277,7 +277,6 @@ class FocusTestScreenshots(
                             GenerationRun(),
                             onRetryRun = null,
                             onProgress = {},
-                            onDone = { WriteOutcome.Done(Unit) },
                             plan = if (onPlan) OnPlan(onChangeFocus = {}, questions = questions, startOnOpen = false) else null,
                         )
                     }
@@ -299,7 +298,7 @@ class FocusTestScreenshots(
                 .captureRender()
                 .asAndroidBitmap()
         val file = File(folder, "$name-$theme.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 
@@ -378,7 +377,7 @@ class FocusTestScreenshots(
               "areaEnds":[{"area":"Administrative law","after":"2026-11-28","before":"2026-11-27","lessonsGained":1},
                {"area":"Mathematics","after":"2026-12-02","before":"2026-11-28","lessonsGained":1}],
               "areaLessons":[{"area":"Statistics","after":3,"before":6}]},
-             "examDocument":"guide","id":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01","kind":"edited","lessonsSkipped":0,"officialDate":null,
+             "examDocument":"guide","id":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01","kind":"edited","lessonsSkipped":0,"officialDate":null,"quote":"quote-shown",
              "operations":[{"kind":"focusAreas","areas":["Administrative law","Mathematics"]}],"reason":null,"seen":false,
              "source":"focusTest","status":"proposed","todaySession":null}
             """

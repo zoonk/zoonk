@@ -1,5 +1,6 @@
 "use client";
 
+import { received } from "@zoonk/learn/help-limit";
 import { type Dispatch, useCallback, useRef } from "react";
 import { type LessonPlayerAction } from "./lesson-player-state";
 import { type LessonPlayerAdapters } from "./lesson-player-types";
@@ -36,7 +37,7 @@ export function useLessonRun({
         runClock(outcome);
       }
 
-      return outcome;
+      return outcome.reason === "limitReached" ? received(outcome) : outcome;
     },
     [adapters, runClock],
   );

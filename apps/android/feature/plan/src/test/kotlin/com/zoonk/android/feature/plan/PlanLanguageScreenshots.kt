@@ -23,6 +23,7 @@ import com.zoonk.android.feature.language.languageProgressNotYet
 import com.zoonk.android.feature.speaking.speakingPaper
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -64,6 +65,14 @@ class PlanLanguageScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expanded() = capture("expanded", sheets = false)
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h1000dp-xxhdpi")
+    fun phoneInPortuguese() = capture("phone-pt")
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w1280dp-h900dp-land-xhdpi")
+    fun expandedInPortuguese() = capture("expanded-pt", sheets = false)
 
     /** The page with the level's tile, then the sheet's content as it shows in its sheet: Robolectric copies only the activity's window. */
     private fun capture(
@@ -129,6 +138,6 @@ class PlanLanguageScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 }

@@ -45,7 +45,7 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
   return (
     <OnboardingPage
       backHref={hasSession ? "/today" : "/"}
-      barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" />}
+      barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" edge="end" />}
     >
       <StartClient
         // "Start over" comes back here with a new key, so nothing typed before is kept, and

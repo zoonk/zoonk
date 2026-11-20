@@ -4,7 +4,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { Page } from "../_components/page";
-import { ACTION_BAR_SURFACE_CLASS, BAR_PADDING_CLASS } from "../_components/task-layout";
 import { PageWithAside } from "../shell/learn-shell";
 import { OnboardingBarRow, OnboardingPageBar } from "./onboarding-bar";
 import { type OnboardingBar, useOnboardingScreen } from "./onboarding-host";
@@ -34,7 +33,7 @@ export function OnboardingSectionFrame({
         {header}
 
         <div className="flex flex-col" data-slot="onboarding-frame">
-          <OnboardingBarRow bar={bar} className="-ml-3 lg:ml-0" />
+          <OnboardingBarRow bar={bar} />
           {notice}
           {children}
         </div>
@@ -43,21 +42,21 @@ export function OnboardingSectionFrame({
   );
 }
 
-/** Hides the aside when none of the rail's blocks has more than its label. */
-const WIDE_ASIDE_CLASS =
-  "not-has-[>div>:nth-child(2)]:hidden min-[72rem]:not-has-[>div>:nth-child(2)]:hidden";
-
-const SCREEN_MEASURE_CLASS = "lg:mx-auto lg:max-w-column";
+/** From 72rem, beside the column. */
+const RAIL_CLASS = "hidden min-[72rem]:flex";
 
 /**
- * Reaches past the page's own padding (the shell's, or the column's beside an aside), so its
- * hairline runs across the page and it rests on the screen's bottom edge.
+ * A screen asks one thing, so its column is centered in the room its bars span, as a task's is:
+ * Back or ✕, "…" and the main action sit in that room's corners. In a room under 50rem the
+ * column would stop a few pixels short of those corners, so it fills the room instead: the
+ * second term is huge while the room (100%) is under 50rem and negative from there.
  */
-const BOTTOM_BAR_CLASS = cn(
-  ACTION_BAR_SURFACE_CLASS,
-  BAR_PADDING_CLASS,
-  "-mx-4 -mb-12 px-4 empty:hidden sm:-mx-8 sm:px-8 lg:-mx-10 lg:-mb-16 lg:px-10",
-);
+const COLUMN_OR_ROOM_CLASS =
+  "lg:mx-auto lg:max-w-[max(var(--container-column),(50rem_-_100%)*9999)]";
+
+/** A row of the bottom bar that belongs to the column sits on it. */
+const BAR_LEAD_ON_COLUMN_CLASS =
+  "lg:**:data-[slot=bar-lead]:mx-auto lg:**:data-[slot=bar-lead]:w-full lg:**:data-[slot=bar-lead]:max-w-[max(var(--container-column),(50rem_-_100%)*9999)]";
 
 export function OnboardingScreenPage({
   backHref,
@@ -65,14 +64,12 @@ export function OnboardingScreenPage({
   bottomBar,
   children,
   rail,
-  wide,
 }: {
   backHref: string;
   barEnd: ReactNode;
   bottomBar?: ReactNode;
   children: ReactNode;
   rail: ReactNode;
-  wide: boolean;
 }) {
   const t = useExtracted();
   const { bar, notice } = useOnboardingScreen();
@@ -80,22 +77,18 @@ export function OnboardingScreenPage({
   return (
     <PageWithAside
       aside={rail}
-      asideClassName={wide ? WIDE_ASIDE_CLASS : "hidden min-[72rem]:flex"}
+      asideClassName={RAIL_CLASS}
       asideLabel={t("Getting started")}
-      className="flex-1 gap-4"
+      className={cn("flex-1 gap-1 lg:gap-2", BAR_LEAD_ON_COLUMN_CLASS)}
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} />
 
-      <Page className={cn("flex-1 gap-6", !wide && SCREEN_MEASURE_CLASS)}>
+      <Page className={cn("flex-1 gap-6", COLUMN_OR_ROOM_CLASS)}>
         {notice}
         {children}
       </Page>
 
-      {bottomBar && (
-        <div className={BOTTOM_BAR_CLASS} data-slot="onboarding-bottom-bar">
-          {bottomBar}
-        </div>
-      )}
+      {bottomBar}
     </PageWithAside>
   );
 }

@@ -1,0 +1,63 @@
+import { FRAME_GUTTER_CLASS } from "@zoonk/ui/components/bottom-bar";
+import { BackLink, PageTop } from "@zoonk/ui/components/page-top";
+import { cn } from "@zoonk/ui/lib/utils";
+import Link from "next/link";
+import { AdminBarMenuButton, AdminBarSearchButton } from "./admin-bar-buttons";
+
+export type AdminParent = { href: string; label: string };
+
+/** The page's side room, which the bar reads to reach the frame's edges. */
+const PAGE_GUTTER_CLASS = cn("px-(--page-gutter)", FRAME_GUTTER_CLASS);
+
+/**
+ * The top of every Admin page, list or record, on the shared page top: a bar with the way back to
+ * the page it belongs to and the page's own actions, then the title and what `children` says about
+ * it. Where the sidebar is hidden, search and the menu end the bar, in the same place on every
+ * page. A phone has no room for the actions beside them, so there they sit under the title.
+ */
+export function AdminHeader({
+  actions,
+  children,
+  parent,
+  title,
+}: {
+  /** `Button size="bar"` and a record's `AdminBarMenu`. */
+  actions?: React.ReactNode;
+  children?: React.ReactNode;
+  /** The list a record belongs to. A list page has none. */
+  parent?: AdminParent;
+  title: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(PAGE_GUTTER_CLASS, parent && "[--bar-start-min:5.5rem]")}
+      data-slot="admin-header"
+    >
+      <PageTop
+        actions={
+          <>
+            {actions ? <div className="hidden items-center gap-2 sm:flex">{actions}</div> : null}
+            <AdminBarSearchButton />
+            <AdminBarMenuButton />
+          </>
+        }
+        back={
+          parent ? (
+            <BackLink
+              aria-label={`Back to ${parent.label}`}
+              render={<Link href={parent.href} prefetch />}
+            >
+              {parent.label}
+            </BackLink>
+          ) : null
+        }
+      >
+        {title}
+        {children}
+        {actions ? (
+          <div className="mt-4 flex flex-wrap items-center gap-2 sm:hidden">{actions}</div>
+        ) : null}
+      </PageTop>
+    </div>
+  );
+}

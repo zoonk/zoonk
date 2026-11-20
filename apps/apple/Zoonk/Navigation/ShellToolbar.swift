@@ -6,6 +6,18 @@ struct ShellToolbar: ViewModifier {
   @Environment(SessionStore.self) private var session
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isToolbarVertical) private var isToolbarVertical
+  @Environment(\.tabBarPlacement) private var tabBarPlacement
+  @State private var barWidth: CGFloat?
+  /// What the bar keeps beside the goal's name: its margins (20 each), the menu's padding and
+  /// chevron (34), the gap the bar leaves before its next item (12), "Level 12" (83), the spacer
+  /// (20) and the account (52). Less, and the bar
+  /// sends the level and the account to its overflow menu.
+  @ScaledMetric(relativeTo: .body) private var besideName: CGFloat = 244
+  /// iPad's tabs in the bar, centered on it (453 with the sidebar's button), and what the name's
+  /// side keeps besides: its margin (14), the menu's padding and chevron (34) and a gap (12).
+  @ScaledMetric(relativeTo: .body) private var tabsInBar: CGFloat = 470
+  @ScaledMetric(relativeTo: .body) private var besideNameByTabs: CGFloat = 60
+  @ScaledMetric(relativeTo: .body) private var shortestName: CGFloat = 96
 
   let isShown: Bool
 
@@ -15,10 +27,30 @@ struct ShellToolbar: ViewModifier {
     if !isShown {
       content
     } else if #available(iOS 27, *) {
-      content.toolbar { items(account: account.visibilityPriority(.high)) }
+      measured(content).toolbar {
+        items(account: account.visibilityPriority(.high), level: level.visibilityPriority(.low))
+      }
     } else {
-      content.toolbar { items(account: account) }
+      measured(content).toolbar { items(account: account, level: level) }
     }
+  }
+
+  private func measured(_ content: Content) -> some View {
+    content.onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
+  }
+
+  /// The name keeps a readable minimum; lower-priority items overflow when they no longer fit.
+  /// Where the tabs sit in the bar, centered, the name has the side they leave.
+  private var nameWidth: CGFloat {
+    guard let barWidth else {
+      return shortestName
+    }
+
+    if tabBarPlacement == .topBar {
+      return max(shortestName, (barWidth - tabsInBar) / 2 - besideNameByTabs)
+    }
+
+    return max(shortestName, barWidth - besideName)
   }
 
   /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
@@ -28,7 +60,9 @@ struct ShellToolbar: ViewModifier {
   }
 
   @ToolbarContentBuilder
-  private func items(account: some ToolbarContent) -> some ToolbarContent {
+  private func items(account: some ToolbarContent, level: some ToolbarContent)
+    -> some ToolbarContent
+  {
     switch session.state {
     case .restoring where session.authenticatedSession == nil:
       ToolbarItem(placement: .topBarTrailing) {
@@ -45,13 +79,11 @@ struct ShellToolbar: ViewModifier {
     case .restoring, .signedIn, .unavailable:
       if let summary = learner.summary.value {
         ToolbarItem(placement: .topBarLeading) {
-          GoalSwitcher(summary: summary, isCompact: isSwitcherCompact)
+          GoalSwitcher(summary: summary, isCompact: isSwitcherCompact, maxTitleWidth: nameWidth)
         }
 
-        if let level = summary.level {
-          ToolbarItem(placement: .topBarTrailing) {
-            LevelButton(level: level)
-          }
+        if summary.level != nil {
+          level
 
           ToolbarSpacer(.fixed, placement: .topBarTrailing)
         }
@@ -71,13 +103,18 @@ struct ShellToolbar: ViewModifier {
     }
   }
 
+  private var level: some ToolbarContent {
+    ToolbarItem(placement: .topBarTrailing) {
+      if let level = learner.summary.value?.level { LevelButton(level: level) }
+    }
+  }
+
   private var account: some ToolbarContent {
     ToolbarItem(placement: .topBarTrailing) {
       AccountToolbarButton {
         router.present(.account())
       }
     }
-    .sharedBackgroundVisibility(.hidden)
   }
 }
 
@@ -90,20 +127,22 @@ private struct LevelButton: View {
     let belt = level.belt
 
     Button {
-      router.open(.statistics)
+      router.open(.statistics(section: .level))
     } label: {
       HStack(spacing: 6) {
         BeltDot(belt: belt)
 
-        Text(level.level, format: .number)
-          .monospacedDigit()
+        Text(
+          "Level \(level.level)", tableName: "Navigation",
+          comment: "Beside the belt's dot in a wide top bar: the learner's level")
       }
     }
     .accessibilityLabel(
       Text(
-        "\(Text(belt.localizedTitle)), level \(level.level). Statistics", tableName: "Navigation",
+        "\(String(localized: belt.localizedTitle)), Level \(level.level.formatted())",
+        tableName: "Progress",
         comment:
-          "Spoken label of the toolbar button with the learner's belt and level, which opens their statistics"
+          "Accessible label of the chip that opens Level. The first placeholder is the translated belt name; the second is the learner’s level number. Each locale controls their order and punctuation."
       ))
   }
 }
@@ -174,7 +213,7 @@ extension View {
 }
 
 /// Acting on one goal (pause, archive) lives on the Plan.
-private struct GoalSwitcher: View {
+struct GoalSwitcher: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
@@ -182,11 +221,43 @@ private struct GoalSwitcher: View {
   @State private var isStartingWaitingGoal = false
   @State private var failure = Failure.switchGoal
   @State private var showsFailure = false
-  /// Caps a long goal title so it truncates in the bar instead of moving to its overflow menu.
-  @ScaledMetric(relativeTo: .body) private var maxTitleWidth: CGFloat = 140
-
   let summary: LearnerSummary
   let isCompact: Bool
+  let maxTitleWidth: CGFloat
+
+  /// The plain "New goal" row, with nothing in a menu to switch to: one quick explanation
+  /// doesn't need a menu, two or more are listed in it.
+  static func startsPlainly(followed: Int, waiting: Int, explanations: Int) -> Bool {
+    followed == 0 && waiting == 0 && explanations <= 1
+  }
+
+  /// The menu's "Your goals" section: the goals followed and the ones waiting to start.
+  static func listsGoals(followed: Int, waiting: Int) -> Bool {
+    followed > 0 || waiting > 0
+  }
+
+  enum Trigger: Equatable {
+    case goal
+    case yourGoals
+    case startGoal
+    case explanations
+  }
+
+  /// What the menu's button says: the goal shown, or the quick explanations it lists when they're
+  /// all the learner has.
+  static func trigger(hasShownGoal: Bool, followed: Int, waiting: Int, explanations: Int)
+    -> Trigger
+  {
+    if hasShownGoal {
+      return .goal
+    }
+
+    if followed == 0 && waiting > 0 {
+      return .yourGoals
+    }
+
+    return followed == 0 && explanations > 1 ? .explanations : .startGoal
+  }
 
   /// Said in an alert, since the menu the learner chose from has closed.
   private enum Failure {
@@ -204,17 +275,21 @@ private struct GoalSwitcher: View {
     let followed = summary.followedGoals
     let explanations = summary.openExplanations
 
-    if followed.isEmpty && explanations.isEmpty {
+    if GoalSwitcher.startsPlainly(
+      followed: followed.count, waiting: summary.waitingGoals.count,
+      explanations: explanations.count)
+    {
       Button {
         router.open(.startGoal())
       } label: {
-        // A toolbar draws a Label as its icon alone; main's link says "Start a goal" beside it.
+        // A toolbar draws a Label as its icon alone; main's link says "New goal" beside it.
         HStack(spacing: 4) {
           Image(systemName: "plus")
 
           if !isCompact {
             startGoalTitle
               .lineLimit(1)
+              .frame(maxWidth: maxTitleWidth)
           }
         }
         .typeWeight(.semibold)
@@ -222,13 +297,15 @@ private struct GoalSwitcher: View {
       .accessibilityLabel(startGoalTitle)
     } else {
       Menu {
-        if !followed.isEmpty {
+        if GoalSwitcher.listsGoals(followed: followed.count, waiting: summary.waitingGoals.count) {
           Section {
             ForEach(followed, id: \.id) { goal in
               Toggle(isOn: isShown(goal)) {
                 Text(goal.displayName)
                 Text(goalLine(goal))
               }
+              // A menu's own checkmark row; the app's switch style draws these dimmed.
+              .toggleStyle(.automatic)
             }
 
             ForEach(summary.waitingGoals) { goal in
@@ -245,9 +322,9 @@ private struct GoalSwitcher: View {
                   )
                 } else if goal.locked {
                   Text(
-                    "Pause a goal or get Plus", tableName: "Navigation",
+                    "Pause a goal to start it", tableName: "Navigation",
                     comment:
-                      "Under a goal in the goal switcher that waits for room on the free plan; Plus is the subscription's name, not \"more\""
+                      "Under a goal in the goal switcher that waits for room: another goal must be paused first"
                   )
                 } else {
                   Text(
@@ -287,7 +364,7 @@ private struct GoalSwitcher: View {
           } label: {
             Label {
               Text(
-                "Start a new goal", tableName: "Navigation",
+                "New goal", tableName: "Navigation",
                 comment: "Goal switcher option that starts another goal")
             } icon: {
               Image(systemName: "plus")
@@ -311,13 +388,9 @@ private struct GoalSwitcher: View {
           Image(systemName: "target")
         } else {
           HStack(spacing: 4) {
-            if let goal = shownGoal {
-              Text(goal.displayName)
-                .lineLimit(1)
-                .frame(maxWidth: maxTitleWidth)
-            } else {
-              startGoalTitle
-            }
+            triggerTitle
+              .lineLimit(1)
+              .frame(maxWidth: maxTitleWidth)
 
             Image(systemName: "chevron.down")
               .imageScale(.small)
@@ -327,11 +400,33 @@ private struct GoalSwitcher: View {
           .typeWeight(.semibold)
         }
       }
-      .accessibilityLabel(shownGoal.map { Text($0.displayName) } ?? startGoalTitle)
+      .accessibilityLabel(triggerTitle)
+      // Main's says "current goal" only after a goal's name.
       .accessibilityHint(
-        Text(
-          "Current goal. Switch goal", tableName: "Navigation",
-          comment: "Spoken hint of the goal switcher, after the current goal's title"))
+        shownGoal == nil
+          ? Text(verbatim: "")
+          : Text(
+            "Current goal. Switch goal", tableName: "Navigation",
+            comment: "Spoken hint of the goal switcher, after the current goal's title"))
+    }
+  }
+
+  private var triggerTitle: Text {
+    let trigger = GoalSwitcher.trigger(
+      hasShownGoal: shownGoal != nil, followed: summary.followedGoals.count,
+      waiting: summary.waitingGoals.count, explanations: summary.openExplanations.count)
+
+    return switch trigger {
+    case .goal: Text(shownGoal?.displayName ?? "")
+    case .startGoal: startGoalTitle
+    case .yourGoals:
+      Text(
+        "Your goals", tableName: "Navigation",
+        comment: "Heading over the learner's goals in the goal switcher")
+    case .explanations:
+      Text(
+        "Quick explanations", tableName: "Navigation",
+        comment: "Heading over the quick explanations the learner hasn't finished")
     }
   }
 
@@ -406,7 +501,7 @@ private struct GoalSwitcher: View {
 
 private var startGoalTitle: Text {
   Text(
-    "Start a goal", tableName: "Navigation",
+    "New goal", tableName: "Navigation",
     comment: "Opens Today, where the learner starts a goal")
 }
 
@@ -446,7 +541,7 @@ private func daysLeft(until targetDate: String?) -> Int? {
     return nil
   }
 
-  let days = PlanDate.days(from: isoDay(.now), to: targetDate)
+  let days = PlanDate.days(from: PlanDate.today(), to: targetDate)
   return days >= 0 ? days : nil
 }
 

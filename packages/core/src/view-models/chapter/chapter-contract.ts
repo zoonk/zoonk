@@ -9,12 +9,6 @@ const chapterLessonSchema = z
   .object({
     lessonId: uuidSchema(),
     minutes: z.int().min(0),
-    plusRequired: z
-      .boolean()
-      .meta({
-        description:
-          "A free exam plan past its first week opens this new lesson with Plus only: show it marked Plus; starting it answers 402",
-      }),
     skillIds: z
       .array(uuidSchema())
       .meta({ description: "Skills it teaches, so tapping a skill on the map lists its lessons" }),
@@ -79,13 +73,7 @@ export const chapterViewSchema = z
         .boolean()
         .meta({
           description:
-            "Offer the test while the chapter has lessons left, unless it was failed today without a lesson studied in it since; it becomes available again on the next learner-local day",
-        }),
-      plusRequired: z
-        .boolean()
-        .meta({
-          description:
-            "A free exam plan past its first week takes the chapter's test-out with Plus only: show it marked Plus; its endpoints answer 402",
+            "True while the chapter's test is available: the chapter has lessons left, and the test wasn't failed today without a lesson studied in it since. A failed one becomes available again on the next learner-local day",
         }),
     }),
   })

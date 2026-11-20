@@ -131,7 +131,6 @@ extension View {
           CatalogLessonView(lesson: lesson)
         }
       }
-      .navigationTitle(destination.title)
       .barTitleAfterHero(destination.title)
     }
   }

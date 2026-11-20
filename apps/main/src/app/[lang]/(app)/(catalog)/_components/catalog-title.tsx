@@ -5,22 +5,27 @@ import { useSelectedLayoutSegment } from "next/navigation";
 
 type CatalogTitles = { allTitle: string; categoryTitles: Record<string, string> };
 
-function CatalogTitle({ allTitle, categoryTitles }: CatalogTitles) {
-  const segment = useSelectedLayoutSegment();
-  return <PageTitle>{(segment && categoryTitles[segment]) ?? allTitle}</PageTitle>;
-}
-
 export function CatalogHeader({
   allTitle,
   categoryTitles,
   className,
+  courseCounts,
   subtitle,
-}: CatalogTitles & { className?: string; subtitle: string }) {
+  total,
+}: CatalogTitles & {
+  className?: string;
+  courseCounts: Readonly<Record<string, number>>;
+  subtitle: string;
+  total: number;
+}) {
+  const segment = useSelectedLayoutSegment();
+  const hasCourses = segment ? (courseCounts[segment] ?? 0) > 0 : total > 0;
+
   return (
     <PageHeader className={className}>
       <PageHeaderContent>
-        <CatalogTitle allTitle={allTitle} categoryTitles={categoryTitles} />
-        <PageSubtitle>{subtitle}</PageSubtitle>
+        <PageTitle>{(segment && categoryTitles[segment]) ?? allTitle}</PageTitle>
+        {hasCourses && <PageSubtitle>{subtitle}</PageSubtitle>}
       </PageHeaderContent>
     </PageHeader>
   );

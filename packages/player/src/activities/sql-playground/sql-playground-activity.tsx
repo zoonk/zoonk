@@ -130,31 +130,36 @@ export function SqlPlaygroundActivity({
         ))}
       </div>
 
-      {!isChecked && (
+      {(!isChecked || query) && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium" htmlFor={editorId}>
-            {phase === "explore" ? t("Query") : t("Your query")}
+          <label className="text-muted-foreground text-xs font-medium" htmlFor={editorId}>
+            {t("Query")}
           </label>
 
           <ActivityCodeEditor
             editorRef={fieldRef}
             id={editorId}
+            label={t("Query")}
             language="sql"
             onChange={change}
             onSubmit={() => void handleRun()}
             placeholder="SELECT"
+            readOnly={isChecked}
             value={query}
           />
 
           <ActivitySnippetBar
+            disabled={isChecked}
             label={t("SQL words, tables and columns")}
             onInsert={insert}
             snippets={snippets}
           />
 
           <SandboxRunBar
+            canRun={!isChecked && query.trim() !== ""}
             hasRun={state !== null}
             isRunning={isRunning}
+            isExploring={phase === "explore"}
             onRetry={runtime.retry}
             onRun={() => void handleRun()}
             runtimeName={RUNTIME_NAME}

@@ -576,6 +576,56 @@ async function useEveryMockWriteToday(userId: string) {
   await usageRecordsFixture({ count: day ?? 0, kind: "mockQuestions", userId });
 }
 
+/** A 16-question exam whose bank holds 10 questions the learner never answered. */
+async function fullMockShortOfQuestions() {
+  const structure = {
+    ...STRUCTURE,
+    mock: {
+      ...STRUCTURE.mock,
+      sections: [
+        { day: null, kind: "objective", minutes: 24, name: "Objective test", questions: 16 },
+      ],
+    },
+    subjects: STRUCTURE.subjects.map((subject) => ({
+      ...subject,
+      questions: subject.name === "Mathematics" ? 10 : 6,
+    })),
+  };
+
+  const { goal, skills, user } = await anytimeSetup({ structure });
+
+  const items = await prisma.item.findMany({
+    orderBy: { id: "asc" },
+    where: { skillId: { in: skills.map((skill) => skill.id) } },
+  });
+
+  const areaOf = (skillId: string) =>
+    skills.findIndex((skill) => skill.id === skillId) < SKILLS_PER_AREA
+      ? "Mathematics"
+      : "Languages";
+
+  const math = items.filter((item) => areaOf(item.skillId) === "Mathematics");
+  const languages = items.filter((item) => areaOf(item.skillId) === "Languages");
+
+  const answered = [...math.slice(0, 2), ...languages.slice(0, 4)];
+
+  await Promise.all(
+    answered.map((item, index) =>
+      attemptFixture({
+        answeredAt: daysAgo(index + 1),
+        isCorrect: false,
+        itemId: item.id,
+        skillId: item.skillId,
+        userId: user.id,
+      }),
+    ),
+  );
+
+  return { answered, goal, items, user };
+}
+
+const FULL_SHAPE = { shape: { area: null, day: null, kind: "full" as const } };
+
 describe("repeating mocks", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -634,53 +684,10 @@ describe("repeating mocks", () => {
   });
 
   it("never pads a full mock with answered questions, and says what it lacks before it starts", async () => {
-    const structure = {
-      ...STRUCTURE,
-      mock: {
-        ...STRUCTURE.mock,
-        sections: [
-          { day: null, kind: "objective", minutes: 24, name: "Objective test", questions: 16 },
-        ],
-      },
-      subjects: STRUCTURE.subjects.map((subject) => ({
-        ...subject,
-        questions: subject.name === "Mathematics" ? 10 : 6,
-      })),
-    };
+    const { answered, goal, items, user } = await fullMockShortOfQuestions();
+    await useEveryMockWriteToday(user.id);
 
-    const { goal, skills, user } = await anytimeSetup({ structure });
-
-    const items = await prisma.item.findMany({
-      orderBy: { id: "asc" },
-      where: { skillId: { in: skills.map((skill) => skill.id) } },
-    });
-
-    const areaOf = (skillId: string) =>
-      skills.findIndex((skill) => skill.id === skillId) < SKILLS_PER_AREA
-        ? "Mathematics"
-        : "Languages";
-
-    const math = items.filter((item) => areaOf(item.skillId) === "Mathematics");
-    const languages = items.filter((item) => areaOf(item.skillId) === "Languages");
-
-    const answered = [...math.slice(0, 2), ...languages.slice(0, 4)];
-
-    await Promise.all([
-      ...answered.map((item, index) =>
-        attemptFixture({
-          answeredAt: daysAgo(index + 1),
-          isCorrect: false,
-          itemId: item.id,
-          skillId: item.skillId,
-          userId: user.id,
-        }),
-      ),
-      useEveryMockWriteToday(user.id),
-    ]);
-
-    const full = { shape: { area: null, day: null, kind: "full" as const } };
-
-    await expect(startAnytimeMock({ goalId: goal.id, input: full })).resolves.toStrictEqual({
+    await expect(startAnytimeMock({ goalId: goal.id, input: FULL_SHAPE })).resolves.toStrictEqual({
       examQuestions: 16,
       limit: "day",
       minutes: 15,
@@ -692,7 +699,7 @@ describe("repeating mocks", () => {
 
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { ...full, acceptFewer: true },
+      input: { ...FULL_SHAPE, acceptFewer: true },
     });
 
     if (started.status !== "started") {
@@ -710,6 +717,26 @@ describe("repeating mocks", () => {
       questions: 10,
       reusedQuestions: 0,
     });
+  });
+
+  it("says what a mock still lacks after its questions were written, instead of starting it short", async () => {
+    const { goal } = await fullMockShortOfQuestions();
+
+    await expect(startAnytimeMock({ goalId: goal.id, input: FULL_SHAPE })).resolves.toStrictEqual({
+      status: "needsQuestions",
+    });
+
+    await expect(
+      startAnytimeMock({ goalId: goal.id, input: { ...FULL_SHAPE, afterWriting: true } }),
+    ).resolves.toStrictEqual({
+      examQuestions: 16,
+      limit: null,
+      minutes: 15,
+      questions: 10,
+      status: "short",
+    });
+
+    await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 
   it("writes new questions for a mock taken again within fair use, and asks answered ones past it", async () => {

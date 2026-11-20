@@ -101,7 +101,7 @@ function PlacedWordTile({
 
 function DragOverlayWord({ option }: { option: WordBankOption }) {
   return (
-    <div className={cn(WORD_CHIP_CLASS, "bg-background ring-foreground")}>
+    <div className={cn(WORD_CHIP_CLASS, "bg-background contrast-more:ring-foreground shadow-lg")}>
       <span>{option.word}</span>
       <RomanizationText>{option.romanization}</RomanizationText>
     </div>
@@ -169,7 +169,7 @@ export function ArrangeWordsAnswerArea({
       <SortableContext items={itemIds} strategy={rectSortingStrategy}>
         <div
           aria-label={t("Your answer")}
-          className="border-border flex min-h-16 flex-wrap gap-2 border-b pb-3"
+          className="border-border flex min-h-16 flex-wrap items-start gap-2 border-b pb-3"
           data-slot="word-answer"
           role="group"
         >

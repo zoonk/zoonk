@@ -19,13 +19,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,6 +48,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -70,6 +74,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
@@ -82,7 +87,6 @@ import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
-import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalMindMaps
@@ -121,6 +125,8 @@ fun MindMapStudyScreen(
         TaskNotFound(navigator)
         return
     }
+    val viewModel = host.maps(goalId)
+    host.SavesSaid(viewModel)
 
     val store = host.store
     val list by store.list[goalId].collectShown()
@@ -170,7 +176,6 @@ fun MindMapStudyScreen(
         return
     }
 
-    val viewModel = host.maps(goalId)
     val saves by viewModel.saves.collectAsStateWithLifecycle()
 
     CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
@@ -190,8 +195,6 @@ fun MindMapStudyScreen(
         )
     }
 }
-
-private val LessonMindMap.opens: Boolean get() = !locked && map != null
 
 /** What a slide shows once its map is read, and its [title]: the map's, or its chapter's while the map can't show. */
 internal sealed interface Slide {
@@ -251,7 +254,7 @@ private fun slideOf(
     val resource = app.mindMaps.lessonMaps[ChapterKey(goalId, chapterId)]
     val read by resource.collectShown()
     val scope = rememberCoroutineScope()
-    val lessons = read.value?.lessons?.filter { it.opens }
+    val lessons = read.value?.lessons
     val lesson = lessons?.firstOrNull { it.lessonId.toString() == lessonId }
     val chapterTitle = chapter?.title ?: read.value?.chapter?.title
     return when {
@@ -313,8 +316,15 @@ internal fun MindMapStudy(
 
     val goTo = { index: Int -> scope.launch { pager.animateScrollToPage(index.coerceIn(0, deck.lastIndex)) } }
     val previous = { goTo(page - 1) }
-    val next = { if (last) actions.close() else goTo(page + 1) }
+    val next = {
+        if (current.canAdvance) {
+            if (last) actions.close() else goTo(page + 1)
+        }
+    }
     val toggleSave = { target?.let { actions.save(it, chapterOf(current), !saved) } }
+
+    // Kept from map to map, so a learner who reads the text keeps reading it.
+    var asText by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(pager) { snapshotFlow { pager.settledPage }.collect { actions.settled(deck[it]) } }
 
@@ -358,9 +368,8 @@ internal fun MindMapStudy(
                     ) { main ->
                         Button(
                             onClick = { next() },
+                            enabled = current.canAdvance,
                             modifier = main,
-                            leadingIcon = if (last) ({ ButtonIcon(R.drawable.ic_check) }) else null,
-                            trailingIcon = if (last) null else ({ ButtonIcon(R.drawable.ic_arrow_forward) }),
                         ) { Text(stringResource(if (last) R.string.mindmaps_done else R.string.mindmaps_next)) }
                     }
                 }
@@ -373,7 +382,7 @@ internal fun MindMapStudy(
                 beyondViewportPageCount = 1,
                 key = { deck[it].key },
             ) { index ->
-                SlideView(slide(deck[index]), actions.zoom)
+                SlideView(slide(deck[index]), asText, { asText = it }, actions.zoom)
             }
         }
     }
@@ -395,9 +404,7 @@ private fun StudyMenu(
 ) {
     var open by remember { mutableStateOf(false) }
     Box {
-        IconButton(onClick = { open = true }) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.mindmaps_options))
-        }
+        MoreButton(onClick = { open = true }, contentDescription = stringResource(R.string.mindmaps_options))
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.mindmaps_start_from_first)) },
@@ -432,6 +439,8 @@ private fun StudyMenu(
 @Composable
 private fun SlideView(
     slide: Slide,
+    asText: Boolean,
+    onAsText: (Boolean) -> Unit,
     zoom: (chapterId: UUID) -> Unit,
 ) {
     when (slide) {
@@ -451,11 +460,11 @@ private fun SlideView(
         }
 
         is Slide.Chapter -> {
-            ChapterSlide(slide.map) { zoom(slide.chapterId) }
+            ChapterSlide(slide.map, asText, onAsText) { zoom(slide.chapterId) }
         }
 
         is Slide.Lesson -> {
-            slide.lesson.map?.let { LessonSlide(StepContent.Map(it, slide.lesson.title)) }
+            LessonSlide(StepContent.Map(slide.lesson.map, slide.lesson.title))
         }
     }
 }
@@ -484,62 +493,88 @@ private fun SlideMessage(
 }
 
 /**
- * A chapter's map: its picture, then its words, in one scroll on a phone; side by side where the
- * screen shows two pages (a book's fold, or a window 840dp and wider), the picture as large as its
- * page holds it whole, from the top as the words start. Tapping the picture opens it to zoom, over
- * the deck, so back closes the zoom first.
+ * A chapter's map: its picture or its words, one at a time, as main's study screen, under a switch
+ * that stays put. The picture is as large as its page holds it whole; the words read as one column.
+ * On an unfolded book both keep to the page before the fold. Tapping the picture opens it to zoom,
+ * over the deck, so back closes the zoom first.
  */
 @Composable
 private fun ChapterSlide(
     map: ViewedMap,
+    asText: Boolean,
+    onAsText: (Boolean) -> Unit,
     onZoom: () -> Unit,
 ) {
     var span by remember { mutableStateOf<PageSpan?>(null) }
     val image = map.image
 
     BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
-        val fold = spreadFold(maxWidth, span)
+        val fold = pageFold(maxWidth, span)
+        val page = fold?.let { Modifier.width(it.start) } ?: Modifier.fillMaxWidth()
 
-        when {
-            image == null -> {
-                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Column(Modifier.taskColumn().padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Text(
-                            stringResource(R.string.mindmaps_as_text_note),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                        MindMapOutlineText(map.outline)
-                    }
-                }
-            }
-
-            fold != null -> {
-                Box(
-                    Modifier.width(fold.start).fillMaxHeight().padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 16.dp),
-                    contentAlignment = Alignment.TopCenter,
-                ) {
-                    ZoomablePicture(map, image.url, onZoom)
-                }
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(start = fold.end)
-                        .verticalScroll(rememberScrollState())
-                        .padding(24.dp),
-                ) {
+        if (image == null) {
+            Column(page.fillMaxHeight().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(Modifier.taskColumn().padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text(
+                        stringResource(R.string.mindmaps_as_text_note),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
                     MindMapOutlineText(map.outline)
                 }
             }
+            return@BoxWithConstraints
+        }
 
-            else -> {
-                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Column(Modifier.taskColumn().padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                        ZoomablePicture(map, image.url, onZoom)
-                        MindMapOutlineText(map.outline)
+        Column(page.fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+            ShownAsSwitch(asText, onAsText, Modifier.padding(vertical = 8.dp))
+
+            // A new view starts at its top.
+            key(asText) {
+                if (asText) {
+                    Column(
+                        Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        MindMapOutlineText(map.outline, Modifier.taskColumn().padding(vertical = 16.dp), titled = true)
+                    }
+                } else {
+                    Column(
+                        Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Box(Modifier.weight(1f, fill = false)) { ZoomablePicture(map, image.url, onZoom) }
+                        Text(
+                            stringResource(R.string.mindmaps_zoom_hint),
+                            Modifier.clearAndSetSemantics {},
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
                     }
                 }
             }
+        }
+    }
+}
+
+/** Main's "Map / Text" switch: which of the two the map shows. */
+@Composable
+private fun ShownAsSwitch(
+    asText: Boolean,
+    onAsText: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val label = stringResource(R.string.mindmaps_shown_as)
+    val choices = listOf(false to R.string.mindmaps_shown_map, true to R.string.mindmaps_shown_text)
+
+    SingleChoiceSegmentedButtonRow(modifier.semantics { contentDescription = label }) {
+        choices.forEachIndexed { index, (value, text) ->
+            SegmentedButton(
+                selected = asText == value,
+                onClick = { onAsText(value) },
+                shape = SegmentedButtonDefaults.itemShape(index, choices.size),
+            ) { Text(stringResource(text)) }
         }
     }
 }
@@ -551,7 +586,8 @@ private fun ZoomablePicture(
     onZoom: () -> Unit,
 ) {
     val shape = RoundedCornerShape(ZoonkRadius.lg)
-    val alt = mindMapAlt(map.outline, map.title)
+    // The words aren't on screen beside the picture, so TalkBack reads them with it.
+    val alt = mindMapDescription(map.outline, map.title)
     MapPicture(
         url = url,
         contentDescription = null,
@@ -584,3 +620,5 @@ private fun LessonSlide(content: StepContent.Map) {
         }
     }
 }
+
+internal val Slide.canAdvance: Boolean get() = this is Slide.Chapter || this is Slide.Lesson

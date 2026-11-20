@@ -81,14 +81,14 @@ export function CategorizeMoveRow({
         className={cn(
           "first:*:rounded-t-lg last:*:rounded-b-lg",
           isDragging &&
-            "bg-background ring-input relative z-10 rounded-lg border-transparent shadow-lg ring-1",
+            "bg-background ring-input relative z-10 rounded-lg border-transparent shadow-lg ring-1 ring-inset",
         )}
       >
         {/* Base UI opens a menu on press; the row opens it on click, so a press that moves can lift the row. */}
         <DropdownMenuTrigger
           className={cn(
             ROW_CLASS,
-            "focus-visible:outline-ring cursor-grab touch-manipulation outline-none select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid active:cursor-grabbing",
+            "focus-visible:outline-ring/50 cursor-grab touch-manipulation outline-none select-none focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-solid active:cursor-grabbing",
             !isDragging && "hover:bg-muted/60",
           )}
           id={id}

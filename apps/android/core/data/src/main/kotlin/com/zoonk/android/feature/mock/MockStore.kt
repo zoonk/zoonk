@@ -37,6 +37,16 @@ class MockStore(
     val options: KeyedResources<UUID, MockOptions> =
         cache.keyed(Audience.SignedIn, OPTIONS_DOMAINS) { session, goalId -> session?.let { api.options(it, goalId) } }
 
+    /**
+     * The server refused a start because it needs a subscription: that answer is the access now, so a
+     * read that fails after it keeps the gate, and the next read that succeeds (a purchase) replaces it.
+     */
+    suspend fun refused(goalId: UUID) {
+        val resource = options[goalId]
+        resource.update { it.copy(access = MockOptions.Access.PLUS_REQUIRED) }
+        resource.refresh()
+    }
+
     companion object {
         val OPTIONS_DOMAINS =
             setOf(

@@ -60,7 +60,18 @@ data class MissionMomentFacts(
 ) {
     val justDone: List<DayMission> get() = missions.filter { it.done && it.kind in completed }
     val shows: Boolean get() = justDone.isNotEmpty() || bonusPaid
-    val payoff: Boolean get() = bonusPaid && missions.all { it.done }
+    internal val progress = MissionProgress(missions)
+    val payoff: Boolean get() = bonusPaid && progress.full
+    internal val title: MissionMomentTitle
+        get() = if (progress.left == 0) MissionMomentTitle.AllDone else MissionMomentTitle.Done(justDone.size)
+}
+
+internal sealed interface MissionMomentTitle {
+    data object AllDone : MissionMomentTitle
+
+    data class Done(
+        val count: Int,
+    ) : MissionMomentTitle
 }
 
 /** How long what follows waits, so the day's moment plays one thing at a time. */
@@ -82,16 +93,16 @@ fun MissionMoment(
     if (!facts.shows) return
 
     val justDone = facts.justDone
-    val left = facts.missions.count { !it.done }
+    val left = facts.progress.left
     val payoff = facts.payoff
     val celebrate = celebrates()
     val points = formatNumber(facts.bonus.toDouble(), currentLocale())
     val brain = MaterialTheme.zoonk.brain
     val title =
-        when {
-            left == 0 -> stringResource(R.string.missions_moment_all_done)
-            justDone.size == 1 -> stringResource(R.string.missions_moment_one_done)
-            else -> pluralStringResource(R.plurals.missions_moment_done, justDone.size, justDone.size)
+        when (val said = facts.title) {
+            MissionMomentTitle.AllDone -> stringResource(R.string.missions_moment_all_done)
+            MissionMomentTitle.Done(1) -> stringResource(R.string.missions_moment_one_done)
+            is MissionMomentTitle.Done -> pluralStringResource(R.plurals.missions_moment_done, said.count, said.count)
         }
     val status =
         if (left > 0) {
@@ -109,13 +120,13 @@ fun MissionMoment(
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(if (payoff) 16.dp else 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 BuddyActor(
                     look = buddy,
-                    modifier = Modifier.size(if (payoff) 96.dp else 48.dp),
+                    modifier = Modifier.size(48.dp),
                     expression = if (payoff) BuddyExpression.Happy else BuddyExpression.Neutral,
-                    crop = if (payoff) BuddyCrop.Whole else BuddyCrop.Face,
+                    crop = BuddyCrop.Face,
                     reaction =
                         if (celebrate) {
                             if (payoff) {
@@ -155,9 +166,9 @@ fun MissionMoment(
             }
 
             MissionTrack(
-                missions = facts.missions,
+                progress = facts.progress,
                 modifier = Modifier.padding(top = 16.dp),
-                from = justDone.map { it.kind }.toSet(),
+                justDone = justDone,
                 delayMillis = ZoonkMotion.BEAT_MILLIS,
             )
 
@@ -178,7 +189,7 @@ private fun MomentMissionRow(
     celebrate: Boolean,
 ) {
     val now = order >= 0
-    val muted = mission.done && !now
+    val muted = mission.done
     val done = stringResource(R.string.today_step_done)
 
     Row(
@@ -205,7 +216,7 @@ private fun MomentMissionRow(
                 style = MaterialTheme.typography.titleSmall,
             )
             if (!mission.done) {
-                missionStepLine(mission, null)?.let {
+                (missionStepLine(mission) ?: stringResource(R.string.today_up_next)).let {
                     Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
             }
@@ -213,7 +224,7 @@ private fun MomentMissionRow(
         if (now) {
             Text(
                 text = stringResource(R.string.missions_just_done),
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium,
             )
         }

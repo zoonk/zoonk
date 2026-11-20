@@ -2,13 +2,18 @@
 
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
-import { ArrowLeftIcon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import { type CallLimit } from "../../_components/help-limit-notice";
+import {
+  type CallLimit,
+  useCallLimitLine,
+  useLiveLimit,
+} from "../../_components/help-limit-notice";
+import { SignUpMainAction, SubscribeMainAction } from "../../_components/subscribe-gate";
 import { TaskActions } from "../../_components/task-layout";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
-import { CallLimitMessage } from "./call-limit-message";
+import { useCallLimitTitle } from "./call-limit-message";
 import { useRefusalCopy } from "./call-refusal-copy";
 import { CallOffMessage } from "./conversation-parts";
 import { type LiveCallError } from "./live-call-lifecycle";
@@ -18,7 +23,7 @@ type CallProblemKind = Exclude<LiveCallError, "dropped"> | "takenOver";
 function ProblemMessage({ text, title }: { text: string; title: string }) {
   return (
     <CallOffMessage title={title}>
-      <p className="text-muted-foreground text-pretty">{text}</p>
+      <p className="text-muted-foreground text-base leading-relaxed text-pretty">{text}</p>
     </CallOffMessage>
   );
 }
@@ -39,14 +44,69 @@ function ProblemWithBack({
       exitHref={exitHref}
       footer={
         <TaskActions>
-          <TaskMainLink href={exitHref} icon={<ArrowLeftIcon aria-hidden="true" />}>
-            {t("Back")}
-          </TaskMainLink>
+          <TaskMainLink href={exitHref}>{t("Back")}</TaskMainLink>
         </TaskActions>
       }
       headerTitle={title}
     >
       {children}
+    </TaskFrame>
+  );
+}
+
+/**
+ * As a lesson's limit screen is: what ran out, when it comes back, and its one way on in the bar.
+ * Once the day comes, that way on is to try again, and the server decides again.
+ */
+function CallLimitScreen({
+  exitHref,
+  limit,
+  onRetry,
+  title,
+}: {
+  exitHref: string;
+  limit: CallLimit;
+  onRetry: () => void;
+  title: string;
+}) {
+  const t = useExtracted();
+  const { line, provisional } = useCallLimitLine(limit);
+  const opened = useLiveLimit(limit) === null;
+  const limitTitle = useCallLimitTitle(limit);
+
+  return (
+    <TaskFrame
+      exitHref={exitHref}
+      footer={
+        <>
+          {opened && (
+            <TaskActions>
+              <TaskMainButton onClick={onRetry}>{t("Try again")}</TaskMainButton>
+            </TaskActions>
+          )}
+          {!opened && limit.tier === "guest" && <SignUpMainAction />}
+          {!opened && limit.tier === "free" && <SubscribeMainAction />}
+          {!opened && limit.tier === "plus" && (
+            <TaskActions>
+              <TaskMainLink href={exitHref}>{t("Back")}</TaskMainLink>
+            </TaskActions>
+          )}
+        </>
+      }
+      headerTitle={title}
+    >
+      <CallOffMessage title={limitTitle}>
+        {line && (
+          <p
+            className={cn(
+              "text-muted-foreground text-base leading-relaxed",
+              provisional && "invisible",
+            )}
+          >
+            {line}
+          </p>
+        )}
+      </CallOffMessage>
     </TaskFrame>
   );
 }
@@ -71,9 +131,12 @@ export function CallProblem({
 
   if (error === "limit") {
     return (
-      <ProblemWithBack exitHref={exitHref} title={title}>
-        <CallLimitMessage limit={limit ?? { period: "day", tier: "plus" }} />
-      </ProblemWithBack>
+      <CallLimitScreen
+        exitHref={exitHref}
+        limit={limit ?? { period: "day", tier: "plus" }}
+        onRetry={onRetry}
+        title={title}
+      />
     );
   }
 
@@ -174,7 +237,7 @@ export function CallEndedStatus({
         </span>
         <p className="flex min-w-0 flex-col text-pretty">
           <span className="text-sm leading-5 font-medium">{t("Call ended")}</span>
-          <span className="text-muted-foreground text-[0.8125rem] leading-snug">
+          <span className="text-muted-foreground text-compact leading-snug">
             <SavingLine grading={grading} />
           </span>
         </p>

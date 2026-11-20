@@ -1,0 +1,212 @@
+import { relative } from "node:path";
+import { isRemote } from "./locate.mts";
+import { type Finding, type FindingState } from "./media.mts";
+
+/** In the order they print: what can't be bound first, then what a retake fixes, then the read. */
+const KINDS = [
+  {
+    kind: "unsupported",
+    label:
+      "Media or a reference-style definition the check can't read: write each picture as ![description](path) and each link inline as [text](url)",
+    summary: "in a form the check can't read",
+  },
+  {
+    kind: "missing",
+    label:
+      "Not found: fix the path, or, for picture syntax shown as an example in code, leave out the !",
+    summary: "not found",
+  },
+  {
+    kind: "remote",
+    label: "Not a local file: check the body before uploading",
+    summary: "not local",
+  },
+  {
+    kind: "changed",
+    label: "Changed since its capture: its bytes don't match its manifest",
+    summary: "changed since capture",
+  },
+  {
+    kind: "unrecorded",
+    label: "Not in any capture manifest: take it with pnpm pr:capture",
+    summary: "not in any capture manifest",
+  },
+  {
+    kind: "device-section",
+    label:
+      "Device pictures appear only in the section pnpm pr:media device-section prints: put this in the body as it is, with a blank line before and after it",
+    summary: "device sections not in the body as written",
+  },
+  { kind: "pending", label: "Pending: no native capture record yet", summary: "pending" },
+  {
+    kind: "unknown-build",
+    label: "After picture from an unknown build: serve this checkout with pnpm start and retake",
+    summary: "from an unknown build",
+  },
+  {
+    kind: "uncommitted",
+    label: "After picture built with uncommitted changes: commit, rebuild and retake",
+    summary: "built with uncommitted changes",
+  },
+  {
+    kind: "stale",
+    label: "After picture older than a later commit to its app or the shared packages: retake",
+    summary: "stale",
+  },
+  {
+    kind: "unread",
+    label: "No read recorded: run pnpm pr:media tiles, read, then pnpm pr:media read",
+    summary: "with no read",
+  },
+  { kind: "finding", label: "Unresolved finding from the read", summary: "unresolved findings" },
+  {
+    kind: "fixed-not-retaken",
+    label: "Finding fixed after the picture was taken: retake",
+    summary: "fixed but not retaken",
+  },
+  {
+    kind: "alignment",
+    label: "Layout the capture's alignment.json fails or couldn't measure",
+    summary: "layout findings failing or not measured",
+  },
+  {
+    kind: "scenarios",
+    label: "Required scenarios the capture's alignment.json says are missing",
+    summary: "captures missing scenarios",
+  },
+] as const;
+
+type Kind = (typeof KINDS)[number]["kind"];
+
+export type Problem = { detail?: string; kind: Kind; picture?: string };
+
+type Reads = { carried: number; missing: number; new: number };
+
+/**
+ * `notMeasured` counts the after captures with no alignment report, or one that measured nothing;
+ * `nothingDeclared`, the screens measured that hold no declared piece, drawn box or action.
+ */
+export type CheckResult = {
+  checked: number;
+  /** The pictures under the device heading with a device record, and what was verified of each. */
+  devices?: { line: string; picture: string }[];
+  /** The findings on the after pictures, a finding several pictures show once for each. */
+  findings?: Finding[];
+  nothingDeclared?: number;
+  limits?: string[];
+  notMeasured: number;
+  problems: Problem[];
+  reads: Reads;
+};
+
+/** In the order they print: open, then how the rest closed, the ones without a fix last. */
+const STATES = [
+  ["open", "open"],
+  ["fixed", "fixed"],
+  ["issue", "filed in an issue"],
+  ["not-a-fault", "not a fault"],
+  ["exception", "by an exception the user granted"],
+] as const satisfies [FindingState["state"], string][];
+
+function findingsLine(findings: Finding[] = []): string | false {
+  const states = [...new Map(findings.map((finding) => [finding.id, finding.state])).values()];
+
+  const counts = STATES.flatMap(([state, label]) => {
+    const count = states.filter((found) => found === state).length;
+    return count > 0 ? [`${count} ${label}`] : [];
+  });
+
+  const unfixed = states.some((state) => !["fixed", "open"].includes(state));
+  const list = unfixed ? "; pnpm pr:media closed prints the PR's list of those not fixed" : "";
+  return counts.length > 0 && `Findings: ${counts.join(", ")}${list}`;
+}
+
+function kindOf(kind: Kind) {
+  const index = KINDS.findIndex((entry) => entry.kind === kind);
+  const { label, summary } = KINDS[index] ?? { label: kind, summary: kind };
+  return { index, label, summary };
+}
+
+export function formatCheck(
+  {
+    checked,
+    devices = [],
+    findings,
+    limits = [],
+    nothingDeclared = 0,
+    notMeasured,
+    problems,
+    reads,
+  }: CheckResult,
+  root: string,
+): string {
+  if (checked === 0 && problems.length === 0) {
+    return "NO PICTURES: the body links none, so nothing was checked";
+  }
+
+  const groups = [...Map.groupBy(problems, (problem) => problem.kind)].toSorted(
+    ([first], [second]) => kindOf(first).index - kindOf(second).index,
+  );
+
+  const shown = (picture: string) => (isRemote(picture) ? picture : relative(root, picture));
+
+  const lines = groups.flatMap(([kind, list]) => [
+    `${kindOf(kind).label} (${list.length})`,
+    // A section to paste prints as it is.
+    ...list.map(({ detail = "", picture }) => {
+      if (picture) {
+        return `  ${shown(picture)}${detail ? `: ${detail}` : ""}`;
+      }
+
+      return detail.includes("\n") ? detail : `  ${detail}`;
+    }),
+  ]);
+
+  const unmeasured =
+    notMeasured > 0
+      ? `; layout not measured for ${notMeasured} ${notMeasured === 1 ? "capture" : "captures"}`
+      : "";
+
+  const undeclared =
+    nothingDeclared > 0
+      ? `; layout measured with nothing declared on ${nothingDeclared} ${nothingDeclared === 1 ? "screen" : "screens"}`
+      : "";
+
+  const others = checked - devices.length;
+
+  const counts = [
+    ...(others > 0 || devices.length === 0
+      ? [
+          `${others} pictures, each in a capture manifest; every after picture from a current, committed build and read${unmeasured}${undeclared}`,
+        ]
+      : []),
+    ...(devices.length > 0
+      ? [
+          `${devices.length} ${devices.length === 1 ? "picture" : "pictures"} on a device, layout not measured, listed above`,
+        ]
+      : []),
+  ];
+
+  const summary =
+    groups.length === 0
+      ? `PASS: ${counts.join("; ")}`
+      : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures${unmeasured}${undeclared}`;
+
+  const deviceLines =
+    devices.length > 0
+      ? [
+          `On a device, layout not measured (${devices.length}):`,
+          ...devices.map(({ line, picture }) => `  ${shown(picture)}: ${line}`),
+        ]
+      : [];
+
+  const readLine =
+    reads.carried + reads.new + reads.missing > 0 &&
+    `Reads: ${reads.carried} carried over from a capture with the same pixels, ${reads.new} new, ${reads.missing} still to read`;
+
+  const limitLine = limits.length > 0 && `Layout limits: ${[...new Set(limits)].join("; ")}`;
+
+  return [...lines, ...deviceLines, limitLine, readLine, findingsLine(findings), summary]
+    .filter(Boolean)
+    .join("\n");
+}

@@ -163,7 +163,7 @@ class LevelTestStepFlowTest {
 
         assertEquals(1, api.prepared)
         rule.onNodeWithText("Preparing your level test").assertIsDisplayed()
-        rule.onNodeWithText("The Italian test is new in your language", substring = true).assertIsDisplayed()
+        rule.onNodeWithText("Getting the Italian test ready", substring = true).assertIsDisplayed()
         rule.onNodeWithText("Skip the test").assertIsDisplayed()
 
         api.levelTest = levelTestOf()
@@ -200,7 +200,7 @@ class LevelTestStepFlowTest {
         api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
         tap("Start")
 
-        rule.onNodeWithText("This didn't start").assertIsDisplayed()
+        rule.onNodeWithText("Something went wrong on our side").assertIsDisplayed()
         assertEquals(0, api.prepared)
 
         api.levelTestGate = null
@@ -216,7 +216,7 @@ class LevelTestStepFlowTest {
         api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
         tap("Start")
 
-        rule.onNodeWithText("This didn't start").assertIsDisplayed()
+        rule.onNodeWithText("Something went wrong on our side").assertIsDisplayed()
         rule.onNodeWithText("When does Marco go to the market?").assertDoesNotExist()
 
         api.levelTestGate = null
@@ -341,7 +341,7 @@ class LevelTestStepFlowTest {
 
         assertEquals(2, api.levelTestAnswers.size)
         assertEquals(api.levelTestAnswers[0], api.levelTestAnswers[1])
-        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        rule.onNodeWithText("Your Italian level").assertIsDisplayed()
     }
 
     @Test
@@ -351,7 +351,7 @@ class LevelTestStepFlowTest {
         show()
         tap("Skip this part")
 
-        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        rule.onNodeWithText("Your Italian level").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
     }
 
@@ -373,14 +373,14 @@ class LevelTestStepFlowTest {
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
-        tap("Stop here and see my plan")
+        tap("Stop and use my answers")
 
         rule.onNodeWithText("Still not going through. You can come back later.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
         api.writeFailure = null
-        tap("Stop here and see my plan")
+        tap("Stop and use my answers")
 
-        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        rule.onNodeWithText("Your Italian level").assertIsDisplayed()
     }
 
     @Test

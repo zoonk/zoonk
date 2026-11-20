@@ -37,6 +37,7 @@ import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.feature.tutor.TutorRoutes
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.GoalExamCountry
@@ -94,7 +95,7 @@ class PlanCountryScreenshots {
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
     fun expandedDark() = capture("expanded-dark", dark = true, interactive = false)
 
-    private val brasil = LearningProfileSuggestedInner("BR", "Brasil", null, null)
+    private val brasil = LearningProfileSuggestedInner("BR", "Brazil", null, null)
     private val portugal =
         LearningProfileSuggestedInner(
             "PT",
@@ -119,7 +120,7 @@ class PlanCountryScreenshots {
         dark: Boolean = false,
         interactive: Boolean = true,
     ) {
-        val summary = learnerSummary(title = "Organizar as finanças pessoais")
+        val summary = learnerSummary(title = "Manage personal finances")
 
         fun goal(rebuild: GoalContentCountry.Rebuild) =
             summary.goals.first().copy(contentCountry = country(rebuild), countryDependent = true, suggested = listOf(portugal, brasil))
@@ -163,10 +164,10 @@ class PlanCountryScreenshots {
                 {
                     listOf(
                         CountryChoice("AR", "Argentina"),
-                        CountryChoice("BR", "Brasil"),
-                        CountryChoice("US", "Estados Unidos"),
-                        CountryChoice("AE", "Emirados Árabes Unidos"),
-                        CountryChoice("GB", "Reino Unido"),
+                        CountryChoice("BR", "Brazil"),
+                        CountryChoice("US", "United States"),
+                        CountryChoice("AE", "United Arab Emirates"),
+                        CountryChoice("GB", "United Kingdom"),
                     )
                 },
                 cache,
@@ -216,7 +217,7 @@ class PlanCountryScreenshots {
         compose.onNode(hasSetTextAction()).performTextInput("uni")
         compose.waitForIdle()
         write("plan-country-picker-search-$suffix", compose.onNode(isDialog()).captureRender().asAndroidBitmap())
-        compose.onAllNodesWithText("Reino Unido").onFirst().performClick()
+        compose.onAllNodesWithText("United Kingdom").onFirst().performClick()
         compose.waitForIdle()
         write("plan-country-confirm-$suffix", compose.onAllNodes(isDialog())[1].captureRender().asAndroidBitmap())
     }
@@ -240,11 +241,7 @@ class PlanCountryScreenshots {
                 ),
             )
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            ContentCountryRow(goal, goal.contentCountry!!, remember { EditorDrafts() }, onPick = {
-                _,
-                _,
-                ->
-            }, pending = false, failed = false)
+            ContentCountryRow(goal, goal.contentCountry!!, remember { EditorDrafts() }, onPick = {}, pending = false, failed = false)
             CountryFacts(general)
             TutorOffer(offer(TutorToolOfferOneOf9.Kind.CONTENT_COUNTRY), routes, null, {})
             TutorOffer(offer(TutorToolOfferOneOf9.Kind.CONTENT_COUNTRY), routes, OfferSave.Saved, {})
@@ -258,6 +255,6 @@ class PlanCountryScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 }

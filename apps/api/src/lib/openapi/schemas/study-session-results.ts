@@ -1,4 +1,5 @@
 import { unshownCertificatesSchema } from "@zoonk/core/certificates/contract";
+import { reminderOfferSchema } from "@zoonk/core/reminders/contract";
 import { milestoneSchema, missionSchema } from "@zoonk/core/sessions/completion-contract";
 import { MasteryState, StudySessionStatus } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -79,6 +80,7 @@ export const studySessionSummaryResponseSchema = z
           "A goal that isn't an exam reads its progress here, not `preparation`: the share of its plan's lessons studied or known, as the syllabus's `lessons` say. Null for an exam, and `before` for a session started before it was kept",
       }),
     questions: z.number().int().min(0),
+    reminderOffer: reminderOfferSchema,
     sessionId: idSchema,
     skillsMoved: z.array(
       z.object({

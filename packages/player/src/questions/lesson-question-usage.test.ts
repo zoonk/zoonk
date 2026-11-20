@@ -29,12 +29,14 @@ describe(getRefusalError, () => {
     await expect(refusal({ body: limitReachedBody("guest"), status: 403 })).resolves.toStrictEqual({
       kind: "usageLimit",
       period: "day",
+      receivedAt: expect.any(Number),
       tier: "guest",
     });
 
     await expect(refusal({ body: limitReachedBody("free"), status: 402 })).resolves.toStrictEqual({
       kind: "usageLimit",
       period: "day",
+      receivedAt: expect.any(Number),
       tier: "free",
     });
   });

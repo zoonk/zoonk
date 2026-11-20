@@ -12,6 +12,7 @@ import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenQuote } from "./_test-utils/seen-quote";
 import { lostChallengeFixture, takenChallengeFixture } from "./_test-utils/taken-challenge";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
@@ -666,7 +667,7 @@ describe("phase dates through system refreshes", () => {
     await decidePlanChange({
       changeId: proposal?.id ?? "",
       goalId: goal.id,
-      input: { status: "applied", timeZone: "UTC" },
+      input: { quote: await seenQuote(proposal?.id ?? ""), status: "applied", timeZone: "UTC" },
     });
 
     const expected = ends.map(
@@ -712,7 +713,7 @@ describe("phase dates through system refreshes", () => {
     await decidePlanChange({
       changeId: proposal?.id ?? "",
       goalId: goal.id,
-      input: { status: "applied", timeZone: "UTC" },
+      input: { quote: await seenQuote(proposal?.id ?? ""), status: "applied", timeZone: "UTC" },
     });
 
     const [endAfter] = await readPhaseEnds(plan.id);

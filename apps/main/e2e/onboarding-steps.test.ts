@@ -43,9 +43,10 @@ test.describe("Refreshing mid-onboarding", () => {
 
     await page.goto(`/start/${goal.id}`);
 
-    const purpose = page.getByRole("radio", { name: /Understand it in depth/u });
+    const purpose = page.getByRole("radio", { name: /Understand it well/u });
     await expectHydrated(purpose);
     await purpose.click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     const level = page.getByRole("heading", { name: "How much do you already know?" });
     await expect(level).toBeVisible();
@@ -58,7 +59,7 @@ test.describe("Refreshing mid-onboarding", () => {
 
     const confirm = page.getByRole("alertdialog", { name: "Start over?" });
     await confirm.getByRole("button", { name: "Start over" }).click();
-    await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
 
     await expect
       .poll(async () => {
@@ -89,13 +90,13 @@ test.describe("Waiting for placement's questions", () => {
     });
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
 
-    await expect(page.getByRole("heading", { name: "Getting your questions ready" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
 
     await page.reload();
 
-    await expect(page.getByRole("heading", { name: "Getting your questions ready" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
 
     await mapGoalSkills({ goalId: goal.id });
 
@@ -126,9 +127,9 @@ test.describe("When a wait can't go on", () => {
     await stopRuns({ entityId: goal.id, page });
     await page.goto(`/start/${goal.id}`);
 
-    const failed = page.getByRole("alert").filter({ hasText: "This didn't finish" });
+    const failed = page.getByRole("alert").filter({ hasText: "Something went wrong on our side" });
     await expect(failed).toBeVisible();
-    await expect(page.getByText("Plan created", { exact: true })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Adjust plan" })).toBeHidden();
     await failed.getByRole("button", { name: "Try again" }).click();
 
     await expect
@@ -139,7 +140,7 @@ test.describe("When a wait can't go on", () => {
       .not.toBe(runId);
 
     await expect(failed).toBeVisible();
-    await expect(page.getByText("Plan created", { exact: true })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Adjust plan" })).toBeHidden();
   });
 
   test("a failed run says so, and Try again starts it over", async ({
@@ -159,19 +160,19 @@ test.describe("When a wait can't go on", () => {
     });
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
 
-    const failed = page.getByRole("alert").filter({ hasText: "This didn't finish" });
+    const failed = page.getByRole("alert").filter({ hasText: "Something went wrong on our side" });
     await expect(failed).toBeVisible();
-    await expect(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
+    await expect(page.getByRole("button", { exact: true, name: "Skip" })).toBeVisible();
     await failed.getByRole("button", { name: "Try again" }).click();
 
     await expect(failed).toBeHidden();
 
     await expect(
       page
-        .getByRole("progressbar", { name: "Getting your questions ready" })
-        .or(page.getByRole("alert").filter({ hasText: "This didn't start" })),
+        .getByRole("progressbar", { name: "Getting your test ready" })
+        .or(page.getByRole("alert").filter({ hasText: "Something went wrong on our side" })),
     ).toBeVisible();
   });
 
@@ -191,18 +192,17 @@ test.describe("When a wait can't go on", () => {
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
 
     // Picking an answer shows the page is interactive, so its wait for the run has begun.
-    const deep = page.getByRole("radio", { name: /Understand it in depth/u });
+    const deep = page.getByRole("radio", { name: /Understand it well/u });
     await expectHydrated(deep);
     await deep.click();
     await expect(deep).toBeChecked();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     // The clock jumps past the limit rather than running through it, which would fire the 2 s ask
     // for the run's id some 20 times at once.
     await page.clock.fastForward(RUN_START_LIMIT_MS);
 
-    const notice = page
-      .getByRole("alert")
-      .filter({ hasText: "We couldn't start building your plan" });
+    const notice = page.getByRole("alert").filter({ hasText: "Your plan didn't start" });
 
     await expect(notice).toBeVisible();
 
@@ -246,6 +246,7 @@ test.describe("Why a language learner studies it", () => {
     const travel = page.getByRole("radio", { name: /^Travel/u });
     await expectHydrated(travel);
     await travel.click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(page.getByRole("heading", { name: "Why are you learning it?" })).toBeHidden();
 

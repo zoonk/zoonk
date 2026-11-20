@@ -51,9 +51,30 @@ export async function mergeLearningProfile({
   guestUserId,
   transaction,
   userId,
+  sessionId,
   takeGuestAddressForm = false,
   takeGuestSupport = false,
-}: GuestLinkContext & { takeGuestAddressForm?: boolean; takeGuestSupport?: boolean }) {
+}: GuestLinkContext & {
+  sessionId?: string;
+  takeGuestAddressForm?: boolean;
+  takeGuestSupport?: boolean;
+}) {
+  // The session hook saves the sign-in's country before Better Auth links the guest, in a row
+  // stamped with the session's start on both timestamps. A row still carrying that stamp holds
+  // only that guess, so the guest's row replaces it and keeps the guess only when it has no
+  // country. Any later write moves `updated_at`, so a row the learner changed stays, even under a
+  // one-time token, which reuses an older session.
+  const [sessionRow] = await transaction.$queryRaw<{ home_country: string | null }[]>`
+    DELETE FROM user_learning_profiles AS profile
+    USING sessions AS session
+    WHERE profile.user_id = ${userId}::uuid
+      AND session.id = ${sessionId ?? null}::uuid
+      AND profile.created_at = session.created_at
+      AND profile.updated_at = session.created_at
+      AND EXISTS (SELECT 1 FROM user_learning_profiles WHERE user_id = ${guestUserId}::uuid)
+    RETURNING profile.home_country
+  `;
+
   await transaction.$executeRaw`
     WITH guest_profile AS (
       DELETE FROM user_learning_profiles
@@ -62,13 +83,14 @@ export async function mergeLearningProfile({
     )
     INSERT INTO user_learning_profiles (
       id, user_id, learning_needs, address_form, buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
+      active_goal_id, memory_enabled, sounds_enabled, share_usage_data, home_country,
       created_at, updated_at
     )
     SELECT id, ${userId}::uuid, learning_needs,
       CASE WHEN ${takeGuestAddressForm} THEN address_form END,
       buddy_kind, buddy_name, buddy_glasses,
       active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
+      COALESCE(home_country, ${sessionRow?.home_country ?? null}),
       created_at, updated_at
     FROM guest_profile
     ON CONFLICT (user_id) DO UPDATE SET
@@ -77,6 +99,7 @@ export async function mergeLearningProfile({
       sounds_enabled = CASE WHEN ${takeGuestSupport} THEN EXCLUDED.sounds_enabled ELSE user_learning_profiles.sounds_enabled END,
       address_form = CASE WHEN ${takeGuestAddressForm} THEN EXCLUDED.address_form ELSE user_learning_profiles.address_form END,
       share_usage_data = COALESCE(user_learning_profiles.share_usage_data, EXCLUDED.share_usage_data),
+      home_country = COALESCE(user_learning_profiles.home_country, EXCLUDED.home_country),
       buddy_kind = COALESCE(user_learning_profiles.buddy_kind, EXCLUDED.buddy_kind),
       buddy_name = CASE WHEN user_learning_profiles.buddy_kind IS NOT NULL
         THEN user_learning_profiles.buddy_name ELSE EXCLUDED.buddy_name END,

@@ -10,7 +10,8 @@ const beltColorClasses: Record<BeltColor, string> = {
   orange: "bg-belt-orange",
   purple: "bg-belt-purple",
   red: "bg-belt-red",
-  white: "bg-belt-white",
+  // A white belt on a white page is only its outline, so the outline is one you can see.
+  white: "bg-belt-white ring-foreground/50 dark:ring-foreground/50",
   yellow: "bg-belt-yellow",
 };
 

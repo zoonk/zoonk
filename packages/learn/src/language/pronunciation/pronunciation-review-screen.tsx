@@ -5,20 +5,15 @@ import {
   type PronunciationReviewsView,
   type PronunciationRoundResult,
 } from "@zoonk/core/language/pronunciation/contract";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
+import { Button } from "@zoonk/ui/components/button";
+import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@zoonk/ui/components/empty";
+import { RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
 import { MomentReadouts } from "../../_components/moment-readouts";
 import { AnswersSaveError } from "../../_components/save-error";
-import { TASK_HEADER_ICON_CLASS, TaskHeaderTitle } from "../../_components/task-header";
+import { TaskHeaderMenu, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { DayMoment } from "../../session/day-moment";
@@ -61,10 +56,7 @@ function RoundResult({
 
   return (
     <>
-      <MomentHeader
-        detail={t("An accent never blocks you.")}
-        title={result ? t("Practice done") : t("Nothing said this time")}
-      >
+      <MomentHeader title={result ? t("Practice done") : t("Nothing said this time")}>
         {result && (
           <MomentReadouts
             brainPower={result.brainPower}
@@ -89,26 +81,12 @@ function WordMenu({ disabled, onSkip }: { disabled: boolean; onSkip: () => void 
   const t = useExtracted();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            className={cn("shrink-0", TASK_HEADER_ICON_CLASS.end)}
-            size="icon"
-            variant="ghost"
-          />
-        }
-      >
-        <EllipsisIcon aria-hidden="true" />
-        <span className="sr-only">{t("Screen options")}</span>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem disabled={disabled} onClick={onSkip}>
-          <SkipForwardIcon aria-hidden="true" />
-          {t("Skip this word")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <TaskHeaderMenu>
+      <DropdownMenuItem disabled={disabled} onClick={onSkip}>
+        <SkipForwardIcon aria-hidden="true" />
+        {t("Skip")}
+      </DropdownMenuItem>
+    </TaskHeaderMenu>
   );
 }
 
@@ -141,17 +119,22 @@ export function PronunciationReviewScreen({
           exitToApp
           footer={
             <TaskActions>
-              <TaskMainLink href={exitHref} icon={<CheckIcon aria-hidden="true" />} toApp>
-                {t("Done")}
+              <TaskMainLink href={exitHref} toApp>
+                {total === 0 ? t("Today") : t("Done")}
               </TaskMainLink>
             </TaskActions>
           }
           headerTitle={<TaskHeaderTitle title={t("Say it again")} />}
         >
           {total === 0 ? (
-            <p className="text-title py-6 text-balance" role="status">
-              {t("No words to say again today.")}
-            </p>
+            <Empty className="py-6" role="status">
+              <EmptyHeader>
+                <EmptyTitle>{t("No words to say again today")}</EmptyTitle>
+                <EmptyDescription>
+                  {t("Words that were hard to say come back here to practice.")}
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           ) : (
             <RoundResult buddy={buddy} result={result} />
           )}
@@ -239,8 +222,8 @@ function WordActions({
             {t("Try again")}
           </Button>
         )}
-        <TaskMainButton busy={round.isPending} onClick={round.next} {...FORWARD_ICON}>
-          {isLast ? t("See how it went") : t("Continue")}
+        <TaskMainButton busy={round.isPending} onClick={round.next}>
+          {isLast ? t("See result") : t("Continue")}
         </TaskMainButton>
       </TaskActions>
     );
@@ -249,25 +232,23 @@ function WordActions({
   if (!available) {
     return (
       <TaskActions>
-        <TaskMainButton
-          busy={round.isPending}
-          icon={<SkipForwardIcon aria-hidden="true" />}
-          onClick={round.next}
-        >
-          {t("Skip this word")}
+        <TaskMainButton busy={round.isPending} onClick={round.next}>
+          {t("Skip")}
         </TaskMainButton>
       </TaskActions>
     );
   }
 
   return (
-    <RecordButton
-      className="w-full"
-      disabled={round.isPending}
-      elapsedMs={mic.elapsedMs}
-      onStart={() => void mic.start()}
-      onStop={mic.stop}
-      recording={mic.status === "recording"}
-    />
+    <TaskActions>
+      <RecordButton
+        busy={mic.status === "acquiring"}
+        disabled={round.isPending}
+        elapsedMs={mic.elapsedMs}
+        onStart={() => void mic.start()}
+        onStop={mic.stop}
+        recording={mic.status === "recording"}
+      />
+    </TaskActions>
   );
 }

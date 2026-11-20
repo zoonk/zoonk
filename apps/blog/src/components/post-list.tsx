@@ -1,4 +1,4 @@
-import { formatDateWithoutYear, getPostsByYear } from "@/lib/posts";
+import { formatPostDate, getPostsByYear } from "@/lib/posts";
 import Link from "next/link";
 
 export function PostList() {
@@ -17,13 +17,13 @@ export function PostList() {
 
               return (
                 <li key={post.id}>
-                  <Link href={href} className="group flex items-baseline py-2 text-sm">
-                    <span className="group-hover:bg-muted -mx-1.5 grow rounded-lg px-1.5 py-0.5 transition-colors">
+                  <Link href={href} className="group flex items-baseline gap-4 py-3 text-sm">
+                    <span className="group-hover:bg-muted -mx-1.5 min-w-0 grow rounded-lg px-1.5 py-0.5 text-balance wrap-anywhere transition-colors">
                       {post.title}
                     </span>
 
-                    <span className="text-muted-foreground shrink-0 text-xs">
-                      {formatDateWithoutYear(post.date)}
+                    <span className="text-muted-foreground shrink-0 text-xs whitespace-nowrap">
+                      {formatPostDate({ isoDate: post.date, year: "never" })}
                     </span>
                   </Link>
                 </li>

@@ -79,8 +79,6 @@ export async function getWeeklyChallenge({
   const access = getExamPrepAccess({
     examPrep: viewer ? getTierExamPrep(viewer.tier) : null,
     goal,
-    timeZone,
-    today,
   });
 
   const item = findNextWeeklyItem({ includesMockExams: access.includesMockExams, items, today });

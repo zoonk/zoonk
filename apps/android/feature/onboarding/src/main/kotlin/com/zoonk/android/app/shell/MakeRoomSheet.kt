@@ -2,8 +2,10 @@ package com.zoonk.android.app.shell
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -22,7 +25,9 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.Button
+import com.zoonk.android.feature.subscription.SubscribeButton
+import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.GoalMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -31,6 +36,8 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.goalSpokenName
+import com.zoonk.android.ui.components.iconButtonEdge
+import com.zoonk.android.ui.scaffold.CloseButton
 import com.zoonk.api.models.LearnerSummaryGoal
 import java.util.UUID
 
@@ -47,11 +54,11 @@ internal fun MakeRoomSheet(
     pausing: UUID?,
     failed: Boolean,
     onPause: (UUID) -> Unit,
-    onGetPlus: () -> Unit,
+    onSubscribe: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        MakeRoomContent(waitingName, active, pausing, failed, onPause, onGetPlus)
+        MakeRoomContent(waitingName, active, pausing, failed, onPause, onSubscribe, onDismiss)
     }
 }
 
@@ -62,7 +69,8 @@ internal fun MakeRoomContent(
     pausing: UUID?,
     failed: Boolean,
     onPause: (UUID) -> Unit,
-    onGetPlus: () -> Unit,
+    onSubscribe: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     val title = stringResource(R.string.goal_switcher_make_room_title, waitingName)
 
@@ -74,9 +82,12 @@ internal fun MakeRoomContent(
             .semantics { paneTitle = title },
     ) {
         Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+                CloseButton(onDismiss, Modifier.iconButtonEdge(ButtonEdge.End).offset(x = CLOSE_INK), stringResource(R.string.close_sheet))
+            }
             Text(
-                stringResource(R.string.goal_switcher_make_room_description, waitingName),
+                stringResource(R.string.goal_switcher_make_room_description),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -98,9 +109,7 @@ internal fun MakeRoomContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            OutlinedButton(onClick = onGetPlus, modifier = Modifier.fillMaxWidth(), size = ButtonSize.Large) {
-                Text(stringResource(R.string.subscription_get_plus))
-            }
+            SubscribeButton(onSubscribe, Modifier.fillMaxWidth(), ButtonSize.Large)
         }
     }
 }
@@ -119,11 +128,12 @@ private fun ActiveGoalRow(
         headline = { Text(goal.displayName, Modifier.semantics { contentDescription = spoken }) },
         leading = { GoalMark(goal.displayName, goal.languageFlag) },
         trailing = {
-            Button(
+            OutlinedButton(
                 onClick = onPause,
                 modifier = Modifier.semantics { contentDescription = pauseGoal },
                 enabled = enabled,
                 busy = busy,
+                leadingIcon = { ButtonIcon(R.drawable.ic_pause) },
                 size = ButtonSize.Small,
             ) {
                 Text(stringResource(R.string.goal_switcher_pause))
@@ -131,3 +141,6 @@ private fun ActiveGoalRow(
         },
     )
 }
+
+/** `ic_close` leaves 5dp blank after its ink, so the ✕ ends on the column's edge. */
+private val CLOSE_INK = 5.dp

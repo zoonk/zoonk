@@ -107,4 +107,4 @@ Nothing else can be fixed: private content, learner data, accounts' organization
 
 ## Local development
 
-`--api <url>` or `ZOONK_API_URL` points the CLI at another API, such as your checkout's local API URL from `pnpm dev`. Each API keeps its own login. Log in there as a seeded admin such as `owner@zoonk.test`, with the code from the local mailbox ([development guide](../../guides/development.md#local-development-and-sign-in)).
+`--api <url>` or `ZOONK_API_URL` points the CLI at another API, such as your checkout's local API URL from `pnpm dev`. Each API keeps its own login. Log in there as a seeded admin such as `owner@zoonk.test`, with the code from the local mailbox ([development guide](../../guides/local-app.md#sign-in)).

@@ -29,6 +29,7 @@
   "activities_music_get_ready": "059742dd37ece293aafbec98576f1a78d12b20f812f4960c826b8d03b0912dcb",
   "activities_music_guitar_strings": "5b002e3fc8de61a75a954563bb84635f7ada4d85cba3b183733472e6d0c499dc",
   "activities_music_hear_it": "4846e139f2ea6830315c47ece9eb3f4c3fcd084662b72690de7e4e3e17587be2",
+  "activities_music_hear_your_notes": "8e6519517f4fcb988cf2b45c912f25e40fde9cf89642517dac76ca62a1519330",
   "activities_music_higher_frets": "3fac332af5f0302897bf1c4563133a5192b4543ec8e59023349fadb3933faef7",
   "activities_music_listen_first": "658a31cfd0833b8c9a9f988af5169e4e749792ad7d6dc8841804b9a230a9cfd0",
   "activities_music_lower_frets": "e53271640e67006ad51031c91487cb5add40b30b956e88c9aae9e87f59dd2ea4",
@@ -56,12 +57,11 @@
   "activities_music_same_notes_guitar": "bf25c9ef276b52243fced3def4b7236c2ba8031a3ad1eaf69514b9964607586b",
   "activities_music_show_as": "0ca3f5a50d6bd91ac790c6d82ec2edbdf8b7aeaf209e2ceb4b6aa7c8557116c6",
   "activities_music_skip_for_now": "b8080f358550c3bc536fd0f39a8adedda28a2022a16be496bc56399fdaeee85f",
+  "activities_music_sound_check_done": "3281798a7ca8fa8fef3e2d544189727b2584638608e78e5f0fd511e868cb2e6a",
   "activities_music_sound_check_failed": "492a4d8da7f24527a6eff3c6baf8a1dfc028033cbb478fca37fb830ace089f42",
-  "activities_music_sound_check_intro": "8e610b6488a625d1070265409ff0057ea529f6290101dadf757e2f9ea650801f",
-  "activities_music_sound_check_late": "1c96042e79256f62c696d31ded65f60aebfe87a3012b42ea7bd99907858e65dd",
+  "activities_music_sound_check_intro": "62a583b225717cd59a7d2ec8cbd035dc5340f3877d6a863db9887ad845c7b509",
   "activities_music_sound_check_listen": "3f56f23400356c7d4e89651f0530e6ac65e58133b2c166bc55d8ec1a9b1a2255",
-  "activities_music_sound_check_on_time": "75904c4e5bdb628b25d20e6d80085d925f2a6e34b00495aeeedaa2b26f47eabf",
-  "activities_music_sound_check_start": "9e7582aed65d5ee48209bbc0857528c378006fa01034740ce5060d6356264c7d",
+  "activities_music_sound_check_start": "0eace99c42844543c5b21bc8628c12c19d19c144bb1e74efbdd9529a3fcf191d",
   "activities_music_sound_check_tap": "bb18bce013687d3dbfa5ad18c669123978af65aee2fedd158e0d125c12b536ff",
   "activities_music_sound_check_title": "61fb4073e72f2c3b820821aa1538a9984d5cac13f6696b4d27b63e3576a05465",
   "activities_music_sound_notes": "73ea87a55951f5b00c1ad16c4c246d7a2e3b97687d64bc88008fa29f3ea30a9e",
@@ -235,17 +235,16 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Sesi ayarla</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Kulaklıklar sesi biraz gecikmeli verebilir. %1$d tık sesine dokunarak eşlik et. Bu tek seferlik ayarla, bu cihazdaki ritimlerde zamanlamanı doğru değerlendirebiliriz.</item>
-        <item quantity="other">Kulaklıklar sesi biraz gecikmeli verebilir. %1$d tık sesine dokunarak eşlik et. Bu tek seferlik ayarla, bu cihazdaki ritimlerde zamanlamanı doğru değerlendirebiliriz.</item>
+        <item quantity="one">Hoparlör ve kulaklıklarda ses biraz gecikebilir. Dokunuşlarının zamanını doğru ölçebilmemiz için %1$d tık sesine eşlik ederek dokun.</item>
+        <item quantity="other">Hoparlör ve kulaklıklarda ses biraz gecikebilir. Dokunuşlarının zamanını doğru ölçebilmemiz için %1$d tık sesine eşlik ederek dokun.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Tık seslerini dinle…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Her tık sesinde dokun · %1$d/%2$d</string>
     <string name="activities_music_sound_check_failed">Yeterli sayıda vuruşu tık sesleriyle eşleştiremedik. Her tık sesinde dokunarak tekrar dene.</string>
-    <string name="activities_music_sound_check_on_time">Bu cihazda ses zamanında geliyor.</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">Bu cihaz sesi yaklaşık %1$d ms gecikmeyle veriyor. Ritimlerde bu gecikmeyi telafi ediyoruz.</string>
-    <string name="activities_music_sound_check_start">Ses kontrolünü başlat</string>
+    <string name="activities_music_sound_check_done">Her şey hazır.</string>
+    <string name="activities_music_sound_check_start">Başla</string>
     <string name="activities_music_skip_for_now">Şimdilik atla</string>
     <string name="activities_music_continue">Devam et</string>
+    <string name="activities_music_hear_your_notes">Notalarını dinle</string>
 </resources>

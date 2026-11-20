@@ -111,9 +111,8 @@ fun SessionEndActions(
             onClick = onContinue,
             modifier = width,
             enabled = !move.busy,
-            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
         ) {
-            Text(stringResource(if (completed) R.string.player_see_todays_summary else R.string.player_action_continue))
+            Text(stringResource(R.string.player_action_continue))
         }
     }
 }

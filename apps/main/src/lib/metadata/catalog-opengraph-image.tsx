@@ -1,16 +1,22 @@
 import "server-only";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { FONT_WEIGHTS, getShareCardFonts } from "@/lib/certificates/certificate-fonts";
 import { optimizeImage } from "@zoonk/core/images/optimize";
 import { safeAsync } from "@zoonk/utils/error";
 import { ImageResponse } from "next/og";
+import {
+  getCatalogImageDescription,
+  truncateCatalogImageText,
+} from "./catalog-opengraph-description";
+import { OpenGraphBrand, getOpenGraphLogo } from "./open-graph-brand";
 import { getOpenGraphWordBreak } from "./open-graph-word-break";
 
 const ROOT_OPEN_GRAPH_IMAGE_PATH = "src/app/icon.svg";
-const DESCRIPTION_LINE_HEIGHT = 1.35;
 const DESCRIPTION_LINE_COUNT = 5;
+const DESCRIPTION_LINE_HEIGHT = 1.35;
 const DESCRIPTION_FONT_SIZE = 30;
-const MAX_DESCRIPTION_LENGTH = 112;
+const BRAND_SIZE = 40;
 const MAX_TITLE_LENGTH = 76;
 const LONG_TITLE_LENGTH = 58;
 const MEDIUM_TITLE_LENGTH = 38;
@@ -35,22 +41,19 @@ type CatalogImageSource =
   | { kind: "root" };
 
 export async function createCatalogOpenGraphImage(params: CatalogOpenGraphImageParams) {
-  const imageSrc = await getRenderableImageSrc({
-    fallbackImagePath: params.fallbackImagePath,
-    imageUrl: params.imageUrl,
-  });
+  const [imageSrc, logoSrc, fonts] = await Promise.all([
+    getRenderableImageSrc({
+      fallbackImagePath: params.fallbackImagePath,
+      imageUrl: params.imageUrl,
+    }),
+    getOpenGraphLogo("light"),
+    getShareCardFonts(),
+  ]);
 
-  return new ImageResponse(<CatalogOpenGraphImage imageSrc={imageSrc} {...params} />, {
-    ...catalogOpenGraphImageSize,
-  });
-}
-
-function truncateText({ maxLength, text }: { maxLength: number; text: string }): string {
-  if (text.length <= maxLength) {
-    return text;
-  }
-
-  return `${text.slice(0, maxLength - 1).trimEnd()}...`;
+  return new ImageResponse(
+    <CatalogOpenGraphImage imageSrc={imageSrc} logoSrc={logoSrc} {...params} />,
+    { ...catalogOpenGraphImageSize, fonts },
+  );
 }
 
 function getTitleFontSize(title: string): number {
@@ -165,87 +168,98 @@ function CatalogOpenGraphImage({
   description,
   imageSrc,
   language,
+  logoSrc,
   title,
-}: CatalogOpenGraphImageParams & { imageSrc: string }) {
-  const safeTitle = truncateText({ maxLength: MAX_TITLE_LENGTH, text: title });
+}: CatalogOpenGraphImageParams & { imageSrc: string; logoSrc: string }) {
+  const safeTitle = truncateCatalogImageText({
+    language,
+    maxLength: MAX_TITLE_LENGTH,
+    text: title,
+  });
 
-  const safeDescription = description
-    ? truncateText({ maxLength: MAX_DESCRIPTION_LENGTH, text: description })
-    : "";
+  const safeDescription = getCatalogImageDescription({ description, language });
 
   return (
     <div
       style={{
-        alignItems: "center",
         background: "#ffffff",
         color: "#111111",
         display: "flex",
-        fontFamily: "Arial, Helvetica, sans-serif",
-        gap: 96,
+        flexDirection: "column",
+        fontFamily: "Geist",
+        gap: 32,
         height: "100%",
         justifyContent: "center",
-        padding: "72px 96px",
+        padding: "48px 96px",
         width: "100%",
         wordBreak: getOpenGraphWordBreak(language),
       }}
     >
-      <div
-        style={{
-          background: "#ffffff",
-          border: "1px solid rgba(17, 17, 17, 0.12)",
-          borderRadius: 32,
-          display: "flex",
-          flexShrink: 0,
-          height: 360,
-          justifyContent: "center",
-          overflow: "hidden",
-          padding: 36,
-          width: 360,
-        }}
-      >
-        {/* oxlint-disable-next-line next/no-img-element -- ImageResponse renders plain img elements, not next/image. */}
-        <img
-          alt=""
-          src={imageSrc}
-          style={{ height: "100%", objectFit: "contain", width: "100%" }}
-        />
-      </div>
+      <OpenGraphBrand logoSrc={logoSrc} size={BRAND_SIZE} />
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 28,
-          justifyContent: "center",
-          minWidth: 0,
-          width: 560,
-        }}
-      >
+      <div style={{ alignItems: "center", display: "flex", gap: 96 }}>
+        <div
+          style={{
+            background: "#ffffff",
+            border: "1px solid rgba(17, 17, 17, 0.12)",
+            borderRadius: 32,
+            display: "flex",
+            flexShrink: 0,
+            height: 360,
+            justifyContent: "center",
+            overflow: "hidden",
+            padding: 36,
+            width: 360,
+          }}
+        >
+          {/* oxlint-disable-next-line next/no-img-element -- ImageResponse renders plain img elements, not next/image. */}
+          <img
+            alt=""
+            src={imageSrc}
+            style={{ height: "100%", objectFit: "contain", width: "100%" }}
+          />
+        </div>
+
         <div
           style={{
             display: "flex",
-            fontSize: getTitleFontSize(safeTitle),
-            fontWeight: 800,
-            lineHeight: 1.04,
+            flexBasis: 0,
+            flexDirection: "column",
+            flexGrow: 1,
+            gap: 28,
+            justifyContent: "center",
+            minWidth: 0,
           }}
         >
-          {safeTitle}
-        </div>
-
-        {safeDescription && (
           <div
             style={{
-              color: "#4a4a4a",
               display: "flex",
-              fontSize: DESCRIPTION_FONT_SIZE,
-              lineHeight: DESCRIPTION_LINE_HEIGHT,
-              maxHeight: DESCRIPTION_FONT_SIZE * DESCRIPTION_LINE_HEIGHT * DESCRIPTION_LINE_COUNT,
-              overflow: "hidden",
+              fontSize: getTitleFontSize(safeTitle),
+              fontWeight: FONT_WEIGHTS.brand,
+              letterSpacing: "-0.035em",
+              lineHeight: 1.04,
+              textWrap: "balance",
             }}
           >
-            {safeDescription}
+            {safeTitle}
           </div>
-        )}
+
+          {safeDescription && (
+            <div
+              style={{
+                color: "#4a4a4a",
+                display: "block",
+                fontSize: DESCRIPTION_FONT_SIZE,
+                lineClamp: DESCRIPTION_LINE_COUNT,
+                lineHeight: DESCRIPTION_LINE_HEIGHT,
+                maxHeight: DESCRIPTION_FONT_SIZE * DESCRIPTION_LINE_HEIGHT * DESCRIPTION_LINE_COUNT,
+                overflow: "hidden",
+              }}
+            >
+              {safeDescription}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

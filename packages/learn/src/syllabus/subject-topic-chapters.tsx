@@ -1,22 +1,29 @@
 "use client";
 
 import { type SyllabusChapter } from "@zoonk/core/view-models/syllabus/contract";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BookOpenIcon, ChevronRightIcon } from "lucide-react";
+import { BookOpenIcon } from "lucide-react";
+import { ListRowChevronSpace } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
 import { useWritingLine } from "../topic-outline/use-far-topic-line";
 
-const TOPIC_CHAPTER_CLASS =
-  "text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -mx-2 flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm transition-colors outline-none focus-visible:ring-[3px]";
+/** A chapter under its topic ends like the topic's own row: its words, then the chevron's slot. */
+const TOPIC_CHAPTER_ROW_CLASS = "text-muted-foreground flex min-h-11 items-center gap-3 text-sm";
+
+const TOPIC_CHAPTER_CLASS = cn(
+  TOPIC_CHAPTER_ROW_CLASS,
+  "hover:text-foreground focus-visible:ring-ring/50 row-bleed rounded-lg transition-colors outline-none focus-visible:ring-[3px]",
+);
 
 function TopicChapterLink({
   chapter,
   chapterHref,
 }: {
   chapter: SyllabusChapter;
-  chapterHref: (chapterId: string) => string;
+  chapterHref: ((chapterId: string) => string) | null;
 }) {
   const writingLine = useWritingLine();
   const outlineActions = useTopicOutlineActions();
@@ -28,16 +35,18 @@ function TopicChapterLink({
     </>
   );
 
-  if (!chapter.chapterId) {
-    const words = writingLine({
-      far: chapter.far,
-      lessons: chapter.plannedLessons,
-      nextDate: chapter.nextDate,
-    });
+  if (!chapterHref || !chapter.chapterId) {
+    const words = chapter.chapterId
+      ? null
+      : writingLine({
+          far: chapter.far,
+          lessons: chapter.plannedLessons,
+          nextDate: chapter.nextDate,
+        });
 
     const line = words && <span className="shrink-0 text-xs">{words}</span>;
 
-    if (chapter.writing && chapter.skillId && outlineActions) {
+    if (chapterHref && chapter.writing && chapter.skillId && outlineActions) {
       return (
         <FarTopicSheet
           actions={outlineActions}
@@ -46,18 +55,20 @@ function TopicChapterLink({
           nextDate={chapter.nextDate}
           skillId={chapter.skillId}
           title={chapter.title}
-          trigger={<button className={cn(TOPIC_CHAPTER_CLASS, "w-full text-left")} type="submit" />}
+          trigger={<button className={cn(TOPIC_CHAPTER_CLASS, "text-left")} type="submit" />}
         >
           {content}
           {line}
+          <ListRowChevronSpace />
         </FarTopicSheet>
       );
     }
 
     return (
-      <span className="text-muted-foreground flex min-h-11 items-center gap-2 text-sm">
+      <span className={TOPIC_CHAPTER_ROW_CLASS}>
         {content}
         {line}
+        <ListRowChevronSpace />
       </span>
     );
   }
@@ -65,16 +76,17 @@ function TopicChapterLink({
   return (
     <LearnLink className={TOPIC_CHAPTER_CLASS} href={chapterHref(chapter.chapterId)}>
       {content}
-      <ChevronRightIcon aria-hidden="true" className="size-4 shrink-0" />
+      <RowChevron />
     </LearnLink>
   );
 }
 
+/** Without `chapterHref` the chapters only say what's there: none opens. */
 export function TopicChapters({
   chapterHref,
   chapters,
 }: {
-  chapterHref: (chapterId: string) => string;
+  chapterHref: ((chapterId: string) => string) | null;
   chapters: readonly SyllabusChapter[];
 }) {
   return (

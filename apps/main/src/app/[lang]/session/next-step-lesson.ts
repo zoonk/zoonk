@@ -68,10 +68,7 @@ export function getNotWritten({
   request: LessonRequest;
   state: LessonGenerationState | null;
 }): LessonNotWritten | null {
-  if (
-    (lesson === "notStarted" || lesson === "failed") &&
-    (request.status === "plusRequired" || request.status === "setAside")
-  ) {
+  if ((lesson === "notStarted" || lesson === "failed") && request.status === "setAside") {
     return request;
   }
 

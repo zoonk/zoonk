@@ -25,11 +25,6 @@ export function RoleStep({ onAnswer, pending, purpose }: RoleStepProps) {
   return (
     <StepForm
       canContinue={(isCareerChange ? second : role).trim().length > 0}
-      description={
-        isCareerChange
-          ? t("The plan covers what that role needs on day one.")
-          : t("We'll use cases from your work.")
-      }
       onContinue={() =>
         onAnswer(
           isCareerChange

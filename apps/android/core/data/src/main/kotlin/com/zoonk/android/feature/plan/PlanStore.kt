@@ -38,12 +38,15 @@ import com.zoonk.api.models.SkillOutlineGeneration
 import com.zoonk.api.models.StudyNext
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import java.io.IOException
 import java.time.ZoneId
 import java.util.UUID
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 /**
@@ -143,11 +146,13 @@ interface PlanApi {
         operations: List<PlanOp>,
     ): PlanChangePreview
 
+    /** [quote] is the one the learner saw: an accept applies only while it's still the change's. */
     suspend fun decide(
         session: AuthenticatedSession,
         goalId: UUID,
         changeId: UUID,
         status: PlanChangeDecisionInput.Status,
+        quote: String?,
     ): PlanChange
 
     /** Plans the goal at each daily time; saves nothing. */
@@ -286,14 +291,23 @@ class LivePlanApi(
         goalId: UUID,
         changeId: UUID,
         status: PlanChangeDecisionInput.Status,
+        quote: String?,
     ) = perform {
-        api.clients(session).plans.decidePlanChange(goalId, changeId, PlanChangeDecisionInput(status = status, timeZone = deviceTimeZone()))
+        api.clients(session).plans.decidePlanChange(
+            goalId,
+            changeId,
+            PlanChangeDecisionInput(quote = quote, status = status, timeZone = deviceTimeZone()),
+        )
     }
 
     override suspend fun timeToCover(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = perform { api.clients(session).plans.findPlanTimeToCover(goalId, PlanTimeToCoverInput()) }
+    ) = perform {
+        // The server plans the goal at each daily time, which can outlast the usual 30 s read: wait the web's 45 s.
+        withTimeoutOrNull(TIME_TO_COVER_WAIT) { api.streamingClients(session).plans.findPlanTimeToCover(goalId, PlanTimeToCoverInput()) }
+            ?: throw IOException("Time to cover took longer than $TIME_TO_COVER_WAIT")
+    }
 
     override suspend fun chooseExamOption(
         session: AuthenticatedSession,
@@ -474,14 +488,17 @@ class PlanStore(
     suspend fun undo(
         goalId: UUID,
         changeId: UUID,
-    ): MutationResult<PlanChange> = decideChange(goalId, changeId, PlanChangeDecisionInput.Status.UNDONE)
+    ): MutationResult<PlanChange> = write(goalId) { api.decide(it, goalId, changeId, PlanChangeDecisionInput.Status.UNDONE, quote = null) }
 
-    /** Applies or declines a change offered to the learner, or undoes an applied one; answers the change as it now stands. */
+    /**
+     * Answers the [change] the learner sees with its quote, and returns the change as it now stands: an
+     * accept whose numbers moved since comes back still proposed, with today's numbers and quote.
+     */
     suspend fun decideChange(
         goalId: UUID,
-        changeId: UUID,
+        change: PlanChange,
         status: PlanChangeDecisionInput.Status,
-    ): MutationResult<PlanChange> = write(goalId) { api.decide(it, goalId, changeId, status) }
+    ): MutationResult<PlanChange> = write(goalId) { api.decide(it, goalId, change.id, status, change.quote) }
 
     suspend fun chooseExamOption(
         goalId: UUID,
@@ -562,25 +579,16 @@ class PlanStore(
      * invalidations always read the plan, as main's page does.
      */
     suspend fun refreshIfChanged(goalId: UUID) {
-        polls += goalId
-        try {
-            plan[goalId].refresh()
-        } finally {
-            polls -= goalId
-        }
+        val resource = plan[goalId]
+        val shown = resource.state.value.value
+        if (shown != null && cache.mutate { api.planChanged(it, goalId, shown.readAt) } == MutationResult.Done(false)) return
+        resource.refresh()
     }
-
-    private val polls = mutableSetOf<UUID>()
 
     private suspend fun read(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): PlanRead {
-        val shown = plan[goalId].state.value.value
-        val written = writes[goalId] ?: 0
-        if (polls.remove(goalId) && shown != null && !api.planChanged(session, goalId, shown.readAt)) return shown.copy(writes = written)
-        return PlanRead(api.plan(session, goalId), now() - CLOCK_MARGIN, written)
-    }
+    ): PlanRead = PlanRead(api.plan(session, goalId), now() - CLOCK_MARGIN, writes[goalId] ?: 0)
 
     companion object {
         val PLAN_DOMAINS = setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress, DataDomain.UserSubscription)
@@ -593,3 +601,5 @@ class PlanStore(
         internal val CLOCK_MARGIN = 1.minutes
     }
 }
+
+private val TIME_TO_COVER_WAIT = 45.seconds

@@ -64,6 +64,7 @@
 - “Buddy”: “Arkadaş”; “study buddy”, and the buddy in compounds (“ders arkadaşı mesajı”): “ders arkadaşı”; “Ask {buddy}”: “{buddy} ile konuş”
 - Buddy stages “Baby” / “Young” / “Adult”: “Bebek” / “Genç” / “Yetişkin”
 - “Brain Power”: “Beyin Gücü”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “BG”
 - “mission”: “görev”
 - “call” (speaking practice): “sohbet”, not “arama”
 - “Mistakes notebook”: “Yanlış defteri”
@@ -90,14 +91,14 @@
 
 ## Plan terminology
 
-- “Pace”: “Tempo”; the “On pace” / “Keeping pace” status: “Yolunda”
+- “Pace”: “Tempo”; the “Up to date” status (formerly “On pace” / “Keeping pace”): “Yolunda”
 - “Finished”: “Tamamlandı”
-- “Past date”: “Hedef tarih geçti”, not “Süresi doldu”, “Tarihi geçti” or “Bitti”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “Hedef tarih geçti”, not “Süresi doldu”, “Tarihi geçti” or “Bitti”
 - “Needs adjusting”: “Ayarlanmalı”
 - “Too tight”: “Çok sıkışık”
 - “left out”: “dışarıda kaldı”, not “atlandı”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “atla” / “atlandı”
-- “Daily time”: “Günlük çalışma süresi”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Günlük çalışma süresi”
 - “rest day”: “dinlenme günü”
 
 ## Buddy names

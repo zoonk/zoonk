@@ -5,25 +5,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.FOCUS_TEST_SOURCE
+import com.zoonk.android.feature.plan.GoalDateKind
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.countsByDate
-import com.zoonk.android.feature.plan.focusedAreas
 import com.zoonk.android.feature.plan.planChangeAppliedLine
-import com.zoonk.android.feature.plan.planChangeKeepOfficialDateLabel
 import com.zoonk.android.feature.plan.planChangeOfficialDateLine
-import com.zoonk.android.feature.plan.planChangeProposalEffect
-import com.zoonk.android.feature.plan.planChangeSentence
-import com.zoonk.android.feature.plan.topicsMoved
+import com.zoonk.android.feature.plan.planChangeWords
+import com.zoonk.android.feature.plan.planNoticeActions
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
+import com.zoonk.android.ui.components.SuggestionCard
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
-import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMainAction
 import com.zoonk.android.ui.components.SuggestionMark
+import com.zoonk.android.ui.components.SuggestionMenu
+import com.zoonk.android.ui.components.SuggestionMenuItem
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
@@ -43,18 +43,18 @@ import kotlinx.datetime.toJavaLocalDate
 @Composable
 internal fun PlanChangeNotice(
     state: TodayNoticeState,
-    layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
     val answer = viewModel.planChangeAnswer?.takeIf { it.visit == state.read.noticeVisit() }
-    val change = answer?.change ?: state.read.today.planChange ?: return
+    val repriced = viewModel.repricedChange?.takeIf { it.visit == state.read.noticeVisit() }?.change
+    val change = answer?.change ?: repriced ?: state.read.today.planChange ?: return
     val behind = change.behind
 
     if (change.kind == MISSED_DAYS && behind != null) {
-        FallingBehindNotice(change, behind, state, layout, modifier)
+        FallingBehindNotice(change, behind, state, modifier)
     } else {
-        ChangeNotice(change, answer, state, layout, modifier)
+        ChangeNotice(change, answer, repriced != null, state, modifier)
     }
 }
 
@@ -62,8 +62,8 @@ internal fun PlanChangeNotice(
 private fun ChangeNotice(
     change: PlanChange,
     answer: PlanChangeAnswer?,
+    repriced: Boolean,
     state: TodayNoticeState,
-    layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
@@ -73,19 +73,12 @@ private fun ChangeNotice(
             .takeIf { (it.daysLeft ?: 0) > 0 }
             ?.targetDate
             ?.toJavaLocalDate()
-    val sentence = planChangeSentence(change, dateAhead)
-    val title = if (change.source == NOTICE_SOURCE) null else stringResource(R.string.today_plan_suggestion)
+    val words = planChangeWords(change, today.goal.dateKind)
     val result = answer?.let { answeredText(it) }
     val byDate = change.status == PlanChange.Status.PROPOSED || countsByDate(change.effect, dateAhead)
-    // The Focus test's proposal lets its diff say what it changes, as the test's own screen does.
-    val effect =
-        if (change.source == FOCUS_TEST_SOURCE) {
-            null
-        } else {
-            planChangeProposalEffect(change.effect, planEnd(state), besideDiff = true, byDate = byDate, focused = change.focusedAreas)
-        }
     val officialDate = planChangeOfficialDateLine(change)
     val saving = viewModel.isSavingPlanChange
+    val failedHere = viewModel.planChangeFailedOn == state.read.noticeVisit()
     val next = today.planChange?.takeIf { answer != null && it.status == PlanChange.Status.PROPOSED && it.id != change.id }
     val after: (@Composable () -> Unit)? =
         when {
@@ -100,7 +93,7 @@ private fun ChangeNotice(
             answer.status == PlanChangeDecisionInput.Status.APPLIED && answer.change.canUndo -> {
                 {
                     SuggestionAction(
-                        text = stringResource(R.string.today_undo),
+                        text = stringResource(planNoticeActions(failed = failedHere, canUndo = true).first().label),
                         onClick = { viewModel.decidePlanChange(state.read, answer.change, PlanChangeDecisionInput.Status.UNDONE) },
                         busy = saving,
                         secondary = true,
@@ -114,19 +107,37 @@ private fun ChangeNotice(
             }
         }
 
-    Suggestion(
+    val failure = stringResource(if (result != null) R.string.plan_undo_failed else R.string.suggestion_save_failed)
+
+    SuggestionCard(
         label = stringResource(R.string.today_notice_plan_change),
-        summary = result ?: sentence,
-        layout = layout,
         modifier = modifier,
         mark = if (change.source == NOTICE_SOURCE) SuggestionMark.Symbol(R.drawable.ic_pending_actions) else SuggestionMark.New,
         answered = result != null,
-        lineAction = if (result != null) after else ({ SuggestionOpen() }),
+        card = {
+            if (result != null) {
+                SuggestionResult(result)
+                after?.let { SuggestionActions { it() } }
+            } else {
+                SuggestionHeader(words.title)
+                words.why?.let { SuggestionDescription(it) }
+                SuggestionActions {
+                    SuggestionOpen(stringResource(R.string.today_see_changes))
+                    if (change.source != NOTICE_SOURCE && change.source != PHASE_DATES_SOURCE) {
+                        SuggestionAction(
+                            stringResource(R.string.today_not_now),
+                            { viewModel.decidePlanChange(state.read, change, PlanChangeDecisionInput.Status.DECLINED) },
+                            enabled = !saving,
+                            secondary = true,
+                        )
+                    }
+                }
+            }
+            if (failedHere) SuggestionSaveError(failure)
+        },
     ) {
-        SuggestionHeader(title ?: sentence)
-        if (title != null) SuggestionDescription(sentence)
-        effect?.let { SuggestionDescription(it) }
-        PlanEffectDiff(change.effect, byDate = byDate)
+        SuggestionHeader(words.title)
+        PlanEffectDiff(change.effect, byDate = byDate, dateKind = today.goal.dateKind, repriced = repriced)
         officialDate?.let { SuggestionDescription(it) }
 
         if (result != null) {
@@ -136,7 +147,7 @@ private fun ChangeNotice(
             ChangeActions(change, enabled = !saving) { status -> viewModel.decidePlanChange(state.read, change, status) }
         }
 
-        if (viewModel.planChangeFailedOn == state.read.noticeVisit()) SuggestionSaveError()
+        if (failedHere) SuggestionSaveError(failure)
     }
 }
 
@@ -151,20 +162,20 @@ private fun ChangeActions(
     val keepsMine = change.source == NOTICE_SOURCE || change.source == PHASE_DATES_SOURCE
     val decline =
         when {
-            overridesNotice -> planChangeKeepOfficialDateLabel(change.examDocument)
+            overridesNotice -> stringResource(R.string.plan_change_keep_official_date)
             keepsMine -> stringResource(R.string.today_plan_keep_mine)
             else -> stringResource(R.string.today_not_now)
         }
 
     SuggestionActions {
         if (change.canApply) {
-            SuggestionAction(
+            SuggestionMainAction(
                 text =
                     stringResource(
                         when {
                             overridesNotice -> R.string.today_plan_use_my_date
                             change.source == FOCUS_TEST_SOURCE -> R.string.focustest_update_plan
-                            else -> R.string.today_plan_apply
+                            else -> R.string.plan_apply
                         },
                     ),
                 onClick = { onAnswer(PlanChangeDecisionInput.Status.APPLIED) },
@@ -190,7 +201,6 @@ private fun FallingBehindNotice(
     change: PlanChange,
     behind: PlanChangeBehind,
     state: TodayNoticeState,
-    layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
@@ -215,18 +225,25 @@ private fun FallingBehindNotice(
         } !=
             null
     val result = if (kept) stringResource(R.string.today_behind_kept) else null
+    val title = stringResource(R.string.today_missed_days_title)
 
-    Suggestion(
+    SuggestionCard(
         label = stringResource(R.string.today_notice_falling_behind),
-        summary = result ?: sentence,
-        layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
         answered = kept,
-        lineAction = if (kept) null else ({ SuggestionOpen() }),
+        card = {
+            if (result != null) {
+                SuggestionResult(result)
+            } else {
+                SuggestionHeader(title)
+                SuggestionDescription(sentence)
+                SuggestionActions { SuggestionOpen(stringResource(R.string.today_see_changes)) }
+            }
+        },
     ) {
-        SuggestionHeader(sentence)
-        topicsMoved(change.effect, named = NAMED_TOPICS)?.let { SuggestionDescription(it) }
+        SuggestionHeader(title)
+        PlanEffectDiff(change.effect, dateKind = today.goal.dateKind, summary = false)
 
         if (result != null) {
             SuggestionResult(result)
@@ -250,7 +267,7 @@ private fun FallingBehindNotice(
     }
 }
 
-private enum class BehindOption { AdjustTime, Focus, Keep, StudyEverything }
+private enum class BehindOption { AdjustTime, Focus, StudyEverything }
 
 /** On a return after a break, nothing that asks for more hours leads. A null route is "Keep my time". */
 @Composable
@@ -261,61 +278,40 @@ private fun BehindChoices(
     enabled: Boolean,
     onChoose: (AppRoute?) -> Unit,
 ) {
-    val primary =
+    val exam = goalKind == TodayGoal.Kind.EXAM
+    val leading =
         when {
             !welcomeBack -> BehindOption.AdjustTime
             behind.canFocus -> BehindOption.Focus
             else -> null
         }
-    val order =
-        if (welcomeBack) {
-            listOf(BehindOption.Focus, BehindOption.Keep, BehindOption.AdjustTime, BehindOption.StudyEverything)
-        } else {
-            listOf(BehindOption.AdjustTime, BehindOption.Focus, BehindOption.StudyEverything, BehindOption.Keep)
-        }
-    val shown = listOfNotNull(primary) + order.filter { it != primary && (it != BehindOption.Focus || behind.canFocus) }
+    val options = listOfNotNull(BehindOption.AdjustTime, BehindOption.Focus.takeIf { behind.canFocus }, BehindOption.StudyEverything)
+
+    @Composable
+    fun label(option: BehindOption) =
+        stringResource(
+            when (option) {
+                BehindOption.AdjustTime -> if (exam) R.string.today_more_time_a_day else R.string.plan_adjust_plan
+                BehindOption.Focus -> R.string.today_choose_focus
+                BehindOption.StudyEverything -> if (exam) R.string.today_keep_studying_after_exam else R.string.today_study_everything
+            },
+        )
+
+    fun route(option: BehindOption) =
+        AppRoute.Plan(
+            focus =
+                when (option) {
+                    BehindOption.AdjustTime -> "time"
+                    BehindOption.Focus -> "choose"
+                    BehindOption.StudyEverything -> "everything"
+                },
+        )
 
     SuggestionActions {
-        shown.forEach { option ->
-            val secondary = option != primary
-            when (option) {
-                BehindOption.AdjustTime -> {
-                    val label =
-                        if (goalKind ==
-                            TodayGoal.Kind.EXAM
-                        ) {
-                            R.string.today_more_time_a_day
-                        } else {
-                            R.string.today_more_time_or_later_date
-                        }
-                    SuggestionAction(stringResource(label), { onChoose(AppRoute.Plan(focus = "time")) }, secondary = secondary)
-                }
-
-                BehindOption.Focus -> {
-                    SuggestionAction(
-                        stringResource(R.string.today_choose_focus),
-                        { onChoose(AppRoute.Plan(focus = "choose")) },
-                        secondary = secondary,
-                    )
-                }
-
-                BehindOption.StudyEverything -> {
-                    SuggestionAction(
-                        stringResource(R.string.today_study_everything),
-                        { onChoose(AppRoute.Plan(focus = "everything")) },
-                        secondary = secondary,
-                    )
-                }
-
-                BehindOption.Keep -> {
-                    SuggestionAction(
-                        stringResource(R.string.today_keep_my_time),
-                        { onChoose(null) },
-                        enabled = enabled,
-                        secondary = secondary,
-                    )
-                }
-            }
+        leading?.let { SuggestionMainAction(label(it), { onChoose(route(it)) }) }
+        SuggestionAction(stringResource(R.string.today_keep_my_time), { onChoose(null) }, enabled = enabled, secondary = true)
+        SuggestionMenu { done ->
+            options.filter { it != leading }.forEach { option -> SuggestionMenuItem(label(option), done) { onChoose(route(option)) } }
         }
     }
 }
@@ -324,3 +320,5 @@ private const val MISSED_DAYS = "missedDays"
 private const val NOTICE_SOURCE = "notice"
 private const val PHASE_DATES_SOURCE = "phaseDates"
 private const val NAMED_TOPICS = 2
+
+internal val TodayGoal.dateKind: GoalDateKind get() = if (kind == TodayGoal.Kind.EXAM) GoalDateKind.Exam else GoalDateKind.Goal

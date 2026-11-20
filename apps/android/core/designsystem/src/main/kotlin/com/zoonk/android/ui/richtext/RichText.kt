@@ -34,7 +34,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.em
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import java.util.Locale
@@ -160,13 +160,45 @@ data class SpokenText(
 private fun typeset(
     segments: List<RichSegment>,
     locale: Locale,
+    group: Boolean = true,
 ): List<RichSegment> =
-    segments.map {
-        when (it.kind) {
-            SegmentKind.Math, SegmentKind.DisplayMath, SegmentKind.Code -> it
-            else -> it.copy(text = typesetNumbers(locale, it.text))
+    segments.mapIndexed { index, segment ->
+        if (!segment.isProse) return@mapIndexed segment
+
+        val before =
+            segments
+                .getOrNull(index - 1)
+                ?.takeIf { it.isProse }
+                ?.text
+                .orEmpty()
+        val after =
+            segments
+                .getOrNull(index + 1)
+                ?.takeIf { it.isProse }
+                ?.text
+                .orEmpty()
+        var text = typesetNumbers(locale, segment.text, group)
+        if (before.lastOrNull()?.let { it in '0'..'9' } == true && STARTS_WITH_WORD.containsMatchIn(text.trimStart())) {
+            text = text.replaceFirst(LEADING_SPACE, "\u00A0")
         }
+        if (STARTS_WITH_WORD.containsMatchIn(after)) {
+            text = text.replace(NUMBER_AT_END, "\u00A0")
+        }
+        segment.copy(text = text)
     }
+
+private val RichSegment.isProse: Boolean
+    get() = kind != SegmentKind.Math && kind != SegmentKind.DisplayMath && kind != SegmentKind.Code
+
+private val STARTS_WITH_WORD = Regex("^[\\p{L}%°]")
+private val LEADING_SPACE = Regex("^[ \t]+")
+private val NUMBER_AT_END = Regex("(?<=[0-9])[ \t]+$")
+
+/** Keep a question's digits as written while keeping its numbers with their words. */
+fun typesetMoney(
+    segments: List<RichSegment>,
+    locale: Locale,
+): List<RichSegment> = typeset(segments, locale, group = false)
 
 private fun typesetBlock(
     block: RichBlock,
@@ -202,9 +234,8 @@ fun richText(
     marksTerms: Boolean = false,
 ): SpokenText {
     val words = rememberMathWords()
-    val codeBackground = MaterialTheme.colorScheme.surfaceContainerHigh
 
-    return remember(segments, words, codeBackground, marksTerms) {
+    return remember(segments, words, marksTerms) {
         var hasMath = false
         val spoken = StringBuilder()
         var markFrom: Int? = null
@@ -233,9 +264,8 @@ fun richText(
                         }
 
                         SegmentKind.Code -> {
-                            withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em, background = codeBackground)) {
-                                append(segment.text)
-                            }
+                            withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em)) { append(segment.text) }
+                            addStringAnnotation(TextMarkKind.Code.tag, "", start, length)
                         }
 
                         SegmentKind.Text -> {
@@ -301,7 +331,7 @@ private fun RichLines(
     }
 }
 
-private fun splitAtDisplayMath(segments: List<RichSegment>): List<List<RichSegment>> {
+internal fun splitAtDisplayMath(segments: List<RichSegment>): List<List<RichSegment>> {
     val parts = mutableListOf<List<RichSegment>>()
     var current = mutableListOf<RichSegment>()
 
@@ -322,7 +352,16 @@ private fun splitAtDisplayMath(segments: List<RichSegment>): List<List<RichSegme
             close()
             parts += listOf(segment)
         } else {
-            current += segment
+            val previous = parts.lastOrNull()?.singleOrNull()
+            val punctuation = segment.text.takeWhile { it in ",.;:!?" }
+            if (current.isEmpty() && segment.kind == SegmentKind.Text && previous?.kind == SegmentKind.DisplayMath &&
+                punctuation.isNotEmpty()
+            ) {
+                parts[parts.lastIndex] = listOf(previous.copy(text = previous.text + "\\text{" + punctuation + "}"))
+                segment.copy(text = segment.text.drop(punctuation.length)).takeIf { it.text.isNotBlank() }?.let { current += it }
+            } else {
+                current += segment
+            }
         }
     }
 
@@ -342,12 +381,29 @@ fun RichTextLine(
     var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
     val highlight = MaterialTheme.zoonk.warning.copy(alpha = MARK_ALPHA)
     val ink = MaterialTheme.zoonk.warning
+    val code = MaterialTheme.colorScheme.surfaceContainerHigh
 
     Text(
         text = text.text,
         modifier =
             (if (spoken == null) modifier else modifier.semantics { contentDescription = spoken })
-                .then(if (marks.isEmpty()) Modifier else Modifier.drawBehind { layout?.let { drawTextMarks(it, marks, highlight, ink) } }),
+                .then(
+                    if (marks.isEmpty()) {
+                        Modifier
+                    } else {
+                        Modifier.drawBehind {
+                            layout?.let {
+                                drawTextMarks(
+                                    it,
+                                    marks,
+                                    highlight,
+                                    ink,
+                                    code,
+                                )
+                            }
+                        }
+                    },
+                ),
         style = style,
         overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
         maxLines = maxLines,
@@ -398,7 +454,7 @@ private fun RichList(
                             .alignByBaseline()
                             .then(if (block.ordered) Modifier else Modifier.clearAndSetSemantics {}),
                     style = style.withTabularFigures(),
-                    textAlign = TextAlign.End,
+                    textAlign = layoutEnd(),
                 )
 
                 RichTextLine(richText(item, marksTerms), Modifier.weight(1f).alignByBaseline(), style)

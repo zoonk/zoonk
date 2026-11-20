@@ -7,6 +7,7 @@ import { listOwed } from "../_test-utils/follow-ups";
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenQuote } from "./_test-utils/seen-quote";
 import * as replan from "./_utils/replan";
 import { changeGoalPlan } from "./change-goal-plan";
 import { changeOwnLevel } from "./change-own-level";
@@ -95,7 +96,7 @@ describe("a plan change owes its lessons in the transaction that saves it", () =
       decidePlanChange({
         changeId,
         goalId: goal.id,
-        input: { status: "applied", timeZone: "UTC" },
+        input: { quote: await seenQuote(changeId), status: "applied", timeZone: "UTC" },
       }),
     ).rejects.toThrow("request died after the commit");
 
@@ -112,7 +113,7 @@ describe("a plan change owes its lessons in the transaction that saves it", () =
     await decidePlanChange({
       changeId,
       goalId: goal.id,
-      input: { status: "applied", timeZone: "UTC" },
+      input: { quote: await seenQuote(changeId), status: "applied", timeZone: "UTC" },
     });
 
     await forgetOwedLessons({ planId: plan.id, userId: user.id });

@@ -112,16 +112,12 @@ final class ScheduleTimeTests: XCTestCase {
   }
 
   func testAsksAboutEveryTimeButTheSuggestedOne() {
-    func asks(dated: Bool = true, found: TimeToCover?, fullCourse: Bool = false, minutes: Int? = 35)
-      -> Bool
-    {
-      ScheduleTime.asksAboutTime(
-        dated: dated, found: found, fullCourse: fullCourse, minutes: minutes)
+    func asks(dated: Bool = true, found: TimeToCover?, minutes: Int? = 35) -> Bool {
+      ScheduleTime.asksAboutTime(dated: dated, found: found, minutes: minutes)
     }
 
     XCTAssertFalse(asks(found: found()))
     XCTAssertTrue(asks(found: found(), minutes: 30))
-    XCTAssertTrue(asks(found: found(), fullCourse: true))
     XCTAssertTrue(asks(dated: false, found: nil))
     XCTAssertFalse(asks(found: nil))
     XCTAssertFalse(asks(found: found(), minutes: nil))
@@ -181,7 +177,7 @@ final class ScheduleTimeTests: XCTestCase {
   func testKeepsTheLastAnswerInPlaceWhileNewDaysAreWorkedOut() {
     let settled = ScheduleTime.Answer(found: found(), line: .share(0.4))
     let working = ScheduleTime.Answer(found: nil, line: .working)
-    let now = ScheduleTime.Answer(found: found(), line: .everything(suggested: true))
+    let now = ScheduleTime.Answer(found: found(), line: .everything)
 
     XCTAssertEqual(ScheduleTime.shownAnswer(last: settled, now: working).answer, settled)
     XCTAssertTrue(ScheduleTime.shownAnswer(last: settled, now: working).updating)
@@ -191,19 +187,13 @@ final class ScheduleTimeTests: XCTestCase {
     XCTAssertFalse(ScheduleTime.shownAnswer(last: settled, now: now).updating)
   }
 
-  func testKeepsAnExamsChoiceToStudyEverythingUntilTheTimeCoversItAll() {
-    XCTAssertTrue(ScheduleTime.keepsFullCourse(checked: true, line: .asking))
-    XCTAssertFalse(ScheduleTime.keepsFullCourse(checked: true, line: .everything(suggested: false)))
-    XCTAssertFalse(ScheduleTime.keepsFullCourse(checked: false, line: .share(0.4)))
-  }
-
   func testAsksAboutAWeekendTimeOfItsOwnOnlyWhereItDiffers() {
     XCTAssertEqual(
-      ScheduleTime.studyWeek(days: [1, 6], minutes: 30, weekend: 30, fullCourse: false),
+      ScheduleTime.studyWeek(days: [1, 6], minutes: 30, weekend: 30),
       ScheduleWeek(studyDays: [1, 6]))
     XCTAssertEqual(
-      ScheduleTime.studyWeek(days: [1, 6], minutes: 30, weekend: 60, fullCourse: true),
-      ScheduleWeek(studyDays: [1, 6], weekendMinutes: 60, fullCourse: true))
+      ScheduleTime.studyWeek(days: [1, 6], minutes: 30, weekend: 60),
+      ScheduleWeek(studyDays: [1, 6], weekendMinutes: 60))
     XCTAssertEqual(
       ScheduleTime.findWeek(days: [0, 6], weekend: 30),
       ScheduleWeek(studyDays: [0, 6], weekendMinutes: 30))

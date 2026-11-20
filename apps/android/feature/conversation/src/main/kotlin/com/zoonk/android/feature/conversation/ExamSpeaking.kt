@@ -37,9 +37,7 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatDuration
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichTable
 import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.richtext.TableAlign
@@ -238,10 +236,8 @@ internal fun ExamTaskIntro(
     onClose: () -> Unit,
     actions: @Composable () -> Unit,
 ) {
-    val locale = currentLocale()
     val partner = task.task.role == SpeakingTask.Role.PARTNER
     val name = conversation.character.name
-    val criteria = spokenList(task.criteria.map { criterionGloss(it.key, it.name) }, locale)
     val card: @Composable () -> Unit = { SpeakingCardView(task.card, conversation.targetLanguage) }
 
     CallFrame(
@@ -262,32 +258,14 @@ internal fun ExamTaskIntro(
                     style = MaterialTheme.typography.headlineMedium,
                 )
                 Text(task.card.summary, style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    joinSentences(
-                        stringResource(R.string.conversation_opens_and_card, name),
-                        stringResource(R.string.conversation_ends_after, formatMinutes(conversation.minutes.toInt(), locale)),
-                        stringResource(R.string.conversation_rated_on, criteria),
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
             }
         }
         item(key = "character") { CharacterRow(name, taskRoleNoun(partner), Modifier.callItem()) }
-        item(key = "stand-in") {
-            val standIn =
-                stringResource(if (partner) R.string.conversation_stand_in_partner else R.string.conversation_stand_in_examiner, name)
-            CallNote(
-                joinSentences(standIn, stringResource(R.string.conversation_practice_estimate)),
-                R.drawable.ic_help,
-                Modifier.callItem(),
-            )
-        }
         if (task.task.prepMinutes > 0) {
             item(key = "prep") { PrepClock(task, prepStartedAt, onStartPrep, Modifier.callItem()) }
         }
         if (!beside) item(key = "card") { Column(Modifier.callItem()) { card() } }
-        item(key = "mic") { CallNote(stringResource(R.string.conversation_speak_answers), R.drawable.ic_mic, Modifier.callItem()) }
+        item(key = "sound") { CallNote(stringResource(R.string.conversation_sound_note), R.drawable.ic_volume_up, Modifier.callItem()) }
     }
 }
 
@@ -300,18 +278,7 @@ private fun PrepClock(
 ) {
     val locale = currentLocale()
     val prep = task.task.prepMinutes
-    val shared = task.task.prepShared
-    val line =
-        if (shared != null) {
-            stringResource(
-                R.string.conversation_prep_shared,
-                formatDuration((shared.minutes * 60).roundToLong(), locale),
-                spokenList(shared.tasks.map { it.toString() }, locale),
-                formatDuration((prep * 60).roundToLong(), locale),
-            )
-        } else {
-            stringResource(R.string.conversation_prep, formatDuration((prep * 60).roundToLong(), locale))
-        }
+    val line = stringResource(R.string.conversation_prep, formatDuration((prep * 60).roundToLong(), locale))
 
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {

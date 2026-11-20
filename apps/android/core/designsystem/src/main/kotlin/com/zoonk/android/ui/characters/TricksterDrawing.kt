@@ -2,6 +2,7 @@ package com.zoonk.android.ui.characters
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -14,8 +15,12 @@ enum class TricksterExpression { Sly, Smug, Defeated }
 /** Main's `@zoonk/ui` Trickster, path for path; artwork colors, the same in light and dark. */
 class TricksterDrawing(
     private val holdsSign: Boolean,
+    /** Main's `view="face"`: cropped to his face for icon sizes, with no shadow. */
+    private val faceOnly: Boolean = false,
 ) : CharacterDrawing<TricksterExpression> {
-    override val viewBox = Rect(0f, 0f, 160f, 160f)
+    override val viewBox = if (faceOnly) Rect(Offset(25.5f, 51.5f), Size(93f, 93f)) else Rect(0f, 0f, 160f, 160f)
+
+    override val clipsToBox: Boolean get() = faceOnly
 
     override fun pose(
         expression: TricksterExpression,
@@ -47,7 +52,7 @@ class TricksterDrawing(
         }
 
     override fun ArtPainter.draw(face: TricksterExpression) {
-        part(CharacterPart.Shadow, Offset(72f, 150f)) { fill(TricksterShapes.shadow, Color.Black, alpha = 0.22f) }
+        if (!faceOnly) part(CharacterPart.Shadow, Offset(72f, 150f)) { fill(TricksterShapes.shadow, Color.Black, alpha = 0.22f) }
         part(CharacterPart.Body, Offset(72f, 142f)) {
             part(CharacterPart.ArmLeft, Offset(46f, 116f)) { fill(TricksterShapes.armLeft, Violet) }
             part(CharacterPart.ArmRight, Offset(98f, 116f)) { fill(TricksterShapes.armRight, Violet) }

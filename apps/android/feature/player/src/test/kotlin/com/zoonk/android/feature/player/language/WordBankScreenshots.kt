@@ -8,9 +8,11 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.player.LessonPlayerHarness
+import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -44,7 +46,7 @@ class WordBankScreenshots {
     private fun capture(name: String) {
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     private fun build(
@@ -52,8 +54,11 @@ class WordBankScreenshots {
         step: LessonStep = longReading("read"),
         words: List<String> = LONG_SENTENCE,
         layoutDirection: LayoutDirection? = null,
+        correct: Boolean = true,
     ) {
-        harness.play(listOf(step, summaryStep("end")), layoutDirection = layoutDirection)
+        harness.play(listOf(step, summaryStep("end")), layoutDirection = layoutDirection) {
+            grade = { _, _ -> checkResult(isCorrect = correct) }
+        }
         capture("$name-0")
         words.forEachIndexed { index, word ->
             harness.tap(word)
@@ -101,4 +106,28 @@ class WordBankScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneFillBlankDark() = build("fill-blank-phone-dark", fillBlank("blank"), listOf("pay"))
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneWrong() = build("reading-phone-wrong", words = LONG_SENTENCE.take(2), correct = false)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneFillBlankWrong() = build("fill-blank-phone-wrong", fillBlank("blank"), listOf("rent"), correct = false)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun expandedWrong() = build("reading-expanded-wrong", words = LONG_SENTENCE.take(2), correct = false)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun expandedFillBlank() = build("fill-blank-expanded", fillBlank("blank"), listOf("pay"))
+
+    /** At twice the text size a 900dp window is too narrow for two pages, so it lays out wide in one column. */
+    @Test
+    @Config(qualifiers = "w900dp-h700dp-land-xhdpi")
+    fun wideInOneColumnWrong() {
+        RuntimeEnvironment.setFontScale(2f)
+        build("fill-blank-wide-wrong", fillBlank("blank"), listOf("rent"), correct = false)
+    }
 }

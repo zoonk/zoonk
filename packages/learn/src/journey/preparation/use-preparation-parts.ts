@@ -2,114 +2,95 @@
 
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { getLessonShare } from "@zoonk/core/view-models/syllabus/lesson-share";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
+import { useFormatShare } from "../../_utils/percent";
+import { type StudyCount, type getPlanTopics, getStudyCounts } from "./study-counts";
 
 export type Preparation = NonNullable<ProgressView["preparation"]>;
 
 export type Lessons = SyllabusView["lessons"];
 
-type PreparationPart = {
-  caption: string;
-  key: "coverage" | "lessons" | "mastery" | "mocks" | "retention";
-  label: string;
-  value: number | null;
-};
+export type PlanTopics = ReturnType<typeof getPlanTopics>;
 
-function useTestCopy(mocks: Preparation["components"]["mocks"]) {
+type PreparationPart = { key: string; label: string; value: string };
+
+function useCountLabel() {
   const t = useExtracted();
-  const count = mocks.taken;
 
-  switch (mocks.kind) {
-    case "fullReviews":
-      return {
-        caption: t(
-          "{count, plural, =0 {# full reviews done} one {# full review done} other {# full reviews done}}",
-          { count },
-        ),
-        label: t("Full reviews"),
-      };
-    case "weeklyChallenges":
-      return {
-        caption: t(
-          "{count, plural, =0 {# weekly challenges} one {# weekly challenge} other {# weekly challenges}}",
-          { count },
-        ),
-        label: t("Weekly challenges"),
-      };
-    case "mockExams":
-      return {
-        caption: t(
-          "{count, plural, =0 {# mock exams taken} one {# mock exam taken} other {# mock exams taken}}",
-          { count },
-        ),
-        label: t("Mock exams"),
-      };
-    default:
-      return mocks.kind satisfies never;
-  }
+  return ({ kind, unit }: StudyCount): string => {
+    if (unit === "lessons") {
+      return kind === "studied" ? t("Lessons studied") : t("Lessons you already knew");
+    }
+
+    return kind === "studied" ? t("Topics studied") : t("Topics you already knew");
+  };
 }
 
+/** What the number is made of. A part with nothing to show yet has no row. */
 export function usePreparationParts({
   lessons,
   preparation,
+  topics,
 }: {
   lessons: Lessons | null;
   preparation: Preparation;
+  topics: PlanTopics | null;
 }): PreparationPart[] {
   const t = useExtracted();
+  const format = useFormatter();
+  const formatShare = useFormatShare();
+  const countLabel = useCountLabel();
   const { coverage, mastery, mocks, retention } = preparation.components;
-  const notYet = t("Not yet");
-  const test = useTestCopy(mocks);
 
-  const first: PreparationPart = lessons
-    ? {
-        caption: t(
-          "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}",
-          lessons,
-        ),
-        key: "lessons",
-        label: t("Lessons"),
-        value: getLessonShare(lessons),
-      }
-    : {
-        caption: t(
-          "{studied, number} of {total, plural, one {# skill} other {# skills}}, weighted by importance",
-          { studied: coverage.studiedSkills, total: coverage.totalSkills },
-        ),
-        key: "coverage",
-        label: t("Coverage"),
-        value: coverage.value,
-      };
+  const counts = getStudyCounts({ coverage, lessons, topics }).map((count): PreparationPart => ({
+    key: `${count.unit}-${count.kind}`,
+    label: countLabel(count),
+    value: t("{done, number} of {total, number}", count),
+  }));
 
   return [
-    first,
-    {
-      caption:
-        mastery.value === null
-          ? t("Shows after a few practice questions")
-          : t("{correct, number} of {answered, number} right", {
-              answered: mastery.answered,
-              correct: mastery.correct,
+    ...counts,
+    ...(mastery.value === null
+      ? []
+      : [
+          {
+            key: "mastery" as const,
+            label: t("Right answers"),
+            value: t("{done, number} of {total, number}", {
+              done: mastery.correct,
+              total: mastery.answered,
             }),
-      key: "mastery",
-      label: t("Mastery"),
-      // The headline's measure: a few right answers say less than many.
-      value: mastery.supported,
-    },
-    {
-      caption: retention.value === null ? notYet : t("Of what you studied"),
-      key: "retention",
-      // Not "Memory": that's the settings feature (what Zoonk remembers about you), and the same
-      // English shares one translation across the app.
-      label: t("Long-term memory"),
-      value: retention.value,
-    },
-    {
-      caption: mocks.taken === 0 ? notYet : test.caption,
-      key: "mocks",
-      label: test.label,
-      value: mocks.value,
-    },
+          },
+        ]),
+    ...(retention.value === null
+      ? []
+      : [
+          {
+            key: "retention" as const,
+            label: t("Remembered"),
+            value: formatShare(retention.value),
+          },
+        ]),
+    ...(mocks.taken === 0
+      ? []
+      : [
+          {
+            key: "mocks" as const,
+            label: {
+              fullReviews: t("Reviews of every topic"),
+              mockExams: t("Mock exams"),
+              weeklyChallenges: t("Weekly challenges"),
+            }[mocks.kind],
+            value:
+              mocks.kind === "fullReviews"
+                ? t({
+                    description:
+                      'How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews.',
+                    message: "{reviews, plural, one {# done} other {# done}}",
+                    values: { reviews: mocks.taken },
+                  })
+                : format.number(mocks.taken),
+          },
+        ]),
   ];
 }

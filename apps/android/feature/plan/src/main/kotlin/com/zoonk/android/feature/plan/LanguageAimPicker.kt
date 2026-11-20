@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import android.content.res.Resources
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -21,21 +23,36 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.LanguageAimChoicesInner
 import java.time.LocalDate
+import java.util.Locale
+
+fun languageAimTitle(
+    resources: Resources,
+    targetLanguage: String?,
+    locale: Locale,
+): String =
+    if (targetLanguage.isNullOrEmpty()) {
+        resources.getString(R.string.onboarding_aim_picker_title)
+    } else {
+        resources.getString(R.string.onboarding_aim_title, languageName(targetLanguage, locale))
+    }
 
 @Composable
 fun languageAimName(aim: String): String? = languageAimNameResource(aim)?.let { stringResource(it) }
 
 fun languageAimNameResource(aim: String): Int? =
-    when (aim) {
+    when (aim.removeSuffix("+")) {
         "A2" -> R.string.onboarding_aim_travel
         "B1" -> R.string.onboarding_aim_talk
         "B2" -> R.string.onboarding_aim_work
@@ -57,6 +74,10 @@ fun reasonTitleResource(reason: String): Int? =
 @Composable
 fun LanguageAimRow(
     aim: String,
+    /** The aim as the rest of the plan names it ("B1+"), which its row and choice show. */
+    label: String?,
+    /** The goal's language, which names the row: "English level to reach". */
+    targetLanguage: String?,
     choices: List<LanguageAimChoicesInner>,
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
@@ -71,15 +92,15 @@ fun LanguageAimRow(
 ) {
     if (choices.isEmpty()) return
     ListRow(
-        headline = { Text(stringResource(R.string.onboarding_your_aim)) },
+        headline = { Text(languageAimTitle(LocalResources.current, targetLanguage, currentLocale())) },
         supporting = {
-            Text(listOfNotNull(aim, languageAimName(aim)).factsLine())
+            Text(listOfNotNull(label ?: aim, languageAimName(aim)).factsLine())
             note?.let { Text(it) }
         },
-        trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
+        trailing = { Text(stringResource(R.string.onboarding_aim_change), style = MaterialTheme.typography.labelMedium) },
         chevron = false,
         onClick = { onOpenChange(true) },
-        modifier = modifier,
+        modifier = modifier.bleed(LIST_ITEM_INSET),
     )
     if (open) {
         LanguageAimSheet(
@@ -92,6 +113,7 @@ fun LanguageAimRow(
             endDate,
             description,
             endDates = dates(),
+            label = label,
         )
     }
 }
@@ -108,6 +130,7 @@ fun LanguageAimSheet(
     endDate: LocalDate? = null,
     description: String? = null,
     endDates: Map<String, LocalDate?> = emptyMap(),
+    label: String? = null,
 ) {
     val locale = currentLocale()
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
@@ -128,13 +151,19 @@ fun LanguageAimSheet(
                         val date = if (choice.aim.value == aim) endDate else endDates[choice.aim.value]
                         Choice(
                             choice.aim.value,
-                            listOfNotNull(choice.aim.value, languageAimName(choice.aim.value)).factsLine(),
+                            listOfNotNull(
+                                if (choice.aim.value == aim) label ?: aim else choice.aim.value,
+                                languageAimName(choice.aim.value),
+                            ).factsLine(),
                             if (date == null) {
-                                stringResource(R.string.onboarding_aim_hours_more, formatNumber(choice.hours.toDouble(), locale))
+                                stringResource(
+                                    R.string.onboarding_aim_hours_more,
+                                    formatMinutes(choice.hours.toInt() * MINUTES_PER_HOUR, locale),
+                                )
                             } else {
                                 stringResource(
                                     R.string.onboarding_aim_hours_month,
-                                    formatNumber(choice.hours.toDouble(), locale),
+                                    formatMinutes(choice.hours.toInt() * MINUTES_PER_HOUR, locale),
                                     formatDate(date, locale, DateStyle.MonthShort),
                                 )
                             },
@@ -157,3 +186,5 @@ fun LanguageAimSheet(
         }
     }
 }
+
+private const val MINUTES_PER_HOUR = 60

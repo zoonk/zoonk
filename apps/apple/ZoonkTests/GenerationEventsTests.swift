@@ -462,7 +462,7 @@ private actor EndedRunTransport: ClientTransport {
     let stream = AsyncThrowingStream<ArraySlice<UInt8>, any Error> { continuation in
       Task {
         continuation.yield(bytes.prefix(1))
-        try? await Task.sleep(for: .milliseconds(200))
+        await Task.yield()
         continuation.yield(bytes.dropFirst())
         continuation.finish()
       }

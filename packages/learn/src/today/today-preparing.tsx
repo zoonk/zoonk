@@ -6,7 +6,6 @@ import { Page, PageHeader, PageHeaderContent, PageTitle } from "../_components/p
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
-import { TodayEyebrow } from "./today-heading";
 
 export function TodayPreparing({
   banner = null,
@@ -28,22 +27,17 @@ export function TodayPreparing({
       {banner}
       <PageHeader>
         <PageHeaderContent>
-          <TodayEyebrow>
-            <span>{t("Building your plan")}</span>
-          </TodayEyebrow>
           <PageTitle>{t("Today")}</PageTitle>
         </PageHeaderContent>
       </PageHeader>
 
       <section className="max-w-column flex w-full flex-col gap-8">
         <GenerationWait kind="firstLesson" run={run}>
-          <h2 className="text-[0.9375rem] leading-snug font-semibold wrap-break-word">
+          <h2 className="text-reading leading-snug font-semibold wrap-break-word">
             {t("Building your {goal} plan", { goal: goalTitle })}
           </h2>
           <GenerationTimelineDescription>
-            {t(
-              "It usually takes a minute or two. Your first day opens here as soon as it's ready.",
-            )}
+            {t("It takes a minute or two. Your first day opens here as soon as it's ready.")}
           </GenerationTimelineDescription>
         </GenerationWait>
       </section>

@@ -1,24 +1,28 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type ScorePatternsData } from "@zoonk/core/progress/get-score-patterns";
-import { MIN_PATTERN_ANSWERS } from "@zoonk/core/progress/score-performance";
-import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { getScoreWeekdayLabel } from "./_utils/weekday";
 import { getTimePeriodNames } from "./pattern-names";
 
+/** With enough answers and no day ahead, any day is the best one, as "Any time" says of the time. */
 export async function getBestDayName(
   verdict: ScorePatternsData["dayVerdict"],
 ): Promise<string | null> {
-  const t = await getExtracted();
-  const locale = await getAppLocale();
-
   if (verdict.kind === "even") {
-    return t("Any day");
+    const t = await getExtracted();
+
+    return t({
+      description: "Best day when every day of the week scores about the same",
+      message: "Any day",
+    });
   }
 
-  return verdict.kind === "best"
-    ? getScoreWeekdayLabel({ dayOfWeek: verdict.best.dayOfWeek, locale })
-    : null;
+  if (verdict.kind !== "best") {
+    return null;
+  }
+
+  const locale = await getAppLocale();
+  return getScoreWeekdayLabel({ dayOfWeek: verdict.best.dayOfWeek, locale });
 }
 
 export async function getBestTimeName(
@@ -32,47 +36,4 @@ export async function getBestTimeName(
   }
 
   return verdict.kind === "best" ? (names.at(verdict.best.period) ?? null) : null;
-}
-
-export async function getEvenDaysNote(
-  verdict: ScorePatternsData["dayVerdict"],
-): Promise<string | null> {
-  const t = await getExtracted();
-
-  return verdict.kind === "even"
-    ? t(
-        "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works.",
-        { points: verdict.points },
-      )
-    : null;
-}
-
-export async function getEvenTimesNote(
-  verdict: ScorePatternsData["timeVerdict"],
-): Promise<string | null> {
-  const t = await getExtracted();
-
-  return verdict.kind === "even"
-    ? t(
-        "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works.",
-        { points: verdict.points },
-      )
-    : null;
-}
-
-/** Without `patterns` it leaves out what each chart says under itself. */
-export async function PatternsNote({ patterns }: { patterns?: ScorePatternsData }) {
-  const t = await getExtracted();
-  const space = getSentenceSpace(await getAppLocale());
-
-  const sentences = [
-    patterns && (await getEvenDaysNote(patterns.dayVerdict)),
-    patterns && (await getEvenTimesNote(patterns.timeVerdict)),
-    t(
-      "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern.",
-      { count: MIN_PATTERN_ANSWERS },
-    ),
-  ].filter(Boolean);
-
-  return <p className="text-muted-foreground text-sm text-pretty">{sentences.join(space)}</p>;
 }

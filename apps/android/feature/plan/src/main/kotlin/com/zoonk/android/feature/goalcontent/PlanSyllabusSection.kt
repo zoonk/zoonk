@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,17 +17,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatProgressShare
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.api.models.GoalContentGoal
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusCourseWeights
@@ -45,7 +45,6 @@ fun PlanSyllabusSection(
     syllabus: Syllabus,
     onOpenSubject: (String) -> Unit,
     modifier: Modifier = Modifier,
-    note: @Composable () -> Unit = {},
 ) {
     val groups = groupSubjects(syllabus.subjects, modules = syllabus.kind == Syllabus.Kind.MODULES)
     val exam = syllabus.goal.kind == GoalContentGoal.Kind.EXAM
@@ -70,22 +69,17 @@ fun PlanSyllabusSection(
                     )
                 }
                 SharedExamsNote(syllabus.sharedExams, Modifier.padding(top = 8.dp))
-                Box(Modifier.padding(horizontal = PAGE_PADDING)) { note() }
             } else {
                 SectionHeader(stringResource(R.string.goalcontent_modules), Modifier.padding(horizontal = PAGE_PADDING)) {
-                    FlowRow(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        LegendItem(LegendDot.Studied, stringResource(R.string.goalcontent_studied))
-                        LegendItem(LegendDot.Known, stringResource(R.string.goalcontent_known))
-                        LegendItem(LegendDot.New, stringResource(R.string.goalcontent_new))
-                    }
+                    CoverageLegend()
                 }
             }
 
             groups.forEach { group ->
-                val name = if (group.extra) beyondGroupName(syllabus) else group.name
+                val name = if (group.extra) stringResource(R.string.goalcontent_also_in_plan) else group.name
                 if (name != null) SectionLabel(name, Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 16.dp, bottom = 4.dp))
                 group.subjects.forEachIndexed { index, subject ->
-                    if (index > 0) HorizontalDivider()
+                    if (index > 0) ListDivider()
                     SubjectRow(
                         subject = subject,
                         alsoIn = alsoInLine(syllabus.sharedExams, subject.sharedWith),
@@ -96,8 +90,16 @@ fun PlanSyllabusSection(
                 }
             }
 
-            QuestionsSourceNote(syllabus, sectionCount(syllabus), Modifier.padding(top = 12.dp))
-            CourseWeightsNote(syllabus.subjects, syllabus.courseWeights, Modifier.padding(top = 8.dp))
+            SectionNote(annotate(sectionCount(syllabus)), Modifier.padding(top = 12.dp))
+            // Main's quiet "Sources": where the question counts and the course's weights come from, for who wants to check.
+            if (syllabus.questionsSource != null || syllabus.courseWeights?.source != null) {
+                QuietDisclosure(stringResource(R.string.plan_sources), Modifier.padding(horizontal = PAGE_PADDING)) {
+                    Column(Modifier.bleed(PAGE_PADDING).padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        QuestionsSourceNote(syllabus)
+                        CourseWeightsNote(syllabus.subjects, syllabus.courseWeights)
+                    }
+                }
+            }
         }
     }
 }
@@ -121,7 +123,7 @@ private fun SubjectRow(
     val name: @Composable (Modifier) -> Unit = { nameModifier ->
         Column(nameModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
-                text = subject.name,
+                text = subject.shortName,
                 color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
             )
             if (alsoIn != null) {
@@ -134,7 +136,7 @@ private fun SubjectRow(
             CoverageBar(studied = bar.studied, known = bar.known, modifier = progressModifier)
         } else {
             Text(
-                stringResource(R.string.goalcontent_not_in_plan),
+                planOutsideReason(subject.notPlannedReason),
                 progressModifier,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
@@ -155,23 +157,23 @@ private fun SubjectRow(
                             modifier = Modifier.width(QUESTIONS_WIDTH),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = factsStyle(),
-                            textAlign = TextAlign.End,
+                            textAlign = layoutEnd(),
                             maxLines = 1,
                         )
                     }
-                    progress(Modifier.width(barWidth))
+                    if (!notPlanned) progress(Modifier.width(barWidth))
                 }
             }
         },
         onClick = onClick,
-        supporting = if (layout == RowLayout.Stacked) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
+        supporting = if (layout == RowLayout.Stacked || notPlanned) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
         meta = {
             Text(
                 text = share?.let { formatProgressShare(it, locale) }.orEmpty(),
                 modifier = Modifier.widthIn(min = SHARE_WIDTH),
                 color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                 style = factsStyle(),
-                textAlign = TextAlign.End,
+                textAlign = layoutEnd(),
             )
         },
     )
@@ -210,14 +212,9 @@ private fun sectionCount(syllabus: Syllabus): String {
 @Composable
 private fun QuestionsSourceNote(
     syllabus: Syllabus,
-    lead: String,
     modifier: Modifier = Modifier,
 ) {
-    val source = syllabus.questionsSource
-    if (source == null) {
-        SectionNote(annotate(lead), modifier)
-        return
-    }
+    val source = syllabus.questionsSource ?: return
     val publisher = sourceHost(source.url)
     val edition = source.edition
     val sentence =
@@ -227,7 +224,7 @@ private fun QuestionsSourceNote(
             stringResource(R.string.goalcontent_questions_source_latest, publisher)
         }
 
-    SectionNote(annotate(factsLine(lead, sentence), publisher to LinkTarget(source.url)), modifier)
+    SectionNote(annotate(sentence, publisher to LinkTarget(source.url)), modifier)
 }
 
 /** How the learner's course weighs the exam's parts, which the plan's time follows. */
@@ -264,3 +261,17 @@ private val BAR_MIN = 112.dp
 private val BAR_MAX = 224.dp
 private val QUESTIONS_WIDTH = 104.dp
 private val SHARE_WIDTH = 40.dp
+
+@Composable
+internal fun planOutsideReason(reason: String?): String =
+    stringResource(
+        when (reason) {
+            "skipped" -> R.string.plan_outside_skipped
+            "known" -> R.string.plan_skipped_known
+            "pastBasics" -> R.string.plan_outside_past_basics
+            "skippedBase" -> R.string.plan_outside_skipped_base
+            "missing" -> R.string.today_coming_not_written
+            "time" -> R.string.plan_outside_time
+            else -> R.string.plan_not_in_your_plan
+        },
+    )

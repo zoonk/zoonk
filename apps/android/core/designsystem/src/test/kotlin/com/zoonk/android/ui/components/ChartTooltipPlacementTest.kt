@@ -38,6 +38,13 @@ class ChartTooltipPlacementTest {
     }
 
     @Test
+    fun aTooltipMayOpenIntoTheVisiblePageAboveTheChart() {
+        assertEquals(-200..300, tooltipRoom(shown = -200..900, height = 300))
+        assertEquals(20..300, tooltipRoom(shown = 20..300, height = 300))
+        assertEquals(0..300, tooltipRoom(shown = null, height = 300))
+    }
+
+    @Test
     fun aColumnScrolledAboveTheViewportShowsNoTooltip() {
         assertNull(tooltipOffset(column, card, width = 400, room = 310..300, gap = 8))
     }

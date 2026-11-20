@@ -2,26 +2,56 @@ import SwiftUI
 
 struct CompletedLessonsScreen: View {
   @Environment(LearnerSummaryStore.self) private var learner
-  @Environment(CompletedLessonsStore.self) private var store
 
   var body: some View {
     Group {
-      if let goal = learner.summary.value?.shownGoal {
-        let lessons = store.lessons(goalId: goal.id)
-
-        content(lessons, goal: goal)
-          .id(goal.id)
-          .loads(lessons)
+      if let summary = learner.summary.value, let goal = summary.shownGoal {
+        CompletedLessonsList(
+          goalId: goal.id,
+          today: PlanDate.today(
+            in: summary.timeZone.flatMap(TimeZone.init(identifier:)) ?? .current)
+        )
+        .id(goal.id)
       } else {
         ProgressView()
           .lonePage()
       }
     }
-    .navigationTitle(title)
     .barTitleAfterHero(
       String(
         localized: "Completed lessons", table: "CompletedLessons",
         comment: "Title of the page listing the lessons the learner finished"))
+  }
+}
+
+/// Newest first, a section per month, each lesson's day at its row's end. A list long enough to
+/// narrow has its plan's groups as its filter: beside it where the page splits into panes, a row of
+/// chips over it otherwise. The filter is the same whichever group shows, so it stays while a
+/// group's lessons load.
+private struct CompletedLessonsList: View {
+  @Environment(CompletedLessonsStore.self) private var store
+  @State private var group: String?
+
+  let goalId: String
+  /// The learner's own day, which decides whether a lesson's day names its year.
+  let today: String
+
+  var body: some View {
+    let every = store.lessons(CompletedLessonsQuery(goalId: goalId))
+    let query = CompletedLessonsQuery(goalId: goalId, group: group)
+    let lessons = store.lessons(query)
+    let filter = lessons.value?.filter ?? every.value?.filter
+
+    PaneBeside(isAvailable: filter != nil, paneEdge: .trailing, primaryShare: 0.66) {
+      if let filter {
+        ZoonkList {
+          CompletedLessonGroupsSection(filter: filter, selection: $group)
+        }
+      }
+    } content: { isBeside in
+      content(lessons, query: query, chips: isBeside ? nil : filter)
+    }
+    .loads(lessons)
   }
 
   private var title: Text {
@@ -31,43 +61,13 @@ struct CompletedLessonsScreen: View {
   }
 
   @ViewBuilder
-  private func content(_ lessons: Resource<CompletedLessonsPage>, goal: LearnerGoal) -> some View {
-    let goalId = goal.id
-
+  private func content(
+    _ lessons: Resource<CompletedLessonsPage>, query: CompletedLessonsQuery,
+    chips: CompletedLessonsFilter?
+  ) -> some View {
     switch lessons.state {
-    case .loaded(let page):
-      ZoonkList {
-        Section {
-          PageHeader(title, eyebrow: Text(goal.displayName))
-        }
-
-        ForEach(days(page.lessons)) { day in
-          Section {
-            ForEach(day.lessons) { lesson in
-              CompletedLessonRow(lesson: lesson)
-            }
-          } header: {
-            SectionTitle(Text(day.title))
-          }
-        }
-
-        if let cursor = page.nextCursor {
-          NextPageRow(failure: store.loadMoreFailures[goalId]) {
-            await store.loadMore(goalId: goalId)
-          }
-          // Again for each page that lands while the row still shows, and once a refresh ends.
-          .task(id: NextPageTrigger(cursor: cursor, isRefreshing: lessons.isRefreshing)) {
-            guard !lessons.isRefreshing else {
-              return
-            }
-
-            await store.loadMore(goalId: goalId)
-          }
-        }
-      }
-      .lonePage()
     case .empty:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "No completed lessons yet", tableName: "CompletedLessons",
@@ -82,63 +82,206 @@ struct CompletedLessonsScreen: View {
           comment: "Explains what the completed lessons page lists, before there's any")
       }
       .lonePage()
+    case .failed(let error) where chips == nil:
+      PracticeLoadFailureView(error: error) {
+        Task { await lessons.refresh() }
+      }
+    case .idle where chips == nil, .loading where chips == nil:
+      ProgressView()
+        .lonePage()
+    default:
+      ZoonkList {
+        Section {
+          PageHeader(title)
+        }
+
+        if let chips {
+          Section {
+            CompletedLessonGroupChips(filter: chips, selection: $group)
+          }
+          .listRowInsets(.vertical, 0)
+          .listRowBackground(Color.clear)
+        }
+
+        rows(lessons, query: query)
+      }
+      .lonePage()
+    }
+  }
+
+  /// Under the filter, which stays where it is while another group's lessons load or fail.
+  @ViewBuilder
+  private func rows(_ lessons: Resource<CompletedLessonsPage>, query: CompletedLessonsQuery)
+    -> some View
+  {
+    switch lessons.state {
+    case .loaded(let page):
+      ForEach(months(page.lessons)) { month in
+        Section {
+          ForEach(month.lessons) { lesson in
+            CompletedLessonRow(lesson: lesson, today: today)
+          }
+        } header: {
+          SectionTitle(Text(month.title))
+        }
+      }
+
+      if let cursor = page.nextCursor {
+        NextPageRow(failure: store.loadMoreFailures[query]) {
+          await store.loadMore(query)
+        }
+        // Again for each page that lands while the row still shows, and once a refresh ends.
+        .task(id: NextPageTrigger(cursor: cursor, isRefreshing: lessons.isRefreshing)) {
+          guard !lessons.isRefreshing else {
+            return
+          }
+
+          await store.loadMore(query)
+        }
+      }
     case .failed(let error):
       PracticeLoadFailureView(error: error) {
         Task { await lessons.refresh() }
       }
-    case .idle, .loading:
+    default:
       ProgressView()
-        .lonePage()
+        .frame(maxWidth: .infinity)
+        .listRowBackground(Color.clear)
     }
   }
 
-  private func days(_ lessons: [CompletedLesson]) -> [CompletedLessonsDay] {
-    let timeZone = learner.summary.value?.timeZone.flatMap(TimeZone.init(identifier:)) ?? .current
+  private func months(_ lessons: [CompletedLesson]) -> [CompletedLessonsMonth] {
     var order: [String] = []
-    var byDay: [String: [CompletedLesson]] = [:]
+    var byMonth: [String: [CompletedLesson]] = [:]
 
     for lesson in lessons {
-      if byDay[lesson.finishedOn] == nil {
-        order.append(lesson.finishedOn)
+      let month = String(lesson.finishedOn.prefix(7))
+
+      if byMonth[month] == nil {
+        order.append(month)
       }
 
-      byDay[lesson.finishedOn, default: []].append(lesson)
+      byMonth[month, default: []].append(lesson)
     }
 
-    return order.map { day in
-      CompletedLessonsDay(
-        id: day, title: completedLessonsDayTitle(day, timeZone: timeZone),
-        lessons: byDay[day] ?? [])
+    return order.map { month in
+      CompletedLessonsMonth(
+        id: month, title: completedLessonsMonthTitle(month, today: today),
+        lessons: byMonth[month] ?? [])
     }
   }
 }
 
-private struct CompletedLessonsDay: Identifiable {
+private struct CompletedLessonsMonth: Identifiable {
   let id: String
   let title: String
   let lessons: [CompletedLesson]
+}
+
+extension CompletedLessonsFilter.Kind {
+  /// The plan's own word for its groups, as its Plan page titles them.
+  fileprivate var title: Text {
+    switch self {
+    case .subjects: Text("Subjects", tableName: "Plan", comment: "Section of an exam's subjects")
+    case .modules: Text("Modules", tableName: "Plan", comment: "Section of a plan's modules")
+    case .phases: Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases")
+    }
+  }
+}
+
+private var everyLessonTitle: Text {
+  Text(
+    "All", tableName: "CompletedLessons",
+    comment:
+      "The first choice of the filter on Completed lessons, before the subjects: every lesson.")
+}
+
+/// The filter where there's no room beside the list: each group with its count.
+private struct CompletedLessonGroupChips: View {
+  let filter: CompletedLessonsFilter
+  @Binding var selection: String?
+
+  var body: some View {
+    FilterChips(groups: filter.groups.map(\.key), selection: $selection, name: filter.kind.title) {
+      key in
+      let group = filter.groups.first { $0.key == key }
+
+      if let group {
+        Text(group.name)
+      } else {
+        everyLessonTitle
+      }
+
+      Text((group?.lessons ?? filter.total).formatted())
+        .typeStyle(.data)
+    }
+  }
+}
+
+/// The filter beside the list: the group shown on `muted`, each with its count at its row's end.
+private struct CompletedLessonGroupsSection: View {
+  let filter: CompletedLessonsFilter
+  @Binding var selection: String?
+
+  var body: some View {
+    Section {
+      row(nil, title: everyLessonTitle, lessons: filter.total)
+
+      ForEach(filter.groups) { group in
+        row(group.key, title: Text(group.name), lessons: group.lessons)
+      }
+    } header: {
+      SectionTitle(filter.kind.title)
+    }
+  }
+
+  private func row(_ key: String?, title: Text, lessons: Int) -> some View {
+    Button {
+      selection = key
+    } label: {
+      HStack(spacing: 12) {
+        title
+          .foregroundStyle(.primary)
+          .lineLimit(1)
+          .frame(maxWidth: .infinity, alignment: .leading)
+
+        Text(lessons.formatted())
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+      }
+    }
+    .currentRow(selection == key)
+    .accessibilityAddTraits(selection == key ? .isSelected : [])
+  }
 }
 
 private struct CompletedLessonRow: View {
   @Environment(AppRouter.self) private var router
 
   let lesson: CompletedLesson
+  let today: String
 
   var body: some View {
     Button {
       router.open(.lesson(lessonId: lesson.lessonId))
     } label: {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(lesson.title)
-          .foregroundStyle(.primary)
+      HStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(lesson.title)
+            .foregroundStyle(.primary)
 
-        if let chapterTitle = lesson.chapterTitle {
-          Text(chapterTitle)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          if let chapterTitle = lesson.chapterTitle {
+            Text(chapterTitle)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
+          }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+        Text(PlanDate.format(lesson.finishedOn, today: today))
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
       .disclosureChevron()
     }
   }
@@ -174,32 +317,9 @@ private struct NextPageRow: View {
   }
 }
 
-/// Main's day sections: the learner's own today and yesterday, else the date, with the year only
-/// when it isn't this one. A finished day is a calendar day, so it's formatted in UTC.
-func completedLessonsDayTitle(_ finishedOn: String, now: Date = .now, timeZone: TimeZone) -> String
-{
-  guard let finished = studyDate(finishedOn) else {
-    return finishedOn
-  }
-
-  var local = Calendar(identifier: .gregorian)
-  local.timeZone = timeZone
-  var utc = Calendar(identifier: .gregorian)
-  utc.timeZone = .gmt
-  let today = local.dateComponents([.year, .month, .day], from: now)
-
-  switch utc.date(from: today).flatMap({ utc.dateComponents([.day], from: finished, to: $0).day }) {
-  case 0:
-    return String(
-      localized: "Today", table: "CompletedLessons",
-      comment: "Section of the lessons last finished today")
-  case 1:
-    return String(
-      localized: "Yesterday", table: "CompletedLessons",
-      comment: "Section of the lessons last finished yesterday")
-  default:
-    let date = Date.FormatStyle.studyDay.weekday(.wide).month(.wide).day()
-    return finished.formatted(
-      utc.component(.year, from: finished) == today.year ? date : date.year())
-  }
+/// A month's section title: "November", with its year once it isn't this one, capitalized as a
+/// title is in every language.
+func completedLessonsMonthTitle(_ month: String, today: String) -> String {
+  let title = PlanDate.monthText("\(month)-01", today: today, wide: true)
+  return title.prefix(1).localizedUppercase + title.dropFirst()
 }

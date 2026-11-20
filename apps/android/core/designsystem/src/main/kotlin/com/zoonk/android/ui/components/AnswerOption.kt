@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
@@ -20,16 +22,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -48,7 +57,8 @@ fun AnswerOptionGroup(
  * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
  * skips it), its words (in `labelLarge`, main's 15/500, unless the content sets its own) and,
  * once checked, the word its result shows. An option among several
- * picks is a [Role.Checkbox], and one that acts at once is a [Role.Button]; [tag] replaces the
+ * picks is a [Role.Checkbox], one that acts at once is a [Role.Button], and one shown after the
+ * fact has no role and nothing to press; [tag] replaces the
  * result's word (an order step's place). A [glyph] marks the key in place of its number, as main's
  * net-scored statements (✓, ✗, –). The key sits on the words' first line, or at the top with
  * [keyAtTop]. [readingContent] supplies a picture's caption for intrinsic sizing without placing a
@@ -62,7 +72,7 @@ fun AnswerOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    role: Role = Role.RadioButton,
+    role: Role? = Role.RadioButton,
     tag: (@Composable () -> Unit)? = null,
     glyph: Painter? = null,
     keyAtTop: Boolean = false,
@@ -73,6 +83,7 @@ fun AnswerOption(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
+    val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null)
 
     TagBesideOrUnder(
         modifier =
@@ -83,14 +94,28 @@ fun AnswerOption(
                 .border(tone.border, shape)
                 .then(
                     when (role) {
+                        null -> Modifier.semantics(mergeDescendants = true) {}
                         Role.Checkbox -> Modifier.toggleable(value = picked, enabled = enabled, role = role, onValueChange = { onClick() })
                         Role.Button -> Modifier.clickable(enabled = enabled, role = role, onClick = onClick)
                         else -> Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
                     },
-                ).padding(horizontal = 14.dp, vertical = 13.dp),
+                ).padding(horizontal = 16.dp, vertical = 13.dp),
         content = { ProvideTextStyle(MaterialTheme.typography.labelLarge, content) },
-        tag = tag ?: { if (result != null) AnswerTag(picked, result, guessed = guessed) },
-        leading = { NumberKey(marker, glyph, Modifier) },
+        tag =
+            tag ?: {
+                when {
+                    result != null -> AnswerTag(picked, result, guessed = guessed)
+                    picked && role != Role.Button -> PickedTag(guessed)
+                }
+            },
+        leading =
+            if (key ==
+                AnswerKey.None
+            ) {
+                null
+            } else {
+                { NumberKey(marker, glyph, picked && result == null, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f)) }
+            },
         leadingAtTop = keyAtTop,
         readingContent = readingContent?.let { reading -> { ProvideTextStyle(MaterialTheme.typography.labelLarge, reading) } },
         onReadingOverflow = onReadingOverflow,
@@ -101,30 +126,53 @@ fun AnswerOption(
 private fun NumberKey(
     number: Int,
     glyph: Painter?,
+    picked: Boolean,
     modifier: Modifier,
 ) {
+    // A picked option's key turns ink: the option's mark, as a radio's dot is.
+    val ink = MaterialTheme.colorScheme.onSurface
     Box(
         modifier =
             modifier
                 .clearAndSetSemantics {}
                 .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)
-                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.04f), RoundedCornerShape(ZoonkRadius.sm))
-                .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f), RoundedCornerShape(ZoonkRadius.sm)),
+                .background(if (picked) ink else ink.copy(alpha = 0.04f), RoundedCornerShape(ZoonkRadius.sm))
+                .border(1.dp, if (picked) Color.Transparent else ink.copy(alpha = 0.12f), RoundedCornerShape(ZoonkRadius.sm)),
         contentAlignment = Alignment.Center,
     ) {
-        // A glyph keeps the digit's size and baseline, so its key lines up with the option's words.
+        // A glyph keeps the digit's size and baseline, so its key lines up with the option's words. Every key is as
+        // wide as its widest digit, so a "1" doesn't start its option's words before a "2" does.
+        val style = MaterialTheme.typography.labelSmall.withTabularFigures()
+        val text = number.toString()
+        val measurer = rememberTextMeasurer()
+        val widest =
+            remember(
+                style,
+                text.length,
+                measurer,
+            ) { ('0'..'9').maxOf { measurer.measure(it.toString().repeat(text.length), style).size.width } }
         Text(
-            text = number.toString(),
-            modifier = Modifier.padding(horizontal = 4.dp),
-            color = if (glyph == null) MaterialTheme.colorScheme.onSurfaceVariant else Color.Transparent,
-            style = MaterialTheme.typography.labelSmall.withTabularFigures(),
+            text = text,
+            modifier = Modifier.padding(horizontal = 4.dp).widthIn(min = with(LocalDensity.current) { widest.toDp() }),
+            color =
+                if (glyph !=
+                    null
+                ) {
+                    Color.Transparent
+                } else if (picked) {
+                    MaterialTheme.colorScheme.surface
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+            textAlign = TextAlign.Center,
+            style = style,
         )
         glyph?.let {
             Icon(
                 it,
                 contentDescription = null,
                 modifier = Modifier.size(14.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = if (picked) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -178,13 +226,8 @@ fun TagBesideOrUnder(
         val tagWidth = tagPlaceable?.width ?: 0
         val tagHeight = tagPlaceable?.height ?: 0
         val besideWidth = max(0, contentWidth - gap - tagWidth)
-        val beside =
-            tagPlaceable == null ||
-                text == null ||
-                (
-                    text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth &&
-                        max(text.minIntrinsicHeight(besideWidth), tagHeight) <= text.minIntrinsicHeight(contentWidth) + gap / 2 + tagHeight
-                )
+        // Beside whenever the words' longest word fits there, so the options of one list never put it two ways.
+        val beside = tagPlaceable == null || text == null || text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth
         val wordsWidth = if (beside && tagPlaceable != null) besideWidth else contentWidth
         val wordsPlaceable = text?.measure(loose.copy(maxWidth = wordsWidth))
         val wordsHeight = wordsPlaceable?.height ?: 0
@@ -219,3 +262,16 @@ fun TagBesideOrUnder(
         }
     }
 }
+
+internal enum class AnswerKey { None, Hidden, Visible }
+
+internal fun answerKey(
+    keyboard: Int,
+    checked: Boolean,
+    ordered: Boolean,
+): AnswerKey =
+    when {
+        keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED || ordered -> AnswerKey.None
+        checked -> AnswerKey.Hidden
+        else -> AnswerKey.Visible
+    }

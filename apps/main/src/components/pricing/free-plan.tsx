@@ -1,22 +1,25 @@
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
+import { PageStartMark } from "@/components/public/page-start";
 import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { formatPrice } from "@zoonk/utils/currency";
 import { getExtracted } from "next-intl/server";
 import { PlanNextStep } from "./for-viewer";
 import {
   PLAN_CARD_CLASS,
+  PLAN_CARD_ROWS_CLASS,
   PLAN_NAME_ROW_CLASS,
   PLAN_PRICE_CLASS,
   PlanIncludes,
   PlanPrice,
 } from "./plan-includes";
-import { formatPlanPrice } from "./plan-price";
 import { PLAN_ACTION_NOTE_CLASS, PLUS_CTA_CLASS } from "./plus-cta";
 import { type PlusViewerState } from "./plus-plan";
+import { getStudyBuddyAllowance } from "./study-buddy-allowance";
 
 const FREE_PLAN_ID = "free-plan";
 
@@ -29,7 +32,7 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
         className={cn(buttonVariants({ size: "lg", variant: "outline" }), PLUS_CTA_CLASS)}
         href="/start"
       >
-        {t("Start free")}
+        {t("Build my plan")}
       </Link>
     );
   }
@@ -44,15 +47,21 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
     );
   }
 
-  if (viewerState.status === "free") {
-    return (
-      <p className="text-muted-foreground flex min-h-10 items-center justify-center text-sm">
-        {t("Your current plan")}
-      </p>
-    );
-  }
-
-  return null;
+  return (
+    <p className="text-muted-foreground flex min-h-11 items-center justify-center text-center text-sm font-medium text-balance">
+      {viewerState.status === "free"
+        ? t({
+            description:
+              "On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.",
+            message: "What you have now",
+          })
+        : t({
+            description:
+              "On the Free card, in the button's place, for a learner who has Plus: everything listed on this card is part of what they already have.",
+            message: "Included in Plus",
+          })}
+    </p>
+  );
 }
 
 export async function FreePlan({
@@ -68,23 +77,30 @@ export async function FreePlan({
   const locale = await getAppLocale();
   const limits = getFreePlanLimits();
 
+  const studyBuddy = await getStudyBuddyAllowance({
+    per30Days: limits.tutorMessagesPer30Days,
+    perDay: limits.tutorMessagesPerDay,
+  });
+
   return (
-    <section aria-labelledby={FREE_PLAN_ID} className={cn(SURFACE_CLASS, PLAN_CARD_CLASS)}>
+    <section
+      aria-labelledby={FREE_PLAN_ID}
+      className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, PLAN_CARD_ROWS_CLASS)}
+    >
       <div className={PLAN_NAME_ROW_CLASS}>
-        <h2 className="text-base font-semibold tracking-[-0.015em]" id={FREE_PLAN_ID}>
+        <h2 className="text-section" id={FREE_PLAN_ID}>
           {t("Free")}
         </h2>
       </div>
 
       <div className={PLAN_PRICE_CLASS}>
-        {currency && (
-          <PlanPrice amount={formatPlanPrice({ locale, price: { amount: 0, currency } })} />
-        )}
+        {currency && <PlanPrice amount={formatPrice(0, currency, locale)} />}
       </div>
 
       <PlanNextStep
         render={(reader) => (
           <>
+            <PageStartMark />
             <FreePlanAction viewerState={reader} />
 
             {(reader.status === "visitor" || reader.status === "guest") && (
@@ -101,25 +117,12 @@ export async function FreePlan({
         <PlanIncludes
           items={[
             { id: "plan", text: t("A plan for your goal and your date") },
-            {
-              id: "exam",
-              text: t(
-                "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}",
-                { days: limits.examPrepDays ?? 0 },
-              ),
-            },
-            {
-              id: "buddy",
-              text: t(
-                "An AI study buddy: {count, plural, one {# message} other {# messages}} a day",
-                { count: limits.tutorMessagesPerDay ?? 0 },
-              ),
-            },
-            { id: "calls", text: t("Speaking practice calls, with lower limits than Plus") },
+            { id: "buddy", text: studyBuddy },
+            { id: "calls", text: t("Speaking practice calls") },
           ]}
           summary={t(
             "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month",
-            { goals: limits.activeGoals ?? 0, lessons: limits.lessonsPerMonth ?? 0 },
+            { goals: limits.activeGoals ?? 0, lessons: limits.lessonsPer30Days ?? 0 },
           )}
         />
       </div>

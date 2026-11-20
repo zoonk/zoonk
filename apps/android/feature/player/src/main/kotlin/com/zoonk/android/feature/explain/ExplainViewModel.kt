@@ -1,5 +1,8 @@
 package com.zoonk.android.feature.explain
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AppCache
@@ -65,20 +68,35 @@ class ExplainViewModel(
 
     fun retry() = follower.retry()
 
-    /** Main's "Try again" on a slow wait: false when it couldn't start. */
-    suspend fun retrySlow(explanation: Explanation): Boolean {
-        if (explanation.status != Explanation.Status.PREPARING) return true
-        val generationId =
-            try {
-                writeAgain()
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                return false
-            }
-        followed = generationId
-        follower.follow(generationId)
-        return true
+    /** Main's slow wait: asked again, it says the explanation is still coming; a write that failed asks again. */
+    enum class SlowRetry { Idle, Asking, Asked }
+
+    /** Owned here, so a recreation while it asks still follows the new run and says so. */
+    var slowRetry by mutableStateOf(SlowRetry.Idle)
+        private set
+
+    /** Main's "Try again" on a slow wait: writes [explanation] again while it's still being prepared, and follows the new run. */
+    fun retrySlow(explanation: Explanation) {
+        if (slowRetry != SlowRetry.Idle) return
+        if (explanation.status != Explanation.Status.PREPARING) {
+            slowRetry = SlowRetry.Asked
+            return
+        }
+        slowRetry = SlowRetry.Asking
+        viewModelScope.launch {
+            val generationId =
+                try {
+                    writeAgain()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    slowRetry = SlowRetry.Idle
+                    return@launch
+                }
+            followed = generationId
+            follower.follow(generationId)
+            slowRetry = SlowRetry.Asked
+        }
     }
 
     private suspend fun writeAgain(): String {

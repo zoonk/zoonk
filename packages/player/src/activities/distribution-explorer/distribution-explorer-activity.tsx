@@ -1,5 +1,6 @@
 "use client";
 
+import { getActivityRoundedAnswer } from "@zoonk/core/library/activities/answers";
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
 import { useExtracted } from "next-intl";
@@ -17,6 +18,7 @@ import {
   type Interval,
   densityCurve,
   distributionDomain,
+  distributionPercentFormat,
   distributionTicks,
   handleStep,
   snapDomain,
@@ -35,7 +37,6 @@ type Content = DistributionExplorerProps["content"];
 const PLOT_HEIGHT = 196;
 const PLOT_PADDING = { bottom: 46, left: 12, right: 12, top: 22 };
 const HEADROOM = 1.08;
-const PERCENT_DIGITS = 1;
 const FAR_SDS = 40;
 
 function percentBetween(content: Content, range: Interval): number {
@@ -51,7 +52,25 @@ function farEnds(distribution: Content["fields"]["distribution"]): Interval {
     : { from: distribution.min, to: distribution.max };
 }
 
+/**
+ * A saved answer holds only the share the handles gave. A right one was read with the handles on
+ * the target, so a reopened curve puts them there and the picture agrees with the checked answer.
+ */
+function startingHandles(content: Content, answer: DistributionExplorerProps["answer"]): Interval {
+  const { check, fields } = content;
+
+  if (answer?.kind !== "numeric" || check.kind !== "numeric") {
+    return fields.handles;
+  }
+
+  const { kind, value } = check.tolerance;
+  const allowed = kind === "absolute" ? value : value * Math.abs(check.answer);
+
+  return Math.abs(check.answer - answer.value) <= allowed ? fields.target : fields.handles;
+}
+
 export function DistributionExplorerActivity({
+  answer,
   content,
   labelId,
   onAnswerChange,
@@ -61,7 +80,7 @@ export function DistributionExplorerActivity({
   const format = useFormatNumber();
   const { check, fields } = content;
   const { distribution } = fields;
-  const [handles, setHandles] = useState(fields.handles);
+  const [handles, setHandles] = useState(() => startingHandles(content, answer));
   const isChecked = phase === "checked";
   const rawDomain = distributionDomain(fields);
   const step = handleStep({ ...fields, domain: rawDomain });
@@ -73,8 +92,17 @@ export function DistributionExplorerActivity({
   const below = percentBetween(content, { from: ends.from, to: handles.from });
   const above = percentBetween(content, { from: handles.to, to: ends.to });
 
+  const display = getActivityRoundedAnswer(content);
+
   const percent = (value: number) =>
-    format(value, { maximumFractionDigits: PERCENT_DIGITS, unit: "%" });
+    format(
+      value,
+      !display || display.places === null
+        ? distributionPercentFormat({ check })
+        : { maximumFractionDigits: display.places, unit: "%" },
+    );
+
+  const tail = (value: number) => format(value, distributionPercentFormat({ check, isTail: true }));
 
   const formatValue = (value: number) => format(value, { unit: fields.unit });
   const space = useSentenceSpace();
@@ -101,9 +129,12 @@ export function DistributionExplorerActivity({
 
   const targetShare = percentBetween(content, fields.target);
 
+  const showTarget =
+    isChecked && (handles.from !== fields.target.from || handles.to !== fields.target.to);
+
   return (
     <ActivityCanvas labelId={labelId}>
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-baseline justify-between gap-3">
         <ActivityCanvasLabel className="text-sm">{rangeLabel}</ActivityCanvasLabel>
         <ActivityReadout aria-hidden="true" className="text-viz-accent">
           {percent(between)}
@@ -116,32 +147,25 @@ export function DistributionExplorerActivity({
         xDomain={domain}
         yDomain={[0, peak * HEADROOM]}
       >
-        <ActivityPlotArea
-          points={curve.filter((point) => point.x >= handles.from && point.x <= handles.to)}
-        />
-        {distribution.kind === "normal" && <DistributionMean value={distribution.mean} />}
+        <ActivityPlotArea points={densityCurve(distribution, [handles.from, handles.to])} />
+        {distribution.kind === "normal" && (
+          <DistributionMean label={format(distribution.mean)} value={distribution.mean} />
+        )}
         <ActivityPlotLine className="stroke-2" points={curve} />
 
         <DistributionTicks
           format={(value) => format(value)}
           handles={[handles.from, handles.to]}
-          ticks={distributionTicks(distribution, domain)}
+          ticks={distributionTicks(distribution, domain).filter(
+            (tick) => distribution.kind !== "normal" || tick !== distribution.mean,
+          )}
         />
 
-        {isChecked && (
-          <DistributionTarget
-            label={t("{from} to {to}: {share}", {
-              from: format(fields.target.from),
-              share: percent(targetShare),
-              to: format(fields.target.to),
-            })}
-            target={fields.target}
-          />
-        )}
+        {showTarget && <DistributionTarget target={fields.target} />}
 
         <DistributionTails
-          above={percent(above)}
-          below={percent(below)}
+          above={tail(above)}
+          below={tail(below)}
           handles={[handles.from, handles.to]}
         />
 
@@ -166,6 +190,16 @@ export function DistributionExplorerActivity({
         />
       </ActivityPlot>
 
+      {showTarget && (
+        <ActivityCanvasLabel className="text-success-text text-center font-semibold tabular-nums">
+          {t("{from} to {to}: {share}", {
+            from: format(fields.target.from),
+            share: percent(targetShare),
+            to: format(fields.target.to),
+          })}
+        </ActivityCanvasLabel>
+      )}
+
       <ActivityTextAlternative>
         {distribution.kind === "normal"
           ? t(
@@ -183,8 +217,8 @@ export function DistributionExplorerActivity({
             })}
         {space}
         {t("{between} of values fall between {from} and {to}, {below} below and {above} above.", {
-          above: percent(above),
-          below: percent(below),
+          above: tail(above),
+          below: tail(below),
           between: percent(between),
           from: formatValue(handles.from),
           to: formatValue(handles.to),

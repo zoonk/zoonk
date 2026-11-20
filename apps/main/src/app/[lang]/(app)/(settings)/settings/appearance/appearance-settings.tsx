@@ -2,27 +2,16 @@
 
 import { usePathname } from "@/i18n/navigation";
 import { switchLanguage } from "@/i18n/switch-language";
-import { notifyUsageDataChoice } from "@/lib/usage-data/usage-data-choice";
 import {
   type AppearanceActions,
   AppearanceScreen,
   type AppearanceView,
 } from "@zoonk/learn/appearance";
-import {
-  saveBuddyAction,
-  setHomeCountryAction,
-  setShareUsageDataAction,
-  setSoundsEnabledAction,
-} from "./actions";
+import { saveBuddyAction, setHomeCountryAction, setSoundsEnabledAction } from "./actions";
 
 const APPEARANCE_ACTIONS: AppearanceActions = {
   saveBuddy: saveBuddyAction,
   setHomeCountry: setHomeCountryAction,
-  setShareUsageData: async (share) => {
-    const saved = await setShareUsageDataAction(share);
-    notifyUsageDataChoice();
-    return saved;
-  },
   setSoundsEnabled: setSoundsEnabledAction,
 };
 

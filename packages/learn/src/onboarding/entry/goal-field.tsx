@@ -1,12 +1,13 @@
 "use client";
 
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useEffect, useRef } from "react";
+import { useExtracted } from "next-intl";
+import { useEffect, useRef, useState } from "react";
+import { EnterButton } from "../../_components/enter-button";
 
-export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-[17px] leading-6";
+const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-lg leading-6";
 
 const GOAL_FIELD = "goal";
 
@@ -16,12 +17,16 @@ const GOAL_FIELD = "goal";
  */
 export function useGoalFieldAction({
   canSendEmpty = false,
+  defaultValue = "",
   onSend,
 }: {
   canSendEmpty?: boolean;
+  defaultValue?: string;
   onSend: (goal: string) => void;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const mounted = useIsMounted();
+  const [hasWords, setHasWords] = useState(Boolean(defaultValue.trim()));
 
   const send = (words: string) => {
     const goal = words.trim();
@@ -44,11 +49,21 @@ export function useGoalFieldAction({
 
     if (field) {
       field.value = words;
+      setHasWords(Boolean(words.trim()));
       field.focus();
     }
   };
 
-  return { action, field: { name: GOAL_FIELD, ref }, fill, send };
+  const onInput = (event: React.InputEvent<HTMLTextAreaElement>) =>
+    setHasWords(Boolean(event.currentTarget.value.trim()));
+
+  return {
+    action,
+    disabled: mounted && !hasWords && !canSendEmpty,
+    field: { name: GOAL_FIELD, onInput, ref },
+    fill,
+    send,
+  };
 }
 
 /**
@@ -63,7 +78,7 @@ export function GoalField({ className, ...props }: React.ComponentProps<"form">)
     <form
       className={cn(
         GOAL_PANEL_CLASS,
-        "flex min-h-14 items-end gap-2 p-1.5 pl-4 text-left",
+        "flex min-h-14 items-end gap-2 px-3 py-2 text-left",
         className,
       )}
       data-slot="goal-field"
@@ -92,6 +107,30 @@ export function GoalFieldLabel({
     >
       {children}
     </label>
+  );
+}
+
+/** The example keeps its line wraps in the grid even after the field holds words. */
+export function GoalFieldExample({ children, id }: { children: React.ReactNode; id: string }) {
+  const t = useExtracted("goalField");
+
+  return (
+    <>
+      <span
+        aria-hidden="true"
+        className={cn(
+          GOAL_FIELD_TEXT_CLASS,
+          "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none col-start-1 row-start-1 min-w-0 text-pretty select-none",
+          "group-has-[textarea:not(:placeholder-shown)]/goal:invisible",
+        )}
+        data-slot="goal-example"
+      >
+        {children}
+      </span>
+      <span className="sr-only" id={id}>
+        {t.rich("For example: <example></example>", { example: () => children })}
+      </span>
+    </>
   );
 }
 
@@ -136,7 +175,7 @@ export function GoalFieldText({
       autoComplete="off"
       className={cn(
         GOAL_FIELD_TEXT_CLASS,
-        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none",
+        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-pretty outline-none",
         className,
       )}
       enterKeyHint="go"
@@ -169,19 +208,17 @@ export function GoalFieldSubmit({
   children,
   className,
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size" | "type" | "variant">) {
+}: Omit<React.ComponentProps<typeof EnterButton>, "enter" | "size" | "type">) {
   return (
-    <Button
-      aria-keyshortcuts="Enter"
-      className={cn("shrink-0 px-4", className)}
-      focusableWhenDisabled
+    // Enter in the goal's field submits its form, so the key is the field's.
+    <EnterButton
+      className={cn("shrink-0 grow-0 basis-auto rounded-md px-4", className)}
+      enter="host"
       size="lg"
       type="submit"
-      {...FORWARD_ICON}
       {...props}
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Button>
+    </EnterButton>
   );
 }

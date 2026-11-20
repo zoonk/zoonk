@@ -164,7 +164,13 @@ describe("phase checkpoint (boss)", () => {
     expect(block.questions).toBe(6);
 
     expect(result).toMatchObject({
-      completion: { checkpoint: { correct: 5, passMark: 5, passed: true, total: 5 } },
+      completion: {
+        checkpoint: { correct: 5, passMark: 5, passed: true, total: 5 },
+        completedMissions: expect.arrayContaining(["challenge"]),
+        missions: expect.arrayContaining([
+          expect.objectContaining({ done: 1, kind: "challenge", status: "done", total: 1 }),
+        ]),
+      },
       status: "ready",
     });
 
@@ -344,7 +350,14 @@ describe("phase checkpoint (boss)", () => {
     const lost = await finishStudyBlock({ ...ref, input: {} });
 
     expect(lost).toMatchObject({
-      completion: { checkpoint: { correct: 3, passMark: 4, passed: false, total: 5 } },
+      completion: {
+        checkpoint: { correct: 3, passMark: 4, passed: false, total: 5 },
+        completedMissions: [],
+        fullMeal: { paid: false },
+        missions: expect.arrayContaining([
+          expect.objectContaining({ done: 0, kind: "challenge", status: "todo", total: 1 }),
+        ]),
+      },
       status: "ready",
     });
 

@@ -10,7 +10,6 @@ import { type Choice, ChoiceList } from "../choice-list";
 import { type LevelChoice, LevelChoiceList, toLevelAnswer } from "./level-choices";
 import { StepForm } from "./step-form";
 import { TextField } from "./text-field";
-import { useAdvanceOnPick } from "./use-advance-on-pick";
 
 type StepProps = {
   onAnswer: (input: OnboardingAnswerInput) => void;
@@ -22,50 +21,36 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
   const t = useExtracted();
   const [purpose, setPurpose] = useState<OnboardingPurpose | null>(null);
 
-  const { pick, submit } = useAdvanceOnPick({
-    answer: (picked: OnboardingPurpose) => onAnswer({ purpose: picked, question: "purpose" }),
-    pending,
-  });
-
   const choices: Choice<OnboardingPurpose>[] = [
     {
-      description: t("A short course: the big ideas, no formulas"),
+      description: t("I want a quick look at the big ideas"),
       label: t("Get an overview"),
       value: "overview",
     },
     {
-      description: t("The full path, from the basics to advanced"),
-      label: t("Understand it in depth"),
+      description: t("I want to go from the basics to advanced topics"),
+      label: t("Understand it well"),
       value: "deep",
     },
+    { label: t("Use it at work"), value: "work" },
     {
-      description: t("Only what your work uses, in the order it needs"),
-      label: t("Use it at work"),
-      value: "work",
-    },
-    {
-      description: t("What the new role needs, portfolio included"),
+      description: t("I want to learn what I need for a new role and build a portfolio"),
       label: t("Change careers"),
       value: "careerChange",
     },
     {
-      description: t("Back to the level you had, after a quick test"),
+      description: t("I want to get back to the level I had"),
       label: t("Refresh what I studied"),
       value: "refresh",
     },
-    {
-      description: t("Tell us later, in your own words"),
-      label: t("Something else"),
-      value: "other",
-    },
+    { label: t("Something else"), value: "other" },
   ];
 
   return (
     <StepForm
       canContinue={purpose !== null}
-      description={t("It sets how deep your course goes, and so how long it is.")}
       subject={subject}
-      onContinue={() => purpose && submit(purpose)}
+      onContinue={() => purpose && onAnswer({ purpose, question: "purpose" })}
       pending={pending}
       title={t({
         description: "Asks what the learner hopes to get out of learning this subject.",
@@ -79,7 +64,6 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
           message: "What you want from it",
         })}
         onChange={setPurpose}
-        onPick={pick}
         readOnly={pending}
         value={purpose}
       />
@@ -97,23 +81,16 @@ export function LevelStep({
   const t = useExtracted();
   const [level, setLevel] = useState<LevelChoice | null>(initialLevel);
 
-  const { pick, submit } = useAdvanceOnPick({
-    answer: (picked: LevelChoice) => onAnswer({ level: toLevelAnswer(picked), question: "level" }),
-    pending,
-  });
-
   return (
     <StepForm
       canContinue={level !== null}
-      description={t("It only changes where your plan starts.")}
       subject={subject}
-      onContinue={() => level && submit(level)}
+      onContinue={() => level && onAnswer({ level: toLevelAnswer(level), question: "level" })}
       pending={pending}
       title={t("How much do you already know?")}
     >
       <LevelChoiceList
         onChange={setLevel}
-        onPick={pick}
         readOnly={pending}
         testMinutes={testMinutes}
         value={level}
@@ -131,23 +108,14 @@ function toTextAnswer(value: string | null): OnboardingAnswerInput {
 function useExamTargetCopy(question: ExamTarget) {
   const t = useExtracted();
 
-  const copy: Record<
-    ExamTarget,
-    Record<"description" | "label" | "title", string> & { placeholder?: string }
-  > = {
+  const copy: Record<ExamTarget, Record<"label" | "title", string> & { placeholder?: string }> = {
     admission: {
-      description: t("It helps your plan focus on what counts most."),
       label: t("Your target"),
       placeholder: t("E.g., medicine, 750 points"),
       title: t("Which course and score are you aiming for?"),
     },
-    position: {
-      description: t("The notice can have a different exam for each position."),
-      label: t("Position"),
-      title: t("Which position are you applying for?"),
-    },
+    position: { label: t("Position"), title: t("Which position are you applying for?") },
     score: {
-      description: t("It helps your plan focus on what counts most."),
       label: t("Your target"),
       placeholder: t({
         description: "An example score: a band is an IELTS-style score.",
@@ -172,7 +140,6 @@ export function TextStep({
   return (
     <StepForm
       canContinue={value.trim().length > 0}
-      description={copy.description}
       onContinue={() => onAnswer(toTextAnswer(value.trim()))}
       onSkip={() => onAnswer(toTextAnswer(null))}
       pending={pending}
@@ -199,7 +166,7 @@ export function FollowUpsStep({
 
   return (
     <StepForm
-      description={t("A couple of details make your plan fit better.")}
+      canContinue={answers.some((answer) => answer.trim().length > 0)}
       onContinue={() =>
         onAnswer({ answers: answers.map((answer) => answer.trim() || null), question: "followUps" })
       }

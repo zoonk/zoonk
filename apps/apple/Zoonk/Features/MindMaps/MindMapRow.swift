@@ -25,7 +25,7 @@ struct MindMapRow: View {
   }
 
   private enum Shown {
-    case create, writingLessons, drawing, ready, failed, unreachable, plusRequired
+    case create, writingLessons, drawing, ready, failed, unreachable
   }
 
   @Environment(AppRouter.self) private var router
@@ -37,25 +37,23 @@ struct MindMapRow: View {
   let place: Place
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      if place.isMindMapsPage, shown == .ready {
-        Button(action: open) {
-          row.disclosureChevron()
+    // A refusal takes Create's place until its day comes; then it goes, in the room it had.
+    OpeningClock(availableAt: refusedLimit?.availableAt) { now in
+      VStack(alignment: .leading, spacing: 12) {
+        if place.isMindMapsPage, shown == .ready {
+          Button(action: open) {
+            row(now).disclosureChevron()
+          }
+        } else {
+          row(now)
         }
-      } else if shown == .plusRequired {
-        // Like the screen's other locked items: the Plus mark, and the whole row leads to Plus.
-        Button {
-          router.present(.subscription)
-        } label: {
-          row
-        }
-      } else {
-        row
-      }
 
-      if case .refused(let refusal) = failure {
-        HelpLimitNotice(limit: refusal.limit, message: refusal.message)
-          .controlSize(.small)
+        HeldSlot(gated: failure?.holdingLimit(at: now) != nil) {
+          if let refusal = failure?.holdingLimit(at: now) {
+            LimitNotice(limit: refusal.limit, words: refusal.words(now:))
+              .controlSize(.small)
+          }
+        }
       }
     }
     .announcesStatus(waitLine)
@@ -78,8 +76,35 @@ struct MindMapRow: View {
     store.failure(goalId: goalId, chapterId: map.chapterId)
   }
 
-  private var row: some View {
-    MarkedRow(alignment: .center) {
+  private var refusedLimit: HelpLimit? {
+    if case .refused(let refusal) = failure {
+      return refusal.limit
+    }
+
+    return nil
+  }
+
+  @ViewBuilder
+  private func row(_ now: Date) -> some View {
+    if case .notMade = place {
+      // Main's library row: the chapter's name and its action, nothing that repeats on every row.
+      HStack(spacing: 12) {
+        words
+          .frame(maxWidth: .infinity, alignment: .leading)
+
+        if shown == .writingLessons || shown == .drawing {
+          ProgressView().controlSize(.small)
+        } else if !(failure?.hidesCreate(at: now) ?? false) || shown != .create {
+          action
+        }
+      }
+    } else {
+      markedRow(now)
+    }
+  }
+
+  private func markedRow(_ now: Date) -> some View {
+    MarkedRow(alignment: place.isMindMapsPage ? .center : .firstTextBaseline) {
       slot
     } content: {
       words
@@ -91,7 +116,9 @@ struct MindMapRow: View {
           SavedMark()
         }
 
-        action
+        if !(failure?.hidesCreate(at: now) ?? false) || shown != .create {
+          action
+        }
       }
     }
   }
@@ -103,7 +130,6 @@ struct MindMapRow: View {
 
     switch map.status {
     case .ready: return .ready
-    case .plusRequired: return .plusRequired
     case _ where failure == .unreachable: return .unreachable
     case .writingLessons: return .writingLessons
     case .drawing: return .drawing
@@ -112,22 +138,29 @@ struct MindMapRow: View {
     }
   }
 
+  /// The list's small mark, so the title starts where the rows beside it start (a chapter's
+  /// summary, a lesson end's "Up next"). A map's picture leads only on the Mind maps page, where
+  /// every row is a map.
   @ViewBuilder
   private var slot: some View {
-    if shown == .ready, let thumbnail {
-      MindMapSlot(picture: thumbnail)
-    } else {
-      MindMapSlot {
-        switch shown {
-        case .writingLessons, .drawing:
-          ProgressView()
-        case .plusRequired:
-          Image(systemName: "lock")
-            .foregroundStyle(.mutedForeground)
-        default:
-          KindMark(kind: .mindMap)
-        }
+    if place.isMindMapsPage {
+      if shown == .ready, let thumbnail {
+        MindMapSlot(picture: thumbnail)
+      } else {
+        MindMapSlot { mark }
       }
+    } else {
+      mark.markColumn()
+    }
+  }
+
+  @ViewBuilder
+  private var mark: some View {
+    switch shown {
+    case .writingLessons, .drawing:
+      ProgressView().controlSize(.small)
+    default:
+      KindMark(kind: .mindMap)
     }
   }
 
@@ -141,11 +174,15 @@ struct MindMapRow: View {
         .typeStyle(.rowTitle)
         .foregroundStyle(Color(.foreground))
 
-      ForEach(lines, id: \.self) { line in
-        Text(line)
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
+      Group {
+        switch place {
+        case .library, .notMade: FactSegments(lines)
+        case .chapter, .finish:
+          ForEach(lines, id: \.self) { Text($0) }
+        }
       }
+      .typeStyle(.meta)
+      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
   }
@@ -183,7 +220,7 @@ struct MindMapRow: View {
       // The page says once what writing a chapter's lessons first means.
       let words: String? =
         switch shown {
-        case .create where map.lessonsToWrite > 0:
+        case .create where map.lessonsToWrite > 0 && (place == .library || !isPlus):
           String(
             localized: "\(map.lessonsToWrite) lessons to write", table: "MindMaps",
             comment: "A chapter on the mind maps page whose lessons a map would write first")
@@ -191,11 +228,9 @@ struct MindMapRow: View {
           String(
             localized: "As text", table: "MindMaps",
             comment: "A map on the mind maps page whose picture failed, so it opens as its outline")
-        case .plusRequired:
-          String(
-            localized: "Plus", table: "Subscriptions",
-            comment: "Mark on a feature that comes with Zoonk Plus")
         case .create, .ready: nil
+        // The list's spinner shows it, and the page says once that maps are on their way.
+        case .writingLessons where place != .library, .drawing where place != .library: nil
         default: waitLine ?? stateLine(ready: nil)
         }
 
@@ -205,7 +240,7 @@ struct MindMapRow: View {
           localized: "Chapter \(map.position)", table: "MindMaps", comment: "A chapter's number")
         : nil
 
-      return [[number, words].compactMap(\.self).joinedFacts()]
+      return [number, words].compactMap(\.self)
     }
   }
 
@@ -214,10 +249,12 @@ struct MindMapRow: View {
     switch shown {
     case .create:
       if map.lessonsToWrite == 0 {
-        return Self.mainIdeas
+        return place == .finish
+          ? String(localized: "A mind map of its main ideas", table: "MindMaps")
+          : Self.mainIdeas
       }
 
-      return learner.summary.value?.tier == .plus
+      return isPlus
         ? String(
           localized: "\(map.lessonsToWrite) lessons get written first, so it takes a few minutes.",
           table: "MindMaps",
@@ -243,8 +280,6 @@ struct MindMapRow: View {
       return String(
         localized: "We couldn't reach the server. Check your connection.", table: "MindMaps",
         comment: "Asking for a map didn't reach the server")
-    case .plusRequired:
-      return Self.mainIdeas
     case .writingLessons, .drawing:
       return nil
     }
@@ -278,6 +313,8 @@ struct MindMapRow: View {
     }
   }
 
+  private var isPlus: Bool { learner.summary.value?.tier == .plus }
+
   private static let mainIdeas = String(
     localized: "Its main ideas in one picture", table: "MindMaps",
     comment: "What a chapter's mind map is")
@@ -303,9 +340,7 @@ struct MindMapRow: View {
       }
       .buttonStyle(.outline)
       .controlSize(.small)
-    case .plusRequired where !place.isMindMapsPage:
-      PlusMark()
-    case .create, .ready, .plusRequired, .writingLessons, .drawing:
+    case .create, .ready, .writingLessons, .drawing:
       EmptyView()
     }
   }
@@ -331,12 +366,34 @@ struct MindMapRow: View {
 }
 
 /// The row's leading square: the map's thumbnail once it's drawn, otherwise a dashed slot.
+enum MindMapSlotMetrics {
+  static let side: CGFloat = 48
+}
+
+/// Main's `MindMapSlot`: a map's picture, a dashed square while a chapter map has none, and a
+/// filled one for a lesson map, which never has a picture.
+enum MindMapSlotLook: Equatable {
+  case picture(URL)
+  case dashed
+  case filled
+
+  init(kind: SavedMindMapKind, picture: URL?) {
+    if kind == .lesson {
+      self = .filled
+    } else if let picture {
+      self = .picture(picture)
+    } else {
+      self = .dashed
+    }
+  }
+}
+
 struct MindMapSlot<Mark: View>: View {
-  private let picture: URL?
+  private let look: MindMapSlotLook
   @ViewBuilder private let mark: Mark
 
-  init(@ViewBuilder mark: () -> Mark) {
-    picture = nil
+  init(_ look: MindMapSlotLook = .dashed, @ViewBuilder mark: () -> Mark) {
+    self.look = look
     self.mark = mark()
   }
 
@@ -344,7 +401,8 @@ struct MindMapSlot<Mark: View>: View {
     let shape = RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
 
     Group {
-      if let picture {
+      switch look {
+      case .picture(let picture):
         AsyncImage(url: picture) { image in
           image.resizable().scaledToFill()
         } placeholder: {
@@ -352,13 +410,17 @@ struct MindMapSlot<Mark: View>: View {
         }
         .clipShape(shape)
         .overlay(shape.strokeBorder(.border))
-      } else {
+      case .dashed:
         shape
           .strokeBorder(.input, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
           .overlay { mark }
+      case .filled:
+        shape
+          .fill(.muted)
+          .overlay { mark }
       }
     }
-    .frame(width: 48, height: 48)
+    .frame(width: MindMapSlotMetrics.side, height: MindMapSlotMetrics.side)
     // The square keeps its size, so what's drawn in it does too.
     .dynamicTypeSize(...DynamicTypeSize.xxLarge)
     .accessibilityHidden(true)
@@ -367,87 +429,21 @@ struct MindMapSlot<Mark: View>: View {
 
 extension MindMapSlot where Mark == EmptyView {
   init(picture: URL) {
-    self.picture = picture
-    mark = EmptyView()
+    self.init(.picture(picture)) {
+      EmptyView()
+    }
   }
 }
 
 extension MindMapLimit {
-  /// Main's `MindMapLimitNotice` words: what ran out and when it comes back. The day's AI spend
-  /// keeps the help notice's own words.
-  var message: String? {
-    guard resource != .aiSpend else {
-      return nil
-    }
-
-    switch limit {
-    case .slowDown:
-      return String(
-        localized: "Take a short break, then try again.", table: "MindMaps",
-        comment: "Fair use asks the learner to wait a moment before another map")
-    case .signUpRequired:
-      return String(
-        localized: "Create your free account to continue.", table: "MindMaps",
-        comment: "A guest must create an account to make a map")
-    case .limitReached(let period, let tier):
-      return resource == .lessons ? Self.lessons(period, tier) : Self.maps(period, tier)
-    }
-  }
-
-  private static func maps(_ period: HelpLimit.Period, _ tier: LearnerTier) -> String {
-    switch (tier, period) {
-    case (.guest, _):
-      String(
-        localized:
-          "You've made the mind map you can try without an account. Create a free account to make more.",
-        table: "MindMaps", comment: "A guest made the one map they can without an account")
-    case (.plus, .month):
-      String(
-        localized: "That's all the new mind maps for this month. You can make more next month.",
-        table: "MindMaps", comment: "A Plus learner made this month's maps")
-    case (.plus, _):
-      String(
-        localized: "That's all the new mind maps for today. You can make more tomorrow.",
-        table: "MindMaps", comment: "A Plus learner made today's maps")
-    case (.free, .month):
-      String(
-        localized:
-          "That's all the new mind maps for this month. You can make more next month, or get Plus to keep going now.",
-        table: "MindMaps", comment: "A free learner made this month's maps")
-    case (.free, _):
-      String(
-        localized:
-          "That's all the new mind maps for today. You can make more tomorrow, or get Plus to keep going now.",
-        table: "MindMaps", comment: "A free learner made today's maps")
-    }
-  }
-
-  /// A map whose lessons aren't written writes them first, and they count as new lessons.
-  private static func lessons(_ period: HelpLimit.Period, _ tier: LearnerTier) -> String {
-    switch (tier, period) {
-    case (.guest, _):
-      String(
-        localized:
-          "You've taken the lessons you can try without an account. Create a free account to keep going.",
-        table: "MindMaps",
-        comment: "A guest's map needs new lessons, and they used the ones they can try")
-    case (.plus, _):
-      String(
-        localized: "That's all the new lessons for today. They open again tomorrow.",
-        table: "MindMaps",
-        comment: "A Plus learner's map needs new lessons, and they started today's")
-    case (.free, .month):
-      String(
-        localized:
-          "That's all the new lessons for this month. They open again next month, or get Plus to keep going now.",
-        table: "MindMaps",
-        comment: "A free learner's map needs new lessons, and they started this month's")
-    case (.free, _):
-      String(
-        localized:
-          "That's all the new lessons for today. They open again tomorrow, or get Plus to keep going now.",
-        table: "MindMaps",
-        comment: "A free learner's map needs new lessons, and they started today's")
+  /// Main's `MindMapLimitNotice` words: the maps, the lessons a map writes first (which count as
+  /// new lessons), or the day's AI spend.
+  func words(now: Date = .now) -> LimitWords {
+    switch resource {
+    case .aiSpend: limit.words(now: now)
+    case .chapterLessons: limit.mapLessonsWords(now: now)
+    case .lessons: limit.words(.lessons, now: now)
+    case .mindMap: limit.words(.mindMaps, now: now)
     }
   }
 }
@@ -464,7 +460,7 @@ struct FinishedChapterSection: View {
       goalId: chapter.goalId, map: store.map(goalId: chapter.goalId, chapterId: chapter.chapterId),
       place: .finish, placeholder: Text(chapter.title), loadsMap: true
     ) {
-      SectionTitle(
+      SectionLabel(
         Text(
           "Chapter finished", tableName: "MindMaps",
           comment: "Over the map of the chapter the learner just finished"))
@@ -472,9 +468,8 @@ struct FinishedChapterSection: View {
   }
 }
 
-/// A chapter's map row read on its own, as on the chapter's page and where the chapter ends. Its
-/// title and slot hold its place while it loads, so nothing under it moves; a chapter that gets no
-/// map leaves no row.
+/// A chapter's map row read on its own, as where the chapter ends. Its title and slot hold its
+/// place while it loads, so nothing under it moves; a chapter that gets no map leaves no row.
 struct MindMapRowSection<Header: View>: View {
   let goalId: String
   let map: Resource<ChapterMindMap>
@@ -496,8 +491,7 @@ struct MindMapRowSection<Header: View>: View {
   }
 }
 
-/// The row inside a section of its own or one it shares, as the chapter page's "For reference"
-/// beside a wide page.
+/// The row inside a section of its own or one it shares, as the chapter page's "For reference".
 struct MindMapRowContent: View {
   let goalId: String
   let map: Resource<ChapterMindMap>
@@ -518,7 +512,7 @@ struct MindMapRowContent: View {
     if let value = map.value {
       MindMapRow(goalId: goalId, map: value, place: place)
     } else {
-      MarkedRow(alignment: .center) {
+      MarkedRow(alignment: place.isMindMapsPage ? .center : .firstTextBaseline) {
         MindMapSlot {
           if case .failed = map.state {
             KindMark(kind: .mindMap)
@@ -542,11 +536,5 @@ struct MindMapRowContent: View {
         }
       }
     }
-  }
-}
-
-extension MindMapRowSection where Header == EmptyView {
-  init(goalId: String, map: Resource<ChapterMindMap>, place: MindMapRow.Place, placeholder: Text) {
-    self.init(goalId: goalId, map: map, place: place, placeholder: placeholder) { EmptyView() }
   }
 }

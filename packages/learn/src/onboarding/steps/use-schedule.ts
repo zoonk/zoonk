@@ -4,8 +4,8 @@ import { type GoalView } from "@zoonk/core/goals/contract";
 import { getDaySplit } from "@zoonk/core/goals/daily-budget";
 import { type LanguageAim } from "@zoonk/core/language/aims";
 import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
-import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { useState } from "react";
+import { getMissingDays } from "../../_components/weekend-time";
 import { getTimeLine } from "../../_utils/time-answer";
 import { type PollStatus } from "../../_utils/use-poll";
 import {
@@ -36,7 +36,6 @@ function readyAnswer<Answer extends { ready: boolean }>(answer: Answer | null): 
 
 export type ScheduleDraft = {
   days: number[];
-  fullCourse: boolean;
   picked: number | null;
   weekendOn: boolean;
   weekendPicked: number | null;
@@ -47,18 +46,18 @@ function useStudyWeek({ draft, goal }: { draft: ScheduleDraft | null; goal: Goal
   const [days, setDays] = useState(() => draft?.days ?? getStartingDays(goal.studyDays));
   const [weekendOn, setWeekendOn] = useState(draft?.weekendOn ?? false);
   const [weekendPicked, setWeekendPicked] = useState(draft?.weekendPicked ?? null);
-  const studiesOnWeekends = days.some((day) => isWeekend(day));
+  const missingDays = getMissingDays(days);
 
   return {
     days,
+    missingDays,
     setDays,
     setWeekendOn: (on: boolean) => {
       setWeekendOn(on);
       setWeekendPicked(null);
     },
     setWeekendPicked,
-    studiesOnWeekends,
-    weekend: studiesOnWeekends && weekendOn ? weekendPicked : null,
+    weekend: missingDays === null && weekendOn ? weekendPicked : null,
     weekendOn,
     weekendPicked,
   };
@@ -112,7 +111,6 @@ export function useSchedule({
   aim,
   dated: datedGuess,
   draft,
-  exam,
   goal,
   paused,
   planMade,
@@ -125,7 +123,6 @@ export function useSchedule({
   aim: string | null;
   dated: boolean;
   draft: ScheduleDraft | null;
-  exam: boolean;
   goal: GoalView;
   paused: boolean;
   planMade: boolean;
@@ -135,7 +132,6 @@ export function useSchedule({
   together: GoalsTogether;
 }) {
   const [picked, setPicked] = useState(draft?.picked ?? null);
-  const [fullCourse, setFullCourse] = useState(draft?.fullCourse ?? false);
   const week = useStudyWeek({ draft, goal });
   const hasDays = week.days.length > 0;
 
@@ -151,7 +147,6 @@ export function useSchedule({
   });
 
   const { dated } = found;
-  const studiesEverything = exam && fullCourse;
 
   const minutes = getShownMinutes({
     fallback: recommendedMinutes,
@@ -163,7 +158,6 @@ export function useSchedule({
 
   const asked = toStudyWeek({
     days: week.days,
-    fullCourse: studiesEverything,
     minutes: minutes ?? recommendedMinutes,
     weekend: week.weekend,
   });
@@ -179,9 +173,7 @@ export function useSchedule({
 
   const timeAdvice = usePlanAnswer({
     ask: () => askAdvice(),
-    enabled:
-      hasDays &&
-      asksAboutTime({ dated, found: found.found, fullCourse: studiesEverything, minutes }),
+    enabled: hasDays && asksAboutTime({ dated, found: found.found, minutes }),
     key: JSON.stringify({ ...asked, aim, dailyMinutes: minutes }),
     paused,
     planMade,
@@ -212,22 +204,17 @@ export function useSchedule({
     dated,
     draft: {
       days: week.days,
-      fullCourse,
       picked,
       weekendOn: week.weekendOn,
       weekendPicked: week.weekendPicked,
     } satisfies ScheduleDraft,
-    // The last answer's, so the line stays while a new time is asked about.
-    focusAdvice: lastAnswers.advice,
     found,
-    fullCourse,
     // When the plan's answer says the goal has no date, the advice asks next: that answer said the plan is ready.
     gate: dated ? found.covering : { ...timeAdvice, last: timeAdvice.last ?? found.covering.last },
     line,
     minutes,
     picked,
     readAimEnd,
-    setFullCourse,
     setPicked,
     shown: getShownAnswer({
       last: { found: lastAnswers.found, line: lineAt(lastAnswers) },

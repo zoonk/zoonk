@@ -18,7 +18,7 @@ export const uploadVisibilityTask: Task<
     "Decide whether an upload is a document its publisher made public or must stay private",
   generate: classifyUploadVisibility,
   id: "upload-visibility",
-  name: "Upload Visibility",
+  name: "Upload visibility",
   score: createDeterministicStringFieldScorer<UploadVisibilityExpected>({
     expectedLabel: "Expected visibility",
     field: "visibility",

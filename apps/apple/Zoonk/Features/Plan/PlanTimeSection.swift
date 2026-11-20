@@ -1,56 +1,19 @@
 import SwiftUI
 
-/// Main's plan editor time: the time question's whole answer, asked when the editor opens and again
+/// Main's plan editor time: the time question's whole answer, read while the editor shows and again
 /// after each change, never when the plan page loads, since it plans the goal at many times.
 struct PlanTimeSection: View {
   @Environment(PlanStore.self) private var store
-  @State private var asked: (revision: Revision, answer: Asked)?
-  @State private var round = 0
-
   let editor: PlanEditor
   let goal: LearnerGoal
   let plan: GoalPlan
   /// The weekend has its own time: the time a day changes the weekdays alone.
   let weekendOn: Bool
-  var asksStudyEverything = false
-
-  private enum Asked: Equatable {
-    case building
-    case failed
-    case time(TimeToCover)
-  }
-
-  /// What the time-to-cover answer depends on: a change to any of it asks again.
-  private struct Revision: Equatable {
-    let planId: String
-    let schedule: GoalPlan.Schedule
-    let feasibility: GoalPlan.Feasibility?
-    let steering: GoalPlan.Steering
-    let areas: [GoalPlan.Area]
-    let bases: GoalPlan.Bases?
-    let examChoices: [GoalPlan.ExamChoice]
-
-    init(_ plan: GoalPlan) {
-      planId = plan.planId
-      schedule = plan.schedule
-      feasibility = plan.feasibility
-      steering = plan.steering
-      areas = plan.areas
-      bases = plan.bases
-      examChoices = plan.examChoices
-    }
-  }
-
-  private struct AskKey: Equatable {
-    let revision: Revision
-    let round: Int
-  }
 
   var body: some View {
     let current = plan.schedule.shape.weekdays
-    let revision = Revision(plan)
-    let answer = asked?.revision == revision ? asked?.answer : nil
-    let found: TimeToCover? = if case .time(let time) = answer { time } else { nil }
+    let time = store.timeToCover(goalId: goal.id)
+    let found = time.freshValue
     let marked = ScheduleTime.markedTimes(found)
 
     Section {
@@ -62,7 +25,7 @@ struct PlanTimeSection: View {
               return
             }
 
-            Task { await setMinutes(minutes) }
+            editor.run { await setMinutes(minutes) }
           })
       ) {
         ForEach(
@@ -70,26 +33,19 @@ struct PlanTimeSection: View {
             plan.schedule.dailyTimes, with: current, marked.suggested, marked.full),
           id: \.self
         ) { minutes in
-          Text(TimeAnswer.choiceLabel(minutes, full: marked.full, suggested: marked.suggested))
+          Text(TimeAnswer.choiceLabel(minutes, suggested: marked.suggested))
             .tag(minutes)
         }
       } label: {
-        Text("Time a day", tableName: "Plan", comment: "Setting: study time a day")
+        Text("Daily study time", tableName: "Plan")
       }
-      .task(id: AskKey(revision: revision, round: round)) {
-        guard plan.schedule.targetDate != nil, answer == nil else {
-          return
-        }
+      .font(.body)
+      .loads(
+        plan.schedule.targetDate == nil ? [] : [time], refreshable: false, retriesAFailure: true
+      )
+      .announcesStatus(editor.isSaving ? nil : finish?.spoken)
 
-        await ask(revision)
-      }
-      .announcesStatus(editor.isSaving ? nil : finish)
-
-      coverage(answer: answer, found: found, minutes: current)
-
-      if goal.kind == .exam, plan.feasibility?.deadline != nil {
-        fullCourseToggle
-      }
+      coverage(time: time, found: found, minutes: current)
     } footer: {
       SectionFooter {
         Text(
@@ -102,7 +58,8 @@ struct PlanTimeSection: View {
   /// While a change saves, its place says the new coverage is being worked out: the old one would
   /// describe a time no longer picked.
   @ViewBuilder
-  private func coverage(answer: Asked?, found: TimeToCover?, minutes: Int) -> some View {
+  private func coverage(time: Resource<TimeToCover>, found: TimeToCover?, minutes: Int) -> some View
+  {
     if let feasibility = plan.feasibility, feasibility.deadline != nil,
       let targetDate = plan.schedule.targetDate
     {
@@ -124,20 +81,43 @@ struct PlanTimeSection: View {
           covers
             .foregroundStyle(.mutedForeground)
         } else {
-          TimeAnswer(
-            date: TimeAnswer.GoalDate(
-              isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
-            exam: goal.kind == .exam, line: line, minutes: minutes,
-            note: ScheduleTime.fullTimeNote(
-              found: found, line: line,
-              studiesEveryDay: plan.schedule.weekdayMinutes.allSatisfy { $0 > 0 }),
-            noteStatus: noteStatus(answer),
-            offer: ScheduleTime.offer(found: found, line: line, minutes: minutes)
-          ) {
-            asked = nil
-            round += 1
-          } onUseOffer: { minutes in
-            Task { await setMinutes(minutes) }
+          let offer = ScheduleTime.offer(found: found, line: line, minutes: minutes)
+          let awaitsOffer =
+            offer == nil && !line.coversEverything
+            && [.idle, .loading].contains(time.freshState)
+
+          // Short of everything, a time that covers more is offered once it's worked out. Its room,
+          // the tallest any offer's words take here, is held for the visit, so nothing under it
+          // moves when the offer comes, nor when none does.
+          HeldSlot(gated: awaitsOffer) {
+            VStack(alignment: .leading, spacing: 8) {
+              TimeAnswer(
+                date: TimeAnswer.GoalDate(
+                  isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
+                exam: goal.kind == .exam, line: line, minutes: minutes, offer: offer
+              ) {
+                Task { await time.refresh() }
+              } onUseOffer: { minutes in
+                editor.run { await setMinutes(minutes) }
+              }
+
+              if awaitsOffer {
+                ZStack(alignment: .topLeading) {
+                  ForEach([ScheduleTime.Offer.Kind.everything, .more, .suggested], id: \.self) {
+                    kind in
+                    Button {
+                    } label: {
+                      TimeAnswer.offerLabel(
+                        ScheduleTime.Offer(kind: kind, minutes: longestOfferMinutes(minutes)))
+                    }
+                  }
+                }
+                .buttonStyle(.outline)
+                .controlSize(.small)
+                .hidden()
+                .accessibilityHidden(true)
+              }
+            }
           }
         }
       }
@@ -148,91 +128,35 @@ struct PlanTimeSection: View {
         moveDate(to: fittingDate)
       }
     } else if let finish {
-      Text(finish)
+      Text(verbatim: finish.shown)
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
-    }
-  }
-
-  private func noteStatus(_ answer: Asked?) -> TimeAnswer.NoteStatus? {
-    switch answer {
-    case .time: nil
-    case .building, .failed: .failed
-    case nil: .finding
+        .accessibilityLabel(Text(verbatim: finish.spoken))
     }
   }
 
   /// A plan without a date says when it finishes. The end is the saved schedule's last day, laid
   /// out again only by a change, so once it has passed it no longer says that.
-  private var finish: String? {
+  private var finish: PlanEndDateValue.Line? {
     guard plan.feasibility?.deadline == nil || plan.schedule.targetDate == nil,
       let end = plan.estimate.endDate, end >= plan.today, plan.end == nil
     else {
       return nil
     }
 
-    return editor.isSaving
-      ? String(
+    guard !editor.isSaving else {
+      let working = String(
         localized: "Working out when you'd finish…", table: "Plan",
         comment: "While a change to the time saves, in place of when the plan finishes")
-      : String(
-        localized: "You finish around \(PlanDate.text(end, today: plan.today, month: true)).",
-        table: "Plan", comment: "When a plan without a date finishes, as a month and year")
-  }
-
-  /// Turning it on says what it changes first; turning it off applies at once.
-  private var fullCourseToggle: some View {
-    PreviewedPlanChange(
-      editor: editor, plan: plan, edits: [.fullCourse(true)],
-      title: Text(
-        "Study everything", tableName: "Plan",
-        comment: "Title asking to study everything, and its button"),
-      what: String(
-        localized: "Every topic, even after the exam, at your own pace.", table: "Plan",
-        comment: "What studying everything does"),
-      sentence: String(
-        localized: "Your plan studies everything, even after the exam.", table: "Plan",
-        comment: "Says the plan now studies everything"),
-      asksOnAppear: asksStudyEverything && !plan.schedule.fullCourse
-    ) { isPreviewing, ask in
-      Toggle(
-        isOn: Binding(
-          get: { plan.schedule.fullCourse },
-          set: { on in
-            if on {
-              ask()
-            } else {
-              Task { await stopFullCourse() }
-            }
-          })
-      ) {
-        HStack {
-          Text(
-            "Study everything, even after the exam", tableName: "Plan",
-            comment: "Setting: keep studying every topic after the exam")
-
-          if isPreviewing {
-            ProgressView()
-          }
-        }
-      }
-      .tint(.success)
-      .disabled(isPreviewing)
+      return .init(shown: working, spoken: working)
     }
+
+    return PlanEndDateValue.estimatedFinish(end, today: plan.today, month: true)
   }
 
   private func moveDate(to fittingDate: String) -> some View {
     Button {
-      Task {
-        await editor.change(
-          [.targetDate(fittingDate)],
-          sentence: String(
-            localized: "Date moved to \(PlanDate.text(fittingDate, today: plan.today)).",
-            table: "Plan",
-            comment:
-              "Says the goal's date moved, earlier or later; the argument is a date like 'May 5'")
-        )
-      }
+      editor.run { await editor.change([.targetDate(fittingDate)]) }
     } label: {
       Text(
         "Move your date to \(PlanDate.text(fittingDate, today: plan.today))", tableName: "Plan",
@@ -240,43 +164,86 @@ struct PlanTimeSection: View {
           "Moves the goal's date to the day its time covers everything; the argument is a date like 'May 5'"
       )
     }
+    .buttonStyle(.outline)
+    .controlSize(.small)
+  }
+
+  private func longestOfferMinutes(_ current: Int) -> Int {
+    (plan.schedule.dailyTimes + [current]).max {
+      planDurationText(minutes: Double($0)).count < planDurationText(minutes: Double($1)).count
+    } ?? current
   }
 
   private func setMinutes(_ minutes: Int) async {
     let shape = plan.schedule.shape
 
-    await editor.change(
-      [
-        weekendOn && shape.canDiffer
-          ? .weekdayMinutes(minutes, weekdays: shape.weekdayDays) : .dailyMinutes(minutes)
-      ],
-      sentence: String(
-        localized: "Daily time changed to \(planDurationText(minutes: Double(minutes))).",
-        table: "Plan", comment: "Says the plan's time a day changed"))
+    await editor.change([
+      weekendOn && shape.canDiffer
+        ? .weekdayMinutes(minutes, weekdays: shape.weekdayDays) : .dailyMinutes(minutes)
+    ])
   }
+}
 
-  private func ask(_ revision: Revision) async {
-    let goalId = goal.id
-    let time = await store.write { api, token in
-      try await api.timeToCover(token: token, goalId: goalId)
-    } changed: { _ in
-      false
+/// Main's `FullCourseSwitch`, at the end of the schedule settings: it shows only on an exam plan
+/// that already studies past the exam, so it can be turned off. Before the exam the option lives in
+/// the coverage suggestion; after it, the Plan asks.
+struct PlanFullCourseSection: View {
+  let editor: PlanEditor
+  let plan: GoalPlan
+  /// Opened to keep studying after the exam: it asks at once.
+  var asks = false
+
+  var body: some View {
+    let on = plan.schedule.fullCourse
+    let title = Text(
+      "Keep studying after the exam", tableName: "Plan",
+      comment: "Setting and question: keep studying what's left after the exam")
+
+    if on || asks {
+      Section {
+        PreviewedPlanChange(
+          editor: editor, plan: plan, edits: [.fullCourse(true)], title: title,
+          button: Text(
+            "Keep studying", tableName: "Plan",
+            comment: "Keeps studying what's left after the exam"),
+          what: String(
+            localized: "You study every topic. What doesn't fit before the exam comes after it.",
+            table: "Plan", comment: "What studying after the exam does"),
+          asksOnAppear: asks && !on
+        ) { isPreviewing, ask in
+          Toggle(
+            isOn: Binding(
+              get: { on },
+              set: { isOn in
+                if isOn {
+                  ask()
+                } else {
+                  editor.run { await editor.change([.fullCourse(false)]) }
+                }
+              })
+          ) {
+            HStack {
+              title
+
+              if isPreviewing {
+                ProgressView()
+              }
+            }
+          }
+          .tint(.success)
+          .disabled(isPreviewing)
+        }
+      } footer: {
+        if on, let end = plan.estimate.endDate {
+          SectionFooter {
+            Text(
+              "You finish around \(PlanDate.text(end, today: plan.today, month: true)).",
+              tableName: "Plan",
+              comment: "When the plan finishes, as a month and year")
+          }
+        }
+      }
     }
-
-    switch time {
-    case .done(let time) where time.ready: asked = (revision, .time(time))
-    case .done: asked = (revision, .building)
-    case .failed: asked = (revision, .failed)
-    case .obsolete: break
-    }
-  }
-
-  private func stopFullCourse() async {
-    await editor.change(
-      [.fullCourse(false)],
-      sentence: String(
-        localized: "What doesn't fit by the exam is left out of your plan.", table: "Plan",
-        comment: "Says the plan stops studying everything"))
   }
 }
 
@@ -302,8 +269,8 @@ func planCoversEverythingText(_ plan: GoalPlan) -> Text? {
         "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'")
 }
 
-/// Main's `useCoveredText`: how much of the goal its time covers in depth by its date. Nil when it
-/// covers everything in depth.
+/// Main's `useCoveredText`: how much of the goal its time covers by its date. Nil when it covers
+/// everything.
 func planCoverageText(_ plan: GoalPlan) -> String? {
   guard let feasibility = plan.feasibility, feasibility.deadline != nil, !feasibility.fits else {
     return nil
@@ -311,7 +278,7 @@ func planCoverageText(_ plan: GoalPlan) -> String? {
 
   let schedule = plan.schedule
 
-  guard feasibility.coveredShare >= 0.005, let targetDate = schedule.targetDate else {
+  guard feasibility.coveredShare >= 0.005, schedule.targetDate != nil else {
     let time = planDurationText(minutes: Double(schedule.dailyMinutes))
 
     return String(
@@ -319,8 +286,7 @@ func planCoverageText(_ plan: GoalPlan) -> String? {
       comment: "The time a day covers next to nothing")
   }
 
-  return TimeAnswer.shareWords(
-    feasibility.coveredShare, exam: feasibility.measure == "exam",
-    month: schedule.targetDateNamedMonth,
-    date: PlanDate.longText(targetDate, month: schedule.targetDateNamedMonth))
+  return planCoverageLine(
+    minutes: schedule.dailyMinutes, share: feasibility.coveredShare,
+    exam: feasibility.measure == "exam")
 }

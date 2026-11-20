@@ -3,10 +3,11 @@
 import { splitExcerpt } from "@zoonk/core/library/activities/excerpt-passages";
 import { useSentenceSpace } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BookOpenText, ScrollText } from "lucide-react";
+import { BookOpenText, CheckIcon, ScrollText } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
+  ACTIVITY_CARD_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
@@ -42,7 +43,7 @@ function passageState({
 const PASSAGE_CLASS: Record<PassageState, string> = {
   correct: "bg-success/15 text-foreground",
   incorrect: "bg-destructive/15 text-foreground",
-  marked: "bg-viz-highlight-soft text-foreground",
+  marked: "bg-selected-tint text-foreground",
   missed: "decoration-success-text underline decoration-2 decoration-dashed underline-offset-4",
   unmarked:
     "decoration-viz-accent/60 hover:bg-accent underline decoration-dotted decoration-2 underline-offset-4",
@@ -66,7 +67,7 @@ function Passage({
       aria-checked={isChecked}
       aria-disabled={disabled || undefined}
       className={cn(
-        "focus-visible:ring-ring/50 rounded-sm [box-decoration-break:clone] px-0.5 py-0.5 outline-none focus-visible:ring-[3px] motion-safe:transition-colors",
+        "focus-visible:ring-ring/50 rounded-sm [box-decoration-break:clone] py-0.5 outline-none focus-visible:ring-[3px] motion-safe:transition-colors",
         !disabled && "cursor-pointer",
         PASSAGE_CLASS[state],
       )}
@@ -83,6 +84,12 @@ function Passage({
       tabIndex={disabled ? -1 : 0}
     >
       {text}
+      {state === "correct" && (
+        <CheckIcon
+          aria-hidden="true"
+          className="text-success-text ms-1 inline size-3.5 align-text-bottom"
+        />
+      )}
     </span>
   );
 }
@@ -108,10 +115,7 @@ function SourceCard({
     .join(", ");
 
   return (
-    <article
-      aria-label={source.author}
-      className="bg-background flex flex-col gap-2 rounded-xl border p-3.5"
-    >
+    <article aria-label={source.author} className={cn(ACTIVITY_CARD_CLASS, "flex flex-col gap-2")}>
       <header className="flex items-center gap-2.5">
         <span className="bg-viz-accent-soft text-viz-accent flex size-8 shrink-0 items-center justify-center rounded-full">
           <Icon aria-hidden="true" className="size-4" />
@@ -122,7 +126,7 @@ function SourceCard({
         </div>
       </header>
 
-      <blockquote className="text-[15px] leading-8">
+      <blockquote className="text-reading">
         {splitExcerpt(source.excerpt, source.passages).map((segment, segmentIndex) => {
           const passage = source.passages.find((item) => item.id === segment.passageId);
 
@@ -205,6 +209,8 @@ export function SourceComparisonActivity({
   const missed = passages.some((passage) => passage.isTarget && !marked.includes(passage.id));
   const wrong = passages.some((passage) => !passage.isTarget && marked.includes(passage.id));
 
+  const showsFound = found && (learnerMarks === null || missed || wrong);
+
   function describeMarks() {
     if (learnerMarks === null) {
       return t("What to mark: {passages}.", { passages: markedTexts.join("; ") });
@@ -234,12 +240,13 @@ export function SourceComparisonActivity({
         ))}
       </div>
 
-      {isChecked && (
+      {/* With nothing missed or wrong the learner's marks are the answer, so no legend is needed. */}
+      {isChecked && (showsFound || missed || wrong) && (
         <div
           aria-hidden="true"
           className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs"
         >
-          {found && (
+          {showsFound && (
             <span className="flex items-center gap-1.5">
               <span className="bg-success/25 h-3 w-4 rounded-sm" />
               {t("What to mark")}

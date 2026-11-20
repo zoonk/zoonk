@@ -2,6 +2,8 @@
 <resources>
     <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
     <string name="warm_up_title">Quiz while you wait</string>
+    <!-- The same card's heading once the plan or lesson is ready and the learner is still reading their last guess. -->
+    <string name="warm_up_title_ready">Quiz</string>
     <!-- Button under a guessed question's answer: shows the next question. -->
     <string name="warm_up_next">Next guess</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->
@@ -15,16 +17,12 @@
     <string name="warm_up_plan_ready_whenever">See it whenever you\'re ready.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Your questions are ready</string>
-    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
-    <string name="warm_up_questions_ready_description">Start them whenever you\'re ready.</string>
-    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
-    <string name="warm_up_lesson_ready">Your lesson is ready. Start it whenever you like.</string>
-    <string name="warm_up_back_to_quiz">Back to the quiz</string>
-    <string name="warm_up_play_quiz">Play a quiz while you wait</string>
+    <string name="warm_up_back_to_quiz">Back to quiz</string>
+    <string name="warm_up_play_quiz">Play a quiz</string>
     <string name="warm_up_first_lesson_writing">Writing your first lesson: %1$s</string>
     <string name="warm_up_first_lesson_ready">Your first lesson is ready</string>
     <string name="warm_up_plan_waiting">Your plan will be waiting when you finish.</string>
-    <string name="warm_up_start_first_lesson">Start lesson 1</string>
+    <string name="warm_up_start_first_lesson">Start</string>
     <string name="warm_up_first_lesson">Your first lesson</string>
     <string name="warm_up_ready_to_start">Ready to start</string>
     <string name="warm_up_first_lesson_screens">Writing about 5 short screens</string>

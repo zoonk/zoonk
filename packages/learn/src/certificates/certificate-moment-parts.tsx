@@ -6,15 +6,13 @@ import {
 } from "@zoonk/core/certificates/contract";
 import { Burst } from "@zoonk/ui/components/burst";
 import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
-import { TASK_MAIN_ACTION_CLASS, TaskActionBar, TaskActions } from "../_components/task-layout";
+import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import { useCertificateSentence } from "./certificate-labels";
-import { LockedCertificateSheet } from "./certificate-lock";
 import { CertificateSheet } from "./certificate-sheet";
 
 const BEHIND_CLASS =
@@ -30,7 +28,7 @@ function TopSheet({
   const sentence = useCertificateSentence();
 
   if (top.locked) {
-    return <LockedCertificateSheet facts={top} />;
+    return <BlankCertificateSheet facts={top} />;
   }
 
   const links = getLinks(top);
@@ -63,7 +61,7 @@ export function MomentSheets({
     <div className="relative w-full max-w-150" data-slot="certificate-stage">
       {behind &&
         (behind.locked ? (
-          <LockedCertificateSheet className={BEHIND_CLASS} facts={behind} />
+          <BlankCertificateSheet className={BEHIND_CLASS} facts={behind} />
         ) : (
           <CertificateSheet alt="" className={BEHIND_CLASS} images={getLinks(behind).imageUrls} />
         ))}
@@ -78,7 +76,7 @@ export function MomentSheets({
 }
 
 function NameStrong(chunks: React.ReactNode) {
-  return <span className="text-foreground font-[550]">{chunks}</span>;
+  return <span className="text-foreground font-medium">{chunks}</span>;
 }
 
 export function NameRow({ name, onChange }: { name: string; onChange: () => void }) {
@@ -87,30 +85,9 @@ export function NameRow({ name, onChange }: { name: string; onChange: () => void
   return (
     <p className="text-muted-foreground text-sm">
       {t.rich("On your certificate: <strong>{name}</strong>", { name, strong: NameStrong })}
-      <Button className="ml-2 font-[550]" onClick={onChange} variant="link">
+      <Button className="ml-2 font-medium" onClick={onChange} variant="link">
         {t("Change")}
       </Button>
     </p>
-  );
-}
-
-export function ContinueBar({ onContinue }: { onContinue: () => void }) {
-  const t = useExtracted();
-
-  return (
-    <TaskActionBar>
-      <TaskActions>
-        <Button
-          aria-keyshortcuts="Enter"
-          autoFocus
-          className={TASK_MAIN_ACTION_CLASS}
-          onClick={onContinue}
-          size="xl"
-        >
-          {t("Continue")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
-      </TaskActions>
-    </TaskActionBar>
   );
 }

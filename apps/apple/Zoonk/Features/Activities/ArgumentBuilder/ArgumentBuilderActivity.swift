@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let argumentBuilder = ActivityRenderer(
-    template: "argumentBuilder", badge: .always(.buildArgument),
+    template: "argumentBuilder",
     grade: ActivityExpectedAnswer.grader(ArgumentFields.self) { .selection($0.strongIds) }
   ) { context in
     if let fields = try? context.fields(as: ArgumentFields.self) {
@@ -95,8 +95,7 @@ private struct ArgumentBuilderCanvas: View {
             "Evidence", tableName: "Activities",
             comment: "Label of the argument's part that backs the claim with a quote from a source"),
           hint: Text(
-            "Pick the quote that best supports the claim", tableName: "Activities",
-            comment: "An argument's empty evidence part"),
+            "Pick or drag the quote that best supports the claim", tableName: "Activities"),
           isStrong: quote?.isStrong, why: quote?.why
         ) {
           quote.map { AnyView(QuoteText(text: $0.quote, citation: $0.citation)) }
@@ -108,9 +107,7 @@ private struct ArgumentBuilderCanvas: View {
             "Reasoning", tableName: "Activities",
             comment: "The part of an argument that explains the quote"),
           hint: openPart == .reasoning
-            ? Text(
-              "Pick how the quote proves the claim", tableName: "Activities",
-              comment: "An argument's empty reasoning part, open for a pick")
+            ? Text("Pick or drag how the quote proves the claim", tableName: "Activities")
             : Text(
               "Next: explain how the quote proves the claim", tableName: "Activities",
               comment: "An argument's empty reasoning part, waiting for the evidence first"),
@@ -244,7 +241,7 @@ private struct ArgumentBuilderCanvas: View {
     switch verdict {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
-    default: isFilled ? Color(.background) : .clear
+    default: isFilled ? .boxBackground : .clear
     }
   }
 
@@ -350,7 +347,7 @@ private struct ArgumentBuilderCanvas: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(12)
-    .panel(cornerRadius: Radius.option)
+    .activityBox(cornerRadius: Radius.option)
     .accessibilityElement(children: .combine)
   }
 }

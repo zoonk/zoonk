@@ -87,4 +87,72 @@ final class ProgressPresentationTests: XCTestCase {
     XCTAssertEqual(CalendarSteps.index(from: 14, key: .rightArrow, count: 20), 14)
     XCTAssertEqual(CalendarSteps.index(from: 10, key: .rightArrow, count: 20), 17)
   }
+
+  func testActivityStepsShadeLongerStudyDaysDarker() {
+    XCTAssertEqual(CalendarSteps.activity(studied: false, seconds: 120, maximumSeconds: 600), 0)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 60, maximumSeconds: 600), 1)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 300, maximumSeconds: 600), 2)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 360, maximumSeconds: 600), 3)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 600, maximumSeconds: 600), 4)
+  }
+
+  /// Older imported days have lessons but no recorded time.
+  func testActivityStepsGiveAStudyDayWithoutTimeTheLightestShade() {
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 0, maximumSeconds: 600), 1)
+    XCTAssertEqual(CalendarSteps.activity(studied: true, seconds: 0, maximumSeconds: 0), 1)
+  }
+
+  func testActivityDayDetailNamesItsTimeAndLessonsLikeMain() {
+    XCTAssertEqual(detail(activities: 3, lessons: 1, seconds: 720), "12 min · 1 lesson")
+    XCTAssertEqual(detail(activities: 4, lessons: 2, seconds: 300), "5 min · 2 lessons")
+    XCTAssertEqual(detail(activities: 2, lessons: 0, seconds: 300), "5 min")
+    XCTAssertEqual(detail(activities: 0, lessons: 0, seconds: 0), "No study")
+  }
+
+  /// Older imported days have lessons but no recorded time.
+  func testActivityDayDetailWithoutTimeNamesItsLessons() {
+    XCTAssertEqual(detail(activities: 2, lessons: 1, seconds: 0), "1 lesson")
+    XCTAssertEqual(detail(activities: 2, lessons: 0, seconds: 0), "Studied")
+  }
+
+  /// The Audio Graph plays the minutes the squares are shaded by, not how many activities a day had.
+  func testActivityCalendarPlaysEachDaysMinutes() {
+    let longDay = activityDay(activities: 2, lessons: 0, seconds: 3_600)
+      .calendarDay(maximumSeconds: 3_600, today: "2026-08-21")
+    let shortDay = activityDay(activities: 10, lessons: 0, seconds: 300)
+      .calendarDay(maximumSeconds: 3_600, today: "2026-08-21")
+
+    XCTAssertEqual(longDay.value, 60)
+    XCTAssertEqual(shortDay.value, 5)
+    XCTAssertGreaterThan(longDay.step, shortDay.step)
+  }
+
+  /// The server decides whether a day stands out; Best day shows its verdict.
+  func testBestDayShowsTheServersVerdict() {
+    let performance = ScorePerformance(
+      correctAnswers: 16, incorrectAnswers: 4, score: 80, totalAnswers: 20)
+    let thursday = WeekdayScorePattern(performance: performance, weekday: .thursday)
+
+    XCTAssertEqual(
+      patterns(dayVerdict: .even(points: 2)).bestDayName, "Any day")
+    XCTAssertEqual(patterns(dayVerdict: .best(thursday)).bestDayName, "Thursday")
+    XCTAssertNil(patterns(dayVerdict: .notEnough).bestDayName)
+  }
+
+  private func patterns(dayVerdict: PatternVerdict<WeekdayScorePattern>) -> ScorePatterns {
+    ScorePatterns(
+      dayparts: [], dayVerdict: dayVerdict, minimumAnswers: 10, strongestDaypart: nil,
+      strongestWeekday: nil, timeVerdict: .notEnough, weekdays: [])
+  }
+
+  private func activityDay(activities: Int, lessons: Int, seconds: Int) -> ActivityProgressDay {
+    ActivityProgressDay(
+      activitiesCompleted: activities, date: ProgressDate("2026-08-20")!,
+      lessonCompletions: lessons, timeSpentSeconds: seconds)
+  }
+
+  private func detail(activities: Int, lessons: Int, seconds: Int) -> String {
+    activityDay(activities: activities, lessons: lessons, seconds: seconds).studyDetail
+      .replacingOccurrences(of: "\u{00A0}", with: " ")
+  }
 }

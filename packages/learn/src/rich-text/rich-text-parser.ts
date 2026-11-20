@@ -18,14 +18,23 @@ export type RichBlock =
     };
 
 const UNORDERED_ITEM = /^\s*[-*•]\s+(?<text>.+)$/u;
+const SPACE_BEFORE_PUNCTUATION = /^[ \t]+(?=[.,])/u;
 const ORDERED_ITEM = /^\s*\d{1,3}[.)]\s+(?<text>.+)$/u;
 
 function parseMarkup(text: string): RichInlineSegment[] {
-  return parseInlineMarkup(text).map((segment) =>
-    segment.kind === "text"
-      ? { ...segment, text: segment.text.replaceAll(String.raw`\$`, "$") }
-      : segment,
-  );
+  return parseInlineMarkup(text).map((segment, index, segments) => {
+    if (segment.kind !== "text") {
+      return segment;
+    }
+
+    const words = segment.text.replaceAll(String.raw`\$`, "$");
+
+    return {
+      ...segment,
+      text:
+        segments[index - 1]?.kind === "code" ? words.replace(SPACE_BEFORE_PUNCTUATION, "") : words,
+    };
+  });
 }
 
 /**

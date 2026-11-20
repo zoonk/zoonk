@@ -4,6 +4,34 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { cn } from "@zoonk/ui/lib/utils";
 import type * as React from "react";
 
+/** A popover keeps the page's gutter from the screen's edge, as content does (craft S5). */
+const PAGE_GUTTER = 16;
+
+/**
+ * The screen's main action is pinned over the page, so its bar is the screen's bottom edge too:
+ * a popover keeps the gutter above it, and turns upward when there's no room under its trigger.
+ * Read as the popover opens, since the bar shows or hides with the page.
+ */
+function getEdgePadding() {
+  const bars = [...document.querySelectorAll('[data-slot="bottom-bar"]')]
+    .map((bar) => bar.getBoundingClientRect())
+    .filter((rect) => rect.height > 0);
+
+  const barTop = Math.min(window.innerHeight, ...bars.map((rect) => rect.top));
+
+  return {
+    bottom: Math.max(0, window.innerHeight - barTop) + PAGE_GUTTER,
+    left: PAGE_GUTTER,
+    right: PAGE_GUTTER,
+    top: PAGE_GUTTER,
+  };
+}
+
+/** Rendered only while the popover is open, so it measures the bar the open popover has to clear. */
+function PopoverPositioner(props: PopoverPrimitive.Positioner.Props) {
+  return <PopoverPrimitive.Positioner collisionPadding={getEdgePadding()} {...props} />;
+}
+
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }
@@ -28,7 +56,7 @@ function PopoverContent({
   return (
     <PopoverPrimitive.Portal>
       {backdrop ? <PopoverPrimitive.Backdrop className="fixed inset-0" /> : null}
-      <PopoverPrimitive.Positioner
+      <PopoverPositioner
         align={align}
         alignOffset={alignOffset}
         className="isolate z-50"
@@ -37,13 +65,13 @@ function PopoverContent({
       >
         <PopoverPrimitive.Popup
           className={cn(
-            "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2 bg-popover text-popover-foreground ring-foreground/10 data-closed:animate-out data-open:animate-in z-50 flex w-72 origin-(--transform-origin) flex-col gap-4 rounded-xl p-4 text-sm shadow-2xl ring-1 outline-hidden duration-100",
+            "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2 bg-popover text-popover-foreground ring-foreground/10 data-closed:animate-out data-open:animate-in z-50 flex w-72 origin-(--transform-origin) flex-col gap-4 rounded-xl p-4 text-sm shadow-2xl ring-1 outline-hidden duration-100 ring-inset",
             className,
           )}
           data-slot="popover-content"
           {...props}
         />
-      </PopoverPrimitive.Positioner>
+      </PopoverPositioner>
     </PopoverPrimitive.Portal>
   );
 }

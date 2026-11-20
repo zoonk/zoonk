@@ -30,7 +30,7 @@ struct ActivityTileStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     content(configuration)
-      .typeStyle(.body.weight(mark == .selected || mark == .wrong ? .semibold : .regular))
+      .typeStyle(.body.weight(mark == .wrong ? .semibold : .regular))
       .foregroundStyle(foreground)
       .padding(.horizontal, isCompact ? 4 : 12)
       .padding(.vertical, isCompact ? 6 : 10)
@@ -106,7 +106,7 @@ struct ActivityReasonList: View {
         .typeStyle(.note)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .panel(cornerRadius: Radius.option)
+        .activityBox(cornerRadius: Radius.option)
         .accessibilityElement(children: .combine)
       }
     }
@@ -122,7 +122,7 @@ struct ActivityCaption: View {
 
   var body: some View {
     text
-      .typeStyle(.data)
+      .typeStyle(.meta.monospacedDigit())
       .foregroundStyle(.mutedForeground)
   }
 }

@@ -39,7 +39,7 @@ describe(getNextStopLesson, () => {
   });
 
   it("says why a refused request won't be written, in the wait's place", () => {
-    const limit = { period: "month", status: "limitReached", tier: "free" } as const;
+    const limit = { period: "day", status: "limitReached", tier: "free" } as const;
     const facts = { limit, request: IDLE, state: NOT_STARTED };
     const lesson = getNextStopLesson({ ...facts, step: LESSON_STEP });
 

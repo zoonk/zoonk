@@ -1,27 +1,41 @@
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminNameCell } from "@/components/admin-name-cell";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
+import { StateMark } from "@/components/state-mark";
 import { type ListedLessonQuestion } from "@/data/questions/list-lesson-questions";
-import {
-  getAdminQuestionLessonContext,
-  getAdminQuestionStatusVariant,
-} from "@/lib/lesson-question";
-import { Badge } from "@zoonk/ui/components/badge";
+import { formatDate } from "@/lib/format";
+import { getAdminQuestionLessonContext } from "@/lib/lesson-question";
 import { TableCell } from "@zoonk/ui/components/table";
 import { markdownToPlainText } from "@zoonk/utils/markdown-text";
-import Link from "next/link";
 
+/** The course over the lesson the question was asked in. */
 function QuestionLessonCell({ question }: { question: ListedLessonQuestion }) {
   const context = getAdminQuestionLessonContext(question.thread);
 
   if (!context) {
-    return <span className="text-muted-foreground">Deleted lesson</span>;
+    return <span className="text-faint">Lesson removed</span>;
   }
 
   return (
     <>
-      <span className="line-clamp-1 font-medium">{context.course?.title ?? "—"}</span>
-      <span className="text-muted-foreground line-clamp-1 text-xs">
-        {[context.chapterTitle, context.lessonLabel].filter(Boolean).join(" · ")}
+      <span className="text-foreground block truncate">
+        {context.course?.title ?? context.lessonLabel}
       </span>
+      {context.course ? (
+        <span className="block truncate text-xs">{context.lessonLabel}</span>
+      ) : null}
+    </>
+  );
+}
+
+/** An answered question shows only its date; one that failed or is still being written says so. */
+function QuestionAskedCell({ question }: { question: ListedLessonQuestion }) {
+  return (
+    <>
+      {formatDate(question.createdAt)}
+      {question.status === "completed" ? null : (
+        <StateMark className="block text-xs" state={question.status} />
+      )}
     </>
   );
 }
@@ -31,37 +45,17 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
 
   return (
     <AdminTableRow>
-      <TableCell className="max-w-72 min-w-56 whitespace-normal">
-        <AdminTableRowLink className="font-medium" href={`/questions/${question.id}`} prefetch>
-          <span className="line-clamp-2">{question.question}</span>
-        </AdminTableRowLink>
-      </TableCell>
-      <TableCell className="text-muted-foreground max-w-80 min-w-64 whitespace-normal">
-        <span className="line-clamp-2">
-          {question.answer ? markdownToPlainText(question.answer) : "No answer yet"}
-        </span>
-      </TableCell>
-      <TableCell className="max-w-48 min-w-40">
-        <Link className="block hover:underline" href={`/users/${user.id}`} prefetch>
-          <span className="block truncate font-medium">{user.name || user.username || "—"}</span>
-          <span className="text-muted-foreground block truncate text-xs">{user.email}</span>
-        </Link>
-      </TableCell>
-      <TableCell className="max-w-56 min-w-48 whitespace-normal">
+      <AdminNameCell
+        href={`/questions/${question.id}`}
+        note={question.answer ? markdownToPlainText(question.answer) : "No answer yet"}
+        title={question.question}
+      />
+      <AdminUserCell opensRow={false} user={user} userId={user.id} />
+      <TableCell>
         <QuestionLessonCell question={question} />
       </TableCell>
       <TableCell>
-        <div className="flex flex-col items-start gap-1">
-          <Badge className="capitalize" variant={getAdminQuestionStatusVariant(question.status)}>
-            {question.status}
-          </Badge>
-          <time
-            className="text-muted-foreground text-xs"
-            dateTime={question.createdAt.toISOString()}
-          >
-            {question.createdAt.toLocaleDateString()}
-          </time>
-        </div>
+        <QuestionAskedCell question={question} />
       </TableCell>
     </AdminTableRow>
   );

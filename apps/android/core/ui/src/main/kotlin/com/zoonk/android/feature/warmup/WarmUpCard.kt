@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
@@ -65,12 +66,15 @@ import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.GenerationFailureNotice
+import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.focusMoveTarget
+import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
@@ -148,6 +152,15 @@ class WaitQuizState internal constructor(
 
     fun back() {
         showingProgress = false
+    }
+
+    /** The run failed, so the wait is over: the quiz goes whole, and a retry's wait offers the next card afresh. */
+    internal fun end() {
+        showingProgress = true
+        if (picked != null) {
+            picked = null
+            index = maxOf(index + 1, warmUpId?.let { warmUps?.next(it) } ?: 0)
+        }
     }
 
     fun pick(
@@ -228,6 +241,9 @@ fun WaitContent(
     progress: @Composable () -> Unit,
 ) {
     quiz.open()
+    // A failed run ends the wait and its quiz with it; a lost connection may still finish, so its quiz stays.
+    val ended = run.status == GenerationRun.Status.Failed && run.failure != GenerationFailure.Connection
+    LaunchedEffect(ended) { if (ended) quiz.end() }
     val share =
         progressShare ?: com.zoonk.android.ui.components
             .rememberGenerationProgress(kind, run)
@@ -242,7 +258,7 @@ fun WaitContent(
     val showingProgress = quiz.showingProgress && quiz.canShowQuiz && !progressBeside
     BackHandler(enabled = showingProgress) { quiz.back() }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        if (!progressBeside && quiz.canShowQuiz && !quiz.showingProgress) {
+        if (!ended && !progressBeside && quiz.canShowQuiz && !quiz.showingProgress) {
             val failure = run.failure
             if (failure != null) {
                 GenerationFailureNotice(failure, onRetry)
@@ -261,7 +277,7 @@ fun WaitContent(
             HorizontalDivider()
         }
         AnimatedContent(
-            targetState = !progressBeside && (quiz.showingProgress || !quiz.canShowQuiz),
+            targetState = ended || (!progressBeside && (quiz.showingProgress || !quiz.canShowQuiz)),
             transitionSpec = {
                 fadeIn(tween(150, easing = ZoonkMotion.EaseOut)) togetherWith
                     fadeOut(tween(150, easing = ZoonkMotion.EaseOut)) using
@@ -269,10 +285,17 @@ fun WaitContent(
             },
             label = "wait view",
         ) { progressShown ->
-            if (progressShown) {
-                Column(Modifier.focusMoveTarget(progressFocus).focusable().semantics { contentDescription = title }) { progress() }
-            } else {
-                QuizCard(quiz, surface, hold, goalId)
+            // Beside its progress, an ended wait has nothing to show here: the progress pane says it failed.
+            if (progressShown && !(ended && progressBeside)) {
+                Column(
+                    Modifier
+                        .layoutPart(LayoutPart.WAIT, LayoutPart.Part.Group, gap = WAIT_GAP)
+                        .focusMoveTarget(progressFocus)
+                        .focusable()
+                        .semantics { contentDescription = title },
+                ) { progress() }
+            } else if (!progressShown) {
+                QuizCard(quiz, surface, hold, WaitPresentation(ready = run.status == GenerationRun.Status.Ready), goalId)
             }
         }
     }
@@ -292,7 +315,7 @@ private fun WaitStrip(
     Column(
         modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .then(if (ready) Modifier else Modifier.clickable(onClick = onClick))
             .semantics(mergeDescendants = true) {
                 stateDescription = percent
             }.padding(vertical = 8.dp),
@@ -313,7 +336,10 @@ private fun WaitStrip(
                 }
             }
             Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
-            Icon(painterResource(R.drawable.ic_chevron_right), null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (!ready) {
+                com.zoonk.android.ui.components
+                    .ListRowChevron()
+            }
         }
         lessonLine?.let {
             Row(
@@ -358,11 +384,12 @@ private fun QuizCard(
     quiz: WaitQuizState,
     surface: AnalyticsEvent.WarmUpSurface,
     hold: ReadyHold,
+    wait: WaitPresentation,
     goalId: String? = null,
 ) {
     val card = quiz.card
     if (card == null) {
-        if (quiz.coming) QuizSkeleton()
+        if (quiz.coming) QuizSkeleton(wait)
         return
     }
     val tracker = LocalEventTracker.current
@@ -375,7 +402,7 @@ private fun QuizCard(
     val reveal = remember { BringIntoViewRequester() }
     val firstAnswer = remember { FocusRequester() }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Title()
+        Title(wait)
         Guess(card, quiz.picked, reveal, firstAnswer) { option ->
             quiz.pick(option, hold)
             tracker.track(AnalyticsEvent.WarmUpAnswered(surface, card.id, quiz.index + 1, option.correct))
@@ -384,9 +411,9 @@ private fun QuizCard(
 }
 
 @Composable
-private fun QuizSkeleton() {
+private fun QuizSkeleton(wait: WaitPresentation) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Title()
+        Title(wait)
         MediaPending(
             Modifier.fillMaxWidth().heightIn(min = 80.dp).semantics { progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate },
         ) {}
@@ -400,24 +427,8 @@ private fun QuizSkeleton() {
 }
 
 @Composable
-private fun Title() {
-    Row(
-        Modifier.semantics(mergeDescendants = true) { heading() },
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            painterResource(R.drawable.ic_auto_awesome),
-            contentDescription = null,
-            modifier = Modifier.size(18.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            stringResource(R.string.warm_up_title),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge,
-        )
-    }
+private fun Title(wait: WaitPresentation) {
+    Eyebrow(stringResource(wait.quizTitle), Modifier.semantics(mergeDescendants = true) { heading() })
 }
 
 /** The answers lock at the first tap, which shows the right one and why; a guess is never wrong, only shown its answer. */
@@ -461,15 +472,21 @@ private fun Guess(
     }
 
     val right = card.options.any { it.id == picked && it.correct }
-    Column(
-        Modifier.bringIntoViewRequester(reveal).semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    com.zoonk.android.ui.components.FeedbackPanel(
+        label = stringResource(if (right) R.string.player_verdict_guess_right else R.string.player_verdict_guess),
+        modifier = Modifier.bringIntoViewRequester(reveal).semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
     ) {
         FeedbackVerdict(
             text = stringResource(if (right) R.string.player_verdict_guess_right else R.string.player_verdict_guess),
             tone = if (right) FeedbackTone.Right else FeedbackTone.Neutral,
             icon = if (right) null else R.drawable.ic_auto_awesome,
         )
-        Text(card.reveal, style = MaterialTheme.typography.bodyLarge)
+        Text(card.reveal, style = MaterialTheme.typography.bodyMedium)
     }
 }
+
+/**
+ * Main's `wait-content` (`gap-6`) between the wait's progress and what follows it, such as the first lesson's row.
+ * The layout capture holds this column to it; the column itself doesn't space its items yet.
+ */
+private val WAIT_GAP = 24.dp

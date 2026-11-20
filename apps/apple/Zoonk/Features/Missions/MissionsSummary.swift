@@ -1,16 +1,20 @@
 import SwiftUI
 
+/// Main's missions header: "Today's missions", then the track with the day's bonus at its end. With
+/// `isOpen`, a press on the title shows or hides the missions; with `collapsesWhenWon`, a won day
+/// is one line.
 struct MissionsSummary: View {
-  @Environment(LearnerSummaryStore.self) private var learner
-
   let missions: [StudyMission]
   let bonus: Int
   let earned: Bool
+  var isOpen: Binding<Bool>?
+  var collapsesWhenWon = true
 
   var body: some View {
-    let left = missions.filter { !$0.isDone }
+    let done = missions.filter(\.isDone).count
+    let won = earned && done == missions.count
 
-    if earned && left.isEmpty {
+    if won && collapsesWhenWon {
       AccessibilityStack(spacing: 8) {
         Text("Missions done", tableName: "Today", comment: "Today's missions are done")
           .typeStyle(.body.weight(.medium))
@@ -19,42 +23,54 @@ struct MissionsSummary: View {
       }
     } else {
       VStack(alignment: .leading, spacing: 12) {
-        MarkedRow(alignment: .center, stackedSpacing: 8) {
-          MissionsRing(done: missions.count - left.count, total: missions.count) {
-            let buddy = learner.summary.value?.buddy ?? BuddyLook()
-            BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
+        if let isOpen {
+          Button {
+            isOpen.wrappedValue.toggle()
+          } label: {
+            title(won: won, isOpen: isOpen.wrappedValue)
           }
-        } content: {
-          remaining(left)
-            .typeStyle(.body.monospaced())
-        } end: {
-          BrainPowerReward(points: bonus, earned: false)
+          .buttonStyle(.plain)
+          .accessibilityValue(
+            isOpen.wrappedValue
+              ? Text("Shown", tableName: "Today", comment: "The missions' list is open")
+              : Text("Hidden", tableName: "Today", comment: "The missions' list is closed"))
+        } else {
+          title(won: won, isOpen: nil)
         }
 
-        MissionTrack(missions: missions)
+        HStack(spacing: 12) {
+          MissionTrack(
+            missions: missions,
+            label: Text(
+              String(
+                localized: "missionsDone", defaultValue: "\(done) of \(missions.count) done",
+                table: "Today",
+                comment: "Under the title Today's missions: how many of today's missions are done."
+              )))
+
+          BrainPowerReward(points: bonus, earned: won)
+            .fixedSize()
+        }
       }
     }
   }
 
-  private func remaining(_ left: [StudyMission]) -> Text {
-    let count =
-      left.count == missions.count
-      ? Text(
-        "\(left.count) missions", tableName: "Today",
-        comment: "How many missions today has, before any is done")
-      : Text("\(left.count) left", tableName: "Today", comment: "Today's missions still to do")
-    let minutes = minutesLeft(left)
+  private func title(won: Bool, isOpen: Bool?) -> some View {
+    HStack(spacing: 6) {
+      (won
+        ? Text("Missions done", tableName: "Today", comment: "Today's missions are done")
+        : Text("Today's missions", tableName: "Today", comment: "Today's missions header"))
+        .typeStyle(.rowTitle)
 
-    guard minutes > 0 else {
-      return count
+      if let isOpen {
+        Image(systemName: "chevron.down")
+          .imageScale(.small)
+          .foregroundStyle(.mutedForeground)
+          .rotationEffect(.degrees(isOpen ? 0 : -90))
+          .accessibilityHidden(true)
+      }
     }
-
-    return Text(
-      "\(count)\u{00A0}· ~\(studyDuration(minutes: minutes))", tableName: "Today",
-      comment: "Today's missions and the time they take, such as “2 missions · ~12 min”")
-  }
-
-  private func minutesLeft(_ missions: [StudyMission]) -> Int {
-    Int(missions.reduce(0) { $0 + ($1.minutes ?? 0) }.rounded())
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .contentShape(.rect)
   }
 }

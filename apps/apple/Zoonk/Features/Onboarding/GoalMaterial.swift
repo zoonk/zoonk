@@ -51,7 +51,7 @@ struct GoalMaterialButton: View {
     }
     .labelStyle(.iconOnly)
     .foregroundStyle(.mutedForeground)
-    .frame(minWidth: 44, minHeight: 44)
+    .frame(minWidth: 44, minHeight: 44, alignment: .leading)
     .contentShape(.rect)
   }
 }
@@ -99,7 +99,7 @@ struct GoalMaterialSections: View {
             router.present(.signIn)
           } label: {
             Text(
-              "Create an account", tableName: "Onboarding",
+              "Create a free account", tableName: "Onboarding",
               comment: "Opens sign-up to add material")
           }
         }
@@ -184,18 +184,34 @@ private let readableMaterialTypes: [UTType] = [
 
 /// What the learner is adding as material: text or a link being pasted, a source being read and
 /// what failed, or for a guest, how to get an account. Kept by the screen above its panes, so
-/// folding keeps it.
+/// folding keeps it, and left as the screen's visit ends.
+@MainActor
 struct MaterialDraft {
   enum Pasting {
     case text
     case link
   }
 
+  enum Attached {
+    case source(AttachedSource)
+    case failed(MaterialFailure)
+  }
+
   var pasting: Pasting?
   var value = ""
-  var isAdding = false
-  var error: LocalizedStringResource?
   var showsSignUp = false
+  let attaching = VisitRequest<Attached>()
+
+  var isAdding: Bool { attaching.isRunning }
+
+  var error: MaterialFailure? {
+    if case .failed(let failure)? = attaching.outcome { failure } else { nil }
+  }
+
+  /// What the learner pasted stays; what was being added still saves, and shows nothing.
+  func leave() {
+    attaching.leave()
+  }
 
   static var adding: String {
     String(
@@ -209,11 +225,13 @@ struct MaterialAttachControls<Label: View>: View {
   var goal: (id: String, language: String)?
   @Binding var draft: MaterialDraft
   @ViewBuilder let label: Label
-  let onAttached: (AttachedSource) async throws -> Void
+  var save: (AttachedSource) async throws -> Void = { _ in }
+  let onAttached: (AttachedSource) -> Void
 
   var body: some View {
-    MaterialAttachMenu(goal: goal, draft: $draft, label: { label }, onAttached: onAttached)
-    MaterialAttachProgress(goal: goal, draft: $draft, onAttached: onAttached)
+    MaterialAttachMenu(
+      goal: goal, draft: $draft, label: { label }, save: save, onAttached: onAttached)
+    MaterialAttachProgress(goal: goal, draft: $draft, save: save, onAttached: onAttached)
   }
 }
 
@@ -225,8 +243,10 @@ struct MaterialAttachMenu<Label: View>: View {
   /// Over the ways, what the material is for.
   var header: Text?
   @ViewBuilder let label: Label
-  /// Its throw shows as a failure to add.
-  let onAttached: (AttachedSource) async throws -> Void
+  /// Saves the added source where it's for; its throw shows as a failure to add.
+  var save: (AttachedSource) async throws -> Void = { _ in }
+  /// Once the source is added and saved, while the visit that added it lasts.
+  let onAttached: (AttachedSource) -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
   @State private var isImporting = false
@@ -249,7 +269,7 @@ struct MaterialAttachMenu<Label: View>: View {
     .announcesStatus(draft.isAdding ? MaterialDraft.adding : nil)
     .fileImporter(isPresented: $isImporting, allowedContentTypes: readableMaterialTypes) { result in
       if case .success(let file) = result {
-        $draft.add({ try await attach(file) }, then: onAttached)
+        $draft.add({ try await attach(file) }, save: save, then: onAttached)
       }
     }
   }
@@ -305,7 +325,8 @@ struct MaterialAttachMenu<Label: View>: View {
 struct MaterialAttachProgress: View {
   var goal: (id: String, language: String)?
   @Binding var draft: MaterialDraft
-  let onAttached: (AttachedSource) async throws -> Void
+  var save: (AttachedSource) async throws -> Void = { _ in }
+  let onAttached: (AttachedSource) -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
 
@@ -317,7 +338,7 @@ struct MaterialAttachProgress: View {
           {
             try await onboarding.attach(
               pasting == .link ? .link(value, goal: goal) : .text(value, goal: goal))
-          }, then: onAttached)
+          }, save: save, then: onAttached)
       } onCancel: {
         draft.pasting = nil
         draft.value = ""
@@ -333,49 +354,48 @@ struct MaterialAttachProgress: View {
     }
 
     if let error = draft.error {
-      FailureLine(message: error)
+      MaterialFailureView(failure: error, kind: .uploads)
     }
   }
 }
 
 extension Binding<MaterialDraft> {
-  /// Reads one source and hands it on; a throw from either shows as a failure to add.
+  /// Reads one source, saves it and hands it on; a throw from either shows as a failure to add.
   @MainActor
   fileprivate func add(
     _ read: @escaping () async throws -> AttachedSource,
-    then onAttached: @escaping (AttachedSource) async throws -> Void
+    save: @escaping (AttachedSource) async throws -> Void,
+    then onAttached: @escaping (AttachedSource) -> Void
   ) {
-    wrappedValue.isAdding = true
-    wrappedValue.error = nil
-
-    Task {
-      defer { wrappedValue.isAdding = false }
-
+    wrappedValue.attaching.run {
       do {
-        try await onAttached(read())
-        wrappedValue = MaterialDraft()
+        let source = try await read()
+        try await save(source)
+        return .source(source)
       } catch is CancellationError {
+        return nil
       } catch {
-        wrappedValue.error = MaterialDraft.message(for: error)
+        return .failed(MaterialFailure(error) { MaterialDraft.message(for: $0) })
+      }
+    } then: { attached in
+      if case .source(let source)? = attached {
+        wrappedValue = MaterialDraft()
+        onAttached(source)
       }
     }
   }
 }
 
 extension MaterialDraft {
-  fileprivate static func message(for error: Error) -> LocalizedStringResource {
+  nonisolated fileprivate static func message(for error: Error) -> LocalizedStringResource {
     switch error as? OnboardingError {
     case .limit(let limit) where limit.tier == "plus":
       LocalizedStringResource(
-        "You've added as much material as your plan allows today. Try again tomorrow.",
-        table: "Onboarding", comment: "A Plus learner added as much material as allowed today")
-    case .limit(let limit) where limit.period == "month":
-      LocalizedStringResource(
-        "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-        table: "Onboarding", comment: "A free learner added as much material as allowed this month")
+        "No more material today. More tomorrow.",
+        table: "Onboarding", comment: "A subscriber added as much material as allowed today")
     case .limit:
       LocalizedStringResource(
-        "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
+        "No more material today. More tomorrow, or subscribe to keep going.",
         table: "Onboarding", comment: "A free learner added as much material as allowed today")
     case .slowDown:
       LocalizedStringResource(
@@ -444,7 +464,7 @@ private struct PasteMaterialRow: View {
             ? Text("Add link", tableName: "Onboarding", comment: "Adds the pasted link")
             : Text("Add text", tableName: "Onboarding", comment: "Adds the pasted text")
         }
-        .buttonStyle(.mainAction)
+        .buttonStyle(.outline)
         .disabled(trimmed.isEmpty)
 
         Button(role: .cancel, action: onCancel) {
@@ -518,7 +538,8 @@ struct MaterialQuestionsView: View {
               .foregroundStyle(.mutedForeground)
             }
           case .failure(let error):
-            FailureLine(message: Self.message(for: error))
+            MaterialFailureView(
+              failure: MaterialFailure(error) { Self.message(for: $0) }, kind: .questions)
           }
         }
       }
@@ -634,16 +655,11 @@ struct MaterialQuestionsView: View {
     switch error as? OnboardingError {
     case .limit(let limit) where limit.tier == "plus":
       LocalizedStringResource(
-        "You've asked as many questions as your plan allows today.", table: "Onboarding",
-        comment: "A Plus learner asked as many material questions as allowed today")
-    case .limit(let limit) where limit.period == "month":
-      LocalizedStringResource(
-        "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.",
-        table: "Onboarding",
-        comment: "A free learner asked as many material questions as allowed this month")
+        "No more questions today. More tomorrow.", table: "Onboarding",
+        comment: "A subscriber asked as many material questions as allowed today")
     case .limit:
       LocalizedStringResource(
-        "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.",
+        "No more questions today. More tomorrow, or subscribe to keep going.",
         table: "Onboarding",
         comment: "A free learner asked as many material questions as allowed today")
     case .slowDown:
@@ -658,6 +674,35 @@ struct MaterialQuestionsView: View {
       LocalizedStringResource(
         "We couldn't answer that. Try again in a moment.", table: "Onboarding",
         comment: "Answering a material question failed")
+    }
+  }
+}
+
+/// Why material couldn't be added or asked about. A monthly cap is the shared notice, which follows
+/// its day while the screen is open; anything else is one line.
+enum MaterialFailure: Equatable {
+  case notice(HelpLimit)
+  case line(LocalizedStringResource)
+
+  init(_ error: Error, line: (Error) -> LocalizedStringResource) {
+    if case .limit(let limit) = error as? OnboardingError, limit.help.isMonthly {
+      self = .notice(limit.help)
+    } else {
+      self = .line(line(error))
+    }
+  }
+}
+
+struct MaterialFailureView: View {
+  let failure: MaterialFailure
+  let kind: HelpLimit.Kind
+
+  var body: some View {
+    switch failure {
+    case .notice(let limit):
+      LimitNotice(limit: limit, kind: kind)
+    case .line(let message):
+      FailureLine(message: message)
     }
   }
 }

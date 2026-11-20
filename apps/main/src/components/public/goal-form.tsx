@@ -4,18 +4,18 @@ import { useRouter } from "@/i18n/navigation";
 import { GOAL_PARAM } from "@/lib/public/public-hrefs";
 import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import {
-  GOAL_FIELD_TEXT_CLASS,
   GoalField,
+  GoalFieldExample,
   GoalFieldLabel,
   GoalFieldSubmit,
   GoalFieldText,
 } from "@zoonk/learn/onboarding/goal-field";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useId, useRef, useState, useTransition } from "react";
+import { PageStartMark } from "./page-start";
 import { useSendGoal } from "./use-send-goal";
-
-const FIELD_TEXT_CLASS = cn(GOAL_FIELD_TEXT_CLASS, "col-start-1 row-start-1");
 
 /**
  * Without scripts it's a plain GET form that only fills onboarding's box: reading a goal always
@@ -27,11 +27,13 @@ export function GoalForm({
   example,
   id,
   note,
+  noteClassName,
 }: {
   action: string;
   example: ReactNode;
   id: string;
   note?: ReactNode;
+  noteClassName?: string;
 }) {
   const t = useExtracted();
   const router = useRouter();
@@ -39,14 +41,15 @@ export function GoalForm({
   const exampleId = useId();
   const lineId = useId();
   const fieldRef = useRef<HTMLTextAreaElement>(null);
-  const [hinted, setHinted] = useState(false);
+  const [hasGoal, setHasGoal] = useState(false);
+  const mounted = useIsMounted();
   const send = useSendGoal();
   const [sending, startSending] = useTransition();
   const reset = useResetWhenDone();
-  const line = hinted ? t("Write your goal in the box first, in your own words.") : note;
 
   return (
     <div className="flex w-full flex-col gap-4" key={reset.key}>
+      <PageStartMark />
       <GoalField
         action={action}
         aria-busy={sending}
@@ -57,68 +60,50 @@ export function GoalForm({
           event.preventDefault();
           const goal = fieldRef.current?.value.trim() ?? "";
 
-          if (!goal) {
-            setHinted(true);
-            fieldRef.current?.focus();
-          } else if (!sending) {
+          if (goal && !sending) {
             reset.done();
+            setHasGoal(false);
             startSending(() => send(goal));
           }
         }}
       >
-        <div className="flex min-w-0 flex-auto items-start gap-2 pr-2.5">
+        <div className="flex min-w-0 flex-auto items-start gap-2">
           <GoalFieldLabel htmlFor={fieldId}>{t("I want to")}</GoalFieldLabel>
 
           <div className="group/goal grid min-w-0 flex-1">
-            <span
-              aria-hidden="true"
-              className={cn(
-                FIELD_TEXT_CLASS,
-                "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none min-w-0 text-pretty select-none",
-                // The field's own state (it holds words), so it's right before scripts run and without them.
-                "group-has-[textarea:not(:placeholder-shown)]/goal:invisible",
-              )}
-              data-slot="goal-example"
-            >
-              {example}
-            </span>
-
-            <span className="sr-only" id={exampleId}>
-              {t.rich("For example: <example></example>", { example: () => example })}
-            </span>
+            <GoalFieldExample id={exampleId}>{example}</GoalFieldExample>
 
             <GoalFieldText
-              aria-describedby={[hinted && lineId, exampleId].filter(Boolean).join(" ")}
-              aria-invalid={hinted || undefined}
+              aria-describedby={note ? `${exampleId} ${lineId}` : exampleId}
               className="col-start-1 row-start-1 contain-inline-size"
               id={fieldId}
               name={GOAL_PARAM}
               onFocus={() => router.prefetch("/start")}
-              onInput={() => setHinted(false)}
+              onInput={(event) => setHasGoal(Boolean(event.currentTarget.value.trim()))}
               // A blank placeholder makes `:placeholder-shown` say whether the box is empty.
               placeholder=" "
               readOnly={sending}
               ref={fieldRef}
+              required
             />
           </div>
         </div>
 
-        <GoalFieldSubmit busy={sending} className="self-end">
+        <GoalFieldSubmit
+          busy={sending}
+          className="self-end"
+          data-action-name="build-plan"
+          disabled={mounted && !hasGoal}
+        >
           {t("Build my plan")}
         </GoalFieldSubmit>
       </GoalField>
 
-      <p
-        aria-live="polite"
-        id={lineId}
-        className={cn(
-          "text-muted-foreground -mt-1 text-[13px]",
-          hinted && "text-foreground",
-          !line && "sr-only",
-        )}
-      >
-        {line}
-      </p>
+      {note && (
+        <p className={cn("text-muted-foreground text-compact -mt-1", noteClassName)} id={lineId}>
+          {note}
+        </p>
+      )}
     </div>
   );
 }

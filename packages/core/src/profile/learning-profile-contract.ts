@@ -53,7 +53,7 @@ export const learningProfileUpdateSchema = z
       .optional()
       .meta({
         description:
-          "Where the learner says they live, or null to clear it. Used for new goals and personal examples; existing plans keep their content country.",
+          "Where the learner lives. It starts as the country they signed in from and they can change it; null clears it, and the next sign-in fills it again. Used for new goals and personal examples, never for prices; existing plans keep their content country.",
       }),
     shareUsageData: z
       .boolean()

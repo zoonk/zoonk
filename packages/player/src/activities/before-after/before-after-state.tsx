@@ -6,6 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { type FactChange, barShares, describeChange } from "./fact-change";
 
 type Fields = ActivityContentFor<"beforeAfter">["fields"];
@@ -48,13 +49,11 @@ function FactRow({
   change,
   fact,
   isAfter,
-  isHighlighted,
   other,
 }: {
   change: FactChange | null;
   fact: Fact;
   isAfter: boolean;
-  isHighlighted: boolean;
   other: Fact | undefined;
 }) {
   const format = useFormatNumber();
@@ -91,8 +90,8 @@ function FactRow({
       {change && (
         <span
           className={cn(
-            "w-fit rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
-            isHighlighted ? "bg-success/10 text-success-text" : "bg-background text-foreground",
+            "w-fit rounded-md px-2 py-0.5 text-xs font-semibold tabular-nums",
+            isAfter ? "bg-viz-accent/10 text-viz-accent" : "bg-background text-foreground",
           )}
         >
           {changeLabel(change)}
@@ -103,14 +102,12 @@ function FactRow({
 }
 
 export function BeforeAfterState({
-  highlightId,
   isAfter,
   other,
   ratios,
   ref,
   state,
 }: {
-  highlightId: string | null;
   isAfter: boolean;
   other: State;
   ratios: Record<string, number | null> | null;
@@ -123,10 +120,10 @@ export function BeforeAfterState({
       ref={ref}
       tabIndex={-1}
       className={cn(
-        "flex flex-col gap-3 rounded-xl p-4 outline-none",
+        "flex flex-col gap-3 p-4 outline-none",
         isAfter
-          ? "bg-viz-accent-soft motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2"
-          : "bg-background",
+          ? "bg-viz-accent-soft motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 rounded-xl"
+          : ACTIVITY_BOX_CLASS,
       )}
     >
       <p
@@ -146,7 +143,6 @@ export function BeforeAfterState({
             change={ratio === null ? null : describeChange(ratio)}
             fact={fact}
             isAfter={isAfter}
-            isHighlighted={fact.id === highlightId}
             key={fact.id}
             other={other.facts.find((item) => item.id === fact.id)}
           />

@@ -1,9 +1,10 @@
 import { useExtracted } from "next-intl";
-import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
-import { useSentenceSpace } from "../_utils/locale";
+import { useGoalDateValues } from "../_utils/iso-date";
+import { useFormatShare } from "../_utils/percent";
 import { type TimeLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
-import { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
+import { useFinishSentence } from "./finish-sentence";
+import { type GoalDate } from "./time-answer-texts";
 
 type DatedLine = Extract<TimeLine, { kind: "everything" | "focus" | "pastDate" | "share" }>;
 
@@ -20,47 +21,42 @@ function isFinishLine(line: TimeLine): line is FinishLine {
   return FINISH_KINDS.has(line.kind);
 }
 
-function FinishMonth(chunks: React.ReactNode) {
-  return <span className="text-foreground font-medium">{chunks}</span>;
+/** Under a time picker, whose number is the sentence's subject; the share stands out in it. */
+function ShareWords({ date, exam, value }: { date: GoalDate; exam: boolean; value: number }) {
+  const t = useExtracted();
+  const goalDate = useGoalDateValues();
+  const formatShare = useFormatShare();
+
+  const values = {
+    ...goalDate(date),
+    b: (chunks: React.ReactNode) => <strong className="font-semibold">{chunks}</strong>,
+    share: formatShare(value),
+  };
+
+  return exam
+    ? t.rich({
+        description:
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message:
+          "{dateKind, select, month {Covers about <b>{share}</b> of your exam topics by {date}.} other {Covers about <b>{share}</b> of your exam topics by {date}.}}",
+        values,
+      })
+    : t.rich({
+        description:
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+        message:
+          "{dateKind, select, month {Covers about <b>{share}</b> of your goal by {date}.} other {Covers about <b>{share}</b> of your goal by {date}.}}",
+        values,
+      });
 }
 
-function DatedWords({
-  date,
-  exam,
-  line,
-  minutes,
-}: {
-  date: GoalDate;
-  exam: boolean;
-  line: DatedLine;
-  minutes: number;
-}) {
+function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {
   const t = useExtracted();
-  const texts = useTimeAnswerTexts();
-  const space = useSentenceSpace();
   const goalDate = useGoalDateValues();
-  const shown = goalDate({ ...date, style: "long" });
+  const shown = goalDate(date);
 
   switch (line.kind) {
     case "everything":
-      if (line.suggested) {
-        return exam
-          ? t({
-              description:
-                'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-              message:
-                "{dateKind, select, month {What it takes to cover all your exam topics by {date}.} other {What it takes to cover all your exam topics by {date}.}}",
-              values: shown,
-            })
-          : t({
-              description:
-                'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-              message:
-                "{dateKind, select, month {What it takes to cover your whole goal by {date}.} other {What it takes to cover your whole goal by {date}.}}",
-              values: shown,
-            });
-      }
-
       return exam
         ? t({
             description:
@@ -77,15 +73,9 @@ function DatedWords({
             values: shown,
           });
     case "focus":
-      return (
-        <>
-          {texts.suggest(minutes)}
-          {space}
-          {texts.focus({ coveredShare: line.coveredShare, everyTopic: line.everyTopic, exam })}
-        </>
-      );
+      return <ShareWords date={date} exam={exam} value={line.coveredShare} />;
     case "share":
-      return texts.share({ date, exam, value: line.share });
+      return <ShareWords date={date} exam={exam} value={line.share} />;
     case "pastDate":
       return t({
         description:
@@ -110,26 +100,13 @@ function FinishWords({
   minutes: number | null;
 }) {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const formatDuration = useFormatDuration();
+  const finishSentence = useFinishSentence();
 
   switch (line.kind) {
     case "finish":
-      return aim && minutes !== null
-        ? t.rich("At {time} a day, you reach {level} around <date>{month}</date>.", {
-            date: FinishMonth,
-            level: aim,
-            month: formatDate(line.endDate, "month"),
-            time: formatDuration(minutes),
-          })
-        : t.rich("You finish around <date>{month}</date>.", {
-            date: FinishMonth,
-            month: formatDate(line.endDate, "month"),
-          });
+      return finishSentence({ aim, endDate: line.endDate, minutes });
     case "noFinish":
-      return t(
-        "We can't estimate a finish date for this schedule. Try more time or more study days.",
-      );
+      return t("We can't estimate an end date. Try more time or more study days.");
     default:
       return line satisfies never;
   }
@@ -182,10 +159,7 @@ export function LineWords({
   minutes: number | null;
 }) {
   if (isDatedLine(line)) {
-    return (
-      date &&
-      minutes !== null && <DatedWords date={date} exam={exam} line={line} minutes={minutes} />
-    );
+    return date && <DatedWords date={date} exam={exam} line={line} />;
   }
 
   if (isFinishLine(line)) {

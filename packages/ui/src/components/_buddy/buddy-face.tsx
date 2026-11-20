@@ -237,7 +237,7 @@ function KindFace() {
 
 export const SLEEPY_EYES_OFFSET = 3;
 
-function SleepyFace() {
+function SleepyFace({ snores }: { snores: boolean }) {
   return (
     <>
       <Part name="eye-left" pivot={EYE_PIVOTS.left}>
@@ -263,29 +263,31 @@ function SleepyFace() {
       <Mouth>
         <ellipse cx="60" cy="82" fill={INK} rx="3.4" ry="2.6" />
       </Mouth>
-      <Part name="snore" pivot={[104, 20]}>
-        <path
-          d="M96 20 h8 l-8 10 h8"
-          fill="none"
-          stroke="#8b93c9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2.6"
-        />
-        <path
-          d="M106 9 h6 l-6 7.5 h6"
-          fill="none"
-          stroke="#b3b9dd"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-        />
-      </Part>
+      {snores && (
+        <Part name="snore" pivot={[104, 20]}>
+          <path
+            d="M96 20 h8 l-8 10 h8"
+            fill="none"
+            stroke="#8b93c9"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2.6"
+          />
+          <path
+            d="M106 9 h6 l-6 7.5 h6"
+            fill="none"
+            stroke="#b3b9dd"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          />
+        </Part>
+      )}
     </>
   );
 }
 
-function FaceDrawing({ expression }: { expression: BuddyExpression }) {
+function FaceDrawing({ expression, snores }: { expression: BuddyExpression; snores: boolean }) {
   switch (expression) {
     case "cheer":
       return <CheerFace />;
@@ -296,7 +298,7 @@ function FaceDrawing({ expression }: { expression: BuddyExpression }) {
     case "proud":
       return <ProudFace />;
     case "sleepy":
-      return <SleepyFace />;
+      return <SleepyFace snores={snores} />;
     case "think":
       return <ThinkFace />;
     case "happy":
@@ -311,13 +313,15 @@ function FaceDrawing({ expression }: { expression: BuddyExpression }) {
 export function BuddyFace({
   expression,
   hidden = false,
+  snores,
 }: {
   expression: BuddyExpression;
   hidden?: boolean;
+  snores: boolean;
 }) {
   return (
     <g data-face={expression} opacity={hidden ? 0 : undefined}>
-      <FaceDrawing expression={expression} />
+      <FaceDrawing expression={expression} snores={snores} />
     </g>
   );
 }

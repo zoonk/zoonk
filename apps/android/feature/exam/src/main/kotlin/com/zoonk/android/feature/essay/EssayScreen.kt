@@ -85,14 +85,15 @@ import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.NoteRow
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.isLongText
+import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.ModalBottomSheet
@@ -103,7 +104,7 @@ import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.components.stepHeading
@@ -116,8 +117,8 @@ import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -263,6 +264,13 @@ internal fun EssayWrite(
                 StatusLine(ui.send, ui.gradesLeft, navigator)
                 if (finishFailures > 0 && !finishing) SaveErrorText(finishFailures, viewModel::finish, onReport = onReportSaveFailure)
                 TaskActions { width ->
+                    if (ui.send == EssaySend.SignUpRequired) {
+                        // Sending again would only meet the gate, so its way on is the bar's one action.
+                        Button(onClick = { navigator.open(AppRoute.Login) }, modifier = width) {
+                            Text(stringResource(R.string.limit_create_account))
+                        }
+                        return@TaskActions
+                    }
                     if (rewriting) {
                         OutlinedButton(
                             busy = finishing,
@@ -278,7 +286,6 @@ internal fun EssayWrite(
                         onClick = viewModel::send,
                         modifier = width,
                         enabled = ui.canSend && !finishing,
-                        leadingIcon = { ButtonIcon(R.drawable.ic_send) },
                     ) {
                         Text(stringResource(if (rewriting) R.string.essay_grade_rewrite else R.string.essay_send))
                     }
@@ -351,7 +358,7 @@ private fun EssayWriteColumn(
             QuestionTitle(essay.question)
         }
     }
-    val guide: @Composable ColumnScope.() -> Unit = { ui.grade?.let { RewriteGuide(it, viewModel::seeGrade) } }
+    val guide: @Composable ColumnScope.() -> Unit = { ui.grade?.let { RewriteGuide(it, gradeBeside = fill, viewModel::seeGrade) } }
     BoxWithConstraints {
         if (fill && maxHeight >= FILL_HEIGHT) {
             Column(Modifier.fillMaxSize().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -395,6 +402,7 @@ private fun QuotedText(
 @Composable
 private fun RewriteGuide(
     grade: EssayGrade,
+    gradeBeside: Boolean,
     onSeeGrade: () -> Unit,
 ) {
     val nextStep = grade.nextStep
@@ -419,14 +427,23 @@ private fun RewriteGuide(
                 buildAnnotatedString {
                     lead?.let {
                         withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold)) { append(it) }
-                        append(" ")
+                        append("\n")
                     }
                     append(detail)
                 },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            TextButton(onClick = onSeeGrade) { Text(stringResource(R.string.essay_see_grade)) }
+            if (essayGradeLinkVisible(
+                    hasGrade = true,
+                    tooShort = tooShort,
+                    beside = gradeBeside,
+                )
+            ) {
+                OutlinedButton(onClick = onSeeGrade, size = ButtonSize.Small) {
+                    Text(stringResource(R.string.essay_see_grade))
+                }
+            }
         }
     }
 }
@@ -472,13 +489,8 @@ private fun StatusLine(
     navigator: AppNavigator,
 ) {
     if (send == EssaySend.SignUpRequired) {
-        LimitNotice(
-            limit = Limit.SignUpRequired,
-            subject = LimitSubject.Help,
-            onCreateAccount = { navigator.open(AppRoute.Login) },
-            onSeePlus = { navigator.open(AppRoute.Subscription) },
-            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        )
+        val words = limitWords(Limit.SignUpRequired, LimitSubject.Help)
+        GateWords(words.title, words.line, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
         return
     }
     var slow by remember(send) { mutableStateOf(false) }
@@ -529,8 +541,12 @@ private fun EssayAside(
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(detailPagePadding())
-                .semantics { paneTitle = label },
+                .padding(
+                    horizontal =
+                        com.zoonk.android.ui.scaffold
+                            .pageMargin(),
+                    vertical = 24.dp,
+                ).semantics { paneTitle = label },
             verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
             texts?.let {
@@ -594,7 +610,7 @@ internal fun EssayGradeSteps(
                     RunColumn(modifier, stepScroll) {
                         when {
                             tooShort -> TooShort(closed)
-                            shown == 0 -> EssayGradeCard(grade, rubric)
+                            shown == 0 -> EssayGradeCard(grade, rubric, onComments = { comments = true }.takeUnless { beside })
                             else -> NextStep(grade)
                         }
                     }
@@ -635,11 +651,6 @@ internal fun EssayGradeSteps(
                                     liveRegion = LiveRegionMode.Assertive,
                                     onReport = onReportSaveFailure,
                                 )
-                            }
-                            if (!tooShort && !beside) {
-                                TextButton(onClick = { comments = true }, modifier = Modifier.fillMaxWidth()) {
-                                    Text(stringResource(R.string.essay_see_comments), textAlign = TextAlign.Center)
-                                }
                             }
                         }
                     }
@@ -772,7 +783,7 @@ private fun CommentsAside(grade: EssayGrade) {
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(detailPagePadding())
+                .padding(pagePadding())
                 .semantics { paneTitle = label },
         ) { Comments(grade) }
     }
@@ -854,3 +865,9 @@ private val BOX_MIN_HEIGHT = 144.dp
 private val FILL_HEIGHT = 560.dp
 private const val NOT_YET = -1
 private val SLOW_GRADING = 20.seconds
+
+internal fun essayGradeLinkVisible(
+    hasGrade: Boolean,
+    tooShort: Boolean,
+    beside: Boolean,
+): Boolean = hasGrade && !tooShort && !beside

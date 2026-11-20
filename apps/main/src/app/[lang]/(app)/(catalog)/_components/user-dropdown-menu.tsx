@@ -6,7 +6,6 @@ import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { getMenu } from "@/lib/menu";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { SendFeedbackItem } from "@zoonk/learn/feedback/menu-items";
-import { PlusMark } from "@zoonk/learn/plus-lock";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -26,7 +25,7 @@ function AccountIdentity({ account }: { account: LearnerSummary["account"] }) {
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-sm font-medium">{account.name}</span>
-          <span className="text-muted-foreground truncate text-xs">{account.email}</span>
+          <span className="text-muted-foreground text-xs wrap-anywhere">{account.email}</span>
         </span>
       </div>
       <DropdownMenuSeparator />
@@ -36,15 +35,17 @@ function AccountIdentity({ account }: { account: LearnerSummary["account"] }) {
 
 function MenuPageItem({
   children,
+  className,
   page,
 }: {
   children: React.ReactNode;
+  className?: string;
   page: Parameters<typeof getMenu>[0];
 }) {
   const { icon: Icon, url } = getMenu(page);
 
   return (
-    <DropdownMenuItem render={<Link href={url} prefetch />}>
+    <DropdownMenuItem className={className} render={<Link href={url} prefetch />}>
       <Icon aria-hidden="true" />
       {children}
     </DropdownMenuItem>
@@ -62,7 +63,16 @@ function PlanItem({ isAccount, plus }: { isAccount: boolean; plus: boolean }) {
   return (
     <MenuPageItem page="subscription">
       {t("Subscription")}
-      {plus && <PlusMark className="ml-auto" label={t("Plus")} />}
+      {plus && (
+        <span className="text-muted-foreground ml-auto">
+          {t({
+            description:
+              "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.",
+            id: "subscriberPlanName",
+            message: "Plus",
+          })}
+        </span>
+      )}
     </MenuPageItem>
   );
 }
@@ -79,11 +89,13 @@ function getAccountStatus(learner: LearnerSummaryState) {
 export function UserDropdownMenu({
   align = "end",
   includeFeedback = true,
+  includePublicLinks = false,
   includeSearch = false,
   side = "bottom",
 }: {
   align?: "end" | "start";
   includeFeedback?: boolean;
+  includePublicLinks?: boolean;
   includeSearch?: boolean;
   side?: "bottom" | "top";
 }) {
@@ -97,6 +109,16 @@ export function UserDropdownMenu({
     <DropdownMenuContent align={align} className="w-64" keepMounted side={side}>
       {isAccount && <AccountIdentity account={summary.account} />}
       {includeSearch && <SearchDropdownItem />}
+      {includePublicLinks && (
+        <MenuPageItem className="sm:hidden" page="courses">
+          {t("Courses")}
+        </MenuPageItem>
+      )}
+      {includePublicLinks && isAccount && (
+        <MenuPageItem className="sm:hidden" page="pricing">
+          {t("Pricing")}
+        </MenuPageItem>
+      )}
       {status !== "visitor" && <MenuPageItem page="certificates">{t("Certificates")}</MenuPageItem>}
       <MenuPageItem page="settings">{t("Settings")}</MenuPageItem>
       <PlanItem isAccount={isAccount} plus={summary?.tier === "plus"} />

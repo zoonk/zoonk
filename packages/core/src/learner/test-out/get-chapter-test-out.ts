@@ -8,7 +8,6 @@ import { findOwnedGoal } from "../_utils/owned-goal";
 import { type SavedPlan, readSavedPlan } from "../facts/saved-plan";
 import { pickPlacementItem } from "../placement/placement-item-choice";
 import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
-import { isTestOutPlusOnly } from "./_utils/test-out-access";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   TEST_OUT_PASS_MARK,
@@ -19,6 +18,8 @@ import {
 
 type ChapterTestOut = {
   chapterId: string;
+  /** The chapter's name, for a screen opened from somewhere that doesn't know it (Today's lesson row). */
+  chapterTitle: string;
   /** Request test-out generation when this list is nonempty. */
   needsItems: string[];
   passMark: number;
@@ -32,7 +33,6 @@ type ChapterTestOut = {
 export type ChapterTestOutResult =
   | { status: "notFound" }
   | { status: "nothingToSkip" }
-  | { status: "plusRequired" }
   | { status: "ready"; testOut: ChapterTestOut }
   | { status: "unauthorized" };
 
@@ -92,24 +92,25 @@ export async function loadChapterTestOut({
     return { status: "nothingToSkip" };
   }
 
-  if (await isTestOutPlusOnly(goal)) {
-    return { status: "plusRequired" };
-  }
-
   const sampled = pickTestOutSkills(chapterSkills);
 
   const count = Math.max(sampled.length, getTestOutQuestionCount(skippable));
 
   const questionsPerSkill = getQuestionsPerSkill({ questions: count, skills: sampled.length });
 
-  const [items, structure] = await Promise.all([
+  const [items, structure, chapter] = await Promise.all([
     loadSkillItems({
       examBlueprintId: goal.examBlueprintId,
       skillIds: sampled.map((skill) => skill.id),
       userId,
     }),
     loadExamStructure(goal),
+    prisma.chapter.findUnique({ select: { title: true }, where: { id: chapterId } }),
   ]);
+
+  if (!chapter) {
+    return { status: "notFound" };
+  }
 
   const picks = sampled.map((skill) => ({
     itemIds: pickSkillItems({ count: questionsPerSkill, items, skillId: skill.id }),
@@ -137,6 +138,7 @@ export async function loadChapterTestOut({
     status: "ready",
     testOut: {
       chapterId,
+      chapterTitle: chapter.title,
       needsItems,
       passMark: TEST_OUT_PASS_MARK,
       questions,

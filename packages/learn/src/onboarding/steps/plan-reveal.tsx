@@ -6,7 +6,6 @@ import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { safeAsync } from "@zoonk/utils/error";
 import { useEffect, useEffectEvent, useState } from "react";
 import { usePoll } from "../../_utils/use-poll";
-import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { type GenerationFirstLesson, type GenerationRun } from "../../generation/generation-run";
 import { type PlanActions, type PlanGoal, PlanScreenProvider } from "../../plan/plan-context";
 import { PlanSheetHosts } from "../../plan/plan-sheet-hosts";
@@ -27,7 +26,6 @@ const POLL_MS = 3000;
 
 export function PlanReveal({
   actions,
-  buddy,
   firstLesson,
   focusTestHref,
   goal,
@@ -38,13 +36,11 @@ export function PlanReveal({
   library,
   planActions,
   planLinkHref,
-  planRevealed,
   run,
   signUpHref,
   toToday,
 }: {
   actions: OnboardingActions;
-  buddy: LearnBuddy | null;
   firstLesson: GenerationFirstLesson | null;
   focusTestHref: string;
   goal: PlanGoal;
@@ -55,14 +51,13 @@ export function PlanReveal({
   library: LibraryCourseLink | null;
   planActions: PlanActions;
   planLinkHref: (planId: string) => string;
-  planRevealed: boolean;
   run: GenerationRun | null;
   signUpHref: string;
   toToday: () => void;
 }) {
   const [plan, setPlan] = useState<PlanView | null>(initialPlan?.plan ?? null);
-  const [syllabus, setSyllabus] = useState<SyllabusView | null>(initialPlan?.syllabus ?? null);
   const [reveal, setReveal] = useState<PlanRevealDays | null>(initialPlan?.reveal ?? null);
+  const [syllabus, setSyllabus] = useState<SyllabusView | null>(initialPlan?.syllabus ?? null);
   const [read, setRead] = useState(initialPlan !== null);
 
   const refresh = async () => {
@@ -73,8 +68,8 @@ export function PlanReveal({
     }
 
     setPlan(outcome.plan);
-    setSyllabus(outcome.syllabus);
     setReveal(outcome.reveal);
+    setSyllabus(outcome.syllabus);
     setRead(true);
   };
 
@@ -171,16 +166,14 @@ export function PlanReveal({
         >
           <PlanSheetHosts>
             <RevealBody
-              buddy={buddy}
               goalId={goalId}
               isGuest={isGuest}
               markRevealed={markRevealed}
-              moment={!planRevealed}
               onStart={start}
               refresh={() => void safeAsync(refresh)}
               signUpHref={signUpHref}
-              syllabus={syllabus}
               reveal={reveal}
+              syllabus={syllabus}
             />
           </PlanSheetHosts>
         </PlanScreenProvider>

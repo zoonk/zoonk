@@ -11,6 +11,7 @@ import {
   type PlayableLibraryLesson,
 } from "@zoonk/core/lesson-player/playable-lesson";
 import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
+import { type HelpLimit } from "@zoonk/learn/help-limit";
 
 export type {
   PlayableLanguageStep,
@@ -30,15 +31,17 @@ export type LessonStepResult = LessonStepCheckResult & {
   answerText: string | null;
   attemptId?: string;
   heard: SpokenAnswerHeard | null;
+  /** A verdict given on the device whose save the server hasn't answered yet. */
+  savePending?: boolean;
 };
 
 type LessonPlayerTier = "free" | "guest" | "plus";
 
 export type LessonRunRefusal =
   | { reason: "failed" }
-  | { period: "day" | "month" | "total"; reason: "limitReached"; tier: LessonPlayerTier }
+  | { reason: "limitReached"; tier: LessonPlayerTier }
+  | { availableAt: string; period: "rolling30Days"; reason: "limitReached"; tier: "free" }
   | { reason: "notFound" }
-  | { reason: "plusRequired" }
   | { reason: "slowDown"; retryAfterSeconds: number }
   | { reason: "unauthorized" };
 
@@ -80,9 +83,7 @@ export type LessonCompletionOutcome =
   | { status: "failed" }
   | { status: "incomplete" };
 
-type HelpLimitOutcome =
-  | { period?: "day" | "month" | "total"; status: "limitReached"; tier: LessonPlayerTier }
-  | { status: "signUpRequired" };
+type HelpLimitOutcome = Exclude<HelpLimit, { status: "slowDown" }>;
 
 export type AnswerExplanationOutcome =
   | { explanation: string; status: "explained" }
@@ -136,6 +137,7 @@ export type LessonPlayerAdapters = {
 };
 
 export type LessonPlayerRoutes = {
+  mistakes: string;
   exit: string;
   /** Set when `exit` points to the lesson's chapter or language unit. */
   exitTo: "chapter" | "unit" | null;

@@ -47,6 +47,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -66,23 +67,22 @@ import androidx.compose.ui.window.DialogWindowProvider
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
-import com.zoonk.android.ui.characters.BuddyKind
-import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
-import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBase
-import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
@@ -104,22 +104,25 @@ internal data class PlanEdits(
     val failed: Set<PlanPart> = emptySet(),
     val latest: EditorChange? = null,
     val changes: Map<UUID, EditorChange> = emptyMap(),
-    val change: (PlanPart, List<PlanOp>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
+    /** Saves a part's operations; what its answer does is the asker's (null: nothing besides the plan). */
+    val change: (PlanPart, List<PlanOp>, PlanAsker?) -> Unit = { _, _, _ -> },
     val undo: (PlanChange) -> Unit = {},
-    val setRegion: (String?, () -> Unit) -> Unit = { _, _ -> },
-    val setContentCountry: (String, () -> Unit) -> Unit = { _, _ -> },
+    val setRegion: (String?) -> Unit = {},
+    val setContentCountry: (String) -> Unit = {},
     val retryCountryRebuild: () -> Unit = {},
     val timeToCover: TimeToCoverState = TimeToCoverState.Idle,
-    val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
+    val findTimeToCover: (Plan, TimeAsker?) -> Unit = { _, _ -> },
     val chooseFocus: () -> Unit = {},
     val studyEverything: () -> Unit = {},
-    val chooseExamOption: (group: String, subjects: List<String>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
-    val chooseTools: (ToolAnswer, (PlanChangeResult?) -> Unit) -> Unit = { _, _ -> },
+    val chooseExamOption: (group: String, subjects: List<String>, PlanAsker?) -> Unit = { _, _, _ -> },
+    val chooseTools: (ToolAnswer, PlanAsker?) -> Unit = { _, _ -> },
     val setupLessons: ContentWritingWait? = null,
     val preview: suspend (List<PlanOp>) -> PlanChangePreview? = { null },
-    val adviseOnBases: suspend () -> PlanBasesAdvice? = { null },
+    val basesAdvice: BasesAdviceAsk? = null,
+    val askBasesAdvice: (Plan) -> Unit = {},
     val sheetAnswers: Map<UUID, PlanChangeResult?> = emptyMap(),
-    val answerSheet: (opening: UUID, PlanChangeResult?) -> Unit = { _, _ -> },
+    /** What the saves and searches asked from here lead to, which the screen acts on. */
+    val outcomes: PlanOutcomes = PlanOutcomes(),
 ) {
     fun isPending(part: PlanPart) = part in pending
 
@@ -132,7 +135,10 @@ internal data class PlanEdits(
     fun sheetApplied(opening: UUID): EditorChange? =
         sheetAnswer(opening)?.takeIf { it.status == PlanChangeResult.Status.APPLIED }?.change?.let { changes[it.id] }
 
-    /** Whether [opening]'s save went to a plan not built yet, which keeps it for when it is: there's no change to show. */
+    /**
+     * Whether [opening]'s save was kept with no change to show: a plan not built yet keeps it for when it is,
+     * and removing a focus that moves no lesson saves only the focus.
+     */
     fun sheetKept(opening: UUID) = sheetAnswer(opening)?.let { it.status == PlanChangeResult.Status.APPLIED && it.change == null } == true
 
     /** Whether [opening]'s save didn't, and [part] hasn't saved again since. */
@@ -223,14 +229,25 @@ internal fun PlanEditor(
     page: PlanPageState,
     edits: PlanEdits,
     section: PlanSection?,
-    onTellBuddy: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val drafts = rememberSaveable(saver = EditorDrafts.Saver) { EditorDrafts() }
 
+    // The editor is Move date's asker, and each picker its own inside it: closing one drops what it's owed.
+    VisitOf(edits.outcomes.editor)
+    if (drafts.picking == PlanPicker.Aim) VisitOf(edits.outcomes.aimPicker)
+    if (drafts.picking == PlanPicker.Variety) VisitOf(edits.outcomes.varietyPicker)
+    if (drafts.picking == PlanPicker.Country) VisitOf(edits.outcomes.countryPicker)
+    ActOn(edits.outcomes.aimPicked) { drafts.picking = null }
+    ActOn(edits.outcomes.regionSaved) { drafts.picking = null }
+    ActOn(edits.outcomes.countrySaved) {
+        drafts.countryAsked = null
+        drafts.picking = null
+    }
+
     if (wide) {
-        SidePanel(onDismiss) { PlanEditorBody(page, edits, section, onTellBuddy, onClose = onDismiss, drafts = drafts) }
+        SidePanel(onDismiss) { PlanEditorBody(page, edits, section, onClose = onDismiss, drafts = drafts) }
     } else {
         val title = stringResource(R.string.plan_editor_title)
         ModalBottomSheet(
@@ -238,19 +255,21 @@ internal fun PlanEditor(
             modifier = Modifier.semantics { paneTitle = title },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         ) {
-            PlanEditorBody(page, edits, section, onTellBuddy, drafts = drafts)
+            PlanEditorBody(page, edits, section, drafts = drafts)
         }
     }
     if (drafts.datePicking) PlanDateDialog(page, edits, layer = wide, onClose = { drafts.datePicking = false })
 }
 
-/** [onClose] is the side panel's close button; the panel shows the latest change at its top, as main's does. */
+/**
+ * [onClose] is the side panel's close button. The latest change shows at the foot on every width, as main's,
+ * and the fields take the rest of the height, so a save's note moves nothing above it.
+ */
 @Composable
 internal fun ColumnScope.PlanEditorBody(
     page: PlanPageState,
     edits: PlanEdits,
     section: PlanSection? = null,
-    onTellBuddy: () -> Unit = {},
     onClose: (() -> Unit)? = null,
     drafts: EditorDrafts = remember { EditorDrafts() },
 ) {
@@ -261,6 +280,8 @@ internal fun ColumnScope.PlanEditorBody(
             aim
                 ?.choices
                 .orEmpty()
+                // A half band's own date isn't any choice's: previewing its band would plan another target.
+                .filterNot { it.aim.value == aim?.aim?.value && aim.label != null && aim.label != aim.aim?.value }
                 .map { choice ->
                     async {
                         val preview = edits.preview(listOf(PlanOp.Aim(choice.aim.value)))
@@ -295,16 +316,10 @@ internal fun ColumnScope.PlanEditorBody(
             }
         }
     }
-    if (onClose != null) {
-        edits.latest?.let {
-            LatestChange(page, it, edits.undo)
-            HorizontalDivider()
-        }
-    }
     Column(
         modifier =
             Modifier
-                .weight(1f, fill = false)
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
                 .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp),
@@ -314,18 +329,13 @@ internal fun ColumnScope.PlanEditorBody(
             languageAim.aim?.let { aim ->
                 LanguageAimRow(
                     aim.value,
+                    languageAim.label,
+                    languageAim.targetLanguage,
                     languageAim.choices,
                     open = drafts.picking == PlanPicker.Aim,
                     onOpenChange = { open -> drafts.picking = if (open) PlanPicker.Aim else null },
-                    onPick = { next, done ->
-                        edits.change(PlanPart.Aim, listOf(PlanOp.Aim(next))) {
-                            if (it?.status ==
-                                PlanChangeResult.Status.APPLIED
-                            ) {
-                                done()
-                            }
-                        }
-                    },
+                    // Its picker closes once the aim applied, through the editor's outcomes.
+                    onPick = { next, _ -> edits.change(PlanPart.Aim, listOf(PlanOp.Aim(next)), PlanAsker.AimPicker) },
                     pending = edits.isPending(PlanPart.Aim),
                     failed = edits.hasFailed(PlanPart.Aim),
                     note = stringResource(R.string.onboarding_aim_description),
@@ -368,15 +378,11 @@ internal fun ColumnScope.PlanEditorBody(
         CountryFacts(page.goal, Modifier.bleed(LIST_ITEM_INSET))
         PlanActivities(page, edits, Modifier.section(PlanSection.Practice))
         PlanWrittenPractice(page, edits)
-        PlanSteering(page, edits)
         PlanTools(page, edits, drafts)
-        PlanEditRequest(page, onTellBuddy)
     }
-    if (onClose == null) {
-        edits.latest?.let {
-            HorizontalDivider()
-            LatestChange(page, it, edits.undo)
-        }
+    edits.latest?.let {
+        HorizontalDivider()
+        LatestChange(page, it, edits.undo)
     }
 }
 
@@ -462,9 +468,12 @@ private fun LatestChange(
                     ?.toJavaLocalDate(),
             fullCourse = page.plan.schedule.fullCourse,
             icon = R.drawable.ic_tune,
+            dateKind = page.dateKind,
         )
         if (latest.change.canUndo) {
-            TextButton(busy = latest.undoing, onClick = { onUndo(latest.change) }, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {
+            TextButton(edge = com.zoonk.android.ui.components.ButtonEdge.Start, busy = latest.undoing, onClick = {
+                onUndo(latest.change)
+            }, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {
                 Text(stringResource(R.string.plan_undo))
             }
         }
@@ -473,32 +482,9 @@ private fun LatestChange(
 }
 
 @Composable
-private fun PlanEditRequest(
-    page: PlanPageState,
-    onTellBuddy: () -> Unit,
-) {
-    val buddy = page.summary.buddy
-    val hasModules = page.goal.kind == LearnerSummaryGoal.Kind.LEARN && page.plan.areas.size > 1
-
-    ListRow(
-        headline = { Text(stringResource(R.string.plan_tell_buddy, buddyName(BuddyKind.of(buddy.kind.value), buddy.name))) },
-        modifier = Modifier.bleed(LIST_ITEM_INSET),
-        onClick = onTellBuddy,
-        leading = { Icon(painterResource(R.drawable.ic_chat_bubble), contentDescription = null) },
-        supporting = {
-            Text(stringResource(if (hasModules) R.string.plan_tell_buddy_description_modules else R.string.plan_tell_buddy_description))
-        },
-    )
-}
-
-@Composable
 internal fun SaveFailedText(modifier: Modifier = Modifier) {
-    Text(
-        text = stringResource(R.string.plan_save_failed),
-        modifier = modifier.semantics { liveRegion = LiveRegionMode.Assertive },
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.error,
-    )
+    com.zoonk.android.ui.components
+        .InlineFailure(stringResource(R.string.plan_save_failed), modifier, politeness = LiveRegionMode.Assertive)
 }
 
 @Composable
@@ -512,11 +498,12 @@ internal fun SectionLabel(
 @Composable
 internal fun ChoiceRow(
     label: String,
-    description: String,
+    description: String?,
     selected: Boolean,
     onSelect: () -> Unit,
     enabled: Boolean = true,
-    mark: (@Composable () -> Unit)? = null,
+    markRoom: String? = null,
+    marked: Boolean = false,
     trailing: String? = null,
 ) {
     Row(
@@ -529,14 +516,21 @@ internal fun ChoiceRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        RadioButton(selected = selected, onClick = null, enabled = enabled)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            // A mark that can come after the first frame, such as a recommendation: every row lays out room for
+            // it, beside the label where it fits and under it where it doesn't, so it moves nothing when it comes.
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(label, style = MaterialTheme.typography.bodyLarge)
-                mark?.invoke()
+                markRoom?.let { room -> Eyebrow(room, if (marked) Modifier else Modifier.alpha(0f).clearAndSetSemantics {}) }
             }
-            Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            description?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }
         trailing?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        // The choice's mark at the row's end, as every choice list draws it.
+        RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk(), enabled = enabled)
     }
 }

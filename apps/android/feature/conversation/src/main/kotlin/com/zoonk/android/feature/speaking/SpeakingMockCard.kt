@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.GenerationKind
+import com.zoonk.android.feature.conversation.CallLimitMessage
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStartModel
 import com.zoonk.android.feature.conversation.CallStarter
@@ -28,12 +29,20 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.api.models.SpeakingMockExam
 import java.util.UUID
 
+/** [goalId]'s speaking mock start, which the page holding the card opens with [OpenStartedCall], above the list the card scrolls in. */
+@Composable
+fun speakingMockStart(
+    goalId: UUID,
+    start: CallStarter,
+): CallStartModel = viewModel(key = "speaking-mock:$goalId") { CallStartModel(start, GenerationKind.SpeakingMock) }
+
 /**
  * Main's `SpeakingMockCard`: an IELTS or TOEFL speaking mock with an AI examiner, written on the
- * learner's tap and opened as a call; [from] is the conversation route's `from`.
+ * learner's tap and opened as a call by the page's [OpenStartedCall] on [speakingMockStart]; [from] is the conversation route's `from`.
  */
 @Composable
 fun SpeakingMockCard(
@@ -45,9 +54,8 @@ fun SpeakingMockCard(
     modifier: Modifier = Modifier,
     from: String? = null,
 ) {
-    val model = viewModel(key = "speaking-mock:$goalId") { CallStartModel(start, GenerationKind.SpeakingMock) }
+    val model = speakingMockStart(goalId, start)
     val startMock = { model.start(CallRequest.SpeakingMock(goalId)) }
-    OpenStartedCall(model) { id -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val writing by model.writing.generationId.collectAsStateWithLifecycle()
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -90,7 +98,14 @@ fun SpeakingMockCard(
                     onClick = startMock,
                     leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 ) { Text(stringResource(R.string.speaking_mock_start)) }
-                if (model.state == CallStartModel.State.Failed) {
+                val limit = model.limit
+                if (model.state == CallStartModel.State.Failed && limit != null) {
+                    CallLimitMessage(
+                        limit,
+                        onCreateAccount = { open(AppRoute.Login) },
+                        onSubscribe = { open(AppRoute.Subscription) },
+                    )
+                } else if (model.state == CallStartModel.State.Failed) {
                     Text(
                         stringResource(R.string.speaking_mock_failed),
                         Modifier.semantics { liveRegion = LiveRegionMode.Polite },

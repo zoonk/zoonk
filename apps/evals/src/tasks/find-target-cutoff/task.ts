@@ -66,7 +66,7 @@ export const findTargetCutoffTask: Task<
   generate: findTargetCutoff,
   id: "find-target-cutoff",
   latencyBudget: { p50: 25, p95: 40 },
-  name: "Find Target Cut-off",
+  name: "Find target cut-off",
   score: scoreTargetCutoff,
   testCases: TEST_CASES,
 };

@@ -2,18 +2,24 @@
 
 import { toListeningStep } from "@zoonk/core/lesson-player/grade";
 import { useNoSpeechMessage } from "@zoonk/learn/language/no-speech";
+import { MainActionInBar } from "@zoonk/learn/main-action-slot";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
-import { Button } from "@zoonk/ui/components/button";
+import { RecordButton } from "@zoonk/learn/speech/record-button";
 import {
   type MicrophoneProblem,
   useCanRecord,
   useVoiceRecorder,
 } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HeadphonesIcon, KeyboardIcon, MicIcon, SquareIcon } from "lucide-react";
+import { MicIcon, MicOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
-import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../components/step-layouts";
+import {
+  FILL_SCREEN_CLASS,
+  InteractiveStepLayout,
+  PlayerContentFrame,
+} from "../../components/step-layouts";
+import { StepWayOut } from "../../components/step-way-out";
 import { PlayerAudioProvider } from "../../player-audio-context";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { LessonQuestion } from "../_components/lesson-step-text";
@@ -24,15 +30,6 @@ import { ExerciseStepView } from "./exercise-step";
 import { LessonAnswerField } from "./lesson-answer-field";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
-const MS_PER_SECOND = 1000;
-const SECONDS_PER_MINUTE = 60;
-
-function formatSeconds(totalSeconds: number): string {
-  const minutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
-  const seconds = totalSeconds % SECONDS_PER_MINUTE;
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
-}
-
 function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   const { romanization, targetText, translation } = step.content;
   const showsTranslation = translation && translation.trim() !== targetText.trim();
@@ -40,7 +37,7 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   return (
     <div className="flex flex-col gap-1">
       <p
-        className="text-2xl leading-tight font-[560] tracking-[-0.02em]"
+        className="text-2xl leading-tight font-semibold tracking-[-0.02em]"
         lang={step.content.language}
       >
         {targetText}
@@ -51,7 +48,8 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   );
 }
 
-function RecordButton({
+/** Recording is this step's answer, so Record and Stop take the bar's place where Check is. */
+function RecordAnswer({
   onProblem,
   stepId,
 }: {
@@ -69,7 +67,6 @@ function RecordButton({
 
   const recorder = useVoiceRecorder({ onRecorded });
   const isRecording = recorder.status === "recording";
-  const seconds = Math.floor(recorder.elapsedMs / MS_PER_SECOND);
 
   const startRecording = async () => {
     actions.startRecording();
@@ -87,25 +84,7 @@ function RecordButton({
   const limit = issue?.status === "noSpeech" ? null : issue;
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <Button
-        aria-pressed={isRecording}
-        className={cn(isRecording && "border-foreground ring-foreground ring-[0.5px]")}
-        disabled={recorder.status === "acquiring"}
-        focusableWhenDisabled
-        onClick={isRecording ? recorder.stop : () => void startRecording()}
-        size="lg"
-        variant="outline"
-      >
-        {isRecording ? <SquareIcon aria-hidden="true" /> : <MicIcon aria-hidden="true" />}
-        {isRecording ? t("Stop") : t("Record")}
-        {isRecording && (
-          <span className="text-muted-foreground font-mono text-xs tabular-nums">
-            {formatSeconds(seconds)}
-          </span>
-        )}
-      </Button>
-
+    <>
       <div aria-live="polite" className="flex flex-col">
         {limit ? (
           <LessonHelpLimitNotice limit={limit} />
@@ -116,7 +95,13 @@ function RecordButton({
               issue?.status === "noSpeech" && "text-destructive-text",
             )}
           >
-            {isIdle && (issue?.status === "noSpeech" ? noSpeech : t("Tap and say it out loud"))}
+            {isIdle &&
+              (issue?.status === "noSpeech"
+                ? noSpeech
+                : t({
+                    description: "“Record” is the label of the button that starts the recording.",
+                    message: "Tap Record and say it out loud",
+                  }))}
             {isRecording &&
               t({
                 description: "“Stop” is the label of the button that ends the recording.",
@@ -125,7 +110,17 @@ function RecordButton({
           </p>
         )}
       </div>
-    </div>
+
+      <MainActionInBar>
+        <RecordButton
+          busy={recorder.status === "acquiring"}
+          elapsedMs={recorder.elapsedMs}
+          onStart={() => void startRecording()}
+          onStop={recorder.stop}
+          recording={isRecording}
+        />
+      </MainActionInBar>
+    </>
   );
 }
 
@@ -227,29 +222,32 @@ function ModeSwitch({
   }
 
   if (mode === "speak") {
+    const label = t("I can't talk now");
+
+    const alternative = canListen
+      ? t("Listen")
+      : t({
+          description:
+            "On a question answered aloud: the learner types this one answer instead of saying it.",
+          id: "typeSpokenAnswer",
+          message: "Type instead",
+        });
+
     return (
-      <Button
-        className={COLUMN_GHOST_ACTION_CLASS}
+      <StepWayOut
+        icon={<MicOffIcon aria-hidden="true" />}
+        label={`${label}. ${alternative}`}
         onClick={() => switchTo({ cantTalk: true })}
-        size="sm"
-        variant="ghost"
       >
-        {canListen ? <HeadphonesIcon aria-hidden="true" /> : <KeyboardIcon aria-hidden="true" />}
-        {t("I can't talk now")}
-      </Button>
+        {label}
+      </StepWayOut>
     );
   }
 
   return (
-    <Button
-      className={COLUMN_GHOST_ACTION_CLASS}
-      onClick={() => switchTo({ cantTalk: false })}
-      size="sm"
-      variant="ghost"
-    >
-      <MicIcon aria-hidden="true" />
+    <StepWayOut icon={<MicIcon aria-hidden="true" />} onClick={() => switchTo({ cantTalk: false })}>
       {cantTalk ? t("I can talk now") : t("Say it instead")}
-    </Button>
+    </StepWayOut>
   );
 }
 
@@ -263,25 +261,34 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
 
   if (answerMode.mode === "listen" && listening) {
     return (
-      <div className="flex flex-col gap-4">
+      <div className={cn("flex flex-col", FILL_SCREEN_CLASS)}>
         <ListeningInstead props={props} step={{ ...step, listening }} />
-        <ModeSwitch answerMode={answerMode} isLocked={isLocked} />
+
+        {/* Under the answer on the column, as on the speaking screen. */}
+        <PlayerContentFrame className="pb-6 empty:hidden">
+          <ModeSwitch answerMode={answerMode} isLocked={isLocked} />
+        </PlayerContentFrame>
       </div>
     );
   }
 
   return (
     <InteractiveStepLayout>
-      <LessonQuestion>{step.content.prompt}</LessonQuestion>
+      <div className="font-normal [&_h2]:font-normal">
+        <LessonQuestion>
+          {answerMode.micProblem === "blocked" ? t("Type what you'd say") : step.content.prompt}
+        </LessonQuestion>
+      </div>
       <TargetText step={step} />
 
       {answerMode.mode === "type" ? (
         <>
-          {answerMode.micProblem && !isLocked && (
-            <p className="text-muted-foreground text-sm" role="status">
+          {/* Typing in place of speaking says why, unless the learner chose it ("I can't talk now"). */}
+          {(answerMode.micProblem || !answerMode.canSpeak) && !isLocked && (
+            <p className="text-muted-foreground text-sm text-pretty" role="status">
               {answerMode.micProblem === "blocked"
-                ? t("The microphone is blocked. Type your answer instead.")
-                : t("We can't use your microphone. Type your answer instead.")}
+                ? t("To speak instead, allow the microphone for Zoonk in your browser settings.")
+                : t("We can't use your microphone, so type what you'd say.")}
             </p>
           )}
 
@@ -294,7 +301,7 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
           />
         </>
       ) : (
-        !isLocked && <RecordButton onProblem={answerMode.onProblem} stepId={step.id} />
+        !isLocked && <RecordAnswer onProblem={answerMode.onProblem} stepId={step.id} />
       )}
 
       <ModeSwitch answerMode={answerMode} isLocked={isLocked} />

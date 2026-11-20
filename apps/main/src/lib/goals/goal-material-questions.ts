@@ -1,6 +1,7 @@
 "use client";
 
 import { type MaterialQuestionAnswer } from "@zoonk/core/library/sources/material-question-contract";
+import { received } from "@zoonk/learn/help-limit";
 import { type MaterialQuestionOutcome } from "@zoonk/learn/onboarding/actions";
 import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -28,7 +29,8 @@ async function toOutcome(response: Response): Promise<MaterialQuestionOutcome> {
 
   // A guest's tutor answers need an account.
   if (refusal?.kind === "usageLimit" && refusal.tier !== "guest") {
-    return { period: refusal.period, status: "limitReached", tier: refusal.tier };
+    const { availableAt, period, tier } = refusal;
+    return received({ availableAt, period, status: "limitReached", tier });
   }
 
   return response.status === HTTP_UNAUTHORIZED || response.status === HTTP_FORBIDDEN || refusal

@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import "@zoonk/ui/globals.css";
+import "./fonts.css";
 import { App } from "./app";
 
 const rootElement = document.querySelector("#root");

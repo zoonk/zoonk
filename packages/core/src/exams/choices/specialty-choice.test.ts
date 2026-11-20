@@ -57,7 +57,7 @@ function countFullMockByTest({
     })),
   );
 
-  const full = listMockOptions({ dayInTurn: null, goalAreas: areas, structure: chosen }).find(
+  const full = listMockOptions({ goalAreas: areas, structure: chosen }).find(
     (option) => option.kind === "full",
   );
 

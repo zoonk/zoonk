@@ -3,12 +3,11 @@
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
+import { ActivityBarAction } from "../_components/activity-bar-action";
 import { CALIBRATION_CLICKS } from "./rhythm-calibration";
 import { RhythmTapPad } from "./rhythm-tap-pad";
 import { type CalibrationPhase, useDelayCalibration } from "./use-delay-calibration";
 import { useSpaceToTap } from "./use-space-to-tap";
-
-const ON_TIME_MS = 20;
 
 function CalibrationStatus({ phase }: { phase: CalibrationPhase }) {
   const t = useExtracted();
@@ -29,17 +28,10 @@ function CalibrationStatus({ phase }: { phase: CalibrationPhase }) {
   }
 
   if (phase.kind === "done" && phase.delayMs !== null) {
-    return phase.delayMs < ON_TIME_MS
-      ? t("Sound on this device arrives on time.")
-      : t("Sound on this device arrives about {ms} ms late. Rhythms here take that out.", {
-          ms: String(phase.delayMs),
-        });
+    return t("All set.");
   }
 
-  return t(
-    "Headphones can play sound a little late. Tap along with {count} clicks once, and rhythms on this device are timed fairly.",
-    { count: String(CALIBRATION_CLICKS) },
-  );
+  return t("Tap Start the beat, then tap along");
 }
 
 export function RhythmDelayCalibration({
@@ -81,24 +73,26 @@ export function RhythmDelayCalibration({
         ref={padRef}
       />
 
-      {!isRunning && (
-        <div className="flex flex-wrap gap-2">
-          {reading === null ? (
-            <Button onClick={() => void start()} size="lg" type="button">
-              {phase.kind === "done" ? t("Try again") : t("Start the sound check")}
-            </Button>
-          ) : (
-            <Button onClick={() => onDone(reading)} size="lg" type="button">
-              {t("Continue")}
-            </Button>
-          )}
+      {/* The set-up comes before anything can be checked, so its action is the bar's. */}
+      {reading === null ? (
+        <ActivityBarAction disabled={isRunning} onPress={() => void start()}>
+          {phase.kind === "done" ? t("Try again") : t("Start the beat")}
+        </ActivityBarAction>
+      ) : (
+        <ActivityBarAction onPress={() => onDone(reading)}>{t("Continue")}</ActivityBarAction>
+      )}
 
-          {reading === null && (
-            <Button onClick={onSkip} size="lg" type="button" variant="ghost">
-              {t("Skip for now")}
-            </Button>
-          )}
-        </div>
+      {!isRunning && reading === null && (
+        <Button
+          className="w-fit"
+          edge="start"
+          onClick={onSkip}
+          size="lg"
+          type="button"
+          variant="ghost"
+        >
+          {t("Skip for now")}
+        </Button>
       )}
     </section>
   );

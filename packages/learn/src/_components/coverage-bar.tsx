@@ -25,7 +25,7 @@ export function CoverageBar({
   return (
     <span
       aria-hidden="true"
-      className={cn("bg-surface-3 flex h-1.5 w-full overflow-hidden rounded-[3px]", className)}
+      className={cn("bg-surface-3 rounded-meter flex h-1.5 w-full overflow-hidden", className)}
       data-slot="coverage-bar"
     >
       <span className="bg-success h-full" style={{ width: `${studiedShare * PERCENT}%` }} />
@@ -37,18 +37,17 @@ export function CoverageBar({
   );
 }
 
-type CoverageState = "known" | "new" | "studied" | "today";
+type CoverageState = "known" | "new" | "studied";
 
-const DEFAULT_STATES: readonly CoverageState[] = ["studied", "known", "new"];
+const STATES: readonly CoverageState[] = ["studied", "known", "new"];
 
 function LegendItem({ state }: { state: CoverageState }) {
   const t = useExtracted();
 
   const marks: Record<CoverageState, { className: string; label: string }> = {
-    known: { className: "bg-muted-foreground/70", label: t("Known") },
+    known: { className: "bg-muted-foreground/70", label: t("Already knew") },
     new: { className: "ring-muted-foreground/70 ring-1 ring-inset", label: t("New") },
     studied: { className: "bg-success", label: t("Studied") },
-    today: { className: "ring-success ring-1 ring-inset", label: t("Today") },
   };
 
   return (
@@ -59,20 +58,14 @@ function LegendItem({ state }: { state: CoverageState }) {
   );
 }
 
-export function CoverageLegend({
-  className,
-  states = DEFAULT_STATES,
-}: {
-  className?: string;
-  states?: readonly CoverageState[];
-}) {
+export function CoverageLegend({ className }: { className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className={cn("text-muted-foreground flex items-center gap-3 text-[0.71875rem]", className)}
+      className={cn("text-muted-foreground text-2xs flex items-center gap-3", className)}
       data-slot="coverage-legend"
     >
-      {states.map((state) => (
+      {STATES.map((state) => (
         <LegendItem key={state} state={state} />
       ))}
     </span>

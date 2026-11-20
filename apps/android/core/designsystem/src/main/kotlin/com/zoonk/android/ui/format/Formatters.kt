@@ -16,12 +16,15 @@ import android.icu.util.ULocale
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalConfiguration
+import com.zoonk.android.feature.plan.isInAnotherYear
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToLong
+import kotlin.time.toJavaInstant
 
 /*
  * These write what main's `@zoonk/utils` and `@zoonk/learn` formatters write, so a value reads the
@@ -123,12 +126,6 @@ fun formatPercent(
     return withSign(format.format(abs(share)), share, locale)
 }
 
-/** Main's goal progress: up to two decimals, so a small step still moves it. */
-fun formatGoalProgress(
-    share: Double,
-    locale: Locale,
-): String = formatPercent(share, locale, maximumFractionDigits = 2)
-
 /** Begun never reads "0%" beside a bar that shows it begun, nor nearly done "100%". */
 fun formatProgressShare(
     share: Double,
@@ -210,7 +207,10 @@ enum class DateStyle(
 ) {
     Day("MMMd", yearWhenAnotherYear = true),
 
-    /** Never with a year: for lists whose year is stated beside them. */
+    /** "Nov 8": a row's day never with a year, for a list whose last day carries it ("Nov 8 and Nov 15, 2026"). */
+    DayNoYear("MMMd"),
+
+    /** Never with a year: for lists whose year is stated beside them, and a cap's opening day, never more than a month away. */
     DayMonth("MMMMd"),
 
     Long("MMMMd", yearWhenAnotherYear = true),
@@ -219,21 +219,25 @@ enum class DateStyle(
 
     Month("yMMMM"),
 
+    /** "November", and "November 2025" once it isn't this year's: a month that heads a list of its days. */
+    MonthName("LLLL", yearWhenAnotherYear = true),
+
     MonthShort("yMMM"),
 
     Short("yMMMd"),
 
     Weekday("EEEE"),
 
-    WeekdayDay("MMMMEEEEd"),
+    WeekdayDay("MMMMEEEEd", yearWhenAnotherYear = true),
 
     /** "Sunday, November 14, 2027": an exam's day, whose edition may be years ahead. */
     WeekdayDayYear("yMMMMEEEEd"),
 
     /** "Wed, Oct 28": Today's date line. */
-    WeekdayDayShort("MMMEEEd"),
+    WeekdayDayShort("MMMEEEd", yearWhenAnotherYear = true),
 
-    WeekdayShort("EEE"),
+    /** "Wed 28": a day of a plan's first week, which never needs its month (main's weekday and day). */
+    WeekdayDayOfMonth("EEEd"),
 }
 
 fun formatDate(
@@ -242,9 +246,46 @@ fun formatDate(
     style: DateStyle = DateStyle.Day,
     today: LocalDate = LocalDate.now(),
 ): String {
-    val skeleton = if (style.yearWhenAnotherYear && date.year != today.year) "y${style.skeleton}" else style.skeleton
+    val skeleton = if (style.yearWhenAnotherYear && isInAnotherYear(date, today)) "y${style.skeleton}" else style.skeleton
     return formatUtc(Date(date.toEpochDay() * MILLIS_PER_DAY), skeleton, locale)
 }
+
+/** A time zone by Android's localized name for it, such as "Brasilia Time", or null for an id it doesn't know. */
+fun formatTimeZoneName(
+    zone: String,
+    locale: Locale,
+): String? =
+    runCatching { ZoneId.of(zone).getDisplayName(java.time.format.TextStyle.FULL, locale) }
+        .getOrNull()
+
+/** A month's short name on its own, as a calendar heads its weeks ("Oct", "out."). */
+fun formatMonthName(
+    date: LocalDate,
+    locale: Locale,
+): String = formatUtc(Date(date.toEpochDay() * MILLIS_PER_DAY), "LLL", locale)
+
+/** "Nov 9 – 15", or "Dec 28, 2026 – Jan 3, 2027" once either end is in another year than [today]. */
+fun formatDayRange(
+    start: LocalDate,
+    end: LocalDate,
+    locale: Locale,
+    today: LocalDate = LocalDate.now(),
+): String {
+    val skeleton = if (isInAnotherYear(start, today) || isInAnotherYear(end, today)) "yMMMd" else "MMMd"
+    return DateIntervalFormat
+        .getInstance(skeleton, ULocale.forLocale(locale))
+        .apply { timeZone = TimeZone.GMT_ZONE }
+        .format(DateInterval(start.toEpochDay() * MILLIS_PER_DAY, end.toEpochDay() * MILLIS_PER_DAY))
+}
+
+/** Main's `useFormatMomentDay`: the day a moment happened, in the device's time zone ("Nov 8", "Nov 8, 2025"). */
+fun formatMomentDay(
+    moment: kotlin.time.Instant,
+    locale: Locale,
+    zone: ZoneId = ZoneId.systemDefault(),
+    today: LocalDate = LocalDate.now(zone),
+    style: DateStyle = DateStyle.Day,
+): String = formatDate(moment.toJavaInstant().atZone(zone).toLocalDate(), locale, style, today)
 
 /** Calendar days and times of day carry no time zone, so they're formatted as UTC instants in UTC. */
 private fun formatUtc(
@@ -256,6 +297,7 @@ private fun formatUtc(
         .getInstanceForSkeleton(skeleton, ULocale.forLocale(locale))
         .apply { timeZone = TimeZone.GMT_ZONE }
         .format(date)
+        .replace(' ', NO_BREAK_SPACE)
 
 internal const val MAX_FRACTION_DIGITS = 20
 internal const val MINUS_SIGN = "−"

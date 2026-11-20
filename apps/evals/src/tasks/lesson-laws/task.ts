@@ -12,7 +12,7 @@ export const lessonLawsTask: Task<LessonLawsParams, { laws: LessonLaw[] }, Lesso
     "Name the laws whose numbered provisions a lesson teaches, where their official text is published and the articles to read",
   generate: generateLessonLaws,
   id: "lesson-laws",
-  name: "Lesson Laws",
+  name: "Lesson laws",
   score: scoreLessonLaws,
   testCases: TEST_CASES,
 };

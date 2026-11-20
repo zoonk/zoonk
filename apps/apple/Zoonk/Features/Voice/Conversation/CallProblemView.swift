@@ -13,7 +13,7 @@ enum CallProblemAction {
 /// One title and what to do, never the learner's fault.
 struct CallProblemView: View {
   enum Problem: Equatable {
-    case call(LiveCall.Failure, CallLimit?)
+    case call(LiveCall.Failure, HelpLimit?)
     /// Saving found the call already ended, or taken over by another call.
     case saveEnded(takenOver: Bool)
   }
@@ -22,37 +22,42 @@ struct CallProblemView: View {
   let onAction: (CallProblemAction) -> Void
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        title
-      } icon: {
-        Image(systemName: symbol)
+    OpeningClock(availableAt: limit?.availableAt) { now in
+      // Once a limit's day comes its words change, and keep the room they had.
+      GateScreen(title: title(now), symbol: symbol, held: limit?.isOpen(at: now) == false) {
+        description(now)
       }
-    } description: {
-      description
-    } actions: {
-      actions
+      .bottomBar {
+        actions(now)
+          .buttonStyle(.mainAction)
+      }
     }
     .lonePage()
   }
 
+  private var limit: HelpLimit? {
+    if case .call(_, let limit) = problem {
+      return limit
+    }
+
+    return nil
+  }
+
   private var symbol: String {
     switch problem {
-    case .call(.limit, _): "clock"
-    case .call(.callsPaused, _): "pause.circle"
-    case .call(.callInProgress, _): "phone.connection"
-    default: "phone.down"
+    case .call(let failure, _): CallRefusal.symbol(failure)
+    case .saveEnded: CallRefusal.symbol(.ended)
     }
   }
 
-  private var title: Text {
+  private func title(_ now: Date) -> Text? {
     switch problem {
     case .saveEnded: CallRefusal.title(.ended, limit: nil)
-    case .call(let failure, let limit): CallRefusal.title(failure, limit: limit)
+    case .call(let failure, let limit): CallRefusal.title(failure, limit: limit, now: now)
     }
   }
 
-  private var description: Text? {
+  private func description(_ now: Date) -> Text? {
     switch problem {
     case .saveEnded(takenOver: true):
       Text(
@@ -61,44 +66,36 @@ struct CallProblemView: View {
     case .saveEnded:
       CallRefusal.text(.ended, limit: nil)
     case .call(let failure, let limit):
-      CallRefusal.text(failure, limit: limit)
+      CallRefusal.text(failure, limit: limit, now: now)
     }
   }
 
+  /// The screen's one way on, in its bottom bar; a gate's is "Subscribe" and the close button
+  /// leaves. Once the cap's day has come, calling again asks the server.
   @ViewBuilder
-  private var actions: some View {
+  private func actions(_ now: Date) -> some View {
     switch problem {
     case .call(.callInProgress, _):
-      CallMainButton {
+      Button {
         onAction(.takeover)
       } label: {
         CallRefusal.takeover
       }
-    case .call(.connect, _), .call(.plusRequired, _):
-      CallMainButton {
+    case .call(.connect, _), .call(.plusRequired, _),
+      .call(.limit, _) where limit?.isOpen(at: now) == true:
+      Button {
         onAction(.retry)
       } label: {
         Text("Try again", tableName: "Voice", comment: "Calls again")
       }
-    case .call(.limit, let limit?) where limit.tier != .plus:
-      CallLimitUpsell(limit: limit)
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-
-      backButton
-        .buttonStyle(.outline)
+    case .call(.limit, let limit?) where limit.needsAccount || limit.offersSubscription:
+      LimitWayOn(limit: limit)
     default:
-      backButton
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-    }
-  }
-
-  private var backButton: some View {
-    Button {
-      onAction(.back)
-    } label: {
-      Text("Back", tableName: "Voice", comment: "Leaves the call")
+      Button {
+        onAction(.back)
+      } label: {
+        Text("Back", tableName: "Voice", comment: "Leaves the call")
+      }
     }
   }
 }
@@ -108,61 +105,82 @@ struct DroppedCallView: View {
   @Environment(\.openURL) private var openURL
 
   let dropped: DroppedCall
-  let limit: CallLimit?
+  let limit: HelpLimit?
   /// Whom the learner talks with, for the microphone's explanation.
   let name: String
   let onAction: (CallProblemAction) -> Void
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text("The call dropped", tableName: "Voice", comment: "A live call lost its connection")
-      } icon: {
-        Image(systemName: "phone.down")
+    OpeningClock(availableAt: limit?.availableAt) { now in
+      // A limit's words change when its day comes, in the room they had.
+      GateScreen(title: title(now), symbol: symbol, held: limit?.isOpen(at: now) == false) {
+        reason(now)
+      } actions: {
+        actions(now)
       }
-    } description: {
-      reason
-    } actions: {
-      actions
     }
     .lonePage()
   }
 
-  @ViewBuilder
-  private var reason: some View {
+  /// What stopped the call, one title: only a lost connection is a call that dropped. Once the
+  /// cap's day has come, it says the call time is back.
+  private func title(_ now: Date) -> Text? {
+    switch dropped.reason {
+    case nil:
+      Text("The call dropped", tableName: "Voice", comment: "A live call lost its connection")
+    case .microphone:
+      CallMicrophoneOff.title
+    case .plusRequired:
+      CallStartFooter.lockedTitle
+    case .callInProgress:
+      CallRefusal.title(.callInProgress, limit: nil)
+    case .callsPaused:
+      CallRefusal.title(.callsPaused, limit: nil)
+    case .ended:
+      CallRefusal.title(.ended, limit: nil)
+    case .limit:
+      CallRefusal.title(.limit, limit: limit, now: now)
+    }
+  }
+
+  private var symbol: String {
+    switch dropped.reason {
+    case nil: CallRefusal.symbol(.dropped)
+    case .microphone: "mic.slash"
+    case .plusRequired: CallRefusal.symbol(.plusRequired)
+    case .callInProgress: CallRefusal.symbol(.callInProgress)
+    case .callsPaused: CallRefusal.symbol(.callsPaused)
+    case .ended: CallRefusal.symbol(.ended)
+    case .limit: CallRefusal.symbol(.limit)
+    }
+  }
+
+  private func reason(_ now: Date) -> Text? {
     switch dropped.reason {
     case nil:
       Text(
         "Call again, or end the call to get feedback on what you said.", tableName: "Voice",
         comment: "What to do after a call dropped")
     case .microphone:
-      why(CallMicrophoneOff.title, CallMicrophoneOff.text(name: name))
+      CallMicrophoneOff.text(name: name)
     case .plusRequired:
-      why(
-        Text(
-          "Available with Plus", tableName: "Subscriptions",
-          comment: "Title of the notice on a feature the learner's plan doesn't include"),
-        CallStartFooter.plusRequired)
+      CallStartFooter.lockedLine
     case .callInProgress:
-      refused(.callInProgress)
+      CallRefusal.text(.callInProgress, limit: nil)
     case .callsPaused:
-      refused(.callsPaused)
+      CallRefusal.text(.callsPaused, limit: nil)
     case .ended:
-      refused(.ended)
+      CallRefusal.text(.ended, limit: nil)
     case .limit:
-      refused(.limit)
+      CallRefusal.text(.limit, limit: limit, now: now)
     }
   }
 
   @ViewBuilder
-  private var actions: some View {
-    switch dropped.retry {
+  private func actions(_ now: Date) -> some View {
+    switch dropped.retryNow(limit: limit, at: now) {
     case .callAgain:
-      CallMainButton {
-        onAction(.retry)
-      } label: {
-        Text("Call again", tableName: "Voice", comment: "Calls again after a drop")
-      }
+      callAgainButton
 
       endButton
     case .takeover:
@@ -190,6 +208,18 @@ struct DroppedCallView: View {
       .buttonStyle(.outline)
 
       endButton
+    case nil where dropped.reason == .limit:
+      // The limit's way on holds Call again's place until its day comes, then Call again takes it.
+      if let limit, limit.needsAccount || limit.offersSubscription {
+        LimitWayOn(limit: limit)
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+      } else {
+        callAgainButton
+          .disabled(true)
+      }
+
+      endButton
     case nil:
       CallMainButton {
         onAction(.end)
@@ -197,17 +227,18 @@ struct DroppedCallView: View {
         endLabel
       }
 
-      upsell
-        .buttonStyle(.outline)
+      if dropped.reason == .plusRequired {
+        SubscribeButton()
+          .buttonStyle(.outline)
+      }
     }
   }
 
-  @ViewBuilder
-  private var upsell: some View {
-    if dropped.reason == .plusRequired {
-      SeePlusButton()
-    } else if dropped.reason == .limit, let limit {
-      CallLimitUpsell(limit: limit)
+  private var callAgainButton: some View {
+    CallMainButton {
+      onAction(.retry)
+    } label: {
+      Text("Call again", tableName: "Voice", comment: "Calls again after a drop")
     }
   }
 
@@ -221,51 +252,30 @@ struct DroppedCallView: View {
   }
 
   private var endLabel: Text {
-    Text("End the call", tableName: "Voice", comment: "Ends a dropped call and saves it")
-  }
-
-  private func refused(_ failure: LiveCall.Failure) -> some View {
-    why(CallRefusal.title(failure, limit: limit), CallRefusal.text(failure, limit: limit))
-  }
-
-  /// Under the screen's own title.
-  private func why(_ title: Text, _ text: Text?) -> some View {
-    VStack(spacing: 4) {
-      title
-        .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(.primary)
-
-      text
-    }
+    Text("End call", tableName: "Voice", comment: "Ends a dropped call and saves it")
   }
 }
 
 /// Each refusal's words, on its own screen or as why a dropped call can't go on.
 private enum CallRefusal {
-  static func title(_ failure: LiveCall.Failure, limit: CallLimit?) -> Text {
+  /// For a limit whose day has come, that the call time is back.
+  static func title(_ failure: LiveCall.Failure, limit: HelpLimit?, now: Date = .now) -> Text? {
     switch failure {
     case .ended:
       Text("This call has ended", tableName: "Voice", comment: "A call that can't go on")
     case .callsPaused:
       Text("Calls are paused", tableName: "Voice", comment: "Calls are off for everyone")
     case .callInProgress:
-      Text("You're already in a call", tableName: "Voice", comment: "Another call is open")
+      Text("You're in another call", tableName: "Voice", comment: "Another call is open")
     case .limit:
-      switch limit?.period {
-      case .month:
-        Text(
-          "No more calls this month", tableName: "Voice", comment: "The plan's call time is used")
-      case .total:
-        Text("Calls need a free account", tableName: "Voice", comment: "A guest can't call")
-      default:
-        Text("No more calls today", tableName: "Voice", comment: "The plan's call time is used")
-      }
+      (limit ?? .limitReached(period: .day, tier: .plus)).words(.callTime, now: now).title
+        .map(Text.init)
     case .connect, .dropped, .plusRequired:
       Text("The call didn't connect", tableName: "Voice", comment: "A call that didn't start")
     }
   }
 
-  static func text(_ failure: LiveCall.Failure, limit: CallLimit?) -> Text? {
+  static func text(_ failure: LiveCall.Failure, limit: HelpLimit?, now: Date = .now) -> Text? {
     switch failure {
     case .ended:
       Text("Start a new call to keep practicing.", tableName: "Voice", comment: "An ended call")
@@ -275,10 +285,10 @@ private enum CallRefusal {
         comment: "Calls are paused for everyone")
     case .callInProgress:
       Text(
-        "It's open in another tab or on another device. Ending it from here skips its feedback.",
+        "That call is open in another tab or on another device. Starting this one ends it without feedback.",
         tableName: "Voice", comment: "Another call of the learner's is open")
     case .limit:
-      limit.map(limitText)
+      limit?.words(.callTime, now: now).line.map(Text.init)
     case .connect, .dropped, .plusRequired:
       Text(
         "This happens sometimes. Try again in a moment.", tableName: "Voice",
@@ -286,60 +296,21 @@ private enum CallRefusal {
     }
   }
 
+  static func symbol(_ failure: LiveCall.Failure) -> String {
+    switch failure {
+    case .limit: "clock"
+    case .callsPaused: "pause.circle"
+    case .callInProgress: "phone.connection"
+    case .connect, .dropped, .ended, .plusRequired: "phone.down"
+    }
+  }
+
   static var takeover: Text {
-    Text("End that call and start this one", tableName: "Voice", comment: "Takes over a call")
+    Text(
+      "Start here", tableName: "Voice",
+      comment: "Ends the learner's other call and starts this one")
   }
 
-  /// Never says how much call time a plan has.
-  private static func limitText(_ limit: CallLimit) -> Text {
-    switch (limit.tier, limit.period) {
-    case (.guest, _):
-      Text(
-        "Speaking calls come with a free account. Create one to practice out loud.",
-        tableName: "Voice",
-        comment: "A guest's plan has no calls")
-    case (.plus, .month):
-      Text(
-        "Your calls come back next month.", tableName: "Voice",
-        comment: "A Plus learner used this month's call time")
-    case (.plus, _):
-      Text(
-        "Your calls come back tomorrow.", tableName: "Voice",
-        comment: "A Plus learner used today's call time")
-    case (.free, .month):
-      Text(
-        "Your calls come back next month, or get Plus for higher call limits.",
-        tableName: "Voice", comment: "A free learner used this month's call time")
-    case (.free, _):
-      Text(
-        "Your calls come back tomorrow, or get Plus for higher call limits.",
-        tableName: "Voice", comment: "A free learner used today's call time")
-    }
-  }
-}
-
-/// More calls: a free account for a guest, Plus for a free learner. Plus has no more to offer.
-private struct CallLimitUpsell: View {
-  @Environment(AppRouter.self) private var router
-
-  let limit: CallLimit
-
-  var body: some View {
-    switch limit.tier {
-    case .guest:
-      Button {
-        router.present(.signIn)
-      } label: {
-        Text(
-          "Create a free account", tableName: "Voice",
-          comment: "Button to sign up after a guest used the free help")
-      }
-    case .free:
-      SeePlusButton()
-    case .plus:
-      EmptyView()
-    }
-  }
 }
 
 private struct CallMainButton<Title: View>: View {

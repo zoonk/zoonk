@@ -109,7 +109,7 @@ type LessonPlayerClientProps = {
   challengeTeam?: ChallengeTeam | null;
   endingSlots?: Pick<
     NonNullable<LessonPlayerProviderProps["slots"]>,
-    "completion" | "completionActions"
+    "completion" | "completionActions" | "completionDetails" | "completionTitled"
   >;
   firstAnswer: string | null;
   goalId?: string | null;
@@ -214,6 +214,7 @@ function LessonPlayerVisit({
   const routes = useMemo(
     () => ({
       ...routing,
+      mistakes: "/mistakes",
       seePlan: (planGoalId: string) => `/start/${planGoalId}`,
       signUp,
       upgrade: "/subscription",
@@ -233,7 +234,6 @@ function LessonPlayerVisit({
       goalId={lessonGoalId}
       lesson={lesson}
       linkComponent={LearningLink}
-      onExit={() => router.push(routes.exit)}
       outline={outline}
       resume={resume}
       routes={routes}

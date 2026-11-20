@@ -49,9 +49,11 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
 import com.zoonk.api.models.SkillOutlineGeneration
@@ -316,7 +318,7 @@ private fun FarTopicBody(
                     ListRow(
                         headline = { Text(chapter.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
                         onClick = { onChapter(chapter.chapterId) },
-                        leading = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
+                        leading = { MarkIcon(R.drawable.ic_menu_book) },
                     )
                 }
             }
@@ -379,7 +381,7 @@ private fun FarTopicRequest(
     }
 
     if (action != null) {
-        val enabled = limit == null || limit is Limit.SlowDown
+        val enabled = limit == null || limit is Limit.SlowDown || limitLifted(limit)
         val label: @Composable RowScope.() -> Unit = { Text(stringResource(action)) }
         if (failed) {
             OutlinedButton(
@@ -396,7 +398,6 @@ private fun FarTopicRequest(
                 enabled = enabled,
                 busy = open.asking,
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
                 content = label,
             )
         }
@@ -410,7 +411,7 @@ private fun FarTopicRequest(
                 topics.close()
                 navigator.open(AppRoute.Login)
             },
-            onSeePlus = {
+            onSubscribe = {
                 topics.close()
                 navigator.open(AppRoute.Subscription)
             },

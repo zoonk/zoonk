@@ -17,6 +17,10 @@ function steps(pattern: string): { index: number; isHit: boolean }[] {
   return Array.from(pattern, (symbol, index) => ({ index, isHit: symbol === "x" }));
 }
 
+function stepSlot({ index, stepsPerBeat }: { index: number; stepsPerBeat: number }) {
+  return cn("min-w-0 flex-1", index > 0 && index % stepsPerBeat === 0 && "ml-1.5");
+}
+
 function RoundRow({
   pattern,
   playingStep,
@@ -40,8 +44,8 @@ function RoundRow({
         return (
           <div
             className={cn(
-              "flex min-w-0 flex-1 flex-col items-center gap-1",
-              step.index > 0 && step.index % stepsPerBeat === 0 && "ml-1.5",
+              "flex flex-col items-center gap-1",
+              stepSlot({ index: step.index, stepsPerBeat }),
             )}
             key={step.index}
           >
@@ -53,9 +57,9 @@ function RoundRow({
             />
             <span
               className={cn(
-                "h-8 w-full rounded-md motion-safe:transition-shadow",
+                "aspect-square max-h-8 w-full rounded-xs motion-safe:transition-shadow",
                 step.isHit ? "bg-viz-accent" : "bg-background",
-                playingStep === step.index && "ring-foreground ring-2",
+                playingStep === step.index && "ring-ring/50 contrast-more:ring-foreground ring-2",
               )}
             />
           </div>
@@ -80,7 +84,6 @@ export function RhythmGrid({
 }) {
   const t = useExtracted();
   const hitsPerRound = rhythmHitSteps(pattern).length;
-  const beats = pattern.length / stepsPerBeat;
 
   return (
     <div aria-hidden="true" className="flex flex-col gap-2" data-slot="rhythm-grid">
@@ -95,22 +98,22 @@ export function RhythmGrid({
       ))}
 
       <div className="flex gap-0.5">
-        {Array.from({ length: beats }, (_, beat) => (
+        {steps(pattern).map((step) => (
           <span
             className={cn(
-              "text-muted-foreground flex-1 text-xs tabular-nums",
-              beat > 0 && "ml-1.5",
+              "text-muted-foreground text-center text-xs tabular-nums",
+              stepSlot({ index: step.index, stepsPerBeat }),
             )}
-            key={beat}
+            key={step.index}
           >
-            {beat + 1}
+            {step.index % stepsPerBeat === 0 ? step.index / stepsPerBeat + 1 : null}
           </span>
         ))}
       </div>
 
       <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
         <span className="flex items-center gap-1.5">
-          <span className="bg-viz-accent h-2 w-3 rounded-[2px]" />
+          <span className="bg-viz-accent h-2 w-3 rounded-xs" />
           {t("Rhythm hits")}
         </span>
         <span className="flex items-center gap-1.5">

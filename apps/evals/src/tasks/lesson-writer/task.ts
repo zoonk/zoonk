@@ -17,7 +17,7 @@ export const lessonWriterTask: Task<
     "Write a lesson from its spec: a hook, the idea in small screens, checks with a reason per option, worked examples, calculations as data, planned activities, an application and the summary card",
   generate: (input) => writeLessonDraft({ ...input, country: input.country ?? null }),
   id: "lesson-writer",
-  name: "Lesson Writer",
+  name: "Lesson writer",
   score: scoreLessonWriter,
   scoreCategories: LESSON_WRITER_SCORE_CATEGORIES,
   testCases: TEST_CASES,

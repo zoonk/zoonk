@@ -23,8 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -73,7 +71,14 @@ fun CourseScreen(
     val report = FeedbackTarget("course", FeedbackSubmissionContext.ContentKind.COURSE, route.courseId.toUuidOrNull())
 
     if (state is LoadState.Loaded) TrackShown(AnalyticsEvent.PublicPageViewed(route.courseId, AnalyticsEvent.PublicPage.Course))
-    CatalogPage(app, navigator, detail, state, title, report) { value, layout -> courseBlocks(app, navigator, value, started, layout) }
+    CatalogPage(
+        app,
+        navigator,
+        detail,
+        state,
+        title,
+        report,
+    ) { value, layout -> courseBlocks(app, navigator, value, started, layout) }
 }
 
 private fun courseBlocks(
@@ -132,7 +137,7 @@ private fun courseBlocks(
         }
 
         if (plan?.pace != null) {
-            add(CatalogBlock("plan") { CoursePlanSection(plan, detail.chapters, course.format == CourseResource.Format.EXAM, beside) })
+            add(CatalogBlock("plan") { CoursePlanSection(plan, detail.chapters, beside) })
         }
 
         if (audience.isNotEmpty() || outcomes.isNotEmpty()) {
@@ -153,7 +158,6 @@ private fun courseBlocks(
                     openLevel = outlineLevel(detail.chapters, courseId, hasSession, summary),
                     levels = course.levels,
                     goal = summary.value?.goalOnCourse(courseId),
-                    examples = showsExamples(courseId, hasSession, summary),
                     disclosures = layout.disclosures,
                 )
             },
@@ -204,7 +208,7 @@ private fun CourseHero(
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null)
+                    Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null)
                 }
             }
         }
@@ -267,7 +271,22 @@ private fun CourseFit(
             Column(Modifier.widthIn(max = COLUMN_WIDTH)) {
                 audience.forEachIndexed { index, line ->
                     if (index > 0) HorizontalDivider()
-                    Text(line, modifier = Modifier.padding(vertical = 12.dp), style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        line,
+                        modifier =
+                            Modifier.padding(
+                                top =
+                                    if (index ==
+                                        0
+                                    ) {
+                                        0.dp
+                                    } else {
+                                        12.dp
+                                    },
+                                bottom = 12.dp,
+                            ),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                 }
             }
         }
@@ -289,7 +308,7 @@ private fun CourseFit(
         }
 
         beside -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
                 audienceSection(Modifier.weight(1f))
                 outcomesSection(Modifier.weight(1f))
             }
@@ -314,11 +333,7 @@ private fun CourseClosing(
     val follows = followsCourse(app, courseId)
 
     Column(Modifier.widthIn(max = COLUMN_WIDTH).padding(bottom = 24.dp)) {
-        Text(
-            stringResource(if (follows) R.string.catalog_closing_follows else R.string.catalog_closing_start),
-            modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
-        )
+        SectionTitle(stringResource(if (follows) R.string.catalog_closing_follows else R.string.catalog_closing_start))
 
         if (!follows) {
             Spacer(Modifier.size(8.dp))
@@ -330,6 +345,6 @@ private fun CourseClosing(
         }
 
         Spacer(Modifier.size(24.dp))
-        StartActions(app, navigator, courseId, dailyMinutes = pace)
+        StartActions(app, navigator, courseId, dailyMinutes = pace, secondary = true)
     }
 }

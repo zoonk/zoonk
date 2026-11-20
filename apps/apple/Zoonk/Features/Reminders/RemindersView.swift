@@ -4,17 +4,19 @@ import SwiftUI
 struct RemindersView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(AppRouter.self) private var router
-  @Environment(PushNotifications.self) private var notifications
   @Environment(StudyRemindersStore.self) private var reminders
 
   let createAccount: () -> Void
 
   /// Read from the system each time the app comes back, since it changes in Settings.
   @State private var notificationsOff = false
-  /// Turning push on here just met blocked notifications.
-  @State private var pushRefused = false
-  @State private var pushFailed = false
-  @State private var isSettingUpPush = false
+  /// One per control, so a later change to one never hides the other's failure: false when it
+  /// didn't save, while the learner is on the page.
+  @State private var timeSave = VisitRequest<Bool>()
+  @State private var emailSave = VisitRequest<Bool>()
+  /// Denied when turning push on here just met blocked notifications; nil when no setup ran and the
+  /// plain change saved.
+  @State private var pushSetup = VisitRequest<PushSetup>()
 
   var body: some View {
     ZoonkList {
@@ -23,49 +25,33 @@ struct RemindersView: View {
           Text(
             "Reminders", tableName: "Reminders", comment: "Title of the reminders settings page"),
           supporting: Text(
-            "One reminder on your study days, when you still have learning left.",
-            tableName: "Reminders", comment: "Under the reminders page's title: what reminders do"))
+            "One reminder on your \(Self.studyDays), if you're not done for the day.",
+            tableName: "Reminders",
+            comment:
+              "Under the reminders page's title: what reminders do; the argument is the link “study days”"
+          ))
       }
 
       if let reminder = reminders.reminder.value {
         Section {
-          DatePicker(selection: timeBinding(reminder), displayedComponents: .hourAndMinute) {
-            ListRow(
-              Text("Time", tableName: "Reminders", comment: "Row for the time reminders go out"),
-              description: Text(ReminderTime.zoneName(reminder.timeZone)))
-          }
-          .environment(\.timeZone, .gmt)
+          emailRow(reminder)
+          pushRows(reminder)
         }
 
         Section {
-          emailRow(reminder)
-          pushRows(reminder)
-        } footer: {
-          SectionFooter {
-            VStack(alignment: .leading, spacing: 4) {
-              Text(
-                "On your study days, from your plans.", tableName: "Reminders",
-                comment: "Under the reminder switches: which days reminders go out")
-
-              Button {
-                router.sheet = nil
-                router.showRoot(of: .plan)
-              } label: {
-                Text("See your plan", tableName: "Reminders", comment: "Opens the Plan")
-                  .typeWeight(.semibold)
-                  .underline()
-              }
-              .buttonStyle(.borderless)
-            }
+          DatePicker(selection: timeBinding(reminder), displayedComponents: .hourAndMinute) {
+            ListRow(
+              Text("Time", tableName: "Reminders", comment: "Row for the time reminders go out"),
+              description: ReminderTime.zoneName(reminder.timeZone).map { Text($0) })
           }
+          .environment(\.timeZone, .gmt)
         }
 
         if reminder.quiet {
           Section {
             Label {
               Text(
-                "Paused while you're away. Studying turns them back on.", tableName: "Reminders",
-                comment: "Reminders stopped after a week without study")
+                "Paused while you're away. Studying turns them back on.", tableName: "Reminders")
             } icon: {
               Image(systemName: "moon.zzz")
             }
@@ -74,13 +60,10 @@ struct RemindersView: View {
         }
       }
 
-      if reminders.saveFailed || pushFailed {
+      if timeSave.outcome == false || emailSave.outcome == false || pushSetup.outcome == .failed {
         SettingsSaveError()
       }
     }
-    .navigationTitle(
-      Text("Reminders", tableName: "Reminders", comment: "Title of the reminders settings page")
-    )
     .barTitleAfterHero(
       String(
         localized: "Reminders", table: "Reminders",
@@ -94,10 +77,27 @@ struct RemindersView: View {
       }
     }
     .loads(reminders.reminder)
+    .environment(
+      \.openURL,
+      OpenURLAction { url in
+        guard url == Self.planLink else {
+          return .systemAction
+        }
+
+        router.sheet = nil
+        router.showRoot(of: .plan)
+        return .handled
+      }
+    )
     .task(id: scenePhase) {
       if scenePhase == .active {
-        notificationsOff = await notifications.isDenied()
+        notificationsOff = await reminders.notificationsDenied()
       }
+    }
+    .onDisappear {
+      emailSave.leave()
+      pushSetup.leave()
+      timeSave.leave()
     }
   }
 
@@ -107,16 +107,15 @@ struct RemindersView: View {
       SettingToggle(
         isOn: Binding(
           get: { reminder.emailOn },
-          set: { on in Task { await reminders.change(StudyReminderChange(emailOn: on)) } }),
-        title: Text("Email", tableName: "Reminders", comment: "Switch for email reminders"),
+          set: { on in save(StudyReminderChange(emailOn: on), in: emailSave) }),
+        title: Text("Email reminders", tableName: "Reminders"),
         description: Text(verbatim: address))
     } else {
       Button(action: createAccount) {
         ListRow(
-          Text("Email", tableName: "Reminders", comment: "Switch for email reminders"),
+          Text("Email reminders", tableName: "Reminders"),
           description: Text(
-            "Create an account to get email reminders", tableName: "Reminders",
-            comment: "A guest's email reminders row, which opens account creation")
+            "Create an account to get email reminders", tableName: "Reminders")
         )
         .disclosureChevron()
       }
@@ -132,9 +131,7 @@ struct RemindersView: View {
       isOn: Binding(
         get: { reminder.pushOn },
         set: { on in
-          Task {
-            await setUpPush { await reminders.setPush(on, in: reminder) }
-          }
+          setUpPush { [reminders] in await reminders.setPush(on, in: reminder) }
         }),
       title: Text(
         "Push notifications", tableName: "Reminders", comment: "Switch for push reminders"),
@@ -146,11 +143,11 @@ struct RemindersView: View {
           : Text(verbatim: phone.label)
       }
     )
-    .disabled(isSettingUpPush)
+    .disabled(pushSetup.isRunning)
 
     if reminder.phone != nil, !isThisPhone {
-      BusyButton(isBusy: isSettingUpPush, icon: .notify) {
-        Task { await setUpPush { await reminders.useThisPhone() } }
+      BusyButton(isBusy: pushSetup.isRunning, icon: .notify) {
+        setUpPush { [reminders] in await reminders.useThisPhone() }
       } label: {
         Text(
           "Use this device", tableName: "Reminders",
@@ -161,34 +158,41 @@ struct RemindersView: View {
     }
 
     // A learner who chose email, or never wanted push, isn't nudged to turn it back on.
-    if notificationsOff, pushRefused || (reminder.pushOn && isThisPhone) {
+    if notificationsOff, pushSetup.outcome == .denied || (reminder.pushOn && isThisPhone) {
       NotificationsOffNotice()
     }
   }
 
-  /// Nil when no setup ran: a plain save, which says its own failure.
-  private func setUpPush(_ setUp: () async -> PushSetup?) async {
-    isSettingUpPush = true
-    pushFailed = false
-    let result = await setUp()
-    isSettingUpPush = false
-
-    switch result {
-    case .on, nil:
-      break
-    case .denied:
-      notificationsOff = true
-      pushRefused = true
-    case .failed:
-      pushFailed = true
+  private func setUpPush(_ setUp: @escaping @MainActor () async -> PushSetup?) {
+    pushSetup.run(setUp) { result in
+      if result == .denied {
+        notificationsOff = true
+      }
     }
+  }
+
+  private func save(_ change: StudyReminderChange, in request: VisitRequest<Bool>) {
+    request.run { [reminders] in await reminders.change(change) }
+  }
+
+  private static let planLink = URL(string: "zoonk-reminders:plan")!
+
+  /// Opens the Plan, where the study days are.
+  private static var studyDays: AttributedString {
+    var link = AttributedString(
+      localized: "study days", table: "Reminders",
+      comment: "Link to the Plan inside “One reminder on your study days…”")
+    link.link = planLink
+    link.foregroundColor = .accentColor
+    link.underlineStyle = .single
+    return link
   }
 
   private func timeBinding(_ reminder: StudyReminder) -> Binding<Date> {
     Binding(
       get: { ReminderTime.date(reminder.time) },
       set: { date in
-        Task { await reminders.change(StudyReminderChange(time: ReminderTime.string(date))) }
+        save(StudyReminderChange(time: ReminderTime.string(date)), in: timeSave)
       })
   }
 }

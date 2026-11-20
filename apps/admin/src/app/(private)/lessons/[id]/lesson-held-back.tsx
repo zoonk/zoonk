@@ -11,7 +11,7 @@ export function LessonHeldBack({ lesson }: { lesson: Lesson }) {
   const drafts = parseHeldBackDrafts(lesson.heldBackDrafts);
 
   if (drafts.length === 0) {
-    return <span className="text-muted-foreground">None</span>;
+    return "—";
   }
 
   return (

@@ -1,8 +1,29 @@
+import HTTPTypes
+import OpenAPIRuntime
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
 
 final class SubscriptionPageTests: XCTestCase {
+  /// The buddy's line names the monthly cap when the plan has one, and ends after "a day" when not.
+  func testTheFreePlansBuddyLineNamesItsMonthlyCap() throws {
+    let plan = { (month: Int?) in
+      try JSONDecoder().decode(
+        FreePlan.self,
+        from: Data(
+          #"{"tutorMessagesPerDay":10,"tutorMessagesPer30Days":\#(month.map(String.init) ?? "null")}"#
+            .utf8))
+    }
+
+    XCTAssertEqual(
+      try plan(100).buddyLine.map { String(localized: $0) },
+      "An AI study buddy: 10 messages a day, up to 100 a month")
+    XCTAssertEqual(
+      try plan(nil).buddyLine.map { String(localized: $0) },
+      "An AI study buddy: 10 messages a day")
+  }
+
   func testLearnerWithoutPlusGetsTheOffer() {
     XCTAssertEqual(SubscriptionPage(current: nil, openedPlan: nil, boughtHere: false), .offer)
   }
@@ -36,5 +57,86 @@ final class SubscriptionPageTests: XCTestCase {
 
   private func makeSubscription(provider: String) -> AccountSubscription {
     AccountSubscription(plan: "plus", provider: provider, status: "active")
+  }
+}
+
+extension SubscriptionPageTests {
+  @MainActor
+  func testTwoSubscriptionsEachShowTheirOwnManagementAction() async throws {
+    let dependencies = AppDependencies.hosted(transport: UnpaidWebsiteTransport())
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      PlusStatusView(
+        subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")
+      )
+      .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: 1032, height: 1376)
+    try await waitForLayout(in: window)
+    try await waitForTestCondition("The website payment action did not appear") {
+      spoken(in: window).joined(separator: " ")
+        .contains("Update your payment on the website, where you subscribed.")
+    }
+    let words = spoken(in: window).joined(separator: " ")
+    XCTAssertTrue(words.contains("Through the App Store"))
+    XCTAssertTrue(words.contains("Manage in App Store"))
+    XCTAssertTrue(words.contains("Through the website"))
+    XCTAssertTrue(words.contains("Update your payment on the website, where you subscribed."))
+    XCTAssertFalse(words.contains("Cancel Plus"))
+  }
+}
+
+private struct UnpaidWebsiteTransport: ClientTransport {
+  var state = "unpaid"
+  func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws
+    -> (HTTPResponse, HTTPBody?)
+  {
+    guard operationID == "getStripeSubscriptionCancellation" else { throw APIError.network }
+    return (
+      HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+      HTTPBody(Data("{\"state\":\"\(state)\",\"periodEnd\":\"2026-12-18T12:00:00.000Z\"}".utf8))
+    )
+  }
+}
+
+extension SubscriptionPageTests {
+  @MainActor
+  func testRenewingWebsitePlusOpensManagement() async throws {
+    try await websiteAction(state: "renewing", label: "Manage on the website")
+  }
+
+  @MainActor
+  func testEndingWebsitePlusOpensManagement() async throws {
+    try await websiteAction(state: "ending", label: "Manage on the website")
+  }
+
+  @MainActor
+  func testFailedWebsitePlusOpensPayment() async throws {
+    try await websiteAction(
+      state: "unpaid", label: "Update your payment on the website, where you subscribed.")
+  }
+
+  @MainActor
+  private func websiteAction(state: String, label: String) async throws {
+    let dependencies = AppDependencies.hosted(transport: UnpaidWebsiteTransport(state: state))
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      PlusStatusView(
+        subscription: AccountSubscription(plan: "plus", provider: "apple", status: "active")
+      )
+      .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
+    for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
+      window.frame = CGRect(x: 0, y: 0, width: width, height: height)
+      window.rootViewController?.traitOverrides.horizontalSizeClass =
+        width > 700 ? .regular : .compact
+      try await waitForLayout(in: window)
+      try await waitForTestCondition("The website action did not appear for \(state)") {
+        spoken(in: window).joined(separator: " ").contains(label)
+      }
+      try captureCallsRoundTwo("website-\(state)-\(size)")
+    }
+    let words = spoken(in: window).joined(separator: " ")
+    XCTAssertTrue(words.contains(label), words)
+    if state == "ending" { XCTAssertTrue(words.contains("Plus ends on"), words) }
+    XCTAssertFalse(words.contains("You subscribed in the App Store."))
   }
 }

@@ -61,7 +61,7 @@ async function UnitBody({ params }: Props) {
 
 export default function LanguageUnitPage(props: Props) {
   return (
-    <Suspense fallback={<DetailSkeleton rows={4} />}>
+    <Suspense fallback={<DetailSkeleton bottomBar />}>
       <UnitBody {...props} />
     </Suspense>
   );

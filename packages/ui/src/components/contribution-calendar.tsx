@@ -19,18 +19,20 @@ const VIEWPORT_SLOT = "contribution-calendar-viewport";
 
 /**
  * The viewport's scroller clips what's drawn outside the grid, so the ring sits inside the day and
- * keyboard focus rings the day itself. Its inner line keeps it readable on every level's color. The grid
- * holds it once, instead of every day of a year repeating it in the page.
+ * keyboard focus rings the day itself: the soft focus ring, dark only with more contrast. Its inner
+ * line keeps it readable on every level's color. The grid holds it once, instead of every day of a
+ * year repeating it in the page.
  */
 const DAY_RING_CLASS = cn(
-  "**:data-active:inset-ring-foreground **:data-active:ring-background **:data-active:ring-3 **:data-active:inset-ring-2 **:data-active:ring-inset",
-  "focus-visible:**:data-current:inset-ring-foreground focus-visible:**:data-current:ring-background focus-visible:**:data-current:ring-3 focus-visible:**:data-current:inset-ring-2 focus-visible:**:data-current:ring-inset",
+  "**:data-active:inset-ring-ring/50 contrast-more:**:data-active:inset-ring-foreground **:data-active:ring-background **:data-active:ring-3 **:data-active:inset-ring-2 **:data-active:ring-inset",
+  "focus-visible:**:data-current:inset-ring-ring/50 contrast-more:focus-visible:**:data-current:inset-ring-foreground focus-visible:**:data-current:ring-background focus-visible:**:data-current:ring-3 focus-visible:**:data-current:inset-ring-2 focus-visible:**:data-current:ring-inset",
 );
 
+/** Whole weeks fill the column; `recentOnPhone` keeps a phone to the last 26 weeks. */
 const CALENDAR_SIZE_CLASS = cn(
   "@container/calendar [--calendar-gap:round(down,clamp(0.125rem,0.25cqw,0.375rem),1px)]",
-  "[--calendar-cell:clamp(0.625rem,round(down,calc((100cqw-(var(--calendar-weeks,53)-1)*var(--calendar-gap))/var(--calendar-weeks,53)),1px),2.5rem)]",
-  "pointer-coarse:[--calendar-cell:1.25rem]",
+  "[--calendar-shown:var(--calendar-weeks,53)] max-sm:data-recent-on-phone:[--calendar-shown:min(var(--calendar-weeks,53),26)]",
+  "[--calendar-cell:clamp(0.5rem,round(down,calc((100cqw-(var(--calendar-shown)-1)*var(--calendar-gap))/var(--calendar-shown)),1px),2.5rem)]",
 );
 
 /**
@@ -42,12 +44,15 @@ export function ContributionCalendar({
   className,
   defaultIndex = 0,
   details = NO_DETAILS,
+  recentOnPhone = false,
   style,
   weeks,
   ...props
 }: ComponentProps<"figure"> & {
   defaultIndex?: number;
   details?: readonly ChartPointDetail[];
+  /** On a phone, only the last 26 weeks, fitted to the column: its title must say so. */
+  recentOnPhone?: boolean;
   weeks?: number;
 }) {
   const weeksStyle: CSSPropertiesWithVariables = weeks ? { "--calendar-weeks": weeks } : {};
@@ -56,6 +61,7 @@ export function ContributionCalendar({
     <ChartInspector defaultIndex={defaultIndex} details={details}>
       <figure
         className={cn("flex min-w-0 flex-col gap-3", CALENDAR_SIZE_CLASS, className)}
+        data-recent-on-phone={recentOnPhone || undefined}
         data-slot="contribution-calendar"
         style={{ ...weeksStyle, ...style }}
         {...props}
@@ -96,8 +102,9 @@ export function ContributionCalendarTitle({ children, className, ...props }: Com
 }
 
 /**
- * RTL so an overflowing calendar opens at its newest edge. On touch it is as wide as a whole number of
- * weeks and snaps to them, so a swipe never rests on half a week.
+ * RTL so a calendar too wide for its column even at its smallest days opens at its newest edge. The
+ * side with earlier or later weeks fades by one week, the only sign on a still screen that the rest
+ * is a swipe away.
  */
 export function ContributionCalendarViewport({
   children,
@@ -107,7 +114,7 @@ export function ContributionCalendarViewport({
   return (
     <div
       className={cn(
-        "ml-auto w-full min-w-0 overflow-x-auto pb-1 pointer-coarse:w-[calc(round(down,100%+var(--calendar-gap),var(--calendar-cell)+var(--calendar-gap))-var(--calendar-gap))] pointer-coarse:snap-x pointer-coarse:snap-mandatory",
+        "scroll-fade-x ml-auto w-full min-w-0 overflow-x-auto pb-1 [--scroll-fade-x-size:calc(var(--calendar-cell)+var(--calendar-gap))]",
         className,
       )}
       data-slot={VIEWPORT_SLOT}
@@ -146,6 +153,7 @@ export function ContributionCalendarGrid({
     <ChartInspectorPoints
       className={cn(
         "flex w-max min-w-full justify-between gap-(--calendar-gap) focus-visible:ring-0 [&>:last-child_[data-slot=contribution-calendar-period]]:right-0 [&>:last-child_[data-slot=contribution-calendar-period]]:left-auto [&>:nth-child(-n+2)_[data-slot=contribution-calendar-period]]:hidden",
+        "max-sm:in-data-recent-on-phone:[&>:nth-last-child(n+27)]:hidden",
         DAY_RING_CLASS,
         className,
       )}
@@ -161,7 +169,7 @@ export function ContributionCalendarWeek({ children, className, ...props }: Comp
   return (
     <div
       className={cn(
-        "relative grid w-(--calendar-cell) shrink-0 snap-end grid-rows-7 gap-(--calendar-gap) pt-5",
+        "relative grid w-(--calendar-cell) shrink-0 grid-rows-7 gap-(--calendar-gap) pt-5",
         className,
       )}
       data-slot="contribution-calendar-week"
@@ -180,7 +188,7 @@ export function ContributionCalendarPeriod({
   return (
     <span
       className={cn(
-        "text-faint absolute top-0 left-0 font-mono text-[10px] whitespace-nowrap tabular-nums",
+        "text-faint text-2xs absolute top-0 left-0 font-mono whitespace-nowrap tabular-nums",
         className,
       )}
       data-slot="contribution-calendar-period"
@@ -198,7 +206,7 @@ export function ContributionCalendarDay({
   return (
     <ChartInspectorPoint
       aria-hidden="true"
-      className={cn("size-(--calendar-cell) shrink-0 rounded-[2px]", className)}
+      className={cn("size-(--calendar-cell) shrink-0 rounded-xs", className)}
       data-slot="contribution-calendar-day"
       {...props}
     />
@@ -214,7 +222,7 @@ export function ContributionCalendarLegend({
   return (
     <div
       className={cn(
-        "text-muted-foreground flex items-center justify-end gap-1 text-[0.6875rem]",
+        "text-muted-foreground text-2xs flex items-center justify-end gap-1",
         className,
       )}
       data-slot="contribution-calendar-legend"
@@ -242,7 +250,7 @@ export function ContributionCalendarLegendSwatch({ className, ...props }: Compon
   return (
     <span
       aria-hidden="true"
-      className={cn("size-2.5 rounded-[2px]", className)}
+      className={cn("size-2.5 rounded-xs", className)}
       data-slot="contribution-calendar-legend-swatch"
       {...props}
     />

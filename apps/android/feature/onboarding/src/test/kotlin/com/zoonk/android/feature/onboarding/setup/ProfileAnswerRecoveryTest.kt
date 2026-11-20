@@ -14,7 +14,6 @@ import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.setupView
 import com.zoonk.android.feature.profile.ProfileDraft
-import com.zoonk.android.feature.profile.profileSkip
 import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
 import com.zoonk.api.models.ProfileQuestionViewSaved
@@ -50,12 +49,12 @@ class ProfileAnswerRecoveryTest {
                 val draft = ProfileDraft(picks = listOf("sciFi"), text = "Star Trek")
                 vm.changeProfile(ProfileQuestion.WATCH, draft)
                 api.refusal = ApiException(ApiError.Network)
-                vm.answer(profileSkip(ProfileQuestion.WATCH))!!.await()
+                vm.answer(ProfileDraft(declined = true).onboardingInput(ProfileQuestion.WATCH, memoryEnabled = true))!!.await()
                 assertTrue(vm.saveFailed)
                 assertEquals(draft, vm.profileDraft(question, null))
                 api.refusal = null
                 api.reply = { _, _ -> setupView(listOf("plan")) }
-                vm.answer(profileSkip(ProfileQuestion.WATCH))!!.await()
+                vm.answer(ProfileDraft(declined = true).onboardingInput(ProfileQuestion.WATCH, memoryEnabled = true))!!.await()
                 assertEquals(ProfileDraft(), vm.profileDraft(question, null))
             } finally {
                 models.clear()

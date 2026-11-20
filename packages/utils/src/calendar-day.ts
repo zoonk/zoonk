@@ -1,6 +1,8 @@
 import { MS_PER_DAY } from "./date";
 import { getDateInTimeZone } from "./time-zone";
 
+const DAYS_PER_WEEK = 7;
+
 export function getIsoDay({ now, timeZone }: { now: Date; timeZone: string }): string {
   return getDateInTimeZone({ date: now, timeZone }).toISOString().slice(0, 10);
 }
@@ -12,3 +14,17 @@ export function daysBetweenIsoDays({ from, to }: { from: string; to: string }): 
 export function addIsoDays({ day, days }: { day: string; days: number }): string {
   return new Date(Date.parse(`${day}T00:00:00Z`) + days * MS_PER_DAY).toISOString().slice(0, 10);
 }
+
+/** A date in another year carries its year: "Nov 14" a year ahead reads as today. */
+export function isInAnotherYear({ isoDate, today }: { isoDate: string; today: string }): boolean {
+  return isoDate.slice(0, "YYYY".length) !== today.slice(0, "YYYY".length);
+}
+
+/**
+ * The order every week a learner sees is drawn in: Monday to Sunday, as the plan's week runs.
+ * Weekdays keep their numbers, Sunday 0.
+ */
+export const WEEKDAYS_FROM_MONDAY: readonly number[] = Array.from(
+  { length: DAYS_PER_WEEK },
+  (_, index) => (index + 1) % DAYS_PER_WEEK,
+);

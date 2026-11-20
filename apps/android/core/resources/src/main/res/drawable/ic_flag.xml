@@ -4,7 +4,10 @@
     android:viewportWidth="960"
     android:viewportHeight="960"
     android:autoMirrored="true">
+  <!-- Material Symbols draws the flag 20 units (0.5dp) below the middle; marks are placed by their ink's middle. -->
+  <group android:translateY="-20">
   <path
       android:fillColor="@android:color/black"
       android:pathData="M200,840L200,160L560,160L576,240L800,240L800,640L520,640L504,560L280,560L280,840L200,840ZM500,400L500,400L500,400L500,400L500,400L500,400L500,400L500,400L500,400ZM586,560L720,560L720,320L510,320L494,240L280,240L280,480L570,480L586,560Z"/>
+  </group>
 </vector>

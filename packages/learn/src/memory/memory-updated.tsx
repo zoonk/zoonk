@@ -24,7 +24,7 @@ type MemoryChangeSummary = Pick<MemoryChange, "action"> & {
   previous: MemoryFactSummary | null;
 };
 
-function toMemoryChangeReferences(changes: MemoryChangeSummary[]): MemoryChangeReference[] {
+export function toMemoryChangeReferences(changes: MemoryChangeSummary[]): MemoryChangeReference[] {
   return changes.map((change) => ({
     factId: change.fact?.id ?? null,
     previousFactId: change.previous?.id ?? null,
@@ -40,7 +40,12 @@ function ChangeText({ change, extra }: { change: MemoryChangeSummary; extra: num
       {change.fact && <span>{change.fact.statement}</span>}{" "}
       {change.previous && <del>{change.previous.statement}</del>}
       {extra > 0 && (
-        <span> {t("{count, plural, one {and # more} other {and # more}}", { count: extra })}</span>
+        <span>
+          {" "}
+          {t("{count, plural, one {and # more change} other {and # more changes}}", {
+            count: extra,
+          })}
+        </span>
       )}
     </>
   );
@@ -87,7 +92,7 @@ export function MemoryUpdated({
     <div
       aria-live="polite"
       className={cn(
-        "text-muted-foreground flex items-start gap-2 text-[0.8125rem] leading-5",
+        "text-muted-foreground text-compact flex items-start gap-2 leading-5",
         className,
       )}
       data-slot="memory-updated"

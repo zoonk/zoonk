@@ -2,10 +2,9 @@
 
 import { type FieldMapView } from "@zoonk/core/view-models/map/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { AwardIcon } from "lucide-react";
+import { AwardIcon, CircleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
-import { PlusMark } from "../_components/plus-lock";
+import { useTransition } from "react";
 import { DoneMark } from "../_components/status-mark";
 import {
   Suggestion,
@@ -18,6 +17,7 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLevelName } from "../course/use-level-name";
+import { useSharedRequest, useSharedState } from "../plan/layout-shared";
 import { SlotContent } from "../plan/plan-suggestion-context";
 
 /**
@@ -31,17 +31,19 @@ export type PlanCertificates = {
 };
 
 function useCertificateClaim(onClaim: PlanCertificates["onClaim"]) {
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useSharedState("claimFailed", false);
   const [isPending, startTransition] = useTransition();
+  const request = useSharedRequest("claim", isPending);
 
   const claim = () => {
     startTransition(async () => {
+      request.start();
       const { data: claimed } = await safeAsync(onClaim);
       setFailed(!claimed);
     });
   };
 
-  return { claim, failed, isPending };
+  return { claim, failed, isPending: request.busy };
 }
 
 function ClaimAction({
@@ -67,7 +69,7 @@ function ClaimAction({
   );
 }
 
-/** A locked certificate opens its locked page; the mark says Plus unlocks it. */
+/** A locked certificate opens its locked page, where the gate is. */
 function ViewAction({
   variant,
   view,
@@ -80,13 +82,6 @@ function ViewAction({
   return (
     <SuggestionLinkAction href={view.href} variant={variant}>
       {view.several ? t("View certificates") : t("View certificate")}
-      {view.locked && (
-        <PlusMark
-          className={
-            variant === "default" ? "bg-primary-foreground/15 text-primary-foreground" : undefined
-          }
-        />
-      )}
     </SuggestionLinkAction>
   );
 }
@@ -144,7 +139,7 @@ export function CourseCompleteSuggestion({
   const title = useCompleteTitle(unclaimed);
 
   return (
-    <Suggestion label={title} mark={<DoneMark />}>
+    <Suggestion label={title} mark={failed ? <CircleAlertIcon /> : <DoneMark />}>
       <SuggestionLine>
         {failed ? (
           <SuggestionSaveError className="min-w-0 flex-1" />

@@ -41,7 +41,7 @@ class PlanEditorResizeTest {
 
         compose.onNodeWithText("Content country").performClick()
         compose.onNodeWithText("Portugal").performClick()
-        compose.onNodeWithText("Change the content country?").assertIsDisplayed()
+        compose.onNodeWithText("Change country?").assertIsDisplayed()
 
         assertConfirmationSurvivesTurningThePhone()
     }
@@ -52,18 +52,18 @@ class PlanEditorResizeTest {
         showEditor {
             PlanEdits(
                 failed = if (failed) setOf(PlanPart.Country) else emptySet(),
-                setContentCountry = { _, _ -> failed = true },
+                setContentCountry = { failed = true },
             )
         }
 
         compose.onNodeWithText("Content country").performClick()
         compose.onNodeWithText("Portugal").performClick()
-        compose.onNodeWithText("Rebuild plan").performClick()
+        compose.onNodeWithText("Change country").performClick()
         compose.waitForIdle()
-        compose.onNodeWithText("Change the content country?").assertDoesNotExist()
+        compose.onNodeWithText("Change country?").assertDoesNotExist()
 
         compose.onNodeWithText("Portugal").performClick()
-        compose.onNodeWithText("Change the content country?").assertIsDisplayed()
+        compose.onNodeWithText("Change country?").assertIsDisplayed()
 
         assertConfirmationSurvivesTurningThePhone()
     }
@@ -94,7 +94,7 @@ class PlanEditorResizeTest {
                     override val containerSize get() = with(density) { IntSize(width.roundToPx(), 900.dp.roundToPx()) }
                 }
             CompositionLocalProvider(LocalWindowInfo provides sized) {
-                ZoonkTheme { PlanEditor(page, edits(), section = null, onTellBuddy = {}, onDismiss = {}) }
+                ZoonkTheme { PlanEditor(page, edits(), section = null, onDismiss = {}) }
             }
         }
     }
@@ -102,10 +102,10 @@ class PlanEditorResizeTest {
     private fun assertConfirmationSurvivesTurningThePhone() {
         width = 900.dp
         compose.waitForIdle()
-        compose.onNodeWithText("Change the content country?").assertIsDisplayed()
+        compose.onNodeWithText("Change country?").assertIsDisplayed()
 
         restoration.emulateSavedInstanceStateRestore()
         compose.waitForIdle()
-        compose.onNodeWithText("Change the content country?").assertIsDisplayed()
+        compose.onNodeWithText("Change country?").assertIsDisplayed()
     }
 }

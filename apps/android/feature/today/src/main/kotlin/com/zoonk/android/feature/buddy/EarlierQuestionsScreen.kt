@@ -3,7 +3,6 @@ package com.zoonk.android.feature.buddy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,10 +35,14 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.tutor.AnswerText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageMargin
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.api.models.EarlierQuestion
 import kotlinx.coroutines.launch
 
@@ -70,19 +73,22 @@ fun EarlierQuestionsScreen(
         }
     }
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.earlier_questions_title)) }) { padding ->
+    PageScaffold(
+        onBack = { navigator.back() },
+        title = { Text(stringResource(R.string.earlier_questions_title)) },
+        columnWidth = COLUMN_WIDTH + pageMargin() * 2,
+    ) { padding ->
         BeforeFold(Modifier.padding(padding)) { beforeFold ->
             LazyColumn(
                 modifier = beforeFold.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = pagePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 item(key = "intro", contentType = "intro") {
-                    Text(
-                        text = stringResource(R.string.earlier_questions_description),
+                    PageHeader(
+                        title = stringResource(R.string.earlier_questions_title),
+                        supporting = stringResource(R.string.earlier_questions_description),
                         modifier = column.padding(bottom = 24.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
 
@@ -192,7 +198,9 @@ private fun OlderQuestions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        TextButton(busy = isLoading, onClick = onLoad) { Text(stringResource(R.string.earlier_questions_older)) }
+        TextButton(busy = isLoading, onClick = onLoad, edge = ButtonEdge.Start, forward = true) {
+            Text(stringResource(R.string.earlier_questions_older))
+        }
     }
 }
 

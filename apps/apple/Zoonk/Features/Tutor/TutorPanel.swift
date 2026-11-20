@@ -5,6 +5,7 @@ import SwiftUI
 struct TutorPanel: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var summary
+  @Environment(TutorStore.self) private var tutor
 
   let scope: TutorScope
   var quote: String?
@@ -20,15 +21,9 @@ struct TutorPanel: View {
         thread
           .navigationTitle(title)
           .navigationBarTitleDisplayMode(.inline)
-          .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-              Button(role: .close) {
-                dismiss()
-              }
-            }
-          }
+          .sheetClose { dismiss() }
       }
-      .zoonkStyles()
+      .zoonkSheet()
       .presentationDetents([.medium, .large])
       .presentationBackgroundInteraction(.enabled(upThrough: .medium))
       .closesOnNavigation()
@@ -44,6 +39,12 @@ struct TutorPanel: View {
   private var thread: some View {
     TutorThreadView(scope: scope, draft: draft) {
       VStack(alignment: .leading, spacing: 8) {
+        if showsBuddy {
+          BuddyFigure(look: summary.summary.value?.buddy ?? BuddyLook())
+            .padding(.bottom, 4)
+            .accessibilityHidden(true)
+        }
+
         if isPane {
           title
             .typeStyle(.body.weight(.semibold))
@@ -74,6 +75,14 @@ struct TutorPanel: View {
     summary.buddyDisplayName
   }
 
+  /// Inside a lesson, the whole buddy greets an empty conversation.
+  private var showsBuddy: Bool {
+    switch scope {
+    case .step, .lesson: tutor.conversation(scope).turns.isEmpty
+    default: false
+    }
+  }
+
   private func quoteLine(_ question: String) -> String {
     if case .item(_, _, true, _, _) = scope {
       return String(
@@ -99,44 +108,59 @@ struct TutorAskToolbarItem: ToolbarContent {
 
 /// After a missed answer it says the buddy's name, when asking helps most.
 struct TutorAskButton: View {
+  @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var summary
 
   let scope: TutorScope
   var quote: String?
   var iconOnly = false
 
-  @State private var isPresented = false
-
   var body: some View {
-    let name = summary.buddyDisplayName
+    // The router presents the panel over the screen: the button can sit in a pane or a bar that a
+    // resize draws again, and the panel stays.
     let button = Button {
-      isPresented = true
+      router.present(.tutor(scope, quote: quote))
     } label: {
-      Label {
-        Text(
-          "Ask \(name)", tableName: "Tutor",
-          comment: "Opens the buddy's panel; the argument is the buddy's name")
-      } icon: {
-        let buddy = summary.summary.value?.buddy ?? BuddyLook()
-        BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
-      }
+      TutorAskLabel()
     }
 
     Group {
       // Beside a question's Check it's the buddy's face alone, so the bar keeps room for its
       // actions, until a miss, as main's bar does.
       if iconOnly {
-        button.labelStyle(.iconOnly)
+        button.tutorAskIcon()
       } else if case .item(_, _, _, missed: false, mistakeId: _) = scope {
-        button.labelStyle(.iconOnly)
+        button.tutorAskIcon()
       } else {
-        button
+        button.buttonStyle(.outline)
       }
     }
-    .buttonStyle(.outline)
-    .accessibilityLabel(Text(scope.askLabel(name)))
-    .sheet(isPresented: $isPresented) {
-      TutorPanel(scope: scope, quote: quote)
+    .accessibilityLabel(Text(scope.askLabel(summary.buddyDisplayName)))
+  }
+}
+
+/// The one ask-the-buddy label: "Ask" and the buddy's name beside its face.
+struct TutorAskLabel: View {
+  @Environment(LearnerSummaryStore.self) private var summary
+
+  var body: some View {
+    Label {
+      Text(
+        "Ask \(summary.buddyDisplayName)", tableName: "Tutor",
+        comment: "Opens the buddy's panel; the argument is the buddy's name")
+    } icon: {
+      let buddy = summary.summary.value?.buddy ?? BuddyLook()
+      BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
     }
+  }
+}
+
+extension View {
+  /// The ask-the-buddy button beside a screen's main action: main's 44pt outline square with the
+  /// buddy's face, as tall as the action beside it.
+  func tutorAskIcon() -> some View {
+    labelStyle(.iconOnly)
+      .buttonStyle(.outline.icon)
+      .controlSize(.large)
   }
 }

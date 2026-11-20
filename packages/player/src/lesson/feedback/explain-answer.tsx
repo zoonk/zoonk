@@ -62,7 +62,9 @@ export function ExplainAnswer({ answer, stepId }: { answer: string; stepId: stri
 
       {(state.status === "slowDown" ||
         state.status === "limitReached" ||
-        state.status === "signUpRequired") && <LessonHelpLimitNotice limit={state} />}
+        state.status === "signUpRequired") && (
+        <LessonHelpLimitNotice kind="explanations" limit={state} />
+      )}
     </div>
   );
 }

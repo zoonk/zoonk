@@ -1,41 +1,48 @@
 package com.zoonk.android.feature.plan
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
+import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.data.WritingWaits
 import com.zoonk.android.data.Written
 import com.zoonk.android.data.value
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
-import com.zoonk.api.models.PlanBasesAdvice
+import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/**
- * What a write did that the screen acts on: a refusal said in a snackbar (the menu that started it
- * has closed by then), or an archived goal, which leaves the Plan.
- */
-enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
+/** What a write did that the screen acts on: an archived goal, which leaves the Plan. */
+data class PlanArchive(
+    val visit: Int,
+    val goalRevision: Long,
+)
+
+enum class ResumeFailure { GoalLimit, Failed }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
 enum class PlanPart {
@@ -76,12 +83,11 @@ class PlanViewModel(
     private val store: PlanStore,
     private val goalId: UUID,
     writingWaits: WritingWaits,
+    private val navigation: PlanNavigationModel,
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
-    private val notices = Channel<PlanEvent>(Channel.BUFFERED)
     private val savingParts = MutableStateFlow(emptySet<PlanPart>())
     private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
-    private val failedParts = MutableStateFlow(emptySet<PlanPart>())
     private val trackedChanges = MutableStateFlow(emptyMap<UUID, EditorChange>())
     private val editorChangeIds = MutableStateFlow(emptySet<UUID>())
     private val sheetAnswersState = MutableStateFlow(emptyMap<UUID, PlanChangeResult?>())
@@ -89,7 +95,6 @@ class PlanViewModel(
     private var search: TimeToCoverSearch? = null
     private val previewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
     private val slotPreviewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
-    private val nextLevelStart = MutableStateFlow(NextLevelStart.Idle)
     private val renameDialog = MutableStateFlow<RenameDialog?>(null)
 
     /** Counts the editor's openings, so a change saved in one doesn't show its answer in the next. */
@@ -97,7 +102,30 @@ class PlanViewModel(
 
     val isSaving: StateFlow<Boolean> = saving.asStateFlow()
 
-    val events: Flow<PlanEvent> = notices.receiveAsFlow()
+    /** This visit to the Plan: what its writes lead to shows only on it. */
+    val visit = Visit()
+
+    private val resumeFailed = visit.outcome<ResumeFailure>()
+
+    /** Why the bar's Resume didn't save on this visit, said over the bar until the next try. */
+    val resumeFailure: ResumeFailure? get() = resumeFailed.value
+
+    /** What a write did that the screen acts on, while the visit that made it lasts. */
+    val event = navigation.event
+
+    /** What the editor's and the slot's saves and searches lead to, while the visit that asked lasts. */
+    internal val outcomes =
+        PlanOutcomes(
+            visit,
+            endTools = { setupLessons.clear() },
+            endSuggestion = {
+                clearSlotPreview()
+                slotState.asking = null
+                slotState.intent = CoverageIntent.Time
+                slotState.waiting = 0
+                if (slotState.dateSearch == DateSearch.Finding) slotState.dateSearch = null
+            },
+        )
 
     /** Parts whose change is saving, which take no other tap meanwhile. */
     val pending: StateFlow<Set<PlanPart>> = savingParts.asStateFlow()
@@ -105,7 +133,8 @@ class PlanViewModel(
     /** What each saving part asked for, shown over the plan meanwhile: a tap shows at once and survives turning the device. */
     val asked: StateFlow<Map<PlanPart, List<PlanOp>>> = askedOperations.asStateFlow()
 
-    val failed: StateFlow<Set<PlanPart>> = failedParts.asStateFlow()
+    /** The editor's parts whose change didn't save, while the editor opening that asked lasts. */
+    val failed: Set<PlanPart> get() = outcomes.failedParts.value.orEmpty()
 
     /** Every change made here, so a sheet or the slot keeps its own, with its Undo, after a newer one or the editor reopening. */
     val changes: StateFlow<Map<UUID, EditorChange>> = trackedChanges.asStateFlow()
@@ -122,7 +151,7 @@ class PlanViewModel(
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /** The suggestion slot's state, kept here so a save's answer, with its Undo, survives turning the device. */
-    internal val slotState = SlotState()
+    internal val slotState = SlotState(visit = visit)
 
     /** Read it with [forPlan]: it's the plan revision it was asked of. */
     val timeToCover: StateFlow<TimeToCoverState> = timeToCoverState.asStateFlow()
@@ -133,7 +162,12 @@ class PlanViewModel(
     /** The suggestion slot's own, as main's: Study everything's preview never replaces what the slot shows. */
     val slotPreview: StateFlow<PlanPreviewState> = slotPreviewState.asStateFlow()
 
-    val nextLevel: StateFlow<NextLevelStart> = nextLevelStart.asStateFlow()
+    private var nextLevelStart by mutableStateOf(NextLevelStart.Idle)
+
+    private val nextLevelFailure = visit.outcome<Unit>()
+
+    /** Failed only on the visit that asked. */
+    val nextLevel: NextLevelStart get() = if (nextLevelFailure.value != null) NextLevelStart.Failed else nextLevelStart
 
     val rename: StateFlow<RenameDialog?> = renameDialog.asStateFlow()
 
@@ -160,14 +194,31 @@ class PlanViewModel(
     fun setStatus(status: LearnerSummaryGoal.Status) {
         if (saving.value) return
         saving.value = true
+        val resuming = status == LearnerSummaryGoal.Status.ACTIVE
+        if (resuming) resumeFailed.clear()
+        val started = visit.number
+        val navigationStarted = navigation.begin()
         viewModelScope.launch {
             when (val result = store.setStatus(goalId, status)) {
                 is MutationResult.Done -> {
-                    if (status == LearnerSummaryGoal.Status.ARCHIVED) notices.send(PlanEvent.Archived)
+                    if (status == LearnerSummaryGoal.Status.ARCHIVED) navigation.archived(navigationStarted)
                 }
 
                 is MutationResult.Failed -> {
-                    notices.send(if (result.status == TOO_MANY_REQUESTS) PlanEvent.GoalLimitReached else PlanEvent.SaveFailed)
+                    if (resuming) {
+                        resumeFailed.send(
+                            started,
+                            if (result.status ==
+                                TOO_MANY_REQUESTS
+                            ) {
+                                ResumeFailure.GoalLimit
+                            } else {
+                                ResumeFailure.Failed
+                            },
+                        )
+                    } else {
+                        outcomes.saveFailed.send(started, Unit)
+                    }
                 }
 
                 MutationResult.Obsolete -> {}
@@ -176,40 +227,43 @@ class PlanViewModel(
         }
     }
 
-    /** A language goal's country: the plan stays as it is, so [saved] runs once the server has it. */
-    fun setRegion(
-        region: String?,
-        saved: () -> Unit,
-    ) = saveGoal(PlanPart.Region, saved) { store.setRegion(goalId, region) }
+    /** A language goal's country: the plan stays as it is, so its picker closes once the server has it. */
+    fun setRegion(region: String?) =
+        saveGoal(PlanPart.Region, outcomes.varietyPicker, outcomes.regionSaved) { store.setRegion(goalId, region) }
 
-    /** A learn goal's content country: the plan stays until its rebuild saves the new one; [saved] runs once the server has the country. */
-    fun setContentCountry(
-        country: String,
-        saved: () -> Unit,
-    ) = saveGoal(PlanPart.Country, saved) { store.setContentCountry(goalId, country) }
+    /** A learn goal's content country: the plan stays until its rebuild saves the new one; its question closes once the server has it. */
+    fun setContentCountry(country: String) =
+        saveGoal(PlanPart.Country, outcomes.countryPicker, outcomes.countrySaved) { store.setContentCountry(goalId, country) }
 
     /** Prepares the new country's plan again after that failed; a retry that doesn't start says so in a snackbar. */
     fun retryCountryRebuild() =
-        saveGoal(PlanPart.CountryRebuild, saved = {}) {
-            store.retryCountryRebuild(goalId).also { if (it is MutationResult.Failed) notices.send(PlanEvent.SaveFailed) }
-        }
+        saveGoal(PlanPart.CountryRebuild, visit, saved = null, failed = outcomes.saveFailed) { store.retryCountryRebuild(goalId) }
 
+    /**
+     * What [write] did shows only on the visit of what asked ([asker]: the editor opening for a picker, the Plan for a
+     * retry), its success and its failure alike, noted when it's asked.
+     */
     private fun saveGoal(
         part: PlanPart,
-        saved: () -> Unit,
+        asker: Visit,
+        saved: VisitOutcome<Unit>?,
+        failed: VisitOutcome<Unit>? = null,
         write: suspend () -> MutationResult<Unit>,
     ) {
         if (part in savingParts.value) return
         savingParts.update { it + part }
-        failedParts.update { it - part }
+        retried(part)
+        val asked = asker.number
+        val editorOpened = outcomes.editor.number
         viewModelScope.launch {
             when (write()) {
                 is MutationResult.Done -> {
-                    saved()
+                    saved?.send(asked, Unit)
                 }
 
                 is MutationResult.Failed -> {
-                    failedParts.update { it + part }
+                    if (asked == asker.number) markFailed(part, editorOpened)
+                    failed?.send(asked, Unit)
                 }
 
                 MutationResult.Obsolete -> {}
@@ -219,33 +273,49 @@ class PlanViewModel(
     }
 
     /**
-     * The part takes no other tap until the plan shown has the change. [answered] gets what it did,
-     * or null when it didn't save or the plan couldn't be read again, as main's page couldn't be.
+     * The part takes no other tap until the plan shown has the change. [asker] gets what it did, or
+     * that it didn't save or the plan couldn't be read again, as main's page couldn't be.
      */
-    fun change(
+    internal fun change(
         part: PlanPart,
         operations: List<PlanOp>,
-        answered: (PlanChangeResult?) -> Unit = {},
-    ) = save(part, operations, answered) { store.change(goalId, operations) }
+        asker: PlanAsker? = null,
+    ) = save(part, operations, asker, visit.number) { store.change(goalId, operations) }
 
-    fun chooseExamOption(
+    internal fun chooseExamOption(
         group: String,
         subjects: List<String>,
-        answered: (PlanChangeResult?) -> Unit = {},
-    ) = save(PlanPart.ExamChoices, listOf(PlanOp.ExamChoice(group, subjects)), answered) { store.chooseExamOption(goalId, group, subjects) }
+        asker: PlanAsker? = null,
+    ) = save(PlanPart.ExamChoices, listOf(PlanOp.ExamChoice(group, subjects)), asker, visit.number) {
+        store.chooseExamOption(goalId, group, subjects)
+    }
 
     /** Main's `useToolChoice`: a setup lesson nobody has needed yet is written first, then the same choice is sent again. */
     val setupLessons = writingWaits.create(GenerationKind.SetupLesson, viewModelScope)
 
-    fun chooseTools(
+    internal fun chooseTools(
         answer: ToolAnswer,
-        answered: (PlanChangeResult?) -> Unit = {},
+        asker: PlanAsker? = null,
+    ) = chooseTools(answer, asker, visit.number, outcomes.tools.number)
+
+    /** Sent again once its setup lesson is written, still for the visit that chose. */
+    private fun chooseTools(
+        answer: ToolAnswer,
+        asker: PlanAsker?,
+        started: Int,
+        opened: Int,
     ): Unit =
-        save(PlanPart.Tools, listOf(answer.operation), answered) {
-            when (val result = store.chooseTools(goalId, answer)) {
+        save(PlanPart.Tools, listOf(answer.operation), asker, started) {
+            val result = store.chooseTools(goalId, answer)
+            when (result) {
                 is MutationResult.Done -> {
                     val written = result.value
-                    when (setupLessons.answered((written as? Written.Writing)?.generationId) { chooseTools(answer, answered) }) {
+                    if (written is Written.Writing && (started != visit.number || opened != outcomes.tools.number)) return@save null
+                    when (
+                        setupLessons.answered(
+                            (written as? Written.Writing)?.generationId,
+                        ) { chooseTools(answer, asker, started, opened) }
+                    ) {
                         ContentWritingWait.Answer.Proceed -> MutationResult.Done((written as Written.Ready).value)
                         ContentWritingWait.Answer.Waiting -> null
                         ContentWritingWait.Answer.Failed -> MutationResult.Failed(ApiError.Unavailable)
@@ -264,23 +334,60 @@ class PlanViewModel(
             }
         }
 
-    /** Null when it couldn't be asked. */
-    suspend fun basesAdvice(): PlanBasesAdvice? = (store.basesAdvice(goalId) as? MutationResult.Done)?.value
+    private val basesAdviceState = MutableStateFlow<BasesAdviceAsk?>(null)
+
+    /** The one recommendation request out from this screen: another plan's ask, a save or an undo cancels it. */
+    private var basesAdviceJob: Job? = null
+
+    /** Read it with [recommendedFor]: it's the plan revision it was asked of. */
+    val basesAdvice: StateFlow<BasesAdviceAsk?> = basesAdviceState.asStateFlow()
+
+    /**
+     * Main's `useBasesAdviceStore`: the tap that opens the prerequisites sheet asks. The server plans the
+     * whole goal to answer, so a reopen while the plan and day are the same keeps the answer, or waits for
+     * the one still out, however long; one that never came is asked for on the next opening.
+     */
+    fun askBasesAdvice(plan: Plan) {
+        val revision = planAdviceRevision(plan)
+        val asked = basesAdviceState.value?.takeIf { it.revision == revision }
+        if (asked != null && asked.status != BasesAdviceAsk.Status.Unanswered) return
+        val pending = BasesAdviceAsk(revision, BasesAdviceAsk.Status.Pending)
+        basesAdviceJob?.cancel()
+        basesAdviceState.value = pending
+        basesAdviceJob =
+            viewModelScope.launch {
+                val advice = (store.basesAdvice(goalId) as? MutationResult.Done)?.value
+                val recommended = advice?.recommended?.takeIf { advice.ready }?.let { PlanBase.Choice.valueOf(it.name) }
+                val status = if (recommended != null) BasesAdviceAsk.Status.Answered else BasesAdviceAsk.Status.Unanswered
+                basesAdviceState.compareAndSet(pending, pending.copy(status = status, recommended = recommended))
+            }
+    }
+
+    private fun dropBasesAdvice() {
+        basesAdviceJob?.cancel()
+        basesAdviceState.value = null
+    }
 
     /** Null when it couldn't be asked. */
     suspend fun preview(operations: List<PlanOp>): PlanChangePreview? = (store.preview(goalId, operations) as? MutationResult.Done)?.value
 
-    /** [write] saves [operations], which show as asked for until the plan shown has them; it answers null while it waits on a run. */
+    /**
+     * [write] saves [operations], which show as asked for until the plan shown has them; it answers null while it waits
+     * on a run. What it did shows only on the visit that [started] it.
+     */
     private fun save(
         part: PlanPart,
         operations: List<PlanOp>,
-        answered: (PlanChangeResult?) -> Unit,
+        asker: PlanAsker?,
+        started: Int,
         write: suspend () -> MutationResult<PlanChangeResult>?,
     ) {
         if (part in savingParts.value) return
         val opening = openings
+        val opened = (if (asker == PlanAsker.AimPicker) outcomes.aimPicker else outcomes.editor).number
+        val editorOpened = outcomes.editor.number
         savingParts.update { it + part }
-        failedParts.update { it - part }
+        retried(part)
         askedOperations.update { it + (part to operations) }
         viewModelScope.launch {
             val result = write()
@@ -290,14 +397,16 @@ class PlanViewModel(
                 return@launch
             }
             val saved = (result as? MutationResult.Done)?.value
+            // The recommendation was the plan's before this change, even when the plan can't be read again.
+            if (saved != null) dropBasesAdvice()
             val shown = if (saved != null) store.awaitWritesShown(goalId) else null
             val sameOpening = opening == openings
             if (saved != null && shown == PlanShown.Current) {
                 if (saved.status == PlanChangeResult.Status.APPLIED) saved.change?.let { report(it, editor = sameOpening) }
-                answered(saved)
+                answer(asker, started, opened, saved)
             } else if (result is MutationResult.Failed || shown == PlanShown.Stale) {
-                if (sameOpening) failedParts.update { it + part }
-                answered(null)
+                if (sameOpening) markFailed(part, editorOpened)
+                answer(asker, started, opened, null)
             }
             askedOperations.update { it - part }
             savingParts.update { it - part }
@@ -309,6 +418,7 @@ class PlanViewModel(
         update(change.id) { copy(undoing = true, undoFailed = false) }
         viewModelScope.launch {
             val result = store.undo(goalId, change.id)
+            if (result is MutationResult.Done) dropBasesAdvice()
             val shown = if (result is MutationResult.Done) store.awaitWritesShown(goalId) else null
             update(change.id) {
                 copy(
@@ -320,11 +430,60 @@ class PlanViewModel(
         }
     }
 
-    /** Pass as a sheet's save's answer: its [opening] reads it. */
-    fun answerSheet(
-        opening: UUID,
+    /**
+     * What the save [asker] asked for does once [result] (null: it didn't save) is in; a visit that ended shows nothing of
+     * it, nor does an editor or picker opening that closed since [opened].
+     */
+    private fun answer(
+        asker: PlanAsker?,
+        started: Int,
+        opened: Int,
         result: PlanChangeResult?,
-    ) = sheetAnswersState.update { it + (opening to result) }
+    ) {
+        val applied = result?.takeIf { it.status == PlanChangeResult.Status.APPLIED }
+        if (started != visit.number) return
+        when (asker) {
+            null -> {}
+
+            PlanAsker.SaysFailure -> {
+                if (result == null) outcomes.saveFailed.send(started, Unit)
+            }
+
+            is PlanAsker.Sheet -> {
+                sheetAnswersState.update { it + (asker.opening to result) }
+            }
+
+            is PlanAsker.Suggestion -> {
+                if (result == null) slotState.failed = asker.item.key
+                applied?.let { showInSlot(asker.item, it.change) }
+            }
+
+            PlanAsker.FitLessons -> {
+                if (result == null) outcomes.saveFailed.send(started, Unit)
+                applied?.let { showInSlot(SlotItem.FitLessons, it.change) }
+            }
+
+            is PlanAsker.SuggestedChoice -> {
+                applied?.change?.let { slotState.result = SlotResult(asker.item, it) }
+            }
+
+            PlanAsker.AimPicker -> {
+                if (applied != null) outcomes.aimPicked.send(opened, Unit)
+            }
+
+            PlanAsker.MoveDate -> {
+                if (result != null) outcomes.dateMoved.send(opened, Unit)
+            }
+        }
+    }
+
+    private fun showInSlot(
+        item: SlotItem,
+        change: PlanChange?,
+    ) {
+        clearSlotPreview()
+        slotState.result = SlotResult(item, change)
+    }
 
     private fun report(
         change: PlanChange,
@@ -340,23 +499,25 @@ class PlanViewModel(
     ) = trackedChanges.update { all -> all[id]?.let { all + (id to it.transform()) } ?: all }
 
     /**
-     * Main's time-to-cover store: one search per plan revision, which [found] joins while it runs,
+     * Main's time-to-cover store: one search per plan revision, which [asker] joins while it runs,
      * and an answer stays only for the plan it was found for. Only from the learner's tap: it plans
-     * the goal at each daily time.
+     * the goal at each daily time. What it found goes to [asker] while the opening that asked lasts.
      */
-    fun findTimeToCover(
+    internal fun findTimeToCover(
         plan: Plan,
-        found: (TimeToCoverOutcome) -> Unit = {},
+        asker: TimeAsker? = null,
     ) {
-        val revision = timeToCoverRevision(plan)
-        (timeToCoverState.value as? TimeToCoverState.Answered)?.takeIf { it.revision == revision }?.let {
-            found(TimeToCoverOutcome.Answered(it.time))
+        val revision = planAdviceRevision(plan)
+        val ask = asker?.let(outcomes::ask)
+        (timeToCoverState.value as? TimeToCoverState.Answered)?.takeIf { it.revision == revision }?.let { answered ->
+            ask?.let { outcomes.found(it, TimeToCoverOutcome.Answered(answered.time)) }
             return
         }
         val running = search?.takeIf { it.revision == revision } ?: startSearch(revision)
+        ask ?: return
         viewModelScope.launch {
             val result = running.result.await()
-            found(if (shownRevision() != revision) TimeToCoverOutcome.Stale else result.outcome())
+            outcomes.found(ask, if (shownRevision() != revision) TimeToCoverOutcome.Stale else result.outcome())
         }
     }
 
@@ -367,16 +528,23 @@ class PlanViewModel(
         viewModelScope.launch {
             val result = started.result.await()
             if (search === started) search = null
-            timeToCoverState.update { if (it == TimeToCoverState.Pending(revision)) result.state(revision) else it }
+            timeToCoverState.update {
+                when {
+                    it != TimeToCoverState.Pending(revision) -> it
+                    shownRevision() != revision -> TimeToCoverState.Idle
+                    else -> result.state(revision)
+                }
+            }
         }
         return started
     }
 
-    private fun shownRevision() =
+    private fun shownPlan() =
         store.plan[goalId]
             .state.value.value
             ?.plan
-            ?.let(::timeToCoverRevision)
+
+    private fun shownRevision() = shownPlan()?.let(::planAdviceRevision)
 
     private class TimeToCoverSearch(
         val revision: List<Any?>,
@@ -412,6 +580,48 @@ class PlanViewModel(
         slotPreviewState.value = PlanPreviewState.Idle
     }
 
+    /**
+     * Main's fit offer: adds its lessons when its numbers are today's, and applies the numbers a
+     * check showed instead on the next tap. Otherwise it checks today's first, in the slot's
+     * preview, and adds them only when they're the card's, while the suggestion's opening that asked
+     * lasts: Not now, closing the suggestion, a recreated layout that no longer shows it, or leaving the
+     * Plan drops the check, so a late answer adds nothing.
+     */
+    fun addFitOffer(
+        plan: Plan,
+        offer: PlanFitOffer,
+    ) {
+        val operations = offer.operations.map { it.op }
+        val shown = slotPreviewState.value.of(operations, plan)
+        if (offer.canApply || (shown is PlanPreviewState.Ready && !shown.preview.unchanged && shown.preview.effect != null)) {
+            addFitLessons(operations)
+            return
+        }
+
+        val request = PlanPreviewState.Loading(operations, plan)
+        val opened = outcomes.suggestion.number
+        slotPreviewState.value = request
+        viewModelScope.launch {
+            val result = store.preview(goalId, operations)
+            if (result is MutationResult.Obsolete) return@launch
+            val today = (result as? MutationResult.Done)?.value
+            val same = today != null && today.ready && !today.unchanged && today.effect == offer.effect
+            val asking = opened == outcomes.suggestion.number
+            var wanted = false
+            slotPreviewState.update { current ->
+                wanted = current === request && asking && request.matchesPlan(shownPlan())
+                when {
+                    current === request && !wanted -> PlanPreviewState.Idle
+                    wanted && same -> PlanPreviewState.Idle
+                    else -> current.resolve(request, today)
+                }
+            }
+            if (wanted && same) addFitLessons(operations)
+        }
+    }
+
+    private fun addFitLessons(operations: List<PlanOp>) = change(PlanPart.Suggestion, operations, PlanAsker.FitLessons)
+
     private fun ask(
         state: MutableStateFlow<PlanPreviewState>,
         plan: Plan,
@@ -422,21 +632,35 @@ class PlanViewModel(
         viewModelScope.launch {
             val result = store.preview(goalId, operations)
             if (result is MutationResult.Obsolete) return@launch
-            state.update { it.resolve(request, (result as? MutationResult.Done)?.value) }
+            state.update {
+                when {
+                    it !== request -> it
+                    !request.matchesPlan(shownPlan()) -> PlanPreviewState.Idle
+                    else -> it.resolve(request, (result as? MutationResult.Done)?.value)
+                }
+            }
         }
     }
 
     fun continueAtNextLevel() {
-        if (nextLevelStart.value == NextLevelStart.Starting || nextLevelStart.value == NextLevelStart.Started) return
-        nextLevelStart.value = NextLevelStart.Starting
+        if (nextLevelStart == NextLevelStart.Starting || nextLevelStart == NextLevelStart.Started) return
+        nextLevelStart = NextLevelStart.Starting
+        nextLevelFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            nextLevelStart.value =
-                when (store.continueAtNextLevel(goalId)) {
-                    is MutationResult.Done -> NextLevelStart.Started
-                    is MutationResult.Failed -> NextLevelStart.Failed
-                    MutationResult.Obsolete -> NextLevelStart.Idle
-                }
+            val result = store.continueAtNextLevel(goalId)
+            nextLevelStart = if (result is MutationResult.Done) NextLevelStart.Started else NextLevelStart.Idle
+            if (result is MutationResult.Failed) nextLevelFailure.send(started, Unit)
         }
+    }
+
+    private fun markFailed(
+        part: PlanPart,
+        editorOpened: Int,
+    ) = outcomes.failedParts.send(editorOpened, failed + part)
+
+    private fun retried(part: PlanPart) {
+        outcomes.failedParts.value?.let { outcomes.failedParts.send(outcomes.editor.number, it - part) }
     }
 
     /** The editor opens without the change it showed last time, as main's does. */
@@ -444,10 +668,25 @@ class PlanViewModel(
         openings++
         editorChangeIds.value = emptySet()
         sheetAnswersState.value = emptyMap()
-        failedParts.value = emptySet()
+        outcomes.failedParts.clear()
     }
 
     private companion object {
         const val TOO_MANY_REQUESTS = 429
+    }
+}
+
+class PlanNavigationModel(
+    private val goals: GoalSwitch,
+) : ViewModel() {
+    val visit = Visit()
+    val event = visit.outcome<PlanArchive>()
+
+    fun begin() = PlanArchive(visit.number, goals.revision)
+
+    fun isCurrent(archive: PlanArchive) = archive.goalRevision == goals.revision
+
+    fun archived(started: PlanArchive) {
+        if (isCurrent(started)) event.send(started.visit, started)
     }
 }

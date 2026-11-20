@@ -14,7 +14,7 @@ import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
 import { getRecordedTestOut } from "@zoonk/core/learner/test-out/recorded";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
-import { TaskSkeleton } from "@zoonk/learn/task-layout";
+import { QuestionSkeleton, TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   // Not the bare "Test out": that message is also the plan's compact action in @zoonk/learn, and
   // this catalog's wording would replace it there.
-  return { robots: { follow: false, index: false }, title: t("Test out of a chapter") };
+  return { robots: { follow: false, index: false }, title: t("Chapter test") };
 }
 
 async function loadPlanChapter({ chapterId, goalId }: { chapterId: string; goalId: string }) {
@@ -92,11 +92,7 @@ async function TestOutBody({ params, searchParams }: Props) {
     return null;
   }
 
-  if (
-    result.status !== "ready" &&
-    result.status !== "plusRequired" &&
-    result.status !== "recorded"
-  ) {
+  if (result.status !== "ready" && result.status !== "recorded") {
     return (
       <NotFoundPage>
         <TaskNotFound />
@@ -130,10 +126,6 @@ async function TestOutBody({ params, searchParams }: Props) {
         test={null}
       />
     );
-  }
-
-  if (result.status === "plusRequired") {
-    return <TestOutPreparingClient generationId={null} page={page} plusRequired />;
   }
 
   if (result.testOut.questions.length === 0) {
@@ -176,16 +168,10 @@ function TestOutSkeleton() {
       title={<Skeleton className="h-4 w-40" />}
     >
       <div className="flex items-center gap-3">
-        <Skeleton className="h-4 w-2/3 lg:hidden" />
+        <Skeleton className="h-5.5 w-48 rounded-sm lg:hidden" />
         <Skeleton className="ml-auto h-3 w-10" />
       </div>
-      <Skeleton className="h-7 w-5/6" />
-      <div className="flex flex-col gap-2.5">
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-      </div>
+      <QuestionSkeleton />
     </TaskSkeleton>
   );
 }

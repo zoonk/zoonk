@@ -59,7 +59,6 @@ const baseInput: SessionBuildInput = {
   capsules: [capsule("a"), capsule("b"), capsule("c")],
   checkpoints: [],
   dailyMinutes: 45,
-  examTrialEnded: false,
   freshStart: null,
   lessons: [lesson("l1", 14), lesson("l2", 10), lesson("l3", 10)],
   netScored: false,
@@ -499,16 +498,6 @@ describe(buildSessionBlocks, () => {
     ]);
   });
 
-  it("keeps reviews free when a free exam trial has ended", () => {
-    const { blocks } = buildSessionBlocks({
-      ...baseInput,
-      checkpoints: [boss],
-      examTrialEnded: true,
-    });
-
-    expect(blocks.map((block) => block.kind)).toStrictEqual(["review"]);
-  });
-
   it("still offers the next lesson when it's longer than the day's room", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
@@ -880,15 +869,6 @@ describe("filling ordinary study days", () => {
     expect(result.blocks.map((block) => block.lessonId)).toStrictEqual(["first"]);
     expect(result.plannedMinutes).toBe(10);
   });
-
-  it.each([{ examTrialEnded: true }, { reviewPlanItemId: "review" }])(
-    "does not fill when new lessons are closed: %j",
-    (gate) => {
-      const result = buildSessionBlocks({ ...empty, fillLessons: [lesson("later", 10)], ...gate });
-      expect(result.blocks).toStrictEqual([]);
-      expect(result.plannedMinutes).toBe(0);
-    },
-  );
 
   it("keeps a rounded forty-lesson day at its commitment", () => {
     const result = buildSessionBlocks({

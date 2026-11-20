@@ -6,7 +6,7 @@ import { type ActivityContentFor } from "@zoonk/core/library/activities/template
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
-import { ActivityCanvasLabel } from "../_components/activity-canvas";
+import { ACTIVITY_CARD_CLASS, ActivityCanvasLabel } from "../_components/activity-canvas";
 import { ActivityCodeListing } from "../_components/activity-code";
 import { ActivityReason, ActivityReasons } from "../_components/activity-reasons";
 import { type QueryResult, runQuery } from "../_sandbox/run-query";
@@ -97,7 +97,7 @@ export function SqlReview({
           <ActivityCanvasLabel className="font-medium">
             {t("A query that works")}
           </ActivityCanvasLabel>
-          <div className="bg-background rounded-xl border px-3 py-2.5">
+          <div className={ACTIVITY_CARD_CLASS}>
             <ActivityCodeListing code={solution} label={t("A query that works")} language="sql" />
           </div>
         </div>

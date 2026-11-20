@@ -3,6 +3,7 @@
 import { rhythmHitSteps, rhythmStepMs, rhythmTapTimes } from "@zoonk/core/library/activities/music";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
+import { ActivityBarAction } from "../_components/activity-bar-action";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -108,6 +109,15 @@ function RhythmTapperRun({
           onTap={run.tap}
           ref={padRef}
         />
+      )}
+
+      {!isChecked && answer === null && (
+        <ActivityBarAction
+          disabled={isRunning || run.phase === "listening"}
+          onPress={() => void startTapping()}
+        >
+          {t("Start tapping")}
+        </ActivityBarAction>
       )}
 
       {!isChecked && !isRunning && run.phase !== "listening" && (

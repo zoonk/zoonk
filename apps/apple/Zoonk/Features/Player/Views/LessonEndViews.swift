@@ -1,7 +1,18 @@
 import SwiftUI
 
+/// A host's own end for a lesson it plays, as main's `endingSlots.completion`: its page takes the
+/// place of the lesson's end while the lesson saves and once it's saved, with one "Done". A failed
+/// save, and a lesson with nothing left to answer, keep the lesson's own end.
+struct LessonEndSlot {
+  let content:
+    (_ completion: LessonPlayerState.Completion, _ correct: Int, _ answered: Int) -> AnyView
+  let done: () -> Void
+}
+
 struct LessonCompletionView: View {
   @Environment(AppRouter.self) private var router
+  @Environment(\.lessonPlayerRoutes) private var routes
+  @Environment(StudySessionStore.self) private var sessions
   @State private var showsSaveReport = false
   let completion: LessonPlayerState.Completion
   let correct: Int
@@ -10,17 +21,54 @@ struct LessonCompletionView: View {
   var guestEnding: LessonGuestEnding?
   /// A spread shows the lesson's map under what was done; one column keeps it in the menu.
   var lesson: PlayableLesson?
+  var ending: LessonEndSlot?
   let finish: () -> Void
   let close: () -> Void
 
-  @State private var reminderOffer: ReminderOfferState?
+  private var isStopping: Bool { stopping.isRunning }
+  private var stopFailed: Bool { stopping.outcome ?? false }
+  @State private var stopping = VisitRequest<Bool>()
 
   var body: some View {
+    end
+      .completionMoments(day)
+      .feedbackSheet(
+        isPresented: $showsSaveReport,
+        context: FeedbackContext(screen: "lesson-end", reportType: .saveFailure), isReport: true
+      )
+      .sensoryFeedback(.success, trigger: completion.status == .saved)
+      .onChange(of: completion.status) { _, status in
+        if status == .saved, soundsEnabled {
+          LessonSounds.shared.play(.finish)
+        }
+      }
+      .onDisappear {
+        stopping.leave()
+      }
+  }
+
+  @ViewBuilder
+  private var end: some View {
+    if let ending, completion.status == .saving || completion.status == .saved {
+      ending.content(completion, correct, answered)
+        .bottomBar {
+          Button(action: ending.done) {
+            Text("Done", tableName: "Player")
+          }
+          .buttonStyle(.mainAction)
+          .keyboardShortcut(.defaultAction)
+          .disabled(completion.status == .saving)
+        }
+    } else {
+      lessonEnd
+    }
+  }
+
+  private var lessonEnd: some View {
     PaneSplit {
       page {
         moment
         dayMoment
-        finishedChapter
 
         if let lesson, let summary = lesson.summary {
           LessonMapSection(title: lesson.title, summary: summary)
@@ -28,38 +76,20 @@ struct LessonCompletionView: View {
       }
     } secondary: {
       page {
+        upNext
         planRevealRow
-        reminderOfferCard
         guestEndingView
       }
-      .safeAreaBar(edge: .bottom) { actionBar }
+      .bottomBar(note: stopFailure) { actionBar }
     } single: {
       page {
         moment
         dayMoment
-        finishedChapter
+        upNext
         planRevealRow
-        reminderOfferCard
         guestEndingView
       }
-      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
-    }
-    .onChange(of: offer, initial: true) {
-      if let offer, reminderOffer == nil {
-        reminderOffer = ReminderOfferState(
-          time: ReminderTime.rounded(offer.time), timeZone: offer.timeZone)
-      }
-    }
-    .completionMoments(day)
-    .feedbackSheet(
-      isPresented: $showsSaveReport,
-      context: FeedbackContext(screen: "lesson-end", reportType: .saveFailure), isReport: true
-    )
-    .sensoryFeedback(.success, trigger: completion.status == .saved)
-    .onChange(of: completion.status) { _, status in
-      if status == .saved, soundsEnabled {
-        LessonSounds.shared.play(.finish)
-      }
+      .bottomBar(note: stopFailure) { actionBar }
     }
   }
 
@@ -68,10 +98,11 @@ struct LessonCompletionView: View {
       VStack(alignment: .leading, spacing: 24) {
         content()
       }
-      .frame(maxWidth: 680, alignment: .leading)
-      .frame(maxWidth: .infinity)
-      .scenePadding()
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .listRowEdges()
+      .scenePadding(.vertical)
     }
+    .readableColumn(680)
   }
 
   @ViewBuilder
@@ -161,19 +192,35 @@ struct LessonCompletionView: View {
 
   @ViewBuilder
   private var dayMoment: some View {
-    if let day, !day.isEmpty {
-      DayMomentSections(result: day)
+    if let day {
+      DayMomentSections(result: day, chapter: completion.summary?.finishedChapter)
     }
   }
 
-  private var offer: ReminderOffer? {
-    completion.status == .saved ? completion.summary?.block?.reminderOffer : nil
+  private var block: BlockMoment? {
+    completion.status == .saved ? completion.summary?.block : nil
   }
 
+  /// The day's next step, and the chapter test's line when the next lesson starts a chapter the
+  /// learner may already know (B2's R1).
   @ViewBuilder
-  private var reminderOfferCard: some View {
-    if let offer = Binding($reminderOffer) {
-      ReminderOfferCard(offer: offer)
+  private var upNext: some View {
+    if let block, let next = block.upNext {
+      VStack(alignment: .leading, spacing: 8) {
+        // Titled as the day's summary titles "Tomorrow" and a lost challenge "What's next".
+        SectionTitle(
+          Text("Up next", tableName: "Session", comment: "Over the session's next block"))
+
+        BlockRow(
+          block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true)
+
+        if let chapterID = block.testChapterID {
+          TestOutLine {
+            router.dismissTask()
+            router.open(.testOut(chapterId: chapterID))
+          }
+        }
+      }
     }
   }
 
@@ -186,38 +233,30 @@ struct LessonCompletionView: View {
   private var planRevealRow: some View {
     if let planReveal {
       VStack(alignment: .leading, spacing: 8) {
-        Text("What's next", tableName: "Player", comment: "Header over where a lesson leads")
-          .sectionTitleStyle()
+        SectionLabel(
+          Text("What's next", tableName: "Player", comment: "Header over where a lesson leads"))
 
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
+        ListRow(planRevealTitle(planReveal), description: Text(planReveal.goalTitle)) {
           if planReveal.planReady {
             StatusMark(status: .done)
           } else {
             Image(systemName: "map")
-              .foregroundStyle(.mutedForeground)
-              .frame(width: 20)
-              .accessibilityHidden(true)
           }
-
-          VStack(alignment: .leading, spacing: 2) {
-            if planReveal.planReady {
-              Text(
-                "Your plan is ready", tableName: "Player",
-                comment: "At a first lesson's end: the goal's plan was built meanwhile")
-            } else {
-              Text(
-                "Building your plan", tableName: "Player",
-                comment: "At a first lesson's end: the goal's plan is still being built")
-            }
-
-            Text(planReveal.goalTitle)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
-          .typeStyle(.rowTitle)
         }
         .accessibilityElement(children: .combine)
       }
+    }
+  }
+
+  private func planRevealTitle(_ planReveal: PlanRevealLead) -> Text {
+    if planReveal.planReady {
+      Text(
+        "Your plan is ready", tableName: "Player",
+        comment: "At a first lesson's end: the goal's plan was built meanwhile")
+    } else {
+      Text(
+        "Building your plan", tableName: "Player",
+        comment: "At a first lesson's end: the goal's plan is still being built")
     }
   }
 
@@ -237,13 +276,6 @@ struct LessonCompletionView: View {
   }
 
   @ViewBuilder
-  private var finishedChapter: some View {
-    if completion.status == .saved, let chapter = completion.summary?.finishedChapter {
-      FinishedChapterSection(chapter: chapter)
-    }
-  }
-
-  @ViewBuilder
   private var guestEndingView: some View {
     if completion.status == .saved, let guestEnding {
       LessonGuestEndingView(ending: guestEnding)
@@ -253,7 +285,9 @@ struct LessonCompletionView: View {
   @ViewBuilder
   private var actionBar: some View {
     // As on main, a guest's ending leads with Build my plan, and the close button leaves.
-    if guestEnding == nil || completion.status == .ready || completion.status == .failed {
+    if let guestEnding, completion.status == .saved {
+      guestActions(guestEnding)
+    } else if guestEnding == nil || completion.status == .ready || completion.status == .failed {
       Group {
         switch completion.status {
         case .ready:
@@ -261,12 +295,11 @@ struct LessonCompletionView: View {
             Text(
               "Finish", tableName: "Player",
               comment: "Saves a lesson answered in an earlier sitting"
-            ).frame(maxWidth: .infinity)
+            )
           }
         case .failed:
           Button(action: finish) {
-            Text("Try again", tableName: "Player", comment: "Tries saving the lesson again").frame(
-              maxWidth: .infinity)
+            Text("Try again", tableName: "Player", comment: "Tries saving the lesson again")
           }
         case .saved where planReveal != nil:
           Button {
@@ -275,11 +308,23 @@ struct LessonCompletionView: View {
             }
           } label: {
             Text(
-              "See your plan", tableName: "Player",
+              "See plan", tableName: "Player",
               comment: "Ends a goal's first lesson for the plan the learner hasn't seen yet"
-            ).frame(maxWidth: .infinity)
+            )
           }
         case .saving, .saved:
+          // Inside a day the learner can end it here; the day's last block only goes on.
+          if let moment = completion.summary?.block, !moment.sessionCompleted {
+            BusyButton(isBusy: isStopping) {
+              stopForToday(sessionID: moment.sessionId)
+            } label: {
+              Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+            }
+            .buttonStyle(.outline)
+            // Enter stays Continue's.
+            .keyboardShortcut(nil)
+          }
+
           Button {
             if let moment = completion.summary?.block, let next = moment.next,
               next.opensInPlayer, let lessonID = next.block.lessonId, let blockID = next.block.id
@@ -293,57 +338,76 @@ struct LessonCompletionView: View {
               close()
             }
           } label: {
-            Text("Continue", tableName: "Player", comment: "Leaves the finished lesson").frame(
-              maxWidth: .infinity)
+            Text("Continue", tableName: "Player", comment: "Leaves the finished lesson")
           }
-          .disabled(completion.status == .saving)
+          .disabled(completion.status == .saving || isStopping)
         }
       }
       .buttonStyle(.mainAction)
-      .controlSize(.large)
       .keyboardShortcut(.defaultAction)
-      .frame(maxWidth: 680)
-      .frame(maxWidth: .infinity)
-      .scenePadding()
     }
   }
 
-  private func readouts(_ summary: LessonCompletionSummary) -> some View {
-    // With nothing answered (an explanation read again, a lesson without checks), no score shows.
-    let answered = summary.correctCount + summary.incorrectCount
-
-    // Main's `MomentReadouts`: each number with its words beside it, on one baseline.
-    return VStack(alignment: .leading, spacing: 12) {
-      FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
-        if answered > 0 {
-          MomentReadout {
-            Text("\(summary.correctCount)/\(answered)")
-          } words: {
-            Text("Right", tableName: "Player", comment: "Label under the lesson's score")
-          }
-        }
-
-        if summary.brainPower > 0 {
-          MomentReadout(tint: .brainText) {
-            EarnedNumber(value: summary.brainPower)
-          } words: {
-            Text(
-              "Brain Power", tableName: "Player",
-              comment: "Label under the Brain Power a lesson earned")
-          }
-        }
-      }
-
-      if let studied = studied(summary.seconds) {
-        Text(studied)
-          .typeStyle(.note.monospacedDigit())
-          .foregroundStyle(.mutedForeground)
-      }
-
-      if let catchUp = summary.block?.dayProgress.catchUp {
-        CatchUpLine(catchUp: catchUp)
-      }
+  /// A guest's way on: saving, then the main action last.
+  @ViewBuilder
+  private func guestActions(_ ending: LessonGuestEnding) -> some View {
+    Button {
+      routes.signIn()
+    } label: {
+      Text(
+        "Create a free account", tableName: "Player",
+        comment: "A guest creates an account at the end of a lesson")
     }
+    .buttonStyle(.outline)
+
+    Button {
+      if let course = ending.fit?.course {
+        routes.startCourse(course.id, course.startChapterId)
+      } else {
+        routes.startGoal(ending.fit?.course?.title ?? ending.lessonTitle)
+      }
+    } label: {
+      Text("Build my plan", tableName: "Player", comment: "Starts a plan from a guest's lesson")
+    }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+  }
+
+  private var stopFailure: BarNote? {
+    stopFailed
+      ? BarNote(
+        LocalizedStringResource(
+          "We couldn't stop for today. Try again.", table: "Session",
+          comment: "Stopping for today failed"))
+      : nil
+  }
+
+  /// The session's screen under the lesson then shows the day's summary.
+  private func stopForToday(sessionID: String) {
+
+    stopping.run {
+      var outcome: Bool = false
+
+      let result = await sessions.stop(sessionID: sessionID, in: router.playback)
+      guard !Task.isCancelled else { return nil }
+      switch result {
+      case .done:
+        close()
+      case .failed:
+        outcome = true
+      case .obsolete:
+        break
+      }
+
+      return outcome
+    }
+  }
+
+  /// A lesson opened outside a day also says its time (B2's R1).
+  private func readouts(_ summary: LessonCompletionSummary) -> some View {
+    LessonReadouts(
+      correct: correct, answered: answered, brainPower: summary.brainPower,
+      studied: summary.block == nil ? studied(summary.seconds) : nil)
   }
 
   private func studied(_ seconds: Int) -> String? {
@@ -356,91 +420,189 @@ struct LessonCompletionView: View {
   }
 }
 
-/// Never a dead end. `isNotice` is main's `LessonNotWrittenNotice`: a lesson its writing was
-/// refused for says so under its description, start-aligned with small buttons, instead of the
-/// centered state a lesson that can't open takes.
-struct LessonUnavailableView: View {
-  @Environment(\.dismiss) private var dismiss
+/// Main's `MomentReadouts` at a lesson's end: how many answers were right and the Brain Power it
+/// earned, side by side, then what it counted under them.
+struct LessonReadouts: View {
+  @Environment(\.self) private var environment
 
+  let correct: Int
+  let answered: Int
+  let brainPower: Int
+  var studied: String?
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      if answered > 0 || brainPower > 0 {
+        FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
+          if answered > 0 {
+            Text(score)
+              .typeStyle(.rowTitle)
+              .foregroundStyle(.mutedForeground)
+          }
+
+          if brainPower > 0 {
+            EarnedBrainPower(points: brainPower)
+          }
+        }
+      }
+
+      if let studied {
+        Text(studied)
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+      }
+    }
+  }
+
+  /// The number in the readout's face, the words around it in the line's.
+  private var score: AttributedString {
+    var score = AttributedString(
+      localized: "**\(correct)** of \(answered) right", table: "Player",
+      comment:
+        "At a lesson's end: the answers the learner got right out of those answered. Keep the ** around the first number: it shows large."
+    )
+
+    for run in score.runs where run.inlinePresentationIntent?.contains(.stronglyEmphasized) == true
+    {
+      score[run.range].font = TypeStyle.readout.font(in: environment)
+      score[run.range].foregroundColor = Color(.foreground)
+      score[run.range].inlinePresentationIntent = nil
+    }
+
+    return score
+  }
+}
+
+/// Never a dead end. As a screen it is main's `lesson-access-screen`: the reason as the title, at
+/// most one line, and the one way on in the bottom bar (a free learner's is "Subscribe", and the
+/// close button leaves). `isNotice` is main's `LessonNotWrittenNotice`: a lesson whose writing was
+/// refused says so under its description, start-aligned with a small button.
+struct LessonUnavailableView: View {
   let refusal: LessonRunRefusal
   var isNotice = false
   let retry: () -> Void
 
   var body: some View {
-    if isNotice {
-      VStack(alignment: .leading, spacing: 12) {
-        LessonNoticeText(title: Text(title), description: Text(description))
+    OpeningClock(availableAt: refusal.limit?.availableAt) { now in
+      LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: now, retry: retry)
+    }
+  }
 
-        HStack(spacing: 8) {
-          actions
+  var said: String {
+    LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: .now, retry: retry).said
+  }
+}
+
+/// Once a free learner's next lesson has opened, "Start" asks again where "Subscribe" was.
+private struct LessonUnavailableBody: View {
+  @Environment(\.lessonPlayerRoutes) private var routes
+  @Environment(AppRouter.self) private var router
+  @Environment(\.dismiss) private var dismiss
+
+  let refusal: LessonRunRefusal
+  let isNotice: Bool
+  let now: Date
+  let retry: () -> Void
+
+  private var isReady: Bool {
+    refusal.limit?.isOpen(at: now) == true
+  }
+
+  var body: some View {
+    if isNotice {
+      // Once a dated limit opens, the words that go keep their room.
+      HeldSlot(gated: refusal.limit?.isOpen(at: now) == false) {
+        VStack(alignment: .leading, spacing: 8) {
+          GateWords(title: Text(title), line: noticeLine.map(Text.init))
+
+          action
+            .buttonStyle(.outline)
+            .controlSize(.small)
         }
-        .controlSize(.small)
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
     } else {
-      ContentUnavailableView {
-        Label {
-          Text(title)
-        } icon: {
-          Image(systemName: symbol)
+      GateScreen(title: Text(title), symbol: symbol, held: refusal.limit?.isOpen(at: now) == false)
+      {
+        if let line = screenLine {
+          Text(line)
         }
-      } description: {
-        Text(description)
-      } actions: {
-        actions
+      }
+      .bottomBar {
+        VStack(spacing: 8) {
+          action.buttonStyle(.mainAction)
+          if case .limitReached(tier: .guest, _) = refusal, !isReady {
+            Button {
+              routes.signIn()
+            } label: {
+              Text("Log in", tableName: "Player")
+            }
+            .buttonStyle(.ghost)
+            .controlSize(.small)
+          } else if case .limitReached(tier: .free, _) = refusal {
+            Button {
+              router.open(.mistakes)
+            } label: {
+              Text(
+                LocalizedStringResource(
+                  "practiceMistakesAction", defaultValue: "Practice mistakes", table: "Practice",
+                  comment: "Opens practice on the mistakes that are ready to fix."))
+            }
+            .buttonStyle(.ghost)
+          }
+        }
+      }
+      .task(id: refusal) {
+        // Main's `LessonSlowDown`: the lesson opens on its own once the break is over.
+        if case .slowDown(let seconds) = refusal,
+          (try? await Task.sleep(for: .seconds(seconds))) != nil
+        {
+          retry()
+        }
       }
     }
   }
 
-  /// A notice's buttons are all quiet: the screen's own bar holds its main action.
-  private var mainStyle: ZoonkButtonStyle {
-    isNotice ? .outline : .mainAction
-  }
-
   var said: String {
-    [String(localized: title), String(localized: description)].joinedSentences()
+    let line = isNotice ? noticeLine.map { String(localized: $0) } : screenLine
+    return ([String(localized: title)] + [line].compactMap(\.self)).joinedSentences()
   }
 
   @ViewBuilder
-  private var actions: some View {
+  private var action: some View {
     switch refusal {
+    case .limitReached where isReady:
+      Button(action: retry) {
+        Text("Start", tableName: "Player")
+      }
     case .failed:
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
       }
-      .buttonStyle(mainStyle)
     case .slowDown:
-      Button(action: retry) {
-        Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
-      }
-      .buttonStyle(.outline)
-    case .plusRequired, .limitReached(tier: .free, _):
-      SeePlusButton()
-        .buttonStyle(mainStyle)
-        .onAppear {
-          UsageAnalytics.track(.subscriptionGateShown)
+      if isNotice {
+        Button(action: retry) {
+          Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
         }
-
-      if !isNotice {
-        backButton
       }
+    case .limitReached(tier: .free, _):
+      SubscribeButton()
     case .limitReached(tier: .guest, _):
-      SignUpButton()
-        .buttonStyle(mainStyle)
+      Button {
+        routes.signIn()
+      } label: {
+        Text(
+          "Create a free account", tableName: "Player",
+          comment: "Opens account creation for a guest")
+      }
     case .limitReached(tier: .plus, _), .notFound:
       if !isNotice {
-        backButton
+        Button {
+          dismiss()
+        } label: {
+          Text("Back", tableName: "Player", comment: "Leaves a lesson that can't open")
+        }
       }
     }
-  }
-
-  private var backButton: some View {
-    Button {
-      dismiss()
-    } label: {
-      Text("Back", tableName: "Player", comment: "Leaves a lesson that can't open")
-    }
-    .buttonStyle(.outline)
   }
 
   private var title: LocalizedStringResource {
@@ -451,61 +613,42 @@ struct LessonUnavailableView: View {
     case .slowDown:
       LocalizedStringResource(
         "Take a short break", table: "Player", comment: "Fair use spaces new lessons out")
-    case .plusRequired:
-      FreeWeekOverNotice.title
-    case .limitReached(.guest, _):
-      LocalizedStringResource(
-        "Save your progress to keep going", table: "Player", comment: "A guest used their lessons")
-    case .limitReached(.free, .month):
-      LocalizedStringResource(
-        "That's all the new lessons for this month", table: "Player",
-        comment: "A free learner used the month's lessons")
-    case .limitReached(.free, _):
-      LocalizedStringResource(
-        "That's all the new lessons for today", table: "Player",
-        comment: "A free learner used the day's lessons")
-    case .limitReached(.plus, _):
-      LocalizedStringResource(
-        "That's a lot of learning today", table: "Player",
-        comment: "A Plus learner reached the day's limit")
     case .notFound:
       LocalizedStringResource(
-        "Lesson not available", table: "Player", comment: "The lesson doesn't exist anymore")
+        "This lesson isn't available", table: "Player", comment: "The lesson doesn't exist anymore")
+    case .limitReached:
+      refusal.limit?.words(.lessons, now: now).title
+        ?? LocalizedStringResource(
+          "We couldn't open this lesson", table: "Player", comment: "A lesson failed to open")
     }
   }
 
-  private var description: LocalizedStringResource {
+  /// In place, a limit's line says only when lessons come back.
+  private var noticeLine: LocalizedStringResource? {
+    refusal.limit?.words(.lessons, now: now).line
+  }
+
+  private var screenLine: String? {
     switch refusal {
-    case .failed:
-      LocalizedStringResource(
-        "Try again in a moment. Nothing you did was lost.", table: "Player",
-        comment: "A lesson failed to open")
+    case .failed, .notFound:
+      return nil
     case .slowDown(let seconds):
-      LocalizedStringResource(
-        "New lessons open again in \(Duration.seconds(seconds).formatted(.units(allowed: [.minutes, .seconds], width: .wide)))",
-        table: "Player", comment: "How long until the next lesson opens")
-    case .plusRequired:
-      FreeWeekOverNotice.description
+      return String(
+        localized:
+          "You opened a lot of lessons quickly. This one opens on its own in \(progressLearningTime(seconds)).",
+        table: "Player", comment: "How long until the next lesson opens; the argument is a duration"
+      )
+    case .limitReached where isReady:
+      return nil
     case .limitReached(.guest, _):
-      LocalizedStringResource(
-        "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you.",
-        table: "Player", comment: "A guest used their lessons")
-    case .limitReached(.free, .month):
-      LocalizedStringResource(
-        "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now.",
-        table: "Player", comment: "A free learner used the month's lessons")
-    case .limitReached(.free, _):
-      LocalizedStringResource(
-        "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now.",
-        table: "Player", comment: "A free learner used the day's lessons")
-    case .limitReached(.plus, _):
-      LocalizedStringResource(
-        "You've reached today's limit. New lessons open again tomorrow.", table: "Player",
-        comment: "A Plus learner reached the day's limit")
-    case .notFound:
-      LocalizedStringResource(
-        "This lesson isn't available anymore.", table: "Player",
-        comment: "The lesson doesn't exist anymore")
+      return String(
+        localized: "Everything you learned comes with you.", table: "Player",
+        comment: "A guest used the lessons they can try; signing up keeps their progress")
+    case .limitReached:
+      let stillFree = String(
+        localized: "You can still review and practice your mistakes.", table: "Player")
+      return ([stillFree] + [noticeLine.map { String(localized: $0) }].compactMap(\.self))
+        .joinedSentences()
     }
   }
 
@@ -513,7 +656,7 @@ struct LessonUnavailableView: View {
     switch refusal {
     case .failed, .notFound: "exclamationmark.circle"
     case .slowDown, .limitReached(.plus, _): "hourglass"
-    case .plusRequired, .limitReached(.free, _): "lock.fill"
+    case .limitReached(.free, _): "sparkles"
     case .limitReached(.guest, _): "person.crop.circle.badge.plus"
     }
   }
@@ -525,8 +668,6 @@ struct LessonGuestEnding: Hashable {
 }
 
 private struct LessonGuestEndingView: View {
-  @Environment(\.lessonPlayerRoutes) private var routes
-
   let ending: LessonGuestEnding
 
   var body: some View {
@@ -540,7 +681,7 @@ private struct LessonGuestEndingView: View {
                   Text(course.title)
                     .typeStyle(.body.weight(.semibold))
                   Text(
-                    "\(course.chapterCount) chapters\u{00A0}· about \(Duration.seconds(max(1, (course.minutes + 30) / 60) * 3600).formatted(.units(allowed: [.hours], width: .wide))) at your pace",
+                    "\(course.chapterCount) chapters\u{00A0}· about \(studyDuration(minutes: max(1, (course.minutes + 30) / 60) * 60)) at your pace",
                     tableName: "Player", comment: "A course's size at the end of a guest's lesson"
                   )
                   .typeStyle(.note)
@@ -587,105 +728,94 @@ private struct LessonGuestEndingView: View {
       }
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
-
-      VStack(spacing: 8) {
-        Button {
-          if let course = ending.fit?.course {
-            routes.startCourse(course.id, course.startChapterId)
-          } else {
-            routes.startGoal(ending.fit?.course?.title ?? ending.lessonTitle)
-          }
-        } label: {
-          Text("Build my plan", tableName: "Player", comment: "Starts a plan from a guest's lesson")
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .keyboardShortcut(.defaultAction)
-
-        Button {
-          routes.signIn()
-        } label: {
-          Text(
-            "Create an account to save", tableName: "Player",
-            comment: "A guest creates an account at the end of a lesson"
-          ).frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.outline)
-        .controlSize(.large)
-      }
     }
   }
 }
 
-private struct SignUpButton: View {
-  @Environment(\.lessonPlayerRoutes) private var routes
-
-  var body: some View {
-    Button {
-      routes.signIn()
-    } label: {
-      Text(
-        "Create a free account", tableName: "Player", comment: "Opens account creation for a guest")
+extension LessonRunRefusal {
+  /// The refusal as the limit every limit notice reads; a lesson that failed or is gone has none.
+  var limit: HelpLimit? {
+    switch self {
+    case .slowDown(let seconds):
+      .slowDown(retryAfterSeconds: seconds)
+    case .limitReached(let tier, .last30Days(let availableAt)):
+      .usedUp(tier: tier.learnerTier, availableAt: availableAt)
+    case .limitReached(let tier, let period):
+      .limitReached(period: period.helpPeriod, tier: tier.learnerTier)
+    case .failed, .notFound:
+      nil
     }
   }
 }
 
-struct LessonHelpLimitNote: View {
-  let refusal: LessonRunRefusal
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text(Self.message(refusal))
-
-      switch refusal {
-      case .limitReached(.guest, _):
-        SignUpButton()
-          .buttonStyle(.mainAction)
-      case .limitReached(.free, _):
-        SeePlusButton()
-          .buttonStyle(.outline)
-      default:
-        EmptyView()
-      }
-    }
-    .typeStyle(.note)
-    .foregroundStyle(.mutedForeground)
-  }
-
-  static func message(_ refusal: LessonRunRefusal) -> String {
-    switch refusal {
-    case .slowDown:
-      String(
-        localized: "Take a short break", table: "Player", comment: "Fair use spaces AI help out")
-    case .limitReached(.guest, _):
-      String(
-        localized: "Save your progress to keep going", table: "Player",
-        comment: "A guest used their AI help")
-    case .limitReached(.free, _):
-      String(
-        localized: "You used today's AI help. Plus gives you more.", table: "Player",
-        comment: "A free learner used the day's AI help")
-    default:
-      String(
-        localized: "You've used today's AI help. It's back tomorrow.", table: "Player",
-        comment: "A learner used the day's AI help")
+extension LessonRunRefusal.Tier {
+  fileprivate var learnerTier: LearnerTier {
+    switch self {
+    case .guest: .guest
+    case .free: .free
+    case .plus: .plus
     }
   }
 }
 
-/// Main's `LessonWaiting`: the lesson's description, then how its writing stands, and once that
-/// takes a while something ready to do meanwhile. Only the learner asks for the lesson to be
-/// written: it runs AI.
+extension LessonRunRefusal.Period {
+  /// `last30Days` is read as `usedUp` before it gets here.
+  fileprivate var helpPeriod: HelpLimit.Period {
+    switch self {
+    case .day, .last30Days: .day
+    case .total: .total
+    }
+  }
+}
+
+/// Main's `useWaitWords`: a challenge's wait names a challenge, since the learner tapped one.
+enum LessonWaitWords {
+  case lesson
+  case challenge
+
+  init(_ kind: GenerationWait.Kind) {
+    self = kind == .challenge ? .challenge : .lesson
+  }
+
+  var notReady: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("This lesson isn't ready yet", table: "Player")
+    case .challenge: LocalizedStringResource("This challenge isn't ready yet", table: "Player")
+    }
+  }
+
+  var gettingReady: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("Getting your lesson ready", table: "Player")
+    case .challenge: LocalizedStringResource("Getting your challenge ready", table: "Player")
+    }
+  }
+
+  var ready: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("Your lesson is ready", table: "Player")
+    case .challenge: LocalizedStringResource("Your challenge is ready", table: "Player")
+    }
+  }
+
+  var stopped: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("We couldn't get this lesson ready", table: "Player")
+    case .challenge:
+      LocalizedStringResource("We couldn't get this challenge ready", table: "Player")
+    }
+  }
+
+  var start: LocalizedStringResource {
+    LocalizedStringResource("Start", table: "Player")
+  }
+}
+
+/// Main's `LessonWaiting`: the lesson's description, how its writing stands, and something ready
+/// to do meanwhile. Only the learner asks for the lesson to be written: it runs AI.
 struct LessonWaitingView: View {
-  static let lessonReady = LocalizedStringResource(
-    "Your lesson is ready. Start it whenever you like.", table: "Player",
-    comment: "A goal's first lesson is written while the learner still guesses on its wait")
-
-  /// Main's `ALTERNATIVE_AFTER_MS`: a wait this long offers what's ready meanwhile.
-  private static let lateAfter = Duration.seconds(15)
-
   let outline: LessonOutline
+  let kind: LessonWaitWords
   let writing: LessonPlayerStore.LessonWriting
   let progress: GenerationWait
   var alternative: Components.Schemas.ReadyAlternative?
@@ -695,40 +825,36 @@ struct LessonWaitingView: View {
   var holding: WaitHolding?
   let write: () -> Void
 
-  @State private var isLate = false
+  /// Main's `useGenerationStepLabel` under a title that already says the lesson is getting ready.
+  private func stripLabel(title: Text) -> Text {
+    if holding != nil {
+      return Text("Done", tableName: "Player")
+    }
+
+    guard writing == .writing, let step = progress.phases.first(where: { $0.state == .working })
+    else {
+      return title
+    }
+
+    return Text(step.label)
+  }
 
   var body: some View {
     Group {
       if let warmUpID {
-        let writingTitle =
-          progress.kind == .challenge
-          ? Text(
-            "Writing your challenge", tableName: "Player",
-            comment: "The challenge's status over the quiz while it's written")
-          : Text(
-            "Writing your lesson", tableName: "Player",
-            comment: "The lesson's status over the quiz while it's written")
-        let title =
-          holding == nil
-          ? writingTitle
-          : Text(
-            "Your lesson is ready", tableName: "Player",
-            comment: "The lesson's status over the quiz once it's written")
+        let title = Text(holding == nil ? kind.gettingReady : kind.ready)
         let shown = holding == nil && writing == .writing ? progress : progress.finished
 
         WaitScreen(
           deck: WaitDeck(id: warmUpID), goalID: goalID, progressTitle: title,
           ready: holding.map { holding in
-            WaitReady(
-              label: Text(
-                "Start this lesson", tableName: "Player",
-                comment: "Opens a goal's first lesson, written while the learner played on its wait"
-              ),
-              icon: .play, action: holding.moveOn)
-          }
+            WaitReady(label: Text(kind.start), action: holding.moveOn)
+          },
+          ended: writing == .failed
         ) {
           WaitStatusStrip(
-            label: title, isDone: holding != nil, share: { shown.shownShare(at: $0) })
+            label: stripLabel(title: title), isDone: holding != nil,
+            share: { shown.shownShare(at: $0) })
         } progress: {
           Section {
             page
@@ -750,27 +876,22 @@ struct LessonWaitingView: View {
             page
             shownAlternative
           }
-          .frame(maxWidth: 680, alignment: .leading)
-          .frame(maxWidth: .infinity)
-          .scenePadding()
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .listRowEdges()
+          .scenePadding(.vertical)
         }
+        .readableColumn(680)
       }
     }
-    .safeAreaBar(edge: .bottom) {
+    .bottomBar {
       if holding == nil, writing == .notStarted {
         Button(action: write) {
           Text(
-            "Start this lesson", tableName: "Player",
-            comment: "Starts a lesson that isn't written yet: it's written, then opens"
-          )
-          .frame(maxWidth: .infinity)
+            "Prepare", tableName: "Player",
+            comment: "Starts making a lesson that isn't ready yet; it opens once it's ready")
         }
         .buttonStyle(.mainAction)
-        .controlSize(.large)
         .keyboardShortcut(.defaultAction)
-        .frame(maxWidth: 680)
-        .frame(maxWidth: .infinity)
-        .scenePadding()
       }
     }
     .announcesStatus(notWrittenLine)
@@ -778,22 +899,12 @@ struct LessonWaitingView: View {
       surface: "lessonWait", contentKind: "lesson", isActive: writing == .writing || holding != nil,
       goalID: goalID
     )
-    .task(id: writing) {
-      isLate = false
-
-      guard writing == .writing else {
-        return
-      }
-
-      try? await Task.sleep(for: Self.lateAfter)
-      isLate = !Task.isCancelled
-    }
   }
 
   private var page: some View {
     VStack(alignment: .leading, spacing: 24) {
       Text(outline.description)
-        .typeStyle(.reading)
+        .typeStyle(.body)
         .foregroundStyle(.mutedForeground)
 
       status
@@ -805,18 +916,15 @@ struct LessonWaitingView: View {
   private var status: some View {
     switch (holding, writing) {
     case (nil, .notStarted):
-      LessonNoticeText(
-        title: Text(
-          "This lesson isn't written yet", tableName: "Player",
-          comment: "Under a lesson's description, before the learner starts it and it's written"),
-        description: Text(
-          "Zoonk writes it when you start. It takes a few minutes.", tableName: "Player",
-          comment: "A lesson not written yet"))
+      LessonNoticeText(title: Text(kind.notReady), description: Text(Self.startTakesMinutes))
     case (nil, .refused(let refusal)):
       LessonUnavailableView(refusal: refusal, isNotice: true, retry: write)
     case (nil, .setAside):
       LessonNoticeText(title: Text(Self.setAsideTitle), description: Text(Self.setAsideLine))
     case (nil, .failed):
+      Text(kind.stopped)
+        .typeStyle(.screenTitle)
+
       // A run that reported a phase stopped there; otherwise it never got going.
       GenerationTimeline(
         wait: progress,
@@ -824,27 +932,26 @@ struct LessonWaitingView: View {
         act: write)
     case (_?, _), (nil, .writing), (nil, .written):
       VStack(alignment: .leading, spacing: 24) {
+        if holding == nil {
+          LessonNoticeText(title: Text(kind.gettingReady), description: Text(Self.takesMinutes))
+        } else {
+          Text(kind.ready)
+            .typeStyle(.screenTitle)
+        }
+
         GenerationTimeline(
           wait: holding == nil && writing == .writing ? progress : progress.finished)
-
-        Text(holding == nil ? Self.writingLine : Self.lessonReady)
-          .typeStyle(.body)
-          .foregroundStyle(.mutedForeground)
       }
     }
   }
 
+  /// Until the lesson is ready.
   private var shownAlternative: LessonWaitAlternative? {
-    guard let alternative, holding == nil else {
+    guard let alternative, holding == nil, writing != .written else {
       return nil
     }
 
-    return switch writing {
-    case .refused, .setAside: LessonWaitAlternative(alternative: alternative, isInstead: true)
-    case .failed: LessonWaitAlternative(alternative: alternative, isInstead: false)
-    case .writing where isLate: LessonWaitAlternative(alternative: alternative, isInstead: false)
-    default: nil
-    }
+    return LessonWaitAlternative(alternative: alternative)
   }
 
   private var notWrittenLine: String? {
@@ -861,17 +968,19 @@ struct LessonWaitingView: View {
     }
   }
 
-  private static let writingLine = LocalizedStringResource(
-    "It usually takes a few minutes. The lesson opens here as soon as it's ready.",
-    table: "Player",
-    comment: "While a lesson is written")
+  private static let takesMinutes = LocalizedStringResource(
+    "It takes a few minutes, and keeps going if you leave.", table: "Player",
+    comment: "How long making a lesson takes; it goes on when the learner leaves")
+
+  private static let startTakesMinutes = LocalizedStringResource(
+    "Getting it ready takes a few minutes.", table: "Player")
 
   private static let setAsideTitle = LocalizedStringResource(
     "This lesson isn't available", table: "Player",
     comment: "Every draft of a lesson was held back by its quality checks")
 
   private static let setAsideLine = LocalizedStringResource(
-    "It didn't pass our quality checks, so your plan goes on without it.", table: "Player",
+    "Your plan goes on without it.", table: "Player",
     comment: "Every draft of a lesson was held back by its quality checks")
 }
 
@@ -883,10 +992,11 @@ private struct LessonNoticeText: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       title
-        .typeStyle(.rowTitle)
+        .typeStyle(.screenTitle)
         .foregroundStyle(Color(.foreground))
 
       description
+        .typeStyle(.body)
         .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -899,26 +1009,14 @@ private struct LessonWaitAlternative: View {
   @Environment(AppRouter.self) private var router
 
   let alternative: Components.Schemas.ReadyAlternative
-  /// Offered in place of a lesson that won't be written, rather than while it is.
-  let isInstead: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Group {
-        if isInstead {
-          Text(
-            "Ready to do instead", tableName: "Player",
-            comment:
-              "Heading over a lesson or review the learner can start now, because this lesson couldn't be written."
-          )
-        } else {
-          Text(
-            "Ready while you wait", tableName: "Player",
-            comment:
-              "Heading over a lesson or review the learner can start while a lesson is written"
-          )
-        }
-      }
+      Text(
+        "Ready to start now", tableName: "Player",
+        comment:
+          "Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready"
+      )
       .typeStyle(.label)
       .foregroundStyle(.mutedForeground)
       .accessibilityAddTraits(.isHeader)
@@ -974,40 +1072,35 @@ private struct LessonWaitAlternative: View {
 struct LessonGuestGateView: View {
   @Environment(\.lessonGuestStart) private var guestStart
   @Environment(\.lessonPlayerRoutes) private var routes
-  @State private var isStarting = false
-  @State private var startFailed = false
-  @State private var starting: Task<Void, Never>?
+  private var isStarting: Bool { starting.isRunning }
+  private var startFailed: Bool { starting.outcome ?? false }
+  @State private var starting = VisitRequest<Bool>()
 
   let outline: LessonOutline
   let reload: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text(outline.title)
-      } icon: {
-        Image(systemName: "book")
-          .accessibilityHidden(true)
-      }
-    } description: {
+    GateScreen(title: Text(outline.title), symbol: "book") {
       Text(outline.description)
     } actions: {
       if let start = guestStart.start {
         BusyButton(isBusy: isStarting, icon: .play) {
-          isStarting = true
-          startFailed = false
-          starting = Task {
-            if await start() {
+
+          starting.run {
+            var outcome: Bool = false
+
+            let saved = await start()
+            guard !Task.isCancelled else { return nil }
+            if saved {
               reload()
             } else {
-              startFailed = true
+              outcome = true
             }
-            isStarting = false
+
+            return outcome
           }
         } label: {
-          Text(
-            "Start this lesson", tableName: "Player",
-            comment: "A visitor starts a public lesson as a guest")
+          Text(LessonWaitWords.lesson.start)
         }
         .buttonStyle(.mainAction)
 
@@ -1023,13 +1116,13 @@ struct LessonGuestGateView: View {
         Button {
           routes.signIn()
         } label: {
-          Text("Sign in", tableName: "Player", comment: "A visitor signs in to play a lesson")
+          Text("Log in", tableName: "Player", comment: "A visitor signs in to play a lesson")
         }
         .buttonStyle(.mainAction)
       }
     }
     .onDisappear {
-      starting?.cancel()
+      starting.leave()
     }
   }
 }

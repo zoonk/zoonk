@@ -89,12 +89,36 @@ function toMajorUnits(amount: number, currency: string): number {
   return ZERO_DECIMAL_CURRENCIES.has(currency.toLowerCase()) ? amount : amount / 100;
 }
 
+function getNarrowSymbol(currency: string, locale: string): string | undefined {
+  return new Intl.NumberFormat(locale, {
+    currency,
+    currencyDisplay: "narrowSymbol",
+    style: "currency",
+  })
+    .formatToParts(0)
+    .find((part) => part.type === "currency")?.value;
+}
+
+/** A narrow symbol another billing currency shares, such as "$" or "kr", would hide which one is charged. */
+function getCurrencyDisplay(currency: string, locale: string): "narrowSymbol" | "symbol" {
+  const narrow = getNarrowSymbol(currency, locale);
+
+  const shared = BILLING_CURRENCIES.some(
+    (other) => other.toUpperCase() !== currency && getNarrowSymbol(other, locale) === narrow,
+  );
+
+  return shared ? "symbol" : "narrowSymbol";
+}
+
 export function formatPrice(amount: number, currency: string, locale = "en-US"): string {
   const value = toMajorUnits(amount, currency);
   const fractionDigits = Number.isInteger(value) ? 0 : 2;
+  const code = currency.toUpperCase();
+  const formattingLocale = getFormattingLocale(locale);
 
-  return new Intl.NumberFormat(getFormattingLocale(locale), {
-    currency: currency.toUpperCase(),
+  return new Intl.NumberFormat(formattingLocale, {
+    currency: code,
+    currencyDisplay: getCurrencyDisplay(code, formattingLocale),
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,
     style: "currency",

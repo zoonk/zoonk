@@ -8,23 +8,19 @@ struct PlanPathSection: View {
   var focusTest: PlanFocusTestRow?
 
   var body: some View {
-    let phases = context.plan.roadPhases
-    let done = phases.filter { $0.state == .done }.count
-
-    Section {
+    PageSection {
       focusTest
-      PlanStudyPlaceRows()
 
       if context.goal.kind == .language,
         let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
       {
-        PlanAlphabetRow(alphabet: alphabet, goalId: context.goal.id)
+        PlanAlphabetRow(alphabet: alphabet, goalId: context.goal.id, skip: context.alphabetSkip)
       }
 
       PlanPathRows(context: context)
 
       if let course {
-        NavigationLink(value: AppRoute.course(courseId: course.courseId, title: course.title)) {
+        PageLink(route: .course(courseId: course.courseId, title: course.title)) {
           PlanPathLink(systemImage: "books.vertical") {
             Text(
               "See the full course", tableName: "Plan",
@@ -35,23 +31,13 @@ struct PlanPathSection: View {
     } header: {
       SectionTitle(
         Text(
-          "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters")
-      ) {
-        if phases.count > 1 {
-          Text(
-            "\(done) of \(phases.count) phases done", tableName: "Plan",
-            comment: "Phases done of the plan's phases"
-          )
-        }
-      }
+          "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters"))
     }
   }
 }
 
 struct PlanPathRows: View {
   let context: PlanContext
-  /// The roadmap's list of every phase leaves out what a challenge is, where it would repeat.
-  var brief = false
 
   var body: some View {
     let phases = context.plan.phases
@@ -59,25 +45,19 @@ struct PlanPathRows: View {
       (phases.first { phase in phase.chapters.contains { $0.state == .current } }
       ?? phases.first { $0.state == .current })?.index
     let beforeFinish = phases.filter { $0.kind != .afterExam }
-    let last = beforeFinish.last?.index
 
     ForEach(beforeFinish) { phase in
       PlanPhaseRow(
-        context: context, phase: phase, isOpen: phase.index == open, isLast: phase.index == last,
-        brief: brief)
+        context: context, phase: phase, isOpen: phase.index == open)
     }
 
-    IconLabeledContent {
-      planFinishText(context)
-    } title: {
-      Text(context.goal.displayName)
-    } icon: {
+    PlanMarkedRow(title: Text(context.goal.displayName), when: planFinish(context)) {
       Image(systemName: "flag")
     }
 
     ForEach(phases.filter { $0.kind == .afterExam }) { phase in
       PlanPhaseRow(
-        context: context, phase: phase, isOpen: phase.index == open, isLast: false, brief: brief)
+        context: context, phase: phase, isOpen: phase.index == open)
     }
   }
 }
@@ -86,7 +66,7 @@ extension PlanPhase {
   var mark: StatusMark.Status {
     switch state {
     case .done: .done
-    case .current: .next
+    case .current: .currentPhase
     case .leftOut, .unfinished, .upcoming: .todo
     }
   }
@@ -94,13 +74,10 @@ extension PlanPhase {
 
 private struct PlanPhaseRow: View {
   @Environment(PlanStore.self) private var store
-  @Environment(\.stacksContent) private var isStacked
 
   let context: PlanContext
   let phase: PlanPhase
   let isOpen: Bool
-  let isLast: Bool
-  let brief: Bool
 
   private var disclosure: PlanStore.PhaseDisclosure {
     store.phaseDisclosure(goalId: context.goal.id, phase: phase.index)
@@ -124,22 +101,28 @@ private struct PlanPhaseRow: View {
         route: context.goal.kind == .language
           ? .languageUnit(chapterId: chapterId) : .chapter(chapterId: chapterId)
       ) {
-        header(byPlace: false, next: own.state == .current)
+        header(next: own.state == .current)
       }
+      .currentRow(own.state == .current)
 
       if isOpen {
         events
       }
     } else if phase.chapters.isEmpty && phase.checkpoint == nil {
-      header(byPlace: false, next: false)
+      header(next: false)
     } else {
       DisclosureGroup(isExpanded: expansion) {
         chapterRows
         events
       } label: {
-        // Open over a chapter of its name, it goes by its place, so the name never shows twice.
-        header(byPlace: isExpanded && namedLikeAChapter, next: false)
+        // Open, a phase named like one of its chapters goes by its place, so the two rows don't read
+        // the same; the current phase keeps its name, as main's does.
+        header(
+          next: false,
+          byPlace: isExpanded && phase.state != .current
+            && phase.chapters.contains { Self.isSameName($0.title, phase.title) })
       }
+      .disclosureGroupStyle(.foldUnderLabel)
     }
   }
 
@@ -156,24 +139,32 @@ private struct PlanPhaseRow: View {
     }
 
     if hidden > 0 {
-      Button {
-        store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
-          $0.showsAllChapters.toggle()
-        }
-      } label: {
-        Label {
+      MoreRowsFold(
+        words: foldLabel(hidden: hidden, showsAll: showsAll),
+        isUnfolded: Binding {
           showsAll
-            ? Text(
-              "Show fewer chapters", tableName: "Plan",
-              comment: "Folds a phase's chapters back to the ones around the next")
-            : Text(
-              "\(hidden) more chapters", tableName: "Plan",
-              comment: "Shows the phase's chapters left out around the next one")
-        } icon: {
-          Image(systemName: showsAll ? "minus" : "plus")
-        }
-      }
-      .foregroundStyle(.mutedForeground)
+        } set: { shows in
+          store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
+            $0.showsAllChapters = shows
+          }
+        })
+    }
+  }
+
+  private func foldLabel(hidden: Int, showsAll: Bool) -> Text {
+    switch (context.goal.kind == .language, showsAll) {
+    case (true, true):
+      Text("Show fewer units", tableName: "Plan")
+    case (true, false):
+      Text("\(hidden) more units", tableName: "Plan")
+    case (false, true):
+      Text(
+        "Show fewer chapters", tableName: "Plan",
+        comment: "Folds a phase's chapters back to the ones around the next")
+    case (false, false):
+      Text(
+        "\(hidden) more chapters", tableName: "Plan",
+        comment: "Shows the phase's chapters left out around the next one")
     }
   }
 
@@ -181,17 +172,8 @@ private struct PlanPhaseRow: View {
   private var events: some View {
     if let checkpoint = phase.checkpoint {
       PlanCheckpointRow(
-        checkpoint: checkpoint, explains: !brief, isLanguage: context.goal.kind == .language,
+        checkpoint: checkpoint, isLanguage: context.goal.kind == .language,
         today: context.plan.today)
-    }
-
-    if phase.chapters.contains(where: \.isWritingAhead) {
-      Text(
-        "More lessons for this phase are being written.", tableName: "Plan",
-        comment: "Note under a phase whose lessons are still being written"
-      )
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -209,240 +191,176 @@ private struct PlanPhaseRow: View {
     return only
   }
 
-  private var namedLikeAChapter: Bool {
-    phase.chapters.contains { Self.isSameName($0.title, phase.title) }
-  }
-
   private static func isSameName(_ first: String, _ second: String) -> Bool {
     first.compare(second, options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive])
       == .orderedSame
   }
 
-  private func header(byPlace: Bool, next: Bool) -> some View {
-    PlanPathRow {
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(
-            byPlace
-              ? String(
-                localized: "Phase \(phase.index + 1)", table: "Plan",
-                comment: "Name of an unnamed phase by its number")
-              : phase.title
-          )
-          .typeWeight(phase.state == .current ? .semibold : .regular)
-          .foregroundStyle(phase.state == .done ? .mutedForeground : .primary)
-
-          if let meta {
-            meta
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-      } icon: {
-        StatusMark(status: next ? .next : phase.mark)
-      }
-    } value: {
-      VStack(alignment: isStacked ? .leading : .trailing, spacing: 2) {
-        if phase.lessonsTotal > 0 {
-          Text(
-            "\(phase.lessonsDone) / \(phase.lessonsTotal)", tableName: "Plan",
-            comment: "Lessons done of a phase's lessons"
-          )
-          .monospacedDigit()
-        }
-
-        if let until {
-          until
-            .typeStyle(.meta)
-        }
-      }
-    }
-    .accessibilityElement(children: .combine)
-    .accessibilityValue(phase.state == .current ? youAreHere : Text(verbatim: ""))
-  }
-
-  private var youAreHere: Text {
-    Text("You are here", tableName: "Plan", comment: "Spoken on the learner's current phase")
+  private func header(next: Bool, byPlace: Bool = false) -> some View {
+    PlanPhaseLabel(
+      context: context, phase: phase, description: meta, next: next, byPlace: byPlace)
   }
 
   private var meta: Text? {
     switch phase.leftOut {
     case .notInPlan:
-      return Text(
-        "Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
+      return planOutsideReason(phase.notPlannedReason)
     case .lessons(let count):
       return Text(
-        "\(count) lessons were left out", tableName: "Plan",
-        comment: "A phase moved past with lessons set aside")
-    case .challenge:
-      return Text(
-        "Challenge left out", tableName: "Plan",
-        comment: "A phase moved past with only its challenge set aside")
-    case .noTimeForChallenge:
-      return Text(
-        "No time for this phase's challenge before your date", tableName: "Plan",
-        comment:
-          "On a phase of the learner's plan: the plan has no room for its challenge before their goal's date"
-      )
+        "\(count) lessons not studied", tableName: "Plan",
+        comment: "A phase the date passed with lessons not studied")
+    case .challenge, .noTimeForChallenge:
+      return context.goal.kind == .language
+        ? Text(
+          "The call isn't in your plan", tableName: "Plan",
+          comment: "A language phase whose closing call has no day in the plan")
+        : Text(
+          "The Trickster isn't in your plan", tableName: "Plan",
+          comment:
+            "A phase whose closing challenge has no day in the plan. The Trickster is the name of the challenge's character"
+        )
     case nil:
       return phase.state == .current && !isOpen ? resumes : nil
     }
   }
 
+  /// When its lessons continue; nothing while they're being written, which the learner can't act on.
   private var resumes: Text? {
-    let writing = phase.chapters.contains { $0.writing }
-    let challenge =
-      phase.checkpoint.flatMap { $0.state == .upcoming && $0.when == .date ? $0.date : nil }
-      .map { PlanDate.estimate($0, today: context.plan.today) }
-
-    if !writing && phase.lessonsDone < phase.lessonsTotal {
-      guard
-        let next = phase.chapters.filter({ $0.state != .done }).compactMap(\.nextDate).min()
-      else {
-        return nil
-      }
-
-      return next == context.plan.today
-        ? Text(
-          "Continues today", tableName: "Plan", comment: "When the current phase's lessons continue"
-        )
-        : Text(
-          "Continues \(PlanDate.text(next, today: context.plan.today))", tableName: "Plan",
-          comment: "When the current phase's lessons continue; the argument is a date like 'May 5'")
-    }
-
-    switch (writing, challenge) {
-    case (true, let date?):
-      return Text(
-        "More lessons on the way\u{00A0}· challenge \(date.text)", tableName: "Plan",
-        comment: "The current phase's lessons are being written; its challenge's date"
-      )
-      .accessibilityLabel(
-        Text(
-          "More lessons on the way\u{00A0}· challenge \(date.spoken)", tableName: "Plan",
-          comment: "The current phase's lessons are being written; its challenge's date"))
-    case (true, nil):
-      return Text(
-        "More lessons on the way", tableName: "Plan",
-        comment: "The current phase's lessons are being written")
-    case (false, let date?):
-      return Text(
-        "Lessons done\u{00A0}· challenge \(date.text)", tableName: "Plan",
-        comment: "The current phase's lessons are done; its challenge's date"
-      )
-      .accessibilityLabel(
-        Text(
-          "Lessons done\u{00A0}· challenge \(date.spoken)", tableName: "Plan",
-          comment: "The current phase's lessons are done; its challenge's date"))
-    case (false, nil):
-      return nil
-    }
-  }
-
-  private var until: Text? {
-    guard let endDate = phase.endDate, phase.state == .current || phase.state == .upcoming,
-      !(isLast && phase.kind != .afterExam)
+    guard !context.isPaused, phase.lessonsDone < phase.lessonsTotal,
+      let next = phase.chapters.filter({ $0.state != .done }).compactMap(\.nextDate).min()
     else {
       return nil
     }
 
-    let learns = phase.kind == .learn || phase.kind == .afterExam
-    let today = context.plan.today
-
-    if learns && phase.state == .upcoming {
-      let month = PlanDate.monthText(endDate, today: today)
-
-      return Text(
-        LocalizedStringResource(
-          "untilAboutMonth", defaultValue: "until ~\(month)", table: "Plan",
-          comment:
-            "When a phase ends, about; the argument is a month like 'Jan' or 'Jan 2028', never a day"
-        )
-      )
-      .accessibilityLabel(
-        Text(
-          LocalizedStringResource(
-            "untilAboutMonthSpoken", defaultValue: "until about \(month)", table: "Plan",
-            comment:
-              "When a phase ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028', never a day"
-          )))
-    }
-
-    let day = PlanDate.text(endDate, today: today)
-
-    // The phase ends with its challenge, which has no booked day, only the plan's estimate.
-    if learns && phase.checkpoint?.state == .upcoming {
-      return Text(
-        "until ~\(day)", tableName: "Plan",
-        comment: "When a phase ends, about; the argument is a day like 'Nov 10'"
-      )
-      .accessibilityLabel(
-        Text(
-          "until about \(day)", tableName: "Plan",
-          comment: "When a phase ends, about, read aloud; the argument is a day like 'Nov 10'"))
-    }
-
-    return Text(
-      "until \(day)", tableName: "Plan",
-      comment: "When a phase ends; the argument is a date like 'May 5'")
+    return next == context.plan.today
+      ? Text(
+        "Continues today", tableName: "Plan", comment: "When the current phase's lessons continue")
+      : Text(
+        "Continues \(PlanDate.text(next, today: context.plan.today))", tableName: "Plan",
+        comment: "When the current phase's lessons continue; the argument is a date like 'May 5'")
   }
 }
 
-private struct PlanChapterRow: View {
+/// A phase's row on the path: its mark, its name over a line, and when it ends.
+struct PlanPhaseLabel: View {
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   let context: PlanContext
-  let chapter: PlanChapter
+  let phase: PlanPhase
+  var description: Text?
+  var next = false
+  /// "Phase 2", for a phase named like one of the chapters under it.
+  var byPlace = false
 
   var body: some View {
-    if let chapterId = chapter.chapterId {
-      PlanRouteLink(route: route(chapterId)) {
-        content
+    let title = Text(byPlace ? phase.placeName : phase.title)
+      .typeWeight(.medium, legibility: legibilityWeight)
+      .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
+
+    ListRow(title, description: description) {
+      StatusMark(status: next ? .next : phase.mark)
+    } trailing: {
+      if let end {
+        Text(verbatim: end.shown)
+          .typeStyle(.data)
+          .layoutRole(.date)
+          .accessibilityHidden(true)
       }
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityValue(Text(verbatim: spokenState))
+  }
+
+  private var end: PhaseEnd? {
+    context.isPaused ? nil : context.plan.phaseEnd(phase)
+  }
+
+  /// "You are here" on the current phase, then its end.
+  private var spokenState: String {
+    let here =
+      phase.state == .current
+      ? String(
+        localized: "You are here", table: "Plan", comment: "Spoken on the learner's current phase")
+      : nil
+
+    return [here, end?.spoken].compactMap(\.self).joined(separator: ", ")
+  }
+}
+
+struct PlanChapterRow: View {
+  let context: PlanContext
+  let chapter: PlanChapter
+  /// A new plan's path only says what's there: none of its chapters opens.
+  var opens = true
+
+  var body: some View {
+    if !opens {
+      content(isMuted: chapter.state == .done)
+    } else if let chapterId = chapter.chapterId {
+      PlanRouteLink(route: route(chapterId)) {
+        content(isMuted: false)
+      }
+      .currentRow(chapter.state == .current)
     } else if chapter.far, let skillId = chapter.skillId {
       // Past the weeks the plan writes ahead: its outline is the learner's to ask for.
       Button {
         context.show(.farTopic(skillId: skillId, title: chapter.title))
       } label: {
-        content
-          .foregroundStyle(.primary)
+        content(isMuted: false)
           .disclosureChevron()
       }
     } else {
-      content
-        .foregroundStyle(.mutedForeground)
+      content(isMuted: true)
     }
   }
 
-  private var content: some View {
-    PlanPathRow {
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          title
+  /// A chapter the learner can't open yet is quiet.
+  private func content(isMuted: Bool) -> some View {
+    ListRow(
+      title.foregroundStyle(isMuted ? Color.mutedForeground : Color(.foreground)),
+      description: note
+    ) {
+      StatusMark(status: mark)
+    } trailing: {
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityLabel { label in
+      if let markWords {
+        Text(markWords)
+      }
 
-          if let note {
-            note
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-      } icon: {
-        StatusMark(status: mark)
-      }
-    } value: {
-      if chapter.lessonsTotal > 0, !chapter.writing, !chapter.isSkipped {
-        Text(
-          "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
-          comment: "Lessons done of a chapter's lessons"
-        )
-        .monospacedDigit()
-      }
+      label
+    }
+  }
+
+  /// What the mark says, read before the title: the row has no count.
+  private var markWords: LocalizedStringResource? {
+    switch mark {
+    case .next:
+      LocalizedStringResource(
+        "chapterMarkNext", defaultValue: "Up next", table: "Plan",
+        comment: "Spoken on the path's next chapter, before its title")
+    case .done:
+      LocalizedStringResource(
+        "chapterMarkDone", defaultValue: "Done", table: "Plan",
+        comment: "Spoken on a done chapter, before its title")
+    case .skipped:
+      LocalizedStringResource(
+        "chapterMarkSkipped", defaultValue: "Skipped", table: "Plan",
+        comment: "Spoken on a chapter the learner already knew, before its title")
+    case .todo where chapter.lessonsDone > 0 && chapter.lessonsTotal > 0 && !chapter.writing:
+      LocalizedStringResource(
+        "\(chapter.lessonsDone) of \(chapter.lessonsTotal) lessons done", table: "Plan",
+        comment: "Spoken on a started chapter, before its title")
+    case .todo, .currentPhase:
+      nil
     }
   }
 
   private var title: Text {
     if !chapter.skills.isEmpty {
       return Text(
-        "\(chapter.skills.count) skills you already know", tableName: "Plan",
-        comment: "A row of skills placement showed the learner knows")
+        "\(chapter.skills.count) chapters you already know", tableName: "Plan")
     }
 
     return chapter.title.isEmpty
@@ -455,25 +373,19 @@ private struct PlanChapterRow: View {
   private var note: Text? {
     if chapter.testedOut && chapter.skills.isEmpty {
       return Text(
-        "Skipped because you already know it", tableName: "Plan",
+        "Skipped\u{00A0}· you already know it", tableName: "Plan",
         comment: "A chapter the learner tested out of")
     }
 
     if chapter.deeper {
       return Text(
-        "Going deeper into an earlier topic", tableName: "Plan",
-        comment: "A chapter that deepens an earlier one")
+        "More on an earlier topic", tableName: "Plan",
+        comment: "A chapter that goes further into an earlier one")
     }
 
-    if chapter.far && chapter.chapterId == nil {
-      return Text(
-        "Lessons on the way", tableName: "Plan", comment: "A far topic's lessons, not planned yet")
-    }
-
-    if chapter.writing && chapter.chapterId == nil {
-      return Text(
-        "Being written", tableName: "Plan",
-        comment: "A chapter whose lessons are still being written")
+    if chapter.chapterId == nil, chapter.far || chapter.writing {
+      return planNotReadyLine(
+        lessons: chapter.lessonsTotal, start: chapter.nextDate, today: context.plan.today)
     }
 
     return nil
@@ -499,36 +411,57 @@ private struct PlanChapterRow: View {
 
 private struct PlanCheckpointRow: View {
   let checkpoint: PlanPhase.Checkpoint
-  let explains: Bool
   let isLanguage: Bool
   let today: String
 
   var body: some View {
     PlanRouteLink(route: .challenge(planItemId: checkpoint.planItemId)) {
       PlanChallengeLabel(
-        when: when, explains: explains && checkpoint.state != .done, isLanguage: isLanguage)
+        when: when, explains: checkpoint.state != .done, isLanguage: isLanguage)
     }
   }
 
-  private var when: Text? {
+  private var when: PlanWhen? {
     if checkpoint.state == .done {
-      return Text("Won", tableName: "Plan", comment: "A phase challenge the learner won")
+      return .words(Text("Won", tableName: "Plan", comment: "A phase challenge the learner won"))
     }
 
-    return checkpoint.whenText(today: today)
+    return checkpoint.when(today: today)
   }
 }
 
 extension PlanPhase.Checkpoint {
   /// When it comes. Dated today, the next session is today's, which may already be under way.
-  func whenText(today: String) -> Text? {
+  func when(today: String) -> PlanWhen? {
     switch when {
     case .nextSession where date == today:
-      Text("Today", tableName: "Plan", comment: "When the phase's challenge comes")
+      .words(Text("Today", tableName: "Plan", comment: "When the phase's challenge comes"))
     case .nextSession:
-      Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+      .words(
+        Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+      )
     case .date, .queued:
-      date.map { PlanDate.estimateText($0, today: today) }
+      date.map { .date(PlanDate.estimateText($0, today: today)) }
+    }
+  }
+}
+
+/// When something on the path comes: a date in the data face, like the phases' ends beside it, and
+/// words in the text face at the date's size.
+enum PlanWhen: View {
+  case date(Text)
+  case words(Text)
+
+  var body: some View {
+    switch self {
+    case .date(let text): text.typeStyle(.data).layoutRole(.date)
+    case .words(let text): text.typeStyle(.meta).layoutRole(.words)
+    }
+  }
+
+  var text: Text {
+    switch self {
+    case .date(let text), .words(let text): text
     }
   }
 }
@@ -574,21 +507,47 @@ struct PlanSyllabusSection: View {
   var body: some View {
     let isExam = goalKind == .exam
 
-    Section {
-      SharedExamsNote(exams: syllabus.sharedExams)
-      focusTest
-      PlanStudyPlaceRows()
-
-      ForEach(choices) { choice in
-        if let line = choice.followingLine {
-          PlanChoiceLine(line: line) { change(choice.group) }
-        }
+    // Main's order: the focus test, then the plan's choices, above the subjects and not among them,
+    // since neither is a subject with a preparation. Each is its own group: a row with a mark and a
+    // sentence don't share one label edge.
+    if let focusTest {
+      PageSection {
+        focusTest
+      } header: {
+        EmptyView()
       }
+    }
 
-      ForEach(syllabus.subjects) { subject in
-        NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
-          SyllabusSubjectRow(
-            subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
+    if choices.contains(where: { $0.followingLine != nil }) {
+      PageSection {
+        ForEach(choices) { choice in
+          if let line = choice.followingLine {
+            PlanChoiceLine(line: line) { change(choice.group) }
+          }
+        }
+      } header: {
+        EmptyView()
+      }
+    }
+
+    PageSection {
+      SharedExamsNote(exams: syllabus.sharedExams)
+
+      // Main's groups: the notice's in its order, then what the plan adds outside it.
+      ForEach(syllabus.subjectGroups) { group in
+        if group.extra {
+          SectionLabel(Text("Also in your plan", tableName: "Plan"))
+            .listRowSeparator(.hidden)
+        } else if let name = group.name {
+          SectionLabel(Text(name))
+            .listRowSeparator(.hidden)
+        }
+
+        ForEach(group.subjects) { subject in
+          PageLink(route: .subject(subjectKey: subject.key)) {
+            SyllabusSubjectRow(
+              subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
+          }
         }
       }
     } header: {
@@ -606,25 +565,126 @@ struct PlanSyllabusSection: View {
         }
         // Main's legend for the bars is quiet words, not a mono fact.
         .typeStyle(.small)
+        // Over the values' column: the rows keep the chevron's room after their values.
+        .chevronSlot()
       }
     } footer: {
       SectionFooter {
-        if isExam {
-          Text(
-            "\(syllabus.subjects.count) subjects", tableName: "Plan",
-            comment: "How many subjects the exam has")
-        } else {
-          Text(
-            "\(syllabus.subjects.count) modules", tableName: "Plan",
-            comment: "How many modules the plan has")
+        VStack(alignment: .leading, spacing: 0) {
+          count
+          SyllabusSources(syllabus: syllabus)
         }
+      }
+    }
+  }
+
+  /// Main's `useSectionCount`: the notice's own subjects, as the reveal counts them, with its topics;
+  /// the learner's material counts its topics.
+  @ViewBuilder private var count: some View {
+    let subjects = syllabus.subjects.filter { $0.source == "notice" }.count
+
+    if syllabus.fromMaterial {
+      Text(
+        "\(syllabus.topicCount > 0 ? syllabus.topicCount : subjects) topics from your material",
+        tableName: "Plan",
+        comment: "How many topics a plan built from the learner's own material holds")
+    } else if syllabus.kind == "notice" && syllabus.topicCount > 0 {
+      FactSegments([
+        subjectsText(subjects),
+        String(
+          localized: "\(syllabus.topicCount) topics", table: "Plan",
+          comment: "How many topics a subject has"),
+      ])
+    } else if goalKind == .exam {
+      Text(verbatim: subjectsText(syllabus.kind == "notice" ? subjects : syllabus.subjects.count))
+    } else {
+      Text(
+        "\(syllabus.subjects.count) modules", tableName: "Plan",
+        comment: "How many modules the plan has")
+    }
+  }
+
+  private func subjectsText(_ count: Int) -> String {
+    String(localized: "\(count) subjects", table: "Plan", comment: "How many subjects the exam has")
+  }
+}
+
+/// Main's quiet "Sources": where the subjects' question counts and the course's weights come from,
+/// for the learner who wants to check.
+private struct SyllabusSources: View {
+  let syllabus: GoalSyllabus
+
+  var body: some View {
+    if syllabus.questionsSource != nil || syllabus.courseWeights?.source != nil {
+      QuietDisclosure(label: Text("Sources", tableName: "Plan")) {
+        VStack(alignment: .leading, spacing: 8) {
+          if let source = syllabus.questionsSource {
+            QuestionsSourceText(edition: source.edition, url: source.url)
+          }
+
+          if let weights = syllabus.courseWeights {
+            CourseWeightsText(subjects: syllabus.subjects, weights: weights)
+          }
+        }
+        .tint(.mutedForeground)
       }
     }
   }
 }
 
+/// Main's `CourseWeightsNote`: how the learner's course weighs the exam's parts, which the plan's
+/// time follows, its source linked.
+private struct CourseWeightsText: View {
+  let subjects: [SyllabusSubject]
+  let weights: GoalSyllabus.CourseWeights
+
+  var body: some View {
+    if let sentence {
+      Text(sentence)
+    }
+  }
+
+  private var sentence: AttributedString? {
+    guard let source = weights.source, let url = URL(string: source.url) else {
+      return nil
+    }
+
+    let publisher = sourceHost(url)
+    let lightest = weights.subjects.map(\.weight).min() ?? 0
+    let heavier = weights.subjects.filter { $0.weight > lightest }.map { part in
+      subjects.first { $0.name == part.name }?.shortName ?? part.name
+    }
+    let sentence =
+      heavier.isEmpty
+      ? String(
+        localized:
+          "\(weights.course) at \(weights.institution) counts every part of the exam the same. Weights from \(publisher).",
+        table: "Plan",
+        comment:
+          "How the learner's course weighs an exam's parts, all the same; the last argument is the source's site"
+      )
+      : String(
+        localized:
+          "\(weights.course) at \(weights.institution) counts \(heavier.formatted(.list(type: .and))) more, so your plan gives them more of your time. Weights from \(publisher).",
+        table: "Plan",
+        comment:
+          "How the learner's course weighs an exam's parts: the ones counted more; the last argument is the source's site"
+      )
+    var text = AttributedString(sentence)
+
+    if let range = text.range(of: publisher, options: .backwards) {
+      text[range].link = url
+      text[range].underlineStyle = .single
+    }
+
+    return text
+  }
+}
+
 /// Main's `PlanChoiceLine`: one sentence naming what the plan follows, with Change inline.
-private struct PlanChoiceLine: View {
+/// Main's `PlanChoiceLine`: which option of an exam's choice the plan follows, with Change as a
+/// link at its end.
+struct PlanChoiceLine: View {
   let line: String
   let change: () -> Void
 
@@ -653,28 +713,32 @@ private struct PlanChoiceLine: View {
   }
 }
 
-/// Phones list the study places nowhere else, so the path leads to the lessons already done and to
-/// the chapters' mind maps.
-private struct PlanStudyPlaceRows: View {
+/// Phones list the study places nowhere else, so the Plan's "More" leads to the lessons already
+/// done and to the chapters' mind maps, drawn as its other places are.
+struct PlanStudyPlaceRows: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.tabBarPlacement) private var tabBarPlacement
 
   var body: some View {
     if tabBarPlacement?.listsStudyPlaces != true, let places = learner.summary.value?.places {
       if places.completedLessons {
-        NavigationLink(value: AppRoute.completedLessons) {
-          PlanPathLink(systemImage: "clock.arrow.circlepath") {
+        PageLink(route: .completedLessons) {
+          Label {
             Text(
               "Completed lessons", tableName: "Plan",
               comment: "Opens the page of the lessons the learner finished")
+          } icon: {
+            Image(systemName: "clock.arrow.circlepath")
           }
         }
       }
 
       if places.mindMaps {
-        NavigationLink(value: AppRoute.mindMaps()) {
-          PlanPathLink(systemImage: LearnKind.mindMap.systemImage) {
+        PageLink(route: .mindMaps()) {
+          Label {
             Text("Mind maps", tableName: "Plan", comment: "Opens the goal's mind maps")
+          } icon: {
+            Image(systemName: LearnKind.mindMap.systemImage)
           }
         }
       }
@@ -683,71 +747,132 @@ private struct PlanStudyPlaceRows: View {
 }
 
 /// Main's `PathLinkRow`: a quiet way out of the path, in the secondary color.
-private struct PlanPathLink: View {
+struct PlanPathLink: View {
   let systemImage: String
   @ViewBuilder let title: Text
 
   var body: some View {
-    Label {
-      title
-    } icon: {
+    ListRow(title.foregroundStyle(.mutedForeground)) {
       Image(systemName: systemImage)
+        .imageScale(.small)
     }
-    .foregroundStyle(.mutedForeground)
   }
 }
 
 struct SyllabusSubjectRow: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
+  @Environment(\.stacksContent) private var isStacked
+
   let subject: SyllabusSubject
   let isExam: Bool
   var sharedExams: [GoalSyllabus.SharedExam] = []
 
+  /// Main's container widths: the bar beside the name from 32rem, the question count too from 42rem.
+  @State private var width: CGFloat = 0
+  private static let barBesideFrom: CGFloat = 512
+  private static let questionsFrom: CGFloat = 672
+
   var body: some View {
     let share = isExam ? (subject.preparation ?? 0) : subject.lessonShare
+    let isWide = !isStacked && width >= Self.barBesideFrom
 
-    VStack(alignment: .leading, spacing: 6) {
-      PlanPathRow {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(subject.name)
-            .typeStyle(.rowTitle)
-            .foregroundStyle(
-              subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
+    // The bar is part of the row's words, so the share centers on the row with the chevron the
+    // list draws after it, as main's subject row does.
+    RowLayout {
+    } words: {
+      if isWide {
+        HStack(spacing: 14) {
+          name
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-          AlsoInExams(exams: sharedExams)
+          if width >= Self.questionsFrom {
+            questions
+              .frame(width: 104, alignment: .trailing)
+          }
+
+          if subject.notPlannedReason == nil {
+            Meter(value: share, fill: .success)
+              .frame(width: min(max(width * 0.3, 112), 224))
+              .accessibilityHidden(true)
+          }
         }
-      } value: {
-        Text(share, format: .percent.precision(.fractionLength(0)))
-          .typeStyle(.data)
-      }
-
-      if subject.notPlannedReason != nil {
-        Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
       } else {
-        Meter(value: share, fill: .success)
-          .accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 6) {
+          name
+
+          if subject.notPlannedReason == nil {
+            Meter(value: share, fill: .success)
+              .accessibilityHidden(true)
+          }
+        }
       }
+    } value: {
+      // As wide as the widest share, so every subject's bar ends on one edge.
+      Text(share, format: .percent.precision(.fractionLength(0)))
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
+        .frame(
+          minWidth: TypeStyle.data.width(
+            of: 1.0.formatted(.percent.precision(.fractionLength(0))),
+            dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
+          alignment: .trailing)
+    }
+    .onGeometryChange(for: CGFloat.self) {
+      $0.size.width
+    } action: {
+      width = $0
     }
     .accessibilityElement(children: .combine)
   }
-}
 
-/// The counts stay at the trailing edge beside a long name, which wraps; stacked, they go under it.
-struct PlanPathRow<Title: View, Value: View>: View {
-  @ViewBuilder let title: Title
-  @ViewBuilder let value: Value
+  /// Its name, the other exams that share it, and why it isn't in the plan.
+  private var name: some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text(subject.shortName)
+        .typeStyle(.rowTitle)
+        .foregroundStyle(
+          subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground
+        )
+        .layoutPart(.label, text: Text(subject.shortName))
 
-  var body: some View {
-    AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 4) {
-      title
-        .frame(maxWidth: .infinity, alignment: .leading)
+      AlsoInExams(exams: sharedExams)
 
-      value
-        .foregroundStyle(.mutedForeground)
-        .fixedSize()
+      if subject.notPlannedReason != nil {
+        planOutsideReason(subject.notPlannedReason)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
     }
   }
+
+  @ViewBuilder private var questions: some View {
+    if let count = subject.questions, count > 0 {
+      Text("\(count) questions", tableName: "Plan")
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
+        .lineLimit(1)
+    }
+  }
+}
+
+/// Main's `useFarTopicLine`: a topic whose lessons aren't ready, how many it has and when it starts
+/// (its day this month, else its month), else "Not ready yet".
+func planNotReadyLine(lessons: Int, start: String?, today: String) -> Text {
+  guard lessons > 0, let start else {
+    return Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
+  }
+
+  if start.prefix(7) != today.prefix(7) {
+    return Text(
+      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today, wide: true))",
+      tableName: "Plan",
+      comment: "A topic not ready yet: its lessons and the month they start, like 'January'")
+  }
+
+  return Text(
+    "\(lessons) lessons\u{00A0}· starts \(PlanDate.text(start, today: today))", tableName: "Plan",
+    comment: "A topic not ready yet: its lessons and the day they start, like 'May 5'")
 }
 
 /// Mirrors main's `getChapterWindow`: four chapters from the one before the next.
@@ -759,44 +884,101 @@ func planChapterWindow(states: [PlanChapter.State]) -> Range<Int> {
   return start..<min(states.count, start + shown)
 }
 
+/// A path row with a mark and its date: the goal's finish, a mock exam, a review.
+struct PlanMarkedRow<Mark: View>: View {
+  let title: Text
+  let when: PlanWhen?
+  @ViewBuilder let mark: Mark
+
+  var body: some View {
+    ListRow(title) {
+      mark
+    } trailing: {
+      when
+    }
+    .accessibilityElement(children: .combine)
+  }
+}
+
 /// Says what a challenge is under its row, since a learner meets one before they've ever taken one.
+/// Main's `PhaseCheckpointMark`: what ends a phase, a call for a language and the Trickster's face
+/// otherwise.
+struct PhaseCheckpointMark: View {
+  let isLanguage: Bool
+
+  @ScaledMetric(relativeTo: .body) private var faceSize = 20.0
+
+  var body: some View {
+    Group {
+      if isLanguage {
+        Image(systemName: "mic")
+          .typeStyle(.rowTitle)
+          .imageScale(.medium)
+          .foregroundStyle(Color(.foreground))
+      } else {
+        TricksterCharacter(faceOnly: true)
+          .frame(width: faceSize, height: faceSize)
+      }
+    }
+    .accessibilityHidden(true)
+  }
+}
+
 struct PlanChallengeLabel: View {
-  let when: Text?
+  let when: PlanWhen?
   let explains: Bool
   let isLanguage: Bool
 
   var body: some View {
-    Label {
-      VStack(alignment: .leading, spacing: 2) {
-        AccessibilityStack(alignment: .firstTextBaseline) {
-          Text("Phase challenge", tableName: "Plan", comment: "The challenge that closes a phase")
-            .foregroundStyle(.primary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-          when?
-            .foregroundStyle(.mutedForeground)
-        }
-
-        if explains {
-          Group {
-            if isLanguage {
-              Text(
-                "A live call where you get your point across", tableName: "Plan",
-                comment: "What a language unit's challenge is, under its row")
-            } else {
-              Text(
-                "Questions on this phase, with no hints", tableName: "Plan",
-                comment: "What a phase challenge is, under its row")
-            }
-          }
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-        }
-      }
-      // In a list row's button it otherwise gets one line's height and truncates its title.
-      .fixedSize(horizontal: false, vertical: true)
-    } icon: {
-      KindMark(kind: .challenge)
+    ListRow(name, description: explains ? explanation : nil) {
+      PhaseCheckpointMark(isLanguage: isLanguage)
+    } trailing: {
+      when
     }
+  }
+
+  private var name: Text {
+    isLanguage
+      ? Text("Call", tableName: "Plan", comment: "The live call that closes a language phase")
+      : Text(
+        "The Trickster", tableName: "Plan",
+        comment: "The challenge that closes a phase, named after its character, the Trickster")
+  }
+
+  private var explanation: Text {
+    isLanguage
+      ? Text(
+        "A live call where you get your point across", tableName: "Plan",
+        comment: "What a language unit's challenge is, under its row")
+      : Text(
+        "Questions on this phase, with no hints", tableName: "Plan",
+        comment: "What the Trickster is, under its row")
+  }
+}
+
+func planOutsideReason(_ reason: String?) -> Text {
+  switch reason {
+  case "skipped":
+    Text(
+      "Not in your plan\u{00A0}· you took this subject out", tableName: "Plan",
+      comment:
+        "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out."
+    )
+  case "known":
+    Text("Skipped\u{00A0}· you already know it", tableName: "Plan")
+  case "pastBasics":
+    Text("Skipped\u{00A0}· you already know the basics", tableName: "Plan")
+  case "skippedBase":
+    Text("Skipped\u{00A0}· your choice", tableName: "Plan")
+  case "missing":
+    Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
+  case "time":
+    Text(
+      "Not in your plan\u{00A0}· your time doesn't cover it", tableName: "Plan",
+      comment:
+        "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it."
+    )
+  default:
+    Text("Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
   }
 }

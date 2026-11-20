@@ -19,6 +19,7 @@
 
 ## Glossary
 
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “MU”
 - “goal” (the learner's goal): “cel”
 - “plan” (study plan): “plan”; subscription plan: “pakiet”
 - “Free” (subscription name): “Free”, as in “pakiet Free”; a “free account”: “bezpłatne konto”
@@ -27,7 +28,7 @@
 - “Quick explanation”: “Szybkie wyjaśnienie”
 - “the big day” (the exam or goal date): “wielki dzień”
 - a counted study “session”: “dzień nauki”
-- pace statuses “Ahead” / “Behind”: “Przed planem” / “Za planem”
+- a plan's states “Ahead” / “Behind”: “Przed planem” / “Za planem”
 - “Get Plus”: “przejdź na Plus”
 - “session” (study): “nauka” (“dzisiejsza nauka”), not “sesja”, which is the sign-in session or the exam period
 - “subject” (of an exam or a plan): “przedmiot”
@@ -67,7 +68,7 @@
 - “call” (speaking practice): “rozmowa”, not “połączenie”
 - “Mistakes notebook”: “Zeszyt błędów”
 - “Saved to your mistakes”: “Zapisano w zeszycie błędów”, in every line that starts with it
-- “To fix” / “Fixed” (notebook tabs): “Do poprawy” / “Poprawione”
+- “To fix” / “Fixed” (notebook tabs): “Do poprawy” / “Poprawione”; “Practice mistakes” (the notebook’s practice, as a button or a title): “Popraw błędy”
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nowe” / “W trakcie nauki” / “Utrwalone” / “Opanowane”
 - “Known before”: “Znane wcześniej”; “Known” (progress legend): “Znane”
 - “Preparation”: “Przygotowanie”
@@ -88,14 +89,14 @@
 
 ## Plan terminology
 
-- “Pace”: “Tempo”; the “On pace” / “Keeping pace” status: “Zgodnie z planem”
+- “Pace”: “Tempo”; the “Up to date” status (formerly “On pace” / “Keeping pace”): “Zgodnie z planem”
 - “Finished”: “Ukończony”
-- “Past date”: “Po terminie”, not “Wygasły” or “Zakończony”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “Po terminie”, not “Wygasły” or “Zakończony”
 - “Needs adjusting”: “Wymaga dostosowania”
 - “Too tight”: “Zbyt napięty”
 - “left out”: “nie zmieścić się” (“Lekcje, które się nie zmieściły”), not “pominąć”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “pomiń” / “pominięte”
-- “Daily time”: “Dzienny czas nauki”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Dzienny czas nauki”
 - “rest day”: “dzień odpoczynku”
 
 ## Buddy names

@@ -37,13 +37,17 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.scaffold.DockedActionBar
+import com.zoonk.android.ui.scaffold.BarNoteInPage
+import com.zoonk.android.ui.scaffold.BarNoteRoom
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.barNoteViewport
+import com.zoonk.android.ui.scaffold.pageMargin
+import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 
 internal data class SetupLayout(
     val fold: PageFold?,
@@ -69,7 +73,7 @@ internal fun ColumnScope.SetupContent(
 }
 
 /**
- * At least the page's height, so a step's actions can sit at its bottom on phones. Across an open book's [fold] it
+ * One column with the step's actions pinned in a bar under it ([PageActions], [com.zoonk.android.feature.onboarding.start.OnboardingActions]). Across an open book's [fold] it
  * is the page before the fold, with [aside] on the page after it; without an aside, a test's question takes both
  * pages ([QuestionPages]). A held wait's way on is pinned to the page's bottom ([PageHold]).
  */
@@ -113,6 +117,7 @@ private fun SetupColumnBody(
         val scroll = rememberScrollState()
         val spread = fold?.takeIf { aside == null }
         val barSlot = remember { mutableStateOf<PageBar?>(null) }
+        val noteRoom = rememberBarNoteRoom()
         val bar = barSlot.value
 
         Column(
@@ -142,7 +147,13 @@ private fun SetupColumnBody(
 
                 CompositionLocalProvider(LocalSetupPage provides SetupPage(spread, scroll, barSlot)) {
                     Box(
-                        if (spread == null) Modifier.fillMaxSize().verticalScroll(scroll) else Modifier.fillMaxSize(),
+                        if (spread ==
+                            null
+                        ) {
+                            Modifier.fillMaxSize().barNoteViewport(noteRoom).verticalScroll(scroll)
+                        } else {
+                            Modifier.fillMaxSize()
+                        },
                         contentAlignment = Alignment.TopCenter,
                     ) {
                         Column(
@@ -152,18 +163,21 @@ private fun SetupColumnBody(
                                         .widthIn(max = COLUMN_WIDTH)
                                         .fillMaxWidth()
                                         .heightIn(min = height)
-                                        .padding(horizontal = MARGIN, vertical = EDGE)
+                                        .padding(horizontal = pageMargin(), vertical = EDGE)
+                                        .padding(bottom = noteRoom.height)
                                 } else {
                                     Modifier.fillMaxSize()
                                 },
                             verticalArrangement = Arrangement.spacedBy(GAP),
-                            content = content,
-                        )
+                        ) {
+                            content()
+                            if (spread == null) BarNoteInPage(noteRoom)
+                        }
                     }
                 }
             }
 
-            bar?.takeIf { it.visible && (it.actions != null || it.hold?.holding == true) }?.let { SetupActionBar(it) }
+            bar?.takeIf { it.visible && (it.actions != null || it.hold?.holding == true) }?.let { SetupActionBar(it, noteRoom) }
         }
 
         if (fold != null && aside != null) {
@@ -190,6 +204,7 @@ internal data class PageBar(
     val action: String,
     val actions: State<@Composable () -> Unit>? = null,
     val visible: Boolean = true,
+    val note: State<(@Composable () -> Unit)?>? = null,
 )
 
 /**
@@ -207,38 +222,37 @@ internal fun PageHold(
     DisposableEffect(slot) { onDispose { slot.value = null } }
 }
 
+/** The page's actions, pinned in its bottom bar; [note] (what the last action couldn't do) sits over the bar, where it moves nothing. */
 @Composable
 internal fun PageActions(
     hold: ReadyHold? = null,
     visible: Boolean = true,
+    note: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val slot = LocalSetupPage.current?.bar
     if (slot == null) {
+        note?.invoke()
         content()
         return
     }
     val actions = rememberUpdatedState(content)
-    val bar = PageBar(hold, "", actions, visible)
+    val shownNote = rememberUpdatedState(note)
+    val bar = PageBar(hold, "", actions, visible, shownNote)
     SideEffect { slot.value = bar }
     DisposableEffect(slot) { onDispose { slot.value = null } }
 }
 
 @Composable
-private fun SetupActionBar(bar: PageBar) {
-    DockedActionBar {
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-            Box(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = MARGIN, vertical = EDGE)) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    if (bar.actions !=
-                        null
-                    ) {
-                        bar.actions.value()
-                    } else {
-                        Button(onClick = { bar.hold?.moveOn() }, modifier = Modifier.fillMaxWidth()) { Text(bar.action) }
-                    }
-                }
-            }
+private fun SetupActionBar(
+    bar: PageBar,
+    noteRoom: BarNoteRoom,
+) {
+    BottomBar(columnWidth = COLUMN_WIDTH, note = bar.note?.value, noteRoom = noteRoom) {
+        if (bar.actions != null) {
+            bar.actions.value()
+        } else {
+            Button(onClick = { bar.hold?.moveOn() }, modifier = Modifier.fillMaxWidth()) { Text(bar.action) }
         }
     }
 }
@@ -279,9 +293,8 @@ internal fun ColumnScope.QuestionPages(
                         .fillMaxSize()
                         .padding(start = fold.end)
                         .semantics { isTraversalGroup = true }
-                        .padding(start = MARGIN, end = MARGIN, bottom = EDGE)
                 },
-                verticalArrangement = Arrangement.spacedBy(GAP),
+                verticalArrangement = Arrangement.spacedBy(if (fold == null) GAP else 0.dp),
             ) {
                 Column(
                     if (fold == null) {
@@ -291,18 +304,14 @@ internal fun ColumnScope.QuestionPages(
                             .weight(1f)
                             .fillMaxWidth()
                             .verticalScroll(answerScroll)
-                            .padding(top = EDGE)
+                            .padding(horizontal = pageMargin(), vertical = EDGE)
                     },
                     verticalArrangement = Arrangement.spacedBy(GAP),
                 ) {
                     if (fold == null) read()
                     answer()
                 }
-                if (fold != null) {
-                    OnboardingActions(actions)
-                } else {
-                    PageActions { Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = actions) }
-                }
+                PageActions { Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = actions) }
             }
 
             if (fold != null) {
@@ -312,7 +321,7 @@ internal fun ColumnScope.QuestionPages(
                         .fillMaxHeight()
                         .semantics { isTraversalGroup = true }
                         .verticalScroll(page.scroll)
-                        .padding(horizontal = MARGIN, vertical = EDGE),
+                        .padding(horizontal = pageMargin(), vertical = EDGE),
                     verticalArrangement = Arrangement.spacedBy(GAP),
                     content = read,
                 )
@@ -322,6 +331,5 @@ internal fun ColumnScope.QuestionPages(
 }
 
 private val COLUMN_WIDTH = 640.dp
-private val MARGIN = 16.dp
 private val EDGE = 16.dp
 private val GAP = 24.dp

@@ -1,9 +1,9 @@
-import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import {
   DISCLOSURE_ANSWER_CLASS,
   DISCLOSURE_LINK_CLASS,
   PublicDisclosure,
 } from "@/components/public/public-disclosure";
+import { PublicQuestions } from "@/components/public/public-questions";
 import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
@@ -14,32 +14,17 @@ import { getExampleSet } from "./landing-examples";
 
 const TITLE_ID = "faq-title";
 
-function emailLink(address: string) {
-  return function renderEmail() {
-    return (
-      <a className={DISCLOSURE_LINK_CLASS} href={`mailto:${address}`}>
-        {address}
-      </a>
-    );
-  };
-}
-
 export async function HomeFaq() {
   const t = await getExtracted();
   const space = getSentenceSpace(await getAppLocale());
   const { exams } = await getExampleSet();
   const limits = getFreePlanLimits();
 
-  const email = t({
-    description: "Zoonk's support address; your language may have its own.",
-    message: "hello@zoonk.com",
-  });
-
   const questions = [
     {
       answer: t(
-        "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed.",
-        { days: limits.examPrepDays ?? 0, goals: limits.activeGoals ?? 0 },
+        "Yes. You start free, no account needed. A free account gives you {lessons, plural, one {# lesson} other {# lessons}} a month across all your goals, exams included, with {goals, plural, one {one goal} other {up to # goals}} at a time. No card needed.",
+        { goals: limits.activeGoals ?? 0, lessons: limits.lessonsPer30Days ?? 0 },
       ),
       id: "free",
       question: t("Is Zoonk free?"),
@@ -48,7 +33,7 @@ export async function HomeFaq() {
       answer: (
         <>
           {t(
-            "Plus is a subscription. It unlocks every goal and every lesson, the full plan up to exam day, mock exams timed like the real exam, Zu whenever you need it and higher limits on practice conversations. You see your whole plan before you pay, and you can cancel anytime.",
+            "Every lesson and every goal, with no monthly limit. For an exam, that's your whole plan up to exam day, with mock exams timed like the real one. You also get help whenever you're stuck and more speaking practice. You see your whole plan before you pay, and you can cancel anytime.",
           )}
           {space}
           <Link className={DISCLOSURE_LINK_CLASS} href="/pricing">
@@ -57,22 +42,20 @@ export async function HomeFaq() {
         </>
       ),
       id: "plus",
-      question: t({
-        description: "In Brazilian Portuguese: “O que o Plus tem a mais?”",
-        message: "What does Plus add?",
-      }),
+      question: t("What do I get if I subscribe?"),
     },
     {
       answer: t({
         description:
-          "“Report a problem” is the app's menu item for reporting a lesson: use the exact words your language's app uses for it (in Korean “문제 신고하기”). In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Toque em “Relatar um problema”.”",
+          "In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e passam por verificações automáticas antes de chegar até você. Depois, outro modelo de IA revisa as aulas e corrige os erros que encontra. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. A IA ainda pode errar. Viu um erro? Avise a gente pela própria aula e a gente confere.”",
         message:
-          "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tap “Report a problem”.",
+          "Lessons are made with the latest AI models and pass automatic checks before they reach you. Then another AI model reviews them and fixes the mistakes it finds. They follow what your goal covers, such as an exam's subjects and topics. AI can still make mistakes. See one? Tell us from the lesson and we'll look into it.",
       }),
       id: "trust",
       question: t({
-        description: "In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”",
-        message: "Can you trust lessons made by AI?",
+        description:
+          "A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”",
+        message: "Can I trust lessons made by AI?",
       }),
     },
     {
@@ -87,7 +70,7 @@ export async function HomeFaq() {
     },
     {
       answer: t(
-        "What's left comes first the next day. If a date changes, your plan tells you. You can also change your daily time whenever you want.",
+        "What's left comes first the next day. If a date changes, your plan tells you. You can also change how long you study each day whenever you want.",
       ),
       id: "missed",
       question: t({
@@ -105,45 +88,20 @@ export async function HomeFaq() {
       }),
       id: "goals",
       question: t({
-        description: "In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”",
+        description:
+          "A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”",
         message: "Which exams and goals can I study for?",
       }),
     },
   ];
 
   return (
-    <section aria-labelledby={TITLE_ID}>
-      <div
-        className={cn(
-          PUBLIC_CONTAINER_CLASS,
-          "grid grid-cols-1 gap-8 py-26 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-20 lg:py-36",
-        )}
-      >
-        <div>
-          <h2
-            className="text-[clamp(2rem,4.2vw,3.125rem)] leading-[1.04] font-[670] tracking-[-0.045em] text-balance"
-            id={TITLE_ID}
-          >
-            {t("Frequently asked questions")}
-          </h2>
-          <p className="text-muted-foreground mt-3.5">
-            {t.rich("Still have questions? Write to <email></email>.", { email: emailLink(email) })}
-          </p>
-        </div>
-
-        <div className="border-b">
-          {questions.map((item, index) => (
-            <PublicDisclosure
-              className="border-t"
-              key={item.id}
-              open={index === 0}
-              summary={item.question}
-            >
-              <p className={cn(DISCLOSURE_ANSWER_CLASS, "pr-9")}>{item.answer}</p>
-            </PublicDisclosure>
-          ))}
-        </div>
-      </div>
-    </section>
+    <PublicQuestions id={TITLE_ID}>
+      {questions.map((item, index) => (
+        <PublicDisclosure key={item.id} open={index === 0} summary={item.question}>
+          <p className={cn(DISCLOSURE_ANSWER_CLASS, "pr-9")}>{item.answer}</p>
+        </PublicDisclosure>
+      ))}
+    </PublicQuestions>
   );
 }

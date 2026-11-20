@@ -5,7 +5,8 @@ enum MockStartOutcome: Equatable, Sendable {
 
   case started(id: String)
   case needsQuestions
-  case short(examQuestions: Int, limit: Limit?, minutes: Int, questions: Int)
+  /// `availableAt`: when the full mock fits, once a monthly cap shortened it.
+  case short(examQuestions: Int, limit: Limit?, availableAt: Date?, minutes: Int, questions: Int)
   case notEnoughQuestions
   case plusRequired
   case refused(HelpLimit)
@@ -59,7 +60,19 @@ struct ExamAPI {
   private var timeZone: String { TimeZone.current.identifier }
 
   /// A shape's keys are required but nullable.
+  /// The API takes every key of a shape: the client leaves out nils, and these go as nulls.
   private static let shapeNulls = ["shape.area", "shape.day"]
+
+  private static func body(_ shape: MockShape) -> Components.Schemas.MockShape {
+    let kind: Components.Schemas.MockShape.KindPayload =
+      switch shape.kind {
+      case .full: .full
+      case .half: .half
+      case .area: .area
+      }
+
+    return .init(area: shape.area, day: shape.day, kind: kind)
+  }
 
   func exam(token: String, goalId: String) async throws -> ExamView? {
     try await clients.perform(token: token) { client in
@@ -104,11 +117,13 @@ struct ExamAPI {
     }
   }
 
-  func startMock(token: String, goalId: String, shape: MockShape, acceptFewer: Bool)
-    async throws -> MockStartOutcome
-  {
-    let body: Components.Schemas.AnytimeMockInput = try PracticeJSON.recode(
-      MockStartRequest(shape: shape, acceptFewer: acceptFewer))
+  /// `afterWriting` on the start that follows a questions run, so the server never asks for more.
+  func startMock(
+    token: String, goalId: String, shape: MockShape, acceptFewer: Bool, afterWriting: Bool = false
+  ) async throws -> MockStartOutcome {
+    let body = Components.Schemas.AnytimeMockInput(
+      shape: .init(value1: Self.body(shape)), acceptFewer: acceptFewer,
+      afterWriting: afterWriting ? true : nil)
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let started: Components.Schemas.AnytimeMock
@@ -135,7 +150,8 @@ struct ExamAPI {
       case .short:
         return .short(
           examQuestions: started.examQuestions ?? 0, limit: started.limit,
-          minutes: started.minutes ?? 0, questions: started.questions ?? 0)
+          availableAt: started.availableAt, minutes: started.minutes ?? 0,
+          questions: started.questions ?? 0)
       }
     }
   }
@@ -144,8 +160,7 @@ struct ExamAPI {
   func requestMockQuestions(token: String, goalId: String, shape: MockShape) async throws
     -> MockQuestionsStart
   {
-    let body: Components.Schemas.MockQuestionsInput = try PracticeJSON.recode(
-      MockStartRequest(shape: shape, acceptFewer: nil))
+    let body = Components.Schemas.MockQuestionsInput(shape: .init(value1: Self.body(shape)))
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let generation: Components.Schemas.MockQuestionsGeneration
@@ -368,37 +383,6 @@ struct ExamAPI {
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
-    }
-  }
-}
-
-private struct MockStartRequest: Encodable {
-  let shape: MockShape
-  let acceptFewer: Bool?
-
-  private enum CodingKeys: String, CodingKey {
-    case acceptFewer, shape
-  }
-
-  func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encodeIfPresent(acceptFewer, forKey: .acceptFewer)
-    try container.encode(ShapeBody(shape), forKey: .shape)
-  }
-
-  /// The API takes every key of a shape, nulls included.
-  private struct ShapeBody: Encodable {
-    let shape: MockShape
-
-    init(_ shape: MockShape) { self.shape = shape }
-
-    private enum CodingKeys: String, CodingKey { case area, day, kind }
-
-    func encode(to encoder: any Encoder) throws {
-      var container = encoder.container(keyedBy: CodingKeys.self)
-      try container.encode(shape.area, forKey: .area)
-      try container.encode(shape.day, forKey: .day)
-      try container.encode(shape.kind, forKey: .kind)
     }
   }
 }

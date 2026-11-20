@@ -1,8 +1,8 @@
 import { getTotalDuration } from "@/lib/public/total-duration";
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { parseCefrScore } from "@zoonk/utils/cefr";
+import { formatIsoDate } from "@zoonk/utils/date-format";
 import { formatDuration } from "@zoonk/utils/duration";
-import { getFormattingLocale } from "@zoonk/utils/locale";
 import { getNumberFormatter } from "@zoonk/utils/localized-number";
 
 const SECONDS_PER_MINUTE = 60;
@@ -17,45 +17,30 @@ export function formatCertificateDate({
   isoDate: string;
   locale: string;
 }): string {
-  return new Intl.DateTimeFormat(getFormattingLocale(locale), {
-    dateStyle: "long",
-    timeZone: "UTC",
-  }).format(new Date(`${isoDate}T00:00:00Z`));
+  return formatIsoDate({ isoDate, locale, role: "sentence", today: isoDate, year: "always" });
 }
 
 /** The plan's estimate, rounded the way the catalog rounds course lengths: whole hours past one. */
-export function formatStudyTime({ locale, minutes }: { locale: string; minutes: number }): string {
+function roundStudyMinutes(minutes: number): number {
   const duration = getTotalDuration(Math.round(minutes));
-  const roundedMinutes = "hours" in duration ? duration.hours * MINUTES_PER_HOUR : duration.minutes;
-
-  return formatDuration({ locale, totalSeconds: roundedMinutes * SECONDS_PER_MINUTE });
+  return "hours" in duration ? duration.hours * MINUTES_PER_HOUR : duration.minutes;
 }
 
-/** The post's study stat as a big number and a small unit: "~41" and "h". */
+/** "~41 hr": the one way a certificate writes its study time, in its facts and on its post. */
+export function formatStudyTime({ locale, minutes }: { locale: string; minutes: number }): string {
+  return `~${formatDuration({ locale, totalSeconds: roundStudyMinutes(minutes) * SECONDS_PER_MINUTE })}`;
+}
+
+/** The post's study stat as a big number and a small unit: "~41" and "hr", as `formatStudyTime` writes it. */
 export function getStudyTimeStat({ locale, minutes }: { locale: string; minutes: number }): {
   unit: string;
   value: string;
 } {
-  const duration = getTotalDuration(Math.round(minutes));
-  const unit = "hours" in duration ? "hour" : "minute";
-  const value = "hours" in duration ? duration.hours : duration.minutes;
+  const parts = /^(?<value>~\d+)\s*(?<unit>.*)$/u.exec(
+    formatStudyTime({ locale, minutes }),
+  )?.groups;
 
-  const parts = getNumberFormatter(locale, {
-    style: "unit",
-    unit,
-    unitDisplay: "narrow",
-  }).formatToParts(value);
-
-  return {
-    unit: parts
-      .filter((part) => part.type === "unit")
-      .map((part) => part.value)
-      .join(""),
-    value: `~${parts
-      .filter((part) => part.type !== "unit" && part.type !== "literal")
-      .map((part) => part.value)
-      .join("")}`,
-  };
+  return { unit: parts?.unit ?? "", value: parts?.value ?? "" };
 }
 
 export function formatCount({ count, locale }: { count: number; locale: string }): string {

@@ -26,6 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -37,26 +38,27 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.ChapterMark
+import com.zoonk.android.feature.plan.MoreChaptersRow
 import com.zoonk.android.feature.plan.WrittenCadenceChoice
 import com.zoonk.android.feature.plan.farTopicLine
 import com.zoonk.android.feature.plan.formatPlanDate
-import com.zoonk.android.feature.tutor.AskTutorAppearance
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -101,23 +103,20 @@ internal fun SubjectCoverage(
                         .withTabularFigures(),
             )
             CoverageBar(studied = preparation)
-            Column {
-                Text(stringResource(R.string.goalcontent_mastery), style = MaterialTheme.typography.labelSmall)
-                val mastery = subject.mastery
-                Text(
-                    text =
-                        if (mastery == null) {
-                            stringResource(R.string.goalcontent_mastery_pending)
-                        } else {
+            subject.mastery?.let { mastery ->
+                Column {
+                    Text(stringResource(R.string.plan_right_answers), style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        text =
                             stringResource(
-                                R.string.goalcontent_mastery_right,
+                                R.string.plan_done_of_total,
                                 formatNumber(mastery.correct.toDouble(), locale),
                                 formatNumber(mastery.answered.toDouble(), locale),
-                            )
-                        },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall.withTabularFigures(),
-                )
+                            ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+                    )
+                }
             }
         }
         return
@@ -136,7 +135,24 @@ internal fun SubjectCoverage(
     }
 }
 
-enum class LegendDot { Studied, Known, New, Today }
+enum class LegendDot { Studied, Known, New }
+
+/**
+ * Main's `CoverageLegend`: what the coverage bar's parts are, in its order. The words beside the bar say the numbers,
+ * so TalkBack skips it.
+ */
+@Composable
+fun CoverageLegend(modifier: Modifier = Modifier) {
+    FlowRow(
+        modifier.clearAndSetSemantics {},
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        LegendItem(LegendDot.Studied, stringResource(R.string.goalcontent_studied))
+        LegendItem(LegendDot.Known, stringResource(R.string.goalcontent_known))
+        LegendItem(LegendDot.New, stringResource(R.string.goalcontent_new))
+    }
+}
 
 @Composable
 fun LegendItem(
@@ -159,7 +175,6 @@ private fun LegendMark(dot: LegendDot) {
         LegendDot.Studied -> FilledDot(MaterialTheme.colorScheme.tertiary, modifier)
         LegendDot.Known -> FilledDot(quiet, modifier)
         LegendDot.New -> Box(modifier.border(1.dp, quiet, CircleShape))
-        LegendDot.Today -> Box(modifier.border(1.dp, MaterialTheme.colorScheme.tertiary, CircleShape))
     }
 }
 
@@ -171,9 +186,9 @@ internal fun NotPlannedNotice(
 ) {
     val words =
         when (subject.notPlannedReason) {
-            SyllabusSubject.NotPlannedReason.SKIPPED -> R.string.goalcontent_subject_skipped
-            SyllabusSubject.NotPlannedReason.TIME -> R.string.goalcontent_subject_time
-            SyllabusSubject.NotPlannedReason.MISSING -> R.string.goalcontent_subject_missing
+            "skipped" -> R.string.goalcontent_subject_skipped
+            "time" -> R.string.goalcontent_subject_time
+            "missing" -> R.string.goalcontent_subject_missing
             else -> return
         }
 
@@ -188,18 +203,18 @@ internal fun NotPlannedNotice(
                 Text(stringResource(words), style = MaterialTheme.typography.bodyMedium)
 
                 when (subject.notPlannedReason) {
-                    SyllabusSubject.NotPlannedReason.SKIPPED -> {
+                    "skipped" -> {
                         OutlinedButton(
                             onClick = { actions.restore(subject.areas) },
                             busy = writes.restoring,
                             leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
                         ) {
-                            Text(stringResource(R.string.goalcontent_bring_back))
+                            Text(stringResource(R.string.goalcontent_add_back))
                         }
                         if (writes.restoreFailed) SaveFailed()
                     }
 
-                    SyllabusSubject.NotPlannedReason.TIME -> {
+                    "time" -> {
                         TextButton(onClick = actions.adjustPlan) { Text(stringResource(R.string.goalcontent_adjust_plan)) }
                     }
 
@@ -247,7 +262,6 @@ internal fun ColumnScope.SubjectAside(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     today: LocalDate,
-    ask: (@Composable (AskTutorAppearance) -> Unit)?,
 ) {
     if (subject.notPlannedReason == null || subject.preparation != null) {
         AsideSection(
@@ -256,10 +270,6 @@ internal fun ColumnScope.SubjectAside(
     }
 
     AsideSection(stringResource(R.string.goalcontent_details)) { SubjectDetails(syllabus, subject, today) }
-
-    if (ask != null) {
-        AsideSection(stringResource(R.string.goalcontent_also)) { ask(AskTutorAppearance.Row) }
-    }
 }
 
 @Composable
@@ -279,19 +289,6 @@ private fun SubjectDetails(
         if (questions != null) {
             PropertyRow(stringResource(R.string.goalcontent_questions), listOfNotNull(number(questions), edition).factsLine())
         }
-        if (subject.topics.isNotEmpty()) {
-            PropertyRow(
-                stringResource(R.string.goalcontent_topics),
-                stringResource(R.string.goalcontent_count_of, number(subject.topicsStudied ?: 0), number(subject.topics.size)),
-            )
-        }
-        if (subject.chapters.isNotEmpty()) {
-            val done = subject.chapters.count { it.state == SyllabusChapter.State.DONE }
-            PropertyRow(
-                stringResource(R.string.goalcontent_chapters),
-                stringResource(R.string.goalcontent_count_of, number(done), number(subject.chapters.size)),
-            )
-        }
         if (nextDate != null) {
             PropertyRow(stringResource(R.string.goalcontent_next_date), formatPlanDate(nextDate.toJavaLocalDate(), today, locale))
         }
@@ -307,7 +304,7 @@ private fun SubjectDetails(
 
 @Composable
 private fun MindMapsLink(onClick: () -> Unit) {
-    TextButton(onClick = onClick, size = ButtonSize.Small, leadingIcon = { ButtonIcon(R.drawable.ic_lan) }) {
+    TextButton(onClick = onClick, edge = ButtonEdge.End, size = ButtonSize.Small, leadingIcon = { ButtonIcon(R.drawable.ic_lan) }) {
         Text(stringResource(R.string.navigation_mind_maps))
     }
 }
@@ -320,8 +317,7 @@ internal fun LazyListScope.subjectChapters(
     val chapters = subject.chapters
     if (chapters.isEmpty()) return
 
-    val done = chapters.filter { it.state == SyllabusChapter.State.DONE }
-    val studied = done.count { !it.known }
+    val done = chapters.doneChapters
     val ahead = chapters.filter { it.state != SyllabusChapter.State.DONE }
 
     sectionTitle(
@@ -330,8 +326,8 @@ internal fun LazyListScope.subjectChapters(
         detail = {
             val locale = currentLocale()
             stringResource(
-                R.string.goalcontent_count_of,
-                formatNumber(studied.toDouble(), locale),
+                R.string.goalcontent_chapters_progress,
+                formatNumber(done.size.toDouble(), locale),
                 formatNumber(chapters.size.toDouble(), locale),
             )
         },
@@ -350,7 +346,7 @@ internal fun LazyListScope.subjectChapters(
                 )
                 if (expanded) {
                     done.forEach { chapter ->
-                        HorizontalDivider()
+                        ListDivider()
                         SyllabusChapterRow(chapter, today, actions)
                     }
                 }
@@ -365,28 +361,12 @@ internal fun LazyListScope.subjectChapters(
 
         Column {
             shown.forEachIndexed { index, chapter ->
-                if (index > 0 || done.isNotEmpty()) HorizontalDivider()
+                if (index > 0 || done.isNotEmpty()) ListDivider()
                 SyllabusChapterRow(chapter, today, actions)
             }
             if (hidden > 0) {
-                HorizontalDivider()
-                ListRow(
-                    headline = {
-                        Text(
-                            pluralStringResource(R.plurals.goalcontent_more_chapters, hidden, hidden),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
-                    onClick = { showAll = true },
-                    leading = {
-                        Icon(
-                            painterResource(R.drawable.ic_add),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
-                    chevron = false,
-                )
+                ListDivider()
+                MoreChaptersRow(pluralStringResource(R.plurals.goalcontent_more_chapters, hidden, hidden)) { showAll = true }
             }
         }
     }
@@ -464,7 +444,7 @@ internal fun SyllabusChapterRow(
                 lessonsTotal = chapter.lessonsTotal,
             )
         },
-        supporting = line?.let { { Text(it) } },
+        supporting = listRowDescription(line),
         meta = nextDate?.let { { Text(formatPlanDate(it.toJavaLocalDate(), today, locale)) } },
     )
 }
@@ -545,8 +525,8 @@ internal fun LazyListScope.subjectTopics(
         groupTopics(run.topics) { it.name }.forEachIndexed { index, group ->
             item(key = "topic-$runIndex-$index", contentType = "topic") {
                 Column {
-                    if (index > 0) HorizontalDivider()
-                    TopicGroupRow(group, showFrequency, syllabus.knownTopicsReturn, actions)
+                    if (index > 0) ListDivider()
+                    TopicGroupRow(group, showFrequency, actions, topics.size.toString().length)
                 }
             }
         }
@@ -557,12 +537,13 @@ internal fun LazyListScope.subjectTopics(
     }
 }
 
+/** Without [actions] its chapters only say what's there: none opens. */
 @Composable
-private fun TopicGroupRow(
+internal fun TopicGroupRow(
     group: TopicGroup<SyllabusTopic>,
     showFrequency: Boolean,
-    knownReturn: Syllabus.KnownTopicsReturn,
-    actions: SubjectActions,
+    actions: SubjectActions?,
+    countDigits: Int,
 ) {
     val mark = group.mark
     val chapters = group.chapters
@@ -574,14 +555,22 @@ private fun TopicGroupRow(
         )
     }
     val supporting: (@Composable () -> Unit)? =
-        if (group.children.isEmpty()) topicNote(group.topic, knownReturn)?.let { note -> { Text(note) } } else null
+        if (group.children.isEmpty()) topicNote(group.topic)?.let { note -> { Text(note) } } else null
     val frequent = showFrequency && group.frequency == SyllabusTopic.Frequency.HIGH
     val count = group.studiedCount
     val meta: (@Composable () -> Unit)? =
         if (frequent || count != null) {
             {
                 if (frequent) FrequencyChip()
-                count?.let { (studied, total) -> GroupCount(studied, total) }
+                Box(contentAlignment = androidx.compose.ui.Alignment.CenterEnd) {
+                    Text(
+                        "8".repeat(countDigits) + "/" + "8".repeat(countDigits),
+                        Modifier.alpha(0f).clearAndSetSemantics {
+                        },
+                        style = MaterialTheme.typography.labelMedium.copy(fontFeatureSettings = "tnum"),
+                    )
+                    count?.let { (studied, total) -> GroupCount(studied, total) }
+                }
             }
         } else {
             null
@@ -606,7 +595,7 @@ private fun TopicGroupRow(
         )
         if (expanded) {
             Column(Modifier.padding(start = listRowWordsStart(), end = LIST_ITEM_INSET, bottom = 8.dp)) {
-                group.children.forEach { child -> ChildTopic(child, knownReturn) }
+                group.children.forEach { child -> ChildTopic(child) }
                 if (chapters.isNotEmpty()) {
                     if (group.children.isNotEmpty()) HorizontalDivider(Modifier.padding(vertical = 4.dp))
                     chapters.forEach { TopicChapterLink(it, actions) }
@@ -632,13 +621,10 @@ private fun GroupCount(
 }
 
 @Composable
-private fun ChildTopic(
-    child: TopicChild<SyllabusTopic>,
-    knownReturn: Syllabus.KnownTopicsReturn,
-) {
+private fun ChildTopic(child: TopicChild<SyllabusTopic>) {
     val mark = child.topic.mark
     val status = topicMarkWords(mark)
-    val note = topicNote(child.topic, knownReturn)
+    val note = topicNote(child.topic)
 
     Row(
         modifier =
@@ -669,14 +655,18 @@ private fun ChildTopic(
 }
 
 @Composable
-private fun TopicChapterLink(
+internal fun TopicChapterLink(
     chapter: SyllabusChapter,
-    actions: SubjectActions,
+    actions: SubjectActions?,
 ) {
     val chapterId = chapter.chapterId
-    val openFarTopic = actions.openFarTopic
+    val openFarTopic = actions?.openFarTopic
     val onClick =
         when {
+            actions == null -> {
+                null
+            }
+
             chapterId != null -> {
                 { actions.openChapter(chapterId) }
             }
@@ -722,37 +712,12 @@ private fun TopicChapterLink(
 private fun numberedTopic(
     number: String?,
     text: String,
-) = buildAnnotatedString {
-    if (number != null) {
-        withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant, fontFeatureSettings = "tnum")) { append("$number ") }
-    }
-    append(text)
-}
+): AnnotatedString = if (number == null) AnnotatedString(text) else numberedTitle(number, text)
 
 @Composable
-private fun topicNote(
-    topic: SyllabusTopic,
-    knownReturn: Syllabus.KnownTopicsReturn,
-): String? {
-    if (topic.status == SyllabusTopic.Status.KNOWN) {
-        return stringResource(
-            if (knownReturn ==
-                Syllabus.KnownTopicsReturn.REVIEWS
-            ) {
-                R.string.goalcontent_topic_known_reviews
-            } else {
-                R.string.goalcontent_topic_known_practice
-            },
-        )
-    }
-    return when (topic.notPlannedReason) {
-        null -> null
-        SyllabusTopic.NotPlannedReason.SKIPPED -> stringResource(R.string.goalcontent_topic_skipped)
-        SyllabusTopic.NotPlannedReason.PAST_BASICS -> stringResource(R.string.goalcontent_topic_past_basics)
-        SyllabusTopic.NotPlannedReason.SKIPPED_BASE -> stringResource(R.string.goalcontent_topic_skipped_base)
-        SyllabusTopic.NotPlannedReason.TIME -> stringResource(R.string.goalcontent_topic_time)
-        SyllabusTopic.NotPlannedReason.MISSING -> stringResource(R.string.goalcontent_topic_missing)
-    }
+private fun topicNote(topic: SyllabusTopic): String? {
+    if (topic.status == SyllabusTopic.Status.KNOWN) return planOutsideReason("known")
+    return topic.notPlannedReason?.let { planOutsideReason(it) }
 }
 
 @Composable
@@ -763,7 +728,7 @@ private fun TopicFrequencyNote(
 ) {
     val source = subject.topicFrequencySource
     val tagged = setsApart(subject.topics.map { it.frequency })
-    val mark = stringResource(R.string.goalcontent_appears_a_lot)
+    val mark = stringResource(R.string.goalcontent_asked_a_lot)
     val markStyle = frequencyMarkStyle()
 
     val text =
@@ -787,7 +752,7 @@ private fun TopicFrequencyNote(
             else -> {
                 val publisher = sourceHost(source.url)
                 val link = publisher to LinkTarget(source.url)
-                val waits = subject.topics.any { it.notPlannedReason == SyllabusTopic.NotPlannedReason.TIME }
+                val waits = subject.topics.any { it.notPlannedReason == "time" }
                 when {
                     tagged && waits -> {
                         annotate(
@@ -837,11 +802,11 @@ internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
 
         Column {
             shown.forEachIndexed { index, group ->
-                if (index > 0) HorizontalDivider()
+                if (index > 0) ListDivider()
                 MatrixGroupRow(group)
             }
             if (groups.size > shown.size) {
-                HorizontalDivider()
+                ListDivider()
                 ListRow(
                     headline = {
                         Text(
@@ -849,13 +814,6 @@ internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
                         )
                     },
                     onClick = { showAll = true },
-                    leading = {
-                        Icon(
-                            painterResource(R.drawable.ic_add),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
                     chevron = false,
                 )
             }

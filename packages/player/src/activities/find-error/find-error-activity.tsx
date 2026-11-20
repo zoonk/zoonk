@@ -4,17 +4,20 @@ import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BotIcon, Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { usePlayerInteractionState } from "../../player-context";
-import { getNumberKeyShortcut } from "../../player-shortcuts";
 import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_PRESS_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
 
@@ -28,8 +31,8 @@ function StepNumber({ index, verdict }: { index: number; verdict: StepVerdict })
       className={cn(
         "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold tabular-nums",
         verdict === "plain" && "bg-muted",
-        verdict === "error" && "bg-success-text text-background",
-        verdict === "picked" && "bg-destructive-text text-background",
+        verdict === "error" && ACTIVITY_COLOR.right.solid,
+        verdict === "picked" && ACTIVITY_COLOR.wrong.solid,
       )}
     >
       {verdict === "error" && <Check className="size-4" />}
@@ -72,14 +75,16 @@ function FindErrorStep({
   return (
     <button
       aria-checked={isPicked}
-      aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
+      aria-keyshortcuts={shortcutKeys("pick", index)}
       aria-label={label}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left text-sm leading-snug outline-none select-none focus-visible:ring-[3px] sm:text-base",
+        ACTIVITY_CARD_CLASS,
+        ACTIVITY_PRESS_CLASS,
+        "focus-visible:border-ring flex w-full items-start gap-3 text-sm leading-snug sm:text-base",
         !isChecked && !isPicked && "hover:bg-accent",
-        !isChecked && isPicked && "border-primary ring-primary/15 ring-[3px]",
-        verdict === "error" && "border-success bg-success/10 border-2",
-        verdict === "picked" && "border-destructive bg-destructive/10 border-2",
+        !isChecked && isPicked && "bg-selected-tint contrast-more:border-input border-transparent",
+        verdict === "error" && cn(ACTIVITY_COLOR.right.box, ACTIVITY_COLOR.right.soft),
+        verdict === "picked" && cn(ACTIVITY_COLOR.wrong.box, ACTIVITY_COLOR.wrong.soft),
       )}
       disabled={isChecked}
       onClick={onToggle}
@@ -93,15 +98,14 @@ function FindErrorStep({
       <span className="flex min-w-0 flex-1 flex-col gap-1.5">
         <span
           className={cn(
-            verdict === "error" &&
-              "text-muted-foreground decoration-destructive-text line-through decoration-2",
+            verdict === "error" && cn(ACTIVITY_COLOR.guess.text, "line-through decoration-2"),
           )}
         >
           <LessonRichText text={text} />
         </span>
 
         {verdict === "error" && (
-          <span className="text-success-text font-medium">
+          <span className={cn(ACTIVITY_COLOR.right.text, "font-medium")}>
             <LessonRichText text={correction} />
           </span>
         )}

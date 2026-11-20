@@ -430,7 +430,7 @@ struct GenerationWait: Equatable, Sendable {
     Phase(
       id: "skills",
       label: LocalizedStringResource(
-        "Mapping the skills it takes", table: "Onboarding",
+        "Choosing what to learn", table: "Onboarding",
         comment: "A step of the wait while a plan is built"),
       isOptional: false, seconds: 60,
       lines: [
@@ -553,7 +553,7 @@ struct GenerationWait: Equatable, Sendable {
         Phase(
           id: "bank",
           label: LocalizedStringResource(
-            "Writing the level test questions", table: "Onboarding",
+            "Getting the questions ready", table: "Onboarding",
             comment: "The step of the wait while a language's level test questions are written"),
           isOptional: false, seconds: 60,
           lines: [
@@ -747,6 +747,11 @@ enum GenerationFailure: Equatable, Sendable {
   case notStarted
   case connection
   case generation
+
+  /// The run won't finish, so its wait is over; a lost connection may still finish.
+  var endsWait: Bool {
+    self != .connection
+  }
 }
 
 /// A run as a wait shows it, and what it reported on the side.
@@ -1051,23 +1056,26 @@ struct GenerationFailureNotice: View {
       Image(
         systemName: failure == .connection ? "wifi.exclamationmark" : "exclamationmark.circle"
       )
+      .markColumn()
       .foregroundStyle(.mutedForeground)
       .accessibilityHidden(true)
 
       VStack(alignment: .leading, spacing: 2) {
-        title
+        Text(title)
           .typeStyle(.rowTitle)
           .foregroundStyle(Color(.foreground))
 
-        Text(description)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        if let description {
+          Text(description)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
 
         if let act {
           Button(action: act) {
             action
           }
-          .buttonStyle(.mainAction)
+          .mainActionUnlessBarHoldsOne()
           .controlSize(.small)
           .disabled(isActing)
           .padding(.top, 8)
@@ -1078,36 +1086,31 @@ struct GenerationFailureNotice: View {
     .padding(.horizontal, 14)
     .padding(.vertical, 12)
     .panel()
-    .announcesAlert(description)
+    .announcesAlert([title, description].compactMap(\.self).joinedSentences())
   }
 
-  private var title: Text {
-    switch failure {
-    case .connection:
-      Text(
-        "Connection lost", tableName: "Onboarding", comment: "A wait that stopped getting updates")
-    case .generation:
-      Text("This didn't finish", tableName: "Onboarding", comment: "A run that failed")
-    case .notStarted:
-      Text("This didn't start", tableName: "Onboarding", comment: "A run that never started")
-    }
-  }
-
-  private var description: String {
+  /// A run that failed and one that never started read the same: the learner's way on is the same.
+  private var title: String {
     switch failure {
     case .connection:
       String(
+        localized: "Connection lost", table: "Onboarding",
+        comment: "A wait that stopped getting updates")
+    case .generation, .notStarted:
+      String(
+        localized: "Something went wrong on our side", table: "Onboarding",
+        comment:
+          "The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows."
+      )
+    }
+  }
+
+  private var description: String? {
+    failure == .connection
+      ? String(
         localized: "We stopped getting updates. It may still be working.", table: "Onboarding",
         comment: "Why a wait stopped getting updates")
-    case .generation:
-      String(
-        localized: "Something went wrong on our side.", table: "Onboarding",
-        comment: "Why a run failed")
-    case .notStarted:
-      String(
-        localized: "We couldn't get this started.", table: "Onboarding",
-        comment: "Why a run never started")
-    }
+      : nil
   }
 
   private var action: Text {
@@ -1145,7 +1148,7 @@ struct GenerationTimeline<Header: View>: View {
       VStack(alignment: .leading, spacing: 10) {
         ForEach(wait.visiblePhases) { phase in
           GenerationPhaseRow(
-            phase: phase, status: status(of: phase),
+            phase: phase, status: phase.status(failure: failure),
             isFollowing: failure == nil && !wait.isDone, clockOffset: wait.clockOffset)
         }
       }
@@ -1153,12 +1156,16 @@ struct GenerationTimeline<Header: View>: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  /// A failed run stops at the phase it was in; one that never started has nothing running.
-  private func status(of phase: GenerationWait.Phase) -> GenerationPhaseRow.Status {
-    switch (phase.state, failure) {
+}
+
+extension GenerationWait.Phase {
+  /// A failed run stops at the phase it was in; one that never started has nothing running. The
+  /// API never names the phase that failed, so it's marked only where the run reported a step.
+  func status(failure: GenerationFailure?) -> GenerationPhaseRow.Status {
+    switch (state, failure) {
     case (.done, _): .done
     case (.waiting, _), (.working, .notStarted?): .waiting
-    case (.working, .generation?): .failed
+    case (.working, .generation?): isReported ? .failed : .waiting
     case (.working, _): .working
     }
   }
@@ -1187,8 +1194,11 @@ private struct GenerationWaitBar: View {
       HStack(spacing: 12) {
         // A report eases the bar on; the drift between reports steps once a second, as the ring
         // does, so a wait left open isn't redrawn every frame.
-        FilledParts(share: shown, weights: wait.visiblePhases.map(\.seconds))
-          .animation(reduceMotion ? nil : .easeOut(duration: 0.7), value: wait.progress.share)
+        FilledParts(
+          share: shown, weights: wait.visiblePhases.map(\.seconds),
+          states: wait.visiblePhases.map(\.state)
+        )
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.7), value: wait.progress.share)
 
         Text(shown, format: .percent.precision(.fractionLength(0)))
           .typeStyle(.data)
@@ -1218,7 +1228,7 @@ extension GenerationWait.Kind {
         "Building your plan", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
     case .placement:
       LocalizedStringResource(
-        "Getting your questions ready", table: "Onboarding",
+        "Getting your test ready", table: "Onboarding",
         comment: "Title while placement questions are written")
     case .explanation:
       LocalizedStringResource(
@@ -1241,6 +1251,7 @@ extension GenerationWait.Kind {
 private struct FilledParts: View, Animatable {
   var share: Double
   let weights: [Double]
+  let states: [GenerationWait.PhaseState]
 
   var animatableData: Double {
     get { share }
@@ -1252,17 +1263,34 @@ private struct FilledParts: View, Animatable {
   }
 
   private var parts: [MeterParts.Part] {
-    var reached = share * weights.reduce(0, +)
-
-    return weights.map { weight in
-      let fill = weight > 0 ? min(1, max(0, reached / weight)) : 0
-      reached -= weight
-      return MeterParts.Part(weight: weight, fill: .share(fill))
+    zip(weights, GenerationWait.phaseFills(share: share, weights: weights, states: states)).map {
+      MeterParts.Part(weight: $0, fill: .share($1))
     }
   }
 }
 
-private struct GenerationPhaseRow: View {
+extension GenerationWait {
+  /// How much of each phase's part `share` (0 to 1) of the whole bar fills, each by its own state,
+  /// so phases running side by side fill as they finish: a done part is full, a waiting one empty,
+  /// and the running ones share what `share` reaches past the done ones.
+  static func phaseFills(share: Double, weights: [Double], states: [PhaseState]) -> [Double] {
+    let parts = zip(weights, states)
+    let done = parts.filter { $0.1 == .done }.reduce(0) { $0 + $1.0 }
+    let running = parts.filter { $0.1 == .working }.reduce(0) { $0 + $1.0 }
+    let reached = min(max(share, 0), 1) * weights.reduce(0, +)
+    let runningFill = running > 0 ? min(1, max(0, (reached - done) / running)) : 0
+
+    return states.map { state in
+      switch state {
+      case .done: 1
+      case .working: runningFill
+      case .waiting: 0
+      }
+    }
+  }
+}
+
+struct GenerationPhaseRow: View {
   enum Status {
     case waiting
     case working
@@ -1400,8 +1428,6 @@ private struct GenerationPhaseDetail: View {
 enum GenerationClock {
   /// Main's `formatClock`: whole seconds rounded up, as "0:18" or "1:02:05".
   static func text(_ seconds: TimeInterval) -> String {
-    let duration = Duration.seconds(max(0, seconds.rounded(.up)))
-    return duration.formatted(
-      .time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond))
+    PlanDate.clock(seconds: Int(max(0, seconds.rounded(.up))))
   }
 }

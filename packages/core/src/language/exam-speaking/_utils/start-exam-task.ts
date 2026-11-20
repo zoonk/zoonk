@@ -9,8 +9,8 @@ import { type SpeakingFormat, type SpeakingTaskFormat } from "../speaking-format
 import { getSpeakingTask } from "../speaking-formats";
 import {
   type ExamSpeakingSetup,
+  findCallStartLimit,
   findExamSpeakingSetup,
-  findUsedUpCallTime,
   hasSpeakingAccess,
 } from "./exam-speaking-setup";
 
@@ -89,7 +89,7 @@ export async function startExamTask({
     return { status: "callsPaused" };
   }
 
-  const usedUp = await findUsedUpCallTime();
+  const usedUp = await findCallStartLimit();
 
   if (usedUp) {
     return { limit: usedUp, status: "limitReached" };

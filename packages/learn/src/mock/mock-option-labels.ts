@@ -3,76 +3,106 @@
 import { type MockOptionView } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
-import { useMockDaySizeLabel } from "./mock-labels";
 
 export function useMockOptionName() {
   const t = useExtracted();
   const format = useFormatter();
-  const daySize = useMockDaySizeLabel();
 
   return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
+    const day = String(option.day ?? 1);
+
     if (option.kind === "area") {
       return option.areas[0] ?? option.area ?? t("One subject");
+    }
+
+    if (option.kind === "half") {
+      return severalDays ? t("Half of day {day}", { day }) : t("Half the exam");
     }
 
     const unpicked = option.leftOut.flatMap((part) =>
       part.part === "choice" && part.name ? [part.name] : [],
     );
 
-    if (option.kind === "full" && unpicked.length > 0) {
+    if (unpicked.length > 0) {
       const names = format.list(unpicked, { type: "conjunction" });
 
       return severalDays
-        ? t("Exam day {day} without {names}", { day: String(option.day ?? 1), names })
-        : t("An exam day without {names}", { names });
+        ? t("Day {day}, without {names}", { day, names })
+        : t("The full exam, without {names}", { names });
     }
 
-    return daySize({
-      day: severalDays ? (option.day ?? 1) : null,
-      fullLength: option.kind === "full",
-    });
+    return severalDays ? t("Day {day}", { day }) : t("The full exam");
   };
 }
 
+/** A row's one line: what the mock exam asks. */
 export function useMockOptionDetail() {
   const t = useExtracted();
   const format = useFormatter();
 
   return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
-    const written =
-      option.written.length > 0
-        ? `+ ${format.list(option.written, { type: "conjunction" })}`
-        : null;
+    const subjects = severalDays && option.kind !== "area" ? option.areas : [];
+    const parts = option.covers ?? [...subjects, ...option.written];
 
-    const subjects =
-      severalDays && option.kind !== "area" && option.areas.length > 0
-        ? format.list(option.areas, { type: "conjunction" })
-        : null;
+    if (parts.length > 0) {
+      return format.list(parts, { type: "conjunction" });
+    }
 
-    const covers = option.covers ? format.list(option.covers, { type: "conjunction" }) : null;
-
-    const objective =
-      option.objectiveOnly && !covers
-        ? t({
-            description:
-              "The mock leaves out the exam's written part and has only its questions with set answers.",
-            message: "objective part only",
-          })
-        : null;
-
-    return [covers, subjects, written, objective].filter(Boolean).join(" · ");
+    return option.objectiveOnly ? t("No written part") : "";
   };
 }
 
-export function useMockOptionSize() {
+const ESTIMATE_STEP_MINUTES = 5;
+
+/**
+ * How long learners usually take, to the nearest five minutes, when that's under the time limit.
+ * Core gives the limit itself when no estimate covers the whole mock (an essay, too few answers).
+ */
+function usualMinutes({
+  estimatedMinutes,
+  minutes,
+}: Pick<MockOptionView, "estimatedMinutes" | "minutes">): number | null {
+  const rounded = Math.max(
+    ESTIMATE_STEP_MINUTES,
+    Math.round(estimatedMinutes / ESTIMATE_STEP_MINUTES) * ESTIMATE_STEP_MINUTES,
+  );
+
+  return estimatedMinutes < minutes && rounded < minutes ? rounded : null;
+}
+
+/** The mock's questions and time limit, as the exam page and the plan show them. */
+function useMockOptionSize() {
   const t = useExtracted();
   const duration = useFormatDuration();
 
-  return (option: Pick<MockOptionView, "estimatedMinutes" | "questions">): string =>
+  return (option: Pick<MockOptionView, "minutes" | "questions">): string =>
     t({
-      description:
-        "{count} is a number of questions in a mock exam, and {time} about how long it takes.",
-      message: "{count} q · ~{time}",
-      values: { count: String(option.questions), time: duration(option.estimatedMinutes) },
+      description: "A mock exam's size: its number of questions, then its time limit.",
+      id: "mockQuestionsAndTime",
+      message: "{count, plural, one {# question} other {# questions}} · {time}",
+      values: { count: option.questions, time: duration(option.minutes) },
     });
+}
+
+/** The chooser's row's facts: the size, then how long learners usually take when it's less. */
+export function useMockOptionSizeFacts() {
+  const t = useExtracted();
+  const duration = useFormatDuration();
+  const size = useMockOptionSize();
+
+  return (option: Pick<MockOptionView, "estimatedMinutes" | "minutes" | "questions">): string[] => {
+    const usual = usualMinutes(option);
+
+    return usual === null
+      ? [size(option)]
+      : [
+          size(option),
+          t({
+            description:
+              "After a mock exam's size and time limit: about how long learners usually take.",
+            message: "usually {time}",
+            values: { time: duration(usual) },
+          }),
+        ];
+  };
 }

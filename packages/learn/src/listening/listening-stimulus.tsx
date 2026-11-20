@@ -2,8 +2,8 @@
 
 import { type ListeningSetView } from "@zoonk/core/library/listening/view";
 import { Button } from "@zoonk/ui/components/button";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ItemLine } from "../questions/item-text";
@@ -40,10 +40,7 @@ function Fold({
         variant="outline"
       >
         {label}
-        <ChevronDownIcon
-          aria-hidden="true"
-          className={cn("size-4 transition-transform", open && "rotate-180")}
-        />
+        <FoldChevron inline />
       </Button>
 
       {open && <div id={contentId}>{children}</div>}

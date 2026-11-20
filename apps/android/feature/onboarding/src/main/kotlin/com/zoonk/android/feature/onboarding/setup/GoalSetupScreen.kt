@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,17 +20,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,7 +36,6 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.GenerationFailure
-import com.zoonk.android.data.GenerationFirstLesson
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
@@ -64,25 +57,25 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
-import com.zoonk.android.feature.warmup.WaitQuizState
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
@@ -96,6 +89,7 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import java.util.Locale
 import java.util.UUID
 
 @Composable
@@ -104,15 +98,11 @@ fun GoalSetupScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val buddy =
-        com.zoonk.android.feature.ceremonies
-            .momentBuddy(app)
     val placementReport = rememberSaveFailureReport(app, "placement-question")
     val levelTestReport = rememberSaveFailureReport(app, "level-test-question")
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session as? SessionState.SignedIn
     CompositionLocalProvider(
-        LocalRevealBuddy provides buddy,
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it, app.sessions) },
         LocalSetupSpeech provides app.speech,
     ) {
@@ -146,7 +136,21 @@ fun GoalSetupScreen(
 ) {
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     val drafts = LocalSetupDrafts.current
-    val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId, route.revealMoment) }
+    val vm =
+        viewModel {
+            GoalSetupViewModel(
+                store,
+                drafts,
+                createSavedStateHandle(),
+                route.goalId,
+                RevealDoors(prepareToday, openRevealStep),
+            )
+        }
+    VisitOf(vm.visit)
+    ActOn(vm.startedOver) {
+        navigator.closeSection()
+        navigator.open(AppRoute.StartGoal())
+    }
     val state by store.onboardings[vm.goalId].collectShown()
     val run by vm.follower.run.collectAsStateWithLifecycle()
     val first = run.firstLesson.withRead(state.value?.firstLesson, state.value?.generationId, run.id)
@@ -204,12 +208,7 @@ fun GoalSetupScreen(
         title = {
             when {
                 testing != null -> {
-                    Meter(
-                        share = testing,
-                        modifier = Modifier.width(STEP_DOTS_WIDTH),
-                        color = MaterialTheme.colorScheme.primary,
-                        contentDescription = stringResource(R.string.onboarding_placement_progress),
-                    )
+                    Text(vm.placementProgressLabel ?: stringResource(R.string.onboarding_placement_progress))
                 }
 
                 else -> {
@@ -219,7 +218,7 @@ fun GoalSetupScreen(
         },
         actions = {
             if (view != null && inQuestions && testing == null) {
-                if (step.profileQuestion != null) {
+                if (step.profileQuestion != null && view.steps.any { it != step && it.profileQuestion != null }) {
                     val skipLabel = stringResource(R.string.profile_questions_skip_all_label)
                     TextButton(
                         onClick = { vm.skipProfiles(false) },
@@ -240,12 +239,7 @@ fun GoalSetupScreen(
                             vm.skipProfiles(true)
                         }.takeIf { step.profileQuestion != null },
                     onFinishLater = { navigator.showRoot(AppTab.Today) },
-                    onStartOver = {
-                        vm.startOver(view.goalIds.map { it.toString() }) {
-                            navigator.closeSection()
-                            navigator.open(AppRoute.StartGoal())
-                        }
-                    },
+                    onStartOver = { vm.startOver(view.goalIds.map { it.toString() }) },
                 )
             }
         },
@@ -287,8 +281,6 @@ fun GoalSetupScreen(
                                         plans,
                                         isGuest,
                                         navigator,
-                                        route,
-                                        prepareToday,
                                         openRevealStep,
                                         announce,
                                         run,
@@ -328,15 +320,13 @@ private fun ColumnScope.SetupStep(
     plans: PlanStore,
     isGuest: Boolean,
     navigator: AppNavigator,
-    route: AppRoute.GoalSetup,
-    prepareToday: suspend () -> Unit,
     openRevealStep: (suspend (DayView, DayStep, UUID) -> MutationResult<AppRoute?>)?,
     announce: (String) -> Unit,
     run: GenerationRun,
     onReportPlacement: () -> Unit,
     onReportLevelTest: () -> Unit,
 ) {
-    val subject = view.subject()
+    val subject = view.subject(currentLocale())
     val pending = vm.isSaving
     val onRetryRun = vm.follower::retry.takeIf { run.failure == GenerationFailure.Connection || vm.follower.canRestart }
     val onboardingId = view.goal.details.text("onboardingId")
@@ -346,6 +336,9 @@ private fun ColumnScope.SetupStep(
         TrackOnboardingQuestion(view.goal.id.toString(), step.value, onboardingId)
     }
     val firstLesson = run.firstLesson.withRead(view.firstLesson, view.generationId, run.id)
+    val startFirstLesson = firstLesson?.let { first -> { navigator.open(AppRoute.Lesson(first.id)) } }
+    ActOn(vm.startLesson) { startFirstLesson?.invoke() }
+    ActOn(vm.revealed) { leadToRevealed(navigator, it) }
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
@@ -355,14 +348,16 @@ private fun ColumnScope.SetupStep(
             SetupAimContext(
                 view.languageAim,
                 vm.isSaving,
-                vm.saveFailed,
-                { aim, done -> vm.changeAim(plans, aim, done) },
+                vm.aimFailed,
+                { aim -> vm.changeAim(plans, aim) },
+                vm.aimSaved,
+                vm.aimSheet,
             ),
         LocalSetupWait provides
             SetupWaitContext(
                 view.goal.id.toString(),
                 firstLesson,
-                firstLesson?.let { first -> { navigator.open(AppRoute.Lesson(first.id)) } },
+                startFirstLesson,
                 view.planReadiness.ready || run.planMade,
                 run.warmUpId,
                 view.libraryCourse,
@@ -378,12 +373,10 @@ private fun ColumnScope.SetupStep(
             plans,
             isGuest,
             navigator,
-            route,
             subject,
             pending,
             run,
             onRetryRun,
-            prepareToday,
             openRevealStep,
             onReportPlacement,
             onReportLevelTest,
@@ -400,12 +393,10 @@ private fun ColumnScope.QuestionStep(
     plans: PlanStore,
     isGuest: Boolean,
     navigator: AppNavigator,
-    route: AppRoute.GoalSetup,
     subject: String,
     pending: Boolean,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
-    prepareToday: suspend () -> Unit,
     openRevealStep: (suspend (DayView, DayStep, UUID) -> MutationResult<AppRoute?>)?,
     onReportPlacement: () -> Unit,
     onReportLevelTest: () -> Unit,
@@ -444,7 +435,14 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.REASON -> {
-            ReasonStep(subject, view.languageAim, pending, rememberUnsentWords(vm.goalId, step.value, count = 2), vm::answer)
+            ReasonStep(
+                subject,
+                view.languageAim,
+                certificateExample(view.goal.targetLanguage, view.goal.targetRegion),
+                pending,
+                rememberUnsentWords(vm.goalId, step.value, count = 2),
+                vm::answer,
+            )
         }
 
         OnboardingStep.TARGET -> {
@@ -527,6 +525,7 @@ private fun ColumnScope.QuestionStep(
                     store = store,
                     navigator = navigator,
                     onProgress = { vm.placementProgress = it },
+                    onProgressLabel = { vm.placementProgressLabel = it },
                     onDone = placed,
                     onReportSaveFailure = onReportLevelTest,
                 )
@@ -539,7 +538,8 @@ private fun ColumnScope.QuestionStep(
                     run = run,
                     onRetryRun = onRetryRun,
                     onProgress = { vm.placementProgress = it },
-                    onDone = placed,
+                    onProgressLabel = { vm.placementProgressLabel = it },
+                    handBack = placed,
                     onReportSaveFailure = onReportPlacement,
                 )
             } else {
@@ -551,6 +551,7 @@ private fun ColumnScope.QuestionStep(
                     onRetryRun = onRetryRun,
                     store = store,
                     onProgress = { vm.placementProgress = it },
+                    onProgressLabel = { vm.placementProgressLabel = it },
                     onDone = placed,
                     onReportSaveFailure = onReportPlacement,
                 )
@@ -565,30 +566,12 @@ private fun ColumnScope.QuestionStep(
                 onRetryRun,
                 plans,
                 navigator,
-                route,
-                prepareToday,
                 onReveal = vm::reveal,
-                openingStep = vm.openingStep,
-                failedStep = vm.failedStep,
                 startStepFailed = vm.startStepFailed,
-                onOpenStep =
-                    openRevealStep?.let { open ->
-                        { day, step, fromStart ->
-                            vm.openRevealStep(
-                                day,
-                                step,
-                                open,
-                                fromStart = fromStart,
-                                isCurrent = { navigator.currentRoute == route },
-                            ) { destination ->
-                                openRevealedPlan(navigator, route, prepareToday, destination)
-                            }
-                        }
-                    },
+                onOpenStep = openRevealStep?.let { { day, step -> vm.openRevealStep(day, step) } },
                 saving = vm.isSaving,
                 saveFailed = vm.saveFailed,
-                playMoment = vm::takeRevealMoment,
-                planRevealed = view.planRevealed,
+                onUseNoticeDay = { vm.useNoticeDay(plans, it) },
                 today = store.revealToday[view.goal.id.toString()],
             )
         }
@@ -626,9 +609,7 @@ private fun MoreMenu(
     var confirming by rememberSaveable { mutableStateOf(false) }
 
     Box {
-        IconButton(onClick = { open = true }, enabled = !disabled) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.onboarding_more))
-        }
+        MoreButton(onClick = { open = true }, contentDescription = stringResource(R.string.onboarding_more), enabled = !disabled)
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             if (onNeverAsk != null) {
                 DropdownMenuItem(text = {
@@ -687,7 +668,9 @@ private fun MenuText(
     }
 }
 
-private fun Onboarding.subject(): String = goal.details.text("subject") ?: goal.displayName
+/** Written to sit mid-sentence ("inglês"); the chip starts a line, so it starts with a capital. */
+private fun Onboarding.subject(locale: Locale): String =
+    goal.details.text("subject")?.replaceFirstChar { it.titlecase(locale) } ?: goal.displayName
 
 private fun Goal.levelChoice(): LevelChoice? {
     val level =

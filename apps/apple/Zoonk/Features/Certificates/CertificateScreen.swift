@@ -2,8 +2,8 @@ import SwiftUI
 import UIKit
 
 /// The learner's own certificate, as main's page: what it says, what they can do with it, its
-/// picture, its details, what it means and what it covers. A locked one leads with the Plus notice,
-/// then its card and facts.
+/// picture, its details, what it means and what it covers. A locked one shows its card and facts,
+/// with the subscription gate in its bar.
 struct CertificateScreen: View {
   @Environment(CertificatesStore.self) private var store
 
@@ -42,24 +42,22 @@ struct CertificateSheet: View {
   var body: some View {
     NavigationStack {
       CertificateScreen(code: code)
-        .toolbar {
-          ToolbarItem(placement: .topBarLeading) {
-            Button(role: .close, action: dismiss.callAsFunction)
-          }
-        }
+        .sheetClose(dismiss.callAsFunction)
     }
   }
 }
 
 private struct CertificateDetail: View {
   @Environment(SessionStore.self) private var session
+  @Environment(\.stacksContent) private var stacksContent
   @State private var isZoomed = false
   @State private var isLinkedInShown = false
   @State private var isEditingName = false
   @State private var nameDraft = ""
   @State private var printAnchor = PrintAnchor()
-  @State private var printing: Task<Void, Never>?
-  @State private var printFailed = false
+  /// False when the certificate couldn't be read for printing, while the learner is on the page.
+  @State private var printing = VisitRequest<Bool>()
+  @State private var nameSave = VisitRequest<ProfileSave>()
   @State private var linkCopied = false
 
   let certificate: Certificate
@@ -85,7 +83,7 @@ private struct CertificateDetail: View {
 
       if name.isEmpty {
         Section {
-          CertificateNameEditor(name: $nameDraft, current: "") {}
+          CertificateNameEditor(name: $nameDraft, current: "", saving: nameSave) {}
         }
       } else {
         actions
@@ -95,7 +93,7 @@ private struct CertificateDetail: View {
         Button {
           isZoomed = true
         } label: {
-          CertificatePicture(url: certificate.pictures.screen)
+          CertificatePicture(url: certificate.pictures.screen, facts: certificate.facts)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(certificate.facts.spokenTitle)
@@ -116,14 +114,18 @@ private struct CertificateDetail: View {
       CertificateMeaning(facts: certificate.facts)
       CertificateCovered(facts: certificate.facts)
     }
-    .barTitleAfterHero(certificate.facts.name)
+    .barTitleAfterHero(certificate.facts.rowName)
     .fullScreenCover(isPresented: $isZoomed) {
       CertificateZoom(certificate: certificate)
     }
     .sheet(isPresented: $isLinkedInShown) {
       CertificateLinkedInSheet(certificate: certificate)
+        .zoonkSheet()
     }
-    .onDisappear { printing?.cancel() }
+    .onDisappear {
+      nameSave.leave()
+      printing.leave()
+    }
     .sensoryFeedback(.success, trigger: linkCopied) { _, copied in copied }
     .task(id: linkCopied) {
       guard linkCopied else {
@@ -151,67 +153,59 @@ private struct CertificateDetail: View {
     .disabled(!picturesAreCurrent)
   }
 
-  /// Main's owner actions: Share leads, Print and saving side by side, then LinkedIn. Saving opens
-  /// the share sheet with the print picture, so it takes the platform's word rather than main's
-  /// "Download".
   private var actions: some View {
     Section {
-      VStack(spacing: 8) {
+      CertificateActions {
         shareLink
-          .buttonStyle(.mainAction)
-
-        // Not a `ButtonRow`, whose buttons take their own width side by side: these share it.
-        AccessibilityStack(spacing: 8) {
-          BusyButton(isBusy: printing != nil, icon: .print, action: printCertificate) {
-            Text("Print", tableName: "Certificates", comment: "Prints a certificate")
-              .background { PrintAnchorView(anchor: printAnchor) }
-          }
-          .disabled(!picturesAreCurrent)
-
-          ShareLink(
-            item: certificate.document,
-            preview: SharePreview(certificate.fileName, image: certificate.document)
-          ) {
-            Label {
-              Text(
-                "Save certificate", tableName: "Certificates",
-                comment: "Saves the certificate's picture to Photos or Files")
-            } icon: {
-              Image(systemName: "square.and.arrow.down")
-            }
-          }
-          .disabled(!picturesAreCurrent)
-        }
-
-        Button {
-          isLinkedInShown = true
-        } label: {
-          Label {
-            Text(
-              "Add to LinkedIn", tableName: "Certificates",
-              comment: "Adds a certificate to LinkedIn")
-          } icon: {
-            Image(systemName: "arrow.up.right")
-          }
-        }
+      } others: {
+        otherActions
       }
-      .buttonStyle(.outline)
-      .buttonSizing(.flexible)
-      .controlSize(.large)
       .listRowSeparator(.hidden)
     } footer: {
-      if printFailed {
+      if printing.outcome == false {
         FailureLine(
           message: LocalizedStringResource(
-            "That didn't work. Try again in a moment.", table: "Certificates",
-            comment: "Loading a certificate to print failed"))
+            "That didn't work. Try again in a moment.", table: "Certificates"))
+      }
+    }
+  }
+
+  @ViewBuilder private var otherActions: some View {
+    BusyButton(isBusy: printing.isRunning, icon: .print, action: printCertificate) {
+      Text("Print", tableName: "Certificates", comment: "Prints a certificate")
+        .background { PrintAnchorView(anchor: printAnchor) }
+    }
+    .disabled(!picturesAreCurrent)
+
+    ShareLink(
+      item: certificate.document,
+      preview: SharePreview(certificate.fileName, image: certificate.document)
+    ) {
+      Label {
+        Text(
+          "Save certificate", tableName: "Certificates",
+          comment: "Saves the certificate's picture to Photos or Files")
+      } icon: {
+        Image(systemName: "square.and.arrow.down")
+      }
+    }
+    .disabled(!picturesAreCurrent)
+
+    Button {
+      isLinkedInShown = true
+    } label: {
+      Label {
+        Text(
+          "Add to LinkedIn", tableName: "Certificates")
+      } icon: {
+        Image(systemName: "arrow.up.right")
       }
     }
   }
 
   @ViewBuilder private var nameRow: some View {
     if isEditingName {
-      CertificateNameEditor(name: $nameDraft, current: name) {
+      CertificateNameEditor(name: $nameDraft, current: name, saving: nameSave) {
         isEditingName = false
       }
     } else {
@@ -240,43 +234,40 @@ private struct CertificateDetail: View {
     }
   }
 
-  /// Main's link row: the page's address, which "Copy" copies.
+  /// Main's link row: the page's address on one line, its code always whole, and the Copy every
+  /// certificate field has. At accessibility sizes the address wraps over Copy.
   private var linkRow: some View {
-    Button {
-      UIPasteboard.general.string = certificate.url.absoluteString
-      linkCopied = true
-      announcePolitely(String(localized: Self.linkCopiedLine))
-    } label: {
-      CertificateDetailRow(
-        label: Text(
-          "Link", tableName: "Certificates", comment: "Labels a certificate's web address")
-      ) {
-        AccessibilityStack(alignment: .firstTextBaseline, spacing: 8) {
+    CertificateDetailRow(
+      label: Text(
+        "Link", tableName: "Certificates", comment: "Labels a certificate's web address")
+    ) {
+      AccessibilityStack(spacing: 8) {
+        if stacksContent {
           Text(verbatim: certificate.shownURL)
             .typeStyle(.data)
-
-          Group {
-            if linkCopied {
-              Text(Self.linkCopiedLine)
-            } else {
-              Text("Copy", tableName: "Certificates", comment: "Copies a certificate's link")
-                .underline()
-            }
-          }
-          .typeStyle(.note.weight(.semibold))
+            .multilineTextAlignment(.leading)
+        } else {
+          CertificateAddress(shown: certificate.shownURL)
+            .accessibilityLabel(Text(verbatim: certificate.shownURL))
         }
+
+        CertificateCopyButton(isCopied: linkCopied) {
+          UIPasteboard.general.string = certificate.url.absoluteString
+          linkCopied = true
+          announcePolitely(String(localized: Self.linkCopiedLine))
+        }
+        .accessibilityLabel(
+          linkCopied
+            ? Text(Self.linkCopiedLine)
+            : Text("Copy link", tableName: "Certificates", comment: "Copies a certificate's link"))
       }
     }
-    .accessibilityLabel(
-      linkCopied
-        ? Text(Self.linkCopiedLine)
-        : Text("Copy link", tableName: "Certificates", comment: "Copies a certificate's link"))
   }
 
   private var linkNote: Text {
     Text(
-      "Anyone with the link can see this certificate. Its page doesn't show up in search.",
-      tableName: "Certificates", comment: "Who can see a certificate's page")
+      "Anyone with the link can see this certificate.",
+      tableName: "Certificates")
   }
 
   private static var linkCopiedLine: LocalizedStringResource {
@@ -286,37 +277,59 @@ private struct CertificateDetail: View {
 
   private func printCertificate() {
     let identity = session.authenticatedSession
-    printFailed = false
 
-    printing = Task {
-      defer { printing = nil }
-
-      do {
-        let data = try await certificate.document.data()
-
-        guard !Task.isCancelled, session.authenticatedSession == identity else {
-          return
-        }
-
-        CertificatePrinting.print(data, jobName: certificate.fileName, from: printAnchor.view)
-      } catch {
-        printFailed = !Task.isCancelled
+    printing.run { [certificate, session, printAnchor] in
+      guard let data = try? await certificate.document.data() else {
+        return false
       }
+
+      if !Task.isCancelled, session.authenticatedSession == identity {
+        CertificatePrinting.print(data, jobName: certificate.fileName, from: printAnchor.view)
+      }
+
+      return true
     }
   }
 }
 
 /// What the certificate says, without the picture, code or link that make it a credential.
+/// Main's: each at its own width in one row where every label fits whole, Share first; otherwise
+/// Share over the others.
+struct CertificateActions<Share: View, Others: View>: View {
+  @ViewBuilder let share: Share
+  @ViewBuilder let others: Others
+
+  var body: some View {
+    ViewThatFits(in: .horizontal) {
+      HStack(spacing: 8) {
+        share
+          .buttonStyle(.mainAction)
+        others
+      }
+      .buttonSizing(.fitted)
+
+      VStack(spacing: 8) {
+        share
+          .buttonStyle(.mainAction)
+
+        EqualButtonRow {
+          others
+        }
+      }
+      .buttonSizing(.flexible)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .buttonStyle(.outline)
+    .controlSize(.large)
+  }
+}
+
 private struct LockedCertificateDetail: View {
   let facts: CertificateFacts
 
   var body: some View {
     ZoonkList {
       CertificateHeading(facts: facts, isIssued: false)
-
-      Section {
-        CertificatePlusNotice()
-      }
 
       Section {
         LockedCertificateCard(facts: facts)
@@ -334,7 +347,19 @@ private struct LockedCertificateDetail: View {
       CertificateMeaning(facts: facts)
       CertificateCovered(facts: facts)
     }
-    .barTitleAfterHero(facts.name)
+    .barTitleAfterHero(facts.rowName)
+    // The gate itself, since the learner opened the certificate: no card about a paid plan.
+    .bottomBar(
+      note: BarNote(
+        String(
+          localized: "Certificates need a subscription", table: "Certificates",
+          comment: "On a certificate a learner earned without a subscription"),
+        tone: .status)
+    ) {
+      SubscribeButton()
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+    }
   }
 }
 
@@ -348,16 +373,9 @@ private struct CertificateHeading: View {
     Section {
       VStack(alignment: .leading, spacing: 10) {
         if isIssued {
-          Label {
-            Text(
-              "Verified certificate · issued by Zoonk", tableName: "Certificates",
-              comment: "Over an issued certificate's heading: Zoonk vouches for it")
-          } icon: {
-            Image(systemName: "checkmark.seal")
-              .foregroundStyle(.success)
-          }
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          Chip(
+            Text("Verified certificate · issued by Zoonk", tableName: "Certificates"),
+            systemImage: "checkmark.seal", tone: .success)
         }
 
         Text(facts.sentence)
@@ -367,8 +385,9 @@ private struct CertificateHeading: View {
           .heroTitle()
 
         if isIssued {
+          // Details' date form, kept on one line.
           Text(
-            "Certificate of completion, issued on \(facts.completedOnLong).",
+            "Certificate of completion, issued on \(facts.completedOnDay.replacing(" ", with: "\u{00A0}")).",
             tableName: "Certificates",
             comment:
               "Under an issued certificate's heading; the argument is a date like October 28, 2026"
@@ -406,7 +425,9 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
 
       CertificateDetailRow(
         label: Text(
-          "Completed", tableName: "Certificates", comment: "When a certificate was earned"),
+          "Completed", tableName: "Certificates",
+          comment:
+            "A certificate's fact: the day the learner finished the course or level."),
         isData: true
       ) {
         Text(facts.completedOnDay)
@@ -416,7 +437,8 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
         CertificateDetailRow(
           label: Text(
             "Lessons studied", tableName: "Certificates",
-            comment: "How many lessons a certificate's learner studied"),
+            comment:
+              "A certificate's fact: how many of the plan's lessons the learner studied."),
           isData: true
         ) {
           Text(lessons, format: .number)
@@ -427,7 +449,9 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
         CertificateDetailRow(
           label: Text(
             "Passed by test", tableName: "Certificates",
-            comment: "How many of a certificate's lessons the learner passed by a test"),
+            comment:
+              "A certificate's fact: lessons the learner skipped by passing a test, said for outsiders."
+          ),
           isData: true
         ) {
           Text(lessons, format: .number)
@@ -438,13 +462,17 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
         CertificateDetailRow(
           label: Text(
             "Study time", tableName: "Certificates",
-            comment: "About how long a certificate's lessons took to study"),
+            comment:
+              "A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”."
+          ),
           isData: true
         ) {
           Text(
             "about \(studyDuration(minutes: roundStudyMinutes(minutes)))",
             tableName: "Certificates",
-            comment: "An approximate study time, such as \"about 41 hr\"")
+            comment:
+              "A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária)."
+          )
         }
       }
 
@@ -502,22 +530,17 @@ private struct CertificateMeaning: View {
 
   private var paragraphs: [String] {
     let nameNote = String(
-      localized:
-        "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs.",
-      table: "Certificates",
-      comment: "Ends a certificate's explanation: the name on it is the one the learner gave")
+      localized: "Names aren't checked against an ID.", table: "Certificates")
 
     if facts.kind == .languageLevel {
       return [
         String(
-          localized:
-            "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons.",
-          table: "Certificates", comment: "How a language level certificate is earned"),
+          localized: "For finishing this level, studying at least half of its lessons.",
+          table: "Certificates"),
         String(
           localized:
             "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
-          table: "Certificates",
-          comment: "What a language certificate's level is, before the note about its name")
+          table: "Certificates")
           + " " + nameNote,
       ]
     }
@@ -525,20 +548,17 @@ private struct CertificateMeaning: View {
     let issued =
       facts.courseLevel == nil
       ? String(
-        localized:
-          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it.",
-        table: "Certificates", comment: "How a certificate for a course's whole plan is earned")
+        localized: "For finishing every lesson and challenge of this plan.",
+        table: "Certificates")
       : String(
-        localized:
-          "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it.",
-        table: "Certificates", comment: "How a certificate for a course's level is earned")
+        localized: "For finishing every lesson and challenge of this level.",
+        table: "Certificates")
 
     return [
       issued,
       String(
-        localized: "It's a record of completion on Zoonk, not academic credit.",
-        table: "Certificates",
-        comment: "What a course certificate is, before the note about its name")
+        localized: "A record of completion on Zoonk, not academic credit.",
+        table: "Certificates")
         + " " + nameNote,
     ]
   }
@@ -548,13 +568,7 @@ private struct CertificateMeaning: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: paragraphSpacing) {
-        Text(
-          "What this certificate means", tableName: "Certificates",
-          comment: "Heading over how Zoonk issues a certificate and what it isn't"
-        )
-        .typeStyle(.section)
-        .foregroundStyle(Color(.foreground))
-        .accessibilityAddTraits(.isHeader)
+        SectionTitle(Text("What this certificate means", tableName: "Certificates"))
 
         ForEach(paragraphs, id: \.self) { paragraph in
           Text(verbatim: paragraph)
@@ -590,7 +604,8 @@ private struct CertificateCovered: View {
           facts.kind == .course
             ? Text(
               "Topics covered", tableName: "Certificates",
-              comment: "Heading over the chapters a course certificate covers")
+              comment:
+                "Above the topics a finished course covered, on its certificate.")
             : Text(
               "Can do", tableName: "Certificates",
               comment: "Heading over what a language certificate's learner can do")
@@ -623,11 +638,7 @@ private struct CertificateZoom: View {
           ProgressView()
         }
       }
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          Button(role: .close, action: dismiss.callAsFunction)
-        }
-      }
+      .sheetClose(dismiss.callAsFunction)
     }
     .task {
       image = await images?.image(

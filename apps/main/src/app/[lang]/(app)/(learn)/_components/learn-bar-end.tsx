@@ -7,9 +7,9 @@ import { VisitorLook } from "@/components/learner/visitor-look";
 import { Link } from "@/i18n/navigation";
 import { useBeltLabel } from "@/lib/belt-label";
 import { getMenu } from "@/lib/menu";
-import { LearnShellEnd } from "@zoonk/learn/shell";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
-import { type BeltColor } from "@zoonk/utils/belt-level";
+import { cn } from "@zoonk/ui/lib/utils";
+import { type BeltColor, LEVELS_PER_COLOR } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
@@ -31,40 +31,91 @@ export function BeltLevel({
   );
 }
 
-function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
+/** It reaches into the bar's gap by its padding. */
+const LEVEL_BOX_CLASS = "text-compact -ms-2 h-9 shrink-0 items-center px-2 whitespace-nowrap";
+
+/**
+ * The level's room: as wide as the highest level's words, so the bar's end sits in one place for
+ * every level and while the learner loads. The mark and its words (`children`) end where the room
+ * does.
+ */
+function LevelRoom({ children }: { children?: React.ReactNode }) {
+  const t = useExtracted();
+
+  return (
+    <span className="grid tabular-nums *:col-start-1 *:row-start-1 *:flex *:items-center *:gap-1.5">
+      <span aria-hidden="true" className="invisible">
+        <span className="size-2.5" />
+        {t("Level {level}", { level: String(LEVELS_PER_COLOR) })}
+      </span>
+
+      {children && <span className="justify-self-end">{children}</span>}
+    </span>
+  );
+}
+
+/** A phone's bar says the level in the sidebar's words ("Level 2"), with the belt's mark before it. */
+export function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
   const t = useExtracted();
   const belt = useBeltLabel(level.color);
   const levelNumber = String(level.level);
 
   return (
     <Link
-      className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono text-[0.8125rem] tabular-nums transition-colors outline-none focus-visible:ring-[3px]"
-      href={getMenu("stats").url}
+      className={cn(
+        LEVEL_BOX_CLASS,
+        "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex rounded-lg transition-colors outline-none focus-visible:ring-[3px]",
+      )}
+      href={getMenu("level").url}
       prefetch
-      title={t("Statistics")}
+      title={t("Level")}
     >
-      <BeltLevel belt={belt} color={level.color} level={levelNumber} />
+      <LevelRoom>
+        <BeltLevel
+          belt={belt}
+          color={level.color}
+          level={t("Level {level}", { level: levelNumber })}
+        />
+      </LevelRoom>
       <span className="sr-only">
-        {t("{belt}, level {level}. Statistics", { belt, level: levelNumber })}
+        {t({
+          description:
+            "Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.",
+          message: "{belt}, Level {level}",
+          values: { belt, level: levelNumber },
+        })}
       </span>
     </Link>
   );
 }
 
-function PendingBarEnd({ visitor }: { visitor: React.ReactNode }) {
+/** A learner's search is the tab bar's last item; a visitor's, with no tab bar, starts the bar. */
+type BarEndProps = { visitor: React.ReactNode };
+
+/** The level's room, kept while the learner loads so the bar's end doesn't move when it arrives. */
+function PendingLevel() {
   return (
-    <LearnShellEnd>
-      <VisitorLook>{visitor}</VisitorLook>
-      <PendingAccountAvatar className="size-7" />
-    </LearnShellEnd>
+    <span aria-hidden="true" className={cn(LEVEL_BOX_CLASS, "signed-in:flex hidden")}>
+      <LevelRoom />
+    </span>
   );
 }
 
-function BarEnd({ visitor }: { visitor: React.ReactNode }) {
+export function PendingBarEnd({ visitor }: BarEndProps) {
+  return (
+    <>
+      <VisitorLook>{visitor}</VisitorLook>
+      <PendingLevel />
+      <PendingAccountAvatar className="size-7" />
+    </>
+  );
+}
+
+function BarEnd({ visitor }: BarEndProps) {
   const learner = useFrameLearner();
 
   if (learner.status === "visitor") {
-    return <LearnShellEnd>{visitor}</LearnShellEnd>;
+    return visitor;
   }
 
   if (learner.status !== "ready") {
@@ -74,17 +125,17 @@ function BarEnd({ visitor }: { visitor: React.ReactNode }) {
   const { level } = learner.summary;
 
   return (
-    <LearnShellEnd>
+    <>
       {level && <LevelLink level={level} />}
       <UserAvatarMenu />
-    </LearnShellEnd>
+    </>
   );
 }
 
-export function LearnBarEnd({ visitor }: { visitor: React.ReactNode }) {
+export function LearnBarEnd(props: BarEndProps) {
   return (
-    <Suspense fallback={<PendingBarEnd visitor={visitor} />}>
-      <BarEnd visitor={visitor} />
+    <Suspense fallback={<PendingBarEnd {...props} />}>
+      <BarEnd {...props} />
     </Suspense>
   );
 }

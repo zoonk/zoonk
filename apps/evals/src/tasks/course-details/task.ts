@@ -16,7 +16,7 @@ export const courseDetailsTask: Task<
     "Write a shared course's public page from its outline: description, landing copy (the promise, audience and outcomes) and 1 or 2 catalog categories",
   generate: (input) => generateCourseDetails({ ...input, country: input.country ?? null }),
   id: "course-details",
-  name: "Course Details",
+  name: "Course details",
   score: scoreCourseDetails,
   testCases: TEST_CASES,
 };

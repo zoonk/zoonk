@@ -33,6 +33,7 @@ final class MockRun {
   let queue: MockDraftQueue
 
   private(set) var drafts: [String: MockDraft] = [:]
+  private var initiallyStored: [String: MockDraft] = [:]
   private var partials: [String: PracticeAnswer] = [:]
   private(set) var position = 0
   private(set) var busy: Step?
@@ -53,6 +54,7 @@ final class MockRun {
   @ObservationIgnored private var shown: (itemId: String, at: ContinuousClock.Instant)?
   @ObservationIgnored private var unsavedText: MockDraft?
   @ObservationIgnored private var textTask: Task<Void, Never>?
+  @ObservationIgnored private let taps = ScreenTasks()
 
   init(store: ExamStore, blockId: String, now: @escaping () -> Date = { .now }) {
     self.store = store
@@ -79,6 +81,10 @@ final class MockRun {
     questions.indices.contains(position) ? questions[position] : nil
   }
 
+  func isCountedAsAnswered(_ itemId: String) -> Bool {
+    queue.countsTowardsProgress(drafts[itemId], initiallyStored: initiallyStored[itemId])
+  }
+
   var timeUp: Bool { sectionTimeUp || questionTimeUp }
   var pending: Bool { busy != nil }
 
@@ -101,9 +107,11 @@ final class MockRun {
     }
 
     adopted = key
+    queue.forgetRefusals()
     shown = nil
     drafts = Dictionary(
       (view.current?.drafts ?? []).map { ($0.itemId, $0) }, uniquingKeysWith: { _, last in last })
+    initiallyStored = drafts
     position = view.current?.resume ?? 0
     reached = position
     changed = []
@@ -214,6 +222,13 @@ final class MockRun {
     }
 
     return true
+  }
+
+  /// Runs a tap's step, which the run owns rather than the screen: a section handed in on purpose
+  /// is handed in even if the mock closes meanwhile. ✕ waits for it, so only another place closing
+  /// the mock can; its step timeouts still cancel it.
+  func start(_ step: @escaping @MainActor () async -> Void) {
+    taps.run(step)
   }
 
   func submitSection() async {

@@ -21,7 +21,7 @@ export const planRoutineFitTask: Task<
       dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
     }),
   id: "plan-routine-fit",
-  name: "Plan Routine Fit",
+  name: "Plan routine fit",
   score: scorePlanEditIntent,
   testCases: TEST_CASES,
 };

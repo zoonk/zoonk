@@ -50,7 +50,7 @@ struct AllCoursesView: View {
 
 }
 
-/// An empty category would only lead to "Start a goal", which the box above already offers. The
+/// An empty category would only lead to "New goal", which the box above already offers. The
 /// open one stays listed, so the row always says where it is.
 func populatedCategories(
   counts: CourseCategoryCounts, open: CourseCategory?, locale: Locale = .current
@@ -96,7 +96,7 @@ private struct CourseCatalogEmptyView: View {
   let startGoal: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text("No courses", tableName: "Courses", comment: "Title when the catalog has no courses")
       } icon: {
@@ -111,7 +111,7 @@ private struct CourseCatalogEmptyView: View {
         Button(action: startGoal) {
           Label {
             Text(
-              "Start a goal", tableName: "Courses",
+              "New goal", tableName: "Courses",
               comment: "Opens the start of a new goal from an empty category")
           } icon: {
             Image(systemName: "plus")

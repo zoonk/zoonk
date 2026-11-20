@@ -1,71 +1,113 @@
-import { AdminSearchSkeleton } from "@/components/admin-search";
-import { parseLibraryLessonStatus, parseProvenanceFilter } from "@/lib/library-lesson-filters";
-import { parseSearchParams } from "@/lib/parse-search-params";
+import { AdminPage, AdminPageBody, AdminPageHeader, AdminToolbar } from "@/components/admin-page";
+import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
+import { AdminTabs } from "@/components/admin-tabs";
+import { buildAdminHref } from "@/lib/admin-href";
 import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+  libraryLessonStatusLabels,
+  libraryLessonStatuses,
+  parseLibraryLessonStatus,
+  parseProvenanceFilter,
+} from "@/lib/library-lesson-filters";
+import { parseSearchParams } from "@/lib/parse-search-params";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { LibraryLessonFilters } from "./library-lesson-filters";
+import {
+  LessonProvenanceFilters,
+  LessonProvenanceFiltersSkeleton,
+} from "./lesson-provenance-filters";
 import { LibraryLessonList, LibraryLessonListSkeleton } from "./library-lesson-list";
+import { RewriteLessons } from "./rewrite-lessons";
 
 export const metadata: Metadata = { title: "Lessons" };
 
-export default function LessonsPage({ searchParams }: PageProps<"/lessons">) {
-  return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Lessons</ContainerTitle>
-          <ContainerDescription>
-            Library lessons, how far their writing got, and which model and prompt version wrote
-            them.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+type Params = Pick<PageProps<"/lessons">, "searchParams">;
 
-      <ContainerBody>
-        <Suspense fallback={<LessonsSkeleton />}>
-          <LessonsContent searchParams={searchParams} />
-        </Suspense>
-      </ContainerBody>
-    </Container>
-  );
-}
-
-async function LessonsContent({ searchParams }: Pick<PageProps<"/lessons">, "searchParams">) {
+async function readFilters({ searchParams }: Params) {
   const params = await searchParams;
-  const { limit, offset, page, search } = parseSearchParams(params);
 
-  const filters = {
+  return {
+    ...parseSearchParams(params),
     model: parseProvenanceFilter(params.model),
     promptVersion: parseProvenanceFilter(params.promptVersion),
-    search,
     status: parseLibraryLessonStatus(params.status),
   };
+}
+
+async function RewriteAction({ searchParams }: Params) {
+  const { model, promptVersion } = await readFilters({ searchParams });
+  return <RewriteLessons model={model} promptVersion={promptVersion} />;
+}
+
+async function ProvenanceFilters({ searchParams }: Params) {
+  const { model } = await readFilters({ searchParams });
+  return <LessonProvenanceFilters model={model} />;
+}
+
+async function StateViews({ searchParams }: Params) {
+  const { model, promptVersion, search, status } = await readFilters({ searchParams });
 
   return (
-    <>
-      <Suspense fallback={<AdminSearchSkeleton />}>
-        <LibraryLessonFilters {...filters} />
-      </Suspense>
-      <Suspense fallback={<LibraryLessonListSkeleton />}>
-        <LibraryLessonList limit={limit} offset={offset} page={page} {...filters} />
-      </Suspense>
-    </>
+    <AdminTabs
+      label="State"
+      options={libraryLessonStatuses.map((item) => ({
+        href: buildAdminHref({
+          params: { model, promptVersion, search, status: item === "all" ? undefined : item },
+          path: "/lessons",
+        }),
+        isActive: item === status,
+        label: libraryLessonStatusLabels[item],
+      }))}
+    />
   );
 }
 
-function LessonsSkeleton() {
+async function Lessons({ searchParams }: Params) {
+  const { limit, model, offset, page, promptVersion, search, status } = await readFilters({
+    searchParams,
+  });
+
   return (
-    <div className="flex flex-col gap-3">
-      <AdminSearchSkeleton />
-      <LibraryLessonListSkeleton />
-    </div>
+    <LibraryLessonList
+      limit={limit}
+      model={model}
+      offset={offset}
+      page={page}
+      promptVersion={promptVersion}
+      search={search}
+      status={status}
+    />
+  );
+}
+
+export default function LessonsPage({ searchParams }: PageProps<"/lessons">) {
+  return (
+    <AdminPage>
+      <AdminPageHeader
+        actions={
+          <Suspense fallback={null}>
+            <RewriteAction searchParams={searchParams} />
+          </Suspense>
+        }
+        title="Lessons"
+      />
+
+      <AdminPageBody>
+        <AdminToolbar>
+          <Suspense fallback={<AdminSearchSkeleton />}>
+            <AdminSearch placeholder="Search by lesson, chapter, or course…" />
+          </Suspense>
+          <Suspense fallback={null}>
+            <StateViews searchParams={searchParams} />
+          </Suspense>
+          <Suspense fallback={<LessonProvenanceFiltersSkeleton />}>
+            <ProvenanceFilters searchParams={searchParams} />
+          </Suspense>
+        </AdminToolbar>
+
+        <Suspense fallback={<LibraryLessonListSkeleton />}>
+          <Lessons searchParams={searchParams} />
+        </Suspense>
+      </AdminPageBody>
+    </AdminPage>
   );
 }

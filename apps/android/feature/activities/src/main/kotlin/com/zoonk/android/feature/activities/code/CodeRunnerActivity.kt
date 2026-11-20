@@ -133,6 +133,7 @@ private fun CodeRunnerActivity(props: ActivityProps) {
                 runtimeName = language.runtimeName,
                 runtime = runtime,
                 hasRun = run != null,
+                needsRun = if (props.isExploring) null else props.answer == null,
                 isRunning = editorRun.isRunning,
                 onRun = ::runProgram,
                 onReset = if (edits.isEmpty() || props.isLocked) null else ({ change(emptyMap()) }),
@@ -170,7 +171,7 @@ private fun CodePanel(
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Row(Modifier.padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 fields.fileName ?: language.defaultFileName,
                 Modifier.weight(1f),
@@ -200,7 +201,14 @@ private fun CodePanel(
                 val number = index + 1
                 val isError = errorLine == number
                 if (number in editable) {
-                    CodeLine(number, digits, if (isError) CodeLineTone.Error else CodeLineTone.Editable) {
+                    // A checked line is plain code again, so its edit outline goes with the field.
+                    val tone =
+                        when {
+                            isError -> CodeLineTone.Error
+                            isLocked -> CodeLineTone.Plain
+                            else -> CodeLineTone.Editable
+                        }
+                    CodeLine(number, digits, tone) {
                         CodeLineField(
                             value = line,
                             onValueChange = { onEdit(number, it) },
@@ -243,7 +251,7 @@ private fun CodeRunnerOutput(
                 .border(1.dp, colors.outlineVariant, shape),
         ) {
             OutputCell(
-                stringResource(if (expectedOutput == null) R.string.activities_code_output else R.string.activities_code_your_output),
+                stringResource(R.string.activities_code_output),
                 Modifier.weight(1f).alpha(
                     if (isStale &&
                         run != null

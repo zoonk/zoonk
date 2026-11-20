@@ -37,11 +37,17 @@ export async function toMemoryInsightView(
 
   const view =
     change &&
-    (await toPlanChangeView({ change, goal: change.plan.goal, planVersion: change.plan.version }));
+    toPlanChangeView({ change, goal: change.plan.goal, planVersion: change.plan.version });
 
   const planChange =
     change && view && (change.status === "proposed" || change.status === "applied")
-      ? { canApply: view.canApply, effect: view.effect, id: change.id, status: change.status }
+      ? {
+          canApply: view.canApply,
+          effect: view.effect,
+          id: change.id,
+          quote: view.quote,
+          status: change.status,
+        }
       : null;
 
   return {

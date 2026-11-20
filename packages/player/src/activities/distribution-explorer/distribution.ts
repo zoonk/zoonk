@@ -1,4 +1,5 @@
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
+import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { type NumericDomain, niceTicks } from "@zoonk/utils/plot-scale";
 import { isMultiple } from "../_utils/snap-value";
 
@@ -16,6 +17,7 @@ const STEP_MULTIPLIERS = [5, 2, 1] as const;
 const MULTIPLE_SLACK = 1e-9;
 const SD_TICKS = 3;
 const UNIFORM_TICKS = 4;
+const TAIL_DIGITS = 2;
 
 function densityAt(distribution: Distribution, value: number): number {
   if (distribution.kind === "uniform") {
@@ -121,4 +123,24 @@ export function distributionTicks(distribution: Distribution, domain: NumericDom
   return distribution.kind === "normal"
     ? landmarks(distribution).filter((value) => value >= domain[0] && value <= domain[1])
     : niceTicks(domain, UNIFORM_TICKS);
+}
+
+export function distributionPercentFormat({
+  check,
+  isTail,
+}: {
+  check: ActivityContentFor<"distributionExplorer">["check"];
+  isTail?: boolean;
+}) {
+  if (isTail) {
+    return { maximumFractionDigits: TAIL_DIGITS, unit: "%" };
+  }
+
+  return {
+    maximumFractionDigits:
+      check.kind === "numeric"
+        ? exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance })
+        : 1,
+    unit: "%",
+  };
 }

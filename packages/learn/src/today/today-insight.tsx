@@ -10,22 +10,28 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
-  SuggestionContent,
   SuggestionDescription,
   SuggestionHeader,
-  SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
   SuggestionSaveError,
-  SuggestionSummary,
+  SuggestionSheet,
+  useMainActionVariant,
 } from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useAppliedLine } from "../plan/use-change-sentence";
-import { useProposalEffectText } from "../plan/use-effect-text";
+import { useTodayDateKind } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
+import { TodaySuggestionCard } from "./today-suggestion-card";
 
 type InsightAnswer = "accepted" | "dismissed";
-type InsightState = { answer: InsightAnswer } | { failed: true } | null;
+
+type InsightState =
+  | { answer: InsightAnswer }
+  | { failed: true }
+  | { repriced: MemoryInsightView }
+  | null;
 
 function insightMark(insight: MemoryInsightView): React.ReactNode {
   if (insight.kind === "tip") {
@@ -35,28 +41,21 @@ function insightMark(insight: MemoryInsightView): React.ReactNode {
   return insight.planChange?.status === "applied" ? <ListPlusIcon /> : undefined;
 }
 
+/** Only a proposed plan change opens a sheet, to show what changes; the card's line says the rest. */
 function useInsightChoices(insight: MemoryInsightView) {
   const t = useExtracted();
 
   if (insight.kind === "planChange") {
     return insight.planChange?.status === "proposed"
-      ? { accept: t("Add it"), dismiss: t("No thanks") }
-      : { accept: t("Keep it"), dismiss: t("Undo") };
+      ? { accept: t("Add it"), dismiss: t("No thanks"), open: t("See what changes") }
+      : { accept: t("Keep it"), dismiss: t("Undo"), open: null };
   }
 
   if (insight.kind === "scheduleIdea") {
-    return {
-      accept: t({
-        description:
-          'Study time is the time of day the learner studies. {time} is a time of day, like "20:00".',
-        message: "Move my study time to {time}",
-        values: { time: insight.studyTime ?? "" },
-      }),
-      dismiss: t("Not now"),
-    };
+    return { accept: t("Move it"), dismiss: t("Not now"), open: null };
   }
 
-  return { accept: t("Got it"), dismiss: null };
+  return { accept: t("Got it"), dismiss: null, open: null };
 }
 
 function useAnsweredText(insight: MemoryInsightView) {
@@ -84,35 +83,34 @@ function useAnsweredText(insight: MemoryInsightView) {
   };
 }
 
-function InsightPlanEffect({ planChange }: { planChange: MemoryInsightView["planChange"] }) {
-  const proposalEffectText = useProposalEffectText();
-  const { planEnd, today } = useTodayScreen();
-  const targetDate = today.goal.targetDate?.toISOString().slice(0, "YYYY-MM-DD".length) ?? null;
-
-  const effect =
-    planChange?.status === "proposed"
-      ? proposalEffectText(planChange, { endDate: planEnd, targetDate })
-      : null;
-
-  if (!effect) {
-    return null;
-  }
-
-  return <SuggestionDescription>{effect}</SuggestionDescription>;
-}
-
 function useInsightAnswer(insight: MemoryInsightView) {
   const { actions } = useTodayScreen();
   const [state, setState] = useState<InsightState>(null);
   const [isPending, startTransition] = useTransition();
 
+  const shown = state !== null && "repriced" in state ? state.repriced : insight;
+
   const answer = (status: InsightAnswer) => {
     startTransition(async () => {
       const { data: saved } = await safeAsync(() =>
-        actions.answerInsight({ insightId: insight.id, status }),
+        actions.answerInsight({
+          insightId: shown.id,
+          quote: shown.planChange?.quote ?? null,
+          status,
+        }),
       );
 
-      setState(saved ? { answer: status } : { failed: true });
+      if (!saved) {
+        setState({ failed: true });
+        return;
+      }
+
+      // Accepted, and still waiting: its plan change's numbers moved, so it asks again.
+      setState(
+        status === "accepted" && saved.status === "pending"
+          ? { repriced: saved }
+          : { answer: status },
+      );
     });
   };
 
@@ -120,32 +118,35 @@ function useInsightAnswer(insight: MemoryInsightView) {
 }
 
 function InsightActions({
+  choices,
   insight,
   isPending,
   onAnswer,
 }: {
+  choices: ReturnType<typeof useInsightChoices>;
   insight: MemoryInsightView;
   isPending: boolean;
   onAnswer: (status: InsightAnswer) => void;
 }) {
-  const choices = useInsightChoices(insight);
+  const mainVariant = useMainActionVariant();
 
   return (
-    <SuggestionActions>
-      {/* A tip's only answer is outline, so Today's own action stays the screen's one filled
-          button. */}
-      {(insight.kind !== "planChange" ||
-        insight.planChange?.status === "applied" ||
-        insight.planChange?.canApply) && (
-        <SuggestionAction
-          action={() => onAnswer("accepted")}
-          disabled={isPending}
-          variant={choices.dismiss ? "default" : "outline"}
-        >
-          {choices.accept}
-        </SuggestionAction>
-      )}
-
+    <SuggestionActions
+      main={
+        // A tip's only answer is outline, so Today's own action stays the screen's one filled button.
+        (insight.kind !== "planChange" ||
+          insight.planChange?.status === "applied" ||
+          insight.planChange?.canApply) && (
+          <SuggestionAction
+            action={() => onAnswer("accepted")}
+            busy={isPending}
+            variant={choices.dismiss ? mainVariant : "outline"}
+          >
+            {choices.accept}
+          </SuggestionAction>
+        )
+      }
+    >
       {choices.dismiss && (
         <SuggestionAction
           action={() => onAnswer("dismissed")}
@@ -159,10 +160,15 @@ function InsightActions({
   );
 }
 
-function InsightNotice({ insight }: { insight: MemoryInsightView }) {
+function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
   const t = useExtracted();
+  const dateKind = useTodayDateKind();
+  const { answer, isPending, state } = useInsightAnswer(opened);
+  const repriced = state !== null && "repriced" in state;
+  const insight = repriced ? state.repriced : opened;
   const answeredText = useAnsweredText(insight);
-  const { answer, isPending, state } = useInsightAnswer(insight);
+  const choices = useInsightChoices(insight);
+  const failed = state !== null && "failed" in state;
   const result = state && "answer" in state ? answeredText(state.answer) : null;
 
   return (
@@ -171,30 +177,53 @@ function InsightNotice({ insight }: { insight: MemoryInsightView }) {
       label={t("From your recent answers")}
       mark={insightMark(insight)}
     >
-      <SuggestionLine>
+      <TodaySuggestionCard>
         {result ? (
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <>
-            <SuggestionSummary>{insight.message}</SuggestionSummary>
-            <SuggestionOpen />
+            <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
+            <SuggestionDescription>{insight.message}</SuggestionDescription>
+            {choices.open ? (
+              <SuggestionActions main={<SuggestionOpen>{choices.open}</SuggestionOpen>} />
+            ) : (
+              <InsightActions
+                choices={choices}
+                insight={insight}
+                isPending={isPending}
+                onAnswer={answer}
+              />
+            )}
           </>
         )}
-      </SuggestionLine>
+        {failed && <SuggestionSaveError />}
+      </TodaySuggestionCard>
 
-      <SuggestionContent>
-        <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
-        <SuggestionDescription className="text-foreground">{insight.message}</SuggestionDescription>
-        <InsightPlanEffect planChange={insight.planChange} />
+      {choices.open && (
+        <SuggestionSheet>
+          <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
+          {insight.planChange?.status === "proposed" && (
+            <PlanEffectDiff
+              dateKind={dateKind}
+              effect={insight.planChange.effect}
+              repriced={repriced}
+            />
+          )}
 
-        {result ? (
-          <SuggestionResult>{result}</SuggestionResult>
-        ) : (
-          <InsightActions insight={insight} isPending={isPending} onAnswer={answer} />
-        )}
+          {result ? (
+            <SuggestionResult>{result}</SuggestionResult>
+          ) : (
+            <InsightActions
+              choices={choices}
+              insight={insight}
+              isPending={isPending}
+              onAnswer={answer}
+            />
+          )}
 
-        {state && "failed" in state && <SuggestionSaveError />}
-      </SuggestionContent>
+          {failed && <SuggestionSaveError />}
+        </SuggestionSheet>
+      )}
     </Suggestion>
   );
 }

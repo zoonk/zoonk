@@ -1,6 +1,7 @@
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
 import { type listUsers } from "@/data/users/list-users";
-import { Badge } from "@zoonk/ui/components/badge";
+import { capitalize, formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
 
 export function UserRow({
@@ -10,28 +11,21 @@ export function UserRow({
 }) {
   return (
     <AdminTableRow>
-      <TableCell>
-        <AdminTableRowLink className="block" href={`/users/${user.id}`} prefetch>
-          <span className="font-medium">{user.name || "—"}</span>
-          <span className="text-muted-foreground block text-xs">{user.email}</span>
-        </AdminTableRowLink>
+      <AdminUserCell note={user.banned && "Banned"} user={user} userId={user.id} />
+
+      <TableCell className={user.plan === "free" ? undefined : "text-foreground"}>
+        {capitalize(user.plan)}
       </TableCell>
 
-      <TableCell>{user.username || "—"}</TableCell>
-
-      <TableCell className="text-right tabular-nums">
-        {Number(user.progress?.totalBrainPower ?? 0).toLocaleString()}
+      <TableCell numeric>
+        {Number(user.progress?.totalBrainPower ?? 0).toLocaleString("en")}
       </TableCell>
 
       <TableCell className="text-muted-foreground">
-        {new Date(user.createdAt).toLocaleDateString()}
+        {user.progress ? formatDate(user.progress.lastActiveAt) : "Never"}
       </TableCell>
 
-      <TableCell>
-        <Badge variant={user.plan === "free" ? "secondary" : "outline"} className="capitalize">
-          {user.plan}
-        </Badge>
-      </TableCell>
+      <TableCell className="text-muted-foreground">{formatDate(user.createdAt)}</TableCell>
     </AdminTableRow>
   );
 }

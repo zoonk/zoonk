@@ -22,9 +22,12 @@ function areaOf(index: number): string {
 
 export async function createAnytimeMockLearner({
   plus,
+  questionsPerSkill = QUESTIONS_PER_SKILL,
   written = false,
 }: {
   plus: boolean;
+  /** Fewer than the default leaves the bank short of a full exam. */
+  questionsPerSkill?: number;
   written?: boolean;
 }) {
   // Numeric-only random suffixes are grouped by Markdown, which changes the fixture lookup key.
@@ -74,7 +77,7 @@ export async function createAnytimeMockLearner({
   });
 
   const questions = skills.flatMap((skill, index) =>
-    Array.from({ length: QUESTIONS_PER_SKILL }, (_, copy) => ({
+    Array.from({ length: questionsPerSkill }, (_, copy) => ({
       content: choiceItemContent(`${skill.name}, question ${copy + 1}?`),
       skill,
       skillIndex: index,
@@ -129,6 +132,22 @@ export async function createAnytimeMockLearner({
   return { answers, goal, plan, skills, user };
 }
 
+export function answerForMockHeading<Answer>({
+  answers,
+  heading,
+}: {
+  answers: ReadonlyMap<string, Answer>;
+  heading: string;
+}): Answer {
+  const answer = answers.get(heading.replaceAll("\u00A0", " ").trim());
+
+  if (answer === undefined) {
+    throw new Error(`No fixture answer for the visible question: ${heading}`);
+  }
+
+  return answer;
+}
+
 export async function answerMockQuestions({
   answers,
   knows,
@@ -153,12 +172,11 @@ export async function answerMockQuestions({
     await expect(title).not.toBeEmpty();
     // oxlint-disable-next-line no-await-in-loop -- The question on screen decides the answer.
     const heading = (await title.textContent()) ?? "";
-    const question = answers.get(heading.trim());
-    expect(question, `No fixture answer for the visible question: ${heading}`).toBeDefined();
+    const question = answerForMockHeading({ answers, heading });
 
     // oxlint-disable-next-line no-await-in-loop -- One answer, then the next question.
     await page
-      .getByRole("radio", { name: question && knows(question) ? question.right : question?.wrong })
+      .getByRole("radio", { name: knows(question) ? question.right : question.wrong })
       .click();
 
     const next = page.getByRole("button", { name: "Next" });

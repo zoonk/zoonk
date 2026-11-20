@@ -110,30 +110,19 @@ export async function loadPracticeClaims({
   };
 }
 
-/** When practice is Plus-gated, the normal-size free review must still confirm due claims. */
 export async function loadReviewsAndClaims({
   claims: claimsInput,
-  practiceLocked,
   readClaims,
   review,
 }: {
   claims: Omit<Parameters<typeof loadPracticeClaims>[0], "readClaims">;
-  /** The day's session has no practice (see `ExamPrepAccess.trialEnded`). */
-  practiceLocked: boolean;
   readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   review: Parameters<typeof loadReviewCapsules>[0];
 }) {
-  if (!practiceLocked) {
-    const [capsules, claims] = await Promise.all([
-      loadReviewCapsules(review),
-      loadPracticeClaims({ ...claimsInput, readClaims }),
-    ]);
-
-    return { capsules, claims };
-  }
-
-  const claims = await loadPracticeClaims({ ...claimsInput, readClaims });
-  const capsules = await loadReviewCapsules({ ...review, confirmSkillIds: [...claims.first] });
+  const [capsules, claims] = await Promise.all([
+    loadReviewCapsules(review),
+    loadPracticeClaims({ ...claimsInput, readClaims }),
+  ]);
 
   return { capsules, claims };
 }

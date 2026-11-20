@@ -3,7 +3,7 @@ package com.zoonk.android.feature.activities.geometry
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import kotlin.math.floor
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
@@ -24,29 +24,50 @@ internal data class LineLabel(
     val isOptional: Boolean = false,
 )
 
-internal class LabelMarks(
+internal data class LabelMarks(
     val arrows: List<Rect>,
     val circles: List<LabelCircle>,
     val lines: List<LabelSegment>,
+    val guides: List<LabelSegment> = emptyList(),
 )
 
-/**
- * Main's `line-crossing-labels.ts`. Where each line's name sits, in order: by its end of the line on the
- * open side, or at the nearest spot that clears the lines, the marks (drag handles, crossings) and the names
- * placed before it. When no spot close by clears every line, it keeps off its own line and the marks, then
- * just off its own line, searching the whole chart when nothing near is free. Every spot it searches keeps
- * clear of the arrows, heads included. Its halo never cuts the line it names: with no free spot anywhere it
- * stays by its end, on the line's open side. An optional name with no spot clear of the marks and the names
- * before it is left out, as null. [unit] is pixels per dp.
- */
+internal fun placeChartLabels(
+    area: Rect,
+    shown: List<LineLabel>,
+    revealed: List<LineLabel>,
+    marks: LabelMarks,
+    unit: Float,
+): List<Rect?> {
+    val visibleMarks = marks.copy(lines = shown.map { it.segment }, guides = marks.lines)
+    val before = placeLineLabels(area, shown, visibleMarks, unit)
+    if (revealed.isEmpty()) return before
+
+    val answerLines = revealed.map { it.segment }
+    val checkedMarks = visibleMarks.copy(lines = visibleMarks.lines + answerLines)
+    val clearance = CLEARANCE * unit
+
+    val placed = before.map { box -> box?.takeUnless { name -> answerLines.any { name.touches(it, clearance) } } }.toMutableList()
+    shown.forEachIndexed { index, label ->
+        val origin = before[index]
+        if (origin != null && placed[index] == null) {
+            placed[index] = placeLineLabel(area, label, checkedMarks, placed.filterNotNull(), unit, origin, answerLines)
+        }
+    }
+
+    return placed + placeLineLabels(area, revealed, checkedMarks, unit, placed.filterNotNull(), answerLines)
+}
+
+/** Places measured labels in order. [unit] is pixels per dp. */
 internal fun placeLineLabels(
     area: Rect,
     labels: List<LineLabel>,
     marks: LabelMarks,
     unit: Float,
+    placed: List<Rect> = emptyList(),
+    requiredLines: List<LabelSegment> = emptyList(),
 ): List<Rect?> =
     labels.fold(emptyList()) { boxes, label ->
-        boxes + placeLineLabel(area, label, marks, boxes.filterNotNull(), unit)
+        boxes + placeLineLabel(area, label, marks, placed + boxes.filterNotNull(), unit, requiredLines = requiredLines)
     }
 
 private fun placeLineLabel(
@@ -55,47 +76,121 @@ private fun placeLineLabel(
     marks: LabelMarks,
     placed: List<Rect>,
     unit: Float,
+    origin: Rect? = null,
+    requiredLines: List<LabelSegment>,
 ): Rect? {
     val clearance = CLEARANCE * unit
-    val start = besideEnd(label, area, unit)
+    val start = origin ?: besideEnd(label, area, unit)
     val step = label.size.height / STEPS_PER_LABEL_HEIGHT
 
-    fun Rect.fits(lines: List<LabelSegment>) =
+    fun Rect.clearsAnswer() =
         left >= area.left && right <= area.right && top >= area.top && bottom <= area.bottom &&
-            (listOf(label.segment) + lines).none { touches(it, clearance) } &&
-            marks.arrows.none { touches(it, clearance) }
+            requiredLines.none { touches(it, clearance) }
 
-    fun Rect.clearsMarks() =
-        marks.circles.none { touches(it, clearance) } &&
-            placed.none { touches(it, clearance) }
+    fun Rect.belongsToLine() = belongsWith(label.segment, marks.lines)
 
-    val isClear = { box: Rect -> box.fits(emptyList()) && box.clearsMarks() }
-    val offItsLine = { box: Rect -> box.fits(emptyList()) }
-    val passes =
-        listOf<(Rect, Offset) -> Boolean>(
-            { box, shift -> shift.getDistance() <= CLEAR_OF_ALL_STEPS && box.fits(marks.lines) && box.clearsMarks() },
-            { box, _ -> isClear(box) },
-            { box, _ -> !label.isOptional && offItsLine(box) },
-        )
-    val nearby = passes.firstNotNullOfOrNull { pass -> NEAREST_SHIFTS.firstOrNull { pass(start.translate(it * step), it) } }
-    if (nearby != null) return start.translate(nearby * step)
+    fun Rect.nearerThanGuides(): Boolean {
+        val own = gapTo(label.segment)
+        return marks.guides.all { own < gapTo(it) }
+    }
 
-    val spots = spotsAcross(area, start)
-    val clear = spots.firstOrNull(isClear)
-    if (clear != null || label.isOptional) return clear
-    return spots.firstOrNull(offItsLine) ?: start
+    fun Rect.avoidsBoxes() = marks.arrows.none { touches(it, clearance) }
+
+    fun Rect.avoidsMarks() = avoidsBoxes() && marks.circles.none { touches(it, clearance) } && placed.none { touches(it, clearance) }
+
+    val strokes = listOf(label.segment) + marks.lines + marks.guides
+
+    fun Rect.clearsStrokes() = strokes.none { touches(it, clearance) }
+
+    fun Rect.avoidsNames() = placed.none { touches(it, 0f) }
+
+    fun Rect.safe() = clearsAnswer() && avoidsNames()
+
+    fun Rect.fits() = safe() && belongsToLine() && belongsWith(label.segment, marks.guides)
+
+    fun nearby(accepts: (Rect, Offset) -> Boolean): Rect? =
+        NEAREST_SHIFTS.firstOrNull { accepts(start.translate(it * step), it) }?.let { start.translate(it * step) }
+
+    val clear =
+        nearby { box, shift ->
+            (origin != null || shift.getDistance() <= CLEAR_OF_ALL_STEPS) && box.clearsStrokes() && box.avoidsMarks() && box.fits()
+        }
+    if (clear != null) return clear
+
+    val associated = { box: Rect -> box.avoidsMarks() && !box.touches(label.segment, clearance) && box.fits() }
+    val close = nearby { box, _ -> associated(box) } ?: spotsAcross(area, start).firstOrNull(associated)
+    if (close != null) return close
+
+    val candidates = spotsAcross(area, start, min(unit, step)).filter { it.safe() }
+    val named = candidates.filter { it.belongsToLine() }
+    val associatedWithGuides = named.filter { it.belongsWith(label.segment, marks.guides) }
+
+    fun Rect.offLine() = avoidsMarks() && !touches(label.segment, 0f)
+
+    val preferred =
+        associatedWithGuides.firstOrNull { it.clearsStrokes() && it.avoidsMarks() }
+            ?: associatedWithGuides.firstOrNull { it.offLine() }
+            ?: associatedWithGuides.firstOrNull { it.avoidsMarks() }
+    if (label.isOptional && origin == null) {
+        return preferred
+            ?: edgeSpots(area, label.size).firstOrNull { it.avoidsMarks() && it.fits() }
+            ?: named.firstOrNull { it.offLine() && it.nearerThanGuides() }
+            ?: named.firstOrNull { it.offLine() }
+    }
+
+    val owned =
+        preferred
+            ?: associatedWithGuides.firstOrNull { it.avoidsBoxes() && !it.touches(label.segment, clearance) }
+            ?: associatedWithGuides.firstOrNull()
+            ?: edgeSpots(area, label.size).firstOrNull { it.fits() }
+            ?: named.firstOrNull { it.nearerThanGuides() }
+            ?: named.firstOrNull { it.avoidsMarks() }
+            ?: named.firstOrNull()
+    if (owned != null) return owned
+
+    val fallback = candidates.filter { it.nearerThanGuides() }.ifEmpty { candidates }
+    val sameSide = fallback.filter { box -> requiredLines.all { box.isOnNamedSide(label.segment, it) } }
+    val open = sameSide.filter { it.avoidsMarks() }
+    return open.ifEmpty { sameSide }.minByOrNull { it.gapTo(label.segment) }
+        ?: fallback.firstOrNull()
+        ?: start.takeIf { requiredLines.isEmpty() && it.belongsToLine() && it.avoidsNames() }
 }
 
 private fun spotsAcross(
     area: Rect,
     start: Rect,
+    spacing: Float = start.height,
 ): List<Rect> {
-    val columns = floor((area.width - start.width) / start.height).toInt() + 1
-    val rows = floor((area.height - start.height) / start.height).toInt() + 1
-    if (columns < 1 || rows < 1) return emptyList()
+    val spanX = area.width - start.width
+    val spanY = area.height - start.height
+    if (spanX < 0 || spanY < 0) return emptyList()
+    val columns = ceil(spanX / spacing).toInt() + 1
+    val rows = ceil(spanY / spacing).toInt() + 1
     return (0 until columns * rows)
-        .map { Rect(Offset(area.left + it % columns * start.height, area.top + it / columns * start.height), start.size) }
-        .sortedBy { (it.topLeft - start.topLeft).getDistance() }
+        .map {
+            val x = area.left + min(spanX, it % columns * spacing)
+            val y = area.top + min(spanY, it / columns * spacing)
+            Rect(Offset(x, y), start.size)
+        }.sortedBy { (it.topLeft - start.topLeft).getDistance() }
+}
+
+private fun edgeSpots(
+    area: Rect,
+    size: Size,
+): Sequence<Rect> {
+    val right = area.right - size.width
+    val bottom = area.bottom - size.height
+    if (right < area.left || bottom < area.top) return emptySequence()
+
+    fun along(
+        start: Float,
+        end: Float,
+    ) = (0..ceil((end - start) * 4).toInt()).asSequence().map { min(end, start + it / 4f) }
+
+    return along(area.left, right)
+        .flatMap { x -> sequenceOf(Offset(x, area.top), Offset(x, bottom)) }
+        .plus(along(area.top, bottom).flatMap { y -> sequenceOf(Offset(area.left, y), Offset(right, y)) })
+        .map { Rect(it, size) }
 }
 
 private fun besideEnd(
@@ -105,7 +200,7 @@ private fun besideEnd(
 ): Rect {
     val (from, to) = label.segment
     val (lower, upper) = if (from.y > to.y) from to to else to to from
-    val end = if (label.isUpper) upper else lower
+    val end = upper
     val gap = LABEL_GAP * unit
     val left = if (end.x < area.center.x) end.x + gap else end.x - gap - label.size.width
     val top = if (label.isUpper) end.y - gap - label.size.height else end.y + gap
@@ -149,3 +244,45 @@ private val NEAREST_SHIFTS =
     (-SEARCH_STEPS..SEARCH_STEPS)
         .flatMap { row -> (-SEARCH_STEPS..SEARCH_STEPS).map { column -> Offset(column.toFloat(), row.toFloat()) } }
         .sortedBy { it.getDistance() }
+
+private fun LabelSegment.closestPoint(point: Offset): Offset {
+    val vector = to - from
+    val squared = vector.x * vector.x + vector.y * vector.y
+    val delta = point - from
+    val along = if (squared == 0f) 0f else ((delta.x * vector.x + delta.y * vector.y) / squared).coerceIn(0f, 1f)
+    return from + vector * along
+}
+
+private fun LabelSegment.sideOf(point: Offset): Float = (to.x - from.x) * (point.y - from.y) - (to.y - from.y) * (point.x - from.x)
+
+private fun Rect.isOnNamedSide(
+    named: LabelSegment,
+    line: LabelSegment,
+): Boolean = line.sideOf(center) * line.sideOf(named.closestPoint(center)) >= 0f
+
+private fun Rect.separatesName(
+    named: LabelSegment,
+    line: LabelSegment,
+): Boolean {
+    val connector = LabelSegment(center, named.closestPoint(center))
+    return line.sideOf(connector.from) * line.sideOf(connector.to) < 0f &&
+        connector.sideOf(line.from) * connector.sideOf(line.to) < 0f
+}
+
+private fun Rect.belongsWith(
+    named: LabelSegment,
+    lines: List<LabelSegment>,
+): Boolean {
+    val own = gapTo(named)
+    return lines.all { it == named || (own < gapTo(it) && !separatesName(named, it)) }
+}
+
+private fun Rect.gapTo(segment: LabelSegment): Float {
+    if (touches(segment, 0f)) return 0f
+    val pointGap = { point: Offset ->
+        Offset(maxOf(left - point.x, 0f, point.x - right), maxOf(top - point.y, 0f, point.y - bottom)).getDistance()
+    }
+    val corners = listOf(topLeft, topRight, bottomLeft, bottomRight)
+    val cornerGap = corners.minOf { corner -> (corner - segment.closestPoint(corner)).getDistance() }
+    return minOf(pointGap(segment.from), pointGap(segment.to), cornerGap)
+}

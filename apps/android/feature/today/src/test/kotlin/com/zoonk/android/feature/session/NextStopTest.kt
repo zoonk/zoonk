@@ -5,9 +5,11 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -22,6 +24,8 @@ import com.zoonk.android.feature.warmup.WARM_UP_ID
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
 import com.zoonk.api.models.LessonReadiness
@@ -36,6 +40,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import java.io.File
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
@@ -155,8 +162,8 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
-        rule.onNodeWithText("While you wait: Mixed practice").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
+        rule.onNodeWithText("Practice now").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
         assertEquals(0, dayReads)
 
@@ -175,14 +182,14 @@ class NextStopTest {
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
         show()
         rule.waitForIdle()
-        rule.onNodeWithText("Play a quiz while you wait").performClick()
+        rule.onNodeWithText("Play a quiz").performClick()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
         rule.onNodeWithText("Next guess").assertExists()
 
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("Your lesson is ready.").assertExists()
+        rule.onNodeWithText("Your lesson is ready").assertExists()
         rule.onNodeWithText("Start").assertExists()
         rule.onNodeWithText("Here's the answer").assertExists()
         rule.onNodeWithText("Next guess").assertDoesNotExist()
@@ -197,7 +204,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(5_000)
@@ -220,6 +227,36 @@ class NextStopTest {
     }
 
     @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun theOtherStepIsNamedByWhatItStartsWhileTheLessonIsWrittenAndOnceItFailed() {
+        statuses += listOf(LessonReadiness.Status.GENERATING, LessonReadiness.Status.GENERATING, LessonReadiness.Status.FAILED)
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show(alternative = practice)
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+        shot("next-stop-writing-phone", "session.lesson-wait.writing")
+
+        rule.onNodeWithText("Practice now").assertExists()
+
+        rule.mainClock.advanceTimeBy(5_000)
+        rule.waitForIdle()
+        shot("next-stop-writing-failed-phone", "session.lesson-wait.failed")
+
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
+        rule.onNodeWithText("Practice now").assertExists()
+    }
+
+    /** A review picture of the screen and its layout, written only on demand: `-Pzoonk.shots=<folder>`. */
+    private fun shot(
+        name: String,
+        scenario: String,
+    ) {
+        val folder = System.getProperty("zoonk.shots").orEmpty().ifEmpty { return }
+        writeRender(File(folder, "$name.png"), rule.onRoot().captureRender(scenario).asAndroidBitmap())
+    }
+
+    @Test
     fun aRunThatFailsSaysItDidntFinishInsteadOfOfferingStart() {
         statuses += listOf(LessonReadiness.Status.GENERATING, LessonReadiness.Status.FAILED)
         shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
@@ -227,10 +264,44 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Try again").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
         rule.onNodeWithText("Your lesson is ready.").assertDoesNotExist()
+    }
+
+    @Test
+    fun aRunThatFailsOffersTryAgainAndNoQuiz() {
+        warmUpId = UUID.fromString(WARM_UP_ID)
+        settled = LessonReadiness.Status.FAILED
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Try again").assertExists()
+        rule.onNodeWithText("Play a quiz").assertDoesNotExist()
+        rule.onNodeWithText("Back to quiz").assertDoesNotExist()
+        rule.onNodeWithText("Next guess").assertDoesNotExist()
+    }
+
+    @Test
+    fun aQuizOpenWhenTheRunFailsGoesWithIt() {
+        warmUpId = UUID.fromString(WARM_UP_ID)
+        settled = LessonReadiness.Status.GENERATING
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+        rule.onNodeWithText("Play a quiz").performClick()
+        rule.onNodeWithText(QUIZ_QUESTION).assertExists()
+
+        settled = LessonReadiness.Status.FAILED
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Try again").assertExists()
+        rule.onNodeWithText(QUIZ_QUESTION).assertDoesNotExist()
     }
 
     @Test
@@ -243,7 +314,7 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("This lesson isn't available").assertExists()
-        rule.onNodeWithText("This didn't finish").assertDoesNotExist()
+        rule.onNodeWithText("Something went wrong on our side").assertDoesNotExist()
         rule.onNodeWithText("Try again").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(10_000)
@@ -260,7 +331,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(601_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Try again").assertExists()
     }
 
@@ -272,12 +343,12 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
@@ -294,7 +365,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't start").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
     }
 
     @Test
@@ -307,7 +378,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't start").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
     }
 
     @Test
@@ -317,7 +388,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(21_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't start").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Try again").assertExists()
     }
 
@@ -329,7 +400,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(10_000)
@@ -345,7 +416,7 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("Start").assertExists()
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertDoesNotExist()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
@@ -356,7 +427,7 @@ class NextStopTest {
     @Test
     fun workTappedWhileWaitingIsNeverDrawnAsTheReadyLesson() {
         show(alternative = practice)
-        rule.onNodeWithText("While you wait: Mixed practice").performClick()
+        rule.onNodeWithText("Practice now").performClick()
         rule.waitForIdle()
         shown = practice
         rule.waitForIdle()
@@ -365,6 +436,8 @@ class NextStopTest {
     }
 
     private companion object {
+        const val QUIZ_QUESTION = "Why do beekeepers puff smoke into a hive before opening it?"
+
         val WRITTEN: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f00")
     }
 }

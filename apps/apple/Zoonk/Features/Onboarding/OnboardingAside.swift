@@ -5,10 +5,6 @@ import SwiftUI
 enum OnboardingAside {
   case howItWorks
   case planSoFar([PlanFact])
-
-  var planFacts: [PlanFact]? {
-    if case .planSoFar(let facts) = self { facts } else { nil }
-  }
 }
 
 extension EnvironmentValues {
@@ -33,7 +29,7 @@ private struct OnboardingColumn<Lead: View>: ViewModifier {
   @Environment(\.onboardingAside) private var aside
 
   func body(content: Content) -> some View {
-    PaneBeside(isAvailable: aside != nil, paneEdge: .trailing, primaryShare: 0.55) {
+    OnboardingPaneColumn(isAvailable: aside != nil) {
       switch aside {
       case .howItWorks?:
         HowItWorks()
@@ -43,7 +39,21 @@ private struct OnboardingColumn<Lead: View>: ViewModifier {
         EmptyView()
       }
     } content: { _ in
-      content.readableColumn(640).lonePage()
+      content
+    }
+  }
+}
+
+/// Main's onboarding column with `pane` in the aside's place, for a step that shows its own facts
+/// there. `content` learns whether the pane is beside it, to show them itself when it isn't.
+struct OnboardingPaneColumn<Pane: View, Content: View>: View {
+  var isAvailable = true
+  @ViewBuilder let pane: () -> Pane
+  @ViewBuilder let content: (_ isBeside: Bool) -> Content
+
+  var body: some View {
+    PaneBeside(isAvailable: isAvailable, paneEdge: .trailing, primaryShare: 0.55, pane: pane) {
+      content($0).readableColumn(640).lonePage()
     }
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
+import { useLiveLimit } from "@zoonk/learn/help-limit";
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
@@ -61,7 +62,7 @@ const COMPOSER_POSITION =
 function LoadError() {
   const controller = useLessonQuestionController();
   const error = controller.state.requestError;
-  const limit = toHelpLimit(error);
+  const limit = useLiveLimit(toHelpLimit(error));
 
   if (limit) {
     return <QuestionLimitNotice limit={limit} />;
@@ -82,7 +83,12 @@ function SignUpPrompt() {
   const { loginHref } = useLessonQuestionNavigation();
 
   return (
-    <div className={cn(TUTOR_COMPOSER_FRAME_CLASS, "flex items-center gap-3 py-2 pr-2 pl-3.5")}>
+    <div
+      className={cn(
+        TUTOR_COMPOSER_FRAME_CLASS,
+        "flex min-h-11 items-center gap-3 py-1.75 pr-1.75 pl-3",
+      )}
+    >
       <p className="text-muted-foreground flex-1 text-sm">
         {t("Create a free account to start the conversation.")}
       </p>
@@ -273,7 +279,7 @@ function ConversationBody({
           </WaitForFirstShow>
         )}
 
-        <ConversationMissionMoment buddyName={identity.name} moment={missionMoment} />
+        <ConversationMissionMoment moment={missionMoment} />
       </div>
 
       <div className={cn(COMPOSER_POSITION, "flex flex-col gap-2.5")}>

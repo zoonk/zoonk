@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
-import { type UsagePeriod } from "../../../entitlements/contract";
+import { type AllowanceLimit, type UsagePeriod } from "../../../entitlements/contract";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
@@ -27,6 +27,7 @@ export type CreateAnytimeMockResult =
   | { status: "notEnoughQuestions" }
   | { status: "needsQuestions" }
   | {
+      availableAt?: Date | null;
       examQuestions: number;
       limit: UsagePeriod | null;
       minutes: number;
@@ -126,9 +127,13 @@ function toConditions({
   };
 }
 
-/** Reuse a running mock; `needsQuestions` requires preparing questions before retrying without `acceptFewer`. */
+/**
+ * Reuse a running mock; `needsQuestions` requires preparing questions before retrying with
+ * `afterWriting`, which answers `short` when the mock still lacks questions.
+ */
 export async function createAnytimeMock({
   acceptFewer,
+  afterWriting = false,
   goal,
   option,
   setup,
@@ -136,17 +141,18 @@ export async function createAnytimeMock({
   writesCap,
 }: {
   acceptFewer: boolean;
+  afterWriting?: boolean;
   goal: Goal;
   option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
-  writesCap: UsagePeriod | null;
+  writesCap: Pick<AllowanceLimit, "period" | "availableAt"> | null;
 }): Promise<CreateAnytimeMockResult> {
   const { candidates, plan } = await planFromBank({ goal, option, setup, userId });
   const planned = countPlannedQuestions(plan);
   const asksEssays = plan.sections.some((section) => section.essays.length > 0);
   const shortOfNew = !acceptFewer && isShortOfNew({ candidates, option, plan, setup });
-  const asksForNew = writesCap === null && shortOfNew;
+  const asksForNew = !afterWriting && writesCap === null && shortOfNew;
 
   const short =
     !acceptFewer &&
@@ -168,7 +174,9 @@ export async function createAnytimeMock({
     if (short) {
       return unchanged({
         examQuestions: option.questions,
-        limit: shortOfNew ? writesCap : null,
+        ...(shortOfNew &&
+          writesCap?.period === "rolling30Days" && { availableAt: writesCap.availableAt }),
+        limit: shortOfNew ? (writesCap?.period ?? null) : null,
         minutes: plan.minutes,
         questions: planned,
         status: "short",

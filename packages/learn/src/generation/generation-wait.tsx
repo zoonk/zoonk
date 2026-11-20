@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import {
   GenerationTimeline,
   GenerationTimelineHeader,
@@ -15,30 +14,21 @@ import {
 } from "@zoonk/ui/components/generation-timeline";
 import { useAnimatedProgress } from "@zoonk/ui/hooks/animated-progress";
 import { useTickCount } from "@zoonk/ui/hooks/tick-count";
-import { CircleAlertIcon, WifiOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
-import {
-  NoticeCard,
-  NoticeCardActions,
-  NoticeCardContent,
-  NoticeCardDescription,
-  NoticeCardLeading,
-  NoticeCardTitle,
-} from "../_components/notice-card";
 import { formatClock } from "../_utils/clock";
 import { useAppLocale } from "../_utils/locale";
 import { getDetailLine } from "./_utils/detail-line";
 import { type PhaseProgress, type PhaseStatus, getPhaseProgress } from "./_utils/phase-progress";
 import { type PhaseTime, getPhaseTimes } from "./_utils/phase-times";
 import { type PhaseCopy } from "./generation-copy-types";
+import { GenerationFailureNotice } from "./generation-failure-notice";
 import { type GenerationKind, getGenerationKind } from "./generation-kinds";
-import { type GenerationFailure, type GenerationRun } from "./generation-run";
+import { type GenerationRun, isFollowing } from "./generation-run";
+import { getActiveStepLabel } from "./generation-step-label";
 import { useGenerationCopy } from "./use-generation-copy";
 
-function isFollowing(run: GenerationRun): boolean {
-  return run.status === "waiting" || run.status === "following";
-}
+export { GenerationFailureNotice } from "./generation-failure-notice";
 
 /**
  * The run's progress from 0 to 100, drifting through the running phase. Bars given the same `since`
@@ -74,12 +64,14 @@ function WaitProgress({
   label,
   run,
   since,
+  statuses,
   weights,
 }: {
   kind: GenerationKind;
   label: string;
   run: GenerationRun;
   since?: number;
+  statuses: PhaseStatus[];
   weights: number[];
 }) {
   const locale = useAppLocale();
@@ -89,6 +81,7 @@ function WaitProgress({
     <GenerationTimelineProgress
       aria-label={label}
       locale={locale}
+      statuses={statuses}
       value={value}
       weights={weights}
     />
@@ -176,66 +169,6 @@ function PhaseStatusText({ status }: { status: PhaseStatus }) {
   return <span className="sr-only">{`, ${text}`}</span>;
 }
 
-function FailureIcon({ failure }: { failure: GenerationFailure }) {
-  return failure === "connection" ? (
-    <WifiOffIcon aria-hidden="true" />
-  ) : (
-    <CircleAlertIcon aria-hidden="true" />
-  );
-}
-
-export function GenerationFailureNotice({
-  failure,
-  retry,
-}: {
-  failure: GenerationFailure;
-  retry?: () => void;
-}) {
-  const t = useExtracted();
-
-  const copy = {
-    connection: {
-      action: t("Reconnect"),
-      description: t("We stopped getting updates. It may still be working."),
-      title: t("Connection lost"),
-    },
-    generation: {
-      action: t("Try again"),
-      description: t("Something went wrong on our side."),
-      title: t({
-        description: "Preparing this content failed. It is not still running.",
-        message: "This didn't finish",
-      }),
-    },
-    notStarted: {
-      action: t("Try again"),
-      description: t("We couldn't get this started."),
-      title: t("This didn't start"),
-    },
-  }[failure];
-
-  return (
-    <NoticeCard role="alert">
-      <NoticeCardLeading className="text-muted-foreground">
-        <FailureIcon failure={failure} />
-      </NoticeCardLeading>
-      <NoticeCardContent>
-        <NoticeCardTitle>{copy.title}</NoticeCardTitle>
-        <NoticeCardDescription>{copy.description}</NoticeCardDescription>
-        {retry && (
-          <form action={() => retry()} className="contents">
-            <NoticeCardActions>
-              <Button size="sm" type="submit">
-                {copy.action}
-              </Button>
-            </NoticeCardActions>
-          </form>
-        )}
-      </NoticeCardContent>
-    </NoticeCard>
-  );
-}
-
 function useAnnouncement({
   copy,
   doneLabel,
@@ -248,16 +181,16 @@ function useAnnouncement({
   run: GenerationRun;
 }): string {
   const t = useExtracted();
-  const active = progress.phases.find((phase) => phase.status === "active");
 
   if (progress.progress === 100) {
     return doneLabel ?? t("Done");
   }
 
-  return isFollowing(run) && active ? (copy[active.id]?.label ?? "") : "";
+  return getActiveStepLabel({ copy, progress, run }) ?? "";
 }
 
 export function GenerationWait({
+  barHasMainAction,
   children,
   className,
   doneLabel,
@@ -265,6 +198,7 @@ export function GenerationWait({
   run,
   since,
 }: {
+  barHasMainAction?: boolean;
   children?: React.ReactNode;
   className?: string;
   /** What the status line says once it's done, for a screen that stays then. */
@@ -294,17 +228,14 @@ export function GenerationWait({
     >
       <GenerationTimelineHeader>
         {children}
-        {failure ? (
-          <GenerationFailureNotice failure={failure} retry={run.retry} />
-        ) : (
-          <WaitProgress
-            kind={kind}
-            label={copy.name}
-            run={run}
-            since={since}
-            weights={progress.phases.map((phase) => phase.seconds)}
-          />
-        )}
+        <WaitProgress
+          kind={kind}
+          label={copy.name}
+          run={run}
+          since={since}
+          statuses={progress.phases.map((phase) => phase.status)}
+          weights={progress.phases.map((phase) => phase.seconds)}
+        />
       </GenerationTimelineHeader>
 
       <GenerationTimelineStatus>{announcement}</GenerationTimelineStatus>
@@ -339,6 +270,15 @@ export function GenerationWait({
           );
         })}
       </GenerationTimelineSteps>
+
+      {/* Under the steps, where a failure moves none of them: the bar stops where it got to. */}
+      {failure && (
+        <GenerationFailureNotice
+          barHasMainAction={barHasMainAction}
+          failure={failure}
+          retry={run.retry}
+        />
+      )}
     </GenerationTimeline>
   );
 }

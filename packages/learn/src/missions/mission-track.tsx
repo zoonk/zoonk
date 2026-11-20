@@ -27,15 +27,18 @@ function getFillMotion({
   return { "--fill-from": was / fill, animationDelay: `${delayMs + order * STAGGER_MS}ms` };
 }
 
+/** With a `label`, screen readers hear the track as that; without one it hides, for words that already say it. */
 export function MissionTrack({
   className,
   delayMs = 0,
   from,
+  label,
   missions,
 }: {
   className?: string;
   delayMs?: number;
   from?: readonly TrackMission[];
+  label?: string;
   missions: readonly TrackMission[];
 }) {
   const fills = byFurthest(missions.map((mission) => getFill(mission)));
@@ -50,13 +53,19 @@ export function MissionTrack({
   const moved = fills.map((fill, index) => fill > (before[index] ?? fill));
 
   return (
-    <div aria-hidden="true" className={cn("flex gap-0.5", className)} data-slot="mission-track">
+    <div
+      aria-hidden={label ? undefined : true}
+      aria-label={label}
+      className={cn("flex gap-0.5", className)}
+      data-slot="mission-track"
+      role={label ? "img" : undefined}
+    >
       {missions.map((mission, index) => {
         const fill = fills[index] ?? 0;
 
         return (
           <span
-            className="bg-brain/15 dark:bg-brain/30 relative h-1.5 flex-1 overflow-hidden rounded-[3px]"
+            className="bg-brain/15 dark:bg-brain/30 rounded-meter relative h-1.5 flex-1 overflow-hidden"
             key={mission.kind}
           >
             <span

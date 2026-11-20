@@ -27,10 +27,15 @@ extension PlanPhase {
         localized: "After the exam", table: "Plan",
         comment: "Name of the phase that goes on after the exam")
     case .learn:
-      return String(
-        localized: "Phase \(index + 1)", table: "Plan",
-        comment: "Name of an unnamed phase by its number")
+      return placeName
     }
+  }
+
+  /// The phase by its place in the plan, "Phase 2".
+  var placeName: String {
+    String(
+      localized: "Phase \(index + 1)", table: "Plan",
+      comment: "Name of an unnamed phase by its number")
   }
 
   var weight: Double {
@@ -55,78 +60,60 @@ struct PlanRoadmapSection: View {
     let phases = context.plan.roadPhases
 
     if !phases.isEmpty {
-      Section {
-        if listsPhases {
-          RoadmapCompact(context: context, opens: false)
-
-          ForEach(Array(zip(phases, PhaseWhen.of(phases))), id: \.0.id) { phase, when in
-            RoadmapPhaseRow(phase: phase, when: when, today: context.plan.today)
+      if listsPhases {
+        Section {
+          RoadmapCompact(context: context, opens: false, hasLine: false)
+          ForEach(phases) { phase in
+            RoadmapPhaseRow(phase: phase, end: context.plan.phaseEnd(phase))
           }
-        } else if structure != nil {
-          Button {
-            context.show(.path)
-          } label: {
-            RoadmapCompact(context: context, opens: true)
-          }
-          .foregroundStyle(.primary)
-        } else {
-          RoadmapCompact(context: context, opens: false)
-        }
-      } header: {
-        if listsPhases {
+        } header: {
           SectionTitle(
             Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases"))
         }
-      }
-    }
-  }
-}
-
-/// What main's roadmap says under each phase: "Today" under the current one and the start of each
-/// one after it. Earlier phases say nothing, since one settled by placement would claim today's date.
-enum PhaseWhen: Equatable {
-  case today
-  case starts(String)
-
-  static func of(_ phases: [PlanPhase]) -> [PhaseWhen?] {
-    let current = phases.firstIndex { $0.state == .current }
-
-    return phases.enumerated().map { position, phase in
-      guard let current, position >= current, let start = phase.startDate else {
-        return nil
-      }
-
-      return position == current ? .today : .starts(start)
-    }
-  }
-}
-
-private struct RoadmapPhaseRow: View {
-  let phase: PlanPhase
-  let when: PhaseWhen?
-  let today: String
-
-  var body: some View {
-    PlanPathRow {
-      Label {
-        Text(phase.title)
-          .typeWeight(.medium)
-      } icon: {
-        StatusMark(status: phase.mark)
-      }
-    } value: {
-      Group {
-        switch when {
-        case .today?:
-          Text("Today", tableName: "Plan", comment: "When the learner's current phase starts")
-        case .starts(let start)?:
-          Text(PlanDate.text(start, today: today))
-        case nil:
-          EmptyView()
+      } else {
+        Section {
+          PlanRoadmapContent(context: context, structure: structure)
         }
       }
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
+    }
+  }
+}
+
+struct PlanRoadmapContent: View {
+  let context: PlanContext
+  let structure: GoalSyllabus?
+
+  var body: some View {
+    if !context.plan.roadPhases.isEmpty {
+      if structure != nil {
+        Button {
+          context.show(.path)
+        } label: {
+          RoadmapCompact(context: context, opens: true)
+        }
+        .foregroundStyle(.primary)
+      } else {
+        RoadmapCompact(context: context, opens: false)
+      }
+    }
+  }
+}
+
+/// A phase of a new plan, named by its end as everywhere else; a phase behind the learner, or one
+/// still being planned, has no date.
+struct RoadmapPhaseRow: View {
+  let phase: PlanPhase
+  let end: PhaseEnd?
+
+  var body: some View {
+    ListRow(Text(phase.title)) {
+      StatusMark(status: phase.mark)
+    } trailing: {
+      if let end {
+        PlanWhen.date(Text(verbatim: end.shown))
+          .foregroundStyle(.mutedForeground)
+          .accessibilityLabel(Text(verbatim: end.spoken))
+      }
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(
@@ -137,11 +124,14 @@ private struct RoadmapPhaseRow: View {
 
 }
 
+/// Main's line under the roadmap: "Phase 1 of 4 · Foundations", then the phase's end.
 private struct RoadmapCompact: View {
   @Environment(\.legibilityWeight) private var legibilityWeight
 
   let context: PlanContext
   let opens: Bool
+  /// Over a list that names each phase and its date, the line would say it again.
+  var hasLine = true
 
   var body: some View {
     let phases = context.plan.roadPhases
@@ -152,84 +142,239 @@ private struct RoadmapCompact: View {
         parts: phases.map { phase in
           MeterParts.Part(
             weight: phase.weight,
-            fill: phase.state == .done
-              ? .color(.success) : phase.state == .current ? .current : .track)
+            fill: phase.state == .current
+              ? .currentPhase(phase.lessonShare) : .share(phase.lessonShare))
         })
 
-      HStack(alignment: .firstTextBaseline) {
-        if let currentIndex {
-          PlanPathRow {
-            position(phase: phases[currentIndex])
-          } value: {
-            Text(
-              "\(currentIndex + 1) of \(phases.count)", tableName: "Plan",
-              comment: "The learner's phase number of the plan's phases, under the roadmap"
-            )
-            .typeStyle(.data)
-          }
-        } else {
-          Text(
-            "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",
-            tableName: "Plan", comment: "Phases done of the plan's phases, once none is current"
-          )
-          .foregroundStyle(.mutedForeground)
-          Spacer()
-        }
-
-        if opens {
-          Image(systemName: "chevron.right")
-            .foregroundStyle(.faint)
-            .imageScale(.small)
-        }
+      if hasLine {
+        line(phases: phases, currentIndex: currentIndex)
       }
-      .typeStyle(.meta)
     }
     .accessibilityElement(children: .combine)
   }
 
-  private func position(phase: PlanPhase) -> Text {
-    let today = context.plan.today
-    let title = Text(phase.title)
-      .typeWeight(.medium, legibility: legibilityWeight)
-      .foregroundStyle(Color(.foreground))
+  private func line(phases: [PlanPhase], currentIndex: Int?) -> some View {
+    HStack(spacing: 12) {
+      if let currentIndex {
+        let phase = phases[currentIndex]
 
-    guard let start = phase.startDate, let end = phase.endDate, start <= today else {
-      return title
+        // Main's `plan-roadmap`: its value and chevron end on the edge; it has no row's label.
+        RowLayout(piece: .planRoadmap) {
+        } words: {
+          position(phase: phase, number: currentIndex + 1, count: phases.count)
+        } value: {
+          if !context.isPaused, let end = context.plan.phaseEnd(phase) {
+            Text(verbatim: end.shown)
+              .typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
+              .accessibilityLabel(Text(verbatim: end.spoken))
+          }
+        }
+        // Stacked at accessibility sizes too, the chevron ends the row on its edge.
+        .frame(maxWidth: .infinity, alignment: .leading)
+      } else if opens {
+        Text(
+          "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",
+          tableName: "Plan",
+          comment: "Under the roadmap once no phase is current, such as after the plan's date"
+        )
+        .foregroundStyle(.mutedForeground)
+        .frame(maxWidth: .infinity, alignment: .leading)
+      }
+
+      if opens {
+        DisclosureChevron()
+      }
+    }
+    .typeStyle(.meta)
+  }
+
+  private func position(phase: PlanPhase, number: Int, count: Int) -> Text {
+    // Main's: the place leads, in the text's color; the phase's own name follows, muted.
+    let place = Text(
+      "Phase \(number) of \(count)", tableName: "Plan",
+      comment: "The learner's phase of the plan's phases, under the roadmap"
+    )
+    .typeWeight(.medium, legibility: legibilityWeight)
+    .foregroundStyle(Color(.foreground))
+
+    guard phase.hasOwnName else {
+      return place
     }
 
-    let day = PlanDate.days(from: start, to: today) + 1
-    let days = PlanDate.days(from: start, to: end) + 1
+    let title = Text(phase.title)
 
     return Text(
-      "\(title)\u{00A0}· day \(day) of \(days)", tableName: "Plan",
-      comment: "Where the learner is: the phase's name, then its day of the phase's days"
+      "\(place)\u{00A0}· \(title)", tableName: "Plan",
+      comment: "The learner's phase under the roadmap: its number of the phases, then its name"
     )
     .foregroundStyle(.mutedForeground)
   }
 }
 
+/// Where a phase ends, at the end of its row or under the roadmap's bar: "Dec 12", "~Dec 12" or
+/// "~Mar". The place says it's the end, so it has no "until".
+struct PhaseEnd: Equatable {
+  let shown: String
+  let spoken: String
+
+  init(_ isoDate: String, estimate: Bool, month: Bool, today: String) {
+    let date =
+      month ? PlanDate.monthText(isoDate, today: today) : PlanDate.text(isoDate, today: today)
+
+    guard estimate else {
+      shown = date
+      spoken = String(
+        localized: "Ends \(date)", table: "Plan",
+        comment: "When a phase of the plan ends, read aloud; the argument is a day like 'Dec 12'")
+      return
+    }
+
+    shown = String(
+      localized: "~\(date)", table: "Plan", comment: "An estimated day or month, like '~Nov 20'")
+    spoken =
+      month
+      ? String(
+        localized: LocalizedStringResource(
+          "endsAboutMonth", defaultValue: "Ends around \(date)", table: "Plan",
+          comment:
+            "When a phase of the plan ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028'"
+        ))
+      : String(
+        localized: "Ends around \(date)", table: "Plan",
+        comment:
+          "When a phase of the plan ends, about, read aloud; the argument is a day like 'Dec 12'")
+  }
+}
+
+extension GoalPlan {
+  /// Main's `getPhaseEnd`: nothing for a phase behind the learner. A learning phase's end is an
+  /// estimate while it's ahead, and while it's current with its challenge, which has no booked
+  /// day, still to come. A phase that ends on its challenge's day is an estimate too, and so is
+  /// every phase of a plan whose own date is one, since its phases are laid out back from it.
+  func phaseEnd(_ phase: PlanPhase) -> PhaseEnd? {
+    guard phase.state == .current || phase.state == .upcoming else {
+      return nil
+    }
+
+    // A last phase without a day of its own ends with the plan.
+    guard let lastDay = phase.untilDate else {
+      guard phase.index == phases.last(where: { $0.kind != .afterExam })?.index,
+        let endDate = estimate.endDate
+      else {
+        return nil
+      }
+
+      return PhaseEnd(endDate, estimate: true, month: isFar(endDate), today: today)
+    }
+
+    let learns = phase.kind == .learn || phase.kind == .afterExam
+    let ahead = phase.state == .upcoming
+    let endsOnChallenge = lastDay != phase.endDate
+    let isEstimate =
+      endsOnChallenge || schedule.targetDateEstimated
+      || (learns && (ahead || phase.checkpoint?.state == .upcoming))
+
+    return PhaseEnd(
+      lastDay, estimate: isEstimate, month: isEstimate && ahead && isFar(lastDay), today: today)
+  }
+
+  /// When the plan finished, or the goal's date or estimated end while it's under way.
+  func roadmapFinish(isExam: Bool) -> (isoDate: String, estimate: Bool, month: Bool)? {
+    if !isExam, let end {
+      return end.finishedOn.map { ($0, false, false) }
+    }
+
+    if let targetDate = schedule.targetDate {
+      return (targetDate, schedule.targetDateEstimated, schedule.targetDateNamedMonth)
+    }
+
+    guard !isExam, let endDate = estimate.endDate else {
+      return nil
+    }
+
+    return (endDate, true, isFar(endDate))
+  }
+
+  /// An estimate past six weeks from this week's start names only its month.
+  private func isFar(_ isoDate: String) -> Bool {
+    PlanDate.days(from: week.startDate, to: isoDate) > 42
+  }
+}
+
+extension PlanPhase {
+  /// A phase named "Phase 2" has no name of its own to say beside its number.
+  var hasOwnName: Bool {
+    kind != .learn || !(name ?? "").isEmpty
+  }
+
+  /// The day the phase is behind you: it ends with its challenge, which can come the day after its
+  /// last lesson.
+  var untilDate: String? {
+    guard let endDate else {
+      return nil
+    }
+
+    guard let challenge = checkpoint?.date, checkpoint?.state == .upcoming, challenge > endDate
+    else {
+      return endDate
+    }
+
+    return challenge
+  }
+}
+
 struct PlanNumbersSection: View {
   @Environment(PlanStore.self) private var store
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let context: PlanContext
   let syllabus: GoalSyllabus?
+  var timeShownBeside = false
 
-  @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
+  /// Main's `@2xl` container: two tiles side by side only from 42rem, where each value fits one line
+  /// in every language.
+  @ScaledMetric(relativeTo: .body) private var minimumWidth = 332.0
 
   var body: some View {
     let standing = standingNumber
+    let schedule = scheduleNumber
 
-    Section {
-      StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
-        if let standing {
-          tile(standing) { context.show(.standing) }
+    if standing != nil || schedule != nil {
+      PageSection {
+        Group {
+          // Main's aside draws the numbers as stats, one under the other with no box; the page's
+          // column draws them as tiles.
+          if timeShownBeside {
+            VStack(alignment: .leading, spacing: 24) {
+              numbers(standing: standing, schedule: schedule)
+            }
+            .environment(\.statTileLone, true)
+          } else {
+            StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
+              numbers(standing: standing, schedule: schedule)
+            }
+          }
         }
-
-        if let pace = paceNumber {
-          tile(pace) { context.show(.pace) }
-        }
+        .buttonStyle(.plain)
+        .environment(\.statTileTitled, true)
+      } header: {
+        EmptyView()
       }
-      .buttonStyle(.plain)
+      // Main's numbers and the suggestion under them share one block, a row's room apart.
+      .listSectionSpacing(0)
+    }
+  }
+
+  @ViewBuilder
+  private func numbers(standing: PlanNumber?, schedule: PlanNumber?) -> some View {
+    if let standing {
+      tile(standing) { context.show(.standing) }
+    }
+
+    if let schedule {
+      tile(schedule) { context.show(.schedule) }
     }
   }
 
@@ -238,7 +383,7 @@ struct PlanNumbersSection: View {
     Button(action: open) {
       StatTile(
         label: Text(number.label),
-        value: Text(number.value),
+        value: number.value,
         icon: { EmptyView() },
         detail: number.detail.map {
           Text($0).foregroundStyle(
@@ -263,11 +408,9 @@ struct PlanNumbersSection: View {
       return PlanNumber(
         label: String(
           localized: "Preparation", table: "Plan", comment: "Label of the exam preparation number"),
-        value: preparation.value.formatted(.percent.precision(.fractionLength(0))),
+        value: Text(verbatim: preparation.value.formatted(.percent.precision(.fractionLength(0)))),
         detail: points == 0
-          ? String(
-            localized: "No change this week", table: "Plan",
-            comment: "Preparation didn't move this week")
+          ? nil
           : points > 0
             ? String(
               localized: "+\(points) this week", table: "Plan",
@@ -284,9 +427,8 @@ struct PlanNumbersSection: View {
       }
 
       return PlanNumber(
-        label: String(
-          localized: "Level", table: "Plan", comment: "Label of a language goal's level"),
-        value: language.levelText)
+        label: language.levelTitle,
+        value: language.levelValue(dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight))
     }
 
     guard context.goal.kind == .learn, let lessons = syllabus?.lessons else {
@@ -298,335 +440,138 @@ struct PlanNumbersSection: View {
     return PlanNumber(
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
-      value: goalProgressPercent(share),
-      detail: studiedText(lessons.done - lessons.known), share: share)
+      value: Text(verbatim: goalProgressPercent(share)),
+      detail: lessonsProgressLine(studied: lessons.done - lessons.known, known: lessons.known),
+      share: share)
   }
 
-  /// Only the lessons studied: a long plan never leads with its total, which stays in the sheet,
-  /// and what the learner already knew stays in the percent and the bars.
-  private func studiedText(_ studied: Int) -> String {
-    studied == 0
-      ? String(
-        localized: "No lessons studied yet", table: "Plan",
-        comment: "Under the plan's progress percent, in a small tile, before any lesson is studied")
-      : String(
-        localized: "\(studied) lessons studied", table: "Plan",
-        comment: "Under the plan's progress percent, in a small tile: the lessons studied")
-  }
-
-  /// A plan without a pace (a free exam plan past its first week) shows none.
-  private var paceNumber: PlanNumber? {
+  /// Main's `useScheduleNumber`: the plan's state, then the time a day while it's under way, or the
+  /// lessons left once its date passed. Beside the plan's settings, whose "Daily study time" row says
+  /// it, the time isn't said again.
+  private var scheduleNumber: PlanNumber? {
     guard let status = context.plan.status else {
       return nil
     }
 
-    let label = String(localized: "Pace", table: "Plan", comment: "Label of the plan's pace number")
-
-    switch status.kind {
-    case .finished:
-      return PlanNumber(
-        label: label,
-        value: String(localized: "Finished", table: "Plan", comment: "Pace of a finished plan"))
-    case .pastDate:
-      return PlanNumber(
-        label: label,
-        value: String(
-          localized: "Past date", table: "Plan", comment: "Pace of a plan whose date came"),
-        detail: String(
+    let paused = planIsResting(status, isPaused: context.isPaused)
+    let detail: String? =
+      switch status.kind {
+      case .pastDate:
+        String(
           localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
-          comment: "Lessons left in a plan whose date came"))
-    case .challengesLeft:
-      return PlanNumber(
-        label: label,
-        value: String(
-          localized: "Challenges", table: "Plan",
-          comment: "Pace of a plan with only challenges left"),
-        detail: planStatusText(status))
-    default:
-      break
-    }
+          comment: "Lessons left in a plan whose date passed")
+      case .ahead, .behind, .onTrack:
+        timeShownBeside
+          ? nil
+          : String(
+            localized:
+              "About \(planDurationText(minutes: Double(context.plan.schedule.dailyMinutes))) a day",
+            table: "Plan")
+      default:
+        nil
+      }
 
-    if context.isPaused {
-      return PlanNumber(
-        label: label,
-        value: String(localized: "Paused", table: "Plan", comment: "Pace of a paused goal"),
-        detail: String(
-          localized: "Nothing is planned", table: "Plan", comment: "A paused goal plans nothing"))
-    }
-
-    switch status.kind {
-    case .ahead:
-      return PlanNumber(
-        label: label,
-        value: String(localized: "Ahead", table: "Plan", comment: "Pace ahead of the plan"),
-        detail: planStatusText(status))
-    case .behind:
-      return PlanNumber(
-        label: label,
-        value: String(localized: "Behind", table: "Plan", comment: "Pace behind the plan"),
-        detail: planStatusText(status))
-    case .needsAdjusting:
-      return PlanNumber(
-        label: label,
-        value: String(
-          localized: "Too tight", table: "Plan", comment: "Pace of a plan that no longer fits"),
-        detail: planStatusText(status))
-    default:
-      return PlanNumber(
-        label: label,
-        value: String(
-          localized: "On pace", table: "Plan", comment: "Pace keeping up with the plan"),
-        detail: String(
-          localized:
-            "\(planDurationText(minutes: Double(context.plan.schedule.dailyMinutes))) a day",
-          table: "Plan", comment: "The plan's time a day, under the pace"))
-    }
+    return PlanNumber(
+      label: String(
+        localized: "Schedule", table: "Plan",
+        comment: "Label of the tile with the plan's state, such as \"Up to date\""),
+      value: Text(verbatim: planStatusText(status, isPaused: context.isPaused)),
+      detail: paused ? nil : detail)
   }
 }
 
 private struct PlanNumber {
   var label: String
-  var value: String
+  var value: Text
   var detail: String?
   var detailIsGain = false
   /// From 0 to 1.
   var share: Double?
 }
 
-func planStatusText(_ status: GoalPlan.Status) -> String {
+/// A paused goal rests unless its plan is already over or its date passed.
+func planIsResting(_ status: GoalPlan.Status, isPaused: Bool) -> Bool {
+  isPaused && ![.finished, .pastDate, .challengesLeft].contains(status.kind)
+}
+
+/// The plan's state, one wording everywhere it shows.
+func planStatusText(_ status: GoalPlan.Status, isPaused: Bool) -> String {
+  if planIsResting(status, isPaused: isPaused) {
+    return String(localized: "Paused", table: "Plan", comment: "State of a paused goal's plan")
+  }
+
   switch status.kind {
   case .ahead:
-    String(
+    return String(
       localized: "\(status.days ?? 0) days ahead", table: "Plan",
-      comment: "How many days ahead of the plan the learner is")
+      comment: "State of a plan the learner is ahead of, in days")
   case .behind:
     if let lessons = status.lessons, lessons > 0 {
-      String(
-        localized: "\(lessons) lessons to catch up", table: "Plan",
-        comment: "Lessons from earlier days still to do")
-    } else {
-      String(
-        localized: "\(status.days ?? 0) days behind", table: "Plan",
-        comment: "How many days behind the plan the learner is")
+      return String(
+        localized: "\(lessons) lessons behind", table: "Plan",
+        comment: "State of a plan the learner is behind, in lessons from earlier days")
     }
+
+    return String(
+      localized: "\(status.days ?? 0) days behind", table: "Plan",
+      comment: "State of a plan the learner is behind, in days")
   case .challengesLeft:
-    String(
-      localized: "\(status.challenges ?? 0) challenges left", table: "Plan",
-      comment: "Challenges left once every lesson is done")
+    return String(
+      localized: "\(status.challenges ?? 0) challenges to go", table: "Plan",
+      comment: "State of a plan with every lesson done and challenges left")
   case .finished:
-    String(localized: "Plan finished", table: "Plan", comment: "Pace of a finished plan, in words")
+    return String(localized: "Finished", table: "Plan", comment: "State of a finished plan")
   case .needsAdjusting:
-    String(
-      localized: "Needs adjusting", table: "Plan", comment: "A plan that no longer fits, in words")
+    return String(
+      localized: "Not enough time", table: "Plan",
+      comment: "State of a plan with more lessons than days left")
   case .onTrack:
-    String(localized: "Keeping pace", table: "Plan", comment: "Keeping up with the plan, in words")
+    return String(
+      localized: "Up to date", table: "Plan", comment: "State of a plan the learner keeps up with")
   case .pastDate:
-    String(localized: "Past your date", table: "Plan", comment: "A plan whose date came, in words")
+    return String(
+      localized: "Date passed", table: "Plan", comment: "State of a plan whose date passed")
   }
 }
 
-func planPaceFix(_ plan: GoalPlan, isExam: Bool) -> (text: String, adjust: Bool)? {
-  guard let status = plan.status else {
-    return nil
-  }
-
-  switch status.kind {
-  case .pastDate:
-    let lessons = status.lessons ?? 0
-    let text =
-      isExam
-      ? String(
-        localized: "\(lessons) lessons were left before your exam.", table: "Plan",
-        comment: "Lessons left when an exam's date came")
-      : String(
-        localized: "Your date came with \(lessons) lessons left.", table: "Plan",
-        comment: "Lessons left when the goal's date came")
-    return (text, false)
-  case .challengesLeft:
-    return (
-      String(
-        localized: "Every lesson is done: win the challenges to finish your plan.", table: "Plan",
-        comment: "What's left once every lesson is done"),
-      false
-    )
-  case .needsAdjusting:
-    return (
-      String(
-        localized: "Your plan no longer fits in the time left.", table: "Plan",
-        comment: "A plan that no longer fits before its date"),
-      true
-    )
-  case .behind:
-    if let lessons = status.lessons, lessons > 0 {
-      let text = String(
-        localized:
-          "\(lessons) lessons from earlier days come first: once you've done them, you're keeping pace again.",
-        table: "Plan", comment: "How a learner behind by some lessons catches up")
-      return (text, false)
-    }
-
-    let text = String(
-      localized:
-        "\(status.extraMinutesPerDay ?? 0) more minutes a day for \(status.days ?? 0) days and you're keeping pace again.",
-      table: "Plan", comment: "How much more time a day catches up")
-    return (text, false)
-  default:
-    return nil
-  }
-}
-
-struct NextOnPathSection: View {
-  @Environment(AppRouter.self) private var router
-
-  let context: PlanContext
-
-  var body: some View {
-    let plan = context.plan
-    let isExam = context.goal.kind == .exam
-    let ahead = plan.phases.filter {
-      $0.kind != .afterExam && ($0.state == .current || $0.state == .upcoming)
-    }
-    let mockDate = ahead.lazy.compactMap(\.mocks.nextDate).first
-    let checkpointPhase = ahead.first { $0.checkpoint?.state == .upcoming }
-    let checkpoint = checkpointPhase?.checkpoint
-    let chapter = isExam ? nil : plan.nextChapter
-    let chapterPhase = plan.phases.first { $0.chapters.contains { $0.state == .current } }
-    // A challenge in the next session comes before the next phase's lessons, as on Today.
-    let challengeFirst =
-      checkpoint?.when == .nextSession
-      && (checkpointPhase?.index ?? 0) < (chapterPhase?.index ?? -1)
-
-    if mockDate != nil || chapter?.chapterId != nil || checkpoint != nil || isExam {
-      PageSection {
-        if let mockDate {
-          Button {
-            router.open(.exam)
-          } label: {
-            row(
-              title: Text(
-                "Mock exam", tableName: "Plan", comment: "The next mock exam on the path"),
-              detail: Text(PlanDate.text(mockDate, today: plan.today)), kind: .mock)
-          }
-        }
-
-        if challengeFirst, let checkpoint {
-          checkpointRow(checkpoint)
-        }
-
-        if let chapter, let chapterId = chapter.chapterId {
-          PageLink(route: chapterRoute(chapterId)) {
-            PlanPathRow {
-              Label {
-                Text(chapter.title)
-              } icon: {
-                StatusMark(status: .next)
-              }
-            } value: {
-              Text(
-                "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
-                comment: "Lessons done of a chapter's lessons"
-              )
-              .monospacedDigit()
-            }
-          }
-        }
-
-        if !challengeFirst, let checkpoint {
-          checkpointRow(checkpoint)
-        }
-
-        finishRow
-      } header: {
-        SectionTitle(
-          Text(
-            "Next on your path", tableName: "Plan",
-            comment: "Section of what comes next on the plan"))
-      }
-    }
-  }
-
-  private func checkpointRow(_ checkpoint: PlanPhase.Checkpoint) -> some View {
-    Button {
-      router.open(.challenge(planItemId: checkpoint.planItemId))
-    } label: {
-      PlanChallengeLabel(
-        when: checkpoint.whenText(today: context.plan.today), explains: true,
-        isLanguage: context.goal.kind == .language)
-    }
-  }
-
-  private func row(title: Text, detail: Text?, kind: LearnKind) -> some View {
-    IconLabeledContent {
-      detail
-    } title: {
-      title.foregroundStyle(.primary)
-    } icon: {
-      KindMark(kind: kind)
-    }
-    .disclosureChevron()
-  }
-
-  @ViewBuilder
-  private var finishRow: some View {
-    let finish = IconLabeledContent {
-      planFinishText(context)
-    } title: {
-      Text(context.goal.displayName).foregroundStyle(.primary)
-    } icon: {
-      Image(systemName: "flag")
-    }
-
-    if context.goal.kind == .exam {
-      Button {
-        router.open(.exam)
-      } label: {
-        finish
-          .disclosureChevron()
-      }
-    } else {
-      finish
-    }
-  }
-
-  private func chapterRoute(_ chapterId: String) -> AppRoute {
-    context.goal.kind == .language
-      ? .languageUnit(chapterId: chapterId) : .chapter(chapterId: chapterId)
-  }
-}
-
-func planFinishText(_ context: PlanContext) -> Text? {
+func planFinish(_ context: PlanContext) -> PlanWhen? {
   let plan = context.plan
-  let schedule = plan.schedule
 
-  if let targetDate = schedule.targetDate {
-    let month = schedule.targetDateNamedMonth
+  guard context.goal.status != .paused else { return nil }
 
-    return schedule.targetDateEstimated
-      ? PlanDate.estimateText(targetDate, today: plan.today, month: month)
-      : Text(PlanDate.text(targetDate, today: plan.today, month: month))
+  guard let finish = plan.roadmapFinish(isExam: context.goal.kind == .exam) else {
+    return nil
   }
 
-  if context.goal.kind == .exam {
-    return Text(
-      "Date to be confirmed", tableName: "Plan", comment: "An exam whose day isn't known yet")
-  }
-
-  return plan.estimate.endDate.map { PlanDate.estimateText($0, today: plan.today) }
+  return .date(
+    finish.estimate
+      ? PlanDate.estimateText(finish.isoDate, today: plan.today, month: finish.month)
+      : Text(PlanDate.text(finish.isoDate, today: plan.today, month: finish.month)))
 }
 
+/// The places a phone lists nowhere else: the lessons done, the mind maps and the exam's page.
 struct PlanMoreSection: View {
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.tabBarPlacement) private var tabBarPlacement
 
   let goal: LearnerGoal
 
   var body: some View {
-    if tabBarPlacement?.listsStudyPlaces != true, goal.kind == .exam {
+    let places = learner.summary.value?.places
+    let hasPlaces =
+      places?.completedLessons == true || places?.mindMaps == true || goal.kind == .exam
+
+    if tabBarPlacement?.listsStudyPlaces != true, hasPlaces {
       PageSection {
-        PageLink(route: .exam) {
-          Label {
-            Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
-          } icon: {
-            Image(systemName: "graduationcap")
+        PlanStudyPlaceRows()
+
+        if goal.kind == .exam {
+          PageLink(route: .exam) {
+            Label {
+              Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
+            } icon: {
+              Image(systemName: "graduationcap")
+            }
           }
         }
       } header: {
@@ -640,25 +585,36 @@ struct PlanMoreSection: View {
 struct PlanSettingsSection: View {
   let context: PlanContext
 
+  @Environment(\.self) private var environment
+
   var body: some View {
     let schedule = context.plan.schedule
 
-    Section {
+    PageSection {
       setting(
         label: context.goal.kind == .exam
           ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
-          : Text("Goal date", tableName: "Plan", comment: "Setting: the goal's date"),
+          : Text("End date", tableName: "Plan", comment: "Setting: the goal's end date"),
         value: dateValue, section: .date)
 
       setting(
-        label: Text("Time a day", tableName: "Plan", comment: "Setting: study time a day"),
-        value: Text(planDurationText(minutes: Double(schedule.dailyMinutes))).monospacedDigit(),
+        label: Text("Daily study time", tableName: "Plan"),
+        value: Text(planDurationText(minutes: Double(schedule.dailyMinutes))).typeStyle(.data),
         section: .time)
 
       setting(
         label: Text(
           "Study days", tableName: "Plan", comment: "Setting: the days of the week to study"),
         value: Text(studyDaysText(schedule.weekdayMinutes)), section: .days)
+
+      if !context.isPaused, let mocks = schedule.mocks {
+        mockExamsRow(mocks)
+      }
+
+      ForEach(context.plan.examChoices) { choice in
+        setting(
+          label: Text(choice.group), value: choiceValue(choice), section: .choice(choice.group))
+      }
 
       if let variety = context.goal.variety {
         setting(
@@ -672,9 +628,9 @@ struct PlanSettingsSection: View {
 
       countryRows
 
-      ForEach(context.plan.examChoices) { choice in
+      if context.goal.kind == .language, let practiced = practicedText {
         setting(
-          label: Text(choice.group), value: choiceValue(choice), section: .choice(choice.group))
+          label: Text("Practice", tableName: "Plan"), value: Text(practiced), section: .practice)
       }
     } header: {
       SectionTitle(Text("Your plan", tableName: "Plan", comment: "Section of the plan's settings"))
@@ -688,9 +644,7 @@ struct PlanSettingsSection: View {
     if let country = context.goal.contentCountry {
       if country.kind == .content, country.editable {
         setting(
-          label: Text(
-            "Content country", tableName: "Plan",
-            comment: "Setting: the country a goal's lessons are about, such as Portugal"),
+          label: countryLabel,
           value: Text(country.name)
         ) {
           context.show(.country)
@@ -711,40 +665,118 @@ struct PlanSettingsSection: View {
             ? Text(
               "Exam country", tableName: "Plan",
               comment: "Row with the country an exam belongs to, such as Argentina")
-            : Text(
-              "Content country", tableName: "Plan",
-              comment: "Setting: the country a goal's lessons are about, such as Portugal"),
+            : countryLabel,
           value: Text(country.name))
       }
     } else if let examples = context.goal.examplesCountry {
-      fact(
-        label: Text(
-          "Lesson examples", tableName: "Plan",
+      fact(label: countryLabel, value: Text(examples.name))
+    }
+  }
+
+  /// Mock exams aren't a setting, so the row opens the exam's page, where they are.
+  @ViewBuilder
+  private func mockExamsRow(_ mocks: GoalPlan.Schedule.MockSchedule) -> some View {
+    let label = Text("Mock exams", tableName: "Plan")
+
+    if context.goal.kind == .exam {
+      PageLink(route: .exam) {
+        LabeledContent {
+          mockValue(mocks)
+        } label: {
+          label.foregroundStyle(.primary)
+        }
+      }
+    } else {
+      fact(label: label, value: mockValue(mocks))
+    }
+  }
+
+  /// Main's `MockScheduleValue`: the weekday they come on, else the next one's day.
+  private func mockValue(_ mocks: GoalPlan.Schedule.MockSchedule) -> Text {
+    if let weekday = mocks.weekday {
+      let days = planWeekdays(weekday)
+
+      if let weeks = mocks.everyWeeks, weeks > 1 {
+        return Text(
+          "\(days), every \(weeks) weeks", tableName: "Plan",
           comment:
-            "Row with the country a general course's examples come from, when the learner lives elsewhere"
-        ),
-        value: Text(examples.name))
+            "When a plan's mock exams come: a weekday, every few weeks, like 'Saturdays, every 2 weeks'"
+        )
+      }
+
+      return Text(verbatim: days)
     }
+
+    let date = Text(verbatim: PlanDate.text(mocks.nextDate, today: context.plan.today))
+      .font(TypeStyle.data.font(in: environment))
+
+    return mocks.count > 1
+      ? Text(
+        "Next \(date)", tableName: "Plan",
+        comment:
+          "When a plan's next mock exam comes, of several; the argument is a day like 'Dec 13'")
+      : date
   }
 
-  /// Read-only: no chevron and not a button, read as one label.
+  /// What a language plan practices: everything, or the activities it keeps.
+  private var practicedText: String? {
+    let skipped = Set(context.plan.steering.skippedActivities)
+    let practiced = planActivities.filter { !skipped.contains($0) }
+
+    if practiced.isEmpty {
+      return nil
+    }
+
+    return practiced.count == planActivities.count
+      ? String(
+        localized: "Everything", table: "Plan",
+        comment: "A language plan practices every activity: new words, listening, writing, speaking"
+      )
+      : practiced.map(planActivityName).joinedFacts()
+  }
+
+  private var countryLabel: Text {
+    Text(
+      "Country", tableName: "Plan",
+      comment:
+        "Setting: the country a goal's lessons and examples are about, such as Portugal")
+  }
+
+  /// Read-only: not a button, read as one label. It keeps the chevron's slot, so its value ends
+  /// where the settings' values do.
   private func fact(label: Text, value: Text) -> some View {
-    LabeledContent {
+    IconLabeledContent {
       value
-    } label: {
+    } title: {
       label.foregroundStyle(.primary)
+    } icon: {
+      EmptyView()
     }
-    .accessibilityElement(children: .combine)
   }
 
-  private var dateValue: Text {
-    if context.plan.schedule.targetDate == nil {
-      return context.goal.kind == .exam
-        ? Text("To be confirmed", tableName: "Plan", comment: "An exam's date not known yet")
-        : Text("No date", tableName: "Plan", comment: "A goal without a date")
+  private var dateValue: some View {
+    let value = PlanEndDateValue(
+      targetDate: context.plan.schedule.targetDate, isExam: context.goal.kind == .exam,
+      finish: context.isPaused
+        ? context.plan.schedule.targetDate.map {
+          (
+            isoDate: $0, estimate: context.plan.schedule.targetDateEstimated,
+            month: context.plan.schedule.targetDateNamedMonth
+          )
+        }
+        : context.plan.roadmapFinish(isExam: context.goal.kind == .exam),
+      today: context.plan.today)
+    return VStack(alignment: .leading, spacing: 2) {
+      Text(verbatim: value.shown)
+        .typeStyle(value.isDate ? .data : .body)
+        .accessibilityLabel(Text(verbatim: value.spoken))
+      if let detail = value.detail {
+        Text(verbatim: detail.shown)
+          .typeStyle(.note)
+          .accessibilityLabel(Text(verbatim: detail.spoken))
+      }
     }
-
-    return planFinishText(context) ?? Text(verbatim: "")
+    .fixedSize(horizontal: false, vertical: true)
   }
 
   private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {
@@ -756,13 +788,17 @@ struct PlanSettingsSection: View {
     return Text(picked)
   }
 
-  private func setting(label: Text, value: Text, section: AdjustPlanSheet.Section) -> some View {
+  private func setting<Value: View>(label: Text, value: Value, section: AdjustPlanSheet.Section)
+    -> some View
+  {
     setting(label: label, value: value) {
       context.adjust(section)
     }
   }
 
-  private func setting(label: Text, value: Text, action: @escaping () -> Void) -> some View {
+  private func setting<Value: View>(label: Text, value: Value, action: @escaping () -> Void)
+    -> some View
+  {
     Button(action: action) {
       LabeledContent {
         value
@@ -776,36 +812,52 @@ struct PlanSettingsSection: View {
 }
 
 func studyDaysText(_ weekdayMinutes: [Int]) -> String {
-  let mondayFirst = [1, 2, 3, 4, 5, 6, 0]
-  let days = mondayFirst.filter { weekdayMinutes.indices.contains($0) && weekdayMinutes[$0] > 0 }
-  let symbols = Calendar.current.shortWeekdaySymbols
+  let days = ScheduleTime.mondayFirst.filter {
+    weekdayMinutes.indices.contains($0) && weekdayMinutes[$0] > 0
+  }
+  let symbol = { PlanDate.weekdayName(number: $0, short: true) }
 
   if days.count == 7 {
     return String(localized: "Every day", table: "Plan", comment: "Study days: all seven")
   }
 
-  let positions = days.compactMap { mondayFirst.firstIndex(of: $0) }
+  let positions = days.compactMap { ScheduleTime.mondayFirst.firstIndex(of: $0) }
   let isOneRun = positions.enumerated().allSatisfy { index, position in
     index == 0 || position == positions[index - 1] + 1
   }
 
   if let first = days.first, let last = days.last, days.count >= 3, isOneRun {
     return String(
-      localized: "\(symbols[first]) – \(symbols[last])", table: "Plan",
+      localized: "\(symbol(first)) – \(symbol(last))", table: "Plan",
       comment: "Study days as a run, from its first weekday to its last")
   }
 
-  return days.map { symbols[$0] }.formatted(.list(type: .and, width: .narrow))
+  return days.map(symbol).formatted(.list(type: .and, width: .narrow))
 }
 
-struct PlanSheetDoneButton: View {
-  @Environment(\.dismiss) private var dismiss
-
-  var body: some View {
-    Button(role: .confirm) {
-      dismiss()
-    } label: {
-      Text("Done", tableName: "Plan", comment: "Closes a sheet")
-    }
+/// The line under the Plan's progress percent. The percent counts lessons studied and those the
+/// learner already knew, so once there are known ones the line names both.
+private func lessonsProgressLine(studied: Int, known: Int) -> String {
+  if known > 0 {
+    return [
+      studied > 0
+        ? String(
+          localized: "\(studied) studied", table: "Plan",
+          comment:
+            "Under the plan's progress percent, beside the lessons already known: the lessons studied"
+        )
+        : nil,
+      String(
+        localized: "\(known) already known", table: "Plan",
+        comment: "Under the plan's progress percent: lessons the learner already knew"),
+    ].compactMap(\.self).joinedFacts()
   }
+
+  return studied == 0
+    ? String(
+      localized: "No lessons studied yet", table: "Plan",
+      comment: "Under the plan's progress percent, in a small tile, before any lesson is studied")
+    : String(
+      localized: "\(studied) lessons studied", table: "Plan",
+      comment: "Under the plan's progress percent, in a small tile: the lessons studied")
 }

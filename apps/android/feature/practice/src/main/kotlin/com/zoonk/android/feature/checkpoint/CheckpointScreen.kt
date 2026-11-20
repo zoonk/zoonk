@@ -32,6 +32,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -47,7 +49,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -63,7 +66,6 @@ import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
-import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.practice.ListeningSet
 import com.zoonk.android.feature.practice.RunFrame
@@ -81,7 +83,9 @@ import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
+import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.WorkedSteps
+import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -102,11 +106,13 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.taskColumn
+import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -119,6 +125,7 @@ import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.CheckpointPhase
@@ -250,7 +257,7 @@ private fun CheckpointRead(
 private fun eyebrow(checkpoint: Checkpoint): String =
     checkpointName(checkpoint.kind == Checkpoint.Kind.WEEKLY, checkpoint.kind == Checkpoint.Kind.FINAL_BOSS, checkpoint.phase)
 
-/** A challenge's name, as its intro and its duel say it (main's `useCheckpointEyebrow`). */
+/** A challenge's name, as its intro and its duel say it (main's `useChallengeName`). */
 @Composable
 internal fun checkpointName(
     weekly: Boolean,
@@ -458,7 +465,6 @@ private fun DuelActions(
                     busy = state.pending,
                     onClick = viewModel::next,
                     modifier = width,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 ) {
                     Text(stringResource(if (score.done) R.string.checkpoint_see_result else R.string.checkpoint_next))
                 }
@@ -470,7 +476,6 @@ private fun DuelActions(
                     onClick = { state.selected?.let(viewModel::confirm) },
                     modifier = width,
                     enabled = state.selected != null,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 ) { Text(stringResource(R.string.checkpoint_confirm)) }
             }
         }
@@ -676,7 +681,7 @@ private fun DetailRow(
                 Text(
                     it,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.End,
+                    textAlign = layoutEnd(),
                     style = MaterialTheme.typography.labelLarge,
                 )
             }
@@ -721,18 +726,26 @@ internal fun DuelResult(
 
             TaskScaffold(
                 onClose = viewModel::close,
-                title = { LessonTitle(eyebrow(checkpoint)) },
                 bottomBar = {
                     TaskActionBar {
                         TaskActions { width ->
                             if (answers.isNotEmpty() && !taskAsideBeside()) {
-                                OutlinedButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
+                                OutlinedButton(
+                                    onClick = { reviewing = true },
+                                    modifier = Modifier.taskOption(),
+                                ) { Text(stringResource(R.string.checkpoint_review)) }
                             }
                             Button(onClick = viewModel::close, modifier = width) { Text(stringResource(R.string.practice_continue)) }
                         }
                     }
                 },
-                aside = outcome?.takeIf { !rows.isEmpty && !folded }?.let { TaskAside { ResultDetails(duel, rows, won) } },
+                // As main's, the challenge's name titles the details beside the result, not the bar over it.
+                aside =
+                    outcome?.takeIf { !rows.isEmpty && !folded }?.let {
+                        TaskAside(
+                            title = eyebrow(checkpoint),
+                        ) { ResultDetails(duel, rows, won) }
+                    },
             ) { padding ->
                 val wide = taskAsideBeside()
                 ResultPages(
@@ -772,7 +785,7 @@ internal fun DuelResult(
                                 facts =
                                     listOfNotNull(
                                         passMark?.takeIf { !won }?.let {
-                                            pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
+                                            pluralStringResource(R.plurals.checkpoint_needed_to_win, it, it)
                                         },
                                     ),
                             )
@@ -813,11 +826,15 @@ private fun phaseLabel(phase: CheckpointPhase): String =
 @Composable
 private fun Section(
     title: String,
-    titleStyle: TextStyle = MaterialTheme.typography.titleSmall,
+    titleStyle: TextStyle? = null,
     content: @Composable () -> Unit,
 ) {
     Column(Modifier.fillMaxWidth()) {
-        Text(title, modifier = Modifier.semantics { heading() }, style = titleStyle)
+        if (titleStyle == null) {
+            SectionHeader(title)
+        } else {
+            Text(title, modifier = Modifier.semantics { heading() }, style = titleStyle)
+        }
         content()
     }
 }
@@ -891,7 +908,7 @@ private fun Review(
     duel: Duel,
     answers: List<StudyBlockCompletionCheckpointAnswersInner>,
     app: AppContainer,
-    titleStyle: TextStyle = MaterialTheme.typography.titleSmall,
+    titleStyle: TextStyle? = null,
 ) {
     Section(stringResource(R.string.checkpoint_answers), titleStyle) {
         answers.forEachIndexed { index, answer ->
@@ -919,26 +936,32 @@ private fun ReviewItem(
                 modifier = Modifier.size(20.dp),
                 tint = if (answer.isCorrect) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
             )
-            ItemText(question.question, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-            ReportProblemMenu(app, FeedbackTarget("checkpoint-review", FeedbackSubmissionContext.ContentKind.ITEM, answer.itemId))
+            ItemText(
+                question.question,
+                Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+            )
+            val line =
+                with(LocalDensity.current) {
+                    MaterialTheme.typography.bodyLarge.lineHeight
+                        .toDp()
+                }
+            Box(Modifier.onQuestionLine(line)) {
+                ReportProblemMenu(app, FeedbackTarget("checkpoint-review", FeedbackSubmissionContext.ContentKind.ITEM, answer.itemId))
+            }
         }
         Column(Modifier.padding(start = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (question.format == QuestionFormat.MultipleChoice || question.format == QuestionFormat.TrueFalse) {
+                val choices = reviewChoices(question, duel.read.words)
                 QuestionAnswer(
-                    question = question,
+                    question = choices,
                     words = duel.read.words,
                     allowBlank = false,
                     // An answer given before the screen opened again isn't known: a miss then shows only the right option.
                     check =
                         AnswerCheck(
-                            given ?: if (answer.isCorrect &&
-                                correct != null
-                            ) {
-                                correct
-                            } else {
-                                Answer.DontKnow
-                            },
-                            correct,
+                            (given ?: if (answer.isCorrect && correct != null) correct else Answer.DontKnow).asChoice(),
+                            correct?.asChoice(),
                             answer.isCorrect,
                         ),
                     draft = null,
@@ -947,12 +970,47 @@ private fun ReviewItem(
                     onSubmit = {},
                 )
             } else {
-                AnswerLine(R.string.checkpoint_answer, correct, question, duel.read.words, MaterialTheme.typography.bodyMedium)
+                AnswerLine(
+                    R.string.questions_right_answer,
+                    correct,
+                    question,
+                    duel.read.words,
+                    MaterialTheme.typography.bodyMedium,
+                    mutedLabel = true,
+                )
             }
             answer.explanation?.let { ItemText(it, style = MaterialTheme.typography.bodyMedium) }
             if (!answer.isCorrect) WorkedSteps(answer.workedSteps)
         }
     }
 }
+
+/**
+ * Centers the 48 dp menu button on the question's first [line], taking only that line's height so the answer keeps its
+ * gap, and ends its dots, not its touch area, on the column's edge.
+ */
+private fun Modifier.onQuestionLine(line: Dp): Modifier =
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        val height = line.roundToPx()
+        val inset = ICON_BUTTON_INSET.roundToPx()
+        layout(placeable.width - inset, height) { placeable.placeRelative(0, (height - placeable.height) / 2) }
+    }
+
+private val ICON_BUTTON_INSET = 12.dp
+
+/** A statement's verdict reviews as main's two answer rows, without the statement's card under its own title. */
+@Composable
+private fun reviewChoices(
+    question: Question,
+    words: TrueFalseWords,
+): Question =
+    if (question.format == QuestionFormat.TrueFalse) {
+        question.copy(format = QuestionFormat.MultipleChoice, options = listOf(trueFalseLabel(true, words), trueFalseLabel(false, words)))
+    } else {
+        question
+    }
+
+private fun Answer.asChoice(): Answer = if (this is Answer.TrueFalse) Answer.Choice(if (isTrue) 0 else 1) else this
 
 private fun StudyQuestionAnswer.toAnswer(): Answer? = runCatching { recode<StudyQuestionAnswer, Answer>() }.getOrNull()

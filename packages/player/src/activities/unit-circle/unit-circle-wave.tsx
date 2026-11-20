@@ -6,11 +6,11 @@ import { useExtracted } from "next-intl";
 import { ActivityCanvasLabel } from "../_components/activity-canvas";
 import {
   ActivityPlot,
-  ActivityPlotAxisX,
   ActivityPlotDot,
   ActivityPlotGridY,
   ActivityPlotLine,
 } from "../_components/activity-plot";
+import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
 import { FULL_TURN } from "./unit-circle-angle";
 import { type TrigName, useTrigNames } from "./use-unit-circle-format";
 
@@ -21,7 +21,12 @@ const SAMPLE_STEP = 5;
 const HALF_TURN = 180;
 const QUARTER_TURN = 90;
 const DOT_RADIUS = 5;
-const WAVE_TICKS = [QUARTER_TURN, HALF_TURN, HALF_TURN + QUARTER_TURN, FULL_TURN];
+const WAVE_TICKS = [0, QUARTER_TURN, HALF_TURN, HALF_TURN + QUARTER_TURN, FULL_TURN];
+
+const SPARSE_WAVE_TICKS = [
+  [0, HALF_TURN, FULL_TURN],
+  [0, FULL_TURN],
+];
 
 const WAVES: Record<
   WaveName,
@@ -87,17 +92,22 @@ export function UnitCircleWave({
 
       <ActivityPlot
         height={PLOT_HEIGHT}
-        padding={{ left: 28 }}
+        padding={{ left: 28, right: 24 }}
         xDomain={[0, FULL_TURN]}
         yDomain={[-1, 1]}
       >
         <ActivityPlotGridY format={(value) => format(value)} ticks={[-1, 0, 1]} />
-        <ActivityPlotAxisX format={formatAngle} ticks={WAVE_TICKS} />
+        <ActivityPlotAxisX
+          allowTickLabelOverhang
+          fallbackTicks={SPARSE_WAVE_TICKS}
+          format={formatAngle}
+          ticks={WAVE_TICKS}
+        />
 
         {show.map((name) => (
           <g key={name}>
             <ActivityPlotLine
-              className="stroke-muted-foreground/40 stroke-2 [stroke-dasharray:2_5]"
+              className={cn(WAVES[name].line, "stroke-2 opacity-40 [stroke-dasharray:2_5]")}
               points={wavePoints(name, FULL_TURN)}
             />
             <ActivityPlotLine className={WAVES[name].line} points={wavePoints(name, degrees)} />

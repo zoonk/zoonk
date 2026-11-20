@@ -78,11 +78,7 @@ export function PatternDrillResult({
   return (
     <>
       <MomentHeader
-        detail={
-          allRight
-            ? t("You've got this rule.")
-            : t("Knowing the rule is the first step. It gets easier each time you use it.")
-        }
+        detail={allRight ? t("You've got this rule.") : undefined}
         title={t("Practice done")}
       >
         <MomentReadouts

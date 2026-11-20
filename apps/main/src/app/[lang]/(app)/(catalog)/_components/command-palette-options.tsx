@@ -2,20 +2,18 @@
 
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { Link } from "@/i18n/navigation";
+import { BuddyArt } from "@zoonk/learn/buddy-art";
 import {
   CommandCollection,
   CommandGroup,
   CommandGroupLabel,
   CommandItem,
 } from "@zoonk/ui/components/command";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { BookOpenIcon, LibraryIcon, type LucideIcon } from "lucide-react";
+import { type ChapterPaletteItem, type CoursePaletteItem } from "./command-palette-catalog-items";
 import { getPaletteItemHref } from "./command-palette-href";
-import {
-  type ChapterPaletteItem,
-  type CoursePaletteItem,
-  type PaletteGroup,
-  type PaletteItem,
-} from "./command-palette-items";
+import { type PaletteGroup, type PaletteItem } from "./command-palette-items";
 
 /** Base UI's collection primitive keeps keyboard order matching the visible grouped list. */
 export function PaletteResultGroup({
@@ -99,7 +97,7 @@ function PaletteOptionContent({ item }: { item: PaletteItem }) {
   if (item.kind === "chapter") {
     return (
       <CatalogOptionContent
-        courseName={item.chapter.courseTitle}
+        courseName={item.showsCourse ? item.chapter.courseTitle : undefined}
         icon={BookOpenIcon}
         title={item.chapter.title}
       />
@@ -109,27 +107,43 @@ function PaletteOptionContent({ item }: { item: PaletteItem }) {
   return <SimpleOptionContent item={item} />;
 }
 
+/** A phone has no room for a row's detail beside its label, so the detail goes under it there. */
+const OPTION_TEXT_CLASS = "flex min-w-0 flex-1 flex-col sm:flex-row sm:items-center sm:gap-2";
+
+const OPTION_META_CLASS =
+  "text-muted-foreground text-xs max-sm:truncate sm:max-w-[45%] sm:text-right sm:text-pretty";
+
 function SimpleOptionContent({
   item,
 }: {
   item: Exclude<PaletteItem, ChapterPaletteItem | CoursePaletteItem>;
 }) {
-  const { chip, count, icon: Icon, meta } = item;
+  const { buddy, chip, count, icon: Icon, meta } = item;
 
   return (
     <>
-      <Icon aria-hidden="true" />
+      {buddy ? (
+        <span className="flex size-4 shrink-0 items-center justify-center">
+          <BuddyArt buddy={buddy} className="size-5" view="face" />
+        </span>
+      ) : (
+        <Icon aria-hidden="true" />
+      )}
 
-      <span className="flex min-w-0 flex-1 items-center gap-2">
-        <span className="truncate">{item.label}</span>
-        {chip && (
-          <span className="text-muted-foreground ring-border hidden h-5.5 shrink-0 items-center rounded-md px-2 text-[0.71875rem] font-medium ring-1 ring-inset sm:inline-flex">
-            {chip}
-          </span>
-        )}
+      <span className={OPTION_TEXT_CLASS}>
+        <span className="flex min-w-0 items-center gap-2 sm:flex-1">
+          <span className="truncate">{item.label}</span>
+          {chip && (
+            <span className="text-muted-foreground ring-border text-2xs hidden h-5.5 shrink-0 items-center rounded-sm px-2 font-medium ring-1 ring-inset sm:inline-flex">
+              {chip}
+            </span>
+          )}
+        </span>
+
+        {meta && <span className={OPTION_META_CLASS}>{meta}</span>}
       </span>
 
-      {meta && <span className="text-muted-foreground max-w-[45%] truncate text-xs">{meta}</span>}
+      {item.kind === "shortcuts" && <ShortcutKbd shortcut="shortcuts" />}
 
       {Boolean(count) && (
         <span className="text-muted-foreground font-mono text-xs tabular-nums">{count}</span>
@@ -138,7 +152,6 @@ function SimpleOptionContent({
   );
 }
 
-/** A chapter's parent course stays available to assistive technology when visually truncated. */
 function CatalogOptionContent({
   courseName,
   icon: Icon,
@@ -151,10 +164,10 @@ function CatalogOptionContent({
   return (
     <>
       <Icon aria-hidden="true" className="size-4" />
-      <span className="min-w-0 flex-1 truncate">{title}</span>
-      {courseName && (
-        <span className="text-muted-foreground max-w-[45%] truncate text-xs">{courseName}</span>
-      )}
+      <span className={OPTION_TEXT_CLASS}>
+        <span className="min-w-0 truncate sm:flex-1">{title}</span>
+        {courseName && <span className={OPTION_META_CLASS}>{courseName}</span>}
+      </span>
     </>
   );
 }

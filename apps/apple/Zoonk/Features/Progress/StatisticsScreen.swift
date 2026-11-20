@@ -2,56 +2,76 @@ import SwiftUI
 
 /// Every number covers all of the learner's goals.
 struct StatisticsScreen: View {
-  @State private var detail = StatsSection.level
+  @Environment(AppRouter.self) private var router
+
+  /// A sidebar's statistic: in one column it's its own page, with no overview behind it.
+  private let routed: StatsSection?
+  /// The one pick: beside the overview in two columns (Level when none), on top of it in one,
+  /// where Back clears it, so a resize keeps it either way.
+  @State private var picked: StatsSection?
+
+  init(section: StatsSection? = nil) {
+    routed = section
+    _picked = State(initialValue: section)
+  }
 
   var body: some View {
     PaneSplit {
-      StatsOverview()
-        .environment(\.statsSectionOpen, StatsSectionOpen(shown: detail) { detail = $0 })
+      overview
+        .environment(\.statsSectionOpen, StatsSectionOpen(shown: picked ?? .level, open: pick))
         // Each pane is about a phone wide, so the overview and the stat take their phone layouts.
         .environment(\.horizontalSizeClass, .compact)
     } secondary: {
-      page(detail)
+      page(picked ?? .level)
         .environment(\.horizontalSizeClass, .compact)
     } single: {
-      StatsOverview()
-    }
-    .navigationTitle(Text(AppTab.statistics.title))
-    .barTitleAfterHero(String(localized: AppTab.statistics.title))
-    .navigationDestination(for: StatsSection.self) { section in
-      pushed(section)
+      if let routed, picked == routed {
+        pushed(routed)
+      } else {
+        overview
+          .environment(\.statsSectionOpen, StatsSectionOpen(shown: nil, open: pick))
+          .navigationDestination(item: $picked) { section in
+            pushed(section)
+          }
+      }
     }
   }
 
-  @ViewBuilder
-  private func pushed(_ section: StatsSection) -> some View {
-    if section == .patterns {
-      page(section)
-        .navigationTitle(Text(section.title))
-        .navigationSubtitle(
-          Text(
-            "When you answer best, over the last 90 days.", tableName: "Progress",
-            comment: "Under the Patterns title on a phone: what the patterns cover"))
+  /// A statistic the sidebar lists opens at its own row, so the row marked is the one shown.
+  private func pick(_ section: StatsSection) {
+    if router.sidebarTabs.contains(.stats(section)) {
+      router.open(.statistics(section: section))
     } else {
-      page(section)
-        .navigationTitle(Text(section.title))
+      picked = section
     }
   }
 
-  @ViewBuilder
+  private var overview: some View {
+    StatsOverview()
+      .barTitleAfterHero(String(localized: AppTab.statistics.title))
+  }
+
+  private func pushed(_ section: StatsSection) -> some View {
+    page(section)
+      .barTitleAfterHero(String(localized: section.title))
+  }
+
   private func page(_ section: StatsSection) -> some View {
-    switch section {
-    case .level:
-      LevelStatsView()
-    case .energy:
-      EnergyStatsView()
-    case .activity:
-      ActivityStatsView()
-    case .score:
-      ScoreStatsView()
-    case .patterns:
-      PatternsStatsView()
+    Group {
+      switch section {
+      case .level:
+        LevelStatsView()
+      case .energy:
+        EnergyStatsView()
+      case .activity:
+        ActivityStatsView()
+      case .score:
+        ScoreStatsView()
+      case .patterns:
+        PatternsStatsView()
+      }
     }
+    .environment(\.statsSection, section)
   }
 }
 
@@ -82,10 +102,7 @@ private struct StatsOverview: View {
     {
       StatsPage {
         PageHeader(
-          Text(AppTab.statistics.title),
-          eyebrow: Text(
-            "All goals", tableName: "Progress",
-            comment: "Under Statistics: its numbers cover every goal"))
+          Text(AppTab.statistics.title))
 
         OverviewTiles(
           activity: activity.summary, energy: progress.energy.value, level: progress.level.value,
@@ -150,13 +167,7 @@ private struct OverviewTiles: View {
           StatTile(
             label: Text(StatsSection.energy.title),
             value: Text(verbatim: wholePercent(energy.currentEnergy)),
-            systemImage: "bolt.fill", tone: .energy,
-            detail: energy.insights.map {
-              Text(
-                "Average \(metricPercent($0.averageEnergy))", tableName: "Progress",
-                comment: "The learner's average Energy")
-            }
-          )
+            systemImage: "bolt.fill", tone: .energy)
         }
       }
 
@@ -166,41 +177,16 @@ private struct OverviewTiles: View {
             "Days studied", tableName: "Progress",
             comment: "Tile: how many days the learner studied"),
           value: Text(activity.learningDays, format: .number),
-          systemImage: "chart.bar.fill", tone: .success,
-          detail: Text(
-            verbatim:
-              "\(lessonCount)\u{00A0}· \(progressLearningTime(activity.totalLearningSeconds))")
-        )
+          systemImage: "calendar.badge.checkmark", tone: .success)
       }
 
       TileLink(section: .score) {
         StatTile(
           label: Text(StatsSection.score.title),
-          value: score.map { Text(verbatim: metricPercent($0.score)) }
-            ?? Text("Not yet", tableName: "Progress", comment: "A stat without a value yet"),
-          systemImage: "target", tone: .success,
-          detail: score.map {
-            Text(
-              "\($0.correctAnswers.formatted())/\($0.totalAnswers.formatted()) right",
-              tableName: "Progress",
-              comment: "Under the Score: right answers of all answers (128/183 right)")
-          }
-            ?? Text(
-              "Right answers in the last 90 days", tableName: "Progress",
-              comment: "Under the Score before the learner has answers: what it will count")
-        )
+          value: Text(verbatim: score.map { metricPercent($0.score) } ?? "–"),
+          systemImage: "chart.line.uptrend.xyaxis", tone: .success)
       }
     }
-  }
-
-  private var lessonCount: String {
-    activity.totalLessonCompletions == 0
-      ? String(
-        localized: "0 lessons", table: "Progress",
-        comment: "Under the study days: no lessons finished")
-      : String(
-        localized: "\(activity.totalLessonCompletions) lessons", table: "Progress",
-        comment: "Under the study days: lessons finished")
   }
 }
 
@@ -213,7 +199,8 @@ private struct TileLink<Tile: View>: View {
 
     StatsSectionLink(section: section) {
       tile
-        .contentShape(.hoverEffect, shape)
+        .environment(\.statTileOpens, true)
+        .contentShape([.interaction, .hoverEffect], shape)
         .hoverEffect(.highlight)
         .modifier(StatsSelection(section: section, shape: shape))
     }
@@ -233,7 +220,7 @@ private struct StatsSelection<Outline: InsettableShape>: ViewModifier {
     content
       .overlay {
         if isShown {
-          shape.strokeBorder(.tint, lineWidth: 2)
+          shape.fill(.selectedTint)
         }
       }
       .accessibilityAddTraits(isShown ? .isSelected : [])
@@ -285,33 +272,18 @@ private struct PatternsOverview: View {
         comment: "Title of the patterns on the overview"),
       trailing: seeAll
     ) {
-      VStack(spacing: 0) {
-        row(
-          Text(
-            "Best day", tableName: "Progress",
-            comment: "The day of the week the learner answers best"),
-          value: patterns?.bestDayName, share: patterns?.dayVerdict.best?.performance.score)
-        Divider()
-        row(
-          Text(
-            "Best time", tableName: "Progress",
-            comment: "The part of the day the learner answers best"),
-          value: patterns?.bestTimeName, share: patterns?.timeVerdict.best?.performance.score)
-
-        if let spread = patterns?.weekSpreadText {
+      VStack(alignment: .leading, spacing: 8) {
+        VStack(spacing: 0) {
+          row(Text(LocalizedStringResource.bestDay), value: patterns?.bestDayName)
           Divider()
-          row(
-            Text(
-              "Spread across the week", tableName: "Progress",
-              comment: "Row: the range from the week's lowest to highest day score, like 40–75%"),
-            value: spread, share: nil)
+          row(Text(LocalizedStringResource.bestTime), value: patterns?.bestTimeName)
         }
-      }
-      .padding(.horizontal)
-      .panel(cornerRadius: 16)
+        .padding(.horizontal)
+        .panel(cornerRadius: 16)
 
-      if let patterns {
-        PatternsNote(patterns: patterns)
+        if patterns.needsAnswers {
+          PatternsHint()
+        }
       }
     }
   }
@@ -328,21 +300,10 @@ private struct PatternsOverview: View {
     .buttonStyle(.borderless)
   }
 
-  private func row(_ label: Text, value: String?, share: Double?) -> some View {
+  private func row(_ label: Text, value: String?) -> some View {
     LabeledContent {
-      HStack(spacing: 12) {
-        Text(
-          value
-            ?? String(
-              localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
-        )
+      Text(value ?? .notYet)
         .foregroundStyle(.primary)
-
-        if let share {
-          Text(wholePercent(share))
-            .monospacedDigit()
-        }
-      }
     } label: {
       label
     }
@@ -351,47 +312,82 @@ private struct PatternsOverview: View {
   }
 }
 
+/// Main's phone row: both patterns under its title, and what fills a "Not yet" under the row.
 private struct PatternsLinkRow: View {
-  @Environment(\.stacksContent) private var isStacked
-
   let patterns: ScorePatterns?
 
-  private var value: String {
-    let names = [patterns?.bestDayName, patterns?.bestTimeName].compactMap(\.self)
-    return names.isEmpty
-      ? String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
-      : names.joinedFacts()
-  }
-
   var body: some View {
-    StatsSectionLink(section: .patterns) {
-      HStack(spacing: 12) {
-        AccessibilityStack(spacing: 12, stackedSpacing: 4) {
-          Text(StatsSection.patterns.title)
-            .typeStyle(.rowTitle)
-            .foregroundStyle(Color(.foreground))
-            .frame(maxWidth: .infinity, alignment: .leading)
+    VStack(alignment: .leading, spacing: 8) {
+      StatsSectionLink(section: .patterns) {
+        HStack(spacing: 12) {
+          VStack(alignment: .leading, spacing: 2) {
+            Text(StatsSection.patterns.title)
+              .typeStyle(.rowTitle)
+              .foregroundStyle(Color(.foreground))
 
-          Text(value)
+            Group {
+              Text(fact(.bestDay, patterns?.bestDayName))
+              Text(fact(.bestTime, patterns?.bestTimeName))
+            }
             .typeStyle(.body)
             .foregroundStyle(.mutedForeground)
-            .multilineTextAlignment(isStacked ? .leading : .trailing)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+          }
+          .frame(maxWidth: .infinity, alignment: .leading)
 
-        Image(systemName: "chevron.forward")
-          .typeStyle(.note.weight(.semibold))
-          .foregroundStyle(.faint)
-          .accessibilityHidden(true)
+          Image(systemName: "chevron.forward")
+            .typeStyle(.note.weight(.semibold))
+            .foregroundStyle(.faint)
+            .accessibilityHidden(true)
+        }
+        // Main's flat row on the page, not a box.
+        .padding(.vertical, 11)
+        .frame(maxWidth: .infinity, minHeight: 44)
+        .contentShape(.rect)
+        .modifier(
+          StatsSelection(
+            section: .patterns, shape: RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+          ))
       }
-      // Main's flat row on the page, not a box.
-      .padding(.vertical, 11)
-      .frame(maxWidth: .infinity, minHeight: 44)
-      .contentShape(.rect)
-      .modifier(
-        StatsSelection(
-          section: .patterns, shape: RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)))
+      .buttonStyle(.plain)
+
+      if patterns.needsAnswers {
+        PatternsHint()
+      }
     }
-    .buttonStyle(.plain)
   }
+
+  private func fact(_ label: LocalizedStringResource, _ value: String?) -> String {
+    [String(localized: label), value ?? .notYet].joinedFacts()
+  }
+}
+
+/// What makes an empty pattern fill.
+private struct PatternsHint: View {
+  var body: some View {
+    Text("Answer more questions to see when you do best.", tableName: "Progress")
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+      .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+extension Optional where Wrapped == ScorePatterns {
+  /// Main's `needsAnswers`: a pattern still says "Not yet".
+  fileprivate var needsAnswers: Bool {
+    guard let patterns = self else { return true }
+    return patterns.dayVerdict == .notEnough || patterns.timeVerdict == .notEnough
+  }
+}
+
+extension String {
+  fileprivate static var notYet: String {
+    String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
+  }
+}
+
+extension LocalizedStringResource {
+  fileprivate static let bestDay = LocalizedStringResource(
+    "Best day", table: "Progress", comment: "The day of the week the learner answers best")
+  fileprivate static let bestTime = LocalizedStringResource(
+    "Best time", table: "Progress", comment: "The part of the day the learner answers best")
 }

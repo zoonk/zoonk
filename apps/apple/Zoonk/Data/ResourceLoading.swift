@@ -3,14 +3,22 @@ import SwiftUI
 extension View {
   /// Frame data that isn't a screen's content passes `refreshable: false`, so pull to refresh stays
   /// with the screens.
-  func loads(_ resources: any CachedResource..., refreshable: Bool = true) -> some View {
-    loads(resources, refreshable: refreshable)
+  /// `retriesAFailure` is for a screen whose failure shows nothing to retry: each visit asks again
+  /// after a failed read instead of waiting for the foreground or an invalidation.
+  func loads(
+    _ resources: any CachedResource..., refreshable: Bool = true, retriesAFailure: Bool = false
+  ) -> some View {
+    loads(resources, refreshable: refreshable, retriesAFailure: retriesAFailure)
   }
 
   /// For resources a screen learns about while it shows, such as a deck its run names: the list
   /// changes without changing the view.
-  func loads(_ resources: [any CachedResource], refreshable: Bool = true) -> some View {
-    modifier(ResourceLoading(resources: resources, refreshable: refreshable))
+  func loads(
+    _ resources: [any CachedResource], refreshable: Bool = true, retriesAFailure: Bool = false
+  ) -> some View {
+    modifier(
+      ResourceLoading(
+        resources: resources, refreshable: refreshable, retriesAFailure: retriesAFailure))
   }
 }
 
@@ -27,6 +35,7 @@ private struct ResourceLoading: ViewModifier {
 
   let resources: [any CachedResource]
   let refreshable: Bool
+  let retriesAFailure: Bool
 
   @ViewBuilder
   func body(content: Content) -> some View {
@@ -60,7 +69,7 @@ private struct ResourceLoading: ViewModifier {
           }
         }
 
-        await forEach(resources) { await $0.show() }
+        await forEach(resources) { retriesAFailure ? await $0.load() : await $0.show() }
         await untilCancelled()
       }
       .onChange(of: scenePhase) { _, scenePhase in

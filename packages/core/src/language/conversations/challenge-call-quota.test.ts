@@ -234,7 +234,12 @@ describe("Plus challenge call quota", () => {
     });
 
     expect(createLiveCallSession).not.toHaveBeenCalled();
-    await expect(getAllowance()).resolves.toMatchObject({ callTime: { usedSeconds: 0 } });
+
+    await expect(getAllowance()).resolves.toMatchObject({
+      items: expect.arrayContaining([
+        expect.objectContaining({ kind: "conversation", usedToday: 0 }),
+      ]),
+    });
   });
 
   it("leaves Plus call metering and limits unchanged", async () => {
@@ -246,7 +251,9 @@ describe("Plus challenge call quota", () => {
     });
 
     await expect(getAllowance()).resolves.toMatchObject({
-      callTime: { usedSeconds: 180 },
+      items: expect.arrayContaining([
+        expect.objectContaining({ kind: "conversation", usedToday: 180 }),
+      ]),
       tier: "plus",
     });
 

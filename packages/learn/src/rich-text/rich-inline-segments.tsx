@@ -1,6 +1,6 @@
 import { useMathMarkup } from "#math-renderer";
 import { Suspense } from "react";
-import { DisplayMath } from "./display-math";
+import { DisplayMath, InlineMath } from "./display-math";
 import { speakMath } from "./math-speech";
 import { MathMarkupView } from "./spoken-math";
 import { useMathWords } from "./use-spoken-text";
@@ -49,7 +49,7 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
 
   if (segment.kind === "code") {
     return (
-      <code className="bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.85em]">
+      <code className="bg-muted text-foreground inline-block max-w-full rounded-sm px-1 py-0.5 font-mono text-[0.85em] leading-tight wrap-break-word">
         {segment.text}
       </code>
     );
@@ -63,7 +63,11 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
       </Suspense>
     );
 
-    return segment.kind === "displayMath" ? <DisplayMath>{formula}</DisplayMath> : formula;
+    return segment.kind === "displayMath" ? (
+      <DisplayMath>{formula}</DisplayMath>
+    ) : (
+      <InlineMath>{formula}</InlineMath>
+    );
   }
 
   return <span>{segment.text}</span>;
@@ -108,7 +112,7 @@ function MarkedRun({
   }
 
   return (
-    <mark className="bg-warning/15 text-foreground rounded-[3px] box-decoration-clone px-0.5">
+    <mark className="bg-warning/15 text-foreground rounded-meter box-decoration-clone">
       {children}
     </mark>
   );

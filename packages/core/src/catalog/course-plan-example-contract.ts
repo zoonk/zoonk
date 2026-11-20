@@ -1,19 +1,12 @@
 import { z } from "zod";
 import { type CoursePlanEstimate, coursePlanEstimateSchema } from "./course-estimate-contract";
 
-export type PaceEstimate = { estimate: CoursePlanEstimate; minutes: number };
-
 export type DatedEstimate = Extract<CoursePlanEstimate, { fittingLessons: number }>;
 
 export type UndatedEstimate = Extract<CoursePlanEstimate, { weeks: number }>;
 
 export function isDatedEstimate(estimate: CoursePlanEstimate): estimate is DatedEstimate {
   return "fittingLessons" in estimate;
-}
-
-export function getStudyMinutes(estimate: CoursePlanEstimate): number {
-  const { numbers } = estimate;
-  return numbers.beforeDeadlineMinutes ?? numbers.scheduledMinutes;
 }
 
 function getPlannedMinutes(estimate: DatedEstimate): number {

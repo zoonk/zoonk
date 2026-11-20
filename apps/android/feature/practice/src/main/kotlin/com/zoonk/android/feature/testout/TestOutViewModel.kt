@@ -59,7 +59,6 @@ data class TestOutUi(
     val starting: Boolean = false,
     val writing: Boolean = false,
     val refused: Limit? = null,
-    val plusRequired: Boolean = false,
     val startFailed: Boolean = false,
     /** Null until the answers kept on the device are read. */
     val answers: List<GradedAnswer>? = null,
@@ -137,7 +136,6 @@ class TestOutViewModel(
                 starting = false,
                 writing = false,
                 nothingToSkip = written == Written.NothingToSkip,
-                plusRequired = written == Written.PlusRequired,
                 refused = (written as? Written.Refused)?.limit,
             )
         }
@@ -268,8 +266,6 @@ class TestOutViewModel(
 
         data object NothingToSkip : Written
 
-        data object PlusRequired : Written
-
         data class Refused(
             val limit: Limit,
         ) : Written
@@ -297,10 +293,7 @@ class TestOutViewModel(
             }
 
             is MutationResult.Failed -> {
-                when {
-                    result.code == PLUS_REQUIRED -> Written.PlusRequired
-                    else -> Limit.of(result)?.let(Written::Refused) ?: Written.Failed
-                }
+                Limit.of(result)?.let(Written::Refused) ?: Written.Failed
             }
 
             MutationResult.Obsolete -> {
@@ -310,7 +303,6 @@ class TestOutViewModel(
 
     private companion object {
         const val SENT = "sentRequestId"
-        const val PLUS_REQUIRED = "PLUS_REQUIRED"
     }
 }
 

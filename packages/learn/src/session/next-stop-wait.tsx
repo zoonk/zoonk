@@ -3,9 +3,8 @@
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useLayoutEffect, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
 import {
   type LessonNotWritten,
@@ -14,7 +13,7 @@ import {
 import { usePoll } from "../_utils/use-poll";
 import { FollowedRun } from "../generation/generation-follower";
 import { type LessonKind } from "../generation/generation-kinds";
-import { type GenerationRun, toHeldRun } from "../generation/generation-run";
+import { type GenerationRun, hasStopped, toHeldRun } from "../generation/generation-run";
 import { GenerationFailureNotice, GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -84,20 +83,53 @@ function useWaitingCheck({
   });
 }
 
-/** Nothing is on its way: the lesson failed, or its writing never started or went quiet. */
-export function useWritingFailed(lesson: NextStopLesson): boolean {
-  const [stuckWhile, setStuckWhile] = useState<NextStopLesson | null>(null);
+/**
+ * Nothing is on its way: the session's snapshot says the lesson failed, its writing never started
+ * or went quiet, or the followed run reported it stopped, whichever comes first, and the one still
+ * behind doesn't bring the quiz back. A stop belongs to the run and the try it was learned from: a
+ * new run, or Try again, starts clean.
+ */
+export function useWaitFailed({
+  generationId,
+  lesson,
+}: {
+  generationId: string | null;
+  lesson: NextStopLesson;
+}) {
+  const [attempt, setAttempt] = useState(0);
+  const run = `${generationId ?? ""}:${attempt}`;
+  const [stuckRun, setStuckRun] = useState<string | null>(null);
+  const [stoppedRun, setStoppedRun] = useState<string | null>(null);
+  const quiet = `${lesson}:${run}`;
 
   useEffect(() => {
     if (lesson !== "notStarted" && lesson !== "writing") {
       return;
     }
 
-    const timer = setTimeout(() => setStuckWhile(lesson), STUCK_AFTER_MS[lesson]);
+    const timer = setTimeout(() => setStuckRun(quiet), STUCK_AFTER_MS[lesson]);
     return () => clearTimeout(timer);
-  }, [lesson]);
+  }, [lesson, quiet]);
 
-  return lesson === "failed" || stuckWhile === lesson;
+  return {
+    clearStopped: () => setAttempt((count) => count + 1),
+    failed: lesson === "failed" || stuckRun === quiet || stoppedRun === run,
+    runStopped: () => setStoppedRun(run),
+  };
+}
+
+/** Before the next paint, so the quiz never shows under a run that stopped. */
+function ReportStopped({ onStopped, run }: { onStopped: () => void; run: GenerationRun }) {
+  const stopped = hasStopped(run);
+  const report = useEffectEvent(onStopped);
+
+  useLayoutEffect(() => {
+    if (stopped) {
+      report();
+    }
+  }, [stopped]);
+
+  return null;
 }
 
 /** A written lesson's page no longer names its run, so its held wait keeps the one it followed. */
@@ -112,11 +144,13 @@ function useHeldRunId({ generationId, held }: { generationId: string | null; hel
 }
 
 function WritingProgress({
+  barHasMainAction,
   held,
   kind,
   run,
   since,
 }: {
+  barHasMainAction: boolean;
   held: boolean;
   kind: LessonKind;
   run: GenerationRun;
@@ -125,10 +159,15 @@ function WritingProgress({
   const t = useExtracted();
 
   return (
-    <GenerationWait kind={kind} run={held ? toHeldRun(run) : run} since={since}>
+    <GenerationWait
+      barHasMainAction={barHasMainAction}
+      kind={kind}
+      run={held ? toHeldRun(run) : run}
+      since={since}
+    >
       {!held && (
         <GenerationTimelineDescription className="text-sm">
-          {t("This lesson is being written for you. It's usually ready in a few minutes.")}
+          {t("Your lesson is usually ready in a few minutes.")}
         </GenerationTimelineDescription>
       )}
     </GenerationWait>
@@ -138,6 +177,7 @@ function WritingProgress({
 /** The lesson's writing as the wait screen shows it: a strip over the quiz, or its progress. */
 export function Waiting({
   actions,
+  barHasMainAction,
   block,
   failed,
   generationId,
@@ -145,8 +185,9 @@ export function Waiting({
   lesson,
 }: {
   actions: NextStopActions;
+  barHasMainAction: boolean;
   block: DayStep;
-  failed: boolean;
+  failed: ReturnType<typeof useWaitFailed>;
   generationId: string | null;
   kind: LessonKind;
   lesson: NextStopLesson;
@@ -157,11 +198,13 @@ export function Waiting({
 
   const poll = useWaitingCheck({ actions, block, generationId, lesson });
 
-  if (failed) {
+  if (failed.failed) {
     const failure = (
       <GenerationFailureNotice
+        barHasMainAction={barHasMainAction}
         failure={lesson === "notStarted" ? "notStarted" : "generation"}
         retry={() => {
+          failed.clearStopped();
           poll.restart();
           void actions.start(block);
         }}
@@ -180,16 +223,31 @@ export function Waiting({
       restart={async () => ((await actions.start(block)) ? undefined : null)}
     >
       {(run) => (
-        <WaitContent
-          progress={<WritingProgress held={held} kind={kind} run={run} since={since} />}
-          status={
-            run.status === "failed" ? (
-              <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />
-            ) : (
-              <LessonWaitStatus holding={held} kind={kind} run={run} since={since} />
-            )
-          }
-        />
+        <>
+          <ReportStopped onStopped={failed.runStopped} run={run} />
+          <WaitContent
+            progress={
+              <WritingProgress
+                barHasMainAction={barHasMainAction}
+                held={held}
+                kind={kind}
+                run={run}
+                since={since}
+              />
+            }
+            status={
+              run.status === "failed" ? (
+                <GenerationFailureNotice
+                  barHasMainAction={barHasMainAction}
+                  failure={run.failure ?? "generation"}
+                  retry={run.retry}
+                />
+              ) : (
+                <LessonWaitStatus holding={held} kind={kind} run={run} since={since} />
+              )
+            }
+          />
+        </>
       )}
     </FollowedRun>
   );
@@ -216,30 +274,47 @@ export function NotWritten({
   );
 }
 
-/**
- * The block's name follows a label: inside a sentence, "Do What you already know" read wrong in
- * every language.
- */
-export function AlternativeButton({
-  actions,
-  alternative,
-  reason,
-}: {
-  actions: NextStopActions;
-  alternative: DayStep;
-  reason: "instead" | "whileWaiting";
-}) {
+/** A verb for what the learner can do meanwhile; only an unusual step needs its name. */
+function useAlternativeLabel() {
   const t = useExtracted();
   const title = useBlockTitle();
 
+  return (alternative: DayStep): string => {
+    if (alternative.checkpoint) {
+      return t({
+        description:
+          '{title} is the name of one of the day\'s challenges, such as "Weekly challenge", never a course.',
+        message: "Start {title}",
+        values: { title: title(alternative) },
+      });
+    }
+
+    if (alternative.kind === "review") {
+      return t("Review now");
+    }
+
+    if (alternative.kind === "learn") {
+      return t("Next lesson");
+    }
+
+    return t("Practice now");
+  };
+}
+
+export function AlternativeButton({
+  actions,
+  alternative,
+}: {
+  actions: NextStopActions;
+  alternative: DayStep;
+}) {
+  const label = useAlternativeLabel();
   const other = useSessionAction({ action: () => actions.start(alternative), enterKey: true });
 
   return (
     <form action={() => void other.run()} className="contents">
-      <EnterButton busy={other.isPending} icon={<PlayIcon aria-hidden="true" />} type="submit">
-        {reason === "instead"
-          ? t("Instead: {title}", { title: title(alternative) })
-          : t("While you wait: {title}", { title: title(alternative) })}
+      <EnterButton busy={other.isPending} enter="host" type="submit">
+        {label(alternative)}
       </EnterButton>
     </form>
   );

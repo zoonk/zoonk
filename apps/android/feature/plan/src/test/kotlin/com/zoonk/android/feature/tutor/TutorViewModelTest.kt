@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -82,7 +81,7 @@ class TutorViewModelTest {
                 setHomeCountry,
             ) { _, _, status -> decision(status) },
             saved,
-            openMission,
+            openMission = openMission,
         ).also { it.thread.load() }
 
     private val TutorViewModel.turns get() =
@@ -99,8 +98,14 @@ class TutorViewModelTest {
                     asked += it
                     answer.await()
                 })
+            // The conversation's screen opens each route it's owed, then says so, as `TutorThreadView` does.
             val routes = mutableListOf<AppRoute>()
-            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.blockRoutes.collect { routes += it } }
+            val act = {
+                vm.blockRoute.value?.let {
+                    routes += it
+                    vm.blockRoute.acted(it)
+                }
+            }
 
             vm.openBlock("turn-1", BLOCK)
             vm.openBlock("turn-2", BLOCK)
@@ -122,6 +127,7 @@ class TutorViewModelTest {
             vm.openBlock("turn-2", BLOCK)
             answer.complete(MutationResult.Done(AppRoute.Today))
             advanceUntilIdle()
+            act()
             assertEquals(listOf<AppRoute>(AppRoute.Today), routes)
             assertNull(vm.blockNotice)
             assertFalse(vm.isOpeningBlock)
@@ -132,6 +138,7 @@ class TutorViewModelTest {
             vm.leave()
             answer.complete(MutationResult.Done(AppRoute.Exam))
             advanceUntilIdle()
+            act()
             assertEquals("a step that opens after the learner left leads nowhere", listOf<AppRoute>(AppRoute.Today), routes)
 
             answer = CompletableDeferred()
@@ -141,6 +148,22 @@ class TutorViewModelTest {
             answer.complete(MutationResult.Failed(ApiError.Network))
             advanceUntilIdle()
             assertNull("nor says anything once they come back", vm.blockNotice)
+        }
+
+    @Test
+    fun aStepLinkThatOpensWhileTheConversationIsRecreatedLeadsThereOnce() =
+        runTest(dispatcher) {
+            val answer = CompletableDeferred<MutationResult<AppRoute?>>()
+            val vm = conversation(openMission = { answer.await() })
+
+            // A recreation: no screen acts while the step opens; the next one does, once.
+            vm.openBlock("turn-1", BLOCK)
+            answer.complete(MutationResult.Done(AppRoute.Exam))
+            advanceUntilIdle()
+
+            assertEquals(AppRoute.Exam, vm.blockRoute.value)
+            vm.blockRoute.acted(AppRoute.Exam)
+            assertNull(vm.blockRoute.value)
         }
 
     @Test
@@ -777,7 +800,7 @@ class TutorViewModelTest {
             decision = { MutationResult.Done(proposed.copy(status = PlanChange.Status.APPLIED)) }
             val vm = conversation()
 
-            vm.decidePlanChange(proposed.id, PlanChangeDecisionInput.Status.APPLIED)
+            vm.decidePlanChange(proposed, PlanChangeDecisionInput.Status.APPLIED)
             advanceUntilIdle()
 
             assertEquals(listOf(false, true), vm.turns.map { it.planChange?.canUndo })
@@ -791,6 +814,22 @@ class TutorViewModelTest {
         }
 
     @Test
+    fun anAcceptWhoseNumbersMovedAsksAgainWithTodays() =
+        runTest(dispatcher) {
+            api.thread = TutorThread(listOf(changeTurn("q1", proposed)), hasMore = false, nextCursor = null)
+            decision = { MutationResult.Done(proposed.copy(quote = "quote-today")) }
+            val vm = conversation()
+
+            vm.decidePlanChange(proposed, PlanChangeDecisionInput.Status.APPLIED)
+            advanceUntilIdle()
+
+            val shown = vm.turns.single().planChange
+            assertEquals(PlanChange.Status.PROPOSED, shown?.status)
+            assertEquals("quote-today", shown?.quote)
+            assertEquals(setOf(proposed.id), vm.state.value.repricedChanges)
+        }
+
+    @Test
     fun aDecisionOutlastsAReadThatStartedBeforeIt() =
         runTest(dispatcher) {
             api.thread = TutorThread(listOf(changeTurn("q1", proposed)), hasMore = false, nextCursor = null)
@@ -800,7 +839,7 @@ class TutorViewModelTest {
             launch { vm.thread.refresh() }
             advanceUntilIdle()
 
-            vm.decidePlanChange(proposed.id, PlanChangeDecisionInput.Status.DECLINED)
+            vm.decidePlanChange(proposed, PlanChangeDecisionInput.Status.DECLINED)
             advanceUntilIdle()
             api.gate?.complete(Unit)
             advanceUntilIdle()

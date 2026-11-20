@@ -78,7 +78,7 @@ export const studyBlockOpeningSchema = z
       .strict()
       .meta({
         description:
-          "The plan hasn't picked this step's lesson yet. The server is preparing it: show the session waiting on the block and read it again",
+          "The plan hasn't picked this step's lesson yet. The server is preparing it, and a later read has it",
         id: "StudyBlockOpeningPreparingLesson",
       }),
     z
@@ -137,7 +137,7 @@ export const studyBlockOpeningSchema = z
       .strict()
       .meta({
         description:
-          "Nothing opened: what the learner saw changed (a mock they didn't see, a mission or buddy answer's block no longer free to start). Read the screen again so they see the change first; a buddy answer, which can't show it, says the step isn't available anymore",
+          "Nothing opened: what the learner saw changed (a mock they didn't see, a mission or buddy answer's block no longer free to start). A new read of the screen has the change; a buddy answer's step isn't available anymore",
         id: "StudyBlockOpeningChanged",
       }),
   ])

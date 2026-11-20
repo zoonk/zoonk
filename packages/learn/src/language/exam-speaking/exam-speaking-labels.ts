@@ -7,14 +7,11 @@ import {
   type SpeakingTaskView,
 } from "@zoonk/core/language/exam-speaking/contract";
 import { useExtracted, useFormatter } from "next-intl";
+import { useFormatRange } from "../../_utils/range";
 
 const POINT_DIGITS = 2;
 
 type Standing = ExamSpeakingFeedbackView["criteria"][number]["standing"];
-
-function span(low: string, high: string): string {
-  return low === high ? low : `${low}–${high}`;
-}
 
 export function useCriterionGloss() {
   const t = useExtracted();
@@ -56,12 +53,13 @@ export function useTaskRoleNoun() {
   const t = useExtracted();
 
   return (role: SpeakingTaskView["role"]) =>
-    role === "partner" ? t("other candidate") : t("examiner");
+    role === "partner" ? t("other candidate (AI)") : t("examiner (AI)");
 }
 
 export function useEstimateText() {
   const t = useExtracted();
   const format = useFormatter();
+  const span = useFormatRange();
 
   const number = (value: number) => format.number(value, { maximumFractionDigits: POINT_DIGITS });
 

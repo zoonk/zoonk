@@ -1,34 +1,29 @@
 "use client";
 
-import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type NoSitting, type NoticeDay } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { CalendarCheckIcon, CalendarDaysIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Fragment, useState, useTransition } from "react";
+import { Fragment, useTransition } from "react";
 import {
   NoticeCard,
   NoticeCardActions,
   NoticeCardContent,
-  NoticeCardDescription,
   NoticeCardLeading,
   NoticeCardTitle,
 } from "../_components/notice-card";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
 export function useNoticeDayText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
-  return ({ date, document, estimated }: NoticeDay & { document: ExamDocument }): string =>
+  return ({ date, estimated }: NoticeDay): string =>
     estimated
-      ? t("The exam's likely date is now {date}.", { date: formatDate(date, "long") })
-      : t(
-          "{document, select, notice {The exam notice says {date}.} other {The exam's official calendar says {date}.}}",
-          { date: formatDate(date, "long"), document },
-        );
+      ? t("The exam's likely date is now {date}.", { date: formatDate(date, "sentence") })
+      : t("The official exam date is {date}. Use it?", { date: formatDate(date, "sentence") });
 }
 
 export function NoSittingWords({
@@ -45,7 +40,11 @@ export function NoSittingWords({
 
   return (
     <>
-      <span>{t("No exam date in {month}", { month: formatDate(noSitting.month, "month") })}</span>
+      <span>
+        {t("No exam date in {month}", {
+          month: formatDate(noSitting.month, "sentenceMonth", { year: "always" }),
+        })}
+      </span>
       {noSitting.closest.map((date) => (
         <Fragment key={date}>
           <span aria-hidden="true">{" · "}</span>
@@ -56,7 +55,7 @@ export function NoSittingWords({
             type="button"
             variant="link"
           >
-            {t("Use {date}", { date: formatDate(date, "long") })}
+            {t("Use {date}", { date: formatDate(date, "sentence") })}
           </Button>
         </Fragment>
       ))}
@@ -68,12 +67,10 @@ export function UseDateButton({
   busy = false,
   disabled = false,
   onUse,
-  variant = "outline",
 }: {
   busy?: boolean;
   disabled?: boolean;
   onUse: () => void;
-  variant?: "outline" | "secondary";
 }) {
   const t = useExtracted();
 
@@ -86,7 +83,7 @@ export function UseDateButton({
         icon={<CalendarCheckIcon aria-hidden="true" />}
         size="sm"
         type="submit"
-        variant={variant}
+        variant="outline"
       >
         {t("Use this date")}
       </Button>
@@ -104,24 +101,18 @@ function CalendarTile() {
   );
 }
 
-function NoticeDayCard({
-  day,
-  document,
-  onUse,
-}: {
-  day: NoticeDay;
-  document: ExamDocument;
-  onUse: () => Promise<boolean>;
-}) {
+function NoticeDayCard({ day, onUse }: { day: NoticeDay; onUse: () => Promise<boolean> }) {
   const text = useNoticeDayText();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
   const use = () =>
     startTransition(async () => {
-      setFailed(false);
       const { data: saved } = await safeAsync(onUse);
-      setFailed(!saved);
+
+      if (!saved) {
+        saveFailed();
+      }
     });
 
   return (
@@ -129,12 +120,10 @@ function NoticeDayCard({
       <CalendarTile />
 
       <NoticeCardContent>
-        <NoticeCardTitle>{text({ ...day, document })}</NoticeCardTitle>
+        <NoticeCardTitle>{text(day)}</NoticeCardTitle>
         <NoticeCardActions>
-          <UseDateButton busy={isPending} onUse={use} variant="secondary" />
+          <UseDateButton busy={isPending} onUse={use} />
         </NoticeCardActions>
-
-        {failed && <ChangeSaveError className="mt-2" />}
       </NoticeCardContent>
     </NoticeCard>
   );
@@ -150,14 +139,16 @@ function NoSittingCard({
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
   const use = (date: string) =>
     startTransition(async () => {
-      setFailed(false);
       const { data: saved } = await safeAsync(() => onUse(date));
-      setFailed(!saved);
+
+      if (!saved) {
+        saveFailed();
+      }
     });
 
   return (
@@ -166,15 +157,10 @@ function NoSittingCard({
 
       <NoticeCardContent>
         <NoticeCardTitle>
-          {t("No exam date in {month}", { month: formatDate(noSitting.month, "month") })}
+          {t("No exam date in {month}", {
+            month: formatDate(noSitting.month, "sentenceMonth", { year: "always" }),
+          })}
         </NoticeCardTitle>
-        <NoticeCardDescription>
-          {t(
-            "{count, plural, one {Your plan keeps your date unless you switch to the closest one.} other {Your plan keeps your date unless you switch to one of the closest.}}",
-            { count: noSitting.closest.length },
-          )}
-        </NoticeCardDescription>
-
         <form className="contents">
           <NoticeCardActions>
             {noSitting.closest.map((date) => (
@@ -185,36 +171,30 @@ function NoSittingCard({
                 key={date}
                 size="sm"
                 type="submit"
-                variant="secondary"
+                variant="outline"
               >
-                {t("Use {date}", { date: formatDate(date, "long") })}
+                {t("Use {date}", { date: formatDate(date, "sentence") })}
               </Button>
             ))}
           </NoticeCardActions>
         </form>
-
-        {failed && <ChangeSaveError className="mt-2" />}
       </NoticeCardContent>
     </NoticeCard>
   );
 }
 
 export function NoticeDatesCard({
-  document,
   noSitting,
   noticeDay,
   onUse,
 }: {
-  document: ExamDocument;
   noSitting: NoSitting | null;
   noticeDay: NoticeDay | null;
   /** False when it couldn't be saved. */
   onUse: (date: string) => Promise<boolean>;
 }) {
   if (noticeDay) {
-    return (
-      <NoticeDayCard day={noticeDay} document={document} onUse={() => onUse(noticeDay.date)} />
-    );
+    return <NoticeDayCard day={noticeDay} onUse={() => onUse(noticeDay.date)} />;
   }
 
   return noSitting ? <NoSittingCard noSitting={noSitting} onUse={onUse} /> : null;

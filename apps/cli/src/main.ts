@@ -12,6 +12,7 @@ import {
   unexpectedResponse,
 } from "./http.ts";
 import { logIn, logOut } from "./login.ts";
+import { type Note } from "./notes.ts";
 import { type OutputShape, shapeOutput } from "./output.ts";
 import { notLoggedIn, sendAuthorized } from "./session.ts";
 
@@ -43,18 +44,20 @@ function apiError({ origin, result }: { origin: string; result: HttpResult }): C
   const details = error.details === undefined ? "" : `\n${JSON.stringify(error.details, null, 2)}`;
 
   return new CliError(
-    `${error.message} (HTTP ${result.status})${details}`,
+    `${error.message}${details}`,
     result.status === BAD_REQUEST ? EXIT_CODES.usage : EXIT_CODES.failed,
   );
 }
 
 async function runRequest({
   file,
+  note,
   origin,
   request,
   shape,
 }: {
   file: string;
+  note?: Note;
   origin: string;
   request: ApiRequest;
   shape?: OutputShape;
@@ -70,6 +73,10 @@ async function runRequest({
   }
 
   process.stdout.write(`${JSON.stringify(shapeOutput({ body: result.body, shape }), null, 2)}\n`);
+
+  if (note) {
+    process.stderr.write(`${note(result.body)}\n`);
+  }
 }
 
 async function run(argv: string[]) {
@@ -94,7 +101,13 @@ async function run(argv: string[]) {
     return;
   }
 
-  await runRequest({ file, origin, request: command.request, shape: command.shape });
+  await runRequest({
+    file,
+    note: command.note,
+    origin,
+    request: command.request,
+    shape: command.shape,
+  });
 }
 
 try {

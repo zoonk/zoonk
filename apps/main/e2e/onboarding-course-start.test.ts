@@ -14,6 +14,7 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
 import { holdActionAnswer } from "./held-action";
@@ -109,7 +110,7 @@ test.describe("Starting a course from its page", () => {
     const level = "How much do you already know?";
     await expect(page.getByRole("heading", { level: 1, name: level })).toBeVisible();
     await expect(page.getByRole("textbox", { name: "I want to" })).toBeHidden();
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeHidden();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeHidden();
 
     await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
     const session = await page.request.get("/api/auth/get-session");
@@ -125,7 +126,7 @@ test.describe("Starting a course from its page", () => {
     const beforeLeaving = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
     await page.goto("/");
     await expect(page).toHaveURL(/\/today$/u);
-    const resume = page.getByRole("link", { name: "Continue setting up" });
+    const resume = page.getByRole("link", { name: /^Continue\b/u });
     await expect(resume).toHaveAttribute("href", `/start/${goalId}`);
     await expect(prisma.studySession.count({ where: { goalId } })).resolves.toBe(0);
 
@@ -168,6 +169,100 @@ test.describe("Starting a course from its page", () => {
     await startFromHero(page, { link: "Continue your plan", name: course.title });
 
     await expect(page).toHaveURL(new RegExp(`/start/${goalId}$`, "u"));
+  });
+
+  test("only people without an account get a note above the course start action", async ({
+    page,
+    userWithoutProgress,
+  }) => {
+    const { course } = await createOutlinedCourse();
+    const href = `/start/course/${course.id}?minutes=15`;
+    const note = "Start free, no account needed.";
+
+    await page.goto(href);
+    await expect(page.getByText(note, { exact: true })).toBeVisible();
+
+    await userWithoutProgress.goto(href);
+    await expect(userWithoutProgress.getByText(note, { exact: true })).toBeHidden();
+    await expect(userWithoutProgress.locator("[data-slot=bottom-bar-note] > *")).toHaveCount(0);
+  });
+
+  test("a free learner who started every new goal they can this month sees when more come back", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { course } = await createOutlinedCourse();
+    const firstGoal = new Date(Date.now() - 10 * 86_400_000);
+    const moreOn = new Date(firstGoal.getTime() + 30 * 86_400_000);
+
+    await usageRecordsFixture({
+      count: 10,
+      createdAt: firstGoal,
+      kind: "goal",
+      userId: noProgressUser.id,
+    });
+
+    const response = await page.request.get(`/start/course/${course.id}?minutes=15`);
+    const html = await response.text();
+
+    expect(html).toMatch(/>You&#x27;ve started all the new goals you can</u);
+    expect(html).toMatch(/<p class="[^"]*\binvisible\b[^"]*"[^>]*>More on /u);
+
+    await page.goto(`/start/course/${course.id}?minutes=15`);
+
+    const gate = page
+      .getByText("You've started all the new goals you can")
+      .filter({ visible: true });
+
+    await expect(gate).toBeVisible();
+
+    await expect(
+      page
+        .getByText(
+          `More on ${moreOn.toLocaleDateString("en-US", { day: "numeric", month: "long", timeZone: "UTC" })}, or subscribe to keep going.`,
+        )
+        .filter({ visible: true }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Subscribe" })).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+
+    await expect(page.getByRole("link", { name: "See plan" })).toBeHidden();
+    await expect(page.getByRole("button", { name: /Build my plan/u })).toBeHidden();
+    await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
+  });
+
+  test("a refused course start comes back on its own once more goals do, and starts", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { course } = await createOutlinedCourse();
+
+    await usageRecordsFixture({
+      count: 10,
+      createdAt: new Date(Date.now() - 30 * 86_400_000 + 15_000),
+      kind: "goal",
+      userId: noProgressUser.id,
+    });
+
+    await page.goto(`/start/course/${course.id}?minutes=15`);
+
+    const gate = page
+      .getByText("You've started all the new goals you can")
+      .filter({ visible: true });
+
+    await expect(gate).toBeVisible();
+    await expect(page.getByRole("button", { name: /Build my plan/u })).toBeHidden();
+
+    await expect(page.getByRole("button", { name: /Build my plan/u })).toBeVisible({
+      timeout: 30_000,
+    });
+
+    await expect(gate).toBeHidden();
+    await startCourseWithLevel(page);
+    await readGoalId(page);
   });
 
   test("a visitor who goes back while the course starts stays there, and the start still stands", async ({

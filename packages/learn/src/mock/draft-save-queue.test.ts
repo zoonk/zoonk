@@ -14,10 +14,14 @@ function flushPromises() {
 function setup() {
   const requests: PendingSave[] = [];
   const statuses: DraftSaveStatus[] = [];
+  const stored: Draft[] = [];
+  const failed: Draft[] = [];
 
   const queue = createDraftSaveQueue<Draft>({
     keyOf: (draft) => draft.itemId,
+    onFailed: (draft) => failed.push(draft),
     onStatus: (status) => statuses.push(status),
+    onStored: (draft) => stored.push(draft),
     save: (draft) =>
       new Promise<boolean>((resolve, reject) => {
         requests.push({
@@ -29,7 +33,7 @@ function setup() {
       }),
   });
 
-  return { queue, requests, statuses };
+  return { failed, queue, requests, statuses, stored };
 }
 
 describe(createDraftSaveQueue, () => {
@@ -90,6 +94,25 @@ describe(createDraftSaveQueue, () => {
     expect(statuses.at(-1)).toBe("saved");
   });
 
+  it("keeps a failed answer failed while it's sent again, until it's stored", async () => {
+    const { failed, queue, requests, stored } = setup();
+    const answer = { answer: "B", itemId: "q1" };
+
+    queue.add(answer);
+    requests[0]?.fail();
+    await flushPromises();
+    expect(failed).toStrictEqual([answer]);
+
+    queue.retryNow();
+    expect(requests).toHaveLength(2);
+    expect(stored).toStrictEqual([]);
+
+    requests[1]?.store();
+    await flushPromises();
+    expect(failed).toStrictEqual([answer]);
+    expect(stored).toStrictEqual([answer]);
+  });
+
   it("waits longer before each new try, and tries at once when asked", async () => {
     const { queue, requests } = setup();
 
@@ -142,21 +165,46 @@ describe(createDraftSaveQueue, () => {
     expect(requests.map((request) => request.draft.answer)).toStrictEqual(["A", "B"]);
   });
 
-  it("says when the server refused an answer, until a later one is stored", async () => {
-    const { queue, requests, statuses } = setup();
+  it("says when the server refused an answer, until that question's answer is stored", async () => {
+    const { failed, queue, requests, statuses } = setup();
 
     queue.add({ answer: "B", itemId: "q1" });
     requests[0]?.refuse();
     await flushPromises();
 
     expect(statuses.at(-1)).toBe("refused");
+    expect(failed).toStrictEqual([{ answer: "B", itemId: "q1" }]);
     expect(vi.getTimerCount()).toBe(0);
 
-    queue.add({ answer: "C", itemId: "q2" });
+    queue.add({ answer: "C", itemId: "q1" });
     requests[1]?.store();
     await flushPromises();
 
     expect(statuses.at(-1)).toBe("saved");
+  });
+
+  it("forgets refusals once the section is handed in", async () => {
+    const { queue, requests, statuses } = setup();
+
+    queue.add({ answer: "B", itemId: "q1" });
+    requests[0]?.refuse();
+    await flushPromises();
+    queue.forgetRefusals();
+
+    expect(statuses.at(-1)).toBe("saved");
+  });
+
+  it("still says an answer was refused after another question's answer is stored", async () => {
+    const { queue, requests, statuses } = setup();
+
+    queue.add({ answer: "B", itemId: "q1" });
+    queue.add({ answer: "C", itemId: "q2" });
+    requests[0]?.refuse();
+    await flushPromises();
+    requests[1]?.store();
+    await flushPromises();
+
+    expect(statuses.at(-1)).toBe("refused");
   });
 
   it("lets a hand-in wait until every answer is stored, retries included", async () => {

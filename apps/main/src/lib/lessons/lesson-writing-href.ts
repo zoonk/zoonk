@@ -42,7 +42,5 @@ export function readLessonWritingRequest(
     return { limit, status };
   }
 
-  return status === "failed" || status === "plusRequired" || status === "setAside"
-    ? { status }
-    : { status: "idle" };
+  return status === "failed" || status === "setAside" ? { status } : { status: "idle" };
 }

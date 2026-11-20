@@ -4,14 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LimitSubject
-import com.zoonk.android.ui.components.limitMessage
+import com.zoonk.android.ui.components.limitWords
 
 @Composable
 internal fun askLabel(
     scope: TutorScope,
-    name: String,
+    identity: TutorIdentity,
 ): String =
-    stringResource(
+    identity.askText(
         when (scope) {
             is TutorScope.Chapter -> R.string.tutor_ask_chapter
             is TutorScope.Mock -> R.string.tutor_ask_mock
@@ -21,7 +21,6 @@ internal fun askLabel(
             is TutorScope.Item -> if (scope.answered) R.string.tutor_ask_answer else R.string.tutor_ask_question
             is TutorScope.Lesson, is TutorScope.Step -> R.string.tutor_ask_screen
         },
-        name,
     )
 
 @Composable
@@ -70,7 +69,7 @@ internal fun aboutLabel(about: TutorTurn.About): String =
 
 @Composable
 internal fun failureMessage(failure: TutorFailure?): String {
-    failure?.helpLimit?.let { return limitMessage(it, LimitSubject.Help) }
+    failure?.helpLimit?.let { return limitWords(it, LimitSubject.Messages).run { title ?: line.orEmpty() } }
 
     return stringResource(
         when (failure) {
@@ -79,7 +78,7 @@ internal fun failureMessage(failure: TutorFailure?): String {
             TutorFailure.Gone -> R.string.tutor_error_gone
             TutorFailure.Invalid -> R.string.tutor_error_invalid
             is TutorFailure.Refused -> R.string.tutor_error_slow_down
-            TutorFailure.Failed, null -> R.string.tutor_error_failed
+            TutorFailure.Failed, TutorFailure.Unanswered, null -> R.string.tutor_error_failed
         },
     )
 }

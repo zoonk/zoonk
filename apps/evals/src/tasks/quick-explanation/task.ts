@@ -32,7 +32,7 @@ export const quickExplanationTask: Task<
   generate: (input) => generateQuickExplanation({ ...input, country: input.country ?? null }),
   id: "quick-explanation",
   latencyBudget: QUICK_EXPLANATION_LATENCY_BUDGET,
-  name: "Quick Explanation",
+  name: "Quick explanation",
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
       check: checkOutput,

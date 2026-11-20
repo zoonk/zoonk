@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -9,12 +10,12 @@ final class BuddyStoreTests: XCTestCase {
     let store = BuddyStore(api: api, cache: AppCache(session: .preview(account: .buddyTestAccount)))
     await store.status.load()
 
-    await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
+    let saved = await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
 
     XCTAssertEqual(store.status.value?.buddy.kind, .otto)
     XCTAssertEqual(store.status.value?.buddy.name, "Octo")
     XCTAssertEqual(store.status.value?.buddy.picked, true)
-    XCTAssertFalse(store.saveFailed)
+    XCTAssertTrue(saved)
   }
 
   func testFailedSavePutsThePreviousBuddyBack() async {
@@ -23,11 +24,11 @@ final class BuddyStoreTests: XCTestCase {
     let store = BuddyStore(api: api, cache: AppCache(session: .preview(account: .buddyTestAccount)))
     await store.status.load()
 
-    await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
+    let saved = await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
 
     XCTAssertEqual(store.status.value?.buddy.kind, .zu)
     XCTAssertNil(store.status.value?.buddy.name)
-    XCTAssertTrue(store.saveFailed)
+    XCTAssertFalse(saved)
   }
 
   func testExpiredSessionOnSaveSignsOutWithoutRollingBack() async {
@@ -37,10 +38,10 @@ final class BuddyStoreTests: XCTestCase {
     let store = BuddyStore(api: api, cache: AppCache(session: session))
     await store.status.load()
 
-    await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
+    let saved = await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
 
     XCTAssertNil(session.authenticatedSession)
-    XCTAssertFalse(store.saveFailed)
+    XCTAssertTrue(saved, "a signed-out learner is told nothing")
   }
 
   func testExpiredSessionOnAnInsightAnswerIsObsolete() async {
@@ -74,12 +75,13 @@ final class BuddyStoreTests: XCTestCase {
 }
 
 private final class BuddyAPIStub: BuddyAPIClient, @unchecked Sendable {
+  var shownStatus = BuddyStatus.fixture
   var saveFailure: Error?
   var answerFailure: Error?
   var pages: [String?: EarlierQuestionsPage] = [:]
 
   func status(timeZone: String, token: String) async throws -> BuddyStatus {
-    .fixture
+    shownStatus
   }
 
   func save(_ buddy: BuddyChoice, token: String) async throws {
@@ -92,10 +94,14 @@ private final class BuddyAPIStub: BuddyAPIClient, @unchecked Sendable {
     pages[cursor] ?? EarlierQuestionsPage(questions: [], nextCursor: nil)
   }
 
-  func answer(insightId: String, accepted: Bool, token: String) async throws {
+  func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
+    async throws -> MemoryInsight?
+  {
     if let answerFailure {
       throw answerFailure
     }
+
+    return nil
   }
 }
 
@@ -139,4 +145,161 @@ extension CurrentAccount {
       image: nil,
       name: "Learner",
       username: "learner"))
+}
+
+@MainActor
+final class BuddyDayOpeningTests: XCTestCase {
+  func testClosingDayBeforeAMissionAnswersOpensNothingThenOrLater() async throws {
+    let (window, api, opened) = try await waitingMission()
+    try await closeRequestSheet(in: window)
+    try await waitForTestCondition("The sheet did not close") {
+      window.rootViewController?.presentedViewController == nil
+    }
+    await api.releaseHeldCall()
+    // A closed day sheet must not open a mission after its response.
+    let closedDayWindow: Duration = .milliseconds(200)
+    try await Task.sleep(for: closedDayWindow)
+    XCTAssertEqual(opened.count, 0)
+    try await showDay(in: window)
+    XCTAssertEqual(opened.count, 0)
+  }
+
+  func testClosingDayBeforeAMissionFailsLeavesTheNextOpeningClean() async throws {
+    let (window, api, _) = try await waitingMission(fails: true)
+    try await closeRequestSheet(in: window)
+    try await waitForTestCondition("The sheet did not close") {
+      window.rootViewController?.presentedViewController == nil
+    }
+    await api.releaseHeldCall()
+    try await showDay(in: window)
+    XCTAssertFalse(
+      spoken(in: window).contains { $0.contains(Self.failure) },
+      "A closed sheet's failure stays gone: \(spoken(in: window))")
+  }
+
+  func testMovingDayFromSheetIntoPaneKeepsTheMissionAndOpensOnce() async throws {
+    let (window, api, opened) = try await waitingMission()
+    window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
+    try await waitForLayout(in: window)
+    await api.releaseHeldCall()
+    try await waitForTestCondition("The mission did not open") { opened.count == 1 }
+    XCTAssertEqual(opened.count, 1)
+    try await waitForTestCondition("The day sheet did not dismiss after moving into the pane") {
+      window.rootViewController?.presentedViewController == nil
+    }
+    XCTAssertNil(window.rootViewController?.presentedViewController)
+  }
+
+  func testMovingDayIntoPaneAndBackKeepsTheMissionAndOpensOnce() async throws {
+    let (window, api, opened) = try await waitingMission()
+    window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
+    try await waitForLayout(in: window)
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await waitForLayout(in: window)
+    await api.releaseHeldCall()
+    try await waitForTestCondition("The mission did not open") { opened.count == 1 }
+    XCTAssertEqual(opened.count, 1)
+  }
+
+  private static let failure = String(
+    localized: "We couldn't open this step. Try again.", table: "Today")
+
+  private func waitingMission(fails: Bool = false) async throws
+    -> (UIWindow, StudyAPIStub, OpenedMissions)
+  {
+    let api = StudyAPIStub(
+      openings: [
+        try JSONDecoder().decode(
+          StudyBlockOpening.self,
+          from: Data(#"{"kind":"lesson","lessonId":"l1","sessionId":"s1"}"#.utf8))
+      ],
+      openError: fails ? .network : nil, holdsOpening: true)
+    let buddy = BuddyAPIStub()
+    buddy.shownStatus.today = .init(
+      fullMeal: .init(bonus: 10, earned: false), goalId: PageServer.goalID,
+      localDate: "2026-11-16",
+      missions: [
+        .init(
+          done: 0, kind: .somethingNew,
+          opens: .init(value1: .case1(.init(blockId: "b1", kind: .block))), status: .todo, total: 1)
+      ])
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
+      session: .preview(account: .planTestAccount), imageLoader: .live(),
+      subscriptionStore: .live(), learnerSummaryAPI: OneGoalSummary(kind: .learn))
+    await dependencies.learnerSummaryStore.summary.load()
+    let store = BuddyStore(api: buddy, cache: dependencies.cache)
+    await store.status.load()
+    let today = TodayStore(api: api, cache: dependencies.cache)
+    let opened = OpenedMissions()
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack { BuddyScreen() }
+        .environment(store)
+        .environment(today)
+        .appDependencies(dependencies)
+        .environment(AppRouter())
+        .environment(\.tutorPlaces, TutorPlaces { _ in opened.count += 1 })
+        .zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await waitForLayout(in: window)
+    try await showDay(in: window)
+    try await activate(
+      where: { $0.contains(String(localized: "Do a new lesson", table: "Today")) }, in: window)
+    try await api.waitForHeldCall()
+    return (window, api, opened)
+  }
+
+  private func showDay(in window: UIWindow) async throws {
+    try await activate("0 of 1 mission", in: window)
+    try await waitForTestCondition("The day sheet did not appear") {
+      window.rootViewController?.presentedViewController != nil
+    }
+  }
+}
+
+@MainActor
+private final class OpenedMissions {
+  var count = 0
+}
+
+extension BuddyDayOpeningTests {
+  func testTheFaceExplainsADayWithNoMissions() async throws {
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
+      session: .preview(account: .planTestAccount), imageLoader: .live(),
+      subscriptionStore: .live(),
+      learnerSummaryAPI: OneGoalSummary(kind: .learn))
+    await dependencies.learnerSummaryStore.summary.load()
+    let buddy = BuddyAPIStub()
+    buddy.shownStatus.today = .init(
+      fullMeal: .init(bonus: 50, earned: false), goalId: "goal", localDate: "2026-11-16",
+      missions: [])
+    let store = BuddyStore(api: buddy, cache: dependencies.cache)
+    await store.status.load()
+    let window = try show(
+      NavigationStack { BuddyScreen() }.environment(store).appDependencies(dependencies)
+        .environment(AppRouter()).zoonkStyles())
+    try await readsWhatVoiceOverReads()
+    for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
+      window.frame = CGRect(x: 0, y: 0, width: width, height: height)
+      window.rootViewController?.traitOverrides.horizontalSizeClass =
+        width > 700 ? .regular : .compact
+      try await waitForLayout(in: window)
+      try captureCallsRoundTwo("empty-buddy-\(size)")
+      if width < 700 {
+        XCTAssertTrue(
+          spokenHints(in: window).contains("Shows Zu's day"), "\(spokenHints(in: window))")
+        try await activate("Zu", in: window)
+        try await waitForTestCondition("The day sheet title did not appear") {
+          spoken(in: window).contains("Zu today")
+        }
+        XCTAssertTrue(spoken(in: window).contains("Zu today"), "\(spoken(in: window))")
+        try captureCallsRoundTwo("empty-buddy-day-phone")
+        try await closeRequestSheet(in: window)
+      }
+    }
+  }
 }

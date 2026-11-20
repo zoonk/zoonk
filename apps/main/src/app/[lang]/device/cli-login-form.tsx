@@ -1,10 +1,13 @@
 "use client";
 
+import { COLUMN_CONTENT_CLASS } from "@/components/public/column-screen";
+import { EnterButton } from "@zoonk/learn/enter-button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Button } from "@zoonk/ui/components/button";
 import { Field, FieldLabel } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
+import { cn } from "@zoonk/ui/lib/utils";
 import {
-  CheckIcon,
   CircleCheckIcon,
   CircleXIcon,
   ClockIcon,
@@ -12,10 +15,9 @@ import {
   FilePenLineIcon,
   PencilOffIcon,
   ShieldAlertIcon,
-  XIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useActionState, useId } from "react";
+import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 import {
   type CliLoginFailure,
@@ -26,10 +28,7 @@ import {
 
 const LOGIN_COMMAND = "pnpm zoonk login";
 
-type FormState =
-  | { outcome: CliLoginOutcome }
-  | { failure: CliLoginFailure; userCode: string }
-  | null;
+type FormState = { outcome: CliLoginOutcome } | { failure: CliLoginFailure } | null;
 
 function CodeReadout({ userCode }: { userCode: string }) {
   const t = useExtracted();
@@ -45,9 +44,38 @@ function CodeReadout({ userCode }: { userCode: string }) {
   );
 }
 
-function CodeField({ defaultValue, errorId }: { defaultValue?: string; errorId?: string }) {
+/**
+ * Enter in the field presses Approve, as a click would (so not while a decision is running): a
+ * form's own Enter would press its first button, Deny.
+ */
+function CodeField({
+  approveId,
+  errorId,
+  onChange,
+  value,
+}: {
+  approveId: string;
+  errorId?: string;
+  onChange: (value: string) => void;
+  value: string;
+}) {
   const t = useExtracted();
   const id = useId();
+
+  const approveOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const approve = event.currentTarget.form?.elements.namedItem(approveId);
+
+    if (
+      event.key !== "Enter" ||
+      event.nativeEvent.isComposing ||
+      !(approve instanceof HTMLButtonElement)
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    approve.click();
+  };
 
   return (
     <Field>
@@ -58,11 +86,14 @@ function CodeField({ defaultValue, errorId }: { defaultValue?: string; errorId?:
         autoCapitalize="characters"
         autoComplete="off"
         className="font-mono uppercase"
-        defaultValue={defaultValue}
         id={id}
         name="userCode"
+        onChange={(event) => onChange(event.target.value)}
+        onKeyDown={approveOnEnter}
+        placeholder="ABCD2345"
         required
         spellCheck={false}
+        value={value}
       />
     </Field>
   );
@@ -112,38 +143,38 @@ function Grant({ email }: { email: string }) {
   );
 }
 
-function DecisionButtons() {
+/** Deny, then Approve as the bar's main action. Enter alone never approves a login: the learner presses it. */
+function DecisionButtons({ approveId, hasCode }: { approveId: string; hasCode: boolean }) {
   const t = useExtracted();
   const { data, pending } = useFormStatus();
   const deciding = pending ? data?.get("decision") : null;
 
   return (
-    <div className="flex flex-wrap gap-2">
-      <Button
-        busy={deciding === "approve"}
-        disabled={deciding === "deny"}
-        icon={<CheckIcon aria-hidden="true" />}
-        name="decision"
-        size="lg"
-        type="submit"
-        value="approve"
-      >
-        {t("Approve")}
-      </Button>
-
+    <BottomBarActions>
       <Button
         busy={deciding === "deny"}
-        disabled={deciding === "approve"}
-        icon={<XIcon aria-hidden="true" />}
+        disabled={!hasCode || deciding === "approve"}
         name="decision"
-        size="lg"
+        size="xl"
         type="submit"
         value="deny"
         variant="outline"
       >
         {t("Deny")}
       </Button>
-    </div>
+
+      <EnterButton
+        busy={deciding === "approve"}
+        disabled={!hasCode || deciding === "deny"}
+        enter="off"
+        id={approveId}
+        name="decision"
+        type="submit"
+        value="approve"
+      >
+        {t("Approve")}
+      </EnterButton>
+    </BottomBarActions>
   );
 }
 
@@ -214,6 +245,8 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
   const t = useExtracted();
 
   const errorId = useId();
+  const approveId = useId();
+  const [code, setCode] = useState(userCode ?? "");
 
   const [state, formAction] = useActionState(
     async (_previous: FormState, formData: FormData): Promise<FormState> => {
@@ -221,11 +254,9 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
       const submittedCode = formData.get("userCode");
       const typedCode = typeof submittedCode === "string" ? submittedCode.trim() : "";
 
-      const result = await decideCliLogin({ decision, userCode: typedCode }).catch(
-        (): CliLoginState => ({ failure: "failed" }),
-      );
-
-      return result && "failure" in result ? { ...result, userCode: typedCode } : result;
+      return decideCliLogin({ decision, userCode: typedCode }).catch((): CliLoginState => ({
+        failure: "failed",
+      }));
     },
     null,
   );
@@ -237,25 +268,30 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-8">
-      {userCode ? (
-        <CodeReadout userCode={userCode} />
-      ) : (
-        <CodeField defaultValue={failed?.userCode} errorId={failed ? errorId : undefined} />
-      )}
+    <form action={formAction} className="contents">
+      <div className={cn(COLUMN_CONTENT_CLASS, "mt-2 flex flex-1 flex-col gap-8")}>
+        {userCode ? (
+          <CodeReadout userCode={userCode} />
+        ) : (
+          <CodeField
+            approveId={approveId}
+            errorId={failed ? errorId : undefined}
+            onChange={setCode}
+            value={code}
+          />
+        )}
 
-      <Grant email={email} />
+        <Grant email={email} />
 
-      <div className="flex flex-col gap-4">
         <p className="flex gap-3 text-sm text-pretty">
           <ShieldAlertIcon aria-hidden="true" className="text-warning mt-0.5 size-4 shrink-0" />
           {t("Only approve a login you started yourself. If someone sent you this link, deny it.")}
         </p>
-
-        <DecisionButtons />
-
-        {failed && <FailureNote failure={failed.failure} id={errorId} />}
       </div>
+
+      <BottomBar note={failed && <FailureNote failure={failed.failure} id={errorId} />}>
+        <DecisionButtons approveId={approveId} hasCode={Boolean(code.trim())} />
+      </BottomBar>
     </form>
   );
 }

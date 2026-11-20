@@ -1,6 +1,5 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
-import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
 import { getRequestInstant } from "../learner/facts/request-instant";
 import { readSavedMindMaps } from "../learner/facts/saved-mind-maps";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
@@ -37,7 +36,7 @@ export async function getChapterMindMap({
   const { goal } = resolved;
 
   const [[facts], numbering, now, savedRows] = await Promise.all([
-    loadMindMapChapters({ chapterIds: [chapterId], goal, readViewer: readEntitlementViewer }),
+    loadMindMapChapters({ chapterIds: [chapterId], goal }),
     loadChapterNumbering(goal),
     getRequestInstant(),
     readSavedMindMaps(goal.userId),

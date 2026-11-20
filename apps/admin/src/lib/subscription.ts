@@ -1,3 +1,5 @@
+import { capitalize, toWords } from "@/lib/format";
+
 export const subscriptionFilters = ["all", "active", "canceled", "incomplete"] as const;
 
 export type SubscriptionFilter = (typeof subscriptionFilters)[number];
@@ -20,23 +22,39 @@ export function parseSubscriptionFilter(status: string | string[] | undefined): 
 }
 
 export function getSubscriptionStatusLabel(status: string | null) {
-  return status ? status.replaceAll("_", " ") : "—";
+  return status ? toWords(status) : "—";
 }
 
-export function getSubscriptionProviderLabel(provider: string) {
-  if (provider === "apple") {
-    return "Apple";
+const STORES: Partial<Record<string, { name: string; where: string }>> = {
+  apple: { name: "Apple", where: "App Store Connect" },
+  google: { name: "Google", where: "Play Console" },
+  stripe: { name: "Stripe", where: "the Stripe dashboard" },
+};
+
+/** Who charges for it. Zoonk's own are the ones staff give by hand, at no charge. */
+export function getSubscriptionBilledBy({
+  billingInterval,
+  provider,
+}: {
+  billingInterval: string | null;
+  provider: string;
+}): string {
+  const store = STORES[provider];
+
+  if (!store) {
+    return "Given by Zoonk, no charge";
   }
 
-  if (provider === "google") {
-    return "Google";
-  }
+  return billingInterval ? `${store.name}, ${billingInterval}` : store.name;
+}
 
-  if (provider === "stripe") {
-    return "Stripe";
-  }
+/** Where a store-billed subscription is changed, since Admin can't. */
+export function getSubscriptionStore(provider: string) {
+  return STORES[provider] ?? null;
+}
 
-  return "Zoonk";
+export function getPlanLabel(plan: string | null | undefined): string {
+  return capitalize(plan ?? "free");
 }
 
 function isSubscriptionFilter(value: string | undefined): value is SubscriptionFilter {

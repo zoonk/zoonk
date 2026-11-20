@@ -74,18 +74,18 @@ export function GridHeader({
 }) {
   const numberSize = isCompact ? "text-sm" : "text-lg";
 
+  // A label, not a box: only the asked square is highlighted, and answer tiles never read as table heads.
   return (
     <div
       aria-hidden="true"
-      className={cn(
-        "bg-background ring-border flex min-h-11 items-center justify-center rounded-xl ring-1 motion-safe:transition-colors",
-        isAllele ? "text-xl" : numberSize,
-        isLit && "bg-viz-accent-soft ring-viz-accent ring-2",
-      )}
+      className={cn("flex min-h-11 items-center justify-center", isAllele ? "text-xl" : numberSize)}
     >
       {/* A sum or product grid's cells are the answer, so its headers stay quieter than them. */}
       <CellValue
-        className={cn(!isAllele && "font-normal", !isAllele && !isLit && "text-muted-foreground")}
+        className={cn(
+          !isAllele && !isLit && "text-muted-foreground",
+          isLit && "decoration-viz-accent underline decoration-2 underline-offset-4",
+        )}
         isAllele={isAllele}
         value={value}
       />

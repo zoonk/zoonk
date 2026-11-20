@@ -5,7 +5,7 @@ import { planChapters } from "./plan-chapters";
 /**
  * The one place that decides which chapters a goal's mind maps cover: its plan's, in plan order,
  * and for a course goal every other chapter of its course after them, in course order. An exam
- * keeps its plan's: chapters outside it often have no id yet, and its Plus lock follows the plan.
+ * keeps its plan's: chapters outside it often have no id yet.
  */
 export function mindMapScopeChapters(goalId: string): Sql {
   return sql`

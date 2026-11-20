@@ -4,11 +4,11 @@ import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
-import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { TaskActions } from "../../_components/task-layout";
 import { WritingWait } from "../../generation/writing-wait";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
+import { CallStartNote } from "./call-limit-message";
 import { useConversationTitle } from "./conversation-labels";
 import { type CallStartOutcome, useCallStart } from "./use-call-start";
 
@@ -28,10 +28,10 @@ export function CheckpointCallPreparing({
   if (call.writing) {
     return (
       <TaskFrame exitHref={exitHref} headerTitle={title}>
-        <WritingWait className="pt-4" kind="conversationCall" writing={call.writing}>
+        <WritingWait kind="conversationCall" writing={call.writing}>
           <GenerationTimelineTitle>{t("Getting your call ready")}</GenerationTimelineTitle>
           <GenerationTimelineDescription>
-            {t("It opens here as soon as it's ready.")}
+            {t("This takes about half a minute.")}
           </GenerationTimelineDescription>
         </WritingWait>
       </TaskFrame>
@@ -43,12 +43,8 @@ export function CheckpointCallPreparing({
       exitHref={exitHref}
       footer={
         <TaskActions>
-          <TaskMainButton
-            busy={call.isStarting}
-            icon={<PhoneIcon aria-hidden="true" />}
-            onClick={call.start}
-          >
-            {t("Get the call ready")}
+          <TaskMainButton busy={call.isStarting} onClick={call.start}>
+            {t("Start")}
           </TaskMainButton>
         </TaskActions>
       }
@@ -57,15 +53,9 @@ export function CheckpointCallPreparing({
       <header className="flex flex-col gap-2">
         <h1 className="text-title text-balance">{unitTitle}</h1>
         <p className="text-muted-foreground text-pretty">
-          {t(
-            "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
-          )}
+          {t("A short voice call with an AI character, about this unit.")}
         </p>
-        {call.failed && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("The call didn't start. Try again in a moment.")}
-          </p>
-        )}
+        <CallStartNote call={call} failed={t("The call didn't start. Try again in a moment.")} />
       </header>
     </TaskFrame>
   );

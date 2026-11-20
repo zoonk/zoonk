@@ -96,4 +96,17 @@ describe("app history", () => {
     expect(goBackToApp()).toBe(true);
     expect(history.traverseTo).toHaveBeenCalledWith(plan.key);
   });
+
+  it("returns from a page outside a section to the section's page it came from", () => {
+    const history = browserHistory();
+    history.open("/today");
+    markAppEntry();
+    const privacy = history.open("/settings/privacy");
+    markAppEntry("(settings)");
+    history.open("/mistakes");
+    markAppEntry();
+
+    expect(goBackToApp()).toBe(true);
+    expect(history.traverseTo).toHaveBeenCalledWith(privacy.key);
+  });
 });

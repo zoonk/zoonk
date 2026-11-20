@@ -53,14 +53,29 @@ describe("reviewing duplicated definitions", () => {
     assert.equal(flags[0]?.rule.blocks, undefined);
   });
 
-  it("shows differing values so a change cannot silently drift from another definition", () => {
+  it("lists namesakes whose values read alike and leaves out the ones that do something else", () => {
     const flags = audit({
-      [PATH]: "export const HELP_LIMIT = 3;",
-      "apps/api/src/help/route.ts": "const HELP_LIMIT = 2;",
+      [PATH]: 'export const EXAM_TARGETS = ["admission", "position", "score"] as const;',
+      "apps/api/src/help/route.ts": "const EXAM_TARGETS = ['admission'];",
+      "packages/learn/src/onboarding/reads.ts":
+        'const EXAM_TARGETS: readonly ExamTarget[] = ["admission", "position", "score"];',
     });
 
-    assert.match(flags[0]?.rule.question ?? "", /HELP_LIMIT = 3/u);
-    assert.match(flags[0]?.rule.question ?? "", /HELP_LIMIT = 2/u);
+    assert.equal(flags.length, 1);
+    assert.match(flags[0]?.rule.question ?? "", /2 definitions/u);
+    assert.match(flags[0]?.rule.question ?? "", /onboarding\/reads\.ts/u);
+    assert.doesNotMatch(flags[0]?.rule.question ?? "", /help\/route\.ts/u);
+  });
+
+  it("leaves same-name helpers with different bodies alone", () => {
+    assert.deepEqual(
+      audit({
+        [PATH]: "function toStatus(plan: Plan) { return plan.done ? 'done' : 'open'; }",
+        "packages/core/src/mocks/status.ts":
+          "function toStatus({ option, outcome }: Pick) { return outcome.started ? option.kind : null; }",
+      }),
+      [],
+    );
   });
 
   it("finds initializer-only and helper-body edits, including arrow helpers", () => {
@@ -73,7 +88,7 @@ describe("reviewing duplicated definitions", () => {
         "};",
       ].join("\n"),
       "packages/core/src/plans/other.ts":
-        "const LIMIT = 2; function isStandIn(item: Item) { return item.placeholder; }",
+        "const LIMIT = 3; function isStandIn(item: Item) { return item.placeholder; }",
     };
 
     assert.deepEqual(
@@ -92,10 +107,10 @@ describe("reviewing duplicated definitions", () => {
       audit(
         {
           [PATH]: "const LIMIT = 3;\nexport const title = 'Plan';",
-          "packages/core/src/generated/client.ts": "const LIMIT = 2;",
-          "packages/core/src/plans/current.test.ts": "const LIMIT = 2;",
+          "packages/core/src/generated/client.ts": "const LIMIT = 3;",
+          "packages/core/src/plans/current.test.ts": "const LIMIT = 3;",
           "packages/core/src/plans/other.ts":
-            "import { LIMIT } from './current'; function load() { const LIMIT = 2; return LIMIT; }",
+            "import { LIMIT } from './current'; function load() { const LIMIT = 3; return LIMIT; }",
         },
         [2],
       ),
@@ -105,10 +120,10 @@ describe("reviewing duplicated definitions", () => {
     assert.deepEqual(
       audit({
         [PATH]: "const LIMIT = 3;",
-        "packages/core/src/generated/client.ts": "const LIMIT = 2;",
-        "packages/core/src/plans/current.test.ts": "const LIMIT = 2;",
+        "packages/core/src/generated/client.ts": "const LIMIT = 3;",
+        "packages/core/src/plans/current.test.ts": "const LIMIT = 3;",
         "packages/core/src/plans/other.ts":
-          "import { LIMIT } from './current'; function load() { const LIMIT = 2; return LIMIT; }",
+          "import { LIMIT } from './current'; function load() { const LIMIT = 3; return LIMIT; }",
       }),
       [],
     );
@@ -129,11 +144,13 @@ describe("reviewing duplicated definitions", () => {
     );
   });
 
-  it("leaves framework handlers and React components out of helper-name searches", () => {
+  it("leaves framework handlers, file conventions and React components out", () => {
     assert.deepEqual(
       audit({
-        [PATH]: "export function GET() {} export function Page() {}",
-        "apps/api/src/example/route.ts": "export function GET() {} export function Page() {}",
+        [PATH]:
+          "export function GET() {} export function Page() {} export const POST = handle(); export const TEST_CASES = [];",
+        "apps/api/src/example/route.ts":
+          "export function GET() {} export function Page() {} export const POST = handle(); export const TEST_CASES = [];",
       }),
       [],
     );

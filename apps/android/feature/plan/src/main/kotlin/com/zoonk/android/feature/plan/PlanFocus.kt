@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.controlInk
+import com.zoonk.android.ui.components.pickedBorder
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.Plan
@@ -110,7 +112,7 @@ internal fun ColumnScope.ChooseFocusBody(
     fun save() {
         val id = UUID.randomUUID()
         saved = id
-        edits.change(PlanPart.Focus, listOf(PlanOp.FocusAreas(chosen))) { edits.answerSheet(id, it) }
+        edits.change(PlanPart.Focus, listOf(PlanOp.FocusAreas(chosen)), PlanAsker.Sheet(id))
     }
 
     PlanSheetContent(
@@ -148,7 +150,6 @@ internal fun ColumnScope.ChooseFocusBody(
                 onClick = ::save,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = chosen.toSet() != current.toSet() && !unchanged,
-                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             ) { Text(stringResource(if (removes) R.string.plan_remove_focus else R.string.plan_focus_on_these)) }
             if (save != null && edits.sheetFailed(PlanPart.Focus, save)) SaveFailedText()
         },
@@ -198,7 +199,8 @@ private fun FocusTestLink(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            com.zoonk.android.ui.components
+                .ListRowChevron()
         }
     }
 }
@@ -217,10 +219,10 @@ private fun AreaChoice(
         modifier = Modifier.fillMaxWidth().semantics { role = Role.Checkbox },
         shape = MaterialTheme.shapes.medium,
         color = if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent,
-        border = if (checked) BorderStroke(2.dp, colors.primary) else BorderStroke(1.dp, colors.outline),
+        border = if (checked) pickedBorder() else BorderStroke(1.dp, colors.outline),
     ) {
         Row(
-            modifier = Modifier.heightIn(min = 56.dp).padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
+            modifier = Modifier.heightIn(min = 56.dp).padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
@@ -240,7 +242,7 @@ private fun AreaChoice(
                     )
                 }
             }
-            Checkbox(checked = checked, onCheckedChange = null)
+            Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk())
         }
     }
 }

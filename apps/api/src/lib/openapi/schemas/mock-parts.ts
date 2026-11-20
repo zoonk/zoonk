@@ -8,13 +8,13 @@ export const mockScoreNotesSchema = z
       .nullable()
       .meta({
         description:
-          "The notice's own sentence on how the exam is scored, where the mock only counts right answers: show it with the result",
+          "The notice's own sentence on how the exam is scored, where the mock only counts right answers",
       }),
     relative: z
       .boolean()
       .meta({
         description:
-          "The real result depends on everyone in the sitting (a percentile, a standardized score): say the mock shows right answers only",
+          "The real result depends on everyone in the sitting (a percentile, a standardized score), as the notice says",
       }),
     scale: z
       .object({
@@ -89,7 +89,7 @@ export const mockSizeSourceSchema = z
       .nullable()
       .meta({
         description:
-          "How the questions split by answer format: the notice's counts, or evenly because it counts none (say so); null for an exam of one format",
+          "How the questions split by answer format: the notice's counts, or evenly because it counts none; null for an exam of one format",
       }),
     material: z
       .boolean()
@@ -104,7 +104,7 @@ export const mockSizeSourceSchema = z
       .enum(["notice", "pastEdition", "unstated"])
       .meta({
         description:
-          "Where the number of questions comes from: the notice, a past edition, or nowhere (say the mock's length is the app's own)",
+          "Where the number of questions comes from: the notice, a past edition, or nowhere (the mock's length is the app's own)",
       }),
     subjects: z
       .enum(["even", "notice", "pastEdition"])
@@ -120,7 +120,45 @@ export const mockSizeSourceSchema = z
       }),
   })
   .meta({
-    description:
-      "Where a mock's size comes from: say so on the mock whenever it isn't the notice, never inventing a number",
+    description: "Where a mock's size comes from, whether or not it's the notice",
     id: "MockSizeSource",
+  });
+
+export const mockAdaptSchema = z
+  .object({
+    focus: z
+      .object({ area: z.string(), correct: z.number(), total: z.number().int() })
+      .nullable()
+      .meta({ description: "The area that went worst, to give more of the plan's time" }),
+    skip: z
+      .object({ lessons: z.number().int().min(1), topics: z.array(z.string()) })
+      .nullable()
+      .meta({
+        description:
+          "The lessons of the topics the mock showed the learner knows (every question right), to skip",
+      }),
+  })
+  .nullable()
+  .meta({
+    description:
+      "What the finished mock offers to change in the plan, each applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null before it's over and for a placement mock",
+    id: "MockAdapt",
+  });
+
+export const mockVerdictSchema = z
+  .object({
+    strongest: z
+      .string()
+      .nullable()
+      .meta({ description: "The subject that went best, as `result.areas` names it" }),
+    weakest: z
+      .string()
+      .nullable()
+      .meta({ description: "The subject to work on, as `result.areas` names it" }),
+  })
+  .nullable()
+  .meta({
+    description:
+      "Once it's over: the subject that went clearly best and the one that went clearly worst. Each is null unless its estimated range (without one, its share of right answers, given the same 90% range, with more points too) stands clear of every other subject's: the strongest's bottom above every other's top, the weakest's top below every other's bottom. A part is never measured against the subject it belongs to and the two are never both set, and a mock with no right answer or no miss sets neither. Null before it's over",
+    id: "MockVerdict",
   });

@@ -7,13 +7,11 @@ import {
 import {
   Drawer,
   DrawerContent,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import {
   ListGroup,
   ListRow,
@@ -24,7 +22,8 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { getSubjectName, useSubjectStateText } from "./use-focus-test-texts";
+import { SheetHeader } from "../_components/sheet-header";
+import { useSubjectStateText } from "./use-focus-test-texts";
 
 export function FocusSubjects({ rows }: { rows: readonly FocusRow[] }) {
   return (
@@ -34,9 +33,7 @@ export function FocusSubjects({ rows }: { rows: readonly FocusRow[] }) {
           <li key={row.subject.key}>
             <ListRow>
               <ListRowContent>
-                <ListRowNumberedTitle number={index + 1}>
-                  {getSubjectName(row.subject)}
-                </ListRowNumberedTitle>
+                <ListRowNumberedTitle number={index + 1}>{row.subject.name}</ListRowNumberedTitle>
               </ListRowContent>
             </ListRow>
           </li>
@@ -47,15 +44,15 @@ export function FocusSubjects({ rows }: { rows: readonly FocusRow[] }) {
 }
 
 function SubjectRow({ subject }: { subject: FocusTestSubject }) {
-  const stateText = useSubjectStateText();
+  const state = useSubjectStateText()(subject);
 
   return (
     <ListRow>
       <ListRowBody>
         <ListRowContent>
-          <ListRowTitle className="font-normal">{getSubjectName(subject)}</ListRowTitle>
+          <ListRowTitle className="font-normal">{subject.name}</ListRowTitle>
         </ListRowContent>
-        <ListRowTrailing>{stateText(subject)}</ListRowTrailing>
+        {state && <ListRowTrailing>{state}</ListRowTrailing>}
       </ListRowBody>
     </ListRow>
   );
@@ -93,10 +90,9 @@ export function FocusTestSubjectsSheet({ subjects }: { subjects: readonly FocusT
       </DrawerTrigger>
 
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{t("Subjects")}</DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        <SheetHeader>
+          <DrawerTitle>{t("Subjects")}</DrawerTitle>
+        </SheetHeader>
 
         <DrawerContent className="pt-1">
           <SubjectRows subjects={subjects} />

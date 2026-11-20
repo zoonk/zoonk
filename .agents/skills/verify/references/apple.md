@@ -1,6 +1,6 @@
 # Measuring the Apple app
 
-How to measure requests, memory, leaks, CPU and hangs for the iPhone and iPad app on a simulator. Every command here was run on Xcode 27.1 with an iOS 27 simulator. Measure the screens a change touches, before and after, on the same simulator, and put the numbers in the report.
+How to measure requests, memory, leaks, CPU and hangs for the iPhone and iPad app on a simulator. Every command here was run on Xcode 27.1 with an iOS 27 simulator. Measure the screens a change touches, before and after, on the same simulator, and put the numbers in the report. Measuring a screen's layout is in [layout capture](apple-layout-capture.md).
 
 ## Set up
 
@@ -17,6 +17,7 @@ How to measure requests, memory, leaks, CPU and hangs for the iPhone and iPad ap
 
 - Use a signed build for anything that signs in. `make test` and `build-for-testing` with `CODE_SIGNING_ALLOWED=NO` replace the app in the same DerivedData with an unsigned one that can't read the Keychain, so the account shows "Account unavailable" and makes no request: rebuild with the command above and reinstall before measuring.
 - Sign in with email as a persona copy (`pnpm dev:persona <name>`). The code is the newest message for that address in the mailbox's JSON: `curl -s <mailbox URL>/api/emails`.
+- To open a screen directly, launch a Debug build with `SIMCTL_CHILD_ZOONK_DEBUG_LINK=/conversation/<id>` (any app path, as `AppRoute+URL.swift` reads it); add `SIMCTL_CHILD_ZOONK_DEBUG_SIGN_IN_EMAIL` and `SIMCTL_CHILD_ZOONK_DEBUG_SIGN_IN_CODE` to sign in first. A local universal link opens Safari instead.
 - Other agents may run Zoonk on other simulators, so always take the process of your own device: `PID=$(pgrep -f "CoreSimulator/Devices/$UDID/.*/Zoonk.app/Zoonk$")`.
 - Drive the app with `agent-device` (some harnesses expose it as device tools). Its element refs expire after every action, so take a new snapshot before each tap. Snapshots make the app build its accessibility tree, which costs CPU: stop driving it before measuring idle CPU or recording a profile you want to read.
 
@@ -70,3 +71,5 @@ For each screen or flow the change touches: requests on first open, on return an
 ## Generated API client
 
 The app imports the local `apps/apple/ZoonkAPI` package. Its generator inputs live in `apps/apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json` and `openapi-generator-config.yaml`; regenerate the contract with `pnpm openapi:generate`. Include the package sources in Apple formatting checks.
+
+The version 2 capture declares its measured page rules in `measuredRules` and its platform limits in `notMeasurable`, with a one-line reason per rule. Every shared action's control frame and kind, including outline and ghost actions, is measured for `one-height`. `line-end` and `lone-word` are **not measurable on apple**: `Text.Layout` exposes glyph character indices but not the resolved source string, and a localization key is not the drawn text. `cut` is **not measurable on apple**: the UIKit host tree does not expose SwiftUI masks, declared clamps or the kit's continuation sign reliably. These declared limits appear in the report and summary without failing. An old capture or a missing required record still fails as not measured.

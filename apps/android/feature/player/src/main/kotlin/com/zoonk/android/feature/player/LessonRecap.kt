@@ -29,7 +29,9 @@ import com.zoonk.android.feature.player.steps.LessonStepVisual
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.isBlankWords
 import com.zoonk.android.ui.richtext.MathText
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
@@ -55,9 +57,10 @@ internal fun LessonRecap(
         title = stringResource(R.string.player_from_the_lesson),
         expanded = expanded,
         onExpandedChange = onExpandedChange,
-        leading = { Icon(painterResource(R.drawable.ic_format_quote), contentDescription = null) },
+        leading = { MarkIcon(R.drawable.ic_format_quote) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
-        supporting = title?.let { { RichInlineText(it) } },
+        // As listRowDescription decides for a row's description: a blank title shows no line.
+        supporting = title?.takeUnless(::isBlankWords)?.let { { RichInlineText(it) } },
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) { RecapBody(recap, mark) }
     }

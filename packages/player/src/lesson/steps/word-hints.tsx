@@ -1,5 +1,6 @@
 "use client";
 
+import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { LightbulbIcon, MessageCircleMoreIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../_components/lesson-rich-text";
@@ -14,7 +15,9 @@ function WordHint({
 }) {
   return (
     <p className="flex items-start gap-2">
-      <Icon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
+      <LineMarker>
+        <Icon aria-hidden="true" className="text-muted-foreground size-4" />
+      </LineMarker>
       <span>{children}</span>
     </p>
   );

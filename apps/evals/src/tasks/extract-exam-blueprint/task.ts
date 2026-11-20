@@ -566,7 +566,7 @@ export const extractExamBlueprintTask: Task<
     "Extract an exam blueprint from real notices, every fact quoting its passage and surviving both citation checks",
   generate: generateExtraction,
   id: "extract-exam-blueprint",
-  name: "Extract Exam Blueprint",
+  name: "Extract exam blueprint",
   score: scoreExtraction,
   testCases: TEST_CASES,
 };

@@ -77,7 +77,7 @@ export const checkWordPronunciationTask: Task<
     "Tell from the audio whether a word English spells the same was read with its language's sounds or the English ones, given both in IPA (labeled text-to-speech clips)",
   generate: checkClip,
   id: "check-word-pronunciation",
-  name: "Check Word Pronunciation",
+  name: "Check word pronunciation",
   score: scoreCheck,
   skippedLanguages: { en: "it only hears words of other languages that English spells the same" },
   testCases: TEST_CASES,

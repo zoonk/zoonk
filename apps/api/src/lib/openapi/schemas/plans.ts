@@ -58,7 +58,7 @@ const planToolSchema = z
   })
   .meta({ id: "PlanTool" });
 
-export const planDaySchema = z
+const planDaySchema = z
   .object({
     date: isoDateSchema,
     items: z.array(planItemSchema),
@@ -77,16 +77,7 @@ const dailyTimesSchema = z
 
 export const planResponseSchema = z
   .object({
-    access: z.object({
-      freeUntil: isoDateSchema.nullable().meta({ description: "Last day a free exam plan covers" }),
-      freeWeekOver: z
-        .boolean()
-        .meta({
-          description:
-            "A free exam plan past its first week: its new lessons, practice, challenges and mocks come with Plus, while reviews and fixing mistakes stay free",
-        }),
-      mocksRequirePlus: z.boolean(),
-    }),
+    access: z.object({ mocksRequirePlus: z.boolean() }),
     areas: z.array(planAreaSchema),
     bases: planBasesSchema
       .nullable()
@@ -102,6 +93,12 @@ export const planResponseSchema = z
     currentPhase: z.int().nullable(),
     end: z
       .object({
+        finishedOn: isoDateSchema
+          .nullable()
+          .meta({
+            description:
+              "The learner-local day the plan finished, if its completion dates are known",
+          }),
         kind: z
           .literal("finished")
           .meta({
@@ -194,7 +191,7 @@ export const planResponseSchema = z
         .boolean()
         .meta({
           description:
-            "The date is the start of the month the learner named, standing for that month: say the month, not the day",
+            "The date is the start of the month the learner named, and stands for that month, not that day",
         }),
       weekdayMinutes: z.array(z.int()).meta({ description: "Sunday first; 0 for rest days" }),
     }),

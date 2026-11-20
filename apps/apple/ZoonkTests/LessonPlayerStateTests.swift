@@ -1022,6 +1022,20 @@ final class LessonGradingTests: XCTestCase {
       "an answer that doesn't fit the check isn't graded")
   }
 
+  func testNumericActivityKeepsEnoughDigitsForTheCorrection() throws {
+    let source = numericActivity.replacingOccurrences(
+      of: "\"answer\": 10", with: "\"answer\": 251.54"
+    ).replacingOccurrences(
+      of: "\"kind\": \"relative\", \"value\": 0.05", with: "\"kind\": \"absolute\", \"value\": 0.01"
+    )
+    let activity = try step(source)
+    let grade = try XCTUnwrap(LessonGrading.grade(.activity(.numeric(251.6)), step: activity))
+
+    XCTAssertEqual(LessonGrading.grade(.activity(.numeric(252)), step: activity)?.isCorrect, true)
+    XCTAssertFalse(grade.isCorrect)
+    XCTAssertEqual(grade.correctAnswer, "251.54")
+  }
+
   // Mirrors core's `activity-answers.test.ts` and `@zoonk/utils` `rounded-answer.test.ts`.
   func testANumberRoundedToThePlacesTypedIsRightWithTwoSignificantDigits() {
     let rise = { (typed: Double) in
@@ -1087,6 +1101,77 @@ final class LessonGradingTests: XCTestCase {
       try grade("R$")?.correctAnswer, ActivityNumberFormat.format(52, unit: "R$"),
       "money is written where the language writes it")
     XCTAssertEqual(try grade("%")?.correctAnswer, ActivityNumberFormat.format(52, unit: "%"))
+  }
+
+  func testANumericVerdictWritesTheRightAnswerAtTheRoundingItsHintNames() throws {
+    let numeric = { (answer: Double, tolerance: Double, rounded: String) in
+      try step(
+        teaching(
+          "rounded", kind: "activity", roundedAnswer: rounded,
+          content: #"""
+            {"template": "formulaModel", "prompt": "Slide", "fields": {},
+             "check": {"kind": "numeric", "question": "How much?", "answer": \#(answer),
+               "explanation": "Why.", "tolerance": {"kind": "absolute", "value": \#(tolerance)}}}
+            """#))
+    }
+    let whole = try numeric(251.54, 0.5, #"{"places": 0, "value": 252}"#)
+    let hundredths = try numeric(0.1667, 0.005, #"{"places": 2, "value": 0.17}"#)
+
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(240)), step: whole)?.correctAnswer, "252",
+      "a whole-number hint writes the right answer as a whole number")
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(0.2)), step: hundredths)?.correctAnswer, "0.17")
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(0.168)), step: hundredths)?.answerText, "0.17",
+      "a right answer is written at the hint's places too")
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(0.174)), step: hundredths)?.answerText, "0.174",
+      "a wrong answer keeps the digits that tell it from the right one")
+  }
+
+  /// Core's `getCheckedAnswerDigits`: the hint's places while the rounded number keeps its grade,
+  /// else the fewest digits that do, rounded half away from zero as the web writes them.
+  func testACheckedNumberIsWrittenAtTheFewestDigitsThatKeepItsGrade() throws {
+    let written = { (answer: Double, tolerance: Double, rounded: String, value: Double) in
+      LessonGrading.grade(
+        .activity(.numeric(value)),
+        step: try step(
+          teaching(
+            "digits", kind: "activity", roundedAnswer: rounded,
+            content: #"""
+              {"template": "formulaModel", "prompt": "Slide", "fields": {},
+               "check": {"kind": "numeric", "question": "How much?", "answer": \#(answer),
+                 "explanation": "Why.", "tolerance": {"kind": "absolute", "value": \#(tolerance)}}}
+              """#)))?.answerText
+    }
+    let whole = #"{"places": 0, "value": 252}"#
+    let hundredths = #"{"places": 2, "value": 0.13}"#
+
+    XCTAssertEqual(try written(251.54, 0.05, whole, 251.495), "251.5")
+    XCTAssertEqual(try written(251.5421, 0.05, whole, 251.4922), "251.4922")
+    XCTAssertEqual(try written(251.5421, 0.05, whole, 251.49301), "251.493")
+    XCTAssertEqual(try written(251.54, 0.05, whole, 251.54 - 0.0499), "251.49")
+    XCTAssertEqual(
+      try written(40.7747, 0.01, #"{"places": 0, "value": 41}"#, 40.7849), "40.785",
+      "a near miss keeps the digit that tells it from the right answer")
+    XCTAssertEqual(try written(0.125, 0.0001, hundredths, 0.1254), "0.1254")
+    XCTAssertEqual(try written(0.125, 0.0001, hundredths, 0.126), "0.126")
+    XCTAssertEqual(
+      try written(0.1183, 0.005, #"{"places": 2, "value": 0.12}"#, 0.125), "0.13",
+      "a tie rounds away from zero, so a wrong 0.125 doesn't read as the right 0.12")
+    // Two places that a binary double can't hold exactly (0.14, 0.57, 0.44, 0.22, 0.88): each
+    // expected text is what core's `getCheckedAnswerDigits` writes for the same check.
+    let hundredthsOf = { (value: Double) in #"{"places": 2, "value": \#(value)}"# }
+    XCTAssertEqual(
+      try written(0.1412, 0.0005, hundredthsOf(0.14), 0.144), "0.144",
+      "a near miss doesn't read as the right 0.14")
+    XCTAssertEqual(try written(0.5683, 0.0005, hundredthsOf(0.57), 0.565), "0.565")
+    XCTAssertEqual(
+      try written(0.4412, 0.0005, hundredthsOf(0.44), 0.4415), "0.44",
+      "a right answer is written at the hint's places")
+    XCTAssertEqual(try written(0.2187, 0.0005, hundredthsOf(0.22), 0.2163), "0.2163")
+    XCTAssertEqual(try written(0.8762, 0.0005, hundredthsOf(0.88), 0.8791), "0.8791")
   }
 
   func testAnActivityIsGradedWithTheToleranceFloorItsScreenCarries() throws {
@@ -1174,12 +1259,14 @@ private func step(_ json: String) throws -> LessonStep {
 }
 
 private func teaching(
-  _ id: String, kind: String, minTolerance: String? = nil, content: String
+  _ id: String, kind: String, minTolerance: String? = nil, roundedAnswer: String? = nil,
+  content: String
 ) -> String {
   let floor = minTolerance.map { #""minTolerance": \#($0), "# } ?? ""
+  let rounded = roundedAnswer.map { #""roundedAnswer": \#($0), "# } ?? ""
   return """
     {"id": "\(id)", "position": 0, "skillId": null, "citation": null, "image": null,
-     "imagePending": false, "kind": "\(kind)", \(floor)"content": \(content)}
+     "imagePending": false, "kind": "\(kind)", \(floor)\(rounded)"content": \(content)}
     """
 }
 
@@ -1385,11 +1472,13 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertEqual(state.struggleOffer?.id, "explanation-2", "the last explanation before it")
   }
 
-  func testCantWriteNowLeavesTheWritingOutUntilWriteAgain() throws {
+  func testSkippingWritingTodayLeavesTheWritingOutUntilTurnedBackOn() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try step(typedAnswer), try step(check(id: "check"))])
+    XCTAssertTrue(state.canSkipWriting, "the menu offers it on an open written answer")
 
     state.skipWriting()
+    XCTAssertFalse(state.canSkipWriting, "not on the check that follows")
     XCTAssertEqual(state.currentStep?.id, "check")
     XCTAssertEqual(state.notice, .writingSkipped)
     XCTAssertEqual(state.skippedWritingStepIds, ["typed"])
@@ -1400,7 +1489,7 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertNil(state.notice)
   }
 
-  func testCantWriteNowAsALessonOfOnlyWritingOpensWaitsForFinish() throws {
+  func testSkippingWritingInALessonOfOnlyWritingWaitsForFinish() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(typedAnswer)])
 
     state.skipWriting(opening: true)
@@ -1412,10 +1501,10 @@ final class LessonPlayerHelpTests: XCTestCase {
   func testTheOpeningGuessOffersTheRevealUntilSomethingIsPicked() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try step(guessHook), try step(check(id: "check"))])
-    XCTAssertTrue(state.revealsWithoutGuess, "\"I don't know yet\" with nothing picked")
+    XCTAssertTrue(state.revealsWithoutGuess, "\"See answer\" reveals with nothing picked")
 
     state.select(.hookGuess(optionId: "wrong"), for: "guess")
-    XCTAssertFalse(state.revealsWithoutGuess, "\"See the answer\" once something is picked")
+    XCTAssertFalse(state.revealsWithoutGuess, "\"See answer\" checks the pick")
   }
 
   func testARevealThatCountsNothingIsNeverAWrongAnswerInTheAbandonedStreak() throws {

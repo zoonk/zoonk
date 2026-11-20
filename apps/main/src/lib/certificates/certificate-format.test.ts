@@ -25,24 +25,29 @@ describe(formatCertificateDate, () => {
 });
 
 describe(formatStudyTime, () => {
-  it("rounds to whole hours past one and keeps minutes under one", () => {
-    expect(formatStudyTime({ locale: "en", minutes: 2460 })).toBe("41\u00A0hr");
-    expect(formatStudyTime({ locale: "en", minutes: 2475 })).toBe("41\u00A0hr");
-    expect(formatStudyTime({ locale: "en", minutes: 45 })).toBe("45\u00A0min");
-    expect(formatStudyTime({ locale: "pt", minutes: 2460 })).toBe("41 h");
+  it("rounds to whole hours past one, keeps minutes under one, and marks it approximate", () => {
+    expect(formatStudyTime({ locale: "en", minutes: 2460 })).toBe("~41\u00A0hr");
+    expect(formatStudyTime({ locale: "en", minutes: 2475 })).toBe("~41\u00A0hr");
+    expect(formatStudyTime({ locale: "en", minutes: 45 })).toBe("~45\u00A0min");
+    expect(formatStudyTime({ locale: "pt", minutes: 2460 })).toBe("~41 h");
   });
 });
 
 describe(getStudyTimeStat, () => {
-  it("splits the approximate hours into a number and a small unit", () => {
+  it("splits the study time into the number and the unit the facts write", () => {
     expect(getStudyTimeStat({ locale: "en", minutes: 2460 })).toStrictEqual({
-      unit: "h",
+      unit: "hr",
       value: "~41",
     });
 
     expect(getStudyTimeStat({ locale: "en", minutes: 45 })).toStrictEqual({
-      unit: "m",
+      unit: "min",
       value: "~45",
+    });
+
+    expect(getStudyTimeStat({ locale: "ja", minutes: 2460 })).toStrictEqual({
+      unit: "時間",
+      value: "~41",
     });
   });
 });

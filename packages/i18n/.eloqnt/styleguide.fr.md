@@ -14,6 +14,7 @@
 - “write” (Zoonk generating content): “préparer”; learner writing: “écrire”
 - “share” (personal facts): “dire”
 - “Brain Power”: “Puissance Mentale”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “PM”
 - “score”, including an exam's “band”: “Score”, not “note” or “bande”
 - Language skills “Listening” / “Speaking” / “Reading” / “Words”: “Écoute” / “Expression orale” / “Lecture” / “Vocabulaire”
 - Speaking criteria “Fluency” / “Accuracy” / “Range of language”: “Aisance” / “Précision” / “Richesse de la langue”
@@ -45,7 +46,7 @@
 - “Mistakes notebook”: “Carnet d’erreurs”
 - “Saved to your mistakes”: “Ajouté à ton carnet d’erreurs”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “À corriger” / “Corrigées”
-- “practice mistakes”: “réviser tes erreurs”
+- “Practice mistakes” (the notebook’s practice, as a button or a title): “Corriger tes erreurs”, matching the tabs; never “réviser”, which a mock exam’s “Questions à revoir” uses
 - “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nouveau” / “En cours” / “Solide” / “Maîtrisé”
 - “Known before”: “Déjà connus”; “Known” (progress legend): “Déjà acquis”
 - “Preparation”: “Préparation”
@@ -63,12 +64,13 @@
 ## Plan terminology
 
 - “Finished”: “Terminé”
-- “Past date”: “Date passée”, not “Clos” or “Expiré”
+- “Up to date” (a plan's state): “À jour”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “Date passée”, not “Clos” or “Expiré”
 - “Needs adjusting”: “À ajuster”
 - “Too tight”: “Trop serré”
 - “left out”: “laissé de côté”, not “passé” or “sauté”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “sauter” / “sauté”, never “passer” or “passé”
-- “Daily time”: “Durée quotidienne”, not “Temps par jour”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Durée quotidienne”, not “Temps par jour”
 
 ## Buddy names
 

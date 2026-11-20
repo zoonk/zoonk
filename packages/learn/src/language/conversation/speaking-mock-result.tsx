@@ -10,13 +10,13 @@ import { LightbulbIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { CHIP_CLASS } from "../../_components/chip";
 import { DetailsDrawer } from "../../_components/details-drawer";
+import { Eyebrow } from "../../_components/eyebrow";
 import {
+  LabeledStepTitle,
   StepCard,
   StepDetail,
-  StepEyebrow,
   StepHeader,
   StepTitle,
-  StepTitleLabel,
   StepTitleNumber,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
@@ -72,10 +72,9 @@ function BandStep({
     <>
       <StepCard>
         <StepHeader>
-          <StepTitle className="flex flex-col items-start gap-1.5">
-            <StepTitleLabel>{title}</StepTitleLabel>
+          <LabeledStepTitle label={title}>
             <StepTitleNumber>{range(feedback.overall)}</StepTitleNumber>
-          </StepTitle>
+          </LabeledStepTitle>
           <StepDetail>{bandLabel(feedback.exam)}</StepDetail>
         </StepHeader>
       </StepCard>
@@ -136,7 +135,7 @@ function FocusStep({ criterion }: { criterion: Criterion }) {
     <>
       <StepCard>
         <StepHeader>
-          <StepEyebrow>{t("Work on this first")}</StepEyebrow>
+          <Eyebrow>{t("Work on this first")}</Eyebrow>
           <StepTitle>{criterionName(criterion.criterion)}</StepTitle>
           <StepDetail>{criterion.evidence}</StepDetail>
         </StepHeader>

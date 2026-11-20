@@ -37,7 +37,7 @@ export function useExamDayText() {
   const formatTimeOfDay = useFormatTimeOfDay();
 
   return (day: ExamDay): string => {
-    const date = `${formatDate(day.date, "weekday")}, ${formatDate(day.date, "longYear")}`;
+    const date = formatDate(day.date, "sentence", { weekday: true, year: "always" });
 
     if (!day.startTime) {
       return date;
@@ -47,10 +47,13 @@ export function useExamDayText() {
   };
 }
 
+/** An estimated day reads "~", as the Plan writes it, and has no weekday anyone knows yet. */
 export function useExamDayDate() {
-  const formatDate = useFormatIsoDate();
+  const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
 
-  return (isoDate: string): string =>
-    `${formatDate(isoDate, "weekdayShort")}, ${formatPlanDate(isoDate)}`;
+  return (isoDate: string, { estimated = false }: { estimated?: boolean } = {}): string => {
+    const date = formatPlanDate(isoDate, { weekday: !estimated });
+    return estimated ? t("~{date}", { date }) : date;
+  };
 }

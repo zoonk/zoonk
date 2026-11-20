@@ -15,7 +15,7 @@ function toLearnerPalette(summary: LearnerSummary): LearnerPalette {
 
   return {
     activeGoalId: summary.activeGoalId,
-    buddy: { kind: summary.buddy.kind, name: summary.buddy.name },
+    buddy: summary.buddy,
     canAskBuddy: Boolean(active && active.kind !== "explain"),
     explanations: summary.goals
       .filter((goal) => goal.kind === "explain")

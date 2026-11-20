@@ -2,15 +2,10 @@
 
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@zoonk/ui/components/empty";
+import { EnterButton, EnterLink } from "@zoonk/learn/enter-button";
+import { TaskStopMessage } from "@zoonk/learn/task-layout";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
 import { BellOffIcon, MailCheckIcon, MailXIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -19,17 +14,20 @@ import { turnOffStudyReminderEmailAction } from "./actions";
 
 type Result = Awaited<ReturnType<typeof turnOffStudyReminderEmailAction>>;
 
-function ManageRemindersLink() {
-  const t = useExtracted();
-
+/** The page's one message, at the top of its column; its action is the bottom bar's. */
+function Message({
+  description,
+  icon,
+  title,
+}: {
+  description?: string;
+  icon: React.ReactNode;
+  title: string;
+}) {
   return (
-    <Link
-      className={buttonVariants({ variant: "outline" })}
-      href={getMenu("reminders").url}
-      prefetch={false}
-    >
-      {t("Manage reminders")}
-    </Link>
+    <div className="flex flex-1 flex-col gap-6">
+      <TaskStopMessage description={description} heading="h1" icon={icon} title={title} />
+    </div>
   );
 }
 
@@ -38,24 +36,21 @@ function UnsubscribeResult({ result }: { result: Result }) {
   const off = result === "off";
 
   return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          {off ? <MailCheckIcon aria-hidden="true" /> : <MailXIcon aria-hidden="true" />}
-        </EmptyMedia>
-        <EmptyTitle>
-          <h1>{off ? t("Email reminders are off") : t("This link is no longer active")}</h1>
-        </EmptyTitle>
-        {off && (
-          <EmptyDescription>
-            {t("Your other reminder settings haven't changed. You'll still get sign-in codes.")}
-          </EmptyDescription>
-        )}
-      </EmptyHeader>
-      <EmptyContent>
-        <ManageRemindersLink />
-      </EmptyContent>
-    </Empty>
+    <>
+      <Message
+        description={off ? undefined : t("Nothing was changed.")}
+        icon={off ? <MailCheckIcon aria-hidden="true" /> : <MailXIcon aria-hidden="true" />}
+        title={off ? t("Email reminders are off") : t("This link is no longer active")}
+      />
+
+      <BottomBar>
+        <BottomBarActions>
+          <EnterLink href={getMenu("reminders").url} link={Link} prefetch={false}>
+            {t("Manage reminders")}
+          </EnterLink>
+        </BottomBarActions>
+      </BottomBar>
+    </>
   );
 }
 
@@ -63,14 +58,16 @@ function UnsubscribeResult({ result }: { result: Result }) {
 export function UnsubscribeForm({ token }: { token: string | null }) {
   const t = useExtracted();
   const [result, setResult] = useState<Result | null>(token ? null : "invalid");
-  const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const turnOff = () =>
     startTransition(async () => {
       const { data } = await safeAsync(() => turnOffStudyReminderEmailAction(token));
-      setFailed(!data);
       setResult(data);
+
+      if (!data) {
+        showErrorToast(t("That didn't save. Try again."));
+      }
     });
 
   if (result) {
@@ -78,27 +75,22 @@ export function UnsubscribeForm({ token }: { token: string | null }) {
   }
 
   return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <BellOffIcon aria-hidden="true" />
-        </EmptyMedia>
-        <EmptyTitle>
-          <h1>{t("Turn off email reminders?")}</h1>
-        </EmptyTitle>
-      </EmptyHeader>
-      <EmptyContent>
-        <form action={() => turnOff()} className="contents">
-          <Button busy={isPending} icon={<BellOffIcon aria-hidden="true" />} type="submit">
-            {t("Turn off")}
-          </Button>
-        </form>
-        {failed && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("That didn't save. Try again.")}
-          </p>
-        )}
-      </EmptyContent>
-    </Empty>
+    <>
+      <Message
+        description={t("They can be turned back on in Settings.")}
+        icon={<BellOffIcon aria-hidden="true" />}
+        title={t("Turn off email reminders")}
+      />
+
+      <form action={() => turnOff()} className="contents">
+        <BottomBar>
+          <BottomBarActions>
+            <EnterButton busy={isPending} type="submit">
+              {t("Turn off")}
+            </EnterButton>
+          </BottomBarActions>
+        </BottomBar>
+      </form>
+    </>
   );
 }

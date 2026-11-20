@@ -59,17 +59,20 @@ private struct ChapterLandingList: View {
       }
     } secondary: {
       ZoonkList {
+        learn
         strip
-        learnAndStart
+        closing
       }
     } single: {
       ZoonkList {
         header
-        strip
         lessons
-        learnAndStart
+        learn
+        strip
+        closing
       }
     }
+    .catalogGoalSwitch()
   }
 
   private var outline: [CourseChapter] {
@@ -97,16 +100,6 @@ private struct ChapterLandingList: View {
   private var header: some View {
     Section {
       VStack(alignment: .leading, spacing: 12) {
-        Label {
-          Text(
-            areas?[chapter.id].map { "\(chapter.courseTitle)\u{00A0}· \($0)" }
-              ?? chapter.courseTitle)
-        } icon: {
-          SubjectGlyph(subject: course?.course.subject)
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-
         Text(chapter.title)
           .typeStyle(.heroTitle)
           .fixedSize(horizontal: false, vertical: true)
@@ -119,7 +112,8 @@ private struct ChapterLandingList: View {
             .foregroundStyle(.mutedForeground)
         }
 
-        PlanLine(startsHere: startsHere)
+        PlanLine(
+          start: startsHere ? .chapter : course?.course.isExam == true ? .examCourse : .course)
 
         ChapterStart(
           chapter: chapter, hasLesson: hasLesson, startsHere: startsHere,
@@ -143,12 +137,12 @@ private struct ChapterLandingList: View {
     if hasLesson {
       ChapterLessonsSection(
         chapter: chapter, lessons: detail.lessons.sorted { $0.position < $1.position },
-        number: index.map { $0 + 1 }, total: outline.count)
+        number: index.map { $0 + 1 })
     }
   }
 
   @ViewBuilder
-  private var learnAndStart: some View {
+  private var learn: some View {
     if let objectives = detail.chapter?.objectives, !objectives.isEmpty {
       Section {
         ForEach(objectives, id: \.self) { CheckLine(text: $0) }
@@ -158,13 +152,15 @@ private struct ChapterLandingList: View {
             "What you'll learn", tableName: "Courses", comment: "Header of what a chapter teaches"))
       }
     }
+  }
 
+  private var closing: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
         Group {
           if startsHere {
             Text(
-              "Your plan from this chapter", tableName: "Courses",
+              "Start from this chapter", tableName: "Courses",
               comment: "A chapter page's last call, when the plan starts there")
           } else {
             Text(
@@ -172,13 +168,12 @@ private struct ChapterLandingList: View {
               comment: "A course page's last call")
           }
         }
-        .typeStyle(.section)
-        .accessibilityAddTraits(.isHeader)
+        .sectionTitleStyle()
 
         Group {
           if startsHere {
             Text(
-              "It follows the course from here, at your pace, with reviews before you forget.",
+              "You get a plan for each day, from this chapter to the end of the course.",
               tableName: "Courses", comment: "Under a chapter page's last call")
           } else {
             Text(
@@ -211,7 +206,7 @@ private struct ChapterStart: View {
       note: hasLesson
         ? nil
         : Text(
-          "Start here and Zoonk writes its lessons for your level.", tableName: "Courses",
+          "This chapter's lessons are prepared when you start.", tableName: "Courses",
           comment: "Under a chapter's start when its lessons aren't written yet"))
   }
 }
@@ -240,15 +235,6 @@ private struct ChapterStrip: View {
     let stretch = [here] + outline.dropFirst(index + 1).prefix(Self.next)
 
     Section {
-      Text(
-        "Where this chapter sits in the course", tableName: "Courses",
-        comment: "Header of where a chapter sits in its course"
-      )
-      .typeStyle(.section)
-      .foregroundStyle(Color(.foreground))
-      .accessibilityAddTraits(.isHeader)
-      .listRowSeparator(.hidden)
-
       VStack(alignment: .leading, spacing: 10) {
         CourseMapBar(
           parts: groups.map { item in
@@ -293,6 +279,12 @@ private struct ChapterStrip: View {
         .listRowInsets(.vertical, 0)
         .listRowSeparator(.hidden)
       }
+    } header: {
+      SectionTitle(
+        Text(
+          "Part of \(course.title)", tableName: "Courses",
+          comment: "Header of where a chapter sits in its course; the argument is the course's name"
+        ))
     }
   }
 
@@ -332,7 +324,6 @@ private struct ChapterLessonsSection: View {
   let chapter: ChapterReference
   let lessons: [CourseLesson]
   let number: Int?
-  let total: Int
 
   var body: some View {
     Section {
@@ -343,40 +334,29 @@ private struct ChapterLessonsSection: View {
               chapter: chapter, chapterNumber: number, id: lesson.id, lessonCount: lessons.count,
               minutes: lesson.estimatedMinutes, number: offset + 1, title: lesson.displayTitle()))
         ) {
-          LabeledContent {
+          ListRow(Text(lesson.displayTitle())) {
+            Text(offset + 1, format: .number)
+              .typeStyle(.data)
+          } trailing: {
             Text(studyDuration(minutes: lesson.estimatedMinutes))
-              .monospacedDigit()
-          } label: {
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
-              Text(offset + 1, format: .number)
-                .typeStyle(.data)
-                .foregroundStyle(.faint)
-              Text(lesson.displayTitle())
-                .foregroundStyle(.primary)
-            }
           }
         }
       }
     } header: {
       SectionTitle(Text("Lessons", tableName: "Courses", comment: "Header of a chapter's lessons"))
       {
-        Text(facts)
+        FactSegments(facts)
       }
     }
   }
 
-  private var facts: String {
+  private var facts: [String] {
     let lessonsText = String(
       localized: "\(lessons.count) short lessons", table: "Courses",
       comment: "How many lessons a course or a chapter has")
     let minutes = catalogDurationText(minutes: lessons.reduce(0) { $0 + $1.estimatedMinutes })
-    let position = number.map {
-      String(
-        localized: "Chapter \($0.formatted()) of \(total.formatted())", table: "Courses",
-        comment: "Where a chapter sits in its course")
-    }
 
-    return [position, lessonsText, minutes].compactMap(\.self).joinedFacts()
+    return [lessonsText, minutes]
   }
 }
 
@@ -473,7 +453,7 @@ private struct ChapterRouteStop: View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       RouteStation(isHere: isHere, color: stop)
         .frame(width: isHere ? pageSize : stopSize, height: isHere ? pageSize : stopSize)
-        .frame(width: pageSize)
+        .markColumn()
         // On the middle of the first line rather than its baseline.
         .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + 4 }
         .anchorPreference(key: StationAnchorKey.self, value: .center) { $0 }

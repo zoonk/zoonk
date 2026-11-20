@@ -7,6 +7,10 @@ enum AppSheet: Hashable, Identifiable {
   case makeRoom(LearnerWaitingGoal)
   case signIn
   case subscription
+  /// Over the screen, above its panes, so a resize never takes it away.
+  case practiceCall(Components.Schemas.TutorToolOffer.Case4Payload)
+  /// The buddy's panel an Ask button opens, over the screen for the same reason.
+  case tutor(TutorScope, quote: String?)
 
   var id: Self { self }
 }
@@ -15,6 +19,15 @@ enum AppSheet: Hashable, Identifiable {
 @Observable
 final class AppRouter {
   var selectedTab = AppTab.today
+  /// The places the window's sidebar lists, where opening one marks its own row (main's
+  /// `getActiveTab`); none where the window has no sidebar. A place opened before the sidebar listed
+  /// it, such as by a link the app starts with, moves to its own row once it does, under whatever
+  /// task is open over it.
+  var sidebarTabs: Set<AppTab> = [] {
+    didSet {
+      moveListedPlaceToItsRow()
+    }
+  }
   var sheet: AppSheet?
   /// The speaking paper's open task in this window, as main's `/speaking?task=`.
   var speakingTask: String?
@@ -24,7 +37,10 @@ final class AppRouter {
     }
   }
   private var hiddenTasks: Set<Int> = []
-  private var paths: [AppTab: NavigationPath] = [:]
+  private var stacks: [AppTab: TabStack] = [:]
+  /// A sidebar place's pages that a resize couldn't carry to Today because the router doesn't know
+  /// them, kept to put back over the place while Today shows it as the resize left it.
+  private var parked: (place: AppTab, today: NavigationPath, stack: TabStack)?
   let playback = SessionPlayback()
   @ObservationIgnored private let openBlock: BlockOpener
 
@@ -37,8 +53,8 @@ final class AppRouter {
 
   func path(for tab: AppTab) -> Binding<NavigationPath> {
     Binding(
-      get: { self.paths[tab] ?? NavigationPath() },
-      set: { self.paths[tab] = $0 })
+      get: { self.stacks[tab]?.path ?? NavigationPath() },
+      set: { self.stacks[tab, default: TabStack()].show($0) })
   }
 
   /// Clearing it closes it and the tasks it opened.
@@ -72,9 +88,9 @@ final class AppRouter {
     selectedTab = tab
   }
 
-  /// A push closes any task first. A Study place already selected in the sidebar goes back to its
-  /// root, and a route already on the stack, or a task already open, is gone back to, instead of
-  /// stacking itself again.
+  /// A push closes any task first. A place the sidebar lists opens at its own row's root, and a
+  /// route already on the stack, or a task already open, is gone back to, instead of stacking
+  /// itself again.
   func open(_ route: AppRoute) {
     switch route.presentation {
     case .task:
@@ -84,25 +100,30 @@ final class AppRouter {
         tasks.append(route)
       }
     case .push:
-      tasks = []
-
-      var path = paths[selectedTab] ?? NavigationPath()
-
-      if route.studyTab == selectedTab {
-        path = NavigationPath()
-      } else if let depth = Self.depth(of: route, in: path) {
-        path.removeLast(path.count - depth)
-      } else {
-        path.append(route)
+      if let tab = route.sidebarTab, sidebarTabs.contains(tab) {
+        showRoot(of: tab)
+        return
       }
 
-      paths[selectedTab] = path
+      tasks = []
+
+      var stack = stacks[selectedTab] ?? TabStack()
+
+      if route.studyTab == selectedTab {
+        stack = TabStack()
+      } else if let depth = Self.depth(of: route, in: stack.path) {
+        stack.removeLast(stack.path.count - depth)
+      } else {
+        stack.append(route)
+      }
+
+      stacks[selectedTab] = stack
     }
   }
 
   /// A value the selected tab's own `navigationDestination` shows.
   func push(_ value: some Hashable) {
-    paths[selectedTab, default: NavigationPath()].append(value)
+    stacks[selectedTab, default: TabStack()].push(value)
   }
 
   /// `NavigationPath` doesn't show its elements, but paths compare by them.
@@ -152,17 +173,64 @@ final class AppRouter {
     hiddenTasks.contains(depth)
   }
 
-  /// Changes whenever the window goes somewhere: another tab, task, pushed screen or sheet.
+  /// Changes whenever the window goes somewhere: another tab, task, pushed screen or sheet. A
+  /// sidebar place, with the pages over it, is on its own row and pushed on the tab it was opened
+  /// from, so a resize that moves it between them goes nowhere.
   var shown: Shown {
-    Shown(
-      tab: selectedTab, tasks: tasks, path: paths[selectedTab] ?? NavigationPath(), sheet: sheet)
+    let stack = stacks[selectedTab] ?? TabStack()
+    let page: Shown.Page =
+      if let parked = parkedPages(on: stack) {
+        .stack(parked.place, parked.stack.path)
+      } else if let listed = Self.listedPlace(of: selectedTab, stack: stack) {
+        .place(listed.place, listed.above)
+      } else {
+        .stack(selectedTab, stack.path)
+      }
+
+    return Shown(page: page, tasks: tasks, sheet: sheet)
   }
 
   struct Shown: Equatable {
-    let tab: AppTab
+    enum Page: Equatable {
+      case place(AppTab, [AppRoute])
+      case stack(AppTab, NavigationPath)
+    }
+
+    let page: Page
     let tasks: [AppRoute]
-    let path: NavigationPath
     let sheet: AppSheet?
+  }
+
+  /// The sidebar place a tab shows, with the pages over it: the tab itself, or the last place on its
+  /// stack.
+  private static func listedPlace(
+    of tab: AppTab, stack: TabStack
+  ) -> (place: AppTab, above: [AppRoute])? {
+    if tab.studyRoute != nil {
+      return stack.routes.map { (tab, $0) }
+    }
+
+    let places = AppTab.sidebarPlaces.compactMap(\.studyRoute) + [.statistics()]
+
+    if let index = stack.top.lastIndex(where: { places.contains($0) }) {
+      return stack.top[index].sidebarTab.map { ($0, Array(stack.top[(index + 1)...])) }
+    }
+
+    // A place a link pushed, which the stack doesn't know.
+    guard !stack.path.isEmpty else {
+      return nil
+    }
+
+    var below = stack.path
+    below.removeLast()
+
+    let place = places.first { route in
+      var candidate = below
+      candidate.append(route)
+      return candidate == stack.path
+    }
+
+    return place?.sidebarTab.map { ($0, []) }
   }
 
   @discardableResult
@@ -204,7 +272,7 @@ final class AppRouter {
 
   func showRoot(of tab: AppTab) {
     tasks = []
-    paths[tab] = NavigationPath()
+    stacks[tab] = TabStack()
     selectedTab = tab
   }
 
@@ -229,7 +297,32 @@ final class AppRouter {
 
   func popToRoots() {
     tasks = []
-    paths = [:]
+    stacks = [:]
+    parked = nil
+  }
+
+  private func moveListedPlaceToItsRow() {
+    guard selectedTab.studyRoute == nil, var stack = stacks[selectedTab] else {
+      return
+    }
+
+    if let (tab, above) = Self.listedPlace(of: selectedTab, stack: stack), sidebarTabs.contains(tab)
+    {
+      let kept = parkedPages(on: stack)?.stack
+      stack.removeLast(above.count + 1)
+      stacks[selectedTab] = stack
+      stacks[tab] = kept ?? TabStack(above)
+      selectedTab = tab
+      parked = nil
+    }
+  }
+
+  private func parkedPages(on stack: TabStack) -> (place: AppTab, stack: TabStack)? {
+    guard let parked, selectedTab == .today, parked.today == stack.path else {
+      return nil
+    }
+
+    return (parked.place, parked.stack)
   }
 
   /// `keepingPlace` when the place still exists (the window became compact) rather than gone (a
@@ -239,11 +332,72 @@ final class AppRouter {
       return
     }
 
+    let place = selectedTab
+    let left = stacks.removeValue(forKey: place) ?? TabStack()
     selectedTab = .today
+    parked = nil
 
-    if keepingPlace {
-      paths[.today, default: NavigationPath()].append(route)
+    guard keepingPlace else {
+      return
     }
+
+    var today = stacks[.today] ?? TabStack()
+    today.append(route)
+
+    if let above = left.routes {
+      for page in above {
+        today.append(page)
+      }
+    } else {
+      parked = (place, today.path, left)
+    }
+
+    stacks[.today] = today
+  }
+}
+
+/// A tab's pushed pages. `NavigationPath` doesn't show its elements, so the routes the router pushed
+/// on top are kept beside it, for a resize to carry a sidebar place's pages to Today and back.
+struct TabStack: Equatable {
+  private(set) var path = NavigationPath()
+  /// The routes at the top of `path`, as far down as they're known.
+  private(set) var top: [AppRoute] = []
+
+  init(_ routes: [AppRoute] = []) {
+    path = NavigationPath(routes)
+    top = routes
+  }
+
+  /// Every page on it, when each is known.
+  var routes: [AppRoute]? {
+    top.count == path.count ? top : nil
+  }
+
+  mutating func append(_ route: AppRoute) {
+    path.append(route)
+    top.append(route)
+  }
+
+  mutating func push(_ value: some Hashable) {
+    path.append(value)
+    top = []
+  }
+
+  mutating func removeLast(_ count: Int) {
+    path.removeLast(count)
+    top.removeLast(min(count, top.count))
+  }
+
+  /// The path the stack shows after its own back and links: going back keeps what's known below.
+  mutating func show(_ shown: NavigationPath) {
+    var kept = self
+
+    if shown.count <= path.count {
+      kept.removeLast(path.count - shown.count)
+    }
+
+    top = kept.path == shown ? kept.top : []
+    path = shown
   }
 }
 

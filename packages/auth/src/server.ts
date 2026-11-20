@@ -26,6 +26,7 @@ import {
 import {
   ensureUserProgressAfterAuthCreate,
   rejectInvalidName,
+  rememberHomeCountryAfterSessionCreate,
   reportSignInAfterSessionCreate,
   reportSignUpAfterAuthCreate,
 } from "./db-hooks";
@@ -86,6 +87,8 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
               userId: session.userId,
             },
           });
+
+          await rememberHomeCountryAfterSessionCreate(session, context);
         },
       },
     },

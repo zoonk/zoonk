@@ -30,12 +30,44 @@ final class CallStartTests: XCTestCase {
 
     start.start(Self.mock, voice: makeVoice(transport)) { opened.append($0) }
     await transport.waitForHeldRequest()
-    start.cancel()
+    start.leave()
     await transport.release()
     await waitUntilStarted(start)
 
     XCTAssertEqual(opened, [])
     XCTAssertNil(start.refusal)
+  }
+
+  func testClosingTheCallSetupOpensNothingItStarted() async {
+    let transport = HeldCallTransport()
+    let setup = PracticeCallSetup()
+    var opened: [String] = []
+
+    setup.isOpen = true
+    setup.start.start(Self.mock, voice: makeVoice(transport)) { opened.append($0) }
+    await transport.waitForHeldRequest()
+    setup.isOpen = false
+    await transport.release()
+    await waitUntilStarted(setup.start)
+
+    XCTAssertEqual(opened, [])
+  }
+
+  func testReopeningTheCallSetupShowsNoEarlierRefusal() async {
+    let transport = HeldCallTransport(status: .internalServerError)
+    let setup = PracticeCallSetup()
+
+    setup.isOpen = true
+    setup.start.start(Self.mock, voice: makeVoice(transport)) { _ in }
+    await transport.waitForHeldRequest()
+    await transport.release()
+    await waitUntilStarted(setup.start)
+    XCTAssertNotNil(setup.start.refusal)
+
+    setup.isOpen = false
+    setup.isOpen = true
+
+    XCTAssertNil(setup.start.refusal)
   }
 
   private static let mock = Components.Schemas.LanguageConversationStartInput.case3(
@@ -50,20 +82,25 @@ final class CallStartTests: XCTestCase {
 
   /// It stops starting and opens the call in one main-actor turn, so once it isn't starting, it has
   /// done all it will.
-  private func waitUntilStarted(_ start: CallStart) async {
-    for _ in 0..<10_000 where start.isStarting {
-      await Task.yield()
+  private func waitUntilStarted(
+    _ start: CallStart, file: StaticString = #filePath, line: UInt = #line
+  ) async {
+    _ = try? await waitForTestCondition("The start never answered", file: file, line: line) {
+      !start.isStarting
     }
-
-    XCTAssertFalse(start.isStarting, "the start never answered")
   }
 }
 
 private actor HeldCallTransport: ClientTransport {
   static let conversationID = "01a18235-e60e-7dbb-a938-b0ae54987c58"
 
+  private let status: HTTPResponse.Status
   private(set) var requests = 0
-  private var held: CheckedContinuation<Void, Never>?
+  private var held: TestContinuation<Void>?
+
+  init(status: HTTPResponse.Status = .created) {
+    self.status = status
+  }
 
   func send(
     _ request: HTTPRequest,
@@ -72,18 +109,17 @@ private actor HeldCallTransport: ClientTransport {
     operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
     requests += 1
-    await withCheckedContinuation { held = $0 }
+    await withTestVoidContinuation { held = $0 }
 
     return (
-      HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
+      HTTPResponse(status: status, headerFields: [.contentType: "application/json"]),
       HTTPBody(#"{"conversationId":"\#(Self.conversationID)"}"#)
     )
   }
 
-  func waitForHeldRequest() async {
-    while held == nil {
-      await Task.yield()
-    }
+  func waitForHeldRequest(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldRequest did not arrive", file: file, line: line)
+    { await self.held != nil }
   }
 
   func release() {

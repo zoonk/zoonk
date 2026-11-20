@@ -70,6 +70,8 @@ import com.zoonk.android.feature.livecall.EndingReason
 import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.livecall.LiveCallState
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ICON_BUTTON_SHAPE
+import com.zoonk.android.ui.components.LearnerBubble
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -78,6 +80,7 @@ import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationTurn.Speaker
 import com.zoonk.api.models.SpeakingTask
@@ -105,13 +108,15 @@ internal class EndedCall(
 /**
  * Main's live call: who's talking and the goals over the transcript, which follows the newest words;
  * the bar under it says whose turn it is, takes typed replies and holds Help, Mute and End. Back and
- * the close action ask before ending a live call, which End does at once; while it connects, they go
- * back to the intro as End does. Once it ends the transcript stays, and the bar says how its save goes.
+ * the close action ask before ending a live call or a dropped one ringing again, which End does at once;
+ * while a first call rings, they go back to the intro as End does. Once it ends the transcript stays, and
+ * the bar says how its save goes.
  */
 @Composable
 internal fun ConversationLive(
     conversation: LanguageConversation,
     call: LiveCallState,
+    continuing: Boolean,
     actions: LiveCallActions,
     ended: EndedCall? = null,
 ) {
@@ -121,10 +126,10 @@ internal fun ConversationLive(
     val goalsMeta = stringResource(R.string.conversation_goals_met, metCount, conversation.objectives.size)
     val character = conversation.character
 
-    val live = call.phase == LiveCallPhase.Live && ended == null
-    BackHandler(enabled = !live && ended == null, onBack = actions.onEnd)
+    val asksFirst = ended == null && !ringsFirst(call.phase, continuing)
+    BackHandler(enabled = !asksFirst && ended == null, onBack = actions.onEnd)
     val endFirst =
-        if (live) {
+        if (asksFirst) {
             TaskExitConfirmation(
                 title = stringResource(R.string.conversation_end_title),
                 description = stringResource(R.string.conversation_end_description),
@@ -193,15 +198,7 @@ internal fun ConversationLive(
             if (call.usedHelp) Phrases(conversation)
         },
     ) { beside ->
-        item(key = "character") {
-            val detail =
-                if (examTask != null) {
-                    taskRoleNoun(examTask.task.role == SpeakingTask.Role.PARTNER)
-                } else {
-                    stringResource(R.string.conversation_character_detail, character.role, character.place)
-                }
-            CharacterRow(character.name, detail, Modifier.callItem())
-        }
+        // On one column the goals come first, so the character's row heads what they say, as it does beside the goals.
         if (!beside && examTask != null) {
             item(key = "card") { SpeakingCardView(examTask.card, conversation.targetLanguage, Modifier.callItem(), compact = true) }
         }
@@ -212,6 +209,15 @@ internal fun ConversationLive(
                     Checklist(conversation.objectives, conversation.targetLanguage, met = { it in call.metLabels })
                 }
             }
+        }
+        item(key = "character") {
+            val detail =
+                if (examTask != null) {
+                    taskRoleNoun(examTask.task.role == SpeakingTask.Role.PARTNER)
+                } else {
+                    stringResource(R.string.conversation_character_detail, character.role, character.place)
+                }
+            CharacterRow(character.name, detail, Modifier.callItem())
         }
         call.turns.forEachIndexed { index, turn ->
             // Turns only grow at the end, so their position identifies them.
@@ -228,7 +234,7 @@ private fun CallClock(
     call: LiveCallState,
     talkSeconds: Long,
 ) {
-    val started = call.phase != LiveCallPhase.Connecting && call.phase != LiveCallPhase.Idle
+    val started = call.elapsedSeconds > 0 || (call.phase != LiveCallPhase.Connecting && call.phase != LiveCallPhase.Idle)
     val share = if (talkSeconds > 0) call.elapsedSeconds.toFloat() / talkSeconds else 0f
     Column(
         Modifier.callItem().padding(top = 8.dp),
@@ -247,7 +253,7 @@ private fun CallClock(
                     .background(if (live) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outlineVariant, CircleShape),
             )
             Text(
-                formatClock(call.elapsedSeconds * 1000),
+                stringResource(R.string.conversation_time_used, formatClock(call.elapsedSeconds * 1000)),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
@@ -280,12 +286,8 @@ private fun Turn(
     if (speaker == Speaker.LEARNER) {
         val said = spokenAs(stringResource(R.string.conversation_you_said, WORDS_MARK), text, conversation.targetLanguage)
         Box(modifier, contentAlignment = Alignment.CenterEnd) {
-            Surface(
-                modifier = Modifier.fillMaxWidth(BUBBLE_SHARE).wrapContentWidth(Alignment.End).clearAndSetSemantics { this.text = said },
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            ) {
-                Text(words, Modifier.padding(horizontal = 14.dp, vertical = 10.dp), style = MaterialTheme.typography.bodyLarge)
+            LearnerBubble(Modifier.fillMaxWidth(BUBBLE_SHARE).wrapContentWidth(Alignment.End).clearAndSetSemantics { this.text = said }) {
+                Text(words, style = MaterialTheme.zoonkType.message)
             }
         }
     } else {
@@ -311,7 +313,7 @@ private fun Phrases(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
-        SectionTitle(stringResource(R.string.conversation_phrases))
+        SectionTitle(stringResource(if (conversation.hints.size == 1) R.string.conversation_phrase else R.string.conversation_phrases))
         conversation.hints.forEachIndexed { index, hint ->
             if (index > 0) HorizontalDivider()
             Text(
@@ -340,7 +342,8 @@ private fun LiveBar(
     var phrasesOpen by rememberSaveable { mutableStateOf(false) }
     val next = if (conversation.examTask == null) conversation.objectives.firstOrNull { it.label !in call.metLabels } else null
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        CallTurn(call, conversation.character.name, next?.description)
+        val goals = if (conversation.examTask == null) conversation.objectives.map { it.description } else emptyList()
+        CallTurn(call, conversation.character.name, next?.description, goals)
         TypedReply(call.isOpen, actions.onSend, actions.onTyping, focusOnStart = call.micBlocked)
         CallControls(
             call,
@@ -369,6 +372,7 @@ private fun CallTurn(
     call: LiveCallState,
     name: String,
     nextGoal: String?,
+    goals: List<String>,
 ) {
     val state =
         when {
@@ -410,7 +414,7 @@ private fun CallTurn(
             TurnState.Yours -> wrapUp ?: yourTurnDetail(call, name, nextGoal)
         }
 
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         TurnMark(state, name)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
@@ -418,10 +422,14 @@ private fun CallTurn(
                 Modifier.semantics { if (state == TurnState.Reconnecting) liveRegion = LiveRegionMode.Polite },
                 style = MaterialTheme.typography.titleSmall,
             )
-            detail?.let {
+            // Every hint this call can show is laid out unseen, so the row keeps the tallest one's height and the bar never moves.
+            Box {
+                turnDetails(name, goals).forEach {
+                    Text(it, Modifier.alpha(0f).clearAndSetSemantics {}, style = MaterialTheme.typography.bodyMedium)
+                }
                 Text(
-                    it,
-                    Modifier.semantics { if (it == wrapUp) liveRegion = LiveRegionMode.Polite },
+                    detail.orEmpty(),
+                    Modifier.semantics { if (detail != null && detail == wrapUp) liveRegion = LiveRegionMode.Polite },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -429,6 +437,23 @@ private fun CallTurn(
         }
     }
 }
+
+/** Every line the turn row can show under its title, for [name]'s call with [goals]. */
+@Composable
+private fun turnDetails(
+    name: String,
+    goals: List<String>,
+): List<String> =
+    listOf(
+        stringResource(R.string.conversation_answers_first, name),
+        stringResource(R.string.conversation_listen_then_answer),
+        stringResource(R.string.conversation_muted_detail),
+        stringResource(R.string.conversation_type_below),
+        stringResource(R.string.conversation_take_your_time),
+        stringResource(R.string.conversation_answer_out_loud, name),
+        stringResource(R.string.conversation_wrap_up_time, name),
+        stringResource(R.string.conversation_wrap_up_done, name),
+    ) + goals.map { stringResource(R.string.conversation_tip, it) }
 
 @Composable
 private fun yourTurnDetail(
@@ -568,22 +593,24 @@ private fun CallControls(
 ) {
     val canMute = call.phase == LiveCallPhase.Live && !call.micBlocked
     val off = call.micBlocked || call.muted
-    val calling = call.phase != LiveCallPhase.Live
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Control(R.string.conversation_help, Modifier.weight(1f)) { label ->
-            FilledTonalIconButton(onClick = onHelp, modifier = Modifier.size(CONTROL_SIZE)) {
-                Icon(painterResource(R.drawable.ic_support), contentDescription = label)
+            FilledTonalIconButton(onClick = onHelp, modifier = Modifier.size(CONTROL_SIZE), shape = ICON_BUTTON_SHAPE) {
+                Icon(painterResource(R.drawable.ic_help), contentDescription = label)
             }
         }
-        Control(R.string.conversation_mute, Modifier.weight(1f)) { label ->
+        Control(R.string.conversation_mute, Modifier.weight(1f), enabled = canMute) { label ->
             FilledTonalIconToggleButton(
                 checked = call.muted,
                 onCheckedChange = { actions.onMute() },
                 enabled = canMute,
                 modifier = Modifier.size(CONTROL_SIZE),
+                shape = ICON_BUTTON_SHAPE,
                 // Muted reads as a pick: the ink fill, not a lighter tonal one.
                 colors =
                     IconButtonDefaults.filledTonalIconToggleButtonColors(
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         checkedContainerColor = MaterialTheme.colorScheme.primary,
                         checkedContentColor = MaterialTheme.colorScheme.onPrimary,
                     ),
@@ -591,10 +618,11 @@ private fun CallControls(
                 Icon(painterResource(if (off) R.drawable.ic_mic_off else R.drawable.ic_mic), contentDescription = label)
             }
         }
-        Control(if (calling) R.string.conversation_cancel else R.string.conversation_end, Modifier.weight(1f)) { label ->
+        Control(R.string.conversation_end, Modifier.weight(1f)) { label ->
             FilledIconButton(
                 onClick = actions.onEnd,
                 modifier = Modifier.size(CONTROL_SIZE),
+                shape = ICON_BUTTON_SHAPE,
                 colors =
                     IconButtonDefaults.filledIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
@@ -607,17 +635,24 @@ private fun CallControls(
     }
 }
 
-/** A call control as phones show them: the button, its name under it. */
+/** A call control as phones show them: the button, its name under it, muted with it while it can't be used. */
 @Composable
 private fun Control(
     label: Int,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     button: @Composable (label: String) -> Unit,
 ) {
     val name = stringResource(label)
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         button(name)
-        Text(name, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.Center)
+        Text(
+            name,
+            Modifier.clearAndSetSemantics {},
+            color = if (enabled) Color.Unspecified else MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 

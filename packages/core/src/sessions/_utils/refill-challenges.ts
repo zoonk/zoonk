@@ -77,7 +77,6 @@ function getRefillCheckpoints({
       items: plan.items,
       today: session.localDate,
     }),
-    trialEnded: access.trialEnded,
   })
     ? plan.items.flatMap((item): PlannedCheckpoint[] => {
         const facts = readSelectedItemFacts(item.facts)?.boss;

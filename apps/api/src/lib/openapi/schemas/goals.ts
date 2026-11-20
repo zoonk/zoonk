@@ -1,3 +1,4 @@
+import { USAGE_PERIODS } from "@zoonk/core/entitlements/contract";
 import { type GoalView, regionChoiceSchema } from "@zoonk/core/goals/contract";
 import { goalCountryFieldsSchema } from "@zoonk/core/goals/country-contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
@@ -68,7 +69,7 @@ export const goalSchema = z
       .nullable()
       .meta({
         description:
-          "A language goal's country, a two-letter code, only when the learner asked for one: name the language with it (\"Spanish (Argentina)\"), and without it name only the language. The buddy and practice calls use its variety; lessons and their audio keep the taught one's (`regionChoices[].taught`)",
+          "A language goal's country, a two-letter code, only when the learner asked for one. The buddy and practice calls use its variety; lessons and their audio keep the taught one's (`regionChoices[].taught`)",
       }),
     timezone: z.string().nullable(),
     title: z.string(),
@@ -87,9 +88,22 @@ export const goalListResponseSchema = z
 
 const allowanceLimitSchema = z
   .object({
+    availableAt: z.iso
+      .datetime()
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "The earliest instant the refused request can be admitted against all its recorded caps, assuming no intervening use. Set when a rolling cap is full, including when a longer daily cap determines the reported period. Calls need positive time and money capacity and then run whole. Includes a currently blocking UTC-day reset. Null when waiting alone cannot admit the request; omitted when only daily or lifetime limits apply.",
+      }),
     limit: z.int(),
-    period: z.enum(["day", "month", "total"]),
-    resource: z.string().meta({ description: "What ran out, such as goal or activeGoals" }),
+    period: z.enum(USAGE_PERIODS),
+    resource: z
+      .string()
+      .meta({
+        description:
+          "What is limited; chapterLessons is the new-lesson size of a chapter request, lessonPreparation is automatic work capacity",
+      }),
     tier: z.enum(["free", "guest", "plus"]),
   })
   .meta({ id: "AllowanceLimit" });

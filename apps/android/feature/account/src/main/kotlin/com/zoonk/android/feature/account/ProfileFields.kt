@@ -50,6 +50,7 @@ fun ProfileFields(
             form.usernameStatus == UsernameStatus.Taken
     val nameHint =
         when {
+            form.showNameRequired -> R.string.account_name_required
             form.isNameTooLong -> R.string.account_name_too_long
             isSetup -> null
             else -> R.string.account_name_description
@@ -71,7 +72,7 @@ fun ProfileFields(
                 nameHint?.let { hint ->
                     { Text(stringResource(hint), Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
                 },
-            isError = form.isNameTooLong,
+            isError = form.isNameTooLong || form.showNameRequired,
             singleLine = true,
             readOnly = form.isSaving,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
@@ -101,7 +102,7 @@ fun ProfileFields(
 @Composable
 private fun UsernameField(form: ProfileFormViewModel) {
     val status = form.usernameStatus
-    val isWrong = status == UsernameStatus.Invalid || status == UsernameStatus.Taken
+    val isWrong = form.showUsernameRequired || status == UsernameStatus.Invalid || status == UsernameStatus.Taken
 
     OutlinedTextField(
         value = form.username,
@@ -117,9 +118,15 @@ private fun UsernameField(form: ProfileFormViewModel) {
                 text =
                     when (status) {
                         UsernameStatus.Checking -> stringResource(R.string.account_username_checking)
+
                         UsernameStatus.Available -> stringResource(R.string.account_username_available, form.username)
+
                         UsernameStatus.Taken -> stringResource(R.string.account_username_taken, form.username)
-                        UsernameStatus.Idle, UsernameStatus.Invalid -> stringResource(R.string.account_username_rules)
+
+                        UsernameStatus.Invalid -> stringResource(R.string.account_username_rules)
+
+                        // The line stays empty until it has something to say, so nothing under it moves.
+                        UsernameStatus.Idle -> if (form.showUsernameRequired) stringResource(R.string.account_username_required) else ""
                     },
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             )

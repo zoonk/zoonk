@@ -71,6 +71,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
@@ -256,8 +257,6 @@ fun CodeEntry(
             stringResource(R.string.account_send_new_code),
             isWorking = work == SignInWork.Resend,
             onClick = signIn::resendCode,
-            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
-            trailingIcon = null,
         )
     } else {
         WorkingButton(stringResource(R.string.account_continue), isWorking = work == SignInWork.CheckCode, onClick = signIn::checkCode)
@@ -276,7 +275,6 @@ fun CodeEntry(
                 busy = work == SignInWork.Resend,
                 onClick = signIn::resendCode,
                 enabled = work == null,
-                leadingIcon = { ButtonIcon(R.drawable.ic_send) },
             ) { Text(stringResource(R.string.account_send_again)) }
         }
         TextButton(onClick = signIn::changeEmail, enabled = work != SignInWork.CheckCode) {
@@ -301,10 +299,14 @@ private fun ProfileSetup(
 @Composable
 fun ProfileSetupForm(form: ProfileFormViewModel) {
     Title(stringResource(R.string.account_setup_title))
-    Description(stringResource(R.string.account_setup_description))
     ProfileFields(form, isSetup = true)
     ProfileSaveFailure(form)
-    WorkingButton(stringResource(R.string.account_continue), isWorking = form.isSaving, enabled = form.canSave, onClick = { form.save() })
+    WorkingButton(
+        stringResource(R.string.account_continue),
+        isWorking = form.isSaving,
+        enabled = form.canContinue,
+        onClick = form::continueSetup,
+    )
 }
 
 @Composable
@@ -327,8 +329,8 @@ fun AuthColumn(
                 modifier =
                     Modifier
                         .widthIn(max = 480.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                        .taskColumn()
+                        .padding(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 content = content,
             )
@@ -378,16 +380,12 @@ private fun WorkingButton(
     isWorking: Boolean,
     onClick: () -> Unit,
     enabled: Boolean = true,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = { ButtonIcon(R.drawable.ic_arrow_forward) },
 ) {
     Button(
         busy = isWorking,
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         enabled = enabled,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
     ) { Text(text) }
 }
 
@@ -407,8 +405,8 @@ private fun OrDivider() {
 /** Main's footer, with its two links opening on the web. */
 @Composable
 private fun Agreement(navigator: AppNavigator) {
-    val terms = stringResource(R.string.account_terms)
-    val privacy = stringResource(R.string.account_privacy)
+    val terms = stringResource(R.string.account_terms).replace(' ', '\u00a0')
+    val privacy = stringResource(R.string.account_privacy).replace(' ', '\u00a0')
     val sentence = stringResource(R.string.account_agreement, terms, privacy)
     val linkStyle = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))
     val text =

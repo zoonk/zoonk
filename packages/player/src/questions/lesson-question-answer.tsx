@@ -1,12 +1,18 @@
 "use client";
 
+import { useLiveLimit } from "@zoonk/learn/help-limit";
 import { Button } from "@zoonk/ui/components/button";
 import { Marker, MarkerContent } from "@zoonk/ui/components/marker";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useMemo } from "react";
 import { type LessonQuestionApiError } from "./lesson-question-api";
-import { QuestionErrorAction, RequestErrorMessage, toHelpLimit } from "./lesson-question-errors";
+import {
+  QuestionErrorAction,
+  RequestErrorMessage,
+  TryAgainButton,
+  toHelpLimit,
+} from "./lesson-question-errors";
 import { LessonQuestionMarkdown } from "./lesson-question-markdown";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { type TutorAnswerLinks } from "./tutor-markdown";
@@ -79,7 +85,8 @@ export function QuestionAnswer({
   status: "pending" | "running" | "completed" | "failed";
 }) {
   const t = useExtracted();
-  const limit = toHelpLimit(error);
+  const refusal = toHelpLimit(error);
+  const liveRefusal = useLiveLimit(refusal);
   const appLinks = useAnswerLinks({ linksVerified, status });
 
   if (status === "pending" && !isLocallyStreaming) {
@@ -108,8 +115,11 @@ export function QuestionAnswer({
             isStreaming={false}
           />
         )}
-        {limit ? (
-          <p className="text-muted-foreground text-sm">{t("This one wasn't answered.")}</p>
+        {refusal ? (
+          <>
+            <p className="text-muted-foreground text-sm">{t("This one wasn't answered.")}</p>
+            {!liveRefusal && <TryAgainButton disabled={disabled} onRetry={onRetry} />}
+          </>
         ) : (
           <>
             <p className="text-destructive-text text-sm">

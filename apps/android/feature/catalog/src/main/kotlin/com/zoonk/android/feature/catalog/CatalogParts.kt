@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
@@ -46,6 +47,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
@@ -60,6 +62,7 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.flagEmoji
+import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
@@ -125,20 +128,25 @@ internal fun courseContinue(goal: LearnerSummaryGoal): CourseContinue =
     }
 
 /**
- * Main's `CourseContinueLink` switch: Today opens once the goal is saved, unless the learner moved on
- * since the tap. Run it in the app's scope, so leaving the page doesn't cut the save short.
+ * Main's `CourseContinueLink` switch: Today opens once the goal is saved, on the visit that tapped. The save runs in the
+ * app's scope, so leaving the page doesn't cut it short; what it leads to ([switched]: saved or not) belongs to the
+ * page's visit, so leaving first opens nothing and says nothing.
  */
-internal fun CoroutineScope.switchThenOpenToday(
-    navigator: AppNavigator,
-    onFailed: () -> Unit,
-    select: suspend () -> Boolean?,
-) {
-    val tappedOn = navigator.currentRoute
+internal class SwitchThenToday(
+    private val appScope: CoroutineScope,
+    private val switch: suspend (UUID) -> Boolean?,
+) : ViewModel() {
+    val visit = Visit()
 
-    launch {
-        val saved = select() ?: return@launch
-        if (navigator.currentRoute != tappedOn) return@launch
-        if (saved) navigator.showRoot(AppTab.Today) else onFailed()
+    /** Whether the goal tapped was saved; null while none is owed. */
+    val switched = visit.outcome<Boolean>()
+
+    fun switchTo(goalId: UUID) {
+        val started = visit.number
+        appScope.launch {
+            val saved = switch(goalId) ?: return@launch
+            switched.send(started, saved)
+        }
     }
 }
 
@@ -235,7 +243,7 @@ internal fun LineWithIcon(
         Icon(
             painterResource(icon),
             contentDescription = null,
-            modifier = Modifier.padding(top = 2.dp).size(markDp(ICON_SIZE)),
+            modifier = Modifier.glyphInk(icon).padding(top = 2.dp).size(markDp(ICON_SIZE)),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(text, color = color, style = style)
@@ -275,6 +283,7 @@ internal fun StartActions(
     val follows = goal != null
     val visitorNote = if (isVisitor(app)) stringResource(R.string.catalog_start_free) else null
     val saving by app.goalSwitch.saving.collectAsStateWithLifecycle()
+    val continuing = LocalCatalogContinuation.current
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -295,21 +304,18 @@ internal fun StartActions(
                     }
 
                     is CourseContinue.Switch -> {
-                        app.scope.switchThenOpenToday(navigator, onFailed = { app.snackbars.show(R.string.goal_switcher_failed) }) {
-                            app.switchGoal(next.goalId)
-                        }
+                        continuing.switchTo(next.goalId)
                     }
                 }
             }
             val label: @Composable RowScope.() -> Unit = {
                 Text(stringResource(if (follows) R.string.catalog_continue_plan else R.string.catalog_build_plan))
             }
-            val arrow: @Composable () -> Unit = { ButtonIcon(R.drawable.ic_arrow_forward) }
 
             if (secondary) {
-                OutlinedButton(onClick = start, busy = saving, trailingIcon = arrow, content = label)
+                OutlinedButton(onClick = start, busy = saving, forward = true, content = label)
             } else {
-                Button(busy = saving, onClick = start, trailingIcon = arrow, content = label)
+                Button(busy = saving, onClick = start, content = label)
             }
 
             if (onTryLesson != null) {
@@ -431,9 +437,8 @@ internal fun FirstQuestion(
 
         Spacer(Modifier.size(20.dp))
 
-        val note = stringResource(if (screen.guess) R.string.catalog_guess_note else R.string.catalog_check_note, minutesText)
-        val visitor = if (isVisitor(app)) spaceAfterSentence(note) + stringResource(R.string.catalog_no_sign_up) else ""
-        LineWithIcon(R.drawable.ic_play_circle, note + visitor, style = MaterialTheme.typography.bodySmall)
+        val note = stringResource(R.string.catalog_guess_note, minutesText)
+        Text(note, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
 

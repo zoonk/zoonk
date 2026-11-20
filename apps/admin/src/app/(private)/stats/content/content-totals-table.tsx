@@ -1,23 +1,18 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
+import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 
 export type ContentTotalRow = { created?: number; title: string; total: number };
 
 export function ContentTotalsTable({ rows }: { rows: readonly ContentTotalRow[] }) {
   return (
-    <Table>
+    <Table scrollLabels={SCROLL_LABELS}>
       <TableHeader>
-        <TableRow>
+        <AdminTableRow>
           <TableHead>Type</TableHead>
-          <TableHead className="text-right">Total</TableHead>
-          <TableHead className="text-right">Created this period</TableHead>
-        </TableRow>
+          <TableHead numeric>Total</TableHead>
+          <TableHead numeric>Created this period</TableHead>
+        </AdminTableRow>
       </TableHeader>
 
       <TableBody>
@@ -31,16 +26,16 @@ export function ContentTotalsTable({ rows }: { rows: readonly ContentTotalRow[] 
 
 function ContentRow({ row }: { row: ContentTotalRow }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="font-medium">{row.title}</TableCell>
-      <TableCell className="text-right tabular-nums">{row.total.toLocaleString()}</TableCell>
-      <TableCell className="text-right tabular-nums">
+      <TableCell numeric>{row.total.toLocaleString()}</TableCell>
+      <TableCell numeric>
         {row.created === undefined ? (
           <span className="text-muted-foreground">—</span>
         ) : (
           row.created.toLocaleString()
         )}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

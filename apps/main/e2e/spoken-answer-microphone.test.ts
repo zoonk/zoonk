@@ -39,11 +39,10 @@ async function sayIt(page: Page) {
   await page.getByRole("button", { name: "Record" }).click();
   await expect(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
 
-  await expect(
-    page.getByRole("button", { name: /^Stop\s?\d+:(?:0[1-9]|[1-5]\d)$/u }),
-  ).toBeVisible();
-
-  await page.getByRole("button", { name: /^Stop/u }).click();
+  // The clock is kept out of the button's name, so it's read from its text.
+  const stop = page.getByRole("button", { name: /^Stop/u });
+  await expect(stop).toHaveText(/\d+:(?:0[1-9]|[1-5]\d)/u);
+  await stop.click();
 }
 
 test.describe("A spoken answer", () => {

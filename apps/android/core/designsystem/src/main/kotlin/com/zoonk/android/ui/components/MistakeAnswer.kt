@@ -1,43 +1,27 @@
 package com.zoonk.android.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.richtext.RichTextLine
 import com.zoonk.android.ui.richtext.SpokenText
-import com.zoonk.android.ui.theme.ZoonkRadius
 
+/** What the learner answered, or the right answer, after the fact: the [AnswerOption]'s result look, locked (main's `AnswerPair`). */
 @Composable
 fun MistakeAnswer(
     text: SpokenText,
     right: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val result = if (right) AnswerResult.Right else AnswerResult.Wrong
-    val tone = answerTone(picked = !right, result = result)
-    val shape = RoundedCornerShape(ZoonkRadius.option)
-
-    TagBesideOrUnder(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clip(shape)
-                .background(tone.container)
-                .border(tone.border, shape)
-                .padding(horizontal = 14.dp, vertical = 12.dp)
-                .semantics(mergeDescendants = true) {},
-        content = { RichTextLine(text, Modifier, MaterialTheme.typography.bodyLarge.copy(color = tone.contentColor)) },
-        tag = { AnswerTag(picked = !right, result = result) },
-    )
+    AnswerOption(
+        marker = 0,
+        picked = !right,
+        result = if (right) AnswerResult.Right else AnswerResult.Wrong,
+        onClick = {},
+        modifier = modifier,
+        role = null,
+    ) { RichTextLine(text, Modifier, LocalTextStyle.current) }
 }
 
 /** An answer shown exactly as written, such as what the learner typed. */

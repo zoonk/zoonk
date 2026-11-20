@@ -2,6 +2,7 @@
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { ItemLine } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -77,7 +78,7 @@ export function CheckpointOptions({
 
         return (
           <AnswerOption
-            aria-keyshortcuts={String(index + 1)}
+            aria-keyshortcuts={shortcutKeys("pick", index)}
             disabled={isLocked}
             key={label}
             marker={index + 1}

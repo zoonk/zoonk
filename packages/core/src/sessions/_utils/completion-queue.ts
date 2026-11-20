@@ -14,9 +14,9 @@ import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadCarriedItemIds } from "./catch-up";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getDayCatchUp, getDayProgress } from "./day-progress";
+import { loadExamPrepAccess } from "./load-exam-access";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { getDayOutlines } from "./outlining-stand-ins";
-import { loadExamPrepAccess } from "./plus-only-lessons";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { getNextBlockId, getSessionBar } from "./session-view";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
@@ -27,11 +27,9 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-acc
  */
 export async function loadSessionTime({
   stored,
-  timeZone,
   userId,
 }: {
   stored: StudySessionRow;
-  timeZone: string;
   userId: string;
 }) {
   const required =
@@ -54,9 +52,7 @@ export async function loadSessionTime({
           where: { goalId: session.goalId },
         })
       : null,
-    session.goal
-      ? loadExamPrepAccess({ goal: session.goal, timeZone, today: session.localDate })
-      : null,
+    session.goal ? loadExamPrepAccess({ goal: session.goal }) : null,
   ]);
 
   const prerequisites = plan
@@ -64,7 +60,7 @@ export async function loadSessionTime({
     : new Map();
 
   const reserved = hasSessionLessonReservation({
-    access: access ?? { includesMockExams: true, trialEnded: false },
+    access: access ?? { includesMockExams: true },
     plan,
     prerequisites,
     session,
@@ -87,7 +83,7 @@ export async function loadSessionTime({
     reserved,
   });
 
-  return { minutes, plan, reserved, session, trialEnded: access?.trialEnded ?? false };
+  return { minutes, plan, reserved, session };
 }
 
 /** Whether the lessons the day holds time for are being written now, as Today says it. */
@@ -130,8 +126,8 @@ export async function loadCompletionQueue({
     where: { id: sessionId, userId },
   });
 
-  const [{ minutes, plan, reserved, session, trialEnded }, carriedItemIds] = await Promise.all([
-    loadSessionTime({ stored, timeZone, userId }),
+  const [{ minutes, plan, reserved, session }, carriedItemIds] = await Promise.all([
+    loadSessionTime({ stored, userId }),
     loadCarriedItemIds(stored.goalId),
   ]);
 
@@ -156,7 +152,6 @@ export async function loadCompletionQueue({
         }),
         freshStart: session.freshStart,
         items: plan?.items ?? [],
-        trialEnded,
       }),
       complete: sessionCompleted,
       lessonsComing,

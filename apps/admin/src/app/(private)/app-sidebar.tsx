@@ -1,9 +1,11 @@
 "use client";
 
-import { Sheet, SheetContent, SheetTitle } from "@zoonk/ui/components/sheet";
+import { type InboxQueueName } from "@/data/inbox/get-inbox";
+import { SidePanel, SidePanelContent, SidePanelTitle } from "@zoonk/ui/components/side-panel";
 import {
   SIDEBAR_ITEM_CLASS,
   Sidebar,
+  SidebarBody,
   SidebarFooter,
   SidebarHeader,
   SidebarHeaderRow,
@@ -24,39 +26,46 @@ function isActive(pathname: string, url: string) {
   return pathname.startsWith(url);
 }
 
-type AdminNavUrl = (typeof adminNavigation)[number]["items"][number]["url"];
-
-/** What follows an item's label, such as how many content fixes wait for review. */
-export type AdminNavCounts = Partial<Record<AdminNavUrl, React.ReactNode>>;
+/** How many wait in each Inbox queue, drawn after its label. */
+export type AdminNavCounts = Record<InboxQueueName, React.ReactNode>;
 
 function AdminNav({ counts, onNavigate }: { counts: AdminNavCounts; onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return adminNavigation.map((group) => (
-    <SidebarSection aria-label={group.label} key={group.label} label={group.label}>
-      {group.items.map(({ icon: Icon, label, url }) => (
-        <SidebarTooltip
-          key={label}
-          label={
-            <>
-              {label}
-              {counts[url]}
-            </>
-          }
-        >
-          <Link
-            aria-current={isActive(pathname, url) ? "page" : undefined}
-            className={SIDEBAR_ITEM_CLASS}
-            href={url}
-            onNavigate={onNavigate}
-            prefetch
+    <SidebarSection
+      aria-label={group.label ?? "Home"}
+      key={group.label ?? "home"}
+      label={group.label}
+    >
+      {group.items.map(({ icon: Icon, label, queue, url }) => {
+        const count = queue ? counts[queue] : null;
+
+        return (
+          <SidebarTooltip
+            key={label}
+            label={
+              <>
+                {label}
+                {count}
+              </>
+            }
           >
-            <Icon aria-hidden="true" />
-            <span className="min-w-0 flex-1 truncate">{label}</span>
-            {counts[url]}
-          </Link>
-        </SidebarTooltip>
-      ))}
+            <Link
+              aria-current={isActive(pathname, url) ? "page" : undefined}
+              className={SIDEBAR_ITEM_CLASS}
+              data-slot="sidebar-item"
+              href={url}
+              onNavigate={onNavigate}
+              prefetch
+            >
+              <Icon aria-hidden="true" />
+              <span className="min-w-0 flex-1 truncate">{label}</span>
+              {count}
+            </Link>
+          </SidebarTooltip>
+        );
+      })}
     </SidebarSection>
   ));
 }
@@ -70,9 +79,12 @@ function AdminSidebarContent({
 }: AdminSidebarProps & { onNavigate?: () => void }) {
   return (
     <>
-      <AdminNav counts={counts} onNavigate={onNavigate} />
+      <SidebarBody className="gap-3">
+        <AdminNav counts={counts} onNavigate={onNavigate} />
+      </SidebarBody>
 
-      <SidebarFooter>
+      {/* Its hairline keeps the account apart from the navigation that scrolls above it. */}
+      <SidebarFooter className="border-t">
         <AdminAccountMenu account={account} />
       </SidebarFooter>
     </>
@@ -81,12 +93,12 @@ function AdminSidebarContent({
 
 export function AppSidebar({ account, counts }: AdminSidebarProps) {
   return (
-    <Sidebar aria-label="Sidebar" className="gap-4">
-      <SidebarHeader className="gap-4">
+    <Sidebar aria-label="Sidebar" className="gap-3">
+      <SidebarHeader className="gap-3">
         <SidebarHeaderRow>
           <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
         </SidebarHeaderRow>
-        <SidebarSearch label="Search…" onClick={openCommandPalette} />
+        <SidebarSearch className="h-8" label="Search…" onClick={openCommandPalette} />
       </SidebarHeader>
 
       <AdminSidebarContent account={account} counts={counts} />
@@ -101,15 +113,15 @@ export function AdminMenuSheet({
   open,
 }: AdminSidebarProps & { onOpenChange: (open: boolean) => void; open: boolean }) {
   return (
-    <Sheet onOpenChange={onOpenChange} open={open}>
-      <SheetContent className="gap-4 overflow-y-auto p-3 data-[side=left]:w-60" side="left">
-        <SheetTitle className="sr-only">Menu</SheetTitle>
+    <SidePanel onOpenChange={onOpenChange} open={open}>
+      <SidePanelContent className="gap-3 overflow-hidden p-3 data-[side=right]:w-60" side="right">
+        <SidePanelTitle className="sr-only">Menu</SidePanelTitle>
         <AdminSidebarContent
           account={account}
           counts={counts}
           onNavigate={() => onOpenChange(false)}
         />
-      </SheetContent>
-    </Sheet>
+      </SidePanelContent>
+    </SidePanel>
   );
 }

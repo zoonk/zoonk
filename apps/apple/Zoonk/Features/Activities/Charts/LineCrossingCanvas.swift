@@ -65,25 +65,22 @@ struct LineCrossingCanvas: View {
 
       if isMoved {
         VStack(alignment: .leading, spacing: 4) {
-          changeRow(fields.yLabel, change: yChange, isVertical: true)
-          changeRow(fields.xLabel, change: xChange, isVertical: false)
+          changeRow(fields.yLabel, change: yChange)
+          changeRow(fields.xLabel, change: xChange)
         }
         .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
       } else {
-        Text(
-          "Drag a line by its handle.", tableName: "ActivitiesCharts",
-          comment: "How to move a line on a two-line chart"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+        dragHint
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
       }
 
       if showsAnswer, let shifted = fields.lines.first(where: { $0.id == fields.shift.line }) {
         VStack(alignment: .leading, spacing: 4) {
           Text(verbatim: movedText(shifted, offset: realOffset))
             .typeStyle(.body.weight(.semibold))
-            .foregroundStyle(.vizHighlight)
+            .foregroundStyle(Color.successText)
 
           if case .interaction = context.check, let feedback = wrongMoveFeedback {
             LessonRichText(feedback)
@@ -100,7 +97,7 @@ struct LineCrossingCanvas: View {
 
     return Chart {
       if isMoved {
-        ForEach(fields.lines) { field in
+        ForEach(fields.lines.filter { offsets[$0.id, default: 0] != 0 }) { field in
           segmentMarks(line(field, [:]), domain: domain, series: "before-\(field.id)")
             .foregroundStyle(Color.mutedForeground.opacity(0.5))
             .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
@@ -111,30 +108,16 @@ struct LineCrossingCanvas: View {
         segmentMarks(
           line(shifted, [shifted.id: realOffset]), domain: domain, series: "answer"
         )
-        .foregroundStyle(.vizHighlight)
+        .foregroundStyle(Color.success)
         .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 4]))
       }
 
       ForEach(Array(fields.lines.enumerated()), id: \.element.id) { index, field in
-        let segment = LineCrossingModel.segment(line(field, offsets), domain: domain)
-
         segmentMarks(line(field, offsets), domain: domain, series: field.id)
-          .foregroundStyle(index == 0 ? Color.vizAccent : Color.vizSecondary)
+          .foregroundStyle(index == 0 ? Color.vizHighlight : Color.vizSecondary)
           .lineStyle(StrokeStyle(lineWidth: 2.5))
 
-        PointMark(x: .value(verbatim: "x", segment.to.x), y: .value(verbatim: "y", segment.to.y))
-          .opacity(0)
-          .annotation(position: .topLeading, spacing: 2) {
-            Text(verbatim: field.label)
-              .typeStyle(.meta.weight(.semibold))
-              .foregroundStyle(index == 0 ? Color.vizAccent : Color.vizSecondary)
-              .chartsLabelHalo()
-          }
       }
-
-      PointMark(x: .value(verbatim: "x", after.x), y: .value(verbatim: "y", after.y))
-        .foregroundStyle(.primary)
-        .symbolSize(70)
 
       RuleMark(
         x: .value(verbatim: "x", after.x), yStart: .value(verbatim: "y", 0),
@@ -148,23 +131,67 @@ struct LineCrossingCanvas: View {
       )
       .foregroundStyle(.mutedForeground)
       .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
+
+      // After its guide lines, so their dashes end under it instead of across it.
+      PointMark(x: .value(verbatim: "x", after.x), y: .value(verbatim: "y", after.y))
+        .foregroundStyle(.primary)
+        .symbolSize(70)
     }
     .chartXScale(domain: 0...domain.x)
     .chartYScale(domain: 0...domain.y)
-    .chartXAxisLabel(fields.xLabel, alignment: .trailing)
-    .chartYAxisLabel(fields.yLabel, position: .top, alignment: .leading)
-    .chartXAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine().foregroundStyle(.vizGrid)
-      }
-    }
+    .chartPlotStyle { plot in plot.frame(minHeight: 248).clipped() }
+    .chartsXAxis(domain: 0...domain.x) { ActivityNumberFormat.format($0) }
     .chartYAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { _ in AxisGridLine().foregroundStyle(.vizGrid)
-      }
+      ChartsAxis.values(ticks: ChartsAxis.ticks(0...domain.y)) { ActivityNumberFormat.format($0) }
     }
     .chartsMarksHidden()
     .chartOverlay { proxy in
       GeometryReader { geometry in
         if let plot = proxy.plotFrame.map({ geometry[$0] }) {
+          let point = { (value: LineCrossingModel.Point) in
+            CGPoint(
+              x: plot.minX + (proxy.position(forX: value.x) ?? 0),
+              y: plot.minY + (proxy.position(forY: value.y) ?? 0))
+          }
+          let segment = { (value: LineCrossingModel.Line) in
+            let ends = LineCrossingModel.segment(value, domain: domain)
+            return LineCrossingLabelLayout.Segment(from: point(ends.from), to: point(ends.to))
+          }
+          let names = fields.lines.enumerated().map { index, field in
+            LineCrossingLabels.Item(
+              id: field.id, text: Text(verbatim: field.label),
+              segment: segment(line(field, offsets)),
+              color: index == 0 ? .vizHighlight : .vizSecondary)
+          }
+          let beforeNames = fields.lines.filter { offsets[$0.id, default: 0] != 0 }.map { field in
+            LineCrossingLabels.Item(
+              id: "before-\(field.id)", text: Text("Before", tableName: "ActivitiesCharts"),
+              segment: segment(line(field, [:])), color: .mutedForeground,
+              isUpper: false, isOptional: true)
+          }
+          let revealed =
+            shifted.flatMap { field -> LineCrossingLabels.Item? in
+              guard showsAnswer else { return nil }
+              return .init(
+                id: "answer", text: Text("What happened", tableName: "ActivitiesCharts"),
+                segment: segment(line(field, [field.id: realOffset])), color: .successText,
+                isUpper: false)
+            }.map { [$0] } ?? []
+          let handles = fields.lines.enumerated().map { index, field in
+            let center = point(handlePosition(field, index: index, plot: plot, domain: domain))
+            let radius = ChartsHandle.radius + 3
+            return CGRect(
+              x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
+          }
+          let cross = point(after)
+          LineCrossingLabels(
+            items: names + beforeNames + revealed, shownCount: names.count + beforeNames.count,
+            plot: plot,
+            guides: [
+              .init(from: CGPoint(x: cross.x, y: plot.maxY), to: cross),
+              .init(from: CGPoint(x: plot.minX, y: cross.y), to: cross),
+            ], obstacles: handles + [CGRect(x: cross.x - 7, y: cross.y - 7, width: 14, height: 14)]
+          )
           ForEach(Array(fields.lines.enumerated()), id: \.element.id) { index, field in
             handle(field, index: index, proxy: proxy, plot: plot, domain: domain, changes: changes)
           }
@@ -173,9 +200,11 @@ struct LineCrossingCanvas: View {
       .coordinateSpace(.named(ChartsPlot.space))
     }
     .chartsPlotText()
-    .frame(minHeight: 240)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(Text(verbatim: summary(changes: changes)))
+    .chartsAxisTitles(
+      x: fields.xLabel, y: fields.yLabel,
+      values: ChartsAxis.ticks(0...domain.y).map { ActivityNumberFormat.format($0) })
   }
 
   private func segmentMarks(
@@ -192,20 +221,27 @@ struct LineCrossingCanvas: View {
     }
   }
 
+  private func handlePosition(
+    _ field: LineCrossingFields.Line, index: Int, plot: CGRect, domain: LineCrossingModel.Point
+  ) -> LineCrossingModel.Point {
+    LineCrossingModel.handlePoint(
+      line(field, offsets), domain: domain,
+      share: index == 0 ? 0.8 : 0.2, plot: .init(x: plot.width, y: plot.height),
+      radius: ChartsHandle.radius)
+  }
+
   private func handle(
     _ field: LineCrossingFields.Line, index: Int, proxy: ChartProxy, plot: CGRect,
     domain: LineCrossingModel.Point, changes: String
   ) -> some View {
-    let segment = LineCrossingModel.segment(line(field, offsets), domain: domain)
-    let share = index == 0 ? 0.8 : 0.2
-    let x = segment.from.x + (segment.to.x - segment.from.x) * share
+    let position = handlePosition(field, index: index, plot: plot, domain: domain)
     let point = CGPoint(
-      x: plot.minX + (proxy.position(forX: x) ?? 0),
-      y: plot.minY + (proxy.position(forY: line(field, offsets).y(at: x)) ?? 0))
+      x: plot.minX + (proxy.position(forX: position.x) ?? 0),
+      y: plot.minY + (proxy.position(forY: position.y) ?? 0))
     let range = LineCrossingModel.range(fields.shift.amount)
     let offset = offsets[field.id] ?? 0
 
-    return ChartsHandle(tint: index == 0 ? .vizAccent : .vizSecondary, isEnabled: !isChecked)
+    return ChartsHandle(tint: index == 0 ? .vizHighlight : .vizSecondary, isEnabled: !isChecked)
       .chartsAdjustable(
         label: Text(
           "Move the line \(field.label)", tableName: "ActivitiesCharts",
@@ -308,37 +344,45 @@ struct LineCrossingCanvas: View {
     }
   }
 
+  /// An axis's label is a name, not a sentence's subject, so each change is its label and a value.
   private func changeWords(_ axisLabel: String, _ change: LineCrossingModel.Change) -> String {
     switch change {
-    case .up:
-      String(
-        localized: "\(axisLabel) goes up.", table: "ActivitiesCharts",
-        comment: "What a line's move did to an axis, like Price goes up")
-    case .down:
-      String(
-        localized: "\(axisLabel) goes down.", table: "ActivitiesCharts",
-        comment: "What a line's move did to an axis, like Price goes down")
-    case .same:
-      String(
-        localized: "\(axisLabel) stays the same.", table: "ActivitiesCharts",
-        comment: "What a line's move did to an axis, like Price stays the same")
+    case .up: String(localized: "\(axisLabel): up", table: "ActivitiesCharts")
+    case .down: String(localized: "\(axisLabel): down", table: "ActivitiesCharts")
+    case .same: String(localized: "\(axisLabel): no change", table: "ActivitiesCharts")
     }
+  }
+
+  private var dragHint: Text {
+    axis == .horizontal
+      ? Text("Drag a line left or right by its handle.", tableName: "ActivitiesCharts")
+      : Text("Drag a line up or down by its handle.", tableName: "ActivitiesCharts")
+  }
+
+  /// Main's `toSentence`: VoiceOver reads each change as its own sentence, ended with the app
+  /// language's full stop.
+  private func sentence(_ text: String) -> String {
+    if let last = text.last, ".!?…。！？".contains(last) {
+      return text
+    }
+
+    let language = Locale(identifier: Bundle.main.preferredLocalizations.first ?? "en").language
+    return text + (language.languageCode == .japanese ? "。" : ".")
   }
 
   private func changeText(yChange: LineCrossingModel.Change, xChange: LineCrossingModel.Change)
     -> String
   {
-    [changeWords(fields.yLabel, yChange), changeWords(fields.xLabel, xChange)].joinedSentences()
+    [changeWords(fields.yLabel, yChange), changeWords(fields.xLabel, xChange)].map(sentence)
+      .joinedSentences()
   }
 
-  private func changeRow(_ label: String, change: LineCrossingModel.Change, isVertical: Bool)
-    -> some View
-  {
+  private func changeRow(_ label: String, change: LineCrossingModel.Change) -> some View {
     let symbol =
       switch change {
       case .same: "minus"
-      case .up: isVertical ? "arrow.up" : "arrow.right"
-      case .down: isVertical ? "arrow.down" : "arrow.left"
+      case .up: "arrow.up"
+      case .down: "arrow.down"
       }
 
     return Label(changeWords(label, change), systemImage: symbol)
@@ -362,3 +406,101 @@ struct LineCrossingCanvas: View {
     return ([lines] + state).joinedSentences()
   }
 }
+
+private struct LineCrossingLabels: View {
+  struct Item: Identifiable {
+    let id: String
+    let text: Text
+    let segment: LineCrossingLabelLayout.Segment
+    let color: Color
+    var isUpper = true
+    var isOptional = false
+  }
+
+  let items: [Item]
+  let shownCount: Int
+  let plot: CGRect
+  let guides: [LineCrossingLabelLayout.Segment]
+  let obstacles: [CGRect]
+
+  var body: some View {
+    LineCrossingNamesLayout(
+      items: items, shownCount: shownCount, plot: plot, guides: guides, obstacles: obstacles
+    ) {
+      ForEach(items) { item in
+        item.text
+          .typeStyle(.meta.weight(.semibold))
+          .foregroundStyle(item.color)
+          .chartsLabelHalo()
+          .clipped()
+          #if DEBUG
+            .modifier(LineCrossingNameFrameReporter(id: item.id))
+          #endif
+      }
+    }
+    .allowsHitTesting(false)
+    .accessibilityHidden(true)
+  }
+}
+
+private struct LineCrossingNamesLayout: Layout {
+  let items: [LineCrossingLabels.Item]
+  let shownCount: Int
+  let plot: CGRect
+  let guides: [LineCrossingLabelLayout.Segment]
+  let obstacles: [CGRect]
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    CGSize(width: proposal.width ?? plot.maxX, height: proposal.height ?? plot.maxY)
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    let area = plot.insetBy(dx: 3, dy: 3)
+    let labels = zip(items, subviews).enumerated().map { index, pair in
+      let (item, view) = pair
+      // The revealed name can wrap into the space between the names already shown.
+      let width = index < shownCount ? area.width : area.width / 2
+      return LineCrossingLabelLayout.Label(
+        segment: item.segment,
+        size: view.sizeThatFits(ProposedViewSize(width: max(1, width), height: nil)),
+        isUpper: item.isUpper, isOptional: item.isOptional)
+    }
+    let boxes = LineCrossingLabelLayout.chart(
+      shown: Array(labels.prefix(shownCount)), revealed: Array(labels.dropFirst(shownCount)),
+      in: area, guides: guides, obstacles: obstacles)
+    for (view, box) in zip(subviews, boxes) {
+      guard let box else {
+        view.place(at: .zero, proposal: .zero)
+        continue
+      }
+      view.place(
+        at: CGPoint(x: bounds.minX + box.minX, y: bounds.minY + box.minY), anchor: .topLeading,
+        proposal: ProposedViewSize(width: box.width, height: box.height))
+    }
+  }
+}
+
+#if DEBUG
+  extension EnvironmentValues {
+    @Entry var lineCrossingNameFrame: ((String, CGRect) -> Void)?
+  }
+
+  private struct LineCrossingNameFrameReporter: ViewModifier {
+    let id: String
+    @Environment(\.lineCrossingNameFrame) private var report
+
+    func body(content: Content) -> some View {
+      if let report {
+        content.onGeometryChange(for: CGRect.self) {
+          $0.frame(in: .global)
+        } action: {
+          report(id, $0)
+        }
+      } else {
+        content
+      }
+    }
+  }
+#endif

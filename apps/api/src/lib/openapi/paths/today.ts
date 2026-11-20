@@ -65,7 +65,7 @@ export const todayPaths = {
         },
         "409": {
           ...conflictResponse,
-          description: `The goal is paused, completed or archived (${studySessionErrorCodes.goalNotActive}), or its plan isn't ready (${todayErrorCodes.planNotReady}, with the goal in \`details\`): while the goal's onboarding isn't over, lead back to it: questions are left (a plan built before they're answered isn't the learner's yet) or its plan reveal isn't seen yet (\`planRevealed\` false on \`GET /goals/{goalId}/onboarding\`); otherwise show the wait and ask again.`,
+          description: `The goal is paused, completed or archived (${studySessionErrorCodes.goalNotActive}), or its plan isn't ready (${todayErrorCodes.planNotReady}, with the goal in \`details\`): either the goal's onboarding isn't over (questions are left, since a plan built before they're answered isn't the learner's yet, or its plan reveal isn't seen yet: \`planRevealed\` false on \`GET /goals/{goalId}/onboarding\`), or the plan is still being built and a later request gets it.`,
         },
       },
       security: AUTHENTICATED_SECURITY,

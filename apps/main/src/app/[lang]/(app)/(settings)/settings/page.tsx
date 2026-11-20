@@ -1,11 +1,7 @@
 import { UserAvatar } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
-import { getAppLocale } from "@/i18n/locale";
 import { getMenu } from "@/lib/menu";
-import { getCurrentUserMemory } from "@zoonk/core/memory/get";
-import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getStudyReminder } from "@zoonk/core/reminders/get";
 import { getSession } from "@zoonk/core/users/session";
-import { BuddyTabName } from "@zoonk/learn/buddy";
 import {
   ListGroup,
   ListRowContent,
@@ -15,10 +11,10 @@ import {
 } from "@zoonk/learn/list";
 import { Page, PageHeader, PageHeaderContent, PageTitle } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { LOCALE_LABELS, isValidLocale } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { SettingsAccountRow } from "../_components/settings-account-button";
 import { SettingsHubLists } from "../_components/settings-links";
 import { getSettingsPagesShown } from "../_components/settings-pages-shown";
 import ProfilePage from "../profile/page";
@@ -32,8 +28,12 @@ export async function generateMetadata(): Promise<Metadata> {
 async function AccountRow() {
   const session = await getSession();
 
-  if (!session || session.user.isAnonymous) {
+  if (!session) {
     return null;
+  }
+
+  if (session.user.isAnonymous) {
+    return <SettingsAccountRow />;
   }
 
   return (
@@ -52,35 +52,14 @@ async function AccountRow() {
 }
 
 async function SettingsHubContent() {
-  const locale = await getAppLocale();
-
-  const [shown, profile, memory, reminder] = await Promise.all([
-    getSettingsPagesShown(),
-    getLearningProfile(),
-    getCurrentUserMemory(),
-    getStudyReminder(),
-  ]);
-
-  const language = isValidLocale(locale) ? LOCALE_LABELS[locale] : locale;
+  const [shown, reminder] = await Promise.all([getSettingsPagesShown(), getStudyReminder()]);
 
   return (
     <>
       <AccountRow />
       <SettingsHubLists
         {...shown}
-        memoryCount={memory?.facts.length}
         reminders={reminder && { on: reminder.email.on || reminder.push.on, time: reminder.time }}
-        preferencesSummary={
-          <>
-            {profile?.buddy && (
-              <>
-                <BuddyTabName buddy={profile.buddy} />
-                {" · "}
-              </>
-            )}
-            {language}
-          </>
-        }
       />
     </>
   );
@@ -101,7 +80,10 @@ async function FirstSettingsPage() {
   return session && !session.user.isAnonymous ? <ProfilePage /> : <AppearancePage />;
 }
 
-/** The server can't tell the screen's width, so the hub and the first page both render and CSS shows one. */
+/**
+ * The server can't tell the screen's width, so the hub and the first page both render and CSS shows
+ * one. Nothing stands in for the first page while it loads: whose it is decides which page it is.
+ */
 export default async function SettingsPage() {
   const t = await getExtracted();
 
@@ -119,8 +101,9 @@ export default async function SettingsPage() {
         </Suspense>
       </Page>
 
-      <div className="max-w-form hidden md:block">
-        <Suspense fallback={<SettingsHubSkeleton />}>
+      {/* Not a box of its own, so the first page sits in the section like on its own URL. */}
+      <div className="hidden md:contents">
+        <Suspense fallback={null}>
           <FirstSettingsPage />
         </Suspense>
       </div>

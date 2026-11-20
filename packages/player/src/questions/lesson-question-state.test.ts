@@ -618,6 +618,7 @@ function planChange(overrides: Partial<PlanChangeView>): PlanChangeView {
     lessonsSkipped: 0,
     officialDate: null,
     operations: [{ kind: "setDailyMinutes", minutes: 60 }],
+    quote: "quote",
     reason: "One hour a day.",
     seen: false,
     source: "planEdit",

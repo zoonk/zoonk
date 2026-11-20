@@ -21,11 +21,11 @@ class GuessScaleTest {
     }
 
     @Test
-    fun ticksShowPowersOfTenOrRoundSteps() {
-        assertEquals(listOf(1.0, 10.0, 100.0, 1000.0), log.ticks())
+    fun ticksLabelBothEndsWithPowersOfTenOrRoundStepsBetween() {
+        assertEquals(listOf(1.0, 10.0, 100.0, 1000.0, 3650.0), log.ticks())
         assertEquals(listOf(0.0, 25.0, 50.0, 75.0, 100.0), linear.ticks())
         assertEquals(listOf(-5.0, 0.0, 5.0, 7.0), belowZero.ticks())
-        assertEquals(listOf(1.0, 100.0, 10_000.0, 1_000_000.0, 100_000_000.0), GuessScale(1.0, 1e9, log = true).ticks())
+        assertEquals(listOf(1.0, 100.0, 10_000.0, 1_000_000.0, 100_000_000.0, 1e9), GuessScale(1.0, 1e9, log = true).ticks())
         assertEquals(listOf(2.0, 9.0), GuessScale(2.0, 9.0, log = true).ticks())
     }
 
@@ -42,8 +42,13 @@ class GuessScaleTest {
         assertEquals(GuessComparison.Close, compareGuess(actual = 11.57, guess = 11.6, isCorrect = true))
         assertEquals(GuessComparison.TooBig(3.5), compareGuess(actual = 11.57, guess = 40.0, isCorrect = false))
         assertEquals(GuessComparison.TooSmall(5.8), compareGuess(actual = 11.57, guess = 2.0, isCorrect = false))
-        assertEquals(GuessComparison.Off(1.4299999999999997), compareGuess(actual = 11.57, guess = 13.0, isCorrect = false))
+        assertEquals(GuessComparison.Off(13.0 - 11.6), compareGuess(actual = 11.57, guess = 13.0, isCorrect = false))
         assertEquals(GuessComparison.Off(5.0), compareGuess(actual = -3.0, guess = 2.0, isCorrect = false))
+    }
+
+    @Test
+    fun theGuessDifferenceUsesTheDisplayedValues() {
+        assertEquals(GuessComparison.Off(10.0 - 11.6), compareGuess(actual = 11.57, guess = 10.0, isCorrect = false))
     }
 
     @Test

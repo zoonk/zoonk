@@ -5,17 +5,16 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSentenceSpace } from "../_utils/locale";
-import {
-  type FullTimeNote,
-  type TimeLine,
-  type TimeOffer,
-  isBusyLine,
-} from "../_utils/time-answer";
+import { type TimeLine, type TimeOffer, isBusyLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { LineWords } from "./time-answer-lines";
-import { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
+import { type GoalDate } from "./time-answer-texts";
 
 export { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
+
+/** An answer under the time, beside the plan's other answers: it wraps where a language runs long. */
+export const TIME_ANSWER_BUTTON_CLASS =
+  "text-foreground h-auto min-h-7.5 max-w-full self-start py-1 text-left whitespace-normal";
 
 const FAILED_KINDS = new Set<TimeLine["kind"]>(["askFailed", "findFailed"]);
 
@@ -37,81 +36,20 @@ function OfferLabel({ offer }: { offer: TimeOffer }) {
 
   switch (offer.kind) {
     case "everything":
-      return t("Use {time} a day to cover everything", { time });
-    case "focus":
-      return t("Use the suggested {time} a day", { time });
-    case "full":
-      return t({
-        description: "A button that changes the plan's daily time to the one just found.",
-        message: "Use {time} a day",
-        values: { time },
-      });
+      return t("Use {time} to cover everything", { time });
+    case "suggested":
+      return t("Use the suggested {time}", { time });
+    case "more":
+      return t("Use {time} to cover more", { time });
     default:
       return offer.kind satisfies never;
   }
 }
 
-function OfferAction({
-  offer,
-  offerAs,
-  onUseOffer,
-}: {
-  offer: TimeOffer;
-  offerAs: "button" | "link";
-  onUseOffer: (minutes: number) => void;
-}) {
-  return offerAs === "link" ? (
-    <Button onClick={() => onUseOffer(offer.minutes)} variant="link">
-      <OfferLabel offer={offer} />
-    </Button>
-  ) : (
-    <Button
-      className="text-foreground self-start"
-      onClick={() => onUseOffer(offer.minutes)}
-      size="sm"
-      variant="outline"
-    >
-      <OfferLabel offer={offer} />
-    </Button>
-  );
-}
-
-function NoteWords({
-  date,
-  note,
-  noteStatus,
-}: {
-  date: GoalDate | null;
-  note: FullTimeNote | null;
-  noteStatus: "failed" | "finding" | null;
-}) {
-  const t = useExtracted();
-  const texts = useTimeAnswerTexts();
-  const space = useSentenceSpace();
-
-  if (date && note?.kind === "takes") {
-    return (
-      <p>
-        {texts.everythingTakes({ date, full: note.full })}
-        {note.moreDays && (
-          <>
-            {space}
-            {texts.moreDays}
-          </>
-        )}
-      </p>
-    );
-  }
-
-  if (noteStatus === "finding") {
-    return <p>{t("Working out the time your goal needs…")}</p>;
-  }
-
-  return noteStatus === "failed" ? (
-    <p>{t("We couldn't work out the time your goal needs.")}</p>
-  ) : null;
-}
-
+/**
+ * What the time picked gets the learner: one line under the picker, whose number is its subject,
+ * and at most one answer that names another time.
+ */
 export function TimeAnswer({
   action,
   aim = null,
@@ -119,10 +57,7 @@ export function TimeAnswer({
   exam,
   line,
   minutes,
-  note,
-  noteStatus = null,
   offer,
-  offerAs = "link",
   onRetry,
   onUseOffer,
   split = null,
@@ -135,71 +70,66 @@ export function TimeAnswer({
   exam: boolean;
   line: TimeLine;
   minutes: number | null;
-  note: FullTimeNote | null;
-  noteStatus?: "failed" | "finding" | null;
   offer: TimeOffer | null;
-  offerAs?: "button" | "link";
   onRetry: () => void;
   onUseOffer: (minutes: number) => void;
   split?: DaySplit | null;
   updating?: boolean;
 }) {
   const t = useExtracted();
-  const texts = useTimeAnswerTexts();
   const space = useSentenceSpace();
-  const failed = FAILED_KINDS.has(line.kind) || noteStatus === "failed";
+  const failed = FAILED_KINDS.has(line.kind);
   const offered = offer && !failed ? offer : null;
 
   return (
-    <div className="flex min-h-12 flex-col gap-2 sm:min-h-0">
-      <div
-        aria-busy={updating || isBusyLine(line) || noteStatus === "finding"}
+    <div className="flex min-h-15 flex-col gap-2 sm:min-h-10">
+      <p
+        aria-busy={updating || isBusyLine(line)}
         aria-live="polite"
         className={cn(
-          "text-muted-foreground flex flex-col gap-2 text-sm leading-6 text-pretty transition-opacity",
+          "text-muted-foreground flex flex-col gap-2 text-sm text-pretty transition-opacity",
           updating && "opacity-50",
         )}
       >
-        <NoteWords date={date} note={note} noteStatus={noteStatus} />
-
-        <p>
+        <span>
           <LineWords aim={aim} date={date} exam={exam} line={line} minutes={minutes} />
+        </span>
 
-          {note?.kind === "tooLong" && (
-            <>
-              {space}
-              {texts.tooLong}
-            </>
-          )}
-
-          {split && (
-            <>
-              {space}
-              <DaySplitWords split={split} />
-            </>
-          )}
-
-          {failed && (
-            <>
-              {space}
-              <Button onClick={onRetry} variant="link">
-                {t("Try again")}
-              </Button>
-            </>
-          )}
-
-          {offered && offerAs === "link" && (
-            <>
-              {space}
-              <OfferAction offer={offered} offerAs={offerAs} onUseOffer={onUseOffer} />
-            </>
-          )}
-        </p>
-
-        {offered && offerAs === "button" && (
-          <OfferAction offer={offered} offerAs={offerAs} onUseOffer={onUseOffer} />
+        {split && (
+          <>
+            {space}
+            <DaySplitWords split={split} />
+          </>
         )}
-      </div>
+
+        {failed && (
+          <>
+            {space}
+            <Button
+              className={TIME_ANSWER_BUTTON_CLASS}
+              onClick={onRetry}
+              size="sm"
+              variant="outline"
+            >
+              {t("Try again")}
+            </Button>
+          </>
+        )}
+
+        {offered && (
+          <>
+            {space}
+            <Button
+              className={TIME_ANSWER_BUTTON_CLASS}
+              onClick={() => onUseOffer(offered.minutes)}
+              size="sm"
+              variant="outline"
+            >
+              <OfferLabel offer={offered} />
+            </Button>
+          </>
+        )}
+      </p>
 
       {action}
     </div>

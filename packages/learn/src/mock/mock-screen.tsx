@@ -1,7 +1,6 @@
 "use client";
 
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { TimerOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -15,7 +14,7 @@ import { MockBreak } from "./mock-break";
 import { useRefreshPastMockDeadline } from "./mock-clock";
 import { type MockActions, type MockHrefs, MockProvider, useMockScreen } from "./mock-context";
 import { MockExpired } from "./mock-expired";
-import { MockEyebrow, MockFrame, MockStepStatus } from "./mock-frame";
+import { MockEyebrow, MockFrame } from "./mock-frame";
 import { MockResultView } from "./mock-result-view";
 import { MockRunnerView } from "./mock-runner-view";
 import { MockSpeakingView } from "./mock-speaking";
@@ -35,22 +34,23 @@ function MockGrading() {
   return (
     <MockFrame
       footer={
-        <>
-          <MockStepStatus />
-          <TaskActions>
-            <TaskMainButton
-              busy={runner.busy === "finish"}
-              disabled={runner.pending}
-              onClick={() => void runner.finish()}
-              {...FORWARD_ICON}
-            >
-              {t("See how it went")}
-            </TaskMainButton>
-          </TaskActions>
-        </>
+        <TaskActions>
+          <TaskMainButton
+            busy={runner.busy === "finish"}
+            disabled={runner.pending}
+            onClick={() => void runner.finish()}
+          >
+            {t("See result")}
+          </TaskMainButton>
+        </TaskActions>
       }
     >
-      <StepTitle>{t("Mock exam handed in")}</StepTitle>
+      <StepCard>
+        <StepHeader>
+          <StepTitle>{t("Mock exam handed in")}</StepTitle>
+          <StepDetail>{t("Your answers are saved.")}</StepDetail>
+        </StepHeader>
+      </StepCard>
     </MockFrame>
   );
 }
@@ -61,25 +61,21 @@ function MockTimeUp() {
   const { actions, runner } = useMockScreen();
   const isLast = runner.view.current?.section === runner.view.sections.length - 1;
   const handingIn = runner.busy === "submit";
-  const action = isLast ? t("See how it went") : t("Continue");
+  const action = isLast ? t("See result") : t("Continue");
   useRefreshPastMockDeadline({ deadline: runner.view.current?.deadline, refresh: actions.refresh });
 
   return (
     <MockFrame
       footer={
-        <>
-          <MockStepStatus />
-          <TaskActions>
-            <TaskMainButton
-              busy={handingIn}
-              disabled={runner.pending}
-              onClick={() => void runner.submitSection()}
-              {...FORWARD_ICON}
-            >
-              {action}
-            </TaskMainButton>
-          </TaskActions>
-        </>
+        <TaskActions>
+          <TaskMainButton
+            busy={handingIn}
+            disabled={runner.pending}
+            onClick={() => void runner.submitSection()}
+          >
+            {action}
+          </TaskMainButton>
+        </TaskActions>
       }
     >
       <StepCard>
@@ -88,9 +84,7 @@ function MockTimeUp() {
         <StepHeader>
           <MockEyebrow />
           <StepTitle>{t("Time's up")}</StepTitle>
-          {runner.saveStatus === "saved" && (
-            <StepDetail>{t("Your answers so far are saved.")}</StepDetail>
-          )}
+          {runner.saveStatus === "saved" && <StepDetail>{t("Your answers are saved.")}</StepDetail>}
         </StepHeader>
       </StepCard>
     </MockFrame>

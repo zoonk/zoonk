@@ -1,95 +1,89 @@
 "use client";
 
-import { type CompletedLesson } from "@zoonk/core/completed-lessons/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import {
+  COMPLETED_LESSON_PAGE_SIZE,
+  type CompletedLesson,
+  type CompletedLessonFilter,
+} from "@zoonk/core/completed-lessons/contract";
+import { Button } from "@zoonk/ui/components/button";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
-import { daysBetweenIsoDays } from "@zoonk/utils/calendar-day";
-import { useExtracted, useFormatter } from "next-intl";
-import { DetailContent, DetailLayout } from "../_components/detail-page";
+import { useExtracted } from "next-intl";
+import { useState } from "react";
+import { DetailAsideSection, DetailContent, DetailLayout } from "../_components/detail-page";
 import {
   LIST_GROUP_CLASS,
+  ListRowBody,
   ListRowContent,
   ListRowDescription,
   ListRowLink,
   ListRowTitle,
+  ListRowTrailing,
 } from "../_components/list-group";
-import {
-  INBOX_PAGE_CLASS,
-  PageEyebrow,
-  PageSection,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "../_components/page";
-import { LearnLink } from "../learn-link";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { PageTab, PageTabsColumn, PageTabsGroup, PageTabsScroll } from "../_components/page-tabs";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { LearnPageBar } from "../shell/learn-bar";
 
-export type CompletedLessonsHrefs = { back: string; lesson: (lessonId: string) => string };
+export type CompletedLessonsHrefs = {
+  back: string;
+  /** The page with only one group's lessons; null is every lesson. */
+  group: (key: string | null) => string;
+  lesson: (lessonId: string) => string;
+};
 
-function groupByDay(lessons: readonly CompletedLesson[]) {
-  return [...Map.groupBy(lessons, (lesson) => lesson.finishedOn).entries()];
+const GROUPS_TITLE_ID = "completed-lessons-groups";
+
+const MONTH_LENGTH = "YYYY-MM".length;
+
+function groupByMonth(lessons: readonly CompletedLesson[]) {
+  return [...Map.groupBy(lessons, (lesson) => lesson.finishedOn.slice(0, MONTH_LENGTH)).entries()];
 }
 
-function readIsoDay(day: string): Date {
-  return new Date(`${day}T00:00:00Z`);
-}
-
-/** Both days are learner-local `YYYY-MM-DD`, read at UTC midnight so no time zone moves them. */
-function useDayTitle(today: string) {
+function useGroupsTitle(kind: CompletedLessonFilter["kind"]): string {
   const t = useExtracted();
-  const format = useFormatter();
 
-  return (day: string): string => {
-    const daysAgo = daysBetweenIsoDays({ from: day, to: today });
+  if (kind === "subjects") {
+    return t("Subjects");
+  }
 
-    if (daysAgo === 0) {
-      return t("Today");
-    }
-
-    if (daysAgo === 1) {
-      return t("Yesterday");
-    }
-
-    const date = readIsoDay(day);
-    const thisYear = date.getUTCFullYear() === readIsoDay(today).getUTCFullYear();
-
-    return format.dateTime(date, {
-      day: "numeric",
-      month: "long",
-      timeZone: "UTC",
-      weekday: "long",
-      ...(!thisYear && { year: "numeric" }),
-    });
-  };
+  return kind === "modules" ? t("Modules") : t("Phases");
 }
 
 function LessonRow({ href, lesson }: { href: string; lesson: CompletedLesson }) {
+  const formatDate = useFormatIsoDate();
+
   return (
     <ListRowLink href={href} lessonWritten prefetch="intent">
-      <ListRowContent>
-        <ListRowTitle>{lesson.title}</ListRowTitle>
-        {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
-      </ListRowContent>
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>{lesson.title}</ListRowTitle>
+          {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
+        </ListRowContent>
+        <ListRowTrailing>{formatDate(lesson.finishedOn)}</ListRowTrailing>
+      </ListRowBody>
     </ListRowLink>
   );
 }
 
-function DaySection({
-  day,
+/** Each lesson's day ends its row, so a month's lessons read as one list however few a day has. */
+function MonthSection({
   hrefs,
   lessons,
-  title,
+  month,
 }: {
-  day: string;
   hrefs: CompletedLessonsHrefs;
   lessons: readonly CompletedLesson[];
-  title: string;
+  month: string;
 }) {
-  const titleId = `completed-lessons-${day}`;
+  const formatDate = useFormatIsoDate();
+  const titleId = `completed-lessons-${month}`;
 
   return (
     <PageSection aria-labelledby={titleId}>
       <PageSectionHeader>
-        <PageSectionTitle id={titleId}>{title}</PageSectionTitle>
+        <PageSectionTitle className="first-letter:uppercase" id={titleId}>
+          {formatDate(`${month}-01`, "sentenceMonth")}
+        </PageSectionTitle>
       </PageSectionHeader>
 
       <ul className={LIST_GROUP_CLASS}>
@@ -103,62 +97,152 @@ function DaySection({
   );
 }
 
-export function CompletedLessonsScreen({
-  goalTitle,
+/** The list switches on the page, which already holds every lesson, so nothing loads or moves. */
+function showGroup(href: string) {
+  globalThis.history.pushState(null, "", href);
+}
+
+function GroupTabs({
+  current,
+  filter,
   hrefs,
-  lessons,
-  moreHref,
-  today,
+  row = false,
 }: {
-  goalTitle: string;
+  current: string | null;
+  filter: CompletedLessonFilter;
   hrefs: CompletedLessonsHrefs;
-  lessons: readonly CompletedLesson[];
-  moreHref: string | null;
-  today: string;
+  row?: boolean;
 }) {
   const t = useExtracted();
-  const dayTitle = useDayTitle(today);
+
+  const tabs: { key: string | null; lessons: number; name: string }[] = [
+    {
+      key: null,
+      lessons: filter.total,
+      name: t({
+        description:
+          "The first choice of the filter on Completed lessons, before the subjects: every lesson.",
+        id: "completedLessonsAll",
+        message: "All",
+      }),
+    },
+    ...filter.groups,
+  ];
+
+  return tabs.map((tab) => (
+    <PageTab
+      count={tab.lessons}
+      current={tab.key === current}
+      href={hrefs.group(tab.key)}
+      key={tab.key ?? ""}
+      onSelect={() => showGroup(hrefs.group(tab.key))}
+      row={row}
+    >
+      {tab.name}
+    </PageTab>
+  ));
+}
+
+/** A new group starts from its newest lessons again. */
+function LessonMonths({
+  hrefs,
+  lessons,
+}: {
+  hrefs: CompletedLessonsHrefs;
+  lessons: readonly CompletedLesson[];
+}) {
+  const t = useExtracted();
+  const [shown, setShown] = useState(COMPLETED_LESSON_PAGE_SIZE);
+
+  return (
+    <>
+      {groupByMonth(lessons.slice(0, shown)).map(([month, monthLessons]) => (
+        <MonthSection hrefs={hrefs} key={month} lessons={monthLessons} month={month} />
+      ))}
+
+      {lessons.length > shown && (
+        <Button
+          className="self-start"
+          onClick={() => setShown(shown + COMPLETED_LESSON_PAGE_SIZE)}
+          variant="outline"
+        >
+          {t("Show more")}
+        </Button>
+      )}
+    </>
+  );
+}
+
+export function CompletedLessonsScreen({
+  filter,
+  group,
+  hrefs,
+  lessons,
+}: {
+  filter: CompletedLessonFilter | null;
+  /** The group in the page's address, which picking one changes in place. */
+  group: string | null;
+  hrefs: CompletedLessonsHrefs;
+  lessons: readonly CompletedLesson[];
+}) {
+  const t = useExtracted();
+  const groupsTitle = useGroupsTitle(filter?.kind ?? "subjects");
+  const current = filter?.groups.find((candidate) => candidate.key === group)?.key ?? null;
+  const listed = current ? lessons.filter((lesson) => lesson.group === current) : lessons;
+
+  const list = (
+    <DetailContent>
+      {lessons.length === 0 && (
+        <p className="text-muted-foreground text-sm text-pretty">
+          {t("Lessons you finish show up here, so you can do them again anytime.")}
+        </p>
+      )}
+
+      <LessonMonths hrefs={hrefs} key={current} lessons={listed} />
+    </DetailContent>
+  );
 
   return (
     <DetailLayout
-      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Completed lessons")} />}
-      className={INBOX_PAGE_CLASS}
+      aside={
+        filter && (
+          <DetailAsideSection title={groupsTitle} titleId={GROUPS_TITLE_ID}>
+            <PageTabsColumn label={groupsTitle}>
+              <GroupTabs current={current} filter={filter} hrefs={hrefs} row />
+            </PageTabsColumn>
+          </DetailAsideSection>
+        )
+      }
+      asideClassName="max-[72rem]:hidden"
+      asideLabel={groupsTitle}
+      bar={
+        <LearnPageBar
+          back={{ href: hrefs.back }}
+          // The sidebar lists the page once a lesson is done: the same runs this list reads.
+          listed={lessons.length > 0 ? "learner" : undefined}
+          root
+          title={t("Completed lessons")}
+        />
+      }
       data-slot="completed-lessons"
+      measure="list"
     >
       <DetailHero>
         <DetailHeroText>
-          <PageEyebrow>{goalTitle}</PageEyebrow>
           <DetailTitle>{t("Completed lessons")}</DetailTitle>
         </DetailHeroText>
       </DetailHero>
 
-      <DetailContent>
-        {lessons.length === 0 && (
-          <p className="text-muted-foreground text-sm text-pretty">
-            {t("Lessons you finish show up here, so you can do them again anytime.")}
-          </p>
-        )}
-
-        {groupByDay(lessons).map(([day, dayLessons]) => (
-          <DaySection
-            day={day}
-            hrefs={hrefs}
-            key={day}
-            lessons={dayLessons}
-            title={dayTitle(day)}
-          />
-        ))}
-
-        {moreHref && (
-          <LearnLink
-            className={buttonVariants({ className: "self-start", variant: "outline" })}
-            href={moreHref}
-            scroll={false}
-          >
-            {t("Show more")}
-          </LearnLink>
-        )}
-      </DetailContent>
+      {filter ? (
+        <PageTabsGroup className="min-[72rem]:mt-0">
+          <PageTabsScroll className="min-[72rem]:hidden" label={groupsTitle}>
+            <GroupTabs current={current} filter={filter} hrefs={hrefs} />
+          </PageTabsScroll>
+          {list}
+        </PageTabsGroup>
+      ) : (
+        list
+      )}
     </DetailLayout>
   );
 }

@@ -48,7 +48,7 @@ export const citeMaterialTask: Task<CiteMaterialInput, CiteMaterialOutput, CiteM
     "Pick the page each lesson screen teaches from: the learner's own material, or the official documents a shared lesson's facts come from",
   generate: citeMaterial,
   id: "cite-material",
-  name: "Cite Material",
+  name: "Cite material",
   score: scoreCiteMaterial,
   testCases: TEST_CASES,
 };

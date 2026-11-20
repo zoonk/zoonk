@@ -13,12 +13,13 @@ struct SearchScreen: View {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @State private var query = ""
   @State private var isFeedbackPresented = false
-  @State private var switchFailed = false
-  @State private var isSwitchingGoal = false
+  @State private var goalSwitch = GoalSwitch()
+  @ScaledMetric(relativeTo: .subheadline) private var symbolSize = 16.0
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
+        header
         groupSections(leadingGroups)
       }
     } secondary: {
@@ -29,12 +30,13 @@ struct SearchScreen: View {
       }
     } single: {
       ZoonkList {
+        header
         groupSections(groups)
         catalogSection
         groupSections(fallback.map { [$0] } ?? [])
       }
     }
-    .navigationTitle(Text(AppTab.search.title))
+    .modifier(SearchTitle(isFieldPinned: horizontalSizeClass == .compact))
     // On a phone the tab bar doesn't turn the search tab into a field, so it stays under the
     // title; wider windows keep the system's place in the bar, which leaves the tabs reachable.
     .searchable(
@@ -56,8 +58,9 @@ struct SearchScreen: View {
       Text(
         "We couldn't switch goals. Try again.", tableName: "Search",
         comment: "Switching to another goal from search didn't go through"),
-      isPresented: $switchFailed
+      isPresented: Bindable(goalSwitch).failed
     ) {}
+    .onDisappear { goalSwitch.leave() }
   }
 
   /// Before a query, the places to go face what the learner can do. A query's own matches face the
@@ -78,6 +81,17 @@ struct SearchScreen: View {
     groups.isEmpty ? [] : fallback.map { [$0] } ?? []
   }
 
+  /// On a phone the field is pinned under the bar, so the bar names the page; a header under the
+  /// field would head nothing.
+  @ViewBuilder
+  private var header: some View {
+    if horizontalSizeClass != .compact {
+      Section {
+        PageHeader(Text(AppTab.search.title))
+      }
+    }
+  }
+
   private func groupSections(_ groups: [SearchGroup]) -> some View {
     ForEach(groups) { group in
       Section {
@@ -85,7 +99,20 @@ struct SearchScreen: View {
           Button {
             perform(item.action)
           } label: {
-            Label(item.title, systemImage: item.systemImage)
+            ListRow(Text(item.title)) {
+              if item.id == "buddy" {
+                BuddyCharacter(
+                  look: learner.summary.value?.buddy ?? BuddyLook(), expression: .happy, crop: .face
+                )
+                .frame(width: 20, height: 20)
+              } else {
+                Image(systemName: item.systemImage)
+                  .resizable()
+                  .scaledToFit()
+                  .fontWeight(.medium)
+                  .frame(width: symbolSize, height: symbolSize)
+              }
+            }
           }
           .badge(item.badge)
           .foregroundStyle(.primary)
@@ -206,24 +233,7 @@ struct SearchScreen: View {
     case .feedback:
       isFeedbackPresented = true
     case .switchGoal(let goalID):
-      guard !isSwitchingGoal else {
-        return
-      }
-
-      isSwitchingGoal = true
-
-      Task {
-        defer { isSwitchingGoal = false }
-
-        switch await learner.switchGoal(to: goalID) {
-        case .done:
-          router.showRoot(of: .today)
-        case .failed:
-          switchFailed = true
-        case .obsolete:
-          break
-        }
-      }
+      goalSwitch.start(goalID, learner: learner, router: router)
     }
   }
 }
@@ -238,5 +248,17 @@ private struct SearchGroupLabel: View {
       .typeStyle(.label)
       .foregroundStyle(.faint)
       .accessibilityAddTraits(.isHeader)
+  }
+}
+
+private struct SearchTitle: ViewModifier {
+  let isFieldPinned: Bool
+
+  func body(content: Content) -> some View {
+    if isFieldPinned {
+      content.navigationTitle(Text(AppTab.search.title))
+    } else {
+      content.barTitleAfterHero(String(localized: AppTab.search.title))
+    }
   }
 }

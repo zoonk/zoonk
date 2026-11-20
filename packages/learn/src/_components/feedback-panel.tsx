@@ -4,6 +4,12 @@ import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 
 export type FeedbackTone = "almost" | "neutral" | "right" | "wrong";
 
+/**
+ * A glyph that starts a line in the card: its ink on the card's text edge (craft E2), and the words
+ * after it on one edge whatever the glyph, so "Correct!", "Not quite" and a tip start together.
+ */
+export const FEEDBACK_MARKER_CLASS = "edge -ms-(--edge-start) me-(--edge-start)";
+
 const TONE_CLASS: Readonly<Record<FeedbackTone, string>> = {
   almost: "text-warning-text",
   neutral: "text-foreground",
@@ -53,12 +59,14 @@ export function FeedbackVerdict({
     <div className={cn("flex items-start justify-between gap-3", className)}>
       <p
         className={cn(
-          "flex items-start gap-2 text-[0.9375rem] leading-6 font-[550] [&_svg]:size-4",
+          "text-reading flex items-start gap-2 leading-6 font-medium [&_svg]:size-4",
           TONE_CLASS[tone],
         )}
         data-slot="feedback-verdict"
       >
-        <LineMarker>{icon ?? <ToneGlyph tone={tone} />}</LineMarker>
+        <LineMarker className={FEEDBACK_MARKER_CLASS}>
+          {icon ?? <ToneGlyph tone={tone} />}
+        </LineMarker>
         {children}
       </p>
 
@@ -74,11 +82,19 @@ export function FeedbackVerdict({
 export function FeedbackExplanation({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("text-foreground text-sm leading-relaxed", className)}
+      className={cn("text-foreground text-sm leading-relaxed text-pretty", className)}
       data-slot="feedback-explanation"
       {...props}
     />
   );
+}
+
+export function FeedbackAnswerLabel({ className, ...props }: React.ComponentProps<"span">) {
+  return <span className={cn("text-muted-foreground", className)} {...props} />;
+}
+
+export function FeedbackAnswerValue({ className, ...props }: React.ComponentProps<"span">) {
+  return <span className={cn("text-success-text font-medium", className)} {...props} />;
 }
 
 export function FeedbackNote({ className, ...props }: React.ComponentProps<"p">) {

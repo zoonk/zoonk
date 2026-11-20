@@ -3,7 +3,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -18,6 +18,7 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 
 const fixtures = activityContentFixtures;
 
@@ -41,8 +42,13 @@ const chainQuestion = {
   ]),
 };
 
-const { calculator, scenario } = engineModeFixtures.formulaModel;
+const { calculator, scenario, simulation } = engineModeFixtures.formulaModel;
 const { breakEven } = engineModeFixtures.lineCrossing;
+
+function sliderTop(name: string): number {
+  const slider = page.getByRole("slider", { name }).element();
+  return slider.getBoundingClientRect().top - slider.closest("figure")!.getBoundingClientRect().top;
+}
 
 function chartLabels() {
   return [...document.querySelectorAll("figure svg text")].map((text) => ({
@@ -101,6 +107,18 @@ function openWithWrongPassage() {
 }
 
 describe("money and society activities", () => {
+  it("keeps the extra payment slider in place when the comparison appears", async () => {
+    openActivity({ content: calculator, template: "formulaModel" });
+    const slider = page.getByRole("slider", { name: "Extra per month" });
+    await expect.element(slider).toBeVisible();
+
+    const top = slider.element().getBoundingClientRect().top;
+    await pressOnSlider("Extra per month", "ArrowRight", 4);
+    await expect.element(valueInput()).toHaveValue("251.54");
+
+    expect(slider.element().getBoundingClientRect().top).toBeCloseTo(top, 0);
+  });
+
   it("formula model calculator: moving the extra payment gives the months to check", async () => {
     openActivity({ content: calculator, template: "formulaModel" });
     await pressOnSlider("Extra per month", "ArrowRight", 4);
@@ -109,6 +127,28 @@ describe("money and society activities", () => {
     await expect.element(page.getByText(/^−[\d.]+ from the start$/u)).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("keeps the speed slider in place when the starting curve appears", async () => {
+    openActivity({ content: simulation, template: "formulaModel" });
+    await expect.element(page.getByRole("slider", { name: "Speed" })).toBeVisible();
+
+    const top = sliderTop("Speed");
+    await pressOnSlider("Speed", "ArrowRight", 1);
+    await expect.element(page.getByText("At the start", { exact: true })).toBeVisible();
+
+    expect(sliderTop("Speed")).toBeCloseTo(top, 0);
+  });
+
+  it("keeps the price slider in place when the rent event changes the curve", async () => {
+    openActivity({ content: scenario, template: "formulaModel" });
+    await expect.element(page.getByRole("slider", { name: "Price per cup" })).toBeVisible();
+
+    const top = sliderTop("Price per cup");
+    await page.getByRole("switch", { name: "Rent goes up $500" }).click();
+    await expect.element(page.getByText("Before", { exact: true })).toBeVisible();
+
+    expect(sliderTop("Price per cup")).toBeCloseTo(top, 0);
   });
 
   it("formula model calculator: a number that isn't the model's is wrong", async () => {
@@ -120,34 +160,34 @@ describe("money and society activities", () => {
 
   it("formula model what-ifs: the rent event and the price give the profit", async () => {
     openActivity({ content: scenario, template: "formulaModel" });
-    await page.getByRole("button", { name: "Rent goes up $500" }).click();
+    await page.getByRole("switch", { name: "Rent goes up $500" }).click();
 
     await expect
-      .element(page.getByRole("button", { name: "Rent goes up $500" }))
-      .toHaveAttribute("aria-pressed", "true");
+      .element(page.getByRole("switch", { name: "Rent goes up $500" }))
+      .toHaveAttribute("aria-checked", "true");
 
     await pressOnSlider("Price per cup", "ArrowRight", 2);
     await expect.element(page.getByText("$1,500 before", { exact: true })).toBeVisible();
-    await expect.element(valueInput()).toHaveValue("1000");
+    await expect.element(valueInput()).toHaveValue("1,000");
     await checkActivity();
     await expectVerdict("Correct!");
   });
 
   it("formula model what-ifs: the right answer's label stays clear of the other chart labels", async () => {
     openActivity({ content: scenario, template: "formulaModel" });
-    await page.getByRole("button", { name: "Rent goes up $500" }).click();
+    await page.getByRole("switch", { name: "Rent goes up $500" }).click();
     await pressOnSlider("Price per cup", "ArrowRight", 2);
     await checkActivity();
     await expectVerdict("Correct!");
 
-    await expect.poll(() => chartLabels().map((label) => label.text)).toContain("1,000");
-    expect(labelsOver("1,000")).toStrictEqual([]);
+    await expect.poll(() => chartLabels().map((label) => label.text)).toContain("$1,000");
+    expect(labelsOver("$1,000")).toStrictEqual([]);
   });
 
   it("formula model what-ifs: leaving the event off gives the wrong profit", async () => {
     openActivity({ content: scenario, template: "formulaModel" });
     await pressOnSlider("Price per cup", "ArrowRight", 2);
-    await expect.element(valueInput()).toHaveValue("1500");
+    await expect.element(valueInput()).toHaveValue("1,500");
     await checkActivity();
     await expectVerdict("Not quite");
   });
@@ -155,10 +195,22 @@ describe("money and society activities", () => {
   it("line crossing: moving supply left explains the spike", async () => {
     openActivity({ template: "lineCrossing" });
     await pressOnSlider("Move the line Supply", "ArrowLeft", 1);
-    await expect.element(page.getByText("Price per dozen goes up.", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("Eggs sold goes down.", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Price per dozen: up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Eggs sold: down", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("line crossing: a time axis uses the generic direction wording", async () => {
+    const crossing = fixtures.lineCrossing;
+
+    openActivity({
+      content: { ...crossing, fields: { ...crossing.fields, xLabel: "Time (s)" } },
+      template: "lineCrossing",
+    });
+
+    await pressOnSlider("Move the line Supply", "ArrowLeft", 1);
+    await expect.element(page.getByText("Time (s): down", { exact: true })).toBeVisible();
   });
 
   it("line crossing: moving demand gets the wrong-line feedback", async () => {
@@ -172,8 +224,15 @@ describe("money and society activities", () => {
 
   it("line crossing: moving the cost line up gives the new break-even", async () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
+    await expect.element(page.getByRole("slider", { name: "Move the line Cost" })).toBeVisible();
+    const plot = document.querySelector('[data-slot="activity-plot"]');
+
+    expect(
+      [...(plot?.querySelectorAll("text") ?? [])].map((text) => text.textContent),
+    ).toStrictEqual(expect.arrayContaining(["0", "100", "200", "300", "2,000", "4,000"]));
+
     await pressOnSlider("Move the line Cost", "ArrowUp", 4);
-    await expect.element(page.getByText("Lamps sold goes up.", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
     await expect.element(valueInput()).toHaveValue("250");
     await checkActivity();
     await expectVerdict("Correct!");
@@ -181,7 +240,7 @@ describe("money and society activities", () => {
 
   it("line crossing: the drag hint goes once the answer is checked", async () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
-    const hint = page.getByText("Drag a line by its handle, or use the arrow keys.");
+    const hint = page.getByText("Drag a line up or down by its handle, or use the arrow keys.");
     await expect.element(hint).toBeVisible();
     await valueInput().fill("250");
     await checkActivity();
@@ -196,14 +255,14 @@ describe("money and society activities", () => {
 
     await expect
       .element(page.getByRole("slider", { name: "Moon landing" }))
-      .toHaveAttribute("aria-valuetext", "2000 CE");
+      .toHaveAttribute("aria-valuetext", "2000\u00A0CE");
 
     await page.getByRole("button", { name: "Place Cleopatra rules Egypt on the timeline" }).click();
 
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("about 2,000 years")).toBeVisible();
-    await expect.element(page.getByText("about 2,500 years")).toBeVisible();
+    await expect.element(page.getByText("about 2,000 years", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("about 2,500 years", { exact: true })).toBeVisible();
   });
 
   it("timeline: events in the wrong order are wrong, with the real dates", async () => {
@@ -217,7 +276,7 @@ describe("money and society activities", () => {
 
     await expect
       .element(page.getByRole("slider", { name: "Cleopatra rules Egypt" }))
-      .toHaveAttribute("aria-valuetext", "51 BCE. Your guess: 2000 CE");
+      .toHaveAttribute("aria-valuetext", "51\u00A0BCE. Your guess: 2000\u00A0CE");
   });
 
   it("timeline: with a question, the real dates show before answering", async () => {
@@ -232,12 +291,122 @@ describe("money and society activities", () => {
     await expectVerdict("Correct!");
   });
 
-  it("map explorer: tapping places uncovers what's there", async () => {
+  it("keeps the named street inside a narrow large-text map and clear of the pin faces", async () => {
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 1100, width: 320 }, async () => {
+      document.documentElement.style.fontSize = "200%";
+      expect(getComputedStyle(document.documentElement).fontSize).toBe("32px");
+      openActivity({ template: "mapExplorer" });
+      await expect.element(page.getByRole("button", { name: "Broad Street pump" })).toBeVisible();
+
+      await expect
+        .poll(
+          () =>
+            getComputedStyle(document.querySelector('[data-street-label="Broad Street"]')!)
+              .visibility,
+        )
+        .toBe("visible");
+
+      const map = document.querySelector('[data-slot="base-map"]')!.getBoundingClientRect();
+
+      const text = document.querySelector<SVGTextElement>('[data-street-label="Broad Street"]')!;
+      const label = text.getBoundingClientRect();
+      const matrix = text.getScreenCTM()!;
+      const mapMatrix = text.ownerSVGElement!.getScreenCTM()!;
+
+      expect(Math.hypot(matrix.a, matrix.b) / Math.hypot(mapMatrix.a, mapMatrix.b)).toBeCloseTo(
+        0.8,
+      );
+
+      const center = { x: (label.left + label.right) / 2, y: (label.top + label.bottom) / 2 };
+
+      const streets = [...document.querySelectorAll<SVGPathElement>("[data-street]")].map(
+        (path) => {
+          const pathMatrix = path.getScreenCTM()!;
+
+          const distance = Math.min(
+            ...Array.from({ length: 501 }, (_, index) => {
+              const at = path.getPointAtLength((path.getTotalLength() * index) / 500);
+              const point = new DOMPoint(at.x, at.y).matrixTransform(pathMatrix);
+              return Math.hypot(center.x - point.x, center.y - point.y);
+            }),
+          );
+
+          return { distance, name: path.dataset.street };
+        },
+      );
+
+      const own = streets.find((street) => street.name === "Broad Street")!;
+      expect(own.distance).toBeLessThanOrEqual(40);
+
+      const lineHeight = text.getBBox().height * Math.hypot(matrix.c, matrix.d);
+
+      const nearestOther = Math.min(
+        ...streets.filter((street) => street !== own).map((street) => street.distance),
+      );
+
+      expect(own.distance < 0.5 || own.distance + lineHeight / 2 <= nearestOther).toBe(true);
+
+      expect(label.left).toBeGreaterThanOrEqual(map.left);
+      expect(label.right).toBeLessThanOrEqual(map.right);
+      expect(label.top).toBeGreaterThanOrEqual(map.top);
+      expect(label.bottom).toBeLessThanOrEqual(map.bottom);
+
+      const column = text.closest(".max-w-column")!;
+      const gutter = Number(getComputedStyle(column).paddingLeft.replace("px", ""));
+      const pageBounds = column.getBoundingClientRect();
+      expect(gutter).toBeGreaterThanOrEqual(16);
+      expect(map.left).toBeGreaterThanOrEqual(pageBounds.left + gutter);
+      expect(map.right).toBeLessThanOrEqual(pageBounds.right - gutter);
+
+      const overlapsCircle = document.querySelector<SVGTextElement>(
+        '[data-street-label="Broad Street"]',
+      )?.dataset.pinCircleOverlap;
+
+      const guarded = [
+        ...document.querySelectorAll<HTMLElement>('[data-slot="map-pin"] > span'),
+      ].map((element) => {
+        const face = element.getBoundingClientRect();
+
+        if (!overlapsCircle) {
+          return face;
+        }
+
+        const style = getComputedStyle(element);
+        const context = document.createElement("canvas").getContext("2d")!;
+        context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+        const metrics = context.measureText(element.textContent!);
+        const width = metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight;
+        const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+        return {
+          bottom: (face.top + face.bottom + height) / 2,
+          left: (face.left + face.right - width) / 2,
+          right: (face.left + face.right + width) / 2,
+          top: (face.top + face.bottom - height) / 2,
+        };
+      });
+
+      for (const pin of guarded) {
+        expect(
+          label.right <= pin.left ||
+            pin.right <= label.left ||
+            label.bottom <= pin.top ||
+            pin.bottom <= label.top,
+        ).toBe(true);
+      }
+    });
+  });
+
+  it("keeps the explored map count visible after check", async () => {
     openActivity({ template: "mapExplorer" });
     await page.getByRole("button", { name: "Brewery on Broad Street" }).click();
-    await expect.element(page.getByText(/Over 70 workers and no cholera deaths/u)).toBeVisible();
+    await expect.element(page.getByText("Over 70 workers and no cholera deaths")).toBeVisible();
     await page.getByRole("button", { name: "Poland Street workhouse" }).click();
-    await expect.element(page.getByText(/535 people lived here/u)).toBeVisible();
+    await expect.element(page.getByText("535 people lived here")).toBeVisible();
     await expect.element(page.getByText("2 of 3 explored")).toBeVisible();
 
     await page
@@ -246,6 +415,7 @@ describe("money and society activities", () => {
 
     await checkActivity();
     await expectVerdict("Correct!");
+    await expect.element(page.getByText("2 of 3 explored")).toBeVisible();
   });
 
   it("map explorer: the wrong conclusion is marked wrong", async () => {
@@ -256,6 +426,26 @@ describe("money and society activities", () => {
     await expectVerdict("Not quite");
   });
 
+  it("cause and effect: the first link keeps the cards in place", async () => {
+    openActivity({ template: "causeEffectChain" });
+    const cause = chainNode("1920 Prairie plowed for wheat");
+    const effect = chainNode("1934 Dust storms");
+    const card = page.getByRole("figure");
+
+    const effectBounds = () => {
+      const { left, width } = effect.element().getBoundingClientRect();
+      return { left: left - card.element().getBoundingClientRect().left, width };
+    };
+
+    await expect.element(effect).toBeVisible();
+    const before = effectBounds();
+
+    await cause.click();
+    await effect.click();
+    await expect.element(page.getByText("1 of 2 links")).toBeVisible();
+    expect(effectBounds()).toStrictEqual(before);
+  });
+
   it("cause and effect: linking both causes to the storms is right", async () => {
     openActivity({ template: "causeEffectChain" });
     await chainNode("1920 Prairie plowed for wheat").click();
@@ -263,20 +453,54 @@ describe("money and society activities", () => {
     await chainNode("1931 Years of drought").click();
     await chainNode("1934 Dust storms").click();
     await expect.element(page.getByText("2 of 2 links")).toBeVisible();
+    const chain = page.getByRole("list", { name: "Causes and effects" });
+    const card = page.getByRole("figure");
+
+    const boardTop = () =>
+      chain.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    const top = boardTop();
+
     await checkActivity();
     await expectVerdict("Correct!");
+    expect(boardTop()).toBe(top);
+
+    await expect
+      .element(page.getByText("Linked: Years of drought led to Dust storms."))
+      .not.toBeVisible();
+
     await expect.element(page.getByText("Bare soil blew away.")).toBeVisible();
+  });
+
+  it("cause and effect: Check keeps the board in place without a link notice", async () => {
+    openActivity({ content: chainQuestion, template: "causeEffectChain" });
+    const instruction = page.getByText("Pick a cause, then pick what it led to.");
+    const chain = page.getByRole("list", { name: "Causes and effects" });
+    const card = page.getByRole("figure");
+
+    const boardTop = () =>
+      chain.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    await page.getByRole("radio", { name: "Plowing and drought together" }).click();
+    await expect.element(instruction).toBeVisible();
+    const top = boardTop();
+
+    await checkActivity();
+    await expectVerdict("Correct!");
+    expect(boardTop()).toBe(top);
+    await expect.element(instruction).not.toBeVisible();
   });
 
   it("cause and effect: a picked cause is named once, under the cards", async () => {
     openActivity({ template: "causeEffectChain" });
+    await expect.element(page.getByText("Pick a cause, then pick what it led to.")).toBeVisible();
     await chainNode("1920 Prairie plowed for wheat").click();
 
     await expect
       .element(page.getByText("Prairie plowed for wheat picked. Now pick what it led to."))
       .toBeVisible();
 
-    await expect.element(page.getByText("Pick a cause, then pick what it led to.")).toBeVisible();
+    await expectCount(page.getByText("Pick a cause, then pick what it led to."), 0);
   });
 
   it("cause and effect: a backward link is wrong and the missed ones show", async () => {
@@ -310,13 +534,13 @@ describe("money and society activities", () => {
     await expectVerdict("Correct!");
   });
 
-  it("source comparison: a right answer's legend says nothing was missed", async () => {
+  it("source comparison: a right answer has no legend, since the learner's marks are the answer", async () => {
     openActivity({ template: "sourceComparison" });
     await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
     await page.getByRole("checkbox", { name: "the rebels fired first" }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("What to mark", { exact: true })).toBeInTheDocument();
+    await expect.element(page.getByText("What to mark", { exact: true })).not.toBeInTheDocument();
     await expect.element(page.getByText("Missed", { exact: true })).not.toBeInTheDocument();
   });
 
@@ -349,8 +573,12 @@ describe("money and society activities", () => {
 describe("money and society activities by dragging", () => {
   it("timeline: dragging an event onto the axis places it where it's dropped", async () => {
     openActivity({ template: "timeline" });
-    const track = page.getByRole("figure");
-    await expect.element(track).toBeVisible();
+    const figure = page.getByRole("figure");
+    await expect.element(figure).toBeVisible();
+
+    const track = page.elementLocator(
+      figure.element().querySelector('[data-slot="timeline-track"]')!,
+    );
 
     await dragOnto(
       page.getByRole("button", { name: "Place Moon landing on the timeline" }),
@@ -367,7 +595,7 @@ describe("money and society activities by dragging", () => {
     openActivity({ template: "lineCrossing" });
     await dragBy(page.getByRole("slider", { name: "Move the line Supply" }), { x: -60, y: 0 });
 
-    await expect.element(page.getByText("Price per dozen goes up.", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Price per dozen: up", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
   });
@@ -376,7 +604,7 @@ describe("money and society activities by dragging", () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
     await dragBy(page.getByRole("slider", { name: "Move the line Cost" }), { x: 0, y: -40 });
 
-    await expect.element(page.getByText("Lamps sold goes up.", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
   });
 });
 
@@ -391,7 +619,7 @@ describe("money and society activities with a keyboard only", () => {
 
   it("formula model what-ifs", async () => {
     openActivity({ content: scenario, template: "formulaModel" });
-    await focusOn(page.getByRole("button", { name: "Rent goes up $500" }));
+    await focusOn(page.getByRole("switch", { name: "Rent goes up $500" }));
     await press("Space");
     await press("Tab");
     await expect.element(page.getByRole("slider", { name: "Price per cup" })).toHaveFocus();
@@ -459,6 +687,7 @@ describe("money and society activities with a keyboard only", () => {
     openActivity({ template: "sourceComparison" });
     await focusOn(page.getByRole("checkbox", { name: "The regulars fired on us" }));
     await press("Space");
+    await press("Tab");
     await press("Tab");
     await press("Enter");
 
@@ -552,23 +781,56 @@ describe("money and society activities reopened from their saved answer", () => 
     await expect.element(page.getByText("Missed link")).not.toBeInTheDocument();
   });
 
+  it("line crossing break-even: the line comes back where the answer was read", async () => {
+    const { reopenSaved } = openActivityToResume(breakEven);
+    await pressOnSlider("Move the line Cost", "ArrowUp", 4);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await reopenSaved();
+
+    await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("What happened")).not.toBeInTheDocument();
+  });
+
+  it("unit circle: the wheel comes back at the angle it was checked at", async () => {
+    const { reopenSaved } = openActivityToResume(fixtures.unitCircle);
+    await pressOnSlider("Point on the circle", "ArrowRight", 6);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await reopenSaved();
+
+    await expect
+      .element(page.getByRole("slider", { name: "Point on the circle" }))
+      .toHaveAttribute("aria-valuetext", expect.stringContaining("30°"));
+  });
+
   it("formula model what-ifs: the checked inputs come back, so the right answer sits on the curve", async () => {
     const { reopenSaved } = openActivityToResume(scenario);
-    await page.getByRole("button", { name: "Rent goes up $500" }).click();
+    await page.getByRole("switch", { name: "Rent goes up $500" }).click();
     await pressOnSlider("Price per cup", "ArrowRight", 2);
     await checkActivity();
     await expectVerdict("Correct!");
     await reopenSaved();
 
     await expect
-      .element(page.getByRole("button", { name: "Rent goes up $500" }))
-      .toHaveAttribute("aria-pressed", "true");
+      .element(page.getByRole("switch", { name: "Rent goes up $500" }))
+      .toHaveAttribute("aria-checked", "true");
 
     await expect
       .element(page.getByRole("slider", { name: "Price per cup" }))
       .toHaveAttribute("aria-valuenow", "4");
 
     await expect.element(page.getByText("$1,500 before", { exact: true })).toBeVisible();
+  });
+
+  it("distribution explorer: the handles come back where the answer was read", async () => {
+    const { reopenSaved } = openActivityToResume(fixtures.distributionExplorer);
+    await pressOnSlider("Lower handle", "ArrowLeft", 4);
+    await pressOnSlider("Upper handle", "ArrowRight", 4);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await reopenSaved();
+    await expect.element(page.getByText("IQ score from 70 to 130", { exact: true })).toBeVisible();
   });
 
   it("timeline: events placed in order are still right, with no made-up guesses", async () => {
@@ -582,9 +844,30 @@ describe("money and society activities reopened from their saved answer", () => 
 
     await expect
       .element(page.getByRole("slider", { name: "Moon landing" }))
-      .toHaveAttribute("aria-valuetext", "1969 CE");
+      .toHaveAttribute("aria-valuetext", "1969\u00A0CE");
 
     await expect.poll(() => timelineMarks("check")).toHaveLength(2);
     expect(timelineMarks("x")).toHaveLength(0);
+  });
+});
+
+describe("causal explanation clarity", () => {
+  it("cause and effect: the joining explanation shows once beside the individual link reasons", async () => {
+    openActivity({ template: "causeEffectChain" });
+    await chainNode("1920 Prairie plowed for wheat").click();
+    await chainNode("1934 Dust storms").click();
+    await chainNode("1931 Years of drought").click();
+    await chainNode("1934 Dust storms").click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(page.getByText("Bare soil blew away.")).toBeVisible();
+    await expect.element(page.getByText("Dry soil lifted.")).toBeVisible();
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+
+    await expect
+      .element(feedback.getByText(fixtures.causeEffectChain.check.explanation))
+      .toBeVisible();
+
+    expect(page.getByText(fixtures.causeEffectChain.check.explanation).elements()).toHaveLength(1);
   });
 });

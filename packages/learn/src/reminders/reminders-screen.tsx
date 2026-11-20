@@ -9,16 +9,15 @@ import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { PauseIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useOptimistic } from "react";
+import { AccountAskMark } from "../_components/account-ask";
 import { ListGroup } from "../_components/list-group";
 import { NoticeCard } from "../_components/notice-card";
-import { PageSectionFooter } from "../_components/page";
-import { ChangeSaveError } from "../_components/save-error";
+import { PageSectionFooter, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { SettingRow, SwitchSettingRow } from "../_components/setting-rows";
-import { useTimeZoneName } from "../_utils/locale";
+import { PageAsideNote } from "../_components/side-detail";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
-import { useLearnRoutes } from "../learn-context";
-import { LearnLink } from "../learn-link";
 import { ReminderTimeSelect } from "./reminder-time";
+import { useOtherZoneName } from "./reminder-zone";
 
 export type ReminderChange = Pick<StudyReminderUpdateInput, "emailOn" | "pushOn" | "time">;
 
@@ -31,25 +30,22 @@ function applyChange(reminder: StudyReminderView, change: ReminderChange): Study
   };
 }
 
-function PlansLink({ children }: { children: React.ReactNode }) {
-  return <LearnLink href={useLearnRoutes().journey}>{children}</LearnLink>;
-}
-
-function renderPlansLink(chunks: React.ReactNode) {
-  return <PlansLink>{chunks}</PlansLink>;
-}
-
 function TimeSetting({
+  disabled,
+  namesZone,
   onChange,
   time,
   timeZone,
 }: {
+  disabled: boolean;
+  namesZone: boolean;
   onChange: (time: string) => void;
   time: string;
   timeZone: string;
 }) {
   const t = useExtracted();
-  const zone = useTimeZoneName(timeZone);
+  const otherZone = useOtherZoneName(timeZone);
+  const zone = namesZone ? otherZone : null;
   const selectId = useId();
   const zoneId = useId();
 
@@ -67,7 +63,14 @@ function TimeSetting({
         </label>
       }
     >
-      <ReminderTimeSelect aria-describedby={zoneId} id={selectId} onChange={onChange} time={time} />
+      <ReminderTimeSelect
+        aria-describedby={zone ? zoneId : undefined}
+        disabled={disabled}
+        id={selectId}
+        onChange={onChange}
+        size="default"
+        time={time}
+      />
     </SettingRow>
   );
 }
@@ -76,14 +79,19 @@ function GuestEmailSetting({ signUpHref }: { signUpHref: string }) {
   const t = useExtracted();
 
   return (
-    <SettingRow description={t("Create an account to get email reminders")} label={t("Email")}>
+    <SettingRow
+      description={t("Create an account to get email reminders")}
+      label={t("Email reminders")}
+    >
       <PendingLink
-        className={buttonVariants({ size: "sm", variant: "outline" })}
+        className={buttonVariants({ size: "lg", variant: "outline" })}
+        data-account-ask
         href={signUpHref}
         icon={<UserPlusIcon aria-hidden="true" />}
       >
-        {t("Create an account")}
+        {t("Create a free account")}
       </PendingLink>
+      <AccountAskMark />
     </SettingRow>
   );
 }
@@ -100,7 +108,8 @@ export function RemindersScreen({
 }) {
   const t = useExtracted();
   const [view, applyOptimistic] = useOptimistic(reminder, applyChange);
-  const { failed, run } = useOptimisticSave();
+  const { run } = useOptimisticSave();
+  const isOff = !(view.email.on || view.push.on);
 
   const change = (next: ReminderChange) =>
     run(
@@ -112,17 +121,11 @@ export function RemindersScreen({
     <div className="flex flex-col gap-7" data-slot="reminders-screen">
       <div className="flex flex-col gap-3">
         <ListGroup>
-          <TimeSetting
-            onChange={(time) => change({ time })}
-            time={view.time}
-            timeZone={view.timeZone}
-          />
-
           {view.email.address ? (
             <SwitchSettingRow
               checked={view.email.on}
               description={view.email.address}
-              label={t("Email")}
+              label={t("Email reminders")}
               onCheckedChange={(emailOn) => change({ emailOn })}
             />
           ) : (
@@ -137,21 +140,31 @@ export function RemindersScreen({
               onCheckedChange={(pushOn) => change({ pushOn })}
             />
           )}
+
+          <TimeSetting
+            disabled={isOff}
+            // Nothing is sent to a guest without the phone app, so no clock needs naming.
+            namesZone={Boolean(view.email.address ?? view.push.phone)}
+            onChange={(time) => change({ time })}
+            time={view.time}
+            timeZone={view.timeZone}
+          />
         </ListGroup>
 
         {!view.push.phone && (
-          <PageSectionFooter>
-            {t({
-              description:
-                "Stands in for the Push notifications row: name them in the same words as that row",
-              message: "To get push notifications, turn them on in the Zoonk app.",
-            })}
-          </PageSectionFooter>
+          <PageAsideNote className="flex flex-col gap-3">
+            <PageSectionHeader className="hidden xl:in-data-signed-in:flex">
+              <PageSectionTitle>{t("Push notifications")}</PageSectionTitle>
+            </PageSectionHeader>
+            <PageSectionFooter>
+              {t({
+                description:
+                  "Stands in for the Push notifications row: name them in the same words as that row",
+                message: "To get push notifications, turn them on in the Zoonk phone app.",
+              })}
+            </PageSectionFooter>
+          </PageAsideNote>
         )}
-
-        <PageSectionFooter>
-          {t.rich("On your study days, from your <link>plans</link>", { link: renderPlansLink })}
-        </PageSectionFooter>
       </div>
 
       {view.quiet && (
@@ -160,8 +173,6 @@ export function RemindersScreen({
           {t("Paused while you're away. Studying turns them back on.")}
         </NoticeCard>
       )}
-
-      {failed && <ChangeSaveError />}
     </div>
   );
 }

@@ -5,13 +5,27 @@ import SwiftUI
 struct MemoryInsightCard: View {
   @Environment(BuddyStore.self) private var store
 
-  let insight: MemoryInsight
+  let opened: MemoryInsight
   /// Held by Today, so the answer outlives the card when a layout change builds it again.
   @Binding var answer: Bool?
+  /// Accepted, and still waiting: its plan change's numbers moved, so it asks again with today's.
+  @Binding var repriced: MemoryInsight?
+  /// Today's, ended as its visit ends.
+  let saving: VisitRequest<InsightAnswer>
   var onAnswering: () -> Void = {}
 
-  @State private var failed = false
-  @State private var isSaving = false
+  init(
+    insight: MemoryInsight, answer: Binding<Bool?>, repriced: Binding<MemoryInsight?>,
+    saving: VisitRequest<InsightAnswer>, onAnswering: @escaping () -> Void = {}
+  ) {
+    opened = insight
+    _answer = answer
+    _repriced = repriced
+    self.saving = saving
+    self.onAnswering = onAnswering
+  }
+
+  private var insight: MemoryInsight { repriced ?? opened }
 
   var body: some View {
     GroupBox {
@@ -21,10 +35,17 @@ struct MemoryInsightCard: View {
             .foregroundStyle(.mutedForeground)
         } else {
           Text(insight.message)
+
+          if let change = insight.planChange, change.status == .proposed {
+            PlanEffectDiff(
+              effect: try? StudyJSON.recode(change.effect, as: PlanEffect.self),
+              today: PlanDate.today(), repriced: repriced != nil)
+          }
+
           actions
         }
 
-        if failed {
+        if case .failed? = saving.outcome {
           FailureLine(
             message: LocalizedStringResource(
               "We couldn't save your answer. Try again.", table: "Buddy",
@@ -95,7 +116,7 @@ struct MemoryInsightCard: View {
         .buttonStyle(.outline)
       }
     }
-    .disabled(isSaving)
+    .disabled(saving.isRunning)
   }
 
   private var acceptLabel: Text {
@@ -106,9 +127,9 @@ struct MemoryInsightCard: View {
         : Text("Keep it", tableName: "Buddy", comment: "Keeps a lesson an insight already added")
     case .scheduleIdea:
       Text(
-        "Move my study time to \(insight.studyTime ?? "")", tableName: "Buddy",
+        "Move it", tableName: "Buddy",
         comment:
-          "Accepts a schedule idea: moves the time of day the learner studies; the argument is a clock time like 20:00"
+          "Accepts a schedule idea: moves the time of day the learner studies to the time the sentence above names"
       )
     case .tip:
       Text("Got it", tableName: "Buddy", comment: "Acknowledges a tip")
@@ -154,21 +175,30 @@ struct MemoryInsightCard: View {
 
   private func save(accepted: Bool) {
     onAnswering()
-    isSaving = true
-    failed = false
 
-    Task {
-      let result = await store.answer(insight, accepted: accepted)
-      isSaving = false
-
-      switch result {
-      case .done:
+    saving.run { [store, insight] in
+      switch await store.answer(insight, accepted: accepted) {
+      case .done(let saved?) where accepted && saved.status == .pending: .repriced(saved)
+      case .done: .answered(accepted)
+      case .failed: .failed
+      case .obsolete: nil
+      }
+    } then: { ended in
+      switch ended {
+      case .answered(let accepted):
         answer = accepted
-      case .failed:
-        failed = true
-      case .obsolete:
+      case .repriced(let saved):
+        repriced = saved
+      case .failed, nil:
         break
       }
     }
   }
+}
+
+/// How answering an insight ended.
+enum InsightAnswer {
+  case answered(Bool)
+  case repriced(MemoryInsight)
+  case failed
 }

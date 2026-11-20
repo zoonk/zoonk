@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -60,7 +61,7 @@ final class TutorConversationTests: XCTestCase {
   }
 
   func testRefusedAnswerTakesTheComposersPlace() async {
-    let limit = TutorFailure.limitReached(period: .day, tier: .free)
+    let limit = TutorFailure.limit(.limitReached(period: .day, tier: .free))
     let api = TutorAPIStub(answers: [], answerFailure: limit)
     let conversation = makeConversation(api: api)
     await conversation.thread.load()
@@ -71,6 +72,31 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertEqual(conversation.turns.first?.status, .failed)
     XCTAssertEqual(conversation.limit, limit)
     XCTAssertFalse(conversation.canAsk)
+  }
+
+  /// Once a monthly cap's day has come, the composer is back and sending asks the server again.
+  func testARefusalWhoseDayCameGivesTheComposerBack() async {
+    let opens = Date(timeIntervalSince1970: 1_795_339_800)
+    let limit = TutorFailure.limit(.usedUp(tier: .free, availableAt: opens))
+    let api = TutorAPIStub(askFailures: [limit])
+    let conversation = makeConversation(api: api)
+    conversation.now = { opens.addingTimeInterval(-60) }
+    await conversation.thread.load()
+
+    conversation.draft = "One more?"
+    await conversation.send()
+
+    XCTAssertEqual(conversation.limit, limit)
+    XCTAssertFalse(conversation.canAsk)
+
+    conversation.now = { opens }
+
+    XCTAssertNil(conversation.limit)
+    XCTAssertTrue(conversation.canSendDraft)
+    await conversation.send()
+
+    XCTAssertEqual(api.requestIDs.count, 2)
+    XCTAssertEqual(conversation.turns.last?.question, "One more?")
   }
 
   func testStreamCutBeforeAnyTextFailsTheAnswer() async {
@@ -270,7 +296,7 @@ final class TutorConversationTests: XCTestCase {
       if api.requestIDs.count == 1 {
         conversation.draft = "What's a cell wall?"
       } else {
-        await withCheckedContinuation { typed.held = $0 }
+        await withTestVoidContinuation { typed.held = $0 }
       }
     }
     api.beforeThread = {
@@ -280,9 +306,7 @@ final class TutorConversationTests: XCTestCase {
 
       typed.send = Task { await conversation.send() }
 
-      while typed.held == nil {
-        await Task.yield()
-      }
+      _ = try? await waitForTestCondition("Fixture state did not arrive") { !(typed.held == nil) }
     }
     let simpler = TutorSuggestion(
       id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
@@ -308,6 +332,51 @@ final class TutorConversationTests: XCTestCase {
     await pending?.value
 
     XCTAssertTrue(api.requestIDs.isEmpty)
+  }
+
+  /// A lesson's Ask moves between a pane and a sheet as the window crosses the spread's width: the
+  /// panel that left asks nothing, and the one drawn in its place asks the offer, once.
+  func testAnOfferAPanelDrawnAgainTakesOverIsAskedOnce() async {
+    let api = TutorAPIStub()
+    let conversation = makeConversation(api: api)
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    let draft = TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true)
+    var left: Task<Void, Never>?
+    var drawnAgain: Task<Void, Never>?
+    api.beforeThread = {
+      api.beforeThread = nil
+      drawnAgain = Task { await conversation.ask(draft) }
+      left?.cancel()
+    }
+
+    left = Task { await conversation.ask(draft) }
+    await left?.value
+    await drawnAgain?.value
+
+    XCTAssertEqual(api.suggestions, ["simpler"])
+  }
+
+  /// Narrowed, Ask leaves the lesson's side without a sheet; widened again, it's back and asks.
+  func testAnOfferWhosePanelLeftIsAskedWhenItsPanelComesBack() async {
+    let api = TutorAPIStub()
+    let conversation = makeConversation(api: api)
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    let draft = TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true)
+    var left: Task<Void, Never>?
+    api.beforeThread = {
+      api.beforeThread = nil
+      left?.cancel()
+    }
+
+    left = Task { await conversation.ask(draft) }
+    await left?.value
+    XCTAssertTrue(api.suggestions.isEmpty, "Nothing is asked while no panel shows")
+
+    await conversation.ask(draft)
+
+    XCTAssertEqual(api.suggestions, ["simpler"])
   }
 
   func testAQuestionShowsAsSentAtOnceAndGoesBackToTheComposerIfItFails() async {
@@ -541,6 +610,31 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertThrowsError(try event(#"{"type":"error","errorText":"boom"}"#))
   }
 
+  /// "About …" shows on the first question and where the topic changes: another part of the
+  /// lesson, or the answer once it's checked.
+  func testAQuestionNamesItsTopicOnlyWhereItChanges() {
+    let part = TutorTurn.fixture(id: "1", about: .step, step: .init(id: "a", number: 1))
+
+    XCTAssertFalse(part.sharesTopic(with: nil))
+    XCTAssertTrue(
+      part.sharesTopic(with: .fixture(id: "0", about: .step, step: .init(id: "a", number: 1))))
+    XCTAssertFalse(
+      part.sharesTopic(with: .fixture(id: "0", about: .step, step: .init(id: "b", number: 2))))
+    XCTAssertFalse(
+      part.sharesTopic(with: .fixture(id: "0", about: .answer, step: .init(id: "a", number: 1))))
+    XCTAssertTrue(TutorTurn.fixture(id: "1").sharesTopic(with: .fixture(id: "0")))
+  }
+
+  /// A deleted step has no id any more: its number tells it apart from another deleted one.
+  func testDeletedStepsAreToldApartByTheirNumber() {
+    let deleted = TutorTurn.fixture(id: "1", about: .step, step: .init(id: nil, number: 2))
+
+    XCTAssertTrue(
+      deleted.sharesTopic(with: .fixture(id: "0", about: .step, step: .init(id: nil, number: 2))))
+    XCTAssertFalse(
+      deleted.sharesTopic(with: .fixture(id: "0", about: .step, step: .init(id: nil, number: 3))))
+  }
+
   func testAMemoryUndoThatDidNotGoThroughCanBeTriedAgain() async {
     let api = TutorAPIStub(answers: [[.memory([.likesMaps]), .text("Noted."), .finish]])
     api.undoResults = [.failure(APIError.network), .success(true)]
@@ -582,10 +676,106 @@ final class TutorConversationTests: XCTestCase {
   }
 }
 
+/// A lesson's Ask in a sheet keeps its view as the lesson moves to its next step, so an
+/// offer still waiting for its step's thread is dropped, never sent for the step the learner left.
+@MainActor
+final class TutorOfferStepTests: XCTestCase {
+  func testAnOfferWaitingWhenTheLearnerMovesOnIsNeverSent() async throws {
+    let api = TutorAPIStub()
+    let held = Held()
+    api.beforeThread = { await held.wait() }
+    let session = SessionStore.preview(account: .tutorTestAccount)
+    let tutor = TutorStore(api: api, cache: AppCache(session: session))
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    let step = Step(
+      scope: .plan(goalId: "step-a"),
+      draft: TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true))
+    let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+
+    let oldThread = tutor.conversation(step.scope).thread
+    try show(
+      StepThread(step: step)
+        .environment(tutor)
+        .environment(session)
+        .environment(
+          LearnerSummaryStore(
+            api: LearnerSummaryAPI(clients: clients), cache: AppCache(session: session))
+        )
+        .zoonkStyles())
+    try await held.waitUntilHeld()
+
+    step.scope = .plan(goalId: "step-b")
+    step.draft = nil
+    try await waitForTestCondition("The next step did not render") {
+      step.renderedScope == step.scope
+    }
+    held.release()
+    try await waitForTestCondition("The old thread result was not consumed") {
+      oldThread.freshValue != nil && !oldThread.isRefreshing
+    }
+
+    XCTAssertTrue(api.requestIDs.isEmpty, "Nothing is asked for the step the learner left")
+  }
+}
+
+@MainActor
+@Observable
+private final class Step {
+  var renderedScope: TutorScope?
+  var scope: TutorScope
+  var draft: TutorDraft?
+
+  init(scope: TutorScope, draft: TutorDraft?) {
+    self.scope = scope
+    self.draft = draft
+  }
+}
+
+private struct StepThread: View {
+  let step: Step
+
+  var body: some View {
+    TutorThreadView(scope: step.scope, draft: step.draft) { EmptyView() }
+      .onChange(of: step.scope, initial: true) { step.renderedScope = step.scope }
+  }
+}
+
+/// A read the test lets through when it says, every read after it at once.
+@MainActor
+private final class Held {
+  private var holding: TestContinuation<Void>?
+  private var released = false
+
+  func wait(file: StaticString = #filePath, line: UInt = #line) async {
+    guard !released, holding == nil else {
+      return
+    }
+
+    await withTestVoidContinuation(file: file, line: line) { continuation in
+      holding = continuation
+    }
+  }
+
+  func waitUntilHeld(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("The fixture request never arrived", file: file, line: line) {
+      self.isHeld
+    }
+  }
+
+  private var isHeld: Bool { holding != nil }
+
+  func release() {
+    released = true
+    holding?.resume()
+    holding = nil
+  }
+}
+
 @MainActor
 private final class TypedDuringReread {
   var send: Task<Void, Never>?
-  var held: CheckedContinuation<Void, Never>?
+  var held: TestContinuation<Void>?
 }
 
 private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
@@ -670,7 +860,8 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   }
 
   func decidePlanChange(
-    goalId: String, changeId: String, decision: PlanChangeDecision, token: String
+    goalId: String, changeId: String, decision: PlanChangeDecision, quote: PlanChangeQuote?,
+    token: String
   ) async throws -> Components.Schemas.PlanChange {
     if let decideFailure {
       throw decideFailure
@@ -696,11 +887,11 @@ extension TutorMemoryChange {
 extension TutorTurn {
   fileprivate static func fixture(
     id: String, question: String = "Question", status: Status = .completed, about: About = .plan,
-    planChange: Components.Schemas.PlanChange? = nil
+    step: Step? = nil, planChange: Components.Schemas.PlanChange? = nil
   ) -> TutorTurn {
     TutorTurn(
       id: id, question: question, answer: status == .completed ? "Answer" : nil, status: status,
-      createdAt: .now, about: about, planChange: planChange, toolOffer: nil)
+      createdAt: .now, about: about, step: step, planChange: planChange, toolOffer: nil)
   }
 }
 
@@ -709,8 +900,8 @@ extension Components.Schemas.PlanChange {
     .init(
       behind: nil, canApply: true, canUndo: false, createdAt: .now, days: nil, effect: nil,
       examDocument: .notice, id: id, kind: "edited", lessonsSkipped: 0, officialDate: nil,
-      operations: [], reason: "A lighter week", seen: false, source: "tutor", status: .proposed,
-      todaySession: nil)
+      operations: [], quote: "quote", reason: "A lighter week", seen: false, source: "tutor",
+      status: .proposed, todaySession: nil)
   }
 }
 

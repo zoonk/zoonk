@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "b9c6fb45aa0bfbb6d015ea0c4b3c280b80b5c8dc66d027b2a83f585154cffcba",
   "pronunciation_continue": "7f9e1de3fadaa84f12cc4b179d674bbb3d775d98ffedb000c57c424edf36cddd",
   "pronunciation_done": "ac172f24443ae43c37b4a479cc07fde474a95cd9abff58cb6154c92c43b2102c",
   "pronunciation_failed": "645d9f92b0af9ceb3b3aab81cb547823f94d4b0813bc9776c418d05707889ef8",
@@ -21,8 +20,8 @@
   "pronunciation_save_failed": "de5d70fa3a52a5d6176c5b724c192614483a2cc645e1ae4a93775ee1674652c3",
   "pronunciation_save_retry": "4e04614a7e58bb885c519fdf015782f5dd4f8f0cc6f4e62049c50cf77bf69b95",
   "pronunciation_say_it_like": "be752f3d4e9d3ce46b65c5c7e295bf7eaf7b7ae437a8505692c5494d84ba420b",
-  "pronunciation_see_how": "784bed1ec0f3590b666abbdd848602a2abb50ad5b7ef604e03a1182a445d5511",
-  "pronunciation_skip": "6b656f18c84126da22016f2c453fe266917ec6f88fec5f0db2c6fd1c05475dcf",
+  "pronunciation_see_how": "d5c8829426418f0e69cdf1a8a0c10070e72d2413ae524f6fa3106080bbbac540",
+  "pronunciation_skip": "4cdfcbcb629eaa7839e527376ef2dc9b2ce7497a89cd13b512170dd6c18009f2",
   "pronunciation_sounded_right": "aada4170b9581b893713338d97e622e18d116eb976d34b9a2071ad3be791656d",
   "pronunciation_title": "e8b2b031b77d245b52d9e1df95c607fdd44ec3e0a84e13385da4c7907f692388",
   "pronunciation_try_again": "6c4ef723db34e4d0606ec70136b164d6aa66475f78957a0f0037d8a4581634eb"
@@ -37,7 +36,7 @@
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">Dilla così: %1$s</string>
     <string name="pronunciation_options">Opzioni della schermata</string>
-    <string name="pronunciation_skip">Salta questa parola</string>
+    <string name="pronunciation_skip">Salta</string>
     <string name="pronunciation_press_record">Premi Registra e di’ la parola ad alta voce</string>
     <string name="pronunciation_recording">Stiamo registrando… Premi Interrompi quando hai finito.</string>
     <string name="pronunciation_grading">Stiamo ascoltando la tua pronuncia…</string>
@@ -52,14 +51,13 @@
     <!-- Goes on to the next word. -->
     <string name="pronunciation_continue">Continua</string>
     <!-- Ends the round after its last word. -->
-    <string name="pronunciation_see_how">Guarda com’è andata</string>
+    <string name="pronunciation_see_how">Vedi il risultato</string>
     <string name="pronunciation_save_failed">L’invio non è riuscito. Le tue risposte sono al sicuro.</string>
     <!-- Retries saving the round. -->
     <string name="pronunciation_save_retry">Riprova</string>
     <string name="pronunciation_no_words">Oggi non ci sono parole da ripetere.</string>
     <string name="pronunciation_practice_done">Esercitazione completata</string>
     <string name="pronunciation_nothing_said">Questa volta non hai parlato</string>
-    <string name="pronunciation_accent">L’accento non ti ferma mai.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Chiudi</string>
 </resources>

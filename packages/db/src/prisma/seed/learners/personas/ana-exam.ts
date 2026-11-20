@@ -249,8 +249,8 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
             source: "memory",
           },
           reason: t(
-            "You take a prep course on Saturday mornings. Want Saturday to become a rest day in the plan?",
-            "Você faz cursinho aos sábados de manhã. Quer que o sábado vire dia de descanso no plano?",
+            "You take a prep course on Saturday mornings.",
+            "Você faz cursinho aos sábados de manhã.",
           ),
           status: "proposed",
         },

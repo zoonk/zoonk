@@ -63,15 +63,10 @@ struct ConversationLiveView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .scenePadding()
         }
-        .toolbar {
-          ToolbarItem(placement: .cancellationAction) {
-            Button(role: .close) {
-              isShowingPhrases = false
-            }
-          }
-        }
+        .sheetClose { isShowingPhrases = false }
       }
       .presentationDetents([.medium, .large])
+      .zoonkSheet()
     }
     .modifier(CallAnnouncements(call: call, name: conversation.character.name))
   }
@@ -328,12 +323,7 @@ private struct CallControls: View {
 
       Button(role: .destructive, action: onEnd) {
         Label {
-          // Before the character answers, nothing is lost by stopping.
-          if call.phase == .live {
-            Text("End", tableName: "Voice", comment: "Hangs up the call")
-          } else {
-            Text("Cancel", tableName: "Voice", comment: "Stops a call that hasn't connected yet")
-          }
+          Text("End", tableName: "Voice", comment: "Hangs up the call")
         } icon: {
           Image(systemName: "phone.down.fill")
         }
@@ -380,7 +370,7 @@ private struct CallHeader: View {
   }
 
   private func clock(_ seconds: TimeInterval) -> String {
-    Duration.seconds(Int(seconds)).formatted(.time(pattern: .minuteSecond))
+    PlanDate.clock(seconds: Int(seconds))
   }
 }
 
@@ -495,8 +485,14 @@ private struct CallPhrases: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("Phrases you can use", tableName: "Voice", comment: "Help's phrases during a call")
-        .typeStyle(.body.weight(.semibold))
+      Group {
+        if conversation.hints.count == 1 {
+          Text("A phrase you can use", tableName: "Voice", comment: "Help's phrase during a call")
+        } else {
+          Text("Phrases you can use", tableName: "Voice", comment: "Help's phrases during a call")
+        }
+      }
+      .typeStyle(.body.weight(.semibold))
 
       ForEach(conversation.hints, id: \.self) { hint in
         Text(hint)

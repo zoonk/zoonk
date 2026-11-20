@@ -29,6 +29,6 @@ export const planFeasibilitySchema = z.object({
     .boolean()
     .meta({
       description:
-        "The learner's own daily time covers everything once the plan is planned again at it, even while `fits` is false (the plan holds less than their time fits): offer `fitOffer` at their time, never another daily time. False without a deadline",
+        "The learner's own daily time covers everything once the plan is planned again at it, even while `fits` is false (the plan holds less than their time fits): `fitOffer` keeps their daily time. False without a deadline",
     }),
 });

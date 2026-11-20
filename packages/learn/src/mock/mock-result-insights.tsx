@@ -34,7 +34,7 @@ function Insight({
     <StepRow className="items-start">
       <Icon aria-hidden="true" className="text-muted-foreground mt-0.5" />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <h3 className="font-semibold">{title}</h3>
+        <h3 className="font-medium">{title}</h3>
         <div className="text-muted-foreground flex flex-col gap-1">{children}</div>
       </div>
     </StepRow>
@@ -53,22 +53,27 @@ function TimingInsight({ result }: { result: MockResult }) {
     <Insight icon={TimerIcon} title={t("Timing")}>
       {slowest && (
         <p>
-          {t(
-            "{seconds, plural, =0 {# seconds} one {# second} other {# seconds}} per {area} question. Aim for {target} or less.",
-            {
+          {t({
+            description:
+              "A mock exam's result: the time spent on each question of its slowest subject.",
+            message:
+              "{seconds, plural, =0 {# seconds} one {# second} other {# seconds}} per {area} question. Aim for {target} or less.",
+            values: {
               area: slowest.name,
               seconds: slowest.secondsPerQuestion,
               target: String(Math.round(slowest.targetSecondsPerQuestion ?? 0)),
             },
-          )}
+          })}
         </p>
       )}
       {result.unansweredAtTimeout > 0 && (
         <p>
-          {t(
-            "{count, plural, one {# question was} other {# questions were}} left when time ran out.",
-            { count: result.unansweredAtTimeout },
-          )}
+          {t({
+            description: "A mock exam's result: its questions left unanswered when time ran out.",
+            message:
+              "{count, plural, one {# question was} other {# questions were}} left when time ran out.",
+            values: { count: result.unansweredAtTimeout },
+          })}
         </p>
       )}
     </Insight>
@@ -84,11 +89,11 @@ function ConsistencyInsight({ result }: { result: MockResult }) {
   }
 
   return (
-    <Insight icon={ScaleIcon} title={t("Consistency")}>
+    <Insight icon={ScaleIcon} title={t("Easy questions")}>
       <p>
         {t(
-          "{easy, plural, one {# easy one} other {# easy ones}} wrong, {hard, plural, one {# hard one} other {# hard ones}} right. The score counts that against you: review the easy ones first.",
-          { easy: coherence.easyWrong, hard: coherence.hardRight },
+          "You missed {count, plural, one {# easy question} other {# easy questions}}. Review those first.",
+          { count: coherence.easyWrong },
         )}
       </p>
     </Insight>
@@ -104,10 +109,10 @@ function CalibrationInsight({ result }: { result: MockResult }) {
   }
 
   return (
-    <Insight icon={ScaleIcon} title={t("When to leave it blank")}>
+    <Insight icon={ScaleIcon} title={t("Flagged answers")}>
       <p>
         {t(
-          "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged as unsure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
+          "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
           {
             sureAnswered: String(calibration.sure.answered),
             sureRight: calibration.sure.right,
@@ -119,13 +124,13 @@ function CalibrationInsight({ result }: { result: MockResult }) {
       {calibration.advice === "blankUnsure" && (
         <p>
           {t(
-            "Leaving the unsure ones blank would have added {points, plural, one {# point} other {# points}}.",
+            "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}.",
             { points: calibration.blankingGain },
           )}
         </p>
       )}
       {calibration.advice === "keepAnswering" && (
-        <p>{t("Your unsure answers still earned points, so keep answering them.")}</p>
+        <p>{t("Your flagged answers still earned points, so keep answering them.")}</p>
       )}
     </Insight>
   );
@@ -157,8 +162,8 @@ export function MockResultInsights() {
   }
 
   return (
-    <ResultSection title={t("What the mock exam showed")}>
-      <StepRows>
+    <ResultSection rows title={t("What stood out")}>
+      <StepRows className="[&>li:last-child]:pb-0">
         <TimingInsight result={result} />
         <ConsistencyInsight result={result} />
         <CalibrationInsight result={result} />

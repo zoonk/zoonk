@@ -9,7 +9,14 @@ const TRACK_CLASS: Readonly<Record<GoalRingTrack, string>> = {
   today: "stroke-foreground/25",
 };
 
-const RADIUS = 15;
+/** One size on every week row, from Today's narrow side panel to the summary. */
+export const GOAL_RING_SIZE_CLASS = "size-7.5";
+
+const BOX = 36;
+const CENTER = BOX / 2;
+const STROKE = 3;
+/** The stroke's outer edge on the box's, so the ring's ink lines up where its box does. */
+const RADIUS = CENTER - STROKE / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export function GoalRing({
@@ -28,31 +35,32 @@ export function GoalRing({
     <span
       aria-hidden="true"
       className={cn(
-        "relative flex size-9 items-center justify-center [&>svg:not(:first-child)]:size-3.5",
+        "relative flex items-center justify-center [&>svg:not(:first-child)]:size-3.5",
+        GOAL_RING_SIZE_CLASS,
         className,
       )}
       data-slot="goal-ring"
     >
-      <svg className="absolute inset-0 size-full -rotate-90" viewBox="0 0 36 36">
+      <svg className="absolute inset-0 size-full -rotate-90" viewBox={`0 0 ${BOX} ${BOX}`}>
         <circle
           className={TRACK_CLASS[track]}
-          cx="18"
-          cy="18"
+          cx={CENTER}
+          cy={CENTER}
           fill="none"
           r={RADIUS}
-          strokeWidth="3"
+          strokeWidth={STROKE}
         />
         {share > 0 && (
           <circle
             className="stroke-success"
-            cx="18"
-            cy="18"
+            cx={CENTER}
+            cy={CENTER}
             fill="none"
             r={RADIUS}
             strokeDasharray={CIRCUMFERENCE}
             strokeDashoffset={(1 - Math.min(1, share)) * CIRCUMFERENCE}
             strokeLinecap="round"
-            strokeWidth="3"
+            strokeWidth={STROKE}
           />
         )}
       </svg>

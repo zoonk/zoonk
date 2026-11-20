@@ -1,4 +1,5 @@
 import { type Route } from "@playwright/test";
+import { getPlanChangeQuote } from "@zoonk/core/plans/change-quote";
 import { anyPlanOperationSchema } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
@@ -55,6 +56,7 @@ export function toProposal(change: {
     lessonsSkipped: 0,
     officialDate: null,
     operations,
+    quote: getPlanChangeQuote(null),
     // A change read from the learner's words is said from what it does, never the model's words.
     reason: null,
     seen: false,

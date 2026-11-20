@@ -3,14 +3,5 @@ import { PublicTopBar } from "@/components/public/public-top-bar";
 import { PublicVisitorActions } from "@/components/public/public-visitor-actions";
 
 export function HomeHeader() {
-  return (
-    <PublicTopBar
-      actions={
-        <>
-          <PublicNavLinks />
-          <PublicVisitorActions />
-        </>
-      }
-    />
-  );
+  return <PublicTopBar actions={<PublicVisitorActions ownStart />} nav={<PublicNavLinks />} />;
 }

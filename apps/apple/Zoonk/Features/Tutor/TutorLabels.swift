@@ -50,39 +50,6 @@ extension TutorScope {
     }
   }
 
-  var placeholder: Text {
-    switch self {
-    case .plan:
-      Text(
-        "Ask about your plan…", tableName: "Tutor", comment: "Placeholder of the buddy's composer")
-    case .subject:
-      Text(
-        "Ask about this subject…", tableName: "Tutor",
-        comment:
-          "Placeholder of the buddy's composer; the subject is one of the learner's exam or plan")
-    case .chapter:
-      Text(
-        "Ask about this chapter…", tableName: "Tutor",
-        comment: "Placeholder of the buddy's composer")
-    case .mock:
-      Text(
-        "Ask about this mock exam…", tableName: "Tutor",
-        comment: "Placeholder of the buddy's composer")
-    case .lesson, .step:
-      Text(
-        "Ask about the lesson content…", tableName: "Tutor",
-        comment: "Placeholder of the buddy's composer in a lesson")
-    case .item(_, _, let answered, _, _):
-      answered
-        ? Text(
-          "Ask about your answer…", tableName: "Tutor",
-          comment: "Placeholder of the buddy's composer")
-        : Text(
-          "Ask about this question…", tableName: "Tutor",
-          comment: "Placeholder of the buddy's composer")
-    }
-  }
-
   func askLabel(_ name: String) -> String {
     switch self {
     case .plan:
@@ -221,75 +188,49 @@ extension TutorTurn.About {
 }
 
 extension TutorFailure {
-  var message: String {
+  /// A limit reads as every other limit, its day read at `now`; the rest are one line.
+  func words(now: Date = .now) -> LimitWords {
     switch self {
     case .signUpRequired:
-      String(
-        localized: "Create your free account to continue.", table: "Tutor",
-        comment: "A guest's help is used up")
+      return HelpLimit.signUpRequired.words(.messages)
     case .slowDown:
-      String(
-        localized: "Take a short break, then ask again.", table: "Tutor",
-        comment: "Fair use asks for a pause before the next question")
-    case .limitReached(let period, let tier):
-      Self.limitMessage(period: period, tier: tier)
+      return HelpLimit.slowDown(retryAfterSeconds: 0).words(.messages)
+    case .limit(let limit):
+      return limit.words(.messages, now: now)
     case .plusRequired:
-      String(
-        localized: "Subscribe to ask questions", table: "Tutor",
-        comment: "A free learner's question needs Plus")
+      return LimitWords(
+        title: LocalizedStringResource(
+          "Asking questions needs a subscription", table: "Tutor",
+          comment: "A free learner's question to their buddy needs a subscription"))
     case .gone:
-      String(
-        localized: "This lesson is no longer available.", table: "Tutor",
-        comment: "What the question was about no longer exists")
+      return LimitWords(
+        line: LocalizedStringResource(
+          "This lesson is no longer available.", table: "Tutor",
+          comment: "What the question was about no longer exists"))
     case .invalid:
-      String(
-        localized: "We couldn't send this question. Try again.", table: "Tutor",
-        comment: "The question wasn't accepted")
+      return LimitWords(
+        line: LocalizedStringResource(
+          "We couldn't send this question. Try again.", table: "Tutor",
+          comment: "The question wasn't accepted"))
     case .signedOut:
-      String(
-        localized: "Your session expired. Sign in again.", table: "Tutor",
-        comment: "The session ended while asking")
+      return LimitWords(
+        line: LocalizedStringResource(
+          "You've been logged out.", table: "Tutor", comment: "The session ended while asking"))
     case .conflict, .failed:
-      String(
-        localized: "Something went wrong. Try again.", table: "Tutor",
-        comment: "A question or answer failed")
+      return LimitWords(
+        line: LocalizedStringResource(
+          "Something went wrong. Try again.", table: "Tutor",
+          comment: "A question or answer failed"))
     }
   }
 
-  private static func limitMessage(period: Period, tier: LearnerTier) -> String {
-    let thisMonth = period == .month || period == .total
-
-    switch tier {
-    case .guest:
-      return thisMonth
-        ? String(
-          localized:
-            "You've used the free help you can get without an account. Create a free account to keep going.",
-          table: "Tutor", comment: "A guest's help is used up")
-        : String(
-          localized: "You've used today's free help. Create a free account to keep going.",
-          table: "Tutor",
-          comment: "A guest's help for the day is used up")
-    case .plus:
-      return String(
-        localized: "You've used today's help. It comes back tomorrow.", table: "Tutor",
-        comment: "A Plus learner's help for the day is used up")
-    case .free:
-      return thisMonth
-        ? String(
-          localized:
-            "You've used this month's help. It comes back next month, or get Plus to keep going now.",
-          table: "Tutor", comment: "A free learner's help for the month is used up")
-        : String(
-          localized:
-            "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
-          table: "Tutor", comment: "A free learner's help for the day is used up")
-    }
+  var message: String {
+    words().said
   }
 
   enum Remedy {
     case createAccount
-    case seePlus
+    case subscribe
     case signIn
     case tryAgain
     case none
@@ -297,13 +238,17 @@ extension TutorFailure {
 
   var remedy: Remedy {
     switch self {
-    case .signUpRequired, .limitReached(_, .guest):
+    case .limit(let limit) where limit.needsAccount:
       .createAccount
-    case .limitReached(_, .free), .plusRequired:
-      .seePlus
+    case .limit(let limit) where limit.offersSubscription:
+      .subscribe
+    case .signUpRequired:
+      .createAccount
+    case .plusRequired:
+      .subscribe
     case .signedOut:
       .signIn
-    case .limitReached(_, .plus), .gone:
+    case .limit, .gone:
       .none
     case .slowDown, .invalid, .conflict, .failed:
       .tryAgain
@@ -324,5 +269,7 @@ func tutorDayLabel(_ date: Date, now: Date = .now) -> Text {
     return Text("Yesterday", tableName: "Tutor", comment: "The day of the messages below")
   }
 
-  return Text(date.formatted(.dateTime.weekday(.wide).day().month(.wide)))
+  return Text(
+    PlanDate.momentDay(
+      date, style: .dateTime.weekday(.wide).day().month(.wide), now: now, calendar: calendar))
 }

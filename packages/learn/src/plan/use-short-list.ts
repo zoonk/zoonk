@@ -35,10 +35,3 @@ export function useShortList() {
         });
   };
 }
-
-export function useExamples() {
-  const format = useFormatter();
-
-  return (names: readonly string[]): string =>
-    format.list(names.slice(0, NAMED), { type: "conjunction" });
-}

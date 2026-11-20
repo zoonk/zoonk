@@ -80,6 +80,25 @@ val TutorScope.about: TutorTurn.About
             is TutorScope.Item -> if (answered) TutorTurn.About.Answer else TutorTurn.About.Item
         }
 
+/** What a question asked in this scope is about, as [TutorTurn.topic] reads it from the server. */
+val TutorScope.topic: String
+    get() =
+        when (this) {
+            is TutorScope.Step -> stepTopic(TutorTurn.About.Step, stepId, stepNumber.toLong())
+            is TutorScope.Answer -> stepTopic(TutorTurn.About.Answer, stepId, stepNumber.toLong())
+            is TutorScope.Item -> itemTopic(answered)
+            else -> about.name
+        }
+
+/** A saved question keeps its step's number once the step itself is removed from the lesson. */
+internal fun stepTopic(
+    about: TutorTurn.About,
+    stepId: String?,
+    stepNumber: Long,
+) = "${about.name}:${stepId ?: "#$stepNumber"}"
+
+internal fun itemTopic(answered: Boolean) = "Item:$answered"
+
 /** One conversation per learner and thread: a lesson keeps one for itself and one per screen. */
 sealed interface TutorThreadKey {
     data class Plan(

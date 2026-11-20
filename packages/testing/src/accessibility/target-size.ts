@@ -1,4 +1,4 @@
-/** Zoonk's tap target rule sits above WCAG 2.2's 24 px floor (2.5.8), the only one axe checks. */
+/** Zoonk's tap target rule sits above WCAG 2.2's 24 px floor (2.5.8), which axe leaves off. */
 export const MIN_TARGET_PX = 44;
 
 const TARGET_LIMITS = {
@@ -11,6 +11,12 @@ const TARGET_LIMITS = {
   /** Browsers round layout sizes, so 43.99 px counts as 44. */
   sizeTolerance: 0.5,
 };
+
+/** Today's day bar keeps its look and is never made taller to press: a granted exception to Z3. */
+const EXEMPT_SLOTS = new Set(["today-day-segment"]);
+
+/** With a mouse a control is 36 px (`--control-height`); touch keeps 44 px: a granted exception to Z3. */
+const MOUSE_TARGET_PX = 36;
 
 export const TARGET_SELECTOR = [
   "a[href]",
@@ -43,6 +49,7 @@ export type TargetSample = {
   blockFontSize: string;
   clipPath: string;
   display: string;
+  finePointer: boolean;
   firstLineHeight: number;
   height: number;
   width: number;
@@ -86,6 +93,7 @@ export function sampleTargets(selector: string): TargetSample[] {
       blockTextLength: block.textContent.trim().length,
       clipPath: style.clipPath,
       display: style.display,
+      finePointer: matchMedia("(pointer: fine)").matches,
       firstLineHeight: element.getClientRects()[0]?.height ?? rect.height,
       height: rect.height,
       inactive:
@@ -156,14 +164,19 @@ export function describeTarget(sample: TargetSample): string {
   return `<${sample.role}${slot}> "${name}"`;
 }
 
-export function findSmallTargets(samples: TargetSample[]): string[] {
-  const smallest = TARGET_LIMITS.min - TARGET_LIMITS.sizeTolerance;
+function getMinimum(sample: TargetSample): number {
+  const min = sample.finePointer ? MOUSE_TARGET_PX : TARGET_LIMITS.min;
 
+  return min - TARGET_LIMITS.sizeTolerance;
+}
+
+export function findSmallTargets(samples: TargetSample[]): string[] {
   return samples.flatMap((sample) => {
-    if (isHiddenTarget(sample) || isInText(sample)) {
+    if (isHiddenTarget(sample) || isInText(sample) || EXEMPT_SLOTS.has(sample.slot ?? "")) {
       return [];
     }
 
+    const smallest = getMinimum(sample);
     const size = getHitArea(sample);
 
     if (size.height >= smallest && size.width >= smallest) {

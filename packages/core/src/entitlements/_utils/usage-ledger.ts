@@ -1,13 +1,14 @@
 import { type TransactionClient, type UsageKind } from "@zoonk/db";
-import { type UsageDecision } from "../contract";
-import { getEstimatedCostMicros } from "../limits";
+import { type AllowanceLimit, type UsageDecision } from "../contract";
+import { FREE_LESSON_LIMIT, getEstimatedCostMicros } from "../limits";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { evaluateUsage } from "./evaluate-usage";
-import { type UsageTotals, addUsage, getUsageCounts } from "./usage-counts";
+import { getUsageOpening } from "./rolling-usage";
+import { type UsageTotals, addUsage, getUsageCounts, promotePreparedUsage } from "./usage-counts";
 
 export type BundleClaim = { generated: boolean; kind: UsageKind; targetId: string };
 
-type PricedClaim = BundleClaim & { costMicros: number };
+type PricedClaim = BundleClaim & { costMicros: number; existing: boolean };
 
 /**
  * Running usage for claims decided one after another in one request: the totals so far and the
@@ -15,6 +16,7 @@ type PricedClaim = BundleClaim & { costMicros: number };
  */
 export type UsageLedger = {
   claimed: ReadonlySet<string>;
+  prepared: ReadonlyMap<string, Date>;
   now: Date;
   totals: UsageTotals;
   viewer: EntitlementViewer;
@@ -33,14 +35,14 @@ export async function findClaimedTargets({
   claims: readonly BundleClaim[];
   client: TransactionClient;
   userId: string;
-}): Promise<Set<string>> {
+}): Promise<{ claimed: Set<string>; prepared: Map<string, Date> }> {
   const byKind = Map.groupBy(claims, (claim) => claim.kind);
 
   const rows =
     claims.length === 0
       ? []
       : await client.usageRecord.findMany({
-          select: { kind: true, targetId: true },
+          select: { countedAt: true, createdAt: true, kind: true, targetId: true },
           where: {
             OR: [...byKind].map(([kind, ofKind]) => ({
               kind,
@@ -50,7 +52,18 @@ export async function findClaimedTargets({
           },
         });
 
-  return new Set(rows.map((row) => toClaimKey(row)));
+  return {
+    claimed: new Set(
+      rows
+        .filter((row) => row.kind !== "lessonStart" || row.countedAt !== null)
+        .map((row) => toClaimKey(row)),
+    ),
+    prepared: new Map(
+      rows
+        .filter((row) => row.kind === "lessonStart" && row.countedAt === null)
+        .map((row) => [toClaimKey(row), row.createdAt]),
+    ),
+  };
 }
 
 type Decided = { decision: UsageDecision; recorded: PricedClaim[]; totals: UsageTotals };
@@ -86,8 +99,12 @@ function decideClaim({
     return decided;
   }
 
-  const costMicros = getEstimatedCostMicros(claim);
-  const decision = decideNewClaim({ claim, ledger: { ...ledger, totals: decided.totals } });
+  const preparedAt = ledger.prepared.get(toClaimKey(claim));
+  const costMicros = preparedAt ? 0 : getEstimatedCostMicros(claim);
+
+  const decision = preparedAt
+    ? { status: "allowed" as const }
+    : decideNewClaim({ claim, ledger: { ...ledger, totals: decided.totals } });
 
   if (decision.status !== "allowed") {
     return { ...decided, decision };
@@ -95,8 +112,10 @@ function decideClaim({
 
   return {
     decision,
-    recorded: [...decided.recorded, { ...claim, costMicros }],
-    totals: addUsage({ ...claim, costMicros, now: ledger.now, totals: decided.totals }),
+    recorded: [...decided.recorded, { ...claim, costMicros, existing: preparedAt !== undefined }],
+    totals: preparedAt
+      ? promotePreparedUsage({ now: ledger.now, preparedAt, totals: decided.totals })
+      : addUsage({ ...claim, costMicros, now: ledger.now, totals: decided.totals }),
   };
 }
 
@@ -119,13 +138,51 @@ export function decideBundle({
     ).values(),
   ];
 
+  const lessons = fresh.filter((claim) => claim.kind === "lessonStart").length;
+
+  if (ledger.viewer.tier === "free" && lessons > FREE_LESSON_LIMIT) {
+    return {
+      decision: {
+        limit: {
+          availableAt: null,
+          limit: FREE_LESSON_LIMIT,
+          period: "total",
+          resource: "chapterLessons",
+          tier: "free",
+        },
+        status: "limitReached",
+      },
+      ledger,
+      recorded: [],
+    };
+  }
+
+  if (
+    ledger.viewer.tier === "free" &&
+    lessons > 0 &&
+    ledger.totals.lessonStarts.count + lessons > FREE_LESSON_LIMIT
+  ) {
+    return {
+      decision: { limit: getBundleLimit({ fresh, ledger }), status: "limitReached" },
+      ledger,
+      recorded: [],
+    };
+  }
+
   const decided = fresh.reduce<Decided>(
     (sofar, claim) => decideClaim({ claim, decided: sofar, ledger }),
     { decision: { status: "allowed" }, recorded: [], totals: ledger.totals },
   );
 
   if (decided.decision.status !== "allowed") {
-    return { decision: decided.decision, ledger, recorded: [] };
+    const decision =
+      decided.decision.status === "limitReached" &&
+      (decided.decision.limit.period === "rolling30Days" ||
+        decided.decision.limit.availableAt !== undefined)
+        ? { ...decided.decision, limit: getBundleLimit({ fresh, ledger }) }
+        : decided.decision;
+
+    return { decision, ledger, recorded: [] };
   }
 
   return {
@@ -137,4 +194,68 @@ export function decideBundle({
     },
     recorded: decided.recorded,
   };
+}
+
+function getBundleLimit({
+  fresh,
+  ledger,
+}: {
+  fresh: readonly BundleClaim[];
+  ledger: UsageLedger;
+}): AllowanceLimit {
+  const costMicros = fresh.reduce(
+    (sum, claim) =>
+      sum + (ledger.prepared.has(toClaimKey(claim)) ? 0 : getEstimatedCostMicros(claim)),
+    0,
+  );
+
+  const checked = [...Map.groupBy(fresh, (claim) => claim.kind)].flatMap(([kind, claims]) => {
+    const unprepared = claims.filter((claim) => !ledger.prepared.has(toClaimKey(claim)));
+
+    const required =
+      kind === "lessonStart" && ledger.viewer.tier === "free" ? claims.length : unprepared.length;
+
+    if (required === 0) {
+      return [];
+    }
+
+    const input = {
+      costMicros,
+      counts: getUsageCounts(ledger.totals, kind),
+      generated: unprepared.some((claim) => claim.generated),
+      generatedCount: unprepared.filter((claim) => claim.generated).length,
+      kind,
+      now: ledger.now,
+      required,
+      tier: ledger.viewer.tier,
+    };
+
+    const decision = evaluateUsage(input);
+    return [{ decision, opening: getUsageOpening(input) }];
+  });
+
+  const limits = checked.flatMap(({ decision, opening }) =>
+    decision.status === "limitReached" ? [{ limit: decision.limit, opening }] : [],
+  );
+
+  const selected = limits.reduce((latest, next) =>
+    (next.opening?.getTime() ?? Number.POSITIVE_INFINITY) >
+    (latest.opening?.getTime() ?? Number.POSITIVE_INFINITY)
+      ? next
+      : latest,
+  );
+
+  const availableAt = checked.some(({ opening }) => opening === null)
+    ? null
+    : checked.reduce<Date>(
+        (latest, { opening }) => (opening && opening > latest ? opening : latest),
+        ledger.now,
+      );
+
+  const limit: AllowanceLimit =
+    selected.limit.resource === "lessonStart"
+      ? { ...selected.limit, resource: "chapterLessons" }
+      : selected.limit;
+
+  return limit.period === "total" ? limit : { ...limit, availableAt };
 }

@@ -1,10 +1,14 @@
 "use client";
 
 import { useAppLocale } from "@zoonk/learn/locale";
-import { Pencil } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import {
+  ACTIVITY_BOX_CLASS,
+  ActivityCanvas,
+  ActivityTextAlternative,
+} from "../_components/activity-canvas";
 import {
   ActivityCodeBlock,
   ActivityCodeLine,
@@ -31,6 +35,30 @@ function runFromAnswer(answer: CodeRunnerProps["answer"]): ProgramRun | null {
     : null;
 }
 
+/** A right answer opened again keeps only its output, so the program that prints it is the solution. */
+function baseProgram({
+  edited,
+  fields,
+  matches,
+  phase,
+}: {
+  edited: boolean;
+  fields: CodeRunnerProps["content"]["fields"];
+  matches: boolean;
+  phase: CodeRunnerProps["phase"];
+}): string {
+  const reopenedRight = phase === "checked" && matches && !edited;
+  return phase === "explore" || reopenedRight ? fields.solution : fields.starterCode;
+}
+
+function runnerLineTone({ canEdit, hasError }: { canEdit: boolean; hasError: boolean }) {
+  if (hasError) {
+    return "error";
+  }
+
+  return canEdit ? "editable" : "plain";
+}
+
 export function CodeRunnerActivity({
   answer,
   content,
@@ -48,12 +76,13 @@ export function CodeRunnerActivity({
   const [run, setRun] = useState<ProgramRun | null>(() => runFromAnswer(answer));
   const editorRun = useEditorRun({ isChecked });
   const { isRunning, isStale } = editorRun;
-  const program = programWithEdits(isExploring ? fields.solution : fields.starterCode, edits);
+  const matches = run !== null && sameOutput(run.output, fields.expectedOutput);
+  const edited = Object.keys(edits).length > 0;
+  const program = programWithEdits(baseProgram({ edited, fields, matches, phase }), edits);
   const lines = program.split("\n");
   const highlighted = highlightCode(program, fields.language);
   const editable = new Set(fields.editableLines);
   const runtimeName = RUNTIME_NAMES[fields.language];
-  const matches = run !== null && sameOutput(run.output, fields.expectedOutput);
 
   const mistake =
     run && !matches && !isExploring
@@ -107,15 +136,14 @@ export function CodeRunnerActivity({
 
   return (
     <ActivityCanvas className="gap-3" labelId={labelId}>
-      <div className="bg-background flex flex-col gap-2 rounded-2xl border px-3 pt-3 pb-3.5">
-        <div className="flex items-center justify-between gap-3 px-1.5">
+      <div className={cn(ACTIVITY_BOX_CLASS, "flex flex-col gap-2 px-3 pt-3 pb-3.5")}>
+        <div className="flex items-center justify-between gap-3">
           <p className="text-muted-foreground font-mono text-xs">
             {fields.fileName ?? DEFAULT_FILE_NAMES[fields.language]}
           </p>
           {!isExploring && (
-            <p className="text-muted-foreground flex items-center gap-1 text-xs">
-              <Pencil aria-hidden="true" className="size-3" />
-              {t("{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}", {
+            <p className="text-muted-foreground flex items-center gap-1 text-xs in-data-[phase=feedback]:invisible">
+              {t("{count, plural, one {Edit line {lines}} other {Edit lines {lines}}}", {
                 count: fields.editableLines.length,
                 lines: yours,
               })}
@@ -123,41 +151,35 @@ export function CodeRunnerActivity({
           )}
         </div>
 
-        <ActivityCodeBlock aria-label={t("Code")} role="group">
+        <ActivityCodeBlock label={t("Code")}>
           {lines.map((line, index) => {
             const number = index + 1;
 
-            if (!editable.has(number)) {
-              return (
-                <ActivityCodeLine
-                  key={number}
-                  number={number}
-                  tone={run?.error?.line === number && !isStale ? "error" : "plain"}
-                >
-                  <ActivityCodeTokens tokens={highlighted[index] ?? []} />
-                </ActivityCodeLine>
-              );
-            }
+            const canEdit = editable.has(number) && !isChecked;
+            const hasError = run?.error?.line === number && !isStale;
 
             return (
               <ActivityCodeLine
                 key={number}
                 number={number}
-                tone={run?.error?.line === number && !isStale ? "error" : "editable"}
+                tone={runnerLineTone({ canEdit, hasError })}
               >
-                <ActivityCodeLineInput
-                  aria-label={t("Line {number}, yours to edit", { number: String(number) })}
-                  language={fields.language}
-                  onChange={(value) => edit(number, value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      void handleRun();
-                    }
-                  }}
-                  readOnly={isChecked}
-                  value={line}
-                />
+                {canEdit ? (
+                  <ActivityCodeLineInput
+                    aria-label={t("Line {number}, yours to edit", { number: String(number) })}
+                    language={fields.language}
+                    onChange={(value) => edit(number, value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        void handleRun();
+                      }
+                    }}
+                    value={line}
+                  />
+                ) : (
+                  <ActivityCodeTokens tokens={highlighted[index] ?? []} />
+                )}
               </ActivityCodeLine>
             );
           })}
@@ -177,6 +199,7 @@ export function CodeRunnerActivity({
         <SandboxRunBar
           hasRun={run !== null}
           isRunning={isRunning}
+          isExploring={isExploring}
           onReset={Object.keys(edits).length > 0 ? reset : undefined}
           onRetry={runtime.retry}
           onRun={() => void handleRun()}

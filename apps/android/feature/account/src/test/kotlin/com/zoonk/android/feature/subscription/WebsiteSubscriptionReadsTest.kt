@@ -72,16 +72,15 @@ class WebsiteSubscriptionReadsTest {
         rule.setContent {
             ZoonkTheme {
                 if (profile) {
-                    webPlusDeletionNotice(store.websiteSubscription)?.let { Text(it) }
+                    deletionPlusNotices(store.websiteSubscription, provider = null).forEach { Text(it) }
                 } else {
                     val state by store.websiteSubscription.collectShown()
-                    val cancellation = WebPlusCancellationViewModel(store::cancelWebPlus, store::keepWebPlus)
-                    AccountPlans(null, state, rememberAppNavigator(), cancellation, {}, {})
+                    AccountPlans(null, state, rememberAppNavigator(), {}, {})
                 }
             }
         }
         rule.settle(store.websiteSubscription)
-        rule.onNodeWithText("Your last renewal payment failed.").assertExists()
+        rule.onNodeWithText(RENEWAL_FAILED).assertExists()
         rule.runOnIdle { profile = true }
         rule.settle(store.websiteSubscription)
         rule.onNodeWithText("Deleting your account ends Plus right away.").assertExists()

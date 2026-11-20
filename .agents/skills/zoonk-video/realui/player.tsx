@@ -436,7 +436,6 @@ function Tutored({ lang, finish = false }: { finish?: boolean; lang: Lang }) {
         firstAnswer={null}
         lesson={lesson}
         linkComponent={PlainLink as any}
-        onExit={() => null}
         routes={{ exit: "/", exitTo: null, nextLesson: null, signUp: "/", upgrade: "/" } as any}
         tutor={tutor as any}
         viewer={{ learnerId: "preview" } as any}

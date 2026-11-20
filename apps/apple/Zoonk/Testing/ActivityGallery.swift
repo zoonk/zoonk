@@ -4,13 +4,11 @@
   /// Launch with `--activity-gallery` and the screens as `[PlayableLibraryStep]` JSON in
   /// `ZOONK_ACTIVITY_GALLERY`. `ZOONK_ACTIVITY_GALLERY_OPEN` opens one screen at launch; with
   /// `ZOONK_ACTIVITY_GALLERY_ANSWER` (a `LessonStepAnswer`) it starts answered and checked, and
-  /// with `ZOONK_ACTIVITY_GALLERY_EXPLORE` it starts explored.
+  /// with `ZOONK_ACTIVITY_GALLERY_EXPLORE` it starts explored. Each is also a launch argument.
   struct ActivityGalleryLaunch: ViewModifier {
-    private static let environment = ProcessInfo.processInfo.environment
-
     private let steps: [LessonStep]? = {
       guard ProcessInfo.processInfo.arguments.contains("--activity-gallery"),
-        let json = ProcessInfo.processInfo.environment["ZOONK_ACTIVITY_GALLERY"]
+        let json = debugLaunchValue("ZOONK_ACTIVITY_GALLERY")
       else {
         return nil
       }
@@ -27,11 +25,11 @@
         content.fullScreenCover(isPresented: .constant(true)) {
           ActivityGallery(
             steps: steps,
-            path: steps.filter { $0.id == Self.environment["ZOONK_ACTIVITY_GALLERY_OPEN"] },
-            answer: Self.environment["ZOONK_ACTIVITY_GALLERY_ANSWER"].flatMap {
+            path: steps.filter { $0.id == debugLaunchValue("ZOONK_ACTIVITY_GALLERY_OPEN") },
+            answer: debugLaunchValue("ZOONK_ACTIVITY_GALLERY_ANSWER").flatMap {
               try? JSONDecoder().decode(LessonAnswer.self, from: Data($0.utf8))
             },
-            isExploring: Self.environment["ZOONK_ACTIVITY_GALLERY_EXPLORE"] != nil
+            isExploring: debugLaunchValue("ZOONK_ACTIVITY_GALLERY_EXPLORE") != nil
           )
           .zoonkStyles()
         }
@@ -85,6 +83,7 @@
       PaneSplit {
         ScrollView {
           VStack(alignment: .leading, spacing: 16) {
+            title
             modePicker
             part(.screen)
           }
@@ -103,6 +102,7 @@
       } single: {
         ScrollView {
           VStack(alignment: .leading, spacing: 16) {
+            title
             modePicker
             part(.screen)
             part(.turn)
@@ -112,8 +112,10 @@
           .id(run)
         }
       }
+      .pageColumn()
       .environment(work)
-      .navigationTitle(Text(verbatim: content.template))
+      // The page's own title, on the column's edge as every page's is, not the bar's large title.
+      .navigationBarTitleDisplayMode(.inline)
       .onAppear {
         if answer != nil, result == nil {
           check()
@@ -145,6 +147,10 @@
           .disabled(answer == nil || result != nil)
         }
       }
+    }
+
+    private var title: some View {
+      PageHeader(Text(verbatim: content.template))
     }
 
     private var modePicker: some View {
@@ -186,12 +192,17 @@
           Image(systemName: result.isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
         }
         .foregroundStyle(result.isCorrect ? Color.success : .destructive)
+        // As the player's verdict: a canvas that takes the number shows the real value itself.
         Text(
-          verbatim: [result.correctAnswer, result.feedback].compactMap { $0 }.joined(
-            separator: "\n")
+          verbatim: [answersOnCanvas ? nil : result.correctAnswer, result.feedback]
+            .compactMap { $0 }.joined(separator: "\n")
         )
         .typeStyle(.note)
       }
+    }
+
+    private var answersOnCanvas: Bool {
+      activityRenderers.renderer(for: content.template)?.answersOnCanvas == true
     }
 
     private func check() {

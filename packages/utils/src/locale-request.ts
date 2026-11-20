@@ -30,12 +30,18 @@ function getCountryFromAcceptLanguage(acceptLanguage: string | null): string {
   return region ?? DEFAULT_COUNTRY;
 }
 
-/** Vercel's IP country, or the browser's language region where Vercel doesn't add it (local runs). */
+/**
+ * Where the request came from, which Vercel reads from its IP address; null where Vercel doesn't
+ * add it (local runs) or can't place the address. The one fact about a learner's location: a
+ * browser's language says what they read, not where they live.
+ */
+export function getIpCountry(headers: Pick<Headers, "get">): string | null {
+  return headers.get("x-vercel-ip-country");
+}
+
+/** The IP's country, or the browser's language region without one, for a price or a consent rule that needs an answer. */
 export function getRequestCountry(headers: Pick<Headers, "get">): string {
-  return (
-    headers.get("x-vercel-ip-country") ??
-    getCountryFromAcceptLanguage(headers.get("accept-language"))
-  );
+  return getIpCountry(headers) ?? getCountryFromAcceptLanguage(headers.get("accept-language"));
 }
 
 function getManualLocale(value?: string | null): SupportedLocale | null {

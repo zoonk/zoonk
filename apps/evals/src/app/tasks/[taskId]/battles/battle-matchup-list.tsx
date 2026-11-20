@@ -1,5 +1,6 @@
 "use client";
 
+import { FoldRowTitle } from "@/components/fold-row-title";
 import { getModelById, getModelDisplayName } from "@/lib/models";
 import { type BattleMatchup, type CategoryScore } from "@/lib/types";
 import {
@@ -8,8 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
-import { Badge } from "@zoonk/ui/components/badge";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import Link from "next/link";
 import { RankingItem } from "./ranking-item";
 
 type TestCaseEntry = {
@@ -20,14 +20,6 @@ type TestCaseEntry = {
   categoryScores?: CategoryScore[];
 };
 
-export function BattleMatchupListSkeleton() {
-  return (
-    <div aria-hidden="true" className="py-8">
-      <Skeleton className="mx-auto h-6 w-48 rounded" />
-    </div>
-  );
-}
-
 function buildJudgeViews(
   matchups: BattleMatchup[],
 ): {
@@ -36,7 +28,6 @@ function buildJudgeViews(
   models: {
     modelId: string;
     modelName: string;
-    totalScore: number;
     averageScore: number;
     testCases: TestCaseEntry[];
   }[];
@@ -87,32 +78,26 @@ function buildJudgeViews(
           modelId,
           modelName: model ? getModelDisplayName(model) : modelId,
           testCases,
-          totalScore,
         };
       })
-      .toSorted((a, b) => b.totalScore - a.totalScore),
+      .toSorted((a, b) => b.averageScore - a.averageScore),
   }));
 }
 
 function ModelItem({
   model,
 }: {
-  model: {
-    modelId: string;
-    modelName: string;
-    totalScore: number;
-    averageScore: number;
-    testCases: TestCaseEntry[];
-  };
+  model: { modelId: string; modelName: string; averageScore: number; testCases: TestCaseEntry[] };
 }) {
   return (
     <AccordionItem value={model.modelId}>
       <AccordionTrigger className="hover:no-underline">
-        <div className="flex items-center gap-3">
-          <span className="font-medium">{model.modelName}</span>
-          <Badge variant="secondary">{model.totalScore.toFixed(1)} pts</Badge>
-          <Badge variant="outline">avg: {model.averageScore.toFixed(1)}</Badge>
-        </div>
+        <FoldRowTitle title={model.modelName}>
+          <span className="text-muted-foreground font-sans text-xs font-normal">
+            {model.testCases.length} {model.testCases.length === 1 ? "case" : "cases"}
+          </span>{" "}
+          <span className="ms-2 font-semibold">{model.averageScore.toFixed(1)}</span>
+        </FoldRowTitle>
       </AccordionTrigger>
 
       <AccordionContent className="flex flex-col gap-3 pt-4">
@@ -131,11 +116,21 @@ function ModelItem({
   );
 }
 
-export function BattleMatchupList({ matchups }: { matchups: BattleMatchup[] }) {
+export function BattleMatchupList({
+  matchups,
+  taskId,
+}: {
+  matchups: BattleMatchup[];
+  taskId: string;
+}) {
   if (matchups.length === 0) {
     return (
-      <p className="text-muted-foreground py-8 text-center">
-        No battle results yet. Run Battle Mode first.
+      <p className="text-muted-foreground py-8 text-sm">
+        No battles yet.{" "}
+        <Link className="text-foreground underline underline-offset-4" href={`/tasks/${taskId}`}>
+          Run a battle from the task
+        </Link>
+        .
       </p>
     );
   }
@@ -143,10 +138,10 @@ export function BattleMatchupList({ matchups }: { matchups: BattleMatchup[] }) {
   const judgeViews = buildJudgeViews(matchups);
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-10 pt-4">
       {judgeViews.map((judge) => (
         <section key={judge.judgeId}>
-          <h3 className="mb-4 text-lg font-semibold">{judge.judgeName}</h3>
+          <h2 className="mb-4 text-lg font-semibold tracking-tight">Judged by {judge.judgeName}</h2>
 
           <Accordion>
             {judge.models.map((model) => (

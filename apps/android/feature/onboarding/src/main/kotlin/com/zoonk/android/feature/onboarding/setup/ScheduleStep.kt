@@ -3,18 +3,16 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -50,12 +49,14 @@ import com.zoonk.android.feature.plan.markedTimes
 import com.zoonk.android.feature.plan.timeLine
 import com.zoonk.android.feature.plan.timeOffer
 import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.DailyTimePicker
-import com.zoonk.android.ui.components.LabelChip
-import com.zoonk.android.ui.components.LocalButtonSize
+import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeSelect
-import com.zoonk.android.ui.components.labelInset
+import com.zoonk.android.ui.components.WeekdayPicker
+import com.zoonk.android.ui.components.WeekendTime
+import com.zoonk.android.ui.components.missingDays
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -72,8 +73,6 @@ import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
-import java.time.DayOfWeek
-import java.time.format.TextStyle
 import java.util.TimeZone
 
 @Composable
@@ -277,6 +276,7 @@ private fun ColumnScope.ScheduleTime(
         .TrackOnboardingQuestion(goal.id.toString(), "schedule", goal.details.text("onboardingId"))
     StepForm(
         title = stringResource(R.string.onboarding_schedule_title),
+        chips = if (factsBeside) emptyList() else planFactChips(goal),
         continueLabel = stringResource(R.string.onboarding_see_plan),
         canContinue = hasDays && minutes != null,
         pending = pending || waitsToSave(line, picked),
@@ -296,23 +296,6 @@ private fun ColumnScope.ScheduleTime(
             )
         },
     ) {
-        if (!factsBeside) PlanFactChips(goal)
-        ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
-
-        // The days decide the time, and what the time covers arrives last, so nothing above it moves.
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            WeekdayToggles(days, onChange = { onChoiceChange(choice.copy(days = it)) })
-            if (days.any(::isWeekend)) {
-                WeekendTime(
-                    times = timeChoices.map { it.minutes },
-                    checked = choice.weekendOn,
-                    minutes = choice.weekendPicked ?: minutes ?: recommendedMinutes,
-                    onCheckedChange = { onChoiceChange(choice.copy(weekendOn = it, weekendPicked = null)) },
-                    onChange = { onChoiceChange(choice.copy(weekendPicked = it)) },
-                )
-            }
-        }
-
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             val label = stringResource(R.string.onboarding_schedule_time_label)
             // The picker carries the name for screen readers; this is its visible title.
@@ -367,6 +350,22 @@ private fun ColumnScope.ScheduleTime(
             val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
             FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
         }
+
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            WeekdayToggles(days, onChange = { onChoiceChange(choice.copy(days = it)) })
+            // The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'.
+            WeekendTime(
+                checked = choice.weekendOn,
+                missing = missingDays(days),
+                times = timeChoices.map { it.minutes },
+                minutes = choice.weekendPicked ?: minutes ?: recommendedMinutes,
+                onCheckedChange = { onChoiceChange(choice.copy(weekendOn = it, weekendPicked = null)) },
+                onPick = { onChoiceChange(choice.copy(weekendPicked = it)) },
+                labelStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.Medium),
+            )
+        }
+
+        ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
     }
 }
 
@@ -393,7 +392,7 @@ private fun DateLink(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset), enabled = enabled) {
+    TextButton(onClick = onClick, enabled = enabled, forward = true, edge = ButtonEdge.Start) {
         Text(stringResource(if (dated) R.string.onboarding_change_date else R.string.onboarding_choose_date))
     }
 }
@@ -441,48 +440,18 @@ private fun WeekdayToggles(
     days: List<Int>,
     onChange: (List<Int>) -> Unit,
 ) {
-    val locale = currentLocale()
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(R.string.onboarding_study_days), fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            EVERY_DAY.forEach { day ->
-                val weekday = DayOfWeek.of(if (day == 0) 7 else day)
-                val picked = day in days
-                FilterChip(
-                    selected = picked,
-                    onClick = { onChange(if (picked) days - day else (days + day).sorted()) },
-                    leadingIcon = selectedCheck(picked),
-                    label = { Text(weekday.getDisplayName(TextStyle.NARROW, locale)) },
-                    modifier = Modifier.semantics { contentDescription = weekday.getDisplayName(TextStyle.FULL, locale) },
-                )
-            }
-        }
-    }
-}
-
-/** The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'. */
-@Composable
-private fun WeekendTime(
-    times: List<Long>,
-    checked: Boolean,
-    minutes: Int,
-    onCheckedChange: (Boolean) -> Unit,
-    onChange: (Int) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SwitchRow(stringResource(R.string.onboarding_weekend_time), checked, onCheckedChange)
-        if (checked) TimeSelect(stringResource(R.string.onboarding_weekend_time_label), times, minutes, onChange)
+        WeekdayPicker(
+            isOn = { it in days },
+            onToggle = { day, on -> onChange(if (on) (days + day).sorted() else days - day) },
+        )
     }
 }
 
 @Composable
-private fun PlanFactChips(goal: Goal) {
-    val facts = planFacts(goal).filter { it.chip }
-    if (facts.isEmpty()) return
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        facts.flatMap { listOfNotNull(it.count ?: it.value, it.note) }.forEach { LabelChip(text = it) }
-    }
-}
+private fun planFactChips(goal: Goal): List<String> =
+    planFacts(goal).filter { it.chip }.flatMap { listOfNotNull(it.count ?: it.value, it.note) }
 
 /** A goal's date as the learner gave it: a named month reads as the month, not its first day. */
 @Composable
@@ -491,13 +460,6 @@ internal fun goalDate(
     namedMonth: Boolean,
     style: DateStyle = DateStyle.Day,
 ): String = formatDate(date.toJavaLocalDate(), currentLocale(), if (namedMonth) DateStyle.Month else style)
-
-internal fun selectedCheck(selected: Boolean): (@Composable () -> Unit)? =
-    if (selected) {
-        { Icon(painterResource(R.drawable.ic_check), contentDescription = null, modifier = Modifier.size(FilterChipDefaults.IconSize)) }
-    } else {
-        null
-    }
 
 /** The whole row toggles, its description read with it, at least a touch target tall. */
 @Composable
@@ -508,7 +470,11 @@ private fun SwitchRow(
     description: String? = null,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(checked, role = Role.Switch, onValueChange = onCheckedChange),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 48.dp)
+                .toggleable(checked, role = Role.Switch, onValueChange = onCheckedChange),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {

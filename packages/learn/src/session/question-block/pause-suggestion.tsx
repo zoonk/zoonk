@@ -31,7 +31,7 @@ export function PauseSuggestion({ onStop }: { onStop: () => Promise<boolean> }) 
 
       {failed && (
         <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't stop the session. Try again.")}
+          {t("That didn't go through. Try again in a moment.")}
         </p>
       )}
     </aside>

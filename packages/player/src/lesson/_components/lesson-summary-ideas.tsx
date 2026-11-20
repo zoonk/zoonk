@@ -1,4 +1,5 @@
 import { LessonRichText } from "./lesson-rich-text";
+import { NumberedLine } from "./numbered-line";
 
 export function LessonSummaryIdeas({ ideas }: { ideas: string[] }) {
   return (
@@ -7,17 +8,11 @@ export function LessonSummaryIdeas({ ideas }: { ideas: string[] }) {
         const key = `idea-${index}`;
 
         return (
-          <li
-            className="border-border flex gap-3 py-3 text-base leading-relaxed sm:text-lg"
-            key={key}
-          >
-            <span aria-hidden="true" className="text-faint w-5 shrink-0 font-mono tabular-nums">
-              {index + 1}
-            </span>
-            <span className="min-w-0">
+          <NumberedLine className="border-border py-3" key={key} number={index + 1}>
+            <span>
               <LessonRichText text={idea} />
             </span>
-          </li>
+          </NumberedLine>
         );
       })}
     </ol>

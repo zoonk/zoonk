@@ -109,7 +109,7 @@ export function ThemeVideo({
 
       <button
         aria-label={playing ? "Pause the clip" : "Play the clip"}
-        className="focus-visible:ring-ring absolute inset-0 flex cursor-pointer items-center justify-center rounded-4xl outline-none focus-visible:ring-2 focus-visible:ring-inset"
+        className="focus-visible:ring-ring/50 absolute inset-0 flex cursor-pointer items-center justify-center rounded-4xl outline-none focus-visible:ring-[3px] focus-visible:ring-inset"
         onClick={toggle}
         type="button"
       >

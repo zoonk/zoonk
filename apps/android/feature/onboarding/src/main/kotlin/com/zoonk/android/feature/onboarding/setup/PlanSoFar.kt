@@ -2,7 +2,7 @@ package com.zoonk.android.feature.onboarding.setup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
@@ -29,6 +30,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.Goal
 import kotlinx.datetime.toJavaLocalDate
@@ -65,7 +67,11 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
                 count = pluralStringResource(R.plurals.onboarding_days, days, days),
                 chip = true,
             )
-        } ?: PlanFact(dateLabel, stringResource(R.string.onboarding_no_date), chip = true).takeIf { details.answered("targetDate") }
+        } ?: PlanFact(
+            dateLabel,
+            stringResource(if (goal.kind == Goal.Kind.EXAM) R.string.onboarding_row_to_be_confirmed else R.string.plan_end_none_set),
+            chip = true,
+        ).takeIf { details.answered("targetDate") }
     val level = setupLevel(details)
     val resources = LocalResources.current
     val rows = remember(resources, locale) { UnderstoodRows(resources, locale, is24Hour = false) }
@@ -76,7 +82,12 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
             PlanFact(row.label, row.value, note = row.note, chip = row.id in CHIP_ROWS)
         } +
         listOfNotNull(
-            level?.let { PlanFact(stringResource(R.string.onboarding_level_label), it) },
+            level?.let {
+                val label =
+                    goal.targetLanguage?.let { language -> stringResource(R.string.language_level, languageName(language, locale)) }
+                        ?: stringResource(R.string.onboarding_row_level)
+                PlanFact(label, it)
+            },
             if (details.answered("schedule")) {
                 PlanFact(
                     stringResource(R.string.onboarding_time_a_day),
@@ -120,20 +131,20 @@ internal fun PlanSoFar(goal: Goal) {
         SectionHeader(stringResource(R.string.onboarding_plan_so_far))
         planFacts(goal).forEachIndexed { index, fact ->
             if (index > 0) HorizontalDivider()
-            Row(
+            FlowRow(
                 Modifier
                     .fillMaxWidth()
                     .semantics(mergeDescendants = true) {
                     }.padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     fact.label,
-                    modifier = Modifier.weight(LABEL_WEIGHT),
+                    modifier = Modifier.padding(end = 16.dp).alignByBaseline(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall,
                 )
-                Column(Modifier.weight(1 - LABEL_WEIGHT)) {
+                Column(Modifier.alignByBaseline(), horizontalAlignment = Alignment.End) {
                     Text(fact.value, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium)
                     fact.note?.let {
                         Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
@@ -150,5 +161,3 @@ internal fun PlanSoFar(goal: Goal) {
         }
     }
 }
-
-private const val LABEL_WEIGHT = 0.35f

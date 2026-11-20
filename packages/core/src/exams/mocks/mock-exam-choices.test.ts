@@ -75,7 +75,6 @@ function askedByArea({
   });
 
   const [full] = listMockOptions({
-    dayInTurn: 1,
     goalAreas: [LANGUAGES, "Spanish", "Humanities"],
     structure: chosen,
   });
@@ -130,7 +129,6 @@ describe("a mock of an exam with a choice of subject", () => {
     });
 
     const options = listMockOptions({
-      dayInTurn: 1,
       goalAreas: [LANGUAGES, "Spanish", "Humanities"],
       structure: chosen,
     });

@@ -1,6 +1,7 @@
 "use client";
 
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
+import { received } from "@zoonk/learn/help-limit";
 import { type AttachOutcome } from "@zoonk/learn/onboarding/actions";
 import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { safeAsync } from "@zoonk/utils/error";
@@ -26,7 +27,8 @@ async function toOutcome(response: Response): Promise<AttachOutcome> {
   const refusal = getUsageRefusal(body);
 
   if (refusal?.kind === "usageLimit") {
-    return { period: refusal.period, status: "limitReached", tier: refusal.tier };
+    const { availableAt, period, tier } = refusal;
+    return received({ availableAt, period, status: "limitReached", tier });
   }
 
   if (refusal) {

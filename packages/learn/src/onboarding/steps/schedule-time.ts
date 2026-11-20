@@ -11,21 +11,16 @@ export type GoalsTogether = { count: number; place: number };
 
 export function toStudyWeek({
   days,
-  fullCourse = false,
   minutes,
   weekend,
 }: {
   days: number[];
-  fullCourse?: boolean;
   minutes: number;
   weekend: number | null;
 }): StudyWeek {
-  const week =
-    weekend === null || weekend === minutes
-      ? { studyDays: days }
-      : { studyDays: days, weekendMinutes: weekend };
-
-  return fullCourse ? { ...week, fullCourse } : week;
+  return weekend === null || weekend === minutes
+    ? { studyDays: days }
+    : { studyDays: days, weekendMinutes: weekend };
 }
 
 /** The weekend's own time stays even when it equals the weekdays': only the weekdays' time is searched. */
@@ -126,12 +121,10 @@ export function toPickedMinutes({
 export function asksAboutTime({
   dated,
   found,
-  fullCourse,
   minutes,
 }: {
   dated: boolean;
   found: PlanTimeToCover | null;
-  fullCourse: boolean;
   minutes: number | null;
 }): boolean {
   if (minutes === null) {
@@ -146,10 +139,5 @@ export function asksAboutTime({
     return false;
   }
 
-  return fullCourse || found.suggested?.minutes !== minutes;
-}
-
-/** An exam's choice to study everything holds until the time picked is known to cover it all. */
-export function keepsFullCourse({ checked, line }: { checked: boolean; line: TimeLine }): boolean {
-  return checked && line.kind !== "everything";
+  return found.suggested?.minutes !== minutes;
 }

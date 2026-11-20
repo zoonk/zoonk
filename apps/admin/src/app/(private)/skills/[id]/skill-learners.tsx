@@ -1,32 +1,23 @@
-import { AdminSection } from "@/components/admin-section";
-import { DetailField, DetailFields } from "@/components/detail-field";
+import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { MasteryMeter } from "@/components/mastery-meter";
 import { countSkillLearnersByState } from "@/data/skills/get-skill-usage";
-import { type MasteryState } from "@zoonk/db";
+import { formatCount } from "@/lib/format";
+import { sumOf } from "@zoonk/utils/number";
 
-const MASTERY_STATE_LABELS: Record<MasteryState, string> = {
-  learning: "Learning",
-  mastered: "Mastered",
-  new: "New",
-  solid: "Solid",
-};
-
+/** How far the learners practicing it are. Accounts left out of analytics aren't counted. */
 export async function SkillLearners({ skillId }: { skillId: string }) {
   "use cache: private";
 
   const states = await countSkillLearnersByState(skillId);
+  const total = sumOf(states.map((row) => row.count));
 
   return (
-    <AdminSection
-      description="Learners by mastery state, without accounts left out of analytics."
-      title="Learners"
-    >
-      <DetailFields>
-        {states.map((row) => (
-          <DetailField key={row.state} label={MASTERY_STATE_LABELS[row.state]}>
-            <span className="tabular-nums">{row.count}</span>
-          </DetailField>
-        ))}
-      </DetailFields>
+    <AdminSection title={total > 0 ? formatCount(total, "learner") : "Learners"}>
+      {total > 0 ? (
+        <MasteryMeter states={states} />
+      ) : (
+        <AdminSectionEmpty>No learner has practiced it yet.</AdminSectionEmpty>
+      )}
     </AdminSection>
   );
 }

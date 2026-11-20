@@ -39,39 +39,18 @@ const en: ProfileContent = {
       adhd: { description: null, fragment: "", label: "ADHD" },
       anxiety: { description: null, fragment: "", label: "Anxiety" },
       autism: { description: null, fragment: "", label: "Autism" },
-      blindOrLowVision: {
-        description: "Your buddy explains in words, without pointing to things on the screen.",
-        fragment: "",
-        label: "Blind or low vision",
-      },
-      colorBlind: {
-        description: "Right and wrong answers show a word, not only a color.",
-        fragment: "",
-        label: "Color blindness",
-      },
-      deafOrHardOfHearing: {
-        description:
-          "Calls let you type, and your buddy can leave listening out of a language plan.",
-        fragment: "",
-        label: "Deaf or hard of hearing",
-      },
-      dyscalculia: {
-        description: "Your buddy explains calculations in small steps.",
-        fragment: "",
-        label: "Dyscalculia",
-      },
+      blindOrLowVision: { description: null, fragment: "", label: "Blind or low vision" },
+      colorBlind: { description: null, fragment: "", label: "Color blindness" },
+      deafOrHardOfHearing: { description: null, fragment: "", label: "Deaf or hard of hearing" },
+      dyscalculia: { description: null, fragment: "", label: "Dyscalculia" },
       dyslexia: { description: null, fragment: "", label: "Dyslexia" },
       motor: { description: null, fragment: "", label: "Limited movement or dexterity" },
       other: { description: "Tell us in your own words.", fragment: "", label: "Something else" },
-      speech: {
-        description: "Lesson speaking screens have “I can’t talk now”, and calls let you type.",
-        fragment: "",
-        label: "Stutter or other speech difference",
-      },
+      speech: { description: null, fragment: "", label: "Stutter or other speech difference" },
     },
     learningSupport: {
       examplesFirst: {
-        description: "Your buddy shows a worked example before the rule.",
+        description: "We show a worked example before the rule.",
         fragment: "",
         label: "Examples first",
       },
@@ -81,22 +60,22 @@ const en: ProfileContent = {
         label: "No sound effects",
       },
       plainWords: {
-        description: "No idioms or figures of speech from your buddy or in your examples.",
+        description: "No idioms or figures of speech.",
         fragment: "",
         label: "Plain, literal words",
       },
       shortAnswers: {
-        description: "Your buddy keeps answers short, one idea at a time.",
+        description: "We keep answers short, one idea at a time.",
         fragment: "",
         label: "Short answers",
       },
       shorterDays: {
-        description: "We’ll suggest a shorter daily time. You still choose.",
+        description: "We'll suggest a shorter daily time. You still choose.",
         fragment: "",
         label: "Shorter study days",
       },
       stepByStep: {
-        description: "Your buddy breaks explanations into small steps.",
+        description: "We break explanations into small steps.",
         fragment: "",
         label: "Step by step",
       },
@@ -195,10 +174,10 @@ const en: ProfileContent = {
     work: {
       neither: {
         description: null,
-        fragment: "Isn’t working or studying right now",
+        fragment: "Isn't working or studying right now",
         label: "Neither right now",
       },
-      student: { description: null, fragment: "Is a student", label: "I’m a student" },
+      student: { description: null, fragment: "Is a student", label: "I'm a student" },
       work: { description: null, fragment: "Works", label: "I work" },
       workAndStudy: { description: null, fragment: "Works and studies", label: "I work and study" },
     },
@@ -232,7 +211,7 @@ const en: ProfileContent = {
       picks: "Watches {picks}",
     },
     work: {
-      neither: "Isn’t working or studying right now",
+      neither: "Isn't working or studying right now",
       student: "Is a student",
       work: "Works",
       workAndStudy: "Works and studies",
@@ -272,28 +251,10 @@ const es: ProfileContent = {
       adhd: { description: null, fragment: "", label: "TDAH" },
       anxiety: { description: null, fragment: "", label: "Ansiedad" },
       autism: { description: null, fragment: "", label: "Autismo" },
-      blindOrLowVision: {
-        description: "Tu compañero te explica con palabras, sin señalar cosas en la pantalla.",
-        fragment: "",
-        label: "Ceguera o baja visión",
-      },
-      colorBlind: {
-        description:
-          "Las respuestas correctas e incorrectas muestran una palabra, no solo un color.",
-        fragment: "",
-        label: "Daltonismo",
-      },
-      deafOrHardOfHearing: {
-        description:
-          "En las llamadas puedes escribir, y tu compañero puede quitar la práctica de escucha de un plan de idioma.",
-        fragment: "",
-        label: "Sordera o pérdida auditiva",
-      },
-      dyscalculia: {
-        description: "Tu compañero te explica los cálculos en pasos pequeños.",
-        fragment: "",
-        label: "Discalculia",
-      },
+      blindOrLowVision: { description: null, fragment: "", label: "Ceguera o baja visión" },
+      colorBlind: { description: null, fragment: "", label: "Daltonismo" },
+      deafOrHardOfHearing: { description: null, fragment: "", label: "Sordera o pérdida auditiva" },
+      dyscalculia: { description: null, fragment: "", label: "Discalculia" },
       dyslexia: { description: null, fragment: "", label: "Dislexia" },
       motor: { description: null, fragment: "", label: "Movilidad o destreza limitada" },
       other: {
@@ -301,16 +262,11 @@ const es: ProfileContent = {
         fragment: "",
         label: "Otra cosa",
       },
-      speech: {
-        description:
-          "Las pantallas para hablar de las lecciones tienen “No puedo hablar ahora”, y en las llamadas puedes escribir.",
-        fragment: "",
-        label: "Tartamudez u otra diferencia del habla",
-      },
+      speech: { description: null, fragment: "", label: "Tartamudez u otra diferencia del habla" },
     },
     learningSupport: {
       examplesFirst: {
-        description: "Tu compañero muestra un ejemplo resuelto antes de la regla.",
+        description: "Te mostramos un ejemplo resuelto antes de la regla.",
         fragment: "",
         label: "Primero ejemplos",
       },
@@ -320,12 +276,12 @@ const es: ProfileContent = {
         label: "Sin efectos de sonido",
       },
       plainWords: {
-        description: "Sin modismos ni sentido figurado, ni de tu compañero ni en tus ejemplos.",
+        description: "Sin modismos ni sentido figurado.",
         fragment: "",
         label: "Palabras sencillas y literales",
       },
       shortAnswers: {
-        description: "Tu compañero responde breve, una idea a la vez.",
+        description: "Te respondemos breve, una idea a la vez.",
         fragment: "",
         label: "Respuestas cortas",
       },
@@ -335,7 +291,7 @@ const es: ProfileContent = {
         label: "Días de estudio más cortos",
       },
       stepByStep: {
-        description: "Tu compañero divide las explicaciones en pasos pequeños.",
+        description: "Dividimos las explicaciones en pasos pequeños.",
         fragment: "",
         label: "Paso a paso",
       },
@@ -539,40 +495,22 @@ const pt: ProfileContent = {
       adhd: { description: null, fragment: "", label: "TDAH" },
       anxiety: { description: null, fragment: "", label: "Ansiedade" },
       autism: { description: null, fragment: "", label: "Autismo" },
-      blindOrLowVision: {
-        description: "Seu parceiro explica com palavras, sem apontar para coisas na tela.",
-        fragment: "",
-        label: "Cegueira ou baixa visão",
-      },
-      colorBlind: {
-        description: "Respostas certas e erradas mostram uma palavra, não só uma cor.",
-        fragment: "",
-        label: "Daltonismo",
-      },
+      blindOrLowVision: { description: null, fragment: "", label: "Cegueira ou baixa visão" },
+      colorBlind: { description: null, fragment: "", label: "Daltonismo" },
       deafOrHardOfHearing: {
-        description:
-          "Nas conversas você pode digitar, e seu parceiro pode tirar a prática de escuta de um plano de idioma.",
+        description: null,
         fragment: "",
         label: "Surdez ou deficiência auditiva",
       },
-      dyscalculia: {
-        description: "Seu parceiro explica os cálculos em pequenos passos.",
-        fragment: "",
-        label: "Discalculia",
-      },
+      dyscalculia: { description: null, fragment: "", label: "Discalculia" },
       dyslexia: { description: null, fragment: "", label: "Dislexia" },
       motor: { description: null, fragment: "", label: "Mobilidade ou destreza limitada" },
       other: { description: "Conte com suas palavras.", fragment: "", label: "Outra coisa" },
-      speech: {
-        description:
-          "As telas de fala das lições têm “Não posso falar agora”, e nas conversas você pode digitar.",
-        fragment: "",
-        label: "Gagueira ou outra diferença na fala",
-      },
+      speech: { description: null, fragment: "", label: "Gagueira ou outra diferença na fala" },
     },
     learningSupport: {
       examplesFirst: {
-        description: "Seu parceiro mostra um exemplo resolvido antes da regra.",
+        description: "Mostramos um exemplo resolvido antes da regra.",
         fragment: "",
         label: "Exemplos primeiro",
       },
@@ -582,13 +520,12 @@ const pt: ProfileContent = {
         label: "Sem efeitos sonoros",
       },
       plainWords: {
-        description:
-          "Sem expressões idiomáticas ou figuras de linguagem, nem do seu parceiro nem nos seus exemplos.",
+        description: "Sem expressões idiomáticas ou figuras de linguagem.",
         fragment: "",
         label: "Palavras simples e literais",
       },
       shortAnswers: {
-        description: "Seu parceiro responde de forma curta, uma ideia por vez.",
+        description: "Respondemos de forma curta, uma ideia por vez.",
         fragment: "",
         label: "Respostas curtas",
       },
@@ -598,7 +535,7 @@ const pt: ProfileContent = {
         label: "Dias de estudo mais curtos",
       },
       stepByStep: {
-        description: "Seu parceiro divide as explicações em pequenos passos.",
+        description: "Dividimos as explicações em pequenos passos.",
         fragment: "",
         label: "Passo a passo",
       },
@@ -810,41 +747,22 @@ const fr: ProfileContent = {
       adhd: { description: null, fragment: "", label: "TDAH" },
       anxiety: { description: null, fragment: "", label: "Anxiété" },
       autism: { description: null, fragment: "", label: "Autisme" },
-      blindOrLowVision: {
-        description: "Ton compagnon explique avec des mots, sans désigner des choses à l’écran.",
-        fragment: "",
-        label: "Cécité ou malvoyance",
-      },
-      colorBlind: {
-        description:
-          "Les bonnes et les mauvaises réponses affichent un mot, pas seulement une couleur.",
-        fragment: "",
-        label: "Daltonisme",
-      },
-      deafOrHardOfHearing: {
-        description:
-          "Les appels te permettent d’écrire, et ton compagnon peut retirer l’écoute d’un plan de langue.",
-        fragment: "",
-        label: "Surdité ou malentendance",
-      },
-      dyscalculia: {
-        description: "Ton compagnon explique les calculs par petites étapes.",
-        fragment: "",
-        label: "Dyscalculie",
-      },
+      blindOrLowVision: { description: null, fragment: "", label: "Cécité ou malvoyance" },
+      colorBlind: { description: null, fragment: "", label: "Daltonisme" },
+      deafOrHardOfHearing: { description: null, fragment: "", label: "Surdité ou malentendance" },
+      dyscalculia: { description: null, fragment: "", label: "Dyscalculie" },
       dyslexia: { description: null, fragment: "", label: "Dyslexie" },
       motor: { description: null, fragment: "", label: "Mobilité ou dextérité réduite" },
       other: { description: "Dis-le avec tes mots.", fragment: "", label: "Autre chose" },
       speech: {
-        description:
-          "Les écrans d’expression orale des leçons proposent « Je ne peux pas parler maintenant », et les appels te permettent d’écrire.",
+        description: null,
         fragment: "",
         label: "Bégaiement ou autre particularité de la parole",
       },
     },
     learningSupport: {
       examplesFirst: {
-        description: "Ton compagnon montre un exemple résolu avant la règle.",
+        description: "On te montre un exemple résolu avant la règle.",
         fragment: "",
         label: "Les exemples d’abord",
       },
@@ -854,13 +772,12 @@ const fr: ProfileContent = {
         label: "Pas d’effets sonores",
       },
       plainWords: {
-        description:
-          "Pas d’expressions idiomatiques ni de figures de style, ni chez ton compagnon ni dans tes exemples.",
+        description: "Pas d’expressions idiomatiques ni de figures de style.",
         fragment: "",
         label: "Des mots simples et littéraux",
       },
       shortAnswers: {
-        description: "Ton compagnon répond brièvement, une idée à la fois.",
+        description: "On te répond brièvement, une idée à la fois.",
         fragment: "",
         label: "Réponses courtes",
       },
@@ -870,7 +787,7 @@ const fr: ProfileContent = {
         label: "Journées d’étude plus courtes",
       },
       stepByStep: {
-        description: "Ton compagnon découpe ses explications en petites étapes.",
+        description: "On découpe les explications en petites étapes.",
         fragment: "",
         label: "Étape par étape",
       },
@@ -1090,27 +1007,14 @@ const de: ProfileContent = {
       adhd: { description: null, fragment: "", label: "ADHS" },
       anxiety: { description: null, fragment: "", label: "Angst" },
       autism: { description: null, fragment: "", label: "Autismus" },
-      blindOrLowVision: {
-        description: "Dein Kumpel erklärt in Worten, ohne auf Dinge auf dem Bildschirm zu zeigen.",
-        fragment: "",
-        label: "Blindheit oder Sehbehinderung",
-      },
-      colorBlind: {
-        description: "Richtige und falsche Antworten zeigen ein Wort, nicht nur eine Farbe.",
-        fragment: "",
-        label: "Farbenblindheit",
-      },
+      blindOrLowVision: { description: null, fragment: "", label: "Blindheit oder Sehbehinderung" },
+      colorBlind: { description: null, fragment: "", label: "Farbenblindheit" },
       deafOrHardOfHearing: {
-        description:
-          "In Gesprächen kannst du tippen, und dein Kumpel kann Hörübungen aus einem Sprachplan herausnehmen.",
+        description: null,
         fragment: "",
         label: "Gehörlosigkeit oder Schwerhörigkeit",
       },
-      dyscalculia: {
-        description: "Dein Kumpel erklärt Rechnungen in kleinen Schritten.",
-        fragment: "",
-        label: "Dyskalkulie",
-      },
+      dyscalculia: { description: null, fragment: "", label: "Dyskalkulie" },
       dyslexia: { description: null, fragment: "", label: "Legasthenie" },
       motor: {
         description: null,
@@ -1122,16 +1026,11 @@ const de: ProfileContent = {
         fragment: "",
         label: "Etwas anderes",
       },
-      speech: {
-        description:
-          "Sprechübungen in Lektionen haben „Ich kann gerade nicht sprechen“, und in Gesprächen kannst du tippen.",
-        fragment: "",
-        label: "Stottern oder andere Sprechbesonderheit",
-      },
+      speech: { description: null, fragment: "", label: "Stottern oder andere Sprechbesonderheit" },
     },
     learningSupport: {
       examplesFirst: {
-        description: "Dein Kumpel zeigt ein durchgerechnetes Beispiel vor der Regel.",
+        description: "Wir zeigen ein durchgerechnetes Beispiel vor der Regel.",
         fragment: "",
         label: "Beispiele zuerst",
       },
@@ -1141,13 +1040,12 @@ const de: ProfileContent = {
         label: "Keine Soundeffekte",
       },
       plainWords: {
-        description:
-          "Keine Redewendungen oder bildliche Sprache, weder von deinem Kumpel noch in deinen Beispielen.",
+        description: "Keine Redewendungen oder bildliche Sprache.",
         fragment: "",
         label: "Einfache, wörtliche Sprache",
       },
       shortAnswers: {
-        description: "Dein Kumpel antwortet kurz, ein Gedanke nach dem anderen.",
+        description: "Wir antworten kurz, ein Gedanke nach dem anderen.",
         fragment: "",
         label: "Kurze Antworten",
       },
@@ -1157,7 +1055,7 @@ const de: ProfileContent = {
         label: "Kürzere Lerntage",
       },
       stepByStep: {
-        description: "Dein Kumpel teilt Erklärungen in kleine Schritte auf.",
+        description: "Wir teilen Erklärungen in kleine Schritte auf.",
         fragment: "",
         label: "Schritt für Schritt",
       },
@@ -1385,40 +1283,18 @@ const it: ProfileContent = {
       adhd: { description: null, fragment: "", label: "ADHD" },
       anxiety: { description: null, fragment: "", label: "Ansia" },
       autism: { description: null, fragment: "", label: "Autismo" },
-      blindOrLowVision: {
-        description: "Il tuo compagno spiega a parole, senza indicare cose sullo schermo.",
-        fragment: "",
-        label: "Cecità o ipovisione",
-      },
-      colorBlind: {
-        description: "Le risposte giuste e sbagliate mostrano una parola, non solo un colore.",
-        fragment: "",
-        label: "Daltonismo",
-      },
-      deafOrHardOfHearing: {
-        description:
-          "Nelle conversazioni puoi scrivere, e il tuo compagno può togliere l’ascolto da un piano di lingua.",
-        fragment: "",
-        label: "Sordità o ipoacusia",
-      },
-      dyscalculia: {
-        description: "Il tuo compagno spiega i calcoli a piccoli passi.",
-        fragment: "",
-        label: "Discalculia",
-      },
+      blindOrLowVision: { description: null, fragment: "", label: "Cecità o ipovisione" },
+      colorBlind: { description: null, fragment: "", label: "Daltonismo" },
+      deafOrHardOfHearing: { description: null, fragment: "", label: "Sordità o ipoacusia" },
+      dyscalculia: { description: null, fragment: "", label: "Discalculia" },
       dyslexia: { description: null, fragment: "", label: "Dislessia" },
       motor: { description: null, fragment: "", label: "Mobilità o destrezza limitata" },
       other: { description: "Raccontacelo con parole tue.", fragment: "", label: "Altro" },
-      speech: {
-        description:
-          "Le schermate per parlare nelle lezioni hanno “Ora non posso parlare”, e nelle conversazioni puoi scrivere.",
-        fragment: "",
-        label: "Balbuzie o altre differenze nel parlare",
-      },
+      speech: { description: null, fragment: "", label: "Balbuzie o altre differenze nel parlare" },
     },
     learningSupport: {
       examplesFirst: {
-        description: "Il tuo compagno mostra un esempio svolto prima della regola.",
+        description: "Ti mostriamo un esempio svolto prima della regola.",
         fragment: "",
         label: "Prima gli esempi",
       },
@@ -1428,13 +1304,12 @@ const it: ProfileContent = {
         label: "Niente effetti sonori",
       },
       plainWords: {
-        description:
-          "Niente modi di dire o linguaggio figurato, né dal tuo compagno né nei tuoi esempi.",
+        description: "Niente modi di dire o linguaggio figurato.",
         fragment: "",
         label: "Parole semplici e letterali",
       },
       shortAnswers: {
-        description: "Il tuo compagno risponde in breve, un’idea alla volta.",
+        description: "Ti rispondiamo in breve, un’idea alla volta.",
         fragment: "",
         label: "Risposte brevi",
       },
@@ -1444,7 +1319,7 @@ const it: ProfileContent = {
         label: "Giornate di studio più brevi",
       },
       stepByStep: {
-        description: "Il tuo compagno divide le spiegazioni in piccoli passi.",
+        description: "Dividiamo le spiegazioni in piccoli passi.",
         fragment: "",
         label: "Passo dopo passo",
       },
@@ -1632,38 +1507,18 @@ const ja: ProfileContent = {
       adhd: { description: null, fragment: "", label: "ADHD" },
       anxiety: { description: null, fragment: "", label: "不安" },
       autism: { description: null, fragment: "", label: "自閉スペクトラム症" },
-      blindOrLowVision: {
-        description: "相棒が画面上のものを指し示さず、言葉で説明します。",
-        fragment: "",
-        label: "全盲または弱視",
-      },
-      colorBlind: {
-        description: "正解・不正解は色だけでなく、文字でも表示されます。",
-        fragment: "",
-        label: "色覚の違い",
-      },
-      deafOrHardOfHearing: {
-        description: "会話では文字で入力でき、相棒は語学プランからリスニングを外すこともできます。",
-        fragment: "",
-        label: "ろう・難聴",
-      },
-      dyscalculia: {
-        description: "相棒が計算を小さなステップに分けて説明します。",
-        fragment: "",
-        label: "ディスカリキュリア",
-      },
+      blindOrLowVision: { description: null, fragment: "", label: "全盲または弱視" },
+      colorBlind: { description: null, fragment: "", label: "色覚の違い" },
+      deafOrHardOfHearing: { description: null, fragment: "", label: "ろう・難聴" },
+      dyscalculia: { description: null, fragment: "", label: "ディスカリキュリア" },
       dyslexia: { description: null, fragment: "", label: "ディスレクシア" },
       motor: { description: null, fragment: "", label: "体の動きや手先の動作の制限" },
       other: { description: "あなたの言葉で教えてください。", fragment: "", label: "その他" },
-      speech: {
-        description: "レッスンの発話画面には「今は話せない」があり、会話では文字で入力できます。",
-        fragment: "",
-        label: "吃音など話し方の違い",
-      },
+      speech: { description: null, fragment: "", label: "吃音など話し方の違い" },
     },
     learningSupport: {
       examplesFirst: {
-        description: "相棒がルールの前に解き方の例を見せます。",
+        description: "ルールの前に解き方の例を見せます。",
         fragment: "",
         label: "例から先に",
       },
@@ -1673,12 +1528,12 @@ const ja: ProfileContent = {
         label: "効果音なし",
       },
       plainWords: {
-        description: "相棒の説明にも例文にも、慣用句や比喩を使いません。",
+        description: "慣用句や比喩を使いません。",
         fragment: "",
         label: "シンプルで文字どおりの言葉",
       },
       shortAnswers: {
-        description: "相棒が一度にひとつずつ、短く答えます。",
+        description: "一度にひとつずつ、短く答えます。",
         fragment: "",
         label: "短い回答",
       },
@@ -1688,7 +1543,7 @@ const ja: ProfileContent = {
         label: "短めの学習時間",
       },
       stepByStep: {
-        description: "相棒が説明を小さなステップに分けます。",
+        description: "説明を小さなステップに分けます。",
         fragment: "",
         label: "一歩ずつ",
       },
@@ -1868,39 +1723,18 @@ const ko: ProfileContent = {
       adhd: { description: null, fragment: "", label: "ADHD" },
       anxiety: { description: null, fragment: "", label: "불안" },
       autism: { description: null, fragment: "", label: "자폐 스펙트럼" },
-      blindOrLowVision: {
-        description: "짝꿍이 화면 속 위치를 가리키지 않고 말로 설명해요.",
-        fragment: "",
-        label: "시각장애 또는 저시력",
-      },
-      colorBlind: {
-        description: "정답과 오답이 색깔만이 아니라 글자로도 표시돼요.",
-        fragment: "",
-        label: "색각 이상",
-      },
-      deafOrHardOfHearing: {
-        description: "대화에서 글로 입력할 수 있고, 짝꿍이 언어 계획에서 듣기를 뺄 수 있어요.",
-        fragment: "",
-        label: "청각장애 또는 난청",
-      },
-      dyscalculia: {
-        description: "짝꿍이 계산을 작은 단계로 나눠 설명해요.",
-        fragment: "",
-        label: "난산증",
-      },
+      blindOrLowVision: { description: null, fragment: "", label: "시각장애 또는 저시력" },
+      colorBlind: { description: null, fragment: "", label: "색각 이상" },
+      deafOrHardOfHearing: { description: null, fragment: "", label: "청각장애 또는 난청" },
+      dyscalculia: { description: null, fragment: "", label: "난산증" },
       dyslexia: { description: null, fragment: "", label: "난독증" },
       motor: { description: null, fragment: "", label: "움직임이나 손 사용의 제약" },
       other: { description: "직접 적어 주세요.", fragment: "", label: "기타" },
-      speech: {
-        description:
-          "레슨의 말하기 화면에 “지금은 말할 수 없어요”가 있고, 대화에서 글로 입력할 수 있어요.",
-        fragment: "",
-        label: "말더듬 또는 다른 말하기 차이",
-      },
+      speech: { description: null, fragment: "", label: "말더듬 또는 다른 말하기 차이" },
     },
     learningSupport: {
       examplesFirst: {
-        description: "짝꿍이 규칙보다 풀이 예시를 먼저 보여 줘요.",
+        description: "규칙보다 풀이 예시를 먼저 보여 줘요.",
         fragment: "",
         label: "예시 먼저",
       },
@@ -1910,12 +1744,12 @@ const ko: ProfileContent = {
         label: "효과음 끄기",
       },
       plainWords: {
-        description: "짝꿍의 설명과 예문에 관용구나 비유를 쓰지 않아요.",
+        description: "관용구나 비유를 쓰지 않아요.",
         fragment: "",
         label: "쉽고 직설적인 말",
       },
       shortAnswers: {
-        description: "짝꿍이 한 번에 하나씩 짧게 답해요.",
+        description: "한 번에 하나씩 짧게 답해요.",
         fragment: "",
         label: "짧은 답변",
       },
@@ -1924,11 +1758,7 @@ const ko: ProfileContent = {
         fragment: "",
         label: "더 짧은 학습 시간",
       },
-      stepByStep: {
-        description: "짝꿍이 설명을 작은 단계로 나눠요.",
-        fragment: "",
-        label: "단계별로",
-      },
+      stepByStep: { description: "설명을 작은 단계로 나눠요.", fragment: "", label: "단계별로" },
     },
     listen: {
       audiobooks: { description: null, fragment: "오디오북", label: "오디오북" },
@@ -2097,40 +1927,26 @@ const tr: ProfileContent = {
       adhd: { description: null, fragment: "", label: "DEHB" },
       anxiety: { description: null, fragment: "", label: "Kaygı" },
       autism: { description: null, fragment: "", label: "Otizm" },
-      blindOrLowVision: {
-        description: "Arkadaşın ekrandaki şeyleri göstermeden, kelimelerle açıklar.",
-        fragment: "",
-        label: "Görme engeli veya az görme",
-      },
-      colorBlind: {
-        description: "Doğru ve yanlış cevaplar yalnızca renkle değil, bir kelimeyle de gösterilir.",
-        fragment: "",
-        label: "Renk körlüğü",
-      },
+      blindOrLowVision: { description: null, fragment: "", label: "Görme engeli veya az görme" },
+      colorBlind: { description: null, fragment: "", label: "Renk körlüğü" },
       deafOrHardOfHearing: {
-        description:
-          "Sohbetlerde yazabilirsin; arkadaşın da bir dil planından dinlemeyi çıkarabilir.",
+        description: null,
         fragment: "",
         label: "İşitme engeli veya az işitme",
       },
-      dyscalculia: {
-        description: "Arkadaşın hesaplamaları küçük adımlarla açıklar.",
-        fragment: "",
-        label: "Diskalkuli",
-      },
+      dyscalculia: { description: null, fragment: "", label: "Diskalkuli" },
       dyslexia: { description: null, fragment: "", label: "Disleksi" },
       motor: { description: null, fragment: "", label: "Kısıtlı hareket veya el becerisi" },
       other: { description: "Kendi kelimelerinle anlat.", fragment: "", label: "Başka bir şey" },
       speech: {
-        description:
-          "Derslerdeki konuşma ekranlarında “Şu an konuşamıyorum” seçeneği var; sohbetlerde de yazabilirsin.",
+        description: null,
         fragment: "",
         label: "Kekemelik veya başka bir konuşma farklılığı",
       },
     },
     learningSupport: {
       examplesFirst: {
-        description: "Arkadaşın kuraldan önce çözülmüş bir örnek gösterir.",
+        description: "Kuraldan önce çözülmüş bir örnek gösteririz.",
         fragment: "",
         label: "Önce örnekler",
       },
@@ -2140,12 +1956,12 @@ const tr: ProfileContent = {
         label: "Ses efektleri kapalı",
       },
       plainWords: {
-        description: "Ne arkadaşın ne de örneklerin deyim ya da mecaz kullanır.",
+        description: "Deyim ya da mecaz kullanmayız.",
         fragment: "",
         label: "Sade ve düz anlatım",
       },
       shortAnswers: {
-        description: "Arkadaşın kısa cevap verir, her seferinde tek bir fikir.",
+        description: "Kısa cevap veririz, her seferinde tek bir fikir.",
         fragment: "",
         label: "Kısa cevaplar",
       },
@@ -2155,7 +1971,7 @@ const tr: ProfileContent = {
         label: "Daha kısa çalışma günleri",
       },
       stepByStep: {
-        description: "Arkadaşın açıklamaları küçük adımlara böler.",
+        description: "Açıklamaları küçük adımlara böleriz.",
         fragment: "",
         label: "Adım adım",
       },
@@ -2344,26 +2160,13 @@ const pl: ProfileContent = {
       anxiety: { description: null, fragment: "", label: "Lęk" },
       autism: { description: null, fragment: "", label: "Autyzm" },
       blindOrLowVision: {
-        description: "Twój kumpel wyjaśnia słowami, bez wskazywania rzeczy na ekranie.",
+        description: null,
         fragment: "",
         label: "Niewidomość lub słabe widzenie",
       },
-      colorBlind: {
-        description: "Dobre i złe odpowiedzi pokazują słowo, nie tylko kolor.",
-        fragment: "",
-        label: "Daltonizm",
-      },
-      deafOrHardOfHearing: {
-        description:
-          "W rozmowach możesz pisać, a twój kumpel może usunąć słuchanie z planu językowego.",
-        fragment: "",
-        label: "Głuchota lub niedosłuch",
-      },
-      dyscalculia: {
-        description: "Twój kumpel wyjaśnia obliczenia małymi krokami.",
-        fragment: "",
-        label: "Dyskalkulia",
-      },
+      colorBlind: { description: null, fragment: "", label: "Daltonizm" },
+      deafOrHardOfHearing: { description: null, fragment: "", label: "Głuchota lub niedosłuch" },
+      dyscalculia: { description: null, fragment: "", label: "Dyskalkulia" },
       dyslexia: { description: null, fragment: "", label: "Dysleksja" },
       motor: {
         description: null,
@@ -2371,16 +2174,11 @@ const pl: ProfileContent = {
         label: "Ograniczona sprawność ruchowa lub manualna",
       },
       other: { description: "Opisz to własnymi słowami.", fragment: "", label: "Coś innego" },
-      speech: {
-        description:
-          "Ekrany mówienia w lekcjach mają „Nie mogę teraz mówić”, a w rozmowach możesz pisać.",
-        fragment: "",
-        label: "Jąkanie lub inna różnica w mówieniu",
-      },
+      speech: { description: null, fragment: "", label: "Jąkanie lub inna różnica w mówieniu" },
     },
     learningSupport: {
       examplesFirst: {
-        description: "Twój kumpel pokazuje rozwiązany przykład przed regułą.",
+        description: "Pokazujemy rozwiązany przykład przed regułą.",
         fragment: "",
         label: "Najpierw przykłady",
       },
@@ -2390,12 +2188,12 @@ const pl: ProfileContent = {
         label: "Bez efektów dźwiękowych",
       },
       plainWords: {
-        description: "Bez idiomów i przenośni, ani u twojego kumpla, ani w twoich przykładach.",
+        description: "Bez idiomów i przenośni.",
         fragment: "",
         label: "Proste, dosłowne słowa",
       },
       shortAnswers: {
-        description: "Twój kumpel odpowiada krótko, jedna myśl naraz.",
+        description: "Odpowiadamy krótko, jedna myśl naraz.",
         fragment: "",
         label: "Krótkie odpowiedzi",
       },
@@ -2405,7 +2203,7 @@ const pl: ProfileContent = {
         label: "Krótsze dni nauki",
       },
       stepByStep: {
-        description: "Twój kumpel dzieli wyjaśnienia na małe kroki.",
+        description: "Dzielimy wyjaśnienia na małe kroki.",
         fragment: "",
         label: "Krok po kroku",
       },

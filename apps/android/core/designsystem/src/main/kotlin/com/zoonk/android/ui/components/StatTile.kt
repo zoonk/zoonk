@@ -1,13 +1,11 @@
 package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalContentColor
@@ -17,21 +15,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.toUpperCase
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
+import kotlin.math.roundToInt
 
 /** Main's `StatTone`: what a tile's symbol is colored by. */
 enum class StatTone { Neutral, Success, Energy, Brain }
@@ -47,6 +53,9 @@ val StatTone.color: Color
             StatTone.Brain -> MaterialTheme.zoonk.brain
         }
 
+/** Main's lone stat: a [StatTiles] row of one draws its tile as the block's readout, with no card around it. */
+private val LocalLoneStat = staticCompositionLocalOf { false }
+
 /**
  * Main's `StatTile`: an uppercase label with its symbol, a number and a line about it, read by TalkBack as one.
  * [spokenValue] is what TalkBack says for a value written for the eye, such as "45 of 60" for "45/60".
@@ -54,7 +63,7 @@ val StatTone.color: Color
  */
 @Composable
 fun StatTile(
-    label: String,
+    label: String?,
     value: String,
     modifier: Modifier = Modifier,
     detail: CharSequence? = null,
@@ -64,26 +73,40 @@ fun StatTile(
     spokenValue: String? = null,
     footer: (@Composable () -> Unit)? = null,
 ) {
+    val lone = LocalLoneStat.current
     val content = @Composable {
-        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                val labelStyle = MaterialTheme.zoonkType.label
-                CompositionLocalProvider(LocalContentColor provides tone.color) {
-                    icon?.invoke(Modifier.size(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }))
+        Column(if (lone) Modifier else Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(if (lone) 10.dp else 6.dp)) {
+            if (label != null) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    val labelStyle = MaterialTheme.zoonkType.label
+                    CompositionLocalProvider(LocalContentColor provides tone.color) {
+                        icon?.invoke(Modifier.size(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }))
+                    }
+                    Text(
+                        label.toUpperCase(LocaleList.current),
+                        Modifier.weight(1f).clearAndSetSemantics { text = AnnotatedString(label) },
+                        color = MaterialTheme.zoonk.faint,
+                        style = labelStyle,
+                    )
+                    if (onClick != null) ListRowChevron()
                 }
-                Text(
-                    label.toUpperCase(LocaleList.current),
-                    Modifier.clearAndSetSemantics { text = AnnotatedString(label) },
-                    color = MaterialTheme.zoonk.faint,
-                    style = labelStyle,
-                )
             }
             val style =
-                MaterialTheme.typography.headlineSmall.copy(
+                (if (lone) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.headlineSmall).copy(
                     color = if (tone == StatTone.Brain) MaterialTheme.zoonk.brainText else MaterialTheme.colorScheme.onSurface,
                 )
             // A description would replace the whole merged card for TalkBack; replaced text joins the label and detail.
-            val spoken = spokenValue?.let { Modifier.clearAndSetSemantics { text = AnnotatedString(it) } } ?: Modifier
+            val spoken =
+                (
+                    spokenValue?.let {
+                        Modifier.clearAndSetSemantics {
+                            text =
+                                AnnotatedString(
+                                    it,
+                                )
+                        }
+                    } ?: Modifier
+                ).endAtBaseline(style)
             // Main's `BigQuantity` for a quantity ("40 Brain Power", "2 days"), its words smaller; other values whole.
             if (value.any(Char::isDigit)) {
                 Readout(value, spoken, style)
@@ -94,39 +117,81 @@ fun StatTile(
                 Text(
                     it as? AnnotatedString ?: AnnotatedString(it.toString()),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = if (lone) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodySmall,
                 )
             }
             footer?.invoke()
         }
     }
 
-    if (onClick == null) {
+    if (lone && onClick == null) {
+        Box(modifier.semantics(mergeDescendants = true) {}) { content() }
+    } else if (onClick == null) {
         OutlinedCard(modifier.semantics(mergeDescendants = true) {}) { content() }
     } else {
         OutlinedCard(onClick = onClick, modifier = modifier) { content() }
     }
 }
 
-/** Main's `StatTiles`: up to [columns] to a row, fewer when larger text leaves a tile too narrow, a last lone tile across the row. */
+/**
+ * Main's trimmed value: the number's box ends at its baseline, so the room under it is the tile's
+ * own. The trim is the style's room under a baseline, so a row that sizes its tiles from their
+ * intrinsic heights trims it too.
+ */
+@Composable
+private fun Modifier.endAtBaseline(style: TextStyle): Modifier {
+    val measurer = rememberTextMeasurer()
+    val below = remember(style, measurer) { measurer.measure("0", style).let { it.size.height - it.lastBaseline.roundToInt() } }
+    return layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        layout(placeable.width, (placeable.height - below).coerceAtLeast(0)) { placeable.place(0, 0) }
+    }
+}
+
+/** Main's `StatTiles`: up to [columns] to a row, fewer when larger text leaves a tile too narrow, a last lone tile across the row, and a row of one as its block's readout. */
 @Composable
 fun StatTiles(
     columns: Int,
     tiles: List<@Composable (Modifier) -> Unit>,
     modifier: Modifier = Modifier,
 ) {
+    if (tiles.isEmpty()) return
+    tiles.singleOrNull()?.let { tile ->
+        CompositionLocalProvider(LocalLoneStat provides true) { tile(modifier.fillMaxWidth()) }
+        return
+    }
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val narrowest = MIN_TILE_WIDTH * LocalDensity.current.fontScale
         val fitting = ((maxWidth + TILE_GAP) / (narrowest + TILE_GAP)).toInt().coerceIn(1, columns)
 
-        Column(verticalArrangement = Arrangement.spacedBy(TILE_GAP)) {
-            tiles.chunked(fitting).forEach { row ->
-                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(TILE_GAP)) {
-                    row.forEach { tile -> tile(Modifier.weight(1f).fillMaxHeight()) }
+        // Every row as tall as the tallest tile (main's `auto-rows-fr`), so a tile's second line gives no row a height of its own.
+        Layout(content = { tiles.forEach { it(Modifier) } }) { measurables, constraints ->
+            val gap = TILE_GAP.roundToPx()
+            val width = constraints.maxWidth
+            val rows = measurables.chunked(fitting).map { row -> row.zip(cellWidths(width, row.size, gap)) }
+            val height = rows.maxOf { row -> row.maxOf { (tile, cell) -> tile.maxIntrinsicHeight(cell) } }
+            val placed = rows.map { row -> row.map { (tile, cell) -> tile.measure(Constraints.fixed(cell, height)) } }
+            layout(width, rows.size * height + (rows.size - 1) * gap) {
+                placed.forEachIndexed { index, row ->
+                    var x = 0
+                    row.forEach { tile ->
+                        tile.placeRelative(x, index * (height + gap))
+                        x += tile.width + gap
+                    }
                 }
             }
         }
     }
+}
+
+/** [count] cells sharing [width] less the gaps between them, the odd pixels to the first. */
+private fun cellWidths(
+    width: Int,
+    count: Int,
+    gap: Int,
+): List<Int> {
+    val room = width - gap * (count - 1)
+    return List(count) { room / count + if (it < room % count) 1 else 0 }
 }
 
 private val MIN_TILE_WIDTH = 120.dp

@@ -79,9 +79,12 @@ final class TodayStore {
     }
   }
 
+  @ObservationIgnored private let saves: LearnerSaves
+
   init(api: any StudyAPIClient, cache: AppCache) {
     self.api = api
     self.cache = cache
+    saves = LearnerSaves(cache: cache)
     today = cache.resource(
       audience: .signedIn,
       domains: [.goals, .learningProfile, .userProgress, .userSession, .userSubscription]
@@ -304,31 +307,40 @@ final class TodayStore {
   func prepareLessons(in view: TodayView) async -> MutationResult<Void> {
     let goalID = view.session.goalId ?? view.goal.id
 
-    return await cache.mutate(invalidating: [.userSession]) { identity in
-      try await api.prepareLessons(token: identity.bearerToken, goalID: goalID)
+    return await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.userSession]) { identity in
+        try await api.prepareLessons(token: identity.bearerToken, goalID: goalID)
+      }
     }
   }
 
+  /// Like every learner's answer here, saved even when Today goes away first (`LearnerSaves`).
   func answer(_ request: TodayView.UploadRequest, sourceID: String) async
     -> MutationResult<UploadAnswer>
   {
-    await cache.mutate(invalidating: [.goals]) { identity in
-      try await api.answerUploadRequest(
-        token: identity.bearerToken, goalID: request.goalId, sourceIDs: [sourceID])
+    await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.goals]) { identity in
+        try await api.answerUploadRequest(
+          token: identity.bearerToken, goalID: request.goalId, sourceIDs: [sourceID])
+      }
     }
   }
 
   func dismiss(_ request: TodayView.UploadRequest) async -> MutationResult<Void> {
-    await cache.mutate(invalidating: [.goals]) { identity in
-      try await api.dismissUploadRequest(token: identity.bearerToken, goalID: request.goalId)
+    await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.goals]) { identity in
+        try await api.dismissUploadRequest(token: identity.bearerToken, goalID: request.goalId)
+      }
     }
   }
 
   func catchUp(in view: TodayView) async -> MutationResult<Void> {
-    await cache.mutate(invalidating: [.goals, .userSession]) { identity in
-      let sessionID = try await keptSessionID(in: view, token: identity.bearerToken)
-      try await api.catchUp(
-        token: identity.bearerToken, sessionID: sessionID, timeZone: TimeZone.current.identifier)
+    await saves.save { [cache] in
+      await cache.mutate(invalidating: [.goals, .userSession]) { identity in
+        let sessionID = try await self.keptSessionID(in: view, token: identity.bearerToken)
+        try await self.api.catchUp(
+          token: identity.bearerToken, sessionID: sessionID, timeZone: TimeZone.current.identifier)
+      }
     }
   }
 
@@ -358,19 +370,27 @@ final class TodayStore {
     async -> MutationResult<Void>
   {
     let goalID = view.goal.id
-    let result = await cache.mutate(invalidating: [.goals, .userSession]) { identity in
-      let saved = try await api.decidePlanChange(
-        token: identity.bearerToken, goalID: goalID, changeID: change.id, decision: decision)
-      return (identity, saved)
+    let result = await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.goals, .userSession]) { identity in
+        let saved = try await api.decidePlanChange(
+          token: identity.bearerToken, goalID: goalID, changeID: change.id, decision: decision,
+          quote: change.quote)
+        return (identity, saved)
+      }
     }
 
     switch result {
     case .done(let (owner, saved)):
+      let day = OpenedSession.Day(view)
+
       // Out of date, it says nothing: Today reads the day again, as main does.
-      answered = saved.flatMap {
-        $0.status == "proposed"
-          ? nil
-          : (owner, OpenedSession.Day(view), AnsweredPlanChange(change: $0, decision: decision))
+      answered = saved.flatMap { saved in
+        if saved.status != "proposed" {
+          return (owner, day, AnsweredPlanChange(change: saved, decision: decision))
+        }
+
+        return decision == .applied
+          ? (owner, day, AnsweredPlanChange(change: saved, repriced: true)) : nil
       }
       return .done(())
     case .failed(let error):
@@ -390,10 +410,14 @@ final class TodayStore {
     return answered.value
   }
 
+  /// Saved even when Today goes away first; then it opens nothing (`LearnerSaves`).
   func answer(_ suggestion: SuggestedGoal, accepted: Bool) async -> MutationResult<Void> {
-    await cache.mutate(invalidating: [.goals]) { identity in
-      try await api.answerSuggestedGoal(
-        token: identity.bearerToken, suggestionID: suggestion.id, accepted: accepted)
+    let api = api
+    return await saves.save {
+      await self.cache.mutate(invalidating: [.goals]) { identity in
+        try await api.answerSuggestedGoal(
+          token: identity.bearerToken, suggestionID: suggestion.id, accepted: accepted)
+      }
     }
   }
 
@@ -589,4 +613,6 @@ private struct OpenedSession {
 struct AnsweredPlanChange: Equatable {
   let change: TodayView.PlanChange
   var decision: PlanChangeDecision?
+  /// Accepted, and still waiting: its numbers moved, so it asks again with today's.
+  var repriced = false
 }

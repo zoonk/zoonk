@@ -7,7 +7,7 @@ import { type RegisteredTask, type TaskEvalResults } from "./types";
 
 export type ModelStatus = "completed" | "outputsReady" | "incomplete" | "notStarted";
 
-export async function getModelStatus(taskId: string, modelId: string): Promise<ModelStatus> {
+async function getModelStatus(taskId: string, modelId: string): Promise<ModelStatus> {
   const task = getTaskById(taskId);
 
   if (!task) {
@@ -54,7 +54,10 @@ function supportsModel(task: RegisteredTask, model: ModelConfig): boolean {
   return model.kind === "generation" || Boolean(task.evaluate);
 }
 
-export async function getSortedModels(task: RegisteredTask) {
+/** The models a task can still run or finish, the ones closest to a score first. */
+export async function getModelsToRun(
+  task: RegisteredTask,
+): Promise<{ model: ModelConfig; status: ModelStatus }[]> {
   const modelWithStatus = await Promise.all(
     EVAL_MODELS.filter((model) => supportsModel(task, model)).map(async (model) => ({
       model,
@@ -64,21 +67,14 @@ export async function getSortedModels(task: RegisteredTask) {
 
   const order: Record<ModelStatus, number> = {
     completed: 3,
-    incomplete: 2,
-    notStarted: 0,
-    outputsReady: 1,
+    incomplete: 1,
+    notStarted: 2,
+    outputsReady: 0,
   };
 
-  const sortedModels = modelWithStatus
-    .filter((x) => x.status !== "completed")
-    .toSorted((a, b) => {
-      const aStatus = a.status;
-      const bStatus = b.status;
-      return order[aStatus] - order[bStatus];
-    })
-    .map((x) => x.model);
-
-  return sortedModels;
+  return modelWithStatus
+    .filter((item) => item.status !== "completed")
+    .toSorted((a, b) => order[a.status] - order[b.status]);
 }
 
 export async function getModelsWithResults(taskId: string): Promise<TaskEvalResults[]> {

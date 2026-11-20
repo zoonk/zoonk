@@ -3,29 +3,56 @@ import SwiftUI
 /// Main's buttons on a native `Button`, which keeps its role, keyboard shortcut, VoiceOver and
 /// pointer behavior. `controlSize` picks main's sizes: `.large` for a screen's action (44pt),
 /// `.regular` (36pt), `.small` beside text (30pt). A destructive role draws main's destructive
-/// button in any of them; `.icon` on any of them is main's square icon button (`size="icon"`). Glass
-/// stays on floating controls and toolbar items.
+/// button in any of them; `.icon` on any of them is main's square icon button (`size="icon"`), and
+/// `.endsRow` on a ghost one is main's `edge="end"`. Glass stays on floating controls and toolbar
+/// items.
 struct ZoonkButtonStyle: ButtonStyle {
   enum Variant {
     /// Ink fill: one per area.
     case main
     /// See-through with the stronger line: main's `outline`.
     case outline
-    /// Ink words on a quiet fill: main's `secondary`, as the lesson's "I don't know yet" in place of
-    /// Check.
-    case secondary
     /// No line: main's `ghost`, a quiet option beside or under the main action.
     case ghost
+
+    /// As every platform's layout captures name a button's look.
+    var layoutName: String {
+      switch self {
+      case .main: "filled"
+      case .outline: "outline"
+      case .ghost: "ghost"
+      }
+    }
   }
 
   let variant: Variant
   var isIcon = false
+  var isAtRowEnd = false
 
   /// Main's `size="icon"`: a square as tall as the size, for a label that is only an icon.
   var icon: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isIcon: true) }
 
+  /// Main's `edge="end"`, for a ghost button that ends a row or a header: its glyph or its words
+  /// sit on the column's edge, where the row's other marks end, and its pressed box hangs past it.
+  var endsRow: ZoonkButtonStyle {
+    ZoonkButtonStyle(variant: variant, isIcon: isIcon, isAtRowEnd: true)
+  }
+
   func makeBody(configuration: Configuration) -> some View {
-    ZoonkButton(configuration: configuration, variant: variant, isIcon: isIcon)
+    ZoonkButton(
+      configuration: configuration, variant: variant, isIcon: isIcon, isAtRowEnd: isAtRowEnd
+    )
+    .layoutAction(configuration.role == .destructive ? "destructive" : variant.layoutName)
+  }
+
+  /// A button's height at a control size, for text that stands in a button's place.
+  static func height(_ controlSize: ControlSize) -> CGFloat {
+    switch controlSize {
+    case .mini: 24
+    case .small: 30
+    case .regular: 36
+    default: 44
+    }
   }
 
   static func horizontalPadding(_ controlSize: ControlSize) -> CGFloat {
@@ -67,7 +94,6 @@ private struct ListRowButtonIcon: ViewModifier {
 extension ButtonStyle where Self == ZoonkButtonStyle {
   static var mainAction: ZoonkButtonStyle { ZoonkButtonStyle(variant: .main) }
   static var outline: ZoonkButtonStyle { ZoonkButtonStyle(variant: .outline) }
-  static var secondary: ZoonkButtonStyle { ZoonkButtonStyle(variant: .secondary) }
   static var ghost: ZoonkButtonStyle { ZoonkButtonStyle(variant: .ghost) }
 }
 
@@ -76,29 +102,43 @@ private struct ZoonkButton: View {
   @Environment(\.isBusy) private var isBusy
   @Environment(\.controlSize) private var controlSize
   @Environment(\.buttonSizing) private var sizing
+  @Environment(\.mainActionFillsRow) private var fillsRow
+  @Environment(\.mainActionMinWidth) private var mainMinWidth
+  @Environment(\.controlsShareHeight) private var sharesHeight
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.buttonTone) private var tone
 
   let configuration: ButtonStyleConfiguration
   let variant: ZoonkButtonStyle.Variant
   let isIcon: Bool
+  let isAtRowEnd: Bool
 
   var body: some View {
     let shape = RoundedRectangle(
       cornerRadius: isSmall && !isIcon ? Radius.md : Radius.lg, style: .continuous)
 
-    configuration.label
+    labelOnlyIfMain(configuration.label)
+      .environment(\.showsButtonIcon, !isLabelOnly)
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
       .padding(.horizontal, isIcon ? 0 : ZoonkButtonStyle.horizontalPadding(controlSize))
       .padding(.vertical, isIcon ? 0 : 6)
-      .frame(minWidth: isIcon ? height : nil, minHeight: height)
-      .frame(maxWidth: sizing == .flexible && !isIcon ? .infinity : nil)
-      .background(fill, in: shape)
+      .frame(
+        minWidth: isIcon ? (isAtRowEnd ? nil : height) : variant == .main ? mainMinWidth : nil,
+        minHeight: height, maxHeight: sharesHeight ? .infinity : nil
+      )
+      .frame(maxWidth: fills && !isIcon ? .infinity : nil)
+      .background {
+        // At a row's end the box is centered on the glyph and as wide as any icon button's, so
+        // it's the glyph, not the box, that ends on the edge.
+        shape.fill(fill)
+          .frame(width: isIcon && isAtRowEnd ? height : nil)
+      }
       .overlay {
         if variant == .outline && !isDestructive {
-          shape.strokeBorder(Color(.input))
+          shape.strokeBorder(tone == .warning ? Color.warning : Color(.input))
         }
       }
       .opacity(isEnabled || variant == .main ? 1 : 0.5)
@@ -106,7 +146,23 @@ private struct ZoonkButton: View {
       .scaleEffect(isPressed && !reduceMotion ? 0.97 : 1)
       .animation(.easeOut(duration: 0.15), value: isPressed)
       .contentShape(MinimumHitArea())
+      .padding(
+        .trailing, isAtRowEnd && !isIcon ? -ZoonkButtonStyle.horizontalPadding(controlSize) : 0)
   }
+
+  /// A main action is its label alone (main's rule 6): any icon its label carries stays off it.
+  private var isLabelOnly: Bool { variant == .main && !isIcon }
+
+  @ViewBuilder
+  private func labelOnlyIfMain(_ label: ButtonStyleConfiguration.Label) -> some View {
+    if isLabelOnly {
+      label.labelStyle(.titleOnly)
+    } else {
+      label
+    }
+  }
+
+  private var fills: Bool { sizing == .flexible || (variant == .main && fillsRow) }
 
   /// A busy button keeps its look even where its container is disabled, such as a form that locks
   /// while its answer saves: only its spinner says it's working.
@@ -118,14 +174,7 @@ private struct ZoonkButton: View {
 
   private var isDestructive: Bool { configuration.role == .destructive }
 
-  private var height: CGFloat {
-    switch controlSize {
-    case .mini: 24
-    case .small: 30
-    case .regular: 36
-    default: 44
-    }
-  }
+  private var height: CGFloat { ZoonkButtonStyle.height(controlSize) }
 
   private var label: Color {
     if isDestructive {
@@ -136,7 +185,7 @@ private struct ZoonkButton: View {
       return isEnabled ? Color(.primaryForeground) : .mutedForeground
     }
 
-    return Color(.foreground)
+    return tone == .warning ? .warningText : Color(.foreground)
   }
 
   private var fill: Color {
@@ -148,8 +197,6 @@ private struct ZoonkButton: View {
     switch variant {
     case .main:
       return isEnabled ? Color(.primary).opacity(isPressed ? 0.8 : 1) : .muted
-    case .secondary:
-      return Color(.secondary).opacity(isPressed ? 0.8 : 1)
     case .outline, .ghost:
       return isPressed ? .muted : .clear
     }
@@ -161,5 +208,52 @@ private struct ZoonkButton: View {
 private struct MinimumHitArea: Shape {
   func path(in rect: CGRect) -> Path {
     Path(rect.insetBy(dx: -max(0, (44 - rect.width) / 2), dy: -max(0, (44 - rect.height) / 2)))
+  }
+}
+
+extension View {
+  /// Controls side by side are one height: when a button's label wraps or a field beside it is
+  /// taller, the row's buttons grow with it.
+  func controlsShareHeight() -> some View {
+    environment(\.controlsShareHeight, true)
+      .fixedSize(horizontal: false, vertical: true)
+  }
+}
+
+/// Main's toned outline (`border-warning text-warning-text`), for a toggle whose on state is a
+/// warning, such as a mock exam's flagged question.
+enum ButtonTone {
+  case neutral
+  case warning
+}
+
+extension View {
+  func buttonTone(_ tone: ButtonTone) -> some View {
+    environment(\.buttonTone, tone)
+  }
+}
+
+extension EnvironmentValues {
+  @Entry fileprivate var controlsShareHeight = false
+  @Entry fileprivate var buttonTone = ButtonTone.neutral
+
+  /// One main action per screen: set where the screen's bar holds it, so a button that would be the
+  /// main action elsewhere (a notice's retry, a suggestion's answer) is secondary beside it. Each
+  /// presented screen starts without it: its own bar is the one on it.
+  @Entry var barHoldsMainAction = false
+}
+
+extension View {
+  /// The main action's fill, or the outline once the screen's bar holds the main action.
+  func mainActionUnlessBarHoldsOne() -> some View {
+    modifier(MainActionUnlessBarHoldsOne())
+  }
+}
+
+private struct MainActionUnlessBarHoldsOne: ViewModifier {
+  @Environment(\.barHoldsMainAction) private var barHoldsMainAction
+
+  func body(content: Content) -> some View {
+    content.buttonStyle(ZoonkButtonStyle(variant: barHoldsMainAction ? .outline : .main))
   }
 }

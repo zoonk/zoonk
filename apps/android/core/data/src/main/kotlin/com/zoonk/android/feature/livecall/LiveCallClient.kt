@@ -9,6 +9,7 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.received
 import com.zoonk.api.models.LanguageConversationConnectInput
 import com.zoonk.api.models.LanguageConversationObjectiveCheck
 import com.zoonk.api.models.LanguageConversationObjectiveCheckInput
@@ -23,6 +24,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import java.time.Instant
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -74,9 +76,11 @@ sealed interface CallReservation {
     data object Failed : CallReservation
 
     companion object {
+        /** [receivedAt]: when this device received the refusal ([Limit.Reached.received]). */
         fun refused(
             code: String?,
             details: JsonElement?,
+            receivedAt: Instant = Instant.now(),
         ): CallReservation {
             val period = details.field("period")
             return when (code) {
@@ -103,7 +107,14 @@ sealed interface CallReservation {
                 "CONVERSATION_LIMIT_REACHED" -> {
                     val limitPeriod = LimitPeriod.entries.firstOrNull { it.name.equals(period, ignoreCase = true) }
                     val tier = LimitTier.entries.firstOrNull { it.name.equals(details.field("tier"), ignoreCase = true) }
-                    if (limitPeriod != null && tier != null) Limited(Limit.Reached(tier, limitPeriod)) else Failed
+                    val availableAt = details.field("availableAt")?.let { runCatching { Instant.parse(it) }.getOrNull() }
+                    if (limitPeriod != null &&
+                        tier != null
+                    ) {
+                        Limited(Limit.Reached(tier, limitPeriod, availableAt).received(receivedAt))
+                    } else {
+                        Failed
+                    }
                 }
 
                 "CONNECTION_LIMIT_REACHED" -> {

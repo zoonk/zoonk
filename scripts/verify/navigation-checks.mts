@@ -51,7 +51,11 @@ export function judgeNavigation(navigation: NavigationMeasurement): Finding[] {
   const always = [
     ...(navigation.settled ? [] : [UNSETTLED]),
     ...errorFindings(navigation),
-    ...shiftFindings(cumulativeLayoutShift(navigation.shifts), navigation.shifts),
+    ...shiftFindings(
+      cumulativeLayoutShift(navigation.shifts),
+      navigation.shifts,
+      "as the next page settled after the tap",
+    ),
     ...requests,
   ];
 

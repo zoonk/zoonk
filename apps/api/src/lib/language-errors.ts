@@ -3,7 +3,7 @@ import { type endLanguageConversationConnection } from "@zoonk/core/language/con
 import { type redeemLiveCallSdp } from "@zoonk/core/language/conversations/redeem-sdp";
 import { type StartLanguageConversationResult } from "@zoonk/core/language/conversations/start";
 import { createErrorResponse, errors, httpStatus, slowDownError } from "./api-errors";
-import { signUpRequiredError } from "./lesson-player-errors";
+import { signUpRequiredError, usageDecisionError } from "./lesson-player-errors";
 import { studySessionError } from "./study-session-errors";
 
 type RefusedConversation =
@@ -14,7 +14,7 @@ type RefusedConversation =
 
 const CALL_LIMIT_MESSAGES = {
   day: "No more call time on your plan today",
-  month: "No more call time on your plan this month",
+  rolling30Days: "No more call time on your plan this month",
   total: "Calls need a free account",
 } as const;
 
@@ -41,6 +41,14 @@ export function conversationRefusalError(
   }
 
   if ("limit" in result) {
+    if (
+      result.limit.period === "rolling30Days" &&
+      result.limit.resource !== "callSeconds" &&
+      result.limit.resource !== "aiSpend"
+    ) {
+      return usageDecisionError({ limit: result.limit, status: "limitReached" });
+    }
+
     return createErrorResponse({
       code: "CONVERSATION_LIMIT_REACHED",
       details: result.limit,

@@ -101,7 +101,7 @@ export function PronunciationWord({ language, word }: { language: string; word: 
       <WordListenButtons language={language} word={word} />
 
       {word.tip && (
-        <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">
+        <p className="text-muted-foreground text-compact leading-snug text-pretty">
           <ItemLine text={word.tip} />
         </p>
       )}

@@ -2,6 +2,7 @@
 
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -9,12 +10,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
+import { NativeSelectButton } from "@zoonk/ui/components/native-select";
 import { safeAsync } from "@zoonk/utils/error";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { useId, useState, useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { type CountryChoice } from "../country/country-choice";
 import { CountryPicker } from "../country/country-picker";
 import { useLessonLanguageLine } from "../country/use-country-lines";
@@ -42,15 +42,15 @@ function ChangeCountryDialog({
       }}
       open={country !== null}
     >
-      <AlertDialogContent overNested>
+      <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("Change the content country?")}</AlertDialogTitle>
+          <AlertDialogTitle>{t("Change country?")}</AlertDialogTitle>
           <AlertDialogDescription className="max-h-[50dvh] overflow-y-auto">
             {t({
               description:
                 "{country} is a country's name. It always follows the colon, so it never needs an article or a case.",
               message:
-                "New country: {country}. Your plan will be rebuilt for it. The lessons you've finished stay done, and you can keep studying your current plan until the new one is ready.",
+                "New country: {country}. We'll make a new plan for it. Finished lessons stay done.",
               values: { country: country?.name ?? "" },
             })}
           </AlertDialogDescription>
@@ -59,9 +59,9 @@ function ChangeCountryDialog({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={saving}>{t("Cancel")}</AlertDialogCancel>
           <form action={onConfirm} className="contents">
-            <Button busy={saving} type="submit">
-              {t("Rebuild plan")}
-            </Button>
+            <AlertDialogAction busy={saving} type="submit">
+              {t("Change country")}
+            </AlertDialogAction>
           </form>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -78,12 +78,12 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
   const lessonLanguage = useLessonLanguageLine()(country.lessonVariety);
   const [open, setOpen] = useState(false);
   const [asking, setAsking] = useState<CountryChoice | null>(null);
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [saving, startSaving] = useTransition();
+  const titleId = useId();
+  const valueId = useId();
 
   const pick = (picked: CountryChoice | null) => {
-    setFailed(false);
-
     if (!picked || picked.code === country.code) {
       setOpen(false);
       return;
@@ -105,29 +105,29 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
       // Updates after an `await` join the transition only when started in one again.
       startSaving(() => {
         setAsking(null);
-        setFailed(!saved);
-        setOpen(!saved);
+
+        if (saved) {
+          setOpen(false);
+        } else {
+          saveFailed();
+        }
       });
     });
   };
 
   return (
     <section className="flex flex-col gap-2">
-      <h3 className="text-sm font-medium">{t("Content country")}</h3>
+      <h3 className="text-sm font-medium" id={titleId}>
+        {t("Country")}
+      </h3>
 
-      <Button
+      <NativeSelectButton
         aria-haspopup="dialog"
-        className="h-auto min-h-9 justify-between py-1.5 text-left whitespace-normal"
-        onClick={() => {
-          setFailed(false);
-          setOpen(true);
-        }}
-        type="button"
-        variant="outline"
+        aria-labelledby={`${titleId} ${valueId}`}
+        onClick={() => setOpen(true)}
       >
-        <span className="min-w-0 text-pretty">{country.name}</span>
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground" />
-      </Button>
+        <span id={valueId}>{country.name}</span>
+      </NativeSelectButton>
 
       {lessonLanguage && <p className="text-muted-foreground text-sm">{lessonLanguage}</p>}
 
@@ -136,13 +136,10 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
         onOpenChange={setOpen}
         onPick={pick}
         open={open}
-        overNested
         suggested={country.suggested}
         title={t("Country")}
         value={country.code}
-      >
-        {failed && <ChangeSaveError />}
-      </CountryPicker>
+      />
 
       <ChangeCountryDialog
         country={asking}

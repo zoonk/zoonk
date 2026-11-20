@@ -3,7 +3,10 @@ import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-resul
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
 import { previewTodayBlocks } from "../../sessions/_utils/read-study-day";
+import { type SyllabusInput } from "../../view-models/syllabus/_utils/syllabus-input";
+import { getNotPlannedReason } from "../../view-models/syllabus/_utils/syllabus-topics";
 import { type PlanView } from "../plan-view-contract";
+import { getSkillArea } from "../planner/graph-areas";
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
@@ -32,13 +35,21 @@ type PathInput = Pick<
   | "skillAreas"
   | "taughtSkillIds"
 > & {
-  access: Pick<PlanView["access"], "freeWeekOver" | "mocksRequirePlus">;
+  access: Pick<PlanView["access"], "mocksRequirePlus">;
   context: PlanReadContext;
+  syllabus: Pick<SyllabusInput, "knownSkillIds" | "pastBasicsSkillIds" | "skippedBaseIds"> | null;
   today: Awaited<ReturnType<typeof readPlanToday>>;
   challengeResults: ReadonlyMap<string, CheckpointResult>;
 };
 
-export function buildPlanPath({ access, challengeResults, context, today, ...input }: PathInput) {
+export function buildPlanPath({
+  access,
+  challengeResults,
+  context,
+  syllabus,
+  today,
+  ...input
+}: PathInput) {
   const { goal, items, phases, state } = context;
 
   const todayBlocks = listTodayLearnBlocks(today.session?.blocks ?? []);
@@ -47,11 +58,39 @@ export function buildPlanPath({ access, challengeResults, context, today, ...inp
 
   return buildPhaseViews({
     ...input,
-    challengesOpen: input.phaseChallengesRequired !== false && !access.freeWeekOver,
+    challengesOpen: input.phaseChallengesRequired !== false,
     goalKind: goal.kind,
     items,
     mocksRequirePlus: access.mocksRequirePlus,
     outlinedUntil: getOutlinedUntil(context.today),
+    phaseReasons: new Map(
+      phases.map((_, index) => {
+        const skills = state.graph.skills.filter((skill) => skill.phase === index);
+
+        const known =
+          skills.length > 0 && skills.every((skill) => syllabus?.knownSkillIds.has(skill.skillId));
+
+        const hasItems = items.some((item) => item.phase === index && item.kind === "lesson");
+
+        const fallbackReason = !hasItems && known ? "known" : "time";
+
+        return [
+          index,
+          getNotPlannedReason({
+            hasItems,
+            hasSkills: skills.length > 0,
+            known,
+            pastBasics: skills.every((skill) => syllabus?.pastBasicsSkillIds.has(skill.skillId)),
+            skipped:
+              skills.length > 0 &&
+              skills.every((skill) =>
+                state.settings.skippedAreas.includes(getSkillArea({ graph: state.graph, skill })),
+              ),
+            skippedBase: skills.every((skill) => syllabus?.skippedBaseIds?.has(skill.skillId)),
+          }) ?? fallbackReason,
+        ];
+      }),
+    ),
     phases,
     skillPhases: new Map(state.graph.skills.map((skill) => [skill.skillId, skill.phase])),
     studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,

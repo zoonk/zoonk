@@ -3,9 +3,11 @@
 import { checkActivityAnswer } from "@zoonk/core/library/activities/answers";
 import { evaluateFormula } from "@zoonk/core/library/activities/expression/evaluate";
 import { useFormatNumber } from "@zoonk/learn/format-number";
-import { Lightbulb } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ACTIVITY_CARD_CLASS } from "../_components/activity-canvas";
 import { ActivityGuessReveal } from "../_components/activity-guess-reveal";
+import { ActivityTip } from "../_components/activity-tip";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";
 
@@ -20,14 +22,24 @@ function GuessWorkings({ workings }: { workings: Workings }) {
   const format = useFormatNumber();
 
   return (
-    <ul className="bg-background flex flex-col gap-1 rounded-xl border px-4 py-3 text-sm tabular-nums">
+    <ul
+      className={cn(ACTIVITY_CARD_CLASS, "grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm")}
+      data-slot="guess-workings"
+    >
       {workings.map((working) => {
         const value = evaluateFormula(working.expression);
 
         return (
-          <li className="flex gap-2" key={working.label}>
-            <span className="font-medium">{value.ok ? format(value.value) : ""}</span>
-            <span className="text-muted-foreground">{working.label}</span>
+          <li className="col-span-2 grid grid-cols-subgrid" key={working.label}>
+            <span
+              className="text-end font-mono font-medium tabular-nums"
+              data-slot="guess-working-value"
+            >
+              {value.ok ? format(value.value) : ""}
+            </span>
+            <span className="text-muted-foreground" data-slot="guess-working-label">
+              {working.label}
+            </span>
           </li>
         );
       })}
@@ -63,10 +75,7 @@ export function GuessRevealActivity({
         </p>
       )}
 
-      <p className="flex items-start gap-2 text-sm leading-snug">
-        <Lightbulb aria-hidden="true" className="text-viz-highlight mt-0.5 size-4 shrink-0" />
-        <LessonRichText text={fields.takeaway} />
-      </p>
+      <ActivityTip text={fields.takeaway} />
     </ActivityGuessReveal>
   );
 }

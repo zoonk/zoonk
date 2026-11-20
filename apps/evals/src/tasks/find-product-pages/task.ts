@@ -65,7 +65,7 @@ export const findProductPagesTask: Task<
     "Find a product maker's official brand, product, docs and releases pages, and the learner's release page",
   generate: findProductPages,
   id: "find-product-pages",
-  name: "Find Product Pages",
+  name: "Find product pages",
   score: scorePages,
   testCases: TEST_CASES,
 };

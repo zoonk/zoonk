@@ -61,9 +61,15 @@ export function NumberLineActivity({
     <ActivityCanvas labelId={labelId}>
       <ActivityCanvasLabel className="text-sm">
         {fields.unit
-          ? t("{label} in {unit}", { label: fields.label, unit: fields.unit })
+          ? t("{label} ({unit})", { label: fields.label, unit: fields.unit })
           : fields.label}
       </ActivityCanvasLabel>
+
+      {!showsMoves && (
+        <ActivityCanvasLabel className="text-sm">
+          {t("Drag it, or use the arrow keys to move it one grid step.")}
+        </ActivityCanvasLabel>
+      )}
 
       <ActivityPlot
         height={PLOT_HEIGHT}

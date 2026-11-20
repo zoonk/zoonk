@@ -44,6 +44,9 @@ extension TypeStyle {
   /// An explanation's heading over its running text.
   static let screenTitle = TypeStyle(
     size: 15, relativeTo: .subheadline, weight: .semibold, lineHeight: 1.375)
+  /// A lesson step's heading: the size of the text it heads, set apart by weight.
+  static let stepHeading = TypeStyle(
+    size: 18, relativeTo: .body, weight: .semibold, lineHeight: 1.375)
   /// A lesson's running text.
   static let lessonText = TypeStyle(
     size: 18, relativeTo: .body, weight: .regular, lineHeight: 1.625)
@@ -70,13 +73,13 @@ extension TypeStyle {
   static let smallButton = TypeStyle(size: 13, relativeTo: .footnote, weight: .medium)
   /// A note under a block, a hint.
   static let note = TypeStyle(size: 13, relativeTo: .footnote, weight: .regular)
+  /// Main's `PageSectionLabel`.
+  static let sectionLabel = TypeStyle(
+    size: 13, relativeTo: .footnote, weight: .medium, lineHeight: 19.0 / 13)
   /// A row's description, in the secondary color.
   static let meta = TypeStyle(size: 12, relativeTo: .caption, weight: .regular)
   /// Minutes, counts, dates and a row's trailing value.
   static let data = meta.monospaced()
-  /// Over a page's title, in the faint color.
-  static let eyebrow = TypeStyle(
-    size: 11.5, relativeTo: .caption2, weight: .regular, face: .mono, isUppercase: true)
   /// Uppercase, inside a panel or over a search group only.
   static let label = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: .medium, tracking: 0.04, isUppercase: true)
@@ -91,9 +94,14 @@ extension TypeStyle {
   /// A block's one big number, its unit beside it in `.body` and the secondary color.
   static let readout = TypeStyle(
     size: 24, relativeTo: .title2, weight: .semibold, tracking: -0.04, isTabular: true)
+  /// Main's `LevelValue`: the level aimed for, after the one reached in a `readout`.
+  static let readoutTarget = TypeStyle(size: 16, relativeTo: .callout, weight: .semibold)
   /// The number a moment or a result leads with.
   static let momentReadout = TypeStyle(
     size: 40, relativeTo: .largeTitle, weight: .semibold, tracking: -0.04, isTabular: true)
+  /// A step's one big letter, main's `text-readout text-5xl`.
+  static let letterReadout = TypeStyle(
+    size: 48, relativeTo: .largeTitle, weight: .semibold, tracking: -0.04, lineHeight: 1)
 
   func weight(_ weight: Font.Weight) -> TypeStyle {
     var style = self
@@ -116,13 +124,6 @@ extension TypeStyle {
   func monospacedDigit() -> TypeStyle {
     var style = self
     style.isTabular = true
-    return style
-  }
-
-  /// In the case it's written in, as main's `normal-case` on an eyebrow that counts something.
-  func asWritten() -> TypeStyle {
-    var style = self
-    style.isUppercase = false
     return style
   }
 
@@ -257,6 +258,7 @@ private struct TypeStyleModifier: ViewModifier {
       .tracking(style.tracking * pointSize)
       .textCase(style.isUppercase ? .uppercase : textCase)
       .environment(\.typeStyle, style)
+      .layoutType(style)
 
     if let lineHeight = style.lineHeight {
       styled.lineSpacing(max(0, (lineHeight - style.face.ownLineHeight) * pointSize))
@@ -333,3 +335,44 @@ extension Font.TextStyle {
     }
   }
 }
+
+extension TypeStyle {
+  /// The font this role draws in at this text size.
+  func uiFont(_ dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?) -> UIFont {
+    let weight = legibility == .bold ? weight.withBoldText : weight
+    let descriptor = UIFontDescriptor(fontAttributes: [
+      .family: family, .traits: [UIFontDescriptor.TraitKey.weight: weight.uiFontWeight],
+    ])
+    return UIFont(descriptor: descriptor, size: pointSize(dynamicTypeSize))
+  }
+}
+
+extension View {
+  /// Text in `style` beside the first line of text in `other` (a row's "3." before its title): its
+  /// capitals center on `other`'s instead of sharing its baseline, where they'd sit low (craft E6).
+  func capitalsLevel(_ style: TypeStyle, with other: TypeStyle) -> some View {
+    modifier(CapitalsLevel(style: style, other: other))
+  }
+}
+
+private struct CapitalsLevel: ViewModifier {
+  let style: TypeStyle
+  let other: TypeStyle
+
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibility
+
+  func body(content: Content) -> some View {
+    let own = style.uiFont(dynamicTypeSize, legibility: legibility).capHeight
+    let line = other.uiFont(dynamicTypeSize, legibility: legibility).capHeight
+
+    content.alignmentGuide(.firstTextBaseline) { $0[.firstTextBaseline] + (line - own) / 2 }
+  }
+}
+
+#if DEBUG
+  extension EnvironmentValues {
+    /// The type role text here takes, for the debug layout report.
+    var layoutTypeStyle: TypeStyle { typeStyle }
+  }
+#endif

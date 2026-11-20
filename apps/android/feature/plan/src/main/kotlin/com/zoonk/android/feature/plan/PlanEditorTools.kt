@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
@@ -99,16 +100,11 @@ private fun ToolRow(
     val action =
         stringResource(if (tool.choice == null) R.string.plan_tool_choose_how else R.string.plan_tool_change_how, tool.name)
     val button =
-        @Composable { stacked: Boolean ->
+        @Composable {
             val described = Modifier.semantics { contentDescription = action }
-            if (tool.choice == null) {
-                OutlinedButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_choose)) }
-            } else if (stacked) {
-                TextButton(onClick = onChoose, modifier = described, shape = MaterialTheme.shapes.small, contentPadding = FLUSH_START) {
-                    Text(stringResource(R.string.plan_tool_change))
-                }
-            } else {
-                TextButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_tool_change)) }
+            // One kind of button down the list, whether the tool is chosen yet.
+            OutlinedButton(onClick = onChoose, modifier = described) {
+                Text(stringResource(if (tool.choice == null) R.string.plan_choose else R.string.plan_tool_change))
             }
         }
 
@@ -127,9 +123,9 @@ private fun ToolRow(
                         2,
                     )?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 ToolStatus(tool)
-                if (stacked) Box(Modifier.padding(top = 6.dp)) { button(true) }
+                if (stacked) Box(Modifier.padding(top = 6.dp)) { button() }
             }
-            if (!stacked) button(false)
+            if (!stacked) button()
         }
     }
 }
@@ -255,7 +251,7 @@ private fun NoToolsPath(
     TextButton(
         onClick = {
             asked = true
-            edits.chooseTools(ToolAnswer(tools.map { it.name }, PlanTool.Choice.NONE)) { edits.answerSheet(opening, it) }
+            edits.chooseTools(ToolAnswer(tools.map { it.name }, PlanTool.Choice.NONE), PlanAsker.Sheet(opening))
         },
         modifier = Modifier.focusRequester(link),
         shape = MaterialTheme.shapes.small,
@@ -275,6 +271,7 @@ internal fun ColumnScope.ToolChoiceForm(
     onDraft: (ToolDraft) -> Unit,
     onDone: () -> Unit,
 ) {
+    VisitOf(edits.outcomes.tools)
     val setupLessons = edits.setupLessons
     if (setupLessons != null && setupLessons.generationId.collectAsStateWithLifecycle().value != null) {
         WritingWait(
@@ -294,7 +291,7 @@ internal fun ColumnScope.ToolChoiceForm(
 
     PlanSheetContent(
         title = tool.name,
-        description = stringResource(R.string.plan_tool_how),
+        description = stringResource(R.string.plan_tool_have_question),
         body = {
             Column(Modifier.selectableGroup()) {
                 TOOL_CHOICES.forEach { option ->
@@ -332,13 +329,13 @@ internal fun ColumnScope.ToolChoiceForm(
                     onClick = {
                         if (chosen == null) return@Button
                         val answer = ToolAnswer(listOf(tool.name), chosen, system.takeIf { chosen == PlanTool.Choice.SETUP })
-                        edits.chooseTools(answer) { edits.answerSheet(draft.opening, it) }
+                        edits.chooseTools(answer, PlanAsker.Sheet(draft.opening))
                     },
                     modifier = Modifier.weight(1f),
                     enabled = chosen != null && !needsSystem,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 ) { Text(stringResource(R.string.plan_save)) }
             }
+
             if (edits.sheetFailed(PlanPart.Tools, draft.opening)) SaveFailedText()
         },
     )
@@ -354,7 +351,7 @@ private val TOOL_CHOICES =
     listOf(
         ToolOption(PlanTool.Choice.HAVE, R.string.plan_tool_have, R.string.plan_tool_have_description),
         ToolOption(PlanTool.Choice.SETUP, R.string.plan_tool_setup, R.string.plan_tool_setup_description),
-        ToolOption(PlanTool.Choice.NONE, R.string.plan_tool_none, R.string.plan_tool_none_description),
+        ToolOption(PlanTool.Choice.NONE, R.string.plan_tool_wont_use, R.string.plan_tool_none_description),
     )
 
 /** "Spreadsheet (Google Sheets or Excel)": the tool, then its usual choices. */

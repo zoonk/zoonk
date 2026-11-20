@@ -81,13 +81,6 @@ const TRANSLATOR = `(() => {
   }).observe(document.body, { characterData: true, childList: true, subtree: true });
 })();`;
 
-const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-
-/** The translator splits numbers off into their own wrappers, so text a test reads back has none. */
-export function lettersOnly(bytes: Uint8Array): string {
-  return Array.from(bytes, (byte) => ALPHABET[byte % ALPHABET.length]).join("");
-}
-
 export async function translatePage(page: Page) {
   const cdp = await page.context().newCDPSession(page);
   const { frameTree } = await cdp.send("Page.getFrameTree");

@@ -1,7 +1,6 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
 import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { Page } from "@zoonk/learn/page";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -28,30 +27,18 @@ async function MemoryContent() {
   );
 }
 
-function MemorySkeleton() {
-  return (
-    <div className="flex flex-col gap-7">
-      <Skeleton className="h-15 rounded-lg" />
-      <div className="flex flex-col gap-3">
-        <Skeleton className="h-3.5 w-20" />
-        <Skeleton className="h-32 rounded-lg" />
-      </div>
-    </div>
-  );
-}
-
 export default async function MemoryPage() {
   const t = await getExtracted();
 
   return (
-    <Page className="max-w-form">
-      <SectionPageHeader title={t("Memory")} />
+    <Page>
+      <SectionPageHeader
+        description={t("What Zoonk remembers to give you examples and plans that fit your life.")}
+        title={t("Memory")}
+      />
 
-      <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">
-        {t("What Zoonk remembers to give you examples and plans that fit your life.")}
-      </p>
-
-      <Suspense fallback={<MemorySkeleton />}>
+      {/* Nothing stands in for the rows: what is remembered decides how wide they run. */}
+      <Suspense fallback={null}>
         <MemoryContent />
       </Suspense>
     </Page>

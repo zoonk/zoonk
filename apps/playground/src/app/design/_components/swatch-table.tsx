@@ -33,6 +33,20 @@ function measure(table: HTMLElement | null): Record<string, number> {
   return ratios;
 }
 
+function TextSample({ token }: { token: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="text-sm font-semibold"
+      data-measure="text"
+      data-token={token}
+      style={{ color: `var(--${token})` }}
+    >
+      Aa
+    </span>
+  );
+}
+
 function Sample({ mode, token }: { mode: string; token: ColorToken }) {
   if (token.on) {
     return (
@@ -41,14 +55,7 @@ function Sample({ mode, token }: { mode: string; token: ColorToken }) {
         data-surface
         style={{ backgroundColor: `var(--${token.on})` }}
       >
-        <span
-          className="text-sm font-semibold"
-          data-measure="text"
-          data-token={token.name}
-          style={{ color: `var(--${token.name})` }}
-        >
-          Aa
-        </span>
+        <TextSample token={token.name} />
       </span>
     );
   }
@@ -63,23 +70,14 @@ function Sample({ mode, token }: { mode: string; token: ColorToken }) {
         role="img"
         style={{ backgroundColor: `var(--${token.name})` }}
       />
-      {token.text && (
-        <span
-          className="text-sm font-semibold"
-          data-measure="text"
-          data-token={token.name}
-          style={{ color: `var(--${token.name})` }}
-        >
-          Aa
-        </span>
-      )}
+      {token.text && <TextSample token={token.name} />}
     </>
   );
 }
 
 function Ratio({ ratio, text }: { ratio?: number; text?: boolean }) {
   if (ratio === undefined) {
-    return <span className="text-faint font-mono text-[0.6875rem]">…</span>;
+    return <span className="text-faint text-2xs font-mono">…</span>;
   }
 
   const minimum = text ? TEXT_MINIMUM : MARK_MINIMUM;
@@ -87,7 +85,7 @@ function Ratio({ ratio, text }: { ratio?: number; text?: boolean }) {
   return (
     <span
       className={cn(
-        "font-mono text-[0.6875rem] tabular-nums",
+        "text-2xs font-mono tabular-nums",
         ratio >= minimum ? "text-muted-foreground" : "text-warning-text",
       )}
       title={`${text ? "As text" : "As a mark"}: ${minimum}:1 asked`}
@@ -119,7 +117,7 @@ export function SwatchTable({
   return (
     <div className="flex flex-col" ref={table} role="table">
       <div
-        className="text-faint hidden gap-3 pb-2 text-xs lg:grid lg:grid-cols-[minmax(0,1.3fr)_repeat(4,minmax(0,1fr))]"
+        className="text-faint hidden gap-x-6 pb-2 text-xs lg:grid lg:grid-cols-[14rem_repeat(4,minmax(0,1fr))]"
         role="row"
       >
         <span role="columnheader">Token</span>
@@ -132,16 +130,16 @@ export function SwatchTable({
 
       {tokens.map((token) => (
         <div
-          className="border-border grid gap-3 border-t py-3 lg:grid-cols-[minmax(0,1.3fr)_repeat(4,minmax(0,1fr))]"
+          className="border-border grid gap-x-6 gap-y-3 border-t py-3 lg:grid-cols-[14rem_repeat(4,minmax(0,1fr))]"
           key={token.name}
           role="row"
         >
           <div className="flex min-w-0 flex-col gap-1" role="rowheader">
-            <code className="font-mono text-[0.8125rem] font-medium">{token.name}</code>
+            <code className="text-compact font-mono font-medium">{token.name}</code>
             <p className="text-sm">{token.meaning}</p>
-            <p className="text-muted-foreground text-xs leading-relaxed">{renderCode(token.use)}</p>
+            <p className="text-muted-foreground text-xs leading-normal">{renderCode(token.use)}</p>
             {token.avoid && (
-              <p className="text-muted-foreground text-xs leading-relaxed">
+              <p className="text-muted-foreground text-xs leading-normal">
                 Never: {renderCode(token.avoid)}
               </p>
             )}
@@ -151,7 +149,7 @@ export function SwatchTable({
             <div
               className={cn(
                 modeClass(mode.id),
-                "ring-border flex min-h-16 items-center gap-3 rounded-lg px-3 py-2 ring-1",
+                "ring-border flex min-h-16 items-center gap-3 self-start rounded-xl px-3 py-2 ring-1 ring-inset",
               )}
               data-mode={mode.id}
               data-subject={subject}

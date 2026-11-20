@@ -1,36 +1,27 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminPage, AdminPageBody, AdminPageHeader, AdminToolbar } from "@/components/admin-page";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { ContentFixList, ContentFixListSkeleton } from "./content-fix-list";
+import { ContentFixList, ContentFixListSkeleton, ContentFixViews } from "./content-fix-list";
 
 export const metadata: Metadata = { title: "Content fixes" };
 
-export default function ContentFixesPage() {
+export default function ContentFixesPage({ searchParams }: PageProps<"/content-fixes">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Content fixes</ContainerTitle>
-          <ContainerDescription>
-            Fixes to shared course content that staff proposed with pnpm zoonk staff fixes propose.
-            A fix changes nothing until a staff person reviews it here and approves it with a
-            passkey.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <AdminPage>
+      <AdminPageHeader title="Content fixes" />
 
-      <ContainerBody className="gap-8">
+      <AdminPageBody>
+        <AdminToolbar>
+          <Suspense fallback={<Skeleton className="h-7.5 w-44" />}>
+            <ContentFixViews searchParams={searchParams} />
+          </Suspense>
+        </AdminToolbar>
+
         <Suspense fallback={<ContentFixListSkeleton />}>
-          <ContentFixList />
+          <ContentFixList searchParams={searchParams} />
         </Suspense>
-      </ContainerBody>
-    </Container>
+      </AdminPageBody>
+    </AdminPage>
   );
 }

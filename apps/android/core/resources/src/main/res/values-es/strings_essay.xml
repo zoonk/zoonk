@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "essay_back_to_today": "aed48a11d305aafb9de19665c67c64fb6f3239a143034a7d21b976cdccffa2c0",
+  "essay_back_to_today": "cf487cd3e85e38c1546f59c90413b45f661c7bdff88b1d78fe17fe5336bef141",
   "essay_comments": "3347ec7705f7889c80b98b96c96cce81b59afe5780030df88d732beee0981a85",
   "essay_criterion_addressing": "d4cffeb739e99b2cf08615e59eafebdcf6951422bdaa12b84d34bf0c31027a1c",
   "essay_criterion_argument": "f48351b9a9d9edb660329bba284a0923e8273fd064babd096a331ba10769de3a",
@@ -23,7 +23,7 @@
   "essay_finish_failed": "7125a26ac441e7b6540ced0bd16df1189b784dc0ad6c93bc9b4936486ea6a396",
   "essay_for_example": "50f647f70c3295443f6740fb835fc7a08ef8645054f752541665f55aa81baad3",
   "essay_full_marks": "48f6ccdad0c55f3c689d7b734f8fac201bd87c8392b7230d7c6f003cdf856c01",
-  "essay_grade_rewrite": "f0d362237109a7981c6d4b49c9e45ef57da8c642b9d7a90284b1ded54ceee4ce",
+  "essay_grade_rewrite": "2d8568a8948098c6717cf447606d112aa90478c8e00ad41bfbaa17946489f6cd",
   "essay_grading": "efc1afbd9724e8d9a18e9ad76ab1f4a3bd64ea28a0b82603ca175a2cdc0e1661",
   "essay_grading_slow": "e945df7d62ee071ffdc45ddf7741cd612819bdf48bc28bf903dfe3a0dea9648a",
   "essay_keep_writing": "e037acbecca2ede5d6c7e5097764b7e6e03f28bbdf59217dd27bc337b1556c9b",
@@ -41,11 +41,11 @@
   "essay_rewrite_label": "6e5afa30d0b83070595342bf8663001e59daa8a5e64e8f889c911b5ac9a51744",
   "essay_scale": "22d6c2ec8d16f912b692532edb09a4eb3a5ed78983ba760c03c4bfae508af6cd",
   "essay_score_of": "f9053f67929df75672995bae69aa9b0ad050e5d8ebdddf12e2b14eda62447847",
-  "essay_see_comments": "2787dc3097f53803daf8a0c393e8dce57d9482515fce8f6debc00234701fc221",
+  "essay_see_comments": "7da53795b92cb1245e93ec483ec18756acbbfcaeede1fb8f29a64bd47379cd67",
   "essay_see_grade": "5c8bbcdc84ec4652ed33e81cc327206a0d046c95f7ce43b7fa63a03e34894708",
-  "essay_send": "67b1842cc10279024f77260b717ffa1dc335862ba11afb1646c2ac3202b9e425",
+  "essay_send": "1c811356f272092f19ee4fbae4378a57eff1d4b7a42c94cab7bbcad8fb89ae83",
   "essay_send_failed": "f00eec47485e97c928f03257cff5a5ea2fb571ae082f53694088616b8f4c6928",
-  "essay_skip_rewrite": "fe6bfeed17f7ff34df8b58baf6ff03ad6ee67b244cc4a60c18e496d53a8ce3f0",
+  "essay_skip_rewrite": "eda9f7786721ccef196335ad721514a5b554aa9f1ebcce1566d015974dfdce20",
   "essay_skipped": "7525b0f165e75a3ca07b09ceca3d19e90fe26e10fc287f451c715d3d65db7d1a",
   "essay_supporting_texts": "244a36067a14a51ba3e8f1a7007dea87d60a3262196f7e4a241de2ab5c7a4dc4",
   "essay_the_case": "c71ffcb59d82e0e807a3ad887be0fd0e47648ed7d21c442abe3d375f201b63bf",
@@ -105,14 +105,14 @@
     </plurals>
     <!-- On an essay the learner skipped, opened again from a link. -->
     <string name="essay_skipped">Te saltaste esta redacción.</string>
-    <string name="essay_back_to_today">Volver a Hoy</string>
+    <string name="essay_back_to_today">Hoy</string>
     <string name="essay_send_failed">No se pudo completar. Tu texto sigue aquí. Inténtalo de nuevo en un momento.</string>
     <string name="essay_limit_reached">Ya alcanzaste el límite de hoy para calificar redacciones. Tu texto se queda aquí; envíalo mañana.</string>
     <string name="essay_grading">Estamos revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos.</string>
     <string name="essay_grading_slow">Aún estamos calificando. Está tardando más de lo habitual.</string>
-    <string name="essay_skip_rewrite">Saltar la reescritura</string>
-    <string name="essay_grade_rewrite">Calificar la nueva versión</string>
-    <string name="essay_send">Enviar a calificar</string>
+    <string name="essay_skip_rewrite">Saltar</string>
+    <string name="essay_grade_rewrite">Calificar nueva versión</string>
+    <string name="essay_send">Calificar redacción</string>
     <string name="essay_leave_title">¿Salir por ahora?</string>
     <string name="essay_leave_description">Tu texto se queda en este dispositivo y estará aquí cuando vuelvas.</string>
     <string name="essay_keep_writing">Seguir escribiendo</string>
@@ -123,7 +123,7 @@
     <string name="essay_too_short_detail">Escribe la redacción completa y vuelve a enviarla.</string>
     <string name="essay_rewrite">Reescribir</string>
     <string name="essay_finish_failed">No se pudo completar. Inténtalo de nuevo en un momento.</string>
-    <string name="essay_see_comments">Ver los comentarios de cada criterio</string>
+    <string name="essay_see_comments">Ver comentarios</string>
     <string name="essay_comments">Comentarios</string>
     <string name="essay_proposal_elements">Los cinco elementos de la propuesta</string>
     <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->

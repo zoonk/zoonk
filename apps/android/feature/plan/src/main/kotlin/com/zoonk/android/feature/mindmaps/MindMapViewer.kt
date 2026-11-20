@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -69,6 +72,7 @@ import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.components.ICON_BUTTON_SHAPE
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
@@ -77,7 +81,7 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.MindMapImage
@@ -113,6 +117,8 @@ fun MindMapScreen(
         TaskNotFound(navigator)
         return
     }
+    val maps = host.maps(goalId)
+    host.SavesSaid(maps)
 
     val listed by app.mindMaps.list[goalId]
         .state
@@ -134,7 +140,6 @@ fun MindMapScreen(
         }
 
         is Viewed.Shown -> {
-            val maps = host.maps(goalId)
             val saves by maps.saves.collectAsStateWithLifecycle()
             val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
             val saved = saves[target] ?: viewed.map.saved
@@ -296,7 +301,7 @@ private fun OutlineOnly(
     Box(modifier.verticalScroll(rememberScrollState())) {
         BeforeFold { beforeFold ->
             Column(
-                beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).padding(detailPagePadding()),
+                beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 if (noted) {
@@ -411,30 +416,50 @@ private fun ZoomControls(
     onZoomIn: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        FilledTonalIconButton(onClick = onZoomOut, enabled = scale > 1f) {
-            Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.mindmaps_zoom_out))
-        }
-        val fit = stringResource(R.string.mindmaps_fit)
-        OutlinedButton(
-            onClick = onFit,
-            enabled = scale > 1f,
-            modifier = Modifier.semantics { contentDescription = fit },
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        val compact = maxWidth < 160.dp
+        val padding = if (compact) PaddingValues(vertical = 8.dp) else ButtonDefaults.ButtonWithIconContentPadding
+        val lineHeight =
+            with(LocalDensity.current) {
+                MaterialTheme.typography.labelLarge.lineHeight
+                    .toDp()
+            }
+        val contentHeight = maxOf(lineHeight, if (compact) 0.dp else ButtonDefaults.IconSize)
+        val height = maxOf(ButtonDefaults.MinHeight, contentHeight + padding.calculateTopPadding() + padding.calculateBottomPadding())
+        FlowRow(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            itemVerticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(painterResource(R.drawable.ic_fit_screen), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
-            Text(
-                formatPercent(scale.toDouble(), currentLocale()),
-                Modifier.padding(start = ButtonDefaults.IconSpacing),
-                style = MaterialTheme.typography.labelLarge.copy(fontFeatureSettings = "tnum"),
-            )
-        }
-        FilledTonalIconButton(onClick = onZoomIn, enabled = scale < PanZoom.MAX_SCALE) {
-            Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.mindmaps_zoom_in))
+            FilledTonalIconButton(modifier = Modifier.size(height), onClick = onZoomOut, enabled = scale > 1f, shape = ICON_BUTTON_SHAPE) {
+                Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.mindmaps_zoom_out))
+            }
+            val fit = stringResource(R.string.mindmaps_fit)
+            OutlinedButton(
+                onClick = onFit,
+                enabled = scale > 1f,
+                modifier = Modifier.height(height).semantics { contentDescription = fit },
+                contentPadding = padding,
+            ) {
+                if (!compact) {
+                    Icon(painterResource(R.drawable.ic_fit_screen), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
+                }
+                Text(
+                    formatPercent(scale.toDouble(), currentLocale()),
+                    Modifier.padding(start = if (compact) 0.dp else ButtonDefaults.IconSpacing),
+                    style = MaterialTheme.typography.labelLarge.copy(fontFeatureSettings = "tnum"),
+                    maxLines = 1,
+                )
+            }
+            FilledTonalIconButton(
+                modifier = Modifier.size(height),
+                onClick = onZoomIn,
+                enabled = scale < PanZoom.MAX_SCALE,
+                shape = ICON_BUTTON_SHAPE,
+            ) {
+                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.mindmaps_zoom_in))
+            }
         }
     }
 }

@@ -10,6 +10,13 @@ struct TutorComposerBar: View {
   @FocusState private var isFocused: Bool
 
   var body: some View {
+    // Draws again when a limit's day comes, which gives the composer back.
+    OpeningClock(availableAt: conversation.limit?.helpLimit?.availableAt) { _ in
+      content
+    }
+  }
+
+  private var content: some View {
     VStack(alignment: .leading, spacing: 10) {
       if !canTalk {
         signUpPrompt
@@ -22,7 +29,7 @@ struct TutorComposerBar: View {
           suggestionChips
         }
 
-        if let failure = conversation.askFailure {
+        if let failure = conversation.askFailure, !failure.isLimit {
           FailureLine(
             message: failure == .failed
               ? String(
@@ -36,7 +43,7 @@ struct TutorComposerBar: View {
         composer
       }
     }
-    .scenePadding(.horizontal)
+    .listRowEdges()
     .padding(.vertical, 8)
   }
 
@@ -82,7 +89,7 @@ struct TutorComposerBar: View {
   }
 
   private var suggestionChips: some View {
-    FlowLayout(spacing: 8) {
+    TapChips {
       ForEach(suggestions) { suggestion in
         Button {
           Task { await conversation.send(suggestion) }
@@ -90,8 +97,6 @@ struct TutorComposerBar: View {
           Text(suggestion.label)
             .multilineTextAlignment(.leading)
         }
-        .buttonStyle(.outline)
-        .controlSize(.regular)
         .disabled(!conversation.canAsk)
       }
     }
@@ -134,13 +139,18 @@ struct TutorLimitNotice: View {
   let failure: TutorFailure
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      Text(failure.message)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .announcesAlert(failure.message)
+    OpeningClock(availableAt: failure.helpLimit?.availableAt) { now in
+      notice(failure.words(now: now))
+    }
+  }
+
+  private func notice(_ words: LimitWords) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
+        .announcesAlert(words.said)
 
       TutorRemedyButton(failure: failure, retry: {})
+        .controlSize(.small)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
   }
@@ -161,14 +171,14 @@ struct TutorRemedyButton: View {
         Text("Create a free account", tableName: "Tutor", comment: "Opens sign-up from the buddy")
       }
       .buttonStyle(.outline)
-    case .seePlus:
-      SeePlusButton()
+    case .subscribe:
+      SubscribeButton()
         .buttonStyle(.outline)
     case .signIn:
       Button {
         places.open(.account)
       } label: {
-        Text("Sign in", tableName: "Tutor", comment: "Opens sign-in after the session expired")
+        Text("Log in", tableName: "Tutor", comment: "Opens sign-in after the session expired")
       }
       .buttonStyle(.outline)
     case .tryAgain:

@@ -2,11 +2,18 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
-import { type Link, type LinkResult, arcPath } from "./cause-effect-links";
+import { type Link, type LinkResult, arcPath, drawsHead } from "./cause-effect-links";
 
 export const ARC_GUTTER = 48;
 
 const END_OFFSET = 5;
+const ARC_STROKE = 2.5;
+const MARKER_SIZE = 10;
+const MARKER_BOX = 10;
+const MARKER_REF_X = 8;
+const MARKER_TIP_EDGE = MARKER_BOX - 1 + ARC_STROKE / 2;
+
+const HEAD_REACH = ((MARKER_TIP_EDGE - MARKER_REF_X) * MARKER_SIZE) / MARKER_BOX;
 
 type ArcState = LinkResult["state"] | "pending" | "made";
 
@@ -15,7 +22,7 @@ const ARC_STATES: readonly ArcState[] = ["correct", "incorrect", "made", "missed
 const ARC_CLASS: Record<ArcState, string> = {
   correct: "text-success-text",
   incorrect: "text-destructive-text",
-  made: "text-viz-highlight",
+  made: "text-foreground",
   missed: "text-success-text/70",
   pending: "text-viz-highlight/70",
 };
@@ -30,6 +37,7 @@ export function CauseEffectArcs({
   order: readonly string[];
 }) {
   const markerId = useId();
+  const heads = drawsHead(links);
 
   return (
     <svg
@@ -43,24 +51,26 @@ export function CauseEffectArcs({
             className={ARC_CLASS[state]}
             id={`${markerId}-${state}`}
             key={state}
-            markerHeight={7}
-            markerWidth={7}
+            markerUnits="userSpaceOnUse"
+            markerHeight={MARKER_SIZE}
+            markerWidth={MARKER_SIZE}
             orient="auto"
-            refX={8}
+            refX={MARKER_REF_X}
             refY={5}
-            viewBox="0 0 10 10"
+            viewBox={`0 0 ${MARKER_BOX} ${MARKER_BOX}`}
           >
             <path
               className="fill-none stroke-current"
               d="M1 1 L9 5 L1 9"
               strokeLinecap="round"
-              strokeWidth={2}
+              strokeLinejoin="round"
+              strokeWidth={ARC_STROKE}
             />
           </marker>
         ))}
       </defs>
 
-      {links.map((link) => {
+      {links.map((link, index) => {
         const [from, to] = [centers[link.from], centers[link.to]];
 
         if (from === undefined || to === undefined) {
@@ -75,12 +85,18 @@ export function CauseEffectArcs({
         return (
           <path
             className={cn("fill-none stroke-current", ARC_CLASS[link.state])}
-            d={arcPath({ from: from - END_OFFSET, gutter: ARC_GUTTER, span, to: to + END_OFFSET })}
+            d={arcPath({
+              from: from - END_OFFSET,
+              gutter: ARC_GUTTER,
+              headReach: HEAD_REACH,
+              span,
+              to: to + END_OFFSET,
+            })}
             key={`${link.from}-${link.to}-${link.state}`}
-            markerEnd={`url(#${markerId}-${link.state})`}
+            markerEnd={heads[index] ? `url(#${markerId}-${link.state})` : undefined}
             strokeDasharray={isDashed ? "5 5" : undefined}
             strokeLinecap="round"
-            strokeWidth={2.5}
+            strokeWidth={ARC_STROKE}
           />
         );
       })}

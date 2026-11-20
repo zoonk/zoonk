@@ -32,7 +32,7 @@ final class SessionPlayback {
     moment = completion
   }
 
-  /// "See today's summary" from the moment that completed the session.
+  /// "See summary" from the moment that completed the session.
   func seeSummary() {
     moment = nil
   }

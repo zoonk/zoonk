@@ -1,59 +1,42 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { TaskClose } from "../_components/task-close";
 import {
-  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
-  TaskHeaderSegments,
   TaskHeaderSide,
   TaskHeaderTitle,
-  type TaskSegment,
 } from "../_components/task-header";
-import { LearnLink } from "../learn-link";
+import { TASK_COLUMN_CLASS } from "../_components/task-layout";
+import { DayMeter, type DayMeterPart } from "../today/day-segments";
 import { WaitTopBarBack } from "../wait/wait-screen";
+import { getDayMeterParts } from "./day-meter-parts";
 import { type SessionQueueRow } from "./session-queue-rows";
-
-const PERCENT = 100;
 
 const NO_BAR = { completed: 0, total: 0 } as const;
 
-const SEGMENT_BY_STATE: Record<SessionQueueRow["state"], TaskSegment> = {
-  ahead: "ahead",
-  done: "done",
-  next: "current",
-};
-
-function getSessionSegments({
+function getSessionMeterParts({
   queue,
   sessionBar,
 }: {
   queue?: readonly SessionQueueRow[];
   sessionBar: { completed: number; total: number };
-}): { segments: TaskSegment[]; weights?: number[] } {
+}): DayMeterPart[] {
   if (queue && queue.length > 0) {
-    return {
-      segments: queue.map((row) => SEGMENT_BY_STATE[row.state]),
-      weights: queue.map((row) => row.block.estimatedMinutes),
-    };
+    return getDayMeterParts({ rows: queue });
   }
 
   const { completed, total } = sessionBar;
 
-  return {
-    segments: Array.from({ length: total }, (_, index): TaskSegment => {
-      if (index < completed) {
-        return "done";
-      }
+  return Array.from({ length: total }, (_, index) => {
+    if (index < completed) {
+      return { id: index, state: "done" };
+    }
 
-      return index === completed ? "current" : "ahead";
-    }),
-  };
+    return { id: index, state: index === completed ? "current" : "ahead" };
+  });
 }
 
 function useSessionProgressLabel({
@@ -92,43 +75,25 @@ export function SessionHeader({
 }) {
   const t = useExtracted();
   const label = useSessionProgressLabel({ lessonsComing, sessionBar });
-  const closeRef = useEscapeClick<HTMLAnchorElement>();
-  const { segments, weights } = getSessionSegments({ queue, sessionBar });
+  const parts = getSessionMeterParts({ queue, sessionBar });
 
   return (
     <TaskHeader className="bg-background sticky top-0" data-slot="session-header">
       <TaskHeaderBar>
         <TaskHeaderSide align="start">
           <WaitTopBarBack>
-            <LearnLink
-              aria-keyshortcuts="Escape"
-              aria-label={t("Back to Today")}
-              className={cn(
-                buttonVariants({ size: "icon", variant: "ghost" }),
-                TASK_HEADER_ICON_CLASS.start,
-              )}
-              href={exitHref}
-              prefetch={false}
-              ref={closeRef}
-            >
-              <XIcon aria-hidden="true" />
-            </LearnLink>
+            <TaskClose href={exitHref} prefetch={false} />
           </WaitTopBarBack>
         </TaskHeaderSide>
 
-        <TaskHeaderTitle title={t("Today's session")} />
+        <TaskHeaderTitle title={t("Today")} />
 
         <TaskHeaderSide align="end">{menu}</TaskHeaderSide>
       </TaskHeaderBar>
 
-      {segments.length > 0 && (
-        <TaskHeaderSegments
-          label={label}
-          segments={segments}
-          value={sessionBar.total === 0 ? 0 : (sessionBar.completed / sessionBar.total) * PERCENT}
-          weights={weights}
-        />
-      )}
+      <div className={TASK_COLUMN_CLASS}>
+        <DayMeter held={lessonsComing} label={label} parts={parts} />
+      </div>
     </TaskHeader>
   );
 }

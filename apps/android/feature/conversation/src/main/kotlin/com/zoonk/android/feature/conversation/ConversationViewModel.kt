@@ -9,6 +9,7 @@ import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.livecall.CallSoFar
 import com.zoonk.android.feature.livecall.LiveCall
 import com.zoonk.android.feature.livecall.LiveCallPhase
@@ -49,12 +50,19 @@ class ConversationViewModel(
     /** When the learner started preparing this task's card, on this device; null before. */
     val prepStartedAt: Flow<Long?> = prep.startedAt(conversationId)
 
+    /** A start that lands after the learner left opens nothing on return. */
+    private val visit = Visit()
+
     /** Another try being started; the screen opens it once started. */
     var startingAgain by mutableStateOf(false)
         private set
 
-    var startAgainFailed by mutableStateOf(false)
-        private set
+    /** The conversation another try started on this visit, for the screen to open. */
+    val againStarted = visit.outcome<UUID>()
+
+    private val againFailure = visit.outcome<Unit>()
+
+    val startAgainFailed get() = againFailure.value != null
 
     /** The run writing another try's card or mock, made with that try's kind. */
     var againWriting by mutableStateOf<ContentWritingWait?>(null)
@@ -89,9 +97,7 @@ class ConversationViewModel(
             call = next
             next.start(microphone, takeover)
             // The notification's Hang up does what End does.
-            ongoing.keep(next, conversation.character.name) {
-                if (next.state.value.phase == LiveCallPhase.Connecting) cancel() else next.hangUp()
-            }
+            ongoing.keep(next, conversation.character.name) { end(next) }
             // A dropped call the learner then ends is saved too.
             next.state.first { it.phase == LiveCallPhase.Ended }
             if (call === next) scope.launch { save(next) }
@@ -108,6 +114,15 @@ class ConversationViewModel(
         if (startedOnOpen) return
         startedOnOpen = true
         start(conversation, microphone)
+    }
+
+    /** End: a first call still ringing goes back to its intro; any other call ends, on what was said. */
+    fun end() {
+        call?.let(::end)
+    }
+
+    private fun end(current: LiveCall) {
+        if (ringsFirst(current.state.value.phase, current.continuing)) cancel() else current.hangUp()
     }
 
     /**
@@ -127,37 +142,47 @@ class ConversationViewModel(
     }
 
     /** Another try at a speaking mock or an exam task: a new conversation, from the learner's tap. */
-    fun startAgain(
+    fun startAgain(request: CallRequest) = startAgain(request, visit.number)
+
+    /** Sent again once its card is written, for the visit that asked. */
+    private fun startAgain(
         request: CallRequest,
-        onStarted: (UUID) -> Unit,
+        asked: Int,
     ) {
         if (startingAgain) return
         startingAgain = true
-        startAgainFailed = false
+        againFailure.clear()
         val kind = if (request is CallRequest.SpeakingMock) GenerationKind.SpeakingMock else GenerationKind.ExamSpeaking
         val writing = againWriting ?: store.writingWaits.create(kind, viewModelScope).also { againWriting = it }
         viewModelScope.launch {
             val started = store.start(request)
             startingAgain = false
-            when (writing.answered((started as? CallStart.Writing)?.generationId) { startAgain(request, onStarted) }) {
+            if (visit.number != asked) return@launch
+            when (writing.answered((started as? CallStart.Writing)?.generationId) { startAgain(request, asked) }) {
                 ContentWritingWait.Answer.Waiting -> {
                     return@launch
                 }
 
                 ContentWritingWait.Answer.Failed -> {
-                    startAgainFailed = true
+                    againFailure.send(asked, Unit)
                 }
 
                 ContentWritingWait.Answer.Proceed -> {
                     if (started is CallStart.Started) {
-                        onStarted(started.conversationId)
+                        againStarted.send(asked, started.conversationId)
                     } else {
-                        startAgainFailed =
-                            true
+                        againFailure.send(asked, Unit)
                     }
                 }
             }
         }
+    }
+
+    /** The screen left for real: a try still starting or being written leads nowhere, and the next visit offers Try again. */
+    fun endVisit() {
+        visit.end()
+        againWriting?.clear()
+        againWriting = null
     }
 
     fun saveAgain() {
@@ -255,3 +280,12 @@ class DraftPrepTimes(
 
     private fun handle(card: UUID) = sessions.current?.let { drafts.open(it, "conversation.prep.$card", Long.serializer()) }
 }
+
+/**
+ * A first call still ringing has nothing said to lose: End and Back go back to its intro, without
+ * asking. A call the server continues counts as a first one when this app holds nothing from it.
+ */
+internal fun ringsFirst(
+    phase: LiveCallPhase,
+    continuing: Boolean,
+) = phase == LiveCallPhase.Connecting && !continuing

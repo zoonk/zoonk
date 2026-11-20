@@ -4,12 +4,14 @@ struct ProfileEditorView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.isPaneSplit) private var isBesideTheList
   @Environment(SessionStore.self) private var session
-  @Environment(SettingsStore.self) private var settings
   @State private var name: String
   @State private var username: String
-  @State private var isChangingUsername = false
   @State private var usernameCheck: UsernameCheck?
+  /// Setup shows the username only when no username could be suggested.
+  @State private var asksUsername = false
   @State private var isSaved = false
+  /// The save's failure, said while the learner is on the page.
+  @State private var saving = VisitRequest<ProfileSave>()
   @FocusState private var focusedField: Field?
 
   private enum Field {
@@ -19,13 +21,10 @@ struct ProfileEditorView: View {
 
   let account: CurrentAccount
   let isRequiredSetup: Bool
-  /// Nil in the required setup, which has no way out but finishing it.
-  let deleteAccount: (() -> Void)?
 
-  init(account: CurrentAccount, isRequiredSetup: Bool, deleteAccount: (() -> Void)? = nil) {
+  init(account: CurrentAccount, isRequiredSetup: Bool) {
     self.account = account
     self.isRequiredSetup = isRequiredSetup
-    self.deleteAccount = deleteAccount
     _name = State(initialValue: account.user.name)
     _username = State(initialValue: account.user.username ?? "")
   }
@@ -41,20 +40,11 @@ struct ProfileEditorView: View {
       // Its sections lock while it saves, not the list, so the button that saves keeps its focus.
       Group {
         if isRequiredSetup {
-          StepHeader(
-            title: setupTitle,
-            description: Text(
-              "You can change it later in your profile.", tableName: "Account",
-              comment: "Explains that the setup's name and username can change later"))
-        }
-
-        if !isRequiredSetup {
+          StepHeader(title: setupTitle, description: nil)
+        } else {
           Section {
             PageHeader(
-              Text("Profile", tableName: "Account", comment: "Profile editor navigation title"),
-              supporting: Text(
-                "Your name, username and account.", tableName: "Account",
-                comment: "Under the Profile page's title: what the page changes"))
+              Text("Profile", tableName: "Account", comment: "Profile editor navigation title"))
           }
         }
 
@@ -68,7 +58,9 @@ struct ProfileEditorView: View {
               prompt: Text(
                 "Your name",
                 tableName: "Account",
-                comment: "Placeholder for the profile name field")
+                comment:
+                  "Shown on a certificate where the learner's name goes, until they add one to their profile."
+              )
             ) {
               Text("Name", tableName: "Account", comment: "Profile name field label")
             }
@@ -77,18 +69,16 @@ struct ProfileEditorView: View {
           } hint: {
             if isNameTooLong {
               Text(
-                "Use 150 characters or fewer.", tableName: "Account",
-                comment: "Shown under the profile name field when the typed name is too long"
+                "Use 150 characters or fewer.", tableName: "Account"
               )
               .foregroundStyle(.destructiveText)
             } else if !isRequiredSetup {
-              Text(
-                "How Zoonk and your buddy call you, and the name on your certificates.",
-                tableName: "Account", comment: "What the profile name is for")
+              NameHint()
             }
           }
 
-          if showsUsernameField {
+          // Setup asks only the name: the username it saves is the one suggested, changed in Profile.
+          if !isRequiredSetup || asksUsername {
             FormField(
               title: Text(
                 "Username", tableName: "Account", comment: "Profile username field label"),
@@ -117,50 +107,12 @@ struct ProfileEditorView: View {
             } hint: {
               usernameHint
             }
-          } else {
-            HStack {
-              if username.isEmpty {
-                ProgressView()
-              } else {
-                Text(
-                  "Your username: @\(username)", tableName: "Account",
-                  comment: "The username setup suggests; the argument is the username")
-              }
-
-              Spacer()
-
-              Button {
-                isChangingUsername = true
-              } label: {
-                Text("Change", tableName: "Account", comment: "Shows the username field in setup")
-              }
-              .accessibilityLabel(
-                Text("Change username", tableName: "Account", comment: "Shows the username field"))
-            }
           }
         }
 
-        if !isRequiredSetup {
+        if let failure = saving.outcome?.failure {
           Section {
-            ListRow(Text("Email", tableName: "Account", comment: "Read-only profile email label")) {
-              EmptyView()
-            } trailing: {
-              Text(account.user.email)
-                .typeStyle(.meta)
-            }
-          } header: {
-            SectionTitle(
-              Text(
-                String(
-                  localized: "Account email",
-                  table: "Account",
-                  comment: "Section title above the read-only account email")))
-          }
-        }
-
-        if session.failure != nil {
-          Section {
-            AccountFailureMessage(failure: session.failure)
+            AccountFailureMessage(failure: failure)
           }
         } else if isSaved {
           Section {
@@ -175,56 +127,19 @@ struct ProfileEditorView: View {
         }
       }
       .disabled(session.isWorking)
-
+    }
+    .bottomBar {
       if isRequiredSetup {
         StepButtons(canContinue: isValid, onContinue: save)
           .environment(\.isSavingAnswer, session.isWorking)
-      }
-
-      Group {
-        if let deleteAccount {
-          Section {
-            DataExportRow(
-              title: Text(
-                "Download my data", tableName: "Account",
-                comment: "Row that downloads everything Zoonk keeps about the learner"),
-              description: Text(
-                "Everything Zoonk keeps about you, as one file", tableName: "Account",
-                comment: "What the data download contains"),
-              filename: "zoonk-data"
-            ) {
-              await settings.exportAccountData()
-            }
-          } header: {
-            SectionTitle(
-              Text(
-                "Your data", tableName: "Account", comment: "Profile section with the data download"
-              ))
-          }
-
-          Section {
-            Button(role: .destructive, action: deleteAccount) {
-              Text(
-                "Delete my account", tableName: "Account",
-                comment: "Opens permanent account deletion"
-              )
-              .typeStyle(.rowTitle)
-            }
-            .foregroundStyle(.destructiveText)
-          } header: {
-            SectionTitle(
-              Text(
-                "Delete account", tableName: "Account", comment: "Profile section about deletion"))
-          } footer: {
-            SectionFooter {
-              Text(
-                "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
-                tableName: "Account", comment: "What deleting the account does")
-            }
-          }
+      } else {
+        BusyButton(isBusy: session.isWorking, action: save) {
+          Text("Save", tableName: "Account", comment: "Button that saves profile changes")
         }
+        .buttonStyle(.mainAction)
+        .disabled(!isValid)
+        .keyboardShortcut(.defaultAction)
       }
-      .disabled(session.isWorking)
     }
     .navigationTitle(
       isRequiredSetup
@@ -239,44 +154,23 @@ struct ProfileEditorView: View {
         : String(localized: "Profile", table: "Account", comment: "Profile editor navigation title")
     )
     .task {
-      guard isRequiredSetup, username.isEmpty else {
-        return
-      }
-
-      let suggestion = await session.usernameSuggestion()
-
-      guard !Task.isCancelled else {
-        return
-      }
-
-      if let suggestion {
-        username = suggestion
-        usernameCheck = UsernameCheck(username: normalizedUsername, status: .available)
-      } else {
-        isChangingUsername = true
+      if isRequiredSetup, username.isEmpty {
+        await suggestUsername()
       }
     }
     .task(id: normalizedUsername) {
       await checkUsername()
     }
-    .onChange(of: session.failure) {
-      if session.failure == .usernameTaken {
-        isChangingUsername = true
+    .task(id: saving.outcome) {
+      // Taken since it was suggested: the next Continue saves another.
+      if isRequiredSetup, !asksUsername, saving.outcome == .failed(.usernameTaken) {
+        await suggestUsername()
       }
     }
+    .onDisappear { saving.leave() }
     .onChange(of: name) { isSaved = false }
     .onChange(of: username) { isSaved = false }
     .announcesStatus(isSaved ? Self.savedLine : nil)
-    .toolbar {
-      if !isRequiredSetup {
-        ToolbarItem(placement: .confirmationAction) {
-          BusyButton(isBusy: session.isWorking, icon: .check, action: save) {
-            Text("Save", tableName: "Account", comment: "Button that saves profile changes")
-          }
-          .disabled(!isValid)
-        }
-      }
-    }
   }
 
   private var setupTitle: Text {
@@ -285,8 +179,19 @@ struct ProfileEditorView: View {
       comment: "Title of the profile setup after signing up")
   }
 
-  private var showsUsernameField: Bool {
-    !isRequiredSetup || isChangingUsername
+  private func suggestUsername() async {
+    let suggestion = await session.usernameSuggestion()
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    if let suggestion {
+      username = suggestion
+      usernameCheck = UsernameCheck(username: normalizedUsername, status: .available)
+    } else {
+      asksUsername = true
+    }
   }
 
   private var usernameStatus: UsernameStatus {
@@ -311,8 +216,7 @@ struct ProfileEditorView: View {
       .foregroundStyle(.successText)
     case .taken:
       Text(
-        "\(normalizedUsername) is already taken", tableName: "Account",
-        comment: "Another account has the typed username; the argument is the username"
+        "\(normalizedUsername) is already taken", tableName: "Account"
       )
       .foregroundStyle(.destructiveText)
     case .idle:
@@ -325,9 +229,8 @@ struct ProfileEditorView: View {
 
   private var usernameRules: Text {
     Text(
-      "3-30 characters. Letters a–z, numbers, and underscores only.",
-      tableName: "Account",
-      comment: "Username requirements below the profile field")
+      "3–30 characters. Letters a–z, numbers, and underscores only.",
+      tableName: "Account")
   }
 
   private func checkUsername() async {
@@ -356,18 +259,20 @@ struct ProfileEditorView: View {
   private func save() {
     isSaved = false
 
-    Task {
-      let didUpdate = await session.updateProfile(
-        name: normalizedName, username: normalizedUsername)
-
-      guard didUpdate, !isRequiredSetup else {
-        return
-      }
-
-      if isBesideTheList {
-        isSaved = true
-      } else {
-        dismiss()
+    saving.run { [session, normalizedName, normalizedUsername] in
+      await session.updateProfile(name: normalizedName, username: normalizedUsername)
+    } then: { outcome in
+      switch outcome {
+      case .saved? where isRequiredSetup:
+        break
+      case .saved?:
+        if isBesideTheList {
+          isSaved = true
+        } else {
+          dismiss()
+        }
+      case .dropped?, .failed?, nil:
+        break
       }
     }
   }

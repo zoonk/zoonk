@@ -16,7 +16,7 @@ export const conversationFeedbackTask: Task<
     "Write feedback after a live call: phrases said well, one fix, hard words for the learner's language and a kind line: code checks, then a judge",
   generate: writeConversationFeedback,
   id: "conversation-feedback",
-  name: "Conversation Feedback",
+  name: "Conversation feedback",
   score: scoreConversationFeedback,
   scoreCategories: CONVERSATION_FEEDBACK_SCORE_CATEGORIES,
   testCases: TEST_CASES,

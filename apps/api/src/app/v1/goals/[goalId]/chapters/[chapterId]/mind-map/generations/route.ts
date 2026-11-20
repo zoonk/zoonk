@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
+import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { requestChapterMindMap } from "@zoonk/core/mind-maps/request";
@@ -44,10 +44,6 @@ async function createMindMapGeneration(
 
   if (result.status === "unavailable") {
     return errors.unprocessableEntity("This chapter has no mind map");
-  }
-
-  if (result.status === "plusRequired") {
-    return plusRequiredError();
   }
 
   if (result.status === "refused") {

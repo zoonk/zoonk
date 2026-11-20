@@ -1,5 +1,7 @@
+import { StateMark } from "@/components/state-mark";
 import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
+import { CheckAgainButton } from "./check-again-button";
 
 function ClipPlayer({ url }: { url: string }) {
   return (
@@ -35,7 +37,10 @@ export function RestoredClip({ change }: { change: StoredChange }) {
   );
 }
 
-/** The clip a word or sentence fix recorded for its text, which approving writes with it. */
+/**
+ * The clip a word or sentence fix recorded for its text, which approving writes with it. The
+ * browser's own player: a reviewer replays and scrubs one clip, by mouse or keyboard.
+ */
 export function ContentFixVoice({ fix }: { fix: Pick<ContentFixDetail, "voice" | "voiceOwedAt"> }) {
   if (fix.voice?.status === "voiced") {
     return (
@@ -48,16 +53,22 @@ export function ContentFixVoice({ fix }: { fix: Pick<ContentFixDetail, "voice" |
 
   if (fix.voice?.status === "failed") {
     return (
-      <p className="text-destructive-text text-sm">
-        The new clip couldn&apos;t be recorded, so this fix can&apos;t be approved. Reject it and
-        propose it again.
+      <p className="text-sm">
+        <StateMark state="failed">The new clip couldn&apos;t be recorded</StateMark>
+        <span className="text-muted-foreground">
+          , so this fix can&apos;t be approved. Reject it and propose it again.
+        </span>
       </p>
     );
   }
 
   return fix.voiceOwedAt ? (
-    <p className="text-muted-foreground text-sm">
-      Recording the new clip. Reload in a minute to hear it and approve.
-    </p>
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+      <p>
+        <StateMark state="running">Recording the new clip</StateMark>
+        <span className="text-muted-foreground">. You can approve once it&apos;s ready.</span>
+      </p>
+      <CheckAgainButton />
+    </div>
   ) : null;
 }

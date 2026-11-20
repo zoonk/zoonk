@@ -49,6 +49,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.OnboardingAnswerInput
+import com.zoonk.api.models.OnboardingExamSubjectsInner
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -146,6 +147,30 @@ class GoalSetupFlowTest {
     }
 
     @Test
+    fun continuingFromTheSubjectsQuestionRequiresASelection() {
+        api.setup = {
+            setupView(listOf("level", "plan"), kind = "exam")
+                .copy(
+                    examSubjects =
+                        listOf(
+                            OnboardingExamSubjectsInner(name = "Statistics", shortName = null),
+                            OnboardingExamSubjectsInner(name = "Algebra", shortName = null),
+                        ),
+                )
+        }
+        show()
+
+        rule.onNodeWithText("Which subjects do you already know well?").assertIsDisplayed()
+        rule.onNodeWithText("Continue").assertIsNotEnabled()
+
+        rule.onNodeWithText("Algebra").performClick()
+        rule.onNodeWithText("Continue").performClick()
+        rule.waitForIdle()
+
+        assertEquals(1, api.answers.size)
+    }
+
+    @Test
     fun skippingSpinsOnlySkipWhileContinueWaits() {
         api.setup = { setupView(listOf("target", "plan"), kind = "exam") }
         api.answerGate = CompletableDeferred()
@@ -187,11 +212,11 @@ class GoalSetupFlowTest {
 
         rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
         rule.mainClock.advanceTimeBy(1_000)
-        rule.onNodeWithText("See your plan").assertIsNotEnabled()
+        rule.onNodeWithText("See plan").assertIsNotEnabled()
 
         rule.mainClock.advanceTimeBy(45_000)
         rule.onNodeWithText("We couldn't work out the time your goal needs.").performScrollTo().assertIsDisplayed()
-        rule.onNodeWithText("See your plan").performClick()
+        rule.onNodeWithText("See plan").performClick()
         rule.waitForIdle()
 
         assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value).value.dailyMinutes)

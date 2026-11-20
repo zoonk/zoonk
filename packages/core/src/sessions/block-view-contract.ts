@@ -24,7 +24,7 @@ export const studyBlockSchema = z
       .array(z.string())
       .meta({
         description:
-          'The areas most of a practice block asks about, at most two, as the plan names them: name its row after them ("Practice: Math and Languages"). Empty for other blocks',
+          "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks",
       }),
     brainPower: z.number().int().min(0).meta({ description: "Brain Power the block earned" }),
     canDo: z.string().nullable().meta({ description: "What the learner will be able to do" }),
@@ -32,7 +32,7 @@ export const studyBlockSchema = z
       .boolean()
       .meta({
         description:
-          "Offer this lesson's chapter test unless it was failed today without a lesson studied in that chapter since; available again on the next learner-local day. False for blocks without a lesson chapter",
+          "True while this lesson's chapter test is available: it wasn't failed today without a lesson studied in that chapter since. A failed one is available again on the next learner-local day. False for blocks without a lesson chapter",
       }),
     capsules: z.array(
       z.object({
@@ -70,7 +70,7 @@ export const studyBlockSchema = z
       .boolean()
       .meta({
         description:
-          "A practice block that only fixes the learner's mistakes (their drills, no practice questions): name it for that, not as mixed practice",
+          "A practice block that only fixes the learner's mistakes (their drills, no practice questions), unlike mixed practice",
       }),
     netScored: z
       .boolean()
@@ -109,14 +109,14 @@ export const studyBlockSchema = z
       .nullable()
       .meta({
         description:
-          "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it): label the block with it. Null for blocks that mix subjects, and for goals with fewer than two subjects",
+          "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it). Null for blocks that mix subjects, and for goals with fewer than two subjects",
       }),
     title: z.string().nullable(),
     topics: z
       .array(z.string())
       .meta({
         description:
-          'A practice block\'s topics as the plan names them, most asked first: under its row, name the first and how many more ("Calculating discounts and 9 more topics"). Empty for other blocks',
+          "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks",
       }),
     waitReason: z
       .enum(["lessons", "challenge"])
@@ -129,7 +129,7 @@ export const studyBlockSchema = z
       .boolean()
       .meta({
         description:
-          "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty. Say so rather than calling it due",
+          "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty",
       }),
   })
   .meta({ id: "StudyBlock" });

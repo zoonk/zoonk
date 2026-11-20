@@ -459,7 +459,7 @@ test.describe("Live call server states", () => {
       const callId = await openUnitCall({ learner, page });
       const actions = observeActions({ conversationId: callId, page });
       await page.getByRole("button", { name: "Call Linda" }).click();
-      await page.getByRole("button", { name: "End that call and start this one" }).click();
+      await page.getByRole("button", { name: "Start here" }).click();
 
       await expect
         .poll(() => hangupRequested({ request, sessionId: original.providerSessionId }))
@@ -619,8 +619,8 @@ test.describe("Live call server states", () => {
       await page.getByRole("button", { name: "Call again" }).click();
       await expect(dropped).toBeVisible();
 
-      // The learner cancels the second while its reservation is still on its way, calls again and
-      // ends the call before it answers: only that reservation is held.
+      // The learner ends the call while the second still rings, its reservation still on its way:
+      // End ends the call, on what was said, not only the redial.
       const held = { reservation: false };
 
       await page.route(`**/conversation/${call.id}`, async (route) => {
@@ -633,10 +633,7 @@ test.describe("Live call server states", () => {
       });
 
       await page.getByRole("button", { name: "Call again" }).click();
-      await page.getByRole("button", { exact: true, name: "Cancel" }).click();
-      await expect(dropped).toBeVisible();
-      await page.getByRole("button", { name: "Call again" }).click();
-      await page.getByRole("button", { name: "End the call" }).click();
+      await page.getByRole("button", { exact: true, name: "End" }).click();
 
       await expect
         .poll(() => prisma.languageConversation.findUnique({ where: { id: call.id } }), {
@@ -699,8 +696,8 @@ test.describe("Live call server states", () => {
 
       await page.getByRole("button", { name: "Call again" }).click();
       await expect(page.getByText("Your microphone is off")).toBeVisible();
-      await expect(page.getByText("The call dropped")).toBeVisible();
-      await expect(page.getByRole("button", { name: "End the call" })).toBeVisible();
+      await expect(page.getByText("The call dropped")).toBeHidden();
+      await expect(page.getByRole("button", { name: "End call" })).toBeVisible();
       await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
       await page.getByRole("button", { name: "Type instead" }).click();
 
@@ -760,15 +757,91 @@ test.describe("Live call server states", () => {
 
       await page.getByRole("button", { name: "Call again" }).click();
       await expect(page.getByText("No more calls today")).toBeVisible();
-      await expect(page.getByText("The call dropped")).toBeVisible();
+      await expect(page.getByText("The call dropped")).toBeHidden();
       await expect(page.getByRole("button", { name: "Call again" })).toBeHidden();
-      await page.getByRole("button", { name: "End the call" }).click();
+      await page.getByRole("button", { name: "End call" }).click();
       await expect.poll(() => actions.complete.length).toBe(1);
 
       expect(actions.complete[0]).toStrictEqual({
         connectionId: first.id,
         turns: [{ speaker: "character", text: "Hi! Are you calling about the apartment?" }],
       });
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("a call refused for call time offers Try again once more comes back, and it connects", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner();
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      await usageRecordsFixture({
+        count: 1,
+        createdAt: new Date(Date.now() - 30 * 86_400_000 + 15_000),
+        kind: "conversation",
+        seconds: 300,
+        userId: learner.user.id,
+      });
+
+      await answerLiveCalls(page, "answers");
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+
+      const tryAgain = page.getByRole("button", { exact: true, name: "Try again" });
+      await expect(page.getByText("You've used your call time")).toBeVisible();
+      await expect(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
+      await expect(tryAgain).toBeHidden();
+
+      await expect(tryAgain).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByRole("link", { name: "Subscribe" })).toBeHidden();
+      await expect(page.getByText("You can try again now.")).toBeVisible();
+      await expect(page.getByText("You've used your call time")).toBeHidden();
+      await tryAgain.click();
+      await expectLive(page);
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("Try again after the call time came back shows the next refusal's own gate", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner();
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      await usageRecordsFixture({
+        count: 1,
+        createdAt: new Date(Date.now() - 30 * 86_400_000 + 15_000),
+        kind: "conversation",
+        seconds: 300,
+        userId: learner.user.id,
+      });
+
+      await answerLiveCalls(page, "answers");
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+
+      const tryAgain = page.getByRole("button", { exact: true, name: "Try again" });
+      await expect(tryAgain).toBeVisible({ timeout: 30_000 });
+
+      // Today's call time runs out on another device while this screen waits.
+      await usageRecordsFixture({
+        count: 1,
+        kind: "conversation",
+        seconds: 120,
+        userId: learner.user.id,
+      });
+
+      await tryAgain.click();
+      await expect(page.getByText("No more calls today")).toBeVisible();
+      await expect(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
+      await expect(tryAgain).toBeHidden();
     } finally {
       await owned.cleanup();
     }

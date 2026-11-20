@@ -52,8 +52,7 @@ export const lessonReadinessSchema = z
     setAside: z
       .boolean()
       .meta({
-        description:
-          "A `failed` lesson its quality checks set aside: it's never written again, so show that instead of offering to write it",
+        description: "A `failed` lesson its quality checks set aside: it's never written again",
       }),
     status: z
       .enum(["ready", "generating", "notStarted", "failed"])
@@ -76,8 +75,7 @@ export const sessionPreparationSchema = z
       .string()
       .nullable()
       .meta({
-        description:
-          "The run getting this and the next session's lessons ready; null for guests, and for a free exam plan past its first week, whose new lessons come with Plus (nothing is prepared)",
+        description: "The run getting this and the next session's lessons ready; null for guests",
       }),
   })
   .meta({ id: "SessionPreparation" });

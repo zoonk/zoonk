@@ -19,6 +19,7 @@
   "questions_entry_decimals": "4c95c9671f631d6f7c4da79fcc9964c69ae1bc5e9369379adbfb89591270bc89",
   "questions_entry_fraction": "d838ea60728aed5015f9d6795fcc9c99d746ff79a2dd40ee5deb52232c0d5d00",
   "questions_entry_integer": "77ccbccfc9a3ff0a0ae91b43b32ace2a0d52570820f34dbdf2fc207b8ffe560e",
+  "questions_entry_round_to_whole": "2ef3ebae9047a5ea9c7bf14107ed55cd55bb7be46076761e9ecf90a444571223",
   "questions_false": "68776c7e3d7a440567b0434f26b2ab3c1113a9db24be951fbd67460d7ad4c152",
   "questions_feedback_label": "affeef2c70cd3ece8b21b2c08d098a87831434d8109c4567e0eb99b054a6b8ae",
   "questions_invalid_fraction": "2254db2676e0fd55a7bcbafc8010b4e70c21e54985147f94cf95b87cd0d7f5a8",
@@ -81,6 +82,7 @@
     <string name="questions_your_answer">Sua resposta</string>
     <string name="questions_mark_correct">Correta</string>
     <string name="questions_mark_wrong">Errada</string>
+    <string name="questions_entry_round_to_whole">Arredonde para o número inteiro mais próximo.</string>
     <plurals name="questions_entry_decimals">
         <item quantity="one">Arredonde para %d casa decimal.</item>
         <item quantity="many">Arredonde para %d casas decimais.</item>

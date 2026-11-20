@@ -74,7 +74,7 @@ export const finishedChapterSchema = finishedChapterObjectSchema
   .nullable()
   .meta({
     description:
-      "The chapter this completion finished: it marked the chapter's last plan item done or tested out, outside a language. Show its map row (GET /goals/{goalId}/chapters/{chapterId}/mind-map). Retries of the same completion return it again; null otherwise",
+      "The chapter this completion finished: it marked the chapter's last plan item done or tested out, outside a language. Its mind map is at GET /goals/{goalId}/chapters/{chapterId}/mind-map. Retries of the same completion return it again; null otherwise",
   });
 
 /** Off-session activity points exclude the separately displayed daily mission reward. */
@@ -237,7 +237,7 @@ export const studyBlockCompletionSchema = z
       .nullable()
       .meta({
         description:
-          "The one milestone the learner hasn't been shown yet, usually one this block earned (a new belt, the buddy's next stage, new glasses): show it as a full-screen moment right after the block, then mark it shown; null when there's none",
+          "The one milestone the learner hasn't been shown yet, usually one this block earned (a new belt, the buddy's next stage, new glasses), until it's marked as shown; null when there's none",
       }),
     certificates: unshownCertificatesSchema,
     checkpoint: checkpointResultSchema

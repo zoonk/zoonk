@@ -36,10 +36,10 @@ function useGoalPhaseCopy() {
       lines: [t("Finding the topics it covers…"), t("Putting them in the order it teaches…")],
     },
     skills: {
-      label: t("Mapping the skills it takes"),
+      label: t("Choosing what to learn"),
       lines: [
         t("Listing what your goal asks for…"),
-        t("Putting the skills in order…"),
+        t("Putting the topics in order…"),
         t("Checking nothing important is missing…"),
       ],
     },
@@ -79,7 +79,7 @@ function useCurriculumCopy(): KindCopy<"curriculum"> {
       plan: {
         label: t("Fitting the plan into your days"),
         lines: [
-          t("Finding lessons in the Library…"),
+          t("Finding lessons for your goal…"),
           t("Spreading the skills over your days…"),
           t("Saving your plan…"),
         ],
@@ -94,7 +94,7 @@ function usePlacementCopy(): KindCopy<"placement"> {
   const goal = useGoalPhaseCopy();
 
   return {
-    name: t("Getting your questions ready"),
+    name: t("Getting your test ready"),
     phases: {
       ...goal,
       questions: {
@@ -116,7 +116,7 @@ function useFirstLessonCopy(): KindCopy<"firstLesson"> {
       ...goal,
       day: {
         label: t("Planning your first day"),
-        lines: [t("Finding lessons in the Library…"), t("Choosing where to start…")],
+        lines: [t("Finding lessons for your goal…"), t("Choosing where to start…")],
       },
     },
   };
@@ -140,7 +140,7 @@ function useCourseOutlineCopy(): KindCopy<"courseOutline"> {
       },
       plan: {
         label: t("Choosing your courses"),
-        lines: [t("Finding courses in the Library…"), t("Saving your plan…")],
+        lines: [t("Finding courses for your goal…"), t("Saving your plan…")],
       },
       skills,
     },
@@ -154,7 +154,7 @@ function useLevelTestBankCopy(): KindCopy<"levelTestBank"> {
     name: t("Preparing your level test"),
     phases: {
       bank: {
-        label: t("Writing the level test questions"),
+        label: t("Getting the questions ready"),
         lines: [
           t("Choosing texts from beginner to advanced…"),
           t("Writing the reading questions…"),
@@ -179,12 +179,7 @@ function useExplanationCopy(): KindCopy<"explanation"> {
       read: { label: t("Reading your question"), lines: [t("Reading your question…")] },
       write: {
         label: t("Writing about 5 short screens"),
-        lines: [],
-        numbered: {
-          count: 5,
-          line: (number) => t("Writing screen {number}…", { number: String(number) }),
-          review: t("Checking the facts…"),
-        },
+        lines: [t("Writing the explanation…"), t("Adding an example…"), t("Checking the facts…")],
       },
     },
   };

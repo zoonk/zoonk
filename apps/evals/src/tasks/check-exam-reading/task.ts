@@ -122,7 +122,7 @@ export const checkExamReadingTask: Task<
     "Find what a reading of an exam's notice left out: a subject the notice says it covers, or a count it states",
   generate: generateReadingCheck,
   id: "check-exam-reading",
-  name: "Check Exam Reading",
+  name: "Check exam reading",
   score: scoreReadingCheck,
   testCases: TEST_CASES,
 };

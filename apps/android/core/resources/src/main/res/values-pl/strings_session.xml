@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "session_belt_step": "6f974d77a700ff8fff609cb639490b10d0281302f4e25ee3f4e27d8da21b53fc",
   "session_block_bonus_practice": "5666bb6146d61440a53fbc671a582fe7efca2e56955c7b4634f8fa7687f30bb8",
   "session_block_bonus_practice_areas": "d7d9419cf3203c369c813aafeb92fdc576032d50bfa490213bcb3b5af8986438",
-  "session_block_challenge_questions": "04eabc85f8b99b744448e7c5508fa1f0548fef301069f4ae2fdc0b7e9fc2a5af",
-  "session_block_challenge_rematch": "54fecd9e0c684c61c33beb2a7a228baebd279c1e950a77c5b7a699fade3fd4b9",
-  "session_block_final_challenge": "e7cc31252bb9943a6438ed01a0f1e380a7ec55228d78c4335d1042cf80b35853",
-  "session_block_full_review": "9de0c5df7def0d7bf56a47b3fa272d93a34c13ef58b8bfad94d2551f3f64165f",
-  "session_block_full_review_questions": "a3f7315952466984e4bfc62500011d0ff1d170dcd70cb20abca3407886439f36",
-  "session_block_live_call": "48d1e715a38f798bb4bd6e16a02ca1202fe0ba1027f2e87f9ed9d8527e1c0510",
+  "session_block_bonus_practice_topic": "3678e0200ad67240eeb9c51591eff01cd837433e4c65612cee711e43d9bf74c6",
+  "session_block_call": "6e152a6d3824a5bd56b5de2d45678984d6dc4e0fa11bf60a97c83889a3d402fe",
+  "session_block_full_review_questions": "28d303f6ca828a20f92bc601e2016378ecb2c86dbab25f3d1cf28658526f426f",
   "session_block_mixed_practice": "d8cfd022cc5e7c24b61bb8f20823991ee8718858a4817d713b073ae335c18534",
   "session_block_mock_exam": "8c21b51a8acb5b2b8553f19f3c9bee8148386aa568dca04d5edbaacb2f56fd92",
   "session_block_new_lesson": "e98fad686e778b680ed1dfe3bcab73579da2c9abee64255e4e1fc34de51af722",
-  "session_block_phase_challenge": "1f32e322718837a96859dc28625731b8ddd5cb4258d7b21eb8d1c589cd8f67b2",
-  "session_block_phase_live_call": "dfb2f0bb4954c012e825536022a3bb558344d3dd2dab449ae9ee6b7cdff1a017",
-  "session_block_phase_questions": "e40ea7aaabb39615f2458839fa60a2b27d9cd26b4c6ae29a9637e317bc20ee13",
   "session_block_practice_areas": "d6b70943a1c01266ec0dd0b4d35897f981fc7aa4e9b4490686e0958f49cf8855",
-  "session_block_practice_mistakes": "a83d77337033ae27eaafb5aab6fe0c4be31bf8fc55a13ba9aa6240b70d46db62",
+  "session_block_practice_mistakes": "7aca9f3d121e4dbeaaa68fc8e1debda20af112cbf90e2701468360a60a6cee2e",
+  "session_block_practice_topic": "b114ba1097761a439079f741dd4d697e161bf66ae3a15d606a08fef3877a412c",
   "session_block_questions": "71ec008d07ddde547a36bc13ee31d3e21473f15e35f6e33b8b8e08b1a242cc2e",
-  "session_block_quick_review": "eac16019f55309e101df2a47d12f32548fe2926da0ccf93b683d0ac5d52ba63d",
+  "session_block_rematch": "ae747a994ed66d69f11b4f6c41feb68c886e7d8a50615e5d39a889d9ad14f078",
   "session_block_rematch_lesson": "d9be79a0964e85d5245ae0c066ad68716e03ada77aefd81f94fc7f59af5c6d22",
+  "session_block_review": "615ad78da9eba3864c1b8498785a1da151e3ec892368694bb48aa6d175677e58",
   "session_block_review_topics": "283ed8b409c436da6a1712686c2788871bc6e24175487df1c8e7e954abe60bb6",
-  "session_block_review_topics_and_known": "2d5ed9f7e505316eb088e5a1d034c8505e0ac17449fefb50939d5fb6f39a9c2a",
-  "session_block_reviews": "9a3e78fd6938dfda50fc23f934e2a8c5930ac44c79bee4160e5138e56dc4983a",
-  "session_block_weakest": "022fb75bba023a9e42185843a6ab87632d3da0496b1aa8e1696c0d1ef65c930c",
+  "session_block_weakest": "ceaff042715cc208adbf63e710c46940d64031c3e7f77a178348c4edfe48248e",
   "session_block_weekly_challenge": "0849f8168e4338d646c97a7f893f61c41aad9675cbd4913518115a3498548388",
   "session_block_what_you_know": "6c3510f4d4b285f649a139ddabadc87c453e89c9eaef8afa543a521a1e70b61f",
   "session_block_writing_practice": "eb9bab7e3798fbf1d655c1968192ad3a3bfe5c4f09263a256168d0e03e6c58b1",
@@ -39,17 +34,17 @@
   "session_energy_glowing": "17bb5889ae7736c3e1e021694ecab1d6acc93705d5aafcd9b5763ba134420afa",
   "session_energy_glowing_brightest": "bc253dbfb109fc451efcd8d34b13bd9dbef8da0be1a4bd22e904e86a9604eeb8",
   "session_energy_max": "8039dbaa9155faad2634f524ccf4f22e6de8b24b28498d64548cfb70bd35ddaa",
-  "session_lessons_deferred": "5726d4ca79ef52af03a78b48a48aae2707411d5e76a1482eebf1de73d03e8361",
-  "session_level_up": "c49e9a73aef147f56813d6647b8503999c58a24cc3f64950aa97450ff1ccb247",
+  "session_next_belt": "14d3938a28080f910e37e7c50d6784af3c30a27b6861ee5f64f76e6152338408",
   "session_next_continue": "385c215cdc80d2ba9ee24cdcb0ed792307e02af80c3c5228e77fd7538497b4ab",
   "session_next_eyebrow": "b54554310c6bdd3115b4598593a4ae3684446beb8ef0db191c760a116d3af137",
-  "session_next_instead": "cce2e5f92a79d316b554ff8fff9d7d05accb2efdd8b200d08b84d74f2909d906",
   "session_next_lesson_ready": "7017293e93ab36301a39823cfa24a0de21e4437d65d28cbb476fe0c82a20d24c",
+  "session_next_practice_now": "2957da692151f943f9f48de6e22ee539c596da520d6d759dd91df3c0bf6f5d41",
+  "session_next_review_now": "adb692af94f53648615a16b928ed18bf8bd529c9de99660bf3a06385920e6cca",
   "session_next_start": "62a20d15a89f2be1f43848b9551483416e3c4f827d4b31f4841966983c3677e6",
+  "session_next_start_title": "43cdbcad2d4d6d7037b191e3c80e0aa021fe0e0c2e601776526a9d5ae693c5c2",
   "session_next_stop": "21f3f4f3a46f2a7f481827b819338e792d75081020f34d165fc4f875db12ba52",
   "session_next_stop_failed": "3448f47a16398cca5c75d4d84b65a1109526fe889f3d7563987c25948abc45a4",
-  "session_next_while_waiting": "851a536d61cc06f566ee77a13cc469ce1aa11d5ffd67b0726cd67b35d2231d65",
-  "session_next_writing_note": "1dbdadc18c38c750f31ca23da6bc6e75dd8d3b73c39b7ea575b44c136581e64d",
+  "session_next_writing_note": "877f79292eea754ba7c5b1296302f35300bd152209afff459a79b0b95f5090d9",
   "session_no_catch_up_left": "111ab7b1fbd4c40076e089f6ea543fd38c10d07b04883cd067345d433af8f09d",
   "session_opening_slow": "4b6f50356710d35c756a2a9ce21d829ff9330da21f1cc01b9d011c83b67c0a40",
   "session_opening_very_slow": "e5426a44182d4879e9e8a8fc1e1d3166698eb68cf2c79947aceb2213d4fd576c",
@@ -65,10 +60,11 @@
   "session_review_intro_weakest_title": "41f091b4bf49b4d4ecc2ebb0b6e1e89f9ad5e5a03f30ec9f12e089bd49ba943c",
   "session_summary_brain_power": "46ea1462e8e8e2363c23061978f70c3299fa0b67b79566d37e36500c94f1d151",
   "session_summary_buddy_happy": "5872f893b2f2c5e555c7bc18cb3c79136a736563587b649c3f4ce0d466e75a7e",
-  "session_summary_create_account": "03800ee0ab9eda10bb738dd4afc61f3f445498bbb27e4221f5523c584b6544d3",
+  "session_summary_create_account": "517e1b368fbc2761f863f465d3040727ef295a93b8c51f248910713405d11d0d",
   "session_summary_done_for_now": "e05b022245ddb866875a08addf699075afec9ce22be9969eead051af27842f7c",
   "session_summary_done_in": "6941fcf929fbe1db6ce964d801255b952b3403c0159fb6411054c7f2986e26a6",
   "session_summary_done_under_minute": "9fe75db1dbb4469013fb36d1a892a9b95706f2e36c93ff0732f13e1328c6ba14",
+  "session_summary_down_from": "72943f476efd064c063fd10a45a62413bab45813261d6c20393c65586cf7edde",
   "session_summary_earned_today": "e8e170f8299b699192df07262d5c2e45e0b6fda32fe23ad4fda03e2a66df56b1",
   "session_summary_eyebrow": "c95bc714a16af6d7ae8c957dc97641cd765d804e7aaa2de01e7d6c35ba495e68",
   "session_summary_finish": "3b778dd5efa1edd6adc0c047c346b88c77bfe30adc40efa6a2910c0bf5ac7380",
@@ -88,31 +84,34 @@
   "session_summary_skills_rose": "811b52058c79e1459c26907e577dfe685d8cdb1fdcc142c4e62f87c75581b59c",
   "session_summary_so_far": "22656ed248110cfaedd2f8930d5050b4de7ed20c5918f1d4990548e4d4c97329",
   "session_summary_streak": "011c1c7f966134719a1fdeaabb73ae52dcc0328a3a77d1489936ef52b51d5d8e",
-  "session_summary_to_review": "705253c227578faa833fa371ae350cb88ad8fc0442f57bf918a16edf2b2523a1",
   "session_summary_tomorrow": "b752699625aa2c12b3eec620e42fe786e4661fdb21a6c96d4a29a1ca6aaa9111",
+  "session_summary_up_from": "d4d255ac0275235ae5687fc753ee302b51d2da8a1d01de3c55c25d661b8fb58c",
   "session_topics_and_more": "153dbdd7f95010889661766877e3f9bc9739d52c8e5a9d61cc3a0ba35fcd4036"
 }
 -->
 <resources>
+    <string name="session_block_review">Powtórz materiał</string>
+    <!-- A second go at the Trickster after losing. -->
+    <string name="session_block_rematch">Rewanż</string>
+    <!-- A language plan's live call with the Trickster. -->
+    <string name="session_block_call">Rozmowa</string>
     <string name="session_block_mock_exam">Egzamin próbny</string>
     <string name="session_block_weekly_challenge">Wyzwanie tygodnia</string>
-    <string name="session_block_final_challenge">Wyzwanie końcowe</string>
-    <string name="session_block_challenge_rematch">Wyzwanie, druga próba</string>
-    <string name="session_block_phase_challenge">Wyzwanie etapu</string>
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">To, co już wiesz</string>
-    <string name="session_block_reviews">Powtórki</string>
-    <string name="session_block_quick_review">Szybka powtórka</string>
     <string name="session_block_new_lesson">Nowa lekcja</string>
     <string name="session_block_writing_practice">Ćwiczenie pisania</string>
-    <string name="session_block_full_review">Pełna powtórka</string>
-    <string name="session_block_practice_mistakes">Praca nad błędami</string>
+    <string name="session_block_practice_mistakes">Popraw błędy</string>
     <string name="session_block_bonus_practice">Dodatkowe ćwiczenia</string>
     <string name="session_block_mixed_practice">Ćwiczenia z różnych tematów</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
     <string name="session_block_practice_areas">Ćwiczenia: %1$s</string>
     <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
     <string name="session_block_bonus_practice_areas">Dodatkowe ćwiczenia: %1$s</string>
+    <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
+    <string name="session_block_practice_topic">Ćwiczenia: %1$s</string>
+    <!-- Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
+    <string name="session_block_bonus_practice_topic">Dodatkowe ćwiczenia: %1$s</string>
     <string name="session_block_rematch_lesson">Krótka lekcja przed rewanżem</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d pytanie</item>
@@ -121,10 +120,10 @@
         <item quantity="other">%d pytania</item>
     </plurals>
     <plurals name="session_block_weakest">
-        <item quantity="one">Brak powtórek na dziś · %d pytanie z najsłabiej opanowanych tematów</item>
-        <item quantity="few">Brak powtórek na dziś · %d pytania z najsłabiej opanowanych tematów</item>
-        <item quantity="many">Brak powtórek na dziś · %d pytań z najsłabiej opanowanych tematów</item>
-        <item quantity="other">Brak powtórek na dziś · %d pytania z najsłabiej opanowanych tematów</item>
+        <item quantity="one">%d pytanie z najtrudniejszych dla ciebie tematów</item>
+        <item quantity="few">%d pytania z najtrudniejszych dla ciebie tematów</item>
+        <item quantity="many">%d pytań z najtrudniejszych dla ciebie tematów</item>
+        <item quantity="other">%d pytania z najtrudniejszych dla ciebie tematów</item>
     </plurals>
     <!-- %2$s lists the topics reviewed, such as "Fractions, Ratios and 2 more topics". -->
     <plurals name="session_block_review_topics">
@@ -133,34 +132,12 @@
         <item quantity="many">%1$d pytań · %2$s</item>
         <item quantity="other">%1$d pytania · %2$s</item>
     </plurals>
-    <plurals name="session_block_review_topics_and_known">
-        <item quantity="one">%1$d pytanie · %2$s, a także to, co już wiesz</item>
-        <item quantity="few">%1$d pytania · %2$s, a także to, co już wiesz</item>
-        <item quantity="many">%1$d pytań · %2$s, a także to, co już wiesz</item>
-        <item quantity="other">%1$d pytania · %2$s, a także to, co już wiesz</item>
-    </plurals>
-    <!-- %2$s is the phase's name. -->
-    <plurals name="session_block_phase_questions">
-        <item quantity="one">%2$s · %1$d pytanie, bez podpowiedzi</item>
-        <item quantity="few">%2$s · %1$d pytania, bez podpowiedzi</item>
-        <item quantity="many">%2$s · %1$d pytań, bez podpowiedzi</item>
-        <item quantity="other">%2$s · %1$d pytania, bez podpowiedzi</item>
-    </plurals>
-    <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
-    <string name="session_block_phase_live_call">%1$s · rozmowa na żywo</string>
-    <string name="session_block_live_call">Rozmowa na żywo</string>
-    <plurals name="session_block_challenge_questions">
-        <item quantity="one">%d pytanie, bez podpowiedzi</item>
-        <item quantity="few">%d pytania, bez podpowiedzi</item>
-        <item quantity="many">%d pytań, bez podpowiedzi</item>
-        <item quantity="other">%d pytania, bez podpowiedzi</item>
-    </plurals>
-    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
+    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic. -->
     <plurals name="session_block_full_review_questions">
-        <item quantity="one">%d pytanie ze wszystkich tematów, od najsłabiej opanowanych</item>
-        <item quantity="few">%d pytania ze wszystkich tematów, od najsłabiej opanowanych</item>
-        <item quantity="many">%d pytań ze wszystkich tematów, od najsłabiej opanowanych</item>
-        <item quantity="other">%d pytania ze wszystkich tematów, od najsłabiej opanowanych</item>
+        <item quantity="one">%d pytanie ze wszystkich tematów</item>
+        <item quantity="few">%d pytania ze wszystkich tematów</item>
+        <item quantity="many">%d pytań ze wszystkich tematów</item>
+        <item quantity="other">%d pytania ze wszystkich tematów</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
     <plurals name="session_topics_and_more">
@@ -171,7 +148,9 @@
     </plurals>
     <string name="session_opening_slow">Otwieramy kolejny krok…</string>
     <string name="session_opening_very_slow">To trwa dłużej niż zwykle. Kolejny krok otworzy się sam, nie musisz klikać ponownie.</string>
-    <string name="session_level_up">Wyższy poziom!</string>
+    <string name="session_belt_step">%1$s, poziom %2$s</string>
+    <!-- Under a level and its belt, such as "White belt, level 4": which belt comes next. {next} is a belt's name, such as "Yellow belt"; {count} is a belt's last level, 10. -->
+    <string name="session_next_belt">%1$s czeka na ciebie po poziomie %2$s</string>
     <!-- %1$s is the learner's Energy as a share, such as 70%. -->
     <string name="session_energy_at">Energia: %1$s</string>
     <!-- %1$s is the learner's Energy as a share, such as 100%. -->
@@ -195,12 +174,11 @@
     <string name="session_summary_net">bilans %1$s</string>
     <string name="session_summary_preparation">Przygotowanie</string>
     <string name="session_summary_progress">Postępy</string>
-    <!-- How many skills come back for review on later days. -->
-    <string name="session_summary_to_review">Do powtórki</string>
-    <!-- Under "To review": these skills (not the learner) come back for review on upcoming days. %1$s lists them, such as "Nov 3 and Nov 5". -->
     <string name="session_summary_brain_power">Moc Umysłu</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_up_from">Wzrost z %1$s</string>
+    <string name="session_summary_down_from">Spadek z %1$s</string>
     <string name="session_summary_skills_rose">Umiejętności na wyższym poziomie</string>
     <string name="session_summary_tomorrow">Jutro</string>
     <string name="session_summary_earned_today">Zdobyte dziś</string>
@@ -227,7 +205,7 @@
     <string name="session_summary_keep_going">Kontynuuj</string>
     <string name="session_summary_finish">Zakończ</string>
     <string name="session_summary_save_note">Zapisz plan, żeby wrócić do niego następnym razem.</string>
-    <string name="session_summary_create_account">Utwórz konto</string>
+    <string name="session_summary_create_account">Utwórz bezpłatne konto</string>
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Następny krok</string>
     <string name="session_next_start">Zacznij</string>
@@ -242,14 +220,16 @@
     <string name="session_review_intro_weakest_title">Najtrudniejsze dla ciebie tematy na dziś</string>
     <string name="session_review_intro_weakest">Na razie wszystko dobrze pamiętasz, więc ćwiczysz to, co dotąd sprawiało ci najwięcej trudności.</string>
     <string name="session_review_intro_first_week">Kilka krótkich pytań, żeby sprawdzić, co już wiesz.</string>
-    <string name="session_next_writing_note">Przygotowujemy dla ciebie tę lekcję. Zwykle jest gotowa w ciągu kilku minut.</string>
+    <string name="session_next_writing_note">Zwykle przygotowujemy lekcję w kilka minut.</string>
     <string name="session_next_lesson_ready">Twoja lekcja jest gotowa.</string>
     <string name="session_next_stop">Zakończ na dziś</string>
     <string name="session_next_stop_failed">Nie udało się zakończyć nauki. Spróbuj ponownie.</string>
-    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
-    <string name="session_next_while_waiting">W międzyczasie: %1$s</string>
-    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
-    <string name="session_next_instead">Zamiast tego: %1$s</string>
+    <!-- A button on the session's next step that starts the day's review instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_review_now">Powtórz teraz</string>
+    <!-- A button on the session's next step that starts the day's practice instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_practice_now">Poćwicz teraz</string>
+    <!-- A button on the session's next step that starts one of the day's challenges instead: %1$s is its name, such as "Weekly challenge". -->
+    <string name="session_next_start_title">Zacznij: %1$s</string>
     <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
     <plurals name="session_day_done">
         <item quantity="one">Dziś ukończono %1$s z %2$s</item>
@@ -296,11 +276,4 @@
     </plurals>
     <!-- At a finished block's end, once every lesson earlier days left is done. -->
     <string name="session_no_catch_up_left">Nie ma już lekcji do nadrobienia.</string>
-    <!-- At a finished block's end. %1$s is the lesson count; %2$s is the learner's daily time, such as "4 h". Lessons moved to a later day, not lost. -->
-    <plurals name="session_lessons_deferred">
-        <item quantity="one">Przeniesiono %1$s lekcję na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
-        <item quantity="few">Przeniesiono %1$s lekcje na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
-        <item quantity="many">Przeniesiono %1$s lekcji na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
-        <item quantity="other">Przeniesiono %1$s lekcji na inny dzień, żeby dziś zmieścić się w %2$s nauki.</item>
-    </plurals>
 </resources>

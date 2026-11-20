@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_guess_in_unit": "0ec66b3459be8e049db66e40fdcfa7ce1506f0a34216779861aa237c8ba2848b",
   "answer_tag_correct": "64f9d75800e72dc02df3fc0a747acac6b20dc8026b66e9b499711db79d6254ba",
   "answer_tag_your_answer": "5fb162b668b6b79bf950d6abfd25117233a69e151e9f2ebaec4ae488a5543a8c",
   "answer_tag_your_guess": "f3e4feb8ce0a141b7a8d3bdd7b58f3deb9d246621d345990f204c595dc7be34a",
@@ -9,7 +10,9 @@
   "belt_brown": "850541eab27bccc8448447431c823650c591f272c635e0176cefbffda55be666",
   "belt_gray": "a55ba233a6619f7376c2d2ab7f92939b372103bc608f9e2976f087e204d5dd95",
   "belt_green": "7f5b15bbe9990a921c849bc8e91a1013e59a4340c10a46d47dbb69ac5ccaccc5",
-  "belt_level": "14a1d063a747d3ef0e91f683abfc01e40517b63f0c65a21c21e787305cd349f8",
+  "belt_level": "6e6baa7f451a2739ab4c14eb946989e16a763cdc9251e8f7da11879a1275d231",
+  "belt_level_description": "5a60bd0ab86fc0646001728cf5574f18fd1bd5565dc57eecf33404c4bf37b55e",
+  "belt_level_words": "3bda5ec1ef5201124a23c4fbd412d51a9e0c2c0caf53dd5e54e0cf4eb7c32eca",
   "belt_orange": "6c8f300f6b5d24ca82f8aa702b208a8fd2f94a115d0623ecceae1393125540c8",
   "belt_purple": "e19807ec6616efacb0a6c11340c21b58ace30dc68e7fc5aca899dbb3fb06cbc9",
   "belt_red": "43b0f1da55e2b586d711036f928b7dd44cab643b6549ea840eb7ec6ac0732b02",
@@ -27,17 +30,16 @@
   "diff_line_spoken": "de8080575de02358b87a2f6cdef85969858733ce88fa41ebb70b8e8fe117bc11",
   "disclosure_collapsed": "f49121409f18b6d4eb2d5c5f87fcd6e7883b31987745452e63a3550f2847fa0b",
   "disclosure_expanded": "02e11e04e3cfd7f7f8dd0b5458f7d4b0917eee97af279d7c7efb1650da415a09",
+  "exam_choice_left_out": "b0d1880806c25c22500b23b0e187b39b66eed8a1f8dd1fafd39e2f5c939b4210",
   "exam_choice_pick_up_to": "a02c3cee13132eb47b9a6bfafa62b284c0bab495494c860de2a960c5a8ad29c1",
+  "gate_build_plan": "4b04786adf6d3bb03bb86da456ae533d0d48ae496afc6802ca7020225f765cbb",
   "gate_log_in": "2b0884dd61bbc490df35f2b14bf94c213eb0b7c5dec16b99c03c1651f2d73f52",
-  "gate_session_ended_description": "9827a2669afccc474161e590b1fb1563f2a22ca4903e537f68a789d160e1de5d",
-  "gate_session_ended_title": "6f0d4f323add0fd2b672ce977655c96e977dd6c9246769cd8015052b6e2c3182",
-  "gate_sign_in_description": "e8d7e3cbc66be9eec0da72a0be13372c68a1d238a2c4f16f0e7a10129918c13a",
+  "gate_session_ended_description": "9e66c3dd024d6e3282cc37bead14e35933fe62c5669195605543378cfdd507e2",
+  "gate_session_ended_title": "3e528ab96d7c808b3a611ac95475fde552194da5cc7f69d7a4d1fc68931c006c",
   "gate_sign_in_title": "ef3321dd0e7aeda405ae9d362baef1d98e23e42e37c6df0332fbe822f90aacf8",
-  "gate_start_free": "ab3489d336362e2ef5bf5151b9729e55296974af5d130efe162df798614ff6dd",
-  "gate_start_goal": "abdfff831a39fd42c8f0d3e26a6bd8f1c7febd9cd792cea8739e277339d2ac05",
+  "gate_start_goal": "097f2128c041a83b7473753884b4826af6b1b3ce6a4110c210f627971ff04de0",
   "gate_start_goal_description": "f980d8439336c84c90159c4cac4bc141940509f1fdbbc960d6b794b01deaa942",
   "gate_start_goal_title": "5866acf2ad5b461231a18976e341d09edb94ed427d16925474f0b0109cce0d68",
-  "gate_start_something_new": "256aa5116e78bb6672baf3c9fbdba93a00de239938226339af6285d4cf2bdff8",
   "goal_with_variety": "bb14ee32488efd61dc80d41de9790162c08fcd2a2384b68192bb427bd1c02eef",
   "lesson_summaries_title": "3b1f2450312d780f2e8a1a8e6637af6fc8e2fb05a2d0708ee267fa3292f42da9",
   "lessons_coming_up": "02783708e6847c46d1421e3d18b5fd3f71a2466b0db25c86e6a2d2ddd208e1b4",
@@ -47,13 +49,13 @@
   "lessons_title": "13c14aedb185c8588b2c2c9e6c1de142e3f92a53bfb326e90eb97157ee002c48",
   "lessons_up_next": "a2e9ca05197cbbf1d8c69782893ac7427d6de10a58e05c1130da3557b57a348c",
   "list_row_states": "650143092dcd67d306bba2f1f8b6b4ef9bf5a5b9b5942eac57b5ef7579f5cbb6",
-  "load_failed_description": "37dabdb27760546ae50e7a1a1a8f65c95475dcfc201f7a6277a87004f4f4a321",
+  "load_failed_description": "1cf750d03ce6b1924aecc4d10f5adc9cb2fbf4e7a2dcb0e8c097744e45e8f0c5",
   "load_failed_title": "785e5861dd84250db47b3c38ae5393a7bb7068ddf7d5463c7355b504745117bb",
   "load_failed_try_again": "b2fb2fb6f246e570782d8e78c5d54a370ad40c10e896581b53ca646acaf96077",
   "navigation_back": "fc505d03120503d5e190f98ec4ce47fe4e3142c3f81b679073fa054882640c3d",
   "navigation_buddy": "d6f73fe9cff4dea7479297a79eff1ad3f5886c09f29ccebbab12ae4c4c0cc058",
   "navigation_completed_lessons": "ebd2b08ab51e0e5ed62aedea97f3c832ba40662576de8046d0a4c60daf396886",
-  "navigation_exam": "fe70271f18e1025d49efde37541709fafbbf61a7f8b8bed7203736eee91b30c1",
+  "navigation_exam": "f64fc74c8e57b8af91e18c1353ccbef193f2f98298cbf9453d9c2ad8e15f3cbd",
   "navigation_mind_maps": "bdb40969d75a325fc729f1cea3eaa84a3193cb95bda1ba12107e00153e39900c",
   "navigation_mistakes": "42bb12d00c6862511d6111a582de786b92968a455c8c79e9fedf7690d2dbf898",
   "navigation_plan": "4c4c2bdf6127a62d65fc8429ca70bc52f4814a29e0657a59878de4bc67cdd29b",
@@ -63,17 +65,20 @@
   "navigation_today": "00fc3cdb77556b66390b459bb3f7dd19b73c3fa1fd535288a540ae4dafa6b3a9",
   "navigation_user_menu": "9c89aff9ce59cdf1d035b55c0a3e8307dcb320777370b2c7a584305f7557f7f6",
   "not_found_description": "1f9f90c25b9cdd4a59d58f3d29c44e56568fd95d2d3d254a1779cd835ac342ca",
-  "not_found_go_home": "17eae6ccbed3804a1cf0525babe20b1cd764510e1c14871e498ecf775fd017ad",
+  "not_found_go_home": "a2407deb9bd8a2d9e3821ce97004d01a459e7ed4feebcd49c91171d9bc23e77d",
   "not_found_title": "a54234e10a21588e264d0111397d9372b3841c8601914ce752cb8b49faae8c71",
   "player_not_saved": "11615190eb8261b3acc51d85bc78d22be0f663366a996d45afe64aca44994c97",
   "player_not_saved_description": "86828e39de8ae7d5d416b0bb67c3e45bc144b9425f1bac37eaf184e3d982a66a",
+  "suggestion_other_options": "f9be4bfafc5d7f4c4cca0982fc79187353b37b20c9fa9177cb5db61bc8b85d63",
   "suggestion_save_failed": "64f77e2077e7d4f067f974eabdcc53a20ac52105964c1a1d6fe1a1f03e6f09e6",
   "suggestion_view": "3d160efc2a851cc8cb8b887b76439d4c85bf15bdbeec4eb2da058732e8bcad57",
   "task_leave": "177cb39387567943127b8e077274966476e8573f7f4bec70580fe56164773c57",
   "test_out_skip_chapter": "959fcd03ac16cbd73942e953c1f1d33fa7bf225c482740ee1e450e180f4ae972",
   "test_out_skip_unit": "146dc4caf6779fdf3d7eb8e3d8fb62df68e8f7d3cb80994ff331771d4353d621",
   "test_out_title": "ec2c7ef6ecff571ff05931dd8c3e275821c334ef7a4909a70210ecfe1e11f5a2",
-  "web_page_unavailable": "7c827279bfaf2b15e4d6329998a20f0e3181be00ca187aa4a917d69a709e6971"
+  "web_page_unavailable": "7c827279bfaf2b15e4d6329998a20f0e3181be00ca187aa4a917d69a709e6971",
+  "weekend_time_differs": "5dca3c6b81751b1109d1279eee43d913e186376b81ae3119a23eb5a9b43fe102",
+  "weekend_time_label": "b53fe5bb0ca4efcb4c98c0150b07a7dd7a05c2e843bece4aa84978c541debd20"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -84,7 +89,7 @@
     <string name="navigation_mistakes">Caderno de erros</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
     <string name="navigation_completed_lessons">Aulas concluídas</string>
-    <string name="navigation_exam">Prova</string>
+    <string name="navigation_exam">Sua prova</string>
     <string name="navigation_speaking">Conversação</string>
     <string name="navigation_mind_maps">Mapas mentais</string>
     <string name="navigation_statistics">Estatísticas</string>
@@ -92,15 +97,16 @@
     <string name="navigation_user_menu">Menu do usuário</string>
     <string name="task_leave">Sair</string>
     <string name="gate_sign_in_title">Entre para continuar</string>
-    <string name="gate_sign_in_description">Entre para continuar de onde parou ou comece grátis.</string>
-    <string name="gate_session_ended_title">Sua sessão terminou</string>
-    <string name="gate_session_ended_description">Entre para continuar seu plano.</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
+    <string name="gate_session_ended_title">Você saiu da sua conta</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
+    <string name="gate_session_ended_description">Entre para voltar ao seu plano.</string>
     <string name="gate_log_in">Entrar</string>
-    <string name="gate_start_free">Começar grátis</string>
-    <string name="gate_start_something_new">Começar algo novo</string>
+    <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
+    <string name="gate_build_plan">Criar meu plano</string>
     <string name="gate_start_goal_title">Comece com um objetivo</string>
     <string name="gate_start_goal_description">Conte o que você quer aprender e a gente planeja cada dia até você chegar lá.</string>
-    <string name="gate_start_goal">Começar um objetivo</string>
+    <string name="gate_start_goal">Novo objetivo</string>
     <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
     <string name="goal_with_variety">%1$s, %2$s</string>
     <string name="belt_white">Faixa branca</string>
@@ -113,17 +119,27 @@
     <string name="belt_red">Faixa vermelha</string>
     <string name="belt_gray">Faixa cinza</string>
     <string name="belt_black">Faixa preta</string>
-    <string name="belt_level">%1$s, nível %2$s</string>
+    <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
+    <string name="belt_level">%1$s %2$s</string>
+    <!-- Accessible name of the chip that opens Level. %1$s is the translated belt name; %2$s is the learner’s level number. Each locale controls their order and punctuation. -->
+    <string name="belt_level_description">%1$s, Nível %2$s</string>
+    <string name="belt_level_words">Nível %1$s</string>
     <string name="answer_tag_correct">Correta</string>
     <string name="answer_tag_your_answer">Sua resposta</string>
     <string name="answer_tag_your_guess">Seu palpite</string>
     <string name="load_failed_title">Esta página não carregou</string>
-    <string name="load_failed_description">Pode ser sua conexão ou um problema do nosso lado. Tentar de novo geralmente resolve.</string>
+    <string name="load_failed_description">Confira sua conexão e tente de novo.</string>
     <string name="load_failed_try_again">Tentar de novo</string>
     <string name="suggestion_view">Ver</string>
     <string name="suggestion_save_failed">Não foi possível salvar. Tente de novo.</string>
+    <string name="suggestion_other_options">Outras opções</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">Escolha até %1$d.</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
+    <string name="weekend_time_differs">Tempo de estudo diferente nos fins de semana</string>
+    <string name="weekend_time_label">Tempo no fim de semana</string>
+    <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
+    <string name="exam_choice_left_out">Escolha uma opção para incluir no seu plano.</string>
     <string name="disclosure_expanded">Expandido</string>
     <string name="disclosure_collapsed">Recolhido</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
@@ -144,7 +160,7 @@
     <string name="test_out_skip_unit">Faça o teste e pule a unidade</string>
     <string name="not_found_title">A gente não encontrou esta página</string>
     <string name="not_found_description">O link pode ser antigo ou ter sido digitado errado.</string>
-    <string name="not_found_go_home">Ir para a página inicial</string>
+    <string name="not_found_go_home">Hoje</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
@@ -165,4 +181,6 @@
     <string name="citation_slide">%1$s, slide %2$s</string>
     <string name="player_not_saved">Ainda não foi salvo</string>
     <string name="player_not_saved_description">Algumas respostas ainda não foram salvas. A gente vai continuar tentando enquanto a aula estiver aberta.</string>
+    <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
+    <string name="activities_guess_in_unit">Unidade: %1$s</string>
 </resources>

@@ -47,10 +47,7 @@ internal sealed interface PlacementPhase {
         val labels: TrueFalseLabels,
     ) : PlacementPhase
 
-    data class Done(
-        val answered: Int,
-        val forToday: Boolean,
-    ) : PlacementPhase
+    data object Done : PlacementPhase
 }
 
 /** The server's counts can shrink while the plan is still being written: neither a question's number nor the bar goes back. */
@@ -99,7 +96,7 @@ private fun Placement.phase(shown: Shown): PlacementPhase {
     return if (next != null && !complete) {
         PlacementPhase.Question(next.item(), number = answered + 1, spent = maxOf(dayBudgetSpent, shown.spent), labels = trueFalseLabels)
     } else {
-        PlacementPhase.Done(answered, forToday = dayBudgetUsed)
+        PlacementPhase.Done
     }
 }
 

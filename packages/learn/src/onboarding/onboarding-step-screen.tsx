@@ -6,7 +6,7 @@ import {
   type OnboardingStep,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
-import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { useAppLocale } from "../_utils/locale";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
 import { ClaimedDeckProvider, usePreloadedDeck } from "../wait/wait-deck";
@@ -87,7 +87,15 @@ function QuestionStepScreen({
         />
       );
     case "reason":
-      return <ReasonStep {...props} reasons={view.languageAim?.reasons ?? []} subject={subject} />;
+      return (
+        <ReasonStep
+          {...props}
+          reasons={view.languageAim?.reasons ?? []}
+          subject={subject}
+          targetLanguage={view.goal.targetLanguage}
+          targetRegion={view.goal.targetRegion}
+        />
+      );
     case "target":
       return (
         <TextStep
@@ -145,7 +153,6 @@ export function OnboardingStepScreen(props: Parameters<typeof StepScreen>[0]) {
 
 function StepScreen({
   actions,
-  buddy,
   isGuest,
   onAnswer,
   onPlacementDone,
@@ -162,7 +169,6 @@ function StepScreen({
   view,
 }: {
   actions: OnboardingActions;
-  buddy: LearnBuddy | null;
   isGuest: boolean;
   onAnswer: (input: OnboardingAnswerInput) => Promise<boolean>;
   onPlacementDone: () => Promise<boolean>;
@@ -179,7 +185,7 @@ function StepScreen({
   toToday: () => void;
   view: OnboardingView;
 }) {
-  const subject = getGoalSubject(view.goal);
+  const subject = getGoalSubject(view.goal, useAppLocale());
   const props = { onAnswer, pending };
 
   usePreloadedDeck({ readDeck: actions.readWarmUp, warmUpId: run?.warmUpId });
@@ -271,7 +277,6 @@ function StepScreen({
         <PlanReveal
           {...wait}
           actions={actions}
-          buddy={buddy}
           goal={{ displayName: view.goal.displayName, kind: view.goal.kind }}
           goalId={view.goal.id}
           initialPlan={plan.initialPlan}
@@ -279,7 +284,6 @@ function StepScreen({
           planActions={plan.planActions}
           focusTestHref={routes.focusTest(view.goal.id)}
           planLinkHref={routes.planLink}
-          planRevealed={view.planRevealed}
           run={run}
           signUpHref={routes.signUp}
           toToday={toToday}

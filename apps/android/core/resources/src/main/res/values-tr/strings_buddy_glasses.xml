@@ -6,10 +6,10 @@
   "buddy_glasses_cat_eye": "de3a04c0008622ee5b02531a225e3a4f2f5e294606d38cfe4a1cd0e876061501",
   "buddy_glasses_earn_aviator": "6f38428f7ef7c2d655ea5f4f4d736027b37ff0c8470c826f9d6cb2333a186b3e",
   "buddy_glasses_earn_cat_eye": "156fc32bd842cf7f738d43746c920a97da0be3e80a6f05e47a99831a3b065399",
-  "buddy_glasses_earn_monocle": "3d813970d9f192a4389fc5e6db6291b8d7d72758d96880853fe57a53d83f8007",
+  "buddy_glasses_earn_monocle": "56d39efa7cdd2aa9ff5f5e30ba448c898dc675dd04b43709f80c9fc2f83b3d9e",
   "buddy_glasses_earn_retro": "aa64604e48e84bd97e8539480dcd407a3e7d38a0f5e9bcf0a92b194079095295",
   "buddy_glasses_earn_round": "f4333f5afd70a87eb0bff2aa6431f2287bb30dab7e1f0948f487282529538a62",
-  "buddy_glasses_earn_star": "cb1c853c3351be4ad9baf37ca226c546459396f5b570ad26149cb90c16834b5a",
+  "buddy_glasses_earn_star": "b3d6b0b92d707cc7f710ecc066b5a1e772beeb19e37b05fa4857d1251ed8ed82",
   "buddy_glasses_monocle": "257df61a12afd903d5d938ed4089d6260a20a4de0db9780443ed53039840193b",
   "buddy_glasses_retro": "9c7b79ccf7e3cb04fcec3dc61febf2ea0ffc908816aa53cafc32b436412cf7fb",
   "buddy_glasses_round": "7525d84b86bc04657de38084e919525ac0c91794ddc639bf5a9560f53574804c",
@@ -40,11 +40,11 @@
     <string name="buddy_glasses_worn_retro">Retro gözlük</string>
     <string name="buddy_glasses_worn_monocle">Monokl</string>
     <string name="buddy_glasses_earn_round">Arkadaşınla birlikte gelir</string>
-    <string name="buddy_glasses_earn_star">İlk aşama meydan okumanı kazan</string>
+    <string name="buddy_glasses_earn_star">İlk meydan okumanı kazan</string>
     <string name="buddy_glasses_earn_aviator">İlk haftalık meydan okumanı tamamla</string>
     <string name="buddy_glasses_earn_cat_eye">7 farklı günde tüm görevleri tamamla</string>
     <string name="buddy_glasses_earn_retro">50 tekrar tamamla</string>
-    <string name="buddy_glasses_earn_monocle">Son meydan okumayı kazan</string>
+    <string name="buddy_glasses_earn_monocle">Planının son meydan okumasını kazan</string>
     <string name="buddy_stage_baby">Bebek</string>
     <string name="buddy_stage_young">Genç</string>
     <string name="buddy_stage_adult">Yetişkin</string>

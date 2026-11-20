@@ -26,6 +26,7 @@ import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageTodaySpeaking
@@ -72,6 +73,10 @@ class TodayScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phone() = capture("phone")
+
+    @Test
+    @Config(qualifiers = "w360dp-h800dp-xxhdpi")
+    fun narrowestPhone() = capture("phone-narrow")
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
@@ -203,8 +208,8 @@ class TodayScreenshots {
                         com.zoonk.android.ui.characters
                             .BuddyLook(),
                     buddyName = "Zu",
+                    snackbars = app.snackbars,
                     refreshIfChanged = app.today::refreshIfChanged,
-                    brainPower = 1240,
                     practice = {
                         TodayPracticeRows(
                             MistakeListAvailability(ready = 3, tomorrow = 1),
@@ -241,7 +246,7 @@ class TodayScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 
@@ -303,6 +308,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "exam",
                                 "exam" to
                                     fixture(
                                         "exam-moment",
@@ -333,7 +339,11 @@ class TodayScreenshots {
                     day(
                         blocks = lessons(3),
                         next = 0,
-                        today = mapOf("examChoice" to examChoice("Língua estrangeira", listOf("Inglês", "Espanhol"), take = 1)),
+                        today =
+                            mapOf(
+                                "notice" to "examChoice",
+                                "examChoice" to examChoice("Língua estrangeira", listOf("Inglês", "Espanhol"), take = 1),
+                            ),
                     ),
                 "notice-exam-modules" to
                     day(
@@ -341,6 +351,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "examChoice",
                                 "examChoice" to
                                     examChoice("Módulos disciplinares", listOf("Biología", "Química", "Derecho", "Premedicina"), take = 2),
                             ),
@@ -380,6 +391,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "planChange",
                                 "planChange" to
                                     fixture(
                                         "plan-change",
@@ -396,6 +408,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "planChange",
                                 "planChange" to
                                     fixture(
                                         "plan-change",
@@ -418,6 +431,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "insight",
                                 "insight" to
                                     fixture(
                                         "memory-insight",
@@ -437,19 +451,6 @@ class TodayScreenshots {
                                 "focusTest" to
                                     buildJsonObject {
                                         put("minutes", 15)
-                                    },
-                            ),
-                    ),
-                "notice-access" to
-                    day(
-                        blocks = lessons(3),
-                        next = 0,
-                        extra =
-                            mapOf(
-                                "examAccess" to
-                                    buildJsonObject {
-                                        put("includesMockExams", false)
-                                        put("trialEnded", true)
                                     },
                             ),
                     ),
@@ -484,6 +485,29 @@ class TodayScreenshots {
                     ),
                 "done-up-next" to doneWithUpNext(),
                 "rest" to day(blocks = emptyList(), next = null, dailyGoal = 0, extra = mapOf("state" to "rest")),
+                "exam-over" to
+                    day(
+                        blocks = emptyList(),
+                        next = null,
+                        dailyGoal = 0,
+                        extra = mapOf("state" to "rest"),
+                        today =
+                            mapOf(
+                                "progress" to
+                                    buildJsonObject {
+                                        put("measure", "preparation")
+                                        put(
+                                            "status",
+                                            buildJsonObject {
+                                                put("kind", "pastDate")
+                                                put("lessons", 4)
+                                            },
+                                        )
+                                        put("value", 0.62)
+                                        put("weekGain", 0)
+                                    },
+                            ),
+                    ),
                 "waiting" to day(blocks = emptyList(), next = null, extra = mapOf("emptyDay" to "lessonsComing", "state" to "waiting")),
             )
         }

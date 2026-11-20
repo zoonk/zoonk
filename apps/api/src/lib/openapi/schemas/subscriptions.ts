@@ -1,3 +1,4 @@
+import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { z } from "zod";
 import { meResponseSchema } from "./me";
 
@@ -17,17 +18,15 @@ export const freePlanResponseSchema = z
     activeGoals: freePlanLimitSchema.meta({
       description: "Goals a free account can have at a time",
     }),
-    examPrepDays: freePlanLimitSchema.meta({
-      description: "Days of an exam plan the free plan includes, or null for all of it",
-    }),
     guestLessons: freePlanLimitSchema.meta({
       description: "Lessons a guest can start before creating an account",
     }),
-    lessonsPerDay: freePlanLimitSchema.meta({
-      description: "Lessons a free account can start each day",
+    lessonsPer30Days: freePlanLimitSchema.meta({
+      description: `${getFreePlanLimits().lessonsPer30Days} distinct lessons across all goals in the preceding 30 times 24 hours; admitted lessons can be replayed without another charge`,
     }),
-    lessonsPerMonth: freePlanLimitSchema.meta({
-      description: "Lessons a free account can start each month",
+    tutorMessagesPer30Days: freePlanLimitSchema.meta({
+      description:
+        "Messages a free account can send its study buddy in the preceding 30 times 24 hours, beside its daily limit",
     }),
     tutorMessagesPerDay: freePlanLimitSchema.meta({
       description: "Messages a free account can send its study buddy each day",

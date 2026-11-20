@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { seedPersonaCopy } from "@zoonk/core/seed";
+import { type ScenarioState, seedPersonaCopy } from "@zoonk/core/seed";
 import { prisma } from "@zoonk/db";
 import { seedPlus } from "@zoonk/db/seed";
 import { type SeedLanguage } from "@zoonk/db/seed/localize";
@@ -25,9 +25,13 @@ export type PersonaRequest = {
   plus?: boolean;
   timeZone?: string;
   language?: SeedLanguage;
+  /** A named scenario's state, written on the copy (`SCENARIO_STATES`). */
+  state?: ScenarioState;
 };
 
-export type PersonaCloneRequest = Omit<PersonaRequest, "language" | "name"> & { from: string };
+export type PersonaCloneRequest = Omit<PersonaRequest, "language" | "name" | "state"> & {
+  from: string;
+};
 
 export function listPersonaNames(): string[] {
   return listSeedPersonas({ now: new Date() })

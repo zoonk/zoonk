@@ -34,25 +34,20 @@ fun StepPagerActions(
 ) {
     BackHandler(enabled = index > 0) { onIndexChange(index - 1) }
 
-    // Back stays outside the actions' row, level with its last line when they wrap at a large font.
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
-        if (index > 0) StepBackButton(onClick = { onIndexChange(index - 1) })
-        Box(Modifier.weight(1f)) {
-            TaskActions { main ->
-                if (index < count - 1) {
-                    Button(onClick = { onIndexChange(index + 1) }, modifier = main) { Text(stringResource(R.string.steps_continue)) }
-                } else {
-                    finalAction(main)
-                }
-            }
+    TaskActions(back = if (index > 0) ({ StepBackButton(onClick = { onIndexChange(index - 1) }) }) else null) { main ->
+        if (index < count - 1) {
+            Button(onClick = { onIndexChange(index + 1) }, modifier = main) { Text(stringResource(R.string.steps_continue)) }
+        } else {
+            finalAction(main)
         }
     }
 }
 
+/** Main's `QuestionBack`: a task's way back one screen, a chevron as on every task's bar (the page's back is the arrow). */
 @Composable
 fun StepBackButton(onClick: () -> Unit) {
     OutlinedIconButton(onClick = onClick) {
-        Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
+        Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.navigation_back))
     }
 }
 

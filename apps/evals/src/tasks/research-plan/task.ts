@@ -16,7 +16,7 @@ export const researchPlanTask: Task<
     "Name the canonical exam (name and role), whether it's a teacher's test, where its organizer publishes, and the queries to find its notice",
   generate: generateExamResearchPlan,
   id: "research-plan",
-  name: "Exam Research Plan",
+  name: "Exam research plan",
   score: scoreResearchPlan,
   testCases: TEST_CASES,
 };

@@ -7,7 +7,7 @@ export const FirstLessonReadContext = createContext<ReactNode>(null);
 
 type OnboardingHost =
   | { backHref: string; barEnd: ReactNode; kind: "page" }
-  | { header: ReactNode; kind: "section" };
+  | { header: ReactNode; kind: "section"; titleClassName?: string };
 
 const OnboardingHostContext = createContext<OnboardingHost | null>(null);
 
@@ -27,15 +27,20 @@ export function OnboardingPage({
   );
 }
 
+/** `titleClassName` hides the section's title where the page's own menu already says it. */
 export function OnboardingEmbedded({
   children,
   header,
+  titleClassName,
 }: {
   children: ReactNode;
   header: ReactNode;
+  titleClassName?: string;
 }) {
   return (
-    <OnboardingHostContext value={{ header, kind: "section" }}>{children}</OnboardingHostContext>
+    <OnboardingHostContext value={{ header, kind: "section", titleClassName }}>
+      {children}
+    </OnboardingHostContext>
   );
 }
 
@@ -47,13 +52,23 @@ export function useOnboardingSection(): boolean {
   return useOnboardingHost()?.kind === "section";
 }
 
-export type OnboardingBar = { end?: ReactNode; middle?: ReactNode; onBack?: () => void };
+export type OnboardingBar = {
+  /** While a request that moves the learner on is out, Back waits with it. */
+  backDisabled?: boolean;
+  end?: ReactNode;
+  middle?: ReactNode;
+  onBack?: () => void;
+};
 
 export const NO_BAR: OnboardingBar = {};
 
-type OnboardingScreen = { bar: OnboardingBar; notice: ReactNode };
+type OnboardingScreen = { bar: OnboardingBar; failure: ReactNode; notice: ReactNode };
 
-const OnboardingScreenContext = createContext<OnboardingScreen>({ bar: NO_BAR, notice: null });
+const OnboardingScreenContext = createContext<OnboardingScreen>({
+  bar: NO_BAR,
+  failure: null,
+  notice: null,
+});
 
 export function OnboardingScreenProvider({
   children,

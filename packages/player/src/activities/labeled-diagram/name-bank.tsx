@@ -7,7 +7,7 @@ import { useRef } from "react";
 import { useActivityDraggable } from "../_components/activity-drag-drop";
 
 const CHIP_CLASS =
-  "flex min-h-11 items-center gap-1.5 rounded-full border bg-background ps-2.5 pe-3.5 text-sm font-medium";
+  "flex min-h-11 items-center gap-1.5 rounded-lg border bg-background ps-2.5 pe-3.5 text-sm font-medium";
 
 function NameChipFace({ isLifted, name }: { isLifted: boolean; name: string }) {
   return (
@@ -40,7 +40,7 @@ function NameChip({
         isDisabled ? name : t("Put {name} on spot {number}", { name, number: String(activeNumber) })
       }
       className={cn(
-        "focus-visible:ring-ring/50 touch-manipulation rounded-full outline-none select-none focus-visible:ring-[3px]",
+        "focus-visible:ring-ring/50 touch-manipulation rounded-lg outline-none select-none focus-visible:ring-[3px]",
         isDisabled ? "opacity-60" : "hover:[&>span]:bg-accent cursor-grab active:cursor-grabbing",
         isDragging && "relative z-10",
       )}
@@ -58,10 +58,13 @@ function NameChip({
 
 export function NameBank({
   activeNumber,
+  extraNames,
   names,
   onPlace,
 }: {
   activeNumber: number | null;
+  /** How many names belong to no spot, so the learner knows some are left over. */
+  extraNames: number;
   names: readonly string[];
   onPlace: (name: string) => void;
 }) {
@@ -87,10 +90,19 @@ export function NameBank({
     <div className="flex flex-col gap-2">
       <p className="text-muted-foreground text-xs">
         {activeNumber === null
-          ? t("Every spot has a name. Tap a spot to change it.")
-          : t("Tap a name for spot {number}, or drag it onto any spot.", {
+          ? t("Every spot has a name. Pick a spot to change it.")
+          : t("Pick a name for spot {number}, or drag it onto any spot.", {
               number: String(activeNumber),
             })}
+        {extraNames > 0 && (
+          <>
+            {" "}
+            {t(
+              "{count, plural, one {# name doesn't belong on the diagram.} other {# names don't belong on the diagram.}}",
+              { count: extraNames },
+            )}
+          </>
+        )}
       </p>
 
       <ul aria-label={t("Names")} className="flex flex-wrap gap-2" ref={listRef}>

@@ -14,7 +14,22 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Take a mock exam") };
 }
 
-const CHOOSER_BAR = <LearnPageBar back={{ href: "/exam" }} root />;
+/**
+ * `label` is the exam page's title, the exam's name, so the way back names the page it returns to.
+ * `listed` only where the sidebar lists the page: with an exam goal, and the placeholder, which
+ * can't know.
+ */
+async function ChooserBar({ label, listed = false }: { label?: string; listed?: boolean }) {
+  const t = await getExtracted();
+
+  return (
+    <LearnPageBar
+      back={{ href: "/exam", label }}
+      listed={listed ? "learner" : undefined}
+      title={t("Take a mock exam")}
+    />
+  );
+}
 
 async function MockChooserContent() {
   // The root param, not `params`: a prefetch warms its caches with `params` still pending.
@@ -25,7 +40,7 @@ async function MockChooserContent() {
 
     return (
       <LearnNoGoal
-        bar={CHOOSER_BAR}
+        bar={<ChooserBar label={t("Your exam")} />}
         description={t("Mock exam, timed like the real one")}
         next="/mock/new"
         title={t("Take a mock exam")}
@@ -49,12 +64,18 @@ async function MockChooserContent() {
     redirect({ href: "/exam", locale });
   }
 
-  return <MockChooserClient bar={CHOOSER_BAR} goalId={view.goalId} view={view} />;
+  return (
+    <MockChooserClient
+      bar={<ChooserBar label={view.examName} listed />}
+      goalId={view.goalId}
+      view={view}
+    />
+  );
 }
 
 async function MockChooserSkeleton() {
   const t = await getExtracted();
-  return <DetailSkeleton bar={CHOOSER_BAR} rows={6} title={t("Take a mock exam")} />;
+  return <DetailSkeleton bar={<ChooserBar listed />} bottomBar title={t("Take a mock exam")} />;
 }
 
 export default function MockChooserPage() {

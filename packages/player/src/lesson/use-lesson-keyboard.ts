@@ -1,19 +1,15 @@
 "use client";
 
-import { useEnterKey, useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useEnterKey, useHeldEnterOnce, useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { useTutorBuddy } from "../questions/tutor-buddy";
 import { runPrimary, useLessonPrimary } from "./lesson-action-bar";
-import { useLeaveLesson } from "./lesson-leave";
 import { useLessonPlayer } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
 import { useScreenTurns } from "./use-screen-turns";
 
-const SCREEN_KEY = { mode: "none", screen: true } as const;
-
 export function useLessonKeyboard() {
   const { actions, screen, state } = useLessonPlayer();
   const primary = useLessonPrimary();
-  const leave = useLeaveLesson();
   const { isPaused } = useLessonInteraction();
   const buddy = useTutorBuddy();
   const turns = useScreenTurns({ keepFocus: true });
@@ -30,47 +26,26 @@ export function useLessonKeyboard() {
     runPrimary({ actions, screen });
   });
 
-  // A held Enter presses a focused button once, as it acts once on the screen.
-  useKeyboardCallback("Enter", (event) => {
-    if (!event.repeat || !(event.target instanceof HTMLButtonElement)) {
+  useHeldEnterOnce();
+
+  useShortcut("next", () => {
+    if (!turns.forward()) {
       return false;
     }
   });
 
-  useKeyboardCallback(
-    "ArrowRight",
-    () => {
-      if (!turns.forward()) {
-        return false;
-      }
-    },
-    SCREEN_KEY,
-  );
+  useShortcut("previous", () => {
+    if (!turns.back()) {
+      return false;
+    }
+  });
 
-  useKeyboardCallback(
-    "ArrowLeft",
-    () => {
-      if (!turns.back()) {
-        return false;
-      }
-    },
-    SCREEN_KEY,
-  );
+  // With nothing of the lesson's open, Esc is the ✕'s (`TaskClose`).
+  useShortcut("leave", () => {
+    if (isPaused || !buddy?.docked) {
+      return false;
+    }
 
-  useKeyboardCallback(
-    "Escape",
-    () => {
-      if (isPaused) {
-        return false;
-      }
-
-      if (buddy?.docked) {
-        buddy.close();
-        return;
-      }
-
-      leave();
-    },
-    SCREEN_KEY,
-  );
+    buddy.close();
+  });
 }

@@ -41,6 +41,40 @@ describe(getSetupProgress, () => {
     }
   });
 
+  it("shows no dashes while a question that can add another is current or ahead", () => {
+    const steps = ["contentCountry", "purpose", "level", "targetDate", "schedule", "plan"] as const;
+
+    expect(
+      getSetupProgress({ current: "contentCountry", history: [], view: { steps } }),
+    ).toBeNull();
+
+    expect(
+      getSetupProgress({
+        current: "purpose",
+        history: ["contentCountry"],
+        view: { steps: steps.slice(1) },
+      }),
+    ).toBeNull();
+
+    expect(
+      getSetupProgress({
+        current: "level",
+        history: ["contentCountry", "purpose"],
+        view: { steps: ["level", "role", "targetDate", "schedule", "plan"] },
+      }),
+    ).toStrictEqual({ current: 2, total: 6 });
+  });
+
+  it("hides setup dashes while the language aim can open exam questions", () => {
+    expect(
+      getSetupProgress({
+        current: "reason",
+        history: ["level", "followUps", "targetDate", "schedule"],
+        view: { steps: ["reason", "plan"] },
+      }),
+    ).toBeNull();
+  });
+
   it("keeps an earlier question's place when a later screen opens it again", () => {
     expect(
       getSetupProgress({
@@ -75,7 +109,7 @@ describe(getSetupProgress, () => {
 describe("profile steps", () => {
   const steps = ["work", "tools", "conditions", "learningSupport", "schedule", "plan"] as const;
 
-  it("share one dot", () => {
+  it("share one dash of the setup's dashes", () => {
     expect(
       getSetupProgress({ current: "tools", history: ["level", "work"], view: { steps } }),
     ).toStrictEqual({ current: 1, total: 3 });
@@ -96,7 +130,7 @@ describe("profile steps", () => {
         history: ["level", "work"],
         view: { steps: steps.slice(1) },
       }),
-    ).toStrictEqual({ current: 2, total: 4 });
+    ).toStrictEqual({ canSkipAll: true, current: 2, total: 4 });
 
     expect(
       getProfileProgress({
@@ -104,7 +138,15 @@ describe("profile steps", () => {
         history: ["level"],
         view: { steps: ["conditions", "learningSupport", "schedule", "plan"] },
       }),
-    ).toStrictEqual({ current: 1, total: 2 });
+    ).toStrictEqual({ canSkipAll: true, current: 1, total: 2 });
+
+    expect(
+      getProfileProgress({
+        current: "learningSupport",
+        history: ["conditions"],
+        view: { steps: ["learningSupport", "schedule", "plan"] },
+      }),
+    ).toStrictEqual({ canSkipAll: false, current: 2, total: 2 });
 
     expect(getProfileProgress({ current: "schedule", history: [], view: { steps } })).toBeNull();
   });

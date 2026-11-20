@@ -24,7 +24,7 @@ struct TutorThreadView<Header: View>: View {
       canTalk: session.authenticatedSession != nil && learner?.identity.isAnonymous != true,
       buddyName: summary.buddyDisplayName,
       suggestions: suggestions ?? scope.suggestions,
-      placeholder: placeholder ?? scope.placeholder,
+      placeholder: placeholder ?? Text("Ask \(summary.buddyDisplayName)", tableName: "Tutor"),
       draft: draft,
       isPage: isPage,
       header: header)
@@ -65,7 +65,8 @@ private struct TutorConversationView<Header: View>: View {
       }
       .frame(maxWidth: 720, alignment: .leading)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .scenePadding()
+      .listRowEdges()
+      .scenePadding(.vertical)
       .scrollTargetLayout()
     }
     .scrollPosition($position)
@@ -77,7 +78,11 @@ private struct TutorConversationView<Header: View>: View {
         suggestions: suggestions, placeholder: placeholder)
     }
     .modifier(LoadsThread(thread: conversation.thread, isActive: canTalk))
+    // An offer is its step's: once the learner moves on, the draft goes or changes, and an offer
+    // still waiting for the thread is dropped, never sent for the step they're on now.
     .onChange(of: draft, initial: true) { _, draft in
+      pendingAsk?.cancel()
+
       guard let draft else {
         return
       }
@@ -161,7 +166,8 @@ private struct TutorConversationView<Header: View>: View {
           }
 
           TutorTurnView(
-            turn: turn, conversation: conversation, buddyName: buddyName, isPage: isPage)
+            turn: turn, conversation: conversation, buddyName: buddyName, isPage: isPage,
+            showsTopic: !turn.sharesTopic(with: index > 0 ? turns[index - 1] : nil))
         }
         .id(turn.id)
       }

@@ -10,6 +10,7 @@ import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { ExplainEnding } from "@zoonk/learn/explain/ending";
 import { ExplainDeeperLink, ExplainWaiting } from "@zoonk/learn/explain/waiting";
 import { useVisibleWait } from "@zoonk/learn/generation/wait-clock";
+import { FailedMoment } from "@zoonk/learn/session/failed-moment";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { useExtracted } from "next-intl";
 import { type ComponentProps, startTransition, useEffect, useMemo, useState } from "react";
@@ -74,26 +75,30 @@ function createExplainEnding({
   const { course } = explanation.goFurther;
 
   return {
-    completion: (slot) => (
-      <>
-        {!course && <GoFurtherRefresh />}
-        <ExplainEnding
-          buddy={buddy}
-          deeper={<DeeperStart explanation={explanation} />}
-          doneHref={getHomeHref(explanation)}
-          explanation={explanation}
-          questionHref={getGoalStartHref}
-          result={{
-            answered: slot.correctCount + slot.incorrectCount,
-            celebration: slot.completion.result
-              ? getLessonCelebration(slot.completion.result)
-              : null,
-            correct: slot.correctCount,
-          }}
-          saving={slot.completion.status === "saving"}
-        />
-      </>
-    ),
+    completion: (slot) =>
+      slot.completion.status === "failed" ? (
+        <FailedMoment failures={slot.completion.failures} onRetry={slot.onRetry} />
+      ) : (
+        <>
+          {!course && <GoFurtherRefresh />}
+          <ExplainEnding
+            buddy={buddy}
+            deeper={<DeeperStart explanation={explanation} />}
+            doneHref={getHomeHref(explanation)}
+            explanation={explanation}
+            questionHref={getGoalStartHref}
+            result={{
+              answered: slot.correctCount + slot.incorrectCount,
+              celebration: slot.completion.result
+                ? getLessonCelebration(slot.completion.result)
+                : null,
+              correct: slot.correctCount,
+            }}
+            saving={slot.completion.status === "saving"}
+          />
+        </>
+      ),
+    completionTitled: true,
   };
 }
 
@@ -127,7 +132,12 @@ export function ExplainClient({
     explanation.lesson ? "playing" : "outline",
   );
 
-  const { lesson } = explanation;
+  // The lesson goes by the question's title, as Today and the goal list name it.
+  const lesson = useMemo(
+    () => explanation.lesson && { ...explanation.lesson, title: explanation.title },
+    [explanation.lesson, explanation.title],
+  );
+
   const isWaiting = !lesson || phase === "outline";
 
   useVisibleWait({

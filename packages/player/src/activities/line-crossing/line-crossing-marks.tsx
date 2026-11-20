@@ -1,19 +1,21 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type LinearScale } from "@zoonk/utils/plot-scale";
 import { useEffectEvent, useId, useLayoutEffect, useRef } from "react";
-import { usePlotScales } from "../_components/activity-plot";
-import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
-import { type LabelBox, type LabelSize } from "./line-crossing-labels";
+import { ActivityPlotGridY, usePlotScales } from "../_components/activity-plot";
+import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
+import { DRAWING_LABEL_HALO, measureDrawingLabel } from "../_utils/drawing-label";
+import {
+  ARROW_HEAD,
+  ARROW_STROKE,
+  type LabelBox,
+  type LabelSize,
+  changeArrows,
+} from "./line-crossing-labels";
 import { type ChartDomain, type Line, type Point, visibleSegment } from "./line-crossing-model";
 
 const DOT_RADIUS = 6;
-const ARROW_OFFSET = 10;
-const ARROW_STROKE = 2;
-const ARROW_HEAD = 7;
-const Y_LABEL_RISE = 12;
-const X_LABEL_DROP = 20;
 
 export function LineMark({
   className,
@@ -41,30 +43,68 @@ export function LineMark({
   );
 }
 
+export type LineLabelMetrics = LabelSize & { left: number; top: number };
+
 export function LineLabel({
   box,
   className,
   label,
   onMeasure,
+  metrics,
 }: {
   box: LabelBox | null;
   className: string;
   label: string;
-  onMeasure: (size: LabelSize) => void;
+  metrics: LineLabelMetrics | undefined;
+  onMeasure: (size: LineLabelMetrics) => void;
 }) {
   const ref = useRef<SVGTextElement>(null);
   const measured = useEffectEvent(onMeasure);
+  const last = useRef<LineLabelMetrics>(undefined);
 
   useLayoutEffect(() => {
     const node = ref.current;
 
-    if (node) {
-      measured({
-        height: Number(getComputedStyle(node).fontSize.replace("px", "")),
-        width: node.getBBox().width,
-      });
+    if (!node) {
+      return;
     }
-  }, []);
+
+    const measure = () => {
+      const size = measureDrawingLabel({ element: node });
+
+      const next = {
+        height: size.height,
+        left: size.offsetX - size.width / 2,
+        top: size.offsetY - size.height / 2,
+        width: size.width,
+      };
+
+      const previous = last.current;
+
+      if (
+        previous?.height === next.height &&
+        previous.width === next.width &&
+        previous.left === next.left &&
+        previous.top === next.top
+      ) {
+        return;
+      }
+
+      last.current = next;
+      measured(next);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    document.fonts.addEventListener("loadingdone", measure);
+
+    return () => {
+      observer.disconnect();
+      document.fonts.removeEventListener("loadingdone", measure);
+    };
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Same-size translations can change ink bearings without resizing the observed box.
+  }, [label]);
 
   return (
     <text
@@ -73,23 +113,35 @@ export function LineLabel({
       dominantBaseline="central"
       ref={ref}
       visibility={box ? undefined : "hidden"}
-      x={box?.left ?? 0}
-      y={box ? (box.top + box.bottom) / 2 : 0}
+      x={box && metrics ? box.left - metrics.left : 0}
+      y={box && metrics ? box.top - metrics.top : 0}
     >
       {label}
     </text>
   );
 }
 
+export function crossingGuides(point: Point, left: number, bottom: number) {
+  return [
+    { from: { x: left, y: point.y }, to: point },
+    { from: point, to: { x: point.x, y: bottom } },
+  ] as const;
+}
+
 export function CrossingGuide({ isBefore, point }: { isBefore: boolean; point: Point }) {
   const { x, y } = usePlotScales();
-  const [px, py] = [x.toPixel(point.x), y.toPixel(point.y)];
+
+  const [horizontal, vertical] = crossingGuides(
+    { x: x.toPixel(point.x), y: y.toPixel(point.y) },
+    x.range[0],
+    y.range[0],
+  );
 
   return (
     <path
       aria-hidden="true"
       className={cn("fill-none", isBefore ? "stroke-muted-foreground/50" : "stroke-foreground/60")}
-      d={`M${x.range[0]} ${py} H${px} V${y.range[0]}`}
+      d={`M${horizontal.from.x} ${horizontal.from.y} H${horizontal.to.x} V${vertical.to.y}`}
       strokeDasharray="3 3"
       strokeWidth={1.5}
     />
@@ -116,36 +168,6 @@ export function CrossingDot({ isBefore, point }: { isBefore: boolean; point: Poi
 
 export const CROSSING_RADIUS = DOT_RADIUS + 1;
 
-type ArrowEnds = { after: Point; before: Point; x: LinearScale; y: LinearScale };
-
-function changeArrows({ after, before, x, y }: ArrowEnds): { from: Point; to: Point }[] {
-  const [left, bottom] = [x.range[0], y.range[0]];
-
-  const arrows = [
-    {
-      from: { x: left + ARROW_OFFSET, y: y.toPixel(before.y) },
-      to: { x: left + ARROW_OFFSET, y: y.toPixel(after.y) },
-    },
-    {
-      from: { x: x.toPixel(before.x), y: bottom - ARROW_OFFSET },
-      to: { x: x.toPixel(after.x), y: bottom - ARROW_OFFSET },
-    },
-  ];
-
-  return arrows.filter(({ from, to }) => Math.hypot(to.x - from.x, to.y - from.y) > DOT_RADIUS);
-}
-
-export function changeArrowBoxes(ends: ArrowEnds): LabelBox[] {
-  const reach = (ARROW_HEAD * ARROW_STROKE) / 2;
-
-  return changeArrows(ends).map(({ from, to }) => ({
-    bottom: Math.max(from.y, to.y) + reach,
-    left: Math.min(from.x, to.x) - reach,
-    right: Math.max(from.x, to.x) + reach,
-    top: Math.min(from.y, to.y) - reach,
-  }));
-}
-
 export function ChangeArrows({ after, before }: { after: Point; before: Point }) {
   const { x, y } = usePlotScales();
   const markerId = useId();
@@ -170,7 +192,12 @@ export function ChangeArrows({ after, before }: { after: Point; before: Point })
           />
         </marker>
       </defs>
-      {changeArrows({ after, before, x, y }).map(({ from, to }) => (
+      {changeArrows({
+        after: { x: x.toPixel(after.x), y: y.toPixel(after.y) },
+        before: { x: x.toPixel(before.x), y: y.toPixel(before.y) },
+        bottom: y.range[0],
+        left: x.range[0],
+      }).map(({ from, to }) => (
         <path
           className="fill-none stroke-current"
           d={`M${from.x} ${from.y} L${to.x} ${to.y}`}
@@ -183,29 +210,29 @@ export function ChangeArrows({ after, before }: { after: Point; before: Point })
   );
 }
 
-export function Axes({ xLabel, yLabel }: { xLabel: string; yLabel: string }) {
+export function Axes({
+  units,
+  xTicks,
+  yTicks,
+}: {
+  units: { x?: string; y?: string };
+  xTicks: readonly number[];
+  yTicks: readonly number[];
+}) {
+  const format = useFormatNumber();
   const { x, y } = usePlotScales();
   const [left, right] = x.range;
   const [bottom, top] = y.range;
 
   return (
     <g aria-hidden="true">
+      <ActivityPlotGridY format={(value) => format(value, { unit: units.y })} ticks={yTicks} />
+      <ActivityPlotAxisX format={(value) => format(value, { unit: units.x })} ticks={xTicks} />
       <path
         className="stroke-foreground/40 fill-none"
         d={`M${left} ${top} V${bottom} H${right}`}
         strokeWidth={1.5}
       />
-      <text className="fill-muted-foreground text-xs" x={left} y={top - Y_LABEL_RISE}>
-        {yLabel}
-      </text>
-      <text
-        className="fill-muted-foreground text-xs"
-        textAnchor="end"
-        x={right}
-        y={bottom + X_LABEL_DROP}
-      >
-        {xLabel}
-      </text>
     </g>
   );
 }

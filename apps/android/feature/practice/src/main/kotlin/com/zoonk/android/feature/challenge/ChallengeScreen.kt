@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -42,21 +44,21 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.checkpoint.checkpointName
 import com.zoonk.android.feature.conversation.ChecklistRow
-import com.zoonk.android.feature.mock.chooser.MockLeftOutNote
-import com.zoonk.android.feature.mock.mockDaySize
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -75,6 +77,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -346,8 +349,6 @@ private fun IntroScreen(
             CenteredColumn(Modifier.padding(padding)) {
                 Intro(challenge)
                 if (!taskAsideBeside()) aside?.content?.invoke(true)
-                // A card this size scrolls with the intro; the bar under it keeps only its action.
-                if (plusRequired(challenge, ui)) PlusRequiredNotice(challenge, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
             }
         }
     }
@@ -422,7 +423,7 @@ private fun topicsTitle(challenge: Challenge): String? =
 @Composable
 private fun Intro(challenge: Challenge) {
     val locale = currentLocale()
-    val prize = stringResource(R.string.challenge_prize, formatNumber(challenge.reward.brainPower.toDouble(), locale))
+    val prize = formatNumber(challenge.reward.brainPower.toDouble(), locale)
     val questions =
         challenge.questions
             ?.takeIf { it > 0 }
@@ -437,23 +438,13 @@ private fun Intro(challenge: Challenge) {
 
     when {
         challenge.mock -> {
-            val section = challenge.sections.singleOrNull()
-            val objectiveOnly = challenge.leftOut.any { it.part == MockLeftOut.Part.WRITTEN_IN_FULL }
-            // Half a day isn't named by its day, which would say its written part is asked.
-            val area = section?.name?.takeIf { challenge.written.isEmpty() && !objectiveOnly }
-            IntroHeading(
-                title = mockTitle(challenge.number ?: 1),
-                whenText = whenText(challenge),
-                detail = listOfNotNull(challenge.examName, area).factsLine().ifEmpty { null },
-            )
-            Facts(
-                listOfNotNull(
-                    questions,
-                    challenge.minutes?.let { formatMinutes(it.toInt(), locale) },
-                    mockDaySize(fullLength = false).takeIf { !challenge.fullLength },
-                    stringResource(R.string.challenge_objective_only).takeIf { objectiveOnly },
-                ),
-            )
+            // Named only when the mock exam is one subject: a day's name would list parts it may not ask.
+            val subject =
+                challenge.sections.singleOrNull()?.name?.takeIf {
+                    challenge.written.isEmpty() && challenge.leftOut.none { it.part == MockLeftOut.Part.WRITTEN_IN_FULL }
+                }
+            IntroHeading(title = mockTitle(challenge.number ?: 1), whenText = whenText(challenge), detail = subject)
+            Facts(listOfNotNull(questions, challenge.minutes?.let { formatMinutes(it.toInt(), locale) }))
         }
 
         challenge.kind == Challenge.Kind.WEEKLY -> {
@@ -556,7 +547,7 @@ private fun IntroHeading(
     }
 }
 
-/** Its size in a line, with the prize in Brain Power's color. */
+/** Its size in a line, with the [prize] in Brain Power's color and its unit's short form, which TalkBack says in full. */
 @Composable
 private fun Facts(
     facts: List<String>,
@@ -564,14 +555,19 @@ private fun Facts(
 ) {
     if (facts.isEmpty() && prize == null) return
     val brain = MaterialTheme.zoonk.brainText
+    val amount = prize?.let { stringResource(R.string.missions_points, it) }
+    val unit = stringResource(R.string.missions_brain_power_short)
+    val spoken = (facts + listOfNotNull(prize?.let { stringResource(R.string.challenge_prize, it) })).factsLine()
     Text(
         buildAnnotatedString {
             append(facts.factsLine())
-            prize?.let {
+            amount?.let {
                 if (facts.isNotEmpty()) append(FACT_SEPARATOR)
                 withStyle(SpanStyle(color = brain)) { append(it) }
+                append(" $unit")
             }
         },
+        modifier = Modifier.semantics { contentDescription = spoken },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium,
     )
@@ -605,7 +601,7 @@ private fun DetailRow(
 ) {
     ListRow(
         headline = { Text(title) },
-        supporting = details.takeIf { it.isNotEmpty() }?.let { lines -> { Column { lines.forEach { Text(it) } } } },
+        supporting = details.takeIf { it.isNotEmpty() }?.let { lines -> { lines.forEach { Text(it) } } },
         meta = meta?.let { { Text(it) } },
     )
 }
@@ -642,11 +638,8 @@ private fun Topics(
                 if (subject == null) {
                     DetailRow(names.first(), meta = null)
                 } else {
-                    DetailRow(
-                        subject,
-                        meta = pluralStringResource(R.plurals.challenge_topic_count, names.size, names.size),
-                        details = listOf(names.joinToString(", ")),
-                    )
+                    // The topics listed under a subject already say how many; a lone topic row has no count to match.
+                    DetailRow(subject, meta = null, details = listOf(names.joinToString(", ")))
                 }
             }
         }
@@ -657,8 +650,9 @@ private fun Topics(
 @Composable
 private fun MockDetails(challenge: Challenge) {
     val locale = currentLocale()
+    val written = challenge.written.filter { it.asked }
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        if (challenge.sections.size + challenge.written.size > 1) {
+        if (challenge.sections.size + written.size > 1) {
             DetailRows {
                 challenge.sections.forEachIndexed { index, section ->
                     if (index > 0) DetailDivider()
@@ -675,7 +669,7 @@ private fun MockDetails(challenge: Challenge) {
                         details = listOfNotNull(section.tools),
                     )
                 }
-                challenge.written.forEach { part ->
+                written.forEach { part ->
                     DetailDivider()
                     DetailRow(
                         part.name,
@@ -685,13 +679,11 @@ private fun MockDetails(challenge: Challenge) {
                                 part.tasks
                                     .map { task -> task.count?.let { count -> "$count × ${task.description}" } ?: task.description }
                                     .factsLine(),
-                                stringResource(if (part.asked) R.string.challenge_written_asked else R.string.challenge_written_practiced),
                             ),
                     )
                 }
             }
         }
-        MockLeftOutNote(challenge.leftOut.filter { it.part != MockLeftOut.Part.WRITTEN && it.part != MockLeftOut.Part.WRITTEN_IN_FULL })
         RuleLine(scoringLine(challenge), if (challenge.netScored) R.drawable.ic_balance else R.drawable.ic_visibility_off)
     }
 }
@@ -728,10 +720,10 @@ private fun ChallengeFooter(
     val movable = challenge.canMove && ui.refusal == null
     val ready = challenge.status == Challenge.Status.READY && challenge.waitReason == null
 
-    if (plusRequired(challenge, ui)) {
-        TaskActions { width ->
-            Button(onClick = actions::seePlus, modifier = width) { Text(stringResource(R.string.challenge_see_plus)) }
-        }
+    // A challenge that needs a subscription looks like any other until Start is pressed.
+    var gated by rememberSaveable { mutableStateOf(false) }
+    if (gated || ui.problem == StartProblem.PlusRequired) {
+        ChallengeGate(challenge, actions)
         return
     }
     when (challenge.status) {
@@ -752,7 +744,6 @@ private fun ChallengeFooter(
                             busy = ui.starting,
                             onClick = vm::start,
                             modifier = width,
-                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         ) { Text(stringResource(R.string.challenge_continue)) }
                     }
                 }
@@ -791,7 +782,9 @@ private fun ChallengeFooter(
             OpensLine(challenge)
         }
 
-        Challenge.Status.PLUS_REQUIRED -> {}
+        Challenge.Status.PLUS_REQUIRED -> {
+            StartActions(challenge, ui, movable, actions) { gated = true }
+        }
     }
     if (!ready) {
         MoveFailed(ui)
@@ -817,15 +810,16 @@ private fun StartActions(
     ui: ChallengeUi,
     movable: Boolean,
     actions: ChallengeActions,
+    onStart: () -> Unit = actions.viewModel::start,
 ) {
     val vm = actions.viewModel
-    val refused = ui.refused
+    val refused = ui.refused?.takeUnless { limitLifted(it) }
     if (refused != null) {
         LimitNotice(
             refused,
             LimitSubject.Help,
             onCreateAccount = actions::createAccount,
-            onSeePlus = actions::seePlus,
+            onSubscribe = actions::seePlus,
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
         return
@@ -846,10 +840,9 @@ private fun StartActions(
         }
         Button(
             busy = ui.starting,
-            onClick = vm::start,
+            onClick = onStart,
             modifier = width,
             enabled = !ui.moving,
-            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
         ) {
             Text(stringResource(if (challenge.mock) R.string.challenge_mock_start else R.string.challenge_start))
         }
@@ -867,33 +860,20 @@ private fun SeeResult(
     }
 }
 
-private fun plusRequired(
-    challenge: Challenge,
-    ui: ChallengeUi,
-) = ui.problem == StartProblem.PlusRequired || challenge.status == Challenge.Status.PLUS_REQUIRED
-
+/** The challenge limit appears above Subscribe in the task bar. */
 @Composable
-private fun PlusRequiredNotice(
+private fun ChallengeGate(
     challenge: Challenge,
-    modifier: Modifier = Modifier,
+    actions: ChallengeActions,
 ) {
-    when {
-        challenge.mock -> {
-            PlusNotice(onSeePlus = null, modifier = modifier, description = stringResource(R.string.challenge_mock_plus))
-        }
-
-        challenge.call != null -> {
-            PlusNotice(onSeePlus = null, modifier = modifier, description = stringResource(R.string.challenge_call_plus))
-        }
-
-        else -> {
-            PlusNotice(
-                onSeePlus = null,
-                modifier = modifier,
-                title = stringResource(R.string.subscription_free_week_over_title),
-                description = stringResource(R.string.subscription_free_week_over_description),
-            )
-        }
+    TrackShown(AnalyticsEvent.SubscriptionGateShown)
+    GateWords(
+        title = stringResource(if (challenge.mock) R.string.challenge_mock_gate else R.string.challenge_call_gate),
+        line = stringResource(R.string.challenge_call_gate_line).takeUnless { challenge.mock },
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+    )
+    TaskActions { width ->
+        Button(onClick = actions::seePlus, modifier = width) { Text(stringResource(R.string.subscription_subscribe)) }
     }
 }
 

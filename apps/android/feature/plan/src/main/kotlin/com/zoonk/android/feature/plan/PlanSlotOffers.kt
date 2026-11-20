@@ -1,32 +1,26 @@
 package com.zoonk.android.feature.plan
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.DropdownMenu
+import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
+import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionMark
+import com.zoonk.android.ui.components.SuggestionMenu
+import com.zoonk.android.ui.components.SuggestionMenuItem
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -138,7 +132,7 @@ private fun answerOffer(
         is CoverageChange.Time -> {
             if (answer is TimeToCoverAnswer.Focus) {
                 CoverageOffer(
-                    description = listOfNotNull(takes, focusText(answer.coveredShare, answer.everyTopic, page.isExam)),
+                    description = listOf(timeCoversText(page.isExam, answer.minutes, answer.coveredShare)),
                     operations = change.operations,
                     title = stringResource(R.string.plan_time_suggest_title, formatMinutes(change.minutes, locale)),
                 )
@@ -146,7 +140,7 @@ private fun answerOffer(
                 CoverageOffer(
                     description = listOf(covered),
                     operations = change.operations,
-                    title = stringResource(R.string.plan_time_covers_everything_in_depth, formatMinutes(change.minutes, locale)),
+                    title = stringResource(R.string.plan_time_covers_everything, formatMinutes(change.minutes, locale)),
                 )
             }
         }
@@ -164,7 +158,7 @@ internal fun CoverageSuggestion(slot: Slot) {
     val edits = slot.edits
     val state = slot.state
     val coverage = planCoverage(plan)
-    val covered = coverage?.let { coveredText(plan, it, page.today) }.orEmpty()
+    val covered = coverage?.let { coveredText(plan, it) }.orEmpty()
     val search = edits.timeToCover.forPlan(plan)
     val found = (search as? TimeToCoverState.Answered)?.time
     val course = fullCourse(page)
@@ -183,25 +177,17 @@ internal fun CoverageSuggestion(slot: Slot) {
     val status =
         when {
             retry -> if (search is TimeToCoverState.Building) stringResource(R.string.plan_find_building) else failed
+            pending && state.intent == CoverageIntent.Time -> stringResource(R.string.plan_finding)
             noDate -> stringResource(R.string.plan_find_no_date)
             else -> none
         }
     val preview = slot.host.preview.of(offer?.operations.orEmpty(), plan)
 
-    /** [focus] moves to the suggestion once the search answers, as the control that asked gives way. */
-    fun ask(
-        next: CoverageIntent,
-        focus: () -> Unit,
-    ) {
+    fun ask(next: CoverageIntent) {
         state.asking = next
         state.intent = next
         slot.host.clearPreview()
-        edits.findTimeToCover(plan) { outcome ->
-            if (state.asking == next) focus()
-            val time = (outcome as? TimeToCoverOutcome.Answered)?.time ?: return@findTimeToCover
-            val change = coverageChange(page.isExam, next, time, plan.schedule.dailyMinutes.toInt()) ?: return@findTimeToCover
-            if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
-        }
+        edits.findTimeToCover(plan, TimeAsker.Coverage(next))
     }
 
     fun stopAsking() {
@@ -210,12 +196,23 @@ internal fun CoverageSuggestion(slot: Slot) {
     }
 
     PlanChangeSuggestion(SlotItem.Coverage, title, slot) {
+        // The card asks: paging away drops what the search owes it, so coming back only shows what was found.
+        VisitOf(edits.outcomes.suggestion)
+        // Focus moves to the suggestion once the search answers, as the control that asked gives way. What's kept is
+        // the answer for the plan shown now ([found]), never the time an older plan's search carried.
+        ActOn(edits.outcomes.coverageFound) { (next, _) ->
+            if (state.asking == next) focus()
+            val time = found ?: return@ActOn
+            val change = coverageChange(page.isExam, next, time, plan.schedule.dailyMinutes.toInt()) ?: return@ActOn
+            if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
+        }
         offer?.description?.filter { it != title }?.forEach { SuggestionDescription(it) }
         status?.let { StatusDescription(it) }
 
         when {
             preview != PlanPreviewState.Idle && offer != null -> {
                 PlanPreviewResult(
+                    dateKind = page.dateKind,
                     state = preview,
                     onApply = { slot.applyPreview(SlotItem.Coverage, preview) },
                     onRetry = { slot.host.requestPreview(offer.operations) },
@@ -233,12 +230,12 @@ internal fun CoverageSuggestion(slot: Slot) {
                 SuggestionActions {
                     offer?.let {
                         SuggestionAction(
-                            stringResource(R.string.plan_preview),
+                            stringResource(R.string.plan_see_changes),
                             onClick = { slot.host.requestPreview(it.operations) },
                         )
                     }
                     if (offer == null && found == null) {
-                        FindAction(pending, retry) { ask(if (retry) state.intent else CoverageIntent.Time, focus) }
+                        FindAction(pending, retry) { ask(if (retry) state.intent else CoverageIntent.Time) }
                     }
                     if (studiesEverything) {
                         SuggestionAction(stringResource(R.string.plan_study_everything_after_exam), onClick = {
@@ -251,24 +248,34 @@ internal fun CoverageSuggestion(slot: Slot) {
                             close()
                             slot.links.focusTest()
                         }, secondary = true)
+                        Text(
+                            stringResource(R.string.focustest_suggestion_line),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
                     }
                     if (coverage != null) {
-                        OtherOptions { done ->
-                            if (moveDate) Option(stringResource(R.string.plan_move_date), done) { ask(CoverageIntent.Date, focus) }
+                        SuggestionMenu { done ->
+                            if (moveDate) {
+                                SuggestionMenuItem(
+                                    stringResource(R.string.plan_move_date),
+                                    done,
+                                ) { ask(CoverageIntent.Date) }
+                            }
                             if (canChooseFocus(plan)) {
-                                Option(stringResource(R.string.plan_choose_focus), done) {
+                                SuggestionMenuItem(stringResource(R.string.plan_choose_focus), done) {
                                     close()
                                     edits.chooseFocus()
                                 }
                             }
                             if (course != null && !course.on && !studiesEverything) {
                                 val text = if (course.isExam) R.string.plan_study_everything_after_exam else R.string.plan_study_everything
-                                Option(stringResource(text), done) {
+                                SuggestionMenuItem(stringResource(text), done) {
                                     close()
                                     edits.studyEverything()
                                 }
                             }
-                            Option(stringResource(R.string.plan_not_now), done) { slot.dismiss(SlotItem.Coverage) }
+                            SuggestionMenuItem(stringResource(R.string.plan_not_now), done) { slot.dismiss(SlotItem.Coverage) }
                         }
                     }
                 }
@@ -288,22 +295,20 @@ private fun FindAction(
         onClick = onFind,
         modifier = if (pending) Modifier.semantics { stateDescription = finding } else Modifier,
         busy = pending,
-    ) { Text(stringResource(if (retry) R.string.plan_try_again else R.string.plan_find)) }
+    ) { Text(stringResource(if (retry) R.string.plan_try_again else R.string.plan_see_changes)) }
 }
 
 /** Main's `FitLessonsSuggestion`: the lessons the learner's own time fits that the plan doesn't hold. */
 @Composable
 internal fun FitLessonsSuggestion(slot: Slot) {
     val page = slot.page
-    val offer = page.plan.fitOffer
+    val offer = page.plan.fitOffer ?: return
+    val preview = slot.host.preview.of(offer.operations.map { it.op }, page.plan)
+    val today = (preview as? PlanPreviewState.Ready)?.preview?.effect
     val target = page.plan.schedule.targetDate
-    val lessons =
-        offer
-            ?.effect
-            ?.lessonsAdded
-            ?.toInt() ?: 0
+    val lessons = (today ?: offer.effect).lessonsAdded.toInt()
     val title =
-        if (offer?.fits == true && target != null) {
+        if (offer.fits && today == null && target != null) {
             val month = page.plan.schedule.targetDateNamedMonth
             stringResource(
                 if (month) R.string.plan_time_covers_everything_by_month else R.string.plan_time_covers_everything_by,
@@ -313,59 +318,109 @@ internal fun FitLessonsSuggestion(slot: Slot) {
             pluralStringResource(R.plurals.plan_more_lessons_fit, lessons, lessons)
         }
 
+    val pending = slot.edits.isPending(PlanPart.Suggestion)
+    val checking = preview is PlanPreviewState.Loading
+    val add = { slot.host.addFitOffer(offer) }
+    val checkingWords = stringResource(R.string.plan_checking_changes)
+    val room = remember(offer) { HeldRoom() }
+
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
-        offer?.let { topicsMoved(it.effect, named = NAMED_TOPICS) }?.let { SuggestionDescription(it) }
-        offer?.let { PlanEffectDiff(it.effect) }
-        SuggestionActions {
-            if (offer != null && offer.canApply) {
+        // The card asks: its check adds only while the card shows, so one paged away adds nothing.
+        VisitOf(slot.edits.outcomes.suggestion)
+        // While it checks, the card stays as it was with its Add busy: the same numbers add from there. In the room a
+        // check's answer takes, so its buttons stay put when the answer is a failure.
+        if (preview == PlanPreviewState.Idle || checking) {
+            EffectRoom(FIT_ROOM_LINES, room) { PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded) }
+            SuggestionActions {
                 SuggestionAction(
-                    stringResource(R.string.plan_apply),
-                    onClick = { slot.apply(SlotItem.FitLessons, offer.operations.map { it.op }) },
-                    busy = slot.edits.isPending(PlanPart.Suggestion),
+                    onClick = add,
+                    modifier = if (checking) Modifier.semantics { stateDescription = checkingWords } else Modifier,
+                    busy = pending || checking,
                     leadingIcon = { ButtonIcon(R.drawable.ic_check) },
-                )
+                ) { Text(stringResource(R.string.plan_add_to_my_plan)) }
+                SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(SlotItem.FitLessons) }, secondary = true)
             }
-            SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(SlotItem.FitLessons) }, secondary = true)
+        } else {
+            PlanPreviewResult(
+                state = preview,
+                onApply = add,
+                onRetry = add,
+                onDismiss = slot.host.clearPreview,
+                pending = pending,
+                dateKind = page.dateKind,
+                repriced = true,
+                roomLines = FIT_ROOM_LINES,
+                heldRoom = room,
+            )
         }
     }
 }
 
 private const val NAMED_TOPICS = 2
 
-private val STUDY_AFTER_EXAM = listOf(PlanOp.FullCourse(true))
+/** The fit card names what it adds in a line, and a failed check says so in one. */
+private const val FIT_ROOM_LINES = 1
 
-/**
- * Main's `PastDateSuggestion`. A goal's new date is found only when the learner taps Preview:
- * finding it plans the goal at each candidate date.
- */
 @Composable
 internal fun PastDateSuggestion(
     item: SlotItem.PastDate,
     slot: Slot,
     onAdjust: (PlanSection?) -> Unit,
 ) {
+    if (slot.page.isExam) {
+        // No actions: the page's bar holds the answers (ExamOverActions), which a sheet over it would cover. The
+        // Schedule number beside it says how many lessons are left.
+        val title = stringResource(R.string.plan_past_date_exam_title)
+        val left = stringResource(R.string.plan_exam_over_ask)
+        Suggestion(
+            label = title,
+            summary = title,
+            layout = slot.layout,
+            mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
+            lineAction = null,
+            lineDescription = left,
+        ) {
+            SuggestionHeader(title)
+            SuggestionDescription(left)
+        }
+    } else {
+        DateOverSuggestion(item, slot, onAdjust)
+    }
+}
+
+@Composable
+private fun DateOverSuggestion(
+    item: SlotItem.PastDate,
+    slot: Slot,
+    onAdjust: (PlanSection?) -> Unit,
+) {
     val page = slot.page
     val state = slot.state
-    val title =
-        pluralStringResource(
-            if (page.isExam) R.plurals.plan_past_date_exam_title else R.plurals.plan_past_date_goal_title,
-            item.lessons,
-            item.lessons,
-        )
-    val preview = (slot.host.preview as? PlanPreviewState.Asked)?.takeIf { it.plan == page.plan }
+    val preview = (slot.host.preview as? PlanPreviewState.Asked)?.takeIf { it.matchesPlan(page.plan) }
     val search = state.dateSearch
     val retry = search == DateSearch.Failed || search == DateSearch.Building
 
-    fun showChange() {
-        if (page.isExam) {
-            slot.host.requestPreview(STUDY_AFTER_EXAM)
-            return
-        }
+    fun findDate() {
         val request = ++state.searches
         state.waiting = request
         state.dateSearch = DateSearch.Finding
-        slot.edits.findTimeToCover(page.plan) { found ->
-            if (state.waiting != request) return@findTimeToCover
+        slot.edits.findTimeToCover(page.plan, TimeAsker.PastDate(request))
+    }
+
+    fun stopWaiting() {
+        state.waiting = 0
+        state.dateSearch = null
+    }
+
+    PlanChangeSuggestion(
+        item,
+        stringResource(R.string.plan_past_date_goal_title),
+        slot,
+    ) {
+        // The card asks: paging away while the date is found stops the wait, and its answer does nothing.
+        VisitOf(slot.edits.outcomes.suggestion)
+        ActOn(slot.edits.outcomes.pastDateFound) { (request, found) ->
+            if (state.waiting != request) return@ActOn
             state.waiting = 0
             val date = (found as? TimeToCoverOutcome.Answered)?.time?.fittingDate?.toJavaLocalDate()
             date?.let { slot.host.requestPreview(CoverageChange.Date(it).operations) }
@@ -377,14 +432,6 @@ internal fun PastDateSuggestion(
                     TimeToCoverOutcome.Stale -> null
                 }
         }
-    }
-
-    fun stopWaiting() {
-        state.waiting = 0
-        state.dateSearch = null
-    }
-
-    PlanChangeSuggestion(item, title, slot, mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock)) {
         val adjust = {
             close()
             onAdjust(PlanSection.Date)
@@ -393,6 +440,7 @@ internal fun PastDateSuggestion(
         when {
             preview != null -> {
                 PlanPreviewResult(
+                    dateKind = page.dateKind,
                     state = preview,
                     onApply = { slot.applyPreview(item, preview) },
                     onRetry = { slot.host.requestPreview(preview.operations) },
@@ -423,14 +471,13 @@ internal fun PastDateSuggestion(
                 when {
                     search == DateSearch.Building -> StatusDescription(stringResource(R.string.plan_find_building))
                     retry -> StatusDescription(stringResource(R.string.plan_couldnt_check_changes))
-                    page.isExam -> SuggestionDescription(stringResource(R.string.plan_study_everything_exam_description))
-                    else -> SuggestionDescription(stringResource(R.string.plan_move_date_covers_whats_left))
+                    else -> SuggestionDescription(pluralStringResource(R.plurals.plan_past_date_offer, item.lessons, item.lessons))
                 }
                 SuggestionActions {
-                    SuggestionAction(stringResource(if (retry) R.string.plan_try_again else R.string.plan_preview), onClick = ::showChange)
-                    OtherOptions { done ->
-                        Option(stringResource(R.string.plan_adjust_plan), done, adjust)
-                        Option(stringResource(R.string.plan_not_now), done) { slot.dismiss(item) }
+                    SuggestionAction(stringResource(if (retry) R.string.plan_try_again else R.string.plan_find_date), onClick = ::findDate)
+                    SuggestionMenu { done ->
+                        SuggestionMenuItem(stringResource(R.string.plan_adjust_plan), done, adjust)
+                        SuggestionMenuItem(stringResource(R.string.plan_not_now), done) { slot.dismiss(item) }
                     }
                 }
             }
@@ -445,35 +492,4 @@ private fun Slot.applyPreview(
 ) {
     val ready = (preview as? PlanPreviewState.Ready)?.takeIf { !it.preview.unchanged && it.preview.effect != null } ?: return
     apply(item, ready.operations)
-}
-
-/** Main's `OtherOptions` menu; each option closes it with [done] before acting. */
-@Composable
-private fun OtherOptions(options: @Composable (done: () -> Unit) -> Unit) {
-    var open by rememberSaveable { mutableStateOf(false) }
-
-    Box {
-        SuggestionAction(
-            onClick = { open = true },
-            modifier = Modifier.semantics { role = Role.DropdownList },
-            secondary = true,
-        ) {
-            Text(stringResource(R.string.plan_other_options))
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-        }
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) { options { open = false } }
-    }
-}
-
-@Composable
-private fun Option(
-    text: String,
-    done: () -> Unit,
-    onClick: () -> Unit,
-) {
-    DropdownMenuItem(text = { Text(text) }, onClick = {
-        done()
-        onClick()
-    })
 }

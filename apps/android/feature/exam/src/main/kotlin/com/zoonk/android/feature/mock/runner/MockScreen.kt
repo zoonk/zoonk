@@ -21,10 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -46,12 +43,14 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.mock.mockShapeLabel
+import com.zoonk.android.feature.mock.mockSubject
 import com.zoonk.android.feature.mock.rememberNow
 import com.zoonk.android.feature.mock.result.MockResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
@@ -64,9 +63,12 @@ import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.scaffold.BarNoteInPage
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.LocalBarNoteRoom
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
@@ -151,18 +153,9 @@ private fun MockRunScreen(
     navigator: AppNavigator,
 ) {
     val run by viewModel.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
-    var leaving by remember { mutableStateOf(false) }
-    // Pressed again while answers go out, it still closes only the mock.
-    val leave: () -> Unit = {
-        if (!leaving) {
-            leaving = true
-            scope.launch {
-                viewModel.leave()
-                navigator.closeTask()
-            }
-        }
-    }
+    val leave: () -> Unit = viewModel::leave
+    VisitOf(viewModel.visit)
+    ActOn(viewModel.closed) { navigator.closeTask() }
     val view = run.view
     val current = view.current
 
@@ -197,12 +190,8 @@ internal fun MockStepFrame(
     TaskScaffold(
         onClose = onClose,
         title = title,
-        bottomBar = {
-            TaskActionBar {
-                MockStepStatus(viewModel, run)
-                actions()
-            }
-        },
+        bottomBar = { TaskActionBar { actions() } },
+        note = mockStepNote(viewModel, run),
         aside = aside,
         lonePage = true,
     ) { padding -> StepColumn(Modifier.padding(padding), content = content) }
@@ -220,11 +209,18 @@ internal fun StepColumn(
 ) {
     BeforeFold(modifier) { beforeFold ->
         key(step) {
-            Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+            val noteRoom = LocalBarNoteRoom.current
+            Box(
+                beforeFold.fillMaxSize().barNoteViewport(noteRoom).verticalScroll(rememberScrollState()),
+                contentAlignment = Alignment.TopCenter,
+            ) {
                 Column(
                     Modifier.taskColumn().padding(vertical = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
-                ) { content() }
+                ) {
+                    content()
+                    BarNoteInPage(noteRoom)
+                }
             }
         }
     }
@@ -242,9 +238,20 @@ internal fun StepHeader(
     }
 }
 
+/** [MockStepStatus] just above a step's bar, as main's sits, while it has something to say. */
+@Composable
+internal fun mockStepNote(
+    viewModel: MockRunnerViewModel,
+    run: MockRun,
+): (@Composable () -> Unit)? {
+    val saveStatus by viewModel.saveStatus.collectAsStateWithLifecycle()
+    val says = saveStatus == DraftSaveStatus.Retrying || saveStatus == DraftSaveStatus.Refused || run.error || run.slow
+    return if (says) ({ Column { MockStepStatus(viewModel, run) } }) else null
+}
+
 /** Main's `MockStepStatus`: whether answers are saving, and a step that didn't go through or is slow. */
 @Composable
-internal fun MockStepStatus(
+private fun MockStepStatus(
     viewModel: MockRunnerViewModel,
     run: MockRun,
 ) {
@@ -255,18 +262,18 @@ internal fun MockStepStatus(
         DraftSaveStatus.Retrying -> {
             Row(live, verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    stringResource(R.string.mock_not_saved_retrying),
+                    stringResource(R.string.mock_save_retry),
                     Modifier.weight(1f, fill = false),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                TextButton(onClick = viewModel::retrySaves) { Text(stringResource(R.string.mock_retry)) }
+                TextButton(onClick = viewModel::retrySaves) { Text(stringResource(R.string.mock_try_again)) }
             }
         }
 
         DraftSaveStatus.Refused -> {
             Text(
-                stringResource(R.string.mock_last_not_saved),
+                stringResource(R.string.mock_answer_not_saved),
                 Modifier.semantics {
                     liveRegion = LiveRegionMode.Assertive
                 },
@@ -306,22 +313,18 @@ internal fun MockMainButton(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
 ) = Button(
     busy = busy,
     onClick = onClick,
-    modifier = modifier.heightIn(min = 48.dp),
+    modifier = modifier,
     enabled = enabled,
-    leadingIcon = leadingIcon,
-    trailingIcon = trailingIcon,
 ) { Text(text) }
 
-/** "Mock exam · Mathematics". */
+/** "Mock exam", or "Mock exam · Mathematics" for one subject. */
 @Composable
 internal fun MockEyebrow(view: MockExam) {
-    val shape = mockShapeLabel(view.purpose == MockExam.Purpose.PLACEMENT, view.shape)
-    Eyebrow(if (shape.isEmpty()) stringResource(R.string.mock_label) else stringResource(R.string.mock_label_shape, shape))
+    val subject = mockSubject(view.shape)
+    Eyebrow(if (subject.isEmpty()) stringResource(R.string.mock_label) else stringResource(R.string.mock_label_shape, subject))
 }
 
 @Composable
@@ -361,12 +364,11 @@ private fun MockTimeUp(
         actions = {
             TaskActions { main ->
                 MockMainButton(
-                    text = stringResource(if (isLast) R.string.mock_see_how else R.string.mock_continue_section),
+                    text = stringResource(if (isLast) R.string.mock_see_result else R.string.mock_continue_section),
                     busy = handingIn,
                     enabled = !run.pending,
                     onClick = viewModel::submitSection,
                     modifier = main,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 )
             }
         },
@@ -394,16 +396,20 @@ private fun MockHandedIn(
         actions = {
             TaskActions { main ->
                 MockMainButton(
-                    text = stringResource(R.string.mock_see_how),
+                    text = stringResource(R.string.mock_see_result),
                     busy = finishing,
                     enabled = !run.pending,
                     onClick = viewModel::finish,
                     modifier = main,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 )
             }
         },
-    ) { StepHeader { StepTitle(stringResource(R.string.mock_handed_in_title)) } }
+    ) {
+        StepHeader {
+            StepTitle(stringResource(R.string.mock_handed_in_title))
+            StepDetail(stringResource(R.string.mock_answers_saved))
+        }
+    }
 }
 
 /** When the break ends, its clock already started the next section on the server; this shows it. */
@@ -428,12 +434,11 @@ private fun MockBreak(
         actions = {
             TaskActions { main ->
                 MockMainButton(
-                    stringResource(R.string.mock_start_next),
+                    stringResource(R.string.mock_start_now),
                     busy = run.busy == MockStep.EndBreak,
                     enabled = !run.pending,
                     onClick = viewModel::endBreak,
                     modifier = main,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 )
             }
         },
@@ -509,8 +514,8 @@ private fun MockExpired(
                             run.view.planItemId?.let { AppRoute.Challenge(it.toString(), route.sessionId) } ?: AppRoute.MockChooser,
                         )
                     },
-                    modifier = main.heightIn(min = 48.dp),
-                ) { Text(stringResource(R.string.mock_take_new)) }
+                    modifier = main,
+                ) { Text(stringResource(R.string.mock_take_another)) }
             }
         },
     ) {

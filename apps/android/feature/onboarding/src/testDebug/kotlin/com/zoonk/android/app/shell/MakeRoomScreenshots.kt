@@ -18,6 +18,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -103,7 +104,8 @@ class MakeRoomScreenshots {
                                     pausing = goals.first().id.takeIf { pausing },
                                     failed = failed,
                                     onPause = {},
-                                    onGetPlus = {},
+                                    onSubscribe = {},
+                                    onDismiss = {},
                                 )
                             }
                         }
@@ -113,7 +115,7 @@ class MakeRoomScreenshots {
         }
         val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         File(folder).mkdirs()
-        File(folder, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     private fun goal(
@@ -126,7 +128,9 @@ class MakeRoomScreenshots {
             {"courseChapterId":null,"courseId":null,"courseLevel":null,"dailyMinutes":20,"language":"en",
              "id":"0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a$number","isActive":${number == 1},"isSettingUp":false,
              "kind":"${if (flag == null) "learn" else "language"}","languageFlag":${flag?.let { "\"$it\"" }},"status":"active",
-             "targetDate":null,"targetLanguage":${flag?.let { "\"es\"" }},"targetRegion":${flag?.let { "\"$it\"" }},
+             "targetDate":null,"targetDateEstimated":false,"targetLanguage":${flag?.let {
+                "\"es\""
+            }},"targetRegion":${flag?.let { "\"$it\"" }},
              "regionChoices":[],"contentCountry":null,"countryDependent":false,"examCountry":null,"examplesCountry":null,"languageCountry":{"code":"US","name":"United States"},"suggested":[],"title":"$name","displayName":"$name"}
             """.trimIndent(),
         )

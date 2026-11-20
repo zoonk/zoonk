@@ -2,9 +2,9 @@
 
 import { OTP_LINK_CLASS } from "@/components/otp";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { type getLoginHref } from "../../_utils/auth-redirect";
 
 export function ChangeEmailLink({
@@ -14,14 +14,17 @@ export function ChangeEmailLink({
   children: React.ReactNode;
   href: ReturnType<typeof getLoginHref>;
 }) {
-  const router = useRouter();
-
-  useKeyboardCallback("Escape", () => router.push(href), { mode: "none" });
+  const ref = useEscapeClick<HTMLAnchorElement>({ fromField: true });
 
   return (
-    <Link aria-keyshortcuts="Escape" className={OTP_LINK_CLASS} href={href}>
+    <Link
+      aria-keyshortcuts={shortcutKeys("leave")}
+      className={OTP_LINK_CLASS}
+      href={href}
+      ref={ref}
+    >
       {children}
-      <ShortcutKbd>Esc</ShortcutKbd>
+      <ShortcutKbd shortcut="leave" />
     </Link>
   );
 }

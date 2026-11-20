@@ -1,7 +1,9 @@
 "use client";
 
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
+import { VisitorLook } from "@/components/learner/visitor-look";
 import { usePathname } from "@/i18n/navigation";
+import { getActiveTab } from "@/lib/learn/active-tab";
 import { useTabMissions } from "@/lib/learn/tab-missions-provider";
 import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
 import { markAppEntry } from "@zoonk/learn/bar";
@@ -14,42 +16,26 @@ import {
   type LearnTabMissions,
 } from "@zoonk/learn/navigation";
 import { LearnShellMain } from "@zoonk/learn/shell";
-import { SIDEBAR_COUNT_CLASS } from "@zoonk/ui/components/sidebar";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useLayoutEffect } from "react";
-
-const TAB_PATHS: Record<string, LearnTab> = {
-  buddy: "buddy",
-  content: "journey",
-  exam: "journey",
-  "mind-maps": "journey",
-  mistakes: "today",
-  mock: "journey",
-  plan: "journey",
-  speaking: "today",
-  today: "today",
-};
+import { VisitorSideLinks } from "./learn-sidebar-learner";
+import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 
 const TAB_ROOTS = new Set<string>(["buddy", "plan", "today"]);
-
-const SIDEBAR_PATHS = new Set<string>(["exam", "mind-maps", "mistakes", "mock", "speaking"]);
 
 function useIsOnboarding(): boolean {
   return useSelectedLayoutSegments().includes("(onboarding)");
 }
 
 /** By the path, not the layout's segment: a pushed page belongs to the tab it opens from. */
-function useActiveTab({ sidebar = false }: { sidebar?: boolean } = {}): LearnTab | null {
-  const [, first = ""] = usePathname().split("/");
+function useActiveTab(): LearnTab | null {
+  const pathname = usePathname();
   const onboarding = useIsOnboarding();
 
-  if (onboarding || (sidebar && SIDEBAR_PATHS.has(first))) {
-    return null;
-  }
-
-  return TAB_PATHS[first] ?? null;
+  return onboarding ? null : getActiveTab(pathname);
 }
 
 type TabsProps = { buddy?: LearnBuddy | null; missions?: LearnTabMissions };
@@ -74,35 +60,21 @@ function useFrameTabs(learner: LearnerSummaryState): TabsProps {
 
 const UNREAD: LearnerSummaryState = { status: "not-loaded" };
 
-function TodayCount({ learner }: { learner: LearnerSummaryState }) {
-  const t = useExtracted();
-  const blocksLeft = learner.status === "ready" ? (learner.summary.today?.blocksLeft ?? 0) : 0;
-
-  if (!blocksLeft) {
-    return null;
-  }
-
+function renderBuddyPlaceholder(className: string) {
   return (
-    <span className={SIDEBAR_COUNT_CLASS}>
-      <span aria-hidden="true">{blocksLeft}</span>
-      <span className="sr-only">
-        {t("{count, plural, one {# activity left} other {# activities left}}", {
-          count: blocksLeft,
-        })}
-      </span>
-    </span>
+    <PrivateShellPlaceholder>
+      <Skeleton aria-hidden="true" className={className} />
+    </PrivateShellPlaceholder>
   );
 }
 
-type SideTabsProps = TabsProps & { todayCount: React.ReactNode };
-
-function CurrentSideTabs({ buddy, missions, todayCount }: SideTabsProps) {
+function CurrentSideTabs({ buddy, missions }: TabsProps) {
   return (
     <LearnSideNavigation
-      activeTab={useActiveTab({ sidebar: true })}
+      activeTab={useActiveTab()}
       buddy={buddy}
       missions={missions}
-      todayCount={todayCount}
+      renderBuddyPlaceholder={renderBuddyPlaceholder}
     />
   );
 }
@@ -115,7 +87,15 @@ function CurrentBottomTabs({ buddy, missions }: TabsProps) {
     return null;
   }
 
-  return <LearnBottomNavigation activeTab={activeTab} buddy={buddy} missions={missions} />;
+  return (
+    <LearnBottomNavigation
+      activeTab={activeTab}
+      buddy={buddy}
+      missions={missions}
+      onSearch={openCommandPalette}
+      renderBuddyPlaceholder={renderBuddyPlaceholder}
+    />
+  );
 }
 
 /** `contents` keeps the bar sticky to the frame. */
@@ -123,9 +103,8 @@ const ONBOARDING_FIRST_PAINT_CLASS =
   "contents [[data-slot=learn-shell-content]:has([data-onboarding-bar])_&]:hidden";
 
 /** A page with its own id has a path only known once it's open, so the tabs are unmarked until then. */
-function SideTabs({ learner }: { learner: LearnerSummaryState }) {
+function LearnerSideTabs({ learner }: { learner: LearnerSummaryState }) {
   const { buddy, missions } = useFrameTabs(learner);
-  const todayCount = <TodayCount learner={learner} />;
 
   return (
     <Suspense
@@ -134,13 +113,39 @@ function SideTabs({ learner }: { learner: LearnerSummaryState }) {
           activeTab={null}
           buddy={buddy}
           missions={missions}
-          todayCount={todayCount}
+          renderBuddyPlaceholder={renderBuddyPlaceholder}
         />
       }
     >
-      <CurrentSideTabs buddy={buddy} missions={missions} todayCount={todayCount} />
+      <CurrentSideTabs buddy={buddy} missions={missions} />
     </Suspense>
   );
+}
+
+/**
+ * The tabs are a learner's own pages: for someone without a session each would only open a log-in
+ * wall, so they get the catalog and the prices instead. Until the learner is read, the page's
+ * signed-in mark picks which to draw.
+ */
+function SideTabs({ learner }: { learner: LearnerSummaryState }) {
+  if (learner.status === "visitor") {
+    return <VisitorSideLinks />;
+  }
+
+  if (learner.status !== "ready") {
+    return (
+      <>
+        <VisitorLook>
+          <VisitorSideLinks />
+        </VisitorLook>
+        <div className="signed-in:contents hidden">
+          <LearnerSideTabs learner={learner} />
+        </div>
+      </>
+    );
+  }
+
+  return <LearnerSideTabs learner={learner} />;
 }
 
 function FrameSideTabs() {
@@ -155,20 +160,43 @@ export function LearnSideTabs() {
   );
 }
 
-function BottomTabs({ learner }: { learner: LearnerSummaryState }) {
+function LearnerBottomTabs({ learner }: { learner: LearnerSummaryState }) {
   const { buddy, missions } = useFrameTabs(learner);
 
   return (
     <Suspense
       fallback={
         <div className={ONBOARDING_FIRST_PAINT_CLASS}>
-          <LearnBottomNavigation activeTab={null} buddy={buddy} missions={missions} />
+          <LearnBottomNavigation
+            activeTab={null}
+            buddy={buddy}
+            missions={missions}
+            onSearch={openCommandPalette}
+            renderBuddyPlaceholder={renderBuddyPlaceholder}
+          />
         </div>
       }
     >
       <CurrentBottomTabs buddy={buddy} missions={missions} />
     </Suspense>
   );
+}
+
+/** No tab bar for someone without a session: the top bar holds what they can use. */
+function BottomTabs({ learner }: { learner: LearnerSummaryState }) {
+  if (learner.status === "visitor") {
+    return null;
+  }
+
+  if (learner.status !== "ready") {
+    return (
+      <div className="signed-in:contents hidden">
+        <LearnerBottomTabs learner={learner} />
+      </div>
+    );
+  }
+
+  return <LearnerBottomTabs learner={learner} />;
 }
 
 function FrameBottomTabs() {
@@ -193,7 +221,7 @@ function TabRootContent({ children }: { children: React.ReactNode }) {
 }
 
 const OWN_BAR_FIRST_PAINT_CLASS =
-  "[[data-slot=learn-shell-content]:has([data-slot=learn-page-bar],[data-slot=learn-section-bar])_&]:hidden";
+  "[[data-slot=learn-shell-content]:has([data-slot=learn-shell-main]_[data-slot=page-top-bar])_&]:hidden";
 
 /**
  * The path is read after the first paint, so the bar is drawn until then and a tab's own page never

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -22,12 +21,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -53,9 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -70,8 +63,10 @@ import com.zoonk.android.feature.search.SearchAction
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.EmptyState
+import com.zoonk.android.ui.components.FilterChips
+import com.zoonk.android.ui.components.FilterList
+import com.zoonk.android.ui.components.FilterTab
 import com.zoonk.android.ui.components.GoalBox
-import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LoadMoreFooter
 import com.zoonk.android.ui.components.OutlinedButton
@@ -80,7 +75,6 @@ import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectGlyph
 import com.zoonk.android.ui.components.SubjectLabel
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.onPageSpan
@@ -248,22 +242,12 @@ private fun CategoryList(
     onSelect: (String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val description = stringResource(R.string.catalog_categories)
-    val locale = currentLocale()
-
-    // Main's category list: the category shown on `muted`, each with its number of courses.
-    Column(modifier.padding(vertical = 12.dp).selectableGroup().semantics { contentDescription = description }) {
-        categories.forEach { link ->
-            ListRow(
-                headline = { Text(link.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                modifier = Modifier.selectable(selected = link.selected, role = Role.Tab) { onSelect(link.key) },
-                highlighted = link.selected,
-                leading = link.key?.let { { SubjectGlyph(Subject.of(it)) } },
-                meta = { Text(formatNumber(link.count.toDouble(), locale)) },
-            )
-        }
-    }
+    FilterList(categories.asTabs(), stringResource(R.string.catalog_categories), onSelect, modifier.padding(vertical = 12.dp))
 }
+
+@Composable
+private fun List<CategoryLink>.asTabs(): List<FilterTab> =
+    map { link -> FilterTab(link.key, link.label, link.count, link.selected, link.key?.let { { SubjectGlyph(Subject.of(it)) } }) }
 
 /**
  * Main's catalog header: the page's title and its line, then the goal box. The goal is the screen's,
@@ -293,55 +277,14 @@ private fun CatalogHeader(
     }
 }
 
-/**
- * Main pins the chips under the bar on phones, so another category is in reach however far the list
- * scrolls. Material's filter chips, drawn as main's small buttons: the category shown in ink, the
- * others outlined.
- */
+/** Main pins the chips under the bar on phones, so another category is in reach however far the list scrolls. */
 @Composable
 private fun CategoryChips(
     categories: List<CategoryLink>,
     onSelect: (String?) -> Unit,
 ) {
-    val description = stringResource(R.string.catalog_categories)
-
     Surface {
-        LazyRow(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = 8.dp,
-                    ).selectableGroup()
-                    .semantics { contentDescription = description },
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(categories.size, key = { categories[it].key ?: "all" }) { index ->
-                val link = categories[index]
-
-                FilterChip(
-                    selected = link.selected,
-                    onClick = { onSelect(link.key) },
-                    label = { Text(link.label, style = MaterialTheme.typography.labelMedium) },
-                    leadingIcon = link.key?.let { { SubjectGlyph(Subject.of(it)) } },
-                    colors =
-                        FilterChipDefaults.filterChipColors(
-                            labelColor = MaterialTheme.colorScheme.onSurface,
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                        ),
-                    border =
-                        FilterChipDefaults.filterChipBorder(
-                            enabled = true,
-                            selected = link.selected,
-                            borderColor = MaterialTheme.colorScheme.outline,
-                            selectedBorderColor = MaterialTheme.colorScheme.primary,
-                            selectedBorderWidth = 1.dp,
-                        ),
-                )
-            }
-        }
+        FilterChips(categories.asTabs(), stringResource(R.string.catalog_categories), onSelect, Modifier.padding(vertical = 8.dp))
     }
 }
 
@@ -460,7 +403,7 @@ private fun CourseCell(
 ) {
     val locale = currentLocale()
     val subject = Subject.of(course.subject?.value)
-    val description = course.description?.let { firstSentence(it, course.language) }
+    val promise = course.promise?.let { firstSentence(it, course.language) }
 
     Column {
         Row(
@@ -480,10 +423,10 @@ private fun CourseCell(
                     if (subject.key != category) SubjectLabel(subject)
                 }
 
-                if (!description.isNullOrEmpty()) {
+                if (!promise.isNullOrEmpty()) {
                     Spacer(Modifier.size(4.dp))
                     Text(
-                        description,
+                        promise,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 2,

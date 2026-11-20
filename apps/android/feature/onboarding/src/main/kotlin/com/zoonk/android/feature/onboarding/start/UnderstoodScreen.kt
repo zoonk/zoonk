@@ -49,19 +49,24 @@ import com.zoonk.android.feature.country.CountrySheet
 import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
+import com.zoonk.android.feature.onboarding.lifted
 import com.zoonk.android.feature.onboarding.setup.TargetDatePicker
 import com.zoonk.android.feature.onboarding.setup.goalZone
 import com.zoonk.android.feature.onboarding.setup.targetDateBounds
 import com.zoonk.android.feature.plan.Variety
 import com.zoonk.android.feature.plan.VarietySheet
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.feature.subscription.GateWords
+import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeOfDayDialog
+import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
@@ -94,7 +99,7 @@ internal fun ColumnScope.UnderstoodScreen(
     edits: FactEdits,
     onRewrite: (String) -> Unit,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,
 ) {
     val locale = currentLocale()
@@ -112,12 +117,13 @@ internal fun ColumnScope.UnderstoodScreen(
     val locked = understanding.goals.drop(startable.size)
     val full = activeGoalsLeft == 0L
     // A full card's way on for a guest is a free account, which has room; for an account it's a pause or Plus.
-    val shownError = if (full && !hasAccount) GoalError.Limit(GoalLimitReason.Guest) else error
+    val shownError = if (full && !hasAccount) GoalError.Limit(GoalLimitReason.Guest) else error?.takeUnless { it.lifted() }
     // The draft counts the goals the plan can still follow; the up-front read of that cap may be older.
     val plusLimit =
         GoalLimitReason.ActiveGoals.takeIf { full && hasAccount }
             ?: listOfNotNull((shownError as? GoalError.Limit)?.reason, goalLimit.takeIf { it != GoalLimitReason.ActiveGoals })
                 .firstOrNull { it.isPlusLimit }
+                ?.takeUnless { GoalError.Limit(it).lifted() }
 
     if (rewriting) {
         RewriteWords(words = goal, disabled = isCreating, onCancel = { rewriting = false }, onRewrite = onRewrite)
@@ -166,20 +172,19 @@ internal fun ColumnScope.UnderstoodScreen(
     }
 
     if (locked.isNotEmpty()) {
-        val remedy = (if (hasAccount) onSeePlus else onCreateAccount).takeIf { plusLimit == null && shownError?.needsAccount != true }
+        val remedy = (if (hasAccount) onSubscribe else onCreateAccount).takeIf { plusLimit == null && shownError?.needsAccount != true }
         LockedGoals(locked, rows, timeZone, waiting = startable.isNotEmpty(), hasAccount, remedy)
     }
 
     if (plusLimit != null) {
-        GoalLimitWall(plusLimit, onSeePlus, onOpenPlan)
+        GoalLimitWall(plusLimit, onSubscribe, onOpenPlan)
     } else {
-        GoalFooter(shownError, onCreateAccount, onOpenPlan, onSeePlus) {
+        GoalFooter(shownError, onCreateAccount, onOpenPlan, onSubscribe) {
             Button(
                 busy = isCreating,
                 onClick = onConfirm,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !rewriting,
-                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             ) {
                 Text(stringResource(R.string.onboarding_looks_right))
             }
@@ -222,26 +227,29 @@ private fun LockedGoals(
         }
     }
     if (!waiting) return
-    val one = goals.size == 1
     if (hasAccount) {
-        PlusNotice(
-            onSeePlus = onRemedy,
-            description =
-                stringResource(if (one) R.string.onboarding_understood_locked_goal else R.string.onboarding_understood_locked_goals),
-        )
-    } else {
-        PlusNotice(
-            onSeePlus = null,
-            title = stringResource(R.string.onboarding_understood_free_account_title),
-            description =
-                stringResource(
-                    if (one) R.string.onboarding_understood_locked_goal_guest else R.string.onboarding_understood_locked_goals_guest,
-                ),
-            action =
-                onRemedy?.let { createAccount ->
-                    { OutlinedButton(onClick = createAccount) { Text(stringResource(R.string.onboarding_create_account)) } }
+        val title = stringResource(R.string.onboarding_understood_locked_title)
+        val line =
+            stringResource(
+                if (goals.size ==
+                    1
+                ) {
+                    R.string.onboarding_understood_locked_line_one
+                } else {
+                    R.string.onboarding_understood_locked_line_more
                 },
-        )
+            )
+        if (onRemedy != null) SubscribeGate(title, onSubscribe = onRemedy, line = line) else GateWords(title, line)
+    } else {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            GateWords(stringResource(R.string.onboarding_understood_free_account_title), line = null)
+            onRemedy?.let { createAccount ->
+                OutlinedButton(
+                    onClick = createAccount,
+                    size = ButtonSize.Small,
+                ) { Text(stringResource(R.string.onboarding_create_account)) }
+            }
+        }
     }
 }
 
@@ -359,7 +367,7 @@ private fun FactRow(
         }
 
         if (row.editable != null && !(editing && editor == EditorKind.Text)) {
-            IconButton(onClick = { onEdit(true) }) {
+            IconButton(onClick = { onEdit(true) }, modifier = Modifier.iconButtonEdge(ButtonEdge.End)) {
                 Icon(
                     painterResource(R.drawable.ic_edit),
                     contentDescription = stringResource(R.string.onboarding_edit_fact, row.label),
@@ -385,6 +393,7 @@ private fun FactRow(
             onPick = save,
             pending = saving,
             failed = failed,
+            label = languageAim.label,
         )
     }
     if (editing && editor == EditorKind.Time) {
@@ -461,7 +470,7 @@ private fun TextEditor(
             keyboardActions = KeyboardActions(onDone = { submit() }),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(busy = saving, onClick = { submit() }, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+            Button(busy = saving, onClick = { submit() }) {
                 Text(stringResource(R.string.onboarding_save))
             }
             TextButton(onClick = onCancel, enabled = !saving) { Text(stringResource(R.string.onboarding_cancel)) }

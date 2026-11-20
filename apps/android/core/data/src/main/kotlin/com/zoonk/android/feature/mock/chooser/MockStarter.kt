@@ -14,8 +14,10 @@ import com.zoonk.api.models.MockQuestionsGeneration
 import com.zoonk.api.models.MockQuestionsInput
 import com.zoonk.api.models.MockShape
 import kotlinx.coroutines.delay
+import java.time.Instant
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaInstant
 
 sealed interface MockStartOutcome {
     /** Started now, or the one already running: either way the learner goes on in it. */
@@ -29,6 +31,8 @@ sealed interface MockStartOutcome {
         val examQuestions: Long,
         val minutes: Long,
         val limit: AnytimeMock.Limit?,
+        /** When the full mock fits again, for a cap counted over the last 30 days. */
+        val availableAt: Instant?,
     ) : MockStartOutcome
 
     data object NeedsQuestions : MockStartOutcome
@@ -53,12 +57,19 @@ sealed interface QuestionWriting {
     data object PlusRequired : QuestionWriting
 }
 
+/**
+ * Which start this is: the learner's first tap, the start after a question-writing run (the server
+ * then answers with the mock or its short numbers, never asks for questions again), or the start the
+ * learner confirmed after seeing those numbers.
+ */
+enum class MockStartAsk { First, AfterWriting, AcceptFewer }
+
 interface MockStartApi {
     suspend fun start(
         session: AuthenticatedSession,
         goalId: UUID,
         shape: MockShape,
-        acceptFewer: Boolean,
+        ask: MockStartAsk,
     ): AnytimeMock
 
     suspend fun writeQuestions(
@@ -75,9 +86,16 @@ class LiveMockStartApi(
         session: AuthenticatedSession,
         goalId: UUID,
         shape: MockShape,
-        acceptFewer: Boolean,
+        ask: MockStartAsk,
     ) = perform {
-        api.clients(session).exams.startAnytimeMock(goalId, AnytimeMockInput(shape = shape, acceptFewer = acceptFewer))
+        api.clients(session).exams.startAnytimeMock(
+            goalId,
+            AnytimeMockInput(
+                shape = shape,
+                acceptFewer = ask == MockStartAsk.AcceptFewer,
+                afterWriting = ask == MockStartAsk.AfterWriting,
+            ),
+        )
     }
 
     override suspend fun writeQuestions(
@@ -103,12 +121,12 @@ class MockStarter(
     suspend fun start(
         goalId: UUID,
         shape: MockShape,
-        acceptFewer: Boolean,
+        ask: MockStartAsk,
     ): MutationResult<MockStartOutcome> {
         val result =
             cache.mutate { session ->
                 try {
-                    outcome(api.start(session, goalId, shape, acceptFewer))
+                    outcome(api.start(session, goalId, shape, ask))
                 } catch (e: ApiException) {
                     when (e.code) {
                         PLUS_REQUIRED -> MockStartOutcome.PlusRequired
@@ -166,6 +184,7 @@ class MockStarter(
                     examQuestions = mock.examQuestions ?: 0,
                     minutes = mock.minutes ?: 0,
                     limit = mock.limit,
+                    availableAt = mock.availableAt?.toJavaInstant(),
                 )
             }
         }

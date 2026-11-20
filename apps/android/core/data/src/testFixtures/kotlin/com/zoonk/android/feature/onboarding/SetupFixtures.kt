@@ -145,7 +145,7 @@ fun phaseOf(
     chapters: String = "[]",
 ) = """
     {"chapterCount":0,"chapters":$chapters,"hours":20,"index":$index,"kind":"$kind","lessonsDone":0,"lessonsTotal":12,
-     "mocks":{"count":0,"nextDate":null},"name":"","state":"$state","startDate":"$start","endDate":"$end"}
+     "mocks":{"count":0,"nextDate":null},"name":"","notPlannedReason":${if (state == "leftOut") "\"time\"" else "null"},"state":"$state","startDate":"$start","endDate":"$end"}
     """.trimIndent()
 
 fun chapterOf(title: String) =
@@ -176,7 +176,7 @@ fun planOf(
     val weekStart = LocalDate.now()
     return ApiJson.decodeFromString(
         """
-        {"access":{"freeUntil":null,"freeWeekOver":false,"mocksRequirePlus":false},"areas":[],"changes":[],
+        {"access":{"mocksRequirePlus":false},"areas":[],"changes":[],
          "estimate":{"remainingHours":40,"totalHours":40${endDate?.let { ""","endDate":"$it"""" } ?: ""}},
          "examChoices":$examChoices,"examDocument":"notice","fundedMocks":[],"goalId":"$GOAL_ID","phases":[${phases.joinToString(",")}],
          "planId":"$PLAN_ID","ready":$ready${notice?.let {
@@ -295,29 +295,6 @@ fun specialtyChoice(subject: String? = null) =
       "subjects":[${subject?.let { "\"$it\"" }.orEmpty()}],"take":1}]
     """.trimIndent()
 
-fun revealDaysOf(): String {
-    val today = LocalDate.now()
-    val titles =
-        listOf(
-            "Songs and calls",
-            "Pitch, rhythm and tone",
-            "Who sings, and when",
-            "The dawn chorus",
-            "Calls that warn",
-            "Listening in layers",
-        )
-    return titles
-        .mapIndexed { index, title ->
-            """{"date":"${today.plusDays(
-                index.toLong() + 1,
-            )}","items":[{"chapterId":null,"id":null,"kind":"lesson","lessonId":"${"019a482c-6a00-7000-8000-00000000002$index"}",
-          "minutes":6,"requiresPlus":false,"scheduledFor":"${today.plusDays(
-                index.toLong() + 1,
-            )}","skillId":null,"status":"todo","title":"$title","writing":false}],
-          "minutes":6,"mockFunding":null,"state":"${if (index == 0) "today" else "upcoming"}"}"""
-        }.joinToString(",", "[", "]")
-}
-
 fun revealTodayOf(): com.zoonk.api.models.PlanRevealToday {
     val today = LocalDate.now().toString()
     val blocks =
@@ -361,12 +338,6 @@ fun revealTodayOf(): com.zoonk.api.models.PlanRevealToday {
                     put("left", kotlinx.serialization.json.JsonPrimitive(15))
                 },
         )
-    return com.zoonk.api.models.PlanRevealToday(
-        today = todayDay,
-        minutes = 15,
-        nextDays = ApiJson.decodeFromString(revealDaysOf()),
-        week =
-            com.zoonk.api.models
-                .PlanRevealTodayWeek(days = 7, minutes = 51),
-    )
+    return com.zoonk.api.models
+        .PlanRevealToday(today = todayDay)
 }

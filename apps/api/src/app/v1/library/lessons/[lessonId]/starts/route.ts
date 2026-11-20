@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
+import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { libraryLessonStartInputSchema } from "@zoonk/core/lesson-player/contract";
@@ -34,10 +34,6 @@ async function createLibraryLessonStart(
 
   if (outcome.status === "notFound") {
     return errors.notFound();
-  }
-
-  if (outcome.status === "plusRequired") {
-    return plusRequiredError();
   }
 
   return usageDecisionError(outcome);

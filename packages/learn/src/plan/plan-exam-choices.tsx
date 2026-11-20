@@ -2,29 +2,27 @@
 
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
+import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { useId, useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
 import {
   Suggestion,
-  SuggestionAction,
   SuggestionActions,
-  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
-  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
+import { useStillMounted } from "../_utils/use-still-mounted";
 import { ExamChoicePicks } from "./exam-choice-picks";
+import { ExamChoiceAnswers, useExamChoiceQuestion } from "./exam-choice-question";
+import { useSharedRequest } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
-import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import {
   SlotContent,
   type SlotItem,
@@ -32,78 +30,101 @@ import {
   usePlanSuggestionSlot,
   useSlotAnswer,
 } from "./plan-suggestion-context";
-import { useChangeSentence } from "./use-change-sentence";
+import { usePlanChangeSentence } from "./use-change-sentence";
 import { useTappedChoice } from "./use-tapped-choice";
 
 function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => void } = {}) {
   const { actions, keepFocus } = usePlanScreen();
   const editor = useReportEditorChange();
   const [isPending, startTransition] = useTransition();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
+  const isMounted = useStillMounted();
+  const request = useSharedRequest("choose", isPending);
 
   const choose = (input: { group: string; subjects: string[] }, answer?: () => void) => {
-    setFailed(false);
     keepFocus();
 
     startTransition(async () => {
+      request.start();
       const { data: outcome } = await safeAsync(() => actions.chooseExamOption(input));
 
       // Updates after an `await` join the transition only when started in one again.
       startTransition(() => {
-        setFailed(!outcome);
-        answer?.();
+        if (!outcome) {
+          saveFailed();
+        }
 
         if (outcome?.change) {
           editor.report(outcome.change);
-          onChange?.(outcome.change);
+        }
+
+        if (isMounted()) {
+          answer?.();
+
+          if (outcome?.change) {
+            onChange?.(outcome.change);
+          }
         }
       });
     });
   };
 
-  return { choose, failed, isPending };
+  return { choose, isPending: request.busy };
 }
 
 function OneOptionChoice({
   choice,
   choose,
   isPending,
+  labelId,
 }: {
   choice: ExamChoiceView;
   choose: ReturnType<typeof useExamChoice>["choose"];
   isPending: boolean;
+  labelId: string;
 }) {
+  const t = useExtracted();
   const [saved = ""] = choice.subjects;
   const tapped = useTappedChoice(saved);
 
   return (
-    <RadioGroup
-      className="flex flex-wrap gap-2"
+    <NativeSelect
+      aria-labelledby={labelId}
       disabled={isPending}
-      onValueChange={(value) => {
-        if (typeof value === "string" && value !== saved) {
+      focusableWhenDisabled
+      onChange={(event) => {
+        const { value } = event.target;
+
+        if (value !== saved) {
           choose({ group: choice.group, subjects: [value] }, tapped.pick(value));
         }
       }}
       value={tapped.shown}
     >
+      {!tapped.shown && (
+        <NativeSelectOption disabled value="">
+          {t("Not set")}
+        </NativeSelectOption>
+      )}
+
       {choice.options.map((option) => (
-        <RadioGroupOption className={PLAN_OPTION_CLASS} key={option.name}>
-          <RadioGroupItem value={option.name} />
+        <NativeSelectOption key={option.name} value={option.name}>
           {option.shortName ?? option.name}
-        </RadioGroupOption>
+        </NativeSelectOption>
       ))}
-    </RadioGroup>
+    </NativeSelect>
   );
 }
 
 function ExamChoice({ choice }: { choice: ExamChoiceView }) {
-  const leftOutLine = useChoiceLeftOutLine();
-  const { choose, failed, isPending } = useExamChoice();
+  const labelId = useId();
+  const { choose, isPending } = useExamChoice();
 
   return (
-    <fieldset className="flex flex-col gap-2">
-      <legend className="mb-2 text-sm font-medium">{choice.group}</legend>
+    <section aria-labelledby={labelId} className="flex flex-col gap-2">
+      <h3 className="text-sm font-medium" id={labelId}>
+        {choice.group}
+      </h3>
 
       {choice.take > 1 ? (
         <ExamChoicePicks
@@ -112,15 +133,9 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
           pending={isPending}
         />
       ) : (
-        <OneOptionChoice choice={choice} choose={choose} isPending={isPending} />
+        <OneOptionChoice choice={choice} choose={choose} isPending={isPending} labelId={labelId} />
       )}
-
-      {choice.subjects.length === 0 && (
-        <p className="text-muted-foreground text-sm">{leftOutLine(choice)}</p>
-      )}
-
-      {failed && <ChangeSaveError />}
-    </fieldset>
+    </section>
   );
 }
 
@@ -132,18 +147,14 @@ export function PlanExamChoices() {
 
 export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind: "choice" }> }) {
   const t = useExtracted();
-  const sentence = useChangeSentence();
-  const leftOutLine = useChoiceLeftOutLine();
+  const sentence = usePlanChangeSentence();
+  const question = useExamChoiceQuestion();
   const { setResult } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
   const { choice } = item;
+  const title = question(choice);
 
-  const title =
-    choice.take > 1
-      ? t("{group}: which ones will you take?", { group: choice.group })
-      : t("{group}: which one will you take?", { group: choice.group });
-
-  const { choose, failed, isPending } = useExamChoice({
+  const { choose, isPending } = useExamChoice({
     onChange: (change) => setResult({ change, item, text: sentence(change) }),
   });
 
@@ -151,7 +162,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
 
   return (
     <Suggestion answered={answer !== null} label={title} mark={<SignpostIcon />}>
-      <SuggestionLine>
+      <SuggestionLine className="**:data-[slot=button]:min-h-control">
         {answer ? (
           <>
             <SuggestionResult>{answer.text}</SuggestionResult>
@@ -174,30 +185,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
             <SuggestionActions>{undo}</SuggestionActions>
           </>
         ) : (
-          <>
-            <SuggestionDescription>{leftOutLine(choice)}</SuggestionDescription>
-            {choice.take > 1 ? (
-              <ExamChoicePicks
-                choice={choice}
-                onSave={(subjects) => choose({ group: choice.group, subjects })}
-                pending={isPending}
-              />
-            ) : (
-              <SuggestionActions>
-                {choice.options.map((option) => (
-                  <SuggestionAction
-                    action={() => choose({ group: choice.group, subjects: [option.name] })}
-                    disabled={isPending}
-                    key={option.name}
-                    variant="outline"
-                  >
-                    {option.shortName ?? option.name}
-                  </SuggestionAction>
-                ))}
-              </SuggestionActions>
-            )}
-            {failed && <SuggestionSaveError />}
-          </>
+          <ExamChoiceAnswers choice={choice} onPick={choose} pending={isPending} />
         )}
       </SlotContent>
     </Suggestion>

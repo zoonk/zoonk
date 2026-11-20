@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -50,15 +49,16 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.hasContent
 import com.zoonk.android.data.value
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.LocalButtonSize
+import com.zoonk.android.ui.components.LoadFailureRetry
 import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.labelInset
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.launch
 import java.text.Normalizer
@@ -70,7 +70,7 @@ val LocalCountryCatalog = staticCompositionLocalOf<KeyedResources<String, List<C
 /**
  * The one country picker: a search over [suggested] then every country, named in [language], which
  * it reads once the sheet opens. A tap on a country picks it ([onPick]); on the [selected] one, it just closes.
- * With [allowNone], "Not set" comes first and picks null. While [pending], the row picked spins.
+ * While [pending], the row picked spins.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +81,6 @@ fun CountrySheet(
     selected: String?,
     onPick: (CountryChoice?) -> Unit,
     onDismiss: () -> Unit,
-    allowNone: Boolean = false,
     pending: Boolean = false,
     failed: Boolean = false,
 ) {
@@ -90,11 +89,11 @@ fun CountrySheet(
     val scope = rememberCoroutineScope()
     var query by rememberSaveable { mutableStateOf("") }
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
-    val pick = { choice: CountryChoice? ->
-        if (choice?.code == selected) {
+    val pick = { choice: CountryChoice ->
+        if (choice.code == selected) {
             onDismiss()
         } else {
-            picked = choice?.code ?: NONE
+            picked = choice.code
             onPick(choice)
         }
     }
@@ -136,12 +135,6 @@ fun CountrySheet(
                     unloaded(all) { scope.launch { catalog?.refresh() } }
                     return@LazyColumn
                 }
-                if (allowNone) {
-                    item(key = "none", contentType = "country") {
-                        val none = CountryChoice("", stringResource(R.string.settings_home_country_none))
-                        CountryRow(none, selected == null, busy = pending && picked == NONE, enabled = !pending) { pick(null) }
-                    }
-                }
                 if (suggested.isNotEmpty()) {
                     label("suggested", R.string.country_suggested)
                     items(suggested, key = { "suggested-${it.code}" }, contentType = { "country" }) { row(it) }
@@ -170,9 +163,7 @@ private fun LazyListScope.unloaded(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                TextButton(onClick = onRetry, modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset)) {
-                    Text(stringResource(R.string.load_failed_try_again))
-                }
+                LoadFailureRetry(onRetry = onRetry, inBar = false)
             }
         }
     } else {
@@ -198,17 +189,17 @@ private fun CountryRow(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    val home = stringResource(R.string.settings_home_country)
+    val home = stringResource(R.string.country_home_tag)
     val spoken = stringResource(R.string.country_home_label, choice.name)
     ListRow(
         headline = { Text(choice.name, Modifier.semantics { if (choice.home) contentDescription = spoken }) },
         busy = busy,
+        highlighted = selected,
         supporting = if (choice.home) ({ Text(home, Modifier.clearAndSetSemantics {}) }) else null,
         modifier =
             Modifier
-                .background(if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent)
                 .selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick),
-        trailing = { RadioButton(selected = selected, onClick = null) },
+        trailing = { RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk()) },
     )
     HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
 }
@@ -255,8 +246,5 @@ private fun normalize(text: String) =
 
 private val COMBINING_ACCENTS = Regex("\\p{Mn}+")
 private val WORD_STARTS = listOf(" ", "-", "(", "'")
-
-/** The "Not set" row's mark while it saves. */
-private const val NONE = ""
 
 private const val SKELETON_ROWS = 6

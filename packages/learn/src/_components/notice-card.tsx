@@ -3,7 +3,7 @@ import { SURFACE_CLASS } from "./surface";
 
 const NOTICE_CARD_CLASS = cn(
   SURFACE_CLASS,
-  "text-foreground [&>svg]:text-muted-foreground flex items-start gap-3 px-3.5 py-3 text-[0.8125rem] leading-5 ring-inset [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0",
+  "text-foreground [&>svg]:text-muted-foreground text-compact flex items-start gap-3 px-4 py-3 leading-5 ring-inset [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0",
 );
 
 export function NoticeCard({ className, ...props }: React.ComponentProps<"div">) {
@@ -44,7 +44,7 @@ export function NoticeCardTitle({ className, ...props }: React.ComponentProps<"p
 export function NoticeCardDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-muted-foreground text-[0.8125rem] leading-snug text-pretty", className)}
+      className={cn("text-muted-foreground text-compact leading-snug text-pretty", className)}
       data-slot="notice-card-description"
       {...props}
     />

@@ -1,6 +1,5 @@
 import { type LanguageConversation, type TransactionClient, sql } from "@zoonk/db";
 import {
-  getCallExposureMicros,
   getEndingCharge,
   getTalkEndsAt,
 } from "../../language/conversations/_utils/live-call-money";
@@ -13,7 +12,6 @@ import {
 import {
   LIVE_CALL_ATTEMPTS_PER_DAY,
   LIVE_CALL_WRAP_UP_SECONDS,
-  getCallMonthlyBudgetMicros,
   getLiveCallReservationMicros,
 } from "../limits";
 import { claimUsageInTransaction } from "./claim-usage-in-transaction";
@@ -22,16 +20,6 @@ import { getUsagePeriodStarts } from "./usage-periods";
 
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
-
-/** Must escape the transaction so a refused reservation rolls back its claimed call time. */
-export class LiveCallReservationRefusedError extends Error {
-  readonly result: LiveCallRefusal;
-  constructor(result: LiveCallRefusal) {
-    super(result.status);
-    this.name = "LiveCallReservationRefusedError";
-    this.result = result;
-  }
-}
 
 type RequestedCall = { reconnect: boolean; seconds: number };
 
@@ -114,30 +102,6 @@ async function clearOpenConnection({
   return running.state === "live" && running.conversationId !== conversationId
     ? { connectionId: running.id, conversationId: running.conversationId, status: "callInProgress" }
     : { status: "previousConnectionClosing" };
-}
-
-async function hasMonthlyBudgetLeft({
-  now,
-  transaction,
-  viewer,
-}: {
-  now: Date;
-  transaction: TransactionClient;
-  viewer: EntitlementViewer;
-}): Promise<boolean> {
-  const connections = await transaction.liveCallConnection.findMany({
-    where: {
-      OR: [{ createdAt: { gte: getUsagePeriodStarts(now).month } }, { state: { not: "ended" } }],
-      userId: viewer.userId,
-    },
-  });
-
-  const exposure = connections.reduce(
-    (total, connection) => total + getCallExposureMicros({ connection, now }),
-    0,
-  );
-
-  return exposure < getCallMonthlyBudgetMicros(viewer.tier);
 }
 
 async function newConnectionId(transaction: TransactionClient): Promise<string> {
@@ -234,18 +198,6 @@ async function holdCallTime({
 
   if (decision.status !== "allowed") {
     return decision;
-  }
-
-  if (!reconnect && !(await hasMonthlyBudgetLeft({ now, transaction, viewer }))) {
-    throw new LiveCallReservationRefusedError({
-      limit: {
-        limit: getCallMonthlyBudgetMicros(viewer.tier),
-        period: "month",
-        resource: "aiSpend",
-        tier: viewer.tier,
-      },
-      status: "limitReached",
-    });
   }
 
   const connection = await transaction.liveCallConnection.create({

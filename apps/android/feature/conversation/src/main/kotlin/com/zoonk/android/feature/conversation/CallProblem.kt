@@ -7,14 +7,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.livecall.LiveCallFailure
+import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitActions
+import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
-import com.zoonk.android.ui.components.limitMessage
+import com.zoonk.android.ui.components.comesBackLine
+import com.zoonk.android.ui.components.hasWayOn
+import com.zoonk.android.ui.components.limitLifted
+import com.zoonk.android.ui.components.limitWords
+import com.zoonk.android.ui.components.needsAccount
 
 /** Why a call stopped before its result: a failure, or a save the server refused. */
 sealed interface CallProblemKind {
@@ -33,7 +40,7 @@ internal class CallProblemActions(
     val onRetry: () -> Unit,
     val onTakeover: () -> Unit,
     val onCreateAccount: () -> Unit,
-    val onSeePlus: () -> Unit,
+    val onSubscribe: () -> Unit,
 )
 
 /** Main's `CallProblem`: what happened, in the learner's words, with the one way on. */
@@ -47,9 +54,19 @@ internal fun CallProblem(
     when {
         failure == LiveCallFailure.Limit -> {
             val limit = kind.limit ?: Limit.Reached(LimitTier.Plus, LimitPeriod.Day)
-            ProblemWithBack(title, actions.onClose) {
-                CallLimitMessage(limit, actions.onCreateAccount, actions.onSeePlus)
-            }
+            val lifted = limitLifted(limit)
+            val (label, onClick) =
+                when {
+                    lifted -> R.string.conversation_start to actions.onRetry
+                    limit.needsAccount -> R.string.limit_create_account to actions.onCreateAccount
+                    limit.hasWayOn -> R.string.subscription_subscribe to actions.onSubscribe
+                    else -> R.string.navigation_back to actions.onClose
+                }
+            // One call site whatever the action, so the message keeps its held title room when the day comes.
+            Problem(title, actions.onClose, actions = {
+                if (!lifted && limit.hasWayOn && !limit.needsAccount) TrackShown(AnalyticsEvent.SubscriptionGateShown)
+                Button(onClick = onClick, modifier = Modifier.barAction()) { Text(stringResource(label)) }
+            }) { CallLimitMessage(limit, actions.onCreateAccount, actions.onSubscribe, inBar = true) }
         }
 
         kind == CallProblemKind.TakenOver || kind == CallProblemKind.SaveEnded || failure == LiveCallFailure.Ended -> {
@@ -101,29 +118,38 @@ internal fun CallProblem(
 internal fun CallLimitMessage(
     limit: Limit.Reached,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String? = null,
+    inBar: Boolean = false,
 ) {
-    CallOffMessage(title ?: callLimitTitle(limit), modifier) {
-        Text(
-            limitMessage(limit, LimitSubject.Calls),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        LimitActions(limit, onCreateAccount, onSeePlus)
+    if (!inBar) {
+        LimitNotice(limit, LimitSubject.Calls, onCreateAccount, onSubscribe, modifier)
+        return
+    }
+    CallOffMessage(callLimitTitle(limit) ?: stringResource(R.string.limit_call_time_back), modifier) {
+        comesBackLine(limit)?.let {
+            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+        }
     }
 }
 
+/** A language plan's challenge call a free learner tried, in place under its result; [titled] is false under a title that says it. */
 @Composable
-internal fun callLimitTitle(limit: Limit.Reached) =
-    stringResource(
-        when (limit.period) {
-            LimitPeriod.Month -> R.string.conversation_no_calls_month
-            LimitPeriod.Total -> R.string.conversation_calls_need_account
-            else -> R.string.conversation_no_calls_today
-        },
+internal fun ChallengeCallGate(
+    onSubscribe: () -> Unit,
+    titled: Boolean = true,
+) {
+    TrackShown(AnalyticsEvent.SubscriptionGateShown)
+    SubscribeGate(
+        stringResource(R.string.conversation_challenge_gate_title).takeIf { titled },
+        onSubscribe,
+        line = stringResource(R.string.conversation_challenge_gate_line),
     )
+}
+
+/** What ran out, or none once its day has come. */
+@Composable
+internal fun callLimitTitle(limit: Limit.Reached): String? = limitWords(limit, LimitSubject.Calls).title
 
 @Composable
 private fun ProblemMessage(

@@ -9,7 +9,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
@@ -24,9 +28,11 @@ import com.zoonk.android.feature.tutor.turn
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.BuddyStatus
+import com.zoonk.api.models.LearnerSummaryLevel
 import com.zoonk.api.models.Memory
 import com.zoonk.api.models.MistakeListAvailability
 import org.junit.Assume.assumeTrue
@@ -77,6 +83,16 @@ class BuddyScreenshots {
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun empty() = capture("buddy-empty", dark = false, turns = emptyList(), status = STATUS.copy(firstSteps = null))
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun callsNoMissionsPhone() =
+        capture("calls-no-missions-phone", dark = false, status = STATUS.copy(today = STATUS.today?.copy(missions = emptyList())))
+
+    @Test
+    @Config(qualifiers = "w1280dp-h1000dp-land-xhdpi")
+    fun callsNoMissionsLarge() =
+        capture("calls-no-missions-large", dark = false, status = STATUS.copy(today = STATUS.today?.copy(missions = emptyList())))
+
     private fun capture(
         name: String,
         dark: Boolean,
@@ -89,7 +105,9 @@ class BuddyScreenshots {
                 remember {
                     AppContainer.preview(context).apply {
                         buddy.status.replace(status)
-                        learnerSummary.summary.replace(learnerSummary())
+                        learnerSummary.summary.replace(
+                            learnerSummary().copy(level = LearnerSummaryLevel(LearnerSummaryLevel.Color.WHITE, 2)),
+                        )
                         tutor.threads[TutorThreadKey.Plan(GOAL)].replace(TutorThread(turns, hasMore = false, nextCursor = null))
                         today.mistakes[UUID.fromString(GOAL)]
                             .replace(GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 1))
@@ -109,12 +127,13 @@ class BuddyScreenshots {
         }
         compose.waitForIdle()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use {
+        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
+        if (name == "calls-no-missions-phone") compose.onNodeWithText("Zu today").assertExists()
+        if (name.startsWith("calls-")) {
             compose
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
+                .onNode(
+                    SemanticsMatcher("opens Level") { it.config.getOrNull(SemanticsActions.OnClick)?.label == "Level" },
+                ).assertExists()
         }
     }
 

@@ -21,9 +21,10 @@ async function listCompletedLessons(request: Request) {
     return learnerAccessError(result.status);
   }
 
-  return NextResponse.json(
-    createPaginatedResponse({ hasMore: result.hasMore, items: result.lessons, offset }),
-  );
+  return NextResponse.json({
+    ...createPaginatedResponse({ hasMore: result.hasMore, items: result.lessons, offset }),
+    filter: result.filter,
+  });
 }
 
 export const GET = withApiErrorBoundary(listCompletedLessons);

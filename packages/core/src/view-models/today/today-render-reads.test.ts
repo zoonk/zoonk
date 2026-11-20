@@ -248,8 +248,8 @@ describe("Today's render reads", () => {
     );
 
     expect(reads.result[0].status).toBe("ready");
-    // One call kind: a row each from the all-time, this month's and today's counts.
-    expect(reads.rows).toBe(3);
+    // The shared totals load returns one all-time and one daily aggregate row for this call kind.
+    expect(reads.rows).toBe(2);
   });
 
   it.each(["exam", "language"] as const)(

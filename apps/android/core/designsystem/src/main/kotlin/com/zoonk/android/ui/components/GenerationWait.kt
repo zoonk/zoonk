@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -32,6 +33,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
@@ -53,6 +55,7 @@ import com.zoonk.android.data.progress
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
 import kotlinx.coroutines.delay
 import kotlin.math.exp
@@ -72,21 +75,21 @@ fun GenerationWait(
     /** When the wait began ([System.currentTimeMillis]), so a screen that takes over another's wait goes on from its bar. */
     since: Long? = null,
     share: Float? = null,
-    header: @Composable ColumnScope.() -> Unit = {},
+    header: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val progress = kind.progress(run)
     val following = run.status == GenerationRun.Status.Waiting || run.status == GenerationRun.Status.Following
     val now by ticking(following)
 
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            header()
-
-            val failure = run.failure.takeIf { run.status == GenerationRun.Status.Failed }
-            if (failure != null) {
-                GenerationFailureNotice(failure, onRetry)
-            } else {
+    Column(
+        modifier = modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Row).fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        // The wait's progress toward its name; a failure stops it where it got to.
+        val state =
+            @Composable { stateModifier: Modifier ->
                 WaitProgress(
+                    modifier = stateModifier,
                     name = stringResource(kind.label),
                     share =
                         share
@@ -99,7 +102,19 @@ fun GenerationWait(
                                 progress.activeSince ?: since,
                             ),
                     weights = progress.phases.map { it.phase.seconds },
+                    statuses = progress.phases.map { it.status },
                 )
+            }
+        if (header == null) {
+            state(Modifier)
+        } else {
+            // A header over the wait's state: the group's two rows, 16dp apart.
+            Column(
+                Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Group, gap = HEADER_GAP),
+                verticalArrangement = Arrangement.spacedBy(HEADER_GAP),
+            ) {
+                Column(Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Row), content = header)
+                state(Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Row))
             }
         }
 
@@ -113,6 +128,9 @@ fun GenerationWait(
                 )
             }
         }
+
+        // Under the steps, as main's, so a failure moves none of them.
+        run.failure.takeIf { run.status == GenerationRun.Status.Failed }?.let { GenerationFailureNotice(it, onRetry) }
     }
 }
 
@@ -134,7 +152,14 @@ fun rememberGenerationProgress(
         following,
         now,
         progress.activeSince ?: opened,
-    ).coerceAtLeast(0.08f)
+    ).coerceAtLeast(startedShare(progress.phases.map { it.phase.seconds }))
+}
+
+/** A bar that has started shows a little fill, never past what its first step's part can hold while it runs. */
+private fun startedShare(weights: List<Int>): Float {
+    val total = weights.sumOf { it.coerceAtLeast(0) }
+    val first = weights.firstOrNull()?.coerceAtLeast(0) ?: 0
+    return if (total == 0) 0f else minOf(STARTED_SHARE, first.toFloat() / total * RUNNING_PART_CAP)
 }
 
 /** Main's `WritingWait`: [hint] says what happens once it's written, so a failed run leaves it out. */
@@ -143,18 +168,34 @@ fun WritingWait(
     wait: ContentWritingWait,
     hint: String?,
     modifier: Modifier = Modifier,
-    header: @Composable ColumnScope.() -> Unit = {},
+    header: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val run by wait.run.collectAsStateWithLifecycle()
     val generationId by wait.generationId.collectAsStateWithLifecycle()
     // GenerationWait remembers its bar's drift, which belongs to one run (main keys it by generationId too).
     key(generationId) {
-        GenerationWait(wait.kind, run, onRetry = wait::retry, modifier = modifier) {
-            header()
-            if (hint != null && run.status != GenerationRun.Status.Failed) {
-                Text(hint, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-            }
-        }
+        val shownHint = hint?.takeIf { run.status != GenerationRun.Status.Failed }
+        GenerationWait(
+            wait.kind,
+            run,
+            onRetry = wait::retry,
+            modifier = modifier,
+            header =
+                if (header == null && shownHint == null) {
+                    null
+                } else {
+                    {
+                        header?.invoke(this)
+                        shownHint?.let {
+                            Text(
+                                it,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
+                },
+        )
     }
 }
 
@@ -166,50 +207,55 @@ fun GenerationFailureNotice(
     title: String? = null,
     description: String? = null,
 ) {
+    // Main's two failures read as one: the failure was ours, and Try again is the way on.
     val (icon, titleRes, descriptionRes) =
         when (failure) {
             GenerationFailure.Connection -> {
                 Triple(R.drawable.ic_wifi_off, R.string.generation_connection_lost, R.string.generation_connection_lost_description)
             }
 
-            GenerationFailure.Generation -> {
-                Triple(R.drawable.ic_error, R.string.generation_failed, R.string.generation_failed_description)
-            }
-
-            GenerationFailure.NotStarted -> {
-                Triple(R.drawable.ic_error, R.string.generation_not_started, R.string.generation_not_started_description)
+            GenerationFailure.Generation, GenerationFailure.NotStarted -> {
+                Triple(R.drawable.ic_error, R.string.generation_failed_ours, null)
             }
         }
 
     OutlinedCard(modifier = modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
         Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(title ?: stringResource(titleRes), style = MaterialTheme.typography.titleSmall)
-                Text(
-                    description ?: stringResource(descriptionRes),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+            val titleStyle = MaterialTheme.typography.titleSmall
+            // Beside a title, its description and a button, the mark sits on the title's line, at the size of text.
+            Box(Modifier.height(with(LocalDensity.current) { titleStyle.lineHeight.toDp() }), contentAlignment = Alignment.Center) {
+                Icon(
+                    painterResource(icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(TEXT_ICON_SIZE * glyphScale()),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(title ?: stringResource(titleRes), style = titleStyle)
+                (description ?: descriptionRes?.let { stringResource(it) })?.let {
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                }
                 if (onRetry != null) {
-                    Button(onClick = onRetry, modifier = Modifier.padding(top = 8.dp)) {
-                        Text(
-                            stringResource(
-                                if (failure ==
-                                    GenerationFailure.Connection
-                                ) {
-                                    R.string.generation_reconnect
-                                } else {
-                                    R.string.generation_try_again
-                                },
-                            ),
+                    val label =
+                        stringResource(
+                            if (failure ==
+                                GenerationFailure.Connection
+                            ) {
+                                R.string.generation_reconnect
+                            } else {
+                                R.string.generation_try_again
+                            },
                         )
-                    }
+                    OutlinedButton(onClick = onRetry, modifier = Modifier.padding(top = 8.dp)) { Text(label) }
                 }
             }
         }
     }
 }
+
+/** An icon beside text is the text's size (main's `size-4`). */
+private val TEXT_ICON_SIZE = 16.dp
 
 /** Main's `GenerationTimelineProgress`: a part per phase, as long as the phase usually takes, filling in order. */
 @Composable
@@ -217,6 +263,8 @@ private fun WaitProgress(
     name: String,
     share: Float,
     weights: List<Int>,
+    statuses: List<PhaseStatus>,
+    modifier: Modifier = Modifier,
 ) {
     val shown by animateFloatAsState(share, label = "generation progress")
     val percent = formatPercent(shown.toDouble(), currentLocale())
@@ -224,7 +272,7 @@ private fun WaitProgress(
 
     Row(
         modifier =
-            Modifier.clearAndSetSemantics {
+            modifier.clearAndSetSemantics {
                 contentDescription = name
                 progressBarRangeInfo = ProgressBarRangeInfo(shown, 0f..1f)
             },
@@ -233,16 +281,17 @@ private fun WaitProgress(
     ) {
         MeterParts(
             parts =
-                segmentFills(
+                phaseFills(
                     shown,
                     weights,
+                    statuses,
                 ).zip(weights) { part, weight -> MeterPart(MeterPart.Fill.Solid(fill, part), weight.toFloat()) },
             modifier = Modifier.weight(1f),
         )
         Text(
             text = percent,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.zoonkType.data,
+            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
         )
     }
 }
@@ -271,8 +320,9 @@ private fun PhaseRow(
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
                 text = label,
+                // Said as its phase and state; the words stay readable to the layout capture.
                 modifier =
-                    Modifier.clearAndSetSemantics {
+                    Modifier.semantics {
                         contentDescription = label
                         stateDescription = state
                         liveRegion = LiveRegionMode.Polite
@@ -286,7 +336,7 @@ private fun PhaseRow(
         if (elapsedMillis != null) {
             Text(
                 text = formatClock(elapsedMillis),
-                modifier = Modifier.clearAndSetSemantics {},
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.zoonkType.data.copy(lineHeight = MaterialTheme.typography.bodyMedium.lineHeight),
             )
@@ -304,16 +354,35 @@ private fun PhaseIndicator(status: PhaseStatus) {
     val ink = MaterialTheme.colorScheme.onSurface
     val faint = MaterialTheme.colorScheme.onSurface.copy(alpha = FAINT_ALPHA)
 
-    Box(Modifier.size(box), contentAlignment = Alignment.Center) {
+    // Every mark centers on one axis, the dots' and the icons' alike, so the list's marks line up down the column.
+    Box(Modifier.size(box), contentAlignment = Alignment.CenterStart) {
         when (status) {
             PhaseStatus.Pending -> {
                 Canvas(Modifier.size(box)) {
-                    drawCircle(faint, radius = size.minDimension * DOT_SHARE / 2, style = Stroke(1.dp.toPx()))
+                    drawCircle(
+                        faint,
+                        center =
+                            androidx.compose.ui.geometry
+                                .Offset(size.width * ICON_SHARE / 2, size.height / 2),
+                        radius =
+                            size.minDimension * DOT_SHARE / 2,
+                        style = Stroke(1.dp.toPx()),
+                    )
                 }
             }
 
             PhaseStatus.Active -> {
-                Canvas(Modifier.size(box)) { drawCircle(ink, radius = size.minDimension * DOT_SHARE / 2) }
+                Canvas(Modifier.size(box)) {
+                    drawCircle(
+                        ink,
+                        center =
+                            androidx.compose.ui.geometry.Offset(
+                                size.width * ICON_SHARE / 2,
+                                size.height / 2,
+                            ),
+                        radius = size.minDimension * DOT_SHARE / 2,
+                    )
+                }
             }
 
             PhaseStatus.Completed -> {
@@ -425,7 +494,7 @@ private fun driftedShare(
         if (since != null) drift.startedAt = since
         drift.since = since
     }
-    val ceiling = minOf(target, DRIFT_CAP)
+    val ceiling = driftCeiling(share, target)
     val constant = (activeMillis?.takeIf { it > 0 } ?: DEFAULT_ESTIMATE_MILLIS) / 2.0
     val drifted =
         when {
@@ -436,20 +505,50 @@ private fun driftedShare(
     return (if (following) maxOf(drifted, share, drift.shown) else share).also { drift.shown = it }
 }
 
-/** Main's `getSegmentFills`: how much of each part [share] (0 to 1) of the whole fills, the parts in order. */
-internal fun segmentFills(
+/** How far the bar drifts while a step runs from [share] toward its end at [target]. */
+internal fun driftCeiling(
+    share: Float,
+    target: Float,
+): Float = minOf(share + (target - share) * RUNNING_PART_CAP, DRIFT_CAP)
+
+/**
+ * How much of each step's part [share] (0 to 1) of the whole bar fills, each step by its [statuses], so steps
+ * running side by side fill in the order they finish: a done step's part is full, a pending one's empty, and
+ * the running ones share what [share] reaches past the done ones. Before any step reports, the first one
+ * holds the started share, so a run that fails there shows the fill its percent says.
+ */
+internal fun phaseFills(
     share: Float,
     weights: List<Int>,
+    statuses: List<PhaseStatus>,
 ): List<Float> {
+    val reported = statuses.any { it != PhaseStatus.Pending }
+    val started = statuses.mapIndexed { index, status -> if (index == 0 && !reported) PhaseStatus.Active else status }
     val sizes = weights.map { it.coerceAtLeast(0).toFloat() }
-    val reached = share.coerceIn(0f, 1f) * sizes.sum()
-    var start = 0f
-    return sizes.map { size ->
-        val fill = if (size == 0f) 0f else ((reached - start) / size).coerceIn(0f, 1f)
-        start += size
-        fill
+    val done =
+        sizes
+            .zip(started)
+            .filter { (_, status) -> status == PhaseStatus.Completed }
+            .sumOf { it.first.toDouble() }
+            .toFloat()
+    val running =
+        sizes
+            .zip(started)
+            .filter { (_, status) -> status.isRunning() }
+            .sumOf { it.first.toDouble() }
+            .toFloat()
+    val runningFill = if (running == 0f) 0f else ((share.coerceIn(0f, 1f) * sizes.sum() - done) / running).coerceIn(0f, 1f)
+    return started.map { status ->
+        when {
+            status == PhaseStatus.Completed -> 1f
+            status.isRunning() -> runningFill
+            else -> 0f
+        }
     }
 }
+
+/** A failed step keeps what it reached, as a running one shows it. */
+private fun PhaseStatus.isRunning() = this == PhaseStatus.Active || this == PhaseStatus.Failed
 
 /** Not state: only the composition that reads it writes it. */
 private class Drift(
@@ -470,8 +569,11 @@ private fun elapsed(
     val startedAt = phase.startedAt ?: return null
     val endedAt = phase.endedAt
     return when {
-        phase.status == PhaseStatus.Completed && endedAt != null -> endedAt - startedAt
+        // A step done within a second has no time worth showing: "0:00" reads as a clock that never ran.
+        phase.status == PhaseStatus.Completed && endedAt != null -> (endedAt - startedAt).takeIf { it >= TICK_MILLIS }
+
         phase.status == PhaseStatus.Active && following && clockOffsetMillis != null -> now - clockOffsetMillis - startedAt
+
         else -> null
     }?.coerceAtLeast(0)
 }
@@ -482,5 +584,12 @@ private const val DETAIL_MAX_MILLIS = 3600L
 
 /** Estimates are never the finish line: only the end of the work shows a full bar. */
 private const val DRIFT_CAP = 0.97f
+
+/** A running step's part fills at most this much of itself, so the bar never shows it done before the list does. */
+private const val RUNNING_PART_CAP = 0.9f
+
+private const val STARTED_SHARE = 0.08f
 private const val DEFAULT_ESTIMATE_MILLIS = 30_000L
 private const val FAINT_ALPHA = 0.35f
+
+private val HEADER_GAP = 16.dp

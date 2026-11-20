@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 function SubscriptionSkeleton() {
   return (
     <Page aria-hidden="true">
-      <Skeleton className="mx-1 h-9 w-64 max-w-full md:h-6.5" />
+      <Skeleton className="mx-1 h-9 w-64 max-w-full md:hidden" />
       <PlusPricingSkeleton />
     </Page>
   );

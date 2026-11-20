@@ -14,24 +14,6 @@ import { CategoryNav } from "./category-nav";
 
 export const ensureStatic = "navigation";
 
-async function CategoryNavWithData() {
-  const categories = await getCategories();
-  const locale = await getAppLocale();
-  const counts = await countCatalogCourses({ language: locale });
-  const courseCounts = new Map(counts.categories.map((item) => [item.category, item.courseCount]));
-
-  return (
-    <CategoryNav
-      categories={categories.map(({ key, label }) => ({
-        courseCount: courseCounts.get(key) ?? 0,
-        key,
-        label,
-      }))}
-      total={counts.total}
-    />
-  );
-}
-
 const CATALOG_GOAL_ID = "catalog-goal";
 
 async function CatalogGoalBox() {
@@ -50,11 +32,21 @@ async function CatalogGoalBox() {
 }
 
 export default async function CoursesLayout({ children }: LayoutProps<"/[lang]/courses">) {
-  const t = await getExtracted();
-  const categoryTitles = await getCategoryTitles();
+  const [t, categories, categoryTitles, locale] = await Promise.all([
+    getExtracted(),
+    getCategories(),
+    getCategoryTitles(),
+    getAppLocale(),
+  ]);
+
+  const counts = await countCatalogCourses({ language: locale });
+
+  const courseCounts = Object.fromEntries(
+    counts.categories.map(({ category, courseCount }) => [category, courseCount]),
+  );
 
   return (
-    <div className="flex flex-1 flex-col [--catalog-bar:4rem] lg:[--catalog-bar:0rem]">
+    <div className="flex flex-1 flex-col [--catalog-bar:calc(4rem+1px)]">
       <div aria-hidden="true" className="scroll-mt-24" id={CATALOG_TOP_TARGET_ID} />
       <CatalogBar />
 
@@ -63,12 +55,21 @@ export default async function CoursesLayout({ children }: LayoutProps<"/[lang]/c
           allTitle={t("Explore courses")}
           categoryTitles={categoryTitles}
           className="lg:col-span-2"
+          courseCounts={courseCounts}
+          total={counts.total}
           subtitle={t("Start from a course, or tell Zoonk what you're getting ready for.")}
         />
 
         <CatalogGoalBox />
 
-        <CategoryNavWithData />
+        <CategoryNav
+          categories={categories.map(({ key, label }) => ({
+            courseCount: courseCounts[key] ?? 0,
+            key,
+            label,
+          }))}
+          total={counts.total}
+        />
 
         {children}
       </div>

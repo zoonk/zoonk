@@ -2,10 +2,8 @@
 
 import { getActivityBaseMap } from "@zoonk/core/library/activities/base-maps";
 import { useFormatNumber } from "@zoonk/learn/format-number";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MapPin as MapPinIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { use, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
@@ -13,13 +11,14 @@ import { type BaseMapDrawing } from "../_assets/base-maps/base-map-drawing";
 import { projectPlace } from "../_assets/base-maps/base-map-projection";
 import { loadBaseMap } from "../_assets/base-maps/load-base-map";
 import {
+  ACTIVITY_CARD_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
-import { BaseMapView, type MapPin } from "./base-map-view";
-import { fitViewport, spreadPins } from "./map-viewport";
+import { BaseMapView, MapFrame, type MapPin } from "./base-map-view";
+import { MAP_MAX_ASPECT, fitViewport, spreadPins } from "./map-viewport";
 import { useBaseMapLabels, useBaseMapName, useBaseMapNote } from "./use-base-map-words";
 
 type MapExplorerProps = ActivityRendererProps<"mapExplorer">;
@@ -63,22 +62,9 @@ function MapLegend({
   );
 }
 
-function PlaceDetails({ number, place }: { number: number; place: Place | null }) {
-  const t = useExtracted();
-
-  if (!place) {
-    return (
-      <p className="text-muted-foreground flex items-start gap-2 text-sm">
-        <LineMarker>
-          <MapPinIcon aria-hidden="true" className="size-4" />
-        </LineMarker>
-        {t("Tap a numbered place to see what's there.")}
-      </p>
-    );
-  }
-
+function PlaceDetails({ number, place }: { number: number; place: Place }) {
   return (
-    <div className="bg-background flex gap-3 rounded-xl border p-3" data-slot="map-place-details">
+    <div className={cn(ACTIVITY_CARD_CLASS, "flex gap-3")} data-slot="map-place-details">
       <span className="bg-viz-accent text-background flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold tabular-nums">
         {number}
       </span>
@@ -114,6 +100,7 @@ function layoutPins({
     map: drawing,
     maxAspect: MAX_MAP_HEIGHT / width,
     maxZoom: drawing.maxZoom,
+    minAspect: drawing.streets.length > 0 ? MAP_MAX_ASPECT : undefined,
     points: projected.map((item) => item.point),
   });
 
@@ -140,6 +127,14 @@ function layoutPins({
   return { crop, height, pins };
 }
 
+function questionReferences(check: MapExplorerProps["content"]["check"]): string {
+  if (check.kind === "choice") {
+    return [check.question, ...check.options.map((option) => option.text)].join(" ");
+  }
+
+  return check.kind === "numeric" ? check.question : "";
+}
+
 function MapCanvas({
   content,
   drawing,
@@ -164,6 +159,7 @@ function MapCanvas({
   });
 
   const selectedIndex = fields.places.findIndex((place) => place.id === selectedId);
+  const selected = fields.places[selectedIndex];
   const baseMap = getActivityBaseMap(fields.baseMapId);
   const name = baseMap ? mapName(baseMap.id) : "";
   const note = baseMap ? mapNote(baseMap.id) : null;
@@ -175,9 +171,9 @@ function MapCanvas({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <div className="flex items-baseline justify-between gap-3">
-        <ActivityCanvasLabel className="text-sm">{name}</ActivityCanvasLabel>
-        <ActivityCanvasLabel className="shrink-0 tabular-nums">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <p className="text-sm font-medium text-pretty">{name}</p>
+        <ActivityCanvasLabel className="max-w-full min-w-0 tabular-nums">
           {t("{count} of {total} explored", {
             count: format(visited.length),
             total: format(fields.places.length),
@@ -185,25 +181,34 @@ function MapCanvas({
         </ActivityCanvasLabel>
       </div>
 
-      <div ref={ref}>
+      <MapFrame ref={ref}>
         <BaseMapView
           crop={crop}
           drawing={drawing}
+          references={[
+            questionReferences(content.check),
+            ...fields.places.map((place) => place.label),
+          ].join(" ")}
+          question={
+            content.check.kind === "choice" || content.check.kind === "numeric"
+              ? content.check.question
+              : ""
+          }
           height={height}
           labelText={labelText}
           onSelect={select}
           pins={pins}
           width={width}
         />
-      </div>
+      </MapFrame>
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <MapLegend drawing={drawing} labelText={labelText} />
         {note && <ActivityCanvasLabel>{note}</ActivityCanvasLabel>}
       </div>
 
-      <div aria-live="polite">
-        <PlaceDetails number={selectedIndex + 1} place={fields.places[selectedIndex] ?? null} />
+      <div aria-live="polite" className={selected ? undefined : "sr-only"}>
+        {selected && <PlaceDetails number={selectedIndex + 1} place={selected} />}
       </div>
 
       <ActivityTextAlternative>

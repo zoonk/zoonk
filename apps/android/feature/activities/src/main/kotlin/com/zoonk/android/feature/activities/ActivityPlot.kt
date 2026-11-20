@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -29,6 +30,9 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.LinearScale
+import com.zoonk.android.ui.components.TICK_LABEL_GAP
+import com.zoonk.android.ui.components.fittingTicks
+import com.zoonk.android.ui.components.niceTicks
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.max
@@ -189,10 +193,11 @@ fun ActivityPlot(
     xDomain: ClosedFloatingPointRange<Double>,
     yDomain: ClosedFloatingPointRange<Double>,
     yTicks: List<Double>,
-    xTicks: List<Double>,
     formatY: (Double) -> String,
     formatX: (Double) -> String,
     modifier: Modifier = Modifier,
+    xTicks: List<Double>? = null,
+    xFallbackTicks: List<List<Double>>? = null,
     area: Dp = 148.dp,
     draw: Plot.() -> Unit,
 ) {
@@ -211,27 +216,21 @@ fun ActivityPlot(
 
     Canvas(modifier.fillMaxWidth().height(height).clearAndSetSemantics {}) {
         val yLabels = yTicks.map { measurer.measure(formatY(it), style.copy(color = muted)) }
-        val xLabels = xTicks.map { measurer.measureLine(formatX(it), style.copy(color = muted), size.width) }
         val gap = LABEL_GAP.toPx()
         val left = if (yLabels.isEmpty()) RIGHT.toPx() else max(MIN_LEFT.toPx(), yLabels.maxOf { it.size.width } + gap)
         val right = size.width - RIGHT.toPx()
         val top = TOP.toPx()
-        val bottom = size.height - max(MIN_BOTTOM.toPx(), (xLabels.maxOfOrNull { it.size.height } ?: 0) + gap)
+        val bottom = size.height - max(MIN_BOTTOM.toPx(), labelHeight.toPx() + gap)
         val x = LinearScale(xDomain, left to right)
         val y = LinearScale(yDomain, bottom to top)
-        val baseline = yTicks.minOrNull()
-        val dashes = PathEffect.dashPathEffect(floatArrayOf(DASH.toPx(), DASH_GAP.toPx()))
-
-        yTicks.zip(yLabels).forEach { (tick, label) ->
-            val py = y.toPixel(tick)
-            val effect = if (tick == baseline) null else dashes
-            drawLine(gridColor, Offset(left, py), Offset(right, py), strokeWidth = 1.dp.toPx(), pathEffect = effect)
-            drawText(label, topLeft = Offset(left - gap - label.size.width, py - label.size.height / 2))
-        }
-        xTicks.zip(xLabels).forEach { (tick, label) ->
-            val start = (x.toPixel(tick) - label.size.width / 2).coerceIn(0f, size.width - label.size.width)
-            drawText(label, topLeft = Offset(start, bottom + gap))
-        }
+        val xStyle = style.copy(color = muted)
+        val xLabels =
+            xTicks?.let { ticks ->
+                val labels = mutableMapOf<Double, TextLayoutResult>()
+                val label = { tick: Double -> labels.getOrPut(tick) { measurer.measure(formatX(tick), xStyle) } }
+                x.fittedTicks(ticks, xFallbackTicks, TICK_LABEL_GAP.toPx()) { label(it).size.width }.map { it to label(it) }
+            } ?: measurer.fittedPlotTicks(x, xStyle, TICK_LABEL_GAP.toPx(), formatX)
+        drawPlotAxes(x, y, xLabels, yTicks.zip(yLabels), gridColor)
         Plot(this, x, y, top, bottom, measurer, style).draw()
     }
 }
@@ -253,7 +252,7 @@ private val MIN_LEFT = 44.dp
 private val RIGHT = 12.dp
 private val TOP = 12.dp
 private val MIN_BOTTOM = 24.dp
-private val LABEL_GAP = 6.dp
+private val LABEL_GAP = 12.dp
 private val DASH = 3.dp
 private val DASH_GAP = 4.dp
 private val DOT_RING = 2.5.dp
@@ -262,3 +261,79 @@ private val GUIDE_DASH = 3.dp
 private val GUIDE_WIDTH = 1.5.dp
 private val MAX_BAR_RADIUS = 3.dp
 private const val BAR_ROUNDING = 0.25f
+private const val ROUND_FALLBACK_TICKS = 3
+
+internal fun DrawScope.drawPlotAxes(
+    x: LinearScale,
+    y: LinearScale,
+    xLabels: List<Pair<Double, TextLayoutResult>>,
+    yLabels: List<Pair<Double, TextLayoutResult>>,
+    gridColor: Color,
+) {
+    val gap = LABEL_GAP.toPx()
+    val left = x.range.first
+    val right = x.range.second
+    val bottom = y.range.first
+    val baseline = yLabels.minOfOrNull { it.first }
+    val dashes = PathEffect.dashPathEffect(floatArrayOf(DASH.toPx(), DASH_GAP.toPx()))
+    yLabels.forEach { (tick, label) ->
+        val py = y.toPixel(tick)
+        val effect = if (tick == baseline) null else dashes
+        drawLine(gridColor, Offset(left, py), Offset(right, py), strokeWidth = 1.dp.toPx(), pathEffect = effect)
+        drawText(label, topLeft = Offset(left - gap - label.size.width, py - label.size.height / 2))
+    }
+    xLabels.forEach { (tick, label) ->
+        val start = x.labelSpan(tick, label.size.width).first
+        drawLine(gridColor, Offset(x.toPixel(tick), bottom), Offset(x.toPixel(tick), bottom + 4.dp.toPx()), 1.dp.toPx())
+        drawText(label, topLeft = Offset(start, bottom + gap))
+    }
+}
+
+/** Where the axis draws a label [width] wide for [tick]: centered on it, pulled inside the plot at its ends. */
+private fun LinearScale.labelSpan(
+    tick: Double,
+    width: Int,
+): Pair<Float, Float> {
+    val start = (toPixel(tick) - width / 2f).coerceIn(range.first, max(range.first, range.second - width))
+    return start to start + width
+}
+
+/**
+ * A chart's own [ticks] when their labels ([width] each) fit where the axis draws them, otherwise the first of [fallback]
+ * (sparser ones, densest first) that fits, round ticks unless the chart names its own, as main's `ActivityPlotAxisX`.
+ */
+internal fun LinearScale.fittedTicks(
+    ticks: List<Double>,
+    fallback: List<List<Double>>?,
+    gap: Float,
+    width: (Double) -> Int,
+): List<Double> {
+    val choices = listOf(ticks) + (fallback ?: (ROUND_FALLBACK_TICKS downTo 1).map { niceTicks(domain, it) })
+    return fittingTicks(
+        domain,
+        frame = { labelSpan(it, width(it)) },
+        values = { choices[choices.size - it].distinct().sorted() },
+        count = choices.size,
+        gap = gap,
+    )
+}
+
+internal fun TextMeasurer.fittedPlotTicks(
+    scale: LinearScale,
+    style: TextStyle,
+    gap: Float,
+    format: (Double) -> String,
+): List<Pair<Double, TextLayoutResult>> {
+    val measured = mutableMapOf<Double, TextLayoutResult>()
+    val selected =
+        fittingTicks(scale.domain, frame = { value ->
+            scale.labelSpan(value, measured.getOrPut(value) { measure(format(value), style) }.size.width)
+        }, gap = gap)
+    return selected.map { it to measured.getValue(it) }
+}
+
+internal fun TextMeasurer.axisTitle(
+    text: String,
+    style: TextStyle,
+    width: Float,
+): TextLayoutResult = measure(text, style, constraints = Constraints(maxWidth = width.toInt().coerceAtLeast(1)))

@@ -17,7 +17,7 @@ export const courseOutlineTask: Task<
     "Write one level band of a shared course: chapters with objectives and tools, and every lesson's title, description, can-do line, minutes and skills",
   generate: (input) => generateCourseOutline({ ...input, country: input.country ?? null }),
   id: "course-outline",
-  name: "Course Outline",
+  name: "Course outline",
   score: scoreCourseOutline,
   testCases: TEST_CASES,
 };

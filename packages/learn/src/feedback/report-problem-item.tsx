@@ -17,6 +17,7 @@ export function ReportProblemItem({ screen, target }: { screen: string; target?:
 
   return (
     <DropdownMenuItem
+      aria-haspopup="dialog"
       onClick={() => feedback.openFeedbackForm({ context: { ...target, screen }, isReport: true })}
     >
       <FlagIcon aria-hidden="true" />
@@ -35,6 +36,7 @@ export function SendFeedbackItem({ screen }: { screen: string }) {
 
   return (
     <DropdownMenuItem
+      aria-haspopup="dialog"
       onClick={() => feedback.openFeedbackForm({ context: { screen }, isReport: false })}
     >
       <MessageSquareIcon aria-hidden="true" />

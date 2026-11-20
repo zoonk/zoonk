@@ -14,7 +14,7 @@ export const lessonFixTask: Task<
     "Fix only the lesson screens the quality gate flagged, so the lesson passes the code checks",
   generate: (input) => fixLessonDraft({ ...input, country: input.country ?? null }),
   id: "lesson-fix",
-  name: "Lesson Fix",
+  name: "Lesson fix",
   score: scoreLessonFix,
   testCases: TEST_CASES,
 };

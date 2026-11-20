@@ -22,17 +22,19 @@ struct BeltDrawing: View {
       let bandEnd = size.width * columns.band
       let barEnd = bandEnd + size.width * columns.bar
       let band = CGRect(x: 0, y: 0, width: bandEnd, height: bandHeight)
+      let bandShape = UnevenRoundedRectangle(topLeadingRadius: 6, bottomLeadingRadius: 6).path(
+        in: band)
       let end = CGRect(x: barEnd, y: 0, width: size.width - barEnd, height: bandHeight)
       let endShape = UnevenRoundedRectangle(bottomTrailingRadius: 6, topTrailingRadius: 6).path(
         in: end)
       let beltColor = level.belt == .black ? Color.black : level.belt.color
 
-      context.fill(Path(band), with: .color(beltColor))
+      context.fill(bandShape, with: .color(beltColor))
       context.fill(endShape, with: .color(beltColor))
-      drawEdges(in: context, band: band, end: end, endShape: endShape)
+      drawEdges(in: context, bandShape: bandShape, endShape: endShape)
 
       let stitch = isLight ? Color.black.opacity(0.15) : Color.white.opacity(0.25)
-      drawStitching(in: context, from: 0, to: bandEnd - 8, color: stitch)
+      drawStitching(in: context, from: 10, to: bandEnd - 8, color: stitch)
       drawStitching(in: context, from: barEnd + 8, to: size.width - 10, color: stitch)
 
       let bar = CGRect(x: bandEnd, y: 0, width: barEnd - bandEnd, height: bandHeight)
@@ -50,7 +52,7 @@ struct BeltDrawing: View {
   }
 
   /// White would vanish into a light panel and Black into a dark one without an edge.
-  private func drawEdges(in context: GraphicsContext, band: CGRect, end: CGRect, endShape: Path) {
+  private func drawEdges(in context: GraphicsContext, bandShape: Path, endShape: Path) {
     let edge: Color? =
       switch level.belt {
       case .white: colorScheme == .dark ? nil : Color.primary.opacity(0.4)
@@ -62,12 +64,7 @@ struct BeltDrawing: View {
       return
     }
 
-    var lines = Path()
-    lines.move(to: CGPoint(x: band.minX, y: band.minY + 0.5))
-    lines.addLine(to: CGPoint(x: band.maxX, y: band.minY + 0.5))
-    lines.move(to: CGPoint(x: band.minX, y: band.maxY - 0.5))
-    lines.addLine(to: CGPoint(x: band.maxX, y: band.maxY - 0.5))
-    context.stroke(lines, with: .color(edge), lineWidth: 1)
+    context.stroke(bandShape, with: .color(edge), lineWidth: 1)
     context.stroke(endShape, with: .color(edge), lineWidth: 1)
   }
 
@@ -136,55 +133,100 @@ struct BeltRack: View {
 
   var body: some View {
     let currentIndex = ProgressBelt.allCases.firstIndex(of: current) ?? 0
+    let beltWidth: CGFloat = sizeClass == .regular ? 52 : 32
 
-    VStack(alignment: .leading, spacing: 8) {
-      HStack(alignment: .top, spacing: 0) {
+    VStack(spacing: 6) {
+      // The first and last belts sit on the column's edges, as the page's other parts do.
+      HStack(spacing: 0) {
         ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
-          VStack(spacing: 6) {
-            RackBelt(belt: belt, isTied: index <= currentIndex)
-              .frame(
-                width: sizeClass == .regular ? 52 : 32, height: sizeClass == .regular ? 38 : 26
-              )
-              .overlay {
-                if index == currentIndex {
-                  RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(.primary, lineWidth: 1.5)
-                }
-              }
-
-            if sizeClass == .regular {
-              Text(belt.shortTitle)
-                .typeStyle(.small.weight(index == currentIndex ? .medium : .regular))
-                .foregroundStyle(
-                  index == currentIndex
-                    ? AnyShapeStyle(.primary)
-                    : index < currentIndex ? AnyShapeStyle(.mutedForeground) : AnyShapeStyle(.faint)
-                )
-                .lineLimit(1)
-            }
+          if index > 0 {
+            Spacer(minLength: 0)
           }
-          .frame(maxWidth: .infinity)
-          .accessibilityElement(children: .ignore)
-          .accessibilityLabel(Text(belt.localizedTitle))
-          .accessibilityAddTraits(index == currentIndex ? .isSelected : [])
-        }
-      }
-      .accessibilityElement(children: .contain)
-      .accessibilityLabel(
-        Text(
-          "Belt progression", tableName: "Progress", comment: "Title of the belts on the Level page"
-        ))
 
-      if sizeClass != .regular {
-        HStack {
-          Text(ProgressBelt.white.localizedTitle)
-          Spacer()
-          Text(ProgressBelt.black.localizedTitle)
+          RackBelt(belt: belt, isTied: index <= currentIndex)
+            .frame(width: beltWidth, height: sizeClass == .regular ? 38 : 26)
+            .overlay {
+              if index == currentIndex {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                  .strokeBorder(.primary, lineWidth: 1.5)
+              }
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(belt.localizedTitle))
+            .accessibilityValue(
+              index <= currentIndex
+                ? Text("Earned", tableName: "Progress") : Text("Upcoming", tableName: "Progress")
+            )
+            .accessibilityAddTraits(index == currentIndex ? .isSelected : [])
         }
-        .typeStyle(.small)
-        .foregroundStyle(.faint)
-        .accessibilityHidden(true)
       }
+
+      // Every belt is named only when no name would crowd its neighbor's column; otherwise only
+      // the learner's, kept inside the row.
+      ViewThatFits(in: .horizontal) {
+        BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth) {
+          ForEach(Array(ProgressBelt.allCases.enumerated()), id: \.element) { index, belt in
+            name(belt, index: index, currentIndex: currentIndex)
+          }
+        }
+
+        BeltColumns(count: ProgressBelt.allCases.count, beltWidth: beltWidth, only: currentIndex) {
+          name(current, index: currentIndex, currentIndex: currentIndex)
+        }
+      }
+      .accessibilityHidden(true)
+    }
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel(
+      Text(
+        "Belt progression", tableName: "Progress", comment: "Title of the belts on the Level page"
+      ))
+  }
+
+  private func name(_ belt: ProgressBelt, index: Int, currentIndex: Int) -> some View {
+    Text(belt.shortTitle)
+      .typeStyle(.small.weight(index == currentIndex ? .medium : .regular))
+      .foregroundStyle(
+        index == currentIndex
+          ? AnyShapeStyle(.primary)
+          : index < currentIndex ? AnyShapeStyle(.mutedForeground) : AnyShapeStyle(.faint)
+      )
+      .lineLimit(1)
+  }
+}
+
+/// Names under the rack's belts, each centered under its belt. With every name, its ideal width
+/// keeps the widest name a few points from the next, so `ViewThatFits` drops to the learner's name
+/// alone when one would crowd its neighbor. A name is moved in from the row's ends so it never
+/// starts or ends outside the row.
+private struct BeltColumns: Layout {
+  let count: Int
+  let beltWidth: CGFloat
+  var only: Int?
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+    let widest = sizes.map(\.width).max() ?? 0
+    // Every name keeps a few points from the next one.
+    let ideal =
+      only == nil ? (widest + 4) * Double(max(count - 1, 0)) + max(widest, beltWidth) : widest
+
+    return CGSize(width: proposal.width ?? ideal, height: sizes.map(\.height).max() ?? 0)
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    let step = (bounds.width - beltWidth) / Double(max(count - 1, 1))
+
+    for (index, subview) in subviews.enumerated() {
+      let width = min(subview.sizeThatFits(.unspecified).width, bounds.width)
+      let center = bounds.minX + beltWidth / 2 + step * Double(only ?? index)
+      let x = min(max(center - width / 2, bounds.minX), bounds.maxX - width)
+
+      subview.place(
+        at: CGPoint(x: x, y: bounds.minY), anchor: .topLeading,
+        proposal: ProposedViewSize(width: width, height: nil))
     }
   }
 }
@@ -198,11 +240,16 @@ private struct RackBelt: View {
 
   var body: some View {
     Canvas { context, size in
-      let scale = min(size.width * 0.8 / 44, size.height * 0.8 / 30)
-      let origin = CGPoint(x: (size.width - 44 * scale) / 2, y: (size.height - 30 * scale) / 2)
+      let drawing = isTied ? Self.tied : Self.folded
+      let bounds = drawing.boundingRect.insetBy(
+        dx: outline == nil ? 0 : -1.5, dy: outline == nil ? 0 : -1.5)
+      let scale = min(size.width / bounds.width, size.height / bounds.height)
+      let origin = CGPoint(
+        x: (size.width - bounds.width * scale) / 2 - bounds.minX * scale,
+        y: (size.height - bounds.height * scale) / 2 - bounds.minY * scale)
       let transform = CGAffineTransform(translationX: origin.x, y: origin.y).scaledBy(
         x: scale, y: scale)
-      let shape = (isTied ? Self.tied : Self.folded).applying(transform)
+      let shape = drawing.applying(transform)
 
       if let outline {
         context.stroke(

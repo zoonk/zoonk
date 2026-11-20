@@ -3,14 +3,17 @@ package com.zoonk.android.feature.buddy
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -45,14 +49,12 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
-import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -99,64 +101,41 @@ internal fun BuddyTodayLine(
     val today = status.today
     val done = today?.missions?.count { it.status == StudyMission.Status.DONE } ?: 0
     val energy = status.energy.current?.let { formatPercent(it / PERCENT, currentLocale()) }
-    val spoken =
-        listOfNotNull(
-            "${stringResource(R.string.buddy_page_energy)} ${energy ?: stringResource(R.string.buddy_page_not_yet)}",
-            missionsLabel(today?.missions?.size, done),
-        ).joinToString(", ")
     val number = MaterialTheme.typography.labelMedium.withTabularFigures()
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
     val icon = with(LocalDensity.current) { LINE_ICON.toDp() }
 
-    TextButton(
-        onClick = { onOpenChange(true) },
-        modifier = Modifier.semantics { contentDescription = spoken },
-        contentPadding = PaddingValues(horizontal = 8.dp),
-    ) {
-        Row(
-            Modifier.clearAndSetSemantics {},
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painterResource(R.drawable.ic_bolt),
-                    contentDescription = null,
-                    Modifier.size(icon),
-                    tint = MaterialTheme.zoonk.energy,
-                )
-                Text(energy ?: DASH, style = number, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), itemVerticalAlignment = Alignment.CenterVertically) {
+        TextButton(onClick = { navigator.open(AppRoute.StatsEnergy) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
+            Icon(painterResource(R.drawable.ic_bolt), null, Modifier.size(icon), tint = MaterialTheme.zoonk.energy)
+            Text(
+                stringResource(R.string.buddy_page_energy_named, name),
+                Modifier.padding(start = ENERGY_GAP),
+                color = muted,
+                style = number,
+            )
+            Text(energy ?: DASH, Modifier.padding(start = ENERGY_GAP), color = muted, style = number)
+        }
+        TextButton(onClick = { onOpenChange(true) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
+            if (today != null && today.missions.isNotEmpty()) {
+                MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
+                Spacer(Modifier.width(MISSIONS_GAP))
             }
-            if (today == null || today.missions.isNotEmpty()) {
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-                    if (today != null) {
-                        MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
-                    } else {
-                        Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(icon))
-                    }
-                    Text(
-                        today?.let { "$done/${it.missions.size}" } ?: DASH,
-                        style = number,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
+            Text(
+                today
+                    ?.takeIf {
+                        it.missions.isNotEmpty()
+                    }?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
+                    ?: stringResource(R.string.buddy_page_today, name),
+                color = muted,
+                style = number,
+            )
         }
     }
 
     if (open) BuddyTodaySheet(status, look, name, taps, navigator, onDismiss = { onOpenChange(false) })
 }
-
-@Composable
-private fun missionsLabel(
-    total: Int?,
-    done: Int,
-): String? =
-    when (total) {
-        null -> stringResource(R.string.buddy_page_missions)
-        0 -> null
-        else -> stringResource(R.string.buddy_page_missions_done, done, total)
-    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,7 +163,7 @@ private fun BuddyTodaySheet(
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Text(
-                    factsLine(buddyStageName(look.stage), growthLine(status.nextStage)),
+                    growthLine(status.nextStage),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -195,7 +174,10 @@ private fun BuddyTodaySheet(
             }
             if (status.today?.missions?.isNotEmpty() == true) {
                 HorizontalDivider()
-                BuddyMissions(status, look, name, taps)
+                BuddyMissions(status, look, name, taps) {
+                    onDismiss()
+                    navigator.open(AppRoute.StatsLevel)
+                }
             }
             if (status.firstSteps != null) {
                 HorizontalDivider()
@@ -223,7 +205,7 @@ internal fun BuddyDayPane(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         BuddyEnergy(status.energy, name) { navigator.open(AppRoute.StatsEnergy) }
-        BuddyMissions(status, look, name, taps)
+        BuddyMissions(status, look, name, taps) { navigator.open(AppRoute.StatsLevel) }
         BuddyFirstStepsSection(status.firstSteps, look, name, taps)
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -279,6 +261,7 @@ private fun BuddyMissions(
     look: BuddyLook,
     name: String,
     taps: BuddyDayTaps,
+    onLevel: () -> Unit,
 ) {
     val today = status.today ?: return
 
@@ -289,10 +272,9 @@ private fun BuddyMissions(
         buddy = look,
         buddyName = name,
         onOpen = { opens -> taps.open(BuddyTap(opens)) },
-        brainPower = status.belt.totalBrainPower,
+        onLevel = onLevel,
         opening = { mission -> taps.isOpening(mission.tap()) },
         openFailed = { mission -> taps.hasFailed(mission.tap()) },
-        showBuddy = false,
     )
 }
 
@@ -303,11 +285,11 @@ private fun BuddyEnergy(
     name: String,
     onOpen: () -> Unit,
 ) {
-    val title = stringResource(R.string.buddy_page_energy)
+    val title = stringResource(R.string.buddy_page_energy_named, name)
     val current = energy.current
 
     if (current == null) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.clickable(onClick = onOpen), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
             Text(
                 stringResource(R.string.buddy_page_energy_starts),
@@ -321,7 +303,7 @@ private fun BuddyEnergy(
     val line =
         when {
             energy.state == BuddyStatusEnergy.State.NAPPING -> stringResource(R.string.buddy_page_energy_napping, name)
-            energy.studiedToday -> stringResource(R.string.buddy_page_energy_studied)
+            energy.studiedToday -> null
             else -> stringResource(R.string.buddy_page_energy_study)
         }
 
@@ -336,15 +318,10 @@ private fun BuddyEnergy(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleSmall)
             Text(formatPercent(current / PERCENT, currentLocale()), style = MaterialTheme.typography.labelLarge.withTabularFigures())
-            Icon(
-                painterResource(R.drawable.ic_chevron_right),
-                contentDescription = null,
-                Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            ListRowChevron()
         }
         Meter((current / PERCENT).toFloat(), color = MaterialTheme.zoonk.energy)
-        Text(line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        line?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
     }
 }
 
@@ -353,13 +330,17 @@ private fun growthLine(next: BuddyStatusNextStage?): String {
     next ?: return stringResource(R.string.buddy_page_fully_grown)
     val belt = stringResource(belt(next.belt).label)
 
-    return when (next.stage) {
-        BuddyStatusNextStage.Stage.ADULT -> stringResource(R.string.buddy_page_grows_adult, belt)
-        BuddyStatusNextStage.Stage.BABY, BuddyStatusNextStage.Stage.YOUNG -> stringResource(R.string.buddy_page_grows_young, belt)
-    }
+    return stringResource(R.string.buddy_page_grows, belt)
 }
 
 private const val PERCENT = 100.0
 private const val DASH = "–"
 private const val RING_STROKE = 6f
 private val LINE_ICON = 14.sp
+
+/** The day's line is a quiet button: its words sit this far inside its box. */
+internal val DAY_LINE_PADDING = 8.dp
+
+/** Main's `gap-1` and `gap-1.5` between the line's mark and words. */
+private val ENERGY_GAP = 4.dp
+private val MISSIONS_GAP = 6.dp

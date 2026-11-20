@@ -4,6 +4,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { NotQuiteLead } from "../../components/not-quite-lead";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
+import { BalanceEquation } from "./balance-equation";
 
 type SymbolicStep = { equation: string; move: string };
 type WrongMove = { hint: string; move: string };
@@ -62,9 +63,7 @@ export function BalanceSymbolic({
 
   return (
     <div className="flex flex-col gap-3" data-slot="balance-symbolic">
-      <p aria-live="polite" className="text-center font-mono text-2xl font-medium tabular-nums">
-        {current}
-      </p>
+      <BalanceEquation aria-live="polite">{current}</BalanceEquation>
 
       {next && !disabled && (
         <ActivitySelectGrid columns={1} label={t("Pick the next move")}>

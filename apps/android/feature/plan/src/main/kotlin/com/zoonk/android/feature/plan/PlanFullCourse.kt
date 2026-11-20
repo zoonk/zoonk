@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +30,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -68,20 +68,6 @@ internal fun finishText(
     }
 }
 
-@Composable
-private fun fullCourseRule(
-    course: FullCourse,
-    today: LocalDate,
-): String =
-    if (course.isExam) {
-        stringResource(R.string.plan_full_course_rule_exam)
-    } else {
-        stringResource(
-            if (course.targetDateNamedMonth) R.string.plan_full_course_rule_goal_month else R.string.plan_full_course_rule_goal,
-            goalDate(course.targetDate, course.targetDateNamedMonth, today),
-        )
-    }
-
 /** Main's `FullCourseSwitch`, under an exam's time a day. */
 @Composable
 internal fun FullCourseSwitch(
@@ -96,7 +82,6 @@ internal fun FullCourseSwitch(
             .filterIsInstance<PlanOp.FullCourse>()
             .firstOrNull()
             ?.fullCourse ?: course.on
-    val finish = finishText(course, course.endDate, page)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
@@ -108,7 +93,7 @@ internal fun FullCourseSwitch(
                     .toggleable(
                         value = on,
                         role = Role.Switch,
-                        onValueChange = { edits.change(PlanPart.FullCourse, course.operations(it)) {} },
+                        onValueChange = { edits.change(PlanPart.FullCourse, course.operations(it), null) },
                     ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -116,16 +101,6 @@ internal fun FullCourseSwitch(
             Text(stringResource(R.string.plan_full_course_switch), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
             Switch(checked = on, onCheckedChange = null)
         }
-        Text(
-            text =
-                when {
-                    !course.on -> stringResource(R.string.plan_full_course_off)
-                    finish != null -> stringResource(R.string.plan_full_course_on_exam, finish)
-                    else -> stringResource(R.string.plan_full_course_on_exam_unknown_end)
-                },
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
         if (edits.hasFailed(PlanPart.FullCourse)) SaveFailedText()
     }
 }
@@ -163,8 +138,8 @@ internal fun ColumnScope.StudyEverythingBody(
     val save = saved
     val applied = save?.let(edits::sheetApplied)
     val course = fullCourse(page)
-    val title = stringResource(R.string.plan_study_everything)
     val exam = course?.isExam ?: page.isExam
+    val title = stringResource(if (exam) R.string.plan_study_everything_after_exam else R.string.plan_study_everything)
     val description =
         stringResource(if (exam) R.string.plan_study_everything_exam_description else R.string.plan_study_everything_goal_description)
 
@@ -174,7 +149,7 @@ internal fun ColumnScope.StudyEverythingBody(
             title,
             description,
             applied,
-            R.drawable.ic_local_library,
+            R.drawable.ic_library,
             onUndo = { edits.undo(applied.change) },
             onDone = onDone,
         )
@@ -204,7 +179,7 @@ internal fun ColumnScope.StudyEverythingBody(
     fun choose() {
         val id = UUID.randomUUID()
         saved = id
-        edits.change(PlanPart.FullCourse, operations) { edits.answerSheet(id, it) }
+        edits.change(PlanPart.FullCourse, operations, PlanAsker.Sheet(id))
     }
 
     PlanSheetContent(
@@ -220,19 +195,13 @@ internal fun ColumnScope.StudyEverythingBody(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Text(
-                fullCourseRule(course, page.today),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         },
         actions = {
             Button(
                 busy = pending,
                 onClick = ::choose,
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
-            ) { Text(stringResource(R.string.plan_study_everything)) }
+            ) { Text(stringResource(if (exam) R.string.plan_keep_studying else R.string.plan_study_everything)) }
             TextButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_cancel)) }
             if (save != null && edits.sheetFailed(PlanPart.FullCourse, save)) SaveFailedText()
         },

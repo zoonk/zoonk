@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.subscription
 
+import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,11 +22,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,7 +36,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -44,13 +51,16 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -61,26 +71,41 @@ import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.OnVisitEnd
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LoadFailureRetry
+import com.zoonk.android.ui.components.OnFirstLine
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.glyphInk
+import com.zoonk.android.ui.components.glyphScale
+import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMomentDay
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.pageTitle
-import com.zoonk.api.models.AllowanceItem
+import com.zoonk.android.ui.scaffold.centeredColumn
+import com.zoonk.android.ui.scaffold.pagePadding
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellation.State
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.Currency
 import java.util.Locale
 import kotlin.time.Instant
@@ -97,34 +122,46 @@ fun SubscriptionScreen(
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.account_menu_subscription)) }) { padding ->
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-            contentAlignment = Alignment.TopCenter,
-        ) {
-            when (val state = session) {
-                is SessionState.SignedIn -> {
-                    if (state.isGuest) Offer(app, navigator, PlanViewer.Guest) else Account(app, navigator, state.session.localId)
-                }
+    SubscriptionPage(onBack = { navigator.back() }) {
+        when (val state = session) {
+            is SessionState.SignedIn -> {
+                if (state.isGuest) Offer(app, navigator, PlanViewer.Guest) else Account(app, navigator)
+            }
 
-                is SessionState.SignedOut -> {
-                    Offer(app, navigator, PlanViewer.Visitor)
-                }
+            is SessionState.SignedOut -> {
+                Offer(app, navigator, PlanViewer.Visitor)
+            }
 
-                SessionState.Restoring -> {
-                    CircularProgressIndicator()
-                }
+            SessionState.Restoring -> {
+                PageSpinner()
+            }
 
-                SessionState.Unavailable -> {
-                    LoadFailedMessage(onRetry = { scope.launch { app.sessions.retryRestore() } })
-                }
+            SessionState.Unavailable -> {
+                LoadFailedMessage(onRetry = { scope.launch { app.sessions.retryRestore() } })
             }
         }
+    }
+}
+
+/** One column for every state: the plans side by side take its whole width, the rest keep a narrower measure from its start. */
+@Composable
+internal fun SubscriptionPage(
+    onBack: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    PageScaffold(
+        onBack = onBack,
+        title = { Text(stringResource(R.string.account_menu_subscription)) },
+        columnWidth = TWO_PLANS_WIDTH,
+    ) { padding ->
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .centeredColumn(TWO_PLANS_WIDTH)
+                .padding(pagePadding()),
+        ) { content() }
     }
 }
 
@@ -135,22 +172,11 @@ internal enum class PlanViewer { Visitor, Guest, Free }
 private fun Account(
     app: AppContainer,
     navigator: AppNavigator,
-    sessionKey: String,
 ) {
     val account by app.subscriptions.account.collectShown()
     val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
     val website by app.subscriptions.websiteSubscription.collectShown()
     val scope = rememberCoroutineScope()
-    val cancellation =
-        viewModel(key = "web-plus-cancellation:$sessionKey") {
-            WebPlusCancellationViewModel(
-                app.subscriptions::cancelWebPlus,
-                app.subscriptions::keepWebPlus,
-            )
-        }
-
-    WebPlusCancellationDialog(cancellation)
-
     when (val state = account) {
         is LoadState.Loaded -> {
             AccountPlans(
@@ -158,7 +184,6 @@ private fun Account(
                 alreadyPlus = purchase == PurchaseState.AlreadyPlus,
                 website = website,
                 navigator = navigator,
-                cancellation = cancellation,
                 onRetryWebsite = { scope.launch { app.subscriptions.websiteSubscription.refresh() } },
                 offer = { Offer(app, navigator, PlanViewer.Free) },
             )
@@ -169,7 +194,7 @@ private fun Account(
         }
 
         LoadState.Idle, LoadState.Loading, LoadState.Empty -> {
-            CircularProgressIndicator()
+            PageSpinner()
         }
     }
 }
@@ -179,7 +204,6 @@ internal fun AccountPlans(
     subscription: MeSubscription?,
     website: LoadState<StripeSubscriptionCancellation>,
     navigator: AppNavigator,
-    cancellation: WebPlusCancellationViewModel,
     onRetryWebsite: () -> Unit,
     offer: @Composable () -> Unit,
     alreadyPlus: Boolean = false,
@@ -191,11 +215,11 @@ internal fun AccountPlans(
             CurrentPlan(storePlan, navigator)
             when (website) {
                 is LoadState.Loaded -> {
-                    WebPlusPlan(website.value, cancellation, standalone = false)
+                    WebPlusPlan(website.value, standalone = false)
                 }
 
                 is LoadState.Failed -> {
-                    LoadFailedMessage(onRetry = onRetryWebsite)
+                    LoadFailedMessage(onRetry = onRetryWebsite, inBar = false)
                 }
 
                 LoadState.Idle, LoadState.Loading -> {
@@ -211,7 +235,7 @@ internal fun AccountPlans(
         is LoadState.Loaded -> {
             PageColumn {
                 if (alreadyPlus) AlreadyPlusMessage(STRIPE)
-                WebPlusPlan(website.value, cancellation)
+                WebPlusPlan(website.value)
             }
         }
 
@@ -220,7 +244,7 @@ internal fun AccountPlans(
         }
 
         LoadState.Idle, LoadState.Loading -> {
-            CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
+            PageSpinner(MaterialTheme.colorScheme.tertiary)
         }
 
         LoadState.Empty -> {
@@ -232,19 +256,18 @@ internal fun AccountPlans(
 @Composable
 internal fun WebPlusPlan(
     subscription: StripeSubscriptionCancellation,
-    cancellation: WebPlusCancellationViewModel,
     standalone: Boolean = true,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
-                stringResource(if (standalone) R.string.subscription_plus else R.string.subscription_website),
-                if (standalone) Modifier.pageTitle() else Modifier.semantics { heading() },
-                style = if (standalone) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.titleMedium,
+                stringResource(R.string.subscription_through_website),
+                Modifier.semantics { heading() },
+                style = MaterialTheme.zoonkType.sectionTitle,
             )
             if (standalone && subscription.state != State.UNPAID) {
                 val label = if (subscription.state == State.ENDING) R.string.subscription_ending else R.string.subscription_active
-                LabelChip(stringResource(label))
+                Eyebrow(stringResource(label))
             }
         }
         val dateLine =
@@ -261,7 +284,16 @@ internal fun WebPlusPlan(
         dateLine?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
     }
     if (standalone && subscription.state != State.UNPAID) PlusBenefits()
-    if (subscription.state == State.ENDING) KeepWebPlusButton(cancellation) else WebPlusCancelButton(subscription.state, cancellation)
+    val context = LocalContext.current
+    val language = currentLocale().language
+    TextButton(onClick = { openWebPage(context, AppLink.webUrl("/subscription", language)) }, forward = true, edge = ButtonEdge.Start) {
+        Text(stringResource(R.string.subscription_manage_website))
+    }
+}
+
+@Composable
+private fun PageSpinner(color: Color = ProgressIndicatorDefaults.circularColor) {
+    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) { CircularProgressIndicator(color = color) }
 }
 
 @Composable
@@ -269,7 +301,10 @@ private fun PageColumn(
     maxWidth: Dp = PAGE_WIDTH,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(Modifier.widthIn(max = maxWidth).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+    Column(Modifier.widthIn(max = maxWidth).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        PageTitleRow(stringResource(R.string.account_menu_subscription))
+        content()
+    }
 }
 
 @Composable
@@ -284,11 +319,23 @@ internal fun CurrentPlan(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
-                stringResource(R.string.subscription_plus),
-                Modifier.pageTitle(),
-                style = MaterialTheme.typography.headlineMedium,
+                stringResource(
+                    if (provider ==
+                        GOOGLE
+                    ) {
+                        R.string.subscription_through_google
+                    } else if (provider ==
+                        APPLE
+                    ) {
+                        R.string.subscription_through_apple
+                    } else {
+                        R.string.subscription_plus
+                    },
+                ),
+                Modifier.semantics { heading() },
+                style = MaterialTheme.zoonkType.sectionTitle,
             )
-            LabelChip(stringResource(if (isEnding) R.string.subscription_ending else R.string.subscription_active))
+            Eyebrow(stringResource(if (isEnding) R.string.subscription_ending else R.string.subscription_active))
         }
         dateLine(subscription)?.let {
             Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
@@ -298,18 +345,13 @@ internal fun CurrentPlan(
     PlusBenefits()
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text =
-                stringResource(
-                    when (provider) {
-                        GOOGLE -> R.string.subscription_managed_google
-                        APPLE -> R.string.subscription_managed_apple
-                        else -> R.string.subscription_managed_zoonk
-                    },
-                ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (provider != GOOGLE && provider != APPLE) {
+            Text(
+                stringResource(R.string.subscription_managed_zoonk),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (provider == GOOGLE) {
                 Button(
@@ -320,6 +362,10 @@ internal fun CurrentPlan(
                         )
                     },
                 ) { Text(stringResource(R.string.subscription_manage_google)) }
+            } else if (provider == APPLE) {
+                OutlinedButton(onClick = { openWebPage(context, "https://apps.apple.com/account/subscriptions") }) {
+                    Text(stringResource(R.string.subscription_manage_apple))
+                }
             }
             OutlinedButton(
                 onClick = { navigator.open(AppRoute.Help) },
@@ -366,14 +412,14 @@ private fun Offer(
     val offers by app.subscriptions.offers.collectShown()
     val freePlan by app.subscriptions.freePlan.collectShown()
     val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
-    val activity = LocalActivity.current
     val analytics = LocalEventTracker.current
     val scope = rememberCoroutineScope()
+    val checkout = rememberCheckout(app.subscriptions)
     val onSubscribe: ((PlusOffer) -> Unit)? =
-        activity?.let { host ->
+        checkout?.let { buy ->
             { offer ->
                 analytics.track(AnalyticsEvent.SubscriptionCheckoutStarted(offer.period))
-                scope.launch { app.subscriptions.buy(host, offer.period) }
+                buy(offer.period)
             }
         }
 
@@ -384,20 +430,14 @@ private fun Offer(
         purchase = purchase,
         navigator = navigator,
         onSubscribe = onSubscribe,
+        onRetryOffers = { scope.launch { app.subscriptions.offers.refresh() } },
         onRetryFreePlan = { scope.launch { app.subscriptions.freePlan.refresh() } },
-        messagesUsed = if (viewer == PlanViewer.Free) messagesUsedToday(app) else null,
     )
-}
-
-@Composable
-private fun messagesUsedToday(app: AppContainer): AllowanceItem? {
-    val allowance by app.subscriptions.allowance.collectShown()
-    return allowance.value?.items?.firstOrNull { it.kind == AllowanceItem.Kind.TUTOR_MESSAGE }
 }
 
 /**
  * Plus beside Free when both fit at [PLAN_MIN_WIDTH], so their prices compare at a glance, with the
- * questions' heading under Plus and the questions under Free; one above the other otherwise.
+ * questions' heading beside them; one above the other otherwise.
  */
 @Composable
 internal fun PlanOffer(
@@ -407,50 +447,113 @@ internal fun PlanOffer(
     purchase: PurchaseState,
     navigator: AppNavigator,
     onSubscribe: ((PlusOffer) -> Unit)?,
+    onRetryOffers: () -> Unit,
     onRetryFreePlan: () -> Unit,
-    messagesUsed: AllowanceItem? = null,
 ) {
     val limits = freePlan.value
     val hasAccount = viewer == PlanViewer.Free
 
-    BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
         val sideBySide = minOf(maxWidth, TWO_PLANS_WIDTH) >= PLAN_MIN_WIDTH * LocalDensity.current.fontScale * 2 + PLAN_GAP
 
         PageColumn(maxWidth = if (sideBySide) TWO_PLANS_WIDTH else PAGE_WIDTH) {
-            Text(
-                stringResource(R.string.subscription_offer_title),
-                Modifier.pageTitle(),
-                style = MaterialTheme.typography.headlineMedium,
+            PlanCards(
+                sideBySide,
+                cards =
+                    listOf(
+                        plusPlanRows(offers, purchase, hasAccount, navigator, onSubscribe, onRetryOffers),
+                        freePlanRows(
+                            freePlan,
+                            currency = offers.value?.let { plans -> (plans.monthly ?: plans.yearly)?.currency },
+                            viewer,
+                            navigator,
+                        ),
+                    ),
             )
-
-            PlanColumns(sideBySide, verticalSpacing = 24.dp) {
-                PlusPlanCard(offers, purchase, hasAccount, navigator, onSubscribe)
-                Box {
-                    when {
-                        limits != null -> {
-                            FreePlanCard(
-                                limits,
-                                currency = offers.value?.let { (it.monthly ?: it.yearly)?.currency },
-                                viewer = viewer,
-                                navigator = navigator,
-                                modifier = Modifier.fillMaxHeight(),
-                                messagesUsed = messagesUsed,
-                            )
-                        }
-
-                        freePlan is LoadState.Failed -> {
-                            LoadFailedMessage(onRetry = onRetryFreePlan)
-                        }
-                    }
-                }
-            }
+            if (freePlan is LoadState.Failed) LoadFailedMessage(onRetry = onRetryFreePlan, inBar = false)
 
             CommonQuestions(limits, hasAccount, navigator, sideBySide)
         }
     }
 }
 
-/** Items in equal columns as tall as the tallest, or one above the other; one layout either way, so their state survives a resize. */
+/** A plan card's rows, top to bottom: its name, its price, how to get it and what it includes. */
+internal typealias PlanRows = List<@Composable ColumnScope.() -> Unit>
+
+/**
+ * Main's plan cards: side by side, each row lines up with the same row of the card beside it and the cards
+ * are as tall as each other, as main's subgrid lays them out; one above the other otherwise. One layout
+ * either way, so what the cards hold survives a resize. TalkBack reads a card's rows before the next card's.
+ */
+@Composable
+internal fun PlanCards(
+    sideBySide: Boolean,
+    cards: List<PlanRows>,
+) {
+    Layout(
+        content = {
+            cards.forEachIndexed { card, rows ->
+                OutlinedCard(Modifier) {}
+                rows.forEach { row ->
+                    Column(
+                        Modifier.fillMaxWidth().semantics {
+                            isTraversalGroup = true
+                            traversalIndex = card.toFloat()
+                        },
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        content = row,
+                    )
+                }
+            }
+        },
+        modifier = Modifier.semantics { isTraversalGroup = true },
+    ) { measurables, constraints ->
+        val width = constraints.maxWidth
+        val padding = CARD_PADDING.roundToPx()
+        val rowGap = CARD_ROW_GAP.roundToPx()
+        val cardGap = (if (sideBySide) PLAN_GAP else STACKED_PLAN_GAP).roundToPx()
+        val cardWidth = if (sideBySide) (width - cardGap * (cards.size - 1)) / cards.size else width
+        val inner = Constraints(maxWidth = (cardWidth - padding * 2).coerceAtLeast(0))
+
+        var next = 0
+        val frames = mutableListOf<Measurable>()
+        val rows =
+            cards.map { card ->
+                frames += measurables[next]
+                measurables.subList(next + 1, next + 1 + card.size).map { it.measure(inner) }.also { next += 1 + card.size }
+            }
+        val shared = (0 until (cards.maxOfOrNull { it.size } ?: 0)).map { row -> rows.maxOf { it.getOrNull(row)?.height ?: 0 } }
+
+        fun heightsOf(card: Int) = if (sideBySide) shared else rows[card].map { it.height }
+
+        fun cardHeight(card: Int) =
+            heightsOf(card).filter { it > 0 }.let { it.sum() + rowGap * (it.size - 1).coerceAtLeast(0) } + padding * 2
+
+        val heights = cards.indices.map(::cardHeight)
+        val total = if (sideBySide) heights.maxOrNull() ?: 0 else heights.sum() + cardGap * (cards.size - 1).coerceAtLeast(0)
+
+        layout(width, total) {
+            var x = 0
+            var y = 0
+            cards.indices.forEach { card ->
+                val height = if (sideBySide) total else heights[card]
+                frames[card].measure(Constraints.fixed(cardWidth, height)).placeRelative(x, y)
+                var top = y + padding
+                rows[card].forEachIndexed { index, row ->
+                    val rowHeight = heightsOf(card)[index]
+                    row.placeRelative(x + padding, top)
+                    if (rowHeight > 0) top += rowHeight + rowGap
+                }
+                if (sideBySide) x += cardWidth + cardGap else y += height + cardGap
+            }
+        }
+    }
+}
+
+/**
+ * Two columns, the first beside the second with their first lines on one baseline as main's, or one
+ * above the other; one layout either way, so their state survives a resize.
+ */
 @Composable
 internal fun PlanColumns(
     sideBySide: Boolean,
@@ -462,9 +565,11 @@ internal fun PlanColumns(
         if (sideBySide) {
             val gap = PLAN_GAP.roundToPx()
             val column = (width - gap * (items.size - 1)) / items.size
-            val height = items.maxOf { it.maxIntrinsicHeight(column) }
-            val placed = items.map { it.measure(Constraints.fixed(column, height)) }
-            layout(width, height) { placed.forEachIndexed { index, item -> item.placeRelative(index * (column + gap), 0) } }
+            val placed = items.map { it.measure(Constraints(maxWidth = column)) }
+            val baselines = placed.map { it[FirstBaseline].takeIf { line -> line != AlignmentLine.Unspecified } ?: 0 }
+            val tops = baselines.map { baselines.max() - it }
+            val height = placed.indices.maxOf { tops[it] + placed[it].height }
+            layout(width, height) { placed.forEachIndexed { index, item -> item.placeRelative(index * (column + gap), tops[index]) } }
         } else {
             val spacing = verticalSpacing.roundToPx()
             val placed = items.map { it.measure(constraints.copy(minWidth = width, minHeight = 0)) }
@@ -481,13 +586,14 @@ internal fun PlanColumns(
 
 /** Main's PlusPlan: Play's price for each billing period and the way to buy it. */
 @Composable
-private fun PlusPlanCard(
+private fun plusPlanRows(
     offers: LoadState<PlusOffers>,
     purchase: PurchaseState,
     hasAccount: Boolean,
     navigator: AppNavigator,
     onSubscribe: ((PlusOffer) -> Unit)?,
-) {
+    onRetryOffers: () -> Unit,
+): PlanRows {
     var period by rememberSaveable { mutableStateOf(BillingPeriod.Monthly) }
     val plans = offers.value
     // Play can sell one base plan and not the other in a region: show the one it sells.
@@ -495,69 +601,95 @@ private fun PlusPlanCard(
     val isWorking = purchase == PurchaseState.Buying || purchase == PurchaseState.Confirming
     val canBuy = offer != null || offers is LoadState.Loading
 
-    OutlinedCard(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(stringResource(R.string.subscription_plus), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-
-            if (plans?.monthly != null && plans.yearly != null) {
-                val billingPeriod = stringResource(R.string.subscription_billing_period)
-                SingleChoiceSegmentedButtonRow(
-                    Modifier.fillMaxWidth().semantics {
-                        isTraversalGroup = true
-                        contentDescription = billingPeriod
-                    },
-                ) {
-                    BillingPeriod.entries.forEachIndexed { index, choice ->
-                        SegmentedButton(
-                            selected = period == choice,
-                            onClick = { period = choice },
-                            shape = SegmentedButtonDefaults.itemShape(index, BillingPeriod.entries.size),
-                        ) {
-                            if (choice == BillingPeriod.Monthly) {
-                                Text(stringResource(R.string.subscription_monthly))
-                            } else {
-                                YearlyLabel(plans.yearlySavings())
+    return listOf(
+        {
+            PlanNameRow(stringResource(R.string.subscription_plus)) {
+                if (plans?.monthly != null && plans.yearly != null) {
+                    val billingPeriod = stringResource(R.string.subscription_billing_period)
+                    SingleChoiceSegmentedButtonRow(
+                        Modifier.fillMaxWidth().semantics {
+                            isTraversalGroup = true
+                            contentDescription = billingPeriod
+                        },
+                    ) {
+                        BillingPeriod.entries.forEachIndexed { index, choice ->
+                            SegmentedButton(
+                                selected = period == choice,
+                                onClick = { period = choice },
+                                shape = SegmentedButtonDefaults.itemShape(index, BillingPeriod.entries.size),
+                            ) {
+                                if (choice == BillingPeriod.Monthly) {
+                                    Text(stringResource(R.string.subscription_monthly))
+                                } else {
+                                    YearlyLabel(plans.yearlySavings())
+                                }
                             }
                         }
                     }
                 }
             }
-
+        },
+        {
             when {
-                offer != null -> Price(offer)
-                offers is LoadState.Loading -> CircularProgressIndicator(Modifier.size(24.dp).align(Alignment.CenterHorizontally))
-                else -> Note(stringResource(R.string.subscription_unavailable))
-            }
+                offer != null -> {
+                    Price(offer)
+                }
 
-            when {
-                !canBuy -> {}
-
-                !hasAccount -> {
-                    Button(onClick = { navigator.open(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.subscription_get_plus))
-                    }
+                offers is LoadState.Loading -> {
+                    CircularProgressIndicator(Modifier.size(24.dp))
                 }
 
                 else -> {
+                    Note(stringResource(R.string.subscription_unavailable))
+                    LoadFailureRetry(onRetry = onRetryOffers, inBar = false)
+                }
+            }
+        },
+        {
+            if (canBuy) {
+                if (hasAccount) {
                     Button(
                         busy = isWorking,
                         onClick = { offer?.let { onSubscribe?.invoke(it) } },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = offer != null && onSubscribe != null,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     ) { Text(stringResource(R.string.subscription_subscribe)) }
+                } else {
+                    Button(onClick = { navigator.open(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.subscription_subscribe))
+                    }
                 }
+                Note(stringResource(R.string.subscription_cancel_anytime), Modifier.align(Alignment.CenterHorizontally))
             }
-            if (canBuy) Note(stringResource(R.string.subscription_cancel_anytime), Modifier.align(Alignment.CenterHorizontally))
             PurchaseMessage(purchase)
             if (purchase == PurchaseState.ConfirmFailed) {
                 OutlinedButton(
                     onClick = { navigator.open(AppRoute.Help) },
                 ) { Text(stringResource(R.string.subscription_contact_support)) }
             }
-            HorizontalDivider()
-            PlusBenefits()
-        }
+        },
+        { PlanIncludesRow { PlusBenefits() } },
+    )
+}
+
+/** A plan's name, with what the plan lets the learner choose (Plus's billing period) under it. */
+@Composable
+internal fun PlanNameRow(
+    name: String,
+    choice: @Composable () -> Unit = {},
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+        choice()
+    }
+}
+
+/** What a plan includes, under a line that sets it apart from the price and the button. */
+@Composable
+internal fun PlanIncludesRow(content: @Composable () -> Unit) {
+    Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        HorizontalDivider()
+        content()
     }
 }
 
@@ -582,9 +714,8 @@ private fun Price(offer: PlusOffer) {
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        if (offer.period == BillingPeriod.Monthly) {
-            Note(stringResource(R.string.subscription_billed_monthly))
-        } else {
+        // "per month" already says how a monthly plan bills; a yearly one says what a month comes to.
+        if (offer.period == BillingPeriod.Yearly) {
             Note(stringResource(R.string.subscription_yearly_per_month, money(offer.priceMicros / 12, offer.currency, locale)))
         }
     }
@@ -659,17 +790,21 @@ internal fun PlanIncludes(
     items: List<String>,
     modifier: Modifier = Modifier,
 ) {
+    val style = MaterialTheme.typography.bodyMedium
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(summary, style = MaterialTheme.typography.titleLarge)
+        Text(summary, style = style)
         items.forEach { item ->
+            // The check's ink starts on the column's edge and sits on its line's middle at every text size.
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
-                Icon(
-                    painterResource(R.drawable.ic_check),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(item, style = MaterialTheme.typography.bodyMedium)
+                OnFirstLine(style) {
+                    Icon(
+                        painterResource(R.drawable.ic_check),
+                        contentDescription = null,
+                        modifier = Modifier.glyphInk(R.drawable.ic_check).size(20.dp * glyphScale()),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Text(item, style = style)
             }
         }
     }
@@ -683,18 +818,11 @@ internal fun Note(
     Text(text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
 }
 
+/** As main's subscription page writes a period's end: the day with its year ("Dec 1, 2026"). */
 internal fun planDate(
     instant: Instant,
     locale: Locale,
-): String =
-    DateTimeFormatter
-        .ofLocalizedDate(FormatStyle.MEDIUM)
-        .withLocale(locale)
-        .format(
-            java.time.Instant
-                .ofEpochMilli(instant.toEpochMilliseconds())
-                .atZone(ZoneId.systemDefault()),
-        )
+): String = formatMomentDay(instant, locale, style = DateStyle.Short)
 
 internal fun money(
     micros: Long,
@@ -721,3 +849,44 @@ private val TWO_PLANS_WIDTH = 1024.dp
 /** The narrowest a plan card keeps Plus's billing switch readable, at 100% text. */
 private val PLAN_MIN_WIDTH = 360.dp
 private val PLAN_GAP = 16.dp
+private val STACKED_PLAN_GAP = 24.dp
+private val CARD_PADDING = 16.dp
+private val CARD_ROW_GAP = 16.dp
+
+/** Starts a Plus checkout for [period] on Play's sheet; null where no activity can host it. */
+@Composable
+internal fun rememberCheckout(subscriptions: SubscriptionStore): ((BillingPeriod) -> Unit)? {
+    val activity = LocalActivity.current ?: return null
+    val checkout = viewModel { Checkout(subscriptions) }
+    DisposableEffect(checkout, activity) { onDispose(checkout.show(activity)) }
+    OnVisitEnd(checkout, onEnd = checkout::endVisit)
+    return checkout::buy
+}
+
+/**
+ * A Plus checkout belongs to the visit that started it: a width change, a fold or a rotation while it reads fresh
+ * offers is the same visit, and Play's sheet opens on the window shown then; leaving ends the checkout and its outcome.
+ */
+internal class Checkout(
+    private val subscriptions: SubscriptionStore,
+) : ViewModel() {
+    private val host = MutableStateFlow<Activity?>(null)
+    private var buying: Job? = null
+
+    /** [activity] hosts Play's sheet until the returned call, when its screen goes. */
+    fun show(activity: Activity): () -> Unit {
+        host.value = activity
+        return { host.compareAndSet(activity, null) }
+    }
+
+    fun buy(period: BillingPeriod) {
+        buying = viewModelScope.launch { subscriptions.buy({ host.filterNotNull().first() }, period) }
+    }
+
+    /** The learner left: a checkout not yet on Play's sheet ends, and what it led to is gone on their return. */
+    fun endVisit() {
+        buying?.cancel()
+        buying = null
+        subscriptions.forgetCheckout()
+    }
+}

@@ -1,11 +1,9 @@
 "use client";
 
-import { type LanguageAim, isLanguageAim } from "@zoonk/core/language/aims";
+import { type LanguageAim, toLanguageAimBand } from "@zoonk/core/language/aims";
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
@@ -13,7 +11,6 @@ import {
 import {
   Popover,
   PopoverContent,
-  PopoverDescription,
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
@@ -23,10 +20,12 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
+import { SheetHeader } from "../_components/sheet-header";
 import { ChoiceList } from "../onboarding/choice-list";
 import { useAimWords } from "./use-aim-words";
 
-export type AimOption = { aim: LanguageAim; detail: string };
+/** `name` is how the row names its aim when the goal's own aim is a half band in it ("B1+"). */
+export type AimOption = { aim: LanguageAim; detail?: string; name?: string };
 
 export function AimName({ aim }: { aim: string }) {
   const words = useAimWords();
@@ -42,21 +41,23 @@ export function AimName({ aim }: { aim: string }) {
 
 /** A tap, a number key or Enter on the highlighted aim picks it; the arrow keys only move. */
 export function AimChoices({
+  label,
   numberKeys = true,
   onPick,
   options,
   pending,
   value,
 }: {
+  label: string;
   /** Off where the choices share the screen with other controls. */
   numberKeys?: boolean;
   onPick: (aim: LanguageAim) => void;
   options: readonly AimOption[];
   pending: boolean;
+  /** The picked aim, as a band or as the plan names it ("B1+"). */
   value: string | null;
 }) {
-  const words = useAimWords();
-  const saved = isLanguageAim(value) ? value : null;
+  const saved = toLanguageAimBand(value);
   const [highlighted, setHighlighted] = useState(saved);
   const [shownSaved, setShownSaved] = useState(saved);
 
@@ -70,10 +71,10 @@ export function AimChoices({
     <ChoiceList
       choices={options.map((option) => ({
         description: option.detail,
-        label: <AimName aim={option.aim} />,
+        label: <AimName aim={option.name ?? option.aim} />,
         value: option.aim,
       }))}
-      label={words.title}
+      label={label}
       numberKeys={numberKeys}
       onChange={setHighlighted}
       onPick={onPick}
@@ -87,7 +88,6 @@ export function AimChoices({
 /** A sheet on phones and a popover from its trigger on wider screens; picking applies and closes. */
 export function AimPicker({
   children,
-  description,
   onOpen,
   onPick,
   options,
@@ -96,7 +96,6 @@ export function AimPicker({
 }: {
   /** What the trigger shows; `trigger` is the element it's drawn as. */
   children: React.ReactNode;
-  description: string | null;
   onOpen?: () => void;
   /** False when it couldn't be saved, which keeps the choices open. */
   onPick: (aim: LanguageAim) => Promise<boolean>;
@@ -120,7 +119,7 @@ export function AimPicker({
   };
 
   const pick = (aim: LanguageAim) => {
-    if (aim === value) {
+    if (aim === toLanguageAimBand(value)) {
       setOpen(false);
       return;
     }
@@ -138,7 +137,7 @@ export function AimPicker({
 
   const choices = (
     <>
-      <AimChoices onPick={pick} options={options} pending={isSaving} value={value} />
+      <AimChoices label={title} onPick={pick} options={options} pending={isSaving} value={value} />
       {failed && <ChangeSaveError />}
     </>
   );
@@ -148,10 +147,9 @@ export function AimPicker({
       <Drawer onOpenChange={changeOpen} open={open}>
         <DrawerTrigger render={trigger}>{children}</DrawerTrigger>
         <DrawerPopup>
-          <DrawerHeader>
-            <DrawerTitle className="text-lg font-semibold">{title}</DrawerTitle>
-            {description && <DrawerDescription>{description}</DrawerDescription>}
-          </DrawerHeader>
+          <SheetHeader>
+            <DrawerTitle>{title}</DrawerTitle>
+          </SheetHeader>
           <DrawerContent className="flex flex-col gap-3 pt-2">{choices}</DrawerContent>
         </DrawerPopup>
       </Drawer>
@@ -164,7 +162,6 @@ export function AimPicker({
       <PopoverContent align="end" className="w-96 gap-3">
         <PopoverHeader>
           <PopoverTitle>{title}</PopoverTitle>
-          {description && <PopoverDescription>{description}</PopoverDescription>}
         </PopoverHeader>
         {choices}
       </PopoverContent>

@@ -3,15 +3,9 @@ import Observation
 
 struct GoalChapter: Decodable, Equatable, Sendable {
   struct Chapter: Decodable, Equatable, Sendable {
-    struct Subject: Decodable, Equatable, Sendable {
-      let key: String
-      let name: String
-    }
-
     let chapterId: String
     let position: Int
     let state: String
-    let subject: Subject?
     let title: String
   }
 
@@ -24,7 +18,6 @@ struct GoalChapter: Decodable, Equatable, Sendable {
 
     let lessonId: String
     let minutes: Int
-    let plusRequired: Bool
     let state: State
     let title: String
 
@@ -61,7 +54,6 @@ struct GoalChapter: Decodable, Equatable, Sendable {
 
   struct TestOut: Decodable, Equatable, Sendable {
     let available: Bool
-    let plusRequired: Bool
   }
 
   let chapter: Chapter

@@ -6,10 +6,10 @@ enum ScheduleTime {
   enum Line: Equatable {
     case asking
     case askFailed
-    case everything(suggested: Bool)
+    case everything
     case findFailed
     case finish(endDate: String)
-    case focus(coveredShare: Double, everyTopic: Bool)
+    case focus(coveredShare: Double)
     case noDays
     case noFinish
     case pastDate
@@ -35,18 +35,12 @@ enum ScheduleTime {
     let minutes: Int
   }
 
-  enum FullTimeNote: Equatable {
-    /// What the longest useful time takes; nil when not even a whole day covers everything.
-    case takes(FullTime?, moreDays: Bool)
-    /// The time shown covers everything, which is more than most people keep up.
-    case tooLong
-  }
-
   struct Offer: Equatable {
     enum Kind: Equatable {
       case everything
-      case focus
-      case full
+      /// The longest useful time, where part of the goal never fits whatever the time.
+      case more
+      case suggested
     }
 
     let kind: Kind
@@ -77,6 +71,8 @@ enum ScheduleTime {
   }
 
   static let everyDay = Array(0..<7)
+  /// How every list of the week reads, whatever the region's first weekday (Sunday is 0).
+  static let mondayFirst = [1, 2, 3, 4, 5, 6, 0]
 
   private static let weekdays = [1, 2, 3, 4, 5]
 
@@ -95,10 +91,8 @@ enum ScheduleTime {
     day == 0 || day == 6
   }
 
-  static func studyWeek(days: [Int], minutes: Int, weekend: Int?, fullCourse: Bool) -> ScheduleWeek
-  {
-    ScheduleWeek(
-      studyDays: days, weekendMinutes: weekend == minutes ? nil : weekend, fullCourse: fullCourse)
+  static func studyWeek(days: [Int], minutes: Int, weekend: Int?) -> ScheduleWeek {
+    ScheduleWeek(studyDays: days, weekendMinutes: weekend == minutes ? nil : weekend)
   }
 
   /// The weekend's own time stays even when it equals the weekdays': only the weekdays' time is
@@ -198,35 +192,12 @@ enum ScheduleTime {
     }
   }
 
-  /// The picker marks the suggestion, and beside a focus the time that covers everything.
+  /// The picker marks the suggestion; beside a focus, the time that covers everything is in its list.
   static func markedTimes(_ found: TimeToCover?) -> (full: Int?, suggested: Int?) {
     (
       full: found?.suggested?.kind == .focus ? found?.recommendedMinutes : nil,
       suggested: suggestedMinutes(found)
     )
-  }
-
-  /// Beside a focus suggestion: what the longest useful time takes, or that the time shown, which
-  /// covers everything, is more than most people keep up. More days bring the time down until every
-  /// day is a study day, except where part never fits whatever the time.
-  static func fullTimeNote(found: TimeToCover?, line: Line, studiesEveryDay: Bool) -> FullTimeNote?
-  {
-    guard let suggested = found?.suggested, suggested.kind == .focus else {
-      return nil
-    }
-
-    if case .everything = line {
-      return .tooLong
-    }
-
-    let full = fullTime(found)
-
-    if let full, full.minutes <= suggested.minutes {
-      return nil
-    }
-
-    let neverFits = full.map { !$0.everything } ?? false
-    return .takes(full, moreDays: !studiesEveryDay && !neverFits)
   }
 
   /// The suggestion while another time is shown, unless that time covers everything anyway; on a
@@ -241,7 +212,8 @@ enum ScheduleTime {
       return covered
         ? nil
         : Offer(
-          kind: suggested.kind == .everything ? .everything : .focus, minutes: suggested.minutes)
+          kind: suggested.kind == .everything ? .everything : .suggested, minutes: suggested.minutes
+        )
     }
 
     guard suggested.kind == .focus, let full = fullTime(found), full.minutes > suggested.minutes
@@ -249,7 +221,7 @@ enum ScheduleTime {
       return nil
     }
 
-    return Offer(kind: .full, minutes: full.minutes)
+    return Offer(kind: full.everything ? .everything : .more, minutes: full.minutes)
   }
 
   static func line(
@@ -283,14 +255,13 @@ enum ScheduleTime {
 
     if let suggested = found?.suggested, suggested.minutes == minutes {
       return suggested.kind == .everything
-        ? .everything(suggested: true)
-        : .focus(coveredShare: suggested.coveredShare, everyTopic: suggested.everyTopic)
+        ? .everything : .focus(coveredShare: suggested.coveredShare)
     }
 
     // The plan's own time can say what it covers before the time question answers.
     if let advice {
       let share = advice.coveredShare ?? 0
-      return share >= 1 ? .everything(suggested: false) : .share(share)
+      return share >= 1 ? .everything : .share(share)
     }
 
     guard found != nil else {
@@ -301,12 +272,7 @@ enum ScheduleTime {
   }
 
   /// The time picked needs the plan's own answer, except the one it suggested.
-  static func asksAboutTime(
-    dated: Bool,
-    found: TimeToCover?,
-    fullCourse: Bool,
-    minutes: Int?
-  ) -> Bool {
+  static func asksAboutTime(dated: Bool, found: TimeToCover?, minutes: Int?) -> Bool {
     guard minutes != nil else {
       return false
     }
@@ -319,11 +285,6 @@ enum ScheduleTime {
       return false
     }
 
-    return fullCourse || found.suggested?.minutes != minutes
-  }
-
-  /// An exam's choice to study everything holds until the time picked is known to cover it all.
-  static func keepsFullCourse(checked: Bool, line: Line) -> Bool {
-    checked && !line.coversEverything
+    return found.suggested?.minutes != minutes
   }
 }

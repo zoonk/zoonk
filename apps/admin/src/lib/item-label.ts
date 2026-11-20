@@ -12,7 +12,7 @@ export const ITEM_FORMAT_LABELS: Record<ItemFormat, string> = {
 };
 
 /** Formats keep the question under `question`, except true-or-false items, which state a claim. */
-const ITEM_PROMPT_KEYS = ["question", "statement"] as const;
+export const ITEM_PROMPT_KEYS = ["question", "statement"] as const;
 
 function readStringField(content: object, key: string): string | null {
   const value: unknown = Object.entries(content).find(([entryKey]) => entryKey === key)?.[1];

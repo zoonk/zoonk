@@ -1,24 +1,44 @@
 package com.zoonk.android.feature.onboarding
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
+import com.zoonk.android.feature.mindmaps.item
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.LimitWords
+import com.zoonk.android.ui.components.comesBackLine
+import com.zoonk.android.ui.components.gateSentence
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.AllowanceResponse
 
-enum class GoalLimitReason {
-    ActiveGoals,
-    DailyExplanations,
-    DailyGoals,
-    Guest,
-    MonthlyExplanations,
-    MonthlyGoals,
-    SignUpRequired,
-    SlowDown,
-    ;
+sealed interface GoalLimitReason {
+    data object ActiveGoals : GoalLimitReason
 
-    /** Lifted by Plus, not by waiting. */
-    val isPlusLimit get() = this == ActiveGoals || this == MonthlyGoals
+    data object DailyExplanations : GoalLimitReason
+
+    data object DailyGoals : GoalLimitReason
+
+    data object Guest : GoalLimitReason
+
+    /** Counted over the last 30 days; [limit] says when one more fits. */
+    data class MonthlyExplanations(
+        val limit: Limit.Reached,
+    ) : GoalLimitReason
+
+    data class MonthlyGoals(
+        val limit: Limit.Reached,
+    ) : GoalLimitReason
+
+    data object SignUpRequired : GoalLimitReason
+
+    data object SlowDown : GoalLimitReason
+
+    /** Lifted by Plus, not only by waiting. */
+    val isPlusLimit get() = this == ActiveGoals || (this is MonthlyGoals && limit.tier == LimitTier.Free)
 
     val needsAccount get() = this == Guest || this == SignUpRequired
 }
@@ -49,6 +69,26 @@ sealed interface GoalError {
             }
 }
 
+/** True once the day a monthly cap gave comes while the screen is open: the way to try is back and the server decides again. */
+@Composable
+fun GoalError.lifted(): Boolean =
+    limitLifted(
+        when (this) {
+            is GoalError.ReadLimit -> {
+                limit.reached
+            }
+
+            is GoalError.Limit -> {
+                (reason as? GoalLimitReason.MonthlyGoals)?.limit
+                    ?: (reason as? GoalLimitReason.MonthlyExplanations)?.limit
+            }
+
+            else -> {
+                null
+            }
+        },
+    )
+
 fun Refusal.goalLimitReason(): GoalLimitReason =
     when (this) {
         Refusal.SignUpRequired -> {
@@ -56,12 +96,30 @@ fun Refusal.goalLimitReason(): GoalLimitReason =
         }
 
         is Refusal.Limit -> {
-            val monthly = limit.period == "month"
+            val reached = limit.reached
+            val daily = reached.period == LimitPeriod.Day
             when {
-                limit.tier == "guest" -> GoalLimitReason.Guest
-                limit.resource == "activeGoals" -> GoalLimitReason.ActiveGoals
-                limit.resource == "explanation" -> if (monthly) GoalLimitReason.MonthlyExplanations else GoalLimitReason.DailyExplanations
-                else -> if (monthly) GoalLimitReason.MonthlyGoals else GoalLimitReason.DailyGoals
+                limit.tier == "guest" -> {
+                    GoalLimitReason.Guest
+                }
+
+                limit.resource == "activeGoals" -> {
+                    GoalLimitReason.ActiveGoals
+                }
+
+                limit.resource == "explanation" -> {
+                    if (daily) {
+                        GoalLimitReason.DailyExplanations
+                    } else {
+                        GoalLimitReason.MonthlyExplanations(
+                            reached,
+                        )
+                    }
+                }
+
+                else -> {
+                    if (daily) GoalLimitReason.DailyGoals else GoalLimitReason.MonthlyGoals(reached)
+                }
             }
         }
 
@@ -104,19 +162,19 @@ fun WriteOutcome<*>.startError(): GoalError =
 
 /** The first cap a new goal would hit, checked in core's order. */
 fun AllowanceResponse.goalStartLimit(): GoalLimitReason? {
-    val goal = items.find { it.kind == AllowanceItem.Kind.GOAL }
+    val goal = item(AllowanceItem.Kind.GOAL)
     val period =
         when {
             goal == null -> null
             goal.totalLimit?.let { goal.usedTotal >= it } == true -> "total"
             goal.dailyLimit?.let { goal.usedToday >= it } == true -> "day"
-            goal.monthlyLimit?.let { goal.usedThisMonth >= it } == true -> "month"
+            goal.rollingLimit?.let { goal.usedLast30Days >= it } == true -> "rolling30Days"
             else -> null
         }
     val limit =
         when {
             activeGoals.limit?.let { activeGoals.used >= it } == true -> UsageLimit("total", "activeGoals", tier.value)
-            period != null -> UsageLimit(period, "goal", tier.value)
+            period != null -> UsageLimit(period, "goal", tier.value, goal?.availableAt?.toString())
             else -> return null
         }
     return Refusal.Limit(limit).goalLimitReason()
@@ -124,18 +182,70 @@ fun AllowanceResponse.goalStartLimit(): GoalLimitReason? {
 
 @Composable
 fun goalLimitMessage(reason: GoalLimitReason): String =
-    stringResource(
-        when (reason) {
-            GoalLimitReason.ActiveGoals -> R.string.onboarding_limit_active_goals
-            GoalLimitReason.DailyExplanations -> R.string.onboarding_limit_daily_explanations
-            GoalLimitReason.DailyGoals -> R.string.onboarding_limit_daily_goals
-            GoalLimitReason.Guest -> R.string.onboarding_limit_guest
-            GoalLimitReason.MonthlyExplanations -> R.string.onboarding_limit_monthly_explanations
-            GoalLimitReason.MonthlyGoals -> R.string.onboarding_limit_monthly_goals
-            GoalLimitReason.SignUpRequired -> R.string.onboarding_limit_sign_up_required
-            GoalLimitReason.SlowDown -> R.string.onboarding_limit_slow_down
-        },
-    )
+    when (reason) {
+        GoalLimitReason.ActiveGoals -> {
+            gateSentence(stringResource(R.string.onboarding_goals_at_once_title), stringResource(R.string.onboarding_goals_at_once_line))
+        }
+
+        GoalLimitReason.DailyExplanations -> {
+            stringResource(R.string.onboarding_limit_daily_explanations)
+        }
+
+        GoalLimitReason.DailyGoals -> {
+            stringResource(R.string.onboarding_limit_daily_goals)
+        }
+
+        GoalLimitReason.Guest -> {
+            stringResource(R.string.onboarding_limit_guest)
+        }
+
+        is GoalLimitReason.MonthlyExplanations -> {
+            usedSentence(R.string.limit_quick_explanations_used, reason.limit)
+        }
+
+        is GoalLimitReason.MonthlyGoals -> {
+            usedSentence(R.string.limit_goals_used, reason.limit)
+        }
+
+        GoalLimitReason.SignUpRequired -> {
+            stringResource(R.string.onboarding_limit_sign_up_required)
+        }
+
+        GoalLimitReason.SlowDown -> {
+            stringResource(R.string.onboarding_limit_slow_down)
+        }
+    }
+
+/** A goal limit's title and line, for a screen that says them in its own heading (main's `useGoalLimitGateWords`). */
+@Composable
+fun goalLimitGateWords(reason: GoalLimitReason): LimitWords =
+    when (reason) {
+        GoalLimitReason.ActiveGoals -> {
+            LimitWords(stringResource(R.string.onboarding_goals_at_once_title), stringResource(R.string.onboarding_goals_at_once_line))
+        }
+
+        is GoalLimitReason.MonthlyGoals -> {
+            LimitWords(stringResource(R.string.limit_goals_used), comesBackLine(reason.limit))
+        }
+
+        is GoalLimitReason.MonthlyExplanations -> {
+            LimitWords(stringResource(R.string.limit_quick_explanations_used), comesBackLine(reason.limit))
+        }
+
+        else -> {
+            LimitWords(title = null, line = goalLimitMessage(reason))
+        }
+    }
+
+/** A cap used up over the last 30 days in one sentence: what ran out, then when more comes; once its day comes, only that it has. */
+@Composable
+fun usedSentence(
+    @StringRes title: Int,
+    limit: Limit.Reached,
+): String {
+    val line = comesBackLine(limit)
+    return if (limitLifted(limit) && line != null) line else gateSentence(stringResource(title), line)
+}
 
 @Composable
 fun goalErrorMessage(error: GoalError): String =
@@ -157,13 +267,12 @@ fun goalErrorMessage(error: GoalError): String =
         }
 
         is GoalError.ReadLimit -> {
-            stringResource(
-                when {
-                    error.limit.tier == "guest" -> R.string.onboarding_read_limit_guest
-                    error.limit.tier == "plus" -> R.string.onboarding_read_limit_plus
-                    error.limit.period == "month" -> R.string.onboarding_read_limit_free_month
-                    else -> R.string.onboarding_read_limit_free_day
-                },
-            )
+            val reached = error.limit.reached
+            when {
+                error.limit.tier == "guest" -> stringResource(R.string.onboarding_read_limit_guest)
+                reached.period != LimitPeriod.Day -> usedSentence(R.string.limit_goals_used, reached)
+                error.limit.tier == "plus" -> stringResource(R.string.onboarding_read_limit_plus)
+                else -> stringResource(R.string.onboarding_read_limit_free_day)
+            }
         }
     }

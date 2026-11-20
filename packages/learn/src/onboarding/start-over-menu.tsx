@@ -24,8 +24,6 @@ import { LearnLink } from "../learn-link";
 import { goBackToApp } from "../shell/app-history";
 import { useOnboardingHost } from "./onboarding-host";
 
-const MENU_TRIGGER_CLASS = "-mr-3 lg:-mr-2.5 [&_svg:not([class*='size-'])]:size-5";
-
 const MENU_ROW_CLASS = "flex-col items-start gap-0.5 py-2";
 
 type MenuProps = {
@@ -41,9 +39,7 @@ function OnboardingBarMenu({ disabled, onDeclineProfile, onStartOver }: MenuProp
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button className={MENU_TRIGGER_CLASS} size="icon-bar" variant="ghost" />}
-      >
+      <DropdownMenuTrigger render={<Button edge="end" size="icon-bar" variant="ghost" />}>
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">
           {t({
@@ -84,7 +80,12 @@ function OnboardingBarMenu({ disabled, onDeclineProfile, onStartOver }: MenuProp
           </DropdownMenuItem>
         )}
 
-        <DropdownMenuItem className={MENU_ROW_CLASS} disabled={disabled} onClick={onStartOver}>
+        <DropdownMenuItem
+          aria-haspopup="dialog"
+          className={MENU_ROW_CLASS}
+          disabled={disabled}
+          onClick={onStartOver}
+        >
           {t("Start over")}
           <span className="text-muted-foreground text-xs">{t("Clears your answers")}</span>
         </DropdownMenuItem>
@@ -127,7 +128,7 @@ function StartOverMenu({ onStartOver, ...menu }: MenuProps) {
 
 export function StartOverMenuSkeleton() {
   return (
-    <ButtonSkeleton className={MENU_TRIGGER_CLASS} size="icon-bar" variant="ghost">
+    <ButtonSkeleton edge="end" size="icon-bar" variant="ghost">
       <EllipsisIcon aria-hidden="true" />
     </ButtonSkeleton>
   );
@@ -143,7 +144,7 @@ function SkipProfileButton({ disabled, onSkip }: { disabled: boolean; onSkip: ()
         aria-describedby={descriptionId}
         disabled={disabled}
         onClick={onSkip}
-        size="sm"
+        size="bar"
         variant="ghost"
       >
         {t({
@@ -158,13 +159,14 @@ function SkipProfileButton({ disabled, onSkip }: { disabled: boolean; onSkip: ()
   );
 }
 
-/** On the questions about the learner, Skip all comes first and the menu can decline them all. */
 export function StepsBarEnd({
+  canSkipAll,
   disabled,
   onSkipProfile,
   onStartOver,
   profile,
 }: {
+  canSkipAll: boolean;
   disabled: boolean;
   onSkipProfile: (forever: boolean) => void;
   onStartOver: () => void;
@@ -173,7 +175,7 @@ export function StepsBarEnd({
 }) {
   return (
     <div className="flex items-center gap-1">
-      {profile && <SkipProfileButton disabled={disabled} onSkip={() => onSkipProfile(false)} />}
+      {canSkipAll && <SkipProfileButton disabled={disabled} onSkip={() => onSkipProfile(false)} />}
       <StartOverMenu
         disabled={disabled}
         onDeclineProfile={profile ? () => onSkipProfile(true) : undefined}

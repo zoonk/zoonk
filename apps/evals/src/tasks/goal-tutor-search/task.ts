@@ -44,7 +44,7 @@ export const goalTutorSearchTask: Task<
   id: "goal-tutor-search",
   // Past `shouldSearchFirst`'s deadline the decision is dropped.
   latencyBudget: { p50: 1, p95: 2.5 },
-  name: "Goal Tutor Search",
+  name: "Goal tutor search",
   score: scoreGoalTutorSearch,
   testCases: TEST_CASES,
 };

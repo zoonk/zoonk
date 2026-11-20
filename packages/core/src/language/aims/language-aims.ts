@@ -58,6 +58,13 @@ export function isLanguageReason(value: unknown): value is LanguageReason {
   return LANGUAGE_REASONS.some((reason) => reason === value);
 }
 
+/** The aim a label like "B1+" sits in, to match it with a choice; null outside the aims. */
+export function toLanguageAimBand(label: unknown): LanguageAim | null {
+  const score = parseCefrScore(label);
+  const band = score === null ? null : toCefrLevel(score);
+  return isLanguageAim(band) ? band : null;
+}
+
 export function getReasonAim(reason: LanguageReason): LanguageAim | null {
   return REASON_AIMS[reason];
 }
@@ -101,7 +108,12 @@ export type LanguageAimChoice = {
 };
 
 export type LanguageAimView = {
+  /** The aim's band, matching one of `choices` when it's among them. */
   aim: CefrLevel | null;
+  /** The aim as the rest of the plan names it, half bands included ("B1+"). */
+  label: string | null;
+  /** The language the aim is a level of. */
+  targetLanguage: string | null;
   /** The aims above the learner's level, lowest first. */
   choices: LanguageAimChoice[];
 };
@@ -116,9 +128,16 @@ export type LanguageReasonView = {
   reason: LanguageReason;
 };
 
-export function toLanguageAimView(details: Record<string, unknown>): LanguageAimView {
+export function toLanguageAimView({
+  details,
+  targetLanguage,
+}: {
+  details: Record<string, unknown>;
+  targetLanguage: string | null;
+}): LanguageAimView {
   const start = getStartHours(details.level) ?? 0;
-  const score = parseCefrScore(readLanguageAim(details));
+  const label = readLanguageAim(details);
+  const score = parseCefrScore(label);
 
   return {
     aim: score === null ? null : toCefrLevel(score),
@@ -126,6 +145,8 @@ export function toLanguageAimView(details: Record<string, unknown>): LanguageAim
       const hours = Math.round(GUIDED_HOURS[aim] - start);
       return hours > 0 ? [{ aim, hours }] : [];
     }),
+    label,
+    targetLanguage,
   };
 }
 

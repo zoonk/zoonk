@@ -1,5 +1,8 @@
-/// What the dropped screen shows: why the call can't go on (nil keeps the plain "call dropped"
-/// line) and how the learner can call again, if that can work. Ending the call is always there.
+import Foundation
+
+/// What the dropped screen shows: why the call can't go on (nil: the connection was lost, the one
+/// call that "dropped") and how the learner can call again, if that can work. Ending the call is
+/// always there.
 struct DroppedCall: Equatable {
   enum Reason: Equatable {
     case callInProgress, callsPaused, ended, limit, microphone, plusRequired
@@ -34,11 +37,17 @@ extension DroppedCall {
 
     switch failure {
     case .connect, .dropped: self.init(reason: nil, retry: .callAgain)
-    case .callsPaused: self.init(reason: .callsPaused, retry: .callAgain)
+    // Paused for everyone: calling again now can't work.
+    case .callsPaused: self.init(reason: .callsPaused, retry: nil)
     case .callInProgress: self.init(reason: .callInProgress, retry: .takeover)
     case .ended: self.init(reason: .ended, retry: nil)
     case .limit: self.init(reason: .limit, retry: nil)
     case .plusRequired: self.init(reason: .plusRequired, retry: nil)
     }
+  }
+
+  /// A call the cap stopped can be called again once the cap's day has come: the server decides.
+  func retryNow(limit: HelpLimit?, at now: Date) -> Retry? {
+    retry ?? (reason == .limit && limit?.isOpen(at: now) == true ? .callAgain : nil)
   }
 }

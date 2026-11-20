@@ -2,23 +2,21 @@
 
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { Checkbox } from "@zoonk/ui/components/checkbox";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { PLAN_OPTION_CLASS } from "./plan-option-styles";
+import { CheckList } from "../onboarding/choice-list";
 
 type ExamChoicePicksProps = {
   choice: ExamChoiceView;
   onSave: (subjects: string[]) => void;
   pending: boolean;
+  /** Outline where the page beside it keeps its own filled action. */
+  saveVariant?: "default" | "outline";
 };
 
-function Picks({ choice, onSave, pending }: ExamChoicePicksProps) {
+function Picks({ choice, onSave, pending, saveVariant = "default" }: ExamChoicePicksProps) {
   const t = useExtracted();
   const [draft, setDraft] = useState<string[]>(choice.subjects);
-  const isFull = draft.length >= choice.take;
 
   const isSaved =
     draft.length === choice.subjects.length &&
@@ -30,45 +28,31 @@ function Picks({ choice, onSave, pending }: ExamChoicePicksProps) {
         {t("Pick up to {take, number}.", { take: choice.take })}
       </p>
 
-      <div className="flex flex-wrap gap-2">
-        {choice.options.map((option) => {
-          const isPicked = draft.includes(option.name);
-          const isDisabled = pending || (!isPicked && isFull);
-
-          return (
-            <label
-              className={cn(PLAN_OPTION_CLASS, isDisabled && "cursor-not-allowed opacity-50")}
-              key={option.name}
-            >
-              <Checkbox
-                checked={isPicked}
-                disabled={isDisabled}
-                onCheckedChange={(checked) =>
-                  setDraft(
-                    checked
-                      ? [...draft, option.name]
-                      : draft.filter((name) => name !== option.name),
-                  )
-                }
-              />
-              {option.shortName ?? option.name}
-            </label>
-          );
-        })}
-      </div>
+      <CheckList
+        choices={choice.options.map((option) => ({
+          label: option.shortName ?? option.name,
+          value: option.name,
+        }))}
+        label={choice.group}
+        max={choice.take}
+        numberKeys={false}
+        onChange={setDraft}
+        readOnly={pending}
+        value={draft}
+      />
 
       <Button
         busy={pending}
         className="self-start"
         disabled={draft.length === 0 || isSaved}
         focusableWhenDisabled
-        icon={<CheckIcon aria-hidden="true" />}
         onClick={() =>
           onSave(
             choice.options.flatMap((option) => (draft.includes(option.name) ? [option.name] : [])),
           )
         }
         size="sm"
+        variant={saveVariant}
       >
         {t("Save")}
       </Button>

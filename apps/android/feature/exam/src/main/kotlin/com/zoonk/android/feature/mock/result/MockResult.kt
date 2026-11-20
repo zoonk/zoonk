@@ -5,14 +5,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -21,11 +23,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -38,7 +40,6 @@ import com.zoonk.android.feature.mock.runner.MockRun
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.MockRunnerViewModel
 import com.zoonk.android.feature.mock.runner.StepColumn
-import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
@@ -46,16 +47,15 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.CelebrationScope
-import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.KindMark
-import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LocalStepHeading
+import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.barButtonEnd
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.scaffold.TaskAside
@@ -64,6 +64,7 @@ import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamReviewInner
+import com.zoonk.api.models.MockResult
 import com.zoonk.api.models.MockResultPreparation
 
 private class ResultStep(
@@ -102,8 +103,8 @@ internal fun MockResult(
             if (essays.isNotEmpty()) add(MockResultPart.Essays)
             if (speaking != null) add(MockResultPart.Speaking)
             if (preparation != null || offered.isNotEmpty()) add(MockResultPart.Plan)
-            if (!placement && mistakes > 0) add(MockResultPart.Next)
         }
+    val about = result?.let { mockAboutLines(view) }.orEmpty()
     // A result opened again was celebrated then; one just finished shows its milestone's ceremony before its steps.
     MomentAfterCeremony(
         app,
@@ -119,17 +120,17 @@ internal fun MockResult(
         var opened by rememberSaveable { mutableStateOf(emptyList<String>()) }
         val toggle = { key: String -> opened = if (key in opened) opened - key else opened + key }
         val onContinue = { navigator.continueAfter(view, route) }
-        val apply = { offersViewModel.apply(offered) }
-        val keep = { offersViewModel.keep(offered) }
+        var detailsOpen by rememberSaveable { mutableStateOf(false) }
 
         BoxWithConstraints {
             val fold = pageFold(maxWidth)
             val asideFits = supportingPaneBeside(maxWidth, panesTouch = true)
             // An open book reads how it went before the fold, and what's next after it, with the way on.
             val nextAfterFold = MockResultPart.Score in has && fold != null && asideFits
-            // Main's aside, under its title: the plan and the mistakes. A fold adds the page after it even without them.
+            // Main's aside: what supports the number, then the preparation and the plan. A fold adds the page after it even without them.
             val mainAside = resultAsideParts(has).isNotEmpty()
-            val hasAside = mainAside || nextAfterFold
+            val hasSummary = result != null && MockResultPart.Score in has && (hasAnswerCounts(result) || hasBreakdown(result))
+            val hasAside = mainAside || nextAfterFold || hasSummary
             // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
             val wide =
                 if (hasAside) {
@@ -146,13 +147,36 @@ internal fun MockResult(
                             listOfNotNull(
                                 result?.let {
                                     ResultStep(SCORE, part.beside) {
-                                        ScoreStep(view, it, dayMoment = { MockDayMoment(view, buddy) }) {
-                                            ScoreNumbers(it, opened, toggle)
-                                            if (!nextAfterFold) {
-                                                if (wide) ReviewSection(view, app, review)
-                                                ResultNotes(view)
-                                            }
-                                        }
+                                        ScoreStep(
+                                            view,
+                                            it,
+                                            dayMoment = { MockDayMoment(view, buddy) },
+                                            // An open book keeps the numbers the score is made of on the page before the fold.
+                                            summary =
+                                                if (hasSummary &&
+                                                    (!wide || nextAfterFold)
+                                                ) {
+                                                    ({ ResultSummary(it, opened, toggle) })
+                                                } else {
+                                                    null
+                                                },
+                                            review =
+                                                if (nextAfterFold) {
+                                                    null
+                                                } else {
+                                                    (
+                                                        {
+                                                            ReviewSection(
+                                                                view,
+                                                                app,
+                                                                review,
+                                                                opened,
+                                                                toggle,
+                                                            )
+                                                        }
+                                                    )
+                                                },
+                                        )
                                     }
                                 },
                             )
@@ -180,11 +204,11 @@ internal fun MockResult(
                         }
 
                         MockResultPart.Plan -> {
-                            listOf(ResultStep(PLAN, part.beside) { PlanStep(view.adapt, preparation, offers, apply, keep) })
-                        }
-
-                        MockResultPart.Next -> {
-                            listOf(ResultStep(NEXT, part.beside) { NextStep(mistakes) })
+                            listOf(
+                                ResultStep(PLAN, part.beside) {
+                                    PlanStep(view.adapt, preparation, offers)
+                                },
+                            )
                         }
                     }
                 }
@@ -196,14 +220,14 @@ internal fun MockResult(
             // Where the step reached is beside, the step before it shows with the aside.
             val current = shown.lastOrNull { steps.indexOf(it) <= reached } ?: shown.firstOrNull()
             val position = shown.indexOf(current).coerceAtLeast(0)
-            // Beside the main action on a wide layout and under it on a phone or a book's page, as main's `MockResultOptions`.
+            // Beside the main action on a wide layout and above it on a phone or a book's page, as main's `MockResultSkip`.
             val secondaryBeside = isWideLayout()
-            val secondary =
-                when {
-                    placement || mistakes == 0 -> null
-                    view.purpose == MockExam.Purpose.PLANNED -> stringResource(R.string.mock_result_continue_session)
-                    else -> stringResource(R.string.mock_result_not_now)
-                }
+            val secondary = stringResource(R.string.mock_result_continue).takeUnless { placement || mistakes == 0 }
+            // Main's `MockPlanDecline` and `MockPlanAccept`: while the plan step asks, its answers are the bar's, in place of the way on.
+            val asking =
+                view.adapt
+                    ?.let { adapt -> offers.open(adapt)?.let { offerCopy(it, adapt) to it } }
+                    ?.takeIf { current?.id == PLAN && position == shown.lastIndex }
             val heading = remember { FocusRequester() }
             var announced by rememberSaveable { mutableStateOf(current?.id) }
 
@@ -217,6 +241,18 @@ internal fun MockResult(
 
             val actions: @Composable () -> Unit = {
                 TaskActionBar {
+                    // On a phone the second action takes the line above the main one and the way back.
+                    if (position == shown.lastIndex && !secondaryBeside) {
+                        if (asking != null) {
+                            OutlinedButton(
+                                onClick = { offersViewModel.decline(asking.second) },
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !offers.applying,
+                            ) { Text(asking.first.decline) }
+                        } else if (secondary != null) {
+                            OutlinedButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) { Text(secondary) }
+                        }
+                    }
                     StepPagerActions(
                         count = shown.size,
                         index = position,
@@ -225,23 +261,23 @@ internal fun MockResult(
                             reachedId = shown[to].id
                         },
                     ) { main ->
-                        if (secondaryBeside && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
-                        MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
-                    }
-                    if (current?.id == SCORE && !wide && view.review.isNotEmpty()) {
-                        TextButton(onClick = review::openSheet, modifier = Modifier.fillMaxWidth()) {
-                            val questions = view.review.size
-                            Text(
-                                if (questions == 1) {
-                                    stringResource(R.string.mock_result_see_question)
-                                } else {
-                                    pluralStringResource(R.plurals.mock_result_see_questions, questions, questions)
-                                },
-                            )
+                        if (asking != null) {
+                            val (copy, offer) = asking
+                            if (secondaryBeside) {
+                                OutlinedButton(
+                                    onClick = { offersViewModel.decline(offer) },
+                                    enabled = !offers.applying,
+                                ) { Text(copy.decline) }
+                            }
+                            Button(
+                                busy = offers.applying,
+                                onClick = { offersViewModel.accept(offer) },
+                                modifier = main,
+                            ) { Text(copy.accept) }
+                        } else {
+                            if (secondaryBeside && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
+                            MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
                         }
-                    }
-                    if (position == shown.lastIndex && !secondaryBeside && secondary != null) {
-                        TextButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) { Text(secondary) }
                     }
                 }
             }
@@ -263,29 +299,49 @@ internal fun MockResult(
                 TaskScaffold(
                     onClose = if (placement) onContinue else navigator::closeTask,
                     title = { StepDots(shown.size, position) },
-                    actions = { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) },
+                    actions = {
+                        if (result != null && hasDetails(view, result, about)) {
+                            TextButton(onClick = { detailsOpen = true }) { Text(stringResource(R.string.mock_result_details)) }
+                        }
+                        Box(Modifier.barButtonEnd()) { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) }
+                    },
                     bottomBar = actions.takeUnless { nextAfterFold },
                     aside =
                         if (hasAside) {
                             TaskAside(
-                                title = stringResource(R.string.mock_result_after).takeIf { mainAside },
+                                // Its blocks name themselves once the answers lead it, so the rail's own line would repeat them.
+                                title = stringResource(R.string.mock_result_after).takeIf { mainAside && (!hasSummary || nextAfterFold) },
                                 footer = actions.takeIf { nextAfterFold },
                             ) {
-                                ResultAside(preparation) {
+                                ResultAside(
+                                    summary =
+                                        result?.takeIf { hasSummary && !nextAfterFold }?.let {
+                                            {
+                                                ResultSummary(
+                                                    it,
+                                                    opened,
+                                                    toggle,
+                                                )
+                                            }
+                                        },
+                                    preparation,
+                                ) {
                                     if (offered.isNotEmpty()) {
                                         view.adapt?.let { adapt ->
-                                            AsideSection(
-                                                stringResource(R.string.mock_result_your_plan),
-                                            ) { PlanChange(adapt, offers, true, apply, keep) }
+                                            AsideSection(stringResource(R.string.mock_result_your_plan)) {
+                                                PlanChange(adapt, offers, true) { offer ->
+                                                    InlinePlanAnswers(
+                                                        adapt,
+                                                        offer,
+                                                        offers,
+                                                        offersViewModel::accept,
+                                                        offersViewModel::decline,
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
-                                    if (MockResultPart.Next in has) {
-                                        AsideSection(stringResource(R.string.mock_result_now)) { MistakesRow(mistakes) }
-                                    }
-                                    if (nextAfterFold) {
-                                        ReviewSection(view, app, review)
-                                        ResultNotes(view)
-                                    }
+                                    if (nextAfterFold) ReviewSection(view, app, review, opened, toggle)
                                 }
                             }
                         } else {
@@ -294,7 +350,9 @@ internal fun MockResult(
                 ) { padding -> Box(Modifier.padding(padding)) { step() } }
             }
 
-            if (review.open && !wide) ReviewSheet(view, app, review)
+            if (detailsOpen && result != null) {
+                DetailsSheet(onDismiss = { detailsOpen = false }) { ScoreDetails(view, result, about) }
+            }
         }
     }
 }
@@ -307,24 +365,11 @@ private fun MainAction(
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when {
-        placement -> {
-            Button(onClick = onContinue, modifier) { Text(stringResource(R.string.mock_result_see_plan)) }
-        }
-
-        mistakes == 0 -> {
-            Button(onClick = onContinue, modifier) { Text(stringResource(R.string.mock_result_continue)) }
-        }
-
-        mistakes == 1 -> {
-            Button(onClick = onMistakes, modifier) { Text(stringResource(R.string.mock_result_review_mistake)) }
-        }
-
-        else -> {
-            Button(
-                onClick = onMistakes,
-                modifier,
-            ) { Text(pluralStringResource(R.plurals.mock_result_review_mistakes, mistakes, mistakes)) }
+    if (placement || mistakes == 0) {
+        Button(onClick = onContinue, modifier) { Text(stringResource(R.string.mock_result_continue)) }
+    } else {
+        Button(onClick = onMistakes, modifier) {
+            Text(stringResource(R.string.mistakes_practice))
         }
     }
 }
@@ -355,15 +400,30 @@ private fun AppNavigator.continueAfter(
     }
 }
 
+/** Main's `MockResultSummary`: how the answers went, then each subject or topic. */
+@Composable
+private fun ResultSummary(
+    result: MockResult,
+    opened: List<String>,
+    onToggle: (String) -> Unit,
+) {
+    if (hasAnswerCounts(result)) {
+        ResultSection(stringResource(R.string.mock_result_answers)) { AnswerMeter(result) }
+    }
+    if (hasBreakdown(result)) Breakdown(result, opened, onToggle)
+}
+
 @Composable
 private fun ResultAside(
+    summary: (@Composable () -> Unit)?,
     preparation: MockResultPreparation?,
     rest: @Composable ColumnScope.() -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+        summary?.invoke()
         preparation?.let {
             AsideSection(stringResource(R.string.mock_result_your_preparation)) {
-                PreparationNumbers(it, MaterialTheme.typography.headlineMedium)
+                PreparationReadout(it, MaterialTheme.typography.headlineMedium)
                 PreparationMeter(it)
             }
         }
@@ -382,23 +442,25 @@ private fun AsideSection(
     }
 }
 
+/** Main's `DetailsDrawer`: the result's numbers and caveats, in a sheet over the step. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NextStep(mistakes: Int) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(stringResource(R.string.mock_result_now))
-        StepTitle(pluralStringResource(R.plurals.mock_result_mistakes_to_review, mistakes, mistakes), Modifier.stepHeading())
-    }
-}
-
-@Composable
-private fun MistakesRow(mistakes: Int) {
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-        KindMark(LearnKind.Mistakes)
-        Text(pluralStringResource(R.plurals.mock_result_mistakes_to_review, mistakes, mistakes), style = MaterialTheme.typography.bodyLarge)
+private fun DetailsSheet(
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        Column(Modifier.padding(horizontal = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text(
+                stringResource(R.string.mock_result_details),
+                Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(bottom = 16.dp)) { content() }
+        }
     }
 }
 
 private const val SCORE = "score"
 private const val SPEAKING = "speaking"
 private const val PLAN = "plan"
-private const val NEXT = "next"

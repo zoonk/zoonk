@@ -10,9 +10,11 @@ import { useSearchParams } from "next/navigation";
 const HREFS = { back: "/plan", page: "/mind-maps", study: "/mind-maps/study" };
 
 export function MindMapsClient({
+  listed,
   mindMaps,
   tier,
 }: {
+  listed: boolean;
   mindMaps: MindMapsPage;
   tier: EntitlementTier;
 }) {
@@ -23,6 +25,7 @@ export function MindMapsClient({
     <MindMapsScreen
       actions={actions}
       hrefs={HREFS}
+      listed={listed}
       mindMaps={mindMaps}
       subject={query.get("subject")}
       tab={readMindMapTab(query.get("tab"))}

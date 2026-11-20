@@ -8,7 +8,7 @@
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">Say it like %1$s</string>
     <string name="pronunciation_options">Screen options</string>
-    <string name="pronunciation_skip">Skip this word</string>
+    <string name="pronunciation_skip">Skip</string>
     <string name="pronunciation_press_record">Press Record and say the word out loud</string>
     <string name="pronunciation_recording">Recording… Press Stop when you\'re done.</string>
     <string name="pronunciation_grading">Listening to how it sounded…</string>
@@ -23,14 +23,13 @@
     <!-- Goes on to the next word. -->
     <string name="pronunciation_continue">Continue</string>
     <!-- Ends the round after its last word. -->
-    <string name="pronunciation_see_how">See how it went</string>
+    <string name="pronunciation_see_how">See result</string>
     <string name="pronunciation_save_failed">That didn\'t go through. Your answers are kept.</string>
     <!-- Retries saving the round. -->
     <string name="pronunciation_save_retry">Try again</string>
     <string name="pronunciation_no_words">No words to say again today.</string>
     <string name="pronunciation_practice_done">Practice done</string>
     <string name="pronunciation_nothing_said">Nothing said this time</string>
-    <string name="pronunciation_accent">An accent never blocks you.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Done</string>
 </resources>

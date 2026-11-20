@@ -24,7 +24,7 @@ export const planBasesSchema = z
             .array(z.enum(["deep", "essential", "quick", "skip"]))
             .meta({
               description:
-                "The choices it is open to, the only ones setBaseChoices accepts for it (others are refused with baseChoiceClosed): only deep once its core is studied (studied), and only when it has more than its core; every choice otherwise. Offer only these",
+                "The choices it is open to, the only ones setBaseChoices accepts for it (others are refused with baseChoiceClosed): only deep once its core is studied (studied), and only when it has more than its core; every choice otherwise",
             }),
           minutes: z
             .object({ deep: minutesSchema, essential: minutesSchema, quick: minutesSchema })
@@ -41,7 +41,7 @@ export const planBasesSchema = z
             .boolean()
             .meta({
               description:
-                'The learner studied its core, none of its lessons still to do: say "Studied", and offer only deep study when choices has it',
+                "The learner studied its core and has none of its lessons still to do; `choices` then holds deep study at most",
             }),
         })
         .meta({ id: "PlanBase" }),
@@ -51,7 +51,7 @@ export const planBasesSchema = z
       .min(0)
       .meta({
         description:
-          "Bases placement or a test-out found the learner knows: they're out of the plan already. Say so",
+          "Bases placement or a test-out found the learner knows: they're out of the plan already",
       }),
   })
   .meta({ id: "PlanBases" }) satisfies z.ZodType<PlanBasesView>;

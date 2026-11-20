@@ -132,7 +132,7 @@ test.describe("Mock speaking sections", () => {
     await page.getByRole("listitem").nth(1).getByRole("link", { name: "Start" }).click();
     await expect(page).toHaveURL(new RegExp(`/conversation/${calls[1]?.id}\\?mock=`, "u"));
 
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await page.getByRole("button", { name: "Start call" }).click();
     await page.getByRole("textbox", { name: "Type your reply" }).fill("Me parece una buena idea.");
     await page.keyboard.press("Enter");
     const transcript = page.getByRole("log", { name: "Conversation" });
@@ -141,14 +141,13 @@ test.describe("Mock speaking sections", () => {
     await page.getByRole("button", { exact: true, name: "End" }).click();
 
     await expect(page).toHaveURL(new RegExp(`/mock/${mock.id}$`, "u"));
-    await expect(page.getByText(/1 task left\.$/u)).toBeVisible();
     await expect(page.getByRole("listitem").nth(1)).toContainText("Done");
 
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: calls[1]?.id } }),
     ).resolves.toMatchObject({ status: "completed" });
 
-    await page.getByRole("button", { name: "Hand in the mock exam" }).click();
+    await page.getByRole("button", { exact: true, name: "Hand in" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
 
     await expect(page.getByRole("heading", { level: 1, name: "No estimate" })).toBeVisible();

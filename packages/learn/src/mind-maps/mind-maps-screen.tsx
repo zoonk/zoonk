@@ -1,15 +1,8 @@
 "use client";
 
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
-import { Button } from "@zoonk/ui/components/button";
-import {
-  DetailActions,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import {
@@ -18,11 +11,10 @@ import {
   DetailContent,
   DetailLayout,
 } from "../_components/detail-page";
-import { FreeWeekOverNotice } from "../_components/free-week-over";
+import { EnterLink } from "../_components/enter-button";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
-import { PageEyebrow, PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { PageTab, PageTabs } from "../_components/page-tabs";
-import { LearnLink } from "../learn-link";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { LearnPageBar } from "../shell/learn-bar";
 import {
   MIND_MAP_TABS,
@@ -46,7 +38,7 @@ import {
   UnavailableMapRow,
 } from "./mind-map-index-rows";
 import { useMindMapPlace } from "./mind-map-resume";
-import { NotMadeYet } from "./not-made-yet";
+import { NotMadeYet, useShownStop } from "./not-made-yet";
 import { type MindMapsLibrary, useMindMapsLibrary } from "./use-mind-maps-library";
 
 export type { MindMapLimit } from "../_components/help-limit-notice";
@@ -73,37 +65,31 @@ function EmptyTab({ children }: { children: React.ReactNode }) {
   );
 }
 
-function StudyLabel() {
-  const t = useExtracted();
-
-  return t({
-    description: "A button: study the mind maps, one by one. A verb, not the noun.",
-    id: "mindMapsStudyAction",
-    message: "Study",
-  });
-}
-
 function StudyLink({ goalId, study, view }: { goalId: string; study: string; view: MindMapTab }) {
+  const t = useExtracted();
   const place = useMindMapPlace({ goalId, view });
-  const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <LearnLink
+    <EnterLink
       className={DETAIL_PRIMARY_CLASS}
       href={buildStudyHref({ place, study, view })}
       // Where the learner stopped is only known once the page hydrates, so the deck loads on intent.
       prefetch="intent"
-      ref={ref}
+      size="lg"
     >
-      <StudyLabel />
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </LearnLink>
+      {t({
+        description: "Button on the Mind maps page that starts studying its maps.",
+        message: "Study maps",
+      })}
+    </EnterLink>
   );
 }
 
-function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: EntitlementTier }) {
+function ChaptersTab({ hrefs, library, subject }: IndexTabProps) {
   const t = useExtracted();
-  const { index, notMade } = splitChapters(library.page.chapters);
+  const { index } = splitChapters(library.page.chapters);
+  // The map a finished chapter gets is claimed like any other, so it waits while the maps are used up.
+  const stopped = useShownStop(library) !== null;
 
   const groups = groupBySubject(index).map((group) => ({
     ...group,
@@ -113,21 +99,17 @@ function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: 
     })),
   }));
 
-  return (
-    <>
-      {index.some((chapter) => chapter.status === "plusRequired") && (
-        <FreeWeekOverNotice className="max-w-prose" />
-      )}
+  if (index.length === 0) {
+    return (
+      <EmptyTab>
+        {stopped
+          ? t("No chapter maps yet.")
+          : t("No chapter maps yet. Every chapter you finish gets one.")}
+      </EmptyTab>
+    );
+  }
 
-      {index.length > 0 ? (
-        <MindMapIndex groups={groups} label={t("Chapter maps")} opensAt={subject} />
-      ) : (
-        <EmptyTab>{t("No chapter maps yet. Every chapter you finish gets one.")}</EmptyTab>
-      )}
-
-      {notMade.length > 0 && <NotMadeYet chapters={notMade} library={library} tier={tier} />}
-    </>
-  );
+  return <MindMapIndex groups={groups} label={t("Chapter maps")} opensAt={subject} />;
 }
 
 function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
@@ -140,13 +122,7 @@ function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
   });
 
   if (rows.length === 0) {
-    return (
-      <EmptyTab>
-        {t(
-          "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written.",
-        )}
-      </EmptyTab>
-    );
+    return <EmptyTab>{t("No lesson maps yet. Every lesson ends with one.")}</EmptyTab>;
   }
 
   const groups = groupBySubject(rows).map((group) => ({
@@ -157,12 +133,7 @@ function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
     })),
   }));
 
-  return (
-    <>
-      {rows.some((row) => row.locked > 0) && <FreeWeekOverNotice className="max-w-prose" />}
-      <MindMapIndex groups={groups} label={t("Lesson maps by chapter")} opensAt={subject} />
-    </>
-  );
+  return <MindMapIndex groups={groups} label={t("Lesson maps by chapter")} opensAt={subject} />;
 }
 
 function SavedTab({ hrefs, library }: TabProps) {
@@ -227,8 +198,14 @@ function useTabLabels(): Record<MindMapTab, string> {
   const t = useExtracted();
 
   return {
-    chapters: t("Chapters"),
-    lessons: t("Lessons"),
+    chapters: t({
+      description: "A tab's name: the mind maps of the goal's chapters, one per chapter.",
+      message: "Chapter maps",
+    }),
+    lessons: t({
+      description: "A tab's name: the small mind maps of single lessons, grouped by chapter.",
+      message: "Lesson maps",
+    }),
     saved: t({
       description: "A tab's name: the list of mind maps the learner saved.",
       id: "mindMapsSavedTab",
@@ -255,6 +232,7 @@ function countDeck({ page, tab }: { page: MindMapsPage; tab: MindMapTab }): numb
 export function MindMapsScreen({
   actions,
   hrefs,
+  listed,
   mindMaps,
   subject,
   tab,
@@ -262,6 +240,8 @@ export function MindMapsScreen({
 }: {
   actions: MindMapLibraryActions;
   hrefs: MindMapsHrefs;
+  /** The learner's sidebar lists the page (`hasMindMapsPage`), so from `lg` it has no way back. */
+  listed: boolean;
   mindMaps: MindMapsPage;
   /** The subject the page was opened from, whose maps start unfolded. */
   subject: string | null;
@@ -279,29 +259,43 @@ export function MindMapsScreen({
   const current = tab ?? page.firstTab;
   const counts = countTabs(page);
 
+  const { notMade } = splitChapters(page.chapters);
+
+  const study = countDeck({ page, tab: current }) > 0 && (
+    <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />
+  );
+
   return (
     <DetailLayout
-      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
+      aside={notMade.length > 0 && <NotMadeYet chapters={notMade} library={library} tier={tier} />}
+      asideClassName={current === "chapters" ? undefined : "max-[72rem]:hidden"}
+      asideLabel={t("Chapters with no map yet")}
+      bar={
+        <LearnPageBar
+          back={{ href: hrefs.back }}
+          listed={listed ? "learner" : undefined}
+          root
+          title={t("Mind maps")}
+        />
+      }
+      bottomBar={
+        study && (
+          <BottomBar>
+            <BottomBarActions>{study}</BottomBarActions>
+          </BottomBar>
+        )
+      }
       data-slot="mind-maps"
     >
       <DetailAside>
         <DetailHero>
           <DetailHeroText>
-            <PageEyebrow>{page.goal.displayName}</PageEyebrow>
             <DetailTitle>{t("Mind maps")}</DetailTitle>
           </DetailHeroText>
-
-          <DetailActions>
-            {countDeck({ page, tab: current }) > 0 ? (
-              <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />
-            ) : (
-              <Button className={DETAIL_PRIMARY_CLASS} disabled>
-                <StudyLabel />
-              </Button>
-            )}
-          </DetailActions>
         </DetailHero>
+      </DetailAside>
 
+      <PageTabsGroup>
         <PageTabs data-slot="mind-maps-tabs" label={t("Mind maps")}>
           {MIND_MAP_TABS.map((name) => (
             <PageTab
@@ -315,15 +309,17 @@ export function MindMapsScreen({
             </PageTab>
           ))}
         </PageTabs>
-      </DetailAside>
 
-      <DetailContent>
-        {current === "chapters" && (
-          <ChaptersTab hrefs={hrefs} library={library} subject={subject} tier={tier} />
-        )}
-        {current === "lessons" && <LessonsTab hrefs={hrefs} library={library} subject={subject} />}
-        {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
-      </DetailContent>
+        <DetailContent>
+          {current === "chapters" && (
+            <ChaptersTab hrefs={hrefs} library={library} subject={subject} />
+          )}
+          {current === "lessons" && (
+            <LessonsTab hrefs={hrefs} library={library} subject={subject} />
+          )}
+          {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
+        </DetailContent>
+      </PageTabsGroup>
     </DetailLayout>
   );
 }

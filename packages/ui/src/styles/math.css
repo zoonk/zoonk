@@ -74,3 +74,28 @@ mrow[notation~="horizontalstrike"] {
     background-color: transparent;
   }
 }
+
+/* Nothing in a formula draws under the type scale's smallest size (craft T3): a script, and a fraction set small, shrink by the math scale only down to it. */
+:is(
+    msub,
+    msup,
+    msubsup,
+    mmultiscripts,
+    munderover,
+    munder:not([accentunder="true"]),
+    mover:not([accent="true"])
+  )
+  > :not(:first-child),
+:is(
+    math:not([display="block"]),
+    mfrac,
+    :is(msub, msup, msubsup, mmultiscripts, munderover, munder, mover, mroot) > :not(:first-child)
+  )
+  mfrac:not([displaystyle="true"] > *)
+  > * {
+  font-size: max(var(--text-2xs), 0.71em);
+}
+
+mroot > :last-child {
+  font-size: max(var(--text-2xs), 0.71em * 0.71);
+}

@@ -8,9 +8,9 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   LIST_GROUP_CLASS,
@@ -21,6 +21,7 @@ import {
   ListRowLeading,
   ListRowTitle,
   ListRowTrailing,
+  ROW_FOLD_CLASS,
 } from "../_components/list-group";
 import { PageSectionLabel } from "../_components/page";
 import { FrequencyChip, setsApart } from "./frequency-chip";
@@ -204,7 +205,7 @@ function TopicGroupRow({
   group,
   showFrequency,
 }: {
-  chapterHref: (chapterId: string) => string;
+  chapterHref: ((chapterId: string) => string) | null;
   group: Group;
   showFrequency: boolean;
 }) {
@@ -220,16 +221,13 @@ function TopicGroupRow({
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/topic")}>
+      <CollapsibleTrigger className={LIST_ROW_INTERACTIVE_CLASS}>
         <GroupLine group={group} showFrequency={showFrequency} />
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/topic:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron />
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-        <div className="flex flex-col pr-4 pb-2 pl-13">
+      <CollapsibleContent className={ROW_FOLD_CLASS}>
+        <div className="nested-rows flex flex-col pb-2">
           {group.children.length > 0 && (
             <ul className="flex flex-col">
               {group.children.map((child) => (
@@ -268,7 +266,7 @@ export function SubjectTopics({
   labelledBy,
   topics,
 }: {
-  chapterHref: (chapterId: string) => string;
+  chapterHref: ((chapterId: string) => string) | null;
   labelledBy: string;
   topics: readonly SyllabusTopic[];
 }) {

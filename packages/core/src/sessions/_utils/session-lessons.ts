@@ -3,14 +3,8 @@ import { toBlockPayload } from "../block-payload";
 import { isFullReviewDay } from "../full-review";
 import { type PlannedBlock, type PlannedLesson, type SessionBuildInput } from "../session-builder";
 
-export function canAddSessionLessons({
-  reviewDay,
-  trialEnded,
-}: {
-  reviewDay: boolean;
-  trialEnded: boolean;
-}): boolean {
-  return !reviewDay && !trialEnded;
+export function canAddSessionLessons({ reviewDay }: { reviewDay: boolean }): boolean {
+  return !reviewDay;
 }
 
 export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): PlannedBlock {
@@ -60,12 +54,6 @@ export function isSessionReviewDay(input: SessionBuildInput): boolean {
   return Boolean(input.reviewPlanItemId || input.reviewPlanItemKey) || isFullReviewDay(input);
 }
 
-/** Review days and expired free trials offer no new lessons. */
 export function getNewLessons(input: SessionBuildInput): readonly PlannedLesson[] {
-  return canAddSessionLessons({
-    reviewDay: isSessionReviewDay(input),
-    trialEnded: input.examTrialEnded,
-  })
-    ? input.lessons
-    : [];
+  return canAddSessionLessons({ reviewDay: isSessionReviewDay(input) }) ? input.lessons : [];
 }

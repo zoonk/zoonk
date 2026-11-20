@@ -8,8 +8,8 @@ import {
 } from "@zoonk/db";
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { logError } from "@zoonk/utils/logger";
+import { getActivityAnswerRules } from "../../library/activities/activity-answers";
 import { getExploreExpected } from "../../library/activities/activity-expected";
-import { getActivityTemplate } from "../../library/activities/activity-templates";
 import { safeParseStepContent } from "../../library/steps/contract/step-contract";
 import { type LessonLanguages } from "../../player/contracts/build-word-bank-options";
 import { type ExerciseKind, isExerciseKind } from "../../player/contracts/exercise-content";
@@ -104,12 +104,7 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
 function buildActivityStep(row: PlayableStepRow): PlayableActivityStep | null {
   const step = buildTeachingStep("activity", row);
 
-  return (
-    step && {
-      ...step,
-      minTolerance: getActivityTemplate(step.content.template)?.minTolerance ?? null,
-    }
-  );
+  return step && { ...step, ...getActivityAnswerRules(step.content) };
 }
 
 /** The explore's solved end state follows the explanation's content, a learner's own version included. */

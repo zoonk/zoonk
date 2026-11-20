@@ -1,33 +1,17 @@
 "use client";
 
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { MeterPart, MeterParts } from "../_components/meter";
-import { StatusMark } from "../_components/status-mark";
-import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
-import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
-import { usePlanScreen } from "../plan/plan-context";
-import { PlanDateText } from "../plan/plan-date-text";
-import { usePhaseName } from "../plan/use-phase-name";
+import { FactSegments } from "../_components/task-meta";
+import { getPhaseWeight } from "../plan/phase-weight";
+import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
-import { PATH_ROW_BODY_CLASS } from "./journey-phase-events";
-import { BandFace } from "./roadmap-band";
+import { PhaseWhen } from "./phase-when";
 import { RoadmapFull } from "./roadmap-full";
-import { PhaseAxis } from "./roadmap-lane";
-import {
-  BAND_CLASS,
-  BAND_COLUMN_CLASS,
-  BAND_ROWS_CLASS,
-  BAND_STATE_CLASS,
-  getBandColumnsStyle,
-} from "./roadmap-styles";
-import {
-  getLessonShare,
-  useRoadmapFinish,
-  useRoadmapPhases,
-  useRoadmapPosition,
-} from "./use-roadmap";
+import { BAND_STATE_CLASS } from "./roadmap-styles";
+import { getLessonShare, useRoadmapPhases, useRoadmapPosition } from "./use-roadmap";
 
 const PERCENT = 100;
 
@@ -50,41 +34,42 @@ function RoadmapCompact({
             as="span"
             className={cn(
               "relative min-w-6 overflow-hidden",
-              phase.state === "current" &&
-                "after:ring-success after:absolute after:inset-0 after:rounded-[inherit] after:ring-[1.5px] after:ring-inset",
+              phase.state === "current" && BAND_STATE_CLASS.current,
             )}
             key={phase.index}
             weight={getPhaseWeight(phase)}
           >
             <span
-              className="bg-success absolute inset-y-0 left-0"
+              className={cn(
+                "absolute inset-y-0 left-0",
+                phase.state === "current" ? "bg-success/30" : "bg-success",
+              )}
               style={{ width: `${getLessonShare(phase) * PERCENT}%` }}
             />
+            {phase.state === "current" && (
+              <CurrentPhaseMark className="absolute top-1/2 left-1/2 size-1 -translate-1/2 ring-1" />
+            )}
           </MeterPart>
         ))}
       </MeterParts>
 
       {position && (
-        <span className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}>
-          <span className="flex flex-wrap items-baseline">
-            <span
-              className={cn(TRUNCATED_TITLE_CLASS, "max-w-max min-w-0 grow basis-24 font-medium")}
-            >
-              {position.name}
-            </span>
-            {position.day && (
-              <span className="text-muted-foreground whitespace-pre-wrap">{` · ${position.day}`}</span>
-            )}
+        <span
+          className="flex w-full items-center justify-between gap-2 text-xs"
+          data-slot="plan-roadmap-line"
+        >
+          <span className="text-muted-foreground min-w-0 text-balance">
+            <FactSegments
+              facts={[position.name]}
+              lead={<span className="text-foreground font-medium">{position.place}</span>}
+            />
           </span>
-          <span className="text-muted-foreground flex items-center gap-0.5 font-mono tabular-nums">
-            <span aria-hidden="true">
-              {t("{number, number} of {total, number}", {
-                number: position.number,
-                total: position.total,
-              })}
-            </span>
-            <span className="sr-only">{position.place}</span>
-            {onOpen && <ChevronRightIcon aria-hidden="true" className="size-3.5" />}
+          <span
+            className="text-muted-foreground flex shrink-0 items-center gap-2"
+            data-slot="plan-roadmap-when"
+          >
+            <PhaseWhen phase={position.phase} />
+            {onOpen && <RowChevron />}
           </span>
         </span>
       )}
@@ -97,7 +82,7 @@ function RoadmapCompact({
               total: phases.length,
             })}
           </span>
-          <ChevronRightIcon aria-hidden="true" className="size-3.5 shrink-0" />
+          <RowChevron />
         </span>
       )}
     </>
@@ -115,7 +100,7 @@ function RoadmapCompact({
     <button
       aria-haspopup="dialog"
       className={cn(
-        "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 flex min-h-11 flex-col gap-2 rounded-[0.625rem] px-2.5 py-1.5 text-left transition-colors outline-none focus-visible:ring-[3px]",
+        "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 flex min-h-11 flex-col gap-2 rounded-lg px-2.5 py-1.5 text-left transition-colors outline-none focus-visible:ring-[3px]",
         className,
       )}
       data-slot="plan-roadmap"
@@ -127,134 +112,6 @@ function RoadmapCompact({
   );
 }
 
-const PHASE_MARK = {
-  current: "next",
-  done: "done",
-  leftOut: "todo",
-  unfinished: "todo",
-  upcoming: "todo",
-} as const;
-
-/**
- * What the axis says under a phase: "Today" under the current one and the start of each one after
- * it. Earlier phases, done or settled by placement, say nothing, their check says it.
- */
-function getPhaseWhen({ currentIndex, position }: { currentIndex: number; position: number }) {
-  if (position === currentIndex) {
-    return "today";
-  }
-
-  return currentIndex !== -1 && position > currentIndex ? "start" : null;
-}
-
-function PhaseWhenText({ startDate, when }: { startDate: string; when: "start" | "today" }) {
-  const t = useExtracted();
-
-  if (when === "today") {
-    return t("Today");
-  }
-
-  return (
-    <>
-      {t("From")} <PlanDateText isoDate={startDate} />
-    </>
-  );
-}
-
-function RoadmapRevealList() {
-  const t = useExtracted();
-  const phaseName = usePhaseName();
-  const { plan } = usePlanScreen();
-  const { currentIndex, phases } = useRoadmapPhases();
-
-  return (
-    <div className="flex flex-col gap-2 sm:hidden" data-slot="plan-roadmap">
-      <RoadmapCompact onOpen={null} />
-
-      <ol className="flex flex-col [&>li+li]:border-t">
-        {phases.map((phase, position) => {
-          const when = getPhaseWhen({ currentIndex, position });
-
-          return (
-            <li className="flex min-h-11 items-center gap-3 py-2 text-sm" key={phase.index}>
-              <StatusMark
-                label={phase.state === "current" ? t("You are here") : undefined}
-                status={PHASE_MARK[phase.state]}
-              />
-              <span className={PATH_ROW_BODY_CLASS}>
-                <span className="font-medium text-pretty">
-                  {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-                </span>
-                {when && phase.startDate && (
-                  <span className="text-muted-foreground font-mono text-xs tabular-nums">
-                    {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
-                  </span>
-                )}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-    </div>
-  );
-}
-
-function RoadmapReveal() {
-  const t = useExtracted();
-  const { currentIndex, phases, today } = useRoadmapPhases();
-  const finish = useRoadmapFinish();
-  const dated = phases.every((phase) => phase.startDate !== null);
-
-  return (
-    <div className="flex flex-col gap-1.5 max-sm:hidden" data-slot="plan-roadmap">
-      <ol
-        className={cn(BAND_ROWS_CLASS, "grid-rows-[repeat(2,auto)] gap-y-1.5")}
-        style={getBandColumnsStyle(phases.map((phase) => getPhaseWeight(phase)))}
-      >
-        {phases.map((phase, position) => {
-          const when = getPhaseWhen({ currentIndex, position });
-
-          return (
-            <li className={BAND_COLUMN_CLASS} key={phase.index}>
-              <span
-                aria-current={phase.state === "current" ? "step" : undefined}
-                className={cn(BAND_CLASS, BAND_STATE_CLASS[phase.state])}
-              >
-                <BandFace phase={phase} />
-              </span>
-
-              {dated && phase.startDate && (
-                <>
-                  <PhaseAxis
-                    isLast={position === phases.length - 1}
-                    labelled={when === "start"}
-                    phase={phase}
-                    todayShare={
-                      when === "today" ? getShareInPhase({ at: "start", date: today, phase }) : null
-                    }
-                  />
-                  {when && (
-                    <span className="sr-only">
-                      <PhaseWhenText startDate={phase.startDate} when={when} />
-                    </span>
-                  )}
-                </>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-
-      {dated && finish && (
-        <p className="sr-only">
-          {t("Until")}{" "}
-          <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
-        </p>
-      )}
-    </div>
-  );
-}
-
 export function PlanRoadmap({
   className,
   density,
@@ -262,7 +119,7 @@ export function PlanRoadmap({
   onOpen = null,
 }: {
   className?: string;
-  density: "compact" | "full" | "reveal";
+  density: "compact" | "full";
   links?: JourneyPathLinks | null;
   onOpen?: (() => void) | null;
 }) {
@@ -274,15 +131,6 @@ export function PlanRoadmap({
 
   if (density === "full" && links) {
     return <RoadmapFull className={className} links={links} />;
-  }
-
-  if (density === "reveal") {
-    return (
-      <>
-        <RoadmapRevealList />
-        <RoadmapReveal />
-      </>
-    );
   }
 
   return <RoadmapCompact className={className} onOpen={onOpen} />;

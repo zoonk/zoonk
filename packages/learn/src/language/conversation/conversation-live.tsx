@@ -19,6 +19,7 @@ import { useEffect, useRef, useState } from "react";
 import { TaskHeaderTitle, useTaskAsideShown } from "../../_components/task-header";
 import { TaskBody } from "../../_components/task-layout";
 import { formatClock } from "../../_utils/clock";
+import { useCountOf } from "../../_utils/count-of";
 import { TaskFrame } from "../../shell/task-frame";
 import { useTaskRoleNoun } from "../exam-speaking/exam-speaking-labels";
 import { CallAnnouncer, CallControls, CallTurn } from "./call-control";
@@ -62,7 +63,7 @@ function Transcript({
           </LearnerBubble>
         ) : (
           <p
-            className="max-w-[80%] self-start text-[0.9375rem] leading-relaxed text-pretty"
+            className="text-reading max-w-[80%] self-start leading-relaxed text-pretty"
             // oxlint-disable-next-line react/no-array-index-key -- Turns only grow at the end, so their position identifies them.
             key={index}
             lang={conversation.targetLanguage}
@@ -126,6 +127,7 @@ function TypedReply({ call }: { call: LiveCall }) {
       />
       <Button
         className="size-11"
+        data-slot="composer-send"
         disabled={!canSend || !text.trim()}
         focusableWhenDisabled
         size="icon"
@@ -221,6 +223,7 @@ export function ConversationLive({
   onEnd: () => void;
 }) {
   const t = useExtracted();
+  const countOf = useCountOf();
   const asideShown = useTaskAsideShown();
   const [phrasesOpen, setPhrasesOpen] = useState(false);
   const progress = useCallProgress({ call, conversation });
@@ -248,7 +251,7 @@ export function ConversationLive({
           label: t("Call goals and phrases"),
           meta: examTask
             ? undefined
-            : `${countMetGoals(conversation, call.metLabels)}/${conversation.objectives.length}`,
+            : countOf(countMetGoals(conversation, call.metLabels), conversation.objectives.length),
           title: examTask ? undefined : t("Goals of the call"),
         }}
         exitHref={null}
@@ -267,7 +270,12 @@ export function ConversationLive({
               <>
                 <CallTurn call={call} conversation={conversation} />
                 <TypedReply call={call} />
-                <CallControls call={call} onEnd={onEnd} onHelp={help} />
+                <CallControls
+                  call={call}
+                  helpPopup={asideShown ? undefined : "dialog"}
+                  onEnd={onEnd}
+                  onHelp={help}
+                />
               </>
             )}
           </div>

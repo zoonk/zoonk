@@ -4,7 +4,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let notationPlayer = ActivityRenderer(
-    template: "notationPlayer", badge: .always(.readAndListen)
+    template: "notationPlayer"
   ) { context in
     if let fields = try? context.fields(as: NotationPlayerFields.self) {
       NotationPlayerCanvas(fields: fields)
@@ -213,9 +213,12 @@ private struct NotationPlayerCanvas: View {
 
   private var viewPicker: some View {
     Picker(selection: $view) {
-      Text("Staff", tableName: "ActivitiesMusic", comment: "Shows the melody on a music staff")
-        .tag(NotationPlayerFields.View.staff)
-      Text("Tab", tableName: "ActivitiesMusic", comment: "Shows guitar tablature under the staff")
+      Text(
+        "Notes", tableName: "ActivitiesMusic",
+        comment: "Shows the melody as music notes on five lines, rather than numbered guitar frets."
+      )
+      .tag(NotationPlayerFields.View.staff)
+      Text("Guitar frets", tableName: "ActivitiesMusic")
         .tag(NotationPlayerFields.View.tab)
     } label: {
       Text(
@@ -274,8 +277,7 @@ private struct NotationPlayerCanvas: View {
       Picker(selection: $tempo) {
         ForEach(ABCTune.practiceTempos(fields.tempo), id: \.self) { option in
           Text(
-            "\(option) bpm", tableName: "ActivitiesMusic",
-            comment: "A rhythm's tempo in beats per minute"
+            "\(option) beats/min", tableName: "ActivitiesMusic"
           )
           .tag(option)
         }

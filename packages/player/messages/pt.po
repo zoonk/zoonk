@@ -12,26 +12,6 @@ msgid "Before and after"
 msgstr "Antes e depois"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "-KqWLm"
-msgid "Build an argument"
-msgstr "Construa um argumento"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "n9MRd4"
-msgid "Build it"
-msgstr "Monte"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "InC3wm"
-msgid "Build the sentence"
-msgstr "Monte a frase"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "0lfSFT"
-msgid "Compare sources"
-msgstr "Compare fontes"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "khPfjz"
 msgid "Drag a corner"
 msgstr "Arraste um canto"
@@ -41,131 +21,21 @@ msgctxt "EXpTKi"
 msgid "Ear training"
 msgstr "Treine o ouvido"
 
+#. A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count.
 #: src/activities/_components/activity-badge.tsx
-msgctxt "h3UUQw"
-msgid "Estimate first"
-msgstr "Dê seu palpite primeiro"
+msgctxt "rI0jil"
+msgid "Your guess counts"
+msgstr "Seu palpite conta"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "7JlauX"
-msgid "Explore"
-msgstr "Explore"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "iSynlE"
-msgid "Explore the map"
-msgstr "Explore o mapa"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "J5ozVw"
-msgid "Fill the square"
-msgstr "Preencha o quadrado"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Xl9ymg"
-msgid "Find the error"
-msgstr "Encontre o erro"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "XsJOM5"
-msgid "Hands on"
-msgstr "Ponha a mão na massa"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "UJRCcU"
-msgid "Label it"
-msgstr "Identifique as partes"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eGo7pb"
-msgid "Link causes"
-msgstr "Relacione as causas"
-
-#: src/activities/_components/activity-badge.tsx
-#: src/lesson/feedback/lesson-spoken-words.tsx
-msgctxt "zhvWvI"
-msgid "Listen"
-msgstr "Ouça"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "SQ_uG1"
-msgid "Match pairs"
-msgstr "Forme pares"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "wIskGV"
-msgid "Move a curve"
-msgstr "Mova uma curva"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "JZiAEC"
-msgid "Place in time"
-msgstr "Posicione no tempo"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "zgfs1R"
-msgid "Place it"
-msgstr "Posicione"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Pofn38"
-msgid "Play it"
-msgstr "Toque"
+msgctxt "s80KEd"
+msgid "Move a line"
+msgstr "Mova uma linha"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
 msgid "Predict first"
 msgstr "Preveja primeiro"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "OghajY"
-msgid "Put in order"
-msgstr "Coloque em ordem"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "epbkrE"
-msgid "Query the data"
-msgstr "Consulte os dados"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eF6aGp"
-msgid "Read and listen"
-msgstr "Leia e ouça"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "ApZCMI"
-msgid "Read the chart"
-msgstr "Leia o gráfico"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "9HU8vw"
-msgid "Reply"
-msgstr "Responda"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "JRCKkF"
-msgid "Run the code"
-msgstr "Execute o código"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eZSeUm"
-msgid "Simulate"
-msgstr "Simule"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "9yzaMX"
-msgid "Sort into groups"
-msgstr "Separe em grupos"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "6XjjqC"
-msgid "Split it"
-msgstr "Divida"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "sLJxwK"
-msgid "Spot the pattern"
-msgstr "Encontre o padrão"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "kUkIDR"
@@ -183,24 +53,9 @@ msgid "Tap along"
 msgstr "Toque no ritmo"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "XUcSce"
-msgid "Test a pattern"
-msgstr "Teste um padrão"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "YrB0ys"
-msgid "Try it"
-msgstr "Experimente"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "82b3Fd"
 msgid "Turn it"
 msgstr "Gire"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Mpyk9t"
-msgid "What if"
-msgstr "E se"
 
 #: src/activities/_components/activity-data-note.tsx
 msgctxt "9we_u3"
@@ -211,26 +66,6 @@ msgstr "Números de exemplo, não são dados reais"
 msgctxt "WFoGUE"
 msgid "Source:"
 msgstr "Fonte:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-#: src/activities/pattern-table/pattern-row.tsx
-msgctxt "QAJ_Tl"
-msgid "Correct answer:"
-msgstr "Resposta correta:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/activities/combination-grid/grid-board.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-msgctxt "3nOd8f"
-msgid "Your answer:"
-msgstr "Sua resposta:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "Resposta:"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -294,6 +129,16 @@ msgctxt "8RsqoE"
 msgid "No guess yet"
 msgstr "Ainda sem palpite"
 
+#: src/activities/_components/activity-horizontal-scroll.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Rolar para a esquerda"
+
+#: src/activities/_components/activity-horizontal-scroll.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Rolar para a direita"
+
 #: src/activities/_components/activity-model-sliders.tsx
 msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
@@ -339,6 +184,22 @@ msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "O som não carregou. Você ainda pode ver todas as notas."
 
+#. Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times.
+#: src/activities/_components/guess-format.ts
+msgctxt "da0cNH"
+msgid "Unit: {unit}"
+msgstr "Unidade: {unit}"
+
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "MgBNC_"
+msgid "Play without pressing a fret"
+msgstr "Toque a corda solta"
+
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "hKgOZu"
+msgid "Don't play this string"
+msgstr "Não toque essa corda"
+
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
@@ -355,9 +216,9 @@ msgid "Try again"
 msgstr "Tentar de novo"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "g91Ps-"
-msgid "Start over with the original code"
-msgstr "Recomeçar com o código original"
+msgctxt "4prk89"
+msgid "Start over"
+msgstr "Começar de novo"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/random-simulation/chance-simulation.tsx
@@ -452,6 +313,11 @@ msgid "{note} minor seventh"
 msgstr "{note} menor com sétima"
 
 #: src/activities/area-model/area-model-activity.tsx
+msgctxt "B3Vw-p"
+msgid "Drag to split"
+msgstr "Arraste para dividir"
+
+#: src/activities/area-model/area-model-activity.tsx
 msgctxt "hL2YKx"
 msgid "Split into {count, plural, one {# part} other {# parts}}: {parts}."
 msgstr "Dividido em {count, plural, one {# parte} other {# partes}}: {parts}."
@@ -482,9 +348,9 @@ msgid "Take the quote out"
 msgstr "Remover a citação"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "fnHca8"
-msgid "Pick the quote that best supports the claim"
-msgstr "Escolha a citação que melhor sustenta a afirmação"
+msgctxt "LyB4NV"
+msgid "Pick or drag the quote that best supports the claim"
+msgstr "Escolha ou arraste a citação que melhor sustenta a afirmação"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "6g7-6N"
@@ -497,9 +363,9 @@ msgid "Take the reasoning out"
 msgstr "Remover o raciocínio"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "X3GSpA"
-msgid "Pick how the quote proves the claim"
-msgstr "Escolha como a citação comprova a afirmação"
+msgctxt "IyaCYo"
+msgid "Pick or drag how the quote proves the claim"
+msgstr "Escolha ou arraste a explicação de como a citação comprova a afirmação"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "HmrHXg"
@@ -686,11 +552,6 @@ msgctxt "Cwq6lj"
 msgid "<item></item> belongs in <group></group>."
 msgstr "<item></item> pertence ao grupo <group></group>."
 
-#: src/activities/categorize/categorize-results.tsx
-msgctxt "Y4KaZD"
-msgid "{right} of {total} in the right group"
-msgstr "{right} de {total} no grupo certo"
-
 #. Title of the menu that moves a sorted card to another group.
 #: src/activities/categorize/categorize-row.tsx
 msgctxt "AfxJ0y"
@@ -708,6 +569,11 @@ msgstr ", grupo certo"
 msgctxt "NTZ7fO"
 msgid ", wrong group"
 msgstr ", grupo errado"
+
+#: src/activities/categorize/categorize-sorted.tsx
+msgctxt "Y4KaZD"
+msgid "{right} of {total} in the right group"
+msgstr "{right} de {total} no grupo certo"
 
 #. Shown once every card has a group. Choosing a card opens a menu that moves it to another group.
 #: src/activities/categorize/categorize-sorted.tsx
@@ -827,14 +693,14 @@ msgid "{value} per {unit}"
 msgstr "{value} por {unit}"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "CzXebu"
-msgid "Tap a span to measure it"
-msgstr "Toque em um intervalo para medir"
+msgctxt "ISwdKr"
+msgid "Pick a part of the chart to measure it"
+msgstr "Escolha uma parte do gráfico para medir"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
-msgctxt "OmKD_i"
-msgid "Spans to measure"
-msgstr "Intervalos para medir"
+msgctxt "pljLCT"
+msgid "Parts of the chart to measure"
+msgstr "Partes do gráfico para medir"
 
 #: src/activities/chart-reader/chart-reader-activity.tsx
 msgctxt "CWM6BM"
@@ -847,9 +713,9 @@ msgid "{span}: {change}."
 msgstr "{span}: {change}."
 
 #: src/activities/code-runner/code-runner-activity.tsx
-msgctxt "ydcluT"
-msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, one {A linha {lines} é sua} other {As linhas {lines} são suas}}"
+msgctxt "KheRTj"
+msgid "{count, plural, one {Edit line {lines}} other {Edit lines {lines}}}"
+msgstr "{count, plural, =1 {Edite a linha {lines}} other {Edite as linhas {lines}}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -903,11 +769,6 @@ msgid "Output"
 msgstr "Saída"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "e2tgwJ"
-msgid "Your output"
-msgstr "Sua saída"
-
-#: src/activities/code-runner/code-runner-output.tsx
 msgctxt "6srLb2"
 msgid "Expected"
 msgstr "Esperado"
@@ -917,10 +778,15 @@ msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
 msgstr "Você alterou o código. Execute de novo para ver a nova saída."
 
+#: src/activities/code-runner/code-runner-output.tsx
+msgctxt "KN7zKn"
+msgid "Error"
+msgstr "Erro"
+
 #: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "isBSlr"
-msgid "Step forward to run the next line."
-msgstr "Avance para executar a próxima linha."
+msgctxt "3yH3qo"
+msgid "We'll stop for you to predict a value."
+msgstr "A gente vai pausar para você prever um valor."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "6uNMzr"
@@ -1018,6 +884,12 @@ msgid "{title}: {rowLabel} ({rowValues}) down the side, {columnLabel} ({columnVa
 msgstr "{title}: {rowLabel} ({rowValues}) na lateral e {columnLabel} ({columnValues}) no topo. Cada quadrinho mostra o produto dos valores."
 
 #: src/activities/combination-grid/grid-board.tsx
+#: src/activities/labeled-diagram/diagram-slots.tsx
+msgctxt "3nOd8f"
+msgid "Your answer:"
+msgstr "Sua resposta:"
+
+#: src/activities/combination-grid/grid-board.tsx
 msgctxt "_RHUYG"
 msgid "Square {number}, {row} and {column}: empty"
 msgstr "Quadrado {number}, {row} e {column}: vazio"
@@ -1027,10 +899,11 @@ msgctxt "Sb4hnT"
 msgid "Square {number}, {row} and {column}:"
 msgstr "Quadrado {number}, {row} e {column}:"
 
+#. How many squares of the grid show one result, such as "Squares showing 7: 6 of 36". {what} is that result.
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "5cNGIS"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}"
-msgstr "{count} de {total, plural, =0 {# quadrados} one {# quadrado} other {# quadrados}}: {what}"
+msgctxt "gws3gs"
+msgid "Squares showing {what}: {count} of {total}"
+msgstr "Quadrados com {what}: {count} de {total}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -1053,14 +926,9 @@ msgid "Every square is filled. Tap one to change it."
 msgstr "Todos os quadrados estão preenchidos. Toque em um para mudar."
 
 #: src/activities/combination-grid/grid-palette.tsx
-msgctxt "ZJ9RKr"
-msgid "Which genotype goes in square {number}?"
-msgstr "Qual genótipo vai no quadrado {number}?"
-
-#: src/activities/combination-grid/grid-palette.tsx
-msgctxt "_Z7gdQ"
-msgid "What goes in square {number}?"
-msgstr "O que vai no quadrado {number}?"
+msgctxt "mLazZP"
+msgid "What goes in the highlighted square?"
+msgstr "O que vai no quadrado em destaque?"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"
@@ -1076,6 +944,11 @@ msgstr "Você disse:"
 msgctxt "ZWpFH7"
 msgid "Hear this line"
 msgstr "Ouvir esta fala"
+
+#: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
+msgctxt "HArSl0"
+msgid "Best reply:"
+msgstr "Melhor resposta:"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "TSUuRN"
@@ -1108,11 +981,6 @@ msgid "{value}. {share} between the handles."
 msgstr "{value}. {share} entre os marcadores."
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
-msgctxt "SCf2os"
-msgid "{from} to {to}: {share}"
-msgstr "{from} a {to}: {share}"
-
-#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "qN0b5S"
 msgid "Lower handle"
 msgstr "Marcador inferior"
@@ -1121,6 +989,11 @@ msgstr "Marcador inferior"
 msgctxt "pxrrIb"
 msgid "Upper handle"
 msgstr "Marcador superior"
+
+#: src/activities/distribution-explorer/distribution-explorer-activity.tsx
+msgctxt "SCf2os"
+msgid "{from} to {to}: {share}"
+msgstr "{from} a {to}: {share}"
 
 #: src/activities/distribution-explorer/distribution-explorer-activity.tsx
 msgctxt "9q43yq"
@@ -1219,11 +1092,6 @@ msgid "What-if events"
 msgstr "Cenários hipotéticos"
 
 #: src/activities/formula-model/formula-model-events.tsx
-msgctxt "3eJe1c"
-msgid "With the what-ifs"
-msgstr "Com os cenários hipotéticos"
-
-#: src/activities/formula-model/formula-model-events.tsx
 msgctxt "tgvES0"
 msgid "Now"
 msgstr "Agora"
@@ -1285,6 +1153,7 @@ msgid "At {x}, {y}. {summary}"
 msgstr "Em {x}, {y}. {summary}"
 
 #: src/activities/geometry-board/geometry-board-activity.tsx
+#: src/activities/number-line/number-line-activity.tsx
 msgctxt "RB6TJL"
 msgid "Drag it, or use the arrow keys to move it one grid step."
 msgstr "Arraste o vértice ou use as teclas de seta para movê-lo uma posição na grade."
@@ -1396,14 +1265,24 @@ msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Um teclado de piano de dó a si. Teclas pressionadas: {notes}."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "S7Oawr"
-msgid "By ear"
-msgstr "De ouvido"
+msgctxt "9uJ5mO"
+msgid "Play the sound, then pick."
+msgstr "Ouça o som e depois escolha."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "Um semitom é a distância até a próxima tecla, incluindo as teclas pretas."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "0kfXGd"
 msgid "{count, plural, one {# note} other {# notes}}"
 msgstr "{count, plural, one {# nota} other {# notas}}"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "nfwiHT"
+msgid "Your notes"
+msgstr "Suas notas"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "uHVyhO"
@@ -1421,9 +1300,9 @@ msgid "Play the sound"
 msgstr "Reproduzir o som"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "f6zKAc"
-msgid "Hear it"
-msgstr "Ouvir"
+msgctxt "X9t3Pl"
+msgid "Hear your notes"
+msgstr "Ouvir suas notas"
 
 #: src/activities/keyboard-fretboard/sound-as-text.tsx
 msgctxt "b0QQkx"
@@ -1456,6 +1335,12 @@ msgid "Pick a name"
 msgstr "Escolha um nome"
 
 #: src/activities/labeled-diagram/diagram-slots.tsx
+#: src/activities/pattern-table/pattern-row.tsx
+msgctxt "QAJ_Tl"
+msgid "Correct answer:"
+msgstr "Resposta correta:"
+
+#: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "vjLo-k"
 msgid "Spots to label"
 msgstr "Pontos para identificar"
@@ -1486,14 +1371,19 @@ msgid "Put {name} on spot {number}"
 msgstr "Colocar {name} no ponto {number}"
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "d_eYHc"
-msgid "Every spot has a name. Tap a spot to change it."
-msgstr "Todos os pontos têm um nome. Toque em um ponto para mudar o nome."
+msgctxt "J7KJCP"
+msgid "Every spot has a name. Pick a spot to change it."
+msgstr "Todos os pontos têm um nome. Escolha um ponto para mudar o nome."
 
 #: src/activities/labeled-diagram/name-bank.tsx
-msgctxt "ITUJOF"
-msgid "Tap a name for spot {number}, or drag it onto any spot."
-msgstr "Toque em um nome para o ponto {number} ou arraste ele para qualquer ponto."
+msgctxt "uuB8t6"
+msgid "Pick a name for spot {number}, or drag it onto any spot."
+msgstr "Escolha um nome para o ponto {number} ou arraste um nome para qualquer ponto."
+
+#: src/activities/labeled-diagram/name-bank.tsx
+msgctxt "S_5x1D"
+msgid "{count, plural, one {# name doesn't belong on the diagram.} other {# names don't belong on the diagram.}}"
+msgstr "{count, plural, one {# nome não tem lugar no diagrama.} other {# nomes não têm lugar no diagrama.}}"
 
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
@@ -1501,25 +1391,24 @@ msgid "Names"
 msgstr "Nomes"
 
 #: src/activities/line-crossing/line-crossing-chart.tsx
-#: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "Xup5P8"
 msgid "What happened"
 msgstr "O que aconteceu"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "HSYVGq"
-msgid "{axis} goes down."
-msgstr "{axis} diminui."
+msgctxt "IHxN7y"
+msgid "{axis}: down"
+msgstr "{axis}: para baixo"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "AMYIvl"
-msgid "{axis} stays the same."
-msgstr "{axis} continua igual."
+msgctxt "wEr5qf"
+msgid "{axis}: no change"
+msgstr "{axis}: sem mudança"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "K23AEK"
-msgid "{axis} goes up."
-msgstr "{axis} aumenta."
+msgctxt "cwnIuM"
+msgid "{axis}: up"
+msgstr "{axis}: para cima"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1552,14 +1441,24 @@ msgid "{line} moved down."
 msgstr "{line} se moveu para baixo."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PHEAQb"
-msgid "Drag a line by its handle."
-msgstr "Arraste uma linha pelo controle."
+msgctxt "K-pwvx"
+msgid "Drag a line left or right by its handle."
+msgstr "Arraste uma linha pela alça para a esquerda ou para a direita."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "5H0MTv"
-msgid "Drag a line by its handle, or use the arrow keys."
-msgstr "Arraste uma linha pelo controle ou use as teclas de seta."
+msgctxt "5xSynH"
+msgid "Drag a line left or right by its handle, or use the arrow keys."
+msgstr "Arraste uma linha pela alça para a esquerda ou para a direita, ou use as teclas de seta."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "TvX9Up"
+msgid "Drag a line up or down by its handle."
+msgstr "Arraste uma linha pela alça para cima ou para baixo."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "Ku-lfL"
+msgid "Drag a line up or down by its handle, or use the arrow keys."
+msgstr "Arraste uma linha pela alça para cima ou para baixo, ou use as teclas de seta."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "QqIq-i"
@@ -1575,11 +1474,6 @@ msgstr "Nenhuma linha se moveu ainda."
 msgctxt "dSVAFh"
 msgid "The new crossing is at {value}."
 msgstr "O novo cruzamento está em {value}."
-
-#: src/activities/map-explorer/map-explorer-activity.tsx
-msgctxt "KP7hl9"
-msgid "Tap a numbered place to see what's there."
-msgstr "Toque em um lugar numerado para ver o que tem lá."
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "PAYKae"
@@ -1783,6 +1677,11 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "Mapa simplificado das ruas, baseado no mapa de John Snow de 1854."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "Z7Xcs6"
+msgid "Those two don't go together."
+msgstr "Esses dois não formam um par."
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
 msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "Você formou um par com {left} e {right}. {matched, plural, other {# de {total} pares formados.}}"
@@ -1808,24 +1707,9 @@ msgid "{text}, no match"
 msgstr "{text}, sem par"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {# de {total} pares formados}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, one {# cartão não tem par} other {# cartões não têm par}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Cartões para formar pares"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "Esses dois não formam um par."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"
@@ -1883,19 +1767,14 @@ msgid "Nothing selected."
 msgstr "Nada selecionado."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "DLio1y"
-msgid "Target: {formula}"
-msgstr "Objetivo: {formula}"
+msgctxt "ymqUu2"
+msgid "{atom}: {used} of {valence, plural, =0 {# bonds} one {# bond} other {# bonds}}"
+msgstr "{atom}: {used} de {valence, plural, =0 {# ligações} one {# ligação} other {# ligações}}"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "thePhu"
 msgid "Built: {formula}"
 msgstr "Construído: {formula}"
-
-#: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "ymqUu2"
-msgid "{atom}: {used} of {valence, plural, =0 {# bonds} one {# bond} other {# bonds}}"
-msgstr "{atom}: {used} de {valence, plural, =0 {# ligações} one {# ligação} other {# ligações}}"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "18z35m"
@@ -1932,15 +1811,16 @@ msgctxt "MRYE3Y"
 msgid "Remove {atom}"
 msgstr "Remover {atom}"
 
+#. Button that removes the atom the learner selected from the molecule.
 #: src/activities/molecule-builder/molecule-palette.tsx
-msgctxt "E6Wo-S"
-msgid "Remove the selected atom"
-msgstr "Remover o átomo selecionado"
+msgctxt "G_yZLu"
+msgid "Remove"
+msgstr "Remover"
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "hXYqS7"
-msgid "Tap an element to add its first atom."
-msgstr "Toque em um elemento para adicionar seu primeiro átomo."
+msgctxt "0ktP9z"
+msgid "Pick an element to start your molecule."
+msgstr "Escolha um elemento para começar sua molécula."
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "zL2gBh"
@@ -1958,14 +1838,14 @@ msgid "Every atom has all its bonds."
 msgstr "Todos os átomos têm todas as suas ligações."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "cSgkWf"
-msgid "{atom} is selected. Tap another atom to bond them, or an element to add one bonded to it."
-msgstr "{atom} está selecionado. Toque em outro átomo para ligar os dois ou em um elemento para adicionar um átomo ligado ao selecionado."
+msgctxt "esd72m"
+msgid "Pick an atom."
+msgstr "Selecione um átomo."
 
 #: src/activities/molecule-builder/molecule-status.tsx
-msgctxt "FaoZuv"
-msgid "Tap an atom to select it."
-msgstr "Toque em um átomo para selecionar ele."
+msgctxt "TFHgRi"
+msgid "{atom} is selected. Pick another atom to bond them, or an element to add one bonded to it."
+msgstr "Você selecionou {atom}. Escolha outro átomo para ligar os dois ou um elemento para adicionar um átomo ligado ao que você selecionou."
 
 #: src/activities/molecule-builder/use-atom-name.ts
 msgctxt "8ALT9p"
@@ -2042,16 +1922,16 @@ msgctxt "iHeHi6"
 msgid "Silicon"
 msgstr "Silício"
 
-#. Shows the notes on the five-line music staff (not sheet music) instead of guitar tab.
+#. Shows the melody as music notes on five lines, rather than numbered guitar frets.
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "gFJ4sU"
-msgid "Staff"
-msgstr "Pentagrama"
+msgctxt "7-Domh"
+msgid "Notes"
+msgstr "Notas"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "1xqT9N"
-msgid "Tab"
-msgstr "Tablatura"
+msgctxt "RpejPq"
+msgid "Guitar frets"
+msgstr "Casas do violão"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "yYzCD2"
@@ -2064,9 +1944,9 @@ msgid "Tempo"
 msgstr "Andamento"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "F2244X"
-msgid "{tempo} bpm"
-msgstr "{tempo} bpm"
+msgctxt "m5IhOG"
+msgid "{tempo} beats/min"
+msgstr "{tempo} batidas/min"
 
 #: src/activities/notation-player/notation-player-activity.tsx
 msgctxt "ZLkshx"
@@ -2079,7 +1959,6 @@ msgid "The music couldn't load. Check your connection and try again."
 msgstr "A música não carregou. Confira sua conexão e tente de novo."
 
 #: src/activities/notation-player/notation-player-activity.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "q_uwLT"
 msgid "Stop"
 msgstr "Parar"
@@ -2105,9 +1984,9 @@ msgid "Bar {bar}: {notes}."
 msgstr "Compasso {bar}: {notes}."
 
 #: src/activities/number-line/number-line-activity.tsx
-msgctxt "-s66db"
-msgid "{label} in {unit}"
-msgstr "{label} em {unit}"
+msgctxt "6EheS7"
+msgid "{label} ({unit})"
+msgstr "{label} ({unit})"
 
 #: src/activities/number-line/number-line-activity.tsx
 msgctxt "BDKQJ4"
@@ -2133,6 +2012,11 @@ msgstr "Sua resposta na reta numérica"
 msgctxt "mgXw7n"
 msgid "{person}: {word}, choose the ending"
 msgstr "{person}: {word}, escolha a terminação"
+
+#: src/activities/pattern-table/pattern-table-activity.tsx
+msgctxt "dlL374"
+msgid "Forms of {model} and {word}"
+msgstr "Formas de {model} e {word}"
 
 #: src/activities/pattern-table/pattern-table-activity.tsx
 msgctxt "om_2Uq"
@@ -2399,14 +2283,9 @@ msgid "Pick your guess, then check it to run the simulation."
 msgstr "Escolha seu palpite e confira para iniciar a simulação."
 
 #: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "icFXM1"
-msgid "{hit} in {share} of the runs."
-msgstr "{hit} em {share} das simulações."
-
-#: src/activities/random-simulation/chance-simulation.tsx
-msgctxt "uhzSro"
-msgid "{hit} in {share} of the runs. The exact chance is {exact}."
-msgstr "{hit} em {share} das simulações. A chance exata é {exact}."
+msgctxt "k2RxOi"
+msgid "The exact chance is {exact}."
+msgstr "A chance exata é {exact}."
 
 #: src/activities/random-simulation/chance-simulation.tsx
 msgctxt "0xVUIe"
@@ -2475,24 +2354,19 @@ msgid "±{value}"
 msgstr "±{value}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "pSyQZq"
-msgid "{tempo} bpm · Round {round} of {rounds}"
-msgstr "{tempo} bpm · Rodada {round} de {rounds}"
+msgctxt "lSvfb0"
+msgid "{tempo} beats a minute · Round {round} of {rounds}"
+msgstr "{tempo} batidas por minuto · Rodada {round} de {rounds}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "HDtGU-"
-msgid "{tempo} bpm · {rounds, plural, one {# round} other {# rounds}}"
-msgstr "{tempo} bpm · {rounds, plural, one {# rodada} other {# rodadas}}"
+msgctxt "vQ73wa"
+msgid "{tempo} beats a minute · {rounds, plural, one {# round} other {# rounds}}"
+msgstr "{tempo} batidas por minuto · {rounds, plural, one {# rodada} other {# rodadas}}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "vbF2AY"
 msgid "Listen first"
 msgstr "Ouvir primeiro"
-
-#: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "V8V6gJ"
-msgid "Start tapping"
-msgstr "Começar a tocar"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
@@ -2515,19 +2389,14 @@ msgid "We couldn't match enough taps to the clicks. Try again, tapping with each
 msgstr "Não conseguimos associar toques suficientes aos cliques. Tente de novo, tocando a cada clique."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "JUoCnO"
-msgid "Sound on this device arrives on time."
-msgstr "O som chega no tempo certo neste dispositivo."
+msgctxt "NNlvmb"
+msgid "All set."
+msgstr "Tudo certo."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "hIMvUw"
-msgid "Sound on this device arrives about {ms} ms late. Rhythms here take that out."
-msgstr "O som chega com cerca de {ms} ms de atraso neste dispositivo. Esse atraso é descontado nos ritmos."
-
-#: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "ukg6sv"
-msgid "Headphones can play sound a little late. Tap along with {count} clicks once, and rhythms on this device are timed fairly."
-msgstr "O som dos fones pode chegar com um pequeno atraso. Toque junto com {count} cliques uma vez para ajustar o tempo dos ritmos neste dispositivo."
+msgctxt "FfrrCO"
+msgid "Tap Start the beat, then tap along"
+msgstr "Toque em Começar o ritmo e depois acompanhe com toques"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2535,13 +2404,12 @@ msgid "Set up your sound"
 msgstr "Ajuste seu som"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "JrS_qa"
-msgid "Start the sound check"
-msgstr "Começar a conferir o som"
+msgctxt "Nl2YDQ"
+msgid "Start the beat"
+msgstr "Começar o ritmo"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
-#: src/lesson/lesson-action-bar.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
@@ -2612,6 +2480,11 @@ msgid "or press Space"
 msgstr "ou aperte a barra de espaço"
 
 #: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
+msgctxt "V8V6gJ"
+msgid "Start tapping"
+msgstr "Começar a tocar"
+
+#: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
 msgctxt "eP7OeM"
 msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hits}, over a click on every beat."
 msgstr "Um ritmo de {length} passos, com uma batida a cada {perBeat} passos. Toque nos passos {hits}, acompanhando o clique de cada batida."
@@ -2671,11 +2544,6 @@ msgstr "SQLite não carregou. Confira sua conexão e tente de novo."
 msgctxt "qj71j1"
 msgid "Query"
 msgstr "Consulta"
-
-#: src/activities/sql-playground/sql-playground-activity.tsx
-msgctxt "Vpa3uJ"
-msgid "Your query"
-msgstr "Sua consulta"
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "fv34i9"
@@ -2790,6 +2658,11 @@ msgid "A timeline from {start} to {end}."
 msgstr "Uma linha do tempo de {start} a {end}."
 
 #: src/activities/timeline/timeline-activity.tsx
+msgctxt "h_uYYh"
+msgid "{count} of {total} events placed"
+msgstr "{count} de {total} eventos posicionados"
+
+#: src/activities/timeline/timeline-activity.tsx
 msgctxt "nq2tGo"
 msgid "Show the real dates"
 msgstr "Mostrar as datas reais"
@@ -2820,24 +2693,25 @@ msgid "Time between the dates"
 msgstr "Tempo entre as datas"
 
 #: src/activities/timeline/timeline-gaps.tsx
-msgctxt "V9pdjC"
-msgid "from {earlier} ({earlierYear}) to {later} ({laterYear})"
-msgstr "de {earlier} ({earlierYear}) até {later} ({laterYear})"
+msgctxt "aDM2Dn"
+msgid "{event} ({year})"
+msgstr "{event} ({year})"
+
+#. Read aloud by a screen reader between two events on a timeline, where sighted learners see an arrow: “Great Pyramid built (2560 BCE) to Moon landing (1969)”.
+#: src/activities/timeline/timeline-gaps.tsx
+msgctxt "NLeFGn"
+msgid "to"
+msgstr "até"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "WeCA4I"
-msgid "{count, plural, one {# event to place} other {# events to place}}"
-msgstr "{count, plural, one {# evento para posicionar} other {# eventos para posicionar}}"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "Arraste para a linha do tempo."
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "atG-Sh"
 msgid "Place {event} on the timeline"
 msgstr "Posicionar {event} na linha do tempo"
-
-#: src/activities/timeline/timeline-tray.tsx
-msgctxt "Mz-N9C"
-msgid "Drag onto the timeline"
-msgstr "Arraste para a linha do tempo"
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -2890,6 +2764,21 @@ msgid "undefined"
 msgstr "indefinido"
 
 #: src/components/alphabet-step.tsx
+msgctxt "V08Uj0"
+msgid "In Latin letters"
+msgstr "Em letras latinas"
+
+#: src/components/alphabet-step.tsx
+msgctxt "hd_Nz8"
+msgid "Hiragana"
+msgstr "Hiragana"
+
+#: src/components/alphabet-step.tsx
+msgctxt "74gN_v"
+msgid "Katakana"
+msgstr "Katakana"
+
+#: src/components/alphabet-step.tsx
 msgctxt "w0J_gv"
 msgid "Alphabet"
 msgstr "Alfabeto"
@@ -2928,6 +2817,34 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Escolha palavras para montar sua resposta"
 
+#. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "3W8LgY"
+msgid "check"
+msgstr "conferir"
+
+#. Keyboard hint under a message box, right after a picture of the Enter key: pressing Enter sends the message. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "qITzR1"
+msgid "send"
+msgstr "enviar"
+
+#. Keyboard hint under a text box, right after pictures of the Shift and Enter keys: pressing them together starts a new line. Lowercase.
+#: src/components/enter-hint.tsx
+msgctxt "4SYk2r"
+msgid "new line"
+msgstr "nova linha"
+
+#: src/components/enter-hint.tsx
+msgctxt "waVIZZ"
+msgid "Press Enter to check, Shift+Enter for a new line."
+msgstr "Pressione Enter para conferir e Shift+Enter para uma nova linha."
+
+#: src/components/enter-hint.tsx
+msgctxt "ZPgsC6"
+msgid "Press Enter to send, Shift+Enter for a new line."
+msgstr "Pressione Enter para enviar, Shift+Enter para começar uma nova linha."
+
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
 msgctxt "SL2Bob"
@@ -2957,6 +2874,16 @@ msgstr "O que você escuta?"
 msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "Traduza"
+
+#: src/components/match-board.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {# de {total} pares formados}}"
+
+#: src/components/match-board.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, one {# cartão não tem par} other {# cartões não têm par}}"
 
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
@@ -3030,7 +2957,6 @@ msgctxt "pHv5DW"
 msgid "Each level sits inside the next one."
 msgstr "Cada nível fica dentro do próximo."
 
-#: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
 msgid "Drawing the picture…"
@@ -3056,29 +2982,26 @@ msgid "Tap an idea to see what it covers"
 msgstr "Toque em uma ideia para ver o que ela aborda"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "P0MjYO"
-msgid "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."
-msgstr "Você ainda pode revisar o que aprendeu e praticar o que errou. Novas aulas estarão disponíveis no mês que vem, ou assine o Plus para continuar agora."
+msgctxt "q5JxBr"
+msgid "You can still review and practice your mistakes."
+msgstr "Você ainda pode revisar e praticar o que você errou."
+
+#. Opens practice on the mistakes that are ready to fix.
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "practiceMistakesAction"
+msgid "Practice mistakes"
+msgstr "Corrigir erros"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "SDARaX"
-msgid "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now."
-msgstr "Você ainda pode revisar o que aprendeu e praticar o que errou. Novas aulas estarão disponíveis amanhã, ou assine o Plus para continuar agora."
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Começar"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "o_xO7j"
-msgid "That's all the new lessons for this month"
-msgstr "Você chegou ao limite de aulas novas deste mês"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "PXe9T_"
-msgid "That's all the new lessons for today"
-msgstr "Você chegou ao limite de aulas novas de hoje"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "xANHtD"
-msgid "See Plus"
-msgstr "Conhecer o Plus"
+#: src/questions/lesson-question-errors.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "Assinar"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/tutor-dock.tsx
@@ -3087,36 +3010,28 @@ msgid "Back"
 msgstr "Voltar"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "q-Zgbe"
-msgid "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you."
-msgstr "Você já fez as aulas que pode experimentar sem uma conta. Crie uma conta grátis para continuar e manter tudo o que aprendeu."
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "gojCcS"
-msgid "Save your progress to keep going"
-msgstr "Salve seu progresso para continuar"
-
-#: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-thread.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-conversation.tsx
+#: src/questions/tutor-dock.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Criar uma conta grátis"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "nkKtmz"
-msgid "You've reached today's limit. New lessons open again tomorrow."
-msgstr "Você atingiu o limite de hoje. Novas aulas estarão disponíveis amanhã."
+#: src/questions/lesson-question-errors.tsx
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "Entrar"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "8aKab6"
-msgid "That's a lot of learning today"
-msgstr "Você aprendeu bastante hoje"
+msgctxt "KFO_vV"
+msgid "Everything you learned comes with you."
+msgstr "Tudo o que você aprendeu continua com você."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "jdlHSh"
-msgid "Try again in a moment. Nothing you did was lost."
-msgstr "Tente de novo em instantes. Nada do que você fez foi perdido."
+msgctxt "EY8lh9"
+msgid "Nothing was lost. Try again in a moment."
+msgstr "Nada foi perdido. Tente de novo daqui a pouco."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3124,35 +3039,30 @@ msgid "We couldn't open this lesson"
 msgstr "Não conseguimos abrir esta aula"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "hp9pnq"
-msgid "Sign in to keep learning."
-msgstr "Entre na sua conta para continuar aprendendo."
+#: src/questions/tutor-conversation-parts.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "Hoje"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "QvYlF0"
-msgid "This lesson isn't available anymore."
-msgstr "Esta aula não está mais disponível."
+msgctxt "EdX_cR"
+msgid "The link may be old or mistyped."
+msgstr "O link pode ser antigo ou ter sido digitado errado."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "szo7Rq"
-msgid "Sign in to continue"
-msgstr "Entre na sua conta para continuar"
+msgctxt "t12Boe"
+msgid "This lesson isn't available"
+msgstr "Esta aula não está disponível"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "A_VPtF"
-msgid "Lesson not available"
-msgstr "Aula indisponível"
-
-#: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-errors.tsx
-msgctxt "SQJto2"
-msgid "Sign in"
-msgstr "Entrar"
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "Você saiu da sua conta"
 
 #: src/lesson/access/lesson-slow-down.tsx
-msgctxt "fKzrQy"
-msgid "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
-msgstr "Você começou muitas aulas em pouco tempo. Esta aula abre em {seconds, plural, =0 {# segundos} one {# segundo} other {# segundos}}."
+msgctxt "z7s-vx"
+msgid "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgstr "Você abriu muitas aulas em pouco tempo. Esta aula vai abrir sozinha em {seconds, plural, =0 {# segundos} one {# segundo} other {# segundos}}."
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "bKi-gy"
@@ -3173,6 +3083,11 @@ msgstr "Voltar para o capítulo"
 msgctxt "UI79fv"
 msgid "Next lesson"
 msgstr "Próxima aula"
+
+#: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Ir para Hoje"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "XHHt5U"
@@ -3200,9 +3115,9 @@ msgid "Building your plan"
 msgstr "Criando seu plano"
 
 #: src/lesson/completion/lesson-completion-plan.tsx
-msgctxt "SedhMm"
-msgid "See your plan"
-msgstr "Ver seu plano"
+msgctxt "nF8bKj"
+msgid "See plan"
+msgstr "Ver plano"
 
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
@@ -3221,6 +3136,8 @@ msgstr "Precisa de mais tempo? {name} pode explicar de outra forma."
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
+#: src/questions/lesson-question-panel.tsx
+#: src/questions/lesson-question-thread.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3330,6 +3247,12 @@ msgid "sounds like {respelling}"
 msgstr "soa como {respelling}"
 
 #: src/lesson/feedback/lesson-spoken-words.tsx
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "zhvWvI"
+msgid "Listen"
+msgstr "Ouça"
+
+#: src/lesson/feedback/lesson-spoken-words.tsx
 msgctxt "BvZ66J"
 msgid "Slowly"
 msgstr "Devagar"
@@ -3345,10 +3268,16 @@ msgctxt "yDk4bj"
 msgid "Also correct:"
 msgstr "Também está certo:"
 
+#. Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way.
 #: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "57Nd7h"
-msgid "Each question is checked a few times a day. Compare your answer with this one:"
-msgstr "Cada pergunta é conferida algumas vezes por dia. Compare sua resposta com esta:"
+msgctxt "FtNhyg"
+msgid "This question was updated after you started, so this answer doesn't count."
+msgstr "Esta pergunta foi atualizada depois que você começou, então esta resposta não conta."
+
+#: src/lesson/feedback/lesson-step-result.tsx
+msgctxt "WGhDaL"
+msgid "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
+msgstr "Esta pergunta já foi conferida algumas vezes hoje, então sua resposta não conta. Compare com esta:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "bqVpRG"
@@ -3359,56 +3288,6 @@ msgstr "Escrita:"
 msgctxt "mhiTW7"
 msgid "Correct answer"
 msgstr "Resposta correta"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "Conferir"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "Confirmar"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "Ainda não sei"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "Próximo"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "BkQAJw"
-msgid "Show the next step"
-msgstr "Mostrar o próximo passo"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "ZLtyTD"
-msgid "See the answer"
-msgstr "Ver a resposta"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "Ver como foi"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Começar"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "QriCsD"
-msgid "Previous screen"
-msgstr "Tela anterior"
 
 #: src/lesson/lesson-aside.tsx
 #: src/lesson/steps/worked-example-content.tsx
@@ -3439,39 +3318,29 @@ msgid "{count, plural, one {# quick question at the end} other {# quick question
 msgstr "{count, plural, one {# pergunta rápida no final} other {# perguntas rápidas no final}}"
 
 #: src/lesson/lesson-aside.tsx
-msgctxt "fl3kLl"
-msgid "screen {number}"
-msgstr "tela {number}"
-
-#: src/lesson/lesson-aside.tsx
 msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "Ajuda com esta tela"
 
-#: src/lesson/lesson-leave.tsx
-msgctxt "-D1SOt"
-msgid "Leave for now?"
-msgstr "Sair por enquanto?"
-
-#: src/lesson/lesson-leave.tsx
-msgctxt "evHhXy"
-msgid "Your answer hasn't been checked, so it won't be kept."
-msgstr "Sua resposta ainda não foi conferida, então não será salva."
-
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "Continuar escrevendo"
 
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "fnihsY"
 msgid "Leave"
 msgstr "Sair"
 
 #: src/lesson/lesson-player-header.tsx
-msgctxt "fp5tEg"
-msgid "Close lesson"
-msgstr "Fechar aula"
+msgctxt "evHhXy"
+msgid "Your answer hasn't been checked, so it won't be kept."
+msgstr "Sua resposta ainda não foi conferida, então não será salva."
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "-D1SOt"
+msgid "Leave for now?"
+msgstr "Sair por enquanto?"
 
 #: src/lesson/lesson-player-header.tsx
 msgctxt "0WZ-rc"
@@ -3494,14 +3363,14 @@ msgid "Lesson content"
 msgstr "Conteúdo da aula"
 
 #: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Opções da tela"
-
-#: src/lesson/lesson-screen-menu.tsx
 msgctxt "_fpJc0"
 msgid "Made with AI. It may contain mistakes."
 msgstr "Feito com IA. Pode conter erros."
+
+#: src/lesson/lesson-screen-menu.tsx
+msgctxt "GscVFm"
+msgid "Skip writing questions today"
+msgstr "Pular perguntas de escrita hoje"
 
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "JfMPi0"
@@ -3509,19 +3378,14 @@ msgid "I already know this"
 msgstr "Eu já sei isso"
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "qzpeai"
-msgid "Write again"
-msgstr "Escrever de novo"
+msgctxt "Bvu2Yr"
+msgid "Turn back on"
+msgstr "Reativar"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
 msgid "Quick check · {current} of {total}"
 msgstr "Teste rápido · {current} de {total}"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "wIdPyY"
-msgid "Not quite. Look again and fix it yourself, then check."
-msgstr "Não é bem isso. Olhe de novo, corrija você mesmo e depois confira."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "KC15MC"
@@ -3534,9 +3398,9 @@ msgid "This question was waiting for its picture. Answer it to finish the lesson
 msgstr "Esta pergunta estava esperando a imagem. Responda para concluir a aula."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "I67vt5"
-msgid "No more writing today."
-msgstr "Por hoje, chega de escrever."
+msgctxt "36aQ8F"
+msgid "Writing is off for today."
+msgstr "Perguntas de escrita desativadas por hoje."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "N9yMCQ"
@@ -3547,6 +3411,16 @@ msgstr "Não conseguimos conferir sua resposta desta vez. Tente de novo."
 msgctxt "dw3XKv"
 msgid "Still checking. This is taking longer than usual."
 msgstr "Ainda estamos conferindo. Está demorando mais que o normal."
+
+#: src/lesson/lesson-stage.tsx
+msgctxt "s0oKCO"
+msgid "Listen again"
+msgstr "Ouvir de novo"
+
+#: src/lesson/lesson-stage.tsx
+msgctxt "wIdPyY"
+msgid "Not quite. Look again and fix it yourself, then check."
+msgstr "Não é bem isso. Olhe de novo, corrija você mesmo e depois confira."
 
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
@@ -3579,14 +3453,14 @@ msgid "Challenge complete"
 msgstr "Desafio concluído"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "ttLWcq"
-msgid "Skills practiced"
-msgstr "Habilidades praticadas"
+msgctxt "3SY66E"
+msgid "What you practiced"
+msgstr "O que você praticou"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "gvZdep"
-msgid "Practice “{skill}” · {time}"
-msgstr "Pratique “{skill}” · {time}"
+msgctxt "4B-api"
+msgid "Next time, try…"
+msgstr "Da próxima vez, tente…"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "M55cZV"
@@ -3599,24 +3473,9 @@ msgid "What if · {setting}"
 msgstr "E se · {setting}"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "YVTWsk"
-msgid "Challenge · {setting}"
-msgstr "Desafio · {setting}"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "KV-6ml"
 msgid "Your mission"
 msgstr "Sua missão"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "r5v2r8"
-msgid "You can ask the team or the AI for help. Your decisions change the outcome."
-msgstr "Você pode pedir ajuda à equipe ou à IA. Suas decisões mudam o resultado."
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "cjl8Gf"
-msgid "You can ask the team for help. Your decisions change the outcome."
-msgstr "Você pode pedir ajuda à equipe. Suas decisões mudam o resultado."
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "eppyrx"
@@ -3648,6 +3507,21 @@ msgctxt "jzSjBX"
 msgid "How the case is going"
 msgstr "Como está indo o caso"
 
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "u2BixT"
+msgid "out of 100"
+msgstr "de 100"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "yeDos5"
+msgid "higher is better"
+msgstr "quanto maior, melhor"
+
+#: src/lesson/steps/challenge/challenge-meters.tsx
+msgctxt "B_mzOz"
+msgid "lower is better"
+msgstr "quanto menor, melhor"
+
 #: src/lesson/steps/challenge/challenge-parts.tsx
 msgctxt "hYkLAU"
 msgid "You:"
@@ -3665,24 +3539,15 @@ msgid "Just a guess, it doesn't count"
 msgstr "Só um palpite, não vale ponto"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "waVIZZ"
-msgid "Press Enter to check, Shift+Enter for a new line."
-msgstr "Pressione Enter para conferir e Shift+Enter para uma nova linha."
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Escreva sua resposta"
 
+#. “Record” is the label of the button that starts the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "7Y6Yvq"
-msgid "Record"
-msgstr "Gravar"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "Tljb7W"
-msgid "Tap and say it out loud"
-msgstr "Toque e fale em voz alta"
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "Toque em Gravar e fale em voz alta"
 
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3695,6 +3560,12 @@ msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "Não posso falar agora"
 
+#. On a question answered aloud: the learner types this one answer instead of saying it.
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "typeSpokenAnswer"
+msgid "Type instead"
+msgstr "Digitar"
+
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
 msgid "I can talk now"
@@ -3706,14 +3577,19 @@ msgid "Say it instead"
 msgstr "Prefiro falar"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "QuYUAL"
-msgid "The microphone is blocked. Type your answer instead."
-msgstr "O microfone está bloqueado. Digite sua resposta."
+msgctxt "pjy2sy"
+msgid "Type what you'd say"
+msgstr "Digite o que você falaria"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "2Px63n"
-msgid "We can't use your microphone. Type your answer instead."
-msgstr "A gente não consegue usar seu microfone. Digite sua resposta."
+msgctxt "eUqe2x"
+msgid "To speak instead, allow the microphone for Zoonk in your browser settings."
+msgstr "Para falar em vez de digitar, permita o uso do microfone pelo Zoonk nas configurações do navegador."
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "uTDJ3g"
+msgid "We can't use your microphone, so type what you'd say."
+msgstr "A gente não consegue usar seu microfone, então digite o que você falaria."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"
@@ -3724,11 +3600,6 @@ msgstr "Resumo"
 msgctxt "-LUe1w"
 msgid "{count, plural, one {# idea to take from this lesson} other {# ideas to take from this lesson}}"
 msgstr "{count, plural, one {# ideia para levar desta aula} other {# ideias para levar desta aula}}"
-
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "DPTzG-"
-msgid "Can't write now"
-msgstr "Não posso escrever agora"
 
 #: src/lesson/steps/typed-answer-step.tsx
 msgctxt "lZZnLn"
@@ -3767,11 +3638,6 @@ msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "Você escolheu <strong>{answer}</strong> em “<question></question>”"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
-msgctxt "IzCVhG"
-msgid "More options"
-msgstr "Mais opções"
-
-#: src/mind-maps/mind-map-reader-menu.tsx
 msgctxt "pyQIKJ"
 msgid "Start from the first map"
 msgstr "Começar pelo primeiro mapa"
@@ -3806,10 +3672,35 @@ msgctxt "lvN_47"
 msgid "Previous map"
 msgstr "Mapa anterior"
 
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "Próximo"
+
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"
 msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "A imagem tinha erros, então aqui está o mapa mental em texto."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "J2sgEz"
+msgid "Show the map as"
+msgstr "Mostrar o mapa como"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "zuqMfZ"
+msgid "Map"
+msgstr "Mapa"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "aA8bDw"
+msgid "Text"
+msgstr "Texto"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "nonkuT"
+msgid "Tap the map to zoom in"
+msgstr "Toque no mapa para ampliar"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "7FWazb"
@@ -3883,41 +3774,6 @@ msgid "We couldn't send your last question. Try again."
 msgstr "Não conseguimos enviar sua última pergunta. Tente de novo."
 
 #: src/questions/lesson-question-composer.tsx
-msgctxt "v9luVQ"
-msgid "Ask about this chapter…"
-msgstr "Pergunte sobre este capítulo…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "CVtLex"
-msgid "Ask about this mock exam…"
-msgstr "Pergunte sobre este simulado…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "X_H9F0"
-msgid "Ask about your plan…"
-msgstr "Pergunte sobre seu plano…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uDwgZF"
-msgid "Ask about this subject…"
-msgstr "Pergunte sobre esta matéria…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "TCh0B4"
-msgid "Ask about this question…"
-msgstr "Pergunte sobre esta questão…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "wBr6ON"
-msgid "Ask about your answer…"
-msgstr "Pergunte sobre sua resposta…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "6sIYgs"
-msgid "Ask about the lesson content…"
-msgstr "Pergunte sobre o conteúdo da aula…"
-
-#: src/questions/lesson-question-composer.tsx
 msgctxt "zMPwOt"
 msgid "Retry last question"
 msgstr "Reenviar última pergunta"
@@ -3932,20 +3788,15 @@ msgctxt "iPfRms"
 msgid "Ask a question"
 msgstr "Faça uma pergunta"
 
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uw7M-z"
-msgid "⏎ send · ⇧⏎ new line"
-msgstr "⏎ enviar · ⇧⏎ nova linha"
+#: src/questions/lesson-question-errors.tsx
+msgctxt "NYRAZH"
+msgid "You've been logged out."
+msgstr "Você saiu da sua conta."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "2P8sqa"
-msgid "Your session expired. Sign in again."
-msgstr "Sua sessão expirou. Entre de novo."
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "iVOq9B"
-msgid "Subscribe to ask questions"
-msgstr "Assine para fazer perguntas"
+msgctxt "JGZkd5"
+msgid "Asking questions needs a subscription"
+msgstr "Para fazer perguntas, é preciso assinar"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "0-TBnr"
@@ -3966,11 +3817,6 @@ msgstr "Faça uma pausa curta e pergunte de novo."
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "Algo deu errado. Tente de novo."
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "EaucLA"
-msgid "View plans"
-msgstr "Ver planos"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "BIwI4b"
@@ -4017,6 +3863,11 @@ msgctxt "J9Kkha"
 msgid "Close questions"
 msgstr "Fechar perguntas"
 
+#: src/questions/lesson-question-panel.tsx
+msgctxt "dmlJ5t"
+msgid "Ask {name} with a free account"
+msgstr "Pergunte para {name} com uma conta grátis"
+
 #: src/questions/lesson-question-thread-viewport.tsx
 msgctxt "E6r0bc"
 msgid "Scroll to latest"
@@ -4058,20 +3909,14 @@ msgid "Questions about this lesson"
 msgstr "Perguntas sobre esta aula"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "BOsQu3"
-msgid "What would you like help with?"
-msgstr "Com o que você precisa de ajuda?"
+msgctxt "OCg58Y"
+msgid "With a free account, you can ask about anything in a lesson."
+msgstr "Com uma conta grátis, você pode tirar dúvidas sobre qualquer parte da aula."
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"
 msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "{name} é uma IA parceira de estudos e pode cometer erros."
-
-#: src/questions/lesson-question-thread.tsx
-#: src/questions/tutor-dock.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "Crie uma conta grátis para fazer perguntas"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -4140,11 +3985,6 @@ msgid "Your question"
 msgstr "Sua pergunta"
 
 #: src/questions/tutor-conversation-parts.tsx
-msgctxt "zWgbGg"
-msgid "Today"
-msgstr "Hoje"
-
-#: src/questions/tutor-conversation-parts.tsx
 msgctxt "6dIxDP"
 msgid "Yesterday"
 msgstr "Ontem"
@@ -4180,6 +4020,11 @@ msgid "Ask {name} about this screen"
 msgstr "Pergunte para {name} sobre esta tela"
 
 #: src/questions/tutor-dock.tsx
+msgctxt "uTM1IU"
+msgid "Questions need a free account"
+msgstr "Você precisa de uma conta grátis para fazer perguntas"
+
+#: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"
 msgid "Questions to {name}"
 msgstr "Perguntas para {name}"
@@ -4193,6 +4038,11 @@ msgstr "{count, plural, one {# pergunta para {name}} other {# perguntas para {na
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, one {# pergunta} other {# perguntas}}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "ZT0z9z"
+msgid "Ask"
+msgstr "Perguntar"
 
 #: src/questions/tutor-markdown.tsx
 msgctxt "13bnyN"

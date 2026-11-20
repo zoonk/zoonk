@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_CARD_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 import { keyedByPosition } from "../_utils/position-keys";
 import { type SampleResult, countPassing } from "./pattern-results";
 
@@ -18,7 +19,7 @@ function MarkedSample({ result, shouldMatch }: { result: SampleResult; shouldMat
       {sample.slice(0, match.start)}
       <mark
         className={cn(
-          "rounded px-px",
+          "rounded",
           shouldMatch
             ? "bg-success/10 text-success-text"
             : "bg-destructive/10 text-destructive-text",
@@ -45,8 +46,10 @@ function SampleRow({ result, shouldMatch }: { result: SampleResult; shouldMatch:
   return (
     <li
       className={cn(
-        "bg-background flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 font-mono text-base",
-        !result.passes && "border-destructive/50 bg-destructive/10",
+        ACTIVITY_CARD_CLASS,
+        "flex min-h-11 items-center gap-2 py-2 font-mono text-sm",
+        result.passes && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
+        !result.passes && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
       )}
     >
       <MarkedSample result={result} shouldMatch={shouldMatch} />
@@ -57,9 +60,9 @@ function SampleRow({ result, shouldMatch }: { result: SampleResult; shouldMatch:
           <span className="text-destructive-text font-sans text-xs font-medium">{status}</span>
         )}
         {result.passes ? (
-          <Check className="text-success-text size-[18px]" />
+          <Check className="text-success-text size-4" />
         ) : (
-          <X className="text-destructive-text size-[18px]" />
+          <X className="text-destructive-text size-4" />
         )}
       </span>
     </li>
@@ -102,14 +105,17 @@ export function RegexSampleList({
         )}
       </div>
 
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-2">
         {results
           ? keyedByPosition(results, (result) => result.sample).map(({ item, key }) => (
               <SampleRow key={key} result={item} shouldMatch={shouldMatch} />
             ))
           : keyedByPosition(samples, (sample) => sample).map(({ item, key }) => (
               <li
-                className="bg-background flex min-h-11 items-center rounded-xl border px-3 py-2 font-mono text-base whitespace-pre"
+                className={cn(
+                  ACTIVITY_CARD_CLASS,
+                  "flex min-h-11 items-center py-2 font-mono text-sm whitespace-pre",
+                )}
                 key={key}
               >
                 {item}

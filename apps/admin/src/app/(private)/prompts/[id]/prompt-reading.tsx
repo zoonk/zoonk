@@ -3,7 +3,9 @@ import { AdminSectionEmpty } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { type PromptOutcome } from "@/data/prompts/_utils/prompt-outcomes";
 import { type AdminPrompt } from "@/data/prompts/get-prompt";
+import { formatMinutes } from "@/lib/format-duration";
 import { type GoalUnderstandingView } from "@zoonk/core/view-models/onboarding/contract";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { parsePromptReading } from "../_utils/prompt-labels";
 
 type GoalsReading = Extract<GoalUnderstandingView, { status: "goals" }>;
@@ -15,13 +17,17 @@ function getGoalFacts(draft: GoalsReading["goals"][number]["draft"]) {
     draft.targetDate && `by ${draft.targetDate}`,
   ]
     .filter(Boolean)
-    .join(" · ");
+    .join(FACT_SEPARATOR);
 }
 
 function getScheduleFacts(schedule: GoalsReading["schedule"]) {
-  return [`${schedule.dailyMinutes} min a day`, schedule.studyTime, schedule.studyTimeNote]
+  return [
+    `${formatMinutes(schedule.dailyMinutes)} a day`,
+    schedule.studyTime,
+    schedule.studyTimeNote,
+  ]
     .filter(Boolean)
-    .join(" · ");
+    .join(FACT_SEPARATOR);
 }
 
 function UnderstoodGoals({ reading }: { reading: GoalsReading }) {
@@ -66,10 +72,10 @@ function ReadingBody({ prompt }: { prompt: AdminPrompt }) {
   return <AdminSectionEmpty>{readingNotes[prompt.outcome]}</AdminSectionEmpty>;
 }
 
-const OLDER_FORMAT_NOTE = "This reading is in an older format. Open the stored reading below.";
+const OLDER_FORMAT_NOTE = "This reading is in an older format. Open its technical details below.";
 
 const readingNotes: Record<PromptOutcome, string> = {
-  failed: "The words couldn't be read.",
+  failed: "Reading the words failed, so nothing was saved.",
   goalCreated: OLDER_FORMAT_NOTE,
   inProgress: "Still reading the words.",
   noGoal: OLDER_FORMAT_NOTE,
@@ -81,7 +87,7 @@ export function PromptReading({ prompt }: { prompt: AdminPrompt }) {
   return (
     <div className="flex flex-col gap-1">
       <ReadingBody prompt={prompt} />
-      <AdminJson label="Stored reading" value={prompt.understanding} />
+      <AdminJson value={prompt.understanding} />
     </div>
   );
 }

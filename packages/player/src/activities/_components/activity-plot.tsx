@@ -4,18 +4,17 @@ import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type LinearScale, type NumericDomain, createLinearScale } from "@zoonk/utils/plot-scale";
 import { createContext, use } from "react";
+import { PLOT_DOT_RADIUS, PLOT_DOT_STROKE, PLOT_TICK_ROOM, TICK_GAP } from "../_utils/plot-ticks";
 import { type PlotPoint, linePath } from "../_utils/sample-formula";
+import { ActivityCanvasLabel } from "./activity-canvas";
 
 type PlotPadding = { bottom: number; left: number; right: number; top: number };
 
 type PlotScales = { height: number; width: number; x: LinearScale; y: LinearScale };
 
 const FALLBACK_WIDTH = 318;
-const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: 44, right: 12, top: 12 };
-const LABEL_GAP = 6;
-const X_LABEL_OFFSET = 18;
-const DOT_RADIUS = 6;
-const DOT_STROKE = 2.5;
+export const PLOT_LINE_WIDTH = 3;
+const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: PLOT_TICK_ROOM, right: 12, top: 12 };
 const GUIDE_STROKE = 1.5;
 
 const PlotContext = createContext<PlotScales | null>(null);
@@ -36,13 +35,17 @@ export function ActivityPlot({
   height: heightProp,
   padding = DEFAULT_PADDING,
   xDomain,
+  xLabel,
   yDomain,
+  yLabel,
 }: {
   children: React.ReactNode;
   className?: string;
   height: number | ((width: number) => number);
   padding?: Partial<PlotPadding>;
   xDomain: NumericDomain;
+  xLabel?: string;
+  yLabel?: string;
   yDomain: NumericDomain;
 }) {
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
@@ -57,7 +60,20 @@ export function ActivityPlot({
   };
 
   return (
-    <div className={cn("w-full", className)} data-slot="activity-plot" ref={ref}>
+    <div
+      className={cn("flex w-full flex-col gap-1", className)}
+      data-slot="activity-plot"
+      ref={ref}
+    >
+      {yLabel && (
+        <ActivityCanvasLabel
+          data-slot="plot-axis-title-y"
+          className="min-w-0 wrap-break-word"
+          style={{ marginLeft: inset.left, marginRight: inset.right }}
+        >
+          {yLabel}
+        </ActivityCanvasLabel>
+      )}
       <svg
         className="block overflow-visible text-xs tabular-nums select-none"
         height={height}
@@ -66,6 +82,15 @@ export function ActivityPlot({
       >
         <PlotContext value={scales}>{children}</PlotContext>
       </svg>
+      {xLabel && (
+        <ActivityCanvasLabel
+          data-slot="plot-axis-title-x"
+          className="min-w-0 text-right text-balance wrap-break-word"
+          style={{ marginLeft: inset.left, marginRight: inset.right }}
+        >
+          {xLabel}
+        </ActivityCanvasLabel>
+      )}
     </div>
   );
 }
@@ -73,8 +98,10 @@ export function ActivityPlot({
 export function ActivityPlotGridY({
   format,
   ticks,
+  align = "end",
 }: {
   format: (value: number) => string;
+  align?: "start" | "end";
   ticks: readonly number[];
 }) {
   const { x, y } = usePlotScales();
@@ -93,40 +120,13 @@ export function ActivityPlotGridY({
           <text
             className="fill-muted-foreground"
             dominantBaseline="middle"
-            x={left - LABEL_GAP}
+            x={align === "start" ? 0 : left - TICK_GAP}
             y={y.toPixel(tick)}
-            textAnchor="end"
+            textAnchor={align}
           >
             {format(tick)}
           </text>
         </g>
-      ))}
-    </g>
-  );
-}
-
-export function ActivityPlotAxisX({
-  format,
-  ticks,
-}: {
-  format: (value: number) => string;
-  ticks: readonly number[];
-}) {
-  const { x, y } = usePlotScales();
-  const [bottom] = y.range;
-
-  return (
-    <g aria-hidden="true">
-      {ticks.map((tick) => (
-        <text
-          className="fill-muted-foreground"
-          key={tick}
-          textAnchor="middle"
-          x={x.toPixel(tick)}
-          y={bottom + X_LABEL_OFFSET}
-        >
-          {format(tick)}
-        </text>
       ))}
     </g>
   );
@@ -152,7 +152,7 @@ export function ActivityPlotLine({
       d={linePath(toPixels(points, scales))}
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth={3}
+      strokeWidth={PLOT_LINE_WIDTH}
     />
   );
 }
@@ -207,7 +207,7 @@ export function ActivityPlotGuide({
 
 export function ActivityPlotDot({
   className,
-  radius = DOT_RADIUS,
+  radius = PLOT_DOT_RADIUS,
   x: dataX,
   y: dataY,
 }: {
@@ -225,7 +225,7 @@ export function ActivityPlotDot({
       cx={x.toPixel(dataX)}
       cy={y.toPixel(dataY)}
       r={radius}
-      strokeWidth={DOT_STROKE}
+      strokeWidth={PLOT_DOT_STROKE}
     />
   );
 }

@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="8dp"
+    android:height="16dp"
+    android:viewportWidth="480"
+    android:viewportHeight="960">
+  <!-- ic_row_fold turned over, for a row that is open: the same ink, so it ends on the same edge. -->
+  <group android:rotation="180" android:pivotX="240" android:pivotY="480">
+    <group android:translateX="-240">
+      <path
+          android:fillColor="@android:color/black"
+          android:pathData="M480,615L240,375L296,319L480,503L664,319L720,375L480,615Z"/>
+    </group>
+  </group>
+</vector>

@@ -11,6 +11,7 @@ export function SettingRow({
   description,
   descriptionId,
   label,
+  stacked = false,
   wide = false,
 }: {
   children: React.ReactNode;
@@ -18,17 +19,22 @@ export function SettingRow({
   description?: React.ReactNode;
   descriptionId?: string;
   label: React.ReactNode;
+  /** On a phone the control goes under the label; `wide` also gives it a fixed width beside it. */
+  stacked?: boolean;
   wide?: boolean;
 }) {
+  const stacks = stacked || wide;
+
   return (
     <ListRow
       className={cn(
-        "items-center gap-x-4",
-        wide && "flex-col items-stretch gap-y-0 pb-3 sm:flex-row sm:items-center sm:pb-0",
+        // Its control has an outline or a fill of its own, so no hairline is drawn over it too.
+        "items-center gap-x-4 border-t-0!",
+        stacks && "flex-col items-stretch gap-y-0 pb-3 sm:flex-row sm:items-center sm:pb-0",
         className,
       )}
     >
-      <ListRowContent className={cn(wide && "sm:py-3")}>
+      <ListRowContent className={cn(stacks && "sm:py-3")}>
         <ListRowTitle>{label}</ListRowTitle>
         {description && (
           <ListRowDescription className="text-pretty" id={descriptionId}>
@@ -36,7 +42,15 @@ export function SettingRow({
           </ListRowDescription>
         )}
       </ListRowContent>
-      <div className={cn("flex shrink-0 items-center", wide && "sm:w-75")}>{children}</div>
+      <div
+        className={cn(
+          "flex shrink-0 items-center py-2",
+          stacks && "py-0 sm:py-2",
+          wide && "sm:w-75",
+        )}
+      >
+        {children}
+      </div>
     </ListRow>
   );
 }
@@ -67,30 +81,6 @@ export function SwitchSettingRow({
         checked={checked}
         onCheckedChange={onCheckedChange}
       />
-    </SettingRow>
-  );
-}
-
-export function SelectSettingRow({
-  children,
-  description,
-  descriptionId,
-  label,
-  selectId,
-}: {
-  children: React.ReactNode;
-  description: string;
-  descriptionId: string;
-  label: string;
-  selectId: string;
-}) {
-  return (
-    <SettingRow
-      description={description}
-      descriptionId={descriptionId}
-      label={<label htmlFor={selectId}>{label}</label>}
-    >
-      {children}
     </SettingRow>
   );
 }

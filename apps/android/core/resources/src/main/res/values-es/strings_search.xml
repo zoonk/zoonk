@@ -20,7 +20,6 @@
   "search_group_goals": "5352e837900c49634152726f342d23d5c5f3f1bddaaf71fdee34ded676f2460b",
   "search_group_help": "bb9b0d47e3109b250fe935bac9e1e000b3d529956c7f0bee1c9ddc0ba382e12e",
   "search_group_mocks": "0494deb09db97061058f9da2e8a12234e672acf6011b990641ae2fe79b667906",
-  "search_group_new_goal": "4eeee81dfbf6073d09ab03f6080418b020428aaf8bbb444b6184fe175fbe9131",
   "search_group_plan": "78c6d0ef9a62ed8cff40ef700afaa8a11dc89489010e27d1f26b334f3937308e",
   "search_help": "027a93a1de32f411ffbd35e932e08e15b8d8740ba8765eec06ef1379abb7c557",
   "search_home": "603db6def84d1dc374be2f9554e3a61d97299a88130946b49a3e4d5ec1cb4be4",
@@ -33,7 +32,7 @@
   "search_mock_exam": "7cfab1a79488e90cd644a0b2270fd1615ae9a1ea82d057dab6dbb132ee84b8e8",
   "search_open": "901b9755a4f0615971e5a0cf7c1d152a200245bc118b8e6cd07d669c35c535bf",
   "search_placeholder": "8a0e02599fcf2a587186d909fcaa0e86a1bf960eaf7dd942c86de5527d24b41a",
-  "search_practice_mistakes": "fcec28b449a798db1c0771e53001f12bea40d737e7f9b1ebf03f112f9e0fe2f2",
+  "search_practice_mistakes": "45ecec1ff6993a319de62c595b0280b12561d33690d9eb2190b1f37e7ffe43df",
   "search_preferences": "65221acf6a50d878c8c86263192d2d90d6dc2305c1b997569715903df67a890d",
   "search_pricing": "c89ae99feeb416636f14c8887c6a8affa3d6a625e7b7ad1cc7cb3a4b54a3662f",
   "search_profile": "5453a985146ee69acd35b8a3040bf2972540c2764559e113521a70885d6b7985",
@@ -65,12 +64,11 @@
     <string name="search_group_account">Mi cuenta</string>
     <string name="search_group_help">Ayuda</string>
     <string name="search_group_ask">Preguntar</string>
-    <string name="search_group_new_goal">Nuevo objetivo</string>
     <string name="search_continue">Continuar la sesión de hoy</string>
     <string name="search_take_mock">Hacer un simulacro</string>
     <!-- Under "Take a mock exam": the learner can take a full exam day, half an exam day or one subject. -->
     <string name="search_take_mock_detail">Día completo, medio día o una materia</string>
-    <string name="search_practice_mistakes">Practicar con tus errores</string>
+    <string name="search_practice_mistakes">Practicar tus errores</string>
     <string name="search_ask_buddy">Preguntar a %1$s…</string>
     <string name="search_start_new_goal">Crear un nuevo objetivo</string>
     <string name="search_buddy_keyword">Compañero</string>

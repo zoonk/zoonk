@@ -10,6 +10,17 @@ func languageSkillName(_ skill: String) -> String {
 }
 
 extension LanguageStanding {
+  /// "English level": "Level" alone is the game's.
+  var levelTitle: String {
+    String(
+      localized: "\(Locale.current.languageName(goal.targetLanguage)) level", table: "Plan")
+  }
+
+  var sheetTitle: String {
+    String(
+      localized: "Your \(Locale.current.languageName(goal.targetLanguage)) level", table: "Plan")
+  }
+
   var levelText: String {
     guard let level else {
       return String(
@@ -17,6 +28,23 @@ extension LanguageStanding {
     }
 
     return level.target.map { "\(level.label) → \($0)" } ?? level.label
+  }
+
+  /// Main's `LevelValue`, for a readout: the level reached, then the one aimed for, smaller and
+  /// muted.
+  func levelValue(dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?) -> Text {
+    guard let level, let target = level.target else {
+      return Text(verbatim: levelText)
+    }
+
+    var environment = EnvironmentValues()
+    environment.dynamicTypeSize = dynamicTypeSize
+    environment.legibilityWeight = legibility
+    let aim = Text(verbatim: " → \(target)")
+      .font(TypeStyle.readoutTarget.font(in: environment))
+      .foregroundStyle(.mutedForeground)
+
+    return Text("\(Text(verbatim: level.label))\(aim)")
   }
 }
 
@@ -46,6 +74,7 @@ extension LanguageStanding.Level {
 }
 
 struct LanguageLevelSheet: View {
+  @Environment(\.dismiss) private var dismiss
   let standing: LanguageStanding
 
   var body: some View {
@@ -54,7 +83,7 @@ struct LanguageLevelSheet: View {
         LabeledContent {
           Text(standing.levelText)
         } label: {
-          Text("Level", tableName: "Plan", comment: "Label of a language goal's level")
+          Text(standing.levelTitle)
         }
       }
 
@@ -67,43 +96,21 @@ struct LanguageLevelSheet: View {
           }
           .accessibilityRepresentation { Text(level.estimate) }
         }
-      } header: {
-        SectionTitle(
-          Text(
-            "Practice estimates", tableName: "Plan",
-            comment:
-              "Heads each language skill's level, estimated from the learner's answers to set how hard practice is"
-          ))
-      } footer: {
-        SectionFooter {
-          Text(
-            "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan.",
-            tableName: "Plan",
-            comment:
-              "Under the skill estimates: they set how hard practice is, while certificates come from finishing the plan's lessons"
-          )
-        }
       }
     }
-    .navigationTitle(
-      Text("Your level", tableName: "Plan", comment: "Title of the language level sheet")
-    )
+    .navigationTitle(Text(standing.sheetTitle))
     .toolbarTitleDisplayMode(.inline)
-    .toolbar {
-      ToolbarItem(placement: .confirmationAction) {
-        PlanSheetDoneButton()
-      }
-    }
+    .sheetClose { dismiss() }
   }
 }
 
 struct PlanAlphabetRow: View {
   @Environment(PlanStore.self) private var store
-  @State private var failed = false
-  @State private var isSkipping = false
 
   let alphabet: LanguageUnitsOverview.Alphabet
   let goalId: String
+  /// The Plan's, above its panes.
+  let skip: VisitRequest<Bool>
 
   var body: some View {
     let time = planDurationText(minutes: Double(alphabet.minutes))
@@ -133,15 +140,15 @@ struct PlanAlphabetRow: View {
 
     if alphabet.pending {
       Button {
-        Task { await skip() }
+        skipAlphabet()
       } label: {
         Text(
           "I can already read it", tableName: "Plan",
           comment: "Skips the alphabet lesson; \"it\" is the language's alphabet")
       }
-      .disabled(isSkipping)
+      .disabled(skip.isRunning)
 
-      if failed {
+      if skip.outcome == false {
         FailureLine(
           message: LocalizedStringResource(
             "That didn't work. Try again in a moment.", table: "Plan",
@@ -150,13 +157,13 @@ struct PlanAlphabetRow: View {
     }
   }
 
-  private func skip() async {
-    isSkipping = true
-    switch await store.skipAlphabet(goalId: goalId) {
-    case .done(let skipped): failed = !skipped
-    case .failed: failed = true
-    case .obsolete: break
+  private func skipAlphabet() {
+    skip.run { [store, goalId] in
+      switch await store.skipAlphabet(goalId: goalId) {
+      case .done(let skipped): skipped
+      case .failed: false
+      case .obsolete: nil
+      }
     }
-    isSkipping = false
   }
 }

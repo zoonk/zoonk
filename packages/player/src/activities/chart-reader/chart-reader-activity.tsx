@@ -12,13 +12,13 @@ import {
 } from "../_components/activity-canvas";
 import {
   ActivityPlot,
-  ActivityPlotAxisX,
   ActivityPlotBand,
   ActivityPlotDot,
   ActivityPlotGridY,
   ActivityPlotLabel,
   ActivityPlotLine,
 } from "../_components/activity-plot";
+import { ActivityPlotAxisX } from "../_components/activity-plot-axis";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -81,6 +81,7 @@ export function ChartReaderActivity({
   const measure = (spanId: string) => computeActivityValue(content, { output: spanId });
   const targetId = check.kind === "numeric" ? (check.output ?? fields.spans[0]?.id) : null;
   const plainX = isPlainAxis(xs);
+  const formatX = (value: number) => format(value, { grouping: !plainX });
 
   function handleToggle(spanId: string) {
     const next = selected.includes(spanId)
@@ -104,19 +105,18 @@ export function ChartReaderActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <ActivityCanvasLabel className="text-foreground text-sm font-medium">
-        {fields.yLabel}
-      </ActivityCanvasLabel>
-
-      <ActivityPlot height={PLOT_HEIGHT} xDomain={xDomain} yDomain={yDomain}>
+      <ActivityPlot
+        height={PLOT_HEIGHT}
+        xDomain={xDomain}
+        xLabel={fields.xLabel}
+        yDomain={yDomain}
+        yLabel={fields.yLabel}
+      >
         <ActivityPlotGridY
           format={(value) => format(value, { compact: true })}
           ticks={niceTicks(yDomain, 3)}
         />
-        <ActivityPlotAxisX
-          format={(value) => format(value, { grouping: !plainX })}
-          ticks={niceTicks(xDomain, 3)}
-        />
+        <ActivityPlotAxisX format={formatX} ticks={niceTicks(xDomain, 3)} />
 
         {shownSpans.map((span) => (
           <ActivityPlotBand from={span.from} key={span.id} to={span.to} />
@@ -157,11 +157,11 @@ export function ChartReaderActivity({
         })}
       </ActivityPlot>
 
-      <ActivityCanvasLabel>{fields.xLabel}</ActivityCanvasLabel>
+      <ActivityCanvasLabel className="text-sm">
+        {t("Pick a part of the chart to measure it")}
+      </ActivityCanvasLabel>
 
-      <ActivityCanvasLabel className="text-sm">{t("Tap a span to measure it")}</ActivityCanvasLabel>
-
-      <ActivitySelectGrid label={t("Spans to measure")}>
+      <ActivitySelectGrid label={t("Parts of the chart to measure")}>
         {fields.spans.map((span) => (
           <ActivitySelectGridItem
             disabled={isChecked}
@@ -178,8 +178,8 @@ export function ChartReaderActivity({
       <ActivityTextAlternative>
         {t("A line chart of {y} by {x}, from {start} at {firstX} to {end} at {lastX}.", {
           end: format(pointAt(fields, xDomain[1]), { unit: fields.yUnit }),
-          firstX: format(xDomain[0], { grouping: !plainX }),
-          lastX: format(xDomain[1], { grouping: !plainX }),
+          firstX: formatX(xDomain[0]),
+          lastX: formatX(xDomain[1]),
           start: format(pointAt(fields, xDomain[0]), { unit: fields.yUnit }),
           x: fields.xLabel,
           y: fields.yLabel,

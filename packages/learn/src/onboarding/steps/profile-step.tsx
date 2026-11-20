@@ -16,6 +16,7 @@ import { useExclusiveLabels } from "../../profile-questions/profile-body-parts";
 import {
   type ProfileDraft,
   canSendProfileDraft,
+  declineProfileQuestion,
   getPrecheckedSupports,
   getProfileJobPrefill,
   toProfileAnswer,
@@ -30,22 +31,6 @@ import {
 import { type FlowState } from "../_utils/answered-step";
 import { getProfileProgress } from "../_utils/setup-progress";
 import { StepForm } from "./step-form";
-
-/**
- * Skipping conditions declines them, so a learner isn't asked about their health at every new goal;
- * the address form's skip is its "I'd rather not say".
- */
-function skipAnswer(question: ProfileQuestionView["id"]): OnboardingAnswerInput {
-  if (question === "conditions") {
-    return { answer: { conditions: [], consented: false, declined: true }, question };
-  }
-
-  if (question === "addressForm") {
-    return { answer: { declined: true, form: null }, question };
-  }
-
-  return { answer: null, question };
-}
 
 function initialDraft({
   jobPrefill,
@@ -108,7 +93,7 @@ function LessonOffer({ answer, href }: { answer: (() => Promise<boolean>) | null
         }}
         ref={link}
       >
-        {answer ? t("Save and start lesson 1") : t("Start lesson 1")}
+        {t("Start")}
         <ChevronRightIcon aria-hidden="true" data-icon="inline-end" />
       </LearnLink>
     </div>
@@ -123,7 +108,6 @@ function ProfileStep({
   onConditions,
   pending,
   precheck,
-  progress,
   question,
 }: {
   jobPrefill: string | null;
@@ -135,13 +119,12 @@ function ProfileStep({
   onConditions: (picks: string[]) => void;
   pending: boolean;
   precheck: readonly string[];
-  progress: { current: number; total: number };
   question: ProfileQuestionView;
 }) {
   const t = useExtracted();
   const exclusiveLabels = useExclusiveLabels();
   const title = useProfileQuestionTitle(question.id);
-  const description = useProfileQuestionDescription(question.id);
+  const description = useProfileQuestionDescription(question.id, "onboarding");
 
   const [draft, setDraft] = useState(() => initialDraft({ jobPrefill, precheck, question }));
   const canSend = canSendProfileDraft({ draft, from: "onboarding", question: question.id });
@@ -168,20 +151,16 @@ function ProfileStep({
       onSkip={() => {
         onConditions([]);
 
-        void onAnswer(skipAnswer(question.id));
+        void onAnswer(declineProfileQuestion(question.id));
       }}
       pending={pending}
       skipLabel={question.id === "addressForm" ? exclusiveLabels.ratherNot : undefined}
-      subject={t({
-        description: "Which of the questions about the learner this is, such as 4 of 10.",
-        message: "About you · {current, number} of {total, number}",
-        values: progress,
-      })}
+      subject={t("About you")}
       title={title}
     >
       <ProfileQuestionBody
-        declineAsSkip
         draft={draft}
+        from="onboarding"
         jobPrefill={jobPrefill}
         label={title}
         memoryEnabled={memoryEnabled}
@@ -196,7 +175,7 @@ function ProfileStep({
 export type ProfileStepState = {
   onConditions: (picks: string[]) => void;
   precheck: readonly string[];
-  progress: { current: number; total: number } | null;
+  progress: ReturnType<typeof getProfileProgress>;
 };
 
 /** The conditions' picks stay in this run's state only, to check rows on the supports screen next. */
@@ -242,7 +221,6 @@ export function ProfileStepScreen({
         onConditions={onConditions}
         pending={pending}
         precheck={precheck}
-        progress={progress}
         question={question}
       />
     )

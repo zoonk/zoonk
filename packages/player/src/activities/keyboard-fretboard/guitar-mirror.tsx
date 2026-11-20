@@ -3,19 +3,40 @@
 import { useExtracted } from "next-intl";
 import { ActivityCanvasLabel } from "../_components/activity-canvas";
 import { FRETBOARD_SPAN, GuitarFretboard } from "../_components/guitar-fretboard";
+import { type NoteMarkKind } from "../_components/note-mark";
+import { type GuitarVoicing, stringNoteMidi } from "../_utils/guitar-voicing";
 import { nameChord } from "../_utils/music-notes";
 import { useFretboardLabels } from "../_utils/use-fretboard-labels";
 import { useNoteNames } from "../_utils/use-music-labels";
 import { fretWindowStart, voicingFor } from "./keyboard-fretboard-notes";
 
+const OCTAVE = 12;
+
+function stringMark({
+  kindOf,
+  stringIndex,
+  voicing,
+}: {
+  kindOf: (pitch: number) => NoteMarkKind;
+  stringIndex: number;
+  voicing: GuitarVoicing;
+}): NoteMarkKind {
+  const fret = voicing[stringIndex];
+
+  return fret === null || fret === undefined
+    ? "new"
+    : kindOf(stringNoteMidi(stringIndex, fret) % OCTAVE);
+}
+
+/** The keyboard's notes on a guitar, each in the mark it has on the keys. */
 export function GuitarMirror({
   caption,
-  isChecked,
+  kindOf,
   pitches,
   spell,
 }: {
   caption?: string;
-  isChecked: boolean;
+  kindOf: (pitch: number) => NoteMarkKind;
   pitches: readonly number[];
   spell: (pitch: number) => string;
 }) {
@@ -40,7 +61,7 @@ export function GuitarMirror({
           {...labels}
           firstFret={fretWindowStart(voicing, FRETBOARD_SPAN)}
           label={title}
-          markOf={() => (isChecked ? "correct" : "new")}
+          markOf={(stringIndex) => stringMark({ kindOf, stringIndex, voicing })}
           nameOf={(midi) => display(spell(midi))}
           voicing={voicing}
         />

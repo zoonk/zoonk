@@ -9,7 +9,7 @@ Like `@zoonk/player`, the package can use Next.js and next-intl but never an app
 - Wrap the learning routes in `LearnProvider` (`@zoonk/learn/provider`) with stable `adapters`: the host's link component, the analytics `track` function from `@zoonk/core/analytics` and the tab routes.
 - Merge `learnMessages(locale)` (`@zoonk/learn/messages`) into the app's next-intl messages and add `packages/learn/messages` to the plugin's message paths. Feedback components translate under the `feedback` namespace (`useExtracted("feedback")`), so an app can send `learnFeedbackMessages(locale)` to every page and the full catalog only where learn screens render; new feedback components use the same namespace.
 - Wrap the app once in `ContentFeedbackProvider` (`@zoonk/learn/feedback`) with the host's message functions. It powers "Report a problem" in screen menus (`@zoonk/learn/feedback/menu-items` and `@zoonk/learn/feedback/content-menu`) and the feedback form, and renders the form dialog outside any menu, loading it the first time it opens. Without it, those controls render nothing.
-- Compose the frame with `LearnShell`, `LearnShellHeader`, `LearnShellStart`, `LearnShellEnd` and `LearnShellMain` (`@zoonk/learn/shell`), and place `LearnNavigation` (`@zoonk/learn/navigation`) in the header. It renders the learning tabs.
+- Compose the frame with `LearnShell`, `LearnShellContent` and `LearnShellMain` (`@zoonk/learn/shell`): a tab's page gets the frame's top bar (`PageTopBar` from `@zoonk/ui/components/page-top`, in `FRAME_COLUMN_CLASS`), any other page draws its own bar (`LearnPageBar`, `LearnSectionBar` from `@zoonk/learn/bar`), and `LearnBottomNavigation` (`@zoonk/learn/navigation`) renders the learning tabs under `lg`.
 
 ## Buddies
 

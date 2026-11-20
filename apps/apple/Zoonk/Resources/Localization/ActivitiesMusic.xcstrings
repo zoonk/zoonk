@@ -770,6 +770,65 @@
         }
       }
     },
+    "%lld beats/min" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Schläge/min"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld bpm"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld battements/min"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld battiti/min"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld拍/分"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "분당 %lld박"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld BPM"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld batidas/min"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dakikada %lld vuruş"
+          }
+        }
+      }
+    },
     "%lld bpm" : {
       "comment" : "A rhythm's tempo in beats per minute",
       "localizations" : {
@@ -1692,6 +1751,65 @@
         }
       }
     },
+    "All set." : {
+      "comment" : "The sound check measured the device's sound delay",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles bereit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo listo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout est prêt."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutto pronto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "準備ができました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "준비됐어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wszystko gotowe."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tudo certo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her şey hazır."
+          }
+        }
+      }
+    },
     "Bar %lld of %lld" : {
       "comment" : "Which bar of the melody is playing",
       "localizations" : {
@@ -1858,7 +1976,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "듣고 찾기"
+            "value" : "귀로 듣기"
           }
         },
         "pl" : {
@@ -2247,6 +2365,65 @@
         }
       }
     },
+    "Guitar frets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gitarrenbünde"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trastes de guitarra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frettes de guitare"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasti della chitarra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ギターのフレット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기타 프렛"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progi gitary"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Casas do violão"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gitar perdeleri"
+          }
+        }
+      }
+    },
     "Guitar strings" : {
       "comment" : "VoiceOver name of the guitar neck",
       "localizations" : {
@@ -2306,167 +2483,6 @@
         }
       }
     },
-    "Headphones can play sound a little late. Tap along with %lld clicks once, and rhythms on this device are timed fairly." : {
-      "comment" : "Why the sound check runs, before it starts",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Bei Kopfhörern kann der Ton etwas verzögert ankommen. Tippe einmal zu %lld Klick mit, damit deine Schläge bei Rhythmusaufgaben auf diesem Gerät fair bewertet werden."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Bei Kopfhörern kann der Ton etwas verzögert ankommen. Tippe einmal zu %lld Klicks mit, damit deine Schläge bei Rhythmusaufgaben auf diesem Gerät fair bewertet werden."
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Headphones can play sound a little late. Tap along with %lld click once, and rhythms on this device are timed fairly."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Headphones can play sound a little late. Tap along with %lld clicks once, and rhythms on this device are timed fairly."
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Los audífonos pueden reproducir el sonido con un poco de retraso. Toca al ritmo de %lld clic en una sola prueba para que este dispositivo evalúe los ritmos con precisión."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Los audífonos pueden reproducir el sonido con un poco de retraso. Toca al ritmo de %lld clics en una sola prueba para que este dispositivo evalúe los ritmos con precisión."
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Les écouteurs peuvent diffuser le son avec un léger retard. Un seul test suffit : appuie au rythme de %lld clic pour que les rythmes soient bien synchronisés sur cet appareil."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Les écouteurs peuvent diffuser le son avec un léger retard. Un seul test suffit : appuie au rythme de %lld clics pour que les rythmes soient bien synchronisés sur cet appareil."
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Le cuffie possono riprodurre i suoni con un leggero ritardo. Fai una sola prova toccando a tempo con %lld clic, così i ritmi su questo dispositivo saranno valutati correttamente."
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "ヘッドホンでは音が少し遅れて聞こえることがあります。一度、%lld回のクリック音に合わせてタップすると、この端末でリズムのタイミングを正しく判定できます。"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "헤드폰에서는 소리가 조금 늦게 들릴 수 있어요. 클릭 소리에 맞춰 %lld번 눌러 두면 이후에는 이 기기에서 리듬 타이밍을 정확하게 판정할 수 있어요."
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Słuchawki mogą odtwarzać dźwięk z lekkim opóźnieniem. Wystukaj raz rytm %lld kliknięcia, aby rytmy na tym urządzeniu były oceniane sprawiedliwie."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Słuchawki mogą odtwarzać dźwięk z lekkim opóźnieniem. Wystukaj raz rytm %lld kliknięć, aby rytmy na tym urządzeniu były oceniane sprawiedliwie."
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Fones de ouvido podem atrasar um pouco o som. Toque acompanhando %lld clique para ajustar o tempo dos ritmos neste aparelho. Você só precisa fazer isso uma vez."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Fones de ouvido podem atrasar um pouco o som. Toque acompanhando %lld cliques para ajustar o tempo dos ritmos neste aparelho. Você só precisa fazer isso uma vez."
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Kulaklıklar sesi biraz gecikmeli verebilir. Bir kez %lld tık sesine eşlik ederek dokun; böylece bu cihazda ritim tutuşunu doğru değerlendirebiliriz."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "Hear it" : {
       "comment" : "Plays the notes on the keys",
       "localizations" : {
@@ -2522,6 +2538,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dinle"
+          }
+        }
+      }
+    },
+    "Hear your notes" : {
+      "comment" : "Button that plays the notes the learner has placed on the instrument, rather than the mystery sound.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Töne anhören"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuchar tus notas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écouter tes notes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascolta le tue note"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んだ音を聴く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 음 듣기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posłuchaj wybranych dźwięków"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvir suas notas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notalarını dinle"
           }
         }
       }
@@ -3230,6 +3305,66 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çalınmıyor"
+          }
+        }
+      }
+    },
+    "Notes" : {
+      "comment" : "Shows the melody as music notes on five lines, rather than numbered guitar frets.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "五線譜"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오선보"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuty"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notalar"
           }
         }
       }
@@ -4125,120 +4260,60 @@
         }
       }
     },
-    "Sound on this device arrives about %lld ms late. Rhythms here take that out." : {
-      "comment" : "The sound check's reading, in milliseconds",
+    "Speakers and headphones can play a little late. Tap along with %lld clicks so your taps are timed right." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Ton kommt auf diesem Gerät etwa %lld ms zu spät an. Das wird bei den Rhythmen ausgeglichen."
+            "value" : "Lautsprecher und Kopfhörer können Töne leicht verzögert wiedergeben. Tippe im Takt der %lld Klicks mit, damit deine Schläge zeitlich richtig erfasst werden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El sonido de este dispositivo tiene un retraso de aproximadamente %lld ms. Los ritmos compensan ese retraso."
+            "value" : "Los altavoces y los audífonos pueden reproducir el sonido con un poco de retraso. Toca al ritmo de %lld clics para sincronizar tus toques."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le son de cet appareil arrive avec environ %lld ms de retard. Les rythmes en tiennent compte."
+            "value" : "Les haut-parleurs et les écouteurs peuvent diffuser le son avec un léger retard. Appuie au rythme des %lld clics pour bien synchroniser tes appuis."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Su questo dispositivo l’audio arriva con circa %lld ms di ritardo. Gli esercizi di ritmo lo compensano."
+            "value" : "Altoparlanti e cuffie possono riprodurre i suoni con un leggero ritardo. Tocca a tempo con %lld clic per sincronizzare i tuoi colpi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この端末では音が約%lldミリ秒遅れます。リズム練習ではその遅れを補正します。"
+            "value" : "スピーカーやヘッドホンでは、音が少し遅れて聞こえることがあります。タップのタイミングを調整するため、%lld回のクリック音に合わせてタップしてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 기기에서는 소리가 약 %lld밀리초 늦게 나와요. 리듬 연습에서는 그만큼 보정해요."
+            "value" : "스피커나 헤드폰에서 소리가 조금 늦게 나올 수 있어요. 타이밍을 정확히 맞출 수 있도록 클릭 소리에 맞춰 %lld번 두드려 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dźwięk na tym urządzeniu jest opóźniony o około %lld ms. W ćwiczeniach rytmicznych korygujemy to opóźnienie."
+            "value" : "Głośniki i słuchawki mogą odtwarzać dźwięk z lekkim opóźnieniem. Stukaj w rytm %lld kliknięć, byśmy mogli uwzględnić to opóźnienie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O som neste aparelho chega com cerca de %lld ms de atraso. Os ritmos levam esse atraso em conta."
+            "value" : "Caixas de som e fones de ouvido podem ter um pequeno atraso. Toque no ritmo dos %lld cliques para ajustar o tempo dos seus toques."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu cihazda ses yaklaşık %lld ms gecikiyor. Ritimlerde bu gecikmeyi telafi ediyoruz."
-          }
-        }
-      }
-    },
-    "Sound on this device arrives on time." : {
-      "comment" : "The sound check found no delay",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Ton kommt auf diesem Gerät rechtzeitig an."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El sonido de este dispositivo no tiene retraso."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le son de cet appareil arrive à temps."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Su questo dispositivo l’audio arriva senza ritardo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この端末では音の遅れはありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 기기에서는 소리가 지연 없이 나와요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dźwięk na tym urządzeniu jest odtwarzany bez opóźnienia."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O som neste aparelho chega sem atraso."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu cihazda ses gecikmesi yok."
+            "value" : "Hoparlör ve kulaklıklardan ses biraz gecikmeli gelebilir. Vuruşlarının zamanlamasını ayarlamak için %lld tık sesinin her birinde dokun."
           }
         }
       }
@@ -4249,7 +4324,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noten"
+            "value" : "Notensystem"
           }
         },
         "es" : {
@@ -4298,6 +4373,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Porte"
+          }
+        }
+      }
+    },
+    "Start" : {
+      "comment" : "Starts the clicks to tap along with",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zacznij"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlat"
           }
         }
       }
@@ -4357,65 +4491,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dokunmaya başla"
-          }
-        }
-      }
-    },
-    "Start the sound check" : {
-      "comment" : "Starts the clicks to tap along with",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tonprüfung starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iniciar la prueba de sonido"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lancer le test du son"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avvia la prova audio"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "音のチェックを始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "소리 확인 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rozpocznij test dźwięku"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar o teste de som"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ses testini başlat"
           }
         }
       }
@@ -4533,7 +4608,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tablatür"
+            "value" : "Tablatur"
           }
         }
       }
@@ -5260,6 +5335,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeterli sayıda vuruşu tık sesleriyle eşleştiremedik. Her tık sesinde dokunarak tekrar dene."
+          }
+        }
+      }
+    },
+    "Your notes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Noten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus notas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes notes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le tue note"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んだ音"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내가 고른 음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje nuty"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suas notas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notaların"
           }
         }
       }

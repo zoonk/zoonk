@@ -50,7 +50,7 @@ function LearnerBubble({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="learner-bubble"
       className={cn(
-        "bg-muted text-foreground w-fit max-w-[80%] min-w-0 self-end rounded-[0.75rem_0.75rem_0.25rem_0.75rem] px-3 py-2 text-[0.9375rem] leading-normal wrap-break-word whitespace-pre-wrap",
+        "bg-muted text-foreground text-reading w-fit max-w-[80%] min-w-0 self-end rounded-[0.75rem_0.75rem_0.25rem_0.75rem] px-3 py-2 leading-normal wrap-break-word whitespace-pre-wrap",
         className,
       )}
       {...props}

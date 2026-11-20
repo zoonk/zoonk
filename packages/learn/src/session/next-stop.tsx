@@ -2,13 +2,14 @@
 
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { CircleStopIcon, PlayIcon } from "lucide-react";
+import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
+import { Eyebrow } from "../_components/eyebrow";
 import { type LessonNotWritten } from "../_components/lesson-not-written-notice";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
-import { PageEyebrow } from "../_components/page";
+import { ChangeSaveError } from "../_components/save-error";
 import { StatusRegion } from "../_components/status-region";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
@@ -20,18 +21,19 @@ import { useVisibleWait } from "../generation/use-visible-wait";
 import { useLearnAnalytics } from "../learn-context";
 import { useReadyHold } from "../wait/use-ready-hold";
 import { WaitScreen, WaitSlot, useWaitScreen } from "../wait/wait-screen";
+import { StopFailed } from "./action-failed";
 import {
   AlternativeButton,
   NotWritten,
   Waiting,
   useKeptDeck,
-  useWritingFailed,
+  useWaitFailed,
   useWrittenWhileWaiting,
 } from "./next-stop-wait";
-import { ReviewIntro, noteReviewStart } from "./review-intro";
+import { ReviewIntro, noteReviewStart, useReviewLine } from "./review-intro";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
-import { useSessionQueueAside } from "./session-queue";
+import { SessionQueueSection, useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type DayStep } from "./session-types";
 import { useBlockDetail, useBlockTitle } from "./use-block-copy";
@@ -85,7 +87,7 @@ function StartButton({
 
   return (
     <form action={() => onStart()} className="contents">
-      <EnterButton busy={busy} icon={<PlayIcon aria-hidden="true" />} ref={ref} type="submit">
+      <EnterButton busy={busy} enter="host" ref={ref} type="submit">
         {step.status === "active" ? t("Continue") : t("Start")}
       </EnterButton>
     </form>
@@ -131,7 +133,6 @@ function useStartState({
 function NextStopActionBar({
   actions,
   alternative,
-  alternativeReason,
   block,
   isReady,
   notWritten,
@@ -141,7 +142,6 @@ function NextStopActionBar({
 }: {
   actions: NextStopActions;
   alternative: DayStep | null;
-  alternativeReason: "instead" | "whileWaiting";
   block: DayStep;
   isReady: boolean;
   notWritten: LessonNotWritten | null;
@@ -160,28 +160,19 @@ function NextStopActionBar({
     return null;
   }
 
-  return (
-    <TaskActionBar>
+  const note = (start.failed || stop.failed || start.wait !== "none") && (
+    <>
       {start.failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't open this step. Try again.")}
-        </p>
+        <ChangeSaveError>{t("We couldn't open this step. Try again.")}</ChangeSaveError>
       )}
+      {stop.failed && <StopFailed />}
+      <OpeningWaitLine wait={start.wait} />
+    </>
+  );
 
-      {stop.failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't stop the session. Try again.")}
-        </p>
-      )}
-
-      {/* Empty, it takes back the bar's gap but stays in the page, so it's heard when it speaks. */}
-      <OpeningWaitLine className="text-sm empty:-mt-2" wait={start.wait} />
-
-      <TaskActions
-        className={
-          !isReady && (alternative || quizSlot) ? "max-lg:flex-col max-lg:items-stretch" : undefined
-        }
-      >
+  return (
+    <TaskActionBar note={note}>
+      <TaskActions>
         {canStop && (
           <form action={() => void stop.run()} className="contents">
             <Button
@@ -208,11 +199,7 @@ function NextStopActionBar({
         {quizSlot && <WaitSlot enterKey={!alternative} />}
 
         {!isReady && alternative && (
-          <AlternativeButton
-            actions={actions}
-            alternative={alternative}
-            reason={alternativeReason}
-          />
+          <AlternativeButton actions={actions} alternative={alternative} />
         )}
       </TaskActions>
     </TaskActionBar>
@@ -257,12 +244,12 @@ export function NextStop({
   const title = useBlockTitle();
   const detail = useBlockDetail();
   const isReady = lesson === "ready";
-  const line = detail(block);
+  const line = useReviewLine({ block, detail: detail(block), goalId });
   const rows = getSessionQueue({ blocks, nextPosition: block.position });
   const aside = useSessionQueueAside({ left: minutesLeft, rows });
 
   const written = useWrittenWhileWaiting({ block, lesson });
-  const failed = useWritingFailed(lesson);
+  const failed = useWaitFailed({ generationId, lesson });
   const deck = useKeptDeck(warmUp);
   const hold = useReadyHold(isReady);
   const { track } = useLearnAnalytics();
@@ -274,7 +261,8 @@ export function NextStop({
 
   return (
     <WaitScreen
-      deck={hold.status === "go" ? null : deck}
+      // A failed run has nothing to wait for, so it offers Try again and no quiz.
+      deck={hold.status === "go" || failed.failed ? null : deck}
       goalId={goalId}
       hold={hold}
       surface="lessonWait"
@@ -289,13 +277,13 @@ export function NextStop({
 
         <TaskBody data-slot="next-stop">
           <div className="flex flex-col gap-2">
-            <PageEyebrow>{t("Up next")}</PageEyebrow>
+            <Eyebrow className="mb-1">{t("Up next")}</Eyebrow>
             <h2 className="text-title">{title(block)}</h2>
             {line && <p className="text-muted-foreground text-sm text-pretty">{line}</p>}
             <TaskMeta facts={facts} />
           </div>
 
-          <ReviewIntro block={block} goalId={goalId} />
+          <ReviewIntro block={block} />
 
           <StatusRegion className="text-sm text-pretty">
             {written && t("Your lesson is ready.")}
@@ -308,6 +296,7 @@ export function NextStop({
           {showsWait && (
             <Waiting
               actions={actions}
+              barHasMainAction={alternative !== null}
               block={block}
               failed={failed}
               generationId={generationId}
@@ -315,6 +304,7 @@ export function NextStop({
               lesson={lesson}
             />
           )}
+          <SessionQueueSection aside={aside} />
         </TaskBody>
 
         <NextStopActionBar
@@ -326,7 +316,6 @@ export function NextStop({
             },
           }}
           alternative={alternative}
-          alternativeReason={notWritten || failed ? "instead" : "whileWaiting"}
           block={block}
           isReady={isReady}
           notWritten={notWritten}

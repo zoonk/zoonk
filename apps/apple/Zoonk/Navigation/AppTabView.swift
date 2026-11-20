@@ -35,9 +35,12 @@ struct AppTabView: View {
         }
       }
       .onChange(of: studyTabs) {
-        if router.selectedTab.studyRoute != nil, !studyTabs.contains(router.selectedTab) {
+        if AppTab.study.contains(router.selectedTab), !studyTabs.contains(router.selectedTab) {
           router.leaveStudyTab(keepingPlace: false)
         }
+      }
+      .onChange(of: isStudyShown ? Set(studyTabs + AppTab.stats) : [], initial: true) {
+        router.sidebarTabs = $1
       }
   }
 
@@ -71,6 +74,7 @@ struct AppTabView: View {
           }
         } icon: {
           BuddyTabIcon()
+            .frame(width: 20)
         }
       }
 
@@ -92,6 +96,21 @@ struct AppTabView: View {
           Text("Study", tableName: "Navigation", comment: "Sidebar section with the study places")
         }
         .defaultVisibility(.hidden, for: .tabBar)
+
+        TabSection {
+          ForEach(AppTab.stats, id: \.self) { tab in
+            Tab(value: tab) {
+              TabRoot(tab: tab, tabBarPlacement: $tabBarPlacement)
+            } label: {
+              TabLabel(tab: tab)
+            }
+          }
+        } header: {
+          Text(
+            "Stats", tableName: "Navigation",
+            comment: "Sidebar section with a page for each of the learner's statistics")
+        }
+        .defaultVisibility(.hidden, for: .tabBar)
       }
     }
     // No `defaultTabBarPlacement(.sidebar)`: on the open iPhone Duo a sidebar would take the room
@@ -108,6 +127,13 @@ struct AppTabView: View {
         } icon: {
           Image(systemName: "bubble.left")
         }
+        .font(.body)
+        .labelReservedIconWidth(20)
+        .labelIconToTitleSpacing(15)
+        // The sidebar's rows center their icons 50pt in and start their titles 75pt in (iOS 27.2),
+        // where its bottom bar starts at its edge.
+        .padding(.leading, 40)
+        .frame(maxWidth: .infinity, alignment: .leading)
       }
     }
   }
@@ -121,7 +147,7 @@ struct AppTabView: View {
 
     return AppTab.study.filter { tab in
       switch tab {
-      case .exam: places?.exam == true
+      case .exam, .mockExam: places?.exam == true
       case .speaking: places?.speaking == true
       case .mindMaps: places?.mindMaps == true
       case .completedLessons: places?.completedLessons == true
@@ -216,8 +242,12 @@ struct AppSheetView: View {
         AccountSheet(signsIn: true)
       case .subscription:
         SubscriptionScreen()
+      case .practiceCall(let call):
+        TutorPracticeCallSheet(call: call)
+      case .tutor(let scope, let quote):
+        TutorPanel(scope: scope, quote: quote)
       }
     }
-    .zoonkStyles()
+    .zoonkSheet()
   }
 }

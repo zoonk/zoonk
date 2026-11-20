@@ -7,7 +7,7 @@ const MAX_OPEN_FLAGS = 200;
 const cachedListOpenReviewFlags = cacheAdminData(async () =>
   prisma.contentReviewFlag.findMany({
     include: {
-      item: { select: { format: true, id: true, skillId: true, sourceCitation: true } },
+      item: { select: { content: true, format: true, id: true, sourceCitation: true } },
       lesson: { select: { id: true, title: true } },
       notice: {
         include: {

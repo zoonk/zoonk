@@ -4,9 +4,11 @@ struct MemoryView: View {
   /// A fact the learner gave in About you is changed there, on its question.
   let editProfile: (ProfileQuestion) -> Void
 
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SettingsStore.self) private var settings
   @State private var editing: MemoryFact?
   @State private var statement = ""
+  @State private var changes = MemoryChanges()
 
   var body: some View {
     ZoonkList {
@@ -15,7 +17,7 @@ struct MemoryView: View {
           Text("Memory", tableName: "Settings", comment: "Title of the Memory page"),
           supporting: Text(
             "What Zoonk remembers to give you examples and plans that fit your life.",
-            tableName: "Settings", comment: "What the Memory page is for"))
+            tableName: "Settings"))
       }
 
       if let memory = settings.memory.value {
@@ -24,26 +26,23 @@ struct MemoryView: View {
             isOn: enabledBinding(memory.enabled),
             title: Text(
               "Use memory", tableName: "Settings", comment: "Switch that turns memory on or off"),
-            description: memory.enabled
-              ? Text(
-                "Personal examples, plans that fit your week and calls that remember your news",
-                tableName: "Settings", comment: "What memory does while it's on")
-              : Text(
-                "Memory is off. Nothing new is learned, and these facts aren't used.",
-                tableName: "Settings", comment: "What happens while memory is off"))
+            description: Text(
+              "Personal examples, plans that fit your week and calls with \(learner.buddyDisplayName) that remember what you share",
+              tableName: "Settings",
+              comment:
+                "What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it."
+            ))
         } footer: {
           SectionFooter {
-            if let deleted = settings.deletedFact {
-              MemoryUpdatedNotice(fact: deleted, status: settings.undoStatus) {
-                Task {
-                  await settings.undoDeletion()
-                }
+            if let deleted = changes.deletedFact {
+              MemoryUpdatedNotice(fact: deleted, status: changes.undoStatus) {
+                changes.undo(settings: settings)
               }
             }
           }
         }
 
-        if settings.saveFailed {
+        if changes.saveFailed {
           SettingsSaveError()
         }
 
@@ -69,9 +68,7 @@ struct MemoryView: View {
             Section {
               ForEach(facts) { fact in
                 MemoryFactRow(fact: fact, edit: { edit(fact) }) {
-                  Task {
-                    await settings.deleteMemoryFact(id: fact.id)
-                  }
+                  changes.delete(id: fact.id, settings: settings)
                 }
               }
             } header: {
@@ -82,12 +79,8 @@ struct MemoryView: View {
 
         Section {
           DataExportRow(
-            title: Text(
-              "Download my memory", tableName: "Settings",
-              comment: "Row that downloads everything in the learner's memory"),
-            description: Text(
-              "Everything in your memory, as one file", tableName: "Settings",
-              comment: "What the memory download contains"),
+            title: Text("A copy of your memory", tableName: "Settings"),
+            spokenAction: Text("Download your memory", tableName: "Settings"),
             filename: "zoonk-memory"
           ) {
             await settings.exportMemory()
@@ -96,13 +89,11 @@ struct MemoryView: View {
           SectionFooter {
             Text(
               "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
-              tableName: "Settings",
-              comment: "Note about sensitive details at the Memory page's end")
+              tableName: "Settings")
           }
         }
       }
     }
-    .navigationTitle(Text("Memory", tableName: "Settings", comment: "Title of the Memory page"))
     .barTitleAfterHero(
       String(localized: "Memory", table: "Settings", comment: "Title of the Memory page")
     )
@@ -114,17 +105,18 @@ struct MemoryView: View {
       }
     }
     .loads(settings.memory)
+    .onDisappear { changes.leave() }
     .alert(
       Text(
         "Edit memory", tableName: "Settings",
-        comment: "Title of the dialog correcting one remembered fact"),
+        comment:
+          "A memory is one fact Zoonk remembers about the learner."),
       isPresented: isEditingBinding,
       presenting: editing
     ) { fact in
       TextField(text: $statement) {
         Text(
-          "What Zoonk remembers", tableName: "Settings",
-          comment: "Field holding a fact Zoonk remembers")
+          "What Zoonk remembers", tableName: "Settings")
       }
       .onChange(of: statement) { _, value in
         statement = String(value.prefix(memoryStatementLimit))
@@ -139,14 +131,15 @@ struct MemoryView: View {
           return
         }
 
-        Task {
+        changes.save(.edit(fact.id)) {
           await settings.updateMemoryFact(id: fact.id, statement: trimmed)
         }
       }
     } message: { _ in
       Text(
         "Say it the way it's true for you.", tableName: "Settings",
-        comment: "Asks the learner to correct a fact in their own words")
+        comment:
+          "\"It\" is the note Zoonk keeps about the learner, edited in this dialog.")
     }
   }
 
@@ -173,10 +166,122 @@ struct MemoryView: View {
     Binding(
       get: { enabled },
       set: { next in
-        Task {
-          await settings.setMemoryEnabled(next)
-        }
+        changes.save(.memorySwitch) { await settings.setMemoryEnabled(next) }
       })
+  }
+}
+
+/// What the learner changed in Memory and how it went: the page's, so leaving it ends what's still
+/// out and says nothing of it, and the next visit starts with no notice. The memory itself saves
+/// and stays in `SettingsStore`.
+@MainActor
+@Observable
+final class MemoryChanges {
+  /// What a change was made with. Each keeps its own latest result, so a change to one never hides
+  /// another's failure.
+  enum Control: Hashable {
+    case memorySwitch
+    case edit(String)
+    case deletion(String)
+  }
+
+  /// "Memory updated", with its Undo.
+  private(set) var deletedFact: MemoryFact?
+  private(set) var undoStatus: MemoryUndo?
+  private var failed: Set<Control> = []
+  @ObservationIgnored private var latest: [Control: Int] = [:]
+  @ObservationIgnored private var lastRun = 0
+  @ObservationIgnored private let tasks = ScreenTasks()
+
+  var saveFailed: Bool { !failed.isEmpty }
+
+  /// A change to the memory, false when it didn't save.
+  func save(_ control: Control, _ write: @escaping @MainActor () async -> Bool) {
+    let run = begin(control)
+
+    tasks.run {
+      let saved = await write()
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      self.end(control, run: run, saved: saved)
+    }
+  }
+
+  func delete(id: String, settings: SettingsStore) {
+    let control = Control.deletion(id)
+    let run = begin(control)
+
+    tasks.run {
+      let result = await settings.deleteMemoryFact(id: id)
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      switch result {
+      case .done(let deleted):
+        self.deletedFact = deleted
+        self.undoStatus = nil
+        self.end(control, run: run, saved: true)
+        // The fact and its retry are gone. Its edits and its deletion take turns in the memory's
+        // saves, so an edit has always landed before its fact's deletion does.
+        self.failed.remove(.edit(id))
+      case .failed?, nil:
+        self.end(control, run: run, saved: false)
+      case .obsolete?:
+        break
+      }
+    }
+  }
+
+  func undo(settings: SettingsStore) {
+    guard let deleted = deletedFact, undoStatus?.canUndo ?? true else {
+      return
+    }
+
+    undoStatus = .undoing
+
+    tasks.run {
+      let status = await settings.undoDeletion(of: deleted)
+
+      // A deletion made meanwhile has its own notice and its own undo.
+      guard !Task.isCancelled, self.deletedFact?.id == deleted.id else {
+        return
+      }
+
+      self.undoStatus = status
+    }
+  }
+
+  func leave() {
+    tasks.cancel()
+    failed = []
+    latest = [:]
+    deletedFact = nil
+    undoStatus = nil
+  }
+
+  private func begin(_ control: Control) -> Int {
+    lastRun += 1
+    latest[control] = lastRun
+    failed.remove(control)
+    return lastRun
+  }
+
+  /// Only the control's latest change says how it went.
+  private func end(_ control: Control, run: Int, saved: Bool) {
+    guard latest[control] == run else {
+      return
+    }
+
+    if saved {
+      failed.remove(control)
+    } else {
+      failed.insert(control)
+    }
   }
 }
 
@@ -189,11 +294,12 @@ private struct MemoryFactRow: View {
   let delete: () -> Void
 
   var body: some View {
-    HStack(alignment: .firstTextBaseline) {
+    // The options sit on the row's center, as a row's end does beside a title and its note.
+    HStack {
       ListRow(
         Text(fact.statement),
         description: Text(
-          "\(fact.source.name)\u{00A0}· \(fact.createdAt.formatted(.dateTime.month(.abbreviated).day()))",
+          "\(fact.source.name)\u{00A0}· \(PlanDate.momentDay(fact.createdAt))",
           tableName: "Settings",
           comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”"))
 
@@ -216,15 +322,15 @@ private struct MemoryFactRow: View {
           }
         }
       } label: {
-        Image(systemName: "ellipsis")
-          .foregroundStyle(.mutedForeground)
-          .frame(minWidth: 44, minHeight: 44)
-          .contentShape(.rect)
+        Label {
+          Text("Options for “\(fact.statement)”", tableName: "Settings")
+        } icon: {
+          Image(systemName: "ellipsis")
+        }
+        .labelStyle(.iconOnly)
       }
-      .accessibilityLabel(
-        Text(
-          "Options for “\(fact.statement)”", tableName: "Settings",
-          comment: "Names the menu that edits or deletes a remembered fact"))
+      .buttonStyle(.ghost.icon.endsRow)
+      .controlSize(.small)
     }
     .swipeActions {
       Button(role: .destructive, action: delete) {
@@ -264,16 +370,14 @@ private struct MemoryUpdatedNotice: View {
         if status == .failed {
           FailureLine(
             message: LocalizedStringResource(
-              "Couldn't undo. Try again.", table: "Settings",
-              comment: "A deleted fact didn't come back, and Undo stays to try again"))
+              "Couldn't undo. Try again.", table: "Settings"))
         }
       case .undone:
         Text(undone)
       case .changedSince:
         FailureLine(
           message: LocalizedStringResource(
-            "Couldn't undo. It changed since.", table: "Settings",
-            comment: "Says a deleted fact couldn't come back"))
+            "Couldn't undo. It changed since.", table: "Settings"))
       }
     }
     .typeStyle(.note)
@@ -294,12 +398,16 @@ extension MemoryFact.Category {
     case .background:
       Text(
         "Background", tableName: "Settings",
-        comment: "Memory category: facts about the learner's background, like studies and work")
+        comment:
+          "A category of what Zoonk remembers about the learner: their studies, job, school year and the languages they speak."
+      )
     case .routine: Text("Routine", tableName: "Settings", comment: "Memory category: routine")
     case .preferences:
       Text(
         "Preferences", tableName: "Settings",
-        comment: "Memory category: how the learner likes to learn, like short explanations")
+        comment:
+          "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”."
+      )
     case .learning: Text("Learning", tableName: "Settings", comment: "Memory category: learning")
     case .context: Text("Context", tableName: "Settings", comment: "Memory category: context")
     }
@@ -311,12 +419,10 @@ extension MemoryFact.Source {
     switch self {
     case .noticed:
       Text(
-        "Noticed from your activity", tableName: "Settings",
-        comment: "Source of a fact Zoonk noticed")
+        "Noticed from your activity", tableName: "Settings")
     case .told:
       Text(
-        "You told us", tableName: "Settings",
-        comment: "Source of a fact the learner told Zoonk themselves (\"us\" is Zoonk)")
+        "You told us", tableName: "Settings")
     case .call:
       Text(
         "From a call", tableName: "Settings",
@@ -324,7 +430,7 @@ extension MemoryFact.Source {
           "Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor."
       )
     case .chat:
-      Text("From a chat", tableName: "Settings", comment: "Source of a fact from a chat")
+      Text("From a chat", tableName: "Settings")
     case .onboarding:
       Text("From onboarding", tableName: "Settings", comment: "Source of a fact from onboarding")
     case .session:

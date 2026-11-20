@@ -2,6 +2,7 @@
 
 import { type ExamFormatDay } from "@zoonk/core/exams/view/contract";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted, useFormatter } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import {
@@ -10,10 +11,12 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { FactSegments } from "../_components/task-meta";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { useExamScreen } from "./exam-context";
 import { useExamDayDate } from "./exam-labels";
+import { useExamQuestionCount } from "./use-exam-question-count";
 
 const FORMAT_TITLE_ID = "exam-format-title";
 
@@ -28,7 +31,7 @@ function useFormatTitle(days: number): string {
 }
 
 function useFormatDetail(format: readonly ExamFormatDay[]): string | null {
-  const t = useExtracted();
+  const questionCount = useExamQuestionCount();
   const parts = format.flatMap((day) => day.parts);
 
   const questions = parts.reduce(
@@ -38,19 +41,16 @@ function useFormatDetail(format: readonly ExamFormatDay[]): string | null {
 
   const written = parts.filter((part) => part.written).map((part) => part.name);
 
-  const count =
-    questions > 0
-      ? t("{count, plural, one {# question} other {# questions}}", { count: questions })
-      : null;
+  const count = questions > 0 ? questionCount(questions) : null;
 
-  return [count, ...written].filter(Boolean).join(" · ") || null;
+  return [count, ...written].filter(Boolean).join(FACT_SEPARATOR) || null;
 }
 
 function useDayParts() {
-  const t = useExtracted();
   const format = useFormatter();
+  const questionCount = useExamQuestionCount();
 
-  return (day: ExamFormatDay): string => {
+  return (day: ExamFormatDay): { count: string | null; parts: string } => {
     const questions = day.parts.reduce(
       (sum, part) => sum + (part.written ? 0 : (part.questions ?? 0)),
       0,
@@ -61,35 +61,59 @@ function useDayParts() {
       { type: "conjunction" },
     );
 
-    return questions > 0
-      ? t("{parts} · {count, plural, one {# question} other {# questions}}", {
-          count: questions,
-          parts,
-        })
-      : parts;
+    const count = questions > 0 ? questionCount(questions) : null;
+
+    return { count, parts };
+  };
+}
+
+function useDayTitle() {
+  const t = useExtracted();
+  const dayDate = useExamDayDate();
+  const { exam } = useExamScreen();
+
+  return function dayTitle({
+    day,
+    numbered,
+  }: {
+    day: ExamFormatDay;
+    numbered: boolean;
+  }): React.ReactNode {
+    const number = t("Day {number, number}", { number: day.day });
+
+    const date = day.date ? (
+      <span className="whitespace-nowrap">
+        {dayDate(day.date, { estimated: exam.daysEstimated })}
+      </span>
+    ) : (
+      t("Date to be confirmed")
+    );
+
+    return numbered ? (
+      <FactSegments facts={[{ content: date, key: day.day.toString() }]} lead={number} />
+    ) : (
+      date
+    );
   };
 }
 
 function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
-  const t = useExtracted();
-  const dayDate = useExamDayDate();
+  const dayTitle = useDayTitle();
   const dayParts = useDayParts();
   const formatDuration = useFormatDuration();
+  const { count, parts } = dayParts(day);
 
   return (
-    <li className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-3 py-2.5">
-      <span className="text-muted-foreground font-mono text-xs tabular-nums">
-        {numbered ? t("Day {number, number}", { number: day.day }) : null}
-      </span>
+    <li className="py-2.5">
       <span className={cn(TITLE_ROW_CLASS, "items-baseline")}>
-        <span className="text-[0.8125rem] font-medium">
-          {day.date ? dayDate(day.date) : t("Day {number, number}", { number: day.day })}
-        </span>
+        <span className="text-compact min-w-0 font-medium">{dayTitle({ day, numbered })}</span>
         <span className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden">
           {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
         </span>
         <span className="text-muted-foreground basis-full pt-0.5 text-xs text-pretty">
-          {dayParts(day)}
+          {parts}
+          {/* Unbroken from " ·" on, so a wrapped line never starts or ends on the dot. */}
+          {count && <span className="whitespace-nowrap">{` · ${count}`}</span>}
         </span>
       </span>
     </li>

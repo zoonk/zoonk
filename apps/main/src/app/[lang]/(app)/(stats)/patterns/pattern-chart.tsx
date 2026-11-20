@@ -1,10 +1,5 @@
 import { MIN_PATTERN_ANSWERS, type ScorePerformance } from "@zoonk/core/progress/score-performance";
-import {
-  PageSection,
-  PageSectionFooter,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "@zoonk/learn/page";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import {
   ChartInspector,
   ChartInspectorPoint,
@@ -29,13 +24,13 @@ const COLUMN_CLASS = "flex min-w-0 flex-col items-center gap-2 pt-1 pb-2";
 const PLOT_CLASS =
   "border-border flex h-[calc(var(--pattern-bar)+3rem)] w-full flex-col items-center justify-end gap-1 border-b";
 
-const BAR_CLASS = "w-full max-w-8 shrink-0 rounded-t-[3px]";
+const BAR_CLASS = "w-full max-w-8 shrink-0 rounded-t-meter";
 
 const CHIP_CLASS = "flex size-9 items-center justify-center rounded-full";
 
 const NAME_CLASS = "max-w-full truncate px-0.5 text-xs leading-4";
 
-const CAPTION_CLASS = "-mt-1.5 text-[0.6875rem] leading-4";
+const CAPTION_CLASS = "-mt-1.5 text-2xs leading-4";
 
 const DASH = "–";
 
@@ -49,12 +44,8 @@ export type PatternColumnView = {
   shortName?: string;
 };
 
-type PatternState = "best" | "counted" | "few" | "none";
+type PatternState = "best" | "counted" | "empty";
 
-/**
- * A group with too few answers to count is a hollow gray outline and one without answers has no bar,
- * so neither reads as a result.
- */
 const PATTERN_STATE = {
   best: {
     bar: "bg-success",
@@ -68,13 +59,7 @@ const PATTERN_STATE = {
     name: "text-muted-foreground",
     value: "text-foreground",
   },
-  few: {
-    bar: "border-foreground/30 contrast-more:border-foreground border border-b-0 border-dashed",
-    chip: "bg-surface-3 text-muted-foreground",
-    name: "text-muted-foreground",
-    value: "text-muted-foreground",
-  },
-  none: {
+  empty: {
     bar: "",
     chip: "bg-surface-3 text-muted-foreground",
     name: "text-muted-foreground",
@@ -83,12 +68,8 @@ const PATTERN_STATE = {
 } as const satisfies Record<PatternState, Record<"bar" | "chip" | "name" | "value", string>>;
 
 function getPatternState({ best, pattern }: Pick<PatternColumnView, "best" | "pattern">) {
-  if (pattern.totalAnswers === 0) {
-    return "none";
-  }
-
   if (pattern.totalAnswers < MIN_PATTERN_ANSWERS) {
-    return "few";
+    return "empty";
   }
 
   return best ? "best" : "counted";
@@ -172,10 +153,10 @@ function PatternColumn({
         )}
 
         <span className={cn("font-mono text-xs leading-4 tabular-nums", tone.value)}>
-          {state === "none" ? DASH : value}
+          {state === "empty" ? DASH : value}
         </span>
 
-        {state !== "none" && (
+        {state !== "empty" && (
           <span
             className={cn("min-h-0.5", BAR_CLASS, tone.bar)}
             style={{ height: getBarHeight(column.pattern.score) }}
@@ -208,16 +189,16 @@ function PatternColumn({
 export async function PatternChart({
   bestLabel,
   columns,
-  footer,
   id,
   title,
 }: {
   bestLabel: string;
   columns: PatternColumnView[];
-  footer?: string | null;
   id: string;
   title: string;
 }) {
+  const t = await getExtracted();
+
   const points = await Promise.all(
     columns.map(async (column) => ({ column, ...(await getPatternTexts(column.pattern)) })),
   );
@@ -255,7 +236,11 @@ export async function PatternChart({
         <ChartInspectorTooltip within={PROGRESS_CONTENT_SELECTOR} />
       </ChartInspector>
 
-      {footer && <PageSectionFooter>{footer}</PageSectionFooter>}
+      {columns.some((column) => getPatternState(column) === "empty") && (
+        <p className="text-muted-foreground text-xs">
+          {DASH} {t("Not enough answers yet")}
+        </p>
+      )}
     </PageSection>
   );
 }

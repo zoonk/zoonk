@@ -83,10 +83,12 @@ export function markAppEntry(section?: string): void {
 
   const kept = new Set(navigation.entries().map((item) => item.key));
   const marks = Object.fromEntries(Object.entries(getMarks()).filter(([key]) => kept.has(key)));
+  const path = getPathname(entry.url);
+  const current = getAppMark(entry) ?? {};
 
   tabStorage.set(
     APP_ENTRIES_KEY,
-    JSON.stringify({ ...marks, [entry.key]: { path: getPathname(entry.url), section } }),
+    JSON.stringify({ ...marks, [entry.key]: { ...current, path, section } }),
   );
 }
 
@@ -104,48 +106,24 @@ export function goBackTo(href: string): boolean {
   return true;
 }
 
-/** False without the Navigation API. */
-export function cameFromApp(): boolean {
-  const navigation = getNavigation();
-  const index = navigation?.currentEntry?.index ?? 0;
-  const previous = index > 0 ? navigation?.entries()[index - 1] : null;
-  const section = getAppSection(navigation?.currentEntry ?? null);
-
-  return previous
-    ? isAppEntry(previous) && !(section !== undefined && getAppSection(previous) === section)
-    : false;
-}
-
-export function subscribeToHistory(onChange: () => void): () => void {
-  const navigation = getNavigation();
-  const controller = new AbortController();
-
-  const notify = () => {
-    /** Next writes history during an insertion effect; notify React after that commit. */
-    queueMicrotask(() => {
-      if (!controller.signal.aborted) {
-        onChange();
-      }
-    });
-  };
-
-  navigation?.addEventListener("currententrychange", notify, { signal: controller.signal });
-  return () => controller.abort();
-}
-
-/** Returns whether it found an app page; otherwise the link goes to its default. */
-export function goBackToApp(): boolean {
-  const navigation = getNavigation();
+function findAppEntryBehind(navigation: Navigation | null): NavigationHistoryEntry | undefined {
   const index = navigation?.currentEntry?.index ?? 0;
   const entries = navigation?.entries().slice(0, index) ?? [];
   const here = getPathname(globalThis.location.href);
   const section = getAppSection(navigation?.currentEntry ?? null);
 
-  const entry = entries.findLast((candidate) =>
-    isOtherAppPage({ entry: candidate, here, section }),
-  );
+  return entries.findLast((candidate) => isOtherAppPage({ entry: candidate, here, section }));
+}
 
-  if (!(navigation && entry)) {
+/** Returns to the app page outside this section, optionally requiring the link's own address. */
+export function goBackToApp(href?: string): boolean {
+  const navigation = getNavigation();
+  const entry = findAppEntryBehind(navigation);
+
+  if (
+    !(navigation && entry?.url) ||
+    (href && getPathAndSearch(entry.url) !== getPathAndSearch(href))
+  ) {
     return false;
   }
 

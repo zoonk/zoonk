@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "258a9c8bbb4c5112d2346f84f9e2b0ff39b109cd4834a0f3dbf33597349915f9",
-  "activities_badge_estimate_first": "58296d1d4f89c2e0858774c3cd02e789650ce2efdade4171b1e4a80ce5a64a00",
+  "activities_badge_estimate_first": "edf045a469f2afc9330e2f1e183a015142ef291c1772982afeda5e167855e8f3",
   "activities_badge_find_error": "91f9423c36cf8020a710ef9126cea8367cfdc41a5a0322465d0a7157ffdbba93",
   "activities_badge_read_chart": "1b336a25808e0bea8fd027f7452bfdf5753df83b737c30f83129451505dc0170",
   "activities_badge_reply": "5cbdeb88cfb02474b430feda5a9ffa5e602e9c30bee91cdfafe529731e8e5897",
@@ -15,8 +15,8 @@
   "activities_chart_description": "b5dc5c4d71db380291cd3ff98ea88adbc092e13c6c43da1a2cafafd6ccd116a5",
   "activities_chart_rate": "b9880e20e631fc3bddcafdb5d81b95742982c15bfaa96220e4211908198f70e6",
   "activities_chart_span": "99fc48870b487093a6e79e44b34be85b260cab873fb335b4620f37c2c23af7f2",
-  "activities_chart_spans": "191acb46dfa460ecbae200eabe9c3be868b4c4271a95d7b00245847ef466bc5f",
-  "activities_chart_tap_span": "c7844e82ecdd3e9870399e2778077a25a6587504e12534be8bba5bf30da188a0",
+  "activities_chart_spans": "f889cb20551d3e72b1501da884aee8da45064d33cbc2b9f89e871d3374ae839d",
+  "activities_chart_tap_span": "a97b8f890cf0f467bd29c5f4e6d1ced440e23325549b56a972476d6366c2001e",
   "activities_dialogue_conversation": "e4121bf6e6b680937108c713048ce723de35398fba7fb1b194415f9e5bc1dc03",
   "activities_dialogue_hear_best": "483c13ddc4d982385adf6c3634b2e07c8a8a4c5e22aaf4bdc7ebd574af62a589",
   "activities_dialogue_hear_line": "7cc625d122fdac19126ff0b2d6e489310b603116e47c2212d9f4092d47d87da4",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">まず予想する</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">予想も採点対象</string>
     <string name="activities_badge_read_chart">グラフを読み取る</string>
     <string name="activities_badge_before_after">変化の前後</string>
     <string name="activities_badge_find_error">間違いを見つける</string>
@@ -96,9 +97,8 @@
     <string name="activities_chart_description">%1$sを%2$sごとに示す折れ線グラフです。%3$s（%4$s）から%5$s（%6$s）へ変化しています。</string>
     <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
     <string name="activities_chart_span">%1$s：%2$s。</string>
-    <string name="activities_chart_tap_span">測定する区間をタップしてください</string>
-    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
-    <string name="activities_chart_spans">測定する区間</string>
+    <string name="activities_chart_tap_span">グラフの測りたい部分をタップしてください</string>
+    <string name="activities_chart_spans">グラフで測る部分</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s（%2$sあたり）</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->

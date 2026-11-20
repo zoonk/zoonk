@@ -6,14 +6,21 @@ import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { useFocusOnRemovedControl } from "../../_components/suggestion-focus";
 import { useAppLocale } from "../../_utils/locale";
-import { type GoalError } from "../goal-errors";
+import { type GoalError, useGoalLimitWords } from "../goal-errors";
 import {
   type AttachedSource,
   type GoalAttachActions,
   type OnboardingRoutes,
 } from "../onboarding-actions";
+import {
+  OnboardingColumn,
+  OnboardingDescription,
+  OnboardingHeading,
+  OnboardingTitle,
+} from "../onboarding-frame";
 import { AttachPanel, SignUpPrompt } from "./attach-panel";
 import { GoalEntry } from "./goal-entry";
+import { GoalLimitBar } from "./goal-limit-notice";
 import { type MaterialIntent, MaterialIntentChoice } from "./material-intent";
 
 function AttachedChips({
@@ -119,7 +126,7 @@ function GoalAttachments({
   );
 }
 
-export function AttachableGoalEntry({
+function AttachableGoalEntry({
   attach,
   attached,
   canAttach,
@@ -127,7 +134,6 @@ export function AttachableGoalEntry({
   error,
   fromSharedPlan,
   intent,
-  notice,
   onAttachedChange,
   onIntentChange,
   onSubmit,
@@ -140,7 +146,6 @@ export function AttachableGoalEntry({
   error: GoalError | null;
   fromSharedPlan: boolean;
   intent: MaterialIntent | null;
-  notice?: React.ReactNode;
   onAttachedChange: (items: AttachedSource[]) => void;
   onIntentChange: (intent: MaterialIntent) => void;
   onSubmit: (goal: string) => void;
@@ -179,10 +184,33 @@ export function AttachableGoalEntry({
       defaultGoal={defaultGoal}
       error={error}
       fromSharedPlan={fromSharedPlan}
-      notice={notice}
+      hasAccount={canAttach}
       onAttach={() => setOpen((previous) => !previous)}
       onSubmit={onSubmit}
       signUpHref={routes.signUp}
     />
+  );
+}
+
+/** A learner who can't start another goal now sees only that: no box to type in, no examples. */
+export function GoalStartEntry({
+  atGoalLimit,
+  ...entry
+}: React.ComponentProps<typeof AttachableGoalEntry> & { atGoalLimit: boolean }) {
+  return atGoalLimit ? <GoalLimitScreen /> : <AttachableGoalEntry {...entry} />;
+}
+
+const AT_ACTIVE_GOALS = { reason: "activeGoals" } as const;
+
+function GoalLimitScreen() {
+  const words = useGoalLimitWords()(AT_ACTIVE_GOALS);
+
+  return (
+    <OnboardingColumn bar={<GoalLimitBar limit={AT_ACTIVE_GOALS} />}>
+      <OnboardingHeading>
+        <OnboardingTitle>{words.title}</OnboardingTitle>
+        {words.line && <OnboardingDescription>{words.line}</OnboardingDescription>}
+      </OnboardingHeading>
+    </OnboardingColumn>
   );
 }

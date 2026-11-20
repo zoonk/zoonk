@@ -25,14 +25,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.DoneMark
-import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.celebrates
-import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.ZoonkMotion
@@ -90,12 +87,10 @@ fun DayProgress(
     val done = MaterialTheme.colorScheme.tertiary
     val fills =
         parts.map { part ->
-            val kind = part.step.learnKind
-            when {
-                part.state == DayPart.State.Done -> MeterPart.Fill.Solid(done, if (part.step.id == fillingId) filling.value else 1f)
-                part.state == DayPart.State.Current -> MeterPart.Fill.Place(part.share)
-                kind == LearnKind.Lesson -> MeterPart.Fill.Track
-                else -> MeterPart.Fill.Solid(kind.color.copy(alpha = AHEAD_ALPHA))
+            when (part.state) {
+                DayPart.State.Done -> MeterPart.Fill.Solid(done, if (part.step.id == fillingId) filling.value else 1f)
+                DayPart.State.Current -> MeterPart.Fill.Place(part.share)
+                DayPart.State.Ahead -> MeterPart.Fill.Track
             }
         }
 
@@ -171,7 +166,6 @@ fun SessionDayProgress(
     if (total == 0 && !open) return
 
     val locale = currentLocale()
-    val deferred = completion.deferredLessonsCount.toInt()
     val caption =
         when {
             day.lead == StudyDayProgress.Lead.LEFT -> {
@@ -219,18 +213,6 @@ fun SessionDayProgress(
                 fillingId = completion.blockId.takeIf { celebrates() },
             )
         }
-        if (deferred > 0) {
-            Text(
-                pluralStringResource(
-                    R.plurals.session_lessons_deferred,
-                    deferred,
-                    formatNumber(deferred.toDouble(), locale),
-                    formatMinutes(completion.minutes.dailyGoal, locale),
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
     }
 }
 
@@ -276,4 +258,3 @@ private fun leadLine(
 
 private const val MARK = "⁣"
 private const val PERCENT = 100.0
-private const val AHEAD_ALPHA = 0.5f

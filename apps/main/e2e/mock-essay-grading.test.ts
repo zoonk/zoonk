@@ -139,11 +139,9 @@ test.describe("Mock essays need a learner's grading request", () => {
       await expect(prisma.attempt.count({ where: { mockExamId: mock.id } })).resolves.toBe(0);
       expect(gradingRequests).toHaveLength(0);
       expect(sectionRequests).toHaveLength(0);
-      await page.getByRole("button", { name: "See how it went" }).click();
+      await page.getByRole("button", { name: "See result" }).click();
 
-      await expect(
-        page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u }),
-      ).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1/u })).toBeVisible();
 
       await expect
         .poll(() => prisma.mockExam.findUnique({ where: { id: mock.id } }))

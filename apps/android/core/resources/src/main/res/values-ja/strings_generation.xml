@@ -5,26 +5,24 @@
   "generation_connection_lost_description": "0c0007d56b84bff0928a75c5d767a871f75dcff8942fecc2ceabed5613cd5518",
   "generation_curriculum": "347db21dc8f8caf16cf91a0aa4bfceeb3de1c58a24bbe8959a7249a5ae621a49",
   "generation_curriculum_plan": "d80eded0fc10e59aa43cb04c5738d44a193ab9b5960fe7c10afaf423d73c478c",
-  "generation_curriculum_plan_line_1": "19ee9c7299a03a7f5dd7216e3f2406e9213e9ac436a83acc1db8b51f17603f3f",
+  "generation_curriculum_plan_line_1": "41911d919db30adc227161dc0f6a6f72e248ef19bdda7b6b2420d20a623ccf4e",
   "generation_curriculum_plan_line_2": "aed43876ae0a51bc135b54ba28a7fbce18344f5798e745f0d4f04fa7504f867c",
   "generation_curriculum_plan_line_3": "2529093ae2ed9e44d8f66619f9eca461de84642f0dfb253faeba87ba03958b27",
-  "generation_failed": "90c36b3fee2b60116c22fa4df497c4bfc2397aeae650b9a09592b62f835e386b",
   "generation_failed_description": "076b4b7bdd6f6661c554c193554c695b51c10690298f734f2f5fda94d372b480",
+  "generation_failed_ours": "24d5a8100304c91338853d27202013db57a5d86d71bc818c2c94aeba92231f6a",
   "generation_first_lesson": "b4825aa35c398cd5b9ffc9ae06dfecb2fe73465b9c40274f62a79a3b0063786a",
   "generation_first_lesson_day": "33997a18c1d37f1cf9582f1d03c334b3daf12ebb4ab99e388f2de3fc9092cf5d",
-  "generation_first_lesson_day_line_1": "d899dca1c2b6d1078146220f4e9ec9c7b226340a087f68f68190c799b1ad7efe",
+  "generation_first_lesson_day_line_1": "3c7771ce86aba4a1be41a0f3693b277c631c73dd5618b2bb63fbcd85318eddd4",
   "generation_first_lesson_day_line_2": "c715a370b020ff1eadf78826d4c4921ab6bbf2e4e6590f74edbe7d3edbcd21d5",
   "generation_goal": "0d74de4a986c39a930ed7415d64b8813d112ef11988cfe605d0a424a6455d915",
   "generation_goal_line_1": "5f4ce78912d91eac351de64f5016e4a07b13138d4d16750ea0c2ce3627c9069e",
   "generation_goal_line_2": "44f9090008e85b412c0ff1648644536a7c89050f93186347166d1f9f62535b09",
   "generation_level_test": "b8498f709cd6138c795c97dcf16191d8dd23299625c6ed12055d46799cd35d5c",
-  "generation_level_test_bank": "79d1f9420a5ccb8edb3508f3e81a3855511e188802f495dcf0c6ba23ccca47de",
+  "generation_level_test_bank": "13f0ca4b1ea47ad04905fa285e3979aff51268d8d66e818f9f8202c905a73883",
   "generation_level_test_bank_line_1": "23adfc43a7cacceb715fb9749285e45f615a3dbcefaa6d7fc48637813cfc37ea",
   "generation_level_test_bank_line_2": "6cc81fc64e7fe9e929e4eeaa5761df88be80c94cb2cf229f94242cd957e3b1bb",
   "generation_level_test_bank_line_3": "0c75b29e2da30b0881a3a5a35f9ca05b7d30abd33e0c7abe03ddaa3ac56925a3",
   "generation_level_test_bank_line_4": "5528b35dbc00da1ee83d08246049abfebd6ebc56fe1e7c12e678cd1aebf44b97",
-  "generation_not_started": "d5c2667c85a20d004eca59afd9f49bfc8d65a6080eb7bb1552475e4e815bbddc",
-  "generation_not_started_description": "ada8cce390884cbeb66eb661d70c4f9c166baa5b3f963e0b9191cfa3c5a3b1a5",
   "generation_notice": "abd40b0592b60c4295c34a4d4518bfc5f6e6247651263e92fccce9e9307e5fdc",
   "generation_notice_line_1": "0a330711a02a802d21654c3a044387d9ed4bb18c4ff6e87aa11311029ae34a17",
   "generation_notice_line_2": "7b1362d1f17846bbbe3c2df426547de60144a5e38b929abbb1fdc804d5fea324",
@@ -32,7 +30,7 @@
   "generation_phase_completed": "e1e23422eadb2faadaf975a205c44432d4eb7fcd04401777291d44310cb334e4",
   "generation_phase_failed": "01041f9254a06bde937c57a344e01e9f8e9691fd26a949f1fbc51ad460b5a46f",
   "generation_phase_pending": "b46bd5cb882c63270610836c9604a2c9b36bf699b8fc303da00685294a3ec1b4",
-  "generation_placement": "8bd12c3698d03a3e0d69a65f1d9970f17c64d5dc7295f74d58f39666abe7c08b",
+  "generation_placement": "f3aa6b1c0ec1edbd93434a2bb7ef93f43f0a328b77e610efc2f07044ff690267",
   "generation_placement_questions": "aee4c2a38b097cb5e4199db94e87dfea00d11b3aaa63c9bbb385a2b6417cfcf1",
   "generation_placement_questions_line": "629e44bc5b235395df0da3e1f212e832e000b649fa5c73212acab79c347f49f4",
   "generation_question_line": "9bf7512fb779697363a0fb80d3187b8d2460f602b4e7da25a632abb6044e9113",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">進捗状況が届かなくなりました。準備は続いているかもしれません。</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">再接続する</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">作成を完了できませんでした</string>
+    <string name="generation_failed_ours">システム側で問題が発生しました</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">こちら側で問題が発生しました。</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">作成を開始できませんでした</string>
-    <string name="generation_not_started_description">準備を開始できませんでした。</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">もう一度試す</string>
     <!-- Screen reader state of a step of a wait. -->
@@ -99,21 +94,21 @@
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">学習計画を作成しています</string>
     <string name="generation_curriculum_plan">日々の予定に合わせて学習計画を立てています</string>
-    <string name="generation_curriculum_plan_line_1">ライブラリでレッスンを探しています…</string>
+    <string name="generation_curriculum_plan_line_1">目標に合うレッスンを探しています…</string>
     <string name="generation_curriculum_plan_line_2">スキルの学習を日ごとに振り分けています…</string>
     <string name="generation_curriculum_plan_line_3">学習計画を保存しています…</string>
     <!-- The wait while placement questions are written. -->
-    <string name="generation_placement">問題を準備しています</string>
+    <string name="generation_placement">レベル診断テストを準備しています</string>
     <string name="generation_placement_questions">問題を作成しています</string>
     <string name="generation_placement_questions_line">問題にするスキルを選んでいます…</string>
     <!-- The wait while the first day of a plan is prepared. -->
     <string name="generation_first_lesson">初日の学習を準備しています</string>
     <string name="generation_first_lesson_day">初日の学習計画を立てています</string>
-    <string name="generation_first_lesson_day_line_1">ライブラリでレッスンを探しています…</string>
+    <string name="generation_first_lesson_day_line_1">目標に合うレッスンを探しています…</string>
     <string name="generation_first_lesson_day_line_2">どこから始めるか選んでいます…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">レベルテストを準備しています</string>
-    <string name="generation_level_test_bank">レベル診断テストの問題を作成しています</string>
+    <string name="generation_level_test_bank">問題を準備しています…</string>
     <string name="generation_level_test_bank_line_1">初級から上級までの文章を選んでいます…</string>
     <string name="generation_level_test_bank_line_2">リーディングの問題を作成しています…</string>
     <string name="generation_level_test_bank_line_3">リスニングの問題を作成しています…</string>

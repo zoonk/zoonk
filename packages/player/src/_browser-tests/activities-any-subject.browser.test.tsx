@@ -3,9 +3,11 @@ import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
+  expectCount,
   expectMathVisible,
   expectVerdict,
   focusOn,
+  guessOnScale,
   openActivity,
   press,
   pressOnSlider,
@@ -18,16 +20,50 @@ describe("any-subject activities", () => {
   it("guess then reveal: a close guess shows the cited value", async () => {
     openActivity({ content: cited, template: "guessReveal" });
     await expect.element(page.getByText("Drag to guess")).toBeVisible();
-    await valueInput().fill("14");
+    await guessOnScale(cited.fields, 14);
+    const slider = page.getByRole("slider", { name: "Your guess" });
+    const figure = page.getByRole("figure");
+
+    const sliderTop = () =>
+      slider.element().getBoundingClientRect().top - figure.element().getBoundingClientRect().top;
+
+    const beforeCheck = sliderTop();
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("Real value: 14 times")).toBeVisible();
-    await expect.element(page.getByText("The map stretches land near the poles.")).toBeVisible();
+    expect(sliderTop()).toBe(beforeCheck);
+    await expect.element(page.getByText("Real value: 14")).toBeVisible();
+    await expect.element(page.getByText("Unit: times", { exact: true })).toBeVisible();
+
+    await expect
+      .element(page.getByText(/The usual world map stretches land near the poles/u))
+      .toBeVisible();
+
+    await expect.element(page.getByText("Your guess: 13")).toBeVisible();
+    await expect.element(page.getByText("Your guess is close to the real value.")).toBeVisible();
+  });
+
+  it("guess then reveal: a guess that is the real value isn't called close", async () => {
+    const content = { ...cited, fields: { ...cited.fields, max: 200, min: 0 } };
+    openActivity({ content, template: "guessReveal" });
+    await guessOnScale(content.fields, 14);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(page.getByText("Your guess: 14")).toBeVisible();
+
+    await expect
+      .element(page.getByText("Your guess is close to the real value."))
+      .not.toBeInTheDocument();
+  });
+
+  it("guess then reveal: the guess on the scale is the answer, with no second field to fill", async () => {
+    openActivity({ content: cited, template: "guessReveal" });
+    await expect.element(page.getByRole("slider", { name: "Your guess" })).toBeVisible();
+    await expectCount(page.getByRole("textbox"), 0);
   });
 
   it("guess then reveal: a far guess says how far", async () => {
     openActivity({ content: cited, template: "guessReveal" });
-    await valueInput().fill("3");
+    await guessOnScale(cited.fields, 3);
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("Your guess is about 4.7 times too small.")).toBeVisible();
@@ -50,6 +86,7 @@ describe("any-subject activities", () => {
 
   it("before and after: a wrong ratio is marked", async () => {
     openActivity({ template: "beforeAfter" });
+    await page.getByRole("button", { name: "Show after: 1914" }).click();
     await valueInput().fill("8");
     await checkActivity();
     await expectVerdict("Not quite");
@@ -71,7 +108,7 @@ describe("any-subject activities", () => {
     await expectMathVisible(prompt.getByRole("math", { includeHidden: true }));
     await expect.element(prompt).not.toMatchTextContent("$");
 
-    await valueInput().fill("14");
+    await guessOnScale(cited.fields, 14);
     await checkActivity();
     await expectMathVisible(page.getByRole("figure").getByRole("math"));
   });
@@ -82,7 +119,6 @@ describe("any-subject activities with a keyboard", () => {
     openActivity({ content: cited, template: "guessReveal" });
     await pressOnSlider("Your guess", "ArrowRight", 10);
     await expect.element(page.getByText(/^Your guess: /u)).toBeVisible();
-    await expect.element(valueInput()).not.toHaveValue("");
   });
 
   it("before and after: showing the after state moves focus to it", async () => {

@@ -124,6 +124,58 @@ describe("the tutor's call offer", () => {
     expect(startConversation).toHaveBeenCalledTimes(2);
   });
 
+  it("shows the call gate when the allowance ran out after the card loaded", async () => {
+    const availableAt = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
+    const day = availableAt.toLocaleDateString("en-US", { day: "numeric", month: "long" });
+
+    renderOffer(OFFERED_CALL, {
+      limit: { availableAt: availableAt.toISOString(), period: "rolling30Days", tier: "free" },
+    });
+
+    await page.getByRole("button", { name: "Practice" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await expect.element(page.getByText("You've used your call time")).toBeVisible();
+
+    await expect
+      .element(page.getByText(`More on ${day}, or subscribe to keep going.`))
+      .toBeVisible();
+
+    await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
+
+    await expect
+      .element(page.getByText("The call didn't start. Try again in a moment."))
+      .not.toBeInTheDocument();
+  });
+
+  it("brings Continue back once a refused call's time comes back, and Continue starts it", async () => {
+    const startConversation = renderOffer(OFFERED_CALL, {
+      limit: {
+        availableAt: new Date(Date.now() + 1500).toISOString(),
+        period: "rolling30Days",
+        tier: "free",
+      },
+    });
+
+    await page.getByRole("button", { name: "Practice" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await expect.element(page.getByText("You've used your call time")).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Continue" })).not.toBeInTheDocument();
+
+    await expect.element(page.getByRole("button", { name: "Continue" })).toBeVisible();
+    await expect.element(page.getByText("You've used your call time")).not.toBeInTheDocument();
+
+    startConversation.mockResolvedValueOnce(true);
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await expect
+      .element(page.getByRole("dialog", { name: "Practice a conversation" }))
+      .not.toBeInTheDocument();
+
+    expect(startConversation).toHaveBeenCalledTimes(2);
+  });
+
   it("says calls are paused, with nothing to tap", async () => {
     renderOffer({ ...OFFERED_CALL, call: { ...OFFERED_CALL.call, paused: true } });
 

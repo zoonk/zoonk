@@ -21,7 +21,7 @@ export function SubjectLabel({
   return (
     <span
       className={cn(
-        "bg-subject-tint text-subject-text inline-flex h-5.5 w-fit shrink-0 items-center rounded-md px-2 text-xs leading-none font-[550]",
+        "bg-subject-tint text-subject-text inline-flex h-5.5 w-fit shrink-0 items-center rounded-sm px-2 text-xs leading-none font-medium",
         className,
       )}
       data-slot="subject-label"
@@ -36,7 +36,7 @@ export function SubjectGlyph({ className, subject }: { className?: string; subje
   return (
     <span
       aria-hidden="true"
-      className={cn("bg-subject size-2 shrink-0 rounded-[2px]", className)}
+      className={cn("bg-subject size-2 shrink-0 rounded-xs", className)}
       data-slot="subject-glyph"
       data-subject={subject}
     />

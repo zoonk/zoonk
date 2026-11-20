@@ -1,11 +1,13 @@
 import "server-only";
-import { type MasteryState, type Milestone, prisma } from "@zoonk/db";
+import { type Goal, type MasteryState, type Milestone, prisma } from "@zoonk/db";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getLocalDateInstants, getStartOfLocalDay } from "../learner/_utils/local-time";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getStartOfWeek } from "../plans/planner/plan-calendar";
+import { type StudyWeek, loadStudyWeekPair } from "../progress/_utils/load-study-week";
 import { loadTomorrow } from "../sessions/_utils/load-summary-parts";
+import { type WeekDay, getWeekDays } from "../sessions/daily-goal";
 import { getSession } from "../users/get-session";
 import { type BuddyDiet, loadBuddyDiet } from "./_utils/buddy-diet";
 import { loadPhasesFinished } from "./_utils/recap-goal";
@@ -16,6 +18,7 @@ import {
   compareWeeks,
   findBiggestTurnaround,
   summarizeWeek,
+  summarizeWeekTotals,
 } from "./weekly-recap";
 
 const DAYS_PER_WEEK = 7;
@@ -25,6 +28,7 @@ type TurnaroundReason = "gold" | "practice" | "solid";
 
 type WeeklyRecap = {
   badges: Milestone[];
+  days: WeekDay[];
   comparison: ReturnType<typeof compareWeeks>;
   lastWeek: WeekNumbers;
   nextFocus: { title: string } | null;
@@ -90,7 +94,37 @@ async function loadTurnaround({ userId, weekStart }: { userId: string; weekStart
   return { ...turnaround, name: skill?.name ?? "", reason: getReason(state), state };
 }
 
-async function loadWeeks({ userId, weekStart }: { userId: string; weekStart: Date }) {
+function toWeekNumbers(studyWeek: StudyWeek): WeekNumbers {
+  return summarizeWeekTotals({
+    ...studyWeek.totals,
+    daysStudied: studyWeek.days.filter((day) => day.studied).map((day) => day.date),
+  });
+}
+
+async function loadWeeks({
+  goal,
+  userId,
+  weekStart,
+  today,
+}: {
+  goal: Goal | null;
+  userId: string;
+  weekStart: Date;
+  today: Date;
+}) {
+  if (goal) {
+    const pair = await loadStudyWeekPair({ goal, localDate: today, weekStart });
+    const week = toWeekNumbers(pair.week);
+    const lastWeek = toWeekNumbers(pair.lastWeek);
+
+    return {
+      comparison: compareWeeks({ current: week, previous: lastWeek }),
+      days: pair.week.days,
+      lastWeek,
+      week,
+    };
+  }
+
   const lastWeekStart = new Date(weekStart.getTime() - DAYS_PER_WEEK * MS_PER_DAY);
 
   const days = await prisma.dailyProgress.findMany({
@@ -110,14 +144,26 @@ async function loadWeeks({ userId, weekStart }: { userId: string; weekStart: Dat
   const week = summarizeWeek({ days: recapDays, weekStart });
   const lastWeek = summarizeWeek({ days: recapDays, weekStart: lastWeekStart });
 
-  return { comparison: compareWeeks({ current: week, previous: lastWeek }), lastWeek, week };
+  return {
+    comparison: compareWeeks({ current: week, previous: lastWeek }),
+    days: getWeekDays({
+      days: recapDays,
+      getPlanDay: () => ({ goalMinutes: 0, kind: "rest" }),
+      today,
+      weekStart,
+    }),
+    lastWeek,
+    week,
+  };
 }
 
 /** Before Sunday, default to last week; new learners use their first week, marked not ready until Sunday. */
 async function getDefaultWeekStart({
+  goal,
   today,
   userId,
 }: {
+  goal: Goal | null;
   today: Date;
   userId: string;
 }): Promise<Date> {
@@ -126,6 +172,25 @@ async function getDefaultWeekStart({
 
   if (isSunday) {
     return currentWeekStart;
+  }
+
+  if (goal) {
+    const where = { goalId: goal.id, localDate: { lt: currentWeekStart }, userId };
+
+    const [study, finished] = await Promise.all([
+      prisma.learningEvent.findFirst({
+        select: { id: true },
+        where: { ...where, kind: { not: "session" }, seconds: { gt: 0 } },
+      }),
+      prisma.studySession.findFirst({
+        select: { id: true },
+        where: { ...where, endedAt: { not: null } },
+      }),
+    ]);
+
+    return study || finished
+      ? new Date(currentWeekStart.getTime() - DAYS_PER_WEEK * MS_PER_DAY)
+      : currentWeekStart;
   }
 
   const studiedBefore = await prisma.dailyProgress.findFirst({
@@ -161,14 +226,14 @@ export async function getWeeklyRecap(input: WeeklyRecapInput): Promise<WeeklyRec
 
   const weekStart = input.weekStart
     ? getStartOfWeek(parseLocalDate(input.weekStart))
-    : await getDefaultWeekStart({ today, userId });
+    : await getDefaultWeekStart({ goal, today, userId });
 
   const weekEnd = new Date(weekStart.getTime() + SUNDAY_OFFSET * MS_PER_DAY);
   const from = getStartOfLocalDay({ localDate: weekStart, timeZone });
   const to = getStartOfLocalDay({ localDate: new Date(weekEnd.getTime() + MS_PER_DAY), timeZone });
 
   const [weeks, turnaround, badges, buddyAte, phasesFinished, nextFocus] = await Promise.all([
-    loadWeeks({ userId, weekStart }),
+    loadWeeks({ goal, today, userId, weekStart }),
     loadTurnaround({ userId, weekStart }),
     prisma.milestone.findMany({
       orderBy: { earnedAt: "asc" },

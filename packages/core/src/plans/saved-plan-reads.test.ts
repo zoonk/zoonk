@@ -90,7 +90,7 @@ describe("saved plan reads", () => {
   });
 
   it.each(["input token", "planning day"])(
-    "keeps card text after the %s changes and hides only a stale Apply",
+    "keeps card text and its accept after the %s changes, without building",
     async (changed) => {
       const { goal, user } = await setup();
 
@@ -143,22 +143,20 @@ describe("saved plan reads", () => {
       const read = await getGoalPlan(goal.id);
       expect(read).toMatchObject({ status: "ready" });
 
-      const canApply = changed === "input token";
-
       expect(
         read.status === "ready" && read.plan.changes.find((change) => change.id === proposal.id),
-      ).toMatchObject({ canApply, id: proposal.id });
+      ).toMatchObject({ canApply: true, id: proposal.id });
 
       await expect(
         loadTodayPlanChange({ goal, now: new Date(), timeZone: "UTC" }),
-      ).resolves.toMatchObject({ canApply, id: proposal.id });
+      ).resolves.toMatchObject({ canApply: true, id: proposal.id });
 
       await expect(getCurrentMemoryInsight({ goalId: goal.id })).resolves.toMatchObject({
-        insight: { planChange: { canApply, id: proposal.id } },
+        insight: { planChange: { canApply: true, id: proposal.id } },
       });
 
       await expect(getLessonQuestion({ questionId: question.id })).resolves.toMatchObject({
-        question: { planChange: { canApply, id: proposal.id } },
+        question: { planChange: { canApply: true, id: proposal.id } },
         status: "ready",
       });
 

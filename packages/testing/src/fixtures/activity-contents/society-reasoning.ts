@@ -1,9 +1,11 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
-import { choiceCheck, interactionCheck } from "./activity-checks";
+import { explained, reasonedChoice } from "./activity-checks";
 
 export const societyReasoningActivities = {
   argumentBuilder: {
-    check: interactionCheck,
+    check: explained(
+      "“Too rash, too unadvised, too sudden” names the speed, and Juliet saying it herself ties the quote to the claim.",
+    ),
     fields: {
       claim: "Romeo's love is impulsive.",
       evidence: [
@@ -41,7 +43,9 @@ export const societyReasoningActivities = {
     template: "argumentBuilder",
   },
   categorize: {
-    check: interactionCheck,
+    check: explained(
+      "Burning and rusting make something new: ash and gas, iron oxide. Melted ice is still water.",
+    ),
     fields: {
       groups: [
         { id: "chemical", label: "New substance", rule: "Something new forms." },
@@ -57,7 +61,9 @@ export const societyReasoningActivities = {
     template: "categorize",
   },
   causeEffectChain: {
-    check: interactionCheck,
+    check: explained(
+      "Plowing left the soil bare and the drought dried it out, so the wind could lift it into dust storms.",
+    ),
     fields: {
       links: [
         { from: "plow", to: "dust", why: "Bare soil blew away." },
@@ -73,7 +79,9 @@ export const societyReasoningActivities = {
     template: "causeEffectChain",
   },
   findError: {
-    check: interactionCheck,
+    check: explained(
+      "Taking 20% off 120 removes 24, more than the 20 the rise added, so the price ends at $96.",
+    ),
     fields: {
       correction: "120 × 0.8 = 96, not 100.",
       errorStepId: "s2",
@@ -89,9 +97,19 @@ export const societyReasoningActivities = {
     template: "findError",
   },
   mapExplorer: {
-    check: choiceCheck("What kept the brewers and the workhouse safe?", [
-      ["Their water didn't come from the Broad Street pump", true],
-      ["The air in their buildings was cleaner", false],
+    check: reasonedChoice("What kept the brewers and the workhouse safe?", [
+      {
+        isCorrect: true,
+        reason:
+          "The brewery and the workhouse had wells of their own, so nobody there drank from the pump.",
+        text: "Their water didn't come from the Broad Street pump",
+      },
+      {
+        isCorrect: false,
+        reason:
+          "Everyone on these streets breathed the same air. What differed was the water they drank.",
+        text: "The air in their buildings was cleaner",
+      },
     ]),
     data: { source: { title: "On the Mode of Communication of Cholera", year: 1855 } },
     fields: {
@@ -124,7 +142,9 @@ export const societyReasoningActivities = {
     template: "mapExplorer",
   },
   matchPairs: {
-    check: interactionCheck,
+    check: explained(
+      "Embarazada, éxito and librería look like embarrassed, exit and library, but they mean pregnant, success and bookstore.",
+    ),
     fields: {
       distractors: [
         {
@@ -148,9 +168,11 @@ export const societyReasoningActivities = {
     template: "matchPairs",
   },
   sourceComparison: {
-    check: interactionCheck,
+    check: explained(
+      "Each writer says the other side fired first: the captain blames the regulars, the officer the rebels.",
+    ),
     fields: {
-      markPrompt: "Mark who each writer says fired first.",
+      markPrompt: "Mark one phrase in each account.",
       sources: [
         {
           author: "A colonial captain",
@@ -158,7 +180,10 @@ export const societyReasoningActivities = {
           date: "April 1775",
           excerpt: "The regulars fired on us without any provocation.",
           id: "parker",
-          passages: [{ id: "p1", isTarget: true, text: "The regulars fired on us" }],
+          passages: [
+            { id: "p1", isTarget: true, text: "The regulars fired on us" },
+            { id: "p1b", isTarget: false, text: "without any provocation." },
+          ],
         },
         {
           author: "A British officer",
@@ -166,15 +191,20 @@ export const societyReasoningActivities = {
           date: "April 1775",
           excerpt: "Some of the rebels fired first from behind a wall.",
           id: "pitcairn",
-          passages: [{ id: "p2", isTarget: true, text: "the rebels fired first" }],
+          passages: [
+            { id: "p2", isTarget: true, text: "the rebels fired first" },
+            { id: "p2b", isTarget: false, text: "from behind a wall." },
+          ],
         },
       ],
     },
-    prompt: "Read both eyewitnesses.",
+    prompt: "Mark who each eyewitness says fired first.",
     template: "sourceComparison",
   },
   timeline: {
-    check: interactionCheck,
+    check: explained(
+      "Cleopatra ruled about 2,500 years after the Great Pyramid was built and about 2,000 years before the Moon landing.",
+    ),
     fields: {
       anchors: [{ label: "Great Pyramid built", year: -2560 }],
       end: 2000,

@@ -136,7 +136,13 @@ describe("guest usage", () => {
       await usageRecordsFixture({ count: month, createdAt: earlier, kind, userId: other.id });
 
       await expect(claimUsage({ kind, targetId: randomUUID() })).resolves.toStrictEqual({
-        limit: { limit: month, period: "month", resource: kind, tier: "guest" },
+        limit: {
+          availableAt: new Date(earlier.getTime() + 30 * MS_PER_DAY),
+          limit: month,
+          period: "rolling30Days",
+          resource: kind,
+          tier: "guest",
+        },
         status: "limitReached",
       });
     },

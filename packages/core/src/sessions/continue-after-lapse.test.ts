@@ -56,7 +56,11 @@ describe("the frame's explicit Continue after Plus lapses", () => {
       startStudyBlock({ blockId: target!.id, input: {}, sessionId: day.sessionId }),
     ).resolves.toMatchObject({ block: { kind: "learn" }, status: "ready" });
 
-    await expect(getAllowance()).resolves.toMatchObject({ callTime: { usedSeconds: 0 } });
+    await expect(getAllowance()).resolves.toMatchObject({
+      items: expect.arrayContaining([
+        expect.objectContaining({ kind: "conversation", usedToday: 0 }),
+      ]),
+    });
 
     await expect(
       prisma.languageConversation.count({ where: { userId: day.user.id } }),

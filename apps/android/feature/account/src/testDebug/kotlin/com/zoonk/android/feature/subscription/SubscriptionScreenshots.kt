@@ -25,8 +25,8 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -86,28 +86,19 @@ class SubscriptionScreenshots {
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                PageScaffold(onBack = {}, title = { Text(stringResource(R.string.account_menu_subscription)) }) { padding ->
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .padding(padding)
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
-                        contentAlignment = Alignment.TopCenter,
-                    ) {
-                        val viewer = PlanViewer.entries[shown]
-                        key(viewer) {
-                            PlanOffer(
-                                viewer = viewer,
-                                offers = LoadState.Loaded(OFFERS),
-                                freePlan = LoadState.Loaded(LIMITS),
-                                purchase = PurchaseState.Idle,
-                                navigator = rememberAppNavigator(),
-                                onSubscribe = {},
-                                onRetryFreePlan = {},
-                                messagesUsed = MESSAGES.takeIf { viewer == PlanViewer.Free },
-                            )
-                        }
+                SubscriptionPage(onBack = {}) {
+                    val viewer = PlanViewer.entries[shown]
+                    key(viewer) {
+                        PlanOffer(
+                            viewer = viewer,
+                            offers = LoadState.Loaded(OFFERS),
+                            freePlan = LoadState.Loaded(LIMITS),
+                            purchase = PurchaseState.Idle,
+                            navigator = rememberAppNavigator(),
+                            onSubscribe = {},
+                            onRetryOffers = {},
+                            onRetryFreePlan = {},
+                        )
                     }
                 }
             }
@@ -118,7 +109,7 @@ class SubscriptionScreenshots {
             compose.waitForIdle()
             val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
             val file = File(folder, "$prefix-${viewer.name.lowercase()}.png").apply { parentFile?.mkdirs() }
-            file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+            writeRender(file, bitmap)
         }
     }
 }
@@ -126,10 +117,9 @@ class SubscriptionScreenshots {
 private val LIMITS =
     FreePlan(
         activeGoals = 1,
-        examPrepDays = 7,
         guestLessons = 3,
-        lessonsPerDay = 5,
-        lessonsPerMonth = 40,
+        lessonsPer30Days = 20,
+        tutorMessagesPer30Days = 100,
         tutorMessagesPerDay = 10,
         uploadsPerDay = 1,
     )
@@ -139,17 +129,4 @@ private val OFFERS =
         PlusOffer(BillingPeriod.Monthly, "monthly", "$9.99", 9_990_000, "USD"),
         PlusOffer(BillingPeriod.Yearly, "yearly", "$79.99", 79_990_000, "USD"),
         product = Unit,
-    )
-
-private val MESSAGES =
-    AllowanceItem(
-        dailyLimit = 10,
-        fairUseDailyLimit = null,
-        kind = AllowanceItem.Kind.TUTOR_MESSAGE,
-        monthlyLimit = null,
-        remaining = 7,
-        totalLimit = null,
-        usedThisMonth = 3,
-        usedToday = 3,
-        usedTotal = 3,
     )

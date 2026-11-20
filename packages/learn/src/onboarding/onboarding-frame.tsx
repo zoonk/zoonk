@@ -1,48 +1,60 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { BottomBar } from "@zoonk/ui/components/bottom-bar";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useLayoutEffect } from "react";
-import { PageEyebrow } from "../_components/page";
-import { PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
-import { toLabelCase } from "../_utils/label-case";
+import { EnterButton } from "../_components/enter-button";
+import { Eyebrow } from "../_components/eyebrow";
+import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
+import { ChangeSaveError } from "../_components/save-error";
+import { TASK_WRAPPING_ACTION_CLASS, TaskActions } from "../_components/task-layout";
 import { OnboardingBarRow } from "./onboarding-bar";
 import {
   NO_BAR,
   type OnboardingBar,
   OnboardingScreenProvider,
   useOnboardingHost,
+  useOnboardingScreen,
   useOnboardingSection,
 } from "./onboarding-host";
 import { OnboardingScreenPage, OnboardingSectionFrame } from "./onboarding-page";
 import { useOnboardingRail } from "./onboarding-rail";
-import { PlanStartNoticeSlot } from "./steps/plan-start-notice";
+import { PlanStartNotice, usePlanStartFailure } from "./steps/plan-start-notice";
 
 export { OnboardingEmbedded, OnboardingPage } from "./onboarding-host";
 
-const STANDALONE_COLUMN_CLASS = "mx-auto w-full max-w-xl px-4";
+const STANDALONE_COLUMN_CLASS =
+  "mx-auto w-full max-w-xl px-(--page-gutter) [--page-gutter:--spacing(4)]";
 
 export function OnboardingFrame({
   bar = NO_BAR,
   children,
+  failure = null,
   notice = null,
 }: {
   bar?: OnboardingBar;
   children: ReactNode;
+  /** What the last action couldn't do, said over the screen's actions, where it moves nothing. */
+  failure?: ReactNode;
   notice?: ReactNode;
 }) {
   const host = useOnboardingHost();
 
   if (host?.kind === "page") {
-    return <OnboardingScreenProvider value={{ bar, notice }}>{children}</OnboardingScreenProvider>;
+    return (
+      <OnboardingScreenProvider value={{ bar, failure, notice }}>
+        {children}
+      </OnboardingScreenProvider>
+    );
   }
 
   if (host?.kind === "section") {
     return (
       <OnboardingSectionFrame bar={bar} header={host.header} notice={notice}>
-        {children}
+        <OnboardingScreenProvider value={{ bar, failure, notice: null }}>
+          {children}
+        </OnboardingScreenProvider>
       </OnboardingSectionFrame>
     );
   }
@@ -54,7 +66,9 @@ export function OnboardingFrame({
     >
       <OnboardingBarRow bar={bar} className={cn(STANDALONE_COLUMN_CLASS, "pt-3 sm:pt-4")} />
       {notice}
-      {children}
+      <OnboardingScreenProvider value={{ bar, failure, notice: null }}>
+        {children}
+      </OnboardingScreenProvider>
     </div>
   );
 }
@@ -64,13 +78,11 @@ export function OnboardingColumn({
   children,
   className,
   rail,
-  wide = false,
   ...props
 }: React.ComponentProps<"main"> & {
-  /** Pinned at the screen's bottom, across the page: a wait's actions. */
+  /** The screen's actions, the only place they go. Pass `OnboardingActions`. */
   bar?: ReactNode;
   rail?: ReactNode;
-  wide?: boolean;
 }) {
   const host = useOnboardingHost();
   const flowRail = useOnboardingRail();
@@ -82,10 +94,13 @@ export function OnboardingColumn({
         barEnd={host.barEnd}
         bottomBar={bar}
         rail={rail === undefined ? flowRail : rail}
-        wide={wide}
       >
         <section
-          className={cn("flex w-full min-w-0 flex-1 flex-col gap-6", className)}
+          className={cn(
+            "flex w-full min-w-0 flex-1 flex-col gap-6",
+            CLEAR_OF_PINNED_ACTIONS_CLASS,
+            className,
+          )}
           data-slot="onboarding-column"
           {...props}
         >
@@ -98,7 +113,7 @@ export function OnboardingColumn({
   if (host?.kind === "section") {
     return (
       <section
-        className={cn("lg:max-w-column flex w-full flex-col gap-6", className)}
+        className={cn("flex w-full flex-col gap-6", className)}
         data-slot="onboarding-column"
         {...props}
       >
@@ -110,14 +125,15 @@ export function OnboardingColumn({
 
   return (
     <main
-      className={cn(STANDALONE_COLUMN_CLASS, "flex flex-1 flex-col pt-4 pb-8 sm:pt-8 lg:pb-16")}
+      className={cn(STANDALONE_COLUMN_CLASS, "flex flex-1 flex-col pt-4 sm:pt-8")}
       data-slot="onboarding-column"
       {...props}
     >
-      <div className={cn("flex min-w-0 flex-1 flex-col gap-6", className)}>
+      <div className={cn("flex min-w-0 flex-1 flex-col gap-6 pb-8 lg:pb-16", className)}>
         {children}
-        {bar}
       </div>
+
+      {bar}
     </main>
   );
 }
@@ -175,37 +191,20 @@ export function OnboardingDescription({
  */
 export function OnboardingSubject({
   children,
-  className,
   position,
 }: {
   children: string;
-  className?: string;
+  /** Where the learner is, such as "Question 2 of 8" or the time left: at the row's end, not in the chip. */
   position?: string;
 }) {
-  const host = useOnboardingHost();
-
-  const content = (
-    <>
-      <span>{toLabelCase(children)}</span>
-      {position && (
-        <>
-          <span aria-hidden="true">{" · "}</span>
-          <span>{position}</span>
-        </>
-      )}
-    </>
-  );
-
-  if (host?.kind === "page") {
-    return (
-      <PageEyebrow className={cn("min-w-0 text-pretty wrap-break-word", className)}>
-        {content}
-      </PageEyebrow>
-    );
-  }
-
   return (
-    <p className={cn("text-label min-w-0 text-pretty wrap-break-word", className)}>{content}</p>
+    <div
+      className="text-muted-foreground flex items-center justify-between gap-3"
+      data-slot="onboarding-subject"
+    >
+      <Eyebrow className="min-w-0 wrap-break-word">{children}</Eyebrow>
+      {position && <p className="shrink-0 font-mono text-xs tabular-nums">{position}</p>}
+    </div>
   );
 }
 
@@ -222,7 +221,7 @@ export function OnboardingHeading({
     return (
       <div
         className={cn(
-          "flex min-w-0 flex-col gap-1 first:not-has-[>[data-slot=page-eyebrow]]:pt-5 *:data-[slot=onboarding-description]:pt-1",
+          "flex min-w-0 flex-col gap-1 *:data-[slot=eyebrow]:mb-2 *:data-[slot=onboarding-description]:pt-1 *:data-[slot=onboarding-subject]:mb-2",
           className,
         )}
         data-slot="onboarding-heading"
@@ -232,75 +231,90 @@ export function OnboardingHeading({
     );
   }
 
-  return <div className={cn("flex flex-col gap-2", className)}>{children}</div>;
-}
-
-/** The bottom padding reaches into the page's own, so a short screen's buttons stay where they were. */
-const PINNED_FOOTER_CLASS = cn(
-  PINNED_ACTIONS_CLASS,
-  "bottom-0 -mb-[max(1rem,env(safe-area-inset-bottom))] pb-[max(1rem,env(safe-area-inset-bottom))]",
-);
-
-export function OnboardingFooter({
-  children,
-  className,
-  pinned = false,
-  ...props
-}: React.ComponentProps<"div"> & { pinned?: boolean }) {
-  const standalone = useOnboardingHost() === null;
-
   return (
     <div
       className={cn(
-        "mt-auto flex flex-col gap-2 pt-4 sm:mt-0",
-        standalone && "pb-[max(0.5rem,env(safe-area-inset-bottom))]",
-        pinned && PINNED_FOOTER_CLASS,
+        "flex flex-col gap-2 *:data-[slot=eyebrow]:mb-1 *:data-[slot=onboarding-subject]:mb-1",
         className,
       )}
-      {...props}
     >
-      <PlanStartNoticeSlot />
       {children}
     </div>
   );
 }
 
-export function OnboardingPrimaryButton({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<typeof Button>) {
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: !props.disabled && !props.busy });
+type ActionsProps = { children: ReactNode; failed?: boolean; note?: ReactNode };
 
+/**
+ * A screen's actions, for `OnboardingColumn`'s `bar`: the other action, then the main one, pinned at
+ * the screen's bottom. What the last action couldn't do and a `note` about the actions are said over
+ * them, where they move nothing.
+ */
+export function OnboardingActions({ children, ...props }: ActionsProps) {
   return (
-    <Button
-      aria-keyshortcuts="Enter"
-      className={cn("w-full font-[560]", className)}
-      focusableWhenDisabled
-      size="lg"
-      {...props}
-      ref={ref}
-    >
-      {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Button>
+    <OnboardingBottomBar {...props}>
+      <TaskActions>{children}</TaskActions>
+    </OnboardingBottomBar>
   );
 }
 
+/** `OnboardingActions` around a row of the screen's own, such as a question's. */
+export function OnboardingBottomBar({ children, failed = false, note }: ActionsProps) {
+  const { failure } = useOnboardingScreen();
+  const planFailure = usePlanStartFailure();
+  const said = failure || failed || note || planFailure;
+
+  return (
+    <BottomBar
+      note={
+        said && (
+          <div className="flex flex-col gap-2">
+            {failure}
+            {failed && <ChangeSaveError />}
+            {note}
+            {planFailure && <PlanStartNotice run={planFailure} />}
+          </div>
+        )
+      }
+    >
+      {children}
+    </BottomBar>
+  );
+}
+
+/** A quiet line about the actions, for `OnboardingActions`' `note`. */
+export function OnboardingActionsNote({ children }: { children: ReactNode }) {
+  return <p className="text-muted-foreground text-sm text-pretty lg:text-right">{children}</p>;
+}
+
+/** The screen's main action: one look with a lesson's, and Enter presses it. */
+export function OnboardingPrimaryButton({
+  children,
+  ...props
+}: Omit<React.ComponentProps<typeof EnterButton>, "enter" | "size">) {
+  return <EnterButton {...props}>{children}</EnterButton>;
+}
+
+/** The other action, before the main one: Skip, Not now. */
 export function OnboardingSecondaryButton({
   className,
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: Omit<React.ComponentProps<typeof Button>, "size" | "variant">) {
   return (
     <Button
-      className={cn("w-full", className)}
+      className={cn(TASK_WRAPPING_ACTION_CLASS, className)}
       focusableWhenDisabled
-      size="lg"
-      variant="ghost"
+      size="xl"
+      variant="outline"
       {...props}
     />
   );
 }
+
+/** A link drawn as the action beside the main one. */
+export const ONBOARDING_ACTION_LINK_CLASS = {
+  other: cn(buttonVariants({ size: "xl", variant: "outline" }), TASK_WRAPPING_ACTION_CLASS),
+} as const;
 
 /** The window keeps the scroll of a long screen, so the next one would open past its title. */
 export function OnboardingScreenTop() {

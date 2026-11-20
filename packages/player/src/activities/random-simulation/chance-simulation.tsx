@@ -2,6 +2,7 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { hashSeed } from "@zoonk/utils/seeded-random";
 import { RotateCcw } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -12,6 +13,7 @@ import {
   ActivityReadout,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { useReducedMotion } from "../_utils/use-reduced-motion";
 import { useRevealCount } from "../_utils/use-reveal-count";
@@ -79,22 +81,25 @@ export function ChanceSimulation({ answer, content, expected, labelId, phase }: 
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-col gap-0.5">
-          <ActivityCanvasLabel className="text-sm">{runsLabel}</ActivityCanvasLabel>
-          <ActivityCanvasLabel>{fields.hitLabel}</ActivityCanvasLabel>
-
-          {isChecked && guess !== null && (
-            <ActivityCanvasLabel className="text-foreground font-medium">
-              {t("Your guess: {value}", { value: percent(guess) })}
-            </ActivityCanvasLabel>
-          )}
+      <div className="flex flex-col gap-0.5">
+        <ActivityCanvasLabel className="text-sm">{runsLabel}</ActivityCanvasLabel>
+        <div className="flex items-baseline justify-between gap-3">
+          <ActivityCanvasLabel className="text-sm">{fields.hitLabel}</ActivityCanvasLabel>
+          <ActivityReadout
+            aria-hidden="true"
+            className={cn(
+              ACTIVITY_COLOR.dataThird.text,
+              "min-w-[5ch] shrink-0 text-end whitespace-nowrap",
+            )}
+          >
+            {shown.length === 0 ? "–" : percent(share)}
+          </ActivityReadout>
         </div>
 
-        {isChecked && (
-          <ActivityReadout aria-hidden="true" className="text-viz-accent">
-            {percent(share)}
-          </ActivityReadout>
+        {isChecked && guess !== null && (
+          <ActivityCanvasLabel className="text-sm">
+            {t("Your guess: {value}", { value: percent(guess) })}
+          </ActivityCanvasLabel>
         )}
       </div>
 
@@ -124,15 +129,11 @@ export function ChanceSimulation({ answer, content, expected, labelId, phase }: 
 
       {isDone && (
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p aria-live="polite" className="text-sm tabular-nums">
-            {exact === null
-              ? t("{hit} in {share} of the runs.", { hit: fields.hitLabel, share: percent(share) })
-              : t("{hit} in {share} of the runs. The exact chance is {exact}.", {
-                  exact: percent(exact),
-                  hit: fields.hitLabel,
-                  share: percent(share),
-                })}
-          </p>
+          {exact !== null && (
+            <p aria-live="polite" className="text-sm tabular-nums">
+              {t("The exact chance is {exact}.", { exact: percent(exact) })}
+            </p>
+          )}
 
           <Button onClick={() => setRunIndex(runIndex + 1)} size="lg" variant="outline">
             <RotateCcw aria-hidden="true" />

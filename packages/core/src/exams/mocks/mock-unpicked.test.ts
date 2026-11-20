@@ -81,7 +81,6 @@ describe(listLeftOutChoices, () => {
 describe("day mocks of an exam with an unpicked choice", () => {
   it("say only the choice's own day leaves it out", () => {
     const options = listMockOptions({
-      dayInTurn: 1,
       goalAreas: [LANGUAGES, "Matemática e suas Tecnologias"],
       structure: ENEM,
       unpicked: listUnpickedChoices({

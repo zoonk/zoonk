@@ -77,14 +77,6 @@ struct AppView: View {
     subscriptionStore: .live())
 
   AppView()
-    .environment(dependencies.countryCatalogStore)
-    .environment(dependencies.courseCatalogStore)
-    .environment(dependencies.learnerSummaryStore)
-    .environment(dependencies.progressStore)
-    .environment(dependencies.sessionStore)
-    .environment(dependencies.settingsStore)
-    .environment(dependencies.studySessionStore)
-    .environment(dependencies.subscriptionStore)
-    .environment(dependencies.todayStore)
+    .appDependencies(dependencies)
     .environment(AppRouter())
 }

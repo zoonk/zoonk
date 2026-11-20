@@ -1,6 +1,5 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
-import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
 import { readSavedMindMaps } from "../learner/facts/saved-mind-maps";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
 import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
@@ -15,7 +14,7 @@ export type ChapterLessonMapsResult =
 
 /**
  * Every written lesson's map in a chapter of the goal's mind map scope, studied or not, with the
- * learner's saves and Plus locks; notFound for a chapter outside the scope or one without maps.
+ * learner's saves; notFound for a chapter outside the scope or one without maps.
  */
 export async function listChapterLessonMaps({
   chapterId,
@@ -39,7 +38,7 @@ export async function listChapterLessonMaps({
   const { goal } = resolved;
 
   const [[facts], numbering, savedRows] = await Promise.all([
-    loadMindMapChapters({ chapterIds: [chapterId], goal, readViewer: readEntitlementViewer }),
+    loadMindMapChapters({ chapterIds: [chapterId], goal }),
     loadChapterNumbering(goal),
     readSavedMindMaps(goal.userId),
   ]);
@@ -60,8 +59,7 @@ export async function listChapterLessonMaps({
       },
       lessons: (lessonMaps.get(chapterId) ?? []).map((map) => ({
         lessonId: map.lessonId,
-        locked: map.locked,
-        map: map.locked ? null : map.map,
+        map: map.map,
         position: map.position,
         saved: saved.has(toSavedKey({ kind: "lesson", targetId: map.lessonId })),
         title: map.title,

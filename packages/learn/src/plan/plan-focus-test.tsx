@@ -1,12 +1,9 @@
 "use client";
 
-import { CrosshairIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   ListRowContent,
   ListRowDescription,
-  ListRowIcon,
-  ListRowLeading,
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
@@ -48,11 +45,6 @@ export function PlanFocusTest() {
 
   return (
     <ListRowLink href={focusTestHref}>
-      <ListRowLeading>
-        <ListRowIcon>
-          <CrosshairIcon />
-        </ListRowIcon>
-      </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>{t("Focus test")}</ListRowTitle>
         <ListRowDescription>

@@ -1,3 +1,4 @@
+import { FRAME_GUTTER_CLASS } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 
 /** These parts render on the server. */
@@ -16,61 +17,74 @@ export function LearnShell({ children, className, ...props }: React.ComponentPro
   );
 }
 
+/**
+ * The frame's gutter and bottom room (`--page-gutter`, `--page-bottom`) are set here so the bar over
+ * a tab and the page under it share one column. Where the phone's tab bar shows, a bottom bar
+ * rests on it (`--page-dock`) and leaves the home indicator's inset to it.
+ */
 export function LearnShellContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex min-w-0 flex-1 flex-col", className)}
+      className={cn(
+        "flex min-w-0 flex-1 flex-col [--page-bottom:--spacing(12)] lg:[--page-bottom:--spacing(16)]",
+        FRAME_GUTTER_CLASS,
+        "max-lg:has-data-[slot=learn-bottom-navigation]:[--page-dock:calc(4rem+1px+env(safe-area-inset-bottom))] max-lg:has-data-[slot=learn-bottom-navigation]:[--page-safe-bottom:0px]",
+        className,
+      )}
       data-slot="learn-shell-content"
       {...props}
     />
   );
 }
 
-export function LearnShellHeader({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"header">) {
-  return (
-    <header className={className} data-slot="learn-shell-header" {...props}>
-      <div
-        className={cn(
-          "grid grid-cols-[minmax(0,1fr)_auto] grid-rows-[minmax(2.75rem,auto)] items-center gap-x-3 lg:grid-rows-[minmax(2.5rem,auto)]",
-          BAR_ROW_CLASS,
-        )}
-      >
-        {children}
-      </div>
-    </header>
-  );
-}
+/**
+ * Where a page's way back leads nowhere the frame doesn't already show, so the bar doesn't draw it:
+ * `back` hides the link, and `bare` lets a bar that then holds nothing keep only its top room and
+ * hairline and scroll away, so the title takes the bar's row (`PageTopBar`'s `className`). A bar
+ * holds nothing when its end shows nothing: no actions, on a computer only a phone's
+ * (`data-phone-only`), or only one that leaves with the way back (`data-with-back`), which is so
+ * while that action is still loading too. `data-signed-in` says whose frame this is before the
+ * first paint.
+ * - `beside`: from `xl` for whoever has a session, where the page it goes back to stays on screen
+ *   and this one opens in the aside.
+ * - `computer`: from `lg`, where the sidebar holds the goal and every page it lists.
+ * - `learner`, `visitor`: from `lg`, a page the sidebar lists in that state.
+ * - `tabs`: a page whose way back is Today, the Plan or the buddy, for a learner, who reaches them by
+ *   the tab bar under `lg` and the sidebar from it. A visitor has neither and keeps the link.
+ * - `sectionTabs`: from `md`, where a section's own tabs lead to its first page.
+ */
+export const NO_WAY_BACK = {
+  beside: {
+    back: "xl:in-data-signed-in:hidden",
+    bare: "xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:static xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:pb-0 xl:in-data-signed-in:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:*:hidden",
+  },
+  computer: {
+    back: "lg:hidden",
+    bare: "lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:static lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:pb-0 lg:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:*:hidden",
+  },
+  learner: {
+    back: "lg:[[data-signed-in]_&]:hidden",
+    bare: "lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:static lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:pb-0 lg:[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:*:hidden",
+  },
+  sectionTabs: {
+    back: "md:hidden",
+    bare: "md:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:static md:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:pb-0 md:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:*:hidden",
+  },
+  tabs: {
+    back: "[[data-signed-in]_&]:hidden",
+    bare: "[[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:static [[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:pb-0 [[data-signed-in]_&]:not-has-[[data-slot=page-top-end]>:not([data-with-back])]:*:hidden",
+  },
+  visitor: {
+    back: "lg:[:root:not([data-signed-in])_&]:hidden",
+    bare: "lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:static lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:pb-0 lg:[:root:not([data-signed-in])_&]:not-has-[[data-slot=page-top-end]>:not([data-phone-only],[data-with-back])]:*:hidden",
+  },
+} as const;
 
-export function LearnShellStart({ children, className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("col-start-1 row-start-1 flex min-w-0 items-center gap-2", className)}
-      data-slot="learn-shell-start"
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
+export type NoWayBack = keyof typeof NO_WAY_BACK;
 
-export function LearnShellEnd({ children, className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("col-start-2 row-start-1 flex items-center justify-end gap-1", className)}
-      data-slot="learn-shell-end"
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
-
-export const BAR_ROW_CLASS =
-  "mx-auto w-full px-4 pt-3 pb-2 sm:max-w-3xl sm:px-8 lg:mx-0 lg:max-w-none lg:px-10 lg:py-3";
+/** The page's column inside the frame: the bar over a tab and the notices line up with it. */
+export const FRAME_COLUMN_CLASS =
+  "mx-auto w-full px-(--page-gutter) sm:max-w-3xl lg:mx-0 lg:max-w-none";
 
 const LEARN_MAIN_ID = "main-content";
 
@@ -87,13 +101,15 @@ export function LearnSkipLink({ children }: { children: React.ReactNode }) {
 
 /**
  * Its padding never depends on the page inside: pages the router keeps hidden stay in the document,
- * so a page with an aside reaches past the padding itself.
+ * so a page with an aside reaches past the padding itself. It has no top padding: the page's bar
+ * owns all the room over a title.
  */
 export function LearnShellMain({ children, className, ...props }: React.ComponentProps<"main">) {
   return (
     <main
       className={cn(
-        "flex w-full flex-1 flex-col px-4 pt-4 pb-12 outline-none sm:mx-auto sm:max-w-3xl sm:px-8 sm:pt-6 lg:mx-0 lg:max-w-none lg:px-10 lg:pt-8 lg:pb-16",
+        FRAME_COLUMN_CLASS,
+        "flex flex-1 flex-col pb-(--page-bottom) outline-none",
         className,
       )}
       data-slot="learn-shell-main"
@@ -107,11 +123,25 @@ export function LearnShellMain({ children, className, ...props }: React.Componen
   );
 }
 
+/**
+ * The bottom bar ends the main column, so it pins over that column and never covers the aside.
+ * Under 72rem the column dissolves into the page and the bar comes after the aside, so it stays
+ * pinned while the aside scrolls by; on a short page it rests on the frame's bottom.
+ */
+const WITH_BAR_COLUMN_CLASS =
+  "max-[72rem]:contents [&>[data-slot=bottom-bar]]:mt-auto max-[72rem]:[&>[data-slot=bottom-bar]]:order-last";
+
+/**
+ * At desktop widths the aside's first card starts on the frame's first row, 12px from the top, level
+ * with the sidebar's first row and the page's bar or title, wherever in its column the page draws
+ * them. `bottomBar` is the page's `BottomBar`.
+ */
 export function PageWithAside({
   aside,
   asideClassName,
   asideLabel,
   asideRef,
+  bottomBar,
   children,
   className,
 }: {
@@ -119,29 +149,32 @@ export function PageWithAside({
   asideClassName?: string;
   asideLabel: string;
   asideRef?: React.Ref<HTMLElement>;
+  bottomBar?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
     <div
-      className="flex w-full flex-1 flex-col gap-10 min-[72rem]:-mx-10 min-[72rem]:-mt-8 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
+      className="group/page-aside flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-(--page-gutter) min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
       data-slot="page-with-aside"
     >
       <div
         className={cn(
-          "flex min-w-0 flex-col min-[72rem]:px-10 min-[72rem]:pt-8 min-[72rem]:pb-16",
+          "flex min-w-0 flex-col min-[72rem]:px-(--page-gutter) min-[72rem]:pb-16",
+          bottomBar && WITH_BAR_COLUMN_CLASS,
           className,
         )}
       >
         {children}
+        {bottomBar}
       </div>
 
       {aside && (
         <aside
           aria-label={asideLabel}
           className={cn(
-            "flex min-w-0 flex-col gap-8 outline-none",
-            "min-[72rem]:border-border min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:py-8 xl:w-80",
+            "flex min-w-0 flex-col gap-7 outline-none min-[72rem]:gap-9",
+            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:px-frame min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:pt-3 min-[72rem]:pb-8 xl:w-80",
             asideClassName,
           )}
           data-slot="page-aside"

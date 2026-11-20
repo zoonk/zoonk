@@ -2,17 +2,11 @@ import { SectionPageHeader } from "@/components/learn/section-page";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
+import { LIST_DETAIL_GRID_CLASS, SIDE_DETAIL_PANE_CLASS } from "@zoonk/learn/side-detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { getRequestCountry } from "@zoonk/utils/locale-request";
-import {
-  USAGE_DATA_COOKIE,
-  getUsageDataChoice,
-  parseUsageDataCookie,
-  resolveUsageDataSharing,
-} from "@zoonk/utils/usage-data";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { cookies, headers } from "next/headers";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { AppearanceSettings } from "./appearance-settings";
@@ -31,24 +25,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/** Off until the visitor says yes where the law needs one, as `AppAnalytics` decides. */
-async function readShareUsageData(account: boolean | null): Promise<boolean> {
-  const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
-  const browser = parseUsageDataCookie(cookieStore.get(USAGE_DATA_COOKIE)?.value);
-
-  const share = resolveUsageDataSharing({
-    choice: getUsageDataChoice({ account, browser }),
-    country: getRequestCountry(requestHeaders),
-  });
-
-  return share ?? false;
-}
-
-/** Visitors get only the language and usage data, which their browser keeps. */
+/** Visitors get only the language, which their browser keeps. */
 async function AppearanceContent() {
   const language = await lang();
   const [profile, buddy] = await Promise.all([getLearningProfile(language), getLearnerBuddy()]);
-  const shareUsageData = await readShareUsageData(profile?.shareUsageData ?? null);
 
   return (
     <AppearanceSettings
@@ -66,7 +46,6 @@ async function AppearanceContent() {
           energy: buddy.energy,
           studiedToday: buddy.studiedToday,
         },
-        shareUsageData,
         soundsEnabled: profile?.soundsEnabled ?? true,
       }}
     />
@@ -84,15 +63,29 @@ function SectionSkeleton({ className, label }: { className: string; label: strin
   );
 }
 
+/** Laid out as the page is, rows and the buddy's pane where it has one, so nothing moves as it loads. */
 async function AppearanceSkeleton() {
   const t = await getExtracted();
 
   return (
-    <div className="flex flex-col gap-7">
-      <SectionSkeleton className="h-15 rounded-lg" label={t("Your buddy")} />
-      <SectionSkeleton className="h-30 rounded-lg" label={t("Lessons")} />
-      <SectionSkeleton className="h-30 rounded-lg" label={t("Language and region")} />
-      <SectionSkeleton className="h-15 rounded-lg" label={t("Privacy")} />
+    <div className={cn("flex flex-col gap-7", LIST_DETAIL_GRID_CLASS)}>
+      <div className="xl:in-data-signed-in:hidden">
+        <SectionSkeleton className="h-15 rounded-lg" label={t("Your buddy")} />
+      </div>
+
+      <div
+        className={cn(
+          "hidden xl:in-data-signed-in:col-start-2 xl:in-data-signed-in:row-start-1",
+          SIDE_DETAIL_PANE_CLASS,
+        )}
+      >
+        <SectionSkeleton className="h-41 rounded-xl" label={t("Your buddy")} />
+      </div>
+
+      <div className="flex flex-col gap-7 xl:in-data-signed-in:col-start-1 xl:in-data-signed-in:row-start-1">
+        <SectionSkeleton className="h-30 rounded-lg" label={t("Lessons")} />
+        <SectionSkeleton className="h-30 rounded-lg" label={t("Language and region")} />
+      </div>
     </div>
   );
 }
@@ -102,9 +95,8 @@ export default async function AppearancePage() {
   const t = await getExtracted();
 
   return (
-    <Page className="max-w-form">
+    <Page className="flex-1">
       <SectionPageHeader
-        description={t("Your buddy, lessons and language, the way you like them.")}
         title={t({
           description:
             "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.",

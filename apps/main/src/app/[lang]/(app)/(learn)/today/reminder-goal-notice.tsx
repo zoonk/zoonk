@@ -60,7 +60,7 @@ export function ReminderGoalNotice({ goal }: { goal: ReminderGoal }) {
             size="sm"
             variant="outline"
           >
-            {t("Switch to this goal")}
+            {t("Switch")}
           </Button>
         </NoticeCardActions>
 

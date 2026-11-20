@@ -7,21 +7,19 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -31,7 +29,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.TICK_LABEL_GAP
+import com.zoonk.android.ui.format.currencyUnit
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.displayDigits
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -55,7 +56,7 @@ fun ActivityGuessReveal(
     explains: @Composable ColumnScope.() -> Unit,
 ) {
     val locale = currentLocale()
-    val format = { value: Double -> formatAmount(value, locale, unit) }
+    val format = { value: Double -> formatAmount(value, locale, currencyUnit(unit)) }
     val revealed = actual.takeIf { props.isChecked }
     val description =
         if (revealed == null) {
@@ -64,7 +65,8 @@ fun ActivityGuessReveal(
             stringResource(R.string.activities_guess_scale_revealed, format(scale.min), format(scale.max), format(revealed))
         }
 
-    ActivityCanvas(description = description) {
+    val unitLabel = guessUnitLabel(unit)
+    ActivityCanvas(description = listOfNotNull(description, unitLabel).joinToString(" ")) {
         ActivityGuessScale(scale, unit, guess, revealed, disabled = props.isLocked, onGuessChange = onGuessChange)
         if (revealed != null) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -85,32 +87,30 @@ fun ActivityGuessScale(
     onGuessChange: (Double) -> Unit,
 ) {
     val locale = currentLocale()
-    val format = { value: Double -> formatAmount(value, locale, unit) }
+    val format = { value: Double -> formatAmount(value, locale, currencyUnit(unit)) }
     val share = guess?.let(scale::shareOf) ?: HALF
     val actualShare = actual?.let(scale::shareOf)
     val highlight = MaterialTheme.zoonk.vizHighlight
     val guessName = stringResource(R.string.activities_guess_slider)
-    val guessValue = guess?.let(format) ?: stringResource(R.string.activities_guess_none)
+    val unitLabel = guessUnitLabel(unit)
+    val guessValue = listOfNotNull(guess?.let(format) ?: stringResource(R.string.activities_guess_none), unitLabel).joinToString(". ")
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (actual != null && actualShare != null) {
-            AtShare(actualShare) {
-                ScaleChip(container = highlight.copy(alpha = SOFT), content = highlight) {
-                    Text(
-                        stringResource(R.string.activities_guess_real_value, format(actual)),
-                        style =
-                            MaterialTheme.typography.labelLarge
-                                .withTabularFigures()
-                                .copy(fontWeight = FontWeight.SemiBold),
-                    )
-                }
+        // The real value's row holds its room from the start, so the slider the learner just dragged stays put at Check.
+        val shown = actual != null && actualShare != null
+        AtShare(actualShare ?: HALF, if (shown) Modifier else Modifier.alpha(0f).clearAndSetSemantics {}) {
+            ScaleChip(container = highlight.copy(alpha = SOFT), content = highlight) {
+                Text(
+                    stringResource(R.string.activities_guess_real_value, format(actual ?: scale.max)),
+                    style =
+                        MaterialTheme.typography.labelLarge
+                            .withTabularFigures()
+                            .copy(fontWeight = FontWeight.SemiBold),
+                )
             }
         }
         AtShare(share) {
             ScaleChip(container = MaterialTheme.colorScheme.surface, content = MaterialTheme.colorScheme.onSurface, outlined = true) {
-                if (disabled && guess != null) {
-                    Icon(painterResource(R.drawable.ic_lock), contentDescription = null, modifier = Modifier.size(12.dp))
-                }
                 Text(
                     if (guess ==
                         null
@@ -123,6 +123,7 @@ fun ActivityGuessScale(
                 )
             }
         }
+        unitLabel?.let { ActivityCanvasLabel(it) }
         ActivitySliderTrack(
             position = (share * GuessScale.POSITIONS).roundToInt(),
             positions = GuessScale.POSITIONS,
@@ -153,7 +154,7 @@ fun ActivityGuessScale(
                 drawCircle(highlight, radius = DOT.toPx(), center = center)
             },
         )
-        ScaleTicks(scale)
+        ScaleTicks(scale, unit)
     }
 }
 
@@ -166,7 +167,7 @@ fun ActivityGuessComparison(
 ) {
     val locale = currentLocale()
     val text =
-        when (val comparison = compareGuess(actual, guess, isCorrect)) {
+        when (val comparison = compareGuess(actual, guess, isCorrect, unit)) {
             GuessComparison.Close -> {
                 stringResource(R.string.activities_guess_close)
             }
@@ -174,7 +175,12 @@ fun ActivityGuessComparison(
             is GuessComparison.Off -> {
                 stringResource(
                     R.string.activities_guess_off_by,
-                    formatAmount(abs(comparison.difference), locale, unit),
+                    formatAmount(
+                        abs(comparison.difference),
+                        locale,
+                        currencyUnit(unit),
+                        maximumFractionDigits = displayDigits(actual, unit),
+                    ),
                 )
             }
 
@@ -215,9 +221,10 @@ private fun ScaleChip(
 @Composable
 private fun AtShare(
     share: Double,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    Layout(content, Modifier.fillMaxWidth()) { measurables, constraints ->
+    Layout(content, modifier.fillMaxWidth()) { measurables, constraints ->
         val placeable = measurables.single().measure(constraints.copy(minWidth = 0))
         val width = constraints.maxWidth
         val x = (share * width - placeable.width / 2).roundToInt().coerceIn(0, max(0, width - placeable.width))
@@ -226,14 +233,34 @@ private fun AtShare(
 }
 
 @Composable
-private fun ScaleTicks(scale: GuessScale) {
+private fun ScaleTicks(
+    scale: GuessScale,
+    unit: String?,
+) {
     val locale = currentLocale()
-    val ticks = scale.ticks()
+    val values = (4 downTo 1).flatMap { scale.ticks(it) }.distinct()
+    val labels =
+        scale.tickLabels(values) { value, compact ->
+            formatAmount(
+                value,
+                locale,
+                currencyUnit(unit),
+                compact = compact,
+                maximumFractionDigits =
+                    if (compact &&
+                        currencyUnit(unit) != null
+                    ) {
+                        1
+                    } else {
+                        null
+                    },
+            )
+        }
     Layout(
         content = {
-            ticks.forEach {
+            labels.forEach {
                 Text(
-                    formatAmount(it, locale, compact = true),
+                    it,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall.withTabularFigures(),
                 )
@@ -244,15 +271,17 @@ private fun ScaleTicks(scale: GuessScale) {
         val placeables = measurables.map { it.measure(constraints.copy(minWidth = 0)) }
         val width = constraints.maxWidth
         layout(width, placeables.maxOfOrNull { it.height } ?: 0) {
-            placeables.zip(ticks).forEach { (placeable, tick) ->
-                val share = scale.shareOf(tick)
-                val x =
-                    when {
-                        share < TICK_EDGE_SHARE -> 0
-                        share > 1 - TICK_EDGE_SHARE -> width - placeable.width
-                        else -> (share * width - placeable.width / 2).roundToInt()
-                    }
-                placeable.placeRelative(x, 0)
+            val shown = scale.fittedTicks(width, TICK_LABEL_GAP.toPx()) { value -> placeables[values.indexOf(value)].width }
+            placeables.forEachIndexed { index, placeable ->
+                if (values[index] in shown) {
+                    val left =
+                        (
+                            scale.shareOf(
+                                values[index],
+                            ) * width - placeable.width / 2
+                        ).toInt().coerceIn(0, maxOf(0, width - placeable.width))
+                    placeable.placeRelative(left, 0)
+                }
             }
         }
     }
@@ -260,6 +289,9 @@ private fun ScaleTicks(scale: GuessScale) {
 
 private const val HALF = 0.5
 private const val SOFT = 0.18f
-private const val TICK_EDGE_SHARE = 0.04
 private val DOT = 8.dp
 private val RING = 4.dp
+
+@Composable
+private fun guessUnitLabel(unit: String?): String? =
+    unit?.takeIf { it.isNotEmpty() && currencyUnit(it) == null }?.let { stringResource(R.string.activities_guess_in_unit, it) }

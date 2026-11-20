@@ -8,6 +8,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { toHelpLimit } from "../../_components/comes-back-words";
+import { HelpLimitNotice } from "../../_components/help-limit-notice";
+import { SURFACE_CLASS } from "../../_components/surface";
 import { useAppLocale } from "../../_utils/locale";
 import { useCitationLabel } from "../../_utils/use-citation-label";
 import {
@@ -16,6 +19,8 @@ import {
   TutorMessage,
   useTutorIdentity,
 } from "../../conversation/tutor-identity";
+import { useLearnRoutes } from "../../learn-context";
+import { LearnLink } from "../../learn-link";
 import {
   type AttachedSource,
   type MaterialQuestionOutcome,
@@ -32,24 +37,6 @@ import { TypedGoal } from "./goal-outcomes";
 
 type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
 
-function useQuestionLimitMessage() {
-  const t = useExtracted();
-
-  return (outcome: MaterialQuestionOutcome): string => {
-    if (outcome.status !== "limitReached" || outcome.tier === "plus") {
-      return t("You've asked as many questions as your plan allows today.");
-    }
-
-    return outcome.period === "month"
-      ? t(
-          "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.",
-        )
-      : t(
-          "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.",
-        );
-  };
-}
-
 function TurnAnswer({
   identity,
   outcome,
@@ -59,14 +46,27 @@ function TurnAnswer({
 }) {
   const t = useExtracted();
   const toLabel = useCitationLabel();
-  const toLimitMessage = useQuestionLimitMessage();
+  const routes = useLearnRoutes();
+
+  if (outcome.status === "limitReached") {
+    return (
+      <TutorMessage identity={identity}>
+        <HelpLimitNotice
+          kind="questions"
+          limit={toHelpLimit(outcome)}
+          linkComponent={LearnLink}
+          routes={routes}
+        />
+      </TutorMessage>
+    );
+  }
 
   if (outcome.status !== "answered") {
-    const limitReached = toLimitMessage(outcome);
-
-    const messages: Record<Exclude<MaterialQuestionOutcome["status"], "answered">, string> = {
+    const messages: Record<
+      Exclude<MaterialQuestionOutcome["status"], "answered" | "limitReached">,
+      string
+    > = {
       failed: t("We couldn't answer that. Try again in a moment."),
-      limitReached,
       signInRequired: t("Create an account to ask about your material."),
       slowDown: t("You're asking quickly. Try again in a few minutes."),
     };
@@ -82,7 +82,7 @@ function TurnAnswer({
 
   return (
     <TutorMessage identity={identity}>
-      <div className="bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1">
+      <div className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-4")}>
         <p className="leading-relaxed whitespace-pre-wrap">{answer}</p>
 
         {citations.length > 0 && (
@@ -199,7 +199,7 @@ export function MaterialQuestions({
         <Button
           aria-label={t("Ask")}
           busy={isPending}
-          className="size-11 shrink-0 rounded-full"
+          className="shrink-0 rounded-full"
           disabled={!trimmed}
           focusableWhenDisabled
           icon={<ArrowUpIcon aria-hidden="true" className="size-5" />}

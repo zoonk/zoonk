@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -30,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,10 +44,10 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -57,11 +56,14 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.constrainHeight
+import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
@@ -69,7 +71,10 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.ActivityAnnouncement
-import com.zoonk.android.feature.audio.VoiceAnswerRecorder
+import com.zoonk.android.feature.audio.VoiceAnswerButton
+import com.zoonk.android.feature.audio.VoiceAnswerLine
+import com.zoonk.android.feature.audio.VoiceAnswerModel
+import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
@@ -90,7 +95,8 @@ import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
@@ -138,6 +144,12 @@ private val MIN_YIELDED_PICTURE = 140.dp
 /** The layout id of the screen part that takes the height the lesson screen's other parts leave in view. */
 object FillsView
 
+/** What a check adds to a word bank's screen (its feedback, or "fix it yourself"), which the bank places itself. */
+val LocalWordBankCheck = compositionLocalOf<(@Composable () -> Unit)?> { null }
+
+/** Where a checked question goes next ("Saved to your mistakes"), drawn inside the activity's own feedback card. */
+val LocalResultNotes = compositionLocalOf<(@Composable () -> Unit)?> { null }
+
 /**
  * A word bank's screen. In one narrow column the bank sits at the bottom of the view, just above the
  * actions, so it stays under the learner's thumb while the answer grows; once the screen outgrows the
@@ -148,14 +160,57 @@ internal fun WordBankScene(
     question: @Composable ColumnScope.() -> Unit,
     bank: @Composable () -> Unit,
 ) {
+    val wide = isWideLayout()
+
     Column(
-        Modifier.fillMaxWidth().then(if (isWideLayout()) Modifier else Modifier.layoutId(FillsView)),
+        Modifier.fillMaxWidth().then(if (wide) Modifier else Modifier.layoutId(FillsView)),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         QuestionScene(question)
-        Box(Modifier.padding(top = QUESTION_SPACING)) { bank() }
+        CheckBesideBank(wide, LocalWordBankCheck.current, bank, Modifier.padding(top = QUESTION_SPACING))
     }
 }
+
+/**
+ * What a check adds takes the room the bank leaves, so the bank and the answer above it hold still: right above the
+ * bank in one narrow column, where the bank waits above the actions, and under it in a wide layout. Both are always
+ * composed in the same place and only placed in a different order, so crossing widths keeps what the learner did in
+ * the feedback and where focus was.
+ */
+@Composable
+private fun CheckBesideBank(
+    wide: Boolean,
+    added: (@Composable () -> Unit)?,
+    bank: @Composable () -> Unit,
+    modifier: Modifier,
+) {
+    Layout(listOf<@Composable () -> Unit>({ added?.invoke() }, bank), modifier) { (addedParts, bankParts), constraints ->
+        val loose = constraints.copy(minHeight = 0)
+        val check = addedParts.map { it.measure(loose) }
+        val words = bankParts.map { it.measure(loose) }
+        val checkHeight = check.sumOf { it.height }
+        val bankHeight = words.sumOf { it.height }
+        val gap = if (checkHeight > 0) CHECK_GAP.roundToPx() else 0
+        val width = (check + words).maxOfOrNull { it.width } ?: 0
+
+        layout(constraints.constrainWidth(width), constraints.constrainHeight(checkHeight + gap + bankHeight)) {
+            val stack = { parts: List<Placeable>, top: Int ->
+                parts.fold(top) { y, part ->
+                    part.placeRelative(0, y)
+                    y + part.height
+                }
+            }
+            // Placed in the order they show, which is the order focus moves through them.
+            if (wide) {
+                stack(check, stack(words, 0) + gap)
+            } else {
+                stack(words, stack(check, 0) + gap)
+            }
+        }
+    }
+}
+
+private val CHECK_GAP = 16.dp
 
 @Composable
 private fun BodyText(text: String) {
@@ -204,17 +259,16 @@ internal fun GuessHookView(
             if (part.showsScreen) {
                 Column(verticalArrangement = Arrangement.spacedBy(QUESTION_SPACING)) {
                     if (marking != null) IdeaStrip(marking.map, step.marks)
-                    LabelChip(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome)
+                    Eyebrow(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome)
                 }
             }
         },
         picture = { if (part.showsScreen) StepPicture(step, PictureFrame.Question) },
+        // On a spread the question heads the learner's page, right over the answers it asks for.
         question = {
-            if (part.showsScreen) {
-                Column(verticalArrangement = Arrangement.spacedBy(QUESTION_PART_SPACING)) {
-                    LessonStepVisual(guess.visual)
-                    QuestionText(guess.question)
-                }
+            Column(verticalArrangement = Arrangement.spacedBy(QUESTION_PART_SPACING)) {
+                if (part.showsScreen) LessonStepVisual(guess.visual)
+                if (part.showsTurn) QuestionText(guess.question)
             }
         },
         options = {
@@ -256,7 +310,7 @@ private fun HookScene(
         val pictureRoom = viewHeight?.let { (it.roundToPx() - others).coerceAtLeast(MIN_YIELDED_PICTURE.roundToPx()) }
         val pictureParts = pictures.map { it.measure(if (pictureRoom == null) loose else loose.copy(maxHeight = pictureRoom)) }
         val rows =
-            listOf(chipParts to partGap, pictureParts to partGap, questionParts to sceneGap, optionParts to 0)
+            listOf(chipParts to partGap, pictureParts to sceneGap, questionParts to partGap, optionParts to 0)
                 .filter { (parts, _) -> parts.any { it.height > 0 } }
         val height = rows.sumOf { (parts, _) -> parts.sumOf { it.height } } + rows.dropLast(1).sumOf { (_, gap) -> gap }
 
@@ -363,10 +417,22 @@ internal fun WorkedExampleView(
         if (part.showsScreen) {
             if (marking != null) IdeaStrip(marking.map, step.marks)
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
+                Eyebrow(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
                 worked.title?.let { QuestionText(it) }
             }
-            TeachingText(title = null, text = worked.problem, marks = step.marks.takeIf { marking != null }, marksTerms = marksTerms)
+            TeachingText(
+                title = null,
+                text = worked.problem,
+                marks =
+                    step.marks.takeIf {
+                        marking != null
+                    },
+                marksTerms = marksTerms,
+                textStyle =
+                    MaterialTheme.zoonkType.lessonText.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+            )
             StepPicture(step, PictureFrame.Inline)
             LessonStepVisual(worked.visual)
         }
@@ -446,11 +512,12 @@ internal fun CheckView(
                 screen.step?.let { StepPicture(it, PictureFrame.Question) }
                 ContextText(check.context)
                 LessonStepVisual(check.visual)
-                QuestionText(check.question)
             }
         }
 
         if (part.showsTurn) {
+            // On a spread the question heads the learner's page, right over the answers it asks for.
+            QuestionText(check.question)
             val pictured = screen.step?.takeIf { check.options.any { it.picture != null } }
             val optionCaption: (@Composable (ChoiceOption) -> Unit)? =
                 if (pictured != null && result != null) {
@@ -556,7 +623,7 @@ internal fun TypedAnswerView(
         if (part.showsScreen && marking != null) IdeaStrip(marking.map, step.marks)
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (inOwnWords) LabelChip(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
+                if (inOwnWords) Eyebrow(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
                 ContextText(typed.context)
                 LessonStepVisual(typed.visual)
                 QuestionText(typed.question)
@@ -565,17 +632,7 @@ internal fun TypedAnswerView(
 
         if (part.showsTurn) AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
 
-        if (part.showsTurn && !locked && writingOptions) {
-            Column {
-                ExplainFirstButton(screen, actions)
-                if (!isNumber) {
-                    if (!screen.canExplainFirst) {
-                        GhostAction(R.drawable.ic_help, stringResource(R.string.player_dont_know_yet)) { actions.dontKnow(step.id) }
-                    }
-                    GhostAction(R.drawable.ic_edit_off, stringResource(R.string.player_cant_write_now), actions::skipWriting)
-                }
-            }
-        }
+        if (part.showsTurn && !locked && writingOptions) ExplainFirstButton(screen, actions)
     }
 }
 
@@ -597,11 +654,11 @@ internal fun SpokenAnswerView(
 ) {
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
-    var micBlocked by rememberSaveable(step.id) { mutableStateOf(false) }
-    val types = if (locked) answer is LessonAnswer.Spoken else actions.cantTalk || micBlocked
+    val voice = spokenVoice(step, actions)
+    val types = if (locked) answer is LessonAnswer.Spoken else actions.cantTalk || voice.blocked
     val switchTo = { cantTalk: Boolean ->
         actions.select(null)
-        micBlocked = false
+        voice.blocked = false
         actions.setCantTalk(cantTalk)
     }
     val listening = content.listeningInstead(if (locked) answer is LessonAnswer.Listening else actions.cantTalk)
@@ -623,9 +680,9 @@ internal fun SpokenAnswerView(
         if (part.showsTurn) {
             when {
                 types -> {
-                    if (micBlocked && !locked) {
+                    if (voice.blocked && !locked) {
                         Text(
-                            stringResource(R.string.player_microphone_blocked),
+                            stringResource(R.string.player_microphone_is_blocked),
                             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyMedium,
@@ -640,13 +697,7 @@ internal fun SpokenAnswerView(
                 }
 
                 !locked || state.phase == LessonPhase.Checking -> {
-                    VoiceAnswerRecorder(
-                        grade = { recording -> actions.gradeSpoken(step.id, recording) },
-                        onGraded = {},
-                        navigator = navigator,
-                        key = "spoken:${step.id}",
-                        onBlocked = { micBlocked = true },
-                    )
+                    VoiceAnswerLine(voice, navigator)
                 }
             }
 
@@ -664,6 +715,43 @@ internal fun SpokenAnswerView(
         }
     }
 }
+
+/** The spoken screen's take, shared by its line here and its Record in the lesson's bottom bar. */
+@Composable
+private fun spokenVoice(
+    step: LessonStep,
+    actions: StepActions,
+): VoiceAnswerModel = voiceAnswerModel("spoken:${step.id}") { recording -> actions.gradeSpoken(step.id, recording) }
+
+/**
+ * A spoken screen's Record and Stop, the bar's main action while the learner answers out loud;
+ * null while they type or listen instead, when the bar keeps its Check.
+ */
+@Composable
+fun SpokenRecordAction(
+    step: LessonStep,
+    actions: StepActions,
+    modifier: Modifier = Modifier,
+) {
+    val voice = spokenVoice(step, actions)
+    VoiceAnswerButton(voice, modifier, onBlocked = { voice.blocked = true })
+}
+
+/** Whether a written answer offers "I don't know yet" in the bar; one with its explanation ahead offers that first instead. */
+fun offersDontKnow(
+    screen: LessonScreen,
+    state: LessonPlayerState,
+): Boolean {
+    val typed = (screen.step?.content as? StepContent.TypedAnswer)?.content ?: return false
+    return state.phase == LessonPhase.Playing && !screen.canExplainFirst && !isNumberAnswer(typed.acceptedAnswers)
+}
+
+/** Whether [SpokenRecordAction] takes the bar's main action on this screen now. */
+@Composable
+fun recordsInBar(
+    step: LessonStep?,
+    actions: StepActions,
+): Boolean = step?.content is StepContent.SpokenAnswer && !actions.cantTalk && !spokenVoice(step, actions).blocked
 
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {
@@ -784,11 +872,9 @@ internal fun GhostAction(
     color: Color = Color.Unspecified,
     leading: (@Composable () -> Unit)?,
 ) {
-    val inset = ButtonDefaults.TextButtonWithIconContentPadding.calculateStartPadding(LocalLayoutDirection.current)
-
     TextButton(
         onClick = onClick,
-        modifier = Modifier.offset(x = -inset),
+        edge = ButtonEdge.Start,
         colors = ButtonDefaults.textButtonColors(contentColor = color),
     ) {
         leading?.let { Box(Modifier.padding(end = 8.dp)) { it() } }

@@ -1,19 +1,12 @@
+import { AuthHeader, AuthTitle } from "@/components/auth-form";
 import { AuthFrame } from "@/components/auth-frame";
-import {
-  Setup,
-  SetupDescription,
-  SetupFormSkeleton,
-  SetupHeader,
-  SetupTitle,
-} from "@/components/setup";
+import { Setup, SetupFormSkeleton } from "@/components/setup";
 import { getAuthPageLocale } from "@/i18n/page-locale";
-import { suggestCurrentUsername } from "@zoonk/core/users/current";
 import { getSession } from "@zoonk/core/users/session";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { connection } from "next/server";
 import { Suspense } from "react";
 import { getCallbackHref, getLoginHref, readRedirectTo } from "../../_utils/auth-redirect";
 import { getReturnAppUrl } from "../../_utils/return-app";
@@ -41,17 +34,7 @@ async function SetupProfile({
     redirect(getCallbackHref(returnTo));
   }
 
-  // The suggested username tries random suffixes when the plain one is taken: render per request.
-  await connection();
-  const suggestedUsername = await suggestCurrentUsername();
-
-  return (
-    <SetupProfileForm
-      defaultName={session.user.name}
-      defaultUsername={suggestedUsername ?? ""}
-      redirectTo={returnTo}
-    />
-  );
+  return <SetupProfileForm defaultName={session.user.name} redirectTo={returnTo} />;
 }
 
 export default async function SetupPage({ searchParams }: PageProps<"/auth/[locale]/setup">) {
@@ -61,15 +44,9 @@ export default async function SetupPage({ searchParams }: PageProps<"/auth/[loca
   return (
     <AuthFrame appUrl={redirectTo.then(getReturnAppUrl)}>
       <Setup>
-        <SetupHeader>
-          <SetupTitle>{t("What should we call you?")}</SetupTitle>
-          <SetupDescription>
-            {t({
-              description: "“it” is the name and username the learner picks on this screen.",
-              message: "You can change it later in your profile.",
-            })}
-          </SetupDescription>
-        </SetupHeader>
+        <AuthHeader>
+          <AuthTitle>{t("What should we call you?")}</AuthTitle>
+        </AuthHeader>
 
         <Suspense fallback={<SetupFormSkeleton />}>
           <SetupProfile locale={locale} redirectTo={redirectTo} />

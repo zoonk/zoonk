@@ -16,6 +16,7 @@ import { hasOnboardingQuestions } from "@zoonk/core/view-models/onboarding/steps
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
 import { getProgressView } from "@zoonk/core/view-models/progress/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
+import { getPlanTopics } from "@zoonk/learn/journey/plan-topics";
 import { toSyllabusSection } from "@zoonk/learn/syllabus-section-view";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
@@ -153,6 +154,34 @@ async function JourneyWithoutPlan({
   );
 }
 
+/** The Plan's progress card and its sheet, which count the same lessons and topics as the Plan. */
+function getPreparation({
+  forExam,
+  standing,
+  syllabus,
+}: {
+  forExam: boolean;
+  standing:
+    | Extract<Awaited<ReturnType<typeof getProgressView>>, { status: "ready" }>["progress"]
+    | null;
+  syllabus: Awaited<ReturnType<typeof getSyllabusView>>;
+}) {
+  if (!standing?.preparation) {
+    return null;
+  }
+
+  const ready = syllabus.status === "ready" ? syllabus.syllabus : null;
+
+  return {
+    forExam,
+    kind: "preparation" as const,
+    lessons: ready?.lessons ?? null,
+    preparation: standing.preparation,
+    stillNeeded: standing.stillNeeded,
+    topics: ready ? getPlanTopics(ready) : null,
+  };
+}
+
 async function JourneyContent() {
   // The locale comes from the root param: a prefetch warms its caches with `params` still pending.
   const [readAt, result, progress, language, units, syllabus, buddy, locale, goals] =
@@ -232,17 +261,7 @@ async function JourneyContent() {
       plan={plan}
       readAt={readAt}
       resume={resume}
-      preparation={
-        standing?.preparation
-          ? {
-              forExam: goal.kind === "exam",
-              kind: "preparation",
-              lessons: syllabus.status === "ready" ? syllabus.syllabus.lessons : null,
-              preparation: standing.preparation,
-              stillNeeded: standing.stillNeeded,
-            }
-          : null
-      }
+      preparation={getPreparation({ forExam: goal.kind === "exam", standing, syllabus })}
       shareHref={getPathname({
         href: `/plan-link/${plan.planId}`,
         locale: getSupportedLocaleFromLanguage(locale),

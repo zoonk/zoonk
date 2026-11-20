@@ -52,6 +52,41 @@ class PronunciationFlowTest {
     }
 
     @Test
+    fun aLimitWhoseLoginOpensOverTheRoundIsGoneOnReturn() {
+        val round =
+            PronunciationRound(
+                "es",
+                listOf(word(1, "hola")),
+                answer = {
+                    _,
+                    _,
+                    _,
+                    ->
+                    com.zoonk.android.feature.audio.GradeOutcome
+                        .Limited(com.zoonk.android.ui.components.Limit.SignUpRequired)
+                },
+                complete = {
+                    com.zoonk.android.data.MutationResult
+                        .Done(RESULT)
+                },
+            )
+        val model = PronunciationViewModel(rule.activity)
+        lateinit var navigator: com.zoonk.android.navigation.AppNavigator
+        rule.setContent {
+            ZoonkTheme {
+                navigator = rememberAppNavigator()
+                if (navigator.currentRoute != com.zoonk.android.navigation.AppRoute.Login) {
+                    PronunciationRoundScreen(round, model, previewSpeech(), navigator, buddy = null, ceremony = { _, _ -> })
+                }
+            }
+        }
+        rule.runOnIdle { runBlocking { round.record(round.attempt, RECORDING) } }
+        rule.onNodeWithText("Create a free account").performClick()
+        rule.runOnIdle { navigator.back() }
+        rule.onNodeWithText("Create a free account").assertDoesNotExist()
+    }
+
+    @Test
     fun reopeningAfterARoundShowsTheWordsDueNowNotTheCachedOnes() {
         val api = FakePronunciationApi(reviews(word(1, "hola")))
         val store = store(api)

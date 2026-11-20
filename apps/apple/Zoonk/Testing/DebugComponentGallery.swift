@@ -7,16 +7,23 @@
   /// section names open at that section.
   struct DebugComponentGallery: ViewModifier {
     /// Also a launch argument (`-ZOONK_DEBUG_GALLERY lists`), which device tools can pass.
-    private let section =
-      ProcessInfo.processInfo.environment["ZOONK_DEBUG_GALLERY"]
-      ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_GALLERY")
+    private let section = debugLaunchValue("ZOONK_DEBUG_GALLERY")
 
     func body(content: Content) -> some View {
       if let section {
         content.fullScreenCover(isPresented: .constant(true)) {
           NavigationStack {
-            if let writing = DebugLessonWait.writing(section) {
-              DebugLessonWait(writing: writing)
+            if section == "lessonGate" || section == "lessonGateLater" {
+              DebugLessonGate(opensIn: section == "lessonGate" ? 20 : 5 * 86_400)
+            } else if section == "limits" {
+              DebugLimits()
+            } else if section == "todayNotices" {
+              DebugTodayNotices()
+            } else if section == "rowStack" {
+              DebugRowStack()
+            } else if let writing = DebugLessonWait.writing(section) {
+              DebugLessonWait(
+                writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
             } else {
               ComponentGallery(start: section)
             }
@@ -36,7 +43,7 @@
       ScrollViewReader { proxy in
         ZoonkList {
           PageHeader(
-            Text(verbatim: "Design system"), eyebrow: Text(verbatim: "Tue, Nov 3 · Debug"),
+            Text(verbatim: "Design system"), chip: Chip(Text(verbatim: "Tue, Nov 3 · Debug")),
             supporting: Text(verbatim: "Every role and shared piece, as main's /design.")
           ) {
             Text(verbatim: "43 min")
@@ -49,6 +56,7 @@
           GallerySection(id: "busy", title: "Busy") { BusySamples() }
           GallerySection(id: "chips", title: "Chips and subjects") { Chips() }
           ListSample()
+          GallerySection(id: "rowLine", title: "Row line") { RowLine() }
           GallerySection(id: "panels", title: "Panels and tiles") { Panels() }
           GallerySection(id: "meters", title: "Meters") { Meters() }
           GallerySection(id: "waits", title: "Waits") { Waits() }
@@ -56,6 +64,7 @@
           GallerySection(id: "options", title: "Answer options") { Options() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
           GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
+          GallerySection(id: "planDates", title: "Plan path dates") { PlanPathDates() }
           GallerySection(id: "charts", title: "Lesson charts") { LessonCharts() }
         }
         .navigationTitle(Text(verbatim: "Design system"))
@@ -192,7 +201,7 @@
         } label: {
           Text(verbatim: "I don't know yet").frame(maxWidth: .infinity)
         }
-        .buttonStyle(.secondary)
+        .buttonStyle(.outline)
         .controlSize(.large)
 
         ButtonRow {
@@ -255,7 +264,7 @@
         } label: {
           Text(verbatim: "I don't know yet")
         }
-        .buttonStyle(.secondary)
+        .buttonStyle(.outline)
         .controlSize(.large)
         .buttonSizing(.flexible)
 
@@ -313,13 +322,9 @@
       }
       .disabled(true)
 
-      Button {
+      BusyButton(isBusy: true, icon: .play, isRow: true) {
       } label: {
-        Label {
-          Text(verbatim: "Study 10 more minutes")
-        } icon: {
-          Image(systemName: ActionIcon.play.rawValue).coveredBySpinner(true)
-        }
+        Text(verbatim: "Study 10 more minutes")
       }
 
       BusyButton(isBusy: true, isRow: true) {
@@ -448,6 +453,28 @@
     }
   }
 
+  /// A row's value against its label and its chevron: one line, a title that wraps, a note under
+  /// it, and values without capitals, which sit where "Off" does.
+  private struct RowLine: View {
+    var body: some View {
+      row(Text(verbatim: "Reminders"), value: "Off")
+      row(Text(verbatim: "When ownership is diluted and new shares are sold"), value: "2 days")
+      row(Text(verbatim: "Memory"), description: Text(verbatim: "4 things Zu knows"), value: "yes")
+      row(Text(verbatim: "Lessons studied"), value: "12")
+    }
+
+    private func row(_ title: Text, description: Text? = nil, value: String) -> some View {
+      NavigationLink {
+        title
+      } label: {
+        ListRow(title, description: description) {
+        } trailing: {
+          Text(verbatim: value)
+        }
+      }
+    }
+  }
+
   private struct Panels: View {
     var body: some View {
       GroupBox {
@@ -519,29 +546,29 @@
         MindMapRow(goalId: "debug", map: Self.map(.ready, id: "finish-text"), place: .finish)
         MindMapRow(
           goalId: "debug", map: Self.map(.available, id: "library", lessons: 3), place: .library)
-        MindMapRow(
-          goalId: "debug", map: Self.map(.plusRequired, id: "library-plus"), place: .library)
         MindMapRow(goalId: "debug", map: Self.map(.ready, id: "library-text"), place: .library)
 
-        ForEach(Self.refusals, id: \.self) { resource in
-          HelpLimitNotice(
-            limit: .limitReached(period: .day, tier: .free),
-            message: MindMapLimit(
-              limit: .limitReached(period: .day, tier: .free), resource: resource
-            )
-            .message
-          )
-          .controlSize(.small)
+        ForEach(Array(Self.refusals.enumerated()), id: \.offset) { _, refusal in
+          LimitNotice(limit: refusal.limit, words: refusal.words(now:))
+            .controlSize(.small)
         }
       }
     }
 
-    private static let refusals: [MindMapLimit.Resource] = [.mindMap, .lessons, .aiSpend]
+    private static let refusals = [
+      MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .mindMap),
+      MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .lessons),
+      MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .aiSpend),
+      MindMapLimit(
+        limit: .usedUp(tier: .free, availableAt: .now.addingTimeInterval(3 * 86_400)),
+        resource: .chapterLessons),
+      MindMapLimit(limit: .limitReached(period: .total, tier: .free), resource: .chapterLessons),
+    ]
 
     private static let chapterStates = [
       map(.available, id: "available"), map(.available, id: "lessons", lessons: 3),
       map(.writingLessons, id: "writing", lessons: 3), map(.drawing, id: "drawing"),
-      map(.ready, id: "text"), map(.failed, id: "failed"), map(.plusRequired, id: "plus"),
+      map(.ready, id: "text"), map(.failed, id: "failed"),
     ]
 
     private static func map(
@@ -553,30 +580,234 @@
     }
   }
 
+  /// Each value a date's place on the Plan's path shows: a date in the data face, words in the
+  /// text face at the date's size.
+  private struct PlanPathDates: View {
+    var body: some View {
+      Group {
+        RoadmapPhaseRow(
+          phase: Self.phase(0),
+          end: PhaseEnd("2027-02-16", estimate: false, month: false, today: "2026-11-14"))
+        RoadmapPhaseRow(
+          phase: Self.phase(1),
+          end: PhaseEnd("2027-06-01", estimate: true, month: true, today: "2026-11-14"))
+
+        // A phase with a line under its name, and a folded one, as the path draws them.
+        ListRow(
+          Text(verbatim: "Foundations").fontWeight(.semibold),
+          description: Text(
+            "Continues \(PlanDate.text("2026-11-16", today: "2026-11-14"))",
+            tableName: "Plan")
+        ) {
+          StatusMark(status: .next)
+        } trailing: {
+          PlanWhen.date(Text(verbatim: "18 Feb 2027"))
+        }
+        .disclosureChevron()
+
+        DisclosureGroup(isExpanded: .constant(true)) {
+          EmptyView()
+        } label: {
+          ListRow(Text(verbatim: "Fill the gaps")) {
+            StatusMark(status: .todo)
+          } trailing: {
+            PlanWhen.date(Text(verbatim: "14 Jul 2027"))
+          }
+        }
+
+        ForEach(Array(Self.challengeDays.enumerated()), id: \.offset) { _, when in
+          PlanChallengeLabel(when: when, explains: false, isLanguage: false)
+        }
+
+        ForEach(Array(Self.finishDays.enumerated()), id: \.offset) { _, when in
+          PlanMarkedRow(title: Text(verbatim: "ENEM 2027"), when: when) {
+            Image(systemName: "flag")
+          }
+        }
+
+        // A goal named in a script and an emoji Geist doesn't draw.
+        PlanMarkedRow(title: Text(verbatim: "日本語の練習 🎯"), when: .words(Text(verbatim: "Today"))) {
+          Image(systemName: "flag")
+        }
+      }
+    }
+
+    private static let challengeDays: [PlanWhen] = [
+      .date(PlanDate.estimateText("2027-02-16", today: "2026-11-14")),
+      .words(Text(verbatim: "Today")),
+      .words(Text(verbatim: "In your next session")),
+      .words(Text(verbatim: "Won")),
+    ]
+
+    private static let finishDays: [PlanWhen] = [
+      .date(PlanDate.estimateText("2027-11-14", today: "2026-11-14")),
+      .words(Text(verbatim: "Date to be confirmed")),
+    ]
+
+    private static func phase(_ index: Int) -> PlanPhase {
+      let json = """
+        { "notPlannedReason":null,"challengeLeftOut": false, "chapters": [], "checkpoint": null, "endDate": null,
+          "index": \(index), "kind": "learn", "lessonsDone": 0, "lessonsTotal": 10,
+          "mocks": { "count": 0, "nextDate": null }, "name": "\(index == 0 ? "Foundations" : "Fill the gaps")",
+          "startDate": "2027-02-17", "state": "\(index == 0 ? "current" : "upcoming")" }
+        """
+      return try! JSONDecoder().decode(PlanPhase.self, from: Data(json.utf8))
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=rowStack` draws rows in a scroll's stack with hairlines between them, as
+  /// a lesson's end and a challenge's topics do, outside any list.
+  private struct DebugRowStack: View {
+    var body: some View {
+      ScrollView {
+        VStack(spacing: 0) {
+          ForEach(["Percentages", "Ratios and proportions", "Brazil's Republic"], id: \.self) {
+            title in
+            ListRow(Text(verbatim: title), description: Text(verbatim: "3 questions")) {
+              KindMark(kind: .lesson)
+            } trailing: {
+              Text(verbatim: "12 min")
+            }
+            .padding(.vertical, 12)
+
+            Divider()
+          }
+        }
+        .padding(.horizontal, 20)
+      }
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=lessonGate` opens the free lessons gate as a screen, and `lessonRefused`
+  /// in place on a lesson's wait; the next free lesson opens 20 seconds after launch, or five days
+  /// after with `lessonGateLater`.
+  private struct DebugLessonGate: View {
+    let opensIn: TimeInterval
+
+    static func refusal(opensIn: TimeInterval = 20) -> LessonRunRefusal {
+      .limitReached(tier: .free, period: .last30Days(availableAt: .now.addingTimeInterval(opensIn)))
+    }
+
+    var body: some View {
+      LessonUnavailableView(refusal: Self.refusal(opensIn: opensIn)) {}
+        .lonePage()
+        .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=limits` opens the buddy's and the explanations' monthly gates, free and
+  /// subscribed, as their screens draw them.
+  /// Today's notices no persona reaches on demand, drawn from the shapes the API sends: missed days
+  /// on an exam goal, and a goal suggested from an earlier course.
+  private struct DebugTodayNotices: View {
+    @State private var isOpen = false
+    @State private var answer = SuggestedGoalAnswer()
+
+    private static func decode<Value: Decodable>(_ json: String) -> Value {
+      try! JSONDecoder().decode(Value.self, from: Data(json.utf8))
+    }
+
+    private static let view = TodayView(
+      earlierWork: [], exam: nil, examChoice: nil, focusTest: nil,
+      goal: decode(
+        #"{"dateEstimated":false,"daysLeft":120,"id":"g1","kind":"exam","title":"ENEM 2027"}"#),
+      insight: nil, lessonStatus: [:], mockFunding: nil, notice: nil, pattern: nil,
+      planChange: change, progress: nil,
+      session: decode(
+        #"""
+        {"blocks":[],"brainPower":0,"catchUp":null,"current":true,"dayEndsAt":1793242800000,
+        "emptyDay":null,"examAccess":{"includesMockExams":true},"examTomorrow":false,
+        "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
+        "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"g1","lessonsComing":false,
+        "lessonsToPrepare":false,"localDate":"2026-11-15",
+        "minutes":{"dailyGoal":45,"done":0,"left":45,"planned":45},"missions":[],
+        "nextPosition":null,"pauseSuggested":false,"sessionBar":{"completed":0,"total":0},
+        "state":"underway","week":{"days":[],"nextStudyDate":null},"status":"unstarted"}
+        """#),
+      sourceChange: nil, studiedToday: false, suggestedGoal: nil, uploadRequest: nil,
+      weeklyChallenge: nil)
+
+    private static let change: TodayView.PlanChange = decode(
+      #"""
+      {"behind":{"canFocus":true,"coveredAfter":0.62,"coveredBefore":0.8,"currentMinutes":45,
+      "measure":"exam"},"canApply":true,"canUndo":false,"effect":null,"examDocument":"notice",
+      "quote":"q1","id":"c1","kind":"missedDays","officialDate":null,"operations":[],"reason":"",
+      "source":"memory","status":"proposed","todaySession":null}
+      """#)
+
+    var body: some View {
+      ZoonkList {
+        TodayPlanChangeSection(
+          view: Self.view, shown: AnsweredPlanChange(change: Self.change), next: nil,
+          isOpen: $isOpen, isSaving: false, failed: false, answer: { _ in }, showNext: {},
+          adjust: { _ in })
+
+        SuggestedGoalSection(
+          suggestion: SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics"),
+          answer: answer)
+      }
+      .navigationTitle(Text(verbatim: "Today's notices"))
+      .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+
+  private struct DebugLimits: View {
+    static let later = Date.now.addingTimeInterval(5 * 86_400)
+
+    var body: some View {
+      ZoonkList {
+        Section {
+          TutorLimitNotice(failure: .limit(.usedUp(tier: .free, availableAt: Self.later)))
+        } header: {
+          Text(verbatim: "Buddy's messages, free")
+        }
+
+        Section {
+          TutorLimitNotice(failure: .limit(.usedUp(tier: .plus, availableAt: Self.later)))
+        } header: {
+          Text(verbatim: "Buddy's messages, Plus")
+        }
+
+        Section {
+          LimitNotice(limit: .usedUp(tier: .free, availableAt: Self.later), kind: .explanations)
+        } header: {
+          Text(verbatim: "Explanations, free")
+        }
+      }
+      .navigationTitle(Text(verbatim: "Limits"))
+      .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+
   /// `ZOONK_DEBUG_GALLERY=lessonWait` (or `lessonUnwritten`, `lessonFailed`, `lessonSetAside`) opens
   /// a lesson's wait as the player shows it, with a run's first minute already reported.
   private struct DebugLessonWait: View {
     let writing: LessonPlayerStore.LessonWriting
+    let kind: LessonWaitWords
 
+    /// `lessonWait`, `lessonUnwritten`, `lessonFailed`, `lessonSetAside`, or `challenge` in place of
+    /// `lesson` for a challenge's words.
     static func writing(_ section: String) -> LessonPlayerStore.LessonWriting? {
-      switch section {
-      case "lessonWait": .writing
-      case "lessonUnwritten": .notStarted
-      case "lessonFailed": .failed
-      case "lessonSetAside": .setAside
+      switch section.replacing(/^(lesson|challenge)/, with: "") {
+      case "Wait": .writing
+      case "Unwritten": .notStarted
+      case "Failed": .failed
+      case "SetAside": .setAside
+      case "Refused": .refused(DebugLessonGate.refusal())
       default: nil
       }
     }
 
     /// `reported` of the lesson's events: planning started, planning finished, writing started.
-    static func sample(reported: Int) -> GenerationWait {
+    static func sample(reported: Int, kind: LessonWaitWords = .lesson) -> GenerationWait {
       let now = Date.now
+      let noun = kind == .challenge ? "Challenge" : "Lesson"
       let events = [
-        GenerationEvent(at: now.addingTimeInterval(-60), status: "started", step: "planLesson"),
-        GenerationEvent(at: now.addingTimeInterval(-8), status: "completed", step: "planLesson"),
-        GenerationEvent(at: now.addingTimeInterval(-7), status: "started", step: "writeLesson"),
+        GenerationEvent(at: now.addingTimeInterval(-60), status: "started", step: "plan\(noun)"),
+        GenerationEvent(at: now.addingTimeInterval(-8), status: "completed", step: "plan\(noun)"),
+        GenerationEvent(at: now.addingTimeInterval(-7), status: "started", step: "write\(noun)"),
       ]
-      var wait = GenerationWait(kind: .lesson).started
+      var wait = GenerationWait(kind: kind == .challenge ? .challenge : .lesson).started
 
       for event in events.prefix(reported) {
         wait.apply(event, receivedAt: event.at ?? now)
@@ -593,8 +824,8 @@
 
     var body: some View {
       LessonWaitingView(
-        outline: outline, writing: writing,
-        progress: writing == .failed ? Self.sample(reported: 3) : Self.sample(reported: 1),
+        outline: outline, kind: kind, writing: writing,
+        progress: Self.sample(reported: writing == .failed ? 3 : 1, kind: kind),
         alternative: .case2(.init(dueSkills: 1, kind: .review))
       ) {}
       .lonePage()
@@ -637,18 +868,9 @@
 
         BigQuantity("38 min left")
 
-        FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
-          MomentReadout {
-            Text(verbatim: "8/10")
-          } words: {
-            Text(verbatim: "Right")
-          }
-          MomentReadout(tint: .brainText) {
-            Text(verbatim: "+120")
-          } words: {
-            Text(verbatim: "Brain Power")
-          }
-        }
+        LessonReadouts(correct: 1, answered: 1, brainPower: 12)
+        LessonReadouts(correct: 3, answered: 4, brainPower: 30)
+        LessonReadouts(correct: 7, answered: 10, brainPower: 120, studied: "4 min studied")
 
         HStack(spacing: 12) {
           GoalRing(share: 1, size: 26) {

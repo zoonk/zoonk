@@ -1,3 +1,4 @@
+import { STAT_TILES_CLASS, StatTile, StatTileSkeleton } from "@/components/stat-tile";
 import { getLearnerMilestoneSummary } from "@/data/stats/get-learner-milestones";
 import {
   DEFAULT_COMPLETED_LESSONS_THRESHOLD,
@@ -11,9 +12,8 @@ import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { BookCheckIcon, CalendarDaysIcon } from "lucide-react";
+import { BookCheckIcon, BookOpenIcon, CalendarDaysIcon, UsersIcon } from "lucide-react";
 import Form from "next/form";
-import Link from "next/link";
 
 type EngagementSearchParams = {
   completedLessons?: string | string[];
@@ -57,26 +57,41 @@ async function CachedLearnerMilestones({
 
   return (
     <section className="flex flex-col gap-8 py-4">
-      <LearnerMilestoneForm
-        completedLessonsThreshold={completedLessonsThreshold}
-        learningDaysThreshold={learningDaysThreshold}
-      />
+      <div className={STAT_TILES_CLASS}>
+        <StatTile
+          detail="Accounts, all time"
+          href="/users"
+          icon={<UsersIcon />}
+          title="Total users"
+          value={summary.totalUsers.toLocaleString("en")}
+        />
 
-      <div className="border-border/60 grid grid-cols-1 divide-y border-y sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-        <LearnerMilestoneCard
+        <StatTile
+          detail="Average, among learners who finished one"
+          icon={<BookOpenIcon />}
+          title="Lessons per learner"
+          value={summary.lessonsPerLearner.toLocaleString("en", { maximumFractionDigits: 1 })}
+        />
+
+        <LearnerMilestoneTile
           count={summary.completedLessonsUsers}
           icon={<BookCheckIcon />}
           kind="completedLessons"
           threshold={completedLessonsThreshold}
         />
 
-        <LearnerMilestoneCard
+        <LearnerMilestoneTile
           count={summary.learningDaysUsers}
           icon={<CalendarDaysIcon />}
           kind="learningDays"
           threshold={learningDaysThreshold}
         />
       </div>
+
+      <LearnerMilestoneForm
+        completedLessonsThreshold={completedLessonsThreshold}
+        learningDaysThreshold={learningDaysThreshold}
+      />
     </section>
   );
 }
@@ -91,8 +106,7 @@ function LearnerMilestoneForm({
   return (
     <Form action="/stats/engagement" className="flex flex-col gap-5">
       <p className="text-muted-foreground max-w-2xl text-sm">
-        All-time learner counts for completion depth and return days. Adjust either threshold to
-        explore a different milestone.
+        Change a milestone to count the learners who reached another.
       </p>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
@@ -112,7 +126,7 @@ function LearnerMilestoneForm({
           name="learningDays"
         />
 
-        <Button className="self-start sm:self-auto" type="submit" variant="outline">
+        <Button className="self-start sm:self-auto" size="lg" type="submit" variant="outline">
           Apply thresholds
         </Button>
       </div>
@@ -146,7 +160,8 @@ function MilestoneThresholdField({
   );
 }
 
-function LearnerMilestoneCard({
+/** How many learners reached a milestone; the tile opens the list of them. */
+function LearnerMilestoneTile({
   count,
   icon,
   kind,
@@ -160,27 +175,27 @@ function LearnerMilestoneCard({
   const copy = getLearnerMilestoneCopy({ kind, threshold });
 
   return (
-    <Link
-      className="hover:bg-muted/40 flex min-w-0 flex-col gap-3 px-2 py-8 transition-colors sm:px-8"
+    <StatTile
+      detail="Learners, all time"
+      help={copy.help}
       href={buildLearnerMilestoneUsersHref({ kind, threshold })}
-      prefetch
-    >
-      <div className="text-muted-foreground flex items-center gap-2 text-sm">
-        <span className="flex size-4 items-center justify-center">{icon}</span>
-        <span>{copy.pageTitle}</span>
-      </div>
-      <p className="text-5xl leading-none font-semibold tracking-tight tabular-nums">
-        {count.toLocaleString()}
-      </p>
-      <p className="text-muted-foreground text-sm">{copy.help}</p>
-      <span className="text-sm font-medium">Open user list →</span>
-    </Link>
+      icon={icon}
+      title={copy.pageTitle}
+      value={count.toLocaleString("en")}
+    />
   );
 }
 
 export function LearnerMilestonesSkeleton() {
   return (
     <section className="flex flex-col gap-8 py-4">
+      <div className={STAT_TILES_CLASS}>
+        <StatTileSkeleton />
+        <StatTileSkeleton />
+        <StatTileSkeleton />
+        <StatTileSkeleton />
+      </div>
+
       <div className="flex flex-col gap-4">
         <Skeleton className="h-4 w-96 max-w-full" />
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -188,11 +203,6 @@ export function LearnerMilestonesSkeleton() {
           <Skeleton className="h-16 flex-1 rounded-lg" />
           <Skeleton className="h-9 w-32 rounded-4xl" />
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <Skeleton className="h-56 rounded-xl" />
-        <Skeleton className="h-56 rounded-xl" />
       </div>
     </section>
   );

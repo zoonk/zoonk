@@ -1,7 +1,9 @@
 import { useSyncExternalStore } from "react";
 import { type EmailInboxResponse, isEmailInboxResponse } from "./email";
 
-type EmailStoreSnapshot = EmailInboxResponse & { status: "loading" | "ready" | "unavailable" };
+export type EmailInboxStatus = "loading" | "ready" | "unavailable";
+
+type EmailStoreSnapshot = EmailInboxResponse & { status: EmailInboxStatus };
 
 const EMAILS_PATH = "/api/emails";
 const POLLING_INTERVAL = 1000;

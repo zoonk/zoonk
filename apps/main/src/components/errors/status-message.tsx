@@ -8,7 +8,7 @@ export function StatusMessage({
   icon,
   title,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   description: string;
   icon: ReactNode;
@@ -21,13 +21,13 @@ export function StatusMessage({
         className,
       )}
     >
-      <span className="text-muted-foreground flex [&_svg]:size-8">{icon}</span>
+      <span className="text-muted-foreground flex [&_svg]:size-6">{icon}</span>
 
       <h1 className="text-title mt-5">{title}</h1>
 
       <p className="text-lead mt-3">{description}</p>
 
-      <div className="mt-8 flex flex-col items-center gap-2">{children}</div>
+      {children && <div className="mt-8 flex flex-col items-center gap-2">{children}</div>}
     </div>
   );
 }

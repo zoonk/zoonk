@@ -20,9 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -30,8 +28,13 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.mock.result.ScoreRange
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.Measure
+import com.zoonk.android.ui.components.MeasureRows
 import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -63,17 +66,21 @@ internal fun writingName(rubric: EssayRubric): String =
 internal fun EssayGradeCard(
     grade: EssayGrade,
     rubric: EssayRubric,
+    onComments: (() -> Unit)? = null,
 ) {
     val locale = currentLocale()
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(writingName(rubric), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleMedium)
+            Eyebrow(writingName(rubric))
             ScoreRange(stringResource(R.string.essay_range, formatNumber(grade.range.low, locale), formatNumber(grade.range.high, locale)))
         }
         StepDetail(stringResource(R.string.essay_scale, formatNumber(grade.total.maxScore, locale)))
     }
     CriteriaRows(grade, rubric)
+    if (onComments != null) {
+        OutlinedButton(onClick = onComments, size = ButtonSize.Small) { Text(stringResource(R.string.essay_see_comments)) }
+    }
 }
 
 @Composable
@@ -82,43 +89,16 @@ internal fun CriteriaRows(
     rubric: EssayRubric,
 ) {
     val locale = currentLocale()
-    val valueStyle = MaterialTheme.typography.labelMedium.withTabularFigures()
-    val values =
+    MeasureRows(
         grade.criteria.map { criterion ->
             val shown = shownScore(criterion, rubric, grade)
-            stringResource(R.string.essay_score_of, formatNumber(shown.first, locale), formatNumber(shown.second, locale))
-        }
-    // Every value takes the widest one's room, so the meters line up.
-    val measurer = rememberTextMeasurer()
-    val valueWidth = with(LocalDensity.current) { values.maxOfOrNull { measurer.measure(it, valueStyle).size.width }?.toDp() ?: 0.dp }
-    val nextLabel = stringResource(R.string.essay_next_step)
-
-    Column {
-        grade.criteria.forEachIndexed { index, criterion ->
-            val next = criterion.id == grade.nextStep?.criterionId
-            if (index > 0) HorizontalDivider()
-            Row(
-                Modifier.fillMaxWidth().height(IntrinsicSize.Min).semantics(mergeDescendants = true) {
-                    if (next) stateDescription = nextLabel
-                },
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    criterionName(criterion),
-                    Modifier.weight(1f).padding(vertical = 12.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (next) FontWeight.SemiBold else null,
-                )
-                Meter(
-                    share = if (criterion.maxScore > 0) (criterion.score / criterion.maxScore).toFloat() else 0f,
-                    modifier = Modifier.width(METER_WIDTH),
-                    color = if (next) MaterialTheme.zoonk.warning else MaterialTheme.colorScheme.tertiary,
-                )
-                Text(values[index], Modifier.width(valueWidth), style = valueStyle, textAlign = TextAlign.End)
-            }
-        }
-    }
+            Measure(
+                name = criterionName(criterion),
+                share = if (criterion.maxScore > 0) (criterion.score / criterion.maxScore).toFloat() else 0f,
+                value = stringResource(R.string.essay_score_of, formatNumber(shown.first, locale), formatNumber(shown.second, locale)),
+            )
+        },
+    )
 }
 
 /** A custom rubric's criteria each read on the total's scale, so three read "10 of 10", never "3.34 · 3.33 · 3.33". */
@@ -131,24 +111,31 @@ private fun shownScore(
     return criterion.score / criterion.maxScore * grade.total.maxScore to grade.total.maxScore
 }
 
+/** Main's "Next step" eyebrow over the criterion's name. */
+@Composable
+private fun NextStepLabel() {
+    Eyebrow(stringResource(R.string.essay_next_step))
+}
+
 @Composable
 internal fun NextStepComment(grade: EssayGrade) {
     val nextStep = grade.nextStep
     if (nextStep == null) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Eyebrow(stringResource(R.string.essay_next_step))
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            NextStepLabel()
             StepTitle(stringResource(R.string.essay_nothing_left), Modifier.stepHeading())
-            StepDetail(stringResource(R.string.essay_full_marks))
         }
+        StepDetail(stringResource(R.string.essay_full_marks))
         return
     }
     val criterion = grade.criteria.firstOrNull { it.id == nextStep.criterionId }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(stringResource(R.string.essay_next_step))
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        NextStepLabel()
         StepTitle(criterion?.let { criterionName(it) } ?: stringResource(R.string.essay_what_to_rewrite), Modifier.stepHeading())
     }
     criterion?.quote?.let { quote ->
+        SectionLabel(stringResource(R.string.essay_your_essay))
         Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             VerticalDivider(Modifier.fillMaxHeight(), thickness = 2.dp, color = MaterialTheme.zoonk.warning)
             Text(quote, fontStyle = FontStyle.Italic, style = MaterialTheme.typography.bodyLarge)
@@ -179,5 +166,3 @@ internal fun criterionName(criterion: EssayGradeCriteriaInner): String =
         "closing-and-form" -> stringResource(R.string.essay_criterion_closing)
         else -> criterion.name
     }
-
-private val METER_WIDTH = 72.dp

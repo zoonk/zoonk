@@ -4,26 +4,47 @@ enum GoalLimitReason: Equatable, Sendable {
   case dailyExplanations
   case dailyGoals
   case guest
-  case monthlyExplanations
   case activeGoals
-  case monthlyGoals
   case signUpRequired
   case slowDown
+  /// A monthly cap, with when it comes back.
+  case monthlyExplanations(HelpLimit)
+  case monthlyGoals(HelpLimit)
 
-  var isPlusLimit: Bool { self == .activeGoals || self == .monthlyGoals }
+  var isPlusLimit: Bool {
+    if case .monthlyGoals = self {
+      return true
+    }
 
-  /// Mirrors main's `getGoalLimitReason`.
+    return self == .activeGoals
+  }
+
+  /// When a monthly cap's next use comes back.
+  var availableAt: Date? {
+    switch self {
+    case .monthlyGoals(let limit), .monthlyExplanations(let limit): limit.availableAt
+    default: nil
+    }
+  }
+
+  /// The gate takes the start's place until the monthly cap's day has come; then the start is back
+  /// and the server decides again.
+  func holdsStart(at now: Date) -> Bool {
+    isPlusLimit && !(availableAt.map { $0 <= now } ?? false)
+  }
+
+  /// Mirrors main's `getGoalLimit`.
   init(_ limit: OnboardingLimit) {
-    let monthly = limit.period == "month"
+    let help = limit.help
 
     if limit.tier == "guest" {
       self = .guest
     } else if limit.resource == "activeGoals" {
       self = .activeGoals
     } else if limit.resource == "explanation" {
-      self = monthly ? .monthlyExplanations : .dailyExplanations
+      self = help.isMonthly ? .monthlyExplanations(help) : .dailyExplanations
     } else {
-      self = monthly ? .monthlyGoals : .dailyGoals
+      self = help.isMonthly ? .monthlyGoals(help) : .dailyGoals
     }
   }
 
@@ -31,36 +52,31 @@ enum GoalLimitReason: Equatable, Sendable {
     switch self {
     case .dailyExplanations:
       LocalizedStringResource(
-        "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
+        "No more quick explanations today. More tomorrow, or subscribe to keep going.",
         table: "Onboarding",
-        comment: "A free learner asked as many quick questions as allowed today")
+        comment: "A free learner asked for as many quick explanations as allowed today")
     case .dailyGoals:
       LocalizedStringResource(
-        "You've started as many new goals as your plan allows today. Try again tomorrow.",
+        "No more new goals today. More tomorrow.",
         table: "Onboarding", comment: "The learner started as many goals as allowed today")
     case .guest:
       LocalizedStringResource(
-        "Without an account, you can follow one goal. Create a free account to keep going.",
+        "Without an account, you study one goal. Create a free account to start another.",
         table: "Onboarding", comment: "A guest can't start another goal")
-    case .monthlyExplanations:
-      LocalizedStringResource(
-        "You've asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-        table: "Onboarding",
-        comment: "A free learner asked as many quick questions as allowed this month")
-    case .monthlyGoals:
-      LocalizedStringResource(
-        "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-        table: "Onboarding", comment: "A free learner started as many goals as allowed this month")
+    case .monthlyExplanations(let limit):
+      limit.sentence(.quickExplanations)
+    case .monthlyGoals(let limit):
+      limit.sentence(.goals)
     case .activeGoals:
       LocalizedStringResource(
-        "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus.",
+        "That's all the goals you can study at once. Pause one, or subscribe to study more.",
         table: "Onboarding",
         comment:
-          "A free learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\""
+          "A free learner studies as many goals at once as their plan allows; it's about goals at the same time, not new goals started per day or month. Pausing a goal keeps its progress"
       )
     case .signUpRequired:
       LocalizedStringResource(
-        "Create your free account to continue.", table: "Onboarding",
+        "This needs a free account.", table: "Onboarding",
         comment: "Guests' shared AI budget for the day is spent")
     case .slowDown:
       LocalizedStringResource(
@@ -73,6 +89,12 @@ enum GoalLimitReason: Equatable, Sendable {
 /// A limit only an account lifts isn't an error: it says why, and creating a free account is the way
 /// on.
 struct GoalError: Equatable {
+  /// Main's `ResumeGoalBar`, for every tier: resuming a paused goal is refused at the goals studied
+  /// at once.
+  static let resumeLimit = LocalizedStringResource(
+    "That's as many goals as you can study at once. Pause another goal to resume this one.",
+    table: "Plan")
+
   let message: LocalizedStringResource
   var needsAccount = false
   var limit: GoalLimitReason?
@@ -85,23 +107,20 @@ struct GoalError: Equatable {
     case .limit(let limit) where limit.tier == "guest":
       return GoalError(
         message: LocalizedStringResource(
-          "Without an account, you can send a few new goals a day. Create a free account to keep going.",
+          "No more new goals today without an account.",
           table: "Onboarding", comment: "A guest sent as many goals as allowed today"),
         needsAccount: true)
+    case .limit(let limit) where limit.help.isMonthly:
+      return GoalError(message: limit.help.sentence(.goals))
     case .limit(let limit) where limit.tier == "plus":
       return GoalError(
         message: LocalizedStringResource(
-          "You've sent as many new goals as your plan allows today. Try again tomorrow.",
-          table: "Onboarding", comment: "A Plus learner sent as many goals as allowed today"))
-    case .limit(let limit) where limit.period == "month":
-      return GoalError(
-        message: LocalizedStringResource(
-          "You've sent as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-          table: "Onboarding", comment: "A free learner sent as many goals as allowed this month"))
+          "No more new goals today. More tomorrow.",
+          table: "Onboarding", comment: "A subscriber sent as many goals as allowed today"))
     case .limit:
       return GoalError(
         message: LocalizedStringResource(
-          "You've sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
+          "No more new goals today. More tomorrow, or subscribe to keep going.",
           table: "Onboarding", comment: "A free learner sent as many goals as allowed today"))
     case .signUpRequired:
       return GoalError(message: GoalLimitReason.signUpRequired.message, needsAccount: true)
@@ -143,10 +162,12 @@ struct GoalError: Equatable {
 
 struct GoalErrorSection: View {
   let error: GoalError
+  /// The gate stands in for the screen's start, so it goes once that start is back.
+  var replacesStart = false
 
   var body: some View {
     if let limit = error.limit, limit.isPlusLimit {
-      GoalLimitNoticeSection(reason: limit)
+      GoalLimitNoticeSection(reason: limit, replacesStart: replacesStart)
     } else if error.needsAccount {
       Section {
         Text(error.message)
@@ -183,63 +204,103 @@ struct CreateAccountButton: View {
   }
 }
 
+/// Main's `GoalLimitNotice`: the gate a learner meets on trying to start a goal their plan has no
+/// room for.
 struct GoalLimitNoticeSection: View {
   let reason: GoalLimitReason
-  var upFront = false
+  /// The gate stands in for the screen's start, so it goes once that start is back.
+  var replacesStart = false
 
   @Environment(AppRouter.self) private var router
 
   var body: some View {
-    if reason.isPlusLimit {
+    if reason == .activeGoals {
       Section {
-        Label {
-          VStack(alignment: .leading, spacing: 4) {
-            if reason == .activeGoals {
-              Text(
-                "More goals at once with Plus", tableName: "Onboarding",
-                comment:
-                  "Title of the notice that the learner follows as many goals at once as the free plan allows; Plus is the subscription's name, not \"more\""
-              )
-              .typeStyle(.body.weight(.semibold))
-
-              if upFront {
-                Text(
-                  "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime.",
-                  tableName: "Onboarding",
-                  comment:
-                    "Said before typing a goal when the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress"
-                )
-              } else {
-                Text(reason.message)
-              }
-            } else {
-              Text(reason.message)
-            }
-          }
-        } icon: {
-          Image(systemName: "sparkles")
-            .foregroundStyle(.tint)
-        }
-        .announcesAlert(upFront ? nil : String(localized: reason.message))
-
-        Button {
-          router.present(.subscription)
-        } label: {
-          Text(
-            "See Plus", tableName: "Onboarding",
-            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"")
-        }
-
-        if reason == .activeGoals {
+        SubscribeGate(
+          title: Text(
+            "That's all the goals you can study at once", tableName: "Onboarding",
+            comment:
+              "A free learner studies as many goals at once as their plan allows; it's about goals at the same time, not new goals started per day or month"
+          ),
+          line: Text(
+            "Pause one in your Plan, or subscribe to study more at once.", tableName: "Onboarding",
+            comment: "Pausing a goal keeps its progress")
+        ) {
           Button {
             router.showRoot(of: .plan)
           } label: {
             Text(
-              "Go to your Plan", tableName: "Onboarding",
+              "See plan", tableName: "Onboarding",
               comment: "Opens the Plan, whose menu pauses a goal and keeps its progress")
+          }
+        }
+        .announcesAlert(String(localized: reason.message))
+      }
+    } else if case .monthlyGoals(let limit) = reason {
+      OpeningClock(availableAt: limit.availableAt) { now in
+        if !replacesStart || reason.holdsStart(at: now) {
+          Section {
+            LimitNotice(limit: limit, kind: .goals)
+              .announcesAlert(String(localized: reason.message))
           }
         }
       }
     }
+  }
+}
+
+/// Main's `GoalLimitScreen`: a limit only subscribing lifts takes the start's place while it holds.
+/// Its words head the screen and `GoalLimitActions` in the bar is the way on, so nothing is left to
+/// choose. Nil while the start is open.
+struct GoalLimitGate {
+  let title: Text
+  let line: Text?
+  let said: String
+
+  init?(_ limit: GoalLimitReason?, at now: Date, subject: String? = nil) {
+    guard let limit, limit.holdsStart(at: now) else {
+      return nil
+    }
+
+    if case .monthlyGoals(let help) = limit {
+      let words = help.words(.goals, now: now)
+      title = words.title.map { Text($0) } ?? Text(verbatim: subject ?? "")
+      line = words.line.map { Text($0) }
+      said = words.said
+      return
+    }
+
+    title = Text(
+      "That's all the goals you can study at once", tableName: "Onboarding",
+      comment:
+        "A free learner studies as many goals at once as their plan allows; it's about goals at the same time, not new goals started per day or month"
+    )
+    line = Text(
+      "Pause one in your Plan, or subscribe to study more at once.", tableName: "Onboarding",
+      comment: "Pausing a goal keeps its progress")
+    said = String(localized: limit.message)
+  }
+}
+
+/// Main's `GoalLimitBar`: their Plan, where a goal can be paused, then Subscribe as the main action.
+struct GoalLimitActions: View {
+  let limit: GoalLimitReason
+
+  @Environment(AppRouter.self) private var router
+
+  var body: some View {
+    if limit == .activeGoals {
+      Button {
+        router.showRoot(of: .plan)
+      } label: {
+        Text(
+          "See plan", tableName: "Onboarding",
+          comment: "Opens the Plan, whose menu pauses a goal and keeps its progress")
+      }
+      .buttonStyle(.outline)
+    }
+
+    SubscribeButton()
+      .buttonStyle(.mainAction)
   }
 }

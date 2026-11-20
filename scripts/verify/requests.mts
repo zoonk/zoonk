@@ -109,12 +109,16 @@ export function summarizePrefetches(requests: RequestRecord[], timeOrigin: numbe
   };
 }
 
-export function inlineRscCharacters(html: string): number {
-  return [...html.matchAll(/self\.__next_f\.push\(\[1,(?<chunk>"(?:[^"\\]|\\.)*")\]\)/gu)].reduce(
-    (total, match) => {
+/** The React Server Components payload a Next.js page inlines in its HTML, decoded. */
+export function inlineRscPayload(html: string): string {
+  return [...html.matchAll(/self\.__next_f\.push\(\[1,(?<chunk>"(?:[^"\\]|\\.)*")\]\)/gu)]
+    .map((match) => {
       const chunk: unknown = JSON.parse(match.groups?.chunk ?? '""');
-      return total + (typeof chunk === "string" ? chunk.length : 0);
-    },
-    0,
-  );
+      return typeof chunk === "string" ? chunk : "";
+    })
+    .join("");
+}
+
+export function inlineRscCharacters(html: string): number {
+  return inlineRscPayload(html).length;
 }

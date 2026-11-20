@@ -1,19 +1,19 @@
 ---
 name: zoonk-commit
-description: Write Zoonk commit messages and PR titles or descriptions, including the before-and-after numbers, screenshots and videos a PR shows, when preparing a commit or pull request.
+description: Write Zoonk commit messages and PR titles and descriptions, and choose the before-and-after numbers, screenshots and videos a PR shows. Use when preparing a commit or a pull request.
 license: MIT
 metadata:
   author: zoonk
-  version: "2.0.0"
+  version: "3.0.0"
 ---
 
 # Commit and PR wording
 
 Commit each change's own files as it lands. Stage only that change's paths; never use `git add -A`, `git add .`, or `git commit -a` on a shared tree. Before committing, check the path list and diff for secrets, `.env*`, keys, logs, and temporary or scratch files. Never amend, force-push, or use `--no-verify`. Push when you open or update the task's pull request ([zoonk-pull-request](../zoonk-pull-request/SKILL.md)), and otherwise only when asked.
 
-Before each commit, run the change's relevant checks: format and lint the touched files, typecheck their packages, and run the affected tests, where applicable. Report the checks and results, and include the final ones in the PR's verification section; CI runs the full suites on the PR ([root PR verification gate](../../../AGENTS.md#pr-verification-gate)).
+Before each commit, run the change's checks ([checks for a change](../../guides/checks.md)). Report them and their results, and include the final ones in the PR's verification section.
 
-Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period.
+Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period. Commit and merge messages describe the change for someone who never saw how it was made, never the process that produced it (agent names or task codes).
 
 | Type       | Use                                                  |
 | ---------- | ---------------------------------------------------- |
@@ -56,6 +56,10 @@ chore(agents): simplify repository instructions
 
 Describe the concrete problem and resulting behavior for a reviewer who has not seen the conversation. Keep it brief; include a trigger or before/after example when useful. Rewrite the title and body around the final implementation if the scope changes. Omit conversational history.
 
+For each piece the PR adds or redraws (a component, a part of a screen, a rule), name where the product already does the same thing, or write "none found" with what you searched ([find the piece](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one)). Reviewers compare the two.
+
+List under **Exceptions** every departure from a rule about looks (the screen, the rule, what shipped instead and why) and every exception an agent asked for with the answer it got, so the user can accept or overrule each one ([when a rule looks wrong](../../guides/exceptions.md)).
+
 End with a short **Verification** section that tells the reviewer what was proven and what wasn't, in plain language rather than command lists or logs:
 
 - For user-facing changes, the [persona walkthroughs](../zoonk-persona-walkthrough/SKILL.md): which personas, which journeys including bad-day paths, what they exposed and what changed.
@@ -66,57 +70,11 @@ For multiline bodies, use a structured tool argument or write the exact text to 
 
 ## Show the change
 
-A reviewer sees what the change did without running it, from evidence of both sides measured the same way. Capture the before side first, before you edit; a reviewer can't check a before you describe from memory.
+A reviewer sees what the change did without running it, from evidence of both sides measured the same way: numbers for something faster or lighter, screenshots for anything a learner sees, a video for something that moves or takes several steps, a preview link for a blog post. Capture the before side first, before you edit.
 
-| The change                                                                                                    | The PR shows                                                                              |
-| ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Makes something faster, lighter or cheaper                                                                    | Each number before → after, with the difference and how it was measured                   |
-| Changes what a learner sees: layout, copy, color, a state, a new screen                                       | Screenshots before and after of the screens that show the change, on a phone and a laptop |
-| Changes something that moves or takes several steps: a flow, a transition, a wait, a loading state, a gesture | Those screenshots, and a video of each side doing the same steps                          |
-| Adds or edits a blog post                                                                                     | A link to the post on the PR's Vercel preview, instead of screenshots                     |
-
-- **Numbers:** each metric with before → after and the difference (`LCP, phone, throttled: 2.4 s → 1.1 s (−54%)`), what was measured (page or command, build, screen, throttling) and how many runs. Measure both sides back to back on the same machine and settings; on a busy machine, compare the numbers noise barely moves (main-thread work, counts, bytes). For pages, `verify:pages --baseline` prints the table ([measuring pages](../verify/references/pages.md)). Report a number that didn't move or got worse too. "Faster" without numbers isn't evidence.
-- **Any visual change gets screenshots:** what decides it is whether a learner would see a difference, not how big the change is. They let a reviewer see what changed from the PR alone, so a PR that changes what a learner sees is not ready to open without them.
-- **A new screen** has only an after side and **a removed one** only a before; say so in its panel.
-- **A blog post** needs no screenshots: its preview is the page readers will get, on any screen. Once the PR is open, start the preview ([how](../zoonk-pull-request/SKILL.md#4-hand-back)) and link the post on it in the body; after a push that changes the post, preview again and update the link.
-
-### Keep it short and clear
-
-A reviewer looks at every picture, and a long page of them hides the one that matters.
-
-- **Show the few screens that make the change clear,** usually one to three: the screen the change is about, plus another size, scheme or state only where the change looks different there. A change that reaches many screens, such as a redesign, shows a representative few, and the verification section says what else you checked.
-- **Each screen gets a collapsed panel,** and its summary says what changed there, so a reviewer can scan the summaries without opening any: `<summary>Today: the time readout sits at the title's end</summary>`. Put the screen that shows the change best first; its panel starts open. `media.md` is laid out this way; lay out hand-made media (the native apps, a sheet of several screens) the same way.
-- **Compare each pair before you attach it.** `pr:capture` prints how much of each shot changed and the box around it, and leaves out pairs where nothing changed. When you can't spot the difference at a glance, a reviewer can't either: say in the summary where to look, and when it's a small part of the screen, lead with a shot of just that part (`shot(name, { clip })`). Drop a pair whose change doesn't show.
-
-### Screenshots and videos
-
-`pnpm pr:capture` captures Main (`--app api` or `--app admin` another app) the same way on both sides and writes the PR's before-and-after section. Run it on `pnpm start`: `pnpm dev` adds its own overlay and loading states learners never see.
-
-```sh
-pnpm pr:capture before /today /plan --email <learner>@zoonk.test   # before you edit
-pnpm pr:capture after /today /plan --email <learner>@zoonk.test    # after the change
-```
-
-Each run shoots every path on a phone and a laptop in light mode (`--viewports`; `--schemes light,dark` when colors change), replaces `tmp/pr-media/<side>/` and rewrites `tmp/pr-media/media.md`: a collapsed panel per screen pairing each screenshot with its other side, then a panel per video. For a screen behind taps, or a video (`--video`), write the steps once and pass them to both runs, such as `pnpm pr:capture after --steps tmp/pr-media/steps.mts --video --viewports phone`:
-
-```ts
-// tmp/pr-media/steps.mts
-export default async function steps({ page, shot }) {
-  await page.goto("/today");
-  await shot("today");
-  await page.getByRole("button", { name: "Start" }).click();
-  await shot("first question");
-}
-```
-
-- `shot(name, options)` waits until the page stops changing, or shoots at once with `settle: false` (a loading state), and takes Playwright's screenshot options (`fullPage`, `mask`). On a phone, a full-page shot ends touch emulation until the next load, so take it after the taps.
-- The steps run on each screen and scheme in turn. When they change what the learner has (an answer, a finished lesson), capture one screen and give each side its own learner (`pnpm dev:persona`).
-- If you already changed the code, capture the before side on the base the way [measuring pages](../verify/references/pages.md) measures a `--baseline`.
-- Look at every shot and video before you attach it: a path that fails stops the run, but a step that lands on the wrong screen still makes a picture of it.
-- Attached files are public, like the repository: show seeded and `dev:persona` learners only, never a real learner's data or a secret.
-- For the Apple or Android app, take the same shots and recordings in the simulator or emulator (`agent-device screenshot` and `record`, or `xcrun simctl io <device> screenshot` and `recordVideo`, `adb exec-out screencap -p` and `adb shell screenrecord`), and put them in the same panels.
-
-[zoonk-pull-request](../zoonk-pull-request/SKILL.md) uploads them when it opens the PR.
+- [Show the change](references/show-the-change.md): what each kind of change shows, how to report numbers, and how few pictures make it clear.
+- [Capturing screens](references/capture.md): `pnpm pr:capture`, steps for a screen behind taps, videos, and the native apps.
+- [The picture gate](references/picture-gate.md): what `pnpm pr:media check` holds every picture to before the body goes up.
 
 ## New commits on an open PR
 

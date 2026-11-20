@@ -1,4 +1,5 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
+import { received } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { type LessonQuestionApiError } from "./lesson-question-api";
@@ -13,7 +14,8 @@ const slowDownSchema = z.object({
 });
 
 const usageLimitSchema = z.object({
-  period: z.enum(["day", "month", "total"]),
+  availableAt: z.string().nullish(),
+  period: z.enum(["day", "rolling30Days", "total"]),
   tier: z.enum(["free", "guest", "plus"]),
 });
 
@@ -33,7 +35,7 @@ const usageErrorSchema = z.object({
 export type LessonQuestionUsageRefusal =
   | { kind: "signUpRequired" }
   | { kind: "slowDown"; retryAfterSeconds: number }
-  | { kind: "usageLimit"; period: "day" | "month" | "total"; tier: "free" | "guest" | "plus" };
+  | ({ kind: "usageLimit"; receivedAt?: number } & z.infer<typeof usageLimitSchema>);
 
 export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | null {
   const parsed = usageErrorSchema.safeParse(body);
@@ -62,6 +64,10 @@ const REFUSAL_STATUSES = new Set([
 export async function getRefusalError(response: Response): Promise<LessonQuestionApiError> {
   const { data: body } = await safeAsync<unknown>(() => response.json());
   const usage = getUsageRefusal(body);
+
+  if (usage?.kind === "usageLimit") {
+    return received(usage);
+  }
 
   if (usage) {
     return usage;

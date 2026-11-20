@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -24,6 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,6 +38,7 @@ import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.reminders.StudyReminderStore
 import com.zoonk.android.feature.reminders.nearestQuarterHour
@@ -44,11 +49,15 @@ import com.zoonk.android.feature.reminders.reminderTime
 import com.zoonk.android.feature.reminders.reminderZone
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.TimeOfDayDialog
@@ -57,12 +66,17 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.StudyReminder
 import kotlinx.coroutines.launch
 import java.time.LocalTime
+import java.time.ZoneId
 
 /** A switch shows what it was flipped to while the change saves, and turns back if it doesn't. */
 class RemindersViewModel(
     private val reminders: StudyReminderStore,
-    private val snackbars: AppSnackbars,
 ) : ViewModel() {
+    val visit = Visit()
+
+    /** A change that didn't save on this visit, which the page says in the app's snackbars. */
+    val saveFailed = visit.outcome<Unit>()
+
     var email by mutableStateOf<Boolean?>(null)
         private set
 
@@ -116,16 +130,16 @@ class RemindersViewModel(
         settle: () -> Unit,
         write: suspend () -> MutationResult<*>,
     ) {
+        val started = visit.number
         viewModelScope.launch {
-            if (write() is MutationResult.Failed) snackbars.show(R.string.reminders_save_failed)
+            if (write() is MutationResult.Failed) saveFailed.send(started, Unit)
             settle()
         }
     }
 }
 
 /**
- * Main's Settings > Reminders: the time in the learner's zone, email, push to one phone, then where
- * the study days come from. Android's notification permission and the reminders channel are read
+ * Main's Settings > Reminders: the time in the learner's zone, email and push to one phone. Android's notification permission and the reminders channel are read
  * live, so a phone that can't show them says so.
  */
 @Composable
@@ -134,10 +148,14 @@ fun RemindersScreen(
     navigator: AppNavigator,
 ) {
     val state by app.reminders.reminder.collectShown()
-    val viewModel = viewModel { RemindersViewModel(app.reminders, app.snackbars) }
+    val viewModel = viewModel { RemindersViewModel(app.reminders) }
+    VisitOf(viewModel.visit)
+    ActOn(viewModel.saveFailed) { app.snackbars.show(R.string.reminders_save_failed) }
     val scope = rememberCoroutineScope()
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.reminders_title)) }) { padding ->
+    PageScaffold(onBack = {
+        navigator.back()
+    }, title = { Text(stringResource(R.string.reminders_title)) }, columnWidth = SETTINGS_COLUMN_WIDTH) { padding ->
         Box(
             modifier =
                 Modifier
@@ -148,15 +166,12 @@ fun RemindersScreen(
         ) {
             Column(
                 modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                    Modifier.settingsColumn(),
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
                 PageHeader(
                     stringResource(R.string.reminders_title),
-                    stringResource(R.string.reminders_channel_description),
+                    remindersLine { navigator.showRoot(AppTab.Plan) },
                     Modifier.padding(horizontal = LIST_ITEM_INSET),
                 )
 
@@ -191,28 +206,18 @@ private fun ReminderSettings(
     val time = reminderTime(reminder.time)
 
     Column {
-        ListRow(
-            headline = { Text(stringResource(R.string.reminders_time)) },
-            supporting = { Text(reminderZone(reminder.timeZone)) },
-            meta = { Text(time) },
-            onClick = { picking = true },
-        )
-        ListDivider()
         EmailRow(reminder, viewModel, navigator)
         ListDivider()
         PushRows(reminder, thisPhone, viewModel)
+        ListDivider()
+        ListRow(
+            headline = { Text(stringResource(R.string.reminders_time)) },
+            // The zone is said only when it isn't the phone's own.
+            supporting = reminder.timeZone.takeUnless { it == ZoneId.systemDefault().id }?.let { zone -> { Text(reminderZone(zone)) } },
+            meta = { Text(time) },
+            onClick = { picking = true },
+        )
     }
-
-    ListRow(
-        headline = {
-            Text(
-                stringResource(R.string.reminders_study_days),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        },
-        onClick = { navigator.open(AppRoute.Plan()) },
-    )
 
     if (reminder.quiet) {
         Text(
@@ -312,12 +317,28 @@ private fun PushRows(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             },
-            leading = { Icon(painterResource(R.drawable.ic_notifications_off), contentDescription = null) },
+            leading = { MarkIcon(R.drawable.ic_notifications_off) },
             trailing = {
                 OutlinedButton(onClick = context::openNotificationSettings, size = ButtonSize.Small) {
                     Text(stringResource(R.string.reminders_open_settings))
                 }
             },
         )
+    }
+}
+
+/** Main's line under the title, its "study days" a link to the Plan, where they're set. */
+@Composable
+private fun remindersLine(onOpenPlan: () -> Unit): AnnotatedString {
+    val days = stringResource(R.string.reminders_study_days)
+    val line = stringResource(R.string.reminders_line, days)
+    val start = line.indexOf(days)
+
+    return buildAnnotatedString {
+        append(line)
+        if (start >= 0) {
+            val link = LinkAnnotation.Clickable(days, TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))) { onOpenPlan() }
+            addLink(link, start, start + days.length)
+        }
     }
 }

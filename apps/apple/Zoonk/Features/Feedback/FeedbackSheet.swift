@@ -37,7 +37,7 @@ private struct FeedbackSheetPresenter: ViewModifier {
 
   private func form(_ store: FeedbackFormStore) -> some View {
     FeedbackForm(store: store, isReport: isReport)
-      .zoonkStyles()
+      .zoonkSheet()
   }
 }
 
@@ -131,11 +131,8 @@ private struct FeedbackForm: View {
           }
 
           ToolbarItem(placement: .confirmationAction) {
-            BusyButton(isBusy: store.state == .submitting, icon: .send, action: submit) {
-              Text(
-                "Send",
-                tableName: "Feedback",
-                comment: "Submits the feedback form.")
+            BusyButton(isBusy: store.state == .submitting, icon: .check, action: submit) {
+              Text("Send message", tableName: "Feedback")
             }
             .disabled(!store.canSubmit && store.state != .submitting)
           }
@@ -144,7 +141,6 @@ private struct FeedbackForm: View {
     }
     .announcesStatus(store.state == .sent ? thanks : nil)
     .interactiveDismissDisabled(store.state == .submitting)
-    .presentationDetents([.medium, .large])
     .presentationDragIndicator(.visible)
   }
 
@@ -153,9 +149,8 @@ private struct FeedbackForm: View {
       if !isReport {
         Section {
           Text(
-            "Found a problem or have an idea? Tell us below or email hello@zoonk.com.",
-            tableName: "Feedback",
-            comment: "Introduction shown above the feedback fields."
+            "Ask a question, report a problem or share an idea. We answer by email.",
+            tableName: "Feedback"
           )
           .foregroundStyle(.mutedForeground)
           .listRowBackground(Color.clear)
@@ -268,7 +263,7 @@ private struct FeedbackForm: View {
   }
 
   private var confirmation: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(thanks)
       } icon: {

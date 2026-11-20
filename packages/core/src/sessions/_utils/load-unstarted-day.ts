@@ -15,7 +15,6 @@ import { toDayViewFields } from "./day-view-fields";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { type PlannedStudyDay, toUnstartedBlocks } from "./plan-study-day";
-import { loadDayPlusLessons } from "./plus-only-lessons";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionDayContext } from "./session-placement";
@@ -37,9 +36,9 @@ export async function loadUnstartedDayView({
 
   const missionDay = { blocks, goalId: goal.id, localDate, userId };
   const { dayMinutes, examPrep } = day.plan;
-  const examAccess = getExamPrepAccess({ examPrep, goal, timeZone, today: localDate });
+  const examAccess = getExamPrepAccess({ examPrep, goal });
 
-  const [week, subjects, oftenTestedSkillIds, blockedTestOutChapters, missionViews, plusLessons] =
+  const [week, subjects, oftenTestedSkillIds, blockedTestOutChapters, missionViews] =
     await Promise.all([
       loadStudyWeek({ goal, localDate, planSettings: selection.state.settings }),
       loadBlockSubjects({ blocks, blueprint, goal }),
@@ -58,13 +57,6 @@ export async function loadUnstartedDayView({
         session: missionDay,
         through: now,
         timeZone,
-      }),
-      loadDayPlusLessons({
-        access: examAccess,
-        goalId: goal.id,
-        items: selection.items,
-        localDate,
-        userId,
       }),
     ]);
 
@@ -92,7 +84,6 @@ export async function loadUnstartedDayView({
     lessonRoom: reserved,
     missions,
     outlines: reserved ? (day.plan.outlines ?? "idle") : null,
-    plusLessons,
     session: {
       blocks,
       freshStart: day.input.freshStart,
@@ -118,11 +109,10 @@ export async function loadUnstartedDayView({
       goalId: goal.id,
       readItems: () => readCatchUpItems(userId, goal.id),
       selectedItems,
-      trialEnded: fields.examAccess.trialEnded,
     }),
     withExtraStudyCheck({
       extraTime: fields.extraTime,
-      session: { blocks, goal, goalId: goal.id, localDate },
+      session: { blocks, goal, goalId: goal.id },
       userId,
     }),
   ]);

@@ -409,39 +409,6 @@ describe(getTodayStudySession, () => {
     ]);
   });
 
-  it("keeps reviews free once a free exam plan's first week is over", async () => {
-    const user = await userFixture();
-
-    const { goal, items, planItems, skills } = await sessionGoalFixture({
-      challengesDone: true,
-      goal: { createdAt: daysAgo(10), kind: "exam" },
-      userId: user.id,
-    });
-
-    await Promise.all([
-      prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
-      dueSkillFixture({ skillId: skills[0]?.id ?? "", userId: user.id }),
-      mistakeFixture({
-        createdAt: daysAgo(2),
-        itemId: items[0]?.id,
-        skillId: skills[0]?.id,
-        userId: user.id,
-      }),
-    ]);
-
-    mockSession(user.id);
-    const result = await getTodayStudySession({ goalId: goal.id });
-
-    expect(result.status === "ready" && result.session.examAccess).toStrictEqual({
-      includesMockExams: false,
-      trialEnded: true,
-    });
-
-    expect(
-      result.status === "ready" && result.session.blocks.map((block) => block.kind),
-    ).toStrictEqual(["review"]);
-  });
-
   it("reviews every skill that would fade before the exam once the final stretch starts", async () => {
     await expect(examReviewTitles(10)).resolves.toStrictEqual(["Lesson 1"]);
     await expect(examReviewTitles(40)).resolves.toStrictEqual([]);

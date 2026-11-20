@@ -5,10 +5,16 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { TaskMeta } from "./task-meta";
 
+/** Under a moment's title, so the title leads. */
+const LINE_SIZE = "text-2xl";
+
+/** Where the number is the moment itself: the day's bonus, the day's total. */
+const HERO_SIZE = "text-[2.5rem]";
+
 function ReadoutNumber({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-readout inline-block text-[2.5rem]", className)}
+      className={cn("text-readout me-[0.1em] inline-block", className)}
       data-slot="readout-number"
       {...props}
     />
@@ -16,7 +22,7 @@ function ReadoutNumber({ className, ...props }: React.ComponentProps<"span">) {
 }
 
 function scoreNumber(chunks: React.ReactNode) {
-  return <ReadoutNumber className="text-foreground">{chunks}</ReadoutNumber>;
+  return <ReadoutNumber className={cn("text-foreground", LINE_SIZE)}>{chunks}</ReadoutNumber>;
 }
 
 function readoutWords(chunks: React.ReactNode) {
@@ -25,13 +31,21 @@ function readoutWords(chunks: React.ReactNode) {
   );
 }
 
-export function BrainPowerReadout({ delayMs, points }: { delayMs?: number; points: number }) {
+export function BrainPowerReadout({
+  delayMs,
+  hero = false,
+  points,
+}: {
+  delayMs?: number;
+  hero?: boolean;
+  points: number;
+}) {
   const t = useExtracted();
   const format = useFormatter();
 
   return t.rich("<number>+{points}</number> <words>Brain Power</words>", {
     number: () => (
-      <ReadoutNumber className="text-brain-text">
+      <ReadoutNumber className={cn("text-brain-text", hero ? HERO_SIZE : LINE_SIZE)}>
         <CountUp delayMs={delayMs} format={(value) => `+${format.number(value)}`} value={points} />
       </ReadoutNumber>
     ),
@@ -40,7 +54,13 @@ export function BrainPowerReadout({ delayMs, points }: { delayMs?: number; point
   });
 }
 
-type MomentScore = { answered: number; correct: number; spoken?: boolean };
+type MomentScore = {
+  answered: number;
+  correct: number;
+  spoken?: boolean;
+  /** For a duel, which stops once it's decided: its right answers alone, with no "of". */
+  countOnly?: boolean;
+};
 
 function ScoreWords({ score }: { score: MomentScore }) {
   const t = useExtracted();
@@ -51,6 +71,15 @@ function ScoreWords({ score }: { score: MomentScore }) {
     correct: score.correct,
     number: scoreNumber,
   };
+
+  if (score.countOnly) {
+    return t.rich({
+      description: "How many answers the learner got right in a challenge.",
+      message:
+        "{correct, plural, =0 {<number>#</number> right} one {<number>#</number> right} other {<number>#</number> right}}",
+      values: { correct: score.correct, number: scoreNumber },
+    });
+  }
 
   return score.spoken
     ? t.rich({

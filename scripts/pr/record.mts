@@ -7,15 +7,29 @@ import {
   type Page,
   type PageScreenshotOptions,
 } from "@playwright/test";
+import { type Capture } from "../verify/alignment-capture.mts";
+import { readAlignment, webCapture } from "../verify/alignment-probe.mts";
+import { WEB_TABLE } from "../verify/alignment-table.mts";
+import { evaluateFile } from "../verify/alignment.mts";
 import { openPage, waitForQuiet } from "../verify/browser.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "../verify/viewports.mts";
-import { type CaptureItem, MANIFEST, type Side, fileName, pathShotName } from "./media.mts";
+import { carryReads } from "./carry.mts";
+import {
+  type CaptureItem,
+  type Side,
+  fileName,
+  pathShotName,
+  readCapture,
+  writeManifest,
+} from "./media.mts";
+import { type CheckoutBuild, bindBuild, sha256File } from "./provenance.mts";
 
-/** Waits until the page stops changing, unless `settle` is false, as for a loading state. */
-type Shot = (
-  name: string,
-  options?: Omit<PageScreenshotOptions, "path"> & { settle?: boolean },
-) => Promise<void>;
+/**
+ * Waits until the page stops changing, unless `settle` is false, as for a loading state.
+ * `scenario` names the state shown, with the id every platform uses for it.
+ */
+type ShotOptions = Omit<PageScreenshotOptions, "path"> & { scenario?: string; settle?: boolean };
+type Shot = (name: string, options?: ShotOptions) => Promise<void>;
 
 /** A `--steps` module's default export, run once on each screen and scheme. */
 export type Steps = (scene: {
@@ -44,21 +58,50 @@ export function visitPaths(paths: string[]): Steps {
 type Scene = {
   baseUrl: string;
   browser: Browser;
+  checkout: CheckoutBuild;
+  side: Side;
   steps: Steps;
+  stepsDigest: string;
   storageState?: BrowserContextOptions["storageState"];
   video: boolean;
 };
 
+type WithoutHash<T> = T extends unknown ? Omit<T, "sha256"> : never;
+type Unhashed = WithoutHash<CaptureItem>;
+type Screen = { captures: Capture[]; items: Unhashed[] };
+
+/**
+ * The HTML of the newest full page load, which names the build that served it; the page itself
+ * drops that payload once it hydrates.
+ */
+function watchDocuments(page: Page): () => Promise<string> {
+  const loads: Promise<string>[] = [];
+
+  page.on("response", (response) => {
+    if (response.request().resourceType() === "document" && response.frame() === page.mainFrame()) {
+      loads.push(response.text().catch(() => ""));
+    }
+  });
+
+  return async () => {
+    const pages = await Promise.all(loads);
+    return pages.findLast((html) => html.length > 0) ?? "";
+  };
+}
+
 async function captureScreen({
   baseUrl,
   browser,
+  checkout,
   folder,
   scheme,
+  side,
   steps,
+  stepsDigest,
   storageState,
   video,
   viewport,
-}: Scene & { folder: string; scheme: Scheme; viewport: ViewportName }): Promise<CaptureItem[]> {
+}: Scene & { folder: string; scheme: Scheme; viewport: ViewportName }): Promise<Screen> {
   const { context, page, traffic } = await openPage({
     actions: new Map(),
     baseUrl,
@@ -70,7 +113,30 @@ async function captureScreen({
   });
 
   const screen = posix.join(viewport, scheme);
-  const items: CaptureItem[] = [];
+  const items: Unhashed[] = [];
+  const captures: Capture[] = [];
+  const { deviceScaleFactor = 1, hasTouch = false } = VIEWPORTS[viewport];
+
+  const lastDocument = watchDocuments(page);
+
+  const describe = async () => {
+    const [html, lang] = await Promise.all([
+      lastDocument(),
+      page.evaluate(() => document.documentElement.lang),
+    ]);
+
+    return {
+      build: bindBuild({ checkout, html }),
+      locale: lang || "unknown",
+      platform: "web" as const,
+      pointer: hasTouch ? ("coarse" as const) : ("fine" as const),
+      scale: deviceScaleFactor,
+      scheme,
+      side,
+      steps: stepsDigest,
+      viewport,
+    };
+  };
 
   if (video) {
     await page.screencast.start({
@@ -81,7 +147,7 @@ async function captureScreen({
     await page.screencast.showActions();
   }
 
-  const shot: Shot = async (text, { settle = true, ...options } = {}) => {
+  const shot: Shot = async (text, { scenario, settle = true, ...options }: ShotOptions = {}) => {
     const name = fileName(text);
     const file = posix.join(screen, `${name}.png`);
 
@@ -106,11 +172,24 @@ async function captureScreen({
       await page.screencast.showActions();
     }
 
-    items.push({ file, kind: "shot", name, scheme, viewport });
+    // The layout of the state just shot, read before a step can change it.
+    const layout = await page.evaluate(readAlignment, WEB_TABLE);
+    const path = new URL(page.url()).pathname;
+
+    captures.push({
+      ...webCapture({ app: checkout.app, page: layout, path, scheme, viewport }),
+      scenario: scenario ?? null,
+    });
+
+    items.push({ ...(await describe()), file, kind: "shot", name, scenario });
   };
 
   try {
     await steps({ page, scheme, shot, viewport });
+
+    if (video) {
+      items.push({ ...(await describe()), file: `${screen}.webm`, kind: "video" });
+    }
   } finally {
     if (video) {
       await page.screencast.stop();
@@ -119,7 +198,19 @@ async function captureScreen({
     await context.close();
   }
 
-  return video ? [...items, { file: `${screen}.webm`, kind: "video", scheme, viewport }] : items;
+  return { captures, items };
+}
+
+async function hashItems({
+  folder,
+  items,
+}: {
+  folder: string;
+  items: Unhashed[];
+}): Promise<CaptureItem[]> {
+  return Promise.all(
+    items.map(async (item) => ({ ...item, sha256: await sha256File(join(folder, item.file)) })),
+  );
 }
 
 /**
@@ -129,26 +220,37 @@ async function captureScreen({
 export async function captureSide({
   out,
   schemes,
-  side,
   viewports,
   ...scene
-}: Scene & { out: string; schemes: Scheme[]; side: Side; viewports: ViewportName[] }): Promise<
-  CaptureItem[]
-> {
-  const folder = join(out, side);
-  const scratch = join(out, `${side}.partial`);
+}: Scene & { out: string; schemes: Scheme[]; viewports: ViewportName[] }): Promise<CaptureItem[]> {
+  const folder = join(out, scene.side);
+  const scratch = join(out, `${scene.side}.partial`);
   await rm(scratch, { force: true, recursive: true });
   await mkdir(scratch, { recursive: true });
 
-  const items: CaptureItem[] = [];
+  const unhashed: Unhashed[] = [];
+  const captures: Capture[] = [];
 
   for (const viewport of viewports) {
     for (const scheme of schemes) {
-      items.push(...(await captureScreen({ ...scene, folder: scratch, scheme, viewport })));
+      const screen = await captureScreen({ ...scene, folder: scratch, scheme, viewport });
+      unhashed.push(...screen.items);
+      captures.push(...screen.captures);
     }
   }
 
-  await writeFile(join(scratch, MANIFEST), `${JSON.stringify(items, null, 2)}\n`);
+  // `pr:media check` fails an after folder on what this leaves unresolved.
+  const alignment = { captures, ...evaluateFile({ captures }) };
+  await writeFile(join(scratch, "alignment.json"), `${JSON.stringify(alignment, null, 2)}\n`);
+
+  const items = await carryReads({
+    folder: scratch,
+    items: await hashItems({ folder: scratch, items: unhashed }),
+    previous: (await readCapture(folder)) ?? [],
+    previousFolder: folder,
+  });
+
+  await writeManifest(scratch, items);
   await rm(folder, { force: true, recursive: true });
   await rename(scratch, folder);
   return items;

@@ -101,6 +101,7 @@ class FocusTestScreenTest {
             suggested = emptyList(),
             status = LearnerSummaryGoal.Status.ACTIVE,
             targetDate = null,
+            targetDateEstimated = false,
             targetLanguage = null,
             targetRegion = null,
             title = "DELE B2",
@@ -137,7 +138,7 @@ class FocusTestScreenTest {
     }
 
     private fun typeTheAnswer() {
-        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.onNodeWithText("Continue").performClick()
         rule.onNode(hasSetTextAction()).performTextInput(ANSWER)
     }
 

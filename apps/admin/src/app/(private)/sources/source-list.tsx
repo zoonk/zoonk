@@ -2,6 +2,7 @@ import {
   type AdminTableColumn,
   AdminTableColumns,
   AdminTableColumnsSkeleton,
+  emptyListLabel,
 } from "@/components/admin-table-columns";
 import { AdminPagination } from "@/components/pagination";
 import { listSources } from "@/data/sources/list-sources";
@@ -11,15 +12,11 @@ import { parseSourceListFilters } from "./_utils/source-list-params";
 import { SourceRow } from "./source-row";
 
 const SOURCE_COLUMNS: AdminTableColumn[] = [
-  { label: "Source" },
+  { label: "Source", twoLines: true },
   { label: "Kind" },
-  { label: "Visibility" },
-  { label: "Language" },
-  { label: "Fetched" },
-  { label: "Valid until" },
-  { label: "Next check" },
-  { align: "right", label: "Learners" },
-  { align: "right", label: "Exams" },
+  { align: "right", label: "Last checked" },
+  { align: "right", label: "Good until", size: "text" },
+  { align: "right", label: "Used by", size: "wide" },
 ];
 
 /** Resolves the URL into primitive filters so each list state is its own cache entry. */
@@ -63,7 +60,7 @@ async function CachedSourceList({
     <>
       <AdminTableColumns
         columns={SOURCE_COLUMNS}
-        emptyLabel="No sources found."
+        emptyLabel={emptyListLabel({ noun: "sources", search })}
         isEmpty={sources.length === 0}
       >
         {sources.map((source) => (

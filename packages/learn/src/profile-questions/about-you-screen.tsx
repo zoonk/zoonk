@@ -4,6 +4,8 @@ import {
   type ProfileQuestionView,
   type ProfileQuestionsView,
 } from "@zoonk/core/profile/questions/contract";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
@@ -22,15 +24,10 @@ import {
 } from "../_components/notice-card";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { LearnLink } from "../learn-link";
+import { ABOUT_YOU_GROUPS } from "./about-you-order";
 import { type ProfileQuestion } from "./profile-draft";
 
-const GROUPS = [
-  { id: "day", questions: ["work", "tools", "studies"] },
-  { id: "fun", questions: ["watch", "listen", "play", "read", "activities"] },
-  { id: "learn", questions: ["addressForm", "conditions", "learningSupport"] },
-] as const satisfies { id: string; questions: ProfileQuestion[] }[];
-
-type GroupId = (typeof GROUPS)[number]["id"];
+type GroupId = (typeof ABOUT_YOU_GROUPS)[number]["id"];
 
 export function aboutYouQuestionHref(question: ProfileQuestion): string {
   return `/settings/about-you/${question}`;
@@ -68,31 +65,31 @@ function QuestionName({ question }: { question: ProfileQuestion }) {
       return t({
         description: "What the learner likes to watch.",
         id: "aboutYouWatch",
-        message: "Watch",
+        message: "What you watch",
       });
     case "listen":
       return t({
         description: "What the learner likes to listen to.",
         id: "aboutYouListen",
-        message: "Listen",
+        message: "What you listen to",
       });
     case "play":
       return t({
         description: "What the learner likes to play.",
         id: "aboutYouPlay",
-        message: "Play",
+        message: "What you play",
       });
     case "read":
       return t({
         description: "What the learner likes to read.",
         id: "aboutYouRead",
-        message: "Read",
+        message: "What you read",
       });
     case "activities":
       return t({
         description: "What the learner likes to do for fun.",
         id: "aboutYouDo",
-        message: "Do",
+        message: "What you do for fun",
       });
     case "conditions":
       return t({
@@ -120,18 +117,12 @@ function labelsOf(question: ProfileQuestionView, ids: readonly string[]): string
  * What's saved, short: conditions only count and the address form only says it's saved, so the
  * list is safe on a shared screen.
  */
-function useSavedSummary(question: ProfileQuestionView): string {
+function useSavedSummary(question: ProfileQuestionView): string | null {
   const t = useExtracted();
   const { picks, studies, text } = question.saved;
 
   if (picks.length === 0 && studies.length === 0 && text === "") {
-    if (question.status === "declined") {
-      return t("Not shared");
-    }
-
-    return question.status === "answered"
-      ? t({ description: "Invites the learner to fill in an empty answer.", message: "Add" })
-      : t("Not answered");
+    return question.status === "declined" ? t("Not shared") : null;
   }
 
   switch (question.id) {
@@ -156,30 +147,42 @@ function useSavedSummary(question: ProfileQuestionView): string {
     case "play":
     case "read":
     case "activities":
-      return [labelsOf(question, picks).join(", "), text].filter(Boolean).join(" · ");
+      return [labelsOf(question, picks).join(", "), text].filter(Boolean).join(FACT_SEPARATOR);
     default:
       return question.id satisfies never;
   }
 }
 
-function QuestionRow({ editable, question }: { editable: boolean; question: ProfileQuestionView }) {
+function QuestionRow({
+  current,
+  editable,
+  question,
+}: {
+  current: boolean;
+  editable: boolean;
+  question: ProfileQuestionView;
+}) {
   const summary = useSavedSummary(question);
 
   const body = (
     <ListRowBody>
       <ListRowContent>
-        <ListRowTitle>
+        <ListRowTitle className={editable ? undefined : "text-muted-foreground"}>
           <QuestionName question={question.id} />
         </ListRowTitle>
       </ListRowContent>
-      <ListRowTrailing className="max-w-[55%] truncate font-sans">{summary}</ListRowTrailing>
+      {summary && (
+        <ListRowTrailing className="max-w-[55%] truncate font-sans">{summary}</ListRowTrailing>
+      )}
     </ListRowBody>
   );
 
   return editable ? (
-    <ListRowLink href={aboutYouQuestionHref(question.id)}>{body}</ListRowLink>
+    <ListRowLink current={current} href={aboutYouQuestionHref(question.id)}>
+      {body}
+    </ListRowLink>
   ) : (
-    <ListRow className="py-3">{body}</ListRow>
+    <ListRow>{body}</ListRow>
   );
 }
 
@@ -189,14 +192,13 @@ function MemoryOffNotice() {
   return (
     <NoticeCard>
       <NoticeCardContent>
-        <NoticeCardDescription>
-          {t(
-            "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them.",
-          )}
-        </NoticeCardDescription>
+        <NoticeCardDescription>{t("“Your day” and “For fun” need Memory.")}</NoticeCardDescription>
         <NoticeCardActions>
-          <LearnLink className="text-sm font-medium underline" href="/settings/memory">
-            {t("Memory")}
+          <LearnLink
+            className={buttonVariants({ size: "sm", variant: "outline" })}
+            href="/settings/memory"
+          >
+            {t("Turn on Memory")}
           </LearnLink>
         </NoticeCardActions>
       </NoticeCardContent>
@@ -204,12 +206,19 @@ function MemoryOffNotice() {
   );
 }
 
-export function AboutYouScreen({ view }: { view: ProfileQuestionsView }) {
+export function AboutYouScreen({
+  current = null,
+  view,
+}: {
+  /** The question open beside the list. */
+  current?: string | null;
+  view: ProfileQuestionsView;
+}) {
   return (
     <div className="flex flex-col gap-7" data-slot="about-you-screen">
       {!view.memoryEnabled && <MemoryOffNotice />}
 
-      {GROUPS.map((group) => (
+      {ABOUT_YOU_GROUPS.map((group) => (
         <PageSection aria-labelledby={`about-you-${group.id}`} key={group.id}>
           <PageSectionHeader>
             <PageSectionTitle id={`about-you-${group.id}`}>
@@ -224,6 +233,7 @@ export function AboutYouScreen({ view }: { view: ProfileQuestionsView }) {
               return (
                 question && (
                   <QuestionRow
+                    current={current === id}
                     editable={view.memoryEnabled || group.id === "learn"}
                     key={id}
                     question={question}

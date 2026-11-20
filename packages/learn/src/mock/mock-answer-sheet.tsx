@@ -6,79 +6,80 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
+  DrawerFooter,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
+import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HistoryIcon, PenLineIcon, PencilRulerIcon } from "lucide-react";
+import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
+import { useEffect, useRef, useState } from "react";
+import { SheetHeader } from "../_components/sheet-header";
 import { type TaskFrameAside } from "../shell/task-frame";
+import { countsTowardMockProgress } from "./mock-answer-progress";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MovesNote } from "./mock-moves";
-import { useMockShortLine } from "./mock-notes";
 import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
-import { isDraftAnswered } from "./use-mock-drafts";
+import { useQuestionCellLabel } from "./use-question-cell-label";
 
 function useSheetCountLine(): string {
   const t = useExtracted();
-  const { answered, flagged } = useSectionCounts();
+  const { answered } = useSectionCounts();
 
-  return t(
-    "{answered, plural, =0 {# answered} one {# answered} other {# answered}} · {flagged, plural, =0 {# flagged} one {# flagged} other {# flagged}}",
-    { answered, flagged },
-  );
+  return t("{answered, plural, =0 {# answered} one {# answered} other {# answered}}", { answered });
 }
 
-const CELL_SIZE = {
-  row: { cell: "h-7 rounded-[0.375rem] text-xs", essay: "size-3.5" },
-  sheet: { cell: "h-11 rounded-lg text-sm", essay: "size-4" },
-} as const;
+const CELL_FILLED_CLASS =
+  "bg-selected-tint text-foreground enabled:hover:bg-selected-tint contrast-more:ring-input ring-transparent";
+
+const CELL_CURRENT_CLASS =
+  "after:bg-foreground after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full";
+
+/** A flag is a tint in its own color, never a ring; an answered one keeps its number in ink. */
+const CELL_FLAGGED_CLASS =
+  "bg-warning/14 enabled:hover:bg-warning/14 contrast-more:ring-warning ring-transparent contrast-more:ring-2";
 
 function QuestionCell({
   index,
   onPick,
   question,
-  size,
 }: {
   index: number;
   onPick: (position: number) => void;
   question: MockQuestion;
-  size: keyof typeof CELL_SIZE;
 }) {
-  const t = useExtracted();
   const { runner } = useMockScreen();
   const draft = runner.drafts[question.itemId];
   const isEssay = question.format === "essay";
   const isCurrent = index === runner.position;
+  const isAnswered = countsTowardMockProgress(runner, question.itemId);
+
+  const label = useQuestionCellLabel({ flagged: Boolean(draft?.flagged), question });
 
   return (
     <button
       aria-current={isCurrent ? "true" : undefined}
-      aria-label={
-        isEssay ? t("Written part") : t("Question {number}", { number: String(question.number) })
-      }
+      aria-label={label}
       className={cn(
-        "focus-visible:outline-ring text-muted-foreground ring-border enabled:hover:bg-muted/60 hit-area relative flex w-full items-center justify-center font-mono font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
-        CELL_SIZE[size].cell,
-        isDraftAnswered(draft) &&
-          "bg-surface-3 text-foreground enabled:hover:bg-surface-3 ring-transparent",
-        draft?.flagged && "text-warning-text ring-warning ring-[1.5px]",
-        isCurrent && "text-foreground ring-success ring-2",
+        "focus-visible:outline-ring/50 text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-3 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
+        isAnswered && CELL_FILLED_CLASS,
+        draft?.flagged && cn(CELL_FLAGGED_CLASS, !isAnswered && "text-warning-text"),
+        isCurrent && cn(CELL_CURRENT_CLASS, !draft?.flagged && "text-foreground"),
       )}
       disabled={!runner.moves.canOpen(index)}
       onClick={() => onPick(index)}
       type="button"
     >
-      {isEssay ? (
-        <PenLineIcon aria-hidden="true" className={CELL_SIZE[size].essay} />
-      ) : (
-        question.number
+      {isEssay ? <PenLineIcon aria-hidden="true" className="size-4" /> : question.number}
+      {draft?.flagged && (
+        <span
+          aria-hidden="true"
+          className="bg-warning absolute inset-e-1 top-1 size-1 rounded-full"
+        />
       )}
     </button>
   );
@@ -96,85 +97,85 @@ function SheetGrid({ onPick }: { onPick: (position: number) => void }) {
     >
       {questions.map((question, index) => (
         <li key={question.itemId}>
-          <QuestionCell index={index} onPick={onPick} question={question} size="sheet" />
+          <QuestionCell index={index} onPick={onPick} question={question} />
         </li>
       ))}
     </ol>
   );
 }
 
-const MAP_ROW = 9;
+const SCROLL_FADE_PX = 64;
 
 export function MockQuestionMap({ className }: { className?: string }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const questions = runner.view.current?.questions ?? [];
+  const row = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    const scroll = row.current?.parentElement;
+    const current = row.current?.children[runner.position];
+
+    if (!scroll || !current) {
+      return;
+    }
+
+    function keepCurrentInView() {
+      if (!scroll?.clientWidth || !current) {
+        return;
+      }
+
+      const viewport = scroll.getBoundingClientRect();
+      const cell = current.getBoundingClientRect();
+      const inset = Math.min(SCROLL_FADE_PX, cell.width);
+      const left = cell.left - viewport.left - inset;
+      const right = cell.right - viewport.right + inset;
+
+      if (left < 0 || right > 0) {
+        scroll.scrollBy({ left: left < 0 ? left : right });
+      }
+    }
+
+    keepCurrentInView();
+    const resized = new ResizeObserver(keepCurrentInView);
+    resized.observe(scroll);
+    return () => resized.disconnect();
+  }, [runner.position]);
 
   if (questions.length <= 1) {
     return null;
   }
 
-  const start = Math.floor(runner.position / MAP_ROW) * MAP_ROW;
-
   return (
-    <ol
-      aria-label={t("Questions")}
-      className={cn("grid grid-cols-9 gap-1.5", className)}
-      data-slot="mock-question-map"
+    <HorizontalScroll
+      box={{ label: t("Questions") }}
+      className={className}
+      labels={{ left: t("Earlier questions"), right: t("Later questions") }}
     >
-      {questions.slice(start, start + MAP_ROW).map((question, offset) => (
-        <li key={question.itemId}>
-          <QuestionCell index={start + offset} onPick={runner.go} question={question} size="row" />
-        </li>
-      ))}
-    </ol>
-  );
-}
-
-export function SheetLegend({ className }: { className?: string }) {
-  const t = useExtracted();
-
-  return (
-    <p className={cn("text-muted-foreground flex items-start gap-1.5 text-xs", className)}>
-      <span
-        aria-hidden="true"
-        className="ring-warning mt-1 size-2 shrink-0 rounded-[2px] ring-[1.5px] ring-inset"
-      />
-      {t("flagged · no feedback until the end, like on exam day")}
-    </p>
+      <ol className="flex w-max min-w-full gap-2 p-0.5" data-slot="mock-question-map" ref={row}>
+        {questions.map((question, index) => (
+          <li className="w-11 shrink-0 grow" key={question.itemId}>
+            <QuestionCell index={index} onPick={runner.go} question={question} />
+          </li>
+        ))}
+      </ol>
+    </HorizontalScroll>
   );
 }
 
 function SheetNotes() {
-  const t = useExtracted();
   const { runner } = useMockScreen();
-  const reused = runner.view.reusedQuestions;
-  const short = useMockShortLine(runner.view);
   const tools = runner.view.sections.find((section) => section.status === "current")?.tools;
 
-  if (!tools && !short && reused === 0) {
+  if (!tools) {
     return null;
   }
 
   return (
-    <div className="text-muted-foreground flex flex-col gap-1.5 text-xs [&_svg]:mt-0.5 [&_svg]:size-3.5 [&_svg]:shrink-0">
-      {tools && (
-        <p className="flex items-start gap-1.5">
-          <PencilRulerIcon aria-hidden="true" />
-          {tools}
-        </p>
-      )}
-      {short && <p>{short}</p>}
-      {reused > 0 && (
-        <p className="flex items-start gap-1.5">
-          <HistoryIcon aria-hidden="true" />
-          {t(
-            "{count, plural, one {# question repeats.} other {# questions repeat, missed ones first.}}",
-            { count: reused },
-          )}
-        </p>
-      )}
-    </div>
+    <p className="text-muted-foreground flex items-start gap-1.5 text-xs [&_svg]:mt-0.5 [&_svg]:size-3.5 [&_svg]:shrink-0">
+      <PencilRulerIcon aria-hidden="true" />
+      {tools}
+    </p>
   );
 }
 
@@ -189,10 +190,11 @@ function MockSheetContent({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <SheetGrid onPick={onPick} />
-        <div className="text-muted-foreground flex flex-col gap-1 text-xs">
-          <SheetLegend />
-          {withMoves && <MovesNote />}
-        </div>
+        {withMoves && (
+          <div className="text-muted-foreground text-xs empty:hidden">
+            <MovesNote />
+          </div>
+        )}
       </div>
       <SheetNotes />
       <SheetSections />
@@ -206,6 +208,7 @@ function SheetHandIn({ onHandIn }: { onHandIn: () => void }) {
 
   return (
     <Button
+      aria-haspopup="dialog"
       className="w-full"
       disabled={runner.pending}
       focusableWhenDisabled
@@ -256,21 +259,21 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
         render={<Button className="with-aside:hidden shrink-0" size="sm" variant="outline" />}
       >
         {t({
-          description: "Short label of a small button that opens the mock exam's answer sheet.",
+          description:
+            'Short label of a small button that opens the mock exam\'s answer sheet. Screen readers and voice control call the button "Answer sheet", so the label must be a word copied letter for letter from your translation of "Answer sheet", such as its first word.',
           message: "Sheet",
         })}
       </DrawerTrigger>
 
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
+        <SheetHeader>
           <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold">{t("Answer sheet")}</DrawerTitle>
+            <DrawerTitle>{t("Answer sheet")}</DrawerTitle>
             <DrawerDescription className="font-mono text-xs tabular-nums">
               {counts}
             </DrawerDescription>
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
 
         <DrawerContent className="pt-2">
           <MockSheetContent
@@ -282,14 +285,14 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
           />
         </DrawerContent>
 
-        <div className="border-border border-t px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <DrawerFooter>
           <SheetHandIn
             onHandIn={() => {
               setOpen(false);
               onHandIn();
             }}
           />
-        </div>
+        </DrawerFooter>
       </DrawerPopup>
     </Drawer>
   );

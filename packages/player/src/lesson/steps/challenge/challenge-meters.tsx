@@ -1,10 +1,12 @@
 "use client";
 
 import { type ChallengeMeterState } from "@zoonk/core/library/challenges/run";
-import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { useFormatNumber } from "@zoonk/learn/format-number";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowUpIcon, ChevronsDownIcon, ChevronsUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_PANEL_CLASS } from "../../../activities/_components/activity-canvas";
 import { type StepOf } from "../lesson-step-view-props";
 
 type ChallengeContent = StepOf<"challenge">["content"];
@@ -31,6 +33,7 @@ function getMeterMove(change: number): keyof typeof METER_ICONS {
 
 function MeterChange({ meter }: { meter: ChallengeMeterState }) {
   const t = useExtracted();
+  const format = useFormatNumber();
 
   if (meter.change === 0) {
     return <span className="text-muted-foreground">{t("no change")}</span>;
@@ -55,7 +58,8 @@ function MeterChange({ meter }: { meter: ChallengeMeterState }) {
       )}
     >
       <Icon aria-hidden="true" className="size-4" />
-      {words[move]}
+      <span aria-hidden="true">{format(meter.change, { signed: true })}</span>
+      <span className="sr-only">{words[move]}</span>
     </span>
   );
 }
@@ -81,13 +85,15 @@ export function ChallengeEffectsView({
   return (
     <li
       aria-hidden="true"
-      className="flex flex-wrap justify-end gap-x-4 gap-y-1 text-xs"
+      className="grid grid-cols-[auto_auto] items-baseline justify-end gap-x-1.5 gap-y-1 text-xs"
       data-slot="challenge-effects"
     >
       {moved.map((meter) => (
-        <span className="flex items-center gap-1.5" key={meter.id}>
-          <span className="text-muted-foreground">{fill(meter.label)}</span>
-          <MeterChange meter={meter} />
+        <span className="contents" key={meter.id}>
+          <span className="text-muted-foreground text-end">{fill(meter.label)}</span>
+          <span className="justify-self-end">
+            <MeterChange meter={meter} />
+          </span>
         </span>
       ))}
     </li>
@@ -104,6 +110,7 @@ export function ChallengeMeters({
   meters: ChallengeMeterState[];
 }) {
   const t = useExtracted();
+  const format = useFormatNumber();
 
   if (meters.length === 0) {
     return null;
@@ -113,14 +120,17 @@ export function ChallengeMeters({
     <section
       aria-label={t("How the case is going")}
       aria-live="polite"
-      className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4"
+      className={cn(ACTIVITY_PANEL_CLASS, "flex w-full flex-col gap-3")}
       data-slot="challenge-meters"
     >
       {meters.map((meter) => (
         <div className="flex flex-col gap-1.5" key={meter.id}>
-          <div className="flex items-center justify-between gap-3 text-sm">
+          <div className="flex items-baseline justify-between gap-3 text-sm">
             <span className="text-foreground">{fill(meter.label)}</span>
-            {hasMoved && <MeterChange meter={meter} />}
+            <span className="flex items-baseline gap-2 tabular-nums">
+              {format(meter.value)} <span className="text-muted-foreground">{t("out of 100")}</span>
+              {hasMoved && <MeterChange meter={meter} />}
+            </span>
           </div>
           <Meter
             aria-hidden={false}
@@ -136,6 +146,9 @@ export function ChallengeMeters({
               share={meter.value / METER_MAX}
             />
           </Meter>
+          <p className="text-muted-foreground text-xs">
+            {meter.goodWhen === "high" ? t("higher is better") : t("lower is better")}
+          </p>
         </div>
       ))}
     </section>

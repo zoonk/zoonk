@@ -15,11 +15,12 @@ import { useInstrument } from "../_utils/use-instrument";
 import { useNoteNames } from "../_utils/use-music-labels";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { GuitarMirror } from "./guitar-mirror";
-import { KeyboardFretboardHeader } from "./keyboard-fretboard-header";
+import { KeyboardFretboardHeader, KeyboardFretboardInstruction } from "./keyboard-fretboard-header";
 import {
   expectedPitches,
   fretWindowStart,
   initialPitches,
+  keyboardHeading,
   pitchSpelling,
   targetPitches,
   targetSound,
@@ -28,7 +29,7 @@ import {
   voicingMidis,
   voicingPitches,
 } from "./keyboard-fretboard-notes";
-import { SoundAsText, useCantListen } from "./sound-as-text";
+import { CantListenSwitch, SoundAsText, useKeyboardListening } from "./sound-as-text";
 
 const OCTAVE = 12;
 const STRUM_GAP = 0.04;
@@ -51,7 +52,6 @@ export function GuitarOnlyBoard({
   const { display, spoken } = useNoteNames();
   const labels = useFretboardLabels();
   const guitar = useInstrument("guitar");
-  const [cantListen, setCantListen] = useCantListen();
   const { check, fields } = content;
   const isChecked = phase === "checked";
   const spell = pitchSpelling([fields.target, fields.start]);
@@ -94,47 +94,42 @@ export function GuitarOnlyBoard({
     return expectedSet.includes(pitch) ? ("correct" as const) : ("wrong" as const);
   }
 
+  const listening = useKeyboardListening({
+    byEar: fields.byEar,
+    onPlay: () => void guitar.play(targetSound(fields.target)),
+    phase,
+    unavailable: guitar.status === "unavailable",
+  });
+
   return (
-    <ActivityCanvas labelId={labelId}>
-      <KeyboardFretboardHeader
-        byEar={
-          fields.byEar
-            ? {
-                isRevealed: phase !== "answering",
-                onPlay: cantListen ? null : () => void guitar.play(targetSound(fields.target)),
-              }
-            : null
-        }
-        notes={played.map((pitch) => spell(pitch))}
-        onHear={() => void guitar.play(together(voicingMidis(voicing), { gap: STRUM_GAP }))}
-        target={fields.target}
-      />
-
-      <GuitarFretboard
-        {...labels}
-        firstFret={firstFret}
-        label={t("Guitar strings")}
-        markOf={markOf}
-        nameOf={(midi) => display(spell(midi))}
-        onChange={isChecked ? undefined : handleChange}
-        voicing={voicing}
-      />
-
-      {fields.byEar && !isChecked && (
-        <SoundAsText
-          cantListen={cantListen}
-          isAnswering={phase === "answering"}
-          notes={targetSpelling(fields.target)}
-          onCantListenChange={setCantListen}
-          soundUnavailable={guitar.status === "unavailable"}
+    <>
+      <ActivityCanvas labelId={labelId}>
+        <KeyboardFretboardHeader
+          byEar={listening.earControls}
+          checked={isChecked}
+          heading={keyboardHeading({ content, phase, shown: played })}
+          notes={played.map((pitch) => spell(pitch))}
+          onHear={() => void guitar.play(together(voicingMidis(voicing), { gap: STRUM_GAP }))}
+          start={fields.start}
+          target={fields.target}
         />
-      )}
 
-      {!isChecked && (
+        <GuitarFretboard
+          {...labels}
+          firstFret={firstFret}
+          label={t("Guitar strings")}
+          markOf={markOf}
+          nameOf={(midi) => display(spell(midi))}
+          onChange={isChecked ? undefined : handleChange}
+          voicing={voicing}
+        />
+
+        {listening.showText && <SoundAsText notes={targetSpelling(fields.target)} />}
+
         <div className="flex items-center justify-between gap-2">
           <Button
             aria-label={t("Lower frets")}
-            disabled={firstFret <= 1}
+            disabled={isChecked || firstFret <= 1}
             onClick={() => setFirstFret(firstFret - 1)}
             size="icon"
             type="button"
@@ -152,7 +147,7 @@ export function GuitarOnlyBoard({
 
           <Button
             aria-label={t("Higher frets")}
-            disabled={firstFret >= HIGHEST_WINDOW}
+            disabled={isChecked || firstFret >= HIGHEST_WINDOW}
             onClick={() => setFirstFret(firstFret + 1)}
             size="icon"
             type="button"
@@ -161,25 +156,32 @@ export function GuitarOnlyBoard({
             <ChevronRight aria-hidden="true" />
           </Button>
         </div>
+
+        {showAnswer && (
+          <GuitarMirror
+            caption={t("One way to play the answer")}
+            kindOf={() => "correct"}
+            pitches={expectedSet}
+            spell={spell}
+          />
+        )}
+
+        {listening.showInstruction && <KeyboardFretboardInstruction />}
+        <ActivitySoundNote status={guitar.status} />
+
+        <ActivityTextAlternative>
+          {t("A guitar neck. Playing: {notes}.", {
+            notes:
+              played.length > 0
+                ? played.map((pitch) => spoken(spell(pitch))).join(", ")
+                : t("none"),
+          })}
+        </ActivityTextAlternative>
+      </ActivityCanvas>
+
+      {listening.offersWayOut && (
+        <CantListenSwitch cantListen={listening.cantListen} onChange={listening.setCantListen} />
       )}
-
-      {showAnswer && (
-        <GuitarMirror
-          caption={t("One way to play the answer")}
-          isChecked
-          pitches={expectedSet}
-          spell={spell}
-        />
-      )}
-
-      <ActivitySoundNote status={guitar.status} />
-
-      <ActivityTextAlternative>
-        {t("A guitar neck. Playing: {notes}.", {
-          notes:
-            played.length > 0 ? played.map((pitch) => spoken(spell(pitch))).join(", ") : t("none"),
-        })}
-      </ActivityTextAlternative>
-    </ActivityCanvas>
+    </>
   );
 }

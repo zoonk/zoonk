@@ -10,7 +10,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,17 +28,18 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.setup.FinishFailed
 import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
+import com.zoonk.android.feature.plan.GoalDateKind
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
-import com.zoonk.android.ui.components.SuccessEyebrow
+import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
@@ -52,6 +52,7 @@ import com.zoonk.api.models.PlanChangeDecisionInput
 /** What the result can do on a plan that's already the learner's: answer its proposal, change its focus, pause its questions. */
 internal class PlanControls(
     val answer: ProposalAnswer?,
+    val repriced: PlanChange?,
     val deciding: PlanChangeDecisionInput.Status?,
     val failed: Boolean,
     val onDecide: (PlanChange, PlanChangeDecisionInput.Status) -> Unit,
@@ -59,14 +60,9 @@ internal class PlanControls(
     val questions: SessionQuestionsModel,
 )
 
-internal fun displayName(
-    name: String,
-    shortName: String?,
-) = shortName ?: name
-
 /** A proposal still waiting for the learner's answer, which then is the screen's question. */
 internal fun FocusTestFocus.waitingProposal(plan: PlanControls?): PlanChange? =
-    proposal?.takeIf { plan != null && plan.answer == null && state == FocusTestFocus.State.PROPOSED && it.canApply }
+    (plan?.repriced ?: proposal)?.takeIf { plan != null && plan.answer == null && state == FocusTestFocus.State.PROPOSED && it.canApply }
 
 /** The test's result: where to focus, or where the plan starts. On a plan, a proposal asks first. */
 @Composable
@@ -93,7 +89,6 @@ internal fun ColumnScope.FocusTestCheckpoint(
         TestHeader(
             title = stringResource(if (focus != null) R.string.focustest_result_title else R.string.focustest_starting_point_title),
             description = answer?.let { outcomeLine(it) } ?: resultLine(focus, lessons, onPlan = plan != null),
-            eyebrow = { if (plan == null) SuccessEyebrow(stringResource(R.string.focustest_answers_saved)) else TestEyebrow() },
             announced = answer != null,
         )
         if (plan != null && answer != null) Undo(answer, plan)
@@ -147,9 +142,9 @@ private fun resultLine(
 private fun FocusRows(rows: List<FocusTestFocusRow>) {
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         rows.forEachIndexed { index, row ->
-            if (index > 0) HorizontalDivider()
+            if (index > 0) ListDivider()
             ListRow(
-                headline = { Text(displayName(row.subject.name, row.subject.shortName)) },
+                headline = { Text(row.subject.name) },
                 leading = {
                     Text(
                         "${index + 1}",
@@ -173,7 +168,7 @@ private fun ColumnScope.FocusProposal(
     SetupContent {
         TestHeader(stringResource(R.string.focustest_proposal_title), stringResource(R.string.focustest_proposal_description))
         FocusRows(rows)
-        PlanEffectDiff(proposal.effect)
+        PlanEffectDiff(proposal.effect, dateKind = GoalDateKind.Exam, repriced = plan.repriced != null)
         OnboardingActions {
             FinishFailed(plan.failed)
             Button(
@@ -215,7 +210,7 @@ private fun Undo(
     if (answer.status != PlanChangeDecisionInput.Status.APPLIED || !answer.change.canUndo) return
     TextButton(
         onClick = { plan.onDecide(answer.change, PlanChangeDecisionInput.Status.UNDONE) },
-        modifier = Modifier.bleed(LocalButtonSize.current.labelInset),
+        edge = ButtonEdge.Start,
         busy = plan.deciding == PlanChangeDecisionInput.Status.UNDONE,
         leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
     ) {
@@ -237,12 +232,12 @@ private fun PlanRows(
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             if (changesFocus) {
                 ListRow(headline = { Text(stringResource(R.string.focustest_change_focus)) }, onClick = plan.onChangeFocus)
-                HorizontalDivider()
+                ListDivider()
             }
             ListRow(headline = { Text(stringResource(R.string.focustest_see_all_subjects)) }, onClick = { subjects = true })
             if (questions != FocusTestSessionQuestions.OFF) {
                 val on = questions != FocusTestSessionQuestions.PAUSED
-                HorizontalDivider()
+                ListDivider()
                 ListRow(
                     headline = { Text(stringResource(R.string.focustest_session_questions)) },
                     modifier =
@@ -270,7 +265,7 @@ private fun PlanRows(
 internal fun HowItWorks(suggestsFocus: Boolean) {
     var open by rememberSaveable { mutableStateOf(false) }
     val title = stringResource(R.string.focustest_how_it_works)
-    TextButton(onClick = { open = true }, modifier = Modifier.bleed(LocalButtonSize.current.labelInset)) { Text(title) }
+    TextButton(onClick = { open = true }, edge = ButtonEdge.Start) { Text(title) }
     if (open) FocusTestSheet(title, onDismiss = { open = false }) { HowItWorksRows(suggestsFocus) }
 }
 
@@ -286,7 +281,7 @@ internal fun HowItWorksRows(suggestsFocus: Boolean) {
         )
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         rows.forEachIndexed { index, (title, line) ->
-            if (index > 0) HorizontalDivider()
+            if (index > 0) ListDivider()
             ListRow(headline = { Text(stringResource(title)) }, supporting = { Text(stringResource(line)) })
         }
     }
@@ -313,7 +308,7 @@ private fun FocusTestSheet(
 }
 
 @Composable
-private fun subjectState(subject: FocusTestSubject): String =
+private fun subjectState(subject: FocusTestSubject): String? =
     when (subject.state) {
         FocusTestSubject.State.ANSWERED -> {
             val chosen = (subject.asked - subject.dontKnow).toInt()
@@ -325,7 +320,7 @@ private fun subjectState(subject: FocusTestSubject): String =
         }
 
         FocusTestSubject.State.NOT_ASKED -> {
-            stringResource(R.string.focustest_not_asked_yet)
+            stringResource(R.string.focustest_not_known_yet)
         }
 
         FocusTestSubject.State.NOT_CHECKED -> {
@@ -345,10 +340,10 @@ private fun subjectState(subject: FocusTestSubject): String =
 internal fun SubjectsList(subjects: List<FocusTestSubject>) {
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         subjects.forEachIndexed { index, subject ->
-            if (index > 0) HorizontalDivider()
+            if (index > 0) ListDivider()
             ListRow(
-                headline = { Text(displayName(subject.name, subject.shortName)) },
-                meta = { Text(subjectState(subject), color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                headline = { Text(subject.name) },
+                meta = subjectState(subject)?.let { state -> { Text(state, color = MaterialTheme.colorScheme.onSurfaceVariant) } },
             )
         }
     }

@@ -102,16 +102,20 @@ class PronunciationRoundTest {
                 )
 
             round.record(round.attempt, RECORDING)
-            assertEquals(RoundStep.Word(0, issue = VoiceIssue.NoSpeech), round.step)
+            assertEquals(RoundStep.Word(0), round.step)
+            assertEquals(VoiceIssue.NoSpeech, round.issue)
 
             round.record(round.attempt, RECORDING)
-            assertEquals(RoundStep.Word(0, issue = VoiceIssue.Limited(Limit.SignUpRequired)), round.step)
+            assertEquals(RoundStep.Word(0), round.step)
+            assertEquals(VoiceIssue.Limited(Limit.SignUpRequired), round.issue)
 
             round.record(round.attempt, RECORDING)
-            assertEquals(RoundStep.Word(0, issue = VoiceIssue.Failed), round.step)
+            assertEquals(RoundStep.Word(0), round.step)
+            assertEquals(VoiceIssue.Failed, round.issue)
 
             round.record(round.attempt, RECORDING)
-            assertEquals(RoundStep.Word(0, issue = VoiceIssue.Failed), round.step)
+            assertEquals(RoundStep.Word(0), round.step)
+            assertEquals(VoiceIssue.Failed, round.issue)
             assertEquals(emptyMap<Int, TaskSegment>(), round.outcomes)
             assertFalse(round.pending)
         }

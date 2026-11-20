@@ -1,22 +1,11 @@
 import SwiftUI
 
 extension View {
-  /// Keeps a list's sections the page margin inside the safe area, where `pageBar(_:)` puts its
+  /// Keeps a list's sections the page margin inside the safe area, where `bottomBar(_:)` puts its
   /// controls. On its own a list keeps the larger of the safe area and its margin, so beside the outer
   /// display's side bar or at a hinge its sections wouldn't line up with a bar under them.
   func pageMargins() -> some View {
     modifier(PageMargins())
-  }
-
-  /// A bottom bar whose controls line up with the sections of the lists under it that keep
-  /// `pageMargins()`, kept off the fold.
-  func pageBar<Bar: View>(@ViewBuilder _ bar: () -> Bar) -> some View {
-    safeAreaBar(edge: .bottom) {
-      bar()
-        .padding(.horizontal, pageMargin)
-        .keepsOffFold()
-        .scenePadding(.vertical)
-    }
   }
 }
 

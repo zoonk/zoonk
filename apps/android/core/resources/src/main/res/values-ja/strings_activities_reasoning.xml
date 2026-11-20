@@ -9,9 +9,9 @@
   "activities_reasoning_claim": "b3f165c666542c76f2659de813d44a96937df64a182005bcea9bcae48213b59e",
   "activities_reasoning_evidence": "4901f0135f22cb54af520b63b8e657192934c28897ec47dbd9760e236497de4e",
   "activities_reasoning_evidence_chosen": "295b370733eecf16ef07c3c0b93b6c3983d9f188d5e2694af765709a7c767871",
-  "activities_reasoning_evidence_hint": "6d07eac635fc69559496fff63b639f3778389b932d8a5539539033734722827e",
+  "activities_reasoning_evidence_hint": "7ffa0517a3382647fb7cfb0bf7a2e75c60bd31246bd665e3ef7c11f127597fb4",
   "activities_reasoning_grid_all_filled": "5a55ef7d833287127eca966c631061af91b1fbb51d052aa45f8ab4a2bad7a2ef",
-  "activities_reasoning_grid_counted": "a82b5d66c7b255613b368b80ea81f2c065a53acaa5ee14309dd444058b048f1d",
+  "activities_reasoning_grid_counted": "e2cea9291b6d01130b74709b03996fb82201b014d97de0035ac04995f7cbf897",
   "activities_reasoning_grid_filled": "e7fd4319fa9fcd6f97fb1b4457c9d84b2281f77cd36c34014a3d488a95b78ec7",
   "activities_reasoning_grid_products": "af01b5dcccc82dd000f01816ffc466968e12c758e7bd662e2d1f526cee82e6dc",
   "activities_reasoning_grid_punnett": "5de223c83bc9406417dc0ff83eba41136927fedc596967e5dd2d256f5c8793fa",
@@ -66,7 +66,7 @@
   "activities_reasoning_quotes": "06e5a6103f03c25807bcbec540f547ab9614ec454eb4cdd5c18814d1f7076c8e",
   "activities_reasoning_reasoning": "6767b138d52b0b59461942f905d94d5548e1a8468237872ba1ee5005d5e6d13e",
   "activities_reasoning_reasoning_chosen": "89528faf060d38d2c82d82bb5e36e82126cad8f7461a7bbfe96d813e12d53862",
-  "activities_reasoning_reasoning_hint": "d5aa0fddeb58ddeb3620cbd6d0882030a14beb62f4788f3a3c8198ac549b9d27",
+  "activities_reasoning_reasoning_hint": "6a458abd7f1739a549af63e538e1a18fa057688e585ef53adee0d218990b0fe2",
   "activities_reasoning_reasoning_next": "68cc4da45d9f0f52ff616413c433d9afb0f0eba856ec6d42b55a48a81ea23303",
   "activities_reasoning_source_mark": "c2783d55c6aee2591a7ed5ad110e2593e566ee2768885af72bff2b11d7ff8fcb",
   "activities_reasoning_source_missed": "40e5fa0de80f31e2731b6a0b637e2bfe7c5dab8b5a6a0bcbc06e92f4a531ba3d",
@@ -105,10 +105,8 @@
     <string name="activities_reasoning_grid_value_trait">%1$s、%2$s</string>
     <!-- A checked square the learner filled wrong, for TalkBack: the right value, then the learner's, like "Pp, Purple. Your answer: pp". -->
     <string name="activities_reasoning_grid_your_answer">%1$s。回答：%2$s</string>
-    <!-- How many squares show the thing the check counted, like "2 of 4 squares: White" or "6 of 36 squares: 7". -->
-    <plurals name="activities_reasoning_grid_counted">
-        <item quantity="other">%1$dマス（全%2$dマス）：%3$s</item>
-    </plurals>
+    <!-- How many squares of the grid show one result, such as "Squares showing 7: 6 of 36". %3$s is that result. -->
+    <string name="activities_reasoning_grid_counted">%3$sを示すマス：%2$dマス中%1$dマス</string>
     <!-- After the check, like "3 of 4 squares right". -->
     <plurals name="activities_reasoning_grid_right">
         <item quantity="other">%1$dマス正解（全%2$dマス）</item>
@@ -211,8 +209,8 @@
     <string name="activities_reasoning_evidence_chosen">根拠：%1$s</string>
     <!-- For TalkBack, after the learner puts a line of reasoning in the argument, like "Reasoning: Juliet herself sees the rush." -->
     <string name="activities_reasoning_reasoning_chosen">理由付け：%1$s</string>
-    <string name="activities_reasoning_evidence_hint">主張を最もよく裏づける引用文を選んでください</string>
-    <string name="activities_reasoning_reasoning_hint">引用文が主張をどう裏づけるか、説明を選んでください</string>
+    <string name="activities_reasoning_evidence_hint">主張を最もよく裏付ける引用を選ぶか、ドラッグしてください</string>
+    <string name="activities_reasoning_reasoning_hint">引用が主張を裏付ける理由を選ぶか、ドラッグしてください</string>
     <!-- The empty reasoning part while the evidence is still to pick. -->
     <string name="activities_reasoning_reasoning_next">次は、引用が主張をどう裏付けるか説明してください</string>
     <string name="activities_reasoning_take_quote_out">引用文を外す</string>

@@ -31,7 +31,7 @@ import { ensureQuickBaseLessons } from "./quick-bases";
 import { replaceWaitingProposals } from "./replace-waiting-proposals";
 import { type ComputedChange, type PlanChangeRecord, revalidatePlanTags } from "./replan";
 import { savePlanProposal } from "./save-plan-proposal";
-import { getAskedAreas, getChangePlanning } from "./steered-areas";
+import { getAskedAreas, getChangePlanning, removesFocusOnly } from "./steered-areas";
 
 type Provenance = NonNullable<PlanChangeRecord["provenance"]>;
 
@@ -237,9 +237,18 @@ export async function applySteeringNow(
   const { change } = computed;
   const focusOnly = request.operations.every((operation) => operation.kind === "focusAreas");
 
+  const { context, operations } = request;
+  const focused = context.state.settings.focusAreas;
+
+  // Taking a focus back is the learner's to make even when no lesson moves.
+  if (focusOnly && change.unchanged && removesFocusOnly({ focused, operations })) {
+    await savePlanState({ ...request, state: change.computed.state });
+    revalidatePlanTags(context.goal.userId);
+    return { status: "saved" };
+  }
+
   if (focusOnly ? change.unchanged : change.contradicts) {
-    const { context, operations } = request;
-    const areas = getAskedAreas({ focused: context.state.settings.focusAreas, operations });
+    const areas = getAskedAreas({ focused, operations });
     const allIn = hasEveryLesson({ areas, computed: change.computed });
 
     return { reason: allIn ? "alreadyIn" : "cantMove", status: "unchanged" };

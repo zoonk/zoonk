@@ -8,8 +8,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 
@@ -37,14 +39,24 @@ fun answerTone(
     val (border, container) =
         when {
             result == AnswerResult.Right -> BorderStroke(CHECKED, colors.tertiary) to colors.tertiaryContainer
-            result == AnswerResult.Wrong -> BorderStroke(CHECKED, colors.error) to colors.errorContainer
+            result == AnswerResult.Wrong -> BorderStroke(CHECKED, MaterialTheme.zoonk.destructive) to colors.errorContainer
             result == AnswerResult.Guess -> BorderStroke(CHECKED, colors.onSurfaceVariant) to Color.Transparent
-            picked -> BorderStroke(2.dp, colors.primary) to MaterialTheme.zoonk.selectedTint
+            picked -> pickedBorder() to MaterialTheme.zoonk.selectedTint
             else -> BorderStroke(1.dp, colors.outline) to Color.Transparent
         }
 
     return AnswerTone(border = border, container = container, contentColor = colors.onSurface)
 }
+
+/**
+ * Main's pick: the soft fill takes the line's place, so a pick is a quiet tile with its own mark. The line comes
+ * back only when the device asks for more contrast.
+ */
+@Composable
+fun pickedBorder(): BorderStroke = BorderStroke(1.dp, pickedBorderColor())
+
+@Composable
+fun pickedBorderColor(): Color = if (LocalMoreContrast.current) MaterialTheme.colorScheme.outline else Color.Transparent
 
 /** A right pick says "Your answer", or "Your guess" when [guessed], so it isn't called correct twice under its verdict. */
 @Composable
@@ -69,6 +81,20 @@ fun AnswerTag(
         }
 
     Text(text = text, modifier = modifier, color = color, style = MaterialTheme.zoonkType.tag)
+}
+
+/** Before Check, a pick says it's the learner's in the words its verdict keeps. Unspoken: the option is selected. */
+@Composable
+fun PickedTag(
+    guessed: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = stringResource(if (guessed) R.string.answer_tag_your_guess else R.string.answer_tag_your_answer),
+        modifier = modifier.clearAndSetSemantics {},
+        color = MaterialTheme.colorScheme.onSurface,
+        style = MaterialTheme.zoonkType.tag,
+    )
 }
 
 private val CHECKED = 1.5.dp

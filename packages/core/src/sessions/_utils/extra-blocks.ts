@@ -1,7 +1,6 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
-import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
@@ -18,15 +17,12 @@ import { type DayBlockInput } from "./day-block-view";
 import { loadExamStructure } from "./exam-structure";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
-import { loadExamPrepAccess } from "./plus-only-lessons";
 import { getPlanTopics, getPracticeLabels } from "./practice-blocks";
 import { lockSessionQueue } from "./session-queue-lock";
 import { type StudyBlockView, toStudyBlockView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
-type ExtraDay = Pick<StudySessionRow, "goal" | "goalId" | "localDate"> & {
-  blocks: readonly DayBlockInput[];
-};
+type ExtraDay = Pick<StudySessionRow, "goal" | "goalId"> & { blocks: readonly DayBlockInput[] };
 
 async function loadPracticePlan(goalId: string | null) {
   const plan = goalId
@@ -37,24 +33,6 @@ async function loadPracticePlan(goalId: string | null) {
     difficultyBias: parsePlanSettings(plan?.settings).difficultyBias,
     graph: parsePlanGraph(plan?.graph),
   };
-}
-
-/** Uses the session's saved local day, not the request's later date. */
-export async function isFreeWeekOver(
-  session: ExtraDay,
-  readViewer?: typeof readEntitlementViewer,
-): Promise<boolean> {
-  if (!session.goal) {
-    return false;
-  }
-
-  const access = await loadExamPrepAccess({
-    goal: session.goal,
-    readViewer,
-    today: session.localDate,
-  });
-
-  return access.trialEnded;
 }
 
 /** Null without an askable question; never reuses questions already asked by the session. */
@@ -132,24 +110,17 @@ function getLessonsDoneToday(session: ExtraDay): Set<string> {
   );
 }
 
-/** Preserves plan order and permits the last lesson to exceed minutes; no new lessons past the free exam week. */
 export async function buildExtraLessons({
   areaId = null,
   minutes = 0,
   planItemIds,
-  readViewer,
   session,
 }: {
   areaId?: string | null;
   minutes?: number;
   planItemIds?: readonly string[];
-  readViewer?: typeof readEntitlementViewer;
   session: ExtraDay;
 }): Promise<PlannedBlock[]> {
-  if (await isFreeWeekOver(session, readViewer)) {
-    return [];
-  }
-
   const done = getLessonsDoneToday(session);
 
   const items = await prisma.planItem.findMany({
@@ -206,18 +177,16 @@ export async function buildExtraLessons({
 
 export async function planExtraBlocks({
   minutes,
-  readViewer,
   session,
   skillIds,
   userId,
 }: {
   minutes: number;
-  readViewer?: typeof readEntitlementViewer;
   session: ExtraDay;
   skillIds: string[];
   userId: string;
 }): Promise<ExtraBlocks | null> {
-  const [lesson, ...lessons] = await buildExtraLessons({ minutes, readViewer, session });
+  const [lesson, ...lessons] = await buildExtraLessons({ minutes, session });
 
   if (lesson) {
     return [lesson, ...lessons];
@@ -241,19 +210,9 @@ export async function withExtraStudyCheck({
     return extraTime;
   }
 
-  if (await isFreeWeekOver(session, readEntitlementViewer)) {
-    return { available: false, lessons: [], minutes: 0, reason: "plusRequired" };
-  }
-
   const skillIds = session.goalId ? await loadGoalSkillIds(session.goalId) : [];
 
-  const planned = await planExtraBlocks({
-    minutes: extraTime.minutes,
-    readViewer: readEntitlementViewer,
-    session,
-    skillIds,
-    userId,
-  });
+  const planned = await planExtraBlocks({ minutes: extraTime.minutes, session, skillIds, userId });
 
   if (!planned) {
     return { available: false, lessons: [], minutes: 0, reason: "nothingToStudy" };

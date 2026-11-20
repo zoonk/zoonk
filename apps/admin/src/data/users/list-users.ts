@@ -10,13 +10,15 @@ const cachedListUsers = cacheAdminData(
     const where = getUserSearchWhere({ search });
 
     const [users, total] = await Promise.all([
-      prisma.user.findMany({
-        include: { progress: true },
-        orderBy: getUserOrderBy({ sort }),
-        skip: offset,
-        take: limit,
-        where,
-      }),
+      sort === "brain-power"
+        ? findUsersByBrainPower({ limit, offset, where })
+        : prisma.user.findMany({
+            include: { progress: true },
+            orderBy: NEWEST_FIRST,
+            skip: offset,
+            take: limit,
+            where,
+          }),
       prisma.user.count({ where }),
     ]);
 
@@ -44,16 +46,46 @@ export async function listUsers(params: {
   return cachedListUsers(params.limit, params.offset, params.sort, params.search);
 }
 
-function getUserOrderBy({ sort }: { sort: UserSort }) {
-  if (sort === "newest-signups") {
-    return [{ createdAt: "desc" as const }, { id: "asc" as const }];
+const NEWEST_FIRST = [{ createdAt: "desc" as const }, { id: "asc" as const }];
+
+/**
+ * Postgres sorts a missing progress row above every number, so a plain descending order would open
+ * the list with the users who never earned any. They follow the ranked ones here, newest first.
+ */
+async function findUsersByBrainPower({
+  limit,
+  offset,
+  where,
+}: {
+  limit: number;
+  offset: number;
+  where: ReturnType<typeof getUserSearchWhere>;
+}) {
+  const ranked = { ...where, progress: { isNot: null } };
+
+  const rankedUsers = await prisma.user.findMany({
+    include: { progress: true },
+    orderBy: [{ progress: { totalBrainPower: "desc" } }, ...NEWEST_FIRST],
+    skip: offset,
+    take: limit,
+    where: ranked,
+  });
+
+  if (rankedUsers.length === limit) {
+    return rankedUsers;
   }
 
-  return [
-    { progress: { totalBrainPower: "desc" as const } },
-    { createdAt: "desc" as const },
-    { id: "asc" as const },
-  ];
+  const rankedTotal = await prisma.user.count({ where: ranked });
+
+  const unrankedUsers = await prisma.user.findMany({
+    include: { progress: true },
+    orderBy: NEWEST_FIRST,
+    skip: Math.max(0, offset - rankedTotal),
+    take: limit - rankedUsers.length,
+    where: { ...where, progress: null },
+  });
+
+  return [...rankedUsers, ...unrankedUsers];
 }
 
 function addUserPlan<TUser extends { id: string }>({

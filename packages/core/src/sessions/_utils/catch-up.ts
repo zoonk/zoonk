@@ -132,13 +132,11 @@ function fitsInADay({ dailyMinutes, minutes }: { dailyMinutes: number; minutes: 
 function isQuietDay({
   examTomorrow,
   freshStart,
-  trialEnded,
 }: {
   examTomorrow: boolean;
   freshStart: StudyFreshStart | null;
-  trialEnded: boolean;
 }): boolean {
-  return trialEnded || (freshStart !== null && !examTomorrow);
+  return freshStart !== null && !examTomorrow;
 }
 
 /** Returns null when the learner is on pace. */
@@ -150,7 +148,6 @@ export async function loadCatchUpView({
   goalId,
   readItems,
   selectedItems,
-  trialEnded,
 }: {
   blocks: readonly DayBlockInput[];
   /** Use the goal's daily minutes to size the extra catch-up day. */
@@ -161,9 +158,8 @@ export async function loadCatchUpView({
   /** A GET's request-wide catch-up items; without it, they're read fresh. */
   readItems?: () => Promise<readonly SessionPlanItem[]>;
   selectedItems?: readonly SessionPlanItem[];
-  trialEnded: boolean;
 }): Promise<CatchUpView | null> {
-  if (isQuietDay({ examTomorrow, freshStart, trialEnded })) {
+  if (isQuietDay({ examTomorrow, freshStart })) {
     return null;
   }
 

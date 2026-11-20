@@ -15,7 +15,7 @@ export const explainWrongAnswerTask: Task<
     "Explain why a typed or spoken answer is wrong, for everyone who gives the same answer (stored and reused)",
   generate: (input) => explainWrongAnswer({ ...input, country: input.country ?? null }),
   id: "explain-wrong-answer",
-  name: "Explain Wrong Answer",
+  name: "Explain wrong answer",
   scoreCategories: EXPLAIN_WRONG_ANSWER_SCORE_CATEGORIES,
   testCases: TEST_CASES,
 };

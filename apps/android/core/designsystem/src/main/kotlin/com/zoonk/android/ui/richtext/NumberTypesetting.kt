@@ -20,72 +20,10 @@ private val STATE_CODE = Regex(",\\s\\p{Lu}{2},?\\s$")
 
 private fun isPostalCode(before: String) = POSTAL_LABEL.containsMatchIn(before) || STATE_CODE.containsMatchIn(before)
 
-/** Units lessons write after a number, in their own case ("A" is amperes, "a" is a word). */
-private val UNITS =
-    listOf(
-        "%",
-        "°C",
-        "°F",
-        "A",
-        "B",
-        "GB",
-        "GHz",
-        "Hz",
-        "J",
-        "K",
-        "KB",
-        "L",
-        "MB",
-        "MHz",
-        "N",
-        "Pa",
-        "TB",
-        "V",
-        "W",
-        "cal",
-        "cm",
-        "cm²",
-        "cm³",
-        "g",
-        "h",
-        "ha",
-        "kHz",
-        "kJ",
-        "kW",
-        "kWh",
-        "kcal",
-        "kg",
-        "km",
-        "km/h",
-        "km²",
-        "l",
-        "m",
-        "m/s",
-        "mA",
-        "mL",
-        "mg",
-        "min",
-        "ml",
-        "mm",
-        "mol",
-        "ms",
-        "m²",
-        "m³",
-        "nm",
-        "rpm",
-        "s",
-        "t",
-        "µm",
-        "Ω",
-        "kΩ",
-    )
+private val NUMBER_THEN_WORD = Regex("(?<=[0-9])[ \t]+(?=[\\p{L}%°])")
 
-private val NUMBER_THEN_UNIT =
-    Regex(
-        "(?<=[0-9]) (?=(?:${UNITS.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) }})(?![\\p{L}0-9]))",
-    )
-
-private val CURRENCY_THEN_NUMBER = Regex("(\\p{Lu}{0,2}\\p{Sc}) (?=[0-9])")
+/** A sign and its amount, apart by a space or by the no-break space a question's text already keeps them with. */
+private val CURRENCY_THEN_NUMBER = Regex("(\\p{Lu}{0,2}\\p{Sc})[ \\u00A0](?=[0-9])")
 
 private val CURRENCY_SYMBOLS =
     mapOf(
@@ -104,7 +42,7 @@ private val CURRENCY_SYMBOLS =
  * The gap the learner's money format puts after the sign: nothing in English ("R$80"), a no-break
  * space in Portuguese ("R$ 80"). Null for a language that writes money after the amount ("80 €").
  */
-private fun moneySignGap(
+internal fun moneySignGap(
     locale: Locale,
     sign: String,
 ): String? {
@@ -132,20 +70,36 @@ private fun moneySignGap(
 
 /**
  * AI-written numbers set the way the learner's language prints them, so they match the readouts
- * and answers beside them, and a number never wraps away from its unit or currency.
+ * and answers beside them, and a number never wraps away from the word, unit or currency beside it.
  */
 internal fun typesetNumbers(
     locale: Locale,
     text: String,
+    group: Boolean = true,
 ): String {
+    val together = text.replace(NUMBER_THEN_WORD, NBSP)
+    if (!group) return typesetMoney(locale, together)
+
     val grouping = NumberFormat.getIntegerInstance(locale).apply { isGroupingUsed = true }
 
-    return text
-        .replace(LONG_NUMBER) { number ->
-            if (isPostalCode(text.substring(0, number.range.first))) number.value else grouping.format(number.value.toBigInteger())
-        }.replace(NUMBER_THEN_UNIT, NBSP)
-        .replace(CURRENCY_THEN_NUMBER) { match ->
-            val sign = match.groupValues[1]
-            sign + (moneySignGap(locale, sign) ?: NBSP)
-        }
+    return typesetMoney(
+        locale,
+        together
+            .replace(LONG_NUMBER) { number ->
+                if (isPostalCode(together.substring(0, number.range.first))) number.value else grouping.format(number.value.toBigInteger())
+            },
+    )
 }
+
+/**
+ * Only money set the way the learner's money format writes it, for a question's own text, whose other digits
+ * (a code in a table, an ID, a count it asks about) stay as written.
+ */
+fun typesetMoney(
+    locale: Locale,
+    text: String,
+): String =
+    text.replace(CURRENCY_THEN_NUMBER) { match ->
+        val sign = match.groupValues[1]
+        sign + (moneySignGap(locale, sign) ?: NBSP)
+    }

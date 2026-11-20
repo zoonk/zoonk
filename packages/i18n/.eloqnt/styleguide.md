@@ -4,6 +4,8 @@
 
 Zoonk helps anyone learn anything, especially first-time learners in small towns and under-resourced communities. Write simple, everyday, welcoming text without jargon: friendly and encouraging, never condescending, and never scolding learners for mistakes, breaks, or missed days.
 
+- A question in a list of common questions (an FAQ) is the reader asking about themselves: word it in the first person, the way your language's other FAQ questions ask (“Can I trust lessons made by AI?”, “What do I get if I subscribe?”), never as a question put to the reader. A language that asks these without a subject keeps doing so.
+- A button's or link's label is as short as the English and says nothing the English doesn't: no added subject, possessive or detail, and no verb when the English has none (“New goal” stays a noun). The language's form for buttons applies to the verb the English has.
 - Use “…” for ellipses. Avoid em dashes.
 - Put a no-break space before every “·”, the English one or one you add, so the dot never starts a line or sits alone on one. A language that writes its separator without spaces, such as Japanese “・”, needs none.
 
@@ -13,15 +15,17 @@ Zoonk helps anyone learn anything, especially first-time learners in small towns
 - A “card” is a speaking exam's task card or a card picked in an activity, never a flashcard.
 - Buddies are learning partners, not pets, and their localized names are proper names.
 - “Known” and “Known before” mean the learner knew it before studying it in Zoonk.
-- In Trickster duels, “broken” counts shield plates broken by right answers; “held” means the shield withstood the attempt.
+- Against the Trickster, “broken” counts shield plates broken by right answers; “held” means the shield withstood the attempt. A second go is a “Rematch”.
 - “Sure” and “unsure” are the learner's confidence in an answer.
+- In a mock exam, “Flag”, “Remove flag” and “flagged” are one word family: a flagged question is one the learner marked with the Flag button, so use that button's word.
 - “q” abbreviates “questions” only in English: write the word.
 - English grammar topics keep the English names their learners use, such as “phrasal verbs”, “present perfect” and “past continuous”.
 
 ## Plan language
 
-- “Finished”: the learner completed the plan. “Past date”: its date passed with lessons left, and the plan can still be adjusted.
-- “Left out”: the plan omitted it for lack of time. “Skipped”: a test showed the learner knew it. “Skip”: the learner's choice.
+- “Finished”: the learner completed the plan. “Date passed”: its date passed with lessons left, and the plan can still be adjusted.
+- “Not in your plan”: the plan has no time for it (older strings say “left out”). “Skipped”: a test showed the learner knew it. “Skip”: the learner's choice. Never translate one with another's word.
+- “Up to date”, “behind” and “ahead” are a plan's states against its dates, not software that was updated.
 - Write proposed changes as proposals and applied changes as done. A sentence that says what a plan change does is shown for both, so keep it in the present.
 
 ## Placeholders

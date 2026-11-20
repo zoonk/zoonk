@@ -37,19 +37,3 @@ export function getShareInPhase({
   const offset = { end: 1, middle: 0.5, start: 0 }[at];
   return Math.min(1, Math.max(0, (daysBetween(phase.startDate, date) + offset) / days));
 }
-
-export function getPhaseDay({
-  phase,
-  today,
-}: {
-  phase: DatedPhase;
-  today: string;
-}): { day: number; days: number } | null {
-  const days = getPhaseDays(phase);
-
-  if (days === null || !phase.startDate) {
-    return null;
-  }
-
-  return { day: Math.min(days, Math.max(1, daysBetween(phase.startDate, today) + 1)), days };
-}

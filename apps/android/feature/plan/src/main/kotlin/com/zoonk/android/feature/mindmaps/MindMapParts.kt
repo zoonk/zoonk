@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.mindmaps
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -9,9 +10,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +30,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -33,18 +39,19 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.size.Size
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -55,9 +62,10 @@ import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.MindMapImage
 import com.zoonk.api.models.MindMapOutline
+import java.io.OutputStream
 import java.util.UUID
 
-/** A map's picture through the session the screen shows; [original] decodes it whole, for zooming. */
+/** A map's picture through the session the screen shows; [original] decodes it whole, for zooming; [onLoaded] once it shows. */
 @Composable
 internal fun MapPicture(
     url: String,
@@ -65,6 +73,7 @@ internal fun MapPicture(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
     original: Boolean = false,
+    onLoaded: () -> Unit = {},
 ) {
     val pictures = LocalPrivatePictures.current ?: return
     val context = LocalContext.current
@@ -81,6 +90,7 @@ internal fun MapPicture(
         contentDescription = contentDescription,
         modifier = modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh),
         contentScale = contentScale,
+        onSuccess = { onLoaded() },
     )
 }
 
@@ -142,65 +152,95 @@ internal fun mindMapDescription(
 }
 
 /**
- * The map in words under the header that names it: its central idea, its numbered branches, a
- * comparison and the gist.
+ * Main's `MindMapOutline`: the map in words, a section per branch (its number and title, its line
+ * and its points), then the comparison as a table and the gist last. [titled] leads with the map's
+ * own title where nothing above names it.
  */
 @Composable
 internal fun MindMapOutlineText(
     outline: MindMapOutline,
     modifier: Modifier = Modifier,
+    titled: Boolean = false,
 ) {
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
+    val heading = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Text(outline.centralIdea, color = quiet, style = MaterialTheme.typography.bodyMedium)
+    ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(32.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                if (titled) Text(outline.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+                Text(outline.centralIdea)
+            }
 
-        outline.branches.forEachIndexed { index, branch ->
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Box(
-                    Modifier
-                        .size(24.dp)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh, MaterialTheme.shapes.extraSmall),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text("${index + 1}", color = quiet, style = MaterialTheme.typography.labelMedium.copy(fontFeatureSettings = "tnum"))
-                }
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(branch.title, style = MaterialTheme.typography.titleSmall)
-                    Text(branch.explanation, style = MaterialTheme.typography.bodyMedium)
+            outline.branches.forEachIndexed { index, branch ->
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(Modifier.semantics(mergeDescendants = true) { heading() }, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(
+                            "${index + 1}",
+                            Modifier.alignByBaseline().clearAndSetSemantics {},
+                            color = quiet,
+                            style = MaterialTheme.typography.labelMedium.copy(fontFeatureSettings = "tnum"),
+                        )
+                        Text(branch.title, Modifier.alignByBaseline(), style = heading)
+                    }
+                    Text(branch.explanation)
                     Points(branch.points)
                 }
             }
-        }
 
-        outline.comparison?.let { comparison ->
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(comparison.title, color = quiet, style = MaterialTheme.typography.labelLarge)
-                comparison.columns.forEach { column ->
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(column.name, style = MaterialTheme.typography.titleSmall)
-                        Points(column.points)
-                    }
+            outline.comparison?.let { comparison ->
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(comparison.title, Modifier.semantics { heading() }, style = heading)
+                    ComparisonTable(comparison.columns.map { it.name to it.points })
+                }
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                val inShort = stringResource(R.string.mindmaps_in_short)
+                Text(
+                    buildAnnotatedString {
+                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) { append(inShort) }
+                        append(" ")
+                        append(outline.summary)
+                    },
+                )
+            }
+        }
+    }
+}
+
+/** The things a map sets side by side, a column each, their points row by row. */
+@Composable
+private fun ComparisonTable(columns: List<Pair<String, List<String>>>) {
+    val rows = columns.maxOfOrNull { it.second.size } ?: 0
+    val divider = MaterialTheme.colorScheme.outlineVariant
+
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            columns.forEach { (name, _) ->
+                Text(
+                    name,
+                    Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
+        }
+        repeat(rows) { row ->
+            HorizontalDivider(color = divider)
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                columns.forEach { (_, points) ->
+                    Text(points.getOrElse(row) { "" }, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
-
-        val inShort = stringResource(R.string.mindmaps_in_short)
-        Text(
-            text =
-                buildAnnotatedString {
-                    withStyle(SpanStyle(fontWeight = FontWeight.Medium)) { append(inShort) }
-                    append(" ")
-                    append(outline.summary)
-                },
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 }
 
 @Composable
 private fun Points(points: List<String>) {
-    val style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val style = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
     points.forEach { point ->
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text("•", Modifier.clearAndSetSemantics {}, style = style)
@@ -219,21 +259,10 @@ internal fun rememberSavePicture(
     image: MindMapImage,
     chapterTitle: String,
 ): () -> Unit {
-    val context = LocalContext.current
-    val snackbar = LocalSnackbarHostState.current
-    val save by maps.save.collectAsStateWithLifecycle()
-    val saved = stringResource(R.string.mindmaps_saved)
-    val failed = stringResource(R.string.mindmaps_save_failed)
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PICTURE_TYPE)) { uri ->
-            if (uri != null) maps.savePicture(image.url) { context.contentResolver.openOutputStream(uri) }
+            if (uri != null) maps.savePicture(image.url, uri)
         }
-
-    LaunchedEffect(save) {
-        val result = save ?: return@LaunchedEffect
-        maps.savedShown()
-        snackbar.showSnackbar(if (result == PictureSave.Saved) saved else failed)
-    }
 
     return { launcher.launch(mindMapFileName(chapterTitle)) }
 }
@@ -274,7 +303,7 @@ internal fun MindMapLimit(
         limit = limit,
         subject = subject,
         onCreateAccount = { navigate(AppRoute.Login) },
-        onSeePlus = { navigate(AppRoute.Subscription) },
+        onSubscribe = { navigate(AppRoute.Subscription) },
         modifier = modifier,
     )
 }
@@ -296,8 +325,8 @@ internal fun FollowWhileOnItsWay(
 /**
  * What a screen's mind maps need from the app: the store, the session it shows (for its pictures
  * and the polls), the plan's cap on new maps (read only where a map could still be made), the
- * learner's plan (on Plus, rows say a chapter's lessons get written first without counting), and
- * where a failed save says so.
+ * learner's plan (on Plus, rows say a chapter's lessons get written first without counting),
+ * the app's snackbars, where a save says how it went, and the files a picture is saved to.
  */
 internal class MindMapsHost(
     val store: MindMapStore,
@@ -306,19 +335,29 @@ internal class MindMapsHost(
     val cap: @Composable () -> Limit?,
     val tier: @Composable () -> LimitTier,
     private val currentSession: () -> AuthenticatedSession?,
-    private val saveFailed: () -> Unit = {},
+    private val snackbars: AppSnackbars = AppSnackbars(),
+    private val files: (Uri) -> OutputStream? = { null },
 ) {
     @Composable
     fun plus(): Boolean = tier() == LimitTier.Plus
 
     @Composable
     fun maps(goalId: UUID): MindMapViewModel =
-        viewModel(key = "mindmaps-$goalId-${session.localId}") { MindMapViewModel(store, session, goalId, currentSession, saveFailed) }
+        viewModel(key = "mindmaps-$goalId-${session.localId}") { MindMapViewModel(store, session, goalId, currentSession, files) }
+
+    /** A screen that saves maps or pictures is [maps]' visit: what those saves lead to is said while it lasts. */
+    @Composable
+    fun SavesSaid(maps: MindMapViewModel) {
+        VisitOf(maps.visit)
+        ActOn(maps.saveFailed) { snackbars.show(R.string.mindmaps_save_map_failed) }
+        ActOn(maps.pictureSaved) { snackbars.show(if (it == PictureSave.Saved) R.string.mindmaps_saved else R.string.mindmaps_save_failed) }
+    }
 }
 
 @Composable
 internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
     val session = app.sessions.current ?: return null
+    val files = LocalContext.current.applicationContext.contentResolver
     return MindMapsHost(
         store = app.mindMaps,
         session = session,
@@ -336,6 +375,7 @@ internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
             }
         },
         currentSession = { app.sessions.current },
-        saveFailed = { app.snackbars.show(R.string.mindmaps_save_map_failed) },
+        snackbars = app.snackbars,
+        files = files::openOutputStream,
     )
 }

@@ -64,6 +64,40 @@ class LessonSpreadTest {
         bounds: DpRect,
     ) = assertTrue("$what starts after the fold: $bounds", bounds.left >= FOLD)
 
+    @Test
+    @Config(qualifiers = "w390dp-h844dp")
+    fun aLanguageExplanationOnAPhoneKeepsItsOnlyAsk() {
+        harness.play(listOf(explanationStep("read")), withTutor = true, targetLanguage = "es")
+        rule.onNodeWithText("Ask buddy").assertExists().performClick()
+        rule.waitForIdle()
+        assertTrue(harness.tutorOpen)
+    }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp")
+    fun aKnowledgeExplanationOnAPhoneKeepsOnlyItsOwnAsk() {
+        harness.play(listOf(explanationStep("read")), withTutor = true)
+        rule.onNodeWithText("I didn't get this").assertExists()
+        rule.onNodeWithText("Ask buddy").assertDoesNotExist()
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun aLargeLanguageExplanationKeepsOnlyItsAsideHelp() {
+        harness.play(listOf(explanationStep("read")), withTutor = true, targetLanguage = "es")
+        rule.unfoldBook(folds)
+        rule.onNodeWithText("Ask for help").assertExists()
+        rule.onNodeWithText("Ask buddy").assertDoesNotExist()
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun aLargeExplanationWithoutAsideHelpKeepsItsAskEntry() {
+        harness.play(listOf(explanationStep("read")), withTutor = true, tutorCanAsk = false, targetLanguage = "es")
+        rule.unfoldBook(folds)
+        rule.onNodeWithText("Ask buddy").assertExists()
+    }
+
     /** A sentence half built isn't the player's answer yet, only the screen's own state: opening or closing the book keeps it. */
     @Test
     @Config(qualifiers = BOOK)

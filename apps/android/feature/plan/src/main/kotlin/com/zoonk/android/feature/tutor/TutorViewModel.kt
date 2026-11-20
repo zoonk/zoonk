@@ -18,6 +18,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.feature.memory.MemoryUndo
@@ -28,17 +29,15 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Clock
 import java.util.UUID
 import kotlin.math.min
 import kotlin.math.pow
@@ -56,6 +55,8 @@ data class TutorConversationState(
     val memoryUndos: Map<String, MemoryUndo> = emptyMap(),
     val decidingChanges: Set<UUID> = emptySet(),
     val failedDecisions: Set<UUID> = emptySet(),
+    /** Changes accepted after their numbers moved: each card asks again with today's. */
+    val repricedChanges: Set<UUID> = emptySet(),
     /** A setting card's (variety, content country, where you live) save in flight or failed, by its turn; whether it's saved is the setting itself. */
     val offerSaves: Map<String, OfferSave> = emptyMap(),
     val missionMoment: StudyMissionMoment? = null,
@@ -94,6 +95,8 @@ class TutorViewModel internal constructor(
     scope: TutorScope,
     private val store: TutorStore,
     private val saved: SavedStateHandle,
+    /** When a refusal arrives, as [com.zoonk.android.ui.components.Limit.Reached.received] reads it. */
+    private val clock: Clock = Clock.systemUTC(),
     /** Null when the step isn't free to start anymore. */
     private val openMission: suspend (UUID) -> MutationResult<AppRoute?>,
 ) : ViewModel() {
@@ -139,25 +142,23 @@ class TutorViewModel internal constructor(
     ) {
         if (isOpeningBlock) return
         isOpeningBlock = true
-        leadsWhereTapped = true
-        blockNotice = null
+        notice.clear()
+        val started = visit.number
 
         viewModelScope.launch {
             try {
-                val result = openMission(blockId)
-                if (!leadsWhereTapped) return@launch
-                when (result) {
+                when (val result = openMission(blockId)) {
                     is MutationResult.Done -> {
                         val route = result.value
                         if (route == null) {
-                            blockNotice = BlockNotice(turnId, closed = true)
+                            notice.send(started, BlockNotice(turnId, closed = true))
                         } else {
-                            openedBlocks.trySend(route)
+                            blockRoute.send(started, route)
                         }
                     }
 
                     is MutationResult.Failed -> {
-                        blockNotice = BlockNotice(turnId, closed = false)
+                        notice.send(started, BlockNotice(turnId, closed = false))
                     }
 
                     MutationResult.Obsolete -> {}
@@ -171,14 +172,16 @@ class TutorViewModel internal constructor(
     var isOpeningBlock by mutableStateOf(false)
         private set
 
-    var blockNotice by mutableStateOf<BlockNotice?>(null)
-        private set
-
-    private val openedBlocks = Channel<AppRoute>(Channel.BUFFERED)
-    private var leadsWhereTapped = false
+    /** This visit to the conversation: a step link's open leads and says something only on it. */
+    private val visit = Visit()
 
     /** Where an answer's step link leads once it opened, even after the answer scrolled away or the screen was made again. */
-    val blockRoutes: Flow<AppRoute> = openedBlocks.receiveAsFlow()
+    val blockRoute = visit.outcome<AppRoute>()
+
+    private val notice = visit.outcome<BlockNotice>()
+
+    /** Why a step link opened nothing, said under its answer on this visit. */
+    val blockNotice get() = notice.value
 
     /**
      * The learner left the conversation, so a step link's open still on its way leads and says
@@ -186,11 +189,7 @@ class TutorViewModel internal constructor(
      */
     fun leave() {
         screenAsk?.cancel()
-        leadsWhereTapped = false
-        blockNotice = null
-        do {
-            val waiting = openedBlocks.tryReceive()
-        } while (waiting.isSuccess)
+        visit.end()
     }
 
     private val mutableState = MutableStateFlow(TutorConversationState())
@@ -250,6 +249,25 @@ class TutorViewModel internal constructor(
         saved[OFFERED_ID] = suggestion.id
     }
 
+    /** The day the messages cap gave has come: the composer is back, and a refused question stays unanswered with its retry. */
+    fun limitLifted() {
+        mutableState.update { state ->
+            state.copy(
+                askFailure = state.askFailure?.takeIf { it.helpLimit == null },
+                answerFailures =
+                    state.answerFailures.mapValues { (_, failure) ->
+                        if (failure.helpLimit !=
+                            null
+                        ) {
+                            TutorFailure.Unanswered
+                        } else {
+                            failure
+                        }
+                    },
+            )
+        }
+    }
+
     fun retryAnswer(id: String) {
         val turn = turns?.firstOrNull { it.id == id } ?: return
         val session = sessions.current ?: return
@@ -285,19 +303,23 @@ class TutorViewModel internal constructor(
     }
 
     fun decidePlanChange(
-        changeId: UUID,
+        change: PlanChange,
         status: PlanChangeDecisionInput.Status,
     ) {
         val goal = goalId ?: return
+        val changeId = change.id
         if (changeId in state.value.decidingChanges) return
         mutableState.update { it.copy(decidingChanges = it.decidingChanges + changeId, failedDecisions = it.failedDecisions - changeId) }
         viewModelScope.launch {
-            val result = store.decidePlanChange(UUID.fromString(goal), changeId, status)
-            if (result is MutationResult.Done) answered(result.value)
+            val result = store.decidePlanChange(UUID.fromString(goal), change, status)
+            val saved = (result as? MutationResult.Done)?.value
+            saved?.let { answered(it) }
+            val repriced = status == PlanChangeDecisionInput.Status.APPLIED && saved?.status == PlanChange.Status.PROPOSED
             mutableState.update {
                 it.copy(
                     decidingChanges = it.decidingChanges - changeId,
                     failedDecisions = if (result is MutationResult.Failed) it.failedDecisions + changeId else it.failedDecisions,
+                    repricedChanges = if (repriced) it.repricedChanges + changeId else it.repricedChanges - changeId,
                 )
             }
         }
@@ -405,7 +427,7 @@ class TutorViewModel internal constructor(
                 } catch (e: ApiException) {
                     if (e.error == ApiError.Network || e.error == ApiError.Unavailable) continue
                     if (e.error == ApiError.Unauthorized) sessions.expire(session)
-                    fail(id, e.toTutorFailure())
+                    fail(id, e.toTutorFailure(clock.instant()))
                     return
                 }
             if (sessions.current != session) return
@@ -433,7 +455,11 @@ class TutorViewModel internal constructor(
         saved[SENT_DRAFT] = written
         if (written.isNotEmpty()) draft.clearText()
         mutableState.update {
-            it.copy(sending = SendingQuestion(pending.question, pending.scope.about), askFailure = null, unresolvedQuestion = null)
+            it.copy(
+                sending = SendingQuestion(pending.question, pending.scope.about, pending.scope.topic),
+                askFailure = null,
+                unresolvedQuestion = null,
+            )
         }
 
         viewModelScope.launch {
@@ -475,7 +501,7 @@ class TutorViewModel internal constructor(
                         thread.refresh()
                         return@launch
                     }
-                    val failure = result.toTutorFailure()
+                    val failure = result.toTutorFailure(clock.instant())
                     // The question may have been saved: only then is it sent again with the same request.
                     if (failure != TutorFailure.Failed) unresolved = null
                     mutableState.update { it.copy(askFailure = failure, unresolvedQuestion = unresolved?.question) }
@@ -552,7 +578,7 @@ class TutorViewModel internal constructor(
             if (!saved) update(id) { it.copy(status = TutorTurn.Status.Completed) }
         } catch (e: ApiException) {
             if (e.error == ApiError.Unauthorized) sessions.expire(session)
-            if (!saved && sessions.current == session) reconcile(id, e.toTutorFailure(), session)
+            if (!saved && sessions.current == session) reconcile(id, e.toTutorFailure(clock.instant()), session)
         } finally {
             mutableState.update { if (it.answeringId == id) it.copy(answeringId = null) else it }
             // Core claims the tutor message when the answer starts, not when the question is asked.
@@ -608,7 +634,7 @@ class TutorViewModel internal constructor(
             api.question(id, session).takeIf { sessions.current == session }
         } catch (e: ApiException) {
             if (e.error == ApiError.Unauthorized) sessions.expire(session)
-            if (e.error != ApiError.Network && e.error != ApiError.Unavailable) fail(id, e.toTutorFailure())
+            if (e.error != ApiError.Network && e.error != ApiError.Unavailable) fail(id, e.toTutorFailure(clock.instant()))
             null
         }
 
@@ -645,6 +671,7 @@ class TutorViewModel internal constructor(
 data class SendingQuestion(
     val question: String,
     val about: TutorTurn.About,
+    val topic: String = about.name,
 )
 
 /** A suggested question; a lesson's own carries its [id] so its shared answer is reused. */

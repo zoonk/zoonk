@@ -1,9 +1,11 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRight, Check, CircleDashed, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ACTIVITY_CARD_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 import { type Link, type LinkResult, sameLink } from "./cause-effect-links";
 
 type ListedLink = Link & { state: LinkResult["state"] | "made" };
@@ -72,7 +74,7 @@ export function CauseEffectLinkList({
             })
           : t("Your links")
       }
-      className="flex flex-col gap-2"
+      className="grid auto-rows-fr gap-2"
       data-slot="cause-effect-links"
     >
       {links.map((link) => {
@@ -82,22 +84,25 @@ export function CauseEffectLinkList({
         return (
           <li
             className={cn(
-              "flex items-start gap-2 rounded-xl border px-3 py-2 text-sm",
+              ACTIVITY_CARD_CLASS,
+              "flex items-start gap-2 text-sm",
+              link.state === "correct" && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
+              link.state === "incorrect" && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
               link.state === "missed" && "border-dashed",
             )}
             key={`${link.from}-${link.to}`}
           >
-            <StateIcon state={link.state} />
-
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
               <p className="flex flex-wrap items-center gap-x-1.5 font-medium">
                 <span>{labelOf(link.from)}</span>
-                <ArrowRight
-                  aria-label={t("led to")}
-                  className="text-muted-foreground size-3.5"
-                  role="img"
-                />
-                <span>{labelOf(link.to)}</span>
+                <span className="flex min-w-0 items-center gap-x-1.5">
+                  <ArrowRight
+                    aria-label={t("led to")}
+                    className="text-muted-foreground size-3.5 shrink-0"
+                    role="img"
+                  />
+                  <span>{labelOf(link.to)}</span>
+                </span>
               </p>
 
               {note && <p className="text-muted-foreground text-xs">{note}</p>}
@@ -109,18 +114,23 @@ export function CauseEffectLinkList({
               )}
             </div>
 
+            <StateIcon state={link.state} />
+
             {canRemove && (
-              <button
+              <Button
                 aria-label={t("Remove the link from {cause} to {effect}", {
                   cause: labelOf(link.from),
                   effect: labelOf(link.to),
                 })}
-                className="text-muted-foreground hover:bg-accent focus-visible:ring-ring/50 -my-2 -mr-2 flex size-11 shrink-0 items-center justify-center rounded-full outline-none focus-visible:ring-[3px]"
+                className="text-muted-foreground -my-1 shrink-0"
+                edge="end"
                 onClick={() => onRemove(link)}
+                size="icon"
                 type="button"
+                variant="ghost"
               >
-                <X aria-hidden="true" className="size-4" />
-              </button>
+                <X aria-hidden="true" />
+              </Button>
             )}
           </li>
         );

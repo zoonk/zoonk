@@ -6,16 +6,13 @@ struct AccountToolbarButton: View {
   let action: () -> Void
 
   var body: some View {
+    // The bar draws a label's title in place of an icon that isn't an image, so the avatar is the
+    // button's label and its name is spoken.
     Button(action: action) {
-      Label {
-        Text("Account", tableName: "Account", comment: "Accessibility label for the account button")
-      } icon: {
-        AccountAvatar(user: session.account?.user, size: 32)
-          .frame(width: 44, height: 44)
-          .contentShape(Circle())
-      }
+      AccountAvatar(user: session.account?.user, size: 28)
     }
-    .buttonStyle(.plain)
+    .accessibilityLabel(
+      Text("Account", tableName: "Account", comment: "Accessibility label for the account button"))
   }
 }
 

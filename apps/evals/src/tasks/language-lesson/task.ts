@@ -13,7 +13,7 @@ export const languageLessonTask: Task<LanguageLessonParams, LanguageLessonConten
     "Write a language lesson for one language pair: words with respellings and tips for the learner's language, sentences, a pattern tip with practice, writing and summary",
   generate: generateLanguageLesson,
   id: "language-lesson",
-  name: "Language Lesson",
+  name: "Language lesson",
   score: scoreLanguageLesson,
   scoreCategories: LANGUAGE_LESSON_SCORE_CATEGORIES,
   testCases: TEST_CASES,

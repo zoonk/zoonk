@@ -28,6 +28,13 @@ private const val GAP = "\u2005"
 class LessonMathTest {
     private fun math(latex: String) = typesetMath(latex, ENGLISH)
 
+    @Test fun punctuationAfterDisplayMathStaysWithTheFormula() {
+        val parts =
+            splitAtDisplayMath(listOf(RichSegment(SegmentKind.DisplayMath, "x = 1"), RichSegment(SegmentKind.Text, ", then continue.")))
+        assertEquals("x = 1\\text{,}", parts.first().single().text)
+        assertEquals("then continue.", parts.last().single().text)
+    }
+
     @Test
     fun setsOperatorsAndRelationsApartAndKeepsASignWithItsNumber() {
         assertEquals("0.75$GAP×${GAP}80$GAP=${GAP}60", math("0.75 \\times 80 = 60").text.text)
@@ -61,6 +68,100 @@ class LessonMathTest {
 
         assertEquals("30\u2044120$GAP=${GAP}1\u20444$GAP=${GAP}25%", fraction.text.text)
         assertEquals("30 over 120 = 1 over 4 = 25%", fraction.spoken)
+    }
+
+    @Test
+    fun setsALongFractionAtFullSizeSoItsExponentsStayRaised() {
+        val formula = math("\\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}")
+
+        assertEquals("(\u2212b$GAP±$GAP√(b2$GAP\u2212${GAP}4ac))/(2a)", formula.text.text)
+
+        fun shifted(at: Int) = formula.text.spanStyles.any { it.start <= at && at < it.end && it.item.baselineShift != null }
+        val square = formula.text.text.indexOf("b2")
+        assertTrue("b sits on the line and its 2 above it", !shifted(square) && shifted(square + 1))
+    }
+
+    /** As KaTeX sets the fraction as the script's base, a power after it raises the whole quotient. */
+    @Test
+    fun aScriptAfterAFractionRaisesTheWholeQuotient() {
+        val formula = math("\\frac{x+1}{2}^2")
+
+        assertEquals("((x$GAP+${GAP}1)/2)2", formula.text.text)
+
+        fun shifted(at: Int) = formula.text.spanStyles.any { it.start <= at && at < it.end && it.item.baselineShift != null }
+        val last = formula.text.text.lastIndex
+        assertTrue("the bracket closes on the line and the 2 sits above it", !shifted(last - 1) && shifted(last))
+        assertEquals("(1\u2044" + "4)2", math("\\frac{1}{4}^2").text.text)
+    }
+
+    /** KaTeX nests (2³)²; written as 2³² it would read as 2 to the power of 32. */
+    @Test
+    fun aBracedPowerKeepsItsOwnExponentApartFromTheNextOne() {
+        val nested = math("{2^3}^2")
+        val shifts =
+            nested.text.text.indices.map { at ->
+                nested.text.spanStyles.any {
+                    it.start <= at && at < it.end &&
+                        it.item.baselineShift != null
+                }
+            }
+
+        assertEquals("(23)2", nested.text.text)
+        assertEquals(listOf(false, false, true, false, true), shifts)
+        assertEquals("232", math("2^{32}").text.text)
+    }
+
+    /** A screen reader keeps (3/2)² and 3/2² apart, as the brackets do on screen. */
+    @Test
+    fun aSpokenScriptAfterAFractionSquaresTheWholeQuotient() {
+        assertEquals("3 over 2, squared", math("\\frac{3}{2}^2").spoken)
+        assertEquals("3 over 2 squared", math("\\frac{3}{2^2}").spoken)
+        assertEquals("x + 1 over 2, squared", math("{\\frac{x+1}{2}}^2").spoken)
+    }
+
+    /** Braces around the fraction don't change its base: KaTeX squares the whole quotient either way. */
+    @Test
+    fun aBracedFractionKeepsTheWholeQuotientAsItsScriptsBase() {
+        assertEquals("((x$GAP+${GAP}1)/2)2", math("{\\frac{x+1}{2}}^2").text.text)
+        assertEquals("x2", math("{x}^2").text.text)
+    }
+
+    /** A power inside an exponent can't rise a second level here, so it's written out, its base and exponent kept apart. */
+    @Test
+    fun aPowerInsideAnExponentIsWrittenOut() {
+        assertEquals("e(x^2+1)/2", math("e^{\\frac{x^2+1}{2}}").text.text)
+        assertEquals("ex^(n+1)", math("e^{x^{n+1}}").text.text)
+    }
+
+    /** In an exponent the fraction is grouped against the exponent's own line, so its sum keeps its brackets. */
+    @Test
+    fun aSumInAFractionInsideAnExponentKeepsItsBrackets() {
+        assertEquals("e(x+1)/2", math("e^{\\frac{x+1}{2}}").text.text)
+        assertEquals("e2/(n+1)", math("e^{\\frac{2}{n+1}}").text.text)
+    }
+
+    @Test
+    fun groupsOnlyTheSumsAndProductsOfALongFraction() {
+        assertEquals("distance/time", math("\\frac{\\text{distance}}{\\text{time}}").text.text)
+        assertEquals("12000/60", math("\\frac{12000}{60}").text.text)
+        assertEquals("12 000/60", math("\\frac{12\\,000}{60}").text.text)
+    }
+
+    @Test
+    fun keepsAProductsBracketsAndLeavesASinglePowerOrSubscriptBare() {
+        assertEquals("8.314/(RT)", math("\\frac{8.314}{RT}").text.text)
+        assertEquals("12000/r2", math("\\frac{12000}{r^2}").text.text)
+        assertEquals("12000/v0", math("\\frac{12000}{v_0}").text.text)
+    }
+
+    @Test
+    fun keepsTheBracketsOfSymbolsOrWordsSideBySide() {
+        assertEquals("1/(μ0ε0)", math("\\frac{1}{\\mu_0 \\varepsilon_0}").text.text)
+        assertEquals("12000/(Δx)", math("\\frac{12000}{\\Delta x}").text.text)
+        assertEquals("12000/μ0", math("\\frac{12000}{\\mu_0}").text.text)
+        assertEquals("(mass volume)/12000", math("\\frac{\\text{mass}\\,\\text{volume}}{12000}").text.text)
+        assertEquals("(mass volume)/12000", math("\\frac{\\text{mass volume}}{12000}").text.text)
+        assertEquals("(total distance)/(total time)", math("\\frac{\\text{total distance}}{\\text{total time}}").text.text)
     }
 
     @Test

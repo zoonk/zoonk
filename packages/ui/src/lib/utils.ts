@@ -16,7 +16,21 @@ export const cn = createCn({
       animate: ["settle", "pop", "fill", "spark"],
       container: ["column", "form", "wide"],
       ease: ["spring", "accelerate", "swing", "follow"],
-      radius: ["option"],
+      radius: ["meter"],
+      text: ["2xs", "compact", "reading"],
     },
   },
 });
+
+/** One ref callback that sets every ref it's given. */
+export function mergeRefs<Target>(...refs: (React.Ref<Target> | undefined)[]) {
+  return (node: Target | null) => {
+    for (const ref of refs) {
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref) {
+        ref.current = node;
+      }
+    }
+  };
+}

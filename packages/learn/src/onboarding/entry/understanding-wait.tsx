@@ -1,11 +1,18 @@
 "use client";
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
+import {
+  GenerationTimeline,
+  GenerationTimelineHeader,
+  GenerationTimelineProgress,
+} from "@zoonk/ui/components/generation-timeline";
+import { getFormattingLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { useAppLocale } from "../../_utils/locale";
 import { FollowedRun } from "../../generation/generation-follower";
 import { type GenerationRun } from "../../generation/generation-run";
-import { GenerationWait } from "../../generation/generation-wait";
+import { GenerationFailureNotice, useGenerationProgress } from "../../generation/generation-wait";
 import { useVisibleWait } from "../../generation/use-visible-wait";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError } from "../goal-errors";
@@ -33,7 +40,9 @@ function UnderstandingWaitScreen({
   since?: number;
 }) {
   const t = useExtracted();
+  const locale = useAppLocale();
   const { track } = useLearnAnalytics();
+  const progress = useGenerationProgress({ kind: "understanding", run, since });
 
   useVisibleWait({
     attemptId,
@@ -47,12 +56,26 @@ function UnderstandingWaitScreen({
     <OnboardingColumn>
       <TypedGoal goal={goal} />
 
-      <GenerationWait kind="understanding" run={run} since={since}>
-        <OnboardingHeading>
-          <OnboardingTitle>{t("Understanding your goal")}</OnboardingTitle>
-          <OnboardingDescription>{t("Next, you check what we understood.")}</OnboardingDescription>
-        </OnboardingHeading>
-      </GenerationWait>
+      <GenerationTimeline>
+        <GenerationTimelineHeader>
+          <OnboardingHeading>
+            <OnboardingTitle>{t("Understanding your goal")}</OnboardingTitle>
+            <OnboardingDescription>
+              {t("Next, we'll show you what we understood.")}
+            </OnboardingDescription>
+          </OnboardingHeading>
+          <GenerationTimelineProgress
+            aria-label={t("Understanding your goal")}
+            locale={getFormattingLocale(locale)}
+            statuses={["active"]}
+            value={progress}
+            weights={[1]}
+          />
+        </GenerationTimelineHeader>
+        {run.status === "failed" && (
+          <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />
+        )}
+      </GenerationTimeline>
     </OnboardingColumn>
   );
 }

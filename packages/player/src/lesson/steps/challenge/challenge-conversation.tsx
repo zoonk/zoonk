@@ -2,7 +2,7 @@
 
 import { type ChallengeStep } from "@zoonk/core/library/challenges/graph";
 import { getChallengeMeters } from "@zoonk/core/library/challenges/run";
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { QuestionTitle } from "@zoonk/learn/question-title";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
@@ -15,12 +15,7 @@ import { LessonRichText } from "../../_components/lesson-rich-text";
 import { type ChallengeProgress } from "../../_utils/challenge-progress";
 import { type StepOf } from "../lesson-step-view-props";
 import { ChallengeEffectsView, ChallengeMeters } from "./challenge-meters";
-import {
-  ChallengeLabel,
-  ChallengeMessageView,
-  ChallengePickView,
-  ChallengeTimeJump,
-} from "./challenge-parts";
+import { ChallengeMessageView, ChallengePickView, ChallengeTimeJump } from "./challenge-parts";
 import { type ChallengeNames } from "./use-challenge-names";
 
 type ChallengeContent = StepOf<"challenge">["content"];
@@ -78,9 +73,9 @@ function ChallengeDecision({
   const { node } = progress.walk;
 
   return (
-    <div className="flex flex-col gap-3" data-slot="challenge-decision">
-      <div className="text-foreground text-lg font-semibold" id={`challenge-prompt-${node.id}`}>
-        <RichTextBlocks text={names.fill(node.prompt)} paragraphTag="h3" />
+    <div className="flex flex-col gap-4" data-slot="challenge-decision">
+      <div id={`challenge-prompt-${node.id}`}>
+        <QuestionTitle text={names.fill(node.prompt)} />
       </div>
 
       <PlayerChoiceSceneOptions
@@ -167,20 +162,7 @@ export function ChallengeConversation({
             onPick={onPick}
             progress={progress}
           />
-        ) : (
-          <section
-            aria-labelledby="challenge-outcome"
-            className="bg-muted/50 flex flex-col gap-2 rounded-xl p-4"
-            data-slot="challenge-outcome"
-          >
-            <ChallengeLabel as="h3" id="challenge-outcome">
-              {t("What happened")}
-            </ChallengeLabel>
-            <p className="text-foreground text-base leading-relaxed">
-              <LessonRichText text={names.fill(progress.walk.ending.outcome)} />
-            </p>
-          </section>
-        )}
+        ) : null}
       </div>
     </PlayerReadScene>
   );

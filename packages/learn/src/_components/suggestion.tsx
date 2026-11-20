@@ -3,11 +3,13 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
+  DrawerCloseButton,
   DrawerContent,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
+import { OVERLAY_ACTIONS_CLASS } from "@zoonk/ui/lib/overlay-actions";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SparkleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -32,6 +34,9 @@ type SuggestionValue = {
 const SuggestionContext = createContext<SuggestionValue | null>(null);
 const PresentationContext = createContext<Presentation>("panel");
 
+/** Whether the page shows its own main action beside a suggestion's panel; a page whose action comes and goes says so. */
+export const PageHasMainAction = createContext(true);
+
 function useSuggestion(): SuggestionValue {
   const value = use(SuggestionContext);
 
@@ -41,17 +46,6 @@ function useSuggestion(): SuggestionValue {
 
   return value;
 }
-
-const FRAME_CLASS = cn(SURFACE_CLASS, "ring-inset");
-
-const LINE_CLASS = "min-[72rem]:hidden";
-const PANEL_CLASS = "hidden min-[72rem]:flex";
-
-const MARK_SIZE: Readonly<Record<Presentation, string>> = {
-  line: "[&>svg]:size-4",
-  panel: "[&>svg]:size-3.5",
-  sheet: "[&>svg]:size-5",
-};
 
 export function Suggestion({
   answered = false,
@@ -107,17 +101,15 @@ export function Suggestion({
   );
 }
 
-function SuggestionMark() {
+export function SuggestionMark() {
   const { mark } = useSuggestion();
-  const presentation = use(PresentationContext);
 
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "flex shrink-0 items-center justify-center",
+        "flex size-4 shrink-0 items-center justify-center [&>svg]:size-4",
         mark ? "text-muted-foreground" : "text-warning",
-        MARK_SIZE[presentation],
       )}
       data-slot="suggestion-mark"
     >
@@ -131,9 +123,8 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
     <PresentationContext value="line">
       <div
         className={cn(
-          FRAME_CLASS,
-          "flex min-h-12 items-center gap-2.5 py-2 pr-2 pl-3",
-          LINE_CLASS,
+          SURFACE_CLASS,
+          "flex min-h-12 items-center gap-3 px-4 py-2 min-[72rem]:hidden",
           className,
         )}
         data-slot="suggestion-line"
@@ -149,14 +140,22 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
 export function SuggestionSummary({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn(
-        "text-muted-foreground stacked:line-clamp-none line-clamp-2 min-w-0 flex-1 text-[0.8125rem] leading-snug",
-        className,
-      )}
+      className={cn("min-w-0 flex-1 text-sm font-medium text-pretty", className)}
       data-slot="suggestion-summary"
       {...props}
     />
   );
+}
+
+/**
+ * A suggestion's main action: filled in the sheet, which covers the page, and in a panel on a page
+ * with no main action of its own; outline in the panel beside one, so the page keeps one filled button.
+ */
+export function useMainActionVariant(): "default" | "outline" {
+  const inPanel = use(PresentationContext) === "panel";
+  const pageHasMainAction = use(PageHasMainAction);
+
+  return inPanel && pageHasMainAction ? "outline" : "default";
 }
 
 export function useCloseSuggestionSheet(): () => void {
@@ -177,65 +176,85 @@ export function SuggestionOpen({ children }: { children?: React.ReactNode }) {
 export function SuggestionContent({
   children,
   className,
+  everyWidth = false,
+  statement = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  /** The panel at every width, with its answers in place: no line, no sheet. */
+  everyWidth?: boolean;
+  /** The line says it all and the page's own bar answers it, so the line opens no sheet. */
+  statement?: boolean;
 }) {
-  const { answered, label, section } = useSuggestion();
-
   return (
     <>
       <PresentationContext value="panel">
         <div
-          className={cn(FRAME_CLASS, "flex-col gap-2.5 p-3.5", PANEL_CLASS, className)}
+          className={cn(
+            SURFACE_CLASS,
+            "flex-col gap-2.5 p-4",
+            everyWidth ? "flex" : "hidden min-[72rem]:flex",
+            className,
+          )}
           data-slot="suggestion-panel"
         >
           {children}
         </div>
       </PresentationContext>
 
-      {/* Closed by an answer, the sheet hands focus to the suggestion, since "View" is gone by
-          then. */}
-      <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
-        <PresentationContext value="sheet">
-          <DrawerContent
-            className="flex flex-col gap-4 px-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
-            data-slot="suggestion-sheet"
-          >
-            {children}
-          </DrawerContent>
-        </PresentationContext>
-      </DrawerPopup>
+      {!statement && !everyWidth && <SuggestionSheet>{children}</SuggestionSheet>}
     </>
   );
 }
 
+export function SuggestionSheet({ children }: { children: React.ReactNode }) {
+  const { answered, label, section } = useSuggestion();
+
+  return (
+    <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
+      <PresentationContext value="sheet">
+        <DrawerContent
+          className="flex flex-col gap-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+          data-slot="suggestion-sheet"
+        >
+          {children}
+        </DrawerContent>
+      </PresentationContext>
+    </DrawerPopup>
+  );
+}
+
+/**
+ * The title starts on the edge the lines and buttons under it start on: the kind's mark stays with
+ * the one-line form, where it leads the row.
+ */
 export function SuggestionHeader({ children }: { children: React.ReactNode }) {
+  const t = useExtracted();
   const presentation = use(PresentationContext);
 
   if (presentation === "sheet") {
     return (
-      <div className="flex items-center gap-2.5" data-slot="suggestion-header">
-        <SuggestionMark />
-        <DrawerTitle className="text-[1.0625rem] leading-snug font-semibold text-pretty">
-          {children}
-        </DrawerTitle>
+      <div className="flex items-start gap-3" data-slot="suggestion-header">
+        <DrawerTitle className="min-w-0 flex-1 text-pretty">{children}</DrawerTitle>
+        <DrawerCloseButton label={t("Close")} />
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-2" data-slot="suggestion-header">
-      <SuggestionMark />
-      <h2 className="text-[0.8125rem] leading-snug font-semibold text-pretty">{children}</h2>
-    </div>
+    <h2
+      className="text-compact leading-snug font-semibold text-pretty"
+      data-slot="suggestion-header"
+    >
+      {children}
+    </h2>
   );
 }
 
 const DESCRIPTION_SIZE: Readonly<Record<Presentation, string>> = {
-  line: "text-[0.8125rem] leading-snug",
-  panel: "text-[0.78125rem] leading-normal",
-  sheet: "text-[0.9375rem] leading-normal",
+  line: "text-compact leading-snug",
+  panel: "text-xs leading-normal",
+  sheet: "text-reading leading-normal",
 };
 
 export function SuggestionDescription({ className, ...props }: React.ComponentProps<"p">) {
@@ -251,9 +270,9 @@ export function SuggestionDescription({ className, ...props }: React.ComponentPr
 }
 
 const RESULT_SIZE: Readonly<Record<Presentation, string>> = {
-  line: "min-w-0 flex-1 text-[0.8125rem] leading-snug",
-  panel: "text-[0.8125rem] leading-snug",
-  sheet: "text-[0.9375rem] leading-normal",
+  line: "min-w-0 flex-1 text-compact leading-snug",
+  panel: "text-compact leading-snug",
+  sheet: "text-reading leading-normal",
 };
 
 export function SuggestionResult({ className, ...props }: React.ComponentProps<"p">) {
@@ -270,26 +289,42 @@ export function SuggestionResult({ className, ...props }: React.ComponentProps<"
 }
 
 export function SuggestionSaveError({ className }: { className?: string }) {
-  return <ChangeSaveError className={cn("text-[0.8125rem] leading-snug", className)} />;
+  return <ChangeSaveError className={cn("text-compact leading-snug", className)} />;
 }
 
+/** In the panel each button fills its share of a row, so buttons that wrap stack at one width. */
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
   line: "flex shrink-0 items-center gap-2",
   panel:
-    "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
-  sheet:
-    "flex gap-2 pt-1 [&>*:first-child]:h-auto [&>*:first-child]:min-h-11 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&>*:first-child]:text-center [&>*:first-child]:text-balance [&>*:first-child]:whitespace-normal has-[>:nth-child(3)]:flex-col",
+    "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:grow [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
+  sheet: cn(OVERLAY_ACTIONS_CLASS, "pt-1"),
 };
 
-export function SuggestionActions({ className, ...props }: React.ComponentProps<"form">) {
+/**
+ * The answers by role: `main`, the other one, then `menu` ("Other options"). The line and the panel
+ * are part of the page and draw them in that order; the sheet is written as every sheet's foot is,
+ * ending with `main`.
+ */
+export function SuggestionActions({
+  children,
+  className,
+  main,
+  menu,
+  ...props
+}: React.ComponentProps<"form"> & { main?: React.ReactNode; menu?: React.ReactNode }) {
   const presentation = use(PresentationContext);
+  const sheet = presentation === "sheet";
 
   return (
     <form
       className={cn(ACTIONS_CLASS[presentation], "empty:hidden", className)}
       data-slot="suggestion-actions"
       {...props}
-    />
+    >
+      {sheet ? menu : main}
+      {children}
+      {sheet ? main : menu}
+    </form>
   );
 }
 

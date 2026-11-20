@@ -74,13 +74,12 @@ class PlanRevealReadsTest {
                             null,
                             plans,
                             rememberAppNavigator(),
-                            AppRoute.GoalSetup(goal.id.toString()),
                         )
                     }
                 }
             }
         }
-        rule.waitFor { api.requests(plan) == 1 && api.requests(syllabus) == 1 }
+        rule.waitFor { api.requests(plan) == 1 }
         rule.waitForIdle()
         rule.runOnIdle { planTab = true }
         rule.settle(plans.plan[goal.id], plans.syllabus[goal.id])

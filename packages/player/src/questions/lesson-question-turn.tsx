@@ -16,7 +16,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { QuestionAnswer, Thinking } from "./lesson-question-answer";
-import { type LessonQuestionContext } from "./lesson-question-context";
+import { type LessonQuestionContext, isSameTopic } from "./lesson-question-context";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
@@ -96,6 +96,7 @@ function Turn({
   answer,
   children,
   identity,
+  newTopic,
   page,
   question,
 }: {
@@ -103,6 +104,7 @@ function Turn({
   answer: React.ReactNode;
   children?: React.ReactNode;
   identity: TutorIdentity;
+  newTopic: boolean;
   page: boolean;
   question: string;
 }) {
@@ -118,7 +120,7 @@ function Turn({
     >
       <Message align="end">
         <MessageContent>
-          {!page && (
+          {!page && newTopic && (
             <MessageHeader>
               <QuestionContextLabel context={about} />
             </MessageHeader>
@@ -129,7 +131,7 @@ function Turn({
 
       <TutorMessage identity={identity} page={page}>
         <Bubble variant="ghost">
-          <BubbleContent className={cn(page && "text-[0.9375rem] leading-[1.55]")}>
+          <BubbleContent className={cn(page && "text-reading leading-[1.55]")}>
             {answer}
           </BubbleContent>
         </Bubble>
@@ -151,28 +153,33 @@ export function SendingTurn({
   question: string;
 }) {
   const { state } = useLessonQuestionController();
+  const last = state.questions.at(-1)?.context ?? null;
 
   return (
     <Turn
       about={state.context}
       answer={<Thinking />}
       identity={identity}
+      newTopic={!isSameTopic(last, state.context)}
       page={page}
       question={question}
     />
   );
 }
 
+/** `previous`: the question before it in the thread, whose topic it may share. */
 export function QuestionTurn({
   identity,
   page = false,
   planChange,
+  previous = null,
   question,
   toolOffer,
 }: {
   identity: TutorIdentity;
   page?: boolean;
   planChange?: React.ReactNode;
+  previous?: LessonQuestionController["state"]["questions"][number] | null;
   question: LessonQuestionController["state"]["questions"][number];
   toolOffer?: React.ReactNode;
 }) {
@@ -197,6 +204,7 @@ export function QuestionTurn({
         />
       }
       identity={identity}
+      newTopic={!isSameTopic(previous?.context ?? null, question.context)}
       page={page}
       question={question.question}
     >

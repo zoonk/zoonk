@@ -2,9 +2,18 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { Link } from "@/i18n/navigation";
 import { type EarlierQuestion, listEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { LessonQuestionMarkdown } from "@zoonk/player/tutor/markdown";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { HistoryIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -22,17 +31,17 @@ async function EarlierQuestionEntry({ question }: { question: EarlierQuestion })
 
   return (
     <li className="flex flex-col gap-2 py-5 first:pt-0">
-      <p className="text-muted-foreground text-xs">
+      <Eyebrow className="mb-1">
         {question.courseTitle
           ? t("From an earlier version of {course}", { course: question.courseTitle })
           : t("From an earlier version of this course")}
         {question.lessonTitle && ` · ${question.lessonTitle}`}
-      </p>
+      </Eyebrow>
 
       <p className="font-medium text-pretty">{question.question}</p>
 
       {question.answer ? (
-        <div className="text-[0.9375rem] leading-relaxed">
+        <div className="text-reading leading-relaxed">
           <LessonQuestionMarkdown
             answer={question.answer}
             isAnimating={false}
@@ -77,16 +86,26 @@ async function EarlierQuestionsContent({ searchParams }: Pick<Props, "searchPara
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>{t("Earlier questions")}</PageTitle>
-            <PageSubtitle>
-              {t(
-                "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread.",
-              )}
-            </PageSubtitle>
+            {result.questions.length > 0 && (
+              <PageSubtitle>
+                {t("Your questions from lessons that were updated, with their answers.")}
+              </PageSubtitle>
+            )}
           </PageHeaderContent>
         </PageHeader>
 
         {result.questions.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t("You have no earlier questions.")}</p>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <HistoryIcon aria-hidden="true" />
+              </EmptyMedia>
+              <EmptyTitle>{t("No earlier questions")}</EmptyTitle>
+              <EmptyDescription>
+                {t("Your questions from lessons that were updated, with their answers.")}
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
           <ol className="divide-border max-w-column flex flex-col divide-y">
             {result.questions.map((question) => (

@@ -573,69 +573,6 @@ describe("the plan the buddy looks up", () => {
       ).toHaveLength(8);
     });
 
-    it("marks what a free exam plan needs Plus for: its mocks, and the days past its first week", async () => {
-      const user = await userFixture();
-      const library = await planLibraryFixture({ skills: [{ area: "Physics", lessons: 4 }] });
-
-      const { goal } = await unplannedGoalFixture({
-        createdAt: NOW,
-        dailyMinutes: 12,
-        kind: "exam",
-        timezone: "UTC",
-        userId: user.id,
-      });
-
-      await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
-      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-
-      const [mock] = await Promise.all([
-        planItemFixture({
-          kind: "mock",
-          planId: plan.id,
-          position: 1000,
-          scheduledFor: new Date("2020-10-03"),
-        }),
-        planItemFixture({
-          kind: "review",
-          planId: plan.id,
-          position: 1001,
-          scheduledFor: new Date("2020-10-05"),
-        }),
-      ]);
-
-      const asked = await answering({ goalId: goal.id, userId: user.id });
-      const schedule = await lookUp(asked, { what: "schedule" });
-
-      if (schedule.status !== "found" || schedule.what !== "schedule") {
-        throw new Error(`Expected a schedule, received ${JSON.stringify(schedule)}`);
-      }
-
-      const freeDay = schedule.days.find((day) => day.date === "2020-10-03");
-
-      expect(freeDay?.plusRequired).toBeUndefined();
-
-      expect(freeDay?.items).toContainEqual(
-        expect.objectContaining({
-          link: { kind: "challenge", planItemId: mock.id },
-          plusRequired: true,
-        }),
-      );
-
-      expect(schedule.days.find((day) => day.date === "2020-10-05")).toMatchObject({
-        plusRequired: true,
-      });
-
-      await expect(lookUp(asked, { what: "challenges" })).resolves.toMatchObject({
-        challenges: expect.arrayContaining([
-          expect.objectContaining({
-            kind: "mock",
-            link: { kind: "challenge", planItemId: mock.id },
-            locked: true,
-          }),
-        ]),
-      });
-    });
-
     it("finds nothing while the plan is still being built", async () => {
       const user = await userFixture();
       const { goal } = await unplannedGoalFixture({ userId: user.id });

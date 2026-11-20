@@ -8,8 +8,6 @@ struct ChartsCanvas<Content: View>: View {
       content
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .padding()
-    .background(.muted, in: .rect(cornerRadius: Radius.xl, style: .continuous))
     .accessibilityElement(children: .contain)
   }
 }
@@ -35,7 +33,7 @@ struct ChartsChoiceStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .typeStyle(.body.weight(state == .plain ? .regular : .medium).monospaced())
+      .typeStyle(.body.weight(state == .plain ? .regular : .medium).monospacedDigit())
       .foregroundStyle(foreground)
       .multilineTextAlignment(.center)
       .frame(maxWidth: .infinity, minHeight: 44)
@@ -119,11 +117,13 @@ private struct ChartsAdjustable: ViewModifier {
 
 enum ChartsPlot {
   static let space = "chartsPlot"
+  static let maxTextSize = DynamicTypeSize.xxxLarge
 }
 
 /// A dot inside a 44-point target, so a finger can grab it without covering the mark and a swipe
 /// elsewhere still scrolls the lesson.
 struct ChartsHandle: View {
+  static let radius = 11.0
   var tint: Color = .primary
   var isEnabled = true
 
@@ -131,10 +131,27 @@ struct ChartsHandle: View {
     Circle()
       .fill(tint)
       .overlay { Circle().strokeBorder(.background, lineWidth: 2) }
-      .frame(width: 22, height: 22)
+      .frame(width: Self.radius * 2, height: Self.radius * 2)
       .frame(width: 44, height: 44)
       .contentShape(.circle)
       .opacity(isEnabled ? 1 : 0.6)
+  }
+}
+
+/// A slider's ends, under its track, so every track in a card starts and ends on the same edges.
+struct ChartsSliderScale: View {
+  let min: String
+  let max: String
+
+  var body: some View {
+    HStack {
+      Text(verbatim: min)
+      Spacer()
+      Text(verbatim: max)
+    }
+    .typeStyle(.meta.monospacedDigit())
+    .foregroundStyle(.mutedForeground)
+    .accessibilityHidden(true)
   }
 }
 
@@ -165,7 +182,7 @@ extension View {
   /// largest standard size, where they still fit beside each other. The words and readouts around
   /// the plot keep growing.
   func chartsPlotText() -> some View {
-    dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+    dynamicTypeSize(...ChartsPlot.maxTextSize)
   }
 }
 

@@ -341,7 +341,7 @@ test.describe("Language calls", () => {
     await page.getByRole("button", { name: "Try again" }).click();
     await expect(page.getByText("Calling Linda…")).toBeVisible();
 
-    await page.getByRole("button", { exact: true, name: "Cancel" }).click();
+    await page.getByRole("button", { exact: true, name: "End" }).click();
     await expect(page.getByRole("button", { name: "Call Linda" })).toBeVisible();
 
     await expect(
@@ -370,7 +370,7 @@ test.describe("Language practice in the plan", () => {
     ]);
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
     await page.getByRole("radio", { name: "Right A2" }).click();
@@ -390,18 +390,18 @@ test.describe("Language practice in the plan", () => {
 
     expect(clip.fileLoaded()).toBe(true);
 
-    await page.getByRole("button", { name: "Stop here and see my plan" }).click();
+    await page.getByRole("button", { name: "Stop and use my answers" }).click();
 
-    await expect(page.getByRole("heading", { name: "Your level today" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Build my plan" })).toBeEnabled();
+    await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
+    await expect(page.getByRole("button", { exact: true, name: "Continue" })).toBeEnabled();
 
     await page.reload();
 
-    await expect(page.getByRole("heading", { name: "Your level today" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
     await expect(page.getByRole("listitem").filter({ hasText: "Reading" })).toBeVisible();
     await expect(page.getByRole("listitem").filter({ hasText: "Speaking" })).toHaveCount(0);
 
-    await page.getByRole("button", { name: "Build my plan" }).click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect
       .poll(async () => {

@@ -2,10 +2,10 @@ import { MainFeedbackProvider } from "@/components/feedback/main-feedback-provid
 import { MainSpeechProvider } from "@/components/speech/main-speech-provider";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { routing } from "@/i18n/routing";
-import { geistMono, geistSans } from "@/lib/fonts";
 import { RefreshStalePages } from "@/lib/http/refresh-stale-pages";
 import { SidebarStateScript } from "@zoonk/ui/components/sidebar";
 import { Toaster } from "@zoonk/ui/components/toast";
+import { FONT_VARIABLES } from "@zoonk/ui/fonts";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { type Metadata, type Viewport } from "next";
 import { lang } from "next/root-params";
@@ -14,6 +14,7 @@ import { Suspense } from "react";
 import { AccountDeletedToast } from "./account-deleted-toast";
 import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
+import { AppKeyboardShortcuts } from "./app-keyboard-shortcuts";
 import { AuthChangeReload } from "./auth-change-reload";
 import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
@@ -41,6 +42,7 @@ function AppCommandPaletteSlot() {
         <PaletteRequestReset />
       </Suspense>
       <AppCommandPalette />
+      <AppKeyboardShortcuts />
     </>
   );
 }
@@ -50,11 +52,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
 
   return (
     // The hint, usage notice and sidebar scripts mark `<html>` before React hydrates it.
-    <html
-      className={`${geistSans.variable} ${geistMono.variable}`}
-      lang={locale}
-      suppressHydrationWarning
-    >
+    <html className={FONT_VARIABLES} lang={locale} suppressHydrationWarning>
       <head>
         <SignedInHintScript />
         <UsageNoticeScript />

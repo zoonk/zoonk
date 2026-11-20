@@ -50,7 +50,6 @@ export function getDayCatchUp({
   dayStart,
   freshStart,
   items,
-  trialEnded,
 }: {
   carriedItemIds: readonly string[];
   /** The first instant of the session's learner-local day. */
@@ -60,9 +59,8 @@ export function getDayCatchUp({
     PlanItem,
     "chapterId" | "completedAt" | "id" | "kind" | "lessonId" | "status"
   >[];
-  trialEnded: boolean;
 }): StudyDayProgress["catchUp"] {
-  if (trialEnded || freshStart === "welcomeBack") {
+  if (freshStart === "welcomeBack") {
     return null;
   }
 

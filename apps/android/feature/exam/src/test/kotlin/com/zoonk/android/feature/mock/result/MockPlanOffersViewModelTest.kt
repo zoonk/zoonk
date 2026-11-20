@@ -56,7 +56,7 @@ class MockPlanOffersViewModelTest {
         runTest(dispatcher) {
             val offers = viewModel()
 
-            offers.keep(listOf(Offer.SKIP, Offer.FOCUS))
+            offers.decline(Offer.FOCUS)
             advanceUntilIdle()
 
             assertEquals(emptyList<Offer>(), api.offers)
@@ -69,30 +69,31 @@ class MockPlanOffersViewModelTest {
             val offers = viewModel()
             api.offerFailure = UNREACHABLE
 
-            offers.apply(listOf(Offer.SKIP, Offer.FOCUS))
+            offers.accept(Offer.SKIP)
             advanceUntilIdle()
             assertEquals(OfferAnswer.Failed, offers.state.value.answers[Offer.SKIP])
 
             api.offerFailure = null
-            offers.apply(listOf(Offer.SKIP, Offer.FOCUS))
+            offers.accept(Offer.SKIP)
             advanceUntilIdle()
-            offers.apply(listOf(Offer.SKIP, Offer.FOCUS))
+            offers.accept(Offer.SKIP)
             advanceUntilIdle()
 
-            assertEquals(listOf(Offer.SKIP, Offer.FOCUS), api.offers)
+            assertEquals(listOf(Offer.SKIP), api.offers)
             assertEquals(false, offers.state.value.applying)
         }
 
     @Test
-    fun aSessionChangeStopsTheOffersStillToSend() =
+    fun anAnswerForAnotherSessionIsDropped() =
         runTest(dispatcher) {
             val offers = viewModel()
             api.afterOffer = { session.session = AuthenticatedSession("bo", "token-b", "local-b") }
 
-            offers.apply(listOf(Offer.SKIP, Offer.FOCUS))
+            offers.accept(Offer.SKIP)
             advanceUntilIdle()
 
             assertEquals(listOf(Offer.SKIP), api.offers)
+            assertEquals(null, offers.state.value.answers[Offer.SKIP])
             assertEquals(false, offers.state.value.applying)
         }
 }

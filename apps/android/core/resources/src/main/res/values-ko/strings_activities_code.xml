@@ -87,7 +87,6 @@
   "activities_code_you_said_right": "d701247a2ab14bf1b0c6e4f5c49062ffa17c35055cfd1da879d5f626862723e4",
   "activities_code_you_said_wrong": "a01dfac8d913c71ff908f2689b5638db8ec5e64b325175ae05cfbabc24e7c789",
   "activities_code_your_formula": "d15bca4a058f9c3fe858999fd724f50c3e7450da6422f8efa51e69c355e527be",
-  "activities_code_your_output": "952bb0041df162cee4cc36d5aec5c2a8fed56ccb01f7ab5411a6d9572cb1f5d8",
   "activities_code_your_pattern": "74da8fb8db6320a6e9a5f8cb73d898d38444ba772de225825623a81b5abb0376",
   "activities_code_your_predictions": "ac8ea5e6e3e2556f8f17da6179f9fbd816c433a042b9ef56b660c67f76ac599a",
   "activities_code_your_query": "27900b17883ed6e0d24d8876c2be953615b64fc27b631edb4155b542bca9c3a0",
@@ -112,7 +111,6 @@
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">%1$d번 줄, 직접 수정할 수 있어요</string>
-    <string name="activities_code_your_output">내 출력</string>
     <!-- What a program shown to explore printed, with no expected output beside it. -->
     <string name="activities_code_output">출력</string>
     <!-- The output the program should print. -->

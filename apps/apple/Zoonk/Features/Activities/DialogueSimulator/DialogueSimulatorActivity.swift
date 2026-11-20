@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let dialogueSimulator = ActivityRenderer(
-    template: "dialogueSimulator", badge: .always(.reply),
+    template: "dialogueSimulator",
     grade: ActivityExpectedAnswer.grader(DialogueFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: DialogueFields.self) {
@@ -99,7 +99,8 @@ private struct DialogueCanvas: View {
   private func bubble(_ line: DialogueFields.Line) -> some View {
     let isThem = line.speaker == "them"
 
-    return HStack(alignment: .bottom, spacing: 8) {
+    // The avatar and the speaker sit level with the line's first words, not under the bubble.
+    return HStack(alignment: .firstTextBaseline, spacing: 8) {
       if isThem {
         Image(systemName: "person.crop.circle.fill")
           .typeStyle(.section.weight(.regular))
@@ -119,7 +120,7 @@ private struct DialogueCanvas: View {
       .padding(.horizontal, 14)
       .padding(.vertical, 10)
       .background(
-        isThem ? Color.card : Color.vizAccent.opacity(0.15),
+        isThem ? Color.boxBackground : Color.vizAccent.opacity(0.15),
         in: .rect(cornerRadius: Radius.xl)
       )
       .accessibilityElement(children: .combine)

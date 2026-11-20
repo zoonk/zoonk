@@ -16,7 +16,7 @@ import {
 import { StatusMark } from "../_components/status-mark";
 import { useFormatDuration } from "../_utils/time-format";
 import { useTimeLeft } from "../_utils/use-time-left";
-import { useMockShapeLabel, useMockTitle } from "../mock/mock-labels";
+import { getMockSubject, useMockTitle } from "../mock/mock-labels";
 import { useExamScreen } from "./exam-context";
 
 const MS_PER_MINUTE = 60_000;
@@ -57,9 +57,8 @@ export function ExamRunningMock({
 }) {
   const t = useExtracted();
   const title = useMockTitle();
-  const shapeLabel = useMockShapeLabel();
   const { hrefs } = useExamScreen();
-  const shape = shapeLabel(running);
+  const subject = getMockSubject(running);
 
   const answered = t("{answered, number} of {questions, number} answered", {
     answered: running.answered,
@@ -74,7 +73,7 @@ export function ExamRunningMock({
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle>{title(running)}</ListRowTitle>
-          <ListRowDescription>{shape ? `${shape} · ${answered}` : answered}</ListRowDescription>
+          <ListRowDescription>{subject ? `${subject} · ${answered}` : answered}</ListRowDescription>
         </ListRowContent>
         <RunningMockClock deadline={running.deadline} />
       </ListRowBody>

@@ -27,15 +27,28 @@ const isTestedOut = (item: Pick<PlanReadItem, "status">) =>
 
 export type SkillAreas = ReadonlyMap<string, string | null>;
 
+/**
+ * What a skill whose lessons are still being written is named by: its area, unless that's the goal's
+ * own course. Every topic of a language plan has the language as its area, so it's named by its own
+ * situation instead, which is how the learner knows the topic.
+ */
 export function getSkillAreas({
   courseTitle,
+  goalKind,
   skills,
 }: {
   courseTitle: string | null;
-  skills: readonly { area: string | null; skillId: string }[];
+  goalKind: Goal["kind"];
+  skills: readonly { area: string | null; name: string; skillId: string }[];
 }): SkillAreas {
   return new Map(
-    skills.map((skill) => [skill.skillId, skill.area === courseTitle ? null : skill.area]),
+    skills.map((skill) => {
+      if (goalKind === "language") {
+        return [skill.skillId, skill.name];
+      }
+
+      return [skill.skillId, skill.area === courseTitle ? null : skill.area];
+    }),
   );
 }
 
@@ -228,6 +241,7 @@ function getPhaseMinutes({
 }
 
 export function buildPhaseViews({
+  phaseReasons = new Map(),
   phaseChallengesRequired = true,
   challengesOpen = true,
   chapterTitles,
@@ -249,6 +263,7 @@ export function buildPhaseViews({
   todayItemKeys = new Set(),
   upNextItemId,
 }: {
+  phaseReasons?: ReadonlyMap<number, PlanPhaseView["notPlannedReason"]>;
   phaseChallengesRequired?: boolean;
   challengesOpen?: boolean;
   chapterTitles: ReadonlyMap<string, string>;
@@ -289,6 +304,8 @@ export function buildPhaseViews({
     const lessons = inPhase.filter((item) => item.kind === "lesson");
     const minutes = getPhaseMinutes({ estimateMinutes, index, items, phase });
 
+    const reason = phaseReasons.has(index) ? (phaseReasons.get(index) ?? null) : "time";
+
     return {
       challengeLeftOut: phase.challengeLeftOut === true,
       chapterCount: new Set(lessons.map((item) => getGroupKey({ item, skillAreas }))).size,
@@ -314,6 +331,7 @@ export function buildPhaseViews({
       milestone: phase.milestone,
       mocks: buildMocks({ items: inPhase, mocksRequirePlus, today }),
       name: phase.name,
+      notPlannedReason: states[index] === "leftOut" ? reason : null,
       short: toShortPhaseView({ phase, shape: shortPlan }),
       startDate: phase.startDate,
       state: states[index] ?? "upcoming",

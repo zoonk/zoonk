@@ -17,6 +17,8 @@ struct LevelTestStep: View {
   @State private var levels: [LevelTest.Level] = []
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
+  /// The test's finish: a step left while it saves doesn't go on when it answers.
+  @State private var finishing = ScreenTasks()
   @State private var isStarting = false
   @State private var saveFailures = 0
   @State private var showsSaveReport = false
@@ -56,11 +58,12 @@ struct LevelTestStep: View {
           onSkip: stop)
       case .done:
         LevelTestDone(
-          levels: levels, isSaving: isSaving, failed: saveFailures > 0 && !isSaving,
-          onContinue: finish)
+          levels: levels, targetLanguage: targetLanguage, isSaving: isSaving,
+          failed: saveFailures > 0 && !isSaving, onContinue: finish)
       }
     }
     .task { await resume() }
+    .onDisappear { finishing.cancel() }
     .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "level-test", reportType: .saveFailure), isReport: true)
@@ -72,7 +75,7 @@ struct LevelTestStep: View {
         "Preparing your level test", table: "Onboarding",
         comment: "Title while a language's level test questions are written"),
       description: LocalizedStringResource(
-        "The \(Locale.current.languageName(targetLanguage)) test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once.",
+        "Getting the \(Locale.current.languageName(targetLanguage)) test ready takes a minute or two, and only this once.",
         table: "Onboarding", comment: "Why the level test waits: the language's name"),
       generationID: generationID,
       kind: .levelTestBank,
@@ -87,36 +90,32 @@ struct LevelTestStep: View {
         return true
       },
       trailing: {
-        skipSection
-      })
-  }
-
-  @ViewBuilder private var skipSection: some View {
-    if saveFailures > 0, !isSaving {
-      Section {
-        FailureLine(
-          message: LocalizedStringResource(
+        // The bar holds the way out; what skipping does is said at the end of the wait.
+        Section {
+          Text(
+            "Your plan starts from the level you gave, and your first days fine-tune it.",
+            tableName: "Onboarding", comment: "What skipping the level test does"
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .listRowBackground(Color.clear)
+        }
+      }
+    )
+    .bottomBar(
+      note: saveFailures > 0 && !isSaving
+        ? BarNote(
+          LocalizedStringResource(
             "That didn't work. Try again in a moment.", table: "Onboarding",
             comment: "Starting or skipping the level test failed"))
-      }
-    }
-
-    Section {
+        : nil
+    ) {
       BusyButton(isBusy: isSaving, icon: .skip, action: finish) {
         Text(
           "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test")
       }
       .buttonStyle(.outline)
-      .controlSize(.large)
       .buttonSizing(.flexible)
-      .listRowInsets(.vertical, 0)
-      .listRowBackground(Color.clear)
-    } footer: {
-      SectionFooter {
-        Text(
-          "Your plan starts from the level you gave, and your first sessions fine-tune it.",
-          tableName: "Onboarding", comment: "What skipping the level test does")
-      }
     }
   }
 
@@ -295,13 +294,13 @@ struct LevelTestStep: View {
 
     isSaving = true
 
-    Task {
+    finishing.run {
       defer { isSaving = false }
 
       do {
         try await onboarding.finishLevelTest(goalID: goalID)
         saveFailures = 0
-        try await next()
+        try await goOnUnlessLeft(next)
       } catch is CancellationError {
       } catch {
         saveFailures += 1
@@ -368,18 +367,18 @@ private struct LevelTestIntro: View {
     ZoonkList {
       StepHeader(
         title: Text(
-          "Let's see your level in \(Locale.current.languageName(targetLanguage))",
+          "Find your level in \(Locale.current.languageName(targetLanguage))",
           tableName: "Onboarding",
           comment: "Title of a language goal's level test"),
         description: Text(
-          "About \(Duration.seconds(minutes * 60), format: .units(allowed: [.minutes], width: .wide)) of reading, listening and one sentence out loud, so your plan starts at your level.",
+          "About \(studyDuration(minutes: minutes)) of reading, listening and one sentence out loud, so your plan starts at your level.",
           tableName: "Onboarding",
           comment: "What the level test is; %@ is about how long it takes, such as \"3 minutes\""))
 
       if showAlphabetNote {
         Section {
           Text(
-            "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",
+            "New to its alphabet? Skip the test. Your first lesson teaches you to read it.",
             tableName: "Onboarding",
             comment:
               "The level test of a language with another alphabet: a learner new to the alphabet doesn't take it"
@@ -396,13 +395,6 @@ private struct LevelTestIntro: View {
         }
       }
 
-      StepButtons(
-        continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
-        continueIcon: .play,
-        skipLabel: Text(
-          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"),
-        onContinue: onStart, onSkip: onSkip)
-
       if offersOwnLanguage, let settings = URL(string: UIApplication.openSettingsURLString) {
         Section {
           Button {
@@ -415,6 +407,11 @@ private struct LevelTestIntro: View {
           }
         }
       }
+    }
+    .bottomBar {
+      StepButtons(
+        continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
+        onContinue: onStart, onSkip: onSkip)
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, isStarting || isSaving)
@@ -456,7 +453,7 @@ private struct ListeningMessage: View {
       }
 
       if case .failed(let limit) = state {
-        failedNote(limit)
+        ListeningFailedNote(limit: limit, play: play)
       }
     }
     .padding()
@@ -545,46 +542,12 @@ private struct ListeningMessage: View {
     .accessibilityElement(children: .combine)
   }
 
-  private func failedNote(_ limit: HelpLimit?) -> some View {
-    let canRetry = if case .slowDown? = limit { true } else { limit == nil }
-
-    return VStack(alignment: .leading, spacing: 8) {
-      if let limit {
-        HelpLimitNotice(limit: limit)
-      } else {
-        Text(audioDidntPlay)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-      }
-
-      if canRetry {
-        Button(action: play) {
-          Label {
-            Text(
-              "Try again", tableName: "Onboarding",
-              comment: "Plays a level test listening question's message again after it failed")
-          } icon: {
-            Image(systemName: "arrow.counterclockwise")
-          }
-        }
-        .buttonStyle(.outline)
-        .controlSize(.small)
-      }
-    }
-  }
-
-  private var audioDidntPlay: String {
-    String(
-      localized: "The audio didn't play.", table: "Onboarding",
-      comment: "A level test listening question's message failed to play")
-  }
-
   private func failure(_ state: SpeechPlayer.State) -> String? {
     guard case .failed(let limit) = state else {
       return nil
     }
 
-    return limit?.message ?? audioDidntPlay
+    return limit?.words().said ?? ListeningFailedNote.audioDidntPlay
   }
 
   private func play() {
@@ -598,6 +561,56 @@ private struct ListeningMessage: View {
   }
 }
 
+/// Why a listening question's message didn't play, and Try again. The gate takes Try again's place
+/// until its day has come, then Try again takes it back, in the room the gate had: the answers sit
+/// under it.
+struct ListeningFailedNote: View {
+  static var audioDidntPlay: String {
+    String(
+      localized: "The audio didn't play.", table: "Onboarding",
+      comment: "A level test listening question's message failed to play")
+  }
+
+  let limit: HelpLimit?
+  let play: () -> Void
+
+  var body: some View {
+    OpeningClock(availableAt: limit?.availableAt) { now in
+      note(now)
+    }
+  }
+
+  private func note(_ now: Date) -> some View {
+    HeldSlot(gated: limit.map { !$0.isOpen(at: now) } ?? false) {
+      VStack(alignment: .leading, spacing: 8) {
+        if let limit {
+          if !limit.isOpen(at: now) {
+            LimitNotice(limit: limit)
+          }
+        } else {
+          Text(Self.audioDidntPlay)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+
+        if limit?.letsTry(at: now) ?? true {
+          Button(action: play) {
+            Label {
+              Text(
+                "Try again", tableName: "Onboarding",
+                comment: "Plays a level test listening question's message again after it failed")
+            } icon: {
+              Image(systemName: "arrow.counterclockwise")
+            }
+          }
+          .buttonStyle(.outline)
+          .controlSize(.small)
+        }
+      }
+    }
+  }
+}
+
 /// Like the test's other questions it has no way back; skipping it ends the test.
 private struct LevelTestSpeaking: View {
   let goalID: String
@@ -605,6 +618,8 @@ private struct LevelTestSpeaking: View {
   let progress: Double
   let onTest: (LevelTest) -> Void
   let onSkip: () -> Void
+  /// Record and Stop are the step's main action, where the other questions put Confirm.
+  @State private var recordInBar = RecordInBar()
 
   var body: some View {
     PracticeTaskLayout {
@@ -634,28 +649,34 @@ private struct LevelTestSpeaking: View {
           }
         })
     } actions: {
-      Button(action: onSkip) {
-        Text("Skip this part", tableName: "Onboarding", comment: "Skips the level test's sentence")
-      }
+      recordInBar.button
+        .controlSize(.large)
+        .buttonSizing(.flexible)
+
+      PracticeSecondaryButton(
+        title: LocalizedStringResource(
+          "Skip this part", table: "Onboarding", comment: "Skips the level test's sentence"),
+        icon: .skip, isDisabled: recordInBar.isChecking, action: onSkip)
     }
+    .environment(recordInBar)
   }
 }
 
 private struct LevelTestDone: View {
   let levels: [LevelTest.Level]
+  let targetLanguage: String
   let isSaving: Bool
   let failed: Bool
   let onContinue: () -> Void
 
   var body: some View {
-    ZoonkList {
-      StepHeader(
-        title: Text(
-          "Your level today", tableName: "Onboarding", comment: "Title after the level test"),
-        description: Text(
-          "Based on the test. It gets more accurate every week.", tableName: "Onboarding",
-          comment: "Under the level test's result"))
-
+    TestOutcome(
+      subject: String(
+        localized: "Level test", table: "Onboarding", comment: "Over the level test's result"),
+      title: Text(
+        "Your \(Locale.current.languageName(targetLanguage)) level", tableName: "Onboarding"),
+      isSaving: isSaving, failed: failed, onContinue: onContinue
+    ) {
       if !levels.isEmpty {
         Section {
           ForEach(levels) { level in
@@ -672,25 +693,7 @@ private struct LevelTestDone: View {
           }
         }
       }
-
-      if failed {
-        Section {
-          FailureLine(
-            message: LocalizedStringResource(
-              "That didn't work. Try again in a moment.", table: "Onboarding",
-              comment: "Starting or skipping the level test failed"))
-        }
-      }
-
-      StepButtons(
-        continueLabel: Text(
-          "Build my plan", tableName: "Onboarding", comment: "Ends the level test to build the plan"
-        ),
-        onContinue: onContinue
-      )
-      .environment(\.isSavingAnswer, isSaving)
     }
-    .onboardingColumn()
   }
 
   private func skillName(_ skill: LevelTest.Skill) -> Text {

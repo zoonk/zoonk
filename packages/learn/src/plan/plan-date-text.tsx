@@ -1,34 +1,20 @@
 "use client";
 
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type DateTimeFormatOptions, useExtracted, useFormatter } from "next-intl";
-import { use } from "react";
-import { isoDateToUtc, toLocalIsoDate } from "../_utils/iso-date";
-import { PlanScreenContext } from "./plan-context";
-import { type PlanDateStyle, getPlanDateStyle } from "./plan-date-style";
-
-const STYLE_OPTIONS: Record<PlanDateStyle, DateTimeFormatOptions> = {
-  day: { day: "numeric", month: "short" },
-  dayYear: { day: "numeric", month: "short", year: "numeric" },
-  month: { month: "short" },
-  monthYear: { month: "short", year: "numeric" },
-};
+import { useExtracted } from "next-intl";
+import { useFormatIsoDate } from "../_utils/iso-date";
 
 /** Kept whole on its line, unless it's wider than the whole line. */
-const PLAN_DATE_CLASS = "inline-block font-mono tabular-nums";
+const PLAN_DATE_CLASS = "inline-block font-mono whitespace-nowrap tabular-nums";
 
+/** A date on the plan: a row's day, or its month when the plan only knows the month. */
 export function useFormatPlanDate() {
-  const format = useFormatter();
-  const plan = use(PlanScreenContext);
-  const mountedAt = useMountTime();
-  const today = plan?.today ?? toLocalIsoDate(mountedAt);
+  const formatDate = useFormatIsoDate();
 
-  return (isoDate: string, { month = false }: { month?: boolean } = {}): string =>
-    format.dateTime(isoDateToUtc(isoDate), {
-      ...STYLE_OPTIONS[getPlanDateStyle({ isoDate, month, today })],
-      timeZone: "UTC",
-    });
+  return (
+    isoDate: string,
+    { month = false, weekday = false }: { month?: boolean; weekday?: boolean } = {},
+  ): string => formatDate(isoDate, month ? "rowMonth" : "row", { weekday });
 }
 
 export function PlanDateText({
@@ -47,11 +33,15 @@ export function PlanDateText({
   const date = formatPlanDate(isoDate, { month });
 
   if (!estimate) {
-    return <span className={cn(PLAN_DATE_CLASS, className)}>{date}</span>;
+    return (
+      <span className={cn(PLAN_DATE_CLASS, className)} data-slot="plan-date">
+        {date}
+      </span>
+    );
   }
 
   return (
-    <span className={cn(PLAN_DATE_CLASS, className)}>
+    <span className={cn(PLAN_DATE_CLASS, className)} data-slot="plan-date">
       <span aria-hidden="true">{t("~{date}", { date })}</span>
       <span className="sr-only">
         {t({

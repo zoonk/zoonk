@@ -66,13 +66,21 @@ final class LessonPlayerStore {
   private let fromCatalog: Bool
   private(set) var screen = Screen.loading
   private(set) var writingProgress = GenerationWait(kind: .lesson).started
-  private var writingKind = GenerationWait.Kind.lesson
+  private(set) var writingKind = GenerationWait.Kind.lesson
   private var progressRun: String?
   private(set) var warmUp: WarmUp?
   /// What's ready to do while the lesson is written, or instead of it.
   private(set) var alternative: Components.Schemas.ReadyAlternative?
   private(set) var lesson: PlayableLesson?
-  private(set) var state: LessonPlayerState?
+  private(set) var state: LessonPlayerState? {
+    didSet {
+      // An offer is its screen's: once the learner leaves that screen it's dropped, so coming
+      // back to it asks nothing until they tap Ask again.
+      if let offer = askingOffer, offer.stepId != state?.currentStep?.id {
+        askingOffer = nil
+      }
+    }
+  }
   private(set) var soundsEnabled = true
   private(set) var challengeTeam: [String] = []
   private(set) var explanations: [String: Explanation] = [:]
@@ -137,6 +145,7 @@ final class LessonPlayerStore {
   private var sendFailed = false
   /// Each screen's held answers being sent now, so finishing waits for them.
   private var saving: [String: Task<Void, Never>] = [:]
+  private var sendAgain: Set<String> = []
   private var reportedAbandonment = false
   private var reportedFirstScene = false
   private var reportedFirstAnswer = false
@@ -487,7 +496,7 @@ final class LessonPlayerStore {
 
     leaveOutUnplayable(&state)
 
-    // "Can't write now" lasts the rest of the learner's day on this device.
+    // "Skip writing questions today" lasts the rest of the learner's day on this device.
     if choices.isChosenToday(.cantWrite) {
       state.skipWriting(opening: true)
     }
@@ -868,15 +877,28 @@ final class LessonPlayerStore {
 
   /// Each screen sends its held answers oldest first, so a miss lands before its retry, and stops at
   /// its first failure. Screens send at once, a screen already sending goes on to what was held
-  /// since, and each save sends the screens that stopped again.
+  /// since, and each save sends the screens that stopped again, including one whose send was out
+  /// when the save came and then failed.
   func sendUnsaved() {
     sendClock()
-    for stepId in Set(held.map(\.stepId)) where saving[stepId] == nil {
+    for stepId in Set(held.map(\.stepId)) {
+      guard saving[stepId] == nil else {
+        sendAgain.insert(stepId)
+        continue
+      }
+
       saving[stepId] = Task {
-        while let next = held.first(where: { $0.stepId == stepId }), await record(next) {
-          sendUnsaved()
+        while let next = held.first(where: { $0.stepId == stepId }) {
+          sendAgain.remove(stepId)
+
+          if await record(next) {
+            sendUnsaved()
+          } else if !sendAgain.contains(stepId) {
+            break
+          }
         }
 
+        sendAgain.remove(stepId)
         saving[stepId] = nil
       }
     }

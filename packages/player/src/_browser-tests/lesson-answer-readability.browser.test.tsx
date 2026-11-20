@@ -1,13 +1,46 @@
+import { collectMathMarkup } from "@zoonk/learn/rich-text/math";
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
-import { contentStep } from "../preview/preview-steps";
+import { activityStep, contentStep } from "../preview/preview-steps";
 
 const ANSWER = "Compartilhado entre os dois átomos, no par de elétrons";
 
-function lessonWithAnswer(text: string) {
+const LONG_FORMULA = String.raw`$P(A \cup B) = P(A) + P(B) - P(A \cap B) = \frac{1}{2} + \frac{1}{3} - \frac{1}{6} = \frac{2}{3} \approx 0.667$`;
+
+function scrollersBetween(drawing: Element, box: Element): Element[] {
+  const scrollers = [];
+
+  for (let node = drawing.parentElement; node && node !== box; node = node.parentElement) {
+    if (getComputedStyle(node).overflowX === "auto" && node.scrollWidth > node.clientWidth) {
+      scrollers.push(node);
+    }
+  }
+
+  return scrollers;
+}
+
+function wordBoxes(answer: Element) {
+  const text = document.createTreeWalker(answer, NodeFilter.SHOW_TEXT).nextNode();
+
+  if (!text?.textContent) {
+    throw new Error("The answer must contain text.");
+  }
+
+  const range = document.createRange();
+
+  return [...text.textContent.matchAll(/\S+/gu)].map((word) => {
+    range.setStart(text, word.index);
+    range.setEnd(text, word.index + word[0].length);
+    const { left, top } = range.getBoundingClientRect();
+    return { left: Math.round(left), top: Math.round(top), word: word[0] };
+  });
+}
+
+function lessonWithAnswer(text: string, question = "Onde está o par de elétrons compartilhado?") {
   return buildLesson(
     [
       contentStep("check", {
@@ -22,7 +55,7 @@ function lessonWithAnswer(text: string) {
               text: "Em apenas um dos átomos",
             },
           ],
-          question: "Onde está o par de elétrons compartilhado?",
+          question,
         },
       }),
     ],
@@ -152,4 +185,118 @@ describe("checked answer readability", () => {
       });
     },
   );
+
+  it.each([
+    { answer: "Their water didn't come from the Broad Street pump", width: 420 },
+    { answer: "Their water didn't come from the Broad Street pump", width: 440 },
+    { answer: ANSWER, width: 450 },
+  ])(
+    "keeps two words on the last line of $answer and moves none when Check adds the tag at $width px",
+    async ({ answer, width }) => {
+      await atViewport({ height: 844, width }, async () => {
+        renderLessonPlayer({ lesson: lessonWithAnswer(answer) });
+
+        const option = page.getByRole("radio", { name: answer });
+        const words = option.getByText(answer, { exact: true }).element();
+        const before = wordBoxes(words);
+        const lastTop = before.at(-1)?.top;
+
+        expect(before.filter((word) => word.top === lastTop).length).toBeGreaterThan(1);
+
+        await option.click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await expect.element(option.getByText("Your answer")).toBeVisible();
+
+        expect(wordBoxes(words)).toStrictEqual(before);
+      });
+    },
+  );
+
+  it("keeps a formula wider than the row beside its mark, scrolling sideways, the tag under it", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const lesson = lessonWithAnswer(LONG_FORMULA);
+      renderLessonPlayer({ lesson, mathMarkup: collectMathMarkup(lesson) });
+
+      await expect.element(page.getByRole("radio").first()).toBeVisible();
+      const drawing = document.querySelector("[data-slot='answer-option'] math");
+      const option = drawing?.closest<HTMLElement>("[data-slot='answer-option']");
+
+      if (!drawing || !option) {
+        throw new Error("The formula must draw inside its answer.");
+      }
+
+      const selected = page.elementLocator(option);
+      await selected.click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await expect.element(selected.getByText("Your answer")).toBeVisible();
+
+      const mark = option.firstElementChild?.getBoundingClientRect();
+      const formula = drawing.closest("[data-slot='inline-math']")?.getBoundingClientRect();
+      const tag = selected.getByText("Your answer").element().getBoundingClientRect();
+
+      if (!mark || !formula) {
+        throw new Error("The answer must draw its mark and its formula.");
+      }
+
+      expect(option.scrollWidth).toBeLessThanOrEqual(option.clientWidth);
+      expect(scrollersBetween(drawing, option)).toHaveLength(1);
+      expect(formula.left).toBeGreaterThanOrEqual(mark.right);
+      expect(formula.top).toBeLessThan(mark.bottom);
+      expect(tag.top).toBeGreaterThanOrEqual(formula.bottom);
+    });
+  });
+
+  it("keeps a formula wider than the screen inside the question, scrolling sideways", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const lesson = lessonWithAnswer("Sim", `É verdade que ${LONG_FORMULA}?`);
+      renderLessonPlayer({ lesson, mathMarkup: collectMathMarkup(lesson) });
+
+      await expect.element(page.getByRole("radio").first()).toBeVisible();
+      const drawing = document.querySelector("math");
+
+      if (!drawing) {
+        throw new Error("The question's formula must draw.");
+      }
+
+      const formula = drawing.closest("[data-slot='inline-math']");
+
+      expect(formula?.getBoundingClientRect().right).toBeLessThanOrEqual(390);
+      expect(scrollersBetween(drawing, document.body)).toHaveLength(1);
+    });
+  });
+
+  it("keeps a formula wider than a match card inside its text column", async () => {
+    const fixture = activityContentFixtures.matchPairs;
+
+    const distractor = { side: "right" as const, text: LONG_FORMULA, why: "It has no match." };
+
+    const lesson = buildLesson([
+      activityStep({
+        content: {
+          ...fixture,
+          fields: { ...fixture.fields, distractors: [...fixture.fields.distractors, distractor] },
+        },
+      }),
+    ]);
+
+    await atViewport({ height: 844, width: 390 }, async () => {
+      renderLessonPlayer({ lesson, mathMarkup: collectMathMarkup(lesson) });
+
+      await expect.element(page.getByRole("group", { name: "Cards to match" })).toBeVisible();
+      const drawing = document.querySelector("[data-slot='match-entry'] math");
+      const card = drawing?.closest("[data-slot='match-entry']");
+      const formula = drawing?.closest("[data-slot='inline-math']");
+      const column = formula?.closest("[data-slot='match-entry'] > span");
+
+      if (!drawing || !card || !formula || !column) {
+        throw new Error("The formula must draw inside its card's text column.");
+      }
+
+      const columnEnd = column.getBoundingClientRect().right;
+
+      expect(formula.getBoundingClientRect().right).toBeLessThanOrEqual(columnEnd);
+      expect(card.scrollWidth).toBeLessThanOrEqual(card.clientWidth);
+      expect(scrollersBetween(drawing, card)).toHaveLength(1);
+    });
+  });
 });

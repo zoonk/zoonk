@@ -10,12 +10,11 @@ import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
 import { StatusMark } from "@zoonk/learn/status-mark";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
-import { ArrowRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   type ComponentProps,
@@ -152,7 +151,6 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
         prefetch
       >
         {label}
-        <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
       </Link>
     );
   }
@@ -181,7 +179,6 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
       className={getStartControlClassName()}
       onClick={continueGoal}
       size="lg"
-      {...FORWARD_ICON}
     >
       {label}
     </Button>
@@ -223,17 +220,6 @@ export function CourseHere({
       {t("You are here")}
     </span>
   );
-}
-
-/** The example plan's numbers help someone deciding; a learner whose plan follows the course has their own. */
-export function CourseExampleNumbers({
-  children,
-  courseId,
-}: {
-  children: ReactNode;
-  courseId: string;
-}) {
-  return <CourseGoalSwitch continueLink={null} courseId={courseId} startLinks={children} />;
 }
 
 /** Opens on its own when it hides the chapter the learner's plan is at. */

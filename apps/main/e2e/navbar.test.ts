@@ -11,7 +11,7 @@ test("a guest can create an account after leaving and returning to the app", asy
   const trigger = page.getByRole("button", { name: /Guest.*User menu/iu });
   await expectHydrated(trigger);
   await trigger.click();
-  await expect(page.getByRole("menuitem", { name: "Create an account" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Create a free account" })).toBeVisible();
   await expect(page.getByRole("menuitem", { exact: true, name: "Log in" })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: "Log out" })).toHaveCount(0);
 
@@ -19,13 +19,16 @@ test("a guest can create an account after leaving and returning to the app", asy
   await expect(page).toHaveURL(/\/pricing$/u);
 
   await expect(
-    page.getByRole("heading", { level: 1, name: "Start free. Plus when you want everything." }),
+    page.getByRole("heading", {
+      level: 1,
+      name: "Follow your study plan all the way to your exam, move abroad or deadline.",
+    }),
   ).toBeVisible();
 
   await page.goBack();
   await expect(page).toHaveURL(/\/today$/u);
   await expectHydrated(trigger);
   await trigger.click();
-  await page.getByRole("menuitem", { name: "Create an account" }).click();
+  await page.getByRole("menuitem", { name: "Create a free account" }).click();
   await expect(page.getByLabel("Email")).toBeVisible();
 });

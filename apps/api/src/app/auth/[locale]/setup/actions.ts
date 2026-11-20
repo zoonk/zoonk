@@ -2,15 +2,14 @@
 
 import { getAuthError } from "@zoonk/auth/errors";
 import { NAME_TOO_LONG_ERROR_CODE } from "@zoonk/auth/name-rules";
-import { isUsernameSyntaxValid } from "@zoonk/auth/username-rules";
-import { updateCurrentUser } from "@zoonk/core/users/current";
+import { suggestCurrentUsername, updateCurrentUser } from "@zoonk/core/users/current";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { logError } from "@zoonk/utils/logger";
 import { redirect } from "next/navigation";
 import { getCallbackHref } from "../../_utils/auth-redirect";
 
-export type SetupState = { status: "error" | "idle" | "nameTooLong" | "usernameTaken" };
+export type SetupState = { status: "error" | "idle" | "nameTooLong" };
 
 export async function setupProfileAction(
   redirectTo: string | null,
@@ -18,9 +17,10 @@ export async function setupProfileAction(
   formData: FormData,
 ): Promise<SetupState> {
   const name = parseFormField(formData, "name");
-  const username = parseFormField(formData, "username");
+  // Picked here, not on the page: a username taken since then gets a new one on the next try.
+  const username = await suggestCurrentUsername();
 
-  if (!name || !username || !isUsernameSyntaxValid(username)) {
+  if (!name || !username) {
     return { status: "error" };
   }
 
@@ -29,10 +29,6 @@ export async function setupProfileAction(
 
   if (errorCode === NAME_TOO_LONG_ERROR_CODE) {
     return { status: "nameTooLong" };
-  }
-
-  if (errorCode === "USERNAME_IS_ALREADY_TAKEN") {
-    return { status: "usernameTaken" };
   }
 
   if (error || !data) {

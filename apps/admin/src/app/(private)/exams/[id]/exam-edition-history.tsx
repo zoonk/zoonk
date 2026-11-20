@@ -9,8 +9,8 @@ export async function ExamEditionHistory({ examBlueprintId }: { examBlueprintId:
 
   return (
     <AdminSection
-      description="What learners were told each time a new fetch changed this exam."
-      title="Edition history"
+      description="What learners were told each time a check found the exam changed."
+      title="What changed"
     >
       <ChangeNoticeTable
         emptyLabel="No change since the blueprint was first read."

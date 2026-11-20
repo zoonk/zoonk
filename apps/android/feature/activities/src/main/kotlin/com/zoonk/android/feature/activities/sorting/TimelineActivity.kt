@@ -74,7 +74,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -92,6 +91,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.ceil
@@ -218,7 +218,8 @@ private fun TimelineQuestion(props: ActivityProps) {
         if (!props.isChecked && trayEvent != null) {
             TimelineTray(
                 label = trayEvent.label,
-                remaining = unplaced.size,
+                placed = fields.events.size - unplaced.size,
+                total = fields.events.size,
                 enabled = !props.isLocked,
                 onPlace = {
                     place(trayEvent.id, snapYear((fields.start + fields.end) / 2.0, fields.start, fields.end))
@@ -368,7 +369,7 @@ private fun TimelineTrack(
                     .clearAndSetSemantics {},
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelSmall.withTabularFigures(),
-                textAlign = TextAlign.End,
+                textAlign = layoutEnd(),
                 maxLines = 1,
             )
         }
@@ -653,7 +654,8 @@ private fun TrackIcon(
 @Composable
 private fun TimelineTray(
     label: String,
-    remaining: Int,
+    placed: Int,
+    total: Int,
     enabled: Boolean,
     onPlace: () -> Unit,
     onDrag: (LayoutCoordinates, Offset, Float) -> Unit,
@@ -671,7 +673,7 @@ private fun TimelineTray(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            pluralStringResource(R.plurals.activities_sorting_events_to_place, remaining, remaining),
+            pluralStringResource(R.plurals.activities_sorting_events_placed, total, placed, total),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium,
         )

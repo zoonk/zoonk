@@ -110,9 +110,14 @@ fun LessonRouteScreen(
         }
 
         is LoadState.Failed -> {
-            LessonFrame(title = null, onClose = exits::close) {
-                if (state.error == ApiError.NotFound) {
-                    LessonAccessScreen(LessonRefusal.NotFound, onRetry = {}, exits = exits)
+            val gone = state.error == ApiError.NotFound
+            LessonFrame(
+                title = null,
+                onClose = exits::close,
+                bottomBar = if (gone) lessonAccessBar(LessonRefusal.NotFound, onRetry = {}, exits = exits) else null,
+            ) {
+                if (gone) {
+                    LessonAccessScreen(LessonRefusal.NotFound, onRetry = {})
                 } else {
                     LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } })
                 }
@@ -120,8 +125,12 @@ fun LessonRouteScreen(
         }
 
         LoadState.Empty -> {
-            LessonFrame(title = null, onClose = exits::close) {
-                LessonAccessScreen(LessonRefusal.NotFound, onRetry = {}, exits = exits)
+            LessonFrame(
+                title = null,
+                onClose = exits::close,
+                bottomBar = lessonAccessBar(LessonRefusal.NotFound, onRetry = {}, exits = exits),
+            ) {
+                LessonAccessScreen(LessonRefusal.NotFound, onRetry = {})
             }
         }
 
@@ -188,6 +197,7 @@ internal fun PlayingLesson(
                 chapters = app.goalContent,
                 analytics = app.analytics,
                 saved = createSavedStateHandle(),
+                hosted = endSlot != null,
             )
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()
@@ -248,7 +258,6 @@ internal fun PlayingLesson(
                     CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
                 },
                 finishedChapter = { FinishedChapterMoment(it, app, navigator::open) },
-                reminderOffer = { ReminderOfferCard(app, it) },
             )
             LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
         }

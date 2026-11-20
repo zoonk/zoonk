@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.subscription.PlusMark
 
 enum class TestOutScope { Chapter, Unit }
 
@@ -18,15 +17,9 @@ fun TestOutRow(
     scope: TestOutScope,
     onOpen: () -> Unit,
     modifier: Modifier = Modifier,
-    plusRequired: Boolean = false,
 ) {
     ListRow(
-        headline = {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.test_out_title))
-                if (plusRequired) PlusMark()
-            }
-        },
+        headline = { Text(stringResource(R.string.test_out_title)) },
         modifier = modifier,
         onClick = onOpen,
         supporting = {

@@ -4,8 +4,9 @@ import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_FIELD_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
@@ -16,6 +17,7 @@ import { type ActivityRendererProps } from "../activity-renderer";
 import { FormulaExamples } from "./formula-examples";
 import { PatternHints } from "./pattern-hints";
 import { type RegexResults, countPassing, testFormula, testRegex } from "./pattern-results";
+import { PatternTask } from "./pattern-task";
 import { RegexSampleList } from "./regex-samples";
 
 type PatternTesterProps = ActivityRendererProps<"patternTester">;
@@ -145,6 +147,7 @@ export function PatternTesterActivity({
   const formulaSnippets = useFormulaSnippets(fields);
   const regexResults = useRegexResults(fields, pattern);
   const summary = passingSummary(fields, pattern, regexResults);
+  const passesAll = summary !== null && summary.passing === summary.total;
 
   function change(next: string) {
     setPattern(next);
@@ -156,9 +159,11 @@ export function PatternTesterActivity({
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
-      <p className="text-base leading-snug font-medium">
-        <LessonRichText literalNumbers={isRegex} text={fields.task} />
-      </p>
+      {!isExploring && (
+        <p className="text-base leading-snug font-medium">
+          <PatternTask literalNumbers={isRegex} text={fields.task} />
+        </p>
+      )}
 
       <div className="flex flex-col gap-2">
         <label className="sr-only" htmlFor={inputId}>
@@ -167,8 +172,8 @@ export function PatternTesterActivity({
 
         <div
           className={cn(
-            "bg-background focus-within:border-primary flex h-14 items-center gap-0.5 rounded-xl border-2 px-4 font-mono text-xl",
-            isChecked && "opacity-80",
+            ACTIVITY_FIELD_CLASS,
+            "flex h-11 items-center gap-0.5 px-3 font-mono text-base",
           )}
         >
           {isRegex && (
@@ -181,7 +186,7 @@ export function PatternTesterActivity({
             autoCapitalize="off"
             autoComplete="off"
             autoCorrect="off"
-            className="placeholder:text-muted-foreground h-full min-w-0 flex-1 bg-transparent outline-none"
+            className="placeholder:text-muted-foreground h-11 min-w-0 flex-1 bg-transparent outline-none"
             id={inputId}
             onChange={(event) => change(event.target.value)}
             placeholder={isRegex ? undefined : "=A1*B1"}
@@ -199,13 +204,12 @@ export function PatternTesterActivity({
           )}
         </div>
 
-        {!isChecked && (
-          <ActivitySnippetBar
-            label={t("Symbols")}
-            onInsert={insert}
-            snippets={isRegex ? regexSnippets : formulaSnippets}
-          />
-        )}
+        <ActivitySnippetBar
+          disabled={isChecked}
+          label={t("Symbols")}
+          onInsert={insert}
+          snippets={isRegex ? regexSnippets : formulaSnippets}
+        />
       </div>
 
       <PatternExamples fields={fields} pattern={pattern} regexResults={regexResults} />
@@ -219,15 +223,20 @@ export function PatternTesterActivity({
       </p>
 
       {!isExploring && (
-        <PatternHints hints={fields.hints} isChecked={isChecked} literalNumbers={isRegex} />
+        <PatternHints
+          hints={fields.hints}
+          isChecked={isChecked}
+          literalNumbers={isRegex}
+          reveal={isChecked && !passesAll}
+        />
       )}
 
-      {isChecked && (
+      {isChecked && !passesAll && (
         <div className="flex flex-col gap-1">
           <ActivityCanvasLabel className="font-medium">
             {isRegex ? t("A pattern that works") : t("A formula that works")}
           </ActivityCanvasLabel>
-          <code className="bg-background w-fit rounded-xl border px-3 py-2 font-mono text-base break-all">
+          <code className={cn(ACTIVITY_CARD_CLASS, "w-fit font-mono text-base break-all")}>
             {isRegex ? `/${fields.solution}/` : `=${fields.solution}`}
           </code>
         </div>
@@ -274,7 +283,7 @@ function PatternExamples({
   const tested = regexResults?.status === "tested" ? regexResults : null;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-5">
       {regexResults?.status === "invalid" && (
         <p className="text-destructive-text text-sm" role="status">
           {t(

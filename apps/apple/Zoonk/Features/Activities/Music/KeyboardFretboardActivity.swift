@@ -5,7 +5,7 @@ extension ActivityRenderer {
     template: "keyboardFretboard",
     badge: .by { content in
       (try? content.fields(as: KeyboardFretboardFields.self))?.isByEar == true
-        ? .earTraining : .playIt
+        ? .earTraining : nil
     }, grade: KeyboardFretboard.grade
   ) { context in
     if let fields = try? context.fields(as: KeyboardFretboardFields.self) {
@@ -58,6 +58,14 @@ private struct KeyboardFretboardState {
     isChecked && (isInteraction || fields.isByEar)
   }
 
+  func heading(shown: [Int]) -> NoteTarget? {
+    if fields.isByEar, context.phase == .answering { return nil }
+    let isBuilding = context.phase == .answering && isInteraction
+    if !isBuilding, shown.sorted() == fields.target.pitches.sorted() { return fields.target }
+    if let start = fields.start, shown.sorted() == start.pitches.sorted() { return start }
+    return nil
+  }
+
   var spell: (Int) -> String {
     KeyboardFretboard.spelling([fields.target, fields.start])
   }
@@ -100,7 +108,8 @@ private struct PianoBoard: View {
       : KeyboardFretboard.answeringMarks(pressed: pressed, start: fields.start?.pitches ?? [])
 
     KeyboardFretboardHeader(
-      fields: fields, isRevealed: context.phase != .answering, notes: shown.map(spell),
+      fields: fields, heading: state.heading(shown: shown),
+      isRevealed: context.phase != .answering, notes: shown.map(spell),
       onPlayTarget: cantListen
         ? nil : { audio.play(KeyboardFretboard.targetSound(fields.target), on: .piano) },
       onHear: {
@@ -179,7 +188,8 @@ private struct GuitarOnlyBoard: View {
     let played = KeyboardFretboard.pitches(of: voicing)
 
     KeyboardFretboardHeader(
-      fields: fields, isRevealed: context.phase != .answering, notes: played.map(spell),
+      fields: fields, heading: state.heading(shown: played),
+      isRevealed: context.phase != .answering, notes: played.map(spell),
       onPlayTarget: cantListen
         ? nil : { audio.play(KeyboardFretboard.targetSound(fields.target), on: .guitar) },
       onHear: {
@@ -294,6 +304,7 @@ private struct GuitarOnlyBoard: View {
 /// Found by ear, the target isn't named until it's answered.
 private struct KeyboardFretboardHeader: View {
   let fields: KeyboardFretboardFields
+  let heading: NoteTarget?
   let isRevealed: Bool
   let notes: [String]
   /// Nil while the learner can't listen: the sound's notes show as text instead.
@@ -301,17 +312,9 @@ private struct KeyboardFretboardHeader: View {
   let onHear: () -> Void
 
   var body: some View {
-    ViewThatFits(in: .horizontal) {
-      HStack(alignment: .top, spacing: 12) {
-        titles
-        Spacer(minLength: 0)
-        buttons
-      }
-
-      VStack(alignment: .leading, spacing: 12) {
-        titles
-        HStack { buttons }
-      }
+    VStack(alignment: .leading, spacing: 12) {
+      titles
+      FlowLayout(spacing: 8) { buttons }
     }
     .announcesStatus(spokenNotes)
   }
@@ -347,8 +350,11 @@ private struct KeyboardFretboardHeader: View {
         action: onPlayTarget)
     }
 
+    // While the sound is a mystery there are two sounds to hear, so each button names its own.
     MusicSoundButton(
-      title: Text("Hear it", tableName: "ActivitiesMusic", comment: "Plays the notes on the keys"),
+      title: fields.isByEar && !isRevealed
+        ? Text("Hear your notes", tableName: "ActivitiesMusic")
+        : Text("Hear it", tableName: "ActivitiesMusic", comment: "Plays the notes on the keys"),
       isDisabled: notes.isEmpty, action: onHear)
   }
 
@@ -359,13 +365,11 @@ private struct KeyboardFretboardHeader: View {
   }
 
   private var title: Text {
-    if fields.isByEar, !isRevealed {
-      return Text(
-        "By ear", tableName: "ActivitiesMusic",
-        comment: "Title while the target is only heard, not named")
+    guard let heading else {
+      return Text("Your notes", tableName: "ActivitiesMusic")
     }
 
-    switch fields.target {
+    switch heading {
     case .chord(let root, let quality):
       return Text(MusicLabels.chord(root: root, quality: quality))
     case .notes(let notes):

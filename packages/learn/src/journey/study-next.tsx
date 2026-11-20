@@ -4,7 +4,7 @@ import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { LibraryIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import {
   ListGroup,
   ListRowContent,
@@ -18,7 +18,6 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
-  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
@@ -26,6 +25,7 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLevelName } from "../course/use-level-name";
+import { useSharedRequest, useSharedState } from "../plan/layout-shared";
 import { SlotContent } from "../plan/plan-suggestion-context";
 import { CertificateAction, type PlanCertificates } from "./course-certificate";
 
@@ -42,11 +42,14 @@ function ContinueAtNextLevel({
 }) {
   const t = useExtracted();
   const levelName = useLevelName();
-  const [failed, setFailed] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [failed, setFailed] = useSharedState("continueFailed", false);
+  const [ownPending, startTransition] = useTransition();
+  const request = useSharedRequest("continue", ownPending);
+  const isPending = request.busy;
 
   const start = () => {
     startTransition(async () => {
+      request.start();
       const { data: started } = await safeAsync(onContinue);
       setFailed(!started);
     });
@@ -105,29 +108,34 @@ export function StudyNextSuggestion({
   next: StudyNext;
 }) {
   const t = useExtracted();
-  const hasNext = next.nextLevel !== null || next.related.length > 0;
   const title = t("You finished your plan");
 
   return (
     <Suggestion label={title} mark={<DoneMark />}>
       <SuggestionLine>
         <SuggestionSummary>{title}</SuggestionSummary>
-        <SuggestionOpen />
+        {certificates ? (
+          <CertificateAction certificates={certificates} primary={false} />
+        ) : (
+          <SuggestionOpen />
+        )}
+        {certificates && (next.nextLevel || next.related.length > 0) && <SuggestionOpen />}
       </SuggestionLine>
 
       <SlotContent>
         <SuggestionHeader>{title}</SuggestionHeader>
-        {hasNext && (
-          <SuggestionDescription>{t("Here's what to study next.")}</SuggestionDescription>
-        )}
-
         {(next.nextLevel || certificates) && (
-          <SuggestionActions>
-            {certificates && (
-              <CertificateAction certificates={certificates} primary={!next.nextLevel} />
-            )}
-            {next.nextLevel && (
-              <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+          <SuggestionActions
+            main={
+              next.nextLevel ? (
+                <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+              ) : (
+                certificates && <CertificateAction certificates={certificates} primary />
+              )
+            }
+          >
+            {next.nextLevel && certificates && (
+              <CertificateAction certificates={certificates} primary={false} />
             )}
           </SuggestionActions>
         )}

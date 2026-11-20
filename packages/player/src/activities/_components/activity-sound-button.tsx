@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { Volume2 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type InstrumentStatus } from "../_utils/use-instrument";
@@ -19,7 +18,7 @@ export function ActivitySoundButton({
 }) {
   return (
     <Button
-      className={cn("rounded-full", className)}
+      className={className}
       disabled={disabled}
       onClick={onPlay}
       size="lg"

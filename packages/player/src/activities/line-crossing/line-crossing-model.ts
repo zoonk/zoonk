@@ -1,4 +1,5 @@
 import { crossing, shiftLine } from "@zoonk/core/library/activities/line-crossing";
+import { niceTicks } from "@zoonk/utils/plot-scale";
 import { type SnapRange, clamp, snapToStep } from "../_utils/snap-value";
 
 export type Line = { intercept: number; slope: number };
@@ -21,13 +22,14 @@ const HEADROOM = 1.25;
 const STEPS_PER_SHIFT = 4;
 const RELATIVE_SLACK = 1e-9;
 const HANDLE_SHARE = 0.82;
-const HANDLE_SHARE_STEPS = 100;
+const HANDLE_SHARE_STEPS = 20;
 
-// Shares of the chart that fit a whole handle, and its gap from a crossing dot, on the smallest
-// plot (192px), so a slide never depends on the window's size.
-const HANDLE_MARGIN = 0.08;
+export const HANDLE_RADIUS = 14;
+export const HANDLE_STROKE = 2.5;
+const NOMINAL_PLOT_SIZE = { x: 192, y: 192 };
 const CROSSING_GAP = 0.135;
-const KEPT_MARGIN = HANDLE_MARGIN * 2;
+const KEPT_MARGIN = 0.16;
+const HANDLES_APART = 0.2;
 
 const HANDLE_SHARES = Array.from(
   { length: HANDLE_SHARE_STEPS + 1 },
@@ -86,7 +88,7 @@ function lowerBound(lowest: number, upper: number): number {
  * zero only as far as it takes for the resting and the right crossings to sit inside the handles'
  * margin, with room to spare.
  */
-function chartDomain({
+export function chartDomain({
   amount,
   axis,
   lines,
@@ -179,27 +181,35 @@ export function changeDirection(before: number, after: number): "down" | "same" 
   return after > before ? "up" : "down";
 }
 
+type HandleOption = { crossings: Point[]; rest: Point; slide: LineSlide; stops: Point[] };
+
 /**
- * How a line's handle slides: twice the real shift each way, as far as the line still passes
+ * How a line's handle can slide: twice the real shift each way, as far as the line still passes
  * through the chart inset by a handle's margin. At each shift the handle rides its moved line,
- * at the point nearest its resting spot inside that inset. It rests 82% along the line, or at
- * the nearest point to that clear of the resting crossing, kept inside the inset.
+ * at the point nearest its resting spot inside that inset. Its resting spots, nearest 82% along
+ * the line first, are those clear of the resting crossing, kept inside the inset. `crossings` are
+ * where the line meets `other` at each shift.
  */
-function lineSlide({
+function handleOptions({
   amount,
   axis,
   crossing: restingCrossing,
+  plot,
   domain,
   line,
+  other,
 }: {
   amount: number;
   axis: ShiftAxis;
   crossing: Point;
+  plot: Point;
   domain: ChartDomain;
   line: Line;
-}): LineSlide {
+  other: Line;
+}): HandleOption[] {
   const size = { x: domain.max.x - domain.min.x, y: domain.max.y - domain.min.y };
-  const margin = { x: size.x * HANDLE_MARGIN, y: size.y * HANDLE_MARGIN };
+  const radius = Math.ceil(HANDLE_RADIUS + HANDLE_STROKE / 2);
+  const margin = { x: (size.x * radius) / plot.x, y: (size.y * radius) / plot.y };
   const low = { x: domain.min.x + margin.x, y: domain.min.y + margin.y };
   const high = { x: domain.max.x - margin.x, y: domain.max.y - margin.y };
   const full = shiftRange(amount);
@@ -211,6 +221,8 @@ function lineSlide({
 
   const visible = spanInside(line, domain.min, domain.max) ?? { from: 0, to: 0 };
   const resting = spanInside(line, low, high) ?? visible;
+  const range = { max: Math.max(...offsets), min: Math.min(...offsets), step: full.step };
+  const crossings = offsets.map((offset) => crossingPoint(movedLine(line, offset, axis), other));
 
   const along = (share: number) =>
     clamp(visible.from + (visible.to - visible.from) * share, resting.from, resting.to);
@@ -219,21 +231,105 @@ function lineSlide({
     Math.hypot((x - restingCrossing.x) / size.x, (yAt(line, x) - restingCrossing.y) / size.y) >=
     CROSSING_GAP;
 
-  const homeX = along(HANDLE_SHARES.find((share) => isClear(along(share))) ?? HANDLE_SHARE);
+  const option = (homeX: number): HandleOption => {
+    const at = (offset: number): Point => {
+      const moved = movedLine(line, offset, axis);
+      const preferred = axis === "horizontal" ? homeX + offset : homeX;
+      const span = spanInside(moved, low, high);
+      const x = span ? clamp(preferred, span.from, span.to) : preferred;
+      return { x: clamp(x, low.x, high.x), y: clamp(yAt(moved, x), low.y, high.y) };
+    };
 
-  function at(offset: number): Point {
-    const moved = movedLine(line, offset, axis);
-    const preferred = axis === "horizontal" ? homeX + offset : homeX;
-    const span = spanInside(moved, low, high);
-    const x = span ? clamp(preferred, span.from, span.to) : preferred;
-    return { x, y: yAt(moved, x) };
-  }
-
-  return {
-    at,
-    offsets,
-    range: { max: Math.max(...offsets), min: Math.min(...offsets), step: full.step },
+    return {
+      crossings,
+      rest: at(0),
+      slide: { at, offsets, range },
+      stops: offsets.map((offset) => at(offset)),
+    };
   };
+
+  const shares = HANDLE_SHARES.filter((share) => isClear(along(share)));
+  return (shares.length > 0 ? shares : [HANDLE_SHARE]).map((share) => option(along(share)));
+}
+
+/** Whether a stop lies between a line's rest and its real answer, where a learner passes. */
+function isOnTheWay(offset: number, realOffset: number): boolean {
+  return offset >= Math.min(0, realOffset) && offset <= Math.max(0, realOffset);
+}
+
+/**
+ * What a pair of resting handles costs, compared in order: on the screens that stay, at rest and at
+ * the real answer, how far a handle runs onto the other handle or under the crossing; the stops on the way to the
+ * answer where the moving handle lands on the other's rest; the same at the other stops; the stops
+ * where the crossing, sliding along the other line, passes over a resting handle.
+ */
+function pairCost({
+  domain,
+  first,
+  real,
+  second,
+}: {
+  domain: ChartDomain;
+  first: HandleOption;
+  real: { crossing: Point; offsets: [number, number] };
+  second: HandleOption;
+}): [number, number, number, number] {
+  const size = { x: domain.max.x - domain.min.x, y: domain.max.y - domain.min.y };
+
+  const distance = (point: Point, to: Point) =>
+    Math.hypot((point.x - to.x) / size.x, (point.y - to.y) / size.y);
+
+  const near = (points: Point[], to: Point, gap: number) =>
+    points.filter((point) => distance(point, to) < gap).length;
+
+  const overlap = (point: Point, to: Point, gap: number) => Math.max(0, gap - distance(point, to));
+
+  const firstAtReal = first.slide.at(real.offsets[0]);
+  const secondAtReal = second.slide.at(real.offsets[1]);
+
+  const stops = (option: HandleOption, realOffset: number, onTheWay: boolean) =>
+    option.stops.filter(
+      (_, index) => isOnTheWay(option.slide.offsets[index] ?? 0, realOffset) === onTheWay,
+    );
+
+  const handlesMet = (onTheWay: boolean) =>
+    near(stops(first, real.offsets[0], onTheWay), second.rest, HANDLES_APART) +
+    near(stops(second, real.offsets[1], onTheWay), first.rest, HANDLES_APART);
+
+  return [
+    overlap(first.rest, second.rest, HANDLES_APART) +
+      overlap(firstAtReal, secondAtReal, HANDLES_APART) +
+      overlap(firstAtReal, real.crossing, CROSSING_GAP) +
+      overlap(secondAtReal, real.crossing, CROSSING_GAP),
+    handlesMet(true),
+    handlesMet(false),
+    near(first.crossings, second.rest, CROSSING_GAP) +
+      near(second.crossings, first.rest, CROSSING_GAP),
+  ];
+}
+
+/** Only one line moves at a time. The handles rest at the cheapest pair, nearest 82% first. */
+function handlePair({
+  domain,
+  firsts,
+  real,
+  seconds,
+}: {
+  domain: ChartDomain;
+  firsts: HandleOption[];
+  real: { crossing: Point; offsets: [number, number] };
+  seconds: HandleOption[];
+}): { first: HandleOption; second: HandleOption } {
+  const pairs = firsts.flatMap((first) =>
+    seconds.map((second) => ({ cost: pairCost({ domain, first, real, second }), first, second })),
+  );
+
+  const isCheaper = (pair: (typeof pairs)[number], best: (typeof pairs)[number]) => {
+    const differs = pair.cost.findIndex((cost, index) => cost !== best.cost[index]);
+    return differs !== -1 && (pair.cost[differs] ?? 0) < (best.cost[differs] ?? 0);
+  };
+
+  return pairs.reduce((best, pair) => (isCheaper(pair, best) ? pair : best));
 }
 
 export function chartSlides<TLine extends NamedLine>({
@@ -241,20 +337,48 @@ export function chartSlides<TLine extends NamedLine>({
   axis,
   lines,
   real,
+  plot = NOMINAL_PLOT_SIZE,
 }: {
   amount: number;
   axis: ShiftAxis;
   lines: readonly [TLine, TLine];
   real: LineOffsets;
-}): { domain: ChartDomain; slides: { line: TLine; slide: LineSlide }[] } {
+  plot?: Point;
+}): {
+  domain: ChartDomain;
+  slides: { line: TLine; slide: LineSlide }[];
+  xTicks: number[];
+  yTicks: number[];
+} {
   const domain = chartDomain({ amount, axis, lines, real });
-  const rest = crossingPoint(lines[0], lines[1]);
+  const [first, second] = lines;
+  const rest = crossingPoint(first, second);
+
+  const options = (line: Line, other: Line) =>
+    handleOptions({ amount, axis, crossing: rest, domain, line, other, plot });
+
+  const realOffsets: [number, number] = [real[first.id] ?? 0, real[second.id] ?? 0];
+
+  const chosen = handlePair({
+    domain,
+    firsts: options(first, second),
+    real: {
+      crossing: crossingPoint(
+        movedLine(first, realOffsets[0], axis),
+        movedLine(second, realOffsets[1], axis),
+      ),
+      offsets: realOffsets,
+    },
+    seconds: options(second, first),
+  });
 
   return {
     domain,
-    slides: lines.map((line) => ({
-      line,
-      slide: lineSlide({ amount, axis, crossing: rest, domain, line }),
-    })),
+    slides: [
+      { line: first, slide: chosen.first.slide },
+      { line: second, slide: chosen.second.slide },
+    ],
+    xTicks: niceTicks([domain.min.x, domain.max.x]),
+    yTicks: niceTicks([domain.min.y, domain.max.y]),
   };
 }

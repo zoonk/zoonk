@@ -11,9 +11,7 @@ import android.os.SystemClock
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +23,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.util.UUID
-import kotlin.math.log10
 
 /** AAC in an MPEG-4 file, which the API accepts as `audio/mp4`. */
 class VoiceRecording(
@@ -59,11 +56,6 @@ class VoiceRecorder(
     private val status = MutableStateFlow<Status>(Status.Idle)
     val state: StateFlow<Status> = status.asStateFlow()
 
-    private val loudness = MutableStateFlow(0f)
-
-    /** From 0 (silence) to 1. */
-    val level: StateFlow<Float> = loudness.asStateFlow()
-
     private val audio = context.getSystemService(AudioManager::class.java)
     private var take: Take? = null
 
@@ -71,7 +63,6 @@ class VoiceRecorder(
         val recorder: MediaRecorder,
         val file: File,
         val focus: AudioFocusRequest,
-        val meter: Job,
         val onRecorded: (VoiceRecording) -> Unit,
     )
 
@@ -109,7 +100,7 @@ class VoiceRecorder(
             return false
         }
         val startedAt = SystemClock.elapsedRealtime()
-        take = Take(recorder, file, focus, meter(recorder), onRecorded)
+        take = Take(recorder, file, focus, onRecorded)
         status.value = Status.Recording(startedAt)
         return true
     }
@@ -137,28 +128,15 @@ class VoiceRecorder(
         setOnErrorListener { _, _, _ -> scope.launch { cancel() } }
     }
 
-    private fun meter(recorder: MediaRecorder) =
-        scope.launch {
-            while (isActive) {
-                // -50 dB is silence for speech; 0 dB is the loudest.
-                val amplitude = recorder.maxAmplitude.coerceAtLeast(1)
-                val decibels = 20 * log10(amplitude / MAX_AMPLITUDE)
-                loudness.value = ((decibels + 50) / 50).coerceIn(0f, 1f)
-                delay(METER_INTERVAL_MS)
-            }
-        }
-
     private fun finish(deliver: Boolean) {
         val take = take ?: return
         this.take = null
         val started = (status.value as? Status.Recording)?.startedAt ?: SystemClock.elapsedRealtime()
         val durationMs = (SystemClock.elapsedRealtime() - started).coerceAtMost(MAX_DURATION_MS)
-        take.meter.cancel()
         // A take stopped before any audio was written throws.
         val complete = runCatching { take.recorder.stop() }.isSuccess
         take.recorder.release()
         audio.abandonAudioFocusRequest(take.focus)
-        loudness.value = 0f
         status.value = Status.Idle
         // A ViewModel closes its scope before onCleared throws the take away.
         if (!complete || !deliver || !scope.isActive) {
@@ -179,7 +157,5 @@ class VoiceRecorder(
         const val MAX_DURATION_MS = 30_000L
         private const val SAMPLE_RATE = 22_050
         private const val BIT_RATE = 32_000
-        private const val MAX_AMPLITUDE = 32_767f
-        private const val METER_INTERVAL_MS = 100L
     }
 }

@@ -52,9 +52,9 @@ export function ActivitySlider({
         </span>
       </div>
 
-      <SliderControl>
-        <SliderTrack>
-          <SliderIndicator className="bg-viz-accent" />
+      <SliderControl className="data-disabled:opacity-100">
+        <SliderTrack className="bg-neutral-500">
+          <SliderIndicator />
           <SliderThumb aria-valuetext={valueText} />
         </SliderTrack>
       </SliderControl>

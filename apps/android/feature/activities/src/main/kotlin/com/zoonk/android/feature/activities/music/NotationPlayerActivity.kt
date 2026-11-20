@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +48,7 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -137,7 +137,14 @@ private fun ViewToggle(
             SegmentedButton(
                 selected = showsTab == isTab,
                 onClick = { if (showsTab != isTab) onChange(isTab) },
-                shape = SegmentedButtonDefaults.itemShape(index, views.size),
+                shape =
+                    SegmentedButtonDefaults.itemShape(
+                        index,
+                        views.size,
+                        baseShape =
+                            androidx.compose.foundation.shape
+                                .RoundedCornerShape(com.zoonk.android.ui.theme.ZoonkRadius.md),
+                    ),
             ) {
                 Text(stringResource(text))
             }
@@ -153,7 +160,7 @@ private fun PlayButton(
 ) {
     val label = stringResource(if (isPlaying) R.string.activities_music_stop else R.string.activities_music_play_melody)
 
-    FilledIconButton(onClick = onClick, enabled = enabled) {
+    OutlinedIconButton(onClick = onClick, enabled = enabled) {
         Icon(
             painterResource(if (isPlaying) R.drawable.ic_stop_filled else R.drawable.ic_play_arrow_filled),
             contentDescription = label,

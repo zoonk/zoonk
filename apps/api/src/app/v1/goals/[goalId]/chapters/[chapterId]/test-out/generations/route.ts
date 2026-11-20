@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
+import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { startOnce } from "@/workflows/_shared/run-token";
@@ -31,10 +31,6 @@ async function createTestOutGeneration(
 
   if (result.status === "refused") {
     return usageDecisionError(result.decision);
-  }
-
-  if (result.status === "plusRequired") {
-    return plusRequiredError();
   }
 
   if (result.status === "nothingToSkip") {

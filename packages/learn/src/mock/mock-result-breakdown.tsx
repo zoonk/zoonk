@@ -5,10 +5,14 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
-import { ChevronDownIcon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { useEffect, useId, useRef, useState } from "react";
 import { StepRow, StepRows } from "../_components/step-card";
+import { useFormatRange } from "../_utils/range";
+import { FoldRow, focusRevealedRow } from "../today/today-fold-row";
 import { useMockNumber } from "./mock-labels";
 import { ResultSection } from "./mock-result-section";
 
@@ -28,56 +32,62 @@ function useRightOf() {
 }
 
 export function useMockRange() {
-  const t = useExtracted();
-
-  return ({ high, low }: { high: number; low: number }) =>
-    t("{low}–{high}", { high: String(high), low: String(low) });
+  const formatRange = useFormatRange();
+  return ({ high, low }: { high: number; low: number }) => formatRange(String(low), String(high));
 }
 
 const TOPICS_SHOWN = 5;
 
-function TopicList({ topics }: { topics: readonly Topic[] }) {
-  const rightOf = useRightOf();
-
-  return (
-    <ul className="flex flex-col">
-      {topics.map((topic) => (
-        <li
-          className="border-border flex min-h-10 items-center justify-between gap-3 border-b py-2 text-sm last:border-b-0"
-          key={topic.skillId}
-        >
-          <span className="text-muted-foreground min-w-0">{topic.name}</span>
-          <span className="text-foreground shrink-0 font-mono text-xs tabular-nums">
-            {rightOf(topic)}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function TopicRows({ topics }: { topics: readonly Topic[] }) {
   const t = useExtracted();
+  const rightOf = useRightOf();
   const sorted = topics.toSorted(byShare);
-  const first = sorted.slice(0, TOPICS_SHOWN);
-  const rest = sorted.slice(TOPICS_SHOWN);
+  const hidden = sorted.length - TOPICS_SHOWN;
+  const [open, setOpen] = useState(false);
+  const listId = useId();
+  const listRef = useRef<HTMLUListElement>(null);
+  const focusOnOpen = useRef(false);
+
+  useEffect(() => {
+    if (open && focusOnOpen.current) {
+      focusRevealedRow(listRef.current?.children[TOPICS_SHOWN]);
+    }
+
+    focusOnOpen.current = false;
+  }, [open]);
+
+  const toggle = () => {
+    focusOnOpen.current = !open;
+    setOpen(!open);
+  };
 
   return (
     <>
-      <TopicList topics={first} />
-      {rest.length > 0 && (
-        <Collapsible>
-          <CollapsibleTrigger className="group/more text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 flex min-h-10 items-center gap-1 rounded-lg text-sm font-medium outline-none focus-visible:ring-[3px]">
-            {t("{count, plural, one {# more topic} other {# more topics}}", { count: rest.length })}
-            <ChevronDownIcon
-              aria-hidden="true"
-              className="size-4 transition-transform group-data-panel-open/more:rotate-180 motion-reduce:transition-none"
-            />
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <TopicList topics={rest} />
-          </CollapsibleContent>
-        </Collapsible>
+      <ul className="flex flex-col" id={listId} ref={listRef}>
+        {(open ? sorted : sorted.slice(0, TOPICS_SHOWN)).map((topic) => (
+          <li
+            className="border-border focus-visible:ring-ring/50 flex min-h-10 items-center justify-between gap-3 border-b py-2 text-sm outline-none last:border-b-0 focus-visible:ring-[3px]"
+            key={topic.skillId}
+          >
+            <span className="text-muted-foreground min-w-0">{topic.name}</span>
+            <span className="text-foreground shrink-0 font-mono text-xs tabular-nums">
+              {rightOf(topic)}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {hidden > 0 && (
+        <FoldRow
+          controls={listId}
+          done={false}
+          label={
+            open
+              ? t("Show less")
+              : t("{count, plural, one {# more topic} other {# more topics}}", { count: hidden })
+          }
+          onToggle={toggle}
+          open={open}
+        />
       )}
     </>
   );
@@ -88,11 +98,16 @@ function AreaRow({ area, topics }: { area: Area; topics: readonly Topic[] }) {
   const range = useMockRange();
   const score = area.score ? range(area.score) : rightOf(area);
 
+  const scoreClass = cn(
+    "shrink-0 tabular-nums",
+    area.score ? "text-readout text-sm" : "font-mono text-xs",
+  );
+
   if (topics.length === 0) {
     return (
       <StepRow className="justify-between">
         <span className="min-w-0 font-medium">{area.name}</span>
-        <span className="shrink-0 font-mono text-xs tabular-nums">{score}</span>
+        <span className={scoreClass}>{score}</span>
       </StepRow>
     );
   }
@@ -100,15 +115,12 @@ function AreaRow({ area, topics }: { area: Area; topics: readonly Topic[] }) {
   return (
     <li className="border-border border-b last:border-b-0">
       <Collapsible>
-        <CollapsibleTrigger className="group/area focus-visible:ring-ring/50 flex min-h-12 w-full items-center gap-3 rounded-lg py-3 text-left text-sm outline-none focus-visible:ring-[3px]">
+        <CollapsibleTrigger className="focus-visible:ring-ring/50 flex min-h-12 w-full items-center gap-3 rounded-lg py-3 text-left text-sm outline-none focus-visible:ring-[3px]">
           <span className="min-w-0 flex-1 font-medium">{area.name}</span>
-          <span className="shrink-0 font-mono text-xs tabular-nums">{score}</span>
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="text-muted-foreground size-4 shrink-0 transition-transform group-data-panel-open/area:rotate-180 motion-reduce:transition-none"
-          />
+          <span className={scoreClass}>{score}</span>
+          <FoldChevron />
         </CollapsibleTrigger>
-        <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+        <CollapsibleContent>
           <div className="pb-2 pl-4">
             <TopicRows topics={topics} />
           </div>
@@ -127,14 +139,14 @@ export function MockResultBreakdown({ result }: { result: MockResult }) {
 
   if (result.areas.length <= 1) {
     return (
-      <ResultSection title={t("By topic")}>
+      <ResultSection rows title={t("By topic")}>
         <TopicRows topics={result.topics} />
       </ResultSection>
     );
   }
 
   return (
-    <ResultSection title={t("By area")}>
+    <ResultSection rows title={t("By subject")}>
       <StepRows>
         {result.areas.map((area) => (
           <AreaRow

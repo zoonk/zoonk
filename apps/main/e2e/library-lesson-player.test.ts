@@ -26,24 +26,26 @@ async function expectVerdict(page: Page, verdict: string) {
 
 async function answerHook(page: Page) {
   await expect(page.getByText("Just a guess, it doesn't count")).toBeVisible();
-  await page.getByRole("radio", { name: "No" }).click();
-  await primary(page, /^See the answer/u).click();
+  const no = page.getByRole("radio", { name: "No" });
+  await expectHydrated(no);
+  await no.click();
+  await primary(page, /^See answer/u).click();
   await expectVerdict(page, "Good guess!");
   await primary(page, /^Continue/u).click();
 }
 
 async function readExplanation(page: Page) {
   await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-  const next = primary(page, /^Next/u);
+  const next = primary(page, /^Continue/u);
   await expectHydrated(next);
   await next.click();
 }
 
 async function followWorkedExample(page: Page) {
   await expect(page.getByText("Reading the cloud")).toBeVisible();
-  await primary(page, /^Show the next step/u).click();
+  await primary(page, /^Next step/u).click();
   await expect(page.getByText("The darkest part sits just around the nucleus.")).toBeVisible();
-  await primary(page, /^Show the next step/u).click();
+  await primary(page, /^Next step/u).click();
 
   await expect(
     page.getByText("Most likely just around the nucleus, where the cloud is densest."),
@@ -337,7 +339,7 @@ test.describe("Library lesson player", () => {
     await primary(page, /^Continue/u).click();
 
     await expect(page.getByText("Reading it")).toBeVisible();
-    await primary(page, /^Next/u).click();
+    await primary(page, /^Continue/u).click();
     await rightOption.click();
     await primary(page, /^Check/u).click();
     await expectVerdict(page, "Correct!");

@@ -1,11 +1,14 @@
 package com.zoonk.android.feature.mock.runner
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,8 +37,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
@@ -53,8 +59,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -67,15 +71,21 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.SwapLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.taskColumn
+import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatClock
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.scaffold.BarNoteInPage
+import com.zoonk.android.ui.scaffold.LocalBarNoteRoom
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -122,6 +132,7 @@ internal fun MockRunnerView(
             }
         },
         bottomBar = { RunnerActions(viewModel, run, handIn) },
+        note = mockStepNote(viewModel, run),
         aside =
             TaskAside(
                 title = stringResource(R.string.mock_answer_sheet),
@@ -136,7 +147,15 @@ internal fun MockRunnerView(
         LaunchedEffect(beside) { if (beside) sheetOpen = false }
 
         // The whole pane scrolls, margins included, with the question held to a readable column.
-        Box(Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+        val noteRoom = LocalBarNoteRoom.current
+        Box(
+            Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .barNoteViewport(noteRoom)
+                .verticalScroll(rememberScrollState()),
+            contentAlignment = Alignment.TopCenter,
+        ) {
             Column(Modifier.taskColumn()) {
                 RunnerProgress(run, titled = !beside, onQuestionTimeUp = viewModel::timeOutQuestion)
                 Column(Modifier.padding(vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -145,10 +164,10 @@ internal fun MockRunnerView(
                     if (!beside) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             QuestionMap(run, onPick = viewModel::go)
-                            SheetLegend()
                             MovesNote(run.moves)
                         }
                     }
+                    BarNoteInPage(noteRoom)
                 }
             }
         }
@@ -359,11 +378,9 @@ private fun RunnerActions(
     val handingIn = run.busy == MockStep.Submit
 
     TaskActionBar {
-        MockStepStatus(viewModel, run)
         TaskActions { width ->
             OutlinedButton(
                 onClick = viewModel::toggleFlag,
-                modifier = Modifier.heightIn(min = 48.dp).semantics { toggleableState = ToggleableState(flagged) },
                 border =
                     if (flagged) {
                         BorderStroke(
@@ -383,27 +400,30 @@ private fun RunnerActions(
                     contentDescription = null,
                     modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
-                Text(stringResource(R.string.mock_flag), Modifier.padding(start = ButtonDefaults.IconSpacing))
+                SwapLabel(
+                    labels = listOf(stringResource(R.string.mock_flag), stringResource(R.string.mock_unflag)),
+                    shown = if (flagged) 1 else 0,
+                    modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
+                    alignment = Alignment.CenterStart,
+                )
             }
             MockMainButton(
                 text =
                     when {
                         !last -> stringResource(R.string.mock_next)
-                        run.isLastSection -> stringResource(R.string.mock_hand_in_mock)
+                        run.isLastSection -> stringResource(R.string.mock_hand_in)
                         else -> stringResource(R.string.mock_hand_in_section)
                     },
                 busy = handingIn,
                 enabled = !run.pending && run.moves.canAdvance,
                 onClick = { if (last) onHandIn() else viewModel.go(run.position + 1) },
                 modifier = width,
-                leadingIcon = if (last) ({ ButtonIcon(R.drawable.ic_send) }) else null,
-                trailingIcon = if (last) null else ({ ButtonIcon(R.drawable.ic_arrow_forward) }),
             )
         }
     }
 }
 
-/** Main's `MockQuestionMap`: the nine questions around the one on screen, to jump between. */
+/** Main's `MockQuestionMap`: the stretch of seven questions that holds the one on screen, to jump between. */
 @Composable
 private fun QuestionMap(
     run: MockRun,
@@ -411,30 +431,16 @@ private fun QuestionMap(
 ) {
     if (run.questions.size <= 1) return
     BoxWithConstraints {
-        // Main's strip shows nine; a phone fits fewer once each is a separate 48dp target.
+        // Main's strip shows seven; a narrow window fits fewer once each is a separate 48dp target.
         val perRow = ((maxWidth + MAP_GAP) / (MAP_TARGET + MAP_GAP)).toInt().coerceIn(1, MAP_ROW)
         val start = run.position / perRow * perRow
         val shown = run.questions.drop(start).take(perRow)
         Row(horizontalArrangement = Arrangement.spacedBy(MAP_GAP)) {
             shown.forEachIndexed { offset, question ->
-                QuestionCell(run, start + offset, question, onPick, Modifier.weight(1f), compact = true)
+                QuestionCell(run, start + offset, question, onPick, Modifier.weight(1f))
             }
             repeat(perRow - shown.size) { Box(Modifier.weight(1f)) }
         }
-    }
-}
-
-@Composable
-internal fun SheetLegend() {
-    val style = MaterialTheme.typography.bodySmall
-    val density = LocalDensity.current
-    val glyph = with(density) { style.fontSize.toDp() }
-    val line = with(density) { style.lineHeight.toDp() }
-
-    // The mark sits on the first line and grows with the words.
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.Top) {
-        FlagGlyph(Modifier.padding(top = (line - glyph) / 2).size(glyph))
-        Text(stringResource(R.string.mock_legend), color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
     }
 }
 
@@ -538,14 +544,13 @@ private fun AnswerSheet(
                     run.questions.withIndex().chunked(perRow).forEach { row ->
                         Row(horizontalArrangement = Arrangement.spacedBy(SHEET_GAP)) {
                             row.forEach { (index, question) ->
-                                QuestionCell(run, index, question, onPick, Modifier.weight(1f), compact = false)
+                                QuestionCell(run, index, question, onPick, Modifier.weight(1f))
                             }
                             repeat(perRow - row.size) { Box(Modifier.weight(1f)) }
                         }
                     }
                 }
             }
-            SheetLegend()
             if (withMoves) MovesNote(run.moves)
         }
         SheetNotes(run)
@@ -555,34 +560,15 @@ private fun AnswerSheet(
 
 @Composable
 private fun SheetNotes(run: MockRun) {
-    val tools = run.currentSection?.tools
-    val examQuestions = run.view.examQuestions
-    val reused = run.view.reusedQuestions.toInt()
-    val questions = run.view.questions.toInt()
-    val lines =
-        listOfNotNull(
-            tools?.let { R.drawable.ic_edit_square to it },
-            examQuestions?.takeIf { it > questions }?.let {
-                null to
-                    pluralStringResource(R.plurals.mock_short, questions, questions, it.toInt())
-            },
-            reused.takeIf { it > 0 }?.let { R.drawable.ic_history to pluralStringResource(R.plurals.mock_reused, it, it) },
+    val tools = run.currentSection?.tools ?: return
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Icon(
+            painterResource(R.drawable.ic_edit_square),
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-    if (lines.isEmpty()) return
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        lines.forEach { (icon, text) ->
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                icon?.let {
-                    Icon(
-                        painterResource(it),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-            }
-        }
+        Text(tools, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -593,6 +579,7 @@ internal fun SheetSections(
     titled: Boolean = true,
 ) {
     val counts = run.counts
+    val locale = currentLocale()
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         if (titled) Text(stringResource(R.string.mock_sections), style = MaterialTheme.typography.titleSmall)
         run.view.sections.forEachIndexed { index, section ->
@@ -627,9 +614,20 @@ internal fun SheetSections(
                         stringResource(R.string.mock_handed_in)
                     } else {
                         stringResource(
-                            R.string.mock_section_answered,
-                            if (section.status == MockExamSectionsInner.Status.CURRENT) counts.answered else 0,
-                            (section.questions + section.essays).toInt(),
+                            R.string.mock_section_answered_of,
+                            formatNumber(
+                                (
+                                    if (section.status ==
+                                        MockExamSectionsInner.Status.CURRENT
+                                    ) {
+                                        counts.answered
+                                    } else {
+                                        0
+                                    }
+                                ).toDouble(),
+                                locale,
+                            ),
+                            formatNumber((section.questions + section.essays).toDouble(), locale),
                         )
                     },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -642,14 +640,10 @@ internal fun SheetSections(
 
 @Composable
 private fun sheetCounts(counts: SectionCounts): String =
-    stringResource(
-        R.string.mock_row_detail,
-        pluralStringResource(R.plurals.mock_answered_count, counts.answered, counts.answered),
-        pluralStringResource(R.plurals.mock_flagged_count, counts.flagged, counts.flagged),
-    )
+    pluralStringResource(R.plurals.mock_answered_count, counts.answered, counts.answered)
 
-private const val MAP_ROW = 9
-private val MAP_GAP = 6.dp
+private const val MAP_ROW = 7
+private val MAP_GAP = 8.dp
 private val MAP_TARGET = 48.dp
 private val SHEET_GAP = 8.dp
 private const val LARGE_FONT_SCALE = 1.5f

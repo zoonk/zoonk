@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let timeline = ActivityRenderer(
-    template: "timeline", badge: .always(.placeInTime),
+    template: "timeline",
     grade: ActivityExpectedAnswer.grader(TimelineFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: TimelineFields.self) {
@@ -26,15 +26,16 @@ private struct TimelineCanvas: View {
 
   private var isExploring: Bool { context.phase == .explore }
   private var showsTruth: Bool { isRevealed || isChecked || isExploring }
-  private var step: Int { TimelineScale.yearStep(start: fields.start, end: fields.end) }
 
   var body: some View {
     let unplaced = fields.events.filter { event in !placements.contains { $0.id == event.id } }
 
     VStack(alignment: .leading, spacing: 16) {
-      TimelineAxis(fields: fields, marks: marks, formatYear: formatYear)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(axisDescription)
+      ChartsCanvas {
+        TimelineAxis(fields: fields, marks: marks, formatYear: formatYear)
+          .accessibilityElement(children: .ignore)
+          .accessibilityLabel(axisDescription)
+      }
 
       if !isExploring {
         VStack(spacing: 8) {
@@ -47,8 +48,8 @@ private struct TimelineCanvas: View {
           VStack(alignment: .leading, spacing: 8) {
             ActivityCaption(
               Text(
-                "\(unplaced.count) events to place", tableName: "Activities",
-                comment: "How many events of a timeline are left to place"))
+                "\(fields.events.count - unplaced.count) of \(fields.events.count) events placed",
+                tableName: "Activities"))
 
             Button {
               placements.append(
@@ -132,15 +133,16 @@ private struct TimelineCanvas: View {
             set: {
               move(event.id, to: TimelineScale.snapYear($0, start: fields.start, end: fields.end))
             }),
-          in: Double(fields.start)...Double(fields.end), step: Double(step)
+          // Years snap in the binding rather than with a step, which would draw a tick per year
+          // under the track.
+          in: Double(fields.start)...Double(fields.end)
         ) {
           Text(verbatim: LessonRichText.spoken(event.label))
-        } minimumValueLabel: {
-          Text(formatYear(fields.start)).typeStyle(.small.monospaced())
-        } maximumValueLabel: {
-          Text(formatYear(fields.end)).typeStyle(.small.monospaced())
         }
         .accessibilityValue(Text(verbatim: formatYear(guess)))
+
+        ChartsSliderScale(
+          min: formatYear(fields.start), max: formatYear(fields.end))
 
         Text(formatYear(guess))
           .typeStyle(.body.weight(.semibold).monospaced())
@@ -156,7 +158,7 @@ private struct TimelineCanvas: View {
     switch mark {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
-    default: Color.card
+    default: Color.boxBackground
     }
   }
 
@@ -323,10 +325,9 @@ private struct TimelineAxis: View {
         let label = context.resolve(
           Text(formatYear(tick)).font(TypeStyle.small.monospaced().font(in: context.environment))
             .foregroundStyle(.mutedForeground))
-        let anchor: UnitPoint =
-          x(tick) < size.width * 0.15
-          ? .topLeading : x(tick) > size.width * 0.85 ? .topTrailing : .top
         let labelWidth = label.measure(in: size).width
+        let anchor = ChartsAxis.anchor(
+          at: x(tick), plotWidth: size.width, labelWidth: labelWidth)
         let minX = x(tick) - labelWidth * anchor.x
         return (label: label, tick: tick, anchor: anchor, span: minX...(minX + labelWidth + 8))
       }

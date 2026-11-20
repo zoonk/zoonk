@@ -1,6 +1,7 @@
 "use client";
 
 import { type ChapterLessonView } from "@zoonk/core/view-models/chapter/contract";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
@@ -14,16 +15,10 @@ import {
   ListRowNumberedTitle,
   ListRowTrailing,
 } from "./list-group";
-import { MeterPart, MeterParts } from "./meter";
 import { PageSection, PageSectionDetail, PageSectionHeader, PageSectionTitle } from "./page";
-import { PlusMark } from "./plus-lock";
 import { StatusMark } from "./status-mark";
 
-type ListedLesson = Pick<
-  ChapterLessonView,
-  "lessonId" | "minutes" | "state" | "title" | "written"
-> &
-  Partial<Pick<ChapterLessonView, "plusRequired">>;
+type ListedLesson = Pick<ChapterLessonView, "lessonId" | "minutes" | "state" | "title" | "written">;
 
 const LESSONS_TITLE_ID = "lesson-list-title";
 
@@ -73,12 +68,7 @@ function LessonRow({
             {lesson.title}
           </ListRowNumberedTitle>
         </ListRowContent>
-        {(lesson.plusRequired || lesson.minutes > 0) && (
-          <ListRowTrailing>
-            {lesson.plusRequired && <PlusMark className="font-sans" />}
-            {lesson.minutes > 0 && formatDuration(lesson.minutes)}
-          </ListRowTrailing>
-        )}
+        {lesson.minutes > 0 && <ListRowTrailing>{formatDuration(lesson.minutes)}</ListRowTrailing>}
       </ListRowBody>
     </ListRowLink>
   );

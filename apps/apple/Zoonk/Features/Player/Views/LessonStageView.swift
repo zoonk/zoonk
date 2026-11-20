@@ -7,6 +7,8 @@ struct LessonStageView: View {
   @Environment(\.spokenAnswerRecording) private var recording
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var isCheckSlow = false
+  /// A spoken answer's Record button is the bar's main action, where Check is on other steps.
+  @State private var recordInBar = RecordInBar()
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -87,6 +89,13 @@ struct LessonStageView: View {
         let teachesKnowledge = store.lesson?.targetLanguage == nil
         let offersDidntGetIt = store.lesson?.offersDidntGetIt(on: step) == true
         let opensWithMap = step.opensLesson && map != nil
+        let place = step.checkAddedPlace(isOneColumn: spread == nil)
+        let isWithBank = place != .underScreen
+        let bankAtBottom = place == .aboveBank
+        let added = LessonCheckAdded(
+          step: step, state: state, store: store, includesSelfCorrect: isWithBank
+        )
+        .id(Self.verdictId)
 
         HStack(spacing: 0) {
           if let pages = spread {
@@ -122,7 +131,7 @@ struct LessonStageView: View {
 
           ScrollViewReader { scroll in
             LessonPage(
-              store: store, fillsHeight: spread == nil && (step.hasWordBank || opensWithMap)
+              store: store, fillsHeight: bankAtBottom || (spread == nil && opensWithMap)
             ) {
               if spread == nil {
                 LessonNotice(state: state, store: store)
@@ -137,6 +146,11 @@ struct LessonStageView: View {
                 // One container, so the id names the whole turn rather than each of its views.
                 VStack(alignment: .leading, spacing: 20) {
                   LessonStepView(step: step, state: state, store: store, part: .turn)
+                    .environment(
+                      \.wordBankAdded,
+                      isWithBank
+                        ? WordBankAdded(view: AnyView(added), isAbove: bankAtBottom) : nil
+                    )
 
                   if offersHelp {
                     LessonScreenHelp(store: store)
@@ -149,23 +163,13 @@ struct LessonStageView: View {
                 }
               }
 
-              LessonCheckNote(state: state, isSlow: isCheckSlow)
-                .id(Self.checkNoteId)
+              LessonCheckNote(
+                state: state, isSlow: isCheckSlow, showsSelfCorrect: !isWithBank
+              )
+              .id(Self.checkNoteId)
 
-              if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
-                VStack(alignment: .leading, spacing: 24) {
-                  LessonVerdictView(
-                    step: step, answer: state.currentAnswer, result: result, store: store,
-                    willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position }
-                      ?? false,
-                    hyperdriveStreak: state.hyperdriveStreak(for: step.id)
-                  )
-
-                  if state.struggleOffer != nil {
-                    LessonAskBuddyOffer(reason: .misses, store: store)
-                  }
-                }
-                .id(Self.verdictId)
+              if !isWithBank {
+                added
               }
 
               if spread == nil, offersDidntGetIt {
@@ -194,7 +198,8 @@ struct LessonStageView: View {
             .onChange(of: state.notice == .selfCorrect || state.checkFailed || isCheckSlow) {
               _, hasNote in
               if hasNote {
-                scroll.scrollTo(Self.checkNoteId, anchor: .bottom)
+                let isNoteWithBank = isWithBank && state.notice == .selfCorrect
+                scroll.scrollTo(isNoteWithBank ? Self.verdictId : Self.checkNoteId, anchor: .bottom)
               }
             }
             // A worked example's newest step is its last. A challenge's turn is its newest
@@ -216,9 +221,11 @@ struct LessonStageView: View {
               }
             }
           }
-          .safeAreaBar(edge: .bottom) {
-            LessonActionBar(store: store, state: state, step: step)
+          .bottomBar {
+            LessonActionBar(
+              store: store, state: state, step: step, showsOwnAsk: offersHelp || offersDidntGetIt)
           }
+          .environment(recordInBar)
           // The hinge is the trailing page's safe area, so its content and the action bar stay
           // clear of the crease. One column keeps to the page before it, as `PaneSplit`'s does.
           .safeAreaPadding(.leading, spread?.gap ?? 0)
@@ -237,7 +244,7 @@ struct LessonStageView: View {
             LessonPaper()
           }
         }
-        .environment(\.isPaneSplit, spread != nil)
+        .paneSplit(spread != nil)
         .environment(\.isLessonStepChecked, state.phase == .feedback)
         .environment(
           \.lessonScreenHeight,
@@ -337,19 +344,54 @@ private struct LessonStepNotes: View {
   }
 }
 
+/// What a check adds: the verdict, and "fix it yourself" on a word bank's step.
+private struct LessonCheckAdded: View {
+  let step: LessonStep
+  let state: LessonPlayerState
+  let store: LessonPlayerStore
+  let includesSelfCorrect: Bool
+
+  var body: some View {
+    if includesSelfCorrect, state.notice == .selfCorrect {
+      SelfCorrectLine()
+    }
+
+    if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
+      VStack(alignment: .leading, spacing: 24) {
+        LessonVerdictView(
+          step: step, answer: state.currentAnswer, result: result, store: store,
+          willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position } ?? false,
+          hyperdriveStreak: state.hyperdriveStreak(for: step.id)
+        )
+
+        if state.struggleOffer != nil {
+          LessonAskBuddyOffer(reason: .misses, store: store)
+        }
+      }
+    }
+  }
+}
+
+private struct SelfCorrectLine: View {
+  var body: some View {
+    Label {
+      Text(LessonPlayerState.Notice.selfCorrect.line)
+    } icon: {
+      Image(systemName: "pencil")
+    }
+    .typeStyle(.body.weight(.medium))
+    .foregroundStyle(.destructiveText)
+  }
+}
+
 private struct LessonCheckNote: View {
   let state: LessonPlayerState
   let isSlow: Bool
+  let showsSelfCorrect: Bool
 
   var body: some View {
-    if state.notice == .selfCorrect {
-      Label {
-        Text(LessonPlayerState.Notice.selfCorrect.line)
-      } icon: {
-        Image(systemName: "pencil")
-      }
-      .typeStyle(.body.weight(.medium))
-      .foregroundStyle(.destructiveText)
+    if showsSelfCorrect, state.notice == .selfCorrect {
+      SelfCorrectLine()
     }
 
     if state.checkFailed {
@@ -394,8 +436,8 @@ extension LessonPlayerState.Notice {
         comment: "A question left out while its picture was drawn came back once it was drawn")
     case .writingSkipped:
       String(
-        localized: "No more writing today.", table: "Player",
-        comment: "\"Can't write now\" left the lesson's writing out")
+        localized: "Writing is off for today.", table: "Player",
+        comment: "\"Skip writing questions today\" left the lesson's writing out")
     }
   }
 }
@@ -413,12 +455,14 @@ struct LessonActionBar: View {
   let state: LessonPlayerState
   /// Nil on the lesson map, which is read like a screen.
   let step: LessonStep?
+  var showsOwnAsk = false
 
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
+  @Environment(RecordInBar.self) private var recordInBar: RecordInBar?
 
   var body: some View {
-    TaskActionBar {
+    Group {
       if state.canGoBack {
         StepBackButton(
           label: Text(
@@ -432,18 +476,38 @@ struct LessonActionBar: View {
         LessonAudioButton(url: step.promptAudio, style: .bar)
       }
 
-      primaryButton
+      if showsDontKnow {
+        Button {
+          store.dontKnow()
+        } label: {
+          Text(
+            "I don't know yet", tableName: "Player",
+            comment:
+              "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
+          )
+        }
+        .buttonStyle(.outline)
+      }
 
-      if tutor.panel != nil {
+      if showsLessonAsk(
+        isExplanation: step?.kind == .explanation, hasPanel: tutor.panel != nil,
+        hasOwnAsk: showsOwnAsk)
+      {
         askButton
+      }
+
+      if state.phase == .playing, let record = recordInBar?.button, recordInBar?.isChecking == false
+      {
+        record
+      } else {
+        primaryButton
       }
     }
   }
 
-  @ViewBuilder
   private var primaryButton: some View {
     let primary = primaryAction
-    let button = BusyButton(isBusy: primary.isBusy, icon: primary.icon) {
+    return BusyButton(isBusy: primary.isBusy, icon: primary.icon) {
       switch primary.action {
       case .check:
         Task { await store.check(gradeActivity: activityGrade) }
@@ -455,16 +519,9 @@ struct LessonActionBar: View {
     } label: {
       Text(primary.title)
     }
-    .controlSize(.large)
-    .buttonSizing(.flexible)
     .disabled(primary.isDisabled)
     .keyboardShortcut(.defaultAction)
-
-    if primary.isProminent {
-      button.buttonStyle(.mainAction)
-    } else {
-      button.buttonStyle(.secondary)
-    }
+    .buttonStyle(.mainAction)
   }
 
   private var askButton: some View {
@@ -477,15 +534,18 @@ struct LessonActionBar: View {
         store.ask()
       }
     } label: {
-      Label {
-        Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
-      } icon: {
-        Image(systemName: "questionmark.bubble")
-      }
-      .labelStyle(.iconOnly)
+      TutorAskLabel()
     }
-    .buttonStyle(.outline.icon)
-    .controlSize(.large)
+    .tutorAskIcon()
+  }
+
+  /// A written answer's way to see a good answer, left of Check, when "Explain first" isn't offered.
+  private var showsDontKnow: Bool {
+    guard let step, step.isWriting, state.phase == .playing, !state.canExplainFirst else {
+      return false
+    }
+
+    return state.answers[step.id] == nil
   }
 
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
@@ -507,12 +567,15 @@ struct LessonActionBar: View {
     let icon: ActionIcon
     var isBusy = false
     var isDisabled = false
-    var isProminent = true
   }
 
   private var primaryAction: PrimaryAction {
     guard let step else {
       return PrimaryAction(action: .continueLesson, title: Self.continueTitle, icon: .forward)
+    }
+
+    if state.phase == .playing, recordInBar?.isChecking == true {
+      return PrimaryAction(action: .check, title: checkTitle(step), icon: .check, isBusy: true)
     }
 
     switch state.phase {
@@ -532,7 +595,7 @@ struct LessonActionBar: View {
         return PrimaryAction(
           action: .continueLesson,
           title: LocalizedStringResource(
-            "Show the next step", table: "Player",
+            "Next step", table: "Player",
             comment: "Reveals the next part of a worked example"),
           icon: .forward)
       }
@@ -560,7 +623,7 @@ struct LessonActionBar: View {
         return PrimaryAction(
           action: .check,
           title: LocalizedStringResource(
-            "See how it went", table: "Player", comment: "Checks a finished challenge"),
+            "See result", table: "Player", comment: "Checks a finished challenge"),
           icon: .forward)
       case .deciding(_, _, _, let pending):
         return PrimaryAction(
@@ -571,11 +634,12 @@ struct LessonActionBar: View {
       }
     }
 
-    // The reveal often points at the picture, so it waits for one still being drawn, as the options do.
+    // The opening guess reveals with or without a pick, under one label. The reveal often points at
+    // the picture, so it waits for one still being drawn, as the options do.
     if state.revealsWithoutGuess {
       return PrimaryAction(
-        action: .dontKnow, title: LessonWaysOut.dontKnowTitle, icon: .notSure,
-        isDisabled: step.isRequiredPictureDrawing(openedAt: store.openedAt), isProminent: false)
+        action: .dontKnow, title: checkTitle(step), icon: checkIcon(step),
+        isDisabled: step.isRequiredPictureDrawing(openedAt: store.openedAt))
     }
 
     return PrimaryAction(
@@ -586,7 +650,7 @@ struct LessonActionBar: View {
   private func checkTitle(_ step: LessonStep) -> LocalizedStringResource {
     step.kind == .hook
       ? LocalizedStringResource(
-        "See the answer", table: "Player", comment: "Reveals a hook's answer after a guess")
+        "See answer", table: "Player", comment: "Reveals a hook's answer after a guess")
       : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer")
   }
 
@@ -633,6 +697,21 @@ extension LessonStep {
 
     return [.reading, .listening, .fillBlank].contains(exercise.kind)
   }
+
+  /// Where what a check adds goes. One column gives the turn spare height and its word bank waits
+  /// at the bottom, so the feedback takes the room above the bank and the bank holds still under the
+  /// thumb; a spread puts it under the bank; a screen without a bank has it under the screen.
+  func checkAddedPlace(isOneColumn: Bool) -> CheckAddedPlace {
+    guard hasWordBank else {
+      return .underScreen
+    }
+
+    return isOneColumn ? .aboveBank : .underBank
+  }
+}
+
+enum CheckAddedPlace: Equatable {
+  case underScreen, aboveBank, underBank
 }
 
 private struct LessonNotice: View {
@@ -641,8 +720,8 @@ private struct LessonNotice: View {
 
   var body: some View {
     if let quickCheck = state.quickCheckProgress {
-      LessonEyebrow(
-        title: Text(
+      Chip(
+        Text(
           "Quick check\u{00A0}· \(quickCheck.current) of \(quickCheck.total)", tableName: "Player",
           comment: "While \"I already know this\" asks the lesson's checks"),
         systemImage: "bolt")
@@ -680,8 +759,8 @@ private struct LessonNotice: View {
               store.restoreWriting()
             } label: {
               Text(
-                "Write again", tableName: "Player",
-                comment: "Takes back \"Can't write now\": the learner does the writing again")
+                "Turn back on", tableName: "Player",
+                comment: "Takes back \"Skip writing questions today\": written answers come back")
             }
             .buttonStyle(.ghost)
           }
@@ -692,4 +771,8 @@ private struct LessonNotice: View {
       }
     }
   }
+}
+
+func showsLessonAsk(isExplanation: Bool, hasPanel: Bool, hasOwnAsk: Bool) -> Bool {
+  hasPanel && !(isExplanation && hasOwnAsk)
 }

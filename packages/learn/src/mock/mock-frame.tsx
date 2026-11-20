@@ -2,75 +2,102 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { StepEyebrow } from "../_components/step-card";
+import { Eyebrow } from "../_components/eyebrow";
 import { TaskFrame } from "../shell/task-frame";
-import { useMockScreen } from "./mock-context";
-import { useMockShapeLabel } from "./mock-labels";
+import { type MockStep, useMockScreen } from "./mock-context";
+import { getMockSubject } from "./mock-labels";
 
 export function MockFrame(
-  props: Omit<React.ComponentProps<typeof TaskFrame>, "beforeExit" | "exitHref">,
+  props: Omit<React.ComponentProps<typeof TaskFrame>, "beforeExit" | "exitHref" | "footerNote">,
 ) {
   const { hrefs, runner } = useMockScreen();
-  return <TaskFrame {...props} beforeExit={runner.savesInFlight} exitHref={hrefs.exit} />;
+  const note = useMockStatusNote();
+
+  return (
+    <TaskFrame
+      {...props}
+      beforeExit={runner.savesInFlight}
+      exitHref={hrefs.exit}
+      footerNote={note}
+    />
+  );
 }
 
 export function MockEyebrow() {
   const t = useExtracted();
-  const shapeLabel = useMockShapeLabel();
   const { runner } = useMockScreen();
-  const shape = shapeLabel(runner.view);
+  const subject = getMockSubject(runner.view);
 
-  return <StepEyebrow>{shape ? `${t("Mock exam")} · ${shape}` : t("Mock exam")}</StepEyebrow>;
+  return <Eyebrow>{subject ? `${t("Mock exam")} · ${subject}` : t("Mock exam")}</Eyebrow>;
 }
 
-function SaveStatusLine() {
+function useSlowLine() {
+  const t = useExtracted();
+
+  return (step: MockStep): string => {
+    if (step === "submit") {
+      return t("Still handing it in. This is taking longer than usual.");
+    }
+
+    return step === "finish"
+      ? t("This is taking longer than usual.")
+      : t("Still starting. This is taking longer than usual.");
+  };
+}
+
+/**
+ * What the last save or hand-in couldn't do, drawn over the screen above the bar (its `note`)
+ * so the bar's buttons never move; null when there's nothing to say.
+ */
+function useMockStatusNote(): React.ReactNode {
   const t = useExtracted();
   const { runner } = useMockScreen();
+  const slowLine = useSlowLine();
+  const saved = runner.saveStatus === "saved";
+  // A hand-in that timed out waiting on saves that keep failing is that one failure, told once.
+  const failed = runner.error && runner.saveStatus !== "retrying";
 
   if (runner.saveStatus === "retrying") {
     return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
-        <span className="min-w-0 flex-1">{t("Not saved yet · retrying")}</span>
+      <div className="flex items-center gap-2" role="status">
+        <span className="text-destructive-text min-w-0 flex-1 text-start">
+          {t("Try again before you move on")}
+        </span>
         <Button className="shrink-0" onClick={runner.retrySaves} size="sm" variant="outline">
-          {t("Retry")}
+          {t("Try again")}
         </Button>
+      </div>
+    );
+  }
+
+  if (failed) {
+    return (
+      <p className="text-destructive-text" role="alert">
+        {saved
+          ? t("That didn't go through. Your answers are saved. Try again in a moment.")
+          : t("That didn't go through. Try again in a moment.")}
       </p>
     );
   }
 
   if (runner.saveStatus === "refused") {
     return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("Your last answer wasn't saved.")}
+      <p className="text-destructive-text" role="alert">
+        {t({
+          description: "During a mock exam: one of the learner's answers couldn't be saved.",
+          message: "An answer wasn't saved.",
+        })}
+      </p>
+    );
+  }
+
+  if (runner.slow && runner.busy) {
+    return (
+      <p className="text-muted-foreground" role="status">
+        {slowLine(runner.busy)}
       </p>
     );
   }
 
   return null;
-}
-
-export function MockStepStatus() {
-  const t = useExtracted();
-  const { runner } = useMockScreen();
-  const saved = runner.saveStatus === "saved";
-
-  return (
-    <>
-      <SaveStatusLine />
-
-      {runner.error && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {saved
-            ? t("That didn't go through. Your answers are saved. Try again in a moment.")
-            : t("That didn't go through. Try again in a moment.")}
-        </p>
-      )}
-
-      {!runner.error && runner.slow && (
-        <p className="text-muted-foreground text-sm" role="status">
-          {t("Still handing it in. This is taking longer than usual.")}
-        </p>
-      )}
-    </>
-  );
 }

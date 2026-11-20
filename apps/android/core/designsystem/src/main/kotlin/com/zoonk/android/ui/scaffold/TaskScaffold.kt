@@ -16,11 +16,10 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -46,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.ui.components.AlertDialog
@@ -54,6 +52,8 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.SnackbarHost
 import com.zoonk.android.ui.components.TASK_MARGIN
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.WithStatusAction
+import com.zoonk.android.ui.theme.TextStartsOnLayoutStart
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
 data class TaskExitConfirmation(
@@ -96,27 +96,46 @@ private fun TaskTopBar(
         val fold = screenSplit(maxWidth, span)
 
         CenterAlignedTopAppBar(
-            title = { if (fold == null) Box(Modifier.titleTarget(focus)) { title() } },
+            title = { if (fold == null) Box(Modifier.titleTarget(focus)) { ProvideTextStyle(TASK_TITLE) { title() } } },
             navigationIcon = {
                 if (fold == null) {
-                    CloseButton(onClick = onClose, label = closeLabel)
+                    CloseButton(onClick = onClose, label = closeLabel, modifier = Modifier.offset(x = CLOSE_PULL))
                 } else {
-                    Row(Modifier.width(fold.start), verticalAlignment = Alignment.CenterVertically) {
-                        CloseButton(onClick = onClose, label = closeLabel)
+                    // Material's bar starts its navigation slot [BAR_INSET] in, so the spacer is that much wider to center the title on the page.
+                    Row(Modifier.width(fold.start - BAR_INSET), verticalAlignment = Alignment.CenterVertically) {
+                        CloseButton(onClick = onClose, label = closeLabel, modifier = Modifier.offset(x = CLOSE_PULL))
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            Box(Modifier.titleTarget(focus)) { ProvideTextStyle(MaterialTheme.typography.titleLarge) { title() } }
+                            Box(Modifier.titleTarget(focus)) { ProvideTextStyle(TASK_TITLE) { title() } }
                         }
-                        Spacer(Modifier.width(CLOSE_WIDTH))
+                        Spacer(Modifier.width(CLOSE_WIDTH + BAR_INSET))
                     }
                 }
             },
-            actions = actions,
+            actions = {
+                Row(
+                    Modifier.offset(x = 4.dp + com.zoonk.android.ui.components.ICON_BUTTON_BLANK - TASK_MARGIN),
+                    content = actions,
+                )
+            },
         )
     }
 }
 
+/** Main's task title (`text-label`), in every pose: a screen's plain text doesn't take Material's larger bar title. */
+private val TASK_TITLE
+    @Composable get() = MaterialTheme.typography.titleSmall
+
+/** Where Material's bar starts its navigation slot. */
+private val BAR_INSET = 4.dp
+
 /** Material's icon button, which the way out is: the space that keeps the title centered over its page. */
 private val CLOSE_WIDTH = 48.dp
+
+/**
+ * The ✕ lines up by its ink with the task column's edge (main's `edge="start"`): Material's bar insets its
+ * navigation icon 4dp, the button centers the 24dp glyph in its width, and `ic_close` leaves 5dp blank before its ink.
+ */
+private val CLOSE_PULL = TASK_MARGIN - (BAR_INSET + (CLOSE_WIDTH - 24.dp) / 2 + 5.dp)
 
 /** In a [TaskScaffold]'s slots, whether its aside shows beside the task; where it doesn't, the screen shows that content its own way. */
 @Composable
@@ -143,6 +162,11 @@ fun TaskScaffold(
     exitConfirmation: TaskExitConfirmation? = null,
     closeLabel: String? = null,
     bottomBar: (@Composable () -> Unit)? = null,
+    /**
+     * A status over [bottomBar] (what's saving, what didn't go through), shown just above it so the bar never moves. Content that
+     * scrolls marks its viewport and holds the note at its end ([LocalBarNoteRoom]), for a note too tall to draw over it.
+     */
+    note: (@Composable () -> Unit)? = null,
     aside: TaskAside? = null,
     lonePage: Boolean = false,
     content: @Composable (PaddingValues) -> Unit,
@@ -150,33 +174,42 @@ fun TaskScaffold(
     var isConfirmingExit by rememberSaveable { mutableStateOf(false) }
     val leave = { if (exitConfirmation == null) onClose() else isConfirmingExit = true }
     val focus = rememberTitleFocus()
+    val noteRoom = rememberBarNoteRoom()
 
     BackHandler(enabled = exitConfirmation != null) { isConfirmingExit = true }
 
     val frame: @Composable (snackbars: Boolean) -> Unit = { snackbars ->
-        Scaffold(
-            topBar = { Box(Modifier.pageBar(focus)) { TaskTopBar(title, actions, onClose = leave, closeLabel, focus.bar) } },
-            bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
-            snackbarHost = { if (snackbars) SnackbarHost(LocalSnackbarHostState.current) },
-            content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
-        )
+        WithStatusAction(enabled = bottomBar == null) { retry ->
+            Scaffold(
+                topBar = { Box(Modifier.pageBar(focus)) { TaskTopBar(title, actions, onClose = leave, closeLabel, focus.bar) } },
+                bottomBar = { (bottomBar ?: retry)?.let { TaskBottomBar(it, note.takeIf { bottomBar != null }, noteRoom) } },
+                snackbarHost = { if (snackbars) SnackbarHost(LocalSnackbarHostState.current) },
+                content = { padding ->
+                    // The note draws over the content just above the bar, so the content's end keeps its room clear.
+                    val clear = padding.plusBottom(noteRoom.height)
+                    CompositionLocalProvider(LocalTitleFocus provides focus, LocalBarNoteRoom provides noteRoom) { content(clear) }
+                },
+            )
+        }
     }
 
     // The screen's modifier (focus, keys) and its frame stay in one place when an aside comes or goes, as it does across a fold.
-    Box(Modifier.pageFocus(focus).then(modifier)) {
-        PageWithSupportingPane(
-            supportingPane = aside?.let { { TaskAsideRail(it) } },
-            panesTouch = true,
-            halfWidth = aside?.half == true,
-        ) { beside ->
-            // An aside's footer beside the task holds its actions, so the aside shows its snackbars over them.
-            CompositionLocalProvider(LocalTaskAsideBeside provides beside) {
-                if (lonePage) {
-                    BeforeFold(Modifier.background(MaterialTheme.colorScheme.background)) { beforeFold ->
-                        Box(beforeFold.fillMaxSize()) { frame(!beside || aside?.footer == null) }
+    TextStartsOnLayoutStart {
+        Box(Modifier.pageFocus(focus).then(modifier)) {
+            PageWithSupportingPane(
+                supportingPane = aside?.let { { TaskAsideRail(it) } },
+                panesTouch = true,
+                halfWidth = aside?.half == true,
+            ) { beside ->
+                // An aside's footer beside the task holds its actions, so the aside shows its snackbars over them.
+                CompositionLocalProvider(LocalTaskAsideBeside provides beside) {
+                    if (lonePage) {
+                        BeforeFold(Modifier.background(MaterialTheme.colorScheme.background)) { beforeFold ->
+                            Box(beforeFold.fillMaxSize()) { frame(!beside || aside?.footer == null) }
+                        }
+                    } else {
+                        frame(!beside || aside?.footer == null)
                     }
-                } else {
-                    frame(!beside || aside?.footer == null)
                 }
             }
         }
@@ -243,7 +276,7 @@ private fun TaskAsideRail(aside: TaskAside) {
                     )
                     if (aside.footer != null) SnackbarHost(LocalSnackbarHostState.current, Modifier.align(Alignment.BottomCenter))
                 }
-                aside.footer?.let { TaskBottomBar(it, horizontalPadding = ASIDE_MARGIN) }
+                aside.footer?.let { TaskBottomBar(it) }
             }
         }
     }
@@ -254,20 +287,8 @@ private val ASIDE_MARGIN = 24.dp
 @Composable
 private fun TaskBottomBar(
     content: @Composable () -> Unit,
-    horizontalPadding: Dp = TASK_MARGIN,
+    note: (@Composable () -> Unit)? = null,
+    noteRoom: BarNoteRoom? = null,
 ) {
-    DockedActionBar {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing
-                            .only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal)
-                            .union(WindowInsets.ime),
-                    ).padding(horizontal = horizontalPadding, vertical = 16.dp),
-        ) {
-            content()
-        }
-    }
+    BottomBar(note = note, columnMargin = TASK_MARGIN, noteRoom = noteRoom) { content() }
 }

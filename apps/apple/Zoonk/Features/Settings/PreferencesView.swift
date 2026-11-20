@@ -3,23 +3,28 @@ import SwiftUI
 /// Light, dark and reduced motion follow the device, so there's no theme picker.
 struct PreferencesView: View {
   @Environment(\.openURL) private var openURL
-  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SettingsStore.self) private var settings
   @State private var isEditingBuddy = false
+  /// One per control, so a later change to one never hides another's failure: false when it didn't
+  /// save, while the learner is on the page.
+  @State private var buddySave = VisitRequest<Bool>()
+  @State private var homeSave = VisitRequest<Bool>()
+  @State private var soundsSave = VisitRequest<Bool>()
   @State private var isPickingHome = false
 
   var body: some View {
     ZoonkList {
       Section {
         PageHeader(
-          Text("Preferences", tableName: "Account", comment: "Title of the Preferences page"),
-          supporting: Text(
-            "Your buddy, lessons and language, the way you like them.", tableName: "Settings",
-            comment: "Under the Preferences page's title: what the page changes"))
+          Text(
+            "Preferences", tableName: "Account",
+            comment:
+              "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”."
+          ))
       }
 
       if let preferences = settings.preferences.value {
-        Section {
+        PageSection {
           IconLabeledContent {
             Button {
               isEditingBuddy = true
@@ -28,18 +33,13 @@ struct PreferencesView: View {
                 Text("Change", tableName: "Settings", comment: "Opens the buddy editor")
               } else {
                 Text(
-                  "Choose your buddy", tableName: "Settings",
-                  comment: "Opens the buddy editor before the learner picked one")
+                  "Choose your buddy", tableName: "Settings")
               }
             }
             .buttonStyle(.outline)
             .controlSize(.small)
           } title: {
             Text(preferences.buddy.displayName)
-            Text(
-              "\(BuddyStage(belt: learner.summary.value?.level?.belt ?? .white).name)\u{00A0}· \(preferences.buddy.glasses.worn)",
-              tableName: "Settings",
-              comment: "The buddy's growth stage and glasses, as in “Baby · Round glasses”")
           } icon: {
             BuddyFace(kind: preferences.buddy.kind, glasses: preferences.buddy.glasses)
               .typeStyle(.section.weight(.regular))
@@ -50,37 +50,21 @@ struct PreferencesView: View {
               "Your buddy", tableName: "Settings", comment: "Preferences section about the buddy"))
         }
 
-        Section {
+        PageSection {
           SettingToggle(
             isOn: soundsBinding(preferences),
             title: Text("Sounds", tableName: "Settings", comment: "Switch for the lessons' sounds"),
             description: Text(
-              "When you get it right or finish", tableName: "Settings",
-              comment: "When the lessons' sounds play"))
+              "When you get it right or finish", tableName: "Settings"))
 
         } header: {
           SectionTitle(
             Text("Lessons", tableName: "Settings", comment: "Preferences section about lessons"))
         }
 
-        Section {
-          SettingToggle(
-            isOn: usageDataBinding,
-            title: Text(
-              "Share usage data", tableName: "Settings",
-              comment: "Switch that lets Zoonk record how the learner uses it, for analytics"),
-            description: Text(
-              "Shows us how you use Zoonk, so we can improve it", tableName: "Settings",
-              comment: "What sharing usage data does"))
-        } header: {
-          SectionTitle(
-            Text(
-              "Your data", tableName: "Settings",
-              comment: "Preferences section about the learner's data"))
-        }
       }
 
-      Section {
+      PageSection {
         Button {
           if let url = URL(string: UIApplication.openSettingsURLString) {
             openURL(url)
@@ -94,6 +78,7 @@ struct PreferencesView: View {
             Text(appLanguageName)
               .typeStyle(.meta)
           }
+          .disclosureChevron()
         }
         .foregroundStyle(.primary)
 
@@ -104,8 +89,7 @@ struct PreferencesView: View {
           } label: {
             ListRow(
               Text(
-                "Where you live", tableName: "Settings",
-                comment: "Row with the country the learner lives in, which they tell us")
+                "Where you live", tableName: "Settings")
             ) {
               EmptyView()
             } trailing: {
@@ -120,33 +104,20 @@ struct PreferencesView: View {
       } header: {
         SectionTitle(
           Text(
-            "Language and region", tableName: "Settings",
-            comment: "Preferences section about the app's language and where the learner lives"))
+            "Language and region", tableName: "Settings"))
       } footer: {
-        SectionFooter {
-          VStack(alignment: .leading, spacing: 8) {
+        if settings.preferences.value != nil {
+          SectionFooter {
             Text(
-              "Zoonk follows your device's language. Change it for Zoonk alone in Settings.",
-              tableName: "Settings",
-              comment: "Explains where the app's language is changed on iPhone and iPad")
-
-            if settings.preferences.value != nil {
-              Text(
-                "For new goals and your examples. It doesn't change the plans you already have.",
-                tableName: "Settings",
-                comment: "What the country the learner lives in changes")
-            }
+              "So examples and exams match your country.", tableName: "Settings")
           }
         }
       }
 
-      if settings.saveFailed {
+      if [buddySave, homeSave, soundsSave].contains(where: { $0.outcome == false }) {
         SettingsSaveError()
       }
     }
-    .navigationTitle(
-      Text("Preferences", tableName: "Account", comment: "Title of the Preferences page")
-    )
     .barTitleAfterHero(
       String(localized: "Preferences", table: "Account", comment: "Title of the Preferences page")
     )
@@ -158,6 +129,11 @@ struct PreferencesView: View {
       }
     }
     .loads(settings.preferences)
+    .onDisappear {
+      buddySave.leave()
+      homeSave.leave()
+      soundsSave.leave()
+    }
     .sheet(isPresented: $isPickingHome) {
       if let preferences = settings.preferences.value {
         CountryPickerSheet(
@@ -166,28 +142,23 @@ struct PreferencesView: View {
             comment: "Row with the country the learner lives in, which they tell us"),
           language: OnboardingAPI.language,
           suggested: preferences.suggestedCountries,
-          selected: preferences.homeCountry?.code,
-          offersNotSet: true
+          selected: preferences.homeCountry?.code
         ) { choice in
           // Nothing rebuilds, so it closes at once; a failed save shows on the page.
-          Task {
-            await settings.updatePreferences(.homeCountry(choice))
-          }
+          save(.homeCountry(choice), in: homeSave)
 
           return true
         }
-        .zoonkStyles()
+        .zoonkSheet()
       }
     }
     .sheet(isPresented: $isEditingBuddy) {
       if let preferences = settings.preferences.value {
         BuddyEditor(choice: preferences.buddy, availableGlasses: preferences.availableGlasses) {
           choice in
-          Task {
-            await settings.updatePreferences(.buddy(choice))
-          }
+          save(.buddy(choice), in: buddySave)
         }
-        .zoonkStyles()
+        .zoonkSheet()
       }
     }
   }
@@ -203,24 +174,13 @@ struct PreferencesView: View {
     Binding(
       get: { preferences.soundsEnabled },
       set: { enabled in
-        Task {
-          await settings.updatePreferences(.soundsEnabled(enabled))
-        }
+        save(.soundsEnabled(enabled), in: soundsSave)
       })
   }
 
-  private var usageDataBinding: Binding<Bool> {
-    Binding(
-      get: { learner.summary.value?.analytics.usageDataSharing == true },
-      set: { shares in
-        learner.showUsageDataSharing(shares)
-
-        Task {
-          await settings.updatePreferences(.shareUsageData(shares))
-        }
-      })
+  private func save(_ update: PreferencesUpdate, in request: VisitRequest<Bool>) {
+    request.run { [settings] in await settings.updatePreferences(update) }
   }
-
 }
 
 struct SettingsSaveError: View {
@@ -228,8 +188,7 @@ struct SettingsSaveError: View {
     Section {
       FailureLine(
         message: LocalizedStringResource(
-          "That didn't save. Try again.", table: "Settings",
-          comment: "Shown when a setting change didn't save"),
+          "That didn't save. Try again.", table: "Settings"),
         systemImage: "exclamationmark.circle")
     }
   }
@@ -244,7 +203,7 @@ struct SettingsLoadingState<Value: Equatable & Sendable>: View {
     case .idle, .loading:
       ProgressView()
     case .failed:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "Couldn't load this page", tableName: "Settings",
@@ -254,8 +213,7 @@ struct SettingsLoadingState<Value: Equatable & Sendable>: View {
         }
       } description: {
         Text(
-          "Check your connection and try again.", tableName: "Settings",
-          comment: "Explains how to recover when a settings page couldn't load")
+          "Check your connection and try again.", tableName: "Settings")
       } actions: {
         Button(action: retry) {
           Text("Try again", tableName: "Settings", comment: "Retries loading a settings page")

@@ -66,6 +66,7 @@ private struct CourseLandingList: View {
         contents
       }
     }
+    .catalogGoalSwitch()
   }
 
   @ViewBuilder
@@ -78,10 +79,9 @@ private struct CourseLandingList: View {
 
     CourseHeroSection(detail: detail, exam: example?.exam, goal: goal)
 
-    if let pace = example?.pace {
+    if let pace = example?.pace, case .toEnd(let weeks, let firstDay) = pace.estimate.reach {
       CoursePlanSections(
-        chapters: detail.chapters, estimate: pace.estimate, exam: example?.exam,
-        isExam: detail.course.isExam, minutes: pace.minutes)
+        chapters: detail.chapters, firstDay: firstDay, minutes: pace.minutes, weeks: weeks)
     }
   }
 
@@ -92,8 +92,7 @@ private struct CourseLandingList: View {
     CourseFitSections(landingPage: detail.course.landingPage)
 
     CourseOutlineSections(
-      detail: detail, estimate: example?.pace?.estimate, exam: example?.exam,
-      lead: outlineLead, minutes: example?.pace?.minutes,
+      detail: detail, estimate: example?.pace?.estimate, lead: outlineLead,
       learner: OutlineLearner(
         signedIn: session.authenticatedSession != nil, summary: learner.summary.state,
         courseID: detail.course.id),
@@ -144,17 +143,8 @@ private struct CourseHeroSection: View {
       VStack(alignment: .leading, spacing: 12) {
         CourseMark(detail.course)
 
-        if detail.course.subject != nil || exam != nil {
-          // Main's wrapping row: the eyebrow takes its own line once both don't fit.
-          FlowLayout(spacing: 12, rowSpacing: 8) {
-            if let subject = detail.course.subject {
-              CourseSubjectLabel(subject: subject)
-            }
-
-            if let exam {
-              CourseExamEyebrow(exam: exam)
-            }
-          }
+        if let subject = detail.course.subject {
+          Chip(Text(subject.localizedTitle))
         }
 
         Text(detail.course.title)
@@ -162,6 +152,10 @@ private struct CourseHeroSection: View {
           .fixedSize(horizontal: false, vertical: true)
           .accessibilityAddTraits(.isHeader)
           .heroTitle()
+
+        if let exam {
+          CourseExamDates(exam: exam)
+        }
 
         if let promise {
           Text(promise)
@@ -173,7 +167,7 @@ private struct CourseHeroSection: View {
           ContentCountryFacts(country: country)
         }
 
-        PlanLine(startsHere: false)
+        PlanLine(start: detail.course.isExam ? .examCourse : .course)
 
         CatalogStartActions(
           courseID: detail.course.id, goal: goal, tryLessonID: detail.tryLessonID
@@ -196,18 +190,9 @@ private struct ContentCountryFacts: View {
   let country: ContentCountry
 
   var body: some View {
-    ViewThatFits(in: .horizontal) {
-      Text(facts.joinedFacts())
-
-      VStack(alignment: .leading, spacing: 2) {
-        ForEach(facts, id: \.self) { fact in
-          Text(fact)
-        }
-      }
-      .accessibilityElement(children: .combine)
-    }
-    .typeStyle(.note)
-    .foregroundStyle(.mutedForeground)
+    FactSegments(facts)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
   }
 
   private var facts: [String] {
@@ -216,7 +201,7 @@ private struct ContentCountryFacts: View {
   }
 }
 
-private struct CourseExamEyebrow: View {
+private struct CourseExamDates: View {
   let exam: CoursePlanExample.Exam
 
   var body: some View {
@@ -231,12 +216,13 @@ private struct CourseExamEyebrow: View {
           comment: "An exam course's next sitting: its days, then how long until it")
       }
     }
-    .typeStyle(.eyebrow)
+    .typeStyle(.body)
     .foregroundStyle(.mutedForeground)
   }
 
   private var dates: String {
-    exam.days.compactMap(catalogDay).formatted(.list(type: .and))
+    let today = PlanDate.today()
+    return exam.days.map { PlanDate.text($0, today: today) }.formatted(.list(type: .and))
   }
 
   private var daysLeft: String {
@@ -255,36 +241,33 @@ private struct CourseExamEyebrow: View {
   }
 }
 
-/// Read at UTC midnight, so no time zone moves it to another day.
-func catalogDay(_ isoDate: String) -> String? {
-  let style = Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day()
-
-  guard let date = try? style.parse(isoDate) else {
-    return nil
+struct PlanLine: View {
+  enum Start {
+    case chapter, course, examCourse
   }
 
-  var format = Date.FormatStyle.dateTime.month(.abbreviated).day()
-  format.timeZone = .gmt
-  return date.formatted(format)
-}
-
-struct PlanLine: View {
-  let startsHere: Bool
+  let start: Start
 
   var body: some View {
-    Label {
-      if startsHere {
-        Text(
-          "With Zoonk, your plan starts at this chapter and fits your schedule.",
-          tableName: "Courses", comment: "On a chapter's page, what Zoonk does with it")
-      } else {
-        Text(
-          "With Zoonk, your plan starts at your level and fits your schedule.",
-          tableName: "Courses", comment: "On a course's page, what Zoonk does with it")
-      }
-    } icon: {
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
       Image(systemName: "map")
+        .markColumn()
         .accessibilityHidden(true)
+
+      switch start {
+      case .chapter:
+        Text(
+          "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter.",
+          tableName: "Courses", comment: "On a chapter's page, what Zoonk does with it")
+      case .course:
+        Text(
+          "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know.",
+          tableName: "Courses", comment: "On a course's page, what Zoonk does with it")
+      case .examCourse:
+        Text(
+          "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know.",
+          tableName: "Courses", comment: "On an exam course's page, what Zoonk does with it")
+      }
     }
     .typeStyle(.note)
     .foregroundStyle(.mutedForeground)
@@ -325,12 +308,13 @@ struct CheckLine<Content: View>: View {
   @ViewBuilder let content: Content
 
   var body: some View {
-    Label {
-      content
-    } icon: {
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
       Image(systemName: "checkmark")
         .foregroundStyle(.success)
+        .markColumn()
         .accessibilityHidden(true)
+
+      content
     }
   }
 }
@@ -380,7 +364,7 @@ private struct CourseClosingSection: View {
 
 private struct CourseDetailEmptyView: View {
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "Course unavailable",

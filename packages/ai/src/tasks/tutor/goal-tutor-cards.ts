@@ -40,7 +40,7 @@ export type GoalTutorPlanChangeEffect = {
   topicsLeftOut?: { area: string; topics: string[] }[];
 } | null;
 
-/** The change itself only happens when the learner taps Apply. */
+/** The change itself only happens once the learner confirms it on the card. */
 export type GoalTutorPlanChangeResult =
   | {
       effect: GoalTutorPlanChangeEffect;
@@ -66,12 +66,10 @@ export type ProposeGoalPlanChange = (request: string) => Promise<GoalTutorPlanCh
 
 export type GoalTutorAppToolResult =
   | {
-      /**
-       * `callTimeUsed`: call time is used until tomorrow, next month or, for a guest, an account.
-       */
       offered: {
         cadence?: "biweekly" | "finalWeeks" | "weekly";
-        callTimeUsed?: "day" | "month" | "total";
+        callAvailableAt?: string | null;
+        callTimeUsed?: "day" | "rolling30Days" | "total";
         chapter?: string;
         /** For a variety, a content country or a home country: the country, a two-letter code. */
         country?: string;
@@ -234,7 +232,7 @@ export function createCardTools({
     }),
     proposePlanChange: tool({
       description:
-        "Proposes a change to the learner's study plan. The app shows it as a card with Apply and Not now; nothing changes until the learner taps Apply.",
+        "Proposes a change to the learner's study plan. The app shows it as a card under your answer, and nothing changes until the learner confirms it there.",
       execute: ({ request }, { toolCallId }) => inTurn(() => propose({ request, toolCallId })),
       inputSchema: z.object({
         request: z

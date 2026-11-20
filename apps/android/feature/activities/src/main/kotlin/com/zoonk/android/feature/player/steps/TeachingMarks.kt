@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Density
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.isNumberedItem
@@ -95,12 +97,8 @@ internal fun IdeaStrip(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IdeasDrawing(ideas.size, index)
-            Column(Modifier.weight(1f)) {
-                Text(
-                    stringResource(R.string.player_idea_position, count(index + 1), count(ideas.size)),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.zoonkType.data,
-                )
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Eyebrow(stringResource(R.string.player_idea_position, count(index + 1), count(ideas.size)))
                 idea.label?.let {
                     Text(
                         it,
@@ -158,6 +156,7 @@ internal fun TeachingText(
     text: String,
     marks: StepMarks?,
     marksTerms: Boolean,
+    textStyle: TextStyle = MaterialTheme.zoonkType.lessonText,
 ) {
     val example = remember(text, marks?.example) { splitExample(text, marks?.example) }
     val underline = marks?.underline?.takeIf { it.isNotBlank() }
@@ -167,7 +166,7 @@ internal fun TeachingText(
         @Composable { part: String, at: Int ->
             RichText(
                 text = part,
-                style = MaterialTheme.zoonkType.lessonText,
+                style = textStyle,
                 underline = underline.takeIf { at == underlined },
                 marksTerms = marksTerms,
             )
@@ -178,12 +177,8 @@ internal fun TeachingText(
                 RichInlineText(
                     title,
                     modifier.semantics { heading() },
-                    style =
-                        MaterialTheme.typography.titleMedium.copy(
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            lineHeight = 21.sp,
-                        ),
+                    // At least the size of the reading text it heads, set apart by weight.
+                    style = MaterialTheme.zoonkType.lessonText.copy(fontWeight = FontWeight.SemiBold),
                 )
             }
         }

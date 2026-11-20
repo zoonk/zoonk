@@ -1,37 +1,36 @@
 "use client";
 
-import { VisitorLook } from "@/components/learner/visitor-look";
+import { LevelLink, PendingBarEnd } from "@/app/[lang]/(app)/(learn)/_components/learn-bar-end";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
-import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
 import { LearnSectionBar } from "@zoonk/learn/bar";
-import { PendingAccountAvatar } from "./user-avatar";
 import { UserAvatarMenu } from "./user-avatar-menu";
-
-const CATALOG_BAR_CLASS = "-mx-4 -mt-4 mb-6 sm:-mx-8 sm:-mt-6 lg:hidden";
 
 export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
   const learner = useLearnerSummary();
 
   if (learner.status === "visitor") {
-    return <LearnSectionBar backHref="/" className={CATALOG_BAR_CLASS} end={visitor} />;
+    return (
+      <div className="**:data-[slot=back-link]:text-foreground contents">
+        <LearnSectionBar back={{ href: "/", label: "Zoonk" }} listed="visitor" phoneEnd={visitor} />
+      </div>
+    );
   }
 
   return (
     <LearnSectionBar
-      backHref="/today"
-      className={CATALOG_BAR_CLASS}
-      end={
+      back={{ href: "/today" }}
+      listed="visitor"
+      phoneEnd={
         learner.status === "ready" ? (
-          <LearnAvatarBelt color={learner.summary.level?.color ?? null}>
-            <UserAvatarMenu includeSearch />
-          </LearnAvatarBelt>
-        ) : (
           <>
-            <VisitorLook>{visitor}</VisitorLook>
-            <PendingAccountAvatar className="size-7" />
+            {learner.summary.level && <LevelLink level={learner.summary.level} />}
+            <UserAvatarMenu />
           </>
+        ) : (
+          <PendingBarEnd visitor={visitor} />
         )
       }
+      root
     />
   );
 }

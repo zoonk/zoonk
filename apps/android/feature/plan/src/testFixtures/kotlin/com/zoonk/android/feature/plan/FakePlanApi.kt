@@ -6,6 +6,7 @@ import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.Written
 import com.zoonk.android.feature.onboarding.examGoal
+import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
@@ -19,6 +20,7 @@ import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineGeneration
 import com.zoonk.api.models.StudyNext
 import com.zoonk.api.models.Syllabus
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
@@ -33,6 +35,14 @@ class FakePlanApi : PlanApi {
     var plans = 0
     var changed = false
     var statusFailure: ApiException? = null
+
+    /** Holds a goal's status change until completed. */
+    var statusGate: CompletableDeferred<Unit>? = null
+    var continueGate: CompletableDeferred<Unit>? = null
+
+    /** Holds a goal's language country or content country change until completed. */
+    var goalGate: CompletableDeferred<Unit>? = null
+    var goalFailure: ApiException? = null
     val statuses = mutableListOf<LearnerSummaryGoal.Status>()
     val askedSince = mutableListOf<Instant>()
     var changeFailure: ApiException? = null
@@ -47,6 +57,10 @@ class FakePlanApi : PlanApi {
     var planGate: CompletableDeferred<Unit>? = null
     val changes = mutableListOf<List<PlanOp>>()
     val decisions = mutableListOf<PlanChangeDecisionInput.Status>()
+    val decisionQuotes = mutableListOf<String?>()
+
+    /** The next accept's answer when its numbers moved: still proposed, with a new quote. */
+    var repriced: PlanChange? = null
     var shownPlan: Plan = plan()
     var shownSyllabus: Syllabus = syllabus()
     var timeToCover: PlanTimeToCover = timeToCover()
@@ -58,9 +72,16 @@ class FakePlanApi : PlanApi {
 
     val examChoices = mutableListOf<Pair<String, List<String>>>()
     val toolAnswers = mutableListOf<ToolAnswer>()
+    var toolGate: CompletableDeferred<Unit>? = null
     var toolFailure: ApiException? = null
     var advice = PlanBasesAdvice(daysLeft = 40, ready = true, recommended = PlanBasesAdvice.Recommended.ESSENTIAL)
     var advised = 0
+
+    /** Holds the next recommendation, with the answer it had when asked, until it opens. */
+    var adviceGate: CompletableDeferred<Unit>? = null
+
+    /** Recommendations whose caller stopped waiting for them. */
+    var adviceCancelled = 0
     var studyNext: StudyNext? = null
     var studyNextReads = 0
     var continued = 0
@@ -126,6 +147,7 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
         status: LearnerSummaryGoal.Status,
     ) {
+        statusGate?.await()
         statusFailure?.let { throw it }
         statuses += status
     }
@@ -140,25 +162,36 @@ class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         region: String?,
-    ) = examGoal().copy(targetLanguage = "es", targetRegion = region, languageFlag = region?.lowercase() ?: "es")
+    ): Goal {
+        goalWrite()
+        return examGoal().copy(targetLanguage = "es", targetRegion = region, languageFlag = region?.lowercase() ?: "es")
+    }
 
     override suspend fun setContentCountry(
         session: AuthenticatedSession,
         goalId: UUID,
         country: String?,
-    ) = examGoal().copy(
-        countryDependent = true,
-        contentCountry =
-            GoalContentCountry(
-                country ?: "US",
-                country ?: "United States",
-                editable = true,
-                kind = GoalContentCountry.Kind.CONTENT,
-                lessonVariety = null,
-                rebuild = GoalContentCountry.Rebuild.PREPARING,
-                source = GoalContentCountry.Source.PICKED,
-            ),
-    )
+    ): Goal {
+        goalWrite()
+        return examGoal().copy(
+            countryDependent = true,
+            contentCountry =
+                GoalContentCountry(
+                    country ?: "US",
+                    country ?: "United States",
+                    editable = true,
+                    kind = GoalContentCountry.Kind.CONTENT,
+                    lessonVariety = null,
+                    rebuild = GoalContentCountry.Rebuild.PREPARING,
+                    source = GoalContentCountry.Source.PICKED,
+                ),
+        )
+    }
+
+    private suspend fun goalWrite() {
+        goalGate?.await()
+        goalFailure?.let { throw it }
+    }
 
     override suspend fun change(
         session: AuthenticatedSession,
@@ -188,9 +221,12 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
         changeId: UUID,
         status: PlanChangeDecisionInput.Status,
+        quote: String?,
     ): PlanChange {
         decisions += status
-        return planChange(status = status.value)
+        decisionQuotes += quote
+        return repriced?.takeIf { status == PlanChangeDecisionInput.Status.APPLIED }?.also { repriced = null }
+            ?: planChange(status = status.value)
     }
 
     override suspend fun timeToCover(
@@ -218,6 +254,7 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
         answer: ToolAnswer,
     ): Written<PlanChangeResult> {
+        toolGate?.await()
         toolFailure?.let { throw it }
         toolAnswers += answer
         setupWritings.removeFirstOrNull()?.let { return Written.Writing(it) }
@@ -232,7 +269,17 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
     ): PlanBasesAdvice {
         advised++
-        return advice
+        val answer = advice
+        adviceGate?.let {
+            adviceGate = null
+            try {
+                it.await()
+            } catch (e: CancellationException) {
+                adviceCancelled++
+                throw e
+            }
+        }
+        return answer
     }
 
     override suspend fun outline(
@@ -267,6 +314,7 @@ class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ) {
+        continueGate?.await()
         continueFailure?.let { throw it }
         continued++
     }

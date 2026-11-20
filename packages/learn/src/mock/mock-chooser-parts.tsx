@@ -1,14 +1,14 @@
 "use client";
 
-import { useExtracted } from "next-intl";
 import { type HelpLimit } from "../_components/help-limit-notice";
-import { PlusNotice } from "../_components/plus-lock";
 import { type GenerationRun } from "../generation/generation-run";
 
-type MockShortStatus = {
+export type MockShortStatus = {
+  /** When the cap over the last 30 days gives back its next question-writing use. */
+  availableAt: string | null;
   examQuestions: number;
   kind: "short";
-  limit: "day" | "month" | "total" | null;
+  limit: "day" | "rolling30Days" | "total" | null;
   minutes: number;
   optionKey: string;
   questions: number;
@@ -20,13 +20,3 @@ export type MockChooserStatus =
   | MockShortStatus
   | { kind: "failed"; reason: "failed" | "notEnoughQuestions" }
   | { kind: "refused"; limit: HelpLimit };
-
-export function MockPlusNotice() {
-  const t = useExtracted();
-
-  return (
-    <PlusNotice cta={false}>
-      {t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
-    </PlusNotice>
-  );
-}

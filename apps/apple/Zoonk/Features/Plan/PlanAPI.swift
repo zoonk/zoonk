@@ -14,8 +14,10 @@ enum GoalStatusChange: String, Sendable {
 }
 
 enum OutlineRequest: Equatable, Sendable {
-  case limit
+  case limit(HelpLimit)
   case started
+  /// The plan has nothing left to write for the topic: studied, settled or left out.
+  case unavailable
 }
 
 protocol PlanAPIClient: Sendable {
@@ -35,8 +37,10 @@ protocol PlanAPIClient: Sendable {
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
   /// False when the change is out of date: answered elsewhere, or the plan moved on.
   /// The change as it stands after the answer; nil when it can't take that answer anymore.
-  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
-    async throws -> TodayView.PlanChange?
+  func decide(
+    token: String, goalId: String, changeId: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
+  ) async throws -> TodayView.PlanChange?
   /// The learner's switches on an exam goal's Focus test.
   func updateFocusTest(token: String, goalId: String, controls: FocusTestControls) async throws
     -> FocusTestSummary
@@ -69,18 +73,17 @@ struct PlanChangeResult: Decodable {
   let status: String
 
   var outcome: PlanChangeOutcome {
-    guard status == "applied", let change else {
+    guard status == "applied" else {
       return .unchanged
+    }
+
+    guard let change else {
+      return .saved
     }
 
     // The latest change, undone: what it says it did is what the plan no longer does.
     return change.status == "undone" ? .undone : .applied(change)
   }
-}
-
-private struct PlanDecision: Encodable {
-  let status: String
-  let timeZone: String
 }
 
 private struct ExamChoiceRequest: Encodable {
@@ -253,12 +256,11 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// Undoes the plan's latest change while the plan is still as it left it.
-  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
-    async throws -> TodayView.PlanChange?
-  {
-    let body: Components.Schemas.PlanChangeDecisionInput = try PracticeJSON.recode(
-      PlanDecision(status: decision.rawValue, timeZone: timeZone))
+  func decide(
+    token: String, goalId: String, changeId: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
+  ) async throws -> TodayView.PlanChange? {
+    let body = try PlanChangeDecisionBody(decision, quote: quote, timeZone: timeZone).input
 
     return try await clients.perform(token: token) { client in
       switch try await client.decidePlanChange(
@@ -424,12 +426,23 @@ struct PlanAPI: PlanAPIClient {
         path: .init(goalId: goalId, skillId: skillId))
       {
       case .ok, .accepted: return .started
-      case .code402, .forbidden, .tooManyRequests: return .limit
+      case .unprocessableContent: return .unavailable
+      case .code402(let response): return Self.outlineLimit(try? response.body.json, status: 402)
+      case .forbidden(let response): return Self.outlineLimit(try? response.body.json, status: 403)
+      case .tooManyRequests(let response):
+        return Self.outlineLimit(try? response.body.json, status: 429)
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }
+  }
+
+  private static func outlineLimit(_ error: Components.Schemas._Error?, status: Int)
+    -> OutlineRequest
+  {
+    .limit(
+      voiceRefusal(status: status, error: error).limit ?? .limitReached(period: .day, tier: .free))
   }
 
   /// A change's body, sent as its own JSON: the generated types drop a `null` date, which is how a

@@ -348,7 +348,7 @@ describe(lessonPlayerReducer, () => {
     );
 
     expect(getCurrentStep(halfway)?.id).toBe("case");
-    expect(getLessonScreen(halfway).primary).toMatchObject({ disabled: false, label: "confirm" });
+    expect(getLessonScreen(halfway).primary).toMatchObject({ disabled: false, label: "check" });
   });
 
   it("skips the rest of a skipped activity's screens and goes on from where the learner is", () => {
@@ -379,7 +379,7 @@ describe(lessonPlayerReducer, () => {
     expect(skipped.skippedWritingStepIds).toStrictEqual(["write"]);
   });
 
-  it("puts the writing back with Write again until the learner moves on", () => {
+  it("puts the writing back with Turn back on until the learner moves on", () => {
     const steps = [explanationStep("tip"), typedAnswerStep("write"), summaryStep("end")];
     const skipped = play(steps, [{ opening: true, type: "skipWriting" }]);
 
@@ -427,7 +427,7 @@ describe(lessonPlayerReducer, () => {
     expect(restored.run).toMatchObject({ runId: "run", status: "started" });
   });
 
-  it("brings the learner back to the screen they left with Can't write now", () => {
+  it("brings the learner back to the screen they left with Skip writing today", () => {
     const steps = [typedAnswerStep("write"), explanationStep("tip")];
     const skipped = play(steps, [{ type: "skipWriting" }]);
     const restored = lessonPlayerReducer(skipped, { type: "writingRestored" });
@@ -1701,12 +1701,39 @@ describe(lessonPlayerReducer, () => {
 
     const confirmed = lessonPlayerReducer(state, {
       attemptId: "quiz-attempt",
-      result: { ...stepResult(false), savedMistake: true },
+      savedMistake: true,
       stepId: "quiz",
       type: "checkConfirmed",
     });
 
-    expect(confirmed.results.quiz?.savedMistake).toBe(true);
+    expect(confirmed.results.quiz).toMatchObject({ savePending: false, savedMistake: true });
+  });
+
+  it("adds the server's saved mistake to a miss its retry already set aside", () => {
+    const retry = play(
+      [explanationStep("tip"), checkStep("quiz")],
+      [
+        { type: "continue" },
+        { answer: { kind: "check", optionId: "wrong" }, stepId: "quiz", type: "selectAnswer" },
+        {
+          counts: true,
+          result: { ...stepResult(false), attemptId: "miss", savePending: true },
+          stepId: "quiz",
+          type: "checkResolved",
+        },
+        { type: "continue" },
+      ],
+    );
+
+    const confirmed = playOn(retry, [
+      { attemptId: "miss", savedMistake: true, stepId: "quiz", type: "checkConfirmed" },
+      { direction: "prev", type: "navigate" },
+    ]);
+
+    expect(showAttemptInView(confirmed).results.quiz).toMatchObject({
+      savePending: false,
+      savedMistake: true,
+    });
   });
 
   it("keeps a newer answer's verdict when the server's word on an earlier answer comes late", () => {
@@ -1719,7 +1746,7 @@ describe(lessonPlayerReducer, () => {
 
     const late = lessonPlayerReducer(again, {
       attemptId: "first",
-      result: { ...stepResult(false), savedMistake: true },
+      savedMistake: true,
       stepId: "quiz",
       type: "checkConfirmed",
     });

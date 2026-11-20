@@ -1,12 +1,13 @@
 "use client";
 
 import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
+import { NotebookPenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { KindDot } from "../_components/kind-tile";
 import {
   ListRowBody,
   ListRowContent,
   ListRowDescription,
+  ListRowIcon,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
@@ -45,7 +46,9 @@ export function MistakesRow({
   return (
     <ListRowLink href={href}>
       <ListRowLeading>
-        <KindDot kind="mistakes" />
+        <ListRowIcon>
+          <NotebookPenIcon />
+        </ListRowIcon>
       </ListRowLeading>
       <ListRowBody>
         <ListRowContent>

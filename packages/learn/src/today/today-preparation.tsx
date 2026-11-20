@@ -3,12 +3,12 @@
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { useExtracted } from "next-intl";
 import { useFormatShare } from "../_utils/percent";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { LevelLadder } from "../language/progress/level-ladder";
 import { LevelValue } from "../language/progress/level-value";
 import { useTodayScreen } from "./today-context";
 import { LessonsCard } from "./today-lessons-card";
 import { ProgressCard, useCardIds } from "./today-progress-card";
-import { SubjectRows, type TodaySyllabus, useSubjectRows } from "./today-subject-rows";
 
 const PERCENT = 100;
 
@@ -29,19 +29,16 @@ function useWeekGain(gain: number): React.ReactNode {
 
 function PreparationCard({
   className,
-  syllabus,
   value,
   weekGain,
 }: {
   className?: string;
-  syllabus: TodaySyllabus | null;
   value: number;
   weekGain: number;
 }) {
   const t = useExtracted();
   const formatShare = useFormatShare();
   const ids = useCardIds();
-  const rows = useSubjectRows(syllabus);
   const gain = useWeekGain(weekGain);
 
   return (
@@ -51,27 +48,28 @@ function PreparationCard({
       ids={ids}
       title={t("Preparation")}
       value={formatShare(value)}
-    >
-      <SubjectRows labelledBy={ids.title} rows={rows} />
-    </ProgressCard>
+    />
   );
 }
 
 function LevelCard({
   className,
   level,
+  targetLanguage,
 }: {
   className?: string;
   level: NonNullable<LanguageTodayView["level"]>;
+  targetLanguage: string;
 }) {
   const t = useExtracted();
   const ids = useCardIds();
+  const languageName = useLanguageNameInSentence();
 
   return (
     <ProgressCard
       className={className}
       ids={ids}
-      title={t("Level")}
+      title={t("{language} level", { language: languageName(targetLanguage) })}
       value={<LevelValue {...level} />}
     >
       <LevelLadder {...level} />
@@ -79,20 +77,25 @@ function LevelCard({
   );
 }
 
+/** The goal's one number; its parts are the Plan's to list. */
 export function TodayPreparation({
   className,
-  level = null,
-  syllabus,
+  language = null,
 }: {
   className?: string;
-  level?: LanguageTodayView["level"];
-  syllabus: TodaySyllabus | null;
+  language?: Pick<LanguageTodayView, "level" | "targetLanguage"> | null;
 }) {
   const { today } = useTodayScreen();
   const { progress } = today;
 
   if (today.goal.kind === "language") {
-    return level ? <LevelCard className={className} level={level} /> : null;
+    return language?.level ? (
+      <LevelCard
+        className={className}
+        level={language.level}
+        targetLanguage={language.targetLanguage}
+      />
+    ) : null;
   }
 
   if (!progress) {
@@ -101,21 +104,9 @@ export function TodayPreparation({
 
   if (progress.measure === "preparation") {
     return (
-      <PreparationCard
-        className={className}
-        syllabus={syllabus}
-        value={progress.value}
-        weekGain={progress.weekGain}
-      />
+      <PreparationCard className={className} value={progress.value} weekGain={progress.weekGain} />
     );
   }
 
-  return (
-    <LessonsCard
-      className={className}
-      lessons={progress.lessons}
-      syllabus={syllabus}
-      value={progress.value}
-    />
-  );
+  return <LessonsCard className={className} lessons={progress.lessons} value={progress.value} />;
 }

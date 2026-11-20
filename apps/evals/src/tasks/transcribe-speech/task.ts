@@ -66,7 +66,7 @@ export const transcribeSpeechTask: Task<SpeechClipInput, SpeechTranscript, Speec
     "Transcribe a learner's spoken answer as said, mistakes included, so word-by-word grading can flag them (labeled text-to-speech clips)",
   generate: transcribeClip,
   id: "transcribe-speech",
-  name: "Transcribe Speech",
+  name: "Transcribe speech",
   output: "transcription",
   score: scoreSpeechTranscript,
   testCases: TEST_CASES,

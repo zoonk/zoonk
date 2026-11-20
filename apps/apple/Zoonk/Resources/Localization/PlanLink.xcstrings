@@ -1,13 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "~%@ of study · %lld phases · %lld skills" : {
-      "comment" : "A shared plan's size: its study time, phases and skills",
+    "~%@ of study · %lld phases · %lld topics" : {
+      "comment" : "A shared plan's size: its study time, phases and topics",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ Lernzeit · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ Lernzeit · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -30,7 +30,7 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -38,13 +38,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg Fähigkeit"
+                      "value" : "%arg Thema"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg Fähigkeiten"
+                      "value" : "%arg Themen"
                     }
                   }
                 }
@@ -55,7 +55,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "~%1$@ of study · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ of study · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -78,7 +78,7 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -86,13 +86,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "new",
-                      "value" : "%arg skill"
+                      "value" : "%arg topic"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "new",
-                      "value" : "%arg skills"
+                      "value" : "%arg topics"
                     }
                   }
                 }
@@ -103,7 +103,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ de estudio · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ de estudio · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -126,7 +126,7 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -134,13 +134,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg habilidad"
+                      "value" : "%arg tema"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg habilidades"
+                      "value" : "%arg temas"
                     }
                   }
                 }
@@ -151,7 +151,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ d’étude · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ d’étude · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -174,7 +174,7 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -182,13 +182,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg compétence"
+                      "value" : "%arg sujet"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg compétences"
+                      "value" : "%arg sujets"
                     }
                   }
                 }
@@ -199,7 +199,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ di studio · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ di studio · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -222,15 +222,21 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg argomento"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg abilità"
+                      "value" : "%arg argomenti"
                     }
                   }
                 }
@@ -241,7 +247,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "約%1$@の学習・%#@phases@・%#@skills@"
+            "value" : "約%1$@の学習 · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -258,7 +264,7 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -266,7 +272,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%argスキル"
+                      "value" : "%argトピック"
                     }
                   }
                 }
@@ -277,7 +283,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "약 %1$@ 학습 · %#@phases@ · %#@skills@"
+            "value" : "약 %1$@ 학습 · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -294,7 +300,7 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -302,7 +308,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "스킬 %arg개"
+                      "value" : "주제 %arg개"
                     }
                   }
                 }
@@ -313,7 +319,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ nauki · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ nauki · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -348,21 +354,33 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tematy"
+                    }
+                  },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tematów"
+                    }
+                  },
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg umiejętność"
+                      "value" : "%arg temat"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg umiejętności"
+                      "value" : "%arg tematu"
                     }
                   }
                 }
@@ -373,7 +391,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ de estudo · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ de estudo · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -396,7 +414,7 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -404,13 +422,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg habilidade"
+                      "value" : "%arg tópico"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg habilidades"
+                      "value" : "%arg tópicos"
                     }
                   }
                 }
@@ -421,7 +439,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ çalışma · %#@phases@ · %#@skills@"
+            "value" : "~%1$@ çalışma · %#@phases@ · %#@topics@"
           },
           "substitutions" : {
             "phases" : {
@@ -438,7 +456,7 @@
                 }
               }
             },
-            "skills" : {
+            "topics" : {
               "argNum" : 3,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -446,7 +464,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg beceri"
+                      "value" : "%arg konu"
                     }
                   }
                 }
@@ -580,65 +598,6 @@
         }
       }
     },
-    "A study plan someone shared with you" : {
-      "comment" : "Eyebrow over a shared plan's subject",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Lernplan, der mit dir geteilt wurde"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un plan de estudio que alguien compartió contigo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un plan d’étude partagé avec toi"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un piano di studio condiviso con te"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "共有された学習計画"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "누군가 공유해 준 학습 계획"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ktoś udostępnił ci plan nauki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um plano de estudos compartilhado com você"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seninle paylaşılan bir çalışma planı"
-          }
-        }
-      }
-    },
     "How much time a day?" : {
       "comment" : "Label of the daily time picker for a shared plan",
       "localizations" : {
@@ -698,61 +657,120 @@
         }
       }
     },
-    "Start from this plan" : {
-      "comment" : "Starts the learner's own plan from a shared one",
+    "Shared with you" : {
+      "comment" : "Chip over a study plan someone shared with the learner",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit diesem Plan starten"
+            "value" : "Mit dir geteilt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar con este plan"
+            "value" : "Compartido contigo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer avec ce plan"
+            "value" : "Partagé avec toi"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia da questo piano"
+            "value" : "Condiviso con te"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この計画をもとに始める"
+            "value" : "共有された学習計画"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 계획으로 시작하기"
+            "value" : "공유받음"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zacznij od tego planu"
+            "value" : "Udostępniono ci"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar com este plano"
+            "value" : "Compartilhado com você"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu planla başla"
+            "value" : "Seninle paylaşıldı"
+          }
+        }
+      }
+    },
+    "Start my own plan" : {
+      "comment" : "Starts the learner's own plan from a shared one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eigenen Plan starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear mi propio plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer mon propre plan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia un piano tutto tuo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分の学習計画を始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나만의 계획 시작하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozpocznij własny plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar meu próprio plano"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kendi planına başla"
           }
         }
       }
@@ -875,65 +893,6 @@
         }
       }
     },
-    "Try again" : {
-      "comment" : "Loads the shared plan again",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch einmal versuchen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reintentar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réessayer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riprova"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もう一度試す"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다시 시도"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spróbuj ponownie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tentar de novo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrar dene"
-          }
-        }
-      }
-    },
     "We couldn't load this plan" : {
       "comment" : "A shared plan failed to load",
       "localizations" : {
@@ -993,120 +952,60 @@
         }
       }
     },
-    "You can't start another goal right now. Finish or pause one first." : {
-      "comment" : "A goal limit refused starting from a shared plan",
+    "You get your own plan for the same subject. It starts from what you already know." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kannst gerade kein weiteres Ziel starten. Schließe zuerst eines ab oder pausiere es."
+            "value" : "Du bekommst einen eigenen Plan für dasselbe Fach. Er baut auf dem auf, was du schon weißt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No puedes crear otro objetivo ahora. Primero completa o pausa uno."
+            "value" : "Recibes tu propio plan para la misma materia. Parte de lo que ya sabes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu ne peux pas commencer un autre objectif pour le moment. Termine ou mets en pause un objectif d’abord."
+            "value" : "Tu obtiens ton propre plan pour la même matière. Il part de ce que tu sais déjà."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al momento non puoi iniziare un altro obiettivo. Prima completane uno o mettilo in pausa."
+            "value" : "Ricevi un piano tutto tuo per la stessa materia. Parte da quello che sai già."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今は新しい目標を始められません。先に取り組み中の目標を1つ終えるか、一時停止してください。"
+            "value" : "同じ科目で自分用の学習計画を立てられます。今の知識に合ったところから始められます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "지금은 새 목표를 시작할 수 없어요. 먼저 기존 목표 하나를 완료하거나 일시 중지해 주세요."
+            "value" : "같은 과목으로 나만의 계획을 세워 드려요. 이미 아는 내용에 맞춰 시작해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie możesz teraz dodać kolejnego celu. Najpierw zrealizuj lub wstrzymaj jeden z obecnych."
+            "value" : "Dostaniesz własny plan nauki tego samego przedmiotu. Zacznie się od tego, co już wiesz."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você não pode começar outro objetivo agora. Primeiro, conclua ou pause um deles."
+            "value" : "Você recebe seu próprio plano para a mesma matéria. Ele parte do que você já sabe."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Şu anda başka bir hedefe başlayamazsın. Önce hedeflerinden birini tamamla veya duraklat."
-          }
-        }
-      }
-    },
-    "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know." : {
-      "comment" : "What starting from a shared plan does",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du bekommst einen eigenen Plan zum selben Thema, in deinem Tempo. Ein paar Fragen sorgen dafür, dass du überspringst, was du schon weißt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tendrás tu propio plan para la misma materia, a tu ritmo. Luego responderás unas preguntas para saltarte lo que ya sabes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu auras ton propre plan sur le même sujet, à ton rythme. Quelques questions permettront ensuite de passer ce que tu sais déjà."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ottieni un piano tutto tuo per la stessa materia, al tuo ritmo. Poi, con poche domande, saltiamo ciò che sai già."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同じ科目で、自分のペースに合った学習計画を作成します。いくつかの問題に答えると、すでに知っている内容はスキップされます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "같은 주제로 내 페이스에 맞는 나만의 계획을 만들어요. 몇 문제를 풀면 이미 아는 내용은 건너뛰어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dostaniesz własny plan z tego samego przedmiotu, dopasowany do twojego tempa. Po kilku pytaniach pominiemy to, co już wiesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você recebe seu próprio plano para a mesma matéria, no seu ritmo. Depois, algumas perguntas ajudam a pular o que você já sabe."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aynı konu için kendi temponda ilerleyeceğin, sana özel bir planın olur. Ardından birkaç soruyla zaten bildiklerini atlarız."
+            "value" : "Aynı konu için kendi planın olur. Zaten bildiklerini temel alır."
           }
         }
       }

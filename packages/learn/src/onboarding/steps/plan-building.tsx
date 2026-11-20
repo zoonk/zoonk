@@ -31,12 +31,14 @@ export function PlanReadyHeading({ next }: { next: PlanNext }) {
 
 /** The plan build's progress view: its steps, then lesson 1 being written alongside it. */
 export function PlanBuilding({
+  barHasMainAction,
   firstLesson,
   holding,
   next,
   run,
   since,
 }: {
+  barHasMainAction: boolean;
   firstLesson: GenerationFirstLesson | null;
   holding: boolean;
   next: PlanNext;
@@ -48,6 +50,8 @@ export function PlanBuilding({
   return (
     <>
       <GenerationWait
+        barHasMainAction={barHasMainAction}
+        className="**:data-[slot=generation-timeline-progress]:[&>span:first-child]:rounded-meter **:data-[slot=generation-timeline-segment]:rounded-none **:data-[slot=generation-timeline-segment]:*:rounded-none **:data-[slot=generation-timeline-progress]:[&>span:first-child]:gap-0 **:data-[slot=generation-timeline-progress]:[&>span:first-child]:overflow-hidden"
         doneLabel={holding ? t("Your plan is ready") : undefined}
         kind="curriculum"
         run={holding ? toHeldRun(run) : run}
@@ -64,7 +68,7 @@ export function PlanBuilding({
                     "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
                   )
             }
-            title={t("Building your plan")}
+            title={isRunStopped(run) ? t("Building your plan stopped") : t("Building your plan")}
           />
         )}
       </GenerationWait>

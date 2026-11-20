@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +38,6 @@ import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -59,9 +59,10 @@ internal fun PlanHeader(
     rename: GoalRename? = null,
     report: FeedbackSheet? = null,
     onAdjust: (() -> Unit)? = null,
+    /** Beside the aside the page has no More section, so the menu says "About the exam"; otherwise More's row does. */
+    examInMenu: Boolean = false,
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        PlanEyebrow(page)
         PageTitleRow(stringResource(R.string.plan_title), verticalAlignment = Alignment.CenterVertically) {
             onAdjust?.let {
                 OutlinedButton(
@@ -70,40 +71,28 @@ internal fun PlanHeader(
                     size = ButtonSize.Small,
                 ) { Text(stringResource(R.string.plan_adjust_plan)) }
             }
-            PlanMenu(page, links, resume, isSaving, onSetStatus, rename, report)
+            PlanMenu(page, links, resume, isSaving, onSetStatus, rename, report, examInMenu)
         }
+        PlanSubtitle(page)
     }
 }
 
+/**
+ * The days left to the goal's date, the one line under the Plan's title. The top bar's goal switcher
+ * names the goal, so the line doesn't; a goal without a date still to come has none.
+ */
 @Composable
-private fun PlanEyebrow(page: PlanPageState) {
+private fun PlanSubtitle(page: PlanPageState) {
     val target = page.plan.schedule.targetDate
     val days = target?.let { ChronoUnit.DAYS.between(page.today, it.toJavaLocalDate()).toInt() }
-    val left =
-        when {
-            days == null || days < 0 -> {
-                null
-            }
+    val left = goalCountdown(days, page.plan.schedule.targetDateEstimated) ?: return
 
-            days == 0 -> {
-                PlanDateWords(stringResource(R.string.plan_day_is_here), stringResource(R.string.plan_day_is_here))
-            }
-
-            page.plan.schedule.targetDateEstimated -> {
-                PlanDateWords(
-                    pluralStringResource(R.plurals.plan_days_left_estimate, days, days),
-                    pluralStringResource(R.plurals.plan_days_left_estimate_spoken, days, days),
-                )
-            }
-
-            else -> {
-                pluralStringResource(R.plurals.plan_days_left, days, days).let { PlanDateWords(it, it) }
-            }
-        }
-    val text = left?.let { stringResource(R.string.plan_eyebrow, page.goal.displayName, it.text) } ?: page.goal.displayName
-    val spoken = left?.let { stringResource(R.string.plan_eyebrow, page.goal.displayName, it.spoken) } ?: page.goal.displayName
-
-    Eyebrow(text, Modifier.semantics { contentDescription = spoken })
+    Text(
+        left.text,
+        Modifier.semantics { contentDescription = left.spoken },
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 }
 
 @Composable
@@ -115,9 +104,10 @@ private fun PlanMenu(
     onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     rename: GoalRename?,
     report: FeedbackSheet?,
+    examInMenu: Boolean,
 ) {
     GoalMenu(page.goal, resume, isSaving, onSetStatus, rename) { closing ->
-        PlanItems(page, links, report, closing)
+        PlanItems(page, links, report, examInMenu, closing)
         HorizontalDivider()
     }
 }
@@ -202,7 +192,7 @@ private fun RenameGoalDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = save, enabled = trimmed.isNotEmpty() && !dialog.saving) {
+            TextButton(onClick = save, enabled = trimmed.isNotEmpty(), busy = dialog.saving) {
                 Text(stringResource(R.string.plan_save))
             }
         },
@@ -218,6 +208,7 @@ private fun PlanItems(
     page: PlanPageState,
     links: PlanLinks,
     report: FeedbackSheet?,
+    examInMenu: Boolean,
     closing: (() -> Unit) -> () -> Unit,
 ) {
     val context = LocalContext.current
@@ -226,15 +217,16 @@ private fun PlanItems(
     val libraryCourse = page.libraryCourse
     val buddy = page.summary.buddy
 
-    if (links.hasExam) MenuItem(R.drawable.ic_school, stringResource(R.string.plan_about_exam), closing(links::exam))
+    val exam = links.hasExam && examInMenu
+    if (exam) MenuItem(R.drawable.ic_school, stringResource(R.string.plan_about_exam), closing(links::exam))
     libraryCourse?.let { course ->
         MenuItem(
-            R.drawable.ic_local_library,
+            R.drawable.ic_library,
             stringResource(R.string.plan_full_course),
             closing { links.course(course.courseId.toString()) },
         )
     }
-    if (links.hasExam || libraryCourse != null) HorizontalDivider()
+    if (exam || libraryCourse != null) HorizontalDivider()
 
     MenuItem(
         R.drawable.ic_share,
@@ -251,7 +243,7 @@ private fun PlanItems(
     )
     MenuItem(
         R.drawable.ic_contact_support,
-        stringResource(R.string.plan_talk_to, buddyName(BuddyKind.of(buddy.kind.value), buddy.name)),
+        stringResource(R.string.tutor_ask, buddyName(BuddyKind.of(buddy.kind.value), buddy.name)),
         closing(links::buddy),
     )
     report?.let { ReportProblemItem(it, onClick = closing {}) }
@@ -302,18 +294,28 @@ private fun GoalStatusDialog(
     onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val archive = dialog == GoalDialog.Archive
+    if (dialog == GoalDialog.Archive) {
+        ArchiveGoalDialog(
+            goal.displayName,
+            onArchive = {
+                onDismiss()
+                onSetStatus(LearnerSummaryGoal.Status.ARCHIVED)
+            },
+            onDismiss = onDismiss,
+        )
+        return
+    }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(if (archive) R.string.plan_archive_title else R.string.plan_resume_title, goal.displayName)) },
-        text = { Text(stringResource(if (archive) R.string.plan_archive_description else R.string.plan_resume_effect)) },
+        title = { Text(stringResource(R.string.plan_resume_title, goal.displayName)) },
+        text = { Text(stringResource(R.string.plan_resume_effect)) },
         confirmButton = {
             TextButton(
                 onClick = {
                     onDismiss()
-                    onSetStatus(if (archive) LearnerSummaryGoal.Status.ARCHIVED else LearnerSummaryGoal.Status.ACTIVE)
+                    onSetStatus(LearnerSummaryGoal.Status.ACTIVE)
                 },
-            ) { Text(stringResource(if (archive) R.string.plan_archive else R.string.plan_resume)) }
+            ) { Text(stringResource(R.string.plan_resume)) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.plan_cancel)) } },
     )
@@ -338,4 +340,34 @@ private fun MenuItem(
 private fun sharePlanUrl(
     page: PlanPageState,
     language: String,
-): String = AppLink.pageUrl("/plan-link/${page.plan.planId}", language)
+): String = AppLink.webUrl("/plan-link/${page.plan.planId}", language)
+
+/**
+ * The days left to a goal's date, as the Plan and the goal menu write them: "~364 days left" for an
+ * estimated date, "The day is here" on it, nothing once it has passed.
+ */
+@Composable
+fun goalCountdown(
+    days: Int?,
+    estimated: Boolean,
+): PlanDateWords? =
+    when {
+        days == null || days < 0 -> {
+            null
+        }
+
+        days == 0 -> {
+            PlanDateWords(stringResource(R.string.plan_day_is_here), stringResource(R.string.plan_day_is_here))
+        }
+
+        estimated -> {
+            PlanDateWords(
+                pluralStringResource(R.plurals.plan_days_left_estimate, days, days),
+                pluralStringResource(R.plurals.plan_days_left_estimate_spoken, days, days),
+            )
+        }
+
+        else -> {
+            pluralStringResource(R.plurals.plan_days_left, days, days).let { PlanDateWords(it, it) }
+        }
+    }

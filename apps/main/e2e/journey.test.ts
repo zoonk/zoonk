@@ -5,6 +5,7 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { type Page, expect, test } from "./fixtures";
+import { holdActionAnswer } from "./held-action";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { openAs } from "./study-day";
@@ -26,6 +27,56 @@ async function openJourney(page: Page) {
 }
 
 test.describe("Journey", () => {
+  test("shows the estimated end date when the learner set no date", async ({ browser }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+      expect(goal.targetDate).toBeNull();
+
+      await page.setViewportSize({ height: 900, width: 1440 });
+      await openJourney(page);
+
+      const properties = page.getByRole("region", { exact: true, name: "Your plan" });
+      const endDate = properties.getByRole("button", { name: /^End date/u });
+      await expect(endDate).toContainText("None set");
+      await expect(endDate.locator('[data-slot="plan-date"]')).toContainText(/^~/u);
+    });
+  });
+
+  test("hides live plan estimates when the goal is paused", async ({ browser }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page }) => {
+      await page.setViewportSize({ height: 900, width: 1440 });
+      await openJourney(page);
+
+      const endDate = page.getByRole("button", { name: /^End date/u });
+      const estimate = endDate.locator('[data-slot="plan-date"]');
+      await expect(estimate).toBeVisible();
+
+      const options = page.getByRole("button", { name: "Plan options" });
+      await expectHydrated(options);
+      await options.click();
+      await page.getByRole("menuitem", { name: /^Pause.*goal$/u }).click();
+
+      await expect(page.getByRole("heading", { name: "This goal is paused" })).toBeVisible();
+      await expect(estimate).toHaveCount(0);
+      await expect(page.locator('[data-slot="phase-when"]')).toHaveCount(0);
+    });
+  });
+
+  test("shows a paused goal's schedule on a phone", async ({ browser }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page }) => {
+      await page.setViewportSize({ height: 844, width: 390 });
+      await openJourney(page);
+
+      const options = page.getByRole("button", { name: "Plan options" });
+      await expectHydrated(options);
+      await options.click();
+      await page.getByRole("menuitem", { name: /^Pause.*goal$/u }).click();
+
+      await expect(page.getByRole("button", { exact: true, name: "Resume" })).toBeVisible();
+      await expect(page.getByRole("button", { name: /^Schedule/u })).toBeVisible();
+    });
+  });
+
   test("says what a time change in the plan editor did, and Undo gives the plan back as it was", async ({
     browser,
   }) => {
@@ -50,7 +101,7 @@ test.describe("Journey", () => {
       await openJourney(page);
       await page.getByRole("button", { name: "Adjust plan" }).click();
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-      const minutes = editor.getByLabel("Time a day", { exact: true });
+      const minutes = editor.getByLabel("Daily study time", { exact: true });
       const before = await loadPlanItems();
 
       await minutes.selectOption(String(otherTime));
@@ -58,7 +109,7 @@ test.describe("Journey", () => {
       await expect(
         editor
           .getByRole("status")
-          .filter({ hasText: `Daily time changed to ${minutesLabel(otherTime)}.` }),
+          .filter({ hasText: `You now study ${minutesLabel(otherTime)} a day.` }),
       ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
       await expect.poll(loadPlanItems).not.toStrictEqual(before);
@@ -146,11 +197,10 @@ test.describe("Journey", () => {
     const options = page.getByRole("button", { name: "Plan options" });
     await expectHydrated(options);
     await options.click();
-    await page.getByRole("menuitem", { name: "Pause this goal" }).click();
+    await page.getByRole("menuitem", { name: "Pause goal" }).click();
 
-    await expect(
-      page.getByRole("heading", { name: "Your Astronomy goal is paused" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "This goal is paused" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Astronomy.*Switch goal$/u })).toBeVisible();
 
     await expect(page.getByRole("link", { name: "Continue" })).toHaveCount(0);
     await expect.poll(readStatus).toBe("paused");
@@ -159,6 +209,47 @@ test.describe("Journey", () => {
 
     await expect(page.getByRole("link", { name: "Continue" })).toBeVisible();
     await expect.poll(readStatus).toBe("active");
+
+    await page.context().close();
+  });
+
+  test("keeps the rename sheet open while a slow rename saves, then closes it with the new name", async ({
+    browser,
+  }) => {
+    const user = await createE2EUser(getBaseURL());
+    const goal = await goalFixture({ title: "Astronomy", userId: user.id });
+
+    await Promise.all([
+      planFixture({ goalId: goal.id }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.goto("/plan");
+
+    const options = page.getByRole("button", { name: "Plan options" });
+    await expectHydrated(options);
+    await options.click();
+    await page.getByRole("menuitem", { name: "Rename goal" }).click();
+
+    const sheet = page.getByRole("dialog", { name: "Rename goal" });
+    await sheet.getByRole("textbox", { name: "Name" }).fill("Stars and planets");
+
+    const rename = await holdActionAnswer(page, "/plan");
+    await sheet.getByRole("button", { name: "Save" }).click();
+    await rename.held;
+
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByRole("button", { name: "Cancel" })).toBeDisabled();
+
+    await rename.release(/\/today/u);
+
+    await expect(sheet).toHaveCount(0);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      displayName: "Stars and planets",
+    });
 
     await page.context().close();
   });

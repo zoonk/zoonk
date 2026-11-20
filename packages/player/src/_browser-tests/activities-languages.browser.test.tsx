@@ -1,10 +1,57 @@
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { checkActivity, expectVerdict, openActivity } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { recordPlayedClips, speechClips } from "../_test-utils/speech-clips";
 
 async function pickEnding(ending: string) {
   await page.getByRole("button", { exact: true, name: ending }).click();
+}
+
+function rowHeights() {
+  return [...document.querySelectorAll("tbody tr")].map(
+    (row) => row.getBoundingClientRect().height,
+  );
+}
+
+/**
+ * Where an answer's tag sits: "placed" after the last word, or at the start of a line of its own,
+ * otherwise how far off it is.
+ */
+function tagPlacement(row: Element): string | null {
+  const tag = row.querySelector('[data-slot="answer-option-tag"]')?.getBoundingClientRect();
+
+  if (!tag) {
+    return null;
+  }
+
+  const text = document.createTreeWalker(row, NodeFilter.SHOW_TEXT, (node) =>
+    node.parentElement?.closest('[data-slot="line-marker"]') || !node.textContent?.trim()
+      ? NodeFilter.FILTER_REJECT
+      : NodeFilter.FILTER_ACCEPT,
+  );
+
+  const range = document.createRange();
+  const lines: DOMRect[] = [];
+
+  for (let node = text.nextNode(); node; node = text.nextNode()) {
+    range.selectNodeContents(node);
+    lines.push(...range.getClientRects());
+  }
+
+  const first = lines[0];
+  const last = lines.at(-1);
+
+  if (!first || !last) {
+    return "no lines";
+  }
+
+  const tagMiddle = (tag.top + tag.bottom) / 2;
+  const sharesLastLine = tagMiddle > last.top && tagMiddle < last.bottom;
+  const gap = sharesLastLine ? tag.left - last.right : Math.abs(tag.left - first.left);
+
+  return gap <= (sharesLastLine ? 16 : 1) ? "placed" : `${Math.round(gap)} px off`;
 }
 
 describe("language activities", () => {
@@ -27,6 +74,29 @@ describe("language activities", () => {
     await expect.element(page.getByText("Correct answer: coméis")).toBeVisible();
   });
 
+  it("pattern table: on a small phone, a wrong ending and its correction move no row on Check", async () => {
+    const fixture = activityContentFixtures.patternTable;
+
+    const rows = fixture.fields.rows.map((row) =>
+      row.blank ? { ...row, labelMeaning: undefined } : row,
+    );
+
+    await atViewport({ height: 640, width: 320 }, async () => {
+      openActivity({
+        content: { ...fixture, fields: { ...fixture.fields, rows } },
+        template: "patternTable",
+      });
+
+      await pickEnding("-áis");
+      await pickEnding("-ís");
+
+      const answering = rowHeights();
+      await checkActivity();
+      await expectVerdict("Not quite");
+      expect(rowHeights()).toStrictEqual(answering);
+    });
+  });
+
   it("dialogue: the polite reply is best and every reply says why", async () => {
     openActivity({ template: "dialogueSimulator" });
     await expect.element(page.getByText("Buenos días, dígame.")).toBeVisible();
@@ -41,6 +111,18 @@ describe("language activities", () => {
     await expect
       .element(page.getByText("Good morning. Do you have anything for a sore throat?"))
       .toBeVisible();
+
+    const rows = page.getByRole("radio").elements();
+    const keys = rows.flatMap((row) => [...row.querySelectorAll("kbd")]);
+
+    expect(keys.map((key) => getComputedStyle(key).visibility)).toStrictEqual(
+      keys.map(() => "hidden"),
+    );
+
+    const tags = rows.map((row) => tagPlacement(row)).filter((placement) => placement !== null);
+
+    expect(tags.length).toBeGreaterThan(0);
+    expect(tags).toStrictEqual(tags.map(() => "placed"));
   });
 
   it("dialogue: a line's voice shows it's loading the first time, then plays it", async () => {

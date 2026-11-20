@@ -48,7 +48,7 @@ export const libraryIdentityDecisionTask: Task<
   evaluate: decideIdentityPair,
   generate: decideIdentityPair,
   id: "library-identity-decision",
-  name: "Library Identity Decision",
+  name: "Library identity decision",
   score: scoreLibraryIdentityDecision,
   testCases: TEST_CASES,
 };

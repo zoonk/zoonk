@@ -7,7 +7,7 @@ test.describe("Account data", () => {
     noProgressUser,
     userWithoutProgress: page,
   }) => {
-    await page.goto("/profile");
+    await page.goto("/settings/privacy");
 
     const remove = page.getByRole("button", { name: "Delete account" });
     await expectHydrated(remove);

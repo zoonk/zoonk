@@ -26,6 +26,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.components.controlInk
 
 /**
  * Main's glasses picker: every pair, worn by [look]'s buddy; the ones not earned yet are dimmed
@@ -89,7 +90,7 @@ fun BuddyGlassesPicker(
                             }
                         }
                     }
-                    RadioButton(selected = isSelected, onClick = null, enabled = isEarned)
+                    RadioButton(selected = isSelected, onClick = null, modifier = Modifier.controlInk(), enabled = isEarned)
                 }
             }
         }

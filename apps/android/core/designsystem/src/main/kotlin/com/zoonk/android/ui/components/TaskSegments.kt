@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -63,7 +62,6 @@ fun TaskSegments(
 
     Canvas(modifier.fillMaxWidth().height(SEGMENT_HEIGHT).then(semantics)) {
         val gap = (if (segments.size > DENSE_SEGMENTS) 1.dp else 3.dp).toPx()
-        val ring = 1.dp.toPx()
         val radius = CornerRadius(2.dp.toPx())
         val shared = (size.width - gap * (segments.size - 1).coerceAtLeast(0)).coerceAtLeast(0f)
         val total = shares.sum()
@@ -76,23 +74,13 @@ fun TaskSegments(
             val fill =
                 when (segment) {
                     TaskSegment.Ahead -> colors.surfaceContainerHighest
-                    TaskSegment.Current -> null
+                    TaskSegment.Current -> colors.tertiary.copy(alpha = CURRENT_ALPHA)
                     TaskSegment.Done, TaskSegment.Right -> colors.tertiary
                     TaskSegment.Read -> colors.onSurface.copy(alpha = READ_ALPHA)
                     TaskSegment.Wrong -> colors.error
                 }
 
-            if (fill == null) {
-                drawRoundRect(
-                    color = colors.tertiary,
-                    topLeft = Offset(left + ring / 2, ring / 2),
-                    size = Size(width - ring, size.height - ring),
-                    cornerRadius = radius,
-                    style = Stroke(ring),
-                )
-            } else {
-                drawRoundRect(fill, Offset(left, 0f), Size(width, size.height), radius)
-            }
+            drawRoundRect(fill, Offset(left, 0f), Size(width, size.height), radius)
 
             start += width + gap
         }
@@ -102,3 +90,6 @@ fun TaskSegments(
 private val SEGMENT_HEIGHT = 4.dp
 private const val DENSE_SEGMENTS = 40
 private const val READ_ALPHA = 0.25f
+
+/** Main's `bg-success/40`: the segment under way, tinted. */
+private const val CURRENT_ALPHA = 0.4f

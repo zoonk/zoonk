@@ -100,7 +100,7 @@ describe("computing activities", () => {
         .toBeVisible();
 
       await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
-      await page.getByRole("button", { name: "Run again" }).click();
+      await page.getByRole("button", { name: "Run" }).click();
       await expectCount(page.getByText("5050", { exact: true }), 2);
       await checkActivity();
       await expectVerdict("Correct!");
@@ -131,7 +131,8 @@ describe("computing activities", () => {
     await expect.element(printed).toBeVisible();
     const checked = printed.element().textContent;
 
-    await page.getByRole("button", { name: /^Run/u }).click();
+    await editableLine(2).click();
+    await userEvent.keyboard("{Enter}");
     await checkActivity();
     await expectVerdict("Not quite");
 
@@ -169,7 +170,7 @@ describe("computing activities", () => {
     openActivity({ template: "sqlPlayground" });
 
     await page
-      .getByRole("textbox", { name: "Your query" })
+      .getByRole("textbox", { name: "Query" })
       .fill(activityContentFixtures.sqlPlayground.fields.solution);
 
     await page.getByRole("button", { name: "Run" }).click();
@@ -182,16 +183,31 @@ describe("computing activities", () => {
   it("SQL playground: OR instead of AND shows the expected rows", async () => {
     openActivity({ template: "sqlPlayground" });
 
-    await page
-      .getByRole("textbox", { name: "Your query" })
-      .fill(
-        "SELECT name, pop_millions FROM countries WHERE continent = 'Asia' OR pop_millions > 200 ORDER BY pop_millions DESC;",
-      );
+    const query =
+      "SELECT name, pop_millions FROM countries WHERE continent = 'Asia' OR pop_millions > 200 ORDER BY pop_millions DESC;";
 
-    await page.getByRole("button", { name: "Run" }).click();
-    await expect.element(page.getByText("Your result: 4 rows")).toBeVisible();
+    const editor = page.getByRole("textbox", { name: "Query" });
+    await editor.fill(query);
+
+    const run = page.getByRole("button", { exact: true, name: "Run" });
+    const chip = page.getByRole("button", { exact: true, name: "WHERE" });
+    const result = page.getByText("Your result: 4 rows");
+    const card = page.getByRole("figure");
+
+    const resultTop = () =>
+      result.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    await run.click();
+    await expect.element(result).toBeVisible();
+    await expect.element(chip).toBeEnabled();
+    const top = resultTop();
+
     await checkActivity();
     await expectVerdict("Not quite");
+    expect(resultTop()).toBe(top);
+    await expect.element(run).toBeDisabled();
+    await expect.element(chip).toBeDisabled();
+    await expect.element(editor).toHaveValue(query);
     await expect.element(page.getByText("Expected result, in this order")).toBeVisible();
     await expect.element(page.getByText("OR keeps rows that pass either test.")).toBeVisible();
   });
@@ -200,7 +216,7 @@ describe("computing activities", () => {
     openActivity({ template: "sqlPlayground" });
 
     await page
-      .getByRole("textbox", { name: "Your query" })
+      .getByRole("textbox", { name: "Query" })
       .fill("SELECT a.name FROM countries a, countries b, countries c, countries d;");
 
     await page.getByRole("button", { name: "Run" }).click();
@@ -215,6 +231,17 @@ describe("computing activities", () => {
   it("pattern tester: examples pass as the pattern grows", async () => {
     openActivity({ template: "patternTester" });
     const pattern = page.getByRole("textbox", { name: "Your pattern" });
+    const examples = page.getByRole("region", { name: "Should not match" });
+    await expect.element(examples.getByRole("listitem").first()).toBeVisible();
+
+    const sampleLeft = () => {
+      const first = examples.getByRole("listitem").first().element();
+      const text = document.createRange();
+      text.selectNodeContents(first.firstChild!);
+      return text.getBoundingClientRect().left;
+    };
+
+    const left = sampleLeft();
     await pattern.fill(String.raw`^\d{5}`);
 
     await expect
@@ -227,9 +254,18 @@ describe("computing activities", () => {
       .element(page.getByRole("region", { name: "Should not match" }))
       .toMatchTextContent("3 of 3 pass");
 
+    const card = page.getByRole("figure");
+
+    const boardTop = () =>
+      examples.element().getBoundingClientRect().top - card.element().getBoundingClientRect().top;
+
+    const top = boardTop();
+
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("A pattern that works")).toBeVisible();
+    expect(boardTop()).toBe(top);
+    expect(sampleLeft()).toBe(left);
+    await expect.element(page.getByText("A pattern that works")).not.toBeInTheDocument();
   });
 
   it("pattern tester: numbers in a regex task are text to match, so they aren't grouped", async () => {

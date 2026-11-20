@@ -1,6 +1,6 @@
 "use client";
 
-import { type HelpLimit, HelpLimitNotice, useHelpLimitMessage } from "@zoonk/learn/help-limit";
+import { type HelpLimit, HelpLimitNotice, useHelpLimitWords } from "@zoonk/learn/help-limit";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -14,7 +14,15 @@ export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | n
   }
 
   if (error?.kind === "usageLimit") {
-    return { period: error.period, status: "limitReached", tier: error.tier };
+    return error.period === "rolling30Days"
+      ? {
+          availableAt: error.availableAt ?? null,
+          period: error.period,
+          receivedAt: error.receivedAt,
+          status: "limitReached",
+          tier: error.tier,
+        }
+      : { period: error.period, status: "limitReached", tier: error.tier };
   }
 
   return null;
@@ -39,6 +47,7 @@ export function QuestionLimitNotice({
   return (
     <HelpLimitNotice
       className={className}
+      kind="messages"
       limit={limit}
       linkComponent={linkComponent}
       routes={{ signUp: loginHref, upgrade: subscriptionHref }}
@@ -50,11 +59,11 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
   const t = useExtracted();
 
   if (error?.kind === "authentication") {
-    return <>{t("Your session expired. Sign in again.")}</>;
+    return <>{t("You've been logged out.")}</>;
   }
 
   if (error?.kind === "subscription") {
-    return <>{t("Subscribe to ask questions")}</>;
+    return <>{t("Asking questions needs a subscription")}</>;
   }
 
   if (error?.kind === "unavailable") {
@@ -79,7 +88,8 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
 }
 
 function HelpLimitMessage({ limit }: { limit: HelpLimit }) {
-  return <>{useHelpLimitMessage(limit)}</>;
+  const { line, title } = useHelpLimitWords(limit, "messages");
+  return title ?? line;
 }
 
 export function QuestionErrorAction({
@@ -100,7 +110,7 @@ export function QuestionErrorAction({
   if (error?.kind === "authentication") {
     return (
       <a className={buttonVariants({ className, variant: "outline" })} href={loginHref}>
-        {t("Sign in")}
+        {t("Log in")}
       </a>
     );
   }
@@ -108,7 +118,7 @@ export function QuestionErrorAction({
   if (error?.kind === "subscription") {
     return (
       <Link className={buttonVariants({ className, variant: "outline" })} href={subscriptionHref}>
-        {t("View plans")}
+        {t("Subscribe")}
       </Link>
     );
   }
@@ -120,6 +130,20 @@ export function QuestionErrorAction({
   if (error?.kind === "unavailable") {
     return null;
   }
+
+  return <TryAgainButton className={className} disabled={disabled} onRetry={onRetry} />;
+}
+
+export function TryAgainButton({
+  className,
+  disabled = false,
+  onRetry,
+}: {
+  className?: string;
+  disabled?: boolean;
+  onRetry: () => void;
+}) {
+  const t = useExtracted();
 
   return (
     <Button

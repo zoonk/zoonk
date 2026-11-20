@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.mock.result
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -8,29 +7,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,14 +32,11 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onPlaced
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -66,10 +54,17 @@ import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.AnswerTag
-import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TagBesideOrUnder
 import com.zoonk.android.ui.components.answerTone
-import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.iconButtonEdge
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -77,38 +72,21 @@ import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamReviewInner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 /**
- * Where the learner is in the questions to review. A phone reads them in a sheet and an open book on
- * the page after the fold, and folding recreates the screen, so the screen saves whether the learner
- * is in them and the question at the top of what they read. Both are noted as the learner scrolls,
- * since the screen lays out again without its fold before it's saved. Each list that shows them
- * brings that question back to its top once.
+ * Where the learner is in the questions to review. A phone and a tablet read them on the page and an
+ * open book on the page after the fold, and folding recreates the screen, so the screen saves the
+ * question at the top of what they read. It's noted as the learner scrolls, since the screen lays out
+ * again without its fold before it's saved. The list shown next brings that question back to its top once.
  */
 @Stable
 internal class ReviewPlace(
-    open: Boolean,
     private var anchor: Int?,
 ) {
-    /** Whether the learner is in the questions, which a phone shows in the sheet. */
-    var open by mutableStateOf(open)
-        private set
-    private var section: LayoutCoordinates? = null
     private val entries = HashMap<Int, LayoutCoordinates>()
     private var list: LayoutCoordinates? = null
     private var listAt: Offset? = null
     private var restoresRunning = 0
-
-    fun openSheet() {
-        open = true
-        anchor = null
-    }
-
-    fun closeSheet() {
-        open = false
-        anchor = null
-    }
 
     /** The question a list shown now brings to its top. */
     fun restoring(): Int? = anchor
@@ -120,10 +98,6 @@ internal class ReviewPlace(
     ) {
         restoresRunning++
         scope.launch { scroll() }.invokeOnCompletion { restoresRunning-- }
-    }
-
-    fun sectionPlaced(coordinates: LayoutCoordinates) {
-        section = coordinates
     }
 
     fun entryPlaced(
@@ -141,70 +115,33 @@ internal class ReviewPlace(
         listAt = at
         if (!scrolled || restoresRunning > 0) return
 
-        val top = entries.filterValues { it.isAttached && it.boundsInWindow().height > 0f }.keys.minOrNull()
-        val inline = section?.takeIf { it.isAttached }
-        when {
-            inline == null -> {
-                anchor = top ?: anchor
-            }
-
-            top == null -> {
-                open = false
-                anchor = null
-            }
-
-            // On the page, the learner reads the questions once their title has scrolled away.
-            inline.boundsInWindow().top > inline.positionInWindow().y -> {
-                open = true
-                anchor = top
-            }
-
-            // With their title in view, they're as far in as they were, at the question in view.
-            else -> {
-                anchor = top
-            }
-        }
+        anchor = entries.filterValues { it.isAttached && it.boundsInWindow().height > 0f }.keys.minOrNull()
     }
 
     companion object {
-        val Saver =
-            Saver<ReviewPlace, IntArray>(
-                save = { intArrayOf(if (it.open) 1 else 0, it.anchor ?: -1) },
-                restore = { ReviewPlace(open = it[0] == 1, anchor = it[1].takeIf { at -> at >= 0 }) },
-            )
+        val Saver = Saver<ReviewPlace, Int>(save = { it.anchor ?: -1 }, restore = { ReviewPlace(anchor = it.takeIf { at -> at >= 0 }) })
     }
 }
 
 @Composable
-internal fun rememberReviewPlace(): ReviewPlace = rememberSaveable(saver = ReviewPlace.Saver) { ReviewPlace(open = false, anchor = null) }
+internal fun rememberReviewPlace(): ReviewPlace = rememberSaveable(saver = ReviewPlace.Saver) { ReviewPlace(anchor = null) }
 
+/**
+ * Main's `MockReview`: every question the learner missed as rows of one list, each saying what it
+ * asked and which it was. A row opens in place to its passage, the two answers and why.
+ */
 @Composable
 internal fun ReviewSection(
     view: MockExam,
     app: AppContainer,
     place: ReviewPlace,
+    opened: List<String>,
+    onToggle: (String) -> Unit,
 ) {
     if (view.review.isEmpty()) return
-    Box(
-        Modifier.onPlaced(place::sectionPlaced),
-    ) { ResultSection(stringResource(R.string.mock_result_review)) { ReviewList(view, app, place) } }
-}
-
-/** Main's `MockReviewDrawer`: the same questions in a sheet, where the score step stays short on a phone. */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-internal fun ReviewSheet(
-    view: MockExam,
-    app: AppContainer,
-    place: ReviewPlace,
-) {
-    ModalBottomSheet(onDismissRequest = place::closeSheet, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        // The title stays while a long review scrolls under it.
-        Column(Modifier.padding(horizontal = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.mock_result_review), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-            val scroll = rememberScrollState()
-            Column(Modifier.weight(1f, fill = false).verticalScroll(scroll)) { ReviewList(view, app, place, scroll) }
-        }
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        SectionHeader(stringResource(R.string.mock_result_review), detail = formatNumber(view.review.size.toDouble(), currentLocale()))
+        ReviewList(view, app, place, opened, onToggle)
     }
 }
 
@@ -213,7 +150,8 @@ private fun ReviewList(
     view: MockExam,
     app: AppContainer,
     place: ReviewPlace,
-    sheetScroll: ScrollState? = null,
+    opened: List<String>,
+    onToggle: (String) -> Unit,
 ) {
     val words = view.trueFalseWords
     val scope = rememberCoroutineScope()
@@ -223,14 +161,11 @@ private fun ReviewList(
     Column(Modifier.onGloballyPositioned(place::listMoved)) {
         view.review.forEachIndexed { index, entry ->
             if (index > 0) HorizontalDivider()
-            val continued =
-                entry.set != null && view.review
-                    .getOrNull(index - 1)
-                    ?.set
-                    ?.id == entry.set?.id
+            val key = "$REVIEW${entry.itemId}"
             ReviewEntry(
                 entry,
-                continued,
+                open = key in opened,
+                onToggle = { onToggle(key) },
                 numbered = view.scoring != MockExam.Scoring.NET,
                 words,
                 app,
@@ -239,14 +174,9 @@ private fun ReviewList(
                     if (restore.at == index && !restore.done) {
                         restore.done = true
                         place.restore(scope) {
-                            if (sheetScroll != null) {
-                                // The sheet first lays out taller than the window as it slides up, so it scrolls to the question itself.
-                                sheetScroll.scrollTo(coordinates.positionInParent().y.roundToInt())
-                            } else {
-                                // Asked to show a rect as tall as the window, whatever scrolls the page brings the question's top to its own.
-                                val window = coordinates.findRootCoordinates().size
-                                requesters[index].bringIntoView(Rect(0f, 0f, coordinates.size.width.toFloat(), window.height.toFloat()))
-                            }
+                            // Asked to show a rect as tall as the window, whatever scrolls the page brings the question's top to its own.
+                            val window = coordinates.findRootCoordinates().size
+                            requesters[index].bringIntoView(Rect(0f, 0f, coordinates.size.width.toFloat(), window.height.toFloat()))
                         }
                     }
                 },
@@ -261,40 +191,54 @@ private class Restore(
     var done = false
 }
 
+/** The row says which question it is and how it went; a wrong answer needs no word, the list is of them. */
+@Composable
+private fun entryFacts(entry: MockExamReviewInner): String =
+    factsLine(
+        stringResource(R.string.mock_result_question, entry.number.toInt()),
+        entry.area,
+        when (entry.outcome) {
+            MockExamReviewInner.Outcome.BLANK -> stringResource(R.string.mock_result_blank)
+            MockExamReviewInner.Outcome.PARTIAL -> stringResource(R.string.mock_result_partly_right)
+            MockExamReviewInner.Outcome.WRONG -> null
+        },
+    )
+
 @Composable
 private fun ReviewEntry(
     entry: MockExamReviewInner,
-    continued: Boolean,
+    open: Boolean,
+    onToggle: () -> Unit,
     numbered: Boolean,
     words: TrueFalseWords,
     app: AppContainer,
     modifier: Modifier,
 ) {
-    val number = entry.number.toInt()
     val muted = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-    Column(modifier.padding(vertical = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                entry.area?.let { stringResource(R.string.mock_result_question_area, number, it) }
-                    ?: stringResource(R.string.mock_result_question, number),
-                Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-            )
-            ReportProblemMenu(app, FeedbackTarget("mock-review", FeedbackSubmissionContext.ContentKind.ITEM, entry.itemId))
+    Column(modifier) {
+        ListRow(
+            headline = { ItemLine(entry.question) },
+            modifier = Modifier.bleed(LIST_ITEM_INSET),
+            onClick = onToggle,
+            expanded = open,
+            supporting = { Text(entryFacts(entry)) },
+        )
+        if (open) {
+            Column(Modifier.padding(top = 4.dp, bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                // A row opens on its own, so a passage shared with the question before it shows whole.
+                entry.set?.let { ItemSetText(it.recode<_, ItemSet>(), continued = false) }
+                entry.context?.let { ItemText(it, style = muted) }
+                ReviewAnswers(entry, numbered, words)
+                entry.explanation?.let { ItemText(it, style = MaterialTheme.typography.bodyMedium) }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.weight(1f)) { entry.citation?.let { ItemCitationNote(it.recode<_, Citation>()) } }
+                    Box(Modifier.iconButtonEdge(ButtonEdge.End)) {
+                        ReportProblemMenu(app, FeedbackTarget("mock-review", FeedbackSubmissionContext.ContentKind.ITEM, entry.itemId))
+                    }
+                }
+            }
         }
-        entry.set?.let { ItemSetText(it.recode<_, ItemSet>(), continued = continued) }
-        entry.context?.let { ItemText(it, style = muted) }
-        RichText(entry.question, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
-        if (entry.outcome ==
-            MockExamReviewInner.Outcome.PARTIAL
-        ) {
-            Text(stringResource(R.string.mock_result_partly_right_note), style = muted)
-        }
-        ReviewAnswers(entry, numbered, words)
-        entry.explanation?.let { ItemText(it, style = MaterialTheme.typography.bodyMedium) }
-        entry.citation?.let { ItemCitationNote(it.recode<_, Citation>()) }
     }
 }
 
@@ -307,13 +251,6 @@ private fun ReviewAnswers(
     val yours = entry.learnerAnswer
     val right = entry.correctAnswer
 
-    if (yours == null) {
-        Text(
-            stringResource(R.string.mock_result_left_blank),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         yours?.let { ReviewAnswer(it, entry, right = false, numbered, words) }
         right?.let { ReviewAnswer(it, entry, right = true, numbered, words) }
@@ -380,3 +317,5 @@ private fun ReviewAnswer(
         )
     }
 }
+
+private const val REVIEW = "review:"

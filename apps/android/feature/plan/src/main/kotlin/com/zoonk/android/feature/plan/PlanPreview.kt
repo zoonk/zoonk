@@ -1,12 +1,24 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -45,12 +57,21 @@ sealed class PlanPreviewState {
     ) : Asked(operations, plan)
 }
 
+/** Fit checks use the whole plan; date and coverage previews depend only on its advice inputs. */
+internal fun PlanPreviewState.Asked.matchesPlan(other: Plan?): Boolean =
+    other != null &&
+        if (PlanOp.FitLessons in operations) {
+            plan.copy(focusTest = null) == other.copy(focusTest = null)
+        } else {
+            planAdviceRevision(plan) == planAdviceRevision(other)
+        }
+
 /** Idle unless it previews [operations] on [plan]; a refresh that reads the same plan again keeps it. */
 internal fun PlanPreviewState.of(
     operations: List<PlanOp>,
     plan: Plan,
 ): PlanPreviewState =
-    if (this is PlanPreviewState.Asked && this.plan == plan &&
+    if (this is PlanPreviewState.Asked && matchesPlan(plan) &&
         this.operations == operations
     ) {
         this
@@ -102,6 +123,13 @@ internal fun PlanPreviewResult(
     onDismiss: () -> Unit,
     goalDate: GoalDateMove? = null,
     pending: Boolean = false,
+    dateKind: GoalDateKind = GoalDateKind.Unknown,
+    /** The card showed other numbers before this check. */
+    repriced: Boolean = false,
+    /** The consequence lines the card held before the check, so its buttons stay where they were. */
+    roomLines: Int = 2,
+    /** The card's room before the check, which its answer's room keeps at least. */
+    heldRoom: HeldRoom? = null,
 ) {
     val notNow = stringResource(R.string.plan_not_now)
 
@@ -113,20 +141,27 @@ internal fun PlanPreviewResult(
         }
 
         is PlanPreviewState.Failed -> {
-            StatusDescription(stringResource(R.string.plan_couldnt_check_changes))
+            EffectRoom(
+                roomLines,
+                heldRoom,
+            ) {
+                com.zoonk.android.ui.components
+                    .InlineFailure(stringResource(R.string.plan_couldnt_check_changes))
+            }
             SuggestionActions {
-                SuggestionAction(stringResource(R.string.plan_try_again), onRetry)
+                SuggestionAction(stringResource(R.string.plan_try_again), onRetry, secondary = true)
                 SuggestionAction(notNow, onDismiss, secondary = true)
             }
         }
 
         is PlanPreviewState.Ready -> {
             val preview = state.preview
-            if (preview.unchanged) {
-                SuggestionDescription(stringResource(R.string.plan_stays_as_it_is))
-            } else {
-                PlanEffectDiff(preview.effect, goalDate = goalDate)
-                if (preview.feasibility?.fits == true) SuggestionDescription(stringResource(R.string.plan_then_covers_everything))
+            EffectRoom(roomLines, heldRoom) {
+                if (preview.unchanged) {
+                    SuggestionDescription(stringResource(R.string.plan_stays_as_it_is))
+                } else {
+                    PlanEffectDiff(preview.effect, goalDate = goalDate, dateKind = dateKind, repriced = repriced)
+                }
             }
             SuggestionActions {
                 if (!preview.unchanged && preview.effect != null) {
@@ -138,11 +173,66 @@ internal fun PlanPreviewResult(
     }
 }
 
-/** Main's `CheckingChange`. */
+/**
+ * Main's `CheckingChange`: the answer's room, and its Change my plan in place, off, so nothing
+ * moves when the changes arrive.
+ */
 @Composable
 internal fun CheckingChange(onCancel: () -> Unit) {
-    StatusDescription(stringResource(R.string.plan_checking_changes))
-    SuggestionActions { SuggestionAction(stringResource(R.string.plan_not_now), onCancel, secondary = true) }
+    EffectRoom { StatusDescription(stringResource(R.string.plan_checking_changes)) }
+    SuggestionActions {
+        SuggestionAction(stringResource(R.string.plan_apply), onClick = {}, enabled = false)
+        SuggestionAction(stringResource(R.string.plan_not_now), onCancel, secondary = true)
+    }
+}
+
+/**
+ * Main's `EFFECT_ROOM_CLASS`: room for a consequence of [lines] and its "All changes", which a
+ * check's note and its answer both take, so the actions under them stay put; a longer answer grows it.
+ * With [held], it is also as tall as the card's room has been at this width and text size.
+ */
+@Composable
+internal fun EffectRoom(
+    lines: Int = 2,
+    held: HeldRoom? = null,
+    content: @Composable () -> Unit,
+) {
+    val density = LocalDensity.current
+    val line =
+        with(density) {
+            MaterialTheme.typography.bodyMedium.lineHeight
+                .toDp()
+        }
+    BoxWithConstraints {
+        val at = HeldRoom.At(maxWidth, density.density, density.fontScale)
+        val room = maxOf(line * lines + 6.dp + 48.dp, held?.tallestAt(at) ?: 0.dp)
+        val keep = held?.let { Modifier.onSizeChanged { size -> it.keep(at, with(density) { size.height.toDp() }) } } ?: Modifier
+        Column(Modifier.heightIn(min = room).then(keep)) { content() }
+    }
+}
+
+/**
+ * The tallest a card's [EffectRoom] has been, so the room of its next state is as tall. It belongs to one width and
+ * text size: at another the card's words wrap anew, so the held height goes (main's `useHeldSlot`).
+ */
+@Stable
+internal class HeldRoom {
+    data class At(
+        val width: Dp,
+        val density: Float,
+        val fontScale: Float,
+    )
+
+    private var held by mutableStateOf<Pair<At, Dp>?>(null)
+
+    fun tallestAt(at: At): Dp = held?.takeIf { it.first == at }?.second ?: 0.dp
+
+    fun keep(
+        at: At,
+        height: Dp,
+    ) {
+        if (height > tallestAt(at)) held = at to height
+    }
 }
 
 @Composable

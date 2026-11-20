@@ -194,6 +194,10 @@ describe("pending word orders", () => {
   it.each(["reading", "listening"] as const)(
     "waits for a real %s miss before offering self-correction",
     async (kind) => {
+      const correction = page.getByText(kind === "listening" ? "Listen again" : SELF_CORRECT, {
+        exact: true,
+      });
+
       const step = sentenceStep(kind, true);
       const lesson = buildLesson([step], { language: "pt", targetLanguage: "it" });
       const server = localAdapters(lesson);
@@ -217,9 +221,9 @@ describe("pending word orders", () => {
 
       await check.click();
       await expect.element(check).toHaveAttribute("aria-busy", "true");
-      await expect.element(page.getByText(SELF_CORRECT)).not.toBeInTheDocument();
+      await expect.element(correction).not.toBeInTheDocument();
       first.resolve(await server.checkStep(checkStep.mock.calls[0]![0]));
-      await expect.element(page.getByText(SELF_CORRECT)).toBeVisible();
+      await expect.element(correction).toBeVisible();
       await expect.element(feedback).not.toBeInTheDocument();
 
       await check.click();
@@ -228,7 +232,7 @@ describe("pending word orders", () => {
       await expect.element(feedback.getByText("Not quite")).toBeVisible();
 
       await expect
-        .element(feedback.getByText(`Answer: ${kind === "reading" ? SENTENCE : TRANSLATION}`))
+        .element(feedback.getByText(`Right answer: ${kind === "reading" ? SENTENCE : TRANSLATION}`))
         .toBeVisible();
     },
   );
@@ -252,7 +256,7 @@ describe("pending word orders", () => {
       await placeWords(words);
       await check.click();
       await expect.element(feedback.getByText("Not quite")).toBeVisible();
-      await expect.element(feedback.getByText(`Answer: ${TRANSLATION}`)).toBeVisible();
+      await expect.element(feedback.getByText(`Right answer: ${TRANSLATION}`)).toBeVisible();
       await page.getByRole("button", { name: "Ask Pip" }).click();
 
       await expect

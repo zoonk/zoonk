@@ -1,16 +1,14 @@
-/** Per-call costs are fractions of a cent, so small amounts keep more digits than totals. */
-const SMALL_AMOUNT_DIGITS = 4;
-const AMOUNT_DIGITS = 2;
+const PRECISION = { detailed: 4, total: 2, whole: 0 } as const;
 const LATENCY_DIGITS = 1;
 const PERCENT = 100;
 
-export function formatUsd(value: number): string {
-  const digits = Math.abs(value) < 1 ? SMALL_AMOUNT_DIGITS : AMOUNT_DIGITS;
+export function formatUsd(value: number, precision: keyof typeof PRECISION = "total"): string {
+  const digits = PRECISION[precision];
 
   return value.toLocaleString("en", {
     currency: "USD",
     maximumFractionDigits: digits,
-    minimumFractionDigits: AMOUNT_DIGITS,
+    minimumFractionDigits: digits,
     style: "currency",
   });
 }

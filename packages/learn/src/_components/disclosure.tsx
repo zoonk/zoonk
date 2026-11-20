@@ -4,9 +4,8 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { SpokenMath } from "../rich-text/spoken-math";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
@@ -39,7 +38,7 @@ export function Disclosure({
 }) {
   return (
     <Collapsible className={className} data-slot="disclosure" defaultOpen={defaultOpen} ref={ref}>
-      <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/disclosure")}>
+      <CollapsibleTrigger className={LIST_ROW_INTERACTIVE_CLASS}>
         <ListRowLeading>{icon}</ListRowLeading>
         <ListRowBody>
           <ListRowContent>
@@ -52,12 +51,9 @@ export function Disclosure({
           </ListRowContent>
           {aside !== undefined && <ListRowTrailing>{aside}</ListRowTrailing>}
         </ListRowBody>
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/disclosure:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron />
       </CollapsibleTrigger>
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+      <CollapsibleContent>
         <div className="flex flex-col gap-5 pt-1 pb-4 in-data-[list=panel]:px-4">{children}</div>
       </CollapsibleContent>
     </Collapsible>

@@ -4,8 +4,8 @@ import { Button } from "@zoonk/ui/components/button";
 import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
-import { TASK_OPTION_CLASS } from "../_components/task-layout";
 
+/** A bar's second action. A failure takes the line above the row, so the buttons stay put. */
 export function UndoButton({
   failed,
   onUndo,
@@ -19,14 +19,14 @@ export function UndoButton({
 
   return (
     <>
-      {failed && <ChangeSaveError />}
+      {failed && <ChangeSaveError className="order-first basis-full lg:text-right" />}
       <Button
         busy={pending}
-        className={TASK_OPTION_CLASS}
+        className="shrink-0"
         icon={<Undo2Icon aria-hidden="true" />}
         onClick={onUndo}
         size="xl"
-        variant="ghost"
+        variant="outline"
       >
         {t("Undo")}
       </Button>

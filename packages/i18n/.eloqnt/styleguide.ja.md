@@ -66,6 +66,7 @@
 - “Buddy”: “相棒”; “study buddy”: “学習の相棒”
 - Buddy stages “Baby” / “Young” / “Adult”: “赤ちゃん” / “こども” / “おとな”, never “アダルト”
 - “Brain Power”: “脳力” (a play on “能力”), never “能力” or “ブレインパワー”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “脳力” (the name is already short, so it stays whole)
 - “mission”: “ミッション”
 - “call” (speaking practice): “会話”, not “電話”; the verb: “会話練習をする”
 - “Mistakes notebook”: “間違いノート”
@@ -92,14 +93,14 @@
 
 ## Plan terminology
 
-- “Pace”: “ペース”; the “On pace” / “Keeping pace” status: “順調”
+- “Pace”: “ペース”; the “Up to date” status (formerly “On pace” / “Keeping pace”): “順調”
 - “Finished”: “完了”
-- “Past date”: “期日を過ぎた”, not “期限切れ” or “終了”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “期日を過ぎた”, not “期限切れ” or “終了”
 - “Needs adjusting”: “調整が必要”
 - “Too tight”: “詰め込みすぎ”
 - “left out”: “入りきらない” (“計画に入りきらなかったレッスン”), not “外れた” or “スキップ”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “スキップ”
-- “Daily time”: “1日の学習時間”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “1日の学習時間”
 - “rest day”: “休みの日”
 
 ## Buddy names

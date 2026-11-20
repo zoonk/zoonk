@@ -43,7 +43,7 @@ export function LevelLadder({
                 />
               ))}
             </span>
-            <span className="text-faint font-mono text-[0.6875rem] leading-none">{band}</span>
+            <span className="text-faint text-2xs font-mono leading-none">{band}</span>
           </span>
         );
       })}

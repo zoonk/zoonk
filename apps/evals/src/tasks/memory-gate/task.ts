@@ -62,7 +62,7 @@ export const memoryGateTask: Task<MemoryGateInput, MemoryGateOutput, MemoryGateE
   evaluate: gateCandidate,
   generate: gateCandidate,
   id: "memory-gate",
-  name: "Memory Gate",
+  name: "Memory gate",
   score: scoreMemoryGate,
   testCases: TEST_CASES,
 };

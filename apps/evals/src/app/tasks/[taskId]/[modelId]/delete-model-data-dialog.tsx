@@ -9,10 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
-import { Trash2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { deleteModelDataAction } from "./actions";
 
@@ -23,36 +20,31 @@ function DeleteModelDataFooter() {
     <AlertDialogFooter>
       <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
       <AlertDialogAction busy={pending} type="submit" variant="destructive">
-        Delete Data
+        Delete
       </AlertDialogAction>
     </AlertDialogFooter>
   );
 }
 
 export function DeleteModelDataDialog({
-  disabled,
   modelId,
   taskId,
+  open,
+  onOpenChange,
 }: {
-  disabled: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   modelId: string;
   taskId: string;
 }) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger
-        render={<Button disabled={disabled} type="button" variant="destructive" />}
-      >
-        <Trash2Icon />
-        Delete Outputs &amp; Results
-      </AlertDialogTrigger>
-
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete outputs and results?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This permanently deletes every generated output and evaluation result for this model.
-            You will need to generate and evaluate it again.
+          <AlertDialogDescription className="text-pretty">
+            Every output and result of this model on this task is deleted for good. To score it
+            again, you generate and evaluate from the start.
           </AlertDialogDescription>
         </AlertDialogHeader>
 

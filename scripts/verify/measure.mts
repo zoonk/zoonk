@@ -1,6 +1,10 @@
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { type Browser, type BrowserContextOptions, type Page } from "@playwright/test";
+import { type Capture } from "./alignment-capture.mts";
+import { readAlignment, webCapture } from "./alignment-probe.mts";
+import { WEB_TABLE } from "./alignment-table.mts";
+import { type DiscoveryLead, readDiscovery } from "./alignment-web.mts";
 import {
   type Traffic,
   checkSchemes,
@@ -13,6 +17,10 @@ import {
 } from "./browser.mts";
 import { type Finding, type LoadMeasurement, judgeLoad, totalBlockingTime } from "./checks.mts";
 import { measureFrames } from "./content-frames.mts";
+import { readCraft } from "./craft-probe.mts";
+import { craftFindings } from "./craft.mts";
+import { type Shortcuts } from "./keys.mts";
+import { type PressRecord } from "./press-walk.mts";
 import {
   findOverflow,
   findTruncated,
@@ -22,6 +30,7 @@ import {
   visibleLinks,
 } from "./probe.mts";
 import { readStatements } from "./queries.mts";
+import { type Readable, readReadable } from "./readable.mts";
 import {
   classifyRequest,
   inlineRscCharacters,
@@ -29,24 +38,40 @@ import {
   redactQuery,
   summarizePrefetches,
 } from "./requests.mts";
+import { readRoleFacts, roleFindings } from "./role-checks.mts";
 import { readCpuMs } from "./server-process.mts";
+import { type WalkCoverage } from "./states.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { type Scheme, type ViewportName } from "./viewports.mts";
+import {
+  type PageWords,
+  pageKind,
+  placeFindings,
+  readWords,
+  summarizeWords,
+  titleTopFindings,
+  wordFindings,
+} from "./words.mts";
 
 export const NETWORK_IDLE_MS = 15_000;
 
 export type Target = {
   actions: Map<string, string>;
+  app: string;
   queries?: string;
   baseUrl: string;
   browser: Browser;
   out: string;
   serverPid: number | null;
+  shortcuts: Shortcuts | null;
   storageState?: BrowserContextOptions["storageState"];
   throttle: boolean;
+  typeScale: number[];
 };
 
 export type LoadReport = LoadMeasurement & {
+  alignment: Capture;
+  discovery: DiscoveryLead[];
   bytes: { html: number; scripts: number; total: number };
   mainThreadMs: number;
   database: { count: number; ms: number } | null;
@@ -56,9 +81,17 @@ export type LoadReport = LoadMeasurement & {
   path: string;
   screenshots: string[];
   viewport: ViewportName;
+  words: PageWords;
+  walk?: WalkCoverage;
+  pressRecords?: PressRecord[];
+  /** What a learner can read on it, which `--baseline` compares. */
+  readable: Readable;
 };
 
 const QUERY_HASH_LENGTH = 8;
+
+/** Craft's E1 and E3 measure past their 24 px cap inside these. */
+const DECLARED_GROUPS = WEB_TABLE.pieces.map((piece) => piece.web.group).join(", ");
 
 export function slug(path: string): string {
   const { search } = new URL(path, "http://slug.invalid");
@@ -102,13 +135,18 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
   return {
     ...measureFrames(probe?.mainFrames ?? [], fcpMs),
     ...summarizePrefetches(traffic.requests, probe?.timeOrigin ?? null),
+    alignment: await page.evaluate(readAlignment, WEB_TABLE),
     blankSeenMs: probe?.blankFrames[0] ?? null,
     blockingMs: probe ? totalBlockingTime(probe.longTasks, fcpMs) : null,
     bytes: await page.evaluate(transferredBytes),
+    craft: await page.evaluate(readCraft, DECLARED_GROUPS),
+    discovery: await page.evaluate(readDiscovery, DECLARED_GROUPS),
     fcpMs,
     lcpMs: probe?.lcp ?? null,
     overflow: await page.evaluate(findOverflow),
     production: !(await page.evaluate(isNextDev)),
+    readable: await page.evaluate(readReadable),
+    roles: await page.evaluate(readRoleFacts),
     shifts: probe?.shifts ?? [],
     skeletonLastMs: probe?.skeletonFrames.at(-1) ?? null,
     skeletonSeenMs: probe?.skeletonFrames[0] ?? null,
@@ -117,6 +155,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     unprefetchedLinks: links
       .filter((link) => !prefetched.has(link))
       .map((link) => redactQuery(link)),
+    words: await page.evaluate(readWords),
   };
 }
 
@@ -167,7 +206,19 @@ export async function measureLoad(
 
     const appearances = await checkSchemes(page, { name, schemes });
 
-    const { bytes, timeOrigin: _, ...measured } = loaded;
+    const {
+      alignment,
+      bytes,
+      craft,
+      discovery,
+      readable,
+      roles,
+      timeOrigin: _,
+      words: text,
+      ...measured
+    } = loaded;
+
+    const words = summarizeWords(text, pageKind(target.app, path));
 
     const measurement: LoadMeasurement = {
       ...measured,
@@ -187,18 +238,35 @@ export async function measureLoad(
 
     return {
       ...measurement,
+      alignment: webCapture({
+        app: target.app,
+        page: alignment,
+        path: redactQuery(path),
+        scheme: schemes[0] ?? "light",
+        viewport,
+      }),
       bytes,
       database: statements && {
         count: statements.length,
         ms: statements.reduce((total, statement) => total + statement.ms, 0),
       },
-      findings: judgeLoad(measurement),
+      discovery,
+      findings: [
+        ...judgeLoad(measurement),
+        ...wordFindings(words),
+        ...placeFindings(words, { app: target.app, path }),
+        ...titleTopFindings(words),
+        ...craftFindings(craft, target.typeScale),
+        ...roleFindings(roles),
+      ],
       frames: paints,
       framesDirectory: `${name}-frames`,
       mainThreadMs,
       path: redactQuery(path),
+      readable,
       screenshots: appearances.screenshots,
       viewport,
+      words,
     };
   } finally {
     await context.close();

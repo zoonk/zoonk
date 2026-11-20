@@ -121,10 +121,10 @@ extension CertificateFacts {
   var name: String {
     if let title, let courseLevel {
       return String(
-        localized: "\(title) · \(String(localized: courseLevel.localizedTitle))",
+        localized: "\(title)\u{00A0}· \(String(localized: courseLevel.localizedTitle))",
         table: "Certificates",
         comment:
-          "A course level certificate's name: the course, then its level, such as Python · Beginner"
+          "A course level's certificate name, such as \"Python · Beginner\": the course's title, then the level's name."
       )
     }
 
@@ -135,30 +135,35 @@ extension CertificateFacts {
     return String(
       localized: "\(languageTitle) \(level ?? "")", table: "Certificates",
       comment:
-        "A language certificate's name: the language, then its CEFR level, such as Spanish B1"
+        "A language and a CEFR level, such as \"Spanish B1\": a certificate's name."
     )
   }
 
-  var kindName: String {
-    String(
-      localized: "Certificate of completion", table: "Certificates",
-      comment: "The kind of certificate earned by finishing a course or a language level")
+  /// Main's row name: a course level's row is the course, with its level on the line under it.
+  var rowName: String {
+    courseLevel == nil ? name : title ?? name
   }
 
-  /// "Certificate of completion · Nov 3, 2026".
-  /// A wrapped line breaks before the date, never inside it.
-  var summary: String {
-    [kindName, completedOnDay.replacingOccurrences(of: " ", with: "\u{00A0}")].joinedFacts()
+  /// "Beginner · Nov 3, 2026", or only the date when the name holds the level. A wrapped line
+  /// breaks before the date, never inside it.
+  var rowLine: [String] {
+    let date = completedOnDay
+
+    guard title != nil, let courseLevel else {
+      return [date]
+    }
+
+    return [String(localized: courseLevel.localizedTitle), date]
   }
 
   /// "Nov 3, 2026".
   var completedOnDay: String {
-    completedOnText(.studyDay.year().month(.abbreviated).day())
+    completedOnText(.row)
   }
 
   /// LinkedIn's issue date: "November 2026".
   var issueMonth: String {
-    completedOnText(.studyDay.year().month(.wide))
+    completedOnText(.sentenceMonth)
   }
 
   /// "K7QF-2M9X-HD4P", as the certificate prints it.
@@ -182,29 +187,23 @@ extension CertificateFacts {
       )
     case (.course, nil):
       String(
-        localized: "\(self.name), completed on Zoonk", table: "Certificates",
-        comment:
-          "A course certificate's heading before the learner gives a name: the course or its level, such as Python · Beginner"
+        localized: "\(self.name), completed on Zoonk", table: "Certificates"
       )
     case (.languageLevel, let name?):
       String(
         localized: "\(name) completed level \(level ?? "") in \(languageName)",
-        table: "Certificates",
-        comment:
-          "A language level certificate read aloud: the learner's name, the level, the language")
+        table: "Certificates")
     case (.languageLevel, nil):
       String(
         localized: "Level \(level ?? "") in \(languageName), completed on Zoonk",
-        table: "Certificates",
-        comment:
-          "A language level certificate's heading before the learner gives a name: the level, then the language"
+        table: "Certificates"
       )
     }
   }
 
   /// "October 28, 2026".
   var completedOnLong: String {
-    completedOnText(.studyDay.year().month(.wide).day())
+    completedOnText(.sentence)
   }
 
   /// What the page's heading says with its date, for VoiceOver on the picture.
@@ -220,8 +219,8 @@ extension CertificateFacts {
     targetLanguage.map { Locale.current.languageTitle($0) } ?? ""
   }
 
-  /// The day it was earned is a calendar day, so it's formatted in UTC.
-  private func completedOnText(_ style: Date.FormatStyle) -> String {
-    studyDate(completedOn)?.formatted(style) ?? completedOn
+  /// A certificate always names the year it was earned.
+  private func completedOnText(_ role: DateRole) -> String {
+    PlanDate.format(completedOn, role, today: completedOn, year: .always)
   }
 }

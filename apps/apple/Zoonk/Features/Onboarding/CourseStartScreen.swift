@@ -43,53 +43,83 @@ struct CourseStartScreen: View {
     let course = catalog.course(id: courseId)
 
     return ZoonkList {
-      if let chapterId {
-        StepHeader(
-          subject: course.value?.course.title,
-          title: Text(course.value?.chapters.first { $0.id == chapterId }?.title ?? ""),
-          description: Text(
-            "Your plan starts at this chapter and follows the course from there, in the time you have each day.",
-            tableName: "Onboarding", comment: "Under a chapter's title when a plan starts from it"))
-      } else {
-        StepHeader(
-          subject: course.value?.course.title,
-          title: Text(
-            "How much do you already know?", tableName: "Onboarding", comment: "Onboarding question"
-          ),
-          description: Text(
-            "It only changes where your plan starts.", tableName: "Onboarding",
-            comment: "Under the level question"))
-
-        ChoiceRows(
-          choices: LevelChoices.all(testMinutes: course.value?.course.quickTestMinutes),
-          picked: level
-        ) { level = $0 }
+      OpeningClock(availableAt: error?.limit?.availableAt) { now in
+        if let gate = GoalLimitGate(error?.limit, at: now, subject: subject) {
+          // Main's: the course stays the subject, the limit is the heading, and the bar holds the
+          // way on, so nothing is left to choose.
+          StepHeader(subject: subject, title: gate.title, description: gate.line)
+            .announcesAlert(gate.said)
+        } else {
+          start(course: course.value)
+        }
       }
-
-      if let error {
-        GoalErrorSection(error: error)
-      }
-
-      if error?.needsAccount != true, error?.limit?.isPlusLimit != true {
-        StepButtons(
-          canContinue: chapterId != nil || level != nil,
-          continueLabel: Text(
-            "Build my plan", tableName: "Onboarding",
-            comment: "Starts a course as the learner's goal"),
-          note: session.authenticatedSession == nil
-            ? Text(
-              "Start free, no account needed.", tableName: "Onboarding",
-              comment: "Under a course's Build my plan for a visitor")
-            : nil,
-          onContinue: start
-        )
-        .environment(\.isSavingAnswer, isStarting)
+    }
+    .bottomBar {
+      OpeningClock(availableAt: error?.limit?.availableAt) { now in
+        if let limit = error?.limit, GoalLimitGate(limit, at: now) != nil {
+          GoalLimitActions(limit: limit)
+        } else if error?.needsAccount != true {
+          StepButtons(
+            canContinue: chapterId != nil || level != nil,
+            continueLabel: Text(
+              "Build my plan", tableName: "Onboarding",
+              comment: "Starts a course as the learner's goal"),
+            onContinue: start
+          )
+          .environment(\.isSavingAnswer, isStarting)
+        }
       }
     }
     .loads(course, refreshable: false)
     .onDisappear {
       startTask?.cancel()
     }
+  }
+
+  @ViewBuilder
+  private func start(course: CourseDetail?) -> some View {
+    if let chapterId {
+      StepHeader(
+        subject: course?.course.title,
+        title: Text(course?.chapters.first { $0.id == chapterId }?.title ?? ""),
+        description: Text(
+          "Your plan starts at this chapter and follows the course from there, in the time you have each day.",
+          tableName: "Onboarding", comment: "Under a chapter's title when a plan starts from it"))
+    } else {
+      StepHeader(
+        subject: course?.course.title,
+        title: Text(
+          "How much do you already know?", tableName: "Onboarding", comment: "Onboarding question"
+        ),
+        description: nil)
+
+      ChoiceRows(
+        choices: LevelChoices.all(testMinutes: course?.course.quickTestMinutes),
+        picked: level
+      ) { level = $0 }
+    }
+
+    if let error {
+      GoalErrorSection(error: error, replacesStart: true)
+    }
+
+    if session.authenticatedSession == nil {
+      Text(
+        "Start free, no account needed.", tableName: "Onboarding",
+        comment: "Under a course's Build my plan for a visitor"
+      )
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+      .listRowSeparator(.hidden)
+    }
+  }
+
+  /// The course, or the chapter the plan would start from.
+  private var subject: String? {
+    let course = catalog.course(id: courseId).value
+
+    return chapterId.flatMap { id in course?.chapters.first { $0.id == id }?.title }
+      ?? course?.course.title
   }
 
   private func start() {

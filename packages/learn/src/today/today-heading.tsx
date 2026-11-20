@@ -1,190 +1,98 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import {
-  PageEyebrow,
-  PageHeader,
-  PageHeaderContent,
-  PageSubtitle,
-  PageTitle,
-} from "../_components/page";
-import { PlusMark } from "../_components/plus-lock";
+import { PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "../_components/page";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
-import { useFormatIsoDate } from "../_utils/iso-date";
-import { usePlanStatusText } from "../plan/plan-status-label";
-import { useShortDayRange, useShortFocusName } from "../plan/use-short-plan";
+import { useLearnRoutes } from "../learn-context";
+import { LearnLink } from "../learn-link";
+import { useShortDayRange } from "../plan/use-short-plan";
 import { useTodayScreen } from "./today-context";
 import { DayTime } from "./today-day-progress";
-import { isWelcomeBackDay, useDayState } from "./use-today-copy";
+import { useWelcomeBack } from "./use-today-copy";
 
-/**
- * Drawn in the gap before a part: a part that wraps starts a new line, whose clipped edge hides its
- * dot.
- */
-const SEPARATOR_CLASS =
-  "relative before:absolute before:-left-3.5 before:content-['·'] first:before:content-none";
-
-export function TodayEyebrowPart({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return <span className={cn(SEPARATOR_CLASS, className)}>{children}</span>;
-}
-
-export function TodayEyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <PageEyebrow className="flex flex-wrap items-center gap-x-5 overflow-hidden empty:hidden">
-      {children}
-    </PageEyebrow>
-  );
-}
-
-function DaysLeft() {
+function NotEnoughTime() {
   const t = useExtracted();
-  const { today } = useTodayScreen();
-  const { dateEstimated, daysLeft } = today.goal;
-
-  if (daysLeft === null) {
-    return null;
-  }
+  const routes = useLearnRoutes();
 
   return (
-    <TodayEyebrowPart>
-      {dateEstimated
-        ? t("{days, plural, one {~# day left} other {~# days left}}", { days: daysLeft })
-        : t("{days, plural, =0 {The day is here} one {# day left} other {# days left}}", {
-            days: daysLeft,
-          })}
-    </TodayEyebrowPart>
+    <p className="text-pretty">
+      {t("Not enough time left for all your lessons.")}{" "}
+      <LearnLink
+        className="text-foreground hit-area focus-visible:ring-ring/50 relative inline-flex items-center gap-0.5 rounded-sm font-medium outline-none focus-visible:ring-[3px]"
+        href={routes.journey}
+      >
+        {t("Adjust your plan")}
+        <ChevronRightIcon aria-hidden="true" className="size-4" />
+      </LearnLink>
+    </p>
   );
 }
 
 /**
- * Behind says so in a word before what to catch up; a return after a break says only "Behind",
- * since a big count above "Welcome back" read as a backlog.
+ * One line at most, and only what changes today: a normal day has none. A return after days away
+ * leads with its welcome, so the plan's state waits for the learner to start.
  */
-function TodayPace() {
+function TodayLine() {
   const t = useExtracted();
-  const statusText = usePlanStatusText();
+  const dayRange = useShortDayRange();
+  const welcomeBack = useWelcomeBack();
   const { today } = useTodayScreen();
-  const status = today.progress?.status ?? null;
+  const { exam, goal, shortPlan } = today;
 
-  if (!status || today.shortPlan) {
-    return null;
-  }
-
-  if (status.kind === "behind" && isWelcomeBackDay(today.session)) {
-    return <TodayEyebrowPart>{t("Behind")}</TodayEyebrowPart>;
-  }
-
-  if (status.kind === "behind" && status.lessons) {
+  if (welcomeBack) {
     return (
-      <>
-        <TodayEyebrowPart>{t("Behind")}</TodayEyebrowPart>
-        <TodayEyebrowPart>{statusText(status)}</TodayEyebrowPart>
-      </>
+      <PageSubtitle data-slot="today-welcome-back">
+        <p className="text-pretty">
+          {t("Welcome back. Today is short, so it's easy to start again.")}
+        </p>
+      </PageSubtitle>
     );
   }
 
-  return (
-    <TodayEyebrowPart
-      className={cn(status.kind === "needsAdjusting" && "text-destructive-text font-medium")}
-    >
-      {statusText(status)}
-    </TodayEyebrowPart>
-  );
-}
-
-function ShortPlanPart() {
-  const dayRange = useShortDayRange();
-  const focusName = useShortFocusName();
-  const { today } = useTodayScreen();
-  const short = today.shortPlan;
-
-  if (!short) {
-    return null;
+  if (shortPlan) {
+    return (
+      <PageSubtitle>
+        {dayRange({ days: shortPlan.days, first: shortPlan.day, last: shortPlan.day })}
+      </PageSubtitle>
+    );
   }
 
-  return (
-    <>
-      <TodayEyebrowPart>
-        {dayRange({ days: short.days, first: short.day, last: short.day })}
-      </TodayEyebrowPart>
-      <TodayEyebrowPart>
-        {focusName(short.focus, { mocksRequirePlus: !today.session.examAccess.includesMockExams })}
-      </TodayEyebrowPart>
-    </>
-  );
-}
-
-function ExamDayPart() {
-  const t = useExtracted();
-  const { today } = useTodayScreen();
-  const { exam } = today;
-
-  if (exam?.stage === "dayBefore") {
-    return <TodayEyebrowPart>{t("{exam} tomorrow", { exam: exam.examName })}</TodayEyebrowPart>;
+  if (today.progress?.status?.kind === "needsAdjusting") {
+    return (
+      <PageSubtitle>
+        <NotEnoughTime />
+      </PageSubtitle>
+    );
   }
 
-  if (exam?.stage === "examDay") {
-    return <TodayEyebrowPart>{t("{exam} today", { exam: exam.examName })}</TodayEyebrowPart>;
+  if (exam?.stage === "finalStretch" && goal.daysLeft !== null) {
+    return (
+      <PageSubtitle>
+        {t("{exam} in {days, plural, one {# day} other {# days}}", {
+          days: goal.daysLeft,
+          exam: exam.examName,
+        })}
+      </PageSubtitle>
+    );
   }
 
   return null;
 }
 
-/**
- * A mock the learner's plan doesn't include wears the Plus mark, so the line never reads as a mock
- * they can take.
- */
-function MockFundingLine() {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const { today } = useTodayScreen();
-
-  if (!today.mockFunding) {
-    return null;
-  }
-
-  const date = formatDate(today.mockFunding.mockDate);
-
-  return (
-    <PageSubtitle className="gap-x-2">
-      <span>
-        {isWelcomeBackDay(today.session)
-          ? t("Saving time for {date}'s mock exam", { date })
-          : t("Lighter day: saving time for {date}'s mock exam", { date })}
-      </span>
-      {!today.session.examAccess.includesMockExams && <PlusMark />}
-    </PageSubtitle>
-  );
-}
-
 export function TodayHeading({ className }: { className?: string }) {
   const t = useExtracted();
-  const state = useDayState();
-  const endsDay = state === "done" || state === "rest";
 
   return (
     <PageHeader className={className}>
       <PageHeaderContent className="w-full">
-        <TodayEyebrow>
-          <DaysLeft />
-          <ShortPlanPart />
-          <ExamDayPart />
-          <TodayPace />
-        </TodayEyebrow>
-
         <div className={cn(TITLE_ROW_CLASS, "items-baseline")}>
           <PageTitle>{t("Today")}</PageTitle>
-          <DayTime className="text-2xl sm:hidden" />
+          <DayTime className="text-2xl" />
         </div>
 
-        {!endsDay && <MockFundingLine />}
+        <TodayLine />
       </PageHeaderContent>
     </PageHeader>
   );

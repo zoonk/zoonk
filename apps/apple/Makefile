@@ -11,7 +11,7 @@ XCODEBUILD := $(if $(CI),,node ../../scripts/dev/queue.mts) $(XCODEBUILD_COMMAND
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
 TEST_ON_DESTINATION := $(if $(TEST_DESTINATION),$(XCODEBUILD) -destination "$(TEST_DESTINATION)",node scripts/with-simulator.mts $(XCODEBUILD_COMMAND))
 
-.PHONY: build build-ios test ui-test format format-check strings-check check
+.PHONY: build build-ios test ui-test format format-check strings-check formatting-check check
 
 build: build-ios
 
@@ -32,5 +32,8 @@ format-check:
 strings-check:
 	node scripts/check-strings.mts
 
-check: format-check test
+formatting-check:
+	node scripts/check-formatting.mts
+
+check: format-check formatting-check test
 	$(MAKE) strings-check

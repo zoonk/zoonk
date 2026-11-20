@@ -92,9 +92,7 @@ export function Mistakes({ lang, q }: { lang: Lang; q: URLSearchParams }) {
     <AppFrame goal="exam" lang={lang} tab="today" topBar={false}>
       <MistakesNotebook
         filters={{ nextOffset: null, status: "open" }}
-        goalTitle={story[lang].exam.title}
         hrefs={{
-          back: "/today",
           lesson: "/learn",
           notebook: "/mistakes",
           pattern: "/pattern",

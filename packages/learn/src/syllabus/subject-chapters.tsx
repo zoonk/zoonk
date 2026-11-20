@@ -6,15 +6,14 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon, NetworkIcon, PlusIcon } from "lucide-react";
+import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
-  ListRowButton,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -27,6 +26,8 @@ import {
 } from "../_components/page";
 import { StatusMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
+import { FoldRow } from "../today/today-fold-row";
+import { getDoneChapters } from "./done-chapters";
 import { SyllabusChapterRow } from "./syllabus-chapter-row";
 
 const CHAPTERS_TITLE_ID = "subject-chapters-title";
@@ -67,13 +68,13 @@ function useDoneLine() {
 
     if (done === 0) {
       return t(
-        "{count, plural, one {# chapter skipped because you already know it} other {# chapters skipped because you already know them}}",
+        "{count, plural, one {# chapter you already know} other {# chapters you already know}}",
         { count: known },
       );
     }
 
     return t(
-      "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# skipped because you already know it} other {# skipped because you already know them}}",
+      "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}",
       { done, known },
     );
   };
@@ -90,19 +91,16 @@ function DoneChapters({
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/done")}>
+      <CollapsibleTrigger className={LIST_ROW_INTERACTIVE_CLASS}>
         <ListRowLeading>
           <StatusMark status={chapters.every((chapter) => chapter.known) ? "skipped" : "done"} />
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle className="text-muted-foreground">{doneLine(chapters)}</ListRowTitle>
         </ListRowContent>
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/done:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron />
       </CollapsibleTrigger>
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+      <CollapsibleContent>
         <ul className="flex flex-col [&>li]:border-t">
           <ChapterRows chapterHref={chapterHref} chapters={chapters} />
         </ul>
@@ -116,7 +114,7 @@ function MindMapsLink({ href }: { href: string }) {
 
   return (
     <LearnLink
-      className={cn(buttonVariants({ size: "sm", variant: "ghost" }), "-my-1 -mr-2.5")}
+      className={buttonVariants({ className: "-my-1", edge: "end", size: "sm", variant: "ghost" })}
       href={href}
     >
       <NetworkIcon aria-hidden="true" data-icon="inline-start" />
@@ -136,8 +134,8 @@ export function SubjectChapters({
 }) {
   const t = useExtracted();
   const [showAll, setShowAll] = useState(false);
-  const done = chapters.filter((chapter) => chapter.state === "done");
-  const studied = done.filter((chapter) => !chapter.known);
+  const listId = useId();
+  const done = getDoneChapters(chapters);
   const ahead = chapters.filter((chapter) => chapter.state !== "done");
   const shown = showAll ? ahead : ahead.slice(0, SHOWN_UPCOMING + 1);
   const hidden = ahead.length - shown.length;
@@ -152,8 +150,8 @@ export function SubjectChapters({
         <PageSectionTitle id={CHAPTERS_TITLE_ID}>{t("Chapters")}</PageSectionTitle>
         <span className="flex items-center gap-3">
           <PageSectionDetail>
-            {t("{done, number} of {total, number}", {
-              done: studied.length,
+            {t("{done, number} of {total, number} chapters", {
+              done: done.length,
               total: chapters.length,
             })}
           </PageSectionDetail>
@@ -161,7 +159,7 @@ export function SubjectChapters({
         </span>
       </PageSectionHeader>
 
-      <ul className={LIST_GROUP_CLASS}>
+      <ul className={LIST_GROUP_CLASS} id={listId}>
         {done.length > 0 && (
           <li>
             <DoneChapters chapterHref={chapterHref} chapters={done} />
@@ -172,18 +170,15 @@ export function SubjectChapters({
 
         {hidden > 0 && (
           <li>
-            <ListRowButton chevron={false} onClick={() => setShowAll(true)}>
-              <ListRowLeading className="text-muted-foreground size-4 justify-center">
-                <PlusIcon aria-hidden="true" className="size-3.5" />
-              </ListRowLeading>
-              <ListRowContent>
-                <ListRowTitle className="text-muted-foreground">
-                  {t("{count, plural, one {# more chapter} other {# more chapters}}", {
-                    count: hidden,
-                  })}
-                </ListRowTitle>
-              </ListRowContent>
-            </ListRowButton>
+            <FoldRow
+              controls={listId}
+              done={false}
+              label={t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                count: hidden,
+              })}
+              onToggle={() => setShowAll(true)}
+              open={showAll}
+            />
           </li>
         )}
       </ul>

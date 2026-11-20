@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getFoldedBlocks, getLessonAgainId, isFinished, splitTodayQueue } from "./today-queue";
+import { getFoldedRows, getLessonAgainId, isFinished, splitTodayQueue } from "./today-queue";
 
 describe(splitTodayQueue, () => {
   it("keeps pending lessons before a later active block out of the done fold", () => {
@@ -81,20 +81,56 @@ describe(getLessonAgainId, () => {
   });
 });
 
-describe(getFoldedBlocks, () => {
-  it("folds the unfinished blocks after the next one and the four that follow it", () => {
-    const blocks = [
-      { position: 0, status: "completed" },
-      { position: 1, status: "active" },
-      ...[2, 3, 4, 5, 6, 7].map((position) => ({ position, status: "pending" as const })),
-    ] as const;
+describe(getFoldedRows, () => {
+  const lesson = { kind: "learn" } as const;
+  const review = { kind: "review" } as const;
 
-    expect(getFoldedBlocks({ blocks, nextPosition: 1 })).toStrictEqual([blocks[6], blocks[7]]);
+  it("names the folded rows lessons when every one is a lesson", () => {
+    const after = [lesson, lesson, lesson, lesson, lesson, lesson];
+
+    expect(getFoldedRows({ after, lessonsAhead: false })).toStrictEqual({
+      count: 2,
+      folds: true,
+      lessonsOnly: true,
+      shown: 4,
+    });
   });
 
-  it("folds nothing once the day has no next block", () => {
+  it("doesn't call a folded review a lesson", () => {
+    const after = [lesson, lesson, lesson, lesson, lesson, review];
+
+    expect(getFoldedRows({ after, lessonsAhead: false })).toStrictEqual({
+      count: 2,
+      folds: true,
+      lessonsOnly: false,
+      shown: 4,
+    });
+  });
+
+  it("counts the lessons-coming row it folds without calling it a lesson", () => {
+    const after = [lesson, lesson, lesson, lesson, lesson];
+
+    expect(getFoldedRows({ after, lessonsAhead: true })).toStrictEqual({
+      count: 2,
+      folds: true,
+      lessonsOnly: false,
+      shown: 4,
+    });
+  });
+
+  it("folds nothing while the rows fit", () => {
+    expect(getFoldedRows({ after: [lesson, review, lesson], lessonsAhead: true }).folds).toBe(
+      false,
+    );
+  });
+
+  it("shows a single row past the first few instead of folding it", () => {
     expect(
-      getFoldedBlocks({ blocks: [{ position: 0, status: "completed" }], nextPosition: null }),
-    ).toStrictEqual([]);
+      getFoldedRows({ after: [lesson, lesson, lesson, lesson, review], lessonsAhead: false }),
+    ).toMatchObject({ folds: false, shown: 5 });
+
+    expect(
+      getFoldedRows({ after: [lesson, lesson, lesson, lesson], lessonsAhead: true }),
+    ).toMatchObject({ folds: false, shown: 4 });
   });
 });

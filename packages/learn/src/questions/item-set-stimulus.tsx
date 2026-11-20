@@ -3,10 +3,11 @@
 import { type ItemSetView } from "@zoonk/core/library/items/set-view";
 import { type ListeningSetView } from "@zoonk/core/library/listening/view";
 import { Button } from "@zoonk/ui/components/button";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { Eyebrow } from "../_components/eyebrow";
 import {
   type ListeningQuestions,
   ListeningStimulus,
@@ -29,7 +30,7 @@ function SetPlace({ set }: { set: ItemSetView }) {
     text: t("Question {position, number} of {count, number} on this text", place),
   }[set.kind];
 
-  return <p className="text-muted-foreground text-xs font-medium">{label}</p>;
+  return <Eyebrow>{label}</Eyebrow>;
 }
 
 type RecordingProps = {
@@ -84,7 +85,7 @@ function SetText({ continued, set }: { continued: boolean; set: ItemSetView }) {
       {set.text && (
         <div
           className={cn(
-            "text-sm leading-relaxed",
+            "text-reading leading-relaxed",
             !expanded &&
               "max-h-24 overflow-hidden mask-b-from-40% lg:max-h-none lg:overflow-visible lg:mask-none",
           )}
@@ -104,10 +105,7 @@ function SetText({ continued, set }: { continued: boolean; set: ItemSetView }) {
           variant="outline"
         >
           {expanded ? t("Show less") : t("Read it all again")}
-          <ChevronDownIcon
-            aria-hidden="true"
-            className={cn("size-4 transition-transform", expanded && "rotate-180")}
-          />
+          <FoldChevron inline />
         </Button>
       )}
 

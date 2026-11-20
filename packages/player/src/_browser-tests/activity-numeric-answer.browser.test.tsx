@@ -1,0 +1,189 @@
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
+import { describe, expect, it, onTestFinished } from "vitest";
+import { page, userEvent } from "vitest/browser";
+import {
+  checkActivity,
+  expectVerdict,
+  openActivity,
+  valueInput,
+} from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
+
+function numericGroup() {
+  return valueInput().element().closest('[data-slot="input-group"]')!;
+}
+
+/** Where the field sits in its form, so only the note above it can move it. */
+function fieldOffsetInForm() {
+  const field = numericGroup();
+  return field.getBoundingClientRect().top - field.closest("form")!.getBoundingClientRect().top;
+}
+
+describe("activity numeric answers", () => {
+  it("the calculator asks for rounding while accepting the precise answer", async () => {
+    openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
+
+    await expect
+      .element(page.getByText("Round to the nearest whole number.", { exact: true }))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByText("Round to 0 decimal places.", { exact: true }))
+      .not.toBeInTheDocument();
+
+    await valueInput().fill("251.54");
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(valueInput()).toHaveValue("252");
+  });
+
+  it("says how to round above the field it explains, where a typing error then shows", async () => {
+    openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
+    const rule = page.getByText("Round to the nearest whole number.", { exact: true });
+    await expect.element(rule).toBeVisible();
+    const ruleBottom = rule.element().getBoundingClientRect().bottom;
+
+    expect(ruleBottom).toBeLessThanOrEqual(numericGroup().getBoundingClientRect().top);
+
+    await valueInput().fill("12,,5");
+    await userEvent.keyboard("{Enter}");
+    const error = page.getByRole("alert");
+    await expect.element(error).toBeVisible();
+
+    expect(error.element().getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      numericGroup().getBoundingClientRect().top,
+    );
+  });
+
+  it("shows a right answer with the fewest digits that keep it right", async () => {
+    const { calculator } = engineModeFixtures.formulaModel;
+
+    openActivity({
+      content: {
+        ...calculator,
+        check: {
+          ...calculator.check,
+          answer: 251.5421,
+          tolerance: { kind: "absolute", value: 0.05 },
+        },
+      },
+      template: "formulaModel",
+    });
+
+    await valueInput().fill("251.49301");
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(valueInput()).toHaveValue("251.493");
+  });
+
+  it.each([
+    { fontSize: "100%", width: 320 },
+    { fontSize: "150%", width: 320 },
+    { fontSize: "200%", width: 390 },
+  ])(
+    "keeps a field with a rounding rule in place when a typing error shows at $fontSize on $width px",
+    async ({ fontSize, width }) => {
+      document.documentElement.style.fontSize = fontSize;
+
+      onTestFinished(() => {
+        document.documentElement.style.removeProperty("font-size");
+      });
+
+      await atViewport({ height: 900, width }, async () => {
+        openActivity({
+          content: engineModeFixtures.formulaModel.calculator,
+          template: "formulaModel",
+        });
+
+        await expect
+          .element(page.getByText("Round to the nearest whole number.", { exact: true }))
+          .toBeVisible();
+
+        const before = fieldOffsetInForm();
+
+        await valueInput().fill("12,,5");
+        await userEvent.keyboard("{Enter}");
+        await expect.element(page.getByRole("alert")).toBeVisible();
+
+        expect(fieldOffsetInForm()).toBe(before);
+      });
+    },
+  );
+
+  it("keeps a field with no rounding rule in place when a typing error shows", async () => {
+    const { calculator } = engineModeFixtures.formulaModel;
+
+    openActivity({
+      content: { ...calculator, check: { ...calculator.check, answer: 252 } },
+      template: "formulaModel",
+    });
+
+    await expect.element(valueInput()).toBeVisible();
+    const top = numericGroup().getBoundingClientRect().top;
+    await valueInput().fill("12,,5");
+    await userEvent.keyboard("{Enter}");
+    await expect.element(page.getByRole("alert")).toBeVisible();
+
+    expect(numericGroup().getBoundingClientRect().top).toBe(top);
+  });
+
+  it("shows the value named by the hint after a calculator miss", async () => {
+    openActivity({ content: engineModeFixtures.formulaModel.calculator, template: "formulaModel" });
+    await valueInput().fill("251.6");
+    await checkActivity();
+    await expectVerdict("Not quite");
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(valueInput()).toHaveValue("251.6");
+    await expect.element(feedback.getByText("252", { exact: true })).toBeVisible();
+  });
+
+  it.each([
+    { token: "--success", value: "0.5", verdict: "Correct!" },
+    { token: "--destructive", value: "0.7", verdict: "Not quite" },
+  ] as const)(
+    "Enter keeps the $verdict border while the answer has focus",
+    async ({ value, verdict, token }) => {
+      openActivity({ template: "unitCircle" });
+      await valueInput().fill(value);
+      await userEvent.keyboard("{Enter}");
+      await expectVerdict(verdict);
+      expect(document.activeElement).toBe(valueInput().element());
+      const color = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+      await expect.poll(() => getComputedStyle(numericGroup()).borderTopColor).toBe(color);
+    },
+  );
+
+  it.each([
+    { places: 1, tolerance: 0.05, value: "0.2" },
+    { places: 2, tolerance: 0.005, value: "0.17" },
+    { places: 2, tolerance: 0.000001, value: "0.17" },
+  ])(
+    "the hint at tolerance $tolerance asks for $places places and grading takes it",
+    async ({ tolerance, places, value }) => {
+      const fixture = activityContentFixtures.unitCircle;
+
+      openActivity({
+        content: {
+          ...fixture,
+          check: {
+            ...fixture.check,
+            answer: 0.1667,
+            tolerance: { kind: "absolute", value: tolerance },
+          },
+        },
+        template: "unitCircle",
+      });
+
+      const rule =
+        places === 1 ? "Round to 1 decimal place." : `Round to ${places} decimal places.`;
+
+      await expect.element(page.getByText(rule, { exact: true })).toBeVisible();
+      await valueInput().fill(value);
+      await checkActivity();
+      await expectVerdict("Correct!");
+    },
+  );
+});

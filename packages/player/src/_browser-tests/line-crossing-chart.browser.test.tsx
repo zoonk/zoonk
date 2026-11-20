@@ -38,6 +38,18 @@ const flatCost = {
 
 const flatCostToMove = { ...flatCost, check: supplyDemand.check };
 
+const flatCostDown = {
+  ...breakEven,
+  fields: {
+    ...breakEven.fields,
+    lines: [
+      { id: "cost", intercept: 1000, label: "Cost", slope: 0 },
+      { id: "revenue", intercept: 0, label: "Revenue", slope: 15 },
+    ],
+    shift: { amount: 900, direction: "down" as const, line: "cost" },
+  },
+};
+
 const supplyDemandUpAndDown = {
   ...supplyDemand,
   fields: {
@@ -216,6 +228,10 @@ async function handlesOutsideAtEachEnd(
   return outside;
 }
 
+function boxCenter(box: DOMRect) {
+  return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+}
+
 function crossingDot(): SVGCircleElement {
   const dot = document.querySelector<SVGCircleElement>("figure svg circle.fill-foreground");
 
@@ -306,6 +322,89 @@ async function expectNamesOffTheirLines() {
 }
 
 describe("line crossing chart", () => {
+  it("keeps the normal-width break-even axis values", async () => {
+    await atViewport(WIDE, async () => {
+      openActivity({ content: breakEven, template: "lineCrossing" });
+      await expect.element(page.getByRole("slider", { name: "Move the line Cost" })).toBeVisible();
+      const plot = document.querySelector("figure svg clipPath rect");
+
+      if (!plot) {
+        throw new Error("No plot");
+      }
+
+      const values = [
+        ...document.querySelectorAll<SVGTextElement>('[data-slot="plot-axis-x"] text'),
+      ]
+        .filter(
+          (node) =>
+            node.getBoundingClientRect().top > plot.getBoundingClientRect().bottom &&
+            ["0", "100", "200", "300"].includes(node.textContent ?? "") &&
+            getComputedStyle(node).visibility !== "hidden",
+        )
+        .map((node) => node.textContent);
+
+      expect(values).toStrictEqual(["0", "100", "200", "300"]);
+    });
+  });
+
+  it.each([
+    { ticks: ["0", "100", "200", "300"], width: 320 },
+    { ticks: ["0", "200"], width: 288 },
+  ])(
+    "keeps break-even x numbers apart at $width pixels and twice the text size",
+    async ({ width, ticks }) => {
+      document.documentElement.style.fontSize = "200%";
+
+      onTestFinished(() => {
+        document.documentElement.style.removeProperty("font-size");
+      });
+
+      await atViewport({ ...NARROW, width }, async () => {
+        openActivity({ content: breakEven, template: "lineCrossing" });
+
+        await expect
+          .element(page.getByRole("slider", { name: "Move the line Cost" }))
+          .toBeVisible();
+
+        await expect
+          .poll(() =>
+            [...document.querySelectorAll('[data-slot="plot-axis-x"] text')].map(
+              (node) => node.textContent,
+            ),
+          )
+          .toStrictEqual(ticks);
+
+        const labels = [
+          ...document.querySelectorAll<SVGTextElement>('[data-slot="plot-axis-x"] text'),
+        ].filter(
+          (node) =>
+            ["0", "100", "200", "300"].includes(node.textContent ?? "") &&
+            node.getBoundingClientRect().top >
+              document.querySelector("figure svg clipPath rect")!.getBoundingClientRect().bottom &&
+            getComputedStyle(node).visibility !== "hidden",
+        );
+
+        const boxes = labels
+          .map((node) => node.getBoundingClientRect())
+          .toSorted((a, b) => a.left - b.left);
+
+        expect(boxes.length).toBeGreaterThanOrEqual(2);
+
+        for (let index = 1; index < boxes.length; index += 1) {
+          expect(boxes[index]!.left).toBeGreaterThanOrEqual(boxes[index - 1]!.right + 4);
+        }
+
+        expect(labels.map((node) => node.textContent)).toContain("0");
+        const title = document.querySelector('[data-slot="plot-axis-title-y"]')!;
+        const card = document.querySelector('[data-slot="activity-plot"]')!.getBoundingClientRect();
+        const box = title.getBoundingClientRect();
+        expect(box.left).toBeGreaterThanOrEqual(card.left);
+        expect(box.right).toBeLessThanOrEqual(card.right);
+        expect(labels.map((node) => node.textContent)).toStrictEqual(ticks);
+      });
+    },
+  );
+
   it("keeps each line's name off its own line when explored", async () => {
     const entry = previewEntries.find((item) => item.id === "activity-lineCrossing-breakEven");
 
@@ -381,30 +480,49 @@ describe("line crossing chart", () => {
     });
   });
 
+  it("reads each change on a moved line's handle as its own sentence", async () => {
+    openActivity({ content: flatCostDown, template: "lineCrossing" });
+    await pressOnSlider("Move the line Cost", "ArrowUp", 1);
+
+    await expect
+      .element(page.getByRole("slider", { name: "Move the line Cost" }))
+      .toHaveAttribute("aria-valuetext", "Cost moved up. Dollars per month: up. Lamps sold: up.");
+  });
+
   it("draws the new crossing over a handle resting on it, and a drag there still moves the handle", async () => {
-    await atViewport(PHONE, async () => {
-      openActivity({ template: "lineCrossing" });
-      await pressOnSlider("Move the line Demand", "End", 1);
-      const supply = page.getByRole("slider", { name: "Move the line Supply" });
-      const handle = supply.element().getBoundingClientRect();
-      const dot = crossingDot().getBoundingClientRect();
+    await atViewport(NARROW, async () => {
+      openActivity({ content: flatCostDown, template: "lineCrossing" });
+      const revenue = page.getByRole("slider", { name: "Move the line Revenue" });
+      const start = boxCenter(revenue.element().getBoundingClientRect());
+
+      await pressOnSlider("Move the line Revenue", "ArrowUp", 1);
+      const next = boxCenter(revenue.element().getBoundingClientRect());
+
+      await pressOnSlider("Move the line Revenue", "ArrowDown", 1);
+      await pressOnSlider("Move the line Cost", "ArrowUp", 5);
+      const handle = revenue.element().getBoundingClientRect();
+      const dot = boxCenter(crossingDot().getBoundingClientRect());
       const body = document.body.getBoundingClientRect();
 
-      expect(supply.element().compareDocumentPosition(crossingDot())).toBe(
+      expect(Math.hypot(dot.x - boxCenter(handle).x, dot.y - boxCenter(handle).y)).toBeLessThan(
+        handle.width / 4,
+      );
+
+      expect(revenue.element().compareDocumentPosition(crossingDot())).toBe(
         Node.DOCUMENT_POSITION_FOLLOWING,
       );
 
-      await userEvent.dragAndDrop(supply, page.elementLocator(document.body), {
+      await userEvent.dragAndDrop(revenue, page.elementLocator(document.body), {
         force: true,
-        sourcePosition: {
-          x: dot.left + dot.width / 2 - handle.left,
-          y: dot.top + dot.height / 2 - handle.top,
-        },
+        sourcePosition: { x: dot.x - handle.left, y: dot.y - handle.top },
         steps: 6,
-        targetPosition: { x: dot.left - 60 - body.left, y: dot.top + dot.height / 2 - body.top },
+        targetPosition: {
+          x: dot.x + (next.x - start.x) * 3 - body.left,
+          y: dot.y + (next.y - start.y) * 3 - body.top,
+        },
       });
 
-      await expect.element(supply).not.toHaveAttribute("aria-valuenow", "0");
+      await expect.element(revenue).not.toHaveAttribute("aria-valuenow", "0");
     });
   });
 

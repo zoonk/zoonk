@@ -17,6 +17,8 @@ struct MindMapReader: View {
   @State private var maps: GoalMindMaps?
   @State private var current: MindMapCard?
   @State private var zoomed: ZoomedMap?
+  /// Kept from map to map, so a learner who reads the text keeps reading it.
+  @State private var shown = ChapterMapPage.Shown.map
 
   var body: some View {
     let list = store.list(goalId: goalId)
@@ -71,7 +73,7 @@ struct MindMapReader: View {
     let index = current.flatMap { cards.firstIndex(of: $0) } ?? 0
 
     if cards.isEmpty {
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "No mind maps to study here yet.", tableName: "MindMaps",
@@ -120,13 +122,9 @@ struct MindMapReader: View {
         move(to: cards[index + 1])
         return .handled
       }
-      .safeAreaBar(edge: .bottom) {
+      .bottomBar {
         actionBar(cards, index: index)
-          .keepsOffFold()
       }
-      // The bar's soft edge doesn't reach a page's own scroll inside the pager, so an outline would
-      // run crisp under the see-through Previous.
-      .scrollEdgeEffectStyle(.hard, for: .bottom)
       .taskTitle(Text(title))
       .announcesStatus(title)
       .taskAction(isShown: save != nil) {
@@ -136,7 +134,7 @@ struct MindMapReader: View {
         }
       }
       .taskOptions(
-        label: Text("More options", tableName: "MindMaps", comment: "The reader's menu")
+        label: Text("Screen options", tableName: "MindMaps", comment: "The reader's menu")
       ) {
         menuItems(cards)
       }
@@ -170,7 +168,7 @@ struct MindMapReader: View {
     switch card {
     case .chapter(let chapterId):
       if let map = maps.chapter(chapterId) {
-        ChapterMapPage(map: map) { image in
+        ChapterMapPage(map: map, shown: $shown) { image in
           zoomed = ZoomedMap(
             url: image,
             target: SaveTarget(
@@ -181,17 +179,15 @@ struct MindMapReader: View {
     case .lesson(let chapterId, let lessonId):
       let lessons = store.lessonMaps(goalId: goalId, chapterId: chapterId)
 
-      if let lesson = lessons.value?.lessons.first(where: { $0.lessonId == lessonId }),
-        let summary = lesson.map
-      {
+      if let lesson = lessons.value?.lessons.first(where: { $0.lessonId == lessonId }) {
         // The lesson player's map, as its last screen shows it, in the player's column.
         ScrollView {
-          LessonMapView(title: lesson.title, summary: summary)
+          LessonMapView(title: lesson.title, summary: lesson.map)
             .taskColumn(alignment: .leading)
         }
         .lonePage()
       } else if lessons.value != nil {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text(
               "This map isn't available anymore.", tableName: "MindMaps",
@@ -258,10 +254,11 @@ struct MindMapReader: View {
   }
 
   /// The lesson player's bar: Previous from the second map, then Next, which is Done on the last.
+  @ViewBuilder
   private func actionBar(_ cards: [MindMapCard], index: Int) -> some View {
     let isLast = index == cards.count - 1
 
-    return TaskActionBar {
+    Group {
       if index > 0 {
         StepBackButton(
           label: Text(
@@ -271,7 +268,7 @@ struct MindMapReader: View {
         }
       }
 
-      BusyButton(isBusy: false, icon: isLast ? .check : .forward) {
+      BusyButton(isBusy: false) {
         if isLast {
           dismiss()
         } else {
@@ -285,8 +282,6 @@ struct MindMapReader: View {
         }
       }
       .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .buttonSizing(.flexible)
       .keyboardShortcut(.defaultAction)
     }
   }
@@ -353,35 +348,65 @@ struct MindMapReader: View {
   }
 }
 
-/// A chapter's map: its picture, then its outline, in one scroll; side by side where the screen
-/// has room for two pages or an open book. Tapping the picture zooms it.
+/// A chapter's map: its picture or its text, one at a time, as main's study screen. The picture is
+/// as big as the page shows it whole; the text reads as one column. Tapping the picture zooms it.
 private struct ChapterMapPage: View {
+  enum Shown: Hashable {
+    case map
+    case text
+  }
+
   let map: ChapterMindMap
+  @Binding var shown: Shown
   let zoom: (URL) -> Void
 
   var body: some View {
     let url = map.image.flatMap { URL(string: $0.url) }
 
     if let outline = map.outline, let url {
-      PaneSplit {
-        ScrollView {
-          picture(url)
-            .scenePadding()
-        }
-      } secondary: {
-        ScrollView {
-          MindMapOutlineView(outline: outline)
-            .scenePadding()
-        }
-      } single: {
-        ScrollView {
-          VStack(alignment: .leading, spacing: 24) {
+      ScrollView {
+        switch shown {
+        case .map:
+          VStack(spacing: 12) {
             picture(url)
-            MindMapOutlineView(outline: outline)
+              // Whole on the page, under the switch and above the bar, with room for the line.
+              .containerRelativeFrame([.horizontal, .vertical]) { length, axis in
+                length - (axis == .vertical ? 64 : 32)
+              }
+
+            Text(
+              "Tap the map to zoom in", tableName: "MindMaps",
+              comment: "Under a map's picture: tapping it opens the picture to zoom"
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+            .accessibilityHidden(true)
           }
-          .taskColumn(alignment: .leading)
+          .frame(maxWidth: .infinity)
+          .padding(.vertical, 8)
+        case .text:
+          MindMapOutlineView(outline: outline, isTitled: true)
+            .taskColumn(alignment: .leading)
         }
       }
+      // A new view starts at its top.
+      .id(shown)
+      .safeAreaBar(edge: .top) {
+        Picker(selection: $shown) {
+          Text("Map", tableName: "MindMaps", comment: "Shows a map as its picture")
+            .tag(Shown.map)
+          Text("Text", tableName: "MindMaps", comment: "Shows a map as text")
+            .tag(Shown.text)
+        } label: {
+          Text(
+            "Show the map as", tableName: "MindMaps",
+            comment: "Names the switch between a map's picture and its text")
+        }
+        .pickerStyle(.segmented)
+        .fixedSize()
+        .padding(.vertical, 8)
+      }
+      .lonePage()
     } else if let outline = map.outline {
       ScrollView {
         VStack(alignment: .leading, spacing: 16) {

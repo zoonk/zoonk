@@ -15,6 +15,7 @@ import {
   uniqueWord,
 } from "../library/identity/_test-utils/identity-mocks";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenQuote } from "./_test-utils/seen-quote";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
@@ -58,8 +59,12 @@ async function readPlan(planId: string) {
   };
 }
 
-function decide(goalId: string, changeId: string, status: "applied" | "undone") {
-  return decidePlanChange({ changeId, goalId, input: { status } });
+async function decide(goalId: string, changeId: string, status: "applied" | "undone") {
+  return decidePlanChange({
+    changeId,
+    goalId,
+    input: { quote: await seenQuote(changeId), status },
+  });
 }
 
 describe("undoing an applied suggestion", () => {

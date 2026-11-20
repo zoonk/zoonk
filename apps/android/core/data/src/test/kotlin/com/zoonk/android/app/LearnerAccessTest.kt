@@ -40,6 +40,7 @@ class LearnerAccessTest {
         suggested = emptyList(),
         status = status,
         targetDate = null,
+        targetDateEstimated = false,
         targetLanguage = null,
         targetRegion = null,
         title = "Goal",

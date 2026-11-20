@@ -63,13 +63,14 @@ const learnerSummaryGoalSchema = z
       }),
     status: z.enum(GoalStatus),
     targetDate: z.iso.date().nullable(),
+    targetDateEstimated: z.boolean(),
     targetLanguage: z.string().nullable(),
     targetRegion: z
       .string()
       .nullable()
       .meta({
         description:
-          'A language goal\'s country, a two-letter code, only when the learner asked for one: name the language with it ("Spanish (Argentina)"), and without it name only the language',
+          "A language goal's country, a two-letter code, only when the learner asked for one",
       }),
     title: z.string(),
   })
@@ -212,7 +213,7 @@ const learnerSummarySchema = z
               .boolean()
               .meta({
                 description:
-                  "The plan follows no more goals at once: show it with the Plus lock, opening Plus",
+                  "True when the learner's plan follows no more goals at once: POST /goals lists it in `refused`",
               }),
           })
           .meta({ id: "LearnerSummaryWaitingGoal" }),

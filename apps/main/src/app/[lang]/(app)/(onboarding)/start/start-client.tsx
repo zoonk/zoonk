@@ -6,14 +6,21 @@ import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { StartFlow } from "@zoonk/learn/onboarding";
-import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
+import { type GoalLimit } from "@zoonk/learn/onboarding/actions";
 import { OnboardingEmbedded } from "@zoonk/learn/onboarding/frame";
+import { useMenuStartsGoal } from "../../(learn)/_components/switcher-goals";
 import {
   WEB_ONBOARDING_ACTIONS,
   getPlanLinkOnboardingActions,
   useWebOnboardingRoutes,
 } from "./onboarding-client-actions";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
+
+/**
+ * The goal menu's own "New goal" shows in a phone's bar and in the open sidebar; the page says
+ * it only where the menu doesn't, with the sidebar collapsed.
+ */
+const BESIDE_START_MENU_CLASS = "hidden in-data-[sidebar-collapsed]:lg:block";
 
 export function StartClient({
   canAttach,
@@ -22,15 +29,18 @@ export function StartClient({
   goalLimit,
   header,
   initialDraft,
+  keepsTitle = false,
   needsAccount,
   planId,
 }: {
   canAttach: boolean;
   defaultGoal: string;
   embedded?: boolean;
-  goalLimit: GoalLimitReason | null;
+  goalLimit: GoalLimit | null;
   header?: React.ReactNode;
   initialDraft: OnboardingDraftView | null;
+  /** `header` has sections of its own, so the box's title keeps it apart from them. */
+  keepsTitle?: boolean;
   needsAccount: boolean;
   planId: string | null;
 }) {
@@ -50,6 +60,7 @@ export function StartClient({
   // An unknown summary leaves answers without a buddy identity until the actual one arrives.
   const learner = useLearnerSummary();
   const buddy = learner.status === "ready" ? learner.summary.buddy : undefined;
+  const menuStartsGoal = useMenuStartsGoal();
 
   const flow = (
     <GenerationFollowerProvider follower={WorkflowRunFollower}>
@@ -80,5 +91,14 @@ export function StartClient({
     </GenerationFollowerProvider>
   );
 
-  return embedded ? <OnboardingEmbedded header={header}>{flow}</OnboardingEmbedded> : flow;
+  return embedded ? (
+    <OnboardingEmbedded
+      header={header}
+      titleClassName={menuStartsGoal && !keepsTitle ? BESIDE_START_MENU_CLASS : undefined}
+    >
+      {flow}
+    </OnboardingEmbedded>
+  ) : (
+    flow
+  );
 }

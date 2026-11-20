@@ -4,64 +4,71 @@ import { CourseStartFailureNote } from "@/components/public/course-start-failure
 import { useCourseStart } from "@/components/public/use-course-start";
 import { Link } from "@/i18n/navigation";
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
-import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
+import { EnterButton, EnterLink } from "@zoonk/learn/enter-button";
+import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
+import { type ReactNode } from "react";
 
 type CourseStart = { chapterId: string | null; courseId: string };
 
-const PLAN_CLASS = cn(buttonVariants({ size: "xl" }), "w-full");
-
-function StartCoursePlan({ start }: { start: CourseStart }) {
+function StartCoursePlan({ other, start }: { other: ReactNode; start: CourseStart }) {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLButtonElement>();
   const { failure, pending, start: startCourse } = useCourseStart(start);
 
   return (
-    <>
-      <Button
-        aria-keyshortcuts="Enter"
-        busy={pending}
-        className="w-full"
-        onClick={startCourse}
-        ref={ref}
-        size="xl"
-        {...FORWARD_ICON}
-      >
-        {t("Build my plan")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </Button>
+    <TaskActionBar
+      note={
+        failure && (
+          <CourseStartFailureNote
+            actionClassName={buttonVariants({ size: "sm", variant: "outline" })}
+            failure={failure}
+            onRetry={startCourse}
+            secondaryActionClassName={buttonVariants({ size: "sm", variant: "outline" })}
+          />
+        )
+      }
+    >
+      <TaskActions>
+        {other}
+        <EnterButton busy={pending} onClick={startCourse}>
+          {t("Build my plan")}
+        </EnterButton>
+      </TaskActions>
 
       {pending && (
         <span className="sr-only" role="status">
           {t("Starting your plan…")}
         </span>
       )}
-
-      <CourseStartFailureNote
-        actionClassName={cn(buttonVariants({ size: "xl", variant: "outline" }), "w-full")}
-        className="max-w-none items-stretch text-center"
-        failure={failure}
-        onRetry={startCourse}
-      />
-    </>
+    </TaskActionBar>
   );
 }
 
-export function GuestPlanStart({ goal, start }: { goal: string; start: CourseStart | null }) {
+/** A visitor's lesson end: `other`, then "Build my plan", in the screen's bar. */
+export function GuestPlanStart({
+  goal,
+  other,
+  start,
+}: {
+  goal: string;
+  other: ReactNode;
+  start: CourseStart | null;
+}) {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>();
 
   if (start) {
-    return <StartCoursePlan start={start} />;
+    return <StartCoursePlan other={other} start={start} />;
   }
 
   return (
-    <Link aria-keyshortcuts="Enter" className={PLAN_CLASS} href={getGoalStartHref(goal)} ref={ref}>
-      {t("Build my plan")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Link>
+    <TaskActionBar>
+      <TaskActions>
+        {other}
+        <EnterLink href={getGoalStartHref(goal)} link={Link}>
+          {t("Build my plan")}
+        </EnterLink>
+      </TaskActions>
+    </TaskActionBar>
   );
 }

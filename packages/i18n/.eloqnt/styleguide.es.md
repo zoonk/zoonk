@@ -21,6 +21,7 @@
 - “write” (Zoonk generating content): “preparar”; learner writing: “escribir”
 - “learning” (study days): “estudio”
 - “Brain Power”: “Poder Mental”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “PM”
 - “score”, including an exam's: “puntaje”, not “puntuación” or “nota”; the admission cut-off: “puntaje mínimo”
 - “grade” (an essay): “calificar”, and the result “calificación”, not “corregir” or “nota”; “fix” (a mistake): “corregir”
 - “band” (an exam's score band): “banda”
@@ -54,7 +55,7 @@
 - “Buddy”: “Compañero”
 - Mission names (missions list, first steps) and activity badges (what the learner does, above the prompt): “tú” imperative: “Completa tu primera lección”, “Lee la gráfica”, “Ordena”
 - “essay”: “redacción”, not “ensayo”; “Writing practice” (essays): “Práctica de redacción”
-- “Mistakes notebook”: “Cuaderno de errores”; “Practice mistakes” / “Practice your mistakes”: “Practicar con tus errores”
+- “Mistakes notebook”: “Cuaderno de errores”; “Practice mistakes”: “Practicar errores”; “Practice your mistakes”: “Practicar tus errores”
 - “Saved to your mistakes”: “Guardado en tu cuaderno de errores”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Por corregir” / “Corregidos”
 - “full review” (language exam preparation): “revisión completa”; spaced review: “repaso”
@@ -75,12 +76,12 @@
 
 - Phases “Foundations” / “Fill the gaps” / “Practice” / “Final stretch”: “Bases” / “Cubrir lo que falta” / “Práctica” / “Recta final”
 - “Finished”: “Completado”
-- “Past date” / “Past your date”: “Fecha pasada”, not “Terminado”, “Caducado”, or “Vencido”
+- “Date passed”, “Exam date passed” (formerly “Past date” / “Past your date”): “Fecha pasada”, not “Terminado”, “Caducado”, or “Vencido”
 - “Needs adjusting”: “Necesita ajustes”
 - “Too tight”: “Demasiado ajustado”
 - “left out”: “omitir”, not “saltar”
-- “On pace” / “Keeping pace”: “Al día”, not “A buen ritmo”
-- “Daily time”: “Tiempo diario”
+- “Up to date” (a plan's state; formerly “On pace” / “Keeping pace”): “Al día”, not “A buen ritmo”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Tiempo diario”
 
 ## Buddy names
 

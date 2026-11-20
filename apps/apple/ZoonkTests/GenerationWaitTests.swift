@@ -283,6 +283,30 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertGreaterThan(wait.shownShare(at: opened), wait.progress.share + 0.1)
   }
 
+  /// The API never names the phase that failed, so a failed run marks where it stopped only on a
+  /// phase it reported a step of (main's `phase-progress.ts`).
+  func testAFailedRunThatReportedNothingMarksNoPhaseStopped() {
+    let wait = GenerationWait(kind: .curriculum).started
+
+    XCTAssertFalse(wait.visiblePhases.contains { $0.status(failure: .generation) == .failed })
+  }
+
+  func testAFailedRunMarksThePhaseItReportedStarting() {
+    var wait = GenerationWait(kind: .curriculum).started
+    wait.apply(GenerationEvent(status: "started", step: "buildSkillGraph"))
+
+    XCTAssertEqual(
+      wait.visiblePhases.filter { $0.status(failure: .generation) == .failed }.map(\.id),
+      ["skills"])
+  }
+
+  func testAFailedRunMarksNoPhaseItMovedOnToWithoutAReport() {
+    var wait = GenerationWait(kind: .explanation).started
+    wait.apply(GenerationEvent(status: "completed", step: "findExplanation"))
+
+    XCTAssertFalse(wait.visiblePhases.contains { $0.status(failure: .generation) == .failed })
+  }
+
   func testIgnoresStepsItDoesntKnow() {
     let fresh = GenerationWait(kind: .curriculum)
     var wait = fresh
@@ -330,4 +354,25 @@ final class GenerationWaitTests: XCTestCase {
       wait.firstLesson(read: read, readGenerationID: "new", generationID: "new")?.isStopped, true)
   }
 
+  /// A lesson's mark (10) and drawing (45) run side by side, and the drawing finished first.
+  func testAStepThatFinishesBeforeTheOneBesideItFillsItsOwnPart() {
+    XCTAssertEqual(
+      GenerationWait.phaseFills(
+        share: 135.0 / 145.0, weights: [40, 50, 10, 45], states: [.done, .done, .working, .done]),
+      [1, 1, 0, 1])
+  }
+
+  /// The running step comes first in the list, and the step after it is already done.
+  func testARunningStepFillsWhatTheBarDriftedPastTheDoneSteps() {
+    XCTAssertEqual(
+      GenerationWait.phaseFills(
+        share: 0.625, weights: [10, 20, 10], states: [.working, .done, .waiting]),
+      [0.5, 1, 0])
+  }
+
+  func testAWaitingStepStaysEmptyWhateverTheBarReached() {
+    XCTAssertEqual(
+      GenerationWait.phaseFills(share: 0.9, weights: [10, 10], states: [.working, .waiting]),
+      [1, 0])
+  }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { type RefObject, useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { useKeyboardCallback } from "./use-keyboard";
+import { useShortcut } from "./use-keyboard";
 
 const DEFAULT_SEARCH_DEBOUNCE_MS = 300;
 
@@ -75,7 +75,7 @@ export function useCommandPaletteSearch<TResults>(options: {
     open();
   }, [closePalette, isOpen, open]);
 
-  useKeyboardCallback("k", toggle, { mode: "any", modifiers: { ctrlKey: true, metaKey: true } });
+  useShortcut("search", toggle);
 
   const onSelectItem = useCallback(() => {
     closePalette();

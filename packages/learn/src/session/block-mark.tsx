@@ -32,7 +32,7 @@ export function BlockMark({
 
   // The Trickster is a phase's boss: the week's challenge wears its kind's icon.
   if (block.checkpoint && !block.checkpoint.mock && block.checkpoint.kind !== "weekly") {
-    return <Trickster className={cn("-m-1 size-5", className)} />;
+    return <Trickster className={cn("size-4", className)} view="face" />;
   }
 
   return <KindMark className={className} kind={getBlockKind(block)} />;

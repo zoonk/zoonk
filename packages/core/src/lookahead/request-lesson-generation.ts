@@ -6,7 +6,6 @@ import { claimUsage, claimUsageFor } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
 import { isVisibleTo } from "../library/_utils/library-visibility";
 import { getLessonGenerationState } from "../library/generation/lesson-generation-state";
-import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { findViewerLesson } from "./_utils/viewer-lesson";
 
 /** generating follows the existing stream; start requires a caller-started run. setAside must never restart generation. */
@@ -26,7 +25,6 @@ export type LessonGenerationRequest =
   | { decision: Exclude<UsageDecision, { status: "allowed" | "unauthorized" }>; status: "refused" }
   | { status: "setAside" }
   | { status: "notFound" }
-  | { status: "plusRequired" }
   | { status: "unauthorized" };
 
 async function getActiveGoal(userId: string) {
@@ -49,10 +47,6 @@ async function requestFor({
   platform: AnalyticsPlatform | null;
   userId: string;
 }): Promise<LessonGenerationRequest> {
-  if (await isLessonPlusOnly({ lessonId, userId })) {
-    return { status: "plusRequired" };
-  }
-
   const state = await getLessonGenerationState(lessonId);
 
   if (!state) {
@@ -92,7 +86,7 @@ async function requestFor({
   };
 }
 
-/** Claims the later lesson start before AI work; starting after generation must not consume allowance again. */
+/** A learner-requested lesson is counted before its work; replaying its admitted target is free. */
 export async function requestLessonGeneration({
   lessonId,
 }: {
@@ -112,7 +106,7 @@ export async function requestLessonGeneration({
   });
 }
 
-/** Internal, for the lesson a learner's write owes: `userId` must come from that write. */
+/** Internal preparation reserves work, not a learner start; `userId` comes from the write that owes it. */
 export async function requestLessonGenerationFor({
   lessonId,
   userId,

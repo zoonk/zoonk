@@ -19,7 +19,7 @@ class TutorStore(
     val setRegion: suspend (goalId: UUID, region: String?) -> MutationResult<Unit>,
     val setContentCountry: suspend (goalId: UUID, country: String) -> MutationResult<Unit>,
     val setHomeCountry: suspend (CountryChoice) -> Boolean,
-    val decidePlanChange: suspend (goalId: UUID, changeId: UUID, PlanChangeDecisionInput.Status) -> MutationResult<PlanChange>,
+    val decidePlanChange: suspend (goalId: UUID, PlanChange, PlanChangeDecisionInput.Status) -> MutationResult<PlanChange>,
 ) {
     /** Before its first question a conversation reads as an empty thread, so a sent one can be added to it. */
     val threads: KeyedResources<TutorThreadKey, TutorThread> =

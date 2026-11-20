@@ -22,7 +22,7 @@ export const goalSpecificityTask: Task<
   }),
   generate: classifyGoalSpecificity,
   id: "goal-specificity",
-  name: "Goal Specificity",
+  name: "Goal specificity",
   score: scoreGoalSpecificity,
   testCases: TEST_CASES,
 };

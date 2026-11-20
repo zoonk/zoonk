@@ -167,7 +167,7 @@ test.describe("An exam's Focus test in onboarding", () => {
     await dropFirstAnswerResponse(page);
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { name: "Start the test" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
     await expect(question(page, 1)).toBeVisible();
 
     const dontKnow = page.getByRole("button", { name: "I don't know yet" });
@@ -188,7 +188,6 @@ test.describe("An exam's Focus test in onboarding", () => {
     await expect(question(page, 3)).toBeVisible();
 
     await page.getByRole("button", { name: "Stop and use my answers" }).click();
-    await expect(page.getByText("Answers saved")).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(
@@ -208,7 +207,7 @@ test.describe("An exam's Focus test in onboarding", () => {
     const goal = await createExamGoalAtFocusTest(noProgressUser.id);
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { name: "Skip for now" }).click();
+    await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
     await expect(
       page.getByRole("heading", { name: "How much time can you study each day?" }),
@@ -227,13 +226,13 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   const goal = await createExamGoalAtFocusTest(noProgressUser.id, { seen: true });
 
   await page.goto(`/focus-test?goal=${goal.id}`);
-  await page.getByRole("button", { name: "Start the test" }).click();
+  await page.getByRole("button", { exact: true, name: "Start the test" }).click();
   await expect(question(page, 1)).toBeVisible();
   await page.getByRole("button", { name: "I don't know yet" }).click();
   await expect(question(page, 2)).toBeVisible();
   await page.getByRole("button", { name: "Stop and use my answers" }).click();
 
-  const update = page.getByRole("button", { name: "Update my plan" });
+  const update = page.getByRole("button", { name: "Change my plan" });
   await expect(page.getByRole("heading", { name: "Give these subjects more time?" })).toBeVisible();
 
   await update.click();
@@ -249,7 +248,7 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   expect(await readProposalStatus(goal.id)).toBe("undone");
 
   await page.reload();
-  await expect(page.getByText(/^You kept your plan as it is\./u)).toBeVisible();
+  await expect(page.getByText("Your plan stays as it is.")).toBeVisible();
   await expect(update).toBeHidden();
 });
 
@@ -271,10 +270,13 @@ test("a skip that doesn't save says so on the wait for questions, and the same b
 
   const allowCompletion = await rejectCompletion(page);
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start the test" }).click();
+  await page.getByRole("button", { exact: true, name: "Start the test" }).click();
 
-  await expect(page.getByRole("alert").filter({ hasText: "This didn't finish" })).toBeVisible();
-  const skip = page.getByRole("button", { name: "Skip for now" });
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Something went wrong on our side" }),
+  ).toBeVisible();
+
+  const skip = page.getByRole("button", { exact: true, name: "Skip" });
   await skip.click();
 
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeVisible();

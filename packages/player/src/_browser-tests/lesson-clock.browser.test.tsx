@@ -322,7 +322,7 @@ describe("lesson clock", () => {
     {
       moment: "step",
       steps: [teachingStep("explanation"), teachingStep("check")],
-      take: () => page.getByRole("button", { name: /^Next/u }).click(),
+      take: () => page.getByRole("button", { name: /^Continue/u }).click(),
     },
   ])(
     "sends a change that didn't get through again at the learner's next $moment",

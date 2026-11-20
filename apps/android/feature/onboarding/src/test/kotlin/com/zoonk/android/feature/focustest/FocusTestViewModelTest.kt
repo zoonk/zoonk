@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
@@ -14,13 +15,16 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.session.FakeStudyApi
+import com.zoonk.android.feature.session.StudySessionStore
 import com.zoonk.android.feature.session.decodeFixture
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlanChange
@@ -36,6 +40,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -72,7 +77,10 @@ class FocusTestViewModelTest {
     ): PlanChange? {
         val focus = FocusTestFocus(proposal = next, rows = emptyList(), state = FocusTestFocus.State.PROPOSED)
         val questions = SessionQuestionsModel(unusedFocusTests(AppCache(FakeSession(ana), backgroundScope)), UUID.fromString(GOAL_ID))
-        return focus.waitingProposal(PlanControls(vm.proposalAnswer, vm.deciding, vm.decisionFailed, vm::decide, {}, questions))
+        return focus.waitingProposal(
+            PlanControls(vm.proposalAnswer, vm.repricedProposal, vm.deciding, vm.decisionFailed, vm::decide, {
+            }, questions),
+        )
     }
 
     /** What the screen does after the app comes back from process death with what [handle] saved. */
@@ -83,7 +91,7 @@ class FocusTestViewModelTest {
         val saved = handle.savedStateProvider().saveState()
         models.clear()
         return viewModel(api, SavedStateHandle.createHandle(saved, null)).also {
-            it.start { WriteOutcome.Done(Unit) }
+            it.start()
             runCurrent()
         }
     }
@@ -106,7 +114,7 @@ class FocusTestViewModelTest {
                     }
                 }
             val handle = SavedStateHandle()
-            viewModel(api, handle).start { WriteOutcome.Done(Unit) }
+            viewModel(api, handle).start()
             runCurrent()
 
             val back = restored(api, handle)
@@ -127,7 +135,7 @@ class FocusTestViewModelTest {
                 }
             val handle = SavedStateHandle()
             val first = viewModel(api, handle)
-            first.start { WriteOutcome.Done(Unit) }
+            first.start()
             runCurrent()
             assertTrue(first.failed)
             api.writeFailure = null
@@ -135,6 +143,84 @@ class FocusTestViewModelTest {
             restored(api, handle)
 
             assertEquals(2, api.sittingsStarted)
+        }
+
+    @Test
+    fun aDecisionThatFailsAfterTheLearnerLeftSaysNothingOnReturn() = decisionFailure(leaveFirst = true)
+
+    @Test
+    fun aDecisionFailureShownBeforeTheLearnerLeftIsGoneOnReturn() = decisionFailure(leaveFirst = false)
+
+    private fun decisionFailure(leaveFirst: Boolean) =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val api = FakeOnboardingApi().apply { placement = placementOf(next = null, focusTest = focusTestOf()) }
+            val held = CompletableDeferred<Unit>()
+            val plans =
+                object : PlanApi by FakePlanApi() {
+                    override suspend fun decide(
+                        session: AuthenticatedSession,
+                        goalId: UUID,
+                        changeId: UUID,
+                        status: PlanChangeDecisionInput.Status,
+                        quote: String?,
+                    ): PlanChange {
+                        held.await()
+                        throw ApiException(ApiError.Network)
+                    }
+                }
+            val vm = viewModel(api, SavedStateHandle(), plans)
+            val proposal = decodeFixture<PlanChange>("plan-change").copy(source = "focusTest", canApply = true)
+
+            vm.decide(proposal, PlanChangeDecisionInput.Status.APPLIED)
+            runCurrent()
+            if (leaveFirst) vm.visit.end()
+            held.complete(Unit)
+            runCurrent()
+            if (!leaveFirst) {
+                assertTrue(vm.decisionFailed)
+                vm.visit.end()
+            }
+
+            assertFalse(vm.decisionFailed)
+        }
+
+    @Test
+    fun aQuestionsSwitchThatFailsAfterTheLearnerLeftSaysNothingOnReturn() = questionsFailure(leaveFirst = true)
+
+    @Test
+    fun aQuestionsSwitchFailureShownBeforeTheLearnerLeftIsGoneOnReturn() = questionsFailure(leaveFirst = false)
+
+    private fun questionsFailure(leaveFirst: Boolean) =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val held = CompletableDeferred<Unit>()
+            val cache = AppCache(FakeSession(ana), backgroundScope)
+            val store =
+                FocusTestStore(
+                    api = { _, _, _ ->
+                        held.await()
+                        throw ApiException(ApiError.Network)
+                    },
+                    cache = cache,
+                    sessions = StudySessionStore(FakeStudyApi(), cache) { "UTC" },
+                    summary = cache.resource(Audience.SignedIn, emptySet()) { null },
+                    timeZone = { "UTC" },
+                )
+            val questions = SessionQuestionsModel(store, UUID.fromString(GOAL_ID)).also { models.put("$it", it) }
+            val result = ApiJson.decodeFromString<FocusTest>(focusTestOf())
+
+            questions.set(result, on = false)
+            runCurrent()
+            if (leaveFirst) questions.visit.end()
+            held.complete(Unit)
+            runCurrent()
+            if (!leaveFirst) {
+                assertTrue(questions.failed(result))
+                questions.visit.end()
+            }
+
+            assertFalse(questions.failed(result))
         }
 
     @Test
@@ -169,7 +255,15 @@ class FocusTestViewModelTest {
                         goalId: UUID,
                         changeId: UUID,
                         status: PlanChangeDecisionInput.Status,
-                    ): PlanChange = if (status == PlanChangeDecisionInput.Status.UNDONE) undone.await() else proposal
+                        quote: String?,
+                    ): PlanChange =
+                        if (status ==
+                            PlanChangeDecisionInput.Status.UNDONE
+                        ) {
+                            undone.await()
+                        } else {
+                            proposal.copy(status = PlanChange.Status.APPLIED)
+                        }
                 }
             val vm = viewModel(api, SavedStateHandle(), plans)
             vm.decide(proposal, PlanChangeDecisionInput.Status.APPLIED)

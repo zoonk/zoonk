@@ -42,7 +42,8 @@ protocol StudyAPIClient: Sendable {
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap
   func getLanguageToday(token: String, goalID: String) async throws -> LanguageTodayView
   func decidePlanChange(
-    token: String, goalID: String, changeID: String, decision: PlanChangeDecision
+    token: String, goalID: String, changeID: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
   ) async throws -> TodayView.PlanChange?
 }
 
@@ -313,15 +314,14 @@ struct StudyAPI: StudyAPIClient {
 
   /// Nil when the change is out of date: answered elsewhere, or the plan moved on.
   func decidePlanChange(
-    token: String, goalID: String, changeID: String, decision: PlanChangeDecision
+    token: String, goalID: String, changeID: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
   ) async throws -> TodayView.PlanChange? {
-    try await clients.perform(token: token) { client in
+    let body = try PlanChangeDecisionBody(decision, quote: quote).input
+
+    return try await clients.perform(token: token) { client in
       switch try await client.decidePlanChange(
-        path: .init(goalId: goalID, changeId: changeID),
-        body: .json(
-          .init(
-            status: .init(rawValue: decision.rawValue) ?? .declined,
-            timeZone: TimeZone.current.identifier)))
+        path: .init(goalId: goalID, changeId: changeID), body: .json(body))
       {
       case .ok(let response):
         return try StudyJSON.recode(try response.body.json)

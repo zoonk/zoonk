@@ -1,6 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { type LibraryLessonStatus, toContentStatus } from "@/lib/library-lesson-filters";
+import { type LibraryLessonStatus } from "@/lib/library-lesson-filters";
 import { CURRENT_STEPS } from "@zoonk/core/library/lessons/versions";
 import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
@@ -33,7 +33,8 @@ function buildLibraryLessonWhere({ model, promptVersion, search, status }: Libra
   const hasProvenanceFilter = Boolean(model ?? promptVersion);
 
   return {
-    contentStatus: toContentStatus(status),
+    ...(status === "setAside" && { setAsideAt: { not: null } }),
+    ...(status !== "all" && status !== "setAside" && { contentStatus: status, setAsideAt: null }),
     ...(hasProvenanceFilter ? { steps: { some: { ...CURRENT_STEPS, model, promptVersion } } } : {}),
     ...(containsSearch
       ? {

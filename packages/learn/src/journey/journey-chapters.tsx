@@ -4,12 +4,20 @@ import {
   type PlanChapterView,
   type PlanPhaseCheckpointView,
 } from "@zoonk/core/plans/view-contract";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  FoldChevron,
+} from "@zoonk/ui/components/collapsible";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
 import { LearnLink } from "../learn-link";
+import { usePlanScreen } from "../plan/plan-context";
+import { FoldRow } from "../today/today-fold-row";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
 import { useWritingLine } from "../topic-outline/use-far-topic-line";
@@ -17,23 +25,23 @@ import { getChapterWindow } from "./chapter-window";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
-  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
+  PathRowBody,
 } from "./journey-phase-events";
 
-export function getChapterKey(chapter: PlanChapterView): string {
+function getChapterKey(chapter: PlanChapterView): string {
   return chapter.chapterId ?? `${chapter.writing ? "writing" : "settled"}:${chapter.title}`;
 }
 
 /** Core leaves the title empty for lessons being written in the goal's own course. */
-export function useChapterTitle() {
+function useChapterTitle() {
   const t = useExtracted();
 
   return (chapter: PlanChapterView): string => {
     if (chapter.skills.length > 0) {
       return t(
-        "{count, plural, one {# skill you already know} other {# skills you already know}}",
+        "{count, plural, one {# chapter you already know} other {# chapters you already know}}",
         { count: chapter.skills.length },
       );
     }
@@ -46,33 +54,13 @@ function isSkipped(chapter: PlanChapterView): boolean {
   return chapter.skills.length > 0 || chapter.testedOut;
 }
 
-export function isWritingAhead(chapter: PlanChapterView): boolean {
+function isWritingAhead(chapter: PlanChapterView): boolean {
   return chapter.writing && !chapter.far && chapter.skills.length === 0;
 }
 
-function ChapterLessons({ chapter }: { chapter: PlanChapterView }) {
-  const t = useExtracted();
-
-  if (chapter.writing || chapter.lessonsTotal === 0 || isSkipped(chapter)) {
-    return null;
-  }
-
-  return (
-    <span className="text-muted-foreground font-mono text-xs tabular-nums">
-      <span aria-hidden="true">
-        {t("{done, number} / {total, number}", {
-          done: chapter.lessonsDone,
-          total: chapter.lessonsTotal,
-        })}
-      </span>
-      <span className="sr-only">
-        {t(
-          "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
-          { done: chapter.lessonsDone, total: chapter.lessonsTotal },
-        )}
-      </span>
-    </span>
-  );
+/** Whether the list would name any chapter: lessons being written right now aren't rows yet. */
+export function hasListedChapters(chapters: readonly PlanChapterView[]): boolean {
+  return chapters.some((chapter) => !isWritingAhead(chapter));
 }
 
 function ChapterRow({
@@ -82,7 +70,7 @@ function ChapterRow({
 }: {
   chapter: PlanChapterView;
   isNext: boolean;
-  links: JourneyPathLinks;
+  links: JourneyPathLinks | null;
 }) {
   const t = useExtracted();
   const title = useChapterTitle();
@@ -96,33 +84,30 @@ function ChapterRow({
   const line =
     writing ??
     (chapter.testedOut && chapter.skills.length === 0
-      ? t("Skipped because you already know it")
+      ? t("Skipped · you already know it")
       : null) ??
-    (chapter.deeper ? t("Going deeper into an earlier topic") : null);
+    (chapter.deeper ? t("More on an earlier topic") : null);
 
   const content = (
     <>
-      <span className={PATH_ROW_LEADING_CLASS}>
+      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <ChapterMark chapter={chapter} isNext={isNext} skipped={isSkipped(chapter)} />
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
-        <span className="flex flex-col">
-          <span
-            className={cn(
-              "line-clamp-2 font-medium",
-              chapter.state === "done" && "text-muted-foreground",
-            )}
-          >
-            {title(chapter)}
-          </span>
-          {line && <span className="text-muted-foreground text-xs">{line}</span>}
+      <PathRowBody>
+        <span
+          className={cn(
+            "line-clamp-2 font-medium",
+            chapter.state === "done" && "text-muted-foreground",
+          )}
+        >
+          {title(chapter)}
         </span>
-        <ChapterLessons chapter={chapter} />
-      </span>
+        {line && <span className="text-muted-foreground text-xs">{line}</span>}
+      </PathRowBody>
     </>
   );
 
-  if (chapter.writing && chapter.skillId && outlineActions) {
+  if (links && chapter.writing && chapter.skillId && outlineActions) {
     return (
       <FarTopicSheet
         actions={outlineActions}
@@ -131,56 +116,78 @@ function ChapterRow({
         nextDate={chapter.nextDate}
         skillId={chapter.skillId}
         title={title(chapter)}
-        trigger={<button className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} type="submit" />}
+        trigger={
+          <button
+            className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+            data-slot="path-row"
+            type="submit"
+          />
+        }
       >
         {content}
+        <RowChevron />
       </FarTopicSheet>
     );
   }
 
-  if (!chapter.chapterId) {
-    return <div className={PATH_ROW_CLASS}>{content}</div>;
+  if (chapter.skills.length > 0) {
+    return (
+      <Collapsible>
+        <CollapsibleTrigger
+          className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+          data-slot="path-row"
+        >
+          {content}
+          <FoldChevron />
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <ul className="text-muted-foreground flex list-disc flex-col gap-1 pb-2 pl-7 text-sm">
+            {chapter.skills.map((skill) => (
+              <li key={skill}>{skill}</li>
+            ))}
+          </ul>
+        </CollapsibleContent>
+      </Collapsible>
+    );
+  }
+
+  if (!links || !chapter.chapterId) {
+    return (
+      <div className={PATH_ROW_CLASS} data-slot="path-row">
+        {content}
+      </div>
+    );
   }
 
   return (
     <LearnLink
-      className={cn(PATH_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
+      className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+      data-highlighted={isNext || undefined}
+      data-slot="path-row"
       href={links.chapter(chapter.chapterId)}
     >
       {content}
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+      <RowChevron />
     </LearnLink>
   );
 }
 
-export function WritingAheadLine({
-  chapters,
-  unit = false,
-}: {
-  chapters: readonly PlanChapterView[];
-  unit?: boolean;
-}) {
+function useShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolean }) {
   const t = useExtracted();
-  const writing = chapters.filter((chapter) => isWritingAhead(chapter));
+  const { goal } = usePlanScreen();
 
-  if (writing.length === 0) {
-    return null;
+  if (goal.kind === "language") {
+    return showAll
+      ? t("Show fewer units")
+      : t("{count, plural, one {# more unit} other {# more units}}", { count: hidden });
   }
 
-  const courses = writing.map((chapter) => chapter.title).filter(Boolean);
-
-  return (
-    <p className="text-muted-foreground py-2 text-xs" data-slot="writing-ahead">
-      {courses.length > 0 &&
-        t("Lessons from {courses} are being written.", { courses: courses.join(", ") })}
-      {courses.length === 0 &&
-        (unit
-          ? t("More lessons for this unit are being written.")
-          : t("More lessons for this phase are being written."))}
-    </p>
-  );
+  return showAll
+    ? t("Show fewer chapters")
+    : t("{count, plural, one {# more chapter} other {# more chapters}}", { count: hidden });
 }
 
+/** Without `links` the rows only say what's there, every one of them, and none opens anything. */
 export function JourneyChapters({
   chapters,
   checkpoint,
@@ -188,17 +195,22 @@ export function JourneyChapters({
 }: {
   chapters: PlanChapterView[];
   checkpoint: PlanPhaseCheckpointView | null;
-  links: JourneyPathLinks;
+  links: JourneyPathLinks | null;
 }) {
-  const t = useExtracted();
   const [showAll, setShowAll] = useState(false);
+  const listId = useId();
   const rows = chapters.filter((chapter) => !isWritingAhead(chapter));
-  const range = getChapterWindow({ states: rows.map((chapter) => chapter.state) });
+
+  const range = links
+    ? getChapterWindow({ states: rows.map((chapter) => chapter.state) })
+    : { end: rows.length, start: 0 };
+
   const hidden = rows.length - (range.end - range.start);
   const shown = showAll ? rows : rows.slice(range.start, range.end);
+  const showMoreLabel = useShowMoreLabel({ hidden, showAll });
 
   return (
-    <ul className="flex flex-col">
+    <ul className="flex flex-col" id={listId}>
       {shown.map((chapter) => (
         <li key={getChapterKey(chapter)}>
           <ChapterRow chapter={chapter} isNext={chapter.state === "current"} links={links} />
@@ -207,36 +219,21 @@ export function JourneyChapters({
 
       {hidden > 0 && (
         <li>
-          <button
-            aria-expanded={showAll}
-            className={cn(
-              PATH_ROW_CLASS,
-              "text-muted-foreground hover:bg-muted/70 hover:text-foreground",
-            )}
-            onClick={() => setShowAll(!showAll)}
-            type="button"
-          >
-            <span aria-hidden="true" className={PATH_ROW_LEADING_CLASS}>
-              {showAll ? <MinusIcon className="size-3.5" /> : <PlusIcon className="size-3.5" />}
-            </span>
-            {showAll
-              ? t("Show fewer chapters")
-              : t("{count, plural, one {# more chapter} other {# more chapters}}", {
-                  count: hidden,
-                })}
-          </button>
+          <FoldRow
+            controls={listId}
+            done={false}
+            label={showMoreLabel}
+            onToggle={() => setShowAll((open) => !open)}
+            open={showAll}
+          />
         </li>
       )}
 
-      {checkpoint && (
+      {checkpoint && links && (
         <li>
           <CheckpointRow checkpoint={checkpoint} links={links} />
         </li>
       )}
-
-      <li className="empty:hidden">
-        <WritingAheadLine chapters={chapters} />
-      </li>
     </ul>
   );
 }

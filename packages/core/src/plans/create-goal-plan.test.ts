@@ -563,12 +563,12 @@ describe(createGoalPlan, () => {
       items.filter((item) => item.lessonId !== finished.id).map((item) => item.status),
     ).toStrictEqual(["todo", "todo"]);
 
-    // What the reveal reads: the lesson checked on today, and counted as done.
+    // What the plan reads: the lesson checked on today, and counted as done.
     const result = await getGoalPlan(goal.id);
     const read = result.status === "ready" ? result.plan : null;
-    const days = result.status === "ready" ? result.nextDays : [];
+    const today = read?.week.days.find((day) => day.state === "today");
 
-    expect(days[0]?.items.find((item) => item.lessonId === finished.id)).toMatchObject({
+    expect(today?.items.find((item) => item.lessonId === finished.id)).toMatchObject({
       status: "done",
     });
 
@@ -748,7 +748,7 @@ describe(getGoalPlan, () => {
     expect(plan?.feasibility).not.toHaveProperty("alternative");
   });
 
-  it("lists today and the six days after it, even on a Sunday, the last day of its week", async () => {
+  it("ends the week on Sunday when read on a Sunday", async () => {
     vi.setSystemTime(new Date("2020-10-04T12:00:00Z"));
     const { goal, library } = await setup({ day: "2020-10-04" });
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
@@ -756,21 +756,7 @@ describe(getGoalPlan, () => {
     const result = await getGoalPlan(goal.id);
     const plan = result.status === "ready" ? result.plan : null;
 
-    expect(plan?.week.days.at(-1)?.date).toBe("2020-10-04");
-
-    const days = result.status === "ready" ? result.nextDays : [];
-
-    expect(days.map((day) => [day.date, day.state])).toStrictEqual([
-      ["2020-10-04", "today"],
-      ["2020-10-05", "upcoming"],
-      ["2020-10-06", "upcoming"],
-      ["2020-10-07", "upcoming"],
-      ["2020-10-08", "upcoming"],
-      ["2020-10-09", "upcoming"],
-      ["2020-10-10", "upcoming"],
-    ]);
-
-    expect(days[0]?.items.map((item) => item.kind)).toStrictEqual(["lesson", "lesson", "lesson"]);
+    expect(plan?.week.days.at(-1)).toMatchObject({ date: "2020-10-04", state: "today" });
   });
 
   it("reads the plan at the pace it was saved with, however others' lessons went since", async () => {

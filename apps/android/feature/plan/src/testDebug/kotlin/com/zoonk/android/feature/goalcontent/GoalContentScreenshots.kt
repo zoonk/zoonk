@@ -43,6 +43,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
@@ -129,7 +130,7 @@ class GoalContentScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 
@@ -140,7 +141,7 @@ class GoalContentScreenshots {
         /** What each screen's opened shot taps first. */
         val OPENED =
             mapOf(
-                "subject-exam" to listOf("1 chapter done, 1 skipped because you already know it", "1 Mechanics"),
+                "subject-exam" to listOf("1 chapter done, 1 skipped because you already know it", "1. Mechanics"),
                 "chapter" to listOf("Chapter summary"),
             )
 
@@ -165,7 +166,7 @@ class GoalContentScreenshots {
             val app = remember { AppContainer.preview(context) }
             val navigator = rememberAppNavigator()
             return Pair(
-                { ReportProblemMenu(app, FeedbackTarget(screen = "screenshots"), inPage = true) },
+                { ReportProblemMenu(app, FeedbackTarget(screen = "screenshots")) },
                 { AskTutor(scope, app, navigator, appearance = it) },
             )
         }
@@ -209,6 +210,24 @@ class GoalContentScreenshots {
 
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
             listOf(
+                "calls-known-phase" to {
+                    val syllabus = examSyllabus()
+                    PlanSyllabusSection(syllabus.copy(subjects = listOf(syllabus.subjects.first().copy(notPlannedReason = "known"))), {})
+                },
+                "calls-topic-reasons" to {
+                    val syllabus = examSyllabus()
+                    val subject = syllabus.subjects.first { it.topics.isNotEmpty() }
+                    val topics =
+                        listOf("pastBasics", "skippedBase", "skipped", "time", "missing", "known").map { reason ->
+                            subject.topics.first().copy(
+                                name = reason,
+                                status = com.zoonk.api.models.SyllabusTopic.Status.NOT_PLANNED,
+                                notPlannedReason = reason,
+                                chapters = emptyList(),
+                            )
+                        }
+                    SubjectPage(syllabus, subject.copy(topics = topics), SubjectWrites(), NO_ACTIONS, TODAY, {}, {})
+                },
                 "subject-exam" to { Subject("natural-sciences") },
                 "subject-skipped" to { Subject("spanish") },
                 "subject-written" to { Subject("essay") },

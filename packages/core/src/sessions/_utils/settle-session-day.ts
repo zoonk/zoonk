@@ -86,7 +86,7 @@ async function completeIfFinished({
         throw new SessionCompletionUnchangedError("open");
       }
 
-      const refit = await refitSessionLessons(tx, { sessionId: session.id, timeZone });
+      const refit = await refitSessionLessons(tx, { sessionId: session.id });
 
       if (refit.reserved) {
         return null;

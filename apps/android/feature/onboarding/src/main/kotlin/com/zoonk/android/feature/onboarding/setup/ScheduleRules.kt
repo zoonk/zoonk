@@ -6,6 +6,7 @@ import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.TimeLine
 import com.zoonk.android.feature.plan.isBusy
 import com.zoonk.android.feature.plan.suggestedMinutes
+import com.zoonk.android.ui.components.missingDays
 import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
@@ -30,7 +31,7 @@ internal data class ScheduleChoice(
     val picked: Int? = null,
     val fullCourse: Boolean = false,
 ) {
-    val weekend: Int? get() = weekendPicked.takeIf { weekendOn && days.any(::isWeekend) }
+    val weekend: Int? get() = weekendPicked.takeIf { weekendOn && missingDays(days) == null }
 }
 
 internal data class StudyWeek(

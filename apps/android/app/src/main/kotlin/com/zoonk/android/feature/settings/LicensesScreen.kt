@@ -42,6 +42,8 @@ import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageListMargin
+import com.zoonk.android.ui.scaffold.pageMargin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -52,17 +54,22 @@ fun LicensesScreen(navigator: AppNavigator) {
     val libraries by produceState<List<Library>?>(null) { value = withContext(Dispatchers.IO) { readLibraries(context) } }
     var openId by rememberSaveable { mutableStateOf<String?>(null) }
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_licenses)) }) { padding ->
+    PageScaffold(onBack = {
+        navigator.back()
+    }, title = { Text(stringResource(R.string.settings_licenses)) }, columnWidth = COLUMN_WIDTH) { padding ->
         val list = libraries
         if (list == null) {
             PageLoading(Modifier.padding(padding))
         } else {
             LazyColumn(Modifier.fillMaxSize(), contentPadding = padding, horizontalAlignment = Alignment.CenterHorizontally) {
                 item(contentType = "title") {
-                    PageTitleRow(stringResource(R.string.settings_licenses), Modifier.widthIn(max = 640.dp).padding(16.dp))
+                    PageTitleRow(
+                        stringResource(R.string.settings_licenses),
+                        Modifier.widthIn(max = COLUMN_WIDTH).padding(horizontal = pageMargin(), vertical = 16.dp),
+                    )
                 }
                 itemsIndexed(list, key = { _, library -> library.uniqueId }) { index, library ->
-                    Column(Modifier.widthIn(max = 640.dp)) {
+                    Column(Modifier.widthIn(max = COLUMN_WIDTH).padding(horizontal = pageListMargin())) {
                         if (index > 0) ListDivider()
                         ListRow(
                             headline = { Text(library.name) },
@@ -133,3 +140,6 @@ private fun readLibraries(context: Context): List<Library> {
         .libraries
         .sortedBy { it.name.lowercase() }
 }
+
+/** The page's column, its margins included; its rows' words sit on the page's margin, as its way back does. */
+private val COLUMN_WIDTH = 640.dp

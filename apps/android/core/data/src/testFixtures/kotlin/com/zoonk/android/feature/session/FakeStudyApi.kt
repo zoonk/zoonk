@@ -11,6 +11,7 @@ import com.zoonk.api.models.StudyBlockOpening
 import com.zoonk.api.models.StudyBlockOpeningTarget
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionSummary
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import java.util.UUID
@@ -99,11 +100,18 @@ class FakeStudyApi : StudyApi {
         return decodeFixture("study-block", "id" to EXTRA_BLOCK.toString(), "extra" to true)
     }
 
+    /** What a catch-up throws once [catchUpGate] opens. */
+    var catchUpFailure: ApiException? = null
+    var catchUpGate: CompletableDeferred<Unit>? = null
+
     override suspend fun catchUp(
         session: AuthenticatedSession,
         sessionId: UUID,
         timeZone: String,
-    ) = Unit
+    ) {
+        catchUpGate?.await()
+        catchUpFailure?.let { throw it }
+    }
 
     suspend fun writeLesson(
         session: AuthenticatedSession,

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -93,10 +92,13 @@ import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
+import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
 import com.zoonk.android.feature.player.engine.asAnswered
+import com.zoonk.android.feature.player.engine.canSelfCorrect
+import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.round
@@ -115,13 +117,18 @@ import com.zoonk.android.feature.player.steps.FillsView
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.LocalAskSimpler
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
+import com.zoonk.android.feature.player.steps.LocalResultNotes
 import com.zoonk.android.feature.player.steps.LocalScreenWork
 import com.zoonk.android.feature.player.steps.LocalStepViewHeight
+import com.zoonk.android.feature.player.steps.LocalWordBankCheck
+import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
+import com.zoonk.android.feature.player.steps.offersDontKnow
+import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
@@ -129,18 +136,21 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.MoreButton
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.SecondaryButton
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskColumn
+import com.zoonk.android.ui.scaffold.BAR_GAP
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
@@ -152,7 +162,6 @@ import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.FinishedChapter
 import com.zoonk.api.models.LearnerSummaryBuddy
-import com.zoonk.api.models.StudyReminderOffer
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -240,7 +249,6 @@ fun LessonPlayer(
     certificatesMoment: CertificatesMoment? = null,
     finishedChapter: FinishedChapterSlot? = null,
     onReportSaveFailure: () -> Unit = {},
-    reminderOffer: (@Composable (StudyReminderOffer) -> Unit)? = null,
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -290,15 +298,13 @@ fun LessonPlayer(
                     val primary = screen.primary?.takeIf { it.enabled } ?: return
 
                     when {
-                        primary.label == PrimaryLabel.DontKnowYet -> screen.step?.let { dontKnow(it.id) }
+                        primary.reveals -> screen.step?.let { dontKnow(it.id) }
                         primary.isCheck -> viewModel.check()
                         else -> viewModel.dispatch(LessonAction.Continue)
                     }
                 }
 
                 override fun dontKnow(stepId: String) = viewModel.dispatch(LessonAction.DontKnow(stepId))
-
-                override fun skipWriting() = viewModel.skipWriting()
 
                 override fun explainFirst() = viewModel.dispatch(LessonAction.ExplainFirst)
 
@@ -370,8 +376,12 @@ fun LessonPlayer(
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     // Escape leaves as back does, so leaving with an unsent answer asks first.
     val leave = { backDispatcher?.onBackPressed() ?: exits.close() }
+    val missing = (state?.run as? LessonRun.Refused)?.refusal == LessonRefusal.NotFound
 
-    SpreadScreen(result = state?.phase == LessonPhase.Completed && state.run !is LessonRun.Refused) {
+    SpreadScreen(
+        result = state?.phase == LessonPhase.Completed && state.run !is LessonRun.Refused,
+        spreads = state?.run !is LessonRun.Refused,
+    ) {
         TaskScaffold(
             onClose = exits::close,
             modifier =
@@ -393,10 +403,12 @@ fun LessonPlayer(
                                 }
                             }
                     },
-            title = { LessonTitle(lesson.title) },
+            // A lesson that isn't there has no name or options to show, only the way out; a host's own end
+            // heads the screen with the lesson's name itself (main's `completionTitled`).
+            title = { if (!missing && ownEnd == null) LessonTitle(lesson.title) },
             actions = {
                 if (viewModel.hasUnsent) UnsavedAnswers()
-                ScreenMenu(state, screen, viewModel)
+                if (!missing) ScreenMenu(state, screen, viewModel)
             },
             exitConfirmation =
                 if (unsent) {
@@ -411,6 +423,10 @@ fun LessonPlayer(
                 },
             bottomBar =
                 when {
+                    state?.run is LessonRun.Refused -> {
+                        lessonAccessBar((state.run as LessonRun.Refused).refusal, viewModel::retryStart, exits)
+                    }
+
                     state == null || screen == null -> {
                         null
                     }
@@ -430,21 +446,27 @@ fun LessonPlayer(
                                 ActionBar(
                                     screen,
                                     actions,
+                                    offersDontKnow(screen, state),
                                     language.prompt,
                                     primaryFocus,
                                     onBack = { viewModel.dispatch(LessonAction.GoBack) },
                                 ) {
                                     // A screen that already offers help keeps the ask quiet.
-                                    tutor?.askButton?.invoke(
-                                        state.tutorScope(screen),
-                                        state.showsMiss(screen) && screen.struggleOffer == null,
-                                        asking && (spread || !askedOnSpread),
-                                        tutor.suggestions.firstOrNull { it.id == offerId }?.let { TutorOffer(it, offerAsked) },
-                                        {
-                                            offerId = null
-                                            offerAsked = false
-                                        },
-                                    ) { open -> if (open) ask(spread) else asking = false }
+                                    tutor
+                                        ?.takeUnless {
+                                            screen.step?.content is StepContent.Explanation &&
+                                                ((spread && help != null) || (!language.languages.isLanguageLesson && askSimpler != null))
+                                        }?.askButton
+                                        ?.invoke(
+                                            state.tutorScope(screen),
+                                            state.showsMiss(screen) && screen.struggleOffer == null,
+                                            asking && (spread || !askedOnSpread),
+                                            tutor.suggestions.firstOrNull { it.id == offerId }?.let { TutorOffer(it, offerAsked) },
+                                            {
+                                                offerId = null
+                                                offerAsked = false
+                                            },
+                                        ) { open -> if (open) ask(spread) else asking = false }
                                 }
                             }
                         }
@@ -459,7 +481,7 @@ fun LessonPlayer(
                 if (state == null || screen == null) {
                     PageLoading()
                 } else {
-                    Segments(screen.segments, state)
+                    if (screen.showProgress) Segments(screen.segments, state)
                     val spread = spreadShows()
                     CompositionLocalProvider(
                         LocalPrimaryFocus provides primaryFocus,
@@ -479,7 +501,6 @@ fun LessonPlayer(
                             ceremony,
                             certificatesMoment,
                             finishedChapter,
-                            reminderOffer,
                             offer,
                             help,
                             touches,
@@ -553,6 +574,7 @@ private fun Segments(
     segments: List<TaskSegment>,
     state: LessonPlayerState,
 ) {
+    if ((state.run as? LessonRun.Refused)?.refusal == LessonRefusal.NotFound) return
     val label = stringResource(R.string.player_progress)
     val done = segments.count { it != TaskSegment.Ahead && it != TaskSegment.Current }
     var span by remember { mutableStateOf<PageSpan?>(null) }
@@ -591,7 +613,6 @@ private fun Content(
     ceremony: MomentCeremony?,
     certificatesMoment: CertificatesMoment?,
     finishedChapter: FinishedChapterSlot?,
-    reminderOffer: (@Composable (StudyReminderOffer) -> Unit)?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
     help: (@Composable (simplerOnScreen: Boolean) -> Unit)?,
     touches: IntState,
@@ -603,7 +624,7 @@ private fun Content(
     when {
         run is LessonRun.Refused -> {
             Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                LessonAccessScreen(run.refusal, onRetry = viewModel::retryStart, exits = exits)
+                LessonAccessScreen(run.refusal, onRetry = viewModel::retryStart)
             }
         }
 
@@ -611,7 +632,7 @@ private fun Content(
             val result = state.completion?.result
             MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
                 if (ownEnd == null) {
-                    LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure, reminderOffer)
+                    LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure)
                 } else {
                     ownEnd.body(state)
                 }
@@ -688,7 +709,18 @@ private fun Content(
                         align = if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
                     ) {
                         Notice(state, screen, viewModel, part)
-                        CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null) {
+                        val result = @Composable {
+                            Result(state, screen, if (fold == null) scroll else turnScroll, reveal, viewModel, exits, offer)
+                        }
+                        // A word bank places what a check adds itself, so it holds still; everywhere else it follows the screen.
+                        val inBank = step.canSelfCorrect
+                        val checked = state.results[step.id]?.takeIf { state.phase == LessonPhase.Feedback && notesInOwnCard(step) }
+                        CompositionLocalProvider(
+                            LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null,
+                            LocalWordBankCheck provides if (inBank) ({ CheckAdded(state, result) }) else null,
+                            LocalResultNotes provides
+                                checked?.let { { LessonResultNotes(resultNext(state, step.id, it), screen.hyperdriveStreak) } },
+                        ) {
                             work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
                         }
                         // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause;
@@ -698,7 +730,7 @@ private fun Content(
                         } else if (offer != null && screen.quickCheck == null && language.languages.isLanguageLesson) {
                             StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
                         }
-                        Result(state, screen, if (fold == null) scroll else turnScroll, reveal, viewModel, exits, offer)
+                        if (!inBank) result()
                         if (fold == null) recap()
                     }
 
@@ -753,13 +785,11 @@ private fun Notice(
     part: StepPart,
 ) {
     val quickCheck = screen.quickCheck
-    // Asking to fix a wrong answer is part of the learner's turn, beside the answer.
-    val shown = if (quickCheck == null && state.notice == LessonNotice.SelfCorrect) part.showsTurn else part.showsScreen
 
-    if (!shown) return
+    if (!part.showsScreen) return
 
     if (quickCheck != null) {
-        LabelChip(
+        Eyebrow(
             text = stringResource(R.string.player_quick_check, count(quickCheck.first + 1), count(quickCheck.second)),
             icon = R.drawable.ic_bolt,
         )
@@ -768,13 +798,29 @@ private fun Notice(
 
     val (icon, text) =
         when (state.notice) {
-            LessonNotice.SelfCorrect -> R.drawable.ic_edit to R.string.player_notice_self_correct
+            // Drawn with what the check adds ([CheckAdded]), so nothing above the answer moves.
+            LessonNotice.SelfCorrect, null -> return
+
             LessonNotice.AnswerNotSaved -> R.drawable.ic_cloud_off to R.string.player_notice_answer_not_saved
+
             LessonNotice.PictureReady -> R.drawable.ic_image to R.string.player_notice_picture_ready
+
             LessonNotice.WritingSkipped -> R.drawable.ic_edit_off to R.string.player_notice_writing_skipped
-            null -> return
         }
 
+    NoticeLine(icon, text) {
+        if (state.notice == LessonNotice.WritingSkipped && state.writingRestore != null && state.phase == LessonPhase.Playing) {
+            TextButton(onClick = viewModel::restoreWriting) { Text(stringResource(R.string.player_write_again)) }
+        }
+    }
+}
+
+@Composable
+private fun NoticeLine(
+    icon: Int,
+    text: Int,
+    trailing: @Composable () -> Unit = {},
+) {
     Row(
         modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -787,9 +833,19 @@ private fun Notice(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        if (state.notice == LessonNotice.WritingSkipped && state.writingRestore != null && state.phase == LessonPhase.Playing) {
-            TextButton(onClick = viewModel::restoreWriting) { Text(stringResource(R.string.player_write_again)) }
-        }
+        trailing()
+    }
+}
+
+/** What a check adds to a word bank's screen: "fix it yourself", its feedback, or both on a screen revisited. */
+@Composable
+private fun CheckAdded(
+    state: LessonPlayerState,
+    result: @Composable () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (state.notice == LessonNotice.SelfCorrect) NoticeLine(R.drawable.ic_edit, R.string.player_notice_self_correct)
+        result()
     }
 }
 
@@ -808,11 +864,7 @@ private fun Result(
 
     if (state.phase != LessonPhase.Feedback) return
 
-    val next =
-        ResultNext(
-            savedMistake = result.savedMistake && !result.isCorrect,
-            willReturn = !result.isCorrect && state.queue.drop(state.position + 1).contains(step.id),
-        )
+    val next = resultNext(state, step.id, result)
 
     val margin = with(LocalDensity.current) { REVEAL_MARGIN.toPx() }
 
@@ -826,7 +878,7 @@ private fun Result(
 
     Column(Modifier.revealPart(reveal, RevealPart.Result), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (showsOwnResult(step)) {
-            LessonResultNotes(next, screen.hyperdriveStreak)
+            if (!notesInOwnCard(step)) LessonResultNotes(next, screen.hyperdriveStreak)
         } else {
             val explanations by viewModel.explanations.collectAsStateWithLifecycle()
             LessonStepResultView(step.asAnswered(state.answers[step.id]), result, next, screen.hyperdriveStreak) {
@@ -834,7 +886,7 @@ private fun Result(
                     explanation = explanations[step.id],
                     onExplain = viewModel::explainAnswer,
                     onCreateAccount = { exits.open(AppRoute.Login) },
-                    onSeePlus = { exits.open(AppRoute.Subscription) },
+                    onSubscribe = { exits.open(AppRoute.Subscription) },
                 )
             }
         }
@@ -857,6 +909,7 @@ private suspend fun PointerInputScope.countTouches(touches: MutableIntState) {
 private fun ActionBar(
     screen: LessonScreen,
     actions: StepActions,
+    dontKnow: Boolean,
     prompt: PromptAudio?,
     primaryFocus: FocusRequester,
     onBack: () -> Unit,
@@ -877,51 +930,43 @@ private fun ActionBar(
             null
         }
 
-    TaskActions(back) { width ->
-        if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
-        val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
-        val iconId = primary.label.icon()
-        val icon: @Composable () -> Unit = { ButtonIcon(iconId) }
-        val forward = iconId == R.drawable.ic_arrow_forward
-        if (primary.label == PrimaryLabel.DontKnowYet) {
-            SecondaryButton(
-                onClick = actions::runPrimary,
-                enabled = primary.enabled,
-                busy = primary.busy,
-                modifier = width.focusRequester(primaryFocus),
-                leadingIcon = icon,
-                content = label,
-            )
-        } else {
+    val step = screen.step
+    val records = primary.label == PrimaryLabel.Check && !primary.busy && recordsInBar(step, actions)
+
+    val dontKnowAbove = dontKnow && back != null && !isWideLayout()
+    val giveUp: @Composable (Modifier) -> Unit = { modifier ->
+        OutlinedButton(
+            onClick = { step?.let { actions.dontKnow(it.id) } },
+            modifier = modifier,
+            leadingIcon = { ButtonIcon(R.drawable.ic_help) },
+        ) { Text(stringResource(R.string.player_dont_know_yet)) }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(BAR_GAP)) {
+        if (dontKnowAbove) giveUp(Modifier.fillMaxWidth())
+        TaskActions(back) { width ->
+            if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
+            if (dontKnow && !dontKnowAbove) giveUp(Modifier)
+            ask()
+            if (records && step != null) {
+                SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
+                return@TaskActions
+            }
             Button(
                 busy = primary.busy,
                 onClick = actions::runPrimary,
                 modifier = width.focusRequester(primaryFocus),
                 enabled = primary.enabled,
-                leadingIcon = icon.takeUnless { forward },
-                trailingIcon = icon.takeIf { forward },
-                content = label,
-            )
+            ) { Text(stringResource(primary.label.text())) }
         }
-        ask()
     }
 }
-
-private fun PrimaryLabel.icon(): Int =
-    when (this) {
-        PrimaryLabel.Check, PrimaryLabel.Confirm -> R.drawable.ic_check
-        PrimaryLabel.Continue, PrimaryLabel.Next, PrimaryLabel.NextStep, PrimaryLabel.SeeHowItWent -> R.drawable.ic_arrow_forward
-        PrimaryLabel.DontKnowYet -> R.drawable.ic_help
-        PrimaryLabel.SeeAnswer -> R.drawable.ic_visibility
-        PrimaryLabel.Start -> R.drawable.ic_play_arrow
-    }
 
 private fun PrimaryLabel.text(): Int =
     when (this) {
         PrimaryLabel.Check -> R.string.player_action_check
         PrimaryLabel.Confirm -> R.string.player_action_confirm
         PrimaryLabel.Continue -> R.string.player_action_continue
-        PrimaryLabel.DontKnowYet -> R.string.player_dont_know_yet
         PrimaryLabel.Next -> R.string.player_action_next
         PrimaryLabel.NextStep -> R.string.player_action_next_step
         PrimaryLabel.SeeAnswer -> R.string.player_action_see_answer
@@ -966,9 +1011,7 @@ private fun ScreenMenu(
     if (screen?.step == null && !isDone) return
 
     Box {
-        IconButton(onClick = { open = true }) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.player_screen_options))
-        }
+        MoreButton(onClick = { open = true }, contentDescription = stringResource(R.string.player_screen_options))
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.player_ai_note), style = MaterialTheme.typography.bodySmall) },
@@ -977,6 +1020,17 @@ private fun ScreenMenu(
                 leadingIcon = { Icon(painterResource(R.drawable.ic_auto_awesome), contentDescription = null) },
             )
             HorizontalDivider()
+            val typed = screen?.step?.content as? StepContent.TypedAnswer
+            if (typed != null && state?.phase == LessonPhase.Playing && !isNumberAnswer(typed.content.acceptedAnswers)) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.player_cant_write_now)) },
+                    onClick = {
+                        open = false
+                        viewModel.skipWriting()
+                    },
+                    leadingIcon = { Icon(painterResource(R.drawable.ic_edit_off), contentDescription = null) },
+                )
+            }
             if (screen?.canKnowThis == true) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.player_know_this)) },

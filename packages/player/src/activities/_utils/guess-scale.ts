@@ -1,3 +1,4 @@
+import { roundForDisplay } from "@zoonk/learn/format-number";
 import { niceTicks } from "@zoonk/utils/plot-scale";
 import { clamp } from "./snap-value";
 
@@ -36,11 +37,11 @@ export function roundGuess(value: number): number {
   return value === 0 ? 0 : Number(value.toPrecision(GUESS_DIGITS));
 }
 
-export function scaleTicks({ max, min, scale }: GuessScale): number[] {
+export function scaleTicks({ max, min, scale }: GuessScale, count = LINEAR_TICKS): number[] {
   if (scale === "linear") {
     const room = (max - min) * END_ROOM;
 
-    const inside = niceTicks([min, max], LINEAR_TICKS).filter(
+    const inside = niceTicks([min, max], count).filter(
       (tick) => tick - min > room && max - tick > room,
     );
 
@@ -54,9 +55,11 @@ export function scaleTicks({ max, min, scale }: GuessScale): number[] {
     (_, index) => 10 ** (from + index),
   );
 
-  const every = Math.ceil(powers.length / MAX_LOG_TICKS);
+  const every = Math.ceil(powers.length / (count === LINEAR_TICKS ? MAX_LOG_TICKS : count));
 
-  return powers.length < 2 ? [min, max] : powers.filter((_, index) => index % every === 0);
+  const inside = powers.filter((tick, index) => tick > min && tick < max && index % every === 0);
+
+  return [min, ...inside, max];
 }
 
 type GuessComparison =
@@ -69,26 +72,28 @@ export function compareGuess({
   actual,
   guess,
   isCorrect,
+  unit,
 }: {
   actual: number;
   guess: number;
   isCorrect: boolean;
+  unit?: string;
 }): GuessComparison {
   if (isCorrect) {
     return { kind: "close" };
   }
 
-  if (guess <= 0 || actual <= 0) {
-    return { difference: guess - actual, kind: "off" };
-  }
-
   const ratio = guess / actual;
 
-  if (ratio >= RATIO_COMPARISON_MIN) {
-    return { kind: "tooBig", times: roundGuess(ratio) };
+  if (guess > 0 && actual > 0) {
+    if (ratio >= RATIO_COMPARISON_MIN) {
+      return { kind: "tooBig", times: roundGuess(ratio) };
+    }
+
+    if (ratio <= 1 / RATIO_COMPARISON_MIN) {
+      return { kind: "tooSmall", times: roundGuess(1 / ratio) };
+    }
   }
 
-  return ratio <= 1 / RATIO_COMPARISON_MIN
-    ? { kind: "tooSmall", times: roundGuess(1 / ratio) }
-    : { difference: guess - actual, kind: "off" };
+  return { difference: roundForDisplay(guess, unit) - roundForDisplay(actual, unit), kind: "off" };
 }

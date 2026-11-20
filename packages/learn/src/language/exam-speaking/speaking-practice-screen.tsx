@@ -3,22 +3,21 @@
 import { type SpeakingPaperView } from "@zoonk/core/language/exam-speaking/contract";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
+import { MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../../_components/detail-page";
-import { KindDot } from "../../_components/kind-tile";
 import {
   ListRowBody,
   ListRowContent,
   ListRowDescription,
+  ListRowIcon,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
-  ListRowTrailing,
 } from "../../_components/list-group";
-import { PageEyebrow } from "../../_components/page";
-import { PlusMark } from "../../_components/plus-lock";
 import { LearnPageBar } from "../../shell/learn-bar";
-import { type ExamTaskStart, SpeakingPaperSection } from "./speaking-paper-section";
+import { type CallStartOutcome } from "../conversation/use-call-start";
+import { SpeakingPaperSection } from "./speaking-paper-section";
 import { useTaskMinutes } from "./speaking-task-row";
 
 export function SpeakingPracticeRow({
@@ -33,7 +32,9 @@ export function SpeakingPracticeRow({
   return (
     <ListRowLink href={href}>
       <ListRowLeading>
-        <KindDot kind="conversation" />
+        <ListRowIcon>
+          <MicIcon />
+        </ListRowIcon>
       </ListRowLeading>
       <ListRowBody>
         <ListRowContent>
@@ -42,11 +43,6 @@ export function SpeakingPracticeRow({
             {t("{exam} tasks on a call", { exam: entry.title })}
           </ListRowDescription>
         </ListRowContent>
-        {entry.access === "plusRequired" && (
-          <ListRowTrailing className="font-sans">
-            <PlusMark />
-          </ListRowTrailing>
-        )}
       </ListRowBody>
     </ListRowLink>
   );
@@ -60,7 +56,7 @@ export function SpeakingPracticeScreen({
   resultHref,
 }: {
   backHref: string;
-  onStart: (task: string) => Promise<ExamTaskStart>;
+  onStart: (task: string) => Promise<CallStartOutcome>;
   openTask: string | null;
   paper: SpeakingPaperView;
   resultHref: (conversationId: string) => string;
@@ -70,13 +66,17 @@ export function SpeakingPracticeScreen({
 
   return (
     <div className="flex flex-col gap-8">
-      <LearnPageBar back={{ href: backHref }} root title={t("Speaking practice")} />
+      <LearnPageBar
+        back={{ href: backHref }}
+        listed="learner"
+        root
+        title={t("Speaking practice")}
+      />
 
       <DetailLayout>
         <DetailAside>
           <DetailHero>
             <DetailHeroText>
-              <PageEyebrow>{t("Exam-style speaking")}</PageEyebrow>
               <DetailTitle>{paper.title}</DetailTitle>
               <DetailFacts>
                 {t("{count, plural, one {# task} other {# tasks}} · {minutes} in the exam", {
@@ -86,13 +86,6 @@ export function SpeakingPracticeScreen({
               </DetailFacts>
             </DetailHeroText>
           </DetailHero>
-
-          <p className="text-muted-foreground max-w-column text-sm text-pretty">
-            {t(
-              "{exam} is an official exam. Practice its speaking tasks whether or not you plan to take it.",
-              { exam: paper.title },
-            )}
-          </p>
         </DetailAside>
 
         <DetailContent>

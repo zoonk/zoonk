@@ -1,8 +1,10 @@
 package com.zoonk.android.ui.characters
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import com.zoonk.android.ui.components.color
 
 typealias BuddyActorState = ActorState<BuddyExpression, BuddyAct>
@@ -24,6 +26,28 @@ fun Buddy(
     label: String? = null,
 ) {
     CharacterStill(rememberBuddyDrawing(look, crop), expression, label, modifier)
+}
+
+/**
+ * Main's `fit="ink"`: the whole buddy framed by its drawn outline, at the scale a body [height] tall
+ * draws it, so short and tall buddies stand at their own heights with nothing floating in its box.
+ */
+@Composable
+fun StandingBuddy(
+    look: BuddyLook,
+    height: Dp,
+    modifier: Modifier = Modifier,
+    expression: BuddyExpression = look.everydayExpression,
+    reaction: ActReaction<BuddyAct>? = null,
+    label: String? = null,
+) {
+    val ink = look.bodyInk
+    val frame = modifier.size(height * (ink.width / BODY_BOX_HEIGHT), height * (ink.height / BODY_BOX_HEIGHT))
+    if (reaction == null) {
+        Buddy(look, frame, expression, crop = BuddyCrop.Ink, label = label)
+    } else {
+        BuddyActor(look, frame, expression, crop = BuddyCrop.Ink, reaction = reaction, label = label)
+    }
 }
 
 /**

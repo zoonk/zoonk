@@ -1,16 +1,28 @@
 package com.zoonk.android.feature.plan
 
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 
 /**
- * Main's `getTimeToCoverRevision`: what the time found depends on. The plan's id is in it, since
- * another goal's plan can look the same and need another time; refreshes that change none of these
- * keep the answer.
+ * The inputs shared by time-to-cover searches and prerequisites advice, matching Main's
+ * `getPlanAdviceRevision` and Apple's `PlanInputs`. The planning day and steering's studied lessons
+ * change what work is left; refreshes that change none of these inputs keep the answers.
  */
-fun timeToCoverRevision(plan: Plan): List<Any?> =
-    listOf(plan.planId, plan.schedule, plan.feasibility, plan.steering, plan.areas, plan.bases, plan.examChoices)
+fun planAdviceRevision(plan: Plan): List<Any?> =
+    listOf(
+        plan.week.days
+            .firstOrNull { it.state == PlanDay.State.TODAY }
+            ?.date ?: plan.week.startDate,
+        plan.planId,
+        plan.schedule,
+        plan.feasibility,
+        plan.steering,
+        plan.areas,
+        plan.bases,
+        plan.examChoices,
+    )
 
 /** The search for the time that covers everything, for the plan revision it was asked of. */
 sealed interface TimeToCoverState {
@@ -46,7 +58,7 @@ private val TimeToCoverState.revision: List<Any?>?
         }
 
 /** Idle for any plan but the one it was asked of, so a re-planned page never shows a stale answer. */
-fun TimeToCoverState.forPlan(plan: Plan): TimeToCoverState = takeIf { revision == timeToCoverRevision(plan) } ?: TimeToCoverState.Idle
+fun TimeToCoverState.forPlan(plan: Plan): TimeToCoverState = takeIf { revision == planAdviceRevision(plan) } ?: TimeToCoverState.Idle
 
 /** What a search came to; [Stale] when the plan changed while it ran. */
 sealed interface TimeToCoverOutcome {

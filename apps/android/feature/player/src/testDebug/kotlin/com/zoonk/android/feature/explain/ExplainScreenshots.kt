@@ -23,6 +23,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.player.COMPLETION
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.checkStep
@@ -33,9 +34,11 @@ import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Explanation
@@ -200,7 +203,12 @@ class ExplainScreenshots {
                 "outline" to
                     { ExplainWaiting(explanation(outline = OUTLINE), viewModel, rememberAppNavigator(), readAgain = {}, onStart = {}) },
                 "written" to { ExplainWaiting(written, viewModel, rememberAppNavigator(), readAgain = {}, onStart = {}) },
-                "ending" to { SpreadScreen(result = true) { ExplainEnding(written, completed(), rememberAppNavigator(), readAgain = {}) } },
+                "ending" to
+                    {
+                        SpreadScreen(result = true) {
+                            ExplainEnding(written, completed(), MomentBuddy(BuddyLook(), "Zu"), rememberAppNavigator(), readAgain = {})
+                        }
+                    },
             )
         var index by mutableIntStateOf(0)
 
@@ -225,7 +233,7 @@ class ExplainScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 }

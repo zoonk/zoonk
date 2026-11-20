@@ -3,6 +3,7 @@ import {
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
+import { getActivityRoundedAnswer } from "./activity-answers";
 import { getActivityExpected } from "./activity-expected";
 import { activityExpectedSchema } from "./activity-expected-answer";
 import { activityContentSchema, getActivityTemplate } from "./activity-templates";
@@ -34,6 +35,23 @@ describe(getActivityExpected, () => {
       value: 5,
     });
   });
+
+  it.each([
+    { answer: 251.54, displayed: 252, tolerance: 0.05 },
+    { answer: 0.1667, displayed: 0.17, tolerance: 0.005 },
+    { answer: -25.5, displayed: -26, tolerance: 0.05 },
+  ])(
+    "keeps $answer exact, with $displayed only as its rounded answer",
+    ({ answer, displayed, tolerance }) => {
+      const content = activityContentSchema.parse({
+        ...numberLine,
+        check: { ...numberLine.check, answer, tolerance: { kind: "absolute", value: tolerance } },
+      });
+
+      expect(getActivityExpected(content)).toStrictEqual({ kind: "numeric", value: answer });
+      expect(getActivityRoundedAnswer(content)?.value).toBe(displayed);
+    },
+  );
 
   it("uses the correct option for choice checks", () => {
     const content = activityContentSchema.parse({

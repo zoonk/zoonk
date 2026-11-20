@@ -362,8 +362,9 @@ struct PracticeBlockCheckpoint: Hashable, Sendable, Decodable {
 }
 
 struct PracticeBlock: Hashable, Sendable, Decodable {
-  enum Kind: String, Decodable, Sendable { case checkpoint, learn, practice, produce, review }
+  typealias Kind = StudyBlock.Kind
 
+  let areas: [String]
   let capsules: [PracticeCapsule]
   let checkpoint: PracticeBlockCheckpoint?
   let estimatedMinutes: Int
@@ -373,10 +374,24 @@ struct PracticeBlock: Hashable, Sendable, Decodable {
   let kind: Kind
   let mistakesOnly: Bool
   let netScored: Bool
+  let questions: Int
   let status: Status
   let title: String?
+  let topics: [String]
 
   enum Status: String, Decodable, Sendable { case active, completed, pending, skipped }
+}
+
+extension PracticeBlock: NamedBlock {
+  var challenge: BlockChallenge? {
+    checkpoint.map {
+      BlockChallenge(mock: $0.mock, rematch: $0.rematch, weekly: $0.kind == .weekly)
+    }
+  }
+
+  var hasCapsules: Bool {
+    kind == .review && !capsules.isEmpty
+  }
 }
 
 /// Questions never come with their answers.

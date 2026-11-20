@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -15,15 +16,13 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationFirstLesson
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
@@ -63,7 +62,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
     onRetry: (() -> Unit)? = null,
     next: PlanNext? = null,
     waitSurface: String = surface.value,
-    afterWait: (@Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit)? = null,
+    skip: (@Composable () -> Unit)? = null,
     progress: @Composable (Float) -> Unit,
 ) {
     val context = LocalSetupWait.current
@@ -76,7 +75,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
             .rememberGenerationProgress(kind, run)
     val shownProgress: @Composable () -> Unit = {
         progress(share)
-        first?.let { FirstLessonRow(it, run) }
+        first?.let { FirstLessonRow(it) }
     }
     val layout = LocalSetupLayout.current
     val aside: (@Composable () -> Unit)? =
@@ -111,6 +110,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
             }
         }
     TrackVisibleWait(waitSurface, "curriculum", context.goalId)
+    val firstReady = first?.ready == true && !context.planReady && context.onStartLesson != null
     SetupContent(aside = aside, reversed = canShowAside) {
         val beside = LocalWaitBeside.current && canShowAside
         WaitContent(
@@ -128,12 +128,12 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
             onRetry = onRetry,
             progress = shownProgress,
         )
-        afterWait?.invoke(this)
-        val firstReady = first?.ready == true && !context.planReady && context.onStartLesson != null
         val course = context.course?.takeIf { !context.planReady && first?.ready != true }
+        // A run that failed waits for nothing: its Try again is the way on, never the quiz. A lost connection still waits.
+        val failed = run.status == GenerationRun.Status.Failed && run.failure != GenerationFailure.Connection
         val actionsVisible =
-            hold.holding || firstReady || course != null ||
-                (quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
+            hold.holding || firstReady || course != null || skip != null ||
+                (!failed && quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
         PageActions(hold, visible = actionsVisible) {
             when {
                 hold.holding -> {
@@ -156,7 +156,6 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
                     Button(
                         onClick = context.onStartLesson,
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                     ) {
                         Text(stringResource(R.string.warm_up_start_first_lesson))
                     }
@@ -164,30 +163,17 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
 
                 else -> {
                     if (course != null && context.onOpenCourse != null) LibraryCourseOffer(course, context.onOpenCourse)
-                    WaitQuizAction(quiz, hold, beside)
+                    if (!failed) WaitQuizAction(quiz, hold, beside)
                 }
             }
+            if (!hold.holding) skip?.invoke()
         }
     }
 }
 
 @Composable
-internal fun FirstLessonRow(
-    lesson: GenerationFirstLesson,
-    run: GenerationRun,
-) {
-    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    val started = run.stepTimes["writeFirstLesson"]?.started
-    val finished = run.stepTimes["firstLessonReady"]?.completed
+private fun FirstLessonRow(lesson: GenerationFirstLesson) {
     val settled = lesson.ready || lesson.done
-    LaunchedEffect(settled, lesson.stopped, started) {
-        if (started != null && !settled && !lesson.stopped) {
-            while (true) {
-                kotlinx.coroutines.delay(1_000)
-                now = System.currentTimeMillis()
-            }
-        }
-    }
     com.zoonk.android.ui.components.ListRow(
         headline = { Text(stringResource(R.string.warm_up_first_lesson)) },
         leading = {
@@ -214,18 +200,6 @@ internal fun FirstLessonRow(
                     },
                 ),
             )
-        },
-        meta = {
-            val elapsed =
-                started?.let { start ->
-                    finished?.minus(start) ?: run.clockOffsetMillis?.let { offset -> now - offset - start }
-                }
-            elapsed?.let {
-                Text(
-                    com.zoonk.android.ui.format
-                        .formatClock(it.coerceAtLeast(0)),
-                )
-            }
         },
     )
 }

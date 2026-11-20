@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -34,37 +33,35 @@ import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
 import java.util.UUID
 
 enum class UndoState { Idle, Pending, Done, Failed }
 
+/** The line over a result's bar when undoing didn't save. */
 @Composable
-internal fun UndoAction(
+internal fun UndoFailed(state: UndoState) {
+    if (state != UndoState.Failed) return
+    Text(
+        stringResource(R.string.practice_undo_failed),
+        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        color = MaterialTheme.colorScheme.error,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+}
+
+/** Undo, before the result's main action in its row. */
+@Composable
+internal fun UndoButton(
     state: UndoState,
     onUndo: () -> Unit,
 ) {
-    if (state == UndoState.Failed) {
-        Text(
-            stringResource(R.string.practice_undo_failed),
-            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
-    TaskActions { width ->
-        TextButton(
-            busy = state == UndoState.Pending,
-            onClick = onUndo,
-            modifier = width,
-            leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
-        ) {
-            Text(stringResource(R.string.practice_undo))
-        }
+    OutlinedButton(busy = state == UndoState.Pending, onClick = onUndo, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {
+        Text(stringResource(R.string.practice_undo))
     }
 }
 
@@ -174,7 +171,6 @@ internal fun ChoiceQuestionsRun(
                             modifier = width,
                             enabled = next != null,
                             focusableWhenDisabled = pending,
-                            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                         ) {
                             Text(
                                 stringResource(
@@ -202,7 +198,7 @@ internal fun ChoiceQuestionsRun(
                         text = hint(question)?.takeUnless { asideShown }.orEmpty(),
                         modifier = Modifier.weight(1f).alignByBaseline(),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium.copy(lineBreak = LineBreak.Paragraph),
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                     Text(
                         text = stringResource(R.string.practice_count, shown + 1, total),

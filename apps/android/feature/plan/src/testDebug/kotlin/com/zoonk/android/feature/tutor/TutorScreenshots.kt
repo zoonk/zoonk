@@ -12,6 +12,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -22,6 +24,7 @@ import com.zoonk.android.feature.plan.effect
 import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.TutorToolOffer
@@ -29,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.json.Json
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -38,6 +42,8 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 /**
@@ -78,6 +84,39 @@ class TutorScreenshots {
     @Config(qualifiers = "w411dp-h3800dp-night-xhdpi")
     fun planChangesDark() = capture("tutor-plan-changes-dark", dark = true, turns = planChangeTurns())
 
+    /** A free learner's messages used up over the last 30 days: the notice in place of the composer, with the day more come back. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun messagesUsed() = captureMessagesUsed("phone")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun messagesUsedTablet() = captureMessagesUsed("tablet")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun messagesUsedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureMessagesUsed("phone-font200")
+    }
+
+    private fun captureMessagesUsed(size: String) {
+        val opens = Instant.now().plus(9, ChronoUnit.DAYS)
+        val limit = """{"availableAt":"$opens","limit":30,"period":"rolling30Days","resource":"tutorMessage","tier":"free"}"""
+        capture(
+            "tutor-messages-used-$size",
+            dark = false,
+            turns = listOf(turn("t0", TutorTurn.Status.Completed, "Black holes bend light around them.", "What do black holes do?")),
+            refusal =
+                ApiException(
+                    ApiError.Unavailable,
+                    "USAGE_LIMIT_REACHED",
+                    status = 402,
+                    details = Json.parseToJsonElement("""{"limit":$limit}"""),
+                ),
+        )
+    }
+
     private fun planChangeTurns() =
         listOf(
             planChange(
@@ -108,7 +147,10 @@ class TutorScreenshots {
             planChange(operations = """[{"kind":"setDailyMinutes","minutes":40}]""", extra = """"todaySession":"changed""""),
             planChange(operations = """[{"kind":"setDailyMinutes","minutes":20}]""", status = "declined"),
             planChange(operations = """[{"kind":"setDailyMinutes","minutes":30}]""", status = "replaced"),
-        ).mapIndexed { index, change -> turn("c$index", TutorTurn.Status.Completed, "Here.").copy(planChange = change) }
+        ).mapIndexed { index, change ->
+            // Each change its own, as the server's are, so only the newest proposal is the one still asked.
+            turn("c$index", TutorTurn.Status.Completed, "Here.").copy(planChange = change.copy(id = java.util.UUID(0, index + 1L)))
+        }
 
     private fun capture(
         name: String,
@@ -120,9 +162,11 @@ class TutorScreenshots {
                 ->
                 turn("offer$index", TutorTurn.Status.Completed, "Here.", toolOffer = offer(json))
             },
+        refusal: ApiException? = null,
     ) {
         val api = FakeTutorApi()
         api.thread = TutorThread(turns, hasMore = false, nextCursor = null)
+        api.refusal = refusal
         api.answers = {
             flow {
                 emit(TutorAnswerEvent.Text("Noted: you like space."))
@@ -150,7 +194,7 @@ class TutorScreenshots {
             TutorRoutes(
                 createAccount = {},
                 signIn = {},
-                seePlus = {},
+                subscribe = {},
                 open = {},
                 startCall = callStarter { CallStart.Failed },
             )
@@ -163,13 +207,7 @@ class TutorScreenshots {
         compose.waitForIdle()
 
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use {
-            compose
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun offer(json: String) = ApiJson.decodeFromString<TutorToolOffer>(json)

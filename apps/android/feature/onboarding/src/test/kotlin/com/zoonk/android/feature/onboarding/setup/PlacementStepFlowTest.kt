@@ -109,7 +109,7 @@ class PlacementStepFlowTest {
 
         assertEquals(2, api.placementAnswers.size)
         assertEquals(api.placementAnswers[0], api.placementAnswers[1])
-        rule.onNodeWithText("Your starting point is set").assertIsDisplayed()
+        rule.onNodeWithText("Your answers are saved").assertIsDisplayed()
     }
 
     @Test
@@ -131,14 +131,14 @@ class PlacementStepFlowTest {
         api.placementGate = read
         tap("Start")
 
-        rule.onNodeWithText("Getting your questions ready").assertDoesNotExist()
+        rule.onNodeWithText("Getting your test ready").assertDoesNotExist()
         rule.onNodeWithText("Let's see what you already know").assertIsDisplayed()
         rule.onNodeWithText("Start").assertIsNotEnabled()
         rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
 
         read.complete(Unit)
 
-        rule.onNodeWithText("Bar exam\u00A0· Question 1").assertIsDisplayed()
+        rule.onNodeWithText("Bar exam ·\u00A0Question 1").assertIsDisplayed()
     }
 
     @Test
@@ -147,7 +147,7 @@ class PlacementStepFlowTest {
         api.placementGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
         tap("Start")
 
-        rule.onNodeWithText("Getting your questions ready").assertIsDisplayed()
+        rule.onNodeWithText("Getting your test ready").assertIsDisplayed()
         rule.onNodeWithText("Which court hears appeals from state courts?").assertDoesNotExist()
 
         api.placementGate = null
@@ -163,17 +163,17 @@ class PlacementStepFlowTest {
         api.reply = { _, _ -> throw ApiException(ApiError.Network) }
         show(inSetup = true)
         tap("Start")
-        tap("Stop here and see my plan")
+        tap("Stop and use my answers")
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
-        tap("Stop here and see my plan")
+        tap("Stop and use my answers")
 
         rule.onNodeWithText("Still not going through. You can come back later.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
         assertEquals(2, api.answers.size)
         api.reply = { _, _ -> setupView(steps = listOf("plan")) }
-        tap("Stop here and see my plan")
+        tap("Stop and use my answers")
 
         assertEquals(3, api.answers.size)
         rule.onNodeWithText("Which court hears appeals from state courts?").assertDoesNotExist()
@@ -188,9 +188,9 @@ class PlacementStepFlowTest {
         show(inSetup = true)
         tap("Start")
         tap("The Supreme Court")
-        tap("Stop here and see my plan")
+        tap("Stop and use my answers")
 
-        rule.onNodeWithText("Stop here and see my plan").assertIsNotEnabled()
+        rule.onNodeWithText("Stop and use my answers").assertIsNotEnabled()
         rule.onNodeWithText("Confirm").assertIsNotEnabled()
         rule.onNodeWithText("I don't know yet").assertIsNotEnabled()
         rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
@@ -224,7 +224,7 @@ class PlacementStepFlowTest {
         tap("Start")
         api.writeFailure = ApiException(ApiError.Network)
         rule.mainClock.advanceTimeBy(30_000)
-        tap("Skip for now")
+        tap("Skip the test")
         api.writeFailure = null
         api.placement = placementOf()
         rule.mainClock.advanceTimeBy(POLL_MS)
@@ -248,7 +248,7 @@ class PlacementStepFlowTest {
         show(inSetup = true)
         tap("Start")
         rule.mainClock.advanceTimeBy(30_000)
-        tap("Skip for now")
+        tap("Skip the test")
         api.placement = placementOf()
         rule.mainClock.advanceTimeBy(POLL_MS)
         rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()
@@ -274,7 +274,7 @@ class PlacementStepFlowTest {
         show(inSetup = true)
         tap("Start")
         rule.mainClock.advanceTimeBy(30_000)
-        tap("Skip for now")
+        tap("Skip the test")
         api.placement = placementOf()
         rule.mainClock.advanceTimeBy(POLL_MS)
         rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()

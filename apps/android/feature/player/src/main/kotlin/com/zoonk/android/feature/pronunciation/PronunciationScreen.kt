@@ -22,7 +22,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -97,6 +96,7 @@ import com.zoonk.android.feature.session.ReachedFacts
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
@@ -107,6 +107,7 @@ import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
@@ -224,6 +225,7 @@ internal fun PronunciationRoundScreen(
     ceremony: MomentCeremony,
     onReportSaveFailure: () -> Unit = {},
 ) {
+    VisitOf(round.visit)
     when (val step = round.step) {
         is RoundStep.Result -> {
             MomentAfterCeremony(
@@ -303,6 +305,7 @@ private fun WordStep(
                 word = { key(word.id) { WordCard(word, round.language, normal, slow, navigator) } },
             ) {
                 val grade = step.grade
+                val issue = round.issue
                 when {
                     grade != null -> {
                         GradeNote(grade)
@@ -312,18 +315,18 @@ private fun WordStep(
                         MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
                     }
 
-                    step.issue is VoiceIssue.Limited && !recording && !round.pending -> {
+                    issue is VoiceIssue.Limited && !recording && !round.pending -> {
                         LimitNotice(
-                            step.issue.limit,
+                            issue.limit,
                             LimitSubject.Help,
                             onCreateAccount = { navigator.open(AppRoute.Login) },
-                            onSeePlus = { navigator.open(AppRoute.Subscription) },
+                            onSubscribe = { navigator.open(AppRoute.Subscription) },
                             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                         )
                     }
 
                     else -> {
-                        RecorderStatus(step.issue, pending = round.pending, recording = recording)
+                        RecorderStatus(issue, pending = round.pending, recording = recording)
                     }
                 }
             }
@@ -333,7 +336,8 @@ private fun WordStep(
 
 /**
  * A word as a spread, as a practice question: the [meter] and the [word] on the page before the split, the learner's
- * [turn] on the page after it, above the docked actions. The turn's page is the one column's place.
+ * [turn] on the page after it, above the docked actions, whether it says what to do or how it sounded. The turn's page is
+ * the one column's place.
  */
 @Composable
 private fun WordPages(
@@ -372,7 +376,9 @@ private fun WordPages(
                         Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true },
                         scroll,
                         Alignment.End,
-                    ) { word() }
+                    ) {
+                        word()
+                    }
                 }
             }
         }
@@ -520,7 +526,7 @@ private fun RecorderStatus(
         // Announcing the take's start would speak into the microphone.
         Modifier.semantics { if (!recording) liveRegion = LiveRegionMode.Polite },
         color =
-            if (issue == VoiceIssue.Failed && !pending &&
+            if (issue != null && !pending &&
                 !recording
             ) {
                 MaterialTheme.colorScheme.error
@@ -551,9 +557,7 @@ private fun WordMenu(
 ) {
     var open by rememberSaveable { mutableStateOf(false) }
     Box {
-        IconButton(onClick = { open = true }) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.pronunciation_options))
-        }
+        MoreButton(onClick = { open = true }, contentDescription = stringResource(R.string.pronunciation_options))
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.pronunciation_skip)) },
@@ -576,7 +580,6 @@ private fun WordActions(
     status: VoiceRecorder.Status,
     tapRecord: () -> Unit,
 ) {
-    val level by model.recorder.level.collectAsStateWithLifecycle()
     val grade = step.grade
     when {
         grade != null -> {
@@ -596,7 +599,6 @@ private fun WordActions(
                     busy = round.pending,
                     onClick = model::next,
                     modifier = width,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 ) {
                     Text(
                         stringResource(
@@ -619,7 +621,6 @@ private fun WordActions(
                     busy = round.pending,
                     onClick = model::next,
                     modifier = width,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
                 ) {
                     Text(stringResource(R.string.pronunciation_skip))
                 }
@@ -627,14 +628,15 @@ private fun WordActions(
         }
 
         else -> {
-            RecordButton(
-                status = status,
-                level = { level },
-                onStart = tapRecord,
-                onStop = model.recorder::stop,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !round.pending,
-            )
+            TaskActions { width ->
+                RecordButton(
+                    status = status,
+                    onStart = tapRecord,
+                    onStop = model.recorder::stop,
+                    modifier = width,
+                    enabled = !round.pending,
+                )
+            }
         }
     }
 }
@@ -680,11 +682,6 @@ private fun RoundEnd(
                                     stringResource(title),
                                     Modifier.semantics { heading() },
                                     style = MaterialTheme.typography.headlineSmall,
-                                )
-                                Text(
-                                    stringResource(R.string.pronunciation_accent),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.bodyLarge,
                                 )
                             }
                             result?.let {

@@ -18,7 +18,7 @@
   "language_estimate_writing": "2b26c51b06867b727322c91f9c7991c2da950527392bb11733ddeed6865ca87b",
   "language_estimates_note": "e4970148a02cdc1fc0300b3351250e3728ab1a6f66925446565209315ca81852",
   "language_estimates_rose": "10979f16c98246a283b1bcbd03f145e29e93461cca6e88055afdce1191f350fe",
-  "language_level": "1e0dcfb1f77191609a7c3810a05a094e2bc1d7ae3a7e6babfd0968fd865d240d",
+  "language_level": "f3a41ff5e363d2fa99b76ceab5d47a0472960021c00bf0ce39ae7c3a7853709c",
   "language_level_down": "6c745680b0ff4132f2d8ab9eb716b9f0b0e39c8829d208e364ab8d4fc550f147",
   "language_level_goal": "c312a6a49d772f4ebc693e0aea526ceef7e878a08d9474bd3e93e37d33376a58",
   "language_level_goal_by": "7b20b1db46875ebc398c5ea85bdcea1cf1dc5a1b744bb60a40d43681f4f5056c",
@@ -31,20 +31,18 @@
   "language_pattern_noticed_summary": "32906f53f409665ecbf362824b2b6985152dce277d8052ab5905cd414cd6e543",
   "language_pattern_practice": "98d26022ad094763e74a6e07cd3f006f9a86e8916e8360b3d5a77c0d86e9297e",
   "language_pattern_typos": "c1bc2f5d2e4169ddafc5c6ade327128d594aac4f5e76c2d410780ae73289ad67",
-  "language_pattern_typos_description": "55497eb997fbd89f0a442d3cab03fbefc1ebf7691ba0e9eb3728ab90f43f056b",
+  "language_pattern_typos_description": "46d752f52eb1a2cd6ae1dbfcc1b7a4c1ab051958cc544716ed29d7c8e9d64c46",
   "language_practice_estimates": "0562020e3f08c8ae559ef5c7dc8b4535719482765d483b3cdf4fd36414090bf0",
   "language_say_again": "a52640dd6930caafcc97df2b224c4430ef28ab78988876cc5b16f0fee8ac21fe",
   "language_say_them": "7e3533aaeeb13c80281c574c4ec3568742bb6275037a9af26eda94acd5f6f237",
-  "language_see_your_plan": "7fd087c75686aad729edfbac8d248c1551796d51ce4155429628e11235f74e96",
+  "language_see_your_plan": "2b981c68377badf743bc9681aa5edf24888ea5397cdf9be470749f1f67701423",
   "language_skill_listening": "6be19b49f5b378ffac943bad0dda14038f6cd17e9ae213f21ed47fd2467fed43",
   "language_skill_reading": "6c0354ead390143a578f4a9d1198639ebc07598256ae7eadc2604fa9193eb860",
   "language_skill_speaking": "8feb6688cc9c94ceef0092a7135b5ed067d6929b33133ca894114e61b6fded02",
   "language_skill_words": "6d4640e0eec75a23082e9914ed59a05517103a1c67819bfd5966b72ea3891f66",
   "language_skill_writing": "7c1f95f710f6d518090c7fafcecd9853af7f0e4cd12d1e53192565990f5930bf",
-  "language_typos_open": "128b2f90bcc6d34eebf729553606fe26c522510855e07721631e7022429848f7",
   "language_unit_about": "5926b7c928531d98b554d848eb0d61808590700b03c45bee11914a24b119d8c2",
   "language_unit_continue": "33b414d25098a64e666c0dece8d74819e557b8b1a0678b3f6e46f5ac7220ccfb",
-  "language_unit_done_share": "570ae6a061b17c3030db388b6b2a8c4c45860976281faa215c76b93032d5e3c1",
   "language_unit_eyebrow": "6d1a349d08d601e53c90e61f7a0a85d9cb51a1cfb75762119f84985ce436c58a",
   "language_unit_grammar_tips": "3dc1cc6b52ee8475b3028281d67556267c9e80052918607bf7c68428ab591b0c",
   "language_unit_lessons": "1ff853a1daa5a427aa2f26f0a9e5771550c9c8e2fefa7b5117d8cd082292331e",
@@ -68,7 +66,6 @@
         <item quantity="other">%d lecciones</item>
     </plurals>
     <!-- How much of the unit is done, the unit being the subject: "33% done". -->
-    <string name="language_unit_done_share">%1$s completada</string>
     <string name="language_unit_start">Empezar</string>
     <string name="language_unit_continue">Continuar</string>
     <string name="language_unit_objectives">Al terminar esta unidad</string>
@@ -128,7 +125,7 @@
     <string name="language_level_toward_goal">%1$s, objetivo %2$s</string>
     <string name="language_pattern_noticed">Notamos un patrón</string>
     <string name="language_pattern_typos">Solo errores al teclear</string>
-    <string name="language_pattern_typos_description">Tus errores recientes fueron descuidos; no necesitas aprender una regla.</string>
+    <string name="language_pattern_typos_description">Tus errores recientes fueron de tecleo, no una regla que aprender.</string>
     <!-- A practice row. %d is how many words are due to be said out loud again, a count, never a word's number: "Say 2 words again" means repeat two words. -->
     <plurals name="language_say_again">
         <item quantity="one">Volver a decir %d palabra</item>
@@ -144,17 +141,15 @@
     <string name="language_alphabet_skip_failed">No se pudo guardar. Inténtalo de nuevo.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Decirlas</string>
-    <!-- Opens the noticed typos. -->
-    <string name="language_typos_open">Abrir</string>
     <!-- %1$s names the rule the learner keeps getting wrong. -->
     <string name="language_pattern_noticed_summary">Notamos un patrón: %1$s</string>
     <!-- Opens the noticed pattern. -->
     <string name="language_pattern_practice">Practicarlo</string>
-    <string name="language_level">Nivel</string>
+    <string name="language_level">Nivel de %1$s</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>
     <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
     <string name="language_level_toward_spoken">%1$s, objetivo %2$s</string>
     <!-- Opens the Plan from Today's level. -->
-    <string name="language_see_your_plan">Ver tu plan</string>
+    <string name="language_see_your_plan">Ver plan</string>
 </resources>

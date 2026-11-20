@@ -20,7 +20,7 @@
           {
             "description": null,
             "id": "student",
-            "label": "I’m a student"
+            "label": "I'm a student"
           },
           {
             "description": null,
@@ -64,7 +64,7 @@
           {
             "description": null,
             "id": "student",
-            "label": "I’m a student"
+            "label": "I'm a student"
           },
           {
             "description": null,
@@ -108,7 +108,7 @@
           {
             "description": null,
             "id": "student",
-            "label": "I’m a student"
+            "label": "I'm a student"
           },
           {
             "description": null,
@@ -734,27 +734,27 @@
             "label": "Dyslexia"
           },
           {
-            "description": "Your buddy explains calculations in small steps.",
+            "description": null,
             "id": "dyscalculia",
             "label": "Dyscalculia"
           },
           {
-            "description": "Your buddy explains in words, without pointing to things on the screen.",
+            "description": null,
             "id": "blindOrLowVision",
             "label": "Blind or low vision"
           },
           {
-            "description": "Right and wrong answers show a word, not only a color.",
+            "description": null,
             "id": "colorBlind",
             "label": "Color blindness"
           },
           {
-            "description": "Calls let you type, and your buddy can leave listening out of a language plan.",
+            "description": null,
             "id": "deafOrHardOfHearing",
             "label": "Deaf or hard of hearing"
           },
           {
-            "description": "Lesson speaking screens have “I can’t talk now”, and calls let you type.",
+            "description": null,
             "id": "speech",
             "label": "Stutter or other speech difference"
           },
@@ -814,27 +814,27 @@
             "label": "Dyslexia"
           },
           {
-            "description": "Your buddy explains calculations in small steps.",
+            "description": null,
             "id": "dyscalculia",
             "label": "Dyscalculia"
           },
           {
-            "description": "Your buddy explains in words, without pointing to things on the screen.",
+            "description": null,
             "id": "blindOrLowVision",
             "label": "Blind or low vision"
           },
           {
-            "description": "Right and wrong answers show a word, not only a color.",
+            "description": null,
             "id": "colorBlind",
             "label": "Color blindness"
           },
           {
-            "description": "Calls let you type, and your buddy can leave listening out of a language plan.",
+            "description": null,
             "id": "deafOrHardOfHearing",
             "label": "Deaf or hard of hearing"
           },
           {
-            "description": "Lesson speaking screens have “I can’t talk now”, and calls let you type.",
+            "description": null,
             "id": "speech",
             "label": "Stutter or other speech difference"
           },
@@ -880,27 +880,27 @@
         "id": "learningSupport",
         "options": [
           {
-            "description": "Your buddy breaks explanations into small steps.",
+            "description": "We break explanations into small steps.",
             "id": "stepByStep",
             "label": "Step by step"
           },
           {
-            "description": "No idioms or figures of speech from your buddy or in your examples.",
+            "description": "No idioms or figures of speech.",
             "id": "plainWords",
             "label": "Plain, literal words"
           },
           {
-            "description": "Your buddy keeps answers short, one idea at a time.",
+            "description": "We keep answers short, one idea at a time.",
             "id": "shortAnswers",
             "label": "Short answers"
           },
           {
-            "description": "Your buddy shows a worked example before the rule.",
+            "description": "We show a worked example before the rule.",
             "id": "examplesFirst",
             "label": "Examples first"
           },
           {
-            "description": "We’ll suggest a shorter daily time. You still choose.",
+            "description": "We'll suggest a shorter daily time. You still choose.",
             "id": "shorterDays",
             "label": "Shorter study days"
           },
@@ -937,27 +937,27 @@
         "id": "learningSupport",
         "options": [
           {
-            "description": "Your buddy breaks explanations into small steps.",
+            "description": "We break explanations into small steps.",
             "id": "stepByStep",
             "label": "Step by step"
           },
           {
-            "description": "No idioms or figures of speech from your buddy or in your examples.",
+            "description": "No idioms or figures of speech.",
             "id": "plainWords",
             "label": "Plain, literal words"
           },
           {
-            "description": "Your buddy keeps answers short, one idea at a time.",
+            "description": "We keep answers short, one idea at a time.",
             "id": "shortAnswers",
             "label": "Short answers"
           },
           {
-            "description": "Your buddy shows a worked example before the rule.",
+            "description": "We show a worked example before the rule.",
             "id": "examplesFirst",
             "label": "Examples first"
           },
           {
-            "description": "We’ll suggest a shorter daily time. You still choose.",
+            "description": "We'll suggest a shorter daily time. You still choose.",
             "id": "shorterDays",
             "label": "Shorter study days"
           },
@@ -1102,27 +1102,27 @@
         "id": "learningSupport",
         "options": [
           {
-            "description": "Your buddy breaks explanations into small steps.",
+            "description": "We break explanations into small steps.",
             "id": "stepByStep",
             "label": "Step by step"
           },
           {
-            "description": "No idioms or figures of speech from your buddy or in your examples.",
+            "description": "No idioms or figures of speech.",
             "id": "plainWords",
             "label": "Plain, literal words"
           },
           {
-            "description": "Your buddy keeps answers short, one idea at a time.",
+            "description": "We keep answers short, one idea at a time.",
             "id": "shortAnswers",
             "label": "Short answers"
           },
           {
-            "description": "Your buddy shows a worked example before the rule.",
+            "description": "We show a worked example before the rule.",
             "id": "examplesFirst",
             "label": "Examples first"
           },
           {
-            "description": "We’ll suggest a shorter daily time. You still choose.",
+            "description": "We'll suggest a shorter daily time. You still choose.",
             "id": "shorterDays",
             "label": "Shorter study days"
           },

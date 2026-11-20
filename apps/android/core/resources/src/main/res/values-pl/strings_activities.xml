@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "442d68013a0eb3d3e1d51d8c9fccb7a8ca08124c927209172cf8e4567c98c504",
-  "activities_badge_estimate_first": "c2b8aac7498c64ffa82b3b8a437771286f5e6655967ce0a214297b2d0eb101f7",
+  "activities_badge_estimate_first": "96e279dc771ba264e695c73763c4fdd3354be1a9764477095b3737483793f5c4",
   "activities_badge_find_error": "4e59e37f9ba714e416e153fe7a51bbbb9257a7fff4544d57fa36038cc63549d1",
   "activities_badge_read_chart": "66443945d5a213050d4b1a29f2d4334ccefd7b6bd162f5647a9511555b257c13",
   "activities_badge_reply": "6016c33f19b66338f411655df3a8aeadc6d51c3b62be1804699c834a3f682ba7",
@@ -15,8 +15,8 @@
   "activities_chart_description": "fcf1cc793ccdc10385dee4e0c914124a07831acca8fadbef120223221d1bb517",
   "activities_chart_rate": "b303008a51e375ee2fd04dbba839f914bbf8628c9ff877c425b3034021a4c508",
   "activities_chart_span": "e95f5115ecbb98e632cfea5a10f7d038044a11d41faf55befa64db466cd46d5f",
-  "activities_chart_spans": "b098c1c693b529ac4f06923b8c2a0b0e27dc1f37df722ae48e4fbd8c7d3f8204",
-  "activities_chart_tap_span": "85f8c6fece427b5c8ae03642f68267298fdace1c87b5b74db47a0f3fcc6d1c1a",
+  "activities_chart_spans": "f37695631e0203edb3f0e4ce0bf4b3d1637fac5c6f7fec02937a5b8862221be1",
+  "activities_chart_tap_span": "4ae6fdaf6c50dd1a7e9e3b2ccb48f741b6dfee05fa7269c1d26553af192e8782",
   "activities_dialogue_conversation": "11c2e509db94237feb4696075aa7deedf644a88e9affd3d2871d27596f13fc09",
   "activities_dialogue_hear_best": "d066acae98b574ec49dedf199fe5282e11572dd504f57192eadb91ac178178c6",
   "activities_dialogue_hear_line": "dabba9d86ee6d410336b0e151cb57582ee60d4f75d845aa6d378447d2a07802f",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Najpierw oszacuj</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">Twój strzał się liczy</string>
     <string name="activities_badge_read_chart">Odczytaj wykres</string>
     <string name="activities_badge_before_after">Przed i po</string>
     <string name="activities_badge_find_error">Znajdź błąd</string>
@@ -96,9 +97,8 @@
     <string name="activities_chart_description">Wykres liniowy: %1$s, oś: %2$s. %3$s w punkcie %4$s to początek, a %5$s w punkcie %6$s to koniec wykresu.</string>
     <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
     <string name="activities_chart_span">%1$s: %2$s.</string>
-    <string name="activities_chart_tap_span">Dotknij przedziału, aby go zmierzyć</string>
-    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
-    <string name="activities_chart_spans">Przedziały do zmierzenia</string>
+    <string name="activities_chart_tap_span">Dotknij części wykresu, aby ją zmierzyć</string>
+    <string name="activities_chart_spans">Części wykresu do zmierzenia</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s na jednostkę osi: %2$s</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->

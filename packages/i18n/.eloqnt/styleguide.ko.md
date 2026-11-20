@@ -71,6 +71,7 @@
 - “Buddy”: “짝꿍”; “study buddy”: “공부 짝꿍”
 - Buddy stages “Baby” / “Young” / “Adult”: “아기” / “어린이” / “어른”
 - “Brain Power”: “두뇌력”
+- “BP” (Brain Power's short form after an amount, “+50 BP”): “두뇌력” (the name is already short, so it stays whole)
 - “mission”: “미션”
 - “call” (speaking practice): “대화”, not “전화”
 - “Mistakes notebook”: “오답 노트”
@@ -96,14 +97,14 @@
 
 ## Plan terminology
 
-- “Pace”: “페이스”; the “On pace” / “Keeping pace” status: “계획대로”
+- “Pace”: “페이스”; the “Up to date” status (formerly “On pace” / “Keeping pace”): “계획대로”
 - “Finished”: “완료”
-- “Past date”: “날짜 지남”, not “만료” or “종료”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “날짜 지남”, not “만료” or “종료”
 - “Needs adjusting”: “조정 필요”
 - “Too tight”: “너무 빠듯함”
 - “left out”: “제외”, not “건너뜀”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “건너뛰기” / “건너뜀”
-- “Daily time”: “하루 학습 시간”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “하루 학습 시간”
 - “rest day”: “쉬는 날”
 
 ## Buddy names

@@ -21,11 +21,15 @@ import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.sin
 
-/** A pen mark on lesson text: the highlighter (a quoted sentence, a teaching screen's term) or a hand-drawn underline. */
+/**
+ * A mark drawn behind or under lesson text: the highlighter (a quoted sentence, a teaching screen's term), inline
+ * code's rounded box, or a hand-drawn underline.
+ */
 internal enum class TextMarkKind(
     val tag: String,
 ) {
     Highlight("zoonk.highlight"),
+    Code("zoonk.code"),
     Underline("zoonk.underline"),
 }
 
@@ -35,7 +39,7 @@ internal data class TextMark(
     val end: Int,
 )
 
-/** Highlights first, so an underline inside a highlighted run draws over it. */
+/** Boxes first, so an underline inside a highlighted run draws over it. */
 internal fun textMarks(text: AnnotatedString): List<TextMark> =
     TextMarkKind.entries.flatMap { kind ->
         text.getStringAnnotations(kind.tag, 0, text.length).map { TextMark(kind, it.start, it.end) }
@@ -77,6 +81,7 @@ internal fun DrawScope.drawTextMarks(
     marks: List<TextMark>,
     highlight: Color,
     ink: Color,
+    code: Color,
 ) {
     val fontSize = layout.layoutInput.style.fontSize
     val em = (if (fontSize.isSpecified) fontSize else 16.sp).toPx()
@@ -85,12 +90,13 @@ internal fun DrawScope.drawTextMarks(
         val spans = layout.lineSpans(mark.start, mark.end)
         when (mark.kind) {
             TextMarkKind.Highlight -> spans.forEach { drawHighlight(it, em, highlight) }
+            TextMarkKind.Code -> spans.forEach { drawHighlight(it, em, code) }
             TextMarkKind.Underline -> drawUnderline(underlineStroke(spans, em), em, ink)
         }
     }
 }
 
-/** A marker stroke from the cap height to below the baseline, a little past the words, with soft corners. */
+/** A box from the cap height to below the baseline, a little past the words, with soft corners: a marker stroke or code's ground. */
 private fun DrawScope.drawHighlight(
     span: LineSpan,
     em: Float,

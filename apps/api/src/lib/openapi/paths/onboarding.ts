@@ -40,7 +40,7 @@ export const onboardingPaths = {
   "/goal-understandings": {
     post: {
       description:
-        "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. A start while a run is already reading the words answers with that run's id. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to upgrade, 429 Plus to come back later). Guests can call it.",
+        "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. A start while a run is already reading the words answers with that run's id. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
       operationId: "createGoalUnderstanding",
       requestBody: {
         content: { "application/json": { schema: goalUnderstandingInputSchema } },
@@ -215,14 +215,14 @@ export const onboardingPaths = {
   "/goals/{goalId}/plan-reveal/today": {
     get: {
       description:
-        "The plan reveal's Today and first week, read before the learner has seen their plan: `today` is the day Today will show, the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included; `nextDays`, `minutes` and `week` are composed with it so each lesson shows once and every number matches what's listed, so draw them as given. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
+        "The day the plan reveal's Start opens, read before the learner has seen their plan: `today` is the day Today will show, the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
       operationId: "getPlanRevealToday",
       requestParams: { path: goalPathParamsSchema, query: studySessionTimeZoneInputSchema },
       responses: {
         ...goalErrors,
         "200": {
           content: { "application/json": { schema: planRevealTodayResponseSchema } },
-          description: "The reveal's Today and first week",
+          description: "The day Today will show",
         },
         "409": {
           ...conflictResponse,

@@ -4,8 +4,9 @@ import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { CheckIcon, PencilIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../../_components/save-error";
@@ -99,14 +100,14 @@ function RowEditor({
       )}
       {failed && <ChangeSaveError />}
       <div className="flex gap-2">
-        <Button busy={isSaving} icon={<CheckIcon aria-hidden="true" />} size="sm" type="submit">
+        <Button busy={isSaving} size="lg" type="submit">
           {t("Save")}
         </Button>
         <Button
           disabled={isSaving}
           focusableWhenDisabled
           onClick={onCancel}
-          size="sm"
+          size="lg"
           type="button"
           variant="ghost"
         >
@@ -188,7 +189,7 @@ function ChoiceDates({
           type="submit"
           variant="outline"
         >
-          {formatDate(date, "short")}
+          {formatDate(date, "row", { year: "always" })}
         </Button>
       ))}
       {failed && <ChangeSaveError />}
@@ -197,15 +198,15 @@ function ChoiceDates({
 }
 
 const FACT_ROW_CLASS =
-  "group/fact flex items-start gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto]";
+  "group/fact flex items-center gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:items-start";
 
-const LABEL_CLASS = "text-muted-foreground text-[0.8125rem] sm:pt-px";
+const LABEL_CLASS = "text-muted-foreground text-compact sm:pt-px";
 
 function RowFact({ row }: { row: Row }) {
   return (
     <>
       <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-[0.9375rem] font-medium">{row.value}</span>
+        <span className="text-reading font-medium">{row.value}</span>
         {row.badge && <span className="text-muted-foreground text-xs">{row.badge}</span>}
       </span>
 
@@ -252,13 +253,14 @@ export function UnderstoodRowItem({
 }) {
   const t = useExtracted();
   const label = editing ? (row.editLabel ?? row.label) : row.label;
+  const inEditor = Boolean(editing && row.editable);
 
   return (
     <li className={FACT_ROW_CLASS}>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:contents">
-        <span className={LABEL_CLASS}>{label}</span>
+        <span className={cn(LABEL_CLASS, inEditor && "sm:pt-3")}>{label}</span>
 
-        <div className="flex min-w-0 flex-col gap-0.5">
+        <div className={cn("flex min-w-0 flex-col gap-0.5", inEditor && "sm:col-span-2")}>
           {editing && row.editable ? (
             <RowEditor
               country={row.country}
@@ -299,7 +301,8 @@ export function UnderstoodRowItem({
         <Button
           aria-label={t("Edit {field}", { field: row.label })}
           autoFocus={focusEdit}
-          className="text-muted-foreground -my-1.5 -mr-2 shrink-0 focus-visible:opacity-100 pointer-fine:opacity-0 pointer-fine:group-hover/fact:opacity-100"
+          className="text-muted-foreground -my-2 shrink-0"
+          edge="end"
           onClick={() => onEdit(true)}
           size="icon"
           variant="ghost"

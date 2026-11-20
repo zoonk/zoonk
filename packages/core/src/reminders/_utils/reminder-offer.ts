@@ -5,7 +5,7 @@ import { DEFAULT_REMINDER_TIME, type ReminderOffer } from "../study-reminder-con
 import { roundToQuarterHour } from "./quarter-hour";
 import { getReminderPhone } from "./reminder-phone";
 
-/** For the result of a finished plan lesson: asks once, and never once a channel is on. */
+/** For the day's summary: asks once, and never once a channel is on. */
 export async function findReminderOffer({
   goalStudyTime,
   userId,

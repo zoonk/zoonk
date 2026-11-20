@@ -103,7 +103,7 @@ export const imageSceneTask: Task<ImageSceneInput, ImageSceneOutput, ImageSceneE
   description: "Plan one lesson picture as a structured scene",
   generate: generateImageScene,
   id: "image-scene",
-  name: "Image Scene",
+  name: "Image scene",
   score: scoreImageScene,
   scoreCategories,
   testCases: TEST_CASES,

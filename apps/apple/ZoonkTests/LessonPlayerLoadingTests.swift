@@ -1,6 +1,7 @@
 import Foundation
 import HTTPTypes
 import OpenAPIRuntime
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -800,6 +801,26 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(store.startingOffer(about: "second"), "moving on with Ask open never asks again")
   }
 
+  /// An offer is dropped once the learner leaves its screen; coming back asks nothing, and
+  /// the learner taps Ask again if they still want it.
+  func testAnOfferLeftWithItsScreenStaysDroppedWhenTheLearnerComesBack() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try twoScreenLesson())
+    }
+    let store = player(
+      cache: cache, content: content, transport: HeldAnswersTransport(runAnswers: "[]"))
+    await store.load()
+    store.ask(suggestionId: "simpler", sendsAtOnce: true)
+
+    store.continueLesson()
+    XCTAssertEqual(store.state?.currentStep?.id, "second")
+    store.goBack()
+    XCTAssertEqual(store.state?.currentStep?.id, "first")
+
+    XCTAssertNil(store.startingOffer(about: "first"))
+  }
+
   /// Loading the lesson again (a session renewed for the same learner) starts every answer over,
   /// so what was done on a canvas starts over with it.
   func testALessonLoadedAgainStartsItsCanvasWorkOver() async throws {
@@ -849,8 +870,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
       return XCTFail("Expected a completed lesson, got \(outcome)")
     }
 
-    XCTAssertEqual(summary.brainPower, 12, "the day's bonus shows with the missions")
-    XCTAssertEqual(summary.block?.deferredLessonsCount, 0)
+    XCTAssertEqual(
+      summary.brainPower, 62, "a new level wins the moment, so the missions' bonus counts here")
     XCTAssertEqual(summary.block?.minutes.left, 20)
     XCTAssertEqual(summary.block?.sessionBar, SessionBar(completed: 1, total: 3))
     XCTAssertEqual(
@@ -863,10 +884,57 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
   }
 
-  func testASavedLessonKeepsTheDeferredCountAndFractionalDailyBudget() async throws {
+  /// Answer help's monthly cap gives the day an explanation comes back, as every monthly cap does.
+  func testAnExplanationRefusedForTheMonthSaysWhenItComesBack() async throws {
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: JSONTransport(
+          body: #"""
+            {"error": {"code": "USAGE_LIMIT_REACHED", "message": "Limit reached",
+             "details": {"limit": {"period": "rolling30Days", "tier": "free",
+             "resource": "explanation", "availableAt": "2026-12-20T12:00:00.000Z"}}}}
+            """#,
+          status: .init(code: 402))))
+
+    let outcome = try await api.explainAnswer(stepId: "step", answer: "answer", token: "token")
+
+    guard case .refused(let refusal) = outcome else {
+      return XCTFail("Expected a refusal, got \(outcome)")
+    }
+
+    let availableAt = Date(timeIntervalSince1970: 1_797_768_000)
+    XCTAssertEqual(refusal.limit, .usedUp(tier: .free, availableAt: availableAt))
+    XCTAssertEqual(
+      refusal.limit?.words(.explanations, now: availableAt.addingTimeInterval(-30 * 86_400)).said,
+      "You've used your explanations. More on December 20, or subscribe to keep going.")
+  }
+
+  /// A refusal whose day this device already shows as past keeps its gate, with no day to promise.
+  func testALessonRefusalPastOnArrivalHasNoDay() async throws {
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: JSONTransport(
+          body: #"""
+            {"error": {"code": "USAGE_LIMIT_REACHED", "message": "Limit reached",
+             "details": {"limit": {"period": "rolling30Days", "tier": "free",
+             "resource": "explanation", "availableAt": "2026-01-01T00:00:00.000Z"}}}}
+            """#,
+          status: .init(code: 402))))
+
+    let outcome = try await api.explainAnswer(stepId: "step", answer: "answer", token: "token")
+
+    guard case .refused(let refusal) = outcome else {
+      return XCTFail("Expected a refusal, got \(outcome)")
+    }
+
+    XCTAssertEqual(refusal.limit, .usedUp(tier: .free, availableAt: nil))
+  }
+
+  func testASavedLessonKeepsAFractionalDailyBudget() async throws {
     let response =
       sessionLessonCompletion
-      .replacingOccurrences(of: "\"deferredLessonsCount\":0", with: "\"deferredLessonsCount\":3")
       .replacingOccurrences(of: "\"dailyGoal\":30", with: "\"dailyGoal\":240.5")
     let api = LessonPlayerAPI(
       clients: APIClientFactory(
@@ -877,7 +945,6 @@ final class LessonPlayerLoadingTests: XCTestCase {
     guard case .completed(let summary) = outcome else {
       return XCTFail("Expected a saved lesson")
     }
-    XCTAssertEqual(summary.block?.deferredLessonsCount, 3)
     XCTAssertEqual(summary.block?.minutes.dailyGoal, 240.5)
   }
 
@@ -973,8 +1040,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
     await store.check()
     store.continueLesson()
 
-    while store.state?.completion?.status == .saving {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(store.state?.completion?.status == .saving)
     }
 
     XCTAssertEqual(store.state?.completion?.status, .failed)
@@ -1005,8 +1072,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
     await store.check()
     store.continueLesson()
 
-    while store.state?.completion?.status == .saving {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(store.state?.completion?.status == .saving)
     }
 
     XCTAssertEqual(store.state?.completion?.status, .failed)
@@ -1038,14 +1105,12 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let second = try XCTUnwrap(store.held.last?.attemptId)
     await transport.release(first)
 
-    while store.held.count > 1 {
-      await Task.yield()
-    }
+    _ = try? await waitForTestCondition("Fixture state did not arrive") { !(store.held.count > 1) }
 
     await transport.release(second)
 
-    while store.state?.completion?.status == .saving {
-      await Task.yield()
+    _ = try? await waitForTestCondition("Fixture state did not arrive") {
+      !(store.state?.completion?.status == .saving)
     }
 
     let requests = await transport.requests
@@ -1109,6 +1174,32 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(requests.last, "check held")
   }
 
+  func testAnAnswerSavedWhileAHeldAnswerIsSendingSendsItAgainWhenThatSendFails() async throws {
+    let defaults = try temporaryDefaults()
+    HeldLessonAnswers(learnerId: "lesson-loading-test-user", lessonId: "lesson", defaults: defaults)
+      .keep(heldAnswer("one", attemptId: "held", isCorrect: true))
+    let transport = HeldAnswersTransport(runAnswers: "[]")
+    await transport.failChecks(numbered: [1, 2])
+    await transport.holdCheck(2)
+    let store = try checksPlayer(
+      steps: ["one", "spoken"], spoken: ["spoken"], defaults: defaults, transport: transport)
+    await store.load()
+    _ = try await waitForTestCondition("The held answer wasn't sent again") {
+      await transport.isHoldingCheck
+    }
+
+    store.resolveSpoken(
+      SpokenAnswerVerdict(
+        isCorrect: true, score: 1, transcript: "Bonjour", feedback: nil,
+        heard: SpokenHeard(words: [], wordsToPractice: [])),
+      stepId: "spoken")
+    await transport.releaseHeldCheck()
+    await waitUntil { store.held.isEmpty }
+
+    let requests = await transport.requests
+    XCTAssertEqual(requests.filter { $0 == "check held" }.count, 3)
+  }
+
   /// Opened from Today with the learner's tap: the start goes out as the lesson opens.
   private func openingPlayer(_ lesson: PlayableLesson, transport: OpeningStartTransport)
     -> LessonPlayerStore
@@ -1143,12 +1234,12 @@ final class LessonPlayerLoadingTests: XCTestCase {
     while await transport.clocks.count < count, Date.now < deadline { await Task.yield() }
   }
 
-  private func waitUntil(_ condition: () -> Bool) async {
-    for _ in 0..<10_000 where !condition() {
-      await Task.yield()
+  private func waitUntil(
+    file: StaticString = #filePath, line: UInt = #line, _ condition: () -> Bool
+  ) async {
+    _ = try? await waitForTestCondition("The state did not arrive", file: file, line: line) {
+      condition()
     }
-
-    XCTAssertTrue(condition(), "the change never showed")
   }
 
   private func temporaryDefaults(name: String = #function) throws -> UserDefaults {
@@ -1270,6 +1361,25 @@ private func markedLesson() throws -> PlayableLesson {
     tutorSuggestions: [.init(id: .simpler, label: "Explain it more simply")])
 }
 
+/// Two screens to read, one after the other.
+private func twoScreenLesson() throws -> PlayableLesson {
+  let steps = try [("first", "Cells make up living things."), ("second", "Each cell has a wall.")]
+    .enumerated().map { index, step in
+      try JSONDecoder().decode(
+        LessonStep.self,
+        from: Data(
+          """
+          {"id": "\(step.0)", "position": \(index), "pictureWaitStartedAt": 0,
+           "kind": "explanation", "content": {"title": null, "text": "\(step.1)"}}
+          """.utf8))
+    }
+
+  return PlayableLesson(
+    id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
+    steps: steps, summary: nil,
+    tutorSuggestions: [.init(id: .simpler, label: "Explain it more simply")])
+}
+
 extension CurrentAccount {
   fileprivate static let lessonLoadingTestAccount = CurrentAccount(
     account: AccountAccess(
@@ -1332,9 +1442,14 @@ private actor HeldAnswersTransport: ClientTransport {
   private let runAnswers: String
   private var failingSteps: Set<String> = []
   private var holdsChecks = false
-  private var gates: [String: CheckedContinuation<Void, Never>] = [:]
+  private var gates: [String: TestContinuation<Void>] = [:]
   private var released: Set<String> = []
+  private var checks = 0
+  private var failingChecks: Set<Int> = []
+  private var heldCheck: Int?
+  private var heldCheckGate: TestContinuation<Void>?
   private(set) var requests: [String] = []
+  private(set) var isHoldingCheck = false
 
   init(runAnswers: String) {
     self.runAnswers = runAnswers
@@ -1347,6 +1462,23 @@ private actor HeldAnswersTransport: ClientTransport {
   /// Each check then waits for `release(_:)` before the server answers it.
   func holdChecks() {
     holdsChecks = true
+  }
+
+  /// The checks with these numbers, counted from 1 in the order they arrive, fail.
+  func failChecks(numbered numbers: Set<Int>) {
+    failingChecks = numbers
+  }
+
+  /// The check with this number waits for `releaseHeldCheck()` before the server answers it.
+  func holdCheck(_ number: Int) {
+    heldCheck = number
+  }
+
+  func releaseHeldCheck() {
+    heldCheck = nil
+    isHoldingCheck = false
+    heldCheckGate?.resume()
+    heldCheckGate = nil
   }
 
   func release(_ attemptId: String) {
@@ -1370,6 +1502,14 @@ private actor HeldAnswersTransport: ClientTransport {
         )
       )
     case "createStepCheck":
+      checks += 1
+      let number = checks
+
+      if number == heldCheck {
+        isHoldingCheck = true
+        await withTestVoidContinuation { heldCheckGate = $0 }
+      }
+
       let input = try JSONDecoder().decode(
         CheckInput.self, from: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20))
       let stepId = try XCTUnwrap(request.path?.split(separator: "/").dropLast().last)
@@ -1377,13 +1517,13 @@ private actor HeldAnswersTransport: ClientTransport {
 
       if holdsChecks {
         if !released.contains(input.attemptId) {
-          await withCheckedContinuation { gates[input.attemptId] = $0 }
+          await withTestVoidContinuation { gates[input.attemptId] = $0 }
         }
 
         requests.append("answered \(input.attemptId)")
       }
 
-      if failingSteps.contains(String(stepId)) {
+      if failingSteps.contains(String(stepId)) || failingChecks.contains(number) {
         throw APIError.network
       }
 
@@ -1425,13 +1565,14 @@ private struct UnexpectedLessonTransport: ClientTransport {
 
 private struct JSONTransport: ClientTransport {
   let body: String
+  var status: HTTPResponse.Status = .ok
 
   func send(
     _ request: HTTPRequest, body _: HTTPBody?, baseURL: URL, operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
     var headerFields = HTTPFields()
     headerFields[.contentType] = "application/json"
-    return (HTTPResponse(status: .ok, headerFields: headerFields), HTTPBody(body))
+    return (HTTPResponse(status: status, headerFields: headerFields), HTTPBody(body))
   }
 }
 
@@ -1474,8 +1615,8 @@ private actor OpeningStartTransport: ClientTransport {
   let clockStatus: String
   /// By their place among the clock requests, from 1: the ones answered only on `releaseClock(_:)`.
   let heldClocks: Set<Int>
-  private var gate: CheckedContinuation<Void, Never>?
-  private var clockGates: [Int: CheckedContinuation<Void, Never>] = [:]
+  private var gate: TestContinuation<Void>?
+  private var clockGates: [Int: TestContinuation<Void>] = [:]
   private(set) var count = 0
   private(set) var inputs: [String] = []
   private(set) var clocks: [ClockInput] = []
@@ -1524,7 +1665,7 @@ private actor OpeningStartTransport: ClientTransport {
       let place = clocks.count
       if failingClocks.contains(place) { throw APIError.network }
       if heldClocks.contains(place) {
-        await withCheckedContinuation { clockGates[place] = $0 }
+        await withTestVoidContinuation { clockGates[place] = $0 }
       }
       return (
         HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
@@ -1544,7 +1685,7 @@ private actor OpeningStartTransport: ClientTransport {
       String(
         decoding: try await Data(collecting: try XCTUnwrap(body), upTo: 1 << 20), as: UTF8.self))
     count += 1
-    if holds || heldStarts.contains(count) { await withCheckedContinuation { gate = $0 } }
+    if holds || heldStarts.contains(count) { await withTestVoidContinuation { gate = $0 } }
     var headers = HTTPFields()
     headers[.contentType] = "application/json"
     if failingStarts.contains(count) {
@@ -1582,5 +1723,34 @@ private actor OpeningStartTransport: ClientTransport {
         #"{"checked": true, "correctAnswer": null, "corrections": [], "expected": null, "feedback": null, "isCorrect": true, "keyPoints": null, "savedMistake": false, "score": null, "spelling": null}"#
       )
     )
+  }
+}
+
+extension LessonPlayerLoadingTests {
+  func testCallsExplanationPictures() async throws {
+    guard ProcessInfo.processInfo.environment["ZOONK_CALLS_CAPTURE"] != nil else {
+      throw XCTSkip("On-demand review pictures")
+    }
+    let base = try markedLesson()
+    for language in [false, true] {
+      let lesson = PlayableLesson(
+        id: base.id, title: base.title, language: base.language,
+        targetLanguage: language ? "es" : nil, chapterTitle: base.chapterTitle, steps: base.steps,
+        summary: base.summary, tutorSuggestions: base.tutorSuggestions)
+      let store = openingPlayer(lesson, transport: OpeningStartTransport(holds: false))
+      await store.load()
+      let state = try XCTUnwrap(store.state)
+      let window = try show(
+        LessonStageView(store: store, state: state).environment(
+          \.lessonTutor, LessonTutor(panel: { _, _ in AnyView(Text(verbatim: "Tutor")) })
+        ).appDependencies(.hosted()).environment(AppRouter()).zoonkStyles())
+      for (size, width, height) in [("phone", 390.0, 844.0), ("large", 1032.0, 1376.0)] {
+        window.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        window.rootViewController?.traitOverrides.horizontalSizeClass =
+          width > 700 ? .regular : .compact
+        try await Task.sleep(for: .milliseconds(600))
+        try captureCallsRoundTwo("explanation-\(language ? "language" : "knowledge")-\(size)")
+      }
+    }
   }
 }

@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -38,6 +40,7 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -161,8 +164,8 @@ class MindMapScreenshots {
         name: String,
         bitmap: Bitmap,
     ) {
-        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        val file = File(folder, "$name.png")
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 
@@ -175,7 +178,7 @@ class MindMapScreenshots {
         val STUDY_ACTIONS = StudyActions({}, { _, _, _ -> }, {}, {})
         val ALL = offer(needLessons = 0, startable = 5)
         val PART = offer(needLessons = 2, startable = 3, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
-        val PLUS_MONTH = offer(needLessons = 0, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"month\""))
+        val PLUS_ROLLING = offer(needLessons = 0, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"rolling30Days\""))
         val GUEST = offer(needLessons = 1, startable = 0, stop = stop("signUpRequired", "null", "null"))
         val FREE_LIMIT = offer(needLessons = 2, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
         val NEED_LESSONS = offer(needLessons = 2, startable = 0, eligible = 0)
@@ -193,7 +196,7 @@ class MindMapScreenshots {
             reason: String,
             resource: String,
             period: String,
-        ) = """{"reason":"$reason","resource":$resource,"period":$period,"resetsAt":null}"""
+        ) = """{"reason":"$reason","resource":$resource,"period":$period,"availableAt":null}"""
 
         val CHAPTERS =
             listOf(
@@ -203,7 +206,6 @@ class MindMapScreenshots {
                 mapJson(4, "Electricity", "drawing"),
                 mapJson(5, "Light", "writingLessons", lessonsToWrite = 3),
                 mapJson(6, "Optics", "available", lessonsToWrite = 2),
-                mapJson(7, "Modern physics", "plusRequired"),
                 mapJson(1, "Functions", "failed", subject = "mathematics", id = 11),
             )
 
@@ -213,8 +215,7 @@ class MindMapScreenshots {
             listOf(
                 lessonGroupJson(1, (1..4).toList()),
                 lessonGroupJson(2, (5..7).toList()),
-                lessonGroupJson(7, emptyList(), locked = 5),
-                lessonGroupJson(11, (8..11).toList(), locked = 2),
+                lessonGroupJson(11, (8..11).toList()),
             )
         val SAVED =
             listOf(
@@ -296,7 +297,10 @@ class MindMapScreenshots {
         @Composable
         fun Rows(place: MindMapPlace) {
             val inset = if (place == MindMapPlace.Finish) LIST_ITEM_INSET else 0.dp
-            Column(Modifier.padding(horizontal = inset, vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                Modifier.verticalScroll(rememberScrollState()).padding(horizontal = inset, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 if (place == MindMapPlace.Finish) SectionLabel(stringResource(R.string.mindmaps_chapter_finished))
                 Row("available", place)
                 Row("available", place, lessonsToWrite = 4)
@@ -307,7 +311,6 @@ class MindMapScreenshots {
                 Row("ready", place, image = false)
                 Row("failed", place)
                 Row("failed", place, shown = MindMapShown.Unreachable)
-                Row("plusRequired", place)
                 Row("available", place, cap = FREE_CAP)
                 Row(
                     "available",
@@ -316,7 +319,7 @@ class MindMapScreenshots {
                     lessonsToWrite = 4,
                     local =
                         MindMapLocal(
-                            limit = Limit.Reached(LimitTier.Free, LimitPeriod.Month),
+                            limit = Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days),
                             subject = LimitSubject.Lessons,
                         ),
                 )
@@ -328,7 +331,7 @@ class MindMapScreenshots {
                 "mind-maps" to { Library() },
                 "mind-maps-not-made-open" to { Library(notMade = true) },
                 "mind-maps-offer-part" to { Library(PART) },
-                "mind-maps-offer-plus-month" to { Library(PLUS_MONTH, tier = LimitTier.Plus) },
+                "mind-maps-offer-plus-rolling" to { Library(PLUS_ROLLING, tier = LimitTier.Plus) },
                 "mind-maps-offer-guest" to { Library(GUEST, tier = LimitTier.Guest) },
                 "mind-maps-offer-all-settled" to { Library(ALL, chapters = SETTLED) },
                 "mind-maps-offer-part-settled" to { Library(PART, chapters = SETTLED) },

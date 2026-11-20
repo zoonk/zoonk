@@ -1,6 +1,64 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Ask a question, report a problem or share an idea. We answer by email." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stell eine Frage, melde ein Problem oder teile eine Idee. Wir antworten per E-Mail."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haz una pregunta, reporta un problema o comparte una idea. Respondemos por correo electrónico."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose une question, signale un problème ou partage une idée. Nous te répondons par e-mail."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fai una domanda, segnala un problema o condividi un’idea. Ti rispondiamo via email."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "質問や問題の報告、アイデアをお寄せください。メールでお返事します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "궁금한 점이나 문제, 아이디어를 알려 주세요. 이메일로 답변해 드려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zadaj pytanie, zgłoś problem lub podziel się pomysłem. Odpowiadamy e-mailem."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tire uma dúvida, conte sobre um problema ou compartilhe uma ideia. A gente responde por e-mail."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir soru sor, sorun bildir veya fikrini paylaş. E-postayla cevap veriyoruz."
+          }
+        }
+      }
+    },
     "Cancel" : {
       "comment" : "Dismisses the feedback form without sending it.",
       "localizations" : {
@@ -233,65 +291,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E-posta adresi"
-          }
-        }
-      }
-    },
-    "Found a problem or have an idea? Tell us below or email hello@zoonk.com." : {
-      "comment" : "Introduction shown above the feedback fields.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hast du ein Problem entdeckt oder eine Idee? Schreib uns hier oder per E-Mail an hello@zoonk.com."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Encontraste un problema o tienes una idea? Cuéntanos abajo o escríbenos a contacto@zoonk.com."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as rencontré un problème ou tu as une idée ? Dis-le-nous ci-dessous ou écris-nous à hello@zoonk.com."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai trovato un problema o hai un’idea? Scrivici qui sotto o via email a hello@zoonk.com."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "気になる点やアイデアはありますか？下のフォームか、hello@zoonk.comへのメールでお知らせください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "문제를 발견했거나 아이디어가 떠올랐나요? 아래에 적어 주시거나 hello@zoonk.com으로 이메일을 보내 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coś nie działa lub masz pomysł? Napisz nam poniżej lub na adres hello@zoonk.com."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encontrou um problema ou tem uma ideia? Conte pra gente abaixo ou envie um e-mail para contato@zoonk.com."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir sorunla mı karşılaştın ya da bir fikrin mi var? Aşağıya yaz veya hello@zoonk.com adresine e-posta gönder."
           }
         }
       }
@@ -538,65 +537,6 @@
         }
       }
     },
-    "Send" : {
-      "comment" : "Submits the feedback form.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Envoyer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invia"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "送信する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "보내기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wyślij"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gönder"
-          }
-        }
-      }
-    },
     "Send feedback" : {
       "comment" : "Navigation title for the feedback form.",
       "localizations" : {
@@ -652,6 +592,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geri bildirim gönder"
+          }
+        }
+      }
+    },
+    "Send message" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachricht senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar mensaje"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyer le message"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invia messaggio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メッセージを送信する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메시지 보내기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyślij wiadomość"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar mensagem"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mesaj gönder"
           }
         }
       }
@@ -892,65 +890,6 @@
         }
       }
     },
-    "Your email, if you'd like a reply" : {
-      "comment" : "Optional reply email for a report about answers that repeatedly failed to save",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine E-Mail-Adresse, falls du eine Antwort möchtest"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu correo, si quieres que te respondamos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton adresse e-mail, si tu veux une réponse"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua email, se vuoi una risposta"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メールアドレス（返信をご希望の場合）"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이메일 주소(답변을 원하는 경우)"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adres e-mail, jeśli chcesz dostać odpowiedź"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu e-mail, se quiser uma resposta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cevap almak istersen e-posta adresin"
-          }
-        }
-      }
-    },
     "you@example.com" : {
       "comment" : "Example email address in the feedback form.",
       "localizations" : {
@@ -1006,6 +945,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "you@example.com"
+          }
+        }
+      }
+    },
+    "Your email, if you'd like a reply" : {
+      "comment" : "Optional reply email for a report about answers that repeatedly failed to save",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine E-Mail-Adresse, falls du eine Antwort möchtest"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu correo, si quieres que te respondamos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton adresse e-mail, si tu veux une réponse"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua email, se vuoi una risposta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレス（返信をご希望の場合）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이메일 주소(답변을 원하는 경우)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adres e-mail, jeśli chcesz dostać odpowiedź"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu e-mail, se quiser uma resposta"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cevap almak istersen e-posta adresin"
           }
         }
       }

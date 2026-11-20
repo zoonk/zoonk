@@ -10,10 +10,12 @@ final class ExamStore {
   @ObservationIgnored private var options: [String: Resource<MockOptions>] = [:]
   @ObservationIgnored private var mocks: [String: Resource<MockView>] = [:]
   @ObservationIgnored private var essays: [String: Resource<EssayView>] = [:]
+  @ObservationIgnored private let saves: LearnerSaves
 
   init(api: ExamAPI, cache: AppCache) {
     self.api = api
     self.cache = cache
+    saves = LearnerSaves(cache: cache)
   }
 
   func exam(goalId: String) -> Resource<ExamView> {
@@ -91,8 +93,18 @@ final class ExamStore {
     }
   }
 
+  /// The official result the learner reports: saved even when the page that asked goes away first,
+  /// which then gets `.obsolete`.
+  func reportResult(goalId: String, _ input: ExamResultInput) async -> MutationResult<Bool> {
+    await saves.save {
+      await self.write(invalidating: [.learnerModel]) { api, token in
+        try await api.reportResult(token: token, goalId: goalId, input: input)
+      }
+    }
+  }
+
   /// Only from a learner's tap. A mock that can ask only part of its questions comes back `short`
-  /// for the learner to start it knowingly (`acceptFewer`).
+  /// for the learner to start it knowingly (`acceptFewer`), also after the questions were written.
   func startMock(
     goalId: String, shape: MockShape, acceptFewer: Bool,
     onWriting: @escaping @MainActor () -> Void
@@ -124,7 +136,7 @@ final class ExamStore {
       }
 
       return try await api.startMock(
-        token: token, goalId: goalId, shape: shape, acceptFewer: true)
+        token: token, goalId: goalId, shape: shape, acceptFewer: acceptFewer, afterWriting: true)
     }
   }
 }

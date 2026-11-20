@@ -28,10 +28,8 @@ import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatTimeOfDay
-import java.time.DateTimeException
+import com.zoonk.android.ui.format.formatTimeZoneName
 import java.time.LocalTime
-import java.time.ZoneId
-import java.time.format.TextStyle
 
 /** Whether this phone can show reminders: Zoonk's notifications are allowed and their channel isn't turned off. */
 fun Context.canShowReminders(): Boolean {
@@ -117,11 +115,4 @@ fun reminderTime(time: String): String =
 
 /** The reminder's IANA zone by Android's localized name for it, such as "Brasilia Time". */
 @Composable
-fun reminderZone(timeZone: String): String {
-    val locale = currentLocale()
-    return try {
-        ZoneId.of(timeZone).getDisplayName(TextStyle.FULL, locale)
-    } catch (e: DateTimeException) {
-        timeZone
-    }
-}
+fun reminderZone(timeZone: String): String = formatTimeZoneName(timeZone, currentLocale()) ?: timeZone

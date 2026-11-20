@@ -29,55 +29,58 @@ import androidx.window.core.layout.WindowSizeClass
  * Main's `DetailLayout`: one column from the window's start margin, capped at a readable measure
  * (wider windows give it room, never wider margins), and [aside] beside it behind a hairline where
  * there's room, with [asideBar] pinned under it. Where there isn't, [content] is told so and shows
- * what the aside and its bar hold its own way, as main does under `lg`.
+ * what the aside and its bar hold its own way, as main does under `lg`. A [BottomBar] under both panes
+ * passes its [noteRoom], so each pane's scrolling content ends clear of the note drawn over them, and the column holds a note too
+ * tall to draw over it; a [noteRoom] made with [listState] scrolls the column to it.
  */
 @Composable
 fun DetailPage(
-    aside: @Composable ColumnScope.() -> Unit,
+    aside: (@Composable ColumnScope.() -> Unit)?,
     asideLabel: String,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     asideBar: (@Composable () -> Unit)? = null,
+    noteRoom: BarNoteRoom? = null,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    val padding = detailPagePadding()
+    val padding = pagePadding().plusBottom(noteRoom?.height ?: 0.dp)
 
     PageWithSupportingPane(
         modifier = modifier,
-        supportingPane = {
-            Row {
-                VerticalDivider()
-                Column(Modifier.semantics { paneTitle = asideLabel }) {
-                    Column(
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                            .padding(padding),
-                        verticalArrangement = Arrangement.spacedBy(DETAIL_SECTION_GAP),
-                        content = aside,
-                    )
-                    asideBar?.let { bar -> DockedActionBar { Box(Modifier.fillMaxWidth().padding(16.dp)) { bar() } } }
+        panesTouch = true,
+        supportingPane =
+            aside?.let {
+                {
+                    Row {
+                        VerticalDivider()
+                        Column(Modifier.semantics { paneTitle = asideLabel }) {
+                            Column(
+                                Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth()
+                                    .verticalScroll(rememberScrollState())
+                                    .padding(padding),
+                                verticalArrangement = Arrangement.spacedBy(DETAIL_SECTION_GAP),
+                                content = it,
+                            )
+                            asideBar?.let { bar -> BottomBar { bar() } }
+                        }
+                    }
                 }
-            }
-        },
+            },
     ) { asideBeside ->
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
             LazyColumn(
                 state = listState,
-                modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(),
+                modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize().barNoteViewport(noteRoom),
                 contentPadding = padding,
                 verticalArrangement = Arrangement.spacedBy(DETAIL_SECTION_GAP),
-            ) { content(asideBeside) }
+            ) {
+                content(asideBeside)
+                noteRoom?.let { barNoteInPage(it) }
+            }
         }
     }
-}
-
-/** Material's window margins: 16dp on phones, 24dp from medium windows up. */
-@Composable
-fun detailPagePadding(): PaddingValues {
-    val compact = !windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    return PaddingValues(horizontal = if (compact) 16.dp else 24.dp, vertical = 24.dp)
 }
 
 /** A page's main action fills the row on a phone and on a book's page, as main's does under `md` ([isMediumLayout]), and keeps its own width beyond. */

@@ -6,7 +6,11 @@ import { Button } from "@zoonk/ui/components/button";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import {
+  ActivityCanvas,
+  ActivityCanvasLabel,
+  ActivityTextAlternative,
+} from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { type TrackEvent, hasShownGuess } from "./timeline-event-card";
 import { TimelineGaps } from "./timeline-gaps";
@@ -24,12 +28,13 @@ const CHARACTER_WIDTH = 7.2;
 const CARD_CHROME = 150;
 const LINE_HEIGHT = 20;
 const CARD_BASE = 34;
+const NO_BREAK_SPACE = "\u00A0";
 
 function useFormatYear(start: number) {
   const t = useExtracted();
   const format = useFormatNumber();
 
-  return (year: number) => {
+  function written(year: number): string {
     const label = yearLabel(year, { start });
     const value = format(label.year, { grouping: false });
 
@@ -38,7 +43,10 @@ function useFormatYear(start: number) {
     }
 
     return label.era === "ce" ? t("{year} CE", { year: value }) : value;
-  };
+  }
+
+  // A year and its era wrap as one word.
+  return (year: number) => written(year).replaceAll(" ", NO_BREAK_SPACE);
 }
 
 function cardGap(labels: readonly string[], width: number): number {
@@ -118,6 +126,7 @@ function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | 
   const axis = {
     end: fields.end,
     height: Math.max(MIN_HEIGHT, gap * (dated.length + 1)),
+    inset: gap / 2,
     start: fields.start,
   };
 
@@ -178,6 +187,7 @@ function TimelineQuestion({
   const axis = {
     end: fields.end,
     height: Math.max(MIN_HEIGHT, gap * (labels.length + 1)),
+    inset: gap / 2,
     start: fields.start,
   };
 
@@ -242,6 +252,12 @@ function TimelineQuestion({
 
   return (
     <ActivityCanvas labelId={labelId}>
+      <ActivityCanvasLabel className="tabular-nums">
+        {t("{count} of {total} events placed", {
+          count: String(trackEvents.length),
+          total: String(fields.events.length),
+        })}
+      </ActivityCanvasLabel>
       <div ref={ref}>
         <TimelineTrack
           anchors={fields.anchors}
@@ -277,7 +293,6 @@ function TimelineQuestion({
             place(trayEvent.id, snapYear((fields.start + fields.end) / 2, fields));
             setFocusId(trayEvent.id);
           }}
-          remaining={unplaced.length}
         />
       )}
 

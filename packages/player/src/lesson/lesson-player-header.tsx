@@ -1,64 +1,54 @@
 "use client";
 
 import { StatusRegion } from "@zoonk/learn/status-region";
+import { TaskClose } from "@zoonk/learn/task-close";
 import {
-  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
+  TaskHeaderProgress,
   TaskHeaderSegments,
   TaskHeaderSide,
   TaskHeaderTitle,
 } from "@zoonk/learn/task-header";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import {
   Popover,
   PopoverContent,
   PopoverDescription,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CloudOffIcon, XIcon } from "lucide-react";
+import { CloudOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useLeaveLesson } from "./lesson-leave";
+import { useTutorBuddy } from "../questions/tutor-buddy";
+import { getChallengeProgress } from "./_utils/challenge-progress";
+import { useCompletionProps } from "./completion/use-completion-props";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
+import { useLessonInteraction } from "./lesson-player-interaction";
 import { LessonScreenMenu } from "./lesson-screen-menu";
 
-function LessonCloseLink() {
+function LessonClose() {
   const t = useExtracted();
-  const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
+  const { linkComponent, routes } = useLessonPlayerConfig();
   const { screen } = useLessonPlayer();
-  const leave = useLeaveLesson();
+  const { isPaused } = useLessonInteraction();
+  const buddy = useTutorBuddy();
 
-  const className = cn(
-    buttonVariants({ size: "icon", variant: "ghost" }),
-    "shrink-0",
-    TASK_HEADER_ICON_CLASS.start,
-  );
-
-  const label = (
-    <>
-      <XIcon aria-hidden="true" />
-      <span className="sr-only">{t("Close lesson")}</span>
-    </>
-  );
-
-  if (screen.unsentAnswer) {
-    return (
-      <button
-        aria-keyshortcuts="Escape"
-        className={className}
-        onClick={() => leave()}
-        type="button"
-      >
-        {label}
-      </button>
-    );
-  }
+  const confirm = screen.unsentAnswer
+    ? {
+        cancel: t("Keep writing"),
+        confirm: t("Leave"),
+        description: t("Your answer hasn't been checked, so it won't be kept."),
+        title: t("Leave for now?"),
+      }
+    : null;
 
   return (
-    <LinkComponent aria-keyshortcuts="Escape" className={className} href={routes.exit}>
-      {label}
-    </LinkComponent>
+    <TaskClose
+      confirm={confirm}
+      escHeld={isPaused || Boolean(buddy?.docked)}
+      href={routes.exit}
+      link={linkComponent}
+    />
   );
 }
 
@@ -74,7 +64,7 @@ function UnsavedAnswers() {
         <Popover>
           <PopoverTrigger
             render={
-              <Button className="text-muted-foreground shrink-0" size="icon" variant="ghost" />
+              <Button className="text-muted-foreground shrink-0" size="icon-bar" variant="ghost" />
             }
           >
             <CloudOffIcon aria-hidden="true" />
@@ -92,27 +82,68 @@ function UnsavedAnswers() {
   );
 }
 
-function useLessonProgress(): number {
-  const { screen } = useLessonPlayer();
+function LessonProgress() {
+  const t = useExtracted();
+  const { screen, state } = useLessonPlayer();
   const { current, total } = screen.progress;
+  const { step } = screen;
+  const label = t("Lesson progress");
 
-  return total === 0 ? 0 : Math.round((current / total) * 100);
+  if (step?.kind === "challenge") {
+    const progress = getChallengeProgress({
+      answer: state.answers[step.id],
+      shown: state.revealed[step.id] ?? 0,
+      step,
+    });
+
+    const share = {
+      deciding:
+        progress.stage === "deciding" ? progress.confirmed.length / step.content.nodes.length : 0,
+      ended: 1,
+      intro: 0,
+    }[progress.stage];
+
+    return <TaskHeaderProgress label={label} value={Math.round(share * 100)} />;
+  }
+
+  return (
+    <TaskHeaderSegments
+      label={label}
+      segments={screen.segments}
+      value={total === 0 ? 0 : Math.round((current / total) * 100)}
+    />
+  );
 }
 
 export function LessonPlayerHeader() {
-  const t = useExtracted();
-  const { lesson } = useLessonPlayerConfig();
-  const { screen } = useLessonPlayer();
-  const progress = useLessonProgress();
+  const { lesson, slots } = useLessonPlayerConfig();
+  const { state } = useLessonPlayer();
+  const end = useCompletionProps();
+
+  const endShowsTitle = Boolean(
+    slots.completionTitled && end && end.completion.status !== "failed",
+  );
+
+  if (state.run.status === "refused" && state.run.refusal.reason === "notFound") {
+    return (
+      <TaskHeader>
+        <TaskHeaderBar>
+          <TaskHeaderSide align="start">
+            <LessonClose />
+          </TaskHeaderSide>
+        </TaskHeaderBar>
+      </TaskHeader>
+    );
+  }
 
   return (
     <TaskHeader data-slot="lesson-player-header">
       <TaskHeaderBar>
         <TaskHeaderSide align="start">
-          <LessonCloseLink />
+          <LessonClose />
         </TaskHeaderSide>
 
-        <TaskHeaderTitle title={lesson.title} />
+        <TaskHeaderTitle spoken={endShowsTitle} title={lesson.title} />
 
         <TaskHeaderSide align="end">
           <UnsavedAnswers />
@@ -120,11 +151,7 @@ export function LessonPlayerHeader() {
         </TaskHeaderSide>
       </TaskHeaderBar>
 
-      <TaskHeaderSegments
-        label={t("Lesson progress")}
-        segments={screen.segments}
-        value={progress}
-      />
+      {state.phase !== "completed" && <LessonProgress />}
     </TaskHeader>
   );
 }

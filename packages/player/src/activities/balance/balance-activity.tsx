@@ -9,6 +9,7 @@ import { NotQuiteLead } from "../../components/not-quite-lead";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BalanceControls } from "./balance-controls";
+import { BalanceEquation } from "./balance-equation";
 import {
   type BalanceMove,
   type BalanceState,
@@ -119,14 +120,11 @@ function BlockBalance({
         tilt={tilt}
       />
 
-      <p
-        aria-hidden="true"
-        className="flex items-center justify-center gap-3 font-mono text-2xl font-medium tabular-nums"
-      >
+      <BalanceEquation aria-hidden="true">
         <span>{sides.left}</span>
         <span className={cn(tilt !== 0 && "text-destructive-text")}>{relation}</span>
         <span>{sides.right}</span>
-      </p>
+      </BalanceEquation>
 
       {tilt !== 0 && hint && (
         <p aria-live="polite" className="text-sm leading-snug">

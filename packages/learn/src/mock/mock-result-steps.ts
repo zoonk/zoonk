@@ -1,8 +1,8 @@
-export type MockResultPart = "essays" | "next" | "plan" | "score" | "speaking";
+export type MockResultPart = "essays" | "plan" | "score" | "speaking";
 
-const ORDER: readonly MockResultPart[] = ["score", "essays", "speaking", "plan", "next"];
+const ORDER: readonly MockResultPart[] = ["score", "essays", "speaking", "plan"];
 
-const BESIDE: readonly MockResultPart[] = ["plan", "next"];
+const BESIDE: readonly MockResultPart[] = ["plan"];
 
 export function getResultSteps(
   has: Readonly<Record<MockResultPart, boolean>>,

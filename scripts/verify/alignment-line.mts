@@ -1,0 +1,203 @@
+/* oxlint-disable no-magic-numbers -- Row alignment tolerance in logical units. */
+import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.mts";
+import { isStacked } from "./alignment-edges.mts";
+import {
+  type Context,
+  EDGE,
+  type Group,
+  drawn,
+  finding,
+  glyphsOnly,
+  groupName,
+  measured,
+  rowName,
+} from "./alignment-geometry.mts";
+
+/**
+ * One line of a row (craft E6): every part sits on the middle of the label's
+ * capitals, whatever its face or size, within half a logical unit at text ×1. The offset a reader
+ * sees is against the size of the text, so at text ×N that's N halves. A part read by its ink is
+ * drawn in whole device pixels, so its middle is known only to half a device pixel: it's allowed
+ * that much more on top.
+ */
+const LINE = 0.5;
+
+/**
+ * A text's middle from the font's cap height (or a script's ideographic face), never from the
+ * string's ink: "yes" sits where "Off" would, and "一" where "書" would.
+ */
+function capMiddle(element: CaptureElement): number | null {
+  const top = measured(element.capTop);
+  const bottom = measured(element.capBottom);
+
+  return top === null || bottom === null ? null : (top + bottom) / 2;
+}
+
+/** A mark's, an end glyph's or a glyphs-only part's middle is its ink's. */
+function middleOf(element: CaptureElement): number | null {
+  if (element.part !== "mark" && element.part !== "end" && !glyphsOnly(element)) {
+    return capMiddle(element);
+  }
+
+  const ink = drawn(element);
+  return ink ? (ink.top + ink.bottom) / 2 : null;
+}
+
+/** `inked`: one side of the comparison is a part read by its ink, not a text's capitals. */
+type Miss = { inked: boolean; off: number; part: string; to: string };
+
+function readByInk(element: CaptureElement) {
+  return element.part === "mark" || element.part === "end" || glyphsOnly(element);
+}
+
+// Apple records both ListRow's number and the plan reveal's date as `lead`. The former is
+// attached to the title by ListRow's 6pt spacing, while the latter sits in its own column.
+function isNumberedLabel(context: Context, lead: CaptureElement, label: CaptureElement) {
+  const [leadX, , leadWidth] = lead.bounds;
+  const [labelX, , labelWidth] = label.bounds;
+  const gap = Math.max(labelX - (leadX + leadWidth), leadX - (labelX + labelWidth));
+
+  return context.capture.platform === "apple" && Math.abs(gap - 6) <= 1 / context.capture.scale;
+}
+
+/**
+ * Each part's distance from where it belongs (craft E5 and E6). One line: on the label's middle.
+ * Beside a title and one description, or a title that wraps: a mark, a value and an end glyph on
+ * the row's center. Beside three lines or more (a title and two descriptions): a mark on the
+ * label's first line, a value and an end glyph on the row's center. A row with a text lead (a date
+ * before its day's entries) is top-aligned as a whole: every part sits on its first entry's line.
+ * A value stacked under its label has no line to share.
+ */
+function misses(context: Context, row: CaptureElement, own: CaptureElement[]): Miss[] | null {
+  const label = own
+    .filter((element) => element.part === "label" && drawn(element))
+    .toSorted((one, other) => one.bounds[1] - other.bounds[1])[0];
+
+  const stacked = isStacked(row, own);
+  const labelTop = label ? drawn(label)?.top : undefined;
+
+  // Stacked (large text), a value goes under the label, and Apple's stacked layout puts a mark on
+  // a line of its own above the words: neither shares the label's line. A mark beside the label
+  // still does.
+  const above = (element: CaptureElement) => {
+    const ink = drawn(element);
+
+    return (
+      element.part === "mark" && ink && labelTop !== undefined && ink.bottom <= labelTop + EDGE
+    );
+  };
+
+  const others = own.filter(
+    (element) =>
+      ["end", "lead", "mark", "value"].includes(element.part) &&
+      drawn(element) &&
+      !(stacked && (element.part === "value" || above(element))),
+  );
+
+  if (!label || others.length === 0) {
+    return [];
+  }
+
+  const labelMiddle = capMiddle(label);
+  // Apple records the containing list cell as bounds and the declared row inside it as ink.
+  const [, top, , height] =
+    context.capture.platform === "apple" && Array.isArray(row.ink) ? row.ink : row.bounds;
+
+  const rowMiddle = measured(row.middle, top + height / 2);
+  const middles = others.map((element) => ({ element, middle: middleOf(element) }));
+
+  if (labelMiddle === null || rowMiddle === null || middles.some(({ middle }) => middle === null)) {
+    return null;
+  }
+
+  // A title counts as one line however it wraps; each description under it is another (E5).
+  const notes = Math.max(own.filter((element) => element.part === "note").length, row.note ? 1 : 0);
+
+  const lines = measured(label.lines, 1);
+
+  if (lines === null) {
+    return null;
+  }
+
+  const oneLine = !stacked && lines === 1 && notes === 0;
+  const endMiddle = middles.find(({ element }) => element.part === "end")?.middle ?? null;
+
+  const led = others.some(
+    (element) => element.part === "lead" && !isNumberedLabel(context, element, label),
+  );
+
+  return middles.flatMap(({ element, middle }): Miss[] => {
+    const at = middle ?? labelMiddle;
+    const inked = readByInk(element);
+
+    if (oneLine) {
+      return [{ inked, off: at - labelMiddle, part: element.part, to: "the label's middle" }];
+    }
+
+    // A row with a text lead sits on its first line; a mark does beside three lines or more.
+    if (led || element.part === "lead" || (element.part === "mark" && notes >= 2)) {
+      return [{ inked, off: at - labelMiddle, part: element.part, to: "the label's first line" }];
+    }
+
+    return [
+      { inked, off: at - rowMiddle, part: element.part, to: "the row's center" },
+      ...(element.part === "value" && endMiddle !== null
+        ? [{ inked: true, off: at - endMiddle, part: "value", to: "the end glyph's middle" }]
+        : []),
+    ];
+  });
+}
+
+function describe(miss: Miss) {
+  return `the ${miss.part} ${Math.round(Math.abs(miss.off) * 100) / 100} ${miss.off > 0 ? "below" : "above"} ${miss.to}`;
+}
+
+export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
+  const { group, parts, rows } = read;
+
+  return rows.flatMap((row) => {
+    const own = parts.filter((element) => element.row === row.id);
+    const found = misses(context, row, own);
+
+    if (found === null) {
+      return [
+        finding(context, {
+          detail: `${rowName(read, row.id)}: a part's cap height or the row's middle wasn't measured`,
+          level: "not-measured",
+          message: `one line of a row in ${group.piece}: a part wasn't measured`,
+          piece: group.piece,
+          rule: "line",
+        }),
+      ];
+    }
+
+    const allowed = LINE * context.capture.configuration.textScale;
+    const resolution = 0.5 / context.capture.scale;
+
+    const off = found.filter(
+      (miss) => Math.abs(miss.off) > allowed + (miss.inked ? resolution : 0),
+    );
+
+    if (off.length === 0) {
+      return [];
+    }
+
+    const label = own.find((element) => element.part === "label");
+
+    const faced =
+      label?.textBox === "ideographic face"
+        ? " (the label by its ideographic face: it has no capitals)"
+        : "";
+
+    return [
+      finding(context, {
+        detail: `${rowName(read, row.id)}: ${off.map((miss) => describe(miss)).join("; ")}${faced}`,
+        level: "fail",
+        measured: Math.max(...off.map((miss) => Math.abs(miss.off))),
+        message: `a row of ${groupName(read)} is off one line by more than ${allowed}`,
+        piece: group.piece,
+        rule: "line",
+      }),
+    ];
+  });
+}

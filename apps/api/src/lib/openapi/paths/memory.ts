@@ -170,7 +170,7 @@ export const memoryPaths = {
   "/me/memory/insights/{insightId}": {
     patch: {
       description:
-        "Accepts or dismisses an insight. Accepting a schedule idea moves the goal's study time to the suggested one.",
+        "Accepts or dismisses an insight. Accepting a schedule idea moves the goal's study time to the suggested one. Accepting a plan change insight applies its change only when `quote` is the change's current one and today's numbers match its `effect`; otherwise the insight stays `pending` with today's.",
       operationId: "answerMemoryInsight",
       requestBody: {
         content: { "application/json": { schema: memoryInsightAnswerSchema } },

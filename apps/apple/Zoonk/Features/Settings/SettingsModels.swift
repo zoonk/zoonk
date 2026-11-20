@@ -13,8 +13,7 @@ struct LearningPreferences: Equatable, Sendable {
 
 enum PreferencesUpdate: Equatable, Sendable {
   case buddy(BuddyChoice)
-  /// Nil clears it.
-  case homeCountry(CountryChoice?)
+  case homeCountry(CountryChoice)
   /// The summary shows it, so it changes nothing here.
   case shareUsageData(Bool)
   case soundsEnabled(Bool)
@@ -59,11 +58,6 @@ enum PreferencesUpdate: Equatable, Sendable {
     return next
   }
 
-  /// Clearing a country sends its `null`, which the generated client would leave out.
-  var nullKeys: [String] {
-    self == .homeCountry(nil) ? ["homeCountry"] : []
-  }
-
   var body: Components.Schemas.LearningProfileUpdate {
     switch self {
     case .buddy(let buddy):
@@ -74,7 +68,7 @@ enum PreferencesUpdate: Equatable, Sendable {
             kind: .init(rawValue: buddy.kind.rawValue) ?? .zu,
             name: buddy.name)))
     case .homeCountry(let country):
-      .init(homeCountry: country?.code)
+      .init(homeCountry: country.code)
     case .shareUsageData(let shares):
       .init(shareUsageData: shares)
     case .soundsEnabled(let enabled):
@@ -133,12 +127,27 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
 /// What a free account can do; nil means no cap.
 struct FreePlan: Decodable, Equatable, Sendable {
   let activeGoals: Int?
-  let examPrepDays: Int?
   let guestLessons: Int?
-  let lessonsPerDay: Int?
-  let lessonsPerMonth: Int?
+  let lessonsPer30Days: Int?
   let tutorMessagesPerDay: Int?
+  let tutorMessagesPer30Days: Int?
   let uploadsPerDay: Int?
+
+  /// The buddy's free messages, with the monthly cap when the plan has one.
+  var buddyLine: LocalizedStringResource? {
+    guard let day = tutorMessagesPerDay else {
+      return nil
+    }
+
+    guard let month = tutorMessagesPer30Days else {
+      return LocalizedStringResource(
+        "An AI study buddy: \(day) messages a day", table: "Subscriptions",
+        comment: "Free plan: the study buddy's daily messages")
+    }
+
+    return LocalizedStringResource(
+      "An AI study buddy: \(day) messages a day, up to \(month) a month", table: "Subscriptions")
+  }
 }
 
 struct PlanAllowance: Equatable, Sendable {
@@ -151,6 +160,8 @@ struct PlanAllowance: Equatable, Sendable {
   struct Cap: Equatable, Sendable {
     var limit: Int?
     var used = 0
+    /// A monthly cap's next use, once it's reached.
+    var availableAt: Date?
 
     var isReached: Bool { limit.map { used >= $0 } ?? false }
   }
@@ -162,7 +173,8 @@ struct PlanAllowance: Equatable, Sendable {
   var activeGoals = Cap()
   var newGoalsTotal = Cap()
   var newGoalsToday = Cap()
-  var newGoalsThisMonth = Cap()
+  /// Over the last 30 days.
+  var newGoalsMonthly = Cap()
 }
 
 extension LearningPreferences {
@@ -217,6 +229,8 @@ extension PlanAllowance {
       activeGoals: Cap(limit: allowance.activeGoals.limit, used: allowance.activeGoals.used),
       newGoalsTotal: Cap(limit: goals?.totalLimit, used: goals?.usedTotal ?? 0),
       newGoalsToday: Cap(limit: goals?.dailyLimit, used: goals?.usedToday ?? 0),
-      newGoalsThisMonth: Cap(limit: goals?.monthlyLimit, used: goals?.usedThisMonth ?? 0))
+      newGoalsMonthly: Cap(
+        limit: goals?.rollingLimit, used: goals?.usedLast30Days ?? 0,
+        availableAt: goals?.availableAt))
   }
 }

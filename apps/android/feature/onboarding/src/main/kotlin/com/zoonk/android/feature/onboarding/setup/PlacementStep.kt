@@ -55,6 +55,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
@@ -67,7 +68,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
-import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.richtext.RichInlineText
@@ -98,9 +98,11 @@ internal fun ColumnScope.PlacementStep(
     onProgress: (Float?) -> Unit,
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
+    onProgressLabel: (String?) -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
-    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
+    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle(), onDone) }
+    VisitOf(vm.visit)
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
     val phase = vm.phase(placement)
@@ -108,10 +110,25 @@ internal fun ColumnScope.PlacementStep(
     val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
     val hold = rememberReadyHold(ready = phase != PlacementPhase.Waiting)
     val shown = if (hold.over) phase else PlacementPhase.Waiting
-    val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = onDone) }
+    val finish = { fromScratch: Boolean -> vm.finish(fromScratch) }
     val progress = (shown as? PlacementPhase.Question)?.spent?.toFloat()
-    LaunchedEffect(progress) { onProgress(progress) }
-    DisposableEffect(Unit) { onDispose { onProgress(null) } }
+    val progressLabel =
+        (shown as? PlacementPhase.Question)?.let {
+            stringResource(
+                R.string.onboarding_placement_question_number,
+                it.number,
+            )
+        }
+    LaunchedEffect(progress, progressLabel) {
+        onProgress(progress)
+        onProgressLabel(progressLabel)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            onProgress(null)
+            onProgressLabel(null)
+        }
+    }
 
     when (shown) {
         PlacementPhase.Loading -> {
@@ -168,14 +185,14 @@ internal fun ColumnScope.PlacementStep(
                         saveFailures = vm.saveFailures,
                         onReportSaveFailure = onReportSaveFailure,
                         onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
-                        onStop = { vm.finish(fromScratch = false, fromQuestion = true, onDone = onDone) },
+                        onStop = { vm.finish(fromScratch = false, fromQuestion = true) },
                     )
                 }
             }
         }
 
-        is PlacementPhase.Done -> {
-            PlacementDone(shown, pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
+        PlacementPhase.Done -> {
+            PlacementDone(pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
         }
     }
 }
@@ -214,7 +231,6 @@ private fun ColumnScope.PlacementIntro(
                 onClick = onStart,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
                 Text(stringResource(R.string.onboarding_placement_start))
             }
@@ -240,8 +256,8 @@ internal fun ColumnScope.PlacementWaiting(
     pending: Boolean,
     failed: Boolean,
     onSkip: () -> Unit,
-    skipLabel: String = stringResource(R.string.onboarding_placement_skip_for_now),
-    skipNote: String? = stringResource(R.string.onboarding_placement_skip_note),
+    skipLabel: String = stringResource(R.string.onboarding_language_test_skip),
+    skipNote: String? = null,
 ) {
     var patient by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -250,7 +266,11 @@ internal fun ColumnScope.PlacementWaiting(
     }
 
     val shown = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
-    val title = stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_placement_waiting_title)
+    val title =
+        stringResource(
+            com.zoonk.android.feature.warmup
+                .placementWaitTitle(hold.holding, shown.status == GenerationRun.Status.Failed),
+        )
     SetupWait(
         shown,
         GenerationKind.Placement,
@@ -259,9 +279,9 @@ internal fun ColumnScope.PlacementWaiting(
         hold,
         stringResource(R.string.onboarding_continue),
         onRetry,
-        afterWait = {
-            if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
-                OnboardingActions {
+        skip =
+            if (patient || run.status == GenerationRun.Status.Failed) {
+                {
                     FinishFailed(failed)
                     TextButton(
                         busy = pending,
@@ -281,19 +301,18 @@ internal fun ColumnScope.PlacementWaiting(
                         )
                     }
                 }
-            }
-        },
+            } else {
+                null
+            },
     ) { share ->
         GenerationWait(GenerationKind.Placement, shown, onRetry, share = share) {
             OnboardingHeading(
                 title,
-                stringResource(
-                    when {
-                        hold.holding -> R.string.warm_up_questions_ready_description
-                        READS_MATERIAL_STEP in run.steps -> R.string.onboarding_placement_waiting_material
-                        else -> R.string.onboarding_placement_waiting_time
-                    },
-                ),
+                when {
+                    hold.holding || shown.status == GenerationRun.Status.Failed -> null
+                    READS_MATERIAL_STEP in run.steps -> stringResource(R.string.onboarding_placement_waiting_material)
+                    else -> stringResource(R.string.onboarding_placement_waiting_time)
+                },
             )
         }
     }
@@ -428,7 +447,24 @@ internal fun ColumnScope.PlacementQuestion(
     }
 }
 
-/** [end] moves above [start] when [start] can't fit on one line beside it, so no label breaks mid-word. */
+/**
+ * [start]'s width beside [end], which keeps the larger of [endMin] and [endLongestWord], since main's action never
+ * shrinks below its longest word: its label's, or what's left, where the label wraps (main's
+ * `TASK_WRAPPING_ACTION_CLASS`); null only when its [longestWord] wouldn't fit there.
+ */
+internal fun besideStartWidth(
+    label: Int,
+    longestWord: Int,
+    endLongestWord: Int,
+    width: Int,
+    gap: Int,
+    endMin: Int,
+): Int? {
+    val room = width - gap - max(endMin, endLongestWord)
+    return if (longestWord <= room) minOf(label, room) else null
+}
+
+/** [start] then [end] on one line, as main keeps them; under each other, [end] still last, only when a word wouldn't fit. */
 @Composable
 private fun BesideOrAbove(
     start: @Composable () -> Unit,
@@ -437,10 +473,23 @@ private fun BesideOrAbove(
     Layout(contents = listOf(start, end)) { (starts, ends), constraints ->
         val gap = ACTION_GAP.roundToPx()
         val width = constraints.maxWidth
-        val startWidth = starts.first().maxIntrinsicWidth(constraints.maxHeight)
-        val beside = startWidth + gap + END_MIN_WIDTH.roundToPx() <= width
+        val start = starts.first()
+        val besideWidth =
+            besideStartWidth(
+                label = start.maxIntrinsicWidth(constraints.maxHeight),
+                longestWord = start.minIntrinsicWidth(constraints.maxHeight),
+                endLongestWord = ends.first().minIntrinsicWidth(constraints.maxHeight),
+                width = width,
+                gap = gap,
+                endMin = END_MIN_WIDTH.roundToPx(),
+            )
+        val beside = besideWidth != null
+        val startWidth = besideWidth ?: width
         val startPlaceable = starts.first().measure(Constraints.fixedWidth(if (beside) startWidth else width))
-        val endPlaceable = ends.first().measure(Constraints.fixedWidth(if (beside) width - gap - startWidth else width))
+        val endWidth = if (beside) width - gap - startWidth else width
+        // Beside a label that wraps, Confirm takes its height, so the two share a top and a bottom.
+        val endPlaceable =
+            ends.first().measure(Constraints(endWidth, endWidth, if (beside) startPlaceable.height else 0, Constraints.Infinity))
 
         if (beside) {
             val height = max(startPlaceable.height, endPlaceable.height)
@@ -449,9 +498,9 @@ private fun BesideOrAbove(
                 endPlaceable.placeRelative(startWidth + gap, (height - endPlaceable.height) / 2)
             }
         } else {
-            layout(width, endPlaceable.height + gap + startPlaceable.height) {
-                endPlaceable.placeRelative(0, 0)
-                startPlaceable.placeRelative(0, endPlaceable.height + gap)
+            layout(width, startPlaceable.height + gap + endPlaceable.height) {
+                startPlaceable.placeRelative(0, 0)
+                endPlaceable.placeRelative(0, startPlaceable.height + gap)
             }
         }
     }
@@ -515,36 +564,20 @@ private fun AnswerList(
     }
 }
 
+/** Main's `PlacementDone`: a test that's over and not saved yet; the title says it's done. */
 @Composable
 private fun ColumnScope.PlacementDone(
-    done: PlacementPhase.Done,
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
 ) {
-    when {
-        done.forToday -> {
-            PlacementOutcome(
-                eyebrow = pluralStringResource(R.plurals.onboarding_placement_answered, done.answered, done.answered),
-                title = stringResource(R.string.onboarding_placement_enough_title),
-                description = stringResource(R.string.onboarding_placement_enough_description),
-                pending = pending,
-                failed = failed,
-                onContinue = onContinue,
-            )
-        }
-
-        else -> {
-            PlacementOutcome(
-                eyebrow = pluralStringResource(R.plurals.onboarding_placement_answered, done.answered, done.answered),
-                title = stringResource(R.string.onboarding_placement_set_title),
-                description = stringResource(R.string.onboarding_placement_set_description),
-                pending = pending,
-                failed = failed,
-                onContinue = onContinue,
-            )
-        }
-    }
+    PlacementOutcome(
+        title = stringResource(R.string.focustest_answers_saved_title),
+        description = null,
+        pending = pending,
+        failed = failed,
+        onContinue = onContinue,
+    )
 }
 
 @Composable
@@ -554,9 +587,8 @@ internal fun ColumnScope.PlacementUnavailable(
     onContinue: () -> Unit,
 ) {
     PlacementOutcome(
-        eyebrow = null,
         title = stringResource(R.string.onboarding_placement_unavailable_title),
-        description = stringResource(R.string.onboarding_placement_unavailable_description),
+        description = null,
         pending = pending,
         failed = failed,
         onContinue = onContinue,
@@ -566,16 +598,14 @@ internal fun ColumnScope.PlacementUnavailable(
 
 @Composable
 private fun ColumnScope.PlacementOutcome(
-    eyebrow: String?,
     title: String,
-    description: String,
+    description: String?,
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
     action: String = stringResource(R.string.onboarding_placement_see_plan),
 ) {
     SetupContent {
-        eyebrow?.let { SuccessEyebrow(it) }
         OnboardingHeading(title, description)
         OnboardingActions {
             FinishFailed(failed)
@@ -583,7 +613,6 @@ private fun ColumnScope.PlacementOutcome(
                 busy = pending,
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
-                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
                 Text(action)
             }

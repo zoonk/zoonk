@@ -112,10 +112,6 @@ class StudyOpenerTest {
             val opener = opener(api)
             val step = MutationResult.Done(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()))
 
-            api.writeError = ApiException(ApiError.Unavailable, "PLUS_REQUIRED", status = 403)
-            assertEquals(step, opener.open(day(listOf(lesson)), lesson, next = false, goalId = GOAL))
-            assertEquals(LessonWriting.Refused(LessonRefusal.PlusRequired), opener.notWritten(blockId(0)))
-
             api.writeError = ApiException(ApiError.Unavailable, "LESSON_SET_ASIDE", status = 409)
             assertEquals(step, opener.open(day(listOf(lesson)), lesson, next = false, goalId = GOAL))
             assertEquals(LessonWriting.SetAside, opener.notWritten(blockId(0)))

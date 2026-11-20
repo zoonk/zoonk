@@ -1,5 +1,6 @@
 import StoreKitTest
 import UIKit
+import Vision
 import XCTest
 
 private enum UITestScenario {
@@ -53,6 +54,81 @@ final class ZoonkUITests: XCTestCase {
   }
 
   @MainActor
+  func testCertificatesTitleStaysOutOfBarAfterLoadingEmptyList() throws {
+    try checkCertificatesTitle(json: "[]", loadedText: "No certificates yet")
+  }
+
+  @MainActor
+  func testCertificatesTitleStaysOutOfBarAfterLoadingCertificate() throws {
+    try checkCertificatesTitle(
+      json: """
+        [{"code":"APCERT000001","kind":"course","recipientName":"UI Test User",
+          "completedOn":"2026-11-03","title":"Quantum physics from scratch",
+          "topics":[],"canDo":[],"locked":true}]
+        """, loadedText: "Quantum physics from scratch")
+  }
+
+  @MainActor
+  private func checkCertificatesTitle(json: String, loadedText: String) throws {
+    continueAfterFailure = false
+    let app = makeApp(for: .freeSubscription)
+    app.launchEnvironment["ZOONK_UI_TEST_CERTIFICATES"] = json
+    addTeardownBlock { app.terminate() }
+    launch(app)
+    openAccount(in: app)
+    let certificates = app.buttons["Certificates"].firstMatch
+    XCTAssertTrue(certificates.waitForExistence(timeout: 5))
+    certificates.tap()
+    XCTAssertTrue(app.staticTexts[loadedText].firstMatch.waitForExistence(timeout: 5))
+    let header = app.staticTexts["Certificates"].firstMatch
+    XCTAssertTrue(header.exists)
+    let screenshot = app.screenshot()
+    let evidence = XCTAttachment(screenshot: screenshot)
+    evidence.lifetime = .keepAlways
+    add(evidence)
+    let barImage = try XCTUnwrap(screenshot.image.cgImage)
+    let recognition = VNRecognizeTextRequest()
+    recognition.recognitionLevel = .accurate
+    recognition.recognitionLanguages = ["en-US"]
+    try VNImageRequestHandler(cgImage: barImage).perform([recognition])
+    let barWords = recognition.results?.compactMap { $0.topCandidates(1).first?.string } ?? []
+    XCTAssertEqual(
+      barWords.filter { $0 == "Certificates" }.count, 1,
+      "The visible page header must be the only Certificates title after loading: \(barWords)")
+  }
+
+  @MainActor
+  func testGoalNameRemainsVisibleAtAccessibilitySizes() throws {
+    for category in [
+      "UICTContentSizeCategoryAccessibilityL", "UICTContentSizeCategoryAccessibilityXXXL",
+    ] {
+      let app = makeApp(for: .freeSubscription)
+      app.launchArguments += [
+        "-UIPreferredContentSizeCategoryName", category,
+      ]
+      addTeardownBlock { app.terminate() }
+      launch(app)
+      XCTAssertTrue(app.buttons["Plant growth"].firstMatch.waitForExistence(timeout: 10))
+      let screenshot = app.screenshot()
+      let attachment = XCTAttachment(screenshot: screenshot)
+      attachment.lifetime = .keepAlways
+      add(attachment)
+      let request = VNRecognizeTextRequest()
+      request.recognitionLevel = .accurate
+      request.recognitionLanguages = ["en-US"]
+      request.regionOfInterest = CGRect(x: 0, y: 0.72, width: 1, height: 0.28)
+      try VNImageRequestHandler(cgImage: XCTUnwrap(screenshot.image.cgImage)).perform([request])
+      let words = request.results?.compactMap { $0.topCandidates(1).first?.string } ?? []
+      XCTAssertTrue(
+        words.contains { $0.contains("Plant") }, "The goal name must have visible text: \(words)")
+      openLevel(in: app)
+      XCTAssertTrue(
+        app.navigationBars["Level"].firstMatch.waitForExistence(timeout: 5), app.debugDescription)
+      app.terminate()
+    }
+  }
+
+  @MainActor
   func testFreeAccountOpensNativeSubscriptionStore() throws {
     continueAfterFailure = false
     storeKitSession = try makeStoreKitSession()
@@ -66,14 +142,13 @@ final class ZoonkUITests: XCTestCase {
 
     let subscription = app.buttons["Subscription"]
     XCTAssertTrue(subscription.waitForExistence(timeout: 5))
-    XCTAssertEqual(subscription.value as? String, "Free")
     subscription.tap()
 
     XCTAssertTrue(
-      app.navigationBars["Zoonk Plus"].waitForExistence(timeout: 5),
+      app.staticTexts["Subscription"].firstMatch.waitForExistence(timeout: 5),
       "Expected the free account to reach the native subscription screen")
     XCTAssertTrue(
-      app.staticTexts["Subscribe to Zoonk Plus"].waitForExistence(timeout: 5),
+      app.staticTexts["Plus"].firstMatch.waitForExistence(timeout: 5),
       "Expected the subscription screen to use main's Plus offer")
     XCTAssertTrue(
       app.staticTexts["Plus Monthly"].waitForExistence(timeout: 5),
@@ -112,11 +187,10 @@ final class ZoonkUITests: XCTestCase {
       try performAccessibilityAudit(in: app, sizedBySystem: destination.sizedBySystem)
     }
 
-    app.primaryNavigationItem("Today").tap()
     openStatistics(in: app)
     XCTAssertTrue(
       statTile("Days studied", in: app).waitForExistence(timeout: 5),
-      "Expected the level button to push Statistics")
+      "Expected Search's Statistics row to open Statistics")
     // The calendar's title row swaps layouts as text grows (`ViewThatFits`), which the audit reads
     // as text that doesn't scale and is clipped; at the largest size the title and key show whole.
     try performAccessibilityAudit(in: app, skipping: [.dynamicType, .textClipped])
@@ -148,6 +222,9 @@ final class ZoonkUITests: XCTestCase {
   /// - Dynamic Type and clipping in system bars and the search field, which keep their size (a long
   ///   press shows the Large Content Viewer) and truncate to their width, and in the elements
   ///   labeled `sizedBySystem`, which another system view sizes.
+  /// - Dynamic Type in labels no element covers, when the window shows iPad's floating tab bar: its
+  ///   tab names are labels inside its buttons, which XCUITest can't find, and keep their size as
+  ///   the iPhone's tab bar does.
   /// - Hit areas of elements that aren't controls, such as a chart's key.
   @MainActor
   private func performAccessibilityAudit(
@@ -161,9 +238,11 @@ final class ZoonkUITests: XCTestCase {
     // button at 61.99999999999997.
     let frames = systemSized.filter(\.exists).map { $0.frame.insetBy(dx: -0.01, dy: -0.01) }
 
+    let showsFloatingTabBar = app.buttons["ToggleSideBar"].exists
+
     try app.performAccessibilityAudit(for: .all.subtracting(skipped.union(.contrast))) { issue in
       guard let element = issue.element else {
-        return false
+        return showsFloatingTabBar && issue.auditType == .dynamicType
       }
 
       switch issue.auditType {
@@ -211,11 +290,27 @@ final class ZoonkUITests: XCTestCase {
 
   @MainActor
   private func openStatistics(in app: XCUIApplication) {
-    let levelButton = app.buttons.matching(
-      NSPredicate(format: "label ENDSWITH %@", "Statistics")
-    ).firstMatch
-    XCTAssertTrue(levelButton.waitForExistence(timeout: 5), "Expected the level button to exist")
-    levelButton.tap()
+    app.primaryNavigationItem("Search").tap()
+    let statistics = app.buttons["Statistics"].firstMatch
+    XCTAssertTrue(statistics.waitForExistence(timeout: 5), "Expected Search to list Statistics")
+    statistics.tap()
+  }
+
+  /// The level chip is in the bar, or in the bar's More menu where text is too large for both it
+  /// and the goal's name.
+  @MainActor
+  private func openLevel(in app: XCUIApplication) {
+    let level = app.buttons.matching(NSPredicate(format: "label ENDSWITH %@", "Level 12"))
+      .firstMatch
+
+    if !level.waitForExistence(timeout: 2) {
+      let more = app.buttons["More"].firstMatch
+      XCTAssertTrue(more.waitForExistence(timeout: 5), app.debugDescription)
+      more.tap()
+      XCTAssertTrue(level.waitForExistence(timeout: 5), app.debugDescription)
+    }
+
+    level.tap()
   }
 
   @MainActor

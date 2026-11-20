@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "checkpoint_after_lessons": "cb87484891473bfc2b8c905f27071c7d5964c20220bfea7d0758bccf7d300e19",
-  "checkpoint_answer": "fb3a33c664754479ff599c19964f5fef6db1f9fad4021391a6ed3e010eb10659",
   "checkpoint_answers": "dffcda18b1e579742bee99d5668bcd8290d5a1330ea8d78214d3acb9cbe160c3",
   "checkpoint_badge": "bb04d2bccff96bd2989c1eb096a147da7e0bd7bf3e21e71d9824d6c56c577124",
   "checkpoint_beat": "47b31a45fe7e464375fc26b7200ec19a2b1e0ae739ca8573ad72a3e22fc386aa",
@@ -14,6 +13,7 @@
   "checkpoint_finishing": "82c95546b48eeae2df3d607ed9aa2b89d5537f82b80f1a9481e7002108171fdd",
   "checkpoint_held": "15e7b23e860c015d88f962c566ef2e7d62813664a3d7e0623198e9d1a1fe95b1",
   "checkpoint_lost_line": "6d35cb9958b1a67b9620bf12b266c958f83bf78df491348c8af167556b24dfbb",
+  "checkpoint_needed_to_win": "df0f77f4f2a3be0d249e28e125b9c385db9963e6f5d0fb91c30c5986256fa5fc",
   "checkpoint_new_try_next": "6ff8638cf45e0d0e9b1c722ca37c546b36c022d1a03997eb5bbe9588086fc514",
   "checkpoint_new_try_tomorrow": "118c696330d7a291d465d5c4693c28c3a0354a2386cc97cdd364a73fda95f995",
   "checkpoint_next": "adc0e22fcdb224b36f1281f412299a7952df98125cdc6e43efaa82d85e8ec40e",
@@ -36,13 +36,12 @@
   "checkpoint_questions_left": "96560c0c7019b26c4bd6d93688b545493de6b06c81dcb099aa5f55dd80fbda45",
   "checkpoint_removed_detail": "6d0f97d29ba5f7e96439b65b25e234c7c90462e979b8dced5a04d7b3bd1b4643",
   "checkpoint_removed_title": "3207b4d02e5695e39d7de11b3d6d0c429811d26275e62fc91d9b7903d738921c",
-  "checkpoint_retry_after_lessons": "87fbfb353d725c2e3c70c0a3180a3f36b147d7c9431db22eb3a83849905b7fc1",
-  "checkpoint_retry_tomorrow": "5196a5c98a99082a44c80e2e0a9d0197cad6f44c08ef1122cb9d0d0c2dfe26b8",
-  "checkpoint_review": "1239b6d6c37b608755862389c43715c99a0f88338317d6785c5aea380c136ca6",
+  "checkpoint_retry_after_lessons": "ccd828d34d2a88d0e0dbf50418df4939ab482913cc8df5b08d7c5e416757035d",
+  "checkpoint_retry_tomorrow": "c54a1da3e23537caaac4a67595d3d243dd101bdd73d5e7c50530907281f813d8",
+  "checkpoint_review": "99713eb7c8f4dd05ad1e0333e647dffaff10cc4d515243899c35e79b570cb41a",
   "checkpoint_rewards": "2192af6a53970dc6bd45cf06f50042c6627f1f4d2b640a4b956740260f5e7361",
   "checkpoint_right_to_win": "7815f14d073074f2b3ab6324ecf3f028897e58b2fe3149956592ab56b8d21ca6",
-  "checkpoint_right_to_win_of": "c1f0e59bfe8e820623667218be908a55abb13501a247bd1c74c3876a11f6a360",
-  "checkpoint_see_result": "631000f902521e3150f2d86a192d07ddbbc7428fe43fce73d9ca79593a94d91e",
+  "checkpoint_see_result": "695f11f9a21cc57482316fc9da671255a7c98a651cb2f523b3f7ed8d5d2c13a8",
   "checkpoint_shield": "5733f4f3474101d0e2442e0e35be543554cb8e5ca9ad32c2cab1d746c1ae00af",
   "checkpoint_shield_value": "2bfb4435800f2a64e31f38d622d98fb167d572f59e3b371f480982536debf892",
   "checkpoint_to_go": "a01bd84c5daad48be81deab21ba74b11d47ff66ba1befa4a63688e8bb7701412",
@@ -64,14 +63,14 @@
     <string name="checkpoint_phase_plain">Aşama meydan okuması</string>
     <string name="checkpoint_confirm">Onayla</string>
     <string name="checkpoint_next">Sonraki</string>
-    <string name="checkpoint_see_result">Sonucunu gör</string>
+    <string name="checkpoint_see_result">Sonucu gör</string>
     <string name="checkpoint_why_later">Nedenini en sonda göreceksin.</string>
     <string name="checkpoint_won_line">Kalkanı kırıldı. Kazandın!</string>
     <string name="checkpoint_lost_line">Bu kez kalkanı dayandı.</string>
-    <string name="checkpoint_retry_tomorrow">Yarın yeniden deneyebilirsin. Hiçbir şey kaybetmedin.</string>
+    <string name="checkpoint_retry_tomorrow">Yarın rövanş var.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">Yarın %d kısa dersten sonra yeniden deneyebilirsin. Hiçbir şey kaybetmedin.</item>
-        <item quantity="other">Yarın %d kısa dersten sonra yeniden deneyebilirsin. Hiçbir şey kaybetmedin.</item>
+        <item quantity="one">Yarın %d kısa dersten sonra rövanş var.</item>
+        <item quantity="other">Yarın %d kısa dersten sonra rövanş var.</item>
     </plurals>
     <string name="checkpoint_every_answered">Tüm sorular cevaplandı.</string>
     <string name="checkpoint_shield">Hilebaz’ın kalkanı</string>
@@ -115,10 +114,9 @@
     <string name="checkpoint_weekly_done">Haftalık meydan okuma tamamlandı</string>
     <string name="checkpoint_beat">Hilebaz’ı yendin!</string>
     <string name="checkpoint_not_this_time">Bu kez olmadı</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">Kazanmak için %1$d doğru gerekiyordu (toplam %2$d soru)</item>
-        <item quantity="other">Kazanmak için %1$d doğru gerekiyordu (toplam %2$d soru)</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">Kazanmak için %d doğru cevaba ihtiyacın vardı.</item>
+        <item quantity="other">Kazanmak için %d doğru cevaba ihtiyacın vardı.</item>
     </plurals>
     <string name="checkpoint_rewards">Ödüller</string>
     <!-- %1$s is the phase's number. -->
@@ -141,7 +139,5 @@
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">Sıradaki aşama olan %1$s şimdiden açık.</string>
     <string name="checkpoint_answers">Cevaplar</string>
-    <string name="checkpoint_review">Cevapları incele</string>
-    <!-- %1$s is the right answer. -->
-    <string name="checkpoint_answer">Cevap: %1$s</string>
+    <string name="checkpoint_review">Cevapları gör</string>
 </resources>

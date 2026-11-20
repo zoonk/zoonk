@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "essay_back_to_today": "2ee39ceb046908efd1e307d0a32fc39acac44c911da5515d6e2538254f907853",
+  "essay_back_to_today": "8b86dd6f84027b23346553bf13170fcf182c0e65a6430d4abedd5a9d829dd73b",
   "essay_comments": "1394af1e5f1737669eddc1ab456a70f42aeb36e830fb434b07f23a0d186c8520",
   "essay_criterion_addressing": "ff673a2da41a523c15e818eea56bd3fd8a9468f02eab181cfb4946510f62bd49",
   "essay_criterion_argument": "36ff048a52010eebcf776540dce0f824654a84181c439482f90cc2226f7f0f80",
@@ -23,7 +23,7 @@
   "essay_finish_failed": "696adf7b1a44695c0b97d1587fa56cca14a16de9a2c9f4b9c58c0ac461830c71",
   "essay_for_example": "b3007d40b9b8f212c6b5be304a780696bb16afa60ae61b3d1e05b7727957ef2c",
   "essay_full_marks": "46f549bcbef9efc7130abb101455443408ff943350692ddc8c887321d957e22f",
-  "essay_grade_rewrite": "9f913370c49bd238872a809dae6b488ae0b694c6bab3843bb5dba7c3601d3b6b",
+  "essay_grade_rewrite": "6af0b6c5238938d5c34b441204efbd0f958ec7f04b28145248529f7735bcdd3c",
   "essay_grading": "462bc053b5de78ee4f2e70e685058c4a534e275d76da8c19d8ef9392da209205",
   "essay_grading_slow": "7ce73f075a0f0908668070cdd6522a0b90f57822f2e663d19ba01569516045c6",
   "essay_keep_writing": "b2de857194238bd5307b6d1fefeb4f21aa6233fd81b374472599942c90dc2750",
@@ -41,11 +41,11 @@
   "essay_rewrite_label": "ff673351308f9a35eb87f9c66e6556f27e9cbee058719c874dea5618955e2b4e",
   "essay_scale": "3add3bc3b18ba0ad74d13cfb94db9a4e5a856924d103a17939e78b0467848f7e",
   "essay_score_of": "10e1a7291d55820f75166b665966d983fbce501d1078d94ebcd6f28536c9b0b0",
-  "essay_see_comments": "7955690aded7a395da58ceaf3fdfa756d99eca5de9a924e9854e9e4be0a03e31",
+  "essay_see_comments": "21b1a1d0e3ef9265d2f00f5331234d78e983549ffdb94fc037bf3a8d393aad70",
   "essay_see_grade": "2e5fbb82ac41ef978c65bc1e466f25667e315ad78f1450e7d824d60659f35b14",
-  "essay_send": "62886978de76a32b3bcdf1a938e72a33a12fa45b44178262e5d299b95b851795",
+  "essay_send": "75727b9d0400c9327694873a5c01487eaebd142d7ef07be2657e2b71603e5ebe",
   "essay_send_failed": "620484cfceb1898f324c6765faf8d4332fd15f2d7221626e77235863d80b6fb6",
-  "essay_skip_rewrite": "38d209182fd6e03a808f25f52f6b3f30e25074782c984ca79c9030a7506f2028",
+  "essay_skip_rewrite": "4dbeca0cff4ab5310d602e45ddc68a2303e94a0810e326b175e42efd7be31853",
   "essay_skipped": "be168f28ba3b7e44b507e076434363eac5d25b84752da0979fab572294cce9af",
   "essay_supporting_texts": "284247f75176a73283ece11d20d21dc967460d7094a301abf75a6aac733da29e",
   "essay_the_case": "f49fccea8d964c1d742be1ddc878a0adf8120fb67b6b0841f1c49f312934d622",
@@ -104,14 +104,14 @@
     </plurals>
     <!-- On an essay the learner skipped, opened again from a link. -->
     <string name="essay_skipped">Bu kompozisyonu atladın.</string>
-    <string name="essay_back_to_today">Bugün’e dön</string>
+    <string name="essay_back_to_today">Bugün</string>
     <string name="essay_send_failed">İşlem tamamlanamadı. Metnin hâlâ burada. Birazdan tekrar dene.</string>
     <string name="essay_limit_reached">Bugünkü kompozisyon değerlendirme haklarını kullandın. Metnin burada kalacak; yarın gönder.</string>
     <string name="essay_grading">Kompozisyonunu her ölçüte göre inceliyoruz. Bu işlem 30 saniyeye kadar sürebilir.</string>
     <string name="essay_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>
-    <string name="essay_skip_rewrite">Yeniden yazmayı atla</string>
-    <string name="essay_grade_rewrite">Yeni taslağı değerlendir</string>
-    <string name="essay_send">Değerlendirmeye gönder</string>
+    <string name="essay_skip_rewrite">Atla</string>
+    <string name="essay_grade_rewrite">Yeniden yazımı değerlendir</string>
+    <string name="essay_send">Kompozisyonu değerlendir</string>
     <string name="essay_leave_title">Şimdilik çıkmak ister misin?</string>
     <string name="essay_leave_description">Metnin bu cihazda saklanır, geri döndüğünde seni burada bekler.</string>
     <string name="essay_keep_writing">Yazmaya devam et</string>
@@ -122,7 +122,7 @@
     <string name="essay_too_short_detail">Kompozisyonun tamamını yaz, sonra yeniden gönder.</string>
     <string name="essay_rewrite">Yeniden yaz</string>
     <string name="essay_finish_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
-    <string name="essay_see_comments">Her ölçütle ilgili yorumları gör</string>
+    <string name="essay_see_comments">Yorumları gör</string>
     <string name="essay_comments">Yorumlar</string>
     <string name="essay_proposal_elements">Önerinin beş unsuru</string>
     <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->

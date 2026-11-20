@@ -30,7 +30,7 @@ export const iconMatchTask: Task<
     "Decide, for each icon a lesson needs, whether a library icon the text search found shows the same thing or a new one should be drawn",
   generate: matchLessonIcons,
   id: "icon-match",
-  name: "Icon Match",
+  name: "Icon match",
   score: scoreIconMatch,
   testCases: TEST_CASES,
 };

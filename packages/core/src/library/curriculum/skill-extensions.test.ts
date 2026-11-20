@@ -14,6 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { OUTLINE_AHEAD_DAYS } from "../../lookahead/outline-ahead";
 import { unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
+import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
@@ -252,8 +253,11 @@ describe("skill extensions", () => {
 
     expect(standIns.map((item) => item.skillId)).toStrictEqual(skills.map((skill) => skill.id));
 
+    const firstDay = (item: (typeof standIns)[number]) =>
+      readSelectedItemFacts(item.facts)?.days?.at(0)?.[0] ?? item.scheduledFor?.toISOString() ?? "";
+
     const soon = standIns
-      .filter((item) => (item.scheduledFor ?? NOW) <= new Date("2020-10-12T00:00:00Z"))
+      .filter((item) => firstDay(item).slice(0, 10) <= "2020-10-12")
       .map((item) => item.skillId);
 
     const requests = await listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id });
@@ -359,12 +363,27 @@ describe("skill extensions", () => {
     ).resolves.toStrictEqual([]);
   });
 
-  it("waits while the stand-in is more than two weeks away", async () => {
-    const { goal } = await setup({ dailyMinutes: 5 });
+  it("asks for a long stand-in's next chapter from its first day, not the last one it spans", async () => {
+    const { goal, plan, skill } = await setup({ dailyMinutes: 5 });
+    const items = await planItems(plan.id);
+    const standIn = items.find((item) => item.kind === "lesson" && !item.lessonId);
+    const [first] = readSelectedItemFacts(standIn?.facts)?.days ?? [];
 
-    await expect(
+    expect([first?.[0], standIn?.scheduledFor?.toISOString().slice(0, 10)]).toStrictEqual([
+      "2020-10-05",
+      "2020-10-31",
+    ]);
+
+    const [soon, later] = await Promise.all([
       listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id }),
-    ).resolves.toStrictEqual([]);
+      listSkillExtensions({ days: 6, goalId: goal.id }),
+    ]);
+
+    expect(soon.flatMap((need) => need.bands.flatMap((band) => band.extend ?? []))).toStrictEqual([
+      expect.objectContaining({ skill: expect.objectContaining({ id: skill.id }) }),
+    ]);
+
+    expect(later).toStrictEqual([]);
   });
 
   it("sizes the next chapter to the plan's stand-in, capped, after the chapters so far", async () => {

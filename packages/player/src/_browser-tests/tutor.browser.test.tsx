@@ -1,5 +1,7 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { MemoryUpdated } from "@zoonk/learn/memory-updated";
+import { TaskAsideContent } from "@zoonk/learn/task-layout";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
@@ -131,6 +133,21 @@ describe("asking the tutor", () => {
   beforeEach(showDrawerSize);
   afterEach(restoreViewport);
 
+  it("heads a guest's question sheet with the guest's own buddy", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson([teachingStep("check")]),
+      tutor: { ...buildTutor(), canAsk: false },
+    });
+
+    await page.getByRole("button", { name: "Ask Pip" }).click();
+
+    await expect
+      .element(
+        page.getByRole("dialog").getByRole("heading", { name: "Ask Pip with a free account" }),
+      )
+      .toBeVisible();
+  });
+
   it("keeps a late history preload in its own step and restores it on return", async () => {
     const { api, lesson } = lessonWithTutor({
       steps: [teachingStep("explanation"), teachingStep("explanation")],
@@ -154,7 +171,7 @@ describe("asking the tutor", () => {
     playLesson({ lesson });
 
     await expect.poll(() => api.requests.thread).toBe(1);
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     const sheet = await openTutor();
     await expect.element(sheet.getByText(second.question)).toBeVisible();
 
@@ -183,16 +200,8 @@ describe("asking the tutor", () => {
     const [check] = lesson.steps;
     playLesson({ lesson });
 
-    await expect
-      .element(page.getByRole("button", { name: "Ask Pip" }))
-      .not.toHaveTextContent("Ask Pip");
-
     await page.getByRole("radio", { name: "The electron's size" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
-
-    await expect
-      .element(page.getByRole("button", { name: "Ask Pip" }))
-      .toHaveTextContent("Ask Pip");
 
     await expect
       .element(
@@ -287,8 +296,8 @@ describe("asking the tutor", () => {
   });
 
   it.each([
-    { action: "Sign in", status: 401 },
-    { action: "View plans", status: 402 },
+    { action: "Log in", status: 401 },
+    { action: "Subscribe", status: 402 },
   ])("offers $action when the API refuses a question with $status", async ({ action, status }) => {
     const { api, lesson } = lessonWithTutor();
     api.fail("create", status);
@@ -304,7 +313,7 @@ describe("asking the tutor", () => {
     expect(api.requests.create).toBe(1);
   });
 
-  it("offers Plus and stops sending once a free learner's daily allowance is used", async () => {
+  it("offers a subscription and stops sending once a free learner's daily allowance is used", async () => {
     const { api, lesson } = lessonWithTutor();
 
     api.next("answer", () => {
@@ -328,12 +337,17 @@ describe("asking the tutor", () => {
 
     playLesson({ lesson });
     const sheet = await openTutor();
-    const limitReached = sheet.getByRole("alert").filter({ hasText: /used today's help/iu });
-    const seePlus = sheet.getByRole("link", { name: "See Plus" });
+    const limitReached = sheet.getByRole("alert").filter({ hasText: /No more messages today/iu });
+    const subscribe = sheet.getByRole("link", { name: "Subscribe" });
 
     await ask(sheet, "Explain this within my limit.");
     await expect.element(limitReached).toBeVisible();
-    await expect.element(seePlus).toBeVisible();
+
+    await expect
+      .element(sheet.getByText("More tomorrow, or subscribe to keep going."))
+      .toBeVisible();
+
+    await expect.element(subscribe).toBeVisible();
     await expect.element(sheet.getByText("This one wasn't answered.")).toBeVisible();
     await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
     expect(api.requests.answer).toBe(1);
@@ -345,9 +359,152 @@ describe("asking the tutor", () => {
     await press("Escape");
     await openTutor();
     await expect.element(limitReached).toBeVisible();
-    await expect.element(seePlus).toBeVisible();
+    await expect.element(subscribe).toBeVisible();
     await expect.element(composer(sheet)).not.toBeInTheDocument();
     expect(api.requests.answer).toBe(1);
+  });
+
+  it("gives the day more messages come back once a free learner's messages for the month are used", async () => {
+    const { api, lesson } = lessonWithTutor();
+    const opens = new Date(Date.now() + 5 * MS_PER_DAY);
+    const day = new Intl.DateTimeFormat("en", { day: "numeric", month: "long" }).format(opens);
+
+    api.next("answer", () => {
+      api.questions = api.questions.map((question) => ({ ...question, status: "failed" as const }));
+
+      return Promise.resolve(
+        Response.json(
+          {
+            error: {
+              code: LESSON_PLAYER_ERROR_CODES.usageLimitReached,
+              details: {
+                limit: {
+                  availableAt: opens.toISOString(),
+                  limit: 100,
+                  period: "rolling30Days",
+                  resource: "tutorMessage",
+                  tier: "free",
+                },
+              },
+              message: "This plan's limit is reached",
+            },
+          },
+          { status: 402 },
+        ),
+      );
+    });
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+
+    await ask(sheet, "One more question this month.");
+
+    await expect
+      .element(sheet.getByRole("alert").filter({ hasText: /You've used your messages/u }))
+      .toBeVisible();
+
+    await expect
+      .element(sheet.getByText(`More on ${day}, or subscribe to keep going.`))
+      .toBeVisible();
+
+    await expect.element(sheet.getByRole("link", { name: "Subscribe" })).toBeVisible();
+    await expect.element(composer(sheet)).not.toBeInTheDocument();
+  });
+
+  it("keeps the notice, with no day, for a refusal whose day the device's clock already shows as past", async () => {
+    const { api, lesson } = lessonWithTutor();
+    const passedByThisClock = new Date(Date.now() - 60 * 1000);
+
+    api.next("answer", () => {
+      api.questions = api.questions.map((question) => ({ ...question, status: "failed" as const }));
+
+      return Promise.resolve(
+        Response.json(
+          {
+            error: {
+              code: LESSON_PLAYER_ERROR_CODES.usageLimitReached,
+              details: {
+                limit: {
+                  availableAt: passedByThisClock.toISOString(),
+                  limit: 100,
+                  period: "rolling30Days",
+                  resource: "tutorMessage",
+                  tier: "free",
+                },
+              },
+              message: "This plan's limit is reached",
+            },
+          },
+          { status: 402 },
+        ),
+      );
+    });
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    await ask(sheet, "A question refused by a server behind this clock.");
+
+    await expect
+      .element(sheet.getByRole("alert").filter({ hasText: /You've used your messages/u }))
+      .toBeVisible();
+
+    await expect.element(sheet.getByRole("link", { name: "Subscribe" })).toBeVisible();
+    await expect.element(composer(sheet)).not.toBeInTheDocument();
+    await expect.element(sheet.getByText("You can try again now.")).not.toBeInTheDocument();
+    await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
+  });
+
+  it("keeps a refused question unanswered, not failed, and offers Try again once its messages come back", async () => {
+    // The day's clock is driven: on a real one, a slow machine passes the opening before the refusal
+    // arrives, and a refusal already past on arrival rightly keeps the composer away.
+    freezeClock();
+    const { api, lesson } = lessonWithTutor();
+    const reopensInMs = 60_000;
+    const opens = new Date(Date.now() + reopensInMs);
+
+    api.next("answer", () => {
+      api.questions = api.questions.map((question) => ({ ...question, status: "failed" as const }));
+
+      return Promise.resolve(
+        Response.json(
+          {
+            error: {
+              code: LESSON_PLAYER_ERROR_CODES.usageLimitReached,
+              details: {
+                limit: {
+                  availableAt: opens.toISOString(),
+                  limit: 100,
+                  period: "rolling30Days",
+                  resource: "tutorMessage",
+                  tier: "free",
+                },
+              },
+              message: "This plan's limit is reached",
+            },
+          },
+          { status: 402 },
+        ),
+      );
+    });
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    await composer(sheet).fill("A question just past the month's messages.");
+    await pressKeepingClock(sendButton(sheet));
+
+    await expect.element(sheet.getByText("This one wasn't answered.")).toBeVisible();
+    await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
+    await expect.element(composer(sheet)).not.toBeInTheDocument();
+
+    await vi.advanceTimersByTimeAsync(reopensInMs);
+
+    await expect.element(composer(sheet)).toBeInTheDocument();
+    await expect.element(sheet.getByRole("button", { name: "Try again" })).toBeVisible();
+    await expect.element(sheet.getByText("This one wasn't answered.")).toBeVisible();
+
+    await expect
+      .element(sheet.getByText("We couldn't finish this answer."))
+      .not.toBeInTheDocument();
   });
 
   it("lets the learner answer a question another client left unfinished when this one conflicts with it", async () => {
@@ -928,15 +1085,15 @@ describe("answers still being written", () => {
     const sheet = await openTutor();
     await expect.element(sheet.getByText(running.question)).toBeVisible();
     await vi.advanceTimersByTimeAsync(FIRST_POLL_MS);
-    await expect.element(sheet.getByText(/session expired/iu)).toBeVisible();
-    await expect.element(sheet.getByRole("link", { name: "Sign in" })).toBeVisible();
+    await expect.element(sheet.getByText(/logged out/iu)).toBeVisible();
+    await expect.element(sheet.getByRole("link", { name: "Log in" })).toBeVisible();
 
     await vi.advanceTimersByTimeAsync(5000);
     expect(api.requests.thread).toBe(1);
     expect(api.requests.question).toBe(1);
   });
 
-  it("offers plans when a manual check loses access to questions", async () => {
+  it("offers a subscription when a manual check loses access to questions", async () => {
     freezeClock();
     const { api, lesson } = lessonWithTutor();
 
@@ -949,8 +1106,8 @@ describe("answers still being written", () => {
 
     const sheet = await openTutor();
     await checkAgain(sheet);
-    await expect.element(sheet.getByText("Subscribe to ask questions")).toBeVisible();
-    await expect.element(sheet.getByRole("link", { name: "View plans" })).toBeVisible();
+    await expect.element(sheet.getByText("Asking questions needs a subscription")).toBeVisible();
+    await expect.element(sheet.getByRole("link", { name: "Subscribe" })).toBeVisible();
     expect(api.requests.answer).toBe(0);
     expect(api.requests.question).toBe(1);
   });
@@ -1055,7 +1212,6 @@ describe("tutor history", () => {
 
     await releasePreload();
     await expect.element(loading).not.toBeInTheDocument();
-    await expect.element(sheet.getByText("What would you like help with?")).toBeVisible();
 
     await expect
       .element(sheet.getByText(/is an AI study buddy and can make mistakes\./u))
@@ -1301,7 +1457,7 @@ describe("the learner's buddy", () => {
 
     const sheet = await openTutor();
     await expect.element(sheet.getByText("Ask about this screen")).toBeVisible();
-    await expect.element(sheet.getByText("What would you like help with?")).toBeVisible();
+    await expect.element(sheet.getByPlaceholder(/^Ask /u)).toBeVisible();
   });
 
   it("answers as the default buddy before the learner picks one", async () => {
@@ -1453,7 +1609,7 @@ describe("the learner's buddy", () => {
     });
 
     playLesson({ lesson });
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     const tricky = page.getByText("This one is tricky. Pip can explain it another way.");
 
@@ -1471,19 +1627,49 @@ describe("the learner's buddy", () => {
     const sheet = page.getByRole("dialog");
     await expect.element(composer(sheet)).toHaveValue("Explain it more simply");
     await expect.element(sheet.getByText("Ask about your answer")).toBeVisible();
+    await expect.element(tricky).not.toBeInTheDocument();
   });
 
-  it("says the buddy's name in the bar on a phone after a miss", async () => {
+  it("keeps the help offer in the open buddy panel after two misses", async () => {
+    await atViewport({ height: 900, width: 1440 }, async () => {
+      const { lesson } = lessonWithTutor({
+        steps: [teachingStep("explanation"), teachingStep("check"), teachingStep("check")],
+      });
+
+      playLesson({ lesson });
+      await page.getByRole("button", { name: /^Continue/u }).click();
+      await page.getByRole("radio", { name: "The electron's exact path" }).click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
+      await page.getByRole("radio", { name: "The electron's exact path" }).click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+
+      await expect
+        .element(lessonAside().getByRole("list", { name: "Suggested questions" }))
+        .toBeVisible();
+
+      expect(
+        page.getByText("This one is tricky. Pip can explain it another way.").query(),
+      ).toBeNull();
+    });
+  });
+
+  it("keeps the bar's buddy button the same size after a miss on a phone", async () => {
     await atViewport(PHONE, async () => {
       const { lesson } = lessonWithTutor();
       playLesson({ lesson });
 
       const buddy = page.getByRole("button", { name: "Ask Pip" });
-      await expect.element(buddy).toHaveTextContent("");
+      await expect.element(buddy).toHaveTextContent("Ask");
+      const before = buddy.element().getBoundingClientRect();
 
       await page.getByRole("radio", { name: "The electron's size" }).click();
       await page.getByRole("button", { name: /^Check/u }).click();
-      await expect.element(buddy).toHaveTextContent("Ask Pip");
+      await expect.element(page.getByText("Not quite")).toBeVisible();
+
+      await expect.element(buddy).toHaveTextContent("Ask");
+      const after = buddy.element().getBoundingClientRect();
+      expect([after.width, after.height]).toStrictEqual([before.width, before.height]);
     });
   });
 
@@ -1494,14 +1680,14 @@ describe("the learner's buddy", () => {
       });
 
       playLesson({ lesson });
-      await page.getByRole("button", { name: /^Next/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
 
       const namedAsks = page.getByText("Ask Pip", { exact: true });
 
       await page.getByRole("radio", { name: "The electron's exact path" }).click();
       await page.getByRole("button", { name: /^Check/u }).click();
       await expect.element(page.getByText("Not quite")).toBeVisible();
-      await expectCount(namedAsks, 1);
+      await expectCount(namedAsks, 0);
       await page.getByRole("button", { name: /^Continue/u }).click();
 
       await page.getByRole("radio", { name: "The electron's exact path" }).click();
@@ -1529,6 +1715,12 @@ function dockedConversation() {
   return page.getByRole("region", { name: "Questions to Pip" });
 }
 
+async function askFromAside() {
+  await asideComposer().fill("Why does the cloud show chances?");
+  await press("Enter");
+  await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+}
+
 const WHY_MISSED = "Why isn't it the size?";
 
 async function missAndAskWhy() {
@@ -1540,6 +1732,50 @@ async function missAndAskWhy() {
 }
 
 describe("docked beside the lesson", () => {
+  it.each([
+    { buddy: "closed", setUp: async () => {} },
+    { buddy: "open", setUp: askFromAside },
+  ])(
+    "gives the aside to the host's own panel at the lesson's end, with the buddy $buddy before it",
+    async ({ setUp }) => {
+      const { lesson } = lessonWithTutor();
+
+      renderLessonPlayer({
+        lesson,
+        slots: {
+          completion: () => (
+            <>
+              <TaskAsideContent>
+                <h2>Today</h2>
+              </TaskAsideContent>
+              <h1>Block done</h1>
+            </>
+          ),
+        },
+        tutor: buildTutor(),
+      });
+
+      await setUp();
+
+      await page
+        .getByRole("radio", { name: "Where the electron is most likely to be found" })
+        .click();
+
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
+
+      await expect.element(page.getByRole("heading", { name: "Block done" })).toBeVisible();
+      await expect.element(page.getByRole("heading", { name: "Today" })).toBeVisible();
+      await expect.element(page.getByText("Pip is an AI study buddy")).not.toBeInTheDocument();
+
+      await expect
+        .element(page.getByRole("textbox", { name: /^Ask Pip/u }))
+        .not.toBeInTheDocument();
+
+      await expect.element(dockedConversation()).not.toBeInTheDocument();
+    },
+  );
+
   it("asks from the aside's composer and shows the answer beside the question", async () => {
     const { api, lesson } = lessonWithTutor();
     const [check] = lesson.steps;
@@ -1583,6 +1819,20 @@ describe("docked beside the lesson", () => {
       .toBeVisible();
   });
 
+  it("introduces the buddy while the aside holds nothing else, then gives it to the recap", async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [teachingStep("explanation"), teachingStep("check")],
+    });
+
+    playLesson({ lesson });
+    const intro = lessonAside().getByText("Pip is an AI study buddy and can make mistakes.");
+    await expect.element(intro).toBeVisible();
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(lessonAside().getByText("From the lesson")).toBeVisible();
+    await expect.element(intro).not.toBeVisible();
+  });
+
   it("offers the lesson's takes on a reading screen, one tap each", async () => {
     const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
     playLesson({ lesson });
@@ -1619,7 +1869,7 @@ describe("docked beside the lesson", () => {
     await expect.element(simpler).toBeVisible();
     await expect.element(didntGetIt).not.toBeInTheDocument();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(didntGetIt).toBeVisible();
     await expect.element(simpler).not.toBeInTheDocument();
 
@@ -1745,7 +1995,7 @@ describe("docked beside the lesson", () => {
     await press("Enter");
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(dockedConversation()).not.toBeInTheDocument();
     await page.getByRole("button", { name: "Previous screen" }).click();
 
@@ -1781,16 +2031,19 @@ describe("docked beside the lesson", () => {
     await pause();
     await expect.element(offer).not.toBeInTheDocument();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(lessonAside().getByRole("button", { name: "1 question" })).toBeVisible();
 
+    await page.getByRole("button", { name: "Collapse sidebar" }).click();
     await pause();
     await expect.element(offer).not.toBeInTheDocument();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await pause();
     await expect.element(offer).toBeVisible();
+    await page.getByRole("button", { name: "Expand sidebar" }).click();
+    await expect.element(offer).not.toBeInTheDocument();
   });
 
   it('fills in the simpler suggestion when "I didn\'t get this" is tapped while a question is on its way', async () => {
@@ -1886,5 +2139,31 @@ describe("docked beside the lesson", () => {
     await releaseCreate();
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
     await expect.element(asideComposer()).toHaveValue("");
+  });
+});
+
+describe("explanation help at every layout", () => {
+  it.each([null, "es"] as const)(
+    "keeps a phone ask entry with target language %s",
+    async (targetLanguage) => {
+      await atViewport(PHONE, async () => {
+        const lesson = buildLesson([teachingStep("explanation")], { targetLanguage });
+        stubTutorApi({ lesson });
+        playLesson({ lesson });
+        await expect.element(page.getByRole("button", { name: "Ask Pip" })).toBeVisible();
+        await page.getByRole("button", { name: "Ask Pip" }).click();
+
+        await expect
+          .element(page.getByRole("dialog").getByRole("textbox", { name: "Ask a question" }))
+          .toBeVisible();
+      });
+    },
+  );
+
+  it("keeps one ask beside a wide explanation", async () => {
+    const { lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    playLesson({ lesson });
+    await expect.element(asideComposer()).toBeVisible();
+    expect(page.getByRole("button", { name: "Ask Pip" }).query()).toBeNull();
   });
 });

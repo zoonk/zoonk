@@ -15,12 +15,14 @@ struct GoalStartEntry: View {
   }
 
   var part = Part.whole
+  var showsFreeNote = false
   /// Kept by the screen, so folding or unfolding iPhone Duo keeps what the learner typed.
   @Binding var goal: SentGoal
+  /// The screen's, which leaves it as its visit ends; the box offers material only with it.
+  var materialDraft: Binding<MaterialDraft>?
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var materialDraft = MaterialDraft()
 
   var body: some View {
     if part == .examples {
@@ -31,17 +33,18 @@ struct GoalStartEntry: View {
     } else {
       GoalEntrySections(
         words: $goal.words, isSection: part != .box, showsExamples: part == .whole,
+        showsFreeNote: showsFreeNote,
         canSubmitEmpty: !goal.material.isEmpty && goal.intent != nil,
         onSubmit: send,
         attach: {
-          if part != .box {
-            GoalMaterialButton(material: $goal.material, draft: $materialDraft)
+          if part != .box, let materialDraft {
+            GoalMaterialButton(material: $goal.material, draft: materialDraft)
           }
         },
         attachment: {
-          if part != .box {
+          if part != .box, let materialDraft {
             GoalMaterialSections(
-              material: $goal.material, intent: $goal.intent, draft: $materialDraft)
+              material: $goal.material, intent: $goal.intent, draft: materialDraft)
           }
         })
     }
@@ -92,12 +95,18 @@ enum GoalStart: Equatable {
   case goal(String)
 }
 
+enum GoalEntrySubmission {
+  static func isEnabled(words: String, canSubmitEmpty: Bool) -> Bool {
+    !words.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || canSubmitEmpty
+  }
+}
+
 struct GoalEntrySections<Attach: View, Attachment: View>: View {
   @Binding var words: String
   var isSection = false
   var showsExamples = true
+  var showsFreeNote = false
   var error: GoalError?
-  var limit: GoalLimitReason?
   /// With material and what to do with it, the box may stay empty.
   var canSubmitEmpty = false
   let onSubmit: (String) -> Void
@@ -112,10 +121,6 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
   private var maxLength: Int { 2000 }
 
   var body: some View {
-    if let limit {
-      GoalLimitNoticeSection(reason: limit, upFront: true)
-    }
-
     Section {
       VStack(spacing: 0) {
         // Tops rather than first baselines: a vertical `TextField` reports its baseline above its
@@ -148,7 +153,6 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
             }
           }
         }
-        .padding(10)
 
         HStack(alignment: .bottom, spacing: 4) {
           attach()
@@ -162,9 +166,10 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
           }
           .buttonStyle(.mainAction)
           .controlSize(.large)
+          .disabled(!GoalEntrySubmission.isEnabled(words: words, canSubmitEmpty: canSubmitEmpty))
         }
       }
-      .padding(6)
+      .padding(12)
       .inputPanel(isFocused: isFocused)
       .keepsOffFold()
       .listRowBackground(Color.clear)
@@ -175,6 +180,14 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
           Text(
             "Start a goal", tableName: "Onboarding",
             comment: "Title of the section where a learner types a new goal"))
+      }
+    } footer: {
+      if showsFreeNote {
+        SectionFooter {
+          Text(
+            "Start free, no account needed.", tableName: "Onboarding",
+            comment: "Under onboarding's steps for a visitor or a guest")
+        }
       }
     }
 
@@ -192,14 +205,10 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
     }
   }
 
-  /// Never greyed out: with nothing to send, it puts the cursor in the box instead.
   private func submit() {
     let goal = words.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    guard !goal.isEmpty || canSubmitEmpty else {
-      isFocused = true
-      return
-    }
+    guard GoalEntrySubmission.isEnabled(words: goal, canSubmitEmpty: canSubmitEmpty) else { return }
 
     isFocused = false
     onSubmit(goal)
@@ -266,7 +275,7 @@ struct GoalExamplesSection: View {
         Button {
           onPick(String(localized: example.label))
         } label: {
-          ListRow(Text(example.label), description: Text(example.kind))
+          ListRow(Text(example.label), description: example.kind.map { Text($0) })
             .disclosureChevron()
         }
       }
@@ -278,7 +287,7 @@ struct GoalExamplesSection: View {
     }
   }
 
-  private var examples: [(label: LocalizedStringResource, kind: LocalizedStringResource)] {
+  private var examples: [(label: LocalizedStringResource, kind: LocalizedStringResource?)] {
     let exam: LocalizedStringResource =
       switch LocalExample.exam {
       case .abitur:
@@ -311,35 +320,29 @@ struct GoalExamplesSection: View {
       }
 
     return [
-      (
-        exam,
-        LocalizedStringResource("Exam", table: "Onboarding", comment: "The kind of an example goal")
-      ),
+      (exam, nil),
       (
         LocalizedStringResource(
           "Speak \(LocalExample.language) for a job interview", table: "Onboarding",
           comment: "An example goal; the language is one the learner could speak"),
-        LocalizedStringResource(
-          "Language", table: "Onboarding", comment: "The kind of an example goal")
+        nil
       ),
       (
         LocalizedStringResource(
           "Understand quantum physics", table: "Onboarding", comment: "An example goal"),
-        LocalizedStringResource(
-          "Learn a topic", table: "Onboarding", comment: "The kind of an example goal")
+        nil
       ),
       (
         LocalizedStringResource(
           "Learn music from scratch", table: "Onboarding", comment: "An example goal"),
-        LocalizedStringResource(
-          "Music", table: "Onboarding", comment: "The kind of an example goal")
+        nil
       ),
       (
         LocalizedStringResource(
           "How does inflation work?", table: "Onboarding",
           comment: "An example question for a quick explanation"),
         LocalizedStringResource(
-          "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
+          "Quick explanation\u{00A0}· \(studyDuration(minutes: 5))",
           table: "Onboarding",
           comment:
             "The kind of an example goal: a short explanation of one question, and its length")

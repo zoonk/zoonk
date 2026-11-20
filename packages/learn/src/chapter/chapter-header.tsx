@@ -1,15 +1,10 @@
 "use client";
 
-import {
-  DetailActions,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
-import { DetailContinueLink, useDoneShare } from "../_components/detail-page";
-import { PageEyebrow } from "../_components/page";
+import { DetailContinueLink } from "../_components/detail-page";
+import { FactSegments } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
@@ -18,63 +13,56 @@ import { useChapterScreen } from "./chapter-context";
 function ChapterFacts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const doneShare = useDoneShare();
   const { chapter } = useChapterScreen();
   const { lessons } = chapter;
   const minutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
-  const done = lessons.filter((lesson) => lesson.state === "done").length;
-
-  if (lessons.length === 0) {
-    return null;
-  }
 
   const facts = [
-    t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
+    t("Chapter {number, number}", { number: chapter.chapter.position }),
+    lessons.length > 0 &&
+      t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
     minutes > 0 && formatDuration(minutes),
-    doneShare(done / lessons.length),
   ].filter(Boolean);
 
-  return <DetailFacts>{facts.join(" · ")}</DetailFacts>;
+  return (
+    <DetailFacts>
+      <FactSegments facts={facts} />
+    </DetailFacts>
+  );
 }
 
 export function ChapterHeader() {
-  const t = useExtracted();
-  const { chapter, hrefs } = useChapterScreen();
-  const { lessons } = chapter;
-  const done = lessons.filter((lesson) => lesson.state === "done").length;
-  const next = lessons.find((lesson) => lesson.state === "next");
+  const { chapter } = useChapterScreen();
 
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow>
-          {chapter.chapter.subject
-            ? t("{subject} · Chapter {number, number}", {
-                number: chapter.chapter.position,
-                subject: chapter.chapter.subject.name,
-              })
-            : t("Chapter {number, number}", { number: chapter.chapter.position })}
-        </PageEyebrow>
         <DetailTitle>{chapter.chapter.title}</DetailTitle>
         <ChapterFacts />
       </DetailHeroText>
-
-      <DetailActions className="empty:hidden">
-        {next && (
-          <DetailContinueLink
-            href={`${hrefs.lessonBasePath}/${next.lessonId}`}
-            lessonWritten={next.written}
-            started={done > 0}
-          />
-        )}
-        <ContentFeedbackMenu
-          label={t("Chapter options")}
-          screen="chapter"
-          size="detail"
-          target={{ contentId: chapter.chapter.chapterId, contentKind: "chapter" }}
-        />
-      </DetailActions>
     </DetailHero>
+  );
+}
+
+export function ChapterBottomBar() {
+  const { chapter, hrefs } = useChapterScreen();
+  const { lessons } = chapter;
+  const next = lessons.find((lesson) => lesson.state === "next");
+
+  if (!next) {
+    return null;
+  }
+
+  return (
+    <BottomBar>
+      <BottomBarActions>
+        <DetailContinueLink
+          href={`${hrefs.lessonBasePath}/${next.lessonId}`}
+          lessonWritten={next.written}
+          started={lessons.some((lesson) => lesson.state === "done")}
+        />
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
@@ -88,6 +76,11 @@ export function ChapterBar() {
       title={chapter.chapter.title}
     >
       {ask}
+      <ContentFeedbackMenu
+        label={t("Chapter options")}
+        screen="chapter"
+        target={{ contentId: chapter.chapter.chapterId, contentKind: "chapter" }}
+      />
     </LearnPageBar>
   );
 }

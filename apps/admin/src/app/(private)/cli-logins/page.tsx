@@ -1,37 +1,56 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
+import { getSafeAppRelativePath } from "@zoonk/core/auth/ott/redirect";
+import { ADMIN_URL } from "@zoonk/utils/url";
 import { type Metadata } from "next";
 import { Suspense } from "react";
+import { CLI_LOGINS_PAGE, adminPages } from "../admin-navigation";
 import { CliLoginList, CliLoginListSkeleton } from "./cli-login-list";
 
 export const metadata: Metadata = { title: "CLI logins" };
 
-export default function CliLoginsPage() {
-  return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>CLI logins</ContainerTitle>
-          <ContainerDescription>
-            Everyone logged in with pnpm zoonk login, and on how many machines. A login renews
-            itself while it&apos;s used and ends after 30 days without use. Revoke ends all of a
-            person&apos;s CLI logins at once, on every machine; they log in again on the machines
-            they still have.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+const HOME = { href: "/", label: "Home" };
 
-      <ContainerBody>
+function returnPage(from: string | string[] | undefined) {
+  const safePath = getSafeAppRelativePath(from);
+
+  if (!safePath) {
+    return HOME;
+  }
+
+  const { pathname } = new URL(safePath, ADMIN_URL);
+  const page = adminPages.findLast(({ url }) => pathname === url || pathname.startsWith(`${url}/`));
+
+  return page && page !== CLI_LOGINS_PAGE ? { href: pathname, label: page.label } : HOME;
+}
+
+function CliLoginsHeader({ parent }: { parent: typeof HOME }) {
+  return (
+    <AdminPageHeader parent={parent} title="CLI logins">
+      Staff logged in to the Zoonk CLI.
+    </AdminPageHeader>
+  );
+}
+
+async function CliLoginsHeaderFromPage({
+  searchParams,
+}: Pick<PageProps<"/cli-logins">, "searchParams">) {
+  const { from } = await searchParams;
+
+  return <CliLoginsHeader parent={returnPage(from)} />;
+}
+
+export default function CliLoginsPage({ searchParams }: PageProps<"/cli-logins">) {
+  return (
+    <AdminPage>
+      <Suspense fallback={<CliLoginsHeader parent={HOME} />}>
+        <CliLoginsHeaderFromPage searchParams={searchParams} />
+      </Suspense>
+
+      <AdminPageBody>
         <Suspense fallback={<CliLoginListSkeleton />}>
           <CliLoginList />
         </Suspense>
-      </ContainerBody>
-    </Container>
+      </AdminPageBody>
+    </AdminPage>
   );
 }

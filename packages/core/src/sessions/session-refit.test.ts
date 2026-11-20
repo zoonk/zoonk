@@ -387,7 +387,7 @@ describe("completion adds a reached challenge from its saved facts", () => {
       );
 
       const refit = await prisma.$transaction((tx) =>
-        refitSessionLessons(tx, { sessionId: fixture.session.id, timeZone: "UTC" }),
+        refitSessionLessons(tx, { sessionId: fixture.session.id }),
       );
 
       expect(refit.reserved).toBe(false);

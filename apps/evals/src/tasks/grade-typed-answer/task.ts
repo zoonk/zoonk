@@ -23,7 +23,7 @@ export const gradeTypedAnswerTask: Task<
     return { ...result, usage: result.usage ?? NO_USAGE };
   },
   id: "grade-typed-answer",
-  name: "Grade Typed Answer",
+  name: "Grade typed answer",
   score: scoreTypedAnswerGrade,
   testCases: TEST_CASES,
 };

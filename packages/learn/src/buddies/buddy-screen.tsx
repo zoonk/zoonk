@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { getBuddyEnergyState } from "@zoonk/utils/buddy";
 import { safeAsync } from "@zoonk/utils/error";
 import {
@@ -30,7 +31,8 @@ import {
   useState,
   useTransition,
 } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveErrorMessage } from "../_components/save-error";
+import { useCountOf } from "../_utils/count-of";
 import { type AppearanceBuddy, BuddyEditor } from "../appearance/buddy-settings";
 import {
   type TutorConversationContent,
@@ -52,7 +54,6 @@ import { type LearnBuddy } from "./use-buddy-name";
 export { BuddyDaySkeleton } from "./buddy-day";
 export { BUDDY_COLUMN_CLASS } from "./buddy-header";
 export { BuddyGoalStart } from "./buddy-goal-start";
-export { BuddyTabName } from "./buddy-labels";
 export type { MissionLinks } from "../missions/mission-links";
 export type { BuddyStatusView } from "./buddy-status-view";
 export type {
@@ -89,26 +90,26 @@ function useBuddyChanges({
   saveBuddy: BuddyScreenActions["saveBuddy"];
 }) {
   const [current, setCurrent] = useOptimistic(initial);
-  const [failed, setFailed] = useState(false);
   const [, startTransition] = useTransition();
+  const failedMessage = useChangeSaveErrorMessage();
   const latestSave = useRef(0);
 
   function save(next: AppearanceBuddy) {
     latestSave.current += 1;
     const request = latestSave.current;
-    setFailed(false);
 
     startTransition(async () => {
       setCurrent({ ...next, picked: true });
       const { data: saved } = await safeAsync(() => saveBuddy(next));
 
-      if (request === latestSave.current) {
-        setFailed(!saved);
+      // A toast, not a line on the page, so a failed save moves nothing under it.
+      if (request === latestSave.current && !saved) {
+        showErrorToast(failedMessage);
       }
     });
   }
 
-  return { current, failed, save };
+  return { current, save };
 }
 
 /** Only with a fine pointer: on a phone, focus would raise the keyboard over the conversation. */
@@ -143,11 +144,7 @@ function BuddyMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button className="text-muted-foreground shrink-0" size="icon-sm" variant="ghost" />
-        }
-      >
+      <DropdownMenuTrigger render={<Button edge="end" size="icon-sm" variant="ghost" />}>
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{t("More about {buddy}", { buddy: name })}</span>
       </DropdownMenuTrigger>
@@ -160,10 +157,15 @@ function BuddyMenu({
 
         <DropdownMenuItem onClick={onGlasses}>
           <GlassesIcon aria-hidden="true" />
-          <span className="flex-1">{t("Glasses")}</span>
-          <span className="text-muted-foreground font-mono text-xs tabular-nums">
-            {glassesCount}
+          <span className="flex-1">
+            {t({
+              description:
+                "Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.",
+              message: "{buddy}'s glasses",
+              values: { buddy: name },
+            })}
           </span>
+          <span className="text-muted-foreground text-xs tabular-nums">{glassesCount}</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
@@ -188,8 +190,7 @@ function PickBuddyButton({ onPick }: { onPick: () => void }) {
   const t = useExtracted();
 
   return (
-    <Button aria-haspopup="dialog" onClick={onPick} size="sm" variant="outline">
-      <SmileIcon aria-hidden="true" />
+    <Button aria-haspopup="dialog" onClick={onPick} size="lg" variant="outline">
       {t("Choose your buddy")}
     </Button>
   );
@@ -213,9 +214,8 @@ function useChatFace(buddy: LearnBuddy) {
 }
 
 function useGlassesCount(status: BuddyStatusView): string {
-  const t = useExtracted();
-  const earned = status.glasses.filter((item) => item.earned).length;
-  return t("{earned} of {total}", { earned: String(earned), total: String(status.glasses.length) });
+  const countOf = useCountOf();
+  return countOf(status.glasses.filter((item) => item.earned).length, status.glasses.length);
 }
 
 export function BuddyScreen({
@@ -238,7 +238,7 @@ export function BuddyScreen({
   const [wearing, setWearing] = useState(false);
   const columnRef = useFocusComposerOnPointer();
 
-  const { current, failed, save } = useBuddyChanges({
+  const { current, save } = useBuddyChanges({
     initial: status.buddy,
     saveBuddy: actions.saveBuddy,
   });
@@ -302,7 +302,6 @@ export function BuddyScreen({
             />
           }
           name={name}
-          stage={status.stage}
         >
           <BuddyToday
             buddy={buddy}
@@ -314,14 +313,11 @@ export function BuddyScreen({
           />
         </BuddyHeader>
 
-        {failed && !editing && <ChangeSaveError />}
-
         <TutorContentContext value={tutorContent}>{children}</TutorContentContext>
       </div>
 
       <BuddyGlassesSheet
         buddy={buddy}
-        failed={failed}
         glasses={status.glasses}
         onOpenChange={setWearing}
         onWear={(glasses) => save({ glasses, kind: buddy.kind, name: buddy.name })}
@@ -333,6 +329,7 @@ export function BuddyScreen({
           initial={{ glasses: current.glasses, kind: current.kind, name: current.name ?? "" }}
           look={buddy}
           onClose={() => setEditing(false)}
+          picked={current.picked}
           onSave={(choice) => {
             setEditing(false);
 

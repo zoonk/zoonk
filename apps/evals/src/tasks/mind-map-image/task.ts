@@ -125,7 +125,7 @@ export const mindMapImageTask: Task<MindMapImageInput, MindMapImageOutput> = {
   description: "Draw a chapter's mind map with every word exactly as its structure says",
   generate,
   id: TASK_ID,
-  name: "Mind Map Image",
+  name: "Mind map image",
   output: "image",
   score: scoreMindMapImage,
   scoreCategories,

@@ -27,8 +27,6 @@ const READING_MS = 240_000;
 
 const PLAN_BUILT_PROGRESS = 40;
 
-const PHASE_WEIGHTS = [PLAN_BUILT_PROGRESS, 100 - PLAN_BUILT_PROGRESS];
-
 function ReadingDetail({ document }: { document: ExamDocument }) {
   const t = useExtracted();
   const tick = useTickCount({ resetKey: "notice" });
@@ -36,7 +34,7 @@ function ReadingDetail({ document }: { document: ExamDocument }) {
   const line = getDetailLine({
     lines: [
       t(
-        "{document, select, notice {Finding the subjects and topics the notice lists…} other {Finding the parts and topics the official guide lists…}}",
+        "{document, select, notice {Finding the subjects and topics on the exam…} other {Finding the parts and topics the official guide lists…}}",
         { document },
       ),
       t("Checking the exam's dates and format…"),
@@ -86,6 +84,7 @@ export function useNoticeTitle(lastNotice: boolean): string {
 }
 
 export function NoticeReading({
+  barHasMainAction,
   document,
   holding,
   lastNotice,
@@ -93,6 +92,7 @@ export function NoticeReading({
   since,
   stopped,
 }: {
+  barHasMainAction: boolean;
   document: ExamDocument;
   holding: boolean;
   lastNotice: boolean;
@@ -120,7 +120,7 @@ export function NoticeReading({
                     "The next edition's documents aren't out yet, so your plan follows the last one's subjects and topics. We'll tell you when the new ones are out. This usually takes a few minutes.",
                   )
                 : t(
-                    "{document, select, notice {Your plan will follow the notice's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes.",
+                    "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes.",
                     { document },
                   )
             }
@@ -129,13 +129,18 @@ export function NoticeReading({
         )}
 
         {stop ? (
-          <GenerationFailureNotice failure={stop.failure} retry={stop.retry} />
+          <GenerationFailureNotice
+            barHasMainAction={barHasMainAction}
+            failure={stop.failure}
+            retry={stop.retry}
+          />
         ) : (
           <GenerationTimelineProgress
             aria-label={title}
             locale={locale}
+            statuses={["active"]}
             value={value}
-            weights={PHASE_WEIGHTS}
+            weights={[100]}
           />
         )}
       </GenerationTimelineHeader>

@@ -93,6 +93,10 @@ internal class FakeMockRunApi(
     val saved = mutableListOf<MockDraft>()
     var afterFinish: MockExam? = null
     var saveFailure: ApiException? = null
+    var saveOutcome = SaveOutcome.Stored
+
+    /** Holds every save until completed, as a slow connection does. */
+    var saveGate: CompletableDeferred<Unit>? = null
 
     /** Holds a hand-in until completed, then fails it with [stepFailure] if set. */
     var stepGate: CompletableDeferred<Unit>? = null
@@ -119,7 +123,9 @@ internal class FakeMockRunApi(
         blockId: String,
         draft: MockDraft,
     ): SaveOutcome {
+        saveGate?.await()
         saveFailure?.let { throw it }
+        if (saveOutcome == SaveOutcome.Refused) return saveOutcome
         saved += draft
         return SaveOutcome.Stored
     }
@@ -147,6 +153,7 @@ internal class FakeMockRunApi(
 
     /** Runs the next speaking starts answer with, one each, before the paper is written. */
     val paperWritings = ArrayDeque<String>()
+    var speakingGate: CompletableDeferred<Unit>? = null
     var speakingStarts = 0
     var speakingFailure: ApiException? = null
 
@@ -155,6 +162,7 @@ internal class FakeMockRunApi(
         blockId: String,
     ): String? {
         speakingStarts++
+        speakingGate?.await()
         paperWritings.removeFirstOrNull()?.let { return it }
         speakingFailure?.let { throw it }
         return null

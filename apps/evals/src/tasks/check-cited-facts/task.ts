@@ -49,7 +49,7 @@ export const checkCitedFactsTask: Task<
   description: "Reject extracted exam facts that say more than their quoted passage",
   generate: checkCitedFacts,
   id: "check-cited-facts",
-  name: "Check Cited Facts",
+  name: "Check cited facts",
   score: scoreCheck,
   testCases: TEST_CASES,
 };

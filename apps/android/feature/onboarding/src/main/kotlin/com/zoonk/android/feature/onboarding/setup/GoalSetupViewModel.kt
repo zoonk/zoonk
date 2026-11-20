@@ -11,6 +11,7 @@ import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -56,20 +57,30 @@ internal data class SetupProgress(
 )
 
 /**
- * Placement is optional and the plan isn't a question, so neither counts, and placement shows no dots.
+ * Placement is optional and the plan isn't a question, so neither counts, and placement shows no dots. The questions
+ * about the learner share one dot, so the setup keeps one display throughout.
  * Each question counts once, where the learner meets it: an earlier one opened again from a later
- * screen keeps its place, and the screen it was opened from is still ahead.
+ * screen keeps its place, and the screen it was opened from is still ahead. Until the count is known
+ * there are no dots: a question whose answer can add one (core's `QUESTIONS_THAT_ADD_QUESTIONS`) is
+ * current or ahead, and dots would promise an end that moves.
  */
 internal fun setupProgress(
     flow: SetupFlow,
     steps: List<OnboardingStep>,
 ): SetupProgress? {
     val current = flow.current?.takeIf(::countsAsQuestion) ?: return null
+    if ((steps + current).any { it in QUESTIONS_THAT_ADD_QUESTIONS }) return null
     val ahead = steps.filter(::countsAsQuestion)
     val behind = flow.history.filter { countsAsQuestion(it) && (it == current || it !in ahead) }
     val order = (behind + current + ahead).map { if (it.profileQuestion != null) OnboardingStep.WORK else it }.distinct()
     return SetupProgress(order.indexOf(if (current.profileQuestion != null) OnboardingStep.WORK else current), order.size)
 }
+
+/**
+ * A work or career-change purpose asks the role next; a language reason that names a certificate asks
+ * the exam's questions.
+ */
+private val QUESTIONS_THAT_ADD_QUESTIONS = setOf(OnboardingStep.PURPOSE, OnboardingStep.REASON)
 
 private fun countsAsQuestion(step: OnboardingStep) =
     (step in QUESTION_SCREENS || step.profileQuestion != null) && step != OnboardingStep.PLACEMENT
@@ -110,8 +121,11 @@ internal class GoalSetupViewModel(
     private val drafts: SetupDrafts?,
     private val handle: SavedStateHandle,
     goalId: String,
-    revealMoment: Boolean = false,
+    private val doors: RevealDoors = RevealDoors(),
 ) : ViewModel() {
+    /** This visit to the setup: what its saves lead to (a failure, lesson 1) shows only on it. */
+    val visit = Visit()
+
     private var saved by handle.saved { SetupFlow(goalId) }
     private var savedProfiles by handle.saved { emptyMap<ProfileQuestion, ProfileDraft>() }
     private var profileDrafts by mutableStateOf(savedProfiles)
@@ -131,20 +145,25 @@ internal class GoalSetupViewModel(
         savedProfiles = profileDrafts - ProfileQuestion.CONDITIONS
     }
 
-    init {
-        if (!handle.contains("revealMoment")) handle["revealMoment"] = revealMoment
-    }
+    /** The aim sheet's opening: a save asked from an earlier opening closes nothing in a later one. */
+    val aimSheet = visit.opening()
 
-    fun takeRevealMoment(): Boolean = (handle.get<Boolean>("revealMoment") == true).also { handle["revealMoment"] = false }
+    /** The aim the learner picked saved: the sheet that asked closes. */
+    val aimSaved = aimSheet.outcome<Unit>()
+
+    private val aimFailure = aimSheet.outcome<Unit>()
+
+    /** The aim didn't save, said in the sheet that asked. */
+    val aimFailed get() = aimFailure.value != null
 
     fun changeAim(
         plans: com.zoonk.android.feature.plan.PlanStore,
         aim: String,
-        onSaved: () -> Unit,
     ) {
         if (isSaving) return
         isSaving = true
-        clearFailure()
+        aimFailure.clear()
+        val sheet = aimSheet.number
         viewModelScope.launch {
             when (
                 val result =
@@ -159,51 +178,52 @@ internal class GoalSetupViewModel(
                 is com.zoonk.android.data.MutationResult.Done -> {
                     if (result.value.status == com.zoonk.api.models.PlanChangeResult.Status.APPLIED) {
                         store.onboardings[goalId].refresh()
-                        onSaved()
+                        aimSaved.send(sheet, Unit)
                     } else {
-                        saveFailed = true
+                        aimFailure.send(sheet, Unit)
                     }
                 }
 
                 com.zoonk.android.data.MutationResult.Obsolete -> {}
 
                 else -> {
-                    saveFailed = true
+                    aimFailure.send(sheet, Unit)
                 }
             }
             isSaving = false
         }
     }
 
-    fun reveal(onSaved: () -> Unit) =
-        reveal(null) {
-            onSaved()
+    /** Where the reveal leads once its plan is marked seen and Today is read again: Today, and the step it opened. */
+    val revealed = visit.outcome<Revealed>()
+
+    /** "Start": marks the plan seen, reads Today again, then leads there. */
+    fun reveal() =
+        reveal { started ->
+            doors.prepareToday()
+            revealed.send(started, Revealed())
             true
         }
 
-    var openingStep by mutableStateOf<Long?>(null)
-        private set
+    private val startStepFailure = visit.outcome<Unit>()
 
-    var failedStep by mutableStateOf<Long?>(null)
-        private set
+    /** Start's step didn't open on this visit. */
+    val startStepFailed get() = startStepFailure.value != null
 
-    var startStepFailed by mutableStateOf(false)
-        private set
-
+    /** "Start" with a step to open: marks the plan seen, opens the step, reads Today again, then leads to it. */
     fun openRevealStep(
         day: DayView,
         step: DayStep,
-        open: suspend (DayView, DayStep, java.util.UUID) -> MutationResult<AppRoute?>,
-        fromStart: Boolean = false,
-        isCurrent: () -> Boolean = { true },
-        onOpened: suspend (AppRoute) -> Unit,
     ) {
+        val open = doors.openRow ?: return
         val tappedGoal = java.util.UUID.fromString(goalId)
-        reveal(step.position, fromStart) {
-            if (!isCurrent()) return@reveal true
+        reveal { started ->
             when (val result = open(day, step, tappedGoal)) {
                 is MutationResult.Done -> {
-                    result.value?.let { onOpened(it) }
+                    result.value?.let {
+                        doors.prepareToday()
+                        revealed.send(started, Revealed(it))
+                    }
                     true
                 }
 
@@ -218,33 +238,27 @@ internal class GoalSetupViewModel(
         }
     }
 
-    private fun reveal(
-        position: Long?,
-        fromStart: Boolean = false,
-        onSaved: suspend () -> Boolean,
-    ) {
+    /** Marks the plan seen, then runs [opened] with the visit that asked, only while that visit lasts. */
+    private fun reveal(opened: suspend (started: Int) -> Boolean) {
         if (isSaving) return
         isSaving = true
-        openingStep = position.takeUnless { fromStart }
-        failedStep = null
-        startStepFailed = false
+        startStepFailure.clear()
         clearFailure()
+        val started = visit.number
         val revealingGoal = goalId
         viewModelScope.launch {
             when (store.markPlanRevealed(revealingGoal)) {
                 is WriteOutcome.Done -> {
-                    if (!onSaved()) {
-                        if (fromStart) startStepFailed = true else failedStep = position
-                    }
+                    // A visit that ended while it marked opens no step and leads nowhere.
+                    if (visit.number == started && !opened(started)) startStepFailure.send(started, Unit)
                 }
 
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    if (position == null || fromStart) saveFailed = true else failedStep = position
+                    failure.send(started, SaveFailure())
                 }
             }
-            openingStep = null
             isSaving = false
         }
     }
@@ -255,16 +269,16 @@ internal class GoalSetupViewModel(
     var isSaving by mutableStateOf(false)
         private set
 
-    var saveFailed by mutableStateOf(false)
-        private set
+    private val failure = visit.outcome<SaveFailure>()
 
-    var dayTooShort by mutableStateOf<Refusal.DayTooShort?>(null)
-        private set
+    val saveFailed get() = failure.value != null
+    val dayTooShort get() = failure.value?.dayTooShort
 
     var isStartingOver by mutableStateOf(false)
         private set
 
     /** How far a placement test is while it asks, which takes the step dots' place and Back's. */
+    var placementProgressLabel by mutableStateOf<String?>(null)
     var placementProgress by mutableStateOf<Float?>(null)
 
     val goalId: String get() = flow.goalId
@@ -294,6 +308,20 @@ internal class GoalSetupViewModel(
         update(flow.copy(current = view.steps.firstOrNull() ?: OnboardingStep.PLAN, history = answeredScreens(view)))
     }
 
+    private val lessonStartVisit = visit.opening()
+
+    /** "Save and start lesson 1": survives recreation, but Back ends the question's pending start. */
+    val startLesson = lessonStartVisit.outcome<Unit>()
+
+    fun answerThenStartLesson(
+        input: OnboardingAnswerInput,
+        profileAnswer: ProfileDraft,
+    ) {
+        val started = lessonStartVisit.number
+        val saving = answer(input, profileAnswer = profileAnswer) ?: return
+        viewModelScope.launch { if (saving.await() is WriteOutcome.Done) startLesson.send(started, Unit) }
+    }
+
     /**
      * One answer saves at a time, so a pick and a Continue never save twice. [from] is the screen the
      * answer belongs to: a placement that finishes after Back still answers placement.
@@ -308,6 +336,7 @@ internal class GoalSetupViewModel(
         if (isSaving) return null
         isSaving = true
         clearFailure()
+        val started = visit.number
         val answeredGoal = goalId
         val draft = drafts?.sending(answeredGoal, step.value)
         return viewModelScope.async {
@@ -347,8 +376,7 @@ internal class GoalSetupViewModel(
                 else -> {
                     // Only the screen that saved shows its failure: the learner may have gone Back while it saved.
                     if (showFailure && flow.current == step) {
-                        saveFailed = true
-                        dayTooShort = (outcome as? WriteOutcome.Refused)?.refusal as? Refusal.DayTooShort
+                        failure.send(started, SaveFailure((outcome as? WriteOutcome.Refused)?.refusal as? Refusal.DayTooShort))
                     }
                 }
             }
@@ -359,6 +387,7 @@ internal class GoalSetupViewModel(
 
     fun back() {
         val previous = flow.goingBack() ?: return
+        lessonStartVisit.end()
         clearFailure()
         update(previous)
     }
@@ -381,14 +410,41 @@ internal class GoalSetupViewModel(
         update(flow.opening(OnboardingStep.TARGET_DATE))
     }
 
-    fun startOver(
-        goalIds: List<String>,
-        onDone: () -> Unit,
+    /** The reveal's "Use this date": the day the exam's notice gives becomes the goal's date. */
+    fun useNoticeDay(
+        plans: com.zoonk.android.feature.plan.PlanStore,
+        date: java.time.LocalDate,
     ) {
+        if (isSaving) return
+        isSaving = true
+        clearFailure()
+        val started = visit.number
+        viewModelScope.launch {
+            val result =
+                plans.change(
+                    java.util.UUID.fromString(goalId),
+                    listOf(
+                        com.zoonk.android.feature.plan.PlanOp
+                            .TargetDate(date),
+                    ),
+                )
+            val applied =
+                result is com.zoonk.android.data.MutationResult.Done &&
+                    result.value.status == com.zoonk.api.models.PlanChangeResult.Status.APPLIED
+            if (!applied && result != com.zoonk.android.data.MutationResult.Obsolete) failure.send(started, SaveFailure())
+            isSaving = false
+        }
+    }
+
+    /** Start over archived what this setup made: the learner starts again from their words. */
+    val startedOver = visit.outcome<Unit>()
+
+    fun startOver(goalIds: List<String>) {
         if (isStartingOver) return
         isStartingOver = true
+        val started = visit.number
         viewModelScope.launch {
-            if (store.startOver(goalIds) is WriteOutcome.Done) onDone() else saveFailed = true
+            if (store.startOver(goalIds) is WriteOutcome.Done) startedOver.send(started, Unit) else failure.send(started, SaveFailure())
             isStartingOver = false
         }
     }
@@ -400,7 +456,6 @@ internal class GoalSetupViewModel(
     ) {
         val goalId = view.goal.id.toString()
         val movedGoal = goalId != flow.goalId
-        if (step == OnboardingStep.SCHEDULE && flow.current == step) handle["revealMoment"] = true
         update(
             if (flow.current == step) {
                 flow.arriving(goalId, step, view.steps.firstOrNull { it != step } ?: OnboardingStep.PLAN)
@@ -419,10 +474,7 @@ internal class GoalSetupViewModel(
         viewModelScope.launch { store.onboardings[goalId].refresh() }
     }
 
-    private fun clearFailure() {
-        saveFailed = false
-        dayTooShort = null
-    }
+    private fun clearFailure() = failure.clear()
 
     private fun update(next: SetupFlow) {
         flow = next
@@ -435,3 +487,22 @@ internal fun answeredScreens(view: Onboarding): List<OnboardingStep> =
         .orEmpty()
         .mapNotNull { answer -> OnboardingStep.entries.find { it.value == (answer as? JsonPrimitive)?.contentOrNull } }
         .filter { it in QUESTION_SCREENS || it.profileQuestion != null }
+
+/** A save that failed on the setup's visit, and the day's minimum it fell short of when that was why. */
+internal data class SaveFailure(
+    val dayTooShort: Refusal.DayTooShort? = null,
+)
+
+/** Where a reveal leads: Today, and [step] over it when the learner opened one of its steps. */
+internal data class Revealed(
+    val step: AppRoute? = null,
+)
+
+/**
+ * What the reveal reaches outside the setup, from the app's container: Today read again before it's shown, and a
+ * step of the revealed day opened. Without [openRow] (a host with no study opener) the day's steps don't open.
+ */
+internal class RevealDoors(
+    val prepareToday: suspend () -> Unit = {},
+    val openRow: (suspend (DayView, DayStep, java.util.UUID) -> MutationResult<AppRoute?>)? = null,
+)

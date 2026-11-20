@@ -11,9 +11,8 @@ import { type StudySessionTimeZoneInput } from "./contract";
 
 export type CatchUpTodayResult =
   | { session: StudySessionView; status: "ready" }
-  | { status: "nothingToCatchUp" | "notFound" | "plusRequired" | "unauthorized" };
+  | { status: "nothingToCatchUp" | "notFound" | "unauthorized" };
 
-/** Requires today's offered catch-up; respects free-exam gates and reopens completed days to append the saved lessons. */
 export async function catchUpToday({
   input,
   sessionId,
@@ -30,10 +29,6 @@ export async function catchUpToday({
   const { userId } = owned;
   const timeZone = getAnswerTimeZone({ goal: owned.session.goal, timeZone: input.timeZone });
   const day = await loadStudySessionView({ session: owned.session, timeZone, userId });
-
-  if (day.examAccess.trialEnded) {
-    return { status: "plusRequired" };
-  }
 
   if (!day.catchUp?.later.offered) {
     return { status: "nothingToCatchUp" };

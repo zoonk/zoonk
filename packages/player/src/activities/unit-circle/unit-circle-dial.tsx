@@ -4,7 +4,8 @@ import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { svgPoint } from "../_components/activity-place-handle";
 import { FULL_TURN, angleAfterKey, pointerAngle, snapAngle } from "./unit-circle-angle";
-import { DialLabel, TangentMark, TrigLegsAndAngle, arcPath, onCircle } from "./unit-circle-marks";
+import { onCircle } from "./unit-circle-label";
+import { DialLabel, TangentMark, TrigLegsAndAngle, arcPath } from "./unit-circle-marks";
 import { type TrigName, useTrigNames } from "./use-unit-circle-format";
 
 type Vector = { x: number; y: number };
@@ -22,7 +23,6 @@ const LABEL_GAP = 8;
 const ANGLE_LABEL_GAP = 16;
 const HALF_TURN = 180;
 const TARGET_LABEL_GAP = 14;
-const AXIS_CLEARANCE = 25;
 const SIDE_THRESHOLD = 0.35;
 
 function sideAnchor(degrees: number): "end" | "middle" | "start" {
@@ -33,10 +33,6 @@ function sideAnchor(degrees: number): "end" | "middle" | "start" {
   }
 
   return across < -SIDE_THRESHOLD ? "end" : "middle";
-}
-
-function angleLabelDirection(degrees: number): number {
-  return Math.min(Math.max(degrees / 2, AXIS_CLEARANCE), FULL_TURN - AXIS_CLEARANCE);
 }
 
 function DialHandle({
@@ -222,15 +218,16 @@ export function UnitCircleDial({
 
         <TrigLegsAndAngle
           angle={{
-            direction: angleLabelDirection(degrees),
+            degrees,
             distance: ARC_RADIUS + ANGLE_LABEL_GAP,
-            label: angleLabel,
+            label: target?.degrees === degrees ? "" : angleLabel,
           }}
           canvas={{ width }}
           center={center}
           formatValue={formatValue}
           names={names}
           point={point}
+          radius={radius}
           show={show}
           target={target ? onCircle(center, radius, target.degrees) : null}
           values={values}

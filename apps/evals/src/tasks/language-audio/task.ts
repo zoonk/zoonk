@@ -49,7 +49,7 @@ export const languageAudioTask: Task<LanguageAudioInput, LanguageAudioOutput> = 
     "Read a word, sentence or short passage aloud in its language so that two listeners from different providers hear every word as written (the clips lessons play)",
   generate: voiceText,
   id: TASK_ID,
-  name: "Language Audio",
+  name: "Language audio",
   output: "speech",
   score: scoreLanguageAudio,
   testCases: TEST_CASES,

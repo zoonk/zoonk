@@ -42,6 +42,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -61,8 +62,8 @@ const val MAX_GOAL_LENGTH = 2000
 
 /**
  * Main's goal box (the landing's and `/start`'s): "I want to …" and Build my plan in one panel.
- * [onSubmit] gets the trimmed words; an empty box asks for them unless [canSubmitEmpty] (material and
- * an intent are already chosen). [leading] holds the attach button; [placeholder] is a page's own
+ * [onSubmit] gets the trimmed words; Build my plan waits for them unless [canSubmitEmpty] (material and
+ * an intent are already chosen), and Enter in an empty box asks for them. [leading] holds the attach button; [placeholder] is a page's own
  * example, as the catalog's is. [hiddenLabel] makes it main's buddy box: no visible "I want to" (TalkBack reads
  * the hidden label), and Build my plan beside the words while it fits. Enter sends, as main's box does.
  */
@@ -114,7 +115,7 @@ fun GoalBox(
                 .fillMaxWidth()
                 .background(colors.surfaceContainerLow, shape)
                 .border(if (focused) ring else 1.dp, if (focused) colors.primary else colors.outline, shape)
-                .padding(6.dp),
+                .padding(16.dp),
         ) {
             val textField: @Composable () -> Unit = {
                 BasicTextField(
@@ -159,10 +160,11 @@ fun GoalBox(
             }
 
             val submitButton: @Composable () -> Unit = {
+                // As main's, it waits for words: a button that would send nothing doesn't look ready.
                 Button(
                     onClick = submit,
+                    enabled = isSubmitting || canSubmitEmpty || value.isNotBlank(),
                     busy = isSubmitting,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     size = ButtonSize.Large,
                 ) {
                     Text(stringResource(R.string.goal_box_submit))
@@ -181,7 +183,7 @@ fun GoalBox(
                             style = words.copy(fontWeight = FontWeight.Medium),
                         )
                     },
-                    modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                    modifier = Modifier,
                     field = textField,
                 )
 
@@ -207,7 +209,6 @@ fun GoalBox(
         line?.let {
             Text(
                 it,
-                modifier = Modifier.padding(horizontal = 16.dp),
                 color = if (isAskingForWords) colors.error else colors.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -269,9 +270,10 @@ private fun ActionBeside(
     }
 }
 
+/** Only a quick explanation says what it is: the other examples' own words already do. */
 data class GoalExample(
     val label: String,
-    val kind: String,
+    val kind: String? = null,
 )
 
 /** Main's examples under the goal box: a tap sends the example as the goal. */
@@ -285,27 +287,15 @@ fun GoalExamples(
         SectionHeader(stringResource(R.string.goal_box_examples))
         Spacer(Modifier.size(8.dp))
         val pickLabel = stringResource(R.string.goal_box_example_pick)
-        examples.forEachIndexed { index, example ->
-            if (index > 0) HorizontalDivider()
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 48.dp)
-                        .clickable(role = Role.Button, onClickLabel = pickLabel) { onPick(example.label) }
-                        .padding(vertical = 11.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                // Main's `ListRowTitle` over its `ListRowDescription`.
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                    Text(example.label, style = MaterialTheme.typography.titleSmall)
-                    Text(example.kind, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-                }
-                Icon(
-                    painterResource(R.drawable.ic_chevron_right),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            examples.forEachIndexed { index, example ->
+                if (index > 0) ListDivider()
+                ListRow(
+                    headline = { Text(example.label) },
+                    // The row's own tap, named for TalkBack.
+                    modifier = Modifier.semantics { onClick(label = pickLabel, action = null) },
+                    onClick = { onPick(example.label) },
+                    supporting = example.kind?.let { kind -> { Text(kind) } },
                 )
             }
         }
@@ -320,10 +310,10 @@ fun rememberGoalExamples(): List<GoalExample> {
     val quickExplanation = stringResource(R.string.goal_box_kind_quick_explanation, formatMinutes(QUICK_EXPLANATION_MINUTES, locale))
 
     return listOf(
-        GoalExample(stringResource(R.string.goal_box_example_exam), stringResource(R.string.goal_box_kind_exam)),
-        GoalExample(stringResource(R.string.goal_box_example_language, language), stringResource(R.string.goal_box_kind_language)),
-        GoalExample(stringResource(R.string.goal_box_example_topic), stringResource(R.string.goal_box_kind_topic)),
-        GoalExample(stringResource(R.string.goal_box_example_music), stringResource(R.string.goal_box_kind_music)),
+        GoalExample(stringResource(R.string.goal_box_example_exam)),
+        GoalExample(stringResource(R.string.goal_box_example_language, language)),
+        GoalExample(stringResource(R.string.goal_box_example_topic)),
+        GoalExample(stringResource(R.string.goal_box_example_music)),
         GoalExample(stringResource(R.string.goal_box_example_explanation), quickExplanation),
     )
 }
@@ -334,7 +324,8 @@ private fun spokenLanguage(locale: Locale): String {
     return Locale.forLanguageTag(spoken).getDisplayLanguage(locale)
 }
 
-private const val QUICK_EXPLANATION_MINUTES = 5
+/** How long a quick explanation takes to read, wherever one is offered. */
+const val QUICK_EXPLANATION_MINUTES = 5
 
 /** Main's `text-[17px] leading-6 py-2.5`: one line of words is 44dp. */
 private val GOAL_LINE_HEIGHT = 24.sp

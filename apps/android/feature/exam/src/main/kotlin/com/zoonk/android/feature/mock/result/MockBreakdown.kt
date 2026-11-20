@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -94,31 +95,13 @@ private fun AreaRow(
     val folds = topics.isNotEmpty()
 
     Column {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .then(
-                    if (folds) {
-                        Modifier.clickable(role = Role.Button) { onToggle(key) }.semantics { stateDescription = state }
-                    } else {
-                        Modifier.semantics(mergeDescendants = true) {}
-                    },
-                ).heightIn(min = 48.dp)
-                .padding(vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(area.name, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-            Text(score, style = MaterialTheme.typography.labelLarge.withTabularFigures())
-            if (folds) {
-                Icon(
-                    painterResource(R.drawable.ic_expand_more),
-                    contentDescription = null,
-                    modifier = if (open) Modifier.rotate(HALF_TURN) else Modifier,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
+        com.zoonk.android.ui.components.ListRow(
+            headline = { Text(area.name) },
+            modifier = Modifier.bleed(com.zoonk.android.ui.components.LIST_ITEM_INSET),
+            onClick = if (folds) ({ onToggle(key) }) else null,
+            expanded = open.takeIf { folds },
+            meta = { Text(score) },
+        )
         if (open) {
             Column(Modifier.padding(start = 16.dp, bottom = 8.dp)) {
                 TopicRows(topics, more = "$MORE_TOPICS${area.name}" in opened) { onToggle("$MORE_TOPICS${area.name}") }
@@ -271,18 +254,11 @@ private fun TimingInsight(result: MockResult) {
 private fun ConsistencyInsight(result: MockResult) {
     val coherence = result.coherence ?: return
     val easy = coherence.easyWrong.toInt()
-    val hard = coherence.hardRight.toInt()
 
     Insight(
         R.drawable.ic_balance,
-        stringResource(R.string.mock_result_consistency),
-        listOf(
-            stringResource(
-                R.string.mock_result_consistency_detail,
-                pluralStringResource(R.plurals.mock_result_easy_wrong, easy, easy),
-                pluralStringResource(R.plurals.mock_result_hard_right, hard, hard),
-            ),
-        ),
+        stringResource(R.string.mock_result_easy_questions),
+        listOf(pluralStringResource(R.plurals.mock_result_easy_missed, easy, easy)),
     )
 }
 
@@ -295,7 +271,7 @@ private fun CalibrationInsight(result: MockResult) {
 
     Insight(
         R.drawable.ic_balance,
-        stringResource(R.string.mock_result_calibration),
+        stringResource(R.string.mock_result_flagged_answers),
         listOfNotNull(
             stringResource(
                 R.string.mock_result_calibration_detail,

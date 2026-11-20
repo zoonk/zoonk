@@ -7,17 +7,25 @@ import Image from "next/image";
 const COURSE_MARK_CLASS = "size-10 shrink-0 rounded-lg";
 
 export function CourseMark({
+  align = "center",
   course,
   loading,
   locale,
 }: {
+  align?: "center" | "start";
   course: { imageUrl: string | null; targetLanguage: string | null };
   loading?: "eager" | "lazy";
   locale: string;
 }) {
   if (hasLanguageFlag(course.targetLanguage)) {
     return (
-      <span className={cn(COURSE_MARK_CLASS, "grid place-items-center")}>
+      <span
+        className={cn(
+          COURSE_MARK_CLASS,
+          "grid items-center",
+          align === "center" && "justify-items-center",
+        )}
+      >
         <LanguageFlag
           alt={getVarietyName({ language: course.targetLanguage, userLanguage: locale })}
           className="w-8"
@@ -31,7 +39,10 @@ export function CourseMark({
     return (
       <Image
         alt=""
-        className={cn(COURSE_MARK_CLASS, "object-cover ring-1 ring-black/5 dark:ring-white/10")}
+        className={cn(
+          COURSE_MARK_CLASS,
+          "object-cover outline-1 -outline-offset-1 outline-black/5 dark:outline-white/10",
+        )}
         height={40}
         loading={loading}
         src={course.imageUrl}

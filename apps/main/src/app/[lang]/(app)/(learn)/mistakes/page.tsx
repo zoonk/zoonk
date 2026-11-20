@@ -4,9 +4,7 @@ import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getTodayPattern } from "@zoonk/core/language/patterns/today";
 import { mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
-import { LearnPageBar } from "@zoonk/learn/bar";
-import { MistakesNotebook } from "@zoonk/learn/mistakes";
-import { INBOX_PAGE_CLASS } from "@zoonk/learn/page";
+import { MistakesNotebook, MistakesNotebookBar } from "@zoonk/learn/mistakes";
 import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -40,12 +38,6 @@ function readQuery(query: Awaited<Props["searchParams"]>) {
     : mistakeListInputSchema.parse({ limit: NOTEBOOK_PAGE_SIZE, status: "open" });
 }
 
-async function NotebookBar() {
-  const t = await getExtracted();
-
-  return <LearnPageBar back={{ href: "/today" }} root title={t("Mistakes notebook")} />;
-}
-
 async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
   const [goal, query] = await Promise.all([getCurrentGoal(), searchParams]);
 
@@ -54,7 +46,7 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
 
     return (
       <LearnNoGoal
-        bar={<NotebookBar />}
+        bar={<MistakesNotebookBar />}
         description={t("The questions you got wrong, why, and practice until you get them right.")}
         next="/mistakes"
         title={t("Mistakes notebook")}
@@ -84,9 +76,7 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
           nextOffset: result.hasMore ? input.offset + input.limit : null,
           status: input.status ?? "open",
         }}
-        goalTitle={goal.displayName}
         hrefs={{
-          back: "/today",
           lesson: "/learn",
           notebook: "/mistakes",
           pattern: "/pattern",
@@ -103,14 +93,7 @@ async function NotebookSkeleton() {
   const t = await getExtracted();
 
   return (
-    <DetailSkeleton
-      aside={false}
-      bar={<NotebookBar />}
-      className={INBOX_PAGE_CLASS}
-      rows={3}
-      tabs
-      title={t("Mistakes notebook")}
-    />
+    <DetailSkeleton aside={false} bar={<MistakesNotebookBar />} title={t("Mistakes notebook")} />
   );
 }
 

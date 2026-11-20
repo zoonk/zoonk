@@ -54,7 +54,7 @@ function AngleFan({ reading }: { reading: BoardReading }) {
           {isTriangle && (
             <path
               className="stroke-foreground"
-              d={`M${FAN_PADDING} ${center.y} H${FAN_WIDTH - FAN_PADDING}`}
+              d={`M1 ${center.y} H${FAN_WIDTH - FAN_PADDING}`}
               strokeLinecap="round"
               strokeWidth={2}
             />

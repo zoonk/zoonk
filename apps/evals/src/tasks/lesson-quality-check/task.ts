@@ -92,7 +92,7 @@ export const lessonQualityCheckTask: Task<
     "Review a written or alphabet lesson as an expert from another model family: find factual errors, wrong answer keys and contradictions, and pass lessons with style flaws",
   generate: reviewLesson,
   id: "lesson-quality-check",
-  name: "Lesson Quality Check",
+  name: "Lesson quality check",
   score: scoreLessonQualityCheck,
   testCases: [...TEST_CASES, ...REAL_REVIEW_CASES],
 };

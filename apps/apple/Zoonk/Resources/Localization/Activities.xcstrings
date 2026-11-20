@@ -2024,175 +2024,66 @@
         }
       }
     },
-    "%lld events to place" : {
-      "comment" : "How many events of a timeline are left to place",
+    "%lld of %lld events placed" : {
       "localizations" : {
         "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Ereignis noch einzuordnen"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Ereignisse noch einzuordnen"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld von %2$lld Ereignissen platziert"
           }
         },
         "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld event to place"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld events to place"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld events placed"
           }
         },
         "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld evento por colocar"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld eventos por colocar"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld eventos colocados"
           }
         },
         "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld événement à placer"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld événements à placer"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Événements placés : %1$lld sur %2$lld"
           }
         },
         "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld evento da collocare"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld eventi da collocare"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld eventi posizionati su %2$lld"
           }
         },
         "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "配置する出来事はあと%lld件"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出来事を%1$lld/%2$lld件配置済み"
           }
         },
         "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "배치할 사건 %lld개"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사건 %1$lld/%2$lld개 배치 완료"
           }
         },
         "pl" : {
-          "variations" : {
-            "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld wydarzeń do umieszczenia"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld wydarzenie do umieszczenia"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld wydarzenia do umieszczenia"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umieszczone wydarzenia: %1$lld z %2$lld"
           }
         },
         "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld evento para posicionar"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld eventos para posicionar"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld eventos posicionados"
           }
         },
         "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Yerleştirilecek %lld olay"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld olay yerleştirildi"
           }
         }
       }
@@ -3238,273 +3129,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld / %#@squares@ doğru"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg kare"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "%lld of %lld squares: %@" : {
-      "comment" : "After the check: how many squares of a grid the question counts, and what it counts",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld von %#@squares@: %3$@"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Feld"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Feldern"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld of %#@squares@: %3$@"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg square"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg squares"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld de %#@squares@: %3$@"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg casilla"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg casillas"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld sur %#@squares@ : %3$@"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg case"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg cases"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld su %#@squares@: %3$@"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg casella"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg caselle"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld／%#@squares@：%3$@"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%argマス"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld/%#@squares@: %3$@"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg칸"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld z %#@squares@: %3$@"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pola"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg pól"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld de %#@squares@: %3$@"
-          },
-          "substitutions" : {
-            "squares" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg quadrado"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg quadrados"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld / %#@squares@: %3$@"
           },
           "substitutions" : {
             "squares" : {
@@ -7323,120 +6947,118 @@
         }
       }
     },
-    "Pick how the quote proves the claim" : {
-      "comment" : "An argument's empty reasoning part, open for a pick",
+    "Pick or drag how the quote proves the claim" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle aus, wie das Zitat die Behauptung belegt"
+            "value" : "Wähl aus, wie das Zitat die Aussage belegt, oder zieh die Erklärung hierher"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir cómo la cita demuestra la afirmación"
+            "value" : "Elige o arrastra la explicación de cómo la cita demuestra la afirmación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis comment la citation prouve l’affirmation"
+            "value" : "Choisis ou fais glisser l’explication qui montre comment la citation prouve l’affirmation"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli come la citazione dimostra la tesi"
+            "value" : "Scegli o trascina la spiegazione di come la citazione dimostra la tesi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "引用が主張をどう裏付けるかを選ぶ"
+            "value" : "引用が主張を裏付ける理由を選ぶか、ドラッグしてください"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "인용문이 주장을 뒷받침하는 이유 고르기"
+            "value" : "인용문이 주장을 입증하는 이유를 고르거나 끌어다 놓으세요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wybierz wyjaśnienie, jak cytat potwierdza tezę"
+            "value" : "Wybierz lub przeciągnij wyjaśnienie, jak cytat potwierdza tezę"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha como a citação comprova a afirmação"
+            "value" : "Escolha ou arraste a explicação de como a citação comprova a afirmação"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alıntının iddiayı nasıl kanıtladığını seç"
+            "value" : "Alıntının iddiayı nasıl kanıtladığını açıklayan ifadeyi seç veya sürükle"
           }
         }
       }
     },
-    "Pick the quote that best supports the claim" : {
-      "comment" : "An argument's empty evidence part",
+    "Pick or drag the quote that best supports the claim" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle das Zitat, das die Behauptung am besten stützt"
+            "value" : "Wähl das Zitat, das die Aussage am besten stützt, oder zieh es hierher"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir la cita que mejor respalda la afirmación"
+            "value" : "Elige o arrastra la cita que mejor respalde la afirmación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis la citation qui appuie le mieux l’affirmation"
+            "value" : "Choisis ou fais glisser la citation qui appuie le mieux l’affirmation"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli la citazione che sostiene meglio la tesi"
+            "value" : "Scegli o trascina la citazione che sostiene meglio la tesi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "主張を最もよく裏付ける引用を選ぶ"
+            "value" : "主張を最もよく裏付ける引用を選ぶか、ドラッグしてください"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "주장을 가장 잘 뒷받침하는 인용문 고르기"
+            "value" : "주장을 가장 잘 뒷받침하는 인용문을 고르거나 끌어다 놓으세요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wybierz cytat, który najlepiej potwierdza tezę"
+            "value" : "Wybierz lub przeciągnij cytat, który najlepiej potwierdza tezę"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha a citação que melhor sustenta a afirmação"
+            "value" : "Escolha ou arraste a citação que melhor sustenta a afirmação"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İddiayı en iyi destekleyen alıntıyı seç"
+            "value" : "İddiayı en iyi destekleyen alıntıyı seç veya sürükle"
           }
         }
       }
@@ -8964,6 +8586,71 @@
         }
       }
     },
+    "Squares showing %@: %lld of %lld" : {
+      "comment" : "How many squares of the grid show one result, such as \"Squares showing 7: 6 of 36\". The first value is that result.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Felder mit %1$@: %2$lld von %3$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Squares showing %1$@: %2$lld of %3$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Casillas que muestran %1$@: %2$lld de %3$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cases affichant %1$@ : %2$lld sur %3$lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quadrati che mostrano %1$@: %2$lld di %3$lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@を示すマス：%2$lld/%3$lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "값 %1$@인 칸: %2$lld/%3$lld"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kratki z wynikiem %1$@: %2$lld z %3$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quadrados com %1$@: %2$lld de %3$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sonucunu gösteren kareler: %2$lld / %3$lld"
+          }
+        }
+      }
+    },
     "Step %lld: %@" : {
       "comment" : "VoiceOver: one step of a worked answer",
       "localizations" : {
@@ -9379,65 +9066,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ numaralı nokta için bir ada dokun veya adı istediğin noktaya sürükle."
-          }
-        }
-      }
-    },
-    "Tap a numbered place to see what's there." : {
-      "comment" : "Before the learner taps a place on a map",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tippe auf einen nummerierten Ort, um zu sehen, was dort ist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca un lugar numerado para ver qué hay ahí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuie sur un lieu numéroté pour voir ce qui s’y trouve."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca un punto numerato per vedere cosa c’è."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "番号の付いた場所をタップすると、そこに何があるか確認できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "번호가 있는 곳을 탭해서 무엇이 있는지 확인해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stuknij miejsce z numerem, aby zobaczyć, co tam jest."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque em um lugar numerado para ver o que tem lá."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Orada ne olduğunu görmek için numaralı bir yere dokun."
           }
         }
       }
@@ -10093,6 +9721,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geri al"
+          }
+        }
+      }
+    },
+    "Unit: %@" : {
+      "comment" : "Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einheit: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidad: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unité : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unità: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "単位：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단위: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jednostka: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidade: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birim: %@"
           }
         }
       }

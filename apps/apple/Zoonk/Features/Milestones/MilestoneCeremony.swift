@@ -133,10 +133,10 @@ struct MilestoneCeremony: View {
     case "buddyStage":
       milestone.key == "adult"
         ? String(
-          localized: "\(buddy) is an Adult now, fully grown with your Brain Power.",
+          localized: "\(buddy) is fully grown, thanks to your Brain Power.",
           table: "Session", comment: "The buddy's last stage")
         : String(
-          localized: "\(buddy) is Young now, and keeps growing with your Brain Power.",
+          localized: "Your Brain Power helped \(buddy) grow.",
           table: "Session", comment: "The buddy's next stage")
     case "glasses":
       glassesDetail
@@ -162,7 +162,7 @@ struct MilestoneCeremony: View {
     switch milestone.key {
     case "star":
       String(
-        localized: "For winning your first phase challenge.", table: "Session",
+        localized: "For winning your first challenge.", table: "Session",
         comment: "What earned the glasses")
     case "aviator":
       String(
@@ -178,7 +178,7 @@ struct MilestoneCeremony: View {
         comment: "What earned the glasses")
     case "monocle":
       String(
-        localized: "For winning the final challenge.", table: "Session",
+        localized: "For winning your plan's last challenge.", table: "Session",
         comment: "What earned the glasses")
     default:
       String(

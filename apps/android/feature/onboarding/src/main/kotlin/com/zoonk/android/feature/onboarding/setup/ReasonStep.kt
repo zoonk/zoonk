@@ -18,17 +18,16 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.plan.reasonTitleResource
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedTextField
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf3
 import com.zoonk.api.models.OnboardingLanguageAim
+import java.util.Locale
 
 @Composable
 internal fun ColumnScope.ReasonStep(
     subject: String,
     aim: OnboardingLanguageAim?,
+    certificateExample: String?,
     pending: Boolean,
     words: UnsentWords,
     onAnswer: (OnboardingAnswerInput) -> Unit,
@@ -63,22 +62,19 @@ internal fun ColumnScope.ReasonStep(
                     Choice(
                         key,
                         stringResource(requireNotNull(reasonTitleResource(key))),
-                        stringResource(
-                            when (key) {
-                                "travel" -> R.string.onboarding_reason_travel_description
-                                "talk" -> R.string.onboarding_reason_talk_description
-                                "work" -> R.string.onboarding_reason_work_description
-                                "fluent" -> R.string.onboarding_reason_fluent_description
-                                "certificate" -> R.string.onboarding_reason_certificate_description
-                                else -> R.string.onboarding_reason_other_description
-                            },
-                        ),
-                        listOfNotNull(
-                            row.aim?.value,
-                            row.hours?.let {
-                                stringResource(R.string.onboarding_aim_hours, formatNumber(it.toDouble(), currentLocale()))
-                            },
-                        ).factsLine().ifEmpty { stringResource(R.string.onboarding_reason_exam) },
+                        if (key == "certificate") {
+                            certificateExample
+                        } else {
+                            stringResource(
+                                when (key) {
+                                    "travel" -> R.string.onboarding_reason_travel_description
+                                    "talk" -> R.string.onboarding_reason_talk_description
+                                    "work" -> R.string.onboarding_reason_work_description
+                                    "fluent" -> R.string.onboarding_reason_fluent_description
+                                    else -> R.string.onboarding_reason_other_description
+                                },
+                            )
+                        },
                     )
                 },
             value = reason,
@@ -113,10 +109,58 @@ internal fun ColumnScope.ReasonStep(
                 }
             },
         )
-        Text(
-            stringResource(R.string.onboarding_reason_hours_note),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+    }
+}
+
+internal fun certificateExample(
+    language: String?,
+    region: String?,
+): String? {
+    val tag = language?.let(Locale::forLanguageTag) ?: return null
+    return when (tag.language) {
+        "de" -> {
+            "Goethe-Zertifikat"
+        }
+
+        "en" -> {
+            "IELTS"
+        }
+
+        "es" -> {
+            "DELE"
+        }
+
+        "fr" -> {
+            "DELF"
+        }
+
+        "it" -> {
+            "CELI"
+        }
+
+        "ja" -> {
+            "JLPT"
+        }
+
+        "ko" -> {
+            "TOPIK"
+        }
+
+        "pt" -> {
+            val tagRegion = tag.country.takeIf { tag.script.isEmpty() || tag.script == "Latn" }
+            when (region ?: tagRegion) {
+                "BR" -> "Celpe-Bras"
+                "PT" -> "CAPLE"
+                else -> "ACTFL OPI"
+            }
+        }
+
+        "zh" -> {
+            "HSK"
+        }
+
+        else -> {
+            null
+        }
     }
 }

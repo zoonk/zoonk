@@ -1,17 +1,23 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { FileButton } from "@zoonk/ui/components/file-button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { FileTextIcon, LinkIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { toHelpLimit } from "../../_components/comes-back-words";
+import { HelpLimitNotice } from "../../_components/help-limit-notice";
+import { SURFACE_CLASS } from "../../_components/surface";
+import { useLearnRoutes } from "../../learn-context";
+import { LearnLink } from "../../learn-link";
 import {
   type AttachOutcome,
   type AttachedSource,
   type GoalAttachActions,
-  type UsageCap,
 } from "../onboarding-actions";
 import { PasteLink } from "./paste-link";
 
@@ -19,34 +25,16 @@ import { PasteLink } from "./paste-link";
 const ACCEPTED_FILES =
   ".pdf,.docx,.pptx,.txt,.md,.jpg,.jpeg,.png,.webp,application/pdf,text/plain,text/markdown,image/jpeg,image/png,image/webp";
 
-const PANEL_CLASS = "bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1";
+const PANEL_CLASS = cn(SURFACE_CLASS, "flex flex-col gap-3 p-4");
 
-function useAttachLimitMessage() {
-  const t = useExtracted();
-
-  return ({ period, tier }: UsageCap): string => {
-    if (tier === "plus") {
-      return t("You've added as much material as your plan allows today. Try again tomorrow.");
-    }
-
-    return period === "month"
-      ? t(
-          "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-        )
-      : t(
-          "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
-        );
-  };
-}
+type NotAttached = Exclude<AttachOutcome, { status: "attached" }>;
+type AttachFailure = Exclude<NotAttached, { status: "limitReached" }>;
 
 function useAttachError() {
   const t = useExtracted();
-  const limitMessage = useAttachLimitMessage();
 
-  return (outcome: Exclude<AttachOutcome, { status: "attached" }>): string => {
+  return (outcome: AttachFailure): string => {
     switch (outcome.status) {
-      case "limitReached":
-        return limitMessage(outcome);
       case "slowDown":
         return t("You're adding material quickly. Try again in a few minutes.");
       case "unsupported":
@@ -74,7 +62,7 @@ export function SignUpPrompt({ signUpHref }: { signUpHref: string }) {
         className="text-foreground self-start text-sm font-medium underline underline-offset-4"
         href={signUpHref}
       >
-        {t("Create an account")}
+        {t("Create a free account")}
       </PendingLink>
     </div>
   );
@@ -111,8 +99,9 @@ function PasteText({ onAdd, pending }: { onAdd: (text: string) => void; pending:
         className="self-start"
         disabled={pending || !text.trim()}
         focusableWhenDisabled
-        size="sm"
+        size="lg"
         type="submit"
+        variant="outline"
       >
         {t("Add text")}
       </Button>
@@ -129,20 +118,20 @@ type AttachControlsProps = {
 
 export function AttachControls({ attach, autoFocus, language, onAttached }: AttachControlsProps) {
   const t = useExtracted();
-  const fileId = useId();
   const errorFor = useAttachError();
+  const routes = useLearnRoutes();
   const [pasting, setPasting] = useState<"link" | "text" | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [failure, setFailure] = useState<NotAttached | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const toggle = (way: "link" | "text") => {
-    setError(null);
+    setFailure(null);
     setPasting((previous) => (previous === way ? null : way));
   };
 
   const add = (run: () => Promise<AttachOutcome>) =>
     startTransition(async () => {
-      setError(null);
+      setFailure(null);
       const outcome = await run().catch((): AttachOutcome => ({ status: "failed" }));
 
       if (outcome.status === "attached") {
@@ -151,63 +140,54 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
         return;
       }
 
-      setError(errorFor(outcome));
+      setFailure(outcome);
     });
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
-        <label
-          className="border-border hover:bg-muted/60 has-focus-visible:ring-ring/50 inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border px-3 text-sm font-medium has-focus-visible:ring-[3px]"
-          htmlFor={fileId}
-        >
-          <UploadIcon aria-hidden="true" className="size-4" />
-          {t("Upload a file")}
-          <input
-            accept={ACCEPTED_FILES}
-            aria-disabled={isPending || undefined}
-            autoFocus={autoFocus}
-            className="sr-only"
-            id={fileId}
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              event.target.value = "";
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <FileButton
+          accept={ACCEPTED_FILES}
+          aria-disabled={isPending || undefined}
+          autoFocus={autoFocus}
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            event.target.value = "";
 
-              if (file) {
-                add(() => attach.file({ file, language }));
-              }
-            }}
-            // Not `disabled`: that would drop keyboard focus to the page while the file uploads.
-            onClick={(event) => {
-              if (isPending) {
-                event.preventDefault();
-              }
-            }}
-            type="file"
-          />
-        </label>
+            if (file) {
+              add(() => attach.file({ file, language }));
+            }
+          }}
+          // Not `disabled`: that would drop keyboard focus to the page while the file uploads.
+          onClick={(event) => {
+            if (isPending) {
+              event.preventDefault();
+            }
+          }}
+        >
+          <UploadIcon aria-hidden="true" data-icon="inline-start" />
+          {t("Upload a file")}
+        </FileButton>
 
         <Button
           aria-pressed={pasting === "text"}
-          className="rounded-full"
+          className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
           disabled={isPending}
+          icon={<FileTextIcon aria-hidden="true" />}
           onClick={() => toggle("text")}
-          size="sm"
           variant="outline"
         >
-          <FileTextIcon aria-hidden="true" />
           {t("Paste text")}
         </Button>
 
         <Button
           aria-pressed={pasting === "link"}
-          className="rounded-full"
+          className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
           disabled={isPending}
+          icon={<LinkIcon aria-hidden="true" />}
           onClick={() => toggle("link")}
-          size="sm"
           variant="outline"
         >
-          <LinkIcon aria-hidden="true" />
           {t("Paste a link")}
         </Button>
       </div>
@@ -230,9 +210,20 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
         </p>
       )}
 
-      {error && (
+      {failure?.status === "limitReached" && (
+        <div role="alert">
+          <HelpLimitNotice
+            kind="uploads"
+            limit={toHelpLimit(failure)}
+            linkComponent={LearnLink}
+            routes={routes}
+          />
+        </div>
+      )}
+
+      {failure && failure.status !== "limitReached" && (
         <p className="text-destructive-text text-sm" role="alert">
-          {error}
+          {errorFor(failure)}
         </p>
       )}
     </>

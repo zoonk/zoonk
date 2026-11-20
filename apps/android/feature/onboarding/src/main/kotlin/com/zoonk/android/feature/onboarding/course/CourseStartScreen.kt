@@ -46,15 +46,20 @@ import com.zoonk.android.feature.catalog.goalOnCourse
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.goalLimitGateWords
 import com.zoonk.android.feature.onboarding.goalStartLimit
+import com.zoonk.android.feature.onboarding.lifted
 import com.zoonk.android.feature.onboarding.setup.LevelChoiceList
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.StepHeading
+import com.zoonk.android.feature.onboarding.start.CreateAccountButton
 import com.zoonk.android.feature.onboarding.start.GoalFooter
-import com.zoonk.android.feature.onboarding.start.GoalLimitWall
+import com.zoonk.android.feature.onboarding.start.GoalLimitButtons
+import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -103,6 +108,7 @@ internal fun CourseStartScreen(
     navigator: AppNavigator,
 ) {
     val vm = viewModel { CourseStartViewModel(store, createSavedStateHandle()) }
+    VisitOf(vm.visit)
     val resource = catalog.course[route.courseId]
     val state by resource.collectShown()
     val caps by allowance.collectShown()
@@ -171,18 +177,18 @@ private fun CourseStartForm(
     val course = detail.course
     val chapter = detail.chapters.find { it.id.toString() == route.chapterId && it.lessonCount > 0 }
     val planned = chapter?.let { detail.chapters.drop(detail.chapters.indexOf(it)) } ?: detail.chapters
-    val limit = (vm.failure as? CourseStartFailure.Limit)?.reason ?: upFront.takeIf { vm.failure == null }
-    val blocked = limit != null && (limit.needsAccount || limit == GoalLimitReason.ActiveGoals)
+    // A cap whose day came while the page is open gives the choices and Build my plan back; the server decides again.
+    val limit =
+        ((vm.failure as? CourseStartFailure.Limit)?.reason ?: upFront.takeIf { vm.failure == null })
+            ?.takeUnless { GoalError.Limit(it).lifted() }
+    val blocked = limit != null && (limit.needsAccount || limit.isPlusLimit)
     val minutes = route.dailyMinutes?.takeIf { it in MIN_DAILY_MINUTES..MAX_DAILY_MINUTES }
     val start = { vm.start(course.id.toString(), chapter?.id?.toString(), minutes) }
-    val remedy = { to: AppRoute ->
-        vm.clearFailure()
-        navigator.open(to)
-    }
+    val remedy = { to: AppRoute -> navigator.open(to) }
 
     SetupColumn {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            CourseStartHeading(course.title, chapter?.title, blocked)
+            CourseStartHeading(course.title, chapter?.title, gate = limit?.takeIf { blocked })
             if (!blocked) {
                 minutes?.let {
                     Text(
@@ -198,8 +204,15 @@ private fun CourseStartForm(
             if (chapter != null) PlanPreview(planned) else LevelChoiceList(vm.level, course.quickTestMinutes.toInt(), onChange = vm::pick)
         }
 
-        if (limit == GoalLimitReason.ActiveGoals) {
-            GoalLimitWall(limit, onSeePlus = { remedy(AppRoute.Subscription) }, onOpenPlan = { remedy(AppRoute.Plan()) })
+        // The heading says why; the bar holds only the way on (main's `CourseStartBlockedAction`).
+        if (blocked) {
+            OnboardingActions {
+                if (limit.needsAccount) {
+                    CreateAccountButton { remedy(AppRoute.Login) }
+                } else {
+                    GoalLimitButtons(limit, onSubscribe = { remedy(AppRoute.Subscription) }, onOpenPlan = { remedy(AppRoute.Plan()) })
+                }
+            }
             return@SetupColumn
         }
 
@@ -207,7 +220,7 @@ private fun CourseStartForm(
             error = limit?.let(GoalError::Limit),
             onCreateAccount = { remedy(AppRoute.Login) },
             onOpenPlan = { remedy(AppRoute.Plan()) },
-            onSeePlus = { remedy(AppRoute.Subscription) },
+            onSubscribe = { remedy(AppRoute.Subscription) },
         ) {
             if (vm.failure == CourseStartFailure.Failed) {
                 Text(
@@ -222,7 +235,6 @@ private fun CourseStartForm(
                 Button(
                     busy = vm.isStarting,
                     onClick = start,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     modifier =
                         Modifier.fillMaxWidth().semantics {
                             liveRegion = LiveRegionMode.Polite
@@ -248,15 +260,19 @@ private fun CourseStartForm(
 private fun CourseStartHeading(
     course: String,
     chapter: String?,
-    blocked: Boolean,
+    gate: GoalLimitReason?,
 ) {
     when {
-        chapter != null -> {
-            StepHeading(chapter, stringResource(R.string.onboarding_course_chapter_description), subject = course)
+        // A start that stops says why in its heading, with the course as its subject (main's `StartHeading`).
+        gate != null -> {
+            val words = goalLimitGateWords(gate)
+            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+                StepHeading(words.title ?: course, words.line, subject = chapter ?: course)
+            }
         }
 
-        blocked -> {
-            StepHeading(course, stringResource(R.string.onboarding_course_follows))
+        chapter != null -> {
+            StepHeading(chapter, stringResource(R.string.onboarding_course_chapter_description), subject = course)
         }
 
         else -> {

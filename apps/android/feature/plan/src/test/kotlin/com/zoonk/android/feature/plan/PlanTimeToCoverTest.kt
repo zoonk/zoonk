@@ -9,22 +9,28 @@ class PlanTimeToCoverTest {
     fun anAnswerIsKeyedToThePlanItWasFoundForNeverToAnotherGoalsThatLooksTheSame() {
         val other = coveragePlan().copy(planId = java.util.UUID.fromString(CHANGE_ID))
 
-        assertNotEquals(timeToCoverRevision(coveragePlan()), timeToCoverRevision(other))
+        assertNotEquals(planAdviceRevision(coveragePlan()), planAdviceRevision(other))
     }
 
     @Test
-    fun theSamePlanReadAgainKeepsTheAnswerEvenWhenItsWeekMoved() {
-        val read = coveragePlan()
-        val nextDay = read.copy(week = read.week.copy(startDate = kotlinx.datetime.LocalDate.parse("2026-10-27")))
-        val answered = TimeToCoverState.Answered(timeToCoverRevision(read), timeToCover())
+    fun theSamePlanReadAgainKeepsTheAnswer() {
+        val answered = TimeToCoverState.Answered(planAdviceRevision(coveragePlan()), timeToCover())
 
         assertEquals(answered, answered.forPlan(coveragePlan()))
-        assertEquals(answered, answered.forPlan(nextDay))
+    }
+
+    @Test
+    fun aNewDayDropsTheAnswerSinceTheDaysLeftChangeIt() {
+        val read = coveragePlan()
+        val nextDay = read.copy(week = read.week.copy(startDate = kotlinx.datetime.LocalDate.parse("2026-10-27")))
+        val answered = TimeToCoverState.Answered(planAdviceRevision(read), timeToCover())
+
+        assertEquals(TimeToCoverState.Idle, answered.forPlan(nextDay))
     }
 
     @Test
     fun aReplannedPlanDropsTheAnswer() {
-        val answered = TimeToCoverState.Answered(timeToCoverRevision(coveragePlan()), timeToCover())
+        val answered = TimeToCoverState.Answered(planAdviceRevision(coveragePlan()), timeToCover())
 
         assertEquals(TimeToCoverState.Idle, answered.forPlan(coveragePlan(timeCovers = true)))
     }

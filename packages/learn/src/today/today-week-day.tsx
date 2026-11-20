@@ -9,11 +9,15 @@ import {
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
 import { cn } from "@zoonk/ui/lib/utils";
-import { GraduationCapIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
-import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
+import { useExtracted } from "next-intl";
 import { KindIcon } from "../_components/kind-tile";
-import { DoneMark } from "../_components/status-mark";
+import {
+  WEEK_DAY_CLASS,
+  WeekDayLetter,
+  WeekDayRing,
+  getDayShare,
+  isMissed,
+} from "../_components/week-row";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { type StudySession } from "../session/session-types";
@@ -30,22 +34,7 @@ type WeekDay = StudySession["week"]["days"][number];
 export const WEEK_DAY_SLOT = "today-week-day";
 
 const DAY_BUTTON_CLASS =
-  "flex min-h-11 w-full cursor-pointer flex-col items-center gap-1.5 rounded-md py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
-
-const RING_CLASS = "size-7.5";
-
-/** A day the plan gave no time that the learner studied anyway fills whole. */
-function getDayShare(day: WeekDay): number {
-  if (day.hitGoal) {
-    return 1;
-  }
-
-  if (day.goalMinutes === 0) {
-    return day.studied ? 1 : 0;
-  }
-
-  return Math.min(1, day.minutes / day.goalMinutes);
-}
+  "hit-area relative min-h-11 cursor-pointer rounded-md py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 /** The week marks the current local day even while a lesson carries the previous day's session. */
 function useWeekDate(): Date {
@@ -54,81 +43,24 @@ function useWeekDate(): Date {
   return today.session.week.days.find((day) => day.isToday)?.date ?? today.session.localDate;
 }
 
-function isMissed(day: WeekDay, localDate: Date): boolean {
-  return day.kind === "study" && !day.studied && !day.isToday && day.date < localDate;
-}
-
-function isOutsidePlan(day: WeekDay): boolean {
-  return !day.studied && (day.kind === "beforeStart" || day.kind === "afterEnd");
-}
-
-function getTrack(day: WeekDay, localDate: Date): GoalRingTrack {
-  if (day.isToday) {
-    return "today";
-  }
-
-  if (isMissed(day, localDate)) {
-    return "missed";
-  }
-
-  return day.kind === "rest" ? "rest" : "default";
-}
-
-function DayRing({ children, day }: { children?: React.ReactNode; day: WeekDay }) {
-  const localDate = useWeekDate();
-
-  if (isOutsidePlan(day) && !day.isToday) {
-    return (
-      <span aria-hidden="true" className={cn("flex items-center justify-center", RING_CLASS)}>
-        <span className="bg-foreground/15 h-0.5 w-3 rounded-full" />
-      </span>
-    );
-  }
-
-  const isTarget = !day.studied && (day.kind === "exam" || day.kind === "deadline");
-
-  return (
-    <GoalRing className={RING_CLASS} share={getDayShare(day)} track={getTrack(day, localDate)}>
-      {day.hitGoal && <DoneMark />}
-      {isTarget && <GraduationCapIcon className="text-foreground" />}
-      {!day.hitGoal && !isTarget && children}
-    </GoalRing>
-  );
-}
-
 function ChallengeDot({ challenge, day }: { challenge: Challenge; day: WeekDay }) {
   return (
-    <DayRing day={day}>
+    <WeekDayRing day={day} localDate={useWeekDate()}>
       {getDayShare(day) === 0 && (
         <KindIcon className="size-3.5" kind={getChallengeKind(challenge)} />
       )}
-    </DayRing>
-  );
-}
-
-function DayLetter({ day }: { day: WeekDay }) {
-  const format = useFormatter();
-
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "text-faint font-mono text-[0.6875rem] uppercase",
-        day.isToday && "text-foreground font-medium",
-      )}
-    >
-      {format.dateTime(day.date, { timeZone: "UTC", weekday: "narrow" })}
-    </span>
+    </WeekDayRing>
   );
 }
 
 function useDayStatus() {
   const t = useExtracted();
   const localDate = useWeekDate();
+  const { today } = useTodayScreen();
 
   return (day: WeekDay): string => {
     if (day.hitGoal) {
-      return t("daily time met");
+      return t("done");
     }
 
     if (day.studied) {
@@ -140,7 +72,7 @@ function useDayStatus() {
     }
 
     if (day.kind === "deadline") {
-      return t("your goal's date");
+      return t("end date");
     }
 
     if (day.kind === "beforeStart") {
@@ -148,7 +80,7 @@ function useDayStatus() {
     }
 
     if (day.kind === "afterEnd") {
-      return t("after your date");
+      return today.goal.kind === "exam" ? t("after your exam") : t("after your end date");
     }
 
     if (day.kind === "rest") {
@@ -177,7 +109,7 @@ function ChallengeDay({ challenge, day }: { challenge: Challenge; day: WeekDay }
   return (
     <>
       <ChallengeDot challenge={challenge} day={day} />
-      <DayLetter day={day} />
+      <WeekDayLetter date={day.date} isToday={day.isToday} />
       <span className="sr-only">
         {ahead
           ? t("{day}: {name}", { day: weekday, name })
@@ -194,8 +126,8 @@ function PlainDay({ day }: { day: WeekDay }) {
 
   return (
     <>
-      <DayRing day={day} />
-      <DayLetter day={day} />
+      <WeekDayRing day={day} localDate={useWeekDate()} />
+      <WeekDayLetter date={day.date} isToday={day.isToday} />
       <span className="sr-only">
         {t("{day}: {status}", { day: weekdayLabel(day.date), status: dayStatus(day) })}
       </span>
@@ -257,7 +189,7 @@ export function WeekDayCell({
   return (
     <Popover>
       <PopoverTrigger
-        className={DAY_BUTTON_CLASS}
+        className={cn(WEEK_DAY_CLASS, DAY_BUTTON_CLASS)}
         data-slot={WEEK_DAY_SLOT}
         tabIndex={focusable ? 0 : -1}
       >

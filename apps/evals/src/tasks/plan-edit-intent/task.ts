@@ -28,7 +28,7 @@ export const planEditIntentTask: Task<
       dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
     }),
   id: "plan-edit-intent",
-  name: "Plan Edit Intent",
+  name: "Plan edit intent",
   score: scorePlanEditIntent,
   testCases: [
     ...TEST_CASES,

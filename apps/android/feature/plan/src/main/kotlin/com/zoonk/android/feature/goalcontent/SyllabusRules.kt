@@ -6,6 +6,9 @@ import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
 import com.zoonk.api.models.SyllabusTopic
 
+internal val List<SyllabusChapter>.doneChapters: List<SyllabusChapter>
+    get() = filter { it.state == SyllabusChapter.State.DONE }
+
 /** Language units and single-course paths keep the plan's path; exams and multi-module plans have subject pages. */
 val Syllabus.hasSubjectPages: Boolean
     get() = goal.kind != GoalContentGoal.Kind.LANGUAGE && (kind == Syllabus.Kind.NOTICE || subjects.size > 1)
@@ -67,7 +70,7 @@ internal fun groupSubjects(
         }
 }
 
-/** "Appears a lot" on every row tells nothing, so it only marks rows when it sets some apart. */
+/** "Asked a lot" on every row tells nothing, so it only marks rows when it sets some apart. */
 internal fun setsApart(frequencies: List<SyllabusTopic.Frequency?>): Boolean {
     val frequent = frequencies.count { it == SyllabusTopic.Frequency.HIGH }
     return frequent > 0 && frequent < frequencies.size

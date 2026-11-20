@@ -8,14 +8,14 @@
     <string name="checkpoint_phase_plain">Phase challenge</string>
     <string name="checkpoint_confirm">Confirm</string>
     <string name="checkpoint_next">Next</string>
-    <string name="checkpoint_see_result">See how it went</string>
+    <string name="checkpoint_see_result">See result</string>
     <string name="checkpoint_why_later">You\'ll see why at the end.</string>
     <string name="checkpoint_won_line">His shield is broken. You won!</string>
     <string name="checkpoint_lost_line">His shield held this time.</string>
-    <string name="checkpoint_retry_tomorrow">New try tomorrow. Nothing is lost.</string>
+    <string name="checkpoint_retry_tomorrow">Rematch tomorrow.</string>
     <plurals name="checkpoint_retry_after_lessons">
-        <item quantity="one">New try tomorrow, after %d short lesson. Nothing is lost.</item>
-        <item quantity="other">New try tomorrow, after %d short lessons. Nothing is lost.</item>
+        <item quantity="one">Rematch tomorrow, after %d short lesson.</item>
+        <item quantity="other">Rematch tomorrow, after %d short lessons.</item>
     </plurals>
     <string name="checkpoint_every_answered">Every question is answered.</string>
     <string name="checkpoint_shield">The Trickster\'s shield</string>
@@ -59,10 +59,9 @@
     <string name="checkpoint_weekly_done">Weekly challenge done</string>
     <string name="checkpoint_beat">You beat the Trickster!</string>
     <string name="checkpoint_not_this_time">Not this time</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">%1$d of %2$d right to win</item>
-        <item quantity="other">%1$d of %2$d right to win</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">You needed %d right to win.</item>
+        <item quantity="other">You needed %d right to win.</item>
     </plurals>
     <string name="checkpoint_rewards">Rewards</string>
     <!-- %1$s is the phase's number. -->
@@ -85,7 +84,5 @@
     <!-- %1$s is the next phase's name. -->
     <string name="checkpoint_next_phase_open">The next phase, %1$s, is already open.</string>
     <string name="checkpoint_answers">The answers</string>
-    <string name="checkpoint_review">Review the answers</string>
-    <!-- %1$s is the right answer. -->
-    <string name="checkpoint_answer">Answer: %1$s</string>
+    <string name="checkpoint_review">See answers</string>
 </resources>

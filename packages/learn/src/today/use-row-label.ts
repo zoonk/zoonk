@@ -1,48 +1,38 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { useShortList } from "../plan/use-short-list";
 import { type DayStep } from "../session/session-types";
-import { practisesTopics, useBlockDetail } from "../session/use-block-copy";
-import { useIsCatchingUp } from "./today-catch-up";
+import { practisesTopics } from "../session/use-block-copy";
 
-export function useRowLabel() {
-  return useStepLabel(useIsCatchingUp());
-}
-
-/** A challenge says what it is, since a learner meets one before they've ever taken one. */
-export function useStepLabel(isCatchingUp: (step: DayStep) => boolean) {
+/**
+ * A row's one line under its title: what a lesson belongs to, what practice is on, or how long a
+ * challenge is, since a learner meets one before they've ever taken one.
+ */
+export function useStepLabel({ includeSubject = true } = {}) {
   const t = useExtracted();
-  const detail = useBlockDetail();
-  const shortList = useShortList();
 
-  const part = (block: DayStep): string | null => {
-    if (practisesTopics(block)) {
-      return shortList(block.topics, "topics", { named: 1 });
+  return function stepLabel(block: DayStep): string | null {
+    if (block.waitReason) {
+      return t("After today's lessons");
     }
 
-    if (!isCatchingUp(block)) {
-      return block.checkpoint
-        ? [block.subject, detail(block)].filter(Boolean).join(" · ")
-        : block.subject;
+    // The title names a practice's first topic, so the line counts the others.
+    if (practisesTopics(block) && block.topics.length > 1) {
+      return t("{count, plural, one {# more topic} other {# more topics}}", {
+        count: block.topics.length - 1,
+      });
     }
 
-    return block.subject
-      ? t({
-          description: "A lesson left from an earlier day.",
-          message: "Catching up · {subject}",
-          values: { subject: block.subject },
-        })
-      : t({ description: "A lesson left from an earlier day.", message: "Catching up" });
-  };
-
-  return (block: DayStep): string | null => {
-    const label = part(block);
-
-    if (!block.oftenTested) {
-      return label;
+    if (block.checkpoint) {
+      return block.questions > 0
+        ? t("{count, plural, one {# question} other {# questions}}", { count: block.questions })
+        : null;
     }
 
-    return label ? t("{label} · often tested", { label }) : t("Often tested");
+    if (block.fullReview) {
+      return t("Every topic");
+    }
+
+    return includeSubject ? block.subject : null;
   };
 }

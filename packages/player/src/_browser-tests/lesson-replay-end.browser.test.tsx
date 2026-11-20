@@ -7,6 +7,7 @@ import { teachingStep } from "../preview/preview-steps";
 const ROUTES = {
   exit: "/chapter",
   exitTo: "chapter" as const,
+  mistakes: "/mistakes",
   nextLesson: "/learn/next",
   seePlan: (goalId: string) => `/start/${goalId}`,
   signUp: "/login",
@@ -88,7 +89,7 @@ describe("a lesson's end", () => {
     await expect.element(page.getByText("Your plan is ready")).toBeVisible();
 
     await expect
-      .element(page.getByRole("link", { name: "See your plan" }))
+      .element(page.getByRole("link", { name: "See plan" }))
       .toHaveAttribute("href", "/start/goal-1");
 
     expect(page.getByRole("link", { name: /^Next lesson/u }).elements()).toHaveLength(0);

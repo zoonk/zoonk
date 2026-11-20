@@ -1,4 +1,4 @@
-import { type LessonQuestionContextKind, type LessonQuestionStatus } from "@zoonk/db";
+import { type LessonQuestionContextKind } from "@zoonk/db";
 
 type AdminCourseRef = { id: string; title: string };
 
@@ -10,24 +10,12 @@ type QuestionThreadLesson = {
   } | null;
 };
 
-export type AdminQuestionLessonContext = {
+type AdminQuestionLessonContext = {
   chapterTitle: string | null;
   course: AdminCourseRef | null;
   lessonHref: string;
   lessonLabel: string;
 };
-
-export function getAdminQuestionStatusVariant(status: LessonQuestionStatus) {
-  if (status === "completed") {
-    return "success" as const;
-  }
-
-  if (status === "failed") {
-    return "destructive" as const;
-  }
-
-  return "secondary" as const;
-}
 
 export function getAdminQuestionContextLabel({
   contextKind,
@@ -37,14 +25,14 @@ export function getAdminQuestionContextLabel({
   stepNumber: number | null;
 }) {
   if (contextKind === "answer") {
-    return stepNumber ? `Learner answer · item ${stepNumber}` : "Learner answer";
+    return stepNumber ? `Their answer on screen ${stepNumber}` : "Their answer";
   }
 
   if (contextKind === "step") {
-    return stepNumber ? `Lesson content · item ${stepNumber}` : "Lesson content";
+    return stepNumber ? `Screen ${stepNumber}` : "A screen";
   }
 
-  return "Lesson";
+  return "The whole lesson";
 }
 
 export function getAdminQuestionLessonContext(

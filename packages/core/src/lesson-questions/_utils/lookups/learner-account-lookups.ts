@@ -69,18 +69,23 @@ export async function lookUpAccount({ goal, scope }: Lookup): Promise<GoalTutorL
     return { status: "notFound", what };
   }
 
-  const { callTime } = allowance;
-  const noCalls = getReachedCap({ allowance, kind: "conversation" }) !== null;
+  const callTime = allowance.items.find((item) => item.kind === "conversation");
+
+  if (!callTime) {
+    throw new Error("Conversation allowance missing");
+  }
+
+  const noCalls = getReachedCap({ allowance, kind: "conversation" })?.period === "total";
 
   return {
     callMinutesLeft: noCalls
-      ? { thisMonth: 0, today: 0 }
+      ? { last30Days: 0, today: 0 }
       : {
-          thisMonth: toMinutesLeft({
-            limit: callTime.monthLimitSeconds,
-            used: callTime.usedSecondsThisMonth,
+          last30Days: toMinutesLeft({
+            limit: callTime.rollingLimit,
+            used: callTime.usedLast30Days,
           }),
-          today: toMinutesLeft({ limit: callTime.limitSeconds, used: callTime.usedSeconds }),
+          today: toMinutesLeft({ limit: callTime.dailyLimit, used: callTime.usedToday }),
         },
     link: toPageLink({ page: "settings", scope }),
     memory: { enabled: memoryEnabled, link: toPageLink({ page: "memory", scope }) },

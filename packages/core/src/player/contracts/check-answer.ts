@@ -23,14 +23,18 @@ export function checkMultipleChoiceAnswer(
   content: MultipleChoiceStepContent,
   selectedOptionId: string,
 ): AnswerResult {
-  const correctAnswer = content.options.find((opt) => opt.isCorrect)?.text ?? null;
+  const correct = content.options.find((opt) => opt.isCorrect);
+  const correctAnswer = correct?.text ?? null;
   const option = content.options.find((item) => item.id === selectedOptionId);
 
   if (!option) {
     return { correctAnswer, feedback: null, isCorrect: false };
   }
 
-  return { correctAnswer, feedback: option.feedback, isCorrect: option.isCorrect };
+  // An option stored with no words of its own still gets an explanation: why the right one is right.
+  const feedback = option.feedback.trim() || correct?.feedback.trim() || null;
+
+  return { correctAnswer, feedback, isCorrect: option.isCorrect };
 }
 
 export function checkFillBlankAnswer(

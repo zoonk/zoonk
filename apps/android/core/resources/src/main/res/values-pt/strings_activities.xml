@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "8d06e17ddb5c2be64d840a5346d2a16572fa62ce659a3b6d1d451c6c42a4782b",
-  "activities_badge_estimate_first": "a39f053d277c1f2d218b963a5f0b02b25bb806f70cefe410ae2c5e6d1237aacd",
+  "activities_badge_estimate_first": "c2b2b027c215a923c214f3a198104275fedc69c152d76fba4e88139962c9f75d",
   "activities_badge_find_error": "a13c3622cfc396444b49f77f06c3326094b925384e5e55f9acce56437982bcc4",
   "activities_badge_read_chart": "520ae739730a17e239dbb1bf7942e57f27df52ac06e5a38b533034edfbbb4c14",
   "activities_badge_reply": "dabfe8ae57699f8485fa489de73f35b55ba19edc9a0dee18d331fd908ecec68c",
@@ -15,8 +15,8 @@
   "activities_chart_description": "7341107c79623e1573a4938c5706afc98bf5bb4e13246909f5ca723ce1ee0662",
   "activities_chart_rate": "d7f5bc50dbe954ca67517ceba6b779d96a07655974e07a695fe10746de6a25b4",
   "activities_chart_span": "3b6a269fda02457d7d28a8acf13be615fc5e7f26cf3cb899c4687171df09190a",
-  "activities_chart_spans": "26d147f6f97df6ce6ba3a377a4ca40898ff090370c70ec022dd207d53480aae4",
-  "activities_chart_tap_span": "132378c00f72006ddf914acc72a0bd31741b1220ce2e388f83b03f02266592a0",
+  "activities_chart_spans": "78fd5c41046301f06f167d16b1d00dba10424598957ca5c1f3fd6c5ce726f07d",
+  "activities_chart_tap_span": "bd2bd8cc2cc4c7a2e29d56eb284b5adcf1ecc384664431784d50f0eadc2d2542",
   "activities_dialogue_conversation": "9878106a84de990d9c39331b2c1af434fb698900acdd4405436c26b2505c5475",
   "activities_dialogue_hear_best": "acd2fa592d5f784d51c97ade445364db12f805617015cb97d5961e40c9acc40d",
   "activities_dialogue_hear_line": "2fae251c44d77422d16b46f6d32914b569e218dbefa6b9aed3acc1bc13e33fdd",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Dê um palpite primeiro</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">Seu palpite conta</string>
     <string name="activities_badge_read_chart">Leia o gráfico</string>
     <string name="activities_badge_before_after">Veja o antes e o depois</string>
     <string name="activities_badge_find_error">Encontre o erro</string>
@@ -96,9 +97,8 @@
     <string name="activities_chart_description">Um gráfico de linhas de %1$s por %2$s, de %3$s em %4$s a %5$s em %6$s.</string>
     <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
     <string name="activities_chart_span">%1$s: %2$s.</string>
-    <string name="activities_chart_tap_span">Toque em um intervalo para medir</string>
-    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
-    <string name="activities_chart_spans">Intervalos para medir</string>
+    <string name="activities_chart_tap_span">Toque na parte do gráfico que você quer medir</string>
+    <string name="activities_chart_spans">Partes do gráfico para medir</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s por %2$s</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->

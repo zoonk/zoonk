@@ -4,7 +4,7 @@ export const COVER_SIZES = "(max-width: 672px) 100vw, 672px";
 
 export function CoverFrame({ children }: { children: React.ReactNode }) {
   return (
-    <span className="not-prose relative my-6 block aspect-video w-full overflow-hidden rounded-lg">
+    <span className="not-prose relative my-6 block aspect-video w-full overflow-hidden rounded-xl">
       {children}
     </span>
   );

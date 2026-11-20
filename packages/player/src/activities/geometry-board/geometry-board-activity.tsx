@@ -4,11 +4,11 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
 import { Button } from "@zoonk/ui/components/button";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
-import { Lightbulb, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import { ActivityTip } from "../_components/activity-tip";
 import { hidesAskedTotal } from "../_utils/hides-asked-total";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BoardDrawing } from "./board-drawing";
@@ -81,7 +81,7 @@ export function GeometryBoardActivity({ content, labelId, phase }: GeometryBoard
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <div className="-mx-2" ref={ref}>
+      <div ref={ref}>
         <BoardDrawing
           bounds={bounds}
           cornerLabel={(index) => t("Corner {name}", { name: cornerName(index) })}
@@ -126,12 +126,7 @@ export function GeometryBoardActivity({ content, labelId, phase }: GeometryBoard
         </Button>
       )}
 
-      {isChecked && (
-        <p className="flex items-start gap-2 text-sm leading-snug">
-          <Lightbulb aria-hidden="true" className="text-viz-highlight mt-0.5 size-4 shrink-0" />
-          <LessonRichText text={fields.invariant} />
-        </p>
-      )}
+      {isChecked && <ActivityTip text={fields.invariant} />}
 
       <ActivityTextAlternative>
         {t(

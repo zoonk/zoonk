@@ -3,6 +3,7 @@ package com.zoonk.android.feature.onboarding.start
 import android.content.res.Resources
 import android.icu.text.ListFormatter
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.languageAimTitle
 import com.zoonk.android.feature.plan.varietyNote
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.factsLine
@@ -271,13 +272,11 @@ class UnderstoodRows(
                 UnderstoodRow(
                     id = "targetScore",
                     label =
-                        text(
-                            if (draft.isLanguage) {
-                                R.string.onboarding_row_level_aiming
-                            } else {
-                                R.string.onboarding_row_target_score
-                            },
-                        ),
+                        if (draft.isLanguage) {
+                            languageAimTitle(resources, draft.targetLanguage, locale)
+                        } else {
+                            text(R.string.onboarding_row_target_score)
+                        },
                     value =
                         if (aim ==
                             null
@@ -285,7 +284,7 @@ class UnderstoodRows(
                             it
                         } else {
                             listOfNotNull(
-                                aim,
+                                languageAim.label ?: aim,
                                 com.zoonk.android.feature.plan.languageAimNameResource(aim)?.let { name ->
                                     text(name)
                                 },
@@ -393,7 +392,7 @@ class UnderstoodRows(
                     .meantDay(examDates, draft.details, today, targetDate)
                     ?.takeUnless { day -> day.estimated || examDates.any { it.day == targetDate } }
             }
-        val note = official?.let { daysLeft(it.day) } ?: suggested?.let { noticeDayText(it.day, draft) }
+        val note = official?.let { daysLeft(it.day) } ?: suggested?.let { noticeDayText(it.day) }
 
         return UnderstoodRow(
             id = "targetDate",
@@ -407,7 +406,7 @@ class UnderstoodRows(
                         R.string.onboarding_row_deadline
                     },
                 ),
-            value = formatDate(targetDate, locale, DateStyle.LongYear, today),
+            value = formatDate(targetDate, locale, DateStyle.Short, today),
             note = note,
             source = (official ?: suggested)?.source?.let { RowSource(it.title, it.url) },
             editable = EditableField.TargetDate,
@@ -433,7 +432,7 @@ class UnderstoodRows(
             id = "targetDate",
             label = text(R.string.onboarding_row_exam_date),
             value = formatDate(kept, locale, DateStyle.Month, today).replaceFirstChar { it.titlecase(locale) },
-            note = noticeDay?.let { noticeDayText(it.day, draft) },
+            note = noticeDay?.let { noticeDayText(it.day) },
             source = noticeDay?.source?.let { RowSource(it.title, it.url) },
             editable = EditableField.TargetDate,
             editDefault = kept.toString(),
@@ -467,16 +466,11 @@ class UnderstoodRows(
         )
     }
 
-    private fun noticeDayText(
-        date: LocalDate,
-        draft: GoalDraftOutput,
-    ) = text(
-        if (isGuide(draft)) R.string.onboarding_row_guide_says else R.string.onboarding_row_notice_says,
-        formatDate(date, locale, DateStyle.Long, today),
-    )
+    private fun noticeDayText(date: LocalDate) = text(R.string.onboarding_row_notice_says, formatDate(date, locale, DateStyle.Long, today))
 
-    private fun daysLeft(date: LocalDate): String {
+    private fun daysLeft(date: LocalDate): String? {
         val days = ChronoUnit.DAYS.between(today, date).toInt()
+        if (days < 0) return null
         return resources.getQuantityString(R.plurals.onboarding_row_days_left, days, days)
     }
 
@@ -507,7 +501,7 @@ class UnderstoodRows(
         val sameYear = days.map { it.day.year }.distinct().size == 1
         return ListFormatter.getInstance(locale).format(
             days.mapIndexed { index, day ->
-                val style = if (sameYear && index < days.lastIndex) DateStyle.DayMonth else DateStyle.LongYear
+                val style = if (sameYear && index < days.lastIndex) DateStyle.DayNoYear else DateStyle.Short
                 formatDate(day.day, locale, style, today).replace(' ', NO_BREAK_SPACE)
             },
         )
@@ -517,7 +511,7 @@ class UnderstoodRows(
 
     private companion object {
         const val SITTING_CHOICES = 3
-        const val NO_BREAK_SPACE = ' '
+        const val NO_BREAK_SPACE = '\u00a0'
     }
 }
 

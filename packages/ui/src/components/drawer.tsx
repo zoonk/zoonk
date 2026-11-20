@@ -1,8 +1,13 @@
 "use client";
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
-import { cn } from "@zoonk/ui/lib/utils";
+import { OVERLAY_ACTIONS_CLASS } from "@zoonk/ui/lib/overlay-actions";
+import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
+import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
+import { useRef } from "react";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
+import { MenuOpenerNotice, useFocusAfterMenuItem } from "./_utils/menu-handoff";
+import { PanelCloseButton } from "./_utils/panel-close";
 import type * as React from "react";
 
 function Drawer({ ...props }: DrawerPrimitive.Root.Props) {
@@ -21,13 +26,14 @@ function DrawerPortal({ ...props }: DrawerPrimitive.Portal.Props) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
 }
 
+/** Drawn for a nested overlay too, which Base UI skips, so whatever it opened from dims under it. */
 function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props) {
   return (
     <DrawerPrimitive.Backdrop
+      forceRender
       className={cn(
-        "fixed inset-0 z-50 bg-black",
-        "[--backdrop-opacity:0.5] dark:[--backdrop-opacity:0.7]",
-        "opacity-[calc(var(--backdrop-opacity)*(1-var(--drawer-swipe-progress)))]",
+        "fixed inset-0 z-50 opacity-[calc(1-var(--drawer-swipe-progress))]",
+        OVERLAY_DIM_CLASS,
         "transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]",
         "data-swiping:duration-0",
         "data-ending-style:opacity-0 data-starting-style:opacity-0",
@@ -40,66 +46,151 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
   );
 }
 
-/** Base UI needs the Viewport wrapper for swipe gestures. */
+/**
+ * A panel opens on its first field, a choice included (the checked radio of a group is the one it
+ * can focus); with none, Base UI's default. Choice pieces carry a hidden input that never takes focus.
+ */
+const FIRST_FIELD =
+  "input:not([type=hidden],[disabled],[tabindex='-1']),textarea:not([disabled]),select:not([disabled]),[role=radio][tabindex='0'],[role=checkbox]:not([aria-disabled=true])";
+
+/**
+ * A sheet docked at the bottom on a phone, where it also closes with a swipe down. From `sm` it is
+ * a centered dialog, like `Dialog`: a pointer has no use for a grab handle, and a docked box puts
+ * a short form far from where the learner was looking. Base UI needs the Viewport wrapper for
+ * swipe gestures, and its keyboard provider keeps a focused field above a phone's keyboard.
+ */
 function DrawerPopup({
-  backdropClassName,
   className,
   children,
+  finalFocus,
+  initialFocus,
+  opensOnField = true,
+  ref,
   ...props
-}: DrawerPrimitive.Popup.Props & { backdropClassName?: string }) {
+}: React.ComponentProps<typeof DrawerPrimitive.Popup> & {
+  /** False for a panel opened to show something first, whose field comes second (a saved conversation over its composer). */
+  opensOnField?: boolean;
+}) {
+  const handoff = useFocusAfterMenuItem(finalFocus);
+  const popupRef = useRef<HTMLDivElement>(null);
+
   return (
-    <DrawerPortal>
-      <DrawerBackdrop className={backdropClassName} />
-      <DrawerPrimitive.Viewport
-        className="fixed inset-0 z-50 flex items-end justify-center"
-        data-slot="drawer-viewport"
-      >
-        <DrawerPrimitive.Popup
-          className={cn(
-            "bg-background flex max-h-[80dvh] w-full flex-col rounded-t-xl border-t sm:mb-4 sm:max-w-2xl sm:rounded-xl sm:border",
-            "transform-[translateY(var(--drawer-swipe-movement-y))]",
-            "transition-transform duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]",
-            "data-swiping:duration-0 data-swiping:select-none",
-            "data-ending-style:transform-[translateY(calc(100%+2px))]",
-            "data-starting-style:transform-[translateY(calc(100%+2px))]",
-            "data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)]",
-            className,
-          )}
-          data-slot="drawer-popup"
-          {...props}
+    <DrawerPrimitive.VirtualKeyboardProvider>
+      <DrawerPortal>
+        <DrawerBackdrop />
+        <DrawerPrimitive.Viewport
+          className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
+          data-slot="drawer-viewport"
         >
-          <div className="bg-muted mx-auto mt-3 h-1 w-10 shrink-0 rounded-full" />
-          <PopupShortcutLayer value>{children}</PopupShortcutLayer>
-        </DrawerPrimitive.Popup>
-      </DrawerPrimitive.Viewport>
-    </DrawerPortal>
+          <DrawerPrimitive.Popup
+            className={cn(
+              "bg-background flex max-h-[80dvh] w-full flex-col rounded-t-2xl border-t outline-none sm:max-w-lg sm:rounded-2xl sm:border",
+              "transform-[translateY(var(--drawer-swipe-movement-y))]",
+              "transition-transform duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]",
+              "data-swiping:duration-0 data-swiping:select-none",
+              "data-ending-style:transform-[translateY(calc(100%+2px))]",
+              "data-starting-style:transform-[translateY(calc(100%+2px))]",
+              "data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)]",
+              "sm:transition-[opacity,scale] sm:duration-100 sm:data-ending-style:duration-100",
+              "sm:data-ending-style:transform-none sm:data-starting-style:transform-none",
+              "sm:data-ending-style:scale-95 sm:data-ending-style:opacity-0",
+              "sm:data-starting-style:scale-95 sm:data-starting-style:opacity-0",
+              className,
+            )}
+            data-slot="drawer-popup"
+            {...props}
+            finalFocus={handoff.finalFocus}
+            initialFocus={
+              initialFocus ??
+              (() =>
+                (opensOnField && popupRef.current?.querySelector<HTMLElement>(FIRST_FIELD)) || true)
+            }
+            ref={mergeRefs(popupRef, ref)}
+          >
+            <div
+              className="bg-foreground/20 contrast-more:bg-foreground/50 mx-auto mt-3 h-1 w-10 shrink-0 rounded-full sm:hidden"
+              data-slot="drawer-handle"
+            />
+            <MenuOpenerNotice onOpen={handoff.onOpen} />
+            <PopupShortcutLayer value>{children}</PopupShortcutLayer>
+          </DrawerPrimitive.Popup>
+        </DrawerPrimitive.Viewport>
+      </DrawerPortal>
+    </DrawerPrimitive.VirtualKeyboardProvider>
   );
 }
 
 function DrawerContent({ className, ...props }: DrawerPrimitive.Content.Props) {
   return (
     <DrawerPrimitive.Content
-      className={cn("overflow-y-auto px-6 pb-6", className)}
+      className={cn(
+        "scroll-hairline-t overflow-y-auto px-6 pb-6",
+        "[&:has(+[data-slot=drawer-footer])]:scroll-hairline-y [&:has(+[data-slot=drawer-footer])]:pb-2",
+        className,
+      )}
       data-slot="drawer-content"
       {...props}
     />
   );
 }
 
-function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
+/** A sheet's ✕, for the one sheet that draws no header. */
+function DrawerCloseButton({ label }: { label: string }) {
+  return (
+    <DrawerPrimitive.Close data-slot="drawer-close" render={<PanelCloseButton label={label} />} />
+  );
+}
+
+/**
+ * A sheet's title (and its one line under it) with the ✕ that closes it, so no sheet depends on a
+ * swipe, Esc or a press outside. The ✕ is a dialog's, at its size.
+ */
+function DrawerHeader({
+  children,
+  className,
+  closeLabel,
+  ...props
+}: React.ComponentProps<"div"> & { closeLabel: string }) {
   return (
     <div
-      className={cn("flex flex-col gap-1.5 px-6 pt-4 pb-2", className)}
+      className={cn("flex items-start justify-between gap-3 px-6 pt-4 pb-2 sm:pt-6", className)}
       data-slot="drawer-header"
       {...props}
-    />
+    >
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">{children}</div>
+
+      <DrawerCloseButton label={closeLabel} />
+    </div>
+  );
+}
+
+/**
+ * A sheet's foot, held under its content while that scrolls: one line that says what the actions
+ * will do (`note`), then the actions. Its edge is the content's, drawn only while something scrolls
+ * under it.
+ */
+function DrawerFooter({
+  children,
+  className,
+  note,
+  ...props
+}: React.ComponentProps<"div"> & { note?: React.ReactNode }) {
+  return (
+    <div
+      className={cn("flex shrink-0 flex-col gap-3 px-6 pt-4 pb-6", className)}
+      data-slot="drawer-footer"
+      {...props}
+    >
+      {note}
+      {children && <div className={OVERLAY_ACTIONS_CLASS}>{children}</div>}
+    </div>
   );
 }
 
 function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
   return (
     <DrawerPrimitive.Title
-      className={cn("text-foreground text-base font-medium", className)}
+      className={cn("text-foreground text-lg leading-tight font-semibold text-balance", className)}
       data-slot="drawer-title"
       {...props}
     />
@@ -109,7 +200,7 @@ function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
 function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.Props) {
   return (
     <DrawerPrimitive.Description
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-muted-foreground text-sm text-pretty", className)}
       data-slot="drawer-description"
       {...props}
     />
@@ -119,8 +210,10 @@ function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.
 export {
   Drawer,
   DrawerClose,
+  DrawerCloseButton,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerHeader,
   DrawerPopup,
   DrawerTitle,

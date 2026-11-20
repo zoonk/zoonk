@@ -75,7 +75,7 @@ test.describe("Exam goal", () => {
       await page.goto(`/mock/${mock.blockId}`);
       await expect(page).toHaveURL(new RegExp(`/challenge/${mock.planItemId}$`, "u"));
 
-      const start = page.getByRole("button", { name: "Start the mock exam" });
+      const start = page.getByRole("button", { exact: true, name: "Start" });
       await start.click();
       await expect(start).toHaveAttribute("aria-busy", "true");
       await expect(start).toBeDisabled();
@@ -96,8 +96,10 @@ test.describe("Exam goal", () => {
       const handingIn = await holdServerActions(page, isHandIn);
       await playMock({ answers: mock.answers, page });
 
-      const handIn = page.getByRole("button", { name: "Hand in the mock exam" });
-      await expect(handIn).toHaveAttribute("aria-busy", "true");
+      const handIn = page
+        .getByRole("complementary", { name: "Answer sheet" })
+        .getByRole("button", { name: "Hand in" });
+
       await expect(handIn).toBeDisabled();
       await page.clock.fastForward(11_000);
 
@@ -110,7 +112,7 @@ test.describe("Exam goal", () => {
 
       await handingIn.release();
 
-      await page.getByRole("button", { name: "Hand in the mock exam" }).click();
+      await handIn.click();
 
       await page
         .getByRole("alertdialog", { name: "Hand in the mock exam?" })
@@ -118,7 +120,21 @@ test.describe("Exam goal", () => {
         .click();
 
       await expect(
-        page.getByRole("heading", { level: 1, name: /^Mock exam 2 done\s*\d+–\d+$/u }),
+        page.getByRole("heading", { level: 1, name: /^Mock exam 2\s*\d+–\d+$/u }),
+      ).toBeVisible();
+    });
+  });
+
+  test("a learner with one finished mock exam sees its score on the exam page", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page }) => {
+      await page.goto("/exam");
+
+      await expect(
+        page
+          .getByRole("region", { name: "Your progress" })
+          .getByText(/^\d+%\s*Right answers in Mock exam 1$/u),
       ).toBeVisible();
     });
   });
@@ -159,7 +175,7 @@ test.describe("Exam goal", () => {
       await rewrite.fill(draft);
       await expect(page.getByText(/^\d{2,} words$/u)).toBeVisible();
 
-      const send = page.getByRole("button", { name: "Grade the rewrite" });
+      const send = page.getByRole("button", { name: "Grade rewrite" });
 
       const failed = page.getByText(
         "That didn't go through. Your text is still here. Try again in a moment.",
@@ -226,7 +242,7 @@ test.describe("Exam goal", () => {
         }
       });
 
-      const skip = page.getByRole("button", { name: "Skip the rewrite" });
+      const skip = page.getByRole("button", { exact: true, name: "Skip" });
       await skip.click();
       await expect(skip).toBeDisabled();
       await expect(send).toBeDisabled();

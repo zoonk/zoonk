@@ -13,20 +13,20 @@ import {
 } from "@zoonk/ui/components/alert-dialog";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { QuestionTitle } from "../_components/question-title";
 import { DoneMark } from "../_components/status-mark";
 import { TaskActions } from "../_components/task-layout";
 import { WritingWait } from "../generation/writing-wait";
 import { useTaskMinutes } from "../language/exam-speaking/speaking-task-row";
 import { LearnLink } from "../learn-link";
-import { QUESTION_TEXT_CLASS } from "../questions/item-text";
 import { TaskMainButton } from "../shell/task-frame";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
-import { MockFrame, MockStepStatus } from "./mock-frame";
+import { MockFrame } from "./mock-frame";
+import { canStartSpeaking } from "./use-speaking-start";
 
 type SpeakingTask = SpeakingSectionView["tasks"][number];
 
@@ -70,10 +70,7 @@ function SpeakingPaper({ paper }: { paper: SpeakingSectionView }) {
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm text-pretty">
         {left > 0
-          ? t(
-              "Do the tasks in order. Each one is a call, and you come back here after it. {count, plural, one {# task left.} other {# tasks left.}}",
-              { count: left },
-            )
+          ? t("Do the tasks in order. Each one is a call.")
           : t("Every task is done. Hand in this section to go on.")}
       </p>
 
@@ -90,16 +87,15 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const [confirming, setConfirming] = useState(false);
-  const label = isLast ? t("Hand in the mock exam") : t("Hand in this section");
+  const label = isLast ? t("Hand in") : t("Hand in section");
 
   return (
     <>
-      <MockStepStatus />
       <TaskActions>
         <TaskMainButton
+          aria-haspopup="dialog"
           busy={runner.busy === "submit"}
           disabled={runner.pending}
-          icon={<SendIcon aria-hidden="true" />}
           onClick={() => setConfirming(true)}
         >
           {label}
@@ -118,7 +114,7 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
                     "{count, plural, one {# task isn't done,} other {# tasks aren't done,}} so this paper gets no estimate. After this, you can't do them in this mock.",
                     { count: left },
                   )
-                : t("Every task is done. After this, you can't do them again in this mock.")}
+                : t("Every task is done. After this, you can't do them again in this mock exam.")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -146,39 +142,42 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
   const isLast = index === sections.length - 1;
   const writing = runner.speakingWriting;
 
+  const startable = canStartSpeaking({
+    error: runner.error,
+    pending: runner.pending,
+    writing: writing !== null,
+  });
+
   const footer = speaking ? (
     <SpeakingHandIn
       isLast={isLast}
       left={speaking.tasks.filter((task) => task.status !== "completed").length}
     />
   ) : (
-    <>
-      <MockStepStatus />
-      {!writing && (
-        <TaskActions>
-          <TaskMainButton
-            busy={runner.busy === "startSpeaking"}
-            disabled={runner.pending}
-            icon={<PlayIcon aria-hidden="true" />}
-            onClick={() => void runner.startSpeaking()}
-          >
-            {t("Start the speaking part")}
-          </TaskMainButton>
-        </TaskActions>
-      )}
-    </>
+    <TaskActions>
+      <TaskMainButton
+        busy={runner.busy === "startSpeaking"}
+        disabled={!startable}
+        onClick={() => void runner.startSpeaking()}
+      >
+        {t("Start")}
+      </TaskMainButton>
+    </TaskActions>
   );
 
   return (
     <MockFrame footer={footer} headerTitle={<ClockTitle deadline={deadline} />}>
       <div className="flex flex-col gap-4">
-        <h2 className={QUESTION_TEXT_CLASS}>{section?.name ?? speaking?.paper ?? t("Speaking")}</h2>
+        <QuestionTitle>{section?.name ?? speaking?.paper ?? t("Speaking")}</QuestionTitle>
 
         {speaking && <SpeakingPaper paper={speaking} />}
 
         {!speaking && writing && (
           <WritingWait
-            hint={t("Your speaking paper opens as soon as it's ready.")}
+            // A disabled Start is no choice yet, so the wait's own retry stays the filled one.
+            barHasMainAction={startable}
+            // Once opening the written paper failed, it opens only from Start.
+            hint={runner.error ? undefined : t("Your speaking paper opens as soon as it's ready.")}
             kind="speakingPaper"
             writing={writing}
           />

@@ -36,15 +36,28 @@ export function splitTodayQueue<Block extends Pick<DayStep, "position" | "status
   };
 }
 
-export const UPCOMING_ROWS = 4;
+const UPCOMING_ROWS = 4;
 
-/** The blocks "+N more" holds while the queue is folded. */
-export function getFoldedBlocks<Block extends Pick<DayStep, "position" | "status">>({
-  blocks,
-  nextPosition,
+/**
+ * The rows "Show more" hides: the blocks past the first few, then the lessons-coming row. `folds`
+ * says whether a fold is worth it and `shown` how many of `after` show while folded: a single row
+ * past the first few shows, as folding it would cost a tap to save one row.
+ */
+export function getFoldedRows({
+  after,
+  lessonsAhead,
 }: {
-  blocks: readonly Block[];
-  nextPosition: number | null;
-}): Block[] {
-  return splitTodayQueue({ blocks, nextPosition }).after.slice(UPCOMING_ROWS);
+  after: readonly Pick<DayStep, "kind">[];
+  lessonsAhead: boolean;
+}) {
+  const hidden = after.slice(UPCOMING_ROWS);
+  const count = after.length + Number(lessonsAhead) - UPCOMING_ROWS;
+  const folds = count > 1;
+
+  return {
+    count,
+    folds,
+    lessonsOnly: !lessonsAhead && hidden.every((block) => block.kind === "learn"),
+    shown: folds ? UPCOMING_ROWS : after.length,
+  };
 }

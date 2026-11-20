@@ -41,7 +41,7 @@ export const challengeReviewTask: Task<
     });
   },
   id: "challenge-review",
-  name: "Challenge Review",
+  name: "Challenge review",
   testCases: cases.map((saved) => ({
     expectations:
       saved.errors.length > 0

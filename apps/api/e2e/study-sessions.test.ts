@@ -5,11 +5,9 @@ import { studyBlockCompletionSchema } from "@zoonk/core/sessions/completion-cont
 import { studyBlockOpeningSchema } from "@zoonk/core/sessions/open-block-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -572,106 +570,6 @@ test.describe("Study sessions API", () => {
 
     expect(after.status).not.toBe("unstarted");
     expect(after).toMatchObject({ nextBlockId: today.blocks[0]?.id });
-  });
-
-  test("holds catch-up, bonus time, challenges, test-outs and writing ahead for Plus once a free exam plan's first week is over", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-free-week" });
-
-    const goal = await goalFixture({
-      createdAt: new Date(Date.now() - 10 * DAY_MS),
-      kind: "exam",
-      timezone: "UTC",
-      userId,
-    });
-
-    const studied = await libraryLessonFixture({ title: "Studied lesson" });
-
-    const [plan, session] = await Promise.all([
-      planFixture({
-        goalId: goal.id,
-        items: [{ lessonId: studied.id, status: "done" }, { kind: "boss" }],
-      }),
-      studySessionFixture({ goalId: goal.id, userId }),
-      learningProfileFixture({ activeGoalId: goal.id, userId }),
-    ]);
-
-    const boss = plan.items[1];
-
-    if (!boss) {
-      throw new Error("Expected the phase's challenge");
-    }
-
-    const sessionPath = `/v1/study-sessions/${session.id}`;
-    const plusRequired = { error: { code: "PLUS_REQUIRED" } };
-
-    const catchUp = await api.post(`${sessionPath}/catch-up-blocks`, { data: { timeZone: "UTC" } });
-
-    expect(catchUp.status()).toBe(402);
-    await expect(catchUp.json()).resolves.toMatchObject(plusRequired);
-
-    const extra = await api.post(`${sessionPath}/extra-blocks`, { data: { timeZone: "UTC" } });
-
-    expect(extra.status()).toBe(409);
-
-    await expect(extra.json()).resolves.toMatchObject({
-      error: { code: "EXTRA_TIME_UNAVAILABLE", details: { reason: "plusRequired" } },
-    });
-
-    const challenge = await api.get(`/v1/challenges/${boss.id}`);
-    await expect(challenge.json()).resolves.toMatchObject({ status: "plusRequired" });
-
-    const start = await api.post(`/v1/challenges/${boss.id}/starts`, { data: {} });
-
-    expect(start.status()).toBe(402);
-    await expect(start.json()).resolves.toMatchObject(plusRequired);
-
-    const writing = await api.post(`/v1/challenges/${boss.id}/generations`);
-
-    expect(writing.status()).toBe(402);
-    await expect(writing.json()).resolves.toMatchObject(plusRequired);
-
-    const [chapter, skill] = await Promise.all([libraryChapterFixture(), skillFixture()]);
-
-    const [lesson, question] = await Promise.all([
-      planItemFixture({ chapterId: chapter.id, planId: plan.id, position: 2, skillId: skill.id }),
-      itemFixture({ content: choiceItemContent(), skillId: skill.id }),
-    ]);
-
-    const testOutPath = `/v1/goals/${goal.id}/chapters/${chapter.id}/test-out`;
-
-    const testOutResponses = await Promise.all([
-      api.get(testOutPath),
-      api.post(`${testOutPath}/generations`),
-      api.post(testOutPath, {
-        data: {
-          answers: [{ answer: { selectedIndex: 0 }, durationMs: 4000, itemId: question.id }],
-          requestId: randomUUID(),
-        },
-      }),
-    ]);
-
-    await Promise.all(
-      testOutResponses.map(async (response) => {
-        expect(response.status()).toBe(402);
-        await expect(response.json()).resolves.toMatchObject(plusRequired);
-      }),
-    );
-
-    await expect(
-      prisma.planItem.findUniqueOrThrow({ where: { id: lesson.id } }),
-    ).resolves.toMatchObject({ status: "todo" });
-
-    const preparation = await api.post(`${sessionPath}/preparations`);
-
-    expect(preparation.status()).toBe(202);
-    await expect(preparation.json()).resolves.toStrictEqual({ preparationId: null });
-
-    await expect(
-      prisma.studySessionBlock.count({ where: { sessionId: session.id } }),
-    ).resolves.toBe(0);
-
-    await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
-    await api.dispose();
   });
 
   test("reads milestones and hides another learner's acknowledgment", async () => {

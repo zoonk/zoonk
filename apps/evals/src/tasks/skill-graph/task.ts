@@ -16,7 +16,7 @@ export const skillGraphTask: Task<SkillGraphCase, SkillGraphOutput> = {
     "Turn a goal into a skill graph: skills with prerequisites, the courses that teach them and phases sized in hours",
   generate,
   id: "skill-graph",
-  name: "Skill Graph",
+  name: "Skill graph",
   score: scoreSkillGraph,
   scoreCategories: SKILL_GRAPH_SCORE_CATEGORIES,
   testCases: TEST_CASES,

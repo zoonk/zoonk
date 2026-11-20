@@ -1,5 +1,6 @@
 import "server-only";
 import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
+import { readGuestSpentMicros } from "../entitlements/_utils/guest-spend-budget";
 import { readUsageLedger } from "../entitlements/bundle-claims";
 import { getRequestInstant } from "../learner/facts/request-instant";
 import { readSavedMindMaps } from "../learner/facts/saved-mind-maps";
@@ -54,11 +55,9 @@ function toLessonGroups({
   return chapters.flatMap(({ chapterId }) => {
     const maps = lessonMaps.get(chapterId) ?? [];
 
-    const open = maps.filter((map) => !map.locked).map((map) => map.lessonId);
+    const open = maps.map((map) => map.lessonId);
 
-    return maps.length > 0
-      ? [{ chapterId, count: maps.length, lessonIds: open, locked: maps.length - open.length }]
-      : [];
+    return maps.length > 0 ? [{ chapterId, count: maps.length, lessonIds: open }] : [];
   });
 }
 
@@ -73,7 +72,7 @@ function chooseFirstTab({
     return "chapters";
   }
 
-  return lessonGroups.some((group) => group.count > group.locked) ? "lessons" : "chapters";
+  return lessonGroups.some((group) => group.count > 0) ? "lessons" : "chapters";
 }
 
 /**
@@ -95,7 +94,7 @@ export async function listGoalMindMaps(
   const { goal } = resolved;
 
   const [facts, numbering, now, savedRows, viewer] = await Promise.all([
-    loadMindMapChapters({ goal, readViewer: readEntitlementViewer }),
+    loadMindMapChapters({ goal }),
     loadChapterNumbering(goal),
     getRequestInstant(),
     readSavedMindMaps(goal.userId),
@@ -128,7 +127,7 @@ export async function listGoalMindMaps(
   const chapters = listed.map((row) => row.view);
   const bulk = sortBulkChapters(chapters);
 
-  const [scopeLessonMaps, ledger] = await Promise.all([
+  const [scopeLessonMaps, ledger, guestSpent] = await Promise.all([
     loadScopeLessonMaps({ chapters: listed.map((row) => row.facts), userId: goal.userId }),
     viewer &&
       readUsageLedger({
@@ -138,6 +137,7 @@ export async function listGoalMindMaps(
         now,
         viewer,
       }),
+    viewer?.isGuest ? readGuestSpentMicros(now) : null,
   ]);
 
   const lessonMaps = listEachLessonOnce(scopeLessonMaps);
@@ -146,7 +146,7 @@ export async function listGoalMindMaps(
   return {
     mindMaps: {
       chapters,
-      createOffer: offerChapterMaps({ chapters, ledger }),
+      createOffer: offerChapterMaps({ chapters, guestSpent, ledger }),
       firstTab: chooseFirstTab({ chapters, lessonGroups }),
       goal: { displayName: goal.displayName, id: goal.id, title: goal.title },
       lessonGroups,

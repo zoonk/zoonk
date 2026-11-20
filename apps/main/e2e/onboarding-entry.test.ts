@@ -10,7 +10,7 @@ type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
 const DRAFT_URL = /\/start\?draft=[0-9a-f-]{36}$/u;
 
-const FAILED_READ = /^This didn't (?:start|finish)$/u;
+const FAILED_READ = /^Something went wrong on our side$/u;
 
 function uniqueWords(words: string) {
   return `${words} ${randomUUID().slice(0, 8)}`;
@@ -49,13 +49,43 @@ test.describe("Sending a goal", () => {
       "learn to cook for my family",
     );
 
-    await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
 
     await expect
       .poll(() =>
         prisma.onboardingDraft.count({ where: { prompt: "learn to cook for my family" } }),
       )
       .toBe(0);
+  });
+
+  test("Back waits while the goal is being made, so its setup never opens over the box", async ({
+    page,
+  }) => {
+    const goal = uniqueWords("understand quantum physics, made once");
+    await goalUnderstandingFixture({ goal, result: QUANTUM, userId: await ensureGuest(page) });
+    await sendGoal(page, goal);
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
+
+    const release = Promise.withResolvers<null>();
+
+    await page.route(
+      (url) => url.pathname.endsWith("/start"),
+      async (route) => {
+        if (route.request().method() === "POST") {
+          await release.promise;
+        }
+
+        await route.fallback();
+      },
+    );
+
+    await page.getByRole("button", { name: /^Looks right/u }).click();
+    await expect(page.getByRole("button", { exact: true, name: "Back" })).toBeDisabled();
+
+    release.resolve(null);
+
+    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+    await expect(prisma.goal.count({ where: { prompt: goal } })).resolves.toBe(1);
   });
 });
 
@@ -75,7 +105,7 @@ test.describe("Sending a goal from another page", () => {
     await page.getByRole("button", { name: "Build my plan" }).click();
 
     await expect(page).toHaveURL(DRAFT_URL);
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
     await expect(page.getByText(goal, { exact: true })).toBeVisible();
 
     await page.goBack();
@@ -131,7 +161,7 @@ test.describe("Coming back", () => {
 
     await expect(page).toHaveURL(/\/today$/u);
     await expect(page.getByRole("main").getByText(goal, { exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
   });
 
   test("a start that failed offers to try again, which moves on once the words can be read, and a refresh follows a read to the card", async ({
@@ -207,7 +237,7 @@ test.describe("Coming back", () => {
 
     release.resolve(null);
 
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
     await expect(page.getByText("Juggling", { exact: true })).toBeVisible();
   });
 });

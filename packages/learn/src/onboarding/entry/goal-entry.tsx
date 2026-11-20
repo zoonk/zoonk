@@ -1,13 +1,12 @@
 "use client";
 
-import { MAX_GOAL_PROMPT_LENGTH } from "@zoonk/core/goals/goal-input-limits";
 import { Button } from "@zoonk/ui/components/button";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { PageSectionTitle } from "../../_components/page";
+import { FreeStartNote } from "../free-start-note";
 import { type GoalError } from "../goal-errors";
 import {
   OnboardingColumn,
@@ -15,24 +14,12 @@ import {
   OnboardingHeading,
   OnboardingTitle,
 } from "../onboarding-frame";
-import { useOnboardingSection } from "../onboarding-host";
+import { useOnboardingHost } from "../onboarding-host";
+import { GoalBox } from "./goal-box";
+import { GoalEntrySubmit } from "./goal-entry-submit";
 import { GoalExamples } from "./goal-examples";
-import {
-  GoalField,
-  GoalFieldLabel,
-  GoalFieldSubmit,
-  GoalFieldText,
-  useGoalFieldAction,
-} from "./goal-field";
+import { useGoalFieldAction } from "./goal-field";
 import { GoalErrorAlert } from "./goal-outcomes";
-import { useLocalGoalExample } from "./use-local-goal-example";
-
-function SubmitButton() {
-  const t = useExtracted();
-  const ref = useEnterClick<HTMLButtonElement>();
-
-  return <GoalFieldSubmit ref={ref}>{t("Build my plan")}</GoalFieldSubmit>;
-}
 
 export function GoalEntry({
   attachOpen,
@@ -42,7 +29,7 @@ export function GoalEntry({
   defaultGoal,
   error,
   fromSharedPlan = false,
-  notice,
+  hasAccount,
   onAttach,
   onSubmit,
   signUpHref,
@@ -54,24 +41,32 @@ export function GoalEntry({
   defaultGoal: string;
   error: GoalError | null;
   fromSharedPlan?: boolean;
-  notice?: React.ReactNode;
+  hasAccount: boolean;
   onAttach?: () => void;
   onSubmit: (goal: string) => void;
   signUpHref: string;
 }) {
   const t = useExtracted();
-  const section = useOnboardingSection();
-  const example = useLocalGoalExample();
-  const inputId = useId();
-  const goal = useGoalFieldAction({ canSendEmpty: canSubmitEmpty, onSend: onSubmit });
+  const host = useOnboardingHost();
+  const section = host?.kind === "section";
+  const formId = useId();
+
+  const goal = useGoalFieldAction({
+    canSendEmpty: canSubmitEmpty,
+    defaultValue: defaultGoal,
+    onSend: onSubmit,
+  });
 
   return (
-    <OnboardingColumn className={cn(section && "gap-4")}>
+    <OnboardingColumn
+      bar={!section && <GoalEntrySubmit disabled={goal.disabled} form={formId} />}
+      className={cn(section && "gap-4")}
+    >
       {section ? (
-        <PageSectionTitle>{t("Start a goal")}</PageSectionTitle>
+        <PageSectionTitle className={host.titleClassName}>{t("Start a goal")}</PageSectionTitle>
       ) : (
         <OnboardingHeading>
-          <OnboardingTitle>{t("What do you want to achieve?")}</OnboardingTitle>
+          <OnboardingTitle>{t("What's your goal?")}</OnboardingTitle>
           <OnboardingDescription>
             {fromSharedPlan
               ? t(
@@ -82,47 +77,27 @@ export function GoalEntry({
         </OnboardingHeading>
       )}
 
-      {notice}
+      <GoalBox defaultValue={defaultGoal} goal={goal} id={formId}>
+        {onAttach && (
+          <Button
+            aria-expanded={attachOpen}
+            aria-label={t("Study your own material")}
+            className="text-muted-foreground me-auto shrink-0 @xl:ms-0 @xl:me-0"
+            edge="start"
+            onClick={onAttach}
+            ref={attachRef}
+            size="icon-lg"
+            type="button"
+            variant="ghost"
+          >
+            <PaperclipIcon aria-hidden="true" />
+          </Button>
+        )}
 
-      <GoalField action={goal.action} className="@container grid grid-cols-[minmax(0,1fr)_auto]">
-        <div className="col-span-2 flex min-w-0 items-start gap-2 pr-2.5 @xl:col-span-1 @xl:pr-0">
-          <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
+        {section && <GoalEntrySubmit disabled={goal.disabled} />}
+      </GoalBox>
 
-          <GoalFieldText
-            autoFocusOnPointer
-            defaultValue={defaultGoal}
-            id={inputId}
-            maxLength={MAX_GOAL_PROMPT_LENGTH}
-            placeholder={t({
-              description:
-                "Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.",
-              message:
-                "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}",
-              values: example,
-            })}
-            {...goal.field}
-          />
-        </div>
-
-        <div className="col-span-2 flex items-end justify-end gap-1 @xl:col-span-1">
-          {onAttach && (
-            <Button
-              aria-expanded={attachOpen}
-              aria-label={t("Study your own material")}
-              className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 @xl:mr-0 @xl:ml-0"
-              onClick={onAttach}
-              ref={attachRef}
-              size="icon-lg"
-              type="button"
-              variant="ghost"
-            >
-              <PaperclipIcon aria-hidden="true" />
-            </Button>
-          )}
-
-          <SubmitButton />
-        </div>
-      </GoalField>
+      {section && !hasAccount && <FreeStartNote className="min-[72rem]:hidden" />}
 
       {attachment}
 

@@ -17,6 +17,7 @@ import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -107,12 +108,16 @@ class EssayScreenshots {
     private fun write(name: String) {
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneWrite() = show("phone-write", text = "A mobilidade urbana é um dos maiores desafios das cidades brasileiras.")
+
+    @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h891dp-xxhdpi")
+    fun phoneWriteInPortuguese() = show("phone-write-pt", text = "A mobilidade urbana é um dos maiores desafios das cidades brasileiras.")
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

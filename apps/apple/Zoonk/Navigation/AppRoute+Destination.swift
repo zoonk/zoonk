@@ -102,8 +102,8 @@ extension AppRoute {
       SpeakingScreen()
     case .earlierQuestions:
       EarlierQuestionsScreen()
-    case .statistics:
-      StatisticsScreen()
+    case .statistics(let section):
+      StatisticsScreen(section: section)
     case .certificates:
       CertificatesTabScreen()
     case .certificate(let code):
@@ -188,7 +188,8 @@ extension AppTab {
       }
     case .search:
       SearchScreen()
-    case .mistakes, .completedLessons, .certificates, .exam, .speaking, .mindMaps, .statistics:
+    case .mistakes, .completedLessons, .certificates, .exam, .mockExam, .speaking, .mindMaps,
+      .statistics, .stats:
       studyRoute?.destination
     }
   }
@@ -204,6 +205,7 @@ struct PresentedTask: View {
     let isHidden = router.isHidden(taskAt: depth)
 
     route.destination
+      .environment(\.isTaskScreen, true)
       .zoonkStyles()
       .landsActsOnInput()
       .opacity(isHidden ? 0 : 1)

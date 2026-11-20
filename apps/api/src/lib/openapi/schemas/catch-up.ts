@@ -5,7 +5,7 @@ export const catchUpSchema = z
   .object({
     blockIds: z
       .array(uuidSchema())
-      .meta({ description: "The day's blocks that catch up: label them so" }),
+      .meta({ description: "The day's blocks that catch up on lessons earlier days left" }),
     later: z
       .object({
         lessons: z.number().int().min(0),
@@ -14,12 +14,12 @@ export const catchUpSchema = z
           .boolean()
           .meta({
             description:
-              "They take about one more day's time at most: offer adding them to today (POST catch-up-blocks). Otherwise say only that they come first on the next days",
+              "They take about one more day's time at most, so POST catch-up-blocks can add them to today. Otherwise they come first on the next days",
           }),
       })
       .meta({
         description:
-          "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today on a tap while offered",
+          "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today when the learner asks, while offered",
       }),
     lessonsLeft: z.number().int().min(1),
     positions: z.array(z.number().int().nonnegative()),
@@ -27,5 +27,5 @@ export const catchUpSchema = z
   .nullable()
   .meta({
     description:
-      "Catching up on lessons earlier days left, which the day opens with; null when the learner is on pace, on a fresh start (a fresh start carries no backlog) and when a free exam plan's first week has ended",
+      "Catching up on lessons earlier days left, which the day opens with; null when the learner is on pace, on a fresh start (a fresh start carries no backlog)",
   });

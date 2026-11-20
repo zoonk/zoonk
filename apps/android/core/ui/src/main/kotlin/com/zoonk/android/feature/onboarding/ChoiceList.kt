@@ -8,6 +8,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -15,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -26,8 +26,12 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.controlInk
+import com.zoonk.android.ui.components.layoutPart
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.theme.zoonk
 
 data class Choice<T>(
@@ -73,6 +77,7 @@ fun <T> ChoiceList(
         modifier =
             modifier
                 .bleed(LIST_ITEM_INSET)
+                .layoutPart(LayoutPart.CHOICES, LayoutPart.Part.Group, gap = DividerDefaults.Thickness)
                 .selectableGroup()
                 .semantics { contentDescription = label },
     ) {
@@ -96,8 +101,8 @@ fun <T> ChoiceList(
                                 false
                             }
                         }.selectable(selected = selected, enabled = !readOnly, role = Role.RadioButton) { choose(choice) },
-                supporting = choice.description?.let { { Text(it) } },
-                trailing = { RadioButton(selected = selected, onClick = null) },
+                supporting = listRowDescription(choice.description),
+                trailing = { RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk()) },
             )
             afterChoice(choice.value)
         }
@@ -118,20 +123,27 @@ fun <T> CheckList(
 ) {
     val full = max != null && value.size >= max
 
-    Column(modifier.bleed(LIST_ITEM_INSET).semantics { contentDescription = label }) {
+    Column(
+        modifier
+            .bleed(LIST_ITEM_INSET)
+            .layoutPart(LayoutPart.CHOICES, LayoutPart.Part.Group, gap = DividerDefaults.Thickness)
+            .semantics { contentDescription = label },
+    ) {
         choices.forEachIndexed { index, choice ->
             if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
             val checked = choice.value in value
             val open = checked || !full
+            // Past the limit an option is dimmed in its words' own colors (Material's disabled emphasis), so what it
+            // draws stays its words' color, and the box takes Material's disabled look.
+            val dim = { color: Color -> if (open) Color.Unspecified else color.copy(alpha = color.alpha * DISABLED_ALPHA) }
             ListRow(
-                headline = { Text(choice.label) },
+                headline = { Text(choice.label, color = dim(MaterialTheme.colorScheme.onSurface)) },
                 modifier =
                     Modifier
                         .background(if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent)
-                        .alpha(if (open) 1f else DISABLED_ALPHA)
                         .toggleable(checked, enabled = open && !readOnly, role = Role.Checkbox) { onToggle(choice.value) },
-                supporting = choice.description?.let { { Text(it) } },
-                trailing = { Checkbox(checked = checked, onCheckedChange = null) },
+                supporting = listRowDescription(choice.description, dim(MaterialTheme.colorScheme.onSurfaceVariant)),
+                trailing = { Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk(), enabled = open) },
             )
             afterChoice(choice.value)
         }

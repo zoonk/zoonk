@@ -20,7 +20,12 @@ function RackBelt({ color, isTied }: { color: BeltColor; isTied: boolean }) {
   );
 
   return (
-    <svg aria-hidden="true" className="size-4/5" fill="currentColor" viewBox="0 0 44 30">
+    <svg
+      aria-hidden="true"
+      className="h-4/5 w-4/5 overflow-visible"
+      fill="currentColor"
+      viewBox={isTied ? "0 0 44 30" : "3.5 0 37 30"}
+    >
       {(color === "white" || color === "black") && (
         <g
           className={
@@ -44,15 +49,11 @@ function RackBelt({ color, isTied }: { color: BeltColor; isTied: boolean }) {
 export async function BeltRack({
   beltColors,
   currentIndex,
-  labelledBy,
 }: {
   beltColors: BeltColorOption[];
   currentIndex: number;
-  labelledBy: string;
 }) {
   const t = await getExtracted();
-  const firstBelt = beltColors[0];
-  const lastBelt = beltColors.at(-1);
 
   const shortName = (color: BeltColor) =>
     t(
@@ -61,50 +62,38 @@ export async function BeltRack({
     );
 
   return (
-    <div className="flex flex-col gap-2">
-      <ol aria-labelledby={labelledBy} className="flex">
-        {beltColors.map((belt, index) => (
-          <li
-            aria-current={index === currentIndex ? "step" : undefined}
-            className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
-            key={belt.key}
-          >
-            <span
-              aria-label={belt.label}
-              className={cn(
-                "flex h-6.5 w-8 items-center justify-center rounded-md md:h-9.5 md:w-13 md:rounded-lg",
-                index === currentIndex && "ring-foreground ring-[1.5px]",
-              )}
-              role="img"
-              style={{ color: `var(--belt-${belt.key})` }}
-            >
-              <RackBelt color={belt.key} isTied={index <= currentIndex} />
-            </span>
-
-            <span
-              aria-hidden="true"
-              className={cn(
-                "hidden max-w-full truncate text-[0.71875rem] md:block",
-                index === currentIndex && "text-foreground font-medium",
-                index < currentIndex && "text-muted-foreground",
-                index > currentIndex && "text-faint",
-              )}
-            >
-              {shortName(belt.key)}
-            </span>
-          </li>
-        ))}
-      </ol>
-
-      {firstBelt && lastBelt && (
-        <div
-          aria-hidden="true"
-          className="text-faint flex justify-between text-[0.71875rem] md:hidden"
+    <ol aria-label={t("Belts")} className="flex">
+      {beltColors.map((belt, index) => (
+        <li
+          aria-current={index === currentIndex ? "step" : undefined}
+          className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
+          key={belt.key}
         >
-          <span>{firstBelt.label}</span>
-          <span>{lastBelt.label}</span>
-        </div>
-      )}
-    </div>
+          <span
+            aria-label={`${belt.label}, ${index <= currentIndex ? t("Earned") : t("Upcoming")}`}
+            className={cn(
+              "flex h-6.5 w-full max-w-8 items-center justify-center rounded-md md:h-9.5 md:max-w-13 md:rounded-lg",
+              index === currentIndex && "bg-selected-tint",
+            )}
+            role="img"
+            style={{ color: `var(--belt-${belt.key})` }}
+          >
+            <RackBelt color={belt.key} isTied={index <= currentIndex} />
+          </span>
+
+          <span
+            aria-hidden="true"
+            className={cn(
+              "text-2xs leading-tight",
+              index === currentIndex ? "text-foreground font-medium" : "hidden md:block",
+              index < currentIndex && "text-muted-foreground",
+              index > currentIndex && "text-faint",
+            )}
+          >
+            {shortName(belt.key)}
+          </span>
+        </li>
+      ))}
+    </ol>
   );
 }

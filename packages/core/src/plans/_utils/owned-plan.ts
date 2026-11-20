@@ -80,10 +80,7 @@ export async function loadOwnedPlanContext(
   return { context, now: currentInstant, status: "ready" };
 }
 
-export async function loadPlanChangeView(
-  changeId: string,
-  { timeZone }: { timeZone?: string | null } = {},
-): Promise<PlanChangeView> {
+export async function loadPlanChangeView(changeId: string): Promise<PlanChangeView> {
   const change = await prisma.planChange.findUniqueOrThrow({
     include: {
       plan: {
@@ -105,7 +102,7 @@ export async function loadPlanChangeView(
   });
 
   return foldChangeAreas({
-    change: await toPlanChangeView({ change, goal, planVersion: version, timeZone }),
+    change: toPlanChangeView({ change, goal, planVersion: version }),
     partAreas,
   });
 }

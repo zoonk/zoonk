@@ -42,11 +42,23 @@ func metricPercent(_ value: Double) -> String {
     .percent.precision(.fractionLength(0...1)).rounded(rule: .toNearestOrAwayFromZero))
 }
 
-/// Mirrors main's `formatGoalProgress`: to the hundredth of a percent, since a whole percentage
-/// would sit at "0%" for weeks. `share` is 0–1.
+/// Mirrors main's `formatProgressShare`: whole percents, but begun never reads "0%" and nearly
+/// done never "100%". `share` is 0–1.
 func goalProgressPercent(_ share: Double) -> String {
-  share.formatted(
-    .percent.precision(.fractionLength(0...2)).rounded(rule: .toNearestOrAwayFromZero))
+  let whole = 0.01
+  let format = { (value: Double) in
+    value.formatted(.percent.precision(.fractionLength(0)).rounded(rule: .toNearestOrAwayFromZero))
+  }
+
+  if share > 0, share < whole / 2 {
+    return "<" + format(whole)
+  }
+
+  if share < 1, share >= 1 - whole / 2 {
+    return ">" + format(1 - whole)
+  }
+
+  return format(share)
 }
 
 func wholePercent(_ value: Double) -> String {
@@ -174,29 +186,7 @@ extension ProgressDaypart {
   }
 
   func localizedTimeRange(locale: Locale = .autoupdatingCurrent) -> String {
-    let (start, end) = hours
-    let clockFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale) ?? "H"
-
-    guard clockFormat.contains("a") else {
-      return String(format: "%02d–%02d", start, end)
-    }
-
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.locale = locale
-
-    func clock(_ hour: Int) -> (hour: String, period: String) {
-      let twelveHour = hour % 12 == 0 ? 12 : hour % 12
-      return (
-        twelveHour.formatted(.number.locale(locale)),
-        hour % 24 < 12 ? calendar.amSymbol : calendar.pmSymbol
-      )
-    }
-
-    let (from, to) = (clock(start), clock(end))
-
-    return from.period == to.period
-      ? "\(from.hour)–\(to.hour) \(to.period)"
-      : "\(from.hour) \(from.period)–\(to.hour) \(to.period)"
+    PlanDate.hourRange(from: hours.start, to: hours.end, locale: locale)
   }
 
   private var hours: (start: Int, end: Int) {
@@ -216,18 +206,12 @@ extension ProgressDaypart {
 extension ProgressWeekday {
   /// Capitalized, as a name on its own reads ("Quinta-feira").
   func localizedTitle(locale: Locale = .autoupdatingCurrent) -> String {
-    capitalized(\.standaloneWeekdaySymbols, locale: locale)
+    PlanDate.weekdayName(number: sundayIndex, label: true, locale: locale)
   }
 
   /// Under a chart's column ("Qui.").
   func localizedShortTitle(locale: Locale = .autoupdatingCurrent) -> String {
-    capitalized(\.shortStandaloneWeekdaySymbols, locale: locale)
-  }
-
-  private func capitalized(_ symbols: KeyPath<Calendar, [String]>, locale: Locale) -> String {
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.locale = locale
-    return calendar[keyPath: symbols][sundayIndex].labelCased(locale)
+    PlanDate.weekdayName(number: sundayIndex, short: true, label: true, locale: locale)
   }
 
   private var sundayIndex: Int {

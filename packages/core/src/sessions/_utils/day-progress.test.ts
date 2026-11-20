@@ -125,7 +125,7 @@ describe("the catch-up line at a block's end", () => {
       dayStart: DAY_START,
       freshStart: null,
       items,
-      trialEnded: false,
+
       ...input,
     });
   }
@@ -154,11 +154,5 @@ describe("the catch-up line at a block's end", () => {
 
   it("has no line when nothing is carried", () => {
     expect(catchUp({ carriedItemIds: [] })).toBeNull();
-  });
-
-  it("has no line on a welcome-back session or after the free week, but keeps it on other fresh starts", () => {
-    expect(catchUp({ freshStart: "welcomeBack" })).toBeNull();
-    expect(catchUp({ trialEnded: true })).toBeNull();
-    expect(catchUp({ freshStart: "newWeek" })).toStrictEqual({ doneToday: 2, lessonsLeft: 3 });
   });
 });

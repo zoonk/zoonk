@@ -19,42 +19,24 @@ export function PlanStartNoticeProvider({
   return <PlanRunContext value={run}>{children}</PlanRunContext>;
 }
 
-/**
- * In the footer, so a notice never moves the choices under the learner's finger; the live region
- * stays while empty, so it's heard when it comes.
- */
-export function PlanStartNoticeSlot() {
+/** The plan's build that failed, while the steps go on; a lost connection says itself elsewhere. */
+export function usePlanStartFailure(): GenerationRun | null {
   const run = use(PlanRunContext);
-
-  if (run === undefined) {
-    return null;
-  }
-
-  return <div aria-live="polite">{run && <PlanStartNotice run={run} />}</div>;
+  return run?.status === "failed" && run.failure !== "connection" ? run : null;
 }
 
-function PlanStartNotice({ run }: { run: GenerationRun }) {
+export function PlanStartNotice({ run }: { run: GenerationRun }) {
   const t = useExtracted();
-
-  if (run.status !== "failed" || run.failure === "connection") {
-    return null;
-  }
 
   return (
     <Alert variant="destructive">
       <CircleAlertIcon aria-hidden="true" />
       <AlertTitle>
         {run.failure === "notStarted"
-          ? t("We couldn't start building your plan")
+          ? t("Your plan didn't start")
           : t("Building your plan stopped")}
       </AlertTitle>
-      <AlertDescription>
-        {t({
-          description:
-            '"It" is the learner\'s plan. "When you finish" means finishing these setup questions.',
-          message: "Your answers are saved. Try again so it's ready when you finish.",
-        })}
-      </AlertDescription>
+      <AlertDescription>{t("Your answers are saved.")}</AlertDescription>
       {run.retry && (
         <Button
           className="text-foreground col-start-2 mt-3 justify-self-start"

@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.tutor
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,13 +27,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,11 +59,17 @@ import com.zoonk.android.feature.memory.MemoryUpdated
 import com.zoonk.android.feature.missions.MissionMoment
 import com.zoonk.android.feature.missions.MissionMomentFacts
 import com.zoonk.android.feature.session.toDayMission
+import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.LearnerBubble
+import com.zoonk.android.ui.components.LoadFailureRetry
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
@@ -88,7 +91,7 @@ import java.util.UUID
 class TutorRoutes(
     val createAccount: () -> Unit,
     val signIn: () -> Unit,
-    val seePlus: () -> Unit,
+    val subscribe: () -> Unit,
     val open: (AppRoute) -> Unit,
     val startCall: CallStarter,
 )
@@ -105,10 +108,8 @@ internal fun TutorThreadView(
     page: TutorPage? = null,
 ) {
     val coroutines = rememberCoroutineScope()
-    val openRoute by rememberUpdatedState(routes.open)
-    val activity = LocalActivity.current
-    LaunchedEffect(vm) { vm.blockRoutes.collect { openRoute(it) } }
-    DisposableEffect(vm) { onDispose { if (activity?.isChangingConfigurations != true) vm.leave() } }
+    ActOn(vm.blockRoute, routes.open)
+    OnVisitEnd(vm, onEnd = vm::leave)
 
     Box(modifier.fillMaxSize()) {
         when {
@@ -155,7 +156,11 @@ private fun LoadFailure(
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(failureMessage(failure), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        FailureAction(failure, routes, onRetry = { coroutines.launch { vm.thread.refresh() } })
+        if (failure == TutorFailure.Failed) {
+            LoadFailureRetry(onRetry = { coroutines.launch { vm.thread.refresh() } }, inBar = false)
+        } else {
+            FailureAction(failure, routes, onRetry = { coroutines.launch { vm.thread.refresh() } })
+        }
     }
 }
 
@@ -208,8 +213,10 @@ private fun Turns(
                 identity = identity,
                 routes = routes,
                 others = thread.turns.count { it.isInProgress && it.id != turn.id },
+                liveProposal = liveProposal(thread.turns)?.id,
                 day = newDay(days[index], days.getOrNull(index - 1))?.let { { DayLabel(it, today) } },
                 inPanel = page == null,
+                newAbout = turn.topic != thread.turns.getOrNull(index - 1)?.topic,
             )
         }
         // The server's turn takes this one's place, laid out the same, so nothing moves when it arrives.
@@ -218,7 +225,7 @@ private fun Turns(
                 val day = newDay(today, days.lastOrNull())
                 TurnLayout(
                     sending.question,
-                    sending.about.takeIf { page == null },
+                    sending.about.takeIf { page == null && sending.topic != thread.turns.lastOrNull()?.topic },
                     identity.takeIf { page == null },
                     day?.let { { DayLabel(it, today) } },
                 ) { Thinking(answerWords(inPanel = page == null)) }
@@ -304,10 +311,13 @@ private fun TurnView(
     identity: TutorIdentity,
     routes: TutorRoutes,
     others: Int,
+    liveProposal: java.util.UUID?,
     day: (@Composable () -> Unit)? = null,
     inPanel: Boolean = true,
+    newAbout: Boolean = true,
 ) {
-    TurnLayout(turn.question, turn.about.takeIf { inPanel }, identity.takeIf { inPanel }, day) {
+    // What a question is about shows on the first one and where it changes: another part of the lesson, or its answer once checked.
+    TurnLayout(turn.question, turn.about.takeIf { inPanel && newAbout }, identity.takeIf { inPanel }, day) {
         // A finished or failed answer is read out once; while it streams nothing is, word by word.
         val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed
         Column(
@@ -323,7 +333,9 @@ private fun TurnView(
                     change = change,
                     deciding = change.id in state.decidingChanges,
                     failed = change.id in state.failedDecisions,
-                    onDecide = { vm.decidePlanChange(change.id, it) },
+                    repriced = change.id in state.repricedChanges,
+                    live = change.id == liveProposal,
+                    onDecide = { vm.decidePlanChange(change, it) },
                 )
             }
             turn.toolOffer?.let { offer ->
@@ -364,12 +376,8 @@ private fun TurnLayout(
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
-            Surface(
-                modifier = Modifier.widthIn(max = BUBBLE_MAX_WIDTH),
-                shape = BUBBLE_SHAPE,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            ) {
-                Text(question, Modifier.padding(horizontal = 12.dp, vertical = 8.dp), style = MaterialTheme.zoonkType.message)
+            LearnerBubble {
+                Text(question, style = MaterialTheme.zoonkType.message)
             }
         }
 
@@ -408,12 +416,15 @@ private fun Answer(
 
         turn.status == TutorTurn.Status.Failed -> {
             turn.answer?.let { AnswerText(it, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn), words) }
-            if (failure?.helpLimit != null) {
+            if (failure?.helpLimit != null || failure == TutorFailure.Unanswered) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
+                if (failure == TutorFailure.Unanswered) {
+                    FailureAction(failure, routes, onRetry = { vm.retryAnswer(turn.id) }, enabled = !busy && others == 0)
+                }
             } else {
                 Text(
                     text = if (failure.isGeneric) stringResource(R.string.tutor_answer_failed) else failureMessage(failure),
@@ -558,7 +569,7 @@ private fun CheckAgain(
     }
 }
 
-/** Main's error action: sign in again, see Plus, or try again; a help limit or a gone lesson has none. */
+/** Main's error action: log in again, subscribe, or try again; a help limit or a gone lesson has none. */
 @Composable
 internal fun FailureAction(
     failure: TutorFailure?,
@@ -573,7 +584,7 @@ internal fun FailureAction(
         }
 
         failure == TutorFailure.PlusRequired -> {
-            OutlinedButton(onClick = routes.seePlus, modifier = modifier) { Text(stringResource(R.string.tutor_view_plans)) }
+            SubscribeButton(routes.subscribe)
         }
 
         failure?.helpLimit != null || failure == TutorFailure.Gone -> {}
@@ -588,14 +599,14 @@ internal fun FailureAction(
 }
 
 @Composable
-private fun EmptyThread(
+internal fun EmptyThread(
     identity: TutorIdentity,
     suggestions: List<TutorSuggestion>,
     canAsk: Boolean,
     onSelect: (TutorSuggestion) -> Unit,
 ) {
     CenteredState {
-        TutorAvatar(identity, EMPTY_AVATAR_SIZE)
+        identity.look?.let { StandingBuddy(it, EMPTY_BUDDY_HEIGHT) }
         Text(stringResource(R.string.tutor_empty_title), textAlign = TextAlign.Center, style = MaterialTheme.typography.titleMedium)
         Text(
             stringResource(R.string.tutor_empty_ai, identity.name),
@@ -664,11 +675,7 @@ private fun ConversationLoading(modifier: Modifier = Modifier) {
 private const val SENDING = "sending"
 private val AVATAR_SIZE = 32.dp
 
-/** Main's `LearnerBubble`: its corner nearest the learner's side tucked in. */
-private val BUBBLE_SHAPE =
-    RoundedCornerShape(topStart = ZoonkRadius.option, topEnd = ZoonkRadius.option, bottomEnd = 4.dp, bottomStart = ZoonkRadius.option)
-private val EMPTY_AVATAR_SIZE = 48.dp
-private val BUBBLE_MAX_WIDTH = 480.dp
+private val EMPTY_BUDDY_HEIGHT = 96.dp
 private val LOADING_HEIGHT = 96.dp
 
 /** A card that saves a setting: what its save shows, and its tap; other cards save nothing. */

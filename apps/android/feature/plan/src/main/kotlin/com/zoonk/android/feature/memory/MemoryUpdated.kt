@@ -3,6 +3,7 @@ package com.zoonk.android.feature.memory
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
@@ -28,6 +29,8 @@ import androidx.compose.ui.unit.em
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.tutor.CONFLICT
+import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.MemoryChangeReference
 import java.util.UUID
@@ -84,12 +87,10 @@ fun MemoryUpdated(
         modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        Icon(painterResource(R.drawable.ic_psychology), contentDescription = null, modifier = Modifier.size(20.dp), tint = icon)
         Text(
             text =
                 buildAnnotatedString {
-                    // The icon is decorative: TalkBack reads its stand-in as a pause, not a symbol.
-                    appendInlineContent(ICON_ID, alternateText = " ")
-                    append(" ")
                     when (undo) {
                         MemoryUndo.Undone -> {
                             append(stringResource(R.string.memory_change_undone))
@@ -121,22 +122,16 @@ fun MemoryUpdated(
             modifier = Modifier.weight(1f).alignByBaseline(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
-            inlineContent =
-                mapOf(
-                    ICON_ID to
-                        InlineTextContent(Placeholder(ICON_EM.em, ICON_EM.em, PlaceholderVerticalAlign.TextCenter)) {
-                            Icon(painterResource(R.drawable.ic_psychology), contentDescription = null, Modifier.fillMaxSize(), tint = icon)
-                        },
-                ),
         )
 
         if (undo.canUndo || undo == MemoryUndo.Undoing) {
-            TextButton(onClick = onUndo, enabled = undo.canUndo, modifier = Modifier.alignByBaseline()) {
+            OutlinedButton(
+                onClick = onUndo,
+                enabled = undo.canUndo,
+                leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
+            ) {
                 Text(stringResource(R.string.memory_undo))
             }
         }
     }
 }
-
-private const val ICON_ID = "icon"
-private const val ICON_EM = 1.3f

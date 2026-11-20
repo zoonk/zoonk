@@ -16,14 +16,13 @@ struct LessonIdeaStrip: View {
         LessonIdeaMiniMap(count: summary.ideas.count, current: index)
       }
 
-      VStack(alignment: .leading, spacing: 2) {
-        Text(
-          "Idea \(index + 1) of \(summary.ideas.count)", tableName: "Player",
-          comment:
-            "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"Tap an idea to see what it covers\"."
-        )
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
+      VStack(alignment: .leading, spacing: 8) {
+        Chip(
+          Text(
+            "Idea \(index + 1) of \(summary.ideas.count)", tableName: "Player",
+            comment:
+              "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"Tap an idea to see what it covers\"."
+          ))
 
         if let label = idea.label {
           Text(label)
@@ -178,7 +177,7 @@ struct LessonOpeningMap: View {
   }
 }
 
-/// Main's `OpeningMapIdea`: the idea's icon in a dashed ring, in ink while its popover is open,
+/// Main's `OpeningMapIdea`: the idea's icon in a dashed ring, on the pick's fill while its popover is open,
 /// with its number on the top corner; without an icon, the number in the ring.
 private struct LessonOpeningIdea: View {
   static let size: CGFloat = 64
@@ -246,7 +245,8 @@ private struct LessonOpeningIdea: View {
     ZStack {
       Circle()
         .fill(Color(.systemBackground))
-        .strokeBorder(ring, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+        .overlay { Circle().fill(isShowingIdea ? Color.selectedTint : .clear) }
+        .overlay { Circle().strokeBorder(ring, style: StrokeStyle(lineWidth: 2, dash: [6, 4])) }
 
       if let icon = idea.icon {
         LessonIconImage(icon: icon, size: 44)
@@ -274,6 +274,10 @@ private struct LessonOpeningIdea: View {
   }
 
   private var ring: Color {
-    isShowingIdea || contrast == .increased ? Color(.foreground) : Color(.foreground).opacity(0.3)
+    if contrast == .increased {
+      return Color(.foreground)
+    }
+
+    return Color(.foreground).opacity(isShowingIdea ? 0.6 : 0.3)
   }
 }

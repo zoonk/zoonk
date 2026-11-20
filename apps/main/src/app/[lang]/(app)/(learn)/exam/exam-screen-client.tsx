@@ -1,14 +1,11 @@
 "use client";
 
-import {
-  useOpenLanguageConversation,
-  useStartLanguageConversation,
-} from "@/lib/language/use-start-language-conversation";
+import { useOpenLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { type ExamActions, type ExamHrefs, ExamScreen } from "@zoonk/learn/exam";
-import { MockEntryButton } from "@zoonk/learn/mock/entry";
+import { MockEntryButton, getMockEntryTarget } from "@zoonk/learn/mock/entry";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
@@ -24,7 +21,6 @@ export function ExamScreenClient({
 }) {
   const { goalId } = exam;
   const searchParams = useSearchParams();
-  const startConversation = useStartLanguageConversation({ from: "exam" });
   const openConversation = useOpenLanguageConversation({ from: "exam" });
 
   const actions = useMemo<ExamActions>(
@@ -35,9 +31,9 @@ export function ExamScreenClient({
         return outcome?.status === "applied";
       },
       startExamTask: (task) => openConversation({ goalId, kind: "examSpeaking", task }),
-      startSpeakingMock: () => startConversation({ goalId, kind: "speakingMock" }),
+      startSpeakingMock: () => openConversation({ goalId, kind: "speakingMock" }),
     }),
-    [goalId, openConversation, startConversation],
+    [goalId, openConversation],
   );
 
   const hrefs: ExamHrefs = {
@@ -47,16 +43,19 @@ export function ExamScreenClient({
     mock: (blockId) => `/mock/${blockId}`,
   };
 
+  const runningId = exam.runningMocks[0]?.id ?? null;
+
+  const mockAction =
+    mocks && getMockEntryTarget({ hrefs: MOCK_ENTRY_HREFS, runningId, view: mocks }) ? (
+      <MockEntryButton hrefs={MOCK_ENTRY_HREFS} runningId={runningId} view={mocks} />
+    ) : null;
+
   return (
     <ExamScreen
       actions={actions}
       exam={exam}
       hrefs={hrefs}
-      mockAction={
-        mocks && (mocks.running || mocks.options.length > 0) ? (
-          <MockEntryButton hrefs={MOCK_ENTRY_HREFS} view={mocks} />
-        ) : null
-      }
+      mockAction={mockAction}
       openSpeakingTask={searchParams.get("task")}
     />
   );

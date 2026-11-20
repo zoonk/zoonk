@@ -30,13 +30,13 @@ type GoalTutorCase = TestCase<
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-The output has the buddy's answer, "proposedChange": the plan change it asked for in this message (null when it asked for none), "offeredTools": the app's features it offered as cards under the answer, with what it passed and whether each could be offered ("locked: Plus" when the card shows it locked with what Plus unlocks; null when none), "searches": what it searched the web for (null when it didn't), and "toolResults": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.
+The output has the buddy's answer, "proposedChange": the plan change it asked for in this message (null when it asked for none), "offeredTools": the app's features it offered as cards under the answer, with what it passed and whether each could be offered ("locked: Plus" when the card shows it locked with what Plus unlocks; null when none), "searches": what it searched the web for (null when it didn't), and "toolResults": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only once the learner confirms it on the card the app shows under the answer. The buddy doesn't see the app's buttons, so it never names or quotes one.
 
 1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.
 
 2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.
 
-3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), "proposedChange" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, "proposedChange" is null.
+3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), "proposedChange" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that nothing changes until they confirm it on the card. It never says the plan already changed. When the message isn't a plan change, "proposedChange" is null.
 
 4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing ("gabarita", "você vai acertar com certeza"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt. Every word is in that language's own letters: a word in a writing system the goal doesn't study (a Cyrillic "Источник:" in a Portuguese answer) is wrong language, however small.
 
@@ -51,6 +51,7 @@ MAJOR-ERROR CAPS:
 - Saying it can't see something in its summary, context or data instead of saying what it knows and where to look: 5.0 or lower
 - A plan change requested but "proposedChange" null, or a change proposed for a message that isn't one: 6.0 or lower
 - Saying the plan already changed: 6.5 or lower
+- Naming or quoting a button the app shows ("tap Apply", "toque em Aplicar"), which the buddy can't see: 7.0 or lower
 - A wrong fact about the subject: 6.0 or lower
 - Wrong language, including a single word in a writing system the goal doesn't study: 7.0 or lower
 - A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower
@@ -1264,7 +1265,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: CONCURSO_PLAN,
     expectations:
-      "A plan change: one hour a day. proposedChange asks for one hour (60 minutes) a day. The answer says it will apply after Apply.",
+      "A plan change: one hour a day. proposedChange asks for one hour (60 minutes) a day. The answer says it applies once confirmed on the card.",
     id: "pt-concurso-hour",
     question: "quero estudar só 1h por dia a partir de agora",
   }),
@@ -1382,7 +1383,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: { ...ENEM_WITH_SETUP, setup: { ...ENEM_WITH_SETUP.setup, writtenCadence: "weekly" } },
     expectations:
-      "A wish to practice the redação less often: proposes practicing the written test only in the final weeks before the exam (proposedChange is about when the redação is practiced, not leaving it out or less time for it), says the practice moves rather than shrinks and, briefly, that less spaced practice helps writing less, and that it applies when they tap Apply.",
+      "A wish to practice the redação less often: proposes practicing the written test only in the final weeks before the exam (proposedChange is about when the redação is practiced, not leaving it out or less time for it), says the practice moves rather than shrinks and, briefly, that less spaced practice helps writing less, and that it applies once they confirm it on the card.",
     id: "pt-enem-redacao-final-weeks",
     question: "não quero fazer redação toda semana, prefiro só nas semanas finais antes da prova",
   }),
@@ -1457,7 +1458,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: UX_PLAN,
     expectations:
-      "A plan change the plan can't make: the tool answered `unchanged` (the portfolio already comes as early as what it builds on allows). proposedChange asks to bring the portfolio forward, but the answer says plainly that the plan stays as it is and why, never that it changed or will change after Apply, and offers something that would help instead (such as starting a small portfolio piece alongside the lessons, or more daily time from coverage). No job promise.",
+      "A plan change the plan can't make: the tool answered `unchanged` (the portfolio already comes as early as what it builds on allows). proposedChange asks to bring the portfolio forward, but the answer says plainly that the plan stays as it is and why, never that it changed or will change once confirmed, and offers something that would help instead (such as starting a small portfolio piece alongside the lessons, or more daily time from coverage). No job promise.",
     id: "pt-ux-portfolio-unchanged",
     planChange: "unchanged",
     question: "quero começar o portfólio desde o início do plano",
@@ -1465,7 +1466,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: UX_PLAN,
     expectations:
-      "Carla's own words (Oct 2026), which once got 'não consigo antecipar' and no card. A project of her own: proposedChange asks to add a portfolio project set in the school where she teaches, starting soon (her 'logo'). The tool says its lessons start on 9 October (effect.addedTopicsStart): the answer says it comes into her plan from 9 October once she taps Apply, and that it adds 8 lessons and leaves out 13 that no longer fit before her date. Saying the plan can't bring the portfolio forward, or proposing no change, is a major error (cap 5.0); saying it starts today or right away is a major error (cap 6.0). No job promise.",
+      "Carla's own words (Oct 2026), which once got 'não consigo antecipar' and no card. A project of her own: proposedChange asks to add a portfolio project set in the school where she teaches, starting soon (her 'logo'). The tool says its lessons start on 9 October (effect.addedTopicsStart): the answer says it comes into her plan from 9 October once she confirms it on the card, and that it adds 8 lessons and leaves out 13 that no longer fit before her date. Saying the plan can't bring the portfolio forward, or proposing no change, is a major error (cap 5.0); saying it starts today or right away is a major error (cap 6.0). No job promise.",
     id: "pt-ux-school-project-soon",
     planChange: {
       effect: {
@@ -1481,7 +1482,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: INTERVIEW_PLAN,
     expectations:
-      "A plan change: topics of his own field (SQL, dashboards, stakeholders) added to his interview English. proposedChange asks to add those topics to the plan; offering a new goal instead, or saying the plan can't add them, is a major error (cap 5.0). The answer says they come into his plan once he taps Apply, never that the plan already changed.",
+      "A plan change: topics of his own field (SQL, dashboards, stakeholders) added to his interview English. proposedChange asks to add those topics to the plan; offering a new goal instead, or saying the plan can't add them, is a major error (cap 5.0). The answer says they come into his plan once he confirms it on the card, never that the plan already changed.",
     id: "pt-interview-add-field-topics",
     memory: ["Trabalha como analista de dados"],
     question: "quero mais conteúdo da minha área de dados no plano: SQL, dashboards e stakeholders",
@@ -1503,7 +1504,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: OAB_PLAN,
     expectations:
-      "A plan change she insists on, off the notice's date: she'll take the next exam instead. proposedChange asks to move the exam date to March (her words). The answer says the notice sets the 1ª fase for 10 January 2027 and that tapping Apply keeps March anyway; it doesn't say the plan changed.",
+      "A plan change she insists on, off the notice's date: she'll take the next exam instead. proposedChange asks to move the exam date to March (her words). The answer says the notice sets the 1ª fase for 10 January 2027 and that the card lets her keep March anyway; it doesn't say the plan changed.",
     id: "pt-oab-own-date-anyway",
     planChange: {
       officialExamDate: {
@@ -1570,6 +1571,13 @@ export const TEST_CASES: GoalTutorCase[] = [
     question: "pode tirar matemática do meu plano, não quero estudar isso",
   }),
   goalCase({
+    context: ENEM_WITH_SETUP,
+    expectations:
+      "Ana's own words (Nov 2026), which once got 'A proposta só se aplica quando você tocar em Aplicar no cartão' above a card whose buttons say something else. proposedChange asks to leave Redação out of her plan, since she'll study it with a private teacher (her choice). The answer says what will change and that nothing changes until she confirms it on the card under the answer. Naming or quoting a button of the card (Aplicar, Apply or any other) is a major error (cap 7.0).",
+    id: "pt-enem-drop-redacao-tutor",
+    question: "Tira Redação do meu plano. Vou estudar redação com um professor particular.",
+  }),
+  goalCase({
     appTools: { conversationCall: { minutes: [1, 2, 3, 5], unit: "Talking about your projects" } },
     context: INTERVIEW_PLAN,
     expectations:
@@ -1585,7 +1593,7 @@ export const TEST_CASES: GoalTutorCase[] = [
     appTools: { conversationCall: { minutes: [1, 2, 3, 5], unit: "Talking about your projects" } },
     context: INTERVIEW_PLAN,
     expectations:
-      "He asks for two things: speaking practice for the interview (a feature) and his field's topics in the plan (a plan change he asked for). The message shows one card, and the plan change's wins: proposedChange asks to add SQL, dashboards and stakeholders to the plan, and offeredTools has no conversationCall offered (none called, or one that came back onePerMessage). The answer says the topics come into his plan once he taps Apply, and in a sentence that the speaking call's card comes in the next answer when he asks for it. Offering the call and leaving the plan change for later ('podemos pedir essa mudança depois') is a major error (cap 5.0); saying the call card is under this answer is a major error (cap 6.0).",
+      "He asks for two things: speaking practice for the interview (a feature) and his field's topics in the plan (a plan change he asked for). The message shows one card, and the plan change's wins: proposedChange asks to add SQL, dashboards and stakeholders to the plan, and offeredTools has no conversationCall offered (none called, or one that came back onePerMessage). The answer says the topics come into his plan once he confirms it on the card, and in a sentence that the speaking call's card comes in the next answer when he asks for it. Offering the call and leaving the plan change for later ('podemos pedir essa mudança depois') is a major error (cap 5.0); saying the call card is under this answer is a major error (cap 6.0).",
     id: "pt-interview-call-and-field-topics",
     memory: ["Trabalha como analista de dados"],
     question:
@@ -1595,7 +1603,7 @@ export const TEST_CASES: GoalTutorCase[] = [
     appTools: { conversationCall: { minutes: [1, 2], unit: "Talking about your projects" } },
     context: INTERVIEW_PLAN,
     expectations:
-      "Marcos's own words (Oct 2026), which once got the call card and 'peça essa mudança na próxima mensagem'. Wanting lessons on SQL, dashboards and stakeholders is a plan change he asked for: proposedChange asks to add them to the plan, and the message's one card is the change's (offeredTools has no conversationCall offered: none called, or one that came back onePerMessage or changeFirst). The answer says the topics come into his plan once he taps Apply, and in a sentence that the speaking call's card comes in the next answer when he asks for it. Offering the call and leaving the plan change for the next message is a major error (cap 5.0); saying the call card is under this answer is a major error (cap 6.0).",
+      "Marcos's own words (Oct 2026), which once got the call card and 'peça essa mudança na próxima mensagem'. Wanting lessons on SQL, dashboards and stakeholders is a plan change he asked for: proposedChange asks to add them to the plan, and the message's one card is the change's (offeredTools has no conversationCall offered: none called, or one that came back onePerMessage or changeFirst). The answer says the topics come into his plan once he confirms it on the card, and in a sentence that the speaking call's card comes in the next answer when he asks for it. Offering the call and leaving the plan change for the next message is a major error (cap 5.0); saying the call card is under this answer is a major error (cap 6.0).",
     id: "pt-interview-call-and-sql-lessons",
     memory: ["Trabalha como analista de dados"],
     question:
@@ -1690,7 +1698,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: OAB_PHILOSOPHY_DAY,
     expectations:
-      "Sofia's own words: Sundays with one hour, more Processo Civil, less Filosofia, and a question about the date. proposedChange asks, in one call, for one hour on Sundays, more time for Direito Processual Civil and less time for Filosofia do Direito. Asking for more time or focus for Filosofia is a major error (cap 4.0), and so is leaving Filosofia out of the plan (cap 5.0). The answer says what the change does for each part as `changes` says it (Filosofia gets less time), the 45 lessons it leaves out, and that it applies on Apply. The date is a question: the notice (FGV) sets the 1ª fase for 10 January 2027; proposing to move the exam to March is a major error (cap 5.0).",
+      "Sofia's own words: Sundays with one hour, more Processo Civil, less Filosofia, and a question about the date. proposedChange asks, in one call, for one hour on Sundays, more time for Direito Processual Civil and less time for Filosofia do Direito. Asking for more time or focus for Filosofia is a major error (cap 4.0), and so is leaving Filosofia out of the plan (cap 5.0). The answer says what the change does for each part as `changes` says it (Filosofia gets less time), the 45 lessons it leaves out, and that it applies once confirmed on the card. The date is a question: the notice (FGV) sets the 1ª fase for 10 January 2027; proposing to move the exam to March is a major error (cap 5.0).",
     id: "pt-oab-more-civil-procedure-less-philosophy",
     planChange: {
       changes:
@@ -1835,7 +1843,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: { ...UX_PLAN, screen: UX_RESEARCH_CHAPTER },
     expectations:
-      "Carla asks from the \"Pesquisa com usuários\" chapter's page. Her plan is in the context: saying it can't see her plan, or asking her to paste or share it, is a major error (cap 4.0). proposedChange is one sentence in Portuguese adding a portfolio case study of an online enrollment system to her plan, as early as it can come; the answer says what it adds and that it applies when she taps Apply, without saying the plan already changed. It may add one or two sentences on handling students' data in a case study (anonymize, no real personal data). No em dashes (—) in the answer: one caps at 8.0.",
+      "Carla asks from the \"Pesquisa com usuários\" chapter's page. Her plan is in the context: saying it can't see her plan, or asking her to paste or share it, is a major error (cap 4.0). proposedChange is one sentence in Portuguese adding a portfolio case study of an online enrollment system to her plan, as early as it can come; the answer says what it adds and that it applies once she confirms it on the card, without saying the plan already changed. It may add one or two sentences on handling students' data in a case study (anonymize, no real personal data). No em dashes (—) in the answer: one caps at 8.0.",
     id: "pt-screen-chapter-plan-change",
     question:
       "quero criar um estudo de caso de matrícula online para o meu portfólio. dá pra começar cedo? e como cuido dos dados dos alunos?",
@@ -2236,7 +2244,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: ANALYTICS_BEHIND,
     expectations:
-      "Owen asks how to change his buddy's name. The answer says it's in his preferences (the Preferences page), where 'Choose your buddy' opens its character, name and glasses, and links it (/settings/appearance); it may also mention changing it from the buddy's tab (/buddy). Leaving out the 'Choose your buddy' step, or that Save keeps the new name, is a minor error (persona walks, 14 Oct 2026: the page shows no name field until it's tapped, and Save sits below it). One or two sentences; no invented steps beyond what the page does. proposedChange is null.",
+      "Owen asks how to change his buddy's name. The answer says it's in his preferences (the Preferences page), where he opens his buddy to change its character, name and glasses, and links it (/settings/appearance); it may also mention changing it from the buddy's tab (/buddy). Leaving out that he opens his buddy there, or that he saves the new name, is a minor error (persona walks, 14 Oct 2026: the page shows no name field until the buddy is opened, and saving comes after it). One or two sentences; no invented steps beyond what the page does. proposedChange is null.",
     id: "en-guide-buddy-name",
     question: "How do I change my buddy's name?",
   }),
@@ -2403,7 +2411,7 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "en-lookup-account",
     lookUps: {
       account: {
-        callMinutesLeft: { thisMonth: 0, today: 0 },
+        callMinutesLeft: { last30Days: 0, today: 0 },
         link: { kind: "page", page: "settings" },
         memory: { enabled: true, link: { kind: "page", page: "memory" } },
         plan: { link: { kind: "page", page: "subscription" }, tier: "free" },

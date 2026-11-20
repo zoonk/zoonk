@@ -31,22 +31,24 @@ struct GoalStartScreen: View {
 extension PlanAllowance {
   /// Said before the learner types, checked in core's order; creating a goal checks it again.
   var goalStartLimit: GoalLimitReason? {
-    let reached: (period: String, resource: String)? =
+    let reached: (period: String, resource: String, availableAt: Date?)? =
       if activeGoals.isReached {
-        ("total", "activeGoals")
+        ("total", "activeGoals", nil)
       } else if newGoalsTotal.isReached {
-        ("total", "goal")
+        ("total", "goal", nil)
       } else if newGoalsToday.isReached {
-        ("day", "goal")
-      } else if newGoalsThisMonth.isReached {
-        ("month", "goal")
+        ("day", "goal", nil)
+      } else if newGoalsMonthly.isReached {
+        ("rolling30Days", "goal", newGoalsMonthly.availableAt)
       } else {
         nil
       }
 
     return reached.map {
       GoalLimitReason(
-        OnboardingLimit(period: $0.period, resource: $0.resource, tier: tier.rawValue))
+        OnboardingLimit(
+          period: $0.period, resource: $0.resource, tier: tier.rawValue,
+          availableAt: $0.availableAt?.ISO8601Format()))
     }
   }
 }
@@ -55,7 +57,7 @@ private struct GuestGoalGate: View {
   @Environment(AppRouter.self) private var router
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "Create a free account to start another goal", tableName: "Onboarding",
@@ -81,7 +83,7 @@ private struct GuestGoalGate: View {
       Button {
         router.showRoot(of: .today)
       } label: {
-        Text("Back to Today", tableName: "Onboarding", comment: "Leaves the start flow for Today")
+        Text("Today", tableName: "Onboarding", comment: "Leaves the start flow for Today")
       }
     }
     .lonePage()
@@ -159,24 +161,34 @@ private struct GoalStartFlow: View {
     } else {
       NavigationStack(path: $path) {
         ZoonkList {
-          StepHeader(
-            title: Text(
-              "What do you want to achieve?", tableName: "Onboarding",
-              comment: "Title of the start flow's first screen"),
-            description: Text(
-              "Tell us in your own words. We'll build the plan.", tableName: "Onboarding",
-              comment: "Under the start flow's first title"))
+          if let gate = limitGate {
+            StepHeader(title: gate.title, description: gate.line)
+              .announcesAlert(gate.said)
+          } else {
+            StepHeader(
+              title: Text(
+                "What do you want to achieve?", tableName: "Onboarding",
+                comment: "Title of the start flow's first screen"),
+              description: Text(
+                "Tell us in your own words. We'll build the plan.", tableName: "Onboarding",
+                comment: "Under the start flow's first title"))
 
-          GoalEntrySections(
-            words: $words, error: error, limit: limit,
-            canSubmitEmpty: !material.isEmpty && intent != nil,
-            onSubmit: submit,
-            attach: {
-              GoalMaterialButton(material: $material, draft: $materialDraft)
-            },
-            attachment: {
-              GoalMaterialSections(material: $material, intent: $intent, draft: $materialDraft)
-            })
+            GoalEntrySections(
+              words: $words, error: error,
+              canSubmitEmpty: !material.isEmpty && intent != nil,
+              onSubmit: submit,
+              attach: {
+                GoalMaterialButton(material: $material, draft: $materialDraft)
+              },
+              attachment: {
+                GoalMaterialSections(material: $material, intent: $intent, draft: $materialDraft)
+              })
+          }
+        }
+        .bottomBar {
+          if limitGate != nil {
+            GoalLimitActions(limit: .activeGoals)
+          }
         }
         .onboardingColumn()
         .closesTask()
@@ -191,6 +203,8 @@ private struct GoalStartFlow: View {
             }
           }
           .onboardingColumn()
+          // Its steps are a plan's, so an explanation offer goes without them.
+          .environment(\.onboardingAside, page == .draft && offersExplanation ? nil : .howItWorks)
           .closesTask()
           .barName(title)
         }
@@ -202,7 +216,13 @@ private struct GoalStartFlow: View {
           send(goal)
         }
       }
-      .onChange(of: path) { _, path in
+      .onChange(of: path) { previous, path in
+        // A page over the entry ends its visit: how adding material went is gone, and an addition
+        // still out says nothing when it lands. What was typed and pasted stays.
+        if previous.isEmpty, !path.isEmpty {
+          materialDraft.leave()
+        }
+
         // Back from the draft: its words wait in the box, and nothing still being sent shows up.
         if path.isEmpty {
           sending?.cancel()
@@ -215,15 +235,32 @@ private struct GoalStartFlow: View {
         }
       }
       .onDisappear {
+        materialDraft.leave()
         sending?.cancel()
       }
     }
+  }
+
+  /// Main's: at the goals studied at once, the screen is only the gate, with no box to type in. A
+  /// month's new goals used up shows after a try.
+  private var limitGate: GoalLimitGate? {
+    limit == .activeGoals ? GoalLimitGate(limit, at: .now) : nil
   }
 
   private var title: Text {
     Text(
       "Start with your goal", tableName: "Onboarding",
       comment: "Names the start flow's screens, whose own titles head them")
+  }
+
+  private var offersExplanation: Bool {
+    guard case .draft(let id, _) = draft,
+      case .case2? = onboarding.draft(id: id).value?.understanding?.value1
+    else {
+      return false
+    }
+
+    return true
   }
 
   @ViewBuilder
@@ -296,7 +333,7 @@ private struct GoalStartFlow: View {
   }
 }
 
-private struct DraftView: View {
+struct DraftView: View {
   let card: Resource<OnboardingDraft>
   let sentHere: Bool
   let onRewrite: (String) -> Void
@@ -307,12 +344,18 @@ private struct DraftView: View {
   @Environment(OnboardingStore.self) private var onboarding
   @State private var retryError: GoalError?
   @State private var isRetrying = false
+  /// The visit's: one owner whatever the draft's read, so a read while its goal is made keeps Back
+  /// waiting and the answer shows on the card the learner sees.
+  @State private var creation = DraftCreation()
 
   var body: some View {
     Group {
-      switch card.state {
-      case .loaded(let draft):
-        page(draft)
+      // One card for a draft read or being read again, its controls waiting while it is; a read
+      // that fails offers to read it again.
+      switch card.freshState {
+      case .loaded,
+        .loading where card.value != nil:
+        card.value.map(page)
       case .failed:
         GoalLoadFailure {
           await card.refresh()
@@ -325,12 +368,30 @@ private struct DraftView: View {
         }
       }
     }
+    // Hiding the system's Back also stops the edge swipe; the one in its place says Back waits.
+    .navigationBarBackButtonHidden(!creation.canLeave)
+    .toolbar {
+      if !creation.canLeave {
+        ToolbarItem(placement: .topBarLeading) {
+          Button {
+          } label: {
+            Label {
+              Text("Back", tableName: "Onboarding", comment: "Goes back to the previous question")
+            } icon: {
+              Image(systemName: "chevron.backward")
+            }
+          }
+          .disabled(true)
+        }
+      }
+    }
     // One saved as a goal meanwhile goes on with that goal's setup.
     .onChange(of: card.value?.goalId, initial: true) { _, goalID in
       if let goalID {
         onGoal(goalID)
       }
     }
+    .onDisappear { creation.leave(card) }
     .loads(card, refreshable: false)
   }
 
@@ -345,7 +406,8 @@ private struct DraftView: View {
       failed(draft)
     case .understood:
       ReadDraftView(
-        draft: draft, sentHere: sentHere, onRewrite: onRewrite, onBack: onBack,
+        card: card, draft: draft, creation: creation, sentHere: sentHere, onRewrite: onRewrite,
+        onBack: onBack,
         onCreated: onGoal, sourceIDs: sourceIDs)
     }
   }

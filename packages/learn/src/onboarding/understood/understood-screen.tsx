@@ -2,19 +2,17 @@
 
 import { type UnderstoodGoalView } from "@zoonk/core/view-models/onboarding/contract";
 import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
-import { PlusNotice } from "../../_components/plus-lock";
-import { GoalLimitWall } from "../entry/goal-limit-notice";
-import { GoalFooter } from "../entry/goal-outcomes";
+import { GateWords, SubscribeGate } from "../../_components/subscribe-gate";
+import { GoalLimitBar } from "../entry/goal-limit-notice";
+import { GoalActions, GoalErrorMessage } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
-import { type GoalLimitReason } from "../onboarding-actions";
+import { type GoalLimit } from "../onboarding-actions";
 import {
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
@@ -25,11 +23,11 @@ import { readEditValue, toDraftEdit } from "./understood-edits";
 import { useCardLimit } from "./understood-limit";
 import { UnderstoodFactItem, UnderstoodRowItem } from "./understood-row";
 import { UnderstoodWords } from "./understood-words";
+import { useScheduleRow } from "./use-schedule-row";
 import {
   type EditableField,
   type UnderstoodRow,
   useMaterialRow,
-  useScheduleRow,
   useUnderstoodRows,
 } from "./use-understood-rows";
 
@@ -59,7 +57,7 @@ function GoalCard({
   onSave: (input: { field: EditableField; value: string }) => Promise<boolean>;
   timeZone: string;
 }) {
-  const rowsFor = useUnderstoodRows();
+  const rowsFor = useUnderstoodRows(timeZone);
   // oxlint-disable-next-line react/hook-use-state -- What the card opened with never changes, so there is no setter.
   const [countryAsked] = useState(Boolean(goal.draft.targetRegion));
 
@@ -95,8 +93,8 @@ function GoalCard({
   );
 }
 
-function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
-  const rowsFor = useUnderstoodRows();
+function LockedGoalCard({ goal, timeZone }: { goal: UnderstoodGoalView; timeZone: string }) {
+  const rowsFor = useUnderstoodRows(timeZone);
 
   const rows = rowsFor({
     contentCountry: goal.contentCountry,
@@ -117,7 +115,7 @@ function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
   );
 }
 
-/** A guest's next step is a free account, which follows more goals at once; an account's is Plus. */
+/** A guest's next step is a free account, which studies more goals at once; an account's is subscribing. */
 function LockedGoalsNote({
   count,
   hasAccount,
@@ -130,37 +128,25 @@ function LockedGoalsNote({
   const t = useExtracted();
 
   if (hasAccount) {
-    return (
-      <PlusNotice cta={offersRemedy}>
-        {t({
-          description:
-            "Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.",
-          message:
-            "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}",
-          values: { count },
-        })}
-      </PlusNotice>
+    const title = t("More goals at once need a subscription");
+
+    const line = t(
+      "{count, plural, one {Pause another goal to start this one.} other {Pause another goal to start these.}}",
+      { count },
+    );
+
+    return offersRemedy ? (
+      <SubscribeGate title={title}>{line}</SubscribeGate>
+    ) : (
+      <GateWords line={line} title={title} />
     );
   }
 
   return (
-    <PlusNotice
-      action={offersRemedy && <CreateAccountLink />}
-      cta={false}
-      title={t({
-        description:
-          "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A “free account” is a signed-up account on the free plan, not the paid plan.",
-        message: "Available with a free account",
-      })}
-    >
-      {t({
-        description:
-          "Under the goals of a card a guest can't start yet, below the one they start. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. The waiting goals come with them when they create the account.",
-        message:
-          "{count, plural, one {Following more goals at once comes with a free account. Until then, this goal waits in your goals.} other {Following more goals at once comes with a free account. Until then, these goals wait in your goals.}}",
-        values: { count },
-      })}
-    </PlusNotice>
+    <div className="flex flex-col items-start gap-2">
+      <GateWords title={t("More goals at once come with a free account")} />
+      {offersRemedy && <CreateAccountLink />}
+    </div>
   );
 }
 
@@ -180,7 +166,7 @@ export function UnderstoodScreen({
   draft: UnderstandingDraft;
   error: GoalError | null;
   goal: string;
-  goalLimit?: GoalLimitReason | null;
+  goalLimit?: GoalLimit | null;
   hasAccount: boolean;
   isCreating: boolean;
   material: readonly { title: string }[];
@@ -206,7 +192,32 @@ export function UnderstoodScreen({
   };
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        plusLimit ? (
+          <GoalLimitBar limit={plusLimit} words />
+        ) : (
+          <GoalActions error={cardError} signUpHref={signUpHref}>
+            <OnboardingSecondaryButton
+              disabled={isCreating || rewriting}
+              onClick={() => setRewriting(true)}
+              ref={fixButtonRef}
+            >
+              {t("Fix something")}
+            </OnboardingSecondaryButton>
+            <form action={() => onConfirm()} className="contents">
+              <OnboardingPrimaryButton
+                busy={isCreating}
+                disabled={rewriting || editing !== null}
+                type="submit"
+              >
+                {t("Looks right")}
+              </OnboardingPrimaryButton>
+            </form>
+          </GoalActions>
+        )
+      }
+    >
       <UnderstoodWords
         disabled={isCreating}
         onCancel={() => {
@@ -220,7 +231,7 @@ export function UnderstoodScreen({
       />
 
       <OnboardingHeading>
-        <OnboardingTitle>{t("Here's what I understood")}</OnboardingTitle>
+        <OnboardingTitle>{t("Here's what we understood")}</OnboardingTitle>
         <OnboardingDescription>
           {draft.goals.length > 1
             ? t("These goals share your daily time. You can change all of this later.")
@@ -246,7 +257,7 @@ export function UnderstoodScreen({
         <div className="flex flex-col gap-3">
           {draft.lockedGoals.map((understood, index) => (
             // oxlint-disable-next-line react/no-array-index-key -- Locked goals can't be edited; their place is their identity.
-            <LockedGoalCard goal={understood} key={index} />
+            <LockedGoalCard goal={understood} key={index} timeZone={draft.timeZone} />
           ))}
 
           {draft.goals.length > 0 && (
@@ -259,31 +270,7 @@ export function UnderstoodScreen({
         </div>
       )}
 
-      {plusLimit ? (
-        <OnboardingFooter className="gap-3">
-          <GoalLimitWall reason={plusLimit} />
-        </OnboardingFooter>
-      ) : (
-        <GoalFooter error={cardError} signUpHref={signUpHref}>
-          <form action={() => onConfirm()} className="contents">
-            <OnboardingPrimaryButton
-              busy={isCreating}
-              disabled={rewriting}
-              icon={<CheckIcon aria-hidden="true" />}
-              type="submit"
-            >
-              {t("Looks right")}
-            </OnboardingPrimaryButton>
-          </form>
-          <OnboardingSecondaryButton
-            disabled={isCreating || rewriting}
-            onClick={() => setRewriting(true)}
-            ref={fixButtonRef}
-          >
-            {t("Fix something")}
-          </OnboardingSecondaryButton>
-        </GoalFooter>
-      )}
+      {!plusLimit && <GoalErrorMessage error={cardError} />}
     </OnboardingColumn>
   );
 }

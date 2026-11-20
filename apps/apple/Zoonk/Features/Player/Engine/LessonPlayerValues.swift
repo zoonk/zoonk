@@ -85,16 +85,17 @@ enum LessonRunRefusal: Hashable, Sendable, Error {
     case guest, free, plus
   }
 
+  /// The day's cap, a guest's for good, or a monthly cap, where each use comes back 30 days after
+  /// it was made and `availableAt` is when the next one does.
   enum Period: Hashable, Sendable {
-    case day, month, total
+    case day, total
+    case last30Days(availableAt: Date?)
   }
 
   case failed
   /// The plan's lessons are used up: a guest signs up, a free learner upgrades, Plus comes back later.
   case limitReached(tier: Tier, period: Period)
   case notFound
-  /// A free exam plan past its first week opens this new lesson with Plus only.
-  case plusRequired
   case slowDown(retryAfterSeconds: Int)
 }
 

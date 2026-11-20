@@ -16,8 +16,8 @@ function getAlphabetContent(step: SerializedStep) {
 
 function AlphabetSymbol({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[4rem] leading-none font-semibold" dir="auto">
-      {children}
+    <p className="text-readout text-5xl">
+      <bdi>{children}</bdi>
     </p>
   );
 }
@@ -29,9 +29,16 @@ function AlphabetReading({
   pronunciation: string;
   readingAid: string;
 }) {
+  const t = useExtracted();
+
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-foreground text-xl font-medium">{readingAid}</p>
+      <dl>
+        <dt className="text-muted-foreground text-xs font-medium">{t("In Latin letters")}</dt>
+        <dd className="text-foreground text-xl font-medium">
+          <bdi>{readingAid}</bdi>
+        </dd>
+      </dl>
       <p className="text-muted-foreground text-sm">{pronunciation}</p>
     </div>
   );
@@ -47,8 +54,8 @@ function AlphabetForms({ forms }: { forms: AlphabetForm[] }) {
       {forms.map((form) => (
         <div className="flex min-w-0 flex-col gap-1" key={`${form.label}-${form.symbol}`}>
           <dt className="text-muted-foreground text-xs font-medium">{form.label}</dt>
-          <dd className="text-2xl font-medium" dir="auto">
-            {form.symbol}
+          <dd className="text-2xl font-medium">
+            <bdi>{form.symbol}</bdi>
           </dd>
         </div>
       ))}
@@ -56,10 +63,17 @@ function AlphabetForms({ forms }: { forms: AlphabetForm[] }) {
   );
 }
 
+const HIRAGANA = /^\p{Script=Hiragana}+$/u;
+const KATAKANA = /^\p{Script=Katakana}+$/u;
+
 export function AlphabetStep({ step }: { step: SerializedStep }) {
   const t = useExtracted();
   const audio = usePromptAudio();
   const content = getAlphabetContent(step);
+
+  const script =
+    (HIRAGANA.test(content.symbol) && t("Hiragana")) ||
+    (KATAKANA.test(content.symbol) && t("Katakana"));
 
   return (
     <PlayerReadScene className="w-full">
@@ -69,6 +83,7 @@ export function AlphabetStep({ step }: { step: SerializedStep }) {
         role="region"
       >
         <PlayerReadSceneStack className="gap-3">
+          {script && <p className="text-muted-foreground text-xs font-medium">{script}</p>}
           <div className="flex items-center gap-2">
             <AlphabetSymbol>{content.symbol}</AlphabetSymbol>
             {audio && <PromptAudioButton audio={audio} variant="inline" />}

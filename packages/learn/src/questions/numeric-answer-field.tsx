@@ -7,19 +7,20 @@ import {
   InputGroupText,
 } from "@zoonk/ui/components/input-group";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { useAppLocale } from "../_utils/locale";
-import { type NumericEntry, parseEntryAnswer } from "./_utils/numeric-entry";
+import { type NumericEntry, getNumericEntryRule, parseEntryAnswer } from "./_utils/numeric-entry";
 import { ANSWER_GROUP_CLASS, focusAnswerOnPointer, putAwayOnScreenKeyboard } from "./answer-field";
 
 type NumericUnit = { position: "prefix" | "suffix"; symbol: string };
 
 const DECIMAL_EXAMPLE = 2.5;
 
-function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
+function EntryRule({ entry, id }: { entry: NumericEntry; id?: string }) {
   const t = useExtracted();
 
   const rule = {
@@ -30,7 +31,8 @@ function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
     fraction: t("A fraction, like 2/3, or a decimal."),
     integer: t("A whole number."),
     number: null,
-  }[entry.kind];
+    roundToWhole: t("Round to the nearest whole number."),
+  }[getNumericEntryRule(entry)];
 
   return rule ? (
     <p className="text-muted-foreground text-sm" id={id}>
@@ -39,7 +41,8 @@ function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
   ) : null;
 }
 
-function InvalidHint({ entry, id }: { entry: NumericEntry | null; id: string }) {
+/** Without an `id` it's a spacer: the line's room, not an alert. */
+function InvalidHint({ entry, id }: { entry: NumericEntry | null; id?: string }) {
   const t = useExtracted();
   const locale = useAppLocale();
 
@@ -53,9 +56,47 @@ function InvalidHint({ entry, id }: { entry: NumericEntry | null; id: string }) 
   };
 
   return (
-    <p className="text-destructive-text text-sm" id={id} role="alert">
+    <p className="text-destructive-text text-sm" id={id} role={id ? "alert" : undefined}>
       {hints[entry?.kind ?? "number"]}
     </p>
+  );
+}
+
+/**
+ * The rule and a typing error share one line's room, as tall as the taller of the two, so the
+ * field never moves; with no rule the error goes under the field.
+ */
+function EntryNote({
+  entry,
+  hintId,
+  invalid,
+  ruleId,
+}: {
+  entry: NumericEntry | null;
+  hintId: string;
+  invalid: boolean;
+  ruleId: string;
+}) {
+  const hasRule = entry !== null && entry.kind !== "number";
+
+  if (!hasRule) {
+    return invalid ? <InvalidHint entry={entry} id={hintId} /> : null;
+  }
+
+  return (
+    <div className="grid *:col-start-1 *:row-start-1">
+      <div aria-hidden={invalid || undefined} className={cn(invalid && "invisible")}>
+        <EntryRule entry={entry} id={invalid ? undefined : ruleId} />
+      </div>
+
+      {invalid ? (
+        <InvalidHint entry={entry} id={hintId} />
+      ) : (
+        <div aria-hidden="true" className="invisible">
+          <InvalidHint entry={entry} />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -63,9 +104,31 @@ function describeField(ids: Record<"hint" | "rule" | "unit", string | false>): s
   return [ids.unit, ids.rule, ids.hint].filter(Boolean).join(" ") || undefined;
 }
 
-function UnitAddon({ id, unit }: { id: string; unit: NumericUnit }) {
+function UnitAddon({
+  id,
+  hasValue = true,
+  nearValue = false,
+  position,
+  unit,
+}: {
+  id: string;
+  hasValue?: boolean;
+  nearValue?: boolean;
+  position: NumericUnit["position"];
+  unit: NumericUnit | null;
+}) {
+  if (unit?.position !== position) {
+    return null;
+  }
+
   return (
-    <InputGroupAddon align={unit.position === "prefix" ? "inline-start" : "inline-end"}>
+    <InputGroupAddon
+      align={unit.position === "prefix" ? "inline-start" : "inline-end"}
+      className={cn(
+        nearValue && "min-w-fit flex-1 justify-start",
+        nearValue && !hasValue && "sr-only",
+      )}
+    >
       <InputGroupText className="text-base" id={id}>
         {unit.symbol}
       </InputGroupText>
@@ -73,18 +136,62 @@ function UnitAddon({ id, unit }: { id: string; unit: NumericUnit }) {
   );
 }
 
+function useNumericText({
+  defaultText,
+  entry,
+  locale,
+  locked,
+  maximumFractionDigits,
+  value,
+}: {
+  defaultText: string;
+  entry: NumericEntry | null;
+  locale: string;
+  locked: boolean;
+  maximumFractionDigits?: number;
+  value?: number | null;
+}) {
+  function formattedValue() {
+    if (value === undefined) {
+      return defaultText;
+    }
+
+    return value === null ? "" : formatLocalizedNumber({ locale, maximumFractionDigits, value });
+  }
+
+  const written = formattedValue();
+  const [text, setText] = useState(written);
+  const [previousValue, setPreviousValue] = useState(value);
+
+  if (value !== previousValue) {
+    setPreviousValue(value);
+
+    if (value !== undefined && parseEntryAnswer({ entry, locale, text }) !== value) {
+      setText(written);
+    }
+  }
+
+  return [locked && value !== undefined ? written : text, setText] as const;
+}
+
 export function NumericAnswerField({
   defaultText = "",
   entry = null,
   locked,
+  labelledBy,
+  maximumFractionDigits,
   onChange,
   onSubmit,
   result,
   unit,
+  value,
 }: {
   defaultText?: string;
   entry?: NumericEntry | null;
   locked: boolean;
+  labelledBy?: string;
+  maximumFractionDigits?: number;
+  value?: number | null;
   onChange?: (value: number | null) => void;
   onSubmit: (value: number) => void;
   result: "correct" | "wrong" | null;
@@ -93,10 +200,20 @@ export function NumericAnswerField({
   const t = useExtracted();
   const locale = useAppLocale();
   const [inputId, unitId, hintId, ruleId] = [useId(), useId(), useId(), useId()];
-  const [text, setText] = useState(defaultText);
+
+  const [text, setText] = useNumericText({
+    defaultText,
+    entry,
+    locale,
+    locked,
+    maximumFractionDigits,
+    value,
+  });
+
   const [invalid, setInvalid] = useState(false);
   const hasRule = entry !== null && entry.kind !== "number";
 
+  const showsDegree = unit?.position === "suffix" && unit.symbol === "°";
   const showsRule = hasRule && !invalid;
 
   const describedBy = describeField({
@@ -110,15 +227,15 @@ export function NumericAnswerField({
       return;
     }
 
-    const value = parseEntryAnswer({ entry, locale, text });
+    const parsed = parseEntryAnswer({ entry, locale, text });
 
-    if (value === null) {
+    if (parsed === null) {
       setInvalid(true);
       return;
     }
 
     putAwayOnScreenKeyboard();
-    onSubmit(value);
+    onSubmit(parsed);
   }
 
   return (
@@ -134,14 +251,27 @@ export function NumericAnswerField({
         {t("Your answer")}
       </label>
 
-      <InputGroup className={ANSWER_GROUP_CLASS} data-result={result ?? undefined}>
-        {unit?.position === "prefix" && <UnitAddon id={unitId} unit={unit} />}
+      {/* A typing error takes the rule's line; with no rule it goes under the field, so the field stays put. */}
+      {hasRule && <EntryNote entry={entry} hintId={hintId} invalid={invalid} ruleId={ruleId} />}
+
+      <InputGroup
+        className={cn(
+          ANSWER_GROUP_CLASS,
+          "data-result:has-[[data-slot=input-group-control]:focus-visible]:ring-0!",
+        )}
+        data-result={result ?? undefined}
+      >
+        <UnitAddon id={unitId} position="prefix" unit={unit} />
 
         <InputGroupInput
           aria-describedby={describedBy}
+          aria-labelledby={labelledBy}
           aria-invalid={invalid || undefined}
           autoComplete="off"
-          className="text-lg tabular-nums md:text-lg"
+          className={cn(
+            "text-lg tabular-nums md:text-lg",
+            showsDegree && text && "field-sizing-content w-auto min-w-0 flex-[0_1_auto] pr-0!",
+          )}
           enterKeyHint="done"
           id={inputId}
           // A phone's decimal keypad has no slash, so a fraction box opens the full keyboard.
@@ -158,21 +288,28 @@ export function NumericAnswerField({
           value={text}
         />
 
-        {unit?.position === "suffix" && <UnitAddon id={unitId} unit={unit} />}
+        <UnitAddon
+          hasValue={Boolean(text)}
+          id={unitId}
+          nearValue={showsDegree}
+          position="suffix"
+          unit={unit}
+        />
 
-        {result && (
-          <InputGroupAddon align="inline-end">
-            {result === "correct" ? (
-              <CheckIcon aria-hidden="true" className="text-success-text" />
-            ) : (
-              <XIcon aria-hidden="true" className="text-destructive-text" />
-            )}
-          </InputGroupAddon>
-        )}
+        <InputGroupAddon
+          align="inline-end"
+          className={result === null ? "invisible" : undefined}
+          aria-hidden={result === null}
+        >
+          {result === "wrong" ? (
+            <XIcon aria-hidden="true" className="text-destructive-text" />
+          ) : (
+            <CheckIcon aria-hidden="true" className="text-success-text" />
+          )}
+        </InputGroupAddon>
       </InputGroup>
 
-      {showsRule && <EntryRule entry={entry} id={ruleId} />}
-      {invalid && <InvalidHint entry={entry} id={hintId} />}
+      {!hasRule && <EntryNote entry={entry} hintId={hintId} invalid={invalid} ruleId={ruleId} />}
     </form>
   );
 }

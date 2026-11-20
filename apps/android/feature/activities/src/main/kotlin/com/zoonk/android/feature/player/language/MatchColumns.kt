@@ -218,7 +218,7 @@ private fun MatchCell(
                 .clickable(enabled = enabled, role = Role.Button, onClick = onTap)
                 .semantics { state?.let { stateDescription = it } }
                 .padding(horizontal = 12.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.Top,
     ) {
         Text(label, style = MaterialTheme.typography.bodyLarge)

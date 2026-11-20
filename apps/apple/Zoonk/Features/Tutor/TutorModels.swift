@@ -19,12 +19,24 @@ struct TutorTurn: Identifiable, Equatable, Sendable {
     case subject
   }
 
+  /// The lesson screen a question is about: its id, or its number once it was deleted.
+  enum Step: Equatable, Sendable {
+    case id(String)
+    case number(Int)
+
+    init(id: String?, number: Int) {
+      self = id.map(Step.id) ?? .number(number)
+    }
+  }
+
   let id: String
   let question: String
   var answer: String?
   var status: Status
   let createdAt: Date
   let about: About
+  /// Nil when the question isn't about one lesson screen.
+  var step: Step?
   var planChange: Components.Schemas.PlanChange?
   var toolOffer: Components.Schemas.TutorToolOffer?
   /// A streamed answer links nothing until the server checked its links.
@@ -32,6 +44,12 @@ struct TutorTurn: Identifiable, Equatable, Sendable {
 
   var isInProgress: Bool {
     status == .pending || status == .running
+  }
+
+  /// Mirrors main's `isSameTopic`: "About …" shows where the topic changes, to another part of the
+  /// lesson or to the answer once it's checked.
+  func sharesTopic(with previous: TutorTurn?) -> Bool {
+    previous.map { $0.about == about && $0.step == step } ?? false
   }
 }
 
@@ -92,7 +110,7 @@ enum TutorFailure: Error, Equatable, Sendable {
   /// A guest's help, or the day's budget all guests share, is used up.
   case signUpRequired
   case slowDown
-  case limitReached(period: Period, tier: LearnerTier)
+  case limit(HelpLimit)
   case plusRequired
   case gone
   case invalid
@@ -101,15 +119,17 @@ enum TutorFailure: Error, Equatable, Sendable {
   case conflict
   case failed
 
-  enum Period: String, Decodable, Sendable {
-    case day
-    case month
-    case total
+  var helpLimit: HelpLimit? {
+    if case .limit(let limit) = self {
+      return limit
+    }
+
+    return nil
   }
 
   var isLimit: Bool {
     switch self {
-    case .signUpRequired, .limitReached:
+    case .signUpRequired, .limit:
       true
     case .slowDown, .plusRequired, .gone, .invalid, .signedOut, .conflict, .failed:
       false

@@ -24,7 +24,7 @@ function ConversationSkeleton() {
   return (
     <TaskSkeleton aside={<Skeleton className="h-32 w-full" />}>
       <div className="flex flex-col gap-2">
-        <Skeleton className="h-3 w-28" />
+        <Skeleton className="mb-1 h-5.5 w-28 rounded-sm" />
         <Skeleton className="h-8 w-3/4" />
         <Skeleton className="h-5 w-full" />
       </div>

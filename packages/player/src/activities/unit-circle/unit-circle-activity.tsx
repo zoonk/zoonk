@@ -44,7 +44,31 @@ function valueAt(content: Content, degrees: number, output: TrigName): number | 
   });
 }
 
+const SAME_VALUE = 1e-9;
+
+/**
+ * A saved answer holds only the number the wheel gave. When it's the number the question's angle
+ * gives, a reopened wheel stands at that angle, so the picture agrees with the checked answer.
+ */
+function answeredDegrees({
+  answer,
+  content,
+  target,
+}: {
+  answer: UnitCircleProps["answer"];
+  content: Content;
+  target: ReturnType<typeof checkTarget>;
+}): number | null {
+  if (answer?.kind !== "numeric" || !target) {
+    return null;
+  }
+
+  const value = valueAt(content, target.degrees, target.output);
+  return value !== null && Math.abs(value - answer.value) < SAME_VALUE ? target.degrees : null;
+}
+
 export function UnitCircleActivity({
+  answer,
   content,
   expected,
   labelId,
@@ -60,7 +84,11 @@ export function UnitCircleActivity({
   const target = checkTarget(content);
   const startDegrees = toDegrees(fields.startAngle, fields.angleUnit);
   const step = angleStep(target ? [startDegrees, target.degrees] : [startDegrees]);
-  const [degrees, setDegrees] = useState(() => snapAngle(startDegrees, step));
+
+  const [degrees, setDegrees] = useState(
+    () => answeredDegrees({ answer, content, target }) ?? snapAngle(startDegrees, step),
+  );
+
   const isChecked = phase === "checked";
 
   const values: Record<TrigName, number | null> = {

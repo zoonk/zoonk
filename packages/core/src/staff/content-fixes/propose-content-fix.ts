@@ -186,7 +186,7 @@ async function findApplied(input: { batchId?: string; fixId?: string }) {
     where: input.fixId ? { id: input.fixId } : { batchId: input.batchId ?? "" },
   });
 
-  const name = input.fixId ? `ContentFix with id ${input.fixId}` : `batch ${input.batchId ?? ""}`;
+  const name = input.fixId ? `fix ${input.fixId}` : `batch ${input.batchId ?? ""}`;
   const applied = fixes.filter((fix) => fix.status === "applied");
 
   const wanted = input.fixId ? applied : applied.filter((fix) => fix.revertedBy.length === 0);
@@ -197,14 +197,16 @@ async function findApplied(input: { batchId?: string; fixId?: string }) {
 
   if (applied.length === 0) {
     return {
-      message: `Only an applied fix can be reverted; nothing in ${name} is applied.`,
+      message: input.fixId
+        ? `Fix ${input.fixId} isn't applied, so there's nothing to undo.`
+        : `No fix in ${name} is applied, so there's nothing to undo.`,
       status: "invalid" as const,
     };
   }
 
   if (wanted.length === 0) {
     return {
-      message: `Every applied fix in ${name} is already reverted or has a revert waiting for review.`,
+      message: `Every applied fix in ${name} is already undone or has an undo waiting for review.`,
       status: "invalid" as const,
     };
   }

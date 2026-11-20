@@ -1,6 +1,5 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import {
@@ -9,19 +8,20 @@ import {
   HandHeartIcon,
   LightbulbIcon,
   MessageCircleQuestionIcon,
-  MusicIcon,
-  PlayIcon,
-  UserPlusIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useLimitText } from "../../_components/comes-back-words";
+import { useLiveLimit } from "../../_components/help-limit-notice";
 import { ChangeSaveError } from "../../_components/save-error";
+import { SignUpMainLink } from "../../_components/subscribe-gate";
 import { useSentenceSpace } from "../../_utils/locale";
+import { useHeldSlot } from "../../_utils/use-held-slot";
 import { type GoalError } from "../goal-errors";
 import { type WaitlistOutcome } from "../onboarding-actions";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
@@ -30,24 +30,40 @@ import {
 import { GoalLimitNotice, isPlusGoalLimit } from "./goal-limit-notice";
 
 const BUBBLE_CLASS =
-  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap";
+  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-reading leading-relaxed text-pretty whitespace-pre-wrap";
 
 const ICON_CLASS = "text-muted-foreground flex [&_svg]:size-6";
 
-export function SignUpLink({ href }: { href: string }) {
-  const t = useExtracted();
+/** What starting a goal couldn't do. The way on (an account to create) is `GoalActions`' or the alert's. */
+export function GoalErrorMessage({ error }: { error: GoalError | null }) {
+  const message = useLimitText(error?.message);
+  const limit = useLiveLimit(error?.limit ?? null);
 
-  return (
-    <PendingLink
-      className={cn(buttonVariants({ size: "lg" }), "w-full")}
-      href={href}
-      icon={<UserPlusIcon aria-hidden="true" />}
+  if (!error || (error.limit && !limit)) {
+    return null;
+  }
+
+  if (error.limit && isPlusGoalLimit(error.limit.reason)) {
+    return (
+      <div role="alert">
+        <GoalLimitNotice limit={error.limit} />
+      </div>
+    );
+  }
+
+  return error.needsAccount ? (
+    <p
+      className={cn("text-muted-foreground text-sm text-pretty", message.hidden && "invisible")}
+      role="alert"
     >
-      {t("Create a free account")}
-    </PendingLink>
+      {message.text}
+    </p>
+  ) : (
+    <ChangeSaveError className={cn(message.hidden && "invisible")}>{message.text}</ChangeSaveError>
   );
 }
 
+/** For a screen with no bar: the message with its way on under it. */
 export function GoalErrorAlert({
   error,
   signUpHref,
@@ -55,35 +71,18 @@ export function GoalErrorAlert({
   error: GoalError | null;
   signUpHref: string;
 }) {
-  if (!error) {
-    return null;
-  }
-
-  if (error.limit && isPlusGoalLimit(error.limit)) {
-    return (
-      <div role="alert">
-        <GoalLimitNotice reason={error.limit} />
-      </div>
-    );
-  }
-
-  if (!error.needsAccount) {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {error.message}
-      </p>
-    );
-  }
+  const slot = useHeldSlot<HTMLDivElement>(useLiveLimit(error?.limit ?? null) !== null);
 
   return (
-    <div className="flex flex-col gap-4" role="alert">
-      <p className="text-base text-pretty">{error.message}</p>
-      <SignUpLink href={signUpHref} />
+    <div className="flex flex-col gap-4 [&:not([data-held]):empty]:hidden" ref={slot}>
+      <GoalErrorMessage error={error} />
+      {error?.needsAccount && <SignUpMainLink href={signUpHref} />}
     </div>
   );
 }
 
-export function GoalFooter({
+/** A goal screen's bar: creating an account takes its actions' place when the goal needs one. */
+export function GoalActions({
   children,
   error,
   signUpHref,
@@ -92,19 +91,10 @@ export function GoalFooter({
   error: GoalError | null;
   signUpHref: string;
 }) {
-  if (error?.needsAccount) {
-    return (
-      <OnboardingFooter>
-        <GoalErrorAlert error={error} signUpHref={signUpHref} />
-      </OnboardingFooter>
-    );
-  }
-
   return (
-    <>
-      <GoalErrorAlert error={error} signUpHref={signUpHref} />
-      <OnboardingFooter>{children}</OnboardingFooter>
-    </>
+    <OnboardingActions>
+      {error?.needsAccount ? <SignUpMainLink href={signUpHref} /> : children}
+    </OnboardingActions>
   );
 }
 
@@ -134,7 +124,15 @@ export function ExplainGoal({
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <GoalActions error={error} signUpHref={signUpHref}>
+          <OnboardingPrimaryButton busy={isStarting} onClick={onStart}>
+            {t("Explain it")}
+          </OnboardingPrimaryButton>
+        </GoalActions>
+      }
+    >
       <TypedGoal goal={goal} />
       <span aria-hidden="true" className={ICON_CLASS}>
         <LightbulbIcon />
@@ -142,19 +140,15 @@ export function ExplainGoal({
       <OnboardingHeading>
         <OnboardingTitle>{question}</OnboardingTitle>
         <OnboardingDescription>
-          {t("A short explanation written for you, about 5 minutes.")}
+          {t({
+            description:
+              "Offers a quick explanation of the learner's question, written once they tap Explain it",
+            message: "We'll write you a short explanation that takes about 5 minutes to read.",
+          })}
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton
-          busy={isStarting}
-          icon={<LightbulbIcon aria-hidden="true" />}
-          onClick={onStart}
-        >
-          {t("Explain it")}
-        </OnboardingPrimaryButton>
-      </GoalFooter>
+      <GoalErrorMessage error={error} />
     </OnboardingColumn>
   );
 }
@@ -163,7 +157,13 @@ export function DeclinedGoal({ goal, onRetry }: { goal: string; onRetry: () => v
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions>
+          <OnboardingPrimaryButton onClick={onRetry}>{t("New goal")}</OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <TypedGoal goal={goal} />
       <span aria-hidden="true" className={ICON_CLASS}>
         <HandHeartIcon />
@@ -176,9 +176,6 @@ export function DeclinedGoal({ goal, onRetry }: { goal: string; onRetry: () => v
           )}
         </OnboardingDescription>
       </OnboardingHeading>
-      <OnboardingFooter>
-        <OnboardingPrimaryButton onClick={onRetry}>{t("Try another goal")}</OnboardingPrimaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -187,24 +184,23 @@ export function UnclearGoal({ goal, onRetry }: { goal: string; onRetry: () => vo
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions>
+          <OnboardingPrimaryButton onClick={onRetry}>{t("Edit goal")}</OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <TypedGoal goal={goal} />
       <span aria-hidden="true" className={ICON_CLASS}>
         <MessageCircleQuestionIcon />
       </span>
       <OnboardingHeading>
-        <OnboardingTitle>{t("Tell us a bit more")}</OnboardingTitle>
+        <OnboardingTitle>{t("Write your goal again")}</OnboardingTitle>
         <OnboardingDescription>
-          {t(
-            "What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”.",
-          )}
+          {t("We couldn't tell what you want to learn.")}
         </OnboardingDescription>
       </OnboardingHeading>
-      <OnboardingFooter>
-        <OnboardingPrimaryButton onClick={onRetry}>
-          {t("Write my goal again")}
-        </OnboardingPrimaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -236,7 +232,7 @@ function WaitlistNote({
           className="text-foreground font-medium underline underline-offset-4"
           href={signUpHref}
         >
-          {t("Create an account")}
+          {t("Create a free account")}
         </PendingLink>
       </p>
     );
@@ -269,7 +265,23 @@ export function InstrumentGoal({
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <GoalActions error={error} signUpHref={signUpHref}>
+          <OnboardingSecondaryButton
+            busy={isJoining}
+            disabled={waitlist === "joined"}
+            icon={<BellIcon aria-hidden="true" />}
+            onClick={onJoinWaitlist}
+          >
+            {t("Join waitlist")}
+          </OnboardingSecondaryButton>
+          <OnboardingPrimaryButton busy={isStarting} onClick={onStartMusicianship}>
+            {t("Start")}
+          </OnboardingPrimaryButton>
+        </GoalActions>
+      }
+    >
       <TypedGoal goal={goal} />
 
       <span aria-hidden="true" className={ICON_CLASS}>
@@ -281,51 +293,19 @@ export function InstrumentGoal({
           {t({
             description:
               '{instrument} names what the learner wants to play, or singing, like "guitar".',
-            message: "Lessons for playing {instrument} are coming",
+            message: "We can't teach {instrument} yet",
             values: { instrument },
           })}
         </OnboardingTitle>
         <OnboardingDescription>
           {t(
-            "To teach you to play, we need to hear you play, and we're still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.",
+            "You can start with the basics of music today: reading notes, rhythm and training your ear.",
           )}
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <div className="bg-card ring-border flex items-start gap-3 rounded-xl p-4 text-sm ring-1">
-        <span className="flex h-lh shrink-0 items-center">
-          <MusicIcon aria-hidden="true" className="size-5" />
-        </span>
-        <p>
-          {t({
-            description:
-              '{instrument} names what the learner wants to play, or singing, like "guitar".',
-            message:
-              "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed.",
-            values: { instrument },
-          })}
-        </p>
-      </div>
-
       <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
-
-      <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton
-          busy={isStarting}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStartMusicianship}
-        >
-          {t("Start musicianship")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton
-          busy={isJoining}
-          disabled={waitlist === "joined"}
-          icon={<BellIcon aria-hidden="true" />}
-          onClick={onJoinWaitlist}
-        >
-          {t("Join the waitlist")}
-        </OnboardingSecondaryButton>
-      </GoalFooter>
+      <GoalErrorMessage error={error} />
     </OnboardingColumn>
   );
 }

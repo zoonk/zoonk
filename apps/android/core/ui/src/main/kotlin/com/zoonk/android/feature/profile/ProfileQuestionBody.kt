@@ -54,9 +54,13 @@ fun profileQuestionTitle(question: ProfileQuestion): String =
         },
     )
 
+/** [inSettings] drops "in Settings" from the lines that point there, as main's Settings page does. */
 @Composable
-fun profileQuestionDescription(question: ProfileQuestion): String =
-    stringResource(
+fun profileQuestionDescription(
+    question: ProfileQuestion,
+    inSettings: Boolean = false,
+): String? {
+    val line =
         when (question) {
             ProfileQuestion.WORK -> {
                 R.string.profile_questions_work_description
@@ -71,7 +75,11 @@ fun profileQuestionDescription(question: ProfileQuestion): String =
             }
 
             ProfileQuestion.CONDITIONS -> {
-                R.string.profile_questions_conditions_description
+                if (inSettings) {
+                    R.string.profile_questions_conditions_description_settings
+                } else {
+                    R.string.profile_questions_conditions_description
+                }
             }
 
             ProfileQuestion.LEARNING_SUPPORT -> {
@@ -79,14 +87,15 @@ fun profileQuestionDescription(question: ProfileQuestion): String =
             }
 
             ProfileQuestion.ADDRESS_FORM -> {
-                R.string.profile_questions_address_description
+                null
             }
 
             else -> {
                 R.string.profile_questions_interest_description
             }
-        },
-    )
+        }
+    return line?.let { stringResource(it) }
+}
 
 @Composable
 fun ProfileQuestionBody(
@@ -98,6 +107,7 @@ fun ProfileQuestionBody(
     role: String? = null,
     suggested: Boolean = false,
     declineAsSkip: Boolean = false,
+    inSettings: Boolean = false,
 ) {
     var atCap by rememberSaveable(question.id) { mutableStateOf(false) }
     var noteOpen by rememberSaveable(question.id) { mutableStateOf(false) }
@@ -114,7 +124,11 @@ fun ProfileQuestionBody(
         when (question.id) {
             ProfileQuestion.WORK -> {
                 ChoiceList(
-                    choices = choices + Choice("_declined", stringResource(R.string.profile_questions_prefer_not)),
+                    choices =
+                        choices +
+                            listOfNotNull(
+                                Choice("_declined", stringResource(R.string.profile_questions_prefer_not)).takeUnless { declineAsSkip },
+                            ),
                     value = if (draft.declined) "_declined" else draft.picks.firstOrNull(),
                     label = label,
                     readOnly = !enabled,
@@ -205,11 +219,11 @@ fun ProfileQuestionBody(
                     )
                 }
                 CheckList(
-                    choices = choices + Choice("_none", stringResource(R.string.profile_questions_nothing_particular)),
-                    value = draft.picks + if (draft.declined) listOf("_none") else emptyList(),
+                    choices = choices,
+                    value = draft.picks,
                     label = label,
                     readOnly = !enabled,
-                    onToggle = { id -> change(if (id == "_none") draft.decline() else draft.toggle(id)) },
+                    onToggle = { id -> change(draft.toggle(id)) },
                 )
                 if (memoryEnabled) {
                     if (noteOpen || draft.text.isNotEmpty()) {
@@ -219,7 +233,12 @@ fun ProfileQuestionBody(
                             300,
                             enabled,
                             placeholder = R.string.profile_questions_support_placeholder,
-                            help = R.string.profile_questions_support_note_help,
+                            help =
+                                if (inSettings) {
+                                    R.string.profile_questions_support_note_help_settings
+                                } else {
+                                    R.string.profile_questions_support_note_help
+                                },
                         ) { change(draft.copy(text = it, declined = false)) }
                     } else {
                         TextButton(
@@ -244,11 +263,6 @@ fun ProfileQuestionBody(
                     )
                 }
                 if (question.id == ProfileQuestion.STUDIES) {
-                    ProfileChip(
-                        stringResource(R.string.profile_questions_nothing_to_add),
-                        draft.declined,
-                        enabled,
-                    ) { change(draft.decline()) }
                     draft.picks.forEach { id ->
                         val field =
                             if (id ==
@@ -284,7 +298,6 @@ fun ProfileQuestionBody(
                         enabled,
                         placeholder = placeholder,
                     ) { change(draft.copy(text = it, declined = false)) }
-                    ProfileChip(stringResource(R.string.profile_questions_none), draft.declined, enabled) { change(draft.decline()) }
                 }
             }
         }

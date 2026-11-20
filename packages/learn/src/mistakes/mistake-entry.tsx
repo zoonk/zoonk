@@ -12,12 +12,14 @@ import {
   TimerIcon,
   TriangleAlertIcon,
 } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
-import { TagBesideOrUnder } from "../_components/answer-option";
-import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
+import { useExtracted } from "next-intl";
+import { AnswerPair } from "../_components/answer-pair";
+import { Eyebrow } from "../_components/eyebrow";
+import { QuestionTitle } from "../_components/question-title";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
+import { useFormatMomentDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
-import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
+import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { MistakeStimulus } from "./mistake-stimulus";
 import { type MistakeEntry } from "./mistakes-notebook";
@@ -32,82 +34,19 @@ const CAUSE_ICON: Readonly<Record<NonNullable<MistakeEntry["cause"]> | "unsorted
   unsorted: CircleDashedIcon,
 };
 
-function MistakeCauseLabel({
-  cause,
-  fixed = false,
-}: {
-  cause: MistakeEntry["cause"];
-  fixed?: boolean;
-}) {
-  const t = useExtracted();
+function MistakeCauseLabel({ cause }: { cause: MistakeEntry["cause"] }) {
   const causeLabel = useCauseLabel();
   const CauseIcon = CAUSE_ICON[cause ?? "unsorted"];
 
-  return (
-    <p className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs font-medium">
-      <CauseIcon aria-hidden="true" className="size-3.5 shrink-0" />
-      {fixed ? t("{cause} · Fixed", { cause: causeLabel(cause) }) : causeLabel(cause)}
-    </p>
-  );
-}
-
-function useEntryDate() {
-  const format = useFormatter();
-
-  return (date: Date) =>
-    format.dateTime(date, {
-      day: "numeric",
-      month: "short",
-      ...(date.getFullYear() === new Date().getFullYear() ? {} : { year: "numeric" }),
-    });
-}
-
-function hiddenLabel(words: React.ReactNode) {
-  return <span className="sr-only">{words}</span>;
-}
-
-export function MistakeAnswer({
-  children,
-  kind,
-}: {
-  children: React.ReactNode;
-  kind: "learner" | "right";
-}) {
-  const t = useExtracted();
-  const right = kind === "right";
-  const answer = () => children;
+  // A mistake nobody sorted yet has no tag: "not sorted" is the sorter's state, not the learner's.
+  if (!cause) {
+    return <span />;
+  }
 
   return (
-    <p
-      className={cn(
-        "rounded-option w-full px-3.5 py-3 text-[0.9375rem] leading-6 font-medium wrap-break-word",
-        right ? ANSWER_TONE.right : ANSWER_TONE.wrong,
-      )}
-      data-slot="mistake-answer"
-    >
-      <TagBesideOrUnder
-        tag={
-          <span
-            aria-hidden="true"
-            className={cn(ANSWER_TAG_CLASS, ANSWER_TAG_TONE[right ? "right" : "wrong"])}
-          >
-            {right ? t("Correct") : t("Your answer")}
-          </span>
-        }
-      >
-        <span>
-          {right
-            ? t.rich("<label>Right answer:</label> <answer></answer>", {
-                answer,
-                label: hiddenLabel,
-              })
-            : t.rich("<label>You answered:</label> <answer></answer>", {
-                answer,
-                label: hiddenLabel,
-              })}
-        </span>
-      </TagBesideOrUnder>
-    </p>
+    <Eyebrow className="bg-muted ring-0" icon={<CauseIcon aria-hidden="true" />}>
+      {causeLabel(cause)}
+    </Eyebrow>
   );
 }
 
@@ -159,13 +98,18 @@ function MistakeEntryActions({
           // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
           prefetch={false}
         >
-          {t("Practice this skill")}
+          {t("Practice this topic")}
         </LearnLink>
       )}
 
       {links.lesson && (
         <LearnLink
-          className={buttonVariants({ size: "sm", variant: "ghost" })}
+          className={buttonVariants({
+            // Alone on its line, its words start on the column's edge like the text above.
+            edge: links.practiceSkill || availableTomorrow ? undefined : "start",
+            size: "sm",
+            variant: "ghost",
+          })}
           href={links.lesson}
           // The lesson may still be unwritten (it writes itself once opened), as in lesson lists.
           prefetch="auto"
@@ -181,14 +125,17 @@ export function MistakeEntryCard({
   continued = false,
   links,
   mistake,
+  tomorrowOnPage = false,
   trueFalseLabels,
 }: {
   continued?: boolean;
   links: MistakeEntryLinks;
   mistake: MistakeEntry;
+  /** The page already says practice opens tomorrow, so the entry doesn't say it again. */
+  tomorrowOnPage?: boolean;
   trueFalseLabels: TrueFalseLabels;
 }) {
-  const entryDate = useEntryDate();
+  const entryDate = useFormatMomentDate();
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { snapshot } = mistake;
   const answer = answerText({ answer: snapshot.answer, format: snapshot.format });
@@ -197,12 +144,12 @@ export function MistakeEntryCard({
 
   return (
     <li
-      className="border-border lg:max-w-column flex flex-col gap-3 border-t py-4 text-sm first:border-t-0 first:pt-1"
+      className="border-border lg:max-w-column flex flex-col gap-3 border-t py-4 text-sm first:border-t-0 lg:first:pt-1"
       data-slot="mistake-entry"
       data-status={mistake.status}
     >
       <div className={cn(TITLE_ROW_CLASS, "text-muted-foreground text-xs")}>
-        <MistakeCauseLabel cause={mistake.cause} fixed={mistake.status === "fixed"} />
+        <MistakeCauseLabel cause={mistake.cause} />
         {/* Formatted in the viewer's time zone, which the server can't know. */}
         <time
           className="font-mono tabular-nums"
@@ -215,34 +162,30 @@ export function MistakeEntryCard({
 
       <MistakeStimulus continued={continued} snapshot={snapshot} />
 
-      <div className="text-[0.9375rem] leading-snug font-medium lg:text-[1.1875rem] lg:leading-snug">
-        <ItemStem text={snapshot.question} />
-      </div>
+      <QuestionTitle heading={false} text={snapshot.question} />
 
       {(answer || correct) && (
-        <div className="flex flex-col gap-2">
-          {answer && (
-            <MistakeAnswer kind="learner">
-              {WRITTEN_ANSWER_FORMATS.has(snapshot.format ?? "") ? (
-                answer
-              ) : (
-                <ItemLine text={answer} />
-              )}
-            </MistakeAnswer>
-          )}
-          {correct && (
-            <MistakeAnswer kind="right">
-              {snapshot.format === "typed" ? correct : <ItemLine text={correct} />}
-            </MistakeAnswer>
-          )}
-        </div>
+        <AnswerPair
+          right={correct && (snapshot.format === "typed" ? correct : <ItemLine text={correct} />)}
+          yours={
+            answer &&
+            (WRITTEN_ANSWER_FORMATS.has(snapshot.format ?? "") ? (
+              answer
+            ) : (
+              <ItemLine text={answer} />
+            ))
+          }
+        />
       )}
 
       {snapshot.explanation && (
         <ItemText className="text-muted-foreground leading-relaxed" text={snapshot.explanation} />
       )}
 
-      <MistakeEntryActions links={links} availableTomorrow={mistake.practiceAvailableTomorrow} />
+      <MistakeEntryActions
+        availableTomorrow={mistake.practiceAvailableTomorrow && !tomorrowOnPage}
+        links={links}
+      />
     </li>
   );
 }

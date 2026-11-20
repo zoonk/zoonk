@@ -1,11 +1,12 @@
 "use client";
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
-import { getLanguageName, getLanguageNameInSentence } from "@zoonk/utils/languages";
+import { getLanguageName } from "@zoonk/utils/languages";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useAppLocale } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { useLevelName } from "../course/use-level-name";
 
 const MINUTES_PER_HOUR = 60;
@@ -27,13 +28,6 @@ function useLanguageName() {
 
   return (targetLanguage: string | null) =>
     targetLanguage ? getLanguageName({ targetLanguage, userLanguage: locale }) : "";
-}
-
-export function useLanguageNameInSentence() {
-  const locale = useAppLocale();
-
-  return (targetLanguage: string | null) =>
-    targetLanguage ? getLanguageNameInSentence({ targetLanguage, userLanguage: locale }) : "";
 }
 
 /**
@@ -67,26 +61,33 @@ export function useCertificateName() {
   };
 }
 
-/** "about 41 hr", "about 45 min". */
-export function useStudyTime() {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
+/**
+ * A list row's two parts: the course or the language with its level, and a course's level, which
+ * goes on the row's second line so the name never wraps around a separator.
+ */
+export function useCertificateRowName() {
+  const certificateName = useCertificateName();
+  const levelName = useLevelName();
 
-  return (minutes: number): string =>
-    t({
-      description: 'An approximate study time, such as "about 41 hr".',
-      message: "about {duration}",
-      values: { duration: formatDuration(roundStudyMinutes(minutes)) },
-    });
+  return (facts: NamedFacts): { level: string | null; name: string } =>
+    facts.kind === "course" && facts.courseLevel
+      ? { level: levelName(facts.courseLevel), name: facts.title ?? "" }
+      : { level: null, name: certificateName(facts) };
+}
+
+/** "~41 hr", "~45 min": the public certificate's way. */
+export function useStudyTime() {
+  const formatDuration = useFormatDuration();
+  return (minutes: number): string => `~${formatDuration(roundStudyMinutes(minutes))}`;
 }
 
 export function useCertificateDate() {
   const formatDate = useFormatIsoDate();
 
   return {
-    long: (isoDate: string) => formatDate(isoDate, "longYear"),
-    month: (isoDate: string) => formatDate(isoDate, "month"),
-    short: (isoDate: string) => formatDate(isoDate, "short"),
+    long: (isoDate: string) => formatDate(isoDate, "sentence", { year: "always" }),
+    month: (isoDate: string) => formatDate(isoDate, "sentenceMonth", { year: "always" }),
+    short: (isoDate: string) => formatDate(isoDate, "row", { year: "always" }),
   };
 }
 

@@ -14,18 +14,46 @@ struct BuddyCharacter: View {
   }
 }
 
+/// The whole buddy cut to its own drawing, at the size a whole buddy `height` tall has, so it starts
+/// on the edge its text starts on, as main's `fit="ink"` does.
+struct BuddyFigure: View {
+  let look: BuddyLook
+  var height: CGFloat = 96
+
+  var body: some View {
+    let ink = BuddyArt(look: look, crop: .ink).viewBox
+    let scale = height / BuddyArt(look: look).viewBox.height
+
+    BuddyCharacter(look: look, crop: .ink)
+      .frame(width: ink.width * scale, height: ink.height * scale)
+  }
+}
+
 /// `reacts` where something just happened (the challenge opened, or its result came in); a revisit
-/// passes none, and he's still.
+/// passes none, and he's still. `won` is his win: he lifts his shield whole.
 struct TricksterCharacter: View {
   var beaten = false
+  var won = false
   var reacts = false
+  /// His shield's cracks from the learner's right answers: none, one or two.
+  var cracks = 0
+  var delay: TimeInterval = .beat
   var cue: ActCue<TricksterAct>?
+  /// Main's `view="face"`, for a mark the size of an icon.
+  var faceOnly = false
 
   var body: some View {
     CharacterActor(
-      art: TricksterArt(holdsSign: !beaten), expression: beaten && !reacts ? .defeated : .sly,
-      reaction: reacts ? ActReaction(act: beaten ? .defeat : .smug, delay: .beat) : nil,
+      art: TricksterArt(cracks: cracks, faceOnly: faceOnly),
+      expression: reacts ? .sly : beaten ? .defeated : won ? .smug : .sly,
+      reaction: reacts
+        ? ActReaction(act: beaten ? .defeat : won ? .triumph : .smug, delay: delay) : nil,
       cue: cue)
+  }
+
+  /// One mark from the first right answer, the second once right answers reach half the pass mark.
+  static func cracks(right: Int, passMark: Int) -> Int {
+    right == 0 ? 0 : right * 2 >= passMark ? 2 : 1
   }
 }
 

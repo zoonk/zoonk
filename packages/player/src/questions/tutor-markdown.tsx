@@ -200,9 +200,12 @@ function BlockUnavailable() {
 
 // Streamdown's code and table scrollers carry their own border and background, which the sideways
 // fade would fade with them, so their outer card is the one frame. A table keeps its words whole
-// and scrolls instead of breaking them letter by letter.
+// and scrolls instead of breaking them letter by letter. Its lists sit inside their text, so a
+// wrapped item's next line would start under the bullet, and an inline code box split over two
+// lines would leave each half open.
 const TUTOR_MARKDOWN_CLASS = cn(
   "min-w-0 wrap-anywhere [&_a]:underline [&_a]:underline-offset-4",
+  "**:data-[streamdown=inline-code]:box-decoration-clone **:data-[streamdown=ordered-list]:list-outside **:data-[streamdown=ordered-list]:ps-5 **:data-[streamdown=unordered-list]:list-outside **:data-[streamdown=unordered-list]:ps-5",
   "**:data-[streamdown=code-block]:bg-background **:data-[streamdown=code-block-body]:scroll-fade-x **:data-[streamdown=code-block-body]:border-0 **:data-[streamdown=code-block-body]:bg-transparent",
   "**:data-[streamdown=table-wrapper]:bg-background [&_[data-streamdown=table-wrapper]>div:has(>table)]:scroll-fade-x **:data-[streamdown=table-wrapper]:wrap-normal [&_[data-streamdown=table-wrapper]>div:has(>table)]:border-0 [&_[data-streamdown=table-wrapper]>div:has(>table)]:bg-transparent",
 );

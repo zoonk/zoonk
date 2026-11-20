@@ -1,26 +1,23 @@
 "use client";
 
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterKey, useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
+import { Button } from "@zoonk/ui/components/button";
+import { SwapLabel } from "@zoonk/ui/components/swap-label";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon, SendIcon } from "lucide-react";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { Eyebrow } from "../_components/eyebrow";
+import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
 import { TaskHeaderProgress } from "../_components/task-header";
-import { TASK_COLUMN_CLASS, TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
-import {
-  MockAnswerSheet,
-  MockQuestionMap,
-  SheetLegend,
-  useMockSheetAside,
-} from "./mock-answer-sheet";
+import { TASK_COLUMN_CLASS } from "../_components/task-layout";
+import { MockAnswerSheet, MockQuestionMap, useMockSheetAside } from "./mock-answer-sheet";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
-import { MockFrame, MockStepStatus } from "./mock-frame";
+import { MockFrame } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
-import { FLAG_KEY } from "./mock-keys";
 import { useMockTitle } from "./mock-labels";
 import { ItemClock, MovesNote } from "./mock-moves";
 import { getSectionPlace } from "./mock-place";
@@ -50,18 +47,18 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
       <div
         className={cn(
           TASK_COLUMN_CLASS,
-          "text-muted-foreground flex items-center justify-between gap-3 pt-1.5 pb-1 font-mono text-xs tabular-nums",
+          "text-muted-foreground flex items-center justify-between gap-3 pt-1.5 pb-1",
         )}
         data-slot="mock-meta"
       >
-        <span aria-hidden="true" className="min-w-0 truncate">
+        <Eyebrow aria-hidden="true" className={cn(!question.area && "with-aside:hidden")}>
           <span className="with-aside:hidden">
             {title(runner.view)}
             {question.area && " · "}
           </span>
           {question.area}
-        </span>
-        <span className="flex shrink-0 items-center gap-3">
+        </Eyebrow>
+        <span className="flex shrink-0 items-center gap-3 font-mono text-xs tabular-nums">
           <ItemClock />
           <span aria-hidden="true">
             {inSection
@@ -83,13 +80,14 @@ function FlagButton() {
   const { runner } = useMockScreen();
   const question = runner.view.current?.questions[runner.position];
   const flagged = Boolean(question && runner.drafts[question.itemId]?.flagged);
+  const flag = t("Flag");
+  const unflag = t("Remove flag");
 
-  useLetterKey(FLAG_KEY, runner.toggleFlag);
+  useShortcut("flag", runner.toggleFlag);
 
   return (
     <Button
-      aria-keyshortcuts={FLAG_KEY.toUpperCase()}
-      aria-pressed={flagged}
+      aria-keyshortcuts={shortcutKeys("flag")}
       className={cn(
         "shrink-0",
         flagged && "border-warning text-warning-text hover:text-warning-text",
@@ -98,9 +96,11 @@ function FlagButton() {
       size="xl"
       variant="outline"
     >
-      <FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />
-      {t("Flag")}
-      <ShortcutKbd>{FLAG_KEY.toUpperCase()}</ShortcutKbd>
+      <SwapLabel
+        current={flagged ? unflag : flag}
+        icon={<FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />}
+        labels={[flag, unflag]}
+      />
     </Button>
   );
 }
@@ -126,49 +126,45 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
     runner.go(runner.position + 1);
   }
 
-  const screenKey = { mode: "none", screen: true } as const;
-
   // Enter moves on after a key picked an answer; handing in stays a deliberate click.
-  useEnterKey(() => runner.go(runner.position + 1), {
-    enabled: !isLastQuestion && !runner.pending && !waiting,
-  });
+  useShortcut("next", () => !waiting && runner.go(runner.position + 1));
+  useShortcut("previous", () => runner.go(runner.position - 1));
 
-  useKeyboardCallback("ArrowRight", () => !waiting && runner.go(runner.position + 1), screenKey);
-  useKeyboardCallback("ArrowLeft", () => runner.go(runner.position - 1), screenKey);
-
-  const nextLabel = isLastSection ? t("Hand in the mock exam") : t("Hand in this section");
+  const nextLabel = isLastSection ? t("Hand in") : t("Hand in section");
   const handingIn = runner.busy === "submit";
 
   return (
     <>
-      <MockStepStatus />
-      <TaskActions>
+      {/* In the bar, so the numbers stay in one place whatever a question's length. */}
+      <MockQuestionMap className="with-aside:hidden w-full" />
+      <QuestionActions className="w-full lg:w-auto">
         <FlagButton />
-        <Button
-          aria-keyshortcuts={isLastQuestion ? undefined : "Enter ArrowRight"}
-          busy={handingIn}
-          className={TASK_MAIN_ACTION_CLASS}
-          disabled={runner.pending || waiting}
-          focusableWhenDisabled
-          onClick={next}
-          size="xl"
-          {...(isLastQuestion ? { icon: <SendIcon aria-hidden="true" /> } : FORWARD_ICON)}
-        >
-          {isLastQuestion ? (
-            nextLabel
-          ) : (
-            <>
-              {t("Next")}
-              <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-            </>
-          )}
-        </Button>
-      </TaskActions>
+        {isLastQuestion ? (
+          <QuestionMainAction
+            action="finish"
+            busy={handingIn}
+            disabled={runner.pending || waiting}
+            enter="off"
+            onPress={next}
+          >
+            {nextLabel}
+          </QuestionMainAction>
+        ) : (
+          <QuestionMainAction
+            action="next"
+            aria-keyshortcuts={`${shortcutKeys("main")} ${shortcutKeys("next")}`}
+            disabled={runner.pending || waiting}
+            onPress={next}
+          />
+        )}
+      </QuestionActions>
     </>
   );
 }
 
+/** What the flag is for, said once: where the learner first meets the button. */
 function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
+  const t = useExtracted();
   const [confirming, setConfirming] = useState(false);
   const handIn = () => setConfirming(true);
   const sheet = useMockSheetAside({ deadline, onHandIn: handIn });
@@ -176,6 +172,12 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
   return (
     <MockFrame
       aside={sheet}
+      confirmExit={{
+        cancel: t("Stay"),
+        confirm: t("Leave"),
+        description: t("Your answers are saved. The clock keeps running while you're away."),
+        title: t("Leave the mock exam?"),
+      }}
       footer={<RunnerFooter onHandIn={handIn} />}
       headerEnd={<MockAnswerSheet onHandIn={handIn} />}
       headerTitle={<ClockTitle clockBeside deadline={deadline} />}
@@ -183,12 +185,8 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
     >
       <MockRecording key={question.set?.id ?? "none"} question={question} />
       <MockQuestionCard key={question.itemId} question={question} />
-      <div className="flex flex-col gap-2.5">
-        <MockQuestionMap className="with-aside:hidden" />
-        <div className="text-muted-foreground flex flex-col gap-1 text-xs">
-          <SheetLegend className="with-aside:hidden" />
-          <MovesNote />
-        </div>
+      <div className="text-muted-foreground text-xs empty:hidden">
+        <MovesNote />
       </div>
       <MockHandInDialog onOpenChange={setConfirming} open={confirming} />
     </MockFrame>

@@ -47,7 +47,7 @@ export const findChoiceOptionsTask: Task<
   generate: findChoiceOptions,
   id: "find-choice-options",
   latencyBudget: { p50: 20, p95: 35 },
-  name: "Find Choice Options",
+  name: "Find choice options",
   score: scoreChoiceOptions,
   testCases: TEST_CASES,
 };

@@ -1,4 +1,4 @@
-import { type AdminFilterOption } from "@/components/admin-filter-nav";
+import { type AdminTabOption } from "@/components/admin-tabs";
 
 export function buildEnumFilterOptions<Value extends string>({
   allLabel,
@@ -10,7 +10,7 @@ export function buildEnumFilterOptions<Value extends string>({
   buildHref: (value?: Value) => string;
   current: Value | undefined;
   options: { label: string; value: Value }[];
-}): AdminFilterOption[] {
+}): AdminTabOption[] {
   return [
     { href: buildHref(), isActive: current === undefined, label: allLabel },
     ...options.map((option) => ({

@@ -64,32 +64,34 @@ export function CategorizeSorting({
 
       <CategorizeCard cardId={card.id} items={items} />
 
-      <div className="flex min-h-7.5 flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <p className="text-muted-foreground text-[0.8125rem]" id={askId}>
-          {t({
-            description: "Under the card being sorted, above the groups to choose from.",
-            message: "Which group does it belong in?",
-          })}
-        </p>
+      <div className="flex flex-col gap-2">
+        <div className="flex min-h-7.5 flex-wrap items-center justify-between gap-x-3 gap-y-1">
+          <p className="text-muted-foreground text-compact" id={askId}>
+            {t({
+              description: "Under the card being sorted, above the groups to choose from.",
+              message: "Which group does it belong in?",
+            })}
+          </p>
 
-        {state.history.length > 0 && (
-          <Button className="-mr-2.5" onClick={onUndo} ref={undoRef} size="sm" variant="ghost">
-            <Undo2 aria-hidden="true" />
-            {t("Undo")}
-          </Button>
-        )}
-      </div>
+          {state.history.length > 0 && (
+            <Button edge="end" onClick={onUndo} ref={undoRef} size="sm" variant="ghost">
+              <Undo2 aria-hidden="true" />
+              {t("Undo")}
+            </Button>
+          )}
+        </div>
 
-      <div aria-labelledby={askId} className="flex flex-col gap-2.5" ref={groupsRef} role="group">
-        {groups.map((group, index) => (
-          <CategorizeGroupOption
-            group={group}
-            index={index}
-            key={group.id}
-            onSort={() => onSort(group.id)}
-            {...groupPreview({ groupId: group.id, items, state })}
-          />
-        ))}
+        <div aria-labelledby={askId} className="flex flex-col gap-2.5" ref={groupsRef} role="group">
+          {groups.map((group, index) => (
+            <CategorizeGroupOption
+              group={group}
+              index={index}
+              key={group.id}
+              onSort={() => onSort(group.id)}
+              {...groupPreview({ groupId: group.id, items, state })}
+            />
+          ))}
+        </div>
       </div>
     </>
   );

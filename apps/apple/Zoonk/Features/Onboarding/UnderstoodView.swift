@@ -1,7 +1,72 @@
 import SwiftUI
 
+/// A goal made from a draft's card, owned by the visit to the draft's page. While it's made, the
+/// card's controls wait, Back included, as main's do, so the goal is made once and its setup opens
+/// from the card the learner confirmed.
+@MainActor
+@Observable
+final class DraftCreation {
+  private(set) var isCreating = false
+  var error: GoalError?
+  @ObservationIgnored private var leadsOn: Task<Void, Never>?
+
+  var canLeave: Bool { !isCreating }
+
+  /// Only a draft read since a create from it that this device can't vouch for (the store or the
+  /// visit marks it stale then) and that names no goal: one made from it opens that goal's setup.
+  static func canCreate(from card: Resource<OnboardingDraft>) -> Bool {
+    card.freshValue.map { $0.goalId == nil } ?? false
+  }
+
+  /// The write is the learner's, not the visit's: it finishes whatever happens to the screen. What
+  /// its answer leads to (`then`, or the error it shows) is the visit's, and ends when it leaves.
+  @discardableResult
+  func create(
+    from card: Resource<OnboardingDraft>, _ write: @escaping @MainActor () async throws -> String,
+    then: @escaping @MainActor (String) -> Void
+  ) -> Task<Void, Never>? {
+    guard !isCreating, Self.canCreate(from: card) else {
+      return nil
+    }
+
+    isCreating = true
+    error = nil
+    let sent = Task { try await write() }
+
+    leadsOn = Task {
+      defer { isCreating = false }
+
+      do {
+        let goalID = try await sent.value
+        try Task.checkCancellation()
+        then(goalID)
+      } catch is CancellationError {
+      } catch {
+        if !Task.isCancelled {
+          self.error = GoalError.creating(error)
+        }
+      }
+    }
+
+    return leadsOn
+  }
+
+  /// The visit left while its goal was being made: its answer opens nothing, and since this device
+  /// no longer waits for it, the draft is read again on the next visit.
+  func leave(_ card: Resource<OnboardingDraft>) {
+    guard isCreating else {
+      return
+    }
+
+    leadsOn?.cancel()
+    card.invalidate(rereadsWhileShown: false)
+  }
+}
+
 struct ReadDraftView: View {
+  let card: Resource<OnboardingDraft>
   let draft: OnboardingDraft
+  let creation: DraftCreation
   /// Sent in this flow just now: a question opens its explanation by itself.
   let sentHere: Bool
   let onRewrite: (String) -> Void
@@ -11,20 +76,29 @@ struct ReadDraftView: View {
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var isCreating = false
-  @State private var error: GoalError?
+
+  /// The card's controls wait while its goal is made, and while a draft read again since may
+  /// already have one.
+  private var isWaiting: Bool {
+    creation.isCreating || !DraftCreation.canCreate(from: card)
+  }
 
   var body: some View {
+    outcome
+  }
+
+  @ViewBuilder private var outcome: some View {
     switch draft.understanding?.value1 {
     case .case1(let understood):
       UnderstoodCard(
-        draft: draft, understood: understood, isCreating: isCreating, error: error,
+        draft: draft, understood: understood, isCreating: isWaiting, error: creation.error,
         onRewrite: onRewrite
       ) {
         create {
           try await onboarding.createGoals(
             understood.startableGoals(left: draft.activeGoalsLeft).map(\.draft.value1),
-            schedule: understood.schedule, sourceIDs: sourceIDs, timeZone: draft.timeZone)
+            from: draft.id, schedule: understood.schedule, sourceIDs: sourceIDs,
+            timeZone: draft.timeZone)
         } then: {
           onCreated($0)
         }
@@ -32,25 +106,27 @@ struct ReadDraftView: View {
       .onChange(of: draft) {
         // The draft is read again when the learner's goals or plan change, and it may have room by
         // then, such as after getting Plus; nil is no cap.
-        if error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
-          error = nil
+        if creation.error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
+          creation.error = nil
         }
       }
     case .case2(let explain):
       ExplainOutcome(
-        goal: draft.prompt, question: explain.question, isStarting: isCreating, error: error
+        goal: draft.prompt, question: explain.question, isStarting: isWaiting,
+        error: creation.error
       ) {
         startExplanation(question: explain.question)
       }
       .task {
         // Right after sending, a question opens its explanation by itself; coming back, it waits for a tap.
-        if sentHere, error == nil, !isCreating {
+        if sentHere, creation.error == nil, !isWaiting {
           startExplanation(question: explain.question)
         }
       }
     case .case3(let instrument):
       InstrumentOutcome(
-        goal: draft.prompt, instrument: instrument.instrument, isStarting: isCreating, error: error
+        goal: draft.prompt, instrument: instrument.instrument, isStarting: isWaiting,
+        error: creation.error
       ) {
         create {
           try await onboarding.createMusicianship(draft: draft, instrument: instrument.instrument)
@@ -66,38 +142,19 @@ struct ReadDraftView: View {
   }
 
   private func startExplanation(question: String) {
-    create {
+    creation.create(from: card) {
       try await onboarding.createExplanation(draft: draft, question: question)
     } then: { goalID in
-      // Only while the start flow that asked is still on screen.
-      guard case .startGoal = router.tasks.last else {
-        return
-      }
-
       router.dismissTask()
       router.open(.explain(goalId: goalID))
     }
   }
 
-  private func create(_ run: @escaping () async throws -> String, then: @escaping (String) -> Void)
-  {
-    guard !isCreating else {
-      return
-    }
-
-    isCreating = true
-    error = nil
-
-    Task {
-      defer { isCreating = false }
-
-      do {
-        then(try await run())
-      } catch is CancellationError {
-      } catch {
-        self.error = GoalError.creating(error)
-      }
-    }
+  private func create(
+    _ write: @escaping @MainActor () async throws -> String,
+    then: @escaping @MainActor (String) -> Void
+  ) {
+    creation.create(from: card, write, then: then)
   }
 }
 
@@ -189,30 +246,16 @@ private struct UnderstoodCard: View {
       if startable.isEmpty, !isGuest {
         GoalLimitNoticeSection(reason: .activeGoals)
       } else if let limit = shownError?.limit, limit.isPlusLimit {
-        GoalLimitNoticeSection(reason: limit)
+        GoalLimitNoticeSection(reason: limit, replacesStart: true)
       } else {
         if let shownError {
           GoalErrorSection(error: shownError)
         }
-
-        if shownError?.needsAccount != true {
-          StepButtons(
-            canContinue: !rewriting,
-            canSkip: !isCreating && !rewriting,
-            continueLabel: Text(
-              "Looks right", tableName: "Onboarding",
-              comment: "Confirms what was understood and creates the goals"),
-            continueIcon: .check,
-            skipLabel: Text(
-              "Fix something", tableName: "Onboarding",
-              comment: "Opens the typed words to change and read again"),
-            skipIcon: nil,
-            onContinue: onConfirm
-          ) {
-            rewriting = true
-          }
-          .environment(\.isSavingAnswer, isCreating)
-        }
+      }
+    }
+    .bottomBar {
+      OpeningClock(availableAt: shownError?.limit?.availableAt) { now in
+        stepButtons(now)
       }
     }
     .sheet(item: $choosingCountry) { choice in
@@ -223,8 +266,30 @@ private struct UnderstoodCard: View {
         LanguageVarietySheet(variety: variety) { region in
           await save(field: .targetRegion, goal: choice.goal, value: region)
         }
-        .zoonkStyles()
+        .zoonkSheet()
       }
+    }
+  }
+
+  @ViewBuilder
+  private func stepButtons(_ now: Date) -> some View {
+    if !(startable.isEmpty && !isGuest), shownError?.limit?.holdsStart(at: now) != true,
+      shownError?.needsAccount != true
+    {
+      StepButtons(
+        canContinue: !rewriting,
+        canSkip: !isCreating && !rewriting,
+        continueLabel: Text(
+          "Looks right", tableName: "Onboarding",
+          comment: "Confirms what was understood and creates the goals"),
+        skipLabel: Text(
+          "Fix something", tableName: "Onboarding",
+          comment: "Opens the typed words to change and read again"),
+        onContinue: onConfirm
+      ) {
+        rewriting = true
+      }
+      .environment(\.isSavingAnswer, isCreating)
     }
   }
 
@@ -244,9 +309,9 @@ private struct UnderstoodCard: View {
         selected: ContentCountry(goal.contentCountry)?.code
       ) { choice in
         // Nothing is built yet, so a pick saves on the draft without asking.
-        await save(field: .contentCountry, goal: index, value: choice?.code)
+        await save(field: .contentCountry, goal: index, value: choice.code)
       }
-      .zoonkStyles()
+      .zoonkSheet()
     }
   }
 
@@ -321,6 +386,7 @@ private struct UnderstoodCard: View {
 }
 
 /// A guest's next step is a free account, which follows more goals at once; an account's is Plus.
+/// Main's note under the goals a card can't start yet: the gate, in place.
 private struct LockedGoalsNote: View {
   let count: Int
   let isGuest: Bool
@@ -330,60 +396,54 @@ private struct LockedGoalsNote: View {
 
   var body: some View {
     if !isGuest {
-      PlusNotice(description: plusDescription, showsSeePlus: offersRemedy)
-    } else if offersRemedy {
-      PlusNotice(title: guestTitle, description: guestDescription, showsSeePlus: false) {
-        Button {
-          router.present(.signIn)
-        } label: {
-          Text(
-            "Create a free account", tableName: "Onboarding",
-            comment: "Opens sign-up; a guest's plan and progress come with them")
-        }
+      if offersRemedy {
+        SubscribeGate(title: subscriberTitle, line: pauseLine)
+      } else {
+        GateWords(title: subscriberTitle, line: pauseLine)
       }
     } else {
-      PlusNotice(title: guestTitle, description: guestDescription, showsSeePlus: false)
+      VStack(alignment: .leading, spacing: 8) {
+        GateWords(title: guestTitle)
+
+        if offersRemedy {
+          Button {
+            router.present(.signIn)
+          } label: {
+            Text(
+              "Create a free account", tableName: "Onboarding",
+              comment: "Opens sign-up; a guest's plan and progress come with them")
+          }
+          .buttonStyle(.outline)
+          .controlSize(.small)
+        }
+      }
     }
   }
 
-  private var plusDescription: Text {
+  private var subscriberTitle: Text {
+    Text(
+      "More goals at once need a subscription", tableName: "Onboarding",
+      comment:
+        "Over the goals a card can't start yet, because the learner studies as many goals at once as their plan allows; they wait in their goal list"
+    )
+  }
+
+  private var pauseLine: Text {
     count == 1
       ? Text(
-        "Following more goals at once comes with Plus. Until then, this goal waits in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the one goal the free plan can't follow yet, because the learner follows as many goals at once as it allows; the goal waits in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
-      )
+        "Pause another goal to start this one.", tableName: "Onboarding",
+        comment: "Under the one goal a card can't start yet; pausing a goal keeps its progress")
       : Text(
-        "Following more goals at once comes with Plus. Until then, these goals wait in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the goals the free plan can't follow yet, because the learner follows as many goals at once as it allows; they wait in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
-      )
+        "Pause another goal to start these.", tableName: "Onboarding",
+        comment: "Under the goals a card can't start yet; pausing a goal keeps its progress")
   }
 
   private var guestTitle: Text {
     Text(
-      "Available with a free account", tableName: "Onboarding",
+      "More goals at once come with a free account", tableName: "Onboarding",
       comment:
-        "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan"
+        "Over the goals a card a guest can't start yet: without an account they study one goal at a time; the goals wait and come with them when they sign up"
     )
-  }
-
-  private var guestDescription: Text {
-    count == 1
-      ? Text(
-        "Following more goals at once comes with a free account. Until then, this goal waits in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the one goal a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goal waits in their goal list and comes with them when they create the account"
-      )
-      : Text(
-        "Following more goals at once comes with a free account. Until then, these goals wait in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the goals a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goals wait in their goal list and come with them when they create the account"
-      )
   }
 }
 
@@ -525,7 +585,7 @@ private struct UnderstoodRowView: View {
           Button {
             use(date)
           } label: {
-            Text(UnderstoodRows.day(date)?.formatted(.dateTime.day().month(.abbreviated)) ?? date)
+            Text(PlanDate.text(date, today: PlanDate.today()))
           }
         }
       }
@@ -563,7 +623,7 @@ private struct UnderstoodRowView: View {
             .foregroundStyle(.mutedForeground)
 
           HStack(alignment: .firstTextBaseline) {
-            Text(row.value)
+            if row.valueFacts.isEmpty { Text(row.value) } else { FactSegments(row.valueFacts) }
             if let badge = row.badge {
               Text(badge)
                 .typeStyle(.meta)
@@ -571,7 +631,11 @@ private struct UnderstoodRowView: View {
             }
           }
 
-          if let note = row.note {
+          if !row.noteFacts.isEmpty {
+            FactSegments(row.noteFacts)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
+          } else if let note = row.note {
             Text(note)
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
@@ -806,21 +870,24 @@ private struct ExplainOutcome: View {
         systemImage: "lightbulb",
         title: Text(question),
         description: Text(
-          "A short explanation written for you, about 5 minutes.", tableName: "Onboarding",
-          comment: "What a quick explanation is"))
+          "We'll write you a short explanation that takes about 5 minutes to read.",
+          tableName: "Onboarding",
+          comment:
+            "Offers a quick explanation of the learner's question, written once they tap Explain it"
+        ))
 
       TypedGoalSection(goal: goal)
 
       if let error {
         GoalErrorSection(error: error)
       }
-
+    }
+    .bottomBar {
       if error?.needsAccount != true {
         StepButtons(
           continueLabel: Text(
             "Explain it", tableName: "Onboarding",
             comment: "Starts a quick explanation of the learner's question"),
-          continueIcon: .explain,
           onContinue: onStart
         )
         .environment(\.isSavingAnswer, isStarting)
@@ -847,12 +914,12 @@ private struct InstrumentOutcome: View {
       OutcomeHeader(
         systemImage: "guitars",
         title: Text(
-          "Lessons for playing \(instrument) are coming", tableName: "Onboarding",
+          "We can't teach \(instrument) yet", tableName: "Onboarding",
           comment:
             "Title when the learner wants to play an instrument; the argument is the instrument in the learner's words, without an article, like 'guitar'"
         ),
         description: Text(
-          "To teach you to play, we need to hear you play, and we're still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.",
+          "You can start with the basics of music today: reading notes, rhythm and training your ear.",
           tableName: "Onboarding", comment: "Why playing an instrument is a waitlist for now"))
 
       TypedGoalSection(goal: goal)
@@ -886,15 +953,15 @@ private struct InstrumentOutcome: View {
       if let error {
         GoalErrorSection(error: error)
       }
-
+    }
+    .bottomBar {
       if error?.needsAccount != true {
         StepButtons(
           canSkip: waitlist != .joined,
           continueLabel: Text(
-            "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
-          continueIcon: .play,
+            "Start", tableName: "Onboarding", comment: "Starts a musicianship goal"),
           skipLabel: Text(
-            "Join the waitlist", tableName: "Onboarding",
+            "Join waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),
           skipIcon: .notify,
           onContinue: onStartMusicianship
@@ -950,12 +1017,12 @@ private struct DeclinedOutcome: View {
           tableName: "Onboarding", comment: "Why a goal is declined"))
 
       TypedGoalSection(goal: goal)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
-          "Try another goal", tableName: "Onboarding",
+          "New goal", tableName: "Onboarding",
           comment: "Goes back to write a different goal"),
-        continueIcon: nil,
         onContinue: onRetry)
     }
   }
@@ -976,12 +1043,12 @@ private struct UnclearOutcome: View {
           tableName: "Onboarding", comment: "Asks for a clearer goal, with examples"))
 
       TypedGoalSection(goal: goal)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
-          "Write my goal again", tableName: "Onboarding",
+          "Edit goal", tableName: "Onboarding",
           comment: "Goes back to write the goal with more detail"),
-        continueIcon: nil,
         onContinue: onRetry)
     }
   }

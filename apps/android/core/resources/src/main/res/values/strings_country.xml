@@ -30,11 +30,11 @@
     <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
     <string name="country_lesson_examples_label">Lesson examples</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
-    <string name="country_change_title">Change the content country?</string>
+    <string name="country_change_title">Change country?</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->
-    <string name="country_change_body">New country: %1$s. Your plan will be rebuilt for it. The lessons you\'ve finished stay done, and you can keep studying your current plan until the new one is ready.</string>
+    <string name="country_change_body">New country: %1$s. We\'ll make a new plan for it. Finished lessons stay done.</string>
     <!-- The dialog's button that saves the new country and rebuilds the plan for it. -->
-    <string name="country_change_confirm">Rebuild plan</string>
+    <string name="country_change_confirm">Change country</string>
     <!-- A notice at the top of the plan while a new plan is prepared for the new content country. -->
     <string name="country_rebuild_title">Preparing your new plan</string>
     <!-- Under that notice's title. -->

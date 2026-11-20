@@ -3,44 +3,16 @@ import { type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
-import { getAllowance } from "../../entitlements/get-allowance";
 import { getExamDocument } from "../../exams/exam-document";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readSharedExams } from "../../plans/_utils/shared-exams";
 import { getOutlinedUntil } from "../../plans/_utils/stand-in-lessons";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
-import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
 import { buildSyllabus } from "./_utils/build-syllabus";
 import { readSyllabusInput } from "./_utils/read-syllabus-input";
 import { type SyllabusView } from "./syllabus-contract";
-
-/** Free exam reviews must confirm known topics after mixed practice becomes Plus-only. */
-async function getKnownTopicsReturn({
-  goal,
-  timeZone,
-  today,
-}: {
-  goal: Pick<Goal, "createdAt" | "kind">;
-  timeZone: string;
-  today: Date;
-}): Promise<SyllabusView["knownTopicsReturn"]> {
-  if (goal.kind !== "exam") {
-    return "practice";
-  }
-
-  const allowance = await getAllowance();
-
-  const access = getExamPrepAccess({
-    examPrep: allowance?.examPrep ?? null,
-    goal,
-    timeZone,
-    today,
-  });
-
-  return access.trialEnded ? "reviews" : "practice";
-}
 
 async function loadSections(goal: Pick<Goal, "id" | "kind">) {
   if (goal.kind !== "exam") {
@@ -92,7 +64,7 @@ export async function getSyllabusView(
     syllabus: {
       examDocument: getExamDocument(goal),
       goal: { displayName: goal.displayName, id: goal.id, kind: goal.kind, title: goal.title },
-      knownTopicsReturn: await getKnownTopicsReturn({ goal, timeZone, today }),
+      knownTopicsReturn: "practice",
       sharedExams: shared.exams,
       ...buildSyllabus({
         ...syllabusInput,

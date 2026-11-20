@@ -1,19 +1,20 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { TooltipProvider } from "./tooltip";
 
-export const SIDEBAR_COLLAPSED_ATTRIBUTE = "data-sidebar-collapsed";
-export const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
+export type SidebarSide = "end" | "start";
 
-/** The task screens' right sidebar (`TaskAside` in `@zoonk/learn`), for the screens that let the person collapse it. */
-export const ASIDE_COLLAPSED_ATTRIBUTE = "data-aside-collapsed";
-export const ASIDE_COLLAPSED_KEY = "aside-collapsed";
+/**
+ * `start` is the app's sidebar (`Sidebar`); `end` is a task screen's side column (`TaskAside` in
+ * `@zoonk/learn`). Each keeps whether the person collapsed it, on this device.
+ */
+export const SIDEBAR_STATE = {
+  end: { attribute: "data-aside-collapsed", key: "aside-collapsed" },
+  start: { attribute: "data-sidebar-collapsed", key: "sidebar-collapsed" },
+} as const satisfies Record<SidebarSide, { attribute: string; key: string }>;
 
-const RESTORED = [
-  [SIDEBAR_COLLAPSED_ATTRIBUTE, SIDEBAR_COLLAPSED_KEY],
-  [ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY],
-]
+const RESTORED = Object.values(SIDEBAR_STATE)
   .map(
-    ([attribute, key]) =>
+    ({ attribute, key }) =>
       `document.documentElement.toggleAttribute(${JSON.stringify(attribute)},localStorage.getItem(${JSON.stringify(key)})==="true")`,
   )
   .join(";");
@@ -67,6 +68,20 @@ export function SidebarHeaderRow({ className, ...props }: React.ComponentProps<"
   );
 }
 
+/**
+ * What sits between the header and the footer. It scrolls by itself when the window is short, so
+ * the footer stays in reach; its padding keeps a row's focus ring inside what scrolls.
+ */
+export function SidebarBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("-m-3 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-3", className)}
+      data-slot="sidebar-body"
+      {...props}
+    />
+  );
+}
+
 export function SidebarSection({
   children,
   className,
@@ -77,7 +92,9 @@ export function SidebarSection({
     <nav className={cn("flex flex-col gap-0.5", className)} data-slot="sidebar-section" {...props}>
       {/* Collapsed, the label keeps its one line of room, so the icons under it stay put. */}
       {label && (
-        <span className="text-label sidebar-collapsed:invisible truncate px-2 pb-1">{label}</span>
+        <span className="text-faint sidebar-collapsed:invisible truncate px-2 pb-1 text-xs leading-4 font-medium">
+          {label}
+        </span>
       )}
       {children}
     </nav>
@@ -91,8 +108,9 @@ export function SidebarSection({
 export const SIDEBAR_ICON_ONLY_CLASS =
   "sidebar-collapsed:justify-center sidebar-collapsed:*:not-first:sr-only";
 
+/** Under `lg` the sidebar is hidden, so an item there is a row of a phone's menu sheet: 44px to press. */
 export const SIDEBAR_ITEM_CLASS = cn(
-  "text-muted-foreground hover:bg-muted/60 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium outline-none focus-visible:ring-[3px] [&>svg]:size-4 [&>svg]:shrink-0",
+  "text-muted-foreground hover:bg-muted/60 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press text-compact relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 font-medium outline-none focus-visible:ring-[3px] max-lg:h-11 [&>svg]:size-4 [&>svg]:shrink-0",
   SIDEBAR_ICON_ONLY_CLASS,
 );
 
@@ -103,8 +121,9 @@ export const SIDEBAR_ITEM_CLASS = cn(
 export const SIDEBAR_COUNT_CLASS =
   "text-faint in-aria-[current=page]:text-muted-foreground in-data-[slot=tooltip-content]:text-background/70 font-mono text-xs tabular-nums in-data-[slot=tooltip-content]:ml-2";
 
+/** Its 24px picture hangs 4px out each side, so it centers on the items' icons and the name starts with their labels. */
 export const SIDEBAR_ACCOUNT_CLASS = cn(
-  "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-11 w-full min-w-0 items-center gap-2.5 rounded-md px-1 text-left text-[0.84375rem] font-medium transition-colors outline-none focus-visible:ring-[3px]",
+  "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area text-compact relative flex h-11 w-full min-w-0 items-center gap-2.5 rounded-md px-2 text-left font-medium transition-colors outline-none *:first:-mx-1 focus-visible:ring-[3px]",
   SIDEBAR_ICON_ONLY_CLASS,
 );
 

@@ -33,12 +33,12 @@ async function signIn({ baseURL, email }: { baseURL: string; email: string }) {
 /** Tests that change a learner's data use a private copy, so the shared personas stay the same. */
 export async function createE2EPersona(
   baseURL: string,
-  { persona }: { persona: SeedPersonaName },
+  { persona, state }: { persona: SeedPersonaName; state?: string },
 ): Promise<E2EPersona> {
   const copyKey = randomUUID().slice(0, SHORT_UUID_LENGTH);
   const email = `e2e-${persona.toLowerCase()}-${copyKey}@zoonk.test`;
 
-  const { goalId, userId } = await seedPersonaCopy({ copyKey, email, persona });
+  const { goalId, userId } = await seedPersonaCopy({ copyKey, email, persona, state });
 
   const [storageState, goal] = await Promise.all([
     signIn({ baseURL, email }),

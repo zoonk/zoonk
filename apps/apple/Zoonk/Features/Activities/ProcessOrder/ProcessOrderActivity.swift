@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let processOrder = ActivityRenderer(
-    template: "processOrder", badge: .always(.putInOrder),
+    template: "processOrder",
     grade: ActivityExpectedAnswer.grader(ProcessOrderFields.self) { .order($0.steps.map(\.id)) }
   ) { context in
     if let fields = try? context.fields(as: ProcessOrderFields.self) {
@@ -92,7 +92,7 @@ private struct ProcessOrderCanvas: View {
     .buttonStyle(ActivityTileStyle(mark: isSelected ? .selected : .plain))
     .overlay {
       if targetedId == step.id {
-        RoundedRectangle(cornerRadius: Radius.option).strokeBorder(.primary, lineWidth: 2)
+        RoundedRectangle(cornerRadius: Radius.option).fill(.selectedTint)
       }
     }
     .draggable(ActivityDragItem(id: step.id))
@@ -198,7 +198,7 @@ private struct ProcessOrderCanvas: View {
     switch mark {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
-    default: Color.card
+    default: Color.boxBackground
     }
   }
 }
@@ -241,8 +241,12 @@ private struct ProcessStepMarks: View {
         .background(fill, in: .circle)
 
       if let symbol = ProcessIcons.symbol(for: icon) {
+        // In one square box, as Lucide draws every icon, so a wide one (a battery) isn't wider.
         Image(systemName: symbol)
+          .resizable()
+          .scaledToFit()
           .foregroundStyle(.mutedForeground)
+          .frame(width: badge * 0.7, height: badge * 0.7)
           .frame(width: badge)
       }
     }

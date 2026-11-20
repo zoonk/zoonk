@@ -1,7 +1,5 @@
 import "server-only";
 import { type GenerationStatus, type Goal, prisma, sql } from "@zoonk/db";
-import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { loadExamPrepAccess, loadPlusOnlyLessonIds } from "../../sessions/_utils/plus-only-lessons";
 import { chapterLessonStats } from "./chapter-lesson-stats";
 import { type MindMapRow } from "./mind-map-view";
 import { mindMapScopeChapters } from "./scope-chapters";
@@ -33,9 +31,6 @@ export type MindMapChapterFacts = {
   lessonsToWrite: number;
   /** The learner's finish owes this map and no run has taken it yet. */
   owed: boolean;
-  /** Its lessons a free exam plan past its first week keeps for Plus. */
-  plusLessonIds: string[];
-  plusRequired: boolean;
   /** Internal scope order; display numbering must use loadChapterNumbering. */
   position: number;
   row: MindMapRow | null;
@@ -105,46 +100,23 @@ function readChapterRows({
     ORDER BY m.position`;
 }
 
-/**
- * Returns only visible chapters of the goal's mind map scope, in its order. `readViewer` decides
- * the Plus lock: a page's display read, a fresh session check for a learner's tap, or the learner
- * a workflow acts for.
- */
 export async function loadMindMapChapters({
   chapterIds,
   goal,
-  readViewer,
 }: {
   chapterIds?: readonly string[];
   goal: MindMapGoal;
-  readViewer?: () => Promise<EntitlementViewer | null>;
 }): Promise<MindMapChapterFacts[]> {
-  const [chapters, access] = await Promise.all([
-    readChapterRows({ chapterIds, goalId: goal.id }),
-    loadExamPrepAccess({ goal, readViewer }),
-  ]);
+  const chapters = await readChapterRows({ chapterIds, goalId: goal.id });
 
-  const held = await loadPlusOnlyLessonIds({
-    access,
-    goalId: goal.id,
-    lessonIds: chapters.flatMap((chapter) => (chapter.canHaveMap ? chapter.lessonIds : [])),
-    userId: goal.userId,
-  });
-
-  return chapters.map((chapter) => {
-    const plusLessonIds = chapter.lessonIds.filter((lessonId) => held.has(lessonId));
-
-    return {
-      canHaveMap: chapter.canHaveMap,
-      chapterId: chapter.chapterId,
-      lessonIds: chapter.lessonIds,
-      lessonsToWrite: chapter.lessonsToWrite,
-      owed: chapter.mapOwed,
-      plusLessonIds,
-      plusRequired: plusLessonIds.length > 0,
-      position: chapter.position,
-      row: toMindMapRow(chapter),
-      title: chapter.title,
-    };
-  });
+  return chapters.map((chapter) => ({
+    canHaveMap: chapter.canHaveMap,
+    chapterId: chapter.chapterId,
+    lessonIds: chapter.lessonIds,
+    lessonsToWrite: chapter.lessonsToWrite,
+    owed: chapter.mapOwed,
+    position: chapter.position,
+    row: toMindMapRow(chapter),
+    title: chapter.title,
+  }));
 }

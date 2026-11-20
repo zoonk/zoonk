@@ -1,10 +1,10 @@
 import { PlayerPreview } from "@zoonk/player/preview";
 import { getPreviewEntry, previewLesson } from "@zoonk/player/preview/catalog";
 import { type Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { readOption, readParam } from "../_utils/gallery-params";
-import { PreviewIntlProvider } from "./preview-intl-provider";
 
 export const metadata: Metadata = { title: "Preview" };
 
@@ -28,9 +28,11 @@ async function PreviewScreen({ searchParams }: Pick<PageProps<"/preview">, "sear
   }
 
   return (
-    <PreviewIntlProvider>
-      <PlayerPreview lesson={preview.lesson} state={preview.state} />
-    </PreviewIntlProvider>
+    <NextIntlClientProvider>
+      <div className="contents **:data-[slot=lesson-player]:pr-0 **:data-[slot=task-aside]:hidden [&_[data-slot=lesson-player]_[data-slot=sidebar-toggle]]:hidden">
+        <PlayerPreview lesson={preview.lesson} state={preview.state} />
+      </div>
+    </NextIntlClientProvider>
   );
 }
 

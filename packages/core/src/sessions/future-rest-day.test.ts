@@ -4,6 +4,7 @@ import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { courseChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { seenQuote } from "../plans/_test-utils/seen-quote";
 import { followPlanToday } from "../plans/_utils/follow-plan-today";
 import { loadPlanContext } from "../plans/_utils/plan-context";
 import { changeGoalPlan } from "../plans/change-goal-plan";
@@ -112,7 +113,7 @@ async function applyFutureRestDay({
   const changed = await decidePlanChange({
     changeId: proposal.id,
     goalId,
-    input: { status: "applied", timeZone },
+    input: { quote: await seenQuote(proposal.id), status: "applied", timeZone },
   });
 
   return { changed, proposal };

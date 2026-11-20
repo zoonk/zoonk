@@ -3,14 +3,11 @@ import { VisitorSummarySeed } from "@/components/learner/learner-summary-seed";
 import { JsonLd } from "@/components/public/json-ld";
 import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { PublicFooter } from "@/components/public/public-footer";
-import { PUBLIC_FOOTER_ID } from "@/components/public/public-ids";
+import { PublicStartBar } from "@/components/public/public-start-bar";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
-import { StickyStartBar } from "@/components/public/sticky-start-bar";
-import { Link, getPathname } from "@/i18n/navigation";
+import { getPathname } from "@/i18n/navigation";
 import { getLocalizedAlternates } from "@/lib/metadata/localized-url";
 import { HOME_JSON_LD } from "@/lib/public/structured-data";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -22,7 +19,6 @@ import { FinalCall } from "./_components/final-call";
 import { HomeFaq } from "./_components/home-faq";
 import { HomeHeader } from "./_components/home-header";
 import { HomeHero } from "./_components/home-hero";
-import { FINAL_GOAL_ID, HERO_GOAL_ID } from "./_components/home-ids";
 import { LanguageSection } from "./_components/language-section";
 import { TopicSection } from "./_components/topic-section";
 
@@ -36,15 +32,15 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: getLocalizedAlternates({ href: "/", language }),
     description: t({
       description:
-        "The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”",
+        "The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano de estudos para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”",
       message:
-        "Tell Zoonk your goal and the date. It builds a plan for each day that fits your time and starts from what you already know. Start free, no account needed.",
+        "Tell Zoonk your goal and the date. It builds a study plan for each day that fits your time and starts from what you already know. Start free, no account needed.",
     }),
     title: {
       absolute: t({
         description:
-          "The landing's title. In Brazilian Portuguese: “Zoonk: um plano para cada dia até o seu objetivo”.",
-        message: "Zoonk: A plan for each day, all the way to your goal",
+          "The landing's title. In Brazilian Portuguese: “Zoonk: um plano de estudos para cada dia até o seu objetivo”.",
+        message: "Zoonk: A study plan for each day, all the way to your goal",
       }),
     },
   };
@@ -52,13 +48,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** Anyone with a session opens Today instead (`proxy.ts`). */
 export default async function HomePage() {
-  const t = await getExtracted();
   const language = await lang();
   const locale = getSupportedLocaleFromLanguage(language);
   const startPath = getPathname({ href: "/start", locale });
 
+  // Clipped like every public page, so the bar's last button doesn't scroll the page sideways.
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col overflow-x-clip">
       <JsonLd items={HOME_JSON_LD} />
       <PublicViewTracker page="home" />
       <VisitorSummarySeed />
@@ -78,14 +74,7 @@ export default async function HomePage() {
 
       <PublicFooter pathname="/" />
 
-      <StickyStartBar
-        afterId={HERO_GOAL_ID}
-        hideWhileVisibleIds={[FINAL_GOAL_ID, PUBLIC_FOOTER_ID]}
-      >
-        <Link className={cn(buttonVariants({ size: "lg" }), "w-full")} href="/start">
-          {t("Start free")}
-        </Link>
-      </StickyStartBar>
+      <PublicStartBar />
     </div>
   );
 }

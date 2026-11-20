@@ -73,7 +73,7 @@ export const findSubjectQuestionsTask: Task<
   generate: findSubjectQuestions,
   id: "find-subject-questions",
   latencyBudget: { p50: 25, p95: 40 },
-  name: "Find Subject Questions",
+  name: "Find subject questions",
   score: scoreSubjectQuestions,
   testCases: TEST_CASES,
 };

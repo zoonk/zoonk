@@ -1,11 +1,10 @@
 "use client";
 
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
-import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
+import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { useExtracted, useFormatter } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
+import { useId } from "react";
 import { usePlanScreen } from "./plan-context";
-import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
 
@@ -22,12 +21,6 @@ export function useWrittenCadenceWords() {
     weekly: t("Every week"),
   };
 
-  const effects: Record<WrittenCadence, string> = {
-    biweekly: t("The same practice in alternate weeks: less spread out, more at a time."),
-    finalWeeks: t("Less spaced practice, concentrated in the final weeks before the exam."),
-    weekly: t("Recommended: a little every week, which improves writing the most."),
-  };
-
   const changes: Record<WrittenCadence, string> = {
     biweekly: t("Writing practice every other week from now on."),
     finalWeeks: t("Writing practice only in the final weeks from now on."),
@@ -36,27 +29,21 @@ export function useWrittenCadenceWords() {
 
   return {
     changed: (cadence: WrittenCadence) => changes[cadence],
-    effect: (cadence: WrittenCadence) => effects[cadence],
     label: (cadence: WrittenCadence) => labels[cadence],
   };
 }
 
-function isCadence(value: unknown): value is WrittenCadence {
-  return CADENCES.some((cadence) => cadence === value);
-}
-
 export function WrittenCadenceChoice({
-  failed,
   onChange,
   pending,
   practice,
 }: {
-  failed: boolean;
   onChange: (cadence: WrittenCadence, answered: () => void) => void;
   pending: boolean;
   practice: WrittenPractice;
 }) {
   const t = useExtracted();
+  const labelId = useId();
   const format = useFormatter();
   const words = useWrittenCadenceWords();
   const choice = useTappedChoice(practice.cadence);
@@ -66,46 +53,40 @@ export function WrittenCadenceChoice({
     (cadence) => cadence !== "finalWeeks" || practice.finalWeeksFrom !== null,
   );
 
-  return (
-    <fieldset className="flex flex-col gap-2">
-      <legend className="mb-2 text-sm font-medium">
-        {t("When to practice {parts}", { parts })}
-      </legend>
+  const title = t("When to practice {parts}", { parts });
 
-      <RadioGroup
-        className="flex flex-wrap gap-2"
+  return (
+    <section aria-labelledby={labelId} className="flex flex-col gap-2">
+      <h3 className="text-sm font-medium" id={labelId}>
+        {title}
+      </h3>
+
+      <NativeSelect
+        aria-labelledby={labelId}
         disabled={pending}
-        onValueChange={(value) => {
-          if (isCadence(value) && value !== practice.cadence) {
-            onChange(value, choice.pick(value));
+        focusableWhenDisabled
+        onChange={(event) => {
+          const cadence = cadences.find((option) => option === event.target.value);
+
+          if (cadence && cadence !== practice.cadence) {
+            onChange(cadence, choice.pick(cadence));
           }
         }}
         value={choice.shown}
       >
         {cadences.map((cadence) => (
-          <RadioGroupOption className={PLAN_OPTION_CLASS} key={cadence}>
-            <RadioGroupItem value={cadence} />
-            {words.label(cadence)}
-          </RadioGroupOption>
+          <NativeSelectOption key={cadence} value={cadence}>
+            {cadence === "weekly" ? t("Every week (recommended)") : words.label(cadence)}
+          </NativeSelectOption>
         ))}
-      </RadioGroup>
-
-      <p
-        aria-busy={pending}
-        aria-live="polite"
-        className="text-muted-foreground text-sm aria-busy:opacity-60"
-      >
-        {words.effect(choice.shown)}
-      </p>
-
-      {failed && <ChangeSaveError />}
-    </fieldset>
+      </NativeSelect>
+    </section>
   );
 }
 
 export function PlanWrittenPractice() {
   const { plan } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const practice = plan.writtenPractice;
 
   if (!practice) {
@@ -114,7 +95,6 @@ export function PlanWrittenPractice() {
 
   return (
     <WrittenCadenceChoice
-      failed={failed}
       onChange={(cadence, answered) => change([{ cadence, kind: "setWrittenCadence" }], answered)}
       pending={isPending}
       practice={practice}

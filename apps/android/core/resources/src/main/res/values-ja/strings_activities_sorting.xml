@@ -22,7 +22,7 @@
   "activities_sorting_dont_go_together_short": "56498441cd747a0f2cbeffbd9bfaa6fc7f4c66ee9149b874eed9801ff01986ce",
   "activities_sorting_drag_onto_timeline": "df283dd09a6f7c0dd3a0d0896151ccc210bcbe656d9f6a91d1fa0349d599439b",
   "activities_sorting_drag_steps": "24f45b9e75c4ce83c5b940ab3d77ccd6db5c5409118b37c4160bdd64100fe8d1",
-  "activities_sorting_events_to_place": "b0b445d4b32f840d317822c03883bd07e077ef343342861ceedf6c97b1042fec",
+  "activities_sorting_events_placed": "6522577394b3dcc53d2007b2d2504bc5953bce41ad41a07a92ff1d134912dabb",
   "activities_sorting_every_spot_named": "6b569476f51b8646a7351baeeeecdf56ca28cadc18c42f63464982a13b6af4ea",
   "activities_sorting_gap_between": "4806db0506b278c385b922af2c410cde33a08d9ef10eb30372e8980f4ddb27db",
   "activities_sorting_goes_with": "8cfbc9697971aeef0d64ce8a6cae880ec22ce637f536fcfc2c3f654f710a350d",
@@ -54,7 +54,6 @@
   "activities_sorting_put_on_spot": "a8402a1a467727b5a2d5f4cb982dba037ac74040d9a254750181a7a2cd580edc",
   "activities_sorting_remove_link": "2da528ec2fa3a8f8c6956685a0732b2d342434b6f859f2505ce28f132c0cbfdd",
   "activities_sorting_removed": "d33d7de45a8222d3b08fc6bb24d304087ae39ab461f438631c516850b5708780",
-  "activities_sorting_right_count": "d7055c18cd7eb7f9bb38a68c7ea0cf5c26cfdb55d37607aceb776727b54634c1",
   "activities_sorting_right_group": "8a2454710303882e925d254c389aac5c9db3cba75081a4075db265437ff23566",
   "activities_sorting_right_order": "523d0882550609bf5c2247e1bf548574108ecfa9bf28e13fe9f111db39488a94",
   "activities_sorting_show_real_dates": "98e71885853284faf6f52615f4357a2f568aa90f7958d09aff5a42cc6c0fea10",
@@ -109,7 +108,6 @@
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
     <string name="activities_sorting_wrong_group">%1$s、グループが違います</string>
     <!-- How many items were sorted right, like "2 of 3 in the right group". -->
-    <string name="activities_sorting_right_count">正しく分類できた数：%1$d / %2$d</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">「%1$s」が入るのは「%2$s」です。</string>
     <string name="activities_sorting_badge_put_in_order">順番に並べる</string>
@@ -191,8 +189,9 @@
     <string name="activities_sorting_year_and_guess">%1$s。予想：%2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
     <string name="activities_sorting_your_guess">予想：%1$s</string>
-    <plurals name="activities_sorting_events_to_place">
-        <item quantity="other">配置する出来事は%d件です</item>
+    <!-- How many of a timeline's events the learner placed, of all of them, like "2 of 5 events placed". -->
+    <plurals name="activities_sorting_events_placed">
+        <item quantity="other">%2$d件中%1$d件のイベントを配置しました</item>
     </plurals>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">%1$sを年表に置く</string>

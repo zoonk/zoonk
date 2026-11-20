@@ -38,6 +38,21 @@ describe(checkMultipleChoiceAnswer, () => {
       });
     });
 
+    it("explains a wrong option that has no words of its own with the right option's", () => {
+      const silent: MultipleChoiceStepContent = {
+        options: [
+          { feedback: "On means resting on top.", id: "a", isCorrect: true, text: "on the table" },
+          { feedback: " ", id: "b", isCorrect: false, text: "under the chair" },
+        ],
+      };
+
+      expect(checkMultipleChoiceAnswer(silent, "b")).toStrictEqual({
+        correctAnswer: "on the table",
+        feedback: "On means resting on top.",
+        isCorrect: false,
+      });
+    });
+
     it("returns incorrect with null feedback for unknown text", () => {
       expect(checkMultipleChoiceAnswer(content, "missing")).toStrictEqual({
         correctAnswer: "A",

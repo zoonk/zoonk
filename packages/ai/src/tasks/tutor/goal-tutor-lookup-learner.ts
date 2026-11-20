@@ -61,8 +61,8 @@ export type LearnerLookUpFound =
       what: "goals";
     }
   | {
-      /** Null for a period their plan doesn't cap. */
-      callMinutesLeft: { thisMonth: number | null; today: number | null };
+      /** Null for an uncapped allowance; last30Days is a rolling month. */
+      callMinutesLeft: { last30Days: number | null; today: number | null };
       link: TutorLink | null;
       memory: { enabled: boolean; link: TutorLink | null };
       /** `free`, `plus`, or `guest` before they create an account. */
@@ -157,7 +157,7 @@ export type LearnerLookUpFound =
 
 export const LEARNER_LOOKUP_USES: Record<LearnerLookUp, string> = {
   account:
-    "their account: Free or Plus (`guest` before they create an account), the call minutes left today and this month (null when that period has no cap), whether memory is on, and their preferences (the name they gave you, null when you go by your own; sounds). Each part links its page. Never say a price. For their plan, call time, memory or settings.",
+    "their account: Free or Plus (`guest` before they create an account), the call minutes left today and in the rolling month (null when uncapped; call this period a month, never a calendar reset), whether memory is on, and their preferences (the name they gave you, null when you go by your own; sounds). Each part links its page. Never say a price. For their plan, call time, memory or settings.",
   courses:
     "the courses they study, most recent first, each with the lessons they finished and how far they are (`percentDone`), and whether it's the course this goal is built on. Narrow it with `query` (a course's title). For their courses outside this goal.",
   goals:

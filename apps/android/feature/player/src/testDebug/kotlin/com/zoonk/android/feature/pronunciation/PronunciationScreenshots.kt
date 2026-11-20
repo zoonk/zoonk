@@ -26,6 +26,7 @@ import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PronunciationAnswerGrade
@@ -199,7 +200,7 @@ class PronunciationScreenshots {
     ) {
         val file = File(folder, "pronunciation-$name.png")
         file.parentFile?.mkdirs()
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 
     private companion object {

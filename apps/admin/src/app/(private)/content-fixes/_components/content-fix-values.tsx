@@ -1,10 +1,11 @@
 import { AdminJson } from "@/components/admin-json";
+import { StateMark } from "@/components/state-mark";
+import { toWords } from "@/lib/format";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
 import {
   type ContentValueChange,
   listContentValueChanges,
 } from "@zoonk/core/staff/content-fixes/screen-content-rules";
-import { Badge } from "@zoonk/ui/components/badge";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
 import { diffWordsWithSpace } from "diff";
@@ -26,10 +27,27 @@ function isTextOrMissing(value: unknown): boolean {
   return value === undefined || typeof value === "string";
 }
 
-function NamedId({ id, name }: { id: string; name: string }) {
+/**
+ * The spaces around a changed run stay outside its mark: a mark that starts with a space leaves a
+ * lone highlighted sliver at a line's end when the line breaks there. A change of spaces alone
+ * stays marked, or it wouldn't show.
+ */
+function MarkedWords({ className, text }: { className: string; text: string }) {
+  const {
+    lead = "",
+    trail = "",
+    words = "",
+  } = /^(?<lead>\s*)(?<words>[\s\S]*?)(?<trail>\s*)$/u.exec(text)?.groups ?? {};
+
+  if (!words) {
+    return <mark className={className}>{text}</mark>;
+  }
+
   return (
     <>
-      {name} <span className="text-muted-foreground font-mono text-xs">{id}</span>
+      {lead}
+      <mark className={className}>{words}</mark>
+      {trail}
     </>
   );
 }
@@ -61,22 +79,18 @@ function ValueSide({
       <span className="text-muted-foreground text-xs">{label}</span>
       <p
         className={cn(
-          "min-h-10 rounded-lg border px-3 py-2 text-sm leading-6 wrap-break-word whitespace-pre-wrap",
+          "min-h-10 flex-1 rounded-lg border px-3 py-2 text-sm leading-6 wrap-break-word whitespace-pre-wrap",
           !isText && !name && "font-mono text-xs",
         )}
       >
         {value === undefined && <span className="text-muted-foreground">None</span>}
         {name && typeof value === "string" ? (
-          <mark className={cn("text-foreground", mark)}>
-            <NamedId id={value} name={name} />
-          </mark>
+          <mark className={cn("text-foreground", mark)}>{name}</mark>
         ) : (
           parts.map((part, index) =>
             part[own] ? (
               // oxlint-disable-next-line react/no-array-index-key -- the parts never reorder
-              <mark className={cn("text-foreground", mark)} key={index}>
-                {part.value}
-              </mark>
+              <MarkedWords className={cn("text-foreground", mark)} key={index} text={part.value} />
             ) : (
               part.value
             ),
@@ -89,13 +103,27 @@ function ValueSide({
 
 type ShownChange = ContentValueChange & { about: string | null };
 
+/** Where a value sits in a screen, in words: `content.options.2.reason` reads "Options › 3 › Reason". */
+function pathInWords(path: string): string {
+  const keys = path.split(".");
+  const inside = keys.length > 1 && keys[0] === "content" ? keys.slice(1) : keys;
+
+  return inside
+    .map((key) => (/^\d+$/u.test(key) ? String(Number(key) + 1) : toWords(key)))
+    .join(" › ");
+}
+
 function ValueChange({ change, names }: { change: ShownChange; names: Names }) {
   return (
     <li className="flex flex-col gap-2 py-3">
       <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <code className="text-xs font-medium">{change.path}</code>
+        <span className="text-xs font-medium">{pathInWords(change.path)}</span>
         {change.about && <span className="text-muted-foreground text-xs">of “{change.about}”</span>}
-        {change.isAnswerKey && <Badge variant="destructive">Changes the right answer</Badge>}
+        {change.isAnswerKey && (
+          <StateMark className="text-xs" state="answerKey" tone="attention">
+            Changes the right answer
+          </StateMark>
+        )}
       </span>
 
       <div className="grid gap-3 md:grid-cols-2">

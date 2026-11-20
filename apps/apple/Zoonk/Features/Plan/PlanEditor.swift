@@ -6,6 +6,8 @@ import Observation
 final class PlanEditor {
   enum Latest: Equatable {
     case applied(AppliedPlanChange, sentence: String)
+    /// Saved without moving a lesson: what the learner asked is all there is to say.
+    case saved(sentence: String)
     case invalid
     case undone
     case unchanged
@@ -17,15 +19,34 @@ final class PlanEditor {
 
   private let goalId: String
   private let store: PlanStore
+  @ObservationIgnored private let tasks = ScreenTasks()
+  /// Whose date a statement names: the exam's or the goal's end date.
+  let dateKind: GoalDateKind
 
-  init(goalId: String, store: PlanStore) {
+  init(goalId: String, store: PlanStore, dateKind: GoalDateKind = .unknown) {
     self.goalId = goalId
     self.store = store
+    self.dateKind = dateKind
   }
 
+  /// Runs a tap's change for the editor's screen, which calls `cancel()` when it goes away. The
+  /// store saves the change anyway; the screen gone, the editor shows nothing of it.
+  func run(_ work: @escaping @MainActor () async -> Void) {
+    tasks.run(work)
+  }
+
+  func cancel() {
+    tasks.cancel()
+  }
+
+  /// What the plan says once the change is saved: each edit's statement, unless the caller has
+  /// its own.
   @discardableResult
-  func change(_ edits: [PlanEdit], sentence: String) async -> Bool {
+  func change(_ edits: [PlanEdit], sentence: String? = nil) async -> Bool {
     let goalId = goalId
+    let operations = edits.compactMap { try? PracticeJSON.recode($0, as: PlanChangeOperation.self) }
+    let sentence = sentence ?? PlanChangeWords.statements(operations, dateKind: dateKind)
+
     return await apply(sentence: sentence) { api, token in
       try await api.change(token: token, goalId: goalId, edits: edits)
     }
@@ -34,10 +55,8 @@ final class PlanEditor {
   /// What `edits` would do, without saving; nil when it couldn't be read.
   func preview(_ edits: [PlanEdit]) async -> PlanChangePreview? {
     let goalId = goalId
-    let result = await store.write { api, token in
+    let result = await store.ask { api, token in
       try await api.preview(token: token, goalId: goalId, edits: edits)
-    } changed: { _ in
-      false
     }
 
     guard case .done(let preview) = result else {
@@ -64,6 +83,9 @@ final class PlanEditor {
     case .done(.applied(let change)):
       latest = .applied(change, sentence: sentence)
       return true
+    case .done(.saved):
+      latest = .saved(sentence: sentence)
+      return true
     case .done(.invalid):
       latest = .invalid
     case .done(.unchanged):
@@ -83,15 +105,10 @@ final class PlanEditor {
   @discardableResult
   func chooseExamOptions(_ subjects: [String], in group: String) async -> Bool {
     let goalId = goalId
-    let names = subjects.formatted(.list(type: .and))
+    let choice = PlanChangeOperation(kind: "setExamChoice", group: group, subjects: subjects)
 
-    return await apply(
-      sentence: String(
-        localized: "Your plan studies \(names) for \(group).", table: "Plan",
-        comment:
-          "Says which options the plan studies for an exam's choice: the first argument lists them, the second is the choice, like its foreign language"
-      )
-    ) { api, token in
+    return await apply(sentence: PlanChangeWords.statement(choice, dateKind: dateKind)) {
+      api, token in
       try await api.chooseExamOption(token: token, goalId: goalId, group: group, subjects: subjects)
     }
   }
@@ -105,15 +122,7 @@ final class PlanEditor {
     failed = false
     defer { isSaving = false }
 
-    let goalId = goalId
-    let undone = await store.write { api, token in
-      try await api.decide(
-        token: token, goalId: goalId, changeId: change.id, decision: .undone)
-    } changed: {
-      $0 != nil
-    }
-
-    switch undone {
+    switch await store.undo(goalId: goalId, changeId: change.id) {
     case .done(.some): latest = .undone
     case .done(nil), .failed: failed = true
     case .obsolete: break

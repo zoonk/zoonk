@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -21,6 +22,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.R
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
@@ -29,12 +32,16 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
-import com.zoonk.api.models.PlanBasesAdvice
+import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
+import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
 import kotlinx.coroutines.CoroutineScope
@@ -56,7 +63,10 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class PlanScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -102,8 +112,77 @@ class PlanScreenshots {
     fun expanded() = capture("plan-expanded")
 
     @Test
+    @Config(qualifiers = "w852dp-h1600dp-xhdpi")
+    fun openBook() {
+        show()
+        compose.unfoldBook(folds)
+        compose.waitForIdle()
+        write("plan-open-book", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examPhone() = capture("plan-exam-phone", exam = examPage(dated = true))
+
+    @Test
+    @Config(qualifiers = "w411dp-h3200dp-xhdpi")
+    fun examPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("plan-exam-phone-font200", exam = examPage(dated = true))
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examWithoutADatePhone() = capture("plan-exam-no-date-phone", exam = examPage(dated = false))
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun examExpanded() = capture("plan-exam-expanded", exam = examPage(dated = true))
+
+    /** Ana's ENEM: four phases to the exam, then After the exam; without a date, the plan's estimate ends it. */
+    private fun examPage(dated: Boolean): PlanPageState {
+        val summary = learnerSummary(kind = "exam", title = "ENEM")
+        val base = learnPlan().let { plan -> plan.copy(phases = plan.phases.map { it.asEnem() }) }
+        val after =
+            base.phases.last().copy(
+                index = 4,
+                name = "After the exam",
+                kind = PlanPhase.Kind.AFTER_EXAM,
+                startDate = kotlinx.datetime.LocalDate(2027, 2, 1),
+                endDate = kotlinx.datetime.LocalDate(2027, 3, 15),
+            )
+        val plan =
+            base.copy(
+                phases = base.phases + after,
+                schedule = base.schedule.copy(targetDate = base.schedule.targetDate.takeIf { dated }, fullCourse = true),
+                estimate = base.estimate.copy(endDate = kotlinx.datetime.LocalDate(2027, 2, 6)),
+            )
+        return PlanPageState(summary.goals.first(), plan, summary)
+    }
+
+    @Test
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
     fun expandedDark() = capture("plan-expanded-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun phonePaused() = capture("plan-paused-phone", paused = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun phonePausedAtTheGoalLimit() = capture("plan-paused-limit-phone", paused = true, failure = ResumeFailure.GoalLimit)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedPaused() = capture("plan-paused-expanded", paused = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun phoneExamOver() = capture("plan-exam-over-phone", examOver = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedExamOver() = capture("plan-exam-over-expanded", examOver = true)
 
     /** Robolectric copies only the activity's window, so a sheet's content is drawn here as it shows in its sheet. */
     @Test
@@ -114,12 +193,25 @@ class PlanScreenshots {
             mapOf(
                 "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
                 "plan-sheet-progress" to
+                    { links -> PreparationDetails(Standing.Progress(progress(), done = 13, known = 0, total = 46), links) },
+                "plan-sheet-preparation-review" to
                     { links ->
                         PreparationDetails(
-                            progress(),
-                            forExam = false,
-                            lessons = Standing.Progress(progress(), done = 13, known = 0, total = 46),
-                            links = links,
+                            Standing.Preparation(
+                                progress(
+                                    mocks = """{"kind":"fullReviews","taken":0,"value":0}""",
+                                    rule = "examWeighted",
+                                    fading = 0,
+                                ),
+                            ),
+                            links,
+                        )
+                    },
+                "plan-sheet-preparation-reviewed" to
+                    { links ->
+                        PreparationDetails(
+                            Standing.Preparation(progress(mocks = """{"kind":"fullReviews","taken":2,"value":0.5}""")),
+                            links,
                         )
                     },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },
@@ -133,13 +225,26 @@ class PlanScreenshots {
                         )
                     },
             )
+        // The titles the Plan's number sheets draw over these contents.
+        val sheetTitles: Map<String, @Composable () -> String> =
+            mapOf(
+                "plan-sheet-pace" to { stringResource(R.string.plan_your_pace) },
+                "plan-sheet-progress" to { stringResource(R.string.plan_your_progress) },
+                "plan-sheet-preparation-review" to { stringResource(R.string.plan_your_preparation) },
+                "plan-sheet-preparation-reviewed" to { stringResource(R.string.plan_your_preparation) },
+            )
         var shown by mutableStateOf(sheets.keys.first())
         compose.setContent {
             val links = PlanLinks(rememberAppNavigator(), page)
             ZoonkTheme {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(28.dp)) {
-                        sheets.getValue(shown)(this, links)
+                    val title = sheetTitles[shown]?.invoke()
+                    if (title != null) {
+                        DetailsSheetBody(title, Modifier.padding(24.dp)) { sheets.getValue(shown)(this, links) }
+                    } else {
+                        Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(28.dp)) {
+                            sheets.getValue(shown)(this, links)
+                        }
                     }
                 }
             }
@@ -149,12 +254,30 @@ class PlanScreenshots {
             compose.waitForIdle()
             write(name, compose.onRoot().captureRender().asAndroidBitmap())
         }
+        shown = "plan-change-diff"
+        compose.waitForIdle()
+        compose.onNodeWithText("All changes").performClick()
+        compose.waitForIdle()
+        write("plan-change-diff-open", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** A far topic's sheet in each state, driven through its view model as the sheet is. */
     @Test
     @Config(qualifiers = "w411dp-h900dp-xxhdpi")
-    fun farTopic() {
+    fun farTopic() = captureFarTopic("")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun farTopicTablet() = captureFarTopic("-tablet")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun farTopicAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureFarTopic("-font200")
+    }
+
+    private fun captureFarTopic(suffix: String) {
         val api = FakePlanApi()
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val store = PlanStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))
@@ -180,7 +303,7 @@ class PlanScreenshots {
                 setUp()
             }
             compose.waitForIdle()
-            write("far-topic-$name", compose.onRoot().captureRender().asAndroidBitmap())
+            write("far-topic-$name$suffix", compose.onRoot().captureRender().asAndroidBitmap())
         }
 
         shot("available") { topics.open(flask) }
@@ -298,8 +421,10 @@ class PlanScreenshots {
                     """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}""",
             )
         val pagedPlan = fitPlan.copy(status = learnPlan().status)
-        val pastDate = plan(""""status":{"kind":"pastDate","lessons":4}""")
-        val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75))
+        val laterFitPlan = fitPlan.copy(fitOffer = fitPlan.fitOffer?.copy(canApply = false))
+        val fitOperations = laterFitPlan.fitOffer!!.operations.map { it.op }
+        val pastDate = pastDatePlan()
+        val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75))
         val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
         val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":75}]""", effect = effect(""""lessonsAdded":14"""))
         val course = java.util.UUID.fromString(CHANGE_ID)
@@ -368,10 +493,16 @@ class PlanScreenshots {
                         edits = PlanEdits(timeToCover = found),
                         host = SlotHost(preview = ready(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
                     ),
+                "plan-slot-coverage-checking" to
+                    Shot(
+                        goalPlan,
+                        edits = PlanEdits(timeToCover = found),
+                        host = SlotHost(preview = PlanPreviewState.Loading(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
+                    ),
                 "plan-slot-coverage-checking-date" to
                     Shot(
                         goalPlan,
-                        edits = PlanEdits(timeToCover = TimeToCoverState.Pending(timeToCoverRevision(goalPlan))),
+                        edits = PlanEdits(timeToCover = TimeToCoverState.Pending(planAdviceRevision(goalPlan))),
                         state = { SlotState(intent = CoverageIntent.Date) },
                     ),
                 "plan-slot-coverage-applied" to
@@ -383,6 +514,12 @@ class PlanScreenshots {
                         SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
                     }),
                 "plan-slot-fit" to Shot(fitPlan),
+                "plan-slot-fit-checking" to
+                    Shot(laterFitPlan, host = SlotHost(preview = PlanPreviewState.Loading(fitOperations, laterFitPlan))),
+                "plan-slot-fit-adding" to Shot(laterFitPlan, edits = PlanEdits(pending = setOf(PlanPart.Suggestion))),
+                "plan-slot-fit-repriced" to Shot(laterFitPlan, host = SlotHost(preview = ready(fitOperations, laterFitPlan))),
+                "plan-slot-fit-check-failed" to
+                    Shot(laterFitPlan, host = SlotHost(preview = PlanPreviewState.Failed(fitOperations, laterFitPlan))),
                 "plan-slot-paged" to Shot(pagedPlan, state = { SlotState(position = 1) }),
                 "plan-slot-paged-applied" to
                     Shot(pagedPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
@@ -417,8 +554,6 @@ class PlanScreenshots {
                                     shot.edits,
                                     PlanLinks(navigator, page),
                                     Resume.Plain,
-                                    isSaving = false,
-                                    onSetStatus = {},
                                     onAdjust = {},
                                     layout = layout,
                                     host = shot.host,
@@ -455,7 +590,7 @@ class PlanScreenshots {
         val examPage = PlanPageState(exam.goals.first(), examPlan, exam)
         val examAreas = "[${area("Administrative law")},${area("Constitutional law")},${area("Portuguese")},${area("Logical reasoning")}]"
         val examFocusPage = PlanPageState(exam.goals.first(), coveragePlan(kind = "exam", areas = examAreas).withFocusTest(CHECKED), exam)
-        val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
+        val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
 
         fun preview(
             operations: List<PlanOp>,
@@ -611,7 +746,7 @@ class PlanScreenshots {
                 """.trimIndent(),
             )
         val page = PlanPageState(summary.goals.first(), plan, summary)
-        val found = TimeToCoverState.Answered(timeToCoverRevision(plan), timeToCover(recommended = 805, focus = 240))
+        val found = TimeToCoverState.Answered(planAdviceRevision(plan), timeToCover(recommended = 805, focus = 240))
         compose.setContent {
             ZoonkTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
@@ -664,11 +799,8 @@ class PlanScreenshots {
                  "finishDate":null,"feasibility":{"coreFits":true,"coveredShare":0.82,"fits":false,"measure":"exam"},"ready":true,"unchanged":false}
                 """.trimIndent(),
             )
-        val edits =
-            PlanEdits(
-                preview = { preview },
-                adviseOnBases = { PlanBasesAdvice(daysLeft = 12, ready = true, recommended = PlanBasesAdvice.Recommended.QUICK) },
-            )
+        val revision = planAdviceRevision(page.plan)
+        var advice by mutableStateOf(BasesAdviceAsk(revision, BasesAdviceAsk.Status.Pending))
         var sheet by mutableStateOf("bases")
         var bases by mutableStateOf(BasesDraft())
         var tool by mutableStateOf(ToolDraft("Spreadsheet (Google Sheets or Excel)", choice = null, system = null))
@@ -676,6 +808,7 @@ class PlanScreenshots {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
                     Column(Modifier.padding(top = 24.dp)) {
+                        val edits = PlanEdits(preview = { preview }, basesAdvice = advice)
                         when (sheet) {
                             "bases" -> BasesChoices(page, page.plan.bases!!, edits, bases, onDraft = { bases = it }, onDone = {})
                             else -> ToolChoiceForm(page.plan.tools.first(), tool, edits, onDraft = { tool = it }, onDone = {})
@@ -687,8 +820,12 @@ class PlanScreenshots {
         compose.waitForIdle()
         write("$prefix-bases", compose.onRoot().captureRender().asAndroidBitmap())
 
-        compose.onNodeWithText("Get a recommendation").performClick()
-        compose.onNodeWithText("Quick lesson").performClick()
+        // The recommendation the sheet's opening asked for comes in the room every row keeps for it.
+        advice = advice.copy(status = BasesAdviceAsk.Status.Answered, recommended = PlanBase.Choice.QUICK)
+        compose.waitForIdle()
+        write("$prefix-bases-recommended", compose.onRoot().captureRender().asAndroidBitmap())
+
+        compose.onNodeWithText("One short lesson each").performClick()
         compose.mainClock.advanceTimeBy(1_000)
         compose.waitForIdle()
         write("$prefix-bases-changed", compose.onRoot().captureRender().asAndroidBitmap())
@@ -700,12 +837,50 @@ class PlanScreenshots {
         write("$prefix-tool", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun callsPartialPathPhone() = captureCallsPath("calls-partial-path-phone")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
+    fun callsPartialPathLarge() = captureCallsPath("calls-partial-path-large")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun callsKnownPathPhone() = captureCallsPath("calls-known-path-phone", "known")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
+    fun callsKnownPathLarge() = captureCallsPath("calls-known-path-large", "known")
+
+    private fun captureCallsPath(
+        name: String,
+        outsideReason: String = "skippedBase",
+    ) {
+        val original = page()
+        val phases =
+            original.plan.phases.take(2).mapIndexed { index, phase ->
+                if (index == 0) {
+                    phase.copy(state = PlanPhase.State.LEFT_OUT, notPlannedReason = outsideReason, checkpoint = null)
+                } else {
+                    phase.copy(state = PlanPhase.State.CURRENT, challengeLeftOut = true, checkpoint = null)
+                }
+            }
+        capture(name, exam = original.copy(plan = original.plan.copy(phases = phases)))
+        compose.onNodeWithText("The Trickster isn't in your plan").assertExists()
+        if (outsideReason == "known") compose.onNodeWithText("Skipped · you already know it").assertExists()
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        paused: Boolean = false,
+        failure: ResumeFailure? = null,
+        examOver: Boolean = false,
+        exam: PlanPageState? = null,
     ) {
-        show(dark, moreContrast)
+        show(dark, moreContrast, paused, failure, examOver, exam)
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -713,8 +888,31 @@ class PlanScreenshots {
     private fun show(
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        paused: Boolean = false,
+        failure: ResumeFailure? = null,
+        examOver: Boolean = false,
+        exam: PlanPageState? = null,
     ) {
-        val page = page()
+        val page =
+            when {
+                exam != null -> {
+                    exam
+                }
+
+                paused -> {
+                    page().let { it.copy(goal = it.goal.copy(status = LearnerSummaryGoal.Status.PAUSED)) }
+                }
+
+                examOver -> {
+                    learnerSummary(kind = "exam", title = "ENEM").let {
+                        PlanPageState(it.goals.first(), pastDatePlan(), it)
+                    }
+                }
+
+                else -> {
+                    page()
+                }
+            }
         compose.setContent {
             val navigator = rememberAppNavigator()
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
@@ -727,6 +925,7 @@ class PlanScreenshots {
                         resume = Resume.Plain,
                         isSaving = false,
                         onSetStatus = {},
+                        resumeFailure = failure,
                         onAdjust = {},
                     )
                 }
@@ -741,7 +940,7 @@ class PlanScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 
     private companion object {
@@ -781,3 +980,26 @@ private val PAUSED = CHECKED.replace(""""sessionQuestions":"on"""", """"sessionQ
 private fun focusTest(json: String) = ApiJson.decodeFromString<com.zoonk.api.models.FocusTestSummary>(json)
 
 private fun com.zoonk.api.models.Plan.withFocusTest(json: String) = copy(focusTest = focusTest(json))
+
+/** A plan whose date passed, which a plan only is with a date in the past. */
+private fun pastDatePlan() =
+    plan(""""status":{"kind":"pastDate","lessons":4}""").let {
+        it.copy(schedule = it.schedule.copy(targetDate = LocalDate(2026, 10, 20)))
+    }
+
+/** The learn plan's phases and chapters named as an ENEM plan's, so an exam's renders read as that exam. */
+private val ENEM_NAMES =
+    mapOf(
+        "Python basics" to "Mathematics",
+        "Variables and types" to "Functions",
+        "Data structures" to "Natural sciences",
+        "Lists" to "Cells",
+        "Dictionaries" to "Genetics",
+        "Sets and tuples" to "Ecology",
+        "Web apps" to "Languages",
+        "Flask" to "Reading and interpretation",
+        "Projects" to "Humanities",
+    )
+
+private fun PlanPhase.asEnem() =
+    copy(name = ENEM_NAMES[name] ?: name, chapters = chapters.map { it.copy(title = ENEM_NAMES[it.title] ?: it.title) })

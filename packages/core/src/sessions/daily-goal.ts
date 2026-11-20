@@ -13,7 +13,7 @@ export type PlanDay = { goalMinutes: number; kind: WeekDayKind };
 
 export type WeekDay = PlanDay & {
   date: Date;
-  /** Reached the day's time goal, or finished the day's session in less time. */
+  /** Reached the planned time or finished the session; any study completes a day with no planned time. */
   hitGoal: boolean;
   isToday: boolean;
   minutes: number;
@@ -54,37 +54,40 @@ function includesDate(dates: readonly Date[], date: Date): boolean {
   return dates.some((item) => item.getTime() === date.getTime());
 }
 
-/** Monday through Sunday; finishing the day's session satisfies the daily goal even early, while rest days have no goal to hit. */
+/** Monday through Sunday, with the same completion rule for planned and unplanned study. */
 export function getWeekDays({
   days,
   finishedDates = [],
   getPlanDay,
   today,
+  weekStart = getStartOfWeek(today),
 }: {
   days: readonly { date: Date; seconds: number }[];
   /** Days whose study session finished, as UTC-midnight labels. */
   finishedDates?: readonly Date[];
   getPlanDay: (date: Date) => PlanDay;
   today: Date;
+  weekStart?: Date;
 }): WeekDay[] {
-  const start = getStartOfWeek(today).getTime();
+  const start = weekStart.getTime();
 
   return Array.from({ length: DAYS_PER_WEEK }, (_, index) => {
     const date = new Date(start + index * MS_PER_DAY);
     const seconds = days.find((day) => day.date.getTime() === date.getTime())?.seconds ?? 0;
     const minutes = toStudiedMinutes(seconds);
     const { goalMinutes, kind } = getPlanDay(date);
+    const finished = includesDate(finishedDates, date);
+    const studied = finished || seconds > 0;
 
     return {
       date,
       goalMinutes,
       hitGoal:
-        goalMinutes > 0 &&
-        (includesDate(finishedDates, date) || seconds >= goalMinutes * SECONDS_PER_MINUTE),
+        studied && (goalMinutes === 0 || finished || seconds >= goalMinutes * SECONDS_PER_MINUTE),
       isToday: date.getTime() === today.getTime(),
       kind,
       minutes,
-      studied: includesDate(finishedDates, date) || seconds > 0,
+      studied,
     };
   });
 }

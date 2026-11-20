@@ -166,8 +166,6 @@ function AsTextToggle({
   return (
     <Button
       aria-pressed={pressed}
-      // From 72rem the outline shows beside the picture, so only an "on" toggle stays, to turn off.
-      className={cn(!pressed && "min-[72rem]:hidden")}
       onClick={() => onChange(!pressed)}
       size="icon-bar"
       variant={pressed ? "secondary" : "ghost"}
@@ -197,7 +195,7 @@ export function MindMapViewer({
   const t = useExtracted();
   const descriptionId = useId();
   const alt = useMindMapAlt({ outline, title });
-  const barButton = buttonVariants({ size: "icon-bar", variant: "ghost" });
+  const barButton = buttonVariants({ edge: "end", size: "icon-bar", variant: "ghost" });
   const [asText, setAsText] = useState(false);
   const zoom = usePanZoom({ active: open && image !== null && !asText });
 
@@ -218,8 +216,8 @@ export function MindMapViewer({
           className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out fixed inset-0 z-50 flex flex-col duration-150 motion-reduce:animate-none"
           data-slot="mind-map-viewer"
         >
-          <header className="flex items-center gap-2 px-2 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2">
-            <DialogClose render={<Button size="icon-bar" variant="ghost" />}>
+          <header className="flex items-center gap-2 px-4 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2">
+            <DialogClose render={<Button edge="start" size="icon-bar" variant="ghost" />}>
               <XIcon aria-hidden="true" />
               <span className="sr-only">{t("Close")}</span>
             </DialogClose>
@@ -246,25 +244,13 @@ export function MindMapViewer({
           {image && <MindMapDescription id={descriptionId} outline={outline} />}
 
           {image && !asText && (
-            <div className="flex min-h-0 flex-1">
-              <div className="flex min-w-0 flex-1 flex-col">
-                <ZoomFrame
-                  alt={alt}
-                  descriptionId={outline ? descriptionId : undefined}
-                  image={image}
-                  zoom={zoom}
-                />
-              </div>
-
-              {outline && (
-                <aside
-                  aria-hidden="true"
-                  className="border-border hidden w-80 shrink-0 overflow-y-auto border-l px-6 py-6 min-[72rem]:block"
-                  data-slot="mind-map-viewer-outline"
-                >
-                  <MindMapOutline outline={outline} />
-                </aside>
-              )}
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+              <ZoomFrame
+                alt={alt}
+                descriptionId={outline ? descriptionId : undefined}
+                image={image}
+                zoom={zoom}
+              />
             </div>
           )}
 

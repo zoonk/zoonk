@@ -1,7 +1,6 @@
 "use client";
 
 import { type MockAnswer, type MockAnswerInput } from "@zoonk/core/exams/mocks/answer-contract";
-import { isMockAnswerPresent } from "@zoonk/core/exams/mocks/answer-presence";
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { settleWithin } from "@zoonk/utils/timeout";
@@ -14,10 +13,6 @@ const TEXT_SAVE_DELAY_MS = 1500;
 
 /** Leaving waits at most this long for answers going out, so ✕ always leaves, even offline. */
 const LEAVE_WAIT_MS = 5000;
-
-export function isDraftAnswered(draft: MockDraft | undefined): boolean {
-  return isMockAnswerPresent(draft?.answer);
-}
 
 function toDrafts(view: MockView): Drafts {
   return Object.fromEntries((view.current?.drafts ?? []).map((draft) => [draft.itemId, draft]));
@@ -35,6 +30,8 @@ export function useMockDrafts({
   view: MockView;
 }) {
   const [drafts, setDrafts] = useState<Drafts>(() => toDrafts(view));
+  const [failedDrafts, setFailedDrafts] = useState<Partial<Drafts>>({});
+  const [savedDrafts, setSavedDrafts] = useState<Drafts>(drafts);
   const [saveStatus, setSaveStatus] = useState<DraftSaveStatus>("saved");
   const shown = useRef<{ at: number; itemId: string } | null>(null);
   const unsavedText = useRef<MockDraft | null>(null);
@@ -45,7 +42,15 @@ export function useMockDrafts({
     () =>
       createDraftSaveQueue<MockDraft>({
         keyOf: (draft) => draft.itemId,
+        onFailed: (draft) => setFailedDrafts((current) => ({ ...current, [draft.itemId]: draft })),
         onStatus: setSaveStatus,
+        onStored: (draft) => {
+          setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft }));
+
+          setFailedDrafts((current) =>
+            current[draft.itemId] ? { ...current, [draft.itemId]: undefined } : current,
+          );
+        },
         save,
       }),
     [save],
@@ -89,6 +94,7 @@ export function useMockDrafts({
     answer: (itemId: string, answer: MockAnswer | null) =>
       persist({ ...withTimeSpent(itemId), answer }),
     drafts,
+    failedDrafts,
     flush: () => {
       saveText();
       return queue.idle();
@@ -113,10 +119,15 @@ export function useMockDrafts({
     },
     reset: (next: MockView) => {
       shown.current = null;
-      setDrafts(toDrafts(next));
+      const nextDrafts = toDrafts(next);
+      setDrafts(nextDrafts);
+      setFailedDrafts({});
+      setSavedDrafts(nextDrafts);
+      queue.forgetRefusals();
     },
     retry: () => queue.retryNow(),
     saveStatus,
+    savedDrafts,
     show: (itemId: string) => {
       shown.current = { at: Date.now(), itemId };
     },

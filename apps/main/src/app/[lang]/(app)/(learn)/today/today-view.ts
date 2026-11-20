@@ -16,13 +16,11 @@ import {
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
-import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import {
   type TodayView,
   type TodayViewResult,
   getTodayView,
 } from "@zoonk/core/view-models/today/get";
-import { type TodaySyllabus } from "@zoonk/learn/today";
 
 /** Worked out here with core's rules, so the browser carries them with the step instead of building refs. */
 type TodayStep = { ref: DayBlockRef; screen: DayBlockScreen };
@@ -36,7 +34,6 @@ export type TodayScreenData = {
   mocks: MockOptionsView | null;
   planEnd: string | null;
   steps: TodayStep[];
-  syllabus: TodaySyllabus | null;
   today: TodayView;
 };
 
@@ -70,7 +67,7 @@ async function loadPlanEnd(today: TodayView): Promise<string | null> {
   return result.status === "ready" ? result.view.plan.estimate.endDate : null;
 }
 
-/** Offered to every learner: without Plus the row is marked Plus and its chooser says what Plus unlocks. */
+/** Offered to every learner: the chooser says what a subscription unlocks. */
 async function loadTodayMocks(goal: TodayView["goal"]) {
   if (goal.kind !== "exam") {
     return null;
@@ -82,36 +79,19 @@ async function loadTodayMocks(goal: TodayView["goal"]) {
   return view && (view.running || view.options.length > 0) ? view : null;
 }
 
-/** Only what the rows draw goes to the browser, never every topic and chapter. */
-async function loadSyllabus(goalId: string): Promise<TodaySyllabus | null> {
-  const result = await getSyllabusView({ goalId });
-
-  if (result.status !== "ready") {
-    return null;
-  }
-
-  const { goal, kind, lessons, subjects } = result.syllabus;
-
-  return {
-    goal,
-    kind,
-    lessons,
-    subjects: subjects.map((subject) => ({
-      key: subject.key,
-      lessonsDone: subject.lessonsDone,
-      lessonsKnown: subject.lessonsKnown,
-      lessonsTotal: subject.lessonsTotal,
-      name: subject.name,
-      notPlannedReason: subject.notPlannedReason,
-      preparation: subject.preparation,
-      shortName: subject.shortName,
-    })),
-  };
-}
-
+/** Lessons the plan skipped because the learner already knew them, for Today's progress cells. */
 async function countOpenMistakes(goalId: string): Promise<MistakeAvailability> {
   const result = await listCurrentUserMistakes({ goalId, limit: 1, offset: 0, status: "open" });
   return result.status === "ready" ? result.availability : { ready: 0, tomorrow: 0 };
+}
+
+export async function loadTodayPractice(goalId: string) {
+  const [completedLessons, mistakes] = await Promise.all([
+    hasCompletedLessons(goalId),
+    countOpenMistakes(goalId),
+  ]);
+
+  return { completedLessons, mistakes };
 }
 
 /** Only reads: a day not opened yet is shown as it will open, and opening it is the learner's own tap. */
@@ -124,18 +104,15 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
 
   const { today } = result;
 
-  const [buddy, planEnd, readAt, mocks, mistakes, completedLessons, language, syllabus, belt] =
-    await Promise.all([
-      getLearnerBuddy(),
-      loadPlanEnd(today),
-      getReadAt(),
-      loadTodayMocks(today.goal),
-      countOpenMistakes(today.goal.id),
-      hasCompletedLessons(today.goal.id),
-      loadLanguageToday(today.goal),
-      loadSyllabus(today.goal.id),
-      getBeltLevel(),
-    ]);
+  const [buddy, planEnd, readAt, mocks, practice, language, belt] = await Promise.all([
+    getLearnerBuddy(),
+    loadPlanEnd(today),
+    getReadAt(),
+    loadTodayMocks(today.goal),
+    loadTodayPractice(today.goal.id),
+    loadLanguageToday(today.goal),
+    getBeltLevel(),
+  ]);
 
   const steps = today.session.blocks.map((block) => ({
     ref: toDayBlockRef(block),
@@ -146,13 +123,11 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
     data: {
       brainPower: belt?.totalBrainPower ?? 0,
       buddy,
-      completedLessons,
+      ...practice,
       language,
-      mistakes,
       mocks,
       planEnd,
       steps,
-      syllabus,
       today,
     },
     day: getTodayDayKey(today),

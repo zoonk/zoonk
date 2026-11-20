@@ -7,6 +7,7 @@ import { mockAccountSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { SESSION_NOW, sessionGoalFixture } from "../sessions/_test-utils/session-goal";
 import { finishStudyBlock } from "../sessions/finish-study-block";
+import { getStudySessionSummary } from "../sessions/get-study-session-summary";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { claimStudyReminderOffer } from "./claim-study-reminder-offer";
 import { updateStudyReminder } from "./update-study-reminder";
@@ -42,7 +43,11 @@ async function finishFirstLesson() {
     userId: user.id,
   });
 
-  return { finish: () => finishStudyBlock(request), user };
+  return {
+    finish: () => finishStudyBlock(request),
+    summary: () => getStudySessionSummary({ input: {}, sessionId: today.session.id }),
+    user,
+  };
 }
 
 describe("reminder offer after a plan lesson", () => {
@@ -65,6 +70,19 @@ describe("reminder offer after a plan lesson", () => {
     await claimStudyReminderOffer({ locale: "en" });
 
     await expect(lesson.finish()).resolves.toMatchObject({ completion: { reminderOffer: null } });
+  });
+
+  it("offers reminders on the day's summary until the offer is shown", async () => {
+    const lesson = await finishFirstLesson();
+    await lesson.finish();
+
+    await expect(lesson.summary()).resolves.toMatchObject({
+      summary: { reminderOffer: { time: "07:30", timeZone: "UTC" } },
+    });
+
+    await claimStudyReminderOffer({ locale: "en" });
+
+    await expect(lesson.summary()).resolves.toMatchObject({ summary: { reminderOffer: null } });
   });
 
   it("doesn't offer reminders a learner already turned on", async () => {

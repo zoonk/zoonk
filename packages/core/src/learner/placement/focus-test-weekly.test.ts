@@ -5,6 +5,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { adaptPlanFromMock } from "../../exams/mocks/adapt-plan-from-mock";
 import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
+import { seenQuote } from "../../plans/_test-utils/seen-quote";
 import {
   parsePlanChangePayload,
   toPlanChangePayload,
@@ -50,7 +51,7 @@ async function setup(
     await decidePlanChange({
       changeId: changed.changeId,
       goalId: goal.id,
-      input: { status: "applied" },
+      input: { quote: await seenQuote(changed.changeId), status: "applied" },
     });
   } else if (source === "learner") {
     await changeGoalPlan({
@@ -322,7 +323,11 @@ describe("weekly reviews of a system-owned focus", () => {
     expect(proposal).toBeDefined();
 
     await expect(
-      decidePlanChange({ changeId: proposal!.id, goalId: goal.id, input: { status: "applied" } }),
+      decidePlanChange({
+        changeId: proposal!.id,
+        goalId: goal.id,
+        input: { quote: await seenQuote(proposal!.id), status: "applied" },
+      }),
     ).resolves.toMatchObject({ status: "updated" });
 
     await expect(

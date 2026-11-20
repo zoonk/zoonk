@@ -10,6 +10,9 @@ struct CertificateNameEditor: View {
   @Binding var name: String
   /// Empty when the learner hasn't given a name yet.
   let current: String
+  /// Kept by the screen, which ends it when the learner leaves: folding or unfolding draws this
+  /// editor again.
+  let saving: VisitRequest<ProfileSave>
   /// After a save, or Esc while changing it.
   let onDone: () -> Void
 
@@ -37,8 +40,7 @@ struct CertificateNameEditor: View {
         TextField(
           text: $name,
           prompt: Text(
-            "Your full name", tableName: "Certificates",
-            comment: "Placeholder of the field for the name on the learner's certificates")
+            "Your full name", tableName: "Certificates")
         ) {
           label
         }
@@ -48,12 +50,13 @@ struct CertificateNameEditor: View {
         .focused($isFocused)
         .onSubmit(save)
 
-        BusyButton(isBusy: session.isWorking, icon: .check, action: save) {
+        BusyButton(isBusy: session.isWorking, action: save) {
           Text("Save", tableName: "Certificates", comment: "Saves the name on the certificates")
         }
         .buttonStyle(.mainAction)
         .disabled(!canSave && !session.isWorking)
       }
+      .controlsShareHeight()
 
       Group {
         if isTooLong {
@@ -63,13 +66,13 @@ struct CertificateNameEditor: View {
           )
           .foregroundStyle(.destructiveText)
         } else {
-          hint
+          NameHint()
             .foregroundStyle(.mutedForeground)
         }
       }
       .typeStyle(.note)
 
-      AccountFailureMessage(failure: session.failure)
+      AccountFailureMessage(failure: saving.outcome?.failure)
     }
     .onKeyPress(.escape) {
       guard !isFirst else {
@@ -87,21 +90,9 @@ struct CertificateNameEditor: View {
   private var label: Text {
     isFirst
       ? Text(
-        "Your name, as it should appear", tableName: "Certificates",
-        comment: "Label of the field asking for the name to print on a certificate")
+        "Your name, as it should appear", tableName: "Certificates")
       : Text(
-        "Name on your certificates", tableName: "Certificates",
-        comment: "Label of the field that changes the name on the learner's certificates")
-  }
-
-  private var hint: Text {
-    isFirst
-      ? Text(
-        "Your certificates and your buddy use this name. You can change it anytime.",
-        tableName: "Certificates", comment: "Under the field asking for the learner's name")
-      : Text(
-        "Your certificates and your buddy use this name.", tableName: "Certificates",
-        comment: "Under the field that changes the learner's name")
+        "Name on your certificates", tableName: "Certificates")
   }
 
   private func save() {
@@ -109,8 +100,10 @@ struct CertificateNameEditor: View {
       return
     }
 
-    Task {
-      if await session.updateProfile(name: trimmed) {
+    saving.run { [session, trimmed] in
+      await session.updateProfile(name: trimmed)
+    } then: { outcome in
+      if outcome == .saved {
         onDone()
       }
     }

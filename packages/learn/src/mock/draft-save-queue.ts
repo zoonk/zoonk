@@ -1,4 +1,4 @@
-/** `refused` holds until a later answer is stored. */
+/** `refused` holds until every refused question's answer is stored. */
 export type DraftSaveStatus = "refused" | "retrying" | "saved" | "saving";
 
 const FIRST_RETRY_MS = 1000;
@@ -15,11 +15,16 @@ function getRetryDelay(attempt: number): number {
  */
 export function createDraftSaveQueue<TDraft>({
   keyOf,
+  onFailed,
   onStatus,
+  onStored,
   save,
 }: {
   keyOf: (draft: TDraft) => string;
+  /** A refused answer, or one that didn't get through; it stays failed until it's stored. */
+  onFailed: (draft: TDraft) => void;
   onStatus: (status: DraftSaveStatus) => void;
+  onStored: (draft: TDraft) => void;
   /** True once stored, false when refused; rejects when it didn't get through. */
   save: (draft: TDraft) => Promise<boolean>;
 }) {
@@ -27,7 +32,7 @@ export function createDraftSaveQueue<TDraft>({
   const idleWaiters: (() => void)[] = [];
   let sending = false;
   let attempt = 0;
-  let refused = false;
+  const refused = new Set<string>();
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
   function getStatus(): DraftSaveStatus {
@@ -39,7 +44,7 @@ export function createDraftSaveQueue<TDraft>({
       return "saving";
     }
 
-    return refused ? "refused" : "saved";
+    return refused.size > 0 ? "refused" : "saved";
   }
 
   function isBusy() {
@@ -94,6 +99,10 @@ export function createDraftSaveQueue<TDraft>({
 
     sending = false;
 
+    if (!stored) {
+      onFailed(draft);
+    }
+
     if (stored === null) {
       keepForRetry(draft);
       scheduleRetry();
@@ -102,7 +111,14 @@ export function createDraftSaveQueue<TDraft>({
     }
 
     attempt = 0;
-    refused = !stored;
+
+    if (stored) {
+      refused.delete(keyOf(draft));
+      onStored(draft);
+    } else {
+      refused.add(keyOf(draft));
+    }
+
     await sendNext();
   }
 
@@ -118,6 +134,11 @@ export function createDraftSaveQueue<TDraft>({
       }
 
       void sendNext();
+    },
+    /** A handed-in section's answers can't be saved again, so its refusals have nothing left to ask. */
+    forgetRefusals() {
+      refused.clear();
+      settle();
     },
     /** Resolves once every answer given so far is stored or refused. */
     idle(): Promise<void> {

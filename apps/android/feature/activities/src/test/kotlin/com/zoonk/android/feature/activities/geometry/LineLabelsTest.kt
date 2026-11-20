@@ -3,6 +3,7 @@ package com.zoonk.android.feature.activities.geometry
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -30,6 +31,108 @@ class LineLabelsTest {
     ) = placeLineLabels(area, labels.toList(), marks, unit = 1f).map { requireNotNull(it) }
 
     @Test
+    fun movesOnlyTheNameCrossedByTheAnswer() {
+        val own = LabelSegment(Offset(22f, 104f), Offset(311f, 100f))
+        val other = LabelSegment(Offset(22f, 170f), Offset(311f, 160f))
+        val answer = LabelSegment(Offset(22f, 86f), Offset(311f, 86f))
+        val shown = listOf(LineLabel(true, own, size), LineLabel(true, other, size))
+        val before = placeChartLabels(area, shown, emptyList(), noMarks, 1f)
+        val after = placeChartLabels(area, shown, listOf(LineLabel(false, answer, size)), noMarks, 1f)
+
+        assertEquals(Rect(253f, 80f, 303f, 92f), before[0])
+        assertEquals(Rect(253f, 104f, 303f, 116f), after[0])
+        assertEquals(before[1], after[1])
+    }
+
+    @Test
+    fun keepsANameCloserToItsLineThanADottedGuide() {
+        val own = LabelSegment(Offset(22f, 104f), Offset(311f, 100f))
+        val guide = LabelSegment(Offset(22f, 76f), Offset(311f, 76f))
+        val marks = noMarks.copy(lines = listOf(guide))
+        val box = requireNotNull(placeChartLabels(area, listOf(LineLabel(true, own, size)), emptyList(), marks, 1f).single())
+
+        assertTrue(gap(box, own) < gap(box, guide))
+    }
+
+    @Test
+    fun crossedNameKeepsItsSideOfTheAnswerAt320DpWithLargestText() {
+        fun segment(
+            x: Float,
+            y: Float,
+            endX: Float,
+            endY: Float,
+        ) = LabelSegment(Offset(x, y), Offset(endX, endY))
+
+        val plot = Rect(0f, 0f, 230f, 248f)
+        val supply = segment(0f, 248f, 230f, 141f)
+        val demand = segment(0f, 50f, 214f, 248f)
+        val original = segment(0f, 229f, 230f, 121f)
+        val answer = segment(0f, 208f, 230f, 101f)
+        val guides = listOf(segment(0f, 182f, 140f, 182f), segment(140f, 182f, 140f, 248f))
+        val shown =
+            listOf(
+                LineLabel(true, supply, Size(55f, 23f)),
+                LineLabel(true, demand, Size(68f, 23f)),
+                LineLabel(false, original, Size(55f, 23f), isOptional = true),
+            )
+        val marks = noMarks.copy(lines = guides)
+        val before = placeChartLabels(plot, shown, emptyList(), marks, 1f)
+        val after = placeChartLabels(plot, shown, listOf(LineLabel(false, answer, Size(82f, 46f))), marks, 1f)
+        val box = requireNotNull(after[2])
+
+        assertTrue(gap(requireNotNull(before[2]), answer) < 1f)
+        assertEquals(before.take(2), after.take(2))
+        assertTrue(box.center.y > 208f - 107f * box.center.x / 230f)
+        assertTrue(gap(box, answer) >= 3f)
+        assertTrue(gap(box, original) < 40f)
+    }
+
+    @Test
+    fun movedLineDoesNotSeparateBeforeFromItsLineAt390Dp() {
+        fun line(
+            x: Float,
+            y: Float,
+            endX: Float,
+            endY: Float,
+        ) = LabelSegment(Offset(x, y), Offset(endX, endY))
+
+        val supply = line(1f, 218f, 326f, 134.8f)
+        val demand = line(1f, 64.4f, 301f, 218f)
+        val original = line(1f, 202.64f, 326f, 119.44f)
+        val answer = line(1f, 187.28f, 326f, 104.08f)
+        val shown =
+            listOf(
+                LineLabel(true, supply, Size(40f, 16f)),
+                LineLabel(true, demand, Size(49f, 16f)),
+                LineLabel(false, original, Size(38f, 16f), isOptional = true),
+            )
+        val marks =
+            noMarks.copy(
+                arrows = listOf(Rect(1f, 0f, 106f, 20f)),
+                lines =
+                    listOf(
+                        line(1f, 166.8f, 201f, 166.8f),
+                        line(201f, 166.8f, 201f, 218f),
+                        line(1f, 156.56f, 181f, 156.56f),
+                        line(181f, 156.56f, 181f, 218f),
+                    ),
+            )
+        val boxes =
+            placeChartLabels(
+                Rect(1f, 0f, 326f, 218f),
+                shown,
+                listOf(LineLabel(false, answer, Size(87f, 16f))),
+                marks,
+                1f,
+            )
+        val name = requireNotNull(boxes[2])
+
+        assertTrue(gap(name, answer) >= 3f)
+        assertTrue(name.center.y < 218f - 83.2f * (name.center.x - 1f) / 325f)
+        assertTrue(gap(name, original) < gap(name, supply))
+    }
+
+    @Test
     fun keepsANameOffItsLineWhereTheLineLeavesThroughTheChartsTop() {
         val segment = LabelSegment(Offset(22f, 222f), Offset(293f, 26f))
         val box = place(LineLabel(isUpper = true, segment, size)).single()
@@ -39,11 +142,11 @@ class LineLabelsTest {
     }
 
     @Test
-    fun putsALowerEndsNameUnderItsLine() {
+    fun putsADashedCopiesNameUnderTheUpperEndOfItsLine() {
         val segment = LabelSegment(Offset(22f, 150f), Offset(293f, 90f))
         val box = place(LineLabel(isUpper = false, segment, size)).single()
 
-        assertTrue("top ${box.top}", box.top > 150f)
+        assertTrue("top ${box.top}", box.top > 90f && box.top < 150f)
         assertTrue("gap ${gap(box, segment)}", gap(box, segment) >= 3f)
     }
 

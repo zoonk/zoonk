@@ -280,55 +280,62 @@ describe("the learner's data the buddy looks up", () => {
     });
   });
 
-  it("reads the account: Plus, the call time left, memory and preferences, with their pages", async () => {
-    const [{ goal, user }, free] = await Promise.all([
-      learnerWithGoal(),
-      learnerWithGoal({ open: false }),
-    ]);
+  it.each([600, 1200])(
+    "reads the account: Plus, the call time left, memory and preferences, with their pages",
+    async (seconds) => {
+      const [{ goal, user }, free] = await Promise.all([
+        learnerWithGoal(),
+        learnerWithGoal({ open: false }),
+      ]);
 
-    await Promise.all([
-      prisma.subscription.create({
-        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-      }),
-      learningProfileFixture({
-        activeGoalId: goal.id,
-        buddyKind: "noodle",
-        buddyName: "Pip",
-        memoryEnabled: false,
-        soundsEnabled: false,
-        userId: user.id,
-      }),
-      usageRecordsFixture({ count: 1, kind: "conversation", seconds: 600, userId: user.id }),
-      usageRecordsFixture({ count: 1, kind: "conversation", seconds: 900, userId: free.user.id }),
-    ]);
+      await Promise.all([
+        prisma.subscription.create({
+          data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+        }),
+        learningProfileFixture({
+          activeGoalId: goal.id,
+          buddyKind: "noodle",
+          buddyName: "Pip",
+          memoryEnabled: false,
+          soundsEnabled: false,
+          userId: user.id,
+        }),
+        usageRecordsFixture({ count: 1, kind: "conversation", seconds, userId: user.id }),
+        usageRecordsFixture({ count: 1, kind: "conversation", seconds: 900, userId: free.user.id }),
+      ]);
 
-    const rule = getUsageRule({ kind: "conversation", tier: "plus" });
-    mockSession(user.id);
-    const asked = await answering(goal.id);
+      const rule = getUsageRule({ kind: "conversation", tier: "plus" });
+      mockSession(user.id);
+      const asked = await answering(goal.id);
 
-    await expect(lookUp(asked, { what: "account" })).resolves.toStrictEqual({
-      callMinutesLeft: {
-        thisMonth: ((rule.monthSeconds ?? 0) - 600) / 60,
-        today: ((rule.daySeconds ?? 0) - 600) / 60,
-      },
-      link: { kind: "page", page: "settings" },
-      memory: { enabled: false, link: { kind: "page", page: "memory" } },
-      plan: { link: { kind: "page", page: "subscription" }, tier: "plus" },
-      preferences: { buddyName: "Pip", link: { kind: "page", page: "appearance" }, sounds: false },
-      status: "found",
-      what: "account",
-    });
+      await expect(lookUp(asked, { what: "account" })).resolves.toStrictEqual({
+        callMinutesLeft: {
+          last30Days: ((rule.rolling30Days ?? 0) - seconds) / 60,
+          today: ((rule.daySeconds ?? 0) - seconds) / 60,
+        },
+        link: { kind: "page", page: "settings" },
+        memory: { enabled: false, link: { kind: "page", page: "memory" } },
+        plan: { link: { kind: "page", page: "subscription" }, tier: "plus" },
+        preferences: {
+          buddyName: "Pip",
+          link: { kind: "page", page: "appearance" },
+          sounds: false,
+        },
+        status: "found",
+        what: "account",
+      });
 
-    mockSession(free.user.id);
-    const freeAsked = await answering(free.goal.id);
+      mockSession(free.user.id);
+      const freeAsked = await answering(free.goal.id);
 
-    await expect(lookUp(freeAsked, { what: "account" })).resolves.toMatchObject({
-      link: { kind: "page", page: "settings" },
-      memory: { enabled: true },
-      plan: { link: { kind: "page", page: "subscription" }, tier: "free" },
-      preferences: { buddyName: null, sounds: true },
-    });
-  });
+      await expect(lookUp(freeAsked, { what: "account" })).resolves.toMatchObject({
+        link: { kind: "page", page: "settings" },
+        memory: { enabled: true },
+        plan: { link: { kind: "page", page: "subscription" }, tier: "free" },
+        preferences: { buddyName: null, sounds: true },
+      });
+    },
+  );
 
   it("tells the week as the logbook does, against the week before, with the biggest step", async () => {
     const [{ goal, user }, other] = await Promise.all([learnerWithGoal(), userFixture()]);
@@ -341,6 +348,21 @@ describe("the learner's data the buddy looks up", () => {
       new Date(monday.getTime() + offset * MS_PER_DAY + hour * 3_600_000);
 
     await Promise.all([
+      learningEventFixture({
+        correctAnswers: 2,
+        goalId: goal.id,
+        incorrectAnswers: 1,
+        localDate: day(0),
+        seconds: 600,
+        userId: user.id,
+      }),
+      learningEventFixture({
+        correctAnswers: 1,
+        goalId: goal.id,
+        localDate: day(-3),
+        seconds: 300,
+        userId: user.id,
+      }),
       dailyProgressFixtureMany([
         {
           correctAnswers: 20,
@@ -399,18 +421,18 @@ describe("the learner's data the buddy looks up", () => {
           rightTo: 100,
           skill: skill.name,
         },
-        lastWeek: { averageMinutes: 30, daysStudied: 1, minutes: 30, questions: 10 },
+        lastWeek: { averageMinutes: 5, daysStudied: 1, minutes: 5, questions: 1 },
         link: { kind: "page", page: "logbook" },
         next: null,
         phasesFinished: [],
         status: "found",
         week: {
-          averageMinutes: 35,
-          daysStudied: 2,
+          averageMinutes: 10,
+          daysStudied: 1,
           end: "2026-10-04",
           finished: true,
-          minutes: 70,
-          questions: 37,
+          minutes: 10,
+          questions: 3,
           start: "2026-09-28",
         },
         what: "weekly",

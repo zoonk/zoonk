@@ -1,23 +1,23 @@
 "use client";
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
-import {
-  TASK_ASIDE_PLACE_CLASS,
-  TASK_WRAPPING_ACTION_CLASS,
-  TaskActionLabel,
-} from "@zoonk/learn/task-layout";
-import { Button } from "@zoonk/ui/components/button";
+import { TASK_ASIDE_PLACE_CLASS, TASK_GUTTER_CLASS } from "@zoonk/learn/task-layout";
+import { BOTTOM_BAR_ROOM_CLASS } from "@zoonk/ui/components/bottom-bar";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Empty } from "@zoonk/ui/components/empty";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon, MessageCircleQuestionIcon } from "lucide-react";
+import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
 import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
+import { AskTutorFace } from "./ask-tutor-face";
 import { QuestionComposer } from "./lesson-question-composer";
 import { isAboutCheckedAnswer } from "./lesson-question-context";
 import { LessonQuestionNavigationContext } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
-import { QuestionThread } from "./lesson-question-thread";
+import { QuestionThread, TutorIntro } from "./lesson-question-thread";
 import { type TutorBuddy, useTutorBuddy } from "./tutor-buddy";
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionController } from "./use-lesson-questions";
@@ -88,18 +88,17 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
   const { loginHref } = buddy.navigation;
 
   return (
-    <a
-      className="bg-card ring-input rounded-option text-muted-foreground hover:text-foreground flex min-h-11 items-center gap-2.5 px-2.5 text-sm ring-1 transition-colors ring-inset"
-      href={loginHref}
-    >
-      <span
-        aria-hidden="true"
-        className="flex size-5.5 shrink-0 items-center justify-center *:size-5.5!"
+    <div className="flex flex-col gap-2">
+      {!buddy.docked && (
+        <p className="text-muted-foreground text-sm">{t("Questions need a free account")}</p>
+      )}
+      <DocumentLink
+        className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full")}
+        href={loginHref}
       >
-        {buddy.identity.avatar}
-      </span>
-      {t("Create a free account to ask questions")}
-    </a>
+        {t("Create a free account")}
+      </DocumentLink>
+    </div>
   );
 }
 
@@ -115,7 +114,7 @@ function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <TutorSuggestions
-      className="bg-background px-5 pb-3"
+      className="bg-background px-frame pb-3"
       onSelect={(suggestion) => buddy.ask(suggestion)}
       suggestions={suggestions}
     />
@@ -139,14 +138,15 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
       )}
       data-slot="tutor-docked-conversation"
     >
-      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15">
+      <div className="px-frame flex h-13 shrink-0 items-center justify-between gap-3 xl:h-15">
         <Button
-          className="text-muted-foreground -ml-1 px-2"
+          className="text-muted-foreground"
+          edge="start"
           onClick={back}
           size="sm"
           variant="ghost"
         >
-          <ChevronLeftIcon aria-hidden="true" />
+          <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
           {buddy.context.kind === "item"
             ? t("Back")
             : t({
@@ -183,6 +183,11 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <LessonQuestionNavigationContext value={buddy.navigation}>
+      {/* Only while nothing comes before it in the side panel, such as a lesson's recap. */}
+      <Empty className="not-first:hidden" data-slot="tutor-intro">
+        <TutorIntro identity={buddy.identity} />
+      </Empty>
+
       {buddy.docked && <DockedConversation buddy={buddy} />}
 
       <div
@@ -192,7 +197,7 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
       >
         {suggests && <DockSuggestions buddy={buddy} />}
 
-        <div className="bg-background px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className={cn("bg-background px-frame", TASK_GUTTER_CLASS, BOTTOM_BAR_ROOM_CLASS)}>
           {canAskQuestions ? <DockComposer buddy={buddy} /> : <DockSignUp buddy={buddy} />}
         </div>
       </div>
@@ -219,7 +224,7 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
         count,
         name: buddy.identity.name,
       })}
-      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area relative -mr-1 inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-solid"
+      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring/50 hit-area edge relative -me-(--edge-pull) inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none select-none [--edge-text-end:--spacing(1)] [--icon-size:--spacing(3.5)] focus-visible:outline-3 focus-visible:outline-solid"
       onClick={() => buddy.open()}
       type="button"
     >
@@ -235,12 +240,13 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
   );
 }
 
-export function TutorConversationLink({ fallback }: { fallback: React.ReactNode }) {
+export function TutorConversationLink({ fallback = null }: { fallback?: React.ReactNode }) {
   const buddy = useTutorBuddy();
   return buddy ? <ConversationLink buddy={buddy} fallback={fallback} /> : fallback;
 }
 
-export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
+/** One size in every state, so a miss never resizes the main action beside it. */
+export function TutorAskButton() {
   const t = useExtracted();
   const buddy = useTutorBuddy();
 
@@ -250,21 +256,6 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
 
   const label = t("Ask {name}", { name: buddy.identity.name });
 
-  if (buddy.missed && !quiet) {
-    return (
-      <Button
-        className={cn(TASK_WRAPPING_ACTION_CLASS, "with-aside:hidden ml-auto lg:ml-0")}
-        onClick={() => buddy.open()}
-        size="lg"
-        type="button"
-        variant="outline"
-      >
-        <MessageCircleQuestionIcon aria-hidden="true" />
-        <TaskActionLabel>{label}</TaskActionLabel>
-      </Button>
-    );
-  }
-
   return (
     <Tooltip>
       <TooltipTrigger
@@ -272,14 +263,15 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
         onClick={() => buddy.open()}
         render={
           <Button
-            className="with-aside:hidden ml-auto size-11 shrink-0 lg:ml-0"
-            size="icon"
+            className="with-aside:hidden h-11 shrink-0"
+            size="lg"
             type="button"
             variant="outline"
           />
         }
       >
-        <MessageCircleQuestionIcon aria-hidden="true" />
+        <AskTutorFace identity={buddy.identity} />
+        {t("Ask")}
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>

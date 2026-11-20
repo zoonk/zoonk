@@ -1,3 +1,4 @@
+import { USAGE_PERIODS } from "@zoonk/core/entitlements/contract";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
 import {
   type MockOptionView,
@@ -17,7 +18,7 @@ const estimatedMinutesSchema = z
   .min(1)
   .meta({
     description:
-      "About how long it takes: learners' real pace on this exam's mocks, or the exam's own pace until there's enough of it; never more than `minutes`",
+      "About how long it usually takes: learners' real pace per answer on this exam's mocks, never more than `minutes`. Equal to `minutes` when there's no estimate for the whole mock (too few answers yet, or a written or spoken part, which no answer pace measures).",
   });
 
 const mockOptionSchema = mockShapeSchema
@@ -28,7 +29,7 @@ const mockOptionSchema = mockShapeSchema
       .nullable()
       .meta({
         description:
-          "The exam day's sections it sits, by the notice's names (Listening, Reading), when it leaves one out that isn't a written part (IELTS's Speaking): say what it covers. Null when it sits every such section, and for a subject's mock",
+          "The exam day's sections it sits, by the notice's names (Listening, Reading), when it leaves one out that isn't a written part (IELTS's Speaking). Null when it sits every such section, and for a subject's mock",
       }),
     estimatedMinutes: estimatedMinutesSchema,
     leftOut: mockLeftOutSchema,
@@ -59,7 +60,7 @@ export const mockOptionsResponseSchema = z
       .enum(["open", "plusRequired"])
       .meta({
         description:
-          "`plusRequired`: every mock exam comes with Plus; show the options with what it takes",
+          "`plusRequired`: every mock exam comes with Plus, and the learner's plan doesn't include them",
       }),
     examDocument: examDocumentSchema,
     examName: z.string(),
@@ -74,7 +75,7 @@ export const mockOptionsResponseSchema = z
       .array(mockOptionSchema)
       .meta({
         description:
-          "Each exam day in full, half of the day in turn, then each objective subject, biggest first",
+          "Each exam day in full, then half of each exam day, then each objective subject, biggest first",
       }),
     running: z
       .object({ id: uuidSchema(), purpose: mockPurposeSchema, shape: mockShapeSchema.nullable() })
@@ -89,6 +90,14 @@ export const mockOptionsResponseSchema = z
 
 export const anytimeMockResponseSchema = z
   .object({
+    availableAt: z.iso
+      .datetime()
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "For `short` when the rolling question-writing cap stopped it: when the full mock's questions can be written; absent otherwise",
+      }),
     examQuestions: z
       .number()
       .int()
@@ -101,12 +110,12 @@ export const anytimeMockResponseSchema = z
         description: "The mock's id (GET /v1/mocks/{id}); null for needsQuestions and short",
       }),
     limit: z
-      .enum(["day", "month", "total"])
+      .enum(USAGE_PERIODS)
       .nullable()
       .optional()
       .meta({
         description:
-          "For `short`: the plan's fair use for new mock questions is used for the day or the month, so new ones can be written once it renews; null when there's nothing more to write now",
+          "For `short`: the fair use for new mock questions that is used up, so new ones can be written once it renews; null when there's nothing more to write now",
       }),
     minutes: z
       .number()
@@ -124,7 +133,7 @@ export const anytimeMockResponseSchema = z
       .enum(["started", "running", "needsQuestions", "short"])
       .meta({
         description:
-          "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again (with `acceptFewer` after the run). `short`: the bank holds well under the questions picked and none can be written now: tell the learner how many it asks of the exam's and in how long, and start it with `acceptFewer` if they want",
+          "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again with `afterWriting`. `short`: the bank holds well under the questions picked and none can be written now (or the run just wrote what it could): it can ask `questions` of `examQuestions`, in `minutes`, and `acceptFewer` starts it with those once the learner agreed",
       }),
   })
   .meta({ id: "AnytimeMock" });
@@ -141,7 +150,7 @@ export const mockQuestionsGenerationSchema = z
       .enum(["ready", "preparing", "generating"])
       .meta({
         description:
-          "`ready`: start the mock now with `acceptFewer`: the bank holds its questions, or the plan's fair use for new questions is used for now, so it asks what the bank has (see `startAnytimeMock`). `preparing`: the goal's skill map is still being drawn; ask again in a few seconds. `generating`: follow the run's stream until `mockQuestionsReady`, then start the mock with `acceptFewer`",
+          "`ready`: start the mock now with `afterWriting`: the bank holds its questions, or the plan's fair use for new questions is used for now, so it asks what the bank has or answers `short` (see `startAnytimeMock`). `preparing`: the goal's skill map is still being drawn; ask again in a few seconds. `generating`: follow the run's stream until `mockQuestionsReady`, then start the mock with `afterWriting`",
       }),
   })
   .meta({ id: "MockQuestionsGeneration" });

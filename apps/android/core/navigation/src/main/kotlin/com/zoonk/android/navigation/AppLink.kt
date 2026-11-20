@@ -105,10 +105,10 @@ object AppLink {
     fun webUrl(
         page: AppRoute.WebPage,
         language: String,
-    ): String = pageUrl(page.path, language)
+    ): String = webUrl(page.path, language)
 
     /** One of main's pages by its [path] without the language, in [language] when main has it. */
-    fun pageUrl(
+    fun webUrl(
         path: String,
         language: String,
     ): String {
@@ -321,6 +321,7 @@ object AppLink {
         when (page) {
             "appearance" -> AppRoute.Preferences
             "memory" -> AppRoute.Memory
+            "privacy" -> AppRoute.PrivacySettings
             "reminders" -> AppRoute.Reminders
             "about-you" -> AppRoute.AboutYou
             else -> null

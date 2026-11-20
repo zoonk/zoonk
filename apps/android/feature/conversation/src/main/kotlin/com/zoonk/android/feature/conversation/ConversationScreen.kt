@@ -47,6 +47,8 @@ import com.zoonk.android.feature.session.ReachedFacts
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -170,6 +172,12 @@ internal fun ConversationContent(
     val load by model.conversation.collectShown()
     val scope = rememberCoroutineScope()
 
+    OnVisitEnd(model, onEnd = model::endVisit)
+    ActOn(model.againStarted) { id ->
+        exits.close()
+        exits.open(AppRoute.Conversation(id.toString(), from = if (fromExam) FROM_EXAM else null))
+    }
+
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
             TaskScaffold(onClose = exits::close) { padding -> PageLoading(Modifier.padding(padding)) }
@@ -217,7 +225,7 @@ private fun Conversation(
     // unless a dropped call is left to save.
     val launcher =
         rememberCallLauncher(onBlocked = model::cancel) { microphone, takeover -> model.start(conversation, microphone, takeover) }
-    val onSeePlus = { exits.open(AppRoute.Subscription) }
+    val onSubscribe = { exits.open(AppRoute.Subscription) }
     LaunchedEffect(model) { if (startWith != null && result == null) model.startOnce(conversation, startWith) }
 
     val examTask = conversation.examTask
@@ -236,12 +244,7 @@ private fun Conversation(
             tryAgain =
                 again?.let { request ->
                     TryAgain(
-                        onStart = {
-                            model.startAgain(request) { id ->
-                                exits.close()
-                                exits.open(AppRoute.Conversation(id.toString(), from = if (fromExam) FROM_EXAM else null))
-                            }
-                        },
+                        onStart = { model.startAgain(request) },
                         starting = model.startingAgain,
                         failed = model.startAgainFailed,
                         writing = model.againWriting,
@@ -287,7 +290,7 @@ private fun Conversation(
                             speech = speech,
                             onContinue = exits::close,
                             onClose = exits::close,
-                            onSeePlus = onSeePlus,
+                            onSubscribe = onSubscribe,
                             dayMoment = dayMoment,
                         )
                     }
@@ -306,7 +309,7 @@ private fun Conversation(
             onRetry = { launcher.start(false) },
             onTakeover = { launcher.start(true) },
             onCreateAccount = { exits.open(AppRoute.Login) },
-            onSeePlus = onSeePlus,
+            onSubscribe = onSubscribe,
         )
     val dropped =
         if (call != null &&
@@ -326,13 +329,13 @@ private fun Conversation(
                     onTakeover = problemActions.onTakeover,
                     onTypeInstead = launcher.typeInstead,
                     onCreateAccount = problemActions.onCreateAccount,
-                    onSeePlus = onSeePlus,
+                    onSubscribe = onSubscribe,
                 )
             DroppedCallScreen(dropped, callState.limit, conversation.character.name, title, actions)
         }
 
         conversation.locked || callState?.failure == LiveCallFailure.PlusRequired -> {
-            CallIntro(intro, CallIntroStart.PlusRequired, launcher = null, onSeePlus = onSeePlus, onClose = exits::close)
+            CallIntro(intro, CallIntroStart.PlusRequired, launcher = null, onSubscribe = onSubscribe, onClose = exits::close)
         }
 
         callState == null && examTask != null -> {
@@ -343,7 +346,7 @@ private fun Conversation(
         }
 
         callState == null -> {
-            CallIntro(intro, CallIntroStart.Idle, launcher, onSeePlus = onSeePlus, onClose = exits::close)
+            CallIntro(intro, CallIntroStart.Idle, launcher, onSubscribe = onSubscribe, onClose = exits::close)
         }
 
         save == CallSave.Ended || save == CallSave.TakenOver -> {
@@ -366,9 +369,10 @@ private fun Conversation(
             ConversationLive(
                 conversation = conversation,
                 call = callState,
+                continuing = call.continuing,
                 actions =
                     LiveCallActions(
-                        onEnd = { if (callState.phase == LiveCallPhase.Connecting) model.cancel() else call.hangUp() },
+                        onEnd = model::end,
                         onHelp = call::help,
                         onMute = call::toggleMute,
                         onSend = call::sendText,

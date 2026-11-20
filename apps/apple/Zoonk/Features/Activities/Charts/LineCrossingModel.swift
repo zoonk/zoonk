@@ -152,6 +152,25 @@ enum LineCrossingModel {
     return (Point(x: start, y: line.y(at: start)), Point(x: end, y: line.y(at: end)))
   }
 
+  static func handlePoint(_ line: Line, domain: Point, share: Double, plot: Point, radius: Double)
+    -> Point
+  {
+    let inset = ceil(radius)
+    let low = Point(x: domain.x * inset / plot.x, y: domain.y * inset / plot.y)
+    let high = Point(x: domain.x - low.x, y: domain.y - low.y)
+    let visible = segment(line, domain: domain)
+    let preferred = visible.from.x + (visible.to.x - visible.from.x) * share
+    var x = min(max(preferred, low.x), high.x)
+    if line.slope != 0 {
+      let first = (low.y - line.intercept) / line.slope
+      let second = (high.y - line.intercept) / line.slope
+      let from = max(low.x, min(first, second))
+      let to = min(high.x, max(first, second))
+      if from <= to { x = min(max(preferred, from), to) }
+    }
+    return Point(x: x, y: min(max(line.y(at: x), low.y), high.y))
+  }
+
   enum Change {
     case up, down, same
   }

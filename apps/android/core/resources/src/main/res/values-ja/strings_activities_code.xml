@@ -87,7 +87,6 @@
   "activities_code_you_said_right": "49387ab89943f75cffcfd1a868f0b1bffd6de03d55b63a6983037ac9bee1c8bf",
   "activities_code_you_said_wrong": "e7e5418b55b24c24b2832f9a2a04e74bd7ef1d35d3baf3b36b9663d08e5a6717",
   "activities_code_your_formula": "daa552fae32846212349306b2fc3e30b9e2043cfc2e54658387af0300cab09d2",
-  "activities_code_your_output": "9bea71d34ba6cc85fa29fb0de119e92d632256642a52a3ae91c5ae04f8cc7a71",
   "activities_code_your_pattern": "a84917dadfc25898eb1524bbba8e268dc3fc18a8acc4ec1816ad3c042b08eedd",
   "activities_code_your_predictions": "68134c7d536affb407cbcd972e4e8f404bc2fbf5b77efe2f7fae869559276f5e",
   "activities_code_your_query": "77d25685c6490eb13aef114b1b991b2f3472d9eb22e3ae0da04b715220a0d4cb",
@@ -112,7 +111,6 @@
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">%1$d行目は編集できます</string>
-    <string name="activities_code_your_output">実際の出力</string>
     <!-- What a program shown to explore printed, with no expected output beside it. -->
     <string name="activities_code_output">出力</string>
     <!-- The output the program should print. -->

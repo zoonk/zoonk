@@ -1,16 +1,16 @@
 "use client";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { type FeedbackFormRequest } from "./feedback-contract";
 import { FeedbackForm } from "./feedback-form";
 
@@ -19,20 +19,31 @@ function FeedbackFormHeader({ isReport }: { isReport: boolean }) {
 
   if (isReport) {
     return (
-      <DialogHeader>
-        <DialogTitle>{t("Report a problem")}</DialogTitle>
-      </DialogHeader>
+      <DrawerHeader closeLabel={t("Close")}>
+        <DrawerTitle>{t("Report a problem")}</DrawerTitle>
+      </DrawerHeader>
     );
   }
 
   return (
-    <DialogHeader>
-      <DialogTitle>{t("Send feedback")}</DialogTitle>
-      <DialogDescription>
-        {t("Found a problem or have an idea? Tell us below or email hello@zoonk.com.")}
-      </DialogDescription>
-    </DialogHeader>
+    <DrawerHeader closeLabel={t("Close")}>
+      <DrawerTitle>{t("Send feedback")}</DrawerTitle>
+      <DrawerDescription>
+        {t("Ask a question, report a problem or share an idea. We answer by email.")}
+      </DrawerDescription>
+    </DrawerHeader>
   );
+}
+
+/** Kept past the close, which clears the request before focus goes back. */
+function useLastOpener(request: FeedbackFormRequest | null): HTMLElement | undefined {
+  const [opener, setOpener] = useState(request?.opener);
+
+  if (request && request.opener !== opener) {
+    setOpener(request.opener);
+  }
+
+  return opener;
 }
 
 export function FeedbackFormDialog({
@@ -44,9 +55,10 @@ export function FeedbackFormDialog({
 }) {
   const t = useExtracted("feedback");
   const dialogRef = useRef<HTMLDivElement>(null);
+  const opener = useLastOpener(request);
 
   return (
-    <Dialog
+    <Drawer
       onOpenChange={(open) => {
         if (!open && request) {
           onClose(request);
@@ -54,14 +66,14 @@ export function FeedbackFormDialog({
       }}
       open={request !== null}
     >
-      <DialogContent
-        closeLabel={t("Close")}
+      <DrawerPopup
+        finalFocus={opener && (() => (opener.isConnected ? opener : true))}
         initialFocus={request?.context.reportType === "saveFailure" ? dialogRef : undefined}
         ref={dialogRef}
       >
         <FeedbackFormHeader isReport={request?.isReport ?? false} />
 
-        <DialogFooter>
+        <DrawerContent className="pt-2">
           {request && (
             <FeedbackForm
               context={request.context}
@@ -72,8 +84,8 @@ export function FeedbackFormDialog({
               }}
             />
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DrawerContent>
+      </DrawerPopup>
+    </Drawer>
   );
 }

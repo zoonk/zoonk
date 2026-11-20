@@ -1,10 +1,10 @@
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { type PlanDayView, type PlanView } from "../plan-view-contract";
+import { type PlanView } from "../plan-view-contract";
 import { type StudyCalendar } from "../planner/plan-calendar";
 import { getExamDayRules } from "../planner/plan-days";
 import { type SkillAreas } from "./plan-phase-views";
 import { type PlanReadContext } from "./plan-read-projection";
-import { buildFundedMocksView, buildNextDaysView, buildWeekView } from "./plan-week-view";
+import { buildFundedMocksView, buildWeekView } from "./plan-week-view";
 
 export function buildPlanTimingView({
   access,
@@ -18,7 +18,7 @@ export function buildPlanTimingView({
   context: PlanReadContext;
   skillAreas: SkillAreas;
   studiedDates: ReadonlySet<string>;
-}): Pick<PlanView, "fundedMocks" | "week"> & { nextDays: PlanDayView[] } {
+}): Pick<PlanView, "fundedMocks" | "week"> {
   const { goal, items, state, today } = context;
 
   const days = {
@@ -42,7 +42,6 @@ export function buildPlanTimingView({
       skillAreas,
       today,
     }),
-    nextDays: buildNextDaysView(days),
     week: buildWeekView(days),
   };
 }

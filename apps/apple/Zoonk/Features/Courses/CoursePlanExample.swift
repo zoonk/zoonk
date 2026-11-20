@@ -40,8 +40,9 @@ struct CoursePlanExample: Codable, Equatable, Sendable {
 
 struct CoursePlanEstimate: Codable, Equatable, Sendable {
   enum Reach: Codable, Equatable, Sendable {
-    case toEnd(weeks: Int, endDate: String?, firstDay: [FirstDayLesson])
-    case byDate(fittingLessons: Int, publishedLessons: Int, areas: [Area])
+    case toEnd(weeks: Int, firstDay: [FirstDayLesson])
+    /// The exam's subjects, in the course's order.
+    case byDate(areas: [String])
   }
 
   struct FirstDayLesson: Codable, Equatable, Identifiable, Sendable {
@@ -51,55 +52,11 @@ struct CoursePlanEstimate: Codable, Equatable, Sendable {
     let title: String
   }
 
-  struct Area: Codable, Equatable, Sendable {
-    let fitting: Int
-    let name: String?
-    let plannedMinutes: Double
-    let quickLessons: Int
-    let total: Int
-    let unwrittenMinutes: Double
-  }
-
   struct ChapterPlace: Codable, Equatable, Sendable {
     let area: String?
     let chapterID: String
-    let endWeek: Int?
-    let lessonsInPlan: Int?
-    let studyOrder: Int?
-    let week: Int?
-    let workKinds: Set<WorkKind>
-  }
-
-  enum WorkKind: String, Codable, Sendable {
-    case original
-    case quick
-    case unwritten
-  }
-
-  struct Workload: Codable, Equatable, Sendable {
-    let checkpointMinutes: Double
-    let lessonMinutes: Double
-    let practiceMinutes: Double
-    let unwrittenLessonMinutes: Double
-  }
-
-  struct Coverage: Codable, Equatable, Sendable {
-    let coveredShare: Double
-    let measuresGoal: Bool
   }
 
   let reach: Reach
   let chapters: [ChapterPlace]
-  let afterDeadlineMinutes: Double?
-  let beforeDeadlineMinutes: Double?
-  let coverage: Coverage?
-  let fromDate: String
-  /// After-date work included.
-  let scheduledMinutes: Double
-  let unwrittenLessonMinutes: Double
-  let workload: Workload
-
-  var studyMinutes: Double {
-    beforeDeadlineMinutes ?? scheduledMinutes
-  }
 }

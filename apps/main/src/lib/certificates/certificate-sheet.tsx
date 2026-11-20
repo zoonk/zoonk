@@ -1,9 +1,10 @@
+import { Brand } from "@/lib/metadata/open-graph-brand";
 import { type FittedSheet } from "./certificate-fit";
 import { FONT_WEIGHTS } from "./certificate-fonts";
 import { CertificateGraph } from "./certificate-graph";
 import { TOPIC_COLUMN_WIDTH } from "./certificate-layout";
 import { CERTIFICATE_COLORS } from "./certificate-palette";
-import { Brand, CheckMark, QrCode, ShapedImage } from "./certificate-parts";
+import { CheckMark, QrCode, ShapedImage } from "./certificate-parts";
 import { SHEET } from "./certificate-spec";
 import { type CertificateView } from "./certificate-view";
 
@@ -256,13 +257,7 @@ export function CertificateSheet({
       <SheetTopics covered={fitted.covered} moreTopics={fitted.moreTopics} px={px} view={view} />
 
       <div style={{ display: "flex", marginTop: "auto", paddingTop: px(SHEET.graph.above) }}>
-        <CertificateGraph
-          ladder={SHEET.ladder}
-          route={SHEET.route}
-          scale={scale}
-          showLabels
-          view={view}
-        />
+        <CertificateGraph ladder={SHEET.ladder} route={SHEET.route} scale={scale} view={view} />
       </div>
 
       <SheetFooter px={px} view={view} />

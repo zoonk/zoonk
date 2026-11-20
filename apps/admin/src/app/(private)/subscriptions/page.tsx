@@ -1,50 +1,55 @@
-import { parseSubscriptionFilter } from "@/lib/subscription";
+import { AdminPage, AdminPageBody, AdminPageHeader, AdminToolbar } from "@/components/admin-page";
+import { AdminTabs } from "@/components/admin-tabs";
+import { buildAdminHref } from "@/lib/admin-href";
 import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+  parseSubscriptionFilter,
+  subscriptionFilterLabels,
+  subscriptionFilters,
+} from "@/lib/subscription";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { SubscriptionList, SubscriptionListSkeleton } from "./subscription-list";
-import { SubscriptionStatusFilter } from "./subscription-status-filter";
 
 export const metadata: Metadata = { title: "Subscriptions" };
 
 export default function SubscriptionsPage({ searchParams }: PageProps<"/subscriptions">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Subscriptions</ContainerTitle>
-          <ContainerDescription>
-            Review active, canceled, and incomplete subscription records.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <AdminPage>
+      <AdminPageHeader title="Subscriptions" />
 
-      <ContainerBody>
-        <Suspense fallback={<Skeleton className="h-8 w-72 rounded-4xl" />}>
-          <SubscriptionFilters searchParams={searchParams} />
-        </Suspense>
+      <AdminPageBody>
+        <AdminToolbar>
+          <Suspense fallback={<Skeleton className="h-7.5 w-72" />}>
+            <SubscriptionFilter searchParams={searchParams} />
+          </Suspense>
+        </AdminToolbar>
 
         <Suspense fallback={<SubscriptionListSkeleton />}>
           <SubscriptionList searchParams={searchParams} />
         </Suspense>
-      </ContainerBody>
-    </Container>
+      </AdminPageBody>
+    </AdminPage>
   );
 }
 
-async function SubscriptionFilters({
+async function SubscriptionFilter({
   searchParams,
 }: Pick<PageProps<"/subscriptions">, "searchParams">) {
   const params = await searchParams;
-  const status = parseSubscriptionFilter(params.status);
+  const current = parseSubscriptionFilter(params.status);
 
-  return <SubscriptionStatusFilter status={status} />;
+  return (
+    <AdminTabs
+      label="Subscription state"
+      options={subscriptionFilters.map((filter) => ({
+        href: buildAdminHref({
+          params: { status: filter === "all" ? undefined : filter },
+          path: "/subscriptions",
+        }),
+        isActive: filter === current,
+        label: subscriptionFilterLabels[filter],
+      }))}
+    />
+  );
 }

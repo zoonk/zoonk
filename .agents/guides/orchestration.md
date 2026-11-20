@@ -1,66 +1,43 @@
 # Agent orchestration
 
-First, discover providers, current models, supported effort settings, and remaining quotas/reset times where exposed. Then pick providers by which weekly window resets first ([pick the provider](#pick-the-provider)).
+When to hand work to another agent, and which small file covers each part of doing it. Approval and verification rules apply to every agent, at every level.
 
-Always use the latest version of each model, resolved from the live catalog. Never pin a version in these instructions or in a brief: write "the latest Opus", not a version number. Map effort names to each provider's supported equivalents. Existing approval and verification rules still apply.
+## When to delegate
+
+- A subagent costs a fresh start: it knows only its brief, reads the repository's instructions again and returns only a summary. Delegate when that pays for itself: a big task, one that spans several areas (code, design, UX, accessibility), work that runs in parallel, or a read that must come from eyes that didn't build the change. Do a handful of tool calls yourself.
+- **Brief it like a peer:** the goal, what's done and what's ruled out, the branch and the files worth reading, what to hand back, and any rule it must hold that it couldn't find itself. A new agent or a new model gets a short written brief, never the whole history: a model can't reuse another's prompt cache, so its first turn on a long conversation pays to cache all of it.
+- **Fresh agents for new work:** a lane hands back when its slice is done. The next slice, a fix round or a review gets a new agent with a short brief (the goal, the branch, what's done), not another message to a lane that already carries its whole history. Resume a lane only to finish its own slice.
+- **Keep every context lean:** an agent's whole context is read again on every turn, so each turn costs more the longer the agent runs. Any agent, a lane included, hands bulky reading (a broad search, a long log, many files) to a cheaper helper ([models](models.md)) that returns only the lines and facts that matter. It still reads the files it's about to edit and makes quick lookups itself, since a helper costs a brief and a fresh start.
+- A subagent that splits work follows these files the same way, and its brief says so, since it may see only the usage numbers.
 
 ## Pick the model
 
-Claude and OpenAI models pair by tier: Haiku and Luna, Sonnet and Terra, Opus and Sol, Fable and Astra. Where a row names both families, pick the one whose provider comes first by reset ([pick the provider](#pick-the-provider)).
-
-| Task                                                                           | Model and reasoning                                                                                                                                               |
-| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Design: UI, UX, layouts, interactions, motion                                  | Opus at high; Fable at high for a major new feature or a big redesign                                                                                             |
-| Writing: copy, docs, marketing, prompts                                        | Opus at medium; Fable at medium when Opus's quality falls short; Terra at medium when neither is available                                                        |
-| Everyday engineering and debugging, including multi-PR feature work            | Opus or Sol at high                                                                                                                                               |
-| Well-scoped coding: bug fixes, feature iteration, spec-driven work             | Opus or Sol at high                                                                                                                                               |
-| Major refactors, migrations, architecture planning                             | Fable or Astra at high                                                                                                                                            |
-| Code review                                                                    | The other family's top model at high: Astra reviews a Claude model's work, Fable reviews a GPT model's ([cross-model review](../../AGENTS.md#cross-model-review)) |
-| Investigating a problem, filing an issue or a feature request                  | Opus at medium                                                                                                                                                    |
-| Computer use: driving a browser or device, persona walks                       | Terra at medium                                                                                                                                                   |
-| Finding and pulling out text: searching code, reading logs, collecting numbers | Haiku or Luna at medium                                                                                                                                           |
-| Summarizing or explaining what several files or logs say                       | Sonnet or Terra at medium                                                                                                                                         |
-| Classification, routing, tagging, high-volume extraction                       | Haiku or Luna at medium                                                                                                                                           |
-| Unsure                                                                         | Opus at medium                                                                                                                                                    |
-
-- **Claude for design and writing:** Design and writing stay on Claude models (Fable or Opus) even when an OpenAI provider has more room. If no Claude model is available, use Sol at the same effort for design and Terra at medium for writing, track the pending work, and have Fable review it at high as soon as Claude is back.
-- **Fable and Astra fallback:** When a family's top model isn't available, use the next one down at one effort level higher: Fable at medium becomes Opus at high, Fable at high becomes Opus at xhigh, and Astra falls back to Sol the same way. Work at xhigh never falls back to max: Fable at xhigh becomes Astra at xhigh for architecture and Opus at xhigh for a redesign, and Astra at xhigh becomes Fable at xhigh.
-- **No low or max:** Use low or max reasoning only when the user asks for it. Low misses too much for what it saves, and max costs far more than xhigh for little gain. Past high, the next model up at a lower effort usually beats one more effort level.
-- **Check medium coding and design:** Coding or design work done at medium reasoning gets checked by another model before it counts. For code, the [cross-model review](../../AGENTS.md#cross-model-review) is that check. Other medium work (investigations, issues, computer use, searching, summarizing) needs no extra check, since the lead reads what it reports.
-- **Escalate in order:** When a model's work falls short, first give it a way to check itself (a test, a build, a script that calls the endpoint), then raise its effort one level, and only then move to the next model up, at a lower effort than the one that fell short.
-- **Keep every context lean:** An agent's whole context is read again on every turn, often 200K to 500K tokens, so each turn costs more the longer the agent runs. Any agent, a lane included, hands bulky reading (a broad search, a long log, many files) to a cheaper helper (see the table) that returns only the lines and facts that matter, and keeps its own context for decisions and edits. It still reads the files it's about to edit and makes quick targeted lookups itself, since a helper costs a brief and a fresh start.
-- **Fresh agents for new work:** A lane hands back when its slice is done. The next slice, a fix round or a review gets a new agent with a short brief (the goal, the branch, what's done), not another message to a lane that already carries its whole history. Resume a lane only to finish its own slice.
-- **Switch models at natural breaks:** A model can't reuse another's prompt cache, so its first turn on a long conversation pays to cache all of it. Hand a new model a short written brief, not the whole history.
-- **Design debate:** Only a big new feature or an architecture decision gets one, never a bug fix, a small change or a minor choice ([when](../../AGENTS.md#agent-orchestration)). Fable and Astra debate it at high until they agree ([protocol](#design-debate)). When only one family is available, two fresh agents of it debate, and the handoff says so.
+Which model and reasoning effort each kind of task gets, and what to do when one isn't available: [models](models.md).
 
 ## Pick the provider
 
-- **Soonest reset first:** Weekly usage a provider doesn't spend before its reset is lost, so give each new subagent, review or helper to the eligible provider (one that meets the task's model requirements) whose weekly window resets soonest, however little it has left. A provider at 20% that resets in two days takes the work before one at 75% that resets in six. Keep using it until it has 2% or less of its weekly window left, then move to the eligible provider that resets next.
-- **The 2% floor:** A provider with 2% or less of its weekly window left takes no new work. One that keeps running on paid credits past its weekly window, such as Codex with credits, stays eligible below 2% only while it has more than 2,000 credits left; at 2,000 or fewer it takes no new work either. Work a provider already runs keeps going; if it hits the limit, move it as **Usage limits** says.
-- **Session window:** The 5-hour window doesn't change the order, it only pauses it: while the soonest-resetting provider's session window is spent, new work goes to the next one by reset, and returns once the session resets.
-- **Large tasks:** Split independent work into subagents with non-overlapping edits, and place each one by the rules above. Every slice lands on the task's one branch, and the lead opens the task's one PR ([finishing a task](../../AGENTS.md#finishing-a-task)).
-- **Nested delegation:** These rules apply at every level. A subagent that splits work picks providers the same way, and its brief says so, since it may see only the usage numbers.
-- **Usage limits:** Recheck quotas periodically, at task boundaries, and when a provider is limited. If its reset is less than 15 minutes away, waiting is acceptable; otherwise transfer unfinished work to an eligible provider with quota. Include the brief, decisions, changed files, verification, and open issues in the handoff; stop the original task to avoid duplicate work. Keep checking so available providers take over work blocked by longer resets.
-- **Lane health:** A lane's failure notice doesn't always reach its lead. After a machine-wide failure (a full disk, a reboot, a provider outage), or when a lane has been quiet for about an hour, read each lane's status yourself, and resume a failed lane where it ran so it keeps its context and worktree.
-- **Waiting inside the turn:** A turn spent checking whether something is done costs as much as a turn of real work, since it reads the agent's whole context again. So every wait is one command that blocks until the thing is done, never a sleep and a check per turn: a build, test run or review runs as a background command the harness waits on; CI uses the harness's own CI or PR watch when the agent has one, otherwise one background `gh run watch <run id> --exit-status` (or `gh pr checks <pr> --watch`), never repeated `gh run view` or `gh run list`; a server, a process or free memory gets one shell loop that returns when it's ready (`until curl -sf <url>; do sleep 5; done`), never turns of `sleep 2` and `pgrep`. Nothing wakes a lane whose turn has ended, so it waits inside its turn; otherwise it stops until its lead notices.
-- **Review once per PR:** The reviews run once, on the whole branch, before the PR is marked ready ([cross-model review](../../AGENTS.md#cross-model-review)), never after each lane or fix batch. A lane checks its own slice with tests and the running app.
-- **Translate once per PR:** Lanes change English copy but don't translate it. Translation sends every changed string to a model in every language, so the agent that owns the PR runs each changed app's `i18n` once, after every lane's copy has landed ([translations](translations.md)).
+Which provider account takes the next agent, its floors, and what happens at a usage limit: [providers](providers.md).
+
+## Lanes
+
+Splitting a large task among agents that land on one branch, who owns the shared pieces, and what runs once per PR: [lanes](lanes.md).
+
+## Waiting
+
+Every wait is one command that blocks until the thing is done, never a sleep and a check per turn: [waiting](waiting.md).
+
+## Cross-model review
+
+The one adversarial review a PR gets from the other model family before it's marked ready: [cross-model review](cross-model-review.md).
 
 ## Design debate
 
-Two models from different families find gaps one model misses, and each drops weak ideas once the other shows evidence from the code. They don't know how the user and learners actually work, though, and can agree on assumptions that contradict it. So the brief carries that context, and the user decides before any code is written.
+Two models from different families debate a big feature or a structural change before any code: [design debate](design-debate.md).
 
-1. **Brief:** Both get the same brief: the question, the user's constraints and real usage, the current behavior with `file:line` references as the starting point rather than the limit ([think big](../../AGENTS.md#principles)), what the answer must cover, fixed headings for it, and a read-only rule (no edits, commits or posts).
-2. **First proposals:** Each writes its first proposal without seeing the other's, so neither anchors on the other.
-3. **Rounds:** Relay each one's latest proposal to the other verbatim. Each reply says what it accepts, gives each objection with its evidence, revises its proposal under the same headings, and ends with `AGREEMENT: yes` or `AGREEMENT: no` and what's still open. Rounds cross: each reply answers the other's previous round.
-4. **Sign-off:** Once they're close, merge their proposals into one list and send it to both to sign. A point still open after a few rounds goes to the user with both sides instead of another round.
-5. **User:** Re-check the code claims the agreement rests on, name the assumptions it makes about learners and the user, and add your own recommendation. The user aligns on the plan before any code is written.
+## Exceptions
+
+What an agent does when a rule looks wrong for its case, and where a task with lanes records it: [when a rule looks wrong](exceptions.md).
 
 ## Sharing one machine
 
-Agents working in parallel share the machine's memory, disk and devices.
-
-- Heavy jobs take turns through `pnpm dev:queue`; the [development guide](development.md#commands) says which commands queue on their own and how to queue the rest. The [Apple](../../apps/apple/AGENTS.md#simulators) and [Android](../../apps/android/AGENTS.md#emulators-and-builds) guidance caps how many simulators, emulators and native builds run at once.
-- On macOS, a lead whose lanes use simulators or emulators runs `pnpm dev:close-device-crash-alerts` each time it checks on them, so crash alerts don't pile up on screen until a lane ends.
-- Every worktree fills the disk with its own dependencies, builds (a production build is about 6 GB) and database copies. Before an agent hands back, it commits its work (its branch keeps the commits) and stops the servers it started. The agent that owns the task's PR pushes and keeps its worktree, since review fixes and the user's follow-up changes happen there; the harness removes it once the PR merges. A subagent or lane removes the worktree made for its slice: it reports first, since a session running inside the worktree loses its turn when the worktree goes, then, as its last command, runs `git worktree remove <path>` from outside it, which refuses while uncommitted work is left. The next `pnpm worktree:setup` drops a removed worktree's database copies.
-- A lead lands a lane's commits from its branch and doesn't need the lane's checkout; it removes the worktree of a lane that failed, was cancelled or handed back uncommitted work once its commits are landed or dropped. Reviews and other read-only tasks run in the lead's checkout, without a worktree.
+The queue for heavy jobs, device limits, worktrees, branches and what to do before handing back: [sharing one machine](shared-machine.md).

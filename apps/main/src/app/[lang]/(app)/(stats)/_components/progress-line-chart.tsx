@@ -1,4 +1,6 @@
 import { isValidChartPayload } from "@zoonk/utils/chart";
+import { formatMetricPercent } from "@zoonk/utils/number";
+import { useFormatter } from "next-intl";
 import { type CSSProperties, type ComponentProps, type ReactNode } from "react";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import { PROGRESS_CHART_HEIGHT } from "./progress-chart-figure";
@@ -19,10 +21,11 @@ const PROGRESS_CHART_STYLE = {
   width: "100%",
 } satisfies CSSProperties;
 
-const PROGRESS_CHART_TICK_PROPS = { fill: "var(--muted-foreground)", fontSize: 11 } as const;
+const PROGRESS_CHART_TICK_PROPS = { fill: "var(--muted-foreground)", fontSize: 12 } as const;
 
 const X_AXIS_PADDING = { left: 16, right: 24 };
 
+const PERCENT_AXIS_WIDTH = 46;
 const PERCENT_GUIDES = 4;
 const PERCENT = 100;
 
@@ -63,15 +66,19 @@ export function ProgressChartXAxis() {
 }
 
 export function ProgressChartPercentYAxis() {
+  const format = useFormatter();
+
   return (
     <YAxis
       axisLine={false}
       domain={[0, 100]}
-      tick={PROGRESS_CHART_TICK_PROPS}
+      tick={{ ...PROGRESS_CHART_TICK_PROPS, textAnchor: "start" }}
       tickLine={false}
-      tickMargin={8}
+      tickFormatter={(value: number) => formatMetricPercent({ format, value })}
+      tickMargin={PERCENT_AXIS_WIDTH}
+      tickSize={0}
       ticks={PERCENT_TICKS}
-      width={36}
+      width={PERCENT_AXIS_WIDTH}
     />
   );
 }

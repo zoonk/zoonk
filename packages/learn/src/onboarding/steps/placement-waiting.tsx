@@ -3,7 +3,6 @@
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
-import { ChangeSaveError } from "../../_components/save-error";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun, toHeldRun } from "../../generation/generation-run";
 import {
@@ -62,23 +61,23 @@ function PlacementProgress({
   const readsMaterial = run.steps.readExamNotice !== undefined;
 
   const description = readsMaterial
-    ? t("They come from the material you added. Reading it takes a few minutes.")
+    ? t("Reading your material takes a few minutes.")
     : t({
         description:
           "Shown while the learner waits for their first questions to be prepared. “This” is the wait.",
-        message: "This usually takes a minute or two.",
+        message: "This takes a minute or two.",
       });
 
   return (
     <GenerationWait
-      doneLabel={holding ? t("Your questions are ready") : undefined}
+      doneLabel={holding ? t("Your test is ready") : undefined}
       kind="placement"
       run={holding ? toHeldRun(run) : run}
       since={since}
     >
       <WaitHeading
-        description={holding ? t("Start them whenever you're ready.") : description}
-        title={holding ? t("Your questions are ready") : t("Getting your questions ready")}
+        description={holding ? null : description}
+        title={holding ? t("Your test is ready") : t("Getting your test ready")}
       />
     </GenerationWait>
   );
@@ -107,7 +106,7 @@ function PlacementStatus({
 
   return (
     <WaitStatus done={holding} value={value}>
-      {holding ? t("Your questions are ready") : t("Getting your questions ready")}
+      {holding ? t("Your test is ready") : t("Getting your test ready")}
     </WaitStatus>
   );
 }
@@ -135,9 +134,7 @@ function PlacementBar({
   if (holding) {
     return (
       <WaitBar>
-        <OnboardingPrimaryButton className="lg:w-auto lg:min-w-40" onClick={release}>
-          {t("Continue")}
-        </OnboardingPrimaryButton>
+        <OnboardingPrimaryButton onClick={release}>{t("Continue")}</OnboardingPrimaryButton>
       </WaitBar>
     );
   }
@@ -147,21 +144,13 @@ function PlacementBar({
   }
 
   return (
-    <WaitBar>
+    <WaitBar failed={skipFailed} note={canSkip ? skip?.note : null}>
       <WaitSlot />
 
       {canSkip && (
-        <div className="flex flex-col gap-1 lg:items-end">
-          <OnboardingSecondaryButton className="lg:w-auto" disabled={skipping} onClick={onSkip}>
-            {skip?.label ?? t("Skip for now")}
-          </OnboardingSecondaryButton>
-          {skipFailed && <ChangeSaveError className="text-center lg:text-right" />}
-          {skip?.note !== null && (
-            <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
-              {skip?.note ?? t("Your first sessions will ask a few of these instead.")}
-            </p>
-          )}
-        </div>
+        <OnboardingSecondaryButton disabled={skipping} onClick={onSkip}>
+          {skip?.label ?? t("Skip")}
+        </OnboardingSecondaryButton>
       )}
     </WaitBar>
   );

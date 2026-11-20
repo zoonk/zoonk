@@ -14,7 +14,6 @@
   "feedback_screen_attached": "4dc1f2c23e36076e268b550bba44884cc079533e3aadbac1a7aa8146562a9c5a",
   "feedback_send": "64c8c390f329640f7e78850cc40665a645eaada461fc34993e3cf2aca5a5ae17",
   "feedback_send_feedback": "9f936c3071374012e11543712344268af4f5c2e34f34b1aba7ae6255bb8cf19c",
-  "feedback_send_feedback_description": "44e02c518c68fe011a99d433b53b23d983bb6ca688634f7ab01ffc7981db5dfb",
   "feedback_sent": "3431b22f3eb8ac43afec72efeb99d7cdc240c4306f3431fdd48cc4abeea42ec5",
   "feedback_thanks": "568dbe9c715cc5c0a9779e4aa469692e69d9f7017fb30928712eebe535567c66"
 }
@@ -31,7 +30,6 @@
     <string name="feedback_follow_us">フォローする</string>
     <string name="feedback_report_problem">問題を報告する</string>
     <string name="feedback_send_feedback">フィードバックを送る</string>
-    <string name="feedback_send_feedback_description">気になる点やアイデアはありますか？下の欄に書くか、hello@zoonk.comにメールでお知らせください。</string>
     <string name="feedback_thanks">ありがとうございます！メッセージを受け取りました。</string>
     <string name="feedback_more">その他のオプション</string>
     <string name="feedback_save_failure_message">回答を保存できませんでした。</string>

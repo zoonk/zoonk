@@ -40,8 +40,8 @@ describe(roundGuess, () => {
 });
 
 describe(scaleTicks, () => {
-  it("labels powers of ten on a log scale", () => {
-    expect(scaleTicks(log)).toStrictEqual([1, 10, 100, 1000]);
+  it("labels both ends of a log scale with powers of ten between", () => {
+    expect(scaleTicks(log)).toStrictEqual([1, 10, 100, 1000, 3650]);
   });
 
   it("labels both ends of a linear scale with round steps between", () => {
@@ -70,7 +70,7 @@ describe(compareGuess, () => {
     });
 
     expect(compareGuess({ actual: 11.57, guess: 15, isCorrect: false })).toStrictEqual({
-      difference: 15 - 11.57,
+      difference: 15 - 11.6,
       kind: "off",
     });
   });

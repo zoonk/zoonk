@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -44,7 +45,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
@@ -57,16 +57,18 @@ import com.zoonk.android.feature.conversation.PracticeConversation
 import com.zoonk.android.feature.conversation.rememberPracticeCallState
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.goalcontent.DetailHero
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.questions.ItemText
-import com.zoonk.android.feature.tutor.TutorAskButton
+import com.zoonk.android.feature.tutor.AskTutor
+import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DisclosureRow
-import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.KindDotLeading
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -74,25 +76,28 @@ import com.zoonk.android.ui.components.LessonList
 import com.zoonk.android.ui.components.LessonProgress
 import com.zoonk.android.ui.components.LessonSummaries
 import com.zoonk.android.ui.components.LessonSummary
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TestOutRow
 import com.zoonk.android.ui.components.TestOutScope
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.mainActionWidth
+import com.zoonk.android.ui.scaffold.pageListMargin
 import com.zoonk.android.ui.scaffold.pageTitle
-import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.LanguageUnit
@@ -154,7 +159,7 @@ private fun UnitEntry(
         title = unit?.unit?.title,
         actions = {
             if (unit != null) {
-                TutorAskButton(TutorScope.Chapter(chapterId.toString()), app, navigator, worded = false)
+                AskTutor(TutorScope.Chapter(chapterId.toString()), app, navigator, appearance = AskTutorAppearance.Icon)
                 ReportProblemMenu(app, FeedbackTarget("unit", FeedbackSubmissionContext.ContentKind.CHAPTER, chapterId))
             }
         },
@@ -213,8 +218,7 @@ internal fun UnitPage(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val lessons = remember(unit) { unit.lessons.map { it.listed() } }
-    val compact = !windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    val padding = PaddingValues(horizontal = (if (compact) 16.dp else 24.dp) - LIST_ITEM_INSET, vertical = 24.dp)
+    val padding = PaddingValues(horizontal = pageListMargin(), vertical = 24.dp)
     val aboutLabel = stringResource(R.string.language_unit_about)
     val openLesson = { id: UUID -> actions.open(AppRoute.Lesson(id.toString())) }
     // Practice and reference move between the aside and the page as the window changes, so what's open lives here.
@@ -240,14 +244,15 @@ internal fun UnitPage(
             }
         },
     ) { asideBeside ->
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
+        val next = lessons.firstOrNull { it.next }
+        Column(Modifier.fillMaxSize()) {
             LazyColumn(
                 state = listState,
-                modifier = Modifier.then(if (asideBeside) Modifier else Modifier.widthIn(max = PAGE_WIDTH)).fillMaxSize(),
+                modifier = Modifier.then(if (asideBeside) Modifier else Modifier.widthIn(max = PAGE_WIDTH)).weight(1f).fillMaxWidth(),
                 contentPadding = padding,
                 verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
             ) {
-                item(key = "hero") { UnitHero(unit, lessons, onOpen = openLesson) }
+                item(key = "hero") { UnitHero(unit, lessons) }
                 if (lessons.isNotEmpty()) item(key = "lessons") { LessonList(lessons, upNext, onOpen = openLesson) }
                 if (unit.unit.objectives.isNotEmpty()) {
                     item(key = "objectives") {
@@ -263,6 +268,20 @@ internal fun UnitPage(
                     if (hasReference(unit)) item(key = "reference") { UnitReference(unit, expanded) }
                 }
             }
+            // The unit's one main action, in the bar as on a subject's and a chapter's page.
+            next?.let { lesson ->
+                BottomBar {
+                    TaskActions { main ->
+                        Button(onClick = { openLesson(lesson.id) }, modifier = main) {
+                            Text(
+                                stringResource(
+                                    if (lessons.any { it.done }) R.string.language_unit_continue else R.string.language_unit_start,
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -271,37 +290,22 @@ internal fun UnitPage(
 private fun UnitHero(
     unit: LanguageUnit,
     lessons: List<ListedLesson>,
-    onOpen: (UUID) -> Unit,
 ) {
     val locale = currentLocale()
     val info = unit.unit
-    val done = lessons.count { it.done }
-    val next = lessons.firstOrNull { it.next }
-    val eyebrow =
+    val place =
         info.position?.let { stringResource(R.string.language_unit_eyebrow, formatNumber(it.toDouble(), locale), info.levelRange) }
             ?: info.levelRange
     val facts =
-        if (lessons.isEmpty()) {
-            null
-        } else {
-            listOfNotNull(
-                pluralStringResource(R.plurals.language_unit_lessons, lessons.size, lessons.size),
-                lessons.sumOf { it.minutes }.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
-                stringResource(R.string.language_unit_done_share, formatPercent(done.toDouble() / lessons.size, locale)),
-            ).factsLine()
-        }
+        listOfNotNull(
+            place,
+            lessons.size.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.language_unit_lessons, it, it) },
+            lessons.sumOf { it.minutes }.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
+        )
 
-    Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Eyebrow(eyebrow)
-            Text(info.title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
-            facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
-        }
-        next?.let { lesson ->
-            Button(onClick = { onOpen(lesson.id) }, modifier = Modifier.mainActionWidth()) {
-                Text(stringResource(if (done > 0) R.string.language_unit_continue else R.string.language_unit_start))
-            }
-        }
+    DetailHero {
+        Text(info.title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
+        Facts(facts)
     }
 }
 
@@ -315,7 +319,10 @@ private fun UnitObjectives(
             stringResource(if (finished) R.string.language_can_already else R.string.language_unit_objectives),
             Modifier.padding(horizontal = LIST_ITEM_INSET),
         )
-        objectives.take(SHOWN_OBJECTIVES).forEach { CanDoRow(it, done = finished) }
+        objectives.take(SHOWN_OBJECTIVES).forEachIndexed { index, objective ->
+            if (index > 0) ListDivider()
+            CanDoRow(objective, done = finished)
+        }
     }
 }
 
@@ -383,7 +390,7 @@ private fun UnitPractice(
         SectionHeader(stringResource(R.string.language_unit_practice), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
             rows.forEachIndexed { index, row ->
-                if (index > 0) HorizontalDivider()
+                if (index > 0) ListDivider()
                 row()
             }
         }
@@ -395,7 +402,7 @@ private fun UnitMistakes(mistakes: List<LanguageUnitMistakesInner>) {
     Column {
         mistakes.forEachIndexed { index, mistake ->
             if (index > 0) HorizontalDivider()
-            Column(Modifier.padding(vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     skillLabel(mistake.skill),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -442,7 +449,7 @@ private fun UnitReference(
                         stringResource(R.string.language_unit_grammar_tips),
                         expanded = "tips" in expanded,
                         onExpandedChange = { expanded.show("tips", it) },
-                        leading = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
+                        leading = { MarkIcon(R.drawable.ic_menu_book) },
                         count = unit.grammarTips.size,
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -464,7 +471,7 @@ private fun UnitReference(
                         stringResource(R.string.language_unit_words),
                         expanded = "words" in expanded,
                         onExpandedChange = { expanded.show("words", it) },
-                        leading = { Icon(painterResource(R.drawable.ic_translate), contentDescription = null) },
+                        leading = { MarkIcon(R.drawable.ic_translate) },
                         count = unit.words.count.toInt(),
                     ) {
                         val sample = unit.words.sample.factsLine()
@@ -489,7 +496,7 @@ private fun UnitReference(
                         stringResource(R.string.language_unit_summary),
                         expanded = "summary" in expanded,
                         onExpandedChange = { expanded.show("summary", it) },
-                        leading = { Icon(painterResource(R.drawable.ic_checklist), contentDescription = null) },
+                        leading = { MarkIcon(R.drawable.ic_book_2) },
                     ) { LessonSummaries(unit.summaries.map { LessonSummary(it.title, it.ideas) }) }
                 }
             }
@@ -499,7 +506,7 @@ private fun UnitReference(
         SectionHeader(stringResource(R.string.language_unit_reference), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
             rows.forEachIndexed { index, row ->
-                if (index > 0) HorizontalDivider()
+                if (index > 0) ListDivider()
                 row()
             }
         }

@@ -1,18 +1,31 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
-import { ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY } from "@zoonk/ui/components/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
+import {
+  SidebarToggle,
+  SidebarToggleRoom,
+  useSidebarOpen,
+} from "@zoonk/ui/components/sidebar-toggle";
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
-import { PanelRightIcon } from "lucide-react";
+import { EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useSyncExternalStore } from "react";
-import { deviceStorage } from "../_utils/device-storage";
+import { useRef } from "react";
 import { useAppLocale } from "../_utils/locale";
-import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from "./task-layout";
+import {
+  TASK_ASIDE_TOGGLE_CLASS,
+  TASK_ASIDE_TOGGLE_ROOM_CLASS,
+  TASK_COLUMN_CLASS,
+  TASK_HEADER_BAR_CLASS,
+  TASK_HEADER_SIDE_CLASS,
+} from "./task-layout";
 
 export function TaskHeader({ className, ...props }: React.ComponentProps<"div">) {
   const scrolled = useScrolled();
@@ -20,12 +33,13 @@ export function TaskHeader({ className, ...props }: React.ComponentProps<"div">)
   return (
     <div
       className={cn(
-        "after:from-background relative z-30 shrink-0 border-b transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:mt-px after:h-3 after:bg-linear-to-b after:to-transparent motion-reduce:transition-none",
+        "after:from-background relative z-40 shrink-0 border-b transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:mt-px after:h-3 after:bg-linear-to-b after:to-transparent motion-reduce:transition-none",
         scrolled ? "border-border" : "border-transparent",
         className,
       )}
       data-slot="task-header"
       {...props}
+      data-task-header=""
     />
   );
 }
@@ -34,7 +48,10 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
   return <header className={cn(TASK_HEADER_BAR_CLASS, className)} {...props} />;
 }
 
-/** The end side offers the aside's toggle on a task that has one. */
+/**
+ * On the end side the aside's toggle, on a task that has one, is the outermost control, with "…"
+ * just inside it.
+ */
 export function TaskHeaderSide({
   align,
   children,
@@ -42,15 +59,85 @@ export function TaskHeaderSide({
   align: "end" | "start";
   children?: React.ReactNode;
 }) {
+  const t = useExtracted();
+
+  if (align === "start") {
+    return <div className={TASK_HEADER_SIDE_CLASS.start}>{children}</div>;
+  }
+
   return (
-    <div className={TASK_HEADER_SIDE_CLASS[align]}>
-      {align === "end" && <TaskAsideToggle />}
-      {children}
-    </div>
+    <>
+      <div className={TASK_HEADER_SIDE_CLASS.end}>
+        {children}
+        <SidebarToggleRoom className={TASK_ASIDE_TOGGLE_ROOM_CLASS} />
+      </div>
+      <div className={TASK_ASIDE_TOGGLE_CLASS}>
+        <SidebarToggle
+          collapseLabel={t("Collapse sidebar")}
+          expandLabel={t("Expand sidebar")}
+          side="end"
+        />
+      </div>
+    </>
   );
 }
 
-export const TASK_HEADER_ICON_CLASS = { end: "-mr-2.5", start: "-ml-2.5" } as const;
+const MAIN_ACTION_SELECTOR = "[data-enter]:not(:disabled, [aria-disabled='true'])";
+
+/**
+ * In a task's header, a closed "…" sends focus to the task's main action when it can be pressed,
+ * or to the task's body: left on "…", Enter would open the menu again when the learner means "go
+ * on". Anywhere else focus returns to "…", as after every menu.
+ */
+function getFocusAfterMenu(trigger: HTMLElement | null): HTMLElement | true {
+  if (!trigger?.closest("[data-task-header]")) {
+    return true;
+  }
+
+  const main = [...document.querySelectorAll<HTMLElement>(MAIN_ACTION_SELECTOR)].find(
+    (action) => action.getClientRects().length > 0,
+  );
+
+  return main ?? document.querySelector<HTMLElement>("[data-slot='task-frame-body']") ?? true;
+}
+
+/**
+ * The bare "…" that ends a task's header, a bar or a line. `label` names the menu when it isn't
+ * about the screen.
+ */
+export function TaskHeaderMenu({
+  children,
+  label,
+  onOpenChange,
+  ...content
+}: Pick<React.ComponentProps<typeof DropdownMenuContent>, "className" | "finalFocus"> & {
+  children: React.ReactNode;
+  label?: string;
+  onOpenChange?: (open: boolean) => void;
+}) {
+  const t = useExtracted();
+  const trigger = useRef<HTMLButtonElement>(null);
+
+  return (
+    <DropdownMenu onOpenChange={onOpenChange}>
+      <DropdownMenuTrigger
+        ref={trigger}
+        render={<Button className="shrink-0" edge="end" size="icon-bar" variant="ghost" />}
+      >
+        <EllipsisIcon aria-hidden="true" />
+        <span className="sr-only">{label ?? t("Screen options")}</span>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        align="end"
+        finalFocus={() => getFocusAfterMenu(trigger.current)}
+        {...content}
+      >
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 /** A task's title, wherever its header shows one: the Study view's and its zoom alike. */
 export const TASK_TITLE_CLASS = "text-foreground text-sm leading-5 font-medium";
@@ -58,19 +145,26 @@ export const TASK_TITLE_CLASS = "text-foreground text-sm leading-5 font-medium";
 export function TaskHeaderTitle({
   announce = true,
   detail,
+  spoken = false,
   title,
 }: {
   announce?: boolean;
   detail?: React.ReactNode;
+  /** For a screen whose body shows the same title large: only screen readers get it here. */
+  spoken?: boolean;
   title: string;
 }) {
+  if (spoken) {
+    return <h1 className="sr-only">{title}</h1>;
+  }
+
   return (
     <div className="flex min-w-0 shrink flex-col items-center text-center text-balance">
       <h1 className={TASK_TITLE_CLASS}>{title}</h1>
       {detail && (
         <p
           aria-live={announce ? "polite" : undefined}
-          className="text-muted-foreground font-mono text-[0.6875rem] leading-4 tabular-nums"
+          className="text-muted-foreground text-2xs font-mono leading-4 tabular-nums"
         >
           {detail}
         </p>
@@ -103,7 +197,7 @@ const DENSE_SEGMENTS = 40;
 
 const SEGMENT_CLASS: Record<TaskSegment, string> = {
   ahead: "bg-surface-3",
-  current: "ring-success ring-1 ring-inset",
+  current: "bg-success/40",
   done: "bg-success",
   read: "bg-foreground/25",
   right: "bg-success",
@@ -133,7 +227,7 @@ export function TaskHeaderSegments({
     >
       <span
         aria-hidden="true"
-        className={cn("flex h-1 w-full", segments.length > DENSE_SEGMENTS ? "gap-px" : "gap-[3px]")}
+        className={cn("flex h-1 w-full", segments.length > DENSE_SEGMENTS ? "gap-px" : "gap-0.5")}
       >
         {segments.map((segment, index) => (
           <span
@@ -152,69 +246,7 @@ export function TaskHeaderSegments({
   );
 }
 
-/** Where a task's aside can show (`TaskAside`): Tailwind's `lg`. */
-const ASIDE_QUERY = "(min-width: 64rem)";
-
-const asideListeners = new Set<() => void>();
-
-function subscribeToAside(onChange: () => void) {
-  const query = globalThis.matchMedia(ASIDE_QUERY);
-  query.addEventListener("change", onChange);
-  asideListeners.add(onChange);
-
-  return () => {
-    query.removeEventListener("change", onChange);
-    asideListeners.delete(onChange);
-  };
-}
-
-function isAsideCollapsed(): boolean {
-  return document.documentElement.hasAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
-}
-
-/**
- * Follows the `with-aside` variant in `@zoonk/ui`'s `globals.css`. False on the server and while
- * hydrating, so layout stays in CSS; use it only for behavior.
- */
+/** Follows the `with-aside` variant in `@zoonk/ui`'s `globals.css`; use it only for behavior. */
 export function useTaskAsideShown(): boolean {
-  return useSyncExternalStore(
-    subscribeToAside,
-    () => globalThis.matchMedia(ASIDE_QUERY).matches && !isAsideCollapsed(),
-    () => false,
-  );
-}
-
-function toggleAside() {
-  const collapsed = document.documentElement.toggleAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
-  deviceStorage.set(ASIDE_COLLAPSED_KEY, String(collapsed));
-
-  for (const listener of asideListeners) {
-    listener();
-  }
-}
-
-function TaskAsideToggle() {
-  const t = useExtracted();
-  const collapsed = useSyncExternalStore(subscribeToAside, isAsideCollapsed, () => false);
-  const label = collapsed ? t("Expand sidebar") : t("Collapse sidebar");
-
-  return (
-    <Tooltip>
-      <TooltipTrigger
-        aria-label={label}
-        onClick={toggleAside}
-        render={
-          <Button
-            className="hidden shrink-0 lg:group-data-aside/task:inline-flex"
-            data-slot="task-aside-toggle"
-            size="icon"
-            variant="ghost"
-          />
-        }
-      >
-        <PanelRightIcon aria-hidden="true" />
-      </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
-    </Tooltip>
-  );
+  return useSidebarOpen("end");
 }

@@ -1,16 +1,11 @@
 "use client";
 
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
-import { ListChecksIcon } from "lucide-react";
+import { NotebookTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import {
-  DetailAside,
-  DetailAsideSection,
-  DetailContent,
-  DetailLayout,
-} from "../_components/detail-page";
+import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { Disclosure } from "../_components/disclosure";
-import { LessonList, LessonProgress } from "../_components/lesson-list";
+import { LessonList } from "../_components/lesson-list";
 import { LessonSummaries } from "../_components/lesson-summaries";
 import { ListGroup, ListRowIcon } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
@@ -23,13 +18,12 @@ import {
   ChapterScreenProvider,
   useChapterScreen,
 } from "./chapter-context";
-import { ChapterBar, ChapterHeader } from "./chapter-header";
+import { ChapterBar, ChapterBottomBar, ChapterHeader } from "./chapter-header";
 import {
   ChapterMapAside,
   ChapterMapProvider,
   ChapterMapRow,
   type ChapterMindMap,
-  WIDE_ONLY_CLASS,
   useHasAsideMap,
 } from "./chapter-mind-map";
 import { ChapterMistakes } from "./chapter-mistakes";
@@ -39,7 +33,6 @@ export type { TestOutStart } from "../_components/test-out-start-link";
 export type { ChapterActions, ChapterHrefs } from "./chapter-context";
 
 const PRACTICE_TITLE_ID = "chapter-practice-title";
-const PROGRESS_TITLE_ID = "chapter-progress-title";
 const REFERENCE_TITLE_ID = "chapter-reference-title";
 
 function ChapterSummary({
@@ -57,37 +50,36 @@ function ChapterSummary({
   }
 
   return (
-    <PageSection
-      aria-labelledby={REFERENCE_TITLE_ID}
-      // With only the map, the section is empty where the map sits under the header instead.
-      className={hasSummary ? undefined : WIDE_ONLY_CLASS}
-    >
+    <PageSection aria-labelledby={REFERENCE_TITLE_ID}>
       <PageSectionHeader>
         <PageSectionTitle id={REFERENCE_TITLE_ID}>{t("For reference")}</PageSectionTitle>
       </PageSectionHeader>
 
       <ChapterMapAside />
 
-      {hasSummary && (
-        <ListGroup>
+      {/* The map's row is for narrow screens, so wide ones without a summary show no list. */}
+      <ListGroup className={hasSummary ? undefined : "min-[72rem]:hidden"}>
+        {hasSummary && (
           <Disclosure
             icon={
               <ListRowIcon>
-                <ListChecksIcon />
+                <NotebookTextIcon />
               </ListRowIcon>
             }
             title={t("Chapter summary")}
           >
             {chapter.skills.length > 0 && (
               <section aria-labelledby="chapter-skills-title" className="flex flex-col gap-1">
-                <SectionLabel id="chapter-skills-title">{t("Skills")}</SectionLabel>
+                <SectionLabel id="chapter-skills-title">{t("Topics")}</SectionLabel>
                 <SkillList skills={chapter.skills} />
               </section>
             )}
             <LessonSummaries renderText={renderLessonText} summaries={chapter.summaries} />
           </Disclosure>
-        </ListGroup>
-      )}
+        )}
+        {/* Last, so hidden on wide screens it leaves no line over the summary. */}
+        <ChapterMapRow />
+      </ListGroup>
     </PageSection>
   );
 }
@@ -108,38 +100,10 @@ function ChapterPractice() {
       </PageSectionHeader>
 
       <ListGroup>
-        {canTestOut && (
-          <TestOutStartRow
-            onStart={actions.startTestOut}
-            plusRequired={chapter.testOut.plusRequired}
-            scope="chapter"
-          />
-        )}
+        {canTestOut && <TestOutStartRow onStart={actions.startTestOut} scope="chapter" />}
         <ChapterMistakes />
       </ListGroup>
     </PageSection>
-  );
-}
-
-function ChapterProgress() {
-  const t = useExtracted();
-  const { chapter } = useChapterScreen();
-  const { lessons } = chapter;
-  const done = lessons.filter((lesson) => lesson.state === "done").length;
-
-  if (lessons.length === 0) {
-    return null;
-  }
-
-  return (
-    <DetailAsideSection
-      className="hidden min-[72rem]:flex"
-      detail={t("{done, number} of {total, number}", { done, total: lessons.length })}
-      title={t("Progress")}
-      titleId={PROGRESS_TITLE_ID}
-    >
-      <LessonProgress lessons={lessons} />
-    </DetailAsideSection>
   );
 }
 
@@ -155,18 +119,17 @@ function ChapterBody({
     <DetailLayout
       aside={
         <>
-          <ChapterProgress />
           <ChapterPractice />
           <ChapterSummary renderLessonText={renderLessonText} />
         </>
       }
       asideLabel={t("About this chapter")}
       bar={<ChapterBar />}
+      bottomBar={<ChapterBottomBar />}
       data-slot="chapter"
     >
       <DetailAside>
         <ChapterHeader />
-        <ChapterMapRow />
       </DetailAside>
 
       <DetailContent>

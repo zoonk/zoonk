@@ -7,26 +7,18 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef } from "react";
+import { EnterHint } from "../../components/enter-hint";
 import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { useLessonPlayer } from "../lesson-player-context";
 
 function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
-  const t = useExtracted();
   const { state } = useLessonPlayer();
 
   if (isNumber || state.phase !== "playing") {
     return null;
   }
 
-  return (
-    <p
-      aria-live="polite"
-      className="text-muted-foreground hidden text-xs lg:pointer-fine:block"
-      id={id}
-    >
-      {t("Press Enter to check, Shift+Enter for a new line.")}
-    </p>
-  );
+  return <EnterHint action="check" id={id} />;
 }
 
 export function LessonAnswerField({

@@ -38,14 +38,6 @@ struct LanguageStepView: View {
   }
 }
 
-private struct ScreenChip: View {
-  let text: Text
-
-  var body: some View {
-    text.chip()
-  }
-}
-
 /// Main's prompt audio: a recording the screen is about (a word, a letter, a sentence to hear).
 struct LessonAudioButton: View {
   enum Style {
@@ -220,8 +212,7 @@ private struct VocabularyView: View {
     if let word = exercise.word {
       switch part {
       case .screen:
-        ScreenChip(
-          text: Text("Vocabulary", tableName: "Player", comment: "Label above a word to learn"))
+        Chip(Text("Vocabulary", tableName: "Player", comment: "Label above a word to learn"))
 
         VStack(alignment: .leading, spacing: 4) {
           AccessibilityStack(spacing: 8) {
@@ -291,15 +282,12 @@ private struct AlphabetView: View {
   private var content: LanguageExercise.Content { exercise.content }
 
   var body: some View {
-    ScreenChip(
-      text: Text("Alphabet", tableName: "Player", comment: "Label above a letter to learn"))
+    Chip(Text("Alphabet", tableName: "Player", comment: "Label above a letter to learn"))
 
     HStack(alignment: .center, spacing: 16) {
       Text(content.symbol ?? "")
-        .typeStyle(.heroTitle)
+        .typeStyle(.letterReadout)
         .dynamicTypeSize(...DynamicTypeSize.accessibility5)
-        .scaleEffect(1.6, anchor: .leading)
-        .padding(.trailing, 24)
       AccessibilityStack(spacing: 8) {
         VStack(alignment: .leading, spacing: 4) {
           if let readingAid = content.readingAid {
@@ -372,8 +360,8 @@ private struct TranslationView: View {
     if let word = exercise.word {
       switch part {
       case .screen:
-        ScreenChip(
-          text: Text(
+        Chip(
+          Text(
             "Translate", tableName: "Player",
             comment: "Label above a word or sentence to translate"))
         LessonQuestionText(text: word.translation)
@@ -410,19 +398,55 @@ extension LessonAudio {
   }
 }
 
+/// What a check adds to a word bank's step. Where the bank waits at the bottom it goes right above
+/// the bank, in the room the bank leaves, so the bank holds still; elsewhere it goes under the bank.
+struct WordBankAdded {
+  let view: AnyView
+  let isAbove: Bool
+}
+
+extension EnvironmentValues {
+  @Entry var wordBankAdded: WordBankAdded?
+}
+
 /// Where the stage gives the turn spare height (one column), the bank sits at its bottom, so it
 /// stays put while the answer grows.
-private struct LessonWordBank<Tiles: View>: View {
+struct LessonWordBank<Tiles: View>: View {
+  @Environment(\.wordBankAdded) private var added
+
   @ViewBuilder let tiles: Tiles
 
-  var body: some View {
-    FlowLayout(spacing: 8) {
-      tiles
+  private enum Part {
+    case added, tiles
+  }
+
+  /// One keyed list, so the added part only changes place when the page changes shape (the ask
+  /// panel opening beside the lesson): what the learner did in it, such as a dismissed offer, stays.
+  private var parts: [Part] {
+    guard let added else {
+      return [.tiles]
     }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text("Word bank", tableName: "Player", comment: "The words to build an answer from")
-    )
+
+    return added.isAbove ? [.added, .tiles] : [.tiles, .added]
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 24) {
+      ForEach(parts, id: \.self) { part in
+        switch part {
+        case .added:
+          added?.view
+        case .tiles:
+          FlowLayout(spacing: 8) {
+            tiles
+          }
+          .accessibilityElement(children: .contain)
+          .accessibilityLabel(
+            Text("Word bank", tableName: "Player", comment: "The words to build an answer from")
+          )
+        }
+      }
+    }
     .frame(maxHeight: .infinity, alignment: .bottom)
   }
 }
@@ -582,10 +606,12 @@ private struct ArrangeWordsView: View {
   @ViewBuilder
   private func screen(_ sentence: LanguageExercise.Sentence) -> some View {
     if isListening {
-      ScreenChip(
-        text: Text(
-          "What do you hear?", tableName: "Player",
-          comment: "Above a sentence to listen to and arrange"))
+      Text(
+        "What do you hear?", tableName: "Player",
+        comment: "The question over a sentence to listen to and arrange"
+      )
+      .typeStyle(.question)
+      .accessibilityAddTraits(.isHeader)
       HStack(spacing: 12) {
         LessonAudioButton(url: exercise.promptAudio)
         if exercise.promptAudio == nil {
@@ -593,8 +619,8 @@ private struct ArrangeWordsView: View {
         }
       }
     } else {
-      ScreenChip(
-        text: Text(
+      Chip(
+        Text(
           "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
         ))
       ReadingPromptText(

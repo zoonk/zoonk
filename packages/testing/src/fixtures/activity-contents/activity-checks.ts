@@ -1,9 +1,14 @@
 const NUMERIC_TOLERANCE = 0.01;
 
+/** Placeholder words for a test that doesn't read them. A fixture people see says why with `explained`. */
 export const interactionCheck = { explanation: "Here is why.", kind: "interaction" } as const;
 
+export function explained(explanation: string) {
+  return { explanation, kind: "interaction" as const };
+}
+
 export const citedData = {
-  source: { publisher: "NOAA", title: "Mauna Loa CO2 record", year: 2024 },
+  source: { publisher: "NOAA", title: "Mauna Loa CO₂ record", year: 2024 },
 };
 
 export const exampleData = { isExample: true } as const;
@@ -19,6 +24,18 @@ export function choiceCheck(question: string, options: [string, boolean, number?
       text,
       ...(value === undefined ? {} : { value }),
     })),
+    question,
+  };
+}
+
+/** A choice check whose options each say why, for the fixtures people see. */
+export function reasonedChoice(
+  question: string,
+  options: { isCorrect: boolean; reason: string; text: string; value?: number }[],
+) {
+  return {
+    kind: "choice" as const,
+    options: options.map((option, index) => ({ id: `o${index}`, ...option })),
     question,
   };
 }

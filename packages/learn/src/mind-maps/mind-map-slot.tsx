@@ -21,7 +21,7 @@ export function MindMapSlot({
       // oxlint-disable-next-line next/no-img-element -- @zoonk/learn doesn't depend on next/image; thumbnails are stored, optimized webp files.
       <img
         alt=""
-        className={cn(SLOT_CLASS, "ring-border bg-card object-cover ring-1")}
+        className={cn(SLOT_CLASS, "outline-border bg-card object-cover outline -outline-offset-1")}
         decoding="async"
         height={48}
         src={toMindMapSrc(thumbnailUrl)}

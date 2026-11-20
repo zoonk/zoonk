@@ -25,6 +25,20 @@ function lessonCompletion(
   };
 }
 
+const MISSIONS = [{ done: 1, kind: "askBuddy", status: "done", total: 1 }];
+
+function dayBlock(reached: LibraryLessonCompletion["reached"]) {
+  return {
+    brainPower: 51,
+    ceremony: null,
+    certificates: [],
+    completedMissions: ["askBuddy"],
+    fullMeal: { bonus: 50, paid: true },
+    missions: MISSIONS,
+    reached,
+  } as unknown as NonNullable<LibraryLessonCompletion["studyBlock"]>;
+}
+
 describe(getLessonCelebration, () => {
   it("celebrates a lesson on its own from what the lesson reached", () => {
     const completion = lessonCompletion({ reached: { energy: 80, level: LEVEL_TWO } });
@@ -38,25 +52,31 @@ describe(getLessonCelebration, () => {
     });
   });
 
-  it("celebrates a day's block (a quick explanation's) from the block: its missions, its own points and the bonus's level", () => {
-    const missions = [{ done: 1, kind: "askBuddy", status: "done", total: 1 }];
-
-    const studyBlock = {
-      brainPower: 51,
-      ceremony: null,
-      certificates: [],
-      completedMissions: ["askBuddy"],
-      fullMeal: { bonus: 50, paid: true },
-      missions,
-      reached: { energy: 80, level: LEVEL_TWO },
-    } as unknown as NonNullable<LibraryLessonCompletion["studyBlock"]>;
+  it("celebrates a day's block (a quick explanation's) from the block, its missions saying the day's bonus", () => {
+    const studyBlock = dayBlock({ energy: 80, level: null });
 
     expect(getLessonCelebration(lessonCompletion({ studyBlock }))).toStrictEqual({
       brainPower: 1,
       ceremony: null,
       certificates: [],
-      missionMoment: { completed: ["askBuddy"], fullMeal: { bonus: 50, paid: true }, missions },
-      reached: { energy: 80, level: LEVEL_TWO },
+      missionMoment: {
+        completed: ["askBuddy"],
+        fullMeal: { bonus: 50, paid: true },
+        missions: MISSIONS,
+      },
+      reached: { energy: 80, level: null },
     });
+  });
+
+  it("counts the day's bonus in the block's points when a rarer moment shows instead of the missions", () => {
+    const levelUp = lessonCompletion({ studyBlock: dayBlock({ energy: null, level: LEVEL_TWO }) });
+
+    const chapterDone = lessonCompletion({
+      finishedChapter: { chapterId: "chapter", goalId: "goal", title: "Atoms" },
+      studyBlock: dayBlock({ energy: null, level: null }),
+    });
+
+    expect(getLessonCelebration(levelUp).brainPower).toBe(51);
+    expect(getLessonCelebration(chapterDone).brainPower).toBe(51);
   });
 });

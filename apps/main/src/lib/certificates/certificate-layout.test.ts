@@ -21,7 +21,7 @@ function getTopicOverflow(topic: string): number {
   return getSheetOverflow({
     covered: { topics: [topic] },
     finePrint: COURSE_FINE_PRINT,
-    graph: "labelledRoute",
+    graph: "route",
     nameHeight: NAME_LINE,
     titleHeight: TITLE_LINE,
   });
@@ -33,7 +33,7 @@ describe(getSheetOverflow, () => {
       getSheetOverflow({
         covered: { topics: TOPICS },
         finePrint: COURSE_FINE_PRINT,
-        graph: "labelledRoute",
+        graph: "route",
         nameHeight: NAME_LINE,
         titleHeight: TITLE_LINE,
       }),
@@ -43,7 +43,7 @@ describe(getSheetOverflow, () => {
   it("runs over with a three-line title until every topic gives way", () => {
     const longTitle = {
       finePrint: COURSE_FINE_PRINT,
-      graph: "labelledRoute" as const,
+      graph: "route" as const,
       nameHeight: NAME_LINE,
       titleHeight: TITLE_LINE * 3,
     };
@@ -60,7 +60,7 @@ describe(getSheetOverflow, () => {
       getSheetOverflow({
         covered: null,
         finePrint: COURSE_FINE_PRINT,
-        graph: "labelledRoute",
+        graph: "route",
         nameHeight: NAME_LINE * 2,
         titleHeight: TITLE_LINE * 3,
       }),
@@ -79,11 +79,11 @@ describe(getLinkOverflow, () => {
     const title = 2 * 42 * 1.12;
 
     expect(
-      getLinkOverflow({ graph: "route", nameHeight: 2 * 96, titleHeight: title }),
+      getLinkOverflow({ graph: "none", nameHeight: 2 * 96, titleHeight: title }),
     ).toBeLessThanOrEqual(0);
 
     expect(
-      getLinkOverflow({ graph: "route", nameHeight: 6 * 60, titleHeight: title }),
+      getLinkOverflow({ graph: "none", nameHeight: 6 * 60, titleHeight: title }),
     ).toBeGreaterThan(0);
   });
 });

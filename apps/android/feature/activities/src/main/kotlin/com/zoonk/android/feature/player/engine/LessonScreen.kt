@@ -7,14 +7,16 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.ui.components.TaskSegment
 
-enum class PrimaryLabel { Check, Confirm, Continue, DontKnowYet, Next, NextStep, SeeAnswer, SeeHowItWent, Start }
+enum class PrimaryLabel { Check, Confirm, Continue, Next, NextStep, SeeAnswer, SeeHowItWent, Start }
 
+/** [reveals]: a guess with nothing picked, whose See answer shows the answer without one (main's `reveal`). */
 @Immutable
 data class PrimaryAction(
     val isCheck: Boolean,
     val label: PrimaryLabel,
     val busy: Boolean = false,
     val enabled: Boolean = true,
+    val reveals: Boolean = false,
 )
 
 /**
@@ -34,6 +36,7 @@ data class LessonScreen(
     val quickCheck: Pair<Int, Int>?,
     val struggleOffer: LessonStep?,
     val unsentAnswer: Boolean,
+    val showProgress: Boolean,
 )
 
 private fun LessonAnswer?.isReady(): Boolean = this != null && (writtenText?.isNotBlank() ?: true)
@@ -75,7 +78,7 @@ private fun LessonPlayerState.primaryAction(step: LessonStep): PrimaryAction? {
     val isGuess = step.content is StepContent.Guess
 
     if (isGuess && step.id !in answers) {
-        return PrimaryAction(isCheck = false, label = PrimaryLabel.DontKnowYet, enabled = !step.isRequiredPictureDrawing)
+        return PrimaryAction(isCheck = false, label = PrimaryLabel.SeeAnswer, enabled = !step.isRequiredPictureDrawing, reveals = true)
     }
 
     return PrimaryAction(
@@ -130,6 +133,7 @@ fun LessonPlayerState.screen(): LessonScreen {
         hyperdriveStreak = if (phase == LessonPhase.Feedback && step != null) hyperdriveStreak(step.id) else null,
         quickCheck = quickCheck?.let { position to queue.size },
         struggleOffer = struggleOffer(),
+        showProgress = phase != LessonPhase.Completed,
         unsentAnswer = awaitingCheck && step != null && answers[step.id]?.writtenText?.isNotBlank() == true,
     )
 }

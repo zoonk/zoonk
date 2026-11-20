@@ -4,11 +4,12 @@ import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "@zoonk/core/language/activities";
 import { type MockScheduleView } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { PlusMark } from "../_components/plus-lock";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
+import { useRoadmapFinish } from "../journey/use-roadmap";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -24,31 +25,34 @@ function mono(chunks: React.ReactNode) {
   return <span className="font-mono tabular-nums">{chunks}</span>;
 }
 
-function DailyTimeValue() {
+export function DailyTimeValue({ readout = false }: { readout?: boolean }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
   const { shape } = plan.schedule;
 
+  const time = (value: React.ReactNode) =>
+    readout ? <span className="tabular-nums">{value}</span> : mono(value);
+
   if (shape.weekend === null) {
-    return mono(formatDuration(shape.weekdays));
+    return time(formatDuration(shape.weekdays));
   }
 
   return t.rich("<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends", {
-    mono,
+    mono: time,
     weekdays: formatDuration(shape.weekdays),
     weekend: formatDuration(shape.weekend),
   });
 }
 
 const PROPERTY_ROW_CLASS =
-  "hover:bg-muted focus-visible:ring-ring/50 -mx-2 flex min-h-11 w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-md px-2 text-left text-[0.8125rem] transition-colors outline-none focus-visible:ring-[3px]";
+  "hover:bg-muted focus-visible:ring-ring/50 min-h-control -mx-2 flex w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-md px-2 text-left text-compact transition-colors outline-none focus-visible:ring-[3px]";
 
 function PropertyRowParts({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <>
       <span className="text-muted-foreground max-w-[60%] shrink-0 truncate">{label}</span>
-      <span className="line-clamp-2 min-w-0 py-1 text-right text-balance">{children}</span>
+      <span className="min-w-0 py-1 text-right text-balance">{children}</span>
     </>
   );
 }
@@ -64,7 +68,7 @@ function PropertyRow({
 }) {
   return (
     <li>
-      <button className={PROPERTY_ROW_CLASS} onClick={onOpen} type="button">
+      <button aria-haspopup="dialog" className={PROPERTY_ROW_CLASS} onClick={onOpen} type="button">
         <PropertyRowParts label={label}>{children}</PropertyRowParts>
       </button>
     </li>
@@ -92,7 +96,7 @@ function CountryRows({ onOpen }: { onOpen: () => void }) {
   const { contentCountry, examplesCountry } = usePlanScreen().goal;
 
   if (examplesCountry) {
-    return <ReadOnlyRow label={t("Lesson examples")}>{examplesCountry.name}</ReadOnlyRow>;
+    return <ReadOnlyRow label={t("Country")}>{examplesCountry.name}</ReadOnlyRow>;
   }
 
   if (!contentCountry) {
@@ -102,13 +106,11 @@ function CountryRows({ onOpen }: { onOpen: () => void }) {
   return (
     <>
       {contentCountry.editable ? (
-        <PropertyRow label={t("Content country")} onOpen={onOpen}>
+        <PropertyRow label={t("Country")} onOpen={onOpen}>
           {contentCountry.name}
         </PropertyRow>
       ) : (
-        <ReadOnlyRow
-          label={contentCountry.kind === "exam" ? t("Exam country") : t("Content country")}
-        >
+        <ReadOnlyRow label={contentCountry.kind === "exam" ? t("Exam country") : t("Country")}>
           {contentCountry.name}
         </ReadOnlyRow>
       )}
@@ -166,11 +168,9 @@ function MockScheduleValue({ mocks }: { mocks: MockScheduleView }) {
 /** Mock exams aren't a setting, so the row opens the exam's page, where they are. */
 function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: MockScheduleView }) {
   const t = useExtracted();
-  const { plan } = usePlanScreen();
 
   const parts = (
     <PropertyRowParts label={t("Mock exams")}>
-      {plan.access.mocksRequirePlus && <PlusMark className="mr-2 align-middle" />}
       <MockScheduleValue mocks={mocks} />
     </PropertyRowParts>
   );
@@ -191,19 +191,28 @@ function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: Moc
 function GoalDateValue() {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
-  const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
+  const finish = useRoadmapFinish();
 
-  if (!targetDate) {
-    return goal.kind === "exam" ? t("To be confirmed") : t("No date");
+  if (!finish) {
+    return goal.kind === "exam" ? t("To be confirmed") : t("None set");
   }
 
-  return (
-    <PlanDateText
-      estimate={targetDateEstimated}
-      isoDate={targetDate}
-      month={targetDateNamedMonth}
-    />
+  const date = (
+    <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
   );
+
+  if (goal.kind !== "exam" && !plan.end && !plan.schedule.targetDate) {
+    return (
+      <>
+        {t("None set")}
+        <span className="text-muted-foreground block text-xs">
+          {t.rich("Estimated finish <date></date>", { date: () => date })}
+        </span>
+      </>
+    );
+  }
+
+  return date;
 }
 
 export function PlanProperties({
@@ -219,7 +228,7 @@ export function PlanProperties({
   const activityName = useActivityName();
   const studyDaysText = useStudyDaysText();
   const varietyName = useVarietyName();
-  const { goal, plan } = usePlanScreen();
+  const { goal, paused, plan } = usePlanScreen();
   const skipped = new Set(plan.steering.skippedActivities);
   const practiced = LANGUAGE_ACTIVITY_TYPES.filter((activity) => !skipped.has(activity));
 
@@ -231,13 +240,13 @@ export function PlanProperties({
 
       <ul className="flex flex-col">
         <PropertyRow
-          label={goal.kind === "exam" ? t("Exam date") : t("Goal date")}
+          label={goal.kind === "exam" ? t("Exam date") : t("End date")}
           onOpen={() => onOpen("date")}
         >
           <GoalDateValue />
         </PropertyRow>
 
-        <PropertyRow label={t("Time a day")} onOpen={() => onOpen("time")}>
+        <PropertyRow label={t("Daily study time")} onOpen={() => onOpen("time")}>
           <DailyTimeValue />
         </PropertyRow>
 
@@ -245,7 +254,9 @@ export function PlanProperties({
           {studyDaysText(plan.schedule.weekdayMinutes)}
         </PropertyRow>
 
-        {plan.schedule.mocks && <MockExamsRow examHref={examHref} mocks={plan.schedule.mocks} />}
+        {!paused && plan.schedule.mocks && (
+          <MockExamsRow examHref={examHref} mocks={plan.schedule.mocks} />
+        )}
 
         {plan.examChoices.map((choice) => (
           <ExamChoiceRow choice={choice} key={choice.group} onOpen={() => onOpen("choices")} />
@@ -263,7 +274,7 @@ export function PlanProperties({
           <PropertyRow label={t("Practice")} onOpen={() => onOpen("practice")}>
             {practiced.length === LANGUAGE_ACTIVITY_TYPES.length
               ? t("Everything")
-              : practiced.map((activity) => activityName(activity)).join(" · ")}
+              : practiced.map((activity) => activityName(activity)).join(FACT_SEPARATOR)}
           </PropertyRow>
         )}
       </ul>

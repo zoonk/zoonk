@@ -3,43 +3,13 @@ import {
   type BrandIconComponent,
   GoogleBrandIcon,
 } from "@zoonk/ui/components/brand-icons";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { Input, InputError } from "@zoonk/ui/components/input";
+import { Button } from "@zoonk/ui/components/button";
+import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 
 export function Login({ children, className }: React.ComponentProps<"div">) {
   return <div className={cn("flex w-full flex-col gap-6", className)}>{children}</div>;
-}
-
-export function LoginHeader({ children, className }: React.ComponentProps<"div">) {
-  return (
-    <header className={cn("flex flex-col items-center gap-2 text-center", className)}>
-      {children}
-    </header>
-  );
-}
-
-export function LoginTitle({ children, className }: React.ComponentProps<"h1">) {
-  return (
-    <h1
-      className={cn(
-        "text-[1.625rem] leading-[1.1] font-[620] tracking-[-0.035em] text-balance sm:text-[1.875rem]",
-        className,
-      )}
-    >
-      {children}
-    </h1>
-  );
-}
-
-export function LoginDescription({ children, className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p className={cn("text-muted-foreground text-sm text-balance", className)} {...props}>
-      {children}
-    </p>
-  );
 }
 
 export function LoginDivider({ children, className }: React.ComponentProps<"div">) {
@@ -98,30 +68,6 @@ export function LoginWithApple({ children, ...props }: LoginWithProviderProps) {
   );
 }
 
-export function LoginError({
-  children,
-  hasError,
-  ...props
-}: React.ComponentProps<"p"> & { hasError: boolean }) {
-  if (!hasError) {
-    return null;
-  }
-
-  return <InputError {...props}>{children}</InputError>;
-}
-
-export function LoginForm({ children, className, ...props }: React.ComponentProps<"form">) {
-  return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
-      {children}
-    </form>
-  );
-}
-
-export function LoginField({ children, className }: React.ComponentProps<"fieldset">) {
-  return <fieldset className={cn("grid gap-3", className)}>{children}</fieldset>;
-}
-
 export function LoginEmailLabel({ children, ...props }: React.ComponentProps<"label">) {
   return (
     <Label htmlFor="email" {...props}>
@@ -135,7 +81,6 @@ export function LoginEmailInput({ ...props }: React.ComponentProps<"input">) {
     <Input
       autoCapitalize="none"
       autoComplete="email"
-      className="h-11"
       id="email"
       name="email"
       required
@@ -143,14 +88,6 @@ export function LoginEmailInput({ ...props }: React.ComponentProps<"input">) {
       type="email"
       {...props}
     />
-  );
-}
-
-export function LoginSubmit({ children, ...props }: React.ComponentProps<"button">) {
-  return (
-    <SubmitButton className="h-11 font-[560]" full {...FORWARD_ICON} {...props}>
-      {children}
-    </SubmitButton>
   );
 }
 

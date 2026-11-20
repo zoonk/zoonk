@@ -31,7 +31,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
+import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
@@ -40,10 +42,14 @@ import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.search.SearchAction
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -67,71 +73,78 @@ internal fun <T : Any> CatalogPage(
     alsoShown: List<Resource<*>> = emptyList(),
     blocks: (T, CatalogPageLayout) -> List<CatalogBlock>,
 ) {
-    val scope = rememberCoroutineScope()
-    val isRefreshing by resource.isRefreshing.collectAsStateWithLifecycle()
-    val reading = rememberSaveable(saver = CatalogReading.Saver) { CatalogReading() }
-    val disclosures = rememberSaveable(saver = Disclosures.Saver) { Disclosures() }
-    val refresh: () -> Unit = { (listOf(resource) + alsoShown).forEach { scope.launch { it.refresh() } } }
-    val sizeClass = windowAdaptiveInfo().windowSizeClass
+    val continuing = viewModel { SwitchThenToday(app.scope, app::switchGoal) }
+    VisitOf(continuing.visit)
+    ActOn(continuing.switched) { saved ->
+        if (saved) navigator.showRoot(AppTab.Today) else app.snackbars.show(R.string.goal_switcher_failed)
+    }
+    CompositionLocalProvider(LocalCatalogContinuation provides continuing) {
+        val scope = rememberCoroutineScope()
+        val isRefreshing by resource.isRefreshing.collectAsStateWithLifecycle()
+        val reading = rememberSaveable(saver = CatalogReading.Saver) { CatalogReading() }
+        val disclosures = rememberSaveable(saver = Disclosures.Saver) { Disclosures() }
+        val refresh: () -> Unit = { (listOf(resource) + alsoShown).forEach { scope.launch { it.refresh() } } }
+        val sizeClass = windowAdaptiveInfo().windowSizeClass
 
-    PageScaffold(
-        onBack = { navigator.back() },
-        title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
-        actions = {
-            SearchAction()
-            if (report != null && state is LoadState.Loaded) ReportProblemMenu(app, report)
-        },
-    ) { padding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = refresh,
-            modifier = Modifier.fillMaxSize().padding(padding),
-        ) {
-            // The pages meet at the fold, each with its own margins, as a book's do.
-            PageWithSupportingPane(
-                atFoldOnly = true,
-                panesTouch = true,
-                supportingPane = {
-                    if (state is LoadState.Loaded) {
-                        val layout = CatalogPageLayout(beside = false, disclosures, twoPages = true)
-                        val shown = blocks(state.value, layout).filter { it.trailing }
-                        val listState = remember { reading.listState(shown) }
-                        BlockList(shown, listState, reading, PANE_MARGIN, Modifier.fillMaxSize())
-                    }
-                },
-            ) { twoPages ->
-                when (state) {
-                    LoadState.Idle, LoadState.Loading -> {
-                        PageLoading()
-                    }
-
-                    is LoadState.Failed -> {
-                        if (state.error == ApiError.NotFound) {
-                            CatalogNotFound(navigator)
-                        } else {
-                            LoadFailedMessage(onRetry = refresh)
+        PageScaffold(
+            onBack = { navigator.back() },
+            title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+            columnWidth = PAGE_WIDTH,
+            actions = {
+                SearchAction()
+                if (report != null && state is LoadState.Loaded) ReportProblemMenu(app, report)
+            },
+        ) { padding ->
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = refresh,
+                modifier = Modifier.fillMaxSize().padding(padding),
+            ) {
+                // The pages meet at the fold, each with its own margins, as a book's do.
+                PageWithSupportingPane(
+                    atFoldOnly = true,
+                    panesTouch = true,
+                    supportingPane = {
+                        if (state is LoadState.Loaded) {
+                            val layout = CatalogPageLayout(beside = false, disclosures, twoPages = true)
+                            val shown = blocks(state.value, layout).filter { it.trailing }
+                            val listState = remember { reading.listState(shown) }
+                            BlockList(shown, listState, reading, pageMargin(), Modifier.fillMaxSize())
                         }
-                    }
+                    },
+                ) { twoPages ->
+                    when (state) {
+                        LoadState.Idle, LoadState.Loading -> {
+                            PageLoading()
+                        }
 
-                    LoadState.Empty -> {
-                        CatalogNotFound(navigator)
-                    }
+                        is LoadState.Failed -> {
+                            if (state.error == ApiError.NotFound) {
+                                CatalogNotFound(navigator)
+                            } else {
+                                LoadFailedMessage(onRetry = refresh)
+                            }
+                        }
 
-                    is LoadState.Loaded -> {
-                        val beside = !twoPages && sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-                        val wide = !twoPages && sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-                        val all = blocks(state.value, CatalogPageLayout(beside, disclosures, twoPages))
-                        val shown = if (twoPages) all.filterNot { it.trailing } else all
-                        val listState = remember(twoPages) { reading.listState(shown) }
+                        LoadState.Empty -> {
+                            CatalogNotFound(navigator)
+                        }
 
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-                            BlockList(
-                                blocks = shown,
-                                state = listState,
-                                reading = reading,
-                                margin = if (wide) 24.dp else PANE_MARGIN,
-                                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
-                            )
+                        is LoadState.Loaded -> {
+                            val beside = !twoPages && sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+                            val all = blocks(state.value, CatalogPageLayout(beside, disclosures, twoPages))
+                            val shown = if (twoPages) all.filterNot { it.trailing } else all
+                            val listState = remember(twoPages) { reading.listState(shown) }
+
+                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                                BlockList(
+                                    blocks = shown,
+                                    state = listState,
+                                    reading = reading,
+                                    margin = pageMargin(),
+                                    modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
+                                )
+                            }
                         }
                     }
                 }
@@ -139,6 +152,8 @@ internal fun <T : Any> CatalogPage(
         }
     }
 }
+
+internal val LocalCatalogContinuation = staticCompositionLocalOf<SwitchThenToday> { error("Catalog continuation needs its page") }
 
 /**
  * How a page's blocks lay out in the list that shows them. [beside] when that list is wide enough
@@ -305,6 +320,3 @@ internal class Disclosures(
 
 /** Main's page column (`max-w-5xl`): the outline and plan read in one column however wide the window. */
 private val PAGE_WIDTH = 1040.dp
-
-/** A page of an open book, like a phone, keeps a phone's margins. */
-private val PANE_MARGIN = 16.dp

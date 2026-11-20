@@ -3,6 +3,7 @@ import { formatPrice } from "@zoonk/utils/currency";
 import { escapeHtml } from "@zoonk/utils/escape-html";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { getMainPageUrl } from "@zoonk/utils/url";
+import { EMAIL_TEXT_STYLE } from "../email-style";
 import { type getTranslation } from "../translations/get-translations";
 
 export type Money = { amount: number; currency: string };
@@ -11,6 +12,21 @@ export type BillingInterval = "month" | "year";
 
 const SELLER =
   "Zoonk Tecnologia e Educação Ltda · CNPJ 42.262.784/0001-76 · Setor SGAN 601, Módulo H, Sala 55, SS1, Parte 14, Edif Ion, Asa Norte, Brasília (DF), 70830-018, Brazil · hello@zoonk.com";
+
+/**
+ * One part of the seller per line, so a phone never ends a line on a "·", and the tax id stays whole.
+ * Within the address, a phone wraps only between its comma-separated parts.
+ */
+function sellerHtml(): string {
+  return SELLER.split(" · ")
+    .map((part) =>
+      part
+        .split(", ")
+        .map((piece) => `<span style="white-space:nowrap">${escapeHtml(piece)}</span>`)
+        .join(", "),
+    )
+    .join("<br>");
+}
 
 function fill(template: string, values: Record<string, string>): string {
   return Object.entries(values).reduce(
@@ -28,7 +44,7 @@ export function html(
 }
 
 export function link(url: string, label = url): string {
-  return `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`;
+  return `<a href="${escapeHtml(url)}" style="color:inherit;text-decoration:underline">${escapeHtml(label)}</a>`;
 }
 
 export function paragraph(content: string): string {
@@ -43,11 +59,12 @@ export function details(rows: [label: string, value: string][]): string {
     )
     .join("");
 
-  return `<table role="presentation" style="border-collapse:collapse;margin:0 0 16px">${cells}</table>`;
+  // The cells pad 4px over and under, so the table gives that back to sit 16px from its neighbors.
+  return `<table role="presentation" style="border-collapse:collapse;margin:-4px 0 12px">${cells}</table>`;
 }
 
 export function renderEmail(blocks: string[]): string {
-  return `<div style="font-family:system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5;color:#18181b;max-width:560px">${blocks.join("")}<p style="margin:24px 0 0;font-size:12px;color:#71717a">${escapeHtml(SELLER)}</p></div>`;
+  return `<div style="${EMAIL_TEXT_STYLE}">${blocks.join("")}<p style="margin:24px 0 0;font-size:12px;color:#71717a">${sellerHtml()}</p></div>`;
 }
 
 /**

@@ -87,7 +87,6 @@
   "activities_code_you_said_right": "e4f290ca8754745c2a3f1fe376c88264a08cd4ffaca70c996a42ba1e7c2c59a4",
   "activities_code_you_said_wrong": "0dbe23313b9d3698fe4b882fc3c9e638d1f62a1ae4fba92a9122a01673fb87e1",
   "activities_code_your_formula": "77bdb0f964023ac74d1c0568fccd7b527bfab67dffdd0249af510116ed9e2fa7",
-  "activities_code_your_output": "c41f49434a1e206ee83a13508af105e08d53714315317548bd4b658575844060",
   "activities_code_your_pattern": "ba17f0a6088da465e95e0510196574bbe21256141ff7f4960abb6b5000ac0ae5",
   "activities_code_your_predictions": "eeb1c086155f5032985813515c0064407822863bd630d9241c5fce6104f44eff",
   "activities_code_your_query": "1e248fddd8384677138852e2e708ed746d4615280cbd383e965204869bc456c1",
@@ -114,7 +113,6 @@
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">Línea %1$d, puedes editarla</string>
-    <string name="activities_code_your_output">Tu salida</string>
     <!-- What a program shown to explore printed, with no expected output beside it. -->
     <string name="activities_code_output">Salida</string>
     <!-- The output the program should print. -->

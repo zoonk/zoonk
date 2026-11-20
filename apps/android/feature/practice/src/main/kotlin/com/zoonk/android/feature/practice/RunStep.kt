@@ -446,8 +446,6 @@ internal fun AnswerActions(
                 modifier = width.focusMoveTarget(main),
                 enabled = done || (run.canAnswer && draft != null),
                 focusableWhenDisabled = sender != null,
-                leadingIcon = if (done) null else ({ ButtonIcon(R.drawable.ic_check) }),
-                trailingIcon = if (done) ({ ButtonIcon(R.drawable.ic_arrow_forward) }) else null,
             ) {
                 Text(
                     stringResource(

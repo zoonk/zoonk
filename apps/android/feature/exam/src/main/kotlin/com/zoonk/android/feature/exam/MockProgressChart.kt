@@ -100,11 +100,27 @@ internal fun ProgressLineChart(
     val chartHeight = CHART_HEIGHT * LocalDensity.current.fontScale.coerceAtLeast(1f)
 
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(
-            Modifier.height(chartHeight).widthIn(min = 36.dp).clearAndSetSemantics {},
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            ticks.forEach { Text(formatPercent(it / TOP.toDouble(), locale), color = axisColor, style = axis, textAlign = TextAlign.End) }
+        Layout(
+            content = {
+                ticks.forEach {
+                    Text(
+                        formatPercent(it / TOP.toDouble(), locale),
+                        color = axisColor,
+                        style = axis,
+                        textAlign = TextAlign.End,
+                    )
+                }
+            },
+            modifier = Modifier.height(chartHeight).widthIn(min = 36.dp).clearAndSetSemantics {},
+        ) { measurables, constraints ->
+            val labels = measurables.map { it.measure(constraints.copy(minWidth = 0, minHeight = 0)) }
+            val width = maxOf(constraints.minWidth, labels.maxOfOrNull { it.width } ?: 0)
+            val height = constraints.maxHeight
+            layout(width, height) {
+                labels.forEachIndexed { index, label ->
+                    label.placeRelative(width - label.width, (toY(ticks[index], floor) * height - label.height / 2).roundToInt())
+                }
+            }
         }
 
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -175,10 +191,13 @@ internal fun ProgressLineChart(
                         }
                     },
             ) {
-                Canvas(Modifier.fillMaxSize()) {
+                // The points keep a dot's room from each side, so the first and last dots end inside the column; the
+                // grid still crosses it.
+                Canvas(Modifier.fillMaxSize().padding(horizontal = DOT_ROOM)) {
+                    val room = DOT_ROOM.toPx()
                     ticks.forEach { tick ->
                         val y = toY(tick, floor) * size.height
-                        drawLine(grid, Offset(0f, y), Offset(size.width, y), strokeWidth = 1.dp.toPx())
+                        drawLine(grid, Offset(-room, y), Offset(size.width + room, y), strokeWidth = 1.dp.toPx())
                     }
                     drawChartLine(values, floor, color, wash = true)
                     values.forEachIndexed { index, value ->
@@ -193,7 +212,11 @@ internal fun ProgressLineChart(
                         drawCircle(color, radius = 6.dp.toPx(), center = center)
                     }
                 }
-                active?.let { index -> Readout(points[index], toX(index, values.size), toY(values[index], floor)) }
+                active?.let { index ->
+                    Box(Modifier.fillMaxSize().padding(horizontal = DOT_ROOM)) {
+                        Readout(points[index], toX(index, values.size), toY(values[index], floor))
+                    }
+                }
             }
 
             Row(Modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.SpaceBetween) {
@@ -259,19 +282,6 @@ internal fun Sparkline(values: List<Int>) {
     }
 }
 
-/** A made-up rising line behind the Plus mark: what the chart shows once there are mocks. */
-@Composable
-internal fun SampleProgressChart(values: List<Int>) {
-    val color = LearnKind.Mock.color
-    val grid = MaterialTheme.zoonk.vizGrid
-
-    Canvas(Modifier.fillMaxWidth().height(80.dp)) {
-        drawLine(grid, Offset.Zero, Offset(size.width, 0f), strokeWidth = 1.dp.toPx())
-        drawLine(grid, Offset(0f, size.height), Offset(size.width, size.height), strokeWidth = 1.dp.toPx())
-        drawChartLine(values, floor = 0, color = color, wash = true)
-    }
-}
-
 private fun DrawScope.drawChartLine(
     values: List<Int>,
     floor: Int,
@@ -300,6 +310,9 @@ private fun DrawScope.point(
     count: Int,
     floor: Int,
 ) = Offset(toX(index, count) * size.width, toY(value, floor) * size.height)
+
+/** A point's ring. */
+private val DOT_ROOM = 6.dp
 
 /** 0%, or the next 50 below the lowest score when a net score went negative. */
 private fun chartFloor(values: List<Int>): Int = floor(minOf(0, values.minOrNull() ?: 0) / NEGATIVE_STEP.toDouble()).toInt() * NEGATIVE_STEP

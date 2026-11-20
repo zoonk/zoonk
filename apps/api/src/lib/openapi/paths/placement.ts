@@ -9,7 +9,6 @@ import {
   placementSittingInputSchema,
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { chapterTestOutInputSchema } from "@zoonk/core/learner/test-out/contract";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { z } from "zod";
 import {
   placementAnswerResponseSchema,
@@ -45,11 +44,6 @@ const learnerErrors = {
   "404": notFoundResponse,
 } as const;
 
-const testOutPlusRequired = {
-  ...paymentRequiredResponse,
-  description: `A free exam plan past its first week takes the test-out with Plus only (\`testOut.plusRequired\` on the chapter): nothing is written, graded or skipped. Error code: ${LESSON_PLAYER_ERROR_CODES.plusRequired}.`,
-} as const;
-
 export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out": {
     get: {
@@ -68,7 +62,6 @@ export const placementPaths = {
           description:
             "The chapter's test-out questions, or nothingToSkip when no lessons remain to skip",
         },
-        "402": testOutPlusRequired,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Get a chapter test-out",
@@ -94,7 +87,6 @@ export const placementPaths = {
           description:
             "The test-out result, or nothingToSkip for a new submission with no lessons left to skip",
         },
-        "402": testOutPlusRequired,
         "422": unprocessableEntityResponse,
       },
       security: AUTHENTICATED_SECURITY,
@@ -105,7 +97,7 @@ export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out/generations": {
     post: {
       description:
-        "Gets a chapter's test-out ready when the learner asks for it (never on a screen view). `ready` when it has a question for every skill it samples. Otherwise a run writes a few multiple-choice questions for each skill without one (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. Past a free exam plan's first week it answers 402 `PLUS_REQUIRED` and nothing is written.",
+        "Gets a chapter's test-out ready when the learner asks for it (never on a screen view). `ready` when it has a question for every skill it samples. Otherwise a run writes a few multiple-choice questions for each skill without one (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
       operationId: "createChapterTestOutGeneration",
       requestParams: { path: goalChapterPathParamsSchema },
       responses: {
@@ -128,7 +120,7 @@ export const placementPaths = {
         },
         "402": {
           ...paymentRequiredResponse,
-          description: `The learner's AI help allowance is spent, or a free exam plan past its first week takes the test-out with Plus only (${LESSON_PLAYER_ERROR_CODES.plusRequired})`,
+          description: "The learner's AI help allowance is spent",
         },
         "403": guestRefusalResponse,
         "429": tooManyRequestsResponse,
@@ -141,7 +133,7 @@ export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out/results/{requestId}": {
     get: {
       description:
-        "A test-out the learner sent, as it was recorded: its score, the lessons it skipped, and whether that skip can still be undone or was undone. Show it again (after a reload, or from a link) instead of a new test, celebrating nothing. Nothing is written. 404 for a test never sent, another chapter's or another learner's.",
+        "A test-out the learner sent, as it was recorded: its score, the lessons it skipped, and whether that skip can still be undone or was undone. Read it again after a reload or from a link instead of starting a new test. Nothing is written. 404 for a test never sent, another chapter's or another learner's.",
       operationId: "getChapterTestOutResult",
       requestParams: { path: goalChapterTestOutResultPathParamsSchema },
       responses: {
@@ -197,7 +189,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/answers": {
     post: {
       description:
-        'Grades one placement answer, including "I don\'t know yet", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. For an exam goal (its Focus test) never show `isCorrect`; an item the learner already answered in the test is not recorded again, so a retry is safe; once the returned `status` is `done`, the open sitting asks nothing more: close it with POST /goals/{goalId}/placement/completion.',
+        "Grades one placement answer, including \"I don't know yet\", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. An exam goal's Focus test gives no feedback on answers (`isCorrect` is still returned); an item the learner already answered in the test is not recorded again, so a retry is safe; once the returned `status` is `done`, the open sitting asks nothing more: close it with POST /goals/{goalId}/placement/completion.",
       operationId: "createPlacementAnswer",
       requestBody: {
         content: { "application/json": { schema: placementAnswerInputSchema } },
@@ -220,7 +212,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/completion": {
     post: {
       description:
-        "Ends placement at any time. Skills placement is sure about become known and the plan skips what they cover. With fromScratch, nothing changes and every phase and area starts at its beginning. For an exam goal it closes the open Focus test sitting and returns the test with its result (`focusTest.checkpoint`); with no sitting and no answer it postpones the test (\"Skip for now\"): sessions ask no test questions until it starts; on a plan the learner has seen, a focus the answers suggest arrives as a proposed plan change (`source: focusTest`), never applied by itself; and `fromScratch` is refused with 422. Finishing before the goal's skill map exists places nothing: `complete` is false. The lesson the plan now opens with starts being written, counted as its start like opening it, so it's ready when the first session reaches it; for a learner with an account, Day 1's next lessons and the next study day's first ones are written too (see createGoalLessonPreparation).",
+        "Ends placement at any time. Skills placement is sure about become known and the plan skips what they cover. With fromScratch, nothing changes and every phase and area starts at its beginning. For an exam goal it closes the open Focus test sitting and returns the test with its result (`focusTest.checkpoint`); with no sitting and no answer it postpones the test (\"Skip\"): sessions ask no test questions until it starts; on a plan the learner has seen, a focus the answers suggest arrives as a proposed plan change (`source: focusTest`), never applied by itself; and `fromScratch` is refused with 422. Finishing before the goal's skill map exists places nothing: `complete` is false. The lesson the plan now opens with starts being written, counted as its start like opening it, so it's ready when the first session reaches it; for a learner with an account, Day 1's next lessons and the next study day's first ones are written too (see createGoalLessonPreparation).",
       operationId: "completeGoalPlacement",
       requestBody: {
         content: { "application/json": { schema: placementCompletionInputSchema } },

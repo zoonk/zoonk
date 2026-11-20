@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_badge_before_after": "629c42d265d97c8b409b1432b2264c920bc2d5572a338dd9ab1b189ec93470ea",
-  "activities_badge_estimate_first": "d367a6ca10c38e0dd738458e771c06b2cabbc5e4ad9e9349e4e81c3b793fe75d",
+  "activities_badge_estimate_first": "7ae1585522d385e6e92ce5d12c9c1ca68457b0182d6820e688b2c88eec8264b7",
   "activities_badge_find_error": "54a2fd12c08e4340657679e171fb74fd6a88a4e92b9f21c1f65ca16ddafe3a57",
   "activities_badge_read_chart": "963ec87b3b9330ee1e832bc48d4b4b80a121480c3e2dffac03661f4963f186a3",
   "activities_badge_reply": "22b41ad534300f513e365e73eb5e8518ae605e30183544906d6d1dcfaeca4420",
@@ -15,8 +15,8 @@
   "activities_chart_description": "a2d8af9dfb451eb2bb89820448c5c02d959589b9a731b60aed70fd3d366919ef",
   "activities_chart_rate": "6ab13d8abcfc7b18735524094cb408e57ff212b0727d6c76d9e0a6c167a56dca",
   "activities_chart_span": "56f2a02e4a2b3a21a8264bc5b4ab673d7b82ebbbe7876e9dcb78c54584622da3",
-  "activities_chart_spans": "6d17a79577ac2cf5c96f73aaec0e8f842750dfbdc211c7b4354382b524c61f86",
-  "activities_chart_tap_span": "f19b60373bb3ae36ecc3db8bcdcf5e2fc6dd0e59b526d8f2d139b42fa468dda3",
+  "activities_chart_spans": "2e0319e1e30d0ffa69ce186a3314f9a55655fabbe39d69fd71295563ff5349c2",
+  "activities_chart_tap_span": "a6d095447c414b523adea6bef2d17e982e77d834becd5c8816d8c9d7f03119c9",
   "activities_dialogue_conversation": "ce4adb5972e9b332a62ac208d962aaa6c62e6b8d0d3de56694b83321dad67092",
   "activities_dialogue_hear_best": "7afe1a7b20173021647c62bb65e44775b2f50543224aa0d8188205a8e6c8e932",
   "activities_dialogue_hear_line": "c36d9f381a81bfb50a065c84c4f8ffc8beb0931cda6de4a4a7080a4c49cc94a6",
@@ -61,7 +61,8 @@
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Önce tahmin et</string>
+    <!-- A tag on an activity that asks for a guess: the guess is checked and scored like an answer, unlike a guess that doesn't count. -->
+    <string name="activities_badge_estimate_first">Tahminin puan kazandırır</string>
     <string name="activities_badge_read_chart">Grafiği oku</string>
     <string name="activities_badge_before_after">Öncesi ve sonrası</string>
     <string name="activities_badge_find_error">Hatayı bul</string>
@@ -96,9 +97,8 @@
     <string name="activities_chart_description">%1$s değerinin %2$s eksenindeki değişimini gösteren çizgi grafiği. İlk değer %3$s, eksendeki yeri %4$s; son değer %5$s, eksendeki yeri %6$s.</string>
     <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
     <string name="activities_chart_span">%1$s: %2$s.</string>
-    <string name="activities_chart_tap_span">Ölçmek için bir aralığa dokun</string>
-    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
-    <string name="activities_chart_spans">Ölçülecek aralıklar</string>
+    <string name="activities_chart_tap_span">Grafikte ölçmek istediğin bölüme dokun</string>
+    <string name="activities_chart_spans">Grafiğin ölçülecek bölümleri</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s / %2$s</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->

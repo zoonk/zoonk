@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +67,7 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -125,7 +128,7 @@ private fun Options(
 ) {
     val words = run.view.trueFalseWords
     val labels = question.question.options.orEmpty()
-    // Main's `getOptionMarks`: where a wrong statement cancels a right one, the keys say ✓, ✗ and –.
+    // Where a wrong statement cancels a right one, the keys say ✓, ✗ and –.
     val glyphs = question.question.format == QuestionFormat.TrueFalse && run.view.scoring == MockExam.Scoring.NET
 
     AnswerOptionGroup {
@@ -298,15 +301,14 @@ internal fun QuestionCell(
     question: MockQuestion,
     onPick: (Int) -> Unit,
     modifier: Modifier,
-    compact: Boolean,
 ) {
     val draft = run.drafts[question.itemId]
-    val answered = draft.isAnswered
+    val answered = run.isCountedAsAnswered(question.itemId)
     val flagged = draft?.flagged == true
     val current = index == run.position
     val enabled = run.moves.canOpen(index)
-    val shape = RoundedCornerShape(if (compact) ZoonkRadius.sm else 10.dp)
-    val name =
+    val shape = RoundedCornerShape(10.dp)
+    val number =
         if (question.essay) {
             stringResource(
                 R.string.mock_written_part,
@@ -314,24 +316,27 @@ internal fun QuestionCell(
         } else {
             stringResource(R.string.mock_question_number, question.number)
         }
-    val states =
-        listOfNotNull(
-            stringResource(R.string.mock_cell_answered).takeIf {
-                answered
-            },
-            stringResource(R.string.mock_cell_flagged).takeIf { flagged },
-        ).joinToString(", ")
+    // Flagged is read in the key's words, as the web's cell is.
+    val name = if (flagged) stringResource(R.string.mock_cell_flagged, number) else number
+    val states = if (answered) stringResource(R.string.mock_cell_answered) else ""
+    // The current one has a bar under its number and a flagged one an amber tint with its flag, the web's: never a
+    // ring, except the amber one more contrast asks for.
+    val moreContrast = LocalMoreContrast.current
     val border =
         when {
-            current -> MaterialTheme.colorScheme.tertiary
-            flagged -> MaterialTheme.zoonk.warning
-            answered -> Color.Transparent
+            flagged && moreContrast -> MaterialTheme.zoonk.warning
+            flagged || answered -> Color.Transparent
             else -> MaterialTheme.colorScheme.outlineVariant
+        }
+    val fill =
+        when {
+            flagged -> MaterialTheme.zoonk.warning.copy(alpha = FLAGGED_TINT)
+            answered -> MaterialTheme.zoonk.selectedTint
+            else -> Color.Transparent
         }
 
     val interactions = remember { MutableInteractionSource() }
 
-    // The strip's cell is drawn small, as main's, inside a full-size target.
     Box(
         modifier
             .heightIn(min = 48.dp)
@@ -347,16 +352,26 @@ internal fun QuestionCell(
         Box(
             Modifier
                 .fillMaxWidth()
-                .heightIn(min = if (compact) 28.dp else 48.dp)
+                .heightIn(min = 44.dp)
                 .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .clip(shape)
-                .background(if (answered) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent)
-                .border(if (current) 2.dp else 1.dp, border, shape)
+                .background(fill)
+                .border(if (flagged) 2.dp else 1.dp, border, shape)
                 .indication(interactions, ripple()),
             contentAlignment = Alignment.Center,
         ) {
-            CellLabel(question, answered || current, compact)
-            if (flagged) FlagGlyph(Modifier.align(Alignment.TopEnd).padding(3.dp).size(if (compact) 8.dp else 10.dp))
+            CellLabel(question, answered || current, flagged && !answered)
+            if (flagged) FlagGlyph(Modifier.align(Alignment.TopEnd).padding(3.dp).size(10.dp))
+            if (current) {
+                Box(
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(start = 12.dp, end = 12.dp, bottom = 6.dp)
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .background(MaterialTheme.colorScheme.onSurface, CircleShape),
+                )
+            }
         }
     }
 }
@@ -371,21 +386,22 @@ internal fun FlagGlyph(modifier: Modifier = Modifier) {
 private fun CellLabel(
     question: MockQuestion,
     strong: Boolean,
-    compact: Boolean,
+    flagged: Boolean,
 ) {
     if (question.essay) {
-        Icon(
-            painterResource(R.drawable.ic_border_color),
-            contentDescription = null,
-            modifier = Modifier.size(if (compact) 14.dp else 16.dp),
-        )
+        Icon(painterResource(R.drawable.ic_border_color), contentDescription = null, modifier = Modifier.size(16.dp))
     } else {
         Text(
             question.number.toString(),
-            color = if (strong) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+            color =
+                when {
+                    flagged -> MaterialTheme.zoonk.warningText
+                    strong -> MaterialTheme.colorScheme.onSurface
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                },
             maxLines = 1,
             softWrap = false,
-            style = (if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelLarge).withTabularFigures(),
+            style = MaterialTheme.typography.labelLarge.withTabularFigures(),
         )
     }
 }
@@ -429,6 +445,9 @@ private const val MS_PER_SECOND = 1000L
 
 /** Material's disabled emphasis. */
 private const val DISABLED_ALPHA = 0.38f
+
+/** Main's `bg-warning/14`. */
+private const val FLAGGED_TINT = 0.14f
 
 internal val MockExam.trueFalseWords: TrueFalseWords
     get() = if (trueFalseLabels.value == "rightWrong") TrueFalseWords.RightWrong else TrueFalseWords.TrueFalse

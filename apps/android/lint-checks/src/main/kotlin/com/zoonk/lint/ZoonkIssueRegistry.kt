@@ -10,8 +10,10 @@ class ZoonkIssueRegistry : IssueRegistry() {
     override val minApi: Int = CURRENT_API
     override val issues: List<Issue> =
         listOf(
+            CentralizedFormattingDetector.ISSUE,
             HardcodedComposeTextDetector.ISSUE,
             ImplicitLocaleFormatDetector.ISSUE,
+            LoadStateDetector.ISSUE,
             MaterialComponentDetector.BUTTON,
             MaterialComponentDetector.TEXT_FIELD,
             MaterialComponentDetector.LIST_ITEM,

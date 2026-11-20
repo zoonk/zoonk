@@ -1,25 +1,34 @@
 "use client";
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
+import { type getActivityRoundedAnswer } from "@zoonk/core/library/activities/answers";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
 import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { RightAnswerLine } from "@zoonk/learn/right-answer-line";
 import { VerdictLabel } from "@zoonk/learn/verdict-label";
 import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
+import { countDecimalPlaces } from "@zoonk/utils/rounded-answer";
 import { useExtracted } from "next-intl";
+import { use } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import {
+  HyperdriveStreak,
+  LessonResultNote,
+  OwnResultNotesContext,
+} from "../../lesson/feedback/lesson-result-notes";
 
 type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
 type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
+type NumericDisplay = ReturnType<typeof getActivityRoundedAnswer>;
 
 /** How a numeric check's numbers are written, with the digits its answer (and the learner's) needs. */
-export function exactAnswerFormat({ check, value }: { check: NumericCheck; value?: number }) {
+function exactAnswerFormat({ check, value }: { check: NumericCheck; value?: number }) {
   return {
-    maximumFractionDigits: exactFractionDigitsFor({
-      expected: check.answer,
-      tolerance: check.tolerance,
-      value,
-    }),
+    maximumFractionDigits: Math.max(
+      exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance, value }),
+      countDecimalPlaces(value ?? 0),
+    ),
     unit: check.unit,
   };
 }
@@ -33,8 +42,6 @@ function FeedbackText({ children }: { children: string }) {
 }
 
 function ChoiceFeedback({ answer, check }: { answer: ActivityAnswer | null; check: ChoiceCheck }) {
-  const t = useExtracted();
-
   const chosen = check.options.find(
     (option) => answer?.kind === "choice" && option.id === answer.optionId,
   );
@@ -47,12 +54,7 @@ function ChoiceFeedback({ answer, check }: { answer: ActivityAnswer | null; chec
 
       {correct && !chosen?.isCorrect && (
         <>
-          <FeedbackExplanation>
-            <span className="text-muted-foreground">{t("Correct answer:")}</span>{" "}
-            <span className="text-success-text font-medium">
-              <LessonRichText text={correct.text} />
-            </span>
-          </FeedbackExplanation>
+          <RightAnswerLine answer={<LessonRichText text={correct.text} />} />
 
           <FeedbackText>{correct.reason}</FeedbackText>
         </>
@@ -64,41 +66,33 @@ function ChoiceFeedback({ answer, check }: { answer: ActivityAnswer | null; chec
 function NumericFeedback({
   answer,
   check,
+  display,
   isCorrect,
+  showsNumbers,
 }: {
   answer: ActivityAnswer | null;
   check: NumericCheck;
+  display: NumericDisplay;
   isCorrect: boolean;
+  showsNumbers: boolean;
 }) {
-  const t = useExtracted();
   const format = useFormatNumber();
 
-  const written = exactAnswerFormat({
-    check,
-    value: answer?.kind === "numeric" ? answer.value : undefined,
-  });
+  const value = answer?.kind === "numeric" ? answer.value : undefined;
 
-  const exact = (value: number) => format(value, written);
+  const rightAnswer = format(
+    display?.value ?? check.answer,
+    !display || display.places === null
+      ? exactAnswerFormat({ check, value })
+      : { maximumFractionDigits: display.places, unit: check.unit },
+  );
 
   return (
     <>
-      <dl className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-        {answer?.kind === "numeric" && (
-          <div className="flex gap-1.5">
-            <dt className="text-muted-foreground">{t("Your answer:")}</dt>
-            <dd className="font-mono font-medium tabular-nums">{exact(answer.value)}</dd>
-          </div>
-        )}
-
-        {!isCorrect && (
-          <div className="flex gap-1.5">
-            <dt className="text-muted-foreground">{t("Answer:")}</dt>
-            <dd className="text-success-text font-mono font-medium tabular-nums">
-              {exact(check.answer)}
-            </dd>
-          </div>
-        )}
-      </dl>
+      {/* The learner's number is in the box right above, so only the right one is added. */}
+      {showsNumbers && !isCorrect && (
+        <RightAnswerLine answer={<span className="tabular-nums">{rightAnswer}</span>} />
+      )}
 
       <FeedbackText>{check.explanation}</FeedbackText>
     </>
@@ -108,26 +102,51 @@ function NumericFeedback({
 export function ActivityFeedback({
   answer,
   content,
+  display,
   isCorrect,
+  showsNumbers = true,
 }: {
   answer: ActivityAnswer | null;
   content: ActivityStepContent;
+  display: NumericDisplay;
   isCorrect: boolean;
+  /** False when the canvas already shows the learner's number beside the right one. */
+  showsNumbers?: boolean;
 }) {
   const t = useExtracted();
+  const notes = use(OwnResultNotesContext);
   const { check } = content;
+  const streak = notes?.hyperdriveStreak ?? null;
 
   return (
-    <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
-      <VerdictLabel verdict={isCorrect ? "correct" : "incorrect"} />
+    // As far under the answers as a lesson question's feedback, which follows its step's `pb-6`.
+    <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite" className="mt-2">
+      <VerdictLabel
+        end={streak === null ? undefined : <HyperdriveStreak count={streak} />}
+        verdict={isCorrect ? "correct" : "incorrect"}
+      />
 
       {check.kind === "choice" && <ChoiceFeedback answer={answer} check={check} />}
 
       {check.kind === "numeric" && (
-        <NumericFeedback answer={answer} check={check} isCorrect={isCorrect} />
+        <NumericFeedback
+          answer={answer}
+          check={check}
+          display={display}
+          isCorrect={isCorrect}
+          showsNumbers={showsNumbers}
+        />
       )}
 
       {check.kind === "interaction" && <FeedbackText>{check.explanation}</FeedbackText>}
+
+      {notes && (
+        <LessonResultNote
+          savePending={notes.savePending}
+          savedMistake={notes.savedMistake}
+          willReturn={notes.willReturn}
+        />
+      )}
     </FeedbackPanel>
   );
 }

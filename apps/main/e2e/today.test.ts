@@ -4,14 +4,33 @@ import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { expect, test } from "./fixtures";
-import { carryLessons, openAs } from "./study-day";
+import { carryLessons, createStudyDay, openAs } from "./study-day";
+import { createUnstartedDay } from "./unstarted-day-fixtures";
 
 const DAYS_PER_WEEK = 7;
+
+test("shows practice links on Today while the goal is paused", async ({ browser }) => {
+  const { goal, user } = await createUnstartedDay();
+  await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
+
+  const page = await openAs(browser, user);
+  await page.setViewportSize({ height: 844, width: 390 });
+  await page.goto("/today");
+
+  await expect(page.getByText("This goal is paused.", { exact: true })).toBeVisible();
+  const practice = page.getByRole("region", { name: "Practice anytime" });
+  await expect(practice.getByRole("link", { name: /Mistakes notebook/u })).toBeVisible();
+  await page.context().close();
+});
 
 test.describe("Today without a session to start", () => {
   test("follows a different device zone through the action and shows its day", async ({
@@ -50,7 +69,11 @@ test.describe("Today without a session to start", () => {
       })
       .toBe(deviceZone);
 
-    await expect(page.getByText("10 days left", { exact: true })).toBeVisible();
+    const weekday = new Intl.DateTimeFormat("en", { timeZone: "UTC", weekday: "long" }).format(
+      deviceDay,
+    );
+
+    await expect(page.getByText(`${weekday}: today`, { exact: true })).toBeAttached();
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
     await context.close();
   });
@@ -92,9 +115,7 @@ test.describe("Today without a session to start", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    const keepLearning = page
-      .getByRole("region", { name: "Today's session" })
-      .getByRole("button", { name: "Keep learning" });
+    const keepLearning = page.getByRole("button", { name: "Keep learning" });
 
     await expectHydrated(keepLearning);
     await keepLearning.click();
@@ -116,4 +137,182 @@ test.describe("Today without a session to start", () => {
 
     await page.context().close();
   });
+});
+
+test("an expanded day highlights only the current lesson on a touch screen", async ({
+  browser,
+}) => {
+  const user = await createE2EUser(getBaseURL());
+  const goal = await goalFixture({ dailyMinutes: 20, timezone: "UTC", userId: user.id });
+  // Two rows past the first few, so the day folds them: a single one would just show.
+  const lessonTitles = Array.from({ length: 7 }, (_, index) => `Today's lesson ${index + 1}`);
+
+  const [session, lessons] = await Promise.all([
+    studySessionFixture({ goalId: goal.id, userId: user.id }),
+    Promise.all(
+      lessonTitles.map(async (title) => {
+        const { lesson } = await playableLessonFixture({
+          lesson: { estimatedMinutes: 3, title },
+          steps: ["check"],
+        });
+
+        return lesson;
+      }),
+    ),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+  ]);
+
+  const { items } = await planFixture({
+    goalId: goal.id,
+    items: lessons.map(({ id, title }) => ({ lessonId: id, titleSnapshot: title })),
+  });
+
+  await Promise.all(
+    lessons.map((lesson, position) =>
+      studySessionBlockFixture({
+        estimatedMinutes: lesson.estimatedMinutes,
+        lessonId: lesson.id,
+        payload: { planItemId: items[position]?.id, title: lesson.title },
+        position,
+        sessionId: session.id,
+      }),
+    ),
+  );
+
+  const context = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    storageState: user.storageState,
+    timezoneId: "UTC",
+    viewport: { height: 844, width: 390 },
+  });
+
+  try {
+    const page = await context.newPage();
+    await page.goto("/today");
+    const expand = page.getByRole("button", { name: /^\d+ more(?: lessons?)?$/u });
+    await expectHydrated(expand);
+    await expand.tap();
+
+    const list = page
+      .getByRole("list")
+      .filter({ has: page.getByRole("link", { exact: true, name: "Today's lesson 6" }) });
+
+    const revealed = list.getByRole("link", { exact: true, name: "Today's lesson 6" });
+    await expect(revealed).toBeVisible();
+
+    // Hold the pseudo-state a touch browser can leave behind, even though it cannot hover.
+    expect(await page.evaluate(() => matchMedia("(hover: hover)").matches)).toBe(false);
+
+    await revealed.evaluate((link) => {
+      link.id = "revealed-lesson";
+    });
+
+    await page.addStyleTag({ content: "li::before { transition-duration: 0s !important; }" });
+    const cdp = await context.newCDPSession(page);
+    await cdp.send("DOM.enable");
+    await cdp.send("CSS.enable");
+    const { root } = await cdp.send("DOM.getDocument");
+
+    const { nodeId } = await cdp.send("DOM.querySelector", {
+      nodeId: root.nodeId,
+      selector: "#revealed-lesson",
+    });
+
+    await cdp.send("CSS.forcePseudoState", { forcedPseudoClasses: ["hover"], nodeId });
+
+    const filled = await list
+      .getByRole("listitem")
+      .evaluateAll((rows) =>
+        rows
+          .filter((row) => getComputedStyle(row, "::before").backgroundColor !== "rgba(0, 0, 0, 0)")
+          .map((row) => row.getAttribute("aria-current")),
+      );
+
+    expect(filled).toStrictEqual(["step"]);
+  } finally {
+    await context.close();
+  }
+});
+
+test("one tap acknowledges today's tip on a phone", async ({ browser }) => {
+  const { goal, user } = await createStudyDay({ reviewDone: true });
+
+  const [insight] = await Promise.all([
+    memoryInsightFixture({ goalId: goal.id, userId: user.id }),
+    learningProfileFixture({ activeGoalId: goal.id, memoryEnabled: true, userId: user.id }),
+  ]);
+
+  const context = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    storageState: user.storageState,
+    timezoneId: "UTC",
+    viewport: { height: 844, width: 390 },
+  });
+
+  try {
+    const page = await context.newPage();
+    await page.goto("/today");
+
+    const tip = page.getByRole("region", { name: "From your recent answers" });
+    const acknowledge = tip.getByRole("button", { name: "Got it" });
+    await expectHydrated(acknowledge);
+    await acknowledge.tap();
+
+    await expect(tip.getByRole("status")).toHaveText("Noted.");
+    await expect(page.getByRole("dialog", { name: "From your recent answers" })).toHaveCount(0);
+
+    await expect(
+      prisma.memoryInsight.findUniqueOrThrow({ where: { id: insight.id } }),
+    ).resolves.toMatchObject({ status: "accepted" });
+  } finally {
+    await context.close();
+  }
+});
+
+test("one tap moves the study time from a schedule idea on a phone", async ({ browser }) => {
+  const { goal, user } = await createStudyDay({ reviewDone: true });
+
+  const [insight] = await Promise.all([
+    memoryInsightFixture({
+      goalId: goal.id,
+      kind: "scheduleIdea",
+      message: "Want to study at 8 pm?",
+      payload: { studyTime: "20:00" },
+      userId: user.id,
+    }),
+    learningProfileFixture({ activeGoalId: goal.id, memoryEnabled: true, userId: user.id }),
+  ]);
+
+  const context = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    storageState: user.storageState,
+    timezoneId: "UTC",
+    viewport: { height: 844, width: 390 },
+  });
+
+  try {
+    const page = await context.newPage();
+    await page.goto("/today");
+
+    const idea = page.getByRole("region", { name: "From your recent answers" });
+    const move = idea.getByRole("button", { name: "Move it" });
+    await expectHydrated(move);
+    await move.tap();
+
+    await expect(idea.getByRole("status")).toHaveText("Study time moved.");
+    await expect(page.getByRole("dialog", { name: "From your recent answers" })).toHaveCount(0);
+
+    await expect(
+      prisma.memoryInsight.findUniqueOrThrow({ where: { id: insight.id } }),
+    ).resolves.toMatchObject({ status: "accepted" });
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({ select: { studyTime: true }, where: { id: goal.id } }),
+    ).resolves.toStrictEqual({ studyTime: "20:00" });
+  } finally {
+    await context.close();
+  }
 });

@@ -38,7 +38,7 @@ export const pictureNeedTask: Task<PictureNeedInput, PictureNeedOutput, PictureN
   evaluate: route,
   generate: route,
   id: "picture-need",
-  name: "Picture Need",
+  name: "Picture need",
   score: scorePictureNeed,
   testCases: TEST_CASES,
 };

@@ -3,8 +3,8 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { planChangePathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { planChangeConflict, planChangeInvalid } from "@/lib/plan-errors";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { planChangeDecisionInputSchema } from "@zoonk/core/plans/contract";
 import { decidePlanChange } from "@zoonk/core/plans/decide-change";
+import { planChangeDecisionInputSchema } from "@zoonk/core/plans/decision-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
 async function decideChange(

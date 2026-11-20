@@ -3,14 +3,19 @@ import Observation
 
 /// Sends answers one after another, so an older answer to a question never lands after a newer one.
 /// A newer answer to a question still waiting replaces the older one, since each holds everything
-/// about its question. A refused save isn't tried again: nothing would change.
+/// about its question. A refused save isn't tried again: nothing would change, and its question stays
+/// unsaved until a later answer to it is stored.
 @MainActor
 @Observable
 final class MockDraftQueue {
   enum Status: Equatable {
     case saved
     case saving
+    /// An answer didn't get through and waits to go again; "Try again" sends it now.
     case retrying
+    /// An answer that didn't get through is on its way again. Its note stays up, so it isn't drawn
+    /// and read out again on every attempt, but there's nothing more to send until it fails.
+    case resending
     case refused
   }
 
@@ -21,13 +26,21 @@ final class MockDraftQueue {
   }
 
   private(set) var status: Status = .saved
+  private var failedDrafts: [String: MockDraft] = [:]
+  private var storedDrafts: [String: MockDraft] = [:]
+
+  func countsTowardsProgress(_ draft: MockDraft?, initiallyStored: MockDraft?) -> Bool {
+    guard let draft, draft.isAnswered else { return false }
+    let stored = storedDrafts[draft.itemId] ?? initiallyStored
+    return draft.answer != failedDrafts[draft.itemId]?.answer || draft.answer == stored?.answer
+  }
 
   @ObservationIgnored private let save: (MockDraft) async -> Outcome
   @ObservationIgnored private let retryDelay: (Int) -> Duration
   @ObservationIgnored private var waiting: [MockDraft] = []
   @ObservationIgnored private var sending = false
   @ObservationIgnored private var attempt = 0
-  @ObservationIgnored private var refused = false
+  @ObservationIgnored private var refused: Set<String> = []
   @ObservationIgnored private var retryTask: Task<Void, Never>?
   @ObservationIgnored private var sendTask: Task<Void, Never>?
   @ObservationIgnored private var isStopped = false
@@ -63,6 +76,12 @@ final class MockDraftQueue {
     while isBusy, !Task.isCancelled {
       try? await Task.sleep(for: .milliseconds(50))
     }
+  }
+
+  /// For a section handed in, whose refused answers can't be sent again.
+  func forgetRefusals() {
+    refused.removeAll()
+    settle()
   }
 
   func retryNow() {
@@ -105,6 +124,13 @@ final class MockDraftQueue {
       }
 
       sending = false
+      if outcome == .stored {
+        storedDrafts[draft.itemId] = draft
+        failedDrafts[draft.itemId] = nil
+        refused.remove(draft.itemId)
+      } else {
+        failedDrafts[draft.itemId] = draft
+      }
 
       switch outcome {
       case .unreachable:
@@ -117,7 +143,7 @@ final class MockDraftQueue {
         settle()
       case .stored, .refused:
         attempt = 0
-        refused = outcome == .refused
+        if outcome == .refused { refused.insert(draft.itemId) }
         sendNext()
       }
     }
@@ -142,10 +168,13 @@ final class MockDraftQueue {
   private func settle() {
     if retryTask != nil {
       status = .retrying
-    } else if isBusy {
-      status = .saving
+    } else if attempt > 0 && isBusy {
+      status = .resending
+    } else if !refused.isEmpty {
+      // Another question's save doesn't hide that an answer still isn't saved.
+      status = .refused
     } else {
-      status = refused ? .refused : .saved
+      status = isBusy ? .saving : .saved
     }
   }
 }

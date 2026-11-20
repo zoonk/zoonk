@@ -32,5 +32,8 @@ export async function getLanguageTodayView(
     loadSpeakingPaperEntry({ goal }),
   ]);
 
-  return { status: "ready", today: { level, pronunciation, speaking } };
+  return {
+    status: "ready",
+    today: { level, pronunciation, speaking, targetLanguage: goal.targetLanguage },
+  };
 }

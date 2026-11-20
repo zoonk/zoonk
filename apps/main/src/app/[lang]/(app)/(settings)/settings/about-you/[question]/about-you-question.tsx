@@ -5,10 +5,12 @@ import { getPageLanguage } from "@/i18n/page-language";
 import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { type ProfileQuestionView } from "@zoonk/core/profile/questions/contract";
 import { AboutYouQuestionScreen } from "@zoonk/learn/about-you/question";
+import { useFocusQuestionThatReplaced } from "../about-you-split";
 import { answerProfileQuestionAction } from "../actions";
 
 export function AboutYouQuestion(props: { memoryEnabled: boolean; question: ProfileQuestionView }) {
   const router = useRouter();
+  useFocusQuestionThatReplaced(props.question.id);
 
   return (
     <AboutYouQuestionScreen

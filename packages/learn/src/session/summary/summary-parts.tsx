@@ -6,29 +6,29 @@ import { cn } from "@zoonk/ui/lib/utils";
 import {
   BookOpenIcon,
   BrainIcon,
-  RotateCcwIcon,
   TargetIcon,
   TrendingDownIcon,
   TrendingUpIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { useState } from "react";
 import { PageSectionTitle } from "../../_components/page";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
 import {
   StepCard,
   StepDetail,
-  StepEyebrow,
   StepHeader,
   StepRow,
   StepRows,
   StepTitle,
 } from "../../_components/step-card";
-import { useFormatGoalProgress, useFormatShare } from "../../_utils/percent";
+import { useCountOf } from "../../_utils/count-of";
+import { useFormatProgressShare, useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
-import { useBeltName } from "../../_utils/use-belt-name";
-import { useStateLabel } from "../../_utils/use-state-label";
+import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
+import { ReminderOffer } from "../../reminders/reminder-offer";
 import { type StudySessionSummary } from "../session-types";
-import { getRisenSkills } from "./risen-skills";
+import { SummaryExtraTime } from "./summary-actions";
 import { useIsStopped, useSessionSummary } from "./summary-context";
 
 /** In the title's one face: the mono face's wide space read "Done in 13  min". */
@@ -47,7 +47,7 @@ function DoneTitle() {
 function useGoalNumber() {
   const t = useExtracted();
   const formatShare = useFormatShare();
-  const formatGoalProgress = useFormatGoalProgress();
+  const formatProgressShare = useFormatProgressShare();
   const { goalKind, summary } = useSessionSummary();
 
   if (goalKind === "language") {
@@ -62,7 +62,7 @@ function useGoalNumber() {
   }
 
   const start = before ?? after;
-  const format = forExam ? formatShare : formatGoalProgress;
+  const format = forExam ? formatShare : formatProgressShare;
   const shown = { after: format(after), before: format(start) };
   const moved = shown.after !== shown.before;
 
@@ -72,17 +72,6 @@ function useGoalNumber() {
     label: forExam ? t("Preparation") : t("Progress"),
     value: shown.after,
   };
-}
-
-function RightAnswersValue({ correct, questions }: { correct: number; questions: number }) {
-  const format = useFormatter();
-
-  return (
-    <>
-      {format.number(correct)}
-      <span className="text-muted-foreground">{`/${format.number(questions)}`}</span>
-    </>
-  );
 }
 
 function RightAnswersDetail({ summary }: { summary: StudySessionSummary }) {
@@ -107,14 +96,17 @@ function RightAnswersDetail({ summary }: { summary: StudySessionSummary }) {
 }
 
 function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }) {
-  const t = useExtracted();
   const beltName = useBeltName();
-  const { color, level } = belt.after;
+  const beltStep = useBeltStep();
+  const { color } = belt.after;
 
   return (
     <span className="inline-flex items-center gap-1.5">
-      <BeltIndicator color={color} label={beltName(color)} size="sm" />
-      {t("{belt}, level {level}", { belt: beltName(color), level: String(level) })}
+      {/* The label's icon box, so the belt's name starts under the label. */}
+      <span className="flex size-3.5 shrink-0 items-center justify-center">
+        <BeltIndicator color={color} label={beltName(color)} size="sm" />
+      </span>
+      {beltStep(belt.after)}
     </span>
   );
 }
@@ -122,6 +114,7 @@ function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }
 function SessionNumbers() {
   const t = useExtracted();
   const format = useFormatter();
+  const countOf = useCountOf();
   const { summary } = useSessionSummary();
   const goalNumber = useGoalNumber();
   const dropped = goalNumber?.dropped ?? false;
@@ -134,7 +127,7 @@ function SessionNumbers() {
           icon={<TargetIcon />}
           label={t("Right")}
           tone="success"
-          value={<RightAnswersValue correct={summary.correct} questions={summary.questions} />}
+          value={countOf(summary.correct, summary.questions)}
         />
       )}
 
@@ -145,11 +138,13 @@ function SessionNumbers() {
             goalNumber.change && (
               <span
                 className={cn(
-                  "font-mono tabular-nums",
+                  "tabular-nums",
                   dropped ? "text-muted-foreground" : "text-success-text",
                 )}
               >
-                {`${goalNumber.change.before} → ${goalNumber.change.after}`}
+                {dropped
+                  ? t("Down from {value}", { value: goalNumber.change.before })
+                  : t("Up from {value}", { value: goalNumber.change.before })}
               </span>
             )
           }
@@ -159,12 +154,6 @@ function SessionNumbers() {
           value={goalNumber.value}
         />
       )}
-
-      <StatTile
-        icon={<RotateCcwIcon />}
-        label={t("To review")}
-        value={format.number(summary.comesBack.reduce((sum, day) => sum + day.skills, 0))}
-      />
 
       <StatTile
         className="with-aside:hidden"
@@ -180,42 +169,6 @@ function SessionNumbers() {
         }
       />
     </StatTiles>
-  );
-}
-
-function renderNewState(chunks: React.ReactNode) {
-  return <span className="text-foreground">{chunks}</span>;
-}
-
-function SkillRises() {
-  const t = useExtracted();
-  const stateLabel = useStateLabel();
-  const { summary } = useSessionSummary();
-  const rises = getRisenSkills(summary.skillsMoved);
-
-  if (rises.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className="flex w-full flex-col gap-1">
-      <PageSectionTitle>{t("Skills that rose")}</PageSectionTitle>
-
-      <StepRows>
-        {rises.map((move) => (
-          <StepRow className="justify-between" key={move.skillId}>
-            <span className="min-w-0 font-medium text-pretty">{move.name}</span>
-            <span className="text-muted-foreground shrink-0 font-mono text-xs">
-              {t.rich("{from} → <strong>{to}</strong>", {
-                from: stateLabel({ state: move.from }),
-                strong: renderNewState,
-                to: stateLabel({ state: move.to }),
-              })}
-            </span>
-          </StepRow>
-        ))}
-      </StepRows>
-    </section>
   );
 }
 
@@ -238,6 +191,8 @@ function TomorrowRow() {
           <span className="min-w-0 flex-1 font-medium text-pretty">{summary.tomorrow.title}</span>
         </StepRow>
       </StepRows>
+
+      <SummaryExtraTime />
     </section>
   );
 }
@@ -246,23 +201,26 @@ export function DoneStep() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const stopped = useIsStopped();
-  const { summary } = useSessionSummary();
+  const { reminderActions, summary } = useSessionSummary();
+  // Showing the offer claims it, so a re-read summary comes back without one; it stays for this visit.
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the summary opens, never updated.
+  const [reminderOffer] = useState(summary.reminderOffer);
 
   return (
     <StepCard className="items-stretch">
       <StepHeader>
-        <StepEyebrow>{t("Today's session")}</StepEyebrow>
         <StepTitle>{stopped ? t("Done for now") : <DoneTitle />}</StepTitle>
         {stopped && summary.minutes >= 1 && (
-          <StepDetail className="font-mono text-[0.8125rem] tabular-nums">
-            {t("{time} so far", { time: formatDuration(summary.minutes) })}
+          <StepDetail className="text-compact font-mono tabular-nums">
+            {t("{time} today", { time: formatDuration(summary.minutes) })}
           </StepDetail>
         )}
       </StepHeader>
 
       <SessionNumbers />
-      <SkillRises />
       <TomorrowRow />
+      {!summary.tomorrow && <SummaryExtraTime />}
+      <ReminderOffer actions={reminderActions} offer={reminderOffer} />
     </StepCard>
   );
 }

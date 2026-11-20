@@ -3,32 +3,17 @@
 import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
 import { Burst, type Spark } from "@zoonk/ui/components/burst";
-import { Button } from "@zoonk/ui/components/button";
-import {
-  Dialog,
-  DialogDescription,
-  DialogPopup,
-  DialogPortal,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { DialogDescription, DialogTitle } from "@zoonk/ui/components/dialog";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
-import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
-import {
-  TASK_MAIN_ACTION_CLASS,
-  TaskActionBar,
-  TaskActions,
-  TaskBody,
-} from "../_components/task-layout";
+import { useEffect, useEffectEvent, useRef } from "react";
 import { toBeltColor } from "../_utils/use-belt-name";
-import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { useLearnAnalytics } from "../learn-context";
 import { useCeremonyClosing } from "./ceremony-closing";
+import { CeremonyBar, CeremonyFrame, useCeremonyFrame } from "./ceremony-frame";
 import { type CeremonyMilestone, toBuddyGlasses, useCeremonyCopy } from "./use-ceremony-copy";
 
 export type { CeremonyMilestone } from "./use-ceremony-copy";
@@ -112,9 +97,10 @@ function CeremonyArt({
       )}
       <BuddyActor
         beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
-        className="relative size-40 sm:size-48"
+        className="relative [--buddy-height:--spacing(47)] sm:[--buddy-height:--spacing(56)]"
         energy={buddy.energy}
         expression="happy"
+        fit="ink"
         glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
         kind={buddy.kind}
         label={buddyName}
@@ -135,64 +121,18 @@ function CeremonyText({ detail, title }: { detail: string; title: string }) {
   );
 }
 
-function CeremonyBar({
-  action,
-  onConfirm,
-  onDecline,
-}: {
-  action: string;
-  onConfirm: () => void;
-  onDecline?: () => void;
-}) {
-  const t = useExtracted();
-
-  return (
-    <TaskActionBar>
-      <TaskActions>
-        {onDecline && (
-          <Button className="shrink-0" onClick={onDecline} size="xl" variant="outline">
-            {t("Not now")}
-          </Button>
-        )}
-
-        <Button
-          aria-keyshortcuts="Enter"
-          autoFocus
-          className={TASK_MAIN_ACTION_CLASS}
-          onClick={onConfirm}
-          size="xl"
-        >
-          {action}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
-      </TaskActions>
-    </TaskActionBar>
-  );
-}
-
 function CeremonyMoment({
   buddy,
   milestone,
   onClose,
   onWearGlasses,
 }: Omit<CeremonyProps, "onShown">) {
-  const [open, setOpen] = useState(true);
   const glasses = milestone.kind === "glasses" ? toBuddyGlasses(milestone.key) : null;
   const canWear = Boolean(glasses && onWearGlasses);
   const copy = useCeremonyCopy({ buddy, canWear, milestone });
-  const isSteady = useSteady(SCREEN_STEADY_MS);
-  const onClosing = useCeremonyClosing();
-
-  function close() {
-    setOpen(false);
-    onClosing();
-  }
+  const { close, open, whenSteady } = useCeremonyFrame(useCeremonyClosing());
 
   async function confirm() {
-    if (!isSteady()) {
-      return;
-    }
-
     if (canWear && glasses && onWearGlasses) {
       await onWearGlasses(glasses);
     }
@@ -200,44 +140,23 @@ function CeremonyMoment({
     close();
   }
 
-  function decline() {
-    if (isSteady()) {
-      close();
-    }
-  }
-
   return (
-    <Dialog
-      onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          close();
-        }
-      }}
-      onOpenChangeComplete={(isOpen) => {
-        if (!isOpen) {
-          onClose?.();
-        }
-      }}
+    <CeremonyFrame
+      bar={
+        <CeremonyBar
+          action={copy.action}
+          onConfirm={() => whenSteady(() => void confirm())}
+          onDecline={canWear ? () => whenSteady(close) : undefined}
+        />
+      }
+      onClose={close}
+      onClosed={onClose}
       open={open}
+      slot="milestone-ceremony"
     >
-      <DialogPortal>
-        <DialogPopup
-          className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out duration-base fixed inset-0 z-50 flex flex-col overflow-y-auto"
-          data-slot="milestone-ceremony"
-        >
-          <TaskBody className="items-center justify-center gap-8 pt-12 pb-20 text-center">
-            <CeremonyArt buddy={buddy} milestone={milestone} />
-            <CeremonyText detail={copy.detail} title={copy.title} />
-          </TaskBody>
-
-          <CeremonyBar
-            action={copy.action}
-            onConfirm={() => void confirm()}
-            onDecline={canWear ? decline : undefined}
-          />
-        </DialogPopup>
-      </DialogPortal>
-    </Dialog>
+      <CeremonyArt buddy={buddy} milestone={milestone} />
+      <CeremonyText detail={copy.detail} title={copy.title} />
+    </CeremonyFrame>
   );
 }
 

@@ -1,4 +1,3 @@
-import { type LessonStepCheckResult } from "@zoonk/core/lesson-player/contract";
 import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
 import {
@@ -93,7 +92,7 @@ export type LessonPlayerState = {
 export type LessonPlayerAction =
   | { answer: LessonPlayerAnswer | null; stepId: string; type: "selectAnswer" }
   | { counts: boolean; result: LessonStepResult; stepId: string; type: "checkResolved" }
-  | { attemptId: string; result: LessonStepCheckResult; stepId: string; type: "checkConfirmed" }
+  | { attemptId: string; savedMistake: boolean; stepId: string; type: "checkConfirmed" }
   | { direction: "next" | "prev"; type: "navigate" }
   | { opening?: boolean; stepId?: string; type: "skipWriting" }
   | { stepIds: string[]; type: "skipSteps" }

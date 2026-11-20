@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -29,7 +28,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -43,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 
@@ -71,7 +70,7 @@ internal fun GuitarFretboard(
             Modifier
         }
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    ProvideLayoutDirection(LayoutDirection.Ltr) {
         BoxWithConstraints(modifier.fillMaxWidth().then(shown)) {
             val lead = nameWidth + if (onChange == null) INDICATOR_WIDTH else PICK_WIDTH * 2
             val fretWidth = max(if (onChange == null) 0.dp else PICK_WIDTH, (maxWidth - lead) / Guitar.FRETBOARD_SPAN)

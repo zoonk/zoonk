@@ -21,6 +21,7 @@ import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.TrueFalseLabels
 import org.junit.Assume.assumeTrue
@@ -116,6 +117,6 @@ class SaveFailureScreenshots {
     private fun write(name: String) {
         val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         File(folder).mkdirs()
-        File(folder, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 }

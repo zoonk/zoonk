@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "ed529297011ba173cf66aa6dabf62a07e9c5bd139c8d4a34507e9641c43c0aa9",
   "pronunciation_continue": "26294479b46ac128c41d6ceb80f362476a076879d2d6af15296c88f033500143",
   "pronunciation_done": "de123c80613e26bcf53ac1243cb17a250bb4d0c74a65fadd5ad5705179fd850a",
   "pronunciation_failed": "bcb31be01a5265d9b50199cc3f5120c18c4ab4c2e98822926f1bb49c8acc13b9",
@@ -21,8 +20,8 @@
   "pronunciation_save_failed": "150abd61e2eafaed9b1d004e247d8c14b99d668141b1c61b5db3c8c308ee147b",
   "pronunciation_save_retry": "7b7ae5b6bdf908815b941e4a8e660328a7cd3dbd68e760d1de1f3fff6555a718",
   "pronunciation_say_it_like": "c00df131ac8315a9af37b78c94ec61a6a50c3eeae34b32955c9d1ed1c57ac22e",
-  "pronunciation_see_how": "59b21e085450c880da03f0d656b9a2434d42e0f73f563a20f0cba680f530345f",
-  "pronunciation_skip": "55b7b764da0c4f65955dad334ceba572043a24ad64f3d147ad8dc03f350f6494",
+  "pronunciation_see_how": "06164e997b12be05f87063dac572631187832fa46543dbec0b6ca9c711f8cfed",
+  "pronunciation_skip": "015e59d99728560a517d9d75e8a3ffa61b62103fe710c4b02fd4014c75e4ebdc",
   "pronunciation_sounded_right": "02526ee3a3cb14544a229ff59e03aab8dd4a6283c09a64f69227c8c8193a55e3",
   "pronunciation_title": "1cc46b98a68fa6ff398ee0c21eb981774a11142c523dfae9b6adef87e39419c6",
   "pronunciation_try_again": "8b1f4cfdb13b5a8517a2d7779024faf43d735f5e5c58be6183561f0d73942874"
@@ -37,7 +36,7 @@
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">%1$sのように声に出して言ってください</string>
     <string name="pronunciation_options">画面のオプション</string>
-    <string name="pronunciation_skip">この単語をスキップする</string>
+    <string name="pronunciation_skip">スキップ</string>
     <string name="pronunciation_press_record">「録音」を押して、単語を声に出して言ってください</string>
     <string name="pronunciation_recording">録音しています…話し終わったら「停止」を押してください。</string>
     <string name="pronunciation_grading">発音を聞いています…</string>
@@ -59,7 +58,6 @@
     <string name="pronunciation_no_words">今日はもう一度声に出して言う単語はありません。</string>
     <string name="pronunciation_practice_done">練習完了</string>
     <string name="pronunciation_nothing_said">今回は発音しませんでした</string>
-    <string name="pronunciation_accent">なまりがあっても、先に進めます。</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">完了</string>
 </resources>

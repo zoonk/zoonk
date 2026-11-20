@@ -1,28 +1,28 @@
 import SwiftUI
 
-/// Main's `BrainPowerReward`: the day's missions bonus, outlined until it's earned and then solid.
-/// Tapping it says what Brain Power is.
+/// Main's `BrainPowerReward`: the day's missions bonus and Brain Power's short form, plain until
+/// it's earned and then a solid chip. Tapping it says what Brain Power is.
 struct BrainPowerReward: View {
   let points: Int
   let earned: Bool
 
-  @State private var explains = false
+  @Environment(AppRouter.self) private var router
 
   var body: some View {
     Button {
-      explains = true
+      router.open(.statistics(section: .level))
     } label: {
-      VStack(alignment: .trailing, spacing: 2) {
+      HStack(spacing: 6) {
         Label {
           Text(points, format: .number.sign(strategy: .always()))
         } icon: {
           Image(systemName: earned ? "checkmark" : "brain")
         }
         .labelStyle(.titleAndIcon)
-        .typeStyle(.body.weight(.semibold).monospaced())
+        .typeStyle(.small.weight(.semibold).monospaced())
         .foregroundStyle(earned ? Color(.background) : .brainText)
         .padding(.horizontal, earned ? 6 : 0)
-        .padding(.vertical, earned ? 2 : 0)
+        .padding(.vertical, 2)
         .background {
           // `brainText`, since the page's color on `brain` is under AA in light.
           if earned {
@@ -30,12 +30,19 @@ struct BrainPowerReward: View {
           }
         }
 
-        Text("Brain Power", tableName: "Today", comment: "Under the missions' bonus")
-          .typeStyle(.small)
-          .foregroundStyle(.mutedForeground)
+        Text(
+          "BP", tableName: "Today",
+          comment:
+            "Brain Power's short form after an amount, as in “+50 BP”. Use the short form the style guide gives."
+        )
+        .typeStyle(.small)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .buttonStyle(.plain)
+    .help(
+      Text("Brain Power", tableName: "Session", comment: "Beside the Brain Power a task earned")
+    )
     .accessibilityLabel(
       earned
         ? Text(
@@ -45,22 +52,29 @@ struct BrainPowerReward: View {
           "\(points) Brain Power for finishing them", tableName: "Today",
           comment: "The missions' reward")
     )
-    .popover(isPresented: $explains) {
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Brain Power", tableName: "Today", comment: "Title of what Brain Power is")
-          .typeStyle(.body.weight(.semibold))
 
-        Text(
-          "What you've learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today's missions adds +\(points).",
-          tableName: "Today", comment: "What Brain Power is; the number is the missions' bonus"
-        )
-        .typeStyle(.note)
+  }
+}
+
+/// What a task's end earned, under its title: "+12 Brain Power".
+struct EarnedBrainPower: View {
+  let points: Int
+
+  var body: some View {
+    HStack(alignment: .firstTextBaseline, spacing: 0) {
+      EarnedNumber(value: points)
+        .typeStyle(.readout)
+        .foregroundStyle(.brainText)
+        .padding(.trailing, 0.1 * 24)
+
+      Text("Brain Power", tableName: "Session", comment: "Beside the Brain Power a task earned")
+        .typeStyle(.body)
         .foregroundStyle(.mutedForeground)
-      }
-      .padding()
-      .frame(idealWidth: 280)
-      .presentationCompactAdaptation(.popover)
-      .zoonkStyles()
     }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      Text(
+        "+\(points) Brain Power", tableName: "Session",
+        comment: "Spoken: the Brain Power a task earned"))
   }
 }

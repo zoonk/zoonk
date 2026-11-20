@@ -2,6 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 import { keepArrowKeys } from "../_utils/keep-arrow-keys";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { blankStem, splitForm } from "./pattern-cells";
@@ -32,7 +33,7 @@ function CheckedBlank({
   const isRight = chosen !== null && chosen === expected;
 
   return (
-    <span className="flex flex-wrap items-baseline gap-x-2">
+    <span className="flex w-0 min-w-full flex-wrap items-baseline gap-x-2 leading-5">
       <span className={cn(isRight ? "text-success-text" : "text-destructive-text line-through")}>
         {stem}
         <b className="font-semibold">{chosen ?? ""}</b>
@@ -72,9 +73,9 @@ function OpenBlank({
       })}
       aria-pressed={isActive}
       className={cn(
-        "-ml-2 flex h-11 min-w-24 items-center rounded-xl border-2 bg-transparent pl-2 text-left outline-none select-none",
+        "-ml-2 flex h-11 min-w-24 items-center rounded-xl border pl-1.75 text-left outline-none select-none",
         "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        isActive ? "border-viz-accent bg-background" : "border-transparent",
+        isActive ? cn(ACTIVITY_LINE_CLASS.active, "bg-background") : "border-transparent",
       )}
       onClick={onSelect}
       onKeyDown={keepArrowKeys}
@@ -134,10 +135,15 @@ export function PatternRow({
         <Form form={row.model} stem={modelStem} />
       </td>
 
-      <td className="px-2 py-2 align-middle">
+      <td className={cn("px-2 align-middle", row.blank ? "py-1" : "py-2")}>
         {!row.blank && <Form form={row.answer} stem={newStem} />}
 
-        {row.blank && isChecked && <CheckedBlank chosen={chosen} expected={expected} stem={stem} />}
+        {/* The checked pair, on one line or two, keeps the open blank's height, so Check moves no row. */}
+        {row.blank && isChecked && (
+          <div className="flex min-h-11 items-center">
+            <CheckedBlank chosen={chosen} expected={expected} stem={stem} />
+          </div>
+        )}
 
         {row.blank && !isChecked && (
           <OpenBlank

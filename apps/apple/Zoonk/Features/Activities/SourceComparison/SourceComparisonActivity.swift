@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let sourceComparison = ActivityRenderer(
-    template: "sourceComparison", badge: .always(.compareSources),
+    template: "sourceComparison",
     grade: ActivityExpectedAnswer.grader(SourceComparisonFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: SourceComparisonFields.self) {
@@ -268,7 +268,7 @@ private struct SourceComparisonCanvas: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .panel()
+    .activityBox()
   }
 
   private func excerpt(_ source: SourceComparisonFields.Source) -> AttributedString {

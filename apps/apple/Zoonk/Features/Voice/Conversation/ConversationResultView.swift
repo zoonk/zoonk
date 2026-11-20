@@ -2,17 +2,17 @@ import SwiftUI
 
 struct ConversationResultView: View {
   private enum StartFailure: Equatable {
-    case limit(CallLimit)
+    case limit(HelpLimit)
     case failed
   }
 
   @Environment(VoiceServices.self) private var voice
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
-  @State private var isStartingAgain = false
+  private var isStartingAgain: Bool { again.isRunning }
   @State private var isWritingAgain = false
-  @State private var again: Task<Void, Never>?
-  @State private var startFailure: StartFailure?
+  @State private var again = VisitRequest<StartFailure>()
+  private var startFailure: StartFailure? { again.outcome }
   let conversation: LanguageConversation
   /// Nil for a call opened later, which shows only its own result.
   var day: DayResult?
@@ -48,55 +48,49 @@ struct ConversationResultView: View {
       }
     }
     .completionMoments(day)
-    .onDisappear { again?.cancel() }
-    .safeAreaBar(edge: .bottom) {
-      VStack(spacing: 8) {
-        if let startFailure {
-          FailureLine(message: startFailureMessage(startFailure))
-            .typeStyle(.body)
-        }
-
-        mainAction
-
-        if isWritingAgain {
-          writingAgain
-        } else if let input = againInput {
-          BusyButton(isBusy: isStartingAgain, icon: .retry) {
-            again = Task { await startAgain(input) }
-          } label: {
-            if conversation.kind == .speakingMock {
-              Text("Try another mock", tableName: "Voice", comment: "Starts a new speaking mock")
-            } else {
-              Text(
-                "Try this task with a new card", tableName: "Voice",
-                comment: "Starts the same exam task again with a new card")
-            }
+    .onDisappear {
+      again.leave()
+      isWritingAgain = false
+    }
+    .bottomBar(note: barNote) {
+      if let input = againInput {
+        BusyButton(isBusy: isStartingAgain, icon: .retry) {
+          again.run { await startAgain(input) }
+        } label: {
+          if conversation.kind == .speakingMock {
+            Text("Try another mock", tableName: "Voice", comment: "Starts a new speaking mock")
+          } else {
+            Text(
+              "Try again", tableName: "Voice",
+              comment: "Starts the same exam task again with a new card")
           }
-          .buttonStyle(.borderless)
         }
+        .buttonStyle(.outline)
       }
-      .scenePadding()
-      .keepsOffFold()
+
+      mainAction
     }
   }
 
-  @ViewBuilder
-  private var writingAgain: some View {
-    if conversation.kind == .speakingMock {
-      WritingWait(
-        title: Text(
-          "Writing your mock", tableName: "Voice", comment: "A speaking mock is being written"),
-        hint: Text(
-          "Your mock opens as soon as it's ready.", tableName: "Voice",
-          comment: "A speaking mock opens by itself once it's written"))
+  /// A new card being written keeps "Try again" busy, and says it opens by itself.
+  private var barNote: BarNote? {
+    if let startFailure {
+      BarNote(startFailureMessage(startFailure))
+    } else if isWritingAgain {
+      BarNote(writingAgain, tone: .status)
     } else {
-      WritingWait(
-        title: Text(
-          "Writing your task", tableName: "Voice", comment: "An exam task's card is being written"),
-        hint: Text(
-          "Your task opens as soon as its card is ready.", tableName: "Voice",
-          comment: "An exam task opens by itself once its card is written"))
+      nil
     }
+  }
+
+  private var writingAgain: LocalizedStringResource {
+    conversation.kind == .speakingMock
+      ? LocalizedStringResource(
+        "Your mock opens as soon as it's ready.", table: "Voice",
+        comment: "A speaking mock opens by itself once it's written")
+      : LocalizedStringResource(
+        "Your task opens as soon as its card is ready.", table: "Voice",
+        comment: "An exam task opens by itself once its card is written")
   }
 
   /// The paper's next task when this one stands alone: a mock's tasks go back to the mock.
@@ -135,19 +129,13 @@ struct ConversationResultView: View {
         dismiss()
       }
     } label: {
-      Group {
-        if let nextTask {
-          Text(
-            "Go to task \(nextTask.number)", tableName: "Voice",
-            comment: "Opens the speaking paper's next task")
-        } else {
-          Text("Continue", tableName: "Voice", comment: "Leaves a call's result")
-        }
+      if nextTask != nil {
+        Text("Next task", tableName: "Voice", comment: "Opens the speaking paper's next task")
+      } else {
+        Text("Continue", tableName: "Voice", comment: "Leaves a call's result")
       }
-      .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
     .keyboardShortcut(.defaultAction)
   }
 
@@ -155,22 +143,8 @@ struct ConversationResultView: View {
     let isMock = conversation.kind == .speakingMock
 
     switch failure {
-    case .limit(let limit) where limit.period == .month:
-      return isMock
-        ? String(
-          localized: "Not enough call time this month for this mock", table: "Voice",
-          comment: "The call time left this month can't fit the mock")
-        : String(
-          localized: "Not enough call time this month for this task", table: "Voice",
-          comment: "The call time left this month can't fit this task")
-    case .limit:
-      return isMock
-        ? String(
-          localized: "Not enough call time today for this mock", table: "Voice",
-          comment: "The call time left today can't fit the mock")
-        : String(
-          localized: "Not enough call time today for this task", table: "Voice",
-          comment: "The call time left today can't fit this task")
+    case .limit(let limit):
+      return limit.words(.callTime).said
     case .failed:
       return isMock
         ? String(
@@ -183,28 +157,37 @@ struct ConversationResultView: View {
   }
 
   /// Only on the learner's tap.
-  private func startAgain(_ input: Components.Schemas.LanguageConversationStartInput) async {
-    isStartingAgain = true
-    startFailure = nil
+  private func startAgain(_ input: Components.Schemas.LanguageConversationStartInput) async
+    -> StartFailure?
+  {
+    var outcome: StartFailure? = nil
+
     defer {
-      isStartingAgain = false
-      isWritingAgain = false
+      if !Task.isCancelled { isWritingAgain = false }
     }
 
-    switch await voice.startConversation(input, whileWriting: { isWritingAgain = true }) {
+    let result = await voice.startConversation(
+      input,
+      whileWriting: {
+        if !Task.isCancelled { isWritingAgain = true }
+      })
+    guard !Task.isCancelled else { return nil }
+    switch result {
     case .done(.done(let id)):
       onStartedAgain(id)
     case .done(.refused(let refusal)):
       if case .limit(let limit) = CallReservation(refusal: refusal) {
-        startFailure = .limit(limit)
+        outcome = .limit(limit)
       } else {
-        startFailure = .failed
+        outcome = .failed
       }
     case .failed:
-      startFailure = .failed
+      outcome = .failed
     case .obsolete:
       break
     }
+
+    return outcome
   }
 
   /// An exam task or speaking mock is rated on its exam's criteria instead.
@@ -246,18 +229,6 @@ struct ConversationResultView: View {
         .listRowSeparator(.hidden)
       }
 
-      if showsStars, !conversation.objectives.isEmpty {
-        LabeledContent {
-          Text(
-            "\(conversation.objectives.filter(\.met).count) of \(conversation.objectives.count)",
-            tableName: "Voice", comment: "Goals met out of all"
-          )
-          .monospacedDigit()
-        } label: {
-          Text("Goals", tableName: "Voice", comment: "Readout label for the call's goals")
-        }
-      }
-
       // Never "0": a call that earned nothing doesn't list it, as on main.
       if result.brainPower > 0 {
         IconLabeledContent {
@@ -276,7 +247,7 @@ struct ConversationResultView: View {
       SectionFooter {
         if conversation.kind == .checkpoint, !result.passed {
           Text(
-            "Nothing is lost: the call comes back so you can try again.", tableName: "Voice",
+            "Rematch next time you study", tableName: "Voice",
             comment: "A checkpoint call that didn't pass")
         } else if showsStars {
           Text(
@@ -295,30 +266,49 @@ private struct CallFeedbackSections: View {
   var body: some View {
     let language = conversation.targetLanguage
     let met = conversation.objectives.filter(\.met)
-    let missed = conversation.objectives.filter { !$0.met }
+
+    if !conversation.objectives.isEmpty {
+      Section {
+        ForEach(conversation.objectives, id: \.label) { objective in
+          Label {
+            Text(objective.label).typesettingLanguage(.init(identifier: language))
+          } icon: {
+            Image(systemName: objective.met ? "checkmark.circle.fill" : "circle")
+              .foregroundStyle(objective.met ? .success : .faint)
+          }
+        }
+      } header: {
+        SectionTitle(
+          Text("Goals", tableName: "Voice", comment: "Readout label for the call's goals")
+        ) {
+          Text(
+            "\(met.count) of \(conversation.objectives.count)",
+            tableName: "Voice", comment: "Goals met out of all")
+        }
+      }
+    }
 
     Section {
       Text(feedback.encouragement)
 
-      ForEach(met, id: \.label) { objective in
-        Label {
-          Text(objective.label).typesettingLanguage(.init(identifier: language))
-        } icon: {
-          Image(systemName: "checkmark.circle.fill").foregroundStyle(.success)
-        }
-      }
-
-      ForEach(feedback.wentWell, id: \.self) { phrase in
-        Text(phrase)
-          .typeWeight(.medium)
-          .typesettingLanguage(.init(identifier: language))
-      }
     } header: {
       SectionTitle(
         Text("What went well", tableName: "Voice", comment: "A call result's first part"))
     }
 
-    if feedback.improve != nil || !missed.isEmpty || !feedback.pronunciation.isEmpty {
+    if !feedback.wentWell.isEmpty {
+      Section {
+        ForEach(feedback.wentWell, id: \.self) { phrase in
+          Text("“\(phrase)”", tableName: "Voice", comment: "A phrase the learner said well, quoted")
+            .typeWeight(.medium)
+            .typesettingLanguage(.init(identifier: language))
+        }
+      } header: {
+        SectionTitle(Text("Phrases you said well", tableName: "Voice"))
+      }
+    }
+
+    if feedback.improve != nil || !feedback.pronunciation.isEmpty {
       Section {
         if let improve = feedback.improve {
           VStack(alignment: .leading, spacing: 8) {
@@ -328,7 +318,7 @@ private struct CallFeedbackSections: View {
               Text("You said", tableName: "Voice", comment: "What the learner said in the call")
             }
 
-            HStack(alignment: .firstTextBaseline) {
+            HStack {
               LabeledContent {
                 Text(improve.better)
                   .typeWeight(.medium)
@@ -336,6 +326,8 @@ private struct CallFeedbackSections: View {
               } label: {
                 Text("Better", tableName: "Voice", comment: "A better way to say it")
               }
+
+              Spacer()
 
               SpeakButton(sound: .text(improve.better, language: language, personal: true))
             }
@@ -345,14 +337,6 @@ private struct CallFeedbackSections: View {
               .foregroundStyle(.mutedForeground)
           }
           .labeledContentStyle(.vertical)
-        }
-
-        ForEach(missed, id: \.label) { objective in
-          Label {
-            Text(objective.label).typesettingLanguage(.init(identifier: language))
-          } icon: {
-            Image(systemName: "circle").foregroundStyle(.faint)
-          }
         }
 
         ForEach(feedback.pronunciation, id: \.word) { item in

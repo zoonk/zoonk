@@ -24,6 +24,16 @@ import { activityStep } from "../preview/preview-steps";
 
 const SWIPE_PX = 200;
 
+describe("matching on touch", () => {
+  it("leaves number keys off the matching board", async () => {
+    openActivity({ template: "matchPairs" });
+
+    const tile = page.getByRole("figure").getByRole("button").first();
+    await expect.element(tile).toBeVisible();
+    expect(tile.element().querySelector("kbd")?.checkVisibility() ?? false).toBe(false);
+  });
+});
+
 /** A busy machine can deliver the flick after the hold that starts a drag; paused, the page's hold timer can't run out mid-swipe. */
 async function flick(swipe: () => Promise<void>) {
   vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
@@ -82,6 +92,8 @@ describe("dragging activity items with a finger", () => {
   });
 
   it("labeled diagram: a quick swipe over the names scrolls instead of dragging", async () => {
+    // A small phone, so the last spot starts below the fold whatever sits over the title.
+    await page.viewport(375, 667);
     openActivity({ template: "labeledDiagram" });
     const lastSpot = page.getByRole("button", { name: "Spot 5: empty" });
     await expect.element(lastSpot).toBeVisible();
@@ -100,6 +112,7 @@ describe("dragging activity items with a finger", () => {
     await expect.element(lastSpot).toBeInViewport();
     await expect.element(page.getByRole("button", { name: "Put Aorta on spot 1" })).toBeVisible();
     await settled;
+    await page.viewport(375, 812);
   });
 
   it("labeled diagram: tapping a name still puts it on the highlighted spot", async () => {

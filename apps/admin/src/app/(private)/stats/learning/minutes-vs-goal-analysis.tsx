@@ -1,15 +1,10 @@
 import { getDailyGoalTrend } from "@/data/stats/get-daily-goal-trend";
 import { formatPercent } from "@/lib/format";
+import { formatDuration } from "@/lib/format-duration";
 import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
 import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
 import { buildMetricTrend, sumRows, toPercent, toRatePoints } from "../_utils/metric-trend";
 import { type StatsPeriod } from "../_utils/stats-period";
-
-const SECONDS_PER_MINUTE = 60;
-
-function formatMinutes(seconds: number): string {
-  return `${Math.round(seconds / SECONDS_PER_MINUTE).toLocaleString()} min`;
-}
 
 export async function MinutesVsGoalAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartPeriod, comparisonLabel, current, previous } = statsPeriod;
@@ -46,13 +41,13 @@ export async function MinutesVsGoalAnalysis({ statsPeriod }: { statsPeriod: Stat
 
   const averageDay =
     days > 0
-      ? ` The average day had ${formatMinutes(studied / days)} against a ${formatMinutes(goal / days)} goal.`
+      ? ` The average day had ${formatDuration(studied / days)} against a ${formatDuration(goal / days)} goal.`
       : "";
 
   return (
     <AdminAnalysisTrend
       comparison={{ comparisonLabel, current: met ?? 0, previous: previousMet ?? 0 }}
-      description={`Share of ${days.toLocaleString()} study days, counted from each learner's first goal, that reached the daily minutes of their active goals.${averageDay} Goals keep no history, so every day uses today's minutes.`}
+      description={`Share of ${days.toLocaleString()} study days, counted from each learner's first goal, that reached the daily minutes their active goals ask for today.${averageDay}`}
       value={formatPercent(met)}
     >
       <AdminMetricTrendChart dataPoints={dataPoints} label="Daily goal met" valueFormat="percent" />

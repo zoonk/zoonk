@@ -1,4 +1,6 @@
 import { getAuthPageLocale } from "@/i18n/page-locale";
+import { Toaster } from "@zoonk/ui/components/toast";
+import { FONT_VARIABLES } from "@zoonk/ui/fonts";
 import { KEEP_TYPING_SCRIPT } from "@zoonk/ui/lib/kept-typing-script";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
@@ -16,14 +18,14 @@ export function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
-  return { title: t("Sign in to Zoonk") };
+  return { title: t("Log in to Zoonk") };
 }
 
 export default async function AuthLayout({ children }: LayoutProps<"/auth/[locale]">) {
   const appLocale = await getAuthPageLocale();
 
   return (
-    <html lang={appLocale}>
+    <html className={FONT_VARIABLES} lang={appLocale}>
       <head>
         <script
           // oxlint-disable-next-line react/no-danger -- A fixed script that must run before the first paint.
@@ -32,9 +34,10 @@ export default async function AuthLayout({ children }: LayoutProps<"/auth/[local
       </head>
       <body className="bg-background font-sans antialiased">
         <NextIntlClientProvider>
-          <main className="relative flex min-h-dvh w-full flex-col items-center justify-center px-4 py-16">
+          <main className="relative flex min-h-dvh w-full flex-col items-center px-4 pt-28 pb-0 [--page-dock:0px] [--page-gutter:--spacing(4)]">
             {children}
           </main>
+          <Toaster />
         </NextIntlClientProvider>
       </body>
     </html>

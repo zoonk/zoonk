@@ -151,7 +151,7 @@ test.describe("Exam date", () => {
 
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
       const date = editor.getByLabel("Exam date");
-      const offerText = `The exam notice says ${longDate(noticeDay)}.`;
+      const offerText = `The official exam date is ${longDate(noticeDay)}. Use it?`;
       const offer = editor.getByText(offerText, { exact: true });
 
       await expect(date).toHaveValue(ownDay);
@@ -165,7 +165,7 @@ test.describe("Exam date", () => {
       await date.fill(laterDay);
       await editor.getByRole("button", { name: "Save" }).click();
       await expect(offer).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
-      await expect(editor.getByRole("button", { name: "Save" })).toBeHidden();
+      await expect(editor.getByRole("button", { name: "Save" })).toBeDisabled();
       await expect.poll(() => readTargetDate(goal.id)).toBe(laterDay);
     } finally {
       await page.context().close();

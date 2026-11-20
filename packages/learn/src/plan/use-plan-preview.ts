@@ -3,20 +3,26 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePlanScreen } from "./plan-context";
-import { type PlanPreviewState, isSamePreviewPlan, resolvePlanPreview } from "./plan-preview-state";
+import {
+  type PlanPreviewState,
+  type PreviewScope,
+  isSamePreviewPlan,
+  resolvePlanPreview,
+} from "./plan-preview-state";
+import { createPreviewRequests } from "./preview-requests";
 
 const PREVIEW_TIMEOUT_MS = 45_000;
 
 /**
- * The same object while refreshes deliver an unchanged view, so a wait for a preview carries on
- * through them.
+ * Keeps the same base while refreshes preserve the selected inputs: advice inputs for date and
+ * coverage previews, the whole plan for other edits.
  */
-export function usePreviewBase(): object {
+export function usePreviewBase(scope: PreviewScope = "plan") {
   const { plan } = usePlanScreen();
-  const [base, setBase] = useState<object>(plan);
-  const changed = !isSamePreviewPlan({ current: plan, previous: base });
+  const [base, setBase] = useState(plan);
+  const changed = !isSamePreviewPlan({ current: plan, previous: base, scope });
 
   if (changed) {
     setBase(plan);
@@ -25,32 +31,60 @@ export function usePreviewBase(): object {
   return changed ? plan : base;
 }
 
-export function usePlanPreview() {
+/**
+ * `requestPreview` resolves to `null` once the request is cancelled or replaced, or its screen goes
+ * away.
+ */
+export function usePlanPreview(opening?: string) {
   const { actions, plan } = usePlanScreen();
+  const scope = opening === "pastDate" || opening === "coverage" ? "advice" : "plan";
+  const base = usePreviewBase(scope);
   const [preview, setPreview] = useState<PlanPreviewState>({ status: "idle" });
+  const requests = useRef(createPreviewRequests(() => setPreview({ status: "idle" })));
 
-  if (preview.status !== "idle" && !isSamePreviewPlan({ current: plan, previous: preview.plan })) {
+  useLayoutEffect(() => {
+    requests.current.showOpening(opening);
+  }, [opening]);
+
+  useLayoutEffect(() => {
+    requests.current.showBase(base);
+  }, [base]);
+
+  useEffect(() => {
+    const current = requests.current;
+    return () => current.cancel();
+  }, []);
+
+  if (
+    preview.status !== "idle" &&
+    !isSamePreviewPlan({ current: plan, previous: preview.plan, scope })
+  ) {
     setPreview({ status: "idle" });
   }
 
-  const requestPreview = async (operations: LearnerPlanOperation[]) => {
-    const request = { operations, plan, status: "loading" } as const;
+  const requestPreview = (operations: LearnerPlanOperation[]) => {
+    const request = { operations, plan, scope, status: "loading" } as const;
     setPreview(request);
 
-    const { data } = await safeAsync(() =>
-      settleWithin({ ms: PREVIEW_TIMEOUT_MS, request: () => actions.preview(operations) }),
-    );
+    return requests.current.run(request, async () => {
+      const { data } = await safeAsync(() =>
+        settleWithin({ ms: PREVIEW_TIMEOUT_MS, request: () => actions.preview(operations) }),
+      );
 
-    const result = data?.status === "settled" ? data.value : null;
-    setPreview((current) => resolvePlanPreview({ current, preview: result, request }));
+      const result = data?.status === "settled" ? data.value : null;
+      setPreview((current) => resolvePlanPreview({ current, preview: result, request }));
+
+      return result;
+    });
   };
 
   return {
     preview:
-      preview.status !== "idle" && !isSamePreviewPlan({ current: plan, previous: preview.plan })
+      preview.status !== "idle" &&
+      !isSamePreviewPlan({ current: plan, previous: preview.plan, scope })
         ? ({ status: "idle" } as const)
         : preview,
     requestPreview,
-    setPreview: () => setPreview({ status: "idle" }),
+    setPreview: () => requests.current.cancel(),
   };
 }

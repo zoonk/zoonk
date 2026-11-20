@@ -1,11 +1,12 @@
 "use client";
 
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
+import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
 import { ItemLine } from "../../questions/item-text";
-import { useFocusCheckWhenComplete } from "./question-actions";
 
 export type OrderResult = { correctOrder: readonly number[]; order: readonly number[] };
 
@@ -53,7 +54,10 @@ export function OrderQuestion({
   const locked = disabled || result !== null;
   const placed = result?.order ?? order;
 
-  useFocusCheckWhenComplete({ complete: order.length === steps.length, containerRef: groupRef });
+  useFocusMainActionWhenComplete({
+    complete: order.length === steps.length,
+    containerRef: groupRef,
+  });
 
   const tap = (index: number) => {
     const next = order.includes(index) ? order.filter((step) => step !== index) : [...order, index];
@@ -76,7 +80,7 @@ export function OrderQuestion({
           return (
             <AnswerOption
               aria-checked={place !== -1}
-              aria-keyshortcuts={String(index + 1)}
+              aria-keyshortcuts={shortcutKeys("pick", index)}
               disabled={locked}
               key={step}
               marker={index + 1}

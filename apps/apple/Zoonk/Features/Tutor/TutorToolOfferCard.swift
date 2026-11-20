@@ -19,6 +19,8 @@ enum TutorPlace: Hashable, Sendable {
   case mission(Components.Schemas.StudyMissionOpens)
   /// What a mission's block opened.
   case missionStep(StudyDestination)
+  /// A practice call the buddy offered, to set up before it starts.
+  case practiceCall(Components.Schemas.TutorToolOffer.Case4Payload)
 }
 
 struct TutorPlaces {
@@ -31,13 +33,10 @@ extension EnvironmentValues {
   @Entry var tutorPlaces = TutorPlaces.unavailable
 }
 
-/// A Plus-only one shows locked, with See Plus instead.
+/// One that needs a subscription looks like any other; tapping its action shows the gate there.
 struct TutorToolOfferCard: View {
   @Environment(\.tutorPlaces) private var places
-  @State private var isCallOpen = false
-  @State private var callMinutes: Int?
-  @State private var callStart = CallStart()
-  @State private var startedCall: String?
+  @State private var isGated = false
 
   let offer: Components.Schemas.TutorToolOffer
 
@@ -52,20 +51,26 @@ struct TutorToolOfferCard: View {
             .foregroundStyle(.mutedForeground)
         }
 
-        if content.locked {
-          PlusNotice(description: content.lockNote, isInset: true)
+        if isGated, let gate = content.gate {
+          SubscribeGate(title: gate)
         } else if let action = content.action {
           switch action {
           case .open(let label, let place):
             Button {
-              places.open(place)
+              if content.gate != nil {
+                isGated = true
+              } else {
+                places.open(place)
+              }
             } label: {
               label
             }
             .buttonStyle(.outline)
           case .practiceCall(let label):
             Button {
-              isCallOpen = true
+              if case .case4(let call) = offer {
+                places.open(.practiceCall(call))
+              }
             } label: {
               label
             }
@@ -88,52 +93,8 @@ struct TutorToolOfferCard: View {
         }
 
         content.title
-
-        if content.locked {
-          Spacer()
-          PlusMark()
-        }
       }
     }
-    .sheet(isPresented: $isCallOpen, onDismiss: openStartedCall) {
-      if case .case4(let call) = offer,
-        let conversation: LanguageUnit.Conversation = try? PracticeJSON.recode(call.call)
-      {
-        NavigationStack {
-          ZoonkList {
-            PracticeCallSection(
-              conversation: conversation, chapterId: call.chapterId, goalId: call.goalId,
-              minutes: $callMinutes, start: callStart
-            ) { conversationId in
-              startedCall = conversationId
-              isCallOpen = false
-            }
-          }
-          .navigationTitle(Text(call.unitTitle))
-          .navigationBarTitleDisplayMode(.inline)
-          .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-              Button(role: .close) {
-                isCallOpen = false
-              }
-            }
-          }
-        }
-        .presentationDetents([.medium, .large])
-        .onDisappear { callStart.cancel() }
-        .zoonkStyles()
-      }
-    }
-  }
-
-  /// A call opens once its sheet is gone: one modal can't present another.
-  private func openStartedCall() {
-    guard let startedCall else {
-      return
-    }
-
-    self.startedCall = nil
-    places.open(.call(conversationId: startedCall))
   }
 
   private enum Action {
@@ -150,8 +111,8 @@ struct TutorToolOfferCard: View {
     let title: Text
     var description: Text?
     let action: Action?
-    var locked = false
-    var lockNote: Text?
+    /// What the gate says when the learner's plan doesn't include it.
+    var gate: Text?
   }
 
   private var offerContent: Content {
@@ -167,13 +128,12 @@ struct TutorToolOfferCard: View {
         action: .open(
           Text("Start", tableName: "Tutor", comment: "Starts the goal the buddy offered"),
           .startGoal(goal: start.goal)),
-        locked: start.access == .plusRequired,
-        lockNote: Text(
-          "Starting another goal right now comes with Plus. Until then, keep going with your current goals.",
-          tableName: "Tutor",
-          comment:
-            "Why a free learner can't start another goal now: either they follow as many goals at once as the free plan allows or they started as many new goals as it allows recently, so it names neither. Plus is the subscription's name, not \"more\""
-        ))
+        gate: start.access == .plusRequired
+          ? Text(
+            "Starting another goal needs a subscription", tableName: "Tutor",
+            comment:
+              "A free learner tried to start another goal from the buddy: either they study as many goals at once as their plan allows or they started as many new goals as it allows recently, so it names neither"
+          ) : nil)
     case .case2(let test):
       return Content(
         title: Text(
@@ -222,19 +182,19 @@ struct TutorToolOfferCard: View {
           "Take a mock exam", tableName: "Tutor", comment: "The buddy offers a mock exam"),
         action: .open(
           Text("Choose", tableName: "Tutor", comment: "Opens choosing a mock exam"), .mockChooser),
-        locked: mock.access == .plusRequired,
-        lockNote: Text(
-          "Mock exams come with Plus: whenever you want, and every week in your plan.",
-          tableName: "Tutor", comment: "Why a free learner can't take a mock exam"))
+        gate: mock.access == .plusRequired
+          ? Text(
+            "Mock exams need a subscription", tableName: "Tutor",
+            comment: "A free learner tried to take a mock exam from the buddy") : nil)
     case .case6(let essay):
       return Content(
         title: Text(essay.subject),
         description: essayCadence(essay.cadence.rawValue),
         action: .open(open, .subject(subjectKey: essay.subjectKey)),
-        locked: essay.access == .plusRequired,
-        lockNote: Text(
-          "Essay practice with grading comes with Plus.", tableName: "Tutor",
-          comment: "Why a free learner can't practice essays"))
+        gate: essay.access == .plusRequired
+          ? Text(
+            "Essay practice needs a subscription", tableName: "Tutor",
+            comment: "A free learner tried to practice essays from the buddy") : nil)
     case .case7(let mistakes):
       return Content(
         title: Text(
@@ -309,7 +269,7 @@ struct TutorToolOfferCard: View {
       return Content(
         title: Text("Statistics", tableName: "Tutor", comment: "The buddy offers the statistics"),
         description: Text(
-          "Energy, level, right answers and when you study best.", tableName: "Tutor",
+          "Energy, belt, right answers and when you study best.", tableName: "Tutor",
           comment: "What the statistics show"),
         action: .open(open, .statistics))
     case .case12:
@@ -328,20 +288,19 @@ struct TutorToolOfferCard: View {
         action: .open(open, .memory))
     case .case14(let plus):
       return Content(
-        title: Text("Plus", tableName: "Tutor", comment: "The buddy offers the subscription"),
+        title: Text(
+          "Subscription", tableName: "Tutor", comment: "The buddy offers the subscription page"),
         description: plus.subscribed
           ? Text(
             "Your plan and its billing.", tableName: "Tutor",
             comment: "What the subscription page shows a subscriber")
           : Text(
-            "What Plus includes and its price.", tableName: "Tutor",
+            "What it includes and its price.", tableName: "Tutor",
             comment: "What the subscription page shows"),
         action: .open(
           plus.subscribed
             ? Text("Manage", tableName: "Tutor", comment: "Opens the learner's subscription")
-            : Text(
-              "See Plus", tableName: "Tutor",
-              comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\""),
+            : Text("Subscribe", tableName: "Tutor", comment: "Opens the subscription page"),
           .subscription))
     }
   }
@@ -398,7 +357,7 @@ private struct TutorContentCountryApply: View {
         == country,
       label: Text("Apply", tableName: "Tutor", comment: "Applies a plan change the buddy proposed"),
       applied: Text(
-        "Saved. Your new plan is being prepared, and you can keep studying meanwhile.",
+        "Saved. Your new plan is getting ready, and you can keep studying.",
         tableName: "Tutor",
         comment:
           "The learner applied the content country the buddy offered; the plan is rebuilt for it"
@@ -478,6 +437,39 @@ private struct TutorApplyButton: View {
       failed = !(await apply())
       isSaving = false
       isResultFocused = !failed
+    }
+  }
+}
+
+/// A practice call the buddy offered, set up in a sheet the window presents over the screen, never
+/// from the offer: a resize can take the offer's pane away, and the sheet and a start under way
+/// stay. Closing the sheet ends the start; once the call starts, it opens in the sheet's place.
+struct TutorPracticeCallSheet: View {
+  @Environment(\.dismiss) private var dismiss
+  @Environment(AppRouter.self) private var router
+  @State private var minutes: Int?
+  @State private var start = CallStart()
+
+  let call: Components.Schemas.TutorToolOffer.Case4Payload
+
+  var body: some View {
+    if let conversation: LanguageUnit.Conversation = try? PracticeJSON.recode(call.call) {
+      NavigationStack {
+        ZoonkList {
+          PracticeCallSection(
+            conversation: conversation, chapterId: call.chapterId, goalId: call.goalId,
+            minutes: $minutes, start: start
+          ) { conversationId in
+            router.open(.conversation(conversationId: conversationId))
+          }
+        }
+        .navigationTitle(Text(call.unitTitle))
+        .navigationBarTitleDisplayMode(.inline)
+        .sheetClose { dismiss() }
+      }
+      .presentationDetents([.medium, .large])
+      .closesOnNavigation()
+      .onDisappear { start.leave() }
     }
   }
 }

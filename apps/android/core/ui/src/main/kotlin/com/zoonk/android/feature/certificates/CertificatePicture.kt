@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,14 +18,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.zoonk.android.R
 import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -66,30 +62,23 @@ fun CertificatePicture(
 }
 
 /**
- * A locked certificate in its picture's place: the sheet's frame and shape with its name, its date
- * and a lock, and no picture. [compact] keeps only the lock, for a list row's thumbnail.
+ * A certificate its owner can't open without a subscription, in its picture's place: the sheet's
+ * shape with its name and date, and no picture. [compact] keeps only the shape, for a list row's thumbnail.
  */
 @Composable
-fun LockedCertificate(
+fun BlankCertificate(
     name: CertificateName,
     modifier: Modifier = Modifier,
     corner: Dp = ZoonkRadius.md,
     compact: Boolean = false,
 ) {
-    val locked = stringResource(R.string.certificates_locked)
-
     Column(
         modifier
             .sheet(MaterialTheme.colorScheme.surfaceContainerHigh, MaterialTheme.colorScheme.outlineVariant, corner)
-            .padding(if (compact) 8.dp else 16.dp),
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(
-            painterResource(R.drawable.ic_lock),
-            contentDescription = if (compact) null else locked,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
         if (!compact) {
             Text(
                 name.words(),
@@ -107,7 +96,7 @@ fun LockedCertificate(
     }
 }
 
-/** A locked one goes without, so callers show [LockedCertificate] instead. */
+/** A locked one goes without, so callers show [BlankCertificate] instead. */
 val OwnedCertificate.pictureUrl: String? get() = imageUrls?.screen?.toString()
 
 private fun Modifier.sheet(

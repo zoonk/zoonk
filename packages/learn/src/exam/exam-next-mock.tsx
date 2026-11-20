@@ -12,17 +12,15 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
-import { MarkedText } from "../_components/title-row";
-import { useMockDaySizeLabel } from "../mock/mock-labels";
+import { useFormatPlanDate } from "../plan/plan-date-text";
 import { useExamScreen } from "./exam-context";
-import { useExamDayDate } from "./exam-labels";
+import { useExamQuestionCount } from "./use-exam-question-count";
 
 export function ExamNextMock({ current }: { current: boolean }) {
   const t = useExtracted();
-  const dayDate = useExamDayDate();
-  const daySize = useMockDaySizeLabel();
+  const formatPlanDate = useFormatPlanDate();
+  const questionCount = useExamQuestionCount();
   const { exam, hrefs } = useExamScreen();
   const next = exam.nextMock;
 
@@ -40,16 +38,10 @@ export function ExamNextMock({ current }: { current: boolean }) {
       </ListRowLeading>
       <ListRowBody>
         <ListRowContent>
-          <ListRowTitle>
-            <MarkedText mark={exam.mocksRequirePlus && <PlusMark />}>
-              {daySize({ fullLength: next.fullLength })}
-            </MarkedText>
-          </ListRowTitle>
-          <ListRowDescription>
-            {t("{count, plural, one {# question} other {# questions}}", { count: next.questions })}
-          </ListRowDescription>
+          <ListRowTitle>{t("Next mock exam")}</ListRowTitle>
+          <ListRowDescription>{questionCount(next.questions)}</ListRowDescription>
         </ListRowContent>
-        {next.date && <ListRowTrailing>{dayDate(next.date)}</ListRowTrailing>}
+        {next.date && <ListRowTrailing>{formatPlanDate(next.date)}</ListRowTrailing>}
       </ListRowBody>
     </ListRowLink>
   );

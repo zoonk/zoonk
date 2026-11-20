@@ -59,6 +59,8 @@ extension TutorPlaces {
         router.open(.focusTest(goalId: goalId))
       case .call(let conversationId):
         router.open(.conversation(conversationId: conversationId))
+      case .practiceCall(let call):
+        router.present(.practiceCall(call))
       case .mockChooser:
         router.open(.mockChooser)
       case .subject(let subjectKey):
@@ -67,8 +69,10 @@ extension TutorPlaces {
         router.open(.mistakes)
       case .pronunciation(let goalId):
         router.open(.pronunciation(goalId: goalId))
-      case .statistics, .energy:
-        router.open(.statistics)
+      case .statistics:
+        router.open(.statistics())
+      case .energy:
+        router.open(.statistics(section: .energy))
       case .logbook:
         router.open(.logbook)
       case .earlierQuestions:

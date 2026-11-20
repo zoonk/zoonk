@@ -51,7 +51,9 @@ export function ActivitySelectGridItem({
       className={cn(
         "focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-center text-sm tabular-nums transition-colors outline-none select-none focus-visible:ring-[3px]",
         !resultState && !isSelected && "border-border hover:bg-accent",
-        !resultState && isSelected && "border-primary bg-primary/5 font-medium",
+        !resultState &&
+          isSelected &&
+          "bg-selected-tint contrast-more:border-border border-transparent",
         resultState === "correct" &&
           "border-success/60 bg-success/10 text-success-text font-medium",
         resultState === "incorrect" &&
@@ -64,7 +66,7 @@ export function ActivitySelectGridItem({
       onClick={onToggle}
       type="button"
     >
-      <span className="flex items-start gap-1.5">
+      <span className="flex items-center gap-1.5">
         {resultState && (
           <LineMarker>
             {resultState === "correct" ? (

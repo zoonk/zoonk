@@ -4,25 +4,28 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -33,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -45,39 +49,46 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
-import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.EmptyState
-import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.CountTab
+import com.zoonk.android.ui.components.CountTabs
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LocalClock
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
-import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.rememberOpeningDay
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
-import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.centeredColumn
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
+import com.zoonk.api.models.MindMapAllowanceStop
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaInstant
 
 @Composable
 fun MindMapsScreen(
@@ -108,15 +119,17 @@ internal fun MindMapsContent(
     val state by resource.collectShown()
     val scope = rememberCoroutineScope()
     val back: () -> Unit = { navigator.back() }
+    val maps = host.maps(goalId)
+    host.SavesSaid(maps)
 
     when (val shown = state) {
         is LoadState.Loaded -> {
-            val maps = host.maps(goalId)
             val requests by maps.requests.collectAsStateWithLifecycle()
             val saves by maps.saves.collectAsStateWithLifecycle()
             val createAll by maps.createAll.collectAsStateWithLifecycle()
 
             FollowListWhileOnItsWay(resource, shown.value.chapters, requests)
+            RereadWhenOfferOpens(resource, shown.value.createOffer.stop)
 
             CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
                 MindMapsPage(
@@ -125,7 +138,6 @@ internal fun MindMapsContent(
                     actions =
                         MindMapsActions(
                             back = back,
-                            keepStudying = { navigator.select(AppTab.Today) },
                             create = maps::create,
                             createAll = maps::createAll,
                             save = maps::save,
@@ -179,6 +191,22 @@ private fun FollowListWhileOnItsWay(
     }
 }
 
+/**
+ * The day the offer's stop gave comes while the page shows: the page reads its offer once, so its counts and Create
+ * all are today's. Only a day still to come when the page saw it arms that read; one already past asks for nothing.
+ */
+@Composable
+private fun RereadWhenOfferOpens(
+    resource: Resource<GoalMindMaps>,
+    stop: MindMapAllowanceStop?,
+) {
+    val clock = LocalClock.current
+    val at = stop?.availableAt?.toJavaInstant()
+    val ahead = remember(resource, at) { at?.isAfter(clock.instant()) == true }
+    if (!ahead || rememberOpeningDay(at) != OpeningDay.Open) return
+    LaunchedEffect(resource, at) { resource.refresh() }
+}
+
 /** How often the list asks again: drawing takes half a minute, writing lessons minutes; null when nothing is on its way. */
 internal fun listCadence(
     chapters: List<GoalMindMap>,
@@ -201,7 +229,6 @@ internal data class MindMapsState(
 
 internal data class MindMapsActions(
     val back: () -> Unit,
-    val keepStudying: () -> Unit,
     val create: (UUID) -> Unit,
     val navigate: (AppRoute) -> Unit,
     val createAll: () -> Unit = {},
@@ -228,8 +255,8 @@ internal fun MindMapsPage(
     val tab = StudyTab.of(picked) ?: mindMaps.firstTab.tab
     var opened by rememberSaveable { mutableStateOf(listOfNotNull(subject)) }
     var showAll by rememberSaveable { mutableStateOf(emptyList<String>()) }
+    // Only on arrival: a learner who closes it keeps it closed.
     var notMadeOpen by rememberSaveable { mutableStateOf(notMadeShown) }
-    val decks = StudyTab.entries.associateWith { mindMaps.deck(it).size }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = mindMaps.subjectItem(tab, subject) ?: 0)
     val title = stringResource(R.string.navigation_mind_maps)
 
@@ -242,22 +269,57 @@ internal fun MindMapsPage(
             toggleNotMade = { notMadeOpen = !notMadeOpen },
         )
 
-    PageScaffold(onBack = actions.back, title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
-            BeforeFold { beforeFold ->
-                LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
-                    item(key = "hero", contentType = "hero") {
-                        MindMapsHeader(mindMaps, study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 }, actions.navigate)
-                    }
-                    stickyHeader(key = "tabs", contentType = "tabs") { MindMapsTabs(tab, decks) { picked = it.key } }
+    val study = { actions.study(tab, null) }.takeIf { mindMaps.deck(tab).isNotEmpty() }
+    val studyBar: (@Composable ColumnScope.() -> Unit)? =
+        study?.let { { TaskActions { main -> Button(onClick = it, modifier = main) { Text(stringResource(R.string.mindmaps_study)) } } } }
+    // With No map yet beside them, the maps' column is no longer the page's middle: the page's bars keep to its edges,
+    // and Study maps goes under the maps, ending where their column does, as main's.
+    var notMadeBeside by remember { mutableStateOf(false) }
 
-                    val shown = IndexState(opened.toSet(), tab.key in showAll)
-                    when (tab) {
-                        StudyTab.Chapters -> chaptersTab(mindMaps, shown, notMadeOpen, tabActions)
-                        StudyTab.Lessons -> lessonsTab(mindMaps, shown, tabActions)
-                        StudyTab.Saved -> savedTab(mindMaps, shown, tabActions)
+    PageScaffold(
+        onBack = actions.back,
+        title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        columnWidth = if (notMadeBeside) Dp.Unspecified else DETAIL_PAGE_WIDTH,
+        bottomBar = studyBar.takeUnless { notMadeBeside },
+    ) { padding ->
+        val shown = IndexState(opened.toSet(), tab.key in showAll)
+
+        // Main's right column: beside the maps on every tab where there's room, so the page keeps its width as tabs
+        // switch; without it, the list follows the chapters' maps.
+        PageWithSupportingPane(
+            modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
+            panesTouch = true,
+            supportingPane =
+                mindMaps.notMade.takeIf { it.isNotEmpty() }?.let {
+                    {
+                        Row {
+                            VerticalDivider()
+                            LazyColumn(Modifier.fillMaxSize(), contentPadding = pagePadding()) {
+                                notMadeBlock(mindMaps, shown, notMadeOpen, tabActions, beside = true)
+                            }
+                        }
+                    }
+                },
+        ) { beside ->
+            SideEffect { notMadeBeside = beside }
+            Column(Modifier.fillMaxSize()) {
+                BeforeFold(Modifier.weight(1f)) { beforeFold ->
+                    LazyColumn(beforeFold.centeredColumn(DETAIL_PAGE_WIDTH), listState, pagePadding()) {
+                        item(key = "hero", contentType = "hero") {
+                            PageTitleRow(title, Modifier.padding(bottom = 16.dp))
+                        }
+                        stickyHeader(key = "tabs", contentType = "tabs") {
+                            MindMapsTabs(tab, mindMaps.tabCounts(state.saves)) { picked = it.key }
+                        }
+
+                        when (tab) {
+                            StudyTab.Chapters -> chaptersTab(mindMaps, shown, notMadeOpen, tabActions, listsNotMade = !beside)
+                            StudyTab.Lessons -> lessonsTab(mindMaps, shown, tabActions)
+                            StudyTab.Saved -> savedTab(mindMaps, shown, tabActions)
+                        }
                     }
                 }
+                if (beside) studyBar?.let { BottomBar(columnWidth = DETAIL_PAGE_WIDTH, content = it) }
             }
         }
     }
@@ -300,73 +362,24 @@ internal class TabActions(
     ) = state.saves[target] ?: server
 }
 
-/** The goal over the title, then Study, which opens the tab's maps where this device stopped; and why rows are locked for Plus. */
-@Composable
-private fun MindMapsHeader(
-    mindMaps: GoalMindMaps,
-    study: (() -> Unit)?,
-    navigate: (AppRoute) -> Unit,
-) {
-    Column(Modifier.padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(mindMaps.goal.displayName)
-        Text(stringResource(R.string.navigation_mind_maps), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
-        if (study != null) {
-            Button(
-                onClick = study,
-                modifier = Modifier.padding(top = 12.dp),
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-            ) { Text(stringResource(R.string.mindmaps_study)) }
-        }
-        if (mindMaps.chapters.any { it.status == GoalMindMap.Status.PLUS_REQUIRED }) {
-            PlusNotice(
-                onSeePlus = { navigate(AppRoute.Subscription) },
-                modifier = Modifier.padding(top = 12.dp),
-                title = stringResource(R.string.subscription_free_week_over_title),
-                description = stringResource(R.string.subscription_free_week_over_description),
-            )
-        }
-    }
-}
-
-/** Material's tabs, each with how many maps Study would open there. */
+/** Material's tabs, each with how many maps it lists. */
 @Composable
 private fun MindMapsTabs(
     tab: StudyTab,
-    decks: Map<StudyTab, Int>,
+    counts: Map<StudyTab, Int>,
     onPick: (StudyTab) -> Unit,
 ) {
-    PrimaryTabRow(
-        selectedTabIndex = tab.ordinal,
-        modifier = Modifier.bleed(LIST_ITEM_INSET).fillMaxWidth(),
-        containerColor = MaterialTheme.colorScheme.surface,
-    ) {
-        StudyTab.entries.forEach { each ->
-            val label = stringResource(each.label)
-            val count = decks.getValue(each)
-            val number = formatNumber(count.toDouble(), currentLocale())
-            val spoken = pluralStringResource(R.plurals.mindmaps_tab_spoken, count, label, number)
-            Tab(
-                selected = each == tab,
-                onClick = { onPick(each) },
-                text = {
-                    FlowRow(
-                        Modifier.clearAndSetSemantics { contentDescription = spoken },
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-                    ) {
-                        Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Text(
-                            number,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.zoonkType.data,
-                            softWrap = false,
-                        )
-                    }
-                },
-                selectedContentColor = MaterialTheme.colorScheme.onSurface,
-                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
+    CountTabs(
+        tabs =
+            StudyTab.entries.map { each ->
+                val label = stringResource(each.label)
+                val count = counts.getValue(each)
+                val number = formatNumber(count.toDouble(), currentLocale())
+                CountTab(label, count, spoken = pluralStringResource(R.plurals.mindmaps_tab_spoken, count, label, number))
+            },
+        selected = tab.ordinal,
+        onPick = { onPick(StudyTab.entries[it]) },
+    )
 }
 
 private val StudyTab.label: Int
@@ -405,7 +418,7 @@ internal fun <T> LazyListScope.index(
 }
 
 @Composable
-private fun SubjectTitle(
+internal fun SubjectTitle(
     subject: IndexEntry.Subject,
     toggle: (String) -> Unit,
 ) {
@@ -444,28 +457,18 @@ internal fun Divided(
     content: @Composable () -> Unit,
 ) {
     Column(Modifier.bleed(LIST_ITEM_INSET).background(MaterialTheme.colorScheme.surface)) {
-        if (divided) HorizontalDivider()
+        if (divided) ListDivider()
         content()
     }
 }
 
+/** Main's `EmptyTab`: one muted line where a tab has nothing to show. */
 @Composable
-internal fun TabEmpty(
-    icon: Int,
-    title: Int,
-    description: Int,
-    action: (@Composable () -> Unit)? = null,
-) {
-    EmptyState(
-        icon = icon,
-        title = stringResource(title),
-        description = stringResource(description),
-        modifier = Modifier.padding(top = 24.dp),
-        action = action,
+internal fun TabEmpty(text: Int) {
+    Text(
+        stringResource(text),
+        Modifier.padding(top = 16.dp),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
     )
-}
-
-@Composable
-internal fun KeepStudying(onClick: () -> Unit) {
-    OutlinedButton(onClick = onClick) { Text(stringResource(R.string.mindmaps_keep_studying)) }
 }

@@ -19,7 +19,6 @@
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">Line %1$d, yours to edit</string>
-    <string name="activities_code_your_output">Your output</string>
     <!-- What a program shown to explore printed, with no expected output beside it. -->
     <string name="activities_code_output">Output</string>
     <!-- The output the program should print. -->

@@ -8,10 +8,12 @@ import { type FocusTestSummary } from "../learner/placement/focus-test-contract"
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { type PlanStatus } from "../preparation/plan-status";
 import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
+import { type NotPlannedReason } from "../view-models/syllabus/syllabus-contract";
 import { type MockFundingView } from "./mock-funding-contract";
 import { type PlanNumbers } from "./numbers-contract";
 import { type LearnerPlanOperation, type PlanOperation } from "./plan-contract";
 import { type PlanCourseView } from "./plan-course-contract";
+import { type PlanChangeQuote } from "./plan-decision-contract";
 import { type ToolChoice, type ToolSystem } from "./plan-tools-contract";
 import { type PlanEffect } from "./planner/plan-effect";
 import {
@@ -48,6 +50,7 @@ export type PlanChangeView = {
   lessonsSkipped: number;
   officialDate: { date: string; source: string | null } | null;
   operations: PlanOperation[];
+  quote: PlanChangeQuote;
   /** Null when the app words the change from `kind`, `operations` and `effect`. */
   reason: string | null;
   seen: boolean;
@@ -61,6 +64,8 @@ export type PlanItemView = {
   id: string | null;
   kind: PlanItemKind;
   lessonId: string | null;
+  /** The lessons it holds on its day: one written lesson, a share of lessons still to be written, none for other work. */
+  lessons: number;
   minutes: number | null;
   requiresPlus: boolean;
   scheduledFor: string | null;
@@ -98,7 +103,7 @@ export type ShortExamFocus = (typeof SHORT_EXAM_FOCUSES)[number];
 
 export type ShortPhaseView = { firstDay: number; focus: ShortExamFocus; lastDay: number };
 
-type PlanEndView = { kind: "finished" };
+type PlanEndView = { finishedOn: string | null; kind: "finished" };
 
 export type PlanOffer = { effect: PlanEffect; fits: boolean; operations: LearnerPlanOperation[] };
 
@@ -111,6 +116,7 @@ export type PlanPhaseCheckpointView = {
 };
 
 export type PlanPhaseView = {
+  notPlannedReason: NotPlannedReason | null;
   challengeLeftOut: boolean;
   chapterCount: number;
   chapters: PlanChapterView[];
@@ -167,7 +173,7 @@ export type MockScheduleView = {
 };
 
 export type PlanView = {
-  access: { freeUntil: string | null; freeWeekOver: boolean; mocksRequirePlus: boolean };
+  access: { mocksRequirePlus: boolean };
   areas: {
     focusPart: string | null;
     focused: boolean;

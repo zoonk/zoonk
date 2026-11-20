@@ -1,8 +1,9 @@
 "use client";
 
-import { useFormatNumber } from "@zoonk/learn/format-number";
+import { displayDigits, useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { compareGuess } from "../_utils/guess-scale";
+import { useGuessFormat } from "./guess-format";
 
 export function ActivityGuessComparison({
   actual,
@@ -17,17 +18,21 @@ export function ActivityGuessComparison({
 }) {
   const t = useExtracted();
   const format = useFormatNumber();
-  const comparison = compareGuess({ actual, guess, isCorrect });
+  const { value: formatValue } = useGuessFormat(unit);
+  const comparison = compareGuess({ actual, guess, isCorrect, unit });
 
   if (comparison.kind === "close") {
-    return <p className="text-sm font-medium">{t("Your guess is close to the real value.")}</p>;
+    // A guess written the same as the real value needs no line: the two values already say it.
+    return formatValue(guess) === formatValue(actual) ? null : (
+      <p className="text-sm font-medium">{t("Your guess is close to the real value.")}</p>
+    );
   }
 
   if (comparison.kind === "off") {
     return (
       <p className="text-sm font-medium">
         {t("Your guess is off by {difference}.", {
-          difference: format(Math.abs(comparison.difference), { unit }),
+          difference: formatValue(Math.abs(comparison.difference), displayDigits(actual, unit)),
         })}
       </p>
     );

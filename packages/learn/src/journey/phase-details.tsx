@@ -1,32 +1,47 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
-import { PopoverDescription, PopoverTitle } from "@zoonk/ui/components/popover";
+import { DrawerContent, DrawerDescription, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
-import { PlusMark } from "../_components/plus-lock";
-import { MarkedText } from "../_components/title-row";
+import { SheetHeader } from "../_components/sheet-header";
+import { FactSegments } from "../_components/task-meta";
 import { usePlanScreen } from "../plan/plan-context";
-import { useFormatPlanDate } from "../plan/plan-date-text";
+import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, MockRow, usePhaseMocksLine } from "./journey-phase-events";
 import { isNamedLikeAChapter } from "./path-phases";
+import { getPhaseStart } from "./phase-dates";
+import { usePhaseEnd } from "./phase-when";
 
+/** From the phase's start to the end it's named by everywhere (`usePhaseEnd`), or a short plan's days. */
 function usePhaseRange() {
   const t = useExtracted();
-  const formatPlanDate = useFormatPlanDate();
+  const phaseEnd = usePhaseEnd();
 
-  return function phaseRange(phase: PlanPhaseView): string | null {
-    if (!phase.startDate || !phase.endDate) {
+  return function phaseRange(phase: PlanPhaseView): React.ReactNode {
+    const end = phaseEnd(phase);
+
+    if (!end) {
       return null;
     }
 
-    const month = phase.kind === "learn" && phase.state === "upcoming";
+    if ("days" in end) {
+      return end.days;
+    }
 
-    return t("{start} – {end}", {
-      end: formatPlanDate(phase.endDate, { month }),
-      start: formatPlanDate(phase.startDate, { month }),
+    const start = getPhaseStart({ end, phase });
+
+    if (!start) {
+      return null;
+    }
+
+    return t.rich("<start></start> – <end></end>", {
+      end: () => <PlanDateText estimate={end.estimate} isoDate={end.isoDate} month={end.month} />,
+      start: () => (
+        <PlanDateText estimate={start.estimate} isoDate={start.isoDate} month={start.month} />
+      ),
     });
   };
 }
@@ -49,11 +64,11 @@ function usePhaseLessons() {
 }
 
 function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
-  const { plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
+  const { paused } = usePlanScreen();
   const { checkpoint, mocks } = phase;
 
-  if (!mocks.nextDate && mocks.count === 0 && !checkpoint) {
+  if (paused || (!mocks.nextDate && mocks.count === 0 && !checkpoint)) {
     return null;
   }
 
@@ -61,20 +76,13 @@ function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
     <ul className="flex flex-col">
       {mocks.nextDate && (
         <li>
-          <MockRow
-            challengeHref={links.challenge}
-            date={mocks.nextDate}
-            examHref={links.exam}
-            locked={plan.access.mocksRequirePlus}
-          />
+          <MockRow challengeHref={links.challenge} date={mocks.nextDate} examHref={links.exam} />
         </li>
       )}
 
       {!mocks.nextDate && mocks.count > 0 && (
         <li className="text-muted-foreground py-1.5 text-xs">
-          <MarkedText mark={plan.access.mocksRequirePlus && <PlusMark />}>
-            {mocksLine({ count: mocks.count, forNextSitting: false, nextSitting: null })}
-          </MarkedText>
+          {mocksLine({ count: mocks.count, forNextSitting: false, nextSitting: null })}
         </li>
       )}
 
@@ -94,24 +102,30 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
   const { plan } = usePlanScreen();
   const range = phaseRange(phase);
   const listsChapters = phase.kind === "learn";
-  const byPlace = listsChapters && isNamedLikeAChapter({ name: phaseName(phase), phase });
+
+  const byPlace =
+    phase.state !== "current" &&
+    listsChapters &&
+    isNamedLikeAChapter({ name: phaseName(phase), phase });
 
   return (
     <>
-      <div className="flex flex-col gap-0.5">
-        <PopoverTitle>
+      <SheetHeader>
+        <DrawerTitle>
           {phaseName(phase, { byPlace, mocksRequirePlus: plan.access.mocksRequirePlus })}
-        </PopoverTitle>
-        <PopoverDescription className="font-mono text-xs tabular-nums">
-          {[range, phaseLessons(phase)].filter(Boolean).join(" · ")}
-        </PopoverDescription>
-      </div>
+        </DrawerTitle>
+        <DrawerDescription className="font-mono text-xs text-balance tabular-nums">
+          <FactSegments facts={[phaseLessons(phase)]} lead={range} />
+        </DrawerDescription>
+      </SheetHeader>
 
-      {listsChapters ? (
-        <JourneyChapters chapters={phase.chapters} checkpoint={phase.checkpoint} links={links} />
-      ) : (
-        <ExamPhaseEvents links={links} phase={phase} />
-      )}
+      <DrawerContent className="pt-2">
+        {listsChapters ? (
+          <JourneyChapters chapters={phase.chapters} checkpoint={phase.checkpoint} links={links} />
+        ) : (
+          <ExamPhaseEvents links={links} phase={phase} />
+        )}
+      </DrawerContent>
     </>
   );
 }

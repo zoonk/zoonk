@@ -5,80 +5,73 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon, ChevronRightIcon, FlagIcon } from "lucide-react";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
+import { ListRowChevronSpace, ROW_FOLD_CLASS } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
-import { JourneyChapters, WritingAheadLine } from "./journey-chapters";
+import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
-  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
+  PathRowBody,
 } from "./journey-phase-events";
-import { PhaseLessons, PhaseMark, PhaseName, PhaseUntil } from "./path-phase-row";
+import { PHASE_END_CLASS, PhaseMark, PhaseName } from "./path-phase-row";
 import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phases";
+import { PhaseWhen } from "./phase-when";
 import { useRoadmapFinish } from "./use-roadmap";
-
-const PHASE_ROW_CLASS = cn(PATH_ROW_CLASS, "min-h-12");
 
 function PhaseColumns({
   byPlace = false,
-  isLast,
   nextChapter,
   open,
   phase,
 }: {
   byPlace?: boolean;
-  isLast: boolean;
   nextChapter?: PlanChapterView;
   open: boolean;
   phase: PlanPhaseView;
 }) {
   return (
     <>
-      <span className={PATH_ROW_LEADING_CLASS}>
+      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         {nextChapter ? <ChapterMark chapter={nextChapter} isNext /> : <PhaseMark phase={phase} />}
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
+      <PathRowBody value={<PhaseWhen className={PHASE_END_CLASS} phase={phase} />}>
         <PhaseName byPlace={byPlace} isNext={Boolean(nextChapter)} open={open} phase={phase} />
-        <span className="flex flex-wrap items-center gap-x-3 empty:hidden">
-          <PhaseLessons phase={phase} />
-          <PhaseUntil isLast={isLast} phase={phase} />
-        </span>
-      </span>
+      </PathRowBody>
     </>
   );
 }
 
-const NESTED_CLASS = "flex flex-col pl-7";
+const NESTED_CLASS = "nested-rows flex flex-col pb-2";
 
 function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
-  const { goal } = usePlanScreen();
-
   return (
-    <div className={NESTED_CLASS}>
-      {phase.checkpoint && <CheckpointRow checkpoint={phase.checkpoint} links={links} />}
-      <WritingAheadLine chapters={phase.chapters} unit={goal.kind === "language"} />
-    </div>
+    phase.checkpoint && (
+      <div className={NESTED_CLASS} data-slot="path-nested">
+        <CheckpointRow checkpoint={phase.checkpoint} links={links} />
+      </div>
+    )
   );
 }
 
 function ChapterPhase({
   chapter,
-  isLast,
   links,
   open,
   phase,
 }: {
   chapter: PlanChapterView & { chapterId: string };
-  isLast: boolean;
   links: JourneyPathLinks;
   open: boolean;
   phase: PlanPhaseView;
@@ -88,16 +81,13 @@ function ChapterPhase({
   return (
     <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
       <LearnLink
-        className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
+        className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+        data-highlighted={isNext || undefined}
+        data-slot="path-row"
         href={links.chapter(chapter.chapterId)}
       >
-        <PhaseColumns
-          isLast={isLast}
-          nextChapter={isNext ? chapter : undefined}
-          open={open}
-          phase={phase}
-        />
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+        <PhaseColumns nextChapter={isNext ? chapter : undefined} open={open} phase={phase} />
+        <RowChevron />
       </LearnLink>
 
       {open && <OpenPhaseEvents links={links} phase={phase} />}
@@ -107,27 +97,25 @@ function ChapterPhase({
 
 function ChaptersPhase({
   byPlace,
-  isLast,
   links,
   open,
   phase,
 }: {
   byPlace: boolean;
-  isLast: boolean;
   links: JourneyPathLinks;
   open: boolean;
   phase: PlanPhaseView;
 }) {
   const hasContent = phase.chapters.length > 0 || phase.checkpoint !== null;
 
-  const header = <PhaseColumns byPlace={byPlace} isLast={isLast} open={open} phase={phase} />;
+  const header = <PhaseColumns byPlace={byPlace} open={open} phase={phase} />;
 
   if (!hasContent) {
     return (
       <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
-        <div className={PHASE_ROW_CLASS}>
+        <div className={PATH_ROW_CLASS} data-slot="path-row">
           {header}
-          <span aria-hidden="true" className="size-4 shrink-0" />
+          <ListRowChevronSpace />
         </div>
       </li>
     );
@@ -138,16 +126,16 @@ function ChaptersPhase({
       {/* The key remounts the phase when the plan goes on elsewhere, so one opened or shut by
           hand keeps it until then. */}
       <Collapsible defaultOpen={open} key={open ? "open" : "shut"}>
-        <CollapsibleTrigger className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70 group/phase")}>
+        <CollapsibleTrigger
+          className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+          data-slot="path-row"
+        >
           {header}
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="text-muted-foreground/60 size-4 shrink-0 transition-transform group-data-panel-open/phase:rotate-180 motion-reduce:transition-none"
-          />
+          <FoldChevron />
         </CollapsibleTrigger>
 
-        <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-          <div className={NESTED_CLASS}>
+        <CollapsibleContent className={ROW_FOLD_CLASS}>
+          <div className={NESTED_CLASS} data-slot="path-nested">
             <JourneyChapters
               chapters={phase.chapters}
               checkpoint={phase.checkpoint}
@@ -161,12 +149,10 @@ function ChaptersPhase({
 }
 
 function PhaseItem({
-  isLast,
   links,
   open,
   phase,
 }: {
-  isLast: boolean;
   links: JourneyPathLinks;
   open: boolean;
   phase: PlanPhaseView;
@@ -176,13 +162,13 @@ function PhaseItem({
   const own = findOwnChapter({ name, phase });
 
   if (own) {
-    return <ChapterPhase chapter={own} isLast={isLast} links={links} open={open} phase={phase} />;
+    return <ChapterPhase chapter={own} links={links} open={open} phase={phase} />;
   }
 
   return (
     <ChaptersPhase
       byPlace={isNamedLikeAChapter({ name, phase })}
-      isLast={isLast}
+
       links={links}
       open={open}
       phase={phase}
@@ -196,22 +182,25 @@ function FinishItem() {
 
   return (
     <li data-state="finish">
-      <div className={PHASE_ROW_CLASS}>
-        <span className={PATH_ROW_LEADING_CLASS}>
+      <div className={PATH_ROW_CLASS} data-slot="path-row">
+        <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
           <FlagIcon aria-hidden="true" className="size-4" />
         </span>
-        <span className={PATH_ROW_BODY_CLASS}>
+        <PathRowBody
+          value={
+            finish && (
+              <PlanDateText
+                className="text-muted-foreground text-xs"
+                estimate={finish.estimate}
+                isoDate={finish.isoDate}
+                month={finish.month}
+              />
+            )
+          }
+        >
           <span className="font-medium">{goal.displayName}</span>
-          {finish && (
-            <PlanDateText
-              className="text-muted-foreground text-xs"
-              estimate={finish.estimate}
-              isoDate={finish.isoDate}
-              month={finish.month}
-            />
-          )}
-        </span>
-        <span aria-hidden="true" className="size-4 shrink-0" />
+        </PathRowBody>
+        <ListRowChevronSpace />
       </div>
     </li>
   );
@@ -223,16 +212,9 @@ export function JourneyPathList({ links }: { links: JourneyPathLinks }) {
   const openIndex = findOpenPhase(plan.phases);
   const beforeFinish = plan.phases.filter((phase) => phase.kind !== "afterExam");
   const afterExam = plan.phases.filter((phase) => phase.kind === "afterExam");
-  const lastIndex = beforeFinish.at(-1)?.index;
 
   const toItem = (phase: PlanPhaseView) => (
-    <PhaseItem
-      isLast={phase.index === lastIndex}
-      key={phase.index}
-      links={links}
-      open={phase.index === openIndex}
-      phase={phase}
-    />
+    <PhaseItem key={phase.index} links={links} open={phase.index === openIndex} phase={phase} />
   );
 
   return (

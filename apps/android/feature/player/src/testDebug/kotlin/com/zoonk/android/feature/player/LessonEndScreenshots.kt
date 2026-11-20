@@ -30,6 +30,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonFit
@@ -81,7 +82,7 @@ class LessonEndScreenshots {
 
     @Test
     @Config(qualifiers = BOOK)
-    fun bookInSession() = capture("lessonend-session-book", IN_SESSION, LessonEnding(inSession = true), fold = true)
+    fun bookInSession() = capture("lessonend-session-book", IN_SESSION_RENDER, LessonEnding(inSession = true), fold = true)
 
     @Test
     @Config(qualifiers = BOOK)
@@ -98,17 +99,17 @@ class LessonEndScreenshots {
 
     @Test
     @Config(qualifiers = "pt-rBR-w411dp-h891dp-xxhdpi")
-    fun phoneDeferredLessons() = capture("lessonend-deferred-phone-pt", IN_SESSION, LessonEnding(inSession = true))
+    fun phoneDeferredLessons() = capture("lessonend-deferred-phone-pt", IN_SESSION_RENDER, LessonEnding(inSession = true))
 
     @Test
     @Config(qualifiers = "pt-rBR-w411dp-h891dp-night-xxhdpi", fontScale = 2f)
     fun phoneDeferredLessonsWithLargeTextInDark() =
-        capture("lessonend-deferred-phone-pt-dark-contrast-font200", IN_SESSION, LessonEnding(inSession = true), moreContrast = true)
+        capture("lessonend-deferred-phone-pt-dark-contrast-font200", IN_SESSION_RENDER, LessonEnding(inSession = true), moreContrast = true)
 
     @Test
     @Config(qualifiers = BOOK, fontScale = 2f)
     fun bookDeferredLessonsWithLargeText() =
-        capture("lessonend-deferred-book-font200", IN_SESSION, LessonEnding(inSession = true), fold = true)
+        capture("lessonend-deferred-book-font200", IN_SESSION_RENDER, LessonEnding(inSession = true), fold = true)
 
     @Test
     @Config(qualifiers = PHONE)
@@ -279,7 +280,7 @@ class LessonEndScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 }
@@ -355,3 +356,6 @@ private val FIT: LessonFit =
          "course":{"chapterCount":8,"id":"00000000-0000-4000-8000-000000000032","minutes":240,"startChapterId":null,"title":"Weather, from the ground up"}}
         """.trimIndent(),
     )
+
+private val IN_SESSION_RENDER =
+    inSession("""{"catchUp":null,"lead":"done","lessonsComing":false,"percent":33}""", completed = 1, total = 3, deferred = 2)

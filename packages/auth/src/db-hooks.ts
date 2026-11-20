@@ -1,5 +1,8 @@
 import { prisma } from "@zoonk/db";
+import { isCountryCode } from "@zoonk/utils/countries";
+import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
+import { getIpCountry } from "@zoonk/utils/locale-request";
 import { type GenericEndpointContext } from "better-auth";
 import { APIError } from "better-auth/api";
 import { type SignInMethod, reportAuthEvent } from "./auth-events";
@@ -34,6 +37,51 @@ export const ensureUserProgressAfterAuthCreate: UserCreateAfterHook = async (use
     where: { userId: user.id },
   });
 };
+
+/**
+ * Where a learner lives starts as the country they signed in from, so nobody has to say it. Only
+ * an empty one is filled: a country the learner picked stays, and staff looking at an account as
+ * its learner leave it alone. A sign-in never fails over it; a country it couldn't save is filled
+ * at the next sign-in.
+ */
+export async function rememberHomeCountryAfterSessionCreate(
+  session: { createdAt: Date; impersonatedBy?: string | null; userId: string },
+  context: GenericEndpointContext | null,
+): Promise<void> {
+  const homeCountry = context?.headers ? getIpCountry(context.headers) : null;
+
+  if (!homeCountry || !isCountryCode(homeCountry) || session.impersonatedBy) {
+    return;
+  }
+
+  await safeAsync(() =>
+    fillEmptyHomeCountry({ homeCountry, sessionStart: session.createdAt, userId: session.userId }),
+  );
+}
+
+async function fillEmptyHomeCountry({
+  homeCountry,
+  sessionStart,
+  userId,
+}: {
+  homeCountry: string;
+  sessionStart: Date;
+  userId: string;
+}) {
+  const filled = await prisma.userLearningProfile.updateMany({
+    data: { homeCountry },
+    where: { homeCountry: null, userId },
+  });
+
+  if (filled.count === 0) {
+    // Stamped with the session's start, which no later write can have: linking a guest replaces
+    // only a row still carrying that stamp on both timestamps, so one the learner changed stays.
+    await prisma.userLearningProfile.createMany({
+      data: [{ createdAt: sessionStart, homeCountry, updatedAt: sessionStart, userId }],
+      skipDuplicates: true,
+    });
+  }
+}
 
 export const reportSignUpAfterAuthCreate: UserCreateAfterHook = async (user) => {
   if (user.isAnonymous === true) {

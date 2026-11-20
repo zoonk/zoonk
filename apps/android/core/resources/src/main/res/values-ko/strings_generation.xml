@@ -5,26 +5,24 @@
   "generation_connection_lost_description": "7a877cdd7b54619d9122dda99b4acd7804ace01d8ba5fafad380189a8f218263",
   "generation_curriculum": "9a1b4b5c77cbdb2174aae0ad213b6235995a726e7cab5889e228b844e67d54d8",
   "generation_curriculum_plan": "5864b8e4d13d5ee33a98968ecce03ccb48e8e06444e7e92264a874ead72467e2",
-  "generation_curriculum_plan_line_1": "77f6fea17d692ece98d3a4670081051772956894c060c83671071618151b863a",
+  "generation_curriculum_plan_line_1": "897c7ffd5cf4fca7676ede181428601e09ee662025c41beb4c43cf4e2d4f5fa1",
   "generation_curriculum_plan_line_2": "b5367bb0bd2dadcdde1d627a8e24ee14040c106d482a882ab9abf4d6cb864194",
   "generation_curriculum_plan_line_3": "0035f127cb544f326d1bca115f602aa9be7cf2419f9ceb8c862a1347e7774f2d",
-  "generation_failed": "e30b152a62e351dbdbc60873e3602cffcd72e968be7c2591240a3db93d6580ba",
   "generation_failed_description": "ae74d8534a222eb66b1f1a7135778595fce6bfe7ff28dab353c45e3d5af1c023",
+  "generation_failed_ours": "d79efc62bc5a737ddcd99133f9f6773d7e2294bc95362faa97daeba25243a780",
   "generation_first_lesson": "cdadbc52729c4cf4667be0760814b1c377c6927597b682ab42367e57d36a5323",
   "generation_first_lesson_day": "e44045057e2a6b57d4308306a9d9df5454c3490895f5b8a90c747bf2b834435b",
-  "generation_first_lesson_day_line_1": "a16b0ef5ce5da243198f6642ac59d9b18ce5bb5a2dcb243cd425eb84b80e8ab8",
+  "generation_first_lesson_day_line_1": "a9dfee38deb9cb293bf9a36504b82229b166030dbde94ed62eb43ba3e3f920d4",
   "generation_first_lesson_day_line_2": "a9834739bfe1a79c3eff1b97bd215ec16d226e78bc765fbb497fb7e0fb15caf7",
   "generation_goal": "7c70b8e6fa4328cdb19d3de15a941ef83994fcd3a5ac8e22f88db2dabe1b5da6",
   "generation_goal_line_1": "947edab6d8aba9dc43e1181a733c46389c4a74c14b2fc99fde192f31dac5c35f",
   "generation_goal_line_2": "70ca24a5fcc4b5e1fface6307cc98c4f7b4629e98a8b6e72c306df287ef434b0",
   "generation_level_test": "99639ea4fc95877cb22dfcabd12cc3f39dc32fedc609025e2938b9994407235b",
-  "generation_level_test_bank": "983fb8171ec0c03a245c32bb3d5904128b22ac609e06425e3d1211dc58625792",
+  "generation_level_test_bank": "d2cc5c7389a98df6f9a6ecb6cfbb171fe4d86dac21b3589818b422265ee2234b",
   "generation_level_test_bank_line_1": "4b1f796aa45aae5169a29863d1cfbf9e8341095b117127940aaa5749c3db1dec",
   "generation_level_test_bank_line_2": "88b250a34584a84cb1386c467097fd18a933c9eb456f8258d3939551ae5ad00e",
   "generation_level_test_bank_line_3": "9b9cbb04153889b12bad3b54e663a72b553065fdabd3f666ddf9a9ef04a6fabb",
   "generation_level_test_bank_line_4": "b157ffe2a9a283e880bf40d93f30b52480998e37e5b0ebc2351447e4406e21f5",
-  "generation_not_started": "7383ff7e9cc880a40231063cb92e4dd7b3f822a63681de2388f2588e7a099caf",
-  "generation_not_started_description": "12efed0141637766432fb92ea39aaefcc46b533c2905df699d1f4fb5930adbea",
   "generation_notice": "a6840d26f71a35b62afb01902c491c0bd81643570aa5a82f479a2f3cce7af372",
   "generation_notice_line_1": "1875d82345dbc50ea8cd1b295786f0d4d8a51d178e0d823cd4eee0b9c6c03b10",
   "generation_notice_line_2": "11d340e7716f4ae1f20520386477021a62efaf89b18c0353675a9317ea5aba7a",
@@ -32,7 +30,7 @@
   "generation_phase_completed": "003c1702deba5d88cc1ab27485b7d4ae713b44ffb2323742009dfdeb033f83bd",
   "generation_phase_failed": "a71aa40c5d500820bdf0048ed681eba92890b75b356676a512f7a5f94d135dce",
   "generation_phase_pending": "9320559100b8dacb06a5997c1c6d1d2d7a7e59f6f589c93b488c5d2246601a6e",
-  "generation_placement": "b1e99123b87b1c4620df8ec1f0d233d800f4ba8fdc89adcaba62b326303fc06c",
+  "generation_placement": "47e2751af0b902676ab3078749b50060d79b9839b4a7edd4745b441ba3c13cb9",
   "generation_placement_questions": "2ab10e6d07d86a37841e4093e5cad80c540aaa8f7844a2dcf755215441708091",
   "generation_placement_questions_line": "475dcc01a9984f89a99a21d7213b8cb1311cf5700dabaad3740f7f108e0ab6c3",
   "generation_question_line": "613a841f4ba02ba8b72e502a3011987ee1e0233aa89be8fcb1c46662080a804d",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">진행 상황을 더 이상 확인할 수 없어요. 작업은 계속 진행 중일 수 있어요.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">다시 연결하기</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">완료하지 못했어요</string>
+    <string name="generation_failed_ours">저희 쪽에 문제가 생겼어요</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">저희 쪽에 문제가 생겼어요.</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">시작하지 못했어요</string>
-    <string name="generation_not_started_description">준비를 시작하지 못했어요.</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">다시 시도</string>
     <!-- Screen reader state of a step of a wait. -->
@@ -99,21 +94,21 @@
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">계획을 만들고 있어요</string>
     <string name="generation_curriculum_plan">일정에 맞춰 계획을 짜고 있어요</string>
-    <string name="generation_curriculum_plan_line_1">라이브러리에서 레슨을 찾고 있어요…</string>
+    <string name="generation_curriculum_plan_line_1">목표에 맞는 레슨을 찾고 있어요…</string>
     <string name="generation_curriculum_plan_line_2">날짜별로 배울 스킬을 정하고 있어요…</string>
     <string name="generation_curriculum_plan_line_3">계획을 저장하고 있어요…</string>
     <!-- The wait while placement questions are written. -->
-    <string name="generation_placement">문제를 준비하고 있어요</string>
+    <string name="generation_placement">레벨 테스트를 준비하고 있어요</string>
     <string name="generation_placement_questions">문제를 만들고 있어요</string>
     <string name="generation_placement_questions_line">문제로 확인할 스킬을 고르고 있어요…</string>
     <!-- The wait while the first day of a plan is prepared. -->
     <string name="generation_first_lesson">첫날 학습을 준비하고 있어요</string>
     <string name="generation_first_lesson_day">첫날 학습을 계획하고 있어요</string>
-    <string name="generation_first_lesson_day_line_1">라이브러리에서 레슨을 찾고 있어요…</string>
+    <string name="generation_first_lesson_day_line_1">목표에 맞는 레슨을 찾고 있어요…</string>
     <string name="generation_first_lesson_day_line_2">어디부터 시작할지 정하고 있어요…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">레벨 테스트를 준비하고 있어요</string>
-    <string name="generation_level_test_bank">레벨 테스트 문제를 만들고 있어요</string>
+    <string name="generation_level_test_bank">문제를 준비하고 있어요</string>
     <string name="generation_level_test_bank_line_1">초급부터 고급까지 수준별 지문을 고르고 있어요…</string>
     <string name="generation_level_test_bank_line_2">읽기 문제를 만들고 있어요…</string>
     <string name="generation_level_test_bank_line_3">듣기 문제를 만들고 있어요…</string>

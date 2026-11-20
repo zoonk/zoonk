@@ -4,7 +4,6 @@ import {
   asksAboutTime,
   getShownAnswer,
   getShownMinutes,
-  keepsFullCourse,
   toFindWeek,
   toPickedMinutes,
   toStudyWeek,
@@ -101,15 +100,11 @@ describe(toPickedMinutes, () => {
 });
 
 describe(asksAboutTime, () => {
-  const ASK = { dated: true, found: foundTime(), fullCourse: false, minutes: 35 };
+  const ASK = { dated: true, found: foundTime(), minutes: 35 };
 
   it("asks about every time but the one the plan suggested", () => {
     expect(asksAboutTime(ASK)).toBe(false);
     expect(asksAboutTime({ ...ASK, minutes: 30 })).toBe(true);
-  });
-
-  it("asks about the suggested time too when studying everything needs its end", () => {
-    expect(asksAboutTime({ ...ASK, fullCourse: true })).toBe(true);
   });
 
   it("asks an undated goal about its time right away", () => {
@@ -123,25 +118,16 @@ describe(asksAboutTime, () => {
   });
 });
 
-describe(keepsFullCourse, () => {
-  it("keeps an exam's choice to study everything until the time picked covers it all", () => {
-    const covers = { kind: "everything", suggested: false } as const;
-
-    expect(keepsFullCourse({ checked: true, line: { kind: "asking" } })).toBe(true);
-    expect(keepsFullCourse({ checked: true, line: covers })).toBe(false);
-    expect(keepsFullCourse({ checked: false, line: { kind: "share", share: 0.4 } })).toBe(false);
-  });
-});
-
 describe(toStudyWeek, () => {
-  it("leaves out a weekend time equal to the weekdays' and asks about studying everything only when on", () => {
+  it("leaves out a weekend time equal to the weekdays'", () => {
     expect(toStudyWeek({ days: [1, 6], minutes: 30, weekend: 30 })).toStrictEqual({
       studyDays: [1, 6],
     });
 
-    expect(toStudyWeek({ days: [1, 6], fullCourse: true, minutes: 30, weekend: 60 })).toStrictEqual(
-      { fullCourse: true, studyDays: [1, 6], weekendMinutes: 60 },
-    );
+    expect(toStudyWeek({ days: [1, 6], minutes: 30, weekend: 60 })).toStrictEqual({
+      studyDays: [1, 6],
+      weekendMinutes: 60,
+    });
   });
 });
 

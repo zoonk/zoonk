@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_guess_in_unit": "9c0a0be44d89f5e1906dcc3d612dd3f96a1650f5a6d0f364c03d75f76cf09129",
   "answer_tag_correct": "bd7b51a991dcdf10588c9e30dc81ebfc05b3f873d09a14883252e10dcd5989a5",
   "answer_tag_your_answer": "9549fe692fcf4980298171ba68696486a87b21e0c23480dd68987b39f0dd2263",
   "answer_tag_your_guess": "8e936ef2ccb0d8057cb72e344a9898896781bebe7b4e1f67ea6aa64cdb9dd58c",
@@ -9,7 +10,9 @@
   "belt_brown": "a5a0ffe87440258a80e8cb52d2011aeadbd5d27f1006a2a809694f28ad320a9c",
   "belt_gray": "52c511c0a44dbc07cf431f530b367dde3e451e1f0f1131c1b0466ab49b0abe75",
   "belt_green": "68aae7beeb08f85b7e70c21a0299e968ff06ddfad0974b191d14061ecba7416c",
-  "belt_level": "4f18de4553bfa52bb81b455e1dfb617c7592ccf887a5e2ab243948425b82c2b3",
+  "belt_level": "995f1d61aa15f45070a53a3c2510b8ed8dfd96bece3d9ad2880d59500974cc40",
+  "belt_level_description": "6da6ad77747422dc228bdad58041a6b77fe3ce446f940a2c02efa36bbfade358",
+  "belt_level_words": "c723e84ad6679cd9758ef2ad4876e7f0d80d429df81e95991d5555e789c0362d",
   "belt_orange": "f932d10bc6bf3e097284d33a8d07f4498c1d7bbba698eb85a51bf369198393c6",
   "belt_purple": "da6577421cdc7b9a003e2808d0fa747fdd724ab567524a6942c44fee98c0ddde",
   "belt_red": "c35949a8133967e3fa6453781f5339467bb536f427c46932d7835b1dfd9cd056",
@@ -27,17 +30,16 @@
   "diff_line_spoken": "08ff92cf1c881e1ca729470a0829333fa8064c3e3340cb8cc68a11e08859ee2e",
   "disclosure_collapsed": "fcd7630ba4dc71efaab53d712b71e7b3497072e6c3f7bdfb54323dc86bab99ef",
   "disclosure_expanded": "ef1bf7e2d28892c32b244eafef0271c4189d5800fcc4a5b4b08879bfb573c0e7",
+  "exam_choice_left_out": "51ee9b7d5f55acd41993345ae765d0f949b8b1411987d4d75aad2ec1f057534c",
   "exam_choice_pick_up_to": "0394ea194e2f963787f04e2e95fcc1da97fc23da6264d2b873576611c44be1b4",
+  "gate_build_plan": "213a6aac116dc01a1430a4b4677720d2f76de9e094f4ad231a53f3b18e345f0f",
   "gate_log_in": "1c71d46eaf237666a02992594fcf206f0995899f0f72eff412c4c5535e8b2162",
-  "gate_session_ended_description": "ac5487ab0a5f8c25304efb1d1c05df078effbebbb65aeb0d5cef0f64e3b67f7b",
-  "gate_session_ended_title": "04a43336bfd16031cd8f74d53077d2e4559fce680d6b05789deaa7fdc8c0e99c",
-  "gate_sign_in_description": "069b0871a604f63d4c8e95614714fed887c04fc902040bc24fe2cf8d23d59a15",
+  "gate_session_ended_description": "0bbc2de5edb86886ddb1ca0748a39a70874ea4a7a0c22105a921a52d20f00f1b",
+  "gate_session_ended_title": "c88953d238310c35b2a4d1b54cc682cb033aeada5b33c9c1c756cf094f8656ff",
   "gate_sign_in_title": "4ca888b444cd9da5a1f709c2f470c6bd2b83aaeeec1a869636196c29f4f82051",
-  "gate_start_free": "8369f286ccb4e2f74c9fdfceba5a38d0b767d3c8786362a7d750bda757afa036",
-  "gate_start_goal": "35adaaa03ba094133a1eadd498ab1da34d292e0d85adc828c408e86a419ee578",
+  "gate_start_goal": "20b247de7823581a68e56db0b661fc39023700266087154c66a1d675a2e06373",
   "gate_start_goal_description": "deaa2ea6ca4b0fec746572a513c23f1f0a43ccc7ca6da2d732bbb8bd9d155efa",
   "gate_start_goal_title": "9098152f6ae7e967f28d4a2a604f9a275911f44659dc162bd591b97fce3ceacd",
-  "gate_start_something_new": "f1e6e1e1db0cb11c86042f1d025e9061cff5b97b0f3d4c8a20cbcaffcb800fd2",
   "goal_with_variety": "6ee698ff66d1896d082e76a3dbab3d9dfd38c50259e8ac40a42ae091d39f3103",
   "lesson_summaries_title": "2de26e8f6392c2ee5c38a7ff4f2b9dc097f0cf9de8739357158a8f4fce78efe9",
   "lessons_coming_up": "3887cc7048b723f97fed5493e898b02d294751b12ebdda1d28455909b9b84716",
@@ -47,13 +49,13 @@
   "lessons_title": "611781430070778f1b9a4f5ea0c7f1ddf2f3cdbcd0bc82072b6f52c137bd5754",
   "lessons_up_next": "65a1d16af0c02eb445ac3ad9bac09aabe0d9d4d569b5eb01074a650dded1a67d",
   "list_row_states": "c7011c44ae0a07410ef934cd2ab0bd671c21d0edc60b09b9c274dc3f882847a1",
-  "load_failed_description": "f3ea785d6b9fc5f54632715706b6ee27297a5186d60ff80918e7f59c36ae3a09",
+  "load_failed_description": "ff76852872ca28b6b75b42ef19e3c845be00e7ce5e069b70c449fa541f6383f0",
   "load_failed_title": "f591c57c0a18fc361150c510534112c9e4910674a9f5673f37f1725e0a3a80a0",
   "load_failed_try_again": "ee4752d7b95fc1845d1b95fac736eaa8b60ffaea0b3c8ef80665d627a45c9323",
   "navigation_back": "e38116a47026b664007414dac152ba7f61de9cfe97035f6a5d374e57d910fc3c",
   "navigation_buddy": "48aa10c09f3ddc7f0747d2d2a02651f38e344cc267b1621eae29fa92ad5b9d17",
   "navigation_completed_lessons": "3895afbf2fe3d5a2e29182abfc35acf2d9f005620da26cefe7577d496c50387e",
-  "navigation_exam": "d8bcda53dfbb6754e6f14f72349cf3097fa687f30e61a54992cbe0644809e923",
+  "navigation_exam": "4905dcc49fde767dac484ad3c7bde5e9d1c0f7eac9e32c05888729f7949299c8",
   "navigation_mind_maps": "e4844f2b2b3bade305fd95c3cdd2638d3d66964f39aa199f215bbb30d393429d",
   "navigation_mistakes": "5a73fbd5fb16fd8e67067e20d8ab90721659a22811b07bfe5427ff6635af91ee",
   "navigation_plan": "e760a9bfe3a2ddad53377116cb3c6c9737c7a8393d9e8a381d93f0a094b8006c",
@@ -63,17 +65,20 @@
   "navigation_today": "f52b7e039a9aa41c2103878eea0de4ce3c0f50fd2f14ecbf91c5786a7e343658",
   "navigation_user_menu": "33597dfbb7f783cddae9f75ea58d432388fe60ebe23aaf754fed7a1988a82db7",
   "not_found_description": "bb1b2461628c12aea26e7ae88b344434bed93ace8549881407ffba1f0ca7c77f",
-  "not_found_go_home": "956cc85474be7b5a30f060e90a1ed888c8e121f43f65da4e9ad57f2d86bd3b28",
+  "not_found_go_home": "3ce8e2113ea22852b390b86f484a26d61999270499a694676a621167413aacf3",
   "not_found_title": "ac7599e7936a50f7b977b79e6299bbe367632d51ecdaeb7405d7accd4ace37cc",
   "player_not_saved": "57deebecd006b2fa2d6ee7b658210c8d6db29ad0e34e596ed632a3b8fcaf4a77",
   "player_not_saved_description": "5be810a8b5bdf29cad6807be62e1afd5580f506e6b5a1bf8702693725fa4cf7b",
+  "suggestion_other_options": "39d771928eb05baf73f27a1b31453b3d1e8769fe5572a523bede2f143c4dfa54",
   "suggestion_save_failed": "5cc011d4b7131953d9a5f823412ce23c8c8db104766c9cd7b976a8113cd6117e",
   "suggestion_view": "799e8a8e64f4edb7717e2b3beefe1eceb16653f9c0332451ce582f7fae866997",
   "task_leave": "5bb4b8874aee4d8c407570dac2ed6d6ecb135327e6334f11dab50946e081cb1b",
   "test_out_skip_chapter": "c53b3ae1a6e4defb2e7482fc000b74b38d7bc9521e8f0e3de2437cc8b21e3ffe",
   "test_out_skip_unit": "643c966a0099226a3e95bc25023c03e8d3bcd0cfa352954e08271e49619b945b",
   "test_out_title": "acd9c1387dbb5f920ae66bf94e42347cde96e4f41098db48833df29e841708e3",
-  "web_page_unavailable": "7c4d75c731c0849ec88c59e9103a52474d2c95f774610ce218f0d8170fdeb41a"
+  "web_page_unavailable": "7c4d75c731c0849ec88c59e9103a52474d2c95f774610ce218f0d8170fdeb41a",
+  "weekend_time_differs": "83090315fe8b4e2a6020fe327122858e22e6992d22520fd5fc74b1f169ce3923",
+  "weekend_time_label": "3785634844a8d05c609a564929df470d6a28a10851bc40fbe2577230b6a259eb"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -84,7 +89,7 @@
     <string name="navigation_mistakes">Yanlış defteri</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
     <string name="navigation_completed_lessons">Tamamlanan dersler</string>
-    <string name="navigation_exam">Sınav</string>
+    <string name="navigation_exam">Sınavın</string>
     <string name="navigation_speaking">Konuşma</string>
     <string name="navigation_mind_maps">Zihin haritaları</string>
     <string name="navigation_statistics">İstatistikler</string>
@@ -92,15 +97,16 @@
     <string name="navigation_user_menu">Kullanıcı menüsü</string>
     <string name="task_leave">Çık</string>
     <string name="gate_sign_in_title">Devam etmek için giriş yap</string>
-    <string name="gate_sign_in_description">Kaldığın yerden devam etmek için giriş yap veya ücretsiz başla.</string>
-    <string name="gate_session_ended_title">Oturumun sona erdi</string>
-    <string name="gate_session_ended_description">Planına devam etmek için giriş yap.</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
+    <string name="gate_session_ended_title">Oturumun kapatıldı</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
+    <string name="gate_session_ended_description">Planına dönmek için giriş yap.</string>
     <string name="gate_log_in">Giriş yap</string>
-    <string name="gate_start_free">Ücretsiz başla</string>
-    <string name="gate_start_something_new">Yeni bir şeye başla</string>
+    <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
+    <string name="gate_build_plan">Planımı oluştur</string>
     <string name="gate_start_goal_title">Bir hedefle başla</string>
     <string name="gate_start_goal_description">Ne öğrenmek istediğini söyle, hedefine ulaşana kadar her gününü biz planlayalım.</string>
-    <string name="gate_start_goal">Bir hedefe başla</string>
+    <string name="gate_start_goal">Yeni hedef</string>
     <!-- Read by TalkBack for a goal whose language has a chosen country: %1$s is the goal's title, %2$s the language as that country speaks it, such as "Spanish (Argentina)". -->
     <string name="goal_with_variety">%1$s, %2$s</string>
     <string name="belt_white">Beyaz kuşak</string>
@@ -113,17 +119,27 @@
     <string name="belt_red">Kırmızı kuşak</string>
     <string name="belt_gray">Gri kuşak</string>
     <string name="belt_black">Siyah kuşak</string>
-    <string name="belt_level">%1$s, %2$s. seviye</string>
+    <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
+    <string name="belt_level">%1$s %2$s</string>
+    <!-- Accessible name of the chip that opens Level. %1$s is the translated belt name; %2$s is the learner’s level number. Each locale controls their order and punctuation. -->
+    <string name="belt_level_description">%1$s, %2$s. seviye</string>
+    <string name="belt_level_words">Seviye %1$s</string>
     <string name="answer_tag_correct">Doğru</string>
     <string name="answer_tag_your_answer">Cevabın</string>
     <string name="answer_tag_your_guess">Tahminin</string>
     <string name="load_failed_title">Bu sayfa yüklenemedi</string>
-    <string name="load_failed_description">Sorun bağlantından ya da bizden kaynaklanıyor olabilir. Tekrar denemek genellikle sorunu çözer.</string>
+    <string name="load_failed_description">Bağlantını kontrol edip tekrar dene.</string>
     <string name="load_failed_try_again">Tekrar dene</string>
     <string name="suggestion_view">Görüntüle</string>
     <string name="suggestion_save_failed">Kaydedilemedi. Tekrar dene.</string>
+    <string name="suggestion_other_options">Diğer seçenekleri gör</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">En fazla %1$d seçenek seç.</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
+    <string name="weekend_time_differs">Hafta sonları farklı çalışma süresi</string>
+    <string name="weekend_time_label">Hafta sonu çalışma süresi</string>
+    <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
+    <string name="exam_choice_left_out">Planında yer alması için birini seç.</string>
     <string name="disclosure_expanded">Genişletildi</string>
     <string name="disclosure_collapsed">Daraltıldı</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
@@ -144,7 +160,7 @@
     <string name="test_out_skip_unit">Testi çöz ve üniteyi atla</string>
     <string name="not_found_title">Bu sayfayı bulamadık</string>
     <string name="not_found_description">Bağlantı eski veya yanlış yazılmış olabilir.</string>
-    <string name="not_found_go_home">Ana sayfaya git</string>
+    <string name="not_found_go_home">Bugün</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
     <!-- A toast, at most two short lines: a link did nothing because no app on the phone can open web pages. Same meaning as Android's own "No app can perform this action". -->
@@ -165,4 +181,6 @@
     <string name="citation_slide">%1$s, slayt %2$s</string>
     <string name="player_not_saved">Henüz kaydedilmedi</string>
     <string name="player_not_saved_description">Bazı cevapların henüz kaydedilmedi. Bu ders açık kaldığı sürece kaydetmeyi denemeye devam edeceğiz.</string>
+    <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
+    <string name="activities_guess_in_unit">Birim: %1$s</string>
 </resources>

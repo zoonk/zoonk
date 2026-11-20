@@ -20,21 +20,27 @@ function useQuestionsLeftOpen(): string {
   const { blank, essays, flagged, total } = useSectionCounts();
 
   if (blank > 0 && flagged > 0) {
-    return t(
-      "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}.",
-      { blank, flagged },
-    );
+    return t({
+      description: "Before handing in a mock exam: how many of its questions are blank or flagged.",
+      message:
+        "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}.",
+      values: { blank, flagged },
+    });
   }
 
   if (blank > 0) {
-    return t("{count, plural, one {# question is blank.} other {# questions are blank.}}", {
-      count: blank,
+    return t({
+      description: "Before handing in a mock exam: how many of its questions are blank or flagged.",
+      message: "{count, plural, one {# question is blank.} other {# questions are blank.}}",
+      values: { count: blank },
     });
   }
 
   if (flagged > 0) {
-    return t("{count, plural, one {# question is flagged.} other {# questions are flagged.}}", {
-      count: flagged,
+    return t({
+      description: "Before handing in a mock exam: how many of its questions are blank or flagged.",
+      message: "{count, plural, one {# question is flagged.} other {# questions are flagged.}}",
+      values: { count: flagged },
     });
   }
 

@@ -10,7 +10,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
@@ -20,6 +23,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CompletedLessonList
@@ -57,39 +61,60 @@ class CompletedLessonsScreenshots {
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
-    private fun list(empty: Boolean): CompletedLessonList {
+    private fun list(
+        empty: Boolean,
+        group: String?,
+    ): CompletedLessonList {
         val today = LocalDate.now()
         val lessons =
             listOf(
-                Triple("How cells divide", "Cell biology", today),
-                Triple("Mitosis step by step", "Cell biology", today),
-                Triple("What a gene is", "Genetics", today.minusDays(1)),
-                Triple("Proteins and what they do", null, today.minusDays(3)),
-                Triple("Why the cell membrane lets some things through and keeps others out", "Cell biology", today.minusDays(3)),
-                Triple("Photosynthesis", "Energy in living things", today.minusDays(9)),
-                Triple("Respiration", "Energy in living things", today.minusYears(1)),
+                Lesson("How cells divide", "Cell biology", today, "biology"),
+                Lesson("Mitosis step by step", "Cell biology", today, "biology"),
+                Lesson("What a gene is", "Genetics", today.minusDays(1), "biology"),
+                Lesson("Proteins and what they do", null, today.minusDays(3), "chemistry"),
+                Lesson(
+                    "Why the cell membrane lets some things through and keeps others out",
+                    "Cell biology",
+                    today.minusDays(3),
+                    "biology",
+                ),
+                Lesson("Photosynthesis", "Energy in living things", today.minusMonths(1), "biology"),
+                Lesson("Balancing an equation", "Reactions", today.minusMonths(1), "chemistry"),
+                Lesson("Respiration", "Energy in living things", today.minusYears(1), "biology"),
             ).takeUnless { empty }.orEmpty()
         val data =
-            lessons.mapIndexed { index, (title, chapter, day) ->
-                """{"chapterTitle":${chapter?.let { "\"$it\"" } ?: "null"},"finishedOn":"$day",
-                "lessonId":"00000000-0000-4000-8000-00000000000$index","title":"$title"}"""
+            lessons.filter { group == null || it.group == group }.mapIndexed { index, lesson ->
+                """{"chapterTitle":${lesson.chapter?.let { "\"$it\"" } ?: "null"},"finishedOn":"${lesson.day}",
+                "group":"${lesson.group}","lessonId":"00000000-0000-4000-8000-00000000000$index","title":"${lesson.title}"}"""
             }
+        val filter =
+            """{"groups":[{"key":"biology","lessons":212,"name":"Biology"},{"key":"chemistry","lessons":96,"name":"Chemistry"},
+            {"key":"languages","lessons":41,"name":"Languages, codes and their technologies"}],"kind":"subjects","total":349}"""
         return ApiJson.decodeFromString(
             CompletedLessonList.serializer(),
-            """{"data":[${data.joinToString(",")}],"pagination":{"hasMore":false,"nextCursor":null}}""",
+            """{"data":[${data.joinToString(",")}],"filter":${if (empty) "null" else filter},
+            "pagination":{"hasMore":false,"nextCursor":null}}""",
         )
     }
+
+    private data class Lesson(
+        val title: String,
+        val chapter: String?,
+        val day: LocalDate,
+        val group: String,
+    )
 
     private fun show(
         name: String,
         dark: Boolean = false,
         empty: Boolean = false,
         fold: Boolean = false,
+        group: String? = null,
     ) {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val store =
             CompletedLessonsStore(
-                { _, _, _ -> list(empty) },
+                { _, query, _ -> list(empty, query.group) },
                 AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
                 session,
             )
@@ -105,12 +130,14 @@ class CompletedLessonsScreenshots {
             }
         }
         if (fold) rule.unfoldBook(folds)
+        group?.let {
+            rule.waitForIdle()
+            rule.onAllNodesWithText(it).onFirst().performClick()
+        }
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "completed-lessons-$name.png").apply { parentFile?.mkdirs() }.outputStream().use {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(File(folder, "completed-lessons-$name.png"), bitmap)
     }
 
     @Test
@@ -133,8 +160,20 @@ class CompletedLessonsScreenshots {
     fun phoneEmpty() = show("phone-empty", empty = true)
 
     @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneOneSubject() = show("phone-one-subject", group = "Chemistry")
+
+    @Test
     @Config(qualifiers = "w700dp-h1000dp-xhdpi")
     fun medium() = show("medium")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletOneSubject() = show("tablet-one-subject", group = "Chemistry")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun tabletDark() = show("tablet-dark", dark = true)
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")

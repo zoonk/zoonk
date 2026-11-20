@@ -5,7 +5,7 @@ import SwiftUI
 enum PlanSheet: Identifiable, Hashable {
   case path
   case standing
-  case pace
+  case schedule
   case farTopic(skillId: String, title: String)
   case certificate(code: String)
   case suggestion(PlanSlotItem)
@@ -13,6 +13,10 @@ enum PlanSheet: Identifiable, Hashable {
   case country
 
   var id: Self { self }
+
+  var isSuggestion: Bool {
+    if case .suggestion = self { true } else { false }
+  }
 }
 
 extension View {
@@ -60,9 +64,9 @@ private struct PlanSheets: ViewModifier {
               }
             }
             .presentationDetents([.medium, .large])
-          case .pace:
+          case .schedule:
             NavigationStack {
-              PlanPaceSheet(context: context) {
+              PlanScheduleSheet(context: context) {
                 then = .adjust(.top)
                 self.sheet = nil
               }
@@ -95,7 +99,7 @@ private struct PlanSheets: ViewModifier {
                 selected: country.code,
                 confirmsRebuild: true
               ) { choice in
-                await learner.setContentCountry(choice?.code, goalID: context.goal.id)
+                await learner.setContentCountry(choice.code, goalID: context.goal.id)
               }
             }
           }
@@ -107,7 +111,7 @@ private struct PlanSheets: ViewModifier {
             self.sheet = nil
           }
         )
-        .zoonkStyles()
+        .zoonkSheet()
       }
   }
 
@@ -140,6 +144,7 @@ private struct PlanSheets: ViewModifier {
 
 /// A far topic's outline opens over the path, so closing it comes back to the path.
 private struct PlanPathSheet: View {
+  @Environment(\.dismiss) private var dismiss
   @Environment(\.planSheetOpen) private var sheetOpen
   @State private var outline: PlanSheet?
   @State private var pendingRoute: AppRoute?
@@ -152,19 +157,17 @@ private struct PlanPathSheet: View {
 
     return NavigationStack {
       ZoonkList {
-        PlanPathRows(context: rows, brief: true)
+        PlanPathRows(context: rows)
       }
       .navigationTitle(
         Text("Your path", tableName: "Plan", comment: "Title of the plan's phases")
       )
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          PlanSheetDoneButton()
-        }
-      }
+      .sheetClose { dismiss() }
     }
-    .presentationDetents([.medium, .large])
+    // The whole path at once; the grabber still says it closes with a swipe down.
+    .presentationDetents([.large])
+    .presentationDragIndicator(.visible)
     .sheet(item: $outline, onDismiss: openPendingRoute) { sheet in
       if case .farTopic(let skillId, let title) = sheet {
         FarTopicSheet(goal: context.goal, skillId: skillId, title: title)
@@ -175,7 +178,7 @@ private struct PlanPathSheet: View {
               outline = nil
             }
           )
-          .zoonkStyles()
+          .zoonkSheet()
       }
     }
   }

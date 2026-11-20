@@ -67,7 +67,7 @@ const BANK: MockCandidate[] = Object.values(TESTS).flatMap((names) =>
 
 function planFullMock(structure: ExamStructure, half = false): string[] {
   const subjects = structure.subjects.map((item) => item.name);
-  const options = listMockOptions({ dayInTurn: null, goalAreas: subjects, structure });
+  const options = listMockOptions({ goalAreas: subjects, structure });
 
   const full = options.find((option) => option.kind === (half ? "half" : "full"));
 
@@ -126,11 +126,17 @@ describe("a notice that counts its tests' questions, not its subjects'", () => {
 
   it("tells the learner the counts come from the notice", () => {
     expect(
-      getMockSizeSource({ noticeQuestions: 170, ownerId: null, structure: BY_PARTS }).subjects,
+      getMockSizeSource({
+        examName: "ENEM",
+        noticeQuestions: 170,
+        ownerId: null,
+        structure: BY_PARTS,
+      }).subjects,
     ).toBe("notice");
 
     expect(
       getMockSizeSource({
+        examName: "ENEM",
         noticeQuestions: 170,
         ownerId: null,
         structure: structureWith({ scoring: {} }),

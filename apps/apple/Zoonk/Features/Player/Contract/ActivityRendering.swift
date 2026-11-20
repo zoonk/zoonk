@@ -19,6 +19,8 @@ struct ActivityCanvasContext {
   let answer: ActivityAnswer?
   let setAnswer: @MainActor (ActivityAnswer?) -> Void
   var baseMap: ActivityBaseMap?
+  /// A numeric check's answer as the verdict writes it.
+  var roundedAnswer: ActivityRoundedAnswer? = nil
 
   func fields<Fields: Decodable>(as type: Fields.Type = Fields.self) throws -> Fields {
     try (payload["fields"] ?? .null).decode(as: type)
@@ -30,10 +32,13 @@ struct ActivityCanvasContext {
 /// while it isn't an answer yet).
 struct ActivityRenderer: Sendable {
   let template: String
-  /// Mirrors main's `badge`.
-  let badge: ActivityBadge.Rule
+  /// Mirrors main's `badge`: none for most templates.
+  let badge: ActivityBadge.Rule?
   /// Mirrors main's `checkFirst`.
   let showsCheckFirst: @Sendable (ActivityStepContent) -> Bool
+  /// Mirrors main's `answersOnCanvas`: the canvas takes the numeric answer itself, so the step asks
+  /// no second question with a field of its own.
+  let answersOnCanvas: Bool
   /// Computed like core's `checkActivityAnswer`, for instant feedback. Without it, the player waits
   /// for the server's verdict.
   let grade: (@Sendable (ActivityStepContent, ActivityAnswer) -> Bool)?
@@ -41,16 +46,23 @@ struct ActivityRenderer: Sendable {
 
   init<Canvas: View>(
     template: String,
-    badge: ActivityBadge.Rule,
+    badge: ActivityBadge.Rule? = nil,
     showsCheckFirst: @escaping @Sendable (ActivityStepContent) -> Bool = { _ in false },
+    answersOnCanvas: Bool = false,
     grade: (@Sendable (ActivityStepContent, ActivityAnswer) -> Bool)? = nil,
     @ViewBuilder canvas: @escaping @MainActor @Sendable (ActivityCanvasContext) -> Canvas
   ) {
     self.template = template
     self.badge = badge
     self.showsCheckFirst = showsCheckFirst
+    self.answersOnCanvas = answersOnCanvas
     self.grade = grade
-    self.canvas = { context in AnyView(canvas(context)) }
+    self.canvas = { context in
+      AnyView(
+        canvas(context)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .activityPanel())
+    }
   }
 }
 
@@ -80,7 +92,7 @@ struct ActivityFallbackCanvas: View {
 
   var body: some View {
     if case .interaction = context.check {
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "This activity isn't available in the app yet", tableName: "Player",

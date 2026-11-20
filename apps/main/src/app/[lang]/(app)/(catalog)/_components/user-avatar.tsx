@@ -10,7 +10,7 @@ export function UserAvatar({ image, name }: { image?: string | null; name?: stri
   const fallback = name?.[0] || <User size={16} />;
 
   return (
-    <Avatar className="focus-visible:ring-ring size-full cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2">
+    <Avatar className="size-full cursor-pointer">
       <AvatarImage src={image || undefined} />
       <AvatarFallback>{fallback}</AvatarFallback>
     </Avatar>

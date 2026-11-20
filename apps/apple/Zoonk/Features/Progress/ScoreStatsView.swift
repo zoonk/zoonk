@@ -8,10 +8,6 @@ struct ScoreStatsView: View {
     StatsContent(state: progress.score.state, retry: { await progress.score.refresh() }) { score in
       ScoreTiles(performance: score.performance)
       ScoreTrendChart(score: score)
-      StatsLine(
-        text: Text(
-          "Every answer counts the same, so harder lessons can lower your score for a while.",
-          tableName: "Progress", comment: "Under the Score trend: what moves the score"))
     }
     .loads(progress.score)
   }
@@ -22,35 +18,12 @@ private struct ScoreTiles: View {
   @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
 
   var body: some View {
-    StatTileGrid(columns: [3, 2, 1], minimumWidth: minimumWidth) {
+    StatTileGrid(columns: [1], minimumWidth: minimumWidth) {
       StatTile(
-        label: Text(StatsSection.score.title),
-        value: Text(verbatim: metricPercent(performance.score)),
-        systemImage: "target", tone: .success,
+        quantity: metricPercent(performance.score),
         detail: Text(
-          "Right answers", tableName: "Progress", comment: "Under the Score: what it is a share of")
-      )
-
-      StatTile(
-        label: Text("Right", tableName: "Progress", comment: "Tile: right answers of all answers"),
-        value: Text(
-          verbatim:
-            "\(performance.correctAnswers.formatted())/\(performance.totalAnswers.formatted())"),
-        systemImage: "checkmark", tone: .success,
-        detail: Text(
-          "Of all your answers", tableName: "Progress", comment: "Under the right answers count"),
-        spokenValue: Text(
-          "\(performance.correctAnswers) of \(performance.totalAnswers)", tableName: "Progress",
-          comment: "Spoken right answers of all answers")
-      )
-
-      StatTile(
-        label: Text("Period", tableName: "Progress", comment: "Tile: the days Score counts"),
-        quantity: dayCount(90),
-        systemImage: "calendar",
-        detail: Text(
-          "Back from today", tableName: "Progress",
-          comment: "Under the Score's period: the days counted backward from today")
+          "\(performance.correctAnswers.formatted()) of \(performance.totalAnswers.formatted()) right in the last \(90) days",
+          tableName: "Progress")
       )
     }
   }
@@ -61,6 +34,17 @@ struct ScoreTrendChart: View {
 
   @Environment(ChartInspection.self) private var inspection
   @State private var selectedDate: Date?
+  @State private var axisWidth = 0.0
+  @Environment(\.dynamicTypeSize) private var typeSize
+  @Environment(\.legibilityWeight) private var legibility
+
+  private var axisLabels: [ScoreAxisLabel] {
+    let font = TypeStyle.data.uiFont(typeSize, legibility: legibility)
+    let labelWidth =
+      points.map { (weekLabel($0.date) as NSString).size(withAttributes: [.font: font]).width }
+      .max() ?? 0
+    return scoreAxisLabels(count: points.count, width: axisWidth, labelWidth: labelWidth + 8)
+  }
 
   private var points: [ScoreWeek] {
     score.dataPoints.compactMap { point in
@@ -79,6 +63,17 @@ struct ScoreTrendChart: View {
   }
 
   var body: some View {
+    if points.count < 2 {
+      Text("Your trend shows after two weeks of study", tableName: "Progress")
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    } else {
+      chart
+    }
+  }
+
+  private var chart: some View {
     Chart {
       ForEach(points) { week in
         let (date, point) = (week.date, week.point)
@@ -125,21 +120,29 @@ struct ScoreTrendChart: View {
     }
     .chartYScale(domain: 0...100)
     .chartYAxis {
-      AxisMarks(position: .leading, values: [0, 25, 50, 75, 100]) {
+      AxisMarks(position: .leading, values: [0.0, 25, 50, 75, 100]) { value in
         AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel()
+        AxisValueLabel {
+          if let percent = value.as(Double.self) {
+            Text(wholePercent(percent)).typeStyle(.data)
+          }
+        }
       }
     }
     .chartXScale(range: .plotDimension(padding: 16))
     .chartXAxis {
-      AxisMarks(values: points.map(\.date)) { value in
+      AxisMarks(preset: .aligned, values: axisLabels.map { points[$0.index].date }) { value in
+        // On its point, not after it: the ends start and stop at theirs, so none leaves the plot.
         AxisValueLabel(
-          anchor: value.index == 0
-            ? .topLeading : value.index == value.count - 1 ? .topTrailing : .top,
-          collisionResolution: .greedy(minimumSpacing: 8)
+          centered: false,
+          anchor: axisLabels[value.index].anchor,
+          collisionResolution: .disabled,
+          horizontalSpacing: 0,
+          // Below the "0%" that ends the percent axis, not against it.
+          verticalSpacing: 10
         ) {
           if let date = value.as(Date.self) {
-            Text(weekLabel(date))
+            Text(weekLabel(date)).typeStyle(.data)
           }
         }
       }
@@ -151,8 +154,15 @@ struct ScoreTrendChart: View {
       }
     }
     .frame(height: 220)
+    .chartPlotStyle { plot in
+      plot.onGeometryChange(for: Double.self) {
+        $0.size.width
+      } action: {
+        axisWidth = $0
+      }
+    }
     .accessibilityLabel(
-      Text("Weekly score trend", tableName: "Progress", comment: "Spoken name of the Score chart")
+      Text("Weekly score trend", tableName: "Progress")
     )
     .accessibilityValue(
       Text(
@@ -169,8 +179,6 @@ struct ScoreTrendChart: View {
   }
 
   private func weekLabel(_ date: Date) -> String {
-    var format = Date.FormatStyle.dateTime.month(.abbreviated).day()
-    format.timeZone = .gmt
-    return date.formatted(format)
+    PlanDate.text(PlanDate.isoDate(date), today: PlanDate.today())
   }
 }

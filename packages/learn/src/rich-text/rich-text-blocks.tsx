@@ -8,7 +8,7 @@ import {
 } from "./rich-inline-segments";
 import { type RichBlock, markRichBlocks, parseRichBlocks } from "./rich-text-parser";
 import { speakSegments } from "./rich-text-speech";
-import { typesetNumbers } from "./rich-text-typography";
+import { typesetNumbers, typesetProse } from "./rich-text-typography";
 import { SpokenMath } from "./spoken-math";
 import { useMathWords } from "./use-spoken-text";
 
@@ -19,11 +19,7 @@ function typeset({
   locale: string;
   segments: RichInlineSegment[];
 }): RichInlineSegment[] {
-  return segments.map((segment) =>
-    segment.kind === "math" || segment.kind === "displayMath" || segment.kind === "code"
-      ? segment
-      : { ...segment, text: typesetNumbers({ locale, text: segment.text }) },
-  );
+  return typesetProse({ locale, segments, typeset: (text) => typesetNumbers({ locale, text }) });
 }
 
 function typesetBlock({ block, locale }: { block: RichBlock; locale: string }): RichBlock {
@@ -49,13 +45,16 @@ function RichTableBlock({ block }: { block: Extract<RichBlock, { kind: "table" }
   const words = useMathWords();
 
   return (
-    <RichTable
-      align={block.align}
-      header={block.header}
-      label={block.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
-      renderCell={(cell) => <RichInlineSegments segments={cell} />}
-      rows={block.rows}
-    />
+    // Padding, not margin: in the lesson's block flow a margin would collapse into the paragraph's.
+    <div className="min-w-0 py-1.5">
+      <RichTable
+        align={block.align}
+        header={block.header}
+        label={block.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
+        renderCell={(cell) => <RichInlineSegments segments={cell} />}
+        rows={block.rows}
+      />
+    </div>
   );
 }
 
@@ -113,6 +112,10 @@ function RichBlockView({
   );
 }
 
+/** The size a lesson's own text reads at, in the player and wherever a page quotes a lesson. */
+export const LESSON_BODY_CLASS =
+  "text-foreground text-lg leading-relaxed md:text-xl md:leading-[1.6]";
+
 export function RichTextBlocks({
   className,
   htmlFor,
@@ -134,7 +137,7 @@ export function RichTextBlocks({
 
   return (
     <div
-      className={cn("flex max-w-full min-w-0 flex-col gap-3", className)}
+      className={cn("flex max-w-full min-w-0 flex-col gap-3 text-pretty", className)}
       data-slot="lesson-rich-text"
     >
       {(mark ? markRichBlocks(blocks, mark) : blocks).map((block, index) => {

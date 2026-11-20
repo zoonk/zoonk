@@ -85,16 +85,20 @@ fun BeltDot(
     }
 }
 
-/** Read as "Yellow belt, level 3"; the button around it says where it goes (`onClickLabel`). */
+/**
+ * Read as "Yellow belt, Level 3"; the button around it says where it goes (`onClickLabel`). [inWords] says "Level 3"
+ * beside the dot where there's room for it, as main's sidebar does; a phone's bar keeps the number.
+ */
 @Composable
 fun BeltLevel(
     belt: Belt,
     level: Int,
     modifier: Modifier = Modifier,
+    inWords: Boolean = false,
 ) {
     val name = stringResource(belt.label)
     val number = formatNumber(level.toDouble(), currentLocale())
-    val description = stringResource(R.string.belt_level, name, number)
+    val description = stringResource(R.string.belt_level_description, name, number)
 
     Row(
         modifier = modifier.clearAndSetSemantics { contentDescription = description },
@@ -103,7 +107,7 @@ fun BeltLevel(
     ) {
         BeltDot(belt)
         Text(
-            text = number,
+            text = if (inWords) stringResource(R.string.belt_level_words, number) else number,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelLarge.withTabularFigures(),
         )
@@ -143,7 +147,7 @@ fun BeltTicks(
     )
 }
 
-private const val LEVELS_PER_BELT = 10
+const val LEVELS_PER_BELT = 10
 private const val WHITE_TICK_ALPHA = 0.7f
 
 private const val BELT_DOT_SHARE = 0.45f

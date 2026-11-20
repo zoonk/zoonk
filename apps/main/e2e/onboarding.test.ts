@@ -71,10 +71,11 @@ test.describe("Onboarding from a typed goal", () => {
     await page.getByRole("textbox", { name: "I want to" }).fill(goal);
     await page.getByRole("button", { name: "Build my plan" }).click();
 
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
     await expect(page.getByText("Spanish (Argentina)", { exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: "Edit Language" }).click();
+    await expect(page.getByRole("button", { name: "Looks right" })).toBeDisabled();
     await page.getByLabel("Country", { exact: true }).selectOption("ES");
     await page.getByRole("button", { exact: true, name: "Save" }).click();
     await expect(page.getByText("Spanish (Spain)", { exact: true })).toBeVisible();
@@ -100,19 +101,21 @@ test.describe("Onboarding from a typed goal", () => {
     await page.getByRole("textbox", { name: "I want to" }).fill(goal);
     await page.getByRole("button", { name: "Build my plan" }).click();
 
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
     await page.getByRole("button", { name: "Looks right" }).click();
     await expect(page).toHaveURL(GOAL_URL);
     const created = await prisma.goal.findFirstOrThrow({ where: { prompt: goal } });
 
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
     await page.getByRole("radio", { name: /Change careers/u }).click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(
       page.getByRole("heading", { name: "How much do you already know?" }),
     ).toBeVisible();
 
     await page.getByRole("radio", { name: /^The basics/u }).click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(page.getByRole("heading", { name: "Where are you headed?" })).toBeVisible();
     await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
@@ -132,7 +135,7 @@ test.describe("Onboarding from a typed goal", () => {
       .poll(() => date.evaluate((input: HTMLInputElement) => input.validity.badInput))
       .toBe(true);
 
-    await page.getByRole("button", { name: "Continue without a date" }).click();
+    await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
     await expect(page.getByRole("heading", { name: "What do you do now?" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Skip all" }).click();
@@ -140,7 +143,7 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-    await page.getByRole("button", { name: "Skip and start from the basics" }).click();
+    await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
     await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
     await mapGoalSkills({ goalId: created.id });
@@ -151,12 +154,12 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(time).toBeVisible();
 
     await page.getByLabel("Time a day", { exact: true }).selectOption("30");
-    await page.getByRole("button", { name: "Saturday" }).click();
+    await page.getByRole("button", { exact: true, name: "Sat" }).click();
     await page.getByRole("switch", { name: "Different time on weekends" }).click();
-    await page.getByLabel("Time on weekends", { exact: true }).selectOption("60");
-    await page.getByRole("button", { exact: true, name: "See your plan" }).click();
+    await page.getByLabel("Weekend time", { exact: true }).selectOption("60");
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
 
     const saved = await prisma.goal.findUniqueOrThrow({
       include: { user: true },
@@ -242,7 +245,7 @@ test.describe("Onboarding from a typed goal", () => {
 
     // Leaving before Start brings the plan back; Start ends onboarding.
     const resumePlan = page
-      .getByRole("link", { exact: true, name: "See your plan" })
+      .getByRole("link", { exact: true, name: "See plan" })
       .and(page.locator(`a[href="/start/${created.id}"]`));
 
     await page.goto("/today");
@@ -282,7 +285,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   const switcher = page.getByRole("button", { name: /^Learn chemistry.*Switch goal$/u });
   await expectHydrated(switcher);
   await switcher.click();
-  await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+  await page.getByRole("menuitem", { name: "New goal" }).click();
 
   await page.getByRole("textbox", { name: "I want to" }).fill(words);
   await page.getByRole("button", { name: "Build my plan" }).click();
@@ -291,13 +294,15 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   const created = await prisma.goal.findFirstOrThrow({ where: { prompt: words } });
 
   await page.getByRole("radio", { name: /Change careers/u }).click();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await page.getByRole("radio", { name: /^The basics/u }).click();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
   await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
-  await page.getByRole("button", { name: "Continue without a date" }).click();
+  await page.getByRole("button", { exact: true, name: "Skip" }).click();
   await page.getByRole("button", { exact: true, name: "Skip all" }).click();
-  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
+  await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
   await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
   await mapGoalSkills({ goalId: created.id });
@@ -306,8 +311,8 @@ test("a learner who starts another goal from Today lands on it, never on the goa
     page.getByRole("heading", { name: "How much time can you study each day?" }),
   ).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
 
-  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
-  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+  await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
 
   await page.evaluate((text) => {
     const showsPrevious = () =>
@@ -333,9 +338,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await page.getByRole("button", { exact: true, name: "Start" }).press("Enter");
   await expect(page).toHaveURL(/\/today$/u);
 
-  await expect(
-    page.getByRole("main").getByRole("button", { name: "Get today's lessons" }),
-  ).toBeVisible();
+  await expect(page.getByRole("main").getByRole("button", { name: "Get lessons" })).toBeVisible();
 
   const newSwitcher = page.getByRole("button", { name: /^Quantum physics.*Switch goal$/u });
 
@@ -344,7 +347,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
 
   await expectHydrated(newSwitcher);
   await newSwitcher.click();
-  await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+  await page.getByRole("menuitem", { name: "New goal" }).click();
   await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue("");
   await page.context().close();
 });
@@ -381,7 +384,7 @@ test("a goal a link filled in doesn't fill the box again once it's made, on Back
   const switcher = page.getByRole("button", { name: /^Quantum physics.*Switch goal$/u });
   await expectHydrated(switcher);
   await switcher.click();
-  await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+  await page.getByRole("menuitem", { name: "New goal" }).click();
   await expect(page).toHaveURL(/\/start$/u);
   await expect(box).toHaveValue("");
   await page.context().close();

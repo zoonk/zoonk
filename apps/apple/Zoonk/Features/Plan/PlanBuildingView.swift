@@ -226,7 +226,7 @@ struct PlanBuildingRun {
         localized: "Reading your material", table: "Plan", comment: "A phase of building the plan")
     case "skills":
       String(
-        localized: "Mapping the skills it takes", table: "Plan",
+        localized: "Choosing what to learn", table: "Plan",
         comment: "A phase of building the plan")
     default:
       String(

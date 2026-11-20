@@ -6,7 +6,6 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { continueToLastStep } from "./result-steps";
 import {
   answerRight,
   createStudyDay,
@@ -122,9 +121,8 @@ async function replayFromToday(page: Page, lesson: { id: string; title: string }
   await expect(page).toHaveURL(/\/today$/u);
 
   await page.getByRole("link", { name: "Completed lessons" }).click();
-  const today = page.getByRole("region", { name: "Today" });
 
-  await expect(today.getByRole("link", { name: lesson.title })).toHaveAttribute(
+  await expect(page.getByRole("main").getByRole("link", { name: lesson.title })).toHaveAttribute(
     "href",
     `/learn/${lesson.id}?from=%2Fcompleted-lessons`,
   );
@@ -135,7 +133,7 @@ async function playPractice(page: Page) {
   await answerRight(page, /^Practice one/u);
   await answerRight(page, /^Practice two/u);
   await expectMoment(page, "Practice done");
-  await expect(page.getByRole("button", { name: /^See today's summary/u })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
 
   await pressUntil(
     () => page.keyboard.press("Enter"),
@@ -223,7 +221,6 @@ test.describe("Today's session", () => {
     await playLesson(page, started);
     await playPractice(page);
 
-    await continueToLastStep(page, { keyboard: true });
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);
@@ -281,12 +278,12 @@ test.describe("Today's session", () => {
 
     await page.goto("/today");
 
-    const mission = page
-      .getByRole("region", { name: "Today's missions" })
-      .getByRole("button", { name: /^Practice/u });
+    const missions = page.getByRole("region", { name: "Today's missions" });
+    const showMissions = missions.getByRole("button", { name: "Today's missions" });
 
-    await expectHydrated(mission);
-    await mission.click();
+    await expectHydrated(showMissions);
+    await showMissions.click();
+    await missions.getByRole("button", { name: /^Practice/u }).click();
     await expect(page).toHaveURL((url) => url.searchParams.get("block") === practice.id);
 
     await expect(
@@ -391,7 +388,7 @@ test.describe("Today's session", () => {
     await page.clock.install();
     await page.goto("/session");
     const retry = page.getByRole("button", { name: "Try again" });
-    await expect(page.getByText("This didn't finish")).toBeVisible();
+    await expect(page.getByText("Something went wrong on our side")).toBeVisible();
     await expectHydrated(retry);
 
     // Each check sets its next one once its read answers, so the clock moves until two have run.

@@ -4,49 +4,74 @@ import { Button } from "@zoonk/ui/components/button";
 import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type CallLimit } from "../../_components/help-limit-notice";
+import { type CallLimit, useLiveLimit } from "../../_components/help-limit-notice";
 import { TaskActions } from "../../_components/task-layout";
-import { ChallengeCallPlusNotice } from "../../challenge/challenge-plus-lock";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
-import { MicrophoneOff } from "./call-intro-footer";
-import { CallLimitReason } from "./call-limit-message";
+import { useMicrophoneOffWords } from "./call-intro-footer";
+import { CallLimitReason, useCallLimitTitle } from "./call-limit-message";
 import { useRefusalCopy } from "./call-refusal-copy";
-import { CallOffMessage, CallReason } from "./conversation-parts";
+import { ChallengeCallGate, useChallengeCallGateTitle } from "./challenge-call-gate";
+import { CallOffMessage } from "./conversation-parts";
 import { type DroppedCall } from "./dropped-call";
 import { type CallAudio, openTypedCallAudio } from "./use-call-microphone";
 
-function DroppedCallReason({
+const REACHED: CallLimit = { period: "day", tier: "plus" };
+
+/** Titled by what stopped the call: only a lost connection "dropped". */
+function useDroppedTitle({
   limit,
-  microphoneProblem,
-  name,
   reason,
 }: {
-  limit: CallLimit | null;
-  microphoneProblem: MicrophoneProblem | null;
-  name: string;
+  limit: CallLimit;
+  reason: DroppedCall["reason"];
+}): string {
+  const t = useExtracted();
+  const copy = useRefusalCopy();
+  const limitTitle = useCallLimitTitle(limit);
+  const gateTitle = useChallengeCallGateTitle();
+
+  if (reason === "limit") {
+    return limitTitle;
+  }
+
+  if (reason === "plusRequired") {
+    return gateTitle;
+  }
+
+  if (reason === "callInProgress" || reason === "callsPaused" || reason === "ended") {
+    return copy[reason].title;
+  }
+
+  return t("The call dropped");
+}
+
+function DroppedCallReason({
+  limit,
+  microphoneText,
+  reason,
+}: {
+  limit: CallLimit;
+  /** What to do about the microphone, when it's what stopped the call; the screen's title names it. */
+  microphoneText: string | null;
   reason: DroppedCall["reason"];
 }) {
   const t = useExtracted();
   const copy = useRefusalCopy();
 
   if (reason === "limit") {
-    return <CallLimitReason limit={limit ?? { period: "day", tier: "plus" }} />;
+    return <CallLimitReason limit={limit} untitled />;
   }
 
-  if (reason === "microphone" && microphoneProblem) {
-    return <MicrophoneOff name={name} problem={microphoneProblem} />;
+  if (microphoneText) {
+    return <p className="text-muted-foreground text-pretty">{microphoneText}</p>;
   }
 
   if (reason === "plusRequired") {
-    return <ChallengeCallPlusNotice cta />;
+    return <ChallengeCallGate form="untitled" />;
   }
 
   if (reason === "callInProgress" || reason === "callsPaused" || reason === "ended") {
-    return (
-      <CallReason title={copy[reason].title}>
-        <p className="text-muted-foreground text-sm text-pretty">{copy[reason].text}</p>
-      </CallReason>
-    );
+    return <p className="text-muted-foreground text-pretty">{copy[reason].text}</p>;
   }
 
   return (
@@ -75,7 +100,7 @@ function DroppedCallActions({
   if (!retry) {
     return (
       <TaskActions>
-        <TaskMainButton onClick={onEnd}>{t("End the call")}</TaskMainButton>
+        <TaskMainButton onClick={onEnd}>{t("End call")}</TaskMainButton>
       </TaskActions>
     );
   }
@@ -91,7 +116,7 @@ function DroppedCallActions({
   return (
     <TaskActions className={cn(crowded && "max-lg:flex-col max-lg:items-stretch")}>
       <Button className="shrink-0" onClick={onEnd} size="lg" variant="outline">
-        {t("End the call")}
+        {t("End call")}
       </Button>
 
       {retry === "microphone" && (
@@ -124,19 +149,24 @@ export function DroppedCallScreen({
   onTakeover: () => void;
   title: string;
 }) {
-  const t = useExtracted();
+  const reached = limit ?? REACHED;
+  const liveLimit = useLiveLimit(limit);
+  const opened = limit !== null && liveLimit === null;
+  const retry = dropped.reason === "limit" && opened ? "callAgain" : dropped.retry;
+  const droppedTitle = useDroppedTitle({ limit: reached, reason: dropped.reason });
+  const microphone = useMicrophoneOffWords({ name, problem: microphoneProblem ?? "blocked" });
+  const microphoneOff = dropped.reason === "microphone" && microphoneProblem !== null;
 
   return (
     <TaskFrame
       exitHref={null}
-      footer={<DroppedCallActions {...actions} retry={dropped.retry} />}
+      footer={<DroppedCallActions {...actions} retry={retry} />}
       headerTitle={title}
     >
-      <CallOffMessage title={t("The call dropped")}>
+      <CallOffMessage title={microphoneOff ? microphone.title : droppedTitle}>
         <DroppedCallReason
-          limit={limit}
-          microphoneProblem={microphoneProblem}
-          name={name}
+          limit={reached}
+          microphoneText={microphoneOff ? microphone.text : null}
           reason={dropped.reason}
         />
       </CallOffMessage>

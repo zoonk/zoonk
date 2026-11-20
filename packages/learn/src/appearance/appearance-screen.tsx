@@ -1,14 +1,15 @@
 "use client";
 
 import { type ResolvedBuddy } from "@zoonk/core/profile/default-buddy";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { useOptimistic } from "react";
 import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { ChangeSaveError } from "../_components/save-error";
 import { SwitchSettingRow } from "../_components/setting-rows";
+import { LIST_DETAIL_GRID_CLASS } from "../_components/side-detail";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
 import { type CountryName, type SuggestedCountry } from "../country/country-choice";
@@ -23,19 +24,16 @@ export type AppearanceView = {
   canPersonalize: boolean;
   look: BuddyLook;
   buddy: ResolvedBuddy;
-  /** Where the learner says they live; null until they say. */
+  /** Where the learner lives: where they signed in from until they change it; null when that wasn't known. */
   homeCountry: CountryName | null;
   homeCountrySuggested: readonly SuggestedCountry[];
-  shareUsageData: boolean;
   soundsEnabled: boolean;
 };
 
 /** How Preferences saves. Each resolves to whether it was saved. */
 export type AppearanceActions = {
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
-  /** Null clears it. */
-  setHomeCountry: (country: string | null) => Promise<boolean>;
-  setShareUsageData: (share: boolean) => Promise<boolean>;
+  setHomeCountry: (country: string) => Promise<boolean>;
   setSoundsEnabled: (enabled: boolean) => Promise<boolean>;
 };
 
@@ -50,36 +48,29 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function useAppearance({ actions, view }: { actions: AppearanceActions; view: AppearanceView }) {
   const [buddy, setOptimisticBuddy] = useOptimistic(view.buddy);
   const [soundsEnabled, setOptimisticSounds] = useOptimistic(view.soundsEnabled);
-  const [shareUsageData, setOptimisticShare] = useOptimistic(view.shareUsageData);
   const [homeCountry, setOptimisticHome] = useOptimistic(view.homeCountry);
 
-  const { failed, run } = useOptimisticSave();
+  const { run } = useOptimisticSave();
 
   return {
     buddy,
-    failed,
     homeCountry,
-    saveBuddy: (next: AppearanceBuddy) =>
+    saveBuddy: (next: AppearanceBuddy, onSaved?: () => void) =>
       run(
         () => setOptimisticBuddy({ ...next, picked: true }),
         () => actions.saveBuddy(next),
+        onSaved,
       ),
-    setHomeCountry: (next: CountryName | null) =>
+    setHomeCountry: (next: CountryName) =>
       run(
         () => setOptimisticHome(next),
-        () => actions.setHomeCountry(next?.code ?? null),
-      ),
-    setShareUsageData: (next: boolean) =>
-      run(
-        () => setOptimisticShare(next),
-        () => actions.setShareUsageData(next),
+        () => actions.setHomeCountry(next.code),
       ),
     setSoundsEnabled: (next: boolean) =>
       run(
         () => setOptimisticSounds(next),
         () => actions.setSoundsEnabled(next),
       ),
-    shareUsageData,
     soundsEnabled,
   };
 }
@@ -97,62 +88,50 @@ export function AppearanceScreen({
   const appearance = useAppearance({ actions, view });
 
   return (
-    <div className="flex flex-col gap-7" data-slot="appearance-screen">
+    <div
+      className={cn("flex flex-col gap-7", view.canPersonalize && LIST_DETAIL_GRID_CLASS)}
+      data-slot="appearance-screen"
+    >
       {view.canPersonalize && (
-        <PageSection>
-          <SectionTitle>{t("Your buddy")}</SectionTitle>
-          <BuddySettings
-            availableGlasses={view.availableGlasses}
-            look={view.look}
-            onSave={appearance.saveBuddy}
-            buddy={appearance.buddy}
-          />
-        </PageSection>
+        <BuddySettings
+          availableGlasses={view.availableGlasses}
+          look={view.look}
+          onSave={appearance.saveBuddy}
+          buddy={appearance.buddy}
+        />
       )}
 
-      {view.canPersonalize && (
+      <div className="flex flex-col gap-7 xl:in-data-signed-in:col-start-1 xl:in-data-signed-in:row-start-1">
+        {view.canPersonalize && (
+          <PageSection>
+            <SectionTitle>{t("Lessons")}</SectionTitle>
+            <ListGroup>
+              <SwitchSettingRow
+                checked={appearance.soundsEnabled}
+                description={t("When you get it right or finish")}
+                label={t("Sounds")}
+                onCheckedChange={appearance.setSoundsEnabled}
+              />
+            </ListGroup>
+          </PageSection>
+        )}
+
         <PageSection>
-          <SectionTitle>{t("Lessons")}</SectionTitle>
+          <SectionTitle>
+            {view.canPersonalize ? t("Language and region") : t("Language")}
+          </SectionTitle>
           <ListGroup>
-            <SwitchSettingRow
-              checked={appearance.soundsEnabled}
-              description={t("When you get it right or finish")}
-              label={t("Sounds")}
-              onCheckedChange={appearance.setSoundsEnabled}
-            />
+            <LanguageSetting onChange={onLanguageChange} />
+            {view.canPersonalize && (
+              <HomeCountrySetting
+                onChange={appearance.setHomeCountry}
+                suggested={view.homeCountrySuggested}
+                value={appearance.homeCountry}
+              />
+            )}
           </ListGroup>
         </PageSection>
-      )}
-
-      <PageSection>
-        <SectionTitle>
-          {view.canPersonalize ? t("Language and region") : t("Language")}
-        </SectionTitle>
-        <ListGroup>
-          <LanguageSetting onChange={onLanguageChange} />
-          {view.canPersonalize && (
-            <HomeCountrySetting
-              onChange={appearance.setHomeCountry}
-              suggested={view.homeCountrySuggested}
-              value={appearance.homeCountry}
-            />
-          )}
-        </ListGroup>
-      </PageSection>
-
-      <PageSection>
-        <SectionTitle>{t("Privacy")}</SectionTitle>
-        <ListGroup>
-          <SwitchSettingRow
-            checked={appearance.shareUsageData}
-            description={t("Shows us how you use Zoonk, so we can improve it")}
-            label={t("Share usage data")}
-            onCheckedChange={appearance.setShareUsageData}
-          />
-        </ListGroup>
-      </PageSection>
-
-      {appearance.failed && <ChangeSaveError />}
+      </div>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.account
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,6 +24,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -53,6 +55,26 @@ class SignInTest {
         val sessions = SessionStore(sessionApi, MemoryCredentials(), drafts, onChange = { _, _ -> }, clearCredentialState = {})
         return sessions to AccountStore(api, sessions, AppCache(sessions, main))
     }
+
+    @Test
+    fun continuingAnEmptySetupStaysAvailableSoItCanExplainWhatsMissing() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            account.signInWithEmailCode("bia@zoonk.test", "123456")
+            val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            advanceUntilIdle()
+            form.onNameChange("")
+            form.onUsernameChange("")
+            assertTrue(form.canContinue)
+            assertFalse(form.canSave)
+            form.continueSetup()
+            assertTrue(form.showNameRequired)
+            assertTrue(form.showUsernameRequired)
+            assertFalse(form.isSaving)
+            form.onNameChange("Bia")
+            assertFalse(form.showNameRequired)
+        }
 
     @Test
     fun anEmailCodeSignsInOnceItsSixDigitsAreTyped() =
@@ -156,6 +178,73 @@ class SignInTest {
             assertTrue(api.signInBearers.isEmpty())
             assertTrue((sessions.state.value as SessionState.SignedIn).isGuest)
             assertNull(signIn.work)
+        }
+
+    @Test
+    fun aProfileSavedWhileThePageIsRecreatedSaysSavedOnce() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            account.signInWithEmailCode("bia@zoonk.test", "123456")
+            val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            advanceUntilIdle()
+
+            form.onNameChange("Bia")
+            form.save()
+            advanceUntilIdle()
+
+            assertEquals(Unit, form.saved.value)
+            form.saved.acted(Unit)
+            assertEquals(null, form.saved.value)
+            assertTrue(form.isSaved)
+        }
+
+    @Test
+    fun aProfileSavedAfterTheLearnerLeftThePageSaysNothingOnReturn() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            account.signInWithEmailCode("bia@zoonk.test", "123456")
+            val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            advanceUntilIdle()
+
+            form.onNameChange("Bia")
+            form.save()
+            form.visit.end()
+            advanceUntilIdle()
+
+            assertEquals(null, form.saved.value)
+            assertEquals(listOf("Bia" to "ana_learner"), api.saved)
+        }
+
+    @Test
+    fun aProfileThatFailsAfterTheLearnerLeftSaysNothingOnReturn() = profileFailure(leaveFirst = true)
+
+    @Test
+    fun aProfileFailureShownBeforeTheLearnerLeftIsGoneOnReturn() = profileFailure(leaveFirst = false)
+
+    private fun profileFailure(leaveFirst: Boolean) =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            account.signInWithEmailCode("bia@zoonk.test", "123456")
+            val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            advanceUntilIdle()
+            val held = CompletableDeferred<Unit>().also { api.saveGate = it }
+            api.saveFailure = ApiException(ApiError.Network)
+
+            form.onNameChange("Bia")
+            form.save()
+            runCurrent()
+            if (leaveFirst) form.visit.end()
+            held.complete(Unit)
+            advanceUntilIdle()
+            if (!leaveFirst) {
+                assertEquals(AccountFailure.Network, form.failure)
+                form.visit.end()
+            }
+
+            assertNull(form.failure)
         }
 
     @Test

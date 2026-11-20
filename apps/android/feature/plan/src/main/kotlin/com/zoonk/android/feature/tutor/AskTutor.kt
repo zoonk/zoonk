@@ -29,11 +29,10 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
-import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 
-enum class AskTutorAppearance { Button, Icon, Row }
+enum class AskTutorAppearance { Button, Icon }
 
 /**
  * Main's "Ask {buddy}" on a chapter, subject, mock or plan page: it opens the conversation about it
@@ -49,14 +48,14 @@ fun AskTutor(
 ) {
     val summary by app.learnerSummary.summary.collectShown()
     val identity = tutorIdentity(summary.value)
-    val label = askLabel(scope, identity.name)
+    val label = askLabel(scope, identity)
     var open by rememberSaveable { mutableStateOf(false) }
 
     when (appearance) {
         AskTutorAppearance.Button -> {
             OutlinedButton(onClick = { open = true }, modifier = modifier.semantics { contentDescription = label }) {
-                Box(Modifier.size(BUTTON_AVATAR_SIZE)) { TutorAvatar(identity, BUTTON_AVATAR_SIZE) }
-                Text(stringResource(R.string.tutor_ask, identity.name), Modifier.padding(start = 8.dp))
+                if (identity.look != null) TutorAvatar(identity, BUTTON_AVATAR_SIZE, Modifier.padding(end = 8.dp))
+                Text(identity.askText())
             }
         }
 
@@ -69,15 +68,6 @@ fun AskTutor(
                     TutorAvatar(identity, BUTTON_AVATAR_SIZE)
                 }
             }
-        }
-
-        AskTutorAppearance.Row -> {
-            ListRow(
-                headline = { Text(label) },
-                modifier = modifier,
-                onClick = { open = true },
-                leading = { TutorAvatar(identity, ROW_AVATAR_SIZE) },
-            )
         }
     }
 
@@ -115,7 +105,7 @@ fun TutorAskButton(
 ) {
     val summary by app.learnerSummary.summary.collectShown()
     val identity = tutorIdentity(summary.value)
-    val label = stringResource(R.string.tutor_ask, identity.name)
+    val label = identity.askText()
 
     if (worded) {
         OutlinedButton(onClick = { onOpenChange(true) }) {
@@ -140,4 +130,3 @@ fun TutorAskButton(
 }
 
 private val BUTTON_AVATAR_SIZE = 24.dp
-private val ROW_AVATAR_SIZE = 24.dp

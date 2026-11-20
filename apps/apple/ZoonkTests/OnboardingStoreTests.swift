@@ -99,6 +99,92 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(card.value, Self.draft(prompt: "Spanish, fixed", goalsLeft: 1))
   }
 
+  /// Back to a draft whose goal was just made, before its read: the card offers no second create,
+  /// so the draft makes one goal.
+  func testADraftReadAgainAfterItsGoalWasMadeOffersNoSecondCreate() async throws {
+    let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+    let shown = try XCTUnwrap(card.value)
+    var made: String?
+
+    await DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: {
+      made = $0
+    }?.value
+
+    // A new visit to the draft before its read says the goal is made.
+    let second = DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: { _ in
+    }
+    let creates = await server.creates
+
+    XCTAssertNotNil(made)
+    XCTAssertNil(second, "the stale card offers no create")
+    XCTAssertEqual(creates, 1)
+  }
+
+  /// The visit leaves while its create is out (a link left it) and the draft is opened again: the
+  /// draft it was made from is stale, so the new card offers no second create until it's read.
+  func testANewCardAfterTheVisitLeftWhileTheCreateIsOutOffersNoSecondCreate() async throws {
+    let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+    let shown = try XCTUnwrap(card.value)
+    await server.holdNextCreate()
+    let first = DraftCreation()
+
+    let leadsOn = first.create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: { _ in
+    }
+    await server.waitForHeldCreate()
+    first.leave(card)
+
+    let second = DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: { _ in
+    }
+    let creates = await server.creates
+
+    XCTAssertNil(second, "the new card offers no create")
+    XCTAssertEqual(creates, 1)
+
+    await server.releaseHeldCreate()
+    await leadsOn?.value
+  }
+
+  /// A read after the create that names its goal leads to the goal's setup, and offers no create.
+  func testADraftReadThatNamesItsGoalOffersNoCreate() async throws {
+    let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+    let shown = try XCTUnwrap(card.value)
+
+    await DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: { _ in
+    }?.value
+    await server.serve(
+      Self.draft(prompt: "Why is the sky blue?", goalsLeft: 1, goalID: Self.goalID))
+    await card.load()
+
+    let again = DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: { _ in
+    }
+    let creates = await server.creates
+
+    XCTAssertEqual(card.freshValue?.goalId, Self.goalID, "the card goes on with the goal's setup")
+    XCTAssertNil(again)
+    XCTAssertEqual(creates, 1)
+  }
+
   private func makeStore(transport: some ClientTransport) -> OnboardingStore {
     let session = SessionStore.preview(account: .onboardingStoreTest)
     return OnboardingStore(
@@ -109,9 +195,13 @@ final class OnboardingStoreTests: XCTestCase {
 
   private static let draftID = "00000000-0000-4000-8000-0000000000d1"
 
-  private static func draft(prompt: String, goalsLeft: Int) -> OnboardingDraft {
+  private static let goalID = "00000000-0000-4000-8000-0000000000a1"
+
+  private static func draft(prompt: String, goalsLeft: Int, goalID: String? = nil)
+    -> OnboardingDraft
+  {
     OnboardingDraft(
-      activeGoalsLeft: goalsLeft, generationId: nil, goalId: nil, id: draftID, prompt: prompt,
+      activeGoalsLeft: goalsLeft, generationId: nil, goalId: goalID, id: draftID, prompt: prompt,
       status: .failed, timeZone: "America/Sao_Paulo", understanding: nil)
   }
 
@@ -159,15 +249,26 @@ private struct DeckEventTransport: ClientTransport {
 
 /// Answers draft reads with the draft it serves now. A held edit or read waits to answer until
 /// released, so another request can land meanwhile.
-private actor DraftServer: ClientTransport {
+actor DraftServer: ClientTransport {
+  enum CreateAnswer {
+    case created
+    case refused
+    case unavailable
+  }
+
   private var served: OnboardingDraft
   private var editAnswer: OnboardingDraft?
-  private var heldEdit: CheckedContinuation<Void, Never>?
+  private var heldEdit: TestContinuation<Void>?
   private var editsFail = false
   private var holdsRead = false
-  private var heldRead: CheckedContinuation<Void, Never>?
+  private var heldRead: TestContinuation<Void>?
   private var editAnswered = false
   private var readsAfterEdit = 0
+  private(set) var creates = 0
+  private(set) var reads = 0
+  private var createAnswer = CreateAnswer.created
+  private var holdsCreate = false
+  private var heldCreate: TestContinuation<Void>?
 
   init(_ draft: OnboardingDraft) {
     served = draft
@@ -179,14 +280,42 @@ private actor DraftServer: ClientTransport {
     var answer = served
 
     if operationID == "getGoalUnderstanding" {
+      reads += 1
+
       if editAnswered {
         readsAfterEdit += 1
       }
 
       if holdsRead {
         holdsRead = false
-        await withCheckedContinuation { heldRead = $0 }
+        await withTestVoidContinuation { heldRead = $0 }
       }
+    }
+
+    if operationID == "createGoals" {
+      creates += 1
+
+      if holdsCreate {
+        holdsCreate = false
+        await withTestVoidContinuation { heldCreate = $0 }
+      }
+
+      switch createAnswer {
+      case .created: break
+      case .refused:
+        return (
+          HTTPResponse(status: .tooManyRequests, headerFields: [.contentType: "application/json"]),
+          HTTPBody(#"{"error":{"code":"SLOW_DOWN","message":"Slow down"}}"#)
+        )
+      case .unavailable:
+        return (HTTPResponse(status: .internalServerError), nil)
+      }
+
+      return (
+        HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
+        HTTPBody(
+          #"{"generations":[],"goals":[\#(createdGoal)],"refused":[],"research":[]}"#)
+      )
     }
 
     if operationID == "reviseGoalUnderstanding" {
@@ -195,7 +324,7 @@ private actor DraftServer: ClientTransport {
       }
 
       if let editAnswer {
-        await withCheckedContinuation { heldEdit = $0 }
+        await withTestVoidContinuation { heldEdit = $0 }
         answer = editAnswer
       }
     }
@@ -214,9 +343,9 @@ private actor DraftServer: ClientTransport {
     editAnswer = draft
   }
 
-  func waitForHeldEdit() async {
-    while heldEdit == nil {
-      await Task.yield()
+  func waitForHeldEdit(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldEdit did not arrive", file: file, line: line) {
+      await self.heldEdit != nil
     }
   }
 
@@ -226,13 +355,31 @@ private actor DraftServer: ClientTransport {
     heldEdit = nil
   }
 
+  func answerCreates(_ answer: CreateAnswer) {
+    createAnswer = answer
+  }
+
+  func holdNextCreate() {
+    holdsCreate = true
+  }
+
+  func waitForHeldCreate(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldCreate did not arrive", file: file, line: line)
+    { await self.heldCreate != nil }
+  }
+
+  func releaseHeldCreate() {
+    heldCreate?.resume()
+    heldCreate = nil
+  }
+
   func holdNextRead() {
     holdsRead = true
   }
 
-  func waitForHeldRead() async {
-    while heldRead == nil {
-      await Task.yield()
+  func waitForHeldRead(file: StaticString = #filePath, line: UInt = #line) async {
+    _ = try? await waitForTestCondition("waitForHeldRead did not arrive", file: file, line: line) {
+      await self.heldRead != nil
     }
   }
 
@@ -243,8 +390,8 @@ private actor DraftServer: ClientTransport {
 
   /// False when no read starts within two seconds of the held edit's answer.
   func waitForReadAfterEdit() async -> Bool {
-    for _ in 0..<200 where readsAfterEdit == 0 {
-      try? await Task.sleep(for: .milliseconds(10))
+    _ = try? await waitForTestCondition("The follow-up read never started") {
+      await self.readsAfterEdit > 0
     }
 
     return readsAfterEdit > 0
@@ -256,10 +403,14 @@ private actor DraftServer: ClientTransport {
 }
 
 extension CurrentAccount {
-  fileprivate static let onboardingStoreTest = CurrentAccount(
+  static let onboardingStoreTest = CurrentAccount(
     account: AccountAccess(
       deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
     user: AccountUser(
       email: "learner@zoonk.test", id: "onboarding-store-test-user",
       image: nil, name: "Learner", username: "learner"))
 }
+
+/// The client reads dates with fractional seconds, as the API writes them.
+private let createdGoal =
+  #"{"contentCountry":null,"countryDependent":false,"createdAt":"2026-11-08T00:00:00.000Z","dailyMinutes":15,"details":{},"examBlueprintId":null,"examCountry":null,"examplesCountry":null,"id":"00000000-0000-0000-0000-000000000001","isActive":true,"kind":"learn","language":"en","languageCountry":{"code":"US","name":"United States"},"languageFlag":null,"plan":null,"primaryCourseId":null,"prompt":"Vaccines","regionChoices":[],"status":"active","studyDays":[],"suggested":[],"studyTime":null,"targetDate":null,"targetLanguage":null,"targetRegion":null,"timezone":null,"title":"Vaccines","displayName":"Vaccines"}"#

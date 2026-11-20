@@ -100,10 +100,10 @@ extension CountryChoice {
   }
 }
 
-/// "Content country: Portugal", for a line that names it.
+/// "Country: Portugal", for a line that names it.
 func contentCountryLine(_ name: String) -> String {
   String(
-    localized: "Content country: \(name)", table: "Plan",
+    localized: "Country: \(name)", table: "Plan",
     comment:
       "A line naming the country a course or a goal's lessons are about; the argument is a country's name, such as Portugal"
   )

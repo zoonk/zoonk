@@ -10,8 +10,7 @@ class MindMapDeckTest {
             lessonGroups =
                 listOf(
                     lessonGroupJson(3, lessons = listOf(2, 3, 4)),
-                    lessonGroupJson(5, lessons = emptyList(), locked = 4),
-                    lessonGroupJson(6, lessons = listOf(7), locked = 1),
+                    lessonGroupJson(6, lessons = listOf(7)),
                 ),
             saved =
                 listOf(

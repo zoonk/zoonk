@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.compositeOver
@@ -47,7 +48,6 @@ import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.player.steps.allowed
 import com.zoonk.android.ui.components.niceTicks
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.exactFractionDigitsFor
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -114,7 +114,11 @@ private fun FormulaModelBoard(
     }
     var events by rememberSaveable { mutableStateOf(eventsOff(fields).mapValues { (name, off) -> answered[name] ?: off }) }
     val view = remember(sliders, events) { modelView(fields, axis, charted, sliders, events) }
-    val formatOutput = { output: ModelOutput, value: Double? -> value?.let { formatAmount(it, locale, output.unit) }.orEmpty() }
+    val askedOutput = numeric?.let { askedOutputId(fields, it.output) }
+    val places = props.roundedAnswer?.places?.toInt()
+    val formatOutput = { output: ModelOutput, value: Double? ->
+        value?.let { formatModelOutput(it, locale, output.unit, places.takeIf { output.id == askedOutput }) }.orEmpty()
+    }
     val formatX = { value: Double -> formatAmount(value, locale, axis.unit) }
     val readouts = readouts(charted, view, formatOutput)
     val update = { nextSliders: ModelValues, nextEvents: ModelValues ->
@@ -132,10 +136,11 @@ private fun FormulaModelBoard(
             }
         }
         OutputReadouts(readouts)
+        // At the compared input this line would repeat the readout, so it keeps its room and says nothing.
         compared?.let { (x, y) ->
             Text(
                 stringResource(R.string.activities_math_formula_compared, charted.label, x, y),
-                Modifier.clearAndSetSemantics {},
+                Modifier.clearAndSetSemantics {}.alpha(if (view.compared.first == view.x) 0f else 1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )
@@ -147,11 +152,10 @@ private fun FormulaModelBoard(
             expected =
                 numeric?.let { check ->
                     props.expected.numericValue?.takeIf { props.isChecked }?.let { y ->
-                        val digits = exactFractionDigitsFor(check.answer, check.allowed, props.answer.numericValue ?: check.answer)
                         AnswerPoint(
                             x = answerX(check.inputs, axis),
                             y = y,
-                            label = formatAmount(y, locale, check.unit, maximumFractionDigits = digits),
+                            label = formatModelOutput(y, locale, charted.unit ?: check.unit, places),
                         )
                     }
                 },
@@ -304,13 +308,12 @@ private fun OutputReadouts(readouts: List<Readout>) {
                             readout.value,
                             color = if (readout.isPrimary) MaterialTheme.zoonk.vizAccent else MaterialTheme.colorScheme.onSurface,
                         )
-                        readout.note?.let {
-                            Text(
-                                it,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                            )
-                        }
+                        // The note's line is there before a slider adds one, so nothing under it moves.
+                        Text(
+                            readout.note ?: "\u00A0",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                        )
                     }
                 }
                 repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
@@ -346,11 +349,11 @@ private fun FormulaChart(
     val density = LocalDensity.current
     val minDelta = with(density) { MIN_DELTA.toPx() }
 
+    // The readouts and sliders name both values, so the chart repeats neither as an axis title.
     ActivityPlot(
         xDomain = axis.min..axis.max,
         yDomain = view.yDomain,
         yTicks = niceTicks(view.yDomain, Y_TICKS),
-        xTicks = listOf(axis.min, axis.max),
         formatY = { formatAmount(it, locale, charted.unit, compact = true) },
         formatX = formatX,
         area = CHART_AREA * density.fontScale.coerceIn(1f, MAX_CHART_GROWTH),
@@ -449,3 +452,11 @@ private val MARK_INNER = 3.25.dp
 private val EXPECTED_INNER = 5.75.dp
 private val EXPECTED_LIFT = 20.dp
 private val CURRENT_INNER = 4.75.dp
+
+/** A model's output as its readouts write it: the asked output at its answer's rounding [places], every other output as numbers are. */
+internal fun formatModelOutput(
+    value: Double,
+    locale: java.util.Locale,
+    unit: String?,
+    places: Int?,
+): String = formatAmount(value, locale, unit, maximumFractionDigits = places)

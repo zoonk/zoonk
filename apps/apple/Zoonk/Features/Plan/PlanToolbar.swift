@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// A ready plan's toolbar: "Adjust plan", and the plan's own items in the "…" options.
+/// A ready plan's own items in the "…" options, which its header draws beside its title with
+/// "Adjust plan" (`PlanHeaderActions`), as main's Plan has them at every width.
 struct PlanToolbar: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -9,19 +10,7 @@ struct PlanToolbar: ViewModifier {
 
   func body(content: Content) -> some View {
     content
-      .taskAction {
-        Button {
-          context.adjust(.top)
-        } label: {
-          Label {
-            Text(
-              "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
-          } icon: {
-            Image(systemName: "slider.horizontal.3")
-          }
-        }
-      }
-      .modifier(GoalOptionsToolbar(goal: context.goal) { planItems })
+      .modifier(GoalOptionsToolbar(goal: context.goal, inPageHeader: true) { planItems })
   }
 
   @ViewBuilder
@@ -67,8 +56,7 @@ struct PlanToolbar: ViewModifier {
     } label: {
       Label {
         Text(
-          "Talk to \(learner.buddyDisplayName)", tableName: "Plan",
-          comment: "Opens the buddy's conversation, where questions about the plan go")
+          "Ask \(learner.buddyDisplayName)", tableName: "Plan")
       } icon: {
         Image(systemName: "questionmark.bubble")
       }
@@ -89,5 +77,26 @@ struct PlanToolbar: ViewModifier {
 
   private var shareURL: URL {
     URL(string: "https://www.zoonk.com/plan-link/\(context.plan.planId)")!
+  }
+}
+
+/// Main's `PlanHeader`: "Adjust plan" and the "…" options after the title.
+struct PlanHeaderActions: View {
+  @Environment(\.planOptions) private var options
+
+  let context: PlanContext
+
+  var body: some View {
+    HStack(spacing: 8) {
+      Button {
+        context.adjust(.top)
+      } label: {
+        Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
+      }
+      .buttonStyle(.outline)
+      .controlSize(.small)
+
+      options
+    }
   }
 }

@@ -1,8 +1,7 @@
 "use client";
 
 import { type LessonPracticeRenderer } from "@zoonk/learn/mistakes/practice";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { useExtracted } from "next-intl";
+import { QuestionMainAction } from "@zoonk/learn/question-actions";
 import { useMemo, useState } from "react";
 import { PlayerAudioProvider } from "../player-audio-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
@@ -66,27 +65,22 @@ function getPhase({
 }
 
 function ChallengePracticeAction() {
-  const t = useExtracted();
   const { actions, screen } = useLessonPlayer();
   const { primary } = screen;
-  const labels = { confirm: t("Confirm"), seeHowItWent: t("See how it went"), start: t("Start") };
 
   if (!primary) {
     return null;
   }
 
-  const label = primary.label === "start" ? labels.start : labels.seeHowItWent;
-
   return (
-    <Button
-      {...FORWARD_ICON}
-      size="xl"
-      disabled={primary.disabled}
+    <QuestionMainAction
+      action={primary.label}
       busy={primary.busy}
-      onClick={() => runPrimary({ actions, screen })}
-    >
-      {primary.label === "confirm" ? labels.confirm : label}
-    </Button>
+      disabled={primary.disabled}
+      enter="host"
+      id="challenge-practice-action"
+      onPress={() => runPrimary({ actions, screen })}
+    />
   );
 }
 
@@ -172,11 +166,11 @@ export function LessonPracticeStep(props: Props) {
           title: "",
         },
         linkComponent: PlainLink,
-        onExit: idle,
         outline: false,
         routes: {
           exit: "/mistakes",
           exitTo: null,
+          mistakes: "/mistakes",
           nextLesson: null,
           seePlan: () => "/plan",
           signUp: "/login",
@@ -207,7 +201,7 @@ export function LessonPracticeStep(props: Props) {
               {graded && (!showsOwnResult(step) || step.kind === "matchColumns" || !selected) && (
                 <LessonStepResultView
                   hyperdriveStreak={null}
-                  next={{ savedMistake: false, willReturn: false }}
+                  next={{ savePending: false, savedMistake: false, willReturn: false }}
                   result={graded}
                   step={getAnsweredStep({ answer: selected, step })}
                 />

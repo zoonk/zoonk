@@ -3,6 +3,7 @@ import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
+import { seenQuote } from "../../plans/_test-utils/seen-quote";
 import { settleNewPlan } from "../../plans/_utils/recommended-bases";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
@@ -156,7 +157,7 @@ describe("the Focus test on a plan whose time is short", () => {
       decidePlanChange({
         changeId: focus?.proposal?.id ?? "",
         goalId: goal.id,
-        input: { status: "applied" },
+        input: { quote: await seenQuote(focus?.proposal?.id ?? ""), status: "applied" },
       }),
     ).resolves.toMatchObject({ status: "updated" });
 
@@ -253,7 +254,7 @@ describe("the Focus test on a plan whose time is short", () => {
       decidePlanChange({
         changeId: proposal.id,
         goalId: goal.id,
-        input: { status: "applied", timeZone },
+        input: { quote: await seenQuote(proposal.id), status: "applied", timeZone },
       }),
     ).resolves.toMatchObject({ status: "updated" });
   });
@@ -409,7 +410,11 @@ describe("the Focus test on a plan whose time is short", () => {
       const changeId = completion.focusTest?.checkpoint?.focus?.proposal?.id ?? "";
 
       if (status === "undone") {
-        await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+        await decidePlanChange({
+          changeId,
+          goalId: goal.id,
+          input: { quote: await seenQuote(changeId), status: "applied" },
+        });
       }
 
       await expect(

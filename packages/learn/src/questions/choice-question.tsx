@@ -3,16 +3,15 @@
 import { type ChapterTestOutResult } from "@zoonk/core/learner/test-out/get";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { FeedbackExplanation, FeedbackPanel, FeedbackVerdict } from "../_components/feedback-panel";
-import { ItemLine, ItemStem, ItemSupport, ItemText, QUESTION_TEXT_CLASS } from "./item-text";
+import { QuestionTitle } from "../_components/question-title";
+import { ItemLine, ItemSupport, ItemText } from "./item-text";
 import { PickRule, isCompletePick, isMultiPick, togglePick } from "./pick-rule";
 import { useTrueFalseLabels } from "./use-true-false-labels";
-
-export const CHOICE_QUESTION_TITLE_SLOT = "choice-question-title";
 
 /** Never says which answer is right. */
 export type ChoiceQuestionView = Extract<
@@ -186,13 +185,7 @@ export function ChoiceQuestion({
   return (
     <div className="flex flex-col gap-4">
       <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      <div
-        className={cn(QUESTION_TEXT_CLASS, "outline-none")}
-        data-slot={CHOICE_QUESTION_TITLE_SLOT}
-        tabIndex={-1}
-      >
-        <ItemStem text={question.question} heading="h2" />
-      </div>
+      <QuestionTitle tabIndex={-1} text={question.question} />
 
       {isMultiPick(select) && <PickRule select={select} />}
 
@@ -203,7 +196,7 @@ export function ChoiceQuestion({
 
           return (
             <AnswerOption
-              aria-keyshortcuts={String(index + 1)}
+              aria-keyshortcuts={shortcutKeys("pick", index)}
               disabled={locked}
               key={option.key}
               marker={index + 1}

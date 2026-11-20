@@ -1,9 +1,7 @@
 import SwiftUI
 
+/// Holds only what adjusts the plan: how lessons feel is said to the buddy, who proposes the change.
 struct AdjustPlanSections: View {
-  @Environment(AppRouter.self) private var router
-  @Environment(LearnerSummaryStore.self) private var learner
-
   let editor: PlanEditor
   let goal: LearnerGoal
   let plan: GoalPlan
@@ -22,11 +20,7 @@ struct AdjustPlanSections: View {
         NavigationLink {
           PlanBasesView(editor: editor, goal: goal, plan: plan, bases: bases)
         } label: {
-          LabeledContent {
-            Text(planBasesSummary(bases))
-          } label: {
-            Text("Choose prerequisites", tableName: "Plan", comment: "Opens the prerequisites")
-          }
+          Text(planBasesSummary(bases))
         }
       } header: {
         SectionTitle(
@@ -36,41 +30,15 @@ struct AdjustPlanSections: View {
 
     if goal.kind == .language {
       PlanActivitiesSection(editor: editor, plan: plan)
+        .id(AdjustPlanSheet.Section.practice)
     }
 
     if let written = plan.writtenPractice {
       PlanWrittenPracticeSection(editor: editor, written: written)
     }
 
-    if plan.steering.lessonsStudied > 0 {
-      PlanSteeringSection(editor: editor, steering: plan.steering)
-    }
-
     if !plan.tools.isEmpty {
       PlanToolsSection(editor: editor, goal: goal, tools: plan.tools)
-    }
-
-    Section {
-      Button {
-        router.select(.buddy)
-      } label: {
-        Text(
-          "Something else? Tell \(learner.buddyDisplayName)", tableName: "Plan",
-          comment: "Opens the buddy's conversation to change the plan in words")
-      }
-    } footer: {
-      SectionFooter {
-        if goal.kind == .learn && plan.areas.count > 1 {
-          Text(
-            "In your own words, like “skip a module” or “less on weekends”. You'll see the change before it applies.",
-            tableName: "Plan",
-            comment: "Explains changing a plan with modules by talking to the buddy")
-        } else {
-          Text(
-            "In your own words, like “less on weekends”. You'll see the change before it applies.",
-            tableName: "Plan", comment: "Explains changing the plan by talking to the buddy")
-        }
-      }
     }
   }
 }
@@ -99,7 +67,7 @@ private struct PlanExamChoiceSection: View {
               return
             }
 
-            Task { await editor.chooseExamOptions([subject], in: choice.group) }
+            editor.run { await editor.chooseExamOptions([subject], in: choice.group) }
           })
       ) {
         if choice.subjects.isEmpty {
@@ -118,10 +86,6 @@ private struct PlanExamChoiceSection: View {
           "\(choice.group): which one will you take?", tableName: "Plan",
           comment:
             "Asks which option of an exam's choice, like its foreign language, the learner takes"))
-    } footer: {
-      SectionFooter {
-        leftOut
-      }
     }
   }
 
@@ -142,7 +106,7 @@ private struct PlanExamChoiceSection: View {
         picked: Binding(get: { picked }, set: { draft = $0 }))
 
       Button {
-        Task {
+        editor.run {
           if await editor.chooseExamOptions(picks.names, in: choice.group) {
             draft = nil
           }
@@ -158,20 +122,9 @@ private struct PlanExamChoiceSection: View {
           comment:
             "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
         ))
-    } footer: {
-      SectionFooter {
-        leftOut
-      }
     }
     .tint(.success)
     .onChange(of: choice.subjects) { draft = nil }
-  }
-
-  @ViewBuilder
-  private var leftOut: some View {
-    if choice.subjects.isEmpty {
-      Text(choice.leftOut.line)
-    }
   }
 }
 
@@ -202,7 +155,7 @@ private struct PlanFocusSection: View {
           } label: {
             ListRow(
               Text(FocusTestCopy.name),
-              description: Text(FocusTestCopy.planLine(focusTest))
+              descriptionFacts: FocusTestCopy.planLine(focusTest)
             ) {
               Image(systemName: "scope")
             }
@@ -233,14 +186,14 @@ private struct PlanFocusSection: View {
         }
 
         Button {
-          Task { await focus(on: selection, choices: choices) }
+          editor.run { await focus(on: selection, choices: choices) }
         } label: {
           if selection.isEmpty, !focused.isEmpty {
             Text(
               "Remove focus", tableName: "Plan",
               comment: "Saves no subject to focus on, so the plan has no focus")
           } else {
-            Text("Focus on these", tableName: "Plan", comment: "Saves the subjects to focus on")
+            Text("Save", tableName: "Plan", comment: "Saves the subjects to focus on")
           }
         }
         .disabled(selection == focused)
@@ -250,7 +203,7 @@ private struct PlanFocusSection: View {
       } footer: {
         SectionFooter {
           Text(
-            "The subjects you pick come first and get more depth.", tableName: "Plan",
+            "The subjects you pick get more of your time.", tableName: "Plan",
             comment: "What focusing on subjects does")
         }
       }
@@ -259,17 +212,8 @@ private struct PlanFocusSection: View {
 
   private func focus(on selection: Set<String>, choices: [GoalPlan.Area]) async {
     let areas = choices.map(\.name).filter { selection.contains($0) }
-    let names = areas.formatted(.list(type: .and))
 
-    await editor.change(
-      [.focusAreas(areas)],
-      sentence: areas.isEmpty
-        ? String(
-          localized: "Your plan has no focus.", table: "Plan",
-          comment: "Says the plan no longer gives any subject more time")
-        : String(
-          localized: "More time for \(names).", table: "Plan",
-          comment: "Says the plan gives more time to these subjects"))
+    await editor.change([.focusAreas(areas)])
     picked = nil
   }
 }
@@ -292,20 +236,14 @@ private struct PlanActivitiesSection: View {
                 return
               }
 
-              Task {
-                await editor.change(
-                  [on ? .restoreActivities([activity]) : .skipActivities([activity])],
-                  sentence: on
-                    ? String(
-                      localized: "\(name(activity)) back in your lessons.", table: "Plan",
-                      comment: "Says a practice activity is back in the lessons")
-                    : String(
-                      localized: "\(name(activity)) left out of your lessons.", table: "Plan",
-                      comment: "Says a practice activity left the lessons"))
+              editor.run {
+                await editor.change([
+                  on ? .restoreActivities([activity]) : .skipActivities([activity])
+                ])
               }
             })
         ) {
-          Text(name(activity))
+          Text(planActivityName(activity))
         }
       }
     } header: {
@@ -317,16 +255,7 @@ private struct PlanActivitiesSection: View {
     .tint(.success)
   }
 
-  private func name(_ activity: String) -> String {
-    switch activity {
-    case "vocabulary": String(localized: "New words", table: "Plan", comment: "Practice activity")
-    case "listening": String(localized: "Listening", table: "Plan", comment: "Practice activity")
-    case "writing": String(localized: "Writing", table: "Plan", comment: "Practice activity")
-    default: String(localized: "Speaking", table: "Plan", comment: "Practice activity")
-    }
-  }
-
-  private static let activities = ["vocabulary", "listening", "writing", "speaking"]
+  private static let activities = planActivities
 }
 
 private struct PlanWrittenPracticeSection: View {
@@ -343,7 +272,9 @@ private struct PlanWrittenPracticeSection: View {
               return
             }
 
-            Task { await editor.change([.writtenCadence(cadence)], sentence: sentence(cadence)) }
+            editor.run {
+              await editor.change([.writtenCadence(cadence)], sentence: sentence(cadence))
+            }
           })
       ) {
         Text("Every week", tableName: "Plan", comment: "Written practice cadence").tag("weekly")
@@ -394,93 +325,6 @@ private struct PlanWrittenPracticeSection: View {
       String(
         localized: "Writing practice every week from now on.", table: "Plan",
         comment: "Says the written practice cadence changed")
-    }
-  }
-}
-
-/// Once the learner studied a lesson of the plan. Tapping an active one again goes back to the
-/// default.
-private struct PlanSteeringSection: View {
-  let editor: PlanEditor
-  let steering: GoalPlan.Steering
-
-  var body: some View {
-    Section {
-      steer(
-        Text("Too easy", tableName: "Plan", comment: "Steering: make the lessons harder"),
-        active: steering.difficultyBias == "harder", on: .difficultyBias("harder"),
-        off: .difficultyBias("standard"))
-      steer(
-        Text("Too hard", tableName: "Plan", comment: "Steering: make the lessons easier"),
-        active: steering.difficultyBias == "easier", on: .difficultyBias("easier"),
-        off: .difficultyBias("standard"))
-      steer(
-        Text("More practice", tableName: "Plan", comment: "Steering: more practice"),
-        active: steering.practiceBias == "morePractice", on: .practiceBias("morePractice"),
-        off: .practiceBias("balanced"))
-      steer(
-        Text("More explanation", tableName: "Plan", comment: "Steering: more explanation"),
-        active: steering.practiceBias == "moreExplanation", on: .practiceBias("moreExplanation"),
-        off: .practiceBias("balanced"))
-    } header: {
-      SectionTitle(
-        Text("How is it going?", tableName: "Plan", comment: "Section of the lessons' steering"))
-    } footer: {
-      SectionFooter {
-        if steering.difficultyBias != "standard" {
-          Text(difficultySentence(steering.difficultyBias))
-        }
-      }
-    }
-    .tint(.success)
-  }
-
-  private func steer(_ label: Text, active: Bool, on: PlanEdit, off: PlanEdit) -> some View {
-    Toggle(
-      isOn: Binding(
-        get: { active },
-        set: { isOn in
-          let edit = isOn ? on : off
-          Task { await editor.change([edit], sentence: sentence(edit)) }
-        })
-    ) {
-      label
-    }
-  }
-
-  private func sentence(_ edit: PlanEdit) -> String {
-    switch edit {
-    case .difficultyBias(let bias):
-      difficultySentence(bias)
-    case .practiceBias("morePractice"):
-      String(
-        localized: "More practice from now on.", table: "Plan", comment: "Says the steering changed"
-      )
-    case .practiceBias("moreExplanation"):
-      String(
-        localized: "More explanation from now on.", table: "Plan",
-        comment: "Says the steering changed")
-    default:
-      String(
-        localized: "Lessons balance practice and explanation from now on.", table: "Plan",
-        comment: "Says the steering went back to the default")
-    }
-  }
-
-  private func difficultySentence(_ bias: String) -> String {
-    switch bias {
-    case "harder":
-      String(
-        localized:
-          "Harder from now on: tougher practice, and the basics you already do well are skipped.",
-        table: "Plan", comment: "What harder lessons do")
-    case "easier":
-      String(
-        localized: "Easier material from now on.", table: "Plan", comment: "What easier lessons do")
-    default:
-      String(
-        localized: "Lessons at the usual difficulty from now on.", table: "Plan",
-        comment: "Says the difficulty went back to the default")
     }
   }
 }
@@ -536,7 +380,7 @@ private struct PlanToolsSection: View {
     }
     .sheet(item: $choosing) { tool in
       PlanToolChoiceSheet(editor: editor, goal: goal, tool: tool)
-        .zoonkStyles()
+        .zoonkSheet()
     }
   }
 
@@ -569,8 +413,9 @@ private struct PlanToolChoiceSheet: View {
   @State private var choice: ToolChoice
   @State private var system: String
   @State private var isWriting = false
-  @State private var failed = false
-  @State private var saving: Task<Void, Never>?
+  @State private var saving = VisitRequest<Bool>()
+
+  private var failed: Bool { saving.outcome == true }
 
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -607,7 +452,7 @@ private struct PlanToolChoiceSheet: View {
         }
       }
       .navigationTitle(
-        Text("How will you use it?", tableName: "Plan", comment: "Title of the tool choice")
+        Text("Do you have it?", tableName: "Plan")
       )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
@@ -621,10 +466,12 @@ private struct PlanToolChoiceSheet: View {
 
         ToolbarItem(placement: .confirmationAction) {
           BusyButton(isBusy: editor.isSaving, role: .confirm, icon: .check) {
-            saving = Task {
-              if await save() {
-                dismiss()
-              }
+            saving.run {
+              // Saved even when the sheet closed first; then there's nothing left to close.
+              let saved = await save()
+              guard !Task.isCancelled else { return nil }
+              if saved { dismiss() }
+              return !saved
             }
           } label: {
             Text("Save", tableName: "Plan", comment: "Saves the tool choice")
@@ -633,7 +480,7 @@ private struct PlanToolChoiceSheet: View {
       }
     }
     .presentationDetents([.medium, .large])
-    .onDisappear { saving?.cancel() }
+    .onDisappear { saving.leave() }
   }
 
   @ViewBuilder
@@ -641,22 +488,16 @@ private struct PlanToolChoiceSheet: View {
     Section {
       Picker(selection: $choice) {
         option(
-          Text("I have it", tableName: "Plan", comment: "Tool choice"),
-          Text(
-            "You'll practice on your own device.", tableName: "Plan",
-            comment: "Tool choice detail")
+          Text("I have it", tableName: "Plan"),
+          Text("You'll practice on your own device.", tableName: "Plan")
         ).tag(ToolChoice.have)
         option(
-          Text("I'll set it up", tableName: "Plan", comment: "Tool choice"),
-          Text(
-            "A short lesson shows how, right before you need it.", tableName: "Plan",
-            comment: "Tool choice detail")
+          Text("I'll set it up", tableName: "Plan"),
+          Text("A short lesson shows how, right before you need it.", tableName: "Plan")
         ).tag(ToolChoice.setup)
         option(
-          Text("No install", tableName: "Plan", comment: "Tool choice"),
-          Text(
-            "Learn with examples. You won't practice on your own computer.", tableName: "Plan",
-            comment: "Tool choice detail")
+          Text("I won't use it", tableName: "Plan"),
+          Text("You'll practice with examples instead.", tableName: "Plan")
         ).tag(ToolChoice.none)
       } label: {
         Text(tool.name)
@@ -688,7 +529,6 @@ private struct PlanToolChoiceSheet: View {
 
   /// False when it didn't save: the sheet stays with the learner's choice for Save to try again.
   private func save() async -> Bool {
-    failed = false
     let goalId = goal.id
     let tools = [tool.name]
     let choice = choice
@@ -707,9 +547,7 @@ private struct PlanToolChoiceSheet: View {
           localized: "You have \(names), so there's nothing to set up.", table: "Plan",
           comment: "Says the learner has the tool")
       case .none:
-        String(
-          localized: "No install for \(names): you'll learn with examples.", table: "Plan",
-          comment: "Says the tool is learned with examples")
+        String(localized: "You won't use \(names): you'll learn with examples.", table: "Plan")
       }
 
     await editor.apply(sentence: sentence) { api, token in
@@ -727,7 +565,6 @@ private struct PlanToolChoiceSheet: View {
     }
 
     editor.failed = false
-    failed = true
     return false
   }
 }

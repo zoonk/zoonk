@@ -1,5 +1,38 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
+
+export const ACTIVITY_PANEL_CLASS =
+  "bg-muted/50 rounded-[calc(var(--radius-xl)+var(--spacing)*4)] p-4";
+
+/** A box inside an activity's panel. Every card, slot, cell and code block there is this box. */
+export const ACTIVITY_BOX_CLASS = "bg-background rounded-xl border";
+
+/** A box that holds a line or two of text. */
+export const ACTIVITY_CARD_CLASS = cn(ACTIVITY_BOX_CLASS, "px-3 py-2.5");
+
+/** Added to a box the learner taps or drags. */
+export const ACTIVITY_PRESS_CLASS =
+  "focus-visible:ring-ring/50 min-h-11 text-left outline-none select-none focus-visible:ring-[3px]";
+
+/** A box the learner types in. */
+export const ACTIVITY_FIELD_CLASS = cn(
+  ACTIVITY_BOX_CLASS,
+  "focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]",
+);
+
+/** A place still to fill: the same 1px line, dashed. */
+export const ACTIVITY_EMPTY_CLASS = "border-dashed bg-transparent";
+
+/**
+ * A box's 2px line: the one the learner is working in, and the right and wrong ones once checked.
+ * It is drawn inside the box, so the box and everything around it stay where they were.
+ */
+export const ACTIVITY_LINE_CLASS = {
+  active: ACTIVITY_COLOR.working.box,
+  right: ACTIVITY_COLOR.right.box,
+  wrong: ACTIVITY_COLOR.wrong.box,
+};
 
 export function ActivityCanvas({
   className,
@@ -9,7 +42,7 @@ export function ActivityCanvas({
   return (
     <figure
       aria-labelledby={labelId}
-      className={cn("bg-muted/50 flex flex-col gap-3 rounded-2xl p-4", className)}
+      className={cn(ACTIVITY_PANEL_CLASS, "flex flex-col gap-3", className)}
       data-slot="activity-canvas"
       {...props}
     />
@@ -42,7 +75,7 @@ export function ActivityCanvasLabel({ className, ...props }: React.ComponentProp
 export function ActivityReadout({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("font-mono text-2xl font-medium tracking-tight tabular-nums", className)}
+      className={cn("text-2xl font-medium tracking-tight tabular-nums", className)}
       data-slot="activity-readout"
       {...props}
     />
@@ -50,5 +83,10 @@ export function ActivityReadout({ className, ...props }: React.ComponentProps<"p
 }
 
 export function ActivityCanvasSkeleton() {
-  return <Skeleton className="h-64 w-full rounded-2xl" data-slot="activity-canvas-skeleton" />;
+  return (
+    <Skeleton
+      className="h-64 w-full rounded-[calc(var(--radius-xl)+var(--spacing)*4)]"
+      data-slot="activity-canvas-skeleton"
+    />
+  );
 }

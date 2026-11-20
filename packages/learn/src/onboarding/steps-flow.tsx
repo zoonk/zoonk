@@ -11,10 +11,8 @@ import { getString } from "@zoonk/utils/json";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
-import { StepDots } from "../_components/step-dots";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePoll } from "../_utils/use-poll";
-import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
 import {
@@ -24,7 +22,6 @@ import {
   isStepScreen,
   openStep,
 } from "./_utils/answered-step";
-import { getSetupProgress } from "./_utils/setup-progress";
 import {
   type AnswerOutcome,
   type OnboardingActions,
@@ -33,7 +30,7 @@ import {
   type RevealedPlan,
 } from "./onboarding-actions";
 import { OnboardingAnnouncer } from "./onboarding-announcer";
-import { BAR_MIDDLE_CLASS } from "./onboarding-bar";
+import { stepBarProgress } from "./onboarding-bar";
 import { OnboardingClock } from "./onboarding-clock";
 import { OnboardingFrame } from "./onboarding-frame";
 import { FirstLessonReadContext } from "./onboarding-host";
@@ -61,33 +58,12 @@ function DayTooShortWords({ goals, minutes }: DayTooShort) {
   );
 }
 
-/** The page read the buddy before the buddy step, so a pick on these steps takes its place. */
-function useShownBuddy(buddy: LearnBuddy | null) {
-  const [picked, setPicked] = useState<Pick<LearnBuddy, "kind" | "name"> | null>(null);
-
-  return {
-    buddy: picked ? { ...resolveLearnBuddy(buddy), ...picked } : buddy,
-    remember: (input: OnboardingAnswerInput) => {
-      if (input.question === "buddy" && input.buddy) {
-        setPicked({ kind: input.buddy.kind, name: input.buddy.name ?? null });
-      }
-    },
-  };
-}
-
-function StepSaveError({ current, failed }: { current: OnboardingStep; failed: Failed | null }) {
-  return (
-    failed?.step === current && (
-      <ChangeSaveError>
-        {failed.dayTooShort && <DayTooShortWords {...failed.dayTooShort} />}
-      </ChangeSaveError>
-    )
-  );
+function StepSaveError({ dayTooShort }: Pick<Failed, "dayTooShort">) {
+  return <ChangeSaveError>{dayTooShort && <DayTooShortWords {...dayTooShort} />}</ChangeSaveError>;
 }
 
 type StepsFlowProps = {
   actions: OnboardingActions;
-  buddy: LearnBuddy | null;
   generation?: GenerationRun | null;
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
@@ -172,7 +148,6 @@ function StepsFlowFrame({
 
 export function StepsFlow({
   actions,
-  buddy,
   generation = null,
   initialPlan,
   isGuest,
@@ -184,7 +159,6 @@ export function StepsFlow({
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState<Failed | null>(null);
   const [scheduleDraft, setScheduleDraft] = useState<ScheduleDraft | null>(null);
-  const shownBuddy = useShownBuddy(buddy);
 
   // Current only when the page opened on the plan; after the steps the reveal reads it fresh.
   const pagePlan = (onboarding.steps[0] ?? "plan") === "plan" ? initialPlan : null;
@@ -240,8 +214,6 @@ export function StepsFlow({
           return;
         }
 
-        shownBuddy.remember(input);
-
         // "Pass an exam" moved a language goal to an exam goal: the steps go on at the new goal's page.
         if (outcome.onboarding.goal.id !== state.view.goal.id) {
           navigation.replaceSteps(outcome.onboarding.goal.id);
@@ -291,7 +263,6 @@ export function StepsFlow({
   const isPlan = state.current === "plan";
   const isProfile = isProfileQuestion(state.current);
   const showDots = isStepScreen(state.current) || isProfile;
-  const progress = getSetupProgress(state);
   const profile = useProfileStepState(state);
   useFocusTitleOnNewScreen(state.current);
 
@@ -301,23 +272,20 @@ export function StepsFlow({
         bar={{
           end: isPlan ? null : (
             <StepsBarEnd
+              canSkipAll={profile.progress?.canSkipAll ?? false}
               disabled={isPending}
               onSkipProfile={(forever) => void answer({ forever, question: "skipProfile" })}
               profile={isProfile}
               onStartOver={startOver}
             />
           ),
-          middle: progress && (
-            <StepDots
-              className={BAR_MIDDLE_CLASS}
-              current={progress.current}
-              total={progress.total}
-            />
-          ),
+          middle: stepBarProgress(state),
           // Answers change in "Adjust" now, not by going back through the questions.
           onBack: state.history.length > 0 && !isPlan ? back : undefined,
         }}
-        notice={<StepSaveError current={state.current} failed={failed} />}
+        failure={
+          failed?.step === state.current && <StepSaveError dayTooShort={failed.dayTooShort} />
+        }
       >
         {/* Placement follows the run itself, so only the questions say it stopped. */}
         <PlanStartNoticeProvider
@@ -325,7 +293,6 @@ export function StepsFlow({
         >
           <OnboardingStepScreen
             actions={actions}
-            buddy={shownBuddy.buddy}
             isGuest={isGuest}
             onAnswer={answer}
             onPlacementDone={() => answer({ question: "placement" }, { quiet: true })}

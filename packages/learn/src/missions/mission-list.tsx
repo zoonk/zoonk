@@ -14,20 +14,23 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { StepOpenFailed } from "../_components/step-open-failed";
+import { useCountOf } from "../_utils/count-of";
 import { type useMissionOpen } from "./mission-links";
 
 export function ProgressCount({ done, total }: { done: number; total: number }) {
-  const t = useExtracted();
-  const complete = String(done);
+  const countOf = useCountOf();
+  return countOf(done, total);
+}
 
-  return (
-    <>
-      <span aria-hidden="true">{`${complete}/${total}`}</span>
-      <span className="sr-only">
-        {t("{complete} of {total}", { complete, total: String(total) })}
-      </span>
-    </>
-  );
+export function useMissionsDoneCount() {
+  const t = useExtracted();
+
+  return ({ done, total }: { done: number; total: number }): string =>
+    t({
+      description: "Under the title Today's missions: how many of today's missions are done.",
+      message: "{done} of {total} done",
+      values: { done: String(done), total: String(total) },
+    });
 }
 
 /**
@@ -53,7 +56,7 @@ export function MissionListRow({
 }) {
   const content = (
     <>
-      <ListRowLeading className="w-3 justify-center">{mark}</ListRowLeading>
+      <ListRowLeading>{mark}</ListRowLeading>
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle className={cn(muted && "text-muted-foreground")}>
@@ -89,7 +92,7 @@ export function MissionListRow({
         {content}
       </ListRowButton>
 
-      {target.failed && <StepOpenFailed className="-mt-0.5 pb-2.75 pl-6" />}
+      {target.failed && <StepOpenFailed className="-mt-0.5 pb-2.75 pl-7" />}
     </>
   );
 }

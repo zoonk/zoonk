@@ -1,6 +1,7 @@
 "use server";
 
 import { postAsLearner } from "@/lib/api/learner-api";
+import { refusedLimitSchema } from "@/lib/api/refused-limit";
 import { languageConversationStartInputSchema } from "@zoonk/core/language/conversations/contract";
 import { z } from "zod";
 
@@ -17,10 +18,7 @@ const writingSchema = z.object({ generationId: z.string() });
 const limitSchema = z.object({
   error: z.object({
     code: z.literal("CONVERSATION_LIMIT_REACHED"),
-    details: z.object({
-      period: z.enum(["day", "month", "total"]),
-      tier: z.enum(["free", "guest", "plus"]),
-    }),
+    details: refusedLimitSchema.omit({ resource: true }),
   }),
 });
 

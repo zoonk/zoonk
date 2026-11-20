@@ -21,7 +21,7 @@ test("signing in with a real token lands a learner on an interactive Today", asy
     await page.goto(callback.href);
     await expect(page).toHaveURL(/\/today$/u);
     await expect(page.getByRole("heading", { exact: true, name: "Today" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /^Start session/u })).toBeEnabled();
+    await expect(page.getByRole("button", { name: /^Start\b/u })).toBeEnabled();
     await expect(page.getByRole("heading", { name: "This page didn't load" })).toHaveCount(0);
   } finally {
     await context.close();

@@ -3,6 +3,7 @@ package com.zoonk.android.feature.audio
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -18,10 +19,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -33,11 +36,14 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.limitMessage
+import com.zoonk.android.ui.components.limitLifted
+import com.zoonk.android.ui.components.limitWords
 import java.util.UUID
 
 /** What a screen's listen buttons read and do; the clip is asked for only in [speak], from a tap. */
@@ -100,7 +106,12 @@ fun ListenButton(
     ) {
         SpeechStatusIcon(state) { Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(buttonIconSize())) }
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(label)
+        val stop = stringResource(R.string.audio_record_stop)
+        Box(contentAlignment = Alignment.Center) {
+            Text(label, Modifier.alpha(0f).clearAndSetSemantics {})
+            Text(stop, Modifier.alpha(0f).clearAndSetSemantics {})
+            Text(if (state == SpeechState.Playing) stop else label)
+        }
     }
 }
 
@@ -157,7 +168,9 @@ fun SpeechFailedNote(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val reason = limit?.let { limitMessage(it, LimitSubject.Help) } ?: stringResource(R.string.audio_did_not_play)
+        // Once the day a cap gave comes, the note is the plain failure with its Try again.
+        val refusal = limit?.takeUnless { limitLifted(it) }
+        val reason = refusal?.let { limitWords(it, LimitSubject.Help).run { title ?: line } } ?: stringResource(R.string.audio_did_not_play)
         Text(
             text = if (text == null) reason else stringResource(R.string.audio_here_is_what_it_says, reason),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -170,18 +183,17 @@ fun SpeechFailedNote(
                 textAlign = TextAlign.Start,
             )
         }
-        if (limit == null || limit is Limit.SlowDown) {
-            OutlinedButton(onClick = onRetry) {
-                Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, modifier = Modifier.size(buttonIconSize()))
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        // Beside the note's words, small, as the limit's Subscribe it takes the place of.
+        if (refusal == null || refusal is Limit.SlowDown) {
+            OutlinedButton(onClick = onRetry, leadingIcon = { ButtonIcon(R.drawable.ic_refresh) }) {
                 Text(stringResource(R.string.audio_try_again))
             }
         }
-        if (limit != null && navigator != null) {
+        if (refusal != null && navigator != null) {
             LimitActions(
-                limit,
+                refusal,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
+                onSubscribe = { navigator.open(AppRoute.Subscription) },
             )
         }
     }

@@ -26,12 +26,4 @@ class RevealShapeTest {
         assertEquals(today.plusDays(200) to true, far.end to far.endAsMonth)
         assertNull(far.days)
     }
-
-    @Test
-    fun theCurrentPhaseCountsItsDays() {
-        val phase = planOf().roadmapPhases.first()
-
-        assertEquals(PhaseDay(day = 1, days = 21), phase.dayOf(today))
-        assertEquals(PhaseDay(day = 21, days = 21), phase.dayOf(today.plusDays(90)))
-    }
 }

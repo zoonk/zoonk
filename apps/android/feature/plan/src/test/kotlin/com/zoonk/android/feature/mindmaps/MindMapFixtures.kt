@@ -56,8 +56,6 @@ internal fun goalMindMaps(
             mapJson(4, "Electricity", "drawing"),
             mapJson(5, "Light", "writingLessons", lessonsToWrite = 3),
             mapJson(6, "Optics", "available", lessonsToWrite = 2),
-            mapJson(7, "Modern physics", "plusRequired"),
-            mapJson(8, "Nuclear physics", "plusRequired", lessonsToWrite = 2),
             mapJson(1, "Functions", "failed", subject = "mathematics", id = 11),
         ),
     lessonGroups: List<String> = emptyList(),
@@ -77,10 +75,9 @@ internal fun mapLesson(number: Int) = "1e550000-0000-4000-8000-%012d".format(Loc
 internal fun lessonGroupJson(
     chapter: Int,
     lessons: List<Int>,
-    locked: Int = 0,
-) = """{"chapterId":"${mapChapter(chapter)}","count":${lessons.size + locked},"lessonIds":[${lessons.joinToString(
+) = """{"chapterId":"${mapChapter(chapter)}","count":${lessons.size},"lessonIds":[${lessons.joinToString(
     ",",
-) { "\"${mapLesson(it)}\"" }}],"locked":$locked}"""
+) { "\"${mapLesson(it)}\"" }}]}"""
 
 internal fun savedJson(
     kind: String,
@@ -97,16 +94,11 @@ internal fun savedJson(
 internal fun lessonMindMapJson(
     number: Int,
     title: String,
-    locked: Boolean = false,
     saved: Boolean = false,
 ) = """
-    {"lessonId":"${mapLesson(number)}","locked":$locked,"position":$number,"saved":$saved,"title":"$title",
-     "map":${if (locked) {
-    "null"
-} else {
-    """{"shape":"hub","ideas":[{"label":"Waves carry energy","text":"A wave moves energy from place to place, not matter."},
-       {"label":"Pitch","text":"How often a wave repeats sets the pitch you hear."},{"label":"Loudness","text":"A taller wave sounds louder."}]}"""
-}}}
+    {"lessonId":"${mapLesson(number)}","position":$number,"saved":$saved,"title":"$title",
+     "map":{"shape":"hub","ideas":[{"label":"Waves carry energy","text":"A wave moves energy from place to place, not matter."},
+       {"label":"Pitch","text":"How often a wave repeats sets the pitch you hear."},{"label":"Loudness","text":"A taller wave sounds louder."}]}}
     """.trimIndent()
 
 internal fun chapterLessonMaps(

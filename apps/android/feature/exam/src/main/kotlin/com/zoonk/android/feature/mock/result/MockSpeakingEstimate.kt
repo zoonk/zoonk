@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -44,19 +45,17 @@ internal fun SpeakingEstimate(
     val total = number(estimate.total)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(paper.paper)
-        StepTitle(
-            modifier = Modifier.stepHeading(),
-            text =
-                when {
-                    low == null || high == null || !points -> stringResource(R.string.mock_result_no_estimate)
-                    low == high -> stringResource(R.string.mock_result_about_points, number(low), total)
-                    else -> stringResource(R.string.mock_result_about_range, number(low), number(high), total)
-                },
-        )
+        Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Eyebrow(paper.paper)
+            if (points) {
+                ScoreRange(if (low == high) number(low) else stringResource(R.string.mock_result_range, number(low), number(high)))
+            } else {
+                StepTitle(stringResource(R.string.mock_result_no_estimate))
+            }
+        }
         StepDetail(
             when {
-                points -> stringResource(R.string.mock_result_estimate_detail)
+                points -> stringResource(R.string.mock_result_estimate_detail, total)
                 !done -> stringResource(R.string.mock_result_not_every_task)
                 estimate.typed -> stringResource(R.string.mock_result_typed_no_estimate)
                 else -> stringResource(R.string.mock_result_task_not_graded)

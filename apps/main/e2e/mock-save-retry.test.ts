@@ -1,6 +1,6 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
+import { answerForMockHeading, createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
@@ -9,7 +9,7 @@ type Answers = Awaited<ReturnType<typeof createAnytimeMockLearner>>["answers"];
 async function answerShown(page: Page, answers: Answers) {
   const main = page.getByRole("main");
   const heading = (await main.getByRole("heading", { level: 2 }).textContent()) ?? "";
-  const right = answers.get(heading.trim())?.right;
+  const right = answerForMockHeading({ answers, heading }).right;
 
   await page.getByRole("radio", { name: right }).click();
   await expect(page.getByRole("radio", { checked: true, name: right })).toBeVisible();
@@ -54,9 +54,9 @@ test.describe("Mock answers on a bad connection", () => {
 
     await answerShown(page, answers);
 
-    const retrying = page.getByRole("status").filter({ hasText: "Not saved yet · retrying" });
+    const retrying = page.getByRole("status").filter({ hasText: "Try again before you move on" });
     await expect(retrying).toBeVisible();
-    await expect(retrying.getByRole("button", { name: "Retry" })).toBeEnabled();
+    await expect(retrying.getByRole("button", { name: "Try again" })).toBeEnabled();
     await page.clock.fastForward(1000);
     await expect.poll(() => countStoredAnswers(user.id)).toBe(1);
     await expect(retrying).toBeHidden();

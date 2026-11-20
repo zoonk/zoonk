@@ -1,16 +1,14 @@
 "use client";
 
-import { CountUp } from "@zoonk/ui/components/count-up";
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { BEAT_MS } from "@zoonk/ui/lib/motion";
-import { useExtracted, useFormatter } from "next-intl";
-import { BigQuantity } from "../../_components/big-quantity";
-import { daysUntilIsoDate, isoDateToUtc, useFormatIsoDate } from "../../_utils/iso-date";
+import { getIsoDateParts } from "@zoonk/utils/date-format";
+import { useExtracted } from "next-intl";
+import { daysUntilIsoDate, useFormatIsoDate, useIsoToday } from "../../_utils/iso-date";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import { usePlanScreen } from "../../plan/plan-context";
 import { useStudyDaysText } from "../../plan/use-study-days-text";
-import { useRevealPhases } from "./plan-shape";
 import { getAimAhead } from "./schedule-aim";
 
 const READOUT_CLASS = "text-readout text-2xl leading-tight";
@@ -53,48 +51,16 @@ function TimeReadout() {
   );
 }
 
-/** The count lands on the moment's second beat, after the check. */
-function LessonsReadout() {
-  const t = useExtracted();
-  const format = useFormatter();
-  const phases = useRevealPhases();
-  const total = phases.reduce((sum, phase) => sum + phase.lessonsTotal, 0);
-  const done = phases.reduce((sum, phase) => sum + phase.lessonsDone, 0);
-
-  if (total === 0) {
-    return null;
-  }
-
-  return (
-    <Readout
-      label={
-        done > 0
-          ? t(
-              "{count, plural, one {lesson, {done, number} done} other {lessons, {done, number} done}}",
-              { count: total, done },
-            )
-          : t("{count, plural, one {lesson} other {lessons}}", { count: total })
-      }
-    >
-      <CountUp delayMs={BEAT_MS} format={(value) => format.number(value)} value={total} />
-    </Readout>
-  );
-}
-
 /** The month reads first and big, its year small, in the locale's order. */
 function MonthYear({ isoDate }: { isoDate: string }) {
   const locale = useAppLocale();
-
-  const parts = new Intl.DateTimeFormat(locale, {
-    month: "short",
-    timeZone: "UTC",
-    year: "numeric",
-  }).formatToParts(isoDateToUtc(isoDate));
+  const today = useIsoToday();
+  const parts = getIsoDateParts({ isoDate, locale, role: "rowMonth", today, year: "always" });
 
   return parts.map((part, index) =>
     part.type === "year" ? (
       // oxlint-disable-next-line react/no-array-index-key -- the parts are fixed for this date
-      <span className="text-muted-foreground text-[0.8125rem] font-medium" key={index}>
+      <span className="text-muted-foreground text-compact font-medium" key={index}>
         {part.value}
       </span>
     ) : (
@@ -116,11 +82,20 @@ function FinishReadout() {
 
     return (
       <Readout label={goal.kind === "exam" ? t("until the exam") : t("until your date")}>
-        <BigQuantity>
-          {targetDateEstimated
-            ? t("{days, plural, one {About # day} other {About # days}}", { days })
-            : t("{days, plural, one {# day} other {# days}}", { days })}
-        </BigQuantity>
+        {targetDateEstimated ? (
+          <>
+            <span aria-hidden="true">
+              <BigQuantity>
+                {t("{days, plural, one {~# day} other {~# days}}", { days })}
+              </BigQuantity>
+            </span>
+            <span className="sr-only">
+              {t("{days, plural, one {About # day} other {About # days}}", { days })}
+            </span>
+          </>
+        ) : (
+          <BigQuantity>{t("{days, plural, one {# day} other {# days}}", { days })}</BigQuantity>
+        )}
       </Readout>
     );
   }
@@ -137,7 +112,7 @@ function FinishReadout() {
         description:
           'Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027".',
         message: "by {month}",
-        values: { month: formatDate(plan.estimate.endDate, "month") },
+        values: { month: formatDate(plan.estimate.endDate, "sentenceMonth", { year: "always" }) },
       })}
     >
       {aim}
@@ -153,7 +128,6 @@ export function RevealReadouts() {
   return (
     <div className="grid auto-cols-fr grid-flow-col border-y [&>*+*]:border-s">
       <TimeReadout />
-      <LessonsReadout />
       <FinishReadout />
     </div>
   );

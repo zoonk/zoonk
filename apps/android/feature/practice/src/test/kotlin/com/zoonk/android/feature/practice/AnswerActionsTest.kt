@@ -95,7 +95,7 @@ class AnswerActionsTest {
             .assertIsFocused()
             .assertIsNotEnabled()
             .performClick()
-        rule.assertOnlySpinnerBeside("Check")
+        rule.assertOnlySpinnerOver("Check")
         assertEquals(emptyList<AnswerSender>(), sent)
     }
 
@@ -107,7 +107,7 @@ class AnswerActionsTest {
         checking(AnswerSender.Timer)
 
         rule.onNodeWithText("I don't know yet").assertIsFocused().assertIsNotEnabled()
-        rule.assertOnlySpinnerBeside("Check")
+        rule.assertOnlySpinnerOver("Check")
     }
 
     @Test
@@ -122,7 +122,7 @@ class AnswerActionsTest {
             .assertIsFocused()
             .assertIsNotEnabled()
             .performClick()
-        rule.assertOnlySpinnerBeside("Check")
+        rule.assertOnlySpinnerOver("Check")
         assertEquals(emptyList<AnswerSender>(), sent)
     }
 

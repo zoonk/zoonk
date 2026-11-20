@@ -46,7 +46,7 @@ export const warmUpCardsTask: Task<OptionalCountry<WriteWarmUpCardsParams>, Warm
     "Write about 10 guess cards (a question, 2 or 3 options with one right, a short reveal) a new learner plays while their plan is built: the shared validator, then a judge",
   generate: (input) => generateWarmUpCards({ ...input, country: input.country ?? null }),
   id: "warm-up-cards",
-  name: "Warm-Up Cards",
+  name: "Warm-up cards",
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
       check: checkOutput,

@@ -27,7 +27,7 @@ export const exampleLinesTask: Task<
       learnerHomeCountry: input.learnerHomeCountry ?? null,
     }),
   id: "example-lines",
-  name: "Example Lines",
+  name: "Example lines",
   scoreCategories: EXAMPLE_LINES_SCORE_CATEGORIES,
   testCases: [...TEST_CASES, ...PERSONA_TEST_CASES],
 };

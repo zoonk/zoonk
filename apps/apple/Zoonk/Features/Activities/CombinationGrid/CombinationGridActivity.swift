@@ -3,10 +3,6 @@ import SwiftUI
 extension ActivityRenderer {
   static let combinationGrid = ActivityRenderer(
     template: "combinationGrid",
-    badge: .by { content in
-      (try? content.fields(as: CombinationGridFields.self)).map(CombinationGrid.isFillable) == true
-        ? .fillSquare : .readChart
-    },
     grade: ActivityExpectedAnswer.grader(CombinationGridFields.self) {
       .grid(CombinationGrid.cells($0))
     }
@@ -83,11 +79,18 @@ private struct CombinationGridCanvas: View {
     let columns = fields.columns.values
 
     return VStack(alignment: .leading, spacing: 4) {
-      Text(fields.columns.label)
-        .typeStyle(.meta)
-        .foregroundStyle(.mutedForeground)
-
       Grid(horizontalSpacing: 6, verticalSpacing: 6) {
+        // The columns' name stands centered over them, so it never reads as the rows' name.
+        GridRow {
+          Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
+          Text(fields.columns.label)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .gridCellColumns(columns.count)
+        }
+
         GridRow {
           Text(fields.rows.label)
             .typeStyle(.meta)
@@ -206,9 +209,10 @@ private struct CombinationGridCanvas: View {
         } ?? output
 
       return String(
-        localized: "\(counted.count) of \(total) squares: \(what)", table: "Activities",
+        localized: "Squares showing \(what): \(counted.count) of \(total)", table: "Activities",
         comment:
-          "After the check: how many squares of a grid the question counts, and what it counts")
+          "How many squares of the grid show one result, such as \"Squares showing 7: 6 of 36\". The first value is that result."
+      )
     }
 
     if isReadOnly {

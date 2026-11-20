@@ -5,9 +5,8 @@ import { useEffect, useEffectEvent, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
-import { AttachableGoalEntry } from "./entry/goal-attachments";
+import { GoalStartEntry } from "./entry/goal-attachments";
 import { GoalExamples } from "./entry/goal-examples";
-import { GoalLimitNotice } from "./entry/goal-limit-notice";
 import { GuestGoalGate } from "./entry/guest-goal-gate";
 import { useSubmitGoal } from "./entry/material-goal";
 import { type MaterialIntent } from "./entry/material-intent";
@@ -22,7 +21,7 @@ import { type GoalError } from "./goal-errors";
 import { OnboardingHowItWorks } from "./how-it-works";
 import {
   type AttachedSource,
-  type GoalLimitReason,
+  type GoalLimit,
   type OnboardingActions,
   type OnboardingNavigation,
   type OnboardingRoutes,
@@ -155,13 +154,28 @@ type GoalStartFlowProps = {
   canAttach?: boolean;
   defaultGoal?: string;
   fromSharedPlan?: boolean;
-  goalLimit?: GoalLimitReason | null;
+  goalLimit?: GoalLimit | null;
   initialDraft?: OnboardingDraftView | null;
   navigation: OnboardingNavigation;
   routes: OnboardingRoutes;
   /** `/start` itself, which shows the goal another page sent; never a flow embedded in another page. */
   takesHandedOffGoal?: boolean;
 };
+
+/** Embedded in another page, the goal box has no room for examples, so they go beside it. */
+function SectionExamples({ onPick }: { onPick: (goal: string) => void }) {
+  return useOnboardingSection() ? <GoalExamples onPick={onPick} /> : null;
+}
+
+/** "How it works" describes a plan's path, which an explanation offer doesn't have. */
+function showsRail({ atGoalLimit, state }: { atGoalLimit: boolean; state: StartState }): boolean {
+  const offersExplanation =
+    state.kind === "draft" &&
+    state.draft.status === "understood" &&
+    state.draft.understanding?.status === "explain";
+
+  return !atGoalLimit && !offersExplanation;
+}
 
 function GoalStartFlow({
   actions,
@@ -175,7 +189,6 @@ function GoalStartFlow({
   routes,
   takesHandedOffGoal = false,
 }: GoalStartFlowProps) {
-  const section = useOnboardingSection();
   const creation = useGoalCreation();
   const { createExplanation } = useDraftGoals(actions);
   const [attached, setAttached] = useState<AttachedSource[]>([]);
@@ -266,18 +279,22 @@ function GoalStartFlow({
 
   const backToEntry = (words: string) => showEntry({ words });
 
-  const rail = (
+  const atGoalLimit = goalLimit?.reason === "activeGoals";
+  const bar = { backDisabled: creation.isCreating, onBack: getBack({ backToEntry, state }) };
+
+  const rail = showsRail({ atGoalLimit, state }) ? (
     <>
-      {section && state.kind === "entry" && <GoalExamples onPick={submit} />}
+      {state.kind === "entry" && <SectionExamples onPick={submit} />}
       <OnboardingHowItWorks hasAccount={canAttach} />
     </>
-  );
+  ) : null;
 
   return (
     <OnboardingRailProvider rail={rail}>
-      <OnboardingFrame bar={{ onBack: getBack({ backToEntry, state }) }}>
+      <OnboardingFrame bar={bar}>
         {state.kind === "entry" && (
-          <AttachableGoalEntry
+          <GoalStartEntry
+            atGoalLimit={atGoalLimit}
             attach={actions.attach}
             attached={attached}
             canAttach={canAttach}
@@ -285,7 +302,6 @@ function GoalStartFlow({
             error={state.error}
             fromSharedPlan={fromSharedPlan}
             intent={intent}
-            notice={goalLimit && <GoalLimitNotice reason={goalLimit} upFront />}
             onAttachedChange={setAttached}
             onIntentChange={setIntent}
             onSubmit={submit}

@@ -25,7 +25,7 @@ export const changingFactsTask: Task<
   }),
   generate: classifyChangingFacts,
   id: "changing-facts",
-  name: "Changing Facts",
+  name: "Changing facts",
   score: createDeterministicStringFieldScorer<ChangingFactsExpected>({
     expectedLabel: "Expected topic",
     field: "topic",

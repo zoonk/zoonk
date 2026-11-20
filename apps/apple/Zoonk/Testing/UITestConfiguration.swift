@@ -41,6 +41,9 @@
           imageLoader: .live(),
           subscriptionStore: .live(),
           buddyAPI: buddyStatus.map(UITestBuddyAPI.init),
+          certificatesAPI: try fixtures.decode(
+            [OwnedCertificate].self, "ZOONK_UI_TEST_CERTIFICATES"
+          ).map(UITestCertificatesAPI.init),
           learnerSummaryAPI: summary.map {
             UITestLearnerSummaryAPI(summary: makeLearnerSummary($0))
           },
@@ -86,6 +89,18 @@
     }
   }
 
+  private struct UITestCertificatesAPI: CertificatesAPIClient {
+    let certificates: [OwnedCertificate]
+
+    func list(token: String) async throws -> [OwnedCertificate] {
+      return certificates
+    }
+
+    func upNext(token: String) async throws -> [CertificateUpNext] { [] }
+    func claim(token: String, goalID: String) async throws -> [ClaimedCertificate] { [] }
+    func markShown(token: String, code: String) async throws {}
+  }
+
   private struct UITestProgressSnapshot: Decodable, Sendable {
     let activity: ActivityProgress
     let energy: EnergyProgress?
@@ -129,7 +144,11 @@
       EarlierQuestionsPage(questions: [], nextCursor: nil)
     }
 
-    func answer(insightId: String, accepted: Bool, token: String) async throws {}
+    func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
+      async throws -> MemoryInsight?
+    {
+      nil
+    }
   }
 
   private struct UITestTutorAPI: TutorAPIClient {
@@ -154,7 +173,8 @@
     }
 
     func decidePlanChange(
-      goalId: String, changeId: String, decision: PlanChangeDecision, token: String
+      goalId: String, changeId: String, decision: PlanChangeDecision, quote: PlanChangeQuote?,
+      token: String
     ) async throws -> Components.Schemas.PlanChange {
       throw APIError.unavailable
     }

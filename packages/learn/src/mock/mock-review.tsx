@@ -1,52 +1,40 @@
 "use client";
 
 import { type MockReviewEntry } from "@zoonk/core/exams/mocks/view-contract";
-import { CheckIcon, XIcon } from "lucide-react";
+import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  FoldChevron,
+} from "@zoonk/ui/components/collapsible";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
-import { DetailsDrawer } from "../_components/details-drawer";
+import { useId } from "react";
+import { AnswerPair } from "../_components/answer-pair";
 import { ItemCitationNote } from "../_components/item-citation";
+import {
+  LIST_ROW_INTERACTIVE_CLASS,
+  ListGroup,
+  ListRowContent,
+  ListRowDescription,
+  ListRowTitle,
+  ROW_FOLD_CLASS,
+} from "../_components/list-group";
+import {
+  PageSection,
+  PageSectionDetail,
+  PageSectionHeader,
+  PageSectionTitle,
+} from "../_components/page";
+import { FactSegments } from "../_components/task-meta";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
-import { readStatementAnswer } from "../questions/_utils/statement-answer";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
-import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
+import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
-import { useMockScreen } from "./mock-context";
-import { getOptionMarks } from "./mock-keys";
-import { ResultSection } from "./mock-result-section";
 
-/**
- * The review has a pick's words but not its number, so answers other than a statement's are marked
- * by how they went.
- */
-function AnswerMark({
-  answer,
-  entry,
-  right,
-}: {
-  answer: string;
-  entry: MockReviewEntry;
-  right: boolean;
-}) {
-  const { runner } = useMockScreen();
-  const isTrue = readStatementAnswer({ answer, format: entry.format });
-  const marks = getOptionMarks({ format: entry.format, scoring: runner.view.scoring });
-
-  if (isTrue !== null && marks === "numbers") {
-    return isTrue ? 1 : 2;
-  }
-
-  if (isTrue !== null) {
-    return isTrue ? <CheckIcon /> : <XIcon />;
-  }
-
-  return right ? <CheckIcon /> : <XIcon />;
-}
-
-function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
-  const t = useExtracted();
-  const { runner } = useMockScreen();
-  const { answerText } = useTrueFalseLabels(runner.view.trueFalseLabels);
+function ReviewAnswers({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
+  const { answerText } = useTrueFalseLabels(labels);
   const yours = entry.learnerAnswer;
   const right = entry.correctAnswer;
 
@@ -58,120 +46,109 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
     );
 
   return (
-    <>
-      {yours === null && <p className="text-muted-foreground text-sm">{t("You left it blank.")}</p>}
-
-      <AnswerOptionGroup aria-label={t("Your answer and the right one")}>
-        {yours !== null && (
-          <AnswerOption
-            disabled
-            marker={<AnswerMark answer={yours} entry={entry} right={false} />}
-            picked
-            result="wrong"
-          >
-            {line(yours)}
-          </AnswerOption>
-        )}
-        {right !== null && (
-          <AnswerOption
-            disabled
-            marker={<AnswerMark answer={right} entry={entry} right />}
-            picked={false}
-            result="right"
-          >
-            {line(right)}
-          </AnswerOption>
-        )}
-      </AnswerOptionGroup>
-    </>
+    <AnswerPair
+      right={right === null ? null : line(right)}
+      yours={yours === null ? null : line(yours)}
+    />
   );
 }
 
-function ReviewEntry({ continued, entry }: { continued: boolean; entry: MockReviewEntry }) {
+/** The row says which question it is and how it went; a wrong answer needs no word, the list is of them. */
+function useEntryFacts() {
+  const t = useExtracted();
+
+  return (entry: MockReviewEntry): (string | null)[] => [
+    t("Question {number}", { number: String(entry.number) }),
+    entry.area,
+    { blank: t("Blank"), partial: t("Partly right"), wrong: null }[entry.outcome],
+  ];
+}
+
+function ReviewEntryBody({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
   const t = useExtracted();
 
   return (
-    <li className="border-border flex flex-col gap-3 border-b py-5 first:pt-0 last:border-b-0">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">
-          {entry.area
-            ? t("Question {number} · {area}", { area: entry.area, number: String(entry.number) })
-            : t("Question {number}", { number: String(entry.number) })}
-        </p>
+    <div className="flex flex-col gap-3 pt-1 pb-3">
+      {entry.set && <ItemSetStimulus continued={false} set={entry.set} />}
+      {entry.context && (
+        <ItemText className="text-muted-foreground text-reading" text={entry.context} />
+      )}
+      <ReviewAnswers entry={entry} labels={labels} />
+      {entry.explanation && <ItemText className="text-reading" text={entry.explanation} />}
+
+      <div className="-my-1 flex items-center justify-between gap-3">
+        {entry.citation ? (
+          <ItemCitationNote citation={entry.citation} className="text-muted-foreground flex-1" />
+        ) : (
+          <span />
+        )}
         <ContentFeedbackMenu
           label={t("Question options")}
           screen="mock-review"
           target={{ contentId: entry.itemId, contentKind: "item" }}
         />
       </div>
-      {entry.set && <ItemSetStimulus continued={continued} set={entry.set} />}
-      {entry.context && <ItemText className="text-muted-foreground text-sm" text={entry.context} />}
-      <div className="font-medium">
-        <ItemStem text={entry.question} />
-      </div>
-      {entry.outcome === "partial" && (
-        <p className="text-muted-foreground text-sm">
-          {t("Partly right: it earned part of its points.")}
-        </p>
-      )}
-      <ReviewAnswers entry={entry} />
-      {entry.explanation && <ItemText className="text-sm" text={entry.explanation} />}
-      {entry.citation && (
-        <ItemCitationNote citation={entry.citation} className="text-muted-foreground" />
-      )}
+    </div>
+  );
+}
+
+function ReviewEntry({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
+  const facts = useEntryFacts();
+
+  return (
+    <li data-slot="mock-review-entry">
+      <Collapsible>
+        <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "items-center")}>
+          <ListRowContent>
+            <ListRowTitle className="text-pretty">
+              <ItemLine text={entry.question} />
+            </ListRowTitle>
+            <ListRowDescription>
+              <FactSegments facts={facts(entry)} />
+            </ListRowDescription>
+          </ListRowContent>
+          <FoldChevron />
+        </CollapsibleTrigger>
+        <CollapsibleContent className={ROW_FOLD_CLASS}>
+          <ReviewEntryBody entry={entry} labels={labels} />
+        </CollapsibleContent>
+      </Collapsible>
     </li>
   );
 }
 
-function MockReviewList() {
-  const { runner } = useMockScreen();
-  const { review } = runner.view;
-
-  return (
-    <ol className="flex flex-col">
-      {review.map((entry, index) => (
-        <ReviewEntry
-          continued={entry.set !== null && review[index - 1]?.set?.id === entry.set.id}
-          entry={entry}
-          key={entry.itemId}
-        />
-      ))}
-    </ol>
-  );
-}
-
-export function MockReviewSection() {
+/**
+ * Every question the learner missed, as rows of one list: what each asked, and which it was. A row
+ * opens in place to its passage, the two answers and why.
+ */
+export function MockReview({
+  review,
+  trueFalseLabels,
+}: {
+  review: readonly MockReviewEntry[];
+  trueFalseLabels: TrueFalseLabels;
+}) {
   const t = useExtracted();
-  const { runner } = useMockScreen();
-
-  if (runner.view.review.length === 0) {
-    return null;
-  }
-
-  return (
-    <ResultSection title={t("Questions to review")}>
-      <MockReviewList />
-    </ResultSection>
-  );
-}
-
-export function MockReviewDrawer() {
-  const t = useExtracted();
-  const { runner } = useMockScreen();
-  const { review } = runner.view;
+  const titleId = useId();
 
   if (review.length === 0) {
     return null;
   }
 
   return (
-    <DetailsDrawer
-      label={t("{count, plural, one {See the question} other {See the # questions}}", {
-        count: review.length,
-      })}
-      title={t("Questions to review")}
-    >
-      <MockReviewList />
-    </DetailsDrawer>
+    <PageSection aria-labelledby={titleId} className="w-full gap-1" data-slot="mock-review">
+      <PageSectionHeader>
+        <PageSectionTitle id={titleId}>{t("Questions to review")}</PageSectionTitle>
+        <PageSectionDetail>{String(review.length)}</PageSectionDetail>
+      </PageSectionHeader>
+
+      <ListGroup>
+        <ol>
+          {review.map((entry) => (
+            <ReviewEntry entry={entry} key={entry.itemId} labels={trueFalseLabels} />
+          ))}
+        </ol>
+      </ListGroup>
+    </PageSection>
   );
 }

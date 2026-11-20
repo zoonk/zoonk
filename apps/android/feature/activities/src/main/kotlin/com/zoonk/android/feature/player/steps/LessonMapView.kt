@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.player.model.StepContent
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -47,7 +47,7 @@ import com.zoonk.api.models.LessonMapIdeasInner
 @Composable
 internal fun LessonMapStepView(content: StepContent.Map) {
     ReadScene {
-        LabelChip(
+        Eyebrow(
             stringResource(R.string.player_lesson_map),
             Modifier.semantics(mergeDescendants = true) { heading() },
             icon = R.drawable.ic_lan,
@@ -139,7 +139,13 @@ private fun MindMap(
         val slots = if (twoColumns) ideaSlots(ideas.size) else List(ideas.size) { IdeaSlot(0, it + 1) }
         val rows = slotRows(slots)
         val pill = measurables.first().measure(Constraints(maxWidth = (width * PILL_SHARE).toInt()))
-        val cards = measurables.drop(1).map { it.measure(Constraints.fixedWidth(cardWidth)) }
+        val cardParts = measurables.drop(1)
+        val heights = cardParts.map { it.minIntrinsicHeight(cardWidth) }
+        val cards =
+            cardParts.mapIndexed { index, item ->
+                val rowHeight = heights.filterIndexed { other, _ -> slots[other].row == slots[index].row }.max()
+                item.measure(Constraints.fixed(cardWidth, rowHeight))
+            }
         val tops = mutableMapOf<Int, Int>()
         val height =
             rows.fold(0) { top, row ->

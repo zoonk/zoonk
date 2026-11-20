@@ -6,16 +6,20 @@ import { useExtracted } from "next-intl";
 import { type SandboxRuntimeStatus } from "./use-sandbox-runtime";
 
 export function SandboxRunBar({
+  canRun = true,
   hasRun,
   isRunning,
+  isExploring,
   onReset,
   onRetry,
   onRun,
   runtimeName,
   runtimeStatus,
 }: {
+  canRun?: boolean;
   hasRun: boolean;
   isRunning: boolean;
+  isExploring: boolean;
   onReset?: () => void;
   onRetry: () => void;
   onRun: () => void;
@@ -45,31 +49,31 @@ export function SandboxRunBar({
       <div className="flex items-center gap-2">
         {onReset && (
           <Button
-            aria-label={t("Start over with the original code")}
             disabled={isRunning}
             focusableWhenDisabled
+            icon={<RotateCcw aria-hidden="true" />}
             onClick={onReset}
-            size="icon-lg"
+            size="lg"
             variant="outline"
           >
-            <RotateCcw aria-hidden="true" />
+            {t("Start over")}
           </Button>
         )}
 
         <Button
           busy={isRunning}
-          className="flex-1"
+          disabled={!canRun || isRunning}
           icon={<Play aria-hidden="true" />}
           onClick={onRun}
           size="lg"
-          variant={hasRun ? "outline" : "default"}
+          variant="outline"
         >
-          {hasRun ? t("Run again") : t("Run")}
+          {isExploring && hasRun ? t("Run again") : t("Run")}
         </Button>
       </div>
 
       {runtimeStatus === "loading" && (
-        <p aria-live="polite" className="text-muted-foreground text-xs">
+        <p aria-live="polite" className="text-muted-foreground text-xs text-pretty">
           {t("Getting {runtime} ready. This takes a few seconds the first time.", {
             runtime: runtimeName,
           })}

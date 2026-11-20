@@ -32,8 +32,10 @@ struct UnderstoodRow: Identifiable, Equatable {
   let id: String
   let label: LocalizedStringResource
   let value: String
+  var valueFacts: [String] = []
   var badge: LocalizedStringResource?
   var note: String?
+  var noteFacts: [String] = []
   var source: UnderstoodSource?
   var field: UnderstoodField?
   var editValue: String?
@@ -148,7 +150,8 @@ enum UnderstoodRows {
 
       if let aim = languageAim.aim, let label = aimLabel(aim) {
         rows[index] = UnderstoodRow(
-          id: "targetScore", label: rows[index].label, value: "\(aim), \(label)",
+          id: "targetScore", label: rows[index].label,
+          value: "\(languageAim.name(of: aim)), \(label)",
           field: .targetScore, editValue: aim, aimChoices: rows[index].aimChoices)
       }
     }
@@ -158,7 +161,10 @@ enum UnderstoodRows {
         UnderstoodRow(
           id: "level",
           label: LocalizedStringResource(
-            "Level", table: "Onboarding", comment: "Row with the level the learner described"),
+            "What you know", table: "Onboarding",
+            comment:
+              "Row with what the learner said they already know about their goal's subject, such as \"I know a few things\"."
+          ),
           value: levelNote,
           badge: LocalizedStringResource(
             "you said", table: "Onboarding",
@@ -199,8 +205,8 @@ enum UnderstoodRows {
           "Exam country", table: "Plan",
           comment: "Row with the country an exam belongs to, such as Argentina")
         : LocalizedStringResource(
-          "Content country", table: "Plan",
-          comment: "Setting: the country a goal's lessons are about, such as Portugal"),
+          "Country", table: "Onboarding",
+          comment: "Row with the country a goal's lessons are about, such as Portugal"),
       value: country.name,
       badge: badge,
       note: country.lessonVariety.map(lessonLanguageLine),
@@ -235,6 +241,7 @@ enum UnderstoodRows {
       label: LocalizedStringResource(
         "When you study", table: "Onboarding", comment: "Row with when the learner studies"),
       value: parts.joinedFacts(),
+      valueFacts: parts,
       field: .studyTime,
       editValue: schedule.studyTime ?? "")
   }
@@ -339,9 +346,7 @@ enum UnderstoodRows {
         UnderstoodRow(
           id: "targetScore",
           label: facts.kind == "language"
-            ? LocalizedStringResource(
-              "Level you're aiming for", table: "Onboarding",
-              comment: "Row with the language level a goal aims for")
+            ? LocalizedStringResource(stringLiteral: aimTitle(language: facts.targetLanguage))
             : LocalizedStringResource(
               "Target score", table: "Onboarding", comment: "Row with the score an exam aims for"),
           value: target, field: .targetScore, editValue: target))
@@ -384,7 +389,6 @@ enum UnderstoodRows {
       cutoff.edition, cutoff.quota,
     ]
     .compactMap { text($0) }
-    .joinedFacts()
 
     return UnderstoodRow(
       id: "cutoff",
@@ -394,7 +398,7 @@ enum UnderstoodRows {
         localized: LocalizedStringResource(
           "\(cutoff.score.formatted(number)) out of \(cutoff.maxScore.formatted(number))",
           table: "Onboarding", comment: "A score on its scale, such as 7 out of 10")),
-      note: detail.isEmpty ? nil : detail,
+      noteFacts: detail,
       // Named by its site: a search's page titles are often file names ("Notas-minimas.pdf").
       source: URL(string: cutoff.source.url).map { UnderstoodSource(title: nil, url: $0) })
   }
@@ -411,7 +415,7 @@ enum UnderstoodRows {
     // A language certificate's dates come from its official guide, any other exam's from its notice.
     let isGuide = facts.kind == "exam" && facts.targetLanguage != nil
 
-    if let targetDate = facts.targetDate, let date = day(targetDate) {
+    if let targetDate = facts.targetDate, day(targetDate) != nil {
       let official = examDates.first {
         $0.source != nil && !$0.estimated && $0.date == targetDate
       }
@@ -430,10 +434,10 @@ enum UnderstoodRows {
         label: facts.kind == "exam"
           ? examDateLabel
           : LocalizedStringResource(
-            "Deadline", table: "Onboarding", comment: "Row with the date a goal aims for"),
-        value: date.formatted(.dateTime.day().month(.wide).year()),
+            "End date", table: "Onboarding", comment: "Row with the date a goal aims for"),
+        value: PlanDate.format(targetDate, .row, today: from),
         note: official.flatMap { day($0.date) }.map { daysLeft(until: $0, today: today) }
-          ?? suggested.map { noticeDayText($0.date, isGuide: isGuide) },
+          ?? suggested.map { noticeDayText($0.date) },
         source: (official ?? suggested)?.source.flatMap(source),
         field: .targetDate, editValue: targetDate, suggestedDate: suggested?.date)
     }
@@ -453,8 +457,7 @@ enum UnderstoodRows {
     let estimated = examDates.contains(where: \.estimated)
 
     if !estimated,
-      let kept = keptMonthRow(
-        examDates: examDates, month: month, year: year, from: from, isGuide: isGuide)
+      let kept = keptMonthRow(examDates: examDates, month: month, year: year, from: from)
         ?? sittingChoiceRow(examDates: examDates, month: month, from: from)
     {
       return kept
@@ -493,8 +496,7 @@ enum UnderstoodRows {
     examDates: [Components.Schemas.OnboardingExamDate],
     month: Int?,
     year: Int?,
-    from: String,
-    isGuide: Bool
+    from: String
   ) -> UnderstoodRow? {
     let noticeDay = ExamSittings.meantDay(
       days: examDates, month: month, year: year, from: from, goalDate: nil)
@@ -504,14 +506,14 @@ enum UnderstoodRows {
       }
       ?? ExamSittings.namedMonthStart(month: month, year: year, from: from)
 
-    guard let kept, let start = day(kept) else {
+    guard let kept, day(kept) != nil else {
       return nil
     }
 
     return UnderstoodRow(
       id: "targetDate", label: examDateLabel,
-      value: start.formatted(.dateTime.month(.wide).year()).localizedCapitalized,
-      note: noticeDay.map { noticeDayText($0.date, isGuide: isGuide) },
+      value: PlanDate.format(kept, .rowMonth, today: from),
+      note: noticeDay.map { noticeDayText($0.date) },
       source: noticeDay?.source.flatMap(source),
       field: .targetDate, editValue: kept, suggestedDate: noticeDay?.date)
   }
@@ -564,33 +566,24 @@ enum UnderstoodRows {
           table: "Onboarding", comment: "Under an exam date that isn't out yet, from its notice"))
   }
 
-  private static func noticeDayText(_ isoDate: String, isGuide: Bool) -> String {
-    let date = day(isoDate)?.formatted(.dateTime.day().month(.wide).year()) ?? isoDate
-
-    return isGuide
-      ? String(
-        localized: LocalizedStringResource(
-          "The exam's official calendar says \(date).", table: "Onboarding",
-          comment:
-            "The day a language certificate's official calendar gives; the argument is a date like 'May 5, 2027'"
-        ))
-      : String(
-        localized: LocalizedStringResource(
-          "The exam notice says \(date).", table: "Onboarding",
-          comment: "The day an exam's notice gives"))
+  private static func noticeDayText(_ isoDate: String) -> String {
+    let date = PlanDate.format(isoDate, .sentence, today: PlanDate.today())
+    return String(
+      localized: "The official exam date is \(date). Use it?", table: "Onboarding"
+    )
   }
 
   private static func examDaysText(_ days: [Components.Schemas.OnboardingExamDate]) -> String {
     let sameYear = Set(days.map { yearOf($0.date) }).count == 1
 
     return days.indices.compactMap { index -> String? in
-      guard let date = day(days[index].date) else {
+      guard day(days[index].date) != nil else {
         return nil
       }
 
-      return sameYear && index < days.count - 1
-        ? date.formatted(.dateTime.day().month(.wide))
-        : date.formatted(.dateTime.day().month(.wide).year())
+      return PlanDate.format(
+        days[index].date, .row, today: days[index].date,
+        year: sameYear && index < days.count - 1 ? .never : .always)
     }
     .formatted(.list(type: .and))
   }
@@ -606,9 +599,7 @@ enum UnderstoodRows {
           "To be confirmed", table: "Onboarding", comment: "An exam date that isn't out yet"))
     }
 
-    guard let month,
-      let date = Calendar.isoLocal.date(from: DateComponents(year: year, month: month))
-    else {
+    guard let month, let start = PlanDate.date("\(year)-\(month)-1") else {
       return String(
         localized: LocalizedStringResource(
           "\(String(year)), to be confirmed", table: "Onboarding",
@@ -617,7 +608,8 @@ enum UnderstoodRows {
 
     return String(
       localized: LocalizedStringResource(
-        "\(date.formatted(.dateTime.month(.wide).year())), to be confirmed", table: "Onboarding",
+        "\(PlanDate.format(PlanDate.isoDate(start), .rowMonth, today: "", year: .always)), to be confirmed",
+        table: "Onboarding",
         comment: "An exam date that isn't out yet, with the month the learner named"))
   }
 
@@ -650,15 +642,13 @@ enum UnderstoodRows {
   private static func timeOfDay(_ value: String) -> String? {
     let parts = value.split(separator: ":").compactMap { Int($0) }
 
-    guard parts.count >= 2,
-      let date = Calendar.current.date(
-        bySettingHour: parts[0], minute: parts[1], second: 0, of: .now)
-    else {
+    guard parts.count >= 2, (0..<24).contains(parts[0]), (0..<60).contains(parts[1]) else {
       return nil
     }
 
-    return date.formatted(date: .omitted, time: .shortened)
+    return PlanDate.timeOfDay(minutes: parts[0] * 60 + parts[1])
   }
+
 }
 
 extension Date {

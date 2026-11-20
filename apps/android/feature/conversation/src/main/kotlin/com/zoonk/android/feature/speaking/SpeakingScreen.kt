@@ -2,6 +2,7 @@ package com.zoonk.android.feature.speaking
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,15 +45,18 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.openWebPage
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.conversation.CallLimitMessage
@@ -65,8 +69,7 @@ import com.zoonk.android.feature.conversation.inLanguage
 import com.zoonk.android.feature.conversation.spokenList
 import com.zoonk.android.feature.conversation.taskMinutes
 import com.zoonk.android.feature.conversation.taskRoleLabel
-import com.zoonk.android.feature.subscription.PlusMark
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
@@ -75,21 +78,25 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
-import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowWordsStart
+import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageMargin
+import com.zoonk.android.ui.scaffold.pagePadding
+import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.SpeakingPaper
 import com.zoonk.api.models.SpeakingPaperTask
@@ -102,6 +109,7 @@ internal class SpeakingActions(
     val start: CallStarter,
     val open: (AppRoute) -> Unit,
     val openWeb: (String) -> Unit,
+    val refused: suspend (UUID) -> Unit,
 )
 
 /** `/speaking`: the active goal's exam speaking paper, each task practiced on a call. */
@@ -120,15 +128,24 @@ fun SpeakingScreen(
                 start = app.conversations,
                 open = navigator::open,
                 openWeb = { openWebPage(context, it) },
+                refused = app.speaking::refused,
             )
         }
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.speaking_title)) }) { padding ->
-        Box(Modifier.padding(padding)) {
-            if (goalId == null) {
-                PageLoading()
-            } else {
-                SpeakingContent(app.speaking.paper(goalId), goalId, route.task, actions)
+    BoxWithConstraints {
+        // The paper's column, its margins included, names where the way back sits; beside the aside the page has no centered column.
+        val besideAside = supportingPaneBeside(maxWidth)
+        PageScaffold(
+            onBack = { navigator.back() },
+            title = { Text(stringResource(R.string.speaking_title)) },
+            columnWidth = if (besideAside) Dp.Unspecified else PAGE_WIDTH + pageMargin() * 2,
+        ) { padding ->
+            Box(Modifier.padding(padding)) {
+                if (goalId == null) {
+                    PageLoading()
+                } else {
+                    SpeakingContent(app.speaking.paper(goalId), goalId, route.task, actions)
+                }
             }
         }
     }
@@ -174,14 +191,15 @@ private fun Paper(
     openTask: String?,
     actions: SpeakingActions,
 ) {
-    val hero: @Composable () -> Unit = { PaperHero(paper) }
-    PageWithSupportingPane(supportingPane = { Column(Modifier.padding(24.dp)) { hero() } }) { beside ->
+    val hero: @Composable (titled: Boolean) -> Unit = { PaperHero(paper, it) }
+    OpenStartedCall(speakingStart(goalId, actions.start) { actions.refused(goalId) }) { actions.open(AppRoute.Conversation(it.toString())) }
+    PageWithSupportingPane(supportingPane = { Column(Modifier.padding(24.dp)) { hero(false) } }) { beside ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(bottom = 24.dp),
+            contentPadding = pagePadding(),
         ) {
-            if (!beside) item(key = "hero") { Box(Modifier.pageItem().padding(top = 8.dp, bottom = 24.dp)) { hero() } }
+            if (!beside) item(key = "hero") { Box(Modifier.pageItem().padding(bottom = 24.dp)) { hero(true) } }
             item(key = "paper") {
                 SpeakingPaperSection(
                     paper = paper,
@@ -190,6 +208,7 @@ private fun Paper(
                     start = actions.start,
                     open = actions.open,
                     openWeb = actions.openWeb,
+                    onRefused = { actions.refused(goalId) },
                     modifier = Modifier.pageItem(),
                     title = stringResource(R.string.speaking_tasks),
                 )
@@ -199,10 +218,17 @@ private fun Paper(
 }
 
 @Composable
-private fun PaperHero(paper: SpeakingPaper) {
+private fun PaperHero(
+    paper: SpeakingPaper,
+    titled: Boolean,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(stringResource(R.string.speaking_eyebrow))
-        Text(paper.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
+        // In the page's column it's the page's title; in the aside it's only a heading.
+        Text(
+            paper.title,
+            if (titled) Modifier.pageTitle() else Modifier.semantics { heading() },
+            style = MaterialTheme.typography.headlineMedium,
+        )
         Text(
             pluralStringResource(
                 R.plurals.speaking_facts,
@@ -213,22 +239,25 @@ private fun PaperHero(paper: SpeakingPaper) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
         )
-        Text(
-            stringResource(R.string.speaking_official, paper.title),
-            Modifier.padding(top = 8.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 }
 
-private fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
+private fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth()
 
 private val PAGE_WIDTH = 720.dp
 
+/** [goalId]'s speaking task start, which the page holding the paper opens with [OpenStartedCall], above the list the paper scrolls in. */
+@Composable
+fun speakingStart(
+    goalId: UUID,
+    start: CallStarter,
+    refused: suspend () -> Unit,
+): CallStartModel = viewModel(key = "speaking-start:$goalId") { CallStartModel(start, GenerationKind.ExamSpeaking, refused) }
+
 /**
  * Main's `SpeakingPaperSection`, for the speaking page and the exam page: the paper's tasks, each
- * opening to its criteria and its Start, with the card written on the learner's tap. [title] null
+ * opening to its criteria and its Start, with the card written on the learner's tap and the call opened by the page's
+ * [OpenStartedCall] on [speakingStart]. [title] null
  * names it Speaking with the paper's title beside it; [from] is the conversation route's `from`.
  * The task [openTask] names starts open and scrolled into view.
  */
@@ -240,12 +269,13 @@ fun SpeakingPaperSection(
     start: CallStarter,
     open: (AppRoute) -> Unit,
     openWeb: (String) -> Unit,
+    onRefused: suspend () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
     from: String? = null,
 ) {
     val locked = paper.access == SpeakingPaper.Access.PLUS_REQUIRED
-    val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start, GenerationKind.ExamSpeaking) }
+    val model = speakingStart(goalId, start, onRefused)
     val paused = paper.access == SpeakingPaper.Access.CALLS_PAUSED
     var started by rememberSaveable { mutableStateOf<String?>(null) }
     val writing by model.writing.generationId.collectAsStateWithLifecycle()
@@ -255,13 +285,11 @@ fun SpeakingPaperSection(
         started = key
         model.start(CallRequest.ExamSpeaking(goalId, key))
     }
-    val actions = SpeakingActions(start, open, openWeb)
-    OpenStartedCall(model, openCall)
+    val actions = SpeakingActions(start, open, openWeb) { onRefused() }
 
     Column(modifier) {
         Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionHeader(title ?: stringResource(R.string.speaking_section), detail = if (title == null) paper.title else null)
-            if (locked) PlusNotice(onSeePlus = { open(AppRoute.Subscription) }, description = stringResource(R.string.speaking_plus))
             if (paused || model.state == CallStartModel.State.Paused) CallsPaused()
         }
         paper.tasks.forEachIndexed { index, task ->
@@ -271,21 +299,23 @@ fun SpeakingPaperSection(
                 index = index,
                 paper = paper,
                 openAtFirst = task.key == openTask,
-                locked = locked || paused,
+                locked = locked,
+                paused = paused,
                 busy = busy,
                 starting = model.state == CallStartModel.State.Starting && started == task.key,
+                refused = model.state == CallStartModel.State.PlusRequired && started == task.key,
                 onStart = { startTask(task.key) },
+                onSubscribe = { open(AppRoute.Subscription) },
                 onLastResult = openCall,
+                note = if (started == task.key) ({ StartNote(model, actions) }) else null,
             )
         }
-        StartState(model, writing != null, actions)
-        val partner = paper.tasks.any { it.role == SpeakingPaperTask.Role.PARTNER }
-        val footer = stringResource(if (partner) R.string.speaking_footer_partner else R.string.speaking_footer)
+        if (writing != null) {
+            WritingWait(model.writing, hint = stringResource(R.string.speaking_opens_when_ready), modifier = Modifier.padding(top = 16.dp))
+        }
         val official = stringResource(R.string.speaking_official_format)
         Text(
             buildAnnotatedString {
-                append(footer)
-                append(spaceAfterSentence(footer))
                 withLink(
                     LinkAnnotation.Clickable(
                         tag = "official-format",
@@ -318,40 +348,26 @@ internal fun CallsPaused(modifier: Modifier = Modifier) {
     }
 }
 
+/** Why the last Start tapped didn't open, under its task: the limit that refused it, or that it failed. */
 @Composable
-private fun StartState(
+private fun StartNote(
     model: CallStartModel,
-    writing: Boolean,
     actions: SpeakingActions,
 ) {
     val limit = model.limit
     when {
-        writing -> {
-            WritingWait(model.writing, hint = stringResource(R.string.speaking_opens_when_ready), modifier = Modifier.padding(top = 16.dp))
-        }
-
         model.state == CallStartModel.State.Failed && limit != null -> {
             CallLimitMessage(
                 limit,
                 onCreateAccount = { actions.open(AppRoute.Login) },
-                onSeePlus = { actions.open(AppRoute.Subscription) },
-                title =
-                    stringResource(
-                        if (limit.period ==
-                            LimitPeriod.Month
-                        ) {
-                            R.string.speaking_no_time_month
-                        } else {
-                            R.string.speaking_no_time_day
-                        },
-                    ),
+                onSubscribe = { actions.open(AppRoute.Subscription) },
             )
         }
 
         model.state == CallStartModel.State.Failed -> {
             Text(
                 stringResource(R.string.speaking_start_failed),
-                Modifier.padding(top = 12.dp).semantics { liveRegion = LiveRegionMode.Polite },
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -366,13 +382,21 @@ private fun TaskRow(
     paper: SpeakingPaper,
     openAtFirst: Boolean,
     locked: Boolean,
+    paused: Boolean,
     busy: Boolean,
     starting: Boolean,
+    refused: Boolean,
     onStart: () -> Unit,
+    onSubscribe: () -> Unit,
     onLastResult: (UUID) -> Unit,
+    note: (@Composable () -> Unit)?,
 ) {
     val locale = currentLocale()
     var open by rememberSaveable(task.key) { mutableStateOf(openAtFirst) }
+    // The gate shows once the learner tries a locked task, or the server refused its start (which locks the
+    // paper), until a read of the paper says open again.
+    var triedLocked by rememberSaveable(task.key) { mutableStateOf(false) }
+    val gated = (triedLocked || refused) && locked
     val requester = remember { BringIntoViewRequester() }
     LaunchedEffect(openAtFirst) { if (openAtFirst) requester.bringIntoView() }
     val level = paper.level.value
@@ -412,20 +436,19 @@ private fun TaskRow(
         }
     ListRow(
         headline = { Text(inLanguage(task.name, paper.language)) },
-        modifier = Modifier.bringIntoViewRequester(requester),
+        modifier = Modifier.bringIntoViewRequester(requester).bleed(LIST_ITEM_INSET),
         onClick = { open = !open },
         expanded = open,
         leading = { Text(formatNumber(index + 1.0, locale), style = MaterialTheme.zoonkType.data) },
+        leadOnFirstLine = true,
         supporting = {
-            Column {
-                Text(facts)
-                lastTry?.let { Text(it) }
-            }
+            Text(facts)
+            lastTry?.let { Text(it) }
         },
     )
     if (open) {
         Column(
-            Modifier.padding(start = listRowWordsStart(), end = LIST_ITEM_INSET, bottom = 16.dp),
+            Modifier.padding(start = listRowWordsStart() - LIST_ITEM_INSET, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
@@ -433,15 +456,32 @@ private fun TaskRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (!locked) {
-                    Button(busy = starting, onClick = onStart, enabled = !busy, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
-                        Text(stringResource(R.string.speaking_start_task))
+            val lastResult: (@Composable () -> Unit)? =
+                task.lastTry?.let { last ->
+                    {
+                        OutlinedButton(
+                            onClick = { onLastResult(last.conversationId) },
+                        ) { Text(stringResource(R.string.speaking_last_result)) }
                     }
                 }
-                task.lastTry?.let { last ->
-                    OutlinedButton(onClick = { onLastResult(last.conversationId) }) { Text(stringResource(R.string.speaking_last_result)) }
+            if (gated) {
+                TrackShown(AnalyticsEvent.SubscriptionGateShown)
+                SubscribeGate(stringResource(R.string.speaking_gate), onSubscribe, action = lastResult)
+            } else {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (!paused) {
+                        Button(
+                            busy = starting,
+                            onClick = { if (locked) triedLocked = true else onStart() },
+                            enabled = !busy,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                        ) {
+                            Text(stringResource(R.string.speaking_start_task))
+                        }
+                    }
+                    lastResult?.invoke()
                 }
+                note?.invoke()
             }
         }
     }
@@ -451,7 +491,6 @@ private fun TaskRow(
 @Composable
 fun SpeakingPracticeRow(
     title: String,
-    plusRequired: Boolean,
     onOpen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -461,6 +500,5 @@ fun SpeakingPracticeRow(
         onClick = onOpen,
         leading = { KindDot(LearnKind.Conversation) },
         supporting = { Text(stringResource(R.string.speaking_row, title)) },
-        meta = if (plusRequired) ({ PlusMark() }) else null,
     )
 }

@@ -15,6 +15,14 @@ class PlanPhasesTest {
     private val plan = learnPlan()
 
     @Test
+    fun aShortBandNameIsOnePartAndALongerOneIsCutWhereItsLongerPartIsShortest() {
+        assertEquals(listOf("Python basics"), bandNameParts("Python basics"))
+        assertEquals(listOf("Introductions"), bandNameParts("Introductions"))
+        assertEquals(listOf("Ordering food", "at a restaurant"), bandNameParts("Ordering food at a restaurant"))
+        assertEquals(listOf("Supercalifragilistic"), bandNameParts("Supercalifragilistic"))
+    }
+
+    @Test
     fun aPhaseIsWeighedByItsDaysCountingBothEnds() {
         assertEquals(14f, plan.phases[0].weight())
         assertEquals(27f, plan.phases[1].weight())
@@ -24,7 +32,6 @@ class PlanPhasesTest {
     fun todayIsADayOfTheCurrentPhase() {
         val phase = plan.phases[1]
 
-        assertEquals(PhaseDay(14, 27), phase.dayOf(LocalDate.of(2026, 10, 28)))
         assertEquals(13f / 27, phase.shareAt(LocalDate.of(2026, 10, 28), DayPart.Start))
         assertEquals(1f, phase.shareAt(LocalDate.of(2026, 12, 1), DayPart.End))
     }

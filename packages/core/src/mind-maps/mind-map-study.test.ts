@@ -97,7 +97,7 @@ describe("mind maps study page", () => {
     await expect(
       listChapterLessonMaps({ chapterId: beginner.id, goalId: goal.id }),
     ).resolves.toMatchObject({
-      lessonMaps: { lessons: [{ lessonId: extra.id, locked: false, map: lessonMap }] },
+      lessonMaps: { lessons: [{ lessonId: extra.id, map: lessonMap }] },
       status: "ready",
     });
 
@@ -135,8 +135,8 @@ describe("mind maps study page", () => {
     const list = await readyList(goal.id);
 
     expect(list.lessonGroups).toStrictEqual([
-      { chapterId: first, count: 1, lessonIds: [labelless?.id], locked: 0 },
-      { chapterId: beginner.id, count: 1, lessonIds: [extra.id], locked: 0 },
+      { chapterId: first, count: 1, lessonIds: [labelless?.id] },
+      { chapterId: beginner.id, count: 1, lessonIds: [extra.id] },
     ]);
 
     expect(list.firstTab).toBe("lessons");
@@ -178,7 +178,6 @@ describe("mind maps study page", () => {
       chapterId: beginner.id,
       count: 1,
       lessonIds: [extra.id],
-      locked: 0,
     });
 
     await expect(
@@ -211,8 +210,8 @@ describe("mind maps study page", () => {
     const list = await readyList(goal.id);
 
     expect(list.lessonGroups).toStrictEqual([
-      { chapterId: first, count: 2, lessonIds: [shared?.id, firstOther?.id], locked: 0 },
-      { chapterId: beginner.id, count: 1, lessonIds: [extra.id], locked: 0 },
+      { chapterId: first, count: 2, lessonIds: [shared?.id, firstOther?.id] },
+      { chapterId: beginner.id, count: 1, lessonIds: [extra.id] },
     ]);
 
     expect(list.saved).toStrictEqual([
@@ -348,9 +347,9 @@ describe("making all of a goal's chapter maps", () => {
     });
 
     const stop = {
+      availableAt: getUsageResets(new Date()).day.toISOString(),
       period: "day",
       reason: "limitReached",
-      resetsAt: getUsageResets(new Date()).day.toISOString(),
       resource: "mindMap",
     };
 
@@ -466,9 +465,9 @@ describe("making all of a goal's chapter maps", () => {
         needLessons: 2,
         startable: 0,
         stop: {
+          availableAt: getUsageResets(new Date()).day.toISOString(),
           period: "day",
           reason: "limitReached",
-          resetsAt: getUsageResets(new Date()).day.toISOString(),
           resource: "mindMap",
         },
       },
@@ -500,9 +499,9 @@ describe("making all of a goal's chapter maps", () => {
         needLessons: 2,
         startable: 1,
         stop: {
+          availableAt: getUsageResets(new Date()).day.toISOString(),
           period: "day",
           reason: "limitReached",
-          resetsAt: getUsageResets(new Date()).day.toISOString(),
           resource: "mindMap",
         },
       },
@@ -558,6 +557,15 @@ async function guestCourseGoal() {
   return { ...fixture, guest };
 }
 
+function spendGuestDay() {
+  return prisma.guestSpendDay.create({
+    data: {
+      day: getUsagePeriodStarts(new Date()).day,
+      spentMicros: GUEST_DAILY_SPEND_BUDGET_MICROS,
+    },
+  });
+}
+
 function readGuestSpend() {
   return prisma.guestSpendDay.findUnique({ where: { day: getUsagePeriodStarts(new Date()).day } });
 }
@@ -578,7 +586,7 @@ describe("a guest making all chapter maps", () => {
     await expect(requestGoalMindMaps({ goalId: goal.id })).resolves.toMatchObject({
       generations: {
         accepted: [chapters[0]?.id],
-        stop: { period: "total", reason: "limitReached", resetsAt: null, resource: "mindMap" },
+        stop: { availableAt: null, period: "total", reason: "limitReached", resource: "mindMap" },
       },
     });
 
@@ -587,6 +595,35 @@ describe("a guest making all chapter maps", () => {
     await expect(readGuestSpend()).resolves.toMatchObject({
       spentMicros: getEstimatedCostMicros({ generated: true, kind: "mindMap" }),
     });
+  });
+
+  it("offers no new map once the day all guests share is spent, as the claim would refuse", async () => {
+    await spendGuestDay();
+    const { goal } = await guestCourseGoal();
+
+    await expect(readyList(goal.id)).resolves.toMatchObject({
+      createOffer: {
+        startable: 0,
+        stop: { availableAt: null, period: null, reason: "signUpRequired", resource: null },
+      },
+    });
+  });
+
+  it("offers a guest's own maps while the day all guests share has room", async () => {
+    const { goal } = await guestCourseGoal();
+
+    await expect(readyList(goal.id)).resolves.toMatchObject({
+      createOffer: { startable: 1, stop: null },
+    });
+  });
+
+  it("never reads a signed-in learner's offer against the day all guests share", async () => {
+    await spendGuestDay();
+    const { goal } = await writtenCourseGoal();
+    const { createOffer } = await readyList(goal.id);
+
+    expect(createOffer.stop).toBeNull();
+    expect(createOffer.startable).toBe(createOffer.eligible);
   });
 
   it("starts nothing once the day all guests share is spent", async () => {
@@ -602,7 +639,7 @@ describe("a guest making all chapter maps", () => {
     await expect(requestGoalMindMaps({ goalId: goal.id })).resolves.toMatchObject({
       generations: {
         accepted: [],
-        stop: { period: null, reason: "signUpRequired", resetsAt: null, resource: null },
+        stop: { availableAt: null, period: null, reason: "signUpRequired", resource: null },
       },
     });
 

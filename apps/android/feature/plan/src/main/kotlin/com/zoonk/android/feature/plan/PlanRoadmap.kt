@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.plan
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +35,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -54,8 +52,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.Hyphens
-import androidx.compose.ui.text.style.LineBreak
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
@@ -66,12 +62,17 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.zoonk.android.R
-import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.format.FACT_SEPARATOR
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.Geist
+import com.zoonk.android.ui.theme.balanced
+import com.zoonk.android.ui.theme.layoutEnd
+import com.zoonk.android.ui.theme.layoutStart
+import com.zoonk.android.ui.theme.wrappedAs
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlanPhase
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.ceil
@@ -108,7 +109,7 @@ private val FULL_ROADMAP_WIDTH = 560.dp
 
 private data class RoadmapPosition(
     val name: String,
-    val day: String?,
+    val end: PlanDateWords?,
     val number: Int,
     val total: Int,
 )
@@ -120,8 +121,12 @@ private fun roadmapPosition(
 ): RoadmapPosition? {
     val index = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
     val current = phases.getOrNull(index) ?: return null
-    val day = current.dayOf(page.today)?.let { stringResource(R.string.plan_roadmap_day_of, it.day, it.days) }
-    return RoadmapPosition(phaseName(current, page.mocksRequirePlus), day, index + 1, phases.size)
+    return RoadmapPosition(
+        phaseName(current, page.mocksRequirePlus),
+        phaseEnd(page, current),
+        index + 1,
+        phases.size,
+    )
 }
 
 @Composable
@@ -150,19 +155,17 @@ private fun RoadmapCompact(
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             if (position != null) {
                 Text(
-                    text = positionWords(position.name, listOfNotNull(position.day)),
+                    text =
+                        positionWords(
+                            stringResource(R.string.plan_roadmap_phase_number, position.number, position.total),
+                            listOf(position.name),
+                        ),
                     modifier = Modifier.weight(1f),
-                    style = small,
+                    style = small.balanced(),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
-                val spoken = stringResource(R.string.plan_roadmap_phase_of, position.number, position.total)
-                Text(
-                    text = stringResource(R.string.plan_roadmap_number_of, position.number, position.total),
-                    modifier = Modifier.semantics { contentDescription = spoken },
-                    style = small.withTabularFigures(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                position.end?.let { TrailingText(it) }
             } else {
                 Text(
                     text = pluralStringResource(R.plurals.plan_phases_done, phases.size, done, phases.size),
@@ -171,6 +174,7 @@ private fun RoadmapCompact(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            if (onOpen != null) ListRowChevron()
         }
     }
 }
@@ -179,17 +183,17 @@ private fun RoadmapCompact(
 private fun RoadmapMeter(phases: List<PlanPhase>) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val fill = MaterialTheme.colorScheme.tertiary
+    val ink = MaterialTheme.colorScheme.onSurface
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     Canvas(
         Modifier
             .fillMaxWidth()
-            .height(8.dp)
+            .height(6.dp)
             .clearAndSetSemantics {},
     ) {
         val gap = 2.dp.toPx()
         val minimum = 24.dp.toPx()
-        val ring = 1.5.dp.toPx()
         val radius = CornerRadius(size.height / 2)
         val widths = weightedWidths(phases.map { it.weight() }, size.width, List(phases.size) { minimum }, gap)
         var start = 0f
@@ -197,24 +201,30 @@ private fun RoadmapMeter(phases: List<PlanPhase>) {
         phases.forEachIndexed { index, phase ->
             val width = widths[index]
             val left = if (rtl) size.width - start - width else start
+            val current = phase.state == PlanPhase.State.CURRENT
             drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
             val done = width * phase.lessonShare()
             if (done > 0) {
-                drawRoundRect(fill, Offset(if (rtl) left + width - done else left, 0f), Size(done, size.height), radius)
-            }
-            if (phase.state == PlanPhase.State.CURRENT) {
                 drawRoundRect(
-                    color = fill,
-                    topLeft = Offset(left + ring / 2, ring / 2),
-                    size = Size(width - ring, size.height - ring),
-                    cornerRadius = radius,
-                    style = Stroke(ring),
+                    if (current) fill.copy(alpha = CURRENT_FILL_ALPHA) else fill,
+                    Offset(if (rtl) left + width - done else left, 0f),
+                    Size(done, size.height),
+                    radius,
                 )
+            }
+            // Main's `CurrentPhaseMark` in the current phase's middle: an ink dot in a faint ring.
+            if (current) {
+                val middle = Offset(left + width / 2, size.height / 2)
+                drawCircle(ink.copy(alpha = CURRENT_RING_ALPHA), radius = 3.dp.toPx(), center = middle)
+                drawCircle(ink, radius = 2.dp.toPx(), center = middle)
             }
             start += width + gap
         }
     }
 }
+
+private const val CURRENT_FILL_ALPHA = 0.3f
+private const val CURRENT_RING_ALPHA = 0.15f
 
 /** Each part gets its minimum, then its share of what's left by weight, as main's flex rows do. */
 internal fun weightedWidths(
@@ -239,18 +249,22 @@ private fun RoadmapFull(
     val position = roadmapPosition(page, phases)
     val currentIndex = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
     val overrun = page.plan.overrun(page.goal.kind)
-    val names = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus)) }
-    val bands = bandLayout(names, phases.map { it.weight() }, width)
+    val axisDated = page.plan.axisDatedPhases(page.goal.kind, page.today)
+    val weights = phases.map { it.weight() }
+    // Each name's parts kept whole when every band fits its widest part; otherwise the names break between words.
+    val parted = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = true) }
+    val loose = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = false) }
+    val partedBands = bandLayout(parted, weights, width)
+    val looseBands = bandLayout(loose, weights, width)
+    val names = if (partedBands.fitsWords) parted else loose
+    val bands = if (partedBands.fitsWords) partedBands else looseBands
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            // The bands name each phase, so the line names only the place.
             position?.let {
                 Text(
-                    text =
-                        positionWords(
-                            it.name,
-                            listOfNotNull(it.day, stringResource(R.string.plan_roadmap_phase_of, it.number, it.total)),
-                        ),
+                    text = stringResource(R.string.plan_roadmap_phase_number, it.number, it.total),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 2,
@@ -268,7 +282,7 @@ private fun RoadmapFull(
                     width = bands.widths[index],
                     bandHeight = bands.height,
                     isLast = index == phases.lastIndex,
-                    shownWhen = phaseWhen(index, currentIndex),
+                    dated = phase.index in axisDated,
                     overrun = overrun?.takeIf { it.phaseIndex == phase.index },
                     hasOverrun = overrun != null,
                     onOpen = { opened = phase.index },
@@ -292,38 +306,53 @@ private fun RoadmapLegend(
     val style = MaterialTheme.typography.labelSmall
     val color = MaterialTheme.colorScheme.onSurfaceVariant
 
+    // Main's legend: each mark 6dp from its words, the pairs 12dp apart, so a mark reads with its own words.
     Row(
         modifier = Modifier.clearAndSetSemantics {},
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (hasMocks) {
-            KindDot(LearnKind.Mock)
-            Text(stringResource(R.string.plan_mock_exam), style = style, color = color)
+            LegendPair({ KindDot(LearnKind.Mock) }) { Text(stringResource(R.string.plan_mock_exam), style = style, color = color) }
         }
         if (hasChallenges) {
-            Trickster(Modifier.size(14.dp))
-            Text(stringResource(R.string.plan_phase_challenge), style = style, color = color)
+            LegendPair(
+                { PhaseCheckpointMark(page, Modifier.size(16.dp * glyphScale())) },
+            ) { Text(challengeName(page), style = style, color = color) }
         }
         if (page.finish != null) {
-            Icon(painterResource(R.drawable.ic_flag), contentDescription = null, modifier = Modifier.size(14.dp), tint = color)
-            Text(stringResource(if (page.isExam) R.string.plan_exam_day else R.string.plan_goal_date), style = style, color = color)
+            LegendPair(
+                {
+                    Icon(
+                        painterResource(R.drawable.ic_flag),
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp * glyphScale()),
+                        tint = color,
+                    )
+                },
+            ) {
+                val finish =
+                    when {
+                        page.isExam -> R.string.plan_exam_date
+                        page.plan.schedule.targetDate != null -> R.string.plan_deadline
+                        else -> R.string.plan_roadmap_you_finish
+                    }
+                Text(stringResource(finish), style = style, color = color)
+            }
         }
     }
 }
 
-/** Main's `getPhaseWhen`: what the axis says under a phase, "Today" under the current one and the start of each after it. */
-private enum class PhaseWhen { Today, Start }
-
-private fun phaseWhen(
-    position: Int,
-    currentIndex: Int,
-): PhaseWhen? =
-    when {
-        position == currentIndex -> PhaseWhen.Today
-        currentIndex != -1 && position > currentIndex -> PhaseWhen.Start
-        else -> null
+@Composable
+private fun LegendPair(
+    mark: @Composable () -> Unit,
+    words: @Composable () -> Unit,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        mark()
+        words()
     }
+}
 
 /** A band's name; a done phase's check sits in its first line, so a narrow band's lines get its whole width. */
 private class BandName(
@@ -335,25 +364,56 @@ private class BandName(
 private fun bandName(
     phase: PlanPhase,
     name: String,
-): BandName =
-    if (phase.state == PlanPhase.State.DONE) {
-        val text =
-            buildAnnotatedString {
-                appendInlineContent(CHECK, "✓")
-                append(name)
-            }
-        BandName(name, text, listOf(AnnotatedString.Range(CHECK_MARK, 0, 1)))
-    } else {
-        BandName(name, AnnotatedString(name), emptyList())
-    }
+    keepParts: Boolean,
+): BandName {
+    // Each part keeps its words together, so a band is as wide as its widest part and breaks only between parts.
+    val shown = if (keepParts) bandNameParts(name).joinToString(" ") { it.replace(' ', NO_BREAK_SPACE) } else name
+    val (mark, placeholder) =
+        when (phase.state) {
+            PlanPhase.State.DONE -> CHECK to CHECK_MARK
+            PlanPhase.State.CURRENT -> CURRENT to CURRENT_MARK
+            else -> return BandName(name, AnnotatedString(shown), emptyList())
+        }
+    val text =
+        buildAnnotatedString {
+            appendInlineContent(mark, "•")
+            append(WORD_JOINER)
+            append(shown)
+        }
+    return BandName(name, text, listOf(AnnotatedString.Range(placeholder, 0, 1)))
+}
+
+/** Main's `splitBandName`: a short name is one part; a longer one is cut between words where its longer part is shortest. */
+internal fun bandNameParts(name: String): List<String> {
+    val words = name.split(" ")
+    if (name.length <= ONE_LINE_NAME_LENGTH || words.size == 1) return listOf(name)
+    val cut = (1 until words.size).minBy { maxOf(words.take(it).joinToString(" ").length, words.drop(it).joinToString(" ").length) }
+    return listOf(words.take(cut).joinToString(" "), words.drop(cut).joinToString(" "))
+}
+
+private const val ONE_LINE_NAME_LENGTH = 16
+private const val NO_BREAK_SPACE = '\u00A0'
+private const val WORD_JOINER = "\u2060"
+
+/** A date carries the data face (withData); a word on the axis, such as "Today", keeps the text face. */
+@Composable
+internal fun axisStyle() =
+    MaterialTheme.zoonkType.data
+        .copy(fontFamily = Geist)
+        .wrappedAs(MaterialTheme.typography.labelMedium)
 
 /** Names wrap and hyphenate rather than being cut. */
 @Composable
-private fun bandStyle() = MaterialTheme.typography.labelMedium.copy(hyphens = Hyphens.Auto, lineBreak = LineBreak.Heading)
+private fun bandStyle() =
+    MaterialTheme.typography.labelMedium
+        .copy(hyphens = Hyphens.Auto)
+        .balanced()
 
 private class BandLayout(
     val widths: List<Dp>,
     val height: Dp,
+    /** Every band is at least as wide as its name's longest unbreakable run. */
+    val fitsWords: Boolean,
 )
 
 /**
@@ -382,10 +442,11 @@ private fun bandLayout(
         val gap = BAND_GAP.roundToPx()
         val total = width.roundToPx()
         val words = names.map { max(narrowest, ceil(measure(it).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding) }
-        val minimums = if (words.sum() + gap * (names.size - 1) <= total) words else List(names.size) { narrowest }
+        val fitsWords = words.sum() + gap * (names.size - 1) <= total
+        val minimums = if (fitsWords) words else List(names.size) { narrowest }
         val widths = weightedWidths(weights, total.toFloat(), minimums.map(Int::toFloat), gap.toFloat()).map { floor(it).toInt() }
         val text = names.indices.maxOfOrNull { measure(names[it], (widths[it] - padding).coerceAtLeast(0)).size.height } ?: 0
-        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp())
+        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp(), fitsWords)
     }
 }
 
@@ -397,7 +458,7 @@ private fun PhaseColumn(
     width: Dp,
     bandHeight: Dp,
     isLast: Boolean,
-    shownWhen: PhaseWhen?,
+    dated: Boolean,
     overrun: PlanOverrun?,
     hasOverrun: Boolean,
     onOpen: () -> Unit,
@@ -405,12 +466,13 @@ private fun PhaseColumn(
     val todayShare = if (phase.state == PlanPhase.State.CURRENT) phase.shareAt(page.today, DayPart.Start) else null
 
     Column(Modifier.width(width)) {
-        PhaseBand(page, phase, name, bandHeight, isLast, shownWhen, todayShare, onOpen)
+        PhaseBand(page, phase, name, bandHeight, todayShare, onOpen)
         PhaseLane(page, phase, isLast, overrun, hasOverrun)
-        PhaseAxis(page, phase, isLast, shownWhen == PhaseWhen.Start, todayShare, overrun, hasOverrun, width)
+        PhaseAxis(page, phase, isLast, dated, todayShare, overrun, hasOverrun, width)
     }
 }
 
+private const val COVERED_ALPHA = 0.3f
 private val BAND_HEIGHT = 32.dp
 private val BAND_GAP = 3.dp
 private val BAND_PADDING_X = 10.dp
@@ -418,6 +480,8 @@ private val BAND_PADDING_Y = 4.dp
 private val MIN_BAND_WIDTH = 72.dp
 private const val CHECK = "check"
 private val CHECK_MARK = Placeholder(1.5.em, 1.2.em, PlaceholderVerticalAlign.TextCenter)
+private const val CURRENT = "current"
+private val CURRENT_MARK = Placeholder(1.em, 1.2.em, PlaceholderVerticalAlign.TextCenter)
 
 @Composable
 private fun PhaseBand(
@@ -425,22 +489,12 @@ private fun PhaseBand(
     phase: PlanPhase,
     name: BandName,
     height: Dp,
-    isLast: Boolean,
-    shownWhen: PhaseWhen?,
     todayShare: Float?,
     onOpen: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
-    val whenWords =
-        phase.start?.let { start ->
-            when (shownWhen) {
-                PhaseWhen.Today -> stringResource(R.string.plan_today)
-                PhaseWhen.Start -> stringResource(R.string.plan_roadmap_from, formatPlanDate(start, page.today, currentLocale()))
-                null -> null
-            }
-        }
-    val until = page.finish?.takeIf { isLast }?.let { roadmapUntil(it, page.today) }
-    val label = listOfNotNull(name.plain + phaseStateWords(phase.state), whenWords, until).joinToString(". ")
+    // "Foundations, you are here, Ends Feb 16, 2027": the end every other place names the phase by.
+    val label = listOfNotNull(name.plain + phaseStateWords(phase.state), phaseEnd(page, phase)?.spoken).joinToString(", ")
     val (container, content) =
         when (phase.state) {
             PlanPhase.State.CURRENT -> colors.surfaceContainerHighest to colors.onSurface
@@ -469,8 +523,8 @@ private fun PhaseBand(
         shape = MaterialTheme.shapes.small,
         color = container,
         contentColor = content,
-        border = if (current) BorderStroke(1.5.dp, colors.tertiary) else null,
     ) {
+        // The part already covered, tinted under the name: a line at the band's edge read as a thicker ring.
         Box(
             Modifier.drawBehind {
                 if (current &&
@@ -478,7 +532,7 @@ private fun PhaseBand(
                 ) {
                     val width = size.width * share
                     val left = if (layoutDirection == LayoutDirection.Rtl) size.width - width else 0f
-                    drawRect(colors.tertiary, Offset(left, size.height - 2.dp.toPx()), Size(width, 2.dp.toPx()))
+                    drawRect(colors.tertiary.copy(alpha = COVERED_ALPHA), Offset(left, 0f), Size(width, size.height))
                 }
             },
         ) {
@@ -488,6 +542,15 @@ private fun PhaseBand(
                 style = bandStyle(),
                 inlineContent =
                     mapOf(
+                        // Main's `CurrentPhaseMark` before the current phase's name: an ink dot in a faint ring.
+                        CURRENT to
+                            InlineTextContent(CURRENT_MARK) {
+                                Canvas(Modifier.fillMaxSize()) {
+                                    val middle = Offset(5.dp.toPx(), size.height / 2)
+                                    drawCircle(ink.copy(alpha = CURRENT_RING_ALPHA), radius = 5.dp.toPx(), center = middle)
+                                    drawCircle(ink, radius = 3.dp.toPx(), center = middle)
+                                }
+                            },
                         CHECK to
                             InlineTextContent(CHECK_MARK) {
                                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
@@ -526,7 +589,18 @@ private fun PhaseLane(
     ) {
         FractionRow(Modifier.fillMaxSize(), endRoom = FLAG_ROOM.takeIf { flag }) {
             mockShare?.let { At(it, Anchor.Center) { KindDot(LearnKind.Mock) } }
-            challengeShare?.let { At(it, if (it > PHASE_END_SHARE) Anchor.End else Anchor.Center) { Trickster(Modifier.size(14.dp)) } }
+            challengeShare?.let {
+                At(
+                    it,
+                    if (it >
+                        PHASE_END_SHARE
+                    ) {
+                        Anchor.End
+                    } else {
+                        Anchor.Center
+                    },
+                ) { PhaseCheckpointMark(page, Modifier.size(16.dp)) }
+            }
             overrun?.let {
                 At(
                     it.share,
@@ -552,38 +626,33 @@ private fun PhaseAxis(
     hasOverrun: Boolean,
     width: Dp,
 ) {
-    val style =
-        MaterialTheme.typography.labelSmall
-            .withTabularFigures()
-            .copy(lineBreak = LineBreak.Heading)
+    val style = axisStyle()
     val faint = MaterialTheme.colorScheme.onSurfaceVariant
     val ink = MaterialTheme.colorScheme.onSurface
-    val overrunSide = overrun?.let { if (it.share < MIDDLE_SHARE) Anchor.Start else Anchor.End }
-    val start = phase.start?.takeIf { labelled && overrunSide != Anchor.Start && (!isLast || width >= 160.dp) }
-    val finishShown = isLast && overrunSide != Anchor.End
+    val axisFinish = page.plan.axisFinish(page.goal.kind, page.today)
+    val goalShare = overrun?.share?.takeIf { axisFinish != null }
+    val goalAtEnd = goalShare != null && goalShare >= MIDDLE_SHARE
     val finishWords = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
-    val examFinish =
+    val goalDate =
         finishWords?.let {
             if (page.isExam &&
                 width >= 128.dp
             ) {
-                stringResource(R.string.plan_exam_date_label, it.text)
+                withData(stringResource(R.string.plan_exam_date_label, it.text), it.text)
             } else {
-                it.text
+                withData(it.text, it.text)
             }
         }
-    val overrunEnd = phase.end?.takeIf { hasOverrun }
+    val end = phaseEnd(page, phase)?.let { if (it.date) withData(it.text, it.text) else AnnotatedString(it.text) }
     val labels =
         listOfNotNull(
-            todayShare?.takeIf { overrun == null }?.let { AxisLabel(stringResource(R.string.plan_today), ink, it) },
-            start?.let {
-                AxisLabel(formatPlanDate(it, page.today, currentLocale(), month = phase.kind == PlanPhase.Kind.LEARN), faint, 0f)
-            },
-            overrun?.let { at -> examFinish?.let { AxisLabel(it, ink, at.share) } },
+            todayShare?.takeIf { goalShare == null }?.let { AxisLabel(AnnotatedString(stringResource(R.string.plan_today)), ink, it) },
+            goalShare?.let { at -> goalDate?.let { AxisLabel(it, ink, at) } },
+            end?.takeIf { labelled && !goalAtEnd }?.let { AxisLabel(it, faint, 1f) },
             when {
-                !finishShown -> null
-                overrunEnd != null -> AxisLabel(formatPlanDate(overrunEnd, page.today, currentLocale()), faint, 1f)
-                examFinish != null -> AxisLabel(examFinish, ink, 1f)
+                !isLast || goalAtEnd -> null
+                hasOverrun -> end?.let { AxisLabel(it, faint, 1f) }
+                axisFinish != null -> goalDate?.let { AxisLabel(it, ink, 1f) }
                 else -> null
             },
         )
@@ -595,7 +664,7 @@ private fun PhaseAxis(
                     it.text,
                     style = style,
                     color = it.color,
-                    textAlign = if (it.share < MIDDLE_SHARE) TextAlign.Start else TextAlign.End,
+                    textAlign = if (it.share < MIDDLE_SHARE) layoutStart() else layoutEnd(),
                 )
             }
         },
@@ -613,7 +682,7 @@ private fun PhaseAxis(
 }
 
 private class AxisLabel(
-    val text: String,
+    val text: AnnotatedString,
     val color: Color,
     val share: Float,
 )

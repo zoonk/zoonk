@@ -218,7 +218,7 @@ const pictureEntries: PreviewEntry[] = [
     screen: (id) =>
       explanationStep(
         { image: { alt: BRAIN.alt, prompt: BRAIN.alt }, text: BRAIN.text, title: BRAIN.title },
-        { id, image: inlineImage({ alt: BRAIN.alt, id: `${id}-image` }) },
+        { id, image: inlineImage({ alt: BRAIN.alt, id: `${id}-image`, kind: "scene" }) },
       ),
   }),
   entry({

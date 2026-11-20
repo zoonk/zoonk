@@ -45,13 +45,13 @@ internal fun PlanSheet(
 @Composable
 internal fun ColumnScope.PlanSheetContent(
     title: String,
-    description: String,
+    description: String?,
     body: @Composable ColumnScope.() -> Unit,
     actions: @Composable ColumnScope.() -> Unit,
 ) {
     Column(Modifier.padding(horizontal = SHEET_MARGIN), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-        Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        description?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
     }
     Column(
         modifier =
@@ -78,7 +78,7 @@ internal fun ColumnScope.PlanSheetContent(
 internal fun ColumnScope.PlanChangeApplied(
     page: PlanPageState,
     title: String,
-    description: String,
+    description: String?,
     latest: EditorChange,
     @DrawableRes icon: Int,
     onUndo: () -> Unit,
@@ -97,6 +97,7 @@ internal fun ColumnScope.PlanChangeApplied(
                         ?.toJavaLocalDate(),
                 fullCourse = page.plan.schedule.fullCourse,
                 icon = icon,
+                dateKind = page.dateKind,
             )
         },
         actions = {

@@ -25,32 +25,25 @@ private struct ActivityTiles: View {
     StatTileGrid(columns: [3, 2, 1], minimumWidth: minimumWidth) {
       StatTile(
         label: Text(
-          "Days studied", tableName: "Progress", comment: "Tile: how many days the learner studied"),
+          "Days studied", tableName: "Progress",
+          comment:
+            "Tile: how many days the learner studied"),
         value: Text(summary.learningDays, format: .number),
-        systemImage: "calendar.badge.checkmark", tone: .success,
-        detail: Text(
-          "Any day you studied", tableName: "Progress",
-          comment: "Under the study days: what counts as one")
-      )
+        systemImage: "calendar.badge.checkmark", tone: .success)
 
       StatTile(
         label: Text(
           "Lessons", tableName: "Progress", comment: "Tile: how many lessons the learner finished"),
         value: Text(summary.totalLessonCompletions, format: .number),
-        systemImage: "book", tone: .success,
-        detail: Text(
-          "Finished", tableName: "Progress",
-          comment: "Under the lessons count: lessons finished, agreeing with lessons")
-      )
+        systemImage: "book", tone: .success)
 
       StatTile(
         label: Text(
-          "Time", tableName: "Progress", comment: "Tile: how long the learner has studied in total"),
+          "Time", tableName: "Progress",
+          comment:
+            "Tile: how long the learner has studied in total"),
         quantity: progressLearningTime(summary.totalLearningSeconds),
-        systemImage: "clock",
-        detail: Text(
-          "Studying in total", tableName: "Progress", comment: "Under the learning time: all of it")
-      )
+        systemImage: "clock")
     }
   }
 }
@@ -59,51 +52,75 @@ struct ActivityCalendar: View {
   let days: [ActivityProgressDay]
 
   var body: some View {
-    let maximum = days.map(\.activitiesCompleted).max() ?? 0
-    let formatDay = calendarDayFormatter(newest: days.last?.date)
-    let studied = days.count(where: { $0.activitiesCompleted > 0 })
+    let maximumSeconds = days.map(\.timeSpentSeconds).max() ?? 0
+    let today = PlanDate.today()
 
     StatsCalendar(
-      title: Text(
-        "Past 12 months", tableName: "Progress",
-        comment: "Title of a calendar of the past year's days"),
       gridLabel: Text(
-        "Activity by day", tableName: "Progress", comment: "Spoken name of the study days calendar"),
+        "Activity by day", tableName: "Progress"),
+      legendTitle: Text(
+        "Study time", tableName: "Progress",
+        comment:
+          "Names the legend of a calendar of study days: a darker square means more minutes studied that day."
+      ),
       legendLabel: Text(
         "Activity from less to more", tableName: "Progress",
-        comment: "Spoken key of the study days calendar's shades"),
-      low: Text("Less", tableName: "Progress", comment: "Low end of the study days calendar's key"),
+        comment:
+          "Legend of a heatmap, from the lightest to the darkest squares."),
+      low: Text(
+        "Less", tableName: "Progress",
+        comment:
+          "The light end of a heatmap's legend: less activity."),
       high: Text(
-        "More", tableName: "Progress", comment: "High end of the study days calendar's key"),
+        "More", tableName: "Progress",
+        comment:
+          "The dark end of a heatmap's legend: more activity."),
       shades: [
         Color.surface3, Color.success.opacity(0.25), Color.success.opacity(0.45),
         Color.success.opacity(0.7), Color.success,
       ],
-      days: days.map { day in
-        CalendarDay(
-          date: day.date,
-          step: CalendarSteps.activity(day.activitiesCompleted, maximum: maximum),
-          detail: ChartPointDetail(
-            label: formatDay(day.date), value: activityCount(day.activitiesCompleted)),
-          value: Double(day.activitiesCompleted))
-      },
+      days: days.map { $0.calendarDay(maximumSeconds: maximumSeconds, today: today) },
       chartTitle: String(
         localized: "Activity by day", table: "Progress",
         comment: "Spoken name of the study days calendar"),
-      chartSummary: studied == 0
-        ? String(
-          localized: "No study in the past 12 months", table: "Progress",
-          comment: "Summary of a study days calendar without a study day")
-        : String(
-          localized: "\(studied) study days in the past 12 months", table: "Progress",
-          comment: "Summary of the study days calendar: how many days had study"))
+      valueText: { progressLearningTime(Int(($0 * 60).rounded())) },
+      chartSummary: { visibleDays, months in
+        let studied = visibleDays.count(where: { $0.step > 0 })
+        return studied == 0
+          ? String(localized: "No study in the past \(months) months", table: "Progress")
+          : String(
+            localized: "\(studied) study days in the past \(months) months", table: "Progress")
+      })
+  }
+}
+
+extension ActivityProgressDay {
+  /// Shaded and played by minutes studied, as main's calendar is.
+  func calendarDay(maximumSeconds: Int, today: String) -> CalendarDay {
+    CalendarDay(
+      date: date,
+      step: CalendarSteps.activity(
+        studied: activitiesCompleted > 0, seconds: timeSpentSeconds,
+        maximumSeconds: maximumSeconds),
+      detail: ChartPointDetail(label: PlanDate.text(date.id, today: today), value: studyDetail),
+      value: Double(timeSpentSeconds) / 60)
   }
 
-  private func activityCount(_ count: Int) -> String {
-    count == 0
-      ? String(localized: "No study", table: "Progress", comment: "A calendar day without study")
-      : String(
-        localized: "\(count) activities", table: "Progress",
-        comment: "A calendar day's lessons, reviews and practice finished")
+  /// Main's day detail: the time studied, then the lessons finished.
+  var studyDetail: String {
+    if activitiesCompleted == 0 {
+      return String(
+        localized: "No study", table: "Progress", comment: "A calendar day without study")
+    }
+
+    let time = timeSpentSeconds > 0 ? progressLearningTime(timeSpentSeconds) : nil
+    let lessons =
+      lessonCompletions > 0
+      ? String(localized: "\(lessonCompletions) lessons", table: "Progress") : nil
+    let facts = [time, lessons].compactMap(\.self)
+
+    return facts.isEmpty
+      ? String(localized: "Studied", table: "Progress", comment: "A calendar day with study")
+      : facts.joinedFacts()
   }
 }

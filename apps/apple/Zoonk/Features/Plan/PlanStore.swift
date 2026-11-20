@@ -13,9 +13,11 @@ final class PlanStore {
   @ObservationIgnored let cache: AppCache
   @ObservationIgnored private let calendar: Calendar
   @ObservationIgnored private let now: @MainActor () -> Date
+  @ObservationIgnored private var basesAdvices: [String: Resource<PlanBasesAdvice>] = [:]
   @ObservationIgnored private var languageStandings: [String: Resource<LanguageStanding>] = [:]
   @ObservationIgnored private var languageUnitLists: [String: Resource<LanguageUnitsOverview>] = [:]
   @ObservationIgnored private var outlines: [String: Resource<SkillOutline>] = [:]
+  @ObservationIgnored private var timesToCover: [String: Resource<TimeToCover>] = [:]
   @ObservationIgnored private var plans: [String: Resource<PlanRead>] = [:]
   @ObservationIgnored private var resumePreviews: [String: Resource<Bool>] = [:]
   @ObservationIgnored private var standings: [String: Resource<GoalStanding>] = [:]
@@ -45,6 +47,8 @@ final class PlanStore {
     let goalId: String
   }
 
+  @ObservationIgnored private let saves: LearnerSaves
+
   init(
     api: any PlanAPIClient, cache: AppCache, calendar: Calendar = .current,
     now: @escaping @MainActor () -> Date = { .now }
@@ -53,6 +57,7 @@ final class PlanStore {
     self.cache = cache
     self.calendar = calendar
     self.now = now
+    saves = LearnerSaves(cache: cache)
   }
 
   func plan(goalId: String) -> Resource<PlanRead> {
@@ -94,6 +99,35 @@ final class PlanStore {
 
   func setSuggestionState(_ key: SuggestionKey, _ change: (inout SuggestionState) -> Void) {
     change(&suggestionStates[key, default: SuggestionState()])
+  }
+
+  /// The server plans the goal with every prerequisite in depth to answer, so only the prerequisites
+  /// sheet reads it, and a reopen shows the answer it already has. Read `freshValue`, as for
+  /// `timeToCover`.
+  func basesAdvice(goalId: String) -> Resource<PlanBasesAdvice> {
+    resource(&basesAdvices, goalId) { api, token in
+      let advice = try await api.basesAdvice(token: token, goalId: goalId)
+      return try Self.ready(advice, advice.ready)
+    }
+  }
+
+  /// The server plans the goal at each daily time to answer, so it's read only where the learner
+  /// changes their time, never by the plan page. A plan change invalidates it: read `freshState`,
+  /// since the answer it had describes the plan before that change.
+  func timeToCover(goalId: String) -> Resource<TimeToCover> {
+    resource(&timesToCover, goalId) { api, token in
+      let time = try await api.timeToCover(token: token, goalId: goalId)
+      return try Self.ready(time, time.ready)
+    }
+  }
+
+  /// An answer the server hasn't worked out yet reads as a failure, so the next visit asks again.
+  nonisolated private static func ready<Answer>(_ answer: Answer, _ ready: Bool) throws -> Answer {
+    guard ready else {
+      throw APIError.unavailable
+    }
+
+    return answer
   }
 
   func syllabus(goalId: String) -> Resource<GoalSyllabus> {
@@ -144,34 +178,42 @@ final class PlanStore {
   func setStatus(_ status: GoalStatusChange, goalId: String) async
     -> MutationResult<GoalStatusOutcome>
   {
-    await write { api, token in
-      try await api.setStatus(token: token, goalId: goalId, status: status)
-    } changed: {
-      $0 == .saved
+    await saves.save {
+      await self.write { api, token in
+        try await api.setStatus(token: token, goalId: goalId, status: status)
+      } changed: {
+        $0 == .saved
+      }
     }
   }
 
   func rename(goalId: String, displayName: String) async -> MutationResult<Bool> {
-    await write { api, token in
-      try await api.rename(token: token, goalId: goalId, displayName: displayName)
-    } changed: {
-      $0
+    await saves.save {
+      await self.write { api, token in
+        try await api.rename(token: token, goalId: goalId, displayName: displayName)
+      } changed: {
+        $0
+      }
     }
   }
 
   func continueAtNextLevel(goalId: String) async -> MutationResult<Bool> {
-    await write { api, token in
-      try await api.continueAtNextLevel(token: token, goalId: goalId)
-    } changed: {
-      $0
+    await saves.save {
+      await self.write { api, token in
+        try await api.continueAtNextLevel(token: token, goalId: goalId)
+      } changed: {
+        $0
+      }
     }
   }
 
   func skipAlphabet(goalId: String) async -> MutationResult<Bool> {
-    await write { api, token in
-      try await api.skipAlphabet(token: token, goalId: goalId)
-    } changed: {
-      $0
+    await saves.save {
+      await self.write { api, token in
+        try await api.skipAlphabet(token: token, goalId: goalId)
+      } changed: {
+        $0
+      }
     }
   }
 
@@ -181,31 +223,35 @@ final class PlanStore {
     FocusTestSummary
   > {
     let api = api
-    let result = await cache.mutate { identity in
-      try await api.updateFocusTest(
-        token: identity.bearerToken, goalId: goalId, controls: controls)
-    }
 
-    if case .done(let saved) = result {
-      plans[goalId]?.update { read in
-        var read = read
-        read.plan.focusTest = saved
-        return read
+    return await saves.save {
+      let result = await self.cache.mutate { identity in
+        try await api.updateFocusTest(
+          token: identity.bearerToken, goalId: goalId, controls: controls)
       }
-      cache.invalidate([.goals, .userSession])
-    }
 
-    return result
+      if case .done(let saved) = result {
+        self.plans[goalId]?.update { read in
+          var read = read
+          read.plan.focusTest = saved
+          return read
+        }
+        self.cache.invalidate([.goals, .userSession])
+      }
+
+      return result
+    }
   }
 
   /// Update my plan, Not now or Undo on a change the plan proposed. False when it's out of date.
-  func decide(goalId: String, changeId: String, decision: PlanChangeDecision) async
+  func decide(_ change: TodayView.PlanChange, goalId: String, decision: PlanChangeDecision) async
     -> MutationResult<TodayView.PlanChange?>
   {
     let api = api
     return await cache.mutate(invalidating: [.goals, .learnerModel, .userSession]) { identity in
       try await api.decide(
-        token: identity.bearerToken, goalId: goalId, changeId: changeId, decision: decision)
+        token: identity.bearerToken, goalId: goalId, changeId: change.id, decision: decision,
+        quote: change.quote)
     }
   }
 
@@ -216,14 +262,39 @@ final class PlanStore {
     }
   }
 
+  /// A change the learner made saves even when its screen closes first (`LearnerSaves`).
   func change(
-    _ request: (any PlanAPIClient, String) async throws -> PlanChangeOutcome
+    _ request: @escaping (any PlanAPIClient, String) async throws -> PlanChangeOutcome
   ) async -> MutationResult<PlanChangeOutcome> {
-    await write(request) { outcome in
-      switch outcome {
-      case .applied, .undone: true
-      case .invalid, .unchanged: false
+    await saves.save {
+      await self.write(request) { outcome in
+        switch outcome {
+        case .applied, .saved, .undone: true
+        case .invalid, .unchanged: false
+        }
       }
+    }
+  }
+
+  func undo(goalId: String, changeId: String) async -> MutationResult<TodayView.PlanChange?> {
+    await saves.save {
+      await self.write { api, token in
+        try await api.decide(
+          token: token, goalId: goalId, changeId: changeId, decision: .undone, quote: nil)
+      } changed: {
+        $0 != nil
+      }
+    }
+  }
+
+  /// What a change would do, worked out with today's numbers when the learner asks. It saves
+  /// nothing, so unlike `write` a failure revalidates nothing.
+  func ask<Result: Sendable>(
+    _ request: (any PlanAPIClient, String) async throws -> Result
+  ) async -> MutationResult<Result> {
+    let api = api
+    return await cache.mutate { identity in
+      try await request(api, identity.bearerToken)
     }
   }
 
@@ -285,6 +356,40 @@ final class PlanStore {
     }
 
     let readAt = now().addingTimeInterval(-Self.clockMargin)
-    return PlanRead(plan: try await api.plan(token: token, goalId: goalId), readAt: readAt)
+    let read = PlanRead(plan: try await api.plan(token: token, goalId: goalId), readAt: readAt)
+
+    // Changed elsewhere (another device, a rebuild, a new day) with no write here to invalidate
+    // them: an answer only the editor or the sheet looks at is read again when it's next shown.
+    if plans[goalId]?.value.map({ PlanInputs($0.plan) }) != PlanInputs(read.plan) {
+      timesToCover[goalId]?.invalidate()
+      // Each answer costs a plan computation, so only the sheet's next opening asks again.
+      basesAdvices[goalId]?.invalidate(rereadsWhileShown: false)
+    }
+
+    return read
+  }
+}
+
+/// What the plan's answers (time to cover, the prerequisites advice) are worked out from, the day
+/// included: the days left change them.
+struct PlanInputs: Equatable {
+  let today: String
+  let planId: String
+  let schedule: GoalPlan.Schedule
+  let feasibility: GoalPlan.Feasibility?
+  let steering: GoalPlan.Steering
+  let areas: [GoalPlan.Area]
+  let bases: GoalPlan.Bases?
+  let examChoices: [GoalPlan.ExamChoice]
+
+  init(_ plan: GoalPlan) {
+    today = plan.today
+    planId = plan.planId
+    schedule = plan.schedule
+    feasibility = plan.feasibility
+    steering = plan.steering
+    areas = plan.areas
+    bases = plan.bases
+    examChoices = plan.examChoices
   }
 }

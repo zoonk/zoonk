@@ -3,17 +3,16 @@
 import { useRef } from "react";
 import { snapYear } from "./timeline-scale";
 
-const TRACK_INSET = 20;
-
-export type TimelineAxis = { end: number; height: number; start: number };
+/** `inset` is half a card's room, so a card at either end of the axis sits level with its dot. */
+export type TimelineAxis = { end: number; height: number; inset: number; start: number };
 
 export function yearToY(year: number, axis: TimelineAxis): number {
   const span = axis.end - axis.start || 1;
-  return TRACK_INSET + ((year - axis.start) / span) * (axis.height - TRACK_INSET * 2);
+  return axis.inset + ((year - axis.start) / span) * (axis.height - axis.inset * 2);
 }
 
 function yToYear(y: number, axis: TimelineAxis): number {
-  const share = (y - TRACK_INSET) / (axis.height - TRACK_INSET * 2);
+  const share = (y - axis.inset) / (axis.height - axis.inset * 2);
   return snapYear(axis.start + share * (axis.end - axis.start), axis);
 }
 

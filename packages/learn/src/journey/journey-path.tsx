@@ -1,24 +1,31 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
+import { Drawer, DrawerPopup, DrawerTrigger } from "@zoonk/ui/components/drawer";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, FlagIcon } from "lucide-react";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { PlusMark } from "../_components/plus-lock";
+import { ListRowChevronSpace } from "../_components/list-group";
 import { DoneMark } from "../_components/status-mark";
-import { MarkedText } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
+import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
+import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
   MockRow,
-  PATH_ROW_BODY_CLASS,
+  PATH_ROW_CLASS,
+  PATH_ROW_LEADING_CLASS,
+  PathRowBody,
   usePhaseMocksLine,
 } from "./journey-phase-events";
-import { useFinishDate, usePhaseWhen } from "./use-phase-when";
+import { PhaseDetails } from "./phase-details";
+import { PhaseWhen } from "./phase-when";
+import { useRoadmapFinish } from "./use-roadmap";
 
 type NodeState = PlanPhaseView["state"] | "finish";
 
@@ -26,7 +33,8 @@ function PathMarker({ state }: { state: NodeState }) {
   return (
     <span
       aria-hidden="true"
-      className="relative z-10 flex h-11 w-4 shrink-0 items-center justify-center"
+      className={cn(PATH_ROW_LEADING_CLASS, "relative z-10")}
+      data-slot="path-row-mark"
     >
       {state === "done" && <DoneMark />}
       {state === "current" && <CurrentPhaseMark />}
@@ -44,119 +52,95 @@ function PathLine({ walked }: { walked: boolean }) {
       aria-hidden="true"
       data-slot="path-line"
       className={cn(
-        "absolute top-8 -bottom-3 left-[7.5px] w-px",
+        "absolute top-9 -bottom-2 left-2 w-px -translate-x-1/2",
         walked ? "bg-success/60" : "bg-border",
       )}
     />
   );
 }
 
-const DATE_CLASS = "text-muted-foreground text-right font-mono text-xs tabular-nums";
+const DATE_CLASS = "text-muted-foreground text-right text-xs";
 
-const HEADER_BODY_CLASS = cn(PATH_ROW_BODY_CLASS, "items-baseline gap-y-0.5");
-
-function PhaseTitle({ phase }: { phase: PlanPhaseView }) {
+function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseView }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
   const phaseName = usePhaseName();
-  const phaseWhen = usePhaseWhen();
-  const when = phaseWhen(phase);
+  const lessonsLeft = phase.lessonsTotal - phase.lessonsDone;
 
   return (
-    <span className={HEADER_BODY_CLASS}>
-      <span className="flex flex-col">
-        <span
-          className={cn("text-sm font-medium", phase.state === "done" && "text-muted-foreground")}
-        >
-          {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-          {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
-          {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
-        </span>
-        {phase.state === "leftOut" && (
-          <span className="text-muted-foreground text-xs">{t("Not in your plan")}</span>
-        )}
-        {phase.state === "unfinished" && (
-          <span className="text-muted-foreground text-xs">
-            {t(
-              "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
-              { done: phase.lessonsDone, total: phase.lessonsTotal },
-            )}
-          </span>
-        )}
+    <PathRowBody value={<PhaseWhen className={DATE_CLASS} phase={phase} />}>
+      <span
+        className={cn("text-sm font-medium", phase.state === "done" && "text-muted-foreground")}
+      >
+        {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
+        {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
+        {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
       </span>
-      {when && <span className={DATE_CLASS}>{when}</span>}
-    </span>
+      {phase.state === "leftOut" && <ReasonText reason={phase.notPlannedReason} />}
+      {phase.state === "unfinished" && lessonsLeft > 0 && (
+        <span className="text-muted-foreground text-xs">
+          {t("{count, plural, one {# lesson not studied} other {# lessons not studied}}", {
+            count: lessonsLeft,
+          })}
+        </span>
+      )}
+      {note && <span className="text-muted-foreground text-xs">{note}</span>}
+    </PathRowBody>
   );
 }
 
-const HEADER_CLASS = "flex min-h-11 w-full items-baseline gap-3 py-3 text-left";
-
-const HEADER_INTERACTIVE_CLASS =
-  "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 w-[calc(100%+1.25rem)] rounded-[0.625rem] px-2.5 outline-none transition-colors focus-visible:ring-[3px]";
-
-function ChevronSpace() {
-  return <span aria-hidden="true" className="size-4 shrink-0" />;
-}
-
-const HEADER_CHEVRON_CLASS = "text-muted-foreground/60 size-4 shrink-0 self-center";
-
 function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
-  const { plan } = usePlanScreen();
+  const { paused, plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
   const { checkpoint, mocks, state } = phase;
-  const locked = plan.access.mocksRequirePlus;
   const forNextSitting = phase.kind === "afterExam";
   const isCurrent = state === "current";
-  const hasEvents = isCurrent && (checkpoint !== null || mocks.nextDate !== null);
+  const hasEvents = !paused && isCurrent && (checkpoint !== null || mocks.nextDate !== null);
 
   return (
-    <li
-      aria-current={isCurrent ? "step" : undefined}
-      className="relative flex gap-3 pb-3"
-      data-state={state}
-    >
+    <li aria-current={isCurrent ? "step" : undefined} className="relative pb-3" data-state={state}>
       <PathLine walked={state === "done"} />
-      <PathMarker state={state} />
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <div className={HEADER_CLASS}>
-          <PhaseTitle phase={phase} />
-          <ChevronSpace />
-        </div>
+      <Drawer>
+        <DrawerTrigger className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} data-slot="path-row">
+          <PathMarker state={state} />
+          <PhaseTitle
+            note={
+              !paused && state === "upcoming" && mocks.count > 0
+                ? mocksLine({
+                    count: mocks.count,
+                    forNextSitting,
+                    nextSitting: plan.schedule.nextSitting,
+                  })
+                : null
+            }
+            phase={phase}
+          />
+          <RowChevron />
+        </DrawerTrigger>
+        <DrawerPopup>
+          <PhaseDetails links={links} phase={phase} />
+        </DrawerPopup>
+      </Drawer>
 
-        {state === "upcoming" && mocks.count > 0 && (
-          <p className="text-muted-foreground -mt-2.5 pb-1 text-xs">
-            <MarkedText mark={locked && <PlusMark />}>
-              {mocksLine({
-                count: mocks.count,
-                forNextSitting,
-                nextSitting: plan.schedule.nextSitting,
-              })}
-            </MarkedText>
-          </p>
-        )}
-
-        {hasEvents && (
-          <ul className="flex flex-col pb-1">
-            {mocks.nextDate && (
-              <li>
-                <MockRow
-                  challengeHref={links.challenge}
-                  date={mocks.nextDate}
-                  examHref={links.exam}
-                  forNextSitting={forNextSitting}
-                  locked={locked}
-                />
-              </li>
-            )}
-            {checkpoint && (
-              <li>
-                <CheckpointRow brief checkpoint={checkpoint} links={links} />
-              </li>
-            )}
-          </ul>
-        )}
-      </div>
+      {hasEvents && (
+        <ul className="nested-rows flex flex-col pb-1.5" data-slot="path-nested">
+          {mocks.nextDate && (
+            <li>
+              <MockRow
+                challengeHref={links.challenge}
+                date={mocks.nextDate}
+                examHref={links.exam}
+              />
+            </li>
+          )}
+          {checkpoint && (
+            <li>
+              <CheckpointRow checkpoint={checkpoint} links={links} />
+            </li>
+          )}
+        </ul>
+      )}
     </li>
   );
 }
@@ -164,33 +148,46 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
 function FinishNode({ continues, examHref }: { continues: boolean; examHref: string | null }) {
   const t = useExtracted();
   const { goal } = usePlanScreen();
-  const date = useFinishDate();
+  const finish = useRoadmapFinish();
 
   const content = (
-    <span className={HEADER_BODY_CLASS}>
+    <PathRowBody
+      value={
+        finish ? (
+          <PlanDateText
+            className={DATE_CLASS}
+            estimate={finish.estimate}
+            isoDate={finish.isoDate}
+            month={finish.month}
+          />
+        ) : (
+          goal.kind === "exam" && <span className={DATE_CLASS}>{t("Date to be confirmed")}</span>
+        )
+      }
+    >
       <span className="text-sm font-medium">{goal.displayName}</span>
       {examHref && <span className="text-muted-foreground text-xs">{t("About the exam")}</span>}
-      {date && (
-        <span className="text-muted-foreground basis-full font-mono text-xs tabular-nums">
-          {date}
-        </span>
-      )}
-    </span>
+    </PathRowBody>
   );
 
   return (
-    <li className={cn("relative flex gap-3", continues && "pb-3")} data-state="finish">
+    <li className={cn("relative", continues && "pb-3")} data-state="finish">
       {continues && <PathLine walked={false} />}
-      <PathMarker state="finish" />
       {examHref ? (
-        <LearnLink className={cn(HEADER_CLASS, HEADER_INTERACTIVE_CLASS)} href={examHref}>
+        <LearnLink
+          className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+          data-slot="path-row"
+          href={examHref}
+        >
+          <PathMarker state="finish" />
           {content}
-          <ChevronRightIcon aria-hidden="true" className={HEADER_CHEVRON_CLASS} />
+          <RowChevron />
         </LearnLink>
       ) : (
-        <div className={HEADER_CLASS}>
+        <div className={PATH_ROW_CLASS} data-slot="path-row">
+          <PathMarker state="finish" />
           {content}
-          <ChevronSpace />
+          <ListRowChevronSpace />
         </div>
       )}
     </li>
@@ -210,6 +207,7 @@ export function JourneyPath({ links }: { links: JourneyPathLinks }) {
     <ol
       aria-label={t("Your path")}
       className="flex flex-col [&>li:last-child>[data-slot=path-line]]:hidden"
+      data-slot="journey-path-list"
     >
       {plan.phases.filter((phase) => phase.kind !== "afterExam").map((phase) => toNode(phase))}
       <FinishNode continues={afterExam.length > 0} examHref={links.exam} />

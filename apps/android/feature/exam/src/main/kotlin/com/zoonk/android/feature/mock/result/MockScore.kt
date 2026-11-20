@@ -1,10 +1,14 @@
 package com.zoonk.android.feature.mock.result
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -26,62 +29,88 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.mock.chooser.MockNotes
 import com.zoonk.android.feature.mock.mockTitle
+import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.MeterPart
+import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.Readout
-import com.zoonk.android.ui.components.StatTile
-import com.zoonk.android.ui.components.StatTiles
-import com.zoonk.android.ui.components.StatTone
-import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockResult
-import com.zoonk.api.models.MockScoreNotes
 import kotlin.math.roundToInt
 
+/**
+ * Main's score step: how it went in one number and one sentence, the day's moment, then what supports
+ * the number ([summary], where no aside holds it) and the questions to review.
+ */
 @Composable
 internal fun ScoreStep(
     view: MockExam,
     result: MockResult,
     dayMoment: @Composable () -> Unit,
-    details: @Composable () -> Unit,
+    summary: (@Composable () -> Unit)?,
+    review: (@Composable () -> Unit)?,
 ) {
-    ScoreHeader(view, result)
-    AnswerTiles(result)
-    result.points?.let { PointsByTest(it) }
-    PassMarks(view)
-    NoteLines(scoreNoteLines(view.scoreNotes))
-    dayMoment()
-    details()
+    val missed = missedMinimum(result.points)
+    val verdict = verdict(view, result).takeIf { missed == null }
+
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        ScoreHeader(view, result, missed)
+        verdict?.let { Text(it, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium) }
+        // A miss's headline isn't followed by a celebration; the day's summary still shows the belt.
+        if (missed == null) dayMoment()
+    }
+    summary?.invoke()
+    review?.invoke()
 }
 
+/** Main's `MockResultDetails`: every table and caveat behind the score, for the learner who asks. */
 @Composable
-internal fun ScoreNumbers(
+internal fun ScoreDetails(
+    view: MockExam,
     result: MockResult,
-    opened: List<String>,
-    onToggle: (String) -> Unit,
+    about: List<String>,
 ) {
-    if (hasBreakdown(result)) Breakdown(result, opened, onToggle)
-    if (hasInsights(result)) Insights(result)
+    Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
+        result.points?.takeIf { hasTestRows(it) }?.let { PointsByTest(it) }
+        PassMarks(view)
+        if (hasInsights(result)) Insights(result)
+        if (about.isNotEmpty() || view.sizeSource.pastEdition != null) {
+            ResultSection(stringResource(R.string.mock_result_about_title)) { MockAbout(view, about) }
+        }
+    }
 }
 
+internal fun hasDetails(
+    view: MockExam,
+    result: MockResult,
+    about: List<String>,
+): Boolean =
+    hasTestRows(result.points) ||
+        view.passMarks != null ||
+        hasInsights(result) ||
+        about.isNotEmpty() ||
+        view.sizeSource.pastEdition != null
+
+/** One sentence on what the number means for the learner's next days, or nothing: the subjects core names. */
 @Composable
-internal fun ResultNotes(view: MockExam) {
-    MockNotes(
-        document = view.examDocument,
-        source = view.sizeSource,
-        questions = view.questions,
-        minutes = view.minutes,
-        leftOut = view.leftOut,
-        short = shortLine(view),
-        namesWrittenInFull = true,
-    )
+private fun verdict(
+    view: MockExam,
+    result: MockResult,
+): String? {
+    if (reachedEveryMinimum(result.points)) return stringResource(R.string.mock_result_every_minimum)
+    val best = view.verdict?.strongest
+    val worst = view.verdict?.weakest
+    return when {
+        best != null && worst != null -> stringResource(R.string.mock_result_strongest, best, worst)
+        best != null -> stringResource(R.string.mock_result_strongest_only, best)
+        worst != null -> stringResource(R.string.mock_result_work_on, worst)
+        else -> null
+    }
 }
 
 /** A [range] reads as one number, so its dash keeps the numbers' size; a raw score's [lead] is its number, the rest its unit. */
@@ -93,11 +122,15 @@ private data class Score(
 )
 
 @Composable
-private fun score(result: MockResult): Score {
+private fun score(
+    view: MockExam,
+    result: MockResult,
+): Score {
     val locale = currentLocale()
     val points = result.points
     val irt = result.irt
     val net = result.net
+    val exam = view.examName
 
     return when {
         points != null -> {
@@ -110,7 +143,12 @@ private fun score(result: MockResult): Score {
         }
 
         irt != null -> {
-            Score(stringResource(R.string.mock_result_estimated_score), scoreRange(irt.low, irt.high), range = true)
+            Score(
+                exam?.let { stringResource(R.string.mock_result_estimated_exam_score, it) }
+                    ?: stringResource(R.string.mock_result_estimated_score),
+                scoreRange(irt.low, irt.high),
+                range = true,
+            )
         }
 
         net != null -> {
@@ -118,8 +156,9 @@ private fun score(result: MockResult): Score {
         }
 
         else -> {
+            // Part of a point on some questions makes the count points, as the exam page's row says.
             Score(
-                stringResource(R.string.mock_result_right_answers),
+                stringResource(if (result.correct % 1.0 == 0.0) R.string.mock_result_right_answers else R.string.mock_result_points),
                 rightOf(result.correct, result.total),
                 lead = formatNumber(result.correct, locale),
             )
@@ -159,31 +198,37 @@ internal fun rightOf(
 private fun ScoreHeader(
     view: MockExam,
     result: MockResult,
+    missed: MissedMinimum?,
 ) {
-    val score = score(result)
-    val areas =
-        if (result.areas.size > MAX_NAMED_AREAS) {
-            pluralStringResource(R.plurals.mock_result_subjects, result.areas.size, result.areas.size)
-        } else {
-            result.areas.joinToString(", ") { it.name }
-        }
-    val detail = listOf(score.label, view.examName.orEmpty(), areas).filter { it.isNotEmpty() }.factsLine()
+    val score = score(view, result)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                stringResource(R.string.mock_result_done, mockTitle(view.number)),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.titleMedium,
-            )
+        Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Eyebrow(mockTitle(view.number))
             when {
-                score.range -> ScoreRange(score.value)
-                score.lead != null -> RightOfReadout(score.value, score.lead)
-                else -> Readout(score.value, style = MaterialTheme.typography.displayMedium)
+                missed != null -> {
+                    Text(
+                        missed.title,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                }
+
+                score.range -> {
+                    ScoreRange(score.value)
+                }
+
+                score.lead != null -> {
+                    RightOfReadout(score.value, score.lead)
+                }
+
+                else -> {
+                    Readout(score.value, style = MaterialTheme.typography.displayMedium)
+                }
             }
         }
-        Text(detail, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        Delta(result)
+        Text(missed?.line ?: score.label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        if (missed == null) Delta(result)
     }
 }
 
@@ -263,84 +308,67 @@ private fun answerCounts(result: MockResult): AnswerCounts? {
     return AnswerCounts(result.correct, result.total - result.correct - result.blank, 0, result.blank)
 }
 
+internal fun hasAnswerCounts(result: MockResult): Boolean = answerCounts(result) != null || (result.net == null && result.blank > 0)
+
+/** Main's `MockResultAnswers`: how the answers went as one meter, each part named with its count under it. */
 @Composable
-private fun AnswerTiles(result: MockResult) {
+internal fun AnswerMeter(result: MockResult) {
     val counts = answerCounts(result)
-    val blankNote = result.net == null && result.blank > 0
-    if (counts == null && !blankNote) return
     val locale = currentLocale()
+    val right = MaterialTheme.colorScheme.tertiary
+    val wrong = MaterialTheme.colorScheme.error
+    val quiet = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         counts?.let {
-            val tiles =
-                listOfNotNull<@Composable (Modifier) -> Unit>(
-                    { modifier ->
-                        AnswerTile(
-                            R.string.mock_result_right,
-                            formatNumber(it.right, locale),
-                            R.drawable.ic_check,
-                            StatTone.Success.color,
-                            modifier,
-                        )
-                    },
-                    { modifier ->
-                        AnswerTile(
-                            R.string.mock_result_wrong,
-                            formatNumber(it.wrong, locale),
-                            R.drawable.ic_close,
-                            MaterialTheme.colorScheme.error,
-                            modifier,
-                        )
-                    },
-                    if (it.partial > 0) {
-                        { modifier ->
-                            AnswerTile(
-                                R.string.mock_result_partly_right,
-                                formatNumber(it.partial.toDouble(), locale),
-                                R.drawable.ic_radio_button_partial,
-                                StatTone.Neutral.color,
-                                modifier,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    { modifier ->
-                        AnswerTile(
-                            R.string.mock_result_blank,
-                            formatNumber(it.blank.toDouble(), locale),
-                            R.drawable.ic_remove,
-                            StatTone.Neutral.color,
-                            modifier,
-                        )
+            val parts =
+                listOfNotNull(
+                    AnswerPart(R.string.mock_result_right, it.right, right),
+                    AnswerPart(R.string.mock_result_wrong, it.wrong, wrong),
+                    AnswerPart(R.string.mock_result_partly_right, it.partial.toDouble(), quiet).takeIf { part -> part.count > 0 },
+                    AnswerPart(R.string.mock_result_blank, it.blank.toDouble(), null),
+                )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                MeterParts(
+                    parts.filter { part -> part.count > 0 }.map { part ->
+                        MeterPart(part.color?.let { color -> MeterPart.Fill.Solid(color) } ?: MeterPart.Fill.Track, part.count.toFloat())
                     },
                 )
-            StatTiles(columns = tiles.size, tiles = tiles)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    parts.forEach { part -> AnswerLegendItem(part, formatNumber(part.count, locale), quiet) }
+                }
+            }
         }
-        if (blankNote) {
-            NoteLines(
-                listOf(
-                    stringResource(if (result.irt != null) R.string.mock_result_blank_exam_day else R.string.mock_result_blank_this_score),
-                ),
-            )
-        }
+        if (result.net == null && result.blank > 0) NoteLines(listOf(stringResource(R.string.mock_result_blank_wrong)))
     }
 }
 
+/** A blank answer has no [color]: its part is the meter's track and its dot a ring. */
+private class AnswerPart(
+    val label: Int,
+    val count: Double,
+    val color: Color?,
+)
+
 @Composable
-private fun AnswerTile(
-    label: Int,
+private fun AnswerLegendItem(
+    part: AnswerPart,
     value: String,
-    icon: Int,
-    tint: Color,
-    modifier: Modifier,
+    ring: Color,
 ) {
-    StatTile(
-        label = stringResource(label),
-        value = value,
-        modifier = modifier,
-        icon = { iconModifier -> Icon(painterResource(icon), contentDescription = null, modifier = iconModifier, tint = tint) },
-    )
+    Row(
+        Modifier.semantics(mergeDescendants = true) {},
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            Modifier.size(6.dp).then(
+                part.color?.let { Modifier.background(it, CircleShape) } ?: Modifier.border(1.dp, ring, CircleShape),
+            ),
+        )
+        Text(stringResource(part.label), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+        Text(value, style = MaterialTheme.typography.labelMedium.withTabularFigures())
+    }
 }
 
 @Composable
@@ -348,22 +376,7 @@ private fun PassMarks(view: MockExam) {
     val marks = view.passMarks ?: return
     val locale = currentLocale()
 
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        HorizontalDivider()
-        Text(
-            stringResource(
-                if (view.examDocument ==
-                    ExamDocument.GUIDE
-                ) {
-                    R.string.mock_result_to_pass_guide
-                } else {
-                    R.string.mock_result_to_pass_notice
-                },
-            ),
-            Modifier.semantics { heading() },
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
-        )
+    ResultSection(stringResource(R.string.mock_result_to_pass)) {
         marks.texts.forEach {
             Text(
                 AnnotatedString(it, SpanStyle(localeList = LocaleList(marks.language))),
@@ -383,44 +396,9 @@ private fun PassMarks(view: MockExam) {
 }
 
 @Composable
-private fun scoreNoteLines(notes: MockScoreNotes): List<String> {
-    val locale = currentLocale()
-    val scale = notes.scale
-    val unconverted = scale != null && scale.score == null
-
-    return listOfNotNull(
-        scale?.let {
-            val min = formatNumber(it.min, locale)
-            val max = formatNumber(it.max, locale)
-            val name = it.name
-            val shown = it.score?.let { score -> formatNumber(score, locale) }
-            when {
-                shown == null && name != null -> stringResource(R.string.mock_result_scale_named, name, min, max)
-                shown == null -> stringResource(R.string.mock_result_scale, min, max)
-                name != null -> stringResource(R.string.mock_result_scale_score_named, shown, name, min, max)
-                else -> stringResource(R.string.mock_result_scale_score, shown, min, max)
-            }
-        },
-        scale?.passScore?.let { stringResource(R.string.mock_result_pass_score, formatNumber(it, locale)) },
-        notes.noticeScoring?.let { stringResource(R.string.mock_result_notice_scoring, it) },
-        stringResource(R.string.mock_result_relative).takeIf { notes.relative },
-        stringResource(R.string.mock_result_shows_right).takeIf { notes.noticeScoring != null || notes.relative || unconverted },
-    )
-}
-
-@Composable
-private fun shortLine(view: MockExam): String? {
-    val examQuestions = view.examQuestions?.takeIf { it > view.questions } ?: return null
-    val questions = view.questions.toInt()
-    return pluralStringResource(R.plurals.mock_short, questions, questions, examQuestions.toInt())
-}
-
-@Composable
 internal fun NoteLines(lines: List<String>) {
     if (lines.isEmpty()) return
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         lines.forEach { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
     }
 }
-
-private const val MAX_NAMED_AREAS = 3

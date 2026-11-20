@@ -518,7 +518,8 @@ fun GenerationKind.progress(run: GenerationRun): RunProgress {
             val startedAt = passedAt(stageTimes, index - 1, doneAt)
             stage.mapIndexed { at, phase ->
                 val times = reported[index][at]
-                when (val status = status(index, activeIndex, stage.size > 1 && finishedShare(phase.id, run) == 1f, run)) {
+                val reported = stepsOf(phase.id).any(run.steps::containsKey)
+                when (val status = status(index, activeIndex, stage.size > 1 && finishedShare(phase.id, run) == 1f, reported, run)) {
                     PhaseStatus.Pending -> {
                         PhaseProgress(phase, status, null, null)
                     }
@@ -556,23 +557,41 @@ fun GenerationKind.progress(run: GenerationRun): RunProgress {
     )
 }
 
+/** Main's `useGenerationStepLabel`: the step the run is on, in the words its progress lists it by, and "Done" once it's finished. */
+@StringRes
+fun GenerationKind.stepLabel(run: GenerationRun): Int? {
+    val progress = progress(run)
+    if (progress.share == 1f) return R.string.player_done
+    val following = run.status == GenerationRun.Status.Waiting || run.status == GenerationRun.Status.Following
+    return progress.phases
+        .firstOrNull { it.status == PhaseStatus.Active }
+        ?.phase
+        ?.label
+        ?.takeIf { following }
+}
+
 private fun stages(phases: List<GenerationPhase>): List<List<GenerationPhase>> =
     phases.fold(emptyList()) { stages, phase ->
         if (phase.alongside && stages.isNotEmpty()) stages.dropLast(1) + listOf(stages.last() + phase) else stages + listOf(listOf(phase))
     }
 
-/** A phase running alongside others is done once its own steps are, while they go on. */
+/**
+ * A phase running alongside others is done once its own steps are, while they go on. A failed run marks where it
+ * stopped only on a phase it reported starting: the API never names the phase that failed, so a run read as failed
+ * with nothing reported marks none (main's `getStatus`).
+ */
 private fun status(
     index: Int,
     activeIndex: Int,
     isDoneAlongside: Boolean,
+    isReported: Boolean,
     run: GenerationRun,
 ): PhaseStatus =
     when {
         index < activeIndex -> PhaseStatus.Completed
         index > activeIndex -> PhaseStatus.Pending
         isDoneAlongside -> PhaseStatus.Completed
-        run.failure == GenerationFailure.Generation -> PhaseStatus.Failed
+        run.failure == GenerationFailure.Generation -> if (isReported) PhaseStatus.Failed else PhaseStatus.Pending
         run.failure == GenerationFailure.NotStarted -> PhaseStatus.Pending
         else -> PhaseStatus.Active
     }

@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.testout
 
 import com.zoonk.android.data.ApiClients
-import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
@@ -35,12 +34,11 @@ data class RecordKey(
 sealed interface TestOutRead {
     /** No [questions] yet: the learner's Start writes them. */
     data class Ready(
+        val chapterTitle: String,
         val passMark: Double,
         val questions: List<Question>,
         val words: TrueFalseWords,
     ) : TestOutRead
-
-    data object PlusRequired : TestOutRead
 
     /** The plan already skips the whole chapter. */
     data object NothingToSkip : TestOutRead
@@ -76,22 +74,19 @@ class LiveTestOutApi(
         session: AuthenticatedSession,
         key: TestOutKey,
     ): TestOutRead =
-        try {
-            when (val read = perform { api.clients(session).learner.getChapterTestOut(key.goalId, key.chapterId) }) {
-                is GetChapterTestOut200Response.ChapterTestOutValue -> {
-                    TestOutRead.Ready(
-                        passMark = read.value.passMark,
-                        questions = read.value.questions.map { it.recode() },
-                        words = read.value.trueFalseLabels.recode(),
-                    )
-                }
-
-                is GetChapterTestOut200Response.NothingToSkipValue -> {
-                    TestOutRead.NothingToSkip
-                }
+        when (val read = perform { api.clients(session).learner.getChapterTestOut(key.goalId, key.chapterId) }) {
+            is GetChapterTestOut200Response.ChapterTestOutValue -> {
+                TestOutRead.Ready(
+                    chapterTitle = read.value.chapterTitle,
+                    passMark = read.value.passMark,
+                    questions = read.value.questions.map { it.recode() },
+                    words = read.value.trueFalseLabels.recode(),
+                )
             }
-        } catch (e: ApiException) {
-            if (e.code == PLUS_REQUIRED) TestOutRead.PlusRequired else throw e
+
+            is GetChapterTestOut200Response.NothingToSkipValue -> {
+                TestOutRead.NothingToSkip
+            }
         }
 
     override suspend fun writeQuestions(
@@ -151,5 +146,3 @@ class TestOutStore(
         val SUBMITTED = setOf(DataDomain.LearnerModel, DataDomain.UserProgress)
     }
 }
-
-private const val PLUS_REQUIRED = "PLUS_REQUIRED"

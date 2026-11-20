@@ -71,7 +71,7 @@ final class ProgressStoreTests: XCTestCase {
 
 private actor SuspendedActivityAPIStub: ProgressAPIClient {
   private struct Request {
-    let continuation: CheckedContinuation<ActivityProgress, any Error>
+    let continuation: TestContinuation<ActivityProgress>
     let id: UUID
   }
 
@@ -94,7 +94,7 @@ private actor SuspendedActivityAPIStub: ProgressAPIClient {
     return try await withTaskCancellationHandler {
       try Task.checkCancellation()
 
-      return try await withCheckedThrowingContinuation { continuation in
+      return try await withTestContinuation { continuation in
         guard !Task.isCancelled else {
           continuation.resume(throwing: CancellationError())
           return
@@ -259,7 +259,11 @@ extension ActivityProgress {
     summary: ActivitySummary(learningDays: 0, totalLearningSeconds: 0, totalLessonCompletions: 0))
 
   fileprivate static let testFixture = ActivityProgress(
-    days: [ActivityProgressDay(activitiesCompleted: 3, date: ProgressDate("2026-08-20")!)],
+    days: [
+      ActivityProgressDay(
+        activitiesCompleted: 3, date: ProgressDate("2026-08-20")!, lessonCompletions: 1,
+        timeSpentSeconds: 600)
+    ],
     summary: ActivitySummary(
       learningDays: 12, totalLearningSeconds: 7_200, totalLessonCompletions: 24))
 }

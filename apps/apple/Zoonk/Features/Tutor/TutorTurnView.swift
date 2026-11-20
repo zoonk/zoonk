@@ -5,6 +5,8 @@ struct TutorTurnView: View {
   let conversation: TutorConversation
   let buddyName: String
   let isPage: Bool
+  /// "About …" above the question, where its topic changes.
+  let showsTopic: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
@@ -63,7 +65,7 @@ struct TutorTurnView: View {
 
   private var question: some View {
     VStack(alignment: .trailing, spacing: 4) {
-      if !isPage {
+      if !isPage, showsTopic {
         turn.about.label
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
@@ -109,31 +111,44 @@ struct TutorTurnView: View {
       .buttonStyle(.outline)
       .disabled(conversation.answeringID != nil)
     case .failed:
-      VStack(alignment: .leading, spacing: 12) {
-        if let text = turn.answer {
-          TutorAnswerText(text: text, linksEnabled: false, buddyName: buddyName)
-            .typeStyle(words)
-        }
+      // Once a limit's day has come, asking for the answer again is the way on.
+      OpeningClock(availableAt: failure?.helpLimit?.availableAt) { now in
+        let opened = failure?.helpLimit?.isOpen(at: now) == true
 
-        if let failure, failure.isLimit {
-          Text(failureLine)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        } else {
-          if failure != nil {
-            FailureLine(message: failureLine)
-              .typeStyle(.body)
-          } else {
-            // An answer that failed before this visit is part of the thread, not news to announce.
+        VStack(alignment: .leading, spacing: 12) {
+          if let text = turn.answer {
+            TutorAnswerText(text: text, linksEnabled: false, buddyName: buddyName)
+              .typeStyle(words)
+          }
+
+          if let failure, failure.isLimit {
+            // The limit stopped it, never a failure: once its day has come it asks again.
             Text(failureLine)
-              .typeStyle(.body)
-              .foregroundStyle(.destructiveText)
-          }
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
 
-          TutorRemedyButton(failure: failure ?? .failed) {
-            Task { await conversation.retryAnswer(turn.id) }
+            if opened {
+              TutorRemedyButton(failure: .failed) {
+                Task { await conversation.retryAnswer(turn.id) }
+              }
+              .disabled(conversation.answeringID != nil)
+            }
+          } else {
+            if failure != nil {
+              FailureLine(message: failureLine)
+                .typeStyle(.body)
+            } else {
+              // An answer that failed before this visit is part of the thread, not news to announce.
+              Text(failureLine)
+                .typeStyle(.body)
+                .foregroundStyle(.destructiveText)
+            }
+
+            TutorRemedyButton(failure: failure ?? .failed) {
+              Task { await conversation.retryAnswer(turn.id) }
+            }
+            .disabled(conversation.answeringID != nil)
           }
-          .disabled(conversation.answeringID != nil)
         }
       }
     default:
@@ -194,7 +209,7 @@ struct TutorTurnView: View {
     }
 
     switch failure {
-    case .signUpRequired, .limitReached:
+    case .signUpRequired, .limit:
       return String(
         localized: "This one wasn't answered.", table: "Tutor",
         comment: "A question the learner's limit stopped")

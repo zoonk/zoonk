@@ -8,6 +8,7 @@ import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.WritingWaits
 import com.zoonk.android.data.Written
 import com.zoonk.android.data.recode
@@ -26,6 +27,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -83,10 +85,18 @@ data class MockRun(
     val busy: MockStep? = null,
     val error: Boolean = false,
     val slow: Boolean = false,
+    val storedDrafts: Map<String, MockDraft> = drafts,
+    val failedDrafts: Map<String, MockDraft> = emptyMap(),
 ) {
     val pending: Boolean get() = busy != null
     val question: MockQuestion? get() = questions.getOrNull(position)
-    val counts: SectionCounts get() = sectionCounts(questions, drafts)
+    val counts: SectionCounts get() = sectionCounts(questions, drafts, ::isCountedAsAnswered)
+
+    fun isCountedAsAnswered(itemId: String): Boolean {
+        val draft = drafts[itemId]
+        return draft.isAnswered && (draft?.answer != failedDrafts[itemId]?.answer || draft?.answer == storedDrafts[itemId]?.answer)
+    }
+
     val isLastSection: Boolean get() = view.sections.lastOrNull()?.status == MockExamSectionsInner.Status.CURRENT
     val currentSection: MockExamSectionsInner? get() = view.sections.firstOrNull { it.status == MockExamSectionsInner.Status.CURRENT }
 
@@ -201,12 +211,30 @@ class MockRunnerViewModel(
 
     fun retrySaves() = queue.retryNow()
 
-    /** Leaving waits at most a few seconds for answers going out, so the close action always leaves, even offline. */
-    suspend fun leave() {
-        run.value.question?.let { leaveQuestion(it.itemId) }
-        saveText()
-        queue.retryNow()
-        withTimeoutOrNull(LEAVE_WAIT) { queue.idle() }
+    private var leavingOn: Int? = null
+
+    /** This visit to the mock: [leave]'s close shows only on it. */
+    val visit = Visit { speakingPaper.clear() }
+
+    /** [leave]'s close, once its answers went out, while the visit that asked lasts. */
+    val closed = visit.outcome<Unit>()
+
+    /**
+     * Leaving waits at most a few seconds for answers going out, so the close action always leaves, even offline.
+     * Pressed again while they go out, it still closes only the mock; a visit that ended before they went out closes
+     * nothing, and the next one can leave again.
+     */
+    fun leave() {
+        val started = visit.number
+        if (leavingOn == started) return
+        leavingOn = started
+        viewModelScope.launch {
+            run.value.question?.let { leaveQuestion(it.itemId) }
+            saveText()
+            queue.retryNow()
+            withTimeoutOrNull(LEAVE_WAIT) { queue.idle() }
+            closed.send(started, Unit)
+        }
     }
 
     /**
@@ -249,7 +277,9 @@ class MockRunnerViewModel(
 
     fun endBreak() = step(MockStep.EndBreak) { store.endBreak(blockId) }
 
-    fun startSpeaking() {
+    fun startSpeaking() = startSpeaking(visit.number)
+
+    private fun startSpeaking(asked: Int) {
         step(MockStep.StartSpeaking) {
             val started =
                 try {
@@ -258,10 +288,11 @@ class MockRunnerViewModel(
                     speakingPaper.clear()
                     throw e
                 }
+            if (asked != visit.number) return@step null
             when (started) {
                 is MutationResult.Done -> {
                     val written = started.value
-                    when (speakingPaper.answered((written as? Written.Writing)?.generationId, ::startSpeaking)) {
+                    when (speakingPaper.answered((written as? Written.Writing)?.generationId) { startSpeaking(asked) }) {
                         ContentWritingWait.Answer.Proceed -> MutationResult.Done((written as Written.Ready).value)
                         ContentWritingWait.Answer.Waiting -> null
                         ContentWritingWait.Answer.Failed -> MutationResult.Failed(ApiError.Unavailable)
@@ -396,6 +427,7 @@ class MockRunnerViewModel(
         heldRead = null
         textSave?.cancel()
         unsavedText = null
+        queue.forgetRefusals()
         run.value = start(next)
         enter(next, kept = emptyList())
     }
@@ -424,11 +456,12 @@ class MockRunnerViewModel(
                 .orEmpty()
                 .map { it.toMockQuestion() }
         val resume = view.current?.resume?.toInt() ?: 0
-        val drafts =
+        val storedDrafts =
             view.current?.drafts.orEmpty().associate {
                 it.itemId.toString() to
                     MockDraft(it.itemId.toString(), it.answer?.toAnswer(), it.durationMs, it.flagged)
-            } + kept.associateBy(MockDraft::itemId)
+            }
+        val drafts = storedDrafts + kept.associateBy(MockDraft::itemId)
         val deadline = view.current?.deadline
         return MockRun(
             view = view,
@@ -436,6 +469,7 @@ class MockRunnerViewModel(
             position = resume,
             reached = resume,
             drafts = drafts,
+            storedDrafts = storedDrafts,
             moves = moves(view, questions, drafts, resume, resume),
             timeUp = (deadline != null && clock.now() >= deadline) || questionTimeUp,
         )
@@ -574,11 +608,31 @@ class MockRunnerViewModel(
 
     private suspend fun send(draft: MockDraft): SendResult {
         if (sessions.current != owner) return SendResult.Stop
-        return when (val result = store.save(blockId, draft)) {
-            is MutationResult.Done -> if (result.value == SaveOutcome.Stored) SendResult.Stored else SendResult.Refused
-            is MutationResult.Failed -> SendResult.Unreachable
-            MutationResult.Obsolete -> SendResult.Stop
+        val outcome =
+            when (val result = store.save(blockId, draft)) {
+                is MutationResult.Done -> if (result.value == SaveOutcome.Stored) SendResult.Stored else SendResult.Refused
+                is MutationResult.Failed -> SendResult.Unreachable
+                MutationResult.Obsolete -> SendResult.Stop
+            }
+        run.update { current ->
+            when (outcome) {
+                SendResult.Stored -> {
+                    current.copy(
+                        storedDrafts = current.storedDrafts + (draft.itemId to draft),
+                        failedDrafts = current.failedDrafts - draft.itemId,
+                    )
+                }
+
+                SendResult.Unreachable, SendResult.Refused -> {
+                    current.copy(failedDrafts = current.failedDrafts + (draft.itemId to draft))
+                }
+
+                SendResult.Stop -> {
+                    current
+                }
+            }
         }
+        return outcome
     }
 
     private companion object {

@@ -1,6 +1,7 @@
 import { type Page, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
 
@@ -71,11 +72,12 @@ test.describe("OTP Login Flow", () => {
     const wrongCode = code === "000000" ? "111111" : "000000";
     const input = page.getByRole("textbox", { name: "Code from the email" });
     const continueButton = page.getByRole("button", { name: /^continue$/iu });
-    const wrong = page.getByText("That code isn't right. Check the email and try again.");
-    const tooMany = page.getByText("Too many wrong tries with this code. Get a new one.");
+    const wrong = page.getByText("That code isn't right. Try again.");
+    const tooMany = page.getByText("Too many wrong tries. Get a new code.");
 
     async function tryCode(attempt: string) {
-      await expect(continueButton).toBeEnabled();
+      await expect(input).toBeEnabled();
+      await expect(continueButton).not.toHaveAttribute("aria-busy", "true");
 
       const checked = page.waitForResponse((response) =>
         response.url().includes("/sign-in/email-otp"),
@@ -108,7 +110,7 @@ test.describe("OTP Login Flow", () => {
     await expect(input).toBeDisabled();
 
     await page.getByRole("button", { name: "Send a new code" }).click();
-    await expect(page.getByText(`We sent a new code to ${email}.`)).toBeVisible();
+    await expect(page.getByText("We sent you a new code.")).toBeVisible();
 
     const newCode = await getOTPForEmail(email);
     await input.fill(newCode ?? "");
@@ -140,9 +142,7 @@ test.describe("OTP Login Flow", () => {
     await input.fill(wrongCode);
     await checks[0]?.continue();
 
-    await expect(
-      page.getByText("That code isn't right. Check the email and try again."),
-    ).toBeVisible();
+    await expect(page.getByText("That code isn't right. Try again.")).toBeVisible();
 
     expect(checkedCodes()).toEqual([wrongCode]);
 
@@ -214,9 +214,7 @@ test.describe("OTP Login Flow", () => {
     await page.unroute(newCodeUrl);
     await input.fill(wrongCode);
 
-    await expect(
-      page.getByText("That code isn't right. Check the email and try again."),
-    ).toBeVisible();
+    await expect(page.getByText("That code isn't right. Try again.")).toBeVisible();
 
     const newCodeRequests = await holdRequests(page, newCodeUrl);
     await sendAgain.click();
@@ -226,7 +224,7 @@ test.describe("OTP Login Flow", () => {
     await input.fill(firstCode);
     await newCodeRequests[0]?.continue();
 
-    await expect(page.getByText(`We sent a new code to ${email}.`)).toBeVisible();
+    await expect(page.getByText("We sent you a new code.")).toBeVisible();
     await expect(input).toHaveValue("");
     expect(checkedCodes).toEqual([wrongCode]);
 
@@ -239,4 +237,16 @@ test.describe("OTP Login Flow", () => {
 
     await cleanupVerifications(email);
   });
+});
+
+test("requires the email code before continuing", async ({ page }) => {
+  await page.goto("/auth/en/otp?email=learner%40example.test");
+
+  const code = page.getByRole("textbox", { name: "Code from the email" });
+  const next = page.getByRole("button", { exact: true, name: "Continue" });
+  await expectHydrated(code);
+
+  await expect(next).toBeDisabled();
+  await code.fill("123");
+  await expect(next).toBeDisabled();
 });

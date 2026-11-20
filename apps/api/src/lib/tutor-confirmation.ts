@@ -28,7 +28,7 @@ export async function loadConfirmationWords(language: string) {
     memory: t("Below you can see and change what I remember about you."),
     mistakes: t("Below is your mistakes notebook, with practice for each one."),
     mockExam: t("Below you can choose a mock exam to take now."),
-    plus: t("Below is the Plus page."),
+    plus: t("Below you can subscribe."),
     pronunciation: t("Below you can say again the words that were hard to pronounce."),
     proposal: t("I've put the change to your plan below. Nothing changes until you apply it."),
     startGoal: t("Below you can start it as a new goal."),

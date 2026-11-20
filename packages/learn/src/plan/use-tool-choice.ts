@@ -2,6 +2,8 @@
 
 import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
+import { useStillMounted } from "../_utils/use-still-mounted";
 import { type ContentWriting } from "../generation/writing-wait";
 import { type PlanActions, usePlanScreen } from "./plan-context";
 
@@ -17,7 +19,9 @@ export function useToolChoice() {
   const { actions } = usePlanScreen();
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [pending, setPending] = useState<PendingChoice | null>(null);
+  const isMounted = useStillMounted();
 
   const send = ({
     afterWrite,
@@ -41,7 +45,11 @@ export function useToolChoice() {
       setPending(null);
       setFailed(data !== true);
 
-      if (data === true) {
+      if (data !== true) {
+        saveFailed();
+      }
+
+      if (data === true && isMounted()) {
         onDone?.();
       }
     });

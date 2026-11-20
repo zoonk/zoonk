@@ -37,8 +37,8 @@ function CourseMap({
   label: string;
 }) {
   return (
-    <div aria-label={label} className="flex flex-col gap-2.5" role="img">
-      <div className="flex gap-1 sm:gap-1.5">
+    <div aria-label={label} className="hidden sm:block" role="img">
+      <div className="flex gap-1 sm:gap-2">
         {groups.map((group, index) => (
           <div
             className="flex min-w-0 basis-0 flex-col gap-2 sm:min-w-14"
@@ -62,12 +62,12 @@ function CourseMap({
             <span
               className={cn(
                 "hidden min-w-0 flex-col text-xs leading-4 sm:flex",
-                index === groups.length - 1 && index > 0 && "items-end text-right",
+                index < groups.length - 1 && "pe-2",
               )}
             >
               <span
                 className={cn(
-                  "max-w-full truncate",
+                  "text-pretty",
                   group === here ? "text-foreground font-semibold" : "text-muted-foreground",
                 )}
               >
@@ -80,8 +80,6 @@ function CourseMap({
           </div>
         ))}
       </div>
-
-      <p className="text-muted-foreground text-xs leading-4 sm:hidden">{label}</p>
     </div>
   );
 }
@@ -89,11 +87,13 @@ function CourseMap({
 export async function ChapterStrip({
   areas = null,
   chapterId,
+  course,
   outline,
   params,
 }: {
   areas?: Map<string, string> | null;
   chapterId: string;
+  course: string;
   outline: LibraryOutline;
   params: { brandSlug: string; courseSlug: string };
 }) {
@@ -126,20 +126,24 @@ export async function ChapterStrip({
     total: String(counted.length),
   });
 
+  const label = here ? `${position} · ${here.label}` : position;
   const stretch = [chapter, ...next];
 
   return (
     <section aria-labelledby={stripId} className={cn(ROUTE_CLASS, "flex min-w-0 flex-col gap-6")}>
-      <h2 className="text-section" id={stripId}>
-        {t("Where this chapter sits in the course")}
-      </h2>
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2 className="text-section" id={stripId}>
+          {t({
+            description:
+              "Heading over a map showing where this chapter sits in its course. {course} is the course's name.",
+            message: "Part of {course}",
+            values: { course },
+          })}
+        </h2>
+        <span className="text-muted-foreground font-mono text-xs tabular-nums">{label}</span>
+      </div>
 
-      <CourseMap
-        chapterId={chapterId}
-        groups={groups}
-        here={here}
-        label={here ? `${position} · ${here.label}` : position}
-      />
+      <CourseMap chapterId={chapterId} groups={groups} here={here} label={label} />
 
       <nav aria-label={t("After this chapter")}>
         <ol className="grid grid-cols-1 sm:grid-cols-4">
@@ -158,6 +162,7 @@ export async function ChapterStrip({
                   className={cn(
                     "absolute top-2 bottom-0 left-2 w-1 -translate-x-1/2 bg-(--route-line)",
                     "sm:top-2 sm:right-0 sm:bottom-auto sm:left-2 sm:h-1 sm:w-auto sm:translate-x-0 sm:-translate-y-1/2",
+                    !isLast && "max-sm:-bottom-3",
                     isLast &&
                       "bg-transparent bg-linear-to-b from-(--route-line) to-transparent sm:bg-linear-to-r",
                   )}
@@ -167,6 +172,7 @@ export async function ChapterStrip({
                   aria-hidden="true"
                   className={cn(
                     "absolute top-2 left-2 -translate-x-1/2 -translate-y-1/2 bg-(--route-fill)",
+                    offset > 1 && "max-sm:top-[0.65rem]",
                     getRouteStationClass(isHere ? "page" : "stop"),
                   )}
                 />
@@ -177,12 +183,12 @@ export async function ChapterStrip({
                 </span>
 
                 {isHere ? (
-                  <span className="text-[0.9375rem] leading-snug font-semibold text-pretty">
+                  <span className="text-reading leading-snug font-semibold text-pretty">
                     {item.title}
                   </span>
                 ) : (
                   <Link
-                    className="hover:text-foreground focus-visible:ring-ring/50 hit-area relative self-start rounded-md text-[0.9375rem] leading-snug font-medium text-pretty outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]"
+                    className="hover:text-foreground focus-visible:ring-ring/50 hit-area text-reading relative self-start rounded-md leading-snug font-medium text-pretty outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]"
                     href={getChapterHref({ ...params, chapterSlug: item.slug })}
                     prefetch
                   >

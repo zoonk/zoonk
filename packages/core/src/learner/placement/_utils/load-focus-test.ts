@@ -105,7 +105,7 @@ async function loadTurnFocusTest({
 
   const focusPlan = {
     ...facts,
-    proposal: facts.waitingId ? await loadPlanChangeView(facts.waitingId, { timeZone }) : null,
+    proposal: facts.waitingId ? await loadPlanChangeView(facts.waitingId) : null,
   };
 
   const offer = getOffer({

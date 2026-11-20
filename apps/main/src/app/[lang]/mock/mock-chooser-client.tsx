@@ -3,7 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
-import { answerHere, openingHere } from "@/lib/session/tap-answer";
+import { answerHere, openingHere, stayingHere } from "@/lib/session/tap-answer";
 import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
@@ -32,9 +32,11 @@ function wait(ms: number): Promise<void> {
 
 async function requestMockWriting({
   goalId,
+  isWanted,
   option,
 }: {
   goalId: string;
+  isWanted: () => Promise<boolean>;
   option: MockOptionView;
 }): Promise<QuestionWriting> {
   const path: `/${string}` = `/goals/${encodeURIComponent(goalId)}/mocks/generations`;
@@ -51,7 +53,7 @@ async function requestMockWriting({
     }
 
     await wait(PREPARING_RETRY_MS);
-    return ask(tries - 1);
+    return (await isWanted()) ? ask(tries - 1) : writing;
   };
 
   return ask(PREPARING_TRIES);
@@ -59,9 +61,20 @@ async function requestMockWriting({
 
 function toStatus({ option, outcome }: { option: MockOptionView; outcome: MockStartOutcome }) {
   if (outcome.status === "short") {
-    const { examQuestions, limit, minutes, questions } = outcome;
+    const { examQuestions, minutes, questions } = outcome;
+    const availableAt = outcome.availableAt?.toISOString() ?? null;
     const optionKey = getMockOptionKey(option);
-    return { examQuestions, kind: "short", limit, minutes, optionKey, questions } as const;
+    const limit = outcome.limit ?? null;
+
+    return {
+      availableAt,
+      examQuestions,
+      kind: "short",
+      limit,
+      minutes,
+      optionKey,
+      questions,
+    } as const;
   }
 
   return outcome.status === "notEnoughQuestions"
@@ -104,16 +117,17 @@ function MockChooserVisit({
 
   /** A start the server couldn't answer is a failed start, never an error page. */
   const startMock = async ({
-    acceptFewer,
     here,
     option,
+    ...flags
   }: {
-    acceptFewer: boolean;
+    acceptFewer?: boolean;
+    afterWriting?: boolean;
     here: Here;
     option: MockOptionView;
   }): Promise<MockStartOutcome | null> => {
     const { data } = await safeAsync(() =>
-      answerHere(startAnytimeMockAction(goalId, { ...toChoice(option), acceptFewer }), here),
+      answerHere(startAnytimeMockAction(goalId, { ...toChoice(option), ...flags }), here),
     );
 
     const answered = data ?? "failed";
@@ -135,17 +149,25 @@ function MockChooserVisit({
     setStatus(toStatus({ option, outcome }));
   };
 
-  const startWithWhatThereIs = async (option: MockOptionView, here: Here) => {
-    const outcome = await startMock({ acceptFewer: true, here, option });
+  const startWith = async (
+    option: MockOptionView,
+    here: Here,
+    flags: { acceptFewer?: boolean; afterWriting?: boolean },
+  ) => {
+    const outcome = await startMock({ ...flags, here, option });
 
     if (outcome) {
       open({ option, outcome });
     }
   };
 
+  /** What was written may still leave the mock short: the server then answers `short`, to ask first. */
+  const startAfterWriting = (option: MockOptionView, here: Here) =>
+    startWith(option, here, { afterWriting: true });
+
   const write = async (option: MockOptionView, here: Here) => {
     const { data } = await safeAsync(() =>
-      answerHere(requestMockWriting({ goalId, option }), here),
+      answerHere(requestMockWriting({ goalId, isWanted: here, option }), here),
     );
 
     const asked = data ?? "failed";
@@ -171,16 +193,15 @@ function MockChooserVisit({
       return;
     }
 
-    await startWithWhatThereIs(option, here);
+    await startAfterWriting(option, here);
   };
 
   const begin = (option: MockOptionView) =>
     startTransition(async () => {
       onDone();
       const here = openingHere();
-      const acceptFewer = status.kind === "short" && status.optionKey === getMockOptionKey(option);
       setStatus({ kind: "choosing" });
-      const outcome = await startMock({ acceptFewer, here, option });
+      const outcome = await startMock({ here, option });
 
       if (outcome?.status === "needsQuestions") {
         await write(option, here);
@@ -189,11 +210,20 @@ function MockChooserVisit({
       }
     });
 
+  const beginShort = (option: MockOptionView) =>
+    startTransition(async () => {
+      onDone();
+      setStatus({ kind: "choosing" });
+      await startWith(option, openingHere(), { acceptFewer: true });
+    });
+
   const screen = {
     bar,
     busy,
-    hrefs: { mock: MOCK_ENTRY_HREFS.mock, plus: "/subscription" },
+    hrefs: { mock: MOCK_ENTRY_HREFS.mock },
     onStart: begin,
+    onStartShort: beginShort,
+    onStayChoosing: () => setStatus({ kind: "choosing" }),
     view,
   };
 
@@ -204,9 +234,14 @@ function MockChooserVisit({
   return (
     <WritingMock
       generationId={writing.generationId}
-      onReady={() => startTransition(() => startWithWhatThereIs(writing.option, openingHere()))}
+      onReady={() => startTransition(() => startAfterWriting(writing.option, openingHere()))}
       restart={async () => {
-        const again = await requestMockWriting({ goalId, option: writing.option });
+        const again = await requestMockWriting({
+          goalId,
+          isWanted: stayingHere(),
+          option: writing.option,
+        });
+
         return again.status === "writing" ? again.generationId : null;
       }}
       screen={screen}

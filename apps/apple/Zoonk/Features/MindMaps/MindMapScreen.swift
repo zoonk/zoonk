@@ -55,13 +55,13 @@ struct MindMapScreen: View {
               .taskColumn(alignment: .leading)
           }
         } else {
-          ContentUnavailableView {
+          StateMessage {
             Label {
               Text(
                 "The mind map couldn't be made this time.", tableName: "MindMaps",
                 comment: "Shown when a chapter has no map to show")
             } icon: {
-              KindMark(kind: .mindMap)
+              Image(systemName: LearnKind.mindMap.systemImage)
             }
           }
           .lonePage()
@@ -108,7 +108,7 @@ struct MindMapUnreachable: View {
   let retry: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    PageLoadFailure(inBar: false) {
       Label {
         Text(
           "We couldn't reach the server.", tableName: "MindMaps",
@@ -120,78 +120,105 @@ struct MindMapUnreachable: View {
       Text(
         "Check your connection.", tableName: "MindMaps",
         comment: "Under a map that failed to load: what the learner can check")
-    } actions: {
-      Button(action: retry) {
-        Text("Try again", tableName: "MindMaps", comment: "Retries")
-      }
-      .buttonStyle(.outline)
+    } retry: {
+      retry()
     }
-    .lonePage()
   }
 }
 
-/// Main's `MindMapOutline`: the map in words, under whatever names it. Its central idea, its
-/// numbered branches, the comparison, and the gist last.
+/// Main's `MindMapOutline`: the map in words, a section per branch: its number and title, its line
+/// and its points, then the comparison as a table and the gist last. `isTitled` leads with the
+/// map's own title where nothing above names it.
 struct MindMapOutlineView: View {
   @Environment(\.legibilityWeight) private var legibility
-  @ScaledMetric(relativeTo: .caption) private var numberSize = 24.0
 
   let outline: ChapterMindMap.Outline
+  var isTitled = false
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 20) {
-      Text(outline.centralIdea)
-        .foregroundStyle(.mutedForeground)
+    VStack(alignment: .leading, spacing: 32) {
+      VStack(alignment: .leading, spacing: 4) {
+        if isTitled {
+          Text(outline.title)
+            .typeStyle(.stepHeading)
+            .accessibilityAddTraits(.isHeader)
+        }
 
-      VStack(alignment: .leading, spacing: 16) {
-        ForEach(Array(outline.branches.enumerated()), id: \.offset) { index, branch in
-          HStack(alignment: .top, spacing: 12) {
+        Text(outline.centralIdea)
+      }
+
+      ForEach(Array(outline.branches.enumerated()), id: \.offset) { index, branch in
+        VStack(alignment: .leading, spacing: 8) {
+          HStack(alignment: .firstTextBaseline, spacing: 10) {
             Text(verbatim: (index + 1).formatted())
               .typeStyle(.data.weight(.medium))
               .foregroundStyle(.mutedForeground)
-              .frame(width: numberSize, height: numberSize)
-              .background(.muted, in: .rect(cornerRadius: Radius.sm, style: .continuous))
               .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: 4) {
-              Text(branch.title)
-                .typeStyle(.rowTitle)
-              Text(branch.explanation)
-              OutlinePoints(points: branch.points)
-            }
+            Text(branch.title)
+              .typeStyle(.reading.weight(.semibold))
           }
+          .accessibilityElement(children: .combine)
+          .accessibilityAddTraits(.isHeader)
+
+          Text(branch.explanation)
+          OutlinePoints(points: branch.points)
         }
       }
 
       if let comparison = outline.comparison {
-        VStack(alignment: .leading, spacing: 8) {
-          Text(comparison.title)
-            .typeStyle(.note.weight(.medium))
-            .foregroundStyle(.mutedForeground)
+        ComparisonTable(comparison: comparison)
+      }
 
-          LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: 240), spacing: 12, alignment: .topLeading)],
-            alignment: .leading, spacing: 12
-          ) {
+      VStack(alignment: .leading, spacing: 24) {
+        Divider()
+
+        Text(
+          AttributedString(
+            localized: "**In short:** \(outline.summary)", table: "MindMaps",
+            comment: "The map's summary, after its label in bold"),
+          strong: .semibold, legibility: legibility)
+      }
+    }
+    .typeStyle(.reading)
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+/// The things a map sets side by side, a column each, their points row by row.
+private struct ComparisonTable: View {
+  let comparison: ChapterMindMap.Outline.Comparison
+
+  var body: some View {
+    let rows = comparison.columns.map(\.points.count).max() ?? 0
+
+    VStack(alignment: .leading, spacing: 12) {
+      Text(comparison.title)
+        .typeStyle(.reading.weight(.semibold))
+        .accessibilityAddTraits(.isHeader)
+
+      Grid(alignment: .topLeading, horizontalSpacing: 16, verticalSpacing: 10) {
+        GridRow {
+          ForEach(comparison.columns, id: \.self) { column in
+            Text(column.name)
+              .typeStyle(.note.weight(.medium))
+              .foregroundStyle(.mutedForeground)
+              .frame(maxWidth: .infinity, alignment: .leading)
+          }
+        }
+
+        ForEach(0..<rows, id: \.self) { row in
+          Divider()
+
+          GridRow {
             ForEach(comparison.columns, id: \.self) { column in
-              VStack(alignment: .leading, spacing: 4) {
-                Text(column.name)
-                  .typeStyle(.rowTitle)
-                OutlinePoints(points: column.points)
-              }
+              Text(row < column.points.count ? column.points[row] : "")
+                .typeStyle(.body)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
           }
         }
       }
-
-      Text(
-        AttributedString(
-          localized: "**In short:** \(outline.summary)", table: "MindMaps",
-          comment: "The map's summary, after its label in bold"),
-        strong: .medium, legibility: legibility)
     }
-    .typeStyle(.body)
-    .frame(maxWidth: .infinity, alignment: .leading)
   }
 }
 
@@ -237,7 +264,7 @@ struct ZoomableRemoteImage: View {
             }
           }
       } else if failed {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text(
               "We couldn't reach the server.", tableName: "MindMaps",

@@ -2,10 +2,7 @@
 <resources>
     <string name="memory_description">What Zoonk remembers to give you examples and plans that fit your life.</string>
     <string name="memory_use">Use memory</string>
-    <string name="memory_use_on">Personal examples, plans that fit your week and calls that remember your news</string>
-    <string name="memory_use_off">Memory is off. Nothing new is learned, and these facts aren\'t used.</string>
-    <string name="memory_empty_on">Nothing yet. As you study and chat, short notes that help Zoonk teach you show up here.</string>
-    <string name="memory_empty_off">Nothing here. Zoonk keeps no notes about you while memory is off.</string>
+    <string name="memory_empty">Nothing yet. What you share shows up here as you study and chat.</string>
     <string name="memory_save_failed">That didn\'t save. Try again.</string>
     <string name="memory_category_goals">Goals</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
@@ -19,8 +16,7 @@
     <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
     <string name="memory_source_call">From a call</string>
     <string name="memory_source_chat">From a chat</string>
-    <string name="memory_source_onboarding">From onboarding</string>
-    <string name="memory_source_session">From a study session</string>
+    <string name="memory_source_session">From your lessons</string>
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
     <string name="memory_fact_source">%1$s · %2$s</string>
     <!-- %1$s is the fact, like "Studies after work". -->
@@ -31,17 +27,18 @@
     <string name="memory_edit_title">Edit memory</string>
     <string name="memory_edit_description">Say it the way it\'s true for you.</string>
     <string name="memory_edit_label">What Zoonk remembers</string>
-    <string name="memory_download">Download my memory</string>
-    <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
-    <string name="memory_download_description">Everything in your memory, as one file</string>
+    <string name="memory_download">A copy of your memory</string>
+    <string name="memory_download_your_memory">Download your memory</string>
     <string name="memory_sensitive_note">Zoonk doesn\'t keep health, religion or other sensitive details unless you ask it to.</string>
     <string name="memory_updated">Memory updated:</string>
     <plurals name="memory_updated_more">
-        <item quantity="one">and %d more</item>
-        <item quantity="other">and %d more</item>
+        <item quantity="one">and %d more change</item>
+        <item quantity="other">and %d more changes</item>
     </plurals>
     <string name="memory_undo">Undo</string>
     <string name="memory_change_undone">Change undone</string>
     <string name="memory_undo_failed">Couldn\'t undo. It changed since.</string>
     <string name="memory_undo_retry">Couldn\'t undo. Try again.</string>
+    <!-- What memory does while it's on; the placeholder is the learner's buddy name, Zu unless they renamed it. -->
+    <string name="memory_use_description">Personal examples, plans that fit your week and calls with %1$s that remember what you share</string>
 </resources>

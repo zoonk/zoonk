@@ -1,0 +1,578 @@
+import { cleanup } from "@testing-library/react";
+import { planTimeToCoverSchema } from "@zoonk/core/plans/time-advice-contract";
+import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
+import { useState } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { page, userEvent } from "vitest/browser";
+import { type PlanActions, PlanScreenProvider } from "../../../learn/src/plan/plan-context";
+import { PlanEditor } from "../../../learn/src/plan/plan-editor";
+import { PlanSheetHosts } from "../../../learn/src/plan/plan-sheet-hosts";
+import {
+  PlanSuggestionProvider,
+  PlanSuggestionSlot,
+} from "../../../learn/src/plan/plan-suggestion";
+import { type PlanSuggestionHost } from "../../../learn/src/plan/plan-suggestion-context";
+import { atViewport } from "../_test-utils/browser-viewport";
+import { render } from "../_test-utils/render";
+
+const PHONE = { height: 844, width: 390 };
+const LAPTOP = { height: 900, width: 1440 };
+
+const FIT_EFFECT = { endDateAfter: null, endDateBefore: null, lessonsAdded: 4, lessonsRemoved: 0 };
+
+const PLAN = {
+  access: { mocksRequirePlus: false },
+  areas: [],
+  bases: null,
+  changes: [],
+  course: null,
+  currentPhase: null,
+  end: null,
+  estimate: {
+    endDate: null,
+    fullCourseEndDate: null,
+    pace: null,
+    remainingHours: 20,
+    totalHours: 30,
+  },
+  examChoices: [],
+  examDocument: "notice",
+  feasibility: null,
+  fitOffer: {
+    canApply: true,
+    effect: FIT_EFFECT,
+    fits: true,
+    operations: [{ kind: "fitLessons" }],
+  },
+  focusTest: null,
+  fundedMocks: [],
+  goalId: "01a11014-0000-7000-8000-0000000000f1",
+  languageAim: null,
+  notice: null,
+  numbers: null,
+  ownLevel: null,
+  phases: [],
+  planId: "01a11014-0000-7000-8000-0000000000f2",
+  ready: true,
+  schedule: {
+    dailyMinutes: 30,
+    dailyTimes: [],
+    fullCourse: false,
+    lightWeeks: [],
+    mocks: null,
+    nextSitting: null,
+    noSitting: null,
+    noticeDay: null,
+    shape: {
+      canDiffer: false,
+      weekdayDays: [1, 2, 3, 4, 5],
+      weekdays: 30,
+      weekend: null,
+      weekendDays: [],
+    },
+    studyDays: 5,
+    targetDate: "2027-03-01",
+    targetDateEstimated: false,
+    targetDateNamedMonth: false,
+    weekdayMinutes: [0, 30, 30, 30, 30, 30, 0],
+  },
+  shortPlan: null,
+  status: { kind: "onTrack" },
+  steering: {
+    difficultyBias: "standard",
+    lessonsStudied: 0,
+    practiceBias: "balanced",
+    skippedActivities: [],
+  },
+  tools: [],
+  week: {
+    days: [{ date: "2026-11-16", items: [], minutes: 30, mockFunding: null, state: "today" }],
+    endDate: "2026-11-22",
+    startDate: "2026-11-16",
+  },
+  weekTime: { studiedMinutes: 0, targetMinutes: 150 },
+  writtenPractice: null,
+} satisfies PlanView;
+
+/** The Plan draws its suggestion twice: in the column below 72rem, in the aside from there. */
+const EDITOR_PANEL_WIDTH = 768;
+
+function isSidePanelShown(): boolean {
+  return document.querySelector("[data-slot='side-panel-content']") !== null;
+}
+
+/** The editor opens as a sheet below 768px and as a side panel from it. */
+function renderEditor(plan: PlanView = PLAN) {
+  const heldChange = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
+  const change = vi.fn<PlanActions["change"]>(() => heldChange.promise);
+
+  const actions: PlanActions = {
+    adviseOnBases: async () => null,
+    change,
+    chooseExamOption: async () => null,
+    chooseTools: async () => false,
+    decide: async () => false,
+    findTimeToCover: async () => null,
+    preview: async () => null,
+  };
+
+  render(
+    <PlanScreenProvider
+      value={{
+        actions,
+        goal: { displayName: "Learn Spanish", kind: "learn" },
+        plan,
+        shareHref: "/plan",
+      }}
+    >
+      <PlanSheetHosts>
+        <PlanEditor onOpenChange={vi.fn()} open />
+      </PlanSheetHosts>
+    </PlanScreenProvider>,
+  );
+
+  return { change, releaseChange: () => heldChange.resolve({ change: null, status: "applied" }) };
+}
+
+function renderPlanSlots({
+  findTimeToCover = async () => null,
+  host,
+  plan,
+}: {
+  findTimeToCover?: PlanActions["findTimeToCover"];
+  host: PlanSuggestionHost;
+  plan: PlanView;
+}) {
+  const heldChange = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
+  const change = vi.fn<PlanActions["change"]>(() => heldChange.promise);
+
+  const actions: PlanActions = {
+    adviseOnBases: async () => null,
+    change,
+    chooseExamOption: async () => null,
+    chooseTools: async () => false,
+    decide: async () => false,
+    findTimeToCover,
+    preview: async () => null,
+  };
+
+  const screen = (shown: { host: PlanSuggestionHost; plan: PlanView }) => (
+    <PlanScreenProvider
+      value={{
+        actions,
+        goal: { displayName: "Learn Spanish", kind: "learn" },
+        plan: shown.plan,
+        shareHref: "/plan",
+      }}
+    >
+      <PlanSuggestionProvider host={shown.host}>
+        <PlanSuggestionSlot className="hidden min-[72rem]:block" />
+        <PlanSuggestionSlot className="min-[72rem]:hidden" />
+      </PlanSuggestionProvider>
+    </PlanScreenProvider>
+  );
+
+  const mounted = render(screen({ host, plan }));
+
+  return {
+    change,
+    releaseChange: () => heldChange.resolve({ change: null, status: "applied" }),
+    /** The same screen showing another plan, as switching goals does. */
+    show: (shown: { host: PlanSuggestionHost; plan: PlanView }) => mounted.rerender(screen(shown)),
+  };
+}
+
+/** The one the learner sees: the other copy is in the DOM, hidden at this width. */
+function shownButton(name: string): Element | undefined {
+  return page
+    .getByRole("button", { name })
+    .elements()
+    .find((element) => element.checkVisibility());
+}
+
+function isBusy(name: string): boolean {
+  return shownButton(name)?.getAttribute("aria-busy") === "true";
+}
+
+/** Hidden at a width, a copy is out of the accessibility tree, so the DOM finds every one. */
+function busyInEveryCopy(name: string): (string | null)[] {
+  return [...document.querySelectorAll("button")]
+    .filter((button) => button.textContent === name)
+    .map((button) => button.getAttribute("aria-busy"));
+}
+
+function isTextShown(text: string): boolean {
+  return page
+    .getByText(text)
+    .elements()
+    .some((element) => element.checkVisibility());
+}
+
+/** Crosses the breakpoint; from 72rem a sheet left open from the phone width closes. */
+async function cross(to: { height: number; width: number }) {
+  await page.viewport(to.width, to.height);
+
+  if (to.width >= LAPTOP.width) {
+    await userEvent.keyboard("{Escape}");
+
+    await vi.waitFor(() => {
+      if (page.getByRole("dialog").elements().length > 0) {
+        throw new Error("The sheet opened at the phone width is still open.");
+      }
+    });
+  }
+}
+
+async function press(name: string) {
+  await expect.poll(() => shownButton(name)).toBeDefined();
+  const button = shownButton(name);
+
+  if (button instanceof HTMLElement) {
+    await userEvent.click(button);
+  }
+}
+
+const HOST_BASE = {
+  courseHref: () => "/course",
+  goalStatus: null,
+  next: null,
+  onAdjust: vi.fn(),
+  onEdit: vi.fn(),
+} satisfies Omit<PlanSuggestionHost, "certificates">;
+
+describe.each([PHONE, LAPTOP])("a completed plan at $width px", (viewport) => {
+  afterEach(cleanup);
+
+  it("offers the certificate without opening the finished plan's details", async () => {
+    await atViewport(viewport, async () => {
+      const onClaim = vi.fn(async () => true);
+
+      renderPlanSlots({
+        host: {
+          ...HOST_BASE,
+          certificates: { onClaim, unclaimed: [{ courseLevel: "beginner" }], view: null },
+          next: { onContinue: vi.fn(), view: { nextLevel: null, related: [] } },
+        },
+        plan: { ...PLAN, fitOffer: null, status: { kind: "finished" } },
+      });
+
+      await press("Get your certificate");
+      await expect.poll(() => onClaim).toHaveBeenCalledOnce();
+    });
+  });
+});
+
+describe.each([
+  { from: PHONE, to: LAPTOP },
+  { from: LAPTOP, to: PHONE },
+])("a Plan suggestion's request from $from.width to $to.width px", ({ from, to }) => {
+  afterEach(cleanup);
+
+  it(`keeps "Add to plan" busy and adds once`, async () => {
+    await atViewport(from, async () => {
+      const held = renderPlanSlots({ host: { ...HOST_BASE, certificates: null }, plan: PLAN });
+
+      await press("Add to plan");
+      await expect.poll(() => held.change).toHaveBeenCalledOnce();
+
+      await cross(to);
+
+      await expect.poll(() => isBusy("Add to plan")).toBe(true);
+
+      held.releaseChange();
+
+      await expect.poll(() => isTextShown("Your plan is updated.")).toBe(true);
+      expect(held.change).toHaveBeenCalledOnce();
+    });
+  });
+
+  it(`keeps "Get your certificate" busy and says a failure`, async () => {
+    await atViewport(from, async () => {
+      const claim = Promise.withResolvers<boolean>();
+      const onClaim = vi.fn(() => claim.promise);
+
+      renderPlanSlots({
+        host: {
+          ...HOST_BASE,
+          certificates: { onClaim, unclaimed: [{ courseLevel: "beginner" }], view: null },
+        },
+        plan: { ...PLAN, fitOffer: null },
+      });
+
+      await press("Get your certificate");
+      await expect.poll(() => onClaim).toHaveBeenCalledOnce();
+
+      await cross(to);
+      await expect.poll(() => isBusy("Get your certificate")).toBe(true);
+
+      claim.resolve(false);
+
+      await expect.poll(() => isTextShown("That didn't save. Try again.")).toBe(true);
+
+      expect(onClaim).toHaveBeenCalledOnce();
+    });
+  });
+
+  it(`keeps a date search going and shows its date`, async () => {
+    await atViewport(from, async () => {
+      const found = Promise.withResolvers<Awaited<ReturnType<PlanActions["findTimeToCover"]>>>();
+      const findTimeToCover = vi.fn(() => found.promise);
+
+      renderPlanSlots({
+        findTimeToCover,
+        host: { ...HOST_BASE, certificates: null },
+        plan: { ...PLAN, fitOffer: null, status: { kind: "pastDate", lessons: 3 } },
+      });
+
+      await press("Find a date");
+      await expect.poll(() => findTimeToCover).toHaveBeenCalledOnce();
+
+      await cross(to);
+
+      await expect.poll(() => isTextShown("Checking what changes…")).toBe(true);
+
+      found.resolve(
+        planTimeToCoverSchema.parse({
+          fittingDate: "2027-01-10",
+          pastDate: true,
+          ready: true,
+          recommendedMinutes: null,
+          suggested: null,
+          targetDate: null,
+          targetDateNamedMonth: false,
+        }),
+      );
+
+      await expect.poll(() => isTextShown("Move your end date to January 10, 2027?")).toBe(true);
+      expect(findTimeToCover).toHaveBeenCalledOnce();
+    });
+  });
+});
+
+describe.each([
+  { from: PHONE, to: { height: 900, width: 1024 } },
+  { from: { height: 900, width: 1024 }, to: PHONE },
+])("the plan editor's save from $from.width to $to.width px", ({ from, to }) => {
+  afterEach(cleanup);
+
+  it("keeps Save busy in the frame the resize brings and saves once", async () => {
+    await atViewport(from, async () => {
+      const held = renderEditor();
+      const field = page.getByLabelText("End date");
+      await field.fill("2027-04-01");
+      await press("Save");
+      await expect.poll(() => held.change).toHaveBeenCalledOnce();
+
+      await page.viewport(to.width, to.height);
+      await expect.poll(isSidePanelShown).toBe(to.width >= EDITOR_PANEL_WIDTH);
+      await expect.poll(() => isBusy("Save")).toBe(true);
+
+      held.releaseChange();
+
+      await expect.poll(() => isBusy("Save")).toBe(false);
+      expect(held.change).toHaveBeenCalledOnce();
+    });
+  });
+});
+
+/** A week with weekdays and a weekend, so "Different time on weekends" shows. */
+const WEEKEND_PLAN = {
+  ...PLAN,
+  schedule: {
+    ...PLAN.schedule,
+    shape: { ...PLAN.schedule.shape, canDiffer: true, weekendDays: [0, 6] },
+    studyDays: 7,
+    weekdayMinutes: [30, 30, 30, 30, 30, 30, 30],
+  },
+} satisfies PlanView;
+
+function topOf(selector: string): number | undefined {
+  return document.querySelector(selector)?.getBoundingClientRect().top;
+}
+
+describe("the Adjust sheet on a phone", () => {
+  afterEach(cleanup);
+
+  it("moves nothing above the weekend switch when it's turned on and off", async () => {
+    await atViewport(PHONE, async () => {
+      renderEditor(WEEKEND_PLAN);
+      const weekends = page.getByRole("switch", { name: "Different time on weekends" });
+      await expect.element(weekends).toBeVisible();
+
+      const tops = () => ({
+        sheet: topOf("[data-slot=drawer-popup]"),
+        switch: weekends.element().getBoundingClientRect().top,
+        title: topOf("[data-slot=drawer-title]"),
+      });
+
+      const before = tops();
+      await weekends.click();
+      await expect.element(page.getByText("Weekend time")).toBeVisible();
+      expect(tops()).toStrictEqual(before);
+
+      await weekends.click();
+      await expect.element(page.getByText("Weekend time")).not.toBeInTheDocument();
+      expect(tops()).toStrictEqual(before);
+    });
+  });
+});
+
+/** An applied change the learner can undo, as a save in the editor reports it. */
+function editorChange(id: string): PlanChangeView {
+  return {
+    behind: null,
+    canApply: false,
+    canUndo: true,
+    createdAt: "2026-11-15",
+    days: null,
+    effect: FIT_EFFECT,
+    examDocument: "notice",
+    id,
+    kind: "manual",
+    lessonsSkipped: 0,
+    officialDate: null,
+    operations: [{ kind: "setTargetDate", targetDate: "2027-04-01" }],
+    quote: "q",
+    reason: null,
+    seen: true,
+    source: "learner",
+    status: "applied",
+    todaySession: null,
+  };
+}
+
+describe("the Plan's requests belong to its screen", () => {
+  afterEach(cleanup);
+
+  it(`shows "Add to plan" busy in both copies while its form action runs`, async () => {
+    await atViewport(LAPTOP, async () => {
+      const held = renderPlanSlots({ host: { ...HOST_BASE, certificates: null }, plan: PLAN });
+
+      await press("Add to plan");
+
+      await expect.poll(() => busyInEveryCopy("Add to plan")).toEqual(["true", "true"]);
+
+      held.releaseChange();
+
+      await expect.poll(() => isTextShown("Your plan is updated.")).toBe(true);
+      expect(held.change).toHaveBeenCalledOnce();
+    });
+  });
+
+  it("shows another goal's Plan nothing of a request still running on the first", async () => {
+    await atViewport(LAPTOP, async () => {
+      const host = { ...HOST_BASE, certificates: null };
+      const held = renderPlanSlots({ host, plan: PLAN });
+      await press("Add to plan");
+      await expect.poll(() => held.change).toHaveBeenCalledOnce();
+
+      const other = { ...PLAN, goalId: "another-goal", planId: "another-plan" };
+      const pastDate = { kind: "pastDate" as const, lessons: 3 };
+      held.show({ host, plan: { ...other, fitOffer: null, status: pastDate } });
+      await expect.poll(() => shownButton("Add to plan")).toBeUndefined();
+      held.show({ host, plan: other });
+
+      await expect.poll(() => shownButton("Add to plan")).toBeDefined();
+      expect(isBusy("Add to plan")).toBe(false);
+      held.releaseChange();
+    });
+  });
+
+  it("shows another goal's Plan nothing of a claim that failed on the first", async () => {
+    await atViewport(LAPTOP, async () => {
+      const onClaim = vi.fn(async () => false);
+      const unclaimed = [{ courseLevel: "beginner" as const }];
+      const host = { ...HOST_BASE, certificates: { onClaim, unclaimed, view: null } };
+      const plan = { ...PLAN, fitOffer: null };
+      const held = renderPlanSlots({ host, plan });
+      await press("Get your certificate");
+      await expect.poll(() => isTextShown("That didn't save. Try again.")).toBe(true);
+
+      const other = { ...plan, goalId: "another-goal", planId: "another-plan" };
+      held.show({ host: { ...HOST_BASE, certificates: null }, plan: other });
+      await expect.poll(() => shownButton("Get your certificate")).toBeUndefined();
+      held.show({ host, plan: other });
+
+      await expect.poll(() => shownButton("Get your certificate")).toBeDefined();
+      expect(isTextShown("That didn't save. Try again.")).toBe(false);
+      expect(onClaim).toHaveBeenCalledOnce();
+    });
+  });
+
+  it("keeps a reopened editor's own Undo when a save from before it closed lands", async () => {
+    await atViewport(LAPTOP, async () => {
+      const earlier = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
+      const current = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
+
+      const change = vi
+        .fn<PlanActions["change"]>()
+        .mockImplementationOnce(() => earlier.promise)
+        .mockImplementationOnce(() => current.promise);
+
+      const decide = vi.fn<PlanActions["decide"]>(async () => true);
+
+      const actions: PlanActions = {
+        adviseOnBases: async () => null,
+        change,
+        chooseExamOption: async () => null,
+        chooseTools: async () => false,
+        decide,
+        findTimeToCover: async () => null,
+        preview: async () => null,
+      };
+
+      function Screen() {
+        const [open, setOpen] = useState(false);
+
+        return (
+          <PlanScreenProvider
+            value={{
+              actions,
+              goal: { displayName: "Learn Spanish", kind: "learn" },
+              plan: PLAN,
+              shareHref: "/plan",
+            }}
+          >
+            <PlanSheetHosts>
+              <button onClick={() => setOpen(true)} type="button">
+                Open editor
+              </button>
+              <PlanEditor onOpenChange={setOpen} open={open} />
+            </PlanSheetHosts>
+          </PlanScreenProvider>
+        );
+      }
+
+      render(<Screen />);
+      await press("Open editor");
+      await page.getByLabelText("End date").fill("2027-04-01");
+      await press("Save");
+      await expect.poll(() => change).toHaveBeenCalledOnce();
+
+      await userEvent.keyboard("{Escape}");
+      await expect.poll(() => page.getByRole("dialog").elements()).toHaveLength(0);
+      await press("Open editor");
+      await expect.poll(isSidePanelShown).toBe(true);
+      expect(isBusy("Save")).toBe(true);
+
+      await press("Mon");
+      await expect.poll(() => change).toHaveBeenCalledTimes(2);
+      // React shows a transition's updates once every running action is done, so this opening's
+      // answer only shows after the earlier one lands: answered first, it is overwritten unless
+      // the earlier one is dropped. The macrotask lets this one's answer run before.
+      current.resolve({ change: editorChange("made-in-this-opening"), status: "applied" });
+      await current.promise;
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
+      earlier.resolve({ change: editorChange("made-before-closing"), status: "applied" });
+      await expect.poll(() => isBusy("Save")).toBe(false);
+
+      await press("Undo");
+      await expect.poll(() => decide).toHaveBeenCalledOnce();
+      expect(decide).toHaveBeenCalledWith({ changeId: "made-in-this-opening", status: "undone" });
+    });
+  });
+});

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
-import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
+import { useOpenLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { learnerStaying } from "@/lib/learner/learner-store";
 import { runWhenIdle } from "@/lib/run-when-idle";
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/checkpoint-call-contract";
@@ -116,7 +116,7 @@ export function CheckpointCallClient({
   blockId: string;
   unitTitle: string;
 }) {
-  const startConversation = useStartLanguageConversation();
+  const startConversation = useOpenLanguageConversation();
 
   return (
     <CheckpointCallPreparing

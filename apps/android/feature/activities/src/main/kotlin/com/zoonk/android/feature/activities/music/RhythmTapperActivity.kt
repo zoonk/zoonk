@@ -31,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +51,6 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -83,6 +81,7 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -243,7 +242,7 @@ private fun RhythmGrid(
         )
     val hitsPerRound = fields.hitSteps.size
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    ProvideLayoutDirection(LayoutDirection.Ltr) {
         Column(Modifier.clearAndSetSemantics { contentDescription = description }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             repeat(fields.rounds) { round ->
                 Row(verticalAlignment = Alignment.Bottom) {
@@ -410,13 +409,14 @@ private fun RhythmControls(
                 ButtonIcon(R.drawable.ic_headphones)
                 Text(stringResource(R.string.activities_music_listen_first))
             }
-            Button(
-                onClick = onStart,
-                enabled = enabled,
-                contentPadding = if (hasTried) ButtonDefaults.ButtonWithIconContentPadding else ButtonDefaults.ContentPadding,
-            ) {
-                if (hasTried) ButtonIcon(R.drawable.ic_replay)
-                Text(stringResource(if (hasTried) R.string.activities_music_try_again else R.string.activities_music_start_tapping))
+            // A try enables Check, so Try again steps down and Check is the one filled action, as Run does.
+            if (hasTried) {
+                OutlinedButton(onClick = onStart, enabled = enabled, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+                    ButtonIcon(R.drawable.ic_replay)
+                    Text(stringResource(R.string.activities_music_try_again))
+                }
+            } else {
+                Button(onClick = onStart, enabled = enabled) { Text(stringResource(R.string.activities_music_start_tapping)) }
             }
         }
         TextButton(onClick = onCheckSound, enabled = enabled) {
@@ -488,8 +488,7 @@ private fun SoundCheckPanel(
             is SoundCheck.Phase.Done -> {
                 when {
                     phase.delayMs == null -> stringResource(R.string.activities_music_sound_check_failed)
-                    phase.delayMs < ON_TIME_MS -> stringResource(R.string.activities_music_sound_check_on_time)
-                    else -> stringResource(R.string.activities_music_sound_check_late, phase.delayMs)
+                    else -> stringResource(R.string.activities_music_sound_check_done)
                 }
             }
         }
@@ -534,7 +533,6 @@ private fun SoundCheckPanel(
 }
 
 private const val INACTIVE_ALPHA = 0.6f
-private const val ON_TIME_MS = 20
 private val STEP_GAP = 2.dp
 private val BEAT_GAP = 6.dp
 private val RESULT_DOT = 8.dp

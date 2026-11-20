@@ -7,7 +7,6 @@ import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { CompletedLessonsRow } from "../completed-lessons/completed-lessons-row";
 import { MistakesRow } from "../mistakes/mistakes-row";
-import { useTodayScreen } from "./today-context";
 
 const PRACTICE_TITLE_ID = "today-practice-title";
 
@@ -18,18 +17,21 @@ const PRACTICE_TITLE_ID = "today-practice-title";
 export function TodayPractice({
   className,
   completedLessons,
+  completedLessonsHref,
   mistakes,
+  mistakesHref,
   mockEntry,
   speakingEntry,
 }: {
   className?: string;
   completedLessons: boolean;
+  completedLessonsHref: string;
   mistakes: MistakeAvailability;
-  mockEntry: React.ReactNode;
-  speakingEntry: React.ReactNode;
+  mistakesHref: string;
+  mockEntry?: React.ReactNode;
+  speakingEntry?: React.ReactNode;
 }) {
   const t = useExtracted();
-  const { actions } = useTodayScreen();
 
   return (
     <PageSection
@@ -44,8 +46,8 @@ export function TodayPractice({
       <ListGroup>
         {mockEntry}
         {speakingEntry}
-        <MistakesRow availability={mistakes} href={actions.mistakesHref} />
-        {completedLessons && <CompletedLessonsRow href={actions.completedLessonsHref} />}
+        <MistakesRow availability={mistakes} href={mistakesHref} />
+        {completedLessons && <CompletedLessonsRow href={completedLessonsHref} />}
       </ListGroup>
     </PageSection>
   );

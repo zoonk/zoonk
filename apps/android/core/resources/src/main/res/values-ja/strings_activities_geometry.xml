@@ -3,7 +3,7 @@
 {
   "activities_geometry_badge_build_it": "111ea4ab86b5b4b431d34e8736dea5270cede274dbc8b37c08c20811b680b619",
   "activities_geometry_badge_drag_corner": "674f1f4114069f1a1d6cf328106408d882c1210ba0df9cafa6425c9f9a12b7de",
-  "activities_geometry_badge_move_curve": "60d433a53dde4484e7acdb3b9b0ff94ee8a1f424879f46c3e2016eb47ac00516",
+  "activities_geometry_badge_move_curve": "8438f204ae34cdbd2a67a3794b8fac87805f5cb60622cd2ad718343acedde641",
   "activities_geometry_badge_turn_it": "fcc83adf91d372f9d7ed5d37def5aeb768c49e56ebb5d446155a46151cf2760f",
   "activities_geometry_board_angles": "6728e6a1ff7f3d88fffd86c41cc8561e662ae9f579beb9825c15903318b77e2b",
   "activities_geometry_board_angles_total": "e1acacd063cd55d476f8ac3dbf7ade15d66a051b6765828373832fc2fc6a785d",
@@ -78,7 +78,7 @@
   "activities_geometry_molecule_selected": "4bb8e2a51fb1f12a9e7872d45a7b7d6018d98a7b78942bd073b6f51b7349a196",
   "activities_geometry_molecule_selected_hint": "a06b5633f86a51ffa1d2fda8d18e60a9c78cc259a24c611a6d5c488b314bd83c",
   "activities_geometry_molecule_single_bond": "c344a38dfce8bfd8db953e353b7744869ae9f32cc22c2a000f5ba4d75e92bb96",
-  "activities_geometry_molecule_start": "b83f0b3b1307526300b8e6828731f942946550609596526975c5dc01da7e1db9",
+  "activities_geometry_molecule_start": "c7903f02cb4cf5b818b96501425ff77cc1cde9ac2234d4c43bccac1dddcacd80",
   "activities_geometry_molecule_target": "d0c2827c86f27600d7c80e7d773b1ee086a788a7d66ac6f397900b4d8e70c831",
   "activities_geometry_molecule_triple_bond": "c1c417ce095fcc73b8186976e0c18709d5b5a57301eae69d25d14381e5602618",
   "activities_geometry_molecule_undo": "988456be582ebb81f873016c695599985880335d1188467d8e4e5a0ceb2f7381",
@@ -188,7 +188,7 @@
     <!-- Removes the selected atom, like "Remove Oxygen 2". -->
     <string name="activities_geometry_molecule_remove">%1$sを取り除く</string>
     <string name="activities_geometry_molecule_remove_selected">選択中の原子を取り除く</string>
-    <string name="activities_geometry_molecule_start">元素をタップして、最初の原子を追加してください。</string>
+    <string name="activities_geometry_molecule_start">元素をタップして、分子を作り始めましょう。</string>
     <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
     <string name="activities_geometry_molecule_over">%1$sの結合が多すぎます。</string>
     <plurals name="activities_geometry_molecule_open">
@@ -224,7 +224,7 @@
         <item quantity="other">結合は全部で%1$d本です。二重結合は2本と数えます。</item>
     </plurals>
     <!-- The badge of an activity where the learner drags a line on a chart; "curve" as in a supply or demand curve. -->
-    <string name="activities_geometry_badge_move_curve">曲線を動かす</string>
+    <string name="activities_geometry_badge_move_curve">線を動かす</string>
     <!-- A line's draggable handle on a chart, for TalkBack, like "Move the line Supply". -->
     <string name="activities_geometry_line_move">%1$sの線を動かす</string>
     <!-- A line on a chart that the learner hasn't dragged, like "Supply hasn't moved." -->

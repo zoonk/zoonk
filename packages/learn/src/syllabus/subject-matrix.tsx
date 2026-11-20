@@ -4,9 +4,10 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import {
@@ -48,10 +49,10 @@ function MatrixGroupRow({ group }: { group: MatrixGroup }) {
 
   const skills =
     group.children.length > 0
-      ? t("{count, plural, one {# skill} other {# skills}}", { count: group.children.length })
+      ? t("{count, plural, one {# topic} other {# topics}}", { count: group.children.length })
       : null;
 
-  const line = [label, skills].filter(Boolean).join(" · ");
+  const line = [label, skills].filter(Boolean).join(FACT_SEPARATOR);
 
   const content = (
     <ListRowContent>
@@ -69,15 +70,12 @@ function MatrixGroupRow({ group }: { group: MatrixGroup }) {
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/matrix")}>
+      <CollapsibleTrigger className={LIST_ROW_INTERACTIVE_CLASS}>
         {content}
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/matrix:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron />
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+      <CollapsibleContent>
         <ul className="text-muted-foreground flex flex-col gap-2 px-4 pt-1 pb-3.5 text-sm">
           {group.children.map((child) => (
             <li className={cn("text-pretty", child.depth > 1 && "pl-5")} key={child.topic.name}>
@@ -110,7 +108,7 @@ export function SubjectMatrix({ matrix }: { matrix: readonly string[] }) {
       <PageSectionHeader>
         <PageSectionTitle id={titleId}>{t("What the questions ask")}</PageSectionTitle>
         <PageSectionDetail>
-          {t("{count, plural, one {# skill} other {# skills}}", { count: skills })}
+          {t("{count, plural, one {# topic} other {# topics}}", { count: skills })}
         </PageSectionDetail>
       </PageSectionHeader>
 

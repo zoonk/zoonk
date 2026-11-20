@@ -19,7 +19,7 @@ export default async function StatisticsPage() {
   const t = await getExtracted();
 
   return (
-    <StatsPage eyebrow={t("All goals")} title={t("Statistics")}>
+    <StatsPage title={t("Statistics")}>
       <ScoreChartPreload media={OVERVIEW_CHART_MEDIA} />
       <Suspense fallback={<StatsOverviewSkeleton />}>
         <StatsOverview />

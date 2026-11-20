@@ -20,20 +20,6 @@ final class SettingsAPITests: XCTestCase {
       [["soundsEnabled": false], ["shareUsageData": false]])
   }
 
-  func testClearingWhereTheLearnerLivesSendsItsNull() async throws {
-    let transport = ProfileUpdateTransport()
-    let api = SettingsAPI(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!, transport: transport))
-
-    _ = try await api.updatePreferences(
-      token: "token", .homeCountry(CountryChoice(code: "PT", name: "Portugal")))
-    _ = try await api.updatePreferences(token: "token", .homeCountry(nil))
-
-    XCTAssertEqual(
-      transport.sentBodies.value, [["homeCountry": "PT"], ["homeCountry": NSNull()]])
-  }
-
   func testNoWebPlusIsNotFound() async {
     let api = webPlusAPI(
       .notFound, #"{"error":{"code":"NOT_FOUND","message":"No web subscription left to cancel"}}"#)
@@ -43,36 +29,6 @@ final class SettingsAPITests: XCTestCase {
       XCTFail("Expected no website Plus")
     } catch {
       XCTAssertEqual(error as? APIError, .notFound)
-    }
-  }
-
-  func testAWebPlusThatAlreadyChangedIsReadAgainNotFailed() async throws {
-    try await webPlusAPI(.ok, #"{"endsAt":"2026-12-01T12:00:00.000Z"}"#)
-      .cancelWebPlus(token: "token")
-    try await webPlusAPI(
-      .conflict,
-      #"{"error":{"code":"CONFLICT","message":"No renewing web subscription to cancel"}}"#
-    ).cancelWebPlus(token: "token")
-    try await webPlusAPI(
-      .notFound, #"{"error":{"code":"NOT_FOUND","message":"No web subscription left to manage"}}"#
-    ).cancelWebPlus(token: "token")
-    try await webPlusAPI(.noContent, nil).keepWebPlus(token: "token")
-    try await webPlusAPI(
-      .conflict,
-      #"{"error":{"code":"CONFLICT","message":"Plus isn't set to end with its paid period"}}"#
-    ).keepWebPlus(token: "token")
-  }
-
-  func testAWebPlusChangeTheServerCouldntMakeFails() async {
-    let api = webPlusAPI(
-      .internalServerError,
-      #"{"error":{"code":"INTERNAL_ERROR","message":"Internal server error"}}"#)
-
-    do {
-      try await api.cancelWebPlus(token: "token")
-      XCTFail("Expected the cancellation to fail")
-    } catch {
-      XCTAssertEqual(error as? APIError, .unavailable)
     }
   }
 

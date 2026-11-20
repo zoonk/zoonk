@@ -1,10 +1,8 @@
 package com.zoonk.android.feature.buddy
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,13 +17,10 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.WindowInsetsRulers
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -45,6 +41,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -66,20 +64,24 @@ import com.zoonk.android.feature.tutor.rememberTutor
 import com.zoonk.android.feature.tutor.rememberTutorAccess
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyAct
 import com.zoonk.android.ui.characters.BuddyActor
 import com.zoonk.android.ui.characters.BuddyActorState
+import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyEnergyState
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyGlassesPicker
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
-import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.characters.rememberBuddyActorState
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
@@ -180,14 +182,11 @@ fun BuddyPage(
     }
     val taps = BuddyDayTaps(onMission, vm.opening, vm.openFailed)
     val earlier by app.earlierQuestions.questions.collectShown()
-    val activity = LocalActivity.current
 
-    DisposableEffect(vm, goalId) { onDispose { if (activity?.isChangingConfigurations != true) vm.endVisit() } }
-    LaunchedEffect(vm) {
-        vm.routes.collect {
-            dayOpen = false
-            navigator.open(it)
-        }
+    OnVisitEnd(vm, goalId, onEnd = vm::endVisit)
+    ActOn(vm.route) {
+        dayOpen = false
+        navigator.open(it)
     }
     LaunchedEffect(asking) {
         if (!asking) return@LaunchedEffect
@@ -214,7 +213,7 @@ fun BuddyPage(
         TutorRoutes(
             createAccount = { navigator.open(AppRoute.Login) },
             signIn = { navigator.open(AppRoute.Login) },
-            seePlus = { navigator.open(AppRoute.Subscription) },
+            subscribe = { navigator.open(AppRoute.Subscription) },
             open = navigator::open,
             startCall = app.conversations,
         )
@@ -242,28 +241,53 @@ fun BuddyPage(
                         )
                     },
                 )
-                if (vm.saveFailed && !editing) SaveFailed(Modifier.padding(horizontal = 16.dp))
                 TutorPanel(tutor, access, TutorIdentity(name, look), routes, Modifier.weight(1f), page = page)
             }
         }
     }
 
-    if (wearing) {
-        GlassesSheet(status, look, saveFailed = vm.saveFailed, onDismiss = { wearing = false }) { glasses ->
-            vm.save(look.kind, glasses, status.buddy.name)
+    BuddyChanges(
+        vm,
+        status,
+        look,
+        BuddyChangesOpen(wearing, editing),
+        closeGlasses = { wearing = false },
+        closeEditor = { editing = false },
+    )
+}
+
+/** Which of the buddy's change sheets show. */
+internal data class BuddyChangesOpen(
+    val glasses: Boolean,
+    val editor: Boolean,
+)
+
+/** The glasses sheet and the name editor, each its own asker: a save closes or marks only the one that asked. */
+@Composable
+internal fun BuddyChanges(
+    vm: BuddyViewModel,
+    status: BuddyStatus,
+    look: BuddyLook,
+    open: BuddyChangesOpen,
+    closeGlasses: () -> Unit,
+    closeEditor: () -> Unit,
+) {
+    if (open.glasses) {
+        VisitOf(vm.glassesSheet)
+        GlassesSheet(status, look, saveFailed = vm.glassesSaveFailed, onDismiss = closeGlasses) { glasses ->
+            vm.saveGlasses(look.kind, glasses, status.buddy.name)
         }
     }
-    if (editing) {
+    if (open.editor) {
+        VisitOf(vm.editor)
+        ActOn(vm.editorSaved) { closeEditor() }
         BuddyEditor(
             look = look,
             name = status.buddy.name.orEmpty(),
             isSaving = vm.isSaving,
-            saveFailed = vm.saveFailed,
-            onClose = {
-                editing = false
-                vm.dismissSaveFailure()
-            },
-            onSave = { kind, glasses, typed -> vm.save(kind, glasses, typed) { editing = false } },
+            saveFailed = vm.editorSaveFailed,
+            onClose = closeEditor,
+            onSave = vm::saveEdit,
         )
     }
 }
@@ -295,33 +319,74 @@ internal fun BuddyHeader(
     line: (@Composable () -> Unit)? = null,
     menu: (@Composable () -> Unit)? = null,
 ) {
-    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(IDENTITY_GAP),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Box(Modifier.size(FACE_SIZE)) {
-            if (face != null) BuddyActor(look, Modifier.size(FACE_SIZE), state = face) else BuddyStill(look)
+            if (face != null) BuddyActor(look, Modifier.size(FACE_SIZE), crop = BuddyCrop.Face, state = face) else BuddyStill(look)
         }
-        // With large text the day's line moves under the name instead of squeezing it.
-        FlowRow(
-            Modifier.weight(1f),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            itemVerticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column {
-                Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-                Text(
-                    stringResource(R.string.buddy_page_line, buddyStageName(look.stage)),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            line?.invoke()
+        NameAndLine(Modifier.weight(1f), line) {
+            Text(
+                name,
+                Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
         menu?.invoke()
     }
 }
 
+/**
+ * Main's `BuddyIdentityRow`: the day's [line] beside the name while they fit, and under it when they
+ * don't, pulled back by its padding so its words start on the name's edge.
+ */
+@Composable
+internal fun NameAndLine(
+    modifier: Modifier,
+    line: (@Composable () -> Unit)?,
+    name: @Composable () -> Unit,
+) {
+    Layout(content = {
+        name()
+        line?.invoke()
+    }, modifier = modifier) { measurables, constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val title = measurables[0].measure(loose)
+        val gap = IDENTITY_GAP.roundToPx()
+        // Beside the name only while the line fits there on one line of its own.
+        val beside =
+            measurables.getOrNull(1)?.let { title.width + gap + it.maxIntrinsicWidth(title.height) <= constraints.maxWidth } == true
+        val day = measurables.getOrNull(1)?.measure(loose)
+        when {
+            day == null -> {
+                layout(constraints.constrainWidth(title.width), title.height) { title.placeRelative(0, 0) }
+            }
+
+            beside -> {
+                val height = maxOf(title.height, day.height)
+                layout(constraints.constrainWidth(title.width + gap + day.width), height) {
+                    title.placeRelative(0, (height - title.height) / 2)
+                    day.placeRelative(title.width + gap, (height - day.height) / 2)
+                }
+            }
+
+            else -> {
+                layout(constraints.constrainWidth(maxOf(title.width, day.width)), title.height + day.height) {
+                    title.placeRelative(0, 0)
+                    day.placeRelative(-DAY_LINE_PADDING.roundToPx(), title.height)
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun BuddyStill(look: BuddyLook) {
-    Buddy(look, Modifier.size(FACE_SIZE))
+    Buddy(look, Modifier.size(FACE_SIZE), crop = BuddyCrop.Face)
 }
 
 @Composable
@@ -345,11 +410,7 @@ private fun BuddyMenu(
     val more = stringResource(R.string.buddy_page_more, name)
 
     Box {
-        IconButton(onClick = {
-            open = true
-        }, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = more)
-        }
+        MoreButton(onClick = { open = true }, contentDescription = more, quiet = true)
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
                 text = {
@@ -454,14 +515,17 @@ internal fun GlassesSheet(
 }
 
 @Composable
-private fun SaveFailed(modifier: Modifier = Modifier) {
+private fun SaveFailed() {
     Text(
         stringResource(R.string.buddy_page_save_failed),
-        modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
 }
 
 private val FACE_SIZE = 32.dp
+
+/** Main's `gap-2.5` in its identity row: face to name, and name to the day's line. */
+private val IDENTITY_GAP = 10.dp
 internal val BUDDY_COLUMN_WIDTH = 720.dp

@@ -83,8 +83,8 @@ class BusyTest {
     }
 
     /**
-     * From the press, a button's spinner takes its icon's place beside its words, before them or after
-     * them, or covers the words of one without an icon, and none changes size.
+     * From the press, a button's spinner takes its glyph's place beside its words, before them or after
+     * them, or covers the words of the main action, which has none, and none changes size.
      */
     @Test
     @Config(qualifiers = "w500dp-h900dp-xhdpi", fontScale = 2f)
@@ -93,18 +93,16 @@ class BusyTest {
         compose.setContent {
             ZoonkTheme {
                 Column {
-                    Button(onClick = {}, Modifier.testTag("leading"), busy = busy, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
-                        Text("Start session")
-                    }
-                    Button(
+                    OutlinedButton(
                         onClick = {},
-                        Modifier.testTag("trailing"),
+                        Modifier.testTag("leading"),
                         busy = busy,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                     ) {
-                        Text("Continue")
+                        Text("Practice")
                     }
-                    OutlinedButton(onClick = {}, Modifier.testTag("words"), busy = busy) { Text("Show more") }
+                    OutlinedButton(onClick = {}, Modifier.testTag("trailing"), busy = busy, forward = true) { Text("See the plan") }
+                    Button(onClick = {}, Modifier.testTag("words"), busy = busy) { Text("Start") }
                 }
             }
         }
@@ -115,9 +113,9 @@ class BusyTest {
 
         assertEquals(atRest, buttonSizes())
         spinners().assertCountEquals(3)
-        assertTrue(spinnerIn("Start session").right <= wordsOf("Start session").left)
-        assertTrue(spinnerIn("Continue").left >= wordsOf("Continue").right)
-        assertTrue(wordsOf("Show more").contains(spinnerIn("Show more")))
+        assertTrue(spinnerIn("Practice").right <= wordsOf("Practice").left)
+        assertTrue(spinnerIn("See the plan").left >= wordsOf("See the plan").right)
+        assertTrue(wordsOf("Start").contains(spinnerIn("Start")))
     }
 
     /** On a narrow phone at 200% font, German's long label gives the trailing spinner its spot, in either direction. */
@@ -125,16 +123,18 @@ class BusyTest {
     @Config(qualifiers = "de-w320dp-h900dp-xhdpi", fontScale = 2f)
     fun trailingSpinnerKeepsItsSpotBesideALongLabel() {
         var busy by mutableStateOf(false)
+        var scale = 0f
         compose.setContent {
             ZoonkTheme {
+                scale = glyphScale()
                 Column {
                     for (direction in LayoutDirection.entries) {
                         CompositionLocalProvider(LocalLayoutDirection provides direction) {
-                            Button(
+                            OutlinedButton(
                                 onClick = {},
                                 modifier = Modifier.width(288.dp),
                                 busy = busy,
-                                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
+                                forward = true,
                             ) {
                                 Text(stringResource(R.string.catalog_continue_plan))
                             }
@@ -148,7 +148,8 @@ class BusyTest {
         compose.waitForIdle()
 
         val widths = spinners().fetchSemanticsNodes().map { with(compose.density) { it.boundsInRoot.width.toDp() } }
-        assertEquals(listOf(ButtonDefaults.IconSize, ButtonDefaults.IconSize), widths)
+        // The glyph's slot at this text size: the spinner keeps it, in both directions.
+        assertEquals(listOf(ButtonDefaults.IconSize * scale, ButtonDefaults.IconSize * scale), widths)
     }
 
     private fun heights() = WIDTHS.associateWith { compose.onNodeWithTag("row-$it").getUnclippedBoundsInRoot().height }

@@ -5,12 +5,16 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasAnySibling
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
@@ -94,6 +98,23 @@ class ActivityKitFlowTest {
         rule.onNodeWithContentDescription("Step 1 of 2.").assertExists()
         rule.onNodeWithText("Take 25% off").assertHasClickAction()
         rule.onNodeWithText("Check").assertIsNotEnabled()
+    }
+
+    @Test
+    fun aWrongDecimalAnswerKeepsItsDigitsBesideARightAnswerAtTheHintsPlaces() {
+        val calculator = "formulaModel.calculator"
+        harness.play(listOf(ActivityFixtures.step(calculator))) {
+            grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected(calculator)) }
+        }
+
+        rule.onNodeWithText("Round to the nearest whole number.").assertExists()
+        rule.onNode(hasSetTextAction()).performTextReplacement("251.6")
+        harness.tap("Check")
+
+        rule.onNodeWithText("251.6").assertExists()
+        rule
+            .onNode(hasText("252") and hasAnySibling(hasText("Right answer:")), useUnmergedTree = true)
+            .assertExists()
     }
 
     private companion object {

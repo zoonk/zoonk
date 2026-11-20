@@ -12,7 +12,7 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { BUDDY_KINDS, BuddyTagline } from "./buddy-labels";
-import { useBuddyName } from "./use-buddy-name";
+import { useBuddyName, useDefaultBuddyName } from "./use-buddy-name";
 
 export type BuddyChoice = { glasses: BuddyGlasses; kind: BuddyKind; name: string };
 
@@ -39,14 +39,14 @@ function BuddyOption({
       <RadioGroupItem className="absolute top-3 right-3" value={kind} />
       <Buddy
         beltColor={look.beltColor}
-        className="size-20"
+        className="h-23"
         energy={look.energy}
         expression="happy"
         glasses={choice.kind === kind ? choice.glasses : "round"}
         kind={kind}
         studiedToday={look.studiedToday}
       />
-      <span className="text-base font-semibold">{name}</span>
+      <span className="text-sm font-semibold">{name}</span>
       <span className="text-muted-foreground text-xs">
         <BuddyTagline kind={kind} />
       </span>
@@ -59,26 +59,32 @@ export function BuddyPicker({
   choice,
   look,
   onChange,
+  showDefaultName = false,
 }: {
   choice: BuddyChoice;
   look: BuddyLook;
   onChange: (choice: BuddyChoice) => void;
+  showDefaultName?: boolean;
 }) {
   const t = useExtracted();
   const nameId = useId();
 
-  const defaultName = useBuddyName({ kind: choice.kind, name: null });
+  const getDefaultName = useDefaultBuddyName();
+  const defaultName = getDefaultName(choice.kind);
 
   return (
     <div className="flex flex-col gap-5" data-slot="buddy-picker">
       <RadioGroup
         aria-label={t("Buddy")}
-        className="grid grid-cols-2 gap-3"
+        className="grid grid-cols-2 gap-3 @lg/buddy-pane:grid-cols-4"
         onValueChange={(value) => {
           const kind = BUDDY_KINDS.find((item) => item === value);
 
           if (kind) {
-            onChange({ ...choice, kind });
+            const name =
+              showDefaultName && choice.name === defaultName ? getDefaultName(kind) : choice.name;
+
+            onChange({ ...choice, kind, name });
           }
         }}
         value={choice.kind}

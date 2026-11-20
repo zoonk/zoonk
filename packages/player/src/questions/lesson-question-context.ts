@@ -24,3 +24,24 @@ export function isAboutCheckedAnswer(
 ): boolean {
   return context.kind === "answer" || (context.kind === "item" && context.answered);
 }
+
+type Topic = LessonQuestionContext | LessonQuestionContextSummary;
+
+function getTopicKey(context: Topic): string {
+  if (context.kind === "item") {
+    return `item:${context.answered}`;
+  }
+
+  if (context.kind === "step" || context.kind === "answer") {
+    // A saved question keeps its part's number once the part itself is removed from the lesson.
+    const part = "step" in context ? context.step.id : (context.stepId ?? `#${context.stepNumber}`);
+    return `${context.kind}:${part}`;
+  }
+
+  return context.kind;
+}
+
+/** A question's topic is named where it changes: another part, or the answer once it's checked. */
+export function isSameTopic(previous: Topic | null, next: Topic): boolean {
+  return previous !== null && getTopicKey(previous) === getTopicKey(next);
+}

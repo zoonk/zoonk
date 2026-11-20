@@ -317,6 +317,16 @@ test.describe("Exams API", () => {
     expect(hidden.status()).toBe(404);
     expect(full).toStrictEqual({ id: null, status: "needsQuestions" });
 
+    // After a writing run, the server asks first instead of starting a shorter mock exam.
+    const afterWriting = await readBody({
+      response: await api.post(mocksPath, {
+        data: { afterWriting: true, shape: { ...half, kind: "full" } },
+      }),
+      schema: anytimeMockResponseSchema,
+    });
+
+    expect(afterWriting).toMatchObject({ examQuestions: 12, questions: 6, status: "short" });
+
     const started = await readBody({
       response: await api.post(mocksPath, { data: { shape: half } }),
       schema: anytimeMockResponseSchema,

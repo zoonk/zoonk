@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
+import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.page
@@ -14,9 +16,6 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.api.models.Buddy
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class BuddyViewModel internal constructor(
@@ -30,50 +29,75 @@ class BuddyViewModel internal constructor(
     /** Search's question goes in the composer once: the tab keeps its route, so the page would put it back on each return. */
     var askPlaced = false
 
-    /** A change didn't save: the buddy is shown as it was. */
-    var saveFailed by mutableStateOf(false)
-        private set
-
     /** The row whose block is opening, and the one whose block couldn't, so only that row says so. */
     var opening by mutableStateOf<BuddyTap?>(null)
         private set
 
-    var openFailed by mutableStateOf<BuddyTap?>(null)
-        private set
-
     /** An answer that comes back after the learner left the page, or moved to another goal, belongs to no row and opens nothing. */
-    private var visit = 0
-
-    private val opened = Channel<AppRoute>(Channel.BUFFERED)
+    private val visit = Visit()
 
     /** Where a mission's tap leads, once its block has started. */
-    val routes: Flow<AppRoute> = opened.receiveAsFlow()
+    val route = visit.outcome<AppRoute>()
 
-    /** [onSaved] runs only once it saved, so an editor closes then. */
-    fun save(
+    private val openFailure = visit.outcome<BuddyTap>()
+
+    /** The row whose mission failed to open on this visit. */
+    val openFailed get() = openFailure.value
+
+    /** The glasses sheet while it shows: a pick that didn't save says so on it, and closing it ends it. */
+    val glassesSheet = visit.opening()
+
+    /** The name editor while it shows: its save closes it or says it didn't, and closing it ends it. */
+    val editor = visit.opening()
+
+    /** The editor's change saved, so it closes. */
+    val editorSaved = editor.outcome<Unit>()
+
+    private val glassesFailure = glassesSheet.outcome<Unit>()
+
+    private val editorFailure = editor.outcome<Unit>()
+
+    /** The glasses picked in the open sheet didn't save: the buddy is shown as it was. */
+    val glassesSaveFailed get() = glassesFailure.value != null
+
+    /** The open editor's change didn't save. */
+    val editorSaveFailed get() = editorFailure.value != null
+
+    fun saveGlasses(
         kind: BuddyKind,
         glasses: BuddyGlasses,
         name: String?,
-        onSaved: () -> Unit = {},
+    ) = save(glassesSheet, saved = null, glassesFailure, kind, glasses, name)
+
+    fun saveEdit(
+        kind: BuddyKind,
+        glasses: BuddyGlasses,
+        name: String?,
+    ) = save(editor, editorSaved, editorFailure, kind, glasses, name)
+
+    /** [asker]'s save: its success and its failure go to the opening that asked, while it's still open. */
+    private fun save(
+        asker: Visit,
+        saved: VisitOutcome<Unit>?,
+        failure: VisitOutcome<Unit>,
+        kind: BuddyKind,
+        glasses: BuddyGlasses,
+        name: String?,
     ) {
         if (isSaving) return
         isSaving = true
-        saveFailed = false
+        failure.clear()
+        val started = asker.number
         viewModelScope.launch {
-            val saved =
+            val done =
                 profile.setBuddy(
                     Buddy.Kind.entries.first { it.value == kind.key },
                     Buddy.Glasses.entries.first { it.value == glasses.key },
                     name?.trim()?.ifEmpty { null },
                 )
             isSaving = false
-            saveFailed = !saved
-            if (saved) onSaved()
+            (if (done) saved else failure)?.send(started, Unit)
         }
-    }
-
-    fun dismissSaveFailure() {
-        saveFailed = false
     }
 
     fun openMission(
@@ -81,20 +105,20 @@ class BuddyViewModel internal constructor(
         goalId: String,
     ) {
         tap.opens.page(goalId)?.let {
-            opened.trySend(it)
+            route.send(visit.number, it)
             return
         }
         val blockId = (tap.opens as? MissionOpens.Block)?.blockId ?: return
         if (opening != null) return
         opening = tap
-        openFailed = null
-        val started = visit
+        openFailure.clear()
+        val started = visit.number
 
         viewModelScope.launch {
             try {
                 when (val result = opener.openMission(blockId)) {
-                    is MutationResult.Done -> result.value?.let { if (visit == started) opened.trySend(it) } ?: store.status.refresh()
-                    is MutationResult.Failed -> if (visit == started) openFailed = tap
+                    is MutationResult.Done -> result.value?.let { route.send(started, it) } ?: store.status.refresh()
+                    is MutationResult.Failed -> openFailure.send(started, tap)
                     MutationResult.Obsolete -> Unit
                 }
             } finally {
@@ -104,10 +128,7 @@ class BuddyViewModel internal constructor(
     }
 
     /** The page left the screen (a lesson over it, another tab) or moved to another goal. */
-    fun endVisit() {
-        visit++
-        openFailed = null
-    }
+    fun endVisit() = visit.end()
 }
 
 /** A tapped row of the buddy's day. A first step can open the same block as a mission, and only the tapped row shows how it went. */

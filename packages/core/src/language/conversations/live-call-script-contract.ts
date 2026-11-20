@@ -60,7 +60,7 @@ export const liveCallScriptSchema = z
         }),
         quietHintMs: millisecondsSchema.meta({
           description:
-            "How far into a silence episode the screen says the learner can take their time",
+            "How far into a silence episode it counts as the learner taking their time, not as a drop",
         }),
       })
       .meta({ id: "LiveCallTiming" }),

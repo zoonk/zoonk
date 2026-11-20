@@ -2,7 +2,6 @@
 
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
 import {
   SuggestionAction,
   SuggestionActions,
@@ -11,10 +10,11 @@ import {
 } from "../_components/suggestion";
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { getLongerTime } from "../_utils/time-answer";
+import { useSharedMark, useSharedState } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, useCoveredText, usePlanCoverage } from "./plan-coverage";
 import { useFocusTestOfferHref, useTakeFocusTestLabel } from "./plan-focus-test";
-import { useFullCourse } from "./plan-full-course";
+import { useFullCourse, useKeepStudyingLabel } from "./plan-full-course";
 import {
   CheckingChange,
   type CoverageOffer,
@@ -110,10 +110,11 @@ function useCardLines({
 
   const noDate = flags.noDate ? texts.noDate : null;
   const retry = flags.retry ? retryText : null;
+  const finding = flags.pending && intent === "time" ? texts.finding : null;
 
   return {
     description: offer?.description.filter((line) => line !== title) ?? [],
-    status: retry ?? noDate ?? none ?? "",
+    status: finding ?? retry ?? noDate ?? none ?? "",
   };
 }
 
@@ -138,6 +139,7 @@ function CoverageBody({
 }) {
   const t = useExtracted();
   const texts = useTimeToCoverTexts();
+  const keepStudying = useKeepStudyingLabel();
   const coverage = usePlanCoverage();
   const { plan } = usePlanScreen();
   const { requestPreview } = usePlanSuggestionSlot();
@@ -167,58 +169,67 @@ function CoverageBody({
   }
 
   return (
-    <SuggestionActions>
-      {offer && (
-        <SuggestionAction action={() => void requestPreview(offer.operations)} key="preview">
-          {t("Preview")}
-        </SuggestionAction>
-      )}
+    <SuggestionActions
+      main={
+        // One key for the main action in every state, so the button pressed keeps the keyboard.
+        <>
+          {offer && (
+            <SuggestionAction action={() => void requestPreview(offer.operations)} key="find">
+              {texts.seeChanges}
+            </SuggestionAction>
+          )}
 
-      {findsTime && (
-        <SuggestionAction action={() => ask(retry ? intent : "time")} busy={pending} key="find">
-          {retry ? texts.tryAgain : texts.find}
-        </SuggestionAction>
-      )}
+          {findsTime && (
+            <SuggestionAction action={() => ask(retry ? intent : "time")} busy={pending} key="find">
+              {retry ? texts.tryAgain : texts.seeChanges}
+            </SuggestionAction>
+          )}
 
-      {/* Keyed as Find, so the button Find was pressed on becomes it and keeps the keyboard. */}
-      {flags.studiesEverything && fullCourse && (
-        <SuggestionAction action={() => studyEverything(fullCourse)} key="find">
-          {t("Study everything, even after the exam")}
-        </SuggestionAction>
-      )}
-
+          {flags.studiesEverything && fullCourse && (
+            <SuggestionAction action={() => studyEverything(fullCourse)} key="find">
+              {keepStudying}
+            </SuggestionAction>
+          )}
+        </>
+      }
+      menu={
+        coverage && (
+          <OtherOptions
+            onMoveDate={moveDate ? () => ask("date") : null}
+            studyEverythingLeads={flags.studiesEverything && fullCourse !== null}
+          />
+        )
+      }
+    >
       {focusTestHref && (
-        <SuggestionLinkAction href={focusTestHref} variant="outline">
-          {takeFocusTest}
-        </SuggestionLinkAction>
-      )}
-
-      {coverage && (
-        <OtherOptions
-          onMoveDate={moveDate ? () => ask("date") : null}
-          studyEverythingLeads={flags.studiesEverything && fullCourse !== null}
-        />
+        <div className="flex flex-col gap-1">
+          <SuggestionLinkAction href={focusTestHref} variant="outline">
+            {takeFocusTest}
+          </SuggestionLinkAction>
+          <p className="text-muted-foreground text-sm">
+            {t("The Focus test shows what to study most.")}
+          </p>
+        </div>
       )}
     </SuggestionActions>
   );
 }
 
 export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) {
-  const texts = useTimeToCoverTexts();
   const coveredText = useCoveredText();
   const courseOffer = useCourseOffer();
   const answerOffer = useAnswerOffer();
   const { goal, plan } = usePlanScreen();
   const finder = useTimeToCover();
   const { preview: storedPreview, requestPreview, setPreview } = usePlanSuggestionSlot();
-  const [intent, setIntent] = useState<Intent>("time");
-  const asking = useRef<Intent | null>(null);
+  const [intent, setIntent] = useSharedState<Intent>("intent", "time");
+  const asking = useSharedMark<Intent | null>("asking", null);
   const covered = coverage ? coveredText(coverage) : "";
   const found = finder.answered;
   const answered = found && coverage ? answerOffer({ covered, intent, time: found }) : null;
   const offer = courseOffer ?? answered;
   const item: SlotItem = { key: "coverage", kind: "coverage" };
-  const { apply, failed, isPending } = useApplyPreview(item);
+  const { apply, isPending } = useApplyPreview(item);
   const title = offer?.title ?? covered;
 
   const flags = getCardFlags({
@@ -239,25 +250,26 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   });
 
   const ask = async (next: Intent) => {
-    asking.current = next;
+    asking.write(next);
     setIntent(next);
     setPreview();
     const outcome = await finder.find();
     const time = outcome.status === "answered" ? outcome.time : null;
     const asked = time && coverage ? answerOffer({ covered, intent: next, time }) : null;
 
-    if (asked && asking.current === next) {
+    if (asked && asking.read() === next) {
       void requestPreview(asked.operations);
     }
   };
 
   const stopAsking = () => {
-    asking.current = null;
+    asking.write(null);
     setIntent("time");
   };
 
   return (
-    <PlanChangeSuggestion failed={failed} item={item} title={title}>
+    // Finding the time plans the goal many times, so only the button asks.
+    <PlanChangeSuggestion item={item} title={title}>
       {lines.description.map((line) => (
         <SuggestionDescription key={line}>{line}</SuggestionDescription>
       ))}
@@ -269,7 +281,7 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
 
       {/* Always there, so that the search runs, and what it couldn't find, is announced. */}
       <p aria-live="polite" className="sr-only">
-        {flags.pending ? texts.finding : lines.status}
+        {lines.status}
       </p>
 
       <CoverageBody

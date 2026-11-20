@@ -1,15 +1,19 @@
 "use client";
 
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { getIsoDay } from "@zoonk/utils/calendar-day";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import {
+  type DateFormat,
+  type DateRole,
+  getIsoDateOptions,
+  getIsoRangeOptions,
+  isoDateToUtc,
+} from "@zoonk/utils/date-format";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
-import { type DateTimeFormatOptions, useFormatter } from "next-intl";
+import { useExtracted, useFormatter, useTimeZone } from "next-intl";
 import { use } from "react";
 import { PlanScreenContext } from "../plan/plan-context";
-
-/** UTC midnight, formatted in UTC, so the day never shifts in the viewer's timezone. */
-export function isoDateToUtc(isoDate: string): Date {
-  return new Date(`${isoDate}T00:00:00Z`);
-}
 
 /** Core counts a goal's or draft's days in its zone, UTC without one, so date pickers do too. */
 export function getTodayInZone({ now, timeZone }: { now: Date; timeZone: string | null }): string {
@@ -18,12 +22,6 @@ export function getTodayInZone({ now, timeZone }: { now: Date; timeZone: string 
   return getDateInTimeZone({ date: now, timeZone: zone })
     .toISOString()
     .slice(0, "YYYY-MM-DD".length);
-}
-
-export function toLocalIsoDate(date: Date): string {
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${date.getFullYear()}-${month}-${day}`;
 }
 
 export function daysUntilIsoDate({ isoDate, today }: { isoDate: string; today: Date }): number {
@@ -43,71 +41,124 @@ export function daysBetween(from: string, to: string): number {
   return Math.round((isoDateToUtc(to).getTime() - isoDateToUtc(from).getTime()) / MS_PER_DAY);
 }
 
-type DateStyle =
-  | "day"
-  | "dayMonth"
-  | "long"
-  | "longYear"
-  | "month"
-  | "monthShort"
-  | "short"
-  | "weekday"
-  | "weekdayDay"
-  | "weekdayShort";
-
-const DATE_STYLES: Record<DateStyle, DateTimeFormatOptions> = {
-  day: { day: "numeric", month: "short" },
-  dayMonth: { day: "numeric", month: "long" },
-  long: { day: "numeric", month: "long" },
-  longYear: { day: "numeric", month: "long", year: "numeric" },
-  month: { month: "long", year: "numeric" },
-  monthShort: { month: "short", year: "numeric" },
-  short: { day: "numeric", month: "short", year: "numeric" },
-  weekday: { weekday: "long" },
-  weekdayDay: { day: "numeric", month: "long", weekday: "long" },
-  weekdayShort: { weekday: "short" },
-};
-
-const YEAR_WHEN_ANOTHER_YEAR = new Set<DateStyle>(["day", "long"]);
-
-function getDateOptions({ date, style, today }: { date: Date; style: DateStyle; today?: string }) {
-  const options = DATE_STYLES[style];
-  const year = today ? isoDateToUtc(today).getUTCFullYear() : new Date().getFullYear();
-  const isAnotherYear = date.getUTCFullYear() !== year;
-
-  return YEAR_WHEN_ANOTHER_YEAR.has(style) && isAnotherYear
-    ? { ...options, year: "numeric" as const }
-    : options;
+/** A day the server sends as UTC midnight, as its calendar day. */
+export function toIsoDay(date: Date): string {
+  return date.toISOString().slice(0, "YYYY-MM-DD".length);
 }
 
+type DateOptions = Omit<DateFormat, "role">;
+
+const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
+
+/**
+ * The zone every date is drawn in: the provider's, which Main sets to the server's, so the server's
+ * HTML and the browser's first render say the same words.
+ */
+function useDrawingTimeZone(): string {
+  return useTimeZone() ?? "UTC";
+}
+
+/** Today as a calendar day: the plan's own day, or today in the zone dates are drawn in. */
+export function useIsoToday(): string {
+  const plan = use(PlanScreenContext);
+  const timeZone = useDrawingTimeZone();
+  const mountedAt = useMountTime();
+
+  return plan?.today ?? getIsoDay({ now: mountedAt, timeZone });
+}
+
+/** A calendar day from the server ("2027-11-14"), written for the place it has on the screen. */
 export function useFormatIsoDate() {
   const format = useFormatter();
-  const plan = use(PlanScreenContext);
+  const today = useIsoToday();
 
-  return (isoDate: string, style: DateStyle = "day") => {
-    const date = isoDateToUtc(isoDate);
+  return (isoDate: string, role: DateRole = "row", options: DateOptions = {}): string =>
+    format.dateTime(isoDateToUtc(isoDate), getIsoDateOptions({ ...options, isoDate, role, today }));
+}
 
-    return format.dateTime(date, {
-      ...getDateOptions({ date, style, today: plan?.today }),
+/**
+ * A run of calendar days, such as a week: "Nov 9 – 15". Node's ICU puts thin spaces around the dash
+ * and browsers plain ones, so the spaces are normalized to hydrate cleanly.
+ */
+export function useFormatIsoRange() {
+  const format = useFormatter();
+  const today = useIsoToday();
+
+  return ({ end, start }: { end: string; start: string }): string =>
+    format
+      .dateTimeRange(
+        isoDateToUtc(start),
+        isoDateToUtc(end),
+        getIsoRangeOptions({ end, start, today }),
+      )
+      .replaceAll("\u2009", " ");
+}
+
+/** A weekday's name from its day or its number (Sunday is 0): "Tuesday", "Tue" or "T". */
+export function useFormatWeekday() {
+  const format = useFormatter();
+
+  return (day: Date | number, width: "long" | "narrow" | "short" = "long"): string =>
+    format.dateTime(typeof day === "number" ? new Date(REFERENCE_SUNDAY + day * MS_PER_DAY) : day, {
       timeZone: "UTC",
+      weekday: width,
     });
+}
+
+/** An instant's calendar day and today's, in the zone it's drawn in, for "Today" and "Yesterday". */
+export function useMomentDays() {
+  const timeZone = useDrawingTimeZone();
+  const now = useMountTime();
+
+  return {
+    dayOf: (moment: Date | string) => getIsoDay({ now: new Date(moment), timeZone }),
+    today: getIsoDay({ now, timeZone }),
   };
 }
 
-/** Messages `select` on `dateKind`, since a month and a day take different words around them. */
+/**
+ * An instant (a timestamp), drawn in the provider's zone; its day and today are read in that same
+ * zone, so the year shows exactly when the drawn date is in another year.
+ */
+export function useFormatMomentDate() {
+  const format = useFormatter();
+  const timeZone = useDrawingTimeZone();
+  const { dayOf, today } = useMomentDays();
+
+  return (moment: Date | string, role: DateRole = "row", options: DateOptions = {}): string =>
+    format.dateTime(new Date(moment), {
+      ...getIsoDateOptions({ ...options, isoDate: dayOf(moment), role, today }),
+      timeZone,
+    });
+}
+
+/**
+ * Messages `select` on `dateKind`, since a month and a day take different words around them. The
+ * date keeps its words on one line, so a sentence never breaks between a day and its year.
+ */
+/** An estimated date (an exam's likely day) is marked "~", as the plan marks it. */
 export function useGoalDateValues() {
+  const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
   return ({
+    estimated = false,
     isoDate,
     namedMonth,
-    style = "day",
   }: {
+    estimated?: boolean;
     isoDate: string;
     namedMonth: boolean;
-    style?: DateStyle;
-  }): { date: string; dateKind: "day" | "month" } => ({
-    date: formatDate(isoDate, namedMonth ? "month" : style),
-    dateKind: namedMonth ? "month" : "day",
-  });
+  }): { date: string; dateKind: "day" | "month" } => {
+    const date = (
+      namedMonth
+        ? formatDate(isoDate, "sentenceMonth", { year: "always" })
+        : formatDate(isoDate, "sentence")
+    ).replaceAll(" ", "\u00A0");
+
+    return {
+      date: estimated ? t("~{date}", { date }) : date,
+      dateKind: namedMonth ? "month" : "day",
+    };
+  };
 }

@@ -15,7 +15,7 @@ pnpm --filter playground dev:direct
 
 Then open `http://localhost:3202`.
 
-The player's screens and the design system's specimens that speak through next-intl (`useExtracted`) run on the dev server only: a production build has no next-intl compiler, so it shows a note in their place.
+The player's screens and the specimens speak through next-intl (`useExtracted`) in English, from the player's and learn's own catalogs; the playground compiles those calls but never writes the catalogs, so `pnpm start` shows the same screens as `pnpm dev`.
 
 ## Changing the design system
 

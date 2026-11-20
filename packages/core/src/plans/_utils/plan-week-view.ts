@@ -8,32 +8,36 @@ import {
   toIsoDate,
 } from "../planner/plan-calendar";
 import { type ExamDayRules, getPlannedMinutes } from "../planner/plan-days";
-import { isWritingItem } from "../planner/plan-item-rules";
+import { LEARN_KINDS, isWritingItem } from "../planner/plan-item-rules";
 import { DAYS_PER_WEEK, type PlanSettings } from "../planner/plan-state";
 import { type SkillAreas, getWritingTitle } from "./plan-phase-views";
 import { type PlanReadItem } from "./plan-read-projection";
 import { projectSavedAllocationOn } from "./saved-allocation";
 import { isWorkFinished } from "./work-progress";
 
-type ItemAccess = { freeUntil: string | null; mocksRequirePlus: boolean };
-
-function requiresPlus({ access, item }: { access: ItemAccess; item: PlanReadItem }): boolean {
-  if (item.kind === "mock" && access.mocksRequirePlus) {
-    return true;
+/** A written lesson is one; lessons still to be written count the day's share of their size. */
+function countDayLessons({ item, onDay }: { item: PlanReadItem; onDay: PlanReadItem }): number {
+  if (!LEARN_KINDS.has(item.kind)) {
+    return 0;
   }
 
-  return Boolean(
-    access.freeUntil && item.scheduledFor && toIsoDate(item.scheduledFor) > access.freeUntil,
-  );
+  if (item.lessonId !== null || !item.minutes || !onDay.minutes) {
+    return 1;
+  }
+
+  const share = onDay.minutes / item.minutes;
+  return Math.max(1, Math.round(Math.max(1, item.lessons ?? 1) * share));
 }
 
 function toPlanItemView({
   access,
   item,
+  lessons,
   skillAreas,
 }: {
-  access: ItemAccess;
+  access: Pick<PlanView["access"], "mocksRequirePlus">;
   item: PlanReadItem;
+  lessons: number;
   skillAreas: SkillAreas;
 }): PlanItemView {
   const itemMinutes = item.minutes;
@@ -44,8 +48,9 @@ function toPlanItemView({
     id: item.id,
     kind: item.kind,
     lessonId: item.lessonId,
+    lessons,
     minutes: itemMinutes === null || itemMinutes === undefined ? null : Math.round(itemMinutes),
-    requiresPlus: requiresPlus({ access, item }),
+    requiresPlus: item.kind === "mock" && access.mocksRequirePlus,
     scheduledFor: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
     skillId: item.skillId,
     status: item.status,
@@ -87,7 +92,7 @@ function getDayState({
 }
 
 type DaysInput = {
-  access: ItemAccess;
+  access: Pick<PlanView["access"], "mocksRequirePlus">;
   calendar: StudyCalendar;
   exam: ExamDayRules | null;
   items: readonly PlanReadItem[];
@@ -117,9 +122,20 @@ function buildPlanDays({
     const date = addDays(from, offset);
     const day = toIsoDate(date);
 
-    const dayItems = items
-      .flatMap((item) => projectSavedAllocationOn({ date, item }) ?? [])
-      .map((item) => toPlanItemView({ access, item, skillAreas }));
+    const dayItems = items.flatMap((item) => {
+      const onDay = projectSavedAllocationOn({ date, item });
+
+      return onDay
+        ? [
+            toPlanItemView({
+              access,
+              item: onDay,
+              lessons: countDayLessons({ item, onDay }),
+              skillAreas,
+            }),
+          ]
+        : [];
+    });
 
     const dayMinutes =
       date < startDate ? 0 : getPlannedMinutes({ calendar, date, exam, overflow, targetDate });
@@ -151,11 +167,6 @@ export function buildWeekView(input: DaysInput): PlanView["week"] {
   };
 }
 
-/** Today and the six days after it, whatever the weekday: a week from Monday read on a Sunday holds one day ahead. */
-export function buildNextDaysView(input: DaysInput): PlanDayView[] {
-  return buildPlanDays({ ...input, from: input.today });
-}
-
 export function buildFundedMocksView({
   access,
   funding,
@@ -163,7 +174,7 @@ export function buildFundedMocksView({
   skillAreas,
   today,
 }: {
-  access: ItemAccess;
+  access: Pick<PlanView["access"], "mocksRequirePlus">;
   funding: readonly MockFunding[];
   items: readonly PlanReadItem[];
   skillAreas: SkillAreas;
@@ -185,7 +196,11 @@ export function buildFundedMocksView({
       }
 
       return [
-        { ...toPlanItemView({ access, item, skillAreas }), id: item.id, minutes: ledger.minutes },
+        {
+          ...toPlanItemView({ access, item, lessons: 0, skillAreas }),
+          id: item.id,
+          minutes: ledger.minutes,
+        },
       ];
     })
     .toSorted((a, b) => (a.scheduledFor ?? "").localeCompare(b.scheduledFor ?? ""));

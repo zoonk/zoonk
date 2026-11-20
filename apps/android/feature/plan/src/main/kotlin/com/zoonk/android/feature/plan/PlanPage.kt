@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,13 +12,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,36 +31,49 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.app.LocalNavigationSuiteType
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.conversation.CallStarter
+import com.zoonk.android.feature.conversation.OpenStartedCall
 import com.zoonk.android.feature.feedback.FeedbackSheet
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.goalcontent.PlanSyllabusSection
 import com.zoonk.android.feature.goalcontent.hasSubjectPages
 import com.zoonk.android.feature.language.AlphabetRow
+import com.zoonk.android.feature.language.alphabetSkip
+import com.zoonk.android.feature.speaking.speakingMockStart
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.scaffold.BarError
+import com.zoonk.android.ui.scaffold.BarNoteRoom
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.barNoteInPage
+import com.zoonk.android.ui.scaffold.barNoteViewport
+import com.zoonk.android.ui.scaffold.pageMargin
+import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.LanguageProgress
-import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
-import java.time.LocalDate
 
 class PlanLinks(
     private val navigator: AppNavigator,
@@ -104,8 +113,6 @@ class PlanLinks(
     fun subject(key: String) = open(AppRoute.Subject(key))
 
     fun today() = open(AppRoute.Today)
-
-    fun plus() = open(AppRoute.Subscription)
 
     fun speaking() = open(AppRoute.Speaking())
 
@@ -168,14 +175,15 @@ internal fun PlanPage(
     val renameDialog by viewModel.rename.collectAsStateWithLifecycle()
     val pending by viewModel.pending.collectAsStateWithLifecycle()
     val asked by viewModel.asked.collectAsStateWithLifecycle()
-    val failed by viewModel.failed.collectAsStateWithLifecycle()
+    val failed = viewModel.failed
     val latest by viewModel.latest.collectAsStateWithLifecycle()
     val changes by viewModel.changes.collectAsStateWithLifecycle()
     val sheetAnswers by viewModel.sheetAnswers.collectAsStateWithLifecycle()
     val timeToCover by viewModel.timeToCover.collectAsStateWithLifecycle()
+    val basesAdvice by viewModel.basesAdvice.collectAsStateWithLifecycle()
     val preview by viewModel.preview.collectAsStateWithLifecycle()
     val slotPreview by viewModel.slotPreview.collectAsStateWithLifecycle()
-    val nextLevel by viewModel.nextLevel.collectAsStateWithLifecycle()
+    val nextLevel = viewModel.nextLevel
     val end =
         if (page.plan.end != null || page.isExam) {
             app.plans.end[page.goal.id]
@@ -185,6 +193,18 @@ internal fun PlanPage(
             null
         }
     val claim = viewModel(key = "certificate-claim-${page.goal.id}") { CertificateClaimModel(app.certificates, page.goal.id) }
+    val openCertificates = { codes: List<String> ->
+        navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
+    }
+    VisitOf(claim.visit)
+    val skip = if (isLanguage) alphabetSkip(page.goal.id, app.alphabet) else null
+    skip?.let { VisitOf(it.visit) }
+    (standing as? Standing.Language)?.takeIf { it.progress.speakingMock != null }?.let { language ->
+        OpenStartedCall(
+            speakingMockStart(language.progress.goal.id, language.startCall),
+        ) { navigator.open(AppRoute.Conversation(it.toString())) }
+    }
+    ActOn(claim.opened, openCertificates)
     val focusTest = page.plan.focusTest
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
     var editingAt by rememberSaveable {
@@ -219,9 +239,10 @@ internal fun PlanPage(
             chooseTools = viewModel::chooseTools,
             setupLessons = viewModel.setupLessons,
             preview = viewModel::preview,
-            adviseOnBases = viewModel::basesAdvice,
+            basesAdvice = basesAdvice,
+            askBasesAdvice = viewModel::askBasesAdvice,
             sheetAnswers = sheetAnswers,
-            answerSheet = viewModel::answerSheet,
+            outcomes = viewModel.outcomes,
         )
     val report =
         rememberReportProblem(
@@ -229,14 +250,13 @@ internal fun PlanPage(
             FeedbackTarget(screen = "plan", contentKind = FeedbackSubmissionContext.ContentKind.PLAN, contentId = page.plan.planId),
         )
 
-    PlanEvents(viewModel, navigator)
     val countryRebuild = rememberCountryRebuild(page.goal, app)
 
     PlanContent(
         page = page,
         countryRebuild = countryRebuild,
         standing = standing,
-        alphabet = alphabet?.let { { AlphabetRow(it, page.goal.id, app.alphabet, navigator::open) } },
+        alphabet = alphabet?.let { shown -> skip?.let { { AlphabetRow(shown, page.goal.id, it, navigator::open) } } },
         focusTest = focusTest?.let { { PlanFocusTestRow(it, links::focusTest) } },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
@@ -252,6 +272,7 @@ internal fun PlanPage(
             },
         isSaving = isSaving,
         onSetStatus = viewModel::setStatus,
+        resumeFailure = viewModel.resumeFailure,
         rename = GoalRename(renameDialog, viewModel::openRename, viewModel::closeRename, viewModel::rename),
         report = report,
         onAdjust = { section ->
@@ -265,6 +286,7 @@ internal fun PlanPage(
                 preview = slotPreview,
                 requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
                 clearPreview = viewModel::clearSlotPreview,
+                addFitOffer = { viewModel.addFitOffer(page.plan, it) },
                 next = end?.next,
                 nextLevel = nextLevel,
                 onContinue = viewModel::continueAtNextLevel,
@@ -272,19 +294,16 @@ internal fun PlanPage(
                 claimingCertificate = claim.claiming,
                 claimFailed = claim.failed,
                 onCertificate = {
-                    val open = { codes: List<String> ->
-                        navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
-                    }
                     val certificates = end?.certificates
                     when {
                         certificates == null -> {}
 
                         certificates.unclaimed.isNotEmpty() -> {
-                            claim.claim { shown -> open(shown.map { it.code }) }
+                            claim.claim()
                         }
 
                         else -> {
-                            open(certificates.earned.map { it.code })
+                            openCertificates(certificates.earned.map { it.code })
                         }
                     }
                 },
@@ -301,10 +320,6 @@ internal fun PlanPage(
             page = page,
             edits = edits,
             section = editingAt,
-            onTellBuddy = {
-                editing = false
-                links.buddy()
-            },
             onDismiss = { editing = false },
         )
     }
@@ -337,7 +352,9 @@ internal fun PlanPage(
 
 /** Main's `?focus=` arrivals, as Today's and the tutor's links open the Plan. */
 private const val ADJUST = "adjust"
-private const val ADJUST_TIME = "time"
+
+/** The plan reveal's Add time: Android's reveal can't open the editor itself. */
+const val ADJUST_TIME = "time"
 
 /** The plan reveal's Change beside the exam option the plan follows: Android's reveal can't open the editor itself. */
 const val ADJUST_CHOICES = "choices"
@@ -364,6 +381,7 @@ internal fun PlanContent(
     resume: Resume,
     isSaving: Boolean,
     onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
+    resumeFailure: ResumeFailure? = null,
     rename: GoalRename? = null,
     report: FeedbackSheet? = null,
     onAdjust: ((PlanSection?) -> Unit)? = null,
@@ -375,6 +393,8 @@ internal fun PlanContent(
     countryRebuild: CountryRebuild? = null,
 ) {
     val adjust = onAdjust?.let { { it(null) } }
+    // The app's page margin, which its bottom bar keeps too, so the bar's buttons line up with the page.
+    val margin = pageMargin()
     val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
     val suggestion =
         @Composable { layout: SuggestionLayout ->
@@ -383,8 +403,6 @@ internal fun PlanContent(
                 edits = edits,
                 links = links,
                 resume = resume,
-                isSaving = isSaving,
-                onSetStatus = onSetStatus,
                 onAdjust = { onAdjust?.invoke(it) },
                 layout = layout,
                 host = slot,
@@ -393,6 +411,7 @@ internal fun PlanContent(
         }
 
     val hasSuggestion = hasSlotItem(page, edits, slot, slotState)
+    val examOver = page.isExam && page.plan.status?.pace is Pace.PastDate
     // The drawer lists them where there's one, as main's sidebar does from `lg`.
     val withoutDrawer = LocalNavigationSuiteType.current != NavigationSuiteType.NavigationDrawer
     val completedLessonsRow = links.hasCompletedLessons && withoutDrawer
@@ -401,70 +420,77 @@ internal fun PlanContent(
     val list = rememberLazyListState()
     val main =
         @Composable { asideBeside: Boolean ->
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = list,
-                contentPadding = PaddingValues(start = PAGE_MARGIN, end = PAGE_MARGIN, top = 8.dp, bottom = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                item(key = "header", contentType = "header") {
-                    PlanHeader(
-                        page = page,
-                        links = links,
-                        resume = resume,
-                        isSaving = isSaving,
-                        onSetStatus = onSetStatus,
-                        rename = rename,
-                        report = report,
-                        onAdjust = adjust,
-                    )
-                }
-                countryRebuild?.let { rebuild ->
-                    item(key = "country-rebuild", contentType = "notice") {
-                        CountryRebuildNotice(rebuild, edits.isPending(PlanPart.CountryRebuild), edits.retryCountryRebuild)
+            val noteRoom = rememberBarNoteRoom(list)
+            Column(Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f).barNoteViewport(noteRoom),
+                    state = list,
+                    contentPadding = PaddingValues(start = margin, end = margin, top = 8.dp, bottom = 32.dp + noteRoom.height),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    item(key = "header", contentType = "header") {
+                        PlanHeader(
+                            page = page,
+                            links = links,
+                            resume = resume,
+                            isSaving = isSaving,
+                            onSetStatus = onSetStatus,
+                            rename = rename,
+                            report = report,
+                            onAdjust = adjust,
+                            examInMenu = asideBeside,
+                        )
                     }
-                }
-                item(key = "roadmap", contentType = "roadmap") {
-                    PlanRoadmap(page, links, onOpenPath = if (structure != null) ({ pathOpen = true }) else null)
-                }
-                if (!asideBeside) {
-                    item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
-                    if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
-                }
-                if (focusTest != null || completedLessonsRow || mindMapsRow) {
-                    item(key = "places", contentType = "places") {
-                        Column {
-                            focusTest?.invoke()
-                            if (completedLessonsRow) {
-                                PlaceRow(
-                                    R.drawable.ic_history,
-                                    R.string.navigation_completed_lessons,
-                                    links::completedLessons,
-                                )
-                            }
-                            if (mindMapsRow) PlaceRow(R.drawable.ic_lan, R.string.plan_mind_maps, links::mindMaps)
+                    countryRebuild?.let { rebuild ->
+                        item(key = "country-rebuild", contentType = "notice") {
+                            CountryRebuildNotice(rebuild, edits.isPending(PlanPart.CountryRebuild), edits.retryCountryRebuild)
                         }
                     }
-                }
-                if (structure != null) {
-                    item(key = "structure", contentType = "structure") {
-                        PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(PAGE_MARGIN)) {
-                            // Unpicked choices are the suggestion's; beside the aside, its properties name the pick.
-                            if (!asideBeside) {
-                                PlanChoiceLines(
-                                    choices = page.plan.examChoices.filter { it.subjects.isNotEmpty() },
-                                    onChange = { onAdjust?.invoke(PlanSection.Choices) },
-                                )
+                    item(key = "roadmap", contentType = "roadmap") {
+                        PlanRoadmap(page, links, onOpenPath = if (structure != null) ({ pathOpen = true }) else null)
+                    }
+                    // The exam-over question sits in the page's pane with its answers, the page's bar, never across panes.
+                    if (asideBeside && examOver && hasSuggestion) {
+                        item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Panel) }
+                    }
+                    if (!asideBeside) {
+                        item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
+                        if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
+                    }
+                    if (structure != null) {
+                        // Main's order: above the subjects, not among them, since neither is a subject with a preparation.
+                        item(key = "places", contentType = "places") {
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                focusTest?.invoke()
+                                // Unpicked choices are the suggestion's; beside the aside, its properties name the pick.
+                                if (!asideBeside) {
+                                    PlanChoiceLines(
+                                        choices = page.plan.examChoices,
+                                        onChange = { onAdjust?.invoke(PlanSection.Choices) },
+                                    )
+                                }
                             }
                         }
+                        item(key = "structure", contentType = "structure") {
+                            PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(margin))
+                        }
+                    } else {
+                        focusTest?.let { row -> item(key = "places", contentType = "places") { row() } }
+                        item(key = "path", contentType = "path") {
+                            PathSection(page, links, alphabet = alphabet, course = page.libraryCourse)
+                        }
                     }
-                } else {
-                    item(key = "path", contentType = "path") {
-                        PathSection(page, links, alphabet = alphabet, course = page.libraryCourse)
+                    item(key = "more", contentType = "more") {
+                        MoreSection(links, completedLessons = completedLessonsRow, mindMaps = mindMapsRow, exam = !asideBeside)
                     }
+                    barNoteInPage(noteRoom)
                 }
-                if (!asideBeside) {
-                    item(key = "next", contentType = "next") { NextAndMore(page, links) }
+                if (page.isPaused) {
+                    ResumeGoalBar(enabled = resume != Resume.Pending, busy = isSaving, failure = resumeFailure, noteRoom = noteRoom) {
+                        onSetStatus(LearnerSummaryGoal.Status.ACTIVE)
+                    }
+                } else if (examOver) {
+                    ExamOverBar(page, edits, archiving = isSaving, onArchive = { onSetStatus(LearnerSummaryGoal.Status.ARCHIVED) })
                 }
             }
         }
@@ -475,12 +501,11 @@ internal fun PlanContent(
             Row {
                 VerticalDivider()
                 Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(PAGE_MARGIN),
+                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(margin),
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
                     numbers(NumberVariant.Stats)
-                    suggestion(SuggestionLayout.Panel)
-                    NextOnPath(page, links)
+                    if (!examOver) suggestion(SuggestionLayout.Panel)
                     PlanProperties(page, links, onOpen = onAdjust)
                 }
             }
@@ -510,63 +535,12 @@ private fun PathSheet(
     }
 }
 
-internal val PAGE_MARGIN = 16.dp
-
-/** A place the drawer lists on wide windows: Completed lessons, then Mind maps. */
-@Composable
-private fun PlaceRow(
-    icon: Int,
-    title: Int,
-    onClick: () -> Unit,
-) {
-    ListRow(
-        headline = { Text(stringResource(title)) },
-        modifier = Modifier.bleed(LIST_ITEM_INSET),
-        onClick = onClick,
-        leading = { Icon(painterResource(icon), contentDescription = null) },
-    )
-}
-
-@Composable
-private fun NextAndMore(
-    page: PlanPageState,
-    links: PlanLinks,
-) {
-    BoxWithConstraints {
-        if (maxWidth >= SIDE_BY_SIDE_WIDTH) {
-            Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
-                NextOnPath(page, links, Modifier.weight(1f))
-                MoreSection(links, Modifier.weight(1f))
-            }
-        } else {
-            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                NextOnPath(page, links)
-                MoreSection(links)
-            }
-        }
-    }
-}
-
-private val SIDE_BY_SIDE_WIDTH = 600.dp
-
 @Composable
 internal fun PlanEvents(
     viewModel: PlanViewModel,
-    navigator: AppNavigator,
+    snackbars: AppSnackbars,
 ) {
-    val snackbars: SnackbarHostState = LocalSnackbarHostState.current
-    val limitReached = stringResource(R.string.plan_goal_limit_reached)
-    val saveFailed = stringResource(R.string.plan_save_failed)
-
-    LaunchedEffect(viewModel) {
-        viewModel.events.collect { event ->
-            when (event) {
-                PlanEvent.Archived -> navigator.select(AppTab.Today)
-                PlanEvent.GoalLimitReached -> snackbars.showSnackbar(limitReached)
-                PlanEvent.SaveFailed -> snackbars.showSnackbar(saveFailed)
-            }
-        }
-    }
+    ActOn(viewModel.outcomes.saveFailed) { snackbars.show(R.string.plan_save_failed) }
 }
 
 internal sealed interface Standing {
@@ -597,4 +571,51 @@ internal fun standingOf(
     if (page.isExam) return Standing.Preparation(progress)
     val lessons = syllabus?.lessons
     return Standing.Progress(progress, lessons?.done ?: 0, lessons?.known ?: 0, lessons?.total ?: 0)
+}
+
+/** Main's `PlanExamOverBar`: Today's answers after the exam's date, and a failed save in the shared toast. */
+@Composable
+private fun ExamOverBar(
+    page: PlanPageState,
+    edits: PlanEdits,
+    archiving: Boolean,
+    onArchive: () -> Unit,
+) {
+    BottomBar {
+        ExamOverActions(
+            goalTitle = page.goal.displayName,
+            keeping = edits.isPending(PlanPart.FullCourse),
+            archiving = archiving,
+            onArchive = onArchive,
+            onKeepStudying = { edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM, PlanAsker.SaysFailure) },
+        )
+    }
+}
+
+private val STUDY_AFTER_EXAM = listOf(PlanOp.FullCourse(true))
+
+/** Main's `ResumeGoalBar`: a paused goal's Resume as the page's main action, and why it didn't save over it. */
+@Composable
+private fun ResumeGoalBar(
+    enabled: Boolean,
+    busy: Boolean,
+    failure: ResumeFailure?,
+    noteRoom: BarNoteRoom,
+    onResume: () -> Unit,
+) {
+    BottomBar(
+        noteRoom = noteRoom,
+        note =
+            failure?.let {
+                {
+                    BarError(
+                        stringResource(if (it == ResumeFailure.GoalLimit) R.string.plan_goal_limit_reached else R.string.plan_save_failed),
+                    )
+                }
+            },
+    ) {
+        TaskActions { main ->
+            Button(onClick = onResume, modifier = main, enabled = enabled, busy = busy) { Text(stringResource(R.string.plan_resume)) }
+        }
+    }
 }

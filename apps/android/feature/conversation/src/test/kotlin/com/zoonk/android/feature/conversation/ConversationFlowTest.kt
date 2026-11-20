@@ -50,7 +50,7 @@ class ConversationFlowTest {
 
         compose.onNodeWithText("Order at the café").assertExists()
         seen("Ask for a coffee")
-        seen("Turn your sound on. The microphone is on only during the call.")
+        seen("Turn your sound on.")
 
         goLive()
         assertTrue(transport.microphone)
@@ -72,7 +72,7 @@ class ConversationFlowTest {
         )
 
         compose.onNodeWithContentDescription("Help").performClick()
-        compose.onNodeWithText("Phrases you can use").assertExists()
+        compose.onNodeWithText("A phrase you can use").assertExists()
 
         compose.onNodeWithContentDescription("End").performClick()
         compose.waitForIdle()
@@ -99,7 +99,7 @@ class ConversationFlowTest {
         compose.onNodeWithText("Call Lucía").performClick()
         compose.onNodeWithText("Calling Lucía…").assertExists()
 
-        compose.onNodeWithContentDescription("Cancel").performClick()
+        compose.onNodeWithContentDescription("End").performClick()
         compose.waitForIdle()
 
         compose.onNodeWithText("Call Lucía").assertExists()
@@ -122,8 +122,8 @@ class ConversationFlowTest {
         show()
         compose.onNodeWithText("Call Lucía").performClick()
 
-        compose.onNodeWithText("You're already in a call").assertExists()
-        compose.onNodeWithText("End that call and start this one").performClick()
+        compose.onNodeWithText("You're in another call").assertExists()
+        compose.onNodeWithText("Start here").performClick()
         compose.waitForIdle()
 
         assertEquals(listOf(false, true), client.connects)
@@ -137,7 +137,6 @@ class ConversationFlowTest {
                 listOf(
                     CallReservation.Ready(setup()),
                     CallReservation.Ready(setup(talkSeconds = 150, continuesCall = true, connectionId = SECOND)),
-                    CallReservation.Ready(setup(talkSeconds = 120, continuesCall = true, connectionId = THIRD)),
                 ),
             )
         show()
@@ -151,20 +150,14 @@ class ConversationFlowTest {
 
         compose.onNodeWithText("Call again").performClick()
         compose.waitForIdle()
-        compose.onNodeWithText("Calling Lucía…").assertExists()
+        compose.onNodeWithText("Reconnecting…").assertExists()
         seen("You: Un café, por favor.")
         val earlier = listOf("¡Hola! ¿Qué le pongo?", "Un café, por favor.")
         assertEquals(earlier, client.offeredTurns.last().map { it.text })
 
-        // Cancelling the call while it rings leaves it dropped, to end or call again.
-        compose.onNodeWithContentDescription("Cancel").performClick()
-        compose.waitForIdle()
-        compose.onNodeWithText("The call dropped").assertExists()
-        compose.onNodeWithText("Call again").performClick()
-        compose.waitForIdle()
         transport.onEvent(LiveServerEvent.Started)
         compose.waitForIdle()
-        assertEquals(3, transports.size)
+        assertEquals(2, transports.size)
         assertEquals(earlier, client.offeredTurns.last().map { it.text })
         seen("Lucía: ¡Hola! ¿Qué le pongo?")
 
@@ -173,10 +166,78 @@ class ConversationFlowTest {
         compose.waitForIdle()
 
         val saved = api.completions.single()
-        assertEquals(THIRD, saved.connectionId)
+        assertEquals(SECOND, saved.connectionId)
         assertEquals(earlier + "Con leche", saved.turns.map { it.text })
         assertEquals(3L, saved.spokenSeconds)
         assertTrue(saved.usedHelp)
+    }
+
+    /** End while a dropped call rings again ends the call, on what was said, as End does on a live call. */
+    @Test
+    fun endingARingingReconnectEndsTheCallOnWhatWasSaid() {
+        client.reservations =
+            ArrayDeque(listOf(CallReservation.Ready(setup()), CallReservation.Ready(setup(continuesCall = true, connectionId = SECOND))))
+        show()
+        goLive()
+        transport.onEvent(learnerSays("Un café", 1000.0, 2000.0))
+        transport.onLost()
+        compose.waitForIdle()
+        compose.onNodeWithText("Call again").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Reconnecting…").assertExists()
+
+        compose.onNodeWithContentDescription("End").performClick()
+        compose.waitForIdle()
+
+        compose.onNodeWithText("The call dropped").assertDoesNotExist()
+        assertEquals(
+            listOf("Un café"),
+            api.completions
+                .single()
+                .turns
+                .map { it.text },
+        )
+    }
+
+    /** Back while a dropped call rings again asks first, as on a live call, and ends nothing until the learner confirms. */
+    @Test
+    fun goingBackFromARingingReconnectAsksBeforeEndingTheCall() {
+        client.reservations =
+            ArrayDeque(listOf(CallReservation.Ready(setup()), CallReservation.Ready(setup(continuesCall = true, connectionId = SECOND))))
+        show()
+        goLive()
+        transport.onEvent(learnerSays("Un café", 1000.0, 2000.0))
+        transport.onLost()
+        compose.waitForIdle()
+        compose.onNodeWithText("Call again").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Reconnecting…").assertExists()
+
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.waitForIdle()
+
+        compose.onNodeWithText("End the call?").assertExists()
+        assertTrue(api.completions.isEmpty())
+        compose.onNodeWithText("Keep talking").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Reconnecting…").assertExists()
+    }
+
+    /** A first call the server says continues one (its app closed mid-call) has said nothing here: Back goes to its intro. */
+    @Test
+    fun goingBackFromAFirstCallThatRingsAsAReconnectGoesBackToItsIntro() {
+        client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup(continuesCall = true))))
+        show()
+        compose.onNodeWithText("Call Lucía").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Reconnecting…").assertExists()
+
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.waitForIdle()
+
+        compose.onNodeWithText("End the call?").assertDoesNotExist()
+        compose.onNodeWithText("Call Lucía").assertExists()
+        assertTrue(api.completions.isEmpty())
     }
 
     @Test
@@ -187,7 +248,7 @@ class ConversationFlowTest {
         transport.onLost()
         compose.waitForIdle()
 
-        compose.onNodeWithText("End the call").performClick()
+        compose.onNodeWithText("End call").performClick()
         compose.waitForIdle()
 
         assertEquals(
@@ -202,6 +263,5 @@ class ConversationFlowTest {
 
     private companion object {
         val SECOND: UUID = UUID.fromString("00000000-0000-4000-8000-000000000002")
-        val THIRD: UUID = UUID.fromString("00000000-0000-4000-8000-000000000003")
     }
 }

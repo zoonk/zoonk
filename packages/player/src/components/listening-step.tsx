@@ -1,20 +1,20 @@
 "use client";
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { useExtracted } from "next-intl";
 import { type PromptAudio, usePromptAudio } from "../player-audio-context";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { ArrangeWordsInteraction } from "./arrange-words";
 import { PromptAudioButton } from "./prompt-audio-button";
 import { QuestionText } from "./question-text";
-import { ScreenChip } from "./screen-chip";
 
 function AudioPrompt({ audio }: { audio: PromptAudio }) {
   const t = useExtracted();
 
   return (
     <div className="flex flex-col gap-3">
-      <ScreenChip>{t("What do you hear?")}</ScreenChip>
+      <QuestionText>{t("What do you hear?")}</QuestionText>
       <PromptAudioButton audio={audio} variant="labeled" />
     </div>
   );
@@ -25,7 +25,7 @@ function TextPrompt({ sentence }: { sentence: string }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <ScreenChip>{t("Translate")}</ScreenChip>
+      <Eyebrow>{t("Translate")}</Eyebrow>
       <QuestionText>{sentence}</QuestionText>
     </div>
   );

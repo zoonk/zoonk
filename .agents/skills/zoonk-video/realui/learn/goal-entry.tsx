@@ -12,6 +12,7 @@ export function GoalEntryView({ lang, q }: ViewProps) {
         key={value}
         defaultGoal={value}
         error={null}
+        hasAccount={false}
         onAttach={noop}
         onSubmit={noop}
         signUpHref="/login"
