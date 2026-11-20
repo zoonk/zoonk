@@ -171,6 +171,29 @@ describe("guest profile linking", () => {
     ).resolves.toMatchObject({ suggestedTools: expected });
   });
 
+  it.each(["work", "studies"] as const)(
+    "keeps the general fallback when the account's %s answer takes precedence",
+    async (question) => {
+      const { userId, guestUserId } = await learners();
+
+      await Promise.all([
+        answer(userId, question),
+        answer(guestUserId, question),
+        prisma.userLearningProfile.update({ data: { memoryEnabled: true }, where: { userId } }),
+        prisma.userLearningProfile.update({
+          data: { suggestedTools: ["Tasy"] },
+          where: { userId: guestUserId },
+        }),
+      ]);
+
+      await linkGuestAccount({ account: { id: userId }, guestUserId });
+
+      await expect(
+        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } }),
+      ).resolves.toMatchObject({ suggestedTools: [] });
+    },
+  );
+
   it.each(["absent", "pending", "failed"] as const)(
     "keeps the guest's pending suggestions owed when the account's follow-up is %s",
     async (accountAsk) => {
