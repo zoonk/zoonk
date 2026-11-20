@@ -236,6 +236,10 @@ describe(generateItems, () => {
     expect(mock.userPrompt).toContain("WRONG_ANSWER_COST: 100% of a right answer's points");
     expect(mock.userPrompt).not.toContain("LEVEL");
 
+    expect(generateText).toHaveBeenLastCalledWith(
+      expect.objectContaining({ model: "openai/gpt-6.2-sol" }),
+    );
+
     const practice = await generateItems({
       country: null,
       examFormat: exam,
@@ -251,6 +255,11 @@ describe(generateItems, () => {
     );
 
     expect(practice.userPrompt).toContain("LEVEL: beginner");
+
+    expect(generateText).toHaveBeenLastCalledWith(
+      expect.objectContaining({ model: "openai/gpt-6.1-terra" }),
+    );
+
     expect(practice.userPrompt).not.toContain("WRONG_ANSWER_COST");
   });
 

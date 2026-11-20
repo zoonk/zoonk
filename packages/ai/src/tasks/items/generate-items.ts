@@ -27,6 +27,15 @@ import { formatUsedSituations, getSituationSeed } from "./used-situations";
  * 8.79 to Terra's 9.14 at $94.54/1k against $9.77/1k, with 11 of 83 items flagged (18 Nov 2026).
  */
 const defaultModel = "openai/gpt-6.1-terra";
+
+/**
+ * A mock must be as hard as the board's released questions. On the generate-mock-items eval (4
+ * Cebraspe cases blind-mixed with released 2022 items, 20 Nov 2026), Sol 6.2 rated as hard in 11 of
+ * 12 runs (+0.08 on a 1-5 scale) at $18.12/1k with 98% of keys reproduced, and the one disputed
+ * key was right. Terra rated easier (5 of 12, -0.58) at $8.11/1k. Opus 5.5 (6 of 8, -0.21) and
+ * Gemini 4 Hydrogen (6 of 8, 92% of keys) cost $96/1k.
+ */
+const mockModel = "openai/gpt-6.2-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
 const DEFAULT_COUNT = 4;
@@ -143,7 +152,7 @@ export async function generateItems(params: GenerateItemsParams) {
   const {
     analytics,
     format,
-    model = defaultModel,
+    model = params.purpose === "mock" ? mockModel : defaultModel,
     reasoning,
     serviceTier,
     useFallback = true,

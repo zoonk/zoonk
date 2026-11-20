@@ -3,7 +3,7 @@ import { withItemRules } from "./item-rules";
 
 vi.mock("./item-rules.prompt.md", () => ({
   default:
-    "# Good\n\n- Concrete.{{FIELD_RULE}}\n{{#usedSituations}}\n- Not a used situation.\n{{/usedSituations}}\n{{#practice}}\n- Fit `LEVEL`.\n{{/practice}}\n- In `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}.\n\n{{LANGUAGE_GOALS}}\n\n# Text\n\n- Tables.\n{{PICTURES}}\n- No em dashes.\n\n# Formats\n\n{{FORMATS}}\n\n# Final check\n\nIn `LANGUAGE`{{LANGUAGE_GOAL_CHECK}}.\n",
+    "# Good\n\n- Concrete.{{FIELD_RULE}}\n{{#usedSituations}}\n- Not a used situation.\n{{/usedSituations}}\n{{#practice}}\n- Fit `LEVEL`.\n{{/practice}}\n{{#mock}}\n- Like the exam.\n{{/mock}}\n- In `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}.\n\n{{LANGUAGE_GOALS}}\n\n# Text\n\n- Tables.\n{{PICTURES}}\n- No em dashes.\n\n# Formats\n\n{{FORMATS}}\n\n# Final check\n\nIn `LANGUAGE`{{LANGUAGE_GOAL_CHECK}}.\n",
 }));
 
 vi.mock("./item-rules/field.prompt.md", () => ({ default: "Set in `FIELD`.\n" }));
@@ -166,7 +166,7 @@ describe(withItemRules, () => {
       mock: true,
     });
 
-    expect(prompt).toContain("- Concrete.\n- In `LANGUAGE`.");
+    expect(prompt).toContain("- Concrete.\n- Like the exam.\n- In `LANGUAGE`.");
     expect(prompt).not.toContain("LEVEL");
   });
 });

@@ -1,10 +1,10 @@
 # What makes a good question
 
-- It makes the learner use the skill in a situation: apply, predict, compare, diagnose, calculate or explain. Never ask to recall a definition word for word.
+- It makes the learner use the skill{{#practice}} in a situation{{/practice}}: apply, predict, compare, diagnose, calculate or explain. Never ask to recall a definition word for word.
 - Each question stands alone. A learner who never saw a lesson, but has the skill, can answer it.
 - It never gives its answer away: the learner does the skill's work. The context and the question hold only what the learner needs to start, and no option shows that work (see the formats).
 - A reading or interpretation question makes the learner understand the text (an inference, the main idea, how two parts relate, a detail asked in other words), never find a word, number or phrase the text states in the question's own words ("The buses leave every 30 minutes." then "How often do the buses leave?").
-- Situations are concrete and realistic.{{FIELD_RULE}}
+- {{#practice}}Situations are concrete and realistic.{{/practice}}{{#mock}}Situations, when the exam's questions use them, are concrete, realistic and set up the way the exam sets them up.{{/mock}}{{FIELD_RULE}}
 - Vary the situations and what each question asks{{#practice}}, and spread the difficulty (`easy`, `medium`, `hard`) across the set{{/practice}}. The same case with other names, numbers or places (another leaking roof reported to the same kind of landlord, another flight cancelled the same way) is the same situation.
 {{#usedSituations}}
 - `USED_SITUATIONS` are the openings of questions the app already asks about a skill (each skill's own, when there are several), which the same learner also meets in practice and mock exams. Put each new question in a situation of its own, never one of those.
@@ -14,7 +14,7 @@
 {{/practice}}
 - Be correct. If a fact depends on a country, a date or an edition, name it in the question. Never invent statistics, laws or quotes.
 - All learner-facing text is in `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}. Speak to the learner as "you" in reasons and feedback.
-- Situations use the money and everyday life in `LOCAL_CONTEXT`, the country these skills are set in, unless `EXAM` or the skill sets another place (SAT questions stay American even in Portuguese). People and towns come from `CAST`, in its order: each question of a set has its own person and, when its situation needs a town, its own town, never the same name or city twice. Other questions are written at the same time with other casts, so never swap in the names every writer reaches for. A real person, company or city stays when the skill is about it.
+- Situations use the money and everyday life in `LOCAL_CONTEXT`, the country these skills are set in, unless `EXAM` or the skill sets another place (SAT questions stay American even in Portuguese). {{#mock}}Name people and towns only where the exam's own questions do; then they come{{/mock}}{{#practice}}People and towns come{{/practice}} from `CAST`, in its order: each question of a set has its own person and, when its situation needs a town, its own town, never the same name or city twice. Other questions are written at the same time with other casts, so never swap in the names every writer reaches for. A real person, company or city stays when the skill is about it.
 
 {{LANGUAGE_GOALS}}
 
