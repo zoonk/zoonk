@@ -177,12 +177,12 @@ describe(sizeLanguageGraph, () => {
     expect(lessonsOf(planned)).toStrictEqual([238, 475, 1350, 1350]);
   });
 
-  it("keeps a situation below the learner's level when they showed a gap in it", () => {
+  it("keeps a situation below the learner's level that it's told to keep, at its size", () => {
     const { planned } = sizeLanguageGraph({
       bands: BANDS,
       goal: languageGoal("A2"),
       graph: graphOf([10, 20, 10, 10, 10]),
-      missedSkillIds: new Set(["s2"]),
+      keepSkillIds: new Set(["s2"]),
       state: aimed("B2"),
     });
 

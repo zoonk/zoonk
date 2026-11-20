@@ -57,8 +57,7 @@ function getBandHours(band: CourseLevel): { from: number; to: number } {
 
 /**
  * Situations the plan sets aside: those in bands above the aim's (so a trip course never reaches
- * C1 conversations) and those in bands the learner's level already covers, unless they showed a
- * gap in it. The aim's own band always stays, and so does a covered band with nothing after it.
+ * C1 conversations) and those in bands the learner's level already covers. The aim's own band always stays, and so does a covered band with nothing after it.
  */
 function listLeftOut({
   aim,
@@ -166,7 +165,7 @@ export function sizeLanguageGraph({
   bands,
   goal,
   graph,
-  missedSkillIds = new Set(),
+  keepSkillIds = new Set(),
   settledSkillIds = new Set(),
   state,
 }: {
@@ -174,8 +173,8 @@ export function sizeLanguageGraph({
   /** Its details hold the level the learner starts from. */
   goal: { details: unknown; kind: GoalKind };
   graph: PlanGraph;
-  /** Situations the learner showed a gap in stay planned below their level. */
-  missedSkillIds?: ReadonlySet<string>;
+  /** Situations that stay planned below the learner's level, such as ones they started. */
+  keepSkillIds?: ReadonlySet<string>;
   settledSkillIds?: ReadonlySet<string>;
   /** The aim is a CEFR label, half bands included ("B1+"). */
   state: { goal: Pick<PlanState["goal"], "aim">; settings: Pick<PlanSettings, "stopsAtAim"> };
@@ -191,7 +190,7 @@ export function sizeLanguageGraph({
     aim: aimScore,
     bands,
     graph,
-    keepSkillIds: new Set([...settledSkillIds, ...missedSkillIds]),
+    keepSkillIds: new Set([...settledSkillIds, ...keepSkillIds]),
     start,
     stopsAtAim: state.settings.stopsAtAim ?? false,
   });
