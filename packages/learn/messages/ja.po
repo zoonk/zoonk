@@ -8134,12 +8134,12 @@ msgstr "未回答にする"
 #: src/today/today-day-status.tsx
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
-msgstr ""
+msgstr "開始するには、このページに戻ってください。"
 
 #: src/mock/mock-preparing.tsx
 msgctxt "jk5nI6"
 msgid "Your mock exam is being prepared"
-msgstr ""
+msgstr "模試を準備しています"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
@@ -13093,7 +13093,7 @@ msgstr "お休みを楽しんでください！"
 #: src/today/today-day-status.tsx
 msgctxt "N-0-Mq"
 msgid "Your mock exam is being prepared."
-msgstr ""
+msgstr "模試を準備しています。"
 
 #: src/today/today-day-status.tsx
 msgctxt "Pg7r31"

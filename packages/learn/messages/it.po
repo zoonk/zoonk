@@ -8134,12 +8134,12 @@ msgstr "Lascia in bianco"
 #: src/today/today-day-status.tsx
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
-msgstr ""
+msgstr "Torna su questa pagina per iniziare."
 
 #: src/mock/mock-preparing.tsx
 msgctxt "jk5nI6"
 msgid "Your mock exam is being prepared"
-msgstr ""
+msgstr "Stiamo preparando la tua simulazione"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
@@ -13093,7 +13093,7 @@ msgstr "Goditi il tuo giorno di riposo!"
 #: src/today/today-day-status.tsx
 msgctxt "N-0-Mq"
 msgid "Your mock exam is being prepared."
-msgstr ""
+msgstr "Stiamo preparando la tua simulazione."
 
 #: src/today/today-day-status.tsx
 msgctxt "Pg7r31"

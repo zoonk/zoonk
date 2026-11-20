@@ -8134,12 +8134,12 @@ msgstr "답하지 않기"
 #: src/today/today-day-status.tsx
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
-msgstr ""
+msgstr "시작하려면 이 페이지로 다시 오세요."
 
 #: src/mock/mock-preparing.tsx
 msgctxt "jk5nI6"
 msgid "Your mock exam is being prepared"
-msgstr ""
+msgstr "모의고사를 준비하고 있어요"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
@@ -13093,7 +13093,7 @@ msgstr "편히 쉬세요!"
 #: src/today/today-day-status.tsx
 msgctxt "N-0-Mq"
 msgid "Your mock exam is being prepared."
-msgstr ""
+msgstr "모의고사를 준비하고 있어요."
 
 #: src/today/today-day-status.tsx
 msgctxt "Pg7r31"

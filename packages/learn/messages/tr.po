@@ -8134,12 +8134,12 @@ msgstr "Boş bırak"
 #: src/today/today-day-status.tsx
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
-msgstr ""
+msgstr "Başlatmak için bu sayfaya tekrar gel."
 
 #: src/mock/mock-preparing.tsx
 msgctxt "jk5nI6"
 msgid "Your mock exam is being prepared"
-msgstr ""
+msgstr "Deneme sınavın hazırlanıyor"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
@@ -13093,7 +13093,7 @@ msgstr "Dinlenme gününün tadını çıkar!"
 #: src/today/today-day-status.tsx
 msgctxt "N-0-Mq"
 msgid "Your mock exam is being prepared."
-msgstr ""
+msgstr "Deneme sınavın hazırlanıyor."
 
 #: src/today/today-day-status.tsx
 msgctxt "Pg7r31"
