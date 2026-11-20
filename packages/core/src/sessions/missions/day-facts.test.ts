@@ -129,6 +129,14 @@ describe("build-time mission facts and selection against the real database", () 
         data: { plan: "plus", referenceId: input.userId, status: "active" },
       });
 
+      if (mock) {
+        await Promise.all(
+          Array.from({ length: 23 }, () =>
+            itemFixture({ content: choiceItemContent(), mockOnly: true, skillId: input.skill.id }),
+          ),
+        );
+      }
+
       const facts = await load(input, [
         block("review"),
         block("learn"),
@@ -144,6 +152,7 @@ describe("build-time mission facts and selection against the real database", () 
               rematch: false,
               timeLimitMinutes: null,
             },
+            skillIds: [input.skill.id],
           }),
         ),
       ]);
@@ -223,6 +232,33 @@ describe("build-time mission facts and selection against the real database", () 
     const facts = await load(input, [block("review")]);
     expect(facts.candidates.some((pick) => pick.kind === "askBuddy")).toBe(false);
     await expect(prisma.usageRecord.count({ where: { userId: input.userId } })).resolves.toBe(10);
+  });
+
+  it("leaves a mock out of a paid learner's missions while its questions are preparing", async () => {
+    const input = await fixture();
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: input.userId, status: "active" },
+    });
+
+    const facts = await load(input, [
+      block(
+        "checkpoint",
+        toBlockPayload({
+          checkpoint: {
+            kind: "weekly",
+            mock: true,
+            mockIdentity: { day: null, fullLength: false },
+            passMark: 1,
+            phase: null,
+            rematch: false,
+            timeLimitMinutes: 10,
+          },
+        }),
+      ),
+      block("review"),
+    ]);
+
+    expect(facts.candidates.map((pick) => pick.kind)).not.toContain("mock");
   });
 
   it("never offers a Plus mock to a free learner", async () => {

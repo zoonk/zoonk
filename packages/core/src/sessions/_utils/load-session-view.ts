@@ -173,6 +173,9 @@ export async function loadStudySessionView({
     loadDayOutlines({ dayMinutes, plan, session }),
     getDayMissions({
       displayBlocks,
+      preparing: new Set(
+        blockViews.blocks.filter((block) => block.preparing).map((block) => block.position),
+      ),
       readProgress: readDayProgress,
       session,
       timeZone,

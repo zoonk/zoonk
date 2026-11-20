@@ -21,6 +21,7 @@ export async function commitPlan({
   context,
   extraWrites,
   keepsOpenUndo,
+  owe,
   phaseDates,
   restorable = null,
   revalidation = "now",
@@ -32,6 +33,7 @@ export async function commitPlan({
   context: PlanContext;
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
   keepsOpenUndo?: boolean;
+  owe?: Parameters<typeof writePlan>[0]["owe"];
   restorable?: string | null;
   phaseDates?: Pick<Parameters<typeof preparePhaseDatesProposal>[0], "mode" | "pace" | "planning">;
   revalidation?: PlanTagRevalidation;
@@ -62,7 +64,7 @@ export async function commitPlan({
   const changeId = await prisma.$transaction(async (tx) => {
     const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
 
-    await writePlan({ context: writeContext, keepsOpenUndo, plan: prepared, tx });
+    await writePlan({ context: writeContext, keepsOpenUndo, owe, plan: prepared, tx });
 
     await extraWrites?.(tx);
     await phaseWrite?.(tx);

@@ -1,6 +1,5 @@
 import "server-only";
 import { DbNull, type PlanItem, type TransactionClient } from "@zoonk/db";
-import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { toIsoDate } from "../planner/plan-calendar";
 import { isStandIn } from "../planner/plan-item-rules";
 import { type ExistingPlanItem, type PlannedItem } from "../planner/plan-items";
@@ -57,7 +56,7 @@ export async function savePlanItems({
   planId: string;
   standInLessons: ReadonlyMap<string, number>;
   tx: TransactionClient;
-}): Promise<void> {
+}): Promise<boolean> {
   const lessonsOf = (item: SavedPlanItem) =>
     isStandIn(item) ? (standInLessons.get(item.skillId ?? "") ?? null) : null;
 
@@ -180,33 +179,18 @@ export async function savePlanItems({
       ) AS v
       WHERE p.id = v.id`;
   }
+
   const scheduled = new Map(
     existing
       .filter((item) => item.kind === "mock")
       .map((item) => [item.id, item.scheduledFor?.getTime()]),
   );
-  if (
-    items.some(
-      (item) =>
-        item.kind === "mock" &&
-        item.status === "todo" &&
-        item.scheduledFor &&
-        (!item.id || scheduled.get(item.id) !== item.scheduledFor.getTime()),
-    )
-  ) {
-    const { goal } = await tx.plan.findUniqueOrThrow({
-      where: { id: planId },
-      select: { goal: { select: { id: true, userId: true, examBlueprintId: true } } },
-    });
-    await oweFollowUps({
-      db: tx,
-      userId: goal.userId,
-      followUps: [
-        {
-          kind: "prepareMockSupply",
-          input: { goalId: goal.id, examBlueprintId: goal.examBlueprintId, later: true },
-        },
-      ],
-    });
-  }
+
+  return items.some(
+    (item) =>
+      item.kind === "mock" &&
+      item.status === "todo" &&
+      item.scheduledFor &&
+      (!item.id || scheduled.get(item.id) !== item.scheduledFor.getTime()),
+  );
 }

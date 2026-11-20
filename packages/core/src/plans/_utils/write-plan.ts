@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
 import { PlanConflictError } from "../plan-conflict";
@@ -113,11 +114,13 @@ async function carryOpenUndo({
 export async function writePlan({
   context,
   keepsOpenUndo = false,
+  owe = oweFollowUps,
   plan,
   tx,
 }: {
   context: PlanContext;
   keepsOpenUndo?: boolean;
+  owe?: typeof oweFollowUps;
   plan: PlanWrite;
   tx: TransactionClient;
 }): Promise<void> {
@@ -174,13 +177,28 @@ export async function writePlan({
     },
   });
 
-  await savePlanItems({
+  const mockScheduled = await savePlanItems({
     existing: context.items,
     items: plan.items,
     planId: context.plan.id,
     standInLessons: plan.standInLessons,
     tx,
   });
+
+  if (mockScheduled) {
+    const { goal } = context;
+
+    await owe({
+      db: tx,
+      followUps: [
+        {
+          input: { examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: true },
+          kind: "prepareMockSupply",
+        },
+      ],
+      userId: goal.userId,
+    });
+  }
 
   await creditFinishedNewLessons({ context, plan, tx });
 
