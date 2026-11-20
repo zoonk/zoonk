@@ -1,6 +1,6 @@
 "use client";
 
-import { BackLink, PageTopBar } from "@zoonk/ui/components/page-top";
+import { BackLink, PageTopBar, PageTopRow } from "@zoonk/ui/components/page-top";
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -14,7 +14,7 @@ import { getSetupProgress } from "./_utils/setup-progress";
 import { type OnboardingBar } from "./onboarding-host";
 import { testProgressPercent } from "./test-progress";
 
-export const BAR_MIDDLE_CLASS = "w-24 sm:w-32";
+export const BAR_MIDDLE_CLASS = "w-24 max-w-full sm:w-32";
 
 /** One display for the whole setup: the questions about the learner share one dash. */
 export function stepBarProgress(state: Parameters<typeof getSetupProgress>[0]) {
@@ -59,18 +59,12 @@ function BackButton({ disabled, onBack }: { disabled?: boolean; onBack: () => vo
 
 export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; className?: string }) {
   return (
-    <div
-      className={cn(
-        "grid min-h-11 w-full grid-cols-[1fr_auto_1fr] items-center gap-2 not-has-[a,button,[data-slot=step-dots]]:hidden",
-        className,
-      )}
-    >
-      <div className="justify-self-start">
-        {bar.onBack && <BackButton disabled={bar.backDisabled} onBack={bar.onBack} />}
-      </div>
-      {bar.middle ?? <span />}
-      <div className="justify-self-end">{bar.end}</div>
-    </div>
+    <PageTopRow
+      actions={bar.end}
+      back={bar.onBack && <BackButton disabled={bar.backDisabled} onBack={bar.onBack} />}
+      className={cn("w-full not-has-[a,button,[data-slot=step-dots]]:hidden", className)}
+      middle={bar.middle}
+    />
   );
 }
 
