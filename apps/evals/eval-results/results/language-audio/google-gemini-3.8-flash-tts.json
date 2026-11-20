@@ -1776,7 +1776,7 @@
     {
       "classification": {
         "expected": "read right",
-        "predicted": "misread"
+        "predicted": "read right"
       },
       "judge": {
         "modelId": "google/gemini-3.8-flash",
@@ -1787,19 +1787,19 @@
       },
       "steps": [
         {
-          "conclusion": "Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/).",
+          "conclusion": "Needs a listen: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/fr-lookalike-pain.mp3. Single-provider flags: pain. Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/).",
           "kind": "majorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/).",
+          "conclusion": "Needs a listen: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/fr-lookalike-pain.mp3. Single-provider flags: pain. Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/).",
           "kind": "minorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/).",
+          "conclusion": "Needs a listen: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/fr-lookalike-pain.mp3. Single-provider flags: pain. Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/).",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 10
         }
       ],
       "testCase": {

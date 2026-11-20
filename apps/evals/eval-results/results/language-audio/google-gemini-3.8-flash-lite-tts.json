@@ -1608,7 +1608,7 @@
     {
       "classification": {
         "expected": "read right",
-        "predicted": "misread"
+        "predicted": "read right"
       },
       "judge": {
         "modelId": "google/gemini-3.8-flash",
@@ -1619,19 +1619,19 @@
       },
       "steps": [
         {
-          "conclusion": "Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/).",
+          "conclusion": "Needs a listen: eval-results/audio/language-audio/google-gemini-3.8-flash-lite-tts/pt-lookalike-charles.mp3. Single-provider flags: charles. Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/).",
           "kind": "majorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/).",
+          "conclusion": "Needs a listen: eval-results/audio/language-audio/google-gemini-3.8-flash-lite-tts/pt-lookalike-charles.mp3. Single-provider flags: charles. Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/).",
           "kind": "minorErrors",
-          "score": 1
+          "score": 10
         },
         {
-          "conclusion": "Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/).",
+          "conclusion": "Needs a listen: eval-results/audio/language-audio/google-gemini-3.8-flash-lite-tts/pt-lookalike-charles.mp3. Single-provider flags: charles. Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/).",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 10
         }
       ],
       "testCase": {
