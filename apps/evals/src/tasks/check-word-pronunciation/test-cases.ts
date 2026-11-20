@@ -11,6 +11,7 @@ export type LookAlikeClipInput = {
   ipa: string;
   englishIpa: string;
   voicedAs: string;
+  speechText?: string;
 };
 
 export type LookAlikeClipExpected = { pronunciation: "english" | "native" };
@@ -36,5 +37,19 @@ export const TEST_CASES: TestCase<LookAlikeClipExpected, LookAlikeClipInput>[] =
         id: `${id}-english`,
         userInput: { ...word, clipId: `${id}-english`, voicedAs: "en" },
       },
+      ...(id === "es-lookalike-pie"
+        ? [
+            {
+              expected: { pronunciation: "english" as const },
+              id: `${id}-in-sentence`,
+              userInput: {
+                ...word,
+                clipId: `${id}-in-sentence`,
+                speechText: "Le duele el pai desde ayer.",
+                voicedAs: language,
+              },
+            },
+          ]
+        : []),
     ];
   });
