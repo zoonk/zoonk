@@ -365,7 +365,7 @@ struct QuestionBlockView: View {
       PracticeActionRow {
         PracticeMainButton(title: continueTitle, icon: .forward) { Task { await run.next() } }
           .practiceFocus(.next)
-        ask(answered: true, missed: !feedback.isCorrect)
+        ask(answered: true)
       }
     case .answering, .checking, .answerFailed:
       if case .answerFailed = phase {
@@ -433,17 +433,17 @@ struct QuestionBlockView: View {
       }
       .practiceFocus(.check)
 
-      ask(answered: false, missed: false)
+      ask(answered: false)
     }
   }
 
   @ViewBuilder
-  private func ask(answered: Bool, missed: Bool) -> some View {
+  private func ask(answered: Bool) -> some View {
     if let askButton = hooks.askButton, let question = run.question {
       askButton(
         PracticeAskTarget(
           itemId: question.itemId, question: question.question, blockId: run.detail.block.id,
-          answered: answered, missed: missed))
+          answered: answered))
     }
   }
 

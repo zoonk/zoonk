@@ -84,7 +84,7 @@ struct TutorPanel: View {
   }
 
   private func quoteLine(_ question: String) -> String {
-    if case .item(_, _, true, _, _) = scope {
+    if case .item(_, _, true, _) = scope {
       return String(
         localized: "About your answer to “\(question)”", table: "Tutor",
         comment: "The checked practice question the panel is about")
