@@ -24,6 +24,8 @@ protocol StudyAPIClient: Sendable {
   func stop(token: String, sessionID: String, timeZone: String) async throws
   func getSession(token: String, sessionID: String) async throws -> StudyDay
   func getSummary(token: String, sessionID: String) async throws -> SessionSummary
+  func claimSummaryVisit(token: String, sessionID: String, visitID: UUID) async throws
+    -> SummaryVisitDecision
   func lessonReadiness(token: String, lessonID: String) async throws
     -> Components.Schemas.LessonReadiness
   /// Only on the learner's tap, since it runs AI.
@@ -253,6 +255,30 @@ struct StudyAPI: StudyAPIClient {
       switch try await client.getStudySessionSummary(path: .init(sessionId: sessionID)) {
       case .ok(let response):
         return try StudyJSON.recode(try response.body.json)
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func claimSummaryVisit(token: String, sessionID: String, visitID: UUID) async throws
+    -> SummaryVisitDecision
+  {
+    let body = Components.Schemas.StudySessionSummaryVisitInput(
+      visitId: visitID.uuidString.lowercased())
+
+    return try await clients.perform(token: token) { client in
+      switch try await client.createStudySessionSummaryVisit(
+        path: .init(sessionId: sessionID), body: .json(body)
+      ) {
+      case .ok(let response):
+        return try response.body.json.first ? .first : .seen
+      case .conflict:
+        return .notReady
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:

@@ -23,7 +23,7 @@ export function getReminderWindow({
   now: Date;
   time: string;
   timeZone: string;
-}): { endsAt: Date; localDate: Date; open: boolean } {
+}): { endsAt: Date; localDate: Date; open: boolean; startsAt: Date } {
   const wallClock = now.getTime() + getTimeZoneOffsetMs({ date: now, timeZone });
   const localDate = new Date(Math.floor(wallClock / MS_PER_DAY) * MS_PER_DAY);
   const minute = (wallClock - localDate.getTime()) / MS_PER_MINUTE;
@@ -34,5 +34,6 @@ export function getReminderWindow({
     endsAt: new Date(now.getTime() + (end - minute) * MS_PER_MINUTE),
     localDate,
     open: minute >= start && minute < end,
+    startsAt: new Date(now.getTime() + (start - minute) * MS_PER_MINUTE),
   };
 }

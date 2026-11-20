@@ -78,6 +78,7 @@ internal class TodayDayModel(
     val pastDate = today.pastDateLessons()?.takeIf { state == StudySession.State.REST || state == StudySession.State.AHEAD }
     val upNext = day.upNextLessons(pastDate != null)
     val keepLearning = upNext.isNotEmpty()
+    val summaryRoute = AppRoute.Session(goalId = (day.goalId ?: today.goal.id).toString(), summaryRequested = true)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -324,7 +325,7 @@ private fun TodayAction(
 
             model.state == StudySession.State.DONE -> {
                 ActionButton(stringResource(R.string.today_see_summary), busy = false, buttonModifier) {
-                    actions.navigate(AppRoute.Session(goalId = (model.day.goalId ?: model.today.goal.id).toString()))
+                    actions.navigate(model.summaryRoute)
                 }
             }
 

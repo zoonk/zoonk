@@ -6,12 +6,13 @@ import { type ReminderOfferActions } from "../../reminders/reminder-offer";
 import { type MomentCeremony } from "../moment-ceremony";
 import { type StudySessionSummary } from "../session-types";
 
-/** Each returns false when it didn't work. */
 export type SessionSummaryActions = {
   /** Re-reads a stale summary without preparing or starting more content. */
   refresh: () => void;
   addExtraTime: () => Promise<boolean>;
   keepGoing: () => Promise<boolean>;
+  /** First visit, manual revisit, navigation away, or a failed request. */
+  visit: (visitId: string) => Promise<boolean | "left" | null>;
 };
 
 export type SummaryGoalKind = "exam" | "explain" | "language" | "learn";

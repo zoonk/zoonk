@@ -9,6 +9,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.Milestone
 import com.zoonk.api.models.StudyBlockOpeningTarget
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,6 +20,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -112,6 +114,89 @@ class SessionViewModelTest {
         }
 
     @Test
+    fun aSummaryClaimRetriesWithItsOriginalIdAndKeepsItsAnswerThroughRecreation() =
+        runTest(dispatcher) {
+            val api = FakeStudyApi().apply { failures += ApiException(ApiError.Network) }
+            val viewModel = viewModel(api)
+            val visitId = UUID.randomUUID()
+
+            viewModel.recordSummaryVisit(SESSION, visitId, requested = false)
+            advanceUntilIdle()
+            assertEquals(SummaryVisit.Failed, viewModel.summaryVisit)
+
+            viewModel.recordSummaryVisit(SESSION, visitId, requested = false)
+            viewModel.recordSummaryVisit(SESSION, visitId, requested = false)
+            advanceUntilIdle()
+            viewModel.recordSummaryVisit(SESSION, visitId, requested = false)
+            advanceUntilIdle()
+
+            assertEquals(listOf(visitId, visitId), api.summaryVisits)
+            assertEquals(SummaryVisit.First, viewModel.summaryVisit)
+            assertEquals(null, viewModel.summaryExit.value)
+        }
+
+    @Test
+    fun aRepeatSummaryOnlyReturnsToTodayWhenItOpenedAutomatically() =
+        runTest(dispatcher) {
+            val api = FakeStudyApi()
+            val viewModel = viewModel(api)
+            val firstVisit = UUID.randomUUID()
+            val afterStudying = UUID.randomUUID()
+            val requested = UUID.randomUUID()
+
+            viewModel.recordSummaryVisit(SESSION, firstVisit, requested = false)
+            advanceUntilIdle()
+            assertEquals(SummaryVisit.First, viewModel.summaryVisit)
+
+            viewModel.summaryOpening.end()
+            api.firstSummaryVisit = false
+            viewModel.recordSummaryVisit(SESSION, afterStudying, requested = false)
+            advanceUntilIdle()
+            assertEquals(SummaryExit.Repeat, viewModel.summaryExit.value)
+
+            viewModel.summaryOpening.end()
+            viewModel.recordSummaryVisit(SESSION, requested, requested = true)
+            advanceUntilIdle()
+            assertEquals(SummaryVisit.Repeat, viewModel.summaryVisit)
+            assertEquals(null, viewModel.summaryExit.value)
+            assertEquals(listOf(firstVisit, afterStudying, requested), api.summaryVisits)
+        }
+
+    @Test
+    fun aSummaryClaimThatAnswersAfterLeavingCannotSendTheLearnerToToday() =
+        runTest(dispatcher) {
+            val gate = CompletableDeferred<Unit>()
+            val api =
+                FakeStudyApi().apply {
+                    firstSummaryVisit = false
+                    summaryVisitGate = gate
+                }
+            val viewModel = viewModel(api)
+
+            viewModel.recordSummaryVisit(SESSION, UUID.randomUUID(), requested = false)
+            runCurrent()
+            assertEquals(1, api.summaryVisits.size)
+            viewModel.summaryOpening.end()
+            gate.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(null, viewModel.summaryVisit)
+            assertEquals(null, viewModel.summaryExit.value)
+        }
+
+    @Test
+    fun aSummaryThatIsNoLongerReadyReturnsToToday() =
+        runTest(dispatcher) {
+            val api = FakeStudyApi().apply { failures += ApiException(ApiError.Unavailable, "STUDY_SUMMARY_NOT_READY", 409) }
+            val viewModel = viewModel(api)
+
+            viewModel.recordSummaryVisit(SESSION, UUID.randomUUID(), requested = false)
+            advanceUntilIdle()
+
+            assertEquals(SummaryExit.DayChanged, viewModel.summaryExit.value)
+        }
+
+    @Test
     fun startOnASavedDayOpensTheShownStepItselfSinceTheLearnerMayHaveAskedForIt() =
         runTest(dispatcher) {
             val api = FakeStudyApi()
@@ -149,7 +234,7 @@ class SessionViewModelTest {
 
             viewModel.start(day(listOf(step(0), step(1))), step(1), GOAL)
             advanceUntilIdle()
-            viewModel.endVisit()
+            viewModel.visit.end()
 
             assertEquals(emptyList<AppRoute>(), owed(viewModel))
         }
@@ -161,7 +246,7 @@ class SessionViewModelTest {
             val viewModel = viewModel(api)
 
             viewModel.start(day(listOf(step(0), step(1))), step(1), GOAL)
-            viewModel.endVisit()
+            viewModel.visit.end()
             advanceUntilIdle()
 
             assertEquals(null, viewModel.failed)

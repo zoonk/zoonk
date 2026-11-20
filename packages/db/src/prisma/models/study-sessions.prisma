@@ -61,6 +61,16 @@ model StudySession {
   @@map("study_sessions")
 }
 
+model StudySummaryVisit {
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  localDate DateTime @map("local_date") @db.Date
+  visitId   String   @map("visit_id") @db.Uuid
+
+  @@id([userId, localDate], name: "userDate")
+  @@map("study_summary_visits")
+}
+
 /// `payload` holds what the block needs (items, capsule skills) as plain ids.
 model StudySessionBlock {
   id               String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
