@@ -36,11 +36,13 @@ Run `eval:compare` for the task (see the README). It freezes the cases and their
 
 ## 4. Readers
 
-Readers from Claude and GPT read every pair, so the view of what's wrong is balanced whichever family wrote the outputs. When the two rivals are a Claude model and a GPT model, a third family reads too (Gemini 4 Neon; older Gemini models aren't good enough). Readers get only the packet: no tools, no repository, no model names.
+Pick readers before you seal: Claude and GPT always, and a third family when the rivals are a Claude model and a GPT model. For each, look up how that reader did on the controls in the task family's saved comparisons and control banks; use the cheapest tier that passed on packets as long as yours, and treat one that never ran there as unproven. Readers get only the packet: no tools, no repository, no model names.
 
-Use subscription seats first. When a seat runs out, wait if it resets within 4 hours; otherwise read through the gateway without asking. A seat counts only after it's shown to run the requested model with no tools and no project or user context; otherwise that family reads through the gateway.
+Use subscription seats first (the README says how to pick the Claude login). When a seat runs out, the run waits if it resets within 4 hours and otherwise reads through the gateway without asking.
 
-Every packet carries controls (an identical pair and a known defect). A packet whose reader fails a control doesn't count; keep the attempt and read it again.
+For other rivals, the third family is a tie-breaker: it reads only unresolved cases that could change the outcome. It is the priciest reader, so give it a reserve cap sized from the forecast, and raise the cap only when the cases it would settle are the ones that decide.
+
+Every packet carries controls (an identical pair and a known defect). A packet whose reader fails a control doesn't count; keep the attempt and read it again under a new attempt name.
 
 ## 5. Verify only what would decide
 
@@ -48,9 +50,9 @@ Send to a verifier from another family only the observations that would change t
 
 ## 6. Decide
 
-The decision weighs quality against cost and latency by the task's `priorities` (in its `task.ts`): which criteria disqualify, which count toward the trade, and the trade the task accepts. A tie goes to the cheaper model, and so can a small quality loss when the saving is large. When unverified claims, unresolved cases or missing outputs could reverse the choice, keep the incumbent and say what evidence is missing.
+The decision weighs quality against cost and latency by the task's `priorities` (in its `task.ts`): which criteria disqualify, which count toward the trade, and the trade the task accepts. What may decide, and what may not, is in `apps/evals/AGENTS.md`. When the outcome is insufficient evidence, the incumbent stays: say what evidence is missing and don't argue around it with scores or single reads.
 
-- Shared content (Library lessons, items, courses): the owner reads the decisive cases before the switch. Put them in front of them in the evals app's comparison page and wait.
+- Shared content (Library lessons, items, courses): before a switch, the owner reads the decisive cases blind in the evals app's comparison page. Send them the page and wait. Their blind read settles a case the readers left unresolved; a ruling they give afterward overrides it.
 - Private content (one learner's own): take the cheaper variant on shown practical equivalence without waiting.
 
 The comment beside the production model cites the comparison.
@@ -62,4 +64,4 @@ The comment beside the production model cites the comparison.
 
 ## Report
 
-For each task checked: the decision, the decision table's numbers (coverage, quality, delivery), the decisive cases, what was verified and what wasn't, gateway spend and seat time. For each task skipped: why.
+For each task checked: the decision, the decision table's numbers (coverage, quality, delivery), the decisive cases, what was verified and what wasn't, which readers passed their controls, gateway spend and seat time. For each task skipped: why.
