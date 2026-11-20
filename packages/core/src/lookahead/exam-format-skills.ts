@@ -123,7 +123,7 @@ export async function pickExamFormatSkills({
       isQuantitative: true,
       items: {
         select: { content: true, examBlueprintId: true, format: true },
-        where: { format: { in: ["multipleChoice", "numeric"] } },
+        where: { format: { in: ["multipleChoice", "numeric"] }, mockOnly: false },
       },
       language: true,
       level: true,
