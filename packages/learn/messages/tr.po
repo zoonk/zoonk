@@ -23,6 +23,8 @@ msgstr "Doğru"
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
 #: src/questions/typed-answer-field.tsx
+#: src/writing/writing-result.tsx
+#: src/writing/writing-write-screen.tsx
 msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "Cevabın"
@@ -270,6 +272,8 @@ msgstr "{days, plural, other {Yaklaşık # gün kaldı}}"
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
 #: src/today/today-action.tsx
+#: src/writing/writing-refused.tsx
+#: src/writing/writing-screen.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Devam et"
@@ -540,6 +544,7 @@ msgstr "{done, number} / {total, number}"
 #: src/session/open-next-step.tsx
 #: src/speech/speech-parts.tsx
 #: src/topic-outline/far-topic-sheet.tsx
+#: src/writing/writing-start.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Tekrar dene"
@@ -2246,6 +2251,7 @@ msgstr "Sonucunu en sonda göreceksin."
 #: src/today/today-lessons-card.tsx
 #: src/today/today-preparing.tsx
 #: src/today/today-shell.tsx
+#: src/writing/writing-screen.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Bugün"
@@ -3030,11 +3036,13 @@ msgid "You skipped this essay."
 msgstr "Bu kompozisyonu atladın."
 
 #: src/essay/essay-criteria-rows.tsx
+#: src/writing/writing-result.tsx
 msgctxt "H9233U"
 msgid "Score by criterion"
 msgstr "Ölçütlere göre puanlar"
 
 #: src/essay/essay-criteria-rows.tsx
+#: src/writing/writing-result.tsx
 msgctxt "LLXwbj"
 msgid "{score} of {max}"
 msgstr "{score} / {max}"
@@ -3054,16 +3062,19 @@ msgstr "Kompozisyonun tamamını yaz, sonra yeniden gönder."
 
 #: src/essay/essay-feedback.tsx
 #: src/mock/mock-result-speaking.tsx
+#: src/writing/writing-result.tsx
 msgctxt "T735yK"
 msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
 msgstr "Tahmini puan, <mono>0</mono> ile <mono>{max}</mono> arasında"
 
 #: src/essay/essay-feedback.tsx
+#: src/writing/writing-result.tsx
 msgctxt "vtwv7b"
 msgid "See comments"
 msgstr "Yorumları gör"
 
 #: src/essay/essay-feedback.tsx
+#: src/writing/writing-result.tsx
 msgctxt "wCgTu5"
 msgid "Comments"
 msgstr "Yorumlar"
@@ -3080,14 +3091,15 @@ msgid "Every criterion has full marks in this estimate."
 msgstr "Bu tahmine göre her ölçütten tam puan aldın."
 
 #: src/essay/essay-feedback.tsx
-msgctxt "TvkYzM"
-msgid "What to rewrite"
-msgstr "Yeniden yazılacak kısım"
-
-#: src/essay/essay-feedback.tsx
 msgctxt "HiVJjN"
 msgid "For example: {example}"
 msgstr "Örneğin: {example}"
+
+#: src/essay/essay-feedback.tsx
+#: src/writing/writing-result.tsx
+msgctxt "TvkYzM"
+msgid "What to rewrite"
+msgstr "Yeniden yazılacak kısım"
 
 #: src/essay/essay-feedback.tsx
 msgctxt "qSEmp5"
@@ -3105,6 +3117,7 @@ msgid ", missing"
 msgstr ", eksik"
 
 #: src/essay/essay-feedback.tsx
+#: src/writing/writing-screen.tsx
 msgctxt "scAuEr"
 msgid "Rewrite"
 msgstr "Yeniden yaz"
@@ -3222,6 +3235,7 @@ msgid "The case"
 msgstr "Olay"
 
 #: src/essay/essay-prompt.tsx
+#: src/writing/writing-question.tsx
 msgctxt "2rkYNm"
 msgid "What to write"
 msgstr "Yazman gerekenler"
@@ -3244,11 +3258,13 @@ msgid "See the grade"
 msgstr "Notunu gör"
 
 #: src/essay/essay-screen.tsx
+#: src/writing/writing-write-screen.tsx
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "Geliştirmen gereken yerleri yeniden yaz"
 
 #: src/essay/essay-screen.tsx
+#: src/writing/writing-write-screen.tsx
 msgctxt "osZlj7"
 msgid "Grade rewrite"
 msgstr "Yeniden yazımı değerlendir"
@@ -3314,6 +3330,7 @@ msgid "Reading your essay against each criterion. It can take up to 30 seconds."
 msgstr "Kompozisyonunu her ölçüte göre inceliyoruz. Bu işlem 30 saniyeye kadar sürebilir."
 
 #: src/essay/essay-word-count.tsx
+#: src/writing/writing-editor.tsx
 msgctxt "-8LNI4"
 msgid "{count, plural, one {# word} other {# words}}"
 msgstr "{count, plural, other {# kelime}}"
@@ -3458,6 +3475,7 @@ msgstr "Branşlara göre"
 
 #: src/exam/exam-mock-progress.tsx
 #: src/journey/journey-hero.tsx
+#: src/syllabus/subject-written-score.tsx
 msgctxt "dcRwV1"
 msgid "Your progress"
 msgstr "İlerlemen"
@@ -4641,6 +4659,31 @@ msgid "Picking what to ask in each subject…"
 msgstr "Her branşta ne soracağımızı seçiyoruz…"
 
 #: src/generation/use-generation-copy.ts
+msgctxt "xwzlmV"
+msgid "Writing your question"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
+msgctxt "A-XHEK"
+msgid "Writing a question like your exam's"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
+msgctxt "wbqmxC"
+msgid "Choosing the topic…"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
+msgctxt "Xtb_S_"
+msgid "Writing the support text…"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
+msgctxt "XssWee"
+msgid "Checking it against the exam's criteria…"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
 msgid "Adding a setup lesson"
 msgstr "Kurulum dersi ekliyoruz"
@@ -5093,7 +5136,9 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, one {Son deneme sınavına göre} other {Son # deneme sınavına göre}}"
 
 #: src/journey/preparation/preparation-details.tsx
+#: src/journey/preparation/written-projection.tsx
 #: src/mock/mock-result-view.tsx
+#: src/syllabus/subject-written-score.tsx
 msgctxt "Psgvhk"
 msgid "Estimated score"
 msgstr "Tahmini puan"
@@ -5206,6 +5251,61 @@ msgstr "İlk deneme sınavına gir"
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "İlk haftalık meydan okumana katıl"
+
+#: src/journey/preparation/written-projection.tsx
+#: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/syllabus/subject-written-score.tsx
+msgctxt "st8F-L"
+msgid "{range} of {max}"
+msgstr "{range} / {max}"
+
+#: src/journey/preparation/written-projection.tsx
+#: src/syllabus/subject-written-score.tsx
+msgctxt "dau4p7"
+msgid "Not measured yet"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "5Ty5D6"
+msgid "Above the {minimum} points it asks for"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "ofINne"
+msgid "{points} points below the {minimum} it asks for"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "zFi3gB"
+msgid "Close to the {minimum} points it asks for"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "WcpbzU"
+msgid "It asks for {minimum} points, whatever your other scores."
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "i5xuVH"
+msgid "Below the minimum: {part}"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "XmqNXc"
+msgid "{part} isn't measured yet."
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+#: src/syllabus/subject-screen.tsx
+#: src/writing/writing-screen.tsx
+msgctxt "k2veDA"
+msgid "Write"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "r70P1f"
+msgid "Objective test"
+msgstr ""
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx
@@ -6122,11 +6222,6 @@ msgstr "değerlendirici (yapay zekâ)"
 msgctxt "OO7BQP"
 msgid "{range} of {max} points"
 msgstr "{range} / {max} puan"
-
-#: src/language/exam-speaking/exam-speaking-labels.ts
-msgctxt "st8F-L"
-msgid "{range} of {max}"
-msgstr "{range} / {max}"
 
 #: src/language/exam-speaking/exam-speaking-labels.ts
 msgctxt "RREmDO"
@@ -7865,9 +7960,19 @@ msgid "We're writing questions like the exam's for you. It starts here as soon a
 msgstr "Senin için sınavdakilere benzer sorular hazırlıyoruz. Sorular hazır olur olmaz deneme sınavı burada başlayacak."
 
 #: src/mock/mock-chooser.tsx
+msgctxt "aDMxKM"
+msgid "{count, plural, other {Your exam has # tests}}"
+msgstr ""
+
+#: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
 msgid "The exam"
 msgstr "Sınav"
+
+#: src/mock/mock-chooser.tsx
+msgctxt "9yIpY-"
+msgid "Shorter, objective questions only"
+msgstr ""
 
 #: src/mock/mock-chooser.tsx
 #: src/mock/mock-option-labels.ts
@@ -8109,6 +8214,11 @@ msgstr "Bu deneme sınavında {count, plural, other {sınavın {total, number} s
 msgctxt "rDAHmY"
 msgid "{count, plural, one {# question was a repeat.} other {# questions were repeats.}}"
 msgstr "{count, plural, other {# soru daha önce de sorulmuştu.}}"
+
+#: src/mock/mock-option-labels.ts
+msgctxt "EZ8FbD"
+msgid "{count, plural, =2 {Both tests} other {All # tests}}"
+msgstr ""
 
 #: src/mock/mock-option-labels.ts
 msgctxt "8ChI8a"
@@ -8765,6 +8875,7 @@ msgstr "Hedefine bir PDF, notlarının fotoğrafını veya istediğin bir metni 
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-attachments.tsx
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/writing/writing-text.tsx
 msgctxt "Uby0eW"
 msgid "Your text"
 msgstr "Metnin"
@@ -12596,6 +12707,16 @@ msgid "Mixed practice"
 msgstr "Karma alıştırma"
 
 #: src/session/use-block-copy.ts
+msgctxt "HZs6ar"
+msgid "Back tomorrow: today's extra grades are used"
+msgstr ""
+
+#: src/session/use-block-copy.ts
+msgctxt "0cmsKD"
+msgid "Your draft is saved"
+msgstr ""
+
+#: src/session/use-block-copy.ts
 msgctxt "87izcS"
 msgid "{count, plural, one {# question on what's been hardest for you} other {# questions on what's been hardest for you}}"
 msgstr "{count, plural, other {En çok zorlandığın konulardan # soru}}"
@@ -12951,6 +13072,56 @@ msgstr ", çalışılacak"
 msgctxt "sUFAfD"
 msgid "{total, plural, one {{done, number} of # topic studied} other {{done, number} of # topics studied}}"
 msgstr "{total, plural, other {{done, number} / # konu çalışıldı}}"
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "B96Fmq"
+msgid "Minimum to pass: {minimum}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "Ycseyb"
+msgid "{count, plural, one {last answer} other {last # answers}}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+#: src/writing/writing-result.tsx
+msgctxt "Jq3FDz"
+msgid "Content"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "j1okGc"
+msgid "Presentation and structure"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+#: src/writing/writing-result.tsx
+#: src/writing/writing-text.tsx
+msgctxt "a7of83"
+msgid "Language errors"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+#: src/writing/writing-result.tsx
+#: src/writing/writing-text.tsx
+msgctxt "VXgrSB"
+msgid "{count, plural, one {# error} other {# errors}}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "5m07cc"
+msgid "Your answers"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "AFTxeG"
+msgid "{count, plural, one {# line} other {# lines}}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "a0Vmlb"
+msgid "{count, plural, one {# version} other {# versions}}"
+msgstr ""
 
 #: src/syllabus/syllabus-chapter-row.tsx
 msgctxt "PPs9To"
@@ -13703,3 +13874,208 @@ msgstr "En çok ilerlediğin konu"
 msgctxt "HZneUP"
 msgid "{topic} · {from} to {to}"
 msgstr "{topic} · {from} → {to}"
+
+#: src/writing/points-readout.tsx
+msgctxt "j8q20J"
+msgid "of {max}"
+msgstr ""
+
+#: src/writing/writing-editor.tsx
+msgctxt "nqmPlF"
+msgid "about {used} of {lines} lines · the board won't read past line {lines}"
+msgstr ""
+
+#: src/writing/writing-editor.tsx
+msgctxt "sKcJTn"
+msgid "about {used} of {lines} lines"
+msgstr ""
+
+#: src/writing/writing-header.ts
+msgctxt "eRWD_e"
+msgid "Writing drill"
+msgstr ""
+
+#: src/writing/writing-header.ts
+#: src/writing/writing-start.tsx
+msgctxt "neJLv4"
+msgid "Written answer"
+msgstr ""
+
+#. A criterion of a written answer fully met.
+#: src/writing/writing-labels.ts
+msgctxt "U78NhE"
+msgid "Complete"
+msgstr ""
+
+#. A criterion of a written answer mostly met.
+#: src/writing/writing-labels.ts
+msgctxt "6xap9L"
+msgid "Good"
+msgstr ""
+
+#. A criterion of a written answer half met.
+#: src/writing/writing-labels.ts
+msgctxt "B0ZRIZ"
+msgid "Partly"
+msgstr ""
+
+#. A criterion of a written answer not met.
+#: src/writing/writing-labels.ts
+msgctxt "DkkVJF"
+msgid "Missing"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "U413N1"
+msgid "{lines, plural, one {Up to # line} other {Up to # lines}}"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "wHT3hs"
+msgid "{points} points"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "1g9mZ7"
+msgid "about {time}"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "h5Dspx"
+msgid "From the exam notice."
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "1MSsHI"
+msgid "From the exam notice. The answer key is ours, for practice."
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "qPK58Y"
+msgid "How the {points} points are split"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "GHkFy1"
+msgid "What the answer is judged on"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "gsRERV"
+msgid "Grading criteria"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "guQrMp"
+msgid "Support text"
+msgstr ""
+
+#: src/writing/writing-refused.tsx
+msgctxt "K9ytBU"
+msgid "Left for tomorrow"
+msgstr ""
+
+#: src/writing/writing-refused.tsx
+msgctxt "5WNc7Y"
+msgid "No more grading today"
+msgstr ""
+
+#: src/writing/writing-refused.tsx
+msgctxt "rMmqh8"
+msgid "You'll have more tomorrow."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "1JuO3s"
+msgid "Scored zero: {reason}"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "gPyDLV"
+msgid "{count, plural, one {about # line} other {about # lines}}"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "RwlK46"
+msgid "Since your last version"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "P2923Q"
+msgid "Fixed: {criteria}"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "8Fj-Q0"
+msgid "Still to work on: {criteria}"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "G_D1yr"
+msgid "The exam notice doesn't say how many points each criterion is worth."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "JrF1rx"
+msgid "Criteria and points from the exam notice."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "dMVJUV"
+msgid "Criteria and points from the exam notice. The answer key is ours, for practice."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "xZdNA0"
+msgid "Criteria"
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "xj8ORz"
+msgid "Writing your question…"
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "_zs7ro"
+msgid "A new question, like the ones on your exam. It opens here when it's ready."
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "drzL_F"
+msgid "We couldn't write your question"
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "EY8lh9"
+msgid "Nothing was lost. Try again in a moment."
+msgstr ""
+
+#: src/writing/writing-text.tsx
+msgctxt "LRemim"
+msgid "Past line {lines}: the board won't read from here"
+msgstr ""
+
+#: src/writing/writing-text.tsx
+msgctxt "cGktPJ"
+msgid "Past the limit: the board won't read from here"
+msgstr ""
+
+#: src/writing/writing-text.tsx
+msgctxt "agrPL7"
+msgid ", language error"
+msgstr ""
+
+#: src/writing/writing-text.tsx
+msgctxt "7rMeeQ"
+msgid "You wrote “{quote}” · {kind}"
+msgstr ""
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "kgOBET"
+msgid "Question"
+msgstr ""
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "QIqC-9"
+msgid "Grade answer"
+msgstr ""
