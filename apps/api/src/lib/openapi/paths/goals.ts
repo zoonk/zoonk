@@ -7,7 +7,7 @@ import {
   goalUpdateResponseSchema,
 } from "../schemas/goals";
 import { goalPathParamsSchema } from "../schemas/paths";
-import { goalUpdateInvalidResponse } from "../schemas/plan-errors";
+import { goalUpdateInvalidResponse, planChangedWhileSavingResponse } from "../schemas/plan-errors";
 import {
   guestRefusalResponse,
   notFoundResponse,
@@ -96,6 +96,7 @@ export const goalPaths = {
           content: { "application/json": { schema: goalUpdateResponseSchema } },
           description: "The goal and the plan change it made, if any",
         },
+        "409": planChangedWhileSavingResponse,
         "422": goalUpdateInvalidResponse,
         "429": tooManyRequestsResponse,
       },

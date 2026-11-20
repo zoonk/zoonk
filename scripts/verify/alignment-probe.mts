@@ -905,11 +905,33 @@ export function readAlignment({
     ];
   }
 
-  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
-  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+  /** What scrolls under a bar: a sticky bar's nearest clipping ancestor, else the document. */
+  function scrollerOf(bar: Element): Element {
+    if (getComputedStyle(bar).position === "sticky") {
+      for (let holder = bar.parentElement; holder; holder = holder.parentElement) {
+        if (["auto", "hidden", "scroll"].includes(getComputedStyle(holder).overflowY)) {
+          return holder;
+        }
+      }
+    }
 
-  const pinnedShown = (atEnd ? [...document.querySelectorAll(pinnedBars)] : []).filter(
-    (bar) => present(bar) && ["fixed", "sticky"].includes(getComputedStyle(bar).position),
+    return document.documentElement;
+  }
+
+  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
+  function atScrollEnd(bar: Element): boolean {
+    const scroller = scrollerOf(bar);
+
+    return scroller === document.documentElement
+      ? scrollY + innerHeight >= scroller.scrollHeight - 1
+      : scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1;
+  }
+
+  const pinnedShown = [...document.querySelectorAll(pinnedBars)].filter(
+    (bar) =>
+      present(bar) &&
+      ["fixed", "sticky"].includes(getComputedStyle(bar).position) &&
+      atScrollEnd(bar),
   );
 
   const elements = pieces.flatMap(({ name: pieceName, web: piece }) =>

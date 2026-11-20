@@ -97,6 +97,45 @@ describe("what a pinned bar holds", () => {
   });
 });
 
+/**
+ * A lesson on a laptop: the frame holds the window and its `main` scrolls, with the bar pinned in
+ * it and "Explain first" below the fold, `scrollTop` down.
+ */
+function lessonScrolledTo(scrollTop: number) {
+  document.body.innerHTML = `<div style="overflow: hidden" data-box="0,0,1120,900">
+    <main style="overflow-y: auto" data-box="0,69,1120,831">
+      <div data-slot="page" data-box="0,69,1120,912">
+        <button data-slot="button" data-box="245,864,183,30">
+          <span data-icon="inline-start" data-box="257,871,16,16"></span><span data-box="281,869,140,20">Explain first</span></button>
+        <div data-slot="bottom-bar" style="position: sticky" data-box="0,815,1120,85">
+          <div data-slot="bottom-bar-row" data-box="0,816,1120,84">
+            <button style="--button-variant: default" data-box="940,836,160,44">Check</button>
+          </div></div></div></main></div>`;
+
+  const main = document.querySelector("main");
+  assert.ok(main);
+
+  for (const [property, value] of [
+    ["clientHeight", 831],
+    ["scrollHeight", 912],
+    ["scrollTop", scrollTop],
+  ] as const) {
+    Object.defineProperty(main, property, { configurable: true, value });
+  }
+
+  return rule("pinned");
+}
+
+describe("a pinned bar in a screen that scrolls inside its own frame (the lesson player)", () => {
+  it("isn't judged while that frame is short of its end, where content continues under the bar", () => {
+    assert.deepEqual(lessonScrolledTo(0), []);
+  });
+
+  it("is judged at that frame's end", () => {
+    assert.equal(lessonScrolledTo(81).length, 1);
+  });
+});
+
 /** A list row: its title `y` down, its radio at the end. */
 function choiceRow(label: string, y: number) {
   return `<label data-slot="choice-row" data-box="16,${y},358,45">

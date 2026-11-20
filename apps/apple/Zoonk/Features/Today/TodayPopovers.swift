@@ -136,10 +136,8 @@ extension DaySegment {
     switch self {
     case .block(let block, _):
       block.displayTitle
-    case .held:
-      String(
-        localized: "Your next lessons", table: "Today",
-        comment: "Holds the place of the day's lessons that aren't written yet")
+    case .held(_, _, let title):
+      title
     }
   }
 
@@ -163,7 +161,7 @@ extension DaySegment {
         String(localized: "Up next", table: "Today", comment: "The day's next block"),
         studyDuration(minutes: block.estimatedMinutes),
       ]
-    case .held(let minutes, _):
+    case .held(let minutes, _, _):
       return [studyDuration(minutes: minutes)]
     }
   }
@@ -172,20 +170,8 @@ extension DaySegment {
     switch self {
     case .block(let block, _):
       block.learnKind.purpose
-    case .held(_, .toPrepare):
-      String(
-        localized: "Not ready yet", table: "Today",
-        comment: "The day's next lessons, which nobody has asked for yet")
-    case .held(_, .beingWritten) where writingStalled:
-      String(
-        localized: "Taking longer than usual", table: "Today",
-        comment: "The day's next lessons are taking long to outline")
-    case .held(_, .beingWritten):
-      String(
-        localized: "Getting ready…", table: "Today",
-        comment:
-          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-      )
+    case .held(_, let coming, _):
+      coming.asked(writingStalled: writingStalled).note
     }
   }
 }
