@@ -84,14 +84,14 @@ export async function mergeLearningProfile({
     INSERT INTO user_learning_profiles (
       id, user_id, learning_needs, address_form, buddy_kind, buddy_name, buddy_glasses,
       active_goal_id, memory_enabled, sounds_enabled, share_usage_data, home_country,
-      created_at, updated_at
+      suggested_tools, created_at, updated_at
     )
     SELECT id, ${userId}::uuid, learning_needs,
       CASE WHEN ${takeGuestAddressForm} THEN address_form END,
       buddy_kind, buddy_name, buddy_glasses,
       active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
       COALESCE(home_country, ${sessionRow?.home_country ?? null}),
-      created_at, updated_at
+      suggested_tools, created_at, updated_at
     FROM guest_profile
     ON CONFLICT (user_id) DO UPDATE SET
       active_goal_id = COALESCE(EXCLUDED.active_goal_id, user_learning_profiles.active_goal_id),
@@ -100,11 +100,29 @@ export async function mergeLearningProfile({
       address_form = CASE WHEN ${takeGuestAddressForm} THEN EXCLUDED.address_form ELSE user_learning_profiles.address_form END,
       share_usage_data = COALESCE(user_learning_profiles.share_usage_data, EXCLUDED.share_usage_data),
       home_country = COALESCE(user_learning_profiles.home_country, EXCLUDED.home_country),
+      suggested_tools = COALESCE(NULLIF(user_learning_profiles.suggested_tools, ARRAY[]::text[]), EXCLUDED.suggested_tools),
       buddy_kind = COALESCE(user_learning_profiles.buddy_kind, EXCLUDED.buddy_kind),
       buddy_name = CASE WHEN user_learning_profiles.buddy_kind IS NOT NULL
         THEN user_learning_profiles.buddy_name ELSE EXCLUDED.buddy_name END,
       buddy_glasses = CASE WHEN user_learning_profiles.buddy_kind IS NOT NULL
         THEN user_learning_profiles.buddy_glasses ELSE EXCLUDED.buddy_glasses END,
       updated_at = clock_timestamp()
+  `;
+
+  // The sweep can dispatch the ask for the account. A new ID or revision prevents an in-flight
+  // run that read the pre-merge profile from consuming it.
+  await transaction.$executeRaw`
+    WITH guest_ask AS (
+      DELETE FROM follow_ups
+      WHERE user_id = ${guestUserId}::uuid AND kind = 'suggest_profile_tools' AND failed_at IS NULL
+      RETURNING kind, key, input, requested_at
+    )
+    INSERT INTO follow_ups (user_id, kind, key, input, requested_at)
+    SELECT ${userId}::uuid, kind, key, input, requested_at FROM guest_ask
+    ON CONFLICT (user_id, kind, key) DO UPDATE SET
+      input = CASE WHEN follow_ups.failed_at IS NULL THEN follow_ups.input ELSE EXCLUDED.input END,
+      requested_at = LEAST(follow_ups.requested_at, EXCLUDED.requested_at),
+      failed_at = NULL,
+      revision = follow_ups.revision + 1
   `;
 }
