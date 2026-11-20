@@ -164,12 +164,21 @@ export function OpeningMap({ ideas }: { ideas: readonly MapIdea[] }) {
         })}
       </div>
 
-      <figcaption className="text-muted-foreground text-sm">
-        {t({
-          description:
-            "Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers.",
-          message: "Tap an idea to see what it covers",
-        })}
+      <figcaption className="flex flex-col items-center gap-0.5 text-center text-sm">
+        <span className="text-foreground font-medium">
+          {t({
+            description:
+              "Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach.",
+            message: "What you'll learn in this lesson",
+          })}
+        </span>
+        <span className="text-muted-foreground">
+          {t({
+            description:
+              "Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers.",
+            message: "Tap an idea to see what it covers",
+          })}
+        </span>
       </figcaption>
     </figure>
   );

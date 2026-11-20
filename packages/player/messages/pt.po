@@ -2975,6 +2975,12 @@ msgctxt "CCQ4rY"
 msgid "Idea {current} of {total}"
 msgstr "Ideia {current} de {total}"
 
+#. Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach.
+#: src/lesson/_components/opening-map.tsx
+msgctxt "K3OgeW"
+msgid "What you'll learn in this lesson"
+msgstr "O que você vai aprender nesta aula"
+
 #. Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers.
 #: src/lesson/_components/opening-map.tsx
 msgctxt "twXJ5H"

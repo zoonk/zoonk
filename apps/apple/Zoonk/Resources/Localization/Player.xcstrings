@@ -199,12 +199,6 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "**%arg** poprawna odpowiedź z %2$lld"
-                    }
-                  },
                   "few" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -215,6 +209,12 @@
                     "stringUnit" : {
                       "state" : "translated",
                       "value" : "**%arg** poprawnych odpowiedzi z %2$lld"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "**%arg** poprawna odpowiedź z %2$lld"
                     }
                   },
                   "other" : {
@@ -5963,6 +5963,7 @@
       }
     },
     "Log in" : {
+      "comment" : "A visitor signs in to play a lesson",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6018,8 +6019,7 @@
             "value" : "Giriş yap"
           }
         }
-      },
-      "comment" : "A visitor signs in to play a lesson"
+      }
     },
     "Made with AI. It may contain mistakes." : {
       "comment" : "In the lesson's menu",
@@ -12090,6 +12090,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çalıştıkların"
+          }
+        }
+      }
+    },
+    "What you'll learn in this lesson" : {
+      "comment" : "Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das lernst du in dieser Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que aprenderás en esta lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu vas apprendre dans cette leçon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cosa imparerai in questa lezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このレッスンで学ぶこと"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 레슨에서 배울 내용"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czego nauczysz się na tej lekcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você vai aprender nesta aula"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu derste öğreneceklerin"
           }
         }
       }
