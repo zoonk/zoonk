@@ -1,10 +1,8 @@
-"use client";
-
 import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type CodeTokenKind } from "./code-languages";
-import { type CodeToken, highlightCode } from "./highlight-code";
+import { type CodeToken, codeLineText, highlightCode } from "./highlight-code";
 
 const TAB_SIZE = 4;
 
@@ -16,10 +14,6 @@ export const CODE_FIELD_TEXT = "font-mono text-base leading-7 sm:text-sm sm:lead
 
 /** Code's scroll buttons show on touch screens too, since a program rarely looks cut off. */
 export const CODE_SCROLL_SIGN = "[&>button]:pointer-coarse:inline-flex";
-
-function lineText(tokens: readonly CodeToken[]): string {
-  return tokens.map((token) => token.text).join("");
-}
 
 const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
   builtin: "text-viz-secondary-text",
@@ -93,7 +87,7 @@ export function CodeLineNumber({ number, style }: { number: number; style?: Reac
 export type CodeLineTone = "current" | "editable" | "error" | "plain";
 
 function indentOf(tokens: readonly CodeToken[]): number {
-  const leading = /^[ \t]*/u.exec(lineText(tokens))?.[0] ?? "";
+  const leading = /^[ \t]*/u.exec(codeLineText(tokens))?.[0] ?? "";
 
   return leading
     .split("")
@@ -198,7 +192,7 @@ export function CodeFrame({
   );
 }
 
-/** A program as written, colored, with its lines numbered. `language` is a fence's name for it. */
+/** A program with its lines numbered. `language` is a fence's name for it, or null. */
 export function CodeListing({
   code,
   label,
@@ -216,7 +210,7 @@ export function CodeListing({
     <CodeFrame label={label} variant={variant}>
       {highlightCode(code, language).map((tokens, index) => {
         const tone = toneOf?.(index + 1) ?? "plain";
-        const key = `${index}:${lineText(tokens)}`;
+        const key = `${index}:${codeLineText(tokens)}`;
 
         return (
           <CodeLine
@@ -251,7 +245,7 @@ export function CodeSnippet({ code, language }: { code: string; language: string
       translate="no"
     >
       {highlightCode(code, language).map((tokens, index) => {
-        const key = `${index}:${lineText(tokens)}`;
+        const key = `${index}:${codeLineText(tokens)}`;
 
         return (
           <span

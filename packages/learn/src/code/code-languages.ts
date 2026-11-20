@@ -5,7 +5,6 @@ type TokenRule = { kind: CodeTokenKind | "word"; pattern: RegExp };
 
 export type CodeLanguageSpec = {
   builtins: ReadonlySet<string>;
-  /** SQL reads its words in any case. */
   ignoreCase: boolean;
   keywords: ReadonlySet<string>;
   /** Tried in order at each position; each pattern is sticky. */

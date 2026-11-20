@@ -2,6 +2,10 @@ import { type CodeLanguageSpec, type CodeTokenKind, findCodeLanguage } from "./c
 
 export type CodeToken = { kind: CodeTokenKind; text: string };
 
+export function codeLineText(tokens: readonly CodeToken[]): string {
+  return tokens.map((token) => token.text).join("");
+}
+
 const SPACE = /\s+/uy;
 const PROPERTY_DOT = ".";
 

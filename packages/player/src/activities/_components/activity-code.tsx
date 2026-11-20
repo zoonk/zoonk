@@ -1,7 +1,7 @@
 "use client";
 
 import { CODE_FIELD_TEXT, CODE_SCROLL_SIGN, CodeLineNumber, CodeTokens } from "@zoonk/learn/code";
-import { highlightCode } from "@zoonk/learn/code/highlight";
+import { codeLineText, highlightCode } from "@zoonk/learn/code/highlight";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLayoutEffect, useRef } from "react";
@@ -9,10 +9,6 @@ import { type CodeSnippet, insertAtCursor } from "../_utils/insert-at-cursor";
 import { keyedByPosition } from "../_utils/position-keys";
 import { ACTIVITY_FIELD_CLASS } from "./activity-canvas";
 import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
-
-function lineText(tokens: readonly { text: string }[]): string {
-  return tokens.map((token) => token.text).join("");
-}
 
 const FIELD_RESET =
   "col-start-1 row-start-1 m-0 min-w-0 resize-none overflow-hidden border-0 bg-transparent p-0 whitespace-pre text-transparent caret-foreground outline-none selection:bg-viz-accent-soft placeholder:text-muted-foreground";
@@ -88,18 +84,20 @@ export function ActivityCodeEditor({
           )}
           style={{ gridTemplateRows: `repeat(${lines.length}, auto)` }}
         >
-          {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }, index) => (
-            <div aria-hidden="true" className="contents" key={key}>
-              <CodeLineNumber number={index + 1} style={{ gridRow: index + 1 }} />
+          {keyedByPosition(highlightCode(value, language), codeLineText).map(
+            ({ item, key }, index) => (
+              <div aria-hidden="true" className="contents" key={key}>
+                <CodeLineNumber number={index + 1} style={{ gridRow: index + 1 }} />
 
-              <div
-                className="col-start-2 wrap-anywhere whitespace-pre-wrap"
-                style={{ gridRow: index + 1 }}
-              >
-                <CodeTokens field tokens={item} />
+                <div
+                  className="col-start-2 wrap-anywhere whitespace-pre-wrap"
+                  style={{ gridRow: index + 1 }}
+                >
+                  <CodeTokens field tokens={item} />
+                </div>
               </div>
-            </div>
-          ))}
+            ),
+          )}
 
           <textarea
             autoCapitalize="off"
