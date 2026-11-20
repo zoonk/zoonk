@@ -116,8 +116,8 @@ export function projectPlanSkills({
 }
 
 /**
- * A graph skill is in its own area; a lesson's finer skill is in the area of the first plan item
- * that teaches it alongside a graph skill.
+ * A skill is out only when every subject it's in was taken out. A graph skill is in its graph
+ * areas, and any skill is also in the areas of the plan items that teach it with a graph skill.
  */
 export function listRemovedSkillIds({
   entries,
@@ -132,28 +132,38 @@ export function listRemovedSkillIds({
 }): Set<string> {
   const skipped = new Set(parsePlanSettings(settings).skippedAreas);
 
-  const graphAreas = new Map(
-    graph.skills.map((skill) => [survivorOf(skill.skillId), getSkillArea({ graph, skill })]),
+  const graphAreas = Map.groupBy(
+    graph.skills.map((skill) => ({
+      area: getSkillArea({ graph, skill }),
+      skillId: survivorOf(skill.skillId),
+    })),
+    (row) => row.skillId,
   );
 
-  const itemAreas = new Map(
-    entries
-      .flatMap((entry) => {
-        const area = graphAreas.get(entry.skillId);
-        return area === undefined ? [] : [[entry.planItemId, area] as const];
-      })
-      .toReversed(),
+  const areasOf = (skillId: string) => (graphAreas.get(skillId) ?? []).map((row) => row.area);
+
+  const itemAreas = Map.groupBy(
+    entries.flatMap((entry) =>
+      entry.planItemId
+        ? areasOf(entry.skillId).map((area) => ({ area, planItemId: entry.planItemId }))
+        : [],
+    ),
+    (row) => row.planItemId,
+  );
+
+  const skillAreas = Map.groupBy(
+    entries.flatMap((entry) =>
+      [
+        ...areasOf(entry.skillId),
+        ...(itemAreas.get(entry.planItemId) ?? []).map((row) => row.area),
+      ].map((area) => ({ area, skillId: entry.skillId })),
+    ),
+    (row) => row.skillId,
   );
 
   return new Set(
-    [...Map.groupBy(entries, (entry) => entry.skillId)].flatMap(([skillId, skillEntries]) => {
-      const area =
-        graphAreas.get(skillId) ??
-        skillEntries
-          .map((entry) => itemAreas.get(entry.planItemId))
-          .find((itemArea) => itemArea !== undefined);
-
-      return area !== undefined && skipped.has(area) ? [skillId] : [];
-    }),
+    [...skillAreas].flatMap(([skillId, rows]) =>
+      rows.every((row) => skipped.has(row.area)) ? [skillId] : [],
+    ),
   );
 }
