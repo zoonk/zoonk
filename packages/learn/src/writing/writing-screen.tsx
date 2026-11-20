@@ -1,6 +1,6 @@
 "use client";
 
-import { type WrittenEssayDraft } from "@zoonk/core/exams/essays/contract";
+import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
 import { type WritingPrompt } from "@zoonk/core/exams/essays/writing-contract";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
@@ -39,7 +39,7 @@ function ResultScreen({
 }: {
   closed: boolean;
   finish: () => Promise<boolean>;
-  graded: WrittenEssayDraft;
+  graded: EssayDraft;
   hrefs: { exit: string };
   onRewrite: () => void;
   rewriting: boolean;
@@ -112,7 +112,7 @@ function QuestionScreen({
   );
 }
 
-function initialMode(essay: WrittenEssay, results: WrittenEssayDraft[]): Mode {
+function initialMode(essay: WrittenEssay, results: EssayDraft[]): Mode {
   if (essay.draft?.text.trim()) {
     return "question";
   }
@@ -130,7 +130,7 @@ export function WritingScreen({
   essay: WrittenEssay;
   hrefs: { exit: string };
 }) {
-  const [results, setResults] = useState(essay.writtenDrafts ?? []);
+  const [results, setResults] = useState(essay.drafts);
   const [mode, setMode] = useState<Mode>(() => initialMode(essay, results));
   const [rewriting, setRewriting] = useState(false);
   const draft = useWritingDraft({ actions, essay });

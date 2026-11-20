@@ -1,5 +1,5 @@
-import { type EssayView, type WrittenEssayDraft } from "@zoonk/core/exams/essays/contract";
-import { type WritingDraft, type WritingPrompt } from "@zoonk/core/exams/essays/writing-contract";
+import { type EssayDraft, type EssayView } from "@zoonk/core/exams/essays/contract";
+import { type WritingDraft } from "@zoonk/core/exams/essays/writing-contract";
 
 export type WritingStartAnswer =
   | { admissionId: string; status: "ready" }
@@ -11,7 +11,8 @@ export type WritingDraftAnswer =
   | { draft: Pick<WritingDraft, "revision" | "text">; status: "conflict" | "saved" }
   | { status: "closed" | "failed" };
 
-export type WritingSubmitAnswer = WrittenEssayDraft | "limitReached" | "signUpRequired" | null;
+/** Null when it couldn't be graded; sending the same admission again replays its grade. */
+export type WritingSubmitAnswer = EssayDraft | null;
 
 export type WritingActions = {
   /** False when it didn't go through. */
@@ -21,10 +22,9 @@ export type WritingActions = {
   start: (input: { previousAttemptId?: string }) => Promise<WritingStartAnswer>;
   submit: (input: {
     admissionId: string;
-    attemptId: string;
     durationMs: number;
     text: string;
   }) => Promise<WritingSubmitAnswer>;
 };
 
-export type WrittenEssay = EssayView & { writing: WritingPrompt };
+export type WrittenEssay = EssayView;

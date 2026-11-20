@@ -6,6 +6,7 @@ import { Meter, MeterFill, MeterPart, MeterParts } from "@zoonk/ui/components/me
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
+import { Eyebrow } from "../_components/eyebrow";
 import { PageSectionFooter, PageSectionTitle } from "../_components/page";
 import {
   LabeledStepTitle,
@@ -17,7 +18,6 @@ import {
   StepTitleNumber,
   renderStepNumber,
 } from "../_components/step-card";
-import { NextStepCard, NothingLeftComment } from "../essay/essay-feedback";
 import { ESSAY_QUOTE_CLASS, useFormatScore } from "../essay/essay-labels";
 import {
   LEVEL_CELLS,
@@ -25,6 +25,7 @@ import {
   useFormatPointsRange,
   useLevelName,
 } from "./writing-labels";
+import { NextStepCard, NothingLeftComment } from "./writing-next-step";
 import { WritingMarkedText } from "./writing-text";
 
 type Points = Extract<WritingResult, { kind: "points" }>;
@@ -267,10 +268,13 @@ function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: Writ
  * one, no total, the one change that helps most and a level per criterion. Then the text as sent.
  */
 export function WritingResultView({
+  eyebrow,
   grade,
   prompt,
   text,
 }: {
+  /** Which answer this is, where a result shows several (a written test). */
+  eyebrow?: string | null;
   grade: WritingResult;
   prompt: WritingPrompt;
   text: string;
@@ -278,6 +282,7 @@ export function WritingResultView({
   return (
     <div className="flex flex-col gap-10" data-slot="writing-result">
       <div className="flex flex-col gap-6">
+        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         {grade.kind === "points" && <PointsHeader grade={grade} prompt={prompt} text={text} />}
         <WritingProgress grade={grade} />
         <WritingNextStep grade={grade} />

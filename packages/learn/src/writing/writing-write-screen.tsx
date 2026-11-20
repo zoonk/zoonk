@@ -1,9 +1,9 @@
 "use client";
 
-import { type WrittenEssayDraft } from "@zoonk/core/exams/essays/contract";
+import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions, TaskAsideContent, TaskBody } from "../_components/task-layout";
@@ -28,12 +28,11 @@ export function WriteScreen({
   draft: WritingDraftState;
   essay: WrittenEssay;
   hrefs: { exit: string };
-  onGraded: (graded: WrittenEssayDraft) => void;
+  onGraded: (graded: EssayDraft) => void;
   rewrite: boolean;
 }) {
   const t = useExtracted();
   const [status, setStatus] = useState<EssayStatus>("idle");
-  const sent = useRef<{ attemptId: string; text: string } | null>(null);
   const label = useHeaderLabel(essay.writing);
   const canSend = draft.text.trim().length > 0 && status !== "pending";
 
@@ -48,19 +47,16 @@ export function WriteScreen({
     }
 
     await draft.flush();
-    const attemptId = sent.current?.text === text ? sent.current.attemptId : crypto.randomUUID();
-    sent.current = { attemptId, text };
 
     const settled = await settleWithin({
       ms: GRADING_BOUNDS.timeoutMs,
-      request: () =>
-        actions.submit({ admissionId, attemptId, durationMs: draft.durationMs(), text }),
+      request: () => actions.submit({ admissionId, durationMs: draft.durationMs(), text }),
     }).catch(() => null);
 
     const result = settled?.status === "settled" ? settled.value : null;
 
-    if (result === null || result === "limitReached" || result === "signUpRequired") {
-      setStatus(result ?? "error");
+    if (!result) {
+      setStatus("error");
       return;
     }
 
@@ -92,7 +88,7 @@ export function WriteScreen({
         </>
       }
       headerEnd={
-        <span className="with-aside:group-data-aside/task:hidden flex">
+        <span className="flex lg:hidden">
           <DetailsDrawer label={t("Question")} title={essay.writing.title} trigger="bar">
             <div className="flex flex-col gap-8">
               {question}
@@ -104,7 +100,7 @@ export function WriteScreen({
       headerTitle={<TaskHeaderTitle title={label} />}
     >
       <TaskBody className="min-h-0 pb-4">
-        <TaskAsideContent className="without-aside:hidden flex flex-col gap-6">
+        <TaskAsideContent className="flex flex-col gap-6 max-lg:hidden">
           {question}
           <WritingCriteriaSection writing={essay.writing} />
         </TaskAsideContent>

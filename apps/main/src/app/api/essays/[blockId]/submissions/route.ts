@@ -1,21 +1,12 @@
 import { appPostRoute, readJsonBody } from "@/lib/http/app-post-route";
-import {
-  type EssayDraft,
-  type WrittenEssayDraft,
-  essaySubmissionInputSchema,
-} from "@zoonk/core/exams/essays/contract";
+import { type EssayDraft, essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
 import { getEssay } from "@zoonk/core/exams/essays/get";
 import { submitEssay } from "@zoonk/core/exams/essays/submit";
 
 /** A route, not a Server Action: grading takes seconds, and an action would hold up the screen's other requests. */
 export const POST = appPostRoute<{ blockId: string }>(
   "essaySubmissionRoute",
-  async (
-    request,
-    { blockId },
-  ): Promise<
-    EssayDraft | WrittenEssayDraft | "blockNotActive" | "limitReached" | "signUpRequired" | null
-  > => {
+  async (request, { blockId }): Promise<EssayDraft | "blockNotActive" | null> => {
     const body = essaySubmissionInputSchema.safeParse(await readJsonBody(request));
 
     if (!body.success) {
@@ -24,16 +15,8 @@ export const POST = appPostRoute<{ blockId: string }>(
 
     const result = await submitEssay({ blockId, input: body.data });
 
-    if (
-      result.status === "blockNotActive" ||
-      result.status === "limitReached" ||
-      result.status === "signUpRequired"
-    ) {
+    if (result.status === "blockNotActive") {
       return result.status;
-    }
-
-    if (result.status === "graded") {
-      return { grade: result.grade, submittedAt: new Date().toISOString(), text: body.data.text };
     }
 
     if (result.status !== "writingGraded") {
@@ -42,7 +25,6 @@ export const POST = appPostRoute<{ blockId: string }>(
 
     // The saved answer carries the id a rewrite starts from.
     const read = await getEssay({ blockId });
-    const saved = read.status === "ready" ? read.essay.writtenDrafts?.[0] : undefined;
-    return saved ?? null;
+    return read.status === "ready" ? (read.essay.drafts[0] ?? null) : null;
   },
 );

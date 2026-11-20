@@ -642,7 +642,7 @@ msgid "Next"
 msgstr "次へ"
 
 #: src/_components/question-actions.tsx
-#: src/essay/essay-feedback.tsx
+#: src/writing/writing-next-step.tsx
 msgctxt "d-qgix"
 msgid "Next step"
 msgstr "次のステップ"
@@ -778,7 +778,6 @@ msgid "View"
 msgstr "見る"
 
 #: src/_components/task-close.tsx
-#: src/essay/essay-screen.tsx
 #: src/mock/mock-runner-view.tsx
 msgctxt "fnihsY"
 msgid "Leave"
@@ -2092,7 +2091,6 @@ msgid "Next time you study"
 msgstr "次に学習するとき"
 
 #: src/challenge/challenge-footer.tsx
-#: src/essay/essay-feedback.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
 #: src/session/question-block/pause-suggestion.tsx
@@ -2234,8 +2232,6 @@ msgstr "結果は最後に表示されます。"
 
 #: src/challenge/challenge-labels.tsx
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/journey/schedule-details.tsx
@@ -3030,264 +3026,10 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "上級"
 
-#: src/essay/essay-closed.tsx
-msgctxt "af7HsK"
-msgid "You skipped this essay."
-msgstr "この小論文はスキップしました。"
-
-#: src/essay/essay-criteria-rows.tsx
-#: src/writing/writing-result.tsx
-msgctxt "H9233U"
-msgid "Score by criterion"
-msgstr "評価項目ごとのスコア"
-
-#: src/essay/essay-criteria-rows.tsx
-#: src/writing/writing-result.tsx
-msgctxt "LLXwbj"
-msgid "{score} of {max}"
-msgstr "{score} / {max}"
-
-#: src/essay/essay-feedback.tsx
-#: src/essay/essay-rewrite-guide.tsx
-#: src/mock/mock-result-essays.tsx
-msgctxt "fGmDCR"
-msgid "Too short to grade"
-msgstr "採点するには短すぎます"
-
-#: src/essay/essay-feedback.tsx
-#: src/essay/essay-rewrite-guide.tsx
-msgctxt "j5eiKQ"
-msgid "Write the whole essay, then send it again."
-msgstr "小論文を最後まで書いてから、もう一度送信してください。"
-
-#: src/essay/essay-feedback.tsx
-#: src/mock/mock-result-speaking.tsx
-#: src/writing/writing-result.tsx
-msgctxt "T735yK"
-msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
-msgstr "推定スコア（<mono>0</mono>〜<mono>{max}</mono>）"
-
-#: src/essay/essay-feedback.tsx
-#: src/writing/writing-result.tsx
-msgctxt "vtwv7b"
-msgid "See comments"
-msgstr "コメントを見る"
-
-#: src/essay/essay-feedback.tsx
-#: src/writing/writing-result.tsx
-msgctxt "wCgTu5"
-msgid "Comments"
-msgstr "コメント"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "BQrBD9"
-msgid "Nothing left to work on"
-msgstr "直すところはありません"
-
-#: src/essay/essay-feedback.tsx
-#: src/essay/essay-rewrite-guide.tsx
-msgctxt "J_Pd5R"
-msgid "Every criterion has full marks in this estimate."
-msgstr "今回の推定では、すべての評価項目が満点です。"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "HiVJjN"
-msgid "For example: {example}"
-msgstr "例：{example}"
-
-#: src/essay/essay-feedback.tsx
-#: src/writing/writing-result.tsx
-msgctxt "TvkYzM"
-msgid "What to rewrite"
-msgstr "書き直すところ"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "qSEmp5"
-msgid "The five elements of the proposal"
-msgstr "提案の5つの要素"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "FsnkPB"
-msgid ", present"
-msgstr "、あり"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "CVIpBb"
-msgid ", missing"
-msgstr "、なし"
-
-#: src/essay/essay-feedback.tsx
-#: src/writing/writing-screen.tsx
-msgctxt "scAuEr"
-msgid "Rewrite"
-msgstr "書き直す"
-
-#: src/essay/essay-labels.tsx
-msgctxt "CNjg8R"
-msgid "Formal writing"
-msgstr "文体・表現の適切さ"
-
-#. Enem essay competence 2: addressing the set topic and drawing on outside knowledge.
-#: src/essay/essay-labels.tsx
-msgctxt "smqOAn"
-msgid "Topic and references"
-msgstr "テーマの理解と知識の活用"
-
-#: src/essay/essay-labels.tsx
-msgctxt "egqw9P"
-msgid "Argument"
-msgstr "論の展開"
-
-#: src/essay/essay-labels.tsx
-msgctxt "8Gywzk"
-msgid "Cohesion"
-msgstr "文章のつながり"
-
-#: src/essay/essay-labels.tsx
-msgctxt "q4WQag"
-msgid "Intervention proposal"
-msgstr "解決策の提案"
-
-#: src/essay/essay-labels.tsx
-msgctxt "I0dPmd"
-msgid "Addressing and parties"
-msgstr "宛先と当事者"
-
-#: src/essay/essay-labels.tsx
-msgctxt "UGBZgL"
-msgid "Facts"
-msgstr "事実関係"
-
-#: src/essay/essay-labels.tsx
-msgctxt "F9N5v5"
-msgid "Legal basis"
-msgstr "法的根拠"
-
-#: src/essay/essay-labels.tsx
-msgctxt "MNFqIW"
-msgid "Requests"
-msgstr "請求内容"
-
-#: src/essay/essay-labels.tsx
-msgctxt "RsqK9g"
-msgid "Closing and form"
-msgstr "結びと書式"
-
-#: src/essay/essay-labels.tsx
-msgctxt "Exhbbb"
-msgid "Who acts"
-msgstr "誰が行うか"
-
-#: src/essay/essay-labels.tsx
-msgctxt "FT4a4Y"
-msgid "What they do"
-msgstr "何をするか"
-
-#: src/essay/essay-labels.tsx
-msgctxt "rj0QcN"
-msgid "By what means"
-msgstr "どんな方法で行うか"
-
-#: src/essay/essay-labels.tsx
-msgctxt "35xKDl"
-msgid "To what end"
-msgstr "何を目指すか"
-
-#: src/essay/essay-labels.tsx
-msgctxt "fV2ZAc"
-msgid "A detail"
-msgstr "具体的な説明"
-
 #: src/essay/essay-labels.tsx
 msgctxt "EWD_9X"
 msgid "Your essay"
 msgstr "小論文"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "iyKTfM"
-msgid "Free response · AP scoring guidelines"
-msgstr "自由記述・AP採点基準"
-
-#: src/essay/essay-prompt.tsx
-#: src/session/use-block-copy.ts
-msgctxt "Jo0iJd"
-msgid "Writing practice"
-msgstr "文章を書く練習"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "OJsoa4"
-msgid "Essay · ENEM rubric"
-msgstr "小論文・ENEM採点基準"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "mQS0Tq"
-msgid "Supporting texts"
-msgstr "参考資料"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "69RO1g"
-msgid "Motivating texts"
-msgstr "発想のヒントになる文章"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "rUq4jt"
-msgid "The case"
-msgstr "事例"
-
-#: src/essay/essay-prompt.tsx
-#: src/writing/writing-question.tsx
-msgctxt "2rkYNm"
-msgid "What to write"
-msgstr "書く内容"
-
-#. The grade of the learner's last essay draft.
-#: src/essay/essay-rewrite-guide.tsx
-#: src/essay/essay-screen.tsx
-msgctxt "OAkBl1"
-msgid "Your last grade"
-msgstr "前回の採点結果"
-
-#: src/essay/essay-rewrite-guide.tsx
-msgctxt "LKg1Qt"
-msgid "Next step: {criterion}"
-msgstr "次に取り組むこと：{criterion}"
-
-#: src/essay/essay-rewrite-guide.tsx
-msgctxt "--EUMg"
-msgid "See the grade"
-msgstr "採点結果を見る"
-
-#: src/essay/essay-screen.tsx
-#: src/writing/writing-write-screen.tsx
-msgctxt "othn-n"
-msgid "Rewrite what needs work"
-msgstr "改善が必要な部分を書き直す"
-
-#: src/essay/essay-screen.tsx
-#: src/writing/writing-write-screen.tsx
-msgctxt "osZlj7"
-msgid "Grade rewrite"
-msgstr "書き直しを採点する"
-
-#: src/essay/essay-screen.tsx
-msgctxt "KVfx1c"
-msgid "Grade essay"
-msgstr "小論文を採点する"
-
-#: src/essay/essay-screen.tsx
-msgctxt "xNSBn4"
-msgid "Keep writing"
-msgstr "書き続ける"
-
-#: src/essay/essay-screen.tsx
-msgctxt "QnB_s5"
-msgid "Your text stays on this device, here when you come back."
-msgstr "文章はこの端末に保存され、戻ってきたときに再開できます。"
-
-#: src/essay/essay-screen.tsx
-msgctxt "-D1SOt"
-msgid "Leave for now?"
-msgstr "いったん中断しますか？"
 
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
@@ -8364,11 +8106,6 @@ msgid "It hasn't been graded yet."
 msgstr "まだ採点されていません。"
 
 #: src/mock/mock-result-essays.tsx
-msgctxt "jBUMUv"
-msgid "You've used today's essay grades. Try again tomorrow."
-msgstr "今日の小論文の採点は上限に達しました。明日もう一度お試しください。"
-
-#: src/mock/mock-result-essays.tsx
 msgctxt "BtvKCA"
 msgid "Grade it"
 msgstr "採点する"
@@ -8614,6 +8351,12 @@ msgstr "未完了"
 msgctxt "-U9tBB"
 msgid "No estimate"
 msgstr "推定スコアなし"
+
+#: src/mock/mock-result-speaking.tsx
+#: src/writing/writing-result.tsx
+msgctxt "T735yK"
+msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
+msgstr "推定スコア（<mono>0</mono>〜<mono>{max}</mono>）"
 
 #: src/mock/mock-result-speaking.tsx
 msgctxt "xQAJsr"
@@ -12672,6 +12415,11 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "新しいレッスン"
 
+#: src/session/use-block-copy.ts
+msgctxt "Jo0iJd"
+msgid "Writing practice"
+msgstr "文章を書く練習"
+
 #. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
 #: src/session/use-block-copy.ts
 msgctxt "60PbK5"
@@ -13925,6 +13673,21 @@ msgctxt "DkkVJF"
 msgid "Missing"
 msgstr ""
 
+#: src/writing/writing-next-step.tsx
+msgctxt "BQrBD9"
+msgid "Nothing left to work on"
+msgstr "直すところはありません"
+
+#: src/writing/writing-next-step.tsx
+msgctxt "J_Pd5R"
+msgid "Every criterion has full marks in this estimate."
+msgstr "今回の推定では、すべての評価項目が満点です。"
+
+#: src/writing/writing-next-step.tsx
+msgctxt "HiVJjN"
+msgid "For example: {example}"
+msgstr "例：{example}"
+
 #: src/writing/writing-question.tsx
 msgctxt "U413N1"
 msgid "{lines, plural, one {Up to # line} other {Up to # lines}}"
@@ -13970,6 +13733,11 @@ msgctxt "guQrMp"
 msgid "Support text"
 msgstr ""
 
+#: src/writing/writing-question.tsx
+msgctxt "2rkYNm"
+msgid "What to write"
+msgstr "書く内容"
+
 #: src/writing/writing-refused.tsx
 msgctxt "K9ytBU"
 msgid "Left for tomorrow"
@@ -13986,14 +13754,14 @@ msgid "You'll have more tomorrow."
 msgstr ""
 
 #: src/writing/writing-result.tsx
-msgctxt "1JuO3s"
-msgid "Scored zero: {reason}"
-msgstr ""
-
-#: src/writing/writing-result.tsx
 msgctxt "gPyDLV"
 msgid "{count, plural, one {about # line} other {about # lines}}"
 msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "TvkYzM"
+msgid "What to rewrite"
+msgstr "書き直すところ"
 
 #: src/writing/writing-result.tsx
 msgctxt "RwlK46"
@@ -14029,6 +13797,31 @@ msgstr ""
 msgctxt "xZdNA0"
 msgid "Criteria"
 msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "H9233U"
+msgid "Score by criterion"
+msgstr "評価項目ごとのスコア"
+
+#: src/writing/writing-result.tsx
+msgctxt "LLXwbj"
+msgid "{score} of {max}"
+msgstr "{score} / {max}"
+
+#: src/writing/writing-result.tsx
+msgctxt "vtwv7b"
+msgid "See comments"
+msgstr "コメントを見る"
+
+#: src/writing/writing-result.tsx
+msgctxt "wCgTu5"
+msgid "Comments"
+msgstr "コメント"
+
+#: src/writing/writing-screen.tsx
+msgctxt "scAuEr"
+msgid "Rewrite"
+msgstr "書き直す"
 
 #: src/writing/writing-start.tsx
 msgctxt "xj8ORz"
@@ -14076,6 +13869,16 @@ msgid "Question"
 msgstr ""
 
 #: src/writing/writing-write-screen.tsx
+msgctxt "osZlj7"
+msgid "Grade rewrite"
+msgstr "書き直しを採点する"
+
+#: src/writing/writing-write-screen.tsx
 msgctxt "QIqC-9"
 msgid "Grade answer"
 msgstr ""
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "othn-n"
+msgid "Rewrite what needs work"
+msgstr "改善が必要な部分を書き直す"

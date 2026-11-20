@@ -146,12 +146,12 @@ export async function gradeMockEssaysAction(
 
   const result = await gradeMockEssays({ blockId: id.data, input: input.data });
 
-  if (result.status !== "graded" && result.status !== "limitReached") {
+  if (result.status !== "graded") {
     return null;
   }
 
   const mock = await readMock(id.data);
-  return mock ? { mock, status: result.status } : null;
+  return mock ? { mock, status: "graded" } : null;
 }
 
 export async function adaptPlanFromMockAction(

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useEssayScreen } from "./essay-context";
 
 /** Finishing a written task's block: one try at a time, with how many failed in a row. */
 export function useFinishTask(finishTask: () => Promise<boolean>) {
@@ -16,8 +15,4 @@ export function useFinishTask(finishTask: () => Promise<boolean>) {
   }
 
   return { failures, finish, pending };
-}
-
-export function useFinishEssay() {
-  return useFinishTask(useEssayScreen().actions.finish);
 }
