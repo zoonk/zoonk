@@ -7,7 +7,7 @@ import { readEvalImage } from "../image-files";
 import { DEFAULT_REASONING, getModelById } from "../models";
 import { loadModelOutputs } from "../output-loader";
 import { type OutputEntry } from "../types";
-import { hash, hashJson } from "./identity";
+import { hash, hashJson, promptHash } from "./identity";
 import { type Variant, identifier, type runSchema, side } from "./schemas";
 import { loadComparison, readOptional } from "./storage";
 
@@ -221,7 +221,7 @@ export async function source(taskId: string, spec: string): Promise<Source> {
             durationMs: entry.duration,
             hash: hash(output),
             ...(image ? { mediaType: "image/webp" as const } : {}),
-            userPromptHash: hash(entry.userPrompt),
+            userPromptHash: promptHash(entry.userPrompt),
           },
         };
       } catch (error) {

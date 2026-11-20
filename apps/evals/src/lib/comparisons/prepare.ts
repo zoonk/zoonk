@@ -6,7 +6,7 @@ import { getTestCaseLanguage } from "../case-languages";
 import { getCallCost, getRunCost } from "../cost";
 import { generateComparisonRun } from "../output-generator";
 import { type RegisteredTask } from "../types";
-import { hash, hashJson } from "./identity";
+import { hash, hashJson, promptHash } from "./identity";
 import { buildPackets } from "./packets";
 import readerProtocol from "./protocols/reader.md";
 import verifierProtocol from "./protocols/verifier.md";
@@ -398,7 +398,7 @@ async function generateSlot({
         durationMs: entry.duration,
         hash: hash(output),
         ...(task.output === "image" ? { mediaType: "image/webp" as const } : {}),
-        userPromptHash: hash(entry.userPrompt),
+        userPromptHash: promptHash(entry.userPrompt),
       };
 
       await writeBytes(path.join(dir, "outputs", run.challenger.hash), output);
