@@ -6,7 +6,7 @@ import { type ProfileQuestion } from "./profile-draft";
 
 /** About you's questions, grouped and ordered as its list shows them. */
 export const ABOUT_YOU_GROUPS = [
-  { id: "day", questions: ["work", "tools", "studies"] },
+  { id: "day", questions: ["work", "studies", "tools"] },
   { id: "fun", questions: ["watch", "listen", "play", "read", "activities"] },
   { id: "learn", questions: ["addressForm", "conditions", "learningSupport"] },
 ] as const satisfies { id: string; questions: ProfileQuestion[] }[];

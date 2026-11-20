@@ -21,7 +21,7 @@ import {
 } from "../_components/page";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { useChangeSaveFailed } from "../_components/save-error";
-import { canSendProfileDraft, toProfileAnswer, toProfileDraft } from "./profile-draft";
+import { toProfileDraft, toProfileInput } from "./profile-draft";
 import { ProfileQuestionBody } from "./profile-question-body";
 import { useProfileQuestionDescription, useProfileQuestionTitle } from "./profile-question-copy";
 
@@ -65,14 +65,7 @@ export function AboutYouQuestionScreen({
   const [isPending, startTransition] = useTransition();
   const formId = useId();
 
-  const input = canSendProfileDraft({
-    draft,
-    from: "settings",
-    question: question.id,
-    savedStatus: question.status,
-  })
-    ? toProfileAnswer({ draft, memoryEnabled, question: question.id })
-    : null;
+  const input = toProfileInput({ draft, from: "settings", memoryEnabled, question });
 
   return (
     <>

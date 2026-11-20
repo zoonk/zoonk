@@ -11639,6 +11639,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "Np. pieczenie chleba, samochody, astronomia"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr ""
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11668,6 +11674,12 @@ msgstr "{field}: kurs lub przedmiot (opcjonalnie)"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Np. dziennikarstwo"
+
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr ""
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11737,9 +11749,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "Dzięki temu dobieramy przykłady, które cię zainteresują."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "Wcześniejsze lub obecne, ukończone lub nie. Wybierz maksymalnie 3."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr ""
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11755,11 +11767,6 @@ msgstr "To opcjonalne. Na podstawie twoich wyborów dostosowujemy treści do two
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Wybierz wszystko, co ci pomaga."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Wybierz do 3 opcji."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
