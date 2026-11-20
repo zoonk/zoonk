@@ -111,6 +111,7 @@ const NOT_FIXED: Record<string, string> = {
   StudyReminder: ONE_LEARNERS,
   StudySession: ONE_LEARNERS,
   StudySessionBlock: ONE_LEARNERS,
+  StudySummaryVisit: ONE_LEARNERS,
   Subscription: SIGN_IN,
   SuggestedGoal: ONE_LEARNERS,
   TestSubmissionClaim: ONE_LEARNERS,
