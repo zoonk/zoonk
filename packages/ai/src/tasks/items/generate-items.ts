@@ -71,7 +71,7 @@ function describeEntry(entry: NumericEntry | null | undefined): string | null {
  * as hard as, and in the style of, the exam's released questions, so a named exam's mock ignores
  * `level`.
  */
-export type ItemPurpose = "practice" | "mock";
+type ItemPurpose = "practice" | "mock";
 
 export type GenerateItemsParams = {
   skill: { name: string; description: string; example?: string | null };

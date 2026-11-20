@@ -183,18 +183,8 @@ describe("a mock in the exam's own mix of formats", () => {
         target,
       })),
     ).toStrictEqual([
-      {
-        key: "picks:all",
-        questionsPerSkill: 2,
-        skillIds: [kinematics?.id],
-        target: 2,
-      },
-      {
-        key: "picks:all",
-        questionsPerSkill: 1,
-        skillIds: [probability?.id],
-        target: 1,
-      },
+      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 2 },
+      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id], target: 1 },
       { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
     ]);
   });
@@ -221,24 +211,9 @@ describe("a mock in the exam's own mix of formats", () => {
         target,
       })),
     ).toStrictEqual([
-      {
-        key: "choice",
-        questionsPerSkill: 1,
-        skillIds: [kinematics?.id],
-        target: 2,
-      },
-      {
-        key: "picks:all",
-        questionsPerSkill: 2,
-        skillIds: [kinematics?.id],
-        target: 2,
-      },
-      {
-        key: "picks:all",
-        questionsPerSkill: 1,
-        skillIds: [probability?.id],
-        target: 1,
-      },
+      { key: "choice", questionsPerSkill: 1, skillIds: [kinematics?.id], target: 2 },
+      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 2 },
+      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id], target: 1 },
       { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
     ]);
 

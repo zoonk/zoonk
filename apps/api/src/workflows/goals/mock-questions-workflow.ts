@@ -66,7 +66,7 @@ async function prepareGoalSupply({
   }
 }
 
-export async function mockSupplyWorkflow(input: SupplyRequest & { asked: boolean }) {
+async function mockSupplyWorkflow(input: SupplyRequest & { asked: boolean }) {
   "use workflow";
   const { workflowRunId } = getWorkflowMetadata();
 

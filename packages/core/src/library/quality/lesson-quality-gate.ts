@@ -29,7 +29,8 @@ export type LessonWritingContext = Pick<
   | "sources"
   | "spec"
   | "shortAnswers"
-> & { usedSituations?: readonly string[] };
+  | "usedSituations"
+>;
 
 type AiAnalytics = CheckLessonQualityParams["analytics"];
 

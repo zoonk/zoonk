@@ -9,16 +9,6 @@ import {
   getPlannedItemIds,
 } from "./mock-plan";
 
-export function isMockShort({
-  option,
-  planned,
-}: {
-  option: { questions: number };
-  planned: number;
-}): boolean {
-  return planned < option.questions;
-}
-
 /** `isQuantitative` is false for a skill whose numeric questions came back empty. */
 export type MockWritingSkill = { area: string | null; id: string; isQuantitative?: boolean | null };
 
@@ -103,7 +93,7 @@ function countFormats({
   }));
 }
 
-export function listShortFormats(input: {
+function listShortFormats(input: {
   candidates: readonly MockCandidate[];
   mix: readonly MockFormat[];
   option: { questions: number };
@@ -113,13 +103,11 @@ export function listShortFormats(input: {
   const newQuestions = countPlannedQuestions(plan) - plan.reused;
   const asked = listAskedFormats({ mix, plan });
   const writable = asked.filter((format) => canWrite({ candidates, format }));
-  const fallback = isMockShort({ option, planned: newQuestions }) ? writable[0] : undefined;
+  const fallback = newQuestions < option.questions ? writable[0] : undefined;
 
   return countFormats(input)
     .filter(
-      ({ format, planned, wanted }) =>
-        (wanted > 0 && isMockShort({ option: { questions: wanted }, planned })) ||
-        format === fallback,
+      ({ format, planned, wanted }) => (wanted > 0 && planned < wanted) || format === fallback,
     )
     .map(({ format }) => format)
     .filter((format) => writable.includes(format));

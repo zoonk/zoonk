@@ -68,16 +68,6 @@ export type TestOutQuestionsStepName = (typeof TEST_OUT_QUESTIONS_STEPS)[number]
 
 export const TEST_OUT_QUESTIONS_READY_STEP: TestOutQuestionsStepName = "testOutQuestionsReady";
 
-const MOCK_QUESTIONS_STEPS = [
-  "joinMockQuestions",
-  "writeMockQuestions",
-  "mockQuestionsReady",
-] as const;
-
-export type MockQuestionsStepName = (typeof MOCK_QUESTIONS_STEPS)[number];
-
-export const MOCK_QUESTIONS_READY_STEP: MockQuestionsStepName = "mockQuestionsReady";
-
 const CHALLENGE_QUESTIONS_STEPS = [
   "joinChallengeQuestions",
   "writeChallengeQuestions",

@@ -3,7 +3,7 @@ import { type ExamStructure, type SectionNavigation } from "../../library/exams/
 import { listListeningParts } from "../listening/listening-parts";
 import { isObjectiveSection } from "./written-subject";
 
-export const DEFAULT_SECTION_QUESTIONS = 45;
+const DEFAULT_SECTION_QUESTIONS = 45;
 
 export type BlueprintSection = {
   breakAfterMinutes?: number | null;
