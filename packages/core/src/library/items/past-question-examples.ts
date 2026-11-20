@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
+import { getPublicItemFilter } from "./item-field";
 
 const MAX_EXAMPLES = 2;
 
@@ -33,11 +34,18 @@ function toExampleText(content: unknown): string | null {
 export async function listPastQuestionExamples({
   examBlueprintId,
   skillIds,
+  publicOnly = false,
 }: {
   examBlueprintId: string;
+  publicOnly?: boolean;
   skillIds: readonly string[];
 }): Promise<string[]> {
-  const quoted = { content: { equals: true, path: ["quoted"] }, examBlueprintId };
+  const quoted = {
+    ...(publicOnly ? getPublicItemFilter() : {}),
+    content: { equals: true, path: ["quoted"] },
+    examBlueprintId,
+  };
+
   const read = { orderBy: { id: "asc" }, select: { content: true }, take: MAX_EXAMPLES } as const;
 
   const [own, other] = await Promise.all([

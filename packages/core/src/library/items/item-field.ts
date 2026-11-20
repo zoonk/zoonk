@@ -46,6 +46,8 @@ type ItemAudience = {
   examBlueprintId?: string | null;
   field?: string | null;
   inSets?: boolean;
+  includeMockReserve?: boolean;
+  userId?: string | null;
   keepIds?: readonly string[];
 };
 
@@ -58,11 +60,26 @@ export function getAskedItemFilter({
   field = null,
   inSets = false,
   keepIds = [],
+  userId,
+  includeMockReserve,
 }: ItemAudience) {
   const kept = keepIds.length > 0 ? [{ id: { in: [...keepIds] } }] : [];
 
+  const reserve = includeMockReserve
+    ? []
+    : [
+        {
+          OR: [
+            { mockOnly: false },
+            { mockOnly: null },
+            ...(userId ? [{ mockUses: { some: { spentAt: { lte: new Date() }, userId } } }] : []),
+          ],
+        },
+      ];
+
   return {
     AND: [
+      ...reserve,
       { OR: [{ field: null }, ...(field ? [{ field }] : []), ...kept] },
       {
         OR: [{ examBlueprintId: null }, ...(examBlueprintId ? [{ examBlueprintId }] : []), ...kept],
@@ -72,23 +89,8 @@ export function getAskedItemFilter({
   };
 }
 
-export function getItemAudienceFilter(
-  audience: ItemAudience & { includeMockReserve?: boolean; userId?: string | null },
-) {
-  const reserve = audience.includeMockReserve
-    ? []
-    : [
-        {
-          OR: [
-            { mockOnly: false },
-            { mockOnly: null },
-            ...(audience.userId
-              ? [{ mockUses: { some: { spentAt: { lte: new Date() }, userId: audience.userId } } }]
-              : []),
-          ],
-        },
-      ];
-  return { AND: [...getAskedItemFilter(audience).AND, IN_BANK, ...reserve] };
+export function getItemAudienceFilter(audience: ItemAudience) {
+  return { AND: [...getAskedItemFilter(audience).AND, IN_BANK] };
 }
 
 export function getFieldRank({

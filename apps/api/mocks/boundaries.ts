@@ -42,6 +42,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/images/check": { checkLessonImage: vi.fn() },
   "@zoonk/ai/tasks/images/generate": { generateLessonImage: vi.fn() },
   "@zoonk/ai/tasks/images/scene": { generateImageScene: vi.fn() },
+  "@zoonk/ai/tasks/items/check-recall-overlap": { checkRecallOverlap: vi.fn() },
   "@zoonk/ai/tasks/items/generate": { generateItems: vi.fn() },
   "@zoonk/ai/tasks/items/past-questions": { extractPastQuestions: vi.fn() },
   "@zoonk/ai/tasks/items/placement-items": { generatePlacementItems: vi.fn() },

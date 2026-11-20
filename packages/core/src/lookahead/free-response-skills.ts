@@ -168,8 +168,8 @@ export async function pickFreeResponseSkills({
     .slice(0, FREE_RESPONSE_SKILLS);
 
   const usedSituations = await loadUsedSituations({
-    includeMockReserve: true,
     examBlueprintId: blueprint.id,
+    includeMockReserve: true,
     skillIds: picked.map((skill) => skill.id),
   });
 
