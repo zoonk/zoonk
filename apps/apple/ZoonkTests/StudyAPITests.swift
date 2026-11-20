@@ -22,6 +22,29 @@ final class StudyAPITests: XCTestCase {
     XCTAssertEqual(shown["areaId"] as? NSNull, NSNull())
     XCTAssertEqual(shown["checkpoint"] as? NSNull, NSNull())
     XCTAssertEqual(shown["lessonId"] as? String, "bf2cf2eb-ea8d-8423-8d56-c97287bf412e")
+    let flags = try XCTUnwrap(shown["flags"] as? NSDictionary)
+    XCTAssertNil(
+      flags["mockPreparationReview"], "core refuses a null for a flag it reads as absent")
+  }
+
+  /// The review offered while the day's mock is prepared opens only that review, never an ordinary
+  /// one the learner already finished at the same position.
+  func testTheReviewOfferedWhileTheMockIsPreparedSaysSoInItsRef() async throws {
+    let transport = StudyRecordingTransport()
+    let api = StudyAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+    let review = Self.block.replacingOccurrences(
+      of: #""kind": "learn""#, with: #""kind": "review", "mockPreparationReview": true"#)
+    let block = try JSONDecoder().decode(StudyBlock.self, from: Data(review.utf8))
+
+    _ = try? await api.openDay(
+      token: "token", goalID: "56adb511-8f30-426f-b358-fb4a556aaeb1", shownDate: "2026-10-28",
+      timeZone: "America/Sao_Paulo", target: .ref(DayBlockRef(block)))
+
+    let sent = try XCTUnwrap(transport.sent.value.first)
+    let target = try XCTUnwrap(sent.json["target"] as? NSDictionary)
+    let ref = try XCTUnwrap(target["ref"] as? NSDictionary)
+    let flags = try XCTUnwrap(ref["flags"] as? NSDictionary)
+    XCTAssertEqual(flags["mockPreparationReview"] as? Bool, true)
   }
 
   func testAPlanThatChangedWhileTheDayOpenedIsAskedOnceMore() async throws {

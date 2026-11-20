@@ -14,6 +14,12 @@ struct StudyDay: Decodable, Equatable, Sendable {
     case nothingNew
   }
 
+  /// What a `waiting` day waits for: its lessons, or its scheduled mock exam's questions.
+  enum WaitingFor: String, Decodable, Sendable {
+    case lessons
+    case mock
+  }
+
   enum FreshStart: String, Decodable, Sendable {
     case newPhase
     case newWeek
@@ -72,6 +78,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   var nextPosition: Int?
   var state: DayState
   let status: Status
+  let waitingFor: WaitingFor?
   let week: StudyWeek
 
   var nextBlock: StudyBlock? {
@@ -277,6 +284,9 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let kind: Kind
   let lessonId: String?
   let mistakesOnly: Bool
+  /// The review offered while the day's scheduled mock is prepared; its ref says so, so it never
+  /// opens an ordinary review the learner already finished.
+  let mockPreparationReview: Bool?
   let opensInPlayer: Bool
   let oftenTested: Bool
   let planItemId: String?
@@ -375,6 +385,7 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     let extra: Bool
     let fullReview: Bool
     let mistakesOnly: Bool
+    let mockPreparationReview: Bool?
     let refresh: Bool
     let reinforcement: Bool
     let weakest: Bool
@@ -422,7 +433,8 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     }
     flags = Flags(
       extra: block.extra, fullReview: block.fullReview, mistakesOnly: block.mistakesOnly,
-      refresh: block.refresh, reinforcement: block.reinforcement, weakest: block.weakest)
+      mockPreparationReview: block.mockPreparationReview, refresh: block.refresh,
+      reinforcement: block.reinforcement, weakest: block.weakest)
     kind = block.kind
     lessonId = block.lessonId
     planItemKey = block.planItemKey
