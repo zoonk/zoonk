@@ -24,10 +24,10 @@
   "buddy_page_first_today": "b51c6e5f10e0ba541aaf826ae04582a2c017bcf22690259ed7657af92aaca7d0",
   "buddy_page_fully_grown": "1e6cbf3c4f381f55c21852ea2ee41aff538204177bdaef44e7db803f97cf1a54",
   "buddy_page_glasses_description": "7d8d9b797a68b02e95be885888f5a010174b007910710b1882a88805d6ba4cc0",
-  "buddy_page_goal_greeting": "b6211f2e30c16363faf1b45f1bc7dc4f76b592d6afa4491bd20892494b22d68b",
+  "buddy_page_goal_greeting": "4c362c40d94887ce99b6cfe9396d9fe1f03cdff54201d3b25bfa6d3ba6cbc0a9",
   "buddy_page_goal_label": "b970ee5a3e00e9e29d013269984812fff5adfe222e17fed9713802de1a180b6d",
   "buddy_page_goal_placeholder": "18cd55359389c65033e317063617ad5232823ffa468cb3c50e4c1b09597c5318",
-  "buddy_page_greeting": "5338cac95424b1656eb1a881e98c23a141fc577f0dd707038eb1ea269f57a822",
+  "buddy_page_greeting": "ad58a242ad160b30f30549094d026db54b6cdf9f52644301918af96025b6d900",
   "buddy_page_grows": "c05d650eb3ecb3dc78394ae4b778d556f69250c7d75cbdc8002e9d82868d30eb",
   "buddy_page_missions_count": "d42c8cbb1c3585b59f504d17bcacdd7f349da8d8b21ef61e4fef6a31e6684d50",
   "buddy_page_more": "a69adc5510b85ef35600609c9dc9c468732aa9aa98d9e2b784066e00dc8fbd77",
@@ -62,10 +62,10 @@
     <string name="buddy_page_count">%1$s de %2$s</string>
     <string name="buddy_page_save_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
-    <string name="buddy_page_greeting">Oi! Sou %1$s, colega de estudos com IA. Pergunte o que quiser ou me conte o que mudar no seu plano.</string>
+    <string name="buddy_page_greeting">Oi! Sou %1$s, seu colega de estudos com IA. Pergunte o que quiser ou me conte o que mudar no seu plano.</string>
     <string name="buddy_page_goal_placeholder">O que você quer aprender</string>
     <string name="buddy_page_goal_label">Seu objetivo</string>
-    <string name="buddy_page_goal_greeting">Oi! Sou %1$s, colega de estudos com IA. Me conte o que você quer aprender e eu monto seu plano.</string>
+    <string name="buddy_page_goal_greeting">Oi! Sou %1$s, seu colega de estudos com IA. Me conte o que você quer aprender e eu monto seu plano.</string>
     <string name="buddy_page_placeholder">Pergunte o que quiser</string>
     <string name="buddy_page_suggest_plan_today">O que tem no meu plano para hoje?</string>
     <string name="buddy_page_suggest_lighter">Quero estudar menos esta semana</string>

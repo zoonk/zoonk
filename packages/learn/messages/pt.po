@@ -1322,7 +1322,7 @@ msgstr "Exemplos"
 #: src/buddies/buddy-goal-start.tsx
 msgctxt "Py3YsI"
 msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
-msgstr "Oi! Sou {name}, colega de estudos com IA. Me conte o que você quer aprender e eu monto seu plano."
+msgstr "Oi! Sou {name}, seu colega de estudos com IA. Me conte o que você quer aprender e eu monto seu plano."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
@@ -2673,7 +2673,7 @@ msgstr "Quero estudar menos esta semana"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "IihZBt"
 msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
-msgstr "Oi! Sou {name}, colega de estudos com IA. Pergunte o que quiser ou me conte o que mudar no seu plano."
+msgstr "Oi! Sou {name}, seu colega de estudos com IA. Pergunte o que quiser ou me conte o que mudar no seu plano."
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"

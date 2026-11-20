@@ -2511,7 +2511,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, colega de estudos com IA. Pergunte o que quiser ou me conte o que mudar no seu plano."
+            "value" : "Oi! Sou %@, seu colega de estudos com IA. Pergunte o que quiser ou me conte o que mudar no seu plano."
           }
         },
         "tr" : {
@@ -2570,7 +2570,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, colega de estudos com IA. Me conte o que você quer aprender e eu monto seu plano."
+            "value" : "Oi! Sou %@, seu colega de estudos com IA. Me conte o que você quer aprender e eu monto seu plano."
           }
         },
         "tr" : {
