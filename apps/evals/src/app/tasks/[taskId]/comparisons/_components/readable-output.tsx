@@ -123,9 +123,17 @@ function FieldLabel({ children }: { children: string }) {
   return <p className="text-muted-foreground text-xs">{children}</p>;
 }
 
-function Fields({ marks, record }: { marks: OutputMark[]; record: Record<string, unknown> }) {
+function Fields({
+  headingKey,
+  marks,
+  record,
+}: {
+  headingKey?: string;
+  marks: OutputMark[];
+  record: Record<string, unknown>;
+}) {
   const entries = Object.entries(record).filter(
-    ([key, value]) => !isEmpty(value) && !HEADER_KEYS.has(key),
+    ([key, value]) => !isEmpty(value) && key !== headingKey,
   );
 
   const [only] = entries;
@@ -176,16 +184,22 @@ function formatPrimitive(value: string | number | boolean): string {
   return String(value);
 }
 
-function itemHeader(item: unknown, index: number): string {
-  if (!isRecord(item)) {
-    return `${index + 1}`;
-  }
+function ListItem({ index, item, marks }: { index: number; item: unknown; marks: OutputMark[] }) {
+  const heading = isRecord(item)
+    ? Object.entries(item).find(
+        (entry): entry is [string, string] =>
+          HEADER_KEYS.has(entry[0]) && typeof entry[1] === "string" && Boolean(entry[1].trim()),
+      )
+    : undefined;
 
-  const kind = Object.entries(item).find(
-    ([key, value]) => HEADER_KEYS.has(key) && typeof value === "string",
-  )?.[1];
+  const title = heading ? `${index + 1} · ${humanizeKey(heading[1])}` : `${index + 1}`;
 
-  return typeof kind === "string" ? `${index + 1} · ${humanizeKey(kind)}` : `${index + 1}`;
+  return (
+    <li className="flex flex-col gap-2 border-t py-3 first:border-t-0 first:pt-0">
+      <p className="text-muted-foreground font-mono text-xs">{title}</p>
+      <Value headingKey={heading?.[0]} marks={marks} value={item} />
+    </li>
+  );
 }
 
 function List({ items, marks }: { items: unknown[]; marks: OutputMark[] }) {
@@ -206,16 +220,21 @@ function List({ items, marks }: { items: unknown[]; marks: OutputMark[] }) {
     <ol className="flex flex-col">
       {items.map((item, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- an output's list never reorders
-        <li className="flex flex-col gap-2 border-t py-3 first:border-t-0 first:pt-0" key={index}>
-          <p className="text-muted-foreground font-mono text-xs">{itemHeader(item, index)}</p>
-          <Value marks={marks} value={item} />
-        </li>
+        <ListItem index={index} item={item} key={index} marks={marks} />
       ))}
     </ol>
   );
 }
 
-function Value({ marks, value }: { marks: OutputMark[]; value: unknown }) {
+function Value({
+  headingKey,
+  marks,
+  value,
+}: {
+  headingKey?: string;
+  marks: OutputMark[];
+  value: unknown;
+}) {
   if (typeof value === "string") {
     const nested = parseJson(value);
 
@@ -235,7 +254,7 @@ function Value({ marks, value }: { marks: OutputMark[]; value: unknown }) {
   }
 
   if (isRecord(value)) {
-    return <Fields marks={marks} record={value} />;
+    return <Fields headingKey={headingKey} marks={marks} record={value} />;
   }
 
   return null;
