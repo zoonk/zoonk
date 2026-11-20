@@ -7,7 +7,11 @@ import { withItemRules } from "./item-rules";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./generate-items.prompt.md", () => ({ default: "# Goal" }));
+
+vi.mock("./generate-items.prompt.md", () => ({
+  default:
+    "# Goal{{#practice}}{{/practice}}{{#mock}}\n# Mock{{#wrongPenalty}}, costly{{/wrongPenalty}}{{#usedSituations}}, new{{/usedSituations}}{{/mock}}",
+}));
 
 vi.mock("./item-rules", () => ({
   withItemRules: vi.fn((taskPrompt: string) => `${taskPrompt}\n# Rules`),
@@ -208,5 +212,59 @@ describe(generateItems, () => {
     expect(userPrompt).not.toContain(
       formatCast({ country: null, language: "en", seed: `${skill.name}:multipleChoice` }),
     );
+  });
+
+  it("writes a mock to the exam's difficulty and scoring instead of the lesson level", async () => {
+    const exam = { name: "Cebraspe", style: "Certo ou errado.", wrongPenalty: 1 };
+
+    const mock = await generateItems({
+      country: null,
+      examFormat: exam,
+      format: "trueFalse",
+      language: "pt",
+      level: "beginner",
+      purpose: "mock",
+      skill,
+      usedSituations: ["Fábio pediu uma informação."],
+    });
+
+    expect(withItemRules).toHaveBeenLastCalledWith(
+      "# Goal\n# Mock, costly, new",
+      expect.objectContaining({ mock: true, usedSituations: true }),
+    );
+
+    expect(mock.userPrompt).toContain("WRONG_ANSWER_COST: 100% of a right answer's points");
+    expect(mock.userPrompt).not.toContain("LEVEL");
+
+    const practice = await generateItems({
+      country: null,
+      examFormat: exam,
+      format: "trueFalse",
+      language: "pt",
+      level: "beginner",
+      skill,
+    });
+
+    expect(withItemRules).toHaveBeenLastCalledWith(
+      "# Goal",
+      expect.objectContaining({ mock: false }),
+    );
+
+    expect(practice.userPrompt).toContain("LEVEL: beginner");
+    expect(practice.userPrompt).not.toContain("WRONG_ANSWER_COST");
+  });
+
+  it("keeps the level for a mock without an exam, the only measure of its difficulty", async () => {
+    const { userPrompt } = await generateItems({
+      country: null,
+      format: "multipleChoice",
+      language: "en",
+      level: "advanced",
+      purpose: "mock",
+      skill,
+    });
+
+    expect(withItemRules).toHaveBeenLastCalledWith("# Goal\n# Mock", expect.anything());
+    expect(userPrompt).toContain("LEVEL: advanced");
   });
 });

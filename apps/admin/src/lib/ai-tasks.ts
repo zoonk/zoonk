@@ -16,6 +16,7 @@ const AI_TASK_DESCRIPTIONS: Record<string, string> = {
   "check-cited-facts": "Rejects exam facts their quoted passage doesn't support",
   "check-exam-reading": "Finds what a reading of an exam's notice left out",
   "check-level-test-questions": "Answers placement questions to catch wrong keys",
+  "check-recall-overlap": "Finds new mock questions a learner could answer from memory",
   "check-word-pronunciation": "Checks a word's audio uses its language's sounds",
   "cite-material": "Picks the page each lesson screen teaches from",
   "compare-release-lessons": "Finds lessons a product release makes wrong",

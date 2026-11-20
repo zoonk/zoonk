@@ -41,6 +41,8 @@ export type ItemExamFormat = {
   entry?: NumericEntry | null;
   /** Real questions allowed to be quoted, which new ones match in difficulty but never copy. */
   pastQuestions?: readonly string[] | null;
+  /** The share of a right answer's points each wrong answer takes away (1 when one cancels a right one); a mock writes for it. */
+  wrongPenalty?: number | null;
 };
 
 function picksSeveral(examFormat: ItemExamFormat | null | undefined): boolean {
@@ -90,6 +92,19 @@ function readsLevel({ examFormat, purpose }: GenerateItemsParams): boolean {
   return purpose !== "mock" || !examFormat;
 }
 
+function getWrongPenalty({ examFormat, purpose }: GenerateItemsParams): number | null {
+  const penalty = examFormat?.wrongPenalty ?? 0;
+  return purpose === "mock" && penalty > 0 ? penalty : null;
+}
+
+function formatWrongPenalty(params: GenerateItemsParams): string {
+  const penalty = getWrongPenalty(params);
+
+  return penalty === null
+    ? ""
+    : `\n    WRONG_ANSWER_COST: ${Math.round(penalty * 100)}% of a right answer's points`;
+}
+
 function buildUserPrompt(params: GenerateItemsParams): string {
   const { examFormat, field, format, skill, usedSituations } = params;
   const seed = `${getSituationSeed([{ name: skill.name, usedSituations }])}:${format}`;
@@ -119,7 +134,7 @@ ${formatItemSetting({ country: params.country, language: params.language, seed, 
     SKILL_DESCRIPTION: ${skill.description}
     SKILL_EXAMPLE: ${skill.example ?? "none"}${fieldLine}
     EXAM: ${examFormat?.name ?? "none"}
-    EXAM_STYLE: ${examFormat?.style ?? "none"}${formatPastQuestions(examFormat)}${formatUsedSituations({ indent: "    ", situations: usedSituations })}
+    EXAM_STYLE: ${examFormat?.style ?? "none"}${formatWrongPenalty(params)}${formatPastQuestions(examFormat)}${formatUsedSituations({ indent: "    ", situations: usedSituations })}
   `;
 }
 
@@ -141,7 +156,12 @@ export async function generateItems(params: GenerateItemsParams) {
 
   const instructions = selectPromptVariants({
     template: taskPrompt,
-    variants: { mock, practice: !mock, usedSituations },
+    variants: {
+      mock,
+      practice: !mock,
+      usedSituations,
+      wrongPenalty: getWrongPenalty(params) !== null,
+    },
   });
 
   const systemPrompt = withItemRules(instructions, {
