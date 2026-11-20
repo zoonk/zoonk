@@ -75,6 +75,12 @@ describe(parseInvocation, () => {
       path: "/staff/content-fixes",
     });
 
+    expect(parseInvocation(["staff", "fixes", "propose", "--check", file]).command).toStrictEqual({
+      name: "request",
+      request: { body: proposal, method: "POST", path: "/staff/content-fixes/check" },
+      shape: undefined,
+    });
+
     expect(
       sentRequest(["staff", "fixes", "revert", "fix-1", "--reason", "Wrong fix."]),
     ).toStrictEqual({
@@ -104,8 +110,18 @@ describe(parseInvocation, () => {
     });
   });
 
+  it("puts the lesson id in a single URL segment", () => {
+    expect(sentRequest(["staff", "lesson", "bad/id"])).toStrictEqual({
+      method: "GET",
+      path: "/staff/lessons/bad%2Fid",
+    });
+  });
+
   it.each([
     [["staff", "fixes", "propose", "/no/such/fix.json"], "Can't read"],
+    [["staff", "fixes", "propose", "--check"], "takes 1 argument"],
+    [["staff", "fixes", "revert", "fix-1", "--check"], "no --check option"],
+    [["staff", "lesson"], "takes 1 argument"],
     [["staff", "fixes", "revert", "fix-1"], "--reason"],
     [["staff", "fixes", "revert", "fix-1", "--batch", "b", "--reason", "x"], "--batch <batchId>"],
     [["staff", "fixes", "revert", "--reason", "x"], "--batch <batchId>"],

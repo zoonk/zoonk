@@ -1548,6 +1548,12 @@ actor StudyAPIStub: StudyAPIClient {
     throw APIError.unavailable
   }
 
+  func claimSummaryVisit(token: String, sessionID: String, visitID: UUID) async throws
+    -> SummaryVisitDecision
+  {
+    throw APIError.unavailable
+  }
+
   func lessonReadiness(token: String, lessonID: String) async throws
     -> Components.Schemas.LessonReadiness
   {

@@ -313,9 +313,9 @@ export function BlockQuestionActions(props: BlockActionsProps) {
         </QuestionDontKnow>
       )}
 
-      {props.ask}
-
       <QuestionMainAction {...getMainAction(props)} />
+
+      {props.ask}
     </>
   );
 }

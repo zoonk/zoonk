@@ -11247,9 +11247,9 @@ msgid "Full review"
 msgstr "総復習"
 
 #: src/plan/use-short-plan.ts
-msgctxt "jzXhpt"
-msgid "Short mock and review"
-msgstr "短時間の模試と復習"
+msgctxt "0zXviI"
+msgid "Short mock"
+msgstr "短時間の模試"
 
 #: src/plan/use-short-plan.ts
 msgctxt "FTIL8p"
@@ -12659,7 +12659,7 @@ msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "学習タブ"
 
-#. The search button at the end of the phone's tab bar, after the tabs.
+#. The search item at the end of the phone's tab bar, after the tabs.
 #: src/shell/learn-navigation.tsx
 msgctxt "xmcVZ0"
 msgid "Search"

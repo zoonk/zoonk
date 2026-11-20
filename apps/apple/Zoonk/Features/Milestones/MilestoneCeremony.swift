@@ -262,9 +262,14 @@ extension View {
   func completionMoments(certificates: [CertificateFacts] = [], milestone: Milestone? = nil)
     -> some View
   {
+    completionMoments(CompletionMoments(certificates: certificates, milestone: milestone)) { _ in }
+  }
+
+  func completionMoments(
+    _ earned: CompletionMoments?, onFinished: @escaping (CompletionMoments) -> Void
+  ) -> some View {
     modifier(
-      CompletionMomentsPresenter(
-        earned: CompletionMoments(certificates: certificates, milestone: milestone)))
+      CompletionMomentsPresenter(earned: earned, onFinished: onFinished))
   }
 
   func completionMoments(_ day: DayResult?) -> some View {
@@ -282,7 +287,7 @@ extension View {
   }
 }
 
-private struct CompletionMoments: Hashable, Identifiable {
+struct CompletionMoments: Hashable, Identifiable {
   var certificates: [CertificateFacts]
   var milestone: Milestone?
 
@@ -294,31 +299,22 @@ private struct CompletionMomentsPresenter: ViewModifier {
   @Environment(CertificatesStore.self) private var certificates
   @Environment(StudySessionStore.self) private var sessions
 
-  let earned: CompletionMoments
+  let earned: CompletionMoments?
+  let onFinished: (CompletionMoments) -> Void
 
   @State private var shown: CompletionMoments?
+  @State private var presenting: CompletionMoments?
   /// A result plays once on its screen, even when the screen appears again.
   @State private var played: CompletionMoments?
   @State private var opensPlus = false
 
   func body(content: Content) -> some View {
     content
-      .onChange(of: earned, initial: true) { _, earned in
-        guard earned != played else {
-          return
-        }
-
-        played = earned
-        let new = CompletionMoments(
-          certificates: certificates.claimMoments(earned.certificates),
-          milestone: earned.milestone.flatMap { sessions.claimCeremony($0) ? $0 : nil })
-
-        if !new.certificates.isEmpty || new.milestone != nil {
-          shown = new
-        }
+      .onChange(of: earned, initial: true) {
+        presentEarnedMoments()
       }
       // Plus opens once the moment is gone: a screen under a cover can't present.
-      .fullScreenCover(item: $shown, onDismiss: openPlus) { moments in
+      .fullScreenCover(item: $shown, onDismiss: finish) { moments in
         CompletionMomentsView(
           moments: moments,
           onSeePlus: {
@@ -331,13 +327,41 @@ private struct CompletionMomentsPresenter: ViewModifier {
       }
   }
 
-  private func openPlus() {
-    guard opensPlus else {
+  private func presentEarnedMoments() {
+    guard presenting == nil, let earned, earned != played else {
       return
     }
 
-    opensPlus = false
-    router.present(.subscription)
+    played = earned
+    let new = CompletionMoments(
+      certificates: certificates.claimMoments(earned.certificates),
+      milestone: earned.milestone.flatMap { sessions.claimCeremony($0) ? $0 : nil })
+
+    if !new.certificates.isEmpty || new.milestone != nil {
+      presenting = earned
+      shown = new
+    } else {
+      onFinished(earned)
+    }
+  }
+
+  private func finish() {
+    let finished = presenting
+    let showsPlus = opensPlus
+    presenting = nil
+
+    if showsPlus {
+      opensPlus = false
+      router.present(.subscription)
+    }
+
+    if let finished {
+      onFinished(finished)
+    }
+
+    if !showsPlus {
+      presentEarnedMoments()
+    }
   }
 }
 

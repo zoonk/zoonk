@@ -5,9 +5,10 @@ extension View {
   /// Main's `BottomBar`: the one home of a screen's main action, pinned at the bottom in a
   /// `safeAreaBar` on the page's background under a hairline, so content scrolls out of sight under
   /// it and never shows through its see-through outline buttons. Its buttons are 44pt,
-  /// 8pt apart in one row, the main action last and taking the room the others leave; when they
-  /// don't fit one row, or at an accessibility text size, they stack, each as wide as the bar. On a wide bar the main action sits
-  /// at the bar's end at its own width instead. Its one line (`note`) floats over the screen just
+  /// 8pt apart in one row, the main action last (or followed only by a task's Ask) and taking the
+  /// room the others leave; when they don't fit one row, or at an accessibility text size, they
+  /// stack, each as wide as the bar. On a wide bar the row sits at the bar's end, the main action at
+  /// its own width instead. Its one line (`note`) floats over the screen just
   /// above the bar, so the bar and its buttons never move when it shows.
   func bottomBar<Actions: View>(
     note: BarNote? = nil, @ViewBuilder _ actions: () -> Actions

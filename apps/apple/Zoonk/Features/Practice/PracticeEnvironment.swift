@@ -26,8 +26,6 @@ struct PracticeAskTarget: Equatable, Sendable {
   let blockId: String?
   /// The buddy may now talk about the answer, not only the question.
   let answered: Bool
-  /// Ask says the buddy's name, when asking helps most.
-  let missed: Bool
   var mistakeId: String? = nil
 }
 

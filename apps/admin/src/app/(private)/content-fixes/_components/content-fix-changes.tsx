@@ -5,8 +5,13 @@ import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
 import Link from "next/link";
 import { connection } from "next/server";
 import { CollectionChange } from "./content-fix-collection";
+import { PlanChange } from "./content-fix-plan";
 import { Restored } from "./content-fix-restored";
+import { ScreenListChange } from "./content-fix-screens";
 import { type FieldChange, FieldChanges, type Names } from "./content-fix-values";
+
+/** A lesson's plan and screen list each have their own view; every other change reads as fields. */
+type FieldsChange = Exclude<StoredChange, { op: "setPlan" | "setScreens" }>;
 
 const MODEL_LABELS: Record<StoredChange["model"], string> = {
   AnswerExplanation: "Answer explanation",
@@ -56,7 +61,7 @@ function ChangeBody({
   compact,
   names,
 }: {
-  change: StoredChange;
+  change: FieldsChange;
   compact: boolean;
   names: Names;
 }) {
@@ -86,7 +91,7 @@ function OperationChange({
   compact,
   names,
 }: {
-  change: Exclude<StoredChange, { model: "ItemSet" }>;
+  change: Exclude<FieldsChange, { model: "ItemSet" }>;
   compact: boolean;
   names: Names;
 }) {
@@ -163,7 +168,7 @@ function OperationChange({
         </p>
       );
     default:
-      return null;
+      return change satisfies never;
   }
 }
 
@@ -176,20 +181,35 @@ export async function ContentFixChanges({
   fix,
 }: {
   compact?: boolean;
-  fix: Pick<ContentFixDetail, "changes" | "names" | "rowLabels">;
+  fix: Pick<ContentFixDetail, "changes" | "location" | "media" | "names" | "rowLabels">;
 }) {
   await connection();
 
+  const media = new Map(fix.media.map((item) => [item.need.key, item]));
+  const lang = fix.location.targetLanguage ?? fix.location.language ?? undefined;
+
   return (
-    <ul className="flex flex-col gap-6">
-      {fix.changes.map((change) => (
-        <li className="flex flex-col gap-1" key={`${rowKeyOf(change)}:${change.op}`}>
-          <h3 className="text-sm font-semibold">
-            {fix.rowLabels.get(rowKeyOf(change)) ?? MODEL_LABELS[change.model]}
-          </h3>
-          <ChangeBody change={change} compact={compact} names={fix.names} />
-        </li>
-      ))}
+    <ul className="flex flex-col gap-8">
+      {fix.changes.map((change) => {
+        const key = `${rowKeyOf(change)}:${change.op}`;
+
+        if (change.op === "setScreens") {
+          return <ScreenListChange change={change} key={key} lang={lang} media={media} />;
+        }
+
+        if (change.op === "setPlan") {
+          return <PlanChange change={change} key={key} />;
+        }
+
+        return (
+          <li className="flex flex-col gap-1" key={key}>
+            <h3 className="text-sm font-semibold">
+              {fix.rowLabels.get(rowKeyOf(change)) ?? MODEL_LABELS[change.model]}
+            </h3>
+            <ChangeBody change={change} compact={compact} names={fix.names} />
+          </li>
+        );
+      })}
     </ul>
   );
 }

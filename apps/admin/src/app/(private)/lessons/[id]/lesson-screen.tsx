@@ -1,26 +1,13 @@
 import { AdminJson } from "@/components/admin-json";
-import { ContentAnswer, ContentWords } from "@/components/content-words";
+import { ScreenWords, screenKindLabel } from "@/components/screen-words";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatPercent, toWords } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
-import { isJsonObject } from "@zoonk/utils/json";
 import Link from "next/link";
 
 export type StepAnswers = { correct: number; total: number };
 
 const PERCENT = 100;
-
-/** "Hook · Guess", "Activity · Chart reader": the kind, then what tells its variants apart. */
-function screenKind(step: LibraryLessonStep): string {
-  const content = isJsonObject(step.content) ? step.content : {};
-  const variant = step.kind === "activity" ? content.template : content.variant;
-
-  return [step.kind, typeof variant === "string" && variant !== "text" ? variant : null]
-    .filter((part) => part !== null)
-    .map((part) => toWords(part))
-    .join(FACT_SEPARATOR);
-}
 
 function answersLabel(answers?: StepAnswers): string | null {
   if (!answers) {
@@ -30,11 +17,6 @@ function answersLabel(answers?: StepAnswers): string | null {
   return answers.total === 0
     ? "No answers yet"
     : `${formatCount(answers.total, "answer")} · ${formatPercent((answers.correct / answers.total) * PERCENT)} right`;
-}
-
-/** A lesson in the learner's own language translates a word to itself, which says nothing. */
-function otherWords(translation: string | undefined, word: string): string | null {
-  return translation && translation !== word ? translation : null;
 }
 
 function ScreenLinks({ step }: { step: LibraryLessonStep }) {
@@ -94,32 +76,19 @@ export function LessonScreen({
       <div className="flex min-w-0 flex-col gap-2">
         <div className="flex items-baseline justify-between gap-4">
           <span className="text-muted-foreground text-xs leading-5 font-medium">
-            {screenKind(step)}
+            {screenKindLabel(step)}
           </span>
           <span className="text-muted-foreground shrink-0 text-xs">{answersLabel(answers)}</span>
         </div>
 
         <div className="flex max-w-prose flex-col gap-3 text-sm leading-6">
-          {step.word && step.kind === "vocabulary" ? (
-            <>
-              <p>{step.word.word}</p>
-              <ContentAnswer label="Translation">
-                {otherWords(translation, step.word.word)}
-              </ContentAnswer>
-            </>
-          ) : null}
-          {step.word && step.kind === "translation" ? (
-            <>
-              <p>{otherWords(translation, step.word.word) ?? step.word.word}</p>
-              <ContentAnswer label="Answer">
-                {otherWords(translation, step.word.word) && step.word.word}
-              </ContentAnswer>
-            </>
-          ) : null}
-          {step.sentence && (step.kind === "reading" || step.kind === "listening") ? (
-            <p>{step.sentence.sentence}</p>
-          ) : null}
-          <ContentWords content={step.content} />
+          <ScreenWords
+            content={step.content}
+            kind={step.kind}
+            sentence={step.sentence?.sentence}
+            translation={translation}
+            word={step.word?.word}
+          />
         </div>
 
         <ScreenLinks step={step} />

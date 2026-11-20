@@ -253,8 +253,12 @@ struct TodaySessionAction: View {
         open(next, true)
       }
     case .done:
+      guard let sessionID = session.id else {
+        return nil
+      }
+
       return TodayMainAction(kind: .summary, isBusy: false, failed: false) {
-        router.open(.session)
+        router.open(.sessionSummary(sessionId: sessionID))
       }
     case .prepare:
       return TodayMainAction(
@@ -650,7 +654,7 @@ struct DayFoldRow: View {
 
 struct TodayDayStatus: View {
   private enum Link {
-    case summary
+    case summary(sessionID: String)
   }
 
   @Environment(AppRouter.self) private var router
@@ -701,7 +705,7 @@ struct TodayDayStatus: View {
         : String(
           localized: "You're done for today.", table: "Today", comment: "Day done")
       clause = nil
-      link = keepLearning ? .summary : nil
+      link = keepLearning ? session.id.map { .summary(sessionID: $0) } : nil
     case .waiting where session.waitingFor == .mock:
       systemImage = "clock"
       sentence = String(localized: "Your mock exam is being prepared.", table: "Today")
@@ -767,9 +771,9 @@ struct TodayDayStatus: View {
         }
 
         switch link {
-        case .summary:
+        case .summary(let sessionID):
           Button {
-            router.open(.session)
+            router.open(.sessionSummary(sessionId: sessionID))
           } label: {
             Text("See summary", tableName: "Today", comment: "Opens today's summary")
               .typeWeight(.semibold)

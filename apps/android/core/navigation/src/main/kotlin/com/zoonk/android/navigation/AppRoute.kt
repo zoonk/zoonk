@@ -191,6 +191,7 @@ sealed interface AppRoute : NavKey {
         val goalId: String? = null,
         val sessionId: String? = null,
         val stopped: Boolean = false,
+        val summaryRequested: Boolean = false,
     ) : AppRoute
 
     /** A practice or review block of a session, which main plays inside its session screen. */

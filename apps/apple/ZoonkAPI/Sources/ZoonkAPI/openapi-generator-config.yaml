@@ -84,6 +84,7 @@ filter:
     - createStudyCatchUpBlocks
     - createStudyExtraBlock
     - createStudySessionStop
+    - createStudySessionSummaryVisit
     - createSubjectQuestion
     - createUpload
     - createUploadToken

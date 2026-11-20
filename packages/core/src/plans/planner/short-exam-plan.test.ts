@@ -121,7 +121,7 @@ describe("the phases of a test days away", () => {
 });
 
 describe("a class test days away", () => {
-  it("in three days: the gaps first, practice, then the short mock the day before", () => {
+  it("in three days: the gaps first, practice, then only the short mock the day before", () => {
     const plan = buildPlan(classTest({ days: 3 }));
     const lessons = plan.items.filter((item) => item.kind === "lesson");
 
@@ -135,7 +135,7 @@ describe("a class test days away", () => {
     expect(lessons.at(-1)?.skillId).toBe("glycolysis");
     expect(datesOf({ items: plan.items, kind: "boss" })).toStrictEqual([]);
     expect(datesOf({ items: plan.items, kind: "mock" })).toStrictEqual(["2026-10-02"]);
-    expect(datesOf({ items: plan.items, kind: "review" })).toStrictEqual(["2026-10-02"]);
+    expect(datesOf({ items: plan.items, kind: "review" })).toStrictEqual([]);
     expect(lessonDates(plan.items).has("2026-10-02")).toBe(false);
     expect(plan.items.find((item) => item.kind === "mock")?.minutes).toBe(SHORT_MOCK_MINUTES);
   });

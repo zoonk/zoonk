@@ -8,7 +8,7 @@ const shortExamFocusSchema = z
   .enum(SHORT_EXAM_FOCUSES)
   .meta({
     description:
-      "What a day of a plan for a test days away is for: the exam map and gaps, practice, a class test's short mock with a review of what it finds, or a public exam's light review",
+      "What a day of a plan for a test days away is for: the exam map and gaps, practice, a class test's short mock, or a public exam's light review",
     id: "ShortExamFocus",
   });
 

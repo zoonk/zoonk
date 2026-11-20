@@ -32,8 +32,8 @@
   "onboarding_attach_slow_down": "7fcc78b1e6e02e6620dd48b7b011590f9fdd2d29416c8d3d3508a04c441d2a4f",
   "onboarding_attach_unsupported": "10a4d367b3030e7a21840c6697d2cf6ba32b9ea91c31b4f97146626abaa661b6",
   "onboarding_back_to_today": "e964b5e411396cd4c14ce6f55315143ed5ab26050cc0c0b1780b2c7798cc3e7a",
-  "onboarding_buddy_description": "d3ac9c346f65e6e2942e33495b26d0679b530579906f9980f14fdb448d597532",
-  "onboarding_buddy_title": "2d5e1bf6ed8dd22c05938f0beb99a58f7443a131471591781f716a89abae4785",
+  "onboarding_buddy_description": "7e0a9ff5e02d3e3b452bf23aa95de1db0bec6ab6a6f6425791f9d436309cdbb6",
+  "onboarding_buddy_title": "b57b0948a0a14dd83f1128b912f54f5027a3a4ed2aaeb6d048d596199b14c68f",
   "onboarding_cancel": "549581de061f9a4fc500bbd51f25348aad3ba8d3e68146aa2fcd8c968bda8634",
   "onboarding_change_date": "4efbe0e10feede8619f1ca6f0f229312debdcad02e60618bc2b2db857efef38b",
   "onboarding_choose_date": "9757cb69d2f7234a564b6e75a670d82f8655224fb01ad1a9ccdd018d84f4e660",
@@ -754,8 +754,8 @@
     <string name="onboarding_exam_choice_title_one">Quale sosterrai?</string>
     <string name="onboarding_exam_choice_title_other">Quali sosterrai?</string>
     <string name="onboarding_decide_later">Decidi più tardi</string>
-    <string name="onboarding_buddy_title">Scegli il tuo compagno</string>
-    <string name="onboarding_buddy_description">Il tuo compagno cresce mentre impari.</string>
+    <string name="onboarding_buddy_title">Scegli il tuo socio</string>
+    <string name="onboarding_buddy_description">Il tuo socio cresce mentre impari.</string>
     <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
     <string name="onboarding_step_of">Passo %1$d di %2$d</string>
     <string name="onboarding_more">Più</string>

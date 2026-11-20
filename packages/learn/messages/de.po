@@ -569,7 +569,7 @@ msgstr "{correct, plural, =0 {<number>#</number> von {answered} waren richtig} o
 #: src/_components/name-hint.tsx
 msgctxt "zW5SM4"
 msgid "Your buddy and all your certificates use this name."
-msgstr "Dein Kumpel nennt dich so, und dieser Name steht auf all deinen Zertifikaten."
+msgstr "Dein Buddy nennt dich so, und dieser Name steht auf all deinen Zertifikaten."
 
 #: src/_components/name-hint.tsx
 msgctxt "D4cYHr"
@@ -1176,7 +1176,7 @@ msgstr "Brillen"
 #: src/conversation/tutor-identity.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
-msgstr "Dein Kumpel"
+msgstr "Dein Buddy"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-details.tsx
@@ -1194,7 +1194,7 @@ msgstr "Ändern"
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
-msgstr "Wähle deinen Kumpel"
+msgstr "Wähle deinen Buddy"
 
 #: src/appearance/buddy-settings.tsx
 msgctxt "GrnZDN"
@@ -1311,7 +1311,7 @@ msgstr "Beispiele"
 #: src/buddies/buddy-goal-start.tsx
 msgctxt "Py3YsI"
 msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
-msgstr "Hallo! Ich bin {name}, dein KI-Lernkumpel. Sag mir, was du lernen möchtest, und ich erstelle deinen Plan."
+msgstr "Hallo! Ich bin {name}, dein KI-Lernbuddy. Sag mir, was du lernen möchtest, und ich erstelle deinen Plan."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1405,14 +1405,14 @@ msgstr "Die letzte Herausforderung deines Plans gewinnen"
 #: src/buddies/buddy-labels.tsx
 msgctxt "QRnLkX"
 msgid "Comes with your buddy"
-msgstr "Dein Kumpel bringt sie mit"
+msgstr "Dein Buddy bringt sie mit"
 
 #: src/buddies/buddy-picker.tsx
 #: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
 msgctxt "1L2nnA"
 msgid "Buddy"
-msgstr "Kumpel"
+msgstr "Buddy"
 
 #: src/buddies/buddy-picker.tsx
 msgctxt "HAlOn1"
@@ -1533,7 +1533,7 @@ msgstr "Ein Monokel!"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "vwv1rM"
 msgid "They come with your buddy."
-msgstr "Die Brille gehört zu deinem Kumpel."
+msgstr "Die Brille gehört zu deinem Buddy."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "DIrp2X"
@@ -2670,7 +2670,7 @@ msgstr "Ich möchte diese Woche weniger lernen"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "IihZBt"
 msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
-msgstr "Hallo! Ich bin {name}, dein KI-Lernkumpel. Frag mich, was du möchtest, oder sag mir, was sich an deinem Plan ändern soll."
+msgstr "Hallo! Ich bin {name}, dein KI-Lernbuddy. Frag mich, was du möchtest, oder sag mir, was sich an deinem Plan ändern soll."
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"
@@ -2796,7 +2796,7 @@ msgstr "Logbuch"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "Kvxbfx"
 msgid "See, correct or delete what your buddy remembers about you."
-msgstr "Sieh dir an, was dein Kumpel über dich weiß, und korrigiere oder lösche es."
+msgstr "Sieh dir an, was dein Buddy über dich weiß, und korrigiere oder lösche es."
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "dVx3yz"
@@ -2946,7 +2946,7 @@ msgstr "Übernehmen"
 #: src/conversation/tutor-variety-offer.tsx
 msgctxt "axUi06"
 msgid "Your buddy and practice calls use {variety}."
-msgstr "Dein Kumpel und die Übungsgespräche verwenden {variety}."
+msgstr "Dein Buddy und die Übungsgespräche verwenden {variety}."
 
 #: src/conversation/tutor-variety-offer.tsx
 msgctxt "n-Iy44"
@@ -9270,7 +9270,7 @@ msgstr "{count, plural, one {Wähl mindestens {time} pro Tag für dein # Ziel.} 
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
-msgstr "Dein Kumpel wächst, während du lernst."
+msgstr "Dein Buddy wächst, während du lernst."
 
 #: src/onboarding/steps/country-step.tsx
 msgctxt "pBUysu"
@@ -11247,9 +11247,9 @@ msgid "Full review"
 msgstr "Vollständige Wiederholung"
 
 #: src/plan/use-short-plan.ts
-msgctxt "jzXhpt"
-msgid "Short mock and review"
-msgstr "Kurze Probeprüfung und Wiederholung"
+msgctxt "0zXviI"
+msgid "Short mock"
+msgstr "Kurze Probeprüfung"
 
 #: src/plan/use-short-plan.ts
 msgctxt "FTIL8p"
@@ -12659,7 +12659,7 @@ msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "Lernbereiche"
 
-#. The search button at the end of the phone's tab bar, after the tabs.
+#. The search item at the end of the phone's tab bar, after the tabs.
 #: src/shell/learn-navigation.tsx
 msgctxt "xmcVZ0"
 msgid "Search"

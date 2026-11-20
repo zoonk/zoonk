@@ -15,8 +15,12 @@ import {
   STAFF_READ_SCOPE,
 } from "../cli-login-contract";
 
-/** Agents sharing one login refresh at the same moment; within this window they all get the same new pair. */
-const REFRESH_TOKEN_REUSE_SECONDS = 10;
+/**
+ * Within this window a rotated refresh token gets the same new pair again, so a CLI that lost the
+ * answer recovers the pair on its retry or its next command. Past it, the token counts as stolen,
+ * so every token response tells the CLI how long it lasts.
+ */
+const REFRESH_TOKEN_REUSE_SECONDS = 120;
 
 const APPROVAL_URL = new URL(CLI_LOGIN_APPROVAL_PATH, MAIN_URL).toString();
 
@@ -25,6 +29,7 @@ const cliOAuthProvider = oauthProvider({
   clientPrivileges: () => false,
   // Only the authorization code flow opens the consent and login pages, and no client may use it.
   consentPage: APPROVAL_URL,
+  customTokenResponseFields: () => ({ refresh_token_reuse_seconds: REFRESH_TOKEN_REUSE_SECONDS }),
   disableJwtPlugin: true,
   // The provider refuses refresh tokens without the authorization code grant enabled.
   grantTypes: ["authorization_code", "refresh_token"],

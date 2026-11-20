@@ -198,7 +198,7 @@ function fundSessionChallenges(input: SessionBuildInput, budget: number) {
   const planItems = input.planItems ?? [];
 
   const available = canHoldPhaseChallenges({
-    mockOnlyDay: input.mockReplacesDay ?? false,
+    mockOnlyDay: false,
     reviewDay: isSessionReviewDay(input),
   })
     ? input.checkpoints.filter((checkpoint) => isPhaseChallenge(checkpoint))
@@ -212,6 +212,15 @@ function fundSessionChallenges(input: SessionBuildInput, budget: number) {
 
   const calendar = input.checkpoints.filter((checkpoint) => !isPhaseChallenge(checkpoint));
   return { available, calendar, checkpoints: [...leading, ...calendar], leading, planItems };
+}
+
+function buildMockDay(checkpoints: readonly PlannedCheckpoint[]) {
+  const mocks = checkpoints.filter((checkpoint) => checkpoint.mock);
+
+  return {
+    blocks: mocks.map((mock) => buildCheckpointBlock(mock)),
+    plannedMinutes: Math.ceil(mocks.reduce((sum, mock) => sum + mock.minutes, 0)),
+  };
 }
 
 /** Full reviews cover every skill and welcome-back days otherwise stay lighter. */
@@ -232,6 +241,10 @@ export function buildSessionBlocks(day: SessionBuildInput): {
 
   if (budget < MIN_BLOCK_MINUTES) {
     return { blocks: [], plannedMinutes: 0 };
+  }
+
+  if (input.mockReplacesDay) {
+    return buildMockDay(input.checkpoints);
   }
 
   const reviewFactor = input.freshStart ? FRESH_START_REVIEW_FACTOR : 1;

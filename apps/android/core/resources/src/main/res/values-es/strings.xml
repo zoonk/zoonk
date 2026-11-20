@@ -53,7 +53,7 @@
   "load_failed_title": "b0ba24a7686b01181caf4f97dac893c82942d320a440693a425a4bc4a4320213",
   "load_failed_try_again": "e0fbb12306ca8e296e4a29357180b3531c82eae34750a2fe74a5348814650ea5",
   "navigation_back": "afa907f7f0a6a5cdca735e48e8ec9a6199bb04e2989a6c03dbcce0166e9b8ba4",
-  "navigation_buddy": "7af21930a62dbc0e8c578fc5848d245c71aa80842190d4c2de35ff5e7696cf8d",
+  "navigation_buddy": "035e2df5708432149f9d749da130efb0a897b579d0c33c8e0b774284680bb6e0",
   "navigation_completed_lessons": "2640af9a0b8d27be25316341fb07f628a7da5332705f241c3167b8011f1ce1b8",
   "navigation_exam": "8dd9ee40896da2e847bfb87fb072ed4a2d73b80cb5dbca50e073bd72bf3319a6",
   "navigation_mind_maps": "324a68241b7d169e35fee3ff4af6f72dd461b60b3ce7b48ded59135e7fcfb3bc",
@@ -84,7 +84,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="navigation_today">Hoy</string>
     <string name="navigation_plan">Plan</string>
-    <string name="navigation_buddy">Compañero</string>
+    <string name="navigation_buddy">Compa</string>
     <string name="navigation_study">Estudio</string>
     <string name="navigation_mistakes">Cuaderno de errores</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->

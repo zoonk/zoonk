@@ -11247,9 +11247,9 @@ msgid "Full review"
 msgstr "Full review"
 
 #: src/plan/use-short-plan.ts
-msgctxt "jzXhpt"
-msgid "Short mock and review"
-msgstr "Short mock and review"
+msgctxt "0zXviI"
+msgid "Short mock"
+msgstr "Short mock"
 
 #: src/plan/use-short-plan.ts
 msgctxt "FTIL8p"
@@ -12659,7 +12659,7 @@ msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "Learning tabs"
 
-#. The search button at the end of the phone's tab bar, after the tabs.
+#. The search item at the end of the phone's tab bar, after the tabs.
 #: src/shell/learn-navigation.tsx
 msgctxt "xmcVZ0"
 msgid "Search"

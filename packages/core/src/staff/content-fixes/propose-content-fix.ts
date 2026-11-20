@@ -7,27 +7,30 @@ import { unstable_rethrow } from "next/navigation";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { getStaffActor } from "../get-staff-actor";
 import { StaffInputError, parseStaffInput } from "../input";
-import { type ContentFixView, logContentFix, toContentFixView } from "./_utils/content-fix-view";
+import {
+  type ContentFixView,
+  describePreparedFix,
+  logContentFix,
+  toContentFixView,
+} from "./_utils/content-fix-view";
 import {
   type ChangeResolver,
   type PreparedFix,
-  inverseChange,
+  inverseChanges,
   prepareContentFix,
   proposedChange,
   targetsOf,
 } from "./_utils/prepare-content-fix";
+import { reviewBudgetProblem } from "./_utils/review-budget";
 import { getStaffSessionUser } from "./_utils/staff-session";
 import { getContentFixBatchReviewUrl } from "./batches";
-import {
-  contentFixChangesSchema,
-  contentFixProposalSchema,
-  contentFixRevertSchema,
-} from "./contract";
+import { contentFixProposalSchema, contentFixRevertSchema } from "./contract";
 
 type ProposeResult =
   | { status: "error" | "forbidden" | "missingScope" | "unauthorized" }
   | { message: string; status: "invalid" | "notFound" }
-  | { batchId: string; fixes: ContentFixView[]; reviewUrl: string; status: "proposed" };
+  | { batchId: string; fixes: ContentFixView[]; reviewUrl: string; status: "proposed" }
+  | { fixes: ReturnType<typeof describePreparedFix>[]; status: "checked" };
 
 type Actor = { clientId: string; userId: string };
 
@@ -111,9 +114,10 @@ async function prepareBatch(
   });
 
   const problems = [
-    ...results.flatMap((result, index) =>
-      result.ok ? [] : [`${label({ count: proposals.length, index })}${result.problem}`],
-    ),
+    ...results.flatMap((result, index) => {
+      const problem = result.ok ? reviewBudgetProblem(result.fix) : result.problem;
+      return problem ? [`${label({ count: proposals.length, index })}${problem}`] : [];
+    }),
     ...(prepared.length === proposals.length
       ? overlapProblems(prepared.map((entry) => entry.fix))
       : []),
@@ -124,11 +128,19 @@ async function prepareBatch(
 }
 
 /** Every fix of a batch is checked before any is stored, so a batch is proposed whole or not at all. */
-async function saveBatch(actor: Actor, proposals: readonly ProposedFix[]): Promise<ProposeResult> {
+async function submitBatch(
+  actor: Actor,
+  proposals: readonly ProposedFix[],
+  check: boolean,
+): Promise<ProposeResult> {
   const batch = await prepareBatch(proposals);
 
   if ("problems" in batch) {
     return { message: batch.problems.join("\n"), status: "invalid" };
+  }
+
+  if (check) {
+    return { fixes: batch.prepared.map((entry) => describePreparedFix(entry)), status: "checked" };
   }
 
   const batchId = randomUUID();
@@ -141,20 +153,23 @@ async function saveBatch(actor: Actor, proposals: readonly ProposedFix[]): Promi
         changes: fix.changes,
         effects: fix.effects,
         feedbackId: proposal.feedbackId,
+        media: fix.media.map((need) => ({ need, result: null })),
+        mediaOwedAt: fix.media.length > 0 ? now : null,
         proposerClientId: actor.clientId,
         proposerId: actor.userId,
         reason: proposal.reason,
         revertsId: proposal.revertsId,
         unit: fix.unit.kind,
         unitId: fix.unit.id,
-        voiceOwedAt: fix.effects.some((effect) => effect.kind === "voiceOwed") ? now : null,
       })),
     });
 
     await oweFollowUps({
       db: tx,
       followUps: created.flatMap((fix) =>
-        fix.voiceOwedAt ? [{ input: { fixId: fix.id }, kind: "voiceContentFix" as const }] : [],
+        fix.mediaOwedAt
+          ? [{ input: { fixId: fix.id }, kind: "prepareContentFixMedia" as const }]
+          : [],
       ),
       userId: actor.userId,
     });
@@ -175,7 +190,9 @@ async function findApplied(input: { batchId?: string; fixId?: string }) {
     orderBy: { id: "asc" },
     select: {
       changes: true,
+      decidedAt: true,
       id: true,
+      media: true,
       revertedBy: {
         select: { id: true },
         take: 1,
@@ -214,11 +231,8 @@ async function findApplied(input: { batchId?: string; fixId?: string }) {
   return { applied: wanted, status: "found" as const };
 }
 
-async function buildRevert(input: {
-  batchId?: string;
-  fixId?: string;
-  reason: string;
-}): Promise<BuiltProposal> {
+async function buildRevert(body: unknown): Promise<BuiltProposal> {
+  const input = await parseStaffInput(contentFixRevertSchema, body);
   const found = await findApplied(input);
 
   if (found.status !== "found") {
@@ -227,9 +241,7 @@ async function buildRevert(input: {
 
   return {
     proposals: found.applied.map((original) => ({
-      changes: contentFixChangesSchema
-        .parse(original.changes)
-        .map((change) => inverseChange(change)),
+      changes: inverseChanges(original),
       reason: input.reason,
       revertsId: original.id,
     })),
@@ -257,10 +269,6 @@ type Proposer =
   | { status: "forbidden" | "missingScope" | "unauthorized"; userId?: string }
   | (Actor & { status: "ready" });
 
-function getCliProposer(): Promise<Proposer> {
-  return getStaffActor(STAFF_PROPOSE_SCOPE);
-}
-
 /** What `ContentFix.proposerClientId` holds for a revert a staff person started in Admin. */
 const ADMIN_PROPOSER = "admin";
 
@@ -271,11 +279,11 @@ async function getAdminProposer(): Promise<Proposer> {
 
 async function runProposal({
   action,
-  getProposer = getCliProposer,
+  getProposer = () => getStaffActor(STAFF_PROPOSE_SCOPE),
   input,
   toProposal,
 }: {
-  action: "propose" | "revert";
+  action: "check" | "propose" | "revert";
   getProposer?: () => Promise<Proposer>;
   input: unknown;
   toProposal: (input: unknown) => Promise<BuiltProposal>;
@@ -310,7 +318,7 @@ async function runProposal({
 
   const { data: result, error } = await safeAsync(async (): Promise<ProposeResult> => {
     const built = await toProposal(input);
-    return "proposals" in built ? saveBatch(actor, built.proposals) : built;
+    return "proposals" in built ? submitBatch(actor, built.proposals, action === "check") : built;
   });
 
   if (error instanceof StaffInputError) {
@@ -318,7 +326,7 @@ async function runProposal({
     return { message: error.message, status: "invalid" };
   }
 
-  if (error || !result) {
+  if (error) {
     log("error");
     throw error;
   }
@@ -331,34 +339,31 @@ async function runProposal({
  * Stores a staff person's proposed fixes for review, from a CLI login allowed to propose. Nothing
  * changes until someone approves them in Admin with a passkey.
  */
-export function proposeContentFix(input: unknown): Promise<ProposeResult> {
-  return runProposal({ action: "propose", input, toProposal: buildProposal });
+export function proposeContentFix(input: unknown, options?: { check?: boolean }) {
+  return runProposal({
+    action: options?.check ? "check" : "propose",
+    input,
+    toProposal: buildProposal,
+  });
 }
 
 /**
  * Proposes putting back what an applied fix replaced, or what every applied fix of a batch
  * replaced, as a new batch reviewed like any other.
  */
-export function proposeContentFixRevert(input: unknown): Promise<ProposeResult> {
-  return runProposal({
-    action: "revert",
-    input,
-    toProposal: async (body) => buildRevert(await parseStaffInput(contentFixRevertSchema, body)),
-  });
+export function proposeContentFixRevert(input: unknown) {
+  return runProposal({ action: "revert", input, toProposal: buildRevert });
 }
 
 /**
  * Admin's Revert: the same reviewed proposal, from the signed-in staff person's session instead of
  * a CLI login. It changes nothing until someone approves it with a passkey.
  */
-export function proposeContentFixRevertInAdmin(input: {
-  fixId: string;
-  reason: string;
-}): Promise<ProposeResult> {
+export function proposeContentFixRevertInAdmin(input: { fixId: string; reason: string }) {
   return runProposal({
     action: "revert",
     getProposer: getAdminProposer,
     input,
-    toProposal: async (body) => buildRevert(await parseStaffInput(contentFixRevertSchema, body)),
+    toProposal: buildRevert,
   });
 }

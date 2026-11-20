@@ -7,6 +7,8 @@ struct SessionScreen: View {
   @Environment(StudySessionStore.self) private var store
   @Environment(TodayStore.self) private var today
 
+  var summarySessionID: String?
+
   /// An exam goal's session questions can skip the Focus test's for today.
   private var examGoalID: String? {
     guard case .day(let view)? = today.today.value, view.goal.kind == .exam else {
@@ -20,7 +22,9 @@ struct SessionScreen: View {
     let playback = router.playback
 
     ZStack {
-      if let sessionID = today.sessionID, let blockID = playback.playingBlockID {
+      if summarySessionID == nil, let sessionID = today.sessionID,
+        let blockID = playback.playingBlockID
+      {
         QuestionBlockScreen(
           sessionId: sessionID, blockId: blockID,
           onFinished: { completion in
@@ -52,7 +56,10 @@ struct SessionScreen: View {
       } else {
         NavigationStack {
           Group {
-            if let sessionID = today.sessionID {
+            if let summarySessionID {
+              SessionSummaryView(sessionID: summarySessionID, stopped: false, isExplicit: true)
+                .loads(store.session(id: summarySessionID), refreshable: false)
+            } else if let sessionID = today.sessionID {
               SessionContent(sessionID: sessionID)
             } else if let view = today.day, view.session.nextBlock != nil {
               // A day not opened yet shows its next step as Today read it; Start opens the day.
@@ -94,7 +101,9 @@ struct SessionScreen: View {
       }
     }
     .onDisappear {
-      playback.leave()
+      if summarySessionID == nil {
+        playback.leave()
+      }
     }
   }
 }
@@ -119,6 +128,7 @@ private struct SessionContent: View {
       if let day = shownDay(session, moment: playback.moment) {
         if stopped || (day.nextBlock == nil && !endsSession) {
           SessionSummaryView(sessionID: sessionID, stopped: stopped)
+            .id(sessionID)
         } else {
           NextStopView(
             day: day, sessionID: sessionID, goalID: day.goalId ?? today.day?.goal.id,

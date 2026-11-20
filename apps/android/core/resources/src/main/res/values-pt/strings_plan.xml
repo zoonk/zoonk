@@ -406,8 +406,8 @@
   "plan_short_full_review_and_practice": "8964efbf767678021d286612d2a07a7ace956b52182e3594665db693a1e2f691",
   "plan_short_light_review": "c5ea336d4669ee6ba7ac2baeb675401c473ce553cfc664dc3bf3494a13b46bb2",
   "plan_short_map_and_gaps": "01a9539c134e1e8d86ad75538245519ce7674a4811c30a1ec24fabbdea62dde7",
+  "plan_short_mock": "f235e293f3ad21a8379aa50c8f8a5467833536d86ff34754d408cf3dbcf28320",
   "plan_short_mock_and_practice": "1c8f8a74fa76f9017e7a9ee20ae6b9e1a32f9d4f0fb1d533d0c47499ee345150",
-  "plan_short_mock_and_review": "4988b94bfcd28d9cfa0d1c2fca856b2ba19ab5e8194eb07e9a4e9e44c7a33a8e",
   "plan_show_fewer_chapters": "3b4d1e015ff17b5686bef2825286cb720084b1845df66640415d62b9c5d836d2",
   "plan_show_fewer_units": "37e76dd231f7bd9ee90dfb2fb2be92e90cdad8b510e073197d06df203f34638a",
   "plan_skills_you_know": "97d318d8d73f0469537b37be755500aa4593adb21cb3622573082f35a1856d15",
@@ -615,7 +615,7 @@
     <string name="plan_short_map_and_gaps">Mapa da prova e lacunas</string>
     <string name="plan_short_mock_and_practice">Simulado e prática</string>
     <string name="plan_short_full_review_and_practice">Revisão completa e prática</string>
-    <string name="plan_short_mock_and_review">Simulado rápido e revisão</string>
+    <string name="plan_short_mock">Simulado curto</string>
     <string name="plan_short_full_review">Revisão completa</string>
     <string name="plan_short_light_review">Revisão leve</string>
     <string name="plan_short_day">Dia %1$d de %2$d</string>

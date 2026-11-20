@@ -3,7 +3,7 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useRef } from "react";
+import { useEffect, useEffectEvent } from "react";
 import { TaskBody } from "../_components/task-layout";
 import { LearnLink } from "../learn-link";
 import { useSessionAction } from "./use-session-action";
@@ -11,32 +11,22 @@ import { useSessionAction } from "./use-session-action";
 export function OpenNextStep({
   exitHref,
   header,
-  readNext,
+  openNextStep,
   status,
 }: {
   exitHref: string;
   header: React.ReactNode;
-  /** Read-only: a remount must never start preparation or generation. */
-  readNext: () => void;
+  openNextStep: () => Promise<boolean>;
   status: string;
 }) {
   const t = useExtracted();
 
-  const { failed, run } = useSessionAction({
-    action: async () => {
-      readNext();
-      return true;
-    },
-  });
+  const { failed, run } = useSessionAction({ action: openNextStep });
 
-  const opened = useRef(false);
   const openNext = useEffectEvent(run);
 
   useEffect(() => {
-    if (!opened.current) {
-      opened.current = true;
-      openNext();
-    }
+    openNext();
   }, []);
 
   return (

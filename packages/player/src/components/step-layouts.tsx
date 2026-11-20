@@ -10,6 +10,9 @@ export function PlayerContentFrame({ className, ...props }: React.ComponentProps
 /** Below `lg` the word bank waits above the action bar, so it holds still under the thumb while the answer grows. */
 const FILL_FOR_WORD_BANK_CLASS = "max-lg:has-data-[slot=word-bank]:flex-1";
 
+/** What a check adds goes above the bottom-anchored bank, in the room the answer grows into, so the bank never moves. */
+export const WORD_BANK_AT_BOTTOM_CLASS = "max-lg:mt-auto max-lg:flex-col-reverse";
+
 /** From `sm` the opening map sits in the middle of the room under the scene instead of hugging its text. */
 const FILL_FOR_OPENING_MAP_CLASS = "sm:has-data-[slot=opening-map]:flex-1";
 

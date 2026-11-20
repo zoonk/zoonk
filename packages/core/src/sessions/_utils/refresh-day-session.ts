@@ -119,6 +119,7 @@ export async function planRestOfDayWithPlan({
     ...context,
     dayPlan,
     keepsBlocks: kept.length > 0,
+    keepsMock: kept.some((block) => readBlockPayload(block).checkpoint?.mock),
     keptLessonIds,
     selection,
   });

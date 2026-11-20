@@ -127,6 +127,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "endWebPlusBesideStore":
     case "rememberSession":
     case "settleSessionDay":
+    case "prepareContentFixMedia":
     case "voiceContentFix":
     case "voiceWord":
       await startOnce(backgroundTaskWorkflow, [followUp], getBackgroundTaskToken(followUp));

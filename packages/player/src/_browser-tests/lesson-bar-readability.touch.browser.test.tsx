@@ -32,7 +32,12 @@ function visibleText(button: HTMLElement) {
   const texts: Text[] = [];
 
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-    const hidden = node.parentElement?.closest(".sr-only, [data-slot='shortcut-kbd']");
+    const parent = node.parentElement;
+
+    const hidden =
+      !parent ||
+      parent.getClientRects().length === 0 ||
+      parent.closest(".sr-only, [data-slot='shortcut-kbd']");
 
     if (node instanceof Text && node.data.trim() && !hidden) {
       texts.push(node);
@@ -75,7 +80,7 @@ function cutOffLabels() {
 }
 
 describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
-  it("keeps Check whole between the back and ask buttons", async () => {
+  it("keeps Check whole beside the back and ask buttons", async () => {
     await atLargeTextOnSmallPhone();
     const lesson = buildLesson([teachingStep("explanation"), teachingStep("check")]);
     stubTutorApi({ lesson });
@@ -88,7 +93,7 @@ describe("the lesson's bottom bar at 200% text on a 320 px phone", () => {
     expect(cutOffLabels()).toStrictEqual([]);
   });
 
-  it("keeps Continue and an ask label with a long name whole after a wrong answer", async () => {
+  it("keeps Continue whole beside the ask button of a long-named buddy after a wrong answer", async () => {
     await atLargeTextOnSmallPhone();
     const lesson = buildLesson([teachingStep("check")]);
     stubTutorApi({ lesson });

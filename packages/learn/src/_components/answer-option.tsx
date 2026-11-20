@@ -300,12 +300,8 @@ const ROW_FORMULA_CLASS =
   "has-data-[slot=inline-math]:@container [&_[data-slot=inline-math]]:max-w-[100cqi]";
 
 /**
- * The tag ends the answer's last line, or starts a line of its own when the last line has no room
- * for it. `reservesTag` holds its room from the start for a tag that comes with a verdict. The tag
- * is inline, not floated, since a float turns off balanced wrapping and leaves a lone last word, and
- * a wide space parts it from the words, so a tag that starts its own line starts at its edge. A
- * row's answer flows as text: a caller whose answer has several lines makes each one a block or
- * breaks them with `<br>`.
+ * `reservesTag` holds room for the verdict from the start. The space before the inline tag
+ * disappears at a line break, so the tag starts at the text edge if it needs its own line.
  */
 export function TagBesideOrUnder({
   children,
@@ -334,7 +330,7 @@ export function TagBesideOrUnder({
   }
 
   return (
-    <span className={cn("block w-full grow basis-1/2 text-balance", ROW_FORMULA_CLASS)}>
+    <span className={cn("block w-full grow basis-1/2", ROW_FORMULA_CLASS)}>
       {children}
 
       {(tag || reservesTag) && <span className="[word-spacing:0.5rem]"> </span>}

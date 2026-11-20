@@ -3,6 +3,7 @@ import SwiftUI
 /// The day's summary, one screen of numbers (B2-020): the title, the tiles, Tomorrow, more time and,
 /// once, the reminder offer. Two panes keep "Earned today" beside it, as main's wide layout does.
 struct SessionSummaryView: View {
+  @Environment(\.scenePhase) private var scenePhase
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(AppRouter.self) private var router
   @Environment(StudySessionStore.self) private var store
@@ -10,8 +11,12 @@ struct SessionSummaryView: View {
 
   let sessionID: String
   let stopped: Bool
+  var isExplicit = false
 
   @State private var action = VisitRequest<SummaryAction>()
+  @State private var visit = VisitRequest<MutationResult<SummaryVisitDecision>>()
+  @State private var visitID = UUID()
+  @State private var recoveredMoments: CompletionMoments?
   private var isBusy: Bool { action.isRunning }
   private var failed: SummaryAction? { action.outcome }
   @State private var reminderOffer: ReminderOfferState?
@@ -20,61 +25,113 @@ struct SessionSummaryView: View {
     case keepGoing, extraTime
   }
 
+  private var isVisible: Bool {
+    let route: AppRoute = isExplicit ? .sessionSummary(sessionId: sessionID) : .session
+
+    return scenePhase == .active && router.tasks.last == route
+      && !router.isHidden(taskAt: router.tasks.count - 1) && router.sheet == nil
+  }
+
+  private var decision: SummaryVisitDecision? {
+    if case .done(let decision) = visit.outcome { decision } else { nil }
+  }
+
   var body: some View {
+    let session = store.session(id: sessionID)
     let summary = store.summary(id: sessionID)
+    let dayIsReady = stopped || isExplicit || session.freshValue.map { $0.nextBlock == nil } == true
+    let moments = summary.freshValue.map {
+      CompletionMoments(certificates: $0.certificates, milestone: $0.ceremony)
+    }
+    let isReady = isVisible && dayIsReady && moments != nil && moments == recoveredMoments
+    let unfinished = !stopped && summary.freshValue?.finished == false
+    let dayChanged = unfinished || decision == .notReady
+    let leave = dayChanged || (decision == .seen && !isExplicit)
 
     Group {
-      if let value = summary.value {
+      if let decision, decision == .first || (isExplicit && decision == .seen), !unfinished,
+        let value = summary.value
+      {
         content(value)
-      } else if case .failed = summary.state {
-        PageLoadFailure {
-          Label {
-            Text("The summary didn't load", tableName: "Session", comment: "Load failed")
-          } icon: {
-            Image(systemName: "wifi.exclamationmark")
-          }
-        } retry: {
-          await summary.refresh()
-        }
+          .environment(\.celebrates, decision == .first)
+      } else if case .failed = visit.outcome {
+        loadFailure { claimVisit() }
+      } else if !dayIsReady, case .failed = session.freshState {
+        loadFailure { await session.refresh() }
+      } else if case .failed = summary.freshState {
+        loadFailure { await summary.refresh() }
       } else {
         ProgressView()
           .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
     }
     .loads(summary)
+    .completionMoments(isVisible && dayIsReady ? moments : nil) { recoveredMoments = $0 }
+    .onChange(of: isReady && !unfinished ? visitID : nil, initial: true) { _, readyVisitID in
+      if readyVisitID != nil, visit.outcome == nil, !visit.isRunning {
+        claimVisit()
+      }
+    }
+    .onChange(of: isReady && !isBusy && leave, initial: true) { _, shouldLeave in
+      if shouldLeave {
+        if dayChanged { today.today.invalidate() }
+        router.openStudy(.today)
+      }
+    }
     .onChange(of: summary.value?.reminderOffer, initial: true) { _, offer in
       if let offer, reminderOffer == nil {
         reminderOffer = ReminderOfferState(
           time: ReminderTime.rounded(offer.time), timeZone: offer.timeZone)
       }
     }
-    .completionMoments(
-      certificates: summary.value?.certificates ?? [], milestone: summary.value?.ceremony
-    )
     .onDisappear {
       action.leave()
+      visit.leave()
     }
   }
 
-  private func content(_ summary: SessionSummary) -> some View {
-    let visit = "\(sessionID):\(summary.brainPower)"
-
-    return SummaryVisit(visit: visit) {
-      PaneSplit {
-        page {
-          numbers(summary, showsBrainPower: false)
-        }
-      } secondary: {
-        page {
-          earnedToday(summary)
-        }
-        .bottomBar(note: failureNote) { actions(summary) }
-      } single: {
-        page {
-          numbers(summary, showsBrainPower: true)
-        }
-        .bottomBar(note: failureNote) { actions(summary) }
+  private func loadFailure(retry: @escaping @MainActor () async -> Void) -> some View {
+    PageLoadFailure {
+      Label {
+        Text("The summary didn't load", tableName: "Session", comment: "Load failed")
+      } icon: {
+        Image(systemName: "wifi.exclamationmark")
       }
+    } retry: {
+      await retry()
+    }
+  }
+
+  private func claimVisit() {
+    visit.run {
+      let result = await store.claimSummaryVisit(sessionID: sessionID, visitID: visitID)
+
+      if case .obsolete = result { return nil }
+
+      return result
+    }
+  }
+
+  private func endVisit() {
+    visit.leave()
+    visitID = UUID()
+  }
+
+  private func content(_ summary: SessionSummary) -> some View {
+    PaneSplit {
+      page {
+        numbers(summary, showsBrainPower: false)
+      }
+    } secondary: {
+      page {
+        earnedToday(summary)
+      }
+      .bottomBar(note: failureNote) { actions(summary) }
+    } single: {
+      page {
+        numbers(summary, showsBrainPower: true)
+      }
+      .bottomBar(note: failureNote) { actions(summary) }
     }
   }
 
@@ -254,8 +311,10 @@ struct SessionSummaryView: View {
       switch result {
       case .done(.session), .done(.lessonWait):
         // The next stop shows the step, and follows a lesson being written.
+        endVisit()
         router.playback.resume(sessionID: sessionID)
       case .done(let destination) where !Task.isCancelled:
+        endVisit()
         router.playback.resume(sessionID: sessionID)
         router.openStudy(destination)
       case .failed:
@@ -277,7 +336,14 @@ struct SessionSummaryView: View {
       guard !Task.isCancelled else { return nil }
 
       switch result {
+      case .done(.changed):
+        break
       case .done(let destination) where !Task.isCancelled:
+        if isExplicit {
+          router.dismissTask()
+        } else {
+          endVisit()
+        }
         router.openStudy(destination)
       case .failed:
         outcome = .extraTime
@@ -391,31 +457,6 @@ private struct SummaryTiles: View {
         : Text("Progress", tableName: "Session", comment: "The goal's progress"),
       format(after), moved ? format(start) : nil, moved && after < start
     )
-  }
-}
-
-/// Main's `useFirstSummaryVisit`: only the summary's first visit celebrates.
-private let celebratedSummaryKey = "celebratedSessionSummary"
-
-private struct SummaryVisit<Content: View>: View {
-  let visit: String
-  @ViewBuilder let content: Content
-
-  @State private var isFirstVisit: Bool
-
-  init(visit: String, @ViewBuilder content: () -> Content) {
-    self.visit = visit
-    self.content = content()
-    _isFirstVisit = State(
-      initialValue: UserDefaults.standard.string(forKey: celebratedSummaryKey) != visit)
-  }
-
-  var body: some View {
-    content
-      .environment(\.celebrates, isFirstVisit)
-      .onAppear {
-        UserDefaults.standard.set(visit, forKey: celebratedSummaryKey)
-      }
   }
 }
 

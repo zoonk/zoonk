@@ -108,20 +108,17 @@ export function LessonActionBar() {
       <QuestionActions>
         <BackWithSecondAction
           back={
-            screen.canGoBack && (
-              <QuestionBack
-                id={LESSON_BACK_ID}
-                onClick={(event) => pressKeepingFocus(event, actions.goBack)}
-              />
-            )
+            <QuestionBack
+              disabled={!screen.canGoBack}
+              id={LESSON_BACK_ID}
+              onClick={(event) => pressKeepingFocus(event, actions.goBack)}
+            />
           }
         >
           <DontKnow />
         </BackWithSecondAction>
 
         <PromptAudio />
-
-        <TutorAskButton />
 
         <MainActionSlot>
           <QuestionMainAction
@@ -133,6 +130,8 @@ export function LessonActionBar() {
             onClick={(event) => pressKeepingFocus(event, () => runPrimary({ actions, screen }))}
           />
         </MainActionSlot>
+
+        <TutorAskButton />
       </QuestionActions>
     </TaskActionBar>
   );

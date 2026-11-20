@@ -3,9 +3,11 @@ import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient } from "@zoonk/db";
 import { writePlanInputs } from "../../../library/_utils/plan-input-write";
 import { type StoredChange, contentFixChangesSchema } from "../contract";
+import { type ContentFixMedia, readContentFixMedia } from "../media-schema";
 import { applyFixChanges, lockFixPlans, lockFixRows } from "./apply-content-fix";
 import { changedSince } from "./changed-since";
 import { prepareContentFix, storedChange } from "./prepare-content-fix";
+import { readyFixMedia } from "./ready-fix-media";
 import { type FixUnit } from "./resolved-change";
 
 const STALE_CONTENT =
@@ -15,9 +17,15 @@ async function staleReasonFor(
   tx: TransactionClient,
   {
     fixId,
+    media,
     reverts,
     stored,
-  }: { fixId: string; reverts: { decidedAt: Date | null } | null; stored: StoredChange[] },
+  }: {
+    fixId: string;
+    media: ContentFixMedia;
+    reverts: { decidedAt: Date | null } | null;
+    stored: StoredChange[];
+  },
 ): Promise<string | null> {
   if (reverts?.decidedAt && (await changedSince(tx, { fixId, since: reverts.decidedAt, stored }))) {
     return STALE_CONTENT;
@@ -32,7 +40,13 @@ async function staleReasonFor(
     return fresh.problem;
   }
 
-  return isDeepStrictEqual(fresh.fix.changes, stored) ? null : STALE_CONTENT;
+  const expectedMedia = new Map(fresh.fix.media.map((need) => [need.key, need]));
+  const reviewedMedia = new Map(media.map(({ need }) => [need.key, need]));
+
+  return isDeepStrictEqual(fresh.fix.changes, stored) &&
+    isDeepStrictEqual(expectedMedia, reviewedMedia)
+    ? null
+    : STALE_CONTENT;
 }
 
 type Applied =
@@ -63,11 +77,18 @@ export function applyApprovedFix({
     }
 
     const fix = await tx.contentFix.findUniqueOrThrow({
-      select: { changes: true, reverts: { select: { decidedAt: true } }, unit: true, unitId: true },
+      select: {
+        changes: true,
+        media: true,
+        reverts: { select: { decidedAt: true } },
+        unit: true,
+        unitId: true,
+      },
       where: { id: fixId },
     });
 
     const changes = contentFixChangesSchema.parse(fix.changes);
+    const media = readContentFixMedia(fix.media);
     const unit = { id: fix.unitId, kind: fix.unit };
 
     await lockFixPlans(tx, changes);
@@ -78,14 +99,28 @@ export function applyApprovedFix({
     // Fixes that waited on these locks are ordered by when they applied, not when they were claimed.
     await tx.contentFix.update({ data: { decidedAt: now }, where: { id: fixId } });
 
-    const staleReason = await staleReasonFor(tx, { fixId, reverts: fix.reverts, stored: changes });
+    const staleReason = await staleReasonFor(tx, {
+      fixId,
+      media,
+      reverts: fix.reverts,
+      stored: changes,
+    });
 
-    if (staleReason) {
-      await tx.contentFix.update({ data: { staleReason, status: "stale" }, where: { id: fixId } });
+    const produced = staleReason ? null : await readyFixMedia(tx, media);
+
+    if (!produced) {
+      await tx.contentFix.update({
+        data: {
+          staleReason: staleReason ?? "The reviewed media changed. Propose the fix again.",
+          status: "stale",
+        },
+        where: { id: fixId },
+      });
+
       return { status: "stale" };
     }
 
-    await applyFixChanges(tx, { changes, context: { fixId, now }, unit });
+    await applyFixChanges(tx, { changes, context: { fixId, media: produced, now }, unit });
     return { changes, status: "applied", unit };
   });
 }

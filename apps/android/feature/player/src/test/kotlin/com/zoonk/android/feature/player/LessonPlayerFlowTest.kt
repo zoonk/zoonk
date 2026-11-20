@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -235,6 +236,28 @@ class LessonPlayerFlowTest {
         val state = checkNotNull(viewModel.state.value)
         assertEquals(true, state.results[sort]?.isCorrect)
         rule.onNodeWithText("Rusting iron").assertExists()
+    }
+
+    /** The way back stays in the bar, disabled where it can't go back, so a check never moves the bar's buttons. */
+    @Test
+    fun theWayBackStaysInPlaceWhileItCantGoBack() {
+        play(listOf(explanationStep("idea"), typedAnswerStep("write"), summaryStep("end"))) { gate = CompletableDeferred() }
+        val back = rule.onNodeWithContentDescription("Previous screen")
+        back.assertIsNotEnabled()
+
+        tap("Next")
+        rule.onNode(hasSetTextAction()).performTextInput("Because the droplets are small")
+        back.assertIsEnabled()
+        val before = back.getUnclippedBoundsInRoot()
+
+        tap("Check")
+        back.assertIsNotEnabled()
+        assertEquals(before, back.getUnclippedBoundsInRoot())
+
+        api.gate!!.complete(Unit)
+        rule.waitUntil { viewModel.state.value?.phase == LessonPhase.Feedback }
+        back.assertIsEnabled()
+        assertEquals(before, back.getUnclippedBoundsInRoot())
     }
 
     /** A spoken screen answered by typing shows what was typed on review, even on a day the learner can talk. */

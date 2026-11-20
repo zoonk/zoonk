@@ -66,6 +66,12 @@ interface StudyApi {
         timeZone: String,
     ): StudySessionSummary
 
+    suspend fun recordSummaryVisit(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        visitId: UUID,
+    ): Boolean
+
     /** A "10 more minutes" block after the day's session; null when its day is over, so the time goes to today's. */
     suspend fun addExtraBlock(
         session: AuthenticatedSession,
@@ -158,7 +164,7 @@ class StudyOpener(
             follow(session, openBlock(session, target)) ?: AppRoute.Today
         }
 
-    /** Stop for today: the session's summary says what's done so far and offers to keep going. */
+    /** Stop for today and open the session's end-of-study flow. */
     override suspend fun stop(sessionId: UUID): MutationResult<AppRoute> =
         cache.mutate(invalidating = STOPPING) { session ->
             api.stop(session, sessionId, timeZone())

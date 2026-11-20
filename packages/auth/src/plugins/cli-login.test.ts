@@ -3,7 +3,7 @@ import { DEVICE_CODE_GRANT_TYPE } from "@better-auth/oauth-provider";
 import { prisma } from "@zoonk/db";
 import { MAIN_URL } from "@zoonk/utils/url";
 import { betterAuth } from "better-auth/minimal";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { CLI_CLIENT_ID, STAFF_READ_SCOPE } from "../cli-login-contract";
 import { BETTER_AUTH_BASE_PATH } from "../config";
 import { baseAuthConfig, baseAuthPlugins, fullPlugins } from "../server";
@@ -255,6 +255,40 @@ describe("CLI login", () => {
     await expect(
       auth.api.verifyCliAccessToken({ body: { token: firstPair.access_token } }),
     ).resolves.toMatchObject({ clientId: CLI_CLIENT_ID });
+  });
+
+  it("tells the CLI it replays a rotated token for two minutes, answers it with the same pair until then, then refuses", async () => {
+    const { tokens } = await logIn();
+    const start = Date.now();
+    vi.useFakeTimers({ now: start, toFake: ["Date"] });
+
+    try {
+      const rotation = await refresh(tokens.refresh_token);
+      const first = (await rotation.json()) as TokenResponse;
+
+      expect([tokens, first]).toMatchObject([
+        { refresh_token_reuse_seconds: 120 },
+        { refresh_token_reuse_seconds: 120 },
+      ]);
+
+      vi.setSystemTime(start + 60_000);
+      const minuteLater = await refresh(tokens.refresh_token);
+
+      expect(minuteLater.status).toBe(200);
+
+      await expect(minuteLater.json()).resolves.toMatchObject({
+        refresh_token: first.refresh_token,
+        refresh_token_reuse_seconds: 120,
+      });
+
+      vi.setSystemTime(start + 121_000);
+      const tooLate = await refresh(tokens.refresh_token);
+
+      expect(tooLate.status).toBe(400);
+      await expect(tooLate.json()).resolves.toMatchObject({ error: "invalid_grant" });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("ends the login when the CLI revokes its refresh token", async () => {
