@@ -173,7 +173,8 @@ const clip: Scene = async (stage) => {
   // The title sits far enough above the readouts to be out of frame once the camera rests on the path.
   const planY = { box: 96, title: 318, plan: 318 + planTitle.h * S2 + 96 };
   const pathY = planY.plan + plan.h * S2 + 76;
-  const planRest = (planY.plan + pathY + path.h * S2) / 2;
+  // The camera rests on the readouts and the path; a long path runs off the bottom, never the readouts off the top.
+  const planRest = Math.min((planY.plan + pathY + path.h * S2) / 2, planY.plan + size.h / 2 - 80);
 
   box.el.style.zIndex = "5";
   const headingAt = mover(tl, heading, { x: x1, y: top1, s: S1 });
