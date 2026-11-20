@@ -12,6 +12,7 @@ import {
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type GoalOpeningSkill } from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { deliverCourseContent } from "../_shared/course-content-notification";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { startOnce } from "../_shared/run-token";
 import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
@@ -33,7 +34,7 @@ import {
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
 } from "./steps/goal-lookahead-steps";
-import { createGoalPlanStep } from "./steps/goal-plan-steps";
+import { createGoalPlanStep, linkGoalCourseEditionStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { claimLanguageGraphStep, reuseCurriculumStep } from "./steps/stored-plan-steps";
 
@@ -114,6 +115,8 @@ async function createPlanAndOutlines({
     provenance,
     waitsForNotice,
   });
+
+  await deliverCourseContent(linkGoalCourseEditionStep(goalId));
 
   if (!reused) {
     await saveExamSkillGraphStep({ courseIdsByKey, graph, idsByKey, inputs, provenance, scope });

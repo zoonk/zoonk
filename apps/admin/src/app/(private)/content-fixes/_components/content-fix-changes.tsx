@@ -114,6 +114,7 @@ function OperationChange({
           names={names}
         />
       ));
+    case "linkEdition":
     case "setCategories":
     case "setGraph":
     case "setOptions":

@@ -7,6 +7,9 @@ export function cacheUnits(data: { changes: StoredChange[]; unit: FixUnit }): Fi
 
   return [
     data.unit,
+    ...data.changes.flatMap((change): FixUnit[] =>
+      change.op === "linkEdition" ? [{ id: change.editionId, kind: "course" }] : [],
+    ),
     ...roots.flatMap((root): FixUnit[] => [
       ...(root.chapterIds ?? []).map((id) => ({ id, kind: "chapter" as const })),
       ...(root.courseIds ?? []).map((id) => ({ id, kind: "course" as const })),

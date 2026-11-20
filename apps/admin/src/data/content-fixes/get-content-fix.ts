@@ -80,6 +80,7 @@ function screenLabel(step: { kind: string; position: number }): string {
 }
 
 const STRUCTURE_OPS = new Set<StoredChange["op"]>([
+  "linkEdition",
   "setChapters",
   "setGraph",
   "setLessons",
@@ -104,7 +105,9 @@ async function loadStructureNames(changes: readonly StoredChange[]): Promise<Map
   const ids = [
     ...new Set(
       changes.flatMap((change) =>
-        STRUCTURE_OPS.has(change.op) && "fields" in change ? idsIn(change.fields) : [],
+        STRUCTURE_OPS.has(change.op) && "fields" in change
+          ? idsIn(change.op === "linkEdition" ? [change.id, change.fields] : change.fields)
+          : [],
       ),
     ),
   ];
@@ -191,7 +194,7 @@ async function toDetails(fixes: readonly FixRow[]) {
     effects: contentFixEffectsSchema.parse(fix.effects),
     location: locate(fix),
     names,
-    rowLabels,
+    rowLabels: new Map([...names, ...rowLabels]),
     voice: contentFixVoiceSchema.nullable().parse(fix.voice),
   }));
 }

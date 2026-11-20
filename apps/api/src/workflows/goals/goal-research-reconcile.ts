@@ -1,5 +1,6 @@
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { mergeAddedTwins, saveAddedSkills } from "./goal-added-skills";
@@ -9,7 +10,7 @@ import { outlinePlanAhead } from "./goal-outlines";
 import { type GoalRunContext } from "./goal-run-context";
 import { preparePlacementItems } from "./placement-items";
 import { checkGraphCoverageStep, saveExamSkillGraphStep } from "./steps/goal-curriculum-steps";
-import { followNoticeStep } from "./steps/goal-plan-steps";
+import { followNoticeStep, linkGoalCourseEditionStep } from "./steps/goal-plan-steps";
 import {
   claimNoticeLandingStep,
   endNoticeWaitStep,
@@ -106,6 +107,10 @@ async function followNotice({
     platform: context.analytics.platform ?? null,
     provenance: curriculum.provenance,
   });
+
+  if (landed) {
+    await deliverCourseContent(linkGoalCourseEditionStep(goalId));
+  }
 
   await endNoticeWait(goalId);
   return landed;

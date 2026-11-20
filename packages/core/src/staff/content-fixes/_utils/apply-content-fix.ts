@@ -51,9 +51,15 @@ export async function lockFixRows(
   tx: TransactionClient,
   { changes, unit }: { changes: readonly StoredChange[]; unit: FixUnit },
 ): Promise<void> {
-  await tx.$queryRaw`SELECT id FROM ${UNIT_TABLES[unit.kind]} WHERE id = ${unit.id}::uuid FOR NO KEY UPDATE`;
+  if (unit.kind !== "course") {
+    await tx.$queryRaw`SELECT id FROM ${UNIT_TABLES[unit.kind]} WHERE id = ${unit.id}::uuid FOR NO KEY UPDATE`;
+  }
 
-  const rows = changes.map((change) => findStoredHandler(change).lockRows(change));
+  const rows = [
+    ...changes.map((change) => findStoredHandler(change).lockRows(change)),
+    ...(unit.kind === "course" ? [{ ids: [unit.id], table: UNIT_TABLES.course }] : []),
+  ];
+
   const tables = [...new Map(rows.map((row) => [row.table.sql, row.table])).entries()];
 
   for (const [name, table] of tables.toSorted(([left], [right]) => left.localeCompare(right))) {
