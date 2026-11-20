@@ -7,7 +7,7 @@ import { createContext, use } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type ContentWriting } from "../generation/writing-wait";
 import { type MomentCeremony } from "../session/moment-ceremony";
-import { type DraftSaveOutcome, type DraftSaveStatus } from "./draft-save-queue";
+import { type DraftSaveStatus } from "./draft-save-queue";
 import { type SectionMoves } from "./section-moves";
 
 export type MockPlanOfferOutcome =
@@ -21,7 +21,7 @@ export type MockPlayOutcome = { played: number; status: "counted" | "usedUp" };
 /** Each resolves to null when it didn't go through. */
 export type MockActions = {
   adapt: (offer: MockPlanOffer) => Promise<MockPlanOfferOutcome | null>;
-  answer: (input: MockAnswerInput) => Promise<DraftSaveOutcome>;
+  answer: (input: MockAnswerInput) => Promise<boolean | null>;
   endBreak: () => Promise<MockView | null>;
   finish: () => Promise<MockView | null>;
   gradeEssays: () => Promise<MockEssayGrading | null>;

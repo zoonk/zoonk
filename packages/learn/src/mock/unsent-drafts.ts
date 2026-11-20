@@ -11,14 +11,14 @@ const unsentMockDraftSchema = z.object({
   itemId: z.string().min(1),
 });
 
-const storedMockDraftSchema = z.object({ draft: unsentMockDraftSchema, savedAt: z.int().min(0) });
+const storedMockDraftSchema = z.object({ draft: unsentMockDraftSchema, keptAt: z.int().min(0) });
 
-let lastSavedAt = 0;
+let lastKeptAt = 0;
 
-function nextSavedAt(): number {
+function nextKeptAt(): number {
   const now = Date.now();
-  lastSavedAt = now > lastSavedAt ? now : lastSavedAt + 1;
-  return lastSavedAt;
+  lastKeptAt = now > lastKeptAt ? now : lastKeptAt + 1;
+  return lastKeptAt;
 }
 
 function getPrefix(blockId: string): string {
@@ -29,9 +29,8 @@ function getDraftKey({ blockId, itemId }: { blockId: string; itemId: string }): 
   return `${getPrefix(blockId)}${itemId}`;
 }
 
-function isSameDraft(first: MockDraft, second: MockDraft | undefined): boolean {
+function isSameDraft(first: MockDraft, second: MockDraft): boolean {
   return (
-    second !== undefined &&
     first.durationMs === second.durationMs &&
     first.flagged === second.flagged &&
     JSON.stringify(first.answer) === JSON.stringify(second.answer)
@@ -42,9 +41,9 @@ function isSameDraft(first: MockDraft, second: MockDraft | undefined): boolean {
 export function keepUnsentMockDraft({ blockId, draft }: { blockId: string; draft: MockDraft }) {
   const key = getDraftKey({ blockId, itemId: draft.itemId });
   const existing = storedMockDraftSchema.safeParse(deviceStorage.getJson(key));
-  const savedAt = existing.success ? existing.data.savedAt : nextSavedAt();
+  const keptAt = existing.success ? existing.data.keptAt : nextKeptAt();
 
-  deviceStorage.set(key, JSON.stringify({ draft, savedAt }));
+  deviceStorage.set(key, JSON.stringify({ draft, keptAt }));
 }
 
 /** Removes the question's entry only if storage still holds this exact version. */
@@ -57,71 +56,33 @@ export function dropUnsentMockDraft({ blockId, draft }: { blockId: string; draft
   }
 }
 
-function clearUnsentMockDrafts(blockId: string) {
-  for (const key of deviceStorage.keys(getPrefix(blockId))) {
-    deviceStorage.remove(key);
-  }
-}
-
-/**
- * Returns unsent drafts for the current section (oldest first) that differ from `storedDrafts`,
- * removing only already-stored copies for this section. Terminal states clear the mock's keys.
- */
+/** The current section's kept answers in the order first kept; a finished mock keeps none. */
 export function restoreUnsentMockDrafts({
   blockId,
-  storedDrafts,
   view,
 }: {
   blockId: string;
-  storedDrafts?: Readonly<Record<string, MockDraft>>;
   view: MockView;
 }): MockDraft[] {
+  const keys = deviceStorage.keys(getPrefix(blockId));
+
   if (view.status === "finished" || view.status === "expired") {
-    clearUnsentMockDrafts(blockId);
+    keys.forEach((key) => deviceStorage.remove(key));
     return [];
   }
 
-  if (view.status !== "running" || !view.current) {
-    return [];
-  }
+  const questions = view.current?.questions.map((question) => question.itemId) ?? [];
 
-  const questionIndex = new Map(
-    view.current.questions.map((question, index) => [question.itemId, index]),
-  );
-
-  const storedByItem = storedDrafts
-    ? new Map(Object.entries(storedDrafts))
-    : new Map(view.current.drafts.map((draft) => [draft.itemId, draft]));
-
-  const entries = deviceStorage
-    .keys(getPrefix(blockId))
+  return keys
     .flatMap((key) => {
       const parsed = storedMockDraftSchema.safeParse(deviceStorage.getJson(key));
-      return parsed.success ? [{ ...parsed.data, key }] : [];
+      return parsed.success && questions.includes(parsed.data.draft.itemId) ? [parsed.data] : [];
     })
-    .toSorted(
-      (first, second) =>
-        first.savedAt - second.savedAt ||
-        (questionIndex.get(first.draft.itemId) ?? 0) -
-          (questionIndex.get(second.draft.itemId) ?? 0),
-    );
-
-  const kept: MockDraft[] = [];
-
-  for (const entry of entries) {
-    if (questionIndex.has(entry.draft.itemId)) {
-      if (isSameDraft(entry.draft, storedByItem.get(entry.draft.itemId))) {
-        deviceStorage.remove(entry.key);
-      } else {
-        kept.push(entry.draft);
-      }
-    }
-  }
-
-  return kept;
+    .toSorted((first, second) => first.keptAt - second.keptAt)
+    .map((entry) => entry.draft);
 }
 
-/** Drops entries belonging to a section that was just handed in, or clears a finished/expired mock. */
+/** A handed-in section's answers can't be saved again. */
 export function clearHandedInMockDrafts({
   blockId,
   next,
@@ -131,67 +92,11 @@ export function clearHandedInMockDrafts({
   next: MockView;
   previous: MockView;
 }) {
-  if (next.status === "finished" || next.status === "expired") {
-    clearUnsentMockDrafts(blockId);
+  if (previous.current?.section === next.current?.section) {
     return;
   }
 
   for (const question of previous.current?.questions ?? []) {
     deviceStorage.remove(getDraftKey({ blockId, itemId: question.itemId }));
   }
-}
-
-export type ForwardOnlyKeptRecovery = { changed: readonly number[]; reached: number };
-
-/**
- * Computes the furthest reached question and review-change positions consumed by replaying `kept`
- * in order for a forward-only section, matching `judgeForwardOnlySave`.
- */
-export function getForwardOnlyKeptRecovery({
-  kept,
-  view,
-}: {
-  kept: readonly MockDraft[];
-  view: MockView;
-}): ForwardOnlyKeptRecovery {
-  const navigation = view.sections.find((section) => section.status === "current")?.navigation;
-
-  if (!navigation?.forwardOnly || !view.current) {
-    return { changed: [], reached: -1 };
-  }
-
-  const questions = view.current.questions;
-  const questionIndex = new Map(questions.map((question, index) => [question.itemId, index]));
-  const serverDrafts = new Map(view.current.drafts.map((draft) => [draft.itemId, draft]));
-
-  let simulatedReached = Math.max(
-    -1,
-    ...view.current.drafts.map((draft) => questionIndex.get(draft.itemId) ?? -1),
-  );
-
-  let reached = -1;
-  const changed: number[] = [];
-
-  for (const draft of kept) {
-    const index = questionIndex.get(draft.itemId);
-
-    if (index !== undefined) {
-      reached = Math.max(reached, index);
-
-      if (index >= simulatedReached) {
-        simulatedReached = index;
-      } else if (simulatedReached === questions.length - 1) {
-        const storedAnswer = serverDrafts.get(draft.itemId)?.answer ?? null;
-
-        if (
-          JSON.stringify(storedAnswer) !== JSON.stringify(draft.answer) &&
-          !changed.includes(index)
-        ) {
-          changed.push(index);
-        }
-      }
-    }
-  }
-
-  return { changed, reached };
 }

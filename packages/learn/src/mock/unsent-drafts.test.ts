@@ -4,7 +4,6 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   clearHandedInMockDrafts,
   dropUnsentMockDraft,
-  getForwardOnlyKeptRecovery,
   keepUnsentMockDraft,
   restoreUnsentMockDrafts,
 } from "./unsent-drafts";
@@ -29,18 +28,19 @@ function createMemoryStorage(): Storage {
 }
 
 function makeView({
-  drafts = [],
   questionIds = ["q1", "q2"],
+  section = 0,
   status = "running",
-}: { drafts?: MockDraft[]; questionIds?: string[]; status?: MockView["status"] } = {}): MockView {
+}: { questionIds?: string[]; section?: number; status?: MockView["status"] } = {}): MockView {
   return {
     blockId: "mock-1",
     current:
       status === "running"
         ? {
+            changedItemIds: [],
             changesLeft: null,
             deadline: "2030-01-01T00:00:00.000Z",
-            drafts,
+            drafts: [],
             kind: null,
             plays: [],
             questions: questionIds.map((itemId, index) => ({
@@ -60,7 +60,7 @@ function makeView({
               visual: null,
             })),
             resume: 0,
-            section: 0,
+            section,
           }
         : null,
     status,
@@ -151,166 +151,41 @@ describe("unsent mock drafts", () => {
     expect(globalThis.localStorage).toHaveLength(0);
   });
 
-  it("preserves another section's drafts while dropping already-stored and handed-in entries", () => {
-    const stored: MockDraft = {
-      answer: { selectedIndex: 0 },
-      durationMs: 1200,
-      flagged: false,
-      itemId: "q1",
-    };
-
-    const unsent: MockDraft = {
+  it("restores only the current section's answers and clears a section once it's handed in", () => {
+    const first: MockDraft = {
       answer: { selectedIndex: 1 },
       durationMs: 3000,
       flagged: true,
-      itemId: "q2",
+      itemId: "q1",
     };
 
-    const nextSection: MockDraft = {
+    const next: MockDraft = {
       answer: { selectedIndex: 2 },
       durationMs: 500,
       flagged: false,
       itemId: "q-next",
     };
 
-    keepUnsentMockDraft({ blockId: "mock-1", draft: stored });
-    keepUnsentMockDraft({ blockId: "mock-1", draft: unsent });
-    keepUnsentMockDraft({ blockId: "mock-1", draft: nextSection });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: first });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: next });
 
-    // An older tab on section 1 restores only section 1 and preserves tab B's section 2 draft.
-    const section1 = makeView({ drafts: [stored], questionIds: ["q1", "q2"] });
-    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: section1 })).toStrictEqual([unsent]);
-    expect(globalThis.localStorage.getItem("mock:mock-1:q1")).toBeNull();
-    expect(globalThis.localStorage.getItem("mock:mock-1:q-next")).not.toBeNull();
+    const section1 = makeView({ questionIds: ["q1", "q2"] });
+    const section2 = makeView({ questionIds: ["q-next"], section: 1 });
 
-    // Reverting back to the opening draft offline stays unsent once a newer draft was stored.
-    const reverted: MockDraft = {
-      answer: { text: "Paris" },
-      durationMs: 0,
-      flagged: false,
-      itemId: "q1",
-    };
+    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: section1 })).toStrictEqual([first]);
 
-    const acknowledged: MockDraft = {
-      answer: { text: "Lyon" },
-      durationMs: 0,
-      flagged: false,
-      itemId: "q1",
-    };
+    clearHandedInMockDrafts({ blockId: "mock-1", next: section1, previous: section1 });
+    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: section1 })).toStrictEqual([first]);
 
-    keepUnsentMockDraft({ blockId: "mock-1", draft: reverted });
-
-    expect(
-      restoreUnsentMockDrafts({
-        blockId: "mock-1",
-        storedDrafts: { q1: acknowledged },
-        view: makeView({ drafts: [reverted], questionIds: ["q1", "q2"] }),
-      }),
-    ).toStrictEqual([unsent, reverted]);
-
-    // Handing in section 1 removes section 1's keys while keeping section 2's unsent draft.
-    const section2 = makeView({ questionIds: ["q-next"] });
     clearHandedInMockDrafts({ blockId: "mock-1", next: section2, previous: section1 });
-
-    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: section2 })).toStrictEqual([
-      nextSection,
-    ]);
+    expect(globalThis.localStorage.getItem("mock:mock-1:q1")).toBeNull();
+    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: section2 })).toStrictEqual([next]);
 
     expect(
       restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView({ status: "expired" }) }),
     ).toStrictEqual([]);
 
     expect(globalThis.localStorage).toHaveLength(0);
-  });
-
-  it("recovers forward-only reached position and review changes without over-counting", () => {
-    const q1: MockDraft = {
-      answer: { selectedIndex: 0 },
-      durationMs: 1000,
-      flagged: false,
-      itemId: "q1",
-    };
-
-    const q2: MockDraft = {
-      answer: { selectedIndex: 0 },
-      durationMs: 1000,
-      flagged: false,
-      itemId: "q2",
-    };
-
-    const q3: MockDraft = {
-      answer: { selectedIndex: 0 },
-      durationMs: 1000,
-      flagged: false,
-      itemId: "q3",
-    };
-
-    const forwardSection = {
-      breakAfterMinutes: null,
-      essays: 0,
-      index: 0,
-      minutes: 30,
-      name: "Part 1",
-      navigation: { answerChanges: 1, forwardOnly: true, itemSeconds: null, mustAnswer: false },
-      questions: 3,
-      status: "current" as const,
-      tools: null,
-    };
-
-    const view = {
-      ...makeView({ questionIds: ["q1", "q2", "q3"] }),
-      sections: [forwardSection],
-    } as unknown as MockView;
-
-    // Answering q1 -> q2 -> q3 offline consumes no review changes.
-    expect(getForwardOnlyKeptRecovery({ kept: [q1, q2, q3], view })).toStrictEqual({
-      changed: [],
-      reached: 2,
-    });
-
-    // Using a review change offline while already in review marks that question as changed.
-    const reviewView = {
-      ...makeView({ drafts: [q1, q2, q3], questionIds: ["q1", "q2", "q3"] }),
-      sections: [forwardSection],
-    } as unknown as MockView;
-
-    expect(
-      getForwardOnlyKeptRecovery({
-        kept: [{ ...q1, answer: { selectedIndex: 1 } }],
-        view: reviewView,
-      }),
-    ).toStrictEqual({ changed: [0], reached: 0 });
-
-    // Leaving a reviewed question without changing its answer does not spend a review change.
-    expect(
-      getForwardOnlyKeptRecovery({
-        kept: [{ ...q1, durationMs: 5000, flagged: true }],
-        view: reviewView,
-      }),
-    ).toStrictEqual({ changed: [], reached: 0 });
-
-    // Finishing q3 offline and then changing q1 in review recovers both reached and changed.
-    const partialView = {
-      ...makeView({ drafts: [q1, q2], questionIds: ["q1", "q2", "q3"] }),
-      sections: [forwardSection],
-    } as unknown as MockView;
-
-    expect(
-      getForwardOnlyKeptRecovery({
-        kept: [q3, { ...q1, answer: { selectedIndex: 1 } }],
-        view: partialView,
-      }),
-    ).toStrictEqual({ changed: [0], reached: 2 });
-
-    const freeView = {
-      ...view,
-      sections: [{ ...forwardSection, navigation: null }],
-    } as unknown as MockView;
-
-    expect(getForwardOnlyKeptRecovery({ kept: [q2], view: freeView })).toStrictEqual({
-      changed: [],
-      reached: -1,
-    });
   });
 
   it("preserves original enqueue order when reviewing earlier forward-only questions offline", () => {
@@ -349,8 +224,6 @@ describe("unsent mock drafts", () => {
 
     expect(restored.map((draft) => draft.itemId)).toStrictEqual(["q1", "q2", "q3"]);
 
-    // When q1 and q2 were already saved on the server and dropped, an offline q3 followed by a
-    // review change on q1 replays q3 first so the section reaches review before q1 is changed.
     dropUnsentMockDraft({ blockId: "mock-1", draft: { ...q1, durationMs: 2500 } });
     dropUnsentMockDraft({ blockId: "mock-1", draft: { ...q2, durationMs: 3000 } });
 
@@ -361,7 +234,7 @@ describe("unsent mock drafts", () => {
 
     const afterReviewChange = restoreUnsentMockDrafts({
       blockId: "mock-1",
-      view: makeView({ drafts: [q1, q2], questionIds: ["q1", "q2", "q3"] }),
+      view: makeView({ questionIds: ["q1", "q2", "q3"] }),
     });
 
     expect(afterReviewChange.map((draft) => draft.itemId)).toStrictEqual(["q3", "q1"]);

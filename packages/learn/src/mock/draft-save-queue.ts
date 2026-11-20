@@ -1,9 +1,6 @@
 /** `refused` holds until every refused question's answer is stored. */
 export type DraftSaveStatus = "refused" | "retrying" | "saved" | "saving";
 
-/** What one save attempt came to; `stopped` when the session ended or changed. */
-export type DraftSaveOutcome = "refused" | "saved" | "stopped";
-
 const FIRST_RETRY_MS = 1000;
 const LONGEST_RETRY_MS = 15_000;
 const RETRY_BACKOFF = 2;
@@ -11,29 +8,6 @@ const RETRY_BACKOFF = 2;
 function getRetryDelay(attempt: number): number {
   return Math.min(FIRST_RETRY_MS * RETRY_BACKOFF ** attempt, LONGEST_RETRY_MS);
 }
-
-function enqueueDraft<TDraft>(waiting: TDraft[], draft: TDraft, keyOf: (draft: TDraft) => string) {
-  const key = keyOf(draft);
-  const index = waiting.findIndex((other) => keyOf(other) === key);
-
-  if (index === -1) {
-    waiting.push(draft);
-  } else {
-    waiting[index] = draft;
-  }
-}
-
-type DraftSaveQueueOptions<TDraft> = {
-  keyOf: (draft: TDraft) => string;
-  /** A refused answer, or one that didn't get through; it stays failed until it's stored. */
-  onFailed: (draft: TDraft) => void;
-  /** A permanently refused answer for this mock (locked, time up, or old section). */
-  onRefused?: (draft: TDraft) => void;
-  onStatus: (status: DraftSaveStatus) => void;
-  onStored: (draft: TDraft) => void;
-  /** `saved` once stored, `refused` when permanently rejected, `stopped` on session loss; rejects offline. */
-  save: (draft: TDraft) => Promise<DraftSaveOutcome>;
-};
 
 /**
  * Sends answers in order, so an older answer never lands after a newer one, and retries one that
@@ -46,22 +20,30 @@ export function createDraftSaveQueue<TDraft>({
   onStatus,
   onStored,
   save,
-}: DraftSaveQueueOptions<TDraft>) {
+}: {
+  keyOf: (draft: TDraft) => string;
+  /** A refused answer, or one that didn't get through; it stays failed until it's stored. */
+  onFailed: (draft: TDraft) => void;
+  onRefused: (draft: TDraft) => void;
+  onStatus: (status: DraftSaveStatus) => void;
+  onStored: (draft: TDraft) => void;
+  /** True once stored, false when refused; null or a rejection when it didn't get through. */
+  save: (draft: TDraft) => Promise<boolean | null>;
+}) {
   const waiting: TDraft[] = [];
-  const idleWaiters: ((flushed: boolean) => void)[] = [];
-  let sending: TDraft | null = null;
+  const idleWaiters: (() => void)[] = [];
+  let sending = false;
   let attempt = 0;
   const refused = new Set<string>();
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
   let stopped = false;
-  let generation = 0;
 
   function getStatus(): DraftSaveStatus {
     if (retryTimer) {
       return "retrying";
     }
 
-    if (sending !== null || waiting.length > 0) {
+    if (sending || waiting.length > 0) {
       return "saving";
     }
 
@@ -69,18 +51,14 @@ export function createDraftSaveQueue<TDraft>({
   }
 
   function isBusy() {
-    return sending !== null || waiting.length > 0;
-  }
-
-  function resolveIdle(flushed: boolean) {
-    idleWaiters.splice(0).forEach((resolve) => resolve(flushed));
+    return sending || waiting.length > 0;
   }
 
   function settle() {
     onStatus(getStatus());
 
     if (!isBusy()) {
-      resolveIdle(!stopped);
+      idleWaiters.splice(0).forEach((resolve) => resolve());
     }
   }
 
@@ -102,87 +80,68 @@ export function createDraftSaveQueue<TDraft>({
     }, delay);
   }
 
-  function halt() {
-    stopped = true;
-    generation += 1;
+  async function sendNext(): Promise<void> {
+    const draft = waiting.shift();
 
-    if (retryTimer) {
-      clearTimeout(retryTimer);
-      retryTimer = null;
+    if (stopped || sending || retryTimer || draft === undefined) {
+      if (draft !== undefined) {
+        waiting.unshift(draft);
+      }
+
+      settle();
+      return;
     }
 
-    waiting.length = 0;
-    sending = null;
-    attempt = 0;
-    resolveIdle(false);
-  }
+    sending = true;
+    settle();
 
-  function finishAttempt(draft: TDraft, outcome: DraftSaveOutcome | null): boolean {
-    if (outcome !== "saved") {
+    const stored = await save(draft).then(
+      (ok) => ok,
+      () => null,
+    );
+
+    sending = false;
+
+    if (!stored) {
       onFailed(draft);
     }
 
-    if (outcome === "stopped") {
-      halt();
-      onStatus(getStatus());
-      return false;
-    }
-
-    if (outcome === null) {
+    if (stored === null) {
       keepForRetry(draft);
-      scheduleRetry();
+
+      if (!stopped) {
+        scheduleRetry();
+      }
+
       settle();
-      return false;
+      return;
     }
 
     attempt = 0;
 
-    if (outcome === "saved") {
+    if (stored) {
       refused.delete(keyOf(draft));
       onStored(draft);
     } else {
       refused.add(keyOf(draft));
-      onRefused?.(draft);
+      onRefused(draft);
     }
 
-    return true;
-  }
-
-  async function sendNext(): Promise<void> {
-    const draft = stopped || sending !== null || retryTimer ? undefined : waiting.shift();
-
-    if (draft === undefined) {
-      settle();
-      return;
-    }
-
-    const run = generation;
-    sending = draft;
-    settle();
-
-    const outcome = await save(draft).then(
-      (result) => result,
-      () => null,
-    );
-
-    if (stopped || run !== generation) {
-      return;
-    }
-
-    sending = null;
-
-    if (finishAttempt(draft, outcome)) {
-      await sendNext();
-    }
+    await sendNext();
   }
 
   return {
     add(draft: TDraft) {
-      if (stopped) {
-        return;
+      stopped = false;
+      const key = keyOf(draft);
+      const index = waiting.findIndex((other) => keyOf(other) === key);
+
+      if (index === -1) {
+        waiting.push(draft);
+      } else {
+        waiting[index] = draft;
       }
 
-      enqueueDraft(waiting, draft, keyOf);
       void sendNext();
     },
     /** A handed-in section's answers can't be saved again, so its refusals have nothing left to ask. */
@@ -190,14 +149,10 @@ export function createDraftSaveQueue<TDraft>({
       refused.clear();
       settle();
     },
-    /** Resolves true once every answer given so far is stored or refused, or false if stopped first. */
-    idle(): Promise<boolean> {
-      if (stopped) {
-        return Promise.resolve(false);
-      }
-
+    /** Resolves once every answer given so far is stored or refused. */
+    idle(): Promise<void> {
       if (!isBusy()) {
-        return Promise.resolve(true);
+        return Promise.resolve();
       }
 
       return new Promise((resolve) => {
@@ -206,7 +161,7 @@ export function createDraftSaveQueue<TDraft>({
     },
     isBusy,
     retryNow() {
-      if (stopped || !retryTimer) {
+      if (!retryTimer) {
         return;
       }
 
@@ -214,10 +169,14 @@ export function createDraftSaveQueue<TDraft>({
       retryTimer = null;
       void sendNext();
     },
-    start() {
-      stopped = false;
+    /** Holds sends until the next answer, so a closed screen's can't land after a reopened one's. */
+    stop() {
+      stopped = true;
+
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+        retryTimer = null;
+      }
     },
-    /** Ends this screen's retry loop without clearing what the device already kept. */
-    stop: halt,
   };
 }

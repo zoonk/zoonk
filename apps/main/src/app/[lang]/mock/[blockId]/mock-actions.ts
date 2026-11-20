@@ -32,25 +32,20 @@ async function readMock(blockId: string): Promise<MockView | null> {
   return result.status === "ready" ? result.mock : null;
 }
 
-/** Never says whether the answer is right. */
+/** Never says whether the answer is right; null when signed out, so the answer is sent again. */
 export async function saveMockAnswerAction(
   blockId: unknown,
   answer: unknown,
-): Promise<"refused" | "saved" | "stopped"> {
+): Promise<boolean | null> {
   const id = blockIdSchema.safeParse(blockId);
   const input = mockAnswerInputSchema.safeParse(answer);
 
   if (!id.success || !input.success) {
-    return "refused";
+    return false;
   }
 
   const result = await saveMockAnswer({ blockId: id.data, input: input.data });
-
-  if (result.status === "saved") {
-    return "saved";
-  }
-
-  return result.status === "unauthorized" || result.status === "notFound" ? "stopped" : "refused";
+  return result.status === "unauthorized" ? null : result.status === "saved";
 }
 
 export async function submitMockSectionAction(
