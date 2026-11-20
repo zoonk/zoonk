@@ -11,7 +11,7 @@ import {
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../../sessions/_test-utils/session-goal";
-import { listMockPrepWrites } from "./prepare-mock-questions";
+import { checkMockSupply, listMockPrepWrites } from "./prepare-mock-questions";
 import { startMock } from "./start-mock";
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
@@ -121,6 +121,7 @@ describe("a scheduled mock for a learner who took a subject out of the plan", ()
 
     const supply = await listMockPrepWrites({ goalId: goal.id });
     expect(supply.urgentShort).toBe(true);
+    await expect(checkMockSupply(goal.id)).resolves.toBe(false);
 
     expect(supply.writes.flatMap((write) => write.skillIds)).toStrictEqual(
       expect.arrayContaining(retained),

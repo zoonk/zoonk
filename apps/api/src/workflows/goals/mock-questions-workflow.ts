@@ -23,10 +23,12 @@ export function startMockSupply(input: SupplyRequest, ask?: SupplyAsk) {
 }
 
 async function prepareGoalSupply({
+  ask,
   goalId,
   background,
   workflowRunId,
 }: {
+  ask?: SupplyAsk;
   goalId: string;
   background: boolean;
   workflowRunId: string;
@@ -59,7 +61,11 @@ async function prepareGoalSupply({
       await prepareMockRecordings({ goalId, later, recordings: supply.recordings, workflowRunId });
     }
   } finally {
-    await checkMockSupplyStep(goalId);
+    const complete = await checkMockSupplyStep(goalId);
+
+    if (complete && ask) {
+      await endFollowUpStep(ask);
+    }
   }
 }
 
@@ -76,13 +82,10 @@ export async function mockSupplyWorkflow(input: SupplyRequest & { ask?: SupplyAs
   for (const goalId of goals) {
     // oxlint-disable-next-line no-await-in-loop -- Recount after each goal so peers draw on the questions just written.
     await prepareGoalSupply({
+      ask: input.ask,
       background: input.later || goalId !== input.goalId,
       goalId,
       workflowRunId,
     });
-  }
-
-  if (input.ask) {
-    await endFollowUpStep(input.ask);
   }
 }

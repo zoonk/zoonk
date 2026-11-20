@@ -114,6 +114,8 @@ export async function checkMockSupply(goalId: string) {
       level: "warning",
     });
   }
+
+  return !result.urgentShort && result.writes.length === 0 && !result.recordings;
 }
 
 async function getSupplyTargets({

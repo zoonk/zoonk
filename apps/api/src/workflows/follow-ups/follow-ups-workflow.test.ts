@@ -13,6 +13,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { HookConflictError } from "workflow/errors";
+import { mockHookConflict } from "../../../mocks/workflow";
 import { getStartMock } from "../_test-utils/start-mock";
 import { mockSupplyWorkflow } from "../goals/mock-questions-workflow";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
@@ -217,6 +218,11 @@ describe(followUpsWorkflow, () => {
     });
 
     await expect(prisma.followUp.findUnique({ where: { id: owed.id } })).resolves.toBeTruthy();
+    mockHookConflict({ returnValue: Promise.resolve(null), runId: "other-writer" });
+    await expect(mockSupplyWorkflow(supply)).rejects.toThrow("still writing");
+    await expect(prisma.followUp.findUnique({ where: { id: owed.id } })).resolves.toBeTruthy();
+
+    mockHookConflict(null);
     await mockSupplyWorkflow(supply);
     await expect(prisma.followUp.findUnique({ where: { id: owed.id } })).resolves.toBeNull();
   });
