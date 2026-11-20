@@ -12,6 +12,7 @@ import com.zoonk.api.models.StudyBlockOpeningInput
 import com.zoonk.api.models.StudyBlockOpeningTarget
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionSummary
+import com.zoonk.api.models.StudySessionSummaryVisitInput
 import com.zoonk.api.models.StudySessionTimeZone
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -44,6 +45,15 @@ class LiveStudyApi(
         sessionId: UUID,
         timeZone: String,
     ): StudySessionSummary = perform { api.clients(session).studySessions.getStudySessionSummary(sessionId, timeZone) }
+
+    override suspend fun recordSummaryVisit(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        visitId: UUID,
+    ): Boolean =
+        perform {
+            api.clients(session).studySessions.createStudySessionSummaryVisit(sessionId, StudySessionSummaryVisitInput(visitId))
+        }.first
 
     override suspend fun addExtraBlock(
         session: AuthenticatedSession,

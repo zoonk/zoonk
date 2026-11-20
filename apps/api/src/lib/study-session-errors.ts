@@ -17,6 +17,7 @@ export const studySessionErrorCodes = {
   plusRequired: "PLUS_REQUIRED",
   questionsNeeded: "QUESTIONS_NEEDED",
   retryable: "STUDY_DAY_RETRYABLE",
+  summaryNotReady: "STUDY_SUMMARY_NOT_READY",
   unanswered: "UNANSWERED_QUESTIONS",
 } as const;
 
@@ -40,6 +41,7 @@ type StudySessionRefusal =
         | "plusRequired"
         | "questionsNeeded"
         | "retryable"
+        | "summaryNotReady"
         | "unanswered"
         | "unauthorized";
     };
@@ -76,6 +78,10 @@ const REFUSALS = {
   },
   retryable: {
     message: "The plan changed while the day opened. Try again.",
+    status: httpStatus.conflict,
+  },
+  summaryNotReady: {
+    message: "The session has not been stopped and has no finished queue",
     status: httpStatus.conflict,
   },
   unanswered: {

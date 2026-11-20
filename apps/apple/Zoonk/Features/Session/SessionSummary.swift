@@ -1,5 +1,11 @@
 import Foundation
 
+enum SummaryVisitDecision: Equatable, Sendable {
+  case first
+  case seen
+  case notReady
+}
+
 struct SessionSummary: Decodable, Equatable, Sendable {
   struct Belt: Decodable, Equatable, Sendable {
     struct Level: Decodable, Equatable, Sendable {

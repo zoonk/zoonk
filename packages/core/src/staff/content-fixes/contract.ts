@@ -3,13 +3,6 @@ import { z } from "zod";
 import { MAX_BATCH_FIXES } from "./batches";
 import { FIX_HANDLERS } from "./handlers/registry";
 
-/**
- * A review bound on what one fix asks the approver to read, not on what it depends on: a word or
- * sentence carries the row of every lesson that teaches it, so those rows don't count.
- */
-const MAX_CONTENT_FIX_CHANGES = 10;
-const LESSON_ROW_MODELS = new Set(["LessonSentence", "LessonWord"]);
-
 const MAX_REASON_LENGTH = 2000;
 
 const idSchema = uuidSchema();
@@ -29,15 +22,7 @@ const changesSchema = z
       })
       .meta({ description: "{ model, id, <operation> }, as pnpm zoonk staff models lists them" }),
   )
-  .min(1)
-  .refine(
-    (changes) =>
-      changes.filter((change) => !LESSON_ROW_MODELS.has(change.model)).length <=
-      MAX_CONTENT_FIX_CHANGES,
-    {
-      message: `A fix holds up to ${MAX_CONTENT_FIX_CHANGES} changes besides a word's or sentence's lesson rows; split the rest into fixes of a batch.`,
-    },
-  );
+  .min(1);
 
 const batchFixSchema = z.strictObject({
   changes: changesSchema,
@@ -105,6 +90,7 @@ const effectSchema = z.discriminatedUnion("kind", [
   z.object({ id: idSchema, kind: z.literal("itemSetReplaced"), replacementId: idSchema }),
   z.object({ id: idSchema, kind: z.literal("itemSetRestored") }),
   z.object({ chapterId: idSchema, kind: z.literal("mindMapRedrawOwed") }),
+  z.object({ kind: z.literal("planChanged"), lessonId: idSchema }),
   z
     .object({ kind: z.literal("lessonVersion"), lessonId: idSchema })
     .meta({ description: "Learners who open the lesson next get the fixed version" }),

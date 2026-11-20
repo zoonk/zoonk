@@ -507,6 +507,27 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["itemSet.create", "item.create", "item.updateMany"],
     },
   ],
+  "staff/content-fixes/handlers/lesson-plan.ts": [
+    {
+      verdict: "marks",
+      why: "changing the lesson estimate changes plans that schedule it",
+      writes: ["lesson.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/lesson-screens/apply.ts": [
+    {
+      verdict: "marks",
+      why: "adds and restores bank items under the content-fix plan lock",
+      writes: ["item.createMany", "item.updateMany"],
+    },
+    {
+      fields: ["summary"],
+      readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
+      verdict: "excluded",
+      why: "updates the lesson map",
+      writes: ["lesson.update"],
+    },
+  ],
   "staff/content-fixes/handlers/practice.ts": [
     {
       verdict: "marks",
@@ -1746,8 +1767,89 @@ function writeFix({
   return writePlanInputs(async (tx) => {
     await lockFixPlans(tx, changes);
     await lockFixRows(tx, { changes, unit });
-    await applyFixChanges(tx, { changes, context: { fixId: randomUUID(), now: new Date() }, unit });
+
+    await applyFixChanges(tx, {
+      changes,
+      context: { fixId: randomUUID(), media: new Map(), now: new Date() },
+      unit,
+    });
   });
+}
+
+async function lessonEstimateFixCase(): Promise<WriterCase> {
+  const spec = temperatureSpec();
+
+  const lesson = await libraryLessonFixture({
+    contentStatus: "completed",
+    estimatedMinutes: spec.estimatedMinutes,
+    spec,
+  });
+
+  const plan = await planOnLesson(lesson.id);
+
+  const screens = spec.screens.flatMap((screen) =>
+    screen.kind === "workedExample" ? [screen, screen, screen] : [screen],
+  );
+
+  const resolved = await prepareProposedChange(prisma, {
+    id: lesson.id,
+    model: "Lesson",
+    setPlan: { ...spec, screens },
+  });
+
+  if (!resolved.ok) {
+    throw new Error(resolved.problem);
+  }
+
+  const changes = contentFixChangesSchema.parse([resolved.stored]);
+
+  return {
+    expectWritten: async () => {
+      await expect(
+        prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      ).resolves.toMatchObject({ estimatedMinutes: 5 });
+    },
+    plan,
+    root: lessonRoot(lesson.id),
+    write: () => writeFix({ changes, unit: resolved.unit }),
+  };
+}
+
+async function lessonScreenItemFixCase(): Promise<WriterCase> {
+  const { lesson, skill } = await publishedLesson();
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+  const numeric = writtenTemperatureLesson().screens.find((screen) => screen.kind === "mathCheck");
+
+  if (numeric?.kind !== "mathCheck") {
+    throw new Error("Expected a numeric screen");
+  }
+
+  const { context, correctReason, math, question } = numeric;
+
+  const resolved = await prepareProposedChange(prisma, {
+    id: lesson.id,
+    model: "Lesson",
+    setScreens: {
+      screens: [
+        { kind: "check", numeric: { context, correctReason, math, question }, skillId: skill.id },
+      ],
+      version: 1,
+    },
+  });
+
+  if (!resolved.ok) {
+    throw new Error(resolved.problem);
+  }
+
+  const changes = contentFixChangesSchema.parse([resolved.stored]);
+
+  return {
+    expectWritten: () =>
+      expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(1),
+    plan,
+    root: skillRoot(skill.id),
+    write: () => writeFix({ changes, unit: resolved.unit }),
+  };
 }
 
 async function textFixCase(
@@ -2101,6 +2203,8 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
     "restore replaced item": () => itemContentCase("restore"),
   },
   "staff/content-fixes/handlers/item-set.ts": { itemSetReplace: () => sharedFixCase("ItemSet") },
+  "staff/content-fixes/handlers/lesson-plan.ts": { estimate: lessonEstimateFixCase },
+  "staff/content-fixes/handlers/lesson-screens/apply.ts": { numeric: lessonScreenItemFixCase },
   "staff/content-fixes/handlers/practice.ts": {
     "restore item": () => itemFixCase("unretire"),
     "retire item": () => itemFixCase("retire"),

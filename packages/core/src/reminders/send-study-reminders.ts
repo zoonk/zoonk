@@ -5,7 +5,7 @@ import { getTimeZoneOffsetMs } from "@zoonk/utils/time-zone";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { findGoalsWithWork, hasStudiedRecently } from "./_utils/reminder-goals";
+import { findGoalsWithWork, getStudyReminderHold } from "./_utils/reminder-goals";
 import { getReminderPhone } from "./_utils/reminder-phone";
 import { isReminderQuiet } from "./_utils/reminder-quiet";
 import { getReminderWindow } from "./_utils/reminder-window";
@@ -90,11 +90,13 @@ export async function listDueStudyReminders(now: Date): Promise<string[]> {
 async function decideClaim({
   enabledAt,
   now,
+  reminderTime,
   timeZone,
   userId,
 }: {
   enabledAt: Date | null;
   now: Date;
+  reminderTime: Date;
   timeZone: string;
   userId: string;
 }): Promise<"claimed" | "deferred" | "skipped"> {
@@ -104,8 +106,10 @@ async function decideClaim({
     return "skipped";
   }
 
-  if (await hasStudiedRecently({ now, userId })) {
-    return "deferred";
+  const hold = await getStudyReminderHold({ now, reminderTime, userId });
+
+  if (hold) {
+    return hold;
   }
 
   const goals = await findGoalsWithWork({ now, userId });
@@ -143,7 +147,13 @@ export async function claimStudyReminder({
       return unchanged({ status: "notDue" as const });
     }
 
-    const outcome = await decideClaim({ enabledAt: reminder.enabledAt, now, timeZone, userId });
+    const outcome = await decideClaim({
+      enabledAt: reminder.enabledAt,
+      now,
+      reminderTime: window.startsAt,
+      timeZone,
+      userId,
+    });
 
     if (outcome === "deferred") {
       return unchanged({ status: outcome });
@@ -220,15 +230,15 @@ export async function readStudyReminderDelivery({
     return null;
   }
 
-  const [found, goals, studying] = await Promise.all([
+  const [found, goals, hold] = await Promise.all([
     findDestination({ channel, now, userId }),
     findGoalsWithWork({ now, userId }),
-    hasStudiedRecently({ now, userId }),
+    getStudyReminderHold({ now, reminderTime: now, userId }),
   ]);
 
   const [first, ...rest] = goals;
 
-  if (!found || !first || studying) {
+  if (!found || !first || hold) {
     return null;
   }
 

@@ -308,7 +308,7 @@ export function TodayClient({
         startTestOut: (chapterId) =>
           startTestOut({ chapterId, fromSession: true, goalId: today.goal.id }),
         studyEverythingHref: "/plan?focus=everything",
-        summaryHref: sessionHref,
+        summaryHref: getSessionHref({ goalId, limit: null, summary: true }),
       }}
       buddy={data.buddy}
       completedLessons={data.completedLessons}

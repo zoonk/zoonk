@@ -1,11 +1,28 @@
 import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
+import { generateLessonIconImage } from "@zoonk/ai/tasks/icons/image";
+import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
+import { generateLessonImage } from "@zoonk/ai/tasks/images/generate";
+import { generateImageScene } from "@zoonk/ai/tasks/images/scene";
+import { uploadImage } from "@zoonk/core/images/upload";
+import {
+  type ContentFixMediaNeed,
+  clipMediaKey,
+  readContentFixMedia,
+} from "@zoonk/core/staff/content-fixes/media-schema";
 import { prisma } from "@zoonk/db";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  TEST_IMAGE,
+  imageProvenance,
+  passedCheck,
+  sceneFor,
+} from "../images/_test-utils/image-results";
+import { drawnIcon } from "../marks/_test-utils/icon-results";
 import { backgroundTaskWorkflow } from "./background-task-workflow";
 
 const SPEECH_PROVENANCE = {
@@ -19,8 +36,10 @@ const SPEECH_PROVENANCE = {
   usage: {},
 };
 
-/** A proposed fix renaming a word, waiting for the clip of its new text. */
-async function owedWordFix() {
+const clip = { language: "en", model: "Word", text: "rental" } as const;
+const wordClip = { ...clip, key: clipMediaKey(clip), kind: "clip" } as const;
+
+async function owedWordFix(needs: ContentFixMediaNeed[] = [wordClip]) {
   const [organization, proposer] = await Promise.all([
     organizationFixture(),
     userFixture({ role: "admin" }),
@@ -50,41 +69,74 @@ async function owedWordFix() {
         },
       ],
       effects: [],
+      media: needs.map((need) => ({ need, result: null })),
+      mediaOwedAt: new Date(),
       proposerClientId: "test",
       proposerId: proposer.id,
       reason: "Test fix",
       unit: "word",
       unitId: word.id,
-      voiceOwedAt: new Date(),
     },
   });
 
   return { fix, proposer };
 }
 
-function voiceTask({ fixId, userId }: { fixId: string; userId: string }) {
+function mediaTask({ fixId, userId }: { fixId: string; userId: string }) {
   return backgroundTaskWorkflow({
     id: randomUUID(),
     input: { fixId },
     key: fixId,
-    kind: "voiceContentFix",
+    kind: "prepareContentFixMedia",
     revision: 0,
     userId,
   });
 }
 
-describe("voicing a proposed word or sentence fix", () => {
+function storeUploads() {
+  vi.mocked(put).mockImplementation(async (pathname) => ({
+    contentDisposition: "inline",
+    contentType: "application/octet-stream",
+    downloadUrl: `https://blob.test/${pathname}`,
+    etag: "",
+    pathname,
+    url: `https://blob.test/${pathname}`,
+  }));
+}
+
+const picture = { key: "picture", kind: "picture", language: "en", request: "A wax seal" } as const;
+
+function mockPictureCheck(passed: boolean) {
+  vi.mocked(uploadImage).mockImplementation(async ({ fileName }) => ({
+    data: `https://blob.test/${fileName}-${randomUUID()}`,
+    error: null,
+  }));
+
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => new Response(TEST_IMAGE, { headers: { "content-type": "image/webp" } })),
+  );
+
+  vi.mocked(generateImageScene).mockResolvedValue({ data: sceneFor(picture.request) } as never);
+
+  vi.mocked(generateLessonImage).mockResolvedValue({
+    data: { image: { mediaType: "image/webp", uint8Array: TEST_IMAGE } },
+    prompt: "test prompt",
+    provenance: imageProvenance,
+  } as never);
+
+  vi.mocked(checkLessonImage).mockResolvedValue({
+    data: { ...passedCheck.data, passed, problems: passed ? [] : ["wrong object"] },
+  } as never);
+}
+
+describe("preparing media for a proposed content fix", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
   it("stores the clip of the fix's new text on the fix, ready for approval", async () => {
     const { fix, proposer } = await owedWordFix();
 
-    vi.mocked(put).mockImplementation(async (pathname) => ({
-      contentDisposition: "inline",
-      contentType: "audio/mpeg",
-      downloadUrl: `https://blob.test/${pathname}`,
-      etag: "",
-      pathname,
-      url: `https://blob.test/${pathname}`,
-    }));
+    storeUploads();
 
     vi.mocked(generateLanguageAudio).mockResolvedValue({
       data: {
@@ -96,7 +148,7 @@ describe("voicing a proposed word or sentence fix", () => {
       error: null,
     });
 
-    await voiceTask({ fixId: fix.id, userId: proposer.id });
+    await mediaTask({ fixId: fix.id, userId: proposer.id });
 
     expect(vi.mocked(generateLanguageAudio)).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ language: "en", text: "rental" }),
@@ -105,13 +157,17 @@ describe("voicing a proposed word or sentence fix", () => {
     await expect(
       prisma.contentFix.findUniqueOrThrow({ where: { id: fix.id } }),
     ).resolves.toMatchObject({
-      voice: {
-        provenance: { runId: SPEECH_PROVENANCE.runId },
-        status: "voiced",
-        text: "rental",
-        url: expect.stringContaining("blob.test"),
-      },
-      voiceOwedAt: null,
+      media: [
+        {
+          need: wordClip,
+          result: {
+            kind: "clip",
+            provenance: { runId: SPEECH_PROVENANCE.runId },
+            url: expect.stringContaining("blob.test"),
+          },
+        },
+      ],
+      mediaOwedAt: null,
     });
   });
 
@@ -123,10 +179,65 @@ describe("voicing a proposed word or sentence fix", () => {
       error: new Error("Text-to-speech is unavailable"),
     });
 
-    await voiceTask({ fixId: fix.id, userId: proposer.id });
+    await mediaTask({ fixId: fix.id, userId: proposer.id });
 
     await expect(
       prisma.contentFix.findUniqueOrThrow({ where: { id: fix.id } }),
-    ).resolves.toMatchObject({ voice: { status: "failed" }, voiceOwedAt: expect.any(Date) });
+    ).resolves.toMatchObject({ media: [{ result: "failed" }], mediaOwedAt: expect.any(Date) });
+  });
+
+  it("saves a checked picture and a shared idea icon for the reviewer", async () => {
+    const icon = {
+      key: "map:seal",
+      kind: "ideaIcon" as const,
+      need: { description: "A wax seal", name: "wax seal", searchWords: ["wax"] },
+    };
+
+    const { fix, proposer } = await owedWordFix([picture, icon]);
+    mockPictureCheck(true);
+    vi.mocked(generateLessonIconImage).mockResolvedValue(drawnIcon as never);
+
+    await mediaTask({ fixId: fix.id, userId: proposer.id });
+
+    expect(checkLessonImage).toHaveBeenCalledOnce();
+    expect(generateLessonIconImage).toHaveBeenCalledOnce();
+    const stored = await prisma.contentFix.findUniqueOrThrow({ where: { id: fix.id } });
+    const media = readContentFixMedia(stored.media);
+    expect(stored.mediaOwedAt).toBeNull();
+
+    expect(media).toMatchObject([
+      { need: picture, result: { kind: "picture", url: expect.stringContaining("blob.test") } },
+      { need: icon, result: { kind: "ideaIcon", url: expect.stringContaining("blob.test") } },
+    ]);
+
+    const result = media[0]?.result;
+
+    if (!result || result === "failed" || result.kind !== "picture") {
+      throw new Error("Expected a checked picture");
+    }
+
+    await expect(
+      prisma.mediaAsset.findUniqueOrThrow({ where: { id: result.mediaAssetId } }),
+    ).resolves.toMatchObject({ checkOwedAt: null, url: result.url });
+  });
+
+  it("keeps the fix waiting when a picture fails its check", async () => {
+    const { fix, proposer } = await owedWordFix([picture]);
+    mockPictureCheck(false);
+
+    await mediaTask({ fixId: fix.id, userId: proposer.id });
+
+    expect(checkLessonImage).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.contentFix.findUniqueOrThrow({ where: { id: fix.id } }),
+    ).resolves.toMatchObject({
+      media: [{ need: picture, result: "failed" }],
+      mediaOwedAt: expect.any(Date),
+    });
+
+    await expect(
+      prisma.mediaAsset.count({ where: { reuseKey: { startsWith: `image:fix:${fix.id}:` } } }),
+    ).resolves.toBe(0);
   });
 });

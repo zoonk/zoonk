@@ -60,6 +60,15 @@ final class StudySessionStore {
     return resource
   }
 
+  func claimSummaryVisit(sessionID: String, visitID: UUID) async
+    -> MutationResult<SummaryVisitDecision>
+  {
+    await cache.mutate { [api] identity in
+      try await api.claimSummaryVisit(
+        token: identity.bearerToken, sessionID: sessionID, visitID: visitID)
+    }
+  }
+
   func weeklyRecap(goalID: String?) -> Resource<WeeklyRecap> {
     let key = goalID ?? ""
 

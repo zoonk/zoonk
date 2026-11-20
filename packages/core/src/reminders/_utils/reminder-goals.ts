@@ -17,6 +17,7 @@ export type GoalWithWork = {
 };
 
 const RECENT_STUDY_MS = 1_800_000;
+const LESSON_LOOKBACK_MS = 3_600_000;
 
 /**
  * Today's goals that still have work, the active goal first. Reads each goal's day in its own zone,
@@ -98,17 +99,27 @@ export async function findGoalsWithWork({
   );
 }
 
-/** A reminder waits while the learner is studying; the next sweep looks again. */
-export async function hasStudiedRecently({
+export async function getStudyReminderHold({
   now,
+  reminderTime,
   userId,
 }: {
   now: Date;
+  reminderTime: Date;
   userId: string;
-}): Promise<boolean> {
+}): Promise<"deferred" | "skipped" | null> {
   const since = new Date(now.getTime() - RECENT_STUDY_MS);
 
-  const [answer, block] = await Promise.all([
+  const [lesson, answer, block] = await Promise.all([
+    prisma.learningEvent.findFirst({
+      select: { id: true },
+      where: {
+        endedAt: { gte: new Date(reminderTime.getTime() - LESSON_LOOKBACK_MS), lte: now },
+        kind: { in: ["lesson", "review"] },
+        lessonKind: "library",
+        userId,
+      },
+    }),
     prisma.attempt.findFirst({
       select: { id: true },
       where: { answeredAt: { gte: since }, userId },
@@ -122,5 +133,9 @@ export async function hasStudiedRecently({
     }),
   ]);
 
-  return Boolean(answer || block);
+  if (lesson) {
+    return "skipped";
+  }
+
+  return answer || block ? "deferred" : null;
 }

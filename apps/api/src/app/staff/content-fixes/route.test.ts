@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import { cliTokenFixture } from "../../../../../../packages/auth/src/_test-utils/cli-tokens";
 import { staffRequest } from "../_test-utils/requests";
 import { sendStaffAuthorization } from "../_test-utils/staff-authorization";
+import { POST as checkFix } from "./check/route";
 import { POST as proposeFix } from "./route";
 
 async function signIn({ role, scopes }: { role?: "admin"; scopes: string[] }) {
@@ -15,14 +16,16 @@ async function signIn({ role, scopes }: { role?: "admin"; scopes: string[] }) {
   return user;
 }
 
-function renameLesson(lessonId: string) {
-  return proposeFix(
+function renameLesson(lessonId: string, { check = false } = {}) {
+  const submit = check ? checkFix : proposeFix;
+
+  return submit(
     staffRequest({
       body: {
         changes: [{ id: lessonId, model: "Lesson", set: { title: "Adding fractions" } }],
         reason: "The title said subtracting.",
       },
-      path: "/staff/content-fixes",
+      path: check ? "/staff/content-fixes/check" : "/staff/content-fixes",
     }),
   );
 }
@@ -74,6 +77,36 @@ describe("POST /staff/content-fixes", () => {
 
     await expect(response.json()).resolves.toMatchObject({
       error: { message: expect.stringContaining("pnpm zoonk login") },
+    });
+
+    await expect(renameLesson(lesson.id, { check: true })).resolves.toHaveProperty("status", 403);
+  });
+
+  it("returns the prepared changes and effects without a review link for a check", async () => {
+    const lesson = await libraryLessonFixture({ contentStatus: "completed" });
+
+    sendStaffAuthorization();
+    await expect(renameLesson(lesson.id, { check: true })).resolves.toHaveProperty("status", 401);
+
+    await signIn({ role: "admin", scopes: [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE] });
+    const response = await renameLesson(lesson.id, { check: true });
+
+    expect(response.status).toBe(200);
+    const body: unknown = await response.json();
+
+    expect(body).not.toHaveProperty("reviewUrl");
+    expect(body).not.toHaveProperty("batchId");
+
+    expect(body).toMatchObject({
+      fixes: [
+        {
+          changes: [
+            { fields: [{ after: "Adding fractions", before: lesson.title, field: "title" }] },
+          ],
+          effects: expect.arrayContaining([{ id: lesson.id, kind: "slugKept", model: "Lesson" }]),
+          unitId: lesson.id,
+        },
+      ],
     });
   });
 
