@@ -8,6 +8,12 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import systemPrompt from "./check-recall-overlap.prompt.md";
 import { type GeneratedItem } from "./item-schemas";
 
+/**
+ * On 5 labeled cases (17 candidates: rewordings, negations, renamed cases and same-skill questions
+ * that stay new; 3 runs each, 20 Nov 2026), Luna caught every repeat and kept every new question at
+ * $0.35/1k and 5.0 s p50. Haiku 5.5 (9.93, $0.68/1k) once dropped a reversed percentage case, and
+ * Gemini 3.5 Flash Lite (9.87, $0.84/1k) twice dropped a new judicial review question.
+ */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
