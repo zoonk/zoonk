@@ -193,6 +193,17 @@ describe("CGU written exam preparation", () => {
     const skillRow = { userSkill: { skillId: writing.id, userId: user.id } };
     await expect(prisma.learnerSkill.findUnique({ where: skillRow })).resolves.toBeNull();
 
+    vi.setSystemTime(new Date(NOW.getTime() + 2 * DAY_MS));
+
+    const continued = await openWritingDay(goal.id);
+    expect(continued.block.id).toBe(block.id);
+    expect(continued.sessionId).toBe(sessionId);
+
+    await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
+      essay: { draft: { revision: 1, text: TEXT }, writing: { lines: 30, points: 30 } },
+      status: "ready",
+    });
+
     const structure = structuredClone(CGU);
     const task = structure.mock?.sections.find(({ kind }) => kind === "written")?.tasks?.[0];
 
@@ -263,6 +274,53 @@ describe("CGU written exam preparation", () => {
 
     await expect(prisma.learnerSkill.findUnique({ where: skillRow })).resolves.toMatchObject({
       state: "solid",
+    });
+  });
+
+  it("writes a new prompt when the only unseen prompt uses superseded points", async () => {
+    const { blueprint, goal, user, writing } = await setup();
+    useModelFixtures(writing.id);
+
+    const request = {
+      count: 1,
+      goalId: goal.id,
+      taskKey: "short",
+      unit: "answer" as const,
+      userId: user.id,
+    };
+
+    const staleId = getWritingPromptId(crypto.randomUUID(), 0);
+    await writeWritingItem(request, staleId);
+
+    const structure = structuredClone(CGU);
+    const task = structure.mock?.sections.find(({ kind }) => kind === "written")?.tasks?.[0];
+
+    if (!task) {
+      throw new Error("Expected the CGU short task");
+    }
+
+    task.points = 40;
+    await prisma.examBlueprint.update({ data: { structure }, where: { id: blueprint.id } });
+
+    const { block } = await openWritingDay(goal.id);
+
+    await expect(startWriting({ blockId: block.id })).resolves.toMatchObject({
+      status: "needsPrompt",
+    });
+
+    const currentId = getWritingPromptId(crypto.randomUUID(), 0);
+    await writeWritingItem(request, currentId);
+
+    await expect(startWriting({ blockId: block.id })).resolves.toMatchObject({ status: "ready" });
+
+    await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
+      essay: { writing: { points: 40, taskKey: "short" } },
+      status: "ready",
+    });
+
+    await expect(prisma.item.findUnique({ where: { id: staleId } })).resolves.toMatchObject({
+      content: { writing: { points: 30 } },
+      retiredAt: null,
     });
   });
 

@@ -159,6 +159,44 @@ describe(projectWritten, () => {
     expect(result?.parts[0]?.range?.high).toBeCloseTo(70, 8);
   });
 
+  it("names a corrected task as unmeasured when only its earlier criteria have scores", () => {
+    const structure = structuredClone(CGU);
+    const written = structure.mock?.sections.find(({ kind }) => kind === "written");
+    const task = written?.tasks?.find(({ key }) => key === "long");
+    const grading = task?.grading;
+
+    if (!task || !grading) {
+      throw new Error("Expected the long CGU task criterion");
+    }
+
+    task.grading = {
+      ...grading,
+      criteria: grading.criteria.map((criterion) => ({
+        ...criterion,
+        text: "Apply the rule and justify the exception.",
+      })),
+    };
+
+    const samples = [
+      sample({ high: 19, key: "short", low: 17 }),
+      sample({ high: 50, key: "long", low: 45 }),
+    ];
+
+    expect(projectWritten({ objective: OBJECTIVE, samples, structure })).toMatchObject({
+      combined: null,
+      parts: [
+        {
+          range: null,
+          standing: "unmeasured",
+          tasks: [
+            { key: "short", range: { high: 19, low: 17 } },
+            { key: "long", range: null },
+          ],
+        },
+      ],
+    });
+  });
+
   it("excludes disabled rubrics and scoring bases that changed", () => {
     const short = sample({ high: 20, key: "short", low: 15, numericEligible: false });
     const long = sample({ high: 50, key: "long", low: 45 });

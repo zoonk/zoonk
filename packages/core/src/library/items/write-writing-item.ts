@@ -7,6 +7,7 @@ import {
 import { prisma } from "@zoonk/db";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
+import { getWritingTaskBasis } from "../../exams/essays/_utils/writing-task-basis";
 import { writtenItemSchema } from "../../exams/essays/writing-contract";
 import { WRITING_CHARACTERS_PER_LINE } from "../../exams/essays/writing-lines";
 import { type WritingRequest, findWritingPrompts } from "../../exams/essays/writing-supply";
@@ -134,6 +135,7 @@ function promptContent({
           lines: task.lines,
         }),
     points: drill ? null : task.points,
+    ...(drill && { taskBasis: getWritingTaskBasis(task) }),
     taskKey: task.key,
     title: data.title,
     unit: input.unit,

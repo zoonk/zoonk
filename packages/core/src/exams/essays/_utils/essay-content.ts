@@ -6,7 +6,9 @@ export type EssayContent = Extract<
   { format: "essay" }
 >["content"];
 
-export function readEssayContent(item: Item | null): EssayContent | null {
+export function readEssayContent(
+  item: Pick<Item, "content" | "format"> | null,
+): EssayContent | null {
   if (item?.format !== "essay") {
     return null;
   }

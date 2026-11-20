@@ -27,6 +27,7 @@ export const writtenItemSchema = writingPromptSchema.extend({
   aspects: z.array(z.object({ criterionId: z.string(), description: z.string(), points })),
   assessedSkillIds: z.array(uuidSchema()).min(1),
   grading: writtenGradingSchema,
+  taskBasis: z.string().optional(),
 });
 
 export const writingDraftSchema = z

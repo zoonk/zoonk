@@ -31,7 +31,31 @@ const CRITERION = { id: "evidence", name: "Evidence", points: null };
 
 async function setup() {
   const [blueprint, user, skill] = await Promise.all([
-    examBlueprintFixture(),
+    examBlueprintFixture({
+      structure: {
+        formats: [],
+        mock: {
+          adaptive: false,
+          citations: [],
+          order: null,
+          scoring: { description: "", method: "raw" },
+          sections: [
+            {
+              day: null,
+              kind: "written",
+              minutes: TASK.minutes,
+              name: "Written test",
+              questions: 1,
+              tasks: [{ count: 1, description: TASK.title, key: TASK.taskKey, lines: 30 }],
+            },
+          ],
+          timeLimitMinutes: TASK.minutes,
+          totalQuestions: 1,
+        },
+        rules: [],
+        subjects: [],
+      },
+    }),
     userFixture(),
     skillFixture(),
   ]);

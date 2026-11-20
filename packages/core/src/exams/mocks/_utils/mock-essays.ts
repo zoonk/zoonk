@@ -9,10 +9,10 @@ import {
   writtenItemSchema,
 } from "../../essays/writing-contract";
 import { isNumericWritingRubric } from "../../essays/writing-rubric-policy";
+import { loadUnseenWritingPrompts } from "../../essays/writing-supply";
 import { type MockEssayView } from "../mock-view-contract";
 import { type MockEssayCandidate } from "../written-parts";
 import { readMockEssayText } from "./mock-answers";
-import { type loadSkillAreas } from "./mock-candidates";
 import { getEssayItemIds } from "./mock-sections";
 import { type MockSitting } from "./owned-mock";
 
@@ -21,53 +21,17 @@ export async function loadMockEssays({
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "id">;
-  plan?: Parameters<typeof loadSkillAreas>[1];
   userId: string;
 }): Promise<MockEssayCandidate[]> {
   if (!goal.examBlueprintId) {
     return [];
   }
 
-  const scoped = await prisma.goal.findFirst({
-    select: { examBlueprint: { select: { ownerId: true, visibility: true } }, language: true },
-    where: { id: goal.id, userId },
-  });
+  const bank = await loadUnseenWritingPrompts({ goalId: goal.id, tx: prisma, userId });
 
-  if (!scoped?.examBlueprint) {
-    return [];
-  }
-
-  const { examBlueprint, language } = scoped;
-
-  const items = await prisma.item.findMany({
-    orderBy: { id: "asc" },
-    select: { content: true, id: true },
-    where: {
-      attempts: { none: { userId } },
-      examBlueprintId: goal.examBlueprintId,
-      field: null,
-      format: "essay",
-      language,
-      retiredAt: null,
-      setId: null,
-      skill: { ownerId: examBlueprint.ownerId, visibility: examBlueprint.visibility },
-    },
-  });
-
-  const admissions = await prisma.writingAdmission.findMany({
-    select: { itemIds: true },
-    where: { itemIds: { hasSome: items.map((item) => item.id) }, userId },
-  });
-
-  const exposed = new Set(admissions.flatMap((admission) => admission.itemIds));
-
-  return items.flatMap((item) => {
-    const writing = readMockWriting(item);
-
-    return writing?.unit === "answer" && !exposed.has(item.id)
-      ? [{ itemId: item.id, taskKey: writing.taskKey }]
-      : [];
-  });
+  return bank
+    .filter(({ writing }) => writing.unit === "answer")
+    .map(({ id, writing }) => ({ itemId: id, taskKey: writing.taskKey }));
 }
 
 export function readMockWriting(item: Pick<Item, "content">) {
