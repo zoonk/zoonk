@@ -6,6 +6,8 @@ import { isJsonObject } from "@zoonk/utils/json";
 export type StoredScreens = Extract<StoredChange, { op: "setScreens" }>;
 export type ScreenSnapshot = StoredScreens["before"];
 export type SnapshotScreen = ScreenSnapshot["screens"][number];
+type SnapshotVariant = SnapshotScreen["variants"][number];
+type VariantEdit = { after: SnapshotVariant; before: SnapshotVariant };
 
 /** Positions are the ones a reviewer reads: the first screen is 1. */
 export type ScreenRow =
@@ -15,10 +17,12 @@ export type ScreenRow =
   | { position: number; screen: SnapshotScreen; status: "moved"; was: number }
   | {
       answerKey: boolean;
+      baseChanged: boolean;
       before: SnapshotScreen;
       position: number;
       screen: SnapshotScreen;
       status: "changed";
+      variants: VariantEdit[];
       /** Set when the screen also moved among the screens it kept. */
       was: number | null;
     };
@@ -139,7 +143,7 @@ function longestInOrder(indexes: readonly number[]): Set<number> {
   return kept;
 }
 
-function screenChanged({
+function baseScreenChanged({
   after,
   before,
   change,
@@ -156,24 +160,34 @@ function screenChanged({
     !sameScreen({ after, before, change }) ||
     before.sourceId !== after.sourceId ||
     before.sourcePage !== after.sourcePage ||
-    !isDeepStrictEqual(
-      before.variants.map((variant) => variant.content),
-      after.variants.map((variant) => variant.content),
-    ) ||
     (afterIdea === null ? null : (sources[afterIdea] ?? null)) !== ideaIndexOf(before) ||
     Boolean(after.wordId && change.changedWordIds.includes(after.wordId)) ||
     Boolean(after.sentenceId && change.changedSentenceIds.includes(after.sentenceId))
   );
 }
 
-function changesAnswerKey(before: SnapshotScreen, after: SnapshotScreen): boolean {
-  return [
-    { after: after.content, before: before.content },
-    ...after.variants.map((variant, index) => ({
-      after: variant.content,
-      before: before.variants[index]?.content,
-    })),
-  ].some((pair) => listContentValueChanges(pair).some((value) => value.isAnswerKey));
+function editedVariants(before: SnapshotScreen, after: SnapshotScreen): VariantEdit[] {
+  return after.variants.flatMap((variant) => {
+    const previous = before.variants.find(
+      ({ kind, key }) => kind === variant.kind && key === variant.key,
+    );
+
+    return previous && !isDeepStrictEqual(previous.content, variant.content)
+      ? [{ after: variant, before: previous }]
+      : [];
+  });
+}
+
+function changesAnswerKey({
+  before,
+  after,
+}: {
+  before: Pick<SnapshotScreen, "content">;
+  after: Pick<SnapshotScreen, "content">;
+}): boolean {
+  return listContentValueChanges({ after: after.content, before: before.content }).some(
+    (value) => value.isAnswerKey,
+  );
 }
 
 function keptRow({
@@ -193,13 +207,20 @@ function keptRow({
   sources: readonly (number | null)[];
   was: number;
 }): ScreenRow {
-  if (screenChanged({ after: screen, before, change, sources })) {
+  const baseChanged = baseScreenChanged({ after: screen, before, change, sources });
+  const variants = editedVariants(before, screen);
+
+  if (baseChanged || variants.length > 0) {
     return {
-      answerKey: changesAnswerKey(before, screen),
+      answerKey:
+        changesAnswerKey({ after: screen, before }) ||
+        variants.some((edit) => changesAnswerKey(edit)),
+      baseChanged,
       before,
       position,
       screen,
       status: "changed",
+      variants,
       was: anchored ? null : was,
     };
   }

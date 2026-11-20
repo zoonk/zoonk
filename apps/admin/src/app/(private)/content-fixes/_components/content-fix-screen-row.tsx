@@ -1,7 +1,7 @@
 import { textOf } from "@/components/content-words";
 import { ScreenWords, screenKindLabel } from "@/components/screen-words";
 import { StateMark } from "@/components/state-mark";
-import { formatCount } from "@/lib/format";
+import { formatCount, toWords } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
@@ -26,7 +26,7 @@ export type ScreenContext = {
   media: ScreenMedia;
 };
 
-type Context = ScreenContext;
+type ChangedRow = Extract<ScreenRow, { status: "changed" }>;
 
 export const NUMBER_CLASS = "text-muted-foreground font-mono text-xs leading-5 tabular-nums";
 export const ROW_CLASS = "grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-2";
@@ -42,7 +42,6 @@ function vocabularyOf(snapshot: ScreenSnapshot, screen: SnapshotScreen) {
   };
 }
 
-/** One line that tells a folded screen apart from its neighbors. */
 export function screenHeadline({
   ideas,
   screen,
@@ -80,7 +79,7 @@ export function screenHeadline({
   );
 }
 
-function IdeaLine({ context, screen }: { context: Context; screen: SnapshotScreen }) {
+function IdeaLine({ context, screen }: { context: ScreenContext; screen: SnapshotScreen }) {
   const index = ideaIndexOf(screen);
   const idea = index === null ? undefined : context.ideas[index];
 
@@ -101,7 +100,7 @@ function ScreenAttachments({
   proposed,
   screen,
 }: {
-  context: Context;
+  context: ScreenContext;
   proposed?: boolean;
   screen: SnapshotScreen;
 }) {
@@ -143,22 +142,24 @@ function ScreenBody({
   proposed,
   screen,
   snapshot,
+  variant,
 }: {
   className?: string;
-  context: Context;
+  context: ScreenContext;
   proposed?: boolean;
   screen: SnapshotScreen;
   snapshot: ScreenSnapshot;
+  variant?: SnapshotScreen["variants"][number];
 }) {
   return (
     <div className={cn("flex flex-col gap-3 text-sm leading-6", className)}>
       <ScreenWords
-        content={screen.content}
+        content={variant ? variant.content : screen.content}
         kind={screen.kind}
         lang={context.lang}
         {...vocabularyOf(snapshot, screen)}
       />
-      <ScreenAttachments context={context} proposed={proposed} screen={screen} />
+      {!variant && <ScreenAttachments context={context} proposed={proposed} screen={screen} />}
     </div>
   );
 }
@@ -190,29 +191,36 @@ function RowHeader({
   );
 }
 
-function ScreenCard({
+function ScreenComparison({
   context,
-  label,
-  proposed,
-  screen,
-  snapshot,
+  row,
+  variant,
 }: {
-  context: Context;
-  label: string;
-  proposed?: boolean;
-  screen: SnapshotScreen;
-  snapshot: ScreenSnapshot;
+  context: ScreenContext;
+  row: ChangedRow;
+  variant?: ChangedRow["variants"][number];
 }) {
+  const { after, before } = context.change;
+
+  const sides = [
+    { label: "Before", screen: row.before, snapshot: before, variant: variant?.before },
+    {
+      label: "After",
+      proposed: true,
+      screen: row.screen,
+      snapshot: after,
+      variant: variant?.after,
+    },
+  ];
+
   return (
-    <div className="flex min-w-0 flex-col gap-1">
-      <span className="text-muted-foreground text-xs">{label}</span>
-      <ScreenBody
-        className="flex-1 rounded-lg border px-3 py-2"
-        context={context}
-        proposed={proposed}
-        screen={screen}
-        snapshot={snapshot}
-      />
+    <div className="grid gap-3 md:grid-cols-2">
+      {sides.map(({ label, ...body }) => (
+        <div className="flex min-w-0 flex-col gap-1" key={label}>
+          <span className="text-muted-foreground text-xs">{label}</span>
+          <ScreenBody className="flex-1 rounded-lg border px-3 py-2" context={context} {...body} />
+        </div>
+      ))}
     </div>
   );
 }
@@ -245,7 +253,7 @@ export function ShownRow({
   context,
   row,
 }: {
-  context: Context;
+  context: ScreenContext;
   row: Exclude<ScreenRow, { status: "unchanged" }>;
 }) {
   const { after, before } = context.change;
@@ -300,16 +308,15 @@ export function ShownRow({
               Changes the right answer
             </StateMark>
           )}
-          <div className="grid gap-3 md:grid-cols-2">
-            <ScreenCard context={context} label="Before" screen={row.before} snapshot={before} />
-            <ScreenCard
-              context={context}
-              label="After"
-              proposed
-              screen={row.screen}
-              snapshot={after}
-            />
-          </div>
+          {row.baseChanged && <ScreenComparison context={context} row={row} />}
+          {row.variants.map((edit) => (
+            <div className="flex flex-col gap-1" key={edit.after.id}>
+              <p className="text-muted-foreground text-xs leading-5 font-medium">
+                {`${toWords(edit.after.kind)} version${FACT_SEPARATOR}${edit.after.key}`}
+              </p>
+              <ScreenComparison context={context} row={row} variant={edit} />
+            </div>
+          ))}
           <IdeaLine context={context} screen={row.screen} />
         </RowFrame>
       );
