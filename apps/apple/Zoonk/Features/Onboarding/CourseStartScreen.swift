@@ -6,6 +6,8 @@ struct CourseStartScreen: View {
   var chapterId: String? = nil
 
   @Environment(CourseCatalogStore.self) private var catalog
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(SessionStore.self) private var session
   @State private var level: String?
@@ -25,6 +27,21 @@ struct CourseStartScreen: View {
           .barName(title)
       }
     }
+    .loads(learner.summary, refreshable: false)
+    .task(id: existingGoal?.id) {
+      guard !isStarting, goalID == nil, let goal = existingGoal else { return }
+      if goal.isSettingUp {
+        goalID = goal.id
+      } else if learner.summary.value?.shownGoal?.id == goal.id {
+        router.showRoot(of: .today)
+      } else if case .done = await learner.switchGoal(to: goal.id) {
+        router.showRoot(of: .today)
+      }
+    }
+  }
+
+  private var existingGoal: LearnerGoal? {
+    learner.summary.value?.goals.first { $0.opens(for: courseId) }
   }
 
   /// The course opened; a start in the app's language may use another version of it.

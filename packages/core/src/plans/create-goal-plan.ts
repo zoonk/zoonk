@@ -35,7 +35,10 @@ export type GoalPlanCreation = {
   status: "created" | "notFound" | "unchanged";
 };
 
-async function keepKnownSkills(graph: PlanGraph): Promise<PlanGraph> {
+async function keepKnownSkills({
+  editionCandidate: _previous,
+  ...graph
+}: PlanGraph): Promise<PlanGraph> {
   const known = await prisma.skill.findMany({
     select: { id: true },
     where: { id: { in: graph.skills.map((skill) => skill.skillId) } },
@@ -156,9 +159,15 @@ async function planFromGraph({
     keepKnownSkills(graph),
   ]);
 
+  const firstCoursePlan =
+    isFirst || (graph.editionCandidate && context.state.graph.editionCandidate);
+
   const state = {
     goal: { ...context.state.goal, targetDate: target.targetDate },
-    graph: skills,
+    graph:
+      firstCoursePlan && !followUp && goal.sourceCourseId
+        ? { ...skills, editionCandidate: true }
+        : skills,
     settings: { ...context.state.settings, noticeDate: target.noticeDate },
   };
 

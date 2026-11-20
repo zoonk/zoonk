@@ -362,4 +362,52 @@ describe("shared plan graphs", () => {
       fix: { status: "applied" },
     });
   });
+
+  it("refuses a second edition in the same content language", async () => {
+    const family = await prisma.courseFamily.create({ data: {} });
+
+    const [source, extra] = await Promise.all([
+      courseFixture({ familyId: family.id, isPublished: true }),
+      courseFixture({ isPublished: true, language: "pt-BR" }),
+    ]);
+
+    const changes = [{ id: source.id, linkEdition: extra.id, model: "Course" }];
+    await signInProposer();
+    const pending = await proposeFix({ changes, reason: "Link the new edition." });
+    await courseFixture({ familyId: family.id, isPublished: true, language: "pt" });
+
+    await expect(
+      proposeContentFix({ changes, reason: "Link the new edition." }),
+    ).resolves.toMatchObject({ status: "invalid" });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: pending.id, key })).resolves.toMatchObject({
+      fix: { status: "stale" },
+    });
+  });
+
+  it("detaches an edition without a previous staff proposal", async () => {
+    const family = await prisma.courseFamily.create({ data: {} });
+
+    const [source, edition] = await Promise.all(
+      ["en", "pt"].map((language) =>
+        courseFixture({ familyId: family.id, isPublished: true, language }),
+      ),
+    );
+
+    if (!source || !edition) {
+      throw new Error("Missing editions");
+    }
+
+    await apply([{ id: source.id, model: "Course", unlinkEdition: edition.id }]);
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: edition.id } }),
+    ).resolves.toMatchObject({ familyId: null });
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ familyId: family.id });
+  });
 });

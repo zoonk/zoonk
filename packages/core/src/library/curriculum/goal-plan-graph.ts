@@ -7,9 +7,12 @@ export type PlannedSkillGraph = Omit<GoalSkillGraph, "skills"> & {
 };
 
 export function getSinglePlanCourseId({ skills, optionSkills = [] }: PlanGraph): string | null {
-  const ids = new Set([...skills, ...optionSkills].flatMap((skill) => skill.courseIds ?? []));
-  const [courseId] = ids;
-  return ids.size === 1 ? (courseId ?? null) : null;
+  const all = [...skills, ...optionSkills];
+  const id = all[0]?.courseIds?.[0];
+
+  return id && all.every(({ courseIds }) => courseIds?.length === 1 && courseIds[0] === id)
+    ? id
+    : null;
 }
 
 function mergeTopics(copies: readonly PlanGraphSkill[]): string[] | undefined {

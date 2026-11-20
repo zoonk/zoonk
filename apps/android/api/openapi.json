@@ -34541,6 +34541,10 @@
             "nullable": true,
             "type": "string"
           },
+          "supportsEditions": {
+            "description": "Whether this course can be started in another content language.",
+            "type": "boolean"
+          },
           "editions": {
             "type": "array",
             "items": {
@@ -47137,6 +47141,15 @@
               "$ref": "#/components/schemas/RegionChoice"
             },
             "description": "The countries a language goal can set as `targetRegion`, named in the goal's language and sorted by name; empty for other goals and languages without countries"
+          },
+          "startCourseIds": {
+            "description": "Courses whose start opens this goal, including its source and their editions.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
           },
           "status": {
             "type": "string",

@@ -83,8 +83,15 @@ fun CourseStartScreen(
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val summary by app.learnerSummary.summary.collectShown()
-    val opened by app.catalog.course[route.courseId].collectShown()
-    val startId = opened.value?.course?.startCourseId(currentLocale().language) ?: route.courseId
+    val retryScope = rememberCoroutineScope()
+    if (session is SessionState.SignedIn && summary.value == null) {
+        when (summary) {
+            is LoadState.Failed -> LoadFailedMessage(onRetry = { retryScope.launch { app.learnerSummary.summary.refresh() } })
+            LoadState.Loading, LoadState.Idle -> PageLoading()
+            else -> Unit
+        }
+        if (summary !is LoadState.Empty) return
+    }
     CourseStartScreen(
         route = route,
         catalog = app.catalog,
@@ -93,10 +100,11 @@ fun CourseStartScreen(
         signedIn = session is SessionState.SignedIn,
         existingGoalId =
             summary.value
-                ?.goalOnCourse(startId)
+                ?.goalOnCourse(route.courseId)
                 ?.id
                 ?.toString(),
         navigator = navigator,
+        existingGoalActive = summary.value?.goalOnCourse(route.courseId)?.isActive != false,
     )
 }
 
@@ -110,6 +118,7 @@ internal fun CourseStartScreen(
     signedIn: Boolean,
     existingGoalId: String?,
     navigator: AppNavigator,
+    existingGoalActive: Boolean = true,
 ) {
     val vm = viewModel { CourseStartViewModel(store, createSavedStateHandle()) }
     VisitOf(vm.visit)
@@ -131,7 +140,7 @@ internal fun CourseStartScreen(
     if (started != null) {
         LaunchedEffect(started) { openGoal(started.goalId, started.inSetup) }
     } else if (existingGoalId != null && !vm.isStarting) {
-        LaunchedEffect(existingGoalId) { openGoal(existingGoalId, store.inSetup(existingGoalId)) }
+        LaunchedEffect(existingGoalId) { openGoal(existingGoalId, !existingGoalActive || store.inSetup(existingGoalId)) }
     }
 
     PageScaffold(

@@ -24,6 +24,7 @@ export type LearnerSummaryGoal = GoalCountryFields & {
   displayName: string;
   /** Set only while the goal follows its course, so that course's page offers to continue it. */
   courseId: string | null;
+  startCourseIds?: string[];
   /** The chapter of the goal's next lesson in that course, so its page marks it; null until it's written. */
   courseChapterId: string | null;
   /** The level of the goal's next lesson in that course, so its page opens there; null with no course. */

@@ -75,7 +75,6 @@ const CORE_DETAILS_KEYS: ReadonlySet<string> = new Set([
   "contentCountrySource",
   "countryDependent",
   "courseStart",
-  "courseStartSourceId",
   "focusTest",
   "levelTest",
   "noticeFormats",

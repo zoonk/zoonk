@@ -104,6 +104,7 @@ async function createPlanAndOutlines({
   const { graph, provenance } = built;
   const goalId = inputs.goal.id;
   const { courseIdsByKey, idsByKey } = await saved;
+  const initialCourseStart = Boolean(inputs.sourceCourse && !inputs.hasPlanGraph && !followUp);
 
   const setupTasks = await retryPlanConflicts(createGoalPlanStep, {
     courseIdsByKey,
@@ -111,12 +112,18 @@ async function createPlanAndOutlines({
     goalId,
     graph,
     idsByKey,
+    initialCourseStart,
     platform: context.analytics.platform ?? null,
     provenance,
     waitsForNotice,
   });
 
-  await deliverCourseContent(linkGoalCourseEditionStep(goalId));
+  const [primary] = orderGoalCourses(graph);
+  const editionId = primary && courseIdsByKey[primary.key];
+
+  if (initialCourseStart && editionId) {
+    await deliverCourseContent(linkGoalCourseEditionStep(editionId));
+  }
 
   if (!reused) {
     await saveExamSkillGraphStep({ courseIdsByKey, graph, idsByKey, inputs, provenance, scope });
@@ -184,6 +191,7 @@ function saveBuiltGraph({
     : findGoalCourses({
         ...context,
         courses: orderGoalCourses(graph),
+        examCourseStart: Boolean(inputs.sourceCourse && goal.kind === "exam"),
         goal,
         product: inputs.product,
         provenance,

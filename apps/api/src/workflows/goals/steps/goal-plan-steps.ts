@@ -68,17 +68,23 @@ function toGraphPlan({
 
 export async function createGoalPlanStep({
   followUp,
+  initialCourseStart,
   waitsForNotice,
   ...input
-}: GraphPlanInput & { followUp?: GoalRebuildFollowUp; waitsForNotice: boolean }): Promise<
-  PlanStepOutcome<PlanSetupTask[]>
-> {
+}: GraphPlanInput & {
+  followUp?: GoalRebuildFollowUp;
+  initialCourseStart?: boolean;
+  waitsForNotice: boolean;
+}): Promise<PlanStepOutcome<PlanSetupTask[]>> {
   "use step";
 
   return catchPlanConflict(async () => {
+    const plan = toGraphPlan(input);
+
     const { setupTasks, status } = await createGoalPlan({
-      ...toGraphPlan(input),
+      ...plan,
       followUp,
+      graph: initialCourseStart ? { ...plan.graph, editionCandidate: true } : plan.graph,
       waitsForNotice,
     });
 
@@ -112,10 +118,10 @@ export async function followNoticeStep(input: GraphPlanInput): Promise<PlanStepO
   });
 }
 
-export async function linkGoalCourseEditionStep(goalId: string) {
+export async function linkGoalCourseEditionStep(courseId: string) {
   "use step";
 
-  return collectCourseContentTags(() => linkResolvedCourseEdition({ goalId }));
+  return collectCourseContentTags(() => linkResolvedCourseEdition({ courseId }));
 }
 
 export async function runPlanSetupTaskStep(

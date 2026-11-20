@@ -21,7 +21,7 @@ async function getLocalizedCourseGoalName({
   graph: PlanGraph;
   tx: TransactionClient;
 }) {
-  const sourceId = getString(goal.details, "courseStartSourceId");
+  const sourceId = goal.sourceCourseId;
 
   if (
     !sourceId ||

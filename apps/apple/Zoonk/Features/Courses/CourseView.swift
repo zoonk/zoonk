@@ -104,7 +104,7 @@ private struct CourseLandingList: View {
   /// The learner's goal that follows this course. Its page offers "Continue your plan" then, since
   /// starting it again would only lead back to that goal.
   private var goal: LearnerGoal? {
-    learner.summary.value?.goals.first { $0.courseID == detail.course.id }
+    learner.summary.value?.goals.first { $0.opens(for: detail.course.id) }
   }
 
   private var outlineLead: String? {

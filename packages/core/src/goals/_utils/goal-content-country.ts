@@ -61,7 +61,7 @@ export async function resolveNewGoalCountry({
   source: CountrySource;
 }> {
   if (draft.kind !== "learn") {
-    return { contentCountry: null, countryDependent: null, source: "default" };
+    return { contentCountry: courseCountry ?? null, countryDependent: null, source: "default" };
   }
 
   if (courseCountry !== undefined) {

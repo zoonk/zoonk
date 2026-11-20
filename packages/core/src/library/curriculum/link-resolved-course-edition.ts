@@ -1,113 +1,94 @@
 import "server-only";
-import { AnyNull, type TransactionClient, prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
-import { isUuid } from "@zoonk/utils/uuid";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";
-import { getCourseCacheTag } from "../../cache/tags";
+import { COURSE_LIST_CACHE_TAG, getCourseCacheTag } from "../../cache/tags";
 import {
-  type CourseEditionPair,
   courseContentLanguage,
   getCourseEditionProblem,
   joinCourseEditionFamily,
   readCourseEditionPair,
 } from "../../courses/_utils/course-edition-family";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { getContentCountryScope } from "../content-country";
 import { getSinglePlanCourseId } from "./goal-plan-graph";
 
-type LinkTarget = { courseId: string; goalId?: never } | { courseId?: never; goalId: string };
-
-async function findResolvedPair(target: LinkTarget) {
-  const goals = await prisma.goal.findMany({
+async function readOrigin(db: TransactionClient, editionId: string) {
+  const goals = await db.goal.findMany({
     select: {
-      details: true,
+      contentCountry: true,
       language: true,
       plan: { select: { graph: true } },
-      primaryCourseId: true,
+      sourceCourse: { select: { country: true, id: true } },
     },
-    where: {
-      details: { not: AnyNull, path: ["courseStartSourceId"] },
-      id: target.goalId,
-      primaryCourseId: target.courseId ?? { not: null },
-    },
+    where: { primaryCourseId: editionId, sourceCourseId: { not: null } },
   });
 
-  const matches = goals.flatMap((goal) => {
-    const sourceId = isJsonObject(goal.details) ? goal.details.courseStartSourceId : null;
-    const courseId = goal.primaryCourseId;
+  const origin = goals[0]?.sourceCourse;
 
-    return typeof sourceId === "string" &&
-      isUuid(sourceId) &&
-      courseId &&
-      getSinglePlanCourseId(parsePlanGraph(goal.plan?.graph)) === courseId
-      ? [
-          {
-            courseId: sourceId,
-            editionId: courseId,
-            language: courseContentLanguage(goal.language),
-          },
-        ]
-      : [];
+  if (!origin || !goals.every((goal) => goal.sourceCourse?.id === origin.id)) {
+    return null;
+  }
+
+  const goal = goals.find((row) => {
+    const graph = parsePlanGraph(row.plan?.graph);
+
+    return (
+      row.contentCountry === origin.country &&
+      graph.editionCandidate &&
+      getSinglePlanCourseId(graph) === editionId
+    );
   });
 
-  const [first] = matches;
-
-  return first &&
-    matches.every((match) => match.courseId === first.courseId && match.language === first.language)
-    ? first
+  return goal
+    ? { courseId: origin.id, editionId, language: courseContentLanguage(goal.language) }
     : null;
 }
 
-async function hasConflictingMember(tx: TransactionClient, { course, edition }: CourseEditionPair) {
-  const familyId = course.familyId ?? edition.familyId;
+export async function linkResolvedCourseEdition({
+  courseId: editionId,
+}: {
+  courseId: string;
+}): Promise<void> {
+  const source = await prisma.goal.findFirst({
+    select: { sourceCourseId: true },
+    where: { primaryCourseId: editionId, sourceCourseId: { not: null } },
+  });
 
-  if (!familyId || (course.familyId && edition.familyId)) {
-    return false;
-  }
-
-  await tx.$queryRaw`SELECT id FROM course_families WHERE id = ${familyId}::uuid FOR NO KEY UPDATE`;
-
-  const languagesToJoin = new Set(
-    [course, edition]
-      .filter((row) => !row.familyId)
-      .map((row) => courseContentLanguage(row.language)),
-  );
-
-  const members = await tx.course.findMany({ select: { language: true }, where: { familyId } });
-
-  return members.some((member) => languagesToJoin.has(courseContentLanguage(member.language)));
-}
-
-/** Either the saved plan or publication can supply the last condition an edition was waiting for. */
-export async function linkResolvedCourseEdition(target: LinkTarget): Promise<void> {
-  const match = await findResolvedPair(target);
-
-  if (!match) {
+  if (!source?.sourceCourseId) {
     return;
   }
 
-  const ids = [match.courseId, match.editionId];
+  const ids = [source.sourceCourseId, editionId];
 
   const linked = await prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM courses WHERE id = ANY(${ids}::uuid[]) ORDER BY id FOR NO KEY UPDATE`;
-    const pair = await readCourseEditionPair(tx, match);
+    const origin = await readOrigin(tx, editionId);
+
+    if (!origin || origin.courseId !== source.sourceCourseId) {
+      return false;
+    }
+
+    const pair = await readCourseEditionPair(tx, origin);
 
     if (
       !pair ||
-      getCourseEditionProblem(pair) ||
-      courseContentLanguage(pair.edition.language) !== match.language ||
-      (await hasConflictingMember(tx, pair))
+      (pair.course.familyId !== null && pair.course.familyId === pair.edition.familyId) ||
+      courseContentLanguage(pair.edition.language) !== origin.language ||
+      getContentCountryScope({ country: pair.edition.country, language: pair.edition.language }) !==
+        getContentCountryScope({ country: pair.course.country, language: pair.edition.language }) ||
+      (await getCourseEditionProblem(tx, pair))
     ) {
       return false;
     }
 
-    if (!(pair.course.familyId && pair.edition.familyId)) {
-      await joinCourseEditionFamily(tx, pair);
-    }
-
+    await joinCourseEditionFamily(tx, pair);
     return true;
   });
 
   if (linked) {
-    await revalidateCourseContent(ids.map((id) => getCourseCacheTag(id)));
+    await revalidateCourseContent([
+      COURSE_LIST_CACHE_TAG,
+      ...ids.map((id) => getCourseCacheTag(id)),
+    ]);
   }
 }

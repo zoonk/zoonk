@@ -88,9 +88,13 @@ export async function startCourseAction({
     return { goalId: goal.id, next: "steps", status: "started" };
   }
 
-  const existing = await findCourseGoalStart(courseId, language);
+  const existing = await findCourseGoalStart(courseId);
 
-  return { goalId: goal.id, next: existing?.inOnboarding ? "steps" : "today", status: "started" };
+  return {
+    goalId: goal.id,
+    next: existing && (existing.inOnboarding || !existing.isActive) ? "steps" : "today",
+    status: "started",
+  };
 }
 
 function readField(formData: FormData, name: string): string | null {

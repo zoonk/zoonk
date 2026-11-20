@@ -317,7 +317,7 @@ test.describe("Starting a course in another language", () => {
   test("says the lessons will be in the app's language, and opens that goal again", async ({
     page,
   }) => {
-    const { course } = await createOutlinedCourse();
+    const { course, coursePath } = await createOutlinedCourse();
     const chapter = await prisma.courseChapter.findFirstOrThrow({ where: { courseId: course.id } });
 
     await page.goto(`/pt/start/course/${course.id}?minutes=15&chapter=${chapter.chapterId}`);
@@ -338,11 +338,14 @@ test.describe("Starting a course in another language", () => {
     const goalId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject({
-      details: { courseStartSourceId: course.id },
       language: "pt",
       primaryCourseId: null,
+      sourceCourseId: course.id,
     });
 
+    await page.goto(coursePath);
+    const resume = page.getByRole("link", { name: "Continue your plan" }).first();
+    await expect(resume).toHaveAttribute("href", `/start/${goalId}`);
     await page.goto(`/pt/start/course/${course.id}?minutes=15`);
     await expect(page).toHaveURL((url) => url.pathname === `/pt/start/${goalId}`);
   });

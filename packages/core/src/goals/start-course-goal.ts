@@ -16,7 +16,7 @@ import { hasOnboardingQuestions } from "../view-models/onboarding/onboarding-ste
 import { loadCourseExam } from "./_utils/course-exam";
 import { getCourseGoalKind } from "./_utils/course-goal-kind";
 import { loadCourseOutline } from "./_utils/course-outline";
-import { type CourseGoalLookup, findCourseGoal } from "./_utils/find-course-goal";
+import { getCourseGoalIds } from "./_utils/find-course-goal";
 import { type CourseGoalStartInput } from "./course-start-contract";
 import { type CourseStart } from "./course-start-details";
 import { type GoalRefusal, createGoals } from "./create-goals";
@@ -31,7 +31,17 @@ export type CourseGoalStartResult =
 
 function findStartableCourse({ courseId, userId }: { courseId: string; userId: string }) {
   return prisma.course.findFirst({
-    omit: { landingPage: true },
+    select: {
+      country: true,
+      familyId: true,
+      format: true,
+      id: true,
+      language: true,
+      targetLanguage: true,
+      title: true,
+      userId: true,
+      visibility: true,
+    },
     where: {
       OR: [
         { isPublished: true, visibility: "public" },
@@ -57,31 +67,10 @@ async function resolveStart({
     return null;
   }
 
-  const initial = resolveCourseStartLanguage({ course: { ...source, editions: [] }, language });
-
-  if (initial.kind === "same") {
-    return {
-      course: source,
-      lookup: { primaryCourseId: courseId, sourceCourseId: courseId },
-      same: true,
-    };
-  }
-
   const editions = source.familyId ? await findPublishedCourseEditions(source.familyId) : [];
   const decision = resolveCourseStartLanguage({ course: { ...source, editions }, language });
-
-  const edition =
-    decision.kind === "edition"
-      ? await findStartableCourse({ courseId: decision.edition.id, userId })
-      : null;
-
-  const lookup: CourseGoalLookup = {
-    language: initial.language,
-    primaryCourseId: edition?.id,
-    sourceCourseId: courseId,
-  };
-
-  return { course: edition ?? source, lookup, same: false };
+  const course = decision.kind === "edition" ? decision.edition : source;
+  return { course, decision };
 }
 
 async function toExistingResult(goalId: string): Promise<CourseGoalStartResult> {
@@ -97,42 +86,35 @@ async function toExistingResult(goalId: string): Promise<CourseGoalStartResult> 
 
 export async function findCourseGoalStart(
   courseId: string,
-  language?: string,
-): Promise<{ goalId: string; inOnboarding: boolean } | null> {
+): Promise<{ goalId: string; inOnboarding: boolean; isActive: boolean } | null> {
   const session = await getSession();
 
   if (!session || !isUuid(courseId)) {
     return null;
   }
 
-  const userId = session.user.id;
+  const goals = await getCourseGoalIds(prisma, session.user.id);
+  const goalId = goals.get(courseId);
 
-  const start =
-    language === undefined
-      ? { lookup: { primaryCourseId: courseId, sourceCourseId: courseId } }
-      : await resolveStart({ courseId, language, userId });
-
-  const goal = start ? await findCourseGoal(prisma, { ...start.lookup, userId }) : null;
-
-  if (!goal) {
+  if (!goalId) {
     return null;
   }
 
-  const existing = await toExistingResult(goal.id);
+  const existing = await toExistingResult(goalId);
 
   return existing.status === "existing"
-    ? { goalId: goal.id, inOnboarding: existing.inOnboarding }
+    ? { goalId, inOnboarding: existing.inOnboarding, isActive: existing.goal.isActive }
     : null;
 }
 
 function toCourseGoalDraft({
   course,
-  lookup,
+  decision,
   examBlueprintId,
   input,
 }: {
-  course: NonNullable<Awaited<ReturnType<typeof findStartableCourse>>>;
-  lookup: CourseGoalLookup;
+  course: NonNullable<Awaited<ReturnType<typeof resolveStart>>>["course"];
+  decision: NonNullable<Awaited<ReturnType<typeof resolveStart>>>["decision"];
   examBlueprintId: string | undefined;
   input: CourseGoalStartInput;
 }): GoalDraft {
@@ -153,8 +135,8 @@ function toCourseGoalDraft({
       hasExam: Boolean(examBlueprintId),
       targetLanguage: course.targetLanguage,
     }),
-    language: lookup.primaryCourseId ? course.language : (lookup.language ?? course.language),
-    primaryCourseId: lookup.primaryCourseId,
+    language: decision.kind === "learnerLanguage" ? decision.language : course.language,
+    primaryCourseId: decision.kind === "learnerLanguage" ? undefined : course.id,
     prompt: course.title,
     targetDate: input.targetDate ?? undefined,
     targetLanguage: course.targetLanguage ?? undefined,
@@ -244,21 +226,16 @@ export async function startCourseGoal({
     return { status: "notFound" };
   }
 
-  const { course, lookup, same } = start;
-  const chapterId = same ? (input.chapterId ?? null) : null;
+  const { course, decision } = start;
+  const chapterId = decision.kind === "same" ? (input.chapterId ?? null) : null;
 
-  const [existing, outline, exam] = await Promise.all([
-    findCourseGoal(prisma, { ...lookup, userId }),
+  const [outline, exam] = await Promise.all([
     chapterId ? loadCourseOutline({ courseId: course.id, userId }) : [],
-    loadCourseExam(course.id),
+    decision.kind === "learnerLanguage" ? null : loadCourseExam(course.id),
   ]);
 
   if (chapterId && !outline.some((chapter) => chapter.chapterId === chapterId)) {
     return { status: "notFound" };
-  }
-
-  if (existing) {
-    return toExistingResult(existing.id);
   }
 
   const courseStart: CourseStart = {
@@ -269,12 +246,17 @@ export async function startCourseGoal({
   const created = await createGoals(
     {
       dailyMinutes: input.dailyMinutes ?? DEFAULT_DAILY_MINUTES,
-      goals: [toCourseGoalDraft({ course, examBlueprintId: exam?.blueprint.id, input, lookup })],
+      goals: [toCourseGoalDraft({ course, decision, examBlueprintId: exam?.blueprint.id, input })],
       studyDays: input.studyDays,
       studyTime: input.studyTime,
       timeZone: input.timeZone,
     },
-    { country: course.country, details: courseStart, lookup },
+    {
+      country: course.country,
+      courseId,
+      details: courseStart,
+      sourceCourseId: decision.kind === "learnerLanguage" ? courseId : undefined,
+    },
   );
 
   if (created.status === "existing") {

@@ -10,7 +10,11 @@ import {
   getCourseStartHref,
   readDailyMinutes,
 } from "@/lib/public/public-hrefs";
-import { getAllowanceCacheTag, getGoalsCacheTag } from "@zoonk/core/cache-tags";
+import {
+  COURSE_LIST_CACHE_TAG,
+  getAllowanceCacheTag,
+  getGoalsCacheTag,
+} from "@zoonk/core/cache-tags";
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
@@ -94,7 +98,11 @@ async function loadCourseStart(courseId: string, language: string) {
   const session = await getSession();
 
   if (session) {
-    cacheTag(getGoalsCacheTag(session.user.id), getAllowanceCacheTag(session.user.id));
+    cacheTag(
+      COURSE_LIST_CACHE_TAG,
+      getGoalsCacheTag(session.user.id),
+      getAllowanceCacheTag(session.user.id),
+    );
   }
 
   const [course, editions, existing, limit] = await Promise.all([
@@ -103,12 +111,12 @@ async function loadCourseStart(courseId: string, language: string) {
         found && { ...found, quickTestMinutes: await getCourseQuickTestMinutes(found) },
     ),
     listPublishedCourseEditions({ courseId }),
-    findCourseGoalStart(courseId, language),
+    findCourseGoalStart(courseId),
     findGoalStartLimit(),
   ]);
 
   const start = course
-    ? resolveCourseStartLanguage({ course: { editions, language: course.language }, language })
+    ? resolveCourseStartLanguage({ course: { ...course, editions }, language })
     : null;
 
   return { course, existing, hasSession: Boolean(session), limit, start };
@@ -135,12 +143,15 @@ async function FreshCourseStart({ locale, ...view }: CourseStartViewProps & { lo
   await connection();
 
   const [existing, limit] = await Promise.all([
-    findCourseGoalStart(view.screen.course.id, locale),
+    findCourseGoalStart(view.screen.course.id),
     findGoalStartLimit(),
   ]);
 
   if (existing) {
-    redirect({ href: existing.inOnboarding ? `/start/${existing.goalId}` : "/today", locale });
+    redirect({
+      href: existing.inOnboarding || !existing.isActive ? `/start/${existing.goalId}` : "/today",
+      locale,
+    });
   }
 
   return (
@@ -163,7 +174,7 @@ async function CourseStartContent({ params, searchParams }: Props) {
 
   if (existing) {
     redirect({
-      href: existing.inOnboarding ? `/start/${existing.goalId}` : "/today",
+      href: existing.inOnboarding || !existing.isActive ? `/start/${existing.goalId}` : "/today",
       locale: lang,
     });
   }

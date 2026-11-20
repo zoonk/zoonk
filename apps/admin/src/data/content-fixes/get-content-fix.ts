@@ -81,6 +81,7 @@ function screenLabel(step: { kind: string; position: number }): string {
 
 const STRUCTURE_OPS = new Set<StoredChange["op"]>([
   "linkEdition",
+  "unlinkEdition",
   "setChapters",
   "setGraph",
   "setLessons",
@@ -106,7 +107,11 @@ async function loadStructureNames(changes: readonly StoredChange[]): Promise<Map
     ...new Set(
       changes.flatMap((change) =>
         STRUCTURE_OPS.has(change.op) && "fields" in change
-          ? idsIn(change.op === "linkEdition" ? [change.id, change.fields] : change.fields)
+          ? idsIn(
+              change.op === "linkEdition" || change.op === "unlinkEdition"
+                ? [change.id, change.fields]
+                : change.fields,
+            )
           : [],
       ),
     ),

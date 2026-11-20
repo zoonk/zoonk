@@ -9,7 +9,7 @@ import { type Resolution, refuse } from "../_utils/resolved-change";
 import { defineFixHandler, fieldChangeSchema, idSchema } from "./fix-handler";
 
 const model = "Course";
-const op = "linkEdition";
+type EditionOp = "linkEdition" | "unlinkEdition";
 
 const stored = z.object({
   detachIds: z.array(idSchema).optional(),
@@ -18,7 +18,7 @@ const stored = z.object({
   fields: z.array(fieldChangeSchema),
   id: idSchema,
   model: z.literal(model),
-  op: z.literal(op),
+  op: z.enum(["linkEdition", "unlinkEdition"]),
   sourceFamilyId: idSchema.nullable(),
 });
 
@@ -27,10 +27,11 @@ type Link = { detachIds?: string[]; editionId: string; id: string };
 async function resolve(
   db: TransactionClient,
   { detachIds, editionId, id }: Link,
+  op: EditionOp = "linkEdition",
 ): Promise<Resolution<z.infer<typeof stored>>> {
   const pair = await readCourseEditionPair(db, { courseId: id, editionId });
 
-  if (!pair) {
+  if (!pair || id === editionId) {
     return refuse("Both courses must exist.");
   }
 
@@ -50,7 +51,7 @@ async function resolve(
       return refuse("The family gained editions after the link was applied.");
     }
   } else {
-    const problem = getCourseEditionProblem(pair);
+    const problem = await getCourseEditionProblem(db, pair);
 
     if (problem || sameFamily) {
       return refuse(problem ?? "The courses are already editions of each other.");
@@ -80,46 +81,67 @@ async function resolve(
   };
 }
 
-export const courseEditions = defineFixHandler({
-  apply: async (tx, { detachIds, editionId, id }) => {
-    if (detachIds) {
-      await tx.course.updateMany({ data: { familyId: null }, where: { id: { in: detachIds } } });
-      return;
-    }
+function editionHandler(op: EditionOp) {
+  return defineFixHandler({
+    apply: async (tx, { detachIds, editionId, id }) => {
+      if (detachIds) {
+        await tx.$executeRaw`UPDATE plans p SET graph = p.graph - 'editionCandidate' FROM goals g
+        WHERE p.goal_id = g.id AND p.graph ? 'editionCandidate'
+          AND ((g.source_course_id = ${id}::uuid AND g.primary_course_id = ${editionId}::uuid)
+            OR (g.source_course_id = ${editionId}::uuid AND g.primary_course_id = ${id}::uuid))`;
 
-    const pair = await readCourseEditionPair(tx, { courseId: id, editionId });
+        await tx.course.updateMany({ data: { familyId: null }, where: { id: { in: detachIds } } });
+        return;
+      }
 
-    if (!pair) {
-      throw new Error("The locked course edition pair is missing.");
-    }
+      const pair = await readCourseEditionPair(tx, { courseId: id, editionId });
 
-    await joinCourseEditionFamily(tx, pair);
-  },
-  lockIds: ({ editionId, id }) => [id, editionId],
-  model,
-  op,
-  proposal: {
-    rules:
-      "{ linkEdition: courseId } joins two public, published, ownerless courses with different content languages and the same target language and format. Courses in different families cannot be joined.",
-    schema: z
-      .strictObject({ id: idSchema, linkEdition: idSchema, model: z.literal(model) })
-      .transform(({ id, linkEdition }) => ({ editionId: linkEdition, id })),
-  },
-  resolve,
-  revert: (db, change) =>
-    resolve(db, {
-      detachIds: change.detachIds
-        ? undefined
-        : [
-            ...(change.sourceFamilyId ? [] : [change.id]),
-            ...(change.editionFamilyId ? [] : [change.editionId]),
-          ],
-      editionId: change.editionId,
-      id: change.id,
-    }),
-  stored,
-  table: sql`courses`,
-  targets: ({ editionId, id }) =>
-    [id, editionId].map((courseId) => ({ id: courseId, model, part: "familyId" })),
-  toProposed: ({ detachIds, editionId, id }): Link => ({ detachIds, editionId, id }),
-});
+      if (!pair) {
+        throw new Error("The locked course edition pair is missing.");
+      }
+
+      await joinCourseEditionFamily(tx, pair);
+    },
+    lockIds: ({ editionId, id }) => [id, editionId],
+    model,
+    op,
+    proposal: {
+      rules:
+        op === "unlinkEdition"
+          ? "{ unlinkEdition: courseId } removes the named edition from the source course’s family."
+          : "{ linkEdition: courseId } joins two public, published, ownerless courses with different content languages and the same target language and format. Courses in different families cannot be joined.",
+      schema:
+        op === "unlinkEdition"
+          ? z
+              .strictObject({ id: idSchema, model: z.literal(model), unlinkEdition: idSchema })
+              .transform(({ id, unlinkEdition }) => ({
+                detachIds: [unlinkEdition],
+                editionId: unlinkEdition,
+                id,
+              }))
+          : z
+              .strictObject({ id: idSchema, linkEdition: idSchema, model: z.literal(model) })
+              .transform(({ id, linkEdition }) => ({ editionId: linkEdition, id })),
+    },
+    resolve: (db, link: Link) => resolve(db, link, op),
+    revert: (db, change) =>
+      resolve(db, {
+        detachIds: change.detachIds
+          ? undefined
+          : [
+              ...(change.sourceFamilyId ? [] : [change.id]),
+              ...(change.editionFamilyId ? [] : [change.editionId]),
+            ],
+        editionId: change.editionId,
+        id: change.id,
+      }),
+    stored,
+    table: sql`courses`,
+    targets: ({ editionId, id }) =>
+      [id, editionId].map((courseId) => ({ id: courseId, model, part: "familyId" })),
+    toProposed: ({ detachIds, editionId, id }): Link => ({ detachIds, editionId, id }),
+  });
+}
+
+export const courseEditions = editionHandler("linkEdition");
+export const unlinkEdition = editionHandler("unlinkEdition");

@@ -1,6 +1,7 @@
-import { type CourseFormat, type CourseLevel } from "@zoonk/db";
+import { type Course, type CourseFormat, type CourseLevel, type Goal } from "@zoonk/db";
 import { type CourseOutlineChapter, toCoursePlanGraph } from "../../goals/_utils/course-plan-graph";
 import { getExamCourseSkills } from "../../goals/_utils/exam-course-skills";
+import { readCourseStart } from "../../goals/course-start-details";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { type CurriculumScope } from "./curriculum-scope";
@@ -127,4 +128,23 @@ export function toStartedCourseIds({
   graph: GoalSkillGraph;
 }): Record<string, string> {
   return Object.fromEntries(graph.courses.map((item) => [item.key, course.id]));
+}
+
+export function toStartedCourse({
+  country,
+  kind,
+  course,
+  details,
+}: {
+  country: string | null;
+  kind: Goal["kind"];
+  course: Pick<Course, "country" | "id" | "title" | "userId" | "visibility"> | null;
+  details: Record<string, unknown>;
+}): StartedCourse | null {
+  if (!course || (kind === "learn" && course.country !== country) || !readCourseStart(details)) {
+    return null;
+  }
+
+  const ownerId = course.visibility === "private" ? course.userId : null;
+  return { country: course.country, id: course.id, ownerId, title: course.title };
 }

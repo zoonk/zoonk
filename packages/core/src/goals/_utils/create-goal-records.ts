@@ -11,7 +11,7 @@ import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { type CourseStart } from "../course-start-details";
 import { type GoalCreateInput, type GoalDraft, withoutCoreDetails } from "../goal-contract";
-import { type CourseGoalLookup, findCourseGoal } from "./find-course-goal";
+import { getCourseGoalIds } from "./find-course-goal";
 import { resolveNewGoalCountry } from "./goal-content-country";
 import { defaultDisplayName } from "./goal-display-name";
 import { saveMetadataInTransaction } from "./goal-metadata";
@@ -38,10 +38,30 @@ function toScopeSettings(value: unknown): { examSubjects?: string[] } {
   return subjects.length > 0 ? { examSubjects: subjects } : {};
 }
 
+function getCountryDetails(
+  country: Awaited<ReturnType<typeof resolveNewGoalCountry>>,
+  details: Record<string, unknown>,
+) {
+  const answered = Array.isArray(details.answered)
+    ? details.answered.filter((value): value is string => typeof value === "string")
+    : [];
+
+  return country.countryDependent === null
+    ? {}
+    : {
+        contentCountrySource: country.source,
+        countryDependent: country.countryDependent,
+        ...(country.source !== "default" && {
+          answered: [...new Set([...answered, "contentCountry"])],
+        }),
+      };
+}
+
 export type CourseGoalOrigin = {
   country: string | null;
   details: CourseStart;
-  lookup: CourseGoalLookup;
+  courseId: string;
+  sourceCourseId?: string;
 };
 
 type GoalRecord = {
@@ -83,27 +103,14 @@ export async function insertGoalWithPlan(
     userId,
   });
 
-  const answered = Array.isArray(details.answered) ? details.answered : [];
-
-  const countryDetails =
-    country.countryDependent === null
-      ? {}
-      : {
-          contentCountrySource: country.source,
-          countryDependent: country.countryDependent,
-          ...(country.source !== "default" && {
-            answered: [...new Set([...answered, "contentCountry"])],
-          }),
-        };
-
   await tx.goal.create({
     data: {
       contentCountry: country.contentCountry,
       dailyMinutes,
       details: {
         ...withoutCoreDetails(details),
-        ...countryDetails,
-        ...toCourseStartDetails(courseStart),
+        ...getCountryDetails(country, details),
+        ...(courseStart && { courseStart: courseStart.details }),
       },
       displayName: draft.displayName ?? defaultDisplayName(draft),
       examBlueprintId: draft.examBlueprintId ?? null,
@@ -114,6 +121,7 @@ export async function insertGoalWithPlan(
       primaryCourseId: draft.primaryCourseId ?? null,
       prompt: draft.prompt,
       replacesGoalId: replacesGoalId ?? null,
+      sourceCourseId: courseStart?.sourceCourseId,
       studyTime: input.studyTime ?? null,
       targetDate: draft.targetDate ? fromIsoDate(draft.targetDate) : null,
       targetLanguage: testedLanguage ?? draft.targetLanguage ?? getCertificateLanguage(draft),
@@ -135,19 +143,6 @@ export async function insertGoalWithPlan(
       },
     },
   });
-}
-
-function toCourseStartDetails(courseStart: CourseGoalOrigin | undefined) {
-  if (!courseStart) {
-    return {};
-  }
-
-  return {
-    courseStart: courseStart.details,
-    ...(courseStart.lookup.primaryCourseId
-      ? {}
-      : { courseStartSourceId: courseStart.lookup.sourceCourseId }),
-  };
 }
 
 async function pauseGoal(
@@ -180,13 +175,11 @@ export async function createGoal(
     { planInputs: true, userId },
     async (transaction) => {
       if (record.courseStart) {
-        const existing = await findCourseGoal(transaction, {
-          ...record.courseStart.lookup,
-          userId,
-        });
+        const goals = await getCourseGoalIds(transaction, userId);
+        const existing = goals.get(record.courseStart.courseId);
 
         if (existing) {
-          return unchanged({ goalId: existing.id, status: "existing" });
+          return unchanged({ goalId: existing, status: "existing" });
         }
       }
 

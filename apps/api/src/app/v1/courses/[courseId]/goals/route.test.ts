@@ -28,9 +28,11 @@ function startRequest(input = {}) {
   );
 }
 
-function createdGoal(goal: Pick<GoalView, "examBlueprintId" | "kind">) {
+function createdGoal(
+  goal: Pick<GoalView, "examBlueprintId" | "kind"> & Partial<Pick<GoalView, "primaryCourseId">>,
+) {
   vi.mocked(startCourseGoal).mockResolvedValue({
-    goal: { id: GOAL_ID, ...goal } as GoalView,
+    goal: { id: GOAL_ID, primaryCourseId: COURSE_ID, ...goal } as GoalView,
     status: "created",
   });
 }
@@ -46,11 +48,13 @@ describe("POST /v1/courses/{courseId}/goals", () => {
   });
 
   it("accepts the learner's language and passes it to the course start", async () => {
-    createdGoal({ examBlueprintId: null, kind: "learn" });
+    createdGoal({ examBlueprintId: null, kind: "learn", primaryCourseId: null });
 
     const response = await startRequest({ language: "pt-BR" });
 
     expect(response.status).toBe(201);
+
+    expect(start).toHaveBeenCalledWith(researchWorkflow, [{ goalId: GOAL_ID }], expect.any(Object));
 
     expect(startCourseGoal).toHaveBeenCalledWith({
       courseId: COURSE_ID,

@@ -19,13 +19,14 @@ internal sealed interface CourseStartLanguage {
 }
 
 internal fun CourseResource.startLanguage(language: String): CourseStartLanguage {
-    if (baseLanguage(this.language) == language) return CourseStartLanguage.Same
+    val allowsEditions = supportsEditions ?: (organization != null)
+    if (!allowsEditions || targetLanguage?.let(::baseLanguage) == language ||
+        baseLanguage(this.language) == language
+    ) {
+        return CourseStartLanguage.Same
+    }
     val matches = editions.filter { baseLanguage(it.language) == language }
     return matches.singleOrNull()?.let(CourseStartLanguage::Edition) ?: CourseStartLanguage.LearnerLanguage(language)
 }
-
-/** The course the start uses: its version in the app's language when there is one. */
-internal fun CourseResource.startCourseId(language: String): String =
-    (startLanguage(language) as? CourseStartLanguage.Edition)?.edition?.id?.toString() ?: id.toString()
 
 private fun baseLanguage(tag: String) = tag.lowercase().substringBefore('-').substringBefore('_')

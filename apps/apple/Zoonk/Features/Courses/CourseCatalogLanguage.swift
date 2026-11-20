@@ -46,7 +46,9 @@ enum CourseStartLanguage: Equatable {
 
 extension Course {
   func startLanguage(in language: String) -> CourseStartLanguage {
-    guard baseLanguage(self.language) != language else {
+    guard supportsEditions ?? (organization != nil), targetLanguage.map(baseLanguage) != language,
+      baseLanguage(self.language) != language
+    else {
       return .same
     }
 
