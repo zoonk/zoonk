@@ -256,7 +256,7 @@ export function CertificateShareDialog({
           <div className="flex flex-col gap-1.5">
             <span className="text-muted-foreground text-xs">{t("Suggested text")}</span>
             <div className="border-input flex items-start gap-3 rounded-lg border p-3">
-              <p className="min-w-0 flex-1 text-sm leading-normal text-pretty">{text}</p>
+              <p className="min-w-0 flex-1 text-sm leading-normal">{text}</p>
               <CopyButton label={t("Copy the suggested text")} text={text} />
             </div>
           </div>

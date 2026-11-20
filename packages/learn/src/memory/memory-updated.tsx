@@ -100,7 +100,7 @@ export function MemoryUpdated({
     >
       <BrainIcon aria-hidden="true" className="mt-0.75 size-3.5 shrink-0" />
 
-      <p className="min-w-0 flex-1 text-pretty">
+      <p className="min-w-0 flex-1">
         {status === "idle" || status === "failed" ? (
           <>
             <ChangeText change={first} extra={changes.length - 1} />

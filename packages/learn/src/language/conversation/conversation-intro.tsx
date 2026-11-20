@@ -151,7 +151,7 @@ function CallIntro({
           {t("{time} · Level {level}", { level: conversation.level, time })}
         </Eyebrow>
         <h1 className="text-title text-balance">{conversation.title}</h1>
-        <p className="text-muted-foreground text-pretty">{conversation.situation}</p>
+        <p className="text-muted-foreground">{conversation.situation}</p>
       </header>
 
       <CharacterRow

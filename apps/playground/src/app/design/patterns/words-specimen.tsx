@@ -39,7 +39,7 @@ function OfferHeading({ chip, line, title }: { chip: string; line: string; title
     <>
       <p className="text-muted-foreground text-sm">{chip}</p>
       <p className="text-title text-balance">{title}</p>
-      <p className="text-muted-foreground text-sm text-pretty">{line}</p>
+      <p className="text-muted-foreground text-sm">{line}</p>
     </>
   );
 }
@@ -58,7 +58,7 @@ export function WordsSpecimen() {
           {HOW_IT_WORKS.map(([title, line]) => (
             <div key={title}>
               <dt className="text-sm font-medium">{title}</dt>
-              <dd className="text-muted-foreground text-sm text-pretty">{line}</dd>
+              <dd className="text-muted-foreground text-sm">{line}</dd>
             </div>
           ))}
         </dl>

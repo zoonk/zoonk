@@ -19,7 +19,7 @@ export async function CourseExamDate({ exam }: { exam: NonNullable<CoursePlanExa
   const dates = format.list(exam.days.map(formatDay), { type: "conjunction" });
 
   return (
-    <p className="text-muted-foreground mt-3 text-sm text-pretty">
+    <p className="text-muted-foreground mt-3 text-sm">
       <FactSegments
         extra={<DaysLeft days={exam.daysLeft} estimated={exam.estimated} />}
         facts={[

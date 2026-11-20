@@ -82,7 +82,7 @@ function SpeakingTaskRows({ tasks }: { tasks: SpeakingSectionView["tasks"] }) {
     <StepRows aria-label={t("Tasks")}>
       {tasks.map((task) => (
         <StepRow key={task.key}>
-          <span className="min-w-0 flex-1 text-pretty">{task.name}</span>
+          <span className="min-w-0 flex-1">{task.name}</span>
 
           {task.status === "completed" ? (
             <LearnLink

@@ -132,7 +132,7 @@ export function SqlTableViewer({ table }: { table: Table }) {
         <Table2 aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <span className="font-mono text-sm font-semibold">{table.name}</span>
         {/* Open, the table's own header names the columns. */}
-        <span className="text-muted-foreground min-w-0 flex-1 font-mono text-xs text-pretty group-open:hidden">
+        <span className="text-muted-foreground min-w-0 flex-1 font-mono text-xs group-open:hidden">
           {table.columns.map((column) => column.name).join(", ")}
         </span>
         <span className="text-muted-foreground ms-auto shrink-0 text-xs tabular-nums">
