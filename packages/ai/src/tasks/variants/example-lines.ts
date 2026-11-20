@@ -4,7 +4,12 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions, chooseServiceTier } from "../../provider-options";
+import {
+  type CallWait,
+  type Reasoning,
+  buildProviderOptions,
+  chooseServiceTier,
+} from "../../provider-options";
 import { formatLocalContext, formatMoneyForms, getCountryName } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
@@ -42,6 +47,8 @@ export type GenerateExampleLinesParams = {
   goal: string | null;
   /** This lesson's first, then the learner's latest from other lessons. */
   earlierLines?: readonly string[];
+  /** "learner" when they're in the lesson now, "later" when written ahead in the background. */
+  wait: CallWait;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -97,7 +104,7 @@ function toScreenLines({
 
 /** Callers store the nulls too, so the model isn't asked again for the same facts. */
 export async function generateExampleLines(params: GenerateExampleLinesParams) {
-  const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const { analytics, model = defaultModel, reasoning, useFallback = true, wait } = params;
   const userPrompt = buildUserPrompt(params);
 
   const systemPrompt = selectPromptVariants({
@@ -108,7 +115,7 @@ export async function generateExampleLines(params: GenerateExampleLinesParams) {
   const providerOptions = buildProviderOptions({
     fallbackModels,
     model,
-    serviceTier: chooseServiceTier({ wait: "learner" }),
+    serviceTier: chooseServiceTier({ wait }),
     useFallback,
   });
 

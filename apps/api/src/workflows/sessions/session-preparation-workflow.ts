@@ -14,19 +14,12 @@ import {
   whileLessonsAsked,
 } from "../goals/goal-outlines";
 import { preparePlacementItems, preparePlacementWeekItems } from "../goals/placement-items";
-import {
-  listLessonFieldItemTargetsStep,
-  prepareSkillFieldItems,
-  readGoalField,
-} from "../goals/steps/field-items-steps";
 import { endLessonsAskStep, readGoalLookaheadStep } from "../goals/steps/goal-lookahead-steps";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { startChallengeQuestions } from "./challenge-question-starts";
-import { prepareFieldChallenge } from "./prepare-field-challenge";
-import { prepareToolVersion } from "./prepare-tool-version";
+import { preparePersonalLayer } from "./prepare-personal-layer";
 import { writeLanguageCalls } from "./steps/language-call-steps";
-import { listLearnerVersionTargetsStep } from "./steps/personal-versions-steps";
 import {
   type ClaimQuestions,
   type SessionPreparationRequest,
@@ -52,31 +45,6 @@ export type SessionPreparationResult =
 
 const WRITING_POLL = "15s";
 const MAX_WRITING_POLLS = 40;
-
-async function preparePersonalLayer({
-  analytics,
-  goalId,
-  lessonIds,
-}: {
-  analytics: ContentAnalytics;
-  goalId: string;
-  lessonIds: string[];
-}) {
-  const { workflowRunId } = getWorkflowMetadata();
-  const context = { analytics, workflowRunId };
-  const field = await readGoalField({ ...context, goalId });
-
-  const [fieldItems, versions] = await Promise.all([
-    field ? listLessonFieldItemTargetsStep({ field, lessonIds }) : [],
-    listLearnerVersionTargetsStep({ goalId, lessonIds }),
-  ]);
-
-  await Promise.allSettled([
-    ...fieldItems.map((target) => prepareSkillFieldItems({ ...context, target })),
-    ...versions.tools.map((target) => prepareToolVersion({ ...context, target })),
-    ...versions.challenges.map((target) => prepareFieldChallenge({ ...context, target })),
-  ]);
-}
 
 async function startLessonWork({
   analytics,
@@ -180,6 +148,7 @@ async function personalizeLessons({
     analytics,
     goalId: input.goalId,
     lessonIds: preparation.plannedLessonIds,
+    userId: input.userId,
   });
 }
 

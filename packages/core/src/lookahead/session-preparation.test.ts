@@ -11,6 +11,7 @@ import {
   heldBackDraftFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -610,21 +611,24 @@ describe(listSessionPreparation, () => {
   });
 
   it("says whether the learner has a personal layer to write over the planned lessons", async () => {
-    const [nurse, analyst, plain] = await Promise.all([
+    const [nurse, analyst, cook, plain] = await Promise.all([
+      userFixture(),
       userFixture(),
       userFixture(),
       userFixture(),
     ]);
 
-    const [nurseGoal, analystGoal, plainGoal] = await Promise.all([
+    const [nurseGoal, analystGoal, cookGoal, plainGoal] = await Promise.all([
       goalFixture({ details: { purpose: "work", role: "ICU nurse" }, userId: nurse.id }),
       goalFixture({ userId: analyst.id }),
+      goalFixture({ userId: cook.id }),
       goalFixture({ userId: plain.id }),
     ]);
 
-    await Promise.all(
-      [nurseGoal, analystGoal, plainGoal].map((goal) => planTomorrowLesson(goal.id)),
-    );
+    await Promise.all([
+      ...[nurseGoal, analystGoal, cookGoal, plainGoal].map((goal) => planTomorrowLesson(goal.id)),
+      memoryFactFixture({ category: "routine", statement: "Cooks dinner", userId: cook.id }),
+    ]);
 
     await prisma.plan.update({
       data: { settings: { tools: [{ choice: "none", name: "Excel" }] } },
@@ -634,6 +638,7 @@ describe(listSessionPreparation, () => {
     const learners = [
       { goalId: nurseGoal.id, userId: nurse.id },
       { goalId: analystGoal.id, userId: analyst.id },
+      { goalId: cookGoal.id, userId: cook.id },
       { goalId: plainGoal.id, userId: plain.id },
     ];
 
@@ -644,7 +649,7 @@ describe(listSessionPreparation, () => {
       }),
     );
 
-    expect(personalized).toStrictEqual([true, true, false]);
+    expect(personalized).toStrictEqual([true, true, true, false]);
   });
 
   it("marks an exam goal's lessons for the reasoning check, as lessons written on demand get", async () => {

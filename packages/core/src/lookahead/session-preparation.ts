@@ -7,6 +7,7 @@ import {
   getLessonGenerationStates,
 } from "../library/generation/lesson-generation-state";
 import { getGoalFieldInput } from "../library/items/item-field";
+import { loadExampleLineContext } from "../library/variants/_utils/example-line-context";
 import { findPlanFirstLessonId } from "../plans/_utils/plan-first-lesson";
 import { parsePlanSettings } from "../plans/planner/plan-state";
 import {
@@ -267,7 +268,7 @@ function pickTodayWindow({
   return open.slice(0, 1 + lookahead.lessonsAhead);
 }
 
-async function hasPersonalLayer(goal: Goal) {
+async function hasPersonalLayer({ goal, userId }: { goal: Goal; userId: string }) {
   if (getGoalFieldInput(goal.details)) {
     return true;
   }
@@ -277,7 +278,11 @@ async function hasPersonalLayer(goal: Goal) {
     where: { goalId: goal.id },
   });
 
-  return parsePlanSettings(plan?.settings).tools.length > 0;
+  if (parsePlanSettings(plan?.settings).tools.length > 0) {
+    return true;
+  }
+
+  return (await loadExampleLineContext({ userId })) !== null;
 }
 
 /** Workflow bridge: ids must come from getSessionPreparationAccess. Includes the window's chapter challenges and excludes already-written or running content. */
@@ -328,7 +333,7 @@ export async function listSessionPreparation({
     forExam: goal.kind === "exam",
     laterLessonIds: filterUnwritten({ lessonIds: later, states }),
     lessonIds: filterUnwritten({ lessonIds: soon, states }),
-    personalized: planned.length > 0 && (await hasPersonalLayer(goal)),
+    personalized: planned.length > 0 && (await hasPersonalLayer({ goal, userId })),
     plannedLessonIds: planned,
   };
 }

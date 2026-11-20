@@ -4,7 +4,7 @@ import { type GenerateExampleLinesParams } from "@zoonk/ai/tasks/variants/exampl
 
 type ExampleLinesInput = Omit<
   OptionalCountry<GenerateExampleLinesParams>,
-  "analytics" | "learnerHomeCountry" | "model" | "reasoning" | "useFallback"
+  "analytics" | "learnerHomeCountry" | "model" | "reasoning" | "useFallback" | "wait"
 > & { learnerHomeCountry?: string | null };
 
 const SHARED_EXPECTATIONS = `
