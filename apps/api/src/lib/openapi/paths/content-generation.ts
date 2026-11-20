@@ -79,7 +79,7 @@ export const contentGenerationPaths = {
   "/goals/{goalId}/lesson-preparations": {
     post: {
       description:
-        "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion, onboarding's schedule answer and plan changes prepare them on the server, so call it only from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never after those writes or on a screen view. For a guest the first lesson of today and the next study day can be written, each counted as a lesson start.",
+        "Gets a goal's next lessons written: today's next lessons and the next study day's first ones, as many as the learner's plan writes ahead, outlining a topic first when it has no lessons yet. Placement's completion, onboarding's schedule answer, plan changes and lesson starts and finishes prepare them on the server, so call it only from the learner's tap on Today's Get lessons, offered while the day's `state` is `prepare` (with or without blocks; the next read says `lessonsComing`), never after those writes or on a screen view. For a guest only their next lesson is written, counted as a lesson start.",
       operationId: "createGoalLessonPreparation",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -170,7 +170,7 @@ export const contentGenerationPaths = {
   "/study-sessions/{sessionId}/preparations": {
     post: {
       description:
-        "Prepares content around one of the learner's study sessions: the learner’s lookahead window of lessons is prepared around this session and the next study day. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest the next pending lesson today and the first lesson of the next study day can be written, each counted as a lesson start.",
+        "Prepares content around one of the learner's study sessions: the learner’s lookahead window of lessons is prepared around this session and the next study day. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest only the next pending lesson today is written, counted as a lesson start.",
       operationId: "createStudySessionPreparation",
       requestParams: { path: studySessionPathParamsSchema },
       responses: {
