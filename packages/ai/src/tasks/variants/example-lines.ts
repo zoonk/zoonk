@@ -11,12 +11,13 @@ import { selectPromptVariants } from "../_utils/prompt-variants";
 import promptTemplate from "./example-lines.prompt.md";
 
 /**
- * Luna scored 9.68 on the example-lines eval at 4.2s p50, ahead of Claude Haiku 5.5 (7 Oct 2026).
- * On 10 cases (11 Nov 2026), Luna scored 9.66 at $0.22/1k; Muse Ember scored 9.90 at $0.97/1k, too
- * little gain for four times the cost, and won a blind read 4 to 1 against Flash Lite (9.00), which
- * left lines empty where a fact fit.
+ * On 28 cases, 3 runs each (20 Nov 2026), Terra scored 9.43 at $1.46/1k, Muse Ember 9.14 at
+ * $1.08/1k, Luna 8.86 at $0.18/1k and Flash Lite 7.87. Only Terra reliably found the idea outside
+ * the learner's own field (a developer's coding lessons, a nurse learning Python): Luna and Muse
+ * Ember often left those empty, and Luna also left a prep-course discount empty in most runs. A
+ * blind read against Muse Ember came out 6 to 5, with Terra winning the coding cases.
  */
-const defaultModel = "openai/gpt-6-luna";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["meta/muse-ember", "google/gemini-3.5-flash-lite"] as const;
 
 const schema = z.object({

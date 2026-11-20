@@ -36,7 +36,7 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
   },
   {
     expectations:
-      "Write a concrete, non-null discount example using software work, with correct numbers. Use literal language, without idioms, metaphors or figures of speech.",
+      "The learner never said they buy software, so null is acceptable. A line, if written, is a concrete discount on software for their work, with correct numbers and stated as an example, in literal language without idioms, metaphors or figures of speech.",
     id: "en-plain-words-example",
     userInput: {
       facts: ["Works as: software engineer"],
