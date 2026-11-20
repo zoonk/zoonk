@@ -52,7 +52,16 @@ function RestStatus({ className }: { className?: string }) {
 
 function WaitingStatus({ className }: { className?: string }) {
   const t = useExtracted();
-  const { writingStalled } = useTodayScreen();
+  const { today, writingStalled } = useTodayScreen();
+
+  if (today.session.waitingFor === "mock") {
+    return (
+      <TodayStatusLine className={className} icon={<ClockIcon />}>
+        <TodayStatusSentence>{t("Your mock exam is being prepared.")}</TodayStatusSentence>
+        <TodayStatusClause>{t("Come back to this page to start it.")}</TodayStatusClause>
+      </TodayStatusLine>
+    );
+  }
 
   if (writingStalled) {
     return (
