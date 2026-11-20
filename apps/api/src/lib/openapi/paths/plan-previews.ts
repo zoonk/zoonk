@@ -2,7 +2,10 @@ import { planChangeInputSchema } from "@zoonk/core/plans/contract";
 import { planChangePreviewSchema } from "@zoonk/core/plans/preview-contract";
 import { z } from "zod";
 import { goalPathParamsSchema } from "../schemas/paths";
-import { planDateChangeInvalidResponse } from "../schemas/plan-errors";
+import {
+  planChangedWhileSavingResponse,
+  planDateChangeInvalidResponse,
+} from "../schemas/plan-errors";
 import {
   notFoundResponse,
   unauthorizedResponse,
@@ -29,6 +32,7 @@ export const planPreviewPaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "404": notFoundResponse,
+        "409": planChangedWhileSavingResponse,
         "422": planDateChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
