@@ -274,7 +274,7 @@ export async function startCourseGoal({
       studyTime: input.studyTime,
       timeZone: input.timeZone,
     },
-    { details: courseStart, lookup },
+    { country: course.country, details: courseStart, lookup },
   );
 
   if (created.status === "existing") {

@@ -38,7 +38,11 @@ function toScopeSettings(value: unknown): { examSubjects?: string[] } {
   return subjects.length > 0 ? { examSubjects: subjects } : {};
 }
 
-export type CourseGoalOrigin = { details: CourseStart; lookup: CourseGoalLookup };
+export type CourseGoalOrigin = {
+  country: string | null;
+  details: CourseStart;
+  lookup: CourseGoalLookup;
+};
 
 type GoalRecord = {
   courseStart?: CourseGoalOrigin;
@@ -73,7 +77,7 @@ export async function insertGoalWithPlan(
   const { examSubjects, ...details } = draft.details ?? {};
 
   const country = await resolveNewGoalCountry({
-    courseStart: courseStart?.details,
+    courseCountry: courseStart?.country,
     draft,
     tx,
     userId,

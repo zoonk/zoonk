@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   courseChapterFixture,
   libraryChapterFixture,
@@ -174,6 +175,7 @@ describe(startCourseGoal, () => {
     const [source, edition] = await Promise.all([
       publicCourse({ familyId: family.id, organizationId: brand.id, title: "Economics" }),
       publicCourse({
+        country: "CA",
         familyId: family.id,
         language: "pt-BR",
         organizationId: brand.id,
@@ -205,11 +207,46 @@ describe(startCourseGoal, () => {
       throw new Error("Expected an edition goal");
     }
 
+    await expect(loadGoalCurriculumInputs(result.goal.id)).resolves.toMatchObject({
+      goal: { contentCountry: edition.country },
+      startedCourse: { id: edition.id },
+    });
+
     await expect(startCourseGoal(request)).resolves.toMatchObject({
       goal: { id: result.goal.id },
       status: "existing",
     });
   });
+
+  it.each([
+    { country: "US", title: "US Law" },
+    { country: null, title: "Robotics" },
+  ])(
+    "keeps the source country ($country) when starting without an edition",
+    async (courseInput) => {
+      const [course, user] = await Promise.all([publicCourse(courseInput), userFixture()]);
+      await learningProfileFixture({ homeCountry: "BR", userId: user.id });
+      mockSession(user.id);
+
+      const result = await startCourseGoal({ courseId: course.id, input: { language: "pt" } });
+
+      expect(result).toMatchObject({
+        goal: { language: "pt", primaryCourseId: null },
+        status: "created",
+      });
+
+      const goalId = result.status === "created" ? result.goal.id : "";
+
+      await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject(
+        { contentCountry: course.country },
+      );
+
+      await expect(loadGoalCurriculumInputs(goalId)).resolves.toMatchObject({
+        goal: { contentCountry: course.country },
+        startedCourse: null,
+      });
+    },
+  );
 
   it("starts one unpinned goal in the learner's language across concurrent requests", async () => {
     const [course, user] = await Promise.all([publicCourse(), userFixture()]);
