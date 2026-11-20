@@ -172,8 +172,13 @@ describe(startCourseGoal, () => {
     ]);
 
     const [source, edition] = await Promise.all([
-      publicCourse({ familyId: family.id, organizationId: brand.id }),
-      publicCourse({ familyId: family.id, language: "pt-BR", organizationId: brand.id }),
+      publicCourse({ familyId: family.id, organizationId: brand.id, title: "Economics" }),
+      publicCourse({
+        familyId: family.id,
+        language: "pt-BR",
+        organizationId: brand.id,
+        title: "Economia",
+      }),
     ]);
 
     mockSession(user.id);
@@ -188,7 +193,10 @@ describe(startCourseGoal, () => {
     expect(result).toMatchObject({
       goal: {
         details: { courseStart: { chapterId: null }, level: "basic" },
+        displayName: edition.title,
         primaryCourseId: edition.id,
+        prompt: edition.title,
+        title: edition.title,
       },
       status: "created",
     });

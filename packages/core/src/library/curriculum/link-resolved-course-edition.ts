@@ -12,6 +12,7 @@ import {
   readCourseEditionPair,
 } from "../../courses/_utils/course-edition-family";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { getSinglePlanCourseId } from "./goal-plan-graph";
 
 type LinkTarget = { courseId: string; goalId?: never } | { courseId?: never; goalId: string };
 
@@ -33,17 +34,11 @@ async function findResolvedPair(target: LinkTarget) {
   const matches = goals.flatMap((goal) => {
     const sourceId = isJsonObject(goal.details) ? goal.details.courseStartSourceId : null;
     const courseId = goal.primaryCourseId;
-    const { skills, optionSkills = [] } = parsePlanGraph(goal.plan?.graph);
-
-    const courseIds = new Set(
-      [...skills, ...optionSkills].flatMap((skill) => skill.courseIds ?? []),
-    );
 
     return typeof sourceId === "string" &&
       isUuid(sourceId) &&
       courseId &&
-      courseIds.size === 1 &&
-      courseIds.has(courseId)
+      getSinglePlanCourseId(parsePlanGraph(goal.plan?.graph)) === courseId
       ? [
           {
             courseId: sourceId,
