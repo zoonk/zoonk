@@ -26,7 +26,8 @@ async function claude(args: string[], cwd: string, input: string) {
 
   const chunks: Buffer[] = [];
   child.stdout.on("data", (chunk: Buffer) => chunks.push(chunk));
-  child.stderr.resume();
+  const errors: Buffer[] = [];
+  child.stderr.on("data", (chunk: Buffer) => errors.push(chunk));
 
   const done = new Promise<number | null>((resolve, reject) => {
     child.once("error", reject);
@@ -40,27 +41,44 @@ async function claude(args: string[], cwd: string, input: string) {
   const stdout = Buffer.concat(chunks).toString();
 
   if (code !== 0 && !stdout.trim()) {
-    throw new Error("Claude subscription client failed.");
+    throw new Error(
+      `Claude subscription client exited ${code}: ${Buffer.concat(errors).toString().trim()}`,
+    );
   }
 
-  return stdout;
+  return { code, stdout };
+}
+
+async function qualifySubscription(cwd: string) {
+  const auth = z.object({
+    authMethod: z.literal("claude.ai"),
+    loggedIn: z.literal(true),
+    subscriptionType: z.string().min(1),
+  });
+
+  const authResult = await claude(["auth", "status"], cwd, "");
+  const status: unknown = JSON.parse(authResult.stdout);
+
+  if (!auth.safeParse(status).success) {
+    throw new SeatUnavailableError("The client did not authenticate with a Claude subscription.");
+  }
+
+  if (authResult.code !== 0) {
+    throw new Error(`Claude authentication command exited ${authResult.code}.`);
+  }
 }
 
 async function seatRead<T>(reader: Reader, protocol: string, packet: string, schema: z.ZodType<T>) {
   if (reader.family !== "anthropic") {
-    throw new Error("This seat cannot be qualified as tool-free. Use its gateway channel.");
+    throw new SeatUnavailableError(
+      "This seat cannot be qualified as tool-free. Use its gateway channel.",
+    );
   }
 
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "eval-seat-"));
 
   try {
-    const auth = z.object({
-      authMethod: z.literal("claude.ai"),
-      loggedIn: z.literal(true),
-      subscriptionType: z.string().min(1),
-    });
-
-    auth.parse(JSON.parse(await claude(["auth", "status"], cwd, "")));
+    await qualifySubscription(cwd);
     const model = reader.model.replace(/^anthropic\//u, "").replaceAll(".", "-");
 
     const output = await claude(
@@ -88,7 +106,7 @@ async function seatRead<T>(reader: Reader, protocol: string, packet: string, sch
     );
 
     const events = z.array(z.looseObject({ type: z.string() })).parse(
-      output
+      output.stdout
         .trim()
         .split("\n")
         .map((line) => JSON.parse(line) as unknown),
@@ -96,13 +114,25 @@ async function seatRead<T>(reader: Reader, protocol: string, packet: string, sch
 
     const init = events.find((event) => event.subtype === "init");
 
-    z.object({
-      apiKeySource: z.literal("none"),
-      mcp_servers: z.tuple([]),
-      model: z.literal(model),
-      plugins: z.array(z.object({ path: z.literal("builtin") })),
-      tools: z.tuple([]),
-    }).parse(init);
+    if (!init) {
+      throw new Error("Claude returned no initialization event.");
+    }
+
+    const qualification = z
+      .object({
+        apiKeySource: z.literal("none"),
+        mcp_servers: z.tuple([]),
+        model: z.literal(model),
+        plugins: z.array(z.object({ path: z.literal("builtin") })),
+        tools: z.tuple([]),
+      })
+      .safeParse(init);
+
+    if (!qualification.success) {
+      throw new SeatUnavailableError(
+        "Seat initialization failed model, authentication or tool isolation checks.",
+      );
+    }
 
     const result = z
       .object({
@@ -120,19 +150,20 @@ async function seatRead<T>(reader: Reader, protocol: string, packet: string, sch
           .safeParse(event.rate_limit_info),
       );
 
-    const reset = limits.findLast((limit) => limit.success && limit.data.status === "rejected")
-      ?.data?.resetsAt;
+    const rejected = limits.findLast(
+      (limit) => limit.success && limit.data.status === "rejected",
+    )?.data;
 
-    if (result.is_error && reset) {
-      throw new SeatLimitError(result.result, reset * 1000);
+    if (result.is_error && rejected) {
+      throw new SeatUnavailableError(result.result, (rejected.resetsAt ?? 0) * 1000);
     }
 
-    if (result.is_error) {
-      throw new Error(result.result);
+    if (result.is_error || output.code !== 0) {
+      throw new Error(`Claude read failed (exit ${output.code}): ${result.result}`);
     }
 
     if (!Object.hasOwn(result.modelUsage, model)) {
-      throw new Error("Seat response used a different model.");
+      throw new SeatUnavailableError("Seat response used a different model.");
     }
 
     return {
@@ -145,11 +176,11 @@ async function seatRead<T>(reader: Reader, protocol: string, packet: string, sch
   }
 }
 
-class SeatLimitError extends Error {
+class SeatUnavailableError extends Error {
   readonly resetsAt: number;
-  constructor(message: string, resetsAt: number) {
+  constructor(message: string, resetsAt = 0) {
     super(message);
-    this.name = "SeatLimitError";
+    this.name = "SeatUnavailableError";
     this.resetsAt = resetsAt;
   }
 }
@@ -231,7 +262,7 @@ export async function readPacket<T>({
       return await seatRead(reader, protocol, packet, schema);
     } catch (error) {
       if (
-        error instanceof SeatLimitError &&
+        error instanceof SeatUnavailableError &&
         error.resetsAt > Date.now() &&
         error.resetsAt - Date.now() <= 4 * 60 * 60 * 1000
       ) {
@@ -248,9 +279,11 @@ export async function readPacket<T>({
         return seatRead(reader, protocol, packet, schema);
       }
 
-      process.stderr.write(
-        `Subscription unavailable or unqualified. Using gateway for ${reader.model}\n`,
-      );
+      if (!(error instanceof SeatUnavailableError)) {
+        throw error;
+      }
+
+      process.stderr.write(`Seat read for ${reader.model}: ${error.message} Using gateway.\n`);
     }
   }
 
