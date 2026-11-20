@@ -50,7 +50,7 @@ export function MockResultDetails({ result }: { result: MockResult }) {
   }
 
   return (
-    <DetailsDrawer label={t("Details")} title={t("Details")} trigger="small">
+    <DetailsDrawer label={t("Details")} title={t("Details")} trigger="bar">
       <div className="flex flex-col gap-8 pb-2">
         {hasPoints && result.points && <MockResultPoints points={result.points} />}
         <PassMarks />
