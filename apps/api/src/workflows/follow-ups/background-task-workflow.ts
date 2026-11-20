@@ -1,19 +1,18 @@
 import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import { rememberProposedMemory } from "../_shared/remember-memory";
 import { waitForRunToken } from "../_shared/run-token";
+import { prepareContentFixMedia } from "./content-fix-media";
 import {
   askToCancelSecondStorePlusStep,
   checkFactSensitivityStep,
   checkMistakePatternStep,
   claimDailyInsightStep,
   endWebPlusBesideStoreStep,
-  failContentFixVoiceStep,
   proposeOnboardingMemoryStep,
   proposeSessionMemoryStep,
   resolveMistakeCauseStep,
   saveDailyInsightStep,
   settleSessionDayStep,
-  voiceContentFixStep,
   voiceWordStep,
   writeDailyInsightStep,
 } from "./steps/background-task-steps";
@@ -57,15 +56,6 @@ async function checkDailyInsight({ input, userId }: InsightTask): Promise<void> 
   await saveDailyInsightStep({ claim, userId, written });
 }
 
-/** Once retries run out, the fix says so, since it can't be approved without its clip. */
-async function voiceContentFix(input: { fixId: string }): Promise<void> {
-  try {
-    await voiceContentFixStep(input);
-  } catch {
-    await failContentFixVoiceStep(input);
-  }
-}
-
 async function runTask(task: BackgroundTask): Promise<void> {
   const { userId } = task;
 
@@ -86,8 +76,9 @@ async function runTask(task: BackgroundTask): Promise<void> {
       return settleSessionDayStep({ ...task.input, userId });
     case "voiceWord":
       return voiceWordStep(task.input);
+    case "prepareContentFixMedia":
     case "voiceContentFix":
-      return voiceContentFix(task.input);
+      return prepareContentFixMedia(task.input.fixId);
     case "endWebPlusBesideStore":
       return endWebPlusBesideStoreStep(userId);
     case "askToCancelSecondStorePlus":

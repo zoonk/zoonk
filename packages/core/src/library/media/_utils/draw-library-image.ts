@@ -34,6 +34,44 @@ function numberLabels(parts: readonly string[]): ImageScene["labels"] {
   }));
 }
 
+export async function planLibraryImageScene({
+  alt,
+  analytics,
+  context,
+  language,
+  numberedParts,
+  request,
+  screenText,
+  textAllowed,
+}: Pick<
+  LibraryImageRequest,
+  | "alt"
+  | "analytics"
+  | "context"
+  | "language"
+  | "numberedParts"
+  | "request"
+  | "screenText"
+  | "textAllowed"
+>) {
+  const parts = numberedParts ?? [];
+
+  const { data: planned } = await generateImageScene({
+    alt,
+    analytics,
+    context,
+    language,
+    request:
+      parts.length > 0
+        ? `${request}\nShow each of these parts clearly: ${parts.join("; ")}.`
+        : request,
+    screenText,
+    textAllowed: textAllowed && parts.length === 0,
+  });
+
+  return parts.length > 0 ? { ...planned, labels: numberLabels(parts) } : planned;
+}
+
 /**
  * The caller must dispatch the background image check when the returned picture is newly drawn.
  * Only the call that stored it says so, even when another drew the same scene at once, so each
@@ -56,22 +94,18 @@ export async function drawLibraryImage({
     return null;
   }
 
-  const parts = numberedParts ?? [];
-
-  const { data: planned } = await generateImageScene({
+  const scene = await planLibraryImageScene({
     alt,
     analytics,
     context,
     language,
-    request:
-      parts.length > 0
-        ? `${request}\nShow each of these parts clearly: ${parts.join("; ")}.`
-        : request,
+    numberedParts,
+    request,
     screenText,
-    textAllowed: textAllowed && parts.length === 0,
+    textAllowed,
   });
 
-  const scene = parts.length > 0 ? { ...planned, labels: numberLabels(parts) } : planned;
+  const parts = numberedParts ?? [];
   const prompt = describeImageScene(scene);
   const hasLabels = parts.length === 0 && scene.labels.length > 0;
 

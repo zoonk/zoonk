@@ -1,78 +1,25 @@
-import { type TransactionClient } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { toAudioData } from "../../../library/language/_utils/audio-data";
-import { type StoredChange } from "../contract";
-import { contentFixVoiceSchema } from "../voice-schema";
+import { type FixContext } from "../handlers/fix-handler";
+import { type VocabularyModel } from "../handlers/vocabulary-row";
+import { type ContentFixMediaNeed, clipMediaKey } from "../media-schema";
 
-type VoicedModel = "Sentence" | "Word";
+type VocabularyClip = { language: string; model: VocabularyModel; text: string };
 
-type VoiceTarget = { id: string; model: VoicedModel; text: string };
-
-function isVoiced(model: string): model is VoicedModel {
-  return model === "Word" || model === "Sentence";
+export function vocabularyClipNeed(
+  clip: VocabularyClip & { orgSlug: string },
+): Extract<ContentFixMediaNeed, { kind: "clip" }>[] {
+  return isTTSSupportedLanguage(clip.language)
+    ? [{ ...clip, key: clipMediaKey(clip), kind: "clip" }]
+    : [];
 }
 
-function targetOf(change: StoredChange): VoiceTarget | null {
-  if (!isVoiced(change.model)) {
-    return null;
+export function readFixClip(context: FixContext, clip: VocabularyClip) {
+  const produced = context.media.get(clipMediaKey(clip));
+
+  if (produced?.kind !== "clip") {
+    throw new Error(`Content fix ${context.fixId} has no clip for its text`);
   }
 
-  if (change.op === "revoice") {
-    return { id: change.id, model: change.model, text: change.text };
-  }
-
-  if (change.op !== "set" || !("clip" in change) || change.clip?.after !== null) {
-    return null;
-  }
-
-  const textField = change.model === "Word" ? "word" : "sentence";
-  const text = change.fields.find((field) => field.field === textField);
-
-  return text && typeof text.after === "string"
-    ? { id: change.id, model: change.model, text: text.after }
-    : null;
-}
-
-async function loadVoice(db: TransactionClient, { id, model }: VoiceTarget) {
-  const select = { organization: { select: { slug: true } }, targetLanguage: true } as const;
-
-  return model === "Word"
-    ? db.word.findUnique({ select, where: { id } })
-    : db.sentence.findUnique({ select, where: { id } });
-}
-
-/**
- * The text a fix must voice before it can be approved: a word's or sentence's new text, unless a
- * revert puts back the clip it had, or the text it re-records. Null when it voices nothing or its
- * language has no voice.
- */
-export async function readVoiceTarget(
-  db: TransactionClient,
-  changes: readonly StoredChange[],
-): Promise<(VoiceTarget & { orgSlug: string; targetLanguage: string }) | null> {
-  const target = changes.map((change) => targetOf(change)).find((found) => found !== null);
-  const row = target ? await loadVoice(db, target) : null;
-
-  return target && row && isTTSSupportedLanguage(row.targetLanguage)
-    ? { ...target, orgSlug: row.organization.slug, targetLanguage: row.targetLanguage }
-    : null;
-}
-
-/** The clip a fix voiced for `text`. Approval waits for it, so a fix applying without one is a bug. */
-export async function readFixClip(
-  tx: TransactionClient,
-  { fixId, text }: { fixId: string; text: string },
-) {
-  const fix = await tx.contentFix.findUniqueOrThrow({
-    select: { voice: true },
-    where: { id: fixId },
-  });
-
-  const voice = contentFixVoiceSchema.nullable().parse(fix.voice);
-
-  if (voice?.status !== "voiced" || voice.text !== text) {
-    throw new Error(`Content fix ${fixId} has no clip of its text`);
-  }
-
-  return toAudioData(voice);
+  return toAudioData(produced);
 }

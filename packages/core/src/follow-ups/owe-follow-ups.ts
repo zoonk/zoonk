@@ -22,6 +22,7 @@ function getFollowUpKey(followUp: FollowUp): string {
     case "writeLesson":
     case "writeSentenceOrders":
       return followUp.input.lessonId;
+    case "prepareContentFixMedia":
     case "voiceContentFix":
       return followUp.input.fixId;
     // An admitted run is owed apart from an ask, so an ask from a write that read the map before

@@ -20,6 +20,7 @@ import { getChapterCacheTags } from "../../../library/chapters/chapter-cache-tag
 import { type StoredChange } from "../contract";
 import { type FixContext } from "../handlers/fix-handler";
 import { findStoredHandler } from "../handlers/registry";
+import { changesLearnerLesson } from "./lesson-version-effect";
 import { type FixUnit } from "./resolved-change";
 import { applyVocabularyUnit, findLessonsShowing, isVocabularyUnit } from "./vocabulary-unit";
 
@@ -117,8 +118,7 @@ export async function lockFixPlans(
 }
 
 /**
- * Writes exactly the prepared changes. Every fix under a lesson moves its `updatedAt`, which the
- * lesson player reads as the lesson's version in every app.
+ * The lesson player reads `updatedAt` as part of the lesson version in every app.
  */
 export async function applyFixChanges(
   tx: TransactionClient,
@@ -133,7 +133,7 @@ export async function applyFixChanges(
     await findStoredHandler(change).apply(tx, change, context);
   }
 
-  if (unit.kind === "lesson") {
+  if (unit.kind === "lesson" && changes.some((change) => changesLearnerLesson(change))) {
     await tx.lesson.update({ data: { updatedAt: context.now }, where: { id: unit.id } });
   }
 

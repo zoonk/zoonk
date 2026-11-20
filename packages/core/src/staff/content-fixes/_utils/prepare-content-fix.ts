@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CURRENT_STEPS } from "../../../library/lessons/lesson-versions";
@@ -6,11 +7,22 @@ import { type ContentFixEffect, type StoredChange, contentFixChangesSchema } fro
 import { type FixTarget } from "../handlers/fix-handler";
 import { numericScreenProblem } from "../handlers/numeric-screen";
 import { findStoredHandler, prepareProposedChange } from "../handlers/registry";
+import {
+  type ContentFixMediaNeed,
+  normalizeContentFixMediaNeed,
+  readContentFixMedia,
+} from "../media-schema";
 import { lessonProblem } from "./lesson-problem";
+import { changesLearnerLesson } from "./lesson-version-effect";
 import { type FixUnit, type Json, type Refusal, type Resolution, refuse } from "./resolved-change";
 import { isVocabularyUnit, vocabularyEffects } from "./vocabulary-unit";
 
-export type PreparedFix = { changes: StoredChange[]; effects: ContentFixEffect[]; unit: FixUnit };
+export type PreparedFix = {
+  changes: StoredChange[];
+  effects: ContentFixEffect[];
+  media: ContentFixMediaNeed[];
+  unit: FixUnit;
+};
 
 /** Reads what one change touches now and returns what it would write. */
 export type ChangeResolver = (db: TransactionClient) => Promise<Resolution<unknown>>;
@@ -23,8 +35,23 @@ export function storedChange(change: StoredChange): ChangeResolver {
   return (db) => findStoredHandler(change).reprepare(db, change);
 }
 
-export function inverseChange(change: StoredChange): ChangeResolver {
-  return (db) => findStoredHandler(change).revert(db, change);
+export function inverseChanges(original: {
+  changes: unknown;
+  decidedAt: Date | null;
+  id: string;
+  media: unknown;
+}): ChangeResolver[] {
+  const media = new Map(
+    readContentFixMedia(original.media).flatMap(({ need, result }) =>
+      !result || result === "failed" ? [] : [[need.key, result] as const],
+    ),
+  );
+
+  const context = { fixId: original.id, media, now: original.decidedAt ?? new Date() };
+
+  return contentFixChangesSchema
+    .parse(original.changes)
+    .map((change) => (db) => findStoredHandler(change).revert(db, change, context));
 }
 
 export function targetsOf(change: StoredChange): FixTarget[] {
@@ -252,10 +279,15 @@ export async function prepareContentFix(
   resolvers: readonly ChangeResolver[],
 ): Promise<Refusal | { fix: PreparedFix; ok: true }> {
   const resolved = await Promise.all(resolvers.map((resolve) => resolve(db)));
-  const refused = resolved.find((change) => !change.ok);
 
-  if (refused && !refused.ok) {
-    return refused;
+  const refused = resolved.flatMap((change, index) =>
+    change.ok
+      ? []
+      : [resolved.length === 1 ? change.problem : `changes[${String(index)}]: ${change.problem}`],
+  );
+
+  if (refused.length > 0) {
+    return refuse(refused.join("\n"));
   }
 
   const accepted = resolved.filter((change) => change.ok);
@@ -277,8 +309,21 @@ export async function prepareContentFix(
     return refuse(problem);
   }
 
+  const needs = accepted
+    .flatMap((change) => change.media ?? [])
+    .map((need) => normalizeContentFixMediaNeed(need));
+
+  const media = new Map(needs.map((need) => [need.key, need]));
+  const conflicting = needs.find((need) => !isDeepStrictEqual(media.get(need.key), need));
+
+  if (conflicting) {
+    return refuse(`The same media key has different inputs: ${conflicting.key}.`);
+  }
+
   const lessonVersion: ContentFixEffect[] =
-    first.unit.kind === "lesson" ? [{ kind: "lessonVersion", lessonId: first.unit.id }] : [];
+    first.unit.kind === "lesson" && stored.some((change) => changesLearnerLesson(change))
+      ? [{ kind: "lessonVersion", lessonId: first.unit.id }]
+      : [];
 
   const effects = [
     ...lessonVersion,
@@ -289,5 +334,13 @@ export async function prepareContentFix(
       : []),
   ];
 
-  return { fix: { changes: stored, effects: uniqueEffects(effects), unit: first.unit }, ok: true };
+  return {
+    fix: {
+      changes: stored,
+      effects: uniqueEffects(effects),
+      media: [...media.values()],
+      unit: first.unit,
+    },
+    ok: true,
+  };
 }

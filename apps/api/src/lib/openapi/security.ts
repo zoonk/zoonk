@@ -28,6 +28,11 @@ export function createSecuritySchemes({ cookieName }: { cookieName: string }) {
       name: cookieName,
       type: "apiKey",
     },
+    staffCliAuth: {
+      description: "Zoonk staff CLI access token sent in the Authorization header.",
+      scheme: "bearer",
+      type: "http",
+    },
   } as const;
 }
 

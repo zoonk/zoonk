@@ -59,6 +59,7 @@ import { reviewFlagPaths } from "./paths/review-flags";
 import { sessionPaths } from "./paths/sessions";
 import { skillOutlinePaths } from "./paths/skill-outlines";
 import { speechClipPaths } from "./paths/speech-clips";
+import { staffPaths } from "./paths/staff";
 import { studyReminderPaths } from "./paths/study-reminder";
 import { studySessionPaths } from "./paths/study-sessions";
 import { subscriptionPaths } from "./paths/subscriptions";
@@ -109,6 +110,7 @@ const paths = withInternalErrorResponses({
   ...checkpointPaths,
   ...completedLessonPaths,
   ...contentFixPaths,
+  ...staffPaths,
   ...contentGenerationPaths,
   ...courseGoalPaths,
   ...courseEstimatePaths,

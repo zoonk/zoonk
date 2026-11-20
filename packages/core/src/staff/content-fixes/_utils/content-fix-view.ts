@@ -2,7 +2,26 @@ import { type ContentFix } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { getContentFixReviewUrl } from "../batches";
 import { contentFixChangesSchema, contentFixEffectsSchema } from "../contract";
-import { contentFixVoiceSchema } from "../voice-schema";
+import { readContentFixMedia } from "../media-schema";
+import { type PreparedFix } from "./prepare-content-fix";
+
+export function describePreparedFix({
+  fix,
+  proposal,
+}: {
+  fix: PreparedFix;
+  proposal: { feedbackId?: string | null; reason: string };
+}) {
+  const { unit, ...prepared } = fix;
+
+  return {
+    ...prepared,
+    feedbackId: proposal.feedbackId ?? null,
+    reason: proposal.reason,
+    unit: unit.kind,
+    unitId: unit.id,
+  };
+}
 
 export function toContentFixView(fix: ContentFix) {
   return {
@@ -11,6 +30,8 @@ export function toContentFixView(fix: ContentFix) {
     effects: contentFixEffectsSchema.parse(fix.effects),
     feedbackId: fix.feedbackId,
     id: fix.id,
+    media: readContentFixMedia(fix.media),
+    mediaOwed: fix.mediaOwedAt !== null,
     reason: fix.reason,
     revertsId: fix.revertsId,
     reviewUrl: getContentFixReviewUrl(fix.id),
@@ -18,8 +39,6 @@ export function toContentFixView(fix: ContentFix) {
     status: fix.status,
     unit: fix.unit,
     unitId: fix.unitId,
-    voice: contentFixVoiceSchema.nullable().parse(fix.voice),
-    voiceOwed: fix.voiceOwedAt !== null,
   };
 }
 
@@ -27,7 +46,7 @@ export type ContentFixView = ReturnType<typeof toContentFixView>;
 
 /** One line per proposal or decision: who, which fix and what happened, never the content itself. */
 export function logContentFix(entry: {
-  action: "apply" | "approve" | "propose" | "reject" | "resume" | "revert" | "withdraw";
+  action: "apply" | "approve" | "check" | "propose" | "reject" | "resume" | "revert" | "withdraw";
   actorUserId: string | null;
   batchId?: string | null;
   clientId?: string | null;
