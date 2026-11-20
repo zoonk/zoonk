@@ -1,4 +1,7 @@
+// Lesson player views: the real player components with the video's content per locale.
+import { type LessonQuestionResource } from "@repo/packages/core/src/lesson-questions/contract.ts";
 import { serializeExerciseSteps } from "@repo/packages/core/src/player/contracts/prepare-lesson-data.ts";
+import { type LearnLinkComponentProps } from "@repo/packages/learn/src/learn-context.tsx";
 import { SpeechPlayerProvider } from "@repo/packages/learn/src/speech/speech-player-provider.tsx";
 import { LessonPlayerProvider } from "@repo/packages/player/src/lesson/lesson-player-provider.tsx";
 import { LessonPlayerShell } from "@repo/packages/player/src/lesson/lesson-player-shell.tsx";
@@ -12,11 +15,22 @@ import { localAdapters } from "@repo/packages/player/src/preview/preview-lesson.
 import { activityStep, contentStep } from "@repo/packages/player/src/preview/preview-steps.ts";
 import { activityContentFixtures } from "@repo/packages/testing/src/fixtures/activity-contents.ts";
 import { engineModeFixtures } from "@repo/packages/testing/src/fixtures/activity-contents/engine-modes.ts";
-// Lesson player views: the real player components with the video's content per locale.
-import { useMemo } from "react";
+import { type ComponentProps, useMemo } from "react";
 import { story } from "./story";
 
 type Lang = "en" | "pt";
+type PreviewState = Parameters<typeof previewLesson>[1];
+type TutorConfig = NonNullable<ComponentProps<typeof LessonPlayerProvider>["tutor"]>;
+const PREVIEW_STATES: PreviewState[] = ["answering", "checked", "explore", "reading"];
+const previewState = (state: string): PreviewState =>
+  PREVIEW_STATES.find((known) => known === state) ?? "answering";
+type ActivityContent = Parameters<typeof activityStep>[0]["content"];
+
+declare global {
+  /** Set once the tutor stand-in is installed, and how fast it streams. */
+  var __tutorApi: boolean | undefined;
+  var __zuDelay: number | undefined;
+}
 const clone = <T,>(x: T): T => JSON.parse(JSON.stringify(x));
 
 function choice(question: string, options: [string, boolean, string][]) {
@@ -33,16 +47,16 @@ function choice(question: string, options: [string, boolean, string][]) {
 }
 
 /* Six activities from the real registry, with their fixture content (translated for pt). */
-function activityContent(key: string, lang: Lang): { title: string; content: any } {
+function activityContent(key: string, lang: Lang): { title: string; content: ActivityContent } {
   const pt = lang === "pt";
   switch (key) {
     case "timeline": {
-      const c = clone(activityContentFixtures.timeline) as any;
+      const c = clone(activityContentFixtures.timeline);
       if (pt) {
         c.prompt = "Posicione cada evento na linha do tempo.";
-        c.fields.anchors[0].label = "Grande Pirâmide construída";
-        c.fields.events[0].label = "Chegada do homem à Lua";
-        c.fields.events[1].label = "Cleópatra governa o Egito";
+        c.fields.anchors[0]!.label = "Grande Pirâmide construída";
+        c.fields.events[0]!.label = "Chegada do homem à Lua";
+        c.fields.events[1]!.label = "Cleópatra governa o Egito";
       }
       return {
         content: c,
@@ -50,10 +64,11 @@ function activityContent(key: string, lang: Lang): { title: string; content: any
       };
     }
     case "map": {
-      const c = clone(activityContentFixtures.mapExplorer) as any;
+      const c = clone(activityContentFixtures.mapExplorer);
       if (pt) {
         c.prompt = "Toque no mapa para achar pistas.";
         const [pump, brewery, workhouse] = c.fields.places;
+        if (!pump || !brewery || !workhouse) throw new Error("the map fixture has three places");
         pump.label = "Bomba d'água da Broad Street";
         pump.reveals = "A maioria das mortes foi em casas a poucas ruas desta bomba.";
         brewery.label = "Cervejaria da Broad Street";
@@ -77,7 +92,7 @@ function activityContent(key: string, lang: Lang): { title: string; content: any
       };
     }
     case "projectile": {
-      const c = clone((engineModeFixtures as any).formulaModel.simulation);
+      const c = clone(engineModeFixtures.formulaModel.simulation);
       c.check = {
         ...c.check,
         question: pt ? "A que distância a bola cai a 45°?" : "How far does the ball land at 45°?",
@@ -85,15 +100,15 @@ function activityContent(key: string, lang: Lang): { title: string; content: any
       if (pt) {
         c.prompt = "Mude o ângulo e veja onde a bola cai.";
         c.fields.title = "Projétil";
-        c.fields.outputs[0].label = "Cai a";
-        c.fields.outputs[1].label = "Altura máxima";
-        c.fields.variables[0].label = "Ângulo de lançamento";
-        c.fields.variables[1].label = "Velocidade";
+        c.fields.outputs[0]!.label = "Cai a";
+        c.fields.outputs[1]!.label = "Altura máxima";
+        c.fields.variables[0]!.label = "Ângulo de lançamento";
+        c.fields.variables[1]!.label = "Velocidade";
       }
       return { content: c, title: pt ? "Movimento de projéteis" : "Projectile motion" };
     }
     case "polls": {
-      const c = clone((engineModeFixtures as any).randomSimulation.sampling);
+      const c = clone(engineModeFixtures.randomSimulation.sampling);
       if (pt) {
         c.prompt = "Faça 200 pesquisas de cada tamanho.";
         c.fields.populationLabel = "Cidade de exemplo";
@@ -129,15 +144,15 @@ function activityContent(key: string, lang: Lang): { title: string; content: any
       return { content: c, title: pt ? "Como funcionam as pesquisas" : "How polls work" };
     }
     case "code": {
-      const c = clone(activityContentFixtures.codeRunner) as any;
+      const c = clone(activityContentFixtures.codeRunner);
       if (pt) {
         c.prompt = "Corrija o laço para somar todos os números inteiros de 1 a 100.";
-        c.fields.mistakes[0].feedback = "O range para antes do fim.";
+        c.fields.mistakes[0]!.feedback = "O range para antes do fim.";
       }
       return { content: c, title: pt ? "Laços em Python" : "Loops in Python" };
     }
     case "piano": {
-      const c = clone((engineModeFixtures as any).keyboardFretboard.byEarChoice);
+      const c = clone(engineModeFixtures.keyboardFretboard.byEarChoice);
       if (pt) {
         c.prompt = "Toque o acorde. Ele soa maior ou menor?";
         c.check = choice("O que você ouviu?", [
@@ -156,7 +171,7 @@ function lessonLanguage(lang: Lang) {
   return lang === "pt" ? "pt" : "en";
 }
 
-function Act({ lang, state, k }: { k: string; lang: Lang; state: string }) {
+function Act({ lang, state, k }: { k: string; lang: Lang; state: PreviewState }) {
   const lesson = useMemo(() => {
     const { content, title } = activityContent(k, lang);
     return buildLesson([activityStep({ content, id: `act-${k}` })], {
@@ -165,7 +180,7 @@ function Act({ lang, state, k }: { k: string; lang: Lang; state: string }) {
       title,
     });
   }, [k, lang]);
-  return <PlayerPreview lesson={lesson} state={state as any} />;
+  return <PlayerPreview lesson={lesson} state={state} />;
 }
 
 /* A check question answered wrong, from the data analyst story. */
@@ -247,7 +262,7 @@ function wordLesson(lang: Lang) {
   const { learner, target, word: entry } = story[lang].language;
   const word = {
     audioUrl: `/audio/${entry.word}.mp3`,
-    distractors: entry.distractors,
+    distractors: [...entry.distractors],
     id: "8b0d7c84-5d4b-4f43-9a51-6a3c2e7b1f11",
     pronunciation: entry.respelling,
     romanization: null,
@@ -264,21 +279,22 @@ function wordLesson(lang: Lang) {
       sentenceWords: [word],
     },
     steps: [{ content: {}, id, kind: "vocabulary", position: 0, sentence: null, word }],
-  } as any);
+  });
+  if (!exercise) throw new Error("no word exercise");
   const step = {
     exercise,
     id,
-    kind: "vocabulary",
+    kind: "vocabulary" as const,
     position: 0,
     skillId: null,
     wordHints: { note: entry.note, pronunciationTip: entry.tip },
   };
-  return buildLesson([step as any], {
+  return buildLesson([step], {
     id: "lesson-word",
     language: learner,
     targetLanguage: target,
     title: entry.lesson,
-  } as any);
+  });
 }
 
 function Word({ lang }: { lang: Lang }) {
@@ -286,10 +302,10 @@ function Word({ lang }: { lang: Lang }) {
   return <PlayerPreview lesson={lesson} state="answering" />;
 }
 
-function Activity({ id, state }: { id: string; state: string }) {
+function Activity({ id, state }: { id: string; state: PreviewState }) {
   const entry = getPreviewEntry(id);
   if (!entry) return <p>no entry {id}</p>;
-  return <PlayerPreview lesson={previewLesson(entry, state as any)} state={state as any} />;
+  return <PlayerPreview lesson={previewLesson(entry, state)} state={state} />;
 }
 
 /* Ask Zu inside a lesson: the real tutor UI, served by a local stand-in for the tutor API. */
@@ -301,12 +317,12 @@ const ZU_ANSWER = {
 };
 
 function installTutorApi(lang: Lang) {
-  if ((globalThis as any).__tutorApi) return;
-  (globalThis as any).__tutorApi = true;
+  if (globalThis.__tutorApi) return;
+  globalThis.__tutorApi = true;
   const realFetch = globalThis.fetch.bind(globalThis);
-  let questions: any[] = [];
+  let questions: LessonQuestionResource[] = [];
   const now = () => new Date("2026-11-03T15:00:00Z").toISOString();
-  globalThis.fetch = (async (input: any, init?: any) => {
+  globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     const req = new Request(input, init);
     const url = new URL(req.url);
     if (url.origin !== TUTOR_URL) return realFetch(input, init);
@@ -317,13 +333,13 @@ function installTutorApi(lang: Lang) {
       const words = text.split(/(?<=\s)/);
       const stream = new ReadableStream({
         async start(c) {
-          const send = (e: any) =>
+          const send = (e: object | string) =>
             c.enqueue(enc.encode(`data: ${typeof e === "string" ? e : JSON.stringify(e)}\n\n`));
           send({ type: "start" });
           send({ id: "answer", type: "text-start" });
           for (const w of words) {
             send({ delta: w, id: "answer", type: "text-delta" });
-            await new Promise((r) => setTimeout(r, (globalThis as any).__zuDelay ?? 45));
+            await new Promise((r) => setTimeout(r, globalThis.__zuDelay ?? 45));
           }
           send({ id: "answer", type: "text-end" });
           send({ type: "finish" });
@@ -349,7 +365,7 @@ function installTutorApi(lang: Lang) {
     if (req.method === "POST") {
       const body = await req.json();
       const ctx = body.context ?? {};
-      const q = {
+      const q: LessonQuestionResource = {
         answer: null,
         context:
           ctx.kind === "step" || ctx.kind === "answer"
@@ -377,10 +393,10 @@ function installTutorApi(lang: Lang) {
           }
         : null,
     );
-  }) as any;
+  };
 }
 
-function PlainLink({ children, className, href, ref }: any) {
+function PlainLink({ children, className, href, ref }: LearnLinkComponentProps) {
   return (
     <a className={className} href={href} onClick={(e) => e.preventDefault()} ref={ref}>
       {children}
@@ -400,22 +416,25 @@ function Tutored({ lang, finish = false }: { finish?: boolean; lang: Lang }) {
           completion: {
             brainPower: 24,
             ceremony: null,
+            certificates: [],
             correctCount: 5,
             energyDelta: 1,
+            finishedChapter: null,
             incorrectCount: 1,
             isFirstCompletion: true,
+            planReveal: null,
             reached: { energy: 80, level: null },
             seconds: 190,
             studyBlock: null,
             totalBrainPower: 4364,
           },
-          status: "completed",
+          status: "completed" as const,
         }),
       getLessonPictures: () => Promise.resolve([]),
     };
   }, [lesson]);
   const pt = lang === "pt";
-  const tutor = {
+  const tutor: TutorConfig = {
     buddy: { beltColor: "yellow", energy: 76, glasses: "round", kind: "zu", name: "Zu" },
     canAsk: true,
     connection: {
@@ -430,15 +449,23 @@ function Tutored({ lang, finish = false }: { finish?: boolean; lang: Lang }) {
     ],
   };
   return (
-    <SpeechPlayerProvider voice={() => Promise.resolve({ limit: null, status: "failed" }) as any}>
+    <SpeechPlayerProvider voice={async () => ({ limit: null, status: "failed" })}>
       <LessonPlayerProvider
-        adapters={adapters as any}
+        adapters={adapters}
         firstAnswer={null}
         lesson={lesson}
-        linkComponent={PlainLink as any}
-        routes={{ exit: "/", exitTo: null, nextLesson: null, signUp: "/", upgrade: "/" } as any}
-        tutor={tutor as any}
-        viewer={{ learnerId: "preview" } as any}
+        linkComponent={PlainLink}
+        routes={{
+          exit: "/",
+          exitTo: null,
+          mistakes: "/mistakes",
+          nextLesson: null,
+          seePlan: () => "/plan",
+          signUp: "/",
+          upgrade: "/",
+        }}
+        tutor={tutor}
+        viewer={{ learnerId: "preview" }}
       >
         <LessonPlayerShell />
       </LessonPlayerProvider>
@@ -450,8 +477,8 @@ export const views: Record<
   string,
   (p: { lang: Lang; state: string; q: URLSearchParams }) => React.ReactNode
 > = {
-  activity: ({ q, state }) => <Activity id={q.get("id")!} state={state} />,
-  act: ({ lang, q, state }) => <Act k={q.get("k")!} lang={lang} state={state} />,
+  activity: ({ q, state }) => <Activity id={q.get("id")!} state={previewState(state)} />,
+  act: ({ lang, q, state }) => <Act k={q.get("k")!} lang={lang} state={previewState(state)} />,
   averages: ({ lang }) => <Averages lang={lang} />,
   word: ({ lang }) => <Word lang={lang} />,
   tutor: ({ lang }) => <Tutored lang={lang} />,
