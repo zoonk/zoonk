@@ -71,11 +71,13 @@ export function isStopBeingWritten({
   );
 }
 
-export function useLessonGettingReady() {
+/** A step whose row says "Getting ready…": a mock whose questions are being written, or a lesson. */
+export function useStepGettingReady() {
   const { today, writingStalled } = useTodayScreen();
 
-  return (block: StopLesson): boolean =>
-    !writingStalled && isStopBeingWritten({ block, lessonStatus: today.lessonStatus });
+  return (block: StopLesson & { preparing: boolean }): boolean =>
+    block.preparing ||
+    (!writingStalled && isStopBeingWritten({ block, lessonStatus: today.lessonStatus }));
 }
 
 type UpNextLesson = TodayView["session"]["extraTime"]["lessons"][number];
