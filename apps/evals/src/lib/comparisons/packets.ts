@@ -154,6 +154,11 @@ export function buildPackets(
         const flip = Boolean((run.run - 1 + familyIndex + Number(reverse)) % 2);
         const first = incumbent && !flip ? "incumbent" : "challenger";
         const controlIndex = index + readerIndex + Number(reverse);
+        const seed = hashJson([selection.id, run.caseId, run.run, reader.model, "identical"]);
+        const seededIncumbent = seed.slice(0, 1) < "8";
+        const repeatIncumbent = incumbent !== null && seededIncumbent !== reverse;
+        const repeated = repeatIncumbent ? incumbent : challenger;
+        const repeatedSide = repeatIncumbent ? "incumbent" : "challenger";
 
         const sameLanguage = selection.controls.pairs.filter(
           (control) => control.input.language === testCase.language,
@@ -182,7 +187,7 @@ export function buildPackets(
               kind: "real",
             },
             {
-              ...blindOutputs(challenger, challenger),
+              ...blindOutputs(repeated, repeated),
               expectations: testCase.expectations,
               input: testCase.input,
               kind: "identical",
@@ -218,7 +223,7 @@ export function buildPackets(
             caseId: run.caseId,
             clean: kind === "defect" ? cleanLabel : null,
             criterion: kind === "defect" ? bank.criterion : null,
-            first,
+            first: kind === "identical" ? repeatedSide : first,
             kind,
             pairId,
             run: run.run,
