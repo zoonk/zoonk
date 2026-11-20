@@ -20,7 +20,7 @@ struct PlanPathSection: View {
       PlanPathRows(context: context)
 
       if let course {
-        NavigationLink(value: AppRoute.course(courseId: course.courseId, title: course.title)) {
+        PageLink(route: .course(courseId: course.courseId, title: course.title)) {
           PlanPathLink(systemImage: "books.vertical") {
             Text(
               "See the full course", tableName: "Plan",
@@ -543,7 +543,7 @@ struct PlanSyllabusSection: View {
         }
 
         ForEach(group.subjects) { subject in
-          NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
+          PageLink(route: .subject(subjectKey: subject.key)) {
             SyllabusSubjectRow(
               subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
           }
@@ -721,7 +721,7 @@ struct PlanStudyPlaceRows: View {
   var body: some View {
     if tabBarPlacement?.listsStudyPlaces != true, let places = learner.summary.value?.places {
       if places.completedLessons {
-        NavigationLink(value: AppRoute.completedLessons) {
+        PageLink(route: .completedLessons) {
           Label {
             Text(
               "Completed lessons", tableName: "Plan",
@@ -733,7 +733,7 @@ struct PlanStudyPlaceRows: View {
       }
 
       if places.mindMaps {
-        NavigationLink(value: AppRoute.mindMaps()) {
+        PageLink(route: .mindMaps()) {
           Label {
             Text("Mind maps", tableName: "Plan", comment: "Opens the goal's mind maps")
           } icon: {

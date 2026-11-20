@@ -31,7 +31,7 @@ struct PlanRouteLink<Label: View>: View {
       }
       .foregroundStyle(.primary)
     } else if route.presentation == .push {
-      NavigationLink(value: route) {
+      PageLink(route: route) {
         label
       }
     } else {
