@@ -220,7 +220,9 @@ function toExerciseInput({
     (WORD_EXERCISE_KINDS.has(row.kind) && !word) ||
     (SENTENCE_EXERCISE_KINDS.has(row.kind) && !sentence)
   ) {
-    logError(`[lesson-player] Step ${row.id} has no ${row.kind} word or sentence in its lesson.`);
+    if (!row.retiredAt) {
+      logError(`[lesson-player] Step ${row.id} has no ${row.kind} word or sentence in its lesson.`);
+    }
     return [];
   }
 

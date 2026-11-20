@@ -14,7 +14,7 @@ import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { claimModelGrade } from "../learner/_utils/model-grading";
 import { getSession } from "../users/get-session";
 import { findClosingAnswer } from "./_utils/answer-recording";
-import { checkSaved, toCheckResult } from "./_utils/check-results";
+import { NOT_CHECKED, checkSaved, toCheckResult } from "./_utils/check-results";
 import { excuseFixedAnswer } from "./_utils/fixed-screens";
 import { type LessonAnswerVerdict, gradeLessonAnswer } from "./_utils/grade-lesson-answer";
 import { findPlayableStepRow, getAnswerSkillId } from "./_utils/lesson-rows";
@@ -242,12 +242,6 @@ export async function checkLessonStep({
     return { status: "notFound" };
   }
 
-  const [step] = await loadPlayableSteps({ lesson: row.lesson, rows: [row] });
-
-  if (!step || !isAnswerableStep(step)) {
-    return { status: "invalid" };
-  }
-
   const attemptId = input.attemptId
     ? getAnswerAttemptId({ key: input.attemptId, questionId: row.id, userId })
     : undefined;
@@ -257,6 +251,26 @@ export async function checkLessonStep({
   // Saved answers remain replayable after their run ends.
   if (run.endedAt && !saved) {
     return { status: "runEnded" };
+  }
+
+  const [step] = await loadPlayableSteps({ lesson: row.lesson, rows: [row] });
+  if (!step && row.retiredAt && (row.wordId || row.sentenceId)) {
+    if (saved) {
+      return {
+        result: checkSaved({ fromCode: false, hasQuestion: true, saved, verdict: NOT_CHECKED }),
+        status: "checked",
+      };
+    }
+    const excused = await excuseFixedAnswer({ run, screen: row, verdict: null });
+    if (excused) {
+      return {
+        result: toCheckResult({ savedMistake: false, verdict: excused }),
+        status: "checked",
+      };
+    }
+  }
+  if (!step || !isAnswerableStep(step)) {
+    return { status: "invalid" };
   }
 
   const isRecorded =

@@ -4,7 +4,13 @@ import { type FixedRow, findRowsFixedSince } from "../../staff/content-fixes/fix
 import { NOT_CHECKED } from "./check-results";
 import { type LessonAnswerVerdict } from "./grade-lesson-answer";
 
-type Screen = { id: string; lessonId: string; sentenceId: string | null; wordId: string | null };
+type Screen = {
+  id: string;
+  lessonId: string;
+  retiredAt: Date | null;
+  sentenceId: string | null;
+  wordId: string | null;
+};
 
 /**
  * A word screen grades the pick of its own word by id, so another word's fix, which changes only
@@ -26,6 +32,44 @@ function rowsOf({ id, lessonId, sentenceId, wordId }: Screen): FixedRow[] {
         ]
       : []),
   ];
+}
+
+async function missingLessonRows(screens: readonly Screen[]): Promise<string[]> {
+  const retired = screens.filter(
+    (screen) => screen.retiredAt && (screen.wordId || screen.sentenceId),
+  );
+  const words = retired.flatMap(({ lessonId, wordId }) => (wordId ? [{ lessonId, wordId }] : []));
+  const sentences = retired.flatMap(({ lessonId, sentenceId }) =>
+    sentenceId ? [{ lessonId, sentenceId }] : [],
+  );
+  const [linkedWords, linkedSentences] = await Promise.all([
+    words.length
+      ? prisma.lessonWord.findMany({
+          select: { lessonId: true, wordId: true },
+          where: { OR: words },
+        })
+      : [],
+    sentences.length
+      ? prisma.lessonSentence.findMany({
+          select: { lessonId: true, sentenceId: true },
+          where: { OR: sentences },
+        })
+      : [],
+  ]);
+  return retired
+    .filter(
+      (screen) =>
+        (screen.wordId &&
+          !linkedWords.some(
+            (word) => word.lessonId === screen.lessonId && word.wordId === screen.wordId,
+          )) ||
+        (screen.sentenceId &&
+          !linkedSentences.some(
+            (sentence) =>
+              sentence.lessonId === screen.lessonId && sentence.sentenceId === screen.sentenceId,
+          )),
+    )
+    .map((screen) => screen.id);
 }
 
 /**
@@ -57,9 +101,15 @@ export async function findFixedScreenIds({
     })),
   ];
 
-  const fixed = await findRowsFixedSince({ rows: owners.map((owner) => owner.row), startedAt });
+  const [fixed, missing] = await Promise.all([
+    findRowsFixedSince({ rows: owners.map((owner) => owner.row), startedAt }),
+    missingLessonRows(screens),
+  ]);
 
-  return new Set(owners.filter((owner) => fixed.includes(owner.row)).map((owner) => owner.stepId));
+  return new Set([
+    ...missing,
+    ...owners.filter((owner) => fixed.includes(owner.row)).map((owner) => owner.stepId),
+  ]);
 }
 
 /**

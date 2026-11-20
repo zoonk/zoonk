@@ -302,6 +302,30 @@ describe("answers to a screen fixed during the run", () => {
     },
   );
 
+  it("excuses retired translation screens when the lesson no longer teaches their word", async () => {
+    const [user, { lesson, steps, word }] = await Promise.all([
+      userFixture(),
+      languageLessonFixture(),
+    ]);
+    mockSession(user.id);
+    const run = await startRun(lesson.id);
+    const translation = stepOfKind(steps, "translation");
+    await prisma.step.updateMany({
+      where: { lessonId: lesson.id },
+      data: { retiredAt: new Date() },
+    });
+    await prisma.lessonWord.delete({
+      where: { lessonId_wordId: { lessonId: lesson.id, wordId: word.id } },
+    });
+    await expect(
+      answer({
+        runId: run.runId,
+        stepId: translation.id,
+        value: { kind: "translation", selectedOptionId: word.id },
+      }),
+    ).resolves.toMatchObject(EXCUSED);
+  });
+
   it("excuses a pick on a translation screen whose lesson word a fix changed, but not after another word's fix", async () => {
     const [user, { lesson, steps, word }] = await Promise.all([
       userFixture(),
