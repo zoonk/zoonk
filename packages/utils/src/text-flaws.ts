@@ -231,13 +231,20 @@ const PLACEHOLDERS: readonly RegExp[] = [
   /<\s*(?:insert|inserir|insira|placeholder|nome|name)\b[^>]*>/iu,
 ];
 
+/** Code a text shows, inline or in a block, left out of the words a writer wrote. */
+function removeCode(text: string): string {
+  return parseInlineMarkupRanges(removeCodeFences(text))
+    .map((range) => (range.kind === "code" ? " " : range.text))
+    .join("");
+}
+
 /** An elision in a quote ("[...]") is real text, and so is code (a template's `{{ name }}`). */
 export function findPlaceholderText(text: string): string[] {
   if (EMPTY.test(text)) {
     return ["The text is empty."];
   }
 
-  const prose = removeCodeFences(text);
+  const prose = removeCode(text);
 
   return PLACEHOLDERS.flatMap((pattern) => {
     const match = pattern.exec(prose);

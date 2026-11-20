@@ -117,6 +117,7 @@ describe(findPlaceholderText, () => {
     ).toStrictEqual([]);
 
     expect(findPlaceholderText("O Vue mostra:\n```html\n<p>{{ nome }}</p>\n```")).toStrictEqual([]);
+    expect(findPlaceholderText("No Vue, `{{ nome }}` mostra o nome.")).toStrictEqual([]);
   });
 
   it("finds empty text, template slots and instructions left for a writer", () => {
