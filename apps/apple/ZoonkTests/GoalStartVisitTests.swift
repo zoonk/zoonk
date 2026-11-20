@@ -39,20 +39,23 @@ final class GoalStartVisitTests: XCTestCase {
     }
     XCTAssertTrue(shows(Self.failure, in: window), "The failure shows: \(spoken(in: window))")
 
-    try await activate(String(localized: "Build my plan", table: "Onboarding"), in: window)
+    try await activate(Self.entry, in: window)
     try await server.waitForHeldRequest()
+    try await waitForTestCondition("The draft page never covered the entry: \(spoken(in: window))")
+    {
+      shows(Self.draft, in: window) && !shows(Self.entry, in: window)
+    }
     try await server.release()
     try await waitForTestCondition("The entry never came back: \(spoken(in: window))") {
-      shows(String(localized: "Build my plan", table: "Onboarding"), in: window)
+      shows(Self.entry, in: window) && !shows(Self.draft, in: window)
     }
-    XCTAssertTrue(
-      shows(String(localized: "Build my plan", table: "Onboarding"), in: window),
-      "Back on the entry: \(spoken(in: window))")
     XCTAssertFalse(shows(Self.failure, in: window), "Gone on return: \(spoken(in: window))")
   }
 
   private static let failure = String(
     localized: "We couldn't add that. Try again in a moment.", table: "Onboarding")
+  private static let entry = String(localized: "Build my plan", table: "Onboarding")
+  private static let draft = String(localized: "Understanding your goal", table: "Onboarding")
 
   /// Picks `label` from the open menu as a tap on its row does: the menu closes, then the item's
   /// action runs. SwiftUI fills a menu's items only once it's open, and its rows ignore a selection
