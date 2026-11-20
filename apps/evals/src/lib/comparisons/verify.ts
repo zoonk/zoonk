@@ -111,7 +111,7 @@ export async function verifyBatch(
 
   const packet = JSON.stringify(batch);
 
-  const { response, costUsd, channel } = await readPacket({
+  const { response, costUsd, channel, seatContext } = await readPacket({
     content: imageContent({
       entries: batch,
       identify: (entry) => entry.claims.map((claim) => claim.claimId).join(", "),
@@ -139,6 +139,7 @@ export async function verifyBatch(
     protocolHash: hash(manifest.protocols.verifier),
     reader: { ...reader, channel },
     response,
+    seatContext,
   });
 }
 

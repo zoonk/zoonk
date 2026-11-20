@@ -5,9 +5,7 @@ import { type Manifest, type Reader } from "./schemas";
 export const DEFAULT_RESERVE_READ_CAP = 2;
 
 export function forecastReader(reader: Reader) {
-  return reader.channel === "seat"
-    ? { ...reader, channel: "gateway" as const, requestedChannel: "seat" as const }
-    : reader;
+  return reader.channel === "seat" ? { ...reader, fallbackChannel: "gateway" as const } : reader;
 }
 
 const outputTokensByModel: Record<string, number> = {
@@ -122,7 +120,7 @@ export function confirmForecast(
       forecast: {
         byReader,
         conditional:
-          "Estimates reverse reads on half of matched pairs and reserve reads on a third, up to the cap. Seat requests use gateway and are included. Answer-key solves and verification are additional.",
+          "Estimates reverse reads on half of matched pairs and reserve reads on a third, up to the cap. Seat reads cost $0 on the gateway when they succeed. The estimate includes gateway fallback for every seat read. Answer-key solves and verification are additional.",
         generation,
         initialGatewayUsd: usd,
       },

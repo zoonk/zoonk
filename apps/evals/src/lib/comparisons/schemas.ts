@@ -168,6 +168,11 @@ export type Manifest = z.infer<typeof manifestSchema>;
 export type SealedPacket = z.infer<typeof sealedPacketSchema>;
 const failureCode = z.enum(["failed_controls", "invalid_response", "missing_verdicts"]);
 export type FailureCode = z.infer<typeof failureCode>;
+const seatContextSchema = z.object({
+  accountIdentity: z.literal("present"),
+  managedSettings: z.array(text),
+});
+
 export const attemptSchema = z.object({
   attempt: identifier,
   costUsd: z.number().nonnegative(),
@@ -179,6 +184,7 @@ export const attemptSchema = z.object({
   reader: readerSchema,
   recordedAt: z.iso.datetime().optional(),
   response: ownerResponseSchema,
+  seatContext: seatContextSchema.optional(),
 });
 export type Attempt = z.infer<typeof attemptSchema>;
 export const adjudicationSchema = z.object({
@@ -217,6 +223,7 @@ export const verificationAttemptSchema = z.object({
   protocolHash: digest,
   reader: readerSchema,
   response: verificationSchema,
+  seatContext: seatContextSchema.optional(),
 });
 export type Comparison = {
   adjudications: Adjudication[];

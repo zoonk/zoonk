@@ -2,6 +2,7 @@ import { randomInt, randomUUID } from "node:crypto";
 import path from "node:path";
 import { hash, hashJson } from "./identity";
 import {
+  type Attempt,
   type Comparison,
   type FailureCode,
   type Manifest,
@@ -334,7 +335,11 @@ async function ownerPacketToRead({
   return packet;
 }
 
-export async function saveResponse(args: ImportArgs, costUsd: number, channel: Reader["channel"]) {
+export async function saveResponse(
+  args: ImportArgs,
+  receipt: { channel: Reader["channel"] } & Pick<Attempt, "costUsd" | "seatContext">,
+) {
+  const { channel, costUsd, seatContext } = receipt;
   const dir = directory(args.taskId, args.id);
   const manifest = await readOptional(path.join(dir, "manifest.json"), manifestSchema);
   const sealed = manifest?.packets.find((item) => item.id === args.packetId);
@@ -357,8 +362,11 @@ export async function saveResponse(args: ImportArgs, costUsd: number, channel: R
   if (
     parsed.success &&
     previous?.reader.channel === channel &&
-    previous.costUsd === costUsd &&
-    hashJson(previous.response) === hashJson(response)
+    hashJson({
+      costUsd: previous.costUsd,
+      response: previous.response,
+      seatContext: previous.seatContext,
+    }) === hashJson({ costUsd, response, seatContext })
   ) {
     return previous;
   }
@@ -384,8 +392,9 @@ export async function saveResponse(args: ImportArgs, costUsd: number, channel: R
     reader: { ...sealed.reader, channel },
     recordedAt: ownerTimestamp(channel),
     response,
+    seatContext,
   });
 }
 export function importVerdicts(args: ImportArgs) {
-  return saveResponse(args, 0, "owner");
+  return saveResponse(args, { channel: "owner", costUsd: 0 });
 }

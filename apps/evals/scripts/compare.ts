@@ -49,7 +49,10 @@ const usage = `Usage: pnpm --filter evals eval:compare --task <task> --id <id> [
   --case <id>              Limit to a case (repeatable)
   --runs <n>               Runs per case (default 2)
   --reader <channel:model> A reader such as gateway:anthropic/claude-haiku-5.5 (repeatable, one per family)
-  --claude-reader <model> Full Anthropic model ID (default ${DEFAULT_CLAUDE_READER})
+  --claude-reader <model> Full Anthropic model ID (default ${DEFAULT_CLAUDE_READER}, seat first for text packets)
+                         Set CLAUDE_CONFIG_DIR to choose the Claude login.
+                         Claude includes the subscription's account identity. Receipts record its presence and managed settings keys.
+                         If limited, wait for a reset within four hours. Otherwise, print the reason and use the gateway.
   --gpt-reader <model>    Full OpenAI model ID (default ${DEFAULT_GPT_READER})
                          Choose models that passed the control packets. Use --reader to choose channels.
   --reserve <model|none>   Choose the reserve gateway model when sealing, or skip reserve reads
@@ -134,9 +137,9 @@ if (options.reader && (claudeReader || gptReader)) {
   throw new Error("Choose --reader or the family-specific reader options.");
 }
 
-function readers() {
+function readers(image: boolean) {
   const defaultReaders = [
-    `gateway:${claudeReader ?? DEFAULT_CLAUDE_READER}`,
+    `${image ? "gateway" : "seat"}:${claudeReader ?? DEFAULT_CLAUDE_READER}`,
     `gateway:${gptReader ?? DEFAULT_GPT_READER}`,
   ];
 
@@ -232,11 +235,10 @@ async function exchange(manifest: Manifest) {
     if (packet.reader.channel === "owner") {
       await importVerdicts(args);
     } else {
-      await saveResponse(
-        args,
-        z.coerce.number().nonnegative().parse(options["cost-usd"]),
-        "gateway",
-      );
+      await saveResponse(args, {
+        channel: "gateway",
+        costUsd: z.coerce.number().nonnegative().parse(options["cost-usd"]),
+      });
     }
   }
 }
@@ -250,7 +252,7 @@ async function readOne(packet: SealedPacket, { manifest, outputs }: Comparison) 
 
   const { pairs, ...header } = packet.packet;
 
-  const { response, costUsd, channel } = await readPacket({
+  const { response, ...receipt } = await readPacket({
     content: imageContent({ entries: pairs, header, identify: (entry) => entry.pairId, outputs }),
     packet: JSON.stringify(packet.packet),
     protocol: manifest.protocols.reader,
@@ -258,19 +260,16 @@ async function readOne(packet: SealedPacket, { manifest, outputs }: Comparison) 
     schema: responseSchema,
   });
 
-  const saved = await saveResponse(
-    { attempt, id, packetId: packet.id, response, taskId },
-    costUsd,
-    channel,
-  );
+  const saved = await saveResponse({ attempt, id, packetId: packet.id, response, taskId }, receipt);
 
   process.stdout.write(
     `${JSON.stringify({
-      costUsd,
+      costUsd: saved.costUsd,
       packet: packet.id,
       passed: saved.passed,
       ...(saved.failureCodes && { failureCodes: saved.failureCodes, failures: saved.failures }),
       reader: saved.reader,
+      seatContext: saved.seatContext,
     })}\n`,
   );
 }
@@ -364,7 +363,7 @@ async function getManifest() {
     incumbent: options.incumbent,
     limit,
     question: options.question ?? "Which variant better serves the learner?",
-    readers: readers(),
+    readers: readers(task.output === "image"),
     reserve: options.reserve,
     reserveCap: reserveCap ?? DEFAULT_RESERVE_READ_CAP,
     runs: z.coerce
