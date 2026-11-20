@@ -20,6 +20,7 @@ export type DayViewFieldsInput = {
   dayEndsAt?: number;
   dayMinutes: number;
   examAccess: ExamPrepAccess;
+  lessonPlaceholder?: StudySessionView["lessonPlaceholder"];
   lessonRoom?: boolean;
   missions: readonly Pick<Mission, "status">[];
   outlines?: DayOutlines;
@@ -55,6 +56,7 @@ export function toDayViewFields({
   dayEndsAt,
   dayMinutes,
   examAccess,
+  lessonPlaceholder = null,
   lessonRoom = false,
   missions,
   outlines = null,
@@ -89,6 +91,7 @@ export function toDayViewFields({
     },
     goalId: session.goalId,
     hyperdrive: { level: getHyperdriveLevel(streak), streak },
+    lessonPlaceholder,
     lessonsComing: lessons.lessonsComing,
     lessonsToPrepare: lessons.lessonsToPrepare,
     localDate: session.localDate,

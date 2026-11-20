@@ -3095,7 +3095,7 @@
     },
     "/goals/{goalId}/lesson-preparations": {
       "post": {
-        "description": "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion, onboarding's schedule answer and plan changes prepare them on the server, so call it only from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never after those writes or on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
+        "description": "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion, onboarding's schedule answer and plan changes prepare them on the server, so call it only from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never after those writes or on a screen view. For a guest the first lesson of today and the next study day can be written, each counted as a lesson start.",
         "operationId": "createGoalLessonPreparation",
         "security": [
           {
@@ -3470,7 +3470,7 @@
     },
     "/study-sessions/{sessionId}/preparations": {
       "post": {
-        "description": "Prepares content around one of the learner's study sessions: every lesson of this session and the next gets written in the background. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest only the lesson they reach next is written, counted as its start like opening it.",
+        "description": "Prepares content around one of the learner's study sessions: the learner’s lookahead window of lessons is prepared around this session and the next study day. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest the next pending lesson today and the first lesson of the next study day can be written, each counted as a lesson start.",
         "operationId": "createStudySessionPreparation",
         "security": [
           {
@@ -92926,7 +92926,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (the goal's lesson preparation writes them when the learner asks for it, never on its own; the next read says `lessonsComing`), `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and no preparation is in progress, `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -93016,13 +93016,33 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "lessonPlaceholder": {
+            "description": "The first topic in plan order whose outline still owes lessons the day reserves time for. The title is the plan item's title and minutes is its allocation on this day. Null when the day holds no time for an unwritten topic.",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "minutes": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "minutes",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "lessonsComing": {
             "type": "boolean",
             "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again). False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "lessonsToPrepare": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: the goal's lesson preparation writes them when the learner asks for it, never on its own, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons that aren't written while no preparation is in progress. False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
@@ -93224,7 +93244,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (the goal's lesson preparation writes them when the learner asks for it, never on its own; the next read says `lessonsComing`), `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and no preparation is in progress, `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -93309,13 +93329,33 @@
             ],
             "additionalProperties": false
           },
+          "lessonPlaceholder": {
+            "description": "The first topic in plan order whose outline still owes lessons the day reserves time for. The title is the plan item's title and minutes is its allocation on this day. Null when the day holds no time for an unwritten topic.",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "minutes": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "minutes",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "lessonsComing": {
             "type": "boolean",
             "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again). False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "lessonsToPrepare": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: the goal's lesson preparation writes them when the learner asks for it, never on its own, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons that aren't written while no preparation is in progress. False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
