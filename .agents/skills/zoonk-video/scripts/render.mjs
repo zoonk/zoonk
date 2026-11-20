@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
-import { mkdirSync, writeFileSync, rmSync, existsSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 // Renders an HTML timeline page to video, frame by frame.
@@ -82,8 +83,8 @@ async function seek(page, t) {
 
 if (args.stills) {
   const outdir = args.outdir ?? "out/stills";
-  mkdirSync(outdir, { recursive: true });
   const { browser, page, cdp, duration } = await openPage();
+  mkdirSync(outdir, { recursive: true });
   const times =
     args.stills === "all"
       ? Array.from(
@@ -108,9 +109,9 @@ const duration = args.to ? +args.to : probe.duration;
 await probe.browser.close();
 const from = +(args.from ?? 0);
 const totalFrames = Math.round((duration - from) * FPS);
-const segDir = `${out}.segments`;
-if (existsSync(segDir)) rmSync(segDir, { recursive: true });
-mkdirSync(segDir, { recursive: true });
+// Each run has its own segments folder, removed whether it succeeds or not, so two renders never share one.
+const segDir = mkdtempSync(path.join(tmpdir(), "zoonk-render-"));
+mkdirSync(path.dirname(path.resolve(out)), { recursive: true });
 const per = Math.ceil(totalFrames / WORKERS);
 const started = Date.now();
 let done = 0;
@@ -183,49 +184,52 @@ async function worker(i) {
   return file;
 }
 
-const files = (await Promise.all(Array.from({ length: WORKERS }, (_, i) => worker(i)))).filter(
-  Boolean,
-);
-writeFileSync(
-  path.join(segDir, "list.txt"),
-  files.map((f) => `file '${path.resolve(f)}'`).join("\n"),
-);
-const concatArgs = [
-  "-y",
-  "-loglevel",
-  "error",
-  "-f",
-  "concat",
-  "-safe",
-  "0",
-  "-i",
-  path.join(segDir, "list.txt"),
-];
-if (args.audio)
-  concatArgs.push(
-    "-ss",
-    String(from),
-    "-i",
-    args.audio,
-    "-map",
-    "0:v",
-    "-map",
-    "1:a",
-    "-c:a",
-    "aac",
-    "-b:a",
-    "320k",
-    "-ar",
-    "48000",
-    "-shortest",
+try {
+  const files = (await Promise.all(Array.from({ length: WORKERS }, (_, i) => worker(i)))).filter(
+    Boolean,
   );
-concatArgs.push("-c:v", "copy", "-movflags", "+faststart", out);
-await new Promise((r, j) =>
-  spawn("ffmpeg", concatArgs, { stdio: "inherit" }).on("close", (c) =>
-    c === 0 ? r() : j(new Error(`concat ${c}`)),
-  ),
-);
-rmSync(segDir, { recursive: true });
+  writeFileSync(
+    path.join(segDir, "list.txt"),
+    files.map((f) => `file '${path.resolve(f)}'`).join("\n"),
+  );
+  const concatArgs = [
+    "-y",
+    "-loglevel",
+    "error",
+    "-f",
+    "concat",
+    "-safe",
+    "0",
+    "-i",
+    path.join(segDir, "list.txt"),
+  ];
+  if (args.audio)
+    concatArgs.push(
+      "-ss",
+      String(from),
+      "-i",
+      args.audio,
+      "-map",
+      "0:v",
+      "-map",
+      "1:a",
+      "-c:a",
+      "aac",
+      "-b:a",
+      "320k",
+      "-ar",
+      "48000",
+      "-shortest",
+    );
+  concatArgs.push("-c:v", "copy", "-movflags", "+faststart", out);
+  await new Promise((r, j) =>
+    spawn("ffmpeg", concatArgs, { stdio: "inherit" }).on("close", (c) =>
+      c === 0 ? r() : j(new Error(`concat ${c}`)),
+    ),
+  );
+} finally {
+  rmSync(segDir, { force: true, recursive: true });
+}
 console.log(
   `\nwrote ${out} (${totalFrames} frames) in ${((Date.now() - started) / 1000).toFixed(0)}s`,
 );
