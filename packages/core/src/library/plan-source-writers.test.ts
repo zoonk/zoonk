@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { type PastQuestion } from "@zoonk/ai/tasks/items/past-questions";
 import { type ContentFixUnit, type Plan, type TransactionClient, prisma } from "@zoonk/db";
@@ -31,7 +30,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
-import { storeBlobUploads } from "../_test-utils/blob-uploads";
 import { waitForBlockedStatement } from "../_test-utils/learner-lock";
 import {
   ENGLISH,
@@ -88,7 +86,9 @@ import {
 import { createLibraryLesson } from "./lessons/create-library-lesson";
 import { deleteRetiredSteps } from "./lessons/lesson-versions";
 import { placeChapterLessons } from "./lessons/place-chapter-lessons";
-import { voiceListeningSet } from "./listening/voice-listening-set";
+import { getListeningAudioKey } from "./listening/listening-audio-key";
+import { listeningContentSchema } from "./listening/listening-content";
+import { prepareListeningRecording } from "./listening/voice-listening-set";
 import { removeImageAsset } from "./media/check-image-asset";
 import { temperatureSpec, writtenTemperatureLesson } from "./quality/_test-utils/written-lessons";
 import { setAsidePublishedLesson } from "./quality/set-aside-published-lesson";
@@ -1464,25 +1464,9 @@ async function listeningCase(): Promise<WriterCase> {
   await itemFixture({ setId: set.id, skillId: skill.id });
   const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
 
-  storeBlobUploads();
-
-  vi.mocked(voiceListeningScript).mockResolvedValue({
-    data: {
-      audio: new Uint8Array([1, 2, 3]),
-      durationMs: 48_000,
-      format: "mp3",
-      provenance: {
-        generatedAt: new Date().toISOString(),
-        latencyMs: 9000,
-        model: "google/gemini-3.8-flash-lite-tts",
-        promptVersion: "test-listening-voice",
-        provider: "vertex",
-        requestedModel: "google/gemini-3.8-flash-lite-tts",
-        runId: randomUUID(),
-        usage: { audioSeconds: 48 },
-      },
-    },
-    error: null,
+  await mediaAssetFixture({
+    kind: "audio",
+    reuseKey: getListeningAudioKey(listeningContentSchema.parse(set.content)),
   });
 
   return {
@@ -1492,7 +1476,7 @@ async function listeningCase(): Promise<WriterCase> {
       }),
     plan,
     root: skillRoot(skill.id),
-    write: () => voiceListeningSet({ setId: set.id }),
+    write: () => prepareListeningRecording(set.id),
   };
 }
 
@@ -2191,7 +2175,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
     "deleteRetiredSteps (a question only deleted screens asked)": retiredQuestionCase,
   },
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },
-  "library/listening/voice-listening-set.ts": { voiceListeningSet: listeningCase },
+  "library/listening/voice-listening-set.ts": { prepareListeningRecording: listeningCase },
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
   "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },

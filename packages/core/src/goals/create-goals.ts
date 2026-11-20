@@ -16,7 +16,7 @@ import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { readTestedLanguage } from "../library/exams/blueprint-language";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { assertTargetDates, withPlannableDate } from "../plans/target-date-range";
-import { createGoal, selectCreatedGoal } from "./_utils/create-goal-records";
+import { type CourseGoalOrigin, createGoal, selectCreatedGoal } from "./_utils/create-goal-records";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { splitDailyBudget } from "./daily-budget";
 import { type GoalCreateInput, type GoalDraft, type GoalView } from "./goal-contract";
@@ -126,7 +126,17 @@ function readNewGoalDates(input: GoalCreateInput): GoalCreateInput {
   return { ...input, goals };
 }
 
-export async function createGoals(requested: GoalCreateInput): Promise<GoalCreateResult> {
+type CourseGoalCreateResult = GoalCreateResult | { goalId: string; status: "existing" };
+
+export function createGoals(requested: GoalCreateInput): Promise<GoalCreateResult>;
+export function createGoals(
+  requested: GoalCreateInput,
+  courseStart: CourseGoalOrigin,
+): Promise<CourseGoalCreateResult>;
+export async function createGoals(
+  requested: GoalCreateInput,
+  courseStart?: CourseGoalOrigin,
+): Promise<CourseGoalCreateResult> {
   const viewer = await getEntitlementViewer();
 
   if (!viewer) {
@@ -145,12 +155,20 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
   const testedLanguages = await loadTestedLanguages(input.goals);
 
   /** One at a time, so each claim counts the goals created before it. */
-  const results = await input.goals.reduce<Promise<{ ids: string[]; refused: GoalRefusal[] }>>(
+  const results = await input.goals.reduce<
+    Promise<{ existingId?: string; ids: string[]; refused: GoalRefusal[] }>
+  >(
     async (previous, draft, index) => {
       const state = await previous;
+
+      if (state.existingId) {
+        return state;
+      }
+
       const id = crypto.randomUUID();
 
       const decision = await createGoal({
+        courseStart,
         dailyMinutes: minutes[index] ?? input.dailyMinutes,
         draft,
         id,
@@ -160,6 +178,10 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
         userId,
         viewer,
       });
+
+      if (decision.status === "existing") {
+        return { ...state, existingId: decision.goalId };
+      }
 
       if (decision.status === "allowed") {
         return { ...state, ids: [...state.ids, id] };
@@ -171,6 +193,10 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
     },
     Promise.resolve({ ids: [], refused: [] }),
   );
+
+  if (results.existingId) {
+    return { goalId: results.existingId, status: "existing" };
+  }
 
   const [mainId] = results.ids;
 

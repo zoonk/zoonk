@@ -4,7 +4,7 @@
   "otpDisclaimer": "このコードに心当たりがない場合は、このメールを無視してください。",
   "otpExpiry": "このコードの有効期限は5分です。",
   "otpIntro": "Zoonkにログインするためのコードです：",
-  "otpSubject": "Zoonkのログインコード",
+  "otpSubject": "Zoonkのログインコード：{code}",
   "plusAccountLabel": "アカウント",
   "plusAlreadyActiveSubject": "Zoonk Plusはすでにご利用中です",
   "plusEmailLegal": "ご契約には当社の{termsLink}と{privacyLink}が適用されます。",

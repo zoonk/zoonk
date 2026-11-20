@@ -28,5 +28,5 @@ export const auth = betterAuth({
 
 export const reauthorizeEmailForAccountDeletion = createEmailDeletionReauthentication({
   rateLimit: { enabled: true, storage: "database" },
-  storeOTP: "hashed",
+  storeOTP: "encrypted",
 });

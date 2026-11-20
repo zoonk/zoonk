@@ -6,7 +6,7 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { loadCourseOutline, plansFromCourseOutline } from "./_utils/course-outline";
 import { toCoursePlanGraph } from "./_utils/course-plan-graph";
-import { readCourseStart } from "./course-start-details";
+import { readCourseStart, unpinnedCourseSourceId } from "./course-start-details";
 
 /** Workflow bridge: the goal must come from the learner's authorized run. */
 export async function prepareCourseGoalPlan({
@@ -20,7 +20,7 @@ export async function prepareCourseGoalPlan({
 
   const start = goal && isJsonObject(goal.details) ? readCourseStart(goal.details) : null;
 
-  if (!goal || !start || !goal.primaryCourseId) {
+  if (!goal || !start || !goal.primaryCourseId || unpinnedCourseSourceId(goal)) {
     return;
   }
 

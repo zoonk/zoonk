@@ -12,6 +12,7 @@ import {
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type GoalOpeningSkill } from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { deliverCourseContent } from "../_shared/course-content-notification";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { startOnce } from "../_shared/run-token";
 import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
@@ -33,7 +34,7 @@ import {
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
 } from "./steps/goal-lookahead-steps";
-import { createGoalPlanStep } from "./steps/goal-plan-steps";
+import { createGoalPlanStep, linkGoalCourseEditionStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { claimLanguageGraphStep, reuseCurriculumStep } from "./steps/stored-plan-steps";
 
@@ -103,6 +104,7 @@ async function createPlanAndOutlines({
   const { graph, provenance } = built;
   const goalId = inputs.goal.id;
   const { courseIdsByKey, idsByKey } = await saved;
+  const initialCourseStart = Boolean(inputs.sourceCourse && !inputs.hasPlanGraph && !followUp);
 
   const setupTasks = await retryPlanConflicts(createGoalPlanStep, {
     courseIdsByKey,
@@ -110,10 +112,18 @@ async function createPlanAndOutlines({
     goalId,
     graph,
     idsByKey,
+    initialCourseStart,
     platform: context.analytics.platform ?? null,
     provenance,
     waitsForNotice,
   });
+
+  const [primary] = orderGoalCourses(graph);
+  const editionId = primary && courseIdsByKey[primary.key];
+
+  if (initialCourseStart && editionId) {
+    await deliverCourseContent(linkGoalCourseEditionStep(editionId));
+  }
 
   if (!reused) {
     await saveExamSkillGraphStep({ courseIdsByKey, graph, idsByKey, inputs, provenance, scope });
@@ -181,6 +191,7 @@ function saveBuiltGraph({
     : findGoalCourses({
         ...context,
         courses: orderGoalCourses(graph),
+        examCourseStart: inputs.sourceCourse?.format === "exam",
         goal,
         product: inputs.product,
         provenance,

@@ -111,7 +111,10 @@ class OnboardingStoreTest {
                 ) { SignInResult.Obsolete }
 
             assertEquals(WriteOutcome.Obsolete, store.sendGoal("pass the bar exam", "en"))
-            assertEquals(WriteOutcome.Obsolete, store.startCourse("course-1", chapterId = null, dailyMinutes = null, level = null))
+            assertEquals(
+                WriteOutcome.Obsolete,
+                store.startCourse("course-1", chapterId = null, dailyMinutes = null, level = null, language = "en"),
+            )
             assertTrue(api.understandCalls.isEmpty())
             assertTrue(api.courseStarts.isEmpty())
         }

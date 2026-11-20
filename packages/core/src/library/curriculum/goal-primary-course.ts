@@ -7,12 +7,18 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 export function getGoalCourseFormat({
   kind,
   ownerId,
+  wholeExam = false,
 }: {
   kind: GoalKind;
   ownerId: string | null;
+  wholeExam?: boolean;
 }): CourseFormat {
   if (ownerId) {
     return "personalized";
+  }
+
+  if (kind === "exam" && wholeExam) {
+    return "exam";
   }
 
   return kind === "language" ? "language" : "core";
