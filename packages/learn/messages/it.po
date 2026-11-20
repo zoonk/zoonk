@@ -598,12 +598,14 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Stiamo impiegando più tempo del solito. Si aprirà automaticamente, non serve toccare di nuovo."
 
 #: src/_components/page-tabs.tsx
+#: src/code/code-listing.tsx
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Scorri a sinistra"
 
 #: src/_components/page-tabs.tsx
+#: src/code/code-listing.tsx
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
@@ -2585,6 +2587,12 @@ msgstr "Rivincita domani"
 msgctxt "3ekog5"
 msgid "Rematch next time you study"
 msgstr "Rivincita la prossima volta che studi"
+
+#. Name of a block of program code in a lesson or a question, read by screen readers.
+#: src/code/code-listing.tsx
+msgctxt "h2vipu"
+msgid "Code"
+msgstr "Codice"
 
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
