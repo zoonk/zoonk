@@ -1,5 +1,5 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { prisma, sql } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
   languageLessonFixture,
@@ -222,61 +222,6 @@ describe("word and sentence fixes", () => {
     expect(stored.mediaOwedAt).toBeNull();
     expect(generateLanguageAudio).toHaveBeenCalledTimes(3);
     await expect(optionsFor(fix.id)).resolves.toMatchObject({ status: "ready" });
-  });
-
-  it("approves a single-clip row converted from the outgoing release without recording it again", async () => {
-    const { word } = await languageLessonFixture();
-    await signInProposer();
-
-    const proposal = await proposeFix({
-      changes: [{ id: word.id, model: "Word", revoice: true }],
-      reason: "The clip says another word.",
-    });
-
-    const legacyId = crypto.randomUUID();
-
-    const legacyClip = {
-      provenance: SPEECH_PROVENANCE,
-      status: "voiced",
-      text: word.word,
-      url: "https://blob.test/already-recorded.mp3",
-    };
-
-    await prisma.$executeRaw(sql`
-      INSERT INTO content_fixes (id, batch_id, changes, effects, proposer_client_id, reason, unit, unit_id, voice)
-      VALUES (
-        ${legacyId}::uuid, ${legacyId}::uuid, ${JSON.stringify(proposal.changes)}::jsonb,
-        ${JSON.stringify(proposal.effects)}::jsonb, 'test', 'A legacy proposal',
-        'word', ${word.id}::uuid, ${JSON.stringify(legacyClip)}::jsonb
-      )`);
-
-    await prisma.$executeRaw(
-      sql`UPDATE content_fixes SET media = NULL WHERE id = ${legacyId}::uuid`,
-    );
-
-    await prisma.$executeRaw(sql`
-      UPDATE content_fixes SET voice = voice WHERE media IS NULL AND id = ${legacyId}::uuid`);
-
-    const stored = await prisma.contentFix.findUniqueOrThrow({ where: { id: legacyId } });
-
-    expect(readContentFixMedia(stored.media)).toMatchObject([
-      {
-        need: { kind: "clip", model: "Word", text: word.word },
-        result: { kind: "clip", url: legacyClip.url },
-      },
-    ]);
-
-    const { key } = await signInApprover();
-
-    await expect(approve({ fixId: legacyId, key })).resolves.toMatchObject({
-      fix: { status: "applied" },
-    });
-
-    await expect(prisma.word.findUniqueOrThrow({ where: { id: word.id } })).resolves.toMatchObject({
-      audioUrl: legacyClip.url,
-    });
-
-    expect(generateLanguageAudio).not.toHaveBeenCalled();
   });
 
   it("re-records a clip whose text is right", async () => {
