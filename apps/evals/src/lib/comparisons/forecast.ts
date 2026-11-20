@@ -2,6 +2,8 @@ import { getCallCost } from "../cost";
 import { pricesFor } from "./reader-prices";
 import { type Manifest, type Reader } from "./schemas";
 
+export const DEFAULT_RESERVE_READ_CAP = 2;
+
 const outputTokensByModel: Record<string, number> = {
   "anthropic/claude-haiku-5.5": 10_000,
   "google/gemini-4-neon": 18_000,
@@ -20,6 +22,8 @@ export async function forecastReads(
   paired: boolean,
   generate: boolean,
 ) {
+  const reserveCap = selection.reserveCap ?? DEFAULT_RESERVE_READ_CAP;
+
   const matched = slots.filter(
     (slot) =>
       (slot.challenger || generate) &&
@@ -55,9 +59,7 @@ export async function forecastReads(
     selection.readers
       .filter(
         (reader) =>
-          matched.length > 0 &&
-          reader.channel !== "owner" &&
-          !(reader.reserve && selection.reserveCap === 0),
+          matched.length > 0 && reader.channel !== "owner" && !(reader.reserve && reserveCap === 0),
       )
       .map((reader) => reader.model),
   );
@@ -66,7 +68,7 @@ export async function forecastReads(
     let packets = matched.length + (paired ? Math.ceil(matched.length / 2) : 0);
 
     if (reader.reserve) {
-      packets = Math.min(Math.ceil(matched.length / 3), selection.reserveCap ?? Infinity);
+      packets = Math.min(Math.ceil(matched.length / 3), reserveCap);
     }
 
     if (reader.channel === "owner") {
@@ -93,6 +95,7 @@ export async function forecastReads(
       gatewayFallbackUsd: reader.channel === "seat" ? gatewayUsd : 0,
       packets,
       reader,
+      ...(reader.reserve && { reserveCap }),
     };
   };
 

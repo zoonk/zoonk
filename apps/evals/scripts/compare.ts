@@ -3,7 +3,11 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import { checkRuns } from "@/lib/comparisons/checks";
 import { decide, decisionSchema, decisiveUnresolved } from "@/lib/comparisons/decision";
-import { confirmForecast, forecastReads } from "@/lib/comparisons/forecast";
+import {
+  DEFAULT_RESERVE_READ_CAP,
+  confirmForecast,
+  forecastReads,
+} from "@/lib/comparisons/forecast";
 import { importVerdicts, ownerPackets, saveResponse } from "@/lib/comparisons/packets";
 import { prepare } from "@/lib/comparisons/prepare";
 import { imageContent, readPacket } from "@/lib/comparisons/readers";
@@ -43,7 +47,7 @@ const usage = `Usage: pnpm --filter evals eval:compare --task <task> --id <id> [
   --runs <n>               Runs per case (default 2)
   --reader <channel:model> A reader such as seat:anthropic/claude-haiku-5.5 (repeatable, one per family)
   --reserve <model|none>   Choose the reserve gateway model when sealing, or skip reserve reads
-  --reserve-cap <n>        Maximum reserve calls across attempts in this comparison
+  --reserve-cap <n>        Maximum reserve calls across attempts (default ${DEFAULT_RESERVE_READ_CAP})
   --seal-only              Freeze and seal saved outputs for free, without generation or reads
   --bank <name>            Control bank in eval-results/controls (default: the task id)
   --question <text>        The question the comparison answers
@@ -295,12 +299,11 @@ async function readOrder(reverse: boolean, reserve = false) {
     );
   });
 
-  const cap = reserveCap ?? manifest.reserveCap;
+  const cap = reserveCap ?? manifest.reserveCap ?? DEFAULT_RESERVE_READ_CAP;
 
   const used = started.size;
 
-  const available =
-    reserve && cap !== undefined ? pending.slice(0, Math.max(0, cap - used)) : pending;
+  const available = reserve ? pending.slice(0, Math.max(0, cap - used)) : pending;
 
   const first = available.at(0);
 
@@ -339,7 +342,7 @@ async function getManifest() {
     question: options.question ?? "Which variant better serves the learner?",
     readers: readers(task.output === "image"),
     reserve: options.reserve,
-    reserveCap,
+    reserveCap: reserveCap ?? DEFAULT_RESERVE_READ_CAP,
     runs: z.coerce
       .number()
       .int()
