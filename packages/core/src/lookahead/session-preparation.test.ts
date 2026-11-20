@@ -102,7 +102,7 @@ async function prepareSixLessonDay(userId: string) {
 }
 
 describe(getSessionPreparationAccess, () => {
-  it("prepares the owner's sessions, ended ones included, and skips guests and other learners", async () => {
+  it("authorizes the owner's sessions, including ended sessions and guest sessions", async () => {
     const [owner, other] = await Promise.all([userFixture(), userFixture()]);
     const goal = await goalFixture({ timezone: "America/Sao_Paulo", userId: owner.id });
 
@@ -141,13 +141,13 @@ describe(getSessionPreparationAccess, () => {
 
     await expect(getSessionPreparationAccess({ sessionId: running.id })).resolves.toStrictEqual({
       goalId: goal.id,
-      lessonId: null,
       status: "guest",
+      timeZone: "America/Sao_Paulo",
       userId: owner.id,
     });
   });
 
-  it("names only the lesson a guest reaches next, the first learn block not started yet", async () => {
+  it("picks the guest’s next pending lesson and the first lesson of the next study day", async () => {
     const guest = await userFixture();
 
     const [goal] = await Promise.all([
@@ -181,14 +181,30 @@ describe(getSessionPreparationAccess, () => {
       studySessionBlockFixture({ lessonId: later.id, position: 4, sessionId: session.id }),
     ]);
 
-    mockGuestSession(guest.id);
+    const [plan, tomorrow, laterTomorrow] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      libraryLessonFixture(),
+      libraryLessonFixture(),
+    ]);
 
-    await expect(getSessionPreparationAccess({ sessionId: session.id })).resolves.toStrictEqual({
-      goalId: goal.id,
-      lessonId: next.id,
-      status: "guest",
-      userId: guest.id,
-    });
+    await Promise.all([
+      planItemFixture({
+        lessonId: tomorrow.id,
+        planId: plan.id,
+        position: 0,
+        scheduledFor: addDays(today(), 1),
+      }),
+      planItemFixture({
+        lessonId: laterTomorrow.id,
+        planId: plan.id,
+        position: 1,
+        scheduledFor: addDays(today(), 1),
+      }),
+    ]);
+
+    await expect(
+      listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: guest.id }),
+    ).resolves.toMatchObject({ laterLessonIds: [tomorrow.id], lessonIds: [next.id] });
   });
 });
 
@@ -410,7 +426,7 @@ describe(listSessionPreparation, () => {
     mockGuestSession(user.id);
 
     await expect(getGoalPreparationAccess({ goalId: goal.id })).resolves.toMatchObject({
-      lessonId: first.id,
+      goalId: goal.id,
       status: "guest",
     });
   });
@@ -696,7 +712,7 @@ describe(listSessionPreparation, () => {
     });
   });
 
-  it("lets only the goal's owner prepare it with no session open, and a guest only its first lesson", async () => {
+  it("lets owners and guests prepare their own goals with no session open", async () => {
     const [owner, other, guest] = await Promise.all([userFixture(), userFixture(), userFixture()]);
 
     const [goal, guestGoal] = await Promise.all([
@@ -704,13 +720,7 @@ describe(listSessionPreparation, () => {
       goalFixture({ userId: guest.id }),
     ]);
 
-    const [guestPlan, firstLesson] = await Promise.all([
-      planFixture({ goalId: guestGoal.id }),
-      libraryLessonFixture(),
-      prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } }),
-    ]);
-
-    await planItemFixture({ lessonId: firstLesson.id, planId: guestPlan.id, position: 0 });
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } });
 
     mockSession(owner.id);
 
@@ -731,8 +741,8 @@ describe(listSessionPreparation, () => {
 
     await expect(getGoalPreparationAccess({ goalId: guestGoal.id })).resolves.toStrictEqual({
       goalId: guestGoal.id,
-      lessonId: firstLesson.id,
       status: "guest",
+      timeZone: "UTC",
       userId: guest.id,
     });
   });
@@ -744,11 +754,13 @@ describe(listSessionPreparation, () => {
     await expect(
       listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id }),
     ).resolves.toStrictEqual({
+      dates: null,
       forExam: false,
       laterLessonIds: [],
       lessonIds: [],
       personalized: false,
       plannedLessonIds: [],
+      standInSkillIds: [],
     });
   });
 });

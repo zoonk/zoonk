@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { markPlanInputsChanged } from "@zoonk/db/learner-writes";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -8,12 +9,14 @@ import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, sleep } from "workflow";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
 import * as plannerLessons from "../../../../../packages/core/src/plans/_utils/planner-lessons";
 import { buildPlan } from "../../../../../packages/core/src/plans/planner/build-plan";
+import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { sessionPreparationWorkflow } from "./session-preparation-workflow";
 
@@ -147,6 +150,158 @@ describe("session preparation records admission for its children", () => {
 
     expect(sleep).not.toHaveBeenCalled();
   });
+
+  it.each([true, false])(
+    "prepares only the original next day's window after its outline (lands: %s)",
+    async (lands) => {
+      const { goal, plan, user } = await sessionWithLesson();
+
+      const [course, skill, first, second, later] = await Promise.all([
+        courseFixture(),
+        skillFixture(),
+        libraryLessonFixture(),
+        libraryLessonFixture(),
+        libraryLessonFixture(),
+      ]);
+
+      const tomorrow = new Date("2026-10-01T00:00:00Z");
+
+      const [placeholder] = await Promise.all([
+        planItemFixture({
+          planId: plan.id,
+          position: 1,
+          scheduledFor: tomorrow,
+          skillId: skill.id,
+        }),
+        planItemFixture({
+          lessonId: later.id,
+          planId: plan.id,
+          position: 3,
+          scheduledFor: new Date("2026-10-02T00:00:00Z"),
+        }),
+        prisma.plan.update({
+          data: {
+            graph: {
+              phases: [{ milestone: null, name: "Phase" }],
+              skills: [
+                {
+                  area: null,
+                  courseIds: [course.id],
+                  lessons: 2,
+                  name: skill.name,
+                  phase: 0,
+                  skillId: skill.id,
+                  weight: null,
+                },
+              ],
+            },
+          },
+          where: { id: plan.id },
+        }),
+      ]);
+
+      vi.mocked(start).mockImplementation((workflow: unknown) =>
+        Promise.resolve({
+          runId: workflow === courseOutlineWorkflow ? "outline" : "lesson",
+        } as Awaited<ReturnType<typeof start>>),
+      );
+
+      vi.mocked(getRun).mockImplementation((runId) => {
+        if (runId === "outline") {
+          return {
+            exists: Promise.resolve(true),
+            get returnValue() {
+              // The workflow runtime is mocked; persist the outline's plan landing before it returns.
+              return landOutline();
+            },
+            status: Promise.resolve("completed"),
+          } as ReturnType<typeof getRun>;
+        }
+
+        return { exists: Promise.resolve(false) } as ReturnType<typeof getRun>;
+      });
+
+      async function landOutline() {
+        if (lands) {
+          await Promise.all([
+            prisma.planItem.update({ data: { lessonId: first.id }, where: { id: placeholder.id } }),
+            planItemFixture({
+              lessonId: second.id,
+              planId: plan.id,
+              position: 2,
+              scheduledFor: tomorrow,
+              skillId: skill.id,
+            }),
+          ]);
+        } else {
+          await prisma.planItem.delete({ where: { id: placeholder.id } });
+        }
+
+        return { bandsWritten: 1, chapterIds: [], status: "written" };
+      }
+
+      await expect(
+        sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
+      ).resolves.toMatchObject({ laterLessonIds: lands ? [first.id] : [], status: "prepared" });
+
+      expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
+        expect.objectContaining({ courseId: course.id }),
+      ]);
+
+      expect(start).not.toHaveBeenCalledWith(lessonContentWorkflow, [
+        expect.objectContaining({ lessonId: later.id }),
+      ]);
+
+      expect(start).not.toHaveBeenCalledWith(lessonContentWorkflow, [
+        expect.objectContaining({ lessonId: second.id }),
+      ]);
+    },
+  );
+
+  it.each([
+    { readyToday: true, used: 2, writes: "tomorrow" },
+    { readyToday: false, used: 1, writes: "today" },
+    { readyToday: true, used: 3, writes: "neither day" },
+  ] as const)(
+    "writes $writes for a guest with $used starts used",
+    async ({ readyToday, used, writes }) => {
+      const { goal, lesson, plan, user } = await sessionWithLesson();
+
+      const [tomorrow] = await Promise.all([
+        libraryLessonFixture(),
+        prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } }),
+        usageRecordsFixture({ count: used, userId: user.id }),
+        readyToday
+          ? prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lesson.id } })
+          : null,
+      ]);
+
+      await planItemFixture({
+        lessonId: tomorrow.id,
+        planId: plan.id,
+        position: 1,
+        scheduledFor: new Date("2026-10-01T00:00:00Z"),
+      });
+
+      await expect(
+        sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
+      ).resolves.toStrictEqual({ status: "guest" });
+
+      const expected = {
+        "neither day": [],
+        today: [[{ lessonId: lesson.id, wait: "learner" }]],
+        tomorrow: [[{ lessonId: tomorrow.id, wait: "later" }]],
+      };
+
+      const calls: readonly unknown[][] = vi.mocked(start).mock.calls;
+      const started = calls.filter(([workflow]) => workflow === lessonContentWorkflow);
+      expect(started.map(([, args]) => args)).toMatchObject(expected[writes]);
+
+      await expect(
+        prisma.usageRecord.count({ where: { kind: "lessonStart", userId: user.id } }),
+      ).resolves.toBe(used + expected[writes].length);
+    },
+  );
 
   it("publishes one parent manifest for the selected children without a planner entry", async () => {
     const { goal, item, lesson, plan, user } = await sessionWithLesson();
