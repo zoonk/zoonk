@@ -64,6 +64,6 @@ export function createRequestLane<Answer>() {
       pending = null;
     }
 
-    return signal.aborted ? null : result.value;
+    return result.value;
   };
 }

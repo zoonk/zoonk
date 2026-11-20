@@ -23,8 +23,9 @@ describe(createRequestLane, () => {
     const ask = askAbout(createRequestLane<string>(), sent);
     const first = Promise.withResolvers<string>();
 
+    const original = new AbortController();
     const replaced = new AbortController();
-    const allDays = ask("every weekday", first.promise);
+    const allDays = ask("every weekday", first.promise, original.signal);
     const noFriday = ask("no Friday", Promise.resolve("no Friday"), replaced.signal);
     const noThursday = ask("no Thursday or Friday", Promise.resolve("no Thursday or Friday"));
     replaced.abort();
@@ -33,6 +34,7 @@ describe(createRequestLane, () => {
       expect(sent).toStrictEqual(["every weekday"]);
     });
 
+    original.abort();
     first.resolve("every weekday");
 
     await expect(Promise.all([allDays, noFriday, noThursday])).resolves.toStrictEqual([
