@@ -5,6 +5,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import taskPrompt from "./generate-items.prompt.md";
 import { withItemRules } from "./item-rules";
@@ -54,9 +55,17 @@ function describeEntry(entry: NumericEntry | null | undefined): string | null {
   return entry.kind === "decimals" ? `decimals: ${entry.places ?? 0}` : entry.kind;
 }
 
+/**
+ * Practice questions fit the skill's lesson level. Mock questions prepare a learner for exam day:
+ * as hard as, and in the style of, the exam's released questions, so a named exam's mock ignores
+ * `level`.
+ */
+export type ItemPurpose = "practice" | "mock";
+
 export type GenerateItemsParams = {
   skill: { name: string; description: string; example?: string | null };
   format: ItemFormat;
+  purpose?: ItemPurpose;
   level: CourseLevel;
   language: string;
   /** The country the skills are set in; null is the language's own. */
@@ -67,6 +76,7 @@ export type GenerateItemsParams = {
   /** Null for general items. */
   field?: string | null;
   examFormat?: ItemExamFormat | null;
+  /** Openings of the skill's questions a learner already meets; a mock's also hold its lessons' questions. */
   usedSituations?: readonly string[];
   model?: string;
   serviceTier?: ServiceTier;
@@ -74,6 +84,11 @@ export type GenerateItemsParams = {
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
+
+/** A named exam's mock takes its difficulty from the exam, never from the lesson level. */
+function readsLevel({ examFormat, purpose }: GenerateItemsParams): boolean {
+  return purpose !== "mock" || !examFormat;
+}
 
 function buildUserPrompt(params: GenerateItemsParams): string {
   const { examFormat, field, format, skill, usedSituations } = params;
@@ -93,11 +108,11 @@ function buildUserPrompt(params: GenerateItemsParams): string {
   const entry = format === "numeric" ? describeEntry(examFormat?.entry) : null;
   const entryLine = entry ? `\n    ENTRY: ${entry}` : "";
   const fieldLine = field ? `\n    FIELD: ${field}` : "";
+  const levelLine = readsLevel(params) ? `\n    LEVEL: ${params.level}` : "";
 
   return `
     FORMAT: ${format}
-    COUNT: ${count}${optionCount}${select}${entryLine}
-    LEVEL: ${params.level}
+    COUNT: ${count}${optionCount}${select}${entryLine}${levelLine}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
 ${formatItemSetting({ country: params.country, language: params.language, seed, targetLanguage: params.targetLanguage })}
     SKILL: ${skill.name}
@@ -121,13 +136,22 @@ export async function generateItems(params: GenerateItemsParams) {
 
   const userPrompt = buildUserPrompt(params);
 
-  const systemPrompt = withItemRules(taskPrompt, {
+  const mock = params.purpose === "mock";
+  const usedSituations = Boolean(params.usedSituations?.length);
+
+  const instructions = selectPromptVariants({
+    template: taskPrompt,
+    variants: { mock, practice: !mock, usedSituations },
+  });
+
+  const systemPrompt = withItemRules(instructions, {
     field: Boolean(params.field),
     formats: [format],
     languageGoal: Boolean(params.targetLanguage),
+    mock,
     numericEntry: format === "numeric" && describeEntry(params.examFormat?.entry) !== null,
     severalPicks: format === "multipleChoice" && picksSeveral(params.examFormat),
-    usedSituations: Boolean(params.usedSituations?.length),
+    usedSituations,
   });
 
   const schema = z.object({ items: z.array(GENERATED_ITEM_SCHEMAS[format]) });

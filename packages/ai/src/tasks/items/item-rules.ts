@@ -18,6 +18,8 @@ export type ItemRulesScope = {
   formats: readonly ItemFormat[];
   field: boolean;
   languageGoal: boolean;
+  /** A mock's difficulty follows the exam, so its rules drop the lesson level and the difficulty spread. */
+  mock?: boolean;
   numericEntry?: boolean;
   /** By default when their formats can. A set's questions share the set's stimulus instead. */
   pictures?: boolean;
@@ -66,6 +68,7 @@ function buildItemRules({
   field,
   formats,
   languageGoal,
+  mock = false,
   numericEntry = false,
   pictures,
   severalPicks = false,
@@ -83,7 +86,13 @@ function buildItemRules({
 
   return selectPromptVariants({
     template: rules,
-    variants: { numericEntry, onePick: !severalPicks, severalPicks, usedSituations },
+    variants: {
+      numericEntry,
+      onePick: !severalPicks,
+      practice: !mock,
+      severalPicks,
+      usedSituations,
+    },
   });
 }
 

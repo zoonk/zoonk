@@ -66,6 +66,7 @@
     "./tasks/images/scene": "./src/tasks/images/image-scene.ts",
     "./tasks/images/scene-schema": "./src/tasks/images/image-scene-schema.ts",
     "./tasks/images/style": "./src/tasks/images/image-style.ts",
+    "./tasks/items/check-recall-overlap": "./src/tasks/items/check-recall-overlap.ts",
     "./tasks/items/generate": "./src/tasks/items/generate-items.ts",
     "./tasks/items/past-questions": "./src/tasks/items/past-questions.ts",
     "./tasks/items/placement-items": "./src/tasks/items/placement-items.ts",
