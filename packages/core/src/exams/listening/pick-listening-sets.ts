@@ -1,6 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
-import { listMockItemClaims } from "../mocks/_utils/mock-item-uses";
+import { unavailableMockUse } from "../mocks/_utils/mock-item-uses";
 import { type ListeningPart } from "./listening-parts";
 
 export const MAX_SETS_PER_PART = 10;
@@ -93,8 +93,7 @@ export async function pickListeningSets({
   scriptLanguage: string;
   userId: string;
 }): Promise<ListeningPartPick[]> {
-  const claims = mockOnly ? await listMockItemClaims(client, userId, undefined, now) : null;
-  const expired = [...(claims?.expired ?? [])];
+  const blocked = mockOnly ? await unavailableMockUse(client, userId, reuse, now) : null;
 
   const candidates = await Promise.all(
     parts.map((part) =>
@@ -117,25 +116,11 @@ export async function pickListeningSets({
         },
         where: {
           ...getPartSetsFilter({ examBlueprintId, mockOnly, scriptLanguage, task: part.task }),
-          ...(mockOnly && {
+          ...(blocked && {
             items: {
               none: {
                 OR: [
-                  {
-                    mockUses: {
-                      some: {
-                        ...(reuse
-                          ? {
-                              mockExam: { status: "active" as const },
-                              mockExamId: { notIn: expired },
-                            }
-                          : {
-                              OR: [{ spentAt: { not: null } }, { mockExamId: { notIn: expired } }],
-                            }),
-                        userId,
-                      },
-                    },
-                  },
+                  { mockUses: { some: blocked } },
                   ...(reuse ? [] : [{ attempts: { some: { userId } } }]),
                   { id: { in: [...exclude] } },
                   { mockOnly: false },

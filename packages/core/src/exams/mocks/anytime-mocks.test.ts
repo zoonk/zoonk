@@ -15,6 +15,8 @@ import { getMockOptions } from "./get-mock-options";
 import { type MockShape, type MockView, mockConditionsSchema } from "./mock-contract";
 import { listMockPrepWrites } from "./prepare-mock-questions";
 import { saveMockAnswer } from "./save-mock-answer";
+import { scheduledMockSetup } from "./_test-utils/scheduled-mock";
+import { startMock } from "./start-mock";
 import { startAnytimeMock } from "./start-anytime-mock";
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
@@ -501,6 +503,39 @@ describe("mocks taken any time", () => {
     await expect(
       prisma.mockItemUse.count({ where: { spentAt: { not: null }, userId: user.id } }),
     ).resolves.toBe(8);
+  });
+
+  it("keeps the current section of a running scheduled mock out of repeat papers", async () => {
+    const { blockId, goal, user } = await scheduledMockSetup();
+    await startMock({ blockId, input: {} });
+    const scheduled = await prisma.mockExam.findUniqueOrThrow({ where: { blockId } });
+
+    const running = mockConditionsSchema
+      .parse(scheduled.conditions)
+      .sections.flatMap((part) => part.itemIds);
+
+    await prisma.mockExam.createMany({
+      data: Array.from({ length: 10 }, (_, index) => ({
+        conditions: { purpose: "practice" },
+        goalId: goal.id,
+        sectionStartedAt: daysAgo(index + 1),
+        startedAt: daysAgo(index + 1),
+        status: "finished" as const,
+        userId: user.id,
+      })),
+    });
+
+    await prisma.item.updateMany({
+      data: { retiredAt: SESSION_NOW },
+      where: { examBlueprintId: goal.examBlueprintId, id: { notIn: running }, mockOnly: true },
+    });
+
+    await expect(
+      startAnytimeMock({
+        goalId: goal.id,
+        input: { shape: { area: null, day: null, kind: "half" } },
+      }),
+    ).resolves.toStrictEqual({ status: "preparing" });
   });
 
   it("protects the next two scheduled papers, then uses the oldest compatible repeats", async () => {
