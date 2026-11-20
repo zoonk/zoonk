@@ -19,11 +19,7 @@ function supplyKey(input: SupplyRequest) {
 export function startMockSupply(input: SupplyRequest, ask?: SupplyAsk) {
   const request = ask ? `${ask.id}:${ask.revision}` : "ahead";
 
-  return startOnce(
-    mockSupplyWorkflow,
-    [{ ...input, ask }],
-    `${supplyKey(input)}:${request}`,
-  );
+  return startOnce(mockSupplyWorkflow, [{ ...input, ask }], `${supplyKey(input)}:${request}`);
 }
 
 async function prepareGoalSupply({
@@ -67,7 +63,7 @@ async function prepareGoalSupply({
   }
 }
 
-async function mockSupplyWorkflow(input: SupplyRequest & { ask?: SupplyAsk }) {
+export async function mockSupplyWorkflow(input: SupplyRequest & { ask?: SupplyAsk }) {
   "use workflow";
   const { workflowRunId } = getWorkflowMetadata();
 

@@ -14,6 +14,7 @@ import { describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { HookConflictError } from "workflow/errors";
 import { getStartMock } from "../_test-utils/start-mock";
+import { mockSupplyWorkflow } from "../goals/mock-questions-workflow";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import {
@@ -196,6 +197,7 @@ describe(followUpsWorkflow, () => {
   it("keeps mock supply owed until the writer finishes", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
+
     const owed = await prisma.followUp.create({
       data: {
         input: { examBlueprintId: null, goalId: goal.id, later: false },
@@ -207,7 +209,16 @@ describe(followUpsWorkflow, () => {
 
     await followUpsWorkflow({ userId: user.id });
 
+    const ask = { id: owed.id, revision: owed.revision };
+    const supply = { ask, examBlueprintId: null, goalId: goal.id, later: false };
+
+    expect(getStartMock()).toHaveBeenCalledExactlyOnceWith(mockSupplyWorkflow, [supply], {
+      experimental_hook: { token: `mock-supply:${goal.id}:${owed.id}:${owed.revision}` },
+    });
+
     await expect(prisma.followUp.findUnique({ where: { id: owed.id } })).resolves.toBeTruthy();
+    await mockSupplyWorkflow(supply);
+    await expect(prisma.followUp.findUnique({ where: { id: owed.id } })).resolves.toBeNull();
   });
 
   it("starts one rebuild for a coalesced answer revision", async () => {
