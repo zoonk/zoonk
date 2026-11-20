@@ -60,14 +60,14 @@ export const STATE_SCENARIOS: Scenario[] = [
     screen: "/completed-lessons",
   }),
   // The plan's reveal, onboarding's last step: from Today the learner opens it, skips the questions
-  // about them, and sees their first week, a list whose dates lead its days (`week-day-date`, `week-day-item`).
+  // about them, and sees that their plan is ready.
   {
     anchors: [],
     from: "/today",
     id: "onboarding.reveal",
     prerequisites: { persona: { name: "maya" }, state: "reveal" },
-    proof: "Plan created",
-    reach: [{ click: "See plan" }, { click: "Skip all" }, { wait: "Plan created" }],
+    proof: "Your plan is ready",
+    reach: [{ click: "See plan" }, { click: "Skip all" }, { wait: "Your plan is ready" }],
     screen: "/start/[goal]",
     sizes: PHONE_AND_LAPTOP,
     writes: true,

@@ -48,7 +48,7 @@ export const SCENARIOS: Scenario[] = [
     anchors: [],
     id: "plan.path.exam",
     prerequisites: { persona: { name: "ana" } },
-    proof: "Your path",
+    proof: "Subjects",
     reach: [],
     screen: "/plan",
     sizes: PHONE_AND_LAPTOP,
