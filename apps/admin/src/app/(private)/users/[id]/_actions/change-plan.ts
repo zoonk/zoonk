@@ -3,6 +3,7 @@
 import { findUserActiveSubscription } from "@/data/users/find-active-subscription";
 import { assertAdmin } from "@/lib/admin-guard";
 import { issueEarnedCertificates } from "@zoonk/auth/certificate-issuance";
+import { owePlusMocks } from "@zoonk/core/subscriptions/owe-plus-mocks";
 import { type Subscription, prisma } from "@zoonk/db";
 import { lockLearner } from "@zoonk/db/learner-writes";
 import { safeAsync } from "@zoonk/utils/error";
@@ -79,6 +80,9 @@ async function saveManualPlanChange({
         });
 
     await issueEarnedCertificates(tx, { now: changedAt, plus: "check", userId });
+    if (!existing) {
+      await owePlusMocks(tx, userId);
+    }
     return saved;
   });
 }
