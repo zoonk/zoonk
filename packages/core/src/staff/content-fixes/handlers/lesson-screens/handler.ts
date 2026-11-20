@@ -8,7 +8,7 @@ import { defineFixHandler, idSchema } from "../fix-handler";
 import { applyLessonScreens } from "./apply";
 import { buildScreens } from "./build";
 import { checkProposedMedia } from "./media";
-import { changedRows, checkScreenReferences } from "./references";
+import { changedRows, checkScreenReferences, screenItemIds } from "./references";
 import {
   type ScreenList,
   type StoredScreens,
@@ -153,7 +153,10 @@ export const lessonSetScreens = defineFixHandler({
   apply: applyLessonScreens,
   model: "Lesson",
   op: "setScreens",
-  planRoots: ({ id }) => ({ lessonIds: [id] }),
+  planRoots: ({ before, after, newItems }) => ({
+    itemIds: [...screenItemIds(before), ...screenItemIds(after)],
+    skillIds: newItems.map(({ skillId }) => skillId),
+  }),
   proposal: {
     rules:
       "version and screens are required. Order the final list. Keep or edit by id. Add by kind with content, word or sentence (shared ID or declaration key). A numeric check takes numeric: {context, question, math, correctReason} and skillId. Optional words, sentences and ideas replace those lists. An idea index addresses the final list. Kept variants are edited by id. Kept basis positions follow the quoted source. New basis positions refer to the final list.",

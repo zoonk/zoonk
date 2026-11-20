@@ -139,3 +139,7 @@ export function changedRows(
     .filter((row) => !after.some((next) => next.id === row.id && isDeepStrictEqual(next, row)))
     .map(({ id }) => id);
 }
+
+export function screenItemIds(snapshot: ScreenSnapshot): string[] {
+  return snapshot.screens.flatMap(({ itemId }) => itemId ?? []);
+}

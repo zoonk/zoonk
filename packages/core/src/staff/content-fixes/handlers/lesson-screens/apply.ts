@@ -6,6 +6,7 @@ import {
   startLessonVersion,
 } from "../../../../library/lessons/lesson-versions";
 import { type FixContext } from "../fix-handler";
+import { screenItemIds } from "./references";
 import { type StoredScreens } from "./schema";
 
 export async function applyLessonScreens(
@@ -155,5 +156,13 @@ export async function applyLessonScreens(
     }),
   ]);
 
-  await retireUnaskedQuestions(tx, { lessonId });
+  const removed = screenItemIds(before).filter((id) => !screenItemIds(after).includes(id));
+
+  if (removed.length > 0) {
+    await retireUnaskedQuestions(
+      tx,
+      { itemId: { in: removed }, lessonId },
+      { sourcesLocked: true },
+    );
+  }
 }
