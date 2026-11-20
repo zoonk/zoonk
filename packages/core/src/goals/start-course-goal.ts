@@ -101,14 +101,18 @@ export async function findCourseGoalStart(
 ): Promise<{ goalId: string; inOnboarding: boolean } | null> {
   const session = await getSession();
 
-  const start = session
-    ? await resolveStart({ courseId, language, userId: session.user.id })
-    : null;
+  if (!session || !isUuid(courseId)) {
+    return null;
+  }
 
-  const goal =
-    session && start
-      ? await findCourseGoal(prisma, { ...start.lookup, userId: session.user.id })
-      : null;
+  const userId = session.user.id;
+
+  const start =
+    language === undefined
+      ? { lookup: { primaryCourseId: courseId, sourceCourseId: courseId } }
+      : await resolveStart({ courseId, language, userId });
+
+  const goal = start ? await findCourseGoal(prisma, { ...start.lookup, userId }) : null;
 
   if (!goal) {
     return null;
