@@ -1,11 +1,11 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
-import { generateImageScene } from "@zoonk/ai/tasks/images/scene";
 import { type ImageScene, describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { readStoredImage } from "../../../images/read-stored-image";
 import { drawImage, reviewImage } from "../../../library/media/_utils/draw-image";
+import { planLibraryImageScene } from "../../../library/media/_utils/draw-library-image";
 import {
   saveCheckedImageAsset,
   uploadImageFile,
@@ -14,16 +14,15 @@ import { type ContentFixMediaNeed } from "../media-schema";
 
 type PictureNeed = Extract<ContentFixMediaNeed, { kind: "picture" }>;
 
-export async function planFixPicture(need: PictureNeed): Promise<ImageScene> {
-  const { data } = await generateImageScene({
+export function planFixPicture(need: PictureNeed): Promise<ImageScene> {
+  return planLibraryImageScene({
     alt: need.alt,
     context: need.context,
     language: need.language,
+    numberedParts: need.numberedParts,
     request: need.request,
     textAllowed: false,
   });
-
-  return data;
 }
 
 export async function drawFixPicture({ need, scene }: { need: PictureNeed; scene: ImageScene }) {

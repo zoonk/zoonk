@@ -16,18 +16,14 @@ import {
 import {
   type ChangeResolver,
   type PreparedFix,
-  inverseChange,
+  inverseChanges,
   prepareContentFix,
   proposedChange,
   targetsOf,
 } from "./_utils/prepare-content-fix";
 import { getStaffSessionUser } from "./_utils/staff-session";
 import { getContentFixBatchReviewUrl } from "./batches";
-import {
-  contentFixChangesSchema,
-  contentFixProposalSchema,
-  contentFixRevertSchema,
-} from "./contract";
+import { contentFixProposalSchema, contentFixRevertSchema } from "./contract";
 
 type ProposeResult =
   | { status: "error" | "forbidden" | "missingScope" | "unauthorized" }
@@ -192,7 +188,9 @@ async function findApplied(input: { batchId?: string; fixId?: string }) {
     orderBy: { id: "asc" },
     select: {
       changes: true,
+      decidedAt: true,
       id: true,
+      media: true,
       revertedBy: {
         select: { id: true },
         take: 1,
@@ -241,9 +239,7 @@ async function buildRevert(body: unknown): Promise<BuiltProposal> {
 
   return {
     proposals: found.applied.map((original) => ({
-      changes: contentFixChangesSchema
-        .parse(original.changes)
-        .map((change) => inverseChange(change)),
+      changes: inverseChanges(original),
       reason: input.reason,
       revertsId: original.id,
     })),

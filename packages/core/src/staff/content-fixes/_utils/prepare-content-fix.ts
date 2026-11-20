@@ -7,7 +7,11 @@ import { type ContentFixEffect, type StoredChange, contentFixChangesSchema } fro
 import { type FixTarget } from "../handlers/fix-handler";
 import { numericScreenProblem } from "../handlers/numeric-screen";
 import { findStoredHandler, prepareProposedChange } from "../handlers/registry";
-import { type ContentFixMediaNeed, normalizeContentFixMediaNeed } from "../media-schema";
+import {
+  type ContentFixMediaNeed,
+  normalizeContentFixMediaNeed,
+  readContentFixMedia,
+} from "../media-schema";
 import { lessonProblem } from "./lesson-problem";
 import { changesLearnerLesson } from "./lesson-version-effect";
 import { type FixUnit, type Json, type Refusal, type Resolution, refuse } from "./resolved-change";
@@ -31,8 +35,23 @@ export function storedChange(change: StoredChange): ChangeResolver {
   return (db) => findStoredHandler(change).reprepare(db, change);
 }
 
-export function inverseChange(change: StoredChange): ChangeResolver {
-  return (db) => findStoredHandler(change).revert(db, change);
+export function inverseChanges(original: {
+  changes: unknown;
+  decidedAt: Date | null;
+  id: string;
+  media: unknown;
+}): ChangeResolver[] {
+  const media = new Map(
+    readContentFixMedia(original.media).flatMap(({ need, result }) =>
+      !result || result === "failed" ? [] : [[need.key, result] as const],
+    ),
+  );
+
+  const context = { fixId: original.id, media, now: original.decidedAt ?? new Date() };
+
+  return contentFixChangesSchema
+    .parse(original.changes)
+    .map((change) => (db) => findStoredHandler(change).revert(db, change, context));
 }
 
 export function targetsOf(change: StoredChange): FixTarget[] {

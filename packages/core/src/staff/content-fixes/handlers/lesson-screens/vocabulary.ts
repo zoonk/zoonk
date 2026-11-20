@@ -1,9 +1,17 @@
+import { randomUUID } from "node:crypto";
 import { type TransactionClient } from "@zoonk/db";
+import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { type ScreenList, type ScreenSnapshot } from "./schema";
+import { type ContentFixMediaNeed, clipMediaKey } from "../../media-schema";
+import {
+  type ScreenList,
+  type ScreenMediaLink,
+  type ScreenSnapshot,
+  type StoredScreens,
+} from "./schema";
 import { type ScreenLesson } from "./snapshot";
 
-export async function resolveVocabulary(
+async function readVocabularyBank(
   db: TransactionClient,
   { lesson, list, problems }: { lesson: ScreenLesson; list: ScreenList; problems: string[] },
 ) {
@@ -13,21 +21,110 @@ export async function resolveVocabulary(
   const declaredSentences =
     list.sentences?.flatMap((row) => ("sentence" in row ? [row.sentence] : [])) ?? [];
 
+  if (new Set(declaredWords).size !== declaredWords.length) {
+    problems.push("words: declare each shared word only once.");
+  }
+
+  if (new Set(declaredSentences).size !== declaredSentences.length) {
+    problems.push("sentences: declare each shared sentence only once.");
+  }
+
   const org = before.words[0]?.organizationId ?? before.sentences[0]?.organizationId;
 
-  const scope = {
-    ...(org ? { organizationId: org } : { organization: { slug: AI_ORG_SLUG } }),
-    targetLanguage: targetLanguage ?? "",
-  };
+  const organization =
+    declaredWords.length + declaredSentences.length > 0
+      ? await db.organization.findUnique({
+          select: { id: true, slug: true },
+          where: org ? { id: org } : { slug: AI_ORG_SLUG },
+        })
+      : null;
+
+  const scope = { organizationId: organization?.id, targetLanguage: targetLanguage ?? "" };
 
   const [bankWords, bankSentences] = await Promise.all([
-    declaredWords.length > 0
+    organization && declaredWords.length > 0
       ? db.word.findMany({ where: { ...scope, word: { in: declaredWords } } })
       : [],
-    declaredSentences.length > 0
+    organization && declaredSentences.length > 0
       ? db.sentence.findMany({ where: { ...scope, sentence: { in: declaredSentences } } })
       : [],
   ]);
+
+  return { bankSentences, bankWords, organization };
+}
+
+function editSentence(
+  row: ScreenSnapshot["sentences"][number],
+  entry: Extract<NonNullable<ScreenList["sentences"]>[number], { id: string }>,
+  { path, problems }: { path: string; problems: string[] },
+) {
+  if (entry.translation && entry.translation !== row.translation && !entry.otherTranslationOrders) {
+    problems.push(
+      `${path}.otherTranslationOrders: review the accepted orders for the new translation. Send [] when there are none.`,
+    );
+  }
+
+  return {
+    ...row,
+    ...entry,
+    ordersOwedAt:
+      entry.otherSentenceOrders && entry.otherTranslationOrders ? null : row.ordersOwedAt,
+  };
+}
+
+export async function resolveVocabulary(
+  db: TransactionClient,
+  {
+    lesson,
+    allocated,
+    list,
+    problems,
+  }: { allocated?: StoredScreens; lesson: ScreenLesson; list: ScreenList; problems: string[] },
+) {
+  const { before, targetLanguage } = lesson;
+
+  const { bankSentences, bankWords, organization } = await readVocabularyBank(db, {
+    lesson,
+    list,
+    problems,
+  });
+
+  const media: ContentFixMediaNeed[] = [];
+  const mediaLinks: ScreenMediaLink[] = [];
+
+  function declareClip({
+    model,
+    text,
+    id,
+    create,
+    path,
+  }: {
+    model: "Word" | "Sentence";
+    text: string;
+    id: string;
+    create: boolean;
+    path: string;
+  }) {
+    if (!targetLanguage || !isTTSSupportedLanguage(targetLanguage) || !organization) {
+      problems.push(
+        `${path}: no recording can be generated for this lesson. Use a shared row with audio.`,
+      );
+
+      return;
+    }
+
+    const identity = { language: targetLanguage, model, text };
+    const key = clipMediaKey(identity);
+    media.push({ ...identity, key, kind: "clip", orgSlug: organization.slug });
+
+    mediaLinks.push({
+      create,
+      id,
+      key,
+      language: targetLanguage,
+      target: model === "Word" ? "word" : "sentence",
+    });
+  }
 
   const wordRefs = new Map<string, string>();
   const sentenceRefs = new Map<string, string>();
@@ -63,26 +160,29 @@ export async function resolveVocabulary(
 
       const row = bankWords.find((candidate) => candidate.word === entry.word);
 
-      if (!row?.audioUrl) {
-        problems.push(
-          `${path}.word: "${entry.word}" needs a shared word with recorded audio in ${targetLanguage ?? "the lesson language"}.`,
-        );
-
+      if (!organization || !targetLanguage) {
+        problems.push(`${path}.word: choose a lesson with a shared vocabulary language.`);
         return [];
       }
 
-      link(wordRefs, entry.key, row.id, path);
+      const id = row?.id ?? allocated?.after.words[index]?.id ?? randomUUID();
+
+      if (!row?.audioUrl) {
+        declareClip({ create: !row, id, model: "Word", path: `${path}.word`, text: entry.word });
+      }
+
+      link(wordRefs, entry.key, id, path);
 
       return [
         {
-          audioUrl: row.audioUrl,
+          audioUrl: row?.audioUrl ?? null,
           distractors: entry.distractors,
-          id: row.id,
+          id,
           note: entry.note ?? null,
-          organizationId: row.organizationId,
-          romanization: row.romanization,
+          organizationId: organization.id,
+          romanization: row?.romanization ?? null,
           translation: entry.translation,
-          word: row.word,
+          word: entry.word,
         },
       ];
     }) ?? before.words;
@@ -97,24 +197,7 @@ export async function resolveVocabulary(
         if (row) {
           link(sentenceRefs, row.id, row.id, path);
 
-          if (
-            entry.translation &&
-            entry.translation !== row.translation &&
-            !entry.otherTranslationOrders
-          ) {
-            problems.push(
-              `${path}.otherTranslationOrders: review the accepted orders for the new translation. Send [] when there are none.`,
-            );
-          }
-
-          return [
-            {
-              ...row,
-              ...entry,
-              ordersOwedAt:
-                entry.otherSentenceOrders && entry.otherTranslationOrders ? null : row.ordersOwedAt,
-            },
-          ];
+          return [editSentence(row, entry, { path, problems })];
         }
 
         problems.push(
@@ -126,25 +209,34 @@ export async function resolveVocabulary(
 
       const row = bankSentences.find((candidate) => candidate.sentence === entry.sentence);
 
-      if (!row?.audioUrl) {
-        problems.push(
-          `${path}.sentence: "${entry.sentence}" needs a shared sentence with recorded audio in ${targetLanguage ?? "the lesson language"}.`,
-        );
-
+      if (!organization || !targetLanguage) {
+        problems.push(`${path}.sentence: choose a lesson with a shared vocabulary language.`);
         return [];
       }
 
-      link(sentenceRefs, entry.key, row.id, path);
+      const id = row?.id ?? allocated?.after.sentences[index]?.id ?? randomUUID();
+
+      if (!row?.audioUrl) {
+        declareClip({
+          create: !row,
+          id,
+          model: "Sentence",
+          path: `${path}.sentence`,
+          text: entry.sentence,
+        });
+      }
+
+      link(sentenceRefs, entry.key, id, path);
       const { key: _key, ...fields } = entry;
 
       return [
         {
           ...fields,
-          audioUrl: row.audioUrl,
-          id: row.id,
+          audioUrl: row?.audioUrl ?? null,
+          id,
           ordersOwedAt: null,
-          organizationId: row.organizationId,
-          romanization: row.romanization,
+          organizationId: organization.id,
+          romanization: row?.romanization ?? null,
         },
       ];
     }) ?? before.sentences;
@@ -157,5 +249,5 @@ export async function resolveVocabulary(
     sentenceRefs.set(row.id, row.id);
   }
 
-  return { sentenceRefs, sentences, wordRefs, words };
+  return { media, mediaLinks, sentenceRefs, sentences, wordRefs, words };
 }

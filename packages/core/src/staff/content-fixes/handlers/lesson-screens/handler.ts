@@ -7,6 +7,7 @@ import { type Resolution, refuse, toJson } from "../../_utils/resolved-change";
 import { defineFixHandler, idSchema } from "../fix-handler";
 import { applyLessonScreens } from "./apply";
 import { buildScreens } from "./build";
+import { linkScreenMedia } from "./link-media";
 import { checkProposedMedia } from "./media";
 import { changedRows, checkScreenReferences, screenItemIds } from "./references";
 import {
@@ -71,7 +72,7 @@ async function resolve(
         version,
       };
 
-      return { after, newItems: [], proposal: null };
+      return { after, media: [], mediaLinks: [], newItems: [], proposal: null };
     }
 
     const list = proposed.setScreens;
@@ -82,7 +83,7 @@ async function resolve(
       );
     }
 
-    const vocabulary = await resolveVocabulary(db, { lesson, list, problems });
+    const vocabulary = await resolveVocabulary(db, { allocated, lesson, list, problems });
 
     const { screens, summary, newItems } = buildScreens({
       allocated,
@@ -92,7 +93,7 @@ async function resolve(
       vocabulary,
     });
 
-    await checkProposedMedia(db, { lesson, list, problems, screens });
+    const pending = await checkProposedMedia(db, { lesson, list, problems, screens });
 
     return {
       after: {
@@ -102,15 +103,17 @@ async function resolve(
         version,
         words: vocabulary.words,
       },
+      media: [...vocabulary.media, ...pending.map(({ need }) => need)],
+      mediaLinks: [...vocabulary.mediaLinks, ...pending.map(({ link }) => link)],
       newItems,
       proposal: list,
     };
   };
 
-  const { after, newItems, proposal } = await build();
+  const { after, media, mediaLinks, newItems, proposal } = await build();
 
   const [references, beforeReferences] = await Promise.all([
-    checkScreenReferences(db, { after, before, newItems, problems }),
+    checkScreenReferences(db, { after, before, mediaLinks, newItems, problems }),
     checkScreenReferences(db, { after: before, before, newItems: [], problems: [] }),
   ]);
 
@@ -126,6 +129,7 @@ async function resolve(
 
   return {
     effects: [],
+    media,
     ok: true,
     stored: {
       after,
@@ -134,6 +138,7 @@ async function resolve(
       changedSentenceIds: changedRows(before.sentences, after.sentences),
       changedWordIds: changedRows(before.words, after.words),
       id,
+      ...(mediaLinks.length > 0 && { mediaLinks }),
       model: "Lesson",
       newItems,
       op: "setScreens",
@@ -153,18 +158,63 @@ export const lessonSetScreens = defineFixHandler({
   apply: applyLessonScreens,
   model: "Lesson",
   op: "setScreens",
-  planRoots: ({ before, after, newItems }) => ({
-    itemIds: [...screenItemIds(before), ...screenItemIds(after)],
-    skillIds: newItems.map(({ skillId }) => skillId),
-  }),
+  planRoots: ({ id, before, after, newItems }) => {
+    const previous = screenItemIds(before);
+    const next = screenItemIds(after);
+
+    const itemIds = [
+      ...previous.filter((item) => !next.includes(item)),
+      ...next.filter((item) => !previous.includes(item)),
+    ];
+
+    return {
+      itemIds,
+      lessonIds: itemIds.length > 0 ? [id] : [],
+      skillIds: newItems.map(({ skillId }) => skillId),
+    };
+  },
   proposal: {
+    example: {
+      id: "0193cfe6-604d-7fb2-ad00-f968c7542841",
+      model: "Lesson",
+      setScreens: {
+        screens: [
+          { id: "0193cfe6-604d-7fb2-ad00-f968c7542842" },
+          {
+            content: { text: "Two halves make one whole.", title: "Putting halves together" },
+            kind: "explanation",
+            picture: {
+              alt: "Two halves of an orange",
+              prompt: "Two equal orange halves side by side",
+            },
+          },
+        ],
+        version: 1,
+      },
+    },
     rules:
-      "version and screens are required. Order the final list. Keep or edit by id. Add by kind with content, word or sentence (shared ID or declaration key). A numeric check takes numeric: {context, question, math, correctReason} and skillId. Optional words, sentences and ideas replace those lists. An idea index addresses the final list. Kept variants are edited by id. Kept basis positions follow the quoted source. New basis positions refer to the final list.",
+      "version and screens are required. Order the final list. Keep or edit by id. Add by kind with content, word or sentence (shared ID or declaration key). A numeric check takes numeric: {context, question, math, correctReason} and skillId. Optional words, sentences and ideas replace those lists. An idea index addresses the final list. New ideas get icons. Declared vocabulary gets a clip if the shared row lacks one. Set an alphabet card's audioUrl to null to request a clip. To generate a screen picture, send picture: {prompt, alt} in place of mediaAssetId. Kept variants are edited by id. Kept basis positions follow the quoted source. New basis positions refer to the final list.",
     schema: proposal,
   },
   resolve: (db, input: Proposal & { allocated?: StoredScreens }) =>
     resolve(db, input, input.allocated),
-  revert: (db, stored) => resolve(db, { id: stored.id, restore: stored }),
+  revert: (db, stored, context) => {
+    const after = linkScreenMedia(stored, context);
+
+    const before = {
+      ...stored.before,
+      sentences: stored.before.sentences.map((row) => ({
+        ...row,
+        audioUrl: after.sentences.find(({ id }) => id === row.id)?.audioUrl ?? row.audioUrl,
+      })),
+      words: stored.before.words.map((row) => ({
+        ...row,
+        audioUrl: after.words.find(({ id }) => id === row.id)?.audioUrl ?? row.audioUrl,
+      })),
+    };
+
+    return resolve(db, { id: stored.id, restore: { ...stored, after, before } });
+  },
   stored: storedScreensSchema,
   table: sql`library_lessons`,
   targets: ({ id, before, after }) => [

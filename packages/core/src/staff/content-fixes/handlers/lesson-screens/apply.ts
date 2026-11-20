@@ -6,6 +6,7 @@ import {
   startLessonVersion,
 } from "../../../../library/lessons/lesson-versions";
 import { type FixContext } from "../fix-handler";
+import { linkScreenMedia, linkVocabularyMedia } from "./link-media";
 import { screenItemIds } from "./references";
 import { type StoredScreens } from "./schema";
 
@@ -14,7 +15,8 @@ export async function applyLessonScreens(
   change: StoredScreens,
   context: FixContext,
 ) {
-  const { id: lessonId, before, after } = change;
+  const { id: lessonId, before } = change;
+  const after = linkScreenMedia(change, context);
   const provenance = { model: "staff", promptVersion: "setScreens", runId: context.fixId };
   const version = await startLessonVersion(tx, lessonId);
 
@@ -53,6 +55,8 @@ export async function applyLessonScreens(
   if (!isDeepStrictEqual(before.summary, after.summary)) {
     await tx.lesson.update({ data: { summary: after.summary ?? DbNull }, where: { id: lessonId } });
   }
+
+  await linkVocabularyMedia(tx, change, context);
 
   if (!isDeepStrictEqual(before.words, after.words)) {
     await tx.lessonWord.deleteMany({

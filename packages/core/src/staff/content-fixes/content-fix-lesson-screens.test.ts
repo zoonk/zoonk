@@ -2,6 +2,7 @@ import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateLessonIconImage } from "@zoonk/ai/tasks/icons/image";
 import { generateLessonImage } from "@zoonk/ai/tasks/images/generate";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import {
   answerExplanationFixture,
   libraryStepFixture,
@@ -10,16 +11,19 @@ import {
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { mockSession } from "../../_test-utils/mock-session";
 import { checkLessonStep } from "../../lesson-player/check-lesson-step";
 import { completeLibraryLesson } from "../../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
+import { drawnIcon } from "../../library/icons/_test-utils/icon-images";
 import { CURRENT_STEPS, deleteRetiredSteps } from "../../library/lessons/lesson-versions";
 import { writtenTemperatureLesson } from "../../library/quality/_test-utils/written-lessons";
 import {
   approve,
   intro,
+  optionsFor,
   proposeFix,
   publishedLesson,
   question,
@@ -27,6 +31,13 @@ import {
   signInApprover,
   signInProposer,
 } from "./_test-utils/content-fix-steps";
+import { mockVoice } from "./_test-utils/mock-fix-voice";
+import {
+  listPendingFixMedia,
+  produceFixIdeaIcon,
+  recordFixClip,
+  recordFixMedia,
+} from "./prepare-content-fix-media";
 import { proposeContentFix } from "./propose-content-fix";
 
 const reason = "Correct the lesson";
@@ -219,27 +230,63 @@ describe("publishing one reviewed lesson screen version", () => {
       { distractors: ["ma", "má"], key: "falling", translation: "but", word: "mà" },
     ];
 
-    await prisma.word.createMany({
-      data: additions.map((row) => ({
-        audioUrl: `https://audio.test/${row.key}.mp3`,
-        organizationId: word.organizationId,
-        targetLanguage: "vi",
-        word: row.word,
-      })),
+    const existing = await prisma.word.create({
+      data: { organizationId: word.organizationId, targetLanguage: "vi", word: "má" },
     });
 
-    await apply([
-      change(
-        lesson.id,
-        [
-          ...steps.map(({ id }) => ({ id })),
-          ...additions.flatMap((row, i) =>
-            ["vocabulary", "translation"].map((kind) => ({ idea: i + 1, kind, word: row.key })),
-          ),
-        ],
-        { words: [{ id: word.id }, ...additions] },
-      ),
-    ]);
+    const input = {
+      changes: [
+        change(
+          lesson.id,
+          [
+            ...steps.map(({ id }) => ({ id })),
+            ...additions.flatMap((row, i) =>
+              ["vocabulary", "translation"].map((kind) => ({ idea: i + 1, kind, word: row.key })),
+            ),
+          ],
+          { words: [{ id: word.id }, ...additions] },
+        ),
+      ],
+      reason,
+    };
+
+    await signInProposer();
+
+    await expect(proposeContentFix(input, { check: true })).resolves.toMatchObject({
+      fixes: [
+        {
+          media: [
+            { kind: "clip", text: "má" },
+            { kind: "clip", text: "mà" },
+          ],
+        },
+      ],
+      status: "checked",
+    });
+
+    const fix = await proposeFix(input);
+    const { key } = await signInApprover();
+
+    await expect(optionsFor(fix.id)).resolves.toMatchObject({ status: "changed" });
+    expect(generateLanguageAudio).not.toHaveBeenCalled();
+
+    mockVoice();
+    const needs = await listPendingFixMedia(fix.id);
+    const clips = needs.filter((need) => need.kind === "clip");
+    const [first, second] = clips;
+
+    if (!first || !second) {
+      throw new Error("Expected both tone clips");
+    }
+
+    await recordFixClip({ fixId: fix.id, need: first });
+    await expect(optionsFor(fix.id)).resolves.toMatchObject({ status: "changed" });
+    await recordFixClip({ fixId: fix.id, need: second });
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(2);
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
 
     const words = await prisma.lessonWord.findMany({
       include: { word: true },
@@ -268,6 +315,39 @@ describe("publishing one reviewed lesson screen version", () => {
       { ideaIndex: 2 },
       { ideaIndex: 2 },
     ]);
+
+    expect(words[1]?.word).toMatchObject({
+      audioUrl: expect.stringContaining("blob.test"),
+      id: existing.id,
+    });
+
+    expect(words[2]?.word.audioUrl).toContain("blob.test");
+    expect(words[2]?.word.audioUrl).not.toBe(words[1]?.word.audioUrl);
+
+    const inverse = await revertInAdmin({
+      fixId: fix.id,
+      reason: "Restore the previous vocabulary",
+    });
+
+    if (inverse.status !== "proposed") {
+      throw new Error(JSON.stringify(inverse));
+    }
+
+    await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(prisma.lessonWord.count({ where: { lessonId: lesson.id } })).resolves.toBe(1);
+
+    await expect(
+      prisma.word.count({
+        where: { audioUrl: { not: null }, id: { in: words.slice(1).map(({ wordId }) => wordId) } },
+      }),
+    ).resolves.toBe(2);
+
+    expect(
+      vi.mocked(generateLanguageAudio).mock.calls.map(([request]) => request.text),
+    ).toStrictEqual(["má", "mà"]);
   });
 
   it("moves marks by idea identity and regenerates the closing summary from the final ideas", async () => {
@@ -284,11 +364,57 @@ describe("publishing one reviewed lesson screen version", () => {
       }),
     ]);
 
-    await apply([
-      change(lesson.id, [{ id: reading.id }, { content: { ideas }, kind: "summary" }], {
-        ideas: [{ from: 2 }, { label: "Four", text: "Four apples." }],
-      }),
-    ]);
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        change(lesson.id, [{ id: reading.id }, { content: { ideas }, kind: "summary" }], {
+          ideas: [{ from: 2 }, { label: "Four", text: "Four apples." }],
+        }),
+      ],
+      reason,
+    });
+
+    const [media] = await listPendingFixMedia(fix.id);
+
+    if (media?.kind !== "ideaIcon") {
+      throw new Error("Expected a pending idea icon");
+    }
+
+    storeBlobUploads();
+
+    vi.mocked(generateLessonIconImage).mockResolvedValueOnce({
+      data: { image: { mediaType: "image/png", uint8Array: new Uint8Array(await drawnIcon()) } },
+      prompt: "test",
+      provenance: {
+        generatedAt: "2026-11-05T12:00:00.000Z",
+        model: "openai/gpt-image-2.5-flare",
+        promptVersion: "icon-style-test",
+        runId: "idea-icon-test",
+      },
+    } as never);
+
+    const result = await produceFixIdeaIcon({ fixId: fix.id, media });
+    expect(result).toMatchObject({ kind: "ideaIcon" });
+    await recordFixMedia({ fixId: fix.id, key: media.key, result });
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({
+      summary: {
+        ideas: [
+          { text: "Three apples." },
+          { iconId: expect.any(String), label: "Four", text: "Four apples." },
+        ],
+      },
+    });
+
+    expect(generateLessonIconImage).toHaveBeenCalledOnce();
 
     const next = await current(lesson.id);
     expect(next[0]?.marks).toMatchObject({ ideaIndex: 0 });
@@ -300,6 +426,15 @@ describe("publishing one reviewed lesson screen version", () => {
     const skill = await skillFixture();
     await prisma.lessonSkill.create({ data: { lessonId: lesson.id, skillId: skill.id } });
 
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id, sourceSkillIds: [skill.id] });
+
+    const version = async () => {
+      const currentPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+      return currentPlan.sourceVersion;
+    };
+
     const numeric = writtenTemperatureLesson().screens.find(
       (screen) => screen.kind === "mathCheck",
     );
@@ -308,7 +443,7 @@ describe("publishing one reviewed lesson screen version", () => {
       throw new Error("missing numeric fixture");
     }
 
-    await apply([
+    const { fix, key } = await apply([
       change(lesson.id, [
         { id: reading.id },
         {
@@ -331,6 +466,19 @@ describe("publishing one reviewed lesson screen version", () => {
       item: { format: "numeric", model: "staff", skillId: skill.id },
       kind: "check",
     });
+
+    await expect(version()).resolves.toBe(plan.sourceVersion + 1);
+    const inverse = await revertInAdmin({ fixId: fix.id, reason: "Restore the original practice" });
+
+    if (inverse.status !== "proposed") {
+      throw new Error(JSON.stringify(inverse));
+    }
+
+    await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(version()).resolves.toBe(plan.sourceVersion + 2);
   });
 
   it("finishes the old version when its only graded screen was excused before any answer was saved", async () => {

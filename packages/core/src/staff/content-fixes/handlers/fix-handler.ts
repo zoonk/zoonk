@@ -50,7 +50,11 @@ type FixHandlerSpec<Model extends string, Proposed, Stored extends { id: string 
   resolve: (db: TransactionClient, proposed: Proposed) => Promise<Resolution<Stored>>;
   /** What approving prepares again, so a rule added later still applies to a waiting fix. */
   toProposed: (stored: Stored) => Proposed;
-  revert: (db: TransactionClient, stored: Stored) => Promise<Resolution<unknown>>;
+  revert: (
+    db: TransactionClient,
+    stored: Stored,
+    context: FixContext,
+  ) => Promise<Resolution<unknown>>;
   apply: (tx: TransactionClient, stored: Stored, context: FixContext) => Promise<void>;
   targets: (stored: Stored) => FixTarget[];
   lockIds?: (stored: Stored) => string[];
@@ -66,7 +70,11 @@ export type FixHandler<Model extends string = string, Stored = unknown> = {
   propose: (db: TransactionClient, proposed: unknown) => Promise<Resolution<unknown>>;
   proposal: { example?: Json; fields: readonly string[]; rules: string } | null;
   reprepare: (db: TransactionClient, stored: unknown) => Promise<Resolution<unknown>>;
-  revert: (db: TransactionClient, stored: unknown) => Promise<Resolution<unknown>>;
+  revert: (
+    db: TransactionClient,
+    stored: unknown,
+    context: FixContext,
+  ) => Promise<Resolution<unknown>>;
   stored: z.ZodType<Stored>;
   targets: (stored: unknown) => FixTarget[];
 };
@@ -115,7 +123,7 @@ export function defineFixHandler<Model extends string, Proposed, Stored extends 
         : refuse(`${spec.model} ${spec.op}: ${describeIssues(parsed.error)}`);
     },
     reprepare: (db, stored) => spec.resolve(db, spec.toProposed(read(stored))),
-    revert: (db, stored) => spec.revert(db, read(stored)),
+    revert: (db, stored, context) => spec.revert(db, read(stored), context),
     stored: spec.stored,
     targets: (stored) => spec.targets(read(stored)),
   };

@@ -158,7 +158,7 @@ export function setContent({
   setSpokenContent({ entry, list, original, path, problems, screen, vocabulary });
   setSummary({ entry, list, map, original, path, problems, screen });
 
-  if (entry.content || !original) {
+  if (entry.content || entry.picture || !original) {
     validateEdit({
       content: screen.content,
       kind: screen.kind,

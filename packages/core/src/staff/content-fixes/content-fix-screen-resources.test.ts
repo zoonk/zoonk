@@ -1,16 +1,36 @@
 import { prisma } from "@zoonk/db";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { serveStoredFile, storeBlobUploads } from "../../_test-utils/blob-uploads";
+import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
+import {
+  drawTestImage,
+  mockDrawnImages,
+  mockImageChecks,
+  mockImageScene,
+  testScene,
+} from "../../library/media/_test-utils/image-mocks";
 import {
   approve,
   intro,
   proposeFix,
   publishedLesson,
+  revertInAdmin,
   signInApprover,
   signInProposer,
 } from "./_test-utils/content-fix-steps";
+import { mockVoice } from "./_test-utils/mock-fix-voice";
 import { contentFixProposalSchema } from "./contract";
+import {
+  checkFixPicture,
+  drawFixPicture,
+  listPendingFixMedia,
+  planFixPicture,
+  recordFixClip,
+  recordFixMedia,
+  storeFixPicture,
+} from "./prepare-content-fix-media";
 import { proposeContentFix } from "./propose-content-fix";
 
 describe("resources reviewed with a screen list", () => {
@@ -132,9 +152,198 @@ describe("resources reviewed with a screen list", () => {
     ).resolves.toBe(1);
   });
 
+  it("checks a new screen picture before approval and reuses it when restoring the screen", async () => {
+    const { lesson, reading } = await publishedLesson();
+    const picture = { alt: "Two apples", prompt: "Two apples on a plate" };
+
+    const input = {
+      changes: [
+        {
+          id: lesson.id,
+          model: "Lesson",
+          setScreens: {
+            screens: [{ id: reading.id }, { content: intro, kind: "explanation", picture }],
+            version: 1,
+          },
+        },
+      ],
+      reason: "Show two apples.",
+    };
+
+    await signInProposer();
+
+    await expect(proposeContentFix(input, { check: true })).resolves.toMatchObject({
+      fixes: [{ media: [{ kind: "picture", request: picture.prompt }] }],
+      status: "checked",
+    });
+
+    const fix = await proposeFix(input);
+    const [need] = await listPendingFixMedia(fix.id);
+
+    if (need?.kind !== "picture") {
+      throw new Error("Expected a pending picture");
+    }
+
+    const image = await drawTestImage();
+    storeBlobUploads();
+    const plan = mockImageScene(testScene({ focalObject: picture.prompt }));
+    mockDrawnImages([image]);
+    const check = mockImageChecks([true]);
+    serveStoredFile({ data: image, mediaType: "image/webp" });
+
+    try {
+      const scene = await planFixPicture(need);
+      const drawn = await drawFixPicture({ need, scene });
+      await expect(checkFixPicture({ drawn, need, scene })).resolves.toBe(true);
+      const result = await storeFixPicture({ drawn, fixId: fix.id, need, scene });
+      await recordFixMedia({ fixId: fix.id, key: need.key, result });
+
+      const { key } = await signInApprover();
+
+      await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+        fix: { status: "applied" },
+      });
+
+      const linked = () =>
+        prisma.step.findFirst({
+          where: { lessonId: lesson.id, mediaAssetId: result.mediaAssetId, ...CURRENT_STEPS },
+        });
+
+      await expect(linked()).resolves.toMatchObject({ content: { image: picture } });
+
+      const inverse = await revertInAdmin({
+        fixId: fix.id,
+        reason: "Restore the original screens",
+      });
+
+      if (inverse.status !== "proposed") {
+        throw new Error(JSON.stringify(inverse));
+      }
+
+      expect(inverse.fix.media).toStrictEqual([]);
+
+      await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
+        fix: { status: "applied" },
+      });
+
+      await expect(linked()).resolves.toBeNull();
+
+      const restore = await revertInAdmin({
+        fixId: inverse.fix.id,
+        reason: "Restore the illustration",
+      });
+
+      if (restore.status !== "proposed") {
+        throw new Error(JSON.stringify(restore));
+      }
+
+      expect(restore.fix.media).toStrictEqual([]);
+
+      await expect(approve({ fixId: restore.fix.id, key })).resolves.toMatchObject({
+        fix: { status: "applied" },
+      });
+
+      await expect(linked()).resolves.toMatchObject({ content: { image: picture } });
+      expect(plan).toHaveBeenCalledOnce();
+      expect(check).toHaveBeenCalledOnce();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("records a new alphabet card and sentence in the lesson's target language", async () => {
+    const { lesson, sentence, steps } = await languageLessonFixture();
+
+    const content = {
+      audioText: "A",
+      audioUrl: null,
+      forms: [{ label: "uppercase", symbol: "A" }],
+      pronunciation: "ay",
+      readingAid: "Like the start of acorn.",
+      symbol: "A",
+    };
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: lesson.id,
+          model: "Lesson",
+          setScreens: {
+            screens: [
+              ...steps.map(({ id }) => ({ id })),
+              { content, kind: "alphabet" },
+              { kind: "reading", sentence: "acorn" },
+            ],
+            sentences: [
+              { id: sentence.id },
+              {
+                distractors: [],
+                explanation: "Acorn means bolota.",
+                key: "acorn",
+                otherSentenceOrders: [],
+                otherTranslationOrders: [],
+                sentence: "I found an acorn.",
+                translation: "Achei uma bolota.",
+                translationDistractors: [],
+              },
+            ],
+            version: 1,
+          },
+        },
+      ],
+      reason: "Add the alphabet card and the example sentence.",
+    });
+
+    const pending = await listPendingFixMedia(fix.id);
+    expect(pending).toMatchObject([{ model: "Sentence" }, { model: "AlphabetCard" }]);
+    mockVoice();
+
+    await Promise.all(
+      pending
+        .filter((need) => need.kind === "clip")
+        .map((need) => recordFixClip({ fixId: fix.id, need })),
+    );
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      prisma.step.findFirst({ where: { kind: "alphabet", lessonId: lesson.id, version: 2 } }),
+    ).resolves.toMatchObject({
+      content: { audioText: "A", audioUrl: expect.stringContaining("blob.test") },
+    });
+
+    await expect(
+      prisma.lessonSentence.findFirst({
+        include: { sentence: true },
+        where: { lessonId: lesson.id, sentence: { sentence: "I found an acorn." } },
+      }),
+    ).resolves.toMatchObject({
+      ordersOwedAt: null,
+      sentence: { audioUrl: expect.stringContaining("blob.test") },
+    });
+  });
+
   it("counts declarations and generated pictures against the ten review units", () => {
     const id = crypto.randomUUID();
-    const words = Array.from({ length: 8 }, (_, index) => ({ key: String(index) }));
+
+    const words = Array.from({ length: 8 }, (_, index) => ({
+      distractors: [],
+      key: String(index),
+      translation: "maçã",
+      word: `apple ${String(index)}`,
+    }));
+
+    const pictured = {
+      content: intro,
+      kind: "explanation",
+      picture: { alt: "Two apples", prompt: "Two apples on a plate" },
+    };
 
     const parse = (screens: object[]) =>
       contentFixProposalSchema.safeParse({
@@ -142,7 +351,7 @@ describe("resources reviewed with a screen list", () => {
         reason: "Review the lesson words.",
       }).success;
 
-    expect(parse([{ id }, { id }, { picture: {} }])).toBe(true);
-    expect(parse([{ picture: {} }, { picture: {} }])).toBe(false);
+    expect(parse([{ id }, { id }, pictured])).toBe(true);
+    expect(parse([pictured, pictured])).toBe(false);
   });
 });

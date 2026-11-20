@@ -1,6 +1,7 @@
 import { GENERATED_ITEM_SCHEMAS } from "@zoonk/ai/tasks/items/schemas";
 import { StepKind, StepVariantKind } from "@zoonk/db";
 import { z } from "zod";
+import { stepImageRequestSchema } from "../../../../library/steps/contract/content-schemas";
 import { idSchema } from "../fix-handler";
 
 const MAX_SOURCE_PAGE = 32_767;
@@ -67,7 +68,7 @@ const common = {
   content: content.optional(),
   idea: z.int().nonnegative().nullable().optional(),
   mediaAssetId: idSchema.nullable().optional(),
-  picture: content.optional(),
+  picture: stepImageRequestSchema.optional(),
 };
 
 const kept = z.strictObject({
@@ -161,6 +162,21 @@ export const snapshotSchema = z.object({
   version: z.int(),
   words: z.array(word),
 });
+const mediaLink = z.discriminatedUnion("target", [
+  z.object({ key: text, position: z.int(), target: z.literal("picture") }),
+  z.object({ key: text, position: z.int(), target: z.literal("alphabet") }),
+  z.object({ key: text, position: z.int(), target: z.literal("idea") }),
+  z.object({
+    create: z.boolean(),
+    id: idSchema,
+    key: text,
+    language: text,
+    target: z.enum(["word", "sentence"]),
+  }),
+]);
+
+export type ScreenMediaLink = z.infer<typeof mediaLink>;
+
 export const storedScreensSchema = z.object({
   after: snapshotSchema,
   before: snapshotSchema,
@@ -168,6 +184,7 @@ export const storedScreensSchema = z.object({
   changedSentenceIds: z.array(idSchema),
   changedWordIds: z.array(idSchema),
   id: idSchema,
+  mediaLinks: z.array(mediaLink).optional(),
   model: z.literal("Lesson"),
   newItems: z.array(
     z.object({ id: idSchema, question: GENERATED_ITEM_SCHEMAS.numeric, skillId: idSchema }),

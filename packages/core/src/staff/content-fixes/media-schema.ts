@@ -23,6 +23,7 @@ const needSchema = z.discriminatedUnion("kind", [
     key,
     kind: z.literal("picture"),
     language: z.string(),
+    numberedParts: z.array(z.string()).optional(),
     request: z.string(),
   }),
   z.object({ key, kind: z.literal("ideaIcon"), need: iconNeedSchema }),

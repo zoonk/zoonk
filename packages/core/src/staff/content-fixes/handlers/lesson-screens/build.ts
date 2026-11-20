@@ -5,6 +5,7 @@ import { prepareAdded } from "./added";
 import { checkBasis, remapBasis } from "./basis";
 import { editVariants, setContent } from "./content";
 import { mapIdeas, remapMarks } from "./ideas";
+import { setPictureRequest } from "./media";
 import { changedRows } from "./references";
 import { type Screen, type ScreenList, type StoredScreens } from "./schema";
 import { type ScreenLesson } from "./snapshot";
@@ -56,6 +57,7 @@ function clearChangedAnswers({
   const changedScreen =
     contentChanged ||
     ("variants" in entry && Boolean(entry.variants?.length)) ||
+    Boolean(entry.picture) ||
     (screen.wordId && changedWordIds.includes(screen.wordId)) ||
     (screen.sentenceId && changedSentenceIds.includes(screen.sentenceId)) ||
     screen.mediaAssetId !== base.mediaAssetId ||
@@ -137,6 +139,7 @@ export function buildScreens({
       });
     }
 
+    setPictureRequest({ entry, path, problems, screen });
     setContent({ entry, list, map, original, path, problems, screen, vocabulary });
     screen.variants = editVariants({ allocatedScreen, base, entry, lesson, list, path, problems });
     const contentChanged = !isDeepStrictEqual(screen.content, base.content);

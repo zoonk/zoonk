@@ -8,7 +8,6 @@ import {
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { describe, expect, it, vi } from "vitest";
-import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { listOwed } from "../../_test-utils/follow-ups";
 import {
   approve,
@@ -18,34 +17,10 @@ import {
   signInApprover,
   signInProposer,
 } from "./_test-utils/content-fix-steps";
+import { SPEECH_PROVENANCE, mockVoice } from "./_test-utils/mock-fix-voice";
 import { clipMediaKey, readContentFixMedia } from "./media-schema";
 import { listPendingFixMedia, recordFixClip, recordFixMedia } from "./prepare-content-fix-media";
 import { proposeContentFix } from "./propose-content-fix";
-
-const SPEECH_PROVENANCE = {
-  generatedAt: "2026-11-13T12:00:00.000Z",
-  latencyMs: 1,
-  model: "openai/gpt-voice",
-  promptVersion: "test",
-  provider: "openai",
-  requestedModel: "openai/gpt-voice",
-  runId: "speech-run",
-  usage: {},
-};
-
-function mockVoice() {
-  storeBlobUploads();
-
-  vi.mocked(generateLanguageAudio).mockResolvedValue({
-    data: {
-      audio: new Uint8Array([1, 2, 3]),
-      durationMs: 900,
-      format: "mp3",
-      provenance: SPEECH_PROVENANCE,
-    },
-    error: null,
-  });
-}
 
 async function pendingClip(fixId: string) {
   const pending = await listPendingFixMedia(fixId);

@@ -7,9 +7,13 @@ export async function checkScreenReferences(
   {
     before,
     after,
+    mediaLinks = [],
     newItems,
     problems,
-  }: Pick<StoredScreens, "before" | "after" | "newItems"> & { problems: string[] },
+  }: Pick<StoredScreens, "before" | "after" | "newItems"> & {
+    mediaLinks?: StoredScreens["mediaLinks"];
+    problems: string[];
+  },
 ) {
   const mediaIds = after.screens.flatMap((screen) => [
     ...(screen.mediaAssetId ? [screen.mediaAssetId] : []),
@@ -93,8 +97,13 @@ export async function checkScreenReferences(
     }
   }
 
+  const created = new Set(
+    mediaLinks.flatMap((link) => ("create" in link && link.create ? [link.id] : [])),
+  );
+
   for (const [index, word] of after.words.entries()) {
     if (
+      !created.has(word.id) &&
       !words.some(
         (row) =>
           row.id === word.id &&
@@ -111,6 +120,7 @@ export async function checkScreenReferences(
 
   for (const [index, sentence] of after.sentences.entries()) {
     if (
+      !created.has(sentence.id) &&
       !sentences.some(
         (row) =>
           row.id === sentence.id &&

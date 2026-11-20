@@ -1,8 +1,10 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import {
   approve,
@@ -189,6 +191,13 @@ describe("Lesson setPlan", () => {
   it("recomputes both estimates when screen kinds change", async () => {
     const { lesson } = await lessonWithPlan();
 
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const dependent = await planFixture({ goalId: goal.id });
+    await planItemFixture({ lessonId: lesson.id, planId: dependent.id });
+
+    const readDependent = () => prisma.plan.findUniqueOrThrow({ where: { id: dependent.id } });
+
     const corrected = {
       ...plan,
       screens: [
@@ -210,6 +219,31 @@ describe("Lesson setPlan", () => {
     await expect(readLesson(lesson.id)).resolves.toMatchObject({
       estimatedMinutes: 3,
       spec: { ...corrected, estimatedMinutes: 3 },
+    });
+
+    await expect(readDependent()).resolves.toMatchObject({
+      sourceVersion: dependent.sourceVersion + 1,
+    });
+
+    const inverse = await revertInAdmin({
+      fixId: fix.id,
+      reason: "Restore the original estimate.",
+    });
+
+    if (inverse.status !== "proposed") {
+      throw new Error(JSON.stringify(inverse));
+    }
+
+    await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(readLesson(lesson.id)).resolves.toMatchObject({
+      estimatedMinutes: lesson.estimatedMinutes,
+    });
+
+    await expect(readDependent()).resolves.toMatchObject({
+      sourceVersion: dependent.sourceVersion + 2,
     });
   });
 
