@@ -1114,20 +1114,17 @@ private struct ExamScoringSection: View {
                 calibration.sure.answered + calibration.unsure.answered > 0
               {
                 Text(
-                  "In your mock exams: \(calibration.sure.right) of \(calibration.sure.answered) right when not flagged, \(calibration.unsure.right) of \(calibration.unsure.answered) right when flagged.",
-                  tableName: "Exam",
-                  comment:
-                    "Right answers in mock exams among questions not flagged, against flagged ones"
-                )
+                  "In your mock exams: \(calibration.sure.right) of \(calibration.sure.answered) right when sure, \(calibration.unsure.right) of \(calibration.unsure.answered) right when not sure.",
+                  tableName: "Exam")
                 Group {
                   if calibration.advice == .blankUnsure {
                     Text(
-                      "Your flagged answers cost more than they earn: leave those blank.",
-                      tableName: "Exam", comment: "Advice")
+                      "When you're not sure, leave it blank: those answers cost more than they earn.",
+                      tableName: "Exam")
                   } else if calibration.advice == .keepAnswering {
                     Text(
-                      "Your flagged answers still earn points: keep answering them.",
-                      tableName: "Exam", comment: "Advice")
+                      "When you're not sure, still answer: those answers earn points.",
+                      tableName: "Exam")
                   }
                 }
                 .foregroundStyle(.mutedForeground)

@@ -241,9 +241,10 @@ struct MockResultView: View {
     mainAction
   }
 
-  /// The questions answered wrong: the ones to fix. Blanks are reviewed but aren't mistakes.
+  /// The questions answered wrong: the ones to fix. Blanks and right answers the learner wasn't
+  /// sure of are reviewed but aren't mistakes.
   private var mistakes: Int {
-    view.review.filter { $0.outcome != .blank }.count
+    view.review.filter { $0.outcome == .wrong || $0.outcome == .partial }.count
   }
 
   /// With mistakes to fix, reviewing them is the way on and leaving the other one, as on main.
@@ -750,23 +751,20 @@ private struct MockInsightsSection: View {
 
         if let calibration = unsure {
           insight(
-            Text("Flagged answers", tableName: "Mock", comment: "Insight about unsure"),
-            systemImage: "scalemass"
+            Text("Answers you weren't sure of", tableName: "Mock"),
+            systemImage: "bookmark"
           ) {
             Text(
-              "Not flagged: \(calibration.sure.right) of \(calibration.sure.answered) right. Flagged: \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
-              tableName: "Mock",
-              comment:
-                "How many of the answers the learner was sure of were right, against those flagged as unsure"
-            )
+              "Sure: \(calibration.sure.right) of \(calibration.sure.answered) right. Not sure: \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
+              tableName: "Mock")
             if calibration.advice == .blankUnsure {
               Text(
-                "Leaving the flagged ones blank would have added \(Int(calibration.blankingGain.rounded())) points.",
-                tableName: "Mock", comment: "What blanking unsure answers would have gained")
+                "Leaving the ones you weren't sure of blank would have added \(Int(calibration.blankingGain.rounded())) points.",
+                tableName: "Mock")
             } else if calibration.advice == .keepAnswering {
               Text(
-                "Your flagged answers still earned points, so keep answering them.",
-                tableName: "Mock", comment: "Keep answering unsure ones")
+                "The answers you weren't sure of still earned points, so keep answering them.",
+                tableName: "Mock")
             }
           }
         }
@@ -1262,7 +1260,7 @@ private struct MockReviewSection: View {
             if let context = item.context {
               LessonTextBlocks(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
-            if item.outcome != .blank,
+            if item.outcome != .blank, item.outcome != .right,
               let answer = TrueFalseWords.savedAnswer(
                 item.learnerAnswer, format: item.format, labels: labels)
             {
@@ -1286,7 +1284,7 @@ private struct MockReviewSection: View {
           VStack(alignment: .leading, spacing: 2) {
             LessonRichText(item.question)
               .typeStyle(.body.weight(.medium))
-            FactSegments(facts(item))
+            FactSegments(facts: facts(item))
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
@@ -1304,20 +1302,31 @@ private struct MockReviewSection: View {
     }
   }
 
-  private func facts(_ item: MockReviewItem) -> [String] {
+  private func facts(_ item: MockReviewItem) -> [FactSegments.Fact] {
     let outcome: String? =
       switch item.outcome {
       case .blank: String(localized: "Blank", table: "Mock", comment: "A blank question")
       case .partial:
         String(localized: "Partly right", table: "Mock", comment: "Partly right answers")
+      case .right:
+        String(localized: "Right", table: "Mock", comment: "Right answers")
       case .wrong: nil
       }
+
+    let unsure = FactSegments.Fact(
+      text: String(
+        localized: "Not sure", table: "Mock",
+        comment:
+          "A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed."
+      ),
+      color: .warningText, symbol: "bookmark.fill", symbolColor: .warning)
 
     return [
       String(localized: "Question \(item.number)", table: "Mock", comment: "A question by number"),
       item.area, outcome,
     ]
-    .compactMap { $0 }
+    .compactMap { $0.map { FactSegments.Fact(text: $0) } }
+      + (item.unsure ? [unsure] : [])
   }
 }
 

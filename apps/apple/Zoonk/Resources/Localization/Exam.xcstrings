@@ -3004,67 +3004,12 @@
         }
       }
     },
-    "In your mock exams: %lld of %lld right when not flagged, %lld of %lld right when flagged." : {
-      "comment" : "Right answers in mock exams among questions not flagged, against flagged ones",
+    "In your mock exams: %lld of %lld right when sure, %lld of %lld right when not sure." : {
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In deinen Probeprüfungen: ohne Markierung %1$lld von %2$lld richtig, mit Markierung %3$lld von %4$lld richtig."
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "In your mock exams: %1$lld of %2$lld right when not flagged, %3$lld of %4$lld right when flagged."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En tus simulacros: acertaste %1$lld de %2$lld preguntas sin marcar y %3$lld de %4$lld preguntas marcadas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lors de tes examens blancs : %1$lld bonnes réponses sur %2$lld pour les questions non marquées, %3$lld sur %4$lld pour les questions marquées."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nelle tue simulazioni: %1$lld risposte corrette su %2$lld per le domande non contrassegnate, %3$lld su %4$lld per quelle contrassegnate."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模試の結果：見直し対象にしなかった問題は%1$lld問正解（全%2$lld問）、見直し対象にした問題は%3$lld問正解（全%4$lld問）でした。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모의고사 결과: 표시하지 않은 문제는 정답 %1$lld개(총 %2$lld개), 표시한 문제는 정답 %3$lld개(총 %4$lld개)."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na twoich egzaminach próbnych: %1$lld z %2$lld poprawnych odpowiedzi na nieoznaczone pytania, %3$lld z %4$lld na oznaczone."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nos seus simulados: você acertou %1$lld de %2$lld questões não marcadas e %3$lld de %4$lld marcadas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deneme sınavlarında: işaretlemediğin sorularda %1$lld / %2$lld doğru, işaretlediklerinde %3$lld / %4$lld doğru."
+            "value" : "In your mock exams: %1$lld of %2$lld right when sure, %3$lld of %4$lld right when not sure."
           }
         }
       }
@@ -5717,6 +5662,8 @@
         }
       }
     },
+    "When you're not sure, leave it blank: those answers cost more than they earn." : {},
+    "When you're not sure, still answer: those answers earn points." : {},
     "Work on %@." : {
       "comment" : "Mock trends",
       "localizations" : {
@@ -6185,124 +6132,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınavının alanları, her birine ne kadar hazır olduğun ve deneme sınavları."
-          }
-        }
-      }
-    },
-    "Your flagged answers cost more than they earn: leave those blank." : {
-      "comment" : "Advice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine markierten Antworten kosten mehr Punkte, als sie einbringen: Lass diese Fragen unbeantwortet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus respuestas marcadas te restan más puntos de los que te dan: deja esas preguntas en blanco."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes réponses aux questions marquées te coûtent plus de points qu’elles ne t’en rapportent : laisse ces questions sans réponse."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con le domande contrassegnate perdi più punti di quanti ne guadagni: lasciale in bianco."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "見直し対象にした問題では、得点より減点が多くなっています。そうした問題は空欄のままにしてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "표시한 문제는 얻는 점수보다 잃는 점수가 더 많아요. 답을 비워 두세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na oznaczonych pytaniach tracisz więcej punktów, niż zdobywasz: zostawiaj je bez odpowiedzi."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você perde mais pontos do que ganha nas respostas marcadas: deixe essas questões em branco."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İşaretlediğin sorularda kazandığından fazla puan kaybediyorsun: bu soruları boş bırak."
-          }
-        }
-      }
-    },
-    "Your flagged answers still earn points: keep answering them." : {
-      "comment" : "Advice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine markierten Antworten bringen dir trotzdem Punkte: Beantworte auch diese Fragen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus respuestas marcadas aún te dan puntos: sigue respondiendo esas preguntas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes réponses aux questions marquées te rapportent quand même des points : continue à y répondre."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con le domande contrassegnate guadagni comunque punti: continua a rispondere."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "見直し対象にした問題も得点につながっています。引き続き答えてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "표시한 문제도 점수를 올려 줘요. 계속 풀어 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na oznaczonych pytaniach nadal zyskujesz punkty: dalej na nie odpowiadaj."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas respostas marcadas ainda rendem pontos: continue respondendo essas questões."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İşaretlediğin sorulardan hâlâ puan kazanıyorsun: bu soruları cevaplamaya devam et."
           }
         }
       }
