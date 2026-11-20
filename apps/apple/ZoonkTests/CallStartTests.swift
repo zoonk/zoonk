@@ -38,6 +38,38 @@ final class CallStartTests: XCTestCase {
     XCTAssertNil(start.refusal)
   }
 
+  func testClosingTheCallSetupOpensNothingItStarted() async {
+    let transport = HeldCallTransport()
+    let setup = PracticeCallSetup()
+    var opened: [String] = []
+
+    setup.isOpen = true
+    setup.start.start(Self.mock, voice: makeVoice(transport)) { opened.append($0) }
+    await transport.waitForHeldRequest()
+    setup.isOpen = false
+    await transport.release()
+    await waitUntilStarted(setup.start)
+
+    XCTAssertEqual(opened, [])
+  }
+
+  func testReopeningTheCallSetupShowsNoEarlierRefusal() async {
+    let transport = HeldCallTransport(status: .internalServerError)
+    let setup = PracticeCallSetup()
+
+    setup.isOpen = true
+    setup.start.start(Self.mock, voice: makeVoice(transport)) { _ in }
+    await transport.waitForHeldRequest()
+    await transport.release()
+    await waitUntilStarted(setup.start)
+    XCTAssertNotNil(setup.start.refusal)
+
+    setup.isOpen = false
+    setup.isOpen = true
+
+    XCTAssertNil(setup.start.refusal)
+  }
+
   private static let mock = Components.Schemas.LanguageConversationStartInput.case3(
     .init(goalId: "c3b30782-4de7-8386-83fa-934eee74e049", kind: .speakingMock))
 
@@ -62,8 +94,13 @@ final class CallStartTests: XCTestCase {
 private actor HeldCallTransport: ClientTransport {
   static let conversationID = "01a18235-e60e-7dbb-a938-b0ae54987c58"
 
+  private let status: HTTPResponse.Status
   private(set) var requests = 0
   private var held: TestContinuation<Void>?
+
+  init(status: HTTPResponse.Status = .created) {
+    self.status = status
+  }
 
   func send(
     _ request: HTTPRequest,
@@ -75,7 +112,7 @@ private actor HeldCallTransport: ClientTransport {
     await withTestVoidContinuation { held = $0 }
 
     return (
-      HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
+      HTTPResponse(status: status, headerFields: [.contentType: "application/json"]),
       HTTPBody(#"{"conversationId":"\#(Self.conversationID)"}"#)
     )
   }

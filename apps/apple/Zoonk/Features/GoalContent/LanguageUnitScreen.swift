@@ -199,8 +199,7 @@ private struct LanguageUnitContent: View {
   @Environment(\.legibilityWeight) private var legibilityWeight
   /// Above the split: folding iPhone Duo recreates its panes, and the call's picker is in one.
   @State private var callMinutes: Int?
-  @State private var callStart = CallStart()
-  @State private var isCallOpen = false
+  @State private var callSetup = PracticeCallSetup()
   @ScaledMetric(relativeTo: .body) private var markSize = 14.0
 
   let unit: LanguageUnit
@@ -235,8 +234,24 @@ private struct LanguageUnitContent: View {
         .keyboardShortcut(.defaultAction)
       }
     }
+    .sheet(isPresented: $callSetup.isOpen) {
+      if let conversation = unit.conversation {
+        NavigationStack {
+          ZoonkList {
+            PracticeCallSection(
+              conversation: conversation, chapterId: unit.unit.chapterId, goalId: unit.goalId,
+              minutes: $callMinutes, start: callSetup.start
+            ) { conversationId in
+              callSetup.isOpen = false
+              router.open(.conversation(conversationId: conversationId))
+            }
+          }
+        }
+        .presentationDetents([.medium, .large])
+      }
+    }
     .onDisappear {
-      callStart.leave()
+      callSetup.start.leave()
     }
   }
 
@@ -373,7 +388,7 @@ private struct LanguageUnitContent: View {
       }
     } else {
       Button {
-        isCallOpen = true
+        callSetup.isOpen = true
       } label: {
         ListRow(
           title,
@@ -385,20 +400,6 @@ private struct LanguageUnitContent: View {
         ) {
           KindDot(kind: .conversation)
         }
-      }
-      .sheet(isPresented: $isCallOpen) {
-        NavigationStack {
-          ZoonkList {
-            PracticeCallSection(
-              conversation: conversation, chapterId: unit.unit.chapterId, goalId: unit.goalId,
-              minutes: $callMinutes, start: callStart
-            ) { conversationId in
-              isCallOpen = false
-              router.open(.conversation(conversationId: conversationId))
-            }
-          }
-        }
-        .presentationDetents([.medium, .large])
       }
     }
   }
@@ -750,6 +751,22 @@ struct PracticeCallSection: View {
     }
 
     start.start(input, voice: voice, onStarted: onStarted)
+  }
+}
+
+/// The practice call's setup sheet and the start it asks for, presented above the unit's split so a
+/// resize keeps both. Closing the sheet ends its start: a call the learner backed out of never
+/// opens, and its refusal is gone when the sheet opens again.
+@MainActor
+@Observable
+final class PracticeCallSetup {
+  let start = CallStart()
+  var isOpen = false {
+    didSet {
+      if !isOpen {
+        start.leave()
+      }
+    }
   }
 }
 
