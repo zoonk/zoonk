@@ -102,7 +102,7 @@ function CodeStatus({ resendStatus, status }: { resendStatus: ResendStatus; stat
   const resendMessages: Partial<Record<ResendStatus, string>> = {
     failed: t("We couldn't send a new code. Try again."),
     rateLimited: t("Wait a minute, then ask for a new code."),
-    sent: t("We sent you a new code."),
+    sent: t("We emailed you again."),
   };
 
   const codeMessages: Partial<Record<OTPStatus, string>> = {
@@ -156,6 +156,8 @@ export function OTPForm({
   const [status, setStatus] = useState<OTPStatus>("idle");
   const [codeRound, setCodeRound] = useState(0);
   const [code, setCode] = useState("");
+  /** Checking it again would only spend one of the code's few tries on the same answer. */
+  const [rejectedCode, setRejectedCode] = useState<string | null>(null);
   const resendCode = useResendCode(email);
   const isCodeGone = needsNewCode(status);
   const isChecking = status === "pending";
@@ -168,7 +170,7 @@ export function OTPForm({
   }: {
     form: HTMLFormElement;
     otp: string;
-  }): Promise<OTPStatus | "signedIn"> => {
+  }): Promise<{ answer: OTPStatus | "signedIn"; otp: string }> => {
     const answer = await signInWithCode({ email, otp });
     const latestCode = readCode(form);
     const isNewerCode = latestCode.length === OTP_LENGTH && latestCode !== otp;
@@ -177,7 +179,7 @@ export function OTPForm({
       return checkCode({ form, otp: latestCode });
     }
 
-    return answer;
+    return { answer, otp };
   };
 
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
@@ -190,7 +192,7 @@ export function OTPForm({
     const form = event.currentTarget;
     const otp = readCode(form);
 
-    if (otp.length !== OTP_LENGTH) {
+    if (otp.length !== OTP_LENGTH || otp === rejectedCode) {
       return;
     }
 
@@ -198,10 +200,12 @@ export function OTPForm({
     resendCode.clear();
     setStatus("pending");
 
-    const answer = await checkCode({ form, otp });
+    const checked = await checkCode({ form, otp });
+    const { answer } = checked;
 
     if (answer !== "signedIn") {
       isLockedRef.current = needsNewCode(answer);
+      setRejectedCode(answer === "wrongCode" ? checked.otp : null);
       setStatus(answer);
       return;
     }
@@ -216,6 +220,7 @@ export function OTPForm({
       isLockedRef.current = false;
       setStatus("idle");
       setCode("");
+      setRejectedCode(null);
       setCodeRound((round) => round + 1);
     }
   };
@@ -249,7 +254,9 @@ export function OTPForm({
           </Button>
         ) : (
           <AuthSubmit
-            disabled={code.length !== OTP_LENGTH || resendCode.status === "sending"}
+            disabled={
+              code.length !== OTP_LENGTH || code === rejectedCode || resendCode.status === "sending"
+            }
             isLoading={isChecking}
           >
             {t("Continue")}
