@@ -16,12 +16,12 @@ import {
   intro,
   proposeFix,
   publishedLesson,
+  question,
   revertInAdmin,
   signInApprover,
   signInProposer,
 } from "./_test-utils/content-fix-steps";
 import { mockVoice } from "./_test-utils/mock-fix-voice";
-import { contentFixProposalSchema } from "./contract";
 import {
   checkFixPicture,
   drawFixPicture,
@@ -34,6 +34,132 @@ import {
 import { proposeContentFix } from "./propose-content-fix";
 
 describe("resources reviewed with a screen list", () => {
+  it("adds a picture to a kept screen and remaps the question that quotes it", async () => {
+    const { lesson, reading, check } = await publishedLesson();
+    const picture = { alt: "Two apples", prompt: "Two apples on a plate" };
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: lesson.id,
+          model: "Lesson",
+          setScreens: {
+            screens: [
+              { content: intro, kind: "explanation" },
+              { id: reading.id, picture },
+              { id: check.id },
+            ],
+            version: 1,
+          },
+        },
+      ],
+      reason: "Illustrate the explanation.",
+    });
+
+    const [need] = await listPendingFixMedia(fix.id);
+
+    expect(need).toMatchObject({ kind: "picture", request: picture.prompt });
+
+    if (!need) {
+      throw new Error("Expected a pending picture");
+    }
+
+    const asset = await mediaAssetFixture({ checkOwedAt: null });
+
+    await recordFixMedia({
+      fixId: fix.id,
+      key: need.key,
+      result: { key: need.key, kind: "picture", mediaAssetId: asset.id, url: asset.url },
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { lessonId: lesson.id, ...CURRENT_STEPS },
+      }),
+    ).resolves.toMatchObject([
+      { content: intro },
+      { content: { ...intro, image: picture }, mediaAssetId: asset.id, version: 2 },
+      { content: { ...question, basis: { ...question.basis, position: 1 } } },
+    ]);
+  });
+
+  it("refuses a proposal before storing work when its new icons and alphabet clips exceed ten units", async () => {
+    const [{ lesson, steps }, proposer] = await Promise.all([
+      languageLessonFixture(),
+      signInProposer(),
+    ]);
+
+    const ideas = Array.from({ length: 9 }, (_, index) => ({
+      label: `Greeting ${String(index + 1)}`,
+      text: `Practice greeting number ${String(index + 1)}.`,
+    }));
+
+    const setScreens = {
+      ideas,
+      screens: [
+        ...steps.map(({ id }) => ({ id })),
+        {
+          content: {
+            audioText: "A",
+            audioUrl: null,
+            forms: [{ label: "uppercase", symbol: "A" }],
+            pronunciation: "ay",
+            readingAid: "Like the start of acorn.",
+            symbol: "A",
+          },
+          kind: "alphabet",
+        },
+      ],
+      version: 1,
+    };
+
+    const input = {
+      changes: [{ id: lesson.id, model: "Lesson", setScreens }],
+      reason: "Add greetings and a letter.",
+    };
+
+    const atLimit = {
+      ...input,
+      changes: [
+        { id: lesson.id, model: "Lesson", setScreens: { ...setScreens, ideas: ideas.slice(1) } },
+      ],
+    };
+
+    await expect(proposeContentFix(atLimit, { check: true })).resolves.toMatchObject({
+      fixes: [
+        {
+          media: expect.arrayContaining([
+            {
+              key: expect.any(String),
+              kind: "clip",
+              language: "en",
+              model: "AlphabetCard",
+              text: "A",
+            },
+          ]),
+        },
+      ],
+      status: "checked",
+    });
+
+    await expect(proposeContentFix(input, { check: true })).resolves.toMatchObject({
+      message: expect.stringContaining("10 review units"),
+      status: "invalid",
+    });
+
+    await expect(proposeContentFix(input)).resolves.toMatchObject({ status: "invalid" });
+    await expect(prisma.contentFix.count({ where: { proposerId: proposer.id } })).resolves.toBe(0);
+  });
+
   it("saves a declared sentence with its recording and reviewed orders, and refuses a clip changed after review", async () => {
     const { lesson, steps, sentence } = await languageLessonFixture();
 
@@ -329,29 +455,58 @@ describe("resources reviewed with a screen list", () => {
     });
   });
 
-  it("counts declarations and generated pictures against the ten review units", () => {
-    const id = crypto.randomUUID();
+  it("counts vocabulary declarations and new media but leaves reused recordings free", async () => {
+    const { lesson, steps, word } = await languageLessonFixture();
 
-    const words = Array.from({ length: 8 }, (_, index) => ({
-      distractors: [],
-      key: String(index),
-      translation: "maçã",
-      word: `apple ${String(index)}`,
-    }));
+    const shared = await prisma.word.create({
+      data: {
+        audioUrl: "https://audio.test/apple.mp3",
+        organizationId: word.organizationId,
+        targetLanguage: word.targetLanguage,
+        word: "apple",
+      },
+    });
 
-    const pictured = {
-      content: intro,
-      kind: "explanation",
-      picture: { alt: "Two apples", prompt: "Two apples on a plate" },
+    await signInProposer();
+
+    const input = {
+      changes: [
+        {
+          id: lesson.id,
+          model: "Lesson",
+          setScreens: {
+            ideas: Array.from({ length: 7 }, (_, index) => ({
+              label: `Fruit ${String(index + 1)}`,
+              text: `Practice fruit word number ${String(index + 1)}.`,
+            })),
+            screens: [
+              ...steps.map(({ id }) => ({ id })),
+              { kind: "vocabulary", word: "new" },
+              {
+                content: intro,
+                kind: "explanation",
+                picture: { alt: "An apple", prompt: "An apple on a plate" },
+              },
+            ],
+            version: 1,
+            words: [
+              { id: word.id },
+              { distractors: [], key: "new", translation: "maçã", word: shared.word },
+            ],
+          },
+        },
+      ],
+      reason: "Add a vocabulary word and a picture.",
     };
 
-    const parse = (screens: object[]) =>
-      contentFixProposalSchema.safeParse({
-        changes: [{ id, model: "Lesson", setScreens: { screens, words } }],
-        reason: "Review the lesson words.",
-      }).success;
+    const reused = await proposeContentFix(input, { check: true });
+    expect(reused).toMatchObject({ fixes: [{ media: { length: 8 } }], status: "checked" });
 
-    expect(parse([{ id }, { id }, pictured])).toBe(true);
-    expect(parse([pictured, pictured])).toBe(false);
+    await prisma.word.update({ data: { audioUrl: null }, where: { id: shared.id } });
+
+    await expect(proposeContentFix(input, { check: true })).resolves.toMatchObject({
+      message: expect.stringContaining("10 review units"),
+      status: "invalid",
+    });
   });
 });

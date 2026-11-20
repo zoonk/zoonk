@@ -16,12 +16,14 @@ function validateEdit({
   original,
   kind,
   path,
+  picture,
   problems,
 }: {
   content: Screen["content"];
   original?: Screen["content"];
   kind: Screen["kind"];
   path: string;
+  picture?: boolean;
   problems: string[];
 }) {
   const invalid = screenContentProblem({ content, kind });
@@ -34,9 +36,12 @@ function validateEdit({
     return;
   }
 
+  const { image: _newImage, ...prose } = content;
+  const { image: _oldImage, ...originalProse } = original;
+
   const verdict = checkScreenContentChange({
-    after: content,
-    before: original,
+    after: picture ? prose : content,
+    before: picture ? originalProse : original,
     keyedElsewhere: false,
     kind,
   });
@@ -164,6 +169,7 @@ export function setContent({
       kind: screen.kind,
       original: original?.content,
       path: `${path}.content`,
+      picture: Boolean(entry.picture),
       problems,
     });
   }

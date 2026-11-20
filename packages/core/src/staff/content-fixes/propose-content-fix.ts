@@ -21,6 +21,7 @@ import {
   proposedChange,
   targetsOf,
 } from "./_utils/prepare-content-fix";
+import { reviewBudgetProblem } from "./_utils/review-budget";
 import { getStaffSessionUser } from "./_utils/staff-session";
 import { getContentFixBatchReviewUrl } from "./batches";
 import { contentFixProposalSchema, contentFixRevertSchema } from "./contract";
@@ -113,9 +114,10 @@ async function prepareBatch(
   });
 
   const problems = [
-    ...results.flatMap((result, index) =>
-      result.ok ? [] : [`${label({ count: proposals.length, index })}${result.problem}`],
-    ),
+    ...results.flatMap((result, index) => {
+      const problem = result.ok ? reviewBudgetProblem(result.fix) : result.problem;
+      return problem ? [`${label({ count: proposals.length, index })}${problem}`] : [];
+    }),
     ...(prepared.length === proposals.length
       ? overlapProblems(prepared.map((entry) => entry.fix))
       : []),
