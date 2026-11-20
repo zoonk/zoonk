@@ -176,4 +176,27 @@
     <string name="goalcontent_skill_solid">Solid</string>
     <string name="goalcontent_skill_mastered">Mastered</string>
     <string name="goalcontent_chapters_progress">%1$s of %2$s</string>
+    <!-- The learner's estimated points on an exam's written test. -->
+    <string name="goalcontent_written_estimated">Estimated score</string>
+    <!-- %1$s is the written test's minimum points. -->
+    <string name="goalcontent_written_minimum">Minimum to pass: %1$s</string>
+    <!-- How the learner's written answers are moving, over their last few answers. -->
+    <string name="goalcontent_written_progress">Your progress</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="one">last answer</item>
+        <item quantity="other">last %d answers</item>
+    </plurals>
+    <!-- How much of a written answer's score its presentation and structure earned. -->
+    <string name="goalcontent_written_presentation">Presentation and structure</string>
+    <!-- The learner's past written answers. -->
+    <string name="goalcontent_written_answers">Your answers</string>
+    <plurals name="goalcontent_written_lines">
+        <item quantity="one">%d line</item>
+        <item quantity="other">%d lines</item>
+    </plurals>
+    <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
+    <plurals name="goalcontent_written_versions">
+        <item quantity="one">%d version</item>
+        <item quantity="other">%d versions</item>
+    </plurals>
 </resources>

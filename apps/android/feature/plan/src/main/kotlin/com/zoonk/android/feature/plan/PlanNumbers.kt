@@ -593,7 +593,7 @@ internal fun PreparationDetails(
         Readout(number.value, style = MaterialTheme.typography.displaySmall)
         number.share?.let { Meter(it) }
     }
-    if (forExam) EstimatedScoreBlock(preparation)
+    if (forExam) EstimatedScoreBlock(preparation, links.writeNow)
     PreparationParts(preparation, if (forExam) null else lessons)
     NextSteps(preparation, progress.stillNeeded, forExam, links)
     QuietDisclosure(stringResource(R.string.plan_how_calculated)) {
@@ -602,9 +602,16 @@ internal fun PreparationDetails(
 }
 
 @Composable
-private fun EstimatedScoreBlock(preparation: GoalPreparation) {
+private fun EstimatedScoreBlock(
+    preparation: GoalPreparation,
+    writeNow: WriteNow?,
+) {
     val score = preparation.estimatedScore
     val mocks = preparation.components.mocks
+    preparation.writtenProjection?.let { projection ->
+        WrittenProjectionScore(projection, score?.let { estimateSource(it, mocks) }, writeNow)
+        return
+    }
     if (score == null) {
         if (mocks.kind == PreparationComponentsMocks.Kind.MOCK_EXAMS && mocks.taken > 0) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -621,9 +628,17 @@ private fun EstimatedScoreBlock(preparation: GoalPreparation) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(scoreRange(score), style = MaterialTheme.typography.headlineMedium.withTabularFigures())
-        val taken = score.mocks.toInt()
-        MetaLine(
-            when {
+        MetaLine(estimateSource(score, mocks))
+    }
+}
+
+@Composable
+private fun estimateSource(
+    score: EstimatedScore,
+    mocks: PreparationComponentsMocks,
+): String {
+    val taken = score.mocks.toInt()
+    return when {
                 mocks.kind == PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
                     pluralStringResource(
                         R.plurals.plan_estimate_based_on_reviews,
@@ -639,9 +654,7 @@ private fun EstimatedScoreBlock(preparation: GoalPreparation) {
                 else -> {
                     pluralStringResource(R.plurals.plan_estimate_based_on, taken, taken)
                 }
-            },
-        )
-    }
+            }
 }
 
 /** Always a range, so it never reads as a promise; whole-number scales as their reports print them. */
