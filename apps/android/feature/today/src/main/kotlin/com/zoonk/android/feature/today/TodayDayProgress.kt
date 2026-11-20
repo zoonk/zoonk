@@ -43,7 +43,11 @@ internal fun TodayDayProgress(
 
     DayProgress(parts, held = held, contentDescription = stepsDone(day.sessionBar), modifier = modifier) { index ->
         val part = parts.getOrNull(index)
-        if (part != null) StepSegment(part) else HeldSegment(model, day.heldMinutes)
+        if (part != null) {
+            StepSegment(part, gettingReady = part.step.isGettingReady(model.today.lessonStatus, model.writingStalled))
+        } else {
+            HeldSegment(model, day.heldMinutes)
+        }
     }
 }
 
@@ -51,10 +55,13 @@ private val DayStep.share: Float
     get() = if (status != StudyBlock.Status.ACTIVE || questions == 0L) 0f else (answered.toFloat() / questions).coerceAtMost(1f)
 
 @Composable
-private fun StepSegment(part: DayPart) {
+private fun StepSegment(
+    part: DayPart,
+    gettingReady: Boolean,
+) {
     val step = part.step
 
-    Segment(title = blockTitle(step), facts = segmentFacts(part), note = kindNote(step.learnKind), kind = step.learnKind)
+    Segment(title = blockTitle(step), facts = segmentFacts(part, gettingReady), note = kindNote(step.learnKind), kind = step.learnKind)
 }
 
 /** The day's time kept for lessons that aren't on its list yet. */
@@ -100,11 +107,19 @@ private fun Segment(
     }
 }
 
+/** [gettingReady] says the step's row reads "Getting ready…", so its part says it too. */
 @Composable
-private fun segmentFacts(part: DayPart): String {
+private fun segmentFacts(
+    part: DayPart,
+    gettingReady: Boolean,
+): String {
     val step = part.step
     val locale = currentLocale()
     val time = formatMinutes(step.estimatedMinutes.toInt(), locale)
+
+    if (gettingReady && part.state != DayPart.State.Done) {
+        return listOf(stringResource(R.string.today_step_being_written), time).factsLine()
+    }
 
     return when (part.state) {
         DayPart.State.Done -> {
