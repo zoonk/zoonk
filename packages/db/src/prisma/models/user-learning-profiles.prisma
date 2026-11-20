@@ -31,6 +31,7 @@ model UserLearningProfile {
   activeGoal     Goal?          @relation(fields: [activeGoalId], references: [id], onDelete: SetNull)
   /// Off stops Zoonk from learning new facts and from using the ones it has, which stay listed.
   memoryEnabled  Boolean        @default(true) @map("memory_enabled")
+  suggestedTools String[]       @default([]) @map("suggested_tools")
   /// The device's own mute still wins.
   soundsEnabled  Boolean        @default(true) @map("sounds_enabled")
   /// Null until the learner chooses; where the law needs a yes, analytics wait for one.

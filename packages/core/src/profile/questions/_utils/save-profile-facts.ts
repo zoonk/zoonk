@@ -16,6 +16,7 @@ export async function replaceProfileFacts({
   locale,
   viewer,
   existing,
+  suggestedTools,
 }: {
   tx: TransactionClient;
   userId: string;
@@ -23,8 +24,9 @@ export async function replaceProfileFacts({
   locale: SupportedLocale;
   viewer: EntitlementViewer | null;
   existing: MemoryFact[];
+  suggestedTools?: readonly string[];
 }): Promise<boolean> {
-  const desired = toProfileFacts({ ...input, locale });
+  const desired = toProfileFacts({ ...input, locale, suggestedTools });
 
   const matches = (fact: MemoryFact, next: (typeof desired)[number]) =>
     fact.statement === next.statement && isDeepStrictEqual(fact.profileAnswer, next.profileAnswer);

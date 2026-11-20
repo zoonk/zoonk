@@ -202,6 +202,63 @@
       "answer": {
         "answer": {
           "declined": false,
+          "favorites": "ClinicalKey, Notion",
+          "picks": [
+            "Medscape",
+            "Tasy",
+            "UpToDate",
+            "Whitebook"
+          ]
+        },
+        "question": "tools"
+      },
+      "view": {
+        "id": "tools",
+        "options": [
+          {
+            "description": null,
+            "id": "Tasy",
+            "label": "Tasy"
+          },
+          {
+            "description": null,
+            "id": "Whitebook",
+            "label": "Whitebook"
+          },
+          {
+            "description": null,
+            "id": "Medscape",
+            "label": "Medscape"
+          },
+          {
+            "description": null,
+            "id": "UpToDate",
+            "label": "UpToDate"
+          },
+          {
+            "description": null,
+            "id": "Google Drive",
+            "label": "Google Drive"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "Medscape",
+            "Tasy",
+            "UpToDate",
+            "Whitebook"
+          ],
+          "studies": [],
+          "text": "ClinicalKey, Notion"
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
           "studies": [
             {
               "field": "business",

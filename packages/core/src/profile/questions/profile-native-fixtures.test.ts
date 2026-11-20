@@ -1,3 +1,4 @@
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -15,6 +16,15 @@ const ANSWERS = [
   {
     answer: { declined: false, favorites: "Python", picks: ["figma", "vsCode"] },
     question: "tools",
+  },
+  {
+    answer: {
+      declined: false,
+      favorites: "ClinicalKey, Notion",
+      picks: ["UpToDate", "Tasy", "Whitebook", "Medscape"],
+    },
+    question: "tools",
+    suggestedTools: ["Tasy", "Whitebook", "Medscape", "UpToDate", "Google Drive"],
   },
   {
     answer: {
@@ -85,6 +95,14 @@ describe("profile answers as native clients read them back", () => {
       // oxlint-disable-next-line no-await-in-loop -- one learner at a time: the session is global.
       const user = await userFixture();
       mockSession(user.id);
+
+      if ("suggestedTools" in input) {
+        // oxlint-disable-next-line no-await-in-loop -- one learner at a time: the session is global.
+        await learningProfileFixture({
+          suggestedTools: [...input.suggestedTools],
+          userId: user.id,
+        });
+      }
 
       const parsed = profileAnswerInputSchema.parse({
         answer: input.answer,

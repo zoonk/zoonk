@@ -129,8 +129,7 @@ function validContent(normalized: ProfileAnswerInput): ProfileAnswerInput | null
         ? null
         : normalized;
     case "studies":
-      return normalized.answer.studies.length > 3 ||
-        normalized.answer.studies.some((study) => study.field === "other" && !study.subject)
+      return normalized.answer.studies.some((study) => study.field === "other" && !study.subject)
         ? null
         : normalized;
     case "conditions":
@@ -141,14 +140,13 @@ function validContent(normalized: ProfileAnswerInput): ProfileAnswerInput | null
         : normalized;
     case "learningSupport":
     case "addressForm":
-      return normalized;
     case "activities":
     case "listen":
     case "play":
     case "read":
     case "tools":
     case "watch":
-      return normalized.answer.picks.length > 3 ? null : normalized;
+      return normalized;
     default:
       return null;
   }
