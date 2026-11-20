@@ -100,7 +100,7 @@ export async function checkPublishedLesson({
 
   const loaded = await loadCheck({ context, version: plan.version, writerModel: plan.writerModel });
 
-  if (!loaded || loaded.repairBase !== plan.repairBase) {
+  if (!loaded || (typeof plan.repairBase === "string" && loaded.repairBase !== plan.repairBase)) {
     return { status: "replaced" };
   }
 

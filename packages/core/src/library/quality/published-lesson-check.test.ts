@@ -437,6 +437,21 @@ describe(checkPublishedLesson, () => {
     expect([fixedScreen.sourceId, fixedScreen.sourcePage]).toStrictEqual([guidance.id, 2]);
   });
 
+  it("reviews a published check plan made before the repair fingerprint was added", async () => {
+    const {
+      lesson,
+      plan: { repairBase: _repairBase, ...plan },
+    } = await publishLesson();
+
+    mockReview();
+
+    await expect(
+      checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
+    ).resolves.toStrictEqual({ status: "passed" });
+
+    expect(checkLessonQuality).toHaveBeenCalledOnce();
+  });
+
   it("leaves a version the reviewer passes as it is, reviewing it at flex", async () => {
     const { draft, lesson, plan } = await publishLesson();
     mockReview();
