@@ -61,7 +61,6 @@ private struct MockChooserContent: View {
 
 private enum ChooserStatus: Equatable {
   case choosing
-  case notEnoughQuestions
   case failed
   case plusRequired
 }
@@ -276,18 +275,11 @@ private struct MockChooser: View {
 
   /// A Start that failed, over the bar where Start was pressed; the bar's note reads it out.
   private var failure: String? {
-    switch status {
-    case .notEnoughQuestions:
-      String(
-        localized: "Not enough questions for this one yet. Pick another.", table: "Mock",
-        comment: "Too few questions for a mock exam")
-    case .failed:
-      String(
+    status == .failed
+      ? String(
         localized: "We couldn't start the mock exam. Try again.", table: "Mock",
         comment: "Start failed")
-    default:
-      nil
-    }
+      : nil
   }
 
   private func optionRow(_ option: MockOption) -> some View {
@@ -383,7 +375,6 @@ private struct MockChooser: View {
           return asked
         }
         return nil
-      case .done(.notEnoughQuestions): return .notEnoughQuestions
       case .done(.plusRequired):
         // The server's answer is the access now, even if the read after it fails; a later read
         // (a subscription bought) replaces it.

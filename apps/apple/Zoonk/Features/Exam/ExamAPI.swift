@@ -4,7 +4,6 @@ enum MockStartOutcome: Equatable, Sendable {
   case started(id: String)
   /// Its questions are being written: nothing started, and the server keeps the request.
   case preparing
-  case notEnoughQuestions
   case plusRequired
 }
 
@@ -117,10 +116,6 @@ struct ExamAPI {
       case .ok(let response): started = try response.body.json
       case .created(let response): started = try response.body.json
       case .code402: return .plusRequired
-      case .unprocessableContent(let response):
-        let code = try? response.body.json.error.code
-        if code == "NOT_ENOUGH_QUESTIONS" { return .notEnoughQuestions }
-        throw APIError.unavailable
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable

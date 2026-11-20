@@ -235,10 +235,6 @@ actor PageServer: ClientTransport {
   static let speakingTask = "t1"
 
   private var focusTestResult: String?
-  private var mockStartResult: String?
-
-  func setMockStartResult(_ result: String) { mockStartResult = result }
-
   func setFocusTestResult(_ result: String) { focusTestResult = result }
 
   private(set) var writes: [String] = []
@@ -273,13 +269,6 @@ actor PageServer: ClientTransport {
       return (
         HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
         HTTPBody(focusTestResult)
-      )
-    }
-    if operationID == "startAnytimeMock", let mockStartResult {
-      return (
-        HTTPResponse(
-          status: .unprocessableContent, headerFields: [.contentType: "application/json"]),
-        HTTPBody(mockStartResult)
       )
     }
     throw APIError.network

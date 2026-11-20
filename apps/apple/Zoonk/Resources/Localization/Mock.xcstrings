@@ -8280,65 +8280,6 @@
         }
       }
     },
-    "Not enough questions for this one yet. Pick another." : {
-      "comment" : "Too few questions for a mock exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dafür gibt es noch nicht genug Fragen. Wähl eine andere."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no hay suficientes preguntas para este simulacro. Elige otro."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas encore assez de questions pour cet examen blanc. Choisis-en un autre."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non ci sono ancora abbastanza domande per questa simulazione. Scegline un’altra."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この模試にはまだ問題が足りません。別の模試を選んでください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 이 모의고사에 쓸 문제가 부족해요. 다른 모의고사를 고르세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na ten egzamin próbny nie ma jeszcze dość pytań. Wybierz inny."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não tem questões suficientes para este simulado. Escolha outro."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu deneme sınavı için henüz yeterli soru yok. Başka birini seç."
-          }
-        }
-      }
-    },
     "Not every task was done, so there's no estimate for this paper." : {
       "comment" : "A speaking paper with tasks left undone",
       "localizations" : {
