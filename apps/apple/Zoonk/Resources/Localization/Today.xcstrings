@@ -6083,7 +6083,6 @@
       }
     },
     "Getting ready…" : {
-      "comment" : "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6100,13 +6099,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparation…"
+            "value" : "Préparation en cours…"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando tutto…"
+            "value" : "Stiamo preparando…"
           }
         },
         "ja" : {
@@ -14395,6 +14394,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Odak testine göre %@ için daha fazla zaman ayırman iyi olur."
+          }
+        }
+      }
+    },
+    "Your mock exam is being prepared." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir bereiten deine Probeprüfung vor."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se está preparando tu simulacro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton examen blanc est en préparation."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando la tua simulazione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模試を準備しています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모의고사를 준비하고 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trwa przygotowywanie egzaminu próbnego."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu simulado está sendo preparado."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deneme sınavın hazırlanıyor."
           }
         }
       }

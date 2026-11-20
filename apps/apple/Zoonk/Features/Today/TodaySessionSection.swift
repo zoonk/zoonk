@@ -478,11 +478,7 @@ struct BlockRow: View {
   /// A row is its title and at most one short line.
   private var line: String? {
     if today.isGettingReady(block, in: view) {
-      return String(
-        localized: "Getting ready…", table: "Today",
-        comment:
-          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-      )
+      return String(localized: "Getting ready…", table: "Today")
     }
 
     return lineOverride ?? (showsDetail ? block.detail : block.label)
@@ -553,11 +549,7 @@ private struct ComingLessonsRow: View {
               "Taking longer than usual", tableName: "Today",
               comment: "The day's next lessons are taking long to outline")
           case .beingWritten:
-            Text(
-              "Getting ready…", tableName: "Today",
-              comment:
-                "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-            )
+            Text("Getting ready…", tableName: "Today")
           }
         }
         .typeStyle(.meta)
@@ -712,9 +704,7 @@ struct TodayDayStatus: View {
       link = keepLearning ? .summary : nil
     case .waiting where session.waitingFor == .mock:
       systemImage = "clock"
-      sentence = String(
-        localized: "Your mock exam is being prepared.", table: "Today",
-        comment: "The day's scheduled mock exam is waiting for its questions")
+      sentence = String(localized: "Your mock exam is being prepared.", table: "Today")
       clause = String(localized: MockPreparing.line)
     case .waiting where writingStalled:
       systemImage = "clock"

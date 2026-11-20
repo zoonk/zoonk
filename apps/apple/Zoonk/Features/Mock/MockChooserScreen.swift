@@ -396,14 +396,9 @@ private struct MockChooser: View {
 /// Main's `MockPreparingWords`: said beside "Keep studying" while a mock's questions are written,
 /// on the chooser and on a scheduled mock's intro. It never starts by itself.
 enum MockPreparing {
-  static let title = LocalizedStringResource(
-    "Your mock exam is being prepared", table: "Mock",
-    comment: "Over Keep studying, while a mock exam's questions are written")
-  static let line = LocalizedStringResource(
-    "Come back to this page to start it.", table: "Mock",
-    comment: "Under: Your mock exam is being prepared")
-  static let keepStudying = LocalizedStringResource(
-    "Keep studying", table: "Mock", comment: "Leaves a mock exam being prepared")
+  static let title = LocalizedStringResource("Your mock exam is being prepared", table: "Mock")
+  static let line = LocalizedStringResource("Come back to this page to start it.", table: "Mock")
+  static let keepStudying = LocalizedStringResource("Keep studying", table: "Mock")
 }
 
 struct MockSummaryRow: View {

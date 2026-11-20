@@ -175,11 +175,7 @@ extension DaySegment {
       return [String(localized: "Done", table: "Today", comment: "A finished block")]
     case .block(let block, _) where gettingReady:
       return [
-        String(
-          localized: "Getting ready…", table: "Today",
-          comment:
-            "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-        ),
+        String(localized: "Getting ready…", table: "Today"),
         studyDuration(minutes: block.estimatedMinutes),
       ]
     case .block(let block, .ahead):
@@ -216,11 +212,7 @@ extension DaySegment {
         localized: "Taking longer than usual", table: "Today",
         comment: "The day's next lessons are taking long to outline")
     case .held(_, .beingWritten):
-      String(
-        localized: "Getting ready…", table: "Today",
-        comment:
-          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-      )
+      String(localized: "Getting ready…", table: "Today")
     }
   }
 }
