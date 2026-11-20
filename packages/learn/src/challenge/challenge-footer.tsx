@@ -215,13 +215,6 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
   }
 
-  if (challenge.access === "preparing" || start.problem === "preparing") {
-    return {
-      actions: <KeepStudyingLink />,
-      line: <MockPreparingWords title={t("Your mock exam is being prepared")} />,
-    };
-  }
-
   switch (challenge.status) {
     case "ready":
     case "started":
@@ -233,6 +226,13 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
               {t("After today's lessons")}
             </StatusLine>
           ),
+        };
+      }
+
+      if (challenge.access === "preparing" || start.problem === "preparing") {
+        return {
+          actions: <KeepStudyingLink />,
+          line: <MockPreparingWords title={t("Your mock exam is being prepared")} />,
         };
       }
 
