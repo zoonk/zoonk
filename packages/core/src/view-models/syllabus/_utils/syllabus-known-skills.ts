@@ -47,7 +47,7 @@ export async function withTestedOutSkills({
   return [...items, ...unique];
 }
 
-/** Harder starts skip all subject basics; time cuts remove later skills first, so missing basics with later teaching indicate a skipped base. */
+/** Harder starts skip all subject basics, and a language plan skips the levels below the learner's; time cuts remove later skills first, so missing basics with later teaching indicate a skipped base. */
 export function getPastBasicsSkillIds({
   graph,
   items,
@@ -55,7 +55,7 @@ export function getPastBasicsSkillIds({
   settings,
 }: {
   graph: PlanGraph;
-  items: readonly SyllabusItem[];
+  items: readonly Pick<SyllabusItem, "skillId">[];
   prerequisites: ReadonlyMap<string, readonly string[]>;
   settings: Pick<PlanSettings, "difficultyBias" | "pastBasicsAreas">;
 }): Set<string> {
@@ -81,10 +81,14 @@ export function getPastBasicsSkillIds({
     ),
   );
 
+  const isPastBasics = (skill: PlanGraph["skills"][number]) =>
+    skill.pastLevel === true ||
+    (foundations.has(skill.skillId) &&
+      (pastAreas.has(areaOf(skill)) || goingOn.has(areaOf(skill))));
+
   return new Set(
     graph.skills
-      .filter((skill) => foundations.has(skill.skillId) && !taught.has(skill.skillId))
-      .filter((skill) => pastAreas.has(areaOf(skill)) || goingOn.has(areaOf(skill)))
+      .filter((skill) => !taught.has(skill.skillId) && isPastBasics(skill))
       .map((skill) => skill.skillId),
   );
 }
