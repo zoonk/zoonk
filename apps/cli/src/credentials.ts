@@ -6,13 +6,15 @@ import { CliError } from "./errors.ts";
 
 /**
  * `maybeRotatedAt`: when a refresh whose answer never arrived was sent, so the server may have
- * rotated `refreshToken` already.
+ * rotated `refreshToken` already. `replaySeconds`: how long the server answers a rotated refresh
+ * token with the same new pair, as its last token response said.
  */
 export type StoredLogin = {
   accessToken: string;
   expiresAt: number;
   maybeRotatedAt?: number;
   refreshToken: string;
+  replaySeconds?: number;
 };
 
 export type LoginPlace = { file: string; origin: string };
@@ -32,22 +34,28 @@ const CREATE_LOGINS = `
     access_token TEXT NOT NULL,
     refresh_token TEXT NOT NULL,
     expires_at INTEGER NOT NULL,
-    maybe_rotated_at INTEGER
+    maybe_rotated_at INTEGER,
+    replay_seconds INTEGER
   ) STRICT`;
 
-const ADD_MAYBE_ROTATED_AT = "ALTER TABLE logins ADD COLUMN maybe_rotated_at INTEGER";
+/** Columns added after the table first shipped, which files made before them lack. */
+const ADDED_COLUMNS = ["maybe_rotated_at", "replay_seconds"];
 
 const SELECT_LOGIN = `
-  SELECT access_token, refresh_token, expires_at, maybe_rotated_at FROM logins WHERE origin = ?`;
+  SELECT access_token, refresh_token, expires_at, maybe_rotated_at, replay_seconds
+  FROM logins WHERE origin = ?`;
 
 const UPSERT_LOGIN = `
-  INSERT INTO logins (origin, access_token, refresh_token, expires_at, maybe_rotated_at)
-  VALUES (?, ?, ?, ?, ?)
+  INSERT INTO logins (
+    origin, access_token, refresh_token, expires_at, maybe_rotated_at, replay_seconds
+  )
+  VALUES (?, ?, ?, ?, ?, ?)
   ON CONFLICT (origin) DO UPDATE SET
     access_token = excluded.access_token,
     refresh_token = excluded.refresh_token,
     expires_at = excluded.expires_at,
-    maybe_rotated_at = excluded.maybe_rotated_at`;
+    maybe_rotated_at = excluded.maybe_rotated_at,
+    replay_seconds = excluded.replay_seconds`;
 
 export function credentialsPath(environment: NodeJS.ProcessEnv): string {
   const configHome = environment.XDG_CONFIG_HOME || join(homedir(), ".config");
@@ -75,9 +83,11 @@ function toStoredLogin(row: Record<string, SQLOutputValue> | undefined): StoredL
     refreshToken: row.refresh_token,
   };
 
-  return typeof row.maybe_rotated_at === "number"
-    ? { ...login, maybeRotatedAt: row.maybe_rotated_at }
-    : login;
+  return {
+    ...login,
+    ...(typeof row.maybe_rotated_at === "number" && { maybeRotatedAt: row.maybe_rotated_at }),
+    ...(typeof row.replay_seconds === "number" && { replaySeconds: row.replay_seconds }),
+  };
 }
 
 /**
@@ -99,24 +109,22 @@ function restrictToOwner(file: string) {
     .forEach((sideFile) => chmodSync(sideFile, OWNER_ONLY_FILE));
 }
 
-function hasMaybeRotatedAt(database: DatabaseSync): boolean {
+function hasColumn(database: DatabaseSync, name: string): boolean {
   return database
     .prepare("SELECT name FROM pragma_table_info('logins')")
     .all()
-    .some((column) => column.name === "maybe_rotated_at");
+    .some((column) => column.name === name);
 }
 
-/** Files made before the column existed get it on their next open, by whichever command opens one first. */
-function addMaybeRotatedAt(database: DatabaseSync) {
-  if (hasMaybeRotatedAt(database)) {
-    return;
-  }
-
-  try {
-    database.exec(ADD_MAYBE_ROTATED_AT);
-  } catch (error) {
-    if (!hasMaybeRotatedAt(database)) {
-      throw error;
+/** An older file gets the newer columns on its next open, from whichever command opens it first. */
+function addMissingColumns(database: DatabaseSync) {
+  for (const name of ADDED_COLUMNS.filter((column) => !hasColumn(database, column))) {
+    try {
+      database.exec(`ALTER TABLE logins ADD COLUMN ${name} INTEGER`);
+    } catch (error) {
+      if (!hasColumn(database, name)) {
+        throw error;
+      }
     }
   }
 }
@@ -127,7 +135,7 @@ function openCredentials(file: string): DatabaseSync {
   const database = new DatabaseSync(file, { timeout: BUSY_TIMEOUT_MS });
   database.exec(CREATE_LOGINS);
 
-  addMaybeRotatedAt(database);
+  addMissingColumns(database);
 
   return database;
 }
@@ -158,6 +166,7 @@ function writeLogin({
       login.refreshToken,
       login.expiresAt,
       login.maybeRotatedAt ?? null,
+      login.replaySeconds ?? null,
     );
 }
 

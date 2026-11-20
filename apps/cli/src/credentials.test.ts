@@ -77,7 +77,7 @@ describe("credentials file", () => {
     expect(readLogin({ file, origin: LOCAL })).toBeNull();
   });
 
-  it("keeps a login saved before a refresh could be unconfirmed, and remembers when one was", async () => {
+  it("keeps a login saved before the newer columns existed, and stores them once added", async () => {
     const file = createCredentialsFile();
     mkdirSync(dirname(file), { mode: 0o700, recursive: true });
 
@@ -99,12 +99,10 @@ describe("credentials file", () => {
 
     expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual(login("older"));
 
-    await saveLogin({ file, login: { ...login("older"), maybeRotatedAt: 5 }, origin: PRODUCTION });
+    const renewed = { ...login("older"), maybeRotatedAt: 5, replaySeconds: 120 };
+    await saveLogin({ file, login: renewed, origin: PRODUCTION });
 
-    expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual({
-      ...login("older"),
-      maybeRotatedAt: 5,
-    });
+    expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual(renewed);
   });
 
   it("reads a login whose tokens a header can't carry as no login", async () => {

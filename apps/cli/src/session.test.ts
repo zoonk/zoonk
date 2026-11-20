@@ -48,8 +48,15 @@ function runWhoami({ file, origin }: { file: string; origin: string }): Promise<
   });
 }
 
+const REPLAY_SECONDS = 120;
+
 function storedLogin(name: string, expiresAt: number): StoredLogin {
-  return { accessToken: `access-${name}`, expiresAt, refreshToken: `refresh-${name}` };
+  return {
+    accessToken: `access-${name}`,
+    expiresAt,
+    refreshToken: `refresh-${name}`,
+    replaySeconds: REPLAY_SECONDS,
+  };
 }
 
 function tokenResponse(name: string) {
@@ -57,6 +64,7 @@ function tokenResponse(name: string) {
     access_token: `access-${name}`,
     expires_in: 3600,
     refresh_token: `refresh-${name}`,
+    refresh_token_reuse_seconds: REPLAY_SECONDS,
     token_type: "Bearer",
   };
 }
@@ -364,6 +372,21 @@ describe(sendAuthorized, () => {
       maybeRotatedAt: expect.any(Number),
       refreshToken: "refresh-old",
     });
+  });
+
+  it("forgets the login after a lost answer when the server never said it replays rotated tokens", async () => {
+    const file = createCredentialsFile();
+    const api = await startFakeApi({ acceptedToken: "access-new", refresh: "lost" });
+    const withoutReplay = { ...storedLogin("old", Date.now() - 1000), replaySeconds: undefined };
+
+    await saveLogin({ file, login: withoutReplay, origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
+
+    expect(api.refreshRequests).toHaveLength(1);
+    expect(readLogin({ file, origin: api.origin })).toBeNull();
   });
 
   it("remembers that the token may have rotated when its retry can't be sent", async () => {

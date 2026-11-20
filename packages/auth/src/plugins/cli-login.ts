@@ -17,8 +17,8 @@ import {
 
 /**
  * Within this window a rotated refresh token gets the same new pair again, so a CLI that lost the
- * answer recovers the pair on its retry or its next command. The CLI's `REPLAY_DEADLINE_MS` stays
- * inside it; past it, the token counts as stolen.
+ * answer recovers the pair on its retry or its next command. Past it, the token counts as stolen,
+ * so every token response tells the CLI how long it lasts.
  */
 const REFRESH_TOKEN_REUSE_SECONDS = 120;
 
@@ -29,6 +29,7 @@ const cliOAuthProvider = oauthProvider({
   clientPrivileges: () => false,
   // Only the authorization code flow opens the consent and login pages, and no client may use it.
   consentPage: APPROVAL_URL,
+  customTokenResponseFields: () => ({ refresh_token_reuse_seconds: REFRESH_TOKEN_REUSE_SECONDS }),
   disableJwtPlugin: true,
   // The provider refuses refresh tokens without the authorization code grant enabled.
   grantTypes: ["authorization_code", "refresh_token"],

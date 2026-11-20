@@ -257,7 +257,7 @@ describe("CLI login", () => {
     ).resolves.toMatchObject({ clientId: CLI_CLIENT_ID });
   });
 
-  it("answers a CLI that lost a refresh's answer with the same new pair for two minutes, then refuses", async () => {
+  it("tells the CLI it replays a rotated token for two minutes, answers it with the same pair until then, then refuses", async () => {
     const { tokens } = await logIn();
     const start = Date.now();
     vi.useFakeTimers({ now: start, toFake: ["Date"] });
@@ -266,6 +266,11 @@ describe("CLI login", () => {
       const rotation = await refresh(tokens.refresh_token);
       const first = (await rotation.json()) as TokenResponse;
 
+      expect([tokens, first]).toMatchObject([
+        { refresh_token_reuse_seconds: 120 },
+        { refresh_token_reuse_seconds: 120 },
+      ]);
+
       vi.setSystemTime(start + 60_000);
       const minuteLater = await refresh(tokens.refresh_token);
 
@@ -273,6 +278,7 @@ describe("CLI login", () => {
 
       await expect(minuteLater.json()).resolves.toMatchObject({
         refresh_token: first.refresh_token,
+        refresh_token_reuse_seconds: 120,
       });
 
       vi.setSystemTime(start + 121_000);

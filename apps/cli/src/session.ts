@@ -18,13 +18,15 @@ function isExpiring(login: StoredLogin): boolean {
   return login.expiresAt - Date.now() < EXPIRY_MARGIN_MS;
 }
 
-/** The API's refresh token reuse window (`REFRESH_TOKEN_REUSE_SECONDS`), less time for a request to arrive. */
-const REPLAY_DEADLINE_MS = 90_000;
+/** Kept off the end of the server's replay window, for a request to reach the server in time. */
+const REPLAY_MARGIN_MS = 30_000;
 
 type Renewal = StoredLogin | "unconfirmed" | null;
 
-function canReplay(maybeRotatedAt: number): boolean {
-  return Date.now() - maybeRotatedAt < REPLAY_DEADLINE_MS;
+/** A server that never said it replays rotated tokens gets none sent again. */
+function canReplay(login: StoredLogin, maybeRotatedAt: number): boolean {
+  const windowMs = (login.replaySeconds ?? 0) * 1000;
+  return Date.now() - maybeRotatedAt < windowMs - REPLAY_MARGIN_MS;
 }
 
 /**
@@ -40,7 +42,7 @@ async function refreshStored({
   origin: string;
   stored: StoredLogin;
 }): Promise<{ result: Renewal; save?: StoredLogin | null }> {
-  if (stored.maybeRotatedAt !== undefined && !canReplay(stored.maybeRotatedAt)) {
+  if (stored.maybeRotatedAt !== undefined && !canReplay(stored, stored.maybeRotatedAt)) {
     return { result: null, save: null };
   }
 
@@ -60,7 +62,7 @@ async function refreshStored({
 
   // Failing to send the retry still leaves a token the first refresh may have rotated.
   const answer =
-    first === "unconfirmed" && canReplay(maybeRotatedAt)
+    first === "unconfirmed" && canReplay(stored, maybeRotatedAt)
       ? await refreshLogin(place).catch(() => "unconfirmed" as const)
       : first;
 
@@ -68,7 +70,9 @@ async function refreshStored({
     return { result: answer.login, save: answer.login };
   }
 
-  return { result: "unconfirmed", save: { ...stored, maybeRotatedAt } };
+  return canReplay(stored, maybeRotatedAt)
+    ? { result: "unconfirmed", save: { ...stored, maybeRotatedAt } }
+    : { result: null, save: null };
 }
 
 /** Refreshes under the file's lock with the latest saved token, so two commands never both send it. */
