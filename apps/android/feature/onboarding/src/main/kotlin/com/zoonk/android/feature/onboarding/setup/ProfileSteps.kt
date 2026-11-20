@@ -42,10 +42,11 @@ internal fun ColumnScope.ProfileStep(
     val question = view.profile.questions.first { it.id == id }
     val role = profileJobPrefill(view.goal.details.text("role"))
     val draft = vm.profileDraft(question, role)
+    val answer = draft.submitted(question)
     val memory = view.profile.memoryEnabled
     val valid = draft.valid(id, memory)
     val holdsAnswer = draft.declined || !draft.empty(id, memory)
-    val save = { vm.answer(draft.onboardingInput(id, memory), profileAnswer = draft) }
+    val save = { vm.answer(answer.onboardingInput(id, memory), profileAnswer = answer) }
     val wait = LocalSetupWait.current
     var startingLesson by rememberSaveable(id) { mutableStateOf(false) }
     LaunchedEffect(vm.isSaving) { if (!vm.isSaving) startingLesson = false }
@@ -78,7 +79,7 @@ internal fun ColumnScope.ProfileStep(
                             if (holdsAnswer && valid) {
                                 startingLesson = true
                                 // The view model owns the start that follows the save: a layout change mid-save can't drop it.
-                                vm.answerThenStartLesson(draft.onboardingInput(id, memory), draft)
+                                vm.answerThenStartLesson(answer.onboardingInput(id, memory), answer)
                             } else {
                                 wait.onStartLesson.invoke()
                             }
