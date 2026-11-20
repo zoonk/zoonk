@@ -155,6 +155,14 @@ const mockQuestions = {
   steps: { joinMockQuestions: "join", mockQuestionsReady: "done", writeMockQuestions: "questions" },
 } as const satisfies GenerationKindDefinition<MockQuestionsStepName, "questions">;
 
+/** The steps the writing-prompt run reports (`apps/api/src/workflows/sessions/writing-prompt-workflow.ts`). */
+type WritingPromptStepName = "ready" | "signUpRequired" | "writeWritingPrompt";
+
+const writingPrompt = {
+  phases: [{ id: "question", seconds: 45 }],
+  steps: { ready: "done", signUpRequired: "done", writeWritingPrompt: "question" },
+} as const satisfies GenerationKindDefinition<WritingPromptStepName, "question">;
+
 const challengeQuestions = {
   phases: [{ id: "questions", seconds: 32 }],
   steps: {
@@ -225,6 +233,7 @@ const GENERATION_KINDS = {
   speakingPaper,
   testOutQuestions,
   understanding,
+  writingPrompt,
 };
 
 export type GenerationKind = keyof typeof GENERATION_KINDS;

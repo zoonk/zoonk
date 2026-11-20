@@ -106,7 +106,7 @@ function GradeStep({ closed, grade }: { closed: boolean; grade: Grade }) {
   );
 }
 
-function NothingLeftComment() {
+export function NothingLeftComment() {
   const t = useExtracted();
 
   return (
@@ -116,6 +116,40 @@ function NothingLeftComment() {
         <StepTitle>{t("Nothing left to work on")}</StepTitle>
         <StepDetail>{t("Every criterion has full marks in this estimate.")}</StepDetail>
       </StepHeader>
+    </StepCard>
+  );
+}
+
+/** The one thing to work on: the same card for every rubric's result. */
+export function NextStepCard({
+  example,
+  quote,
+  text,
+  title,
+}: {
+  example: string | null | undefined;
+  quote: string | null | undefined;
+  text: string;
+  title: string;
+}) {
+  const t = useExtracted();
+
+  return (
+    <StepCard className="items-stretch">
+      <StepHeader>
+        <Eyebrow>{t("Next step")}</Eyebrow>
+        <StepTitle>{title}</StepTitle>
+      </StepHeader>
+
+      {quote && (
+        <blockquote className={cn(ESSAY_QUOTE_CLASS, "border-warning italic")}>{quote}</blockquote>
+      )}
+      <p className="text-pretty">{text}</p>
+      {example && (
+        <p className="text-muted-foreground text-sm text-pretty">
+          {t("For example: {example}", { example })}
+        </p>
+      )}
     </StepCard>
   );
 }
@@ -132,24 +166,12 @@ export function NextStepComment({ grade }: { grade: Grade }) {
   const criterion = grade.criteria.find((item) => item.id === nextStep.criterionId);
 
   return (
-    <StepCard className="items-stretch">
-      <StepHeader>
-        <Eyebrow>{t("Next step")}</Eyebrow>
-        <StepTitle>{criterion ? criterionName(criterion) : t("What to rewrite")}</StepTitle>
-      </StepHeader>
-
-      {criterion?.quote && (
-        <blockquote className={cn(ESSAY_QUOTE_CLASS, "border-warning italic")}>
-          {criterion.quote}
-        </blockquote>
-      )}
-      <p>{nextStep.text}</p>
-      {criterion?.example && (
-        <p className="text-muted-foreground text-sm">
-          {t("For example: {example}", { example: criterion.example })}
-        </p>
-      )}
-    </StepCard>
+    <NextStepCard
+      example={criterion?.example}
+      quote={criterion?.quote}
+      text={nextStep.text}
+      title={criterion ? criterionName(criterion) : t("What to rewrite")}
+    />
   );
 }
 

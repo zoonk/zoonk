@@ -1,5 +1,10 @@
 import { appPostRoute, readJsonBody } from "@/lib/http/app-post-route";
-import { type EssayDraft, essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
+import {
+  type EssayDraft,
+  type WrittenEssayDraft,
+  essaySubmissionInputSchema,
+} from "@zoonk/core/exams/essays/contract";
+import { getEssay } from "@zoonk/core/exams/essays/get";
 import { submitEssay } from "@zoonk/core/exams/essays/submit";
 
 /** A route, not a Server Action: grading takes seconds, and an action would hold up the screen's other requests. */
@@ -8,7 +13,9 @@ export const POST = appPostRoute<{ blockId: string }>(
   async (
     request,
     { blockId },
-  ): Promise<EssayDraft | "blockNotActive" | "limitReached" | "signUpRequired" | null> => {
+  ): Promise<
+    EssayDraft | WrittenEssayDraft | "blockNotActive" | "limitReached" | "signUpRequired" | null
+  > => {
     const body = essaySubmissionInputSchema.safeParse(await readJsonBody(request));
 
     if (!body.success) {
@@ -25,8 +32,17 @@ export const POST = appPostRoute<{ blockId: string }>(
       return result.status;
     }
 
-    return result.status === "graded"
-      ? { grade: result.grade, submittedAt: new Date().toISOString(), text: body.data.text }
-      : null;
+    if (result.status === "graded") {
+      return { grade: result.grade, submittedAt: new Date().toISOString(), text: body.data.text };
+    }
+
+    if (result.status !== "writingGraded") {
+      return null;
+    }
+
+    // The saved answer carries the id a rewrite starts from.
+    const read = await getEssay({ blockId });
+    const saved = read.status === "ready" ? read.essay.writtenDrafts?.[0] : undefined;
+    return saved ?? null;
   },
 );

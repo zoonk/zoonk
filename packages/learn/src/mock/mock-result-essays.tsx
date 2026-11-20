@@ -10,6 +10,7 @@ import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step
 import { type StepsItem } from "../_components/steps";
 import { EssayGradeCard, NextStepComment } from "../essay/essay-feedback";
 import { useWritingName } from "../essay/essay-labels";
+import { WritingResultView } from "../writing/writing-result";
 import { useMockScreen } from "./mock-context";
 
 const SLOW_GRADING_MS = 30_000;
@@ -53,7 +54,9 @@ function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: 
   const t = useExtracted();
   const { runner } = useMockScreen();
   const writingName = useWritingName();
-  const tooShort = essay.grade?.zeroReason === "tooShort";
+
+  const tooShort =
+    essay.grade !== null && !("kind" in essay.grade) && essay.grade.zeroReason === "tooShort";
 
   return (
     <StepCard>
@@ -85,7 +88,18 @@ export function useEssayItems(): StepsItem[] {
     const id = `essay-${essay.itemId}`;
     const { grade } = essay;
 
-    if (!grade || grade.zeroReason === "tooShort") {
+    if (grade && "kind" in grade && essay.writing) {
+      return [
+        {
+          content: (
+            <WritingResultView grade={grade} prompt={essay.writing} text={essay.text ?? ""} />
+          ),
+          id,
+        },
+      ];
+    }
+
+    if (!grade || "kind" in grade || grade.zeroReason === "tooShort") {
       return [{ content: <UngradedEssayStep essay={essay} eyebrow={eyebrow} />, id }];
     }
 
