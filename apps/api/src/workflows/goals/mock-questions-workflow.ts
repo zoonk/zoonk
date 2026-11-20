@@ -1,5 +1,6 @@
 import { getWorkflowMetadata } from "workflow";
 import { startOnce, waitForRunToken } from "../_shared/run-token";
+import { endFollowUpStep } from "../follow-ups/steps/follow-up-steps";
 import { prepareMockRecordings, writeMockQuestions } from "./mock-question-writes";
 import { pickMockSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
 import {
@@ -20,7 +21,7 @@ export function startMockSupply(input: SupplyRequest, ask?: SupplyAsk) {
 
   return startOnce(
     mockSupplyWorkflow,
-    [{ ...input, asked: Boolean(ask) }],
+    [{ ...input, ask }],
     `${supplyKey(input)}:${request}`,
   );
 }
@@ -66,7 +67,7 @@ async function prepareGoalSupply({
   }
 }
 
-async function mockSupplyWorkflow(input: SupplyRequest & { asked: boolean }) {
+async function mockSupplyWorkflow(input: SupplyRequest & { ask?: SupplyAsk }) {
   "use workflow";
   const { workflowRunId } = getWorkflowMetadata();
 
@@ -74,7 +75,7 @@ async function mockSupplyWorkflow(input: SupplyRequest & { asked: boolean }) {
     throw new Error("The previous mock supply run is still writing.");
   }
 
-  const goals = input.asked ? [input.goalId] : await listExamSupplyGoalsStep(input);
+  const goals = input.ask ? [input.goalId] : await listExamSupplyGoalsStep(input);
 
   for (const goalId of goals) {
     // oxlint-disable-next-line no-await-in-loop -- Recount after each goal so peers draw on the questions just written.
@@ -83,5 +84,9 @@ async function mockSupplyWorkflow(input: SupplyRequest & { asked: boolean }) {
       goalId,
       workflowRunId,
     });
+  }
+
+  if (input.ask) {
+    await endFollowUpStep(input.ask);
   }
 }

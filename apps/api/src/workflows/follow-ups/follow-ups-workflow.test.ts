@@ -193,6 +193,23 @@ describe(followUpsWorkflow, () => {
     await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
+  it("keeps mock supply owed until the writer finishes", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const owed = await prisma.followUp.create({
+      data: {
+        input: { examBlueprintId: null, goalId: goal.id, later: false },
+        key: goal.id,
+        kind: "prepareMockSupply",
+        userId: user.id,
+      },
+    });
+
+    await followUpsWorkflow({ userId: user.id });
+
+    await expect(prisma.followUp.findUnique({ where: { id: owed.id } })).resolves.toBeTruthy();
+  });
+
   it("starts one rebuild for a coalesced answer revision", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
