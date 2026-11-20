@@ -26,7 +26,6 @@ export default defineConfig({
     environment: "node",
     globalSetup: ["../../packages/db/src/test-database.ts", "./workflow-test-bundle.ts"],
     include: ["src/**/*.integration.test.ts"],
-    maxWorkers: 1,
     server: { deps: { inline: [/@workflow\/vitest/u] } },
     setupFiles: ["./setup-workflow-tests.ts"],
     // The Workflow runtime waits at least 1 s before each step retry, so a step that uses all 3 of
