@@ -322,7 +322,10 @@ test.describe("Starting a course in another language", () => {
 
     await page.goto(`/pt/start/course/${course.id}?minutes=15&chapter=${chapter.chapterId}`);
 
-    await expect(page.getByRole("heading", { level: 1, name: "Quanto você já sabe?" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Quanto você já sabe?" }),
+    ).toBeVisible();
+
     await expect(page.getByText(/inglês.*português/u)).toBeVisible();
     await expect(page.getByRole("list").getByText(/What robots are made of/u)).toBeHidden();
 
