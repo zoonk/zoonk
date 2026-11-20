@@ -1,7 +1,8 @@
 import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { withBreakPoints } from "./code-breaks";
+import { Fragment } from "react";
+import { breaksBetween, withBreakPoints } from "./code-breaks";
 import { type CodeTokenKind } from "./code-languages";
 import { type CodeToken, codeLineText, highlightCode } from "./highlight-code";
 
@@ -53,11 +54,15 @@ export function CodeTokens({
 
   return tokens.map((token, index) => {
     const key = `${index}:${token.text}`;
+    const breaksBefore = !field && breaksBetween(tokens[index - 1]?.text ?? "", token.text);
 
     return (
-      <span className={TOKEN_CLASSES[token.kind]} key={key}>
-        {token.kind === "plain" && !field ? withBreakPoints(token.text) : token.text}
-      </span>
+      <Fragment key={key}>
+        {breaksBefore && <wbr />}
+        <span className={TOKEN_CLASSES[token.kind]}>
+          {token.kind === "plain" && !field ? withBreakPoints(token.text) : token.text}
+        </span>
+      </Fragment>
     );
   });
 }

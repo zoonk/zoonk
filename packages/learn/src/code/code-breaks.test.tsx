@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { withBreakPoints } from "./code-breaks";
+import { breaksBetween, withBreakPoints } from "./code-breaks";
 
 function pieces(text: string): string[] {
   return withBreakPoints(text).filter((node): node is string => typeof node === "string");
@@ -20,5 +20,15 @@ describe(withBreakPoints, () => {
   it("keeps an empty pair and a leading dot whole", () => {
     expect(pieces(".then()")).toStrictEqual([".then()"]);
     expect(pieces("items[]")).toStrictEqual(["items[]"]);
+  });
+});
+
+describe(breaksBetween, () => {
+  it("splits where a run after an opening bracket or before a dot starts", () => {
+    expect(breaksBetween(".reject(", "'offline'")).toBe(true);
+    expect(breaksBetween("Promise", ".reject(")).toBe(true);
+    expect(breaksBetween("print(", ")")).toBe(false);
+    expect(breaksBetween("", ".then")).toBe(false);
+    expect(breaksBetween("return", " await")).toBe(false);
   });
 });

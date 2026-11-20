@@ -10,3 +10,8 @@ export function withBreakPoints(text: string): React.ReactNode[] {
     return index === 0 ? [part] : [<wbr key={key} />, part];
   });
 }
+
+/** Whether a wrapped line may split where one run of code ends and the next begins. */
+export function breaksBetween(before: string, after: string): boolean {
+  return before !== "" && `${before.slice(-1)}${after.charAt(0)}`.split(BREAK_POINTS).length > 1;
+}
