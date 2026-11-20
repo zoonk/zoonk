@@ -61,9 +61,11 @@ async function prepareGoalSupply({
       await prepareMockRecordings({ goalId, later, recordings: supply.recordings, workflowRunId });
     }
   } finally {
-    const complete = await checkMockSupplyStep(goalId);
+    await checkMockSupplyStep(goalId);
 
-    if (complete && ask) {
+    // A writer that can't fill the shortage would spend again on every later pass, so a run that
+    // reached its recount answers the ask; the recount's alert and the daily supply take it from here.
+    if (ask) {
       await endFollowUpStep(ask);
     }
   }
