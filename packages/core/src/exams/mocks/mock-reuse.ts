@@ -7,8 +7,12 @@ function interleaveBySkill(candidates: readonly MockCandidate[]): MockCandidate[
 
 export function orderNewFirst(candidates: readonly MockCandidate[]): MockCandidate[] {
   return [
-    ...interleaveBySkill(candidates.filter((candidate) => !candidate.answered)),
-    ...candidates.filter((candidate) => candidate.answered),
+    ...interleaveBySkill(
+      candidates.filter((candidate) => !candidate.answered && candidate.lastMockUse === undefined),
+    ),
+    ...candidates
+      .filter((candidate) => candidate.answered || candidate.lastMockUse !== undefined)
+      .toSorted((a, b) => (a.lastMockUse ?? 0) - (b.lastMockUse ?? 0)),
   ];
 }
 

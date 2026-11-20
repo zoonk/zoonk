@@ -21,6 +21,7 @@ import {
 } from "../mock-contract";
 import { gradeMock } from "./grade-mock";
 import { loadSkillAreas } from "./mock-candidates";
+import { spendSection } from "./mock-item-uses";
 import { getAskedItemIds } from "./mock-sections";
 import { type MockSitting, type OwnedMock } from "./owned-mock";
 import { settleAnytimeMock } from "./settle-anytime-mock";
@@ -229,18 +230,35 @@ export async function completeMock({
     });
 
     if (count && mock.goalId && mock.conditions.purpose !== "placement") {
-      await tx.mockItemUse.deleteMany({ where: { mockExamId: mock.id, spentAt: null } });
+      const now = new Date();
+
+      if (mock.sectionStartedAt <= now) {
+        await spendSection({
+          conditions: mock.conditions,
+          mockExamId: mock.id,
+          now: mock.sectionStartedAt,
+          section: mock.sectionIndex,
+          tx,
+          userId: mock.userId,
+        });
+      }
+
+      await tx.mockItemUse.deleteMany({
+        where: { OR: [{ spentAt: null }, { spentAt: { gt: now } }], mockExamId: mock.id },
+      });
+
       await oweFollowUps({
         db: tx,
-        userId: mock.userId,
         followUps: [
           {
+            input: { examBlueprintId: mock.examBlueprintId, goalId: mock.goalId, later: true },
             kind: "prepareMockSupply",
-            input: { goalId: mock.goalId, examBlueprintId: mock.examBlueprintId, later: true },
           },
         ],
+        userId: mock.userId,
       });
     }
+
     return count > 0 ? count : unchanged(count);
   });
 

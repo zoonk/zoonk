@@ -1,31 +1,24 @@
 import "server-only";
-import { DbNull, type TransactionClient, prisma, type Goal } from "@zoonk/db";
+import { DbNull, type Goal, type TransactionClient } from "@zoonk/db";
 import { USAGE_WINDOW_MS } from "../../../entitlements/limits";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import { parsePlanSettings } from "../../../plans/planner/plan-state";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
 import { markPlannedItems } from "../mock-marking";
-import { planOptionMock } from "../mock-option-plan";
 import { type MockOption } from "../mock-options";
-import {
-  type MockCandidate,
-  type MockPlan,
-  getPlannedItemIds,
-  countPlannedQuestions,
-} from "../mock-plan";
-import { countReused } from "../mock-reuse";
+import { type MockCandidate, type MockPlan, countPlannedQuestions } from "../mock-plan";
 import {
   type AnytimeMockSetup,
   findRunningAnytimeMock,
   listMissingRecordings,
-  loadMockSkillIds,
 } from "./anytime-mock-setup";
-import { loadMockCandidates } from "./mock-candidates";
 import { getExamStartTime } from "./mock-conditions";
 import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
+import { planFromBank } from "./plan-from-bank";
+
+export { planFromBank } from "./plan-from-bank";
 
 export type CreateAnytimeMockResult =
   | { id: string; status: "running" | "started" }
@@ -42,7 +35,7 @@ export function isCompleteMock({
 }) {
   return (
     countPlannedQuestions(plan) === option.questions &&
-    !listMissingRecordings({ option, setup }).length &&
+    listMissingRecordings({ option, setup }).length === 0 &&
     option.written.length === plan.sections.reduce((sum, section) => sum + section.essays.length, 0)
   );
 }
@@ -50,83 +43,13 @@ export function isCompleteMock({
 export async function canReuseMockItems(client: TransactionClient, userId: string) {
   const count = await client.mockExam.count({
     where: {
+      conditions: { equals: "practice", path: ["purpose"] },
+      startedAt: { gte: new Date(Date.now() - USAGE_WINDOW_MS), lte: new Date() },
       userId,
-      startedAt: { gte: new Date(Date.now() - USAGE_WINDOW_MS) },
-      conditions: { path: ["purpose"], equals: "practice" },
     },
   });
+
   return count >= 10;
-}
-
-export async function planFromBank({
-  client = prisma,
-  reuse = false,
-  exclude,
-  goal,
-  option,
-  setup,
-  userId,
-}: {
-  goal: Goal;
-  option: MockOption;
-  setup: AnytimeMockSetup;
-  userId: string;
-  client?: TransactionClient;
-  reuse?: boolean;
-  exclude?: ReadonlySet<string>;
-}): Promise<{ candidates: MockCandidate[]; plan: MockPlan }> {
-  const loaded = await loadMockCandidates({
-    client,
-    reuse,
-    goal,
-    itemIds: null,
-    skillIds: await loadMockSkillIds(goal.id),
-    structure: setup.structure,
-    userId,
-  });
-
-  const saved =
-    reuse && !exclude
-      ? await client.plan.findUnique({ where: { goalId: goal.id }, select: { settings: true } })
-      : null;
-  const protectedIds = new Set<string>(exclude);
-  const upcoming = parsePlanSettings(saved?.settings)
-    .mockFunding.filter((entry) => entry.date >= new Date().toISOString().slice(0, 10))
-    .toSorted((a, b) => a.date.localeCompare(b.date))
-    .slice(0, 2);
-  for (const entry of upcoming) {
-    const scheduled = setup.options.find(
-      (candidate) =>
-        candidate.kind === (entry.fullLength ? "full" : "half") &&
-        candidate.day === (entry.day ?? null),
-    );
-    if (scheduled) {
-      const reserved = planOptionMock({
-        ...setup,
-        option: scheduled,
-        candidates: loaded.filter((item) => !item.answered && !protectedIds.has(item.itemId)),
-      });
-      getPlannedItemIds(reserved).forEach((id) => protectedIds.add(id));
-    }
-  }
-  const candidates = loaded.filter((item) => !protectedIds.has(item.itemId));
-  const freshPlan = planOptionMock({
-    ...setup,
-    option,
-    candidates: candidates.filter((item) => !item.answered),
-  });
-  if (!reuse || countPlannedQuestions(freshPlan) === option.questions)
-    return { candidates, plan: freshPlan };
-  // The full-day planner normally excludes repeats. Fair use admits them after reserving the scheduled papers.
-  const plan = planOptionMock({
-    ...setup,
-    option,
-    candidates: candidates.map((item) => ({ ...item, answered: false })),
-  });
-  return {
-    candidates,
-    plan: { ...plan, reused: countReused({ candidates, sections: plan.sections }) },
-  };
 }
 
 function toConditions({
@@ -183,37 +106,43 @@ export async function createAnytimeMock({
 }): Promise<CreateAnytimeMockResult> {
   return writeLearnerChange<CreateAnytimeMockResult>({ userId }, async (tx) => {
     const running = await findRunningAnytimeMock({ client: tx, goalId: goal.id, userId });
-    if (running) return unchanged({ id: running.id, status: "running" });
+
+    if (running) {
+      return unchanged({ id: running.id, status: "running" });
+    }
+
     await releaseExpiredMockItems(tx, userId);
     const reuse = await canReuseMockItems(tx, userId);
-    const { candidates, plan } = await planFromBank({
-      client: tx,
-      goal,
-      option,
-      setup,
-      userId,
-      reuse,
-    });
-    if (!isCompleteMock({ option, setup, plan })) {
+
+    const {
+      candidates,
+      plan,
+      available: lockedSetup,
+    } = await planFromBank({ client: tx, goal, option, reuse, setup, userId });
+
+    if (!isCompleteMock({ option, plan, setup: lockedSetup })) {
       await tx.goal.update({
+        data: { requestedMock: { area: option.area, day: option.day, kind: option.kind } },
         where: { id: goal.id },
-        data: { requestedMock: { kind: option.kind, area: option.area, day: option.day } },
       });
+
       await oweFollowUps({
         db: tx,
-        userId,
         followUps: [
           {
+            input: { examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: reuse },
             kind: "prepareMockSupply",
-            input: { goalId: goal.id, examBlueprintId: goal.examBlueprintId, later: reuse },
           },
         ],
+        userId,
       });
+
       return { status: "preparing" };
     }
+
     const now = new Date();
 
-    const conditions = toConditions({ candidates, goal, option, plan, setup });
+    const conditions = toConditions({ candidates, goal, option, plan, setup: lockedSetup });
 
     const created = await tx.mockExam.create({
       data: {
@@ -226,19 +155,21 @@ export async function createAnytimeMock({
       },
     });
 
-    await claimMockItems({ tx, userId, conditions, now, mockExamId: created.id });
-    await tx.goal.update({ where: { id: goal.id }, data: { requestedMock: DbNull } });
-    if (!reuse)
+    await claimMockItems({ candidates, conditions, mockExamId: created.id, now, tx, userId });
+    await tx.goal.update({ data: { requestedMock: DbNull }, where: { id: goal.id } });
+
+    if (!reuse) {
       await oweFollowUps({
         db: tx,
-        userId,
         followUps: [
           {
+            input: { examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: true },
             kind: "prepareMockSupply",
-            input: { goalId: goal.id, examBlueprintId: goal.examBlueprintId, later: true },
           },
         ],
+        userId,
       });
+    }
     // The speaking paper is written while the learner sits the papers before it.
     if (conditions.sections.some((section) => section.kind === "speaking")) {
       await oweFollowUps({

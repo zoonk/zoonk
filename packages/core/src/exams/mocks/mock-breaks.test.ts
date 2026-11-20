@@ -96,11 +96,11 @@ async function breakSetup() {
       planItemFixture({ kind: "lesson", planId: plan.id, position, skillId: skill.id }),
     ),
     ...skills.flatMap((skill) =>
-      Array.from({ length: 4 }, () =>
+      Array.from({ length: 6 }, () =>
         itemFixture({
-          mockOnly: true,
-          examBlueprintId: blueprint.id,
           content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          mockOnly: true,
           skillId: skill.id,
         }),
       ),
@@ -213,6 +213,20 @@ describe("a mock with the notice's breaks, tools and penalty", () => {
     );
 
     await expect(endMockBreak({ blockId: id })).resolves.toStrictEqual({ status: "notOnBreak" });
+  });
+
+  it("releases a section the learner finishes the mock before seeing", async () => {
+    const { id } = await breakSetup();
+    await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 0 });
+    await finishMock({ blockId: id, input: { timeZone: UTC } });
+
+    await expect(prisma.mockItemUse.count({ where: { mockExamId: id, section: 1 } })).resolves.toBe(
+      0,
+    );
+
+    await expect(prisma.mockItemUse.count({ where: { mockExamId: id, section: 0 } })).resolves.toBe(
+      6,
+    );
   });
 
   it("starts the next section by itself when the break runs out", async () => {

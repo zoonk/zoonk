@@ -1,17 +1,13 @@
 import { apportion } from "@zoonk/utils/apportion";
-import { interleave } from "@zoonk/utils/interleave";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type MockFormat, getAreaFormat } from "./mock-format-mix";
+import { type MockOption, findAreaSubject, getSubjectShares } from "./mock-options";
 import {
   type MockCandidate,
   type MockPlan,
   countPlannedQuestions,
   getPlannedItemIds,
 } from "./mock-plan";
-
-const MAX_QUESTIONS_PER_SKILL = 15;
-
-const MAX_ITEM_QUESTIONS_PER_SKILL = 5;
 
 export function isMockShort({
   option,
@@ -49,17 +45,24 @@ function canWrite({
   const { writer } = format;
 
   if (writer.kind !== "item" || writer.answerFormat.format !== "numeric") {
-    return writer.kind !== "bankOnly";
+    return true;
   }
 
   if (format.sections.length > 0) {
     return skill?.isQuantitative !== false;
   }
 
-  return candidates.some(
-    (candidate) =>
-      (skill === undefined || candidate.skillId === skill.id) &&
-      candidate.format?.startsWith("numeric:"),
+  if (skill?.isQuantitative === false) {
+    return false;
+  }
+
+  const numeric = candidates.filter((candidate) => candidate.format?.startsWith("numeric:"));
+
+  return (
+    !skill ||
+    skill.isQuantitative === true ||
+    numeric.length === 0 ||
+    numeric.some((candidate) => candidate.skillId === skill.id)
   );
 }
 
@@ -128,17 +131,29 @@ export function getMockQuestionsShortfall({
   option,
   plan,
   skills,
+  onlyMissing = false,
   structure,
 }: {
   candidates: readonly MockCandidate[];
   mix: readonly MockFormat[];
-  option: { questions: number };
+  option: Pick<MockOption, "questions"> & Partial<Pick<MockOption, "kind">>;
   plan: MockPlan;
   skills: readonly MockWritingSkill[];
+  onlyMissing?: boolean;
   structure: ExamStructure | null;
 }): MockFormatShortfall[] {
   const shortFormats = new Set(listShortFormats({ candidates, mix, option, plan }));
-  const fresh = candidates.filter((candidate) => !candidate.answered);
+  const selected = new Set(getPlannedItemIds(plan));
+
+  const fresh = candidates.filter(
+    (candidate) => !candidate.answered && selected.has(candidate.itemId),
+  );
+
+  const demand = plan.formatsWanted
+    ? Object.values(plan.formatsWanted).reduce((sum, count) => sum + count, 0)
+    : option.questions;
+
+  let remaining = onlyMissing ? Math.max(0, demand - fresh.length) : Number.POSITIVE_INFINITY;
 
   return countFormats({ candidates, mix, option, plan }).flatMap(({ format, needed, wanted }) => {
     const eligible = skills.flatMap((skill) => {
@@ -149,53 +164,92 @@ export function getMockQuestionsShortfall({
         : [];
     });
 
-    const size = Math.max(needed, wanted);
+    const size = plan.formatsWanted ? wanted : needed;
 
     if (!shortFormats.has(format) || eligible.length === 0 || size === 0) {
       return [];
     }
 
-    const cap =
-      format.writer.kind === "item" ? MAX_ITEM_QUESTIONS_PER_SKILL : MAX_QUESTIONS_PER_SKILL;
+    const shares = getSubjectShares(structure);
 
-    const target = Math.min(cap, Math.ceil(size / eligible.length));
-
-    const holds = (skill: MockWritingSkill) =>
-      fresh.filter(
-        (candidate) =>
-          candidate.skillId === skill.id && (mix.length === 1 || candidate.format === format.key),
-      ).length;
-
-    const holders = eligible.filter(({ skill }) => holds(skill) >= target).length;
-    const room = Math.ceil(size / target) - holders;
-
-    const byArea = Map.groupBy(
-      eligible.filter(({ skill }) => holds(skill) < target),
-      ({ skill }) => skill.area,
+    const bySubject = Map.groupBy(eligible, ({ skill }) =>
+      skill.area ? (findAreaSubject({ area: skill.area, structure })?.name ?? skill.area) : "",
     );
 
-    const written = interleave([...byArea.values()]).slice(0, Math.max(0, room));
+    const subjects = [...bySubject.entries()];
 
-    const scoped = written.map(({ format: own, skill }) => ({
-      format: own,
-      questionsPerSkill: target - holds(skill),
-      skill,
-    }));
+    const quotas = apportion({
+      total: size,
+      weights: subjects.map(
+        ([name, group]) => shares.find((share) => share.name === name)?.questions ?? group.length,
+      ),
+    });
 
-    const byLack = scoped.reduce((groups, { format: own, questionsPerSkill, skill }) => {
-      const key = JSON.stringify([questionsPerSkill, own.style]);
-      const previous = groups.get(key);
+    const writes = subjects.flatMap(([name, group], index) => {
+      const notice = shares.find((share) => share.name === name)?.questions;
 
-      groups.set(key, {
-        format: own,
-        questionsPerSkill,
-        skillIds: [...(previous?.skillIds ?? []), skill.id],
-        target,
+      const quota =
+        notice && mix.length === 1 && option.kind !== "area" && !structure?.mock?.adaptive
+          ? Math.min(quotas[index] ?? 0, Math.ceil(notice / (plan.fullLength ? 1 : 2)))
+          : (quotas[index] ?? 0);
+
+      const held = group.map(
+        ({ skill }) =>
+          fresh.filter(
+            (candidate) =>
+              candidate.skillId === skill.id &&
+              (mix.length === 1 || candidate.format === format.key),
+          ).length,
+      );
+
+      const missing = Math.min(
+        remaining,
+        Math.max(0, quota - held.reduce((sum, count) => sum + count, 0)),
+      );
+
+      remaining -= missing;
+
+      if (!missing) {
+        return [];
+      }
+
+      const ordered = group
+        .map((entry, i) => ({ ...entry, held: held[i] ?? 0 }))
+        .toSorted((first, second) => first.held - second.held);
+
+      const counts = apportion({ total: missing, weights: ordered.map(() => 1) });
+
+      return ordered.flatMap(({ format: own, skill, held: count }, i) => {
+        const questionsPerSkill = counts[i] ?? 0;
+
+        return questionsPerSkill
+          ? [
+              {
+                format: own,
+                questionsPerSkill,
+                skillId: skill.id,
+                target: count + questionsPerSkill,
+              },
+            ]
+          : [];
       });
+    });
 
-      return groups;
-    }, new Map<string, MockFormatShortfall>());
+    const groups = Map.groupBy(writes, (write) =>
+      JSON.stringify([write.format.style, write.questionsPerSkill, write.target]),
+    );
 
-    return [...byLack.values()];
+    return [...groups.values()].flatMap((group) =>
+      group[0]
+        ? [
+            {
+              format: group[0].format,
+              questionsPerSkill: group[0].questionsPerSkill,
+              skillIds: group.map((write) => write.skillId),
+              target: group[0].target,
+            },
+          ]
+        : [],
+    );
   });
 }

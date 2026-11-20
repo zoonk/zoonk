@@ -18,7 +18,7 @@ import { type MockSizeSource } from "../mock-view-contract";
 import { type MockEssayCandidate } from "../written-parts";
 import { loadSkillAreas } from "./mock-candidates";
 import { loadMockEssays } from "./mock-essays";
-import { loadListeningCandidates } from "./mock-listening";
+import { type MockListening, loadListeningCandidates } from "./mock-listening";
 import { loadMockPace } from "./mock-pace";
 import { loadBankTypedParts } from "./mock-typed-parts";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
@@ -31,6 +31,7 @@ export type AnytimeMockSetup = {
   goalAreas: string[];
   listening: ReadonlyMap<string, readonly MockCandidate[]>;
   unvoiced: ReadonlySet<string>;
+  missingParts: MockListening["missingParts"];
   options: MockOption[];
   sizeSource: MockSizeSource;
   speaking: boolean;
@@ -66,7 +67,7 @@ export async function loadAnytimeMockSetup(
 
   const structure = blueprint ? readMockStructure({ blueprint, picks }) : null;
 
-  const { recordings, unvoiced } = await loadListeningCandidates({
+  const { recordings, unvoiced, missingParts } = await loadListeningCandidates({
     goalId: goal.id,
     mix: getMockFormatMix(structure),
     userId: goal.userId,
@@ -80,6 +81,7 @@ export async function loadAnytimeMockSetup(
     examName: getExamName({ blueprint, goal }),
     goalAreas,
     listening: recordings,
+    missingParts,
     options: buildable
       ? listMockOptions({
           essays,

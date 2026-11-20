@@ -1,10 +1,10 @@
 import "server-only";
 import {
-  type TransactionClient,
   type Goal,
   type ItemFormat,
   type Plan,
   type PlanItem,
+  type TransactionClient,
   prisma,
 } from "@zoonk/db";
 import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
@@ -14,6 +14,7 @@ import { fitsExamChoice, getExamChoiceFormats } from "../../../library/exams/exa
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { getItemFormatKey, getMockFormatMix } from "../mock-format-mix";
 import { type MockCandidate } from "../mock-plan";
+import { listMockItemClaims } from "./mock-item-uses";
 
 type AreaPlanItem = Pick<PlanItem, "chapterId" | "lessonId" | "skillId">;
 
@@ -142,39 +143,68 @@ export async function loadMockCandidates({
   const typed = listTypedFormats(structure);
   const mix = getMockFormatMix(structure);
   const choices = getExamChoiceFormats(structure);
+
   const [items, areas] = await Promise.all([
     client.item.findMany({
+      include: {
+        mockUses: { select: { mockExamId: true, section: true, spentAt: true }, where: { userId } },
+        set: { select: { _count: { select: { items: true } } } },
+      },
+      orderBy: { id: "asc" },
       where: {
         ...getFormatFilter(typed),
         ...(itemIds
           ? { id: { in: [...itemIds] } }
           : {
-              mockOnly: true,
+              NOT: { set: { is: { kind: "audio" } } },
               examBlueprintId: goal.examBlueprintId,
+              mockOnly: true,
               retiredAt: null,
               skillId: { in: [...skillIds] },
-              NOT: { set: { is: { kind: "audio" } } },
             }),
       },
-      include: {
-        set: { select: { _count: { select: { items: true } } } },
-        mockUses: { where: { userId }, select: { spentAt: true } },
-      },
-      orderBy: { id: "asc" },
     }),
     goal.id ? loadSkillAreas(goal.id, plan) : new Map<string, string>(),
   ]);
 
+  const mockIds = new Set(
+    items.flatMap((item) =>
+      item.mockUses
+        .filter((use) => use.section > 0 && (!use.spentAt || reuse))
+        .map((use) => use.mockExamId),
+    ),
+  );
+
+  const claims =
+    !itemIds && mockIds.size > 0 ? await listMockItemClaims(client, userId, [...mockIds]) : null;
+
+  const now = new Date();
+
+  const lastRead = (use: (typeof items)[number]["mockUses"][number] | undefined) => {
+    if (!use?.spentAt) {
+      return;
+    }
+
+    const current = claims?.readable.get(use.mockExamId);
+
+    return current?.section === use.section
+      ? Math.max(use.spentAt.getTime(), current.since.getTime())
+      : use.spentAt.getTime();
+  };
+
   return items
     .filter((item) => {
       const use = item.mockUses[0];
+
       return (
         itemIds ||
-        ((!use || (reuse && use.spentAt)) &&
+        (!claims?.held.has(item.id) &&
+          (!use ||
+            (!use.spentAt && claims?.expired.has(use.mockExamId)) ||
+            (reuse && use.spentAt && use.spentAt <= now)) &&
           (typed.includes(item.format) || fitsExamChoice({ choices, item })))
       );
     })
-    .toSorted((a, b) => Number(a.mockUses[0]?.spentAt ?? 0) - Number(b.mockUses[0]?.spentAt ?? 0))
     .map((item) => ({
       answered: Boolean(item.mockUses[0]?.spentAt),
       area: areas.get(item.skillId) ?? null,
@@ -182,6 +212,7 @@ export async function loadMockCandidates({
       format: getItemFormatKey({ item, mix }),
       itemFormat: item.format,
       itemId: item.id,
+      lastMockUse: lastRead(item.mockUses[0]),
       skillId: item.skillId,
       ...(item.set &&
         item.setId && {

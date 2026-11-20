@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import {
   studySessionBlockFixture,
   studySessionFixture,

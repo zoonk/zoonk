@@ -105,6 +105,11 @@ export async function submitMockSection({
   }
 
   const now = new Date();
+
+  if (mock.sectionStartedAt > now) {
+    return { status: "notRunning" };
+  }
+
   const timedOut = now.getTime() >= getSectionDeadline(mock).getTime();
   const conditions = await advanceConditions({ mock, section, timedOut });
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
@@ -125,15 +130,17 @@ export async function submitMockSection({
       where: { id: mock.id, sectionIndex: section, status: "active" },
     });
 
-    if (updated.count)
+    if (updated.count) {
       await spendSection({
-        tx,
-        mockExamId: mock.id,
-        section: section + 1,
-        userId: owned.userId,
         conditions,
+        mockExamId: mock.id,
         now: new Date(now.getTime() + breakMs),
+        section: section + 1,
+        tx,
+        userId: owned.userId,
       });
+    }
+
     return updated.count > 0 ? updated.count : unchanged(updated.count);
   });
 

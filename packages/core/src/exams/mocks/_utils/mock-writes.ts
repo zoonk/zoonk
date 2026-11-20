@@ -13,7 +13,7 @@ import {
   getMockQuestionsShortfall,
 } from "../mock-shortfall";
 import { type AnytimeMockSetup } from "./anytime-mock-setup";
-import { planFromBank } from "./create-anytime-mock";
+import { planFromBank } from "./plan-from-bank";
 
 async function loadOptionSkills({
   goalId,
@@ -69,10 +69,13 @@ function listWrites({
   planned: Awaited<ReturnType<typeof planFromBank>>;
 }): MockFormatShortfall[] {
   return getMockQuestionsShortfall({
-    candidates: planned.candidates,
+    candidates: planned.reuse
+      ? planned.candidates.map((candidate) => ({ ...candidate, answered: false }))
+      : planned.candidates,
     mix,
+    onlyMissing: planned.reuse,
     option,
-    plan: planned.plan,
+    plan: { ...planned.plan, reused: 0 },
     skills: optionSkills,
     structure,
   });

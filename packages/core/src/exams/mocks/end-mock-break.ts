@@ -30,15 +30,17 @@ export async function endMockBreak({ blockId }: { blockId: string }): Promise<En
       },
     });
 
-    if (updated.count)
+    if (updated.count) {
       await spendSection({
-        tx,
-        mockExamId: mock.id,
-        section: mock.sectionIndex,
         conditions: mock.conditions,
-        userId: mock.userId,
+        mockExamId: mock.id,
         now,
+        section: mock.sectionIndex,
+        tx,
+        userId: mock.userId,
       });
+    }
+
     return updated.count > 0 ? updated.count : unchanged(updated.count);
   });
 

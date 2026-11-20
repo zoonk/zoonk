@@ -12,7 +12,7 @@ import {
   loadAnytimeMockSetup,
   resolveAnytimeOption,
 } from "./_utils/anytime-mock-setup";
-import { canReuseMockItems, planFromBank, isCompleteMock } from "./_utils/create-anytime-mock";
+import { canReuseMockItems, isCompleteMock, planFromBank } from "./_utils/create-anytime-mock";
 import { findLastMock } from "./_utils/finished-mocks";
 import { getBankTypedParts } from "./_utils/mock-typed-parts";
 import { type MockOptionsView, mockConditionsSchema, mockShapeSchema } from "./mock-contract";
@@ -57,33 +57,39 @@ export async function getMockOptions({
 
   const shape = mockShapeSchema.safeParse(goal.requestedMock).data;
   const option = shape && resolveAnytimeOption({ choice: { shape }, setup });
+
   const requestedPlan =
     option &&
     (await planFromBank({
       goal,
       option,
+      reuse: await canReuseMockItems(prisma, goal.userId),
       setup,
       userId: goal.userId,
-      reuse: await canReuseMockItems(prisma, goal.userId),
     }));
+
   return {
     status: "ready",
     view: {
-      requested:
-        option && shape && requestedPlan
-          ? {
-              shape,
-              status: isCompleteMock({ option, setup, plan: requestedPlan.plan })
-                ? "ready"
-                : "preparing",
-            }
-          : null,
       access,
       examDocument: getExamDocument(goal),
       examName: setup.examName,
       goalId: goal.id,
       lastMock,
       options: setup.options,
+      requested:
+        option && shape && requestedPlan
+          ? {
+              shape,
+              status: isCompleteMock({
+                option,
+                plan: requestedPlan.plan,
+                setup: requestedPlan.available,
+              })
+                ? "ready"
+                : "preparing",
+            }
+          : null,
       running:
         running && conditions
           ? { id: running.id, purpose: conditions.purpose, shape: conditions.shape }
