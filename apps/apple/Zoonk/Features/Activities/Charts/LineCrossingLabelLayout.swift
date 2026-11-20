@@ -72,16 +72,8 @@ enum LineCrossingLabelLayout {
     let width = max(0, area.width - label.size.width)
     let height = max(0, area.height - label.size.height)
 
-    func search(
-      spacing: CGFloat = 0, preferOwnLine: Bool = false, edgesOnly: Bool = false,
-      _ accepts: (CGRect) -> Bool
-    )
-      -> CGRect?
-    {
-      let spacing = spacing > 0 ? spacing : step
-      var best: CGRect?
-      var bestGap = CGFloat.infinity
-      var distance = CGFloat.infinity
+    func boxes(spacing: CGFloat, edgesOnly: Bool = false) -> [CGRect] {
+      var boxes: [CGRect] = []
       let lastRow = Int(ceil(height / spacing))
       let lastColumn = Int(ceil(width / spacing))
       for row in 0...lastRow {
@@ -92,18 +84,29 @@ enum LineCrossingLabelLayout {
             x: area.minX + min(width, CGFloat(column) * spacing),
             y: area.minY + min(height, CGFloat(row) * spacing),
             width: label.size.width, height: label.size.height)
-          let dx = box.midX - start.midX
-          let dy = box.midY - start.midY
-          let cost = dx * dx + dy * dy
-          guard area.contains(box) else { continue }
-          if !preferOwnLine && cost >= distance { continue }
-          guard accepts(box) else { continue }
-          let gap = preferOwnLine ? gapSquared(box, label.segment) : 0
-          if (gap, cost) < (bestGap, distance) {
-            best = box
-            bestGap = gap
-            distance = cost
-          }
+          if area.contains(box) { boxes.append(box) }
+        }
+      }
+      return boxes
+    }
+
+    func nearest(
+      _ boxes: [CGRect], preferOwnLine: Bool = false, _ accepts: (CGRect) -> Bool
+    ) -> CGRect? {
+      var best: CGRect?
+      var bestGap = CGFloat.infinity
+      var distance = CGFloat.infinity
+      for box in boxes {
+        let dx = box.midX - start.midX
+        let dy = box.midY - start.midY
+        let cost = dx * dx + dy * dy
+        if !preferOwnLine && cost >= distance { continue }
+        guard accepts(box) else { continue }
+        let gap = preferOwnLine ? gapSquared(box, label.segment) : 0
+        if (gap, cost) < (bestGap, distance) {
+          best = box
+          bestGap = gap
+          distance = cost
         }
       }
       return best
@@ -149,44 +152,62 @@ enum LineCrossingLabelLayout {
       named(box) && belongsWith(box, named: label.segment, lines: guides)
     }
 
-    if let clear = search({ box in
-      clearsStrokes(box) && avoidsMarks(box) && fits(box)
-    }) {
+    let coarse = boxes(spacing: step)
+    if let clear = nearest(coarse, { clearsStrokes($0) && avoidsMarks($0) && fits($0) }) {
       return clear
     }
-    if let close = search({
-      avoidsMarks($0) && !touches(padded($0), label.segment) && fits($0)
-    }) {
+    if let close = nearest(
+      coarse, { avoidsMarks($0) && !touches(padded($0), label.segment) && fits($0) })
+    {
       return close
     }
     func offLine(_ box: CGRect) -> Bool {
       avoidsMarks(box) && !touches(box, label.segment)
     }
 
+    // Every pass from here walks the plot point by point and needs a `safe` box, most a `named`
+    // one, so those are found once: a name with no place left fails every pass, and the learner
+    // waits for all of them when an answer is revealed.
+    var foundSafe: [CGRect]?
+    func safeBoxes() -> [CGRect] {
+      if let foundSafe { return foundSafe }
+      let found = boxes(spacing: 1).filter(safe)
+      foundSafe = found
+      return found
+    }
+    var foundNamed: [CGRect]?
+    func namedBoxes() -> [CGRect] {
+      if let foundNamed { return foundNamed }
+      let found = safeBoxes().filter(belongsToLine)
+      foundNamed = found
+      return found
+    }
+    func edgeBoxes() -> [CGRect] { boxes(spacing: 0.25, edgesOnly: true) }
+
     let preferred =
-      search(spacing: 1) { clearsStrokes($0) && avoidsMarks($0) && fits($0) }
-      ?? search(spacing: 1) { offLine($0) && fits($0) }
-      ?? search(spacing: 1) { avoidsMarks($0) && fits($0) }
+      nearest(namedBoxes(), { clearsStrokes($0) && avoidsMarks($0) && fits($0) })
+      ?? nearest(namedBoxes(), { offLine($0) && fits($0) })
+      ?? nearest(namedBoxes(), { avoidsMarks($0) && fits($0) })
     if label.isOptional && origin == nil {
       return preferred
-        ?? search(spacing: 0.25, edgesOnly: true) { avoidsMarks($0) && fits($0) }
-        ?? search(spacing: 1) { offLine($0) && named($0) && nearerThanGuides($0) }
-        ?? search(spacing: 1) { offLine($0) && named($0) }
+        ?? nearest(edgeBoxes(), { avoidsMarks($0) && fits($0) })
+        ?? nearest(namedBoxes(), { offLine($0) && nearerThanGuides($0) })
+        ?? nearest(namedBoxes(), offLine)
     }
 
     if let owned = preferred
-      ?? search(
-        spacing: 1,
+      ?? nearest(
+        namedBoxes(),
         { box in
           let halo = padded(box)
           return !touches(halo, label.segment) && obstacles.allSatisfy { !halo.intersects($0) }
             && fits(box)
         })
-      ?? search(spacing: 1, fits)
-      ?? search(spacing: 0.25, edgesOnly: true, fits)
-      ?? search(spacing: 1, { named($0) && nearerThanGuides($0) })
-      ?? search(spacing: 1, { avoidsMarks($0) && named($0) })
-      ?? search(spacing: 1, named)
+      ?? nearest(namedBoxes(), fits)
+      ?? nearest(edgeBoxes(), fits)
+      ?? nearest(namedBoxes(), nearerThanGuides)
+      ?? nearest(namedBoxes(), avoidsMarks)
+      ?? nearest(namedBoxes(), { _ in true })
     {
       return owned
     }
@@ -196,12 +217,14 @@ enum LineCrossingLabelLayout {
     }
 
     func fallback(_ accepts: (CGRect) -> Bool) -> CGRect? {
-      search(spacing: 1, preferOwnLine: true) { accepts($0) && onNamedSide($0) && avoidsMarks($0) }
-        ?? search(spacing: 1, preferOwnLine: true) { accepts($0) && onNamedSide($0) }
-        ?? search(spacing: 1, accepts)
+      nearest(
+        safeBoxes(), preferOwnLine: true,
+        { accepts($0) && onNamedSide($0) && avoidsMarks($0) })
+        ?? nearest(safeBoxes(), preferOwnLine: true, { accepts($0) && onNamedSide($0) })
+        ?? nearest(safeBoxes(), accepts)
     }
 
-    return fallback { safe($0) && nearerThanGuides($0) } ?? fallback(safe)
+    return fallback(nearerThanGuides) ?? fallback({ _ in true })
       ?? (requiredLines.isEmpty && belongsToLine(start) && avoidsNames(start) ? start : nil)
   }
 
