@@ -17,9 +17,10 @@ import {
 
 /**
  * Within this window a rotated refresh token gets the same new pair again, so a CLI that lost the
- * answer keeps its login and recovers the pair on its retry or its next command.
+ * answer recovers the pair on its retry or its next command. The CLI's `REPLAY_DEADLINE_MS` stays
+ * inside it; past it, the token counts as stolen.
  */
-const REFRESH_TOKEN_REUSE_SECONDS = 300;
+const REFRESH_TOKEN_REUSE_SECONDS = 120;
 
 const APPROVAL_URL = new URL(CLI_LOGIN_APPROVAL_PATH, MAIN_URL).toString();
 

@@ -257,7 +257,7 @@ describe("CLI login", () => {
     ).resolves.toMatchObject({ clientId: CLI_CLIENT_ID });
   });
 
-  it("answers a CLI that lost a refresh's answer with the same new pair for five minutes, then refuses", async () => {
+  it("answers a CLI that lost a refresh's answer with the same new pair for two minutes, then refuses", async () => {
     const { tokens } = await logIn();
     const start = Date.now();
     vi.useFakeTimers({ now: start, toFake: ["Date"] });
@@ -275,7 +275,7 @@ describe("CLI login", () => {
         refresh_token: first.refresh_token,
       });
 
-      vi.setSystemTime(start + 301_000);
+      vi.setSystemTime(start + 121_000);
       const tooLate = await refresh(tokens.refresh_token);
 
       expect(tooLate.status).toBe(400);

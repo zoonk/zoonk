@@ -4,7 +4,16 @@ import { dirname, join } from "node:path";
 import { DatabaseSync, type SQLOutputValue } from "node:sqlite";
 import { CliError } from "./errors.ts";
 
-export type StoredLogin = { accessToken: string; expiresAt: number; refreshToken: string };
+/**
+ * `maybeRotatedAt`: when a refresh whose answer never arrived was sent, so the server may have
+ * rotated `refreshToken` already.
+ */
+export type StoredLogin = {
+  accessToken: string;
+  expiresAt: number;
+  maybeRotatedAt?: number;
+  refreshToken: string;
+};
 
 export type LoginPlace = { file: string; origin: string };
 
@@ -22,17 +31,23 @@ const CREATE_LOGINS = `
     origin TEXT PRIMARY KEY,
     access_token TEXT NOT NULL,
     refresh_token TEXT NOT NULL,
-    expires_at INTEGER NOT NULL
+    expires_at INTEGER NOT NULL,
+    maybe_rotated_at INTEGER
   ) STRICT`;
 
-const SELECT_LOGIN = "SELECT access_token, refresh_token, expires_at FROM logins WHERE origin = ?";
+const ADD_MAYBE_ROTATED_AT = "ALTER TABLE logins ADD COLUMN maybe_rotated_at INTEGER";
+
+const SELECT_LOGIN = `
+  SELECT access_token, refresh_token, expires_at, maybe_rotated_at FROM logins WHERE origin = ?`;
 
 const UPSERT_LOGIN = `
-  INSERT INTO logins (origin, access_token, refresh_token, expires_at) VALUES (?, ?, ?, ?)
+  INSERT INTO logins (origin, access_token, refresh_token, expires_at, maybe_rotated_at)
+  VALUES (?, ?, ?, ?, ?)
   ON CONFLICT (origin) DO UPDATE SET
     access_token = excluded.access_token,
     refresh_token = excluded.refresh_token,
-    expires_at = excluded.expires_at`;
+    expires_at = excluded.expires_at,
+    maybe_rotated_at = excluded.maybe_rotated_at`;
 
 export function credentialsPath(environment: NodeJS.ProcessEnv): string {
   const configHome = environment.XDG_CONFIG_HOME || join(homedir(), ".config");
@@ -54,11 +69,15 @@ function toStoredLogin(row: Record<string, SQLOutputValue> | undefined): StoredL
     return null;
   }
 
-  return {
+  const login = {
     accessToken: row.access_token,
     expiresAt: row.expires_at,
     refreshToken: row.refresh_token,
   };
+
+  return typeof row.maybe_rotated_at === "number"
+    ? { ...login, maybeRotatedAt: row.maybe_rotated_at }
+    : login;
 }
 
 /**
@@ -80,11 +99,35 @@ function restrictToOwner(file: string) {
     .forEach((sideFile) => chmodSync(sideFile, OWNER_ONLY_FILE));
 }
 
+function hasMaybeRotatedAt(database: DatabaseSync): boolean {
+  return database
+    .prepare("SELECT name FROM pragma_table_info('logins')")
+    .all()
+    .some((column) => column.name === "maybe_rotated_at");
+}
+
+/** Files made before the column existed get it on their next open, by whichever command opens one first. */
+function addMaybeRotatedAt(database: DatabaseSync) {
+  if (hasMaybeRotatedAt(database)) {
+    return;
+  }
+
+  try {
+    database.exec(ADD_MAYBE_ROTATED_AT);
+  } catch (error) {
+    if (!hasMaybeRotatedAt(database)) {
+      throw error;
+    }
+  }
+}
+
 function openCredentials(file: string): DatabaseSync {
   restrictToOwner(file);
 
   const database = new DatabaseSync(file, { timeout: BUSY_TIMEOUT_MS });
   database.exec(CREATE_LOGINS);
+
+  addMaybeRotatedAt(database);
 
   return database;
 }
@@ -109,7 +152,13 @@ function writeLogin({
 
   database
     .prepare(UPSERT_LOGIN)
-    .run(origin, login.accessToken, login.refreshToken, login.expiresAt);
+    .run(
+      origin,
+      login.accessToken,
+      login.refreshToken,
+      login.expiresAt,
+      login.maybeRotatedAt ?? null,
+    );
 }
 
 function isBusy(error: unknown): boolean {

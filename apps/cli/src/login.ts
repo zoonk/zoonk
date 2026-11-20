@@ -121,6 +121,11 @@ export async function logOut({ file, origin }: LoginPlace) {
         return { result: null };
       }
 
+      // Revoking a token the server already rotated would end every CLI login of that person.
+      if (stored.maybeRotatedAt !== undefined) {
+        return { result: "unconfirmed" as const, save: null };
+      }
+
       return {
         result: await revokeLogin({ origin, refreshToken: stored.refreshToken }),
         save: null,

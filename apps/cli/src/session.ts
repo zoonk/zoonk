@@ -3,7 +3,7 @@ import { type ApiRequest } from "./args.ts";
 import { type LoginPlace, type StoredLogin, changeLogin, readLogin } from "./credentials.ts";
 import { CliError, EXIT_CODES } from "./errors.ts";
 import { type HttpResult, UNAUTHORIZED, sendRequest } from "./http.ts";
-import { type RefreshResult, refreshLogin } from "./oauth.ts";
+import { refreshLogin } from "./oauth.ts";
 
 const EXPIRY_MARGIN_MS = 60_000;
 
@@ -18,34 +18,62 @@ function isExpiring(login: StoredLogin): boolean {
   return login.expiresAt - Date.now() < EXPIRY_MARGIN_MS;
 }
 
-/**
- * A lost answer may hide a rotation the server already made. Within its reuse window the provider
- * answers the same refresh token with the same new pair, so asking once more recovers it. A refusal
- * then can mean the first refresh is still running, between rotating the token and storing that
- * answer, so it's no reason to forget the login yet.
- */
-async function refreshOrReplay(place: {
-  origin: string;
-  refreshToken: string;
-}): Promise<RefreshResult> {
-  const refresh = await refreshLogin(place);
+/** The API's refresh token reuse window (`REFRESH_TOKEN_REUSE_SECONDS`), less time for a request to arrive. */
+const REPLAY_DEADLINE_MS = 90_000;
 
-  if (refresh !== "unconfirmed") {
-    return refresh;
-  }
+type Renewal = StoredLogin | "unconfirmed" | null;
 
-  const replay = await refreshLogin(place);
-  const refused = replay !== "unconfirmed" && !replay.ok && replay.error === "invalid_grant";
-
-  return refused ? "unconfirmed" : replay;
+function canReplay(maybeRotatedAt: number): boolean {
+  return Date.now() - maybeRotatedAt < REPLAY_DEADLINE_MS;
 }
 
 /**
- * Refreshes under the file's lock with the latest saved token: the provider rotates refresh tokens
- * and, past its reuse window, treats a rotated one as stolen and ends every CLI login of that person.
+ * Once the server may have rotated the token, any answer but a new pair keeps the login: the
+ * provider answers that token with the same new pair until its reuse window ends, and refuses it
+ * while the refresh that rotated it is still storing that answer. Past the window, sending it
+ * would end every CLI login of that person, so the login is forgotten here instead.
  */
+async function refreshStored({
+  origin,
+  stored,
+}: {
+  origin: string;
+  stored: StoredLogin;
+}): Promise<{ result: Renewal; save?: StoredLogin | null }> {
+  if (stored.maybeRotatedAt !== undefined && !canReplay(stored.maybeRotatedAt)) {
+    return { result: null, save: null };
+  }
+
+  const maybeRotatedAt = stored.maybeRotatedAt ?? Date.now();
+  const place = { origin, refreshToken: stored.refreshToken };
+  const first = await refreshLogin(place);
+
+  if (first !== "unconfirmed" && !first.ok && stored.maybeRotatedAt === undefined) {
+    if (first.error === "invalid_grant") {
+      return { result: null, save: null };
+    }
+
+    throw new CliError(
+      `Couldn't renew the login for ${origin} (${first.error}). It's kept; try again shortly.`,
+    );
+  }
+
+  // Failing to send the retry still leaves a token the first refresh may have rotated.
+  const answer =
+    first === "unconfirmed" && canReplay(maybeRotatedAt)
+      ? await refreshLogin(place).catch(() => "unconfirmed" as const)
+      : first;
+
+  if (answer !== "unconfirmed" && answer.ok) {
+    return { result: answer.login, save: answer.login };
+  }
+
+  return { result: "unconfirmed", save: { ...stored, maybeRotatedAt } };
+}
+
+/** Refreshes under the file's lock with the latest saved token, so two commands never both send it. */
 async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLogin }) {
-  const renewed = await changeLogin<StoredLogin | "unconfirmed" | null>({
+  const renewed = await changeLogin<Renewal>({
     change: async (stored) => {
       if (!stored) {
         return { result: null };
@@ -55,24 +83,7 @@ async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLog
         return { result: stored };
       }
 
-      const refresh = await refreshOrReplay({ origin, refreshToken: stored.refreshToken });
-
-      // The next command sends the kept token again, which the reuse window answers with the new pair.
-      if (refresh === "unconfirmed") {
-        return { result: refresh };
-      }
-
-      if (refresh.ok) {
-        return { result: refresh.login, save: refresh.login };
-      }
-
-      if (refresh.error === "invalid_grant") {
-        return { result: null, save: null };
-      }
-
-      throw new CliError(
-        `Couldn't renew the login for ${origin} (${refresh.error}). It's kept; try again shortly.`,
-      );
+      return refreshStored({ origin, stored });
     },
     file,
     origin,

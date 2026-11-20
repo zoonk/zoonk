@@ -1,6 +1,7 @@
 import { mkdirSync, mkdtempSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import { afterEach, describe, expect, it } from "vitest";
 import { changeLogin, credentialsPath, readLogin, saveLogin } from "./credentials.ts";
 
@@ -74,6 +75,36 @@ describe("credentials file", () => {
 
     expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual(login("production"));
     expect(readLogin({ file, origin: LOCAL })).toBeNull();
+  });
+
+  it("keeps a login saved before a refresh could be unconfirmed, and remembers when one was", async () => {
+    const file = createCredentialsFile();
+    mkdirSync(dirname(file), { mode: 0o700, recursive: true });
+
+    const older = new DatabaseSync(file);
+
+    older.exec(`
+      CREATE TABLE logins (
+        origin TEXT PRIMARY KEY,
+        access_token TEXT NOT NULL,
+        refresh_token TEXT NOT NULL,
+        expires_at INTEGER NOT NULL
+      ) STRICT`);
+
+    older
+      .prepare("INSERT INTO logins VALUES (?, ?, ?, ?)")
+      .run(PRODUCTION, "access-older", "refresh-older", 1);
+
+    older.close();
+
+    expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual(login("older"));
+
+    await saveLogin({ file, login: { ...login("older"), maybeRotatedAt: 5 }, origin: PRODUCTION });
+
+    expect(readLogin({ file, origin: PRODUCTION })).toStrictEqual({
+      ...login("older"),
+      maybeRotatedAt: 5,
+    });
   });
 
   it("reads a login whose tokens a header can't carry as no login", async () => {

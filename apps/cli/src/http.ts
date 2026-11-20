@@ -64,19 +64,29 @@ function failureReason(error: unknown, code: string | null): string {
   return code ? ` (${code})` : "";
 }
 
-/** Every request carries a credential, and following a redirect could send it somewhere unencrypted. */
-export async function sendRequest(url: URL, init: RequestInit): Promise<HttpResult> {
-  try {
-    const response = await fetch(url, { ...init, redirect: "manual" });
-    return { body: parseJson(await response.text()), ok: response.ok, status: response.status };
-  } catch (error) {
-    const code = errorCode(error);
+function requestError(url: URL, error: unknown, beforeAnswer: boolean): RequestError {
+  const code = errorCode(error);
 
-    throw new RequestError(
-      `Couldn't complete the request to ${url.origin}${failureReason(error, code)}.`,
-      !code || !UNSENT_CODES.has(code),
-    );
-  }
+  return new RequestError(
+    `Couldn't complete the request to ${url.origin}${failureReason(error, code)}.`,
+    !beforeAnswer || !code || !UNSENT_CODES.has(code),
+  );
+}
+
+/**
+ * Every request carries a credential, and following a redirect could send it somewhere unencrypted.
+ * A failure while reading the answer always counts as sent, whatever its code.
+ */
+export async function sendRequest(url: URL, init: RequestInit): Promise<HttpResult> {
+  const response = await fetch(url, { ...init, redirect: "manual" }).catch((error: unknown) => {
+    throw requestError(url, error, true);
+  });
+
+  const text = await response.text().catch((error: unknown) => {
+    throw requestError(url, error, false);
+  });
+
+  return { body: parseJson(text), ok: response.ok, status: response.status };
 }
 
 export function postForm(url: URL, fields: Record<string, string>): Promise<HttpResult> {
