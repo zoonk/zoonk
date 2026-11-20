@@ -17,6 +17,7 @@ import {
   ListRowTitle,
 } from "./list-group";
 import { StatusRegion } from "./status-region";
+import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 
 export type TestOutStart =
   | { limit: HelpLimit; status: "refused" }
@@ -83,7 +84,11 @@ export function TestOutStartLink({
     <div className={cn("flex flex-col items-start", compact ? "relative gap-px" : "gap-2")}>
       <form
         action={start}
-        className={cn("text-muted-foreground", compact ? "text-xs leading-4" : "text-sm")}
+        className={cn(
+          "text-muted-foreground",
+          compact ? "text-xs leading-4" : "text-sm",
+          SENTENCE_WITH_ACTION_CLASS,
+        )}
       >
         {t("Already know this chapter?")}
         {space}

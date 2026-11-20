@@ -14,6 +14,7 @@ import { useExtracted } from "next-intl";
 import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import { useCertificateSentence } from "./certificate-labels";
 import { CertificateSheet } from "./certificate-sheet";
+import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 
 const BEHIND_CLASS =
   "absolute inset-0 origin-top-right translate-x-3 -translate-y-3 scale-96 sm:translate-x-5.5 sm:-translate-y-5";
@@ -83,7 +84,7 @@ export function NameRow({ name, onChange }: { name: string; onChange: () => void
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground text-sm">
+    <p className={cn("text-muted-foreground text-sm", SENTENCE_WITH_ACTION_CLASS)}>
       {t.rich("On your certificate: <strong>{name}</strong>", { name, strong: NameStrong })}
       <Button className="ml-2 font-medium" onClick={onChange} variant="link">
         {t("Change")}

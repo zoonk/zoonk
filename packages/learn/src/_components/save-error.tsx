@@ -7,6 +7,7 @@ import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useSentenceSpace } from "../_utils/locale";
 import { useContentFeedback } from "../feedback/feedback-context";
+import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 
 function ReportSaveProblem() {
   const t = useExtracted("feedback");
@@ -52,7 +53,7 @@ export function AnswersSaveError({
 
   return (
     <div className="flex flex-col items-start gap-1">
-      <p className="text-destructive-text text-sm" role="alert">
+      <p className={cn("text-destructive-text text-sm", SENTENCE_WITH_ACTION_CLASS)} role="alert">
         {failures > 1
           ? t("Still not going through. You can come back later.")
           : t("That didn't go through. Your answers are kept.")}

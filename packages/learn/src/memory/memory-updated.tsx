@@ -11,6 +11,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { BrainIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 
 /** `conflict`: a change was undone or changed since, so trying again can't help. */
 export type MemoryUndoOutcome = "conflict" | "failed" | "undone";
@@ -100,7 +101,7 @@ export function MemoryUpdated({
     >
       <BrainIcon aria-hidden="true" className="mt-0.75 size-3.5 shrink-0" />
 
-      <p className="min-w-0 flex-1">
+      <p className={cn("min-w-0 flex-1", SENTENCE_WITH_ACTION_CLASS)}>
         {status === "idle" || status === "failed" ? (
           <>
             <ChangeText change={first} extra={changes.length - 1} />
