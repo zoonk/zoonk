@@ -9,7 +9,7 @@ import { getGoalContentToken, goalContentWorkflow } from "@/workflows/goals/goal
 import { getGoalRebuildAsk } from "@/workflows/goals/goal-rebuild-ask";
 import { rebuildGoalCurriculumWorkflow } from "@/workflows/goals/rebuild-goal-curriculum-workflow";
 import { getRequestPlatform } from "@zoonk/core/analytics/request-platform";
-import { type ReplayedRuns } from "@zoonk/core/goals/create";
+import { type SavedRuns } from "@zoonk/core/goals/create";
 import { getGoalGenerationId } from "@zoonk/core/goals/generation-id";
 import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
 import { recordGoalGeneration } from "@zoonk/core/goals/record-generation";
@@ -122,51 +122,36 @@ async function startGoalContent({
   return started.flatMap((entry) => (entry.status === "fulfilled" ? [entry.value] : []));
 }
 
-/** A start that fails never undoes the goal; the client can start it again. */
-export async function startGoalWork(goals: readonly GoalRef[]) {
-  const research = await startGoalResearch(goals);
-  const generations = await startGoalContent({ goals, research });
-
-  return { generations, research };
-}
-
 function toGenerationKind(kind: GoalKind): GoalGeneration["kind"] {
   return kind === "explain" ? "explanation" : "curriculum";
 }
 
 /**
- * A goal a card confirm made before follows the runs it started, so sending the card again pays for
- * nothing; one whose start never got saved starts now.
+ * A start that fails never undoes the goal; the client can start it again. A run a goal already
+ * saved (a card confirmed again) is followed instead of paid for twice, and only missing work starts.
  */
-export async function startOrFollowGoalWork({
-  goals,
-  replayed,
-}: {
-  goals: readonly GoalRef[];
-  replayed: readonly ReplayedRuns[];
-}) {
-  const fresh = goals.filter((goal) => !replayed.some((run) => run.goalId === goal.id));
-  const started = await startGoalWork(fresh);
+export async function startGoalWork(goals: readonly GoalRef[], saved: readonly SavedRuns[] = []) {
+  const savedFor = (goal: GoalRef) => saved.find((run) => run.goalId === goal.id);
 
-  const followed = replayed.flatMap((run) => {
-    const goal = goals.find((item) => item.id === run.goalId);
-    return goal ? [{ goal, run }] : [];
+  const research = [
+    ...saved.flatMap((run) =>
+      run.researchId ? [{ goalId: run.goalId, researchId: run.researchId }] : [],
+    ),
+    ...(await startGoalResearch(goals.filter((goal) => !savedFor(goal)?.researchId))),
+  ];
+
+  const followed = goals.flatMap((goal) => {
+    const generationId = savedFor(goal)?.generationId;
+
+    return generationId
+      ? [{ generationId, goalId: goal.id, kind: toGenerationKind(goal.kind) }]
+      : [];
   });
 
-  return {
-    generations: [
-      ...followed.map(({ goal, run }) => ({
-        generationId: run.generationId,
-        goalId: goal.id,
-        kind: toGenerationKind(goal.kind),
-      })),
-      ...started.generations,
-    ],
-    research: [
-      ...followed.flatMap(({ goal, run }) =>
-        run.researchId ? [{ goalId: goal.id, researchId: run.researchId }] : [],
-      ),
-      ...started.research,
-    ],
-  };
+  const started = await startGoalContent({
+    goals: goals.filter((goal) => !savedFor(goal)?.generationId),
+    research,
+  });
+
+  return { generations: [...followed, ...started], research };
 }

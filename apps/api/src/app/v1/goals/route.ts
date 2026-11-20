@@ -1,6 +1,6 @@
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { startOrFollowGoalWork } from "@/lib/goal-content";
+import { startGoalWork } from "@/lib/goal-content";
 import { goalRefusedError, planErrorCodes } from "@/lib/plan-errors";
 import { readBody } from "@/lib/request-input";
 import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
@@ -48,10 +48,7 @@ async function createGoal(request: NextRequest) {
     return first ? goalRefusedError(first.decision) : errors.internal();
   }
 
-  const { generations, research } = await startOrFollowGoalWork({
-    goals: result.goals,
-    replayed: result.replayed,
-  });
+  const { generations, research } = await startGoalWork(result.goals, result.saved);
 
   return NextResponse.json(
     {

@@ -113,36 +113,40 @@ describe(createOnboardingGoals, () => {
       ).resolves.toMatchObject({ activeGoalId: studied });
     });
 
-    it("follows the runs the goal started, and starts them when none was saved", async () => {
+    it("reports the runs a goal it found saved, each on its own, so only missing work starts", async () => {
       const user = await userFixture();
       const card = await onboardingDraftFixture({ userId: user.id });
       mockSession(user.id);
 
-      const first = await createOnboardingGoals({
-        dailyMinutes: 30,
-        goals: [cardGoal(card.id)],
-        timeZone: "UTC",
-      });
+      const send = () =>
+        createOnboardingGoals({ dailyMinutes: 30, goals: [cardGoal(card.id)], timeZone: "UTC" });
 
+      const first = await send();
       const goalId = first.status === "created" ? (first.goals[0]?.id ?? "") : "";
+      const unstarted = await send();
 
-      const unstarted = await createOnboardingGoals({
-        dailyMinutes: 30,
-        goals: [cardGoal(card.id)],
-      });
+      await prisma.goal.update({ data: { researchRunId: "wrun_research" }, where: { id: goalId } });
+      const researched = await send();
 
       await prisma.goal.update({
-        data: { generationRunId: "wrun_curriculum", researchRunId: "wrun_research" },
+        data: { generationRunId: "wrun_curriculum" },
         where: { id: goalId },
       });
 
-      const started = await createOnboardingGoals({ dailyMinutes: 30, goals: [cardGoal(card.id)] });
+      const started = await send();
 
-      expect(first).toMatchObject({ replayed: [] });
-      expect(unstarted).toMatchObject({ replayed: [] });
+      expect(first).toMatchObject({ saved: [] });
+
+      expect(unstarted).toMatchObject({
+        saved: [{ generationId: null, goalId, researchId: null }],
+      });
+
+      expect(researched).toMatchObject({
+        saved: [{ generationId: null, goalId, researchId: "wrun_research" }],
+      });
 
       expect(started).toMatchObject({
-        replayed: [{ generationId: "wrun_curriculum", goalId, researchId: "wrun_research" }],
+        saved: [{ generationId: "wrun_curriculum", goalId, researchId: "wrun_research" }],
       });
     });
 
