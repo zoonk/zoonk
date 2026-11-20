@@ -75,7 +75,7 @@ function PointsHeader({
 
       {grade.zeroReason ? (
         <p className="text-pretty" role="note">
-          {t("Scored zero: {reason}", { reason: grade.zeroReason })}
+          {grade.zeroReason}
         </p>
       ) : (
         <StepRows>
