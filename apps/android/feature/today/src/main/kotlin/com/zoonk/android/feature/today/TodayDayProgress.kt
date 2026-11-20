@@ -107,7 +107,6 @@ private fun Segment(
     }
 }
 
-/** [gettingReady] says the step's row reads "Getting ready…", so its part says it too. */
 @Composable
 private fun segmentFacts(
     part: DayPart,

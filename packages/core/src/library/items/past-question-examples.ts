@@ -1,4 +1,5 @@
 import "server-only";
+import { OPTION_LETTERS } from "@zoonk/ai/tasks/items/schemas";
 import { prisma } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { getPublicItemFilter } from "./item-field";
@@ -6,8 +7,6 @@ import { getPublicItemFilter } from "./item-field";
 const MAX_EXAMPLES = 2;
 
 const MAX_EXAMPLE_LENGTH = 1200;
-
-const OPTION_LETTERS = "ABCDEFGH";
 
 function toExampleText(content: unknown): string | null {
   if (!isJsonObject(content)) {

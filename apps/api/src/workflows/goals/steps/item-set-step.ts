@@ -28,6 +28,7 @@ export async function pickMockSetTargetsStep(input: Parameters<typeof pickMockSe
 async function writeItemSetStep({
   analytics,
   first,
+  goalId,
   target,
   count,
   wait,
@@ -36,6 +37,7 @@ async function writeItemSetStep({
   count: number;
   wait: CallWait;
   first: ItemSetTarget["skills"][number];
+  goalId?: string;
   target: ItemSetTarget;
 }): Promise<ItemSetToStore<WrittenSetItem> | null> {
   "use step";
@@ -48,6 +50,7 @@ async function writeItemSetStep({
     examFormat: first.exam,
     format,
     language: first.language,
+    mockOnly: Boolean(goalId),
     questionCount: count,
     serviceTier: chooseServiceTier({ wait }),
     skills: skills.map((skill) => ({
@@ -87,7 +90,15 @@ export async function prepareItemSet({
 
   const context = toContentAnalytics({ analytics, scope: first, workflowRunId });
   const count = goalId ? target.skills.length : QUESTIONS_PER_SET[target.format];
-  const written = await writeItemSetStep({ analytics: context, count, first, target, wait });
+
+  const written = await writeItemSetStep({
+    analytics: context,
+    count,
+    first,
+    goalId,
+    target,
+    wait,
+  });
 
   const set =
     goalId && written

@@ -198,7 +198,6 @@ fun DayMinutes(minutes: Double) {
 fun DayStep.isBeingWritten(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
     kind == StudyBlock.Kind.LEARN && lessonId != null && lessonStatus[lessonId.toString()] == LessonGenerationStatus.GENERATING
 
-/** A step whose row says "Getting ready…": a mock whose questions are being written, or a lesson. */
 fun DayStep.isGettingReady(
     lessonStatus: Map<String, LessonGenerationStatus>,
     writingStalled: Boolean,

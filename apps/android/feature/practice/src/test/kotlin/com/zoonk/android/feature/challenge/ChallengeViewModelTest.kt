@@ -130,7 +130,6 @@ class ChallengeViewModelTest {
             assertEquals(AppRoute.Mock(blockId.toString(), sessionId.toString()), viewModel.ui.value.opening)
         }
 
-    /** The mock's questions ran short after the intro was read: nothing opens, and the intro is read again to say so. */
     @Test
     fun aMockStillPreparedOpensNothingAndReadsTheIntroAgain() =
         runTest(dispatcher) {

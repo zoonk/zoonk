@@ -145,7 +145,6 @@ fun BottomBar(
     }
 }
 
-/** One line of the bar, its note's or its buttons': clear of [insets] and the fold, in the page's column. */
 @Composable
 private fun BarRow(
     insets: WindowInsets,

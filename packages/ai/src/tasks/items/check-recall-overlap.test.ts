@@ -1,8 +1,10 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { readGatewayOptions } from "../_test-utils/gateway-options";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
-import { checkRecallOverlap, toRecallQuestion } from "./check-recall-overlap";
+import { checkRecallOverlap } from "./check-recall-overlap";
 import { type GeneratedItem } from "./item-schemas";
+import { toRecallQuestion } from "./recall-question";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
@@ -44,6 +46,24 @@ const skill = { description: "Apply the access to information law.", name: "Acce
 describe(checkRecallOverlap, () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it("keeps private exam history out of training even for a shared skill", async () => {
+    const options: unknown[] = [];
+
+    vi.mocked(generateText).mockImplementation(async () => {
+      options.push(await readGatewayOptions());
+      return createGenerateTextResult({ checks: [] });
+    });
+
+    await checkRecallOverlap({
+      analytics: { contentScope: "shared" },
+      candidates: [STATEMENT],
+      earlier: [{ answer: "yes", question: "An item from the learner's private exam blueprint." }],
+      skill,
+    });
+
+    expect(options).toStrictEqual([{ disallowPromptTraining: true }]);
   });
 
   it("shows what a learner reads and its key, never the reasons, for both lists", async () => {

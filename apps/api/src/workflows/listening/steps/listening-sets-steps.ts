@@ -6,6 +6,7 @@ import {
   writePartSet,
 } from "@zoonk/core/exams/listening/prepare";
 import { voiceListeningSet } from "@zoonk/core/library/listening/voice";
+import { safeAsync } from "@zoonk/utils/error";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { storeKeyCheckedItemSet } from "../../_shared/item-set-steps";
 import { screenMockSet } from "../../goals/steps/mock-set-overlap";
@@ -56,17 +57,20 @@ export async function preparePartSet(input: PartStepInput): Promise<string | nul
     return unvoiced;
   }
 
-  const written = await writePartSetStep(input);
+  const first = await writePartSetStep(input);
+  const second = first === "flawed" ? await safeAsync(() => writePartSetStep(input)) : null;
+  const written = second ? second.data : first;
+  const valid = written === "flawed" ? null : written;
 
   const set =
-    input.mockGoalId && written
+    input.mockGoalId && valid
       ? await screenMockSet({
           goalId: input.mockGoalId,
-          set: written,
+          set: valid,
           wait: input.wait,
           workflowRunId: input.workflowRunId,
         })
-      : written;
+      : valid;
 
   return storeKeyCheckedItemSet({ analytics: toAnalytics(input), set, wait: input.wait });
 }

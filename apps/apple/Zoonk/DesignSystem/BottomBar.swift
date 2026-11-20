@@ -111,8 +111,6 @@ private struct BottomBar<Actions: View>: View {
         }
         .ignoresSafeArea(edges: .bottom)
     }
-    // Main's note is the bar's own top: its hairline moves above the note, which lines up with
-    // the buttons.
     .floatingAbove {
       if let note {
         note
@@ -194,7 +192,6 @@ struct BarNote: View {
     self.init(nil, AttributedString(message), tone: tone, action: action)
   }
 
-  /// A status the screen waits on, said in a line and what to do about it.
   init(heading: LocalizedStringResource, _ message: LocalizedStringResource) {
     self.init(
       AttributedString(localized: heading), AttributedString(localized: message), tone: .status,
@@ -252,8 +249,7 @@ struct BarNote: View {
 
 extension View {
   /// The bar lines up with the screen's one readable column, such as a list's 768pt one on iPad,
-  /// so its buttons and its note end where the rows do; without one it keeps main's 680pt task
-  /// column. Only the sides: the buttons add the scene's room above and below.
+  /// so both its note and actions end where the rows do.
   @ViewBuilder
   fileprivate func barColumn(
     _ column: ColumnMargins?, listMargins: NSDirectionalEdgeInsets?, isTask: Bool

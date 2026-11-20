@@ -619,7 +619,6 @@ struct MockOptions: Hashable, Decodable, Sendable {
     var purpose: MockPurpose
   }
 
-  /// The mock the learner asked for while its questions were written, kept by the server.
   struct Requested: Hashable, Decodable, Sendable {
     enum Status: String, Decodable, Sendable {
       case preparing

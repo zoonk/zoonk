@@ -92,7 +92,6 @@ class MockChooserScreenshots {
         capturePreparing("chooser-phone-preparing-font200")
     }
 
-    /** Start on a mock whose questions are still written: the server saves the request and the bar says so. */
     private fun capturePreparing(
         name: String,
         dark: Boolean = false,
@@ -104,7 +103,6 @@ class MockChooserScreenshots {
         }
     }
 
-    /** Back on the page once the requested mock is ready: picking it offers Start again. */
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun phoneReady() =

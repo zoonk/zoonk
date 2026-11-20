@@ -14,7 +14,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
     case nothingNew
   }
 
-  /// What a `waiting` day waits for: its lessons, or its scheduled mock exam's questions.
   enum WaitingFor: String, Decodable, Sendable {
     case lessons
     case mock
@@ -284,16 +283,12 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let kind: Kind
   let lessonId: String?
   let mistakesOnly: Bool
-  /// The review offered while the day's scheduled mock is prepared; its ref says so, so it never
-  /// opens an ordinary review the learner already finished.
   let mockPreparationReview: Bool?
   let opensInPlayer: Bool
   let oftenTested: Bool
   let planItemId: String?
   let planItemKey: String?
   let position: Int
-  /// A mock whose questions are still being written: it shows its time and doesn't open, and the
-  /// day goes on with its next step.
   let preparing: Bool
   let questions: Int
   let refresh: Bool

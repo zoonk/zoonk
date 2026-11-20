@@ -15,7 +15,6 @@ export function getMockOptionKey(option: MockShape): string {
   return [option.kind, option.day ?? "", option.area ?? ""].join(":");
 }
 
-/** The option whose questions are still being written, if any. */
 export function getPreparingKey({
   status,
   view,

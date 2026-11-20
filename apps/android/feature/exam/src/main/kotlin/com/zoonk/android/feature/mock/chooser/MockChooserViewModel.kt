@@ -24,10 +24,8 @@ class MockChooserViewModel(
     private val mutableOpened = MutableStateFlow<String?>(null)
     private val mutableTriedLocked = MutableStateFlow(false)
 
-    /** Asking for the mock. */
     val busy: StateFlow<Boolean> = mutableBusy.asStateFlow()
 
-    /** The last Start failed. */
     val failed: StateFlow<Boolean> = mutableFailed.asStateFlow()
 
     /** The mock to open: started, or the one that was running. */
@@ -70,7 +68,6 @@ class MockChooserViewModel(
         }
     }
 
-    /** The server's refusal is the options' access now ([refused] writes it), so the gate reads it from them. */
     private fun metTheLock() {
         tryLocked()
         viewModelScope.launch { refused() }

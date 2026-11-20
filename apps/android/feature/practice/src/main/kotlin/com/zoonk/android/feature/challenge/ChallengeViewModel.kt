@@ -191,11 +191,8 @@ class ChallengeViewModel(
 
     private suspend fun startOnce(afterWriting: Boolean): Outcome =
         when (val result = store.start(mutableUi.value.planItemId, afterWriting)) {
-            // A mock still prepared: the intro, read again, says so.
             is MutationResult.Done -> result.value?.let(::open) ?: Outcome.Reread
-
             is MutationResult.Failed -> failedStart(result, afterWriting)
-
             MutationResult.Obsolete -> Outcome.Failed
         }
 

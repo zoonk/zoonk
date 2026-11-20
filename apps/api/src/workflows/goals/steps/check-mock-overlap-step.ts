@@ -1,5 +1,6 @@
 import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
-import { checkRecallOverlap, toRecallQuestion } from "@zoonk/ai/tasks/items/check-recall-overlap";
+import { checkRecallOverlap } from "@zoonk/ai/tasks/items/check-recall-overlap";
+import { toRecallQuestion } from "@zoonk/ai/tasks/items/recall-question";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { type MockWritingSkill } from "@zoonk/core/exams/mocks/prep";
 import { type toContentAnalytics } from "../../_shared/content-analytics";

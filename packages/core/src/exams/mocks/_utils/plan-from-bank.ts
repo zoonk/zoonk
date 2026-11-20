@@ -13,7 +13,10 @@ import { countReused } from "../mock-reuse";
 import { type AnytimeMockSetup, loadMockSkillIds } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
 import { loadListeningCandidates } from "./mock-listening";
-import { listScheduledSupplyOptions } from "./scheduled-supply-options";
+import {
+  SCHEDULED_SUPPLY_PLAN_SELECT,
+  listScheduledSupplyOptions,
+} from "./scheduled-supply-options";
 
 type BankPlan = {
   candidates: MockCandidate[];
@@ -65,16 +68,7 @@ async function reserveScheduled({
   userId: string;
 }) {
   const plan = await client.plan.findUnique({
-    select: {
-      items: {
-        orderBy: { scheduledFor: "asc" },
-        select: { scheduledFor: true },
-        take: 2,
-        where: { kind: "mock", status: "todo" },
-      },
-      phases: true,
-      settings: true,
-    },
+    select: SCHEDULED_SUPPLY_PLAN_SELECT,
     where: { goalId: goal.id },
   });
 

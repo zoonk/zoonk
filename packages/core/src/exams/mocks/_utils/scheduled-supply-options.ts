@@ -7,6 +7,17 @@ import { getFinalStretchStart, isInFinalStretch } from "../../final-stretch/fina
 import { getMockDays } from "../mock-plan";
 import { type AnytimeMockSetup } from "./anytime-mock-setup";
 
+export const SCHEDULED_SUPPLY_PLAN_SELECT = {
+  items: {
+    orderBy: { scheduledFor: "asc" },
+    select: { scheduledFor: true },
+    take: 2,
+    where: { kind: "mock", status: "todo" },
+  },
+  phases: true,
+  settings: true,
+} as const;
+
 export async function listScheduledSupplyOptions({
   client = prisma,
   goal,

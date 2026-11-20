@@ -61,17 +61,12 @@ function letterId() {
   );
 }
 
-/** Every area of the plan holds this many unseen mock-only questions, more than any mock asks of it. */
 const RESERVE_PER_AREA = 45;
 
 const planSkillsSchema = z.object({
   skills: z.array(z.object({ area: z.string().nullish(), skillId: z.string().nullish() })),
 });
 
-/**
- * Scheduled mocks draw only on the mock-only reserve, so the persona's plan gets a full one, each
- * question a copy of one of the exam's own with a new question line, so it keeps the exam's shape.
- */
 async function fillMockReserve({
   examBlueprintId,
   graph,

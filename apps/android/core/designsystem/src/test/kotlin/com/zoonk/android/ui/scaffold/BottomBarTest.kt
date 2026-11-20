@@ -180,7 +180,6 @@ class BottomBarTest {
         }
         val page = compose.onNodeWithTag(PAGE).getUnclippedBoundsInRoot().let { it.bottom - it.top }
 
-        // 20dp short of the page's height, with the bar's margin over it (24dp on this width).
         noteHeight = page - 44.dp
         compose.waitForIdle()
 

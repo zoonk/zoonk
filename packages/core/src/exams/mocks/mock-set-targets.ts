@@ -31,9 +31,13 @@ export async function pickMockSetTargets({
 
       const sets = await pickItemSetTargets({ goalId, mockSkillIds: skillIds });
 
+      if (sets.length === 0) {
+        return [];
+      }
+
       const skills = await loadMockWritingSkills({
         goalId,
-        skillIds: sets.flatMap((set) => set.skills.map((skill) => skill.id)),
+        skillIds: [...new Set(sets.flatMap((set) => set.skills.map((skill) => skill.id)))],
       });
 
       const byId = new Map(skills.map((skill) => [skill.id, skill]));

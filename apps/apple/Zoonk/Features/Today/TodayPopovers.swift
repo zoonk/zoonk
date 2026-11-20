@@ -137,7 +137,6 @@ private struct DaySegmentButton: View {
 
 // Mirrors main's `today-segment-popover.tsx`.
 extension DaySegment {
-  /// Today's bar draws only progress: a part still ahead is on the track, whatever its kind.
   fileprivate var progressMark: DaySegments.Segment {
     switch self {
     case .block(_, .done): .done
@@ -168,7 +167,6 @@ extension DaySegment {
     }
   }
 
-  /// `gettingReady` says the block's row reads "Getting ready…", so its part says it too.
   func facts(gettingReady: Bool) -> [String] {
     switch self {
     case .block(_, .done):

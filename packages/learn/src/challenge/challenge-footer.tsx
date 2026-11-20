@@ -215,7 +215,6 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
   }
 
-  // A start can find it preparing too, when the page was read before its questions ran short.
   if (challenge.access === "preparing" || start.problem === "preparing") {
     return { actions: <KeepStudyingLink />, line: <MockPreparingWords /> };
   }

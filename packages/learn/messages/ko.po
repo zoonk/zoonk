@@ -8131,7 +8131,6 @@ msgid "Leave blank"
 msgstr "답하지 않기"
 
 #: src/mock/mock-preparing.tsx
-#: src/today/today-day-status.tsx
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
 msgstr "시작하려면 이 페이지로 다시 오세요."

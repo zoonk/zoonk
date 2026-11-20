@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { createFixedScore } from "@/lib/score";
 import { calculateScore } from "@/lib/score-calculation";
 import { type CategoryScore, type TaskScorer, toTokenUsage } from "@/lib/types";
-import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
+import { type GeneratedItem, OPTION_LETTERS } from "@zoonk/ai/tasks/items/schemas";
 import { Output, generateText } from "ai";
 import z from "zod";
 import { type GenerateItemsCase, checkGeneratedItems } from "../generate-items/scorer";
@@ -15,9 +15,6 @@ import { type GenerateMockItemsExpected, type ReleasedQuestion } from "./test-ca
  */
 const BLIND_JUDGE_MODEL_ID = "anthropic/claude-opus-5.5";
 
-const OPTION_LETTERS = "ABCDEFGH";
-
-/** Written questions a rating easier than the released ones by this much or more read as easier. */
 const DIFFICULTY_TOLERANCE = 0.5;
 
 const WEIGHTS = { codeChecks: 15, difficulty: 35, keys: 20, style: 30 } as const;

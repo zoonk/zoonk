@@ -66,11 +66,6 @@ function describeEntry(entry: NumericEntry | null | undefined): string | null {
   return entry.kind === "decimals" ? `decimals: ${entry.places ?? 0}` : entry.kind;
 }
 
-/**
- * Practice questions fit the skill's lesson level. Mock questions prepare a learner for exam day:
- * as hard as, and in the style of, the exam's released questions, so a named exam's mock ignores
- * `level`.
- */
 type ItemPurpose = "practice" | "mock";
 
 export type GenerateItemsParams = {
@@ -87,7 +82,6 @@ export type GenerateItemsParams = {
   /** Null for general items. */
   field?: string | null;
   examFormat?: ItemExamFormat | null;
-  /** Openings of the skill's questions a learner already meets; a mock's also hold its lessons' questions. */
   usedSituations?: readonly string[];
   model?: string;
   serviceTier?: ServiceTier;
@@ -197,7 +191,7 @@ export async function generateItems(params: GenerateItemsParams) {
         providerOptions,
         reasoning,
       }),
-    libraryInput: true,
+    libraryInput: !mock,
     systemPrompt,
     task: "generate-items",
   });

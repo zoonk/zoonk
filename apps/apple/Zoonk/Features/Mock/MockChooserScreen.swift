@@ -91,8 +91,6 @@ private struct MockChooser: View {
     view.options.first { $0.id == picked }
   }
 
-  /// The picked mock is the one asked for and its questions are still being written; another pick
-  /// starts another mock.
   private var isPreparing: Bool {
     guard let requested = view.requested, let pickedOption else { return false }
     return requested.status == .preparing && requested.shape == pickedOption.shape
@@ -139,8 +137,6 @@ private struct MockChooser: View {
     }
   }
 
-  /// The questions are written in the background, so the page reads the request again (main's
-  /// 15 seconds) to bring Start back once they're ready; it never starts the mock itself.
   private func readAgainWhilePreparing() async {
     while isPreparing {
       do {
@@ -393,8 +389,6 @@ private struct MockChooser: View {
   }
 }
 
-/// Main's `MockPreparingWords`: said beside "Keep studying" while a mock's questions are written,
-/// on the chooser and on a scheduled mock's intro. It never starts by itself.
 enum MockPreparing {
   static let title = LocalizedStringResource("Your mock exam is being prepared", table: "Mock")
   static let line = LocalizedStringResource("Come back to this page to start it.", table: "Mock")

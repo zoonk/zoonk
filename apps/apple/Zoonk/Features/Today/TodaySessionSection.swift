@@ -116,7 +116,7 @@ struct TodaySessionSection: View {
   }
 
   /// A block still to do opens from its row, in whatever order the learner likes; one waiting for
-  /// earlier work, or a mock still being prepared, doesn't.
+  /// earlier work or mock supply stays closed.
   @ViewBuilder
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(

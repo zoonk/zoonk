@@ -71,7 +71,6 @@ export function isStopBeingWritten({
   );
 }
 
-/** A step whose row says "Getting ready…": a mock whose questions are being written, or a lesson. */
 export function useStepGettingReady() {
   const { today, writingStalled } = useTodayScreen();
 

@@ -1,8 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { toListeningExam } from "../exams/listening/listening-exam";
-import { getListeningSkillIds } from "../exams/listening/listening-skills";
 import {
   type PlacementQuickFormat,
   getPlacementQuickFormat,
@@ -11,9 +9,8 @@ import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { listPastQuestionExamples } from "../library/items/past-question-examples";
 import { loadUsedSituations } from "../library/items/used-situations";
 import { getSkillArea } from "../plans/planner/graph-areas";
-import { parsePlanGraph } from "../plans/planner/plan-state";
-import { toItemExam } from "./item-exam";
-import { type PlacementItemSkill } from "./placement-item-skills";
+import { readItemExamPlan, toItemExam } from "./item-exam";
+import { PLACEMENT_ITEM_SKILL_SELECT, type PlacementItemSkill } from "./placement-item-skills";
 
 const SET_AREAS = 2;
 
@@ -38,27 +35,13 @@ export async function pickItemSetTargets({
   goalId: string;
   mockSkillIds?: readonly string[];
 }): Promise<ItemSetTarget[]> {
-  const goal = await prisma.goal.findUnique({
-    select: {
-      examBlueprint: true,
-      kind: true,
-      plan: { select: { graph: true } },
-      targetLanguage: true,
-    },
-    where: { id: goalId },
-  });
+  const plan = await readItemExamPlan(goalId);
 
-  const blueprint = goal?.kind === "exam" ? goal.examBlueprint : null;
-
-  if (!blueprint) {
+  if (!plan) {
     return [];
   }
 
-  const graph = parsePlanGraph(goal?.plan?.graph);
-  const firstPhase = Math.min(...graph.skills.map((skill) => skill.phase));
-
-  // Listening skills need recordings rather than text passages about conversations.
-  const listening = goal ? getListeningSkillIds({ exam: toListeningExam(goal), graph }) : new Set();
+  const { blueprint, firstPhase, graph, listening } = plan;
 
   const needed = mockSkillIds && new Set(mockSkillIds);
 
@@ -70,16 +53,7 @@ export async function pickItemSetTargets({
 
   const [rows, sets] = await Promise.all([
     prisma.skill.findMany({
-      select: {
-        country: true,
-        description: true,
-        id: true,
-        language: true,
-        level: true,
-        name: true,
-        ownerId: true,
-        targetLanguage: true,
-      },
+      select: PLACEMENT_ITEM_SKILL_SELECT,
       where: { id: { in: firstSkills.map((skill) => skill.skillId) } },
     }),
     prisma.itemSet.findMany({
@@ -116,10 +90,14 @@ export async function pickItemSetTargets({
       skills: skills
         .slice(0, SKILLS_PER_SET)
         .flatMap((skill) => rows.find((row) => row.id === skill.skillId) ?? [])
-        .map((row) => ({ ...row, exam })),
+        .map((row) => ({ ...row, exam, usedSituations: [] })),
       usedTitles,
     }))
     .filter((target) => target.skills.length >= 2);
+
+  if (needed) {
+    return targets;
+  }
 
   const usedSituations = await loadUsedSituations({
     examBlueprintId: blueprint.id,

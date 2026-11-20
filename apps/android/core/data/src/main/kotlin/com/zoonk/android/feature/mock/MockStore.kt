@@ -49,7 +49,6 @@ class MockStore(
         resource.refresh()
     }
 
-    /** The server saved [shape] as the learner's request while its questions are written: the chooser shows it at once. */
     fun requested(
         goalId: UUID,
         shape: MockShape,

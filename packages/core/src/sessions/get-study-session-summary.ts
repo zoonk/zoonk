@@ -55,7 +55,6 @@ type StudySessionSummary = {
   correct: number;
   energy: Change<number> | null;
   extraTime: ExtraTime;
-  /** True when there is no available next block, including while a mock is preparing. */
   finished: boolean;
   fullMeal: boolean;
   /** Actual recorded time, consistent with learner stats. */

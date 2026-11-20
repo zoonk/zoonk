@@ -39,10 +39,9 @@ export async function writePartSet({
   exam,
   part,
   serviceTier,
-}: PartInput & {
-  analytics?: AiGenerationContext;
-  serviceTier?: ServiceTier;
-}): Promise<ItemSetToStore<WrittenSetItem> | null> {
+}: PartInput & { analytics?: AiGenerationContext; serviceTier?: ServiceTier }): Promise<
+  ItemSetToStore<WrittenSetItem> | "flawed" | null
+> {
   const [stored, skills] = await Promise.all([
     prisma.itemSet.count({ where: getFilter({ exam, mockOnly, part }) }),
     loadListeningSkills({ examBlueprintId: exam.blueprintId, sectionName: part.sectionName }),
@@ -62,7 +61,9 @@ export async function writePartSet({
     skills,
   });
 
-  return set && { ...set, ...(mockOnly && { minItems: part.count }), mockOnly };
+  return !set || set === "flawed"
+    ? set
+    : { ...set, ...(mockOnly && { minItems: part.count }), mockOnly };
 }
 
 async function listUnvoicedParts(exam: ListeningExam): Promise<ListeningPart[]> {

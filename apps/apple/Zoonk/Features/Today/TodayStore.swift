@@ -122,7 +122,6 @@ final class TodayStore {
     view.isBeingWritten(block) && !(block.lessonId.map(isStalled) ?? false)
   }
 
-  /// A block whose row says "Getting ready…": a mock whose questions are being written, or a lesson.
   func isGettingReady(_ block: StudyBlock, in view: TodayView?) -> Bool {
     block.preparing || view.map { isBeingWritten(block, in: $0) } == true
   }

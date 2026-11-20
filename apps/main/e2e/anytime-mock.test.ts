@@ -12,7 +12,6 @@ import { holdActionAnswer } from "./held-action";
 import { continueToStep } from "./result-steps";
 import { openAs } from "./study-day";
 
-/** The chooser reads itself again this often while the picked mock is being prepared. */
 const MOCK_READ_AGAIN_MS = 15_000;
 
 async function confirmMockHandIn(page: Page) {
@@ -234,7 +233,6 @@ test.describe("Mocks whenever the learner wants", () => {
   test("a mock exam still being prepared says so, and Start comes back once it's ready", async ({
     browser,
   }) => {
-    // Half the full exam's questions: the full exam waits for the rest to be written.
     const { blueprint, skills, user } = await createAnytimeMockLearner({
       plus: true,
       questionsPerSkill: 2,
@@ -259,7 +257,6 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(keepStudying).toHaveAttribute("href", /\/today$/u);
     await expect(start).toBeHidden();
 
-    // The bar's main action keeps its row and its edge; only its label changes.
     const keepBox = await keepStudying.boundingBox();
 
     expect(keepBox?.y).toBe(startBox?.y);
@@ -290,7 +287,6 @@ test.describe("Mocks whenever the learner wants", () => {
       ),
     );
 
-    // The page reads itself again while the picked mock is being prepared, and never starts it.
     await page.clock.runFor(MOCK_READ_AGAIN_MS);
     await expect(start).toBeEnabled();
     await expect(keepStudying).toBeHidden();

@@ -17,7 +17,6 @@ struct ChallengeScreen: View {
   @State private var isWriting = false
   @State private var writeLimit: HelpLimit?
   @State private var startProblem: LocalizedStringResource?
-  /// A start found the mock's questions still being written, though the page said it was open.
   @State private var startFoundPreparing = false
   @State private var isMoving = false
   @State private var moveProblem: LocalizedStringResource?
@@ -322,7 +321,6 @@ struct ChallengeScreen: View {
     }
   }
 
-  /// A scheduled mock whose questions are still being written: it never starts short.
   private func isPreparing(_ challenge: Components.Schemas.Challenge) -> Bool {
     canStart(challenge) && (challenge.access == .preparing || startFoundPreparing)
   }

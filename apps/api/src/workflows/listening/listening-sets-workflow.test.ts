@@ -155,6 +155,27 @@ describe(listeningSetsWorkflow, () => {
     ).resolves.toBe(0);
   });
 
+  it("writes a second draft for a flawed listening part before checking and voicing it", async () => {
+    const exam = await listeningExamFixture();
+    const goal = await examGoal(exam);
+
+    vi.mocked(writeListeningSet).mockImplementationOnce(async ({ task }) =>
+      taskResult({ problems: ["The script does not support the answer."], set: writtenSet(task) }),
+    );
+
+    await expect(listeningSetsWorkflow({ goalId: goal.id, wait: "later" })).resolves.toStrictEqual({
+      status: "prepared",
+      voiced: 2,
+    });
+
+    const calls = vi.mocked(writeListeningSet).mock.calls;
+    expect(calls).toHaveLength(3);
+    const firstTask = calls[0]?.[0].task;
+    expect(calls.filter(([{ task }]) => task === firstTask)).toHaveLength(2);
+    expect(calls.every(([, redraft]) => redraft === false)).toBe(true);
+    expect(solveItems).toHaveBeenCalledTimes(2);
+  });
+
   it("writes a learner who heard every recording of a part a new one, for that part only", async () => {
     const exam = await listeningExamFixture();
     const goal = await examGoal(exam);

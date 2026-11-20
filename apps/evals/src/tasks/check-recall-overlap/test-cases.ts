@@ -1,8 +1,6 @@
 import { type TestCase } from "@/lib/types";
-import {
-  type CheckRecallOverlapParams,
-  type RecallQuestion,
-} from "@zoonk/ai/tasks/items/check-recall-overlap";
+import { type CheckRecallOverlapParams } from "@zoonk/ai/tasks/items/check-recall-overlap";
+import { type RecallQuestion } from "@zoonk/ai/tasks/items/recall-question";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 
 export type CheckRecallOverlapInput = Pick<

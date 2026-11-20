@@ -84,9 +84,7 @@ internal fun PracticeChooser(
     val option = view.options.firstOrNull { it.key == picked }
     val severalDays = view.options.count { it.kind == MockOption.Kind.FULL } > 1
     val open = view.access == MockOptions.Access.OPEN
-    // The pick the learner asked for while its questions are written: coming back to it, they find it ready or still being prepared.
     val preparing = view.requested?.let { it.status == MockOptionsRequested.Status.PREPARING && it.shape == option?.shape } == true
-    // The questions are written on the server; reading the options again is how the page learns they're ready.
     WhileShown(preparing) {
         while (true) {
             delay(READ_AGAIN)

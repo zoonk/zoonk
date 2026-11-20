@@ -5,6 +5,7 @@ import { CalendarClockIcon, ClockIcon, MoonIcon, SparklesIcon } from "lucide-rea
 import { useExtracted } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
+import { useReturnToMockLine } from "../mock/mock-preparing";
 import { usePastDateText } from "../plan/plan-status-label";
 import { useTodayScreen } from "./today-context";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
@@ -52,13 +53,14 @@ function RestStatus({ className }: { className?: string }) {
 
 function WaitingStatus({ className }: { className?: string }) {
   const t = useExtracted();
+  const returnToMock = useReturnToMockLine();
   const { today, writingStalled } = useTodayScreen();
 
   if (today.session.waitingFor === "mock") {
     return (
       <TodayStatusLine className={className} icon={<ClockIcon />}>
         <TodayStatusSentence>{t("Your mock exam is being prepared.")}</TodayStatusSentence>
-        <TodayStatusClause>{t("Come back to this page to start it.")}</TodayStatusClause>
+        <TodayStatusClause>{returnToMock}</TodayStatusClause>
       </TodayStatusLine>
     );
   }

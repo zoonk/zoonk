@@ -22,8 +22,11 @@ export async function screenMockSet({
   workflowRunId: string;
 }): Promise<ItemSetToStore<WrittenSetItem>> {
   const bySkill = Map.groupBy(set.items, (question) => question.skillId);
-  const skills = await loadMockWritingSkillsStep({ goalId, skillIds: [...bySkill.keys()] });
-  const stimulus = await getSetStimulusStep({ content: set.content, kind: set.kind });
+
+  const [skills, stimulus] = await Promise.all([
+    loadMockWritingSkillsStep({ goalId, skillIds: [...bySkill.keys()] }),
+    getSetStimulusStep({ content: set.content, kind: set.kind }),
+  ]);
 
   const groups = await Promise.all(
     skills.map(async (mock) => {

@@ -15,7 +15,6 @@ internal fun preparing() = AnytimeMock(id = null, status = AnytimeMock.Status.PR
 
 internal fun refusal(code: String) = ApiException(ApiError.Unavailable, code, status = 422)
 
-/** Each start answers [starts]'s next answer, the last one again once they run out. */
 internal class FakeMockStartApi : MockStartApi {
     var starts: List<() -> AnytimeMock> = listOf { started() }
     val started = mutableListOf<MockShape>()

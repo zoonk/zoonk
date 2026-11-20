@@ -37,7 +37,6 @@ data class DayView(
     val sessionBar: SessionBar,
     val nextPosition: Long?,
     val state: StudySession.State,
-    /** What a `waiting` day waits for: its lessons, or its scheduled mock exam's questions. */
     val waitingFor: StudySession.WaitingFor?,
     val missions: List<DayMission>,
     val fullMeal: StudySessionFullMeal,
@@ -105,9 +104,7 @@ data class DayStep(
     val weakest: Boolean,
     val opensInPlayer: Boolean = false,
     val waitReason: StudyBlock.WaitReason?,
-    /** A mock whose questions are still written: it shows its time and opens once they're ready. */
     val preparing: Boolean = false,
-    /** The review offered while the day's mock is prepared; its ref says so, so it never opens an ordinary one. */
     val mockPreparationReview: Boolean = false,
 ) {
     val isFinished: Boolean

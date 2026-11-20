@@ -13,11 +13,6 @@ const MISSED_REPEAT_SCORE = 6;
 const PASSING_FLOOR = 8;
 const KEPT_NEW_POINTS = 2;
 
-/**
- * A missed repeat puts a question the learner can answer from memory into their mock, so a check
- * that misses one fails; past that bar, the score rises with the share of new questions kept, since
- * each one dropped is written again.
- */
 const scoreCheckRecallOverlap: TaskScorer<CheckRecallOverlapExpected> = ({ output, testCase }) => {
   const expected = testCase.expected?.repeats;
 

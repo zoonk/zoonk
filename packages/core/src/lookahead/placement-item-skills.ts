@@ -25,6 +25,17 @@ import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { type PlacementChoice, type PlacementItemExam, getPickingExam } from "./item-exam";
 
+export const PLACEMENT_ITEM_SKILL_SELECT = {
+  country: true,
+  description: true,
+  id: true,
+  language: true,
+  level: true,
+  name: true,
+  ownerId: true,
+  targetLanguage: true,
+} as const;
+
 export type PlacementItemSkill = {
   country: string | null;
   description: string;

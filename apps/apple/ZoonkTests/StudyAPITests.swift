@@ -27,8 +27,6 @@ final class StudyAPITests: XCTestCase {
       flags["mockPreparationReview"], "core refuses a null for a flag it reads as absent")
   }
 
-  /// The review offered while the day's mock is prepared opens only that review, never an ordinary
-  /// one the learner already finished at the same position.
   func testTheReviewOfferedWhileTheMockIsPreparedSaysSoInItsRef() async throws {
     let transport = StudyRecordingTransport()
     let api = StudyAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))

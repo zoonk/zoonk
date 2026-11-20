@@ -62,7 +62,6 @@ test.describe("Exam goal", () => {
   test("a mock in real conditions, its start and hand-in waits bounded, and its result", async ({
     browser,
   }) => {
-    // A full half-day mock: every one of its questions is answered.
     test.slow();
 
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {

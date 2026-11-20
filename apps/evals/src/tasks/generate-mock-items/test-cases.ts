@@ -6,13 +6,8 @@ type GenerateMockItemsInput = Omit<
   "model" | "purpose" | "reasoning" | "useFallback"
 >;
 
-/** A released question as printed, with its official key: "true" or "false", or an option's letter. */
 export type ReleasedQuestion = { text: string; key: string };
 
-/**
- * Released questions the writer never sees, which the blind judge reads mixed with the written
- * ones, and the paper's command the written ones go under, since every released one shows its own.
- */
 export type GenerateMockItemsExpected = { command: string; released: ReleasedQuestion[] };
 
 const COUNT = 5;

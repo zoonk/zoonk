@@ -85,7 +85,6 @@ function useChooserNote({ busy, gated, preparing, status }: ChooserBarProps): Re
 type ChooserBarProps = {
   busy: boolean;
   gated: boolean;
-  /** The picked option's questions are still being written. */
   preparing: boolean;
   status: MockChooserStatus;
 };

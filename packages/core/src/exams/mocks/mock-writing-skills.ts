@@ -1,5 +1,5 @@
 import "server-only";
-import { type RecallQuestion, toRecallQuestion } from "@zoonk/ai/tasks/items/check-recall-overlap";
+import { type RecallQuestion, toRecallQuestion } from "@zoonk/ai/tasks/items/recall-question";
 import { GENERATED_ITEM_SCHEMAS } from "@zoonk/ai/tasks/items/schemas";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -11,7 +11,10 @@ import { listPastQuestionExamples } from "../../library/items/past-question-exam
 import { getItemSituation, toSituationOpening } from "../../library/items/used-situations";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { getGoalItemExam } from "../../lookahead/item-exam";
-import { type PlacementItemSkill } from "../../lookahead/placement-item-skills";
+import {
+  PLACEMENT_ITEM_SKILL_SELECT,
+  type PlacementItemSkill,
+} from "../../lookahead/placement-item-skills";
 import { getWrongPenalty } from "../scoring/mock-scoring";
 import { readLessonRecallQuestions } from "./mock-lesson-questions";
 
@@ -108,16 +111,7 @@ export async function loadMockWritingSkills({
       where: { id: goalId },
     }),
     prisma.skill.findMany({
-      select: {
-        country: true,
-        description: true,
-        id: true,
-        language: true,
-        level: true,
-        name: true,
-        ownerId: true,
-        targetLanguage: true,
-      },
+      select: PLACEMENT_ITEM_SKILL_SELECT,
       where: { id: { in: [...skillIds] } },
     }),
   ]);
@@ -129,24 +123,27 @@ export async function loadMockWritingSkills({
   const blueprint = goal.examBlueprint;
   const exam = getGoalItemExam(goal).exam;
 
+  const byId = new Map(rows.map((row) => [row.id, row]));
+
   return Promise.all(
     skillIds
-      .flatMap((id) => rows.find((row) => row.id === id) ?? [])
+      .flatMap((id) => byId.get(id) ?? [])
       .filter((skill) => !skill.ownerId || skill.ownerId === goal.userId)
       .map(async (skill) => {
-        const pastQuestions = blueprint
-          ? await listPastQuestionExamples({
-              examBlueprintId: blueprint.id,
-              publicOnly: !skill.ownerId && blueprint.visibility === "public",
-              skillIds: [skill.id],
-            })
-          : [];
-
-        const history = await loadSkillHistory(
-          skill.id,
-          skill.ownerId,
-          blueprint?.visibility === "private" ? blueprint.id : null,
-        );
+        const [pastQuestions, history] = await Promise.all([
+          blueprint
+            ? listPastQuestionExamples({
+                examBlueprintId: blueprint.id,
+                publicOnly: !skill.ownerId && blueprint.visibility === "public",
+                skillIds: [skill.id],
+              })
+            : [],
+          loadSkillHistory(
+            skill.id,
+            skill.ownerId,
+            blueprint?.visibility === "private" ? blueprint.id : null,
+          ),
+        ]);
 
         return {
           ...skill,

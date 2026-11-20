@@ -20,10 +20,8 @@ export { type MockChooserStatus, getMockOptionKey } from "./mock-chooser-parts";
 
 type MockChooserHrefs = { mock: (id: string) => string };
 
-/** How often the page reads again while the picked mock is being prepared. */
 const READ_AGAIN_MS = 15_000;
 
-/** Reads the page again while `waiting`, and as soon as the learner comes back to the tab. */
 function useReadAgainWhile({ readAgain, waiting }: { readAgain: () => void; waiting: boolean }) {
   const read = useEffectEvent(() => {
     if (document.visibilityState === "visible") {
@@ -117,7 +115,6 @@ type MockChooserProps = {
   busy: boolean;
   hrefs: MockChooserHrefs;
   onStart: (option: MockOptionView) => void;
-  /** Reads the page again, to learn when a mock being prepared is ready. */
   readAgain: () => void;
   status: MockChooserStatus;
   view: MockOptionsView;

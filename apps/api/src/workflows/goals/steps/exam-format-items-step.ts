@@ -173,6 +173,7 @@ export async function prepareSkillExamFormatItems({
     analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
     items: written.items,
     language: skill.language,
+    ...(mock && { mockOnly: true }),
     optionCount: getOptionCount(pick),
     optionLanguage: skill.targetLanguage,
     select: pick.answerFormat.select ?? undefined,

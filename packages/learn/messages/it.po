@@ -8131,7 +8131,6 @@ msgid "Leave blank"
 msgstr "Lascia in bianco"
 
 #: src/mock/mock-preparing.tsx
-#: src/today/today-day-status.tsx
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
 msgstr "Torna su questa pagina per iniziare."

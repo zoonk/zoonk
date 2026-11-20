@@ -7,6 +7,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./check-recall-overlap.prompt.md";
 import { type GeneratedItem } from "./item-schemas";
+import { type RecallQuestion, toRecallQuestion } from "./recall-question";
 
 /**
  * On 5 labeled cases (17 candidates: rewordings, negations, renamed cases and same-skill questions
@@ -17,14 +18,9 @@ import { type GeneratedItem } from "./item-schemas";
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["anthropic/claude-haiku-5.5"] as const;
 
-/** What a learner saw: the question as shown and its answer, when it has one. */
-export type RecallQuestion = { question: string; answer: string | null };
-
 export type CheckRecallOverlapParams = {
   skill: { name: string; description: string };
-  /** New questions, before they're stored. */
   candidates: readonly GeneratedItem[];
-  /** The skill's questions a learner can already have met: bank questions and lesson question screens. */
   earlier: readonly RecallQuestion[];
   model?: string;
   serviceTier?: ServiceTier;
@@ -47,51 +43,6 @@ const schema = z.object({
   ),
 });
 /* oxlint-enable eslint/sort-keys */
-
-function lines(values: readonly (string | null | undefined)[]): string {
-  return values.filter(Boolean).join("\n");
-}
-
-/** The question as a learner reads it, and its key, from any item format. */
-export function toRecallQuestion(item: GeneratedItem): RecallQuestion {
-  switch (item.format) {
-    case "trueFalse":
-      return {
-        answer: item.isTrue ? "true" : "false",
-        question: lines([item.context, item.statement]),
-      };
-    case "multipleChoice":
-      return {
-        answer: item.options
-          .flatMap((option) => (option.isCorrect ? [option.text] : []))
-          .join("; "),
-        question: lines([
-          item.context,
-          item.question,
-          ...item.options.map((option) => `- ${option.text}`),
-        ]),
-      };
-    case "typed":
-    case "spoken":
-      return { answer: item.sampleAnswer, question: lines([item.context, item.question]) };
-    case "essay":
-      return { answer: null, question: lines([item.context, item.question]) };
-    case "numeric":
-      return {
-        answer: `${item.math.answer}${item.math.unit ? ` ${item.math.unit}` : ""}`,
-        question: lines([item.context, item.question]),
-      };
-    case "matchPairs":
-      return {
-        answer: item.pairs.map((pair) => `${pair.left} = ${pair.right}`).join("; "),
-        question: item.question,
-      };
-    case "order":
-      return { answer: item.steps.join(" > "), question: item.question };
-    default:
-      throw new Error("Unknown item format.");
-  }
-}
 
 function formatQuestions(questions: readonly RecallQuestion[]): string {
   return questions
@@ -146,7 +97,6 @@ export async function checkRecallOverlap(params: CheckRecallOverlapParams) {
         providerOptions,
         reasoning,
       }),
-    libraryInput: true,
     systemPrompt,
     task: "check-recall-overlap",
   });

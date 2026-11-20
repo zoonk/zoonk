@@ -18,7 +18,10 @@ import {
 } from "./_utils/anytime-mock-setup";
 import { canReuseMockItems, isCompleteMock, planFromBank } from "./_utils/create-anytime-mock";
 import { planMockWrites } from "./_utils/mock-writes";
-import { listScheduledSupplyOptions } from "./_utils/scheduled-supply-options";
+import {
+  SCHEDULED_SUPPLY_PLAN_SELECT,
+  listScheduledSupplyOptions,
+} from "./_utils/scheduled-supply-options";
 import { mockShapeSchema } from "./mock-contract";
 import { getPlannedItemIds } from "./mock-plan";
 import { type MockFormatShortfall } from "./mock-shortfall";
@@ -95,8 +98,10 @@ export async function listExamSupplyGoals({
 }
 
 export async function checkMockSupply(goalId: string) {
-  const result = await listMockPrepWrites({ goalId });
-  const goal = await prisma.goal.findUnique({ select: { userId: true }, where: { id: goalId } });
+  const [result, goal] = await Promise.all([
+    listMockPrepWrites({ goalId }),
+    prisma.goal.findUnique({ select: { userId: true }, where: { id: goalId } }),
+  ]);
 
   if (goal) {
     revalidateCacheTags([getLearnerModelCacheTag(goal.userId)]);
@@ -149,20 +154,7 @@ export async function listMockPrepWrites({
   goalId: string;
 }): Promise<MockQuestionWrites> {
   const goal = await prisma.goal.findUnique({
-    include: {
-      plan: {
-        select: {
-          items: {
-            orderBy: { scheduledFor: "asc" },
-            select: { scheduledFor: true },
-            take: 2,
-            where: { kind: "mock", status: "todo" },
-          },
-          phases: true,
-          settings: true,
-        },
-      },
-    },
+    include: { plan: { select: SCHEDULED_SUPPLY_PLAN_SELECT } },
     where: { id: goalId },
   });
 

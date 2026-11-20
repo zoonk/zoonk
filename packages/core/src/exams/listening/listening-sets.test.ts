@@ -303,6 +303,7 @@ describe(writePartSet, () => {
         })),
         task: part.task,
       }),
+      false,
     );
 
     expect(written).toMatchObject({

@@ -43,6 +43,7 @@ export async function checkItemSetKeys({
     analytics,
     items: items.map(({ item }) => item),
     language,
+    mockOnly: set.mockOnly,
     optionCount,
     optionLanguage,
     serviceTier,

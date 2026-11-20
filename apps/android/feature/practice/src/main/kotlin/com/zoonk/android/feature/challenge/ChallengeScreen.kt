@@ -854,7 +854,6 @@ private fun StartActions(
     }
 }
 
-/** A mock whose questions are still written: no Start until it's ready, and the learner goes on with the day. */
 @Composable
 private fun PreparingActions(
     ui: ChallengeUi,

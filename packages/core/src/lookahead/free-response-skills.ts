@@ -8,7 +8,7 @@ import { loadUsedSituations } from "../library/items/used-situations";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { toItemExam } from "./item-exam";
-import { type PlacementItemSkill } from "./placement-item-skills";
+import { PLACEMENT_ITEM_SKILL_SELECT, type PlacementItemSkill } from "./placement-item-skills";
 
 const FREE_RESPONSE_SKILLS = 3;
 
@@ -145,16 +145,7 @@ export async function pickFreeResponseSkills({
   }
 
   const skills = await prisma.skill.findMany({
-    select: {
-      country: true,
-      description: true,
-      id: true,
-      language: true,
-      level: true,
-      name: true,
-      ownerId: true,
-      targetLanguage: true,
-    },
+    select: PLACEMENT_ITEM_SKILL_SELECT,
     where: {
       id: { in: ranked },
       items: { none: { examBlueprintId: blueprint.id, format: "essay" } },

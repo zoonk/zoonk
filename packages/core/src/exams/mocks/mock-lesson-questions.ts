@@ -1,6 +1,6 @@
-import { type RecallQuestion } from "@zoonk/ai/tasks/items/check-recall-overlap";
+import { type RecallQuestion } from "@zoonk/ai/tasks/items/recall-question";
 import { type StepKind } from "@zoonk/db";
-import { getString, isJsonObject } from "@zoonk/utils/json";
+import { getString, isJsonObject, readStringArray } from "@zoonk/utils/json";
 
 type LessonScreen = {
   kind: StepKind;
@@ -19,12 +19,6 @@ function lines(values: readonly unknown[]) {
     .join("\n");
 }
 
-function strings(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((part): part is string => typeof part === "string")
-    : [];
-}
-
 function lessonContentQuestion(content: Record<string, unknown>): RecallQuestion | null {
   const check = isJsonObject(content.check) ? content.check : content;
   const options = Array.isArray(check.options) ? check.options.filter(isJsonObject) : [];
@@ -38,7 +32,7 @@ function lessonContentQuestion(content: Record<string, unknown>): RecallQuestion
     content.problem,
     ...pairs.map((pair) => pair.left),
     ...options.map((option) => typeof option.text === "string" && `- ${option.text}`),
-    ...strings(content.distractors),
+    ...readStringArray(content.distractors),
   ]);
 
   if (!question) {
@@ -55,7 +49,7 @@ function lessonContentQuestion(content: Record<string, unknown>): RecallQuestion
       getString(content, "targetText") ??
       getString(content, "result") ??
       numeric,
-    ...strings(content.answers),
+    ...readStringArray(content.answers),
     ...options.filter((option) => option.isCorrect === true).map((option) => option.text),
     ...pairs.map((pair) =>
       [getString(pair, "left"), getString(pair, "right")].filter(Boolean).join(" = "),

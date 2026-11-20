@@ -32,7 +32,6 @@ export type LessonWritingContext = {
   setup?: boolean;
   /** Otherwise the lesson asks only what learners pick (`getWrittenKinds`). */
   shortAnswers?: boolean;
-  /** Mock exam questions the lesson must not let a learner answer from memory. */
   usedSituations?: readonly string[];
 };
 
