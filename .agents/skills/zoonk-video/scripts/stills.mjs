@@ -1,9 +1,10 @@
 // Social stills from a film's stage scenes, in every size, scheme and language, with the harness running:
 //   node scripts/stills.mjs --film launch --scenes goal,time,today,goal-angle --out out/launch
 // Writes <out>/<lang>/<scene>-<16x9|4x5>-<light|black>.png, rendered at 2x and reduced with lanczos.
-// Narrow it with --langs en, --formats 16x9, --schemes dark.
+// Narrow it with --langs en, --formats 16x9, --schemes dark. Every image is captured before any is
+// written, so a name the stage doesn't know fails the run with nothing saved.
 import { execFileSync } from "node:child_process";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright-core";
 import { HARNESS } from "./harness.mjs";
@@ -21,6 +22,15 @@ const args = Object.fromEntries(
 const list = (value, fallback) => (value ?? fallback).split(",");
 if (!args.film || !args.scenes || !args.out) {
   throw new Error("usage: node scripts/stills.mjs --film <film> --scenes <a,b> --out <dir>");
+}
+
+for (const [flag, value, allowed] of [
+  ["formats", list(args.formats, "16x9,4x5"), Object.keys(SIZES)],
+  ["schemes", list(args.schemes, "light,dark"), Object.keys(NAMES)],
+]) {
+  const unknown = value.filter((name) => !allowed.includes(name));
+  if (unknown.length > 0)
+    throw new Error(`--${flag} ${unknown.join(",")}: use ${allowed.join(", ")}`);
 }
 
 const jobs = list(args.langs, "en,pt").flatMap((lang) =>
@@ -56,31 +66,37 @@ async function shoot({ fmt, lang, scene, scheme }) {
   });
   await page.evaluate(() => window.__ready);
   await page.waitForTimeout(400);
-  const out = path.join(args.out, lang, `${scene}-${fmt}-${NAMES[scheme]}.png`);
-  const big = `${out}.2x.png`;
-  mkdirSync(path.dirname(out), { recursive: true });
-  writeFileSync(big, await page.screenshot());
-  execFileSync("ffmpeg", [
-    "-y",
-    "-loglevel",
-    "error",
-    "-i",
-    big,
-    "-vf",
-    `scale=${width}:${height}:flags=lanczos`,
-    out,
-  ]);
-  rmSync(big);
+  const png = await page.screenshot();
   await context.close();
+  return {
+    out: path.join(args.out, lang, `${scene}-${fmt}-${NAMES[scheme]}.png`),
+    png,
+    width,
+    height,
+  };
+}
+
+function save({ out, png, width, height }) {
+  mkdirSync(path.dirname(out), { recursive: true });
+  execFileSync(
+    "ffmpeg",
+    ["-y", "-loglevel", "error", "-i", "-", "-vf", `scale=${width}:${height}:flags=lanczos`, out],
+    { input: png },
+  );
   console.log(out);
 }
 
 const started = Date.now();
 const queue = [...jobs];
-await Promise.all(
-  Array.from({ length: PARALLEL }, async () => {
-    for (let job = queue.shift(); job; job = queue.shift()) await shoot(job);
-  }),
-);
-await browser.close();
+const shots = [];
+try {
+  await Promise.all(
+    Array.from({ length: PARALLEL }, async () => {
+      for (let job = queue.shift(); job; job = queue.shift()) shots.push(await shoot(job));
+    }),
+  );
+} finally {
+  await browser.close();
+}
+shots.forEach(save);
 console.log(`${jobs.length} stills in ${((Date.now() - started) / 1000).toFixed(0)}s`);
