@@ -259,7 +259,6 @@
   "plan_far_from": "080dede2af41b3f119b95deadeeacb195f0ea47108abdc787618c2e0bcf17acf",
   "plan_far_from_month": "b9897af0c3d9e4ec22700882e2b0fe874845ce486758e4146cca7b906a4a4722",
   "plan_far_lessons": "d717e096ca3615a2ab517fc167af2f1e0aaa0978afd8354a62e86b052206a3ed",
-  "plan_far_lessons_about": "4091018e82a619a844746e06ed6887730f5b82bfdf014bb2e89d2f8f71f3dfd1",
   "plan_far_nothing_left": "f51c191aa8b7917c2882ee6cded2674a34421550ce26251d4cf31d7cf16b69d8",
   "plan_far_see_lessons": "2f39032bf8850df5294647a997945804d1183282a3b1e670338ff0f9866c43f1",
   "plan_far_unreachable": "f0b673a0575678402e00337532a4977f5f0958802663a8b7610c80f3ff74b618",
@@ -407,8 +406,8 @@
   "plan_short_full_review_and_practice": "303ba341431e3446f7401a9daa9ce5d6ae9f13bc3111f7d1279c7bc91cda5ffe",
   "plan_short_light_review": "a857db8c2a4470ea36156db957f245c33f683e8322cdd01f6abb6bb9e3be2473",
   "plan_short_map_and_gaps": "1b51a3f334bfdf2f4dca231760631503371f12bc44442df4b7fe31a9f8791c31",
+  "plan_short_mock": "ba032c9678fb79a5d7b2917a7f115b9389daeb7c35a9c3a1d24a8d462929108f",
   "plan_short_mock_and_practice": "688dba7d8efd80e3d0355367c22ff96276fc6392d22ed3defd997c703980e774",
-  "plan_short_mock_and_review": "00e0604337f84945a24d191225a8d51515f002a42addb90bcb240653585ce6ab",
   "plan_show_fewer_chapters": "000ee1f3966dd00063709ed4f2a0f7c8a1eac968c62e2062b8ffeebd23b7781f",
   "plan_show_fewer_units": "0a27467c37f7592e4ee38699df77386e5387887d7cc57f8f5c9f2ec9ae63b96b",
   "plan_skills_you_know": "2da6e5956dadce481a2e35bb6bf5194868c936dd905c84cb73f4d3f7a63528c6",
@@ -616,7 +615,7 @@
     <string name="plan_short_map_and_gaps">Mappa dell’esame e lacune</string>
     <string name="plan_short_mock_and_practice">Simulazione ed esercizi</string>
     <string name="plan_short_full_review_and_practice">Ripasso generale ed esercizi</string>
-    <string name="plan_short_mock_and_review">Simulazione breve e ripasso</string>
+    <string name="plan_short_mock">Simulazione breve</string>
     <string name="plan_short_full_review">Ripasso generale</string>
     <string name="plan_short_light_review">Ripasso leggero</string>
     <string name="plan_short_day">Giorno %1$d di %2$d</string>

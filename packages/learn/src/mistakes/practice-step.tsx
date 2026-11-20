@@ -95,11 +95,11 @@ export function PracticeStepActions({
         </QuestionDontKnow>
       )}
 
-      {ask}
-
       {(step.lesson?.step.kind !== "challenge" || phase.kind === "feedback") && (
         <QuestionMainAction {...getMainAction(run)} />
       )}
+
+      {ask}
     </>
   );
 }

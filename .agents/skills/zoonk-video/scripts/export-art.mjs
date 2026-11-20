@@ -3,13 +3,14 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { HARNESS } from "./harness.mjs";
 
 const out = fileURLToPath(new URL("../assets/svg/", import.meta.url));
 mkdirSync(out, { recursive: true });
 
 const browser = await chromium.launch();
 const page = await browser.newPage();
-await page.goto("http://localhost:5199/?view=art", { waitUntil: "networkidle" });
+await page.goto(`${HARNESS}/?view=art`, { waitUntil: "networkidle" });
 await page.waitForSelector("[data-art] svg");
 
 const art = await page.$$eval("[data-art]", (nodes) => {

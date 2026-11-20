@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -84,6 +85,8 @@ fun AnswerOption(
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
     val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null)
+    val label = MaterialTheme.typography.labelLarge
+    val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
 
     TagBesideOrUnder(
         modifier =
@@ -100,7 +103,7 @@ fun AnswerOption(
                         else -> Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
                     },
                 ).padding(horizontal = 16.dp, vertical = 13.dp),
-        content = { ProvideTextStyle(MaterialTheme.typography.labelLarge, content) },
+        content = { ProvideTextStyle(optionStyle, content) },
         tag =
             tag ?: {
                 when {
@@ -117,7 +120,7 @@ fun AnswerOption(
                 { NumberKey(marker, glyph, picked && result == null, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f)) }
             },
         leadingAtTop = keyAtTop,
-        readingContent = readingContent?.let { reading -> { ProvideTextStyle(MaterialTheme.typography.labelLarge, reading) } },
+        readingContent = readingContent?.let { reading -> { ProvideTextStyle(optionStyle, reading) } },
         onReadingOverflow = onReadingOverflow,
     )
 }

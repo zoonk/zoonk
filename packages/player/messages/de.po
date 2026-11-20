@@ -2975,6 +2975,12 @@ msgctxt "CCQ4rY"
 msgid "Idea {current} of {total}"
 msgstr "Idee {current} von {total}"
 
+#. Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach.
+#: src/lesson/_components/opening-map.tsx
+msgctxt "K3OgeW"
+msgid "What you'll learn in this lesson"
+msgstr "Das lernst du in dieser Lektion"
+
 #. Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers.
 #: src/lesson/_components/opening-map.tsx
 msgctxt "twXJ5H"
@@ -3916,7 +3922,7 @@ msgstr "Mit einem kostenlosen Konto kannst du in einer Lektion alles fragen."
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"
 msgid "{name} is an AI study buddy and can make mistakes."
-msgstr "{name} ist ein KI-Lernkumpel und kann Fehler machen."
+msgstr "{name} ist ein KI-Lernbuddy und kann Fehler machen."
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"

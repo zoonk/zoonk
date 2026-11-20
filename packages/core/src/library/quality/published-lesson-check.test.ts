@@ -16,6 +16,12 @@ import { holdPlanLock, waitForBlockedStatement } from "../../_test-utils/learner
 import { settlePublishedDraft } from "../../_test-utils/settle-published-draft";
 import { writeLessonContent } from "../../_test-utils/write-lesson-content";
 import * as refresh from "../../plans/refresh-goal-plan";
+import {
+  approve,
+  proposeFix,
+  signInApprover,
+  signInProposer,
+} from "../../staff/content-fixes/_test-utils/content-fix-steps";
 import { completeLessonContent } from "../generation/lesson-generation-state";
 import { readLessonMap } from "../lessons/lesson-map";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
@@ -435,6 +441,21 @@ describe(checkPublishedLesson, () => {
     expect([fixedScreen.sourceId, fixedScreen.sourcePage]).toStrictEqual([guidance.id, 2]);
   });
 
+  it("reviews a published check plan made before the repair fingerprint was added", async () => {
+    const {
+      lesson,
+      plan: { repairBase: _repairBase, ...plan },
+    } = await publishLesson();
+
+    mockReview();
+
+    await expect(
+      checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
+    ).resolves.toStrictEqual({ status: "passed" });
+
+    expect(checkLessonQuality).toHaveBeenCalledOnce();
+  });
+
   it("leaves a version the reviewer passes as it is, reviewing it at flex", async () => {
     const { draft, lesson, plan } = await publishLesson();
     const reviewer = mockReview();
@@ -688,6 +709,105 @@ describe(redraftPublishedLesson, () => {
 
     const staged = await prisma.step.findMany({ where: { lessonId: lesson.id, staged: true } });
     expect(staged.every((step) => step.version === 2 && step.runId === redraft.runId)).toBe(true);
+  });
+});
+
+describe("published repair input changes", () => {
+  it("discards a redraft when an approved plan fix lands while the writer is working", async () => {
+    const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
+    const corrected = { ...temperatureSpec(), description: "Read a rise that crosses zero." };
+    const writing = Promise.withResolvers<null>();
+    const resume = Promise.withResolvers<null>();
+
+    vi.mocked(writeLessonDraft).mockImplementationOnce(async () => {
+      writing.resolve(null);
+      await resume.promise;
+
+      return {
+        data: writtenRight(),
+        provenance: provenance(),
+        systemPrompt: "",
+        usage: {} as never,
+        userPrompt: "",
+      };
+    });
+
+    mockReview();
+
+    const repair = redraftPublishedLesson({
+      heldBackDrafts: [],
+      lessonId: lesson.id,
+      version: plan.version,
+      workflowRunId: randomUUID(),
+    });
+
+    await writing.promise;
+
+    try {
+      await signInProposer();
+
+      const fix = await proposeFix({
+        changes: [{ id: lesson.id, model: "Lesson", setPlan: corrected }],
+        reason: "Clarify the plan.",
+      });
+
+      const { key } = await signInApprover();
+
+      await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+        fix: { status: "applied" },
+      });
+    } finally {
+      resume.resolve(null);
+    }
+
+    await expect(repair).resolves.toStrictEqual({ status: "replaced" });
+    const steps = await listSteps(lesson.id);
+    expect(steps.every((step) => !step.staged)).toBe(true);
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ spec: corrected, stagedSummary: null });
+  });
+
+  it("discards a repair after an approved screen fix edits the same version in place", async () => {
+    const { lesson, plan } = await publishLesson({ lesson: writtenWrong() });
+    mockReview([wrongRise]);
+
+    const reviewed = await reviewPublished({
+      lessonId: lesson.id,
+      plan,
+      workflowRunId: randomUUID(),
+    });
+
+    const screen = await prisma.step.findFirstOrThrow({
+      where: { kind: "explanation", lessonId: lesson.id, position: 4 },
+    });
+
+    const content = { text: "A rise moves the mark toward the top.", title: "Up is up" };
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [{ id: screen.id, model: "Step", set: { content } }],
+      reason: "Correct the explanation.",
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    mockFix({ changedScreens: [4], lesson: writtenRight() });
+    mockReview();
+
+    await expect(settlePublishedDraft(reviewed)).resolves.toStrictEqual({ status: "replaced" });
+    const steps = await listSteps(lesson.id);
+    expect(steps.every((step) => step.version === plan.version)).toBe(true);
+
+    await expect(
+      prisma.step.findUniqueOrThrow({ where: { id: screen.id } }),
+    ).resolves.toMatchObject({ content, version: plan.version });
   });
 });
 

@@ -3,14 +3,12 @@ import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { prisma } from "@zoonk/db";
 import { type HeldBackDraft } from "../../generation/held-back-drafts";
 import {
-  type CheckedVersion,
   type LessonAnalytics,
   type LessonGate,
   type WrittenVersion,
-  citeScreensIfPossible,
   readLessonSources,
-  toScreensToSave,
 } from "../../lessons/_utils/checked-version";
+import { readLessonRepairBase } from "../../lessons/_utils/lesson-repair-base";
 import {
   type LessonWritingInputs,
   loadPublishedLessonInputs,
@@ -19,9 +17,7 @@ import {
 import {
   type LessonScreenToSave,
   type ScreenProvenance,
-  stageLessonVersion,
 } from "../../lessons/_utils/save-lesson-content";
-import { readCurrentLessonVersion } from "../../lessons/lesson-versions";
 import { getPictureKey } from "../../media/_utils/step-image-request";
 
 export const BACKGROUND_TIER = chooseServiceTier({ wait: "later" });
@@ -40,6 +36,7 @@ export type PublishedDraftState = {
   gate: LessonGate;
   version: WrittenVersion;
   replaces: number;
+  repairBase: string;
   writerRunId?: string;
 };
 
@@ -77,14 +74,19 @@ export async function loadCheck({
   context: CheckContext;
   version: number;
   writerModel: string;
-}): Promise<{ gate: LessonGate; inputs: LessonWritingInputs } | null> {
-  const [inputs, current, analytics] = await Promise.all([
+}): Promise<{ gate: LessonGate; inputs: LessonWritingInputs; repairBase: string } | null> {
+  const repairBase = await readLessonRepairBase({ lessonId: context.lessonId, version });
+
+  if (!repairBase) {
+    return null;
+  }
+
+  const [inputs, analytics] = await Promise.all([
     loadPublishedLessonInputs(context.lessonId),
-    readCurrentLessonVersion(context.lessonId),
     toTaskAnalytics(context),
   ]);
 
-  if (!inputs || current !== version) {
+  if (!inputs) {
     return null;
   }
 
@@ -97,6 +99,7 @@ export async function loadCheck({
       writerModel,
     },
     inputs,
+    repairBase,
   };
 }
 
@@ -190,45 +193,4 @@ export function toHeldBackDraft({
     problems: problems.map(({ problem, screen }) => ({ problem, screen })),
     runId: workflowRunId,
   };
-}
-
-export async function stageFixedVersion({
-  checked,
-  context,
-  inputs,
-  replaces,
-}: {
-  checked: Extract<CheckedVersion, { status: "passed" }>;
-  context: CheckContext;
-  inputs: LessonWritingInputs;
-  replaces: number;
-}) {
-  const [citations, previous] = await Promise.all([
-    citeScreensIfPossible({
-      analytics: await toTaskAnalytics(context),
-      inputs,
-      lesson: checked.version.lesson,
-      serviceTier: BACKGROUND_TIER,
-    }),
-    loadVersionSteps({ lessonId: context.lessonId, version: replaces }),
-  ]);
-
-  const screens = toScreensToSave({
-    citations,
-    inputs,
-    screens: checked.screens,
-    version: checked.version,
-  });
-
-  const version = await stageLessonVersion({
-    language: inputs.language,
-    lessonId: context.lessonId,
-    replaces,
-    screens: keepPictures({ previous, screens }),
-    summary: checked.version.lesson.summary,
-  });
-
-  return version === null
-    ? { status: "replaced" as const }
-    : { savedAt: Date.now(), status: "republished" as const, version };
 }

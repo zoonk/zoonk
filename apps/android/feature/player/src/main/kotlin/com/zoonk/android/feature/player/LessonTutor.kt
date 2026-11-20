@@ -64,7 +64,6 @@ class LessonTutor(
     val canAsk: Boolean = true,
     val askButton: @Composable (
         scope: TutorScope,
-        worded: Boolean,
         open: Boolean,
         offer: TutorOffer?,
         onOfferTaken: () -> Unit,
@@ -177,7 +176,7 @@ internal fun LessonPlayerState.tutorScope(screen: LessonScreen): TutorScope {
     return if (checked != null) TutorScope.Answer(lessonId, step.id, number, checked) else TutorScope.Step(lessonId, step.id, number)
 }
 
-/** Main's miss, which words the ask button: a checked answer shown wrong, never a hook's guess. */
+/** Main's miss: a checked answer shown wrong, never a hook's guess. */
 internal fun LessonPlayerState.showsMiss(screen: LessonScreen): Boolean {
     val step = screen.step ?: return false
     val result = results[step.id]

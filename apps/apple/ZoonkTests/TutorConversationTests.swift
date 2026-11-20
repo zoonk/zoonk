@@ -553,8 +553,8 @@ final class TutorConversationTests: XCTestCase {
       api: TutorAPIStub(), cache: AppCache(session: .preview(account: .tutorTestAccount)))
 
     let unchecked = store.conversation(
-      .item(itemId: "q", blockId: nil, answered: false, missed: false))
-    let checked = store.conversation(.item(itemId: "q", blockId: nil, answered: true, missed: true))
+      .item(itemId: "q", blockId: nil, answered: false))
+    let checked = store.conversation(.item(itemId: "q", blockId: nil, answered: true))
 
     XCTAssertTrue(unchecked === checked)
     XCTAssertFalse(store.conversation(.chapter(chapterId: "c")) === checked)

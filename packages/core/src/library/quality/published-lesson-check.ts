@@ -11,10 +11,6 @@ import {
   readLessonSources,
 } from "../lessons/_utils/checked-version";
 import { pickDraftWriter } from "../lessons/_utils/draft-writer";
-import {
-  loadPublishedLessonInputs,
-  toWritingContext,
-} from "../lessons/_utils/lesson-writing-inputs";
 import { publishStagedLessonVersion } from "../lessons/_utils/save-lesson-content";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
 import { readCurrentLessonVersion, readStagedLessonVersion } from "../lessons/lesson-versions";
@@ -27,19 +23,20 @@ import {
   loadCheck,
   loadVersionSteps,
   readVersionWriterRunId,
-  stageFixedVersion,
   toHeldBackDraft,
   toProvenance,
-  toTaskAnalytics,
 } from "./_utils/published-versions";
+import { stageFixedVersion } from "./_utils/stage-fixed-version";
 import { recordLessonQualityDecision } from "./lesson-quality-decision";
 import { runLessonQualityGate } from "./lesson-quality-gate";
 import { repairWrittenLesson } from "./lesson-repairs";
 
+type PublishedHeldBackDraft = HeldBackDraft & { repairBase?: string };
+
 export type PublishedLessonOutcome =
   | { status: "passed" | "replaced" }
   | { savedAt: number; status: "republished"; version: number }
-  | { draft: HeldBackDraft; status: "heldBack" };
+  | { draft: PublishedHeldBackDraft; status: "heldBack" };
 
 /** A step run again after staging its fix answers with that fix instead of writing another. */
 async function readStagedFix(lessonId: string): Promise<PublishedLessonOutcome | null> {
@@ -60,7 +57,7 @@ export async function checkPublishedLesson({
 
   const loaded = await loadCheck({ context, version: plan.version, writerModel: plan.writerModel });
 
-  if (!loaded) {
+  if (!loaded || (typeof plan.repairBase === "string" && loaded.repairBase !== plan.repairBase)) {
     return { status: "replaced" };
   }
 
@@ -98,6 +95,7 @@ export async function checkPublishedLesson({
       gate,
       inputs,
       live: true,
+      repairBase: loaded.repairBase,
       replaces: plan.version,
       version: {
         lesson: plan.lesson,
@@ -220,11 +218,14 @@ export async function recheckPublishedDraft({
 
   return blocking.length > 0
     ? {
-        draft: toHeldBackDraft({
-          model: state.gate.writerModel,
-          problems: blocking,
-          workflowRunId: state.context.workflowRunId,
-        }),
+        draft: {
+          ...toHeldBackDraft({
+            model: state.gate.writerModel,
+            problems: blocking,
+            workflowRunId: state.context.workflowRunId,
+          }),
+          repairBase: state.repairBase,
+        },
         status: "heldBack",
       }
     : {
@@ -240,15 +241,11 @@ export async function stagePublishedDraft({
 }: Extract<PublishedDraftOutcome, { status: "checked" }>): Promise<PublishedLessonOutcome> {
   const staged = await readStagedFix(state.context.lessonId);
 
-  return (
-    staged ??
-    stageFixedVersion({
-      checked,
-      context: state.context,
-      inputs: state.inputs,
-      replaces: state.replaces,
-    })
-  );
+  if (staged) {
+    return staged;
+  }
+
+  return state.repairBase ? stageFixedVersion({ checked, state }) : { status: "replaced" };
 }
 
 /** Internal workflow bridge; not an app authorization boundary. */
@@ -257,14 +254,11 @@ export async function redraftPublishedLesson({
   version,
   ...context
 }: CheckContext & {
-  heldBackDrafts: HeldBackDraft[];
+  heldBackDrafts: PublishedHeldBackDraft[];
   version: number;
 }): Promise<PublishedDraftOutcome> {
-  const [inputs, current, staged, analytics, reuse] = await Promise.all([
-    loadPublishedLessonInputs(context.lessonId),
-    readCurrentLessonVersion(context.lessonId),
+  const [staged, reuse] = await Promise.all([
     readStagedFix(context.lessonId),
-    toTaskAnalytics(context),
     loadLessonReuse({ forExam: context.forExam, lessonId: context.lessonId }),
   ]);
 
@@ -272,32 +266,32 @@ export async function redraftPublishedLesson({
     return staged;
   }
 
-  if (!inputs || current !== version) {
+  const writer = pickDraftWriter({ heldBackDrafts, reuse });
+  const loaded = await loadCheck({ context, version, writerModel: writer.model });
+
+  const first = heldBackDrafts.find((draft) => draft.repairBase !== undefined);
+
+  if (!loaded || (first && loaded.repairBase !== first.repairBase)) {
     return { status: "replaced" };
   }
 
-  const writer = pickDraftWriter({ heldBackDrafts, reuse });
+  const { gate, inputs, repairBase } = loaded;
 
   const draft = await writeLessonDraft({
-    ...toWritingContext(inputs),
-    analytics,
+    ...gate.context,
+    analytics: gate.analytics,
     heldBackProblems: writer.heldBackProblems,
     model: writer.model,
     serviceTier: BACKGROUND_TIER,
   });
 
-  const loaded = await loadCheck({ context, version, writerModel: draft.provenance.model });
-
-  if (!loaded) {
-    return { status: "replaced" };
-  }
-
   return {
     state: {
       context,
-      gate: loaded.gate,
-      inputs: loaded.inputs,
+      gate: { ...gate, writerModel: draft.provenance.model },
+      inputs,
       live: false,
+      repairBase,
       replaces: version,
       version: {
         lesson: repairWrittenLesson({

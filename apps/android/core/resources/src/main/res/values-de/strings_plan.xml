@@ -259,7 +259,6 @@
   "plan_far_from": "48db493ee46df7a05b6495766cc32e488afebb9cf820dde80f57c75154cbb1bf",
   "plan_far_from_month": "d9a518ab5b3dc1be024e39ff2ba7162eeccb2a4a87eef8e9abe1dddd23beeab5",
   "plan_far_lessons": "d0a81aef8bc53432792c763ae7a5459937db7f16bb87a6b38080279f6db0e6ec",
-  "plan_far_lessons_about": "71b1fe45f9ccde0331e8379d206a7f01b0e1910bcb1e09ab8460ba8b6a5b44f7",
   "plan_far_nothing_left": "af959cbb808e10c7dd267a8a352679f69a2b857bdafdfd00eb1a1a569a055de6",
   "plan_far_see_lessons": "1d94544f44c4c6ba1009cad48b4d099d28c653be25278ee5c2fe28eed3c2b640",
   "plan_far_unreachable": "a072a8b1152707ec235018a17ec4723997f346f49c9ce7a3506a3c2efe84556f",
@@ -407,8 +406,8 @@
   "plan_short_full_review_and_practice": "2502b29f1815647e3a702b2a636259b1a2c8157dbc64c10b4ca92076b65a9be3",
   "plan_short_light_review": "9ebc70742d9cd73f77761ff35cff3fbcc8be04067a0bb55752ae0d8863b1c031",
   "plan_short_map_and_gaps": "77221e2fa6e87aafe1a0847a9f18e3950066847fcd7e1a565b23ee67e748d6d7",
+  "plan_short_mock": "a3de9b1d57d78e42f27ff59110941e2967632561ddf208f4f00a82b28763954a",
   "plan_short_mock_and_practice": "3544b847f879573413e6bef6726702249a0ad68855e5b861c1d9ea929e8db1c3",
-  "plan_short_mock_and_review": "469f92b3d088dd8c97e08efe8e562318c5b11ad62c83ba741ae8d584f14c7614",
   "plan_show_fewer_chapters": "3fcb7bd3a6816305f3d9a468dd398fbde89717a09d3999a21239e3a7ba8b5a50",
   "plan_show_fewer_units": "2bd883ca96314306d3226a9050c725b4edce57806bac5811f429bb87c7b695d3",
   "plan_skills_you_know": "4d354c24677d88bf1e7b0b2937c8d45993638e4b0805478959ff7cb755833ab5",
@@ -612,7 +611,7 @@
     <string name="plan_short_map_and_gaps">Prüfungsüberblick und Wissenslücken</string>
     <string name="plan_short_mock_and_practice">Probeprüfung und Übung</string>
     <string name="plan_short_full_review_and_practice">Vollständige Wiederholung und Übung</string>
-    <string name="plan_short_mock_and_review">Kurze Probeprüfung und Wiederholung</string>
+    <string name="plan_short_mock">Kurze Probeprüfung</string>
     <string name="plan_short_full_review">Vollständige Wiederholung</string>
     <string name="plan_short_light_review">Kurze Wiederholung</string>
     <string name="plan_short_day">Tag %1$d von %2$d</string>

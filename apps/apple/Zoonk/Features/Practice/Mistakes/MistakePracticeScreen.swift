@@ -217,7 +217,7 @@ struct MistakePracticeScreen: View {
           next()
         }
         .practiceFocus(.next)
-        ask(step, answered: true, missed: !grade.isCorrect)
+        ask(step, answered: true)
       }
     case .answering, .checking, .answerFailed:
       if case .answerFailed(let sent) = state.phase {
@@ -256,7 +256,7 @@ struct MistakePracticeScreen: View {
         }
         .practiceFocus(.check)
 
-        ask(step, answered: false, missed: false)
+        ask(step, answered: false)
       }
     case .ending, .ended, .lessonChecking, .lessonFeedback:
       EmptyView()
@@ -264,12 +264,12 @@ struct MistakePracticeScreen: View {
   }
 
   @ViewBuilder
-  private func ask(_ step: MistakePracticeStep, answered: Bool, missed: Bool) -> some View {
+  private func ask(_ step: MistakePracticeStep, answered: Bool) -> some View {
     if step.entry.tutorAvailable, let question = step.question, let askButton = hooks.askButton {
       askButton(
         PracticeAskTarget(
           itemId: question.itemId, question: question.question, blockId: nil,
-          answered: answered, missed: missed, mistakeId: step.entry.mistakeId))
+          answered: answered, mistakeId: step.entry.mistakeId))
     }
   }
 

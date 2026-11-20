@@ -6,7 +6,7 @@
   "search_ask_detail": "86530a7b22c223c2048cc430d97ea709f1c80417062b4bc0e61bc0025424cfe9",
   "search_ask_question": "11a6970f0559b0a447b27d4387af70467a3a744c80888c625cc293460d958f10",
   "search_blog": "188ae076fb9bfc2179a71be194b9d95cb00f77c99a44ee3151e6820314f1d71f",
-  "search_buddy_keyword": "668de5a7e295ba71c89b4863a006045313d8a41f3dc63e1b29403aeb350cbefc",
+  "search_buddy_keyword": "454cf3b74bf658390ff400692b197521eb0c3df69e7cf1240b939c378facc670",
   "search_clear": "1f92e52a0d148910495246459fb8187a3133b8db4671155c5295df6e01706bfd",
   "search_close": "77919f3a64a3b151ea005f007b6881d2721c9eff85e441eb92604573a4f8f4ff",
   "search_continue": "16830cd2d2f6fa652f23275591c114cc43f321e1d865fa701e580da9cd1fed38",
@@ -71,7 +71,7 @@
     <string name="search_practice_mistakes">Corrigir seus erros</string>
     <string name="search_ask_buddy">Pergunte para %1$s…</string>
     <string name="search_start_new_goal">Começar um novo objetivo</string>
-    <string name="search_buddy_keyword">Parceiro</string>
+    <string name="search_buddy_keyword">Colega</string>
     <string name="search_mistakes_notebook">Caderno de erros</string>
     <string name="search_logbook">Diário de bordo</string>
     <string name="search_switch_goal">Mudar para %1$s</string>

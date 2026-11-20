@@ -811,19 +811,26 @@ describe("filling ordinary study days", () => {
     expect(result.plannedMinutes).toBe(100);
   });
 
-  it("leaves a day-replacing mock as the day's work", () => {
+  it("gives a mock day only its mock, even with time left for other work", () => {
+    const mock: PlannedCheckpoint = { ...boss, kind: "weekly", minutes: 40, mock: true };
+
     const result = buildSessionBlocks({
-      ...empty,
-      checkpoints: [{ ...boss, kind: "weekly", mock: true }],
+      ...baseInput,
+      checkpoints: [mock, boss],
+      dailyMinutes: 120,
       fillLessons: [lesson("later", 10)],
       mockReplacesDay: true,
+      produce: { itemId: "essay-1", minutes: 20, skillId: "s-essay", title: "Essay" },
     });
 
-    expect(result.blocks.map((block) => block.kind)).toStrictEqual(["checkpoint"]);
-    expect(result.plannedMinutes).toBe(15);
+    expect(
+      result.blocks.map((block) => [block.kind, block.payload.checkpoint?.mock]),
+    ).toStrictEqual([["checkpoint", true]]);
+
+    expect(result.plannedMinutes).toBe(40);
   });
 
-  it("puts fill lessons before practice and a shared mock checkpoint", () => {
+  it("puts lessons before practice on a class test's only day, which shares its short mock", () => {
     const result = buildSessionBlocks({
       ...empty,
       checkpoints: [{ ...boss, kind: "weekly", mock: true }],

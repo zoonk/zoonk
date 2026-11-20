@@ -19,6 +19,7 @@ import {
   toScreensToSave,
 } from "./_utils/checked-version";
 import { pickDraftWriter } from "./_utils/draft-writer";
+import { readLessonRepairBase } from "./_utils/lesson-repair-base";
 import {
   type LessonWritingInputs,
   loadLessonWritingInputs,
@@ -29,6 +30,7 @@ import { saveLessonContent } from "./_utils/save-lesson-content";
 export type LessonCheckPlan = {
   cite: boolean;
   lesson: WrittenLesson;
+  repairBase?: string | null;
   review: boolean;
   version: number;
   writerModel: string;
@@ -208,6 +210,7 @@ export async function checkLessonContent({
         check: {
           cite,
           lesson: written.lesson,
+          repairBase: review ? await readLessonRepairBase({ lessonId, version }) : null,
           review,
           version,
           writerModel: gate.writerModel,

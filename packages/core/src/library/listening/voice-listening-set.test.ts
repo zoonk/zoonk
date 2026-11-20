@@ -1,144 +1,169 @@
 import { randomUUID } from "node:crypto";
-import { put } from "@vercel/blob";
-import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
+import { BlobNotFoundError, get, head, put } from "@vercel/blob";
+import { joinListeningParts, voiceListeningPart } from "@zoonk/ai/tasks/audio/listening";
 import { prisma } from "@zoonk/db";
+import { blobStoreFixture } from "@zoonk/testing/fixtures/blobs";
 import { listeningContent, listeningSetFixture } from "@zoonk/testing/fixtures/listening";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { storeBlobUploads } from "../../_test-utils/blob-uploads";
-import { getListeningAudioKey } from "./listening-audio-key";
-import { listeningContentSchema } from "./listening-content";
-import { voiceListeningSet } from "./voice-listening-set";
+import {
+  prepareListeningRecording,
+  publishListeningRecording,
+  storeListeningPart,
+} from "./voice-listening-set";
 
-const VOICED = {
-  audio: new Uint8Array([1, 2, 3]),
-  durationMs: 48_000,
-  format: "mp3" as const,
-  provenance: {
-    generatedAt: new Date().toISOString(),
-    latencyMs: 9000,
-    model: "google/gemini-3.8-flash-lite-tts",
-    promptVersion: "test-listening-voice",
-    provider: "vertex",
-    requestedModel: "google/gemini-3.8-flash-lite-tts",
-    runId: randomUUID(),
-    usage: { audioSeconds: 48 },
-  },
+const provenance = {
+  generatedAt: new Date().toISOString(),
+  latencyMs: 9000,
+  model: "retired-speech-model",
+  promptVersion: "test-version",
+  provider: "vertex",
+  requestedModel: "google/gemini-3.8-flash-lite-tts",
+  runId: randomUUID(),
+  usage: { audioSeconds: 12 },
 };
 
-function voiceSucceeds() {
-  vi.mocked(voiceListeningScript).mockResolvedValue({ data: VOICED, error: null });
+async function prepare(setId: string) {
+  const plan = await prepareListeningRecording(setId);
+
+  if (plan.status !== "unvoiced") {
+    throw new Error("Expected an unvoiced recording");
+  }
+
+  return plan;
 }
 
-describe(voiceListeningSet, () => {
+describe("listening recording preparation", () => {
   beforeEach(() => {
-    storeBlobUploads();
+    const store = blobStoreFixture(BlobNotFoundError);
+    vi.mocked(head).mockImplementation(store.head);
+    vi.mocked(get).mockImplementation(store.get);
+    vi.mocked(put).mockImplementation(store.put);
+
+    vi.mocked(voiceListeningPart).mockResolvedValue({
+      audio: new Uint8Array([1, 2, 3]),
+      provenance,
+    });
+
+    vi.mocked(joinListeningParts).mockResolvedValue({
+      audio: new Uint8Array([4, 5]),
+      durationMs: 48_000,
+      format: "mp3",
+    });
   });
 
-  it("voices a new recording once, with each speaker's voice and accent, and stores it for everyone", async () => {
-    voiceSucceeds();
+  it("voices only the missing segment on a fresh run and reuses the final recording across sets", async () => {
     const content = listeningContent();
     const set = await listeningSetFixture({ content });
+    const first = await prepare(set.id);
 
-    const recording = await voiceListeningSet({ serviceTier: "flex", setId: set.id });
+    const segments = first.parts.map((part, index) => ({ ...first, attempt: 1, index, part }));
+    const final = segments.at(-1);
 
-    expect(voiceListeningScript).toHaveBeenCalledExactlyOnceWith({
+    if (!final) {
+      throw new Error("Expected a final segment");
+    }
+
+    await Promise.all(segments.slice(0, -1).map((segment) => storeListeningPart(segment)));
+    vi.mocked(voiceListeningPart).mockRejectedValueOnce(new Error("Speech unavailable"));
+    await expect(storeListeningPart(final)).rejects.toThrow("Speech unavailable");
+
+    const publication = { reuseKey: first.reuseKey, setId: set.id };
+    await expect(publishListeningRecording(publication)).rejects.toThrow();
+    expect(joinListeningParts).not.toHaveBeenCalled();
+    vi.mocked(voiceListeningPart).mockClear();
+    const second = await prepare(set.id);
+
+    await Promise.all(
+      second.parts.map((part, index) =>
+        storeListeningPart({ ...second, attempt: 1, index, part, serviceTier: "flex" }),
+      ),
+    );
+
+    expect(voiceListeningPart).toHaveBeenCalledExactlyOnceWith({
       analytics: { contentScope: "shared" },
+      attempt: 1,
       language: "en",
-      lines: content.script.turns.map((turn) => ({
-        accent: turn.speaker === "Tom" ? "Australian English" : "British English",
-        text: turn.text,
-        voice: turn.speaker === "Tom" ? "Puck" : "Kore",
-      })),
+      part: second.parts.at(-1),
       serviceTier: "flex",
     });
 
-    expect(put).toHaveBeenCalledExactlyOnceWith("library/listening/en.mp3", expect.any(Buffer), {
-      access: "public",
-      addRandomSuffix: true,
+    expect(put).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+      expect.objectContaining({ access: "public", ttlDays: 7 }),
+    );
+
+    for (const [, body] of vi.mocked(put).mock.calls) {
+      if (typeof body !== "string") {
+        throw new TypeError("Expected a JSON part");
+      }
+
+      const stored = JSON.parse(body) as Record<string, unknown>;
+
+      expect(Object.keys(stored).toSorted()).toStrictEqual([
+        "audio",
+        "generatedAt",
+        "model",
+        "promptVersion",
+        "runId",
+      ]);
+    }
+
+    vi.mocked(put).mockRejectedValueOnce(new Error("Upload unavailable"));
+    await expect(publishListeningRecording(publication)).rejects.toThrow("Upload unavailable");
+    await expect(publishListeningRecording(publication)).resolves.toBe(true);
+
+    const published = await prisma.itemSet.findUniqueOrThrow({
+      include: { mediaAsset: true },
+      where: { id: set.id },
     });
 
-    expect(recording).toMatchObject({
+    expect(published.mediaAsset).toMatchObject({
       durationMs: 48_000,
       kind: "audio",
-      language: "en",
       mimeType: "audio/mpeg",
-      model: "google/gemini-3.8-flash-lite-tts",
-      reuseKey: getListeningAudioKey(listeningContentSchema.parse(content)),
-      runId: VOICED.provenance.runId,
+      model: provenance.model,
+      runId: provenance.runId,
       visibility: "public",
     });
 
+    const twin = await listeningSetFixture({ content });
+    await expect(prepareListeningRecording(twin.id)).resolves.toStrictEqual({ status: "ready" });
+
     await expect(
-      prisma.itemSet.findUniqueOrThrow({ where: { id: set.id } }),
-    ).resolves.toMatchObject({ mediaAssetId: recording?.id });
+      prisma.itemSet.findUniqueOrThrow({ where: { id: twin.id } }),
+    ).resolves.toMatchObject({ mediaAssetId: published.mediaAssetId });
+
+    await expect(publishListeningRecording(publication)).resolves.toBe(true);
+    expect(joinListeningParts).toHaveBeenCalledTimes(2);
+    expect(voiceListeningPart).toHaveBeenCalledOnce();
   });
 
-  it("plays the stored recording the next time, without voicing it again", async () => {
-    voiceSucceeds();
+  it("keeps the old recording off a set edited while the MP3 is being encoded", async () => {
     const set = await listeningSetFixture();
+    const plan = await prepare(set.id);
 
-    const first = await voiceListeningSet({ setId: set.id });
-    const again = await voiceListeningSet({ setId: set.id });
+    await Promise.all(
+      plan.parts.map((part, index) => storeListeningPart({ ...plan, attempt: 1, index, part })),
+    );
 
-    expect(again?.id).toBe(first?.id);
-    expect(voiceListeningScript).toHaveBeenCalledOnce();
-  });
-
-  it("gives a set whose script another set already voiced that set's recording", async () => {
-    voiceSucceeds();
-    const content = listeningContent();
-
-    const [first, twin] = await Promise.all([
-      listeningSetFixture({ content }),
-      listeningSetFixture({ content }),
-    ]);
-
-    const voiced = await voiceListeningSet({ setId: first.id });
-    const shared = await voiceListeningSet({ setId: twin.id });
-
-    expect(shared?.id).toBe(voiced?.id);
-    expect(voiceListeningScript).toHaveBeenCalledOnce();
-  });
-
-  it("voices a recording once when two learners start it at the same time", async () => {
-    voiceSucceeds();
-    const set = await listeningSetFixture();
-
-    const [first, second] = await Promise.all([
-      voiceListeningSet({ setId: set.id }),
-      voiceListeningSet({ setId: set.id }),
-    ]);
-
-    expect(second?.id).toBe(first?.id);
-    expect(voiceListeningScript).toHaveBeenCalledOnce();
-  });
-
-  it("keeps a set unvoiced when every voice fails, so it's voiced again next time", async () => {
-    vi.mocked(voiceListeningScript).mockResolvedValueOnce({
-      data: null,
-      error: new Error("All TTS providers failed"),
+    vi.mocked(joinListeningParts).mockImplementationOnce(async () => {
+      await prisma.itemSet.update({ data: { content: listeningContent() }, where: { id: set.id } });
+      return { audio: new Uint8Array([4, 5]), durationMs: 48_000, format: "mp3" };
     });
 
-    const content = listeningContent();
-    const set = await listeningSetFixture({ content });
-
-    await expect(voiceListeningSet({ setId: set.id })).resolves.toBeNull();
+    const publication = { reuseKey: plan.reuseKey, setId: set.id };
+    await expect(publishListeningRecording(publication)).rejects.toThrow("Listening set changed");
+    await expect(publishListeningRecording(publication)).resolves.toBe(false);
 
     await expect(
       prisma.itemSet.findUniqueOrThrow({ where: { id: set.id } }),
     ).resolves.toMatchObject({ mediaAssetId: null });
-
-    await expect(
-      prisma.mediaAsset.count({
-        where: { reuseKey: getListeningAudioKey(listeningContentSchema.parse(content)) },
-      }),
-    ).resolves.toBe(0);
   });
 
-  it("voices nothing for a set that isn't a recording", async () => {
+  it("skips a non-recording", async () => {
     const set = await listeningSetFixture({ content: { text: "A passage" }, kind: "text" });
-
-    await expect(voiceListeningSet({ setId: set.id })).resolves.toBeNull();
-    expect(voiceListeningScript).not.toHaveBeenCalled();
+    await expect(prepareListeningRecording(set.id)).resolves.toStrictEqual({ status: "missing" });
+    expect(voiceListeningPart).not.toHaveBeenCalled();
   });
 });

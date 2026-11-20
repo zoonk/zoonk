@@ -21,7 +21,7 @@ import { type ComputedPlan, type PlanTagRevalidation, computePlan } from "./_uti
 import { getSettledPlanChange } from "./_utils/settled-change";
 import { computeSettledPlan } from "./_utils/settled-plan";
 import { savePlanInputsKey } from "./_utils/write-plan";
-import { afterPlanInputWrite, isPlanConflictError, withPlanRetry } from "./plan-conflict";
+import { isPlanConflictError, unlessPlanConflict, withPlanRetry } from "./plan-conflict";
 import { addDays } from "./planner/plan-calendar";
 
 type PlanRefreshResult = { status: "notFound" | "notReady" | "paused" | "refreshed" | "unchanged" };
@@ -141,7 +141,7 @@ export async function refreshGoalPlan({
   };
 
   if (onConflict === "yield") {
-    return (await afterPlanInputWrite(() => withPlanRetry(refresh))) ?? { status: "unchanged" };
+    return (await unlessPlanConflict(() => withPlanRetry(refresh))) ?? { status: "unchanged" };
   }
 
   return onConflict === "retry" ? withPlanRetry(refresh) : refresh();

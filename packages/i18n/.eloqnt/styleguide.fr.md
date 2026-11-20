@@ -39,8 +39,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Compagnon”; “your buddy”: “ton compagnon”
-- “study buddy”: “compagnon d’étude”
+- “Buddy”: “Binôme”, the partner students pair up with; “your buddy”: “ton binôme”; “study buddy”: “binôme d’étude”; “AI study buddy”: “binôme d’étude IA”. Never “compagnon”, which reads as a romantic partner
 - Mission names (missions list, first steps): infinitive: “Terminer ta première leçon”; “Practice” / “Review”: “S’entraîner” / “Réviser”
 - “essay”: “rédaction”, not “dissertation”
 - “Mistakes notebook”: “Carnet d’erreurs”

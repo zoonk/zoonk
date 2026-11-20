@@ -262,10 +262,9 @@ async function resolveTextRow<Model extends TextModel>(
 }
 
 function textData(fields: readonly { after: unknown; field: string }[]) {
-  const values = new Map(fields.map((field) => [field.field, field.after]));
-  const title = values.get("title");
-  const description = values.get("description");
-  const summary = values.get("summary");
+  const { description, summary, title } = Object.fromEntries(
+    fields.map(({ after, field }) => [field, after] as const),
+  );
 
   return {
     ...(typeof title === "string" ? { normalizedTitle: normalizeString(title), title } : {}),
@@ -322,13 +321,14 @@ function textPlanRoots({
   return model === "Lesson" ? { lessonIds: ids } : {};
 }
 
-function textRowHandler<Model extends TextModel>(model: Model) {
+function textRowHandler<Model extends TextModel>(model: Model, example?: Json) {
   return defineFixHandler({
     apply: (tx, stored) => applyText(tx, stored),
     model,
     op: "set",
     planRoots: (stored) => textPlanRoots(stored),
     proposal: {
+      example,
       fields: FIELDS[model],
       rules: RULES[model],
       schema: z.strictObject({ id: idSchema, model: z.literal(model), set: setFieldsSchema }),
@@ -349,4 +349,8 @@ function textRowHandler<Model extends TextModel>(model: Model) {
 
 export const courseSet = textRowHandler("Course");
 export const chapterSet = textRowHandler("Chapter");
-export const lessonSet = textRowHandler("Lesson");
+export const lessonSet = textRowHandler("Lesson", {
+  id: "00000000-0000-4000-8000-000000000001",
+  model: "Lesson",
+  set: { title: "Adding fractions" },
+});

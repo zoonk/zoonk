@@ -3,7 +3,7 @@ import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/tutor/goal-tutor-loo
 import { type Goal, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
+import { getMistakeSkillIds, loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { getOutlinedUntil } from "../../../plans/_utils/stand-in-lessons";
 import { buildSyllabus } from "../../../view-models/syllabus/_utils/build-syllabus";
@@ -223,7 +223,10 @@ export async function lookUpSubjectProgress({
 
   const [answers, mistakes] = await Promise.all([
     loadAnswers({ since, skillIds, userId: goal.userId }),
-    loadOpenMistakes({ skillIds, userId: goal.userId }),
+    loadOpenMistakes({
+      skillIds: getMistakeSkillIds(plan.skills).filter((id) => skillIds.includes(id)),
+      userId: goal.userId,
+    }),
   ]);
 
   const subjects = bySubject.map(({ skillIds: ids, subject }) => {

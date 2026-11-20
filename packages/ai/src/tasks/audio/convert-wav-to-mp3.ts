@@ -1,6 +1,5 @@
 import decodeWav from "@audio/decode-wav";
 import { createMp3Encoder } from "wasm-media-encoders";
-import { type SpeechModelName } from "./speech-models";
 import { type DecodedAudio, assertAudibleAudioSignal } from "./validate-audio-signal";
 
 const MP3_BITRATE_KBPS = 48;
@@ -13,7 +12,7 @@ function getChannelCount({
   model,
 }: {
   channelData: Float32Array[];
-  model: SpeechModelName;
+  model: string;
 }): 1 | 2 {
   const channelCount = channelData.length;
 
@@ -24,13 +23,7 @@ function getChannelCount({
   throw new Error(`${model} returned invalid WAV audio`);
 }
 
-function decodeWavAudio({
-  audio,
-  model,
-}: {
-  audio: Uint8Array;
-  model: SpeechModelName;
-}): EncodableAudio {
+function decodeWavAudio({ audio, model }: { audio: Uint8Array; model: string }): EncodableAudio {
   try {
     const decodedAudio = decodeWav(audio);
     const channelCount = getChannelCount({ channelData: decodedAudio.channelData, model });
@@ -71,7 +64,7 @@ export function decodeSpeechWav({
 }: {
   audio: Uint8Array;
   maxSeconds: number;
-  model: SpeechModelName;
+  model: string;
 }): EncodableAudio {
   const decodedAudio = decodeWavAudio({ audio, model });
   assertAudibleAudioSignal({ audio: decodedAudio, maxSeconds, model });
@@ -102,7 +95,7 @@ export async function encodeMp3(
 export async function convertWavToMp3(input: {
   audio: Uint8Array;
   maxSeconds: number;
-  model: SpeechModelName;
+  model: string;
 }): Promise<{ audio: Uint8Array; durationSeconds: number }> {
   const decoded = decodeSpeechWav(input);
   return encodeMp3(decoded);

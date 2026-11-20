@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   courseChapterFixture,
   libraryChapterFixture,
@@ -11,6 +12,7 @@ import {
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -151,6 +153,145 @@ describe(startCourseGoal, () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it.each([{}, { language: "en-US" }])("keeps the course with input %j", async (input) => {
+    const [course, user] = await Promise.all([publicCourse(), userFixture()]);
+    mockSession(user.id);
+
+    await expect(startCourseGoal({ courseId: course.id, input })).resolves.toMatchObject({
+      goal: { language: "en", primaryCourseId: course.id },
+      status: "created",
+    });
+  });
+
+  it("starts the listed edition with the chosen level and drops the source chapter", async () => {
+    const [family, brand, user] = await Promise.all([
+      prisma.courseFamily.create({ data: {} }),
+      organizationFixture({ kind: "brand" }),
+      userFixture(),
+    ]);
+
+    const [source, edition] = await Promise.all([
+      publicCourse({ familyId: family.id, organizationId: brand.id, title: "Economics" }),
+      publicCourse({
+        country: "CA",
+        familyId: family.id,
+        language: "pt-BR",
+        organizationId: brand.id,
+        title: "Economia",
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const request = {
+      courseId: source.id,
+      input: { chapterId: randomUUID(), language: "pt", level: "basic" as const },
+    };
+
+    const result = await startCourseGoal(request);
+
+    expect(result).toMatchObject({
+      goal: {
+        details: { courseStart: { chapterId: null }, level: "basic" },
+        displayName: edition.title,
+        primaryCourseId: edition.id,
+        prompt: edition.title,
+        title: edition.title,
+      },
+      status: "created",
+    });
+
+    if (result.status !== "created") {
+      throw new Error("Expected an edition goal");
+    }
+
+    await expect(loadGoalCurriculumInputs(result.goal.id)).resolves.toMatchObject({
+      goal: { contentCountry: edition.country },
+      startedCourse: { id: edition.id },
+    });
+
+    await expect(startCourseGoal(request)).resolves.toMatchObject({
+      goal: { id: result.goal.id },
+      status: "existing",
+    });
+  });
+
+  it.each([
+    { country: "US", title: "US Law" },
+    { country: null, title: "Robotics" },
+  ])(
+    "keeps the source country ($country) when starting without an edition",
+    async (courseInput) => {
+      const [course, user] = await Promise.all([publicCourse(courseInput), userFixture()]);
+      await learningProfileFixture({ homeCountry: "BR", userId: user.id });
+      mockSession(user.id);
+
+      const result = await startCourseGoal({ courseId: course.id, input: { language: "pt" } });
+
+      expect(result).toMatchObject({
+        goal: { language: "pt", primaryCourseId: null },
+        status: "created",
+      });
+
+      const goalId = result.status === "created" ? result.goal.id : "";
+
+      await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject(
+        { contentCountry: course.country },
+      );
+
+      await expect(loadGoalCurriculumInputs(goalId)).resolves.toMatchObject({
+        goal: { contentCountry: course.country },
+        startedCourse: null,
+      });
+    },
+  );
+
+  it("starts one unpinned goal in the learner's language across concurrent requests", async () => {
+    const [course, user] = await Promise.all([publicCourse(), userFixture()]);
+    mockSession(user.id);
+
+    const request = {
+      courseId: course.id,
+      input: { chapterId: randomUUID(), dailyMinutes: 25, language: "pt", level: "basic" as const },
+    };
+
+    const results = await Promise.all([startCourseGoal(request), startCourseGoal(request)]);
+    const created = results.find((result) => result.status === "created");
+    const existing = results.find((result) => result.status === "existing");
+
+    expect(created).toMatchObject({
+      goal: {
+        dailyMinutes: 25,
+        details: { courseStart: { chapterId: null }, level: "basic" },
+        language: "pt",
+        primaryCourseId: null,
+      },
+    });
+
+    expect(existing?.goal.id).toBe(created?.goal.id);
+    expect(created).toBeDefined();
+
+    if (!created) {
+      return;
+    }
+
+    const resolved = await publicCourse({ language: "pt" });
+
+    await prisma.goal.update({
+      data: { primaryCourseId: resolved.id },
+      where: { id: created.goal.id },
+    });
+
+    await expect(loadGoalCurriculumInputs(created.goal.id)).resolves.toMatchObject({
+      startedCourse: null,
+    });
+
+    await expect(startCourseGoal(request)).resolves.toMatchObject({
+      goal: { id: created.goal.id },
+      status: "existing",
+    });
   });
 
   it("makes the course the learner's goal with its plan built from the course, in its order", async () => {
@@ -371,6 +512,7 @@ describe(startCourseGoal, () => {
     await expect(findCourseGoalStart(course.id)).resolves.toStrictEqual({
       goalId: started.status === "created" ? started.goal.id : "",
       inOnboarding: true,
+      isActive: true,
     });
 
     mockSession(other.id);
@@ -577,9 +719,9 @@ describe(startCourseGoal, () => {
     },
   );
 
-  it("marks the default exam date with its notice setting and leaves a repeated start unchanged", async () => {
+  it("keeps a linked core course's exam kind in either language and its notice only in the original", async () => {
     const [course, user, blueprint] = await Promise.all([
-      publicCourse({ format: "exam" }),
+      publicCourse({ format: "core" }),
       userFixture(),
       examBlueprintFixture({
         edition: {
@@ -620,7 +762,7 @@ describe(startCourseGoal, () => {
     const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({
-      goal: { kind: "exam", targetDate: "2020-11-08" },
+      goal: { examBlueprintId: blueprint.id, kind: "exam", targetDate: "2020-11-08" },
       status: "created",
     });
 
@@ -632,6 +774,28 @@ describe(startCourseGoal, () => {
     });
 
     await startCourseWithPlan({ courseId: course.id, input: {} });
+
+    const other = await userFixture();
+    mockSession(other.id);
+    const translated = await startCourseGoal({ courseId: course.id, input: { language: "pt" } });
+
+    expect(translated).toMatchObject({
+      goal: {
+        examBlueprintId: null,
+        kind: "exam",
+        language: "pt",
+        primaryCourseId: null,
+        targetDate: null,
+      },
+      status: "created",
+    });
+
+    const translatedId = translated.status === "created" ? translated.goal.id : "";
+
+    await expect(loadGoalCurriculumInputs(translatedId)).resolves.toMatchObject({
+      sourceCourse: { format: "core", id: course.id },
+      startedCourse: null,
+    });
   });
 
   it("starts an exam course without a stored exam as an exam goal, which research reads", async () => {
@@ -784,5 +948,97 @@ describe(startCourseGoal, () => {
     await expect(startCourseWithPlan({ courseId: course.id, input: {} })).resolves.toStrictEqual({
       status: "unauthorized",
     });
+  });
+});
+
+async function startFamily() {
+  const user = await userFixture();
+  mockSession(user.id);
+  const brand = await organizationFixture({ kind: "brand" });
+  const family = await prisma.courseFamily.create({ data: {} });
+  const data = { familyId: family.id, isPublished: true, organizationId: brand.id };
+  const source = await courseFixture(data);
+  return { data, source };
+}
+
+describe("course starts across languages", () => {
+  it("the learner's own private course is still the course they start", async () => {
+    const user = await userFixture();
+
+    const course = await courseFixture({
+      format: "personalized",
+      title: "My thesis notes",
+      userId: user.id,
+      visibility: "private",
+    });
+
+    mockSession(user.id);
+
+    const result = await startCourseGoal({ courseId: course.id, input: { language: "pt" } });
+
+    expect(result).toMatchObject({ goal: { primaryCourseId: course.id }, status: "created" });
+  });
+
+  it("a language course never becomes a goal to learn a language in itself", async () => {
+    const [user, brand] = await Promise.all([
+      userFixture(),
+      organizationFixture({ kind: "brand" }),
+    ]);
+
+    const course = await courseFixture({
+      format: "language",
+      isPublished: true,
+      language: "en",
+      organizationId: brand.id,
+      targetLanguage: "es",
+      title: "Spanish",
+      visibility: "public",
+    });
+
+    mockSession(user.id);
+
+    const result = await startCourseGoal({ courseId: course.id, input: { language: "es" } });
+    const goal = result.status === "created" ? result.goal : null;
+
+    expect(goal).not.toBeNull();
+    expect(goal?.language).not.toBe(goal?.targetLanguage);
+  });
+
+  it("a learner already on the course in its language gets that goal back", async () => {
+    const user = await userFixture();
+
+    const course = await courseFixture({
+      isPublished: true,
+      title: "Economics",
+      visibility: "public",
+    });
+
+    mockSession(user.id);
+
+    const first = await startCourseGoal({ courseId: course.id, input: {} });
+    const second = await startCourseGoal({ courseId: course.id, input: { language: "pt" } });
+
+    expect([first.status, second.status]).toStrictEqual(["created", "existing"]);
+  });
+
+  it("starts a published guest edition before its description arrives", async () => {
+    const { data, source } = await startFamily();
+    const edition = await courseFixture({ ...data, description: null, language: "pt" });
+    const result = await startCourseGoal({ courseId: source.id, input: { language: "pt" } });
+    expect(result).toMatchObject({ goal: { primaryCourseId: edition.id } });
+  });
+
+  it("resumes a pending goal from the edition staff linked after it started", async () => {
+    const { data, source } = await startFamily();
+    const first = await startCourseGoal({ courseId: source.id, input: { language: "pt" } });
+
+    if (first.status !== "created") {
+      throw new Error(first.status);
+    }
+
+    const edition = await courseFixture({ ...data, language: "pt" });
+    await expect(findCourseGoalStart(source.id)).resolves.toMatchObject({ goalId: first.goal.id });
+    const second = await startCourseGoal({ courseId: edition.id, input: { language: "pt" } });
+    expect(second).toMatchObject({ goal: { id: first.goal.id }, status: "existing" });
   });
 });

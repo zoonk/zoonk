@@ -16,7 +16,7 @@ export function useShortFocusName() {
       case "mockAndPractice":
         return mocksRequirePlus ? t("Full review and practice") : t("Mock and practice");
       case "mockAndReview":
-        return mocksRequirePlus ? t("Full review") : t("Short mock and review");
+        return mocksRequirePlus ? t("Full review") : t("Short mock");
       case "lightReview":
         return t("Light review");
       default:

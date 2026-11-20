@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.feedback
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -93,7 +94,7 @@ fun HelpScreen(
                                         IconButton(onClick = { openWebPage(context, if (portuguese) social.urlPt else social.url) }) {
                                             Icon(
                                                 painterResource(social.icon),
-                                                contentDescription = social.name,
+                                                contentDescription = social.label?.let { stringResource(it) } ?: social.name,
                                                 modifier = Modifier.size(18.dp),
                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                             )
@@ -114,11 +115,13 @@ private data class Social(
     @param:DrawableRes val icon: Int,
     val url: String,
     val urlPt: String = url,
+    @param:StringRes val label: Int? = null,
 )
 
-/** Main's `getSocialProfiles`: where Zoonk posts, in its order, with the Brazilian profiles in Portuguese. */
+/** Main's "Follow us" row: the blog, then `getSocialProfiles` in its order, with the Brazilian profiles in Portuguese. */
 private val SOCIALS =
     listOf(
+        Social("Blog", R.drawable.ic_newspaper, "https://blog.zoonk.com", label = R.string.search_blog),
         Social("X", R.drawable.ic_brand_x, "https://x.com/zoonkcom", "https://x.com/zoonkbr"),
         Social("LinkedIn", R.drawable.ic_brand_linkedin, "https://www.linkedin.com/company/zoonk"),
         Social("GitHub", R.drawable.ic_brand_github, "https://github.com/zoonk"),

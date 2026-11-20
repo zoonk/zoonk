@@ -31,9 +31,9 @@
   "settings_memory": "4629b94f827295a1d5abd94e05806354f46cf748ebab24abf969cd633672e660",
   "settings_preferences": "03ae7ef82c6e59feb9f27f09ea2714063a525d360650158086d0c2eff6a04aac",
   "settings_preferences_app_language": "5ac1745c2e5715b63c3630aa349990493076c5a805ee54c5dcf0bfab058f1de6",
-  "settings_preferences_buddy": "6d4fa9f96d2d4d4c770b5be61717508ccfb7b97c45b28d1562b6cc0c2a4d70fc",
+  "settings_preferences_buddy": "be4bae22ba6c5e43500aedde107ab21c9cc08f85e5a65cf35602e5a46377ee30",
   "settings_preferences_change": "95bac5b386e7f626ff6518ccacdd8f8758f85819e0722c89d9d571b8565476bb",
-  "settings_preferences_choose_buddy": "644b1b6d8edcde2b2566efe47c17659fa1081f893ddeea2643695d78501de130",
+  "settings_preferences_choose_buddy": "a3e0f1b3a8a14c41032c54e7efec267e7fb41cc06f1fd1ab9baf4a25e7973ec5",
   "settings_preferences_language": "e2a1c7d841a38592c92576deae55bf186201b476b99a7eb4d75cdf7f9c6bbe3d",
   "settings_preferences_lessons": "b199392d81507f6b91224c0699cde5854ae48ef26825983b8dec6b529156e12c",
   "settings_preferences_save_failed": "f0cb162a30f76062cd42881420c97c96fc1559fabdd7948a01f5c7589d4724a0",
@@ -84,9 +84,9 @@
     <string name="settings_apple_not_revoked">Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que Zoonk se hubiera quitado de tu Apple ID. Quita Zoonk de Iniciar sesión con Apple para terminar.</string>
     <string name="settings_manage_apple">Administrar el inicio de sesión con Apple</string>
     <string name="settings_done">Listo</string>
-    <string name="settings_preferences_buddy">Tu compañero</string>
+    <string name="settings_preferences_buddy">Tu compa</string>
     <string name="settings_preferences_change">Cambiar</string>
-    <string name="settings_preferences_choose_buddy">Elegir tu compañero</string>
+    <string name="settings_preferences_choose_buddy">Elegir tu compa</string>
     <string name="settings_preferences_lessons">Lecciones</string>
     <string name="settings_preferences_sounds">Sonidos</string>
     <string name="settings_preferences_sounds_description">Cuando aciertas o terminas</string>

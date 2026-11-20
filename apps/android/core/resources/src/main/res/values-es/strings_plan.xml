@@ -259,7 +259,6 @@
   "plan_far_from": "0abe3a768cb30290ea91813b4f580725e284b7c8dd26a6a631ef71917f64abe0",
   "plan_far_from_month": "1ecf59758fd647f9b3fca7a7f37713338dacbec285376e2c1c80618ee0d495f9",
   "plan_far_lessons": "fc52e7a1e40cf1979ca65e5fe26196432dbfd4ef6122cfb495700cb0f81d63c1",
-  "plan_far_lessons_about": "2627e9c4078358bbd04caf8af5c69256fc3278469b38b8c9eb1edf8908a6074b",
   "plan_far_nothing_left": "2b2d7d69eff04f2cde914e9a0d31b8a6794f59cbe6bed2d69c7df78bdad909ec",
   "plan_far_see_lessons": "8af5351dd490be0620bcbb3fb5d7c01a74f3c55ab8865b5fa3a466c6365eabb7",
   "plan_far_unreachable": "4536e9fb491677e8114467d103840dc39008c8102b6c3b56f9b4a30e20569a2b",
@@ -407,8 +406,8 @@
   "plan_short_full_review_and_practice": "0857840845488a7827af570611a428eda65de27e3e31c0c8f3692241bedbe473",
   "plan_short_light_review": "d4964df0b172dabc6ec64298dd86de609369cd06400f0396a226ed4231dc14a8",
   "plan_short_map_and_gaps": "5da10a63ba5776f8a106110ecc1ba478d976eed4803ed73fdc5df1f2bde01be4",
+  "plan_short_mock": "22a5f39931a5b9d9a95f729f7fb0445fea14431c1ec4bd22fb5bbd79698ae110",
   "plan_short_mock_and_practice": "ac93b82082aef7bb73fe21db2edaffca982e9ba981a8493b593b9355de2ad275",
-  "plan_short_mock_and_review": "8d3c1f15483e06e08226f8c2997e6f9a45cd5300c4bd9f0d90e6a7ae5650b72c",
   "plan_show_fewer_chapters": "b655475093dccd20a6a3afd8483d6c84d0384d1994b0051718be4e99d67d91fc",
   "plan_show_fewer_units": "dd3171fcf73f2356db6f67b6dc2b8513fd7e622b61bc91bee62adb5093bda354",
   "plan_skills_you_know": "ad76f28bb48e243af26eff74b72b1e6954928303ffce5a9781ce53c6c92f2b0d",
@@ -616,7 +615,7 @@
     <string name="plan_short_map_and_gaps">Mapa del examen y temas por reforzar</string>
     <string name="plan_short_mock_and_practice">Simulacro y práctica</string>
     <string name="plan_short_full_review_and_practice">Revisión completa y práctica</string>
-    <string name="plan_short_mock_and_review">Simulacro breve y repaso</string>
+    <string name="plan_short_mock">Simulacro corto</string>
     <string name="plan_short_full_review">Revisión completa</string>
     <string name="plan_short_light_review">Repaso ligero</string>
     <string name="plan_short_day">Día %1$d de %2$d</string>

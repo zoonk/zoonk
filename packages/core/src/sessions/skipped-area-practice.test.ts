@@ -1,4 +1,7 @@
 import { prisma } from "@zoonk/db";
+import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -100,6 +103,38 @@ describe("a subject the learner took out of their plan", () => {
     ];
 
     expect(asked).not.toContain(speaking?.id);
+  });
+
+  it("asks none of the finer skills its finished lessons taught, even one with an open mistake", async () => {
+    const { goal, speaking, speakingItem, user } = await speakingTakenOut();
+    const [finer, lesson] = await Promise.all([skillFixture(), libraryLessonFixture()]);
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: lesson.id, skillId: speaking?.id ?? "" }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: finer.id }),
+      itemFixture({ content: choiceItemContent(), skillId: finer.id }),
+      dueSkillFixture({ skillId: finer.id, userId: user.id }),
+      mistakeFixture({ createdAt: new Date("2026-01-01"), skillId: finer.id, userId: user.id }),
+      prisma.planItem.update({
+        data: { lessonId: lesson.id, skillId: null, status: "done" },
+        where: { id: speakingItem?.id },
+      }),
+    ]);
+
+    const input = await loadSessionBuildInput({
+      goal: await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      localDate: SESSION_TODAY,
+      now: SESSION_NOW,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    const asked = [
+      ...input.practice.map((item) => item.skillId),
+      ...input.capsules.flatMap((capsule) => capsule.skillIds),
+    ];
+
+    expect(asked).not.toContain(finer.id);
   });
 
   it("keeps its lessons out after a miss on it", async () => {

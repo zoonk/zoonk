@@ -3,6 +3,7 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 // node scripts/seq.mjs <scenario> <lang> [dpr]   → assets/real/<lang>/seq/<scenario>/NNN.png + manifest.json
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { HARNESS } from "./harness.mjs";
 import { pinStoryClock } from "./story-clock.mjs";
 
 const [name, lang = "en", dpr = "3"] = process.argv.slice(2);
@@ -37,7 +38,7 @@ async function shot(label = "", hold = 1) {
 }
 const wait = (ms) => page.waitForTimeout(ms);
 async function open(query) {
-  await page.goto(`http://localhost:5199/?${query}&lang=${lang}`, { waitUntil: "networkidle" });
+  await page.goto(`${HARNESS}/?${query}&lang=${lang}`, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
   await wait(900);
 }

@@ -121,6 +121,7 @@
   "player_opening_map_hint": "962f86521870ac20e071fd42dbdc7fc11c8896fb135204d625b98188658f2a33",
   "player_opening_map_idea": "40f6c1aa9f29849073cb09f7ac60b28ccab29be0355e61926a52f0600711c893",
   "player_opening_map_show": "fbf3228b7bbebe65741b778352f356f3959fef8191c9ca0b6eae38c62452bcf3",
+  "player_opening_map_title": "ec9fab07c0ae90571effdbe4fe1f88db73e588904903092d0c71bec32e76af8c",
   "player_part_of": "401ba3aa3f710678f9cb3b3b8022424ea40f51340f0413596cea7e7ed5e6bbf3",
   "player_phase_draw": "3fd99af78b49241cd98725ab49e373822c31ec25fafeefe5de17a162718b1700",
   "player_phase_draw_line_1": "22d80d0e08f4645ddc456c90f3ea56ecd9f12b4cc7db9d58e47c3140169b6f04",
@@ -201,6 +202,8 @@
     <string name="player_idea_position">ポイント%1$s（全%2$s個）</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">例</string>
+    <!-- Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach. -->
+    <string name="player_opening_map_title">このレッスンで学ぶこと</string>
     <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
     <string name="player_opening_map_hint">ポイントをタップすると学ぶ内容がわかります</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->

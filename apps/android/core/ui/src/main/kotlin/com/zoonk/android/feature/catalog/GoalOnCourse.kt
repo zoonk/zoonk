@@ -5,7 +5,7 @@ import com.zoonk.api.models.LearnerSummaryGoal
 
 fun LearnerSummary.goalOnCourse(courseId: String): LearnerSummaryGoal? =
     goals.firstOrNull { goal ->
-        goal.courseId?.toString() == courseId &&
+        (goal.startCourseIds?.any { it.toString() == courseId } ?: (goal.courseId?.toString() == courseId)) &&
             goal.status == LearnerSummaryGoal.Status.ACTIVE &&
             goal.kind != LearnerSummaryGoal.Kind.EXPLAIN
     }

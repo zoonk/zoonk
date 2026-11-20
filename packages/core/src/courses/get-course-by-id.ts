@@ -13,7 +13,11 @@ async function getPublishedCourseById(courseId: string) {
 
   return prisma.course.findFirst({
     include: courseInclude,
-    where: getPublishedCourseWhere({ id: courseId, organization: { kind: "brand" } }),
+    where: getPublishedCourseWhere({
+      OR: [{ organization: { kind: "brand" } }, { familyId: { not: null }, userId: null }],
+      id: courseId,
+      visibility: "public",
+    }),
   });
 }
 
@@ -30,7 +34,6 @@ async function getOwnPrivateCourseById(courseId: string) {
   });
 }
 
-/** Private courses require their owner's session; published brand courses are public. */
 export async function getCourseById({ courseId }: { courseId: string }) {
   const published = await getPublishedCourseById(courseId);
   return published ?? getOwnPrivateCourseById(courseId);

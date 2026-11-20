@@ -3,7 +3,9 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
+import { getMistakeSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { loadGoalMap } from "../_utils/goal-map";
@@ -31,6 +33,21 @@ async function loadStudiedSkills({ skillIds, userId }: { skillIds: string[]; use
 }
 
 /** Requires an owned goal (active by default); returns not-found for chapters outside its plan. */
+async function countChapterMistakes({
+  goalId,
+  skillIds,
+  userId,
+}: {
+  goalId: string;
+  skillIds: readonly string[];
+  userId: string;
+}): Promise<number> {
+  const plan = await readGoalPlan(goalId);
+  const inScope = getMistakeSkillIds(plan.skills).filter((id) => skillIds.includes(id));
+
+  return prisma.mistake.count({ where: { skillId: { in: inScope }, status: "open", userId } });
+}
+
 export async function getChapterView({
   chapterId,
   goalId,
@@ -78,9 +95,7 @@ export async function getChapterView({
 
   const [studied, openMistakes, blockedTestOutChapters] = await Promise.all([
     loadStudiedSkills({ skillIds, userId: goal.userId }),
-    prisma.mistake.count({
-      where: { skillId: { in: skillIds }, status: "open", userId: goal.userId },
-    }),
+    countChapterMistakes({ goalId: goal.id, skillIds, userId: goal.userId }),
     loadBlockedTestOutChapters({
       chapterIds: [chapterId],
       goalId: goal.id,

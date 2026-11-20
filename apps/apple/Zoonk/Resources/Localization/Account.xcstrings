@@ -4494,25 +4494,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel nennt dich so, und dieser Name steht auf all deinen Zertifikaten."
+            "value" : "Dein Buddy nennt dich so, und dieser Name steht auf all deinen Zertifikaten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero te llama así y todos tus certificados llevan este nombre."
+            "value" : "Tu compa te llama así y todos tus certificados llevan este nombre."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon t’appelle par ce nom, qui figure sur tous tes certificats."
+            "value" : "Ton binôme t’appelle par ce nom, qui figure sur tous tes certificats."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno ti chiama così e tutti i tuoi certificati riportano questo nome."
+            "value" : "Il tuo socio ti chiama così e tutti i tuoi certificati riportano questo nome."
           }
         },
         "ja" : {
@@ -4536,7 +4536,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro e todos os seus certificados usam esse nome."
+            "value" : "Seu colega e todos os seus certificados usam esse nome."
           }
         },
         "tr" : {

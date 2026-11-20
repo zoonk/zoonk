@@ -153,6 +153,7 @@ describe(writeLessonContent, () => {
       check: {
         cite: false,
         lesson: written,
+        repairBase: expect.any(String),
         review: true,
         version: 1,
         writerModel: draft.model,

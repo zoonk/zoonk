@@ -4,14 +4,15 @@ Films show the app's own components, rendered with sample learner data in either
 
 ## The harness
 
-`npm run harness` (in the studio) serves `realui/` with Vite on `http://localhost:5199`.
+`npm run harness` (in the studio) serves `realui/` with Vite on the port init was given (`studio.json`; 5199 by default). The scripts read the same port.
 
-- **One view per query:** `?view=<name>&lang=<en|pt>`, plus each view's own parameters (`state`, `done`, `scroll`, `at`…). With no `view`, the page lists every view.
+- **One view per query:** `?view=<name>&lang=<en|pt>`, plus each view's own parameters (`state`, `done`, `scroll`, `at`…). With no `view`, the page lists every view. `views=<module>` (such as `views=learners`) loads only that module's code, which the stage uses so a scene with many pieces stays light.
 - **Repo files:** `@repo/…` imports the repo's files; init links the repo's React, next-intl, Vite and Playwright into the studio, so the harness runs the app's exact versions.
 - **Fixed date:** the story's `TODAY` (`realui/story.ts`) is the only date. `main.tsx` gives it to `NextIntlClientProvider` as `now`, with the locale (`en-US` or `pt-BR`) and the São Paulo time zone, and the capture scripts pin the browser clock to it (`scripts/story-clock.mjs`). Days left, review dates and timers read the same on any capture day.
 - **Translations:** the Vite config runs next-intl's own extraction and catalog loaders, the ones Main's build uses, and `main.tsx` merges the player, learn and Main catalogs as Main does. Screens show the app's exact wording in each language, namespaces included, and pick up catalog changes on reload.
 - **Shims:** `next/image` and `web-haptics` use the player's browser-test shims.
 - **Errors stay local:** a module that stops compiling against the app only loses its own views (`main.tsx` loads each one separately). The page's console shows the error.
+- **Type check:** `npm run typecheck` checks every view against the app's contracts. Type view models with the core types and no `any`: a cast hides a field the app added or renamed, and the screen then renders wrong or crashes. Actions are behavior, not data, so a typed no-op proxy stands in for them (`actions()` in `learners/index.tsx`).
 
 ## Building a view
 

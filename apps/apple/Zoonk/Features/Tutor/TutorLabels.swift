@@ -137,7 +137,7 @@ extension TutorScope {
             localized: "Does my plan cover all of it?", table: "Tutor",
             comment: "A question to the buddy about a subject, sent with one tap")),
       ]
-    case .item(_, _, let answered, _, _):
+    case .item(_, _, let answered, _):
       return [
         answered
           ? TutorSuggestion(

@@ -463,14 +463,15 @@ struct LessonActionBar: View {
 
   var body: some View {
     Group {
-      if state.canGoBack {
-        StepBackButton(
-          label: Text(
-            "Previous screen", tableName: "Player", comment: "Goes back one screen in the lesson")
-        ) {
-          store.goBack()
-        }
+      // Dimmed rather than hidden where it can't go back, so checking an answer or recording moves
+      // nothing in the row.
+      StepBackButton(
+        label: Text(
+          "Previous screen", tableName: "Player", comment: "Goes back one screen in the lesson")
+      ) {
+        store.goBack()
       }
+      .disabled(!state.canGoBack || recordInBar?.isChecking == true)
 
       if let step, step.isRead {
         LessonAudioButton(url: step.promptAudio, style: .bar)
@@ -489,18 +490,18 @@ struct LessonActionBar: View {
         .buttonStyle(.outline)
       }
 
-      if showsLessonAsk(
-        isExplanation: step?.kind == .explanation, hasPanel: tutor.panel != nil,
-        hasOwnAsk: showsOwnAsk)
-      {
-        askButton
-      }
-
       if state.phase == .playing, let record = recordInBar?.button, recordInBar?.isChecking == false
       {
         record
       } else {
         primaryButton
+      }
+
+      if showsLessonAsk(
+        isExplanation: step?.kind == .explanation, hasPanel: tutor.panel != nil,
+        hasOwnAsk: showsOwnAsk)
+      {
+        askButton
       }
     }
   }

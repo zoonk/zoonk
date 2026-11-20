@@ -985,6 +985,24 @@ describe("a shared language goal's graph", () => {
       title: "Ficar fluente em italiano",
     });
 
+    const source = await courseFixture({ targetLanguage: "it", title: prompt });
+
+    await expect(
+      findReusableCurriculum({
+        inputs: {
+          ...later,
+          sourceCourse: {
+            country: null,
+            format: source.format,
+            id: source.id,
+            ownerId: null,
+            title: source.title,
+          },
+        },
+        scope: { ...sharedScope(later), generalGoal: source.title },
+      }),
+    ).resolves.toBeNull();
+
     const reused = await findReusableCurriculum({ inputs: later, scope: sharedScope(later) });
 
     expect(first.kept).toBeNull();

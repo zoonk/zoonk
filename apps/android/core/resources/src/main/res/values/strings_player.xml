@@ -11,6 +11,8 @@
     <string name="player_idea_position">Idea %1$s of %2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">Example</string>
+    <!-- Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach. -->
+    <string name="player_opening_map_title">What you\'ll learn in this lesson</string>
     <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
     <string name="player_opening_map_hint">Tap an idea to see what it covers</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->

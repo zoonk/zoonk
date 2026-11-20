@@ -55,7 +55,8 @@ model Course {
   categories            CourseCategory[]
   courseChapters        CourseChapter[]
   homeChapters          Chapter[]
-  goals                 Goal[]
+  goals                 Goal[]                     @relation("PrimaryCourse")
+  starts                 Goal[]                     @relation("CourseStartSource")
   examSkillGraphs       ExamSkillGraph[]
   languageSkillGraphs   LanguageSkillGraph[]
   goFurtherLessons      Lesson[]

@@ -121,6 +121,7 @@
   "player_opening_map_hint": "cfc373e9e872bbb5d2c44727cfafdfb0982c8ee832d630deacc3bc09f2fbabb9",
   "player_opening_map_idea": "d43b3d5ae0970a40f4351ebc83ee52352ca13ba4e3bdd8aab2740ab6d4fa1612",
   "player_opening_map_show": "2471b743fbc1f06da95aeddc3f8c0da61c614ff71b7ca32d1bb812aaf88d0282",
+  "player_opening_map_title": "383046f91f1ae5754826aa86ef4f8765e5a7ea249fbab4748ae4e8ae86757d06",
   "player_part_of": "76f09d23881de278a0e932932beb4e68203b4f34a2b545e340027b1de171a045",
   "player_phase_draw": "932fa18dfee849016333f9a20878e8b53dfaa3c825b10b6005cfe307a9e240ae",
   "player_phase_draw_line_1": "8c6d54ff591924db0eea45d7333110c96c6cf15526d6b0fcb5651a227d95f7a7",
@@ -201,6 +202,8 @@
     <string name="player_idea_position">Notion %1$s sur %2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">Exemple</string>
+    <!-- Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach. -->
+    <string name="player_opening_map_title">Ce que tu vas apprendre dans cette leçon</string>
     <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
     <string name="player_opening_map_hint">Appuie sur une idée pour voir ce qu’elle aborde</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->

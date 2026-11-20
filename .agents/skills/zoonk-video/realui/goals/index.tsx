@@ -3,6 +3,6 @@ import { views as buddy } from "./views-buddy";
 import { views as exam } from "./views-exam";
 import { views as language } from "./views-language";
 
-type View = (p: { lang: "en" | "pt"; state: string; q: URLSearchParams }) => any;
+type View = (p: { lang: "en" | "pt"; state: string; q: URLSearchParams }) => React.ReactNode;
 
 export const views: Record<string, View> = { ...exam, ...language, ...buddy };

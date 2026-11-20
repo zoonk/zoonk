@@ -1,4 +1,5 @@
-import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { getSkillArea } from "../../plans/planner/graph-areas";
+import { type PlanGraph, parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 
 export type ProjectedPlanItem = {
   chapterId: string | null;
@@ -112,4 +113,57 @@ export function projectPlanSkills({
     ),
     skillIds: firstPerSkill(entries).map((entry) => entry.skillId),
   };
+}
+
+/**
+ * A skill is out only when every subject it's in was taken out. A graph skill is in its graph
+ * areas, and any skill is also in the areas of the plan items that teach it with a graph skill.
+ */
+export function listRemovedSkillIds({
+  entries,
+  graph,
+  settings,
+  survivorOf,
+}: {
+  entries: readonly SkillEntry[];
+  graph: PlanGraph;
+  settings: unknown;
+  survivorOf: (skillId: string) => string;
+}): Set<string> {
+  const skipped = new Set(parsePlanSettings(settings).skippedAreas);
+
+  const graphAreas = Map.groupBy(
+    graph.skills.map((skill) => ({
+      area: getSkillArea({ graph, skill }),
+      skillId: survivorOf(skill.skillId),
+    })),
+    (row) => row.skillId,
+  );
+
+  const areasOf = (skillId: string) => (graphAreas.get(skillId) ?? []).map((row) => row.area);
+
+  const itemAreas = Map.groupBy(
+    entries.flatMap((entry) =>
+      entry.planItemId
+        ? areasOf(entry.skillId).map((area) => ({ area, planItemId: entry.planItemId }))
+        : [],
+    ),
+    (row) => row.planItemId,
+  );
+
+  const skillAreas = Map.groupBy(
+    entries.flatMap((entry) =>
+      [
+        ...areasOf(entry.skillId),
+        ...(itemAreas.get(entry.planItemId) ?? []).map((row) => row.area),
+      ].map((area) => ({ area, skillId: entry.skillId })),
+    ),
+    (row) => row.skillId,
+  );
+
+  return new Set(
+    [...skillAreas].flatMap(([skillId, rows]) =>
+      rows.every((row) => skipped.has(row.area)) ? [skillId] : [],
+    ),
+  );
 }

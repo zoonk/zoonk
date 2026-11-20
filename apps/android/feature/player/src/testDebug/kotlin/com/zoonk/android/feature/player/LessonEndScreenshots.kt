@@ -264,7 +264,7 @@ class LessonEndScreenshots {
                         viewModel,
                         exits,
                         rememberAppNavigator(),
-                        tutor = LessonTutor(TutorIdentity("Sam", look = null)) { _, _, _, _, _, _ -> },
+                        tutor = LessonTutor(TutorIdentity("Sam", look = null)) { _, _, _, _, _ -> },
                     )
                 }
             }

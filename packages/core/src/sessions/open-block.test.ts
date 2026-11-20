@@ -16,6 +16,7 @@ import {
 } from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
+import { claimStudySessionSummaryVisit } from "./claim-study-session-summary-visit";
 import { openStudyBlock } from "./open-block";
 import { openStudyDay } from "./open-study-day";
 
@@ -175,6 +176,31 @@ describe("the learner opens a study block", () => {
     });
 
     await expect(readBlock(review)).resolves.toMatchObject({ status: "active" });
+  });
+
+  it("continues directly to Today after a seen summary unless a reward is waiting", async () => {
+    const { session, user } = await learnerSession();
+    await studySessionBlockFixture({ sessionId: session.id, status: "completed" });
+
+    const next = () =>
+      openStudyBlock({ target: { kind: "next", sessionId: session.id }, timeZone: "UTC" });
+
+    const summary = {
+      opening: { blockId: null, kind: "session", sessionId: session.id },
+      status: "ready",
+    };
+
+    await expect(next()).resolves.toStrictEqual(summary);
+
+    await claimStudySessionSummaryVisit({
+      input: { visitId: crypto.randomUUID() },
+      sessionId: session.id,
+    });
+
+    await expect(next()).resolves.toStrictEqual({ opening: { kind: "today" }, status: "ready" });
+
+    await prisma.milestone.create({ data: { key: "yellow", kind: "belt", userId: user.id } });
+    await expect(next()).resolves.toStrictEqual(summary);
   });
 
   it("opens a challenge on its own screen without starting it, and prepares the session", async () => {

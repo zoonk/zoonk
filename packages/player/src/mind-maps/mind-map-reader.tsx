@@ -168,7 +168,7 @@ function Reader({
       fit="always"
       footer={
         <TaskActions data-slot="mind-map-reader-actions">
-          {!isFirst && <QuestionBack label={t("Previous map")} onClick={previous} />}
+          <QuestionBack disabled={isFirst} label={t("Previous map")} onClick={previous} />
 
           {isLast ? (
             <TaskMainLink href={hrefs.exit} toApp>

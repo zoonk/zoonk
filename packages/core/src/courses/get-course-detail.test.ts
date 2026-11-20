@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
@@ -43,6 +44,23 @@ describe(getCourseDetail, () => {
       { level: "intermediate", written: false },
       { level: "advanced", written: false },
     ]);
+  });
+
+  it("opens an ownerless edition by id before it has a catalog address or description", async () => {
+    const family = await prisma.courseFamily.create({ data: {} });
+
+    const edition = await courseFixture({
+      description: null,
+      familyId: family.id,
+      isPublished: true,
+      language: "pt",
+      organizationId: null,
+    });
+
+    await expect(getCourseDetail({ courseId: edition.id })).resolves.toMatchObject({
+      editions: [{ id: edition.id }],
+      id: edition.id,
+    });
   });
 
   it("is null for a course nobody can read", async () => {

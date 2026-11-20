@@ -64,6 +64,7 @@ describe(getReminderWindow, () => {
       endsAt: new Date("2026-10-07T23:15:00Z"),
       localDate: new Date("2026-10-07T00:00:00Z"),
       open: true,
+      startsAt: new Date("2026-10-07T22:15:00Z"),
     });
   });
 
