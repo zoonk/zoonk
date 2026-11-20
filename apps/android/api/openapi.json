@@ -25666,20 +25666,10 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct tool option ids offered for this learner or already saved",
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "enum": [
-                        "excel",
-                        "googleSheets",
-                        "word",
-                        "powerPoint",
-                        "canva",
-                        "figma",
-                        "notion",
-                        "vsCode"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -25711,7 +25701,7 @@
                   },
                   "studies": {
                     "default": [],
-                    "description": "Up to three distinct fields",
+                    "description": "Distinct fields",
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -25782,7 +25772,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -25835,7 +25825,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -25890,7 +25880,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -25943,7 +25933,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -25994,7 +25984,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -31460,20 +31450,10 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct tool option ids offered for this learner or already saved",
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "enum": [
-                        "excel",
-                        "googleSheets",
-                        "word",
-                        "powerPoint",
-                        "canva",
-                        "figma",
-                        "notion",
-                        "vsCode"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -31506,7 +31486,7 @@
                   },
                   "studies": {
                     "default": [],
-                    "description": "Up to three distinct fields",
+                    "description": "Distinct fields",
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -31578,7 +31558,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -31632,7 +31612,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -31688,7 +31668,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -31742,7 +31722,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -31794,7 +31774,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -33553,13 +33533,13 @@
         "enum": [
           "addressForm",
           "work",
-          "tools",
           "studies",
           "watch",
           "listen",
           "play",
           "read",
           "activities",
+          "tools",
           "conditions",
           "learningSupport"
         ],
@@ -33591,7 +33571,7 @@
             "items": {
               "$ref": "#/components/schemas/ProfileQuestionView"
             },
-            "description": "All ten optional profile questions in screen order"
+            "description": "All eleven optional profile questions in screen order"
           }
         },
         "required": [
@@ -33618,11 +33598,11 @@
                 },
                 "id": {
                   "type": "string",
-                  "description": "Stable option id, accepted by the answer input"
+                  "description": "Option id accepted by the answer input. Personalized tool ids are their names"
                 },
                 "label": {
                   "type": "string",
-                  "description": "Option label in the request locale"
+                  "description": "Option label in the request locale or the name of a personalized tool"
                 }
               },
               "required": [
@@ -33632,7 +33612,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "Selectable options in order, with locale extras first"
+            "description": "Selectable options in order. Tools use the learner's suggestions when available and include previously saved tools"
           },
           "saved": {
             "type": "object",
@@ -92791,13 +92771,13 @@
           "schedule",
           "addressForm",
           "work",
-          "tools",
           "studies",
           "watch",
           "listen",
           "play",
           "read",
           "activities",
+          "tools",
           "conditions",
           "learningSupport",
           "buddy",

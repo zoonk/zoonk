@@ -181,21 +181,37 @@ export function toProfileQuestionView({
   const content = PROFILE_CONTENT[locale];
   const saved = toSavedView(input);
 
+  const suggestedTools = question === "tools" ? (state.profile?.suggestedTools ?? []) : [];
+
   const ids = new Set([
-    ...(content.extras[question] ?? []),
-    ...PROFILE_OPTION_IDS[question].filter((id) => !LOCALE_EXTRA_IDS.has(id)),
+    ...(suggestedTools.length > 0
+      ? suggestedTools
+      : [
+          ...(content.extras[question] ?? []),
+          ...PROFILE_OPTION_IDS[question].filter((id) => !LOCALE_EXTRA_IDS.has(id)),
+        ]),
     ...saved.picks,
   ]);
 
   return {
     id: question,
     options: [...ids].flatMap((id) => {
+      if (suggestedTools.includes(id)) {
+        return [{ description: null, id, label: id }];
+      }
+
       const definingContent = LOCALE_EXTRA_IDS.has(id)
         ? Object.values(PROFILE_CONTENT).find((item) => item.extras[question]?.includes(id))
         : content;
 
-      const option = definingContent?.options[question][id];
-      return option ? [{ description: option.description, id, label: option.label }] : [];
+      const options = definingContent?.options[question];
+      const option = options && Object.hasOwn(options, id) ? options[id] : undefined;
+
+      if (option) {
+        return [{ description: option.description, id, label: option.label }];
+      }
+
+      return question === "tools" ? [{ description: null, id, label: id }] : [];
     }),
     saved,
     status: state.answers.find((answer) => answer.question === question)?.outcome ?? null,

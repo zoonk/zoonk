@@ -3,6 +3,7 @@ import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { parseProfileAnswer } from "./profile-answer-normalization";
 import { normalizeProfileFavorites, splitProfileFavorites } from "./profile-favorites";
+import { PROFILE_OPTION_IDS } from "./profile-option-ids";
 import {
   PROFILE_QUESTIONS,
   getProfileSteps,
@@ -20,9 +21,19 @@ const goal: Pick<Goal, "details" | "kind" | "language" | "planRevealedAt" | "rep
 
 describe("profile steps", () => {
   it("keeps order, memory gates, answered versions and per-onboarding skips", () => {
-    expect(getProfileSteps({ answered: {}, goal, memoryEnabled: true })).toStrictEqual(
-      PROFILE_QUESTIONS,
-    );
+    expect(getProfileSteps({ answered: {}, goal, memoryEnabled: true })).toStrictEqual([
+      "addressForm",
+      "work",
+      "studies",
+      "watch",
+      "listen",
+      "play",
+      "read",
+      "activities",
+      "tools",
+      "conditions",
+      "learningSupport",
+    ]);
 
     expect(getProfileSteps({ answered: {}, goal, memoryEnabled: false })).toStrictEqual([
       "addressForm",
@@ -69,6 +80,27 @@ describe("profile steps", () => {
 });
 
 describe("profile statements", () => {
+  it.each(["activities", "listen", "play", "read", "tools", "watch"] as const)(
+    "keeps every distinct %s pick",
+    (question) => {
+      const picks = PROFILE_OPTION_IDS[question];
+
+      expect(
+        parseProfileAnswer({ answer: { picks: [...picks, ...picks] }, question }),
+      ).toMatchObject({ answer: { picks: [...picks].toSorted() } });
+    },
+  );
+
+  it("keeps every distinct study field", () => {
+    const studies = PROFILE_OPTION_IDS.studies.map((field) => ({ field, subject: field }));
+
+    expect(
+      parseProfileAnswer({ answer: { studies: [...studies, ...studies] }, question: "studies" }),
+    ).toMatchObject({
+      answer: { studies: studies.toSorted((a, b) => a.field.localeCompare(b.field)) },
+    });
+  });
+
   it("preserves favorites order and deduplicates every supported separator", () => {
     expect(splitProfileFavorites(" Star Trek; Fringe、STAR TREK，Dragon Ball\n ")).toStrictEqual([
       "Star Trek",

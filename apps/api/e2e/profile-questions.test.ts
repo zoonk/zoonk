@@ -94,5 +94,22 @@ test("profile answers persist privately, enforce consent and memory settings, an
   expect(skippedAll.status()).toBe(200);
   const plan = await prisma.plan.findUnique({ where: { goalId: goal.id } });
   expect(plan).toBeNull();
+
+  const picks = ["Medscape", "Tasy", "UpToDate", "Whitebook"];
+  await learningProfileFixture({ suggestedTools: picks, userId: user.id });
+
+  const tools = await api.post("/v1/me/profile-questions/answers", {
+    data: { answer: { picks }, question: "tools" },
+  });
+
+  expect(tools.status()).toBe(200);
+  expect(await tools.json()).toMatchObject({ question: { id: "tools", saved: { picks } } });
+
+  const unoffered = await api.post("/v1/me/profile-questions/answers", {
+    data: { answer: { picks: ["Other learner's tool"] }, question: "tools" },
+  });
+
+  expect(unoffered.status()).toBe(422);
+
   await api.dispose();
 });

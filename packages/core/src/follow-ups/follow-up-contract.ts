@@ -1,3 +1,4 @@
+import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
@@ -77,6 +78,10 @@ export const followUpSchema = z.discriminatedUnion("kind", [
   }),
   z.object({ input: z.object({ language: z.string() }), kind: z.literal("findMistakePattern") }),
   z.object({ input: z.object({ goalId: uuidSchema() }), kind: z.literal("rememberOnboarding") }),
+  z.object({
+    input: z.object({ language: z.enum(SUPPORTED_LOCALES) }),
+    kind: z.literal("suggestProfileTools"),
+  }),
   z.object({
     input: z.object({
       endedAt: z.iso.datetime(),

@@ -17,7 +17,7 @@ type ProfileFact = {
 };
 
 export function toProfileFacts(
-  input: ProfileAnswerInput & { locale: SupportedLocale },
+  input: ProfileAnswerInput & { locale: SupportedLocale; suggestedTools?: readonly string[] },
 ): ProfileFact[] {
   const { question, answer, locale } = input;
 
@@ -31,7 +31,15 @@ export function toProfileFacts(
   const list = (items: string[]) =>
     new Intl.ListFormat(locale, { type: "conjunction" }).format(items);
 
-  const fragment = (id: string) => content.options[question][id]?.fragment ?? id;
+  const fragment = (id: string) => {
+    const options = content.options[question];
+
+    if (question === "tools" && input.suggestedTools?.includes(id)) {
+      return id;
+    }
+
+    return Object.hasOwn(options, id) ? (options[id]?.fragment ?? id) : id;
+  };
 
   const render = (key: string, values: Record<string, string>) =>
     (templates[key] ?? "").replaceAll(

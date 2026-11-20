@@ -1,6 +1,9 @@
 import { type ProfileQuestion } from "@zoonk/db/enums";
 import { type ServerAnalyticsEvent } from "../../../analytics/events";
+import { PROFILE_OPTION_IDS } from "../profile-option-ids";
 import { type ProfileAnswerInput } from "../profile-question-contract";
+
+const GENERAL_TOOL_IDS = new Set<string>(PROFILE_OPTION_IDS.tools);
 
 function answerMetrics(input: ProfileAnswerInput) {
   switch (input.question) {
@@ -20,10 +23,15 @@ function answerMetrics(input: ProfileAnswerInput) {
     case "listen":
     case "play":
     case "read":
-    case "tools":
     case "watch":
       return {
         options: input.answer.picks,
+        picks: input.answer.picks.length,
+        typedText: Boolean(input.answer.favorites),
+      };
+    case "tools":
+      return {
+        options: input.answer.picks.filter((id) => GENERAL_TOOL_IDS.has(id)),
         picks: input.answer.picks.length,
         typedText: Boolean(input.answer.favorites),
       };

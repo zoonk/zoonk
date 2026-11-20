@@ -15,8 +15,10 @@ import {
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
+import { oweProfileTools } from "./_utils/owe-profile-tools";
 import { toProfileQuestionSavedEvent } from "./_utils/profile-question-event";
 import {
+  type ProfileQuestionState,
   getQuestionFacts,
   loadProfileQuestionState,
   savedProfileAnswer,
@@ -49,6 +51,24 @@ function comparable(input: ProfileAnswerInput, soundsEnabled: boolean, memoryEna
   }
 
   return input.answer;
+}
+
+function usesOfferedOptions({
+  input,
+  state,
+  locale,
+}: {
+  input: ProfileAnswerInput;
+  state: ProfileQuestionState;
+  locale: SupportedLocale;
+}): boolean {
+  if (input.question !== "tools") {
+    return true;
+  }
+
+  const { options } = toProfileQuestionView({ locale, question: input.question, state });
+  const offered = new Set(options.map((option) => option.id));
+  return input.answer.picks.every((id) => offered.has(id));
 }
 
 async function saveSettings({
@@ -146,6 +166,10 @@ export async function answerProfileQuestion({
       return unchanged({ status: "memoryOff" as const });
     }
 
+    if (!usesOfferedOptions({ input, locale, state })) {
+      return unchanged({ status: "invalid" as const });
+    }
+
     const row = state.answers.find((answer) => answer.question === input.question);
     const existing = savedProfileAnswer({ question: input.question, state });
     const sounds = state.profile?.soundsEnabled ?? true;
@@ -171,6 +195,7 @@ export async function answerProfileQuestion({
             existing: getQuestionFacts({ facts: state.facts, question: input.question }),
             input,
             locale,
+            suggestedTools: state.profile?.suggestedTools,
             tx,
             userId,
             viewer,
@@ -189,6 +214,14 @@ export async function answerProfileQuestion({
       create: { question: input.question, userId, ...data },
       update: data,
       where: { userId_question: { question: input.question, userId } },
+    });
+
+    await oweProfileTools({
+      changedQuestions: [input.question],
+      locale,
+      memoryEnabled,
+      tx,
+      userId,
     });
 
     const current = await loadProfileQuestionState({ client: tx, userId });

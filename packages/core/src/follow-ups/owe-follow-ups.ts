@@ -52,6 +52,8 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.sourceId;
     case "endWebPlusBesideStore":
       return "webPlus";
+    case "suggestProfileTools":
+      return "profile";
     case "askToCancelSecondStorePlus":
       return followUp.input.subscriptionId;
     default:

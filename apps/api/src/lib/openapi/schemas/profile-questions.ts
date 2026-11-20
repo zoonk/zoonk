@@ -15,11 +15,23 @@ const profileQuestionViewSchema = z
             .string()
             .nullable()
             .meta({ description: "Optional description in the request locale" }),
-          id: z.string().meta({ description: "Stable option id, accepted by the answer input" }),
-          label: z.string().meta({ description: "Option label in the request locale" }),
+          id: z
+            .string()
+            .meta({
+              description:
+                "Option id accepted by the answer input. Personalized tool ids are their names",
+            }),
+          label: z
+            .string()
+            .meta({
+              description: "Option label in the request locale or the name of a personalized tool",
+            }),
         }),
       )
-      .meta({ description: "Selectable options in order, with locale extras first" }),
+      .meta({
+        description:
+          "Selectable options in order. Tools use the learner's suggestions when available and include previously saved tools",
+      }),
     saved: z
       .object({
         picks: z
@@ -61,7 +73,7 @@ export const profileQuestionsResponseSchema = z
       .meta({ description: "Whether biography answers may be edited and written to memory" }),
     questions: z
       .array(profileQuestionViewSchema)
-      .meta({ description: "All ten optional profile questions in screen order" }),
+      .meta({ description: "All eleven optional profile questions in screen order" }),
   })
   .meta({ id: "ProfileQuestions" }) satisfies z.ZodType<ProfileQuestionsView>;
 export const profileAnswerResponseSchema = z
