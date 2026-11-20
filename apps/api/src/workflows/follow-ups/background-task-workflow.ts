@@ -37,9 +37,7 @@ export type BackgroundTask = Exclude<
 >;
 
 export function getBackgroundTaskToken({ key, kind, userId }: BackgroundTask): string {
-  // Keep the token held by single-clip runs started before the media migration.
-  const taskKind = kind === "prepareContentFixMedia" ? "voiceContentFix" : kind;
-  return `${taskKind}:${userId}:${key}`;
+  return `${kind}:${userId}:${key}`;
 }
 
 type InsightTask = Extract<BackgroundTask, { kind: "checkDailyInsight" }>;
