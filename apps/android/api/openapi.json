@@ -76864,7 +76864,7 @@
           },
           "preparing": {
             "type": "boolean",
-            "description": "A pending mock still needs questions. Show its time and offer the next available study activity."
+            "description": "True when a scheduled mock cannot start because some questions are unavailable."
           },
           "questions": {
             "type": "integer",
@@ -93453,7 +93453,7 @@
                 },
                 "preparing": {
                   "type": "boolean",
-                  "description": "A pending mock still needs questions. Show its time and offer the next available study activity."
+                  "description": "True when a scheduled mock cannot start because some questions are unavailable."
                 },
                 "questions": {
                   "type": "integer",

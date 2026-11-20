@@ -96,9 +96,7 @@ export const studyBlockSchema = z
     position: z.number().int().min(0),
     preparing: z
       .boolean()
-      .describe(
-        "A pending mock still needs questions. Show its time and offer the next available study activity.",
-      ),
+      .describe("True when a scheduled mock cannot start because some questions are unavailable."),
     questions: z.number().int().min(0),
     refresh: z
       .boolean()
