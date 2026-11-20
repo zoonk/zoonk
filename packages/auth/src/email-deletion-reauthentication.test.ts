@@ -45,7 +45,7 @@ describe(createEmailDeletionReauthentication, () => {
     });
   });
 
-  it.each(["hashed", "plain"] as const)(
+  it.each(["encrypted", "plain"] as const)(
     "uses Better Auth's atomic, non-signup OTP flow with %s storage",
     async (storeOTP) => {
       const reauthorize = createEmailDeletionReauthentication({
@@ -72,7 +72,7 @@ describe(createEmailDeletionReauthentication, () => {
 
     const reauthorize = createEmailDeletionReauthentication({
       rateLimit: { enabled: false },
-      storeOTP: "hashed",
+      storeOTP: "encrypted",
     });
 
     await expect(reauthorize({ credentials, expectedUserId: randomUUID() })).rejects.toBeInstanceOf(

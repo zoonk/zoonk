@@ -174,7 +174,7 @@ export const baseAuthPlugins = [
 export const fullPlugins = [
   appChallengePlugin(),
   restoreKeyPlugin(),
-  createEmailOTPPlugin({ storeOTP: "hashed" }),
+  createEmailOTPPlugin({ storeOTP: "encrypted" }),
   oneTimeToken({ storeToken: "hashed" }),
   bearer(),
   passkey({
