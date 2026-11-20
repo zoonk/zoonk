@@ -81,7 +81,7 @@ function getAnswerWordFloor({
   );
 }
 
-function promptContent({
+export function promptContent({
   data,
   input,
   skills,

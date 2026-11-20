@@ -7,7 +7,7 @@ import { type CallWait, buildProviderOptions, chooseServiceTier } from "../../pr
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import taskPrompt from "./write-writing-prompt.prompt.md";
 
-const model = "openai/gpt-6.1-terra";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 const points = z.number().positive().nullable();
 
@@ -35,12 +35,16 @@ export type WritingPromptInput = {
 export async function writeWritingPrompt({
   analytics,
   input,
+  model = defaultModel,
   shared,
+  useFallback = true,
   wait,
 }: {
   analytics?: AiGenerationContext;
   input: WritingPromptInput;
+  model?: string;
   shared: boolean;
+  useFallback?: boolean;
   wait: CallWait;
 }) {
   const systemPrompt = fillPromptLanguages({
@@ -60,7 +64,7 @@ export async function writeWritingPrompt({
           fallbackModels,
           model,
           serviceTier: chooseServiceTier({ wait }),
-          useFallback: true,
+          useFallback,
         }),
       }),
     libraryInput: shared,
