@@ -1,8 +1,11 @@
 "use client";
 
+import { Fold } from "@/components/fold";
+import { type Adjudication } from "@/lib/comparisons/schemas";
 import { Button } from "@zoonk/ui/components/button";
 import { useState, useTransition } from "react";
 import { Choice, TextField } from "../_components/form-fields";
+import { DIRECTION_LABELS } from "../_utils/labels";
 import { type RulingResult, ruleOnCaseAction } from "./actions";
 
 const RULING_CHOICES = [
@@ -11,19 +14,36 @@ const RULING_CHOICES = [
   { label: "Challenger", value: "challenger" },
 ];
 
-/** The owner's call on a case the readers left split, made with every read in view. */
-export function RulingForm({
-  blindRead,
-  caseId,
-  comparisonId,
-  taskId,
-}: {
-  /** The owner's blind pick on this case, the ruling's starting point. */
+type RulingProps = {
   blindRead: string | null;
   caseId: string;
   comparisonId: string;
+  ruling?: Pick<Adjudication, "direction" | "reason">;
   taskId: string;
-}) {
+};
+
+export function RulingForm(props: RulingProps) {
+  const { ruling } = props;
+
+  if (!ruling) {
+    return <EditRuling {...props} />;
+  }
+
+  return (
+    <div className="flex max-w-2xl flex-col gap-1">
+      <p className="text-sm">
+        <span className="text-muted-foreground">Your ruling: </span>
+        {DIRECTION_LABELS[ruling.direction]}.{" "}
+        <span className="text-muted-foreground">{ruling.reason}</span>
+      </p>
+      <Fold key={JSON.stringify(ruling)} title="Change your ruling">
+        <EditRuling {...props} />
+      </Fold>
+    </div>
+  );
+}
+
+function EditRuling({ blindRead, caseId, comparisonId, ruling, taskId }: RulingProps) {
   const [result, setResult] = useState<RulingResult>(null);
   const [pending, startTransition] = useTransition();
 
@@ -59,11 +79,13 @@ export function RulingForm({
 
       <Choice
         choices={RULING_CHOICES}
-        defaultValue={RULING_CHOICES.find((choice) => choice.value === blindRead)?.value}
+        defaultValue={
+          ruling?.direction ?? RULING_CHOICES.find((choice) => choice.value === blindRead)?.value
+        }
         label="Who serves the learner better"
         name="direction"
       />
-      <TextField label="Why" name="reason" required />
+      <TextField defaultValue={ruling?.reason} label="Why" name="reason" required />
 
       {result && (
         <p className="text-destructive-text text-sm" role="alert">

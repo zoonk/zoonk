@@ -40,13 +40,6 @@ function CaseVotes({ item }: { item: Case }) {
           </>
         )}
       </p>
-      {item.adjudication && (
-        <p>
-          <span className="text-muted-foreground">Your ruling: </span>
-          {DIRECTION_LABELS[item.adjudication.direction]}.{" "}
-          <span className="text-muted-foreground">{item.adjudication.reason}</span>
-        </p>
-      )}
     </div>
   );
 }
@@ -99,6 +92,7 @@ export function CasesSection({
                       blindRead={item.owner}
                       caseId={item.caseId}
                       comparisonId={manifest.id}
+                      ruling={item.adjudication}
                       taskId={manifest.taskId}
                     />
                   )}

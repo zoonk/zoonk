@@ -102,6 +102,7 @@ export function Reveal({
           blindRead={decisionCase.owner}
           caseId={real.caseId}
           comparisonId={comparison.manifest.id}
+          ruling={decisionCase.adjudication}
           taskId={comparison.manifest.taskId}
         />
       )}

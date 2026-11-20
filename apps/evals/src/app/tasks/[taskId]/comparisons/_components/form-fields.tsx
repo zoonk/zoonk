@@ -38,11 +38,13 @@ export function Choice({
 }
 
 export function TextField({
+  defaultValue,
   label,
   name,
   placeholder,
   required = false,
 }: {
+  defaultValue?: string;
   label: string;
   name: string;
   placeholder?: string;
@@ -55,6 +57,7 @@ export function TextField({
       <Label htmlFor={id}>{label}</Label>
       <Textarea
         className="min-h-11"
+        defaultValue={defaultValue}
         id={id}
         name={name}
         placeholder={placeholder}
