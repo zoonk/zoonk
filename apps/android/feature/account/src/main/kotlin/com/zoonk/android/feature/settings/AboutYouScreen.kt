@@ -74,8 +74,9 @@ import kotlinx.coroutines.launch
 fun AboutYouScreen(
     app: AppContainer,
     navigator: AppNavigator,
+    store: ProfileQuestionsStore = app.profileQuestions,
 ) {
-    val state by app.profileQuestions.questions.collectShown()
+    val state by store.questions.collectShown()
     ProfilePage(navigator, stringResource(R.string.profile_questions_title)) {
         PageHeader(
             stringResource(R.string.profile_questions_title),
@@ -84,7 +85,7 @@ fun AboutYouScreen(
         )
         when (val shown = state) {
             is LoadState.Loaded -> AboutYouRows(shown.value, navigator)
-            is LoadState.Failed -> LoadFailedMessage(onRetry = { app.scope.launch { app.profileQuestions.questions.refresh() } })
+            is LoadState.Failed -> LoadFailedMessage(onRetry = { app.scope.launch { store.questions.refresh() } })
             else -> PageLoading()
         }
     }
@@ -119,7 +120,7 @@ private val HOW_YOU_LEARN = listOf(ProfileQuestion.ADDRESS_FORM, ProfileQuestion
 
 private val ABOUT_YOU_GROUPS =
     listOf(
-        R.string.profile_questions_your_day to listOf(ProfileQuestion.WORK, ProfileQuestion.TOOLS, ProfileQuestion.STUDIES),
+        R.string.profile_questions_your_day to listOf(ProfileQuestion.WORK, ProfileQuestion.STUDIES, ProfileQuestion.TOOLS),
         R.string.profile_questions_for_fun to
             listOf(ProfileQuestion.WATCH, ProfileQuestion.LISTEN, ProfileQuestion.PLAY, ProfileQuestion.READ, ProfileQuestion.ACTIVITIES),
         R.string.profile_questions_how_learn to HOW_YOU_LEARN,
@@ -338,10 +339,12 @@ internal class ProfileQuestionViewModel(
         question: ProfileQuestion,
         memoryEnabled: Boolean,
     ) {
+        val source = source
         if (saving || source?.id != question || !canSave(memoryEnabled)) return
         saving = true
         failure.clear()
-        val answer = if (draft.empty(question, memoryEnabled)) draft.copy(declined = true) else draft
+        val submitted = draft.submitted(source)
+        val answer = if (submitted.empty(question, memoryEnabled)) submitted.copy(declined = true) else submitted
         val started = visit.number
         viewModelScope.launch {
             when (store.answer(answer.input(question, memoryEnabled))) {
