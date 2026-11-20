@@ -175,6 +175,7 @@ export const attemptSchema = z.object({
   passed: z.boolean(),
   protocolHash: digest,
   reader: readerSchema,
+  recordedAt: z.iso.datetime().optional(),
   response: ownerResponseSchema,
 });
 export type Attempt = z.infer<typeof attemptSchema>;
@@ -183,6 +184,7 @@ export const adjudicationSchema = z.object({
   caseId: text,
   direction: z.enum(["incumbent", "challenger", "tie"]),
   reason: z.string().trim().min(1),
+  recordedAt: z.iso.datetime().optional(),
 });
 export type Adjudication = z.infer<typeof adjudicationSchema>;
 export const checkSchema = z.object({

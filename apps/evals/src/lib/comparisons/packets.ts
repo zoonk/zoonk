@@ -299,6 +299,10 @@ type ImportArgs = {
   attempt: string;
   response: unknown;
 };
+
+function ownerTimestamp(channel: Reader["channel"]) {
+  return channel === "owner" ? new Date().toISOString() : undefined;
+}
 export async function saveResponse(args: ImportArgs, costUsd: number, channel: Reader["channel"]) {
   const dir = directory(args.taskId, args.id);
   const manifest = await readOptional(path.join(dir, "manifest.json"), manifestSchema);
@@ -350,6 +354,7 @@ export async function saveResponse(args: ImportArgs, costUsd: number, channel: R
     passed: failures.length === 0,
     protocolHash: hash(manifest.protocols.reader),
     reader: { ...sealed.reader, channel },
+    recordedAt: ownerTimestamp(channel),
     response,
   });
 }

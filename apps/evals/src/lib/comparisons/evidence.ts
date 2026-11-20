@@ -86,10 +86,8 @@ function summarizeVotes(votes: Direction[]): Direction {
   return directions[0] ?? "tie";
 }
 
-function settle(votes: Direction[]): Direction {
-  if (votes.includes("split")) {
-    return "unresolved";
-  }
+export function settle(votes: Direction[]): Direction {
+  const expressed = votes.filter((vote) => vote !== "split");
 
   const winner = sides.find(
     (subject) =>
@@ -97,7 +95,8 @@ function settle(votes: Direction[]): Direction {
   );
 
   return (
-    winner ?? (votes.length >= 2 && votes.every((vote) => vote === "tie") ? "tie" : "unresolved")
+    winner ??
+    (expressed.length >= 2 && expressed.every((vote) => vote === "tie") ? "tie" : "unresolved")
   );
 }
 
@@ -141,9 +140,13 @@ export function caseVotes(comparison: Comparison, reads: ReturnType<typeof accep
 
     const modelResult = settle(Object.values(families));
 
-    const adjudication = canAdjudicate(manifest, { result: modelResult, votes: families })
+    const ruling = canAdjudicate(manifest, { votes: families })
       ? comparison.adjudications.find((entry) => entry.caseId === caseId)
       : undefined;
+
+    const adjudication = latestRuling(ruling, blindOwner);
+
+    const result = modelResult === "unresolved" ? (blindOwner?.vote ?? modelResult) : modelResult;
 
     return {
       ...(adjudication && { adjudication }),
@@ -151,20 +154,32 @@ export function caseVotes(comparison: Comparison, reads: ReturnType<typeof accep
       language,
       legacyOwner: legacyOwner ?? null,
       owner: blindOwner?.vote ?? legacyOwner ?? null,
-      result: adjudication?.direction ?? modelResult,
+      result: adjudication?.direction ?? result,
       votes: families,
     };
   });
 }
 
+function latestRuling(
+  ruling: Comparison["adjudications"][number] | undefined,
+  blindOwner: Read | undefined,
+) {
+  return ruling &&
+    (!blindOwner?.vote || (ruling.recordedAt ?? "") >= (blindOwner.attempt.recordedAt ?? ""))
+    ? ruling
+    : undefined;
+}
+
 export function canAdjudicate(
   manifest: Comparison["manifest"],
-  item: Pick<Decision["cases"][number], "result" | "votes">,
+  item: Pick<Decision["cases"][number], "votes">,
 ) {
-  const readers = manifest.readers.filter((reader) => reader.channel !== "owner");
+  const readers = manifest.readers.filter(
+    (reader) => reader.channel !== "owner" && !reader.reserve,
+  );
 
   return (
-    item.result === "unresolved" &&
+    settle(Object.values(item.votes)) === "unresolved" &&
     readers.length >= 2 &&
     readers.every((reader) => Object.hasOwn(item.votes, reader.family))
   );
