@@ -83,6 +83,7 @@ const mockEssaySchema = z
           "`pending`: written and not graded yet: POST /v1/mocks/{blockId}/essay-grades right after hand-in, while the objective result already shows. `blank`: left blank",
       }),
     text: z.string().nullable(),
+    unsure: z.boolean().meta({ description: "Whether the learner marked the essay as unsure" }),
   })
   .meta({ id: "MockEssay" });
 

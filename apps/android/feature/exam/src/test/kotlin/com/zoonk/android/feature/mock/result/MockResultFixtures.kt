@@ -54,10 +54,10 @@ internal const val MISSED =
     "question":"Which word is a noun?","set":null,"unsure":false}"""
 
 internal fun pendingEssay(item: String = ESSAY_ONE) =
-    """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow."}"""
+    """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow.","unsure":false}"""
 
 internal fun gradedEssay() =
-    """{"area":"Writing","context":null,"itemId":"$ESSAY_ONE","question":"Write about cities.","status":"graded","text":"Cities grow.",
+    """{"area":"Writing","context":null,"itemId":"$ESSAY_ONE","question":"Write about cities.","status":"graded","text":"Cities grow.","unsure":false,
     "grade":{"criteria":[
       {"maxScore":200,"score":160,"comment":"Clear.","example":null,"id":"c1","name":"C1","quote":null},
       {"maxScore":200,"score":160,"comment":"On topic.","example":null,"id":"c2","name":"C2","quote":null},

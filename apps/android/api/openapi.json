@@ -91237,6 +91237,10 @@
           "text": {
             "nullable": true,
             "type": "string"
+          },
+          "unsure": {
+            "type": "boolean",
+            "description": "Whether the learner marked the essay as unsure"
           }
         },
         "required": [
@@ -91246,7 +91250,8 @@
           "itemId",
           "question",
           "status",
-          "text"
+          "text",
+          "unsure"
         ],
         "additionalProperties": false
       },

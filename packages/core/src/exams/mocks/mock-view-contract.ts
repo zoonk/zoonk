@@ -82,6 +82,7 @@ export type MockEssayView = {
   question: string;
   status: "blank" | "graded" | "pending";
   text: string | null;
+  unsure: boolean;
 };
 
 export type MockSizeSource = {

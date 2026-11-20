@@ -18,19 +18,19 @@ function toEntry({
   unsure,
 }: {
   area: string | null;
-  attempt: { answer: unknown; isCorrect: boolean } | undefined;
+  attempt: { answer: unknown; isCorrect: boolean };
   conditions: MockConditions;
   item: MockItem;
   mockExamId: string;
   number: number;
   unsure: boolean;
 }): MockReviewEntry | null {
-  if (attempt?.isCorrect && !unsure) {
+  if (attempt.isCorrect && !unsure) {
     return null;
   }
 
   const grade = gradeMockItem({
-    answer: readRecordedMockAnswer(attempt?.answer),
+    answer: readRecordedMockAnswer(attempt.answer),
     item,
     mockId: mockExamId,
     partialCredit: conditions.partialCredit,
@@ -50,7 +50,7 @@ function toEntry({
     itemId: item.id,
     learnerAnswer: grade.snapshot.answer,
     number,
-    outcome: attempt?.isCorrect ? "right" : missedOutcome,
+    outcome: attempt.isCorrect ? "right" : missedOutcome,
     question: shown.question,
     set: shown.set,
     unsure,
@@ -103,13 +103,8 @@ export async function loadMockReview({
   const review = getAskedItemIds(conditions).flatMap((entry, index) => {
     const item = items.get(entry.itemId);
     const attempt = attempts.find((row) => row.itemId === entry.itemId);
-    const draft = draftsByItem.get(entry.itemId);
-    const unsure = draft?.flagged ?? false;
 
-    const markedPlacementBlank =
-      conditions.purpose === "placement" && unsure && draft?.answer === null;
-
-    if (!item || (!attempt && !markedPlacementBlank)) {
+    if (!item || !attempt) {
       return [];
     }
 
@@ -120,7 +115,7 @@ export async function loadMockReview({
       item,
       mockExamId,
       number: index + 1,
-      unsure,
+      unsure: draftsByItem.get(entry.itemId)?.flagged ?? false,
     });
 
     return reviewed ? [reviewed] : [];

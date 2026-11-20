@@ -855,9 +855,7 @@ describe("an existing mock taken as placement", () => {
 
     expect(finished).toMatchObject({ adapt: null, result: { total: 4 }, status: "finished" });
 
-    expect(finished.review.filter((entry) => entry.outcome === "blank")).toMatchObject([
-      { itemId: markedBlank?.itemId, number: 5, unsure: true },
-    ]);
+    expect(finished.review.filter((entry) => entry.outcome === "blank")).toStrictEqual([]);
 
     expect(attempts).toHaveLength(4);
     expect(mistakes).toBe(0);
