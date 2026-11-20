@@ -9,6 +9,7 @@ import {
   addressFormTemplate,
   getAddressFormPrompt,
 } from "../_utils/address-form";
+import { answerStreamOptions } from "../_utils/answer-stream";
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import {
@@ -226,11 +227,6 @@ function serializeLessonQuestionMessages(
   return messages.map(({ content, role }) => `${role.toUpperCase()}:\n${content}`).join("\n\n");
 }
 
-/** Provider errors can contain private prompt data; the delivery adapter logs safe identifiers. */
-function suppressLessonQuestionProviderError() {
-  return Promise.resolve();
-}
-
 export async function generateLessonQuestionAnswer({
   addressForm,
   analytics,
@@ -305,7 +301,7 @@ export function streamLessonQuestionAnswer({
           question,
           useFallback: true,
         }),
-        onError: suppressLessonQuestionProviderError,
+        ...answerStreamOptions(LESSON_QUESTION_TASK),
       }),
     systemPrompt: getPromptVersionText(contextSnapshot),
     task: LESSON_QUESTION_TASK,
