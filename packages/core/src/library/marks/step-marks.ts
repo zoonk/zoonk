@@ -1,4 +1,5 @@
 import { isExampleQuote, isUnderlineQuote } from "@zoonk/ai/tasks/lesson-marks/quotes";
+import { findCodeFences } from "@zoonk/utils/code-fence";
 import { findMarkdownTables } from "@zoonk/utils/markdown-table";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
@@ -66,19 +67,22 @@ export function getMarkedText(screen: MarkedScreen): string | null {
   return screen.kind === "workedExample" ? screen.content.problem : null;
 }
 
-/** The players draw a table wherever one starts, even right under a line with a pipe in it, but never in code. */
-function showsTable(text: string): boolean {
-  return findMarkdownTables(text).length > 0;
+/**
+ * The players draw a table wherever one starts, even right under a line with a pipe in it, and a
+ * code block across the text's width, which an icon beside it would narrow.
+ */
+function showsTableOrCode(text: string): boolean {
+  return findMarkdownTables(text).length > 0 || findCodeFences(text.split(/\r?\n/u)).length > 0;
 }
 
-/** Icons add to a screen's visuals and never compete with one, a table in its text included. */
+/** Icons add to a screen's visuals and never compete with one, a table or code in its text included. */
 export function canShowIcon(screen: MarkedScreen): boolean {
   return (
     screen.kind === "explanation" &&
     !screen.content.image &&
     !screen.content.visual &&
     !screen.content.explore &&
-    !showsTable(screen.content.text)
+    !showsTableOrCode(screen.content.text)
   );
 }
 
