@@ -52,7 +52,14 @@ export async function forecastReads(
   });
 
   const prices = await pricesFor(
-    selection.readers.filter((reader) => reader.channel !== "owner").map((reader) => reader.model),
+    selection.readers
+      .filter(
+        (reader) =>
+          matched.length > 0 &&
+          reader.channel !== "owner" &&
+          !(reader.reserve && selection.reserveCap === 0),
+      )
+      .map((reader) => reader.model),
   );
 
   const estimate = (reader: Reader) => {
