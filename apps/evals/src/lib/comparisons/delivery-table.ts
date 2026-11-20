@@ -94,7 +94,9 @@ export function deliveryTable(
             qualityRow.affected.length > 0 &&
             rules?.criteria[qualityRow.criterion] === "disqualifies",
         ) ||
-        comparison.checks.some((ch) => ch.side === subject && ch.passed < ch.total) ||
+        comparison.checks.some(
+          (ch) => ch.side === subject && ch.name === "answer keys" && ch.passed < ch.total,
+        ) ||
         failures.some((failure) => failure.reason === "schema") ||
         (slots.length > 0 &&
           meetsLatencyBudget({ budget: manifest.latencyBudget ?? undefined, latency: delivery }) ===
