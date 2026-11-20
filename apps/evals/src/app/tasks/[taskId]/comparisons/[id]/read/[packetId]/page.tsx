@@ -6,11 +6,10 @@ import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { MainActionBar } from "../../../_components/main-action-link";
-import { nextOwnerPacket, ownerPackets, packetCase } from "../../../_utils/case-evidence";
+import { nextOwnerPacket, ownerReads, packetCase } from "../../../_utils/case-evidence";
 import { getComparisonRoute } from "../../../_utils/comparison-route";
 import { comparisonPath, readPath } from "../../../_utils/paths";
 import { comparisonTitle } from "../../../_utils/titles";
-import { failureAdvice } from "../../../_utils/words";
 import { BlindReadForm } from "./blind-read-form";
 import { Reveal } from "./reveal";
 
@@ -21,7 +20,7 @@ export const metadata: Metadata = { title: "Read blind" };
 async function getRead(params: ReadParams) {
   const { id, packetId, taskId } = await params;
   const route = await getComparisonRoute(taskId, id);
-  const owner = ownerPackets(route.comparison);
+  const owner = ownerReads(route.comparison);
   const index = owner.findIndex((entry) => entry.packet.id === packetId);
   const entry = owner[index];
 
@@ -29,31 +28,21 @@ async function getRead(params: ReadParams) {
     notFound();
   }
 
-  const attempts = route.comparison.attempts
-    .filter((attempt) => attempt.packetId === packetId)
-    .toSorted((left, right) => left.attempt.localeCompare(right.attempt));
+  const passed = route.comparison.attempts
+    .filter((attempt) => attempt.packetId === packetId && attempt.passed)
+    .toSorted((left, right) => left.attempt.localeCompare(right.attempt))[0];
 
   return {
     ...route,
-    failed: attempts.findLast((attempt) => !attempt.passed) ?? null,
     packet: entry.packet,
-    passed: attempts.find((attempt) => attempt.passed) ?? null,
+    passed: passed ?? null,
     position: { index, total: owner.length },
   };
 }
 
-function LastFailure({ failures }: { failures: string[] }) {
-  return (
-    <p className="text-destructive-text text-sm" role="status">
-      Your last read of these pairs didn’t count:{" "}
-      {failures.map((failure) => failureAdvice(failure)).join("; ")}. Read them again.
-    </p>
-  );
-}
-
 async function ReadContent({ params }: { params: ReadParams }) {
   const read = await getRead(params);
-  const { comparison, id, packet, passed, position, taskId } = read;
+  const { comparison, decision, id, packet, passed, position, taskId } = read;
   const step = `Case ${position.index + 1} of ${position.total}`;
 
   if (passed) {
@@ -70,7 +59,7 @@ async function ReadContent({ params }: { params: ReadParams }) {
 
         <ContainerBody className="sm:flex-1">
           <div className="flex flex-1 flex-col">
-            <Reveal attempt={passed} comparison={comparison} packet={packet} />
+            <Reveal attempt={passed} comparison={comparison} decision={decision} packet={packet} />
           </div>
 
           {next ? (
@@ -92,13 +81,11 @@ async function ReadContent({ params }: { params: ReadParams }) {
         title="Read blind"
       >
         <ContainerDescription className={PROSE_MEASURE_CLASS}>
-          {step}. {packet.packet.reads}: say which answer serves them better. Two pairs are checks:
-          one shows the same answer twice, and one has a planted mistake to add as a major problem.
+          {step}. {packet.packet.reads}: say which answer serves them better.
         </ContainerDescription>
       </EvalPageTop>
 
       <ContainerBody className="sm:flex-1">
-        {read.failed && <LastFailure failures={read.failed.failures} />}
         <Fold title="What each point means">
           <dl className="flex max-w-3xl flex-col gap-3 pb-2 text-sm">
             {packet.packet.criteria.map((criterion) => (

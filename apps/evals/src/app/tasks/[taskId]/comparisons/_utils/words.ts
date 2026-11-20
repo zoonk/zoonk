@@ -1,3 +1,5 @@
+import { type Attempt, type FailureCode } from "@/lib/comparisons/schemas";
+
 export function plural(count: number, one: string, many = `${one}s`): string {
   return `${count} ${count === 1 ? one : many}`;
 }
@@ -12,27 +14,14 @@ export function humanizeKey(key: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-const FAILURE_LABELS: Record<string, string> = {
-  "Missed the control bank defect.": "missed the planted mistake",
-  "Missing or repeated pair.": "skipped or repeated a pair",
-  "Preferred one of two identical outputs.": "preferred one of two identical answers",
-  "Unexpected verdict count.": "answered the wrong number of pairs",
-  "Verdict does not cover the sealed criteria or outputs.": "left a point or an answer out",
+const FAILURE_LABELS: Record<FailureCode, string> = {
+  failed_controls: "failed a hidden check",
+  invalid_response: "answered in the wrong shape",
+  missing_verdicts: "skipped or repeated a pair",
 };
 
-const FAILURE_ADVICE: Record<string, string> = {
-  "Missed the control bank defect.":
-    "one pair has a planted mistake: prefer the answer without it and add the mistake as a major problem on the point it breaks",
-  "Preferred one of two identical outputs.":
-    "one pair shows the same answer twice, so it takes Tie overall and on every point",
-};
-
-/** A reader's failed check in a few words. */
-export function failureLabel(failure: string): string {
-  return FAILURE_LABELS[failure] ?? failure;
-}
-
-/** What the owner changes so their read counts. */
-export function failureAdvice(failure: string): string {
-  return FAILURE_ADVICE[failure] ?? failureLabel(failure);
+/** Why a reader's read didn't count, in a few words; older reads carry only the engine's sentence. */
+export function failureLabels(attempt: Pick<Attempt, "failureCodes" | "failures">): string[] {
+  const labels = attempt.failureCodes?.map((code) => FAILURE_LABELS[code]) ?? attempt.failures;
+  return [...new Set(labels)];
 }

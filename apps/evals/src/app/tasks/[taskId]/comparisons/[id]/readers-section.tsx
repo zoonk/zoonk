@@ -3,7 +3,7 @@ import { type Decision } from "@/lib/comparisons/decision";
 import { type Comparison } from "@/lib/comparisons/schemas";
 import { packetCase } from "../_utils/case-evidence";
 import { familyLabel, modelName } from "../_utils/labels";
-import { failureLabel } from "../_utils/words";
+import { failureLabels } from "../_utils/words";
 
 function ownFamilyText(reader: Decision["readers"][number]): string {
   if (reader.ownOpportunities === 0) {
@@ -72,7 +72,7 @@ export function ReadersSection({
                     <span className="font-mono text-xs">
                       {packet ? packetCase(packet) : "an unknown case"}
                     </span>
-                    : {attempt.failures.map((failure) => failureLabel(failure)).join("; ")}
+                    : {failureLabels(attempt).join("; ")}
                   </li>
                 );
               })}

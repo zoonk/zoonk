@@ -1,58 +1,77 @@
 import { Fold } from "@/components/fold";
 import { type Decision } from "@/lib/comparisons/decision";
+import { canAdjudicate } from "@/lib/comparisons/evidence";
 import { type Comparison } from "@/lib/comparisons/schemas";
 import { CaseInput } from "../_components/case-input";
 import { CaseRuns, caseVotesLine } from "../_components/case-view";
 import { caseRuns, orderCases } from "../_utils/case-evidence";
 import { DIRECTION_LABELS, languageName } from "../_utils/labels";
+import { RulingForm } from "./ruling-form";
 
-function caseTitle(item: Decision["cases"][number], audit: boolean): string {
-  const parts = [item.caseId, languageName(item.language)];
+type Case = Decision["cases"][number];
 
-  const result = item.owner
-    ? `${DIRECTION_LABELS[item.result]}, your call: ${DIRECTION_LABELS[item.owner]}`
+function resultText(item: Case): string {
+  if (item.adjudication) {
+    return `${DIRECTION_LABELS[item.result]}, your ruling`;
+  }
+
+  return item.owner
+    ? `${DIRECTION_LABELS[item.result]}, your blind read: ${DIRECTION_LABELS[item.owner]}`
     : DIRECTION_LABELS[item.result];
-
-  return audit ? parts.join(" · ") : [...parts, result].join(" · ");
 }
 
-function CaseVotes({ item }: { item: Decision["cases"][number] }) {
+function caseTitle(item: Case, audit: boolean): string {
+  const parts = [item.caseId, languageName(item.language)];
+  return audit ? parts.join(" · ") : [...parts, resultText(item)].join(" · ");
+}
+
+function CaseVotes({ item }: { item: Case }) {
   const votes = caseVotesLine(item.votes);
 
   return (
-    <p className="text-sm">
-      <span className="text-muted-foreground">Families: </span>
-      {votes || "no complete reads yet"}
-      {item.owner && (
-        <>
-          <span className="text-muted-foreground"> · Your read: </span>
-          {DIRECTION_LABELS[item.owner]}
-        </>
+    <div className="flex max-w-3xl flex-col gap-1 text-sm">
+      <p>
+        <span className="text-muted-foreground">Families: </span>
+        {votes || "no complete reads yet"}
+        {item.owner && (
+          <>
+            <span className="text-muted-foreground"> · Your blind read: </span>
+            {DIRECTION_LABELS[item.owner]}
+          </>
+        )}
+      </p>
+      {item.adjudication && (
+        <p>
+          <span className="text-muted-foreground">Your ruling: </span>
+          {DIRECTION_LABELS[item.adjudication.direction]}.{" "}
+          <span className="text-muted-foreground">{item.adjudication.reason}</span>
+        </p>
       )}
-    </p>
+    </div>
   );
 }
 
 /**
- * Every case, the ones that still need a call first. While the owner's blind read is pending they
- * start closed, since opening one shows which model wrote each answer.
+ * Every case, the ones that still need a call first. A case the owner hasn't read blind starts
+ * closed, since opening it shows which model wrote each answer.
  */
 export function CasesSection({
   comparison,
   decision,
-  ownerPending,
+  unread,
 }: {
   comparison: Comparison;
   decision: Decision;
-  ownerPending: boolean;
+  unread: string[];
 }) {
-  const audit = !comparison.manifest.variants.incumbent;
+  const { manifest } = comparison;
+  const audit = !manifest.variants.incumbent;
 
   return (
     <section className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
         <h2 className="text-lg font-semibold tracking-tight">Cases</h2>
-        {ownerPending && (
+        {unread.length > 0 && (
           <p className="text-muted-foreground text-sm">
             Opening a case shows which model wrote each answer, so read blind first.
           </p>
@@ -61,7 +80,7 @@ export function CasesSection({
 
       <div className="flex flex-col">
         {orderCases(decision.cases).map((item) => {
-          const testCase = comparison.manifest.cases.find((entry) => entry.id === item.caseId);
+          const testCase = manifest.cases.find((entry) => entry.id === item.caseId);
 
           return (
             <section
@@ -69,9 +88,20 @@ export function CasesSection({
               id={`case-${item.caseId}`}
               key={item.caseId}
             >
-              <Fold isOpen={!ownerPending && item.result !== "tie"} title={caseTitle(item, audit)}>
+              <Fold
+                isOpen={!unread.includes(item.caseId) && item.result !== "tie"}
+                title={caseTitle(item, audit)}
+              >
                 <div className="flex flex-col gap-6 pt-2 pb-6">
                   {!audit && <CaseVotes item={item} />}
+                  {canAdjudicate(manifest, item) && (
+                    <RulingForm
+                      blindRead={item.owner}
+                      caseId={item.caseId}
+                      comparisonId={manifest.id}
+                      taskId={manifest.taskId}
+                    />
+                  )}
                   {testCase && (
                     <CaseInput expectations={testCase.expectations} input={testCase.input} />
                   )}

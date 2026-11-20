@@ -1,9 +1,12 @@
+import { type Decision } from "@/lib/comparisons/decision";
+import { canAdjudicate } from "@/lib/comparisons/evidence";
 import { type Attempt, type Comparison, type SealedPacket } from "@/lib/comparisons/schemas";
 import { Badge } from "@zoonk/ui/components/badge";
 import { CaseInput } from "../../../_components/case-input";
 import { CaseRuns } from "../../../_components/case-view";
 import { type ReadView, caseRuns } from "../../../_utils/case-evidence";
 import { SIDE_LABELS, type Side, familyLabel, variantName } from "../../../_utils/labels";
+import { RulingForm } from "../../ruling-form";
 
 type Mapping = SealedPacket["mapping"][number];
 
@@ -64,14 +67,16 @@ function Agreement({ owner, reads }: { owner: ReadView | undefined; reads: ReadV
   );
 }
 
-/** After a read counts: who wrote A and B, where the model readers agree with the owner, and all they saw. */
+/** After the owner reads a case blind: who wrote A and B, where the model readers agree with the owner, and all they saw. */
 export function Reveal({
   attempt,
   comparison,
+  decision,
   packet,
 }: {
   attempt: Attempt;
   comparison: Comparison;
+  decision: Decision;
   packet: SealedPacket;
 }) {
   const real = packet.mapping.find((entry) => entry.kind === "real");
@@ -83,17 +88,23 @@ export function Reveal({
   const run = caseRuns(comparison, real.caseId).find((entry) => entry.run === real.run);
   const testCase = comparison.manifest.cases.find((entry) => entry.id === real.caseId);
   const owner = run?.reads.find((read) => read.key === `${packet.id}-${attempt.attempt}`);
+  const decisionCase = decision.cases.find((item) => item.caseId === real.caseId);
 
   return (
     <div className="flex flex-col gap-8">
       <section className="flex max-w-lg flex-col gap-3">
-        <p className="text-sm">
-          Both hidden checks passed: you called the two identical answers a tie and caught the
-          planted mistake.
-        </p>
         <p className="text-sm font-medium">{whoWroteWhat(comparison, real)}</p>
         <Agreement owner={owner} reads={run?.reads ?? []} />
       </section>
+
+      {decisionCase && canAdjudicate(comparison.manifest, decisionCase) && (
+        <RulingForm
+          blindRead={decisionCase.owner}
+          caseId={real.caseId}
+          comparisonId={comparison.manifest.id}
+          taskId={comparison.manifest.taskId}
+        />
+      )}
 
       {testCase && <CaseInput expectations={testCase.expectations} input={testCase.input} />}
       {run && <CaseRuns caseId={real.caseId} comparison={comparison} runs={[run]} />}

@@ -22,7 +22,20 @@ import { plural } from "../_utils/words";
 
 type Row = Decision["rows"][number];
 
-function CaseLinks({ both, caseIds }: { both: string[]; caseIds: string[] }) {
+function caseNote({ both, owner }: { both: boolean; owner: boolean }): string | null {
+  const notes = [both && "both sides", owner && "you found it"].filter(Boolean);
+  return notes.length > 0 ? ` (${notes.join(", ")})` : null;
+}
+
+function CaseLinks({
+  both,
+  caseIds,
+  owner,
+}: {
+  both: string[];
+  caseIds: string[];
+  owner: string[];
+}) {
   if (caseIds.length === 0) {
     return <span className="text-muted-foreground">None</span>;
   }
@@ -36,7 +49,9 @@ function CaseLinks({ both, caseIds }: { both: string[]; caseIds: string[] }) {
           key={caseId}
         >
           {caseId}
-          {both.includes(caseId) && <span className="text-muted-foreground"> (both sides)</span>}
+          <span className="text-muted-foreground">
+            {caseNote({ both: both.includes(caseId), owner: owner.includes(caseId) })}
+          </span>
         </a>
       ))}
     </span>
@@ -50,6 +65,7 @@ function qualityCell(row: Row, criterion: string) {
     <CaseLinks
       both={metrics.flatMap((metric) => metric.both)}
       caseIds={metrics.flatMap((metric) => metric.affected)}
+      owner={metrics.flatMap((metric) => metric.ownerAffected ?? [])}
     />
   );
 }

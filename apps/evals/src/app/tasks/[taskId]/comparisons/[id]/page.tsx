@@ -1,11 +1,12 @@
 import { EvalPageTop, EvalPageTopSkeleton } from "@/components/eval-page-top";
+import { canAdjudicate } from "@/lib/comparisons/evidence";
 import { formatDollars, formatSeconds } from "@/lib/format";
 import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { ContainerBody, ContainerDescription } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { MainActionBar } from "../_components/main-action-link";
-import { nextOwnerPacket, ownerPackets } from "../_utils/case-evidence";
+import { nextOwnerPacket, ownerReads } from "../_utils/case-evidence";
 import { type ComparisonRoute, getComparisonRoute } from "../_utils/comparison-route";
 import { readPath } from "../_utils/paths";
 import { comparisonTitle, outcomeText } from "../_utils/titles";
@@ -32,25 +33,20 @@ export async function generateMetadata({
 }
 
 function ownerProgress(route: ComparisonRoute) {
-  const packets = ownerPackets(route.comparison);
-  const caseIds = [...new Set(packets.map((entry) => entry.caseId))];
-
-  const done = caseIds.filter((caseId) =>
-    packets.filter((entry) => entry.caseId === caseId).every((entry) => entry.read),
-  );
+  const reads = ownerReads(route.comparison);
 
   return {
-    cases: caseIds.length,
-    done: done.length,
-    pending: packets.some((entry) => !entry.read),
+    cases: reads.length,
+    done: reads.filter((entry) => entry.read).length,
+    unread: reads.filter((entry) => !entry.read).map((entry) => entry.caseId),
   };
 }
 
 function OwnerStatus({ route }: { route: ComparisonRoute }) {
   const progress = ownerProgress(route);
 
-  const needCall = route.decision.cases.filter(
-    (item) => item.result === "unresolved" && !item.owner && Object.keys(item.votes).length > 0,
+  const needCall = route.decision.cases.filter((item) =>
+    canAdjudicate(route.comparison.manifest, item),
   );
 
   if (progress.cases === 0) {
@@ -76,7 +72,7 @@ function OwnerStatus({ route }: { route: ComparisonRoute }) {
               </a>
             </span>
           ))}
-          . Your read settles {needCall.length === 1 ? "it" : "them"}.
+          . Open {needCall.length === 1 ? "it" : "each"} to settle it with your ruling.
         </p>
       )}
     </>
@@ -148,7 +144,7 @@ async function ComparisonBody({ params }: { params: ComparisonParams }) {
       <OutcomeSection route={route} />
       {!audit && <DecisionTable decision={decision} manifest={comparison.manifest} />}
       <PrioritiesSection manifest={comparison.manifest} />
-      <CasesSection comparison={comparison} decision={decision} ownerPending={progress.pending} />
+      <CasesSection comparison={comparison} decision={decision} unread={progress.unread} />
       <ReadersSection comparison={comparison} decision={decision} />
 
       {next && (

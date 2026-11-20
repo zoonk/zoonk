@@ -1,6 +1,6 @@
 "use server";
 
-import { importVerdicts } from "@/lib/comparisons/packets";
+import { importVerdicts, ownerPackets } from "@/lib/comparisons/packets";
 import { type Packet, type PacketOutput, identifier } from "@/lib/comparisons/schemas";
 import { listComparisons, loadComparison } from "@/lib/comparisons/storage";
 import { parseFormField } from "@zoonk/utils/form";
@@ -11,9 +11,8 @@ import { comparisonPath, readPath } from "../../../_utils/paths";
 type Pair = Packet["pairs"][number];
 type Criterion = Packet["criteria"][number];
 
-export type BlindReadResult = { error: string } | { failures: string[]; passed: boolean };
+export type BlindReadResult = { error: string } | null;
 
-const NO_REASON = "No reason given.";
 const WHOLE_ANSWER = "The whole answer.";
 
 function field(formData: FormData, pair: Pair, name: string): string {
@@ -67,7 +66,6 @@ function verdict(formData: FormData, pair: Pair, criteria: Criterion[]) {
     criteria: criteria.map((criterion) => ({
       criterion: criterion.id,
       preference: field(formData, pair, `criterion-${criterion.id}`),
-      reason: field(formData, pair, `criterion-${criterion.id}-reason`) || NO_REASON,
     })),
     observations: observations(formData, pair),
     overall: {
@@ -86,15 +84,12 @@ async function findOwnerPacket(taskId: string, id: string, packetId: string) {
   }
 
   const comparison = await loadComparison(taskId, id);
-
-  const packet = comparison.manifest.packets.find(
-    (entry) => entry.id === packetId && entry.reader.channel === "owner",
-  );
+  const packet = ownerPackets(comparison.manifest).find((entry) => entry.id === packetId);
 
   return packet ? { comparison, packet } : null;
 }
 
-/** Saves the owner's read of one packet as its own attempt; the engine grades its checks. */
+/** Saves the owner's read of one case as its own attempt. */
 export async function saveBlindReadAction(formData: FormData): Promise<BlindReadResult> {
   const taskId = identifier.safeParse(parseFormField(formData, "taskId"));
   const id = identifier.safeParse(parseFormField(formData, "comparisonId"));
@@ -113,13 +108,13 @@ export async function saveBlindReadAction(formData: FormData): Promise<BlindRead
   if (
     found.comparison.attempts.some((attempt) => attempt.packetId === packetId && attempt.passed)
   ) {
-    return { error: "You’ve already read these pairs." };
+    return { error: "You’ve already read this case." };
   }
 
   const { packet } = found.packet;
 
   try {
-    const saved = await importVerdicts({
+    await importVerdicts({
       attempt: `owner-${Date.now()}`,
       id: id.data,
       packetId,
@@ -131,9 +126,12 @@ export async function saveBlindReadAction(formData: FormData): Promise<BlindRead
     revalidatePath(comparisonPath(taskId.data, id.data));
     revalidatePath(`/tasks/${taskId.data}`);
 
-    return { failures: saved.failures, passed: saved.passed };
+    return null;
   } catch (error) {
     logError("Error saving a blind read:", error);
-    return { error: "Your read couldn’t be saved. Check every pair has a choice, then try again." };
+
+    return {
+      error: "Your read couldn’t be saved. Check every point has a choice, then try again.",
+    };
   }
 }

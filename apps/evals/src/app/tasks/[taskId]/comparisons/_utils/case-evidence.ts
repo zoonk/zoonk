@@ -1,5 +1,6 @@
 import { type Decision, type Direction } from "@/lib/comparisons/decision-schema";
 import { acceptedReads, opposite, verifiedClaims } from "@/lib/comparisons/evidence";
+import { ownerPackets } from "@/lib/comparisons/packets";
 import {
   type Comparison,
   type PacketOutput,
@@ -17,7 +18,7 @@ type Choice = Side | "tie";
 export type CheckResult = { family: string; finding: Claim["finding"]; reason: string };
 
 export type ObservationView = {
-  check: { finding: Claim["finding"]; results: CheckResult[] } | null;
+  check: (Pick<Claim, "checked" | "finding" | "source"> & { results: CheckResult[] }) | null;
   observation: Observation;
   side: Side;
 };
@@ -26,7 +27,7 @@ export type ObservationView = {
 export type ReadOrder = { first: Side; paired: boolean };
 
 export type ReadView = {
-  criteria: { choice: Choice; criterion: string; reason: string }[];
+  criteria: { choice: Choice; criterion: string; reason?: string }[];
   key: string;
   observations: ObservationView[];
   order: ReadOrder;
@@ -79,7 +80,14 @@ function observationView({
   const claim = claims.find((entry) => entry.observation === observation);
 
   return {
-    check: claim ? { finding: claim.finding, results: checkResults(comparison, claim.id) } : null,
+    check: claim
+      ? {
+          checked: claim.checked,
+          finding: claim.finding,
+          results: checkResults(comparison, claim.id),
+          source: claim.source,
+        }
+      : null,
     observation,
     side: sideOf(observation.output, first),
   };
@@ -153,20 +161,18 @@ export function packetCase(packet: SealedPacket): string {
   return packet.mapping[0]?.caseId ?? "";
 }
 
-/** The owner reads each run once, in the order the comparison sealed; the reversed copies are for model readers. */
-export function ownerPackets(comparison: Comparison) {
-  return comparison.manifest.packets
-    .filter((packet) => packet.reader.channel === "owner" && !packet.reverse)
-    .map((packet) => ({
-      caseId: packetCase(packet),
-      packet,
-      read: comparison.attempts.some((attempt) => attempt.packetId === packet.id && attempt.passed),
-    }));
+/** The owner reads each case once, blind, in the order the comparison sealed. */
+export function ownerReads(comparison: Comparison) {
+  return ownerPackets(comparison.manifest).map((packet) => ({
+    caseId: packetCase(packet),
+    packet,
+    read: comparison.attempts.some((attempt) => attempt.packetId === packet.id && attempt.passed),
+  }));
 }
 
 /** The next packet the owner hasn't read, preferring the given case. */
 export function nextOwnerPacket(comparison: Comparison, caseId?: string) {
-  const unread = ownerPackets(comparison).filter((entry) => !entry.read);
+  const unread = ownerReads(comparison).filter((entry) => !entry.read);
 
   return (unread.find((entry) => entry.caseId === caseId) ?? unread[0])?.packet ?? null;
 }

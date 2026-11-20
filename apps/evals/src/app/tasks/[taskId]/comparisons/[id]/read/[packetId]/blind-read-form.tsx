@@ -6,16 +6,14 @@ import { Button } from "@zoonk/ui/components/button";
 import { EnterButton } from "@zoonk/ui/components/enter-button";
 import { Label } from "@zoonk/ui/components/label";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
-import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
-import { Textarea } from "@zoonk/ui/components/textarea";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PlusIcon } from "lucide-react";
 import { useId, useState, useTransition } from "react";
 import { CaseInput } from "../../../_components/case-input";
+import { Choice, TextField } from "../../../_components/form-fields";
 import { OutputImage, type ShownImage } from "../../../_components/output-image";
 import { ReadableOutput } from "../../../_components/readable-output";
 import { imagePath } from "../../../_utils/paths";
-import { failureAdvice } from "../../../_utils/words";
 import { type BlindReadResult, saveBlindReadAction } from "./actions";
 
 type Pair = Packet["pairs"][number];
@@ -36,62 +34,6 @@ const SEVERITY_CHOICES = [
   { label: "Major: would mislead or lose the learner", value: "major" },
   { label: "Minor", value: "minor" },
 ];
-
-function Choice({
-  choices,
-  className,
-  label,
-  name,
-}: {
-  choices: { label: string; value: string }[];
-  className?: string;
-  label: string;
-  name: string;
-}) {
-  return (
-    <RadioGroup
-      aria-label={label}
-      className={cn("flex flex-wrap gap-x-6 gap-y-3", className)}
-      name={name}
-      required
-    >
-      {choices.map((choice) => (
-        <RadioGroupOption className="min-h-6 font-normal" key={choice.value}>
-          <RadioGroupItem value={choice.value} />
-          {choice.label}
-        </RadioGroupOption>
-      ))}
-    </RadioGroup>
-  );
-}
-
-function TextField({
-  label,
-  name,
-  placeholder,
-  required = false,
-}: {
-  label: string;
-  name: string;
-  placeholder?: string;
-  required?: boolean;
-}) {
-  const id = useId();
-
-  return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={id}>{label}</Label>
-      <Textarea
-        className="min-h-11"
-        id={id}
-        name={name}
-        placeholder={placeholder}
-        required={required}
-        rows={1}
-      />
-    </div>
-  );
-}
 
 function ProblemFields({
   audit,
@@ -315,9 +257,11 @@ function PairRead({
 
   return (
     <section className="flex flex-col gap-6 border-t pt-8 first:border-t-0 first:pt-0">
-      <h2 className="text-lg font-semibold tracking-tight">
-        Pair {index + 1} of {total}
-      </h2>
+      {total > 1 && (
+        <h2 className="text-lg font-semibold tracking-tight">
+          Pair {index + 1} of {total}
+        </h2>
+      )}
 
       <CaseInput expectations={pair.expectations} input={pair.input} />
 
@@ -332,35 +276,21 @@ function PairRead({
   );
 }
 
-function resultNote(result: BlindReadResult | null) {
+function resultNote(result: BlindReadResult) {
   if (!result) {
     return null;
   }
 
-  if ("error" in result) {
-    return (
-      <p role="alert" className="text-destructive-text">
-        {result.error}
-      </p>
-    );
-  }
-
-  if (!result.passed) {
-    return (
-      <p role="alert" className="text-destructive-text">
-        This read didn’t count:{" "}
-        {result.failures.map((failure) => failureAdvice(failure)).join("; ")}. Change it and submit
-        again.
-      </p>
-    );
-  }
-
-  return null;
+  return (
+    <p role="alert" className="text-destructive-text">
+      {result.error}
+    </p>
+  );
 }
 
 /**
- * The owner's blind read of one packet: only the anonymous pairs reach the browser, never which
- * model wrote A or B. The engine grades the hidden checks when the read is saved.
+ * The owner's blind read of one case: only the anonymous pair reaches the browser, never which
+ * model wrote A or B.
  */
 export function BlindReadForm({
   comparisonId,
@@ -373,7 +303,7 @@ export function BlindReadForm({
   packetId: string;
   taskId: string;
 }) {
-  const [result, setResult] = useState<BlindReadResult | null>(null);
+  const [result, setResult] = useState<BlindReadResult>(null);
   const [pending, startTransition] = useTransition();
 
   return (

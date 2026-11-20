@@ -71,7 +71,11 @@ function FindingBadge({ check }: { check: ObservationView["check"] }) {
     return null;
   }
 
-  if (check.results.length === 0) {
+  if (check.source === "owner") {
+    return <Badge variant="destructive">Counts</Badge>;
+  }
+
+  if (!check.checked) {
     return <Badge variant="outline">Not checked</Badge>;
   }
 
@@ -262,8 +266,8 @@ function ReadRow({ criteria, read }: { criteria: CriterionLabels; read: ReadView
               <li className="text-sm" key={entry.criterion}>
                 <span className="font-medium">{criteria[entry.criterion] ?? entry.criterion}</span>
                 {": "}
-                {choiceLabel(entry.choice)}.{" "}
-                <span className="text-muted-foreground">{entry.reason}</span>
+                {choiceLabel(entry.choice)}.
+                {entry.reason && <span className="text-muted-foreground"> {entry.reason}</span>}
               </li>
             ))}
           </ul>
