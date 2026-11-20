@@ -60,8 +60,15 @@ export function goalView(learner: SampleLearner, dailyMinutes = learner.minutesP
   };
 }
 
-export function timeToCover(learner: SampleLearner): PlanTimeToCover {
-  const minutes = learner.everythingMinutes ?? learner.minutesPerDay;
+/** The time question's offer, which only a learner whose time screen was captured has. */
+export function timeToCover(
+  learner: SampleLearner,
+): PlanTimeToCover & { recommendedMinutes: number } {
+  const minutes = learner.everythingMinutes;
+  if (minutes === null)
+    throw new Error(
+      `${learner.goal.title}: capture the daily time screen and copy its offer into everythingMinutes first`,
+    );
   return {
     fittingDate: null,
     most: null,

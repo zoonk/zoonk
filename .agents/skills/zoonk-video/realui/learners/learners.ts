@@ -30,7 +30,7 @@ export type SampleLearner = {
   minutesPerDay: number;
   /** The goal's share the daily time covers by the date. */
   coverage: number;
-  /** The daily time that covers everything, which the time question offers. */
+  /** The daily time that covers everything, which the time question offers; null until that screen is captured. */
   everythingMinutes: number | null;
   /** A language goal's path; an exam's plan shows its subjects instead. */
   phases: Phase[];

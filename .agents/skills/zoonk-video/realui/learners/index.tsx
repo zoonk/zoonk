@@ -52,6 +52,7 @@ function GoalScreen({ q }: ViewProps) {
 function TimeScreen({ q }: ViewProps) {
   const learner = getLearner(q.get("learner"));
   const picked = Number(q.get("minutes") ?? learner.minutesPerDay);
+  const cover = timeToCover(learner);
 
   return (
     <OnboardingShell>
@@ -60,7 +61,7 @@ function TimeScreen({ q }: ViewProps) {
           dated
           draft={{ days: [1, 2, 3, 4, 5], picked, weekendOn: false, weekendPicked: null }}
           exam={learner.goal.kind === "exam"}
-          findTimeToCover={async () => timeToCover(learner)}
+          findTimeToCover={async () => cover}
           firstLesson={null}
           getTimeAdvice={async (week) => timeAdvice(learner, week.dailyMinutes ?? picked)}
           goal={goalView(learner, picked)}
@@ -73,7 +74,7 @@ function TimeScreen({ q }: ViewProps) {
           pending={false}
           planReadiness={{ readingNotice: false, ready: true }}
           readWarmUp={async () => null}
-          recommendedMinutes={learner.everythingMinutes ?? learner.minutesPerDay}
+          recommendedMinutes={cover.recommendedMinutes}
           run={null}
           startsOnRecommended={false}
           together={{ count: 1, place: 0 }}
