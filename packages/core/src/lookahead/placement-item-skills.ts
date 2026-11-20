@@ -246,6 +246,7 @@ export async function pickPlacementItemSkills({
     .filter((pick) => pick !== null);
 
   const usedSituations = await loadUsedSituations({
+    includeMockReserve: true,
     examBlueprintId: blueprint?.id,
     skillIds: picks.map((pick) => pick.id),
   });

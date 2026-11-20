@@ -72,8 +72,23 @@ export function getAskedItemFilter({
   };
 }
 
-export function getItemAudienceFilter(audience: ItemAudience) {
-  return { AND: [...getAskedItemFilter(audience).AND, IN_BANK] };
+export function getItemAudienceFilter(
+  audience: ItemAudience & { includeMockReserve?: boolean; userId?: string | null },
+) {
+  const reserve = audience.includeMockReserve
+    ? []
+    : [
+        {
+          OR: [
+            { mockOnly: false },
+            { mockOnly: null },
+            ...(audience.userId
+              ? [{ mockUses: { some: { spentAt: { lte: new Date() }, userId: audience.userId } } }]
+              : []),
+          ],
+        },
+      ];
+  return { AND: [...getAskedItemFilter(audience).AND, IN_BANK, ...reserve] };
 }
 
 export function getFieldRank({

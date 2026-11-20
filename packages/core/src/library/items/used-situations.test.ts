@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import {
   choiceItemContent,
   itemFixture,
@@ -15,6 +16,16 @@ function caseItem({ context, ...attrs }: Parameters<typeof itemFixture>[0] & { c
 }
 
 describe(loadUsedSituations, () => {
+  it("only includes the mock reserve when a writer requests it", async () => {
+    const skill = await skillFixture();
+    const item = await caseItem({ context: "Reserved case.", skillId: skill.id });
+    await prisma.item.update({ where: { id: item.id }, data: { mockOnly: true } });
+    expect((await loadUsedSituations({ skillIds: [skill.id] })).get(skill.id)).toEqual([]);
+    expect(
+      (await loadUsedSituations({ includeMockReserve: true, skillIds: [skill.id] })).get(skill.id),
+    ).toEqual(["Reserved case."]);
+  });
+
   it("lists the cases of every question its learner can be served, and none of another exam's or field's", async () => {
     const [skill, exam, otherExam] = await Promise.all([
       skillFixture(),

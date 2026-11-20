@@ -50,10 +50,12 @@ function getItemSituation(item: { content: unknown; set: { content: unknown } | 
 export async function loadUsedSituations({
   examBlueprintId = null,
   field = null,
+  includeMockReserve = false,
   skillIds,
 }: {
   examBlueprintId?: string | null;
   field?: string | null;
+  includeMockReserve?: boolean;
   skillIds: readonly string[];
 }): Promise<Map<string, string[]>> {
   if (skillIds.length === 0) {
@@ -65,7 +67,7 @@ export async function loadUsedSituations({
     select: { content: true, set: { select: { content: true } }, skillId: true },
     where: {
       skillId: { in: [...skillIds] },
-      ...getItemAudienceFilter({ examBlueprintId, field, inSets: true }),
+      ...getItemAudienceFilter({ examBlueprintId, field, includeMockReserve, inSets: true }),
     },
   });
 

@@ -281,7 +281,7 @@ export async function loadPracticeItems({
       where: {
         ...getPracticeItemFilter({ typed }),
         skillId: { in: candidates.filter((skillId) => !listeningSkillIds.has(skillId)) },
-        ...getItemAudienceFilter({ examBlueprintId, field }),
+        ...getItemAudienceFilter({ examBlueprintId, field, userId }),
       },
     }),
     listItemSetsForSkills({ examBlueprintId, skillIds: candidates, userId }),

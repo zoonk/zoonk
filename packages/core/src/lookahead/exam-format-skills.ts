@@ -181,6 +181,7 @@ export async function pickExamFormatSkills({
   );
 
   const usedSituations = await loadUsedSituations({
+    includeMockReserve: true,
     examBlueprintId: blueprint.id,
     skillIds: picks.map(({ skill }) => skill.id),
   });

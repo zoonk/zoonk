@@ -106,6 +106,7 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
     .filter((target) => target.skills.length >= 2);
 
   const usedSituations = await loadUsedSituations({
+    includeMockReserve: true,
     examBlueprintId: blueprint.id,
     skillIds: targets.flatMap((target) => target.skills.map((skill) => skill.id)),
   });

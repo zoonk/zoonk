@@ -116,7 +116,11 @@ export async function loadMockWritingSkills({
   const blueprint = goal?.examBlueprint ?? null;
   const exam = blueprint ? toItemExam(blueprint) : null;
 
-  const usedSituations = await loadUsedSituations({ examBlueprintId: blueprint?.id, skillIds });
+  const usedSituations = await loadUsedSituations({
+    includeMockReserve: true,
+    examBlueprintId: blueprint?.id,
+    skillIds,
+  });
 
   return Promise.all(
     skillIds

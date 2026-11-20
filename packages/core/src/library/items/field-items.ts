@@ -61,6 +61,7 @@ async function findSkillsWithoutFieldItems({
     .slice(0, MAX_FIELD_SKILLS);
 
   const usedSituations = await loadUsedSituations({
+    includeMockReserve: true,
     field,
     skillIds: targets.map((skill) => skill.id),
   });
