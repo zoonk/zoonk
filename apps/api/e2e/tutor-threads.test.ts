@@ -113,7 +113,7 @@ async function createMockBlock({ api, userId }: { api: APIRequestContext; userId
     throw new Error("Expected today's mock");
   }
 
-  return block.id;
+  return { blockId: block.id, sessionId: session.id };
 }
 
 test.describe("Tutor threads beyond lessons", () => {
@@ -308,11 +308,11 @@ test.describe("Tutor threads beyond lessons", () => {
 
   test("asks about a question of the item bank, never while it's on a mock being sat", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "tutor-item" });
-    const blockId = await createMockBlock({ api, userId });
+    const { blockId, sessionId } = await createMockBlock({ api, userId });
     const mockPath = `/v1/mocks/${blockId}`;
 
-    const started = await api.post(`${mockPath}/starts`, { data: { timeZone: "UTC" } });
-    expect(started.status()).toBe(204);
+    const started = await api.post(`/v1/study-sessions/${sessionId}/blocks/${blockId}/starts`, { data: { timeZone: "UTC" } });
+    expect(started.status()).toBe(200);
 
     const mock = await prisma.mockExam.findFirstOrThrow({ where: { blockId, userId } });
     const [itemId] = mockConditionsSchema.parse(mock.conditions).sections[0]?.itemIds ?? [];
@@ -392,12 +392,12 @@ test.describe("Tutor threads beyond lessons", () => {
 
   test("asks about a mock only once it's finished", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "tutor-mock" });
-    const blockId = await createMockBlock({ api, userId });
+    const { blockId, sessionId } = await createMockBlock({ api, userId });
     const mockPath = `/v1/mocks/${blockId}`;
     const path = `${mockPath}/questions`;
 
-    const started = await api.post(`${mockPath}/starts`, { data: { timeZone: "UTC" } });
-    expect(started.status()).toBe(204);
+    const started = await api.post(`/v1/study-sessions/${sessionId}/blocks/${blockId}/starts`, { data: { timeZone: "UTC" } });
+    expect(started.status()).toBe(200);
 
     const [running, runningThread] = await Promise.all([
       ask({ api, context: { kind: "mock" }, path }),
