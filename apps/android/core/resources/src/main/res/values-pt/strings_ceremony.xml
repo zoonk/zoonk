@@ -12,7 +12,7 @@
   "ceremony_glasses_monocle": "2eb3b3b1b78a9c346e60e7ee6b7f732970757d851702be3cccb6c738873b95cd",
   "ceremony_glasses_monocle_detail": "62f553e1b93e41c4f5a327739703de36eea5400f80e1af0b29f4dd6e990490b9",
   "ceremony_glasses_new": "f889f57a458f7e4dbe32b2c0e6cb0e0f0792ad0e72635496553d0408d08ac06c",
-  "ceremony_glasses_new_detail": "50a21831728ee25847b362f73fc48b5559f55815ee92217f0390248b5af83f87",
+  "ceremony_glasses_new_detail": "99663ea059443974d8c98cbdc8d3203b284ddf5e0374f13e0a57e937ef2dcbcc",
   "ceremony_glasses_retro": "ec768edcceb80e69b94c59eb565f169da8e28f64eaa26858b48e3c30a9b72864",
   "ceremony_glasses_retro_detail": "4679b0cf330a305cc8bf424d4e25bd3d03fc75cc7e7f44f4fc9aa2de62515898",
   "ceremony_glasses_star": "359bc2ffc217f9f20d2d1817eb70fd9ab46dc1b2da59e5a8f24a50e6b3aa848c",
@@ -49,7 +49,7 @@
     <string name="ceremony_glasses_monocle">Um monóculo!</string>
     <string name="ceremony_glasses_monocle_detail">Por vencer o desafio final.</string>
     <string name="ceremony_glasses_new">Óculos novos!</string>
-    <string name="ceremony_glasses_new_detail">Eles vêm com seu parceiro.</string>
+    <string name="ceremony_glasses_new_detail">Eles vêm com seu colega.</string>
     <string name="ceremony_continue">Continuar</string>
     <!-- Button after earning glasses: puts them on the learner's buddy. -->
     <string name="ceremony_wear">Usar os óculos</string>

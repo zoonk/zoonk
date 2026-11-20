@@ -231,7 +231,7 @@ msgstr "Plan"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "1L2nnA"
 msgid "Buddy"
-msgstr "Compagnon"
+msgstr "Binôme"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -854,12 +854,12 @@ msgstr "Questions plus anciennes"
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
-msgstr "Ton compagnon"
+msgstr "Ton binôme"
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
-msgstr "Ton compagnon répond à tes questions et ajuste ton plan."
+msgstr "Ton binôme répond à tes questions et ajuste ton plan."
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "BV0cQk"
@@ -1294,7 +1294,7 @@ msgstr "Enregistrer"
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "40quiV"
 msgid "Your answers shape your examples and your buddy. Everything is optional."
-msgstr "Tes réponses servent à personnaliser tes exemples et ton compagnon. Tout est facultatif."
+msgstr "Tes réponses servent à personnaliser tes exemples et ton binôme. Tout est facultatif."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "uOIiKt"
@@ -3099,7 +3099,7 @@ msgstr "Des examens blancs chronométrés comme le vrai"
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "qYv-RO"
 msgid "An AI study buddy whenever you're stuck"
-msgstr "Un compagnon d’étude avec IA quand tu bloques"
+msgstr "Un binôme d’étude IA quand tu bloques"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "K8v_UD"
@@ -3240,7 +3240,7 @@ msgstr "Plus est-il vraiment illimité ?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "gX3xv3"
 msgid "For normal study, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking practice calls have daily and monthly limits, higher than on Free. <link>Read our fair use policy</link>."
-msgstr "Pour une utilisation normale, oui. Les leçons, les objectifs et le compagnon d’étude IA sont uniquement soumis à des limites qui bloquent les bots et les outils automatisés. Les appels d’entraînement à l’oral sont soumis à des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite. <link>Lire notre politique d’utilisation raisonnable</link>."
+msgstr "Pour une utilisation normale, oui. Les leçons, les objectifs et le binôme d’étude IA sont uniquement soumis à des limites qui bloquent les bots et les outils automatisés. Les appels d’entraînement à l’oral sont soumis à des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite. <link>Lire notre politique d’utilisation raisonnable</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"
@@ -3266,22 +3266,22 @@ msgstr "<link>Écris-nous</link> et on étudiera ta demande. Pour les achats sur
 #: src/components/pricing/study-buddy-allowance.ts
 msgctxt "LKY79v"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
-msgstr "Un compagnon d’étude IA : {count, plural, one {# message} other {# messages}} par jour, jusqu’à {month} par mois"
+msgstr "Un binôme d’étude IA : {count, plural, one {# message} other {# messages}} par jour, jusqu’à {month} par mois"
 
 #: src/components/pricing/study-buddy-allowance.ts
 msgctxt "5ZDN6U"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "Un compagnon d’étude IA : {count, plural, one {# message} other {# messages}} par jour"
+msgstr "Un binôme d’étude IA : {count, plural, one {# message} other {# messages}} par jour"
 
 #: src/components/pricing/study-buddy-allowance.ts
 msgctxt "K2QNT9"
 msgid "An AI study buddy: up to {month, plural, one {# message} other {# messages}} a month"
-msgstr "Un compagnon d’étude IA : jusqu’à {month, plural, one {# message} other {# messages}} par mois"
+msgstr "Un binôme d’étude IA : jusqu’à {month, plural, one {# message} other {# messages}} par mois"
 
 #: src/components/pricing/study-buddy-allowance.ts
 msgctxt "y1mZxN"
 msgid "An AI study buddy"
-msgstr "Un compagnon d’étude IA"
+msgstr "Un binôme d’étude IA"
 
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "iB3ixY"

@@ -53,7 +53,7 @@
   "load_failed_title": "e16fd39f1c41f2c8a1846884827c966465b2c28c09d4694d5948bfc11295d508",
   "load_failed_try_again": "3ad686b28b967764673f4fa46cabacda75ef2bede6a80d84d2c77ab8d2a1f924",
   "navigation_back": "c02e1a4b63537b730230a6df58f72e2c94150d17355aaf40b8e4e41c08c3f32d",
-  "navigation_buddy": "bafb8302c5a0bb79326082ada060e349328d4214ac784f98403cfe638bc90410",
+  "navigation_buddy": "bf09c8a4c3743f7a246544c3bd65610103c8e6e583c60dd638959d230bcff09a",
   "navigation_completed_lessons": "2d9c89557b921f5fddad5194283815be07bce7c0243863d111f03bcf25dd847a",
   "navigation_exam": "1c754dd1949b08123c04219d29f9d094b3c84fe9fc31113b3ea4dd43713ef1d9",
   "navigation_mind_maps": "e3fc60eb0f5aa0c2f275739d5e952f5edd41e72b28fa47a2a5ecdda3960e6032",
@@ -84,7 +84,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="navigation_today">Aujourd’hui</string>
     <string name="navigation_plan">Plan</string>
-    <string name="navigation_buddy">Compagnon</string>
+    <string name="navigation_buddy">Binôme</string>
     <string name="navigation_study">Étudier</string>
     <string name="navigation_mistakes">Carnet d’erreurs</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->

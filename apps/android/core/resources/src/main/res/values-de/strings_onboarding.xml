@@ -32,8 +32,8 @@
   "onboarding_attach_slow_down": "966e6460abb0ce403d0b5b42d3319de6eb3bde38427fc312ed587b00b6f7e396",
   "onboarding_attach_unsupported": "72ed8efa92241ea51dba6e256656e9f31bc9bc0cd6a58bfbe22cb5862d356c72",
   "onboarding_back_to_today": "4c5949857df6bfe89a07c57ce7d7b83b33269d057aa4d28802bb5571617209db",
-  "onboarding_buddy_description": "c5e979883c22522257e434395e2923b2e94a3b04c4d3cbb6c76d54ddefa3faed",
-  "onboarding_buddy_title": "7b1f65043e21c45fda8f51007bee00d1121212c641123cef2c5ca7237005ff67",
+  "onboarding_buddy_description": "d2935ca2c7362a1e7439df2afb5cd4a9cc5c1a2de6f17c020552b5c115a26065",
+  "onboarding_buddy_title": "7fcc68f39cc661865f605b5cf8f557714bf2ff718d8eeaf6806b0d8d1d8597f4",
   "onboarding_cancel": "1b2978937718830f42dbfb19cadcaa3e85898f4149e64279f9e732fa07de0f14",
   "onboarding_change_date": "988214b47a17985867ace91debba46af131ebfa76fec83168d48bc017f03d1d1",
   "onboarding_choose_date": "4e1dec3cd8673780c36b526528b781261399c13ece3ffd06e6e655c0a785fa14",
@@ -807,8 +807,8 @@
     <string name="onboarding_exam_choice_title_one">Welche wirst du ablegen?</string>
     <string name="onboarding_exam_choice_title_other">Welche wirst du ablegen?</string>
     <string name="onboarding_decide_later">Später entscheiden</string>
-    <string name="onboarding_buddy_title">Wähle deinen Kumpel</string>
-    <string name="onboarding_buddy_description">Dein Kumpel wächst, während du lernst.</string>
+    <string name="onboarding_buddy_title">Wähle deinen Buddy</string>
+    <string name="onboarding_buddy_description">Dein Buddy wächst, während du lernst.</string>
     <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
     <string name="onboarding_step_of">Schritt %1$d von %2$d</string>
     <string name="onboarding_more">Mehr</string>

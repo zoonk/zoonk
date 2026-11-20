@@ -6,7 +6,7 @@
   "search_ask_detail": "2e850c65f66b36df53a2147a2c5379e635fcfb739948e4e44b991905087df761",
   "search_ask_question": "18d12fd784c63d721b481a6362edda0c078e9355818ce62bd8b8d1171b826d43",
   "search_blog": "abc4a899c1c610caf0069cdaae06a23ff0780455dfae69a02b3cf60bb6a33cc8",
-  "search_buddy_keyword": "ffd34a5a5a11dd88dc86f7c698b4ec1982f58f614c79038d2f5daf1beac3eced",
+  "search_buddy_keyword": "e5db3f47706a86e9f63f713d3da6ba11c42144d1919d2b4b9d22b0544614f44b",
   "search_clear": "08e1fcb916691b7d137f667dd01812435958b24b52cef33ee1717ba80e467483",
   "search_close": "30d9358ea2c4882483a500442eb76d1e7f0b1561d9aba6e72dbf199dea085f29",
   "search_continue": "faf270633ec865a23e7d0b6f018cea22d01e714fdf300822614c7132a79b50fa",
@@ -71,7 +71,7 @@
     <string name="search_practice_mistakes">Corriger tes erreurs</string>
     <string name="search_ask_buddy">Demander à %1$s…</string>
     <string name="search_start_new_goal">Commencer un nouvel objectif</string>
-    <string name="search_buddy_keyword">Compagnon</string>
+    <string name="search_buddy_keyword">Binôme</string>
     <string name="search_mistakes_notebook">Carnet d’erreurs</string>
     <string name="search_logbook">Journal de bord</string>
     <string name="search_switch_goal">Passer à %1$s</string>
