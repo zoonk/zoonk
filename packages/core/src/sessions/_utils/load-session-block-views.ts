@@ -9,7 +9,7 @@ import { isCurrentSession } from "./current-session";
 import { type LessonStatesReader, readLessonScreens } from "./lesson-screens";
 import { loadPreparingMockPositions } from "./preparing-mock-blocks";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
-import { toStudyBlockView } from "./session-view";
+import { toStudyBlockViews } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
 export async function loadSessionBlockViews({
@@ -54,27 +54,23 @@ export async function loadSessionBlockViews({
     loadPreparingMockPositions({ ...session, blueprint }),
   ]);
 
-  const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
   const current = isCurrentSession({ now, session, timeZone });
 
   const { blocks } = await readLessonScreens(
     {
-      blocks: session.blocks.map((block) =>
-        toStudyBlockView({
-          answeredItemIds,
-          block,
-          blockedTestOutChapters: blockedChapters,
-          blocks: session.blocks,
-          oftenTestedSkillIds,
-          preparing: preparing.has(block.position),
-          subject: subjects.get(block.position) ?? null,
-        }),
-      ),
+      blocks: toStudyBlockViews({
+        answers,
+        blockedTestOutChapters: blockedChapters,
+        blocks: session.blocks,
+        oftenTestedSkillIds,
+        preparing,
+        subjects,
+      }),
       current,
       status: session.status,
     },
     readLessonStates,
   );
 
-  return { answers, blocks, current, displayBlocks: session.blocks };
+  return { answers, blocks, current, displayBlocks: session.blocks, preparing };
 }

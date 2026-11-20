@@ -19,6 +19,7 @@ import { loadCompletionQueue } from "./_utils/completion-queue";
 import { toBlockPayload } from "./block-payload";
 import { toDayBlockRef } from "./day-block";
 import { getSessionPageView } from "./get-session-page-view";
+import { getStudySessionSummary } from "./get-study-session-summary";
 import { openStudyDay } from "./open-study-day";
 
 async function savedDay() {
@@ -198,5 +199,45 @@ describe("a saved day whose last scheduled mock becomes unavailable", () => {
 
     expect(queue.next?.block.position).toBe(2);
     expect(queue.blocks.find((block) => block.id === mock.id)?.preparing).toBe(true);
+  });
+
+  it("ends the session for now after the fallback review while its mock is still preparing", async () => {
+    const { goal, mock, reserve, session } = await savedDay();
+
+    await Promise.all([
+      prisma.item.update({ data: { retiredAt: SESSION_NOW }, where: { id: reserve.id } }),
+      studySessionBlockFixture({
+        completedAt: SESSION_NOW,
+        kind: "review",
+        payload: toBlockPayload({ mockPreparationReview: true }),
+        position: 2,
+        sessionId: session.id,
+        status: "completed",
+      }),
+    ]);
+
+    const readSummary = () => getStudySessionSummary({ input: {}, sessionId: session.id });
+
+    await expect(getSessionPageView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      session: { nextBlockId: null, state: "waiting", waitingFor: "mock" },
+      status: "ready",
+    });
+
+    await expect(readSummary()).resolves.toMatchObject({
+      status: "ready",
+      summary: { finished: true, status: "active" },
+    });
+
+    await prisma.item.update({ data: { retiredAt: null }, where: { id: reserve.id } });
+
+    await expect(getSessionPageView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      session: { nextBlockId: mock.id, waitingFor: null },
+      status: "ready",
+    });
+
+    await expect(readSummary()).resolves.toMatchObject({
+      status: "ready",
+      summary: { finished: false, status: "active" },
+    });
   });
 });

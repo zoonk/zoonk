@@ -20,6 +20,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { planRevealTodayResponseSchema } from "../src/lib/openapi/schemas/study-day";
+import { studySessionSummaryResponseSchema } from "../src/lib/openapi/schemas/study-session-results";
 import { suggestedGoalResultSchema } from "../src/lib/openapi/schemas/suggested-goals";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
@@ -335,7 +336,7 @@ test.describe("Today API", () => {
     await api.dispose();
   });
 
-  test("opens a regular review when the only scheduled work is a preparing mock", async () => {
+  test("offers a regular review and then waits for the preparing mock", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "today-mock-review" });
     const { blueprintId, goal } = await createFundedExamGoal(userId);
 
@@ -408,6 +409,30 @@ test.describe("Today API", () => {
     ).resolves.toMatchObject({ kind: "review", status: "active" });
 
     await expect(prisma.mockExam.count({ where: { goalId: goal.id, userId } })).resolves.toBe(0);
+
+    await prisma.studySessionBlock.update({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { id: opened.target?.id },
+    });
+
+    const [summary, today] = await Promise.all([
+      readBody({
+        response: await api.get(`/v1/study-sessions/${opened.sessionId}/summary?timeZone=UTC`),
+        schema: studySessionSummaryResponseSchema,
+      }),
+      readBody({
+        response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
+        schema: todayResponseSchema,
+      }),
+    ]);
+
+    expect(today.session).toMatchObject({
+      nextPosition: null,
+      state: "waiting",
+      waitingFor: "mock",
+    });
+
+    expect(summary).toMatchObject({ finished: true, status: "active" });
     await api.dispose();
   });
 
