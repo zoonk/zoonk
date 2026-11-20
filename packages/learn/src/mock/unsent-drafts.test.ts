@@ -2,10 +2,11 @@ import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+  clearHandedInMockDrafts,
   dropUnsentMockDraft,
   getForwardOnlyKeptReached,
   keepUnsentMockDraft,
-  pruneUnsentMockDrafts,
+  restoreUnsentMockDrafts,
 } from "./unsent-drafts";
 
 function createMemoryStorage(): Storage {
@@ -109,7 +110,7 @@ describe("unsent mock drafts", () => {
     keepUnsentMockDraft({ blockId: "mock-1", draft: q1v1 });
     keepUnsentMockDraft({ blockId: "mock-1", draft: q2 });
 
-    expect(pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
+    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
       q1v1,
       q2,
     ]);
@@ -118,7 +119,7 @@ describe("unsent mock drafts", () => {
     keepUnsentMockDraft({ blockId: "mock-1", draft: q1v2 });
     dropUnsentMockDraft({ blockId: "mock-1", draft: q1v1 });
 
-    expect(pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
+    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
       q1v2,
       q2,
     ]);
@@ -141,16 +142,16 @@ describe("unsent mock drafts", () => {
       JSON.stringify([kept, { bad: true }, { answer: { selectedIndex: -1 }, itemId: "q2" }]),
     );
 
-    expect(pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([kept]);
+    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([kept]);
 
     expect(
-      pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView({ status: "finished" }) }),
+      restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView({ status: "finished" }) }),
     ).toStrictEqual([]);
 
     expect(globalThis.localStorage.getItem("mock:mock-1")).toBeNull();
   });
 
-  it("prunes drafts for older sections, already-stored answers, and expired mocks", () => {
+  it("preserves another section's drafts while dropping already-stored and handed-in entries", () => {
     const stored: MockDraft = {
       answer: { selectedIndex: 0 },
       durationMs: 1200,
@@ -165,23 +166,25 @@ describe("unsent mock drafts", () => {
       itemId: "q2",
     };
 
-    const oldSection: MockDraft = {
+    const nextSection: MockDraft = {
       answer: { selectedIndex: 2 },
       durationMs: 500,
       flagged: false,
-      itemId: "q-old",
+      itemId: "q-next",
     };
 
     keepUnsentMockDraft({ blockId: "mock-1", draft: stored });
     keepUnsentMockDraft({ blockId: "mock-1", draft: unsent });
-    keepUnsentMockDraft({ blockId: "mock-1", draft: oldSection });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: nextSection });
 
-    expect(
-      pruneUnsentMockDrafts({
-        blockId: "mock-1",
-        view: makeView({ drafts: [stored], questionIds: ["q1", "q2"] }),
-      }),
-    ).toStrictEqual([unsent]);
+    // An older tab on section 1 restores only section 1 and preserves tab B's section 2 draft.
+    const section1 = makeView({ drafts: [stored], questionIds: ["q1", "q2"] });
+    expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: section1 })).toStrictEqual([unsent]);
+
+    expect(JSON.parse(globalThis.localStorage.getItem("mock:mock-1") ?? "[]")).toStrictEqual([
+      unsent,
+      nextSection,
+    ]);
 
     // Reverting back to the opening draft offline stays unsent once a newer draft was stored.
     const reverted: MockDraft = {
@@ -201,20 +204,23 @@ describe("unsent mock drafts", () => {
     keepUnsentMockDraft({ blockId: "mock-1", draft: reverted });
 
     expect(
-      pruneUnsentMockDrafts({
+      restoreUnsentMockDrafts({
         blockId: "mock-1",
         storedDrafts: { q1: acknowledged },
         view: makeView({ drafts: [reverted], questionIds: ["q1", "q2"] }),
       }),
     ).toStrictEqual([unsent, reverted]);
 
+    // Handing in section 1 removes section 1's entries while keeping section 2's unsent draft.
+    const section2 = makeView({ questionIds: ["q-next"] });
+    clearHandedInMockDrafts({ blockId: "mock-1", next: section2, previous: section1 });
+
     expect(JSON.parse(globalThis.localStorage.getItem("mock:mock-1") ?? "[]")).toStrictEqual([
-      unsent,
-      reverted,
+      nextSection,
     ]);
 
     expect(
-      pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView({ status: "expired" }) }),
+      restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView({ status: "expired" }) }),
     ).toStrictEqual([]);
 
     expect(globalThis.localStorage.getItem("mock:mock-1")).toBeNull();

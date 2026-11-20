@@ -188,7 +188,7 @@ final class MockRun {
     }
 
     let questionIds = Set((view.current?.questions ?? []).map(\.itemId))
-    let kept = unsent.prune(keeping: questionIds, matching: initiallyStored)
+    let kept = unsent.restore(for: questionIds, matching: initiallyStored)
       .filter { !editedItemIds.contains($0.itemId) }
 
     guard !kept.isEmpty else {

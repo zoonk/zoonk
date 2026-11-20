@@ -40,16 +40,17 @@ struct UnsentMockDrafts {
     }
   }
 
-  /// Keeps only entries for the current section that differ from what the server already stored.
-  func prune(keeping itemIds: Set<String>, matching stored: [String: MockDraft]) -> [MockDraft] {
+  /// Returns unsent drafts for the current section that differ from what the server already stored,
+  /// dropping only already-stored copies for this section so another window's newer section stays intact.
+  func restore(for itemIds: Set<String>, matching stored: [String: MockDraft]) -> [MockDraft] {
     let current = read()
-    let kept = current.filter { itemIds.contains($0.itemId) && stored[$0.itemId] != $0 }
+    let remaining = current.filter { !itemIds.contains($0.itemId) || stored[$0.itemId] != $0 }
 
-    if kept.count != current.count {
-      write(kept)
+    if remaining.count != current.count {
+      write(remaining)
     }
 
-    return kept
+    return remaining.filter { itemIds.contains($0.itemId) }
   }
 
   func clear() {

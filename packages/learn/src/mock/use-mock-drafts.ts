@@ -11,10 +11,11 @@ import {
   createDraftSaveQueue,
 } from "./draft-save-queue";
 import {
+  clearHandedInMockDrafts,
   dropUnsentMockDraft,
   getForwardOnlyKeptReached,
   keepUnsentMockDraft,
-  pruneUnsentMockDrafts,
+  restoreUnsentMockDrafts,
 } from "./unsent-drafts";
 
 type Drafts = Record<string, MockDraft>;
@@ -57,7 +58,7 @@ function useUnsentDraftSync({
     const view = activeViewRef.current;
     queue.start();
 
-    const keptHere = pruneUnsentMockDrafts({ blockId, storedDrafts: readSavedDrafts(), view });
+    const keptHere = restoreUnsentMockDrafts({ blockId, storedDrafts: readSavedDrafts(), view });
 
     if (keptHere.length > 0) {
       const merged = {
@@ -208,6 +209,7 @@ export function useMockDrafts({
         textTimer.current = null;
       }
 
+      const previous = activeViewRef.current;
       unsavedText.current = null;
       shown.current = null;
       activeViewRef.current = next;
@@ -216,7 +218,7 @@ export function useMockDrafts({
       setDrafts(nextDrafts);
       setFailedDrafts({});
       setSavedDrafts(nextDrafts);
-      pruneUnsentMockDrafts({ blockId, storedDrafts: nextDrafts, view: next });
+      clearHandedInMockDrafts({ blockId, next, previous });
       queue.forgetRefusals();
     },
     retry: () => queue.retryNow(),

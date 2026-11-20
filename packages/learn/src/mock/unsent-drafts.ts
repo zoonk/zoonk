@@ -81,33 +81,12 @@ function clearUnsentMockDrafts(blockId: string) {
   deviceStorage.remove(getUnsentKey(blockId));
 }
 
-/** Kept answers that still belong to the section on screen and aren't already stored identically. */
-function selectKeptDraftsForView({
-  kept,
-  storedDrafts,
-  view,
-}: {
-  kept: readonly MockDraft[];
-  storedDrafts?: Readonly<Record<string, MockDraft>>;
-  view: MockView;
-}): MockDraft[] {
-  if (view.status !== "running" || !view.current) {
-    return [];
-  }
-
-  const questionIds = new Set(view.current.questions.map((question) => question.itemId));
-
-  const storedByItem = storedDrafts
-    ? new Map(Object.entries(storedDrafts))
-    : new Map(view.current.drafts.map((draft) => [draft.itemId, draft]));
-
-  return kept.filter(
-    (draft) => questionIds.has(draft.itemId) && !isSameDraft(draft, storedByItem.get(draft.itemId)),
-  );
-}
-
-/** Drops entries that belong to finished/expired mocks or older sections, returning what remains. */
-export function pruneUnsentMockDrafts({
+/**
+ * Returns unsent drafts for the current section that differ from `storedDrafts`, removing only
+ * already-stored copies for this section (never deleting entries from another section that a
+ * second tab may have moved on to). Terminal states clear the key.
+ */
+export function restoreUnsentMockDrafts({
   blockId,
   storedDrafts,
   view,
@@ -121,18 +100,56 @@ export function pruneUnsentMockDrafts({
     return [];
   }
 
-  if (view.status !== "running") {
+  if (view.status !== "running" || !view.current) {
     return [];
   }
 
   const kept = readUnsentMockDrafts(blockId);
-  const keptHere = selectKeptDraftsForView({ kept, storedDrafts, view });
+  const questionIds = new Set(view.current.questions.map((question) => question.itemId));
 
-  if (kept.length !== keptHere.length) {
-    writeRaw({ blockId, drafts: keptHere });
+  const storedByItem = storedDrafts
+    ? new Map(Object.entries(storedDrafts))
+    : new Map(view.current.drafts.map((draft) => [draft.itemId, draft]));
+
+  const remaining = kept.filter(
+    (draft) =>
+      !questionIds.has(draft.itemId) || !isSameDraft(draft, storedByItem.get(draft.itemId)),
+  );
+
+  if (remaining.length !== kept.length) {
+    writeRaw({ blockId, drafts: remaining });
   }
 
-  return keptHere;
+  return remaining.filter((draft) => questionIds.has(draft.itemId));
+}
+
+/** Drops entries belonging to a section that was just handed in, or clears a finished/expired mock. */
+export function clearHandedInMockDrafts({
+  blockId,
+  next,
+  previous,
+}: {
+  blockId: string;
+  next: MockView;
+  previous: MockView;
+}) {
+  if (next.status === "finished" || next.status === "expired") {
+    clearUnsentMockDrafts(blockId);
+    return;
+  }
+
+  const handedInIds = new Set(previous.current?.questions.map((question) => question.itemId));
+
+  if (handedInIds.size === 0) {
+    return;
+  }
+
+  const kept = readUnsentMockDrafts(blockId);
+  const remaining = kept.filter((draft) => !handedInIds.has(draft.itemId));
+
+  if (remaining.length !== kept.length) {
+    writeRaw({ blockId, drafts: remaining });
+  }
 }
 
 /** Furthest question index reached by recovered drafts in a forward-only section, or -1. */
