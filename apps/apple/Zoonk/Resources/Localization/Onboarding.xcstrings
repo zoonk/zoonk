@@ -17618,6 +17618,71 @@
         }
       }
     },
+    "This course is in %@. Your lessons will be in %@." : {
+      "comment" : "Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Kurs ist auf %1$@. Deine Lektionen sind auf %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This course is in %1$@. Your lessons will be in %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este curso está en %1$@. Tus lecciones serán en %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce cours est en %1$@. Tes leçons seront en %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo corso è in %1$@. Le tue lezioni saranno in %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このコースの言語は%1$@です。レッスンは%2$@で行います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 코스는 %1$@로 진행돼요. 레슨은 %2$@로 진행돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Język kursu: %1$@. Język lekcji: %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este curso está em %1$@. Suas aulas serão em %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu kursun dili %1$@. Derslerin dili %2$@ olacak."
+          }
+        }
+      }
+    },
     "This exam is held several times a year. Until you pick one, your plan uses the first." : {
       "comment" : "Under the sittings of an exam held several times a year",
       "localizations" : {

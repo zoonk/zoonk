@@ -27,8 +27,25 @@ struct CourseStartScreen: View {
     }
   }
 
+  /// The course opened; a start in the app's language may use another version of it.
+  private var startLanguage: CourseStartLanguage {
+    catalog.course(id: courseId).value?.course.startLanguage(in: catalog.language) ?? .same
+  }
+
+  /// The course the start uses: its version in the app's language when there is one, so the
+  /// learner never sees the other language's.
+  private var startCourseID: String {
+    if case .edition(let edition) = startLanguage { edition.id } else { courseId }
+  }
+
+  /// A version in another language has other chapters, and a plan in the app's language doesn't
+  /// follow this course's.
+  private var startChapterID: String? {
+    startLanguage == .same ? chapterId : nil
+  }
+
   private var title: Text {
-    if let course = catalog.course(id: courseId).value?.course {
+    if let course = catalog.course(id: startCourseID).value?.course {
       Text(
         "Start \(course.title)", tableName: "Onboarding",
         comment: "Names the screen that starts a course as a goal; the argument is the course")
@@ -40,7 +57,7 @@ struct CourseStartScreen: View {
   }
 
   private var form: some View {
-    let course = catalog.course(id: courseId)
+    let course = catalog.course(id: startCourseID)
 
     return ZoonkList {
       OpeningClock(availableAt: error?.limit?.availableAt) { now in
@@ -60,7 +77,7 @@ struct CourseStartScreen: View {
           GoalLimitActions(limit: limit)
         } else if error?.needsAccount != true {
           StepButtons(
-            canContinue: chapterId != nil || level != nil,
+            canContinue: startChapterID != nil || level != nil,
             continueLabel: Text(
               "Build my plan", tableName: "Onboarding",
               comment: "Starts a course as the learner's goal"),
@@ -78,7 +95,7 @@ struct CourseStartScreen: View {
 
   @ViewBuilder
   private func start(course: CourseDetail?) -> some View {
-    if let chapterId {
+    if let chapterId = startChapterID {
       StepHeader(
         subject: course?.course.title,
         title: Text(course?.chapters.first { $0.id == chapterId }?.title ?? ""),
@@ -91,7 +108,7 @@ struct CourseStartScreen: View {
         title: Text(
           "How much do you already know?", tableName: "Onboarding", comment: "Onboarding question"
         ),
-        description: nil)
+        description: languageNote)
 
       ChoiceRows(
         choices: LevelChoices.all(testMinutes: course?.course.quickTestMinutes),
@@ -114,16 +131,32 @@ struct CourseStartScreen: View {
     }
   }
 
+  /// Main's: a course with no version in the app's language says the lessons will be in it.
+  private var languageNote: Text? {
+    guard case .learnerLanguage(let language) = startLanguage,
+      let course = catalog.course(id: courseId).value?.course
+    else {
+      return nil
+    }
+
+    return Text(
+      "This course is in \(Locale.current.languageName(course.language)). Your lessons will be in \(Locale.current.languageName(language)).",
+      tableName: "Onboarding",
+      comment:
+        "Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence"
+    )
+  }
+
   /// The course, or the chapter the plan would start from.
   private var subject: String? {
-    let course = catalog.course(id: courseId).value
+    let course = catalog.course(id: startCourseID).value
 
-    return chapterId.flatMap { id in course?.chapters.first { $0.id == id }?.title }
+    return startChapterID.flatMap { id in course?.chapters.first { $0.id == id }?.title }
       ?? course?.course.title
   }
 
   private func start() {
-    guard chapterId != nil || level != nil, !isStarting else {
+    guard startChapterID != nil || level != nil, !isStarting else {
       return
     }
 
@@ -135,7 +168,8 @@ struct CourseStartScreen: View {
 
       do {
         goalID = try await onboarding.startCourse(
-          courseID: courseId, chapterID: chapterId, level: level.flatMap(LevelChoices.answer))
+          courseID: startCourseID, chapterID: startChapterID,
+          level: level.flatMap(LevelChoices.answer), language: catalog.language)
       } catch is CancellationError {
       } catch {
         self.error = GoalError.creating(error)
