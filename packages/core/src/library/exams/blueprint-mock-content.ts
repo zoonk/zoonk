@@ -2,6 +2,7 @@ import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-
 import { type ExamStructure, type SectionNavigation } from "./blueprint-contract";
 import { type KeptFacts, keptOr } from "./blueprint-kept";
 import { toPointsScoring } from "./blueprint-points-content";
+import { toWrittenGrading } from "./blueprint-written-facts";
 import { normalizePenalty } from "./marking-penalty";
 
 type Extraction = BlueprintExtraction;
@@ -91,6 +92,9 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
     kind: section.kind,
     minutes: keptOr({ gap: null, id: `${ids[index]}.minutes`, kept, value: section.minutes }),
     name: section.name,
+    ...(section.session?.trim() && kept.has(`${ids[index]}.session`)
+      ? { session: section.session.trim() }
+      : {}),
     questions:
       section.kind === "written"
         ? null
@@ -109,7 +113,25 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
           ? keptOr({ gap: "", id: `${id}.description`, kept, value: task.description })
           : task.description;
 
-      return [{ count: task.count, description, ...(plays ? { plays } : {}) }];
+      const { handwritten, lines, officialIdentifier, points } = task;
+      const grading = toWrittenGrading({ grading: task.grading, id, kept });
+
+      return [
+        {
+          count: task.count,
+          description,
+          ...(plays ? { plays } : {}),
+          ...(grading ? { grading } : {}),
+          ...(typeof handwritten === "boolean" && kept.has(`${id}.handwritten`)
+            ? { handwritten }
+            : {}),
+          ...(lines && lines > 0 && kept.has(`${id}.lines`) ? { lines } : {}),
+          ...(points && points > 0 && kept.has(`${id}.points`) ? { points } : {}),
+          ...(officialIdentifier?.trim() && kept.has(`${id}.officialIdentifier`)
+            ? { officialIdentifier: officialIdentifier.trim() }
+            : {}),
+        },
+      ];
     }),
     ...toSectionDetails({ id: ids[index] ?? "", kept, section }),
   }));

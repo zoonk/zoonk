@@ -138,7 +138,9 @@ function getSystemPrompt(rubric: EssayRubric): string {
       ap: rubric.kind === "ap",
       custom: rubric.kind === "custom",
       enem: rubric.kind === "enem",
+      levels: false,
       oab: rubric.kind === "oab",
+      points: false,
     },
   });
 
@@ -229,4 +231,120 @@ export async function gradeEssay(params: GradeEssayParams) {
     usage: result.usage,
     userPrompt,
   };
+}
+
+const evidenceCriterion = z.object({
+  comment: z.string(),
+  example: z.string().nullable(),
+  id: z.string(),
+  level: z.enum(["missing", "partial", "strong", "complete"]),
+  quote: z.string().nullable(),
+});
+
+export const writingEvidenceSchema = z.object({
+  aspects: z.array(
+    z.object({
+      aspectIndex: z.int().nonnegative(),
+      criterionId: z.string(),
+      earned: z.boolean(),
+      quote: z.string().nullable(),
+    }),
+  ),
+  criteria: z.array(evidenceCriterion),
+  errors: z.array(z.object({ correction: z.string(), kind: z.string(), quote: z.string() })),
+  nextStep: z
+    .object({
+      criterionId: z.string(),
+      example: z.string().nullable(),
+      quote: z.string().nullable(),
+      text: z.string(),
+    })
+    .nullable(),
+  zeroRuleIndex: z.int().nonnegative().nullable(),
+});
+
+export type WritingEvidence = z.infer<typeof writingEvidenceSchema>;
+
+type WritingEvidenceParams = {
+  language: string;
+  question: string;
+  context: string | null;
+  text: string;
+  scoringBasis: { kind: "enem" | "oab" | "points" | "levels"; [key: string]: unknown };
+  aspects: readonly { criterionId: string; description: string; points: number | null }[];
+  keyPoints: readonly string[];
+  model?: string;
+  reasoning?: Reasoning;
+  useFallback?: boolean;
+  analytics?: AiGenerationContext;
+};
+
+export async function gradeWritingEvidence(params: WritingEvidenceParams) {
+  const {
+    analytics,
+    model = defaultModel,
+    reasoning = defaultReasoning,
+    useFallback = true,
+  } = params;
+
+  const kind = params.scoringBasis.kind;
+
+  const rubricPrompt = selectPromptVariants({
+    template: promptTemplate,
+    variants: {
+      ap: false,
+      custom: false,
+      enem: kind === "enem",
+      levels: kind === "levels",
+      oab: kind === "oab",
+      points: kind === "points",
+    },
+  });
+
+  // The evidence interface also works with the original score-oriented prompt during rollout.
+  const systemPrompt = `${rubricPrompt}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}
+For the structured response, report evidence and criterion levels rather than numeric scores.
+Use SCORING_BASIS for criterion IDs and the ordered rules, ASPECTS for zero-based aspect indexes,
+and exact passages from ESSAY for quotes. Return no final points. Report an error only when
+its quote and correction are exact and its usage is unambiguously incorrect in context.`;
+
+  const schema =
+    kind === "enem"
+      ? writingEvidenceSchema.extend({
+          interventionElements: enemOutputSchema.shape.interventionElements,
+          proposalLimit: enemOutputSchema.shape.proposalLimit,
+        })
+      : writingEvidenceSchema;
+
+  const prompt = [
+    `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
+    `RUBRIC: ${kind}`,
+    formatUntrustedInput({
+      ASPECTS: JSON.stringify(params.aspects),
+      CONTEXT: params.context ?? "",
+      ESSAY: params.text,
+      KEY_POINTS: JSON.stringify(params.keyPoints),
+      PROMPT: params.question,
+      SCORING_BASIS: JSON.stringify(params.scoringBasis),
+    }),
+  ].join("\n\n");
+
+  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+
+  const { provenance, result } = await runTaskGeneration({
+    analytics,
+    generate: () =>
+      generateText({
+        instructions: systemPrompt,
+        model,
+        output: Output.object({ schema }),
+        prompt,
+        providerOptions,
+        reasoning,
+      }),
+    systemPrompt,
+    task: "grade-essay",
+  });
+
+  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt: prompt };
 }

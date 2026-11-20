@@ -1,8 +1,10 @@
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
 import { essayGradeSchema, essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
+import { writingResultSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { examResultInputSchema } from "@zoonk/core/exams/results/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
+import { z } from "zod";
 import { studySessionErrorCodes } from "../../study-session-errors";
 import { essayViewResponseSchema } from "../schemas/essays";
 import { examResultResponseSchema, examViewResponseSchema } from "../schemas/exams";
@@ -20,6 +22,7 @@ import {
   validationErrorResponse,
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
+import { writingGradePaths } from "./writing-grades";
 
 const TAGS = ["Exams"];
 
@@ -30,6 +33,7 @@ const commonErrors = {
 };
 
 export const examPaths = {
+  ...writingGradePaths,
   "/essays/{blockId}": {
     get: {
       description:
@@ -51,7 +55,7 @@ export const examPaths = {
   "/essays/{blockId}/submissions": {
     post: {
       description:
-        "Grades a draft with the official rubric and records it as learning: every criterion with a comment on the learner's own words, an estimated range and one next step. Rewriting sends a new draft. Finish the block through the study session's block endpoints.",
+        "Grades an admitted draft against its assigned prompt and returns its saved feedback. Drafts sent with an admission return a WritingResult. Legacy submissions can return an EssayGrade.",
       operationId: "submitEssay",
       requestBody: {
         content: { "application/json": { schema: essaySubmissionInputSchema } },
@@ -60,7 +64,9 @@ export const examPaths = {
       requestParams: { path: essayPathParamsSchema },
       responses: {
         "200": {
-          content: { "application/json": { schema: essayGradeSchema } },
+          content: {
+            "application/json": { schema: z.union([writingResultSchema, essayGradeSchema]) },
+          },
           description: "The grade",
         },
         ...commonErrors,

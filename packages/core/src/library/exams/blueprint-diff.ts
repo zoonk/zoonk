@@ -2,6 +2,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { type BlueprintContent, type ExamEdition, type ExamStructure } from "./blueprint-contract";
 import { countsEverySubject } from "./subject-questions";
 import { toTopicKey } from "./topic-key";
+import { withWrittenTaskKeys } from "./written-tasks";
 
 export type BlueprintChange = { after: unknown; before: unknown; field: string };
 
@@ -240,11 +241,16 @@ export function movesExamDays({
  */
 export function mergeBlueprintContent({
   current,
-  next,
+  next: read,
 }: {
   current: BlueprintContent;
   next: BlueprintContent;
 }): BlueprintMerge {
+  const next = {
+    ...read,
+    structure: withWrittenTaskKeys({ current: current.structure, next: read.structure }),
+  };
+
   const changes = getSections({ current, next })
     .filter((section) => isChanged(section))
     .map(({ after, before, field }) => ({

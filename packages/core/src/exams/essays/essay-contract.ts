@@ -3,6 +3,7 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 import {
+  MAX_ESSAY_CHARACTERS,
   type WritingDraft,
   type WritingPacing,
   type WritingPrompt,
@@ -15,19 +16,26 @@ export const writingAttemptSchema = writtenAnswerSchema
   .extend({ attemptId: uuidSchema(), submittedAt: z.iso.datetime(), writing: writingPromptSchema })
   .meta({ id: "WritingAttempt" });
 
-export const MAX_ESSAY_CHARACTERS = 12_000;
+export { MAX_ESSAY_CHARACTERS } from "./writing-contract";
 
-const MAX_WRITING_MS = 5_400_000;
+// Saved drafts can accumulate active writing time across several days.
+export const MAX_WRITING_MS = 24 * 60 * 60 * 1000;
 
 export const essaySubmissionInputSchema = z
   .object({
+    admissionId: uuidSchema()
+      .optional()
+      .describe("The admission issued when this writing attempt started"),
     attemptId: uuidSchema()
       .optional()
       .describe(
         "Your id for this draft: sent again with it (a retry), it's graded and recorded once",
       ),
     durationMs: z.int().min(0).max(MAX_WRITING_MS).meta({ description: "Time spent writing" }),
-    text: z.string().trim().min(1).max(MAX_ESSAY_CHARACTERS),
+    text: z
+      .string()
+      .max(MAX_ESSAY_CHARACTERS)
+      .refine((value) => value.trim().length > 0),
     timeZone: answerTimeZoneSchema,
   })
   .strict()

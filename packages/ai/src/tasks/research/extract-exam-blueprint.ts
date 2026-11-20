@@ -8,6 +8,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { pointsScoringShape } from "./blueprint-points-schema";
+import { writtenTaskSchema } from "./blueprint-written-schema";
 import { cited, citedMany } from "./cited-passages";
 import { listExamParts } from "./exam-parts";
 import readingAgainPrompt from "./extract-exam-blueprint-reading-again.prompt.md";
@@ -43,18 +44,6 @@ const READING_TIMEOUT = { chunkMs: 60_000, firstChunkMs: 150_000 };
 const CONTENT_FILTER = "content-filter";
 
 const topicHeadingSchema = z.object({ firstTopic: z.string(), name: z.string() });
-
-/**
- * `plays` is null for written tasks and when the notice doesn't say. It quotes every passage it
- * comes from, the line that states the task first, since a format page states a part's details in
- * separate sentences.
- */
-const writtenTaskSchema = z.object({
-  ...citedMany,
-  count: z.number().int(),
-  description: z.string(),
-  plays: z.number().int().nullable(),
-});
 
 /**
  * `fromPercent` only where the notice publishes a linear conversion from the share of right
@@ -120,6 +109,7 @@ const extractionSchema = z.object({
           name: z.string(),
           navigation: navigationSchema.nullable(),
           questions: z.number().int().nullable(),
+          session: z.string().nullable(),
           /** Empty for an objective section. */
           tasks: z.array(writtenTaskSchema),
           tools: z.string().nullable(),
@@ -176,7 +166,22 @@ const extractionSchema = z.object({
   ),
 });
 
-export type BlueprintExtraction = z.infer<typeof extractionSchema>;
+type Extraction = z.infer<typeof extractionSchema>;
+type Mock = NonNullable<Extraction["mock"]>;
+type Section = Mock["sections"][number];
+type Task = Section["tasks"][number];
+type WrittenFields = "grading" | "handwritten" | "lines" | "officialIdentifier" | "points";
+
+export type BlueprintExtraction = Omit<Extraction, "mock"> & {
+  mock:
+    | (Omit<Mock, "sections"> & {
+        sections: (Omit<Section, "session" | "tasks"> & {
+          session?: Section["session"];
+          tasks: (Omit<Task, WrittenFields> & Partial<Pick<Task, WrittenFields>>)[];
+        })[];
+      })
+    | null;
+};
 
 /** `unconfirmed`: what a reading stated that no check could confirm from what it quoted. */
 export type ReadingCorrection =
@@ -204,7 +209,9 @@ export type ExtractExamBlueprintParams = {
  */
 export async function extractExamBlueprint(
   params: ExtractExamBlueprintParams,
-): Promise<Awaited<ReturnType<typeof readBlueprint>>> {
+): Promise<
+  Omit<Awaited<ReturnType<typeof readBlueprint>>, "data"> & { data: BlueprintExtraction }
+> {
   const reading = await readWithFallback(params);
 
   const formats =

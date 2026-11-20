@@ -51,6 +51,10 @@ export async function submitEssay({
 
   const { block, blueprint, content, goal, item, sessionId, userId } = found.owned;
 
+  if (input.admissionId || content.writing) {
+    return { status: "blockNotActive" };
+  }
+
   const attemptId = input.attemptId
     ? getAnswerAttemptId({ key: input.attemptId, questionId: blockId, userId })
     : randomUUID();

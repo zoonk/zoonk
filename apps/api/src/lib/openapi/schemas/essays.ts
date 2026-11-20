@@ -35,3 +35,5 @@ export const essayViewResponseSchema = z
     writing: writingPromptSchema.optional(),
   })
   .meta({ id: "Essay" }) satisfies z.ZodType<EssayView>;
+
+export const writingAttemptPathParamsSchema = z.object({ attemptId: uuidSchema() });

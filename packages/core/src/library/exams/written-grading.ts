@@ -27,6 +27,7 @@ export const sectionTaskSchema = z.object({
   handwritten: z.boolean().optional(),
   key: z.string().min(1).optional(),
   lines: z.int().positive().optional(),
+  officialIdentifier: z.string().min(1).optional(),
   plays: z.number().int().min(1).max(2).nullable().optional(),
   points: z.number().positive().optional(),
 });

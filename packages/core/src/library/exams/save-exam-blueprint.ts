@@ -24,6 +24,7 @@ import {
 import { type BlueprintChange, mergeBlueprintContent, movesExamDays } from "./blueprint-diff";
 import { carryConfirmedGaps } from "./confirmed-gaps";
 import { type ExamIdentity, buildExamIdentityKey, findExamBlueprintByKey } from "./exam-identity";
+import { withWrittenTaskKeys } from "./written-tasks";
 
 export type BlueprintNotice = { message: string; provenance: LibraryProvenance };
 
@@ -326,7 +327,10 @@ export async function saveExamBlueprint(
           role: identity.role,
           sourceId: input.sourceId,
           ...toLibraryVisibility(identity.ownerId),
-          ...toContentColumns(input.content),
+          ...toContentColumns({
+            ...input.content,
+            structure: withWrittenTaskKeys({ current: null, next: input.content.structure }),
+          }),
           ...toProvenanceData(input.provenance),
         },
       }),
