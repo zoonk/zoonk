@@ -219,6 +219,7 @@ describe("plans of an exam with choices of subject", () => {
             content: choiceItemContent(),
             examBlueprintId: blueprint.id,
             language: "es",
+            mockOnly: true,
             skillId: skill.skillId,
           }),
         ),

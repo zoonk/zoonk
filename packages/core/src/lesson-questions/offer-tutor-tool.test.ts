@@ -15,6 +15,7 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { normalizeString } from "@zoonk/utils/string";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { startAnytimeMock } from "../exams/mocks/start-anytime-mock";
 import { updateGoal } from "../goals/update-goal";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
@@ -109,11 +110,19 @@ const MOCK_STRUCTURE = {
   })),
 };
 
-async function examSetup({ notice = true, plus }: { notice?: boolean; plus: boolean }) {
+async function examSetup({
+  areas = MOCK_AREAS,
+  notice = true,
+  plus,
+}: {
+  areas?: readonly string[];
+  notice?: boolean;
+  plus: boolean;
+}) {
   const [user, blueprint, skills] = await Promise.all([
     userFixture(),
     notice ? examBlueprintFixture({ structure: MOCK_STRUCTURE }) : null,
-    Promise.all(MOCK_AREAS.map((area) => skillFixture({ name: `${area} ${randomUUID()}` }))),
+    Promise.all(areas.map((area) => skillFixture({ name: `${area} ${randomUUID()}` }))),
   ]);
 
   const goal = await goalFixture({
@@ -129,7 +138,7 @@ async function examSetup({ notice = true, plus }: { notice?: boolean; plus: bool
       graph: {
         phases: [{ milestone: null, name: "Basics" }],
         skills: skills.map((skill, index) => ({
-          area: MOCK_AREAS[index] ?? "",
+          area: areas[index] ?? "",
           lessons: 1,
           name: skill.name,
           phase: 0,
@@ -320,8 +329,25 @@ describe("app tools the buddy offers", () => {
     ).resolves.toMatchObject({ toolOffer: { access: "plusRequired", kind: "mockExam" } });
   });
 
-  it("never offers a mock that can't be taken: tests with nothing to build from and goals that aren't exams", async () => {
-    const unbuilt = await examSetup({ notice: false, plus: true });
+  it("offers a mock that can be prepared from the plan's topics without an exam notice", async () => {
+    const { goal } = await examSetup({ notice: false, plus: true });
+    const asked = await askBuddy(goal.id, ASKED_FOR_MOCK);
+
+    await expect(offerTutorTool({ ...asked, tool: "mockExam" })).resolves.toMatchObject({
+      offer: { access: "open", goalId: goal.id, kind: "mockExam" },
+      status: "offered",
+    });
+
+    await expect(
+      startAnytimeMock({
+        goalId: goal.id,
+        input: { shape: { area: null, day: null, kind: "full" } },
+      }),
+    ).resolves.toStrictEqual({ status: "preparing" });
+  });
+
+  it("never offers a mock for an exam without topics or a notice, or for a non-exam goal", async () => {
+    const unbuilt = await examSetup({ areas: [], notice: false, plus: true });
     const unbuiltAsked = await askBuddy(unbuilt.goal.id, ASKED_FOR_MOCK);
 
     await expect(offerTutorTool({ ...unbuiltAsked, tool: "mockExam" })).resolves.toStrictEqual({

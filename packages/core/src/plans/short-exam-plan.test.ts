@@ -7,6 +7,8 @@ import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { runningMock } from "../exams/mocks/_test-utils/scheduled-mock";
+import { startMock } from "../exams/mocks/start-mock";
 import { getExamView } from "../exams/view/get-exam-view";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
@@ -351,10 +353,22 @@ describe("a class test days away", () => {
 
     expect(skillIds.some((skillId) => !taught.some((item) => item.skillId === skillId))).toBe(true);
 
-    await prisma.planItem.updateMany({
-      data: { completedAt: day(1), status: "done" },
-      where: { kind: "lesson", planId: plan.id },
-    });
+    await Promise.all([
+      prisma.planItem.updateMany({
+        data: { completedAt: day(1), status: "done" },
+        where: { kind: "lesson", planId: plan.id },
+      }),
+      ...skillIds.flatMap((skillId) =>
+        [0, 1].map(() =>
+          itemFixture({
+            content: choiceItemContent(),
+            examBlueprintId: goal.examBlueprintId,
+            mockOnly: true,
+            skillId,
+          }),
+        ),
+      ),
+    ]);
 
     setClock(2);
     const last = await getTodayStudySession({ goalId: goal.id });
@@ -363,13 +377,29 @@ describe("a class test days away", () => {
       throw new Error(`Expected the last day's session, got ${last.status}`);
     }
 
-    const mock = last.session.blocks.find((block) => block.kind === "checkpoint");
-    const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: mock?.id } });
+    const mock = last.session.blocks.find((block) => block.checkpoint?.mock);
+
+    if (!mock) {
+      throw new Error("Expected the last day's mock");
+    }
+
+    const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: mock.id } });
     const payload = readBlockPayload(block);
-    const asked = await prisma.item.findMany({ where: { id: { in: payload.itemIds } } });
 
     expect(new Set(payload.skillIds)).toStrictEqual(new Set(skillIds));
-    expect(new Set(asked.map((item) => item.skillId)).size).toBe(skillIds.length);
+    expect(payload.itemIds).toStrictEqual([]);
+
+    await expect(startMock({ blockId: mock.id, input: {} })).resolves.toStrictEqual({
+      status: "ready",
+    });
+
+    const running = await runningMock(mock.id);
+
+    const asked = await prisma.item.findMany({
+      where: { id: { in: running.current?.questions.map((question) => question.itemId) ?? [] } },
+    });
+
+    expect(new Set(asked.map((item) => item.skillId))).toStrictEqual(new Set(skillIds));
   });
 
   it("gives the day before a full review sized to the day on the free plan: its short mock comes with Plus", async () => {

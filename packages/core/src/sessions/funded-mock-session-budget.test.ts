@@ -11,7 +11,9 @@ import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { moveChallenge } from "../checkpoints/move-challenge";
 import { startChallenge } from "../checkpoints/start-challenge";
+import { runningMock } from "../exams/mocks/_test-utils/scheduled-mock";
 import { getMock } from "../exams/mocks/get-mock";
+import { startMock } from "../exams/mocks/start-mock";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { parsePlanChangePayload } from "../plans/_utils/plan-change-payload";
@@ -99,9 +101,15 @@ async function setup({
   });
 
   await Promise.all(
-    Array.from({ length: 30 }, () =>
+    Array.from({ length: 30 }, () => [
       itemFixture({ content: choiceItemContent(), skillId: library.skills[0]?.id ?? "" }),
-    ),
+      itemFixture({
+        content: choiceItemContent(),
+        examBlueprintId: blueprint.id,
+        mockOnly: true,
+        skillId: library.skills[0]?.id ?? "",
+      }),
+    ]).flat(),
   );
 
   mockSession(user.id);
@@ -343,17 +351,6 @@ describe("funded mock sessions reserve all their fixed work", () => {
   it("keeps the 165-minute moved mock alone and puts off the phase challenge", async () => {
     const fixture = await setup({ targetDate: "2020-11-09", withBoss: true });
     const { goal, plan } = fixture;
-
-    await Promise.all(
-      Array.from({ length: 30 }, () =>
-        itemFixture({
-          content: choiceItemContent(),
-          examBlueprintId: goal.examBlueprintId,
-          mockOnly: true,
-          skillId: fixture.library.skills[0]?.id ?? "",
-        }),
-      ),
-    );
 
     const studied = (before: string) =>
       readPlanItems(plan.id).then((items) =>
@@ -670,11 +667,19 @@ describe("funded mock sessions reserve all their fixed work", () => {
       throw new Error("Expected the fixed mock block");
     }
 
-    const reserved = new Set(readBlockPayload(fixed).itemIds);
-    expect(questions.every((question) => !reserved.has(question.id))).toBe(true);
+    expect(readBlockPayload(fixed).itemIds).toStrictEqual([]);
     expect.soft(session.blocks.filter((block) => block.kind === "review")).toStrictEqual([]);
     expect.soft(session.plannedMinutes).toBe(165);
     expect.soft(result.today.session.minutes).toMatchObject({ dailyGoal: 165, planned: 165 });
+
+    await expect(startMock({ blockId: fixed.id, input: {} })).resolves.toStrictEqual({
+      status: "ready",
+    });
+
+    const running = await runningMock(fixed.id);
+    const reserved = new Set(running.current?.questions.map((question) => question.itemId));
+    expect(reserved.size).toBe(30);
+    expect(questions.every((question) => !reserved.has(question.id))).toBe(true);
 
     await expect(
       prisma.learnerSkill.findUniqueOrThrow({ where: { userSkill: { skillId, userId: user.id } } }),
