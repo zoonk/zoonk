@@ -415,25 +415,6 @@ enum class GenerationKind(
                 "writeSetupLessons" to StepPlace.Phase("write"),
             ),
     ),
-    MockQuestions(
-        label = R.string.mock_chooser_writing,
-        phases =
-            listOf(
-                GenerationPhase(
-                    "questions",
-                    100,
-                    R.string.mock_chooser_writing_questions,
-                    listOf(R.string.mock_chooser_writing_questions_line),
-                    questionLines(count = 12),
-                ),
-            ),
-        steps =
-            mapOf(
-                "joinMockQuestions" to StepPlace.Join,
-                "mockQuestionsReady" to StepPlace.Done,
-                "writeMockQuestions" to StepPlace.Phase("questions"),
-            ),
-    ),
     ;
 
     fun isDone(steps: Map<String, StepState>): Boolean =

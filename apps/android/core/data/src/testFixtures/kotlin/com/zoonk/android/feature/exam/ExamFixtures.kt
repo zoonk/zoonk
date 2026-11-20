@@ -46,7 +46,7 @@ fun mockOptions(extra: String): MockOptions {
                 {"access":"open","examDocument":"notice","examName":"ENEM","goalId":"$GOAL","lastMock":null,
                  "options":[{"area":null,"day":1,"kind":"full","areas":[],"covers":null,"estimatedMinutes":300,"leftOut":[],
                   "minutes":330,"objectiveOnly":false,"questions":90,"written":[]}],
-                 "placement":null,"running":null,"sizeSource":{"formats":null,"material":false,"pastEdition":null,"questions":"notice","subjects":null,"time":"notice"}}
+                 "placement":null,"requested":null,"running":null,"sizeSource":{"formats":null,"material":false,"pastEdition":null,"questions":"notice","subjects":null,"time":"notice"}}
                 """.trimIndent(),
             ).jsonObject
     val fields = if (extra.isEmpty()) emptyMap() else ApiJson.parseToJsonElement("{$extra}").jsonObject

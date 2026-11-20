@@ -148,4 +148,10 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Every task is done. After this, you can\'t do them again in this mock exam.</string>
     <string name="mock_keep_going">Keep going</string>
+    <!-- Over the main button of a mock exam the learner asked for whose questions are still being written. -->
+    <string name="mock_preparing_title">Your mock exam is being prepared</string>
+    <!-- Under mock_preparing_title: the learner comes back to the same page once it's ready, and starts it there. -->
+    <string name="mock_preparing_line">Come back to this page to start it.</string>
+    <!-- The main button while a mock exam is being prepared: goes back to today's study. -->
+    <string name="mock_preparing_keep_studying">Keep studying</string>
 </resources>

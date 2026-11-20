@@ -1,24 +1,19 @@
 package com.zoonk.android.feature.mock.chooser
 
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -42,51 +37,32 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
-import com.zoonk.android.data.GenerationKind
-import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TrackShown
+import com.zoonk.android.feature.mock.MockPreparingNote
 import com.zoonk.android.feature.mock.MockSummaryRow
 import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.GenerationWait
-import com.zoonk.android.ui.components.HeldSlot
-import com.zoonk.android.ui.components.LimitNotice
-import com.zoonk.android.ui.components.LimitSubject
-import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.controlInk
-import com.zoonk.android.ui.components.rememberOpeningDay
-import com.zoonk.android.ui.format.DateStyle
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.BottomBar
-import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.DetailPage
-import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.android.ui.theme.balanced
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.MockOptionsRequested
 
 @Composable
 internal fun PracticeChooser(
@@ -97,15 +73,15 @@ internal fun PracticeChooser(
     replacementFocus: FocusRequester? = null,
     onStart: () -> Unit = {},
 ) {
-    val status by viewModel.status.collectAsStateWithLifecycle()
     val busy by viewModel.busy.collectAsStateWithLifecycle()
+    val failed by viewModel.failed.collectAsStateWithLifecycle()
     // Nothing is picked as the page opens, so a first tap on Start can't begin an hours-long exam.
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
     val option = view.options.firstOrNull { it.key == picked }
     val severalDays = view.options.count { it.kind == MockOption.Kind.FULL } > 1
     val open = view.access == MockOptions.Access.OPEN
-    val short = status as? ChooserStatus.Short
-    val shown = status.takeUnless { it is ChooserStatus.Short } ?: ChooserStatus.Choosing
+    // The pick the learner asked for while its questions are written: coming back to it, they find it ready or still being prepared.
+    val preparing = view.requested?.let { it.status == MockOptionsRequested.Status.PREPARING && it.shape == option?.shape } == true
     val examChoices = practiceChoices(view.options.filter { it.kind != MockOption.Kind.AREA }, severalDays)
     val subjectChoices = practiceChoices(view.options.filter { it.kind == MockOption.Kind.AREA }, severalDays)
 
@@ -113,25 +89,37 @@ internal fun PracticeChooser(
     val triedLocked by viewModel.triedLocked.collectAsStateWithLifecycle()
     val gated = triedLocked && !open
     val mainAction = {
-        if (gated) {
-            navigator.open(AppRoute.Subscription)
-        } else if (option != null && !busy) {
-            onStart()
-            if (open) viewModel.start(option.shape, option.key) else viewModel.tryLocked()
+        when {
+            gated -> navigator.open(AppRoute.Subscription)
+            preparing -> navigator.showRoot(AppTab.Today)
+            option != null && !busy -> {
+                onStart()
+                if (open) viewModel.start(option.shape) else viewModel.tryLocked()
+            }
         }
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
-        if (gated) {
-            Button(onClick = mainAction, modifier = modifier.focus(replacementFocus)) {
-                Text(stringResource(R.string.subscription_subscribe))
+        when {
+            gated -> {
+                Button(onClick = mainAction, modifier = modifier.focus(replacementFocus)) {
+                    Text(stringResource(R.string.subscription_subscribe))
+                }
             }
-        } else {
-            Button(
-                busy = busy,
-                onClick = mainAction,
-                modifier = modifier.focus(replacementFocus),
-                enabled = option != null,
-            ) { Text(stringResource(R.string.mock_chooser_start)) }
+
+            preparing -> {
+                Button(onClick = mainAction, modifier = modifier.focus(replacementFocus)) {
+                    Text(stringResource(R.string.mock_preparing_keep_studying))
+                }
+            }
+
+            else -> {
+                Button(
+                    busy = busy,
+                    onClick = mainAction,
+                    modifier = modifier.focus(replacementFocus),
+                    enabled = option != null,
+                ) { Text(stringResource(R.string.mock_chooser_start)) }
+            }
         }
     }
 
@@ -141,8 +129,8 @@ internal fun PracticeChooser(
         note =
             when {
                 gated -> ({ MockGate() })
-                shown is ChooserStatus.Refused -> ({ Refusal(shown, navigator) })
-                shown is ChooserStatus.Failed -> ({ StartFailed(shown) })
+                preparing -> ({ MockPreparingNote() })
+                failed -> ({ StartFailed() })
                 else -> null
             },
         bar = { TaskActions { main -> action(main) } },
@@ -176,89 +164,6 @@ internal fun PracticeChooser(
                         ChoiceRows(subjectChoices, picked, onEnter = mainAction) { picked = it }
                     }
                 }
-            }
-        }
-    }
-
-    short?.let { ShortDialog(it.outcome, onStart = viewModel::startShort, onPickAnother = viewModel::stayChoosing) }
-}
-
-/** A mock exam shorter than the one picked never starts unannounced: the learner agrees first. */
-@Composable
-private fun ShortDialog(
-    short: MockStartOutcome.Short,
-    onStart: () -> Unit,
-    onPickAnother: () -> Unit,
-) {
-    val locale = currentLocale()
-    val count = formatNumber(short.questions.toDouble(), locale)
-    val total = formatNumber(short.examQuestions.toDouble(), locale)
-    val time = minutesText(short.minutes)
-    val full = rememberOpeningDay(short.availableAt.takeIf { short.limit == AnytimeMock.Limit.ROLLING30_DAYS })
-    AlertDialog(
-        onDismissRequest = onPickAnother,
-        title = { Text(stringResource(R.string.mock_chooser_short_title)) },
-        text = {
-            // The full mock's day coming while the dialog is open shortens its sentence; the dialog keeps its size, its
-            // width too, since a dialog is as wide as its words and the slot keeps the height of the width it had.
-            HeldSlot(gated = full != OpeningDay.Open, Modifier.fillMaxWidth()) {
-                Text(
-                    when {
-                        short.limit == AnytimeMock.Limit.DAY || full == OpeningDay.Tomorrow -> {
-                            stringResource(R.string.mock_chooser_short_day, count, total, time)
-                        }
-
-                        full == OpeningDay.Today -> {
-                            stringResource(R.string.mock_chooser_short_later_today, count, total, time)
-                        }
-
-                        full is OpeningDay.On -> {
-                            stringResource(
-                                R.string.mock_chooser_short_on,
-                                count,
-                                total,
-                                time,
-                                formatDate(full.date, locale, DateStyle.DayMonth),
-                            )
-                        }
-
-                        else -> {
-                            stringResource(R.string.mock_chooser_short_line, count, total, time)
-                        }
-                    },
-                )
-            }
-        },
-        confirmButton = { TextButton(onClick = onStart) { Text(stringResource(R.string.mock_chooser_start)) } },
-        dismissButton = { TextButton(onClick = onPickAnother) { Text(stringResource(R.string.mock_chooser_pick_another)) } },
-    )
-}
-
-/** Main's `MockWriting`: the questions being written, after which the mock opens by itself. */
-@Composable
-internal fun MockWriting(
-    run: GenerationRun,
-    onRetry: () -> Unit,
-    titleFocus: FocusRequester? = null,
-) {
-    BeforeFold { beforeFold ->
-        Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
-            GenerationWait(
-                kind = GenerationKind.MockQuestions,
-                run = run,
-                onRetry = onRetry,
-                modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
-            ) {
-                Text(
-                    stringResource(R.string.mock_chooser_preparing),
-                    (titleFocus?.let { Modifier.focusRequester(it).focusable() } ?: Modifier).semantics { heading() },
-                    style = MaterialTheme.typography.headlineSmall,
-                )
-                Text(
-                    stringResource(R.string.mock_chooser_preparing_detail),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
             }
         }
     }
@@ -302,9 +207,9 @@ private fun MockGate() {
 
 /** Why the last Start failed, over the bar where Start was pressed (the bar's note reads it out). */
 @Composable
-private fun StartFailed(failed: ChooserStatus.Failed) {
+private fun StartFailed() {
     Text(
-        stringResource(if (failed.notEnoughQuestions) R.string.mock_chooser_not_enough else R.string.mock_chooser_failed),
+        stringResource(R.string.mock_chooser_failed),
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
@@ -321,21 +226,6 @@ private fun enterTakes(
 }
 
 private fun Modifier.focus(requester: FocusRequester?): Modifier = requester?.let { focusRequester(it) } ?: this
-
-/** Fair use for new questions ran out: main's help limit notice with its way on. */
-@Composable
-private fun Refusal(
-    status: ChooserStatus.Refused,
-    navigator: AppNavigator,
-) {
-    LimitNotice(
-        limit = status.limit,
-        subject = LimitSubject.MockExams,
-        onCreateAccount = { navigator.open(AppRoute.Login) },
-        onSubscribe = { navigator.open(AppRoute.Subscription) },
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-    )
-}
 
 internal data class RowChoice(
     val key: String,

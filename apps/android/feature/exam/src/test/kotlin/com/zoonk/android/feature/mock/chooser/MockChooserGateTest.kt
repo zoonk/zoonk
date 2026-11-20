@@ -82,7 +82,7 @@ class MockChooserGateTest {
         )
 
     private fun show() {
-        val viewModel = MockChooserViewModel(GOAL, MockStarter(starts, cache), session, { ReadyRuns() }) { store.refused(GOAL) }
+        val viewModel = MockChooserViewModel(GOAL, MockStarter(starts, cache, store)) { store.refused(GOAL) }
         rule.setContent {
             ZoonkTheme {
                 val state by store.options[GOAL].collectShown()
@@ -217,19 +217,6 @@ class MockChooserGateTest {
         readAgain { OPEN }
 
         assertStart()
-    }
-
-    @Test
-    fun aWritingRequestTheServerRefusesShowsTheGate() {
-        answer = { OPEN }
-        starts.starts = listOf { NEEDS_QUESTIONS }
-        starts.writes = listOf { throw refusal("PLUS_REQUIRED") }
-        show()
-        answer = { LOCKED }
-
-        start()
-
-        assertGate()
     }
 
     private companion object {

@@ -10,6 +10,8 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.perform
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.MockOptionsRequested
+import com.zoonk.api.models.MockShape
 import java.util.UUID
 
 interface MockApi {
@@ -45,6 +47,14 @@ class MockStore(
         val resource = options[goalId]
         resource.update { it.copy(access = MockOptions.Access.PLUS_REQUIRED) }
         resource.refresh()
+    }
+
+    /** The server saved [shape] as the learner's request while its questions are written: the chooser shows it at once. */
+    fun requested(
+        goalId: UUID,
+        shape: MockShape,
+    ) {
+        options[goalId].update { it.copy(requested = MockOptionsRequested(shape, MockOptionsRequested.Status.PREPARING)) }
     }
 
     companion object {
