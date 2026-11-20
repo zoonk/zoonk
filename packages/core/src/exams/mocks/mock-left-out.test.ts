@@ -31,11 +31,7 @@ const CERTIFICATE: ExamStructure = {
 
 describe(listMockLeftOut, () => {
   it("says each part of the exam day a full mock can't ask yet, and the bank's essays it can", () => {
-    const [full] = listMockOptions({
-      essays: [{ area: null, itemId: "essay" }],
-      goalAreas: ["English"],
-      structure: CERTIFICATE,
-    });
+    const [full] = listMockOptions({ goalAreas: ["English"], structure: CERTIFICATE });
 
     expect(full?.leftOut).toStrictEqual([
       { name: "Listening", part: "listening" },
@@ -80,13 +76,9 @@ describe(listMockLeftOut, () => {
   });
 
   it("says half of a day leaves its written part to full mocks, even with essays in the bank", () => {
-    const [, half] = listMockOptions({
-      essays: [{ area: null, itemId: "essay" }],
-      goalAreas: ["English"],
-      structure: CERTIFICATE,
-    });
+    const options = listMockOptions({ goalAreas: ["English"], structure: CERTIFICATE });
 
-    expect(half?.leftOut).toStrictEqual([
+    expect(options.find((option) => option.kind === "half")?.leftOut).toStrictEqual([
       { name: "Listening", part: "listening" },
       { name: "Speaking", part: "speaking" },
       { name: "Writing", part: "writtenInFull" },

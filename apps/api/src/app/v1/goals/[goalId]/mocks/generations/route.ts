@@ -8,6 +8,7 @@ import {
   getMockQuestionsToken,
   mockQuestionsWorkflow,
 } from "@/workflows/goals/mock-questions-workflow";
+import { ensureWritingPrompts } from "@/workflows/sessions/writing-prompt-workflow";
 import { mockQuestionsInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { requestMockQuestions } from "@zoonk/core/exams/mocks/request-questions";
 import { type NextRequest, NextResponse } from "next/server";
@@ -24,6 +25,22 @@ async function createMockQuestions(
   ]);
 
   const result = await requestMockQuestions({ goalId: path.goalId, input: body });
+
+  if (result.status === "writing") {
+    const supply = await ensureWritingPrompts(result.request);
+
+    if (supply.status === "ready") {
+      return NextResponse.json({ generationId: null, status: "ready" });
+    }
+
+    return NextResponse.json(
+      { generationId: supply.runId, status: "generating" },
+      {
+        headers: { Location: `/v1/generations/${encodeURIComponent(supply.runId)}` },
+        status: ACCEPTED,
+      },
+    );
+  }
 
   if (result.status === "refused") {
     return usageDecisionError(result.decision);

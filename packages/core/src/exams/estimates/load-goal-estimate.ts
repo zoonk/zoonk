@@ -10,7 +10,7 @@ import {
   estimateScoreRange,
 } from "../../preparation/estimated-score";
 import { type MockResult as LedgerMock, RECENT_MOCKS } from "../../preparation/preparation-math";
-import { mockResultSchema, mockShapeSchema } from "../mocks/mock-contract";
+import { mockConditionsSchema, mockResultSchema, mockShapeSchema } from "../mocks/mock-contract";
 import { pointsToPercent } from "../results/exam-result-contract";
 import {
   type ExamScale,
@@ -104,12 +104,16 @@ async function loadExamScale(
   return getExamScale({ blueprint, goal });
 }
 
-function loadRecentMocks(goalId: string) {
+function loadRecentMocks(goalId: string, completeObjective: boolean) {
   return prisma.mockExam.findMany({
     orderBy: { finishedAt: "desc" },
     select: { conditions: true, finishedAt: true, result: true },
     take: RECENT_MOCKS,
-    where: { goalId, status: "finished" },
+    where: {
+      goalId,
+      status: "finished",
+      ...(completeObjective && { conditions: { equals: true, path: ["fullLength"] } }),
+    },
   });
 }
 
@@ -169,16 +173,34 @@ function getRecentMockEvidence({
 /** `examPart`: the goal prepares only some of the exam's subjects, so no mock speaks for the whole exam's score. */
 export async function loadGoalScoreEstimate({
   blueprint,
+  completeObjective = false,
   examPart,
   goal,
   ledgerMocks,
 }: {
   blueprint?: Pick<ExamBlueprint, "identityKey" | "name"> | null;
+  completeObjective?: boolean;
   examPart: boolean;
   goal: Pick<Goal, "examBlueprintId" | "id" | "title">;
   ledgerMocks: readonly LedgerMock[];
 }): Promise<EstimatedScore | null> {
-  const mocks = await loadRecentMocks(goal.id);
+  const recent = await loadRecentMocks(goal.id, completeObjective);
+
+  const mocks = completeObjective
+    ? recent.filter((mock) => {
+        const conditions = mockConditionsSchema.safeParse(mock.conditions).data;
+        const points = mockResultSchema.safeParse(mock.result).data?.points;
+
+        return (
+          conditions &&
+          conditions.purpose !== "placement" &&
+          conditions.examQuestions === null &&
+          !conditions.unpicked?.length &&
+          countMockQuestions(mock.result) > 0 &&
+          (!points?.max || points.asked === points.max)
+        );
+      })
+    : recent;
 
   if (!canEstimateScore(getRecentMockEvidence({ examPart, ledgerMocks, mocks }))) {
     return null;

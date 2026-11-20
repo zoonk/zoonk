@@ -14,7 +14,12 @@ import { type Reached } from "../../sessions/reached";
 import { type EssayView } from "../essays/essay-contract";
 import { type ExamDocument } from "../exam-document";
 import { type ExamMockSummary } from "../view/exam-view-contract";
-import { areaPointsShape, mockMarkingSchema, mockPointsSchema } from "./mock-points-contract";
+import {
+  areaPointsShape,
+  mockMarkingSchema,
+  mockPointsSchema,
+  mockWrittenPartsSchema,
+} from "./mock-points-contract";
 import {
   type MockAdaptView,
   type MockCurrentSection,
@@ -38,7 +43,7 @@ export const MOCK_PURPOSES = ["planned", "practice", "placement"] as const;
 
 export type MockPurpose = (typeof MOCK_PURPOSES)[number];
 
-const MOCK_SHAPE_KINDS = ["full", "half", "area"] as const;
+const MOCK_SHAPE_KINDS = ["full", "half", "area", "objective", "written"] as const;
 
 const MAX_AREA_NAME = 200;
 
@@ -89,6 +94,7 @@ export const mockConditionsSchema = z.object({
   examQuestions: z.int().min(0).nullable(),
   fullLength: z.boolean(),
   marking: mockMarkingSchema.optional(),
+  pacing: z.enum(["official", "practice"]).optional(),
   partialCredit: z.enum(PARTIAL_CREDIT_RULES),
   purpose: z.enum(MOCK_PURPOSES),
   reused: z.int().min(0),
@@ -100,6 +106,7 @@ export const mockConditionsSchema = z.object({
   timedOutSections: z.array(z.int()),
   unpicked: z.array(z.string()).optional(),
   writingAdmissionId: uuidSchema().optional(),
+  writtenParts: mockWrittenPartsSchema.optional(),
   wrongPenalty: z.number().min(0).max(1),
 });
 
@@ -219,6 +226,7 @@ export type MockView = {
   missionMoment: MissionMomentView | null;
   mistakes: { cause: MistakeCause | null; count: number }[];
   number: number;
+  pacing?: MockConditions["pacing"];
   passMarks: PassMarks | null;
   planItemId: string | null;
   purpose: MockPurpose;
@@ -294,6 +302,7 @@ export type MockOptionView = MockShape & {
   minutes: number;
   leftOut: MockLeftOut[];
   objectiveOnly: boolean;
+  pacing?: "official" | "practice";
   questions: number;
   written: string[];
 };

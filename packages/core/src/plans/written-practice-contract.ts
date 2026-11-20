@@ -16,7 +16,10 @@ const writtenSubjectSchema = z.object({
       versions: z.int().positive(),
     }),
   ),
+  minutes: z.int().positive().nullable().optional(),
   points: writtenPartPointsSchema,
+  questions: z.int().positive().optional(),
+  share: z.number().positive().max(1).nullable().optional(),
   trend: z.array(
     z.object({
       contentShare: z.number().min(0).max(1).nullable(),

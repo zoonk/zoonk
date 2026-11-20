@@ -5,5 +5,6 @@ export function readMockAnswer(value: unknown): MockAnswer | null {
 }
 
 export function readMockEssayText(value: unknown): string | null {
-  return mockTextSchema.safeParse(value).data?.text.trim() || null;
+  const text = mockTextSchema.safeParse(value).data?.text;
+  return text?.trim() ? text : null;
 }

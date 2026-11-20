@@ -4,9 +4,15 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { claimEssayGrades, releaseEssayGradeClaims } from "../essays/_utils/essay-grade-claims";
-import { gradeEssayText, recordEssayGrade } from "../essays/_utils/grade-essay-answer";
+import {
+  getWritingAttemptId,
+  gradeEssayText,
+  gradeWriting,
+  recordEssayGrade,
+} from "../essays/_utils/grade-essay-answer";
+import { countWritingLines } from "../essays/writing-lines";
 import { readMockEssayText } from "./_utils/mock-answers";
-import { loadMockEssayItems } from "./_utils/mock-essays";
+import { loadMockEssayItems, readMockWriting } from "./_utils/mock-essays";
 import { getEssayItemIds } from "./_utils/mock-sections";
 import { type MockSitting, type OwnedMock, findOwnedMock } from "./_utils/owned-mock";
 import { type MockTimeZoneInput } from "./mock-contract";
@@ -32,7 +38,11 @@ async function listUngradedEssays({ mock, userId }: { mock: MockSitting; userId:
     const text = readMockEssayText(draft?.answer);
     const isGraded = graded.some((attempt) => attempt.itemId === itemId);
 
-    const attemptId = getAnswerAttemptId({ key: mock.id, questionId: itemId, userId });
+    const { writingAdmissionId: admissionId } = mock.conditions;
+
+    const attemptId = admissionId
+      ? getWritingAttemptId({ admissionId, itemId })
+      : getAnswerAttemptId({ key: mock.id, questionId: itemId, userId });
 
     return essay && text && !isGraded
       ? [{ ...essay, attemptId, durationMs: draft?.durationMs ?? 0, text }]
@@ -52,39 +62,76 @@ async function gradeEssays({
   timeZone: string;
 }) {
   const grades = await Promise.allSettled(
-    essays.map((essay) =>
-      gradeEssayText({
+    essays.map(async (essay) => {
+      const common = {
+        durationMs: essay.durationMs,
+        item: essay.item,
+        mockExamId: mock.id,
+        studySessionId: owned.block?.sessionId ?? null,
+        text: essay.text,
+        timeZone,
+        userId: owned.userId,
+      };
+
+      const language = owned.goal?.language ?? essay.item.language;
+      const { writingAdmissionId: admissionId } = mock.conditions;
+
+      if (admissionId) {
+        const writing = readMockWriting(essay.item);
+
+        if (!writing) {
+          throw new Error("An admitted mock answer is missing its scoring basis.");
+        }
+
+        const { estimatedLines } = countWritingLines({
+          charactersPerLine: writing.charactersPerLine,
+          limit: writing.lines,
+          text: essay.text,
+        });
+
+        const conditions = {
+          admissionId,
+          estimatedLines,
+          origin: "mock" as const,
+          timed: true,
+          version: "firstDraft" as const,
+        };
+
+        const grade = await gradeWriting({
+          conditions,
+          content: essay.content,
+          language,
+          previousNextSteps: [],
+          text: essay.text,
+        });
+
+        return { ...common, conditions, grade };
+      }
+
+      const grade = await gradeEssayText({
         blueprint: owned.blueprint,
         content: essay.content,
         goalId: owned.goal?.id,
-        language: owned.goal?.language ?? essay.item.language,
+        language,
         text: essay.text,
         userId: owned.userId,
-      }),
-    ),
+      });
+
+      return { ...common, attemptId: essay.attemptId, grade };
+    }),
   );
 
-  await essays.reduce(
-    (previous, essay, index) =>
-      previous.then(async () => {
-        const graded = grades[index];
+  await grades.reduce(async (previous, grade) => {
+    await previous;
 
-        if (graded?.status === "fulfilled") {
-          await recordEssayGrade({
-            attemptId: essay.attemptId,
-            durationMs: essay.durationMs,
-            grade: graded.value,
-            item: essay.item,
-            mockExamId: mock.id,
-            studySessionId: owned.block?.sessionId ?? null,
-            text: essay.text,
-            timeZone,
-            userId: owned.userId,
-          });
-        }
-      }),
-    Promise.resolve(),
-  );
+    if (grade.status === "fulfilled") {
+      const outcome = await recordEssayGrade(grade.value);
+
+      if (outcome.status === "refused") {
+        throw new Error("The finished mock no longer owns this grade admission.");
+      }
+    }
+  }, Promise.resolve());
 
   const failed = grades.find((graded) => graded.status === "rejected");
 
@@ -119,6 +166,7 @@ export async function gradeMockEssays({
   const ungraded = await listUngradedEssays({ mock, userId });
 
   const claims = await claimEssayGrades({
+    admissionId: mock.conditions.writingAdmissionId,
     attemptIds: ungraded.map((essay) => essay.attemptId),
     localDate,
     userId,
@@ -127,6 +175,10 @@ export async function gradeMockEssays({
   const claimed = ungraded.filter((essay) =>
     claims.some((claim) => claim.attemptId === essay.attemptId && claim.status === "claimed"),
   );
+
+  if (claims.some((claim) => claim.status === "notAdmitted")) {
+    throw new Error("The mock's grade claims do not match its writing admission.");
+  }
 
   try {
     await gradeEssays({ essays: claimed, mock, owned, timeZone });

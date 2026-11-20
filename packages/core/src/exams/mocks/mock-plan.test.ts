@@ -658,8 +658,8 @@ describe("a mock of an exam with a written test", () => {
           name: "Prova discursiva (P3)",
           questions: null,
           tasks: [
-            { count: 2, description: "questões discursivas de até 20 linhas" },
-            { count: 1, description: "peça técnica de até 50 linhas" },
+            { count: 2, description: "questões discursivas de até 20 linhas", key: "questions" },
+            { count: 1, description: "peça técnica de até 50 linhas", key: "technical" },
           ],
         },
       ],
@@ -679,7 +679,7 @@ describe("a mock of an exam with a written test", () => {
       outline.sections.map((section) => [section.name, section.questions, section.minutes]),
     ).toStrictEqual([["Provas objetivas (P1 e P2)", 180, 300]]);
 
-    expect(outline.written).toStrictEqual([
+    expect(outline.written).toMatchObject([
       {
         asked: false,
         minutes: 180,
@@ -704,7 +704,12 @@ describe("a mock of an exam with a written test", () => {
   });
 
   it("sits the written test with the exam's essays, on its own clock, in a full mock", () => {
-    const essays = ["e1", "e2", "e3", "e4"].map((itemId) => ({ area: "Prova Discursiva", itemId }));
+    const essays = [
+      { itemId: "e1", taskKey: "questions" },
+      { itemId: "e2", taskKey: "questions" },
+      { itemId: "e3", taskKey: "technical" },
+      { itemId: "e4", taskKey: "questions" },
+    ];
 
     const full = planMock({
       adaptive: false,
@@ -760,6 +765,14 @@ describe("a mock of an exam with a written test", () => {
             questions: 90,
           },
           {
+            day: 1,
+            kind: "written",
+            minutes: null,
+            name: "Redação",
+            questions: null,
+            tasks: [{ count: 1, description: "Redação", key: "redacao" }],
+          },
+          {
             day: 2,
             kind: "objective",
             minutes: 300,
@@ -778,8 +791,8 @@ describe("a mock of an exam with a written test", () => {
       adaptive: false,
       candidates: candidates("Languages", 120),
       essays: [
-        { area: "Interpretação de texto", itemId: "other" },
-        { area: "Redação", itemId: "redacao" },
+        { itemId: "other", taskKey: "other" },
+        { itemId: "redacao", taskKey: "redacao" },
       ],
       fullLength: true,
       mockNumber: 0,

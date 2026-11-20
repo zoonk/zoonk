@@ -1,69 +1,42 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { namesMatch } from "../_utils/name-match";
 import { type MockSectionPlan } from "./mock-plan";
-import { isWrittenSubject } from "./written-subject";
 
-type MockWrittenTask = { count: number | null; description: string };
+const PRACTICE_MINUTES_PER_ANSWER = 60;
+
+type MockWrittenTask = ReturnType<typeof listWrittenTasks>[number];
 
 export type MockWrittenPart = { minutes: number | null; name: string; tasks: MockWrittenTask[] };
 
-export type MockDayWrittenPart = MockWrittenPart & { asked: boolean };
+export type MockDayWrittenPart = Omit<MockWrittenPart, "tasks"> & {
+  asked: boolean;
+  tasks: { count: number | null; description: string }[];
+};
 
-export type MockEssayCandidate = { area: string | null; itemId: string };
+export type MockEssayCandidate = { itemId: string; taskKey: string };
 
 type WrittenPlacement = { essays: string[]; joins: number | null; part: MockWrittenPart };
 
-type StructureSection = NonNullable<ExamStructure["mock"]>["sections"][number];
-
-function toEssayTasks(structure: ExamStructure | null): MockWrittenTask[] {
-  return (structure?.formats ?? [])
-    .filter((format) => format.kind === "essay")
-    .map((format) => ({ count: null, description: format.description }));
-}
-
-function toWrittenPart({
-  section,
-  structure,
-}: {
-  section: StructureSection;
-  structure: ExamStructure | null;
-}): MockWrittenPart {
-  const tasks = section.tasks && section.tasks.length > 0 ? section.tasks : toEssayTasks(structure);
-  return { minutes: section.minutes, name: section.name, tasks };
-}
-
-export function getDayWrittenParts({
-  day,
-  structure,
-}: {
+export function getDayWrittenParts(input: {
   day: number | null;
   structure: ExamStructure | null;
 }): MockWrittenPart[] {
-  const sections = (structure?.mock?.sections ?? []).filter((section) => section.day === day);
-  const written = sections.filter((section) => section.kind === "written");
-
-  if (written.length > 0) {
-    return written.map((section) => toWrittenPart({ section, structure }));
-  }
-
-  const objective = sections.filter((section) => !written.includes(section));
-
-  return (structure?.subjects ?? [])
-    .filter(
-      (subject) =>
-        structure &&
-        isWrittenSubject({ structure, subject }) &&
-        objective.some((section) => namesMatch(subject.name, section.name)),
-    )
-    .map((subject) => ({ minutes: null, name: subject.name, tasks: toEssayTasks(structure) }));
+  return [...Map.groupBy(listWrittenTasks(input), (task) => task.section)].map(([name, tasks]) => ({
+    minutes: tasks[0]?.minutes ?? null,
+    name,
+    tasks,
+  }));
 }
 
-function countPartEssays(part: MockWrittenPart): number {
-  const counts = part.tasks.map((task) => task.count);
+export function listWrittenRequests(input: Parameters<typeof getDayWrittenParts>[0]) {
+  return getDayWrittenParts(input).flatMap((part) =>
+    part.tasks.map((task) => ({ count: task.count, taskKey: task.key, unit: "answer" as const })),
+  );
+}
 
-  return counts.length > 0 && counts.every((count) => count !== null && count > 0)
-    ? counts.reduce<number>((sum, count) => sum + (count ?? 0), 0)
-    : 1;
+export function countPartEssays(part: MockWrittenPart): number {
+  return part.tasks.reduce((sum, task) => sum + task.count, 0);
 }
 
 function findJoinedSection({
@@ -72,7 +45,7 @@ function findJoinedSection({
 }: {
   objectiveNames: readonly (string | null)[];
   part: MockWrittenPart;
-}): { joins: number | null } | null {
+}): { joins: number | null } {
   if (part.minutes) {
     return { joins: null };
   }
@@ -80,30 +53,46 @@ function findJoinedSection({
   const named = objectiveNames.findIndex((name) => name !== null && namesMatch(part.name, name));
   const joins = named === -1 ? objectiveNames.length - 1 : named;
 
-  return joins < 0 ? null : { joins };
+  return { joins: joins < 0 ? null : joins };
 }
 
-function assignEssays({
-  essays,
-  parts,
+function pickPartPrompts({
+  candidates,
+  part,
+  used,
 }: {
-  essays: readonly MockEssayCandidate[];
-  parts: readonly MockWrittenPart[];
-}): { essays: string[]; part: MockWrittenPart }[] {
-  const [part, ...rest] = parts;
+  candidates: readonly MockEssayCandidate[];
+  part: MockWrittenPart;
+  used: Set<string>;
+}): string[] {
+  const picked = new Set<string>();
 
-  if (!part) {
-    return [];
+  for (const task of part.tasks) {
+    const own = new Set<string>();
+
+    for (const candidate of candidates) {
+      if (
+        candidate.taskKey === task.key &&
+        !used.has(candidate.itemId) &&
+        !picked.has(candidate.itemId)
+      ) {
+        own.add(candidate.itemId);
+      }
+
+      if (own.size === task.count) {
+        break;
+      }
+    }
+
+    if (own.size !== task.count) {
+      return [];
+    }
+
+    own.forEach((id) => picked.add(id));
   }
 
-  const own = essays.filter((essay) => essay.area !== null && namesMatch(essay.area, part.name));
-
-  const picked = [...own, ...essays.filter((essay) => !own.includes(essay))]
-    .slice(0, countPartEssays(part))
-    .map((essay) => essay.itemId);
-
-  const left = essays.filter((essay) => !picked.includes(essay.itemId));
-  return [{ essays: picked, part }, ...assignEssays({ essays: left, parts: rest })];
+  picked.forEach((id) => used.add(id));
+  return [...picked];
 }
 
 function placeWrittenParts({
@@ -123,17 +112,24 @@ function placeWrittenParts({
     return { parts: [], placed: [] };
   }
 
-  const assigned = assignEssays({ essays, parts: getDayWrittenParts({ day, structure }) });
+  const parts = getDayWrittenParts({ day, structure });
+  const used = new Set<string>();
 
-  const placed = assigned.flatMap(({ essays: picked, part }): WrittenPlacement[] => {
+  const placed = parts.flatMap((part): WrittenPlacement[] => {
     const seat = findJoinedSection({ objectiveNames, part });
-    return picked.length > 0 && seat ? [{ essays: picked, joins: seat.joins, part }] : [];
+    const picked = pickPartPrompts({ candidates: essays, part, used });
+
+    return picked.length === countPartEssays(part)
+      ? [{ essays: picked, joins: seat.joins, part }]
+      : [];
   });
 
   return {
-    parts: assigned.map(({ part }) => ({
-      ...part,
+    parts: parts.map((part) => ({
       asked: placed.some((placement) => placement.part === part),
+      minutes: part.minutes,
+      name: part.name,
+      tasks: part.tasks.map(({ count, description }) => ({ count, description })),
     })),
     placed,
   };
@@ -173,13 +169,15 @@ export function withWrittenParts({
     );
 
   const own = placed.flatMap((placement): MockSectionPlan[] =>
-    placement.joins === null && placement.part.minutes
+    placement.joins === null
       ? [
           {
             breakAfterMinutes: sourceOf(placement.part.name)?.breakAfterMinutes ?? null,
             essays: placement.essays,
             itemIds: [],
-            minutes: placement.part.minutes,
+            minutes:
+              placement.part.minutes ??
+              countPartEssays(placement.part) * PRACTICE_MINUTES_PER_ANSWER,
             name: placement.part.name,
             questions: 0,
             routing: null,
