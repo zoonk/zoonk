@@ -8,6 +8,8 @@ const CHROME = ['[data-slot="page-top-bar"]', '[data-slot="bottom-bar"]'];
 const TAB_CHROME = [...CHROME, '[data-slot="learn-bottom-navigation"]'];
 const HEADING = '[data-slot="onboarding-heading"]';
 const PHONE = 430;
+/** Room under a piece whose rows arrive with a short rise, so its crop never cuts the last one on the way. */
+const RISE: [number, number, number, number] = [0, 0, 18, 0];
 
 type Screen = "goal" | "reveal" | "time" | "today";
 
@@ -63,6 +65,7 @@ export const pieces = {
     heading: (who, o) => ({
       ...base("reveal", who, o, 660),
       crop: [HEADING],
+      pad: RISE,
       hide: CHROME,
       radius: 0,
     }),
@@ -70,6 +73,7 @@ export const pieces = {
     plan: (who, o) => ({
       ...base("reveal", who, o, 660),
       crop: ['[data-slot="reveal-plan"]'],
+      pad: RISE,
       hide: CHROME,
       radius: 0,
     }),
@@ -77,6 +81,7 @@ export const pieces = {
     structure: (who, o) => ({
       ...base("reveal", who, o, 700),
       crop: ['[data-slot="reveal-structure"]'],
+      pad: RISE,
       hide: CHROME,
       radius: 0,
     }),
@@ -104,7 +109,7 @@ export const pieces = {
     day: (who, o) => ({
       ...base("today", who, o, PHONE),
       crop: ['[data-slot="page-header"]', '[data-slot="today-session"]'],
-      pad: [10, 12, 4, 12],
+      pad: [10, 12, RISE[2], 12],
       hide: TAB_CHROME,
       radius: 0,
     }),
@@ -112,7 +117,7 @@ export const pieces = {
     week: (who, o) => ({
       ...base("today", who, o, PHONE),
       crop: ['[data-slot="today-week"]'],
-      pad: [0, 0, 8, 0],
+      pad: RISE,
       hide: TAB_CHROME,
       radius: 0,
     }),

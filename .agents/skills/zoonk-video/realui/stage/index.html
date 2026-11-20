@@ -47,6 +47,10 @@
           var(--shade) 100%
         );
       }
+      #view {
+        position: absolute;
+        inset: 0;
+      }
       #world {
         position: absolute;
         left: 0;
@@ -109,7 +113,7 @@
   <body>
     <div id="frame">
       <div id="ground"></div>
-      <div id="world"></div>
+      <div id="view"><div id="world"></div></div>
       <div id="cover"></div>
       <div id="end"></div>
     </div>

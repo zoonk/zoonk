@@ -10,6 +10,7 @@ import { pathToFileURL } from "node:url";
 //        node scripts/render.mjs --page films/zoonk-2/long.html --query lang=pt --stills all --every 2 --outdir out/stills
 // Vertical: --w 1080 --h 1920 --dpr 2 --outw 1080 --outh 1920 renders at 2x and downscales with lanczos.
 // A stage scene: --url "<harness>/stage/?film=launch&scene=clip&lang=en" --scheme dark renders it on black.
+// A stage scene is checked at every frame first, and a frame that cuts what it shows fails the render.
 import { chromium } from "playwright-core";
 import { pinStoryClock } from "./story-clock.mjs";
 
@@ -81,6 +82,27 @@ async function seek(page, t) {
   }, t);
 }
 
+/**
+ * A stage scene checks each moment it will show (stage.cuts): a frame that slices what it shows fails the
+ * render before anything is written. Pages made with the engine have no check.
+ */
+async function failOnCuts(page, times) {
+  const cuts = await page.evaluate(
+    (all) =>
+      window.__cuts
+        ? all.flatMap((t) => {
+            window.__seek(t);
+            return window.__cuts().map((cut) => `${t.toFixed(2)} s: ${cut}`);
+          })
+        : [],
+    times,
+  );
+  if (cuts.length > 0)
+    throw new Error(
+      `The frame cuts what it shows in ${cuts.length} places:\n${cuts.slice(0, 12).join("\n")}`,
+    );
+}
+
 if (args.stills) {
   const outdir = args.outdir ?? "out/stills";
   const { browser, page, cdp, duration } = await openPage();
@@ -92,6 +114,7 @@ if (args.stills) {
           (_, i) => i * +(args.every ?? 2),
         )
       : args.stills.split(",").map(Number);
+  await failOnCuts(page, times);
   for (const t of times) {
     await seek(page, t);
     const buf = await grab(cdp, "png");
@@ -106,9 +129,16 @@ if (args.stills) {
 const out = args.out ?? "out/video.mp4";
 const probe = await openPage();
 const duration = args.to ? +args.to : probe.duration;
-await probe.browser.close();
 const from = +(args.from ?? 0);
 const totalFrames = Math.round((duration - from) * FPS);
+try {
+  await failOnCuts(
+    probe.page,
+    Array.from({ length: totalFrames }, (_, f) => from + f / FPS),
+  );
+} finally {
+  await probe.browser.close();
+}
 // Each run has its own segments folder, removed whether it succeeds or not, so two renders never share one.
 const segDir = mkdtempSync(path.join(tmpdir(), "zoonk-render-"));
 mkdirSync(path.dirname(path.resolve(out)), { recursive: true });

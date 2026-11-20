@@ -29,10 +29,18 @@ export type PieceSpec = {
 
 export type Placement = { x: number; y: number; s: number; o: number };
 
+/** A layer that leaves the frame through a fade: opaque until `from`, gone at `until`, in its px along `to`. */
+export type Fade = { to: "bottom" | "right"; from: number; until: number };
+
+/** A run of words or a drawn control, in the piece's px, and what it says. */
+export type Ink = Rect & { text: string };
+
 export type Piece = {
+  name: string;
   el: HTMLDivElement;
   doc: Document;
   win: typeof window;
+  /** The crop's size now, in the view's px. */
   w: number;
   h: number;
   /** A descendant's box relative to the piece's origin, in the view's px. */
@@ -40,10 +48,17 @@ export type Piece = {
   /** The first visible match; throws when there is none. */
   q: <T extends Element = HTMLElement>(selector: string) => T;
   all: <T extends Element = HTMLElement>(selector: string) => T[];
+  /** Every visible run of words and every drawn button in the view, wherever it sits against the crop. */
+  ink: () => Ink[];
   /** How far right its words and controls reach, in the view's px: text wraps inside boxes wider than it. */
   inkWidth: () => number;
+  /** The box around everything it shows inside its crop (words, fills, edges, icons), or null when it shows nothing. */
+  drawn: () => Rect | null;
+  /** Crops to its elements as they are now: a field that grew to two lines shows both. */
+  fit: () => void;
   place: (to: Partial<Placement>) => void;
   state: Placement;
+  fade: Fade | null;
 };
 
 const BASE_CSS = `
@@ -94,6 +109,73 @@ function cropBox(doc: Document, spec: PieceSpec) {
   };
 }
 
+/** The box the nearest clipping ancestor leaves visible, so truncated words count only as far as they show. */
+function visibleBox(win: typeof window, node: Element): DOMRect | null {
+  for (let at: Element | null = node; at; at = at.parentElement) {
+    const style = win.getComputedStyle(at);
+    if (style.overflowX !== "visible" || style.overflowY !== "visible")
+      return at.getBoundingClientRect();
+  }
+  return null;
+}
+
+const shows = (node: Element) =>
+  node.checkVisibility({ opacityProperty: true, visibilityProperty: true });
+
+/** Every visible run of words, and every button with its own fill or edge, in the view's px. */
+function inkIn(doc: Document, win: typeof window): (DOMRect & { text: string })[] {
+  const range = doc.createRange();
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+  const found: (DOMRect & { text: string })[] = [];
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const parent = node.parentElement;
+    const text = node.textContent?.trim();
+    if (!parent || !text || !shows(parent)) continue;
+    const clip = visibleBox(win, parent);
+    // A run's rect is the font's whole content area; its letters stay within the lines' own box.
+    const lines = parent.getBoundingClientRect();
+    range.selectNodeContents(node);
+    for (const at of range.getClientRects()) {
+      const left = Math.max(at.left, clip?.left ?? -Infinity);
+      const right = Math.min(at.right, clip?.right ?? Infinity);
+      const top = Math.max(at.top, lines.top, clip?.top ?? -Infinity);
+      const bottom = Math.min(at.bottom, lines.bottom, clip?.bottom ?? Infinity);
+      if (right - left > 0.5 && bottom - top > 0.5)
+        found.push(Object.assign(new DOMRect(left, top, right - left, bottom - top), { text }));
+    }
+  }
+  // A control's own edge or fill reaches past its words; a bare one (a full-width trigger) is only its words.
+  for (const button of doc.querySelectorAll("button")) {
+    const style = win.getComputedStyle(button);
+    const drawn =
+      style.backgroundColor !== "rgba(0, 0, 0, 0)" || Number.parseFloat(style.borderRightWidth) > 0;
+    if (drawn && shows(button))
+      found.push(
+        Object.assign(button.getBoundingClientRect(), {
+          text: button.textContent?.trim() || "a button",
+        }),
+      );
+  }
+  return found;
+}
+
+/** A computed color that shows: not "transparent" and not zero alpha in any color syntax. */
+const tinted = (color: string) =>
+  color !== "transparent" && !/(?:,\s*0|\/\s*0%?)\)$/.test(color.replaceAll(/\s+/g, " "));
+
+/** Whether an element paints something of its own: a fill, an edge, or a picture. */
+function paints(win: typeof window, node: Element) {
+  if (node instanceof win.SVGSVGElement || node instanceof win.HTMLImageElement) return true;
+  const style = win.getComputedStyle(node);
+  if (tinted(style.backgroundColor) || style.backgroundImage !== "none") return true;
+  return (["Top", "Right", "Bottom", "Left"] as const).some(
+    (side) =>
+      Number.parseFloat(style[`border${side}Width`]) > 0 &&
+      style[`border${side}Style`] !== "none" &&
+      tinted(style[`border${side}Color`]),
+  );
+}
+
 export async function makePiece(world: HTMLElement, spec: PieceSpec): Promise<Piece> {
   const el = document.createElement("div");
   el.className = `piece${spec.lift ? " lift" : ""}`;
@@ -109,11 +191,7 @@ export async function makePiece(world: HTMLElement, spec: PieceSpec): Promise<Pi
 
   const doc = await load(frame, spec);
   const win = frame.contentWindow as typeof window;
-  const box = cropBox(doc, spec);
-  el.style.width = `${box.w}px`;
-  el.style.height = `${box.h}px`;
-  frame.style.left = `${-box.x}px`;
-  frame.style.top = `${-box.y}px`;
+  let box = cropBox(doc, spec);
   const first = [...doc.querySelectorAll(spec.crop[0] ?? "")].find(isShown);
   const radius =
     spec.radius ?? (first ? Number.parseFloat(win.getComputedStyle(first).borderTopLeftRadius) : 0);
@@ -122,7 +200,8 @@ export async function makePiece(world: HTMLElement, spec: PieceSpec): Promise<Pi
 
   const state: Placement = { x: 0, y: 0, s: 1, o: 1 };
   const find = (selector: string) => [...doc.querySelectorAll(selector)].filter(isShown);
-  return {
+  const piece: Piece = {
+    name: `${spec.crop[0]} in ${spec.view.replace(/^views=\w+&view=/, "")}`,
     el,
     doc,
     win,
@@ -134,36 +213,56 @@ export async function makePiece(world: HTMLElement, spec: PieceSpec): Promise<Pi
       const at = node.getBoundingClientRect();
       return { x: at.left - box.x, y: at.top - box.y, w: at.width, h: at.height };
     },
-    q: (selector) => {
+    q<T extends Element = HTMLElement>(selector: string) {
       const node = find(selector)[0];
       if (!node) throw new Error(`${spec.view}: no ${selector}`);
-      return node as never;
+      return node as T;
     },
-    all: (selector) => find(selector) as never,
+    all: <T extends Element = HTMLElement>(selector: string) => find(selector) as T[],
+    ink: () =>
+      inkIn(doc, win).map((at) => ({
+        h: at.height,
+        text: at.text,
+        w: at.width,
+        x: at.left - box.x,
+        y: at.top - box.y,
+      })),
     inkWidth() {
-      const range = doc.createRange();
-      const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
-      const words = [
-        ...(function* () {
-          for (let node = walker.nextNode(); node; node = walker.nextNode()) yield node;
-        })(),
-      ].flatMap((node) => {
-        range.selectNodeContents(node);
-        return [...range.getClientRects()];
-      });
-      // A control's own edge or fill reaches past its words; a bare one (a full-width trigger) is only its words.
-      const drawn = (node: Element) => {
-        const style = win.getComputedStyle(node);
-        const fill = style.backgroundColor !== "rgba(0, 0, 0, 0)";
-        return fill || Number.parseFloat(style.borderRightWidth) > 0;
+      const inside = piece.ink().filter((at) => at.x >= 0 && at.y >= 0 && at.y + at.h <= box.h);
+      return Math.max(...inside.map((at) => at.x + at.w));
+    },
+    drawn() {
+      const shapes = [...doc.body.querySelectorAll("*")]
+        .filter((node) => paints(win, node) && shows(node))
+        .map((node) => {
+          const at = node.getBoundingClientRect();
+          return { h: at.height, w: at.width, x: at.left - box.x, y: at.top - box.y };
+        });
+      const inside = [...piece.ink(), ...shapes]
+        .map((at) => {
+          const x = Math.max(0, at.x);
+          const y = Math.max(0, at.y);
+          return { h: Math.min(box.h, at.y + at.h) - y, w: Math.min(box.w, at.x + at.w) - x, x, y };
+        })
+        .filter((at) => at.w > 0.5 && at.h > 0.5);
+      if (inside.length === 0) return null;
+      const x = Math.min(...inside.map((at) => at.x));
+      const y = Math.min(...inside.map((at) => at.y));
+      return {
+        h: Math.max(...inside.map((at) => at.y + at.h)) - y,
+        w: Math.max(...inside.map((at) => at.x + at.w)) - x,
+        x,
+        y,
       };
-      const controls = [...doc.querySelectorAll("button")]
-        .filter(drawn)
-        .map((node) => node.getBoundingClientRect());
-      const inside = [...words, ...controls].filter(
-        (at) => at.width > 0 && at.left >= box.x && at.top >= box.y && at.bottom <= box.y + box.h,
-      );
-      return Math.max(...inside.map((at) => at.right)) - box.x;
+    },
+    fit() {
+      box = cropBox(doc, spec);
+      piece.w = box.w;
+      piece.h = box.h;
+      el.style.width = `${box.w}px`;
+      el.style.height = `${box.h}px`;
+      frame.style.left = `${-box.x}px`;
+      frame.style.top = `${-box.y}px`;
     },
     place(to) {
       Object.assign(state, to);
@@ -171,7 +270,10 @@ export async function makePiece(world: HTMLElement, spec: PieceSpec): Promise<Pi
       el.style.opacity = String(state.o);
     },
     state,
+    fade: null,
   };
+  piece.fit();
+  return piece;
 }
 
 /** The box of an element's own digits, without its unit, relative to the piece. */
@@ -358,18 +460,37 @@ export function field(piece: Piece, selector: string, text: string): Field {
   const marker = doc.createElement("span");
   marker.textContent = "​";
   const caret = doc.createElement("div");
-  Object.assign(mirror.style, {
-    position: "fixed",
-    visibility: "hidden",
-    whiteSpace: "pre-wrap",
-    overflowWrap: "break-word",
-    font: style.font,
-    letterSpacing: style.letterSpacing,
-    lineHeight: style.lineHeight,
-    padding: style.padding,
-    boxSizing: "border-box",
-    textIndent: style.textIndent,
-  });
+  // Everything that decides where the field's lines wrap, so the caret lands where the text ends.
+  for (const property of [
+    "boxSizing",
+    "borderTopWidth",
+    "borderRightWidth",
+    "borderBottomWidth",
+    "borderLeftWidth",
+    "paddingTop",
+    "paddingRight",
+    "paddingBottom",
+    "paddingLeft",
+    "fontFamily",
+    "fontSize",
+    "fontWeight",
+    "fontStyle",
+    "fontFeatureSettings",
+    "fontVariationSettings",
+    "letterSpacing",
+    "wordSpacing",
+    "lineHeight",
+    "textIndent",
+    "textTransform",
+    "tabSize",
+    "wordBreak",
+    "overflowWrap",
+    "whiteSpace",
+    "textWrapMode",
+    "textWrapStyle",
+  ] as const)
+    mirror.style[property] = style[property];
+  Object.assign(mirror.style, { borderStyle: "solid", position: "fixed", visibility: "hidden" });
   Object.assign(caret.style, {
     position: "fixed",
     width: "1.5px",

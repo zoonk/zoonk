@@ -12,7 +12,7 @@ import {
   typingTimes,
 } from "../../realui/stage/kit";
 import { pieces } from "../../realui/stage/pieces";
-import { type Scene, type Stage } from "../../realui/stage/stage";
+import { type Format, type Scene, type Stage } from "../../realui/stage/stage";
 // The Zoonk 2 launch set. Each still is a moment: one real piece in focus, one quieter layer behind it
 // that leaves the frame, one light, one sign of the moment. The clip is one shot from the sentence to
 // the plan to today. Copy this file to start a new set; references/social-stills.md and
@@ -50,7 +50,7 @@ async function placeGoal(stage: Stage): Promise<Piece> {
     y: boxTop + box.h * s + (wide ? 62 : 78),
     s: (box.w * s - 24 * s) / structure.w,
   });
-  stage.fade(structure, "bottom", wide ? 28 : 52, 100);
+  stage.fade(structure, "bottom", wide ? 0.7 : 0.74);
   stage.light(50, wide ? 38 : 34);
   return structure;
 }
@@ -69,12 +69,16 @@ const time: Scene = async (stage) => {
     ),
   ]);
   const x = wide ? 190 : 60;
-  // As large as the frame allows with every word inside it; the layer behind steps right only as far as it fits.
+  const headingS = 2.62;
+  const top = heading ? 132 + (heading.h + 22) * headingS : 96;
+  // As large as the frame allows with every word inside it, down to the sentence under the time behind.
   const room = stage.size.w - x - 80;
-  const s = Math.min(wide ? 4.1 : 2.62, room / answer.inkWidth());
+  const gap = wide ? 18 : 30;
+  const said = after.rect('[data-slot="schedule-time"] p');
+  const tall = answer.h + gap + said.y + said.h;
+  const s = Math.min(wide ? 4.1 : 2.62, room / answer.inkWidth(), (stage.size.h - top - 50) / tall);
   const behind = wide ? Math.max(0, Math.min(190, room - after.inkWidth() * s)) : 0;
-  const top = heading ? 132 + heading.h * s + 22 * s : 96;
-  heading?.place({ x: x + 10 * s, y: 132, s });
+  heading?.place({ x: x + 10 * headingS, y: 132, s: headingS });
   answer.place({ x, y: top, s });
   const offer = answer.rect('button[data-slot="button"]');
   stage.touch(
@@ -82,8 +86,9 @@ const time: Scene = async (stage) => {
     top + (offer.y + offer.h * 0.66) * s,
     wide ? 96 : 80,
   );
-  after.place({ x: x + behind, y: top + answer.h * s + (wide ? 64 : 120), s, o: 0.55 });
-  stage.fade(after, "bottom", wide ? 16 : 30, wide ? 74 : 100);
+  const afterTop = top + (answer.h + gap) * s;
+  after.place({ x: x + behind, y: afterTop, s, o: 0.55 });
+  stage.fade(after, "bottom", afterTop / stage.size.h);
   stage.light(44, wide ? 40 : 36);
 };
 
@@ -92,28 +97,32 @@ const today: Scene = async (stage) => {
   const who = CAST.goal[stage.lang];
   const [day, week] = await Promise.all([
     stage.piece(pieces.today.day(who, { wide: false })),
-    stage.piece(pieces.today.week(who, { wide: false })),
+    // A small phone's week in the wide frame, so its seven days sit closer and read larger beside the day.
+    stage.piece(pieces.today.week(who, { w: stage.wide ? 340 : undefined, wide: false })),
   ]);
   const first = day.rect('[data-slot="today-next"]');
+  const title = day.rect('h1[data-slot="page-title"]');
   if (stage.wide) {
-    const s = 3.15;
-    const x = 104;
-    const top = (stage.size.h - day.h * s) / 2 - 6;
+    // The week beside the day, as the app's wide layout has it, at the height of the day's middle so
+    // the two columns balance; all seven days.
+    const s = Math.min(2.55, (stage.size.h - 150) / day.h);
+    const gap = 120;
+    const ws = Math.min(s * 0.9, (stage.size.w - 2 * 110 - day.w * s - gap) / week.w);
+    const x = (stage.size.w - day.w * s - gap - week.w * ws) / 2;
+    const top = (stage.size.h - day.h * s) / 2;
     day.place({ x, y: top, s });
-    stage.touch(x + (first.x + first.w * 0.84) * s, top + (first.y + first.h * 0.56) * s, 88);
-    // The app's wide layout puts the week beside the day; here it runs off the right edge.
-    week.place({ x: x + day.w * s + 92, y: top + 12 * s, s: 2.1, o: 0.85 });
-    stage.fade(week, "right", 26, 60);
-    stage.light(40, 40);
+    stage.touch(x + (first.x + first.w * 0.84) * s, top + (first.y + first.h * 0.56) * s, 80);
+    week.place({ x: x + day.w * s + gap, y: (stage.size.h - week.h * ws) / 2, s: ws, o: 0.85 });
+    stage.light(42, 46);
     return;
   }
   const s = 2.3;
   const x = (stage.size.w - day.w * s) / 2;
-  const top = 150;
+  const top = 120;
   day.place({ x, y: top, s });
   stage.touch(x + (first.x + first.w * 0.86) * s, top + (first.y + first.h * 0.56) * s, 76);
-  week.place({ x: x + 12 * s, y: top + day.h * s + 90, s, o: 0.85 });
-  stage.fade(week, "bottom", 40, 100);
+  week.place({ x: x + 12 * s, y: top + day.h * s + 70, s, o: 0.85 });
+  stage.fade(week, "bottom", 0.9);
   stage.light(50, 36);
 };
 
@@ -134,52 +143,75 @@ const BEATS = {
   end: 16.5,
 };
 const TYPED_PER_SECOND = 19.5;
+/** A portrait cut loops, so it opens on the mark it ends on, and the shot starts this much later. */
+const OPENING = 1.1;
 
-function beatsFor(text: string) {
-  const times = typingTimes(text, BEATS.type, TYPED_PER_SECOND);
-  const typed = times.at(-1) ?? BEATS.type;
-  const shift = Math.max(0, typed + 0.5 - BEATS.press);
-  const later = (at: number) => (at >= BEATS.press ? at + shift : at);
+function beatsFor(text: string, opening: number) {
+  const late = (at: number) => at + opening;
+  const times = typingTimes(text, late(BEATS.type), TYPED_PER_SECOND);
+  const typed = times.at(-1) ?? late(BEATS.type);
+  const shift = Math.max(0, typed + 0.5 - late(BEATS.press));
+  const later = (at: number) => late(at >= BEATS.press ? at + shift : at);
   const beats = Object.fromEntries(Object.entries(BEATS).map(([name, at]) => [name, later(at)]));
   return { beats: beats as typeof BEATS, times, typed };
 }
 
+/**
+ * Where the words go in each frame: the band they stay inside, and the column they fill, clear of
+ * the dissolve at the sides even when the camera leans in.
+ */
+const FRAMING = {
+  "16x9": { safe: { bottom: 1015, top: 65 }, column: 1680 },
+  "4x5": { safe: { bottom: 1270, top: 80 }, column: 840 },
+} satisfies Record<Format, { safe: { bottom: number; top: number }; column: number }>;
+
 /** Goal to plan to today in one shot: each change is carried by something already on screen. */
 const clip: Scene = async (stage) => {
-  const { tl, world, size } = stage;
+  const { tl, world, size, wide } = stage;
   const who = CAST.goal[stage.lang];
   const text = LEARNERS[who].goal.text;
-  const { beats: B, times, typed: typingEnd } = beatsFor(text);
-  const wide = true;
-  const empty = { query: "typed=0", wide };
+  const opening = wide ? 0 : OPENING;
+  const { beats: B, times, typed: typingEnd } = beatsFor(text, opening);
+  const { safe, column } = FRAMING[stage.fmt];
+  const middle = (safe.top + safe.bottom) / 2;
+  // The box is laid out with the whole sentence in it, so the shot leaves room for every line it grows to.
   const [heading, box, button, planTitle, plan, path, day, week] = await Promise.all([
     stage.piece(pieces.goal.heading(who, { wide })),
-    stage.piece(pieces.goal.box(who, empty)),
-    stage.piece(pieces.goal.button(who, empty)),
+    stage.piece(pieces.goal.box(who, { wide })),
+    stage.piece(pieces.goal.button(who, { query: "typed=0", wide })),
     stage.piece(pieces.reveal.heading(who, { wide })),
     stage.piece(pieces.reveal.plan(who, { wide })),
-    stage.piece(pieces.reveal.structure(who, { w: 660, wide })),
-    stage.piece(pieces.today.day(who, { w: 540, wide })),
-    stage.piece(pieces.today.week(who, { w: 540, wide })),
+    stage.piece(pieces.reveal.structure(who, { w: wide ? 660 : undefined, wide })),
+    stage.piece(pieces.today.day(who, { w: wide ? 540 : undefined, wide })),
+    stage.piece(pieces.today.week(who, { w: wide ? 540 : undefined, wide })),
   ]);
 
-  // Where things sit in the world, at zoom 1.
-  const S1 = 2.5;
+  // Where things sit in the world, at zoom 1. The wide frame keeps the app's wide layout; the
+  // portrait ones fill their column with the phone layout.
+  const S1 = wide ? 2.5 : column / box.w;
   const x1 = (size.w - box.w * S1) / 2;
-  const top1 = 312;
-  const boxTop1 = top1 + heading.h * S1 + 22 * S1;
-  const S2 = 2.4;
+  const buttonS = wide ? 2.1 : S1;
+  const goalHeight = (heading.h + 22 + box.h) * S1 + 44 + button.h * buttonS;
+  const top1 = wide ? 312 : middle - goalHeight / 2;
+  const boxTop1 = top1 + (heading.h + 22) * S1;
+  const S2 = wide ? 2.4 : S1;
   const x2 = (size.w - box.w * S2) / 2;
   // The title sits far enough above the readouts to be out of frame once the camera rests on the path.
-  const planY = { box: 96, title: 318, plan: 318 + planTitle.h * S2 + 96 };
-  const pathY = planY.plan + plan.h * S2 + 76;
-  // The camera rests on the readouts and the path; a long path runs off the bottom, never the readouts off the top.
-  const planRest = Math.min((planY.plan + pathY + path.h * S2) / 2, planY.plan + size.h / 2 - 80);
+  const boxY2 = wide ? 96 : safe.top - 40;
+  const titleY = boxY2 + box.h * S2 + (wide ? 54 : 70);
+  const planY = { box: boxY2, plan: titleY + planTitle.h * S2 + (wide ? 96 : 60), title: titleY };
+  const pathY = planY.plan + plan.h * S2 + (wide ? 76 : 60);
+  /** The camera's y for a world point to land on the middle of the words' band, at zoom z. */
+  const aim = (y: number, z = 1) => y + (size.h / 2 - middle) / z;
+  // The camera rests on the readouts and the path; a long path leaves at the bottom, never the readouts at the top.
+  const planRest = Math.min(
+    aim((planY.plan + pathY + path.h * S2) / 2),
+    planY.plan + size.h / 2 - (safe.top + 15),
+  );
 
   box.el.style.zIndex = "5";
   const headingAt = mover(tl, heading, { x: x1, y: top1, s: S1 });
   const boxAt = mover(tl, box, { x: x1, y: boxTop1, s: S1 });
-  const buttonS = 2.1;
   const buttonY = boxTop1 + box.h * S1 + 44;
   const buttonAt = mover(tl, button, {
     x: x1 + box.w * S1 - button.w * buttonS,
@@ -199,23 +231,25 @@ const clip: Scene = async (stage) => {
   const anchor = { x: x2 + from.x * S2, y: planY.plan + (from.y + from.h / 2) * S2 };
   const dayAt0 = { x: anchor.x - to.x * S3, y: anchor.y - (to.y + to.h / 2) * S3 };
   const dayAt = mover(tl, day, { ...dayAt0, s: S3, o: 0 });
+  const weekGap = wide ? 64 : 48;
   const weekAt = mover(tl, week, {
     x: dayAt0.x + 12 * S3,
-    y: dayAt0.y + day.h * S3 + 64,
+    y: dayAt0.y + day.h * S3 + weekGap,
     s: S3,
     o: 0,
   });
-  const dayCenter = { x: dayAt0.x + (day.w * S3) / 2, y: dayAt0.y + (day.h * S3) / 2 };
-  const allHeight = day.h * S3 + 64 + week.h * S3;
-  const allCenterY = dayAt0.y + allHeight / 2;
-  const zAll = Math.min(1, (size.h - 150) / allHeight);
-  const zDay = Math.min(1, (size.h - 130) / (day.h * S3));
+  const band = safe.bottom - safe.top;
+  const allHeight = day.h * S3 + weekGap + week.h * S3;
+  const zAll = Math.min(1, (band - 20) / allHeight, column / (day.w * S3));
+  const zDay = Math.min(1, band / (day.h * S3), column / (day.w * S3));
+  const dayCenter = { x: dayAt0.x + (day.w * S3) / 2, y: aim(dayAt0.y + (day.h * S3) / 2, zDay) };
+  const allCenterY = aim(dayAt0.y + allHeight / 2, zAll);
 
   // The camera never stops: it leans in while the sentence is written, follows the box up, travels down
   // the plan as it forms, slides to today keeping the minutes in place, and opens out for the week.
-  const cam = camera(tl, world, size, { cx: 960, cy: 540, z: 1 });
-  cam.zoomTo(0, B.press, 1.055, EASE.swing);
-  cam.cy.to(0, B.press, 560, EASE.swing);
+  const cam = camera(tl, world, size, { cx: size.w / 2, cy: size.h / 2, z: 1 });
+  cam.zoomTo(opening, B.press - opening, 1.055, EASE.swing);
+  cam.cy.to(opening, B.press - opening, aim(middle + 20, 1.055), EASE.swing);
   cam.zoomTo(B.toPlan, 1.15, 1);
   cam.cy.to(B.path - 0.3, 2.6, planRest, EASE.swing);
   cam.zoomTo(B.path + 2.25, B.toToday - B.path - 2.25, 1.02, EASE.linear);
@@ -311,7 +345,10 @@ const clip: Scene = async (stage) => {
   arrive(tl, [week.q('[data-slot="page-section-header"]')], B.week, { rise: 12 });
   arrive(tl, week.all("ol > li"), B.week + 0.12, { stagger: 0.055, rise: 12, dur: 0.6 });
 
-  // 5. Where to go.
+  // 5. Where to go. Whatever the camera carries past an edge dissolves on the way; a portrait cut
+  // opens on the mark it ends on, so the brand shows from the first frame and the clip loops.
+  stage.edges();
+  if (!wide) stage.open(opening);
   stage.end(B.toEnd, B.end);
 };
 

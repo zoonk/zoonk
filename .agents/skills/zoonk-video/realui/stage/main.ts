@@ -1,6 +1,7 @@
 // /stage/?film=<folder in films/>&scene=<name>&fmt=16x9|4x5&lang=en|pt
 // Exposes window.__ready, __duration and __seek(t), as scripts/render.mjs and scripts/stills.mjs expect.
-// A name it doesn't know rejects __ready, so a typo fails the render instead of saving this page as an image.
+// A name it doesn't know rejects __ready, so a typo fails the render instead of saving this page as an image;
+// so does a moment whose frame or crops cut through words (stage.cuts).
 import "@repo/packages/player/src/_test-utils/browser.css";
 import { type Lang } from "../story";
 import { type Scene, FORMATS, createStage } from "./stage";
@@ -10,6 +11,7 @@ declare global {
     __ready: Promise<void>;
     __duration: number;
     __seek: (t: number) => void;
+    __cuts: () => string[];
   }
 }
 
@@ -48,8 +50,11 @@ async function start() {
   const stage = createStage({ fmt, frame, lang });
   await scene(stage);
   window.__duration = stage.tl.duration;
-  window.__seek = (t) => stage.tl.seek(t);
-  stage.tl.seek(Number(q.get("t") ?? 0));
+  window.__seek = (t) => stage.seek(t);
+  window.__cuts = () => stage.cuts();
+  stage.seek(Number(q.get("t") ?? 0));
+  const cuts = stage.cuts();
+  if (cuts.length > 0) throw new Error(`The frame cuts what it shows:\n${cuts.join("\n")}`);
 }
 
 window.__ready = start().catch((error: unknown) => {
