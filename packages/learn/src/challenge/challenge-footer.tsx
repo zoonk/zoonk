@@ -216,7 +216,10 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   }
 
   if (challenge.access === "preparing" || start.problem === "preparing") {
-    return { actions: <KeepStudyingLink />, line: <MockPreparingWords /> };
+    return {
+      actions: <KeepStudyingLink />,
+      line: <MockPreparingWords title={t("Your mock exam is being prepared")} />,
+    };
   }
 
   switch (challenge.status) {

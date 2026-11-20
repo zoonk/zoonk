@@ -2111,6 +2111,11 @@ msgid "Mock exams need a subscription"
 msgstr "Deneme sınavları için abonelik gerekiyor"
 
 #: src/challenge/challenge-footer.tsx
+msgctxt "jk5nI6"
+msgid "Your mock exam is being prepared"
+msgstr "Deneme sınavın hazırlanıyor"
+
+#: src/challenge/challenge-footer.tsx
 #: src/missions/mission-copy.tsx
 #: src/today/use-row-label.ts
 msgctxt "L_nv1C"
@@ -7826,6 +7831,12 @@ msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "Son deneme sınavın"
 
+#. Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away.
+#: src/mock/mock-chooser-page.tsx
+msgctxt "qDtThy"
+msgid "This mock exam is being prepared"
+msgstr "Bu deneme sınavı hazırlanıyor"
+
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
 msgid "We couldn't start the mock exam. Try again."
@@ -8134,11 +8145,6 @@ msgstr "Boş bırak"
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
 msgstr "Başlatmak için bu sayfaya tekrar gel."
-
-#: src/mock/mock-preparing.tsx
-msgctxt "jk5nI6"
-msgid "Your mock exam is being prepared"
-msgstr "Deneme sınavın hazırlanıyor"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"

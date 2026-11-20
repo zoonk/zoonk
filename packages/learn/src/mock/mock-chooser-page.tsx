@@ -68,7 +68,15 @@ function useChooserNote({ busy, gated, preparing, status }: ChooserBarProps): Re
   }
 
   if (preparing) {
-    return <MockPreparingWords />;
+    return (
+      <MockPreparingWords
+        title={t({
+          description:
+            "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away.",
+          message: "This mock exam is being prepared",
+        })}
+      />
+    );
   }
 
   if (!busy && status.kind === "failed") {

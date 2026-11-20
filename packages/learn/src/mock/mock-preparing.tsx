@@ -6,10 +6,8 @@ export function useReturnToMockLine() {
   return t("Come back to this page to start it.");
 }
 
-export function MockPreparingWords() {
-  const t = useExtracted();
-
+export function MockPreparingWords({ title }: { title: string }) {
   const line = useReturnToMockLine();
 
-  return <GateWords line={line} title={t("Your mock exam is being prepared")} />;
+  return <GateWords line={line} title={title} />;
 }
