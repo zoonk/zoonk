@@ -1441,7 +1441,11 @@ export function readAlignment({
   }
 
   function textRole(flow: Element): CaptureElement["textRole"] {
-    if (flow.closest("[data-slot=list-row-description],[data-slot=tab-title][data-custom=true]")) {
+    if (
+      flow.closest(
+        "[data-slot=answer-option],[data-slot=match-entry],[data-slot=list-row-description],[data-slot=tab-title][data-custom=true]",
+      )
+    ) {
       return undefined;
     }
 

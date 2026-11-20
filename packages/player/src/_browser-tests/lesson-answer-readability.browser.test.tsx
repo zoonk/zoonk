@@ -64,6 +64,23 @@ function lessonWithAnswer(text: string, question = "Onde está o par de elétron
 }
 
 describe("checked answer readability", () => {
+  it("fills the line before wrapping a long lesson option", async () => {
+    const text =
+      "Ieri sera ho perso il cappotto. La mattina seguente l'ho ritrovato in metrò e mi sono sentito deluso.";
+
+    await atViewport({ height: 844, width: 434 }, async () => {
+      renderLessonPlayer({ lesson: lessonWithAnswer(text) });
+
+      const answer = page.getByText(text, { exact: true });
+      await expect.element(answer).toBeVisible();
+      const words = wordBoxes(answer.element());
+
+      expect(words.filter(({ top }) => top === words[0]?.top).map(({ word }) => word)).toContain(
+        "mattina",
+      );
+    });
+  });
+
   it.each([
     { fontFamily: "", fontSize: "150%", width: 390 },
     { fontFamily: "", fontSize: "200%", width: 390 },
@@ -191,7 +208,7 @@ describe("checked answer readability", () => {
     { answer: "Their water didn't come from the Broad Street pump", width: 440 },
     { answer: ANSWER, width: 450 },
   ])(
-    "keeps two words on the last line of $answer and moves none when Check adds the tag at $width px",
+    "keeps the words of $answer in place when Check adds the tag at $width px",
     async ({ answer, width }) => {
       await atViewport({ height: 844, width }, async () => {
         renderLessonPlayer({ lesson: lessonWithAnswer(answer) });
@@ -199,9 +216,6 @@ describe("checked answer readability", () => {
         const option = page.getByRole("radio", { name: answer });
         const words = option.getByText(answer, { exact: true }).element();
         const before = wordBoxes(words);
-        const lastTop = before.at(-1)?.top;
-
-        expect(before.filter((word) => word.top === lastTop).length).toBeGreaterThan(1);
 
         await option.click();
         await page.getByRole("button", { name: /^Check/u }).click();
