@@ -297,10 +297,7 @@ export async function listSkillExtensions({
   const [courses, skills, withToolChapters, lessons] = await Promise.all([
     prisma.course.findMany({
       select: { id: true, language: true, targetLanguage: true, userId: true, visibility: true },
-      where: {
-        OR: [{ outlineStatus: null }, { outlineStatus: { not: "running" } }],
-        id: { in: courseIds },
-      },
+      where: { id: { in: courseIds } },
     }),
     prisma.skill.findMany({
       select: { description: true, id: true, name: true },
