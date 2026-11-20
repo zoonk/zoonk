@@ -1,5 +1,5 @@
 import "server-only";
-import { DbNull, type Goal, type TransactionClient } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { USAGE_WINDOW_MS } from "../../../entitlements/limits";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
@@ -17,7 +17,11 @@ import {
 import { isPaperComplete } from "./mock-complete";
 import { getExamStartTime } from "./mock-conditions";
 import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
-import { mockPaperKey } from "./mock-supply-request";
+import {
+  clearStartedPaperRequest,
+  mockPaperKey,
+  recordMockPaperRequest,
+} from "./mock-supply-request";
 import { planFromBank } from "./plan-from-bank";
 
 export { planFromBank } from "./plan-from-bank";
@@ -123,11 +127,17 @@ export async function createAnytimeMock({
       available: lockedSetup,
     } = await planFromBank({ client: tx, goal, option, reuse, setup, userId });
 
+    const current = await tx.goal.findUniqueOrThrow({
+      select: { id: true, requestedMock: true },
+      where: { id: goal.id },
+    });
+
+    const shape = { area: option.area, day: option.day, kind: option.kind };
+
     if (!isCompleteMock({ option, plan, setup: lockedSetup })) {
-      await tx.goal.update({
-        data: { requestedMock: { area: option.area, day: option.day, kind: option.kind } },
-        where: { id: goal.id },
-      });
+      if (!(await recordMockPaperRequest({ goal: current, paper: shape, tx }))) {
+        return { status: "preparing" };
+      }
 
       await oweFollowUps({
         db: tx,
@@ -137,7 +147,7 @@ export async function createAnytimeMock({
               examBlueprintId: goal.examBlueprintId,
               goalId: goal.id,
               later: reuse,
-              paper: mockPaperKey(option),
+              paper: mockPaperKey(shape),
             },
             kind: "prepareMockSupply",
           },
@@ -164,7 +174,7 @@ export async function createAnytimeMock({
     });
 
     await claimMockItems({ candidates, conditions, mockExamId: created.id, now, tx, userId });
-    await tx.goal.update({ data: { requestedMock: DbNull }, where: { id: goal.id } });
+    await clearStartedPaperRequest({ goal: current, paper: shape, tx });
 
     if (!reuse) {
       await oweFollowUps({

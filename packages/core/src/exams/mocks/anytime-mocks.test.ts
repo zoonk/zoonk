@@ -15,7 +15,7 @@ import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
 import { type MockShape, type MockView, mockConditionsSchema } from "./mock-contract";
-import { listMockPrepWrites } from "./prepare-mock-questions";
+import { checkMockSupply, listMockPrepWrites } from "./prepare-mock-questions";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { startMock } from "./start-mock";
@@ -562,6 +562,62 @@ describe("mocks taken any time", () => {
     await expect(startMock({ blockId, input: {} })).resolves.toStrictEqual({ status: "ready" });
   });
 
+  it("keeps one supply request after a scheduled writer recounts a still-short paper", async () => {
+    const { blockId, goal, user } = await scheduledMockSetup();
+
+    await prisma.item.updateMany({
+      data: { retiredAt: SESSION_NOW },
+      where: { examBlueprintId: goal.examBlueprintId },
+    });
+
+    const start = () => startMock({ blockId, input: {} });
+    const where = { key: goal.id, kind: "prepareMockSupply" as const, userId: user.id };
+    await expect(start()).resolves.toStrictEqual({ status: "preparing" });
+    const first = await prisma.followUp.findFirstOrThrow({ where });
+    await expect(start()).resolves.toStrictEqual({ status: "preparing" });
+
+    await expect(prisma.followUp.findFirstOrThrow({ where })).resolves.toMatchObject({
+      revision: first.revision,
+    });
+
+    await prisma.followUp.deleteMany({ where });
+    await expect(start()).resolves.toStrictEqual({ status: "preparing" });
+    await expect(prisma.followUp.count({ where })).resolves.toBe(0);
+  });
+
+  it("keeps one supply request for repeated starts of the same short paper", async () => {
+    const { goal, user } = await anytimeSetup({ itemsPerSkill: 0 });
+    const start = () => startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE } });
+    const where = { key: goal.id, kind: "prepareMockSupply" as const, userId: user.id };
+    await Promise.all([start(), start()]);
+
+    await expect(prisma.followUp.findFirstOrThrow({ where })).resolves.toMatchObject({
+      revision: 0,
+    });
+
+    await prisma.followUp.deleteMany({ where });
+    await expect(start()).resolves.toStrictEqual({ status: "preparing" });
+    await expect(prisma.followUp.count({ where })).resolves.toBe(0);
+  });
+
+  it("leaves the next attempt to daily supply when a background recount already found the requested paper short", async () => {
+    const { goal, user } = await anytimeSetup({ itemsPerSkill: 0 });
+    await checkMockSupply(goal.id);
+    const shape = { area: null, day: null, kind: "full" } as const;
+
+    await expect(startAnytimeMock({ goalId: goal.id, input: { shape } })).resolves.toStrictEqual({
+      status: "preparing",
+    });
+
+    await expect(
+      prisma.followUp.count({ where: { kind: "prepareMockSupply", userId: user.id } }),
+    ).resolves.toBe(0);
+
+    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
+      view: { requested: { shape, status: "preparing" } },
+    });
+  });
+
   it("protects the next two scheduled papers, then uses the oldest compatible repeats", async () => {
     const { goal, plan, skills, user } = await anytimeSetup({ itemsPerSkill: 10 });
 
@@ -663,6 +719,7 @@ describe("mocks taken any time", () => {
       goalId: goal.id,
       priority: mockPaperKey(input.shape),
     });
+
     expect(papers.map((paper) => paper.later)).toStrictEqual([true]);
     const writes = papers.flatMap((paper) => paper.writes);
 
@@ -671,13 +728,7 @@ describe("mocks taken any time", () => {
     ).toBe(2);
 
     await expect(
-      prisma.followUp.findFirst({
-        where: {
-          input: { equals: true, path: ["later"] },
-          kind: "prepareMockSupply",
-          userId: user.id,
-        },
-      }),
+      prisma.followUp.findFirst({ where: { kind: "prepareMockSupply", userId: user.id } }),
     ).resolves.toBeTruthy();
 
     await prisma.item.updateMany({ data: { retiredAt: null }, where: { id: { in: omittedIds } } });

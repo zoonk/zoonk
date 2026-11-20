@@ -145,7 +145,10 @@ describe("a mock's listening section", () => {
       })),
     });
 
-    await prisma.goal.update({ data: { requestedMock: FULL }, where: { id: goal.id } });
+    await prisma.goal.update({
+      data: { requestedMock: { papers: [], shape: FULL } },
+      where: { id: goal.id },
+    });
 
     const writing = await listMockPrepWrites({ goalId: goal.id });
     expect(writing).toMatchObject({ papers: [], urgentShort: false });
@@ -230,7 +233,10 @@ describe("a mock's listening section", () => {
       ),
     );
 
-    await prisma.goal.update({ data: { requestedMock: FULL }, where: { id: goal.id } });
+    await prisma.goal.update({
+      data: { requestedMock: { papers: [], shape: FULL } },
+      where: { id: goal.id },
+    });
 
     const priority = await listMockPrepWrites({ goalId: goal.id, priority: mockPaperKey(FULL) });
 

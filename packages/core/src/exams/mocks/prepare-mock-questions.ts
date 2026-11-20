@@ -1,9 +1,10 @@
 import { captureMessage } from "@sentry/nextjs";
-import { DbNull, type Goal, prisma } from "@zoonk/db";
+import { AnyNull, DbNull, type Goal, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
+import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import {
   type PlacementQuickFormat,
   getPlacementQuickFormat,
@@ -17,14 +18,17 @@ import {
   resolveAnytimeOption,
 } from "./_utils/anytime-mock-setup";
 import { canReuseMockItems, isCompleteMock, planFromBank } from "./_utils/create-anytime-mock";
-import { mockPaperKey } from "./_utils/mock-supply-request";
+import {
+  mockPaperKey,
+  readMockSupplyRequest,
+  storedMockRequest,
+} from "./_utils/mock-supply-request";
 import { planMockWrites } from "./_utils/mock-writes";
 import { planScheduledFromBank } from "./_utils/plan-from-bank";
 import {
   SCHEDULED_SUPPLY_PLAN_SELECT,
   listScheduledSupplyOptions,
 } from "./_utils/scheduled-supply-options";
-import { mockShapeSchema } from "./mock-contract";
 import { getPlannedItemIds } from "./mock-plan";
 import { type MockFormatShortfall } from "./mock-shortfall";
 
@@ -44,7 +48,7 @@ export async function listDueMockGoals() {
     select: { examBlueprintId: true, id: true },
     where: {
       OR: [
-        { requestedMock: { not: DbNull } },
+        { requestedMock: { not: AnyNull, path: ["shape", "kind"] } },
         {
           plan: {
             items: {
@@ -86,7 +90,7 @@ export async function listExamSupplyGoals({
     select: { id: true },
     where: {
       OR: [
-        { requestedMock: { not: DbNull } },
+        { requestedMock: { not: AnyNull, path: ["shape", "kind"] } },
         { plan: { items: { some: { kind: "mock", status: "todo" } } } },
       ],
       examBlueprintId,
@@ -100,12 +104,26 @@ export async function listExamSupplyGoals({
 }
 
 export async function checkMockSupply(goalId: string) {
-  const [result, goal] = await Promise.all([
-    listMockPrepWrites({ goalId }),
-    prisma.goal.findUnique({ select: { userId: true }, where: { id: goalId } }),
-  ]);
+  const goal = await prisma.goal.findUnique({
+    select: { requestedMock: true, userId: true },
+    where: { id: goalId },
+  });
+
+  const result = await listMockPrepWrites({ goalId });
 
   if (goal) {
+    const saved = readMockSupplyRequest(goal.requestedMock);
+    const papers = result.papers.map((paper) => paper.key);
+
+    if (JSON.stringify(saved.papers) !== JSON.stringify(papers)) {
+      await writeLearnerChange({ userId: goal.userId }, (tx) =>
+        tx.goal.updateMany({
+          data: { requestedMock: storedMockRequest(saved.shape, papers) },
+          where: { id: goalId, requestedMock: { equals: goal.requestedMock ?? DbNull } },
+        }),
+      );
+    }
+
     revalidateCacheTags([getLearnerModelCacheTag(goal.userId)]);
   }
 
@@ -126,7 +144,7 @@ async function getSupplyTargets({
   goal: Goal & { plan: Parameters<typeof listScheduledSupplyOptions>[0]["plan"] };
   setup: Awaited<ReturnType<typeof loadAnytimeMockSetup>>;
 }) {
-  const shape = mockShapeSchema.safeParse(goal.requestedMock).data;
+  const { shape } = readMockSupplyRequest(goal.requestedMock);
 
   const upcoming = await listScheduledSupplyOptions({ goal, plan: goal.plan });
 
