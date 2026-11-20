@@ -14,8 +14,10 @@ struct InlineMarks: Equatable {
   /// word, not at the space after it.
   var underline: [Range<Int>] = []
   var terms: [Range<Int>] = []
+  /// Inline code runs, each on its chip.
+  var code: [Range<Int>] = []
 
-  var isEmpty: Bool { underline.isEmpty && terms.isEmpty }
+  var isEmpty: Bool { underline.isEmpty && terms.isEmpty && code.isEmpty }
 
   init(underline: [Range<Int>] = [], terms: [Range<Int>] = []) {
     self.underline = underline
@@ -28,6 +30,9 @@ struct InlineMarks: Equatable {
       underline.flatMap { phrase in
         text.range(of: phrase).map { Self.words(in: Self.offsets(of: $0, in: text), of: text) }
       } ?? []
+    code = text.runs.compactMap { run in
+      InlineCode.isCode(run.inlinePresentationIntent) ? Self.offsets(of: run.range, in: text) : nil
+    }
 
     guard highlightsTerms else {
       return
@@ -87,7 +92,7 @@ struct HandMarksRenderer: TextRenderer {
   let marks: InlineMarks
 
   var displayPadding: EdgeInsets {
-    EdgeInsets(top: 0, leading: 4, bottom: 10, trailing: 4)
+    EdgeInsets(top: 2, leading: 4, bottom: 10, trailing: 4)
   }
 
   func draw(layout: Text.Layout, in context: inout GraphicsContext) {
@@ -111,6 +116,14 @@ struct HandMarksRenderer: TextRenderer {
     for ((line, glyphs), span) in zip(zip(layout, lines), underlined) {
       let bounds = line.typographicBounds
 
+      for code in marks.code {
+        if let chip = Self.chip(of: code, in: glyphs, from: start) {
+          context.fill(
+            Path(roundedRect: chip, cornerRadius: Radius.sm, style: .continuous),
+            with: .color(.muted))
+        }
+      }
+
       for term in marks.terms {
         if let span = Self.span(of: [term], in: glyphs, from: start) {
           let rect = CGRect(
@@ -131,6 +144,32 @@ struct HandMarksRenderer: TextRenderer {
 
       context.draw(line)
     }
+  }
+
+  /// Main's chip around a line's piece of inline code, 2 points above and below its glyphs. The text
+  /// keeps the padding beside it (`InlineCode.drawn`), the end's inside the run's last glyph.
+  private static func chip(
+    of range: Range<Int>, in glyphs: [Text.Layout.RunSlice], from start: Text.Layout.CharacterIndex
+  ) -> CGRect? {
+    let marked = glyphs.filter { glyph in
+      glyph.characterIndices.contains { range.contains(start.distance(to: $0)) }
+    }
+    let rects = marked.map { $0.typographicBounds.rect }
+
+    guard let minX = rects.map(\.minX).min(), let maxX = rects.map(\.maxX).max(),
+      let minY = rects.map(\.minY).min(), let maxY = rects.map(\.maxY).max()
+    else {
+      return nil
+    }
+
+    let endsHere = marked.contains { glyph in
+      glyph.characterIndices.contains { start.distance(to: $0) == range.upperBound - 1 }
+    }
+    let padding = InlineCode.padding
+
+    return CGRect(
+      x: minX - padding, y: minY - 2, width: maxX - minX + padding + (endsHere ? 0 : padding),
+      height: maxY - minY + 4)
   }
 
   private static func span(

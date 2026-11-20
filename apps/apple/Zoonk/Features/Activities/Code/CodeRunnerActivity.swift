@@ -193,9 +193,9 @@ private struct CodeRunnerCanvas: View {
     let digits = String(lines.count).count
     let errorLine = isStale ? nil : run?.errorLine
     let colored = CodeHighlight.lines(
-      of: lines.joined(separator: "\n"), language: fields.language.highlight)
+      of: lines.joined(separator: "\n"), language: fields.language.rawValue)
 
-    return ActivityCodeBlock {
+    return CodeFrame {
       ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
         let number = index + 1
 
@@ -221,7 +221,7 @@ private struct CodeRunnerCanvas: View {
             .submitLabel(.go)
             .onSubmit(startRun)
           } else {
-            Text(colored.indices.contains(index) ? colored[index] : AttributedString(line))
+            CodeText(tokens: colored.indices.contains(index) ? colored[index] : [])
           }
         }
       }
@@ -360,7 +360,7 @@ private struct CodeRunnerOutput: View {
         .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.mutedForeground)
 
-      ActivityHorizontalScroll {
+      HorizontalScroll {
         content()
       }
     }

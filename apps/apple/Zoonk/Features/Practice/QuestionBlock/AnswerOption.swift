@@ -127,8 +127,8 @@ struct AnswerOption: View {
   }
 }
 
-/// An answer's words and its tag. The tag moves under the words rather than leave them less than
-/// half the row or narrower than their widest line-break unit.
+/// An answer's words, or its code, and its tag. The tag moves under the words rather than leave them
+/// less than half the row or narrower than their widest line-break unit.
 struct TagBesideOrUnder: View {
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.legibilityWeight) private var legibilityWeight
@@ -142,7 +142,11 @@ struct TagBesideOrUnder: View {
   var body: some View {
     AnswerOptionLayout(isStacked: isStacked, hasTag: tag != nil, hasMarker: hasMarker) {
       VStack(alignment: .leading, spacing: 2) {
-        Text(text, legibility: legibilityWeight)
+        if let snippet = text.snippet {
+          CodeSnippet(code: snippet.code, language: snippet.language)
+        } else {
+          RichInlineText(text)
+        }
 
         if let detail {
           Text(verbatim: detail)

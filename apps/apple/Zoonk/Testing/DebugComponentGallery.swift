@@ -62,6 +62,7 @@
           GallerySection(id: "waits", title: "Waits") { Waits() }
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
+          GallerySection(id: "code", title: "Code") { Code() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
           GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
           GallerySection(id: "planDates", title: "Plan path dates") { PlanPathDates() }
@@ -907,6 +908,41 @@
             .frame(height: 14)
         }
       }
+    }
+  }
+
+  /// A lesson's code block, a question's option that is code and inline code, with long lines that
+  /// wrap on a phone and scroll on a wider screen.
+  private struct Code: View {
+    private static let program = """
+      async function abrir() {
+        try {
+          return await Promise.reject('offline');
+        } catch (e) {
+          return 'cópia';
+        } finally {
+          console.log('fechado'); // sempre roda
+        }
+      }
+
+      abrir().then(console.log);
+      console.log('tela');
+      """
+
+    var body: some View {
+      VStack(alignment: .leading, spacing: 12) {
+        LessonTextBlocks(
+          "O console mostra `Promise.resolve('comprovante').then(console.log); console.log('fim');` e depois `fim`.\n\n```javascript\n\(Self.program)\n```"
+        )
+        .typeStyle(.lessonText)
+
+        AnswerOption(
+          marker: 1,
+          text: LessonRichText.typeset(
+            "```java\nclass Exportador extends Servico {\n  Exportador() { Compactador c = new Compactador(); }\n}\n```"
+          ), action: {})
+      }
+      .padding(.vertical, 8)
     }
   }
 

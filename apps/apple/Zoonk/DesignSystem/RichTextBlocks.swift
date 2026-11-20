@@ -5,6 +5,9 @@ import SwiftUI
 struct RichInline {
   var text: AttributedString
   var spoken: String? = nil
+  /// A text that is one code block, such as an option that is a program: a view with room draws it
+  /// as a `CodeSnippet`, and `text` reads it on one line.
+  var snippet: CodeFence? = nil
 
   /// For a label or an announcement.
   var said: String {
@@ -35,24 +38,25 @@ extension Text {
   }
 }
 
-/// Anything beyond paragraphs, lists and GFM tables stays text, so a stray marker never changes a
-/// screen's layout.
+/// Anything beyond paragraphs, lists, GFM tables and fenced code blocks stays text, so a stray
+/// marker never changes a screen's layout.
 struct RichTextBlocks: View {
   let text: String
   /// A quote of the text, in its markup, to highlight where it first shows.
   let mark: String?
   let marks: RichTextMarks?
+  /// For the words only, as main's heading holds a question's paragraphs and not its code.
+  let wordTraits: AccessibilityTraits
   let inline: (String) -> RichInline
-
-  @Environment(\.legibilityWeight) private var legibilityWeight
 
   init(
     _ text: String, mark: String? = nil, marks: RichTextMarks? = nil,
-    inline: @escaping (String) -> RichInline
+    wordTraits: AccessibilityTraits = [], inline: @escaping (String) -> RichInline
   ) {
     self.text = text
     self.mark = mark
     self.marks = marks
+    self.wordTraits = wordTraits
     self.inline = inline
   }
 
@@ -70,10 +74,14 @@ struct RichTextBlocks: View {
         switch block {
         case .paragraph(let lines):
           line(inline(lines.joined(separator: "\n")), mark: mark, underline: underline)
+            .accessibilityAddTraits(wordTraits)
         case .list(let items, let ordered):
           list(items, ordered: ordered, mark: mark, underline: underline)
+            .accessibilityAddTraits(wordTraits)
         case .table(let header, let alignments, let rows):
           RichTable(header: header, alignments: alignments, rows: rows, inline: inline)
+        case .code(let code, let language):
+          CodeBlock(code: code, language: language)
         }
       }
     }
@@ -101,14 +109,11 @@ struct RichTextBlocks: View {
   private func line(
     _ inline: RichInline, mark: RichTextBlock.Mark?, underline: RichTextBlock.Mark?
   ) -> some View {
-    let drawn = highlighting(inline, mark)
-
-    return Text(drawn, legibility: legibilityWeight)
-      .handMarks(
-        InlineMarks(
-          drawn.text, underline: underline?.text, highlightsTerms: marks?.highlightsTerms == true)
-      )
-      .fixedSize(horizontal: false, vertical: true)
+    RichInlineText(
+      highlighting(inline, mark), underline: underline?.text,
+      highlightsTerms: marks?.highlightsTerms == true
+    )
+    .fixedSize(horizontal: false, vertical: true)
   }
 
   private func highlighting(_ inline: RichInline, _ mark: RichTextBlock.Mark?) -> RichInline {
@@ -130,7 +135,6 @@ private struct RichTable: View {
   let rows: [[String]]
   let inline: (String) -> RichInline
 
-  @Environment(\.legibilityWeight) private var legibilityWeight
   @ScaledMetric(relativeTo: .subheadline) private var minimumColumnWidth = 88
   @State private var visibleWidth: CGFloat?
 
@@ -157,7 +161,7 @@ private struct RichTable: View {
     Grid(alignment: .leading, horizontalSpacing: columnSpacing, verticalSpacing: 8) {
       GridRow {
         ForEach(Array(header.enumerated()), id: \.offset) { index, cell in
-          Text(inline(cell), legibility: legibilityWeight)
+          RichInlineText(inline(cell))
             .typeStyle(.body.weight(.semibold))
             .fixedSize(horizontal: false, vertical: true)
             .gridColumnAlignment(alignments[index].horizontal)
@@ -169,7 +173,7 @@ private struct RichTable: View {
       ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
         GridRow {
           ForEach(Array(row.enumerated()), id: \.offset) { index, cell in
-            Text(inline(cell), legibility: legibilityWeight)
+            RichInlineText(inline(cell))
               .typeStyle(alignments[index] == .leading ? .body : .body.monospacedDigit())
               .fixedSize(horizontal: false, vertical: true)
           }
@@ -195,8 +199,11 @@ enum RichTextBlock: Equatable {
   case paragraph(lines: [String])
   case list(items: [String], ordered: Bool)
   case table(header: [String], alignments: [ColumnAlignment], rows: [[String]])
+  /// Its code exactly as written.
+  case code(code: String, language: String?)
 
-  /// Mirrors main's `parseRichBlocks`.
+  /// Mirrors main's `parseRichBlocks`. A code block is read before a table, so a `|` line inside one
+  /// stays code.
   static func parse(_ text: String) -> [RichTextBlock] {
     let lines = Self.lines(text)
     var blocks: [RichTextBlock] = []
@@ -204,6 +211,13 @@ enum RichTextBlock: Equatable {
     var index = 0
 
     while index < lines.count {
+      if let fence = CodeFence.read(lines, at: index) {
+        blocks.append(.code(code: fence.code, language: fence.language))
+        previous = nil
+        index = fence.end
+        continue
+      }
+
       if let table = Table(lines: lines, at: index) {
         blocks.append(
           .table(header: table.header, alignments: table.alignments, rows: table.rows))
@@ -273,8 +287,8 @@ enum RichTextBlock: Equatable {
   }
 
   /// Main's `markRichBlocks`: the quote is read as one line of the text, list marker and all, and only
-  /// the first paragraph or list item that shows it is marked. `shown` turns markup into what it
-  /// displays.
+  /// the first paragraph or list item that shows it is marked, never code. `shown` turns markup into
+  /// what it displays.
   static func mark(_ quote: String, in blocks: [RichTextBlock], shown: (String) -> String) -> Mark?
   {
     let text: String
@@ -297,7 +311,7 @@ enum RichTextBlock: Equatable {
         if let item = items.firstIndex(where: { shown($0).contains(text) }) {
           return Mark(block: index, item: item, text: text)
         }
-      case .paragraph, .table:
+      case .paragraph, .table, .code:
         break
       }
     }
