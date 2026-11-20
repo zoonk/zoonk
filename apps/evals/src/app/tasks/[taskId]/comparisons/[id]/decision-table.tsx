@@ -83,13 +83,11 @@ function DeliveryByLanguage({
     return null;
   }
 
-  return (
-    <span className="text-muted-foreground block text-xs">
-      {languages
-        .map(([language, delivery]) => `${languageName(language)} ${value(delivery)}`)
-        .join(" · ")}
+  return languages.map(([language, delivery]) => (
+    <span className="text-muted-foreground block text-xs" key={language}>
+      {languageName(language)} <span className="font-mono">{value(delivery)}</span>
     </span>
-  );
+  ));
 }
 
 function FactRow({
@@ -122,11 +120,16 @@ function preferredCell(row: Row) {
 }
 
 function deliveredCell(row: Row) {
-  const delivered = `${row.succeeded} of ${row.attempted}`;
-
-  return row.missingMatches > 0
-    ? `${delivered} · ${plural(row.missingMatches, "missing match", "missing matches")}`
-    : delivered;
+  return (
+    <>
+      {row.succeeded} of {row.attempted}
+      {row.missingMatches > 0 && (
+        <span className="text-muted-foreground block text-xs">
+          {plural(row.missingMatches, "missing match", "missing matches")}
+        </span>
+      )}
+    </>
+  );
 }
 
 function costCell(row: Row) {
@@ -138,15 +141,11 @@ function costCell(row: Row) {
   );
 }
 
-function waitText(delivery: { p50: number | null; p95: number | null }) {
-  return `${formatSeconds(delivery.p50)} / ${formatSeconds(delivery.p95)}`;
-}
-
-function waitCell(row: Row) {
+function waitCell(row: Row, percentile: "p50" | "p95") {
   return (
     <>
-      <span className="font-mono">{waitText(row)}</span>
-      <DeliveryByLanguage row={row} value={waitText} />
+      <span className="font-mono">{formatSeconds(row[percentile])}</span>
+      <DeliveryByLanguage row={row} value={(delivery) => formatSeconds(delivery[percentile])} />
     </>
   );
 }
@@ -223,7 +222,8 @@ export function DecisionTable({
 
           <GroupRow label="Delivery" />
           <FactRow cell={costCell} label="Cost per 1,000" rows={rows} />
-          <FactRow cell={waitCell} label="Wait, typical / slowest (p50 / p95)" rows={rows} />
+          <FactRow cell={(row) => waitCell(row, "p50")} label="Typical wait (p50)" rows={rows} />
+          <FactRow cell={(row) => waitCell(row, "p95")} label="Slowest wait (p95)" rows={rows} />
         </TableBody>
       </Table>
 
