@@ -8,6 +8,7 @@ import { DEFAULT_LESSON_MINUTES } from "./plan-units";
 import { type ExamSubjectShare, getWholeShortfall } from "./selected-coverage";
 import { getCoverageDeadline } from "./selected-plan-summary";
 import { type SkillRequirement, listSettled, readLeastRequirement } from "./selected-requirement";
+import { getMinimumWritingCost } from "./writing-allocation";
 
 /** Room the floor leaves for lesson time it can't see, so it never rises above a time that fits. */
 const UNSEEN_SHARE = 0.05;
@@ -28,9 +29,12 @@ function getLessonRoom({
   const { describeDay } = createDays({ input: at, planStart: getPlanStart(at) });
   const days = Math.max(0, daysBetween(input.today, targetDate));
 
-  return Array.from({ length: days }, (_, offset) =>
+  const shapes = Array.from({ length: days }, (_, offset) =>
     describeDay(addDays(input.today, offset)),
-  ).reduce((room, day) => room + Math.max(0, day.minutes) * day.share, 0);
+  );
+
+  const room = shapes.reduce((total, day) => total + Math.max(0, day.minutes) * day.share, 0);
+  return room - getMinimumWritingCost({ days: shapes, input: at });
 }
 
 /** A lesson laid out past the last day's room lands on its own day, so one can count beyond the room. */

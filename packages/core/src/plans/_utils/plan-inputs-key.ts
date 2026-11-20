@@ -49,6 +49,7 @@ const KEYED_FIELDS = {
     "Raw day rollover is not news; missed work settles separately and rescue eligibility is keyed.",
   todayShown: "Whether the learner saw today's session: the saved plan's today, as it is.",
   topicLevels: true,
+  writing: true,
 } satisfies Record<keyof BuildPlanInput, string | true>;
 
 const PLANNED_FIELDS = new Set(
@@ -139,6 +140,8 @@ function hashKeyed(value: unknown): string {
 }
 
 function readKeyedInput(input: BuildPlanInput) {
+  const { writingSchedule: _schedule, ...settings } = input.settings ?? {};
+
   return {
     ...input,
     bossFacts: input.bossFacts && {
@@ -148,7 +151,7 @@ function readKeyedInput(input: BuildPlanInput) {
     },
     graph: input.graph && withoutPlannedLessons(input.graph),
     lessons: input.lessons && toKeyedLessons(input.lessons),
-    settings: input.settings && { ...input.settings, checkpointOverflow: [] },
+    settings: input.settings && { ...settings, checkpointOverflow: [] },
   };
 }
 

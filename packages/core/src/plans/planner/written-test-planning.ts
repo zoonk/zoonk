@@ -9,6 +9,48 @@ import {
   toIsoDate,
 } from "./plan-calendar";
 
+export function listWrittenPapers(structure: ExamStructure) {
+  const sections = structure.mock?.sections.filter(({ kind }) => kind === "written") ?? [];
+
+  return [...Map.groupBy(sections, (section) => section.day)].flatMap(([day, written]) => {
+    const tasks = listWrittenTasks({ day, structure });
+    const minutes = written.reduce((sum, section) => sum + (section.minutes ?? 0), 0);
+
+    const official =
+      tasks.length > 0 && tasks.every((task) => task.minutes !== null) && minutes > 0;
+
+    return official
+      ? [{ day, minutes, tasks, title: written.map(({ name }) => name).join(" / ") }]
+      : [];
+  });
+}
+
+export function scheduleWrittenPapers<Paper extends { minutes: number }>({
+  studyDays,
+  targetDate,
+  tests,
+}: {
+  studyDays: readonly { date: string; minutes: number }[];
+  targetDate: Date;
+  tests: readonly Paper[];
+}): Map<string, Paper> {
+  const schedule = new Map<string, Paper>();
+
+  for (const paper of tests) {
+    const dates = pickWrittenTestDays({
+      sectionMinutes: paper.minutes,
+      studyDays: studyDays.filter(({ date }) => !schedule.has(date)),
+      targetDate,
+    });
+
+    for (const date of dates) {
+      schedule.set(date, paper);
+    }
+  }
+
+  return schedule;
+}
+
 export function getScheduledWrittenTest({
   calendar,
   excludes,
@@ -28,8 +70,7 @@ export function getScheduledWrittenTest({
     return null;
   }
 
-  const sections = structure.mock?.sections.filter(({ kind }) => kind === "written") ?? [];
-  const papers = [...Map.groupBy(sections, (section) => section.day)];
+  const papers = listWrittenPapers(structure);
 
   if (papers.length === 0) {
     return null;
@@ -49,20 +90,6 @@ export function getScheduledWrittenTest({
   );
 
   return (
-    papers.flatMap(([day, written]) => {
-      const tasks = listWrittenTasks({ day, structure });
-      const minutes = written.reduce((sum, section) => sum + (section.minutes ?? 0), 0);
-
-      const official =
-        tasks.length > 0 && tasks.every((task) => task.minutes !== null) && minutes > 0;
-
-      const dates = official
-        ? pickWrittenTestDays({ sectionMinutes: minutes, studyDays, targetDate })
-        : [];
-
-      return dates.includes(toIsoDate(today))
-        ? [{ day, minutes, title: written.map(({ name }) => name).join(" / ") }]
-        : [];
-    })[0] ?? null
+    scheduleWrittenPapers({ studyDays, targetDate, tests: papers }).get(toIsoDate(today)) ?? null
   );
 }

@@ -48,7 +48,11 @@ describe("studying everything after an exam (R14)", () => {
     vi.useRealTimers();
   });
 
-  it.each([100, 30])("keeps Ana's pre-exam schedule at %i minutes a day", async (minutes) => {
+  it.each([
+    { fits: true, minutes: 150 },
+    { fits: false, minutes: 100 },
+    { fits: false, minutes: 30 },
+  ])("keeps Ana's pre-exam schedule at $minutes minutes a day", async ({ fits, minutes }) => {
     const copyKey = randomUUID();
 
     const copy = await seedPersonaCopy({
@@ -95,13 +99,15 @@ describe("studying everything after an exam (R14)", () => {
     }
 
     expect(beforeExam(on.built)).toStrictEqual(beforeExam(off.built));
-    expect(off.feasibility.fits).toBe(minutes === 100);
+
+    expect(on.built.writingSchedule).toStrictEqual(off.built.writingSchedule);
+    expect(off.feasibility.fits).toBe(fits);
     expect(on.feasibility.fits).toBe(off.feasibility.fits);
     expect(on.built.droppedSkillIds).toStrictEqual([]);
   });
 
   it.each([
-    { exam: EXAM, fits: true, minutes: 100 },
+    { exam: EXAM, fits: true, minutes: 150 },
     { exam: "2026-11-15", fits: false, minutes: 120 },
     { exam: "2026-11-15", fits: false, minutes: 30 },
   ])(

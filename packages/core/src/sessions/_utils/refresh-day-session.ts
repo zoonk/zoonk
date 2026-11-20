@@ -70,6 +70,22 @@ function withoutKept({
   const isNewLesson = (lesson: { lessonId: string | null }) =>
     !lesson.lessonId || !lessonIds.has(lesson.lessonId);
 
+  const writtenTasks = new Map<string, number>();
+
+  for (const block of kept) {
+    const { extra, writing } = readBlockPayload(block);
+
+    if (!extra && writing?.unit === "answer") {
+      writtenTasks.set(writing.taskKey, (writtenTasks.get(writing.taskKey) ?? 0) + 1);
+    }
+  }
+
+  const produces = input.produces.filter(({ taskKey }) => {
+    const count = writtenTasks.get(taskKey) ?? 0;
+    writtenTasks.set(taskKey, count - 1);
+    return count <= 0;
+  });
+
   return {
     ...input,
     capsules: kinds.has("review") ? [] : input.capsules,
@@ -86,7 +102,7 @@ function withoutKept({
     practice: input.practice.filter((item) => !itemIds.has(item.itemId)),
     // A day that keeps its practice gives the rest of its time to lessons.
     practiceShare: kinds.has("practice") ? 0 : input.practiceShare,
-    produce: kinds.has("produce") ? null : input.produce,
+    produces,
     usedMinutes: getSessionUsedMinutes(kept),
   };
 }

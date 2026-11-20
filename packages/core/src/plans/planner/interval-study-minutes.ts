@@ -85,7 +85,7 @@ export function getUnitStudy({
   dueDate: Date;
   overflowShare: number;
   start: number;
-  unit: Pick<QueueUnit, "kind" | "minutes">;
+  unit: Pick<QueueUnit, "kind" | "minutes" | "teachingShare">;
 }): { studyMinutes: number; studyPortions: StudyPortion[] } {
   if (unit.kind === "boss") {
     return {
@@ -120,7 +120,13 @@ export function getUnitStudy({
 
   return {
     studyMinutes: studyPortions.reduce((total, portion) => total + portion.minutes, 0),
-    studyPortions,
+    studyPortions:
+      unit.teachingShare === undefined
+        ? studyPortions
+        : studyPortions.map((portion) => ({
+            ...portion,
+            lessonMinutes: portion.lessonMinutes * (unit.teachingShare ?? 1),
+          })),
   };
 }
 

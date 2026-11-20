@@ -30,7 +30,14 @@ export function getSkillMinutes({
     ...dropped.map((unit) => ({ covered: unit.fittedMinutes - unit.minutes, total: 0, unit })),
   ].flatMap(({ covered, total, unit }) =>
     unit.kind === "lesson" && unit.skillId
-      ? [{ covered, skillId: unit.skillId, standIn: unit.lessonId === null, total }]
+      ? [
+          {
+            covered: covered * (unit.teachingShare ?? 1),
+            skillId: unit.skillId,
+            standIn: unit.lessonId === null,
+            total: total * (unit.teachingShare ?? 1),
+          },
+        ]
       : [],
   );
 

@@ -4,6 +4,7 @@ import { type ExamPicks, NO_EXAM_PICKS, toChosenStructure } from "../../exams/ch
 import { getWeeklyMockMinutes, listMockClocks } from "../../exams/mocks/mock-plan";
 import { toMockStructure } from "../../exams/mocks/mock-structure";
 import {
+  type ExamStructure,
   examEditionSchema,
   examStructureSchema,
   topicFrequencySchema,
@@ -24,6 +25,7 @@ type ExamFacts = {
   mockMinutes: number;
   shortMockMinutes: number | null;
   topicLevels: TopicLevel[];
+  writingNotice?: { classTest: boolean; structure: ExamStructure };
 };
 
 type NoticeBlueprint = Pick<ExamBlueprint, "edition" | "ownerId" | "structure" | "topicFrequency">;
@@ -70,6 +72,7 @@ async function loadNoticeFacts({
     mockClocks: listMockClocks(structure),
     mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure }),
     shortMockMinutes: ownerId ? getWeeklyMockMinutes({ fullLength: true, structure }) : null,
+    ...(parsed && { writingNotice: { classTest: Boolean(ownerId), structure: parsed } }),
     topicLevels: parsed ? listTopicLevels({ structure: parsed, topicFrequency }) : [],
   };
 }

@@ -27,6 +27,7 @@ export type DayShape = {
   kept?: number;
   reserved?: number;
   share: number;
+  writtenMinutes?: number;
 };
 
 export type ScheduledUnit = QueueUnit & {
@@ -39,6 +40,7 @@ export type ScheduledUnit = QueueUnit & {
 
 export type DroppedUnit = QueueUnit & { fittedMinutes: number };
 export type ScheduledEvent = FixedEvent & { date: Date; phase: number | null };
+type PlacedUnit = { beside?: boolean; dayIndex: number; start: number; unit: QueueUnit };
 
 export type PlanDay = { date: Date; shape: DayShape };
 
@@ -66,9 +68,8 @@ export function getLessonCapacity({ shape }: PlanDay): number {
     .filter((event) => !event.beside)
     .reduce((total, event) => total + event.minutes, 0);
 
-  const capacity = Math.max(0, shape.minutes - eventMinutes) * shape.share;
-
-  return Math.max(0, capacity - (shape.reserved ?? 0));
+  const available = shape.minutes - eventMinutes - (shape.writtenMinutes ?? 0);
+  return Math.max(0, available * shape.share - (shape.reserved ?? 0));
 }
 
 export function getCumulativeCapacity(days: readonly PlanDay[]): number[] {
@@ -77,8 +78,6 @@ export function getCumulativeCapacity(days: readonly PlanDay[]): number[] {
     return sums;
   }, []);
 }
-
-type PlacedUnit = { beside?: boolean; dayIndex: number; start: number; unit: QueueUnit };
 
 function getDayEnd({ cumulative, used }: { cumulative: readonly number[]; used: number }) {
   if (used <= PLAN_EPSILON) {

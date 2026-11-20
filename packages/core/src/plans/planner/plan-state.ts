@@ -103,6 +103,22 @@ const baseChoiceSchema = z.object({
   skillId: z.string(),
 });
 
+const scheduledAnswerSchema = z.object({
+  minutes: z.number().positive(),
+  pacing: z.enum(["estimated", "official", "personal", "practice"]).optional(),
+  placement: z.boolean().optional(),
+  taskKey: z.string(),
+  title: z.string(),
+  unit: z.literal("answer"),
+});
+
+const writingDaySchema = z.object({
+  date: isoDateSchema,
+  minutes: z.number().positive(),
+  tasks: z.array(scheduledAnswerSchema),
+  test: z.object({ day: z.number().nullable(), title: z.string() }).optional(),
+});
+
 /** `weekdayMinutes` is Sunday first, 0 for rest days; null gives every day the daily minutes. */
 const planSettingsSchema = z.object({
   baseChoices: z.array(baseChoiceSchema).default([]),
@@ -147,6 +163,7 @@ const planSettingsSchema = z.object({
     .length(DAYS_PER_WEEK)
     .nullable()
     .default(null),
+  writingSchedule: z.array(writingDaySchema).optional(),
   writtenCadence: z.enum(WRITTEN_CADENCES).default("weekly"),
 });
 
