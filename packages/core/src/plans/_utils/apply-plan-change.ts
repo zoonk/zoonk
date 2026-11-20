@@ -11,7 +11,7 @@ import { getFocusTargets } from "../planner/focus-targets";
 import { toIsoDate } from "../planner/plan-calendar";
 import { needsApproval } from "../planner/plan-effect";
 import { type PlanChangeRefusal } from "../planner/plan-operations";
-import { type PlanGraph, type PlanState } from "../planner/plan-state";
+import { type PlanState } from "../planner/plan-state";
 import { commitPlan } from "./commit-plan";
 import { computeChange } from "./compute-change";
 import { followPlanToday } from "./follow-plan-today";
@@ -279,17 +279,11 @@ async function findOfficialDate({
   });
 }
 
-export type NoticeChange = {
-  edition: string | null;
-  graph: PlanGraph | null;
-  noticeId: string | null;
-};
-
 export async function proposeChange({
   approval = "whenLarge",
   context,
   extraWrites,
-  notice = null,
+  noticeId = null,
   operations,
   payload,
   provenance = null,
@@ -297,10 +291,10 @@ export async function proposeChange({
   source,
 }: Omit<ChangeRequest, "writesWithSave"> & {
   approval?: "always" | "whenLarge";
-  notice?: NoticeChange | null;
+  noticeId?: string | null;
   payload?: Pick<PlanChangePayload, "releaseId">;
 }): Promise<AppliedChange | UnchangedPlan | { status: "notDue" | "saved" }> {
-  const result = await applyChangeOperations({ context, noticeGraph: notice?.graph, operations });
+  const result = await applyChangeOperations({ context, operations });
 
   if ("error" in result) {
     return { error: result.error, status: "invalid" };
@@ -337,9 +331,7 @@ export async function proposeChange({
     payload: toPlanChangePayload({
       ...payload,
       effect: change.effect,
-      noticeEdition: notice?.edition ?? null,
-      noticeGraph: notice?.graph ?? null,
-      noticeId: notice?.noticeId ?? null,
+      noticeId,
       officialDate,
       operations: [...operations],
       previewBasis: getPlanPreviewBasis(context),

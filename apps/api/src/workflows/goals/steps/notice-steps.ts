@@ -1,8 +1,17 @@
+import { pruneSharedExamGraph } from "@zoonk/core/library/curriculum/exam-graph-repair";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
-import { listNoticeGoals, proposeNoticeChange } from "@zoonk/core/plans/notice-change";
+import {
+  listNoticeGoals,
+  listNoticeRepairBlueprints,
+  proposeNoticeChange,
+  retireWaitingNoticeGraph,
+} from "@zoonk/core/plans/notice-change";
+import { applyNoticeGraph } from "@zoonk/core/plans/notice-graph";
 import { claimNoticeLanding, endNoticeWait } from "@zoonk/core/plans/notice-wait";
 import { logError } from "@zoonk/utils/logger";
+import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
+import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
 export async function claimNoticeLandingStep(goalId: string): Promise<boolean> {
   "use step";
@@ -29,26 +38,37 @@ export async function endNoticeWaitStep(goalId: string): Promise<void> {
   await endNoticeWait(goalId);
 }
 
-export async function proposeNoticeChangeStep({
+export async function applyNoticeGraphStep({
+  blueprintId,
   courseIdsByKey,
+  droppedSkillIds,
   goalId,
-  graph = null,
+  graph,
   idsByKey,
 }: {
-  courseIdsByKey?: Record<string, string>;
+  blueprintId: string;
+  courseIdsByKey: Record<string, string>;
+  droppedSkillIds: string[];
   goalId: string;
-  graph?: GoalSkillGraph | null;
-  idsByKey?: Record<string, string>;
-}): Promise<void> {
+  graph: GoalSkillGraph;
+  idsByKey: Record<string, string>;
+}): Promise<PlanStepOutcome<boolean>> {
   "use step";
 
-  await proposeNoticeChange({
-    goalId,
-    graph:
-      graph && idsByKey && courseIdsByKey
-        ? toGoalPlanGraph({ courseIdsByKey, graph, idsByKey })
-        : null,
-  });
+  return catchPlanConflict(() =>
+    applyNoticeGraph({
+      blueprintId,
+      droppedSkillIds,
+      goalId,
+      graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
+    }),
+  );
+}
+
+export async function proposeNoticeChangeStep({ goalId }: { goalId: string }): Promise<void> {
+  "use step";
+
+  await proposeNoticeChange({ goalId });
 }
 
 export async function listNoticeGoalsStep(input: {
@@ -61,17 +81,41 @@ export async function listNoticeGoalsStep(input: {
   return listNoticeGoals(input);
 }
 
-export async function proposeNoticeDatesStep({
+export async function updateNoticePlansStep({
+  blueprintId,
   goalIds,
+  movesExamDays,
   noticeId,
 }: {
+  blueprintId: string;
   goalIds: string[];
+  movesExamDays: boolean;
   noticeId: string | null;
 }): Promise<void> {
   "use step";
 
   for (const goalId of goalIds) {
     // oxlint-disable-next-line no-await-in-loop -- Each re-plans a goal; one at a time spares the database.
-    await proposeNoticeChange({ goalId, noticeId });
+    await applyNoticeGraph({ blueprintId, goalId });
+
+    if (movesExamDays) {
+      // oxlint-disable-next-line no-await-in-loop -- The date proposal reads the graph after it settles.
+      await proposeNoticeChange({ goalId, noticeId });
+    } else {
+      // oxlint-disable-next-line no-await-in-loop -- Replace any old graph proposal after settling the plan.
+      await retireWaitingNoticeGraph(goalId);
+    }
   }
+}
+
+export async function listNoticeRepairBlueprintsStep(after: string | null): Promise<string[]> {
+  "use step";
+
+  return listNoticeRepairBlueprints(after);
+}
+
+export async function pruneSharedExamGraphStep(blueprintId: string): Promise<boolean> {
+  "use step";
+
+  return pruneSharedExamGraph(blueprintId);
 }

@@ -17,7 +17,7 @@ import {
   mockSearchTermsFor,
   uniqueWord,
 } from "../identity/_test-utils/identity-mocks";
-import { addMissingExamGraphSkills } from "./exam-graph-repair";
+import { addMissingExamGraphSkills, pruneSharedExamGraph } from "./exam-graph-repair";
 
 const provenance = {
   generatedAt: new Date().toISOString(),
@@ -205,5 +205,54 @@ describe(addMissingExamGraphSkills, () => {
 
     await expect(addMissingExamGraphSkills(blueprint.id)).resolves.toStrictEqual([]);
     expect(checkCoverage).not.toHaveBeenCalled();
+  });
+});
+
+describe(pruneSharedExamGraph, () => {
+  it("prunes a shared graph once and keeps an independently stored extra", async () => {
+    const { blueprint, graph } = await writtenGraph();
+
+    const [outside, extra] = await Promise.all([
+      skillFixture({ language: "pt", name: "Lógica do concurso anterior" }),
+      skillFixture({ language: "pt", name: "Administrar o tempo de prova" }),
+    ]);
+
+    const [first] = graph.skills;
+
+    if (!first) {
+      throw new Error("Expected a notice skill");
+    }
+
+    const strategy = {
+      ...first,
+      area: "Estratégia de prova",
+      name: extra.name,
+      skillId: extra.id,
+      topics: [],
+      weight: null,
+    };
+
+    await prisma.examSkillGraph.update({
+      data: {
+        graph: {
+          ...graph,
+          extraSkills: [strategy],
+          skills: [
+            ...graph.skills,
+            { ...first, area: "Lógica", name: outside.name, skillId: outside.id, topics: [] },
+          ],
+        },
+      },
+      where: { examBlueprintId: blueprint.id },
+    });
+
+    await expect(pruneSharedExamGraph(blueprint.id)).resolves.toBe(true);
+    await expect(pruneSharedExamGraph(blueprint.id)).resolves.toBe(false);
+
+    const saved = await prisma.examSkillGraph.findUniqueOrThrow({
+      where: { examBlueprintId: blueprint.id },
+    });
+
+    expect(parsePlanGraph(saved.graph)).toStrictEqual({ ...graph, extraSkills: [strategy] });
   });
 });

@@ -34,9 +34,30 @@ test.describe("Today's mandatory notice acknowledgment API", () => {
     await expect(prisma.studySession.count({ where: { userId } })).resolves.toBe(0);
 
     const notice = await planChangeFixture({
-      kind: "missedDays",
+      kind: "noticeChanged",
+      payload: {
+        effect: {
+          endDateAfter: null,
+          endDateBefore: null,
+          lessonsAdded: 0,
+          lessonsRemoved: 1,
+          noticeRemoved: ["English"],
+        },
+        source: "notice",
+      },
       planId: fixture.plan.id,
       status: "applied",
+    });
+
+    const reading = await api.get(`/v1/today?goalId=${fixture.goal.id}&timeZone=UTC`);
+    expect(reading.status(), await reading.text()).toBe(200);
+
+    expect(todayResponseSchema.parse(await reading.json()).planChange).toMatchObject({
+      canApply: false,
+      canUndo: false,
+      effect: { noticeRemoved: ["English"] },
+      id: notice.id,
+      kind: "noticeChanged",
     });
 
     const input = { changeId: notice.id, kind: "stored" };

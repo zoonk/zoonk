@@ -40,23 +40,31 @@ export function getLinkSubject(goal: LinkedPlan["goal"]): PlanLinkOutline["subje
 }
 
 export async function keepPublicGraph(graph: PlanGraph): Promise<PlanGraph> {
+  const candidates = [...graph.skills, ...(graph.extraSkills ?? [])];
+
   const publicSkills = await prisma.skill.findMany({
     select: { id: true },
     where: {
       NOT: { identityKey: { startsWith: SETUP_SKILL_KEY_PREFIX } },
-      id: { in: graph.skills.map((skill) => skill.skillId) },
+      id: { in: candidates.map((skill) => skill.skillId) },
       visibility: "public",
     },
   });
 
   const publicIds = new Set(publicSkills.map((skill) => skill.id));
-  const skills = graph.skills.filter((skill) => publicIds.has(skill.skillId));
+  const isPublic = (skill: PlanGraph["skills"][number]) => publicIds.has(skill.skillId);
+  const skills = graph.skills.filter((skill) => isPublic(skill) && !skill.extra);
 
   const kept = graph.phases.flatMap((phase, index) =>
     skills.some((skill) => skill.phase === index) ? [index] : [],
   );
 
+  const extraSkills = graph.extraSkills
+    ?.filter((skill) => isPublic(skill))
+    .map((skill) => ({ ...skill, phase: Math.max(0, kept.length - 1) }));
+
   return {
+    ...(extraSkills?.length && { extraSkills }),
     phases: kept.flatMap((index) => graph.phases[index] ?? []),
     skills: skills.map((skill) => ({ ...skill, phase: kept.indexOf(skill.phase) })),
   };

@@ -5,6 +5,7 @@ import {
   findUncoveredTopics,
   isWrittenTestSubject,
 } from "@zoonk/ai/tasks/curriculum/exam-outline";
+import { matchNoticeAreas } from "../../exams/_utils/match-areas";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 type Coverage = Awaited<ReturnType<typeof checkCoverage>>["data"];
@@ -161,8 +162,13 @@ function isWrittenTestArea({
   area: string | null | undefined;
   outline?: ExamOutline;
 }): boolean {
-  const subject = outline?.subjects.find((item) => item.name === area);
-  return Boolean(subject && isWrittenTestSubject(subject));
+  if (!area || !outline) {
+    return false;
+  }
+
+  const { named, parts } = matchNoticeAreas({ areas: [area], subjects: outline.subjects });
+  const subject = outline.subjects[named.get(area) ?? -1];
+  return parts.has(area) || Boolean(subject && isWrittenTestSubject(subject));
 }
 
 function addCoverageSkills({
@@ -219,9 +225,11 @@ function reweightExamSkills({
 
 function placeExamSkills({
   graph,
+  outline,
   placements,
 }: {
   graph: GoalSkillGraph;
+  outline?: ExamOutline;
   placements: readonly Coverage["placements"][number][];
 }): GoalSkillGraph {
   if (placements.length === 0) {
@@ -234,7 +242,16 @@ function placeExamSkills({
     ...graph,
     skills: graph.skills.map((skill) => {
       const place = places.get(skill.key);
-      return place ? { ...skill, area: place.area, topics: place.topics } : skill;
+
+      return place
+        ? {
+            ...skill,
+            area: place.area,
+            topics: place.topics,
+            topicsUnknown: false,
+            ...(isWrittenTestArea({ area: place.area, outline }) && { outcome: true }),
+          }
+        : skill;
     }),
   };
 }
@@ -284,7 +301,11 @@ export function applyGraphCoverage({
   const { examWeights, missing, placements } = coverage;
 
   const checked = addCoverageSkills({
-    graph: placeExamSkills({ graph: reweightExamSkills({ examWeights, graph }), placements }),
+    graph: placeExamSkills({
+      graph: reweightExamSkills({ examWeights, graph }),
+      outline,
+      placements,
+    }),
     missing,
     outline,
   });

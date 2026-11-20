@@ -1,5 +1,9 @@
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
-import { listNoticeGoalsStep, proposeNoticeDatesStep } from "../goals/steps/notice-steps";
+import {
+  listNoticeGoalsStep,
+  pruneSharedExamGraphStep,
+  updateNoticePlansStep,
+} from "../goals/steps/notice-steps";
 import { type ResearchAnalytics } from "./_utils/research-analytics";
 import { extractBlueprint } from "./steps/extract-blueprint-step";
 import { findNoticeReadingStep } from "./steps/is-notice-read-step";
@@ -12,15 +16,19 @@ export function describeExam(identity: ExamIdentity): string {
   return identity.role ? `${identity.name}, ${identity.role}` : identity.name;
 }
 
-async function proposeNoticeDates({
+export async function updateExamNoticePlans({
   examBlueprintId,
   exceptGoalId,
+  movesExamDays,
   noticeId,
 }: {
   examBlueprintId: string;
   exceptGoalId: string | null;
+  movesExamDays: boolean;
   noticeId: string | null;
 }): Promise<void> {
+  await pruneSharedExamGraphStep(examBlueprintId);
+
   let after: string | null = null;
 
   do {
@@ -28,7 +36,13 @@ async function proposeNoticeDates({
     const page = await listNoticeGoalsStep({ after, examBlueprintId, exceptGoalId });
 
     // oxlint-disable-next-line no-await-in-loop -- One page at a time spares the database.
-    await proposeNoticeDatesStep({ goalIds: page.goalIds, noticeId });
+    await updateNoticePlansStep({
+      blueprintId: examBlueprintId,
+      goalIds: page.goalIds,
+      movesExamDays,
+      noticeId,
+    });
+
     after = page.next;
   } while (after);
 }
@@ -99,13 +113,12 @@ export async function readExamBlueprint({
 
   await refreshFollowerSummariesStep(saved.examBlueprintId);
 
-  if (saved.movesExamDays) {
-    await proposeNoticeDates({
-      examBlueprintId: saved.examBlueprintId,
-      exceptGoalId,
-      noticeId: saved.noticeId,
-    });
-  }
+  await updateExamNoticePlans({
+    examBlueprintId: saved.examBlueprintId,
+    exceptGoalId,
+    movesExamDays: saved.movesExamDays,
+    noticeId: saved.noticeId,
+  });
 
   return saved;
 }
