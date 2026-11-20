@@ -47,10 +47,12 @@ const coverageSchema = z.object({
   deadline: z.iso.date(),
   fits: z.boolean(),
   measure: z.enum(["exam", "goal"]),
+  reachedShare: z.number().min(0).max(1),
   shortLessons: z.array(shortLessonSchema),
   skills: z.array(
     z.object({
       coveredRaw: minutesSchema,
+      inPlan: z.boolean(),
       requiredRaw: minutesSchema,
       skillId: z.string(),
       state: z.enum(["measured", "settled", "unknown"]),

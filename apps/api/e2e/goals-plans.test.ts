@@ -436,6 +436,8 @@ test.describe("Goals and plans API", () => {
 
     expect(advice).toMatchObject({ measure: "goal", ready: true, targetDate });
     expect(advice.coveredShare).toBeLessThan(1);
+    expect(advice.reachedShare).not.toBeNull();
+    expect(advice.reachedShare).toBeGreaterThanOrEqual(advice.coveredShare ?? 0);
     expect(advice.numbers).not.toBeNull();
     expect(advice.numbers?.context).toMatchObject({ dailyMinutes: 12, targetDate });
 
@@ -478,6 +480,7 @@ test.describe("Goals and plans API", () => {
 
     expect(time).toMatchObject({ ready: true, targetDate });
     expect(time.recommendedMinutes).toBeGreaterThan(12);
+    expect(time.suggested).toMatchObject({ everyTopic: true, kind: "everything", reachedShare: 1 });
 
     await expect(
       readBody({ response: foundWeekdays, schema: planTimeToCoverSchema }),
@@ -497,6 +500,20 @@ test.describe("Goals and plans API", () => {
         schema: planTimeAdviceSchema,
       }),
     ).resolves.toMatchObject({ coveredShare: advice.coveredShare });
+
+    await readBody({
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
+        data: { operations: [{ kind: "setDailyMinutes", minutes: time.recommendedMinutes }] },
+      }),
+      schema: planChangeResultSchema,
+    });
+
+    await expect(
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
+        schema: planResponseSchema,
+      }),
+    ).resolves.toMatchObject({ feasibility: { coreFits: true, fits: true, reachedShare: 1 } });
 
     await apiContext.dispose();
   });

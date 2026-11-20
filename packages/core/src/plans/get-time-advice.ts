@@ -7,7 +7,7 @@ import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboardi
 import { getCourseFinish } from "./_utils/course-finish";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
-import { toShownShare } from "./_utils/plan-feasibility-view";
+import { toShownCoverage } from "./_utils/plan-feasibility-view";
 import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { readPlanReadiness } from "./_utils/plan-readiness";
 import { loadPlanAtToken } from "./_utils/plan-token";
@@ -80,16 +80,6 @@ function toDayMinutes({ day, minutes }: { day: SharedDay; minutes: number | null
 function toMostDay({ day, most }: { day: SharedDay; most: MostCoverage | null }) {
   const minutes = toDayMinutes({ day, minutes: most?.minutes ?? null });
   return most && minutes !== null ? { coveredShare: most.coveredShare, minutes } : null;
-}
-
-function getSearchWeekdayMinutes({
-  input,
-  state,
-}: {
-  input: PlanTimeToCoverInput;
-  state: PlanState;
-}): number {
-  return input.weekendMinutes === undefined ? state.goal.dailyMinutes : MIN_DAILY_MINUTES;
 }
 
 function withStudyWeek({
@@ -203,6 +193,7 @@ export async function getPlanTimeAdvice({
         fullCourseEndDate: null,
         measure: "goal",
         numbers: null,
+        reachedShare: null,
         readingNotice: asked.readingNotice,
         ready: false,
         targetDate: null,
@@ -238,12 +229,15 @@ export async function getPlanTimeAdvice({
   ]);
 
   const { feasibility } = computed;
+  const { coreFits, coveredShare, fits, reachedShare } = feasibility;
   const end = computed.built.estimate.endDate;
   const targetDate = context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null;
 
   return {
     advice: {
-      coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
+      ...(reachedShare === null
+        ? { coveredShare: null, reachedShare: null }
+        : toShownCoverage({ coreFits, coveredShare, fits, reachedShare })),
       endDate: getCourseFinish(computed),
       focusSubjects:
         feasibility.deadline !== null && !feasibility.fits ? readFocusSubjects(context.goal) : [],
@@ -301,12 +295,15 @@ export async function findPlanTimeToCover({
   const week = toGoalWeek({ day, week: input });
   const stateAt = (dailyMinutes: number) => withStudyWeek({ context, dailyMinutes, input: week });
 
+  const searchStart =
+    week.weekendMinutes === undefined ? context.state.goal.dailyMinutes : MIN_DAILY_MINUTES;
+
   const [computed, dateKind] = await Promise.all([
     computePlan({
       context,
       mode: "forced",
       pace: "saved",
-      state: stateAt(getSearchWeekdayMinutes({ input: week, state: context.state })),
+      state: stateAt(searchStart),
       studyScheduleAt: (dailyMinutes) => {
         const state = stateAt(dailyMinutes);
 

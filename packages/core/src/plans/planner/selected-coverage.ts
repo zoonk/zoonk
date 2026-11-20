@@ -1,8 +1,8 @@
 import { type SelectedCoverage } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
-import { hasEveryTopic } from "./feasibility-topics";
-import { getAreaFoundationIds, getSkillArea } from "./graph-areas";
+import { readTopicMembership } from "./feasibility-topics";
+import { getHarderStartSkillIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
 import { type PlannedItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
@@ -13,6 +13,9 @@ export type ExamSubjectShare = { areas: readonly string[]; share: number };
 type ScopedSkill = { area: string; skillId: string; weight: number };
 
 type SelectedSkill = SelectedCoverage["skills"][number];
+
+// A missing topic can carry no weight, so the weighted ratio alone can reach 1.
+const LARGEST_PARTIAL_SHARE = 1 - Number.EPSILON / 2;
 
 function getExamWorth({
   examSubjects,
@@ -40,16 +43,11 @@ function listScope({
   examSubjects: readonly ExamSubjectShare[] | null;
   input: BuildPlanInput;
 }) {
-  const missed = input.missedSkillIds ?? new Set<string>();
   const skippedAreas = new Set(input.settings.skippedAreas);
 
   const choices = getBaseChoices({ bases: input.bases ?? [], choices: getKeptBaseChoices(input) });
 
-  const pastBasics = getAreaFoundationIds({
-    areas: new Set(input.settings.pastBasicsAreas),
-    graph: input.graph,
-    prerequisites: input.prerequisites,
-  });
+  const pastBasics = getHarderStartSkillIds(input);
 
   const skills = input.graph.skills
     .map((skill) => ({
@@ -61,7 +59,7 @@ function listScope({
       (skill) =>
         !skippedAreas.has(skill.area) &&
         choices.get(skill.skillId) !== "skip" &&
-        (!pastBasics.has(skill.skillId) || missed.has(skill.skillId)),
+        !pastBasics.has(skill.skillId),
     );
 
   const examWorth = examSubjects ? getExamWorth({ examSubjects, skills }) : null;
@@ -226,6 +224,39 @@ export function getSkillValue(skill: SelectedSkill): number {
   return skill.state === "unknown" ? 0 : Math.min(1, skill.coveredRaw / skill.requiredRaw);
 }
 
+export function measureCoverage(skills: readonly SelectedSkill[]) {
+  const { coreFits, covered, reached, total } = skills.reduce(
+    (coverage, skill) => {
+      const value = getSkillValue(skill);
+      const isReached = skill.inPlan || value > 0;
+
+      return {
+        coreFits: coverage.coreFits && isReached,
+        covered: coverage.covered + skill.worth * value,
+        reached: coverage.reached + (isReached ? skill.worth : 0),
+        total: coverage.total + skill.worth,
+      };
+    },
+    { coreFits: true, covered: 0, reached: 0, total: 0 },
+  );
+
+  const whole = skills.every(
+    (skill) =>
+      skill.state === "settled" ||
+      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - PLAN_EPSILON),
+  );
+
+  const limit = coreFits ? 1 : LARGEST_PARTIAL_SHARE;
+  const reachedShare = total > 0 ? Math.min(limit, reached / total) : 0;
+
+  return {
+    coreFits,
+    coveredShare: total > 0 ? Math.min(limit, Math.max(0, covered / total)) : null,
+    fits: coreFits && total > 0 && whole,
+    reachedShare: coreFits ? 1 : reachedShare,
+  };
+}
+
 export function getCoverage({
   built,
   deadline,
@@ -250,6 +281,14 @@ export function getCoverage({
   const lessons = listCoveredLessons({ built, deadline, raw });
   const standIns = listCoveredStandIns({ built, deadline });
 
+  const isInPlan = readTopicMembership({
+    items: built.items.filter(
+      (item) => item.status !== "todo" || sumRawBefore({ built, deadline, item }) > PLAN_EPSILON,
+    ),
+    known: settled,
+    skills: input.graph.skills,
+  });
+
   const skills = scope.skills.map(({ skillId, worth }) => {
     const required = requirement.get(skillId);
     const lessonMinutes = [...(required?.lessons.values() ?? [])].reduce((a, b) => a + b, 0);
@@ -260,11 +299,19 @@ export function getCoverage({
       Math.min(required?.standIn ?? 0, standIns.get(skillId) ?? 0);
 
     if (settled.has(skillId)) {
-      return { coveredRaw: requiredRaw, requiredRaw, skillId, state: "settled" as const, worth };
+      return {
+        coveredRaw: requiredRaw,
+        inPlan: true,
+        requiredRaw,
+        skillId,
+        state: "settled" as const,
+        worth,
+      };
     }
 
     return {
       coveredRaw: Math.min(requiredRaw, coveredRaw),
+      inPlan: isInPlan(skillId),
       requiredRaw,
       skillId,
       state: requiredRaw > PLAN_EPSILON ? ("measured" as const) : ("unknown" as const),
@@ -272,32 +319,10 @@ export function getCoverage({
     };
   });
 
-  const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
-  const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
-
-  const coreFits = hasEveryTopic({
-    built: {
-      ...built,
-      items: built.items.filter(
-        (item) => item.status !== "todo" || sumRawBefore({ built, deadline, item }) > PLAN_EPSILON,
-      ),
-    },
-    known: input.knownSkillIds ?? new Set(),
-    skills: input.graph.skills,
-  });
-
-  const whole = skills.every(
-    (skill) =>
-      skill.state === "settled" ||
-      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - PLAN_EPSILON),
-  );
-
   return {
     basis: "selected",
-    coreFits,
-    coveredShare: total > 0 ? Math.min(1, Math.max(0, covered / total)) : null,
+    ...measureCoverage(skills),
     deadline,
-    fits: coreFits && total > 0 && whole,
     measure: scope.measure,
     shortLessons: listShortLessons({ built, covered: lessons, requirement, skills }),
     skills,

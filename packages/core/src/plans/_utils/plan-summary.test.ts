@@ -17,13 +17,14 @@ const coverage: SelectedCoverage = {
   deadline: "2026-11-01",
   fits: false,
   measure: "goal",
+  reachedShare: 1,
   shortLessons: [
     { countedRaw: 0, lessonId: "after", requiredRaw: 10, skillIds: ["s2"] },
     { countedRaw: 4, lessonId: "shared", requiredRaw: 10, skillIds: ["s1", "s2"] },
   ],
   skills: [
-    { coveredRaw: 14, requiredRaw: 20, skillId: "s1", state: "measured", worth: 1 },
-    { coveredRaw: 4, requiredRaw: 20, skillId: "s2", state: "measured", worth: 1 },
+    { coveredRaw: 14, inPlan: true, requiredRaw: 20, skillId: "s1", state: "measured", worth: 1 },
+    { coveredRaw: 4, inPlan: true, requiredRaw: 20, skillId: "s2", state: "measured", worth: 1 },
   ],
   targetDate: "2026-11-01",
 };
@@ -37,6 +38,7 @@ const summary: PlanSummary = {
       deepensMostAsked: false,
       fits: true,
       measure: "goal",
+      reachedShare: null,
       timeCovers: true,
     },
     fitOffer: null,
@@ -51,7 +53,7 @@ const summary: PlanSummary = {
     timeZone: "America/Sao_Paulo",
     userId: plan.userId,
   },
-  schemaVersion: 4,
+  schemaVersion: 5,
   selected: {
     bases: null,
     coverage,
@@ -175,18 +177,35 @@ describe(reduceCompletedSummary, () => {
     expect(reduction.kind === "reduced" && reduction.summary.selected.coverage?.fits).toBe(true);
   });
 
-  it("keeps a plan short of a topic from fitting, whatever is done", () => {
+  it("reaches a topic when its first lesson finishes past the deadline", () => {
+    const [first, second] = coverage.skills;
+
+    if (!first || !second) {
+      throw new Error("Expected two covered skills");
+    }
+
     const missingTopic = {
       ...summary,
-      selected: { ...summary.selected, coverage: { ...coverage, coreFits: false } },
+      selected: {
+        ...summary.selected,
+        coverage: {
+          ...coverage,
+          coreFits: false,
+          reachedShare: 0.5,
+          skills: [first, { ...second, coveredRaw: 0, inPlan: false }],
+        },
+      },
     };
 
     const reduction = reduceCompletedSummary({
-      completed: [{ lessonId: "shared" }, { lessonId: "after" }],
+      completed: [{ lessonId: "after" }],
       summary: missingTopic,
     });
 
-    expect(reduction.kind === "reduced" && reduction.summary.selected.coverage?.fits).toBe(false);
+    expect(reduction).toMatchObject({
+      kind: "reduced",
+      summary: { selected: { coverage: { coreFits: true, fits: false, reachedShare: 1 } } },
+    });
   });
 
   it("leaves the summary as it is for work it already counted whole", () => {

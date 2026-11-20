@@ -2,6 +2,7 @@ import { type PlanView } from "../plan-view-contract";
 import { daysBetween } from "../planner/plan-calendar";
 import { type PlanSettings } from "../planner/plan-state";
 import { toPlanBasesView } from "./plan-bases-view";
+import { toShownCoverage } from "./plan-feasibility-view";
 import { type PlanReadContext } from "./plan-read-projection";
 import { type PlanSummary } from "./plan-summary";
 
@@ -16,7 +17,10 @@ export function readSavedFeasibility(summary: PlanSummary | null): PlanView["fea
   return {
     ...saved,
     coreFits: coverage.coreFits,
-    coveredShare: Math.round((coverage.coveredShare ?? 1) * 100) / 100,
+    ...toShownCoverage({
+      ...coverage,
+      coveredShare: coverage.coveredShare ?? Number(coverage.coreFits),
+    }),
     fits: coverage.fits,
     timeCovers: coverage.fits || saved.timeCovers,
   };

@@ -390,6 +390,7 @@ describe(getPlanTimeAdvice, () => {
         everyTopic: true,
         kind: "everything",
         minutes: day,
+        reachedShare: 1,
         split,
       });
 
@@ -692,6 +693,7 @@ describe(getPlanTimeAdvice, () => {
 
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({
       coveredShare: picked.coveredShare,
+      reachedShare: picked.reachedShare,
     });
   });
 
@@ -866,6 +868,7 @@ describe(getPlanTimeAdvice, () => {
       fullCourseEndDate: null,
       measure: "goal",
       numbers: null,
+      reachedShare: null,
       readingNotice: false,
       ready: false,
       recommendedMinutes: null,

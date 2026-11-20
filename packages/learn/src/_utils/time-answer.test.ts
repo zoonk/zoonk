@@ -139,7 +139,14 @@ describe("a goal part of which never fits, whatever the time", () => {
     const found = foundTime({
       most: { coveredShare: 0.99, minutes: 195 },
       recommendedMinutes: null,
-      suggested: { coveredShare: 0.99, everyTopic: true, kind: "focus", minutes: 195, split: null },
+      suggested: {
+        coveredShare: 0.99,
+        everyTopic: true,
+        kind: "focus",
+        minutes: 195,
+        reachedShare: 1,
+        split: null,
+      },
     });
 
     const line = getTimeLine({ ...LINE, found, minutes: 195 });

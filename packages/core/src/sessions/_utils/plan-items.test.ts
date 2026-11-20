@@ -32,6 +32,7 @@ async function postedPlan({
         deepensMostAsked: false,
         fits: true,
         measure: "goal",
+        reachedShare: null,
         timeCovers: true,
       },
       fitOffer: null,
@@ -46,7 +47,7 @@ async function postedPlan({
       timeZone: "UTC",
       userId,
     },
-    schemaVersion: 4,
+    schemaVersion: 5,
     selected: {
       bases: null,
       coverage: {
@@ -56,6 +57,7 @@ async function postedPlan({
         deadline: "2026-10-14",
         fits: !short,
         measure: "goal",
+        reachedShare: 1,
         shortLessons: short
           ? lessonIds.map((lessonId) => ({
               countedRaw: 5,
@@ -67,6 +69,7 @@ async function postedPlan({
         skills: [
           {
             coveredRaw: (short ? 5 : 10) * lessonIds.length,
+            inPlan: true,
             requiredRaw: 10 * lessonIds.length,
             skillId: skill.id,
             state: "measured",

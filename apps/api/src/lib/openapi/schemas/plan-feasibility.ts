@@ -25,6 +25,15 @@ export const planFeasibilitySchema = z.object({
       description:
         "exam: a share of the exam's questions and points; goal: of the goal's skills by weight",
     }),
+  reachedShare: z
+    .number()
+    .min(0)
+    .max(1)
+    .nullable()
+    .meta({
+      description:
+        "Share whose topics this plan reaches by the deadline, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null without a deadline.",
+    }),
   timeCovers: z
     .boolean()
     .meta({

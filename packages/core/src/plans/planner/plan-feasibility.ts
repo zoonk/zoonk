@@ -8,7 +8,7 @@ import {
   planAtMinutes,
   withDailyMinutes,
 } from "./daily-time-plans";
-import { deepensMostAsked, hasEveryTopic } from "./feasibility-topics";
+import { deepensMostAsked, readTopicMembership } from "./feasibility-topics";
 import { findFittingDate } from "./fitting-date";
 import { getFittingFloor } from "./fitting-floor";
 import { type MostCoverage, findMostCoverage } from "./most-coverage";
@@ -16,7 +16,7 @@ import { fromIsoDate } from "./plan-calendar";
 import { type ExamSubjectShare, getSkillValue } from "./selected-coverage";
 import { getSelectedCoverage } from "./selected-plan-summary";
 
-export type TimeCoverage = { coreFits: boolean; coveredShare: number };
+export type TimeCoverage = { coreFits: boolean; coveredShare: number; reachedShare: number };
 
 export type PlanFeasibility = {
   alternative: { dailyMinutes: number; endDate: Date | null } | null;
@@ -31,6 +31,7 @@ export type PlanFeasibility = {
   fullCourseEndDate: Date | null;
   measure: "exam" | "goal";
   most: MostCoverage | null;
+  reachedShare: number | null;
   recommendedMinutes: number | null;
   skillFits: ReadonlyMap<string, number>;
   /**
@@ -53,6 +54,16 @@ function toSkillFits(coverage: SelectedCoverage | null): Map<string, number> {
   return new Map(
     (coverage?.skills ?? []).map((skill) => [skill.skillId, getSkillValue(skill)] as const),
   );
+}
+
+function hasEveryTopic({ built, input }: { built: BuiltPlan; input: BuildPlanInput }): boolean {
+  const isInPlan = readTopicMembership({
+    items: built.items,
+    known: input.knownSkillIds ?? new Set(),
+    skills: input.graph.skills,
+  });
+
+  return built.skillMinutes.every(({ skillId }) => isInPlan(skillId));
 }
 
 export function fitsInDepth(input: BuildPlanInput): boolean {
@@ -97,11 +108,10 @@ export function getPlanFeasibility({
   const coverage = getSelectedCoverage({ built: planned, examSubjects, input });
   const deadline = coverage ? fromIsoDate(coverage.deadline) : null;
 
-  const coreFits =
-    coverage?.coreFits ?? hasEveryTopic({ built: planned, known, skills: input.graph.skills });
+  const coreFits = coverage?.coreFits ?? hasEveryTopic({ built: planned, input });
 
   const fits = coverage?.fits ?? coreFits;
-  const coveredShare = coverage?.coveredShare ?? 1;
+  const coveredShare = coverage ? (coverage.coveredShare ?? Number(coreFits)) : 1;
   const skillFits = toSkillFits(coverage);
   const fullCourseEndDate = once(() => (deadline && !fits ? getFullCourseEnd(input) : null));
 
@@ -115,11 +125,13 @@ export function getPlanFeasibility({
   const coverageAt = (dailyMinutes: number): TimeCoverage => {
     const selected = selectedAt(dailyMinutes);
 
+    const everyTopic =
+      selected?.coreFits ?? hasEveryTopic({ built: plannedAt()(dailyMinutes), input });
+
     return {
-      coreFits:
-        selected?.coreFits ??
-        hasEveryTopic({ built: plannedAt()(dailyMinutes), known, skills: input.graph.skills }),
-      coveredShare: selected?.coveredShare ?? 1,
+      coreFits: everyTopic,
+      coveredShare: selected?.coveredShare ?? Number(everyTopic),
+      reachedShare: selected?.reachedShare ?? Number(everyTopic),
     };
   };
 
@@ -179,6 +191,7 @@ export function getPlanFeasibility({
     get most() {
       return most();
     },
+    reachedShare: coverage?.reachedShare ?? null,
     get recommendedMinutes() {
       return recommendedMinutes();
     },

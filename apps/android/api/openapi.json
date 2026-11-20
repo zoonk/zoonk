@@ -85389,6 +85389,13 @@
                 ],
                 "description": "exam: a share of the exam's questions and points; goal: of the goal's skills by weight"
               },
+              "reachedShare": {
+                "nullable": true,
+                "description": "Share whose topics this plan reaches by the deadline, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null without a deadline.",
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
               "timeCovers": {
                 "type": "boolean",
                 "description": "The learner's own daily time covers everything once the plan is planned again at it, even while `fits` is false (the plan holds less than their time fits): `fitOffer` keeps their daily time. False without a deadline"
@@ -85401,6 +85408,7 @@
               "deepensMostAsked",
               "fits",
               "measure",
+              "reachedShare",
               "timeCovers"
             ],
             "additionalProperties": false
@@ -87086,6 +87094,13 @@
               }
             ]
           },
+          "reachedShare": {
+            "nullable": true,
+            "description": "Share whose topics the requested time and study week reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null without a date or while not ready.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
           "readingNotice": {
             "default": false,
             "description": "True while the plan waits for the exam's official documents to be read, which can change the time it needs: ready stays false until the reading lands or the plan's wait for it ends",
@@ -87114,6 +87129,7 @@
           "fullCourseEndDate",
           "measure",
           "numbers",
+          "reachedShare",
           "readingNotice",
           "ready",
           "targetDate",
@@ -87204,6 +87220,12 @@
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
               },
+              "reachedShare": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Share whose topics these minutes reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise."
+              },
               "split": {
                 "default": null,
                 "description": "How these minutes split among the goals typed together, as saving the schedule splits them. Null for a goal typed alone, or when asked without studyDays",
@@ -87242,6 +87264,7 @@
               "everyTopic",
               "kind",
               "minutes",
+              "reachedShare",
               "split"
             ],
             "additionalProperties": false
