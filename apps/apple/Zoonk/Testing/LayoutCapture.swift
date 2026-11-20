@@ -789,6 +789,14 @@
       cells = found
     }
 
+    private init(cells: [Cell]) {
+      self.cells = cells
+    }
+
+    func filter(_ isIncluded: (Cell) -> Bool) -> ListCells {
+      ListCells(cells: cells.filter(isIncluded))
+    }
+
     func cell(containing rect: CGRect) -> Cell? {
       let center = CGPoint(x: rect.midX, y: rect.midY)
       return cells.filter { $0.frame.contains(center) }.min {
@@ -807,14 +815,39 @@
 
     init(picture: WindowPicture, cells: ListCells, window: UIWindow) {
       self.picture = picture
-      self.cells = cells
       self.window = window
       let top = window.topScreen
-      let shown = LayoutRegistry.shared.records
+      let onScreen = LayoutRegistry.shared.records
         .filter { !$0.value.frame.isNull && $0.value.frame.intersects(window.bounds) }
         .filter { LayoutHosts.isOnScreen($0.value.host, in: window, top: top) }
         .map { (id: $0.key, record: $0.value) }
         .sorted { $0.record.order < $1.record.order }
+
+      // A row the screen's bars or its edge cut is outside this frame, as a row scrolled away is:
+      // what shows of it can't be told from the bar drawn over it.
+      let shownCells = cells.filter { picture.shows($0.frame, host: $0.view) }
+      let isCut = { (frame: CGRect, host: UIView?) in
+        guard let cell = cells.cell(containing: frame) else {
+          return !picture.shows(frame, host: host)
+        }
+        return !shownCells.cells.contains { $0.view === cell.view }
+      }
+      let cutRows = Set(
+        onScreen.compactMap { entry -> UUID? in
+          guard case .row = entry.record.kind else { return nil }
+          return isCut(entry.record.frame, entry.record.host) ? entry.id : nil
+        })
+      let shown = onScreen.filter { entry in
+        switch entry.record.kind {
+        case .row: !cutRows.contains(entry.id)
+        case .part:
+          entry.record.row.map { !cutRows.contains($0) }
+            ?? (cells.cell(containing: entry.record.frame) == nil
+              || !isCut(entry.record.frame, entry.record.host))
+        default: true
+        }
+      }
+      self.cells = shownCells
       let active = shown.last { $0.record.kind == .surface }?.id
 
       // Rows and their parts are the top screen's; what's under a sheet keeps its actions and
