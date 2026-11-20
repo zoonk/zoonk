@@ -8,7 +8,7 @@ import { ScheduleStep } from "@repo/packages/learn/src/onboarding/steps/schedule
 import { type PlanActions } from "@repo/packages/learn/src/plan/plan-context.tsx";
 import { type TodayActions } from "@repo/packages/learn/src/today/today-context.tsx";
 import { TodayScreen } from "@repo/packages/learn/src/today/today-screen.tsx";
-import { OnboardingShell, TabShell, noop, type ViewProps } from "../learn/common";
+import { OnboardingShell, TabShell, actions, noop, type ViewProps } from "../learn/common";
 import { getLearner } from "./learners";
 import {
   goalView,
@@ -19,13 +19,6 @@ import {
   todayView,
   firstDay,
 } from "./view-models";
-
-/** Actions are behavior, not data: a still screen never calls them, so each is a no-op unless given. */
-function actions<T extends object>(given: Partial<T>): T {
-  return new Proxy(given, {
-    get: (target, key) => (key in target ? target[key as keyof T] : async () => null),
-  }) as T;
-}
 
 /** The goal box with the first `typed` characters of the learner's sentence (all of it by default). */
 function GoalScreen({ q }: ViewProps) {
