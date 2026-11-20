@@ -12,16 +12,21 @@ export function useTimeAnswerTexts() {
   const formatShare = useFormatShare();
   const goalDate = useGoalDateValues();
 
-  /** What covering everything takes, said as a fact beside a suggestion that doesn't cover it. */
-  const everythingTakes = ({ date, full }: { date: GoalDate; full: FullTime | null }) => {
+  /**
+   * What covering everything takes, said as a fact beside a suggestion that doesn't cover it.
+   * Without `date`, for a sentence above that already names it.
+   */
+  const everythingTakes = ({ date, full }: { date?: GoalDate; full: FullTime | null }) => {
     if (!full) {
-      return t({
-        description:
-          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-        message:
-          "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}",
-        values: goalDate(date),
-      });
+      return date
+        ? t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}",
+            values: goalDate(date),
+          })
+        : t("There isn't enough time to cover everything.");
     }
 
     const time = formatDuration(full.minutes);

@@ -84,10 +84,10 @@ export function TimeAnswer({
           <LineWords aim={aim} date={date} exam={exam} line={line} minutes={minutes} />
         </span>
 
-        {full !== undefined && date && (
+        {full !== undefined && (
           <span className={cn(line.kind === "everything" && "invisible")}>
             {space}
-            {texts.everythingTakes({ date, full })}
+            {texts.everythingTakes({ full })}
           </span>
         )}
 
