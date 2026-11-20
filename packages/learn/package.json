@@ -31,6 +31,8 @@
     "./chapter": "./src/chapter/chapter-screen.tsx",
     "./checkpoint": "./src/checkpoints/checkpoint-screen.tsx",
     "./chip": "./src/_components/chip.ts",
+    "./code": "./src/code/code-listing.tsx",
+    "./code/highlight": "./src/code/highlight-code.ts",
     "./dates": "./src/_utils/iso-date.ts",
     "./count-of": "./src/_utils/count-of.ts",
     "./days-left": "./src/_components/days-left.tsx",

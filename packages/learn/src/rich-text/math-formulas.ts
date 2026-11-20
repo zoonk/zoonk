@@ -14,6 +14,8 @@ function toFormulas(segments: readonly RichInlineSegment[]): Formula[] {
 function formulasIn(text: string): Formula[] {
   const blocks = parseRichBlocks(text).flatMap((block) => {
     switch (block.kind) {
+      case "code":
+        return [];
       case "list":
         return block.items.flat();
       case "paragraph":

@@ -1,131 +1,17 @@
 "use client";
 
+import { CODE_FIELD_TEXT, CODE_SCROLL_SIGN, CodeLineNumber, CodeTokens } from "@zoonk/learn/code";
+import { highlightCode } from "@zoonk/learn/code/highlight";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLayoutEffect, useRef } from "react";
-import {
-  type CodeLanguage,
-  type CodeToken,
-  type CodeTokenKind,
-  highlightCode,
-} from "../_utils/highlight-code";
 import { type CodeSnippet, insertAtCursor } from "../_utils/insert-at-cursor";
 import { keyedByPosition } from "../_utils/position-keys";
 import { ACTIVITY_FIELD_CLASS } from "./activity-canvas";
-import { CodeLineNumber } from "./activity-code-gutter";
 import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
 
-const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
-  builtin: "text-viz-secondary",
-  comment: "text-muted-foreground italic",
-  keyword: "text-viz-accent",
-  number: "text-viz-highlight",
-  plain: "",
-  string: "text-viz-highlight",
-};
-
-// Inputs below 16px trigger automatic zoom on iOS.
-const CODE_SCROLL_SIGN = "[&>button]:pointer-coarse:inline-flex";
-const CODE_TEXT = "font-mono text-base leading-7 sm:text-sm sm:leading-6";
-
-export function ActivityCodeTokens({ tokens }: { tokens: readonly CodeToken[] }) {
-  if (tokens.length === 0) {
-    return <span> </span>;
-  }
-
-  return keyedByPosition(tokens, (token) => token.text).map(({ item, key }) => (
-    <span className={TOKEN_CLASSES[item.kind]} key={key}>
-      {item.text}
-    </span>
-  ));
-}
-
-export function ActivityCodeBlock({
-  children,
-  className,
-  label,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  label: string;
-}) {
-  return (
-    <ActivityHorizontalScroll box={{ label }} className={cn(CODE_SCROLL_SIGN, "-mx-2", className)}>
-      <div
-        className={cn(
-          "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1 sm:w-max",
-          CODE_TEXT,
-        )}
-      >
-        {children}
-      </div>
-    </ActivityHorizontalScroll>
-  );
-}
-
-type CodeLineTone = "current" | "editable" | "error" | "plain";
-
-function lineText(tokens: readonly CodeToken[]): string {
+function lineText(tokens: readonly { text: string }[]): string {
   return tokens.map((token) => token.text).join("");
-}
-
-export function ActivityCodeLine({
-  children,
-  className,
-  number,
-  tone = "plain",
-  ...props
-}: React.ComponentProps<"div"> & { number: number; tone?: CodeLineTone }) {
-  return (
-    <div
-      className={cn(
-        "col-span-full -mx-1.5 grid grid-cols-subgrid items-start rounded-lg px-1.5 wrap-anywhere whitespace-pre-wrap sm:whitespace-pre",
-        tone === "current" &&
-          "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
-        tone === "editable" &&
-          "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1 ring-inset",
-        tone === "error" && "bg-destructive/10",
-        className,
-      )}
-      data-slot="activity-code-line"
-      data-tone={tone}
-      {...props}
-    >
-      <CodeLineNumber number={number} />
-      <div className="min-w-0">{children}</div>
-    </div>
-  );
-}
-
-export function ActivityCodeListing({
-  code,
-  label,
-  language,
-  toneOf,
-}: {
-  code: string;
-  label: string;
-  language: CodeLanguage;
-  toneOf?: (lineNumber: number) => CodeLineTone;
-}) {
-  return (
-    <ActivityCodeBlock label={label}>
-      {keyedByPosition(highlightCode(code, language), lineText).map(({ item, key }, index) => {
-        const tone = toneOf?.(index + 1) ?? "plain";
-
-        return (
-          <ActivityCodeLine
-            aria-current={tone === "current" ? "step" : undefined}
-            key={key}
-            number={index + 1}
-            tone={tone}
-          >
-            <ActivityCodeTokens tokens={item} />
-          </ActivityCodeLine>
-        );
-      })}
-    </ActivityCodeBlock>
-  );
 }
 
 const FIELD_RESET =
@@ -137,7 +23,7 @@ export function ActivityCodeLineInput({
   value,
   ...props
 }: Omit<React.ComponentProps<"textarea">, "onChange" | "value"> & {
-  language: CodeLanguage;
+  language: string;
   onChange: (value: string) => void;
   value: string;
 }) {
@@ -149,7 +35,7 @@ export function ActivityCodeLineInput({
         aria-hidden="true"
         className="col-start-1 row-start-1 wrap-anywhere whitespace-pre-wrap"
       >
-        <ActivityCodeTokens tokens={highlightCode(value, language)[0] ?? []} />
+        <CodeTokens field tokens={highlightCode(value, language)[0] ?? []} />
       </span>
 
       {/* Reaches a 44 px tap target into the rows around it, so its own row keeps one line height. */}
@@ -184,7 +70,7 @@ export function ActivityCodeEditor({
 }: Omit<React.ComponentProps<"textarea">, "onChange" | "value"> & {
   editorRef?: React.Ref<HTMLTextAreaElement>;
   label: string;
-  language: CodeLanguage;
+  language: string;
   onChange: (value: string) => void;
   onSubmit?: () => void;
   value: string;
@@ -196,7 +82,10 @@ export function ActivityCodeEditor({
     <div className={cn(ACTIVITY_FIELD_CLASS, className)} data-slot="activity-code-editor">
       <ActivityHorizontalScroll box={{ label }} className={CODE_SCROLL_SIGN}>
         <div
-          className={cn("grid w-full grid-cols-[max-content_minmax(0,1fr)] px-3 py-3", CODE_TEXT)}
+          className={cn(
+            "grid w-full grid-cols-[max-content_minmax(0,1fr)] px-3 py-3",
+            CODE_FIELD_TEXT,
+          )}
           style={{ gridTemplateRows: `repeat(${lines.length}, auto)` }}
         >
           {keyedByPosition(highlightCode(value, language), lineText).map(({ item, key }, index) => (
@@ -207,7 +96,7 @@ export function ActivityCodeEditor({
                 className="col-start-2 wrap-anywhere whitespace-pre-wrap"
                 style={{ gridRow: index + 1 }}
               >
-                <ActivityCodeTokens tokens={item} />
+                <CodeTokens field tokens={item} />
               </div>
             </div>
           ))}

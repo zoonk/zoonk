@@ -30,13 +30,17 @@ function numbered(items: RichInlineSegment[][]): RichInlineSegment[][] {
   return items.map((item, index) => [{ kind: "text", text: `${index + 1}. ` }, ...item]);
 }
 
-/** A table is its own region with its own label, so a label or announcement leaves it out. */
+/**
+ * A table and a code block are each their own region with its own label, so a label or an
+ * announcement leaves them out.
+ */
 function spokenLines(block: RichBlock): RichInlineSegment[][] {
   switch (block.kind) {
     case "list":
       return block.ordered ? numbered(block.items) : block.items;
     case "paragraph":
       return block.lines;
+    case "code":
     case "table":
       return [];
     default:

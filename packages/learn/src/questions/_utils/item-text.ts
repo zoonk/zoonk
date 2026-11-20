@@ -1,16 +1,19 @@
+import { readCodeFence } from "@zoonk/utils/code-fence";
 import {
   type MarkdownTableAlign,
   isMarkdownTableStart,
   readMarkdownTable,
 } from "@zoonk/utils/markdown-table";
 import { type RichInlineSegment } from "../../rich-text/rich-inline-segments";
-import { parseRichInline } from "../../rich-text/rich-text-parser";
+import { parseRichInline, parseRichLine } from "../../rich-text/rich-text-parser";
 
 /**
- * Paragraphs, GFM pipe tables, and lesson inline text (code, bold, italics and `$…$` math), as item
- * writers are told; anything else stays text.
+ * Paragraphs, GFM pipe tables, fenced code blocks and lesson inline text (code, bold, italics and
+ * `$…$` math), as item writers are told; anything else stays text. A code block keeps its code
+ * exactly as written.
  */
 export type ItemTextBlock =
+  | { code: string; kind: "code"; language: string | null }
   | { kind: "paragraph"; lines: RichInlineSegment[][] }
   | {
       align: MarkdownTableAlign[];
@@ -62,7 +65,9 @@ function isBlank(line: string | undefined): boolean {
 }
 
 function findParagraphEnd(lines: readonly string[], index: number): number {
-  return isBlank(lines[index]) || isMarkdownTableStart(lines, index)
+  return isBlank(lines[index]) ||
+    isMarkdownTableStart(lines, index) ||
+    readCodeFence(lines, index) !== null
     ? index
     : findParagraphEnd(lines, index + 1);
 }
@@ -74,6 +79,15 @@ function readBlocks(lines: readonly string[], index: number): ItemTextBlock[] {
 
   if (isBlank(lines[index])) {
     return readBlocks(lines, index + 1);
+  }
+
+  const fence = readCodeFence(lines, index);
+
+  if (fence) {
+    return [
+      { code: fence.code, kind: "code", language: fence.language },
+      ...readBlocks(lines, fence.end),
+    ];
   }
 
   const read = readMarkdownTable(lines, index);
@@ -108,5 +122,8 @@ export function parseItemText(text: string): ItemTextBlock[] {
 }
 
 export function parseItemLine(text: string): RichInlineSegment[] {
-  return parseInline(text.trim().replaceAll(LINE_BREAKS, " "));
+  return parseRichLine({
+    parseProse: (prose) => parseInline(prose.trim().replaceAll(LINE_BREAKS, " ")),
+    text,
+  });
 }

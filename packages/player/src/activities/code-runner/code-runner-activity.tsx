@@ -1,5 +1,7 @@
 "use client";
 
+import { CodeFrame, CodeLine, CodeTokens } from "@zoonk/learn/code";
+import { highlightCode } from "@zoonk/learn/code/highlight";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -9,17 +11,11 @@ import {
   ActivityCanvas,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
-import {
-  ActivityCodeBlock,
-  ActivityCodeLine,
-  ActivityCodeLineInput,
-  ActivityCodeTokens,
-} from "../_components/activity-code";
+import { ActivityCodeLineInput } from "../_components/activity-code";
 import { type ProgramRun, runProgram } from "../_sandbox/run-program";
 import { SandboxRunBar } from "../_sandbox/sandbox-run-bar";
 import { useEditorRun } from "../_sandbox/use-editor-run";
 import { useSandboxRuntime } from "../_sandbox/use-sandbox-runtime";
-import { highlightCode } from "../_utils/highlight-code";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { CodeRunnerOutput } from "./code-runner-output";
 import { mistakeFor, programWithEdits, sameOutput } from "./code-runner-program";
@@ -151,7 +147,7 @@ export function CodeRunnerActivity({
           )}
         </div>
 
-        <ActivityCodeBlock label={t("Code")}>
+        <CodeFrame field label={t("Code")}>
           {lines.map((line, index) => {
             const number = index + 1;
 
@@ -159,11 +155,7 @@ export function CodeRunnerActivity({
             const hasError = run?.error?.line === number && !isStale;
 
             return (
-              <ActivityCodeLine
-                key={number}
-                number={number}
-                tone={runnerLineTone({ canEdit, hasError })}
-              >
+              <CodeLine key={number} number={number} tone={runnerLineTone({ canEdit, hasError })}>
                 {canEdit ? (
                   <ActivityCodeLineInput
                     aria-label={t("Line {number}, yours to edit", { number: String(number) })}
@@ -178,12 +170,12 @@ export function CodeRunnerActivity({
                     value={line}
                   />
                 ) : (
-                  <ActivityCodeTokens tokens={highlighted[index] ?? []} />
+                  <CodeTokens tokens={highlighted[index] ?? []} />
                 )}
-              </ActivityCodeLine>
+              </CodeLine>
             );
           })}
-        </ActivityCodeBlock>
+        </CodeFrame>
       </div>
 
       <CodeRunnerOutput

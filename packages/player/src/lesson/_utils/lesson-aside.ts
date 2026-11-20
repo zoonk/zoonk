@@ -1,17 +1,22 @@
+import { findCodeFenceLines } from "@zoonk/utils/code-fence";
 import { findMarkdownTableLines } from "@zoonk/utils/markdown-table";
 import { type LessonPlayerState } from "../lesson-player-state";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 import { isLanguageStep, isQuestionStep, isReadStep } from "./lesson-steps";
 
+/**
+ * A question's tables and code blocks are what it asks about, so they show above it, and its title
+ * is the last run of sentences.
+ */
 export function splitQuestionData(text: string): { data: string | null; question: string } {
   const lines = text.split(/\r?\n/u);
-  const tableLines = findMarkdownTableLines(lines);
+  const dataLines = new Set([...findMarkdownTableLines(lines), ...findCodeFenceLines(lines)]);
 
-  if (tableLines.size === 0) {
+  if (dataLines.size === 0) {
     return { data: null, question: text };
   }
 
-  const isProse = (index: number) => !tableLines.has(index) && Boolean(lines[index]?.trim());
+  const isProse = (index: number) => !dataLines.has(index) && Boolean(lines[index]?.trim());
   const end = lines.findLastIndex((_, index) => isProse(index));
 
   if (end === -1) {

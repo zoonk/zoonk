@@ -1,13 +1,16 @@
+import { findCodeFences, readCodeFence } from "@zoonk/utils/code-fence";
 import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
 import { type MarkdownTableAlign, readMarkdownTable } from "@zoonk/utils/markdown-table";
 import { findMath } from "@zoonk/utils/math-spans";
 import { type RichInlineSegment } from "./rich-inline-segments";
 
 /**
- * Emphasis, short lists, GFM tables, inline code and `$...$` math only, so generated headings or
- * links can never change the player's layout.
+ * Emphasis, short lists, GFM tables, fenced code blocks, inline code and `$...$` math only, so
+ * generated headings or links can never change the player's layout. A code block keeps its code
+ * exactly as written.
  */
 export type RichBlock =
+  | { code: string; kind: "code"; language: string | null }
   | { kind: "list"; items: RichInlineSegment[][]; ordered: boolean }
   | { kind: "paragraph"; lines: RichInlineSegment[][] }
   | {
@@ -53,6 +56,65 @@ export function parseRichInline(text: string): RichInlineSegment[] {
     { kind: math.display ? "displayMath" : "math", text: math.content },
     ...parseRichInline(text.slice(math.end)),
   ];
+}
+
+export type WholeCodeBlock = { code: string; language: string | null };
+
+/** Text that is one closed code block and nothing else, such as an answer option that is a program. */
+export function readWholeCodeBlock(text: string): WholeCodeBlock | null {
+  const lines = text.trim().split(/\r?\n/u);
+  const fence = readCodeFence(lines, 0);
+
+  return fence?.closed && fence.end === lines.length
+    ? { code: fence.code, language: fence.language }
+    : null;
+}
+
+function toInlineCode(code: string): RichInlineSegment {
+  const text = code
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join(" ");
+
+  return { kind: "code", text };
+}
+
+const SPACE: RichInlineSegment = { kind: "text", text: " " };
+
+/**
+ * Text drawn on one line, such as a heading or an answer quoted in a sentence: `parseProse` reads
+ * its words, and a code block in it reads as one run of inline code.
+ */
+export function parseRichLine({
+  parseProse,
+  text,
+}: {
+  parseProse: (prose: string) => RichInlineSegment[];
+  text: string;
+}): RichInlineSegment[] {
+  const lines = text.split(/\r?\n/u);
+  const fences = findCodeFences(lines);
+
+  if (fences.length === 0) {
+    return parseProse(text);
+  }
+
+  const read = fences.reduce<{ from: number; pieces: RichInlineSegment[][] }>(
+    ({ from, pieces }, fence) => ({
+      from: fence.end,
+      pieces: [
+        ...pieces,
+        parseProse(lines.slice(from, fence.start).join("\n")),
+        [toInlineCode(fence.code)],
+      ],
+    }),
+    { from: 0, pieces: [] },
+  );
+
+  return [...read.pieces, parseProse(lines.slice(read.from).join("\n"))]
+    .filter((piece) => piece.some((segment) => segment.text.trim()))
+    .flatMap((piece, index) => (index === 0 ? piece : [SPACE, ...piece]));
 }
 
 type LineKind =
@@ -109,35 +171,48 @@ function parseTextLines(lines: readonly string[]): RichBlock[] {
   );
 }
 
-function findNextTable(lines: readonly string[], from: number) {
-  const index = lines.findIndex(
-    (_, position) => position >= from && readMarkdownTable(lines, position) !== null,
-  );
+/** A code block or a table that starts on this line, with the line after it. */
+function readBlockAt(
+  lines: readonly string[],
+  index: number,
+): { block: RichBlock; end: number } | null {
+  const fence = readCodeFence(lines, index);
 
-  return index === -1 ? null : { index, read: readMarkdownTable(lines, index) };
+  if (fence) {
+    return { block: { code: fence.code, kind: "code", language: fence.language }, end: fence.end };
+  }
+
+  const read = readMarkdownTable(lines, index);
+
+  if (!read) {
+    return null;
+  }
+
+  const { align, header, rows } = read.table;
+
+  return {
+    block: {
+      align,
+      header: header.map((cell) => parseRichInline(cell)),
+      kind: "table",
+      rows: rows.map((row) => row.map((cell) => parseRichInline(cell))),
+    },
+    end: read.end,
+  };
 }
 
 function readBlocks(lines: readonly string[], from: number): RichBlock[] {
-  const next = findNextTable(lines, from);
+  const index = lines.findIndex(
+    (_, position) => position >= from && readBlockAt(lines, position) !== null,
+  );
 
-  if (!next?.read) {
+  const next = index === -1 ? null : readBlockAt(lines, index);
+
+  if (!next) {
     return parseTextLines(lines.slice(from));
   }
 
-  const { align, header, rows } = next.read.table;
-
-  const table: RichBlock = {
-    align,
-    header: header.map((cell) => parseRichInline(cell)),
-    kind: "table",
-    rows: rows.map((row) => row.map((cell) => parseRichInline(cell))),
-  };
-
-  return [
-    ...parseTextLines(lines.slice(from, next.index)),
-    table,
-    ...readBlocks(lines, next.read.end),
-  ];
+  return [...parseTextLines(lines.slice(from, index)), next.block, ...readBlocks(lines, next.end)];
 }
 
 export function parseRichBlocks(text: string): RichBlock[] {
@@ -223,6 +298,7 @@ function markBlock(block: RichBlock, quote: string): { block: RichBlock; done: b
       const { done, lines } = markLines(block.items, quote);
       return { block: { ...block, items: lines }, done };
     }
+    case "code":
     case "table":
       return { block, done: false };
     default:

@@ -168,6 +168,12 @@ describe(speakRichBlocks, () => {
     );
   });
 
+  it("leaves a code block to the block, which a screen reader reads as written", () => {
+    expect(
+      speakRichBlocks({ text: "What does this print?\n```python\nprint(1 + 1)\n```", words }),
+    ).toBe("What does this print?");
+  });
+
   it("names a question that is only a table by its header", () => {
     expect(
       speakRichBlocks({ text: "| Shape | Area $A$ |\n| --- | --- |\n| Circle | $r^2$ |", words }),
