@@ -465,3 +465,96 @@ describe("a run whose only news is lessons that landed", () => {
     );
   });
 });
+
+function begunStandIns(plan: { items: readonly PlannedItem[] }) {
+  return plan.items.filter(
+    (entry) => entry.skillId === "begun" && entry.kind === "lesson" && !entry.lessonId,
+  );
+}
+
+describe("a topic whose first chapter the learner already began", () => {
+  const friday = addDays(TODAY, 4);
+
+  const begun = {
+    goal: { dailyMinutes: 16, kind: "language", targetDate: null },
+    graph: {
+      phases: [{ milestone: null, name: "Only" }],
+      skills: [
+        { ...skill("begun", "Begun"), lessons: 24 },
+        { ...skill("after", "After"), lessons: 24 },
+      ],
+    },
+    items: [],
+    lessons: [
+      ...writeLessons({ count: 4, minutes: 4, skillId: "begun" }),
+      ...writeLessons({ count: 4, minutes: 4, skillId: "after" }),
+    ],
+    mockMinutes: 150,
+    mode: "forced",
+    paceFactor: 1,
+    prerequisites: new Map(),
+    readiness: new Map(),
+    settings: parsePlanSettings({}),
+    today: addDays(friday, -3),
+  } satisfies BuildPlanInput;
+
+  /** The learner finished the first chapter and opened today, whose session holds the rest's stand-in. */
+  function openToday() {
+    const studied = saveItems(buildPlan(begun)).map((entry) =>
+      entry.lessonId?.startsWith("begun-")
+        ? { ...entry, completedAt: addDays(friday, -1), status: "done" as const }
+        : entry,
+    );
+
+    const day = { ...begun, items: studied, mode: "automatic" as const, today: friday };
+    const opened = buildPlan({ ...day, todayShown: true });
+
+    return { day, opened };
+  }
+
+  const rest = Array.from({ length: 20 }, (_, index) => ({
+    chapterId: "begun-next",
+    lessonId: `begun-next-${index}`,
+    minutes: 4,
+    skillIds: ["begun"],
+    title: `Begun next ${index}`,
+  }));
+
+  it("holds today's time for the rest of its lessons", () => {
+    const { opened } = openToday();
+
+    expect(
+      begunStandIns(opened).map((entry) => toIsoDate(entry.scheduledFor ?? TODAY)),
+    ).toStrictEqual([toIsoDate(friday)]);
+  });
+
+  it("drops the stand-in once the rest of its lessons are written, though other news came with them", () => {
+    const { day, opened } = openToday();
+
+    const next = buildPlan({
+      ...day,
+      items: saveItems(opened),
+      lessons: [...begun.lessons, ...rest],
+      todayShown: true,
+    });
+
+    const written = next.items.filter((entry) => entry.lessonId?.startsWith("begun-next-"));
+
+    expect(begunStandIns(next)).toStrictEqual([]);
+    expect(written).toHaveLength(rest.length);
+  });
+
+  it("never sets the stand-in aside as work left once a missed day passes", () => {
+    const { day, opened } = openToday();
+
+    const next = buildPlan({
+      ...day,
+      items: saveItems(opened),
+      lessons: [...begun.lessons, ...rest],
+      setAsideLeftWork: true,
+      today: addDays(friday, 1),
+    });
+
+    expect(begunStandIns(next)).toStrictEqual([]);
+  });
+});
