@@ -1,15 +1,27 @@
 import { z } from "zod";
 import { cited, citedMany } from "./cited-passages";
 
-/**
- * `plays` is null for written tasks and when the notice doesn't say. It quotes every passage it
- * comes from, the line that states the task first, since a format page states a part's details in
- * separate sentences.
- */
+const zeroRuleKind = z.enum([
+  "blank",
+  "offTopic",
+  "wrongForm",
+  "tooFewLines",
+  "copiedSupport",
+  "identification",
+  "other",
+]);
+
+type ZeroRuleKind = Exclude<z.infer<typeof zeroRuleKind>, "other">;
+
 const writtenRuleSchema = z.object({ ...cited, text: z.string() });
 
 const writtenGradingSchema = z.object({
-  criteria: z.array(writtenRuleSchema.extend({ id: z.string(), points: z.number().nullable() })),
+  criteria: z.array(
+    writtenRuleSchema.extend({
+      id: z.string().describe("For Enem, c1 through c5 in the official competence order"),
+      points: z.number().nullable(),
+    }),
+  ),
   kind: z.enum(["enem", "oab", "points", "levels"]),
   language: writtenRuleSchema
     .extend({
@@ -19,7 +31,22 @@ const writtenGradingSchema = z.object({
     })
     .nullable(),
   rounding: writtenRuleSchema.nullable(),
-  zeroing: z.array(writtenRuleSchema),
+  zeroing: z.array(
+    writtenRuleSchema.extend({
+      kinds: z
+        .array(zeroRuleKind)
+        .describe(
+          "Each independent trigger in the cited rule. Other covers conduct, handwriting and any case a typed answer cannot establish.",
+        ),
+      maxLines: z
+        .int()
+        .positive()
+        .nullable()
+        .describe(
+          "The largest number of original lines that earns zero, when the notice gives one",
+        ),
+    }),
+  ),
 });
 
 export const writtenTaskSchema = z.object({
@@ -33,3 +60,30 @@ export const writtenTaskSchema = z.object({
   plays: z.number().int().nullable(),
   points: z.number().nullable(),
 });
+
+type StoredRule = { citation: { passage: string; sourceId: string }; text: string };
+
+type StoredWritingGrading = {
+  criteria: (StoredRule & { id: string; points: number | null })[];
+  kind: z.infer<typeof writtenGradingSchema>["kind"];
+  language:
+    | (StoredRule &
+        Omit<
+          NonNullable<z.infer<typeof writtenGradingSchema>["language"]>,
+          "document" | "passage" | "text"
+        >)
+    | null;
+  rounding: StoredRule | null;
+  zeroing: (StoredRule & { kinds?: ZeroRuleKind[]; maxLines?: number | null })[];
+};
+
+export type WrittenTask = Pick<
+  z.infer<typeof writtenTaskSchema>,
+  "count" | "description" | "handwritten" | "lines" | "points"
+> & {
+  grading: StoredWritingGrading;
+  key: string;
+  minutes: number | null;
+  section: string;
+  session: string | null;
+};

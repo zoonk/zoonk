@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
@@ -50,6 +52,20 @@ describe("essay render reads", () => {
           { criterion: "Argument", description: "Support the argument" },
         ],
         sampleOutline: "Introduction and argument",
+        writing: {
+          aspects: [],
+          assessedSkillIds: [skills[0]!.id],
+          charactersPerLine: 55,
+          criteria: [{ id: "claim", name: "Claim", points: null }],
+          grading: { criteria: [], kind: "enem", language: null, rounding: null, zeroing: [] },
+          keySource: "practiceKey",
+          lines: 30,
+          minimumWords: 30,
+          points: 1000,
+          taskKey: "redacao",
+          title: "Disinformation",
+          unit: "answer",
+        },
       },
       examBlueprintId: blueprint.id,
       format: "essay",
@@ -58,15 +74,30 @@ describe("essay render reads", () => {
 
     const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
 
+    const admissionId = randomUUID();
+
+    await prisma.writingAdmission.create({
+      data: {
+        extra: false,
+        id: admissionId,
+        itemIds: [item.id],
+        localDate: session.localDate,
+        userId: user.id,
+      },
+    });
+
     const block = await studySessionBlockFixture({
       kind: "produce",
-      payload: { itemIds: [item.id] },
+      payload: {
+        itemIds: [item.id],
+        writing: { admissionId, draft: null, taskKey: "redacao", unit: "answer" },
+      },
       sessionId: session.id,
     });
 
     mockSession(user.id);
     const counts = await countDatabaseStatements(() => getEssay({ blockId: block.id }));
     expect(counts.writes).toBe(0);
-    expect(counts.result.status).toBe("ready");
+    expect(counts.result).toMatchObject({ essay: { drafts: [], rubric: "enem" }, status: "ready" });
   });
 });

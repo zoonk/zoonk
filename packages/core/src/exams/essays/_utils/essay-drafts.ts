@@ -1,37 +1,35 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type EssayDraft, type WrittenEssayDraft, essayAnswerSchema } from "../essay-contract";
+import { type EssayDraft } from "../essay-contract";
 import { writtenAnswerSchema } from "../writing-contract";
 
-type DraftsInput = { itemId: string; sessionId: string; userId: string };
-
-export function loadEssayDrafts(
-  input: DraftsInput & { format: "writing" },
-): Promise<WrittenEssayDraft[]>;
-export function loadEssayDrafts(input: DraftsInput & { format?: "legacy" }): Promise<EssayDraft[]>;
-
 export async function loadEssayDrafts({
-  format = "legacy",
   itemId,
   sessionId,
   userId,
-}: DraftsInput & { format?: "legacy" | "writing" }): Promise<(EssayDraft | WrittenEssayDraft)[]> {
+}: {
+  itemId: string;
+  sessionId: string;
+  userId: string;
+}): Promise<EssayDraft[]> {
   const attempts = await prisma.attempt.findMany({
     orderBy: { answeredAt: "desc" },
     select: { answer: true, answeredAt: true, id: true },
     where: { itemId, studySessionId: sessionId, userId },
   });
 
-  return attempts.flatMap((attempt): (EssayDraft | WrittenEssayDraft)[] => {
-    const metadata = { attemptId: attempt.id, submittedAt: attempt.answeredAt.toISOString() };
+  return attempts.flatMap((attempt) => {
+    const answer = writtenAnswerSchema.safeParse(attempt.answer).data;
 
-    if (format === "writing") {
-      const answer = writtenAnswerSchema.safeParse(attempt.answer).data;
-      return answer ? [{ ...metadata, grade: answer.grade, text: answer.text }] : [];
-    }
-
-    const answer = essayAnswerSchema.safeParse(attempt.answer).data;
-
-    return answer ? [{ ...metadata, grade: answer.grade, text: answer.text }] : [];
+    return answer
+      ? [
+          {
+            attemptId: attempt.id,
+            grade: answer.grade,
+            submittedAt: attempt.answeredAt.toISOString(),
+            text: answer.text,
+          },
+        ]
+      : [];
   });
 }

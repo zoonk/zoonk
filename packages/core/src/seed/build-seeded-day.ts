@@ -64,7 +64,7 @@ export async function buildSeededDay({ goalId, today }: { goalId: string; today:
   const plan = await prisma.plan.findUnique({ select: { version: true }, where: { goalId } });
   const input = await loadSessionBuildInput(day);
   // The seeded completion has no prompt admission or written response to settle.
-  const { blocks, plannedMinutes } = buildSessionBlocks({ ...input, produce: null });
+  const { blocks, plannedMinutes } = buildSessionBlocks({ ...input, produces: [] });
 
   const [answers, facts] = await Promise.all([
     loadRightAnswers({ blocks, today }),

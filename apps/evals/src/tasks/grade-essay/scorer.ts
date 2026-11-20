@@ -1,202 +1,361 @@
 import { createFixedScore } from "@/lib/score";
 import { detectLanguage } from "@/lib/text-language";
-import { type TaskScorer, type TestCase } from "@/lib/types";
-import {
-  type EnemInterventionElements,
-  type EssayGrade,
-} from "@zoonk/ai/tasks/grading/grade-essay";
-import { type GradeEssayExpected } from "./test-cases";
+import { type TaskScorer } from "@/lib/types";
+import { type GradeWritingOutput } from "./task";
+import { type GradeWritingExpected, type GradeWritingInput } from "./test-cases";
 
 const MIN_SCORE = 6;
 const SCORE_RANGE = 4;
 
+/** How far the content points may sit from the answer standard's, as a share of the maximum. */
+const CONTENT_TOLERANCE = 0.1;
+/** The CGU notice's written minimum is half the part's points. */
+const PASS_SHARE = 0.5;
 const MIN_QUOTED_SHARE = 0.6;
-
-const ENEM_C5_POINTS_PER_ELEMENT = 40;
+const MIN_ERROR_RECALL = 0.5;
+const LEVEL_RANK = { complete: 3, missing: 0, partial: 1, strong: 2 } as const;
 
 type Check = { name: string; passed: boolean; detail: string };
+type Side = "fail" | "pass" | "uncertain";
+type Span = { start: number; end: number };
 
-function getBandLabel({ band, total }: { band: GradeEssayExpected["totalBand"]; total: number }) {
-  if (total < band.min) {
-    return "below band";
-  }
+function spansOf(text: string, anchors: readonly string[]): Span[] {
+  return anchors.flatMap((anchor) => {
+    const spans: Span[] = [];
+    let start = text.indexOf(anchor);
 
-  return total > band.max ? "above band" : "in band";
-}
+    while (start !== -1) {
+      spans.push({ end: start + anchor.length, start });
+      start = text.indexOf(anchor, start + 1);
+    }
 
-function checkElements({
-  expected,
-  grade,
-}: {
-  expected: GradeEssayExpected;
-  grade: EssayGrade;
-}): Check[] {
-  return Object.entries(expected.interventionElements ?? {}).map(([element, present]) => {
-    const found = grade.enemInterventionElements?.[element as keyof EnemInterventionElements];
-
-    return {
-      detail: `C5 ${element}: expected ${String(present)}, got ${String(found)}.`,
-      name: `c5-${element}`,
-      passed: found === present,
-    };
+    return spans;
   });
 }
 
-/** Production derives C5 from the grade's own labels, so this catches a limit set or missed against the case. */
-function checkC5Level({
+function overlaps(span: Span, spans: Span[]): boolean {
+  return spans.some((other) => other.start < span.end && span.start < other.end);
+}
+
+function errorChecks({
   expected,
-  grade,
+  output,
+  planted,
+  text,
 }: {
-  expected: GradeEssayExpected;
-  grade: EssayGrade;
+  expected: GradeWritingExpected;
+  output: GradeWritingOutput;
+  planted: boolean;
+  text: string;
 }): Check[] {
-  const elements = grade.enemInterventionElements;
-  const c5 = grade.criteria.find((criterion) => criterion.id === "c5");
+  const real = spansOf(text, expected.languageErrors);
+  const traps = spansOf(text, expected.traps ?? []);
 
-  if (!elements || !c5 || grade.zeroReason) {
-    return [];
-  }
+  const reported = output.result.errors.map((error) => ({
+    ...error,
+    span: { end: error.start + error.quote.length, start: error.start },
+  }));
 
-  const count = Object.values(elements).filter(Boolean).length;
-  const level = expected.c5Score ?? ENEM_C5_POINTS_PER_ELEMENT * count;
+  const wrong = reported.filter((error) => !overlaps(error.span, real));
+  const trapped = wrong.filter((error) => overlaps(error.span, traps));
+
+  const found = expected.languageErrors.filter((anchor) =>
+    reported.some((error) => overlaps(error.span, spansOf(text, [anchor]))),
+  );
+
+  const describe = (errors: typeof wrong) =>
+    errors.map((error) => `"${error.quote}" → "${error.correction}"`).join("; ");
+
+  const recall: Check[] =
+    planted && expected.languageErrors.length >= 2
+      ? [
+          {
+            detail: `Found ${found.length} of ${expected.languageErrors.length} real errors.`,
+            name: "error-recall",
+            passed: found.length >= expected.languageErrors.length * MIN_ERROR_RECALL,
+          },
+        ]
+      : [];
 
   return [
     {
       detail:
-        expected.c5Score === undefined
-          ? `C5 ${c5.score} with ${count} valid element(s), whose level is ${level}.`
-          : `C5 ${c5.score}, expected ${level} for a limited proposal.`,
-      name: "c5-level",
-      passed: c5.score === level,
+        wrong.length === 0
+          ? `No false errors (${reported.length} reported, ${found.length}/${expected.languageErrors.length} real found).`
+          : `False errors: ${describe(wrong)}.`,
+      name: "false-errors",
+      passed: wrong.length === 0,
+    },
+    {
+      detail:
+        trapped.length === 0
+          ? "No accepted usage flagged."
+          : `Accepted usage flagged: ${describe(trapped)}.`,
+      name: "traps",
+      passed: trapped.length === 0,
+    },
+    ...recall,
+  ];
+}
+
+/** Earned the way the arithmetic counts it: once, on its criterion, with an exact quote. */
+function creditedAspects({ output, text }: { output: GradeWritingOutput; text: string }) {
+  const byIndex = Map.groupBy(output.evidence.aspects, (aspect) => aspect.aspectIndex);
+
+  return new Set(
+    [...byIndex.entries()].flatMap(([index, reports]) => {
+      const [report] = reports;
+      const quote = report?.quote ?? "";
+      const once = quote.trim() !== "" && text.indexOf(quote) === text.lastIndexOf(quote);
+      return reports.length === 1 && report?.earned && text.includes(quote) && once ? [index] : [];
+    }),
+  );
+}
+
+function creditChecks({
+  expected,
+  input,
+  output,
+  text,
+}: {
+  expected: GradeWritingExpected;
+  input: GradeWritingInput;
+  output: GradeWritingOutput;
+  text: string;
+}): Check[] {
+  const credited = creditedAspects({ output, text });
+  const uncertain = new Set(expected.uncertain);
+  const earned = new Set(expected.earned);
+
+  const indexes = input.basis.aspects
+    .map((_, index) => index)
+    .filter((index) => !uncertain.has(index));
+
+  const falseCredit = indexes.filter((index) => credited.has(index) && !earned.has(index));
+  const missed = indexes.filter((index) => !credited.has(index) && earned.has(index));
+
+  const detail = `Credited ${[...credited].toSorted((a, b) => a - b).join(",") || "none"}; expected ${expected.earned.join(",") || "none"}${uncertain.size > 0 ? ` (either way: ${[...uncertain].join(",")})` : ""}. False credit: ${falseCredit.join(",") || "none"}; missed: ${missed.join(",") || "none"}.`;
+
+  if (
+    input.basis.points === null ||
+    input.arithmetic === null ||
+    input.basis.grading.kind === "enem"
+  ) {
+    return [{ detail, name: "credit", passed: falseCredit.length + missed.length <= 1 }];
+  }
+
+  const value = (chosen: Iterable<number>) =>
+    [...chosen].reduce((sum, index) => sum + (input.basis.aspects[index]?.points ?? 0), 0);
+
+  const truth = { high: value([...earned, ...uncertain]), low: value(earned) };
+  const predicted = value(credited);
+  const tolerance = input.basis.points * CONTENT_TOLERANCE;
+
+  return [
+    {
+      detail: `${detail} Content ${predicted} against ${truth.low}–${truth.high} of ${input.basis.points}.`,
+      name: "credit",
+      passed: predicted >= truth.low - tolerance && predicted <= truth.high + tolerance,
     },
   ];
 }
 
-function checkNextStep({
+function truthSide({
   expected,
-  grade,
+  input,
+  output,
 }: {
-  expected: GradeEssayExpected;
-  grade: EssayGrade;
-}): Check {
-  if (!grade.nextStep) {
-    return {
-      detail: `No next step, with ${grade.total.score} of ${grade.total.maxScore} points.`,
-      name: "nextStep",
-      passed: grade.criteria.every((criterion) => criterion.score === criterion.maxScore),
-    };
+  expected: GradeWritingExpected;
+  input: GradeWritingInput;
+  output: GradeWritingOutput;
+}): Side {
+  const { basis } = input;
+  const max = basis.points ?? 0;
+
+  const value = (indexes: number[]) =>
+    indexes.reduce((sum, i) => sum + (basis.aspects[i]?.points ?? 0), 0);
+
+  const factor = basis.grading.language?.factor ?? 0;
+  const lines = Math.max(1, Math.min(output.estimatedLines, basis.lines ?? output.estimatedLines));
+  const deduction = (factor * expected.languageErrors.length) / lines;
+
+  const totals = expected.zero
+    ? [0, 0]
+    : [value(expected.earned), value([...expected.earned, ...(expected.uncertain ?? [])])].map(
+        (content) => Math.max(0, content - deduction),
+      );
+
+  const threshold = max * PASS_SHARE;
+
+  if (totals.every((total) => total >= threshold)) {
+    return "pass";
   }
 
+  return totals.every((total) => total < threshold) ? "fail" : "uncertain";
+}
+
+function predictedSide({
+  input,
+  output,
+}: {
+  input: GradeWritingInput;
+  output: GradeWritingOutput;
+}): Side | null {
+  const { result } = output;
+
+  if (result.kind !== "points") {
+    return null;
+  }
+
+  const threshold = (input.basis.points ?? 0) * PASS_SHARE;
+
+  if (result.total.low >= threshold) {
+    return "pass";
+  }
+
+  return result.total.high < threshold ? "fail" : "uncertain";
+}
+
+function zeroCheck({
+  expected,
+  output,
+}: {
+  expected: GradeWritingExpected;
+  output: GradeWritingOutput;
+}): Check {
+  const zeroed = output.result.kind === "points" && output.result.zeroReason !== null;
+
   return {
-    detail: `Next step on ${grade.nextStep.criterionId}, expected one of ${expected.nextStepCriteria.join(", ")}.`,
-    name: "nextStep",
-    passed: expected.nextStepCriteria.includes(grade.nextStep.criterionId),
+    detail: `Zero: expected ${String(expected.zero)}, got ${String(zeroed)} (rule ${String(output.evidence.zeroRuleIndex)}).`,
+    name: expected.zero ? "true-zero" : "false-zero",
+    passed: zeroed === expected.zero,
   };
 }
 
-function checkFeedback({
-  essay,
+function feedbackChecks({
   expected,
-  grade,
+  output,
 }: {
-  essay: string;
-  expected: GradeEssayExpected;
-  grade: EssayGrade;
+  expected: GradeWritingExpected;
+  output: GradeWritingOutput;
 }): Check[] {
-  if (grade.zeroReason === "tooShort") {
-    return [];
-  }
+  const { criteria, nextStep } = output.result;
+  const open = criteria.filter((criterion) => criterion.level !== "complete");
 
-  const feedback = [
-    ...grade.criteria.map((criterion) => criterion.comment),
-    ...(grade.nextStep ? [grade.nextStep.text] : []),
-  ];
-
-  const language = detectLanguage(feedback.join(" "));
-
-  const quoted = grade.criteria.filter(
-    (criterion) => criterion.quote && essay.includes(criterion.quote),
+  const comments = [...criteria.map((criterion) => criterion.comment), nextStep?.text ?? ""].join(
+    " ",
   );
 
-  const allFeedback = feedback.join(" ").toLowerCase();
+  const language = detectLanguage(comments);
+  const quoted = criteria.filter((criterion) => criterion.level !== "missing");
 
-  const mentions = (expected.feedbackMentions ?? []).map((mention) => ({
-    detail: `Feedback mentions "${mention}".`,
-    name: `mentions-${mention}`,
-    passed: allFeedback.includes(mention.toLowerCase()),
-  }));
+  const levels: Check[] = expected.minimumLevel
+    ? [
+        {
+          detail: `Levels ${criteria.map((criterion) => `${criterion.id} ${criterion.level}`).join(", ")}; expected at least ${expected.minimumLevel}.`,
+          name: "levels",
+          passed: criteria.every(
+            (criterion) =>
+              LEVEL_RANK[criterion.level] >= LEVEL_RANK[expected.minimumLevel ?? "missing"],
+          ),
+        },
+      ]
+    : [];
 
   return [
+    ...levels,
+    {
+      detail: nextStep
+        ? `Next step on ${nextStep.criterionId}${expected.nextStepCriteria ? `, expected one of ${expected.nextStepCriteria.join(", ")}` : ""}.`
+        : `No next step, ${open.length} criteria open.`,
+      name: "next-step",
+      passed: nextStep
+        ? !expected.nextStepCriteria || expected.nextStepCriteria.includes(nextStep.criterionId)
+        : open.length === 0 || expected.zero,
+    },
     {
       detail: `Feedback language: expected ${expected.feedbackLanguage}, detected ${language ?? "unknown"}.`,
       name: "language",
       passed: language === expected.feedbackLanguage,
     },
     {
-      detail: "Every criterion has a comment and the next step has text.",
-      name: "text",
-      passed: feedback.every((text) => text.trim().length > 0),
-    },
-    {
-      detail: `${quoted.length} of ${grade.criteria.length} criteria quote the essay.`,
+      detail: `${quoted.filter((criterion) => criterion.quote).length} of ${quoted.length} assessed criteria quote the answer exactly.`,
       name: "quotes",
-      passed: quoted.length >= grade.criteria.length * MIN_QUOTED_SHARE,
+      passed:
+        quoted.filter((criterion) => criterion.quote).length >= quoted.length * MIN_QUOTED_SHARE,
     },
-    ...mentions,
   ];
 }
 
-function getChecks({
-  expected,
-  grade,
-  testCase,
-}: {
-  expected: GradeEssayExpected;
-  grade: EssayGrade;
-  testCase: TestCase<GradeEssayExpected>;
-}): Check[] {
-  const essay = typeof testCase.userInput.essay === "string" ? testCase.userInput.essay : "";
-  const band = expected.totalBand;
+export const scoreWritingGrade: TaskScorer<GradeWritingExpected> = ({ output, testCase }) => {
+  const { expected } = testCase;
 
-  return [
-    {
-      detail: `Total ${grade.total.score} (range ${grade.range.low}–${grade.range.high}), expected ${band.min}–${band.max}.`,
-      name: "band",
-      passed: getBandLabel({ band, total: grade.total.score }) === "in band",
-    },
-    {
-      detail: `Zero reason: expected ${String(expected.zeroReason)}, got ${String(grade.zeroReason)}.`,
-      name: "zeroReason",
-      passed: grade.zeroReason === expected.zeroReason,
-    },
-    checkNextStep({ expected, grade }),
-    ...checkElements({ expected, grade }),
-    ...checkC5Level({ expected, grade }),
-    ...checkFeedback({ essay, expected, grade }),
-  ];
-}
-
-export const scoreEssayGrade: TaskScorer<GradeEssayExpected> = ({ output, testCase }) => {
-  if (!testCase.expected) {
+  if (!expected) {
     throw new Error(`Test case ${testCase.id} has no expected grade.`);
   }
 
-  const grade = JSON.parse(output) as EssayGrade;
-  const checks = getChecks({ expected: testCase.expected, grade, testCase });
+  const input = testCase.userInput as GradeWritingInput;
+  const graded = JSON.parse(output) as GradeWritingOutput;
+  const text = input.text.slice(0, graded.result.ignoredFrom ?? input.text.length);
+  const comparesPass = input.arithmetic && input.basis.grading.kind === "points";
+  const truth = comparesPass ? truthSide({ expected, input, output: graded }) : null;
+  const predicted = predictedSide({ input, output: graded });
+
+  const side: Check[] =
+    truth && truth !== "uncertain"
+      ? [
+          {
+            detail: `Pass side: standard ${truth}, grade ${predicted ?? "levels"}${graded.result.kind === "points" ? ` (${graded.result.total.low}–${graded.result.total.high} of ${graded.result.max})` : ""}.`,
+            name: "pass-side",
+            passed: predicted !== (truth === "pass" ? "fail" : "pass"),
+          },
+        ]
+      : [];
+
+  const publishedScore: Check[] =
+    expected.officialTotal === undefined
+      ? []
+      : [
+          {
+            detail:
+              graded.result.kind === "points"
+                ? `Published score ${expected.officialTotal}; practice range ${graded.result.total.low}–${graded.result.total.high}.`
+                : `Published score ${expected.officialTotal}; no practice range.`,
+            name: "official-score-coverage",
+            passed:
+              graded.result.kind === "points" &&
+              graded.result.total.low <= expected.officialTotal &&
+              graded.result.total.high >= expected.officialTotal,
+          },
+        ];
+
+  const checks = [
+    ...errorChecks({
+      expected,
+      output: graded,
+      planted: input.basis.grading.kind === "points",
+      text,
+    }),
+    zeroCheck({ expected, output: graded }),
+    ...creditChecks({ expected, input, output: graded, text }),
+    ...side,
+    ...publishedScore,
+    ...feedbackChecks({ expected, output: graded }),
+  ];
+
   const failed = checks.filter((check) => !check.passed);
-  const score = MIN_SCORE + (SCORE_RANGE * (checks.length - failed.length)) / checks.length;
 
   return {
     ...createFixedScore({
       conclusion:
         failed.length === 0
-          ? `All ${checks.length} checks passed. ${checks[0]?.detail ?? ""}`
-          : failed.map((check) => check.detail).join(" "),
-      score: Math.round(score * 100) / 100,
+          ? `All ${checks.length} checks passed. ${checks.map((check) => check.detail).join(" ")}`
+          : failed.map((check) => `[${check.name}] ${check.detail}`).join(" "),
+      score:
+        Math.round(
+          (MIN_SCORE + (SCORE_RANGE * (checks.length - failed.length)) / checks.length) * 100,
+        ) / 100,
     }),
-    classification: {
-      expected: "in band",
-      predicted: getBandLabel({ band: testCase.expected.totalBand, total: grade.total.score }),
-    },
+    ...(truth && predicted ? { classification: { expected: truth, predicted } } : {}),
   };
 };

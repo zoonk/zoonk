@@ -17,13 +17,17 @@ export function withBuiltSettings({
   built: {
     checkpointOverflow: PlanSettings["checkpointOverflow"];
     mockFunding: PlanSettings["mockFunding"];
+    writingSchedule?: PlanSettings["writingSchedule"];
   };
   settings: PlanSettings;
 }): PlanSettings {
+  const { writingSchedule: _previous, ...retained } = settings;
+
   return {
-    ...settings,
+    ...retained,
     checkpointOverflow: built.checkpointOverflow,
     mockFunding: built.mockFunding,
+    ...(built.writingSchedule && { writingSchedule: built.writingSchedule }),
   };
 }
 

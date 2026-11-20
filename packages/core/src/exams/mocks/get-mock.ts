@@ -8,11 +8,12 @@ import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
+import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { NO_RESULT_MOMENTS, loadResultMoments } from "../../milestones/load-ceremony";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
 import { NOTHING_REACHED, reachedSchema } from "../../sessions/reached";
-import { getEssayRubric } from "../essays/essay-rubric";
+import { getNamedEssayRubric } from "../essays/essay-rubric";
 import { getExamDocument } from "../exam-document";
 import { getScoreNotes } from "../scoring/mock-scoring";
 import { loadMockPlanOffers } from "./_utils/mock-adapt";
@@ -141,11 +142,16 @@ function describeOwner({
 }) {
   const asksEssays = getEssayItemIds(conditions).length > 0;
 
+  const kinds = listWrittenTasks({
+    day: conditions.day ?? undefined,
+    structure: owned.structure,
+  }).map(({ grading }) => grading.kind);
+
+  const rubric = kinds.find((kind) => kind !== "levels") ?? getNamedEssayRubric(owned.blueprint);
+
   return {
     date: toIsoDate(owned.sessionDate),
-    essayRubric: asksEssays
-      ? getEssayRubric({ blueprint: owned.blueprint, criteria: [] }).kind
-      : null,
+    essayRubric: asksEssays ? (rubric ?? ("levels" as const)) : null,
     examDocument: owned.goal ? getExamDocument(owned.goal) : "notice",
     examName: owned.blueprint?.name ?? owned.goal?.title ?? null,
     goalId: owned.goal?.id ?? null,

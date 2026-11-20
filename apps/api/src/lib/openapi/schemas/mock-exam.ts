@@ -1,7 +1,6 @@
 import { unshownCertificatesSchema } from "@zoonk/core/certificates/contract";
 import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
-import { essayGradeSchema } from "@zoonk/core/exams/essays/contract";
 import {
   writingPromptSchema,
   writingResultSchema,
@@ -77,7 +76,7 @@ const mockEssaySchema = z
   .object({
     area: z.string().nullable(),
     context: z.string().nullable(),
-    grade: z.union([essayGradeSchema, writingResultSchema]).nullable(),
+    grade: writingResultSchema.nullable(),
     itemId: uuidSchema(),
     question: z.string(),
     status: z
@@ -172,7 +171,7 @@ export const mockViewResponseSchema = z
       .nullable()
       .meta({ description: "Which exam day it copies, when the exam runs over several days" }),
     essayRubric: z
-      .enum(["ap", "custom", "enem", "oab"])
+      .enum(["enem", "oab", "points", "levels"])
       .nullable()
       .meta({ description: "The rubric its essays are graded by; null when it asks none" }),
     essays: z

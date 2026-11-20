@@ -7,15 +7,25 @@ import { writtenGradingSchema } from "./written-grading";
 type Task = NonNullable<BlueprintExtraction["mock"]>["sections"][number]["tasks"][number];
 type Grading = NonNullable<Task["grading"]>;
 
+const ZERO_TRIGGERS: Record<Grading["zeroing"][number]["kinds"][number], string> = {
+  blank: "a blank answer",
+  copiedSupport: "too few original lines after excluding copied support text",
+  identification: "identifying oneself in the answer text",
+  offTopic: "an answer entirely off topic",
+  other: "",
+  tooFewLines: "too few lines",
+  wrongForm: "an answer in the wrong text type",
+};
+
 type Rule =
+  | Grading["zeroing"][number]
   | Grading["criteria"][number]
   | NonNullable<Grading["language"]>
   | NonNullable<Grading["rounding"]>;
 
-function rules(grading: Grading): { key: string; rule: Rule }[] {
+function scoringRules(grading: Grading): { key: string; rule: Rule }[] {
   return [
     ...grading.criteria.map((rule, index) => ({ key: `criteria.${index}`, rule })),
-    ...grading.zeroing.map((rule, index) => ({ key: `zeroing.${index}`, rule })),
     ...(grading.language ? [{ key: "language", rule: grading.language }] : []),
     ...(grading.rounding ? [{ key: "rounding", rule: grading.rounding }] : []),
   ];
@@ -24,6 +34,17 @@ function rules(grading: Grading): { key: string; rule: Rule }[] {
 function describeRule(rule: Rule) {
   const points =
     "points" in rule && typeof rule.points === "number" ? ` (${rule.points} points)` : "";
+
+  if ("kinds" in rule) {
+    const lines = rule.maxLines === null ? "" : ` (zero through ${rule.maxLines} original lines)`;
+
+    const triggers = rule.kinds
+      .map((kind) => ZERO_TRIGGERS[kind])
+      .filter(Boolean)
+      .join(", ");
+
+    return `${rule.text}${lines}${triggers ? ` (a zero applies for ${triggers})` : ""}`;
+  }
 
   if ("formula" in rule && typeof rule.formula === "string") {
     return `${rule.text} (${rule.formula}; ${rule.method}; factor ${rule.factor})`;
@@ -42,7 +63,10 @@ export function writtenRuleFacts({
   task: Task;
 }) {
   return task.grading
-    ? rules(task.grading).flatMap(({ key, rule }) =>
+    ? [
+        ...scoringRules(task.grading),
+        ...task.grading.zeroing.map((rule, index) => ({ key: `zeroing.${index}`, rule })),
+      ].flatMap(({ key, rule }) =>
         toFacts({
           claims: [
             { id: `${id}.grading.${key}`, statement: `${task.description}: ${describeRule(rule)}` },
@@ -76,13 +100,17 @@ export function toWrittenGrading({
     return citation ? { ...fields, citation } : null;
   }
 
-  const complete = rules(grading).every(({ key }) => kept.has(`${id}.grading.${key}`));
+  const complete = scoringRules(grading).every(({ key }) => kept.has(`${id}.grading.${key}`));
 
   return writtenGradingSchema.safeParse({
     criteria: grading.criteria.flatMap((rule, index) => cite(rule, `criteria.${index}`) ?? []),
     kind: complete ? grading.kind : "levels",
     language: grading.language ? cite(grading.language, "language") : null,
     rounding: grading.rounding ? cite(grading.rounding, "rounding") : null,
-    zeroing: grading.zeroing.flatMap((rule, index) => cite(rule, `zeroing.${index}`) ?? []),
+    zeroing: grading.zeroing.flatMap((rule, index) => {
+      const kinds = rule.kinds.filter((kind) => kind !== "other");
+      const cited = cite(rule, `zeroing.${index}`);
+      return cited && kinds.length > 0 ? [{ ...cited, kinds }] : [];
+    }),
   }).data;
 }

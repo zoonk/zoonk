@@ -17,21 +17,25 @@ export function getDayWriting({
   includesMockExams: boolean;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
 }) {
-  const scheduledWriting = getScheduledWrittenTest({
-    calendar: getPlanCalendar({
-      dailyMinutes: goal.dailyMinutes,
-      settings: parsePlanSettings(plan.settings),
-    }),
-    excludes: new Set(
-      plan.items.flatMap(({ kind, scheduledFor }) =>
-        kind === "mock" && scheduledFor ? [toIsoDate(scheduledFor)] : [],
-      ),
-    ),
-    planStart: plan.planStart,
-    structure: plan.structure,
-    targetDate: goal.targetDate,
-    today: localDate,
-  });
+  const settings = parsePlanSettings(plan.settings);
+  const date = toIsoDate(localDate);
+  const schedule = settings.writingSchedule;
+  const allocated = schedule?.find((entry) => entry.date === date);
+
+  const scheduledWriting = schedule
+    ? allocated?.test && { ...allocated.test, minutes: allocated.minutes }
+    : getScheduledWrittenTest({
+        calendar: getPlanCalendar({ dailyMinutes: goal.dailyMinutes, settings }),
+        excludes: new Set(
+          plan.items.flatMap(({ kind, scheduledFor }) =>
+            kind === "mock" && scheduledFor ? [toIsoDate(scheduledFor)] : [],
+          ),
+        ),
+        planStart: plan.planStart,
+        structure: plan.structure,
+        targetDate: goal.targetDate,
+        today: localDate,
+      });
 
   const tasks = plan.structure
     ? listPracticeWritingTasks({
@@ -68,6 +72,8 @@ export function getDayWriting({
       : null;
 
   return {
+    continuingWritingMinutes: allocated?.tasks.length === 0 ? allocated.minutes : 0,
+    produces: schedule ? (allocated?.tasks ?? []) : undefined,
     reserveDrill: (lesson: PlannedLesson) =>
       reserveWritingDrill(lesson, pickWritingDrill({ lesson, tasks })),
     scheduledWriting,

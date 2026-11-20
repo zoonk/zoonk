@@ -1,4 +1,4 @@
-const LINE_BREAK = /\r\n|[\r\n\u2028\u2029]/u;
+export const WRITING_LINE_BREAK = /\r\n|[\r\n\u2028\u2029]/u;
 const GRAPHEMES = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
 export const WRITING_CHARACTERS_PER_LINE = 55;
@@ -17,7 +17,7 @@ export function countWritingLines({
   let used = 0;
 
   for (const { index, segment } of GRAPHEMES.segment(text)) {
-    const lineBreak = LINE_BREAK.test(segment);
+    const lineBreak = WRITING_LINE_BREAK.test(segment);
 
     if (estimatedLines === 0 || (used === charactersPerLine && !lineBreak)) {
       estimatedLines += 1;

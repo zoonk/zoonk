@@ -15,7 +15,15 @@ const CLASS_TEST_PRACTICE_MINUTES = 8;
 
 type Task = ReturnType<typeof listWrittenTasks>[number];
 
-function getEstimatedMinutes(task: Task, tasks: Task[], privateExam: boolean): number {
+export function getEstimatedMinutes({
+  task,
+  tasks,
+  privateExam,
+}: {
+  task: Task;
+  tasks: readonly Task[];
+  privateExam: boolean;
+}): number {
   if (!task.minutes || task.minutes <= 0) {
     return privateExam ? CLASS_TEST_PRACTICE_MINUTES : SHARED_CLOCK_PRACTICE_MINUTES;
   }
@@ -28,38 +36,19 @@ function getEstimatedMinutes(task: Task, tasks: Task[], privateExam: boolean): n
   return Math.max(1, Math.round((task.minutes * weight(task)) / total));
 }
 
-export async function loadSessionProduce({
-  goal,
-  onDemand = false,
-  planSettings,
-  taskKey,
-  today,
+export async function loadWritingPace({
+  examBlueprintId,
+  privateExam,
+  tasks,
   userId,
 }: {
-  goal: Pick<Goal, "examBlueprintId" | "kind" | "targetDate">;
-  onDemand?: boolean;
-  planSettings: unknown;
-  taskKey?: string;
-  today: Date;
+  examBlueprintId: string;
+  privateExam: boolean;
+  tasks: readonly Task[];
   userId: string;
-}): Promise<PlannedProduce | null> {
-  if (goal.kind !== "exam" || !goal.examBlueprintId) {
-    return null;
-  }
-
-  const blueprint = await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } });
-
-  if (!blueprint || (blueprint.ownerId !== userId && blueprint.visibility !== "public")) {
-    return null;
-  }
-
-  const tasks = listPracticeWritingTasks({
-    classTest: Boolean(blueprint.ownerId),
-    structure: readBlueprintContent(blueprint).structure,
-  });
-
+}) {
   if (tasks.length === 0) {
-    return null;
+    return [];
   }
 
   const samples = await prisma.attempt.findMany({
@@ -73,7 +62,7 @@ export async function loadSessionProduce({
     where: {
       item: {
         content: { equals: "answer", path: ["writing", "unit"] },
-        examBlueprintId: blueprint.id,
+        examBlueprintId,
         format: "essay",
       },
       userId,
@@ -83,26 +72,6 @@ export async function loadSessionProduce({
   const independent = samples.filter(
     ({ answer }) => writtenAnswerSchema.safeParse(answer).data?.conditions.version === "firstDraft",
   );
-
-  const settings = parsePlanSettings(planSettings);
-
-  const schedule = {
-    cadence: settings.writtenCadence,
-    planStart: settings.startDate ? fromIsoDate(settings.startDate) : today,
-    targetDate: goal.targetDate,
-  };
-
-  const latest = independent[0]?.localDate;
-
-  if (
-    !onDemand &&
-    taskKey === undefined &&
-    latest &&
-    (!isWrittenDay({ ...schedule, date: today }) ||
-      daysBetween(latest, today) < getDaysBetweenEssays(schedule))
-  ) {
-    return null;
-  }
 
   const ranked = tasks.map((task) => {
     const history = independent.filter(
@@ -135,20 +104,79 @@ export async function loadSessionProduce({
       minutes:
         median > 0
           ? Math.max(1, Math.round(median / MS_PER_MINUTE))
-          : getEstimatedMinutes(task, tasks, Boolean(blueprint.ownerId)),
+          : getEstimatedMinutes({ privateExam, task, tasks }),
       pacing: median > 0 ? ("personal" as const) : pacing,
-      placement: independent.length === 0 && !onDemand,
+      placement: independent.length === 0,
       taskKey: task.key,
       title: task.description,
       unit: "answer" as const,
     };
   });
 
-  const ordered = ranked.toSorted(
+  return ranked.toSorted(
     (first, second) => first.last - second.last || first.minutes - second.minutes,
   );
+}
 
-  return (
-    (taskKey === undefined ? ordered[0] : ordered.find((task) => task.taskKey === taskKey)) ?? null
-  );
+export async function loadSessionProduce({
+  goal,
+  onDemand = false,
+  planSettings,
+  taskKey,
+  today,
+  userId,
+}: {
+  goal: Pick<Goal, "examBlueprintId" | "kind" | "targetDate">;
+  onDemand?: boolean;
+  planSettings: unknown;
+  taskKey?: string;
+  today: Date;
+  userId: string;
+}): Promise<PlannedProduce | null> {
+  if (goal.kind !== "exam" || !goal.examBlueprintId) {
+    return null;
+  }
+
+  const blueprint = await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } });
+
+  if (!blueprint || (blueprint.ownerId !== userId && blueprint.visibility !== "public")) {
+    return null;
+  }
+
+  const tasks = listPracticeWritingTasks({
+    classTest: Boolean(blueprint.ownerId),
+    structure: readBlueprintContent(blueprint).structure,
+  });
+
+  const ordered = await loadWritingPace({
+    examBlueprintId: blueprint.id,
+    privateExam: Boolean(blueprint.ownerId),
+    tasks,
+    userId,
+  });
+
+  const settings = parsePlanSettings(planSettings);
+
+  const schedule = {
+    cadence: settings.writtenCadence,
+    planStart: settings.startDate ? fromIsoDate(settings.startDate) : today,
+    targetDate: goal.targetDate,
+  };
+
+  const latest = Math.max(0, ...ordered.map(({ last }) => last));
+
+  if (
+    !onDemand &&
+    taskKey === undefined &&
+    latest &&
+    (!isWrittenDay({ ...schedule, date: today }) ||
+      daysBetween(new Date(latest), today) < getDaysBetweenEssays(schedule))
+  ) {
+    return null;
+  }
+
+  const picked =
+    taskKey === undefined ? ordered[0] : ordered.find((task) => task.taskKey === taskKey);
+
+  return picked ? { ...picked, placement: picked.placement && !onDemand } : null;
 }

@@ -5,7 +5,6 @@ import { type SectionNavigation } from "../../library/exams/blueprint-contract";
 import { type ItemImage } from "../../library/items/item-image";
 import { type ItemSetView } from "../../library/items/item-set-view";
 import { type ItemCitation } from "../../library/sources/source-citation";
-import { type EssayGradeView } from "../essays/essay-contract";
 import { type WritingPrompt, type writtenAnswerSchema } from "../essays/writing-contract";
 import { type MockAnswer } from "./mock-answer-contract";
 
@@ -78,7 +77,7 @@ export type MockEssayView = {
   writing?: WritingPrompt;
   area: string | null;
   context: string | null;
-  grade: EssayGradeView | z.infer<typeof writtenAnswerSchema>["grade"] | null;
+  grade: z.infer<typeof writtenAnswerSchema>["grade"] | null;
   itemId: string;
   question: string;
   status: "blank" | "graded" | "pending";

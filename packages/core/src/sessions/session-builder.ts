@@ -80,8 +80,8 @@ export type SessionBuildInput = {
   /** An exam where a wrong answer cancels a right one: mixed practice is scored net. */
   netScored: boolean;
   practice: PracticeItem[];
-  /** Official-rubric essay; null when none is planned today. */
-  produce: PlannedProduce | null;
+  produces: readonly PlannedProduce[];
+  continuingWritingMinutes?: number;
   practiceShare: number;
   /** Replaces an unavailable mock with practice across every goal skill; null on other days. */
   fullReviewSkillIds?: readonly string[] | null;
@@ -105,11 +105,6 @@ export type PlannedBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"
   estimatedMinutes: number;
   payload: BlockPayload;
 };
-
-/** Full reviews stay whole on returns so the exam-eve session still reaches every topic. */
-function getSessionBudget(input: SessionBuildInput): number {
-  return Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
-}
 
 function buildReviewBlock({
   capsules,
@@ -184,7 +179,6 @@ function getPracticeMinutes({
   remaining: number;
 }): number {
   const share = isSessionReviewDay(input) ? 1 : input.practiceShare;
-  const practice = input.practice;
   const opened = input.openedPractice;
 
   // Multiplied before dividing, so a day that keeps its minutes gets its practice's exactly.
@@ -192,7 +186,7 @@ function getPracticeMinutes({
     ? (opened.minutes * (budget + (input.usedMinutes ?? 0))) / opened.dayMinutes
     : remaining * share;
 
-  return Math.min(target, practice.length * PRACTICE_MINUTES_PER_QUESTION);
+  return Math.min(target, input.practice.length * PRACTICE_MINUTES_PER_QUESTION);
 }
 
 function fundSessionChallenges(input: SessionBuildInput, budget: number) {
@@ -238,7 +232,7 @@ export function buildSessionBlocks(day: SessionBuildInput): {
     }),
   };
 
-  const dayBudget = getSessionBudget(input);
+  const dayBudget = Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
 
   if (dayBudget < MIN_BLOCK_MINUTES) {
     return { blocks: [], plannedMinutes: 0 };
@@ -248,14 +242,15 @@ export function buildSessionBlocks(day: SessionBuildInput): {
     return buildMockDay(input.checkpoints);
   }
 
-  return buildMixedDay(input, dayBudget, input.produce ? toProduceBlock(input.produce) : null);
+  return buildMixedDay(input, dayBudget - (input.continuingWritingMinutes ?? 0));
 }
 
-function buildMixedDay(input: SessionBuildInput, dayBudget: number, produce: PlannedBlock | null) {
-  const budget = dayBudget - (produce?.estimatedMinutes ?? 0);
+function buildMixedDay(input: SessionBuildInput, dayBudget: number) {
+  const produceMinutes = input.produces.reduce((sum, block) => sum + block.minutes, 0);
+  const budget = dayBudget - produceMinutes;
 
-  if (produce && budget < MIN_BLOCK_MINUTES) {
-    return { blocks: [produce], plannedMinutes: produce.estimatedMinutes };
+  if (budget < MIN_BLOCK_MINUTES) {
+    return { blocks: input.produces.map(toProduceBlock), plannedMinutes: produceMinutes };
   }
 
   const reviewFactor = input.freshStart ? FRESH_START_REVIEW_FACTOR : 1;
@@ -267,8 +262,11 @@ function buildMixedDay(input: SessionBuildInput, dayBudget: number, produce: Pla
 
   if (leading[0] && leading[0].minutes > budget) {
     return {
-      blocks: produce ? [produce] : [buildCheckpointBlock(leading[0])],
-      plannedMinutes: produce?.estimatedMinutes ?? Math.ceil(leading[0].minutes),
+      blocks:
+        produceMinutes > 0
+          ? input.produces.map(toProduceBlock)
+          : [buildCheckpointBlock(leading[0])],
+      plannedMinutes: produceMinutes || Math.ceil(leading[0].minutes),
     };
   }
 
@@ -355,7 +353,7 @@ function buildMixedDay(input: SessionBuildInput, dayBudget: number, produce: Pla
       reviewedSkillIds: review?.payload.skillIds ?? [],
       topics: input.topics,
     }),
-    produce,
+    ...input.produces.map(toProduceBlock),
     ...calendar.map((checkpoint) => buildCheckpointBlock(checkpoint)),
   ].filter((block) => block !== null);
 
@@ -368,6 +366,6 @@ function buildMixedDay(input: SessionBuildInput, dayBudget: number, produce: Pla
     leading,
     learnBudget,
     lessons,
-    produceMinutes: produce?.estimatedMinutes ?? 0,
+    produceMinutes,
   });
 }

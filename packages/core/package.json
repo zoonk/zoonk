@@ -101,6 +101,7 @@
     "./exams/essays/writing-contract": "./src/exams/essays/writing-contract.ts",
     "./exams/essays/writing-lines": "./src/exams/essays/writing-lines.ts",
     "./exams/essays/writing-supply": "./src/exams/essays/writing-supply.ts",
+    "./exams/essays/writing-feedback": "./src/exams/essays/_utils/writing-feedback.ts",
     "./exams/essays/writing-lines": "./src/exams/essays/writing-lines.ts",
     "./exams/final-stretch/rules": "./src/exams/final-stretch/final-stretch-rules.ts",
     "./exams/kept-month": "./src/exams/kept-month.ts",

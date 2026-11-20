@@ -65,7 +65,7 @@ const baseInput: SessionBuildInput = {
   placementItemIds: [],
   practice,
   practiceShare: 0.2,
-  produce: null,
+  produces: [],
   reviewPlanItemId: null,
   topics: new Map([
     ["s0", { area: "Math", name: "Functions" }],
@@ -773,13 +773,15 @@ describe(getPracticeShare, () => {
     const { blocks, plannedMinutes } = buildSessionBlocks({
       ...baseInput,
       dailyMinutes: 60,
-      produce: {
-        minutes: 20,
-        skillId: "s-essay",
-        taskKey: "essay-1",
-        title: "Intervention proposal",
-        unit: "answer",
-      },
+      produces: [
+        {
+          minutes: 20,
+          skillId: "s-essay",
+          taskKey: "essay-1",
+          title: "Intervention proposal",
+          unit: "answer",
+        },
+      ],
     });
 
     const kinds = blocks.map((block) => block.kind);
@@ -821,13 +823,9 @@ describe("filling ordinary study days", () => {
       dailyMinutes: 120,
       fillLessons: [lesson("later", 10)],
       mockReplacesDay: true,
-      produce: {
-        minutes: 20,
-        skillId: "s-essay",
-        taskKey: "essay-1",
-        title: "Essay",
-        unit: "answer",
-      },
+      produces: [
+        { minutes: 20, skillId: "s-essay", taskKey: "essay-1", title: "Essay", unit: "answer" },
+      ],
     });
 
     expect(
@@ -841,7 +839,7 @@ describe("filling ordinary study days", () => {
     const result = buildSessionBlocks({
       ...baseInput,
       dailyMinutes: 15,
-      produce: { minutes: 105, taskKey: "essay-1", title: "Essay", unit: "answer" },
+      produces: [{ minutes: 105, taskKey: "essay-1", title: "Essay", unit: "answer" }],
     });
 
     expect(result.plannedMinutes).toBe(105);

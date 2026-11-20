@@ -1,8 +1,4 @@
-import {
-  type EssayView,
-  type WrittenEssayDraft,
-  essayGradeSchema,
-} from "@zoonk/core/exams/essays/contract";
+import { type EssayView } from "@zoonk/core/exams/essays/contract";
 import {
   writingDraftSchema,
   writingPacingSchema,
@@ -17,38 +13,25 @@ export const essayViewResponseSchema = z
   .object({
     blockId: uuidSchema(),
     context: z.string().nullable(),
-    draft: writingDraftSchema.nullable().optional(),
+    draft: writingDraftSchema.nullable(),
     drafts: z.array(
-      z.union([
-        z.object({
-          attemptId: uuidSchema().optional(),
-          grade: essayGradeSchema,
-          submittedAt: z.iso.datetime(),
-          text: z.string(),
-        }),
-        z.object({
-          attemptId: uuidSchema(),
-          grade: writingResultSchema,
-          submittedAt: z.iso.datetime(),
-          text: z.string(),
-        }),
-      ]),
+      z.object({
+        attemptId: uuidSchema(),
+        grade: writingResultSchema,
+        submittedAt: z.iso.datetime(),
+        text: z.string(),
+      }),
     ),
     gradesLeft: z.number().int().min(0),
-    pacing: writingPacingSchema.optional(),
+    pacing: writingPacingSchema,
     question: z.string(),
     rubric: z
-      .enum(["ap", "enem", "oab", "custom"])
-      .meta({
-        description:
-          "The official rubric: ENEM, OAB, AP scoring guidelines (rows with their own points) or the item's own criteria",
-      }),
+      .enum(["enem", "oab", "points", "levels"])
+      .meta({ description: "The scoring rubric recorded with the writing prompt" }),
     sessionId: uuidSchema(),
     status: z.enum(StudyBlockStatus),
-    writing: writingPromptSchema.optional(),
+    writing: writingPromptSchema,
   })
-  .meta({ id: "Essay" }) satisfies z.ZodType<
-  Omit<EssayView, "drafts"> & { drafts: (EssayView["drafts"][number] | WrittenEssayDraft)[] }
->;
+  .meta({ id: "Essay" }) satisfies z.ZodType<EssayView>;
 
 export const writingAttemptPathParamsSchema = z.object({ attemptId: uuidSchema() });

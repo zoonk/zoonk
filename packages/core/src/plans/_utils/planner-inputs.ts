@@ -12,6 +12,7 @@ import { type SkillReadiness } from "../planner/skill-order";
 import { getLevelFloor } from "./level-bands";
 import { loadExamFacts } from "./planner-exam-facts";
 import { loadGoalPlannerLessons } from "./planner-lessons";
+import { loadPlanWriting } from "./planner-writing";
 import { loadStrongAreas } from "./strong-areas";
 import { findWrittenStartLessonId } from "./written-start";
 
@@ -115,6 +116,18 @@ export async function loadPlannerInputs({
       findWrittenStartLessonId(goal),
     ]);
 
+  const { writingNotice, ...examFacts } = exam;
+
+  const writing =
+    writingNotice && goal.examBlueprintId && targetDate
+      ? await loadPlanWriting({
+          examBlueprintId: goal.examBlueprintId,
+          graph,
+          userId,
+          ...writingNotice,
+        })
+      : undefined;
+
   const { answeredWrong, claims, known: knownSkillIds } = evidence;
   const missedSkillIds = listClaimed({ claim: "gap", claims });
 
@@ -134,6 +147,7 @@ export async function loadPlannerInputs({
     readiness,
     startLessonId,
     strongAreas: new Set([...strongAreas].toSorted()),
-    ...exam,
+    ...examFacts,
+    ...(writing && { writing }),
   };
 }

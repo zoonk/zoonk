@@ -152,11 +152,7 @@ export async function loadSessionBuildInput(
 
   const access = getExamPrepAccess({ examPrep: plan.examPrep, goal });
 
-  const { scheduledWriting, reserveDrill, writtenTest } = getDayWriting({
-    context,
-    includesMockExams: access.includesMockExams,
-    plan,
-  });
+  const writing = getDayWriting({ context, includesMockExams: access.includesMockExams, plan });
 
   const review = toReviewInput({ context, field, netScored, plan });
 
@@ -174,7 +170,7 @@ export async function loadSessionBuildInput(
     { capsules: dueCapsules, claims },
     boss,
     weekly,
-    produce,
+    produces,
   ] = await Promise.all([
     dayLessons,
     loadAlphabetIntro({ goal, userId }),
@@ -207,22 +203,23 @@ export async function loadSessionBuildInput(
       userId,
     }),
     // Written exam tasks must remain practiced even when their topics' lessons do not fit before the test.
-    loadSessionProduce({
-      goal,
-      onDemand: scheduledWriting !== null && !access.includesMockExams,
-      planSettings: plan.settings,
-      today: localDate,
-      userId,
-    }),
+    writing.produces ??
+      loadSessionProduce({
+        goal,
+        onDemand: Boolean(writing.scheduledWriting) && !access.includesMockExams,
+        planSettings: plan.settings,
+        today: localDate,
+        userId,
+      }).then((produce) => (produce ? [produce] : [])),
   ]);
 
   const lessons = [
     ...toAlphabetLessons(alphabet),
-    ...planLessons.map((lesson) => reserveDrill(lesson)),
+    ...planLessons.map((lesson) => writing.reserveDrill(lesson)),
   ];
 
-  const checkpoints = writtenTest
-    ? [writtenTest]
+  const checkpoints = writing.writtenTest
+    ? [writing.writtenTest]
     : listDayCheckpoints({ boss, items: plan.items, weekly });
 
   // A Plus-only mock day gives free learners a full review of every test topic instead.
@@ -253,15 +250,15 @@ export async function loadSessionBuildInput(
 
   const base: Omit<SessionBuildInput, keyof DayWork> = {
     checkpoints,
+    continuingWritingMinutes: writing.continuingWritingMinutes,
     dailyMinutes: dayMinutes,
-
-    fillLessons: fillLessons.map((lesson) => reserveDrill(lesson)),
+    fillLessons: fillLessons.map((lesson) => writing.reserveDrill(lesson)),
     freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? testSkillIds : null,
     lastSessionChallenges: plan.lastSessionChallenges,
     lessons,
     mockReplacesDay:
-      Boolean(writtenTest) ||
+      Boolean(writing.writtenTest) ||
       isMockOnlyDay({
         goal,
         hasMock: context.keepsMock || checkpoints.some((checkpoint) => checkpoint.mock),
@@ -272,7 +269,7 @@ export async function loadSessionBuildInput(
     netScored,
     planItems: plan.items,
     practiceShare: getDayPracticeShare({ goal, items: plan.items, today: localDate }),
-    produce,
+    produces,
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay ? (reviewDay.key ?? getItemKey(reviewDay)) : null,
     topics: getPlanTopics({ goal, graph: plan.graph }),

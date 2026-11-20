@@ -155,7 +155,7 @@ export const mockPaths = {
   "/mocks/{blockId}/essay-grades": {
     post: {
       description:
-        "Grades a finished full mock's essays (its written part, `essays` with `pending` on GET /mocks/{blockId}) with the exam's official rubric, and records them as learning: call it right after the hand-in, while the objective result already shows. Each essay is graded once; a second request waits for the first one's grades. They count toward the day's essay grades: past them, the rest wait for another day (`ESSAY_LIMIT_REACHED`).",
+        "Grades a finished mock's submitted writing tasks using the admissions issued at its start. Each answer is graded once, and concurrent requests replay the saved results.",
       operationId: "gradeMockEssays",
       requestBody: {
         content: { "application/json": { schema: mockTimeZoneInputSchema } },
@@ -169,7 +169,6 @@ export const mockPaths = {
         },
         ...commonErrors,
         "409": { ...conflictResponse, description: "The mock isn't handed in yet" },
-        "429": { ...tooManyRequestsResponse, description: "Today's essay grades are used up" },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Grade a mock's essays",

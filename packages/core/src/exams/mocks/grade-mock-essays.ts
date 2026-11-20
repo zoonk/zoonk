@@ -1,27 +1,26 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { claimEssayGrades, releaseEssayGradeClaims } from "../essays/_utils/essay-grade-claims";
-import {
-  gradeEssayText,
-  gradeWriting,
-  recordEssayGrade,
-} from "../essays/_utils/grade-essay-answer";
+import { gradeWriting, recordEssayGrade } from "../essays/_utils/grade-essay-answer";
 import { getWritingAttemptId } from "../essays/_utils/writing-attempt-id";
-import { countWritingLines } from "../essays/writing-lines";
 import { readMockEssayText } from "./_utils/mock-answers";
-import { loadMockEssayItems, readMockWriting } from "./_utils/mock-essays";
+import { loadMockEssayItems } from "./_utils/mock-essays";
 import { getEssayItemIds } from "./_utils/mock-sections";
 import { type MockSitting, type OwnedMock, findOwnedMock } from "./_utils/owned-mock";
 import { type MockTimeZoneInput } from "./mock-contract";
 
 export type GradeMockEssaysResult = {
-  status: "graded" | "limitReached" | "notFinished" | "notFound" | "unauthorized";
+  status: "graded" | "notFinished" | "notFound" | "unauthorized";
 };
 
-async function listUngradedEssays({ mock, userId }: { mock: MockSitting; userId: string }) {
+async function listUngradedEssays({
+  admissionId,
+  mock,
+}: {
+  admissionId: string;
+  mock: MockSitting;
+}) {
   const itemIds = getEssayItemIds(mock.conditions);
 
   const [items, graded] = await Promise.all([
@@ -38,11 +37,7 @@ async function listUngradedEssays({ mock, userId }: { mock: MockSitting; userId:
     const text = readMockEssayText(draft?.answer);
     const isGraded = graded.some((attempt) => attempt.itemId === itemId);
 
-    const { writingAdmissionId: admissionId } = mock.conditions;
-
-    const attemptId = admissionId
-      ? getWritingAttemptId({ admissionId, itemId })
-      : getAnswerAttemptId({ key: mock.id, questionId: itemId, userId });
+    const attemptId = getWritingAttemptId({ admissionId, itemId });
 
     return essay && text && !isGraded
       ? [{ ...essay, attemptId, durationMs: draft?.durationMs ?? 0, text }]
@@ -51,11 +46,13 @@ async function listUngradedEssays({ mock, userId }: { mock: MockSitting; userId:
 }
 
 async function gradeEssays({
+  admissionId,
   essays,
   mock,
   owned,
   timeZone,
 }: {
+  admissionId: string;
   essays: Awaited<ReturnType<typeof listUngradedEssays>>;
   mock: MockSitting;
   owned: OwnedMock;
@@ -73,51 +70,25 @@ async function gradeEssays({
         userId: owned.userId,
       };
 
-      const language = owned.goal?.language ?? essay.item.language;
-      const { writingAdmissionId: admissionId } = mock.conditions;
+      const grade = await gradeWriting({
+        analytics: { contentScope: "personal", distinctId: owned.userId, goalId: owned.goal?.id },
+        content: essay.content,
+        language: essay.item.language,
+        previousNextSteps: [],
+        text: essay.text,
+      });
 
-      if (admissionId) {
-        const writing = readMockWriting(essay.item);
-
-        if (!writing) {
-          throw new Error("An admitted mock answer is missing its scoring basis.");
-        }
-
-        const { estimatedLines } = countWritingLines({
-          charactersPerLine: writing.charactersPerLine,
-          limit: writing.lines,
-          text: essay.text,
-        });
-
-        const conditions = {
+      return {
+        ...common,
+        conditions: {
           admissionId,
-          estimatedLines,
+          estimatedLines: 0,
           origin: "mock" as const,
           timed: true,
           version: "firstDraft" as const,
-        };
-
-        const grade = await gradeWriting({
-          conditions,
-          content: essay.content,
-          language,
-          previousNextSteps: [],
-          text: essay.text,
-        });
-
-        return { ...common, conditions, grade };
-      }
-
-      const grade = await gradeEssayText({
-        blueprint: owned.blueprint,
-        content: essay.content,
-        goalId: owned.goal?.id,
-        language,
-        text: essay.text,
-        userId: owned.userId,
-      });
-
-      return { ...common, attemptId: essay.attemptId, grade };
+        },
+        grade,
+      };
     }),
   );
 
@@ -162,13 +133,17 @@ export async function gradeMockEssays({
 
   const { userId } = owned;
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
-  const localDate = getDateInTimeZone({ date: new Date(), timeZone });
-  const ungraded = await listUngradedEssays({ mock, userId });
+  const { writingAdmissionId: admissionId } = mock.conditions;
+
+  if (!admissionId) {
+    return { status: getEssayItemIds(mock.conditions).length === 0 ? "graded" : "notFound" };
+  }
+
+  const ungraded = await listUngradedEssays({ admissionId, mock });
 
   const claims = await claimEssayGrades({
-    admissionId: mock.conditions.writingAdmissionId,
+    admissionId,
     attemptIds: ungraded.map((essay) => essay.attemptId),
-    localDate,
     userId,
   });
 
@@ -181,16 +156,10 @@ export async function gradeMockEssays({
   }
 
   try {
-    await gradeEssays({ essays: claimed, mock, owned, timeZone });
+    await gradeEssays({ admissionId, essays: claimed, mock, owned, timeZone });
   } finally {
     await releaseEssayGradeClaims({ attemptIds: claimed.map((essay) => essay.attemptId), userId });
   }
 
-  return {
-    status: claims.some(
-      (claim) => claim.status === "limitReached" || claim.status === "signUpRequired",
-    )
-      ? "limitReached"
-      : "graded",
-  };
+  return { status: "graded" };
 }

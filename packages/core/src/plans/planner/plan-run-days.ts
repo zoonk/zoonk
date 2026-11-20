@@ -21,6 +21,7 @@ import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 import { findPromisedLesson, listPromisedLessonMinutes } from "./promised-minutes";
 import { type FixedEvent, type PlanDay, listPlanDays } from "./schedule-units";
 import { getTaughtDay } from "./whole-boss";
+import { allocateWriting } from "./writing-allocation";
 
 export type RunDayInput = Pick<
   BuildPlanInput,
@@ -173,12 +174,14 @@ export function listFundedPlanDays({
   days,
   input,
   resolution = null,
+  writing,
   start = input.today,
   units = [],
 }: {
   days: Pick<ReturnType<typeof createDays>, "describeDay" | "windows">;
   input: BuildPlanInput;
   resolution?: MockResolution | null;
+  writing?: { planStart: Date; units: QueueUnit[] };
   start?: Date;
   units?: readonly QueueUnit[];
 }) {
@@ -194,9 +197,19 @@ export function listFundedPlanDays({
     units,
   });
 
-  return fundMocks({
+  const allocation =
+    writing &&
+    allocateWriting({
+      days: planDays,
+      input,
+      planStart: writing.planStart,
+      start,
+      units: writing.units,
+    });
+
+  const funded = fundMocks({
     clocks: input.mockClocks,
-    days: planDays,
+    days: allocation?.days ?? planDays,
     from: toIsoDate(start),
     funding: input.settings.mockFunding,
     moves: input.settings.movedEvents,
@@ -206,6 +219,13 @@ export function listFundedPlanDays({
     }),
     resolution,
   });
+
+  return {
+    ...funded,
+    teachingMinutes: allocation?.teachingMinutes,
+    writingRequirement: allocation?.writingRequirement,
+    writingSchedule: allocation?.schedule,
+  };
 }
 
 export function getOpenStart(input: BuildPlanInput): Date {

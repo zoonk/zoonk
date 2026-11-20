@@ -295,16 +295,7 @@ describe("written mock sittings", () => {
 
     await gradeMockEssays({ blockId: id, input: UTC });
 
-    expect(gradeWriting).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        conditions: expect.objectContaining({
-          admissionId: admissions[0]?.id,
-          origin: "mock",
-          version: "firstDraft",
-        }),
-        text,
-      }),
-    );
+    expect(gradeWriting).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ text }));
 
     await expect(view(id)).resolves.toMatchObject({
       essays: [

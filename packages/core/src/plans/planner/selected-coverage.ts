@@ -6,7 +6,7 @@ import { getAreaFoundationIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
 import { type PlannedItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
-import { type SkillRequirement, isCompleted } from "./selected-requirement";
+import { type SkillRequirement, getWrittenCoverage, isCompleted } from "./selected-requirement";
 
 export type ExamSubjectShare = { areas: readonly string[]; share: number };
 
@@ -175,6 +175,23 @@ function listShortLessons({
     .toSorted((a, b) => a.lessonId.localeCompare(b.lessonId));
 }
 
+function readCoveredTeaching({
+  built,
+  deadline,
+  requirement,
+}: {
+  built: BuiltPlan;
+  deadline: string;
+  requirement: ReadonlyMap<string, SkillRequirement>;
+}) {
+  const raw = new Map([...requirement.values()].flatMap((skill) => [...skill.lessons]));
+
+  return {
+    lessons: listCoveredLessons({ built, deadline, raw }),
+    standIns: listCoveredStandIns({ built, deadline }),
+  };
+}
+
 /** Each lesson counts once, however many skills share it. */
 export function getWholeShortfall({
   built,
@@ -191,13 +208,12 @@ export function getWholeShortfall({
   requirement: ReadonlyMap<string, SkillRequirement>;
   settled: ReadonlySet<string>;
 }): number {
-  const raw = new Map([...requirement.values()].flatMap((skill) => [...skill.lessons]));
-  const lessons = listCoveredLessons({ built, deadline, raw });
-  const standIns = listCoveredStandIns({ built, deadline });
+  const { lessons, standIns } = readCoveredTeaching({ built, deadline, requirement });
 
   const measured = listScope({ examSubjects, input }).skills.flatMap(({ skillId }) => {
     const required = requirement.get(skillId);
-    return required && !settled.has(skillId) ? [{ required, skillId }] : [];
+    const written = built.writingRequirement && input.writing?.skillIds.has(skillId);
+    return required && !settled.has(skillId) && !written ? [{ required, skillId }] : [];
   });
 
   const lessonsLeft = new Map(
@@ -245,12 +261,16 @@ export function getCoverage({
 }): SelectedCoverage {
   const scope = listScope({ examSubjects, input });
 
-  const raw = new Map([...requirement.values()].flatMap((skill) => [...skill.lessons]));
+  const { lessons, standIns } = readCoveredTeaching({ built, deadline, requirement });
 
-  const lessons = listCoveredLessons({ built, deadline, raw });
-  const standIns = listCoveredStandIns({ built, deadline });
+  const written = getWrittenCoverage({ built, input });
 
   const skills = scope.skills.map(({ skillId, worth }) => {
+    if (written?.skillIds.has(skillId)) {
+      const { skillIds: _skillIds, ...coverage } = written;
+      return { ...coverage, skillId, worth };
+    }
+
     const required = requirement.get(skillId);
     const lessonMinutes = [...(required?.lessons.values() ?? [])].reduce((a, b) => a + b, 0);
     const requiredRaw = lessonMinutes + (required?.standIn ?? 0);
@@ -275,16 +295,20 @@ export function getCoverage({
   const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
   const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
 
-  const coreFits = hasEveryTopic({
-    built: {
-      ...built,
-      items: built.items.filter(
-        (item) => item.status !== "todo" || sumRawBefore({ built, deadline, item }) > PLAN_EPSILON,
-      ),
-    },
-    known: input.knownSkillIds ?? new Set(),
-    skills: input.graph.skills,
-  });
+  const coreFits =
+    (!written || written.coveredRaw >= written.requiredRaw - PLAN_EPSILON) &&
+    hasEveryTopic({
+      built: {
+        ...built,
+        items: built.items.filter(
+          (item) =>
+            item.status !== "todo" || sumRawBefore({ built, deadline, item }) > PLAN_EPSILON,
+        ),
+        skillMinutes: built.skillMinutes.filter(({ skillId }) => !written?.skillIds.has(skillId)),
+      },
+      known: input.knownSkillIds ?? new Set(),
+      skills: input.graph.skills,
+    });
 
   const whole = skills.every(
     (skill) =>
@@ -299,7 +323,12 @@ export function getCoverage({
     deadline,
     fits: coreFits && total > 0 && whole,
     measure: scope.measure,
-    shortLessons: listShortLessons({ built, covered: lessons, requirement, skills }),
+    shortLessons: listShortLessons({
+      built,
+      covered: lessons,
+      requirement,
+      skills: skills.filter(({ skillId }) => !written?.skillIds.has(skillId)),
+    }),
     skills,
     targetDate,
   };

@@ -1,23 +1,89 @@
 import { type Task } from "@/lib/types";
+import { type Reasoning } from "@zoonk/ai/provider-options";
+import { type WritingEvidence, gradeWritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
+import { type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 import {
-  type EssayGrade,
-  type GradeEssayParams,
-  gradeEssay,
-} from "@zoonk/ai/tasks/grading/grade-essay";
-import { scoreEssayGrade } from "./scorer";
-import { type GradeEssayExpected, TEST_CASES } from "./test-cases";
+  applyWritingArithmetic,
+  buildWritingFeedback,
+} from "@zoonk/core/exams/essays/writing-feedback";
+import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
+import { scoreWritingGrade } from "./scorer";
+import { type GradeWritingExpected, type GradeWritingInput, TEST_CASES } from "./test-cases";
 
-const NO_USAGE = { inputTokens: 0, outputTokens: 0 };
+export type GradeWritingOutput = {
+  estimatedLines: number;
+  evidence: WritingEvidence;
+  result: WritingResult;
+};
 
-export const gradeEssayTask: Task<GradeEssayParams, EssayGrade, GradeEssayExpected> = {
+/** Grades as production does, then applies the arithmetic a numeric enablement would pin. */
+async function generate({
+  arithmetic,
+  basis,
+  context,
+  keyPoints,
+  language,
+  model,
+  question,
+  reasoning,
+  text,
+  useFallback,
+}: GradeWritingInput & { model: string; reasoning?: Reasoning; useFallback?: boolean }) {
+  const { estimatedLines, ignoredFrom } = countWritingLines({
+    charactersPerLine: basis.charactersPerLine,
+    limit: basis.lines,
+    text,
+  });
+
+  const eligible = ignoredFrom === null ? text : text.slice(0, ignoredFrom);
+
+  const graded = await gradeWritingEvidence({
+    aspects: basis.aspects,
+    context,
+    keyPoints,
+    language,
+    model,
+    question,
+    reasoning,
+    scoringBasis: {
+      ...basis.grading,
+      criteria: basis.grading.criteria.length > 0 ? basis.grading.criteria : basis.criteria,
+      lines: basis.lines,
+      points: basis.points,
+    },
+    text: eligible,
+    useFallback,
+  });
+
+  const evidence = graded.data;
+
+  const feedback = buildWritingFeedback({
+    basis,
+    eligible,
+    evidence,
+    ignoredFrom,
+    previousNextSteps: [],
+  });
+
+  const result = applyWritingArithmetic({
+    arithmetic,
+    basis,
+    context,
+    eligible,
+    estimatedLines,
+    evidence,
+    feedback,
+  });
+
+  return { ...graded, data: { estimatedLines, evidence, result } };
+}
+
+export const gradeEssayTask: Task<GradeWritingInput, GradeWritingOutput, GradeWritingExpected> = {
   description:
-    "Grade essays with the ENEM competencies, OAB brief sections or custom criteria, with quotes, examples and one next step; code-scored against expected score bands",
-  generate: async (input) => {
-    const result = await gradeEssay(input);
-    return { ...result, usage: result.usage ?? NO_USAGE };
-  },
+    "Grade written answers as evidence (aspects, criterion levels, exact-quoted language errors) on CGU, Enem, OAB and no-scale bases; code-scored for false deductions, false zeroes, credit and pass-side decisions",
+  generate,
   id: "grade-essay",
   name: "Grade essay",
-  score: scoreEssayGrade,
+  score: scoreWritingGrade,
   testCases: TEST_CASES,
 };

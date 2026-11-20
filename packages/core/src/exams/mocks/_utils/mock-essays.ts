@@ -1,18 +1,12 @@
 import "server-only";
 import { type Goal, type Item, prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
 import { type EssayContent, readEssayContent } from "../../essays/_utils/essay-content";
-import { essayAnswerSchema } from "../../essays/essay-contract";
-import {
-  writingPromptSchema,
-  writtenAnswerSchema,
-  writtenItemSchema,
-} from "../../essays/writing-contract";
+import { writingPromptSchema, writtenAnswerSchema } from "../../essays/writing-contract";
 import { isNumericWritingRubric } from "../../essays/writing-rubric-policy";
+import { loadUnseenWritingPrompts } from "../../essays/writing-supply";
 import { type MockEssayView } from "../mock-view-contract";
 import { type MockEssayCandidate } from "../written-parts";
 import { readMockEssayText } from "./mock-answers";
-import { type loadSkillAreas } from "./mock-candidates";
 import { getEssayItemIds } from "./mock-sections";
 import { type MockSitting } from "./owned-mock";
 
@@ -21,57 +15,17 @@ export async function loadMockEssays({
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "id">;
-  plan?: Parameters<typeof loadSkillAreas>[1];
   userId: string;
 }): Promise<MockEssayCandidate[]> {
   if (!goal.examBlueprintId) {
     return [];
   }
 
-  const scoped = await prisma.goal.findFirst({
-    select: { examBlueprint: { select: { ownerId: true, visibility: true } }, language: true },
-    where: { id: goal.id, userId },
-  });
+  const bank = await loadUnseenWritingPrompts({ goalId: goal.id, tx: prisma, userId });
 
-  if (!scoped?.examBlueprint) {
-    return [];
-  }
-
-  const { examBlueprint, language } = scoped;
-
-  const items = await prisma.item.findMany({
-    orderBy: { id: "asc" },
-    select: { content: true, id: true },
-    where: {
-      attempts: { none: { userId } },
-      examBlueprintId: goal.examBlueprintId,
-      field: null,
-      format: "essay",
-      language,
-      retiredAt: null,
-      setId: null,
-      skill: { ownerId: examBlueprint.ownerId, visibility: examBlueprint.visibility },
-    },
-  });
-
-  const admissions = await prisma.writingAdmission.findMany({
-    select: { itemIds: true },
-    where: { itemIds: { hasSome: items.map((item) => item.id) }, userId },
-  });
-
-  const exposed = new Set(admissions.flatMap((admission) => admission.itemIds));
-
-  return items.flatMap((item) => {
-    const writing = readMockWriting(item);
-
-    return writing?.unit === "answer" && !exposed.has(item.id)
-      ? [{ itemId: item.id, taskKey: writing.taskKey }]
-      : [];
-  });
-}
-
-export function readMockWriting(item: Pick<Item, "content">) {
-  return writtenItemSchema.safeParse(isJsonObject(item.content) ? item.content.writing : null).data;
+  return bank
+    .filter(({ writing }) => writing.unit === "answer")
+    .map(({ id, writing }) => ({ itemId: id, taskKey: writing.taskKey }));
 }
 
 export type MockEssayItem = { content: EssayContent; item: Item };
@@ -127,15 +81,12 @@ export async function loadMockEssayViews({
     const text = readMockEssayText(draft?.answer);
     const recorded = attempts.find((attempt) => attempt.itemId === itemId);
 
-    const grade =
-      writtenAnswerSchema.safeParse(recorded?.answer).data?.grade ??
-      essayAnswerSchema.safeParse(recorded?.answer).data?.grade ??
-      null;
+    const grade = writtenAnswerSchema.safeParse(recorded?.answer).data?.grade ?? null;
 
-    const basis = readMockWriting(essay.item);
-    const writing = writingPromptSchema.safeParse(basis).data;
+    const basis = essay.content.writing;
+    const writing = writingPromptSchema.parse(basis);
 
-    if (!text && basis && isNumericWritingRubric(basis)) {
+    if (!text && isNumericWritingRubric(basis)) {
       numericBlankItems.add(itemId);
     }
 
@@ -148,7 +99,7 @@ export async function loadMockEssayViews({
         question: essay.content.question,
         status: getEssayStatus({ grade, text }),
         text,
-        ...(writing && { writing }),
+        writing,
       },
     ];
   });

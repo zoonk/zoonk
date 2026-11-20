@@ -5,9 +5,10 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type CallWait, buildProviderOptions, chooseServiceTier } from "../../provider-options";
 import { fillPromptLanguages } from "../_utils/prompt-language";
+import { type WrittenTask } from "../research/blueprint-written-schema";
 import taskPrompt from "./write-writing-prompt.prompt.md";
 
-const model = "openai/gpt-6.1-terra";
+const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 const points = z.number().positive().nullable();
 
@@ -24,10 +25,13 @@ const schema = z.object({
 
 export type WritingPromptOutput = z.infer<typeof schema>;
 export type WritingPromptInput = {
+  board?: string;
   drillSkillId: string | null;
+  exam: string;
   language: string;
+  sectionTopics: string[];
   skills: { id: string; name: string }[];
-  task: { description: string; key: string; lines: number | null; points: number | null };
+  task: WrittenTask;
   unit: "answer" | "drill";
   usedTitles: string[];
 };
@@ -35,12 +39,16 @@ export type WritingPromptInput = {
 export async function writeWritingPrompt({
   analytics,
   input,
+  model = defaultModel,
   shared,
+  useFallback = true,
   wait,
 }: {
   analytics?: AiGenerationContext;
   input: WritingPromptInput;
+  model?: string;
   shared: boolean;
+  useFallback?: boolean;
   wait: CallWait;
 }) {
   const systemPrompt = fillPromptLanguages({
@@ -60,7 +68,7 @@ export async function writeWritingPrompt({
           fallbackModels,
           model,
           serviceTier: chooseServiceTier({ wait }),
-          useFallback: true,
+          useFallback,
         }),
       }),
     libraryInput: shared,

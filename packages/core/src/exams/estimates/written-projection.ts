@@ -5,6 +5,7 @@ import { getPartMaxPoints } from "../../library/exams/part-points";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { type EstimatedScore } from "../../preparation/estimated-score";
 import { namesMatch } from "../_utils/name-match";
+import { matchesWritingTaskBasis } from "../essays/_utils/writing-task-basis";
 import { isWrittenSubject } from "../mocks/written-subject";
 import {
   type WritingRange,
@@ -22,10 +23,6 @@ function equalPoints(first: number, second: number): boolean {
   return Math.abs(first - second) < POINTS_TOLERANCE;
 }
 
-function scoringBasis(grading: WrittenTask["grading"]): string {
-  return JSON.stringify(grading, (key, value: unknown) => (key === "sourceId" ? undefined : value));
-}
-
 function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): WritingRange | null {
   const { points, grading } = task;
 
@@ -33,7 +30,6 @@ function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): Writ
     return null;
   }
 
-  const basis = scoringBasis(grading);
   const used = new Set<string>();
   const ranges: WritingRange[] = [];
 
@@ -43,9 +39,7 @@ function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): Writ
       answer.conditions.version === "firstDraft" &&
       prompt.taskKey === task.key &&
       prompt.unit === "answer" &&
-      prompt.points === points &&
-      prompt.lines === task.lines &&
-      scoringBasis(prompt.grading) === basis,
+      matchesWritingTaskBasis({ prompt, task }),
   );
 
   for (const { answer, itemId } of eligible) {

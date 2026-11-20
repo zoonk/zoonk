@@ -4530,7 +4530,7 @@
     },
     "/essays/{blockId}/submissions": {
       "post": {
-        "description": "Grades an admitted draft against its assigned prompt and returns its saved feedback. Drafts sent with an admission return a WritingResult. Legacy submissions can return an EssayGrade.",
+        "description": "Grades an admitted draft against its assigned prompt and returns its saved feedback.",
         "operationId": "submitEssay",
         "security": [
           {
@@ -4574,14 +4574,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/WritingResultOutput"
-                    },
-                    {
-                      "$ref": "#/components/schemas/EssayGrade"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/WritingResultOutput"
                 }
               }
             }
@@ -4606,16 +4599,6 @@
               }
             }
           },
-          "403": {
-            "description": "A guest must create an account because the AI budget all guests share today is spent (SIGN_UP_REQUIRED).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Resource not found",
             "content": {
@@ -4628,16 +4611,6 @@
           },
           "409": {
             "description": "The block is finished or can't start. Error code: BLOCK_NOT_ACTIVE.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Today's essay grades are used up",
             "content": {
               "application/json": {
                 "schema": {
@@ -20578,7 +20551,7 @@
     },
     "/mocks/{blockId}/essay-grades": {
       "post": {
-        "description": "Grades a finished full mock's essays (its written part, `essays` with `pending` on GET /mocks/{blockId}) with the exam's official rubric, and records them as learning: call it right after the hand-in, while the objective result already shows. Each essay is graded once; a second request waits for the first one's grades. They count toward the day's essay grades: past them, the rest wait for another day (`ESSAY_LIMIT_REACHED`).",
+        "description": "Grades a finished mock's submitted writing tasks using the admissions issued at its start. Each answer is graded once, and concurrent requests replay the saved results.",
         "operationId": "gradeMockEssays",
         "security": [
           {
@@ -20659,16 +20632,6 @@
           },
           "409": {
             "description": "The mock isn't handed in yet",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Today's essay grades are used up",
             "content": {
               "application/json": {
                 "schema": {
@@ -27534,16 +27497,10 @@
         "type": "object",
         "properties": {
           "admissionId": {
-            "description": "The admission issued when this writing attempt started",
             "type": "string",
             "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "attemptId": {
-            "description": "Your id for this draft: sent again with it (a retry), it's graded and recorded once",
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The admission issued when this writing attempt started"
           },
           "durationMs": {
             "type": "integer",
@@ -27561,6 +27518,7 @@
           }
         },
         "required": [
+          "admissionId",
           "durationMs",
           "text"
         ],
@@ -34061,7 +34019,8 @@
                   "type": "object",
                   "properties": {
                     "earned": {
-                      "type": "number"
+                      "type": "number",
+                      "description": "Points earned, or the lower end of a ranged criterion"
                     },
                     "id": {
                       "type": "string"
@@ -34070,6 +34029,13 @@
                       "type": "number",
                       "minimum": 0,
                       "exclusiveMinimum": true
+                    },
+                    "range": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/WritingRange"
+                        }
+                      ]
                     }
                   },
                   "required": [
@@ -41411,63 +41377,32 @@
           "drafts": {
             "type": "array",
             "items": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "attemptId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "grade": {
-                      "$ref": "#/components/schemas/EssayGrade"
-                    },
-                    "submittedAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "text": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "grade",
-                    "submittedAt",
-                    "text"
-                  ],
-                  "additionalProperties": false
+              "type": "object",
+              "properties": {
+                "attemptId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
-                {
-                  "type": "object",
-                  "properties": {
-                    "attemptId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "grade": {
-                      "$ref": "#/components/schemas/WritingResultOutput"
-                    },
-                    "submittedAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "text": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "attemptId",
-                    "grade",
-                    "submittedAt",
-                    "text"
-                  ],
-                  "additionalProperties": false
+                "grade": {
+                  "$ref": "#/components/schemas/WritingResultOutput"
+                },
+                "submittedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "text": {
+                  "type": "string"
                 }
-              ]
+              },
+              "required": [
+                "attemptId",
+                "grade",
+                "submittedAt",
+                "text"
+              ],
+              "additionalProperties": false
             }
           },
           "gradesLeft": {
@@ -41476,11 +41411,7 @@
             "maximum": 9007199254740991
           },
           "pacing": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/WritingPacing"
-              }
-            ]
+            "$ref": "#/components/schemas/WritingPacing"
           },
           "question": {
             "type": "string"
@@ -41488,12 +41419,12 @@
           "rubric": {
             "type": "string",
             "enum": [
-              "ap",
               "enem",
               "oab",
-              "custom"
+              "points",
+              "levels"
             ],
-            "description": "The official rubric: ENEM, OAB, AP scoring guidelines (rows with their own points) or the item's own criteria"
+            "description": "The scoring rubric recorded with the writing prompt"
           },
           "sessionId": {
             "type": "string",
@@ -41510,22 +41441,21 @@
             ]
           },
           "writing": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/WritingPromptOutput"
-              }
-            ]
+            "$ref": "#/components/schemas/WritingPromptOutput"
           }
         },
         "required": [
           "blockId",
           "context",
+          "draft",
           "drafts",
           "gradesLeft",
+          "pacing",
           "question",
           "rubric",
           "sessionId",
-          "status"
+          "status",
+          "writing"
         ],
         "additionalProperties": false
       },
@@ -41551,153 +41481,6 @@
           "admissionId",
           "revision",
           "text"
-        ],
-        "additionalProperties": false
-      },
-      "EssayGrade": {
-        "type": "object",
-        "properties": {
-          "criteria": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "maxScore": {
-                  "type": "number"
-                },
-                "score": {
-                  "type": "number"
-                },
-                "comment": {
-                  "type": "string"
-                },
-                "example": {
-                  "nullable": true,
-                  "type": "string"
-                },
-                "id": {
-                  "type": "string",
-                  "description": "c1..c5 for ENEM, fixed section ids for OAB, criterion-n otherwise"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "quote": {
-                  "nullable": true,
-                  "description": "An exact passage of the essay",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "maxScore",
-                "score",
-                "comment",
-                "example",
-                "id",
-                "name",
-                "quote"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "enemInterventionElements": {
-            "nullable": true,
-            "description": "ENEM's five intervention proposal elements; null for other rubrics",
-            "type": "object",
-            "properties": {
-              "action": {
-                "type": "boolean"
-              },
-              "agent": {
-                "type": "boolean"
-              },
-              "detail": {
-                "type": "boolean"
-              },
-              "effect": {
-                "type": "boolean"
-              },
-              "means": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "action",
-              "agent",
-              "detail",
-              "effect",
-              "means"
-            ],
-            "additionalProperties": false
-          },
-          "nextStep": {
-            "nullable": true,
-            "description": "The one thing to work on, on the criterion with the most points to gain; null when every criterion has full marks",
-            "type": "object",
-            "properties": {
-              "criterionId": {
-                "type": "string"
-              },
-              "text": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "criterionId",
-              "text"
-            ],
-            "additionalProperties": false
-          },
-          "range": {
-            "type": "object",
-            "properties": {
-              "high": {
-                "type": "number"
-              },
-              "low": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "high",
-              "low"
-            ],
-            "additionalProperties": false,
-            "description": "The estimated range, labeled Estimated"
-          },
-          "total": {
-            "type": "object",
-            "properties": {
-              "maxScore": {
-                "type": "number"
-              },
-              "score": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "maxScore",
-              "score"
-            ],
-            "additionalProperties": false
-          },
-          "zeroReason": {
-            "nullable": true,
-            "type": "string",
-            "enum": [
-              "offTopic",
-              "notArgumentative",
-              "tooShort"
-            ]
-          }
-        },
-        "required": [
-          "criteria",
-          "enemInterventionElements",
-          "nextStep",
-          "range",
-          "total",
-          "zeroReason"
         ],
         "additionalProperties": false
       },
@@ -92219,10 +92002,10 @@
             "description": "The rubric its essays are graded by; null when it asks none",
             "type": "string",
             "enum": [
-              "ap",
-              "custom",
               "enem",
-              "oab"
+              "oab",
+              "points",
+              "levels"
             ]
           },
           "essays": {
@@ -92819,10 +92602,7 @@
           },
           "grade": {
             "nullable": true,
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/EssayGrade"
-              },
+            "allOf": [
               {
                 "$ref": "#/components/schemas/WritingResultOutput"
               }
@@ -97503,6 +97283,27 @@
                                     "text": {
                                       "type": "string",
                                       "minLength": 1
+                                    },
+                                    "kinds": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "blank",
+                                          "offTopic",
+                                          "wrongForm",
+                                          "tooFewLines",
+                                          "copiedSupport",
+                                          "identification"
+                                        ]
+                                      }
+                                    },
+                                    "maxLines": {
+                                      "nullable": true,
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "exclusiveMinimum": true,
+                                      "maximum": 9007199254740991
                                     }
                                   },
                                   "required": [
@@ -102442,7 +102243,8 @@
                   "type": "object",
                   "properties": {
                     "earned": {
-                      "type": "number"
+                      "type": "number",
+                      "description": "Points earned, or the lower end of a ranged criterion"
                     },
                     "id": {
                       "type": "string"
@@ -102451,6 +102253,13 @@
                       "type": "number",
                       "minimum": 0,
                       "exclusiveMinimum": true
+                    },
+                    "range": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/WritingRangeOutput"
+                        }
+                      ]
                     }
                   },
                   "required": [
