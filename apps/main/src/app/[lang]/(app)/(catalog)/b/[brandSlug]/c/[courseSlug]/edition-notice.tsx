@@ -1,6 +1,6 @@
 import { getCourseHref } from "@/data/courses/course-href";
 import { Link } from "@/i18n/navigation";
-import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
+import { listCourseEditionLinks } from "@zoonk/core/courses/published-editions";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
@@ -14,8 +14,7 @@ export async function EditionNotice({
   courseId: string;
   locale: SupportedLocale;
 }) {
-  const t = await getExtracted();
-  const editions = await listPublishedCourseEditions({ courseId });
+  const [t, editions] = await Promise.all([getExtracted(), listCourseEditionLinks(courseId)]);
   const edition = editions.find((item) => getContentLocale(item.language) === locale);
 
   if (!edition) {

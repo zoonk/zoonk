@@ -60,13 +60,14 @@ internal class CourseStartViewModel(
         courseId: String,
         chapterId: String?,
         dailyMinutes: Int?,
+        language: String,
     ) {
         if (isStarting) return
         isStarting = true
         startFailure.clear()
         val asked = visit.number
         viewModelScope.launch {
-            when (val outcome = store.startCourse(courseId, chapterId, dailyMinutes, level.takeIf { chapterId == null })) {
+            when (val outcome = store.startCourse(courseId, chapterId, dailyMinutes, level.takeIf { chapterId == null }, language)) {
                 is WriteOutcome.Done -> {
                     started = outcome.value
                     return@launch

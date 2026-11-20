@@ -23,11 +23,16 @@ export async function findGoalProductCourseStep(
 
 export async function findGoalCourseStep({
   kind,
+  wholeExam,
   ...input
-}: Omit<CourseInput, "format" | "searchTerms"> & { kind: GoalKind; searchTerms: string[] }) {
+}: Omit<CourseInput, "format" | "searchTerms"> & {
+  kind: GoalKind;
+  wholeExam?: boolean;
+  searchTerms: string[];
+}) {
   "use step";
 
-  const format = getGoalCourseFormat({ kind, ownerId: input.scope.ownerId });
+  const format = getGoalCourseFormat({ kind, ownerId: input.scope.ownerId, wholeExam });
   const { course } = await findGoalCourse({ ...input, format });
   return course.id;
 }

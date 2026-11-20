@@ -4,7 +4,7 @@
   "otpDisclaimer": "Wenn du diesen Code nicht angefordert hast, kannst du diese Nachricht ignorieren.",
   "otpExpiry": "Dieser Code läuft in 5 Minuten ab.",
   "otpIntro": "Hier ist dein Code, um dich bei Zoonk anzumelden:",
-  "otpSubject": "Dein Code für die Anmeldung bei Zoonk",
+  "otpSubject": "{code} ist dein Zoonk-Code",
   "plusAccountLabel": "Konto",
   "plusAlreadyActiveSubject": "Du hast Zoonk Plus schon",
   "plusEmailLegal": "Für dein Abo gelten unsere {termsLink} und unsere {privacyLink}.",

@@ -31,6 +31,7 @@ export class FatalError extends Error {
   }
 }
 
+export const getStepMetadata = () => ({ attempt: 1 });
 export const getWorkflowMetadata = vi.fn(() => workflowMetadata);
 export const getWritable = vi.fn().mockReturnValue(createWritable());
 export const sleep = vi.fn((_duration: Date | string) => Promise.resolve());

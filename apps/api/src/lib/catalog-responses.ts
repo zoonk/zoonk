@@ -5,6 +5,7 @@ import { type searchCatalog } from "@zoonk/core/catalog/search";
 import { type getCourseDetail } from "@zoonk/core/courses/get-detail";
 import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { type listCourses } from "@zoonk/core/courses/list";
+import { supportsCourseEditions } from "@zoonk/core/goals/course-start-language";
 import { type getPublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { getLanguageFlagCode } from "@zoonk/utils/language-flags";
 import { toApiImageUrl } from "./file-urls";
@@ -87,6 +88,7 @@ export function toCourseResource(course: CourseResource) {
     organization: toCourseOrganization(course.organization),
     quickTestMinutes: course.quickTestMinutes,
     slug: course.slug,
+    supportsEditions: supportsCourseEditions(course),
     targetLanguage: course.targetLanguage,
     title: course.title,
   };

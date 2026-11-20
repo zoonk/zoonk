@@ -1,5 +1,3 @@
-import { type SpeechModelName } from "./speech-models";
-
 /** Both providers return 24 kHz, 16-bit mono WAV. */
 const WAV_BYTES_PER_SECOND = 48_000;
 const WAV_HEADER_ALLOWANCE_BYTES = 1024;
@@ -25,7 +23,7 @@ export function assertExpectedAudioSize({
 }: {
   audio: Uint8Array;
   maxSeconds: number;
-  model: SpeechModelName;
+  model: string;
 }) {
   const maxBytes = maxSeconds * WAV_BYTES_PER_SECOND + WAV_HEADER_ALLOWANCE_BYTES;
 

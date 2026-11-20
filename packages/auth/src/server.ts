@@ -30,7 +30,7 @@ import {
   reportSignInAfterSessionCreate,
   reportSignUpAfterAuthCreate,
 } from "./db-hooks";
-import { createEmailOTPPlugin } from "./email-otp-plugin";
+import { createEmailOTPPlugin, replaceEarlierEmailOTPs } from "./email-otp-plugin";
 import { validateEmailBeforeOTP } from "./email-signup-policy";
 import { guardUserCreation } from "./guests/account-creation-guard";
 import { PASSKEY_REGISTRATION_ORIGIN, PASSKEY_RP_ID } from "./passkeys/relying-party";
@@ -110,6 +110,13 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
         },
       },
     },
+    verification: {
+      create: {
+        before: async (verification) => {
+          await replaceEarlierEmailOTPs(verification);
+        },
+      },
+    },
   },
   disabledPaths: [
     // Device authorization's own token endpoint would turn a CLI login into a full session.
@@ -174,7 +181,7 @@ export const baseAuthPlugins = [
 export const fullPlugins = [
   appChallengePlugin(),
   restoreKeyPlugin(),
-  createEmailOTPPlugin({ storeOTP: "hashed" }),
+  createEmailOTPPlugin({ storeOTP: "encrypted" }),
   oneTimeToken({ storeToken: "hashed" }),
   bearer(),
   passkey({
