@@ -8,8 +8,6 @@ const CJK_SENTENCE_END = /[。！？]$/u;
 const CJK_SENTENCE_BREAK = /[。！？]\s*$/u;
 const SENTENCE_BREAK = /[.!?…:;]["'”’»)\]」』]*\s+$/u;
 const LINE_BREAK = /\n\s*$/u;
-/** A code block ends where its closing fence does, and the next line starts a new block. */
-const CLOSING_FENCE = /(?:^|\n) {0,3}`{3,}$/u;
 /** In cased scripts a sentence never starts lowercase: "She said “Hello.” and left." */
 const LOWERCASE_START = /^\p{Ll}/u;
 const BOLD = "**";
@@ -42,6 +40,14 @@ function startsSentence({ before, quote }: { before: string; quote: string }): b
   );
 }
 
+/** A code block ends where its closing fence does, and the next line starts a new block. */
+function endsWithCodeBlock(text: string): boolean {
+  const lines = text.split("\n");
+  const block = findCodeFences(lines).at(-1);
+
+  return block?.closed === true && block.end === lines.length;
+}
+
 function endsSentence({ after, quote }: { after: string; quote: string }): boolean {
   const next = after.trimStart();
 
@@ -53,7 +59,7 @@ function endsSentence({ after, quote }: { after: string; quote: string }): boole
     !LOWERCASE_START.test(next) &&
     ((SENTENCE_END.test(quote) && /^\s/u.test(after)) ||
       CJK_SENTENCE_END.test(quote) ||
-      (CLOSING_FENCE.test(quote) && after.startsWith("\n")))
+      (endsWithCodeBlock(quote) && after.startsWith("\n")))
   );
 }
 
