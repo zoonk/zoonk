@@ -13,7 +13,7 @@ import {
   getMockQuestionsShortfall,
 } from "../mock-shortfall";
 import { type AnytimeMockSetup } from "./anytime-mock-setup";
-import { planFromBank } from "./plan-from-bank";
+import { type planFromBank } from "./plan-from-bank";
 
 async function loadOptionSkills({
   goalId,
@@ -65,7 +65,7 @@ function listWrites({
   mix: ReturnType<typeof getMockFormatMix>;
   structure: ExamStructure | null;
   optionSkills: readonly MockWritingSkill[];
-  option: MockOption;
+  option: Pick<MockOption, "questions" | "kind" | "area" | "areas">;
   planned: Awaited<ReturnType<typeof planFromBank>>;
 }): MockFormatShortfall[] {
   return getMockQuestionsShortfall({
@@ -82,22 +82,23 @@ function listWrites({
 }
 
 export async function planMockWrites({
-  planned: known,
+  planned,
+  skillIds,
   goal,
   option,
   setup,
-  userId,
 }: {
-  planned?: Awaited<ReturnType<typeof planFromBank>>;
+  skillIds?: readonly string[];
+  planned: Awaited<ReturnType<typeof planFromBank>>;
   goal: Goal;
-  option: MockOption;
+  option: Pick<MockOption, "questions" | "kind" | "area" | "areas">;
   setup: AnytimeMockSetup;
-  userId: string;
 }): Promise<MockFormatShortfall[] | null> {
-  const [planned, optionSkills] = await Promise.all([
-    known ?? planFromBank({ goal, option, setup, userId }),
-    loadOptionSkills({ goalId: goal.id, option, structure: setup.structure }),
-  ]);
+  const optionSkills = await loadOptionSkills({
+    goalId: goal.id,
+    option,
+    structure: setup.structure,
+  });
 
   if (!optionSkills) {
     return null;
@@ -106,7 +107,9 @@ export async function planMockWrites({
   return listWrites({
     mix: getMockFormatMix(setup.structure),
     option,
-    optionSkills,
+    optionSkills: skillIds
+      ? optionSkills.filter((skill) => skillIds.includes(skill.id))
+      : optionSkills,
     planned,
     structure: setup.structure,
   });

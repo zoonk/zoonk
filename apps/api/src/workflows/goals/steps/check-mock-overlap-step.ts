@@ -5,6 +5,8 @@ import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { type MockWritingSkill } from "@zoonk/core/exams/mocks/prep";
 import { type toContentAnalytics } from "../../_shared/content-analytics";
 
+const MAX_OVERLAP_EXAMPLES = 64;
+
 function normalizeQuestion(text: string) {
   const lines = text
     .normalize("NFKC")
@@ -63,7 +65,7 @@ export async function checkMockOverlapStep<Item extends GeneratedItem>({
   const { data } = await checkRecallOverlap({
     analytics,
     candidates: candidates.map((entry) => entry.candidate),
-    earlier: mock.earlier,
+    earlier: mock.earlier.slice(0, MAX_OVERLAP_EXAMPLES),
     serviceTier: chooseServiceTier({ wait }),
     skill: { description: mock.description, name: mock.name },
   });

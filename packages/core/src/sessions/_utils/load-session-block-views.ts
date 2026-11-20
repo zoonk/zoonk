@@ -16,6 +16,7 @@ export async function loadSessionBlockViews({
   answers: knownAnswers,
   blueprint,
   plan,
+  preparing: knownPreparing,
   readLessonStates,
   session,
   timeZone,
@@ -23,6 +24,7 @@ export async function loadSessionBlockViews({
 }: {
   answers?: readonly SessionAnswer[];
   blueprint?: ExamBlueprint | null;
+  preparing?: ReadonlySet<number>;
   plan?: SavedPlan | null;
   readLessonStates?: LessonStatesReader;
   session: StudySessionRow;
@@ -51,7 +53,7 @@ export async function loadSessionBlockViews({
         })
       : new Set<string>(),
     loadOftenTestedSkillIds(session.goal),
-    loadPreparingMockPositions({ ...session, blueprint }),
+    knownPreparing ?? loadPreparingMockPositions({ ...session, blueprint }),
   ]);
 
   const current = isCurrentSession({ now, session, timeZone });

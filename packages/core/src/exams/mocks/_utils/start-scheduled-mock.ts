@@ -64,7 +64,7 @@ export async function startScheduledSitting({
   const plan = await tx.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } });
   const picks = readExamPicks(plan?.settings);
 
-  const conditions = await buildMockConditions(
+  const { conditions, complete } = await buildMockConditions(
     {
       blueprint,
       goal,
@@ -81,9 +81,6 @@ export async function startScheduledSitting({
     },
     tx,
   );
-
-  const count = conditions.sections.reduce((sum, section) => sum + section.questions, 0);
-  const complete = count === conditions.examQuestions && conditions.sections.length > 0;
 
   await oweFollowUps({
     db: tx,

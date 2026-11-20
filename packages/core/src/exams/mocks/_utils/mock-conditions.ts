@@ -7,8 +7,9 @@ import { type MockConditions } from "../mock-contract";
 import { markPlannedItems } from "../mock-marking";
 import { type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { listLeftOutChoices } from "../mock-unpicked";
+import { isScheduledPaperComplete } from "./mock-complete";
 import { type OwnedMock } from "./owned-mock";
-import { planWeeklyMock } from "./plan-weekly-mock";
+import { loadWeeklyOutline, planWeeklyMock } from "./plan-weekly-mock";
 
 export function getExamStartTime({
   day,
@@ -25,33 +26,44 @@ export function getExamStartTime({
   return (examDays[index] ?? examDays[0])?.startTime ?? null;
 }
 
-export async function buildMockConditions(
-  owned: Pick<
-    OwnedMock,
-    "blueprint" | "goal" | "payload" | "sessionDate" | "structure" | "unpicked" | "userId"
-  >,
-  client?: TransactionClient,
-): Promise<MockConditions> {
-  const { goal, payload, sessionDate, structure, userId } = owned;
+type ScheduledMock = Pick<
+  OwnedMock,
+  "blueprint" | "goal" | "payload" | "sessionDate" | "structure" | "unpicked" | "userId"
+>;
 
-  const identity = payload.checkpoint?.mockIdentity;
-
-  const bank = await planWeeklyMock({
-    client,
+function paperInputs({ goal, payload, sessionDate, structure, userId }: ScheduledMock) {
+  return {
     goal: {
       examBlueprintId: goal?.examBlueprintId ?? null,
       id: goal?.id ?? null,
       targetDate: goal?.targetDate ?? null,
     },
-    identity,
-    itemIds: null,
+    identity: payload.checkpoint?.mockIdentity,
     skillIds: payload.skillIds,
     structure,
     today: sessionDate,
     userId,
-  });
+  };
+}
 
-  return toPlannedConditions({ ...owned, bank, plan: client ? bank : bank.outline });
+export async function previewMockConditions(owned: ScheduledMock): Promise<MockConditions> {
+  const { outline, structure } = await loadWeeklyOutline(paperInputs(owned));
+
+  return toPlannedConditions({
+    ...owned,
+    bank: { candidates: [], outline },
+    plan: outline,
+    structure,
+  });
+}
+
+export async function buildMockConditions(owned: ScheduledMock, client: TransactionClient) {
+  const bank = await planWeeklyMock({ ...paperInputs(owned), client });
+
+  return {
+    complete: isScheduledPaperComplete(bank),
+    conditions: toPlannedConditions({ ...owned, bank, plan: bank, structure: bank.structure }),
+  };
 }
 
 export function toPlannedConditions({
@@ -62,7 +74,7 @@ export function toPlannedConditions({
   structure,
   unpicked,
 }: Pick<OwnedMock, "blueprint" | "goal" | "structure" | "unpicked"> & {
-  bank: Awaited<ReturnType<typeof planWeeklyMock>>;
+  bank: Pick<Awaited<ReturnType<typeof planWeeklyMock>>, "candidates" | "outline">;
   plan: MockPlan;
 }): MockConditions {
   const edition = blueprint ? readBlueprintContent(blueprint).edition : null;

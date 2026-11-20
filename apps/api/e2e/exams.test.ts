@@ -50,7 +50,6 @@ test.describe("Exams API", () => {
       api.put(`/v1/goals/${id}/exam-result`, { data: REPORT }),
       api.post(`/v1/goals/${id}/exam-moves`),
       api.get(`/v1/mocks/${id}`),
-      api.post(`/v1/mocks/${id}/starts`, { data: {} }),
       api.post(`/v1/mocks/${id}/finishes`, { data: {} }),
       api.post(`/v1/mocks/${id}/break-ends`),
       api.post(`/v1/mocks/${id}/plan-changes`, { data: { offer: "skip", timeZone: "UTC" } }),
@@ -84,11 +83,13 @@ test.describe("Exams API", () => {
 
     const [hidden, start] = await Promise.all([
       other.api.get(path),
-      api.post(`${path}/starts`, { data: { timeZone: "UTC" } }),
+      api.post(`/v1/study-sessions/${today.id}/blocks/${block?.id}/starts`, {
+        data: { timeZone: "UTC" },
+      }),
     ]);
 
     expect(hidden.status()).toBe(404);
-    expect(start.status()).toBe(204);
+    expect(start.status()).toBe(200);
 
     const running = await readBody({
       response: await api.get(path),
@@ -203,8 +204,12 @@ test.describe("Exams API", () => {
     expect(notStarted.status()).toBe(409);
     await expect(notStarted.json()).resolves.toMatchObject({ error: { code: "MOCK_NOT_RUNNING" } });
 
-    const started = await api.post(`${path}/starts`, inUtc);
-    expect(started.status()).toBe(204);
+    const started = await api.post(
+      `/v1/study-sessions/${today.id}/blocks/${mock?.id}/starts`,
+      inUtc,
+    );
+
+    expect(started.status()).toBe(200);
 
     const running = await readBody({
       response: await api.get(path),

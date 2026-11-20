@@ -75,6 +75,7 @@ function getLastMockUse(set: StoredSet): number | undefined {
 export async function pickListeningSets({
   client = prisma,
   mockOnly = false,
+  now,
   exclude = [],
   examBlueprintId,
   parts,
@@ -82,6 +83,7 @@ export async function pickListeningSets({
   scriptLanguage,
   userId,
 }: {
+  now?: Date;
   mockOnly?: boolean;
   examBlueprintId: string;
   exclude?: readonly string[];
@@ -91,7 +93,7 @@ export async function pickListeningSets({
   scriptLanguage: string;
   userId: string;
 }): Promise<ListeningPartPick[]> {
-  const claims = mockOnly ? await listMockItemClaims(client, userId) : null;
+  const claims = mockOnly ? await listMockItemClaims(client, userId, undefined, now) : null;
   const expired = [...(claims?.expired ?? [])];
 
   const candidates = await Promise.all(

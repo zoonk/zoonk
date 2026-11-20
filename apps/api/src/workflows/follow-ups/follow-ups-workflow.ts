@@ -166,7 +166,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 async function runFollowUp(followUp: OwedFollowUp): Promise<void> {
   await startFollowUp(followUp);
 
-  if (followUp.kind !== "rebuildGoalCurriculum") {
+  if (followUp.kind !== "rebuildGoalCurriculum" && followUp.kind !== "prepareMockSupply") {
     await endFollowUpStep({ id: followUp.id, revision: followUp.revision });
   }
 }

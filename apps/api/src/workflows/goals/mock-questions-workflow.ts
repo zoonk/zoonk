@@ -1,5 +1,6 @@
 import { getWorkflowMetadata } from "workflow";
 import { startOnce, waitForRunToken } from "../_shared/run-token";
+import { endFollowUpStep } from "../follow-ups/steps/follow-up-steps";
 import { prepareMockRecordings, writeMockQuestions } from "./mock-question-writes";
 import { pickMockSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
 import {
@@ -18,18 +19,16 @@ function supplyKey(input: SupplyRequest) {
 export function startMockSupply(input: SupplyRequest, ask?: SupplyAsk) {
   const request = ask ? `${ask.id}:${ask.revision}` : "ahead";
 
-  return startOnce(
-    mockSupplyWorkflow,
-    [{ ...input, asked: Boolean(ask) }],
-    `${supplyKey(input)}:${request}`,
-  );
+  return startOnce(mockSupplyWorkflow, [{ ...input, ask }], `${supplyKey(input)}:${request}`);
 }
 
 async function prepareGoalSupply({
+  ask,
   goalId,
   background,
   workflowRunId,
 }: {
+  ask?: SupplyAsk;
   goalId: string;
   background: boolean;
   workflowRunId: string;
@@ -62,11 +61,15 @@ async function prepareGoalSupply({
       await prepareMockRecordings({ goalId, later, recordings: supply.recordings, workflowRunId });
     }
   } finally {
-    await checkMockSupplyStep(goalId);
+    const complete = await checkMockSupplyStep(goalId);
+
+    if (complete && ask) {
+      await endFollowUpStep(ask);
+    }
   }
 }
 
-async function mockSupplyWorkflow(input: SupplyRequest & { asked: boolean }) {
+export async function mockSupplyWorkflow(input: SupplyRequest & { ask?: SupplyAsk }) {
   "use workflow";
   const { workflowRunId } = getWorkflowMetadata();
 
@@ -74,11 +77,12 @@ async function mockSupplyWorkflow(input: SupplyRequest & { asked: boolean }) {
     throw new Error("The previous mock supply run is still writing.");
   }
 
-  const goals = input.asked ? [input.goalId] : await listExamSupplyGoalsStep(input);
+  const goals = input.ask ? [input.goalId] : await listExamSupplyGoalsStep(input);
 
   for (const goalId of goals) {
     // oxlint-disable-next-line no-await-in-loop -- Recount after each goal so peers draw on the questions just written.
     await prepareGoalSupply({
+      ask: input.ask,
       background: input.later || goalId !== input.goalId,
       goalId,
       workflowRunId,

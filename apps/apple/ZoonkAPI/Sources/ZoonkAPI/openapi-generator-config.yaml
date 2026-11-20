@@ -227,7 +227,6 @@ filter:
     - startChallenge
     - startCourseGoal
     - startLanguageConversation
-    - startMock
     - startMockSpeaking
     - streamGenerationEvents
     - submitChapterTestOut

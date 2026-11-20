@@ -14,6 +14,7 @@ import {
   findRunningAnytimeMock,
   listMissingRecordings,
 } from "./anytime-mock-setup";
+import { isPaperComplete } from "./mock-complete";
 import { getExamStartTime } from "./mock-conditions";
 import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
 import { planFromBank } from "./plan-from-bank";
@@ -33,18 +34,23 @@ export function isCompleteMock({
   setup: AnytimeMockSetup;
   plan: MockPlan;
 }) {
-  return (
-    countPlannedQuestions(plan) === option.questions &&
-    listMissingRecordings({ option, setup }).length === 0 &&
-    option.written.length === plan.sections.reduce((sum, section) => sum + section.essays.length, 0)
+  return isPaperComplete(
+    plan,
+    option.questions,
+    option.written.length,
+    listMissingRecordings({ option, setup }).length,
   );
 }
 
-export async function canReuseMockItems(client: TransactionClient, userId: string) {
+export async function canReuseMockItems(
+  client: TransactionClient,
+  userId: string,
+  now = new Date(),
+) {
   const count = await client.mockExam.count({
     where: {
       conditions: { equals: "practice", path: ["purpose"] },
-      startedAt: { gte: new Date(Date.now() - USAGE_WINDOW_MS), lte: new Date() },
+      startedAt: { gte: new Date(now.getTime() - USAGE_WINDOW_MS), lte: now },
       userId,
     },
   });

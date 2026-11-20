@@ -1,8 +1,8 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { isScheduledPaperComplete } from "../../exams/mocks/_utils/mock-complete";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { readScheduledStructure } from "../../exams/mocks/_utils/read-mock-structure";
-import { countPlannedQuestions } from "../../exams/mocks/mock-plan";
 import { readBlockPayload } from "../block-payload";
 import { type DayBlockInput } from "./day-block-view";
 
@@ -42,9 +42,7 @@ export async function loadPreparingMockPositions({
     blueprint === undefined && goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : blueprint,
-    goal.examBlueprintId
-      ? prisma.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } })
-      : null,
+    prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId: goal.id } }),
   ]);
 
   const structure = readScheduledStructure({
@@ -59,13 +57,14 @@ export async function loadPreparingMockPositions({
       const plan = await planWeeklyMock({
         goal,
         identity,
+        paperPlan: savedPlan ?? undefined,
         skillIds,
         structure,
         today: localDate,
         userId: goal.userId,
       });
 
-      return countPlannedQuestions(plan) < countPlannedQuestions(plan.outline) ? [position] : [];
+      return isScheduledPaperComplete(plan) ? [] : [position];
     }),
   );
 

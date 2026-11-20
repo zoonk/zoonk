@@ -17,12 +17,14 @@ export async function loadListeningCandidates({
   exclude,
   goalId,
   mix,
+  now,
   reuse,
   userId,
 }: {
   client?: TransactionClient;
   exclude?: readonly string[];
   goalId: string;
+  now?: Date;
   mix: readonly MockFormat[];
   reuse?: boolean;
   userId: string;
@@ -38,6 +40,7 @@ export async function loadListeningCandidates({
     examBlueprintId: exam.blueprintId,
     exclude,
     mockOnly: true,
+    now,
     parts: exam.parts,
     reuse,
     scriptLanguage: exam.scriptLanguage,

@@ -38,18 +38,21 @@ export async function getMockOptions({
     return { status: "notExam" };
   }
 
+  const now = await getRequestInstant();
+
   const [setup, access, running, lastMock] = await Promise.all([
     loadAnytimeMockSetup(
       goal,
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
       {
         essays: readMockEssays(goal.userId, goal.id, goal.examBlueprintId),
+        now,
         plan: readSavedPlan(goal.userId, goal.id),
         typed: getBankTypedParts(goal.examBlueprintId),
       },
     ),
     getAnytimeMockAccess(goal),
-    findRunningAnytimeMock({ goalId: goal.id, now: getRequestInstant(), userId: goal.userId }),
+    findRunningAnytimeMock({ goalId: goal.id, now, userId: goal.userId }),
     findLastMock(goal.id),
   ]);
 
@@ -62,8 +65,9 @@ export async function getMockOptions({
     option &&
     (await planFromBank({
       goal,
+      now,
       option,
-      reuse: await canReuseMockItems(prisma, goal.userId),
+      reuse: await canReuseMockItems(prisma, goal.userId, now),
       setup,
       userId: goal.userId,
     }));

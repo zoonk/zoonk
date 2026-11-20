@@ -18,6 +18,8 @@ import {
 import { getWrongPenalty } from "../scoring/mock-scoring";
 import { readLessonRecallQuestions } from "./mock-lesson-questions";
 
+const MAX_MOCK_SITUATIONS = 32;
+
 export type MockWritingSkill = PlacementItemSkill & {
   earlier: RecallQuestion[];
   wrongPenalty: number | null;
@@ -30,6 +32,7 @@ async function loadSkillHistory(
 ) {
   const [items, steps] = await Promise.all([
     prisma.item.findMany({
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       select: { content: true, format: true, set: { select: { content: true, kind: true } } },
       where: {
         ...(ownerId
@@ -44,6 +47,7 @@ async function loadSkillHistory(
       },
     }),
     prisma.step.findMany({
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       select: {
         content: true,
         kind: true,
@@ -87,13 +91,15 @@ async function loadSkillHistory(
   const lessons = steps.flatMap((step) => readLessonRecallQuestions(step));
 
   return {
-    earlier: [...questions, ...lessons],
+    earlier: Array.from({ length: Math.max(questions.length, lessons.length) }, (_, index) =>
+      [questions[index], lessons[index]].filter((entry) => entry !== undefined),
+    ).flat(),
     usedSituations: [
       ...new Set([
         ...items.flatMap((item) => getItemSituation(item) ?? []),
         ...lessons.map((entry) => toSituationOpening(entry.question)),
       ]),
-    ],
+    ].slice(0, MAX_MOCK_SITUATIONS),
   };
 }
 
