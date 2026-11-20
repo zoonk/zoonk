@@ -11308,9 +11308,9 @@ msgid "Full review"
 msgstr "Genel tekrar"
 
 #: src/plan/use-short-plan.ts
-msgctxt "jzXhpt"
-msgid "Short mock and review"
-msgstr "Kısa deneme sınavı ve tekrar"
+msgctxt "0zXviI"
+msgid "Short mock"
+msgstr "Kısa deneme sınavı"
 
 #: src/plan/use-short-plan.ts
 msgctxt "FTIL8p"

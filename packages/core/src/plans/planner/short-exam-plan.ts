@@ -6,8 +6,6 @@ const SHORT_EXAM_MAX_DAYS = 7;
 
 const MAP_AND_GAPS_SHARE = 0.6;
 
-const MIN_REVIEW_MINUTES = 5;
-
 const ONLY_DAY_MOCK_SHARE = 0.5;
 
 export type ShortExamPhaseKind = "finalStretch" | "gaps" | "practice";
@@ -135,14 +133,10 @@ export function getShortExamEvents({
   }
 
   const shortMock = minutes > 0 ? Math.min(shortMockMinutes, minutes) : shortMockMinutes;
-  const reviewMinutes = minutes - shortMock;
-
-  return [
-    mockEvent({ date, minutes: shortMock, replacesDay: true }),
-    ...(reviewMinutes >= MIN_REVIEW_MINUTES ? [reviewEvent({ date, minutes: reviewMinutes })] : []),
-  ];
+  return [mockEvent({ date, minutes: shortMock, replacesDay: true })];
 }
 
+/** A class test's only study day keeps its lessons: no later day could take them. */
 export function canShareMockDay({
   isOnlyDay,
   minutes,

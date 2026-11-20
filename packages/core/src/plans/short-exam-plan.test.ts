@@ -217,7 +217,7 @@ describe("a class test days away", () => {
     vi.useRealTimers();
   });
 
-  it("in three days: the gaps first, practice, then the short mock the day before", async () => {
+  it("in three days: the gaps first, practice, then only the short mock the day before", async () => {
     const { enzymes, glycolysis, goal, plan } = await setup({ days: 3 });
     const items = await loadItems(plan.id);
     const lessons = items.filter((item) => item.kind === "lesson");
@@ -226,7 +226,7 @@ describe("a class test days away", () => {
     expect(lessons.at(-1)?.skillId).toBe(glycolysis?.id);
     expect(datesOf({ items, kind: "boss" })).toStrictEqual([]);
     expect(datesOf({ items, kind: "mock" })).toStrictEqual([isoDay(2)]);
-    expect(datesOf({ items, kind: "review" })).toStrictEqual([isoDay(2)]);
+    expect(datesOf({ items, kind: "review" })).toStrictEqual([]);
     expect(datesOf({ items, kind: "lesson" })).not.toContain(isoDay(2));
 
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
