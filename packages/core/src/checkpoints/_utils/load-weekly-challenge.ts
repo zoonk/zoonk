@@ -95,10 +95,10 @@ async function loadMockItems({
 
   return {
     itemIds: [],
-    mockQuestions: countPlannedQuestions(plan.outline),
-    minutes: plan.minutes,
+    minutes: plan.outline.minutes,
     mockIdentity: { day: plan.day, fullLength: plan.fullLength },
-    timeLimitMinutes: plan.minutes,
+    mockQuestions: countPlannedQuestions(plan.outline),
+    timeLimitMinutes: plan.outline.minutes,
   };
 }
 

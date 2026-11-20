@@ -48,8 +48,23 @@ function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["che
   if (!checkpoint) {
     return null;
   }
+
   const { mockQuestions: _mockQuestions, ...view } = checkpoint;
   return studyCheckpointSchema.parse(view);
+}
+
+function getBlockQuestions(
+  block: DayBlockInput,
+  checkpoint: BlockCheckpoint | null,
+  items: number,
+) {
+  if (typeof checkpoint?.mockQuestions === "number") {
+    return checkpoint.mockQuestions;
+  }
+
+  return checkpoint && !checkpoint.mock && checkpoint.passMark > 0 && block.status === "pending"
+    ? getPlannedQuestions(items)
+    : items;
 }
 
 export function toDayBlockView({
@@ -73,14 +88,6 @@ export function toDayBlockView({
   const payload = readBlockPayload(block);
   const itemIds = getBlockItemIds(payload);
   const teaches = block.kind === "learn" || block.kind === "practice" || block.kind === "produce";
-
-  const { checkpoint } = payload;
-
-  const waitsForQuestions =
-    checkpoint !== null &&
-    !checkpoint.mock &&
-    checkpoint.passMark > 0 &&
-    block.status === "pending";
 
   return {
     answered: itemIds.filter((id) => answeredItemIds.has(id)).length,
@@ -117,9 +124,7 @@ export function toDayBlockView({
     planItemKey: payload.planItemKey,
     position: block.position,
     preparing,
-    questions:
-      checkpoint?.mockQuestions ??
-      (waitsForQuestions ? getPlannedQuestions(itemIds.length) : itemIds.length),
+    questions: getBlockQuestions(block, payload.checkpoint, itemIds.length),
     refresh: payload.refresh,
     reinforcement: payload.reinforcement,
     screen: getBlockScreen(block),

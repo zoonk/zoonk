@@ -10,6 +10,7 @@ export type StartMockResult = {
     | "expired"
     | "finished"
     | "notFound"
+    | "plusRequired"
     | "preparing"
     | "ready"
     | "unauthorized";
@@ -24,8 +25,11 @@ async function startScheduledBlock({
 }): Promise<StartMockResult> {
   const started = await startStudyBlock({ blockId: block.id, input, sessionId: block.sessionId });
 
-  if (started.status === "questionsNeeded") return { status: "preparing" };
-  if (started.status === "earlierFirst" || started.status === "plusRequired") {
+  if (started.status === "questionsNeeded") {
+    return { status: "preparing" };
+  }
+
+  if (started.status === "earlierFirst") {
     throw new Error(`Mock block ${block.id} was refused as a phase challenge: ${started.status}.`);
   }
 

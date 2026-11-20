@@ -264,13 +264,17 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
 
     vi.setSystemTime(new Date(`${fixture.date}T12:00:00Z`));
     const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
+
     if (today.status !== "ready") {
       throw new Error(today.status);
     }
+
     const block = today.today.session.blocks.find((b) => b.checkpoint?.mock);
+
     if (!block) {
       throw new Error("Expected scheduled block");
     }
+
     expect.soft(block).toMatchObject({ preparing: true });
     expect.soft(today.today.session.nextPosition).not.toBe(block.position);
     expect.soft(today.today.session.nextBlockId).not.toBe(block.id);

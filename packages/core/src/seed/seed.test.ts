@@ -60,6 +60,13 @@ describe("a persona's copy", () => {
     await expect(
       prisma.followUp.findFirst({ where: { kind: "prepareMockSupply", userId: copy.userId } }),
     ).resolves.toMatchObject({ key: copy.goalId });
+
+    const historicalAnswers = await prisma.mockExamAnswer.count({
+      where: { mockExam: { goalId: copy.goalId, status: "finished" } },
+    });
+
+    expect(historicalAnswers).toBeGreaterThan(0);
+
     sessionBoundary.getSession.mockResolvedValue({ user: { id: copy.userId } });
     const result = await getOnboarding({ goalId: copy.goalId });
     expect(result.status).toBe("ready");

@@ -1,10 +1,9 @@
 import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
-import { readExamPicks } from "../../exams/choices/exam-choices";
 import { getExamStartTime } from "../../exams/mocks/_utils/mock-conditions";
 import { getBankTypedParts } from "../../exams/mocks/_utils/mock-typed-parts";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
-import { readMockStructure } from "../../exams/mocks/_utils/read-mock-structure";
+import { readScheduledStructure } from "../../exams/mocks/_utils/read-mock-structure";
 import { countPlannedQuestions } from "../../exams/mocks/mock-plan";
 import { type GoalPlanSource } from "../../learner/_utils/goal-plan-source";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
@@ -15,7 +14,6 @@ import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { type MockIdentity, findScheduledMock } from "../../plans/planner/mock-identity";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
-import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import { getTestSkillIds } from "../../sessions/_utils/review-skills";
 import { toMockConditions } from "../weekly-challenge-rules";
 
@@ -48,11 +46,7 @@ export async function loadMockCard({
 
   const goalPlan = source ?? saved;
 
-  const dayMinutes = getGoalDayMinutes({ date, goal, planSettings: goalPlan?.settings });
-
-  const structure = blueprint
-    ? readMockStructure({ blueprint, dayMinutes, picks: readExamPicks(goalPlan?.settings) })
-    : null;
+  const structure = readScheduledStructure({ blueprint, date, goal, settings: goalPlan?.settings });
 
   const identity =
     selected ??

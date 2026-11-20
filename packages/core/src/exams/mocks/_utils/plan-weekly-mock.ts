@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient, type Goal } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { type MockIdentity } from "../../../plans/planner/mock-identity";
@@ -12,9 +12,9 @@ import { getSubjectShares } from "../mock-options";
 import {
   type MockCandidate,
   type MockPlan,
-  outlineMock,
   getMockClock,
   getMockDays,
+  outlineMock,
   planMock,
 } from "../mock-plan";
 import { type MockEssayCandidate } from "../written-parts";
@@ -38,11 +38,13 @@ function loadWeeklyMockEssays({
 }
 
 async function loadWeeklyMockListening({
+  client,
   goalId,
   itemIds,
   structure,
   userId,
 }: {
+  client?: TransactionClient;
   goalId: string | null;
   itemIds: readonly string[] | null;
   structure: ExamStructure | null;
@@ -52,20 +54,23 @@ async function loadWeeklyMockListening({
     return new Map();
   }
 
-  const { recordings } = await loadListeningCandidates({
+  const { recordings, unvoiced } = await loadListeningCandidates({
+    client,
     goalId,
     mix: getMockFormatMix(structure),
     userId,
   });
 
+  const ready = new Map([...recordings].filter(([name]) => !unvoiced.has(name)));
+
   if (!itemIds) {
-    return recordings;
+    return ready;
   }
 
   const picked = new Set(itemIds);
 
   return new Map(
-    [...recordings].flatMap(([name, candidates]) => {
+    [...ready].flatMap(([name, candidates]) => {
       const kept = candidates.filter((candidate) => picked.has(candidate.itemId));
       return kept.length > 0 ? [[name, kept] as const] : [];
     }),
@@ -105,7 +110,7 @@ export async function planWeeklyMock({
       ? getFinalStretchStart(parsePlanPhases(savedPlan.phases))
       : loadFinalStretchStart(goal.id),
     essays ?? loadWeeklyMockEssays({ goal, userId }),
-    loadWeeklyMockListening({ goalId: goal.id, itemIds, structure, userId }),
+    loadWeeklyMockListening({ client, goalId: goal.id, itemIds, structure, userId }),
   ]);
 
   const bySubject = toSubjectCandidates({ candidates, structure });
@@ -118,11 +123,13 @@ export async function planWeeklyMock({
   const days = getMockDays(structure);
   const day = identity ? identity.day : (days[mockNumber % days.length] ?? null);
   const clock = getMockClock({ day, fullLength, structure });
+
   const declaredListening = new Set(
     (structure?.mock?.sections ?? [])
       .filter((section) => section.kind === "listening")
       .map((section) => section.name),
   );
+
   const outline = outlineMock({
     clock,
     day,
@@ -131,16 +138,18 @@ export async function planWeeklyMock({
     listening: declaredListening,
     structure,
   });
+
   const plan = planMock({
     adaptive: structure?.mock?.adaptive ?? false,
     candidates: bySubject,
-    clock,
     essays: written,
     fullLength,
     listening,
     mockNumber: Math.max(0, days.indexOf(day)),
+    scheduledOutline: outline,
     structure,
     subjectShares: getSubjectShares(structure),
   });
+
   return { ...plan, candidates: asked, outline };
 }

@@ -5,7 +5,7 @@ import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
 import { markPlannedItems } from "../mock-marking";
-import { countPlannedQuestions } from "../mock-plan";
+import { type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { listLeftOutChoices } from "../mock-unpicked";
 import { type OwnedMock } from "./owned-mock";
 import { planWeeklyMock } from "./plan-weekly-mock";
@@ -32,8 +32,7 @@ export async function buildMockConditions(
   >,
   client?: TransactionClient,
 ): Promise<MockConditions> {
-  const { blueprint, goal, payload, sessionDate, structure, unpicked, userId } = owned;
-  const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
+  const { goal, payload, sessionDate, structure, userId } = owned;
 
   const identity = payload.checkpoint?.mockIdentity;
 
@@ -52,7 +51,22 @@ export async function buildMockConditions(
     userId,
   });
 
-  const plan = client ? bank : bank.outline;
+  return toPlannedConditions({ ...owned, bank, plan: client ? bank : bank.outline });
+}
+
+export function toPlannedConditions({
+  bank,
+  blueprint,
+  goal,
+  plan,
+  structure,
+  unpicked,
+}: Pick<OwnedMock, "blueprint" | "goal" | "structure" | "unpicked"> & {
+  bank: Awaited<ReturnType<typeof planWeeklyMock>>;
+  plan: MockPlan;
+}): MockConditions {
+  const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
+
   return {
     day: plan.day,
     examQuestions: countPlannedQuestions(bank.outline),

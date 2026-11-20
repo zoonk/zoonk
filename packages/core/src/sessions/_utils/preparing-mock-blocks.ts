@@ -1,10 +1,10 @@
 import "server-only";
-import { type ExamBlueprint, type Goal } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
+import { readScheduledStructure } from "../../exams/mocks/_utils/read-mock-structure";
 import { countPlannedQuestions } from "../../exams/mocks/mock-plan";
 import { readBlockPayload } from "../block-payload";
 import { type DayBlockInput } from "./day-block-view";
-import { loadExamStructure } from "./exam-structure";
 
 export async function loadPreparingMockPositions({
   blocks,
@@ -38,7 +38,21 @@ export async function loadPreparingMockPositions({
     return new Set();
   }
 
-  const structure = await loadExamStructure(goal, { blueprint });
+  const [exam, savedPlan] = await Promise.all([
+    blueprint === undefined && goal.examBlueprintId
+      ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
+      : blueprint,
+    goal.examBlueprintId
+      ? prisma.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } })
+      : null,
+  ]);
+
+  const structure = readScheduledStructure({
+    blueprint: exam ?? null,
+    date: localDate,
+    goal,
+    settings: savedPlan?.settings,
+  });
 
   const positions = await Promise.all(
     mocks.map(async ({ position, identity, skillIds }) => {
@@ -50,6 +64,7 @@ export async function loadPreparingMockPositions({
         today: localDate,
         userId: goal.userId,
       });
+
       return countPlannedQuestions(plan) < countPlannedQuestions(plan.outline) ? [position] : [];
     }),
   );

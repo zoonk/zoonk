@@ -1,11 +1,12 @@
 import { type Goal, type StudySessionBlock, type TransactionClient } from "@zoonk/db";
+import { findActiveSubscriptionForUser } from "../../../auth/subscription";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { readExamPicks } from "../../choices/exam-choices";
 import { buildMockConditions } from "./mock-conditions";
 import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
-import { readMockStructure, readUnpickedChoices } from "./read-mock-structure";
+import { readScheduledStructure, readUnpickedChoices } from "./read-mock-structure";
 
 export async function startScheduledSitting({
   tx,
@@ -17,63 +18,91 @@ export async function startScheduledSitting({
 }: {
   tx: TransactionClient;
   block: StudySessionBlock;
-  goal: Goal;
+  goal: Goal | null;
   sessionDate: Date;
   userId: string;
   now: Date;
-}): Promise<"created" | "ready" | "preparing" | "finished"> {
+}): Promise<"created" | "ready" | "preparing" | "finished" | "plusRequired" | null> {
+  const payload = readBlockPayload(block);
+
+  if (!goal || !payload.checkpoint?.mock) {
+    return null;
+  }
+
   const existing = await tx.mockExam.findUnique({
-    where: { blockId: block.id },
     include: { answers: { select: { answer: true } } },
+    where: { blockId: block.id },
   });
-  if (existing && !hasStoredTimeRunOutAway({ mock: existing, now: now.getTime() }))
+
+  if (existing && !hasStoredTimeRunOutAway({ mock: existing, now: now.getTime() })) {
     return existing.status === "active" ? "ready" : "finished";
+  }
+
+  if (!(await findActiveSubscriptionForUser({ client: tx, now, userId }))) {
+    return "plusRequired";
+  }
+
   await releaseExpiredMockItems(tx, userId);
-  if (existing) await tx.mockExam.update({ where: { id: existing.id }, data: { blockId: null } });
+
+  if (existing) {
+    await tx.mockExam.update({ data: { blockId: null }, where: { id: existing.id } });
+  }
+
   const blueprint = goal.examBlueprintId
     ? await tx.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
     : null;
-  const plan = await tx.plan.findUnique({ where: { goalId: goal.id }, select: { settings: true } });
+
+  const plan = await tx.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } });
   const picks = readExamPicks(plan?.settings);
-  const payload = readBlockPayload(block);
+
   const conditions = await buildMockConditions(
     {
-      goal,
       blueprint,
+      goal,
       payload,
       sessionDate,
-      structure: blueprint && readMockStructure({ blueprint, picks }),
+      structure: readScheduledStructure({
+        blueprint,
+        date: sessionDate,
+        goal,
+        settings: plan?.settings,
+      }),
       unpicked: readUnpickedChoices({ blueprint, picks }),
       userId,
     },
     tx,
   );
+
   const count = conditions.sections.reduce((sum, section) => sum + section.questions, 0);
-  const complete =
-    count === (payload.checkpoint?.mockQuestions ?? conditions.examQuestions) &&
-    conditions.sections.length > 0;
+  const complete = count === conditions.examQuestions && conditions.sections.length > 0;
+
   await oweFollowUps({
     db: tx,
-    userId,
     followUps: [
       {
+        input: { examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: complete },
         kind: "prepareMockSupply",
-        input: { goalId: goal.id, examBlueprintId: goal.examBlueprintId, later: complete },
       },
     ],
+    userId,
   });
-  if (!complete) return "preparing";
+
+  if (!complete) {
+    return "preparing";
+  }
+
   const sitting = await tx.mockExam.create({
     data: {
-      goalId: goal.id,
-      examBlueprintId: goal.examBlueprintId,
-      conditions: { ...conditions, examQuestions: null },
       blockId: block.id,
+      conditions: { ...conditions, examQuestions: null },
+      examBlueprintId: goal.examBlueprintId,
+      goalId: goal.id,
       sectionStartedAt: now,
       startedAt: now,
       userId,
     },
   });
-  await claimMockItems({ tx, userId, conditions, mockExamId: sitting.id, now });
+
+  await claimMockItems({ conditions, mockExamId: sitting.id, now, tx, userId });
   return "created";
 }

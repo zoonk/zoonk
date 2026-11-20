@@ -1,3 +1,4 @@
+import { roundToTotal } from "@zoonk/utils/apportion";
 import { type ExamStructure, type SectionNavigation } from "../../library/exams/blueprint-contract";
 import { listListeningParts } from "../listening/listening-parts";
 import { isObjectiveSection } from "./written-subject";
@@ -90,8 +91,16 @@ export function sectionMinutes({
 }): number {
   if (section.minutes) {
     const questions = section.questions ?? DEFAULT_SECTION_QUESTIONS;
-    return Math.max(1, Math.round((section.minutes * picked) / questions));
+    return (section.minutes * picked) / questions;
   }
 
-  return Math.max(1, Math.round(picked * pace));
+  return picked * pace;
+}
+
+export function sectionQuotas(sections: readonly BlueprintSection[], share: number) {
+  return roundToTotal(
+    sections.map((section) =>
+      section.kind === "speaking" ? 0 : (section.questions ?? DEFAULT_SECTION_QUESTIONS) * share,
+    ),
+  );
 }

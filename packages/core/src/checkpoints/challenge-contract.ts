@@ -49,6 +49,7 @@ export function getChallengeAccess({
   if (plusRequired) {
     return "plusRequired";
   }
+
   return preparing ? "preparing" : "open";
 }
 

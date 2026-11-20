@@ -1,8 +1,9 @@
 import "server-only";
-import { type ExamBlueprint } from "@zoonk/db";
+import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import { type ExamPicks, toChosenStructure } from "../../choices/exam-choices";
+import { getGoalDayMinutes } from "../../../sessions/_utils/day-minutes";
+import { type ExamPicks, readExamPicks, toChosenStructure } from "../../choices/exam-choices";
 import { getMockSizeSource } from "../mock-size-source";
 import { toMockStructure } from "../mock-structure";
 import { type UnpickedChoice, listUnpickedChoices } from "../mock-unpicked";
@@ -34,6 +35,25 @@ export function readMockStructure({
     ownerId: blueprint.ownerId,
     structure: toChosenStructure({ picks, structure }),
   });
+}
+
+export function readScheduledStructure({
+  blueprint,
+  date,
+  goal,
+  settings,
+}: {
+  blueprint: ExamBlueprint | null;
+  date: Date;
+  goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate"> | null;
+  settings: unknown;
+}) {
+  if (!blueprint || !goal) {
+    return null;
+  }
+
+  const dayMinutes = getGoalDayMinutes({ date, goal, planSettings: settings });
+  return readMockStructure({ blueprint, dayMinutes, picks: readExamPicks(settings) });
 }
 
 export function readUnpickedChoices({

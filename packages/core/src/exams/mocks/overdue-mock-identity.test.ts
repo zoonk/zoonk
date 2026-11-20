@@ -95,10 +95,11 @@ async function overduePlan({ dailyMinutes = 30, mockMinutes = 150, structure = S
       const lesson = await libraryLessonFixture();
 
       const questions = await Promise.all(
-        Array.from({ length: 6 }, () =>
+        Array.from({ length: 45 }, () =>
           itemFixture({
             content: choiceItemContent(),
             examBlueprintId: blueprint.id,
+            mockOnly: true,
             skillId: skill.id,
           }),
         ),
@@ -276,9 +277,7 @@ describe("an overdue scheduled mock's canonical identity", () => {
     const saved = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
     expect(readBlockPayload(saved).planItemId).toBe(mock.id);
 
-    expect
-      .soft(new Set(readBlockPayload(saved).itemIds))
-      .toStrictEqual(new Set(mathQuestions.map((question) => question.id)));
+    expect(readBlockPayload(saved).itemIds).toStrictEqual([]);
 
     await expect(getMock(block.id)).resolves.toMatchObject({
       mock: { day: 2, fullLength: false, minutes: 150 },
@@ -291,6 +290,11 @@ describe("an overdue scheduled mock's canonical identity", () => {
 
     const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { blockId: block.id } });
     const conditions = mockConditionsSchema.parse(sitting.conditions);
+
+    expect(new Set(conditions.sections.flatMap((section) => section.itemIds))).toStrictEqual(
+      new Set(mathQuestions.map((question) => question.id)),
+    );
+
     expect(conditions).toMatchObject({ day: 2, fullLength: false });
 
     expect(conditions.sections.reduce((minutes, section) => minutes + section.minutes, 0)).toBe(

@@ -139,6 +139,39 @@ async function loadStartableBlock({
   return { block: current, changed: current !== saved };
 }
 
+async function lockStartableSession({
+  block,
+  sessionId,
+  tx,
+  userId,
+}: {
+  block: StudySessionBlock;
+  sessionId: string;
+  tx: TransactionClient;
+  userId: string;
+}) {
+  await tx.$queryRaw`
+      SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
+    `;
+
+  const locked = await tx.studySession.findFirst({
+    include: STUDY_SESSION_INCLUDE,
+    where: { id: sessionId, userId },
+  });
+
+  if (!locked) {
+    throw new StudyBlockStartUnchangedError({ status: "notFound" });
+  }
+
+  const wait = getStoredBlockWait({ block, blocks: locked.blocks });
+
+  if (wait) {
+    throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
+  }
+
+  return locked;
+}
+
 /** Requires ownership; fills checkpoint questions before starting, and owes the session's preparation. */
 export async function startStudyBlock({
   blockId,
@@ -206,38 +239,29 @@ export async function startStudyBlock({
         return { status: "blockFinished" as const };
       }
 
-      await tx.$queryRaw`
-      SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
-    `;
+      const locked = await lockStartableSession({ block: current, sessionId, tx, userId });
 
-      const locked = await tx.studySession.findFirst({
-        include: STUDY_SESSION_INCLUDE,
-        where: { id: sessionId, userId },
+      const sitting = await startScheduledSitting({
+        block: current,
+        goal: locked.goal,
+        now,
+        sessionDate: locked.localDate,
+        tx,
+        userId,
       });
 
-      if (!locked) {
-        throw new StudyBlockStartUnchangedError({ status: "notFound" });
+      if (sitting === "plusRequired") {
+        throw new StudyBlockStartUnchangedError({ status: "plusRequired" });
       }
 
-      const wait = getStoredBlockWait({ block: current, blocks: locked.blocks });
-
-      if (wait) {
-        throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
+      if (sitting === "preparing") {
+        return { status: "questionsNeeded" as const };
       }
 
-      const sitting =
-        readBlockPayload(current).checkpoint?.mock && locked.goal
-          ? await startScheduledSitting({
-              tx,
-              block: current,
-              goal: locked.goal,
-              sessionDate: locked.localDate,
-              userId,
-              now,
-            })
-          : null;
-      if (sitting === "preparing") return { status: "questionsNeeded" as const };
-      if (sitting === "finished") return { status: "blockFinished" as const };
+      if (sitting === "finished") {
+        return { status: "blockFinished" as const };
+      }
+
       if (
         sitting !== "created" &&
         !changed &&

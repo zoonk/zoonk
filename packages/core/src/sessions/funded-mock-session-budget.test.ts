@@ -344,6 +344,17 @@ describe("funded mock sessions reserve all their fixed work", () => {
     const fixture = await setup({ targetDate: "2020-11-09", withBoss: true });
     const { goal, plan } = fixture;
 
+    await Promise.all(
+      Array.from({ length: 30 }, () =>
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: goal.examBlueprintId,
+          mockOnly: true,
+          skillId: fixture.library.skills[0]?.id ?? "",
+        }),
+      ),
+    );
+
     const studied = (before: string) =>
       readPlanItems(plan.id).then((items) =>
         items.filter(
