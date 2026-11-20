@@ -10,7 +10,6 @@ import {
   type RunView,
 } from "../_utils/case-evidence";
 import {
-  DIRECTION_LABELS,
   SIDE_LABELS,
   type Side,
   familyLabel,
@@ -353,12 +352,6 @@ function RunSection({
       )}
     </div>
   );
-}
-
-export function caseVotesLine(votes: Record<string, keyof typeof DIRECTION_LABELS>): string {
-  return Object.entries(votes)
-    .map(([family, direction]) => `${familyLabel(family)}: ${DIRECTION_LABELS[direction]}`)
-    .join(" · ");
 }
 
 /** A case's runs: the outputs side by side, the problems under the output they're about, then each reader's preference. */

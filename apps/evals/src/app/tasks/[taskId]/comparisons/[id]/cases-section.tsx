@@ -4,9 +4,9 @@ import { type Decision } from "@/lib/comparisons/decision";
 import { canAdjudicate } from "@/lib/comparisons/evidence";
 import { type Comparison } from "@/lib/comparisons/schemas";
 import { CaseInput } from "../_components/case-input";
-import { CaseRuns, caseVotesLine } from "../_components/case-view";
+import { CaseRuns } from "../_components/case-view";
 import { caseRuns, orderCases } from "../_utils/case-evidence";
-import { DIRECTION_LABELS } from "../_utils/labels";
+import { DIRECTION_LABELS, familyLabel } from "../_utils/labels";
 import { RulingForm } from "./ruling-form";
 
 type Case = Decision["cases"][number];
@@ -21,22 +21,29 @@ function resultText(item: Case): string {
     : DIRECTION_LABELS[item.result];
 }
 
+function Vote({ children, label }: React.PropsWithChildren<{ label: string }>) {
+  return (
+    <div className="flex gap-1.5">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd>{children}</dd>
+    </div>
+  );
+}
+
+/** Each family's call on the case, and the owner's blind read, as pairs that wrap whole. */
 function CaseVotes({ item }: { item: Case }) {
-  const votes = caseVotesLine(item.votes);
+  const votes = Object.entries(item.votes);
 
   return (
-    <div className="flex max-w-3xl flex-col gap-1 text-sm">
-      <p>
-        <span className="text-muted-foreground">Families: </span>
-        {votes || "no complete reads yet"}
-        {item.owner && (
-          <>
-            <span className="text-muted-foreground"> · Your blind read: </span>
-            {DIRECTION_LABELS[item.owner]}
-          </>
-        )}
-      </p>
-    </div>
+    <dl className="flex max-w-3xl flex-wrap gap-x-5 gap-y-1 text-sm">
+      {votes.length === 0 && <Vote label="Readers">no complete reads yet</Vote>}
+      {votes.map(([family, direction]) => (
+        <Vote key={family} label={familyLabel(family)}>
+          {DIRECTION_LABELS[direction]}
+        </Vote>
+      ))}
+      {item.owner && <Vote label="Your blind read">{DIRECTION_LABELS[item.owner]}</Vote>}
+    </dl>
   );
 }
 
