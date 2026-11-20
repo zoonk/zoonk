@@ -16,7 +16,6 @@ export type MockFormatShortfall = {
   format: MockFormat;
   questionsPerSkill: number;
   skillIds: string[];
-  target: number;
 };
 
 /**
@@ -207,24 +206,15 @@ export function getMockQuestionsShortfall({
 
       const counts = apportion({ total: missing, weights: ordered.map(() => 1) });
 
-      return ordered.flatMap(({ format: own, skill, held: count }, i) => {
+      return ordered.flatMap(({ format: own, skill }, i) => {
         const questionsPerSkill = counts[i] ?? 0;
 
-        return questionsPerSkill
-          ? [
-              {
-                format: own,
-                questionsPerSkill,
-                skillId: skill.id,
-                target: count + questionsPerSkill,
-              },
-            ]
-          : [];
+        return questionsPerSkill ? [{ format: own, questionsPerSkill, skillId: skill.id }] : [];
       });
     });
 
     const groups = Map.groupBy(writes, (write) =>
-      JSON.stringify([write.format.style, write.questionsPerSkill, write.target]),
+      JSON.stringify([write.format.style, write.questionsPerSkill]),
     );
 
     return [...groups.values()].flatMap((group) =>
@@ -234,7 +224,6 @@ export function getMockQuestionsShortfall({
               format: group[0].format,
               questionsPerSkill: group[0].questionsPerSkill,
               skillIds: group.map((write) => write.skillId),
-              target: group[0].target,
             },
           ]
         : [],

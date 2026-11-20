@@ -176,16 +176,15 @@ describe("a mock in the exam's own mix of formats", () => {
     const writes = request.writes;
 
     expect(
-      writes.map(({ format, questionsPerSkill, skillIds, target }) => ({
+      writes.map(({ format, questionsPerSkill, skillIds }) => ({
         key: format.key,
         questionsPerSkill,
         skillIds,
-        target,
       })),
     ).toStrictEqual([
-      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 2 },
-      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id], target: 1 },
-      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
+      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id] },
+      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id] },
+      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id] },
     ]);
   });
 
@@ -204,17 +203,16 @@ describe("a mock in the exam's own mix of formats", () => {
     const first = await listMockPrepWrites({ goalId: goal.id });
 
     expect(
-      first.writes.map(({ format, questionsPerSkill, skillIds, target }) => ({
+      first.writes.map(({ format, questionsPerSkill, skillIds }) => ({
         key: format.key,
         questionsPerSkill,
         skillIds,
-        target,
       })),
     ).toStrictEqual([
-      { key: "choice", questionsPerSkill: 1, skillIds: [kinematics?.id], target: 2 },
-      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 2 },
-      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id], target: 1 },
-      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
+      { key: "choice", questionsPerSkill: 1, skillIds: [kinematics?.id] },
+      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id] },
+      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id] },
+      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id] },
     ]);
 
     const laterLearner = await userFixture();
