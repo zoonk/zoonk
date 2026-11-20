@@ -275,6 +275,7 @@ const COVERAGE_PLAN: PlanView = withWritingLesson(
       deepensMostAsked: false,
       fits: false,
       measure: "goal",
+      reachedShare: 1,
       timeCovers: false,
     },
     fitOffer: null,
@@ -289,7 +290,14 @@ const COVERAGE_TIME = {
   readingNotice: false,
   ready: true,
   recommendedMinutes: 60,
-  suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes: 60, split: null },
+  suggested: {
+    coveredShare: 1,
+    everyTopic: true,
+    kind: "everything",
+    minutes: 60,
+    reachedShare: 1,
+    split: null,
+  },
   targetDate: "2027-03-01",
   targetDateNamedMonth: false,
 } satisfies PlanTimeToCover;
