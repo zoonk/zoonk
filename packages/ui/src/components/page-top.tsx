@@ -54,9 +54,9 @@ function BackLink({
 
 /**
  * The bar's row: the way back at the start, the actions at the end and, between them, what the
- * whole screen shares (a step counter). The middle is centered while both ends leave it room and
- * narrows when they don't, so a long translated label never covers it; with no room for even a
- * narrow middle, the actions move to a line of their own.
+ * whole screen shares (a step counter), up to 6rem wide (8rem from `sm`), which it fills. The middle
+ * is centered while both ends leave it room and narrows when they don't, so a long translated label
+ * never covers it. Too narrow to read, it's left to screen readers, as a native bar drops its title.
  */
 function PageTopRow({
   actions,
@@ -82,8 +82,8 @@ function PageTopRow({
       </div>
 
       {middle && (
-        <div className="pointer-events-none flex max-w-max min-w-10 grow basis-0 justify-center">
-          {middle}
+        <div className="@container pointer-events-none flex max-w-24 min-w-0 grow basis-0 sm:max-w-32">
+          <div className="flex w-full @max-[2.5rem]:sr-only">{middle}</div>
         </div>
       )}
 

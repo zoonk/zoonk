@@ -14,7 +14,7 @@ import { getSetupProgress } from "./_utils/setup-progress";
 import { type OnboardingBar } from "./onboarding-host";
 import { testProgressPercent } from "./test-progress";
 
-export const BAR_MIDDLE_CLASS = "w-24 max-w-full sm:w-32";
+export const BAR_MIDDLE_CLASS = "w-full";
 
 /** One display for the whole setup: the questions about the learner share one dash. */
 export function stepBarProgress(state: Parameters<typeof getSetupProgress>[0]) {
