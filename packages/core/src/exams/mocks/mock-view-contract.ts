@@ -56,6 +56,8 @@ export type MockSectionView = {
   tools: string | null;
 };
 
+export const MOCK_REVIEW_OUTCOMES = ["blank", "partial", "right", "wrong"] as const;
+
 export type MockReviewEntry = {
   area: string | null;
   citation: ItemCitation | null;
@@ -67,8 +69,9 @@ export type MockReviewEntry = {
   itemId: string;
   learnerAnswer: string | null;
   number: number;
-  outcome: "blank" | "partial" | "wrong";
+  outcome: (typeof MOCK_REVIEW_OUTCOMES)[number];
   question: string;
+  unsure: boolean;
 };
 
 export type MockEssayView = {

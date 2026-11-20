@@ -824,9 +824,10 @@ describe("an existing mock taken as placement", () => {
 
     const [first] = skills;
     const answered = asked.slice(0, 4);
+    const markedBlank = asked[answered.length];
 
-    await Promise.all(
-      answered.map((question) =>
+    await Promise.all([
+      ...answered.map((question) =>
         saveMockAnswer({
           blockId: id,
           input: {
@@ -837,7 +838,11 @@ describe("an existing mock taken as placement", () => {
           },
         }),
       ),
-    );
+      saveMockAnswer({
+        blockId: id,
+        input: { answer: null, durationMs: 5000, flagged: true, itemId: markedBlank?.itemId ?? "" },
+      }),
+    ]);
 
     await finishMock({ blockId: id, input: { timeZone: UTC } });
 
@@ -849,6 +854,11 @@ describe("an existing mock taken as placement", () => {
     ]);
 
     expect(finished).toMatchObject({ adapt: null, result: { total: 4 }, status: "finished" });
+
+    expect(finished.review.filter((entry) => entry.outcome === "blank")).toMatchObject([
+      { itemId: markedBlank?.itemId, number: 5, unsure: true },
+    ]);
+
     expect(attempts).toHaveLength(4);
     expect(mistakes).toBe(0);
 

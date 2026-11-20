@@ -6,6 +6,7 @@ import { type MockReviewEntry } from "../mock-view-contract";
 import { gradeMockItem, readRecordedMockAnswer } from "./mock-item-grading";
 import { type MockItem, loadMockItems, toMockQuestionView } from "./mock-items";
 import { getAskedItemIds } from "./mock-sections";
+import { type MockSitting } from "./owned-mock";
 
 function toEntry({
   area,
@@ -14,26 +15,29 @@ function toEntry({
   item,
   mockExamId,
   number,
+  unsure,
 }: {
   area: string | null;
-  attempt: { answer: unknown; isCorrect: boolean };
+  attempt: { answer: unknown; isCorrect: boolean } | undefined;
   conditions: MockConditions;
   item: MockItem;
   mockExamId: string;
   number: number;
+  unsure: boolean;
 }): MockReviewEntry | null {
-  if (attempt.isCorrect) {
+  if (attempt?.isCorrect && !unsure) {
     return null;
   }
 
   const grade = gradeMockItem({
-    answer: readRecordedMockAnswer(attempt.answer),
+    answer: readRecordedMockAnswer(attempt?.answer),
     item,
     mockId: mockExamId,
     partialCredit: conditions.partialCredit,
   });
 
   const outcome = getPickOutcome({ answered: grade.answered, credit: grade.credit });
+  const missedOutcome = outcome === "right" ? "wrong" : outcome;
   const shown = toMockQuestionView({ item, mockId: mockExamId });
 
   return {
@@ -46,9 +50,10 @@ function toEntry({
     itemId: item.id,
     learnerAnswer: grade.snapshot.answer,
     number,
-    outcome: outcome === "blank" || outcome === "partial" ? outcome : "wrong",
+    outcome: attempt?.isCorrect ? "right" : missedOutcome,
     question: shown.question,
     set: shown.set,
+    unsure,
   };
 }
 
@@ -81,25 +86,30 @@ async function loadFinishedAnswers({
 
 export async function loadMockReview({
   areas,
-  conditions,
-  mockExamId,
+  mock,
   userId,
 }: {
   areas: Map<string, string>;
-  conditions: MockConditions;
-  mockExamId: string;
+  mock: MockSitting;
   userId: string;
 }): Promise<{
   mistakes: { cause: MistakeCause | null; count: number }[];
   review: MockReviewEntry[];
 }> {
+  const { answers, conditions, id: mockExamId } = mock;
   const { attempts, items } = await loadFinishedAnswers({ conditions, mockExamId, userId });
+  const draftsByItem = new Map(answers.map((answer) => [answer.itemId, answer]));
 
   const review = getAskedItemIds(conditions).flatMap((entry, index) => {
     const item = items.get(entry.itemId);
     const attempt = attempts.find((row) => row.itemId === entry.itemId);
+    const draft = draftsByItem.get(entry.itemId);
+    const unsure = draft?.flagged ?? false;
 
-    if (!item || !attempt) {
+    const markedPlacementBlank =
+      conditions.purpose === "placement" && unsure && draft?.answer === null;
+
+    if (!item || (!attempt && !markedPlacementBlank)) {
       return [];
     }
 
@@ -110,6 +120,7 @@ export async function loadMockReview({
       item,
       mockExamId,
       number: index + 1,
+      unsure,
     });
 
     return reviewed ? [reviewed] : [];

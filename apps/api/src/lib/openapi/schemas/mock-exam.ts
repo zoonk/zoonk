@@ -9,6 +9,7 @@ import {
   mockResultSchema,
   mockShapeSchema,
 } from "@zoonk/core/exams/mocks/contract";
+import { MOCK_REVIEW_OUTCOMES } from "@zoonk/core/exams/mocks/view-contract";
 import { speakingSectionViewSchema } from "@zoonk/core/language/exam-speaking/contract";
 import { passMarksSchema } from "@zoonk/core/library/exams/pass-marks";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
@@ -238,13 +239,16 @@ export const mockViewResponseSchema = z
         learnerAnswer: z.string().nullable(),
         number: z.number().int(),
         outcome: z
-          .enum(["blank", "partial", "wrong"])
+          .enum(MOCK_REVIEW_OUTCOMES)
           .meta({
             description:
-              "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit",
+              "`partial` means several picks earned part of the points under the exam's partial credit rule. `right` means the learner answered correctly and marked the question as unsure",
           }),
         question: z.string(),
         set: itemSetSchema.nullable(),
+        unsure: z
+          .boolean()
+          .meta({ description: "Whether the learner marked the question as unsure" }),
       }),
     ),
     scoreNotes: mockScoreNotesSchema,

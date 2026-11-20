@@ -17,6 +17,7 @@ function entry(overrides: Partial<MockReviewEntry> & { number: number }): MockRe
     outcome: "wrong",
     question: `What does question ${overrides.number} ask?`,
     set: null,
+    unsure: false,
     ...overrides,
   };
 }

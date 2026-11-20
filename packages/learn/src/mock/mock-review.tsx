@@ -60,7 +60,7 @@ function useEntryFacts() {
   return (entry: MockReviewEntry): (string | null)[] => [
     t("Question {number}", { number: String(entry.number) }),
     entry.area,
-    { blank: t("Blank"), partial: t("Partly right"), wrong: null }[entry.outcome],
+    { blank: t("Blank"), partial: t("Partly right"), right: null, wrong: null }[entry.outcome],
   ];
 }
 

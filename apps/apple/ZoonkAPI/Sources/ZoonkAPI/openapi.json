@@ -90886,9 +90886,10 @@
                   "enum": [
                     "blank",
                     "partial",
+                    "right",
                     "wrong"
                   ],
-                  "description": "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit"
+                  "description": "`partial` means several picks earned part of the points under the exam's partial credit rule. `right` means the learner answered correctly and marked the question as unsure"
                 },
                 "question": {
                   "type": "string"
@@ -90900,6 +90901,10 @@
                       "$ref": "#/components/schemas/ItemSet"
                     }
                   ]
+                },
+                "unsure": {
+                  "type": "boolean",
+                  "description": "Whether the learner marked the question as unsure"
                 }
               },
               "required": [
@@ -90914,7 +90919,8 @@
                 "number",
                 "outcome",
                 "question",
-                "set"
+                "set",
+                "unsure"
               ],
               "additionalProperties": false
             }
