@@ -18,7 +18,20 @@ export const challengeReviewTask: Task<
   ReviewInput,
   Awaited<ReturnType<typeof checkChallengeQuality>>["data"]
 > = {
-  criteria: [],
+  criteria: [
+    {
+      expectations:
+        "Every confirmed error in the case is found, with a concrete location, path and evidence a fixer can act on. Notice a missed error, or one named so vaguely a fixer couldn't find it. Cost: a flawed challenge reaches every learner who plays it.",
+      id: "catchesErrors",
+      label: "Catches the real errors",
+    },
+    {
+      expectations:
+        "Findings are only real errors: no style preferences, missing detail, hypothetical risks or defensible choices, and a clean case gets no findings. Notice a finding the case doesn't support. Cost: a needless fix call that can make a good challenge worse.",
+      id: "noFalseFlags",
+      label: "No false flags",
+    },
+  ],
   description:
     "Errors-only review of saved challenges: 19 confirmed errors and 12 clean controls from the review lane, including six route errors missed by its original labels",
   generate: async ({ written, language, level, field, writerModel, ...options }) => {
@@ -44,7 +57,11 @@ export const challengeReviewTask: Task<
   id: "challenge-review",
   name: "Challenge review",
   priorities: {
-    comparison: { criteria: {}, preference: "canBlock", trade: null },
+    comparison: {
+      criteria: { catchesErrors: "counts", noFalseFlags: "counts" },
+      preference: "canBlock",
+      trade: null,
+    },
     distribution: "shared",
     first: "quality",
     reads: "Code: its findings decide whether to fix or hold back the case",
