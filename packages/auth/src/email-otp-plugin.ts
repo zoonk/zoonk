@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { emailOTP } from "better-auth/plugins";
 import { sendVerificationOTP } from "./plugins/otp";
 
@@ -22,4 +23,17 @@ export function createEmailOTPPlugin({
     sendVerificationOTP,
     storeOTP,
   });
+}
+
+const EMAIL_OTP_IDENTIFIER = /^(?:sign-in|email-verification|forget-password|change-email)-otp-/u;
+
+/**
+ * A new code replaces the email's earlier rows, such as a code that expired unused. A resend
+ * refreshes the expiry by identifier alone, so with an older row beside it, it could refresh that
+ * row and leave the emailed code to expire on its first deadline.
+ */
+export async function replaceEarlierEmailOTPs({ identifier }: { identifier: string }) {
+  if (EMAIL_OTP_IDENTIFIER.test(identifier)) {
+    await prisma.verification.deleteMany({ where: { identifier } });
+  }
 }

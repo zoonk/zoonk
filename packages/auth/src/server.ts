@@ -30,7 +30,7 @@ import {
   reportSignInAfterSessionCreate,
   reportSignUpAfterAuthCreate,
 } from "./db-hooks";
-import { createEmailOTPPlugin } from "./email-otp-plugin";
+import { createEmailOTPPlugin, replaceEarlierEmailOTPs } from "./email-otp-plugin";
 import { validateEmailBeforeOTP } from "./email-signup-policy";
 import { guardUserCreation } from "./guests/account-creation-guard";
 import { PASSKEY_REGISTRATION_ORIGIN, PASSKEY_RP_ID } from "./passkeys/relying-party";
@@ -107,6 +107,13 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
       update: {
         before: async (user) => {
           rejectInvalidName(user.name);
+        },
+      },
+    },
+    verification: {
+      create: {
+        before: async (verification) => {
+          await replaceEarlierEmailOTPs(verification);
         },
       },
     },
