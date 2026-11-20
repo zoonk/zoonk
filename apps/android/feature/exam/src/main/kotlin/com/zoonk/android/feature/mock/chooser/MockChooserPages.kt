@@ -144,7 +144,7 @@ internal fun PracticeChooser(
         note =
             when {
                 gated -> ({ MockGate() })
-                preparing -> ({ MockPreparingNote() })
+                preparing -> ({ MockPreparingNote(stringResource(R.string.mock_preparing_chooser_title)) })
                 failed -> ({ StartFailed() })
                 else -> null
             },

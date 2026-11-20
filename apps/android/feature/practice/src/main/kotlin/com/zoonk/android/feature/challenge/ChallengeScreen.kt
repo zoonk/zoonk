@@ -860,7 +860,7 @@ private fun PreparingActions(
     movable: Boolean,
     actions: ChallengeActions,
 ) {
-    MockPreparingNote()
+    MockPreparingNote(stringResource(R.string.mock_preparing_title))
     MoveFailed(ui)
     TaskActions { width ->
         if (movable) {

@@ -61,7 +61,9 @@ private fun StepSegment(
 ) {
     val step = part.step
 
-    Segment(title = blockTitle(step), facts = segmentFacts(part, gettingReady), note = kindNote(step.learnKind), kind = step.learnKind)
+    val facts = segmentFacts(part, gettingReady)
+
+    Segment(title = blockTitle(step), status = facts.status, facts = facts.data, note = kindNote(step.learnKind), kind = step.learnKind)
 }
 
 /** The day's time kept for lessons that aren't on its list yet. */
@@ -89,13 +91,14 @@ private fun HeldSegment(
 @Composable
 private fun Segment(
     title: String,
-    facts: String,
+    facts: String?,
     note: String?,
     kind: LearnKind,
+    status: String? = null,
 ) {
-    val label = stringResource(R.string.today_segment_label, title, facts)
+    val label = stringResource(R.string.today_segment_label, title, listOf(status, facts).factsLine())
 
-    TodayPopover(title = title, facts = facts, note = note, kind = kind) { open ->
+    TodayPopover(title = title, status = status, facts = facts, note = note, kind = kind) { open ->
         Box(
             Modifier
                 .fillMaxWidth()
@@ -107,39 +110,48 @@ private fun Segment(
     }
 }
 
+/** A state is words, set in the text face; a time or a count is data, set in mono. */
+private data class SegmentFacts(
+    val status: String? = null,
+    val data: String? = null,
+)
+
 @Composable
 private fun segmentFacts(
     part: DayPart,
     gettingReady: Boolean,
-): String {
+): SegmentFacts {
     val step = part.step
     val locale = currentLocale()
     val time = formatMinutes(step.estimatedMinutes.toInt(), locale)
 
     if (gettingReady && part.state != DayPart.State.Done) {
-        return listOf(stringResource(R.string.today_step_being_written), time).factsLine()
+        return SegmentFacts(stringResource(R.string.today_step_being_written), time)
     }
 
     return when (part.state) {
         DayPart.State.Done -> {
-            stringResource(R.string.today_step_done)
+            SegmentFacts(status = stringResource(R.string.today_step_done))
         }
 
         DayPart.State.Ahead -> {
-            listOf(stringResource(R.string.today_week_planned).replaceFirstChar { it.titlecase(locale) }, time).factsLine()
+            SegmentFacts(stringResource(R.string.today_week_planned).replaceFirstChar { it.titlecase(locale) }, time)
         }
 
         DayPart.State.Current -> {
             if (step.status == StudyBlock.Status.ACTIVE && step.answered > 0) {
                 val questions = step.questions.toInt()
-                pluralStringResource(
-                    R.plurals.today_segment_questions,
-                    questions,
-                    formatNumber(step.answered.toDouble(), locale),
-                    questions,
+                SegmentFacts(
+                    data =
+                        pluralStringResource(
+                            R.plurals.today_segment_questions,
+                            questions,
+                            formatNumber(step.answered.toDouble(), locale),
+                            questions,
+                        ),
                 )
             } else {
-                listOf(stringResource(R.string.today_segment_up_next), time).factsLine()
+                SegmentFacts(stringResource(R.string.today_segment_up_next), time)
             }
         }
     }

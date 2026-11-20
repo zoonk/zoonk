@@ -18,9 +18,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.format.FACT_SEPARATOR
+import com.zoonk.android.ui.theme.Geist
 import com.zoonk.android.ui.theme.zoonkType
 import kotlinx.coroutines.launch
 
@@ -32,6 +38,7 @@ internal fun TodayPopover(
     facts: String?,
     note: String?,
     modifier: Modifier = Modifier,
+    status: String? = null,
     kind: LearnKind? = null,
     footer: @Composable () -> Unit = {},
     anchor: @Composable (Modifier) -> Unit,
@@ -54,7 +61,7 @@ internal fun TodayPopover(
                     },
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        if (facts != null) Text(facts, style = MaterialTheme.zoonkType.data)
+                        if (status != null || facts != null) Text(factsWithStatus(status, facts), style = MaterialTheme.zoonkType.data)
                         if (note != null) Text(note)
                         footer()
                     }
@@ -66,3 +73,14 @@ internal fun TodayPopover(
         }
     }
 }
+
+/** Main's: a state is words, in the text face; a time or a count is data, in mono. */
+private fun factsWithStatus(
+    status: String?,
+    facts: String?,
+): AnnotatedString =
+    buildAnnotatedString {
+        if (status != null) withStyle(SpanStyle(fontFamily = Geist)) { append(status) }
+        if (status != null && facts != null) append(FACT_SEPARATOR)
+        if (facts != null) append(facts)
+    }

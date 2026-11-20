@@ -46,8 +46,9 @@
   "mock_next_section": "ff464d8b7c8aca10ff628a7398007c2a954ebc76be2822af58d952a59eec34ed",
   "mock_place": "71872615f909946fca7e9bc741ed97b205f02213e846f068751e1c13029998cd",
   "mock_points_of": "7ee7c2b96463f0b561165232cbccfaee0f65d1c4533122e72340302edb835f49",
+  "mock_preparing_chooser_title": "fc9c8b86529534030fc85a8971156a22558f7be49a591395855148ea902a2078",
   "mock_preparing_keep_studying": "ef230664ef8565e1a96e046aa2daf749fdc7c3926224bcf379d8e1920afd884c",
-  "mock_preparing_line": "59844f64d092debeddd9466ad946ebf88cf9d452a54cd6e8fe0b7f4a64a684d4",
+  "mock_preparing_line": "e64cccd6e34ee6fc57109ad779b26ca00d7448c0ff318e2705368ec2ae69c822",
   "mock_preparing_title": "3e39cea78f23756af378c672aa27618f842af334c7a202a69719068ee7f339d5",
   "mock_progress_label": "c3413be759f5d2a12f80514f416b944e202146657e7baf520faaf16d9f9b9559",
   "mock_question_number": "58d4a557aa0f5a4ab6506d4d6698c352f46ac03d3dde7bda9769a7fde95fe9e2",
@@ -238,6 +239,8 @@
     <string name="mock_speaking_hand_in_done">すべてのタスクが終わりました。提出後はこの模試でやり直せません。</string>
     <string name="mock_keep_going">続ける</string>
     <string name="mock_preparing_title">模試を準備しています</string>
-    <string name="mock_preparing_line">開始するには、このページに戻ってください。</string>
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away. -->
+    <string name="mock_preparing_chooser_title">この模試を準備しています</string>
+    <string name="mock_preparing_line">このページに戻ると開始できます。</string>
     <string name="mock_preparing_keep_studying">学習を続ける</string>
 </resources>
