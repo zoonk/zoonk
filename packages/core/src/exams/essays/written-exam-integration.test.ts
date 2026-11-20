@@ -37,7 +37,16 @@ async function setup() {
 
   const [user, blueprint, writing] = await Promise.all([
     userFixture(),
-    examBlueprintFixture({ structure: CGU }),
+    examBlueprintFixture({
+      board: "Cebraspe",
+      name: "CGU",
+      structure: {
+        ...CGU,
+        subjects: CGU.subjects.map((subject) =>
+          subject.name === "Writing" ? { ...subject, topics: ["Government auditing"] } : subject,
+        ),
+      },
+    }),
     skillFixture(),
   ]);
 
@@ -129,6 +138,9 @@ function useModelFixtures(skillId: string) {
       ],
       errors: [],
       nextStep: null,
+      onTopicQuote: null,
+      zeroKind: null,
+      zeroQuote: null,
       zeroRuleIndex: null,
     },
   });
@@ -155,6 +167,16 @@ describe("CGU written exam preparation", () => {
 
     const itemId = getWritingPromptId(crypto.randomUUID(), 0);
     await writeWritingItem(request.input, itemId);
+
+    expect(writeWritingPrompt).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        input: expect.objectContaining({
+          board: "Cebraspe",
+          exam: "CGU",
+          sectionTopics: ["Government auditing"],
+        }),
+      }),
+    );
 
     const started = await startWriting({ blockId: block.id });
 
@@ -254,14 +276,27 @@ describe("CGU written exam preparation", () => {
       text: `${TEXT} The recommendation assigns ownership.`,
     };
 
-    const result = await submitEssay({ blockId: block.id, input: rewritten });
+    vi.mocked(gradeWritingEvidence).mockRejectedValueOnce(
+      new Error("Grading is temporarily unavailable"),
+    );
+
+    await expect(submitEssay({ blockId: block.id, input: rewritten })).rejects.toThrow(
+      "Grading is temporarily unavailable",
+    );
+
+    const [result, concurrent] = await Promise.all([
+      submitEssay({ blockId: block.id, input: rewritten }),
+      submitEssay({ blockId: block.id, input: rewritten }),
+    ]);
+
     expect(result).toMatchObject({ grade: { kind: "levels" }, status: "writingGraded" });
+    expect(concurrent).toStrictEqual(result);
 
     await expect(
       submitEssay({ blockId: block.id, input: { ...rewritten, text: "A stale duplicate." } }),
     ).resolves.toStrictEqual(result);
 
-    expect(gradeWritingEvidence).toHaveBeenCalledTimes(2);
+    expect(gradeWritingEvidence).toHaveBeenCalledTimes(3);
     await expect(prisma.attempt.count({ where: { itemId, userId: user.id } })).resolves.toBe(2);
 
     await expect(

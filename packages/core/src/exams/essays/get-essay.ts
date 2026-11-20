@@ -5,11 +5,9 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
-import { countGradesLeft } from "./_utils/essay-grade-claims";
 import { findOwnedEssay } from "./_utils/owned-essay";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { type EssayView } from "./essay-contract";
-import { getEssayRubric } from "./essay-rubric";
 import { countWritingExtrasLeft } from "./writing-admission";
 import { writingPromptSchema } from "./writing-contract";
 
@@ -31,7 +29,7 @@ export async function getEssay({
     return found;
   }
 
-  const { block, blueprint, content, goal, item, sessionId, userId } = found.owned;
+  const { block, content, goal, item, sessionId, userId } = found.owned;
   const zone = getAnswerTimeZone({ goal, timeZone });
   const { currentInstant } = await getRequestProgressDateContext();
 
@@ -39,14 +37,9 @@ export async function getEssay({
   const admissionId = writing?.admissionId;
   const localDate = getDateInTimeZone({ date: currentInstant, timeZone: zone });
 
-  const [drafts, writtenDrafts, gradesLeft, submitted] = await Promise.all([
-    writing ? [] : loadEssayDrafts({ itemId: item.id, sessionId, userId }),
-    writing
-      ? loadEssayDrafts({ format: "writing", itemId: item.id, sessionId, userId })
-      : undefined,
-    writing
-      ? countWritingExtrasLeft({ localDate, tx: prisma, userId })
-      : countGradesLeft({ localDate, now: currentInstant, userId }),
+  const [drafts, gradesLeft, submitted] = await Promise.all([
+    loadEssayDrafts({ itemId: item.id, sessionId, userId }),
+    countWritingExtrasLeft({ localDate, tx: prisma, userId }),
     admissionId
       ? prisma.attempt.findFirst({
           select: { id: true },
@@ -59,22 +52,15 @@ export async function getEssay({
     essay: {
       blockId,
       context: content.context,
+      draft: admissionId && writing?.draft && !submitted ? { ...writing.draft, admissionId } : null,
       drafts,
-      ...(writing && {
-        draft:
-          admissionId && writing.draft && !submitted ? { ...writing.draft, admissionId } : null,
-        pacing: {
-          minutes: block.estimatedMinutes ?? 1,
-          source: writingPacing ?? ("practice" as const),
-        },
-        writing: writingPromptSchema.parse(content.writing),
-        writtenDrafts,
-      }),
       gradesLeft,
+      pacing: { minutes: block.estimatedMinutes ?? 1, source: writingPacing ?? "practice" },
       question: content.question,
-      rubric: getEssayRubric({ blueprint, criteria: content.rubric }).kind,
+      rubric: content.writing.grading.kind,
       sessionId,
       status: block.status,
+      writing: writingPromptSchema.parse(content.writing),
     },
     status: "ready",
   };

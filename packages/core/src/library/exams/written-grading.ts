@@ -17,7 +17,23 @@ export const writtenGradingSchema = z.object({
     })
     .nullable(),
   rounding: citedRuleSchema.nullable(),
-  zeroing: z.array(citedRuleSchema),
+  zeroing: z.array(
+    citedRuleSchema.extend({
+      kinds: z
+        .array(
+          z.enum([
+            "blank",
+            "offTopic",
+            "wrongForm",
+            "tooFewLines",
+            "copiedSupport",
+            "identification",
+          ]),
+        )
+        .optional(),
+      maxLines: z.int().positive().nullable().optional(),
+    }),
+  ),
 });
 
 export const sectionTaskSchema = z.object({

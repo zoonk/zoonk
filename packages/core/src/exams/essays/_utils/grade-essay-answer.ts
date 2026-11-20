@@ -1,6 +1,6 @@
 import "server-only";
-import { gradeEssay, gradeWritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
-import { type ExamBlueprint, type Item, type TransactionClient } from "@zoonk/db";
+import { type WritingEvidence, gradeWritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
+import { type Item, type TransactionClient } from "@zoonk/db";
 import { countWords } from "@zoonk/utils/string";
 import {
   type RecordedOutcome,
@@ -8,8 +8,6 @@ import {
   recordAnswerOnce,
 } from "../../../learner/_utils/answer-once";
 import { creditWrittenSkills } from "../../../learner/written-evidence";
-import { type EssayGradeView } from "../essay-contract";
-import { getEssayRubric } from "../essay-rubric";
 import { type WritingConditions, type WritingResult } from "../writing-contract";
 import { countWritingLines } from "../writing-lines";
 import { getWritingArithmetic } from "../writing-rubric-policy";
@@ -20,61 +18,20 @@ import { applyWritingArithmetic, buildWritingFeedback } from "./writing-feedback
 
 const GOOD_SHARE = 0.6;
 
-function joinPrompt({ context, question }: { context: string | null; question: string }) {
-  return context ? `${context}\n\n${question}` : question;
-}
-
-export async function gradeEssayText({
-  blueprint,
-  content,
-  goalId,
-  language,
-  text,
-  userId,
-}: {
-  blueprint: Pick<ExamBlueprint, "identityKey" | "name"> | null;
-  content: EssayContent;
-  goalId: string | undefined;
-  language: string;
-  text: string;
-  userId: string;
-}): Promise<EssayGradeView> {
-  if (content.writing) {
-    throw new Error("An admitted writing item requires its own grading snapshot.");
-  }
-
-  const { data } = await gradeEssay({
-    analytics: { contentScope: "personal", distinctId: userId, goalId },
-    essay: text,
-    keyPoints: content.keyPoints,
-    language,
-    prompt: joinPrompt(content),
-    rubric: getEssayRubric({ blueprint, criteria: content.rubric }),
-  });
-
-  return data;
-}
-
 export async function gradeWriting({
   analytics,
-  conditions: _conditions,
   content,
   language,
   previousNextSteps,
   text,
 }: {
   analytics?: Parameters<typeof gradeWritingEvidence>[0]["analytics"];
-  conditions: WritingConditions;
   content: EssayContent;
   language: string;
   previousNextSteps: readonly string[];
   text: string;
 }): Promise<WritingResult> {
   const basis = content.writing;
-
-  if (!basis) {
-    throw new Error("The writing item has no scoring basis.");
-  }
 
   const { estimatedLines, ignoredFrom } = countWritingLines({
     charactersPerLine: basis.charactersPerLine,
@@ -85,19 +42,29 @@ export async function gradeWriting({
   const eligible = ignoredFrom === null ? text : text.slice(0, ignoredFrom);
 
   if (countWords(eligible) < basis.minimumWords || eligible.trim().length === 0) {
+    const evidence: WritingEvidence = {
+      aspects: [],
+      criteria: [],
+      errors: [],
+      nextStep: null,
+      onTopicQuote: null,
+      zeroKind: null,
+      zeroQuote: null,
+      zeroRuleIndex: null,
+    };
+
     const [criterion] = basis.criteria;
 
-    return {
+    const feedback = {
       criteria: basis.criteria.map(({ id, name }) => ({
         comment: "",
         id,
-        level: "missing",
+        level: "missing" as const,
         name,
         quote: null,
       })),
       errors: [],
       ignoredFrom,
-      kind: "levels",
       nextStep: criterion
         ? {
             criterionId: criterion.id,
@@ -108,6 +75,18 @@ export async function gradeWriting({
         : null,
       progress: null,
     };
+
+    const result = applyWritingArithmetic({
+      arithmetic: getWritingArithmetic(basis),
+      basis,
+      context: content.context,
+      eligible,
+      estimatedLines,
+      evidence,
+      feedback,
+    });
+
+    return result.kind === "points" && result.zeroReason ? result : { ...feedback, kind: "levels" };
   }
 
   const { data: evidence, provenance } = await gradeWritingEvidence({
@@ -137,6 +116,7 @@ export async function gradeWriting({
   return applyWritingArithmetic({
     arithmetic: getWritingArithmetic(basis, provenance),
     basis,
+    context: content.context,
     eligible,
     estimatedLines,
     evidence,
@@ -153,11 +133,7 @@ type RecordGrade = {
   userId: string;
 } & { activeBlockId?: string; mockExamId?: string };
 
-type AdmittedGrade = RecordGrade & {
-  conditions: WritingConditions;
-  grade: WritingResult;
-  attemptId?: string;
-};
+type AdmittedGrade = RecordGrade & { conditions: WritingConditions; grade: WritingResult };
 
 async function confirmAdmission(
   tx: TransactionClient,
@@ -203,7 +179,9 @@ async function confirmAdmission(
   return false;
 }
 
-function recordAdmittedGrade(input: AdmittedGrade) {
+export function recordEssayGrade(
+  input: AdmittedGrade,
+): Promise<RecordedOutcome | RefusedOutcome<"blockNotActive">> {
   const {
     conditions,
     durationMs,
@@ -253,60 +231,5 @@ function recordAdmittedGrade(input: AdmittedGrade) {
       await creditWrittenSkills({ attemptId, conditions: writtenConditions, grade, item, tx });
       await endEssayGradeClaim(tx, { attemptId, userId });
     },
-  });
-}
-
-async function refuseClosedBlock(
-  transaction: TransactionClient,
-  blockId: string,
-): Promise<"blockNotActive" | null> {
-  const active = await transaction.$queryRaw<{ id: string }[]>`
-    SELECT "id" FROM "study_session_blocks"
-    WHERE "id" = ${blockId}::uuid AND "status" = 'active'
-    FOR SHARE
-  `;
-
-  return active.length > 0 ? null : "blockNotActive";
-}
-
-export function recordEssayGrade(
-  input: (RecordGrade & { attemptId: string; grade: EssayGradeView }) | AdmittedGrade,
-): Promise<RecordedOutcome | RefusedOutcome<"blockNotActive">> {
-  if ("conditions" in input) {
-    return recordAdmittedGrade(input);
-  }
-
-  const {
-    activeBlockId,
-    attemptId,
-    durationMs,
-    grade,
-    item,
-    mockExamId,
-    studySessionId,
-    text,
-    timeZone,
-    userId,
-  } = input;
-
-  const share = grade.total.maxScore > 0 ? grade.total.score / grade.total.maxScore : 0;
-
-  return recordAnswerOnce({
-    answer: {
-      answer: { grade, text },
-      attemptId,
-      graded: { durationMs, isCorrect: share >= GOOD_SHARE, score: share },
-      itemId: item.id,
-      language: item.language,
-      mockExamId,
-      purpose: "learning",
-      skillId: item.skillId,
-      studySessionId,
-      timeZone,
-      userId,
-    },
-    refuse: (transaction: TransactionClient) =>
-      activeBlockId ? refuseClosedBlock(transaction, activeBlockId) : Promise.resolve(null),
-    withAnswer: (transaction) => endEssayGradeClaim(transaction, { attemptId, userId }),
   });
 }

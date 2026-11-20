@@ -1,13 +1,7 @@
 import "server-only";
 import { type Goal, type Item, prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
 import { type EssayContent, readEssayContent } from "../../essays/_utils/essay-content";
-import { essayAnswerSchema } from "../../essays/essay-contract";
-import {
-  writingPromptSchema,
-  writtenAnswerSchema,
-  writtenItemSchema,
-} from "../../essays/writing-contract";
+import { writingPromptSchema, writtenAnswerSchema } from "../../essays/writing-contract";
 import { isNumericWritingRubric } from "../../essays/writing-rubric-policy";
 import { loadUnseenWritingPrompts } from "../../essays/writing-supply";
 import { type MockEssayView } from "../mock-view-contract";
@@ -32,10 +26,6 @@ export async function loadMockEssays({
   return bank
     .filter(({ writing }) => writing.unit === "answer")
     .map(({ id, writing }) => ({ itemId: id, taskKey: writing.taskKey }));
-}
-
-export function readMockWriting(item: Pick<Item, "content">) {
-  return writtenItemSchema.safeParse(isJsonObject(item.content) ? item.content.writing : null).data;
 }
 
 export type MockEssayItem = { content: EssayContent; item: Item };
@@ -91,15 +81,12 @@ export async function loadMockEssayViews({
     const text = readMockEssayText(draft?.answer);
     const recorded = attempts.find((attempt) => attempt.itemId === itemId);
 
-    const grade =
-      writtenAnswerSchema.safeParse(recorded?.answer).data?.grade ??
-      essayAnswerSchema.safeParse(recorded?.answer).data?.grade ??
-      null;
+    const grade = writtenAnswerSchema.safeParse(recorded?.answer).data?.grade ?? null;
 
-    const basis = readMockWriting(essay.item);
-    const writing = writingPromptSchema.safeParse(basis).data;
+    const basis = essay.content.writing;
+    const writing = writingPromptSchema.parse(basis);
 
-    if (!text && basis && isNumericWritingRubric(basis)) {
+    if (!text && isNumericWritingRubric(basis)) {
       numericBlankItems.add(itemId);
     }
 
@@ -112,7 +99,7 @@ export async function loadMockEssayViews({
         question: essay.content.question,
         status: getEssayStatus({ grade, text }),
         text,
-        ...(writing && { writing }),
+        writing,
       },
     ];
   });

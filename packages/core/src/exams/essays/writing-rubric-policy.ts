@@ -1,10 +1,11 @@
 import { createHash } from "node:crypto";
 import { type z } from "zod";
+import { ENEM_WRITING_MAX, hasEnemCompetences } from "./_utils/enem-writing";
 import { type writtenItemSchema } from "./writing-contract";
 
 type Basis = Pick<
   z.infer<typeof writtenItemSchema>,
-  "charactersPerLine" | "grading" | "lines" | "minimumWords" | "points"
+  "charactersPerLine" | "criteria" | "grading" | "lines" | "minimumWords" | "points"
 >;
 
 export type WritingArithmetic = {
@@ -27,7 +28,13 @@ export function getWritingArithmetic(
 ): WritingArithmetic | null {
   const { charactersPerLine, grading, lines, minimumWords, points } = basis;
 
-  if (grading.kind !== "points" || points === null || grading.criteria.length === 0) {
+  if (
+    points === null ||
+    grading.kind === "levels" ||
+    (grading.kind === "enem"
+      ? points !== ENEM_WRITING_MAX || !hasEnemCompetences(basis.criteria)
+      : grading.criteria.length === 0)
+  ) {
     return null;
   }
 

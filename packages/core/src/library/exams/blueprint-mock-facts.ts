@@ -139,7 +139,7 @@ function sectionFacts({
         },
         section.minutes !== null && {
           id: `${id}.minutes`,
-          statement: `${name} lasts ${section.minutes} minutes`,
+          statement: `The sitting for ${name}${section.day === null ? "" : ` on exam day ${section.day}`} lasts ${section.minutes} minutes`,
         },
         section.day !== null && {
           id: `${id}.day`,

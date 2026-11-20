@@ -1,11 +1,7 @@
 import "server-only";
 import { setTimeout as wait } from "node:timers/promises";
 import { type Attempt, type TransactionClient, prisma, sql } from "@zoonk/db";
-import { claimGuestShare } from "../../../entitlements/_utils/guest-spend-budget";
-import { ESSAY_GRADE_COST_MICROS } from "../../../entitlements/limits";
 import { getWritingAttemptId } from "./writing-attempt-id";
-
-const DAILY_ESSAY_GRADES = 6;
 
 const CLAIM_LOCK_NAMESPACE = 51_883;
 
@@ -23,35 +19,8 @@ async function lockClaims(transaction: TransactionClient, userId: string): Promi
   );
 }
 
-export async function countGradesLeft({
-  localDate,
-  now,
-  transaction = prisma,
-  userId,
-}: {
-  localDate: Date;
-  now: Date;
-  transaction?: TransactionClient;
-  userId: string;
-}): Promise<number> {
-  const counts = await transaction.user.findUnique({
-    select: {
-      _count: {
-        select: {
-          attempts: { where: { item: { format: "essay" }, localDate } },
-          essayGradeClaims: { where: { createdAt: { gt: getLiveSince(now) }, localDate } },
-        },
-      },
-    },
-    where: { id: userId },
-  });
-
-  const used = (counts?._count.attempts ?? 0) + (counts?._count.essayGradeClaims ?? 0);
-  return Math.max(0, DAILY_ESSAY_GRADES - used);
-}
-
 export type EssayGradeClaim =
-  | { attemptId: string; status: "claimed" | "limitReached" | "notAdmitted" | "signUpRequired" }
+  | { attemptId: string; status: "claimed" | "notAdmitted" }
   | { attemptId: string; saved: Attempt; status: "saved" };
 
 type ClaimRound = EssayGradeClaim | { attemptId: string; status: "taken" };
@@ -60,77 +29,38 @@ function isSettled(claim: ClaimRound): claim is EssayGradeClaim {
   return claim.status !== "taken";
 }
 
-/** Only once every round settles: a round with a taken draft is released and claimed again. */
-function admitGuestGrades({
-  rounds,
-  transaction,
-  userId,
-}: {
-  rounds: ClaimRound[];
-  transaction: TransactionClient;
-  userId: string;
-}): Promise<ClaimRound[]> {
-  return rounds.reduce<Promise<ClaimRound[]>>(async (previous, round) => {
-    const admitted = await previous;
-
-    if (round.status !== "claimed") {
-      return [...admitted, round];
-    }
-
-    const allowed = await claimGuestShare({
-      costMicros: ESSAY_GRADE_COST_MICROS,
-      transaction,
-      userId,
-    });
-
-    return [
-      ...admitted,
-      allowed ? round : { attemptId: round.attemptId, status: "signUpRequired" },
-    ];
-  }, Promise.resolve([]));
-}
-
 function claimRound({
   admissionId,
   attemptIds,
-  localDate,
   userId,
 }: {
-  admissionId?: string;
+  admissionId: string;
   attemptIds: readonly string[];
-  localDate: Date;
   userId: string;
 }): Promise<ClaimRound[]> {
   return prisma.$transaction(async (tx) => {
     await lockClaims(tx, userId);
 
-    if (admissionId) {
-      const receipt = await tx.writingAdmission.findFirst({ where: { id: admissionId, userId } });
+    const receipt = await tx.writingAdmission.findFirst({ where: { id: admissionId, userId } });
 
-      const allowed = new Set(
-        receipt?.itemIds.map((itemId) => getWritingAttemptId({ admissionId, itemId })),
-      );
+    const allowed = new Set(
+      receipt?.itemIds.map((itemId) => getWritingAttemptId({ admissionId, itemId })),
+    );
 
-      if (!attemptIds.every((id) => allowed.has(id))) {
-        return attemptIds.map((attemptId) => ({ attemptId, status: "notAdmitted" as const }));
-      }
+    if (!receipt || !attemptIds.every((id) => allowed.has(id))) {
+      return attemptIds.map((attemptId) => ({ attemptId, status: "notAdmitted" as const }));
     }
 
     const now = new Date();
     const liveSince = getLiveSince(now);
 
-    const [saved, claims, left] = await Promise.all([
+    const [saved, claims] = await Promise.all([
       tx.attempt.findMany({ where: { id: { in: [...attemptIds] }, userId } }),
       tx.essayGradeClaim.findMany({
         select: { id: true },
         where: { createdAt: { gt: liveSince }, id: { in: [...attemptIds] } },
       }),
-      admissionId
-        ? attemptIds.length
-        : countGradesLeft({ localDate, now, transaction: tx, userId }),
     ]);
-
-    let grades = left;
 
     const rounds = attemptIds.map((attemptId): ClaimRound => {
       const attempt = saved.find((row) => row.id === attemptId);
@@ -143,30 +73,20 @@ function claimRound({
         return { attemptId, status: "taken" };
       }
 
-      if (grades === 0) {
-        return { attemptId, status: "limitReached" };
-      }
-
-      grades -= 1;
       return { attemptId, status: "claimed" };
     });
 
-    const admitted =
-      admissionId || rounds.some((round) => round.status === "taken")
-        ? rounds
-        : await admitGuestGrades({ rounds, transaction: tx, userId });
-
-    const claimedIds = admitted.flatMap((round) =>
+    const claimedIds = rounds.flatMap((round) =>
       round.status === "claimed" ? [round.attemptId] : [],
     );
 
     await tx.essayGradeClaim.deleteMany({ where: { id: { in: claimedIds } } });
 
     await tx.essayGradeClaim.createMany({
-      data: claimedIds.map((id) => ({ createdAt: now, id, localDate, userId })),
+      data: claimedIds.map((id) => ({ createdAt: now, id, localDate: receipt.localDate, userId })),
     });
 
-    return admitted;
+    return rounds;
   });
 }
 
@@ -192,11 +112,14 @@ export async function endEssayGradeClaim(
 
 /** The caller must record each claimed grade or release its claim with `releaseEssayGradeClaims`. */
 export async function claimEssayGrades(input: {
-  admissionId?: string;
+  admissionId: string;
   attemptIds: readonly string[];
-  localDate: Date;
   userId: string;
 }): Promise<EssayGradeClaim[]> {
+  if (input.attemptIds.length === 0) {
+    return [];
+  }
+
   const rounds = await claimRound(input);
   const settled = rounds.filter((round) => isSettled(round));
 

@@ -68,6 +68,7 @@ async function generate({
   const result = applyWritingArithmetic({
     arithmetic,
     basis,
+    context,
     eligible,
     estimatedLines,
     evidence,

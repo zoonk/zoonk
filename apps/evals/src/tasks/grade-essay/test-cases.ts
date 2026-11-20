@@ -2,6 +2,7 @@ import { type TestCase } from "@/lib/types";
 import { type writtenItemSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { type applyWritingArithmetic } from "@zoonk/core/exams/essays/writing-feedback";
 import { type z } from "zod";
+import { cguWritingGrading } from "../_fixtures/cgu-writing-grading";
 import { EN_ANSWERS, INEP_REDACOES, LEVELS_ANSWERS, POINTS_ANSWERS } from "./essays";
 
 type Basis = z.infer<typeof writtenItemSchema>;
@@ -32,6 +33,7 @@ export type GradeWritingExpected = {
   zero: boolean;
   minimumLevel?: "strong" | "complete";
   nextStepCriteria?: string[];
+  officialTotal?: number;
   feedbackLanguage: "en" | "pt";
 };
 
@@ -74,55 +76,6 @@ function basis({
     taskKey,
     title,
     unit: "answer",
-  };
-}
-
-const CGU_NOTICE = "cgu-2026-affc-edital-1";
-
-function cebraspeGrading({
-  formula,
-  factor,
-  item,
-  total,
-}: {
-  formula: string;
-  factor: number;
-  item: string;
-  total: number;
-}): Grading {
-  return {
-    criteria: [
-      {
-        citation: {
-          passage: `${item} … a) a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC), cuja pontuação máxima será limitada ao valor de ${total},00 pontos;`,
-          sourceId: CGU_NOTICE,
-        },
-        id: "content",
-        points: total,
-        text: "a apresentação e a estrutura textuais e o desenvolvimento do tema (NC)",
-      },
-    ],
-    kind: "points",
-    language: {
-      citation: {
-        passage: `${item} … d) será calculada, então, a nota … pela fórmula ${formula}, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;`,
-        sourceId: CGU_NOTICE,
-      },
-      factor,
-      formula,
-      method: "errorsPerLine",
-      text: "a avaliação do domínio da modalidade escrita totalizará o número de erros (NE) do candidato, considerando-se aspectos de natureza gramatical, tais como: grafia, morfossintaxe e propriedade vocabular",
-    },
-    rounding: null,
-    zeroing: [
-      {
-        citation: {
-          passage: `${item} … f) nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero.`,
-          sourceId: CGU_NOTICE,
-        },
-        text: "fuga ao tema ou ausência de texto",
-      },
-    ],
   };
 }
 
@@ -180,7 +133,7 @@ const PLANO_REAL_BASIS = basis({
     ],
   ]),
   criteria: [{ id: "content", name: "Domínio do conteúdo", points: 30 }],
-  grading: cebraspeGrading({
+  grading: cguWritingGrading({
     factor: 6,
     formula: "NQ1 = NC - 6 × NE ÷ TL",
     item: "9.7.5",
@@ -238,7 +191,7 @@ const IMPACT_BASIS = basis({
     ["Terceiro momento: após a conclusão", 2],
   ]),
   criteria: [{ id: "content", name: "Domínio do conteúdo", points: 70 }],
-  grading: cebraspeGrading({
+  grading: cguWritingGrading({
     factor: 14,
     formula: "NQ2 = NC – 14 × NE ÷ TL",
     item: "9.7.6",
@@ -262,6 +215,7 @@ const ENEM_LEVELS: Grading = {
           "14.7 A banca avaliadora poderá atribuir nota 0 (zero) à redação que: 14.7.1 Não atender à proposta solicitada ou possua outra estrutura textual que não seja a estrutura dissertativo-argumentativa",
         sourceId: "enem-2026-edital-64",
       },
+      kinds: ["offTopic", "wrongForm"],
       text: "Fuga ao tema/não atendimento à estrutura dissertativo-argumentativa",
     },
   ],
@@ -449,6 +403,7 @@ const OAB_BASIS = basis({
             "4.2.6. Nos casos de propositura de peça inadequada para a solução do problema proposto",
           sourceId: "oab-47-edital",
         },
+        kinds: ["wrongForm"],
         text: "peça inadequada para a solução do problema proposto",
       },
     ],
@@ -520,9 +475,11 @@ function impact(text: string): GradeWritingInput {
   };
 }
 
+const ENEM_ARITHMETIC: Arithmetic = { rounding: null, zeroRules: [0] };
+
 function heritage(text: string): GradeWritingInput {
   return {
-    arithmetic: null,
+    arithmetic: ENEM_ARITHMETIC,
     basis: enemBasis(HERITAGE_THEME, "Herança africana no Brasil"),
     context: HERITAGE_CONTEXT,
     keyPoints: [],
@@ -631,6 +588,7 @@ export const TEST_CASES: TestCase<GradeWritingExpected, GradeWritingInput>[] = [
       feedbackLanguage: "pt",
       languageErrors: ["e impedindo"],
       minimumLevel: "strong",
+      officialTotal: 1000,
       traps: ["de participarem"],
       zero: false,
     },
@@ -651,6 +609,7 @@ export const TEST_CASES: TestCase<GradeWritingExpected, GradeWritingInput>[] = [
         "tanto na série",
       ],
       minimumLevel: "strong",
+      officialTotal: 1000,
       traps: ["impacta na problemática"],
       zero: false,
     },
@@ -669,6 +628,7 @@ export const TEST_CASES: TestCase<GradeWritingExpected, GradeWritingInput>[] = [
         "quando é abordada",
       ],
       minimumLevel: "strong",
+      officialTotal: 1000,
       traps: ["acreditava-se", "faz-se necessário", "evoluirmos"],
       zero: false,
     },
@@ -685,7 +645,7 @@ export const TEST_CASES: TestCase<GradeWritingExpected, GradeWritingInput>[] = [
     },
     id: "enem-off-topic-zero-pt",
     userInput: {
-      arithmetic: null,
+      arithmetic: ENEM_ARITHMETIC,
       basis: enemBasis(
         "Desafios para combater a desinformação sobre vacinas no Brasil",
         "Desinformação sobre vacinas",

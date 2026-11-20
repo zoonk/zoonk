@@ -14,16 +14,15 @@ import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { applyWritingArithmetic, buildWritingFeedback } from "./_utils/writing-feedback";
-import {
-  MAX_ESSAY_CHARACTERS,
-  MAX_WRITING_MS,
-  essayAnswerSchema,
-  essaySubmissionInputSchema,
-} from "./essay-contract";
+import { MAX_ESSAY_CHARACTERS, MAX_WRITING_MS, essaySubmissionInputSchema } from "./essay-contract";
 import { getWritingAttempt } from "./get-writing-attempt";
 import { type WritingConditions, type WritingResult, writtenItemSchema } from "./writing-contract";
 import { countWritingLines } from "./writing-lines";
-import { getWritingArithmetic, isNumericWritingRubric } from "./writing-rubric-policy";
+import {
+  type WritingArithmetic,
+  getWritingArithmetic,
+  isNumericWritingRubric,
+} from "./writing-rubric-policy";
 
 vi.mock("@zoonk/ai/tasks/grading/grade-essay");
 vi.mock("../../learner/written-evidence", () => ({ creditWrittenSkills: vi.fn() }));
@@ -57,7 +56,7 @@ const basis = writtenItemSchema.parse({
       text: "Deduction",
     },
     rounding: { citation, text: "Round to two places" },
-    zeroing: [{ citation, text: "Off topic" }],
+    zeroing: [{ citation, kinds: ["offTopic"], text: "Off topic" }],
   },
   keySource: "practiceKey",
   lines: 2,
@@ -84,6 +83,9 @@ const evidence: WritingEvidence = {
     { correction: "eligible", kind: "grammar", quote: "ignored" },
   ],
   nextStep: null,
+  onTopicQuote: null,
+  zeroKind: null,
+  zeroQuote: null,
   zeroRuleIndex: null,
 };
 
@@ -99,25 +101,42 @@ const content = {
   writing: basis,
 };
 
-const arithmetic = { rounding: { mode: "nearest" as const, places: 2 }, zeroRules: [0] };
+const arithmetic: WritingArithmetic = {
+  rounding: { mode: "nearest" as const, places: 2 },
+  zeroRules: [0],
+};
 
 function mockEvidence() {
   vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValue({ data: evidence });
 }
 
-function assess(assessment: WritingEvidence) {
+function assess(
+  assessment: WritingEvidence,
+  {
+    context = null,
+    rubric = basis,
+    text = eligible,
+    gate = arithmetic,
+  }: {
+    context?: string | null;
+    rubric?: typeof basis;
+    text?: string;
+    gate?: typeof arithmetic | null;
+  } = {},
+) {
   const feedback = buildWritingFeedback({
-    basis,
-    eligible,
+    basis: rubric,
+    eligible: text,
     evidence: assessment,
     ignoredFrom: eligible.length,
     previousNextSteps: ["claim"],
   });
 
   return applyWritingArithmetic({
-    arithmetic,
-    basis,
-    eligible,
+    arithmetic: gate,
+    basis: rubric,
+    context,
+    eligible: text,
     estimatedLines: 3,
     evidence: assessment,
     feedback,
@@ -138,17 +157,159 @@ describe("writing grades", () => {
     });
   });
 
-  it("applies an evaluated zero rule with evidence and rejects an unsupported zero", () => {
-    const failed = [{ ...evidence.criteria[0]!, level: "missing" as const }];
+  it.each([
+    { kind: "blank", no: { text: "An answer." }, yes: { text: "  \n" } },
+    { kind: "tooFewLines", no: { text: "One line.\nTwo lines." }, yes: { text: "One line." } },
+    {
+      kind: "copiedSupport",
+      no: {
+        context: "The support passage is copied word for word.",
+        quote: "The support passage is copied word for word.",
+        text: "The support passage is copied word for word.\nOne line.\nTwo lines.",
+      },
+      yes: {
+        context: "The support passage is copied word for word.",
+        quote: "The support passage is copied word for word.",
+        text: "The support passage is copied word for word.\nOne line.",
+      },
+    },
+    {
+      kind: "identification",
+      no: { quote: "Assinatura: Nome Completo", text: "Uma resposta.\nAssinatura: Nome Completo" },
+      yes: { quote: "Assinatura: Maria Silva", text: "Uma resposta.\nAssinatura: Maria Silva" },
+    },
+    {
+      kind: "offTopic",
+      no: { quote: "A recipe for soup", text: "A study of public accounting" },
+      yes: { quote: "A recipe for soup", text: "A recipe for soup" },
+    },
+    {
+      kind: "wrongForm",
+      no: { quote: "Dear Sir,", text: "The evidence supports a different interpretation." },
+      yes: { quote: "Dear Sir,", text: "Dear Sir,\nI write to you." },
+    },
+  ] as const)("requires independent evidence for $kind", ({ kind, yes, no }) => {
+    const rubric = {
+      ...basis,
+      grading: {
+        ...basis.grading,
+        zeroing: [{ citation, kinds: [kind], maxLines: 1, text: kind }],
+      },
+    };
 
-    expect(assess({ ...evidence, criteria: failed, zeroRuleIndex: 0 })).toMatchObject({
+    const result = (example: { text: string; context?: string; quote?: string }) =>
+      assess(
+        {
+          ...evidence,
+          aspects: [],
+          zeroKind: kind === "blank" || kind === "tooFewLines" ? null : kind,
+          zeroQuote: example.quote ?? null,
+          zeroRuleIndex: example.quote ? 0 : null,
+        },
+        { context: example.context, rubric, text: example.text },
+      );
+
+    expect(result(yes)).toMatchObject({
+      kind: "points",
       total: { high: 0, low: 0 },
-      zeroReason: "Off topic",
+      zeroReason: kind,
     });
 
-    expect(assess({ ...evidence, zeroRuleIndex: 0 })).toMatchObject({
-      total: { high: 0.18, low: 0.05 },
-      zeroReason: null,
+    expect(result(no)).toMatchObject({ kind: "points", zeroReason: null });
+  });
+
+  it("does not zero an off-topic nomination when the answer quotes relevant material", () => {
+    expect(
+      assess({
+        ...evidence,
+        onTopicQuote: "A claim",
+        zeroKind: "offTopic",
+        zeroQuote: "repeat repeat",
+        zeroRuleIndex: 0,
+      }),
+    ).toMatchObject({ total: { high: 0.18, low: 0.05 }, zeroReason: null });
+  });
+
+  it("gates Enem's five competence ranges and caps a conditional proposal in code", () => {
+    const criteria = ["c1", "c2", "c3", "c4", "c5"].map((id) => ({ id, name: id, points: 200 }));
+
+    const rubric = {
+      ...basis,
+      criteria,
+      grading: { criteria: [], kind: "enem" as const, language: null, rounding: null, zeroing: [] },
+      points: 1000,
+    };
+
+    const graded: WritingEvidence = {
+      ...evidence,
+      criteria: criteria.map(({ id }) => ({
+        comment: "",
+        example: null,
+        id,
+        level: id === "c2" ? "partial" : "complete",
+        quote: "A claim",
+      })),
+      interventionElements: { action: true, agent: true, detail: true, effect: true, means: true },
+      proposalLimit: "conditional",
+    };
+
+    expect(getWritingArithmetic(rubric)).toBeNull();
+    expect(assess(graded, { gate: null, rubric })).toMatchObject({ kind: "levels" });
+
+    expect(assess(graded, { gate: { ...arithmetic, rounding: null }, rubric })).toMatchObject({
+      content: { high: 800, low: 760 },
+      deduction: { high: 0, low: 0 },
+      kind: "points",
+      max: 1000,
+      rows: [
+        { earned: 200, id: "c1", max: 200, range: { high: 200, low: 200 } },
+        { earned: 80, id: "c2", max: 200, range: { high: 120, low: 80 } },
+        { earned: 200, id: "c3", max: 200, range: { high: 200, low: 200 } },
+        { earned: 200, id: "c4", max: 200, range: { high: 200, low: 200 } },
+        { earned: 80, id: "c5", max: 200, range: { high: 80, low: 80 } },
+      ],
+      total: { high: 800, low: 760 },
+    });
+
+    const zero = {
+      ...rubric,
+      grading: {
+        ...rubric.grading,
+        zeroing: [{ citation, kinds: ["blank" as const], text: "Blank essay" }],
+      },
+    };
+
+    expect(
+      assess(graded, { gate: { ...arithmetic, rounding: null }, rubric: zero, text: " " }),
+    ).toMatchObject({ kind: "points", total: { high: 0, low: 0 }, zeroReason: "Blank essay" });
+  });
+
+  it.each([5, 1.25])("gates OAB's verified aspect points out of %s", (max) => {
+    const rubric = {
+      ...basis,
+      aspects: [
+        { ...basis.aspects[0]!, points: max * 0.4 },
+        { ...basis.aspects[1]!, points: max * 0.6 },
+      ],
+      grading: {
+        ...basis.grading,
+        criteria: [{ ...basis.grading.criteria[0]!, points: max }],
+        kind: "oab" as const,
+        language: null,
+        rounding: null,
+      },
+      points: max,
+    };
+
+    expect(getWritingArithmetic(rubric)).toBeNull();
+    expect(assess(evidence, { gate: null, rubric })).toMatchObject({ kind: "levels" });
+
+    expect(assess(evidence, { gate: { ...arithmetic, rounding: null }, rubric })).toMatchObject({
+      deduction: { high: 0, low: 0 },
+      kind: "points",
+      max,
+      rows: [{ earned: max * 0.4, id: "claim", max }],
+      total: { high: max * 0.4, low: max * 0.4 },
     });
   });
 
@@ -156,7 +317,6 @@ describe("writing grades", () => {
     mockEvidence();
 
     const grade = await gradeWriting({
-      conditions,
       content,
       language: "en",
       previousNextSteps: ["claim"],
@@ -182,30 +342,18 @@ describe("writing grades", () => {
     mockEvidence();
     vi.mocked(gradeWritingEvidence).mockClear();
 
-    await gradeWriting({
-      conditions,
-      content,
-      language: "en",
-      previousNextSteps: [],
-      text: "Claim",
-    });
+    await gradeWriting({ content, language: "en", previousNextSteps: [], text: "Claim" });
 
     expect(gradeWritingEvidence).not.toHaveBeenCalled();
 
     const drill = { ...content, writing: { ...basis, minimumWords: 1, unit: "drill" as const } };
 
-    await gradeWriting({
-      conditions,
-      content: drill,
-      language: "en",
-      previousNextSteps: [],
-      text: "Claim",
-    });
+    await gradeWriting({ content: drill, language: "en", previousNextSteps: [], text: "Claim" });
 
     expect(gradeWritingEvidence).toHaveBeenCalledOnce();
   });
 
-  it("preserves old numeric drafts and accepts long submissions without trimming", () => {
+  it("requires an admission and accepts long submissions without trimming", () => {
     const text = `  ${"A legal argument. ".repeat(1000)}\n`;
     const input = { admissionId: conditions.admissionId, durationMs: 210 * 60 * 1000, text };
 
@@ -220,19 +368,7 @@ describe("writing grades", () => {
         .success,
     ).toBe(false);
 
-    expect(
-      essayAnswerSchema.parse({
-        grade: {
-          criteria: [],
-          enemInterventionElements: null,
-          nextStep: null,
-          range: { high: 7, low: 5 },
-          total: { maxScore: 10, score: 6 },
-          zeroReason: null,
-        },
-        text,
-      }).grade.total.score,
-    ).toBe(6);
+    expect(essaySubmissionInputSchema.safeParse({ durationMs: 0, text }).success).toBe(false);
   });
 });
 
@@ -329,12 +465,7 @@ describe(recordEssayGrade, () => {
     expect(creditWrittenSkills).toHaveBeenCalledOnce();
 
     await expect(
-      loadEssayDrafts({
-        format: "writing",
-        itemId: item.id,
-        sessionId: session.id,
-        userId: owner.id,
-      }),
+      loadEssayDrafts({ itemId: item.id, sessionId: session.id, userId: owner.id }),
     ).resolves.toMatchObject([{ attemptId, grade, text: original }]);
 
     mockSession(intruder.id);

@@ -61,7 +61,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/goals/find-exam-date": { findExamDate: vi.fn() },
   "@zoonk/ai/tasks/goals/understand-goal": { understandGoal: vi.fn() },
   "@zoonk/ai/tasks/grading/explain-wrong-answer": { explainWrongAnswer: vi.fn() },
-  "@zoonk/ai/tasks/grading/grade-essay": { gradeEssay: vi.fn() },
+  "@zoonk/ai/tasks/grading/grade-essay": { gradeWritingEvidence: vi.fn() },
   "@zoonk/ai/tasks/grading/grade-typed-answer": { gradeTypedAnswer: vi.fn(gradeForReal) },
   "@zoonk/ai/tasks/icons/image": { generateLessonIconImage: vi.fn() },
   "@zoonk/ai/tasks/icons/match": { matchLessonIcons: vi.fn() },

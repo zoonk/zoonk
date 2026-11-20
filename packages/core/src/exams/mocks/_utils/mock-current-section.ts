@@ -5,7 +5,7 @@ import { isMockAnswerPresent } from "../mock-answer-presence";
 import { type MockView } from "../mock-contract";
 import { type MockQuestion } from "../mock-view-contract";
 import { readMockAnswer } from "./mock-answers";
-import { loadMockEssayItems, readMockWriting } from "./mock-essays";
+import { loadMockEssayItems } from "./mock-essays";
 import { loadMockItems, toMockQuestionView } from "./mock-items";
 import { getSectionPlace } from "./mock-navigation";
 import { listSectionPlays } from "./mock-plays";
@@ -54,7 +54,7 @@ export async function loadCurrentSection({
 
   const written = section.essays.flatMap((itemId, index): MockQuestion[] => {
     const essay = essays.get(itemId);
-    const writing = essay ? writingPromptSchema.safeParse(readMockWriting(essay.item)).data : null;
+    const writing = essay ? writingPromptSchema.parse(essay.content.writing) : null;
 
     return essay
       ? [

@@ -3,7 +3,6 @@ import { signUpRequiredError } from "./lesson-player-errors";
 import { studySessionErrorCodes } from "./study-session-errors";
 
 const examErrorCodes = {
-  essayLimitReached: "ESSAY_LIMIT_REACHED",
   invalidMockOption: "INVALID_MOCK_OPTION",
   mockAnswerLocked: "MOCK_ANSWER_LOCKED",
   mockExpired: "MOCK_EXPIRED",
@@ -30,7 +29,6 @@ type ExamRefusal = {
     | "invalidItem"
     | "invalidOption"
     | "invalidSet"
-    | "limitReached"
     | "locked"
     | "noGoal"
     | "notEnoughQuestions"
@@ -88,11 +86,6 @@ const REFUSALS = {
     code: studySessionErrorCodes.invalidItem,
     message: "This recording isn't in the running listening section",
     status: httpStatus.unprocessableEntity,
-  },
-  limitReached: {
-    code: examErrorCodes.essayLimitReached,
-    message: "Today's essay grades are used up",
-    status: httpStatus.tooManyRequests,
   },
   locked: {
     code: examErrorCodes.mockAnswerLocked,

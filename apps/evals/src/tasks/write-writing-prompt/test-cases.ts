@@ -1,10 +1,10 @@
 import { type TestCase } from "@/lib/types";
 import { type WritingPromptInput } from "@zoonk/ai/tasks/items/write-writing-prompt";
-import { type promptContent } from "@zoonk/core/library/items/write-writing-item";
+import { cguWritingGrading } from "../_fixtures/cgu-writing-grading";
 
 /** A written task as the notice reading lists it, which the app sends whole. */
-export type WrittenTask = Parameters<typeof promptContent>[0]["task"];
-export type WriteWritingPromptInput = Omit<WritingPromptInput, "task"> & { task: WrittenTask };
+type WrittenTask = WritingPromptInput["task"];
+export type WriteWritingPromptInput = WritingPromptInput;
 
 const SKILLS = {
   plan: {
@@ -19,60 +19,12 @@ const SKILLS = {
 };
 
 const CGU_SKILLS = [SKILLS.plan, SKILLS.write, SKILLS.revise];
-const NOTICE = "cgu-2026-affc-edital-1";
-
-function cebraspeGrading({
-  formula,
-  factor,
-  item,
-  total,
-}: {
-  formula: string;
-  factor: number;
-  item: string;
-  total: number;
-}) {
-  return {
-    criteria: [
-      {
-        citation: {
-          passage: `${item} … a) a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC), cuja pontuação máxima será limitada ao valor de ${total},00 pontos;`,
-          sourceId: NOTICE,
-        },
-        id: "content",
-        points: total,
-        text: "a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC)",
-      },
-    ],
-    kind: "points" as const,
-    language: {
-      citation: {
-        passage: `${item} … d) … pela fórmula ${formula}, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;`,
-        sourceId: NOTICE,
-      },
-      factor,
-      formula,
-      method: "errorsPerLine" as const,
-      text: "a avaliação do domínio da modalidade escrita totalizará o número de erros (NE) do candidato, considerando-se aspectos de natureza gramatical, tais como: grafia, morfossintaxe e propriedade vocabular",
-    },
-    rounding: null,
-    zeroing: [
-      {
-        citation: {
-          passage: `${item} … f) nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero.`,
-          sourceId: NOTICE,
-        },
-        text: "nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero",
-      },
-    ],
-  };
-}
 
 const CGU_QUESTION: WrittenTask = {
   count: 1,
   description:
     "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
-  grading: cebraspeGrading({
+  grading: cguWritingGrading({
     factor: 6,
     formula: "NQ1 = NC - 6 × NE ÷ TL",
     item: "9.7.5",
@@ -91,7 +43,7 @@ const CGU_CASE: WrittenTask = {
   count: 1,
   description:
     "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos",
-  grading: cebraspeGrading({
+  grading: cguWritingGrading({
     factor: 14,
     formula: "NQ2 = NC – 14 × NE ÷ TL",
     item: "9.7.6",
@@ -229,8 +181,11 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     expectations: `${ANSWER_EXPECTATIONS} The aspects' points add up to 30, and the topic is one a Cebraspe complementary-knowledge question for a federal audit career could set.`,
     id: "cgu-question-30-lines-pt",
     userInput: {
+      board: "Cebraspe",
       drillSkillId: null,
+      exam: "CGU Auditor Federal de Finanças e Controle",
       language: "pt",
+      sectionTopics: ["Administração Financeira e Orçamentária", "Controle interno"],
       skills: CGU_SKILLS,
       task: CGU_QUESTION,
       unit: "answer",
@@ -241,8 +196,11 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     expectations: `${ANSWER_EXPECTATIONS} The aspects' points add up to 70; the question is a situação-problema (a concrete case the candidate must analyze and resolve) for a federal audit and control career, not an abstract essay prompt.`,
     id: "cgu-case-60-lines-pt",
     userInput: {
+      board: "Cebraspe",
       drillSkillId: null,
+      exam: "CGU Auditor Federal de Finanças e Controle",
       language: "pt",
+      sectionTopics: ["Auditoria governamental", "Controle interno"],
       skills: CGU_SKILLS,
       task: CGU_CASE,
       unit: "answer",
@@ -253,8 +211,11 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     expectations: `${ANSWER_EXPECTATIONS} Its topic differs from every used title in substance, not only in wording (no other question on the access-to-information law, LGPD, public procurement or internal control lines of defense).`,
     id: "cgu-question-used-titles-pt",
     userInput: {
+      board: "Cebraspe",
       drillSkillId: null,
+      exam: "CGU Auditor Federal de Finanças e Controle",
       language: "pt",
+      sectionTopics: ["Administração Financeira e Orçamentária", "Controle interno"],
       skills: CGU_SKILLS,
       task: CGU_QUESTION,
       unit: "answer",
@@ -272,8 +233,11 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     expectations: `A drill: one short writing move (an outline, a thesis, one paragraph, a conclusion or a rewrite under a tighter limit) that practices planning a well-founded discursive answer, done in a few minutes. The context gives what the move works on; the question asks for that move only, with its length; the criteria assess only that move, with null points; assessedSkillIds holds only the drill skill.`,
     id: "cgu-drill-plan-pt",
     userInput: {
+      board: "Cebraspe",
       drillSkillId: SKILLS.plan.id,
+      exam: "CGU Auditor Federal de Finanças e Controle",
       language: "pt",
+      sectionTopics: ["Administração Financeira e Orçamentária", "Controle interno"],
       skills: [SKILLS.plan],
       task: CGU_QUESTION,
       unit: "drill",
@@ -284,8 +248,11 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     expectations: `An ENEM redação proposal: a social theme stated as Inep states themes, two to four short motivating texts in the context that never attribute invented quotes or figures to real sources, and the command to write a dissertative-argumentative text in formal Portuguese with an intervention proposal that respects human rights. The criteria are the five competences with ids c1 to c5 and null points. Aspects name what earns credit on this theme (the exact theme, not only its broad subject; the proposal's agent, action, means, effect and detail).`,
     id: "enem-redacao-pt",
     userInput: {
+      board: "Inep",
       drillSkillId: null,
+      exam: "Enem",
       language: "pt",
+      sectionTopics: [],
       skills: [
         {
           id: "0195f1d2-7c4a-7d3e-9a10-000000000021",
@@ -301,8 +268,11 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     expectations: `An OAB 2nd phase criminal-law peça: a case with dated facts and procedural stage from which exactly one correct peça follows, asking the candidate to draft it, with the key naming the right peça and its legal basis, the court, the theses with their provisions and the requests, each fact and article correct. The criteria keep the notice's three ids with null points. The question never invents personal data and expects placeholders for the lawyer.`,
     id: "oab-peca-penal-pt",
     userInput: {
+      board: "FGV",
       drillSkillId: null,
+      exam: "Exame de Ordem Unificado, segunda fase",
       language: "pt",
+      sectionTopics: ["Direito do Trabalho", "Direito Processual do Trabalho"],
       skills: [
         { id: "0195f1d2-7c4a-7d3e-9a10-000000000031", name: "Redigir peças processuais penais" },
       ],
@@ -316,7 +286,9 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     id: "history-essay-no-scale-en",
     userInput: {
       drillSkillId: null,
+      exam: "Prova de redação",
       language: "en",
+      sectionTopics: [],
       skills: HISTORY_SKILLS,
       task: ESSAY_NO_SCALE,
       unit: "answer",
@@ -328,7 +300,9 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     id: "history-drill-thesis-en",
     userInput: {
       drillSkillId: HISTORY_SKILLS[1]?.id ?? null,
+      exam: "Prova de redação",
       language: "en",
+      sectionTopics: [],
       skills: HISTORY_SKILLS.slice(1, 2),
       task: ESSAY_NO_SCALE,
       unit: "drill",

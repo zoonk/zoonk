@@ -2,6 +2,8 @@ import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type z } from "zod";
 import { type WritingResult, type writtenItemSchema } from "../writing-contract";
 import { type WritingArithmetic } from "../writing-rubric-policy";
+import { ENEM_WRITING_MAX, scoreEnemWriting } from "./enem-writing";
+import { verifiedWritingZero } from "./writing-zero";
 
 type Basis = z.infer<typeof writtenItemSchema>;
 type Feedback = Omit<Extract<WritingResult, { kind: "levels" }>, "kind">;
@@ -195,6 +197,7 @@ function getDeduction({
 export function applyWritingArithmetic({
   arithmetic,
   basis,
+  context,
   eligible,
   estimatedLines,
   evidence,
@@ -202,6 +205,7 @@ export function applyWritingArithmetic({
 }: {
   arithmetic: WritingArithmetic | null;
   basis: Basis;
+  context: string | null;
   eligible: string;
   estimatedLines: number;
   evidence: WritingEvidence;
@@ -209,17 +213,40 @@ export function applyWritingArithmetic({
 }): WritingResult {
   const levels = { ...feedback, kind: "levels" as const };
   const { grading, points } = basis;
-  const { language, rounding, zeroing } = grading;
+  const { language, rounding } = grading;
 
   if (
     !arithmetic ||
     points === null ||
-    grading.kind !== "points" ||
+    grading.kind === "levels" ||
     Boolean(rounding) !== Boolean(arithmetic.rounding) ||
-    zeroing.some((_, index) => !arithmetic.zeroRules.includes(index)) ||
     (language && (language.method === "other" || language.factor === null || !language.formula))
   ) {
     return levels;
+  }
+
+  const zeroReason = verifiedWritingZero({
+    basis,
+    context,
+    eligible,
+    evidence,
+    ruleIndexes: arithmetic.zeroRules,
+  });
+
+  if (grading.kind === "enem") {
+    const score = points === ENEM_WRITING_MAX ? scoreEnemWriting(evidence, zeroReason) : null;
+
+    return score
+      ? {
+          ...feedback,
+          ...score,
+          deduction: { high: 0, low: 0 },
+          kind: "points",
+          max: points,
+          total: score.content,
+          zeroReason,
+        }
+      : levels;
   }
 
   const rows = scoreRows({ basis, eligible, evidence });
@@ -240,15 +267,6 @@ export function applyWritingArithmetic({
     errorCount: feedback.errors.length,
     estimatedLines,
   });
-
-  const nominated = evidence.zeroRuleIndex;
-
-  const zeroReason =
-    nominated !== null &&
-    arithmetic.zeroRules.includes(nominated) &&
-    feedback.criteria.some(({ level, quote }) => level === "missing" && quote !== null)
-      ? (zeroing[nominated]?.text ?? null)
-      : null;
 
   const total = (deducted: number) =>
     zeroReason ? 0 : Math.min(points, Math.max(0, round(content - deducted, arithmetic.rounding)));

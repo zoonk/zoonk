@@ -79,7 +79,14 @@ function toPlays({
 function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extraction["mock"]> }) {
   const ids = mock.sections.map((_, index) => `mock.sections.${index}`);
 
-  if (!ids.every((id) => kept.has(id))) {
+  const confirmedSections = mock.sections.map(
+    (section, index) =>
+      kept.has(ids[index] ?? "") ||
+      (section.kind === "written" &&
+        section.tasks.some((_, taskIndex) => kept.has(`${ids[index]}.tasks.${taskIndex}`))),
+  );
+
+  if (!confirmedSections.every(Boolean)) {
     return [];
   }
 
@@ -115,18 +122,26 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
 
       const { handwritten, lines, officialIdentifier, points } = task;
       const grading = toWrittenGrading({ grading: task.grading, id, kept });
+      const verifiedPoints = points && points > 0 && kept.has(`${id}.points`) ? points : null;
 
       return [
         {
           count: task.count,
           description,
           ...(plays ? { plays } : {}),
-          ...(grading ? { grading } : {}),
+          ...(grading
+            ? {
+                grading:
+                  !verifiedPoints && grading.kind !== "enem"
+                    ? { ...grading, kind: "levels" as const }
+                    : grading,
+              }
+            : {}),
           ...(typeof handwritten === "boolean" && kept.has(`${id}.handwritten`)
             ? { handwritten }
             : {}),
           ...(lines && lines > 0 && kept.has(`${id}.lines`) ? { lines } : {}),
-          ...(points && points > 0 && kept.has(`${id}.points`) ? { points } : {}),
+          ...(verifiedPoints ? { points: verifiedPoints } : {}),
           ...(officialIdentifier?.trim() && kept.has(`${id}.officialIdentifier`)
             ? { officialIdentifier: officialIdentifier.trim() }
             : {}),

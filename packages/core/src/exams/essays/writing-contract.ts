@@ -128,7 +128,14 @@ export const writingResultSchema = z
       deduction: writingRangeSchema.describe("Nonnegative points deducted for language"),
       kind: z.literal("points"),
       max: z.number().positive(),
-      rows: z.array(z.object({ earned: z.number(), id: z.string(), max: z.number().positive() })),
+      rows: z.array(
+        z.object({
+          earned: z.number().describe("Points earned, or the lower end of a ranged criterion"),
+          id: z.string(),
+          max: z.number().positive(),
+          range: writingRangeSchema.optional(),
+        }),
+      ),
       total: writingRangeSchema,
       zeroReason: z.string().nullable(),
     }),

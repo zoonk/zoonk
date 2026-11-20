@@ -6,8 +6,11 @@ import {
 } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { prisma } from "@zoonk/db";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
+import { namesMatch } from "../../exams/_utils/name-match";
+import { ENEM_WRITING_MAX, hasEnemCompetences } from "../../exams/essays/_utils/enem-writing";
 import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { getWritingTaskBasis } from "../../exams/essays/_utils/writing-task-basis";
+import { getNamedEssayRubric } from "../../exams/essays/essay-rubric";
 import { writtenItemSchema } from "../../exams/essays/writing-contract";
 import { WRITING_CHARACTERS_PER_LINE } from "../../exams/essays/writing-lines";
 import { type WritingRequest, findWritingPrompts } from "../../exams/essays/writing-supply";
@@ -82,23 +85,61 @@ function getAnswerWordFloor({
   );
 }
 
+type Task = ReturnType<typeof listPracticeWritingTasks>[number];
+
+function getIssuedTask(
+  task: Task,
+  namedRubric: ReturnType<typeof getNamedEssayRubric>,
+  unit: WritingSupplyInput["unit"],
+): Task {
+  if (unit === "drill") {
+    return task;
+  }
+
+  const kind =
+    task.grading.kind === "levels" && task.grading.criteria.length === 0
+      ? (namedRubric ?? task.grading.kind)
+      : task.grading.kind;
+
+  if (kind === "enem") {
+    const criteria = hasEnemCompetences(task.grading.criteria) ? task.grading.criteria : [];
+    return { ...task, grading: { ...task.grading, criteria, kind }, points: ENEM_WRITING_MAX };
+  }
+
+  return kind === task.grading.kind ? task : { ...task, grading: { ...task.grading, kind } };
+}
+
+function getSectionTopics(
+  structure: NonNullable<ReturnType<typeof readBlueprintContent>["structure"]>,
+  task: Task,
+) {
+  const subjects = structure.subjects.filter(({ group, name, partOf }) =>
+    [name, group, partOf].some(
+      (label) => label && (namesMatch(label, task.section) || namesMatch(label, task.description)),
+    ),
+  );
+
+  return [...new Set(subjects.flatMap(({ topics }) => topics))];
+}
+
 export function promptContent({
   data,
   input,
   skills,
   task,
+  issuedTask = task,
 }: {
   data: WritingPromptOutput;
+  issuedTask?: Task;
   input: WritingSupplyInput;
   skills: { id: string; name: string }[];
-  task: ReturnType<typeof listPracticeWritingTasks>[number];
+  task: Task;
 }) {
   const drill = input.unit === "drill";
 
-  const grading =
-    drill || !task.grading
-      ? { criteria: [], kind: "levels" as const, language: null, rounding: null, zeroing: [] }
-      : task.grading;
+  const grading = drill
+    ? { criteria: [], kind: "levels" as const, language: null, rounding: null, zeroing: [] }
+    : issuedTask.grading;
 
   const criteria =
     grading.criteria.length > 0
@@ -112,7 +153,8 @@ export function promptContent({
     assessedSkillIds.some((id) => !skills.some((skill) => skill.id === id)) ||
     (drill && (assessedSkillIds.length !== 1 || assessedSkillIds[0] !== input.skillId)) ||
     data.aspects.some(({ criterionId }) => !criterionIds.has(criterionId)) ||
-    criterionIds.size !== criteria.length
+    criterionIds.size !== criteria.length ||
+    (grading.kind === "enem" && !hasEnemCompetences(criteria))
   ) {
     throw new Error("Writing prompt does not match its criteria or candidate skills.");
   }
@@ -134,8 +176,8 @@ export function promptContent({
           classTest: !task.minutes && task.key === "class-short-answer",
           lines: task.lines,
         }),
-    points: drill ? null : task.points,
-    ...(drill && { taskBasis: getWritingTaskBasis(task) }),
+    points: drill ? null : issuedTask.points,
+    ...((drill || task !== issuedTask) && { taskBasis: getWritingTaskBasis(task) }),
     taskKey: task.key,
     title: data.title,
     unit: input.unit,
@@ -244,13 +286,18 @@ export async function writeWritingItem(input: WritingSupplyInput, itemId: string
     return parsed ? [parsed] : [];
   });
 
+  const issuedTask = getIssuedTask(task, getNamedEssayRubric(blueprint), input.unit);
+
   const { data, provenance } = await writeWritingPrompt({
     analytics: { distinctId: input.userId, goalId: input.goalId },
     input: {
+      ...(blueprint.board && { board: blueprint.board }),
       drillSkillId: input.skillId ?? null,
+      exam: blueprint.name,
       language: goal.language,
+      sectionTopics: getSectionTopics(structure, task),
       skills,
-      task,
+      task: issuedTask,
       unit: input.unit,
       usedTitles,
     },
@@ -258,7 +305,7 @@ export async function writeWritingItem(input: WritingSupplyInput, itemId: string
     wait: input.wait ?? "learner",
   });
 
-  const content = promptContent({ data, input, skills, task });
+  const content = promptContent({ data, input, issuedTask, skills, task });
   const [skillId] = content.writing.assessedSkillIds;
 
   if (!skillId) {

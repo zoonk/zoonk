@@ -136,7 +136,11 @@ function creditChecks({
 
   const detail = `Credited ${[...credited].toSorted((a, b) => a - b).join(",") || "none"}; expected ${expected.earned.join(",") || "none"}${uncertain.size > 0 ? ` (either way: ${[...uncertain].join(",")})` : ""}. False credit: ${falseCredit.join(",") || "none"}; missed: ${missed.join(",") || "none"}.`;
 
-  if (input.basis.points === null || input.arithmetic === null) {
+  if (
+    input.basis.points === null ||
+    input.arithmetic === null ||
+    input.basis.grading.kind === "enem"
+  ) {
     return [{ detail, name: "credit", passed: falseCredit.length + missed.length <= 1 }];
   }
 
@@ -219,10 +223,7 @@ function zeroCheck({
   expected: GradeWritingExpected;
   output: GradeWritingOutput;
 }): Check {
-  const zeroed =
-    output.result.kind === "points"
-      ? output.result.zeroReason !== null
-      : output.evidence.zeroRuleIndex !== null;
+  const zeroed = output.result.kind === "points" && output.result.zeroReason !== null;
 
   return {
     detail: `Zero: expected ${String(expected.zero)}, got ${String(zeroed)} (rule ${String(output.evidence.zeroRuleIndex)}).`,
@@ -296,7 +297,8 @@ export const scoreWritingGrade: TaskScorer<GradeWritingExpected> = ({ output, te
   const input = testCase.userInput as GradeWritingInput;
   const graded = JSON.parse(output) as GradeWritingOutput;
   const text = input.text.slice(0, graded.result.ignoredFrom ?? input.text.length);
-  const truth = input.arithmetic ? truthSide({ expected, input, output: graded }) : null;
+  const comparesPass = input.arithmetic && input.basis.grading.kind === "points";
+  const truth = comparesPass ? truthSide({ expected, input, output: graded }) : null;
   const predicted = predictedSide({ input, output: graded });
 
   const side: Check[] =
@@ -310,11 +312,34 @@ export const scoreWritingGrade: TaskScorer<GradeWritingExpected> = ({ output, te
         ]
       : [];
 
+  const publishedScore: Check[] =
+    expected.officialTotal === undefined
+      ? []
+      : [
+          {
+            detail:
+              graded.result.kind === "points"
+                ? `Published score ${expected.officialTotal}; practice range ${graded.result.total.low}–${graded.result.total.high}.`
+                : `Published score ${expected.officialTotal}; no practice range.`,
+            name: "official-score-coverage",
+            passed:
+              graded.result.kind === "points" &&
+              graded.result.total.low <= expected.officialTotal &&
+              graded.result.total.high >= expected.officialTotal,
+          },
+        ];
+
   const checks = [
-    ...errorChecks({ expected, output: graded, planted: input.arithmetic !== null, text }),
+    ...errorChecks({
+      expected,
+      output: graded,
+      planted: input.basis.grading.kind === "points",
+      text,
+    }),
     zeroCheck({ expected, output: graded }),
     ...creditChecks({ expected, input, output: graded, text }),
     ...side,
+    ...publishedScore,
     ...feedbackChecks({ expected, output: graded }),
   ];
 

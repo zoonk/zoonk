@@ -12,9 +12,9 @@ export function matchesWritingTaskBasis({
   prompt,
   task,
 }: {
-  prompt: Basis & { taskBasis?: string; unit: "answer" | "drill" };
+  prompt: Basis & { taskBasis?: string };
   task: Basis;
 }): boolean {
-  const basis = prompt.unit === "drill" ? prompt.taskBasis : getWritingTaskBasis(prompt);
+  const basis = prompt.taskBasis ?? getWritingTaskBasis(prompt);
   return basis === getWritingTaskBasis(task);
 }

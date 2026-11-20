@@ -332,7 +332,7 @@ describe("writing receipts and drafts", () => {
     const attemptIds = itemIds.map((itemId) => getWritingAttemptId({ admissionId, itemId }));
 
     await expect(
-      claimEssayGrades({ admissionId, attemptIds, localDate: LOCAL_DATE, userId: user.id }),
+      claimEssayGrades({ admissionId, attemptIds, userId: user.id }),
     ).resolves.toStrictEqual(attemptIds.map((attemptId) => ({ attemptId, status: "claimed" })));
 
     await expect(
