@@ -4,7 +4,7 @@
   "otpDisclaimer": "Jeśli to nie ty chcesz się zalogować, zignoruj tę wiadomość.",
   "otpExpiry": "Ten kod wygaśnie za 5 minut.",
   "otpIntro": "Oto twój kod do logowania w Zoonku:",
-  "otpSubject": "Twój kod do logowania w Zoonku",
+  "otpSubject": "{code} to Twój kod do Zoonka",
   "plusAccountLabel": "Konto",
   "plusAlreadyActiveSubject": "Masz już Zoonk Plus",
   "plusEmailLegal": "Subskrypcję obejmują nasz {termsLink} i nasza {privacyLink}.",
