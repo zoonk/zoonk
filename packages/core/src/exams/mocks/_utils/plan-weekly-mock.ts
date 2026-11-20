@@ -129,7 +129,17 @@ async function scheduledPaper(input: WeeklyPaper) {
 
   const scoped =
     structure && skipped.size > 0
-      ? keepExamSubjects(structure, new Set(structure.subjects.filter(subject => !skipped.has(subject.name) && !(subject.partOf && skipped.has(subject.partOf))).map(subject => subject.name)))
+      ? keepExamSubjects(
+          structure,
+          new Set(
+            structure.subjects
+              .filter(
+                (subject) =>
+                  !skipped.has(subject.name) && !(subject.partOf && skipped.has(subject.partOf)),
+              )
+              .map((subject) => subject.name),
+          ),
+        )
       : structure;
 
   return {
