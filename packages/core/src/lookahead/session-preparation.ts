@@ -314,10 +314,7 @@ export async function listSessionPreparation({
     .filter((item) => nextDay !== null && item.dates.includes(nextDay))
     .slice(0, lookahead.nextDayLessons);
 
-  const nextLessons =
-    guest && todayTargets.some((item) => !item.lessonId)
-      ? []
-      : getWritableWindow(nextTargets).filter((id) => !todayWindow.includes(id));
+  const nextLessons = getWritableWindow(nextTargets).filter((id) => !todayWindow.includes(id));
 
   const standInSkillIds = [
     ...new Set(

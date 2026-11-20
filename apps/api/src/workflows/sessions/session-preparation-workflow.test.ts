@@ -271,7 +271,7 @@ describe("session preparation records admission for its children", () => {
   );
 
   it.each([
-    { readyToday: true, used: 2, writes: "tomorrow" },
+    { readyToday: true, used: 2, writes: "neither day" },
     { readyToday: false, used: 1, writes: "today" },
     { readyToday: true, used: 3, writes: "neither day" },
   ] as const)(
@@ -299,11 +299,7 @@ describe("session preparation records admission for its children", () => {
         sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
       ).resolves.toStrictEqual({ status: "guest" });
 
-      const expected = {
-        "neither day": [],
-        today: [[{ lessonId: lesson.id, wait: "learner" }]],
-        tomorrow: [[{ lessonId: tomorrow.id, wait: "later" }]],
-      };
+      const expected = { "neither day": [], today: [[{ lessonId: lesson.id, wait: "learner" }]] };
 
       const calls: readonly unknown[][] = vi.mocked(start).mock.calls;
       const started = calls.filter(([workflow]) => workflow === lessonContentWorkflow);

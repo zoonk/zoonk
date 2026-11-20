@@ -30,13 +30,11 @@ async function startGuestLesson({
   input,
   lessonId,
   planManifest,
-  wait,
 }: {
   analytics: ContentAnalytics;
   input: PlanLessonPreparationInput;
   lessonId: string | undefined;
   planManifest: PlanGenerationManifest | null;
-  wait: "learner" | "later";
 }): Promise<void> {
   if (!lessonId) {
     return;
@@ -53,7 +51,7 @@ async function startGuestLesson({
 
     await startOnce(
       lessonContentWorkflow,
-      [{ ...lesson, ...plan, analytics, wait }],
+      [{ ...lesson, ...plan, analytics, wait: "learner" }],
       getLessonContentHookToken(lessonId),
     );
   }
@@ -93,14 +91,9 @@ async function startLessonWork({
   const planManifest = manifest.value;
   const admitted = new Set(planManifest?.targets.map((target) => target.lessonId));
   const soon = lessonIds.filter((id) => id === guestSessionLessonId || admitted.has(id));
-
-  const later =
-    input.guest && lessonIds.length > 0 && soon.length === 0
-      ? []
-      : laterLessonIds.filter((id) => admitted.has(id));
+  const later = laterLessonIds.filter((id) => admitted.has(id));
 
   if (input.guest) {
-    // Preserve the guest's remaining starts for today's lesson before tomorrow's.
     const [next] = soon;
 
     await startGuestLesson({
@@ -108,10 +101,7 @@ async function startLessonWork({
       input,
       lessonId: next,
       planManifest: next === guestSessionLessonId ? null : planManifest,
-      wait: "learner",
     });
-
-    await startGuestLesson({ analytics, input, lessonId: later[0], planManifest, wait: "later" });
   } else {
     const content = {
       analytics,
@@ -143,33 +133,47 @@ async function startLessonWork({
   };
 }
 
+async function readNextOutlineRunStep(runId: string): Promise<string | null> {
+  "use step";
+
+  const result = await getRun<CourseOutlineResult>(runId).returnValue;
+  return "nextRunId" in result ? (result.nextRunId ?? null) : null;
+}
+
 async function waitForOutline(runId: string): Promise<void> {
   if (!(await waitForRun(runId))) {
     return;
   }
 
-  const result = await getRun<CourseOutlineResult>(runId).returnValue;
+  const nextRunId = await readNextOutlineRunStep(runId);
 
-  if ("nextRunId" in result && result.nextRunId) {
-    await waitForOutline(result.nextRunId);
+  if (nextRunId) {
+    await waitForOutline(nextRunId);
   }
+}
+
+/** Null when another run is already selecting this learner's lessons. */
+export function selectPlanLessons({
+  analytics,
+  input,
+}: {
+  analytics: ContentAnalytics;
+  input: PlanLessonPreparationInput;
+}): Promise<SessionPreparation | null> {
+  return retryPlanConflicts(startLessonWork, { analytics, input });
 }
 
 export async function outlineAndReselect({
   analytics,
   input,
+  preparation,
   started,
 }: {
   analytics: ContentAnalytics;
   input: PlanLessonPreparationInput;
+  preparation: SessionPreparation;
   started: string[];
 }): Promise<SessionPreparation | null> {
-  const preparation = await retryPlanConflicts(startLessonWork, { analytics, input });
-
-  if (!preparation) {
-    return null;
-  }
-
   const lookahead = input.guest ? await readGoalLookaheadStep(input.goalId) : null;
   const days = lookahead?.outlineDays ?? OUTLINE_AHEAD_DAYS;
   const skillIds = preparation.standInSkillIds;

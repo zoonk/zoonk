@@ -14,7 +14,11 @@ import {
 import { endLessonsAskStep } from "../goals/steps/goal-lookahead-steps";
 import { startChallengeQuestions } from "./challenge-question-starts";
 import { prepareFieldChallenge } from "./prepare-field-challenge";
-import { type PlanLessonPreparationInput, outlineAndReselect } from "./prepare-plan-lessons";
+import {
+  type PlanLessonPreparationInput,
+  outlineAndReselect,
+  selectPlanLessons,
+} from "./prepare-plan-lessons";
 import { prepareToolVersion } from "./prepare-tool-version";
 import { writeLanguageCalls } from "./steps/language-call-steps";
 import { listLearnerVersionTargetsStep } from "./steps/personal-versions-steps";
@@ -154,13 +158,33 @@ async function prepareLessons({
   analytics: ContentAnalytics;
   input: SessionPreparationInput;
 }): Promise<SessionPreparationResult> {
+  const sessionWork: Promise<unknown>[] = [];
+
   const preparation = await whileLessonsAsked({
     goalId: input.goalId,
     lessonsAskedAt: input.lessonsAskedAt,
-    run: (started) => outlineAndReselect({ analytics, input, started }),
+    run: async (started) => {
+      const selected = await selectPlanLessons({ analytics, input });
+
+      if (!selected) {
+        return null;
+      }
+
+      // The session's own questions and calls don't wait for its next topics to be outlined.
+      if (!input.guest) {
+        sessionWork.push(
+          writeLanguageCalls({ goalId: input.goalId, userId: input.userId }).catch(() => null),
+          writeClaimQuestions({ analytics, input }).catch(() => null),
+          writePlacementWeekQuestions({ analytics, input }).catch(() => null),
+        );
+      }
+
+      return outlineAndReselect({ analytics, input, preparation: selected, started });
+    },
   });
 
   if (!preparation) {
+    await Promise.all(sessionWork);
     return { status: "alreadyRunning" };
   }
 
@@ -170,9 +194,7 @@ async function prepareLessons({
 
   await Promise.all([
     preparation.personalized ? personalizeLessons({ analytics, input, preparation }) : null,
-    writeLanguageCalls({ goalId: input.goalId, userId: input.userId }).catch(() => null),
-    writeClaimQuestions({ analytics, input }).catch(() => null),
-    writePlacementWeekQuestions({ analytics, input }).catch(() => null),
+    ...sessionWork,
   ]);
 
   return {

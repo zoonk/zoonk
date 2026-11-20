@@ -22,7 +22,7 @@ const LOOKAHEAD: Record<EntitlementTier, LearnerLookahead> = {
     outlineDays: OUTLINE_AHEAD_DAYS,
     speculativeLessons: 2,
   },
-  guest: { lessonsAhead: 1, nextDayLessons: 1, outlineDays: 7, speculativeLessons: 1 },
+  guest: { lessonsAhead: 1, nextDayLessons: 0, outlineDays: 7, speculativeLessons: 1 },
   plus: {
     lessonsAhead: 4,
     nextDayLessons: 3,

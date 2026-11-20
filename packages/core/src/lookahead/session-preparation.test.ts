@@ -147,7 +147,7 @@ describe(getSessionPreparationAccess, () => {
     });
   });
 
-  it("picks the guest’s next pending lesson and the first lesson of the next study day", async () => {
+  it("picks only the guest’s next pending lesson, keeping their starts for today", async () => {
     const guest = await userFixture();
 
     const [goal] = await Promise.all([
@@ -209,7 +209,7 @@ describe(getSessionPreparationAccess, () => {
         timeZone: TIME_ZONE,
         userId: guest.id,
       }),
-    ).resolves.toMatchObject({ laterLessonIds: [tomorrow.id], lessonIds: [next.id] });
+    ).resolves.toMatchObject({ laterLessonIds: [], lessonIds: [next.id] });
   });
 });
 
