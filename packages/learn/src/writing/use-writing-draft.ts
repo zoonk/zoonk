@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { clearUnsentText, keepUnsentText, readUnsentText } from "../essay/unsent-text";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { deviceStorage, subscribeToDeviceStorage } from "../_utils/device-storage";
+import {
+  chooseDraftText,
+  keepDraftText,
+  keptDraftKey,
+  parseKeptDraft,
+} from "./writing-draft-choice";
 import { type WritingActions, type WrittenEssay } from "./writing-types";
 
 const DRAFT_SAVE_MS = 1500;
@@ -18,13 +24,21 @@ export function useWritingDraft({
   actions: WritingActions;
   essay: WrittenEssay;
 }) {
-  const initial = essay.draft?.text || readUnsentText(essay.blockId) || "";
-  const [text, setText] = useState(initial);
+  const { blockId } = essay;
+
+  const raw = useSyncExternalStore(
+    subscribeToDeviceStorage,
+    () => deviceStorage.get(keptDraftKey(blockId)),
+    () => null,
+  );
+
+  const [typed, setTyped] = useState<string | null>(null);
+  const text = typed ?? chooseDraftText({ kept: parseKeptDraft(raw), saved: essay.draft ?? null });
   const admission = useRef(essay.draft?.admissionId ?? null);
   const revision = useRef(essay.draft?.revision ?? 0);
-  const saved = useRef(initial);
+  const saved = useRef(essay.draft?.text ?? "");
+  const latest = useRef<string | null>(null);
   const saving = useRef<Promise<unknown> | null>(null);
-  const latest = useRef(text);
   const typingSince = useRef<number | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -45,8 +59,7 @@ export function useWritingDraft({
     return admission.current;
   }
 
-  async function save(retried = false): Promise<void> {
-    const current = latest.current;
+  async function save(current: string, retried = false): Promise<void> {
     const admissionId = await ensureAdmission();
 
     if (!admissionId || current === saved.current) {
@@ -60,27 +73,28 @@ export function useWritingDraft({
     if (answer.status === "saved") {
       revision.current = answer.draft.revision;
       saved.current = current;
+      keepDraftText(blockId, { base: answer.draft.revision, text: current });
     }
 
     // Another device saved first: what was typed here goes over it, once.
     if (answer.status === "conflict" && !retried) {
       revision.current = answer.draft.revision;
-      await save(true);
+      await save(current, true);
     }
   }
 
   function flush(): Promise<unknown> {
     clearTimeout(timer.current ?? undefined);
-    saving.current = (saving.current ?? Promise.resolve()).then(() => save());
+    const current = latest.current ?? text;
+    saving.current = (saving.current ?? Promise.resolve()).then(() => save(current));
     return saving.current;
   }
 
   function write(next: string) {
-    const now = Date.now();
-    typingSince.current ??= now;
+    typingSince.current ??= Date.now();
     latest.current = next;
-    setText(next);
-    keepUnsentText({ blockId: essay.blockId, text: next });
+    setTyped(next);
+    keepDraftText(blockId, { base: revision.current, text: next });
     clearTimeout(timer.current ?? undefined);
     timer.current = setTimeout(() => void flush(), DRAFT_SAVE_MS);
   }
@@ -99,7 +113,7 @@ export function useWritingDraft({
 
   return {
     admissionId: ensureAdmission,
-    clear: () => clearUnsentText(essay.blockId),
+    clear: () => deviceStorage.remove(keptDraftKey(blockId)),
     durationMs,
     flush,
     pending: () => saving.current,
