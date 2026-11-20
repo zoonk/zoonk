@@ -3197,7 +3197,7 @@ msgstr "Cennik Zoonku: Free i Plus"
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "S6T5h_"
 msgid "Follow your study plan all the way to your exam, move abroad or deadline."
-msgstr "Trzymaj się planu nauki aż do egzaminu, wyjazdu za granicę lub wyznaczonego terminu."
+msgstr "Trzymaj się planu nauki aż do egzaminu, wyjazdu za granicę lub terminu."
 
 #. “Plus” is the name of the subscription.
 #: src/components/pricing/plus-pricing.tsx
