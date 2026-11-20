@@ -192,14 +192,21 @@ function SheetNotes() {
 
 function MockSheetContent({
   onPick,
+  withCount = false,
   withMoves = false,
 }: {
   onPick: (position: number) => void;
+  withCount?: boolean;
   withMoves?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
+        {withCount && (
+          <p className="text-muted-foreground font-mono text-xs tabular-nums">
+            <SheetCountLine />
+          </p>
+        )}
         <SheetGrid onPick={onPick} />
         {withMoves && (
           <div className="text-muted-foreground text-xs empty:hidden">
@@ -246,12 +253,11 @@ export function useMockSheetAside({
     children: (
       <>
         <SectionClock deadline={deadline} place="aside" />
-        <MockSheetContent onPick={runner.go} />
+        <MockSheetContent onPick={runner.go} withCount />
       </>
     ),
     footer: <SheetHandIn onHandIn={onHandIn} />,
     label: t("Answer sheet"),
-    meta: <SheetCountLine />,
     title: t("Answer sheet"),
   };
 }
