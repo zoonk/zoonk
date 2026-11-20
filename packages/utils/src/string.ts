@@ -1,3 +1,6 @@
+import { findCodeFences, splitAtCode } from "./code-fence";
+import { parseInlineMarkupRanges } from "./inline-markup";
+
 const SLUG_MAX_LENGTH = 50;
 const WORD_CONNECTOR_PATTERN = /^[-'’‐‑‒–]$/u;
 const wordSegmenter = new Intl.Segmenter(undefined, { granularity: "word" });
@@ -46,48 +49,104 @@ export function normalizePunctuation(text: string): string {
   return text.replaceAll(/(?<!\s)\s+(?<punctuation>[!?.,;:!?。、！？؟])/gu, "$<punctuation>");
 }
 
-/**
- * The app never shows em dashes: one that opens a line or closes a clause before punctuation goes,
- * any other becomes a comma. En dashes stay: they join ranges ("B1–B2").
- */
-export function replaceEmDashes(text: string): string {
-  if (!text.includes("—")) {
-    return text;
-  }
-
+function replaceProseEmDashes(text: string): string {
   return text
     .replaceAll(/^[ \t]*—[ \t]*/gmu, "")
     .replaceAll(/[ \t]*—[ \t]*(?=[,.;:!?)]|$)/gmu, "")
     .replaceAll(/[ \t]*—[ \t]*/gu, ", ");
 }
 
-const OPEN_DASH_TAIL = /[ \t—]*$/u;
+/** Stands in for the code beside a piece of prose, so a dash next to code reads as mid-line. */
+const CODE_MARK = "x";
 
 /**
- * `push` holds back a trailing dash and its spaces until the next piece says what follows. Joined,
- * the returned pieces read as `replaceEmDashes` reads the whole text.
+ * The app never shows em dashes in prose: one that opens a line or closes a clause before
+ * punctuation goes, any other becomes a comma. En dashes stay: they join ranges ("B1–B2"). Code
+ * keeps every character as written.
+ */
+export function replaceEmDashes(text: string): string {
+  if (!text.includes("—")) {
+    return text;
+  }
+
+  const pieces = splitAtCode(text);
+
+  return pieces
+    .map((piece, index) => {
+      if (piece.code) {
+        return piece.text;
+      }
+
+      const before = index > 0 ? CODE_MARK : "";
+      const after = index < pieces.length - 1 ? CODE_MARK : "";
+      const replaced = replaceProseEmDashes(`${before}${piece.text}${after}`);
+
+      return replaced.slice(before.length, replaced.length - after.length);
+    })
+    .join("");
+}
+
+const OPEN_DASH_TAIL = /[ \t—]*$/u;
+
+/** A last line that more backticks could still turn into a code block's opening fence. */
+const OPENING_FENCE_SO_FAR = /^ {0,3}`{0,2}$/u;
+
+/**
+ * Where code may still be starting at the end of a text being written: a last line that may open a
+ * code block, or an inline code mark nothing has closed yet.
+ */
+function findOpeningCode(text: string): number | null {
+  const lines = text.split("\n");
+  const line = lines.at(-1) ?? "";
+  const lineStart = text.length - line.length;
+  const block = findCodeFences(lines).at(-1);
+
+  if (block && !block.closed) {
+    return block.start === lines.length - 1 ? lineStart : null;
+  }
+
+  if (OPENING_FENCE_SO_FAR.test(line)) {
+    return lineStart;
+  }
+
+  const spans = parseInlineMarkupRanges(line).filter((range) => range.kind === "code");
+  const mark = line.indexOf("`", spans.at(-1)?.end ?? 0);
+
+  return mark === -1 ? null : lineStart + mark;
+}
+
+/**
+ * What later pieces can't change once dashes are replaced: a dash and the spaces around it wait for
+ * what follows, and a dash in code that may still be opening waits until it's known to be code.
+ */
+function settledLength(text: string): number {
+  const openingCode = findOpeningCode(text);
+  const dash = openingCode === null ? -1 : text.indexOf("—", openingCode);
+  const settled = dash === -1 ? text : text.slice(0, dash);
+
+  return settled.length - (OPEN_DASH_TAIL.exec(settled)?.[0].length ?? 0);
+}
+
+/**
+ * `push` returns what's settled of the text so far, holding back only what a later piece could
+ * still change. Joined, the returned pieces read as `replaceEmDashes` reads the whole text.
  */
 export function createEmDashReplacer(): { end: () => string; push: (piece: string) => string } {
-  let held = "";
-  let atLineStart = true;
+  let text = "";
+  let sentLength = 0;
 
-  // A piece that continues a line doesn't open one: a mark in front keeps a dash there mid-line.
-  const replace = (text: string) => {
-    const replaced = atLineStart ? replaceEmDashes(text) : replaceEmDashes(`x${text}`).slice(1);
-    atLineStart = text ? text.endsWith("\n") : atLineStart;
-    return replaced;
+  const send = (settled: string) => {
+    const replaced = replaceEmDashes(settled);
+    const piece = replaced.slice(sentLength);
+    sentLength = replaced.length;
+    return piece;
   };
 
   return {
-    end: () => {
-      const rest = replace(held);
-      held = "";
-      return rest;
-    },
+    end: () => send(text),
     push: (piece) => {
-      const text = held + piece;
-      held = OPEN_DASH_TAIL.exec(text)?.[0] ?? "";
-      return replace(text.slice(0, text.length - held.length));
+      text += piece;
+      return send(text.slice(0, settledLength(text)));
     },
   };
 }

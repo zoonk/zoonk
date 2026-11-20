@@ -1,3 +1,5 @@
+import { parseInlineMarkupRanges } from "./inline-markup";
+
 /**
  * A CommonMark fenced code block written with backticks. The opening fence's info string can't
  * hold a backtick, so "```x```" stays inline code.
@@ -87,4 +89,60 @@ export function removeCodeFences(text: string): string {
   const code = findCodeFenceLines(lines);
 
   return lines.filter((_, index) => !code.has(index)).join("\n");
+}
+
+export type TextPiece = { code: boolean; text: string };
+
+/** A line's inline code as the players read it, each line on its own. */
+function splitLineAtCode(line: string): TextPiece[] {
+  const spans = parseInlineMarkupRanges(line).filter((range) => range.kind === "code");
+
+  return [
+    ...spans.flatMap(({ end, start }, index) => [
+      { code: false, text: line.slice(spans[index - 1]?.end ?? 0, start) },
+      { code: true, text: line.slice(start, end) },
+    ]),
+    { code: false, text: line.slice(spans.at(-1)?.end ?? 0) },
+  ];
+}
+
+function joinProse(pieces: readonly TextPiece[]): TextPiece[] {
+  const joined: TextPiece[] = [];
+
+  for (const piece of pieces.filter(({ text }) => text)) {
+    const last = joined.at(-1);
+
+    if (last && !last.code && !piece.code) {
+      last.text += piece.text;
+    } else {
+      joined.push({ ...piece });
+    }
+  }
+
+  return joined;
+}
+
+/**
+ * Prose and code in turn, joining back into the text: each code block whole, fences included, and
+ * each inline code span with its backticks. A rewrite of the prose leaves code as written.
+ */
+export function splitAtCode(text: string): TextPiece[] {
+  const lines = text.split("\n");
+  const fences = findCodeFences(lines);
+  const blockAt = new Map(fences.map((fence) => [fence.start, fence]));
+  const inBlock = findCodeFenceLines(lines);
+
+  const rows = lines.flatMap((line, index) => {
+    const block = blockAt.get(index);
+
+    if (block) {
+      return [[{ code: true, text: lines.slice(block.start, block.end).join("\n") }]];
+    }
+
+    return inBlock.has(index) ? [] : [splitLineAtCode(line)];
+  });
+
+  return joinProse(
+    rows.flatMap((row, index) => (index === 0 ? row : [{ code: false, text: "\n" }, ...row])),
+  );
 }

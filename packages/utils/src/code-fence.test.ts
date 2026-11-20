@@ -1,9 +1,11 @@
+import { assert, constantFrom, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
   findCodeFenceLines,
   readCodeFence,
   readWholeCodeFence,
   removeCodeFences,
+  splitAtCode,
 } from "./code-fence";
 
 const TEXT = [
@@ -57,6 +59,32 @@ describe(findCodeFenceLines, () => {
 describe(removeCodeFences, () => {
   it("keeps the prose around code", () => {
     expect(removeCodeFences(TEXT)).toBe("O que aparece no console?\nEscolha uma opção.");
+  });
+});
+
+describe(splitAtCode, () => {
+  it("cuts the text into prose, code blocks and inline code", () => {
+    expect(splitAtCode("Rode `f()` assim:\n```js\nf();\n```\nPronto.")).toStrictEqual([
+      { code: false, text: "Rode " },
+      { code: true, text: "`f()`" },
+      { code: false, text: " assim:\n" },
+      { code: true, text: "```js\nf();\n```" },
+      { code: false, text: "\nPronto." },
+    ]);
+  });
+
+  it("joins back into any text", () => {
+    const pieces = constantFrom("a", " ", "`", "```", "\n", "—");
+
+    assert(
+      property(string({ maxLength: 16, unit: pieces }), (text) => {
+        expect(
+          splitAtCode(text)
+            .map((piece) => piece.text)
+            .join(""),
+        ).toBe(text);
+      }),
+    );
   });
 });
 
