@@ -97,7 +97,7 @@ async function generateOutputForTestCase({
 
   const testCaseId = getTestCaseRunId({ runNumber, testCaseId: testCase.id });
   const runTask = getTaskRunner({ model, task });
-  const input = getTaskRunInput({ model, testCase });
+  const input = { ...getTaskRunInput({ model, testCase }), runId: testCaseId };
   const billed: BilledCall[] = [];
   const startTime = performance.now();
 

@@ -167,6 +167,7 @@ export type TaskCodeChecks<TExpected = unknown> = (
 
 type TaskGenerateInput<TInput> = TInput & {
   model: string;
+  runId: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
 };

@@ -1,5 +1,7 @@
+import { scoreImageEdges } from "@/lib/image-edges";
 import { readEvalImage, saveEvalImage } from "@/lib/image-files";
 import { judgeImage } from "@/lib/image-judge";
+import { calculateScore } from "@/lib/score-calculation";
 import { defineScoreCategories } from "@/lib/score-categories";
 import { type Task, type TaskScorer, getJudgeExpectations } from "@/lib/types";
 import { generateCourseIcon } from "@zoonk/ai/tasks/courses/icon";
@@ -35,21 +37,34 @@ const scoreCategories = defineScoreCategories([
 const scoreCourseIcon: TaskScorer = async ({ output, testCase }) => {
   const { imagePath, subject } = JSON.parse(output) as CourseIconOutput;
 
-  return judgeImage({
-    expectations: getJudgeExpectations(testCase),
-    image: await readEvalImage(imagePath),
-    scene: subject,
-    scoreCategories,
-  });
+  const image = await readEvalImage(imagePath);
+
+  const [judged, edges] = await Promise.all([
+    judgeImage({
+      expectations: getJudgeExpectations(testCase),
+      image,
+      scene: subject,
+      scoreCategories,
+    }),
+    scoreImageEdges(image),
+  ]);
+
+  const categoryScores = [...(judged.categoryScores ?? []), edges];
+
+  return {
+    ...judged,
+    categoryScores,
+    score: calculateScore({ categoryScores, steps: judged.steps }),
+  };
 };
 
 async function generate({
-  caseId,
   description,
   model,
+  runId,
   title,
   useFallback,
-}: CourseIconInput & { model: string; useFallback?: boolean }) {
+}: CourseIconInput & { model: string; runId: string; useFallback?: boolean }) {
   const { data, prompt, provenance } = await generateCourseIcon({
     description,
     model,
@@ -60,7 +75,7 @@ async function generate({
   const imagePath = await saveEvalImage({
     image: data.image.uint8Array,
     modelId: model,
-    name: caseId,
+    runId,
     taskId: TASK_ID,
   });
 

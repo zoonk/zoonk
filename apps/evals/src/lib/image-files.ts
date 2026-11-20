@@ -9,15 +9,15 @@ const DATASET_IMAGES_DIR = path.join(process.cwd(), "datasets", "images");
 export async function saveEvalImage({
   image,
   modelId,
-  name,
+  runId,
   taskId,
 }: {
   image: Uint8Array;
   modelId: string;
-  name: string;
+  runId: string;
   taskId: string;
 }): Promise<string> {
-  const relativePath = path.join(taskId, modelId.replaceAll("/", "-"), `${name}.webp`);
+  const relativePath = path.join(taskId, modelId.replaceAll("/", "-"), `${runId}.webp`);
   const filePath = path.join(IMAGES_DIR, relativePath);
 
   const { data: optimized, error } = await optimizeImage({ image: Buffer.from(image) });
@@ -33,7 +33,13 @@ export async function saveEvalImage({
 }
 
 export async function readEvalImage(relativePath: string): Promise<Uint8Array> {
-  return new Uint8Array(await readFile(path.join(IMAGES_DIR, relativePath)));
+  const file = path.resolve(IMAGES_DIR, relativePath);
+
+  if (!file.startsWith(IMAGES_DIR + path.sep) || path.extname(file) !== ".webp") {
+    throw new Error("Invalid saved eval image path.");
+  }
+
+  return new Uint8Array(await readFile(file));
 }
 
 export async function readDatasetImage({

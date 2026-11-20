@@ -1,5 +1,7 @@
+import { scoreImageEdges } from "@/lib/image-edges";
 import { readEvalImage, saveEvalImage } from "@/lib/image-files";
 import { judgeImage } from "@/lib/image-judge";
+import { calculateScore } from "@/lib/score-calculation";
 import { defineScoreCategories } from "@/lib/score-categories";
 import { type Task, type TaskScorer, getJudgeExpectations } from "@/lib/types";
 import { generateLessonImage } from "@zoonk/ai/tasks/images/generate";
@@ -38,22 +40,30 @@ const scoreCategories = defineScoreCategories([
 const scoreLessonImage: TaskScorer = async ({ output, testCase }) => {
   const { imagePath, scene } = JSON.parse(output) as LessonImageOutput;
 
-  return judgeImage({
-    expectations: getJudgeExpectations(testCase),
-    image: await readEvalImage(imagePath),
-    scene,
-    scoreCategories,
-  });
+  const image = await readEvalImage(imagePath);
+
+  const [judged, edges] = await Promise.all([
+    judgeImage({ expectations: getJudgeExpectations(testCase), image, scene, scoreCategories }),
+    scoreImageEdges(image),
+  ]);
+
+  const categoryScores = [...(judged.categoryScores ?? []), edges];
+
+  return {
+    ...judged,
+    categoryScores,
+    score: calculateScore({ categoryScores, steps: judged.steps }),
+  };
 };
 
 async function generate({
-  caseId,
   category,
   language,
   model,
+  runId,
   scene,
   useFallback,
-}: LessonImageInput & { model: string; useFallback?: boolean }) {
+}: LessonImageInput & { model: string; runId: string; useFallback?: boolean }) {
   const { data, prompt, provenance } = await generateLessonImage({
     language,
     model,
@@ -65,7 +75,7 @@ async function generate({
   const imagePath = await saveEvalImage({
     image: data.image.uint8Array,
     modelId: model,
-    name: caseId,
+    runId,
     taskId: TASK_ID,
   });
 

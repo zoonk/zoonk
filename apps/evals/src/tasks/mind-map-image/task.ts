@@ -1,3 +1,4 @@
+import { scoreImageEdges } from "@/lib/image-edges";
 import { readEvalImage, saveEvalImage } from "@/lib/image-files";
 import { judgeImage } from "@/lib/image-judge";
 import { calculateScore } from "@/lib/score-calculation";
@@ -5,7 +6,7 @@ import { defineScoreCategories } from "@/lib/score-categories";
 import { type Task, type TaskScorer, getJudgeExpectations } from "@/lib/types";
 import { checkMindMapImage } from "@zoonk/ai/tasks/mind-maps/check";
 import { generateMindMapImage } from "@zoonk/ai/tasks/mind-maps/image";
-import { type MindMapStructure, listMindMapTexts } from "@zoonk/ai/tasks/mind-maps/schema";
+import { type MindMapStructure } from "@zoonk/ai/tasks/mind-maps/schema";
 import { type MindMapImageInput, TEST_CASES } from "./test-cases";
 
 const TASK_ID = "mind-map-image";
@@ -52,15 +53,13 @@ async function scoreText({
     structure,
   });
 
+  const wrongWords = data.unknown.length + data.missing.length;
+
   return {
     categoryId: "text",
     label: "Text matches the structure",
-    reasoning: data.passed
-      ? `Every word matches the structure (${listMindMapTexts({ language, structure }).length} texts).`
-      : data.problems.join(" "),
-    score: data.passed
-      ? MAX_SCORE
-      : Math.max(MIN_SCORE, MAX_SCORE - POINTS_PER_WRONG_WORD * Math.max(1, data.unknown.length)),
+    reasoning: data.problems.join(" ") || "Every word matches the structure.",
+    score: Math.max(MIN_SCORE, MAX_SCORE - POINTS_PER_WRONG_WORD * wrongWords),
     weight: TEXT_WEIGHT,
   };
 }
@@ -69,7 +68,7 @@ const scoreMindMapImage: TaskScorer = async ({ output, testCase }) => {
   const parsed = JSON.parse(output) as MindMapImageOutput;
   const image = await readEvalImage(parsed.imagePath);
 
-  const [judged, text] = await Promise.all([
+  const [judged, text, edges] = await Promise.all([
     judgeImage({
       expectations: getJudgeExpectations(testCase),
       image,
@@ -77,9 +76,10 @@ const scoreMindMapImage: TaskScorer = async ({ output, testCase }) => {
       scoreCategories,
     }),
     scoreText({ ...parsed, image }),
+    scoreImageEdges(image),
   ]);
 
-  const categoryScores = [...(judged.categoryScores ?? []), text];
+  const categoryScores = [...(judged.categoryScores ?? []), text, edges];
 
   return {
     ...judged,
@@ -89,12 +89,12 @@ const scoreMindMapImage: TaskScorer = async ({ output, testCase }) => {
 };
 
 async function generate({
-  caseId,
   language,
   model,
+  runId,
   structure,
   useFallback,
-}: MindMapImageInput & { model: string; useFallback?: boolean }) {
+}: MindMapImageInput & { model: string; runId: string; useFallback?: boolean }) {
   const { data, prompt, provenance } = await generateMindMapImage({
     language,
     model,
@@ -105,7 +105,7 @@ async function generate({
   const imagePath = await saveEvalImage({
     image: data.image,
     modelId: model,
-    name: caseId,
+    runId,
     taskId: TASK_ID,
   });
 
