@@ -303,7 +303,7 @@ actor PageServer: ClientTransport {
 
   private static let reads = [
     "listMocks": #"""
-    {"access":"open","examDocument":"guide","examName":"ENEM","goalId":"00000000-0000-4000-8000-000000000001","lastMock":null,"options":[{"area":null,"areas":[],"covers":[],"day":null,"estimatedMinutes":30,"kind":"full","leftOut":[],"minutes":60,"objectiveOnly":true,"questions":20,"written":[]}],"running":null,"sizeSource":{"formats":null,"material":false,"pastEdition":null,"questions":"notice","subjects":null,"time":"notice"}}
+    {"access":"open","examDocument":"guide","examName":"ENEM","goalId":"00000000-0000-4000-8000-000000000001","lastMock":null,"options":[{"area":null,"areas":[],"covers":[],"day":null,"estimatedMinutes":30,"kind":"full","leftOut":[],"minutes":60,"objectiveOnly":true,"questions":20,"written":[]}],"requested":null,"running":null,"sizeSource":{"formats":null,"material":false,"pastEdition":null,"questions":"notice","subjects":null,"time":"notice"}}
     """#,
 
     "getGoalChapter": #"""

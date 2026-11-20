@@ -619,11 +619,23 @@ struct MockOptions: Hashable, Decodable, Sendable {
     var purpose: MockPurpose
   }
 
+  /// The mock the learner asked for while its questions were written, kept by the server.
+  struct Requested: Hashable, Decodable, Sendable {
+    enum Status: String, Decodable, Sendable {
+      case preparing
+      case ready
+    }
+
+    var shape: MockShape
+    var status: Status
+  }
+
   var access: Access
   var examDocument: ExamDocument
   var examName: String
   var lastMock: ExamMockSummary?
   var options: [MockOption]
+  var requested: Requested?
   var running: Running?
   var sizeSource: MockSizeSource
 

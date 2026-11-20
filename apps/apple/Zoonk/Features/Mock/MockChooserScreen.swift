@@ -55,24 +55,37 @@ private struct MockChooserContent: View {
       MockChooser(goalId: goalId, view: view) { id in
         router.open(.mock(blockId: id))
       }
+      .task(id: view.requested?.status == .preparing) {
+        await rereadWhilePreparing()
+      }
+    }
+  }
+
+  /// The questions are written in the background, so the page reads the request again to bring
+  /// Start back once they're ready; it never starts the mock itself.
+  private func rereadWhilePreparing() async {
+    while options.value?.requested?.status == .preparing {
+      do {
+        try await Task.sleep(for: .seconds(10))
+      } catch {
+        return
+      }
+
+      await options.refresh()
     }
   }
 }
 
 private enum ChooserStatus: Equatable {
   case choosing
-  case writing
-  case short(
-    optionId: String, examQuestions: Int, limit: MockStartOutcome.Limit?, availableAt: Date?,
-    minutes: Int, questions: Int)
   case notEnoughQuestions
   case failed
-  case refused(HelpLimit)
   case plusRequired
 }
 
 private struct MockChooser: View {
   @Environment(ExamStore.self) private var exam
+  @Environment(AppRouter.self) private var router
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var picked: String?
@@ -93,6 +106,13 @@ private struct MockChooser: View {
   /// Nothing is picked when the page opens, so one tap on Start never begins a five-hour exam.
   private var pickedOption: MockOption? {
     view.options.first { $0.id == picked }
+  }
+
+  /// The picked mock is the one asked for and its questions are still being written; another pick
+  /// starts another mock.
+  private var isPreparing: Bool {
+    guard let requested = view.requested, let pickedOption else { return false }
+    return requested.status == .preparing && requested.shape == pickedOption.shape
   }
 
   /// Main's choice rows put the size under the words on a phone.
@@ -140,16 +160,6 @@ private struct MockChooser: View {
         Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"),
         supporting: detail
       )
-
-      if shownStatus == .writing {
-        writing
-      }
-    }
-
-    if case .refused(let limit)? = shownStatus {
-      Section {
-        LimitNotice(limit: limit, kind: .mockExams)
-      }
     }
 
     if let running = view.running {
@@ -212,6 +222,14 @@ private struct MockChooser: View {
       SubscribeButton()
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
+    } else if isPreparing {
+      Button {
+        router.showRoot(of: .today)
+      } label: {
+        Text("Keep studying", tableName: "Mock", comment: "Leaves a mock exam being prepared")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     } else {
       BusyButton(isBusy: busy) {
         if isOpen {
@@ -225,28 +243,6 @@ private struct MockChooser: View {
       .buttonStyle(.mainAction)
       .disabled(pickedOption == nil)
       .keyboardShortcut(.defaultAction)
-      .confirmationDialog(
-        Text(
-          "Start a shorter mock exam?", tableName: "Mock",
-          comment: "Title of the shorter mock exam dialog"),
-        isPresented: Binding(get: { shortNote != nil }, set: { if !$0 { status = .choosing } }),
-        titleVisibility: .visible,
-        presenting: shortNote
-      ) { _ in
-        Button {
-          start(acceptingFewer: true)
-        } label: {
-          Text("Start", tableName: "Mock", comment: "Starts the picked mock")
-        }
-
-        Button(role: .cancel) {
-          status = .choosing
-        } label: {
-          Text("Pick another", tableName: "Mock", comment: "Closes the shorter mock exam dialog")
-        }
-      } message: { note in
-        Text(note)
-      }
     }
   }
 
@@ -258,6 +254,16 @@ private struct MockChooser: View {
     if isGated {
       return BarNote(
         String(localized: "Mock exams need a subscription", table: "Mock"), tone: .status)
+    }
+
+    if isPreparing {
+      return BarNote(
+        heading: LocalizedStringResource(
+          "Your mock exam is being prepared", table: "Mock",
+          comment: "Over Keep studying, while a mock exam's questions are written"),
+        LocalizedStringResource(
+          "Come back to this page to start it.", table: "Mock",
+          comment: "Under: Your mock exam is being prepared"))
     }
 
     return failure.map { BarNote($0) }
@@ -273,104 +279,19 @@ private struct MockChooser: View {
     Text("Start", tableName: "Mock", comment: "Starts the picked mock")
   }
 
-  /// What the dialog says before a mock exam with fewer questions than it should starts.
-  private var shortNote: String? {
-    guard
-      case .short(_, let examQuestions, let limit, let availableAt, let minutes, let questions)? =
-        shownStatus
-    else { return nil }
-
-    let time = MockLabels.duration(minutes: minutes)
-    let fullOn: HelpLimit.OpeningDay? =
-      switch limit {
-      case .day: .tomorrow
-      case .rolling30Days:
-        availableAt.map { HelpLimit.openingDay($0, now: .now, calendar: .current) }
-      case .total, nil: nil
-      }
-
-    return switch fullOn {
-    case .tomorrow:
-      String(
-        localized:
-          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one tomorrow.",
-        table: "Mock", comment: "A mock exam shorter today, when today's writing is used up")
-    case .today:
-      String(
-        localized:
-          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one later today.",
-        table: "Mock",
-        comment:
-          "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now."
-      )
-    case .on(let date):
-      String(
-        localized:
-          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one on \(date).",
-        table: "Mock",
-        comment:
-          "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as \"November 22\" in English."
-      )
-    case .open, nil:
-      String(
-        localized:
-          "Today this one has \(questions) of its \(examQuestions) questions, about \(time).",
-        table: "Mock", comment: "A mock exam shorter today")
-    }
-  }
-
-  /// A short bank's note is about the mock it was asked for: another pick starts another mock.
-  private var shownStatus: ChooserStatus? {
-    switch status {
-    case .choosing, .plusRequired: nil
-    case .short(let optionId, _, _, _, _, _) where optionId != pickedOption?.id: nil
-    default: status
-    }
-  }
-
   /// A Start that failed, over the bar where Start was pressed; the bar's note reads it out.
   private var failure: String? {
-    switch shownStatus {
-    case .notEnoughQuestions?:
+    switch status {
+    case .notEnoughQuestions:
       String(
         localized: "Not enough questions for this one yet. Pick another.", table: "Mock",
         comment: "Too few questions for a mock exam")
-    case .failed?:
+    case .failed:
       String(
         localized: "We couldn't start the mock exam. Try again.", table: "Mock",
         comment: "Start failed")
     default:
       nil
-    }
-  }
-
-  private var writing: some View {
-    Label {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(
-          "Getting your mock exam ready…", tableName: "Mock", comment: "Questions being written"
-        )
-        .typeStyle(.body.weight(.semibold))
-        Text(
-          "It starts here when it's ready.", tableName: "Mock",
-          comment: "While a mock's questions are written"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-      }
-    } icon: {
-      ProgressView()
-    }
-  }
-
-  /// What the last Start led to, in words: VoiceOver stays on Start and hears it. A failure is
-  /// read out as an alert (`failure`).
-  private var outcome: [String] {
-    switch status {
-    case .refused(let limit):
-      return [limit.words(.mockExams).said]
-    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed, .short:
-      return []
     }
   }
 
@@ -449,26 +370,25 @@ private struct MockChooser: View {
       : ""
   }
 
-  /// `acceptingFewer` only after the learner pressed Start in the shorter mock exam's dialog.
-  private func start(acceptingFewer acceptFewer: Bool = false) {
+  private func start() {
     guard let pickedOption, !busy else { return }
 
     starting.run {
-      let result = await exam.startMock(
-        goalId: goalId, shape: pickedOption.shape, acceptFewer: acceptFewer,
-        onWriting: { if !Task.isCancelled { status = .writing } })
+      let result = await exam.startMock(goalId: goalId, shape: pickedOption.shape)
       guard !Task.isCancelled else { return nil }
 
       switch result {
       case .done(.started(let id)):
         onStarted(id)
         return nil
-      case .done(.short(let examQuestions, let limit, let availableAt, let minutes, let questions)):
-        return .short(
-          optionId: pickedOption.id, examQuestions: examQuestions, limit: limit,
-          availableAt: availableAt, minutes: minutes, questions: questions)
+      case .done(.preparing):
+        exam.mockOptions(goalId: goalId).update { options in
+          var asked = options
+          asked.requested = .init(shape: pickedOption.shape, status: .preparing)
+          return asked
+        }
+        return nil
       case .done(.notEnoughQuestions): return .notEnoughQuestions
-      case .done(.refused(let limit)): return .refused(limit)
       case .done(.plusRequired):
         // The server's answer is the access now, even if the read after it fails; a later read
         // (a subscription bought) replaces it.
@@ -480,14 +400,11 @@ private struct MockChooser: View {
         }
         await options.refresh()
         return .plusRequired
-      case .done(.needsQuestions), .failed: return .failed
+      case .failed: return .failed
       case .obsolete: return nil
       }
-    } then: { _ in
-      if !outcome.isEmpty { announcePolitely(outcome.joinedSentences()) }
     }
   }
-
 }
 
 struct MockSummaryRow: View {

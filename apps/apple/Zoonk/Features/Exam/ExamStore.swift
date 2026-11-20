@@ -103,40 +103,10 @@ final class ExamStore {
     }
   }
 
-  /// Only from a learner's tap. A mock that can ask only part of its questions comes back `short`
-  /// for the learner to start it knowingly (`acceptFewer`), also after the questions were written.
-  func startMock(
-    goalId: String, shape: MockShape, acceptFewer: Bool,
-    onWriting: @escaping @MainActor () -> Void
-  ) async -> MutationResult<MockStartOutcome> {
+  /// Only from a learner's tap.
+  func startMock(goalId: String, shape: MockShape) async -> MutationResult<MockStartOutcome> {
     await write(invalidating: [.learnerModel]) { api, token in
-      let first = try await api.startMock(
-        token: token, goalId: goalId, shape: shape, acceptFewer: acceptFewer)
-
-      guard first == .needsQuestions else {
-        return first
-      }
-
-      // While the goal's skill map is still drawn (a goal in onboarding), ask again a while.
-      var writing = try await api.requestMockQuestions(token: token, goalId: goalId, shape: shape)
-
-      for _ in 0..<60 where writing == .preparing {
-        try await Task.sleep(for: .seconds(3))
-        writing = try await api.requestMockQuestions(token: token, goalId: goalId, shape: shape)
-      }
-
-      switch writing {
-      case .writing(let generationId):
-        onWriting()
-        try await api.waitForQuestions(token: token, generationId: generationId)
-      case .refused(let limit):
-        return .refused(limit)
-      case .ready, .preparing:
-        break
-      }
-
-      return try await api.startMock(
-        token: token, goalId: goalId, shape: shape, acceptFewer: acceptFewer, afterWriting: true)
+      try await api.startMock(token: token, goalId: goalId, shape: shape)
     }
   }
 }

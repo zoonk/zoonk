@@ -171,20 +171,31 @@ struct BarNote: View {
     let perform: () -> Void
   }
 
+  private let heading: AttributedString?
   private let message: AttributedString
   let tone: Tone
   let action: Action?
 
   init(_ message: LocalizedStringResource, tone: Tone = .failure, action: Action? = nil) {
-    self.init(AttributedString(localized: message), tone: tone, action: action)
+    self.init(nil, AttributedString(localized: message), tone: tone, action: action)
   }
 
   /// For words already localized, such as a server's message.
   init(_ message: String, tone: Tone = .failure, action: Action? = nil) {
-    self.init(AttributedString(message), tone: tone, action: action)
+    self.init(nil, AttributedString(message), tone: tone, action: action)
   }
 
-  private init(_ message: AttributedString, tone: Tone, action: Action?) {
+  /// A status the screen waits on, said in a line and what to do about it.
+  init(heading: LocalizedStringResource, _ message: LocalizedStringResource) {
+    self.init(
+      AttributedString(localized: heading), AttributedString(localized: message), tone: .status,
+      action: nil)
+  }
+
+  private init(
+    _ heading: AttributedString?, _ message: AttributedString, tone: Tone, action: Action?
+  ) {
+    self.heading = heading
     self.message = message
     self.tone = tone
     self.action = action
@@ -192,10 +203,25 @@ struct BarNote: View {
 
   /// What the bar reads politely as this note shows or changes; a failure reads itself at once.
   var politeLine: String? {
-    tone == .failure ? nil : String(message.characters)
+    guard tone != .failure else { return nil }
+    return [heading, message].compactMap { $0.map { String($0.characters) } }.joinedSentences()
   }
 
   var body: some View {
+    if let heading {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(heading)
+          .fontWeight(.semibold)
+        Text(message)
+          .foregroundStyle(.mutedForeground)
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+    } else {
+      line
+    }
+  }
+
+  private var line: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       switch tone {
       case .failure:
