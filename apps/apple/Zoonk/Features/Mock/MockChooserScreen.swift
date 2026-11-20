@@ -253,7 +253,7 @@ private struct MockChooser: View {
     }
 
     if isPreparing {
-      return BarNote(heading: MockPreparing.title, MockPreparing.line)
+      return BarNote(heading: MockPreparing.chooserTitle, MockPreparing.line)
     }
 
     return failure.map { BarNote($0) }
@@ -391,6 +391,11 @@ private struct MockChooser: View {
 
 enum MockPreparing {
   static let title = LocalizedStringResource("Your mock exam is being prepared", table: "Mock")
+  static let chooserTitle = LocalizedStringResource(
+    "This mock exam is being prepared", table: "Mock",
+    comment:
+      "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away."
+  )
   static let line = LocalizedStringResource("Come back to this page to start it.", table: "Mock")
   static let keepStudying = LocalizedStringResource("Keep studying", table: "Mock")
 }

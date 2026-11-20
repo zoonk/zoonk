@@ -27,13 +27,18 @@ struct TodaySessionSection: View {
   private var session: StudyDay { view.session }
 
   var body: some View {
+    let status = TodayDayStatus(view: view, writingStalled: writingStalled)
+
     Section {
       queue
 
-      if let status = TodayDayStatus(view: view, writingStalled: writingStalled) {
+      if let status {
         status
       }
     }
+    // Main's status line closes the day's list with a hairline, and opens a day with no list.
+    .listSectionSeparator(
+      status == nil ? .hidden : .visible, edges: session.blocks.isEmpty ? .all : .bottom)
   }
 
   @ViewBuilder
@@ -658,6 +663,7 @@ struct TodayDayStatus: View {
   }
 
   @Environment(AppRouter.self) private var router
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let view: TodayView
   private let sentence: String
@@ -760,15 +766,23 @@ struct TodayDayStatus: View {
     [sentence, clause].compactMap(\.self).joinedSentences()
   }
 
+  /// Main's `TodayStatusLine`: the sentence in medium, its clause muted after it on the same line.
+  private var words: AttributedString {
+    var lead = AttributedString(sentence)
+    lead.inlinePresentationIntent = .stronglyEmphasized
+
+    guard let clause else { return lead }
+
+    var rest = AttributedString(
+      String([sentence, clause].joinedSentences().dropFirst(sentence.count)))
+    rest.foregroundColor = .mutedForeground
+    return lead + rest
+  }
+
   var body: some View {
     Label {
       VStack(alignment: .leading, spacing: 2) {
-        Text(sentence)
-
-        if let clause {
-          Text(clause)
-            .foregroundStyle(.mutedForeground)
-        }
+        Text(words, strong: .medium, legibility: legibilityWeight)
 
         switch link {
         case .summary(let sessionID):
@@ -789,7 +803,7 @@ struct TodayDayStatus: View {
       Image(systemName: systemImage)
         .foregroundStyle(.mutedForeground)
     }
-    .typeStyle(.note)
+    .typeStyle(.body)
   }
 
 }

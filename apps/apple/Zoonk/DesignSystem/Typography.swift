@@ -115,8 +115,12 @@ extension TypeStyle {
 
   /// Geist Mono, whose figures are all one width.
   func monospaced() -> TypeStyle {
+    withFace(.mono)
+  }
+
+  func withFace(_ face: Face) -> TypeStyle {
     var style = self
-    style.face = .mono
+    style.face = face
     return style
   }
 
@@ -198,6 +202,12 @@ extension View {
   /// Sets the weight of this view's text in the role it inherits, so Bold Text still adds to it.
   func typeWeight(_ weight: Font.Weight) -> some View {
     modifier(TypeWeightModifier(weight: weight))
+  }
+
+  /// Sets the face of this view's text in the role it inherits, such as a state's words among
+  /// data; nil keeps the role's.
+  func typeFace(_ face: TypeStyle.Face?) -> some View {
+    modifier(TypeFaceModifier(face: face))
   }
 }
 
@@ -282,6 +292,21 @@ extension TypeStyle.Face {
 
   private static func lineHeight(of postScriptName: String) -> Double {
     (UIFont(name: postScriptName, size: 100)?.lineHeight ?? 121) / 100
+  }
+}
+
+private struct TypeFaceModifier: ViewModifier {
+  let face: TypeStyle.Face?
+
+  @Environment(\.typeStyle) private var style
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if let face {
+      content.typeStyle(style.withFace(face))
+    } else {
+      content
+    }
   }
 }
 

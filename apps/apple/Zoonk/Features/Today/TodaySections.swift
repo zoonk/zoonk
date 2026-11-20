@@ -766,7 +766,8 @@ private struct WeekDayMark: View {
     .accessibilityLabel(label(weekday: weekday))
     .popover(isPresented: $isShown, arrowEdge: .top) {
       TodayFactsPopover(
-        title: weekday.labelCased(), facts: time.map { [$0] }, factsStyle: Color(.foreground),
+        title: weekday.labelCased(), facts: time.map { [.init(text: $0)] },
+        factsStyle: Color(.foreground),
         note: note,
         challenge: challengeLine)
     }

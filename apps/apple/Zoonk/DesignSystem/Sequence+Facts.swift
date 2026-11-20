@@ -25,6 +25,8 @@ struct FactSegments: View {
     var unit: String?
     /// What VoiceOver says instead of the text and its unit.
     var spoken: String?
+    /// A face other than the line's, such as a state's words among data set in mono.
+    var face: TypeStyle.Face?
   }
 
   let facts: [Fact]
@@ -56,6 +58,7 @@ struct FactSegments: View {
           text(fact.compact ?? fact.text, color: fact.color, unit: fact.unit)
             .fixedSize(horizontal: false, vertical: true)
         }
+        .typeFace(fact.face)
       }
     }
     .accessibilityElement(children: .ignore)

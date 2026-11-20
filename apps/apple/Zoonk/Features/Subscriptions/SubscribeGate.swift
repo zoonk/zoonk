@@ -5,8 +5,13 @@ struct GateWords: View {
   var title: Text?
   var line: Text?
 
+  /// A wide bottom bar's note ends with its buttons.
+  @Environment(\.multilineTextAlignment) private var textAlignment
+
+  private var alignment: HorizontalAlignment { textAlignment == .trailing ? .trailing : .leading }
+
   var body: some View {
-    VStack(alignment: .leading, spacing: 2) {
+    VStack(alignment: alignment, spacing: 2) {
       if let title {
         title
           .typeStyle(.rowTitle)
@@ -20,7 +25,7 @@ struct GateWords: View {
       }
     }
     .fixedSize(horizontal: false, vertical: true)
-    .frame(maxWidth: .infinity, alignment: .leading)
+    .frame(maxWidth: .infinity, alignment: Alignment(horizontal: alignment, vertical: .center))
   }
 }
 

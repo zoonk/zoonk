@@ -5139,13 +5139,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Komm zurück auf diese Seite, um sie zu starten."
+            "value" : "Komm auf diese Seite zurück, um sie zu starten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve a esta página para iniciar el simulacro."
+            "value" : "Vuelve a esta página para empezarlo."
           }
         },
         "fr" : {
@@ -5163,7 +5163,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開始するには、このページに戻ってください。"
+            "value" : "このページに戻ると開始できます。"
           }
         },
         "ko" : {
@@ -5181,7 +5181,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volte a esta página para começar o simulado."
+            "value" : "Volte a esta página para começar."
           }
         },
         "tr" : {
@@ -12334,6 +12334,65 @@
         }
       }
     },
+    "This mock exam is being prepared" : {
+      "comment" : "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Probeprüfung wird vorbereitet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estamos preparando este simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet examen blanc est en cours de préparation"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando questa simulazione d’esame"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この模試を準備しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모의고사를 준비하고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy ten egzamin próbny"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este simulado está sendo preparado"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu deneme sınavı hazırlanıyor"
+          }
+        }
+      }
+    },
     "This mock exam shows how many you got right." : {
       "comment" : "What a mock of a relative exam shows",
       "localizations" : {
@@ -15053,7 +15112,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se está preparando tu simulacro"
+            "value" : "Estamos preparando tu simulacro"
           }
         },
         "fr" : {

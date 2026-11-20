@@ -5,7 +5,7 @@ import SwiftUI
 struct TodayFactsPopover: View {
   let title: String
   var kind: LearnKind?
-  let facts: [String]?
+  let facts: [FactSegments.Fact]?
   var factsStyle = Color.mutedForeground
   let note: String?
   /// The week's challenge on the day, under the rest.
@@ -29,7 +29,7 @@ struct TodayFactsPopover: View {
           .accessibilityAddTraits(.isHeader)
 
           if let facts {
-            FactSegments(facts)
+            FactSegments(facts: facts)
               .typeStyle(.data)
               .foregroundStyle(factsStyle)
           }
@@ -119,7 +119,7 @@ private struct DaySegmentButton: View {
     }
     .buttonStyle(.plain)
     .accessibilityLabel(segment.title)
-    .accessibilityValue(facts.joinedFacts())
+    .accessibilityValue(facts.map(\.text).joinedFacts())
     .background {
       // Points the popover at the bar rather than the taller control around it.
       Color.clear
@@ -132,7 +132,7 @@ private struct DaySegmentButton: View {
     }
   }
 
-  private var facts: [String] { segment.facts(gettingReady: gettingReady) }
+  private var facts: [FactSegments.Fact] { segment.facts(gettingReady: gettingReady) }
 }
 
 // Mirrors main's `today-segment-popover.tsx`.
@@ -167,33 +167,39 @@ extension DaySegment {
     }
   }
 
-  func facts(gettingReady: Bool) -> [String] {
+  /// Main's: a state is words, in the text face; a time or a count is data, in mono.
+  func facts(gettingReady: Bool) -> [FactSegments.Fact] {
+    func state(_ words: String) -> FactSegments.Fact { .init(text: words, face: .sans) }
+    func data(_ value: String) -> FactSegments.Fact { .init(text: value) }
+
     switch self {
     case .block(_, .done):
-      return [String(localized: "Done", table: "Today", comment: "A finished block")]
+      return [state(String(localized: "Done", table: "Today", comment: "A finished block"))]
     case .block(let block, _) where gettingReady:
       return [
-        String(localized: "Getting ready…", table: "Today"),
-        studyDuration(minutes: block.estimatedMinutes),
+        state(String(localized: "Getting ready…", table: "Today")),
+        data(studyDuration(minutes: block.estimatedMinutes)),
       ]
     case .block(let block, .ahead):
       return [
-        String(localized: "planned", table: "Today", comment: "A day's status").labelCased(),
-        studyDuration(minutes: block.estimatedMinutes),
+        state(
+          String(localized: "planned", table: "Today", comment: "A day's status").labelCased()),
+        data(studyDuration(minutes: block.estimatedMinutes)),
       ]
     case .block(let block, .current) where block.status == .active && block.answered > 0:
       return [
-        String(
-          localized: "\(block.answered) of \(block.questions) questions", table: "Today",
-          comment: "How far the learner is in the day's current block")
+        data(
+          String(
+            localized: "\(block.answered) of \(block.questions) questions", table: "Today",
+            comment: "How far the learner is in the day's current block"))
       ]
     case .block(let block, .current):
       return [
-        String(localized: "Up next", table: "Today", comment: "The day's next block"),
-        studyDuration(minutes: block.estimatedMinutes),
+        state(String(localized: "Up next", table: "Today", comment: "The day's next block")),
+        data(studyDuration(minutes: block.estimatedMinutes)),
       ]
     case .held(let minutes, _):
-      return [studyDuration(minutes: minutes)]
+      return [data(studyDuration(minutes: minutes))]
     }
   }
 

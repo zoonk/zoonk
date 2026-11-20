@@ -103,20 +103,14 @@ private struct BottomBar<Actions: View>: View {
     .scenePadding(.vertical)
     .background(ListMarginsReader { listMargins = $0 })
     .keepsOffFold()
-    // Main's bar: the page's background from its hairline to the screen's edge. The system's edge
-    // effect alone leaves a list's section header sharp under the buttons, drawn above it.
-    .background {
-      Color(.background)
-        .overlay(alignment: .top) {
-          if note == nil { Divider() }
-        }
-        .ignoresSafeArea(edges: .bottom)
-    }
+    .barBackdrop(hairline: note == nil)
     .floatingAbove {
       if let note {
+        // Main's note starts where the buttons do on a phone and ends with them on a wide bar.
         note
           .typeStyle(.body)
-          .frame(maxWidth: .infinity)
+          .multilineTextAlignment(isWide ? .trailing : .leading)
+          .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .leading)
           .barColumn(column, listMargins: listMargins, isTask: isTask)
           .padding(.top, 12)
           .padding(.bottom, 4)
@@ -130,6 +124,18 @@ private struct BottomBar<Actions: View>: View {
 }
 
 extension View {
+  /// Main's bar: the page's background from its hairline to the screen's edge. The system's edge
+  /// effect alone leaves a list's section header sharp under the buttons, drawn above it.
+  func barBackdrop(hairline: Bool = true) -> some View {
+    background {
+      Color(.background)
+        .overlay(alignment: .top) {
+          if hairline { Divider() }
+        }
+        .ignoresSafeArea(edges: .bottom)
+    }
+  }
+
   /// `content` over the screen, its bottom on this view's top edge, so this view never moves when
   /// it shows.
   func floatingAbove<Above: View>(@ViewBuilder _ content: () -> Above) -> some View {
@@ -244,7 +250,6 @@ struct BarNote: View {
         .disabled(!action.isEnabled)
       }
     }
-    .multilineTextAlignment(action == nil ? .center : .leading)
   }
 }
 
