@@ -14,6 +14,7 @@ export async function importAdjudication({ taskId, id, ...ruling }: ImportArgs) 
   });
 
   const comparison = await loadComparison(taskId, id);
+  const previous = comparison.adjudications.find((entry) => entry.caseId === adjudication.caseId);
 
   const item = caseVotes(comparison, acceptedReads(comparison)).find(
     (entry) => entry.caseId === adjudication.caseId,
@@ -36,5 +37,10 @@ export async function importAdjudication({ taskId, id, ...ruling }: ImportArgs) 
     `${hash(adjudication.caseId)}.json`,
   );
 
-  return writeRecord(file, adjudicationSchema, adjudication, true);
+  return writeRecord(
+    file,
+    adjudicationSchema,
+    { ...adjudication, recordedAt: previous ? previous.recordedAt : adjudication.recordedAt },
+    Boolean(previous),
+  );
 }

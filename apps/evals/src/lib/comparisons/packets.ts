@@ -8,6 +8,7 @@ import {
   type PacketOutput,
   type Reader,
   type SealedPacket,
+  adjudicationSchema,
   attemptSchema,
   blindOutputs,
   identifier,
@@ -307,6 +308,32 @@ type ImportArgs = {
 function ownerTimestamp(channel: Reader["channel"]) {
   return channel === "owner" ? new Date().toISOString() : undefined;
 }
+
+async function ownerPacketToRead({
+  dir,
+  manifest,
+  packetId,
+}: {
+  dir: string;
+  manifest: Manifest;
+  packetId: string;
+}) {
+  const packet = ownerPackets(manifest).find((entry) => entry.id === packetId);
+  const caseId = packet?.mapping[0]?.caseId;
+
+  if (!packet || !caseId) {
+    throw new Error("Unknown owner packet.");
+  }
+
+  if (
+    await readOptional(path.join(dir, "adjudications", `${hash(caseId)}.json`), adjudicationSchema)
+  ) {
+    throw new Error("The owner has already ruled on this case.");
+  }
+
+  return packet;
+}
+
 export async function saveResponse(args: ImportArgs, costUsd: number, channel: Reader["channel"]) {
   const dir = directory(args.taskId, args.id);
   const manifest = await readOptional(path.join(dir, "manifest.json"), manifestSchema);
@@ -326,7 +353,6 @@ export async function saveResponse(args: ImportArgs, costUsd: number, channel: R
   const owner = channel === "owner";
   const parsed = (owner ? ownerResponseSchema : responseSchema).safeParse(args.response);
   const response = parsed.success ? parsed.data : { verdicts: [] };
-  const packet = owner ? ownerPackets(manifest).find((entry) => entry.id === sealed.id) : sealed;
 
   if (
     parsed.success &&
@@ -337,9 +363,7 @@ export async function saveResponse(args: ImportArgs, costUsd: number, channel: R
     return previous;
   }
 
-  if (!packet) {
-    throw new Error("Unknown owner packet.");
-  }
+  const packet = owner ? await ownerPacketToRead({ dir, manifest, packetId: sealed.id }) : sealed;
 
   const failures = parsed.success
     ? gradePacket(packet, response)

@@ -28,14 +28,10 @@ async function getRead(params: ReadParams) {
     notFound();
   }
 
-  const passed = route.comparison.attempts
-    .filter((attempt) => attempt.packetId === packetId && attempt.passed)
-    .toSorted((left, right) => left.attempt.localeCompare(right.attempt))[0];
-
   return {
     ...route,
     packet: entry.packet,
-    passed: passed ?? null,
+    passed: entry.attempt,
     position: { index, total: owner.length },
   };
 }

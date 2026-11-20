@@ -163,11 +163,15 @@ export function packetCase(packet: SealedPacket): string {
 
 /** The owner reads each case once, blind, in the order the comparison sealed. */
 export function ownerReads(comparison: Comparison) {
-  return ownerPackets(comparison.manifest).map((packet) => ({
-    caseId: packetCase(packet),
-    packet,
-    read: comparison.attempts.some((attempt) => attempt.packetId === packet.id && attempt.passed),
-  }));
+  const reads = acceptedReads(comparison);
+
+  return ownerPackets(comparison.manifest).flatMap((packet) => {
+    const caseId = packetCase(packet);
+    const attempt = reads.find((read) => read.packet.id === packet.id)?.attempt ?? null;
+    const ruled = comparison.adjudications.some((entry) => entry.caseId === caseId);
+
+    return ruled && !attempt ? [] : [{ attempt, caseId, packet, read: attempt !== null }];
+  });
 }
 
 /** The next packet the owner hasn't read, preferring the given case. */

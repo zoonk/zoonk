@@ -17,15 +17,25 @@ export function acceptedReads(comparison: Comparison) {
       .filter((prior) => prior.packetId === packet.id && prior.passed)
       .toSorted((prior, next) => prior.attempt.localeCompare(next.attempt));
 
-    const attempt = attempts[0];
-
-    if (!attempt) {
-      return [];
-    }
-
     return packet.mapping
       .filter((mapping) => mapping.kind === "real")
       .flatMap((mapping) => {
+        const ruling =
+          packet.reader.channel === "owner"
+            ? comparison.adjudications.find((entry) => entry.caseId === mapping.caseId)
+            : undefined;
+
+        const attempt = ruling
+          ? attempts.find(
+              (entry) =>
+                entry.recordedAt && ruling.recordedAt && entry.recordedAt < ruling.recordedAt,
+            )
+          : attempts[0];
+
+        if (!attempt) {
+          return [];
+        }
+
         const verdict = attempt.response.verdicts.find((vote) => vote.pairId === mapping.pairId);
 
         if (!verdict) {
