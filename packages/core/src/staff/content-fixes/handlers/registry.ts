@@ -1,6 +1,6 @@
 import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { type Json, type Resolution, refuse } from "../_utils/resolved-change";
+import { type Resolution, refuse } from "../_utils/resolved-change";
 import { organizationSet, productReleaseSet, productSet } from "./brand-rows";
 import { courseCategories } from "./course-categories";
 import { blueprintSet, cutoffSet, weightsSet } from "./exam-facts";
@@ -99,7 +99,7 @@ export const FIX_HANDLERS = [
 /** What `pnpm zoonk staff models` tells an agent it may propose for each model. */
 export const FIXABLE_MODELS: ReadonlyMap<
   string,
-  { example?: Json; fields: readonly string[]; operation: string; rules: string }[]
+  (NonNullable<FixHandler["proposal"]> & { operation: string })[]
 > = new Map(
   [...new Set(FIX_HANDLERS.map((handler) => handler.model))].map((model) => [
     model,
