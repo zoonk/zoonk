@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
@@ -20,6 +21,17 @@ async function writtenSitting({ expired }: { expired: boolean }) {
   ]);
 
   const startedAt = new Date(Date.now() - (expired ? 120_000 : 0));
+
+  // A written test admits its grading when it starts, so the sitting carries that receipt.
+  const admission = await prisma.writingAdmission.create({
+    data: {
+      extra: false,
+      id: randomUUID(),
+      itemIds: [essay.id],
+      localDate: new Date(startedAt.toISOString().slice(0, 10)),
+      userId: user.id,
+    },
+  });
 
   const mock = await prisma.mockExam.create({
     data: {
@@ -60,6 +72,7 @@ async function writtenSitting({ expired }: { expired: boolean }) {
         startTime: null,
         timeZone: null,
         timedOutSections: [],
+        writingAdmissionId: admission.id,
         wrongPenalty: 1,
       },
       goalId: goal.id,

@@ -7,7 +7,7 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
-import { AREAS, WRITTEN_ESSAY, getStructure } from "./anytime-mock-exams";
+import { AREAS, getStructure, writtenEssayContent } from "./anytime-mock-exams";
 
 const SHORT_ID_LENGTH = 6;
 const LOWERCASE_A_CODE_POINT = 97;
@@ -104,7 +104,7 @@ export async function createAnytimeMockLearner({
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     written
       ? itemFixture({
-          content: WRITTEN_ESSAY,
+          content: writtenEssayContent(skills[0]?.id ?? ""),
           examBlueprintId: blueprint.id,
           format: "essay",
           skillId: skills[0]?.id ?? "",

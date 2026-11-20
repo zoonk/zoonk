@@ -48,9 +48,9 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await page.goto("/mock/new");
 
-    const exam = page.getByRole("radiogroup", { name: "The exam" });
-    await exam.getByText("The full exam", { exact: true }).click();
-    await expect(exam.getByRole("radio", { name: /^The full exam/u })).toBeChecked();
+    const exam = page.getByRole("radiogroup", { name: "Your exam has 2 tests" });
+    await exam.getByText("Both tests", { exact: true }).click();
+    await expect(exam.getByRole("radio", { name: /^Both tests/u })).toBeChecked();
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
 
@@ -67,7 +67,7 @@ test.describe("Mocks whenever the learner wants", () => {
     const answer = page.getByLabel("Your answer");
 
     await answer.fill(essayText);
-    await expect(page.getByText(/^\d+ words$/u)).toBeVisible();
+    await expect(page.getByText(/^about \d+ of 30 lines$/u)).toBeVisible();
 
     const resumeGrading = await failEssayGrading(page);
 
@@ -101,26 +101,39 @@ test.describe("Mocks whenever the learner wants", () => {
       where: { examBlueprintId: goal.examBlueprintId, format: "essay" },
     });
 
+    const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { id: mockId } });
+    const conditions = sitting.conditions as { writingAdmissionId?: string };
+
     await prisma.attempt.create({
       data: {
         answer: {
+          conditions: {
+            admissionId: conditions.writingAdmissionId ?? "",
+            estimatedLines: 4,
+            origin: "mock",
+            timed: true,
+            version: "firstDraft",
+          },
           grade: {
             criteria: [
               {
                 comment: "Clear thesis.",
-                example: null,
-                id: "criterion-1",
-                maxScore: 10,
+                id: "thesis",
+                level: "strong",
                 name: "Thesis",
                 quote: null,
-                score: 7,
               },
             ],
-            enemInterventionElements: null,
-            nextStep: { criterionId: "criterion-1", text: "Back the thesis with the law." },
-            range: { high: 8, low: 6 },
-            total: { maxScore: 10, score: 7 },
-            zeroReason: null,
+            errors: [],
+            ignoredFrom: null,
+            kind: "levels",
+            nextStep: {
+              criterionId: "thesis",
+              example: null,
+              quote: null,
+              text: "Back the thesis with the law.",
+            },
+            progress: null,
           },
           text: essayText,
         },
@@ -137,11 +150,9 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await page.reload();
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1/u })).toBeVisible();
-    await continueToStep(page, /^Your answer/u);
+    await continueToStep(page, "Thesis");
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: /^Your answer\s*6–8$/u }),
-    ).toBeVisible();
+    await expect(page.getByText("Back the thesis with the law.")).toBeVisible();
   });
 
   test("keeps the mock action bar in place, with no empty row, when an answer fails to save", async ({
