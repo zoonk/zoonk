@@ -339,6 +339,81 @@ describe("publishing one reviewed lesson screen version", () => {
     await expect(current(lesson.id)).resolves.toHaveLength(2);
   });
 
+  it.each(["LessonWord", "LessonSentence"] as const)(
+    "keeps a newer screen-list translation when reverting a %s fix",
+    async (model) => {
+      const { lesson, sentence, steps, word } = await languageLessonFixture();
+      const wordChange = model === "LessonWord";
+
+      const { fix } = await apply([
+        {
+          id: wordChange
+            ? { lessonId: lesson.id, wordId: word.id }
+            : { lessonId: lesson.id, sentenceId: sentence.id },
+          model,
+          set: { translation: "Primeira correção" },
+        },
+      ]);
+
+      const translation = "Correção mais recente";
+
+      const { key } = await apply([
+        change(
+          lesson.id,
+          steps.map(({ id }) => ({ id })),
+          wordChange
+            ? { words: [{ id: word.id, translation }] }
+            : { sentences: [{ id: sentence.id, otherTranslationOrders: [], translation }] },
+        ),
+      ]);
+
+      const inverse = await revertInAdmin({ fixId: fix.id, reason: "Undo the first correction" });
+
+      if (inverse.status !== "proposed") {
+        throw new Error(JSON.stringify(inverse));
+      }
+
+      await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
+        fix: { status: "stale" },
+      });
+
+      const row = wordChange
+        ? await prisma.lessonWord.findFirstOrThrow({ where: { lessonId: lesson.id } })
+        : await prisma.lessonSentence.findFirstOrThrow({ where: { lessonId: lesson.id } });
+
+      expect(row.translation).toBe(translation);
+    },
+  );
+
+  it("refuses to restore a screen list after a newer lesson word correction", async () => {
+    const { lesson, steps, word } = await languageLessonFixture();
+
+    const { fix } = await apply([
+      change(
+        lesson.id,
+        steps.map(({ id }) => ({ id })),
+        { words: [{ id: word.id, translation: "Primeira correção" }] },
+      ),
+    ]);
+
+    const translation = "Correção mais recente";
+
+    await apply([
+      { id: { lessonId: lesson.id, wordId: word.id }, model: "LessonWord", set: { translation } },
+    ]);
+
+    await expect(
+      revertInAdmin({ fixId: fix.id, reason: "Restore the original screen list" }),
+    ).resolves.toMatchObject({
+      message: expect.stringContaining("the lesson changed after approval"),
+      status: "invalid",
+    });
+
+    await expect(
+      prisma.lessonWord.findFirstOrThrow({ where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject({ translation });
+  });
+
   it("publishes two Vietnamese tones with their recordings, translations and existing map ideas", async () => {
     const { lesson, steps, word, sentence } = await languageLessonFixture({
       language: "en",

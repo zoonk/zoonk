@@ -20,20 +20,9 @@ export async function changedSince(
 ): Promise<boolean> {
   const targets = keysOf(stored);
 
-  const rows = new Map(
-    stored.flatMap((change) => targetsOf(change).map((row) => [`${row.model}:${row.id}`, row])),
-  );
-
   const later = await tx.contentFix.findMany({
     select: { changes: true },
-    where: {
-      OR: [...rows.values()].map(({ id, model }) => ({
-        changes: { array_contains: [{ id, model }] },
-      })),
-      decidedAt: { gt: since },
-      id: { not: fixId },
-      status: "applied",
-    },
+    where: { decidedAt: { gt: since }, id: { not: fixId }, status: "applied" },
   });
 
   return later.some((fix) =>
