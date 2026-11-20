@@ -752,6 +752,29 @@ describe(listSessionPreparation, () => {
     });
   });
 
+  it("asks again for a guest's first lesson whose writing failed, before any session", async () => {
+    const guest = await userFixture();
+
+    const [goal, failed] = await Promise.all([
+      goalFixture({ userId: guest.id }),
+      libraryLessonFixture({ contentStatus: "failed" }),
+      prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } }),
+    ]);
+
+    const plan = await planFixture({ goalId: goal.id });
+
+    await planItemFixture({
+      lessonId: failed.id,
+      planId: plan.id,
+      position: 0,
+      scheduledFor: null,
+    });
+
+    await expect(
+      listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: guest.id }),
+    ).resolves.toMatchObject({ lessonIds: [failed.id] });
+  });
+
   it("prepares nothing for a paused goal", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ status: "paused", userId: user.id });

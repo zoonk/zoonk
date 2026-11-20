@@ -300,7 +300,10 @@ export async function listSessionPreparation({
   const { inSession, open } = listTodayTargets({ guest, planned, session, today: today.getTime() });
   const todayTargets = open.slice(0, guest ? 1 : 1 + lookahead.lessonsAhead);
   const todayWindow = getWritableWindow(todayTargets);
-  const guestSessionLessonId = guest ? todayWindow.find((id) => inSession.has(id)) : undefined;
+  const [guestLessonId] = guest ? todayWindow : [];
+
+  const guestSessionLessonId =
+    guestLessonId && inSession.has(guestLessonId) ? guestLessonId : undefined;
 
   const upcoming = planned.filter((item) => !item.lessonId || !inSession.has(item.lessonId));
 
@@ -333,10 +336,8 @@ export async function listSessionPreparation({
   const plannedLessonIds = [...soon, ...later];
   const states = await getLessonGenerationStates(plannedLessonIds);
 
-  // The request for a queued lesson can also recover an abandoned generation run.
-  const lessonIds = guestSessionLessonId
-    ? [guestSessionLessonId]
-    : filterUnwritten({ lessonIds: soon, states });
+  // A guest's next lesson goes through its request, which can also retry a failed or abandoned run.
+  const lessonIds = guestLessonId ? [guestLessonId] : filterUnwritten({ lessonIds: soon, states });
 
   return {
     dates: { nextDay, today: today.getTime() },
