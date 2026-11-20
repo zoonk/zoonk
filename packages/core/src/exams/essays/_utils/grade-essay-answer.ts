@@ -30,7 +30,7 @@ export async function gradeWriting({
   language: string;
   previousNextSteps: readonly string[];
   text: string;
-}): Promise<WritingResult> {
+}): Promise<WritingResult & { estimatedLines: number }> {
   const basis = content.writing;
 
   const { estimatedLines, ignoredFrom } = countWritingLines({
@@ -86,7 +86,9 @@ export async function gradeWriting({
       feedback,
     });
 
-    return result.kind === "points" && result.zeroReason ? result : { ...feedback, kind: "levels" };
+    return result.kind === "points" && result.zeroReason
+      ? { ...result, estimatedLines }
+      : { ...feedback, estimatedLines, kind: "levels" };
   }
 
   const { data: evidence, provenance } = await gradeWritingEvidence({
@@ -113,7 +115,7 @@ export async function gradeWriting({
     previousNextSteps,
   });
 
-  return applyWritingArithmetic({
+  const grade = applyWritingArithmetic({
     arithmetic: getWritingArithmetic(basis, provenance),
     basis,
     context: content.context,
@@ -122,7 +124,11 @@ export async function gradeWriting({
     evidence,
     feedback,
   });
+
+  return { ...grade, estimatedLines };
 }
+
+export type EssayGradeConditions = Omit<WritingConditions, "estimatedLines">;
 
 type RecordGrade = {
   durationMs: number;
@@ -133,7 +139,10 @@ type RecordGrade = {
   userId: string;
 } & { activeBlockId?: string; mockExamId?: string };
 
-type AdmittedGrade = RecordGrade & { conditions: WritingConditions; grade: WritingResult };
+type AdmittedGrade = RecordGrade & {
+  conditions: EssayGradeConditions;
+  grade: Awaited<ReturnType<typeof gradeWriting>>;
+};
 
 async function confirmAdmission(
   tx: TransactionClient,
@@ -201,13 +210,7 @@ export function recordEssayGrade(
     throw new Error("The writing grade is incompatible with its scoring basis.");
   }
 
-  const { estimatedLines } = countWritingLines({
-    charactersPerLine: basis.charactersPerLine,
-    limit: basis.lines,
-    text,
-  });
-
-  const writtenConditions = { ...conditions, estimatedLines };
+  const writtenConditions = { ...conditions, estimatedLines: grade.estimatedLines };
 
   const share =
     grade.kind === "points" ? (grade.total.low + grade.total.high) / 2 / grade.max : null;

@@ -11,9 +11,10 @@ import { ENEM_WRITING_MAX, hasEnemCompetences } from "../../exams/essays/_utils/
 import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { getWritingTaskBasis } from "../../exams/essays/_utils/writing-task-basis";
 import { getNamedEssayRubric } from "../../exams/essays/essay-rubric";
-import { writtenItemSchema } from "../../exams/essays/writing-contract";
+import { type WritingPrompt, writtenItemSchema } from "../../exams/essays/writing-contract";
 import { WRITING_CHARACTERS_PER_LINE } from "../../exams/essays/writing-lines";
 import { type WritingRequest, findWritingPrompts } from "../../exams/essays/writing-supply";
+import { getWrittenPartMinimum } from "../../exams/scoring/written-points";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getWritingSkillIds } from "../../learner/writing-skills";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
@@ -125,6 +126,7 @@ function getSectionTopics(
 export function promptContent({
   data,
   input,
+  partMinimum,
   skills,
   task,
   issuedTask = task,
@@ -132,6 +134,7 @@ export function promptContent({
   data: WritingPromptOutput;
   issuedTask?: Task;
   input: WritingSupplyInput;
+  partMinimum?: WritingPrompt["partMinimum"];
   skills: { id: string; name: string }[];
   task: Task;
 }) {
@@ -176,6 +179,7 @@ export function promptContent({
           classTest: !task.minutes && task.key === "class-short-answer",
           lines: task.lines,
         }),
+    ...(!drill && partMinimum && { partMinimum }),
     points: drill ? null : issuedTask.points,
     ...((drill || task !== issuedTask) && { taskBasis: getWritingTaskBasis(task) }),
     taskKey: task.key,
@@ -305,7 +309,15 @@ export async function writeWritingItem(input: WritingSupplyInput, itemId: string
     wait: input.wait ?? "learner",
   });
 
-  const content = promptContent({ data, input, issuedTask, skills, task });
+  const content = promptContent({
+    data,
+    input,
+    issuedTask,
+    partMinimum: getWrittenPartMinimum({ structure, taskKey: task.key }),
+    skills,
+    task,
+  });
+
   const [skillId] = content.writing.assessedSkillIds;
 
   if (!skillId) {

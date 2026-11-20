@@ -1,4 +1,5 @@
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
+import { type WritingPromptStepName } from "@zoonk/core/library/generation/steps";
 import {
   type WritingSupplyInput,
   getWritingPromptId,
@@ -52,7 +53,11 @@ export async function writingPromptWorkflow(input: WritingSupplyInput) {
     const { count, status } = await admitPromptWorkStep(input, workflowRunId);
 
     if (status !== "writing") {
-      await progressStep({ status: "completed", step: status }, { last: true });
+      await progressStep<WritingPromptStepName>(
+        { status: "completed", step: status },
+        { last: true },
+      );
+
       return { status };
     }
 
@@ -61,12 +66,16 @@ export async function writingPromptWorkflow(input: WritingSupplyInput) {
       await writePromptStep(input, workflowRunId, slot);
     }
 
-    await progressStep({ status: "completed", step: "writeWritingPrompt" }, { last: true });
+    await progressStep<WritingPromptStepName>(
+      { status: "completed", step: "writeWritingPrompt" },
+      { last: true },
+    );
+
     return { status: "ready" as const };
   } catch (error) {
     await trackFailureStep();
 
-    await progressStep(
+    await progressStep<WritingPromptStepName>(
       { reason: "aiGenerationFailed", status: "error", step: "writeWritingPrompt" },
       { last: true },
     );

@@ -86,3 +86,17 @@ export function scoreWrittenParts({
     };
   });
 }
+
+export function getWrittenPartMinimum({
+  structure,
+  taskKey,
+}: {
+  structure: ExamStructure | null;
+  taskKey: string;
+}) {
+  const part = scoreWrittenParts({ rangeForTask: () => null, structure }).find(({ tasks }) =>
+    tasks.some(({ key }) => key === taskKey),
+  );
+
+  return part?.minimum ? { max: part.max, minimum: part.minimum } : undefined;
+}

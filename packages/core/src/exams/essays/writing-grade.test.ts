@@ -422,9 +422,10 @@ describe(recordEssayGrade, () => {
       status: "active",
     });
 
-    const grade: WritingResult = {
+    const grade: WritingResult & { estimatedLines: number } = {
       criteria: [],
       errors: [],
+      estimatedLines: 4,
       ignoredFrom: null,
       kind: "levels",
       nextStep: null,

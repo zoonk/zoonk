@@ -1,6 +1,6 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { writingRangeSchema } from "../exams/essays/writing-contract";
+import { writingAvailabilitySchema, writingRangeSchema } from "../exams/essays/writing-contract";
 import { writtenPartPointsSchema } from "../exams/scoring/written-points-contract";
 import { WRITTEN_CADENCES } from "./planner/plan-state";
 
@@ -9,6 +9,7 @@ const writtenSubjectSchema = z.object({
     z.object({
       attemptId: uuidSchema(),
       date: z.iso.date(),
+      estimatedLines: z.int().nonnegative().optional(),
       lines: z.int().positive().nullable(),
       range: writingRangeSchema.nullable(),
       taskKey: z.string(),
@@ -28,6 +29,17 @@ const writtenSubjectSchema = z.object({
       presentationShare: z.number().min(0).max(1).nullable(),
     }),
   ),
+  writeActions: z
+    .array(
+      z.object({
+        availability: writingAvailabilitySchema,
+        blockId: uuidSchema()
+          .optional()
+          .describe("An unfinished extra writing block for this task"),
+        taskKey: z.string(),
+      }),
+    )
+    .optional(),
 });
 
 export const writtenPracticeSchema = z

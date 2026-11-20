@@ -6,16 +6,16 @@ import { getBlockElapsedMs } from "../../sessions/_utils/block-timing";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { claimEssayGrades, releaseEssayGradeClaims } from "./_utils/essay-grade-claims";
-import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
+import {
+  type EssayGradeConditions,
+  gradeWriting,
+  recordEssayGrade,
+} from "./_utils/grade-essay-answer";
 import { findOwnedEssay } from "./_utils/owned-essay";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { type EssaySubmissionInput } from "./essay-contract";
 import { getWritingAdmissionId } from "./writing-admission";
-import {
-  type WritingConditions,
-  type WritingResult,
-  writtenAnswerSchema,
-} from "./writing-contract";
+import { type WritingResult, writtenAnswerSchema } from "./writing-contract";
 
 export type SubmitEssayResult =
   | { grade: WritingResult; status: "writingGraded" }
@@ -86,7 +86,6 @@ export async function submitEssay({
     return await gradeAdmittedEssay({
       conditions: {
         admissionId,
-        estimatedLines: 0,
         origin: "block",
         timed: false,
         version: rewrite ? "rewrite" : "firstDraft",
@@ -106,7 +105,7 @@ async function gradeAdmittedEssay({
   owned,
   timeZone,
 }: {
-  conditions: WritingConditions;
+  conditions: EssayGradeConditions;
   input: EssaySubmissionInput;
   owned: Extract<Awaited<ReturnType<typeof findOwnedEssay>>, { status: "ready" }>["owned"];
   timeZone: string;

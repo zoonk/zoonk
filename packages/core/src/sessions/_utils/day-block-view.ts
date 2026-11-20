@@ -60,7 +60,10 @@ function getWritingAvailability({
   }
 
   return {
-    status: payload.writing.admissionId && block.status === "active" ? "continue" : "available",
+    status:
+      payload.writing.admissionId && (block.status === "active" || block.status === "pending")
+        ? "continue"
+        : "available",
   };
 }
 

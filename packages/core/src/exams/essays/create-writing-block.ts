@@ -1,11 +1,13 @@
 import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getLearnerModelCacheTag } from "../../cache/tags";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { appendExtraBlocks, withSessionAppendLock } from "../../sessions/_utils/extra-blocks";
 import { findStudySessionFor } from "../../sessions/_utils/study-session-access";
-import { readBlockPayload } from "../../sessions/block-payload";
 import { openStudyDay } from "../../sessions/open-study-day";
+import { unfinishedExtraWritingWhere } from "./_utils/extra-writing-blocks";
 import { loadSessionProduce } from "./_utils/load-produce";
 import { toProduceBlock } from "./produce-block";
 
@@ -51,26 +53,21 @@ export async function createWritingBlock({
     return saved;
   }
 
-  return withSessionAppendLock({
+  const result = await withSessionAppendLock({
     run: async ({ session, transaction }) => {
       if (session.userId !== userId) {
         return { status: "notFound" as const };
       }
 
       const unfinished = await transaction.studySessionBlock.findFirst({
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         where: {
-          AND: [
-            { payload: { equals: true, path: ["extra"] } },
-            { payload: { equals: produce.taskKey, path: ["writing", "taskKey"] } },
-          ],
-          kind: "produce",
-          session: { goalId, userId },
-          status: { in: ["active", "pending"] },
+          ...unfinishedExtraWritingWhere({ goalId, userId }),
+          payload: { equals: produce.taskKey, path: ["writing", "taskKey"] },
         },
       });
 
-      if (unfinished && readBlockPayload(unfinished).writing?.unit === "answer") {
+      if (unfinished) {
         return { blockId: unfinished.id, status: "ready" as const };
       }
 
@@ -82,8 +79,18 @@ export async function createWritingBlock({
         transaction,
       });
 
-      return { blockId: created.id, status: "ready" as const };
+      return { blockId: created.id, created: true, status: "ready" as const };
     },
     session: saved.session,
   });
+
+  if (result.status !== "ready") {
+    return result;
+  }
+
+  if (result.created) {
+    revalidateCacheTags([getLearnerModelCacheTag(userId)]);
+  }
+
+  return { blockId: result.blockId, status: "ready" as const };
 }

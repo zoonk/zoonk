@@ -82,7 +82,6 @@ async function gradeEssays({
         ...common,
         conditions: {
           admissionId,
-          estimatedLines: 0,
           origin: "mock" as const,
           timed: true,
           version: "firstDraft" as const,

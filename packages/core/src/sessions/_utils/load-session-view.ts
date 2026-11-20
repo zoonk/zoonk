@@ -1,12 +1,13 @@
-import { type ExamBlueprint, prisma } from "@zoonk/db";
+import { type ExamBlueprint } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-challenge-access";
 import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import "server-only";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
-import { readWritingExtraLimit } from "../../exams/essays/writing-admission";
+import { readExtraWritingLimit } from "../../learner/facts/extra-writing";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { readBlockPayload } from "../block-payload";
@@ -112,9 +113,7 @@ async function loadExtraWritingAvailability({
   );
 
   const limit =
-    extraWriting.size > 0
-      ? await readWritingExtraLimit({ localDate: today, tx: prisma, userId })
-      : null;
+    extraWriting.size > 0 ? await readExtraWritingLimit(userId, toIsoDate(today)) : null;
 
   return (block: StudyBlockView): StudyBlockView =>
     limit && extraWriting.has(block.id)
