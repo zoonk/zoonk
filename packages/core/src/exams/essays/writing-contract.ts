@@ -2,8 +2,6 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { writtenGradingSchema } from "../../library/exams/written-grading";
 
-export const MAX_ESSAY_CHARACTERS = 48_000;
-
 const taskKey = z.string().min(1);
 const lines = z.int().positive().nullable();
 const points = z.number().positive().nullable();
@@ -30,11 +28,7 @@ export const writtenItemSchema = writingPromptSchema.extend({
 });
 
 export const writingDraftSchema = z
-  .object({
-    admissionId: uuidSchema(),
-    revision: z.int().nonnegative(),
-    text: z.string().max(MAX_ESSAY_CHARACTERS),
-  })
+  .object({ admissionId: uuidSchema(), revision: z.int().nonnegative(), text: z.string() })
   .meta({ id: "WritingDraft" });
 
 export const saveWritingDraftSchema = writingDraftSchema.strict().meta({ id: "SaveWritingDraft" });
@@ -70,7 +64,7 @@ export const writingBlockSchema = z.object({
   unit,
 });
 
-export const writingConditionsSchema = z.object({
+const writingConditionsSchema = z.object({
   admissionId: uuidSchema(),
   estimatedLines: z.int().nonnegative(),
   origin: z.enum(["block", "mock"]),
@@ -147,3 +141,5 @@ export type WritingPacing = z.infer<typeof writingPacingSchema>;
 
 export type WritingConditions = z.infer<typeof writingConditionsSchema>;
 export type WritingResult = z.infer<typeof writingResultSchema>;
+
+export const writingBlockInputSchema = z.strictObject({ taskKey: z.string().min(1).optional() });

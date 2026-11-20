@@ -1,129 +1,154 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { getItemAudienceFilter } from "../../../library/items/item-field";
+import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
+import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 import { daysBetween, fromIsoDate } from "../../../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../../../plans/planner/plan-state";
-import {
-  type WrittenSchedule,
-  getDaysBetweenEssays,
-  isWrittenDay,
-} from "../../../plans/planner/written-cadence";
-import { type PlannedProduce, getEssayMinutes } from "../produce-block";
+import { getDaysBetweenEssays, isWrittenDay } from "../../../plans/planner/written-cadence";
+import { type PlannedProduce } from "../produce-block";
+import { writtenAnswerSchema } from "../writing-contract";
+import { listPracticeWritingTasks } from "./practice-writing-tasks";
 
-function getWrittenSchedule({
-  planSettings,
-  targetDate,
-  today,
-}: {
-  planSettings: unknown;
-  targetDate: Date | null;
-  today: Date;
-}): WrittenSchedule {
-  const settings = parsePlanSettings(planSettings);
+const MS_PER_MINUTE = 60_000;
+const SHARED_CLOCK_PRACTICE_MINUTES = 45;
+const CLASS_TEST_PRACTICE_MINUTES = 8;
 
-  return {
-    cadence: settings.writtenCadence,
-    planStart: settings.startDate ? fromIsoDate(settings.startDate) : today,
-    targetDate,
-  };
-}
+type Task = ReturnType<typeof listWrittenTasks>[number];
 
-async function wroteRecently({
-  itemIds,
-  schedule,
-  today,
-  userId,
-}: {
-  itemIds: string[];
-  schedule: WrittenSchedule;
-  today: Date;
-  userId: string;
-}): Promise<{ recent: boolean; written: Map<string, Date> }> {
-  const attempts = await prisma.attempt.findMany({
-    orderBy: { answeredAt: "desc" },
-    select: { answeredAt: true, itemId: true, localDate: true },
-    where: { itemId: { in: itemIds }, userId },
-  });
+function getEstimatedMinutes(task: Task, tasks: Task[], privateExam: boolean): number {
+  if (!task.minutes || task.minutes <= 0) {
+    return privateExam ? CLASS_TEST_PRACTICE_MINUTES : SHARED_CLOCK_PRACTICE_MINUTES;
+  }
 
-  const last = attempts[0]?.localDate;
-  const since = last ? daysBetween(last, today) : null;
+  const sectionTasks = tasks.filter(({ section }) => section === task.section);
+  const useLines = sectionTasks.every(({ lines }) => lines !== null);
+  const weight = (entry: Task) => (useLines ? (entry.lines ?? 1) : 1);
+  const total = sectionTasks.reduce((sum, entry) => sum + weight(entry) * entry.count, 0);
 
-  const written = new Map(
-    attempts
-      .toReversed()
-      .flatMap((attempt) =>
-        attempt.itemId ? [[attempt.itemId, attempt.answeredAt] as const] : [],
-      ),
-  );
-
-  return { recent: since !== null && since < getDaysBetweenEssays(schedule), written };
+  return Math.max(1, Math.round((task.minutes * weight(task)) / total));
 }
 
 export async function loadSessionProduce({
   goal,
+  onDemand = false,
   planSettings,
-  skillIds,
-  structure,
+  taskKey,
   today,
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "kind" | "targetDate">;
+  onDemand?: boolean;
   planSettings: unknown;
-  skillIds: readonly string[];
-  structure: ExamStructure | null;
+  taskKey?: string;
   today: Date;
   userId: string;
 }): Promise<PlannedProduce | null> {
-  const schedule = getWrittenSchedule({ planSettings, targetDate: goal.targetDate, today });
-
-  if (goal.kind !== "exam" || !isWrittenDay({ ...schedule, date: today })) {
+  if (goal.kind !== "exam" || !goal.examBlueprintId) {
     return null;
   }
 
-  const [items, blueprint] = await Promise.all([
-    prisma.item.findMany({
-      include: { skill: { select: { name: true } } },
-      orderBy: { id: "asc" },
-      where: {
-        format: "essay",
-        skillId: { in: [...skillIds] },
-        ...getItemAudienceFilter({ examBlueprintId: goal.examBlueprintId }),
-      },
-    }),
-    goal.examBlueprintId
-      ? prisma.examBlueprint.findUnique({
-          select: { ownerId: true },
-          where: { id: goal.examBlueprintId },
-        })
-      : null,
-  ]);
+  const blueprint = await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } });
 
-  const hasEssay =
-    (structure?.formats.some((format) => format.kind === "essay") ?? false) ||
-    items.some(
-      (item) => item.examBlueprintId !== null && item.examBlueprintId === goal.examBlueprintId,
-    );
-
-  if (!hasEssay) {
+  if (!blueprint || (blueprint.ownerId !== userId && blueprint.visibility !== "public")) {
     return null;
   }
 
-  const { recent, written } = await wroteRecently({
-    itemIds: items.map((item) => item.id),
-    schedule,
-    today,
-    userId,
+  const tasks = listPracticeWritingTasks({
+    classTest: Boolean(blueprint.ownerId),
+    structure: readBlueprintContent(blueprint).structure,
   });
 
-  const [item] = (recent ? [] : items).toSorted(
-    (first, second) =>
-      Number(second.examBlueprintId === goal.examBlueprintId) -
-        Number(first.examBlueprintId === goal.examBlueprintId) ||
-      (written.get(first.id)?.getTime() ?? 0) - (written.get(second.id)?.getTime() ?? 0),
+  if (tasks.length === 0) {
+    return null;
+  }
+
+  const samples = await prisma.attempt.findMany({
+    orderBy: { answeredAt: "desc" },
+    select: {
+      answer: true,
+      durationMs: true,
+      item: { select: { content: true } },
+      localDate: true,
+    },
+    where: {
+      item: {
+        content: { equals: "answer", path: ["writing", "unit"] },
+        examBlueprintId: blueprint.id,
+        format: "essay",
+      },
+      userId,
+    },
+  });
+
+  const independent = samples.filter(
+    ({ answer }) => writtenAnswerSchema.safeParse(answer).data?.conditions.version === "firstDraft",
   );
 
-  const minutes = getEssayMinutes({ classTest: Boolean(blueprint?.ownerId) });
+  const settings = parsePlanSettings(planSettings);
 
-  return item ? { itemId: item.id, minutes, skillId: item.skillId, title: item.skill.name } : null;
+  const schedule = {
+    cadence: settings.writtenCadence,
+    planStart: settings.startDate ? fromIsoDate(settings.startDate) : today,
+    targetDate: goal.targetDate,
+  };
+
+  const latest = independent[0]?.localDate;
+
+  if (
+    !onDemand &&
+    taskKey === undefined &&
+    latest &&
+    (!isWrittenDay({ ...schedule, date: today }) ||
+      daysBetween(latest, today) < getDaysBetweenEssays(schedule))
+  ) {
+    return null;
+  }
+
+  const ranked = tasks.map((task) => {
+    const history = independent.filter(
+      ({ item }) =>
+        typeof item?.content === "object" &&
+        item.content !== null &&
+        "writing" in item.content &&
+        typeof item.content.writing === "object" &&
+        item.content.writing !== null &&
+        "taskKey" in item.content.writing &&
+        item.content.writing.taskKey === task.key,
+    );
+
+    const durations = history
+      .map(({ durationMs }) => durationMs)
+      .filter((duration) => duration > 0)
+      .toSorted((first, second) => first - second);
+
+    const middle = Math.floor(durations.length / 2);
+
+    const median =
+      durations.length % 2 === 0
+        ? ((durations[middle - 1] ?? 0) + (durations[middle] ?? 0)) / 2
+        : (durations[middle] ?? 0);
+
+    const pacing = task.minutes ? ("estimated" as const) : ("practice" as const);
+
+    return {
+      last: history[0]?.localDate.getTime() ?? 0,
+      minutes:
+        median > 0
+          ? Math.max(1, Math.round(median / MS_PER_MINUTE))
+          : getEstimatedMinutes(task, tasks, Boolean(blueprint.ownerId)),
+      pacing: median > 0 ? ("personal" as const) : pacing,
+      placement: independent.length === 0 && !onDemand,
+      taskKey: task.key,
+      title: task.description,
+      unit: "answer" as const,
+    };
+  });
+
+  const ordered = ranked.toSorted(
+    (first, second) => first.last - second.last || first.minutes - second.minutes,
+  );
+
+  return (
+    (taskKey === undefined ? ordered[0] : ordered.find((task) => task.taskKey === taskKey)) ?? null
+  );
 }

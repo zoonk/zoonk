@@ -6,6 +6,7 @@ import { isRecord, parseJson } from "./http.ts";
 import { type Note, proposalNote, revertNote, withdrawalNote } from "./notes.ts";
 import { type OutputShape } from "./output.ts";
 import { parseOrder, parseWhereOptions, splitList } from "./query-options.ts";
+import { writingRepairCommand } from "./writing-repair.ts";
 
 export type ApiRequest =
   | { method: "GET"; path: string }
@@ -20,6 +21,8 @@ export type Command =
 type RequestCommand = Extract<Command, { name: "request" }>;
 
 type Options = {
+  after?: string;
+  apply?: boolean;
   batch?: string;
   check?: boolean;
   fields?: string;
@@ -133,6 +136,10 @@ const COMMANDS = new Map<string, CommandSpec>([
   [
     "whoami",
     { arguments: 0, build: () => ({ name: "request", request: WHOAMI_REQUEST }), options: [] },
+  ],
+  [
+    "staff repair-writing",
+    { arguments: 1, build: writingRepairCommand, options: ["after", "apply"] },
   ],
   [
     "staff models",
@@ -316,7 +323,9 @@ function parseCommandLine(argv: string[]) {
       allowPositionals: true,
       args: argv,
       options: {
+        after: { type: "string" },
         api: { type: "string" },
+        apply: { type: "boolean" },
         batch: { type: "string" },
         check: { type: "boolean" },
         fields: { type: "string" },

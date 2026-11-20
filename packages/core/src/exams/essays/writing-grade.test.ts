@@ -11,7 +11,8 @@ import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { creditWrittenSkills } from "../../learner/written-evidence";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
-import { getWritingAttemptId, gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
+import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
+import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { applyWritingArithmetic, buildWritingFeedback } from "./_utils/writing-feedback";
 import {
   MAX_ESSAY_CHARACTERS,

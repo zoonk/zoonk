@@ -14,10 +14,6 @@ import {
   prepareSkillFieldItems,
   readGoalField,
 } from "./steps/field-items-steps";
-import {
-  pickFreeResponseSkillsStep,
-  prepareFreeResponseItemStep,
-} from "./steps/free-response-items-step";
 import { pickItemSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
 import { listMockPrepWritesStep } from "./steps/mock-question-steps";
 import { importPastQuestionsStep, listPastQuestionPapersStep } from "./steps/past-questions-step";
@@ -39,20 +35,6 @@ async function prepareFieldItems({
 
   const targets = await listGoalFieldItemTargetsStep({ field, goalId });
   await Promise.allSettled(targets.map((target) => prepareSkillFieldItems({ ...context, target })));
-}
-
-async function prepareFreeResponseItems({
-  context,
-  inputs,
-}: {
-  context: GoalRunContext;
-  inputs: GoalCurriculumInputs;
-}) {
-  const skills = inputs.isGuest ? [] : await pickFreeResponseSkillsStep(inputs.goal.id);
-
-  await Promise.allSettled(
-    skills.map((skill) => prepareFreeResponseItemStep({ ...context, skill })),
-  );
 }
 
 async function prepareExamFormatItems({
@@ -204,7 +186,6 @@ export function prepareAhead({
   return Promise.all([
     rebuild ? [] : startLikelyLessons({ context, inputs }),
     rebuild ? null : prepareFieldItems({ context, inputs }),
-    rebuild ? null : prepareFreeResponseItems({ context, inputs }),
     bank.then(() => (rebuild ? null : prepareMockQuestions({ context, inputs }))),
     prepareStatuteDrills({ context, goalId }),
     prepareListeningSets({ context, inputs }),

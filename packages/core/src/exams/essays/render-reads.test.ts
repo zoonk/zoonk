@@ -1,11 +1,14 @@
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
-import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { SESSION_NOW, sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
 import { getEssay } from "./get-essay";
 
@@ -37,7 +40,7 @@ describe("essay render reads", () => {
       userId: user.id,
     });
 
-    await itemFixture({
+    const item = await itemFixture({
       content: {
         context: "Theme: disinformation",
         keyPoints: ["Develop a supported argument"],
@@ -53,19 +56,15 @@ describe("essay render reads", () => {
       skillId: skills[0]!.id,
     });
 
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+    const block = await studySessionBlockFixture({
+      kind: "produce",
+      payload: { itemIds: [item.id] },
+      sessionId: session.id,
+    });
+
     mockSession(user.id);
-    const today = await getTodayStudySession({ goalId: goal.id });
-
-    if (today.status !== "ready") {
-      throw new Error(today.status);
-    }
-
-    const block = today.session.blocks.find((candidate) => candidate.kind === "produce");
-
-    if (!block) {
-      throw new Error("Expected scheduled writing");
-    }
-
     const counts = await countDatabaseStatements(() => getEssay({ blockId: block.id }));
     expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");

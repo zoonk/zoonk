@@ -231,13 +231,25 @@ export function orderDayBlocks<
     payload: StudySessionBlock["payload"];
   },
 >({ blocks, items }: { blocks: readonly Block[]; items: readonly ChallengeReachItem[] }): Block[] {
-  const ranks = ["review", "reinforcement", "stretch", "practice", "produce", "calendar"] as const;
+  const ranks = [
+    "review",
+    "writtenPlacement",
+    "reinforcement",
+    "stretch",
+    "practice",
+    "produce",
+    "calendar",
+  ] as const;
 
   const group = (block: Block): (typeof ranks)[number] => {
     const payload = readBlockPayload(block);
 
     if (block.kind === "review") {
       return "review";
+    }
+
+    if (payload.writingPlacement) {
+      return "writtenPlacement";
     }
 
     if (payload.reinforcement) {

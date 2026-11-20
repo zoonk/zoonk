@@ -53,6 +53,17 @@ export function getStoredBlockWait({
   block: StoredWaitInput;
   blocks: readonly StoredWaitInput[];
 }): ReturnType<typeof getBlockWait> {
+  const previous = blocks.find((other) => other.position === block.position - 1);
+
+  if (
+    readBlockPayload(block).writing?.unit === "drill" &&
+    previous?.kind === "learn" &&
+    isUnfinished(previous) &&
+    isUnfinished(block)
+  ) {
+    return "lessons";
+  }
+
   return getBlockWait({
     block: toBlockWaitFields(block),
     blocks: blocks.map((row) => toBlockWaitFields(row)),

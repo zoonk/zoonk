@@ -5,7 +5,6 @@ import { countWords } from "@zoonk/utils/string";
 import {
   type RecordedOutcome,
   type RefusedOutcome,
-  getAnswerAttemptId,
   recordAnswerOnce,
 } from "../../../learner/_utils/answer-once";
 import { creditWrittenSkills } from "../../../learner/written-evidence";
@@ -16,6 +15,7 @@ import { countWritingLines } from "../writing-lines";
 import { getWritingArithmetic } from "../writing-rubric-policy";
 import { type EssayContent, readEssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
+import { getWritingAttemptId } from "./writing-attempt-id";
 import { applyWritingArithmetic, buildWritingFeedback } from "./writing-feedback";
 
 const GOOD_SHARE = 0.6;
@@ -142,17 +142,6 @@ export async function gradeWriting({
     evidence,
     feedback,
   });
-}
-
-export function getWritingAttemptId({
-  admissionId,
-  itemId,
-}: {
-  admissionId: string;
-  itemId: string;
-}) {
-  // Admission ownership can transfer when a guest signs in. The receipt and item stay the same.
-  return getAnswerAttemptId({ key: "writing-admission", questionId: itemId, userId: admissionId });
 }
 
 type RecordGrade = {

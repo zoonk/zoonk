@@ -34,6 +34,7 @@ import { countFullReviewQuestions } from "./full-review";
 const FRESH_START_REVIEW_FACTOR = 0.5;
 
 export type PlannedLesson = {
+  drill?: PlannedProduce;
   canDo: string | null;
   chapterId: string | null;
   lessonId: string | null;
@@ -237,14 +238,24 @@ export function buildSessionBlocks(day: SessionBuildInput): {
     }),
   };
 
-  const budget = getSessionBudget(input);
+  const dayBudget = getSessionBudget(input);
 
-  if (budget < MIN_BLOCK_MINUTES) {
+  if (dayBudget < MIN_BLOCK_MINUTES) {
     return { blocks: [], plannedMinutes: 0 };
   }
 
   if (input.mockReplacesDay) {
     return buildMockDay(input.checkpoints);
+  }
+
+  return buildMixedDay(input, dayBudget, input.produce ? toProduceBlock(input.produce) : null);
+}
+
+function buildMixedDay(input: SessionBuildInput, dayBudget: number, produce: PlannedBlock | null) {
+  const budget = dayBudget - (produce?.estimatedMinutes ?? 0);
+
+  if (produce && budget < MIN_BLOCK_MINUTES) {
+    return { blocks: [produce], plannedMinutes: produce.estimatedMinutes };
   }
 
   const reviewFactor = input.freshStart ? FRESH_START_REVIEW_FACTOR : 1;
@@ -256,8 +267,8 @@ export function buildSessionBlocks(day: SessionBuildInput): {
 
   if (leading[0] && leading[0].minutes > budget) {
     return {
-      blocks: [buildCheckpointBlock(leading[0])],
-      plannedMinutes: Math.ceil(leading[0].minutes),
+      blocks: produce ? [produce] : [buildCheckpointBlock(leading[0])],
+      plannedMinutes: produce?.estimatedMinutes ?? Math.ceil(leading[0].minutes),
     };
   }
 
@@ -284,13 +295,7 @@ export function buildSessionBlocks(day: SessionBuildInput): {
 
   const base = (review?.estimatedMinutes ?? 0) + checkpointMinutes;
 
-  const produce = toProduceBlock({
-    ...input,
-    minBlockMinutes: MIN_BLOCK_MINUTES,
-    room: budget - base,
-  });
-
-  const open = Math.max(0, budget - base - (produce?.estimatedMinutes ?? 0));
+  const open = Math.max(0, budget - base);
 
   const fullReviewMinutes =
     countFullReviewQuestions({
@@ -356,8 +361,8 @@ export function buildSessionBlocks(day: SessionBuildInput): {
 
   return fillRemainingLessonTime({
     available,
-    blocks: fillReview({ blocks: built, budget, input: reviewInput }),
-    budget,
+    blocks: fillReview({ blocks: built, budget: dayBudget, input: reviewInput }),
+    budget: dayBudget,
     checkpointMinutes,
     input,
     leading,

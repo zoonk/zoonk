@@ -42,7 +42,8 @@ export async function findOwnedEssay(blockId: string): Promise<OwnedEssayResult>
       })
     : null;
 
-  const itemId = block ? readBlockPayload(block).itemIds[0] : undefined;
+  const payload = block ? readBlockPayload(block) : null;
+  const itemId = payload?.writing && !payload.writing.admissionId ? undefined : payload?.itemIds[0];
   const item = itemId ? await prisma.item.findUnique({ where: { id: itemId } }) : null;
   const content = readEssayContent(item);
 

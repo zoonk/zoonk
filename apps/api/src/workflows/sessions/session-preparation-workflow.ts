@@ -25,6 +25,7 @@ import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { startChallengeQuestions } from "./challenge-question-starts";
 import { prepareFieldChallenge } from "./prepare-field-challenge";
 import { prepareToolVersion } from "./prepare-tool-version";
+import { prepareWriting } from "./prepare-writing";
 import { writeLanguageCalls } from "./steps/language-call-steps";
 import { listLearnerVersionTargetsStep } from "./steps/personal-versions-steps";
 import {
@@ -250,6 +251,7 @@ async function prepareLessons({
   }
 
   await Promise.all([
+    prepareWriting(input),
     preparation.personalized ? personalizeLessons({ analytics, input, preparation }) : null,
     writeLanguageCalls({ goalId: input.goalId, userId: input.userId }).catch(() => null),
     writeClaimQuestions({ analytics, input }).catch(() => null),

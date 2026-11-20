@@ -7,6 +7,7 @@ import {
   type WritingDraft,
   type WritingPacing,
   type WritingPrompt,
+  type WritingResult,
   writingPromptSchema,
   writtenAnswerSchema,
 } from "./writing-contract";
@@ -50,6 +51,11 @@ export type EssayDraft = {
   text: string;
 };
 
+export type WrittenEssayDraft = Omit<EssayDraft, "grade"> & {
+  attemptId: string;
+  grade: WritingResult;
+};
+
 export type EssayView = {
   blockId: string;
   draft?: WritingDraft | null;
@@ -62,6 +68,7 @@ export type EssayView = {
   sessionId: string;
   status: StudySessionBlock["status"];
   writing?: WritingPrompt;
+  writtenDrafts?: WrittenEssayDraft[];
 };
 
 const scoreSchema = z.object({ maxScore: z.number(), score: z.number() });

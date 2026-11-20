@@ -16,7 +16,7 @@ async function postSubmission(
 
   const result = await submitEssay({ blockId: path.blockId, input: body });
 
-  if (result.status !== "graded") {
+  if (result.status !== "graded" && result.status !== "writingGraded") {
     return examError({ status: result.status });
   }
 

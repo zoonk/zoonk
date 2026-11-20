@@ -1,9 +1,12 @@
 import { setTimeout as wait } from "node:timers/promises";
 import { gradeEssay } from "@zoonk/ai/tasks/grading/grade-essay";
 import { prisma } from "@zoonk/db";
-import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useIsolatedBudgetDay } from "../../_test-utils/isolated-budget-day";
@@ -15,7 +18,12 @@ import {
 } from "../../entitlements/limits";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
-import { DAY_MS, SESSION_NOW, sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
+import {
+  DAY_MS,
+  SESSION_NOW,
+  SESSION_TODAY,
+  sessionGoalFixture,
+} from "../../sessions/_test-utils/session-goal";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { endEssayGradeClaim } from "./_utils/essay-grade-claims";
@@ -84,11 +92,18 @@ async function essaySetup() {
     userId: user.id,
   });
 
-  await itemFixture({
+  const item = await itemFixture({
     content: ESSAY_CONTENT,
     examBlueprintId: blueprint.id,
     format: "essay",
     skillId: fixture.skills[0]?.id ?? "",
+  });
+
+  await issueLegacyWritingBlock({
+    goalId: fixture.goal.id,
+    item,
+    planVersion: fixture.plan.version,
+    userId: user.id,
   });
 
   mockSession(user.id);
@@ -114,15 +129,52 @@ async function apSetup() {
     userId: user.id,
   });
 
-  await itemFixture({
+  const item = await itemFixture({
     content: { ...ESSAY_CONTENT, rubric: AP_ROWS },
     examBlueprintId: blueprint.id,
     format: "essay",
     skillId: fixture.skills[0]?.id ?? "",
   });
 
+  await issueLegacyWritingBlock({
+    goalId: fixture.goal.id,
+    item,
+    planVersion: fixture.plan.version,
+    userId: user.id,
+  });
+
   mockSession(user.id);
   return fixture;
+}
+
+async function issueLegacyWritingBlock({
+  goalId,
+  item,
+  planVersion,
+  userId,
+}: {
+  goalId: string;
+  item: { id: string; skillId: string };
+  planVersion: number;
+  userId: string;
+}) {
+  const session = await studySessionFixture({
+    goalId,
+    localDate: SESSION_TODAY,
+    planVersion,
+    userId,
+  });
+
+  await Promise.all([
+    studySessionBlockFixture({
+      estimatedMinutes: 20,
+      kind: "produce",
+      payload: { itemIds: [item.id], skillIds: [item.skillId] },
+      position: 0,
+      sessionId: session.id,
+    }),
+    studySessionBlockFixture({ kind: "practice", position: 1, sessionId: session.id }),
+  ]);
 }
 
 async function startedWritingBlock() {
@@ -263,7 +315,7 @@ describe("essays in sessions", () => {
     vi.mocked(gradeEssay).mockReset();
   });
 
-  it("plans a writing block, grades drafts by the rubric and settles the block", async () => {
+  it("grades and settles an issued legacy writing block", async () => {
     const { goal } = await essaySetup();
     const today = await getTodayStudySession({ goalId: goal.id });
 
@@ -680,65 +732,5 @@ describe("essay drafts and access", () => {
     await expect(getEssay({ blockId })).resolves.toMatchObject({
       essay: { drafts: [{ text: "Second draft" }, { text: "First draft" }], gradesLeft: 6 },
     });
-  });
-});
-
-async function writesToday({
-  cadence,
-  startDate,
-  targetDate,
-}: {
-  cadence: string;
-  startDate: string;
-  targetDate: string;
-}) {
-  const { goal, plan } = await essaySetup();
-
-  await Promise.all([
-    dailyProgressFixtureMany([
-      { date: new Date("2026-09-29T00:00:00Z"), timeSpentSeconds: 600, userId: goal.userId },
-    ]),
-    prisma.goal.update({
-      data: { targetDate: new Date(`${targetDate}T00:00:00Z`) },
-      where: { id: goal.id },
-    }),
-    prisma.plan.update({
-      data: { settings: { startDate, writtenCadence: cadence } },
-      where: { id: plan.id },
-    }),
-  ]);
-
-  const today = await getTodayStudySession({ goalId: goal.id });
-  return today.status === "ready" && today.session.blocks.some((block) => block.kind === "produce");
-}
-
-describe("essays on the learner's written cadence", () => {
-  beforeEach(() => {
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(SESSION_NOW);
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("writes in the plan's first, third… week when the learner practices every other week", async () => {
-    await expect(
-      writesToday({ cadence: "biweekly", startDate: "2026-09-30", targetDate: "2026-12-20" }),
-    ).resolves.toBe(true);
-
-    await expect(
-      writesToday({ cadence: "biweekly", startDate: "2026-09-23", targetDate: "2026-12-20" }),
-    ).resolves.toBe(false);
-  });
-
-  it("writes only in the final weeks before the exam when the learner asked for that", async () => {
-    await expect(
-      writesToday({ cadence: "finalWeeks", startDate: "2026-09-01", targetDate: "2026-10-20" }),
-    ).resolves.toBe(true);
-
-    await expect(
-      writesToday({ cadence: "finalWeeks", startDate: "2026-09-01", targetDate: "2026-11-30" }),
-    ).resolves.toBe(false);
   });
 });
