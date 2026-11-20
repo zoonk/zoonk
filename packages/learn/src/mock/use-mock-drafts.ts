@@ -34,6 +34,77 @@ function emptyDraft(itemId: string): MockDraft {
   return { answer: null, durationMs: 0, flagged: false, itemId };
 }
 
+function clearTextTimer(timer: React.RefObject<ReturnType<typeof setTimeout> | null>) {
+  if (timer.current) {
+    clearTimeout(timer.current);
+    timer.current = null;
+  }
+}
+
+function restoreKeptForView({
+  base,
+  blockId,
+  queue,
+  storedDrafts,
+  view,
+}: {
+  base: Drafts;
+  blockId: string;
+  queue: DraftQueue;
+  storedDrafts: Drafts;
+  view: MockView;
+}) {
+  const kept = restoreUnsentMockDrafts({ blockId, storedDrafts, view });
+
+  for (const draft of kept) {
+    queue.add(draft);
+  }
+
+  return {
+    keptCount: kept.length,
+    keptReached: getForwardOnlyKeptReached({ kept, view }),
+    merged:
+      kept.length > 0
+        ? { ...base, ...Object.fromEntries(kept.map((draft) => [draft.itemId, draft])) }
+        : base,
+  };
+}
+
+function useMockDraftQueue({
+  blockId,
+  save,
+  setFailedDrafts,
+  setSaveStatus,
+  setSavedDrafts,
+}: {
+  blockId: string;
+  save: (input: MockAnswerInput) => Promise<DraftSaveOutcome>;
+  setFailedDrafts: React.Dispatch<React.SetStateAction<Partial<Drafts>>>;
+  setSaveStatus: React.Dispatch<React.SetStateAction<DraftSaveStatus>>;
+  setSavedDrafts: React.Dispatch<React.SetStateAction<Drafts>>;
+}) {
+  // The host keeps `save` stable.
+  return useMemo(
+    () =>
+      createDraftSaveQueue<MockDraft>({
+        keyOf: (draft) => draft.itemId,
+        onFailed: (draft) => setFailedDrafts((current) => ({ ...current, [draft.itemId]: draft })),
+        onRefused: (draft) => dropUnsentMockDraft({ blockId, draft }),
+        onStatus: setSaveStatus,
+        onStored: (draft) => {
+          dropUnsentMockDraft({ blockId, draft });
+          setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft }));
+
+          setFailedDrafts((current) =>
+            current[draft.itemId] ? { ...current, [draft.itemId]: undefined } : current,
+          );
+        },
+        save,
+      }),
+    [blockId, save, setFailedDrafts, setSaveStatus, setSavedDrafts],
+  );
+}
+
 function useUnsentDraftSync({
   activeViewRef,
   blockId,
@@ -58,31 +129,24 @@ function useUnsentDraftSync({
     const view = activeViewRef.current;
     queue.start();
 
-    const keptHere = restoreUnsentMockDrafts({ blockId, storedDrafts: readSavedDrafts(), view });
+    const { keptCount, keptReached, merged } = restoreKeptForView({
+      base: draftsRef.current,
+      blockId,
+      queue,
+      storedDrafts: readSavedDrafts(),
+      view,
+    });
 
-    if (keptHere.length > 0) {
-      const merged = {
-        ...draftsRef.current,
-        ...Object.fromEntries(keptHere.map((draft) => [draft.itemId, draft])),
-      };
-
+    if (keptCount > 0) {
       draftsRef.current = merged;
-      handleRestore(merged, getForwardOnlyKeptReached({ kept: keptHere, view }));
-
-      for (const draft of keptHere) {
-        queue.add(draft);
-      }
+      handleRestore(merged, keptReached);
     }
 
     const retry = () => queue.retryNow();
     globalThis.addEventListener("online", retry);
 
     return () => {
-      if (textTimer.current) {
-        clearTimeout(textTimer.current);
-        textTimer.current = null;
-      }
-
+      clearTextTimer(textTimer);
       globalThis.removeEventListener("online", retry);
       queue.stop();
     };
@@ -109,26 +173,13 @@ export function useMockDrafts({
   const unsavedText = useRef<MockDraft | null>(null);
   const textTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // The host keeps `save` stable.
-  const queue = useMemo(
-    () =>
-      createDraftSaveQueue<MockDraft>({
-        keyOf: (draft) => draft.itemId,
-        onFailed: (draft) => setFailedDrafts((current) => ({ ...current, [draft.itemId]: draft })),
-        onRefused: (draft) => dropUnsentMockDraft({ blockId, draft }),
-        onStatus: setSaveStatus,
-        onStored: (draft) => {
-          dropUnsentMockDraft({ blockId, draft });
-          setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft }));
-
-          setFailedDrafts((current) =>
-            current[draft.itemId] ? { ...current, [draft.itemId]: undefined } : current,
-          );
-        },
-        save,
-      }),
-    [blockId, save],
-  );
+  const queue = useMockDraftQueue({
+    blockId,
+    save,
+    setFailedDrafts,
+    setSaveStatus,
+    setSavedDrafts,
+  });
 
   useUnsentDraftSync({
     activeViewRef,
@@ -154,11 +205,7 @@ export function useMockDrafts({
   }
 
   function saveText() {
-    if (textTimer.current) {
-      clearTimeout(textTimer.current);
-      textTimer.current = null;
-    }
-
+    clearTextTimer(textTimer);
     const draft = unsavedText.current;
     unsavedText.current = null;
 
@@ -203,23 +250,29 @@ export function useMockDrafts({
         shown.current = null;
       }
     },
-    reset: (next: MockView) => {
-      if (textTimer.current) {
-        clearTimeout(textTimer.current);
-        textTimer.current = null;
-      }
-
+    reset: (next: MockView): number => {
+      clearTextTimer(textTimer);
       const previous = activeViewRef.current;
       unsavedText.current = null;
       shown.current = null;
       activeViewRef.current = next;
-      const nextDrafts = toDrafts(next);
-      draftsRef.current = nextDrafts;
-      setDrafts(nextDrafts);
-      setFailedDrafts({});
-      setSavedDrafts(nextDrafts);
+      const serverDrafts = toDrafts(next);
       clearHandedInMockDrafts({ blockId, next, previous });
       queue.forgetRefusals();
+
+      const { keptReached, merged } = restoreKeptForView({
+        base: serverDrafts,
+        blockId,
+        queue,
+        storedDrafts: serverDrafts,
+        view: next,
+      });
+
+      draftsRef.current = merged;
+      setDrafts(merged);
+      setFailedDrafts({});
+      setSavedDrafts(serverDrafts);
+      return keptReached;
     },
     retry: () => queue.retryNow(),
     saveStatus,
@@ -245,11 +298,7 @@ export function useMockDrafts({
       setDrafts(draftsRef.current);
       unsavedText.current = draft;
       keepUnsentMockDraft({ blockId, draft });
-
-      if (textTimer.current) {
-        clearTimeout(textTimer.current);
-      }
-
+      clearTextTimer(textTimer);
       textTimer.current = setTimeout(saveText, TEXT_SAVE_DELAY_MS);
     },
   };

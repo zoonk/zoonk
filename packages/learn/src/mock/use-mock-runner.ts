@@ -243,9 +243,9 @@ export function useMockRunner({
       return;
     }
 
-    drafts.reset(next);
-    setPosition(next.current?.resume ?? 0);
-    setReached(next.current?.resume ?? 0);
+    const nextPosition = Math.max(next.current?.resume ?? 0, drafts.reset(next));
+    setPosition(nextPosition);
+    setReached(nextPosition);
     setChanged([]);
     setQuestionTimeUp(false);
     setView(next);
