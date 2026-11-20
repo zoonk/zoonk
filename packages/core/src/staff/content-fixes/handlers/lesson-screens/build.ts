@@ -181,14 +181,16 @@ export function buildScreens({
 
   for (const [index, word] of vocabulary.words.entries()) {
     if (!screens.some(({ wordId }) => wordId === word.id)) {
-      problems.push(`words[${String(index)}]: add a screen for "${word.word}" or omit the word.`);
+      problems.push(
+        `words[${String(index)}]: add a screen for "${word.word}" or leave it out of words.`,
+      );
     }
   }
 
   for (const [index, sentence] of vocabulary.sentences.entries()) {
     if (!screens.some(({ sentenceId }) => sentenceId === sentence.id)) {
       problems.push(
-        `sentences[${String(index)}]: add a screen for "${sentence.sentence}" or omit the sentence.`,
+        `sentences[${String(index)}]: add a screen for "${sentence.sentence}" or leave it out of sentences.`,
       );
     }
   }

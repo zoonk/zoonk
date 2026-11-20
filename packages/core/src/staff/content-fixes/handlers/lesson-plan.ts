@@ -184,13 +184,39 @@ async function resolve(
   };
 }
 
+const exampleScreen = (kind: string, brief: string) => ({
+  activityTemplate: null,
+  brief,
+  kind,
+  skills: [0],
+  visual: null,
+  visualKind: "none",
+});
+
 const example = {
   id: "0193cfe6-604d-7fb2-ad00-f968c7542841",
   model: MODEL,
   setPlan: {
-    kind: "challenge",
-    skills: [{ description: "Recognize a conflict of interest.", name: "Conflicts of interest" }],
-    variant: "work",
+    canDo: "Spot a conflict of interest at work",
+    description: "When a private interest can sway a public decision.",
+    estimatedMinutes: 6,
+    screens: [
+      exampleScreen("hook", "A manager is asked to approve a contract with her brother's firm."),
+      exampleScreen("explanation", "Explain the duty in Lei nº 12.813/2013, art. 4º, § 2º."),
+      exampleScreen("check", "Which situation is a conflict of interest?"),
+      exampleScreen("application", "Decide what the manager should do and why."),
+    ],
+    skills: [
+      {
+        description: "Recognize a conflict of interest.",
+        example: "Approving a contract with a relative's firm.",
+        hard: false,
+        name: "Conflicts of interest",
+        topic: "Public ethics",
+        useCase: "Deciding whether to step aside from a decision.",
+      },
+    ],
+    title: "Conflicts of interest",
   },
 };
 
@@ -212,7 +238,7 @@ export const lessonPlanSet = defineFixHandler<typeof MODEL, Proposed, Stored>({
     example,
     fields: ["spec"],
     rules:
-      "Send the full ordinary or challenge plan from this lesson with the edits applied. Keep the plan kind. New or renamed skills must match a skill linked to the lesson. The server keeps planning metadata, recalculates the estimate when screen kinds change, and keeps the live screens.",
+      "Send the whole plan pnpm zoonk staff lesson prints, ordinary or challenge, with only the wrong parts changed. Keep the plan kind. A new or renamed skill must match a skill linked to the lesson. The server keeps its planning fields and recalculates the estimate when screen kinds change. Live screens don't change: when a screen states the same wrong fact, fix it in the same fix.",
     schema: proposedSchema,
   },
   resolve,

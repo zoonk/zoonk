@@ -57,7 +57,7 @@ const changesSchema = z
     (changes) =>
       changes.reduce((total, change) => total + reviewUnits(change), 0) <= MAX_CONTENT_FIX_CHANGES,
     {
-      message: `A fix holds up to ${MAX_CONTENT_FIX_CHANGES} changes besides a word's or sentence's lesson rows; split the rest into fixes of a batch.`,
+      message: `A fix holds up to ${MAX_CONTENT_FIX_CHANGES} review units: each change, and each word, sentence or picture a setScreens adds, counts one, and a word's or sentence's lesson rows count nothing. Split the rest into fixes of a batch.`,
     },
   );
 

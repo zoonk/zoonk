@@ -1,7 +1,9 @@
+import { prisma } from "@zoonk/db";
 import { ItemFormat, StepKind } from "@zoonk/db/enums";
 import { databaseSchema } from "@zoonk/db/schema";
 import { describe, expect, it } from "vitest";
 import { isRelationKind } from "../../library/steps/contract/step-contract";
+import { contentFixProposalSchema } from "./contract";
 import { FIXABLE_MODELS, FIX_HANDLERS } from "./handlers/registry";
 
 const PROPOSABLE = new Set(
@@ -194,6 +196,28 @@ describe("content fix coverage", () => {
       paths: paths.filter((path) => !PROPOSABLE.has(path)),
       refusedParts: excludedParts.filter((key) => !fixable.includes(key.split(":")[0] ?? "")),
     }).toStrictEqual({ paths: [], refusedParts: [] });
+  });
+
+  it("shows only examples that pass their operation's proposal checks", async () => {
+    const examples = FIX_HANDLERS.flatMap((handler) =>
+      handler.proposal?.example === undefined
+        ? []
+        : [{ example: handler.proposal.example, handler }],
+    );
+
+    const refused = await Promise.all(
+      examples.map(async ({ example, handler }) => {
+        const shape = contentFixProposalSchema.safeParse({ changes: [example], reason: "Example" });
+        const result = await handler.propose(prisma, example);
+
+        const schemaRefusal =
+          !result.ok && result.problem.startsWith(`${handler.model} ${handler.op}:`);
+
+        return shape.success && !schemaRefusal ? [] : [`${handler.model} ${handler.op}`];
+      }),
+    );
+
+    expect(refused.flat()).toStrictEqual([]);
   });
 
   it("fixes a screen that holds no text through its word or sentence", () => {
