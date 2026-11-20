@@ -31,7 +31,13 @@ function readTitle(content: unknown): string | null {
 }
 
 /** Workflow bridge: goalId must come from the authenticated public boundary; non-exam goals return no targets. */
-export async function pickItemSetTargets({ goalId }: { goalId: string }): Promise<ItemSetTarget[]> {
+export async function pickItemSetTargets({
+  goalId,
+  mockSkillIds,
+}: {
+  goalId: string;
+  mockSkillIds?: readonly string[];
+}): Promise<ItemSetTarget[]> {
   const goal = await prisma.goal.findUnique({
     select: {
       examBlueprint: true,
@@ -54,8 +60,12 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
   // Listening skills need recordings rather than text passages about conversations.
   const listening = goal ? getListeningSkillIds({ exam: toListeningExam(goal), graph }) : new Set();
 
+  const needed = mockSkillIds && new Set(mockSkillIds);
+
   const firstSkills = graph.skills.filter(
-    (skill) => skill.phase === firstPhase && !listening.has(skill.skillId),
+    (skill) =>
+      (needed ? needed.has(skill.skillId) : skill.phase === firstPhase) &&
+      !listening.has(skill.skillId),
   );
 
   const [rows, sets] = await Promise.all([
@@ -73,12 +83,15 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
       where: { id: { in: firstSkills.map((skill) => skill.skillId) } },
     }),
     prisma.itemSet.findMany({
-      select: { content: true, items: { select: { skillId: true } } },
+      select: { content: true, items: { select: { skillId: true } }, mockOnly: true },
       where: { examBlueprintId: blueprint.id },
     }),
   ]);
 
-  const covered = new Set(sets.flatMap((set) => set.items.map((item) => item.skillId)));
+  const covered = new Set(
+    sets.filter((set) => !set.mockOnly).flatMap((set) => set.items.map((item) => item.skillId)),
+  );
+
   const usedTitles = sets.flatMap((set) => readTitle(set.content) ?? []);
   const exam = toItemExam(blueprint);
   const format = getPlacementQuickFormat(readBlueprintContent(blueprint).structure);
@@ -91,7 +104,10 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
   );
 
   const targets = [...areas.values()]
-    .filter((skills) => skills.length >= 2 && !skills.some((skill) => covered.has(skill.skillId)))
+    .filter(
+      (skills) =>
+        skills.length >= 2 && (needed || !skills.some((skill) => covered.has(skill.skillId))),
+    )
     .map((skills) => skills.toSorted((a, b) => (b.weight ?? 0) - (a.weight ?? 0)))
     .toSorted((a, b) => (b[0]?.weight ?? 0) - (a[0]?.weight ?? 0))
     .slice(0, SET_AREAS)
@@ -106,8 +122,8 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
     .filter((target) => target.skills.length >= 2);
 
   const usedSituations = await loadUsedSituations({
-    includeMockReserve: true,
     examBlueprintId: blueprint.id,
+    includeMockReserve: true,
     skillIds: targets.flatMap((target) => target.skills.map((skill) => skill.id)),
   });
 

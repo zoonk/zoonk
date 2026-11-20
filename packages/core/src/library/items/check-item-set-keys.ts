@@ -4,6 +4,10 @@ import { checkItemKeys } from "./check-item-keys";
 import { type ItemSetToStore, type WrittenSetItem } from "./create-item-set";
 import { type ParsedItemSetContent, parseItemSetContent } from "./item-set-content";
 
+export function getWrittenSetStimulus(set: Pick<ItemSetToStore, "content" | "kind">): string {
+  return toItemSetStimulus(parseItemSetContent(set));
+}
+
 export function toItemSetStimulus({ content, kind }: ParsedItemSetContent): string {
   if (kind === "audio") {
     const labels = new Map(content.script.speakers.map((speaker) => [speaker.key, speaker.label]));
@@ -42,7 +46,7 @@ export async function checkItemSetKeys({
     optionCount,
     optionLanguage,
     serviceTier,
-    stimulus: toItemSetStimulus(parseItemSetContent({ content, kind })),
+    stimulus: getWrittenSetStimulus({ content, kind }),
   });
 
   return {

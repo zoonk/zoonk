@@ -11,10 +11,11 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { listListeningParts } from "../listening/listening-parts";
+import { pickListeningSets } from "../listening/pick-listening-sets";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
 import { mockConditionsSchema } from "./mock-contract";
-import { listMockPrepWrites } from "./prepare-mock-questions";
+import { listDueMockGoals, listMockPrepWrites } from "./prepare-mock-questions";
 import { recordMockPlay } from "./record-mock-play";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
@@ -35,18 +36,18 @@ async function listeningSetup({
       const media = voiced[index] ? await mediaAssetFixture() : null;
 
       const set = await listeningSetFixture({
-        mockOnly: true,
         content: { ...listeningContent(), task: part.task },
         examBlueprintId: blueprint.id,
         mediaAssetId: media?.id ?? null,
+        mockOnly: true,
       });
 
       const questions = await Promise.all(
         [0, 1].map((position) =>
           itemFixture({
-            mockOnly: true,
             content: choiceItemContent(`Part ${index + 1}, question ${position + 1}?`),
             examBlueprintId: blueprint.id,
+            mockOnly: true,
             setId: set.id,
             setPosition: position,
             skillId: listeningSkills[index % listeningSkills.length]?.id ?? "",
@@ -62,9 +63,9 @@ async function listeningSetup({
     planItemFixture({ kind: "lesson", planId: plan.id, position: 0, skillId: reading.id }),
     ...Array.from({ length: readingQuestions }, () =>
       itemFixture({
-        mockOnly: true,
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,
+        mockOnly: true,
         skillId: reading.id,
       }),
     ),
@@ -75,7 +76,7 @@ async function listeningSetup({
 
   mockSession(user.id);
 
-  return { goal, reading, recordings };
+  return { blueprint, goal, parts, plan, reading, recordings };
 }
 
 describe("a mock's listening section", () => {
@@ -116,7 +117,7 @@ describe("a mock's listening section", () => {
     );
   });
 
-  it("writes a part's missing recording when the mock starts, and leaves the section out, saying so, when it couldn't", async () => {
+  it("requests the missing recording and keeps the full mock preparing", async () => {
     const { goal } = await listeningSetup({ voiced: [true, false] });
 
     const options = await getMockOptions({ goalId: goal.id });
@@ -129,13 +130,85 @@ describe("a mock's listening section", () => {
     expect(full?.leftOut).not.toContainEqual({ name: "Listening", part: "listening" });
 
     await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
-      listening: true,
+      recordings: { parts: [{ sectionName: "Listening" }] },
     });
 
     const started = await startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
 
     expect(started.status).toBe("preparing");
+
+    await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
+      learnerWaiting: true,
+      urgentShort: true,
+    });
+
+    await expect(listDueMockGoals()).resolves.toContainEqual({
+      examBlueprintId: goal.examBlueprintId,
+      goalId: goal.id,
+      later: true,
+    });
+
     await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+  });
+
+  it("reserves a voiced part for the first scheduled paper even when another part is missing", async () => {
+    const { goal, parts, plan } = await listeningSetup({ voiced: [true, false] });
+    const dates = ["2026-11-22", "2026-11-29"];
+
+    await prisma.plan.update({
+      data: {
+        settings: {
+          mockFunding: dates.map((date) => ({
+            contributions: [],
+            date,
+            day: null,
+            fullLength: true,
+            minutes: 90,
+          })),
+        },
+      },
+      where: { id: plan.id },
+    });
+
+    await Promise.all(
+      dates.map((date, index) =>
+        planItemFixture({
+          kind: "mock",
+          planId: plan.id,
+          position: index + 1,
+          scheduledFor: new Date(date),
+        }),
+      ),
+    );
+
+    const request = await listMockPrepWrites({ goalId: goal.id });
+
+    expect(request.recordings?.parts.map((part) => part.task)).toStrictEqual([
+      parts[1]?.task,
+      parts[0]?.task,
+      parts[1]?.task,
+      parts[0]?.task,
+      parts[1]?.task,
+    ]);
+  });
+
+  it("a repeated task needs a different recording even within the same paper", async () => {
+    const { blueprint, goal, parts, recordings } = await listeningSetup({ readingQuestions: 0 });
+    const [part] = parts;
+
+    if (!part) {
+      throw new Error("Expected a listening part.");
+    }
+
+    const picks = await pickListeningSets({
+      examBlueprintId: blueprint.id,
+      mockOnly: true,
+      parts: [part, part],
+      scriptLanguage: "en",
+      userId: goal.userId,
+    });
+
+    expect(picks.map(({ setId }) => setId)).toStrictEqual([recordings[0]?.set.id, null]);
   });
 
   it("asks for a full mock's missing recording even when the bank holds its written questions", async () => {
@@ -151,7 +224,7 @@ describe("a mock's listening section", () => {
 
     const request = await listMockPrepWrites({ goalId: goal.id });
 
-    expect(request).toMatchObject({ listening: false });
+    expect(request.recordings).toBeUndefined();
 
     expect(request.writes.flatMap((write) => write.skillIds)).toStrictEqual([reading.id]);
   });

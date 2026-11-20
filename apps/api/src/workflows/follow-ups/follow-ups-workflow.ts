@@ -60,7 +60,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       await settleSessionPlanStep({ ...followUp.input, userId });
       return;
     case "prepareMockSupply":
-      await startMockSupply(followUp.input);
+      await startMockSupply(followUp.input, { id: followUp.id, revision: followUp.revision });
       return;
     case "prepareSession":
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);

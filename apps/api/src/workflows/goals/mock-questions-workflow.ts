@@ -1,35 +1,87 @@
 import { getWorkflowMetadata } from "workflow";
-import { startOnce } from "../_shared/run-token";
-import { writeMockQuestions, prepareMockRecordings } from "./mock-question-writes";
+import { startOnce, waitForRunToken } from "../_shared/run-token";
+import { prepareMockRecordings, writeMockQuestions } from "./mock-question-writes";
+import { pickMockSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
 import {
-  listMockPrepWritesStep,
   checkMockSupplyStep,
   listExamSupplyGoalsStep,
+  listMockPrepWritesStep,
 } from "./steps/mock-question-steps";
 
 type SupplyRequest = { goalId: string; examBlueprintId: string | null; later: boolean };
+type SupplyAsk = { id: string; revision: number };
 
-export function startMockSupply(input: SupplyRequest) {
+function supplyKey(input: SupplyRequest) {
+  return `mock-supply:${input.examBlueprintId ?? input.goalId}`;
+}
+
+export function startMockSupply(input: SupplyRequest, ask?: SupplyAsk) {
+  const request = ask ? `${ask.id}:${ask.revision}` : "ahead";
+
   return startOnce(
     mockSupplyWorkflow,
-    [input],
-    `mock-supply:${input.examBlueprintId ?? input.goalId}`,
+    [{ ...input, asked: Boolean(ask) }],
+    `${supplyKey(input)}:${request}`,
   );
 }
 
-export async function mockSupplyWorkflow(input: SupplyRequest) {
+async function prepareGoalSupply({
+  goalId,
+  background,
+  workflowRunId,
+}: {
+  goalId: string;
+  background: boolean;
+  workflowRunId: string;
+}) {
+  try {
+    let supply = await listMockPrepWritesStep(goalId);
+    const later = background && !supply.learnerWaiting;
+
+    if (supply.allowStimulusSets) {
+      const sets = await pickMockSetTargetsStep({
+        goalId,
+        quickFormat: supply.quickFormat,
+        writes: supply.writes,
+      });
+
+      const stored = await Promise.all(
+        sets.map((target) =>
+          prepareItemSet({ goalId, target, wait: later ? "later" : "learner", workflowRunId }),
+        ),
+      );
+
+      if (stored.some(Boolean)) {
+        supply = await listMockPrepWritesStep(goalId);
+      }
+    }
+
+    await writeMockQuestions({ ...supply, goalId, later, workflowRunId });
+
+    if (supply.recordings) {
+      await prepareMockRecordings({ goalId, later, recordings: supply.recordings, workflowRunId });
+    }
+  } finally {
+    await checkMockSupplyStep(goalId);
+  }
+}
+
+export async function mockSupplyWorkflow(input: SupplyRequest & { asked: boolean }) {
   "use workflow";
   const { workflowRunId } = getWorkflowMetadata();
-  const goals = await listExamSupplyGoalsStep(input);
+
+  if (!(await waitForRunToken(supplyKey(input)))) {
+    throw new Error("The previous mock supply run is still writing.");
+  }
+
+  const goals = input.asked ? [input.goalId] : await listExamSupplyGoalsStep(input);
+
   for (const goalId of goals) {
-    const writes = await listMockPrepWritesStep(goalId);
-    await writeMockQuestions({
-      ...writes,
+    // oxlint-disable-next-line no-await-in-loop -- Recount after each goal so peers draw on the questions just written.
+    await prepareGoalSupply({
+      background: input.later || goalId !== input.goalId,
       goalId,
-      later: input.later || goalId !== input.goalId,
       workflowRunId,
     });
-    if (writes.listening) await prepareMockRecordings({ goalId, workflowRunId });
-    await checkMockSupplyStep(goalId);
   }
 }

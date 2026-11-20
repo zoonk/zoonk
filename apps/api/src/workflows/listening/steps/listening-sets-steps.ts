@@ -8,8 +8,10 @@ import {
 import { voiceListeningSet } from "@zoonk/core/library/listening/voice";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { storeKeyCheckedItemSet } from "../../_shared/item-set-steps";
+import { screenMockSet } from "../../goals/steps/mock-set-overlap";
 
 type PartStepInput = Pick<PartsToPrepare, "exam"> & {
+  mockGoalId?: string;
   analytics?: ContentAnalytics;
   part: PartsToPrepare["parts"][number];
   wait: CallWait;
@@ -32,7 +34,7 @@ export async function listListeningPartsToPrepareStep(input: {
 async function findUnvoicedPartSetStep(input: PartStepInput): Promise<string | null> {
   "use step";
 
-  return findUnvoicedPartSet(input);
+  return findUnvoicedPartSet({ ...input, mockOnly: Boolean(input.mockGoalId) });
 }
 
 async function writePartSetStep(input: PartStepInput) {
@@ -41,6 +43,7 @@ async function writePartSetStep(input: PartStepInput) {
   return writePartSet({
     analytics: toAnalytics(input),
     exam: input.exam,
+    mockOnly: Boolean(input.mockGoalId),
     part: input.part,
     serviceTier: chooseServiceTier({ wait: input.wait }),
   });
@@ -53,11 +56,19 @@ export async function preparePartSet(input: PartStepInput): Promise<string | nul
     return unvoiced;
   }
 
-  return storeKeyCheckedItemSet({
-    analytics: toAnalytics(input),
-    set: await writePartSetStep(input),
-    wait: input.wait,
-  });
+  const written = await writePartSetStep(input);
+
+  const set =
+    input.mockGoalId && written
+      ? await screenMockSet({
+          goalId: input.mockGoalId,
+          set: written,
+          wait: input.wait,
+          workflowRunId: input.workflowRunId,
+        })
+      : written;
+
+  return storeKeyCheckedItemSet({ analytics: toAnalytics(input), set, wait: input.wait });
 }
 
 export async function voiceListeningSetStep({

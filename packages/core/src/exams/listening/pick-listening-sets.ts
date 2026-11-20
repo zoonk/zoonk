@@ -1,14 +1,17 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
+import { listMockItemClaims } from "../mocks/_utils/mock-item-uses";
 import { type ListeningPart } from "./listening-parts";
 
 export const MAX_SETS_PER_PART = 10;
 
 export function getPartSetsFilter({
+  mockOnly = false,
   examBlueprintId,
   scriptLanguage,
   task,
 }: {
+  mockOnly?: boolean;
   examBlueprintId: string;
   scriptLanguage: string;
   task: string;
@@ -21,6 +24,7 @@ export function getPartSetsFilter({
     examBlueprintId,
     items: { some: { retiredAt: null } },
     kind: "audio" as const,
+    ...(mockOnly ? { mockOnly: true } : { OR: [{ mockOnly: false }, { mockOnly: null }] }),
   };
 }
 
@@ -56,19 +60,28 @@ function pickSet(sets: readonly StoredSet[]): Omit<ListeningPartPick, "part"> {
 
 /** Internal: the caller must derive `userId` from the authenticated session. */
 export async function pickListeningSets({
+  client = prisma,
+  mockOnly = false,
+  exclude = [],
   examBlueprintId,
   parts,
   scriptLanguage,
   userId,
 }: {
+  mockOnly?: boolean;
   examBlueprintId: string;
+  exclude?: readonly string[];
+  client?: TransactionClient;
   parts: readonly ListeningPart[];
   scriptLanguage: string;
   userId: string;
 }): Promise<ListeningPartPick[]> {
-  return Promise.all(
-    parts.map(async (part) => {
-      const sets = await prisma.itemSet.findMany({
+  const claims = mockOnly ? await listMockItemClaims(client, userId) : null;
+  const expired = [...(claims?.expired ?? [])];
+
+  const candidates = await Promise.all(
+    parts.map((part) =>
+      client.itemSet.findMany({
         orderBy: [{ createdAt: "asc" }, { id: "asc" }],
         select: {
           id: true,
@@ -84,10 +97,55 @@ export async function pickListeningSets({
           },
           mediaAssetId: true,
         },
-        where: getPartSetsFilter({ examBlueprintId, scriptLanguage, task: part.task }),
-      });
-
-      return { part, ...pickSet(sets) };
-    }),
+        where: {
+          ...getPartSetsFilter({ examBlueprintId, mockOnly, scriptLanguage, task: part.task }),
+          ...(mockOnly && {
+            items: {
+              none: {
+                OR: [
+                  {
+                    mockUses: {
+                      some: {
+                        OR: [{ spentAt: { not: null } }, { mockExamId: { notIn: expired } }],
+                        userId,
+                      },
+                    },
+                  },
+                  { attempts: { some: { userId } } },
+                  { id: { in: [...exclude] } },
+                  { mockOnly: false },
+                  { mockOnly: null },
+                  { retiredAt: { not: null } },
+                ],
+              },
+              some: { retiredAt: null },
+            },
+          }),
+        },
+      }),
+    ),
   );
+
+  const selected = new Set<string>();
+
+  return parts.map((part, index) => {
+    const sets = candidates[index] ?? [];
+
+    if (!mockOnly) {
+      return { part, ...pickSet(sets) };
+    }
+
+    const set = sets.find(
+      (recording) =>
+        recording.mediaAssetId &&
+        recording.items.length === part.count &&
+        !selected.has(recording.id),
+    );
+
+    if (set) {
+      selected.add(set.id);
+    }
+
+    return { needsSet: !set, part, setId: set?.id ?? null };
+  });
 }

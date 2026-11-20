@@ -9,13 +9,14 @@ import { type ListeningPart } from "./listening-parts";
 import { loadListeningSkills } from "./listening-skills";
 import { MAX_SETS_PER_PART, getPartSetsFilter, pickListeningSets } from "./pick-listening-sets";
 
-type PartInput = { exam: ListeningExam; part: ListeningPart };
+type PartInput = { mockOnly?: boolean; exam: ListeningExam; part: ListeningPart };
 
 export type PartsToPrepare = { exam: ListeningExam; parts: ListeningPart[] };
 
-function getFilter({ exam, part }: PartInput) {
+function getFilter({ exam, part, mockOnly }: PartInput) {
   return getPartSetsFilter({
     examBlueprintId: exam.blueprintId,
+    mockOnly,
     scriptLanguage: exam.scriptLanguage,
     task: part.task,
   });
@@ -34,6 +35,7 @@ export async function findUnvoicedPartSet(input: PartInput): Promise<string | nu
 /** Internal workflow bridge for shared content; callers must supply a trusted exam. */
 export async function writePartSet({
   analytics,
+  mockOnly = false,
   exam,
   part,
   serviceTier,
@@ -42,15 +44,15 @@ export async function writePartSet({
   serviceTier?: ServiceTier;
 }): Promise<ItemSetToStore<WrittenSetItem> | null> {
   const [stored, skills] = await Promise.all([
-    prisma.itemSet.count({ where: getFilter({ exam, part }) }),
+    prisma.itemSet.count({ where: getFilter({ exam, mockOnly, part }) }),
     loadListeningSkills({ examBlueprintId: exam.blueprintId, sectionName: part.sectionName }),
   ]);
 
-  if (stored >= MAX_SETS_PER_PART) {
+  if (!mockOnly && stored >= MAX_SETS_PER_PART) {
     return null;
   }
 
-  return writeExamListeningSet({
+  const set = await writeExamListeningSet({
     analytics,
     exam: { blueprintId: exam.blueprintId, name: exam.name },
     language: exam.language,
@@ -59,6 +61,8 @@ export async function writePartSet({
     serviceTier,
     skills,
   });
+
+  return set && { ...set, ...(mockOnly && { minItems: part.count }), mockOnly };
 }
 
 async function listUnvoicedParts(exam: ListeningExam): Promise<ListeningPart[]> {

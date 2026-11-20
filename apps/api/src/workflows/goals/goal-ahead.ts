@@ -174,7 +174,7 @@ async function prepareMockQuestions({
   }
 
   await Promise.allSettled([
-    startMockSupply({ goalId: goal.id, examBlueprintId: goal.examBlueprintId, later: true }),
+    startMockSupply({ examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: true }),
   ]);
 }
 

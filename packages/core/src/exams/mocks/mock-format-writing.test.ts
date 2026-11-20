@@ -110,10 +110,10 @@ async function formatsSetup(bank: Bank) {
     ...skills.flatMap((skill) =>
       contents.map(({ content, format }) =>
         itemFixture({
-          mockOnly: true,
           content,
           examBlueprintId: blueprint.id,
           format,
+          mockOnly: true,
           skillId: skill.id,
         }),
       ),
@@ -157,14 +157,14 @@ describe("a mock in the exam's own mix of formats", () => {
   });
 
   it("has the formats the bank is short of written first, numbers only for skills that take them", async () => {
-    const { goal, skills } = await formatsSetup({ numbers: 0, onePicks: 9, severalPicks: 0 });
+    const { goal, skills } = await formatsSetup({ numbers: 0, onePicks: 2, severalPicks: 0 });
     const [kinematics, probability] = skills;
 
     await itemFixture({
-      mockOnly: true,
       content: NUMBER,
       examBlueprintId: goal.examBlueprintId,
       format: "numeric",
+      mockOnly: true,
       skillId: kinematics?.id ?? "",
     });
 
@@ -186,22 +186,28 @@ describe("a mock in the exam's own mix of formats", () => {
       {
         key: "picks:all",
         questionsPerSkill: 2,
-        skillIds: [kinematics?.id, probability?.id],
+        skillIds: [kinematics?.id],
         target: 2,
+      },
+      {
+        key: "picks:all",
+        questionsPerSkill: 1,
+        skillIds: [probability?.id],
+        target: 1,
       },
       { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
     ]);
   });
 
-  it("prepares the exam's first learner's full mock in every format, and leaves later ones' to their mocks", async () => {
+  it("prepares a paid learner's full mock and skips a free learner", async () => {
     const { goal, skills } = await formatsSetup({ numbers: 0, onePicks: 1, severalPicks: 0 });
     const [kinematics, probability] = skills;
 
     await itemFixture({
-      mockOnly: true,
       content: NUMBER,
       examBlueprintId: goal.examBlueprintId,
       format: "numeric",
+      mockOnly: true,
       skillId: kinematics?.id ?? "",
     });
 
@@ -218,14 +224,20 @@ describe("a mock in the exam's own mix of formats", () => {
       {
         key: "choice",
         questionsPerSkill: 1,
-        skillIds: [kinematics?.id, probability?.id],
+        skillIds: [kinematics?.id],
         target: 2,
       },
       {
         key: "picks:all",
         questionsPerSkill: 2,
-        skillIds: [kinematics?.id, probability?.id],
+        skillIds: [kinematics?.id],
         target: 2,
+      },
+      {
+        key: "picks:all",
+        questionsPerSkill: 1,
+        skillIds: [probability?.id],
+        target: 1,
       },
       { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
     ]);
@@ -327,6 +339,10 @@ describe("a mock in the exam's own mix of formats", () => {
         planItemFixture({ kind: "lesson", planId: plan.id, position, skillId: skill.id }),
       ),
     );
+
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    });
 
     const { writes } = await listMockPrepWrites({ goalId: goal.id });
 

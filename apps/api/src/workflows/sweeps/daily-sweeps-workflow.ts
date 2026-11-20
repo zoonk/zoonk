@@ -197,7 +197,7 @@ async function sweep(): Promise<SweepCounts> {
     writeOwedSentenceOrders(),
     tagOwedSkillLevels(),
     startOwedMindMapRedraws(),
-    listDueMockGoalsStep().then((goals) => Promise.all(goals.map(startMockSupply))),
+    listDueMockGoalsStep().then((goals) => Promise.all(goals.map((goal) => startMockSupply(goal)))),
   ]);
 
   return {

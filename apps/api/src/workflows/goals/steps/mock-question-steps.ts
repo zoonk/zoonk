@@ -1,12 +1,11 @@
 import {
   type MockQuestionWrites,
-  listMockPrepWrites,
   checkMockSupply,
-  listExamSupplyGoals,
   listDueMockGoals,
+  listExamSupplyGoals,
+  listMockPrepWrites,
   loadMockWritingSkills,
 } from "@zoonk/core/exams/mocks/prep";
-import { type PlacementItemSkill } from "@zoonk/core/lookahead/placement-item-skills";
 
 export async function listMockPrepWritesStep(goalId: string): Promise<MockQuestionWrites> {
   "use step";
@@ -17,7 +16,7 @@ export async function listMockPrepWritesStep(goalId: string): Promise<MockQuesti
 export async function loadMockWritingSkillsStep(input: {
   goalId: string;
   skillIds: string[];
-}): Promise<PlacementItemSkill[]> {
+}): ReturnType<typeof loadMockWritingSkills> {
   "use step";
 
   return loadMockWritingSkills(input);

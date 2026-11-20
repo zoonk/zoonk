@@ -104,12 +104,12 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     kind: z.literal("voiceWord"),
   }),
   z.object({
-    kind: z.literal("prepareMockSupply"),
     input: z.object({
-      goalId: uuidSchema(),
       examBlueprintId: uuidSchema().nullable(),
+      goalId: uuidSchema(),
       later: z.boolean(),
     }),
+    kind: z.literal("prepareMockSupply"),
   }),
   z.object({ input: z.object({ mockId: uuidSchema() }), kind: z.literal("writeSpeakingPaper") }),
   z.object({
