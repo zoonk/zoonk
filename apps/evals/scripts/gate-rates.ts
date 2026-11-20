@@ -1,13 +1,13 @@
 import { parseArgs } from "node:util";
 import { isoDate, staffList, wholeNumber } from "./_utils/staff";
 
-type Problem = { code?: string; problem: string; source: "code" | "review" };
+type Problem = { code?: string; problem: string; screen: number | null; source: "code" | "review" };
 
 type Decision = {
   blocking: Problem[];
   minor: Problem[];
   outcome: string;
-  phase: string;
+  phase: "codeCheck" | "firstReview";
   reviewerRunId: string | null;
   writerRunId: string;
 };
@@ -15,12 +15,11 @@ type Decision = {
 type Writer = { model: string; promptVersion: string; runId: string };
 
 type Counts = {
+  codeChecks: number;
+  codeNeedsFix: number;
   firstReviews: number;
   passed: number;
-  skipped: number;
-  skippedRechecks: number;
-  uncheckedPublications: number;
-  problems: Map<string, number>;
+  problems: Map<string, { count: number; example: string }>;
 };
 
 const { values } = parseArgs({
@@ -40,31 +39,33 @@ if (from >= to) {
 }
 
 function addDecision(counts: Counts, decision: Decision) {
-  if (decision.phase === "firstReview") {
-    if (decision.reviewerRunId === null) {
-      counts.skipped += 1;
-    } else {
-      counts.firstReviews += 1;
-      counts.passed += Number(decision.outcome === "passed");
-    }
+  if (decision.phase === "codeCheck") {
+    counts.codeChecks += 1;
+    counts.codeNeedsFix += Number(decision.outcome === "needsFix");
+  } else if (decision.reviewerRunId !== null) {
+    counts.firstReviews += 1;
+    counts.passed += Number(decision.outcome === "passed");
   }
-
-  const codeOnly = decision.phase === "codeCheck" || decision.phase === "codeRecheck";
-
-  if (codeOnly && (decision.outcome === "heldBack" || decision.outcome === "setAside")) {
-    counts.skipped += 1;
-  }
-
-  counts.skippedRechecks += Number(decision.phase === "recheck" && decision.reviewerRunId === null);
-  counts.uncheckedPublications += Number(decision.outcome === "publishUnchecked");
 
   for (const [severity, problems] of [
     ["blocking", decision.blocking],
     ["minor", decision.minor],
   ] as const) {
-    for (const { code, problem, source } of problems) {
-      const label = `${severity}/${source}: ${code ?? problem}`;
-      counts.problems.set(label, (counts.problems.get(label) ?? 0) + 1);
+    const byLabel = new Map(
+      problems.map(({ code, problem, screen, source }) => {
+        const location = screen === null ? "whole lesson" : `screen ${screen + 1}`;
+        const category = source === "code" ? (code ?? "uncategorized") : location;
+        return [`${severity}/${source}: ${category}`, problem] as const;
+      }),
+    );
+
+    for (const [label, problem] of byLabel) {
+      const previous = counts.problems.get(label);
+
+      counts.problems.set(label, {
+        count: (previous?.count ?? 0) + 1,
+        example: previous?.example ?? problem,
+      });
     }
   }
 }
@@ -82,11 +83,7 @@ function readRates() {
       fields: "phase,outcome,writerRunId,reviewerRunId,blocking,minor",
       limit: Math.min(100, limit - offset),
       offset,
-      where: [
-        `createdAt gte ${from}`,
-        `createdAt lt ${to}`,
-        "phase in firstReview,recheck,codeCheck,codeRecheck",
-      ],
+      where: [`createdAt gte ${from}`, `createdAt lt ${to}`, "phase in firstReview,codeCheck"],
     });
 
     const ids = [...new Set(page.records.map((row) => row.writerRunId))].filter(
@@ -117,13 +114,12 @@ function readRates() {
       const writer = writers.get(decision.writerRunId);
       const key = JSON.stringify([writer?.model ?? null, writer?.promptVersion ?? null]);
 
-      const counts = groups.get(key) ?? {
+      const counts: Counts = groups.get(key) ?? {
+        codeChecks: 0,
+        codeNeedsFix: 0,
         firstReviews: 0,
         passed: 0,
-        problems: new Map<string, number>(),
-        skipped: 0,
-        skippedRechecks: 0,
-        uncheckedPublications: 0,
+        problems: new Map(),
       };
 
       addDecision(counts, decision);
@@ -150,14 +146,14 @@ function readRates() {
         const { problems, ...totals } = counts;
 
         const commonProblems = [...problems]
-          .toSorted(([a, aCount], [b, bCount]) => bCount - aCount || a.localeCompare(b))
+          .toSorted(([a, left], [b, right]) => right.count - left.count || a.localeCompare(b))
           .slice(0, 10);
 
         return {
           model,
           promptVersion,
           ...totals,
-          commonProblems: commonProblems.map(([problem, count]) => ({ count, problem })),
+          commonProblems: commonProblems.map(([problem, entry]) => ({ ...entry, problem })),
         };
       }),
   };
