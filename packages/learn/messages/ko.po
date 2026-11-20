@@ -8211,6 +8211,7 @@ msgid "Right"
 msgstr "정답"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "y2fpaL"
 msgid "Wrong"
 msgstr "오답"
@@ -8584,6 +8585,11 @@ msgstr "{number} / {total}"
 msgctxt "d9n-z1"
 msgid "Check it again before you hand in. Your result shows how these answers went."
 msgstr "제출하기 전에 다시 확인해 보세요. 결과에서 이 답들이 어땠는지 확인할 수 있어요."
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "vmWccn"
+msgid "Your result shows how these answers went."
+msgstr ""
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx

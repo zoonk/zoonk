@@ -5,6 +5,8 @@ export type SectionMoves = {
   canOpenAfterTimeout: (position: number) => boolean;
   canChange: (position: number) => boolean;
   canOpen: (position: number) => boolean;
+  /** Whether an answer can still be changed after moving past it, before the section is handed in. */
+  canRecheck: boolean;
   /** Null outside a review or without a limit. */
   changesLeft: number | null;
   forwardOnly: boolean;
@@ -47,6 +49,7 @@ export function getSectionMoves({
       !forwardOnly || target >= reached || changed.includes(target) || (changes ?? 0) > 0,
     canOpen: (target) => canReach(target) && (target === position || canAdvance),
     canOpenAfterTimeout: (target) => target === position + 1 && canReach(target),
+    canRecheck: !forwardOnly || (navigation?.answerChanges ?? 0) > 0,
     changesLeft: changes,
     forwardOnly,
     itemSeconds: reviewing ? null : (navigation?.itemSeconds ?? null),

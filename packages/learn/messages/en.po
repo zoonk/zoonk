@@ -8211,6 +8211,7 @@ msgid "Right"
 msgstr "Right"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 msgctxt "y2fpaL"
 msgid "Wrong"
 msgstr "Wrong"
@@ -8584,6 +8585,11 @@ msgstr "{number} of {total}"
 msgctxt "d9n-z1"
 msgid "Check it again before you hand in. Your result shows how these answers went."
 msgstr "Check it again before you hand in. Your result shows how these answers went."
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "vmWccn"
+msgid "Your result shows how these answers went."
+msgstr "Your result shows how these answers went."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx

@@ -2,7 +2,12 @@
 
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { Popover, PopoverContent, PopoverDescription } from "@zoonk/ui/components/popover";
+import {
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverDescription,
+} from "@zoonk/ui/components/popover";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -80,10 +85,16 @@ const UNSURE_TIP_SEEN_KEY = "zoonk:mock-unsure-tip-seen";
 
 function useUnsureTip(itemId: string | undefined) {
   const [tipFor, setTipFor] = useState<string | null>(null);
+  const [shownItem, setShownItem] = useState(itemId);
+
+  // Any move to another question closes it, so coming back never shows it without a press.
+  if (shownItem !== itemId) {
+    setShownItem(itemId);
+    setTipFor(null);
+  }
 
   return {
     close: () => setTipFor(null),
-    // Kept per question, so moving to another one closes it.
     open: tipFor === itemId,
     toggled: (marking: boolean) => {
       const show = marking && deviceStorage.get(UNSURE_TIP_SEEN_KEY) === null;
@@ -97,8 +108,37 @@ function useUnsureTip(itemId: string | undefined) {
   };
 }
 
-function UnsureButton() {
+/**
+ * The tip stands over the whole bottom bar, so the question strip under it stays in sight, and its
+ * arrow points down at the button.
+ */
+function aboveBottomBar(button: HTMLElement | null) {
+  if (!button) {
+    return null;
+  }
+
+  return {
+    contextElement: button,
+    getBoundingClientRect: () => {
+      const rect = button.getBoundingClientRect();
+      const barTop = button.closest('[data-slot="bottom-bar"]')?.getBoundingClientRect().top;
+      const top = barTop ?? rect.top;
+
+      return new DOMRect(rect.left, top, rect.width, rect.bottom - top);
+    },
+  };
+}
+
+function useUnsureTipText() {
   const t = useExtracted();
+  const { runner } = useMockScreen();
+
+  return runner.moves.canRecheck
+    ? t("Check it again before you hand in. Your result shows how these answers went.")
+    : t("Your result shows how these answers went.");
+}
+
+function UnsureButton() {
   const label = useUnsureLabel();
   const { runner } = useMockScreen();
   const question = runner.view.current?.questions[runner.position];
@@ -106,6 +146,7 @@ function UnsureButton() {
   const button = useRef<HTMLButtonElement>(null);
   const tip = useUnsureTip(question?.itemId);
   const tipId = useId();
+  const tipText = useUnsureTipText();
 
   function toggle() {
     tip.toggled(!unsure);
@@ -135,16 +176,19 @@ function UnsureButton() {
 
       <Popover onOpenChange={(open) => !open && tip.close()} open={tip.open}>
         <PopoverContent
-          anchor={button}
+          anchor={() => aboveBottomBar(button.current)}
           backdrop={false}
           className="w-64 max-w-(--available-width)"
+          collisionAvoidance={{ side: "none" }}
           finalFocus={false}
           initialFocus={false}
           side="top"
+          sideOffset={12}
         >
-          <PopoverDescription className="text-pretty" id={tipId}>
-            {t("Check it again before you hand in. Your result shows how these answers went.")}
+          <PopoverDescription className="text-popover-foreground text-pretty" id={tipId}>
+            {tipText}
           </PopoverDescription>
+          <PopoverArrow />
         </PopoverContent>
       </Popover>
     </>
