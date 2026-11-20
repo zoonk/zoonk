@@ -184,6 +184,7 @@ async function findCardGoal(
   const draft = await tx.onboardingDraft.findFirst({
     select: {
       goals: {
+        orderBy: { createdAt: "desc" },
         select: { id: true },
         take: 1,
         where: { onboardingPlace: card.place, status: { not: "archived" } },

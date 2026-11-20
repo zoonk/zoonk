@@ -9,6 +9,7 @@ import { getGoalContentToken, goalContentWorkflow } from "@/workflows/goals/goal
 import { getGoalRebuildAsk } from "@/workflows/goals/goal-rebuild-ask";
 import { rebuildGoalCurriculumWorkflow } from "@/workflows/goals/rebuild-goal-curriculum-workflow";
 import { getRequestPlatform } from "@zoonk/core/analytics/request-platform";
+import { type ReplayedRuns } from "@zoonk/core/goals/create";
 import { getGoalGenerationId } from "@zoonk/core/goals/generation-id";
 import { type GoalRebuildFollowUp } from "@zoonk/core/goals/rebuild-follow-up";
 import { recordGoalGeneration } from "@zoonk/core/goals/record-generation";
@@ -127,4 +128,45 @@ export async function startGoalWork(goals: readonly GoalRef[]) {
   const generations = await startGoalContent({ goals, research });
 
   return { generations, research };
+}
+
+function toGenerationKind(kind: GoalKind): GoalGeneration["kind"] {
+  return kind === "explain" ? "explanation" : "curriculum";
+}
+
+/**
+ * A goal a card confirm made before follows the runs it started, so sending the card again pays for
+ * nothing; one whose start never got saved starts now.
+ */
+export async function startOrFollowGoalWork({
+  goals,
+  replayed,
+}: {
+  goals: readonly GoalRef[];
+  replayed: readonly ReplayedRuns[];
+}) {
+  const fresh = goals.filter((goal) => !replayed.some((run) => run.goalId === goal.id));
+  const started = await startGoalWork(fresh);
+
+  const followed = replayed.flatMap((run) => {
+    const goal = goals.find((item) => item.id === run.goalId);
+    return goal ? [{ goal, run }] : [];
+  });
+
+  return {
+    generations: [
+      ...followed.map(({ goal, run }) => ({
+        generationId: run.generationId,
+        goalId: goal.id,
+        kind: toGenerationKind(goal.kind),
+      })),
+      ...started.generations,
+    ],
+    research: [
+      ...followed.flatMap(({ goal, run }) =>
+        run.researchId ? [{ goalId: goal.id, researchId: run.researchId }] : [],
+      ),
+      ...started.research,
+    ],
+  };
 }

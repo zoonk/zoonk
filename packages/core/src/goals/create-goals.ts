@@ -29,8 +29,11 @@ import { type GoalCreateInput, type GoalDraft, type GoalView } from "./goal-cont
 
 export type GoalRefusal = { decision: RefusedUsage; index: number };
 
+/** The runs a goal a confirm already made started, which a replay follows instead of paying again. */
+export type ReplayedRuns = { generationId: string; goalId: string; researchId: string | null };
+
 export type GoalCreateResult =
-  | { goals: GoalView[]; refused: GoalRefusal[]; status: "created" }
+  | { goals: GoalView[]; refused: GoalRefusal[]; replayed: ReplayedRuns[]; status: "created" }
   | { refused: GoalRefusal[]; status: "refused" }
   | { status: "invalidReference" }
   | { status: "unauthorized" };
@@ -290,6 +293,11 @@ export async function createGoals(
   return {
     goals: await loadGoalViews({ activeGoalId, goals }),
     refused: results.refused,
+    replayed: goals.flatMap((goal) =>
+      !results.created.includes(goal.id) && goal.generationRunId
+        ? [{ generationId: goal.generationRunId, goalId: goal.id, researchId: goal.researchRunId }]
+        : [],
+    ),
     status: "created",
   };
 }

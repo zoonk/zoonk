@@ -96,10 +96,12 @@ describe(createOnboardingGoals, () => {
 
     it("leaves the goal the learner studies now as it is", async () => {
       const user = await userFixture();
+
       const [first, second] = await Promise.all([
         onboardingDraftFixture({ userId: user.id }),
         onboardingDraftFixture({ userId: user.id }),
       ]);
+
       mockSession(user.id);
 
       await confirm([cardGoal(first.id)]);
@@ -109,6 +111,53 @@ describe(createOnboardingGoals, () => {
       await expect(
         prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
       ).resolves.toMatchObject({ activeGoalId: studied });
+    });
+
+    it("follows the runs the goal started, and starts them when none was saved", async () => {
+      const user = await userFixture();
+      const card = await onboardingDraftFixture({ userId: user.id });
+      mockSession(user.id);
+
+      const first = await createOnboardingGoals({
+        dailyMinutes: 30,
+        goals: [cardGoal(card.id)],
+        timeZone: "UTC",
+      });
+
+      const goalId = first.status === "created" ? (first.goals[0]?.id ?? "") : "";
+
+      const unstarted = await createOnboardingGoals({
+        dailyMinutes: 30,
+        goals: [cardGoal(card.id)],
+      });
+
+      await prisma.goal.update({
+        data: { generationRunId: "wrun_curriculum", researchRunId: "wrun_research" },
+        where: { id: goalId },
+      });
+
+      const started = await createOnboardingGoals({ dailyMinutes: 30, goals: [cardGoal(card.id)] });
+
+      expect(first).toMatchObject({ replayed: [] });
+      expect(unstarted).toMatchObject({ replayed: [] });
+
+      expect(started).toMatchObject({
+        replayed: [{ generationId: "wrun_curriculum", goalId, researchId: "wrun_research" }],
+      });
+    });
+
+    it("returns the newest of two live goals at one place, after one is restored", async () => {
+      const user = await userFixture();
+      const card = await onboardingDraftFixture({ userId: user.id });
+      mockSession(user.id);
+
+      const [restored] = await confirm([cardGoal(card.id)]);
+      await prisma.goal.update({ data: { status: "archived" }, where: { id: restored } });
+      const [newest] = await confirm([cardGoal(card.id)]);
+      await prisma.goal.update({ data: { status: "paused" }, where: { id: restored } });
+      await prisma.goal.update({ data: { dailyMinutes: 20 }, where: { id: newest } });
+
+      await expect(confirm([cardGoal(card.id)])).resolves.toStrictEqual([newest]);
     });
 
     it("makes one goal when two confirms arrive at once", async () => {
