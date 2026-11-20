@@ -8,8 +8,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -127,6 +129,48 @@ class MockResultScreenshots {
         show(enem())
         openQuestions()
         capture("result-phone-review-open")
+    }
+
+    /** Wrong, wrong and not sure, right and not sure, blank and not sure: every row opened. */
+    private fun reviewUnsure(
+        name: String,
+        dark: Boolean = false,
+    ) {
+        show(finishedMock(extra = """"review":$UNSURE_REVIEW"""), dark = dark)
+        openQuestions()
+        capture(name)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h2400dp-xxhdpi")
+    fun phoneReviewUnsure() = reviewUnsure("result-review-unsure-phone")
+
+    @Test
+    @Config(qualifiers = "w360dp-h2400dp-night-xxhdpi")
+    fun smallPhoneReviewUnsureDark() = reviewUnsure("result-review-unsure-small-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h4000dp-xhdpi")
+    fun phoneReviewUnsureAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        reviewUnsure("result-review-unsure-font200")
+    }
+
+    /** The details sheet with how the answers the learner wasn't sure of went. */
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneDetailsUnsure() {
+        show(cebraspe())
+        compose.onNodeWithText("Details").performClick()
+        compose.waitForIdle()
+        write(
+            "result-details-unsure",
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap(),
+        )
     }
 
     @Test
@@ -471,23 +515,37 @@ class MockResultScreenshots {
         const val MATH_REVIEW =
             """[{"area":"Mathematics","citation":null,"context":null,"correctAnswer":"${'$'}x = 2${'$'} e ${'$'}x = 3${'$'}","explanation":"Fatorando, ${'$'}(x - 2)(x - 3) = 0${'$'}.",
             "format":"multipleChoice","itemId":"00000000-0000-4000-8000-0000000000e1","learnerAnswer":"${'$'}x = 1${'$'} e ${'$'}x = 6${'$'}","number":1,"outcome":"wrong",
-            "question":"Quais são as raízes de ${'$'}x^2 - 5x + 6 = 0${'$'}?","set":null},
+            "question":"Quais são as raízes de ${'$'}x^2 - 5x + 6 = 0${'$'}?","set":null,"unsure":false},
             {"area":"Mathematics","citation":null,"context":null,"correctAnswer":"${'$'}x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a} \\text{, com } a \\neq 0 \\text{ e } \\Delta = b^2 - 4ac \\geq 0${'$'}","explanation":"É a fórmula de Bhaskara.",
             "format":"multipleChoice","itemId":"00000000-0000-4000-8000-0000000000e2","learnerAnswer":"${'$'}x = \\frac{b \\pm \\sqrt{b^2 + 4ac}}{2a}${'$'}","number":2,"outcome":"wrong",
-            "question":"Qual expressão dá as raízes de ${'$'}ax^2 + bx + c = 0${'$'}?","set":null},
+            "question":"Qual expressão dá as raízes de ${'$'}ax^2 + bx + c = 0${'$'}?","set":null,"unsure":false},
             {"area":"Mathematics","citation":null,"context":null,"correctAnswer":"60","explanation":"${'$'}\\frac{3}{4} \\times 80 = 60${'$'}.",
             "format":"numeric","itemId":"00000000-0000-4000-8000-0000000000e3","learnerAnswer":"45","number":3,"outcome":"wrong",
-            "question":"Quanto é ${'$'}\\frac{3}{4}${'$'} de ${'$'}80${'$'}?","set":null},
+            "question":"Quanto é ${'$'}\\frac{3}{4}${'$'} de ${'$'}80${'$'}?","set":null,"unsure":false},
             {"area":"Mathematics","citation":null,"context":null,"correctAnswer":"__init__","explanation":"O nome tem dois sublinhados de cada lado.",
             "format":"typed","itemId":"00000000-0000-4000-8000-0000000000e4","learnerAnswer":"init","number":4,"outcome":"wrong",
-            "question":"Que método inicia um objeto em Python?","set":null},
+            "question":"Que método inicia um objeto em Python?","set":null,"unsure":false},
             {"area":"Mathematics","citation":null,"context":null,"correctAnswer":"false","explanation":"${'$'}25\\%${'$'} de ${'$'}80${'$'} é ${'$'}20${'$'}.",
             "format":"trueFalse","itemId":"00000000-0000-4000-8000-0000000000e5","learnerAnswer":"true","number":5,"outcome":"wrong",
-            "question":"${'$'}25\\%${'$'} de ${'$'}80${'$'} é ${'$'}25${'$'}.","set":null}]"""
+            "question":"${'$'}25\\%${'$'} de ${'$'}80${'$'} é ${'$'}25${'$'}.","set":null,"unsure":false}]"""
+
+        const val UNSURE_REVIEW =
+            """[{"area":"Chemistry","citation":null,"context":null,"correctAnswer":"Covalent","explanation":"They share electrons.",
+            "format":"multipleChoice","itemId":"00000000-0000-4000-8000-0000000000f3","learnerAnswer":"Ionic","number":3,"outcome":"wrong",
+            "question":"Which bond holds the atoms of a water molecule together?","set":null,"unsure":false},
+            {"area":"Chemistry","citation":null,"context":null,"correctAnswer":"7","explanation":"Pure water is neutral.",
+            "format":"multipleChoice","itemId":"00000000-0000-4000-8000-0000000000f7","learnerAnswer":"5","number":7,"outcome":"wrong",
+            "question":"What is the pH of pure water at 25 °C?","set":null,"unsure":true},
+            {"area":"Biology","citation":null,"context":null,"correctAnswer":"Mitochondria","explanation":"They make most of the cell's ATP.",
+            "format":"multipleChoice","itemId":"00000000-0000-4000-8000-0000000000fc","learnerAnswer":"Mitochondria","number":12,"outcome":"right",
+            "question":"Which organelle makes most of a cell's energy?","set":null,"unsure":true},
+            {"area":"Physics","citation":null,"context":null,"correctAnswer":"Newton","explanation":"Force is measured in newtons.",
+            "format":"multipleChoice","itemId":"00000000-0000-4000-8000-0000000000ff","learnerAnswer":null,"number":15,"outcome":"blank",
+            "question":"What is the SI unit of force?","set":null,"unsure":true}]"""
 
         const val STATEMENT =
             """{"area":"Mathematics","citation":null,"context":null,"correctAnswer":"false","explanation":"Zero is even.",
             "format":"trueFalse","itemId":"$ITEM_TWO","learnerAnswer":"true","number":2,"outcome":"wrong",
-            "question":"Zero is an odd number.","set":null}"""
+            "question":"Zero is an odd number.","set":null,"unsure":false}"""
     }
 }

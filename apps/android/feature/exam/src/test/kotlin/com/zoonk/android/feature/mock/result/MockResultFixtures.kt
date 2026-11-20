@@ -51,7 +51,7 @@ internal const val IRT = """"irt":{"high":680,"low":610,"score":645,"se":18,"the
 internal const val MISSED =
     """{"area":"Languages","citation":null,"context":null,"correctAnswer":"house","explanation":"A noun names a thing.",
     "format":"multipleChoice","itemId":"$ITEM_THREE","learnerAnswer":"run","number":3,"outcome":"wrong",
-    "question":"Which word is a noun?","set":null}"""
+    "question":"Which word is a noun?","set":null,"unsure":false}"""
 
 internal fun pendingEssay(item: String = ESSAY_ONE) =
     """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow."}"""

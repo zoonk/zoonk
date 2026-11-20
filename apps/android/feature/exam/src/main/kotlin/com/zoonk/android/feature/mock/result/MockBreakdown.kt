@@ -271,7 +271,7 @@ private fun CalibrationInsight(result: MockResult) {
 
     Insight(
         R.drawable.ic_balance,
-        stringResource(R.string.mock_result_flagged_answers),
+        stringResource(R.string.mock_result_unsure_answers),
         listOfNotNull(
             stringResource(
                 R.string.mock_result_calibration_detail,

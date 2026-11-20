@@ -9,7 +9,6 @@
   "mock_break_detail": "2f59152a8edff312bed54bf9b19dc7cbfd6fed1fc0a53cd6a3f44d5362b33713",
   "mock_break_time_left": "b130f4f76d1787e1c0806bb41ccd5b4caa8f56786adf15d477d21b4aa2b03376",
   "mock_cell_answered": "23ae19049484d4a490bb35bdb4a4ef2493e46d8cdb82c4797a64681f633e634a",
-  "mock_cell_flagged": "e709dc634a494bbc1baccdde916e34fcdd4ad52baa239fbfcd0fdc670f198174",
   "mock_continue": "5965ef3b8dfb02a512bfb09c3f92a8f71d18c31a47f4aae5a481ce2f5e19d343",
   "mock_continue_section": "92d4bff9c631dc4d0d43288bce514ed7726014cedb42ce5e7a973e2ebf87b7a2",
   "mock_essay_blank": "0f4c6b7edf719b845b0c39be8ddf03293dc3f5304436ac13d23c5e0c4e5e2da5",
@@ -17,7 +16,6 @@
   "mock_every_answered": "446f8b091b3e4dca2d3762c7062cbb8b8f0d2fc49100d5cba177f236dccfa631",
   "mock_expired_detail": "998b93bf8ce02a2b73f450ee6c5d7010bf48cd0ccc05d44558b2e2af32acd706",
   "mock_expired_title": "80bcba749c71165a024b4e9592b373bea46679bcd80fc2effc4bb96791c0a5a4",
-  "mock_flag": "3311cf72f33b5caf54163581e5070a0b7632583caf6fc6ce21d63b30b57a1904",
   "mock_hand_in": "d9195a4830df55fb9cd575b3f3e70c8f1b7d07c8d28e52e7b574c90fa1fd9795",
   "mock_hand_in_final": "326b628a0f292a07014be78e6597f635046cb4a48122cabc54d74b54c6b1e8b3",
   "mock_hand_in_mock_title": "512d2f8b0150874bacc290a5f563082b2fcdf3bab2eb53eacbf27bf7874d7596",
@@ -30,10 +28,7 @@
   "mock_label": "5feb0953f1b85d05ba84c155579f270ddd2f2648ba3aff2640a8174028ac406d",
   "mock_label_shape": "d28d06109dd466576d05228b472a4b7d06a7319f206a294a0e4b59dd6fc8d878",
   "mock_left_blank": "f61f974ed76763e29250721ca44febc209df4066a091ef702ed3d013eacf7c81",
-  "mock_left_blank_and_flagged": "f8600bff6469b59d06cd78fa22b8a4a43dfb400ea21096e065ff6e884e1ded61",
   "mock_left_blank_only": "08127ffb57058880ec7ce4fc9e1e0ab43f9ea0a79c3431e76c9e1b1265a65f40",
-  "mock_left_flagged": "f227be23001fe786850036fe1f63f7c5f5085ca1f9352cba8cde08f3fc602dfe",
-  "mock_left_flagged_only": "ab3406728913a02f75f97b0afd70f1a868ecaa6e1abb31d10a822df8857c3b11",
   "mock_moves_forward": "0fd5fbd394370caf979d32c88e2e014e8319e96e0b07fc78871182ed03346c4d",
   "mock_moves_forward_must": "8a2761fea44bcd787deff78e7461cfb9a8b109f9e66aa079defbaa804c605622",
   "mock_moves_must": "5d50fdaef2eb822824c9c8f7a82876d06e04252082640f28957afe296422a023",
@@ -89,7 +84,6 @@
   "mock_time_up": "a325cb213a6cad076ff135592e12611e5dc4c433213d04d5a9fe02720dac2171",
   "mock_title": "f7baa19ebfb880dc0db9ad9e6b6ffe82da5eecc99b6df74bdca4beb9b189d242",
   "mock_try_again": "97c6befc797e9a063493c62d85b875cb6074994815d830bef0f0c4c7b3f443a3",
-  "mock_unflag": "b286738fcbe813c6c52a29fe09ce510cb87efd634a5a84217820046e947668cc",
   "mock_words": "09bea6696784497561148eb3b0daa415cfadf75894d07ef11e3c5cd4857b7e35",
   "mock_written_part": "6394e671851eb17368937215e9a5700250292edfa3dbd6f32df4769d8c3706a6",
   "mock_written_part_area": "b43f3a2581a6f24450f38dc40c9c8920a7c5a5d0031d2105e31516cbc48973d3",
@@ -131,8 +125,6 @@
     <string name="mock_question_place">Soru %1$d / %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Soru %1$d / %2$d · %3$s</string>
-    <string name="mock_flag">İşaretle</string>
-    <string name="mock_unflag">İşareti kaldır</string>
     <string name="mock_next">Devam et</string>
     <string name="mock_hand_in_section">Oturumu teslim et</string>
     <string name="mock_moves_review_any">Gözden geçirme: istediğin soruya geri dönebilirsin.</string>
@@ -151,19 +143,9 @@
         <item quantity="one">%d soru boş bırakıldı</item>
         <item quantity="other">%d soru boş bırakıldı</item>
     </plurals>
-    <plurals name="mock_left_flagged">
-        <item quantity="one">%d soru işaretlendi</item>
-        <item quantity="other">%d soru işaretlendi</item>
-    </plurals>
-    <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
-    <string name="mock_left_blank_and_flagged">%1$s ve %2$s.</string>
     <plurals name="mock_left_blank_only">
         <item quantity="one">%d soru boş.</item>
         <item quantity="other">%d soru boş.</item>
-    </plurals>
-    <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d soru işaretlendi.</item>
-        <item quantity="other">%d soru işaretlendi.</item>
     </plurals>
     <string name="mock_every_answered">Tüm sorular cevaplandı.</string>
     <string name="mock_essay_blank">Kompozisyon boş.</string>
@@ -186,8 +168,6 @@
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">%1$d. soru</string>
     <string name="mock_cell_answered">cevaplandı</string>
-    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_flagged">%1$s, işaretli</string>
     <string name="mock_sections">Oturumlar</string>
     <string name="mock_section_number">%1$d. oturum</string>
     <!-- A section's status in the list of the mock's sections. -->

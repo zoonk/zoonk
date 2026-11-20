@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "a66fa78372257b2ee93721d11c4e5f4d6d1342b84e0c9be83e017626caf28eff",
   "mock_result_estimated_score": "4c8f15fe642d4e90ea377b727a6e8bb0fb79ccb1bd8f11a7e0036870db834a61",
   "mock_result_every_minimum": "9f362a27731c8b075cd6c00af1828ae4afc044f48200e99062b7d2319d1c6363",
-  "mock_result_flagged_answers": "bc27f3c24277c2a43c6f1d4ac95209ee81f0710e85806526e7361b0e99918c9a",
   "mock_result_focus_done": "95d8b2faa70d01941283ba429d6c9718a5db6ea02169aacdedc9684967973a47",
   "mock_result_focus_line": "b79bdb412c544b3bd8c83110aafa1934d026aa0df47a38da195a6d18b8de0d7d",
   "mock_result_focus_title": "16f82e39e86d2b7a6878554730deb16d14eab885a2cfe539385d0f5cfee7d038",
@@ -305,8 +304,6 @@
         <item quantity="many">Você errou %d questões fáceis. Revise essas primeiro.</item>
         <item quantity="other">Você errou %d questões fáceis. Revise essas primeiro.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">Respostas marcadas</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d de %2$d certa</item>

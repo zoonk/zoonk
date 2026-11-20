@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "31bd8bed82e96f54f7e70d6f3829a249a551bee743e9f8b95558aa237eb8c5d2",
   "mock_result_estimated_score": "786ce13eb81c8492f34933d5cd044623ce0c0cd92934824a8624b017c7470de6",
   "mock_result_every_minimum": "fc2d206b0643276fa31a31464c9d92fcd99564945677da2ea0071351010e772f",
-  "mock_result_flagged_answers": "4057cb797d4dec250052cf69f0726b39181540dc947dab866463ace798c41520",
   "mock_result_focus_done": "369bcb32e1bd2142aeec5557e5d518fccf188046592fef23d8e78493ed719588",
   "mock_result_focus_line": "46905de029434f44ff98c66641fba3a5e9600afc59e737c3407ea8f299e7ef35",
   "mock_result_focus_title": "a12f7aa13e4b6cd9bb63ce6db41e6094c677b6c98459ad96438f550664da46b2",
@@ -291,8 +290,6 @@
         <item quantity="one">%d kolay soruyu kaçırdın. Önce bunları gözden geçir.</item>
         <item quantity="other">%d kolay soruyu kaçırdın. Önce bunları gözden geçir.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">İşaretlenen cevaplar</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d / %2$d doğru</item>

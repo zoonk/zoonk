@@ -117,7 +117,7 @@ data class SectionCounts(
     val blank: Int,
     val blankEssays: Int,
     val essays: Int,
-    val flagged: Int,
+    val unsure: Int,
     val total: Int,
 )
 
@@ -132,7 +132,7 @@ fun sectionCounts(
         blank = blank.count { !it.essay },
         blankEssays = blank.count { it.essay },
         essays = questions.count { it.essay },
-        flagged = questions.count { drafts[it.itemId]?.flagged == true },
+        unsure = questions.count { drafts[it.itemId]?.unsure == true },
         total = questions.size,
     )
 }

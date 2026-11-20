@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "d8c7fb40ac5aa1c851a19a1bf5697e065849c00de09256cbedf4cc4d48823fa6",
   "mock_result_estimated_score": "69788220be2a7a94bf8b8f21aa28b217e00924d923d21b0004e0d8f64ad857a6",
   "mock_result_every_minimum": "7ab263ecd8cf102dde355f9df0b2a0a0fba6d987c7628acf097bea3330492450",
-  "mock_result_flagged_answers": "4ffc539ecec85d276c8df918517ec1c8706f40f8515c9f205c8d6fdc375f1630",
   "mock_result_focus_done": "8fc5a58742761e65e079da7168913f8f5ed69eb51ee8e1631d46baa713711b93",
   "mock_result_focus_line": "b208eb3c05779735cdcffc675cf3390cf741d06647a4ce3ae04d5d8035cd3bbe",
   "mock_result_focus_title": "56031cee41856d532072b1d640791db4350d27306d8a4a275281ae7b2c1a0c61",
@@ -305,8 +304,6 @@
         <item quantity="many">Fallaste %d preguntas fáciles. Repásalas primero.</item>
         <item quantity="other">Fallaste %d preguntas fáciles. Repásalas primero.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">Respuestas marcadas</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d acierto de %2$d</item>

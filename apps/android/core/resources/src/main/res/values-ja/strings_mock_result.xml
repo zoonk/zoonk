@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "3cc96c094357cadf016cc23e42fe154f54f3e53a5f0b879de101684c8a169a1c",
   "mock_result_estimated_score": "9ed24c03ed62f635266a41a060aeee06545c047f858a468b6d043d83d19646df",
   "mock_result_every_minimum": "1faf00c817d642af4707640392990cdb668460c0495da3ac50d510418985b02a",
-  "mock_result_flagged_answers": "4b26c6ab53eeea0a5f1948878a27559e8072b361767b0549d31c3c599a741d8f",
   "mock_result_focus_done": "974214b89c41ecf5b4f1ec28f8750862f5b4d6ce6f8bc01d30af5a8f1f01a9d4",
   "mock_result_focus_line": "5c5851b227b31059788c17c4cfba94b25b8b9fed6fed0f3da5b99016ea75a91a",
   "mock_result_focus_title": "57df87ad6d93518f116c969c21bbc5cd51832f64da01c4b5be32465e1bf61281",
@@ -277,8 +276,6 @@
     <plurals name="mock_result_easy_missed">
         <item quantity="other">やさしい問題を%d問間違えました。まずはその問題を復習しましょう。</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">見直しを付けた回答</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="other">%1$d問正解（全%2$d問）</item>

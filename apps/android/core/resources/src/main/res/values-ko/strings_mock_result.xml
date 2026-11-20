@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "8cf40eae77c47613bfc6c7372f9170f9f30722b715163cdcb81c8f0ff636f62e",
   "mock_result_estimated_score": "250b9dc3603fe5d2bfcbed1f2e2e93fda8f160e3068c21cc70619c229d7206b5",
   "mock_result_every_minimum": "58412d9ddb1bfc048c53941889133dc71091aef905fe2aa7aacd338780649018",
-  "mock_result_flagged_answers": "830438cec11c5d1e44f8341ebdf8f811ba9c4af89603e485ca65092b9a25ed9e",
   "mock_result_focus_done": "3241ca47552b287d0aa19c6e3e8e4988b64a6303b3c5e68ec242ad79eee8a549",
   "mock_result_focus_line": "2dea2ba541a8038364b0965589efdb57e7850aaeda537f7aff97f97267f64a72",
   "mock_result_focus_title": "634756f14d0723c27fc75e978f06ae83e4ec7904cc229321a7173ce1c34ba632",
@@ -277,8 +276,6 @@
     <plurals name="mock_result_easy_missed">
         <item quantity="other">쉬운 문제 %d개를 틀렸어요. 이 문제부터 복습해 보세요.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">표시한 답안</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="other">%1$d문제 정답(총 %2$d문제)</item>

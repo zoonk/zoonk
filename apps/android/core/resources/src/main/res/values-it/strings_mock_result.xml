@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "1179df7898daad57dcbf0a7aedb0073387a317191fcf6af604fc81f4326f5aeb",
   "mock_result_estimated_score": "0e697c3c88c4c13ca9001bebbd2db25616cd56281e1881cf803328bfb160db83",
   "mock_result_every_minimum": "40cfc3fd7ea1f3a79390f9d79c01240fa38848d59b59b1a1a5d42b250a0b3ee1",
-  "mock_result_flagged_answers": "9a09113e99df9ac94819625cb9562c249418051f5616883ff8dd5b90357aa2ec",
   "mock_result_focus_done": "f775546dfa2b4b810d3f7b4fe16adbfc2becf48474c3b3fae5d54fff56f2e9e3",
   "mock_result_focus_line": "265791a912237893ce57738a417c90716a70e231d384c90a103549755c8ecf58",
   "mock_result_focus_title": "97f29c41bf7b8da80994db3ba1ab1a4d8d49e777f72bcf9c8aca6ae78124f9c0",
@@ -305,8 +304,6 @@
         <item quantity="many">Hai sbagliato %d domande facili. Rivedile per prime.</item>
         <item quantity="other">Hai sbagliato %d domande facili. Rivedile per prime.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">Risposte contrassegnate</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d risposta corretta su %2$d</item>

@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "1693f54c1a57aad476d62b8f1ca02d1d4a443d9a93392fccd91b54fe32430d31",
   "mock_result_estimated_score": "848fa890b0884bc20d537aaa5e2e8ecd8b757f5e1c7e154f2bfa7131832e7758",
   "mock_result_every_minimum": "2fdf151efab5e37973728e780677407f6b50d2c172e68e2fc8213d42f8f6c9f8",
-  "mock_result_flagged_answers": "dbfa15dd7a44537dc9b1ddf3b24618a7d0637d02fea007af7e3ba9e295999de7",
   "mock_result_focus_done": "f04f0fb49b1948edb7995410ac94d3f0724d4e496e4916af7149724fc2b02537",
   "mock_result_focus_line": "af014d30d881a2972fe04caf8511d47296feff2d99ee744a3a6ec3e0022138a9",
   "mock_result_focus_title": "477cf4100f31c314235a86c249ecfcab9657b5c264cf639770f31947b035c5fa",
@@ -319,8 +318,6 @@
         <item quantity="many">Masz błędne odpowiedzi na %d łatwych pytań. Najpierw do nich wróć.</item>
         <item quantity="other">Masz błędne odpowiedzi na %d łatwych pytań. Najpierw do nich wróć.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">Oznaczone odpowiedzi</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d z %2$d poprawnie</item>
