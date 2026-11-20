@@ -4,18 +4,20 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { type Reasoning, buildProviderOptions, chooseServiceTier } from "../../provider-options";
 import { formatLocalContext, formatMoneyForms, getCountryName } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import promptTemplate from "./example-lines.prompt.md";
 
 /**
- * On 28 cases, 3 runs each (20 Nov 2026), Terra scored 9.43 at $1.46/1k, Muse Ember 9.14 at
- * $1.08/1k, Luna 8.86 at $0.18/1k and Flash Lite 7.87. Only Terra reliably found the idea outside
- * the learner's own field (a developer's coding lessons, a nurse learning Python): Luna and Muse
- * Ember often left those empty, and Luna also left a prep-course discount empty in most runs. A
- * blind read against Muse Ember came out 6 to 5, with Terra winning the coding cases.
+ * On 29 cases (20 Nov 2026, same prompt, 3 runs each; 2 for Flash Lite and Haiku), Terra scored
+ * 9.46, Muse Ember 9.07, Luna 8.94, Flash Lite 8.02 and Haiku 5.5 7.86. For a developer taking a
+ * coding lesson, Luna and Muse Ember wrote nothing in 4 of 6 runs where a hobby fit, and Terra in
+ * none; Terra also left the fewest fitting lines empty (4 of 51, Luna 7). A blind read came out 6
+ * to 7 against Luna (6 to 5 against Muse Ember on the prompt before), with Terra winning the coding
+ * cases. At priority tier Terra scored 9.54 with a 4.9s p95 at $3.23/1k; without it, a few calls
+ * queued for 30 to 80 seconds.
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["meta/muse-ember", "google/gemini-3.5-flash-lite"] as const;
@@ -103,7 +105,12 @@ export async function generateExampleLines(params: GenerateExampleLinesParams) {
     variants: { plainWords: params.plainWords ?? false },
   });
 
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({
+    fallbackModels,
+    model,
+    serviceTier: chooseServiceTier({ wait: "learner" }),
+    useFallback,
+  });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

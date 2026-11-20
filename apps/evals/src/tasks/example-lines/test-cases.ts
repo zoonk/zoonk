@@ -53,6 +53,24 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
   },
 
   {
+    expectations:
+      "The learner pays for their own software tools, so the line MUST be non-null: a concrete discount on a tool they pay for, with correct numbers stated as an example, in literal language without idioms, metaphors or figures of speech.",
+    id: "en-plain-words-pays-for-tools",
+    userInput: {
+      facts: ["Works as a freelance software developer", "Pays for their own coding tools"],
+      goal: null,
+      language: "en",
+      plainWords: true,
+      screens: [
+        {
+          idea: "A discount on something the learner pays for.",
+          text: "A 25% discount removes a quarter of the original price.",
+        },
+      ],
+    },
+  },
+
+  {
     expectations: `
       - MUST be in Brazilian Portuguese
       - The learner shares the rent with two friends: a line splitting a rent three ways fits, with correct math
@@ -448,7 +466,7 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese
       - The lesson is about Java and the learner has worked in software for years, so a line set in their own software work (a service, system or project they maintain) only says the screen again: it scores at most 4, even when it's correct
-      - A good line shows the same problem in another part of their life the facts name (a Formula 1 race, a running group), in everyday words, and maps it exactly: one side changes a value and the other keeps acting on the old one until the change is made visible to it. Null is acceptable; a forced parallel is not
+      - A good line shows the same problem in another part of their life the facts name (a Formula 1 race, a running group), in everyday words, and maps it exactly: one side changes a value and the other keeps acting on the old one until the change is made visible to it. A line that only says an updated signal becomes visible, without someone still acting on the old one, misses the screen's point and scores at most 6 for accuracy. Null is acceptable; a forced parallel is not
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-developer-java-volatile-not-work",

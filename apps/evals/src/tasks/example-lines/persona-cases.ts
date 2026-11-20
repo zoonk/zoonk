@@ -85,6 +85,7 @@ export const PERSONA_TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
       - MUST be in Brazilian Portuguese
       - Lucas likes science fiction and prefers explanations without calculations: a line about the colors in a science-fiction scene (a ship's engine glow, a nebula, a lightsaber) fits, with no numbers or formulas
       - The physics must stay right: bigger drops give bluer light, and each element has its own set of colors
+      - The scene must give Lucas something concrete to picture (what glows, and why that color): a line that only adds "in a science-fiction story" to the screen's rule scores at most 4 for fit
     `,
     id: "lucas-colors-sci-fi",
     idea: "Uma cor que a pessoa vê numa história ou no dia a dia, ligada ao tamanho da queda de energia.",
