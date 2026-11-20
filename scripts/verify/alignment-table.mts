@@ -279,4 +279,13 @@ export type AlignmentException = {
   scenario: string;
 } & ({ grantedBy: "user" } | { issue: number });
 
-export const EXCEPTIONS: AlignmentException[] = [];
+export const EXCEPTIONS: AlignmentException[] = [
+  {
+    configuration: "phone touch",
+    issue: 2929,
+    piece: "page",
+    reason: "A far topic's row gives its title only the width its start line leaves, on main too",
+    relation: "lone-word",
+    scenario: "/plan/matematica-e-suas-tecnologias",
+  },
+];
