@@ -164,13 +164,16 @@ async function prepareRead<T, Input extends object>(options: ReadOptions<T, Inpu
   return { call, run: () => options.run(input) };
 }
 
-export function staffTransaction<T>(run: (client: TransactionClient) => Promise<T>): Promise<T> {
+export function staffTransaction<T>(
+  run: (client: TransactionClient) => Promise<T>,
+  { isolationLevel }: { isolationLevel?: "RepeatableRead" } = {},
+): Promise<T> {
   return prisma.$transaction(
     async (client) => {
       await client.$executeRaw`SET LOCAL statement_timeout = '5s'`;
       return run(client);
     },
-    { timeout: 10_000 },
+    { isolationLevel, timeout: 10_000 },
   );
 }
 

@@ -667,6 +667,8 @@
     "./staff/content-fixes/voice-schema": "./src/staff/content-fixes/voice-schema.ts",
     "./staff/content-fixes/withdraw": "./src/staff/content-fixes/withdraw-content-fix.ts",
     "./staff/me": "./src/staff/get-staff-me.ts",
+    "./staff/lesson": "./src/staff/lesson.ts",
+    "./staff/lesson-contract": "./src/staff/lesson-contract.ts",
     "./subscriptions/apple-contract": "./src/subscriptions/apple-contract.ts",
     "./subscriptions/apple-notification": "./src/subscriptions/process-apple-subscription-notification.ts",
     "./subscriptions/apple-store-error": "./src/subscriptions/apple-store-error.ts",

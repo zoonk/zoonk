@@ -10,6 +10,7 @@ Staff (production data)
                                            fields, relations and each change a fix may make
   staff users find <email|username|id>     One account by exact email, username or id
   staff users search <text> [--limit n]    Accounts whose name, email or username contain the text
+  staff lesson <id>                        A lesson's plan, ideas, current screens and vocabulary
   staff get <model> <id> [--fields ...]    One record by id
   staff list <model> [options]             Records matching every --where
       --where "<field> <op> [value]"       Repeatable. Ops: eq ne gt gte lt lte, in notIn
@@ -21,12 +22,13 @@ Staff (production data)
   staff count <model> [--where ...]        Number of records matching every --where
 
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
-  staff fixes propose <file.json>          Propose the fix or batch in the file, and print its review
+  staff fixes propose [--check] <file.json>  Propose the fix or batch in the file, and print its review
                                            link and each fix's changes and effects. Nothing changes
                                            until it's approved.
                                            One fix: { reason, feedbackId?, changes: [...] }
                                            A batch of up to 250 fixes:
                                            { reason, fixes: [{ changes, reason? }, ...] }
+      --check                              Print prepared changes and effects without saving the fix
   staff fixes revert <fixId> --reason "…"  Propose undoing an applied fix: what it replaced comes
                                            back once the undo is approved
       --batch <batchId>                    In place of <fixId>: undo every applied fix of a batch
