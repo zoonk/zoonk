@@ -26,8 +26,11 @@ class FakeStudyApi : StudyApi {
     val targets = mutableListOf<StudyBlockOpeningTarget>()
     val added = mutableListOf<UUID>()
     val written = mutableListOf<String>()
+    val summaryVisits = mutableListOf<UUID>()
     var sessionReads = 0
     var summaryReads = 0
+    var firstSummaryVisit = true
+    var summaryVisitGate: CompletableDeferred<Unit>? = null
     var target: JsonObject? = null
     var targetStatus = "resolved"
     var dayOpening: JsonObject? = null
@@ -89,6 +92,17 @@ class FakeStudyApi : StudyApi {
     ): StudySessionSummary {
         summaryReads++
         return studySummary
+    }
+
+    override suspend fun recordSummaryVisit(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        visitId: UUID,
+    ): Boolean {
+        summaryVisits += visitId
+        summaryVisitGate?.await()
+        failures.removeFirstOrNull()?.let { throw it }
+        return firstSummaryVisit
     }
 
     override suspend fun addExtraBlock(

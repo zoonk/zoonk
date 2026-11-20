@@ -68,7 +68,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.ActOn
-import com.zoonk.android.ui.OnVisitEnd
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
@@ -102,8 +102,7 @@ import kotlinx.coroutines.delay
 import java.util.UUID
 
 /**
- * Main's session page: a day's summary once nothing is left or the learner stopped, else its next
- * step to start, a day not opened yet included. Opening it only reads; every write is a tap.
+ * Main's session page: the next step to start, or the day's summary when study ends.
  */
 @Composable
 fun SessionScreen(
@@ -130,7 +129,7 @@ fun SessionScreen(
             )
         }
 
-    OnVisitEnd(viewModel, onEnd = viewModel::endVisit)
+    VisitOf(viewModel.visit)
     ActOn(viewModel.route) {
         navigator.closeTask()
         navigator.open(it)
@@ -202,6 +201,7 @@ private fun SavedDay(
                     viewModel,
                     session,
                     stopped = route.stopped,
+                    requested = route.summaryRequested && !route.stopped,
                     goalKind =
                         todayDay
                             ?.today
@@ -259,8 +259,15 @@ private fun SessionSummaryContent(
     viewModel: SessionViewModel,
     session: StudySession,
     stopped: Boolean,
+    requested: Boolean,
     goalKind: TodayGoal.Kind?,
 ) {
+    VisitOf(viewModel.summaryOpening)
+    ActOn(viewModel.summaryExit) { reason ->
+        navigator.open(AppRoute.Today)
+        if (reason == SummaryExit.DayChanged) app.today.today.invalidate()
+    }
+    val visitId = rememberSaveable(session.id) { UUID.randomUUID() }
     val read by app.studySessions.summary[session.id].collectShown()
     val learner by app.learnerSummary.summary.collectShown()
     val summary = (read as? LoadState.Loaded)?.value
@@ -296,16 +303,33 @@ private fun SessionSummaryContent(
         return
     }
 
+    val visit = viewModel.summaryVisit
+    LaunchedEffect(visitId) {
+        if (viewModel.summaryVisit == null) viewModel.recordSummaryVisit(session.id, visitId, requested)
+    }
+    if (visit == SummaryVisit.Failed) {
+        TaskScaffold(onClose = navigator::closeTask) { padding ->
+            LoadFailedMessage(
+                onRetry = { viewModel.recordSummaryVisit(session.id, visitId, requested) },
+                modifier = Modifier.padding(padding),
+            )
+        }
+        return
+    }
+    if (visit == null) {
+        SessionLoading(navigator::closeTask)
+        return
+    }
+
     val learnerBuddy = learner.value?.buddy
     val look = learnerBuddy?.look() ?: BuddyLook()
-    val firstVisit = remember(summary.sessionId, summary.brainPower) { app.studySessions.firstVisit(summary.sessionId, summary.brainPower) }
     val day = session.toDayView()
     val goalId = session.goalId
     // Showing the offer claims it, so a re-read summary comes back without one; it stays for this visit.
     val offered = rememberSaveable(summary.sessionId) { summary.reminderOffer?.let { listOf(it.time, it.timeZone) }.orEmpty() }
     val reminderOffer = offered.takeIf { it.size == 2 }?.let { (time, zone) -> StudyReminderOffer(time = time, timeZone = zone) }
 
-    CelebrationScope(play = firstVisit) {
+    CelebrationScope(play = visit == SummaryVisit.First) {
         SessionSummary(
             summary = summary,
             facts =

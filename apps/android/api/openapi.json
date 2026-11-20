@@ -25052,6 +25052,110 @@
         }
       }
     },
+    "/study-sessions/{sessionId}/summary/visit": {
+      "post": {
+        "description": "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped or its work is finished. Retrying the first visit with its original ID returns the same result.",
+        "operationId": "createStudySessionSummaryVisit",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Record a study session summary visit",
+        "tags": [
+          "Study sessions"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Study session ID"
+            },
+            "required": true,
+            "description": "Study session ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudySessionSummaryVisitInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The daily summary visit result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudySessionSummaryVisit"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The session has not been stopped and has no finished queue (STUDY_SUMMARY_NOT_READY)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/me/suggested-goals/{suggestionId}": {
       "patch": {
         "description": "Accepts or dismisses a suggested goal from Today. Accepting only records the answer: open onboarding with the suggestion's title as the goal. Either answer closes it, and the next one (if any) shows on Today.",
@@ -32475,6 +32579,21 @@
           "answer",
           "durationMs",
           "itemId"
+        ],
+        "additionalProperties": false
+      },
+      "StudySessionSummaryVisitInput": {
+        "type": "object",
+        "properties": {
+          "visitId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "A unique visit ID, reused on retries of that visit"
+          }
+        },
+        "required": [
+          "visitId"
         ],
         "additionalProperties": false
       },
@@ -97336,6 +97455,19 @@
           "status",
           "tomorrow",
           "topHyperdrive"
+        ],
+        "additionalProperties": false
+      },
+      "StudySessionSummaryVisit": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "boolean",
+            "description": "This visit recorded the first summary visit for the session's local day"
+          }
+        },
+        "required": [
+          "first"
         ],
         "additionalProperties": false
       },

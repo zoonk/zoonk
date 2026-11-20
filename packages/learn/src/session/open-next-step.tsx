@@ -11,23 +11,17 @@ import { useSessionAction } from "./use-session-action";
 export function OpenNextStep({
   exitHref,
   header,
-  readNext,
+  openNextStep,
   status,
 }: {
   exitHref: string;
   header: React.ReactNode;
-  /** Read-only: a remount must never start preparation or generation. */
-  readNext: () => void;
+  openNextStep: () => Promise<boolean>;
   status: string;
 }) {
   const t = useExtracted();
 
-  const { failed, run } = useSessionAction({
-    action: async () => {
-      readNext();
-      return true;
-    },
-  });
+  const { failed, run } = useSessionAction({ action: openNextStep });
 
   const opened = useRef(false);
   const openNext = useEffectEvent(run);

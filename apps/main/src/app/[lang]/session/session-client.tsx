@@ -19,8 +19,11 @@ import {
 } from "@/lib/session/day-entry-registry";
 import { readWaitedLesson } from "@/lib/session/read-waited-lesson";
 import { sendStudyAnswer } from "@/lib/session/study-answer-request";
-import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
-import { answerHere, openingHere } from "@/lib/session/tap-answer";
+import {
+  claimSummaryVisitAction,
+  finishStudyBlockAction,
+} from "@/lib/session/study-session-actions";
+import { answerHere, openingHere, stayingHere } from "@/lib/session/tap-answer";
 import { useDayEntry, useDayTap } from "@/lib/session/use-day-entry";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import {
@@ -254,6 +257,7 @@ export function SessionSummaryClient({
   goalKind,
   isGuest,
   buddy,
+  requested,
   sessionId,
   stopped,
   summary,
@@ -261,6 +265,7 @@ export function SessionSummaryClient({
   goalKind: SummaryGoalKind;
   isGuest: boolean;
   buddy: LearnerBuddy;
+  requested: boolean;
   sessionId: string;
   stopped: boolean;
   summary: StudySessionSummary;
@@ -272,10 +277,28 @@ export function SessionSummaryClient({
 
   return (
     <SessionSummary
+      key={router.bfcacheId}
       actions={{
         addExtraTime: navigation.addExtraTime,
         keepGoing: navigation.continueSession,
         refresh: () => router.refresh(),
+        visit: async (visitId) => {
+          const result = await answerHere(
+            claimSummaryVisitAction(sessionId, visitId),
+            stayingHere(),
+          );
+
+          if (typeof result === "string" || result.answer === null) {
+            return null;
+          }
+
+          if (result.answer === "unavailable" || (!result.answer && !requested)) {
+            router.replace(EXIT_HREF);
+            return "left";
+          }
+
+          return result.answer;
+        },
       }}
       buddy={buddy}
       exitHref={EXIT_HREF}
