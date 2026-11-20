@@ -17,7 +17,7 @@ final class GoalStartVisitTests: XCTestCase {
     await dependencies.learnerSummaryStore.summary.load()
     try await readsWhatVoiceOverReads()
     let window = try show(
-      GoalStartScreen()
+      GoalStartScreen(goal: "Pass the ENEM")
         .appDependencies(dependencies)
         .environment(AppRouter())
         .zoonkStyles())
@@ -25,25 +25,20 @@ final class GoalStartVisitTests: XCTestCase {
     try await waitForLayout(in: window)
 
     try await activate(String(localized: "Add your material", table: "Onboarding"), in: window)
-    try await waitForTestCondition("The material menu did not appear") {
-      views(UIButton.self, in: window).contains { $0.menu != nil }
-    }
-    try await activateMenuItem(String(localized: "Paste a link", table: "Onboarding"), in: window)
+    try await pick(String(localized: "Paste a link", table: "Onboarding"), in: window)
+    var link: UITextField?
     try await waitForTestCondition("The link field did not appear") {
-      !views(UITextField.self, in: window).isEmpty
+      link = requestViews(UITextField.self, in: window).first
+      return link != nil
     }
-    let link = try XCTUnwrap(views(UITextField.self, in: window).first, "The link's box")
-    link.becomeFirstResponder()
-    link.insertText("https://zoonk.invalid/syllabus")
+    link?.text = "https://zoonk.invalid/syllabus"
+    link?.sendActions(for: .editingChanged)
     try await activate(String(localized: "Add link", table: "Onboarding"), in: window)
     try await waitForTestCondition("The failure never showed: \(spoken(in: window))") {
       shows(Self.failure, in: window)
     }
     XCTAssertTrue(shows(Self.failure, in: window), "The failure shows: \(spoken(in: window))")
 
-    let goal = try XCTUnwrap(views(UITextView.self, in: window).first, "The goal's box")
-    goal.becomeFirstResponder()
-    goal.insertText("Pass the ENEM")
     try await activate(String(localized: "Build my plan", table: "Onboarding"), in: window)
     try await server.waitForHeldRequest()
     try await server.release()
@@ -59,38 +54,23 @@ final class GoalStartVisitTests: XCTestCase {
   private static let failure = String(
     localized: "We couldn't add that. Try again in a moment.", table: "Onboarding")
 
-  /// Hosted tests leave hidden windows in the scene. The source menu belongs to this window;
-  /// its rows may appear in a separate visible window.
-  private func activateMenuItem(_ label: String, in window: UIWindow) async throws {
-    try await waitForTestCondition("Nothing runs \(label)") { runMenuItem(label, in: window) }
-  }
-
-  private func runMenuItem(_ label: String, in window: UIWindow) -> Bool {
-    let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-      .flatMap(\.windows).filter { !$0.isHidden && $0.alpha > 0 }
-    let all = windows.flatMap { views(UIView.self, in: $0) }
-
-    for button in views(UIButton.self, in: window) {
-      if let action = button.menu.flatMap({ action(label, in: $0) }) {
-        for name in ["performWithSender:target:", "_performActionWithSender:"]
-        where action.responds(to: NSSelectorFromString(name)) {
-          action.perform(NSSelectorFromString(name), with: nil, with: nil)
-          return true
-        }
-      }
+  /// Picks `label` from the open menu as a tap on its row does: the menu closes, then the item's
+  /// action runs. SwiftUI fills a menu's items only once it's open, and its rows ignore a selection
+  /// that isn't a touch, so the test runs the item's action itself.
+  private func pick(_ label: String, in window: UIWindow) async throws {
+    var item: (menu: UIContextMenuInteraction?, action: UIAction)?
+    try await waitForTestCondition("No open menu offers \(label)") {
+      item =
+        requestViews(UIButton.self, in: window).lazy.compactMap { button in
+          button.menu.flatMap { self.action(label, in: $0) }.map {
+            (button.contextMenuInteraction, $0)
+          }
+        }.first
+      return item != nil
     }
-
-    for list in all.compactMap({ $0 as? UICollectionView }) {
-      for cell in list.visibleCells
-      where elements(in: cell).contains(where: { $0.accessibilityLabel == label }) {
-        if let path = list.indexPath(for: cell) {
-          list.delegate?.collectionView?(list, didSelectItemAt: path)
-          return true
-        }
-      }
-    }
-
-    return false
+    item?.menu?.dismissMenu()
+    try await waitForTestCondition("The menu did not close") { !shows(label, in: window) }
+    item?.action.performWithSender(nil, target: nil)
   }
 
   private func action(_ title: String, in menu: UIMenu) -> UIAction? {
@@ -105,23 +85,6 @@ final class GoalStartVisitTests: XCTestCase {
     }
 
     return nil
-  }
-
-  private func elements(in element: Any) -> [NSObject] {
-    guard let object = element as? NSObject else {
-      return []
-    }
-
-    if let view = object as? UIView, view.isHidden || view.alpha < 0.01 {
-      return []
-    }
-
-    return [object] + ((object as? UIView)?.subviews.flatMap { elements(in: $0) } ?? [])
-      + (object.accessibilityElements?.flatMap { elements(in: $0) } ?? [])
-  }
-
-  private func views<Kind: UIView>(_ kind: Kind.Type, in view: UIView) -> [Kind] {
-    ((view as? Kind).map { [$0] } ?? []) + view.subviews.flatMap { views(kind, in: $0) }
   }
 
   private func shows(_ line: String, in window: UIWindow) -> Bool {
