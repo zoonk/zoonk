@@ -21,10 +21,10 @@ const ANSWERS = [
     answer: {
       declined: false,
       favorites: "ClinicalKey, Notion",
-      picks: ["UpToDate", "Tasy", "Whitebook", "Medscape"],
+      picks: ["UpToDate", "Tasy", "Whitebook", "Medscape", "excel"],
     },
     question: "tools",
-    suggestedTools: ["Tasy", "Whitebook", "Medscape", "UpToDate", "Google Drive"],
+    suggestedTools: ["Whitebook", "Medscape", "UpToDate", "Google Drive", "Excel"],
   },
   {
     answer: {

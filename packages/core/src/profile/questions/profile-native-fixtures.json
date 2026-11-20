@@ -207,7 +207,8 @@
             "Medscape",
             "Tasy",
             "UpToDate",
-            "Whitebook"
+            "Whitebook",
+            "excel"
           ]
         },
         "question": "tools"
@@ -215,11 +216,6 @@
       "view": {
         "id": "tools",
         "options": [
-          {
-            "description": null,
-            "id": "Tasy",
-            "label": "Tasy"
-          },
           {
             "description": null,
             "id": "Whitebook",
@@ -239,6 +235,16 @@
             "description": null,
             "id": "Google Drive",
             "label": "Google Drive"
+          },
+          {
+            "description": null,
+            "id": "excel",
+            "label": "Excel"
+          },
+          {
+            "description": null,
+            "id": "Tasy",
+            "label": "Tasy"
           }
         ],
         "saved": {
@@ -246,7 +252,8 @@
             "Medscape",
             "Tasy",
             "UpToDate",
-            "Whitebook"
+            "Whitebook",
+            "excel"
           ],
           "studies": [],
           "text": "ClinicalKey, Notion"

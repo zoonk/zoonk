@@ -1,6 +1,7 @@
 import { type MemoryCategory } from "@zoonk/db/enums";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { splitProfileFavorites } from "./profile-favorites";
+import { GENERAL_TOOL_IDS } from "./profile-option-ids";
 import { PROFILE_CONTENT } from "./profile-options";
 import { type ProfileAnswerInput } from "./profile-question-contract";
 
@@ -17,7 +18,7 @@ type ProfileFact = {
 };
 
 export function toProfileFacts(
-  input: ProfileAnswerInput & { locale: SupportedLocale; suggestedTools?: readonly string[] },
+  input: ProfileAnswerInput & { locale: SupportedLocale },
 ): ProfileFact[] {
   const { question, answer, locale } = input;
 
@@ -33,10 +34,6 @@ export function toProfileFacts(
 
   const fragment = (id: string) => {
     const options = content.options[question];
-
-    if (question === "tools" && input.suggestedTools?.includes(id)) {
-      return id;
-    }
 
     return Object.hasOwn(options, id) ? (options[id]?.fragment ?? id) : id;
   };
@@ -110,6 +107,10 @@ function toListFact({
   const { picks, favorites: text } = answer;
   const favorites = splitProfileFavorites(text);
   const picked = picks.map((id) => fragment(id));
+
+  const sensitive =
+    favorites.length > 0 || (question === "tools" && picks.some((id) => !GENERAL_TOOL_IDS.has(id)));
+
   const combined = list(question === "tools" ? [...picked, ...favorites] : picked);
 
   const capitalized =
@@ -120,7 +121,7 @@ function toListFact({
   return {
     category: question === "tools" ? "background" : "context",
     profileAnswer: { favorites, picks },
-    sensitive: favorites.length > 0,
+    sensitive,
     statement: render(
       getListTemplate({ hasFavorites: favorites.length > 0, hasPicks: picks.length > 0 }),
       { favorites: list(favorites), picks: capitalized },

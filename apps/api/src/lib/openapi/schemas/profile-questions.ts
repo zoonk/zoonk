@@ -19,7 +19,7 @@ const profileQuestionViewSchema = z
             .string()
             .meta({
               description:
-                "Option id accepted by the answer input. Personalized tool ids are their names",
+                "Option id accepted by the answer input. Tools use the general id for matching labels, or the tool's name",
             }),
           label: z
             .string()

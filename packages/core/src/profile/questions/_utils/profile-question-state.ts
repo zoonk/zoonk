@@ -181,7 +181,15 @@ export function toProfileQuestionView({
   const content = PROFILE_CONTENT[locale];
   const saved = toSavedView(input);
 
-  const suggestedTools = question === "tools" ? (state.profile?.suggestedTools ?? []) : [];
+  const suggestedTools =
+    question === "tools"
+      ? (state.profile?.suggestedTools ?? []).map(
+          (name) =>
+            PROFILE_OPTION_IDS.tools.find(
+              (id) => content.options.tools[id]?.label.toLowerCase() === name.toLowerCase(),
+            ) ?? name,
+        )
+      : [];
 
   const ids = new Set([
     ...(suggestedTools.length > 0
@@ -196,10 +204,6 @@ export function toProfileQuestionView({
   return {
     id: question,
     options: [...ids].flatMap((id) => {
-      if (suggestedTools.includes(id)) {
-        return [{ description: null, id, label: id }];
-      }
-
       const definingContent = LOCALE_EXTRA_IDS.has(id)
         ? Object.values(PROFILE_CONTENT).find((item) => item.extras[question]?.includes(id))
         : content;

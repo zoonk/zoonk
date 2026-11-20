@@ -31,7 +31,7 @@ async function toolsFollowUps(userId: string) {
 }
 
 describe("profile tools", () => {
-  it("offers the general eight and keeps already saved ids across a rewrite", async () => {
+  it("accepts picks shown before either rewrite and keeps them visible", async () => {
     const userId = await learner();
     const fallback = await toolsView();
 
@@ -46,39 +46,76 @@ describe("profile tools", () => {
       "vsCode",
     ]);
 
-    await save({ answer: { picks: ["excel"] }, question: "tools" });
     await learningProfileFixture({ suggestedTools: ["Tasy", "Whitebook"], userId });
 
-    const personalized = await toolsView();
-
-    expect(personalized?.options).toStrictEqual([
-      { description: null, id: "Tasy", label: "Tasy" },
-      { description: null, id: "Whitebook", label: "Whitebook" },
-      { description: null, id: "excel", label: "Excel" },
-    ]);
-
-    await expect(
-      save({ answer: { picks: ["Tasy", "excel"] }, question: "tools" }),
-    ).resolves.toMatchObject({ status: "saved" });
-
-    await expect(
-      save({ answer: { picks: ["Tasy", "constructor"] }, question: "tools" }),
-    ).resolves.toStrictEqual({ status: "invalid" });
-
-    await expect(save({ answer: { picks: ["figma"] }, question: "tools" })).resolves.toStrictEqual({
-      status: "invalid",
+    await expect(save({ answer: { picks: ["excel"] }, question: "tools" })).resolves.toMatchObject({
+      question: { saved: { picks: ["excel"] } },
+      status: "saved",
     });
 
     await learningProfileFixture({ suggestedTools: ["Medscape"], userId });
 
+    await expect(
+      save({ answer: { picks: [" Tasy ", "excel", "Tasy"] }, question: "tools" }),
+    ).resolves.toMatchObject({
+      question: {
+        options: [
+          { id: "Medscape", label: "Medscape" },
+          { id: "Tasy", label: "Tasy" },
+          { id: "excel", label: "Excel" },
+        ],
+        saved: { picks: ["Tasy", "excel"] },
+      },
+      status: "saved",
+    });
+  });
+
+  it("uses the general id for a suggested name that matches its label", async () => {
+    const userId = await learner();
+    await save({ answer: { picks: ["excel"] }, question: "tools" });
+    await learningProfileFixture({ suggestedTools: ["eXcEl", "Tasy"], userId });
+
     await expect(toolsView()).resolves.toMatchObject({
       options: [
-        { id: "Medscape", label: "Medscape" },
-        { id: "Tasy", label: "Tasy" },
         { id: "excel", label: "Excel" },
+        { id: "Tasy", label: "Tasy" },
       ],
-      saved: { picks: ["Tasy", "excel"] },
+      saved: { picks: ["excel"] },
     });
+  });
+
+  it.each([
+    { picks: ["excel"], sensitive: false, statement: "Uses Excel" },
+    { picks: ["LibreLink"], sensitive: true, statement: "Uses LibreLink" },
+  ])(
+    "checks sensitivity according to whether $picks is a general id",
+    async ({ picks, sensitive, statement }) => {
+      const userId = await learner();
+      await learningProfileFixture({ suggestedTools: ["LibreLink"], userId });
+
+      await expect(save({ answer: { picks }, question: "tools" })).resolves.toMatchObject({
+        status: "saved",
+      });
+
+      const fact = await prisma.memoryFact.findFirstOrThrow({ where: { userId } });
+      expect(fact).toMatchObject({ sensitive, statement });
+
+      const followUps = await listFollowUps(userId);
+
+      expect(followUps.filter(({ kind }) => kind === "checkFactSensitivity")).toHaveLength(
+        sensitive ? 1 : 0,
+      );
+    },
+  );
+
+  it.each([
+    { label: "a blank name", picks: ["  "] },
+    { label: "an overlong name", picks: ["x".repeat(121)] },
+    { label: "too many names", picks: Array.from({ length: 101 }, (_, index) => `Tool ${index}`) },
+  ])("rejects $label at the answer boundary", ({ picks }) => {
+    expect(
+      profileAnswerInputSchema.safeParse({ answer: { picks }, question: "tools" }).success,
+    ).toBe(false);
   });
 
   it("saves every pick and the full sensitive memory statement beyond 300 characters", async () => {

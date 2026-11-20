@@ -1,8 +1,10 @@
 import { suggestProfileTools } from "@zoonk/ai/tasks/profile/suggest-tools";
+import { getUsageRule } from "@zoonk/core/entitlements/limits";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { boundaries } from "../../../mocks/boundaries";
@@ -41,7 +43,7 @@ describe("the profile tools workflow", () => {
       }),
     ]);
 
-    model.mockResolvedValue({ data: { tools: [" Tasy ", "Whitebook", "Tasy", ""] } });
+    model.mockResolvedValue({ data: { tools: ["Tasy", "Whitebook", "x".repeat(121)] } });
     await backgroundTaskWorkflow(task);
     await backgroundTaskWorkflow(task);
 
@@ -57,6 +59,8 @@ describe("the profile tools workflow", () => {
     await expect(
       prisma.userLearningProfile.findUnique({ where: { userId } }),
     ).resolves.toMatchObject({ suggestedTools: ["Tasy", "Whitebook"] });
+
+    await expect(prisma.usageRecord.count({ where: { kind: "assist", userId } })).resolves.toBe(1);
 
     await expect(prisma.followUp.findUnique({ where: { id: task.id } })).resolves.toBeNull();
   });
@@ -83,6 +87,31 @@ describe("the profile tools workflow", () => {
     await expect(prisma.followUp.findUnique({ where: { id: task.id } })).resolves.toMatchObject({
       revision: 1,
     });
+  });
+
+  it("keeps the previous list without generating when the assist allowance is exhausted", async () => {
+    const { id: userId } = await userFixture();
+
+    const [task] = await Promise.all([
+      owedTools(userId),
+      learningProfileFixture({ suggestedTools: ["Google Drive"], userId }),
+      usageRecordsFixture({
+        count: getUsageRule({ kind: "assist", tier: "free" }).day ?? 0,
+        kind: "assist",
+        userId,
+      }),
+    ]);
+
+    model.mockResolvedValue({ data: { tools: ["Tasy"] } });
+    await backgroundTaskWorkflow(task);
+
+    expect(model).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.userLearningProfile.findUnique({ where: { userId } }),
+    ).resolves.toMatchObject({ suggestedTools: ["Google Drive"] });
+
+    await expect(prisma.followUp.findUnique({ where: { id: task.id } })).resolves.toBeNull();
   });
 
   it("clears pending work without calling the model when memory is off", async () => {

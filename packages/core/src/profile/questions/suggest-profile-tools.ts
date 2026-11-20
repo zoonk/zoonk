@@ -1,12 +1,15 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { suggestProfileTools } from "@zoonk/ai/tasks/profile/suggest-tools";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearningProfileCacheTag } from "../../cache/tags";
+import { claimUsageFor } from "../../entitlements/claim-usage";
 import { type OwedFollowUp } from "../../follow-ups/follow-up-contract";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { loadProfileQuestionState, savedProfileAnswer } from "./_utils/profile-question-state";
 import { PROFILE_CONTENT } from "./profile-options";
+import { MAX_PROFILE_FAVORITES_LENGTH } from "./profile-question-contract";
 
 type ToolsTask = Extract<OwedFollowUp, { kind: "suggestProfileTools" }>;
 
@@ -44,6 +47,12 @@ export async function writeProfileToolSuggestions(task: ToolsTask): Promise<stri
     throw new Error("Could not read the saved work and studies answers");
   }
 
+  const claim = await claimUsageFor({ kind: "assist", targetId: randomUUID(), userId });
+
+  if (claim.status !== "allowed") {
+    return null;
+  }
+
   const { data } = await suggestProfileTools({
     country: state.profile?.homeCountry ?? null,
     goals: goals.map(({ title }) => title),
@@ -56,7 +65,7 @@ export async function writeProfileToolSuggestions(task: ToolsTask): Promise<stri
     workStatus: work.answer.status,
   });
 
-  const tools = [...new Set(data.tools.map((tool) => tool.trim()).filter(Boolean))];
+  const tools = data.tools.filter((name) => name.length <= MAX_PROFILE_FAVORITES_LENGTH);
   return tools.length > 0 ? tools : null;
 }
 

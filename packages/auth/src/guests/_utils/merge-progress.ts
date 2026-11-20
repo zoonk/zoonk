@@ -54,10 +54,12 @@ export async function mergeLearningProfile({
   sessionId,
   takeGuestAddressForm = false,
   takeGuestSupport = false,
+  takeGuestTools = true,
 }: GuestLinkContext & {
   sessionId?: string;
   takeGuestAddressForm?: boolean;
   takeGuestSupport?: boolean;
+  takeGuestTools?: boolean;
 }) {
   // The session hook saves the sign-in's country before Better Auth links the guest, in a row
   // stamped with the session's start on both timestamps. A row still carrying that stamp holds
@@ -91,7 +93,8 @@ export async function mergeLearningProfile({
       buddy_kind, buddy_name, buddy_glasses,
       active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
       COALESCE(home_country, ${sessionRow?.home_country ?? null}),
-      suggested_tools, created_at, updated_at
+      CASE WHEN ${takeGuestTools} THEN suggested_tools ELSE ARRAY[]::text[] END,
+      created_at, updated_at
     FROM guest_profile
     ON CONFLICT (user_id) DO UPDATE SET
       active_goal_id = COALESCE(EXCLUDED.active_goal_id, user_learning_profiles.active_goal_id),

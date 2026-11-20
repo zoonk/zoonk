@@ -69,10 +69,7 @@ const declined = z
 const optionalText = (limit: number, description: string) =>
   z.string().trim().max(limit).nullable().default(null).meta({ description });
 
-const picksAnswer = <T extends z.ZodType<string>>(
-  optionId: T,
-  description = "Distinct option ids",
-) =>
+const picksAnswer = <T extends z.ZodType<string>>(optionId: T) =>
   z
     .object({
       declined,
@@ -85,7 +82,7 @@ const picksAnswer = <T extends z.ZodType<string>>(
           description:
             "Favorites separated by commas, semicolons or line breaks; at most 120 characters",
         }),
-      picks: z.array(optionId).default([]).meta({ description }),
+      picks: z.array(optionId).default([]).meta({ description: "Distinct option ids" }),
     })
     .strict();
 
@@ -130,10 +127,13 @@ export const profileAnswerInputSchema = z
       .strict(),
     z
       .object({
-        answer: picksAnswer(
-          z.string(),
-          "Distinct tool option ids offered for this learner or already saved",
-        ),
+        answer: picksAnswer(z.string()).extend({
+          picks: z
+            .array(z.string().trim().min(1).max(MAX_PROFILE_FAVORITES_LENGTH))
+            .max(100)
+            .default([])
+            .meta({ description: "Distinct tool names or general tool option ids" }),
+        }),
         question: z.literal("tools"),
       })
       .strict(),
