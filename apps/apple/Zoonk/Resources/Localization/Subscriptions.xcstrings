@@ -1039,7 +1039,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma dupla de estudos com IA para quando você precisar de ajuda"
+            "value" : "Um colega de estudos com IA para quando você precisar de ajuda"
           }
         },
         "tr" : {
@@ -1191,13 +1191,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Uma dupla de estudos com IA: %lld mensagem por dia"
+                  "value" : "Um colega de estudos com IA: %lld mensagem por dia"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Uma dupla de estudos com IA: %lld mensagens por dia"
+                  "value" : "Um colega de estudos com IA: %lld mensagens por dia"
                 }
               }
             }
@@ -1270,7 +1270,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma dupla de estudos com IA: %1$lld mensagens por dia, até %2$lld por mês"
+            "value" : "Um colega de estudos com IA: %1$lld mensagens por dia, até %2$lld por mês"
           }
         },
         "tr" : {
@@ -1918,7 +1918,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para quem está estudando, sim. As aulas, os objetivos e a dupla de estudos com IA só têm limites para impedir o uso por robôs e ferramentas automatizadas. As conversas de prática têm limites diários e mensais, maiores que no Grátis."
+            "value" : "Para quem está estudando, sim. As aulas, os objetivos e o colega de estudos com IA só têm limites para impedir o uso por robôs e ferramentas automatizadas. As conversas de prática têm limites diários e mensais, maiores que no Grátis."
           }
         },
         "tr" : {

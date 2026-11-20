@@ -5060,7 +5060,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Veja, corrija ou apague o que sua dupla lembra sobre você."
+            "value" : "Veja, corrija ou apague o que seu colega lembra sobre você."
           }
         },
         "tr" : {
@@ -7662,7 +7662,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua dupla e as conversas de prática usam %@."
+            "value" : "Seu colega e as conversas de prática usam %@."
           }
         },
         "tr" : {

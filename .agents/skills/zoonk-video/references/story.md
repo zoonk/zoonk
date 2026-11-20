@@ -55,7 +55,7 @@ The blog and old copy go stale. For every claim, open the code that decides it:
 
 - **Supers:** a headline of at most about 20 characters per line, broken with `<br>`, used only where [composition](#composition) allows. Write the pt line yourself in natural Brazilian Portuguese; don't translate word by word.
   - Vertical: a short subline under the headline, since many watch with the sound off.
-- **Brand terms in pt:** Energia, Poder Mental, faixas, Pegadinha, dupla (for buddy), ofensiva (for streak), edital, simulado. Narration rarely needs them ([first-time viewers](#write-for-someone-who-has-never-opened-zoonk)); they're for supers and post copy that name a feature.
+- **Brand terms in pt:** Energia, Poder Mental, faixas, Pegadinha, colega (for buddy), ofensiva (for streak), edital, simulado. Narration rarely needs them ([first-time viewers](#write-for-someone-who-has-never-opened-zoonk)); they're for supers and post copy that name a feature.
 - **CTA:**
   - "What's your goal? · zoonk.com · Start free."
   - pt: "Qual é o seu objetivo? · zoonk.com · Comece grátis."

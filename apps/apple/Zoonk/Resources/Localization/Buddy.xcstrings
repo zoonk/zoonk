@@ -1390,7 +1390,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha sua dupla"
+            "value" : "Escolha seu colega"
           }
         },
         "tr" : {
@@ -1449,7 +1449,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vêm com sua dupla"
+            "value" : "Vêm com seu colega"
           }
         },
         "tr" : {
@@ -2511,7 +2511,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, sua dupla de estudos com IA. Pergunte o que quiser ou me conte o que mudar no seu plano."
+            "value" : "Oi! Sou %@, colega de estudos com IA. Pergunte o que quiser ou me conte o que mudar no seu plano."
           }
         },
         "tr" : {
@@ -2570,7 +2570,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, sua dupla de estudos com IA. Me conte o que você quer aprender e eu monto seu plano."
+            "value" : "Oi! Sou %@, colega de estudos com IA. Me conte o que você quer aprender e eu monto seu plano."
           }
         },
         "tr" : {
@@ -4634,7 +4634,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos salvar sua dupla. Tente de novo."
+            "value" : "Não conseguimos salvar seu colega. Tente de novo."
           }
         },
         "tr" : {
@@ -5282,7 +5282,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua dupla"
+            "value" : "Seu colega"
           }
         },
         "tr" : {

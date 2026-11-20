@@ -54,7 +54,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Dupla”, the person you pair up with for school work; “your buddy”: “sua dupla”; “study buddy”: “dupla de estudos”; “AI study buddy”: “dupla de estudos com IA”. The noun is feminine whatever the buddy (“Escolha sua dupla”). Never “parceiro” or “companheiro”, which read as a romantic partner
+- “Buddy”: “Colega”, like a classmate you study with; “your buddy”: “seu colega”; “study buddy”: “colega de estudos”; “AI study buddy”: “colega de estudos com IA”. Without the buddy's name, use the masculine (“Escolha seu colega”); next to the name, drop the article and the possessive so it fits any buddy (“Sou {name}, colega de estudos com IA”, “{name} é colega de estudos com IA”). Never “parceiro” or “companheiro”, which read as a romantic partner
 - Mission names (missions list, first steps): infinitive: “Concluir sua primeira aula”
 - “call” (speaking practice): “conversa”, not “chamada” or “ligação”
 - “Mistakes notebook”: “Caderno de erros”

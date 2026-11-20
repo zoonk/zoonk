@@ -943,7 +943,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha sua dupla"
+            "value" : "Escolha seu colega"
           }
         },
         "tr" : {
@@ -1002,7 +1002,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vêm com sua dupla"
+            "value" : "Vêm com seu colega"
           }
         },
         "tr" : {
@@ -4531,7 +4531,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua dupla"
+            "value" : "Seu colega"
           }
         },
         "tr" : {

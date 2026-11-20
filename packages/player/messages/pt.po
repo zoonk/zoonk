@@ -3916,7 +3916,7 @@ msgstr "Com uma conta grátis, você pode tirar dúvidas sobre qualquer parte da
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"
 msgid "{name} is an AI study buddy and can make mistakes."
-msgstr "{name} é sua dupla de estudos com IA e pode cometer erros."
+msgstr "{name} é colega de estudos com IA e pode cometer erros."
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"

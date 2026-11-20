@@ -2037,7 +2037,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pergunte para sua dupla"
+            "value" : "Pergunte para seu colega"
           }
         },
         "tr" : {
@@ -10023,7 +10023,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pensando com calma? Sua dupla pode explicar de outro jeito."
+            "value" : "Pensando com calma? Seu colega pode explicar de outro jeito."
           }
         },
         "tr" : {
@@ -10669,7 +10669,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa é difícil. Sua dupla pode explicar de outra forma."
+            "value" : "Essa é difícil. Seu colega pode explicar de outra forma."
           }
         },
         "tr" : {
@@ -13321,7 +13321,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua dupla explica essa tela de um jeito mais simples"
+            "value" : "Seu colega explica essa tela de um jeito mais simples"
           }
         },
         "tr" : {
