@@ -402,21 +402,34 @@ private fun TodayDayStatus(
         }
 
         StudySession.State.WAITING -> {
-            if (model.writingStalled) {
-                TodayStatusLine(
-                    R.drawable.ic_schedule,
-                    stringResource(R.string.today_waiting_stalled),
-                    stringResource(R.string.today_waiting_stalled_detail),
-                    modifier,
-                )
-            } else {
-                TodayStatusLine(
-                    icon = null,
-                    sentence = stringResource(R.string.today_waiting),
-                    clause = null,
-                    modifier = modifier,
-                    leading = { CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) },
-                )
+            when {
+                day.waitingFor == StudySession.WaitingFor.MOCK -> {
+                    TodayStatusLine(
+                        R.drawable.ic_schedule,
+                        stringResource(R.string.today_waiting_mock),
+                        stringResource(R.string.mock_preparing_line),
+                        modifier,
+                    )
+                }
+
+                model.writingStalled -> {
+                    TodayStatusLine(
+                        R.drawable.ic_schedule,
+                        stringResource(R.string.today_waiting_stalled),
+                        stringResource(R.string.today_waiting_stalled_detail),
+                        modifier,
+                    )
+                }
+
+                else -> {
+                    TodayStatusLine(
+                        icon = null,
+                        sentence = stringResource(R.string.today_waiting),
+                        clause = null,
+                        modifier = modifier,
+                        leading = { CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) },
+                    )
+                }
             }
         }
 

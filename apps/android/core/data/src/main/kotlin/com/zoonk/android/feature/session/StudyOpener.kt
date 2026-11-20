@@ -351,7 +351,16 @@ private fun DayStep.shown() =
         areaId = areaId,
         chapterId = chapterId,
         checkpoint = checkpoint?.recode<StudyCheckpoint, OpenStudyDayRequestTargetOneOfShownCheckpoint>(),
-        flags = OpenStudyDayRequestTargetOneOfShownFlags(extra, fullReview, mistakesOnly, refresh, reinforcement, weakest),
+        flags =
+            OpenStudyDayRequestTargetOneOfShownFlags(
+                extra,
+                fullReview,
+                mistakesOnly,
+                refresh,
+                reinforcement,
+                weakest,
+                mockPreparationReview = true.takeIf { mockPreparationReview },
+            ),
         kind = OpenStudyDayRequestTargetOneOfShown.Kind.valueOf(kind.name),
         lessonId = lessonId,
         planItemKey = planItemKey,

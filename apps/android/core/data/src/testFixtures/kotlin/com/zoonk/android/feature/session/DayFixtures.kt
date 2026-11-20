@@ -75,6 +75,7 @@ fun day(
             ),
         nextPosition = nextPosition,
         state = StudySession.State.UNDERWAY,
+        waitingFor = null,
         missions = emptyList(),
         fullMeal = StudySessionFullMeal(bonus = 0, earned = false, ready = false),
         emptyDay = null,

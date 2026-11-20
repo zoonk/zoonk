@@ -37,6 +37,8 @@ data class DayView(
     val sessionBar: SessionBar,
     val nextPosition: Long?,
     val state: StudySession.State,
+    /** What a `waiting` day waits for: its lessons, or its scheduled mock exam's questions. */
+    val waitingFor: StudySession.WaitingFor?,
     val missions: List<DayMission>,
     val fullMeal: StudySessionFullMeal,
     val emptyDay: EmptyDay?,
@@ -105,6 +107,8 @@ data class DayStep(
     val waitReason: StudyBlock.WaitReason?,
     /** A mock whose questions are still written: it shows its time and opens once they're ready. */
     val preparing: Boolean = false,
+    /** The review offered while the day's mock is prepared; its ref says so, so it never opens an ordinary one. */
+    val mockPreparationReview: Boolean = false,
 ) {
     val isFinished: Boolean
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
@@ -224,6 +228,7 @@ fun StudySession.toDayView(): DayView =
         sessionBar = SessionBar(sessionBar.completed.toInt(), sessionBar.total.toInt()),
         nextPosition = nextPosition,
         state = state,
+        waitingFor = waitingFor,
         missions = missions.map(StudyMission::toDayMission),
         fullMeal = fullMeal,
         emptyDay = emptyDay?.value?.let(::emptyDay),
@@ -248,6 +253,7 @@ private fun UnstartedStudyDay.toDayView(): DayView =
         sessionBar = SessionBar(sessionBar.completed.toInt(), sessionBar.total.toInt()),
         nextPosition = nextPosition,
         state = StudySession.State.entries.first { it.value == state.value },
+        waitingFor = waitingFor?.let { reason -> StudySession.WaitingFor.entries.first { it.value == reason.value } },
         missions = missions.map(UnstartedStudyDayMissionsInner::toDayMission),
         fullMeal = fullMeal,
         emptyDay = emptyDay?.value?.let(::emptyDay),
@@ -310,6 +316,7 @@ fun StudyBlock.toDayStep(): DayStep =
         opensInPlayer = opensInPlayer,
         waitReason = waitReason,
         preparing = preparing,
+        mockPreparationReview = mockPreparationReview == true,
     )
 
 private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
@@ -345,6 +352,7 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         opensInPlayer = opensInPlayer,
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
         preparing = preparing,
+        mockPreparationReview = mockPreparationReview == true,
     )
 
 fun StudyMission.toDayMission(): DayMission =
