@@ -1,8 +1,13 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
 import { type FixedRow, findRowsFixedSince } from "../../staff/content-fixes/fixed-since";
-import { NOT_CHECKED } from "./check-results";
+import { type LessonStepCheckOutcome } from "../check-lesson-step";
+import { isAnswerableStep } from "../lesson-run";
+import "server-only";
+import { type PlayableLibraryStep } from "../playable-lesson";
+import { NOT_CHECKED, checkSaved, toCheckResult } from "./check-results";
 import { type LessonAnswerVerdict } from "./grade-lesson-answer";
+import { type findPlayableStepRow } from "./lesson-rows";
+import { loadPlayableSteps } from "./load-playable-steps";
 
 type Screen = {
   id: string;
@@ -16,19 +21,32 @@ type Screen = {
  * A word screen grades the pick of its own word by id, so another word's fix, which changes only
  * the wrong options shown with it, never makes a right pick wrong.
  */
-function rowsOf({ id, lessonId, sentenceId, wordId }: Screen): FixedRow[] {
+function rowsOf({ id, lessonId, sentenceId, wordId, retiredAt }: Screen): FixedRow[] {
   return [
     { id, model: "Step" },
     ...(wordId
       ? [
           { id: wordId, model: "Word" },
           { id: wordId, lessonId, model: "LessonWord" },
+          ...(retiredAt
+            ? [{ changedWordIds: [wordId], id: lessonId, model: "Lesson", op: "setScreens" }]
+            : []),
         ]
       : []),
     ...(sentenceId
       ? [
           { id: sentenceId, model: "Sentence" },
           { id: sentenceId, lessonId, model: "LessonSentence" },
+          ...(retiredAt
+            ? [
+                {
+                  changedSentenceIds: [sentenceId],
+                  id: lessonId,
+                  model: "Lesson",
+                  op: "setScreens",
+                },
+              ]
+            : []),
         ]
       : []),
   ];
@@ -38,24 +56,28 @@ async function missingLessonRows(screens: readonly Screen[]): Promise<string[]> 
   const retired = screens.filter(
     (screen) => screen.retiredAt && (screen.wordId || screen.sentenceId),
   );
+
   const words = retired.flatMap(({ lessonId, wordId }) => (wordId ? [{ lessonId, wordId }] : []));
+
   const sentences = retired.flatMap(({ lessonId, sentenceId }) =>
     sentenceId ? [{ lessonId, sentenceId }] : [],
   );
+
   const [linkedWords, linkedSentences] = await Promise.all([
-    words.length
+    words.length > 0
       ? prisma.lessonWord.findMany({
           select: { lessonId: true, wordId: true },
           where: { OR: words },
         })
       : [],
-    sentences.length
+    sentences.length > 0
       ? prisma.lessonSentence.findMany({
           select: { lessonId: true, sentenceId: true },
           where: { OR: sentences },
         })
       : [],
   ]);
+
   return retired
     .filter(
       (screen) =>
@@ -132,4 +154,62 @@ export async function excuseFixedAnswer({
   const fixed = await findFixedScreenIds({ screens: [screen], startedAt: run.startedAt });
 
   return fixed.has(screen.id) ? { ...NOT_CHECKED, answerText: verdict?.answerText ?? null } : null;
+}
+
+async function checkUnavailableVocabulary({
+  row,
+  playable,
+  saved,
+}: {
+  row: Screen & { kind: string };
+  playable: boolean;
+  saved: Parameters<typeof checkSaved>[0]["saved"] | null;
+}): Promise<LessonStepCheckOutcome | null> {
+  if (!row.retiredAt || !(row.wordId || row.sentenceId)) {
+    return null;
+  }
+
+  if (playable && row.kind !== "spokenAnswer") {
+    return null;
+  }
+
+  const missing = await missingLessonRows([row]);
+
+  if (!missing.includes(row.id)) {
+    return null;
+  }
+
+  if (saved) {
+    return {
+      result: checkSaved({ fromCode: false, hasQuestion: true, saved, verdict: NOT_CHECKED }),
+      status: "checked",
+    };
+  }
+
+  return {
+    result: toCheckResult({ savedMistake: false, verdict: NOT_CHECKED }),
+    status: "checked",
+  };
+}
+
+export async function loadStepToCheck({
+  row,
+  saved,
+}: {
+  row: NonNullable<Awaited<ReturnType<typeof findPlayableStepRow>>>;
+  saved: Parameters<typeof checkSaved>[0]["saved"] | null;
+}): Promise<{ outcome: LessonStepCheckOutcome } | { step: PlayableLibraryStep }> {
+  const [step] = await loadPlayableSteps({ lesson: row.lesson, rows: [row] });
+
+  const unavailable = await checkUnavailableVocabulary({ playable: Boolean(step), row, saved });
+
+  if (unavailable) {
+    return { outcome: unavailable };
+  }
+
+  if (!step || !isAnswerableStep(step)) {
+    return { outcome: { status: "invalid" } };
+  }
+
+  return { step };
 }

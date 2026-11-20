@@ -1,3 +1,4 @@
+import { isJsonObject } from "@zoonk/utils/json";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { MAX_BATCH_FIXES } from "./batches";
@@ -16,6 +17,28 @@ const idSchema = uuidSchema();
 const reasonSchema = z.string().trim().min(1).max(MAX_REASON_LENGTH);
 const feedbackSchema = idSchema.meta({ description: "The learner report this fix answers" });
 
+const countEntriesWith = (rows: unknown, field: string) =>
+  Array.isArray(rows) ? rows.filter((row) => isJsonObject(row) && field in row).length : 0;
+
+function reviewUnits(change: { model: string; setScreens?: unknown }) {
+  if (LESSON_ROW_MODELS.has(change.model)) {
+    return 0;
+  }
+
+  const list = change.setScreens;
+
+  if (!isJsonObject(list)) {
+    return 1;
+  }
+
+  return (
+    1 +
+    countEntriesWith(list.words, "key") +
+    countEntriesWith(list.sentences, "key") +
+    countEntriesWith(list.screens, "picture")
+  );
+}
+
 const changesSchema = z
   .array(
     z
@@ -32,8 +55,7 @@ const changesSchema = z
   .min(1)
   .refine(
     (changes) =>
-      changes.filter((change) => !LESSON_ROW_MODELS.has(change.model)).length <=
-      MAX_CONTENT_FIX_CHANGES,
+      changes.reduce((total, change) => total + reviewUnits(change), 0) <= MAX_CONTENT_FIX_CHANGES,
     {
       message: `A fix holds up to ${MAX_CONTENT_FIX_CHANGES} changes besides a word's or sentence's lesson rows; split the rest into fixes of a batch.`,
     },

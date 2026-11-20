@@ -108,8 +108,8 @@ describe("proposing a batch", () => {
     expect(message).not.toContain("fixes[0]");
     expect(message).toContain("fixes[1]: Lesson.slug isn't fixable");
 
-    expect(message).toContain(
-      "fixes[2]: A change carries one operation. Lesson takes set, setPlan, setSkills.",
+    expect(message).toMatch(
+      /fixes\[2\]: A change carries one operation\. Lesson takes .*\bsetScreens\b/u,
     );
 
     await expect(prisma.contentFix.count({ where: { proposerId: proposer.id } })).resolves.toBe(0);

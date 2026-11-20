@@ -14,8 +14,8 @@ import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { claimModelGrade } from "../learner/_utils/model-grading";
 import { getSession } from "../users/get-session";
 import { findClosingAnswer } from "./_utils/answer-recording";
-import { NOT_CHECKED, checkSaved, toCheckResult } from "./_utils/check-results";
-import { excuseFixedAnswer } from "./_utils/fixed-screens";
+import { checkSaved, toCheckResult } from "./_utils/check-results";
+import { excuseFixedAnswer, loadStepToCheck } from "./_utils/fixed-screens";
 import { type LessonAnswerVerdict, gradeLessonAnswer } from "./_utils/grade-lesson-answer";
 import { findPlayableStepRow, getAnswerSkillId } from "./_utils/lesson-rows";
 import {
@@ -24,7 +24,6 @@ import {
   hasAnswerSince,
   lockOpenRun,
 } from "./_utils/lesson-runs";
-import { loadPlayableSteps } from "./_utils/load-playable-steps";
 import { getMistakeCorrectAnswer } from "./_utils/mistake-correct-answer";
 import { getStepQuestion } from "./_utils/step-question";
 import {
@@ -32,7 +31,6 @@ import {
   type LessonStepCheckInput,
   type LessonStepCheckResult,
 } from "./contract";
-import { isAnswerableStep } from "./lesson-run";
 
 const EXPECTED_ANSWER_MS: Partial<Record<StepKind, number>> = {
   activity: 45_000,
@@ -214,6 +212,19 @@ async function recordCheck({
   };
 }
 
+async function loadSavedCheck({
+  key,
+  stepId,
+  userId,
+}: {
+  key?: string;
+  stepId: string;
+  userId: string;
+}) {
+  const attemptId = key ? getAnswerAttemptId({ key, questionId: stepId, userId }) : undefined;
+  return { attemptId, saved: attemptId ? await findSavedAttempt({ attemptId, userId }) : null };
+}
+
 /** Requires an open lesson run; reuse attemptId to replay its saved verdict. Over-cap or unrecognized code-only answers are not recorded. */
 export async function checkLessonStep({
   input,
@@ -242,36 +253,20 @@ export async function checkLessonStep({
     return { status: "notFound" };
   }
 
-  const attemptId = input.attemptId
-    ? getAnswerAttemptId({ key: input.attemptId, questionId: row.id, userId })
-    : undefined;
-
-  const saved = attemptId ? await findSavedAttempt({ attemptId, userId }) : null;
+  const { attemptId, saved } = await loadSavedCheck({ key: input.attemptId, stepId, userId });
 
   // Saved answers remain replayable after their run ends.
   if (run.endedAt && !saved) {
     return { status: "runEnded" };
   }
 
-  const [step] = await loadPlayableSteps({ lesson: row.lesson, rows: [row] });
-  if (!step && row.retiredAt && (row.wordId || row.sentenceId)) {
-    if (saved) {
-      return {
-        result: checkSaved({ fromCode: false, hasQuestion: true, saved, verdict: NOT_CHECKED }),
-        status: "checked",
-      };
-    }
-    const excused = await excuseFixedAnswer({ run, screen: row, verdict: null });
-    if (excused) {
-      return {
-        result: toCheckResult({ savedMistake: false, verdict: excused }),
-        status: "checked",
-      };
-    }
+  const loaded = await loadStepToCheck({ row, saved });
+
+  if ("outcome" in loaded) {
+    return loaded.outcome;
   }
-  if (!step || !isAnswerableStep(step)) {
-    return { status: "invalid" };
-  }
+
+  const { step } = loaded;
 
   const isRecorded =
     !saved &&

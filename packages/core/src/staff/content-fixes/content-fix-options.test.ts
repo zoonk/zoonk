@@ -94,7 +94,13 @@ describe("screen option collections", () => {
     await expect(
       excuseFixedAnswer({
         run: { startedAt: new Date() },
-        screen: { id: check.id, lessonId: lesson.id, sentenceId: null, wordId: null },
+        screen: {
+          id: check.id,
+          lessonId: lesson.id,
+          retiredAt: null,
+          sentenceId: null,
+          wordId: null,
+        },
         verdict: null,
       }),
     ).resolves.toMatchObject({ checked: false });

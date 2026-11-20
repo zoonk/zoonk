@@ -260,10 +260,15 @@ export async function prepareContentFix(
   resolvers: readonly ChangeResolver[],
 ): Promise<Refusal | { fix: PreparedFix; ok: true }> {
   const resolved = await Promise.all(resolvers.map((resolve) => resolve(db)));
-  const refused = resolved.find((change) => !change.ok);
 
-  if (refused && !refused.ok) {
-    return refused;
+  const refused = resolved.flatMap((change, index) =>
+    change.ok
+      ? []
+      : [resolved.length === 1 ? change.problem : `changes[${String(index)}]: ${change.problem}`],
+  );
+
+  if (refused.length > 0) {
+    return refuse(refused.join("\n"));
   }
 
   const accepted = resolved.filter((change) => change.ok);

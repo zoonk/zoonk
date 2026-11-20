@@ -8,6 +8,7 @@ import { type FixHandler } from "./fix-handler";
 import { itemReplace, itemRestore, itemSet } from "./item-content";
 import { itemSetReplace, itemSetRestore } from "./item-set";
 import { lessonPlanSet } from "./lesson-plan";
+import { lessonSetScreens } from "./lesson-screens/handler";
 import { lessonSentenceSet, lessonWordSet } from "./lesson-vocabulary";
 import { levelTestSet } from "./level-test";
 import { mindMapSet } from "./mind-map";
@@ -61,6 +62,7 @@ export const FIX_HANDLERS = [
   chapterSet,
   lessonSet,
   lessonPlanSet,
+  lessonSetScreens,
   stepSet,
   stepDetachPicture,
   stepAttachPicture,

@@ -223,6 +223,7 @@ function toExerciseInput({
     if (!row.retiredAt) {
       logError(`[lesson-player] Step ${row.id} has no ${row.kind} word or sentence in its lesson.`);
     }
+
     return [];
   }
 

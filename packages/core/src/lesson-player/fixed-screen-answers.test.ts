@@ -307,16 +307,20 @@ describe("answers to a screen fixed during the run", () => {
       userFixture(),
       languageLessonFixture(),
     ]);
+
     mockSession(user.id);
     const run = await startRun(lesson.id);
     const translation = stepOfKind(steps, "translation");
+
     await prisma.step.updateMany({
-      where: { lessonId: lesson.id },
       data: { retiredAt: new Date() },
+      where: { lessonId: lesson.id },
     });
+
     await prisma.lessonWord.delete({
       where: { lessonId_wordId: { lessonId: lesson.id, wordId: word.id } },
     });
+
     await expect(
       answer({
         runId: run.runId,

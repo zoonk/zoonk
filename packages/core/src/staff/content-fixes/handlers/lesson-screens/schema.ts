@@ -1,0 +1,182 @@
+import { GENERATED_ITEM_SCHEMAS } from "@zoonk/ai/tasks/items/schemas";
+import { StepKind, StepVariantKind } from "@zoonk/db";
+import { z } from "zod";
+import { idSchema } from "../fix-handler";
+
+const MAX_SOURCE_PAGE = 32_767;
+const text = z.string().trim().min(1);
+const texts = z.array(text);
+const content = z.record(z.string(), z.json());
+
+const wordFields = z.object({
+  distractors: texts,
+  note: text.nullable().optional(),
+  translation: text,
+});
+
+const sentenceFields = z.object({
+  distractors: texts,
+  explanation: text,
+  otherSentenceOrders: texts,
+  otherTranslationOrders: texts,
+  translation: text,
+  translationDistractors: texts,
+});
+
+const vocabularyIdentity = {
+  audioUrl: z.string().nullable(),
+  id: idSchema,
+  organizationId: idSchema,
+  romanization: z.string().nullable(),
+};
+
+const word = z.object({
+  ...vocabularyIdentity,
+  distractors: z.array(z.string()),
+  note: z.string().nullable(),
+  translation: z.string(),
+  word: z.string(),
+});
+
+const sentence = z.object({
+  ...vocabularyIdentity,
+  distractors: z.array(z.string()),
+  explanation: z.string(),
+  ordersOwedAt: z.string().nullable(),
+  otherSentenceOrders: z.array(z.string()),
+  otherTranslationOrders: z.array(z.string()),
+  sentence: z.string(),
+  translation: z.string(),
+  translationDistractors: z.array(z.string()),
+});
+
+const idea = z.union([
+  z.strictObject({ from: z.int().nonnegative() }),
+  z.strictObject({ from: z.int().nonnegative().optional(), label: text, text }),
+]);
+
+const numeric = GENERATED_ITEM_SCHEMAS.numeric
+  .pick({ context: true, math: true, question: true })
+  .extend({ correctReason: text });
+
+const common = {
+  citation: z
+    .strictObject({ page: z.int().min(1).max(MAX_SOURCE_PAGE).nullable(), sourceId: idSchema })
+    .nullable()
+    .optional(),
+  content: content.optional(),
+  idea: z.int().nonnegative().nullable().optional(),
+  mediaAssetId: idSchema.nullable().optional(),
+  picture: content.optional(),
+};
+
+const kept = z.strictObject({
+  ...common,
+  id: idSchema,
+  variants: z.array(z.strictObject({ content, id: idSchema })).optional(),
+});
+
+const added = z.strictObject({
+  ...common,
+  kind: z.enum(StepKind),
+  numeric: numeric.optional(),
+  sentence: text.optional(),
+  skillId: idSchema.optional(),
+  word: text.optional(),
+});
+
+export const setScreensSchema = z.strictObject({
+  ideas: z.array(idea).min(1).optional(),
+  screens: z.array(z.union([kept, added])).min(1),
+  sentences: z
+    .array(
+      z.union([
+        sentenceFields.partial().extend({ id: idSchema }).strict(),
+        sentenceFields.extend({ key: text, sentence: text }).strict(),
+      ]),
+    )
+    .optional(),
+  version: z.int().positive(),
+  words: z
+    .array(
+      z.union([
+        wordFields.partial().extend({ id: idSchema }).strict(),
+        wordFields.extend({ key: text, word: text }).strict(),
+      ]),
+    )
+    .optional(),
+});
+
+const provenance = { model: z.string(), promptVersion: z.string(), runId: z.string() };
+
+const screen = z.object({
+  answerExplanations: z.array(
+    z.object({
+      ...provenance,
+      explanation: z.string(),
+      language: z.string(),
+      normalizedAnswer: z.string(),
+    }),
+  ),
+  content,
+  contractVersion: z.int(),
+  id: idSchema,
+  itemId: idSchema.nullable(),
+  kind: z.enum(StepKind),
+  marks: z.json(),
+  mediaAssetId: idSchema.nullable(),
+  optionPictures: z.array(z.object({ mediaAssetId: idSchema, optionId: z.string() })),
+  pictureAvailableAt: z.string().nullable(),
+  pictureRemovedAt: z.string().nullable(),
+  position: z.int(),
+  sentenceId: idSchema.nullable(),
+  sharedTutorAnswers: z.array(
+    z.object({
+      ...provenance,
+      answer: z.string(),
+      question: z.string(),
+      suggestion: z.enum(["simpler", "deeper", "example"]),
+    }),
+  ),
+  skillId: idSchema.nullable(),
+  sourceId: idSchema.nullable(),
+  sourcePage: z.int().nullable(),
+  sources: z.array(z.object({ contentHash: z.string().nullable(), sourceId: idSchema })),
+  variants: z.array(
+    z.object({
+      content,
+      contractVersion: z.int(),
+      id: idSchema,
+      key: z.string(),
+      kind: z.enum(StepVariantKind),
+    }),
+  ),
+  wordId: idSchema.nullable(),
+});
+
+export const snapshotSchema = z.object({
+  screens: z.array(screen),
+  sentences: z.array(sentence),
+  summary: z.json(),
+  version: z.int(),
+  words: z.array(word),
+});
+export const storedScreensSchema = z.object({
+  after: snapshotSchema,
+  before: snapshotSchema,
+  beforeReferences: z.json(),
+  changedSentenceIds: z.array(idSchema),
+  changedWordIds: z.array(idSchema),
+  id: idSchema,
+  model: z.literal("Lesson"),
+  newItems: z.array(
+    z.object({ id: idSchema, question: GENERATED_ITEM_SCHEMAS.numeric, skillId: idSchema }),
+  ),
+  op: z.literal("setScreens"),
+  proposal: setScreensSchema.nullable(),
+  references: z.json(),
+});
+export type Screen = z.infer<typeof screen>;
+export type ScreenSnapshot = z.infer<typeof snapshotSchema>;
+export type ScreenList = z.infer<typeof setScreensSchema>;
+export type StoredScreens = z.infer<typeof storedScreensSchema>;
