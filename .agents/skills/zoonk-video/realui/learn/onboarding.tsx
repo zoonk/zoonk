@@ -263,6 +263,8 @@ function UnderstoodView({ lang }: ViewProps) {
                     role: CURRENT_ROLE[lang],
                     targetPosition: c.title,
                   },
+                  // The name the goal keeps on every later screen (careerGoal's displayName).
+                  displayName: c.title,
                   kind: "learn",
                   language: lang,
                   prompt: c.goalText,
