@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "goalcontent_add_back": "0f9b8582b5ba4ee91cba90db9ef19b3fab5741f14d13e2fd93cbf9685bd90ca3",
   "goalcontent_adjust_plan": "82f960a5d67f7b4628176172034c2e7886ba926c8e32191c60bb49a99f14cabb",
   "goalcontent_also_in_exam_count": "b99e38ce17c607fa171a2b1c4b35b783b0b427b74372cf01b3cfe1c916f19e59",
   "goalcontent_also_in_exams": "cb509c44a2b9ffe6b9b605e29a90a097d60129edb6ceabf3c9dbf17b5b2b313c",
   "goalcontent_also_in_plan": "0d6be97279fc0db18500117b2271abe42f235c2e5b1e6c3b020540643c8e1f42",
   "goalcontent_asked_a_lot": "17e2735e0aae19e452a8b2c59c911e16da3435e2967cbf78f69071ea584bb06d",
-  "goalcontent_bring_back": "168bcf60c5a43fecfe1831ba2af400dcc316f4b7b76bd47fa67db01fb150920d",
   "goalcontent_chapter_number": "7ae989142e1be8d6fe021abeed59351296012981ee661e3811abe6df3e717326",
   "goalcontent_chapter_summary": "d4abfc800e9b937dca7cecd95285c3f6dd8dc11494dc994db2e97a07410243ef",
   "goalcontent_chapters": "2fe43f13b6c8ab5732d8d1ed439e902fb9ad35f1a4a706f9112e3f18fdbfbbc3",
@@ -69,9 +69,9 @@
   "goalcontent_start": "da74b1d50d8751f9a5a5fed95a80ca4922f32194fb191b465094c04588475fbb",
   "goalcontent_studied": "be5601ef2a4098ecc355fe4679d71aa189469376eb797cc7a461d8cb0a1c3bea",
   "goalcontent_subject_count": "b7068b733119eb7baef29e60be0c6798f2553c701890abcba6f15779071bdabd",
-  "goalcontent_subject_missing": "464de09f49d155efcb86bcd12e841e27db6a0314157271fed3bc07a31172de72",
+  "goalcontent_subject_missing": "c754733055be579e21727d3318ae8009e93fb91bf3f94f907f0aab623b239896",
   "goalcontent_subject_skipped": "3c7f82504b7a6fe2ffc2b4fa1d2285da7e716d39cf7c0a6b7d47cb5f1f2def9d",
-  "goalcontent_subject_time": "30c11649317c75fc9cd76d03fe12c300aa9eba9282d0bed78bbb4ddb26d12b5e",
+  "goalcontent_subject_time": "354b48f2ae3df3205ece365cb29a70882887f906b56feb2998985396ebeb3ec7",
   "goalcontent_subjects": "9387e6e35a57bfde615cbb5e2d1e4f0f4e23ebb44348c999310e93ad6d354931",
   "goalcontent_to_review": "66842a155cc165e17c7eb6d6df4e5c25dad4963fdbcc1adee36c34d6c4a6206b",
   "goalcontent_topic_count": "daee3b00ec2a2388f8f43af26f9b810e9e6fbf0b79183a59ec18ca96b884d6a3",
@@ -215,11 +215,10 @@
         <item quantity="other">%d leçons passées</item>
     </plurals>
     <string name="goalcontent_subject_skipped">Tu as retiré ce sujet de ton plan.</string>
-    <string name="goalcontent_subject_time">Tu n’as pas assez de temps pour cette matière.</string>
-    <string name="goalcontent_subject_missing">Ton plan ne couvre pas encore cette matière.</string>
+    <string name="goalcontent_subject_time">Cette matière n’est pas dans ton plan : pas assez de temps.</string>
+    <string name="goalcontent_subject_missing">Cette matière n’est pas encore dans ton plan.</string>
     <string name="goalcontent_adjust_plan">Ajuster le plan</string>
-    <!-- Puts a subject the learner took out back in their plan. -->
-    <string name="goalcontent_bring_back">La remettre</string>
+    <string name="goalcontent_add_back">La rajouter</string>
     <string name="goalcontent_save_failed">L’enregistrement a échoué. Réessaie.</string>
     <plurals name="goalcontent_chapters_done">
         <item quantity="one">%d chapitre terminé</item>

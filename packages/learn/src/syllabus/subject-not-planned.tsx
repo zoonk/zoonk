@@ -81,7 +81,7 @@ export function NotPlannedCallout({
         {reason === "skipped" && <p>{t("You took this subject out of your plan.")}</p>}
         {reason === "time" && (
           <p>
-            {t("This subject isn't in your plan: not enough time before your exam.")}
+            {t("This subject isn't in your plan: not enough time.")}
             {space}
             <LearnLink className="font-medium underline underline-offset-2" href={adjustHref}>
               {t("Adjust plan")}

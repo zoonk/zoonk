@@ -114,11 +114,10 @@
         <item quantity="other">%d lessons skipped</item>
     </plurals>
     <string name="goalcontent_subject_skipped">You took this subject out of your plan.</string>
-    <string name="goalcontent_subject_time">It doesn\'t fit in the time you have.</string>
-    <string name="goalcontent_subject_missing">Your plan doesn\'t teach this subject yet.</string>
+    <string name="goalcontent_subject_time">This subject isn\'t in your plan: not enough time.</string>
+    <string name="goalcontent_subject_missing">This subject isn\'t in your plan yet.</string>
     <string name="goalcontent_adjust_plan">Adjust plan</string>
-    <!-- Puts a subject the learner took out back in their plan. -->
-    <string name="goalcontent_bring_back">Bring it back</string>
+    <string name="goalcontent_add_back">Add it back</string>
     <string name="goalcontent_save_failed">That didn\'t save. Try again.</string>
     <plurals name="goalcontent_chapters_done">
         <item quantity="one">%d chapter done</item>

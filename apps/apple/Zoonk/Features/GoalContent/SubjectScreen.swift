@@ -695,9 +695,7 @@ private struct SubjectNotPlannedNotice: View {
             comment: "Why a subject isn't in the plan: the learner skipped it")
         case "time":
           Text(
-            "This subject isn't in your plan: not enough time before your exam.",
-            tableName: "Plan",
-            comment: "Why a subject isn't in the plan: no time for it by the date")
+            "This subject isn't in your plan: not enough time.", tableName: "Plan")
         case "missing":
           Text(
             "This subject isn't in your plan yet.", tableName: "Plan",
@@ -715,8 +713,7 @@ private struct SubjectNotPlannedNotice: View {
         BusyButton(isBusy: restoring.isRunning, icon: .addLessons) {
           restore()
         } label: {
-          Text(
-            "Add it back", tableName: "Plan", comment: "Puts a skipped subject back in the plan")
+          Text("Add it back", tableName: "Plan")
         }
         .buttonStyle(.outline)
       } else if reason == "time" {

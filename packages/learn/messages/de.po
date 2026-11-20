@@ -12876,9 +12876,9 @@ msgid "You took this subject out of your plan."
 msgstr "Du hast dieses Fach aus deinem Plan genommen."
 
 #: src/syllabus/subject-not-planned.tsx
-msgctxt "Xs-i9Q"
-msgid "This subject isn't in your plan: not enough time before your exam."
-msgstr "Dieses Fach ist nicht in deinem Plan: Bis zu deiner Prüfung bleibt nicht genug Zeit."
+msgctxt "bNkc7y"
+msgid "This subject isn't in your plan: not enough time."
+msgstr "Dieses Fach ist nicht in deinem Plan, weil die Zeit nicht reicht."
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "aqUWND"

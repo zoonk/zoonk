@@ -1,5 +1,6 @@
 // The exam goal's Plan tab, built from story.exam.
 import { JourneyScreen } from "@repo/packages/learn/src/journey/journey-screen.tsx";
+import { getPlanTopics } from "@repo/packages/learn/src/journey/preparation/study-counts.ts";
 import { useEffect } from "react";
 import { story, type Lang } from "../story";
 import { AppFrame, NOOP, NOOP_ASYNC } from "./shell";
@@ -176,6 +177,7 @@ export function examSyllabus(lang: Lang) {
     noticeUrl: null,
     passMarks: null,
     questionsSource: null,
+    sharedExams: [],
     subjects: exam.subjects.map((subject) => ({
       areas: [subject.name],
       chapters: [],
@@ -194,6 +196,7 @@ export function examSyllabus(lang: Lang) {
       preparation: subject.progress,
       questions: null,
       share: 1 / exam.subjects.length,
+      sharedWith: [],
       shortName: subject.name,
       source: "notice",
       topicFrequencySource: null,
@@ -270,6 +273,7 @@ export function ExamPlan({ lang, state }: { lang: Lang; state?: string }) {
             weekGain: 0.03,
           } as any,
           stillNeeded: { areas: [], left: 0, minutes: 0, rule: "examWeighted" },
+          topics: getPlanTopics(syllabus),
         }}
         syllabus={syllabus}
         tutor={{ buddy: { kind: "zu", name: null }, href: "/buddy" }}

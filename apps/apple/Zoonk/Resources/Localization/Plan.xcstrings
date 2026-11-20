@@ -6473,24 +6473,6 @@
     },
     "%lld lessons you already know" : {
       "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld lesson you already know"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld lessons you already know"
-                }
-              }
-            }
-          }
-        },
         "de" : {
           "variations" : {
             "plural" : {
@@ -6504,6 +6486,24 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld Lektionen, die du schon kennst"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lesson you already know"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lessons you already know"
                 }
               }
             }
@@ -6590,16 +6590,16 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld lekcja, którą już znasz"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld lekcje, które już znasz"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcja, którą już znasz"
                 }
               },
               "other" : {
@@ -12680,30 +12680,29 @@
       }
     },
     "Add it back" : {
-      "comment" : "Puts a skipped subject back in the plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wieder aufnehmen"
+            "value" : "Wieder hinzufügen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a agregar"
+            "value" : "Volver a agregarla"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La remettre"
+            "value" : "La rajouter"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reinserisci nel piano"
+            "value" : "Reinseriscila"
           }
         },
         "ja" : {
@@ -12721,7 +12720,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przywróć do planu"
+            "value" : "Przywróć"
           }
         },
         "pt" : {
@@ -12733,7 +12732,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yeniden ekle"
+            "value" : "Geri ekle"
           }
         }
       }
@@ -33225,61 +33224,60 @@
         }
       }
     },
-    "This subject isn't in your plan: not enough time before your exam." : {
-      "comment" : "Why a subject isn't in the plan: no time for it by the date",
+    "This subject isn't in your plan: not enough time." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieses Fach ist nicht in deinem Plan, weil bis zu deiner Prüfung nicht genug Zeit bleibt."
+            "value" : "Dieses Fach ist nicht in deinem Plan, weil die Zeit nicht reicht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta materia no está en tu plan: no hay tiempo suficiente antes de tu examen."
+            "value" : "Esta materia no está en tu plan: no hay suficiente tiempo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette matière n’est pas dans ton plan : il ne reste pas assez de temps avant ton examen."
+            "value" : "Cette matière n’est pas dans ton plan : pas assez de temps."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questa materia non è nel tuo piano: non c’è abbastanza tempo prima dell’esame."
+            "value" : "Questa materia non è nel tuo piano: non c’è abbastanza tempo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "試験までの時間が足りないため、この科目は学習計画に入りきりません。"
+            "value" : "時間が足りないため、この科目は学習計画に入っていません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시험 전까지 시간이 부족해 이 과목은 계획에서 제외돼요."
+            "value" : "시간이 부족해 이 과목은 계획에 없어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ten przedmiot nie mieści się w twoim planie: do egzaminu zostało za mało czasu."
+            "value" : "Tego przedmiotu nie ma w twoim planie: za mało czasu."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa matéria não está no seu plano: não tem tempo suficiente até a prova."
+            "value" : "Essa matéria não está no seu plano: não tem tempo suficiente."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu branş planında yok: sınavına kadar yeterli zaman yok."
+            "value" : "Bu branş planında yok: yeterli zaman yok."
           }
         }
       }

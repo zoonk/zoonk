@@ -209,7 +209,7 @@ internal fun NotPlannedNotice(
                             busy = writes.restoring,
                             leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
                         ) {
-                            Text(stringResource(R.string.goalcontent_bring_back))
+                            Text(stringResource(R.string.goalcontent_add_back))
                         }
                         if (writes.restoreFailed) SaveFailed()
                     }

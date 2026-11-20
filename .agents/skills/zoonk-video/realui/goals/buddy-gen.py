@@ -14,12 +14,11 @@ MAIN = f"{R}/apps/main/src"
 # source file -> copy name (without the buddy-main- prefix)
 FILES = {
     f"{MAIN}/lib/belt-colors.ts": "belt-colors",
-    f"{STATS}/level/level-stats.tsx": "level-stats",
     f"{STATS}/level/level-progression.tsx": "level-progression",
     f"{STATS}/level/belt-rack.tsx": "belt-rack",
     f"{STATS}/energy/energy-stats.tsx": "energy-stats",
     f"{STATS}/energy/energy-chart.tsx": "energy-chart",
-    f"{MAIN}/components/progress/progress-day-count-label.ts": "progress-day-count-label",
+    f"{STATS}/_components/stats-calendar.tsx": "stats-calendar",
     f"{MAIN}/components/learn/section-page.tsx": "section-page",
     f"{MAIN}/components/learn/section-layout.tsx": "section-layout",
     f"{STATS}/_components/stats-page.tsx": "stats-page",
@@ -77,6 +76,17 @@ def resolve(spec, source_dir):
     raise SystemExit(f"cannot resolve {spec} from {source_dir}")
 
 
+def split_all(match):
+    """`const [t, format] = await Promise.all([getExtracted(), getFormatter()])` -> one const per value.
+
+    next-intl's extraction only finds `const t = useExtracted()`, so the hooks can't stay in an array."""
+    names = [name.strip() for name in match.group(1).split(",")]
+    values = [value.strip() for value in match.group(2).split(",") if value.strip()]
+    if len(names) != len(values):
+        raise SystemExit(f"cannot split {match.group(0)}")
+    return "\n  ".join(f"const {name} = {value};" for name, value in zip(names, values))
+
+
 def convert(text, source_dir):
     text = text.replace(
         'from "next-intl/server";',
@@ -85,6 +95,11 @@ def convert(text, source_dir):
     text = re.sub(r"\bgetExtracted\b", "useExtracted", text)
     text = re.sub(r"\bgetFormatter\b", "useFormatter", text)
     text = re.sub(r"\basync function\b", "function", text)
+    text = re.sub(
+        r"const \[([^\]]+)\] = await Promise\.all\(\[([^\]]+)\]\);",
+        split_all,
+        text,
+    )
     text = re.sub(r"\bawait\s+", "", text)
     text = re.sub(r"Promise<([^>]+)>", r"\1", text)
     text = text.replace('import "server-only";\n', "")
