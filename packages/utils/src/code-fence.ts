@@ -91,7 +91,7 @@ export function removeCodeFences(text: string): string {
   return lines.filter((_, index) => !code.has(index)).join("\n");
 }
 
-export type TextPiece = { code: boolean; text: string };
+type TextPiece = { code: boolean; text: string };
 
 /** A line's inline code as the players read it, each line on its own. */
 function splitLineAtCode(line: string): TextPiece[] {
