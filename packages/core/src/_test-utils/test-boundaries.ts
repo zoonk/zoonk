@@ -71,6 +71,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/images/generate": { generateLessonImage: vi.fn() },
   "@zoonk/ai/tasks/images/scene": { generateImageScene: vi.fn() },
   "@zoonk/ai/tasks/items/work-field": { classifyWorkField: vi.fn() },
+  "@zoonk/ai/tasks/items/write-writing-prompt": { writeWritingPrompt: vi.fn() },
   "@zoonk/ai/tasks/language/alphabet-lesson": {
     fixAlphabetLesson: vi.fn(),
     generateAlphabetLesson: vi.fn(),

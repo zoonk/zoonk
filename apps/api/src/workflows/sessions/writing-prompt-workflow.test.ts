@@ -1,5 +1,6 @@
 import { writeWritingPrompt } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
+import { reserveWritingPromptSpend } from "@zoonk/core/library/items/writing-prompt-spend";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -131,6 +132,34 @@ describe(writingPromptWorkflow, () => {
         runId: "holder",
         status: "writing",
       });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("replays the committed guest reservation after the workflow missed its acknowledgment", async () => {
+    const { input } = await setup();
+    const { workflowRunId: runId } = getWorkflowMetadata();
+    const day = new Date("2040-11-21");
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(day);
+
+    try {
+      const reserve = () => reserveWritingPromptSpend({ count: 1, runId, userId: input.userId });
+      await expect(Promise.all([reserve(), reserve()])).resolves.toStrictEqual([1, 1]);
+
+      vi.setSystemTime(new Date("2040-11-22"));
+
+      await expect(reserve()).resolves.toBe(1);
+
+      await expect(prisma.guestSpendDay.findUnique({ where: { day } })).resolves.toMatchObject({
+        spentMicros: 10_000,
+      });
+
+      await expect(
+        prisma.guestSpendDay.findUnique({ where: { day: new Date("2040-11-22") } }),
+      ).resolves.toBeNull();
     } finally {
       vi.useRealTimers();
     }

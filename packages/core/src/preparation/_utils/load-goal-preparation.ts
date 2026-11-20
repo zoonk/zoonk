@@ -4,7 +4,9 @@ import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag, getUserSubscriptionCacheTag } from "../../cache/tags";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
+import { readExamPicks, toChosenStructure } from "../../exams/choices/exam-choices";
 import { loadGoalScoreEstimate } from "../../exams/estimates/load-goal-estimate";
+import { loadGoalWrittenProjection } from "../../exams/estimates/load-goal-written-projection";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { type OwnedGoal } from "../../learner/_utils/owned-goal";
 import { readCatchUpItems } from "../../learner/facts/catch-up-items";
@@ -14,6 +16,7 @@ import { readActiveSubscription } from "../../learner/facts/subscription";
 import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { countSkillStates } from "../../learner/mastery-state";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
+import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { type PlanReadContext } from "../../plans/_utils/plan-read-projection";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
@@ -112,15 +115,24 @@ export async function loadOwnedGoalPreparation({
   const { components, sections, stage, value } = measure(now);
   const areas = getAreaPreparations({ ...inputs, now, weekAgo });
 
-  const estimatedScore =
+  const structure = blueprint
+    ? toChosenStructure({
+        picks: readExamPicks(selectedPlan?.state.settings ?? savedPlan?.settings),
+        structure: readBlueprintContent(blueprint).structure,
+      })
+    : null;
+
+  const [estimatedScore, writtenProjection] = await Promise.all([
     inputs.testKind === "weeklyChallenges"
       ? null
-      : await loadGoalScoreEstimate({
+      : loadGoalScoreEstimate({
           blueprint,
           examPart: inputs.examPart,
           goal,
           ledgerMocks: inputs.mockResults,
-        });
+        }),
+    loadGoalWrittenProjection({ blueprint, examPart: inputs.examPart, goal, structure, userId }),
+  ]);
 
   return {
     preparation: {
@@ -151,6 +163,7 @@ export async function loadOwnedGoalPreparation({
       value,
       weakestAreaId: areas.weakestAreaId,
       weekGain: value - measure(weekStart).value,
+      ...(writtenProjection && { writtenProjection }),
     },
     status: "ready",
   };

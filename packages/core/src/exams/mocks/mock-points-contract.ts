@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { pointsMinimumSchema } from "../../library/exams/blueprint-contract";
 import { writtenPartPointsSchema } from "../scoring/written-points-contract";
@@ -144,3 +145,11 @@ export const mockPointsSchema = z
   });
 
 export type MockPoints = z.infer<typeof mockPointsSchema>;
+
+const writtenTaskWithItems = writtenPartPointsSchema.shape.tasks.element.extend({
+  itemIds: z.array(uuidSchema()),
+});
+
+export const mockWrittenPartsSchema = z.array(
+  writtenPartPointsSchema.extend({ tasks: z.array(writtenTaskWithItems) }),
+);

@@ -1,6 +1,6 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { MAX_ESSAY_CHARACTERS } from "../essays/essay-contract";
+import { MAX_ESSAY_CHARACTERS, MAX_WRITING_MS } from "../essays/essay-contract";
 
 const MAX_PICKS = 8;
 
@@ -39,7 +39,9 @@ export const mockAnswerSchema = z
 export type MockAnswer = z.infer<typeof mockAnswerSchema>;
 
 /** An hour covers the slowest question; anything longer is a tab left open. */
-const MAX_ANSWER_DURATION_MS = 3_600_000;
+export const MAX_OBJECTIVE_ANSWER_DURATION_MS = 3_600_000;
+
+export const MAX_OBJECTIVE_ANSWER_CHARACTERS = 12_000;
 
 export const mockAnswerInputSchema = z
   .object({
@@ -52,7 +54,7 @@ export const mockAnswerInputSchema = z
     durationMs: z
       .int()
       .min(0)
-      .max(MAX_ANSWER_DURATION_MS)
+      .max(MAX_WRITING_MS)
       .meta({ description: "Total time spent on the question so far" }),
     flagged: z.boolean().meta({ description: "Marked to come back to; also means unsure" }),
     itemId: uuidSchema(),

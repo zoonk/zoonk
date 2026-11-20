@@ -5,6 +5,7 @@ import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring
 import { type MockConditions } from "../mock-contract";
 import { markPlannedItems } from "../mock-marking";
 import { listLeftOutChoices } from "../mock-unpicked";
+import { outlineWrittenPrompts, planWrittenTest } from "../written-test-plan";
 import { type OwnedMock } from "./owned-mock";
 import { planWeeklyMock } from "./plan-weekly-mock";
 
@@ -38,39 +39,44 @@ export async function buildMockConditions(
     throw new Error("A scheduled mock is missing its saved exam day and length");
   }
 
-  const plan = await planWeeklyMock({
-    goal: {
-      examBlueprintId: goal?.examBlueprintId ?? null,
-      id: goal?.id ?? null,
-      targetDate: goal?.targetDate ?? null,
-    },
-    identity,
-    itemIds: payload.itemIds,
-    skillIds: payload.skillIds,
-    structure,
-    today: sessionDate,
-    userId,
-  });
+  const written = payload.checkpoint?.written === true;
+  const essays = outlineWrittenPrompts({ day: identity.day, structure });
+
+  const plan = written
+    ? { ...planWrittenTest({ day: identity.day, essays, structure }), candidates: [] }
+    : await planWeeklyMock({
+        essays,
+        goal: {
+          examBlueprintId: goal?.examBlueprintId ?? null,
+          id: goal?.id ?? null,
+          targetDate: goal?.targetDate ?? null,
+        },
+        identity,
+        itemIds: payload.itemIds,
+        skillIds: payload.skillIds,
+        structure,
+        today: sessionDate,
+        userId,
+      });
 
   return {
     day: plan.day,
     examQuestions: null,
     fullLength: plan.fullLength,
     ...markPlannedItems({ candidates: plan.candidates, plan, structure }),
+    ...(written && { pacing: "official" as const }),
     partialCredit: getPartialCredit(structure),
     purpose: "planned",
     reused: plan.reused,
     scoring: getMockScoring({ blueprint, goal, structure }),
     sections: plan.sections,
-    shape: null,
+    shape: written ? { area: null, day: plan.day, kind: "written" } : null,
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],
-    unpicked: listLeftOutChoices({
-      day: plan.day,
-      kind: plan.fullLength ? "full" : "half",
-      unpicked,
-    }),
+    unpicked: written
+      ? []
+      : listLeftOutChoices({ day: plan.day, kind: plan.fullLength ? "full" : "half", unpicked }),
     wrongPenalty: getWrongPenalty(structure),
   };
 }

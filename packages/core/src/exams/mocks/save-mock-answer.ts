@@ -4,7 +4,11 @@ import { DbNull, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { judgeForwardOnlySave } from "./_utils/mock-navigation";
 import { findOwnedMock, getSectionDeadline } from "./_utils/owned-mock";
-import { type MockAnswerInput } from "./mock-answer-contract";
+import {
+  MAX_OBJECTIVE_ANSWER_CHARACTERS,
+  MAX_OBJECTIVE_ANSWER_DURATION_MS,
+  type MockAnswerInput,
+} from "./mock-answer-contract";
 import { type MockConditions } from "./mock-contract";
 
 /** A slow network shouldn't lose the last answer given right before time ran out. */
@@ -34,7 +38,10 @@ async function fitsSection({
     return input.answer === null || isText;
   }
 
-  if (!section?.itemIds.includes(input.itemId)) {
+  if (
+    !section?.itemIds.includes(input.itemId) ||
+    input.durationMs > MAX_OBJECTIVE_ANSWER_DURATION_MS
+  ) {
     return false;
   }
 
@@ -47,7 +54,12 @@ async function fitsSection({
     where: { id: input.itemId },
   });
 
-  return item?.format === "typed";
+  return (
+    item?.format === "typed" &&
+    input.answer !== null &&
+    "text" in input.answer &&
+    input.answer.text.length <= MAX_OBJECTIVE_ANSWER_CHARACTERS
+  );
 }
 
 async function judgeMove({
@@ -122,7 +134,24 @@ export async function saveMockAnswer({
     flagged: input.flagged,
   };
 
-  await writeLearnerChange({ userId: found.owned.userId }, async (tx) => {
+  return writeLearnerChange<SaveMockAnswerResult>({ userId: found.owned.userId }, async (tx) => {
+    const current = await tx.mockExam.findUnique({
+      select: { sectionIndex: true, sectionStartedAt: true, status: true },
+      where: { id: mock.id },
+    });
+
+    if (
+      current?.status !== "active" ||
+      current.sectionIndex !== mock.sectionIndex ||
+      current.sectionStartedAt.getTime() !== mock.sectionStartedAt.getTime()
+    ) {
+      return unchanged({ status: "notRunning" });
+    }
+
+    if (Date.now() > getSectionDeadline(mock).getTime() + DEADLINE_GRACE_MS) {
+      return unchanged({ status: "timeUp" });
+    }
+
     const where = { mockItem: { itemId: input.itemId, mockExamId: mock.id } };
     const saved = await tx.mockExamAnswer.findUnique({ where });
 
@@ -132,15 +161,15 @@ export async function saveMockAnswer({
       saved.durationMs === input.durationMs &&
       saved.flagged === input.flagged
     ) {
-      return unchanged(saved);
+      return unchanged({ status: "saved" });
     }
 
-    return tx.mockExamAnswer.upsert({
+    await tx.mockExamAnswer.upsert({
       create: { ...draft, itemId: input.itemId, mockExamId: mock.id },
       update: { ...draft, ...(move.changed ? { changes: { increment: 1 } } : {}) },
       where,
     });
-  });
 
-  return { status: "saved" };
+    return { status: "saved" };
+  });
 }

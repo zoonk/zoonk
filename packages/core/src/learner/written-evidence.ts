@@ -15,6 +15,7 @@ function isStrong(grade: WrittenAnswer["grade"]) {
   );
 }
 
+/** @internal */
 export function readWritingEvidence(
   samples: Sample[],
   skillIds: ReadonlySet<string>,

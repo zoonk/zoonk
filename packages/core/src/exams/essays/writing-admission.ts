@@ -44,8 +44,6 @@ export async function readWritingExtraLimit({
     : null;
 }
 
-export { getWritingAttemptId } from "./_utils/writing-attempt-id";
-
 export function getWritingAdmissionId(owner: WritingOwner): string {
   const key = "blockId" in owner ? (owner.previousAttemptId ?? "first") : "mock";
   const questionId = "blockId" in owner ? owner.blockId : owner.mockId;

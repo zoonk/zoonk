@@ -1,14 +1,13 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type EssayDraft, essayAnswerSchema } from "../essay-contract";
-import { type WritingResult, writtenAnswerSchema } from "../writing-contract";
+import { type EssayDraft, type WrittenEssayDraft, essayAnswerSchema } from "../essay-contract";
+import { writtenAnswerSchema } from "../writing-contract";
 
 type DraftsInput = { itemId: string; sessionId: string; userId: string };
-type WritingDraftView = Omit<EssayDraft, "grade"> & { attemptId: string; grade: WritingResult };
 
 export function loadEssayDrafts(
   input: DraftsInput & { format: "writing" },
-): Promise<WritingDraftView[]>;
+): Promise<WrittenEssayDraft[]>;
 export function loadEssayDrafts(input: DraftsInput & { format?: "legacy" }): Promise<EssayDraft[]>;
 
 export async function loadEssayDrafts({
@@ -16,14 +15,14 @@ export async function loadEssayDrafts({
   itemId,
   sessionId,
   userId,
-}: DraftsInput & { format?: "legacy" | "writing" }): Promise<(EssayDraft | WritingDraftView)[]> {
+}: DraftsInput & { format?: "legacy" | "writing" }): Promise<(EssayDraft | WrittenEssayDraft)[]> {
   const attempts = await prisma.attempt.findMany({
     orderBy: { answeredAt: "desc" },
     select: { answer: true, answeredAt: true, id: true },
     where: { itemId, studySessionId: sessionId, userId },
   });
 
-  return attempts.flatMap((attempt): (EssayDraft | WritingDraftView)[] => {
+  return attempts.flatMap((attempt): (EssayDraft | WrittenEssayDraft)[] => {
     const metadata = { attemptId: attempt.id, submittedAt: attempt.answeredAt.toISOString() };
 
     if (format === "writing") {

@@ -34,7 +34,7 @@ export function pickWrittenTestDays({
   const last = feasible.findLast((day) => day.instant >= finalWeek);
 
   const middle = feasible
-    .filter((day) => day.instant < finalWeek)
+    .filter((day) => last === undefined || day.instant < last.instant)
     .toSorted((a, b) => Math.abs(a.instant - midpoint) - Math.abs(b.instant - midpoint))[0];
 
   return [middle?.date, last?.date].filter((date) => date !== undefined);

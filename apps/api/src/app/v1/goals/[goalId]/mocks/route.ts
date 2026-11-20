@@ -10,6 +10,7 @@ import { type NextRequest, NextResponse } from "next/server";
 type MocksContext = RouteContext<"/v1/goals/[goalId]/mocks">;
 
 const CREATED = 201;
+const TOO_MANY_REQUESTS = 429;
 
 async function listMocks(_request: Request, context: MocksContext) {
   const path = await readPathParams(context, goalPathParamsSchema);
@@ -33,6 +34,10 @@ async function startMock(request: NextRequest, context: MocksContext) {
 
   if (result.status === "needsQuestions" || result.status === "short") {
     return NextResponse.json({ ...result, id: null });
+  }
+
+  if (result.status === "limitReached") {
+    return NextResponse.json(result, { status: TOO_MANY_REQUESTS });
   }
 
   if (!("id" in result)) {

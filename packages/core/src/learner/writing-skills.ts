@@ -33,20 +33,32 @@ export function getWritingSkillIds({
     return new Set();
   }
 
+  const writtenSubjects = structure.subjects
+    .filter(({ group }) => group && names.some((name) => namesMatch(group, name)))
+    .map(({ name }) => name);
+
+  const subjectsForSection = structure.subjects
+    .filter(({ group }) => group && section && namesMatch(group, section))
+    .map(({ name }) => name);
+
   const outcomes = getWrittenTestAreas(graph);
 
   const matches = graph.skills.filter((skill) => {
     const area = getSkillArea({ graph, skill });
 
     return (
-      names.some((name) => namesMatch(area, name)) ||
+      [...names, ...writtenSubjects].some((name) => namesMatch(area, name)) ||
       outcomes.has(area) ||
       /discursiv|reda[cç][aã]o|pe[cç]a t[eé]cnica/iu.test(area)
     );
   });
 
   const inSection = section
-    ? matches.filter((skill) => namesMatch(getSkillArea({ graph, skill }), section))
+    ? matches.filter((skill) =>
+        [section, ...subjectsForSection].some((name) =>
+          namesMatch(getSkillArea({ graph, skill }), name),
+        ),
+      )
     : [];
 
   return new Set((inSection.length > 0 ? inSection : matches).map((skill) => skill.skillId));

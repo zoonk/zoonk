@@ -5,7 +5,7 @@ import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { getSession } from "../../users/get-session";
-import { getWritingAttemptId } from "./writing-admission";
+import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { type WritingDraft } from "./writing-contract";
 
 export async function saveWritingDraft({

@@ -2,6 +2,8 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { writtenGradingSchema } from "../../library/exams/written-grading";
 
+export const MAX_ESSAY_CHARACTERS = 48_000;
+
 const taskKey = z.string().min(1);
 const lines = z.int().positive().nullable();
 const points = z.number().positive().nullable();
@@ -28,7 +30,11 @@ export const writtenItemSchema = writingPromptSchema.extend({
 });
 
 export const writingDraftSchema = z
-  .object({ admissionId: uuidSchema(), revision: z.int().nonnegative(), text: z.string() })
+  .object({
+    admissionId: uuidSchema(),
+    revision: z.int().nonnegative(),
+    text: z.string().max(MAX_ESSAY_CHARACTERS),
+  })
   .meta({ id: "WritingDraft" });
 
 export const saveWritingDraftSchema = writingDraftSchema.strict().meta({ id: "SaveWritingDraft" });

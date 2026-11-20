@@ -31,7 +31,11 @@ async function startBlock({
       throw new Error(`Mock block ${block.id} didn't start again after its time ran out.`);
     }
 
-    if (started.status === "ready") {
+    if (started.status === "notEnoughQuestions") {
+      return { status: "questionsNeeded" };
+    }
+
+    if (started.status === "ready" || started.status === "writing") {
       return { status: "ready" };
     }
 

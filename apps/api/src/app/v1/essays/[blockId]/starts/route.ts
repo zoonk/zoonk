@@ -6,7 +6,7 @@ import { readBody, readPathParams } from "@/lib/request-input";
 import { ensureWritingPrompts } from "@/workflows/sessions/writing-prompt-workflow";
 import { startWriting } from "@zoonk/core/exams/essays/start-writing";
 import { writingStartInputSchema } from "@zoonk/core/exams/essays/writing-contract";
-import { canFundWritingPrompts } from "@zoonk/core/library/items/write-writing-item";
+import { canFundWritingPrompts } from "@zoonk/core/library/items/writing-prompt-spend";
 import { NextResponse } from "next/server";
 
 async function postStart(request: Request, context: { params: Promise<{ blockId: string }> }) {

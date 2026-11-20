@@ -100,6 +100,7 @@ async function identifyFalseClaims({
 }
 
 /** Internal staff capability. The caller authenticates and audits the staff actor. */
+/** @internal */
 export async function repairWrittenGoal({
   apply,
   goalId,

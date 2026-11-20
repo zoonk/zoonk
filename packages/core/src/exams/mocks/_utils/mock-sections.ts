@@ -24,7 +24,9 @@ export function getFirstNumber({
   conditions: MockConditions;
   section: number;
 }): number {
-  return conditions.sections.slice(0, section).reduce((sum, item) => sum + item.questions, 1);
+  return conditions.sections
+    .slice(0, section)
+    .reduce((sum, item) => sum + item.questions + item.essays.length, 1);
 }
 
 export function toSectionViews({

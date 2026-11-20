@@ -304,6 +304,8 @@ export async function buildPlanView({
     tools: toPlanToolViews({ settings: state.settings, tools }),
     ...buildPlanTimingView({ access, calendar, context, skillAreas, studiedDates }),
     weekTime: studyWeek.time,
-    writtenPractice: getWrittenPracticeView({ goal, graph: state.graph, settings: state.settings }),
+    writtenPractice:
+      syllabus?.writtenPractice ??
+      getWrittenPracticeView({ goal, graph: state.graph, settings: state.settings }),
   };
 }

@@ -14,12 +14,13 @@ import {
 } from "./_utils/essay-grade-claims";
 import { gradeEssayText, gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { findOwnedEssay } from "./_utils/owned-essay";
+import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import {
   type EssayGradeView,
   type EssaySubmissionInput,
   essayAnswerSchema,
 } from "./essay-contract";
-import { getWritingAdmissionId, getWritingAttemptId } from "./writing-admission";
+import { getWritingAdmissionId } from "./writing-admission";
 import {
   type WritingConditions,
   type WritingResult,

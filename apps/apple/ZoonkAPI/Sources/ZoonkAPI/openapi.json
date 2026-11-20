@@ -4354,6 +4354,87 @@
         }
       }
     },
+    "/essays/attempts/{attemptId}": {
+      "get": {
+        "operationId": "getWritingAttempt",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get a graded writing attempt",
+        "tags": [
+          "Exams"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attemptId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The learner's submitted text, question criteria and saved feedback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WritingAttempt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/essays/{blockId}": {
       "get": {
         "description": "A writing block of the learner's session (produce): an exam's essay prompt, the rubric it's graded with (ENEM's five competencies, OAB's brief section by section, or the item's criteria) and the graded drafts so far, latest first, with how many grades are left today.",
@@ -4449,7 +4530,7 @@
     },
     "/essays/{blockId}/submissions": {
       "post": {
-        "description": "Grades a draft with the official rubric and records it as learning: every criterion with a comment on the learner's own words, an estimated range and one next step. Rewriting sends a new draft. Finish the block through the study session's block endpoints.",
+        "description": "Grades an admitted draft against its assigned prompt and returns its saved feedback. Drafts sent with an admission return a WritingResult. Legacy submissions can return an EssayGrade.",
         "operationId": "submitEssay",
         "security": [
           {
@@ -4493,7 +4574,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EssayGrade"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/WritingResultOutput"
+                    },
+                    {
+                      "$ref": "#/components/schemas/EssayGrade"
+                    }
+                  ]
                 }
               }
             }
@@ -20209,6 +20297,34 @@
               }
             }
           },
+          "429": {
+            "description": "The extra writing allowance is used for the day",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "returnsOn": {
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "limitReached"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "returnsOn",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -20813,6 +20929,16 @@
           }
         },
         "responses": {
+          "202": {
+            "description": "The written prompts are being prepared",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockQuestionsGeneration"
+                }
+              }
+            }
+          },
           "204": {
             "description": "Running"
           },
@@ -20836,6 +20962,16 @@
               }
             }
           },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "content": {
@@ -20848,6 +20984,16 @@
           },
           "409": {
             "description": "The mock or its block already finished, or the mock expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
             "content": {
               "application/json": {
                 "schema": {
@@ -23910,6 +24056,12 @@
                                           "fullLength"
                                         ],
                                         "additionalProperties": false
+                                      },
+                                      "written": {
+                                        "type": "boolean",
+                                        "enum": [
+                                          true
+                                        ]
                                       }
                                     },
                                     "required": [
@@ -24109,6 +24261,12 @@
                                           "fullLength"
                                         ],
                                         "additionalProperties": false
+                                      },
+                                      "written": {
+                                        "type": "boolean",
+                                        "enum": [
+                                          true
+                                        ]
                                       }
                                     },
                                     "required": [
@@ -25990,6 +26148,370 @@
           }
         }
       }
+    },
+    "/essays/{blockId}/draft": {
+      "put": {
+        "operationId": "saveWritingDraft",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Save a writing draft",
+        "tags": [
+          "Exams"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "blockId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The writing block's study session block ID"
+            },
+            "required": true,
+            "description": "The writing block's study session block ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveWritingDraft"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The saved draft and its new revision",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WritingDraft"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The current draft on a revision conflict, or an error if the answer was already submitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/WritingDraft"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/essays/{blockId}/starts": {
+      "post": {
+        "operationId": "startWriting",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Start or resume a writing block",
+        "tags": [
+          "Exams"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "blockId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The writing block's study session block ID"
+            },
+            "required": true,
+            "description": "The writing block's study session block ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WritingStartInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The admission for this answer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WritingStart"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "The requested prompt is being written",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WritingStart"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The day this extra writing allowance returns",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WritingStart"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/writing-blocks": {
+      "post": {
+        "operationId": "createWritingBlock",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get or create an extra writing block",
+        "tags": [
+          "Exams"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "taskKey": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The unfinished block for the requested writing task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "blockId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  },
+                  "required": [
+                    "blockId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -27011,6 +27533,12 @@
       "EssaySubmissionInput": {
         "type": "object",
         "properties": {
+          "admissionId": {
+            "description": "The admission issued when this writing attempt started",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "attemptId": {
             "description": "Your id for this draft: sent again with it (a retry), it's graded and recorded once",
             "type": "string",
@@ -27020,13 +27548,12 @@
           "durationMs": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 5400000,
+            "maximum": 86400000,
             "description": "Time spent writing"
           },
           "text": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 12000
+            "maxLength": 48000
           },
           "timeZone": {
             "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
@@ -27835,6 +28362,12 @@
                                           "fullLength"
                                         ],
                                         "additionalProperties": false
+                                      },
+                                      "written": {
+                                        "type": "boolean",
+                                        "enum": [
+                                          true
+                                        ]
                                       }
                                     },
                                     "required": [
@@ -28034,6 +28567,12 @@
                                           "fullLength"
                                         ],
                                         "additionalProperties": false
+                                      },
+                                      "written": {
+                                        "type": "boolean",
+                                        "enum": [
+                                          true
+                                        ]
                                       }
                                     },
                                     "required": [
@@ -31129,10 +31668,43 @@
         "type": "object",
         "properties": {
           "shape": {
-            "description": "The option picked from GET /v1/goals/{goalId}/mocks",
-            "allOf": [
+            "anyOf": [
               {
-                "$ref": "#/components/schemas/MockShape"
+                "type": "object",
+                "properties": {
+                  "area": {
+                    "nullable": true,
+                    "description": "For `area`: the notice's subject, as the options name it",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "day": {
+                    "nullable": true,
+                    "description": "The exam day, when there are several",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "full",
+                      "half",
+                      "area",
+                      "objective"
+                    ]
+                  }
+                },
+                "required": [
+                  "area",
+                  "day",
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "$ref": "#/components/schemas/WrittenTestShape"
               }
             ]
           },
@@ -31141,7 +31713,7 @@
             "type": "boolean"
           },
           "afterWriting": {
-            "description": "This start follows a question-writing run (or a writing request that answered `ready`): never answers `needsQuestions`, so a mock still well short of its questions answers `short`",
+            "description": "This start follows a question-writing run. A mock still short of objective questions reports `short`; a mock missing a written prompt still reports `needsQuestions`",
             "type": "boolean"
           }
         },
@@ -31150,47 +31722,47 @@
         ],
         "additionalProperties": false
       },
-      "MockShape": {
-        "type": "object",
-        "properties": {
-          "area": {
-            "nullable": true,
-            "description": "For `area`: the notice's subject, as the options name it",
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "day": {
-            "nullable": true,
-            "description": "For `full` and `half`: the exam day it copies, when there are several",
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "full",
-              "half",
-              "area"
-            ]
-          }
-        },
-        "required": [
-          "area",
-          "day",
-          "kind"
-        ],
-        "additionalProperties": false
-      },
       "MockQuestionsInput": {
         "type": "object",
         "properties": {
           "shape": {
-            "description": "The option picked from GET /v1/goals/{goalId}/mocks",
-            "allOf": [
+            "anyOf": [
               {
-                "$ref": "#/components/schemas/MockShape"
+                "type": "object",
+                "properties": {
+                  "area": {
+                    "nullable": true,
+                    "description": "For `area`: the notice's subject, as the options name it",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "day": {
+                    "nullable": true,
+                    "description": "The exam day, when there are several",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "full",
+                      "half",
+                      "area",
+                      "objective"
+                    ]
+                  }
+                },
+                "required": [
+                  "area",
+                  "day",
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "$ref": "#/components/schemas/WrittenTestShape"
               }
             ]
           }
@@ -31246,7 +31818,7 @@
           "durationMs": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 3600000,
+            "maximum": 86400000,
             "description": "Total time spent on the question so far"
           },
           "flagged": {
@@ -31348,7 +31920,7 @@
         "properties": {
           "text": {
             "type": "string",
-            "maxLength": 12000
+            "maxLength": 48000
           }
         },
         "required": [
@@ -33168,6 +33740,31 @@
           }
         ]
       },
+      "SaveWritingDraft": {
+        "type": "object",
+        "properties": {
+          "admissionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 48000
+          }
+        },
+        "required": [
+          "admissionId",
+          "revision",
+          "text"
+        ],
+        "additionalProperties": false
+      },
       "WritingResult": {
         "oneOf": [
           {
@@ -33507,6 +34104,49 @@
           }
         ],
         "type": "object"
+      },
+      "WritingStartInput": {
+        "type": "object",
+        "properties": {
+          "previousAttemptId": {
+            "description": "The graded attempt the learner chose to rewrite",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WrittenTestShape": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              null
+            ]
+          },
+          "day": {
+            "nullable": true,
+            "description": "The exam day, when there are several",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "written"
+            ]
+          }
+        },
+        "required": [
+          "area",
+          "day",
+          "kind"
+        ],
+        "additionalProperties": false
       },
       "MeDeletionResponse": {
         "type": "object",
@@ -40771,31 +41411,63 @@
           "drafts": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "attemptId": {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "attemptId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "grade": {
+                      "$ref": "#/components/schemas/EssayGrade"
+                    },
+                    "submittedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "grade",
+                    "submittedAt",
+                    "text"
+                  ],
+                  "additionalProperties": false
                 },
-                "grade": {
-                  "$ref": "#/components/schemas/EssayGrade"
-                },
-                "submittedAt": {
-                  "type": "string",
-                  "format": "date-time",
-                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                },
-                "text": {
-                  "type": "string"
+                {
+                  "type": "object",
+                  "properties": {
+                    "attemptId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "grade": {
+                      "$ref": "#/components/schemas/WritingResultOutput"
+                    },
+                    "submittedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "attemptId",
+                    "grade",
+                    "submittedAt",
+                    "text"
+                  ],
+                  "additionalProperties": false
                 }
-              },
-              "required": [
-                "grade",
-                "submittedAt",
-                "text"
-              ],
-              "additionalProperties": false
+              ]
             }
           },
           "gradesLeft": {
@@ -40871,7 +41543,8 @@
             "maximum": 9007199254740991
           },
           "text": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 48000
           }
         },
         "required": [
@@ -42031,6 +42704,41 @@
           "scoring",
           "shape",
           "total"
+        ],
+        "additionalProperties": false
+      },
+      "MockShape": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "nullable": true,
+            "description": "For `area`: the notice's subject, as the options name it",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "day": {
+            "nullable": true,
+            "description": "The exam day, when there are several",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "full",
+              "half",
+              "area",
+              "objective",
+              "written"
+            ]
+          }
+        },
+        "required": [
+          "area",
+          "day",
+          "kind"
         ],
         "additionalProperties": false
       },
@@ -78232,6 +78940,48 @@
           "weakest": {
             "type": "boolean",
             "description": "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty"
+          },
+          "writingAvailability": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "available",
+                      "continue"
+                    ]
+                  }
+                },
+                "required": [
+                  "status"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "returnsOn": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "tomorrow"
+                    ]
+                  }
+                },
+                "required": [
+                  "returnsOn",
+                  "status"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "type": "object"
           }
         },
         "required": [
@@ -78318,6 +79068,12 @@
                   "fullLength"
                 ],
                 "additionalProperties": false
+              },
+              "written": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
               },
               "passMark": {
                 "type": "integer",
@@ -85807,8 +86563,28 @@
                     "additionalProperties": false
                   }
                 },
+                "minutes": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": 0,
+                  "exclusiveMinimum": true,
+                  "maximum": 9007199254740991
+                },
                 "points": {
                   "$ref": "#/components/schemas/WrittenPartPoints"
+                },
+                "questions": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "exclusiveMinimum": true,
+                  "maximum": 9007199254740991
+                },
+                "share": {
+                  "nullable": true,
+                  "type": "number",
+                  "minimum": 0,
+                  "exclusiveMinimum": true,
+                  "maximum": 1
                 },
                 "trend": {
                   "type": "array",
@@ -90754,7 +91530,7 @@
             "items": {
               "$ref": "#/components/schemas/MockOption"
             },
-            "description": "Each exam day in full, then half of each exam day, then each objective subject, biggest first"
+            "description": "Each exam day and its standalone tests, then shorter mocks for each day and each objective subject"
           },
           "running": {
             "nullable": true,
@@ -90819,7 +91595,7 @@
           },
           "day": {
             "nullable": true,
-            "description": "For `full` and `half`: the exam day it copies, when there are several",
+            "description": "The exam day, when there are several",
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991
@@ -90829,7 +91605,9 @@
             "enum": [
               "full",
               "half",
-              "area"
+              "area",
+              "objective",
+              "written"
             ]
           },
           "areas": {
@@ -90868,7 +91646,14 @@
           },
           "objectiveOnly": {
             "type": "boolean",
-            "description": "The exam day also has a written part (an essay, a discursive test) this mock leaves out"
+            "description": "The mock consists of objective questions"
+          },
+          "pacing": {
+            "type": "string",
+            "enum": [
+              "official",
+              "practice"
+            ]
           },
           "questions": {
             "type": "integer",
@@ -91282,7 +92067,7 @@
                         "typed",
                         "essay"
                       ],
-                      "description": "How it's answered: a pick (`multipleChoice`, by `select`; `trueFalse`), a number typed into the answer box (`numeric`, `{ number }`, beside `unit`), a word or a short answer typed in (`typed`, `{ text }`), or a full mock's written part (`essay`: an essay, a discursive test), its text (`{ text }`) on the section's clock"
+                      "description": "How it's answered: a pick (`multipleChoice`, by `select`; `trueFalse`), a number typed into the answer box (`numeric`, `{ number }`, beside `unit`), a word or a short answer typed in (`typed`, `{ text }`), or a written test's answer (`essay`: an essay, a discursive test), its text (`{ text }`) on the section's clock"
                     },
                     "image": {
                       "nullable": true,
@@ -91362,6 +92147,13 @@
                       "allOf": [
                         {
                           "$ref": "#/components/schemas/LessonVisual"
+                        }
+                      ]
+                    },
+                    "writing": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/WritingPromptOutput"
                         }
                       ]
                     }
@@ -91517,6 +92309,13 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991
+          },
+          "pacing": {
+            "type": "string",
+            "enum": [
+              "official",
+              "practice"
+            ]
           },
           "passMarks": {
             "nullable": true,
@@ -92020,9 +92819,12 @@
           },
           "grade": {
             "nullable": true,
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/EssayGrade"
+              },
+              {
+                "$ref": "#/components/schemas/WritingResultOutput"
               }
             ]
           },
@@ -95006,6 +95808,48 @@
                 "weakest": {
                   "type": "boolean",
                   "description": "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty"
+                },
+                "writingAvailability": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "available",
+                            "continue"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "returnsOn": {
+                          "type": "string",
+                          "format": "date",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "tomorrow"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "returnsOn",
+                        "status"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ],
+                  "type": "object"
                 }
               },
               "required": [
@@ -95234,6 +96078,12 @@
                                         "fullLength"
                                       ],
                                       "additionalProperties": false
+                                    },
+                                    "written": {
+                                      "type": "boolean",
+                                      "enum": [
+                                        true
+                                      ]
                                     }
                                   },
                                   "required": [
@@ -96684,6 +97534,10 @@
                             "minimum": 0,
                             "exclusiveMinimum": true,
                             "maximum": 9007199254740991
+                          },
+                          "officialIdentifier": {
+                            "type": "string",
+                            "minLength": 1
                           },
                           "plays": {
                             "nullable": true,
@@ -99691,6 +100545,120 @@
           }
         ]
       },
+      "WritingAttempt": {
+        "type": "object",
+        "properties": {
+          "grade": {
+            "$ref": "#/components/schemas/WritingResultOutput"
+          },
+          "text": {
+            "type": "string"
+          },
+          "attemptId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "writing": {
+            "$ref": "#/components/schemas/WritingPromptOutput"
+          }
+        },
+        "required": [
+          "grade",
+          "text",
+          "attemptId",
+          "submittedAt",
+          "writing"
+        ],
+        "additionalProperties": false
+      },
+      "WritingStart": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "admissionId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ready"
+                ]
+              }
+            },
+            "required": [
+              "admissionId",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "writing"
+                ]
+              }
+            },
+            "required": [
+              "runId",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "returnsOn": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "limitReached"
+                ]
+              }
+            },
+            "required": [
+              "returnsOn",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "type": "object"
+      },
+      "WritingRangeOutput": {
+        "type": "object",
+        "properties": {
+          "high": {
+            "type": "number"
+          },
+          "low": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "high",
+          "low"
+        ],
+        "additionalProperties": false
+      },
       "WritingPromptOutput": {
         "type": "object",
         "properties": {
@@ -99778,22 +100746,6 @@
           "taskKey",
           "title",
           "unit"
-        ],
-        "additionalProperties": false
-      },
-      "WritingRangeOutput": {
-        "type": "object",
-        "properties": {
-          "high": {
-            "type": "number"
-          },
-          "low": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "high",
-          "low"
         ],
         "additionalProperties": false
       },
@@ -101535,171 +102487,6 @@
           }
         ],
         "type": "object"
-      },
-      "SaveWritingDraft": {
-        "type": "object",
-        "properties": {
-          "admissionId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "revision": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "text": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "admissionId",
-          "revision",
-          "text"
-        ],
-        "additionalProperties": false
-      },
-      "WritingAttempt": {
-        "type": "object",
-        "properties": {
-          "grade": {
-            "$ref": "#/components/schemas/WritingResultOutput"
-          },
-          "text": {
-            "type": "string"
-          },
-          "attemptId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "submittedAt": {
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "writing": {
-            "$ref": "#/components/schemas/WritingPromptOutput"
-          }
-        },
-        "required": [
-          "grade",
-          "text",
-          "attemptId",
-          "submittedAt",
-          "writing"
-        ],
-        "additionalProperties": false
-      },
-      "WritingStart": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "admissionId": {
-                "type": "string",
-                "format": "uuid",
-                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "ready"
-                ]
-              }
-            },
-            "required": [
-              "admissionId",
-              "status"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "runId": {
-                "type": "string"
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "writing"
-                ]
-              }
-            },
-            "required": [
-              "runId",
-              "status"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "returnsOn": {
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "limitReached"
-                ]
-              }
-            },
-            "required": [
-              "returnsOn",
-              "status"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "type": "object"
-      },
-      "WritingStartInput": {
-        "type": "object",
-        "properties": {
-          "previousAttemptId": {
-            "description": "The graded attempt the learner chose to rewrite",
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          }
-        },
-        "additionalProperties": false
-      },
-      "WrittenTestShape": {
-        "type": "object",
-        "properties": {
-          "area": {
-            "type": "string",
-            "nullable": true,
-            "enum": [
-              null
-            ]
-          },
-          "day": {
-            "nullable": true,
-            "description": "For `full` and `half`: the exam day it copies, when there are several",
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "written"
-            ]
-          }
-        },
-        "required": [
-          "area",
-          "day",
-          "kind"
-        ],
-        "additionalProperties": false
       }
     },
     "securitySchemes": {

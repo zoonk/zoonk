@@ -11,11 +11,12 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { findCarriedOverSession } from "../../sessions/_utils/current-session";
 import { claimEssayGrades } from "./_utils/essay-grade-claims";
+import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { getEssay } from "./get-essay";
 import { toProduceBlock } from "./produce-block";
 import { saveWritingDraft } from "./save-writing-draft";
 import { startWriting } from "./start-writing";
-import { admitWriting, getWritingAttemptId } from "./writing-admission";
+import { admitWriting } from "./writing-admission";
 import { findWritingPrompts } from "./writing-supply";
 
 const TASK = {

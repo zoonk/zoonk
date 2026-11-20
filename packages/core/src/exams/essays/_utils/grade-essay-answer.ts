@@ -190,7 +190,8 @@ async function confirmAdmission(
       SELECT block.id FROM study_session_blocks AS block
       INNER JOIN study_sessions AS session ON session.id = block.session_id
       WHERE block.id = ${activeBlockId}::uuid AND session.id = ${studySessionId}::uuid
-        AND session.user_id = ${userId}::uuid AND block.status = 'active'
+        AND session.user_id = ${userId}::uuid
+        AND (block.status = 'active' OR (block.status = 'completed' AND ${conditions.version} = 'rewrite'))
         AND block.kind = 'produce' AND block.payload->'writing'->>'admissionId' = ${conditions.admissionId}
         AND block.payload->'itemIds'->>0 = ${item.id}
       FOR SHARE OF block

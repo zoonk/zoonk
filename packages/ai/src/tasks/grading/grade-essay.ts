@@ -241,7 +241,7 @@ const evidenceCriterion = z.object({
   quote: z.string().nullable(),
 });
 
-export const writingEvidenceSchema = z.object({
+const writingEvidenceSchema = z.object({
   aspects: z.array(
     z.object({
       aspectIndex: z.int().nonnegative(),

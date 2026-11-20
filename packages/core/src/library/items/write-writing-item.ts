@@ -6,23 +6,18 @@ import {
 } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { prisma } from "@zoonk/db";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
-import {
-  claimGuestShare,
-  fitsGuestSpend,
-  readGuestSpentMicros,
-} from "../../entitlements/_utils/guest-spend-budget";
 import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { writtenItemSchema } from "../../exams/essays/writing-contract";
+import { WRITING_CHARACTERS_PER_LINE } from "../../exams/essays/writing-lines";
 import { type WritingRequest, findWritingPrompts } from "../../exams/essays/writing-supply";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getWritingSkillIds } from "../../learner/writing-skills";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toProvenanceData } from "../_utils/library-rows";
+import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { readBlueprintContent } from "../exams/save-exam-blueprint";
 import { createSkill } from "../skills/create-skill";
 
-const PROMPT_COST_MICROS = 10_000;
-const CHARACTERS_PER_LINE = 65;
 const DRILL_WORD_FLOOR = 5;
 const WHOLE_ANSWER_WORD_FLOOR = 30;
 const SHORT_ANSWER_WORD_FLOOR = 10;
@@ -67,28 +62,6 @@ export async function loadWritingSupply(input: WritingSupplyInput) {
   const missing = result.status === "missing" ? (result.requests[0]?.count ?? 0) : 0;
 
   return { blueprint, goal, missing, structure, task };
-}
-
-export async function canFundWritingPrompts(userId: string, count: number): Promise<boolean> {
-  const user = await prisma.user.findUnique({
-    select: { isAnonymous: true },
-    where: { id: userId },
-  });
-
-  return Boolean(
-    user &&
-    (!user.isAnonymous ||
-      fitsGuestSpend({
-        costMicros: count * PROMPT_COST_MICROS,
-        spentMicros: await readGuestSpentMicros(new Date()),
-      })),
-  );
-}
-
-export async function reserveWritingPromptSpend(input: WritingSupplyInput, count: number) {
-  return prisma.$transaction((transaction) =>
-    claimGuestShare({ costMicros: count * PROMPT_COST_MICROS, transaction, userId: input.userId }),
-  );
 }
 
 function getAnswerWordFloor({
@@ -149,7 +122,7 @@ function promptContent({
       points: grading.criteria.length > 0 ? aspect.points : null,
     })),
     assessedSkillIds,
-    charactersPerLine: CHARACTERS_PER_LINE,
+    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
     criteria,
     grading,
     keySource: "practiceKey",
@@ -290,17 +263,21 @@ export async function writeWritingItem(input: WritingSupplyInput, itemId: string
     throw new Error("A writing prompt must assess a skill.");
   }
 
-  await prisma.item.createMany({
-    data: {
-      ...toProvenanceData(provenance),
-      content,
-      examBlueprintId: blueprint.id,
-      format: "essay",
-      id: itemId,
-      language: goal.language,
-      skillId,
-    },
-    skipDuplicates: true,
+  await writePlanInputs(async (tx) => {
+    await lockPlanBlueprintWrite(tx, blueprint.id);
+
+    await tx.item.createMany({
+      data: {
+        ...toProvenanceData(provenance),
+        content,
+        examBlueprintId: blueprint.id,
+        format: "essay",
+        id: itemId,
+        language: goal.language,
+        skillId,
+      },
+      skipDuplicates: true,
+    });
   });
 }
 

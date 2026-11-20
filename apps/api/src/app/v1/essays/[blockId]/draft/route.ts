@@ -3,7 +3,6 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { examError } from "@/lib/exam-errors";
 import { essayPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { MAX_ESSAY_CHARACTERS } from "@zoonk/core/exams/essays/contract";
 import { saveWritingDraft } from "@zoonk/core/exams/essays/save-writing-draft";
 import { saveWritingDraftSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { NextResponse } from "next/server";
@@ -11,10 +10,7 @@ import { NextResponse } from "next/server";
 async function putDraft(request: Request, context: { params: Promise<{ blockId: string }> }) {
   const [path, input] = await Promise.all([
     readPathParams(context, essayPathParamsSchema),
-    readBody(
-      request,
-      saveWritingDraftSchema.refine(({ text }) => text.length <= MAX_ESSAY_CHARACTERS),
-    ),
+    readBody(request, saveWritingDraftSchema),
   ]);
 
   const result = await saveWritingDraft({ blockId: path.blockId, input });

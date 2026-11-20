@@ -7,9 +7,10 @@ import { readBlockPayload } from "../../sessions/block-payload";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { countGradesLeft } from "./_utils/essay-grade-claims";
 import { findOwnedEssay } from "./_utils/owned-essay";
+import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { type EssayView } from "./essay-contract";
 import { getEssayRubric } from "./essay-rubric";
-import { countWritingExtrasLeft, getWritingAttemptId } from "./writing-admission";
+import { countWritingExtrasLeft } from "./writing-admission";
 import { writingPromptSchema } from "./writing-contract";
 
 export type EssayViewResult =

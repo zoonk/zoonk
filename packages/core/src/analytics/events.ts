@@ -129,6 +129,7 @@ type LearningEvents = {
     minutes: number;
     questions: number;
   };
+  "Writing Prompt Wait Viewed": { generation_id: string; surface: "practice" | "mock" };
   "Pronunciation Tip Shown": { skill_id: string | null; target_language: string };
   /**
    * Sent by the app once per connection, best effort, however it ended. A reply gap runs from the

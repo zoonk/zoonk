@@ -8,7 +8,6 @@ import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
-import { isStillAsked } from "../../library/items/item-image";
 import { NO_RESULT_MOMENTS, loadResultMoments } from "../../milestones/load-ceremony";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
@@ -17,37 +16,23 @@ import { getEssayRubric } from "../essays/essay-rubric";
 import { getExamDocument } from "../exam-document";
 import { getScoreNotes } from "../scoring/mock-scoring";
 import { loadMockPlanOffers } from "./_utils/mock-adapt";
-import { readMockAnswer } from "./_utils/mock-answers";
 import { loadSkillAreas } from "./_utils/mock-candidates";
 import { buildMockConditions } from "./_utils/mock-conditions";
-import { loadMockEssayItems, loadMockEssayViews } from "./_utils/mock-essays";
-import { loadMockItems, toMockQuestionView } from "./_utils/mock-items";
+import { loadCurrentSection } from "./_utils/mock-current-section";
+import { loadMockEssayViews } from "./_utils/mock-essays";
 import { loadMockMissionMoment } from "./_utils/mock-mission-moment";
-import { getSectionPlace } from "./_utils/mock-navigation";
 import { countFinishedMocksBefore } from "./_utils/mock-number";
-import { listSectionPlays } from "./_utils/mock-plays";
 import { loadMockReview } from "./_utils/mock-review";
-import {
-  getAskedItemIds,
-  getEssayItemIds,
-  getFirstNumber,
-  toSectionViews,
-} from "./_utils/mock-sections";
+import { getAskedItemIds, getEssayItemIds, toSectionViews } from "./_utils/mock-sections";
 import { loadMockSpeaking } from "./_utils/mock-speaking";
 import { loadAskedTypedParts } from "./_utils/mock-typed-parts";
-import {
-  type MockSitting,
-  type OwnedMock,
-  findOwnedMock,
-  getSectionDeadline,
-} from "./_utils/owned-mock";
+import { type MockSitting, type OwnedMock, findOwnedMock } from "./_utils/owned-mock";
 import { readMockSizeSource } from "./_utils/read-mock-structure";
-import { isMockAnswerPresent } from "./mock-answer-presence";
 import { type MockConditions, type MockView, mockResultSchema } from "./mock-contract";
 import { type MockTypedPart, listSatMockLeftOut } from "./mock-left-out";
 import { getMockDays } from "./mock-plan";
 import { getMockVerdict } from "./mock-verdict";
-import { type MockQuestion } from "./mock-view-contract";
+import { withMockWrittenPoints } from "./mock-written-points";
 
 const keptReachedSchema = z.object({ reached: reachedSchema });
 
@@ -63,93 +48,6 @@ async function getMockNumber(owned: OwnedMock): Promise<number> {
   });
 
   return earlier + 1;
-}
-
-async function loadCurrentSection({
-  areas,
-  mock,
-}: {
-  areas: Map<string, string>;
-  mock: MockSitting;
-}): Promise<MockView["current"]> {
-  const section = mock.conditions.sections[mock.sectionIndex];
-
-  if (!section) {
-    return null;
-  }
-
-  const [items, essays] = await Promise.all([
-    loadMockItems(section.itemIds),
-    loadMockEssayItems(section.essays),
-  ]);
-
-  const first = getFirstNumber({ conditions: mock.conditions, section: mock.sectionIndex });
-
-  const answered = new Set(
-    mock.answers.flatMap((answer) =>
-      isMockAnswerPresent(readMockAnswer(answer.answer)) ? [answer.itemId] : [],
-    ),
-  );
-
-  const questions = section.itemIds.flatMap((itemId, index): MockQuestion[] => {
-    const item = items.get(itemId);
-
-    return item && isStillAsked({ answered: answered.has(itemId), item })
-      ? [
-          {
-            ...toMockQuestionView({ item, mockId: mock.id }),
-            area: areas.get(item.skillId) ?? null,
-            number: first + index,
-          },
-        ]
-      : [];
-  });
-
-  const written = section.essays.flatMap((itemId, index): MockQuestion[] => {
-    const essay = essays.get(itemId);
-
-    return essay
-      ? [
-          {
-            area: areas.get(essay.item.skillId) ?? null,
-            context: essay.content.context,
-            entry: null,
-            format: "essay",
-            image: null,
-            itemId,
-            number: first + section.questions + index,
-            options: null,
-            question: essay.content.question,
-            select: null,
-            set: null,
-            skillId: essay.item.skillId,
-            unit: null,
-            visual: null,
-          },
-        ]
-      : [];
-  });
-
-  const asked = new Set([...section.itemIds, ...section.essays]);
-  const shownIds = [...questions, ...written].map((question) => question.itemId);
-  const rows = mock.answers.filter((answer) => asked.has(answer.itemId));
-
-  const drafts = rows.map((answer) => ({
-    answer: readMockAnswer(answer.answer),
-    durationMs: answer.durationMs,
-    flagged: answer.flagged,
-    itemId: answer.itemId,
-  }));
-
-  return {
-    ...getSectionPlace({ itemIds: shownIds, navigation: section.navigation, rows }),
-    deadline: getSectionDeadline(mock).toISOString(),
-    drafts,
-    kind: section.kind ?? null,
-    plays: listSectionPlays({ plays: mock.listeningPlays, questions }),
-    questions: [...questions, ...written],
-    section: mock.sectionIndex,
-  };
 }
 
 async function canMoveMock(owned: OwnedMock): Promise<boolean> {
@@ -201,13 +99,19 @@ async function loadFinished({
   const result = mockResultSchema.safeParse(owned.mock.result).data ?? null;
   const reached = keptReachedSchema.safeParse(owned.mock.result).data?.reached ?? NOTHING_REACHED;
 
-  const [review, offers, essays] = await Promise.all([
+  const [review, offers, { numericBlankItems, views: essays }] = await Promise.all([
     loadMockReview({ areas, conditions, mockExamId: owned.mock.id, userId: owned.userId }),
     loadMockPlanOffers({ goal: owned.goal, purpose: conditions.purpose, result }),
     loadMockEssayViews({ areas, mock: owned.mock }),
   ]);
 
-  return { ...review, adapt: offers?.view ?? null, essays, reached, result };
+  return {
+    ...review,
+    adapt: offers?.view ?? null,
+    essays,
+    reached,
+    result: withMockWrittenPoints({ conditions, essays, numericBlankItems, result }),
+  };
 }
 
 function getMockPassMarks({
@@ -309,6 +213,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       missionMoment,
       mistakes: finished.mistakes,
       number,
+      pacing: conditions.pacing,
       planItemId: owned.payload.planItemId,
       purpose: conditions.purpose,
       questions: conditions.sections.reduce((sum, section) => sum + section.questions, 0),

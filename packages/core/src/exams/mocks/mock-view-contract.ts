@@ -1,11 +1,12 @@
 import { type NumericEntry, type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type LessonVisual } from "@zoonk/ai/tasks/visuals/schema";
+import { type z } from "zod";
 import { type SectionNavigation } from "../../library/exams/blueprint-contract";
 import { type ItemImage } from "../../library/items/item-image";
 import { type ItemSetView } from "../../library/items/item-set-view";
 import { type ItemCitation } from "../../library/sources/source-citation";
 import { type EssayGradeView } from "../essays/essay-contract";
-import { type WritingPrompt } from "../essays/writing-contract";
+import { type WritingPrompt, type writtenAnswerSchema } from "../essays/writing-contract";
 import { type MockAnswer } from "./mock-answer-contract";
 
 type MockQuestionFormat = "multipleChoice" | "numeric" | "trueFalse" | "typed";
@@ -25,6 +26,7 @@ export type MockQuestion = {
   skillId: string;
   unit: { position: "prefix" | "suffix"; symbol: string } | null;
   visual: LessonVisual | null;
+  writing?: WritingPrompt;
 };
 
 export type MockDraft = {
@@ -76,7 +78,7 @@ export type MockEssayView = {
   writing?: WritingPrompt;
   area: string | null;
   context: string | null;
-  grade: EssayGradeView | null;
+  grade: EssayGradeView | z.infer<typeof writtenAnswerSchema>["grade"] | null;
   itemId: string;
   question: string;
   status: "blank" | "graded" | "pending";

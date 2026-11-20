@@ -84,6 +84,14 @@ export const mockPaths = {
           ...unprocessableEntityResponse,
           description: "Not an exam, not one of its mocks, or too few questions for one",
         },
+        "429": {
+          content: {
+            "application/json": {
+              schema: z.object({ returnsOn: z.iso.date(), status: z.literal("limitReached") }),
+            },
+          },
+          description: "The extra writing allowance is used for the day",
+        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Take a mock now",
@@ -224,12 +232,18 @@ export const mockPaths = {
       },
       requestParams: { path: mockPathParamsSchema },
       responses: {
+        "202": {
+          content: { "application/json": { schema: mockQuestionsGenerationSchema } },
+          description: "The written prompts are being prepared",
+        },
         "204": { description: "Running" },
         ...commonErrors,
+        "402": paymentRequiredResponse,
         "409": {
           ...conflictResponse,
           description: "The mock or its block already finished, or the mock expired",
         },
+        "422": unprocessableEntityResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Start a mock exam",

@@ -1,3 +1,4 @@
+import { pickWrittenTestDays } from "../../exams/mocks/written-test-schedule";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
 import {
@@ -7,7 +8,6 @@ import {
   getStudyMinutes,
   toIsoDate,
 } from "./plan-calendar";
-import { pickWrittenTestDays } from "./written-test-dates";
 
 export function getScheduledWrittenTest({
   calendar,

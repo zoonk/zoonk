@@ -3,9 +3,9 @@ import {
   type WritingSupplyInput,
   getWritingPromptId,
   loadWritingSupply,
-  reserveWritingPromptSpend,
   writeWritingItem,
 } from "@zoonk/core/library/items/write-writing-item";
+import { reserveWritingPromptSpend } from "@zoonk/core/library/items/writing-prompt-spend";
 import { getWorkflowMetadata } from "workflow";
 import { startOnce } from "../_shared/run-token";
 import { progressStep } from "../_shared/stream-status";
@@ -16,7 +16,7 @@ async function writePromptStep(input: WritingSupplyInput, runId: string, slot: n
   await writeWritingItem(input, getWritingPromptId(runId, slot));
 }
 
-async function admitPromptWorkStep(input: WritingSupplyInput) {
+async function admitPromptWorkStep(input: WritingSupplyInput, runId: string) {
   "use step";
 
   const supply = await loadWritingSupply(input);
@@ -26,8 +26,11 @@ async function admitPromptWorkStep(input: WritingSupplyInput) {
     return { count, status: "ready" as const };
   }
 
-  const allowed = await reserveWritingPromptSpend(input, count);
-  return { count, status: allowed ? ("writing" as const) : ("signUpRequired" as const) };
+  const reserved = await reserveWritingPromptSpend({ count, runId, userId: input.userId });
+
+  return reserved === null
+    ? { count: 0, status: "signUpRequired" as const }
+    : { count: reserved, status: "writing" as const };
 }
 
 async function trackFailureStep() {
@@ -39,13 +42,14 @@ async function trackFailureStep() {
   });
 }
 
+/** @internal */
 export async function writingPromptWorkflow(input: WritingSupplyInput) {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
 
   try {
-    const { count, status } = await admitPromptWorkStep(input);
+    const { count, status } = await admitPromptWorkStep(input, workflowRunId);
 
     if (status !== "writing") {
       await progressStep({ status: "completed", step: status }, { last: true });
