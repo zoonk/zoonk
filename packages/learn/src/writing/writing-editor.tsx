@@ -74,13 +74,13 @@ export function WritingEditor({
   const id = useId();
 
   return (
-    <section className="flex flex-1 flex-col gap-2" data-slot="writing-editor">
+    <section className="flex min-h-0 flex-1 flex-col gap-2" data-slot="writing-editor">
       <label className="sr-only" htmlFor={id}>
         {label}
       </label>
       <Textarea
         aria-describedby={`${id}-count`}
-        className={cn(ESSAY_FIELD_CLASS, "flex-1 lg:field-sizing-fixed")}
+        className={cn(ESSAY_FIELD_CLASS, "field-sizing-fixed min-h-0 flex-1")}
         id={id}
         onChange={(event) => onChange(event.target.value)}
         spellCheck={false}

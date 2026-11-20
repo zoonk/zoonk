@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { TaskHeaderTitle } from "../_components/task-header";
-import { TaskActions, TaskAsideContent } from "../_components/task-layout";
+import { TaskActions, TaskAsideContent, TaskBody } from "../_components/task-layout";
 import { type EssayStatus, GRADING_BOUNDS, StatusLine } from "../essay/essay-status-line";
 import { TaskFrame, TaskMainButton } from "../shell/task-frame";
 import { type WritingDraftState } from "./use-writing-draft";
@@ -76,7 +76,7 @@ export function WriteScreen({
       aside={{ label: t("Question"), title: essay.writing.title }}
       beforeExit={draft.pending}
       exitHref={hrefs.exit}
-      fit="lg"
+      fit="always"
       footer={
         <>
           <StatusLine gradesLeft={1} status={status} />
@@ -103,16 +103,18 @@ export function WriteScreen({
       }
       headerTitle={<TaskHeaderTitle title={label} />}
     >
-      <TaskAsideContent className="without-aside:hidden flex flex-col gap-6">
-        {question}
-        <WritingCriteriaSection writing={essay.writing} />
-      </TaskAsideContent>
-      <WritingEditor
-        label={rewrite ? t("Rewrite what needs work") : t("Your answer")}
-        onChange={draft.write}
-        text={draft.text}
-        writing={essay.writing}
-      />
+      <TaskBody className="min-h-0 pb-4">
+        <TaskAsideContent className="without-aside:hidden flex flex-col gap-6">
+          {question}
+          <WritingCriteriaSection writing={essay.writing} />
+        </TaskAsideContent>
+        <WritingEditor
+          label={rewrite ? t("Rewrite what needs work") : t("Your answer")}
+          onChange={draft.write}
+          text={draft.text}
+          writing={essay.writing}
+        />
+      </TaskBody>
     </TaskFrame>
   );
 }
