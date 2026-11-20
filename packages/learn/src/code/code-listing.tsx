@@ -1,6 +1,7 @@
 import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { withBreakPoints } from "./code-breaks";
 import { type CodeTokenKind } from "./code-languages";
 import { type CodeToken, codeLineText, highlightCode } from "./highlight-code";
 
@@ -34,16 +35,6 @@ const CONTINUATION_MARKS = {
   maskRepeat: "repeat-y",
   maskSize: "0.75em 1lh",
 } satisfies React.CSSProperties;
-
-/** Where a wrapped line of code reads best when it splits: before a `.`, after an opening bracket or a comma. */
-const BREAK_POINTS = /(?=\.)|(?<=[(,[{])/u;
-
-function withBreakPoints(text: string): React.ReactNode[] {
-  return text.split(BREAK_POINTS).flatMap((part, index) => {
-    const key = `${index}:${part}`;
-    return index === 0 ? [part] : [<wbr key={key} />, part];
-  });
-}
 
 /**
  * A line's colored runs. A `field`'s mirror wraps exactly where the field's own text does, so it
