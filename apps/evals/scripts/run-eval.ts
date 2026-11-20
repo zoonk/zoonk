@@ -360,7 +360,13 @@ async function runTask({
 
   const shared = models.reduce(
     (cases, { evalResults }) =>
-      cases.intersection(new Set(evalResults.results.map((result) => result.testCase.id))),
+      cases.intersection(
+        new Set(
+          evalResults.results
+            .filter((result) => !result.listeningReview)
+            .map((result) => result.testCase.id),
+        ),
+      ),
     runIds,
   );
 
@@ -369,9 +375,12 @@ async function runTask({
   return models.map((model) => {
     const { evalResults } = model;
     const results = evalResults.results.filter((result) => shared.has(result.testCase.id));
+    const needsListening = evalResults.results.filter((result) => result.listeningReview);
+
+    process.stdout.write(`${model.modelId} · Needs a listen: ${needsListening.length}\n`);
 
     for (const result of evalResults.results) {
-      const conclusion = result.steps[0]?.conclusion ?? "";
+      const conclusion = result.listeningReview?.conclusion ?? result.steps[0]?.conclusion ?? "";
 
       if (conclusion.startsWith("Needs a listen:") || conclusion.startsWith("Confirmed misread:")) {
         process.stdout.write(`${model.modelId} · ${conclusion}\n`);
@@ -379,12 +388,6 @@ async function runTask({
         const { audioPath } = JSON.parse(result.output) as { audioPath: string };
         process.stdout.write(`${model.modelId} · Legacy flag: eval-results/audio/${audioPath}\n`);
       }
-    }
-
-    if (results.some((result) => result.steps[0]?.conclusion.startsWith('Read "'))) {
-      process.stdout.write(
-        `${model.modelId} · Includes saved scores from before the two-check rule.\n`,
-      );
     }
 
     return reportModel({

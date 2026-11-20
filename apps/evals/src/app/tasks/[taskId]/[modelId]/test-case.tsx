@@ -154,14 +154,17 @@ function CategoryScoresSection({ categoryScores }: { categoryScores: CategorySco
 
 export function TestCase({ result, index }: { result: EvalResult; index: number }) {
   const testCaseTitle = result.testCase.id || `Test Case ${index + 1}`;
-  const score = calculateScore({ categoryScores: result.categoryScores, steps: result.steps });
-  const scoreDisplay = score.toFixed(2);
+  const score = result.listeningReview ? null : calculateScore(result);
 
   return (
     <AccordionItem id={`case-${result.testCase.id}`} value={`test-case-${index}`}>
       <AccordionTrigger className="hover:no-underline">
         <FoldRowTitle title={testCaseTitle}>
-          <span className={getScoreClassName(score)}>{scoreDisplay}</span>
+          {score === null ? (
+            <span className="text-muted-foreground font-sans">Needs a listen</span>
+          ) : (
+            <span className={getScoreClassName(score)}>{score.toFixed(2)}</span>
+          )}
         </FoldRowTitle>
       </AccordionTrigger>
 
@@ -176,7 +179,11 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
 
         <KeyFlawsSection flaws={result.keyFlaws} />
 
-        <EvaluationStepsSection steps={result.steps} />
+        {result.listeningReview ? (
+          <p className="text-sm">{result.listeningReview.conclusion}</p>
+        ) : (
+          <EvaluationStepsSection steps={result.steps} />
+        )}
       </AccordionContent>
     </AccordionItem>
   );

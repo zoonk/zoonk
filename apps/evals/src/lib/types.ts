@@ -136,14 +136,17 @@ export function toModelCall({
 
 export type JudgeRun = ModelCall;
 
+type ListeningReview = { audioPath: string; conclusion: string };
+
 export type TaskScoreResult = {
-  score: number;
+  score: number | null;
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
   judge?: JudgeRun;
   keyFlaws?: KeyFlaw[];
   itemsScored?: number;
+  listeningReview?: ListeningReview;
 };
 
 type TaskScoreParams<TExpected = unknown> = { output: string; testCase: TestCase<TExpected> };
@@ -183,6 +186,7 @@ export type EvalResult = TokenUsage & {
   judge?: JudgeRun;
   keyFlaws?: KeyFlaw[];
   itemsScored?: number;
+  listeningReview?: ListeningReview;
   duration: number;
 };
 
@@ -275,6 +279,7 @@ export type ScoredResult = {
   judge?: JudgeRun;
   keyFlaws?: KeyFlaw[];
   itemsScored?: number;
+  listeningReview?: ListeningReview;
 };
 
 export type ScoredTaskResults = { taskId: string; modelId: string; results: ScoredResult[] };

@@ -48,6 +48,16 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
         <Headline label="Latency p50" value={formatSeconds(stats.latencyP50)} />
       </dl>
 
+      {summary.needsListening.length > 0 && (
+        <Fold title={`Needs a listen (${summary.needsListening.length})`}>
+          <ul className="text-muted-foreground list-disc ps-5 text-sm">
+            {summary.needsListening.map(({ audioPath, caseId }) => (
+              <li key={caseId}>eval-results/audio/{audioPath}</li>
+            ))}
+          </ul>
+        </Fold>
+      )}
+
       <Fold title="Details">
         <dl className="grid grid-cols-2 gap-x-6 gap-y-4 md:grid-cols-4">
           <Detail label="Latency p95" value={formatSeconds(stats.latencyP95)} />

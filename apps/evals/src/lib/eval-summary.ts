@@ -10,6 +10,7 @@ export type EvalSummary = {
   generated: number;
   scored: number;
   averageScore: number | null;
+  needsListening: { audioPath: string; caseId: string }[];
   caseIds: { attempted: string[]; generated: string[]; scored: string[] };
   failures: Record<ReportedFailureReason, FailureCount>;
   keyFlaws: {
@@ -27,13 +28,14 @@ export function aggregateEvalResults({
   failedRuns = [],
 }: Pick<TaskEvalResults, "outputs" | "results" | "failedRuns">): EvalSummary {
   const generatedIds = outputs.map((output) => output.testCaseId);
-  const scoredIds = results.map((result) => result.testCase.id);
+  const scored = results.filter((result) => !result.listeningReview);
+  const scoredIds = scored.map((result) => result.testCase.id);
 
   const recorded = results.filter(
     (result) => result.keyFlaws !== undefined && result.itemsScored !== undefined,
   );
 
-  const totalScore = results.reduce((total, result) => total + calculateScore(result), 0);
+  const totalScore = scored.reduce((total, result) => total + calculateScore(result), 0);
 
   function countFailures(reason: ReportedFailureReason): FailureCount {
     const runs = failedRuns.filter((run) => (run.reason ?? "unknown") === reason);
@@ -42,7 +44,7 @@ export function aggregateEvalResults({
 
   return {
     attempted: outputs.length + failedRuns.length,
-    averageScore: results.length === 0 ? null : totalScore / results.length,
+    averageScore: scored.length === 0 ? null : totalScore / scored.length,
     caseIds: {
       attempted: [...new Set([...generatedIds, ...failedRuns.map((run) => run.testCaseId)])],
       generated: generatedIds,
@@ -64,7 +66,10 @@ export function aggregateEvalResults({
       notRecorded: results.length - recorded.length,
       recordedOutputs: recorded.length,
     },
-    scored: results.length,
+    needsListening: results.flatMap(({ listeningReview, testCase }) =>
+      listeningReview ? [{ audioPath: listeningReview.audioPath, caseId: testCase.id }] : [],
+    ),
+    scored: scored.length,
   };
 }
 

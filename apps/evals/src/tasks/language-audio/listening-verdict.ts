@@ -31,14 +31,17 @@ export function listeningVerdict({
 
   const readRight = confirmed.length === 0;
 
+  if (readRight && unconfirmed.length > 0) {
+    return { score: null, status: "Needs a listen", unconfirmed };
+  }
+
   const heardRight =
     wordCount === 0
       ? Number(readRight)
       : (wordCount - Math.min(confirmed.length, wordCount)) / wordCount;
 
   const score = Math.max(MIN_SCORE, Math.round(MAX_SCORE * heardRight * 10) / 10);
-  const pendingStatus = unconfirmed.length > 0 ? "Needs a listen" : "Read right";
-  const status = readRight ? pendingStatus : "Confirmed misread";
+  const status = readRight ? "Read right" : "Confirmed misread";
 
   return { readRight, score, status, unconfirmed };
 }

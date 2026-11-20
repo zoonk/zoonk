@@ -37,7 +37,7 @@ function findLowestScoringResult({
   testCaseId: string;
 }): EvalResult | null {
   const matchingResults = results.filter(
-    (result) => getBaseTestCaseId(result.testCase.id) === testCaseId,
+    (result) => !result.listeningReview && getBaseTestCaseId(result.testCase.id) === testCaseId,
   );
 
   if (matchingResults.length === 0) {

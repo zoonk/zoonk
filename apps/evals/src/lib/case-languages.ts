@@ -59,10 +59,13 @@ export function summarizeByLanguage({
 }): LanguageSummary[] {
   const casesById = new Map(testCases.map((testCase) => [testCase.id, testCase]));
 
-  const groups = Map.groupBy(results, (result) => {
-    const testCase = casesById.get(getBaseTestCaseId(result.testCase.id)) ?? result.testCase;
-    return getTestCaseLanguage(testCase) ?? UNKNOWN_LANGUAGE;
-  });
+  const groups = Map.groupBy(
+    results.filter((result) => !result.listeningReview),
+    (result) => {
+      const testCase = casesById.get(getBaseTestCaseId(result.testCase.id)) ?? result.testCase;
+      return getTestCaseLanguage(testCase) ?? UNKNOWN_LANGUAGE;
+    },
+  );
 
   return [...groups]
     .map(([language, items]) => ({

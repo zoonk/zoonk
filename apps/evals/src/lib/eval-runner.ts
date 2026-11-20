@@ -104,7 +104,7 @@ async function scoreOutput({
         scoreCategories: task.scoreCategories,
       });
 
-  logInfo(`Score: ${scoreResult.score}`);
+  logInfo(scoreResult.listeningReview?.conclusion ?? `Score: ${scoreResult.score}`);
 
   const testCaseWithRun: TestCase = { ...testCase, id: output.testCaseId };
 
@@ -114,6 +114,7 @@ async function scoreOutput({
     itemsScored: scoreResult.itemsScored,
     judge: scoreResult.judge,
     keyFlaws: scoreResult.keyFlaws,
+    listeningReview: scoreResult.listeningReview,
     steps: scoreResult.steps,
     testCase: testCaseWithRun,
   };
@@ -221,6 +222,7 @@ function combineOutputsAndResults(
       itemsScored: scored.itemsScored,
       judge: scored.judge,
       keyFlaws: scored.keyFlaws,
+      listeningReview: scored.listeningReview,
       output: output.output,
       outputTokens: output.outputTokens,
       reasoningTokens: output.reasoningTokens,

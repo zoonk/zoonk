@@ -110,12 +110,18 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
 
   const conclusion = `${listening} Read "${input.text}". gpt-transcribe heard "${transcript.data.text}" (misheard ${JSON.stringify(misheard)}); the pronunciation check heard "${pronunciation.data.transcript}" (unclear ${JSON.stringify(unclear)}).${lookAlikeConclusion}`;
 
+  const judge = {
+    modelId: PRONUNCIATION_MODEL,
+    usage: addUsage(toTokenUsage(pronunciation.usage), lookAlike?.usage),
+  };
+
+  if (score === null) {
+    return { judge, listeningReview: { audioPath, conclusion }, score, steps: [] };
+  }
+
   return {
     ...createFixedScore({ conclusion, score }),
     classification: { expected: "read right", predicted: readRight ? "read right" : "misread" },
-    judge: {
-      modelId: PRONUNCIATION_MODEL,
-      usage: addUsage(toTokenUsage(pronunciation.usage), lookAlike?.usage),
-    },
+    judge,
   };
 };

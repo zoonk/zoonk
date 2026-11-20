@@ -682,10 +682,6 @@
       }
     },
     {
-      "classification": {
-        "expected": "read right",
-        "predicted": "read right"
-      },
       "judge": {
         "modelId": "google/gemini-3.8-flash",
         "usage": {
@@ -693,23 +689,11 @@
           "outputTokens": 747
         }
       },
-      "steps": [
-        {
-          "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1-flash/nl-word.mp3. Single-provider flags: fruit. Read \"fruit\". gpt-transcribe heard \"Groeit.\" (misheard [\"fruit\"]); the pronunciation check heard \"fruit\" (unclear []). As a look-alike it sounded native (called native, /fʁœyt/).",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1-flash/nl-word.mp3. Single-provider flags: fruit. Read \"fruit\". gpt-transcribe heard \"Groeit.\" (misheard [\"fruit\"]); the pronunciation check heard \"fruit\" (unclear []). As a look-alike it sounded native (called native, /fʁœyt/).",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1-flash/nl-word.mp3. Single-provider flags: fruit. Read \"fruit\". gpt-transcribe heard \"Groeit.\" (misheard [\"fruit\"]); the pronunciation check heard \"fruit\" (unclear []). As a look-alike it sounded native (called native, /fʁœyt/).",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
+      "listeningReview": {
+        "audioPath": "language-audio/microsoft-mai-voice-2.1-flash/nl-word.mp3",
+        "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1-flash/nl-word.mp3. Single-provider flags: fruit. Read \"fruit\". gpt-transcribe heard \"Groeit.\" (misheard [\"fruit\"]); the pronunciation check heard \"fruit\" (unclear []). As a look-alike it sounded native (called native, /fʁœyt/)."
+      },
+      "steps": [],
       "testCase": {
         "id": "nl-word-1",
         "userInput": {
@@ -1084,10 +1068,6 @@
       }
     },
     {
-      "classification": {
-        "expected": "read right",
-        "predicted": "read right"
-      },
       "judge": {
         "modelId": "google/gemini-3.8-flash",
         "usage": {
@@ -1095,23 +1075,11 @@
           "outputTokens": 360
         }
       },
-      "steps": [
-        {
-          "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1-flash/de-lookalike-name.mp3. Single-provider flags: name. Read \"Name\". gpt-transcribe heard \"Name.\" (misheard []); the pronunciation check heard \"name\" (unclear [\"Name\"]). As a look-alike it sounded native (called native, /ˈnaːmə/).",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1-flash/de-lookalike-name.mp3. Single-provider flags: name. Read \"Name\". gpt-transcribe heard \"Name.\" (misheard []); the pronunciation check heard \"name\" (unclear [\"Name\"]). As a look-alike it sounded native (called native, /ˈnaːmə/).",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1-flash/de-lookalike-name.mp3. Single-provider flags: name. Read \"Name\". gpt-transcribe heard \"Name.\" (misheard []); the pronunciation check heard \"name\" (unclear [\"Name\"]). As a look-alike it sounded native (called native, /ˈnaːmə/).",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
+      "listeningReview": {
+        "audioPath": "language-audio/microsoft-mai-voice-2.1-flash/de-lookalike-name.mp3",
+        "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1-flash/de-lookalike-name.mp3. Single-provider flags: name. Read \"Name\". gpt-transcribe heard \"Name.\" (misheard []); the pronunciation check heard \"name\" (unclear [\"Name\"]). As a look-alike it sounded native (called native, /ˈnaːmə/)."
+      },
+      "steps": [],
       "testCase": {
         "id": "de-lookalike-name-1",
         "userInput": {
