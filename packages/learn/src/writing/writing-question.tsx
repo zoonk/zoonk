@@ -31,7 +31,7 @@ export type WritingQuestion = Pick<EssayView, "context" | "question"> & {
   writing: WritingPrompt;
 };
 
-export function useWritingFacts({ pacing, writing }: Pick<WritingQuestion, "pacing" | "writing">) {
+function useWritingFacts({ pacing, writing }: Pick<WritingQuestion, "pacing" | "writing">) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const formatScore = useFormatScore();
@@ -95,7 +95,7 @@ export function WritingCriteriaSection({ writing }: { writing: WritingPrompt }) 
 }
 
 /** How the question's points are split, one row away from it. */
-export function WritingCriteriaSheet({ writing }: { writing: WritingPrompt }) {
+function WritingCriteriaSheet({ writing }: { writing: WritingPrompt }) {
   const t = useExtracted();
   const detail = useCriteriaDetail(writing);
 

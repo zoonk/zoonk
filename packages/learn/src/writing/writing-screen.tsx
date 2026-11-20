@@ -19,12 +19,7 @@ import { WritingResultView } from "./writing-result";
 import { type WritingActions, type WrittenEssay } from "./writing-types";
 import { WriteScreen } from "./writing-write-screen";
 
-export type {
-  WritingActions,
-  WritingDraftAnswer,
-  WritingStartAnswer,
-  WritingSubmitAnswer,
-} from "./writing-types";
+export type { WritingActions, WritingDraftAnswer, WritingStartAnswer } from "./writing-types";
 
 type Mode = "question" | "refused" | "result" | "write";
 

@@ -12,7 +12,7 @@ export type WritingDraftAnswer =
   | { status: "closed" | "failed" };
 
 /** Null when it couldn't be graded; sending the same admission again replays its grade. */
-export type WritingSubmitAnswer = EssayDraft | null;
+type WritingSubmitAnswer = EssayDraft | null;
 
 export type WritingActions = {
   /** False when it didn't go through. */
