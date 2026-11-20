@@ -48,6 +48,22 @@ function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["che
   return checkpoint ? studyCheckpointSchema.parse(checkpoint) : null;
 }
 
+function getWritingAvailability({
+  block,
+  payload,
+}: {
+  block: DayBlockInput;
+  payload: ReturnType<typeof readBlockPayload>;
+}): DayBlockView["writingAvailability"] {
+  if (!payload.writing) {
+    return;
+  }
+
+  return {
+    status: payload.writing.admissionId && block.status === "active" ? "continue" : "available",
+  };
+}
+
 export function toDayBlockView({
   answeredItemIds,
   block,
@@ -120,5 +136,6 @@ export function toDayBlockView({
     topics: payload.topics,
     waitReason: getStoredBlockWait({ block, blocks }),
     weakest: payload.weakest,
+    writingAvailability: getWritingAvailability({ block, payload }),
   };
 }

@@ -138,3 +138,8 @@ export type WritingDraft = z.infer<typeof writingDraftSchema>;
 export type WritingPrompt = z.infer<typeof writingPromptSchema>;
 
 export type WritingPacing = z.infer<typeof writingPacingSchema>;
+
+export type WritingConditions = z.infer<typeof writingConditionsSchema>;
+export type WritingResult = z.infer<typeof writingResultSchema>;
+
+export const writingBlockInputSchema = z.strictObject({ taskKey: z.string().min(1).optional() });

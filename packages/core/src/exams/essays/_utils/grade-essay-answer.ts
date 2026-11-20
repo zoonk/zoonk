@@ -8,6 +8,7 @@ import {
 } from "../../../learner/_utils/answer-once";
 import { type EssayGradeView } from "../essay-contract";
 import { getEssayRubric } from "../essay-rubric";
+import { type WritingConditions, type WritingResult } from "../writing-contract";
 import { type EssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
 
@@ -57,8 +58,20 @@ async function refuseClosedBlock(
   return active.length > 0 ? null : "blockNotActive";
 }
 
+export { getWritingAttemptId } from "./writing-attempt-id";
+
+export async function gradeWriting(_input: {
+  conditions: WritingConditions;
+  content: EssayContent;
+  language: string;
+  previousNextSteps: readonly string[];
+  text: string;
+}): Promise<WritingResult> {
+  throw new Error("Writing grading requires the grading implementation.");
+}
+
 /** Records once per claimed `attemptId` and releases the claim in the same transaction. */
-export function recordEssayGrade({
+function recordLegacyEssayGrade({
   activeBlockId,
   attemptId,
   durationMs,
@@ -101,4 +114,20 @@ export function recordEssayGrade({
       activeBlockId ? refuseClosedBlock(transaction, activeBlockId) : Promise.resolve(null),
     withAnswer: (transaction) => endEssayGradeClaim(transaction, { attemptId, userId }),
   });
+}
+
+export function recordEssayGrade(
+  input:
+    | Parameters<typeof recordLegacyEssayGrade>[0]
+    | (Omit<Parameters<typeof recordLegacyEssayGrade>[0], "attemptId" | "grade"> & {
+        conditions: WritingConditions;
+        grade: WritingResult;
+        attemptId?: string;
+      }),
+) {
+  if ("conditions" in input) {
+    throw new Error("Recording written evidence requires the grading implementation.");
+  }
+
+  return recordLegacyEssayGrade(input);
 }

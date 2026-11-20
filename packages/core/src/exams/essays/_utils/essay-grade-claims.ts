@@ -3,6 +3,7 @@ import { setTimeout as wait } from "node:timers/promises";
 import { type Attempt, type TransactionClient, prisma, sql } from "@zoonk/db";
 import { claimGuestShare } from "../../../entitlements/_utils/guest-spend-budget";
 import { ESSAY_GRADE_COST_MICROS } from "../../../entitlements/limits";
+import { getWritingAttemptId } from "./writing-attempt-id";
 
 const DAILY_ESSAY_GRADES = 6;
 
@@ -50,7 +51,7 @@ export async function countGradesLeft({
 }
 
 export type EssayGradeClaim =
-  | { attemptId: string; status: "claimed" | "limitReached" | "signUpRequired" }
+  | { attemptId: string; status: "claimed" | "limitReached" | "notAdmitted" | "signUpRequired" }
   | { attemptId: string; saved: Attempt; status: "saved" };
 
 type ClaimRound = EssayGradeClaim | { attemptId: string; status: "taken" };
@@ -90,16 +91,30 @@ function admitGuestGrades({
 }
 
 function claimRound({
+  admissionId,
   attemptIds,
   localDate,
   userId,
 }: {
+  admissionId?: string;
   attemptIds: readonly string[];
   localDate: Date;
   userId: string;
 }): Promise<ClaimRound[]> {
   return prisma.$transaction(async (tx) => {
     await lockClaims(tx, userId);
+
+    if (admissionId) {
+      const receipt = await tx.writingAdmission.findFirst({ where: { id: admissionId, userId } });
+
+      const allowed = new Set(
+        receipt?.itemIds.map((itemId) => getWritingAttemptId({ admissionId, itemId })),
+      );
+
+      if (!attemptIds.every((id) => allowed.has(id))) {
+        return attemptIds.map((attemptId) => ({ attemptId, status: "notAdmitted" as const }));
+      }
+    }
 
     const now = new Date();
     const liveSince = getLiveSince(now);
@@ -110,7 +125,9 @@ function claimRound({
         select: { id: true },
         where: { createdAt: { gt: liveSince }, id: { in: [...attemptIds] } },
       }),
-      countGradesLeft({ localDate, now, transaction: tx, userId }),
+      admissionId
+        ? attemptIds.length
+        : countGradesLeft({ localDate, now, transaction: tx, userId }),
     ]);
 
     let grades = left;
@@ -134,9 +151,10 @@ function claimRound({
       return { attemptId, status: "claimed" };
     });
 
-    const admitted = rounds.some((round) => round.status === "taken")
-      ? rounds
-      : await admitGuestGrades({ rounds, transaction: tx, userId });
+    const admitted =
+      admissionId || rounds.some((round) => round.status === "taken")
+        ? rounds
+        : await admitGuestGrades({ rounds, transaction: tx, userId });
 
     const claimedIds = admitted.flatMap((round) =>
       round.status === "claimed" ? [round.attemptId] : [],
@@ -174,6 +192,7 @@ export async function endEssayGradeClaim(
 
 /** The caller must record each claimed grade or release its claim with `releaseEssayGradeClaims`. */
 export async function claimEssayGrades(input: {
+  admissionId?: string;
   attemptIds: readonly string[];
   localDate: Date;
   userId: string;

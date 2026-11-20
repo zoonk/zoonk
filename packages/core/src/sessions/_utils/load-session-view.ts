@@ -1,13 +1,15 @@
-import { type ExamBlueprint } from "@zoonk/db";
+import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import "server-only";
 import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-challenge-access";
 import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import "server-only";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
+import { readWritingExtraLimit } from "../../exams/essays/writing-admission";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
+import { readBlockPayload } from "../block-payload";
 import { getDayMissions } from "../missions/get-day-missions";
 import { type DayProgressReader } from "../missions/mission-day-views";
 import { getVisibleSessionTotal } from "../session-minutes";
@@ -22,7 +24,12 @@ import { type DayOutlines, getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionPlanItem } from "./session-plan-item";
-import { EMPTY_WEEK, type StudySessionView, toStudySessionView } from "./session-view";
+import {
+  EMPTY_WEEK,
+  type StudyBlockView,
+  type StudySessionView,
+  toStudySessionView,
+} from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
 async function loadDayOutlines({
@@ -83,6 +90,36 @@ async function loadLessonReservation({
   );
 
   return hasSessionLessonReservation({ ...input, plan, prerequisites });
+}
+
+async function loadExtraWritingAvailability({
+  blocks,
+  today,
+  userId,
+}: {
+  blocks: StudySessionRow["blocks"];
+  today: Date;
+  userId: string;
+}) {
+  const extraWriting = new Set(
+    blocks.flatMap((block) => {
+      const { extra, writing } = readBlockPayload(block);
+
+      return extra && writing && !writing.admissionId && block.status === "pending"
+        ? [block.id]
+        : [];
+    }),
+  );
+
+  const limit =
+    extraWriting.size > 0
+      ? await readWritingExtraLimit({ localDate: today, tx: prisma, userId })
+      : null;
+
+  return (block: StudyBlockView): StudyBlockView =>
+    limit && extraWriting.has(block.id)
+      ? { ...block, writingAvailability: { returnsOn: limit.returnsOn, status: "tomorrow" } }
+      : block;
 }
 
 export async function loadStudySessionView({
@@ -169,7 +206,7 @@ export async function loadStudySessionView({
       })
     : { includesMockExams: true };
 
-  const [outlines, missions, reserved] = await Promise.all([
+  const [outlines, missions, reserved, withWritingAvailability] = await Promise.all([
     loadDayOutlines({ dayMinutes, plan, session }),
     getDayMissions({
       displayBlocks,
@@ -179,11 +216,14 @@ export async function loadStudySessionView({
       ...(current && { through: new Date() }),
     }),
     loadLessonReservation({ access: examAccess, current, plan, session }),
+    loadExtraWritingAvailability({ blocks: session.blocks, today, userId }),
   ]);
 
   const view = toStudySessionView({
     answers,
-    blockViews: blockViews.blocks.filter((block) => visibleBlockIds.has(block.id)),
+    blockViews: blockViews.blocks
+      .filter((block) => visibleBlockIds.has(block.id))
+      .map((block) => withWritingAvailability(block)),
     current,
     dayEndsAt,
     dayMinutes,

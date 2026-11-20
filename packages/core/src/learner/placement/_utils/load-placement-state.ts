@@ -1,9 +1,10 @@
-import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import "server-only";
 import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
+import { loadWritingSkillIds } from "../../writing-skills";
 import { type FocusTestView } from "../focus-test-contract";
 import { type PlacementStatus } from "../placement-contract";
 import { type PlacementItemCandidate } from "../placement-item-choice";
@@ -189,7 +190,8 @@ export async function loadPlacementWithSummary({
   userId,
   tx = prisma,
 }: PlacementRead): Promise<PlacementLoad> {
-  const skills = plan.skills;
+  const written = await loadWritingSkillIds(goalId, tx);
+  const skills = plan.skills.filter((skill) => !written.has(skill.id));
   const skillIds = skills.map((skill) => skill.id);
 
   const {

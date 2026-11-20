@@ -20,6 +20,11 @@ Staff (production data)
       --fields <field>,<field>...          Print only these fields of each record
   staff count <model> [--where ...]        Number of records matching every --where
 
+Written exam preparation repair
+  staff repair-writing <blueprints|learners> [--after <cursor>] [--apply]
+                                           Preview one page. --apply starts notice rereads
+                                           or reopens unsupported writing claims.
+
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
   staff fixes propose <file.json>          Propose the fix or batch in the file, and print its review
                                            link and each fix's changes and effects. Nothing changes

@@ -1,10 +1,12 @@
-import "server-only";
 import { type Plan, type PlanItem, prisma } from "@zoonk/db";
 import { getLessonSkillRows, toIdKey } from "../../library/_utils/shared-rows";
+import "server-only";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { loadWritingSkillIds } from "../writing-skills";
+import { loadWritingEvidence } from "../written-evidence";
 import {
   type ClaimEvent,
   type DatedClaim,
@@ -205,12 +207,29 @@ export async function loadClaimEvents({
 }): Promise<ClaimEvent[]> {
   const asked = new Set(skillIds);
 
-  const [fromPlan, answers] = await Promise.all([
-    planEvents ?? loadPlanClaimEvents({ goalId, skillIds: asked }),
-    loadAnswerEvents({ skillIds, userId }),
+  const [writtenSkills, goal] = await Promise.all([
+    loadWritingSkillIds(goalId),
+    prisma.goal.findUnique({ select: { examBlueprintId: true }, where: { id: goalId } }),
   ]);
 
-  return [...fromPlan.filter((event) => asked.has(event.skillId)), ...answers];
+  const writtenAsked = new Set(skillIds.filter((id) => writtenSkills.has(id)));
+
+  const [fromPlan, answers, written] = await Promise.all([
+    planEvents ?? loadPlanClaimEvents({ goalId, skillIds: asked }),
+    loadAnswerEvents({ skillIds: skillIds.filter((id) => !writtenAsked.has(id)), userId }),
+    loadWritingEvidence({
+      examBlueprintId: goal?.examBlueprintId ?? null,
+      skillIds: writtenAsked,
+      tx: prisma,
+      userId,
+    }),
+  ]);
+
+  return [
+    ...fromPlan.filter((event) => asked.has(event.skillId) && !writtenAsked.has(event.skillId)),
+    ...answers,
+    ...written,
+  ];
 }
 
 export async function loadSkillEvidence({

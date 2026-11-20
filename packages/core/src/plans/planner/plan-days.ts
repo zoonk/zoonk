@@ -336,3 +336,5 @@ export function getPlannedMinutes({
 
   return getFundedMinutes({ base, date, funding }) + extra;
 }
+
+export { getScheduledWrittenTest } from "./written-test-planning";

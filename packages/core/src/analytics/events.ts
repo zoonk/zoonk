@@ -219,6 +219,7 @@ type AccountEvents = {
 type QualityEvents = {
   "Content Reported": { content_id: string; content_kind: string; reason: string };
   "Feedback Sent": { content_kind: string | null };
+  "Writing Prompt Wait Shown": { block_id: string; run_id: string };
   "Generation Failed": { content_kind: string; model: string | null; task: string };
   "Generation Waited": {
     content_kind: string;

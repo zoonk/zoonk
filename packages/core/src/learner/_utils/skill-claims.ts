@@ -8,6 +8,7 @@ export type SkillClaim = "confirmed" | "gap" | "toConfirm";
 /** undone invalidates earlier evidence of knowing the skill; session placement answers remain tests. */
 export type ClaimEvent = { at: Date; skillId: string } & (
   | { kind: "claim" | "studied" | "undone" }
+  | { attemptId: string; claim: SkillClaim; kind: "writing" }
   | { isCorrect: boolean; kind: "practice" | "test"; format?: ItemFormat }
 );
 
@@ -37,6 +38,10 @@ type ClaimState = {
 
 function nextClaim({ current, event }: { current: ClaimState; event: ClaimEvent }): ClaimState {
   const { claim, studied } = current;
+
+  if (event.kind === "writing") {
+    return { ...current, claim: event.claim, claimed: true };
+  }
 
   if (event.kind === "studied") {
     return { ...current, claim: claim === "gap" ? claim : "confirmed", studied: true };

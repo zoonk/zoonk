@@ -1,8 +1,13 @@
-import { type EssayView, essayGradeSchema } from "@zoonk/core/exams/essays/contract";
+import {
+  type EssayView,
+  type WrittenEssayDraft,
+  essayGradeSchema,
+} from "@zoonk/core/exams/essays/contract";
 import {
   writingDraftSchema,
   writingPacingSchema,
   writingPromptSchema,
+  writingResultSchema,
 } from "@zoonk/core/exams/essays/writing-contract";
 import { StudyBlockStatus } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -14,12 +19,20 @@ export const essayViewResponseSchema = z
     context: z.string().nullable(),
     draft: writingDraftSchema.nullable().optional(),
     drafts: z.array(
-      z.object({
-        attemptId: uuidSchema().optional(),
-        grade: essayGradeSchema,
-        submittedAt: z.iso.datetime(),
-        text: z.string(),
-      }),
+      z.union([
+        z.object({
+          attemptId: uuidSchema().optional(),
+          grade: essayGradeSchema,
+          submittedAt: z.iso.datetime(),
+          text: z.string(),
+        }),
+        z.object({
+          attemptId: uuidSchema(),
+          grade: writingResultSchema,
+          submittedAt: z.iso.datetime(),
+          text: z.string(),
+        }),
+      ]),
     ),
     gradesLeft: z.number().int().min(0),
     pacing: writingPacingSchema.optional(),
@@ -34,4 +47,6 @@ export const essayViewResponseSchema = z
     status: z.enum(StudyBlockStatus),
     writing: writingPromptSchema.optional(),
   })
-  .meta({ id: "Essay" }) satisfies z.ZodType<EssayView>;
+  .meta({ id: "Essay" }) satisfies z.ZodType<
+  Omit<EssayView, "drafts"> & { drafts: (EssayView["drafts"][number] | WrittenEssayDraft)[] }
+>;

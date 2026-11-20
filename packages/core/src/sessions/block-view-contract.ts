@@ -131,5 +131,11 @@ export const studyBlockSchema = z
         description:
           "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty",
       }),
+    writingAvailability: z
+      .discriminatedUnion("status", [
+        z.object({ status: z.enum(["available", "continue"]) }),
+        z.object({ returnsOn: z.iso.date(), status: z.literal("tomorrow") }),
+      ])
+      .optional(),
   })
   .meta({ id: "StudyBlock" });

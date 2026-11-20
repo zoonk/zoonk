@@ -15,6 +15,7 @@ import {
   isSessionReviewDay,
   toLessonBlock,
 } from "./session-lessons";
+import { addWritingDrill } from "./writing-drills";
 
 function getPlannedSessionTotal({
   budget,
@@ -118,8 +119,21 @@ export function fillRemainingLessonTime({
     sum,
   });
 
-  return {
-    blocks: orderDayBlocks({ blocks: filled, items: input.planItems ?? [] }),
-    plannedMinutes,
-  };
+  const ordered = orderDayBlocks({ blocks: filled, items: input.planItems ?? [] });
+
+  const withDrills = ordered.flatMap((block) =>
+    addWritingDrill({
+      block,
+      lesson:
+        block.kind === "learn"
+          ? fill.find(
+              (lesson) =>
+                lesson.lessonId === block.lessonId &&
+                (lesson.planItemKey ?? null) === block.payload.planItemKey,
+            )
+          : undefined,
+    }),
+  );
+
+  return { blocks: withDrills, plannedMinutes };
 }

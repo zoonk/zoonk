@@ -17,7 +17,8 @@ async function getEssayRoute(request: Request, context: RouteContext<"/v1/essays
     return examError(result);
   }
 
-  return NextResponse.json(result.essay);
+  const { writtenDrafts, ...essay } = result.essay;
+  return NextResponse.json({ ...essay, drafts: writtenDrafts ?? essay.drafts });
 }
 
 export const GET = withApiErrorBoundary(getEssayRoute);

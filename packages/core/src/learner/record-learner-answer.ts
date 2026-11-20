@@ -1,4 +1,3 @@
-import "server-only";
 import {
   type Attempt,
   type LearnerSkill,
@@ -6,6 +5,7 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
+import "server-only";
 import { type JsonObject } from "@zoonk/utils/json";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
@@ -19,6 +19,7 @@ import { markLearnerChanged } from "./_utils/mark-learner-changed";
 import { applyAnswerToLearnerSkill, loadSkillSurvivors } from "./_utils/update-learner-skill";
 import { type SkillReview, getAnswerEvents } from "./answer-events";
 import { type GradedAnswer } from "./answer-rating";
+import { loadExamWritingSkillIdsForLearner } from "./writing-skills";
 
 const RECENT_SKILL_ANSWERS = 10;
 
@@ -211,7 +212,15 @@ export async function persistLearnerAnswer({
     transaction,
   });
 
-  const review = await updateMemory(context);
+  const written = skillId
+    ? await loadExamWritingSkillIdsForLearner({
+        skillIds: [skillId],
+        tx: transaction,
+        userId: input.userId,
+      })
+    : new Set<string>();
+
+  const review = skillId && written.has(skillId) ? null : await updateMemory(context);
   const fixedMistakes = await fixAnsweredMistakes(context);
   const notebookEntry = await addToNotebook({ attemptId: attempt.id, context });
 
