@@ -17636,7 +17636,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este curso está en %1$@. Tus lecciones serán en %2$@."
+            "value" : "Este curso está en %1$@. Tus lecciones estarán en %2$@."
           }
         },
         "fr" : {
