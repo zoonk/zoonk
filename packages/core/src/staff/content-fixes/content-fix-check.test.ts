@@ -40,6 +40,7 @@ describe("content fix check", () => {
 
     expect(checked.fixes[0]?.changes).toStrictEqual(proposed.fixes[0]?.changes);
     expect(checked.fixes[0]?.effects).toStrictEqual(proposed.fixes[0]?.effects);
-    await expect(listOwed(proposer.id)).resolves.toMatchObject([{ kind: "voiceContentFix" }]);
+    expect(checked.fixes[0]?.media).toMatchObject([{ kind: "clip" }]);
+    await expect(listOwed(proposer.id)).resolves.toMatchObject([{ kind: "prepareContentFixMedia" }]);
   });
 });
