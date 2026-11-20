@@ -51,9 +51,6 @@ vi.mock("@zoonk/core/learner/placement/request", async (importOriginal) => {
 
 const WAIT = { timeout: 10_000 };
 
-/** The run's next sleep, read often: each test wakes many in a row. */
-const SLEEP_POLL = { pollInterval: 10 };
-
 const CAUSE = {
   correctAnswer: "since",
   language: "en",
@@ -187,15 +184,14 @@ async function retry(goalId: string) {
 }
 
 async function drive(run: Run<unknown>) {
-  for (let index = 0; index < 4000; index += 1) {
+  for (let index = 0; index < 400; index += 1) {
     const status = await run.status;
 
     if (status !== "pending" && status !== "running") {
       return;
     }
 
-    // Short, so a run that ends instead of sleeping is noticed soon.
-    const id = await waitForSleep(run, { ...SLEEP_POLL, timeout: 100 }).catch(() => null);
+    const id = await waitForSleep(run, { timeout: 1000 }).catch(() => null);
 
     if (id) {
       await run.wakeUp({ correlationIds: [id] });
@@ -497,11 +493,11 @@ describe("a learner's owed rebuild", () => {
         const rebuild = await goalRun(goal.id);
 
         for (let index = 0; index < 101; index += 1) {
-          const waiting = await waitForSleep(rebuild, SLEEP_POLL);
+          const waiting = await waitForSleep(rebuild);
           await rebuild.wakeUp({ correlationIds: [waiting] });
         }
 
-        const waiting = await waitForSleep(rebuild, SLEEP_POLL);
+        const waiting = await waitForSleep(rebuild);
         await expect(first.status).resolves.toBe("running");
 
         await expect(
