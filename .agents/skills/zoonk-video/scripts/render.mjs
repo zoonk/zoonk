@@ -225,6 +225,7 @@ await new Promise((r, j) =>
     c === 0 ? r() : j(new Error(`concat ${c}`)),
   ),
 );
+rmSync(segDir, { recursive: true });
 console.log(
   `\nwrote ${out} (${totalFrames} frames) in ${((Date.now() - started) / 1000).toFixed(0)}s`,
 );
