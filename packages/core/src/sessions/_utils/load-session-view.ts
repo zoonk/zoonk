@@ -121,7 +121,10 @@ export async function loadStudySessionView({
       userId,
       ...(initialDay &&
         storedSession.startedAt === null &&
-        storedSession.blocks.every((block) => block.status === "pending") && { answers: [] }),
+        storedSession.blocks.every((block) => block.status === "pending") && {
+          answers: [],
+          preparing: initialDay.preparing,
+        }),
     }),
   ]);
 

@@ -1,7 +1,7 @@
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
 import "server-only";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
+import { loadWeeklyOutline } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { loadScheduledMock } from "../../exams/mocks/_utils/scheduled-mock";
 import { countPlannedQuestions } from "../../exams/mocks/mock-plan";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
@@ -73,7 +73,6 @@ async function loadMockItems({
   goal,
   identity: selectedIdentity,
   planItemId,
-  skillIds,
   structure,
   today,
   userId,
@@ -81,7 +80,6 @@ async function loadMockItems({
   goal: Pick<Goal, "examBlueprintId" | "id" | "targetDate">;
   identity?: MockIdentity | null;
   planItemId: string | null;
-  skillIds: readonly string[];
   structure: ExamStructure | null;
   today: Date;
   userId: string;
@@ -91,14 +89,14 @@ async function loadMockItems({
       ? await loadScheduledMock({ date: today, goalId: goal.id, planItemId })
       : selectedIdentity;
 
-  const plan = await planWeeklyMock({ goal, identity, skillIds, structure, today, userId });
+  const { outline } = await loadWeeklyOutline({ goal, identity, structure, today, userId });
 
   return {
     itemIds: [],
-    minutes: plan.outline.minutes,
-    mockIdentity: { day: plan.day, fullLength: plan.fullLength },
-    mockQuestions: countPlannedQuestions(plan.outline),
-    timeLimitMinutes: plan.outline.minutes,
+    minutes: outline.minutes,
+    mockIdentity: { day: outline.day, fullLength: outline.fullLength },
+    mockQuestions: countPlannedQuestions(outline),
+    timeLimitMinutes: outline.minutes,
   };
 }
 
@@ -205,7 +203,6 @@ export async function loadSessionWeeklyChallenge({
             ? findScheduledMock({ date: toIsoDate(item.scheduledFor), funding: mockFunding })
             : undefined,
           planItemId: item.id,
-          skillIds: asked,
           structure,
           today,
           userId,

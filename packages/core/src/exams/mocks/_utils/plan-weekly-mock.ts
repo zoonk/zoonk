@@ -77,19 +77,7 @@ async function loadWeeklyMockListening({
   );
 }
 
-export async function planWeeklyMock({
-  client,
-  essays,
-  finishedMocks,
-  goal,
-  identity = null,
-  itemIds = null,
-  savedPlan,
-  skillIds,
-  structure,
-  today,
-  userId,
-}: {
+type WeeklyPaper = {
   client?: TransactionClient;
   essays?: readonly MockEssayCandidate[];
   /** A GET's finished-mock count; without it, it's counted fresh. */
@@ -98,24 +86,30 @@ export async function planWeeklyMock({
   identity?: MockIdentity | null;
   itemIds?: readonly string[] | null;
   savedPlan?: SavedPlan;
-  skillIds: readonly string[];
   structure: ExamStructure | null;
   today: Date;
   userId: string;
-}): Promise<MockPlan & { outline: MockPlan; candidates: MockCandidate[] }> {
-  const [candidates, mockNumber, finalStretchStart, written, listening] = await Promise.all([
-    loadMockCandidates({ client, goal, itemIds, plan: savedPlan, skillIds, structure, userId }),
-    finishedMocks ?? countFinishedMocksBefore({ goalId: goal.id }),
-    savedPlan
-      ? getFinalStretchStart(parsePlanPhases(savedPlan.phases))
-      : loadFinalStretchStart(goal.id),
+};
+
+export async function loadWeeklyOutline({
+  essays,
+  finishedMocks,
+  goal,
+  identity,
+  savedPlan,
+  structure,
+  today,
+  userId,
+}: WeeklyPaper) {
+  const [mockNumber, finalStretchStart, written] = await Promise.all([
+    identity ? 0 : (finishedMocks ?? countFinishedMocksBefore({ goalId: goal.id })),
+    identity
+      ? null
+      : savedPlan
+        ? getFinalStretchStart(parsePlanPhases(savedPlan.phases))
+        : loadFinalStretchStart(goal.id),
     essays ?? loadWeeklyMockEssays({ goal, userId }),
-    loadWeeklyMockListening({ client, goalId: goal.id, itemIds, structure, userId }),
   ]);
-
-  const bySubject = toSubjectCandidates({ candidates, structure });
-  const asked = [...bySubject, ...[...listening.values()].flat()];
-
   const fullLength =
     identity?.fullLength ??
     isInFinalStretch({ finalStretchStart, targetDate: goal.targetDate, today });
@@ -139,6 +133,22 @@ export async function planWeeklyMock({
     structure,
   });
 
+  return { outline, written };
+}
+
+export async function planWeeklyMock(
+  input: WeeklyPaper & { skillIds: readonly string[] },
+): Promise<MockPlan & { outline: MockPlan; candidates: MockCandidate[] }> {
+  const { client, goal, itemIds = null, savedPlan, skillIds, structure, userId } = input;
+  const [{ outline, written }, candidates, listening] = await Promise.all([
+    loadWeeklyOutline(input),
+    loadMockCandidates({ client, goal, itemIds, plan: savedPlan, skillIds, structure, userId }),
+    loadWeeklyMockListening({ client, goalId: goal.id, itemIds, structure, userId }),
+  ]);
+  const { day, fullLength } = outline;
+  const days = getMockDays(structure);
+  const bySubject = toSubjectCandidates({ candidates, structure });
+  const asked = [...bySubject, ...[...listening.values()].flat()];
   const plan = planMock({
     adaptive: structure?.mock?.adaptive ?? false,
     candidates: bySubject,
