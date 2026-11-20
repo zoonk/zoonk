@@ -56,9 +56,9 @@ export async function buildMockConditions(
     complete: isScheduledPaperComplete(bank),
     conditions: toPlannedConditions({
       ...owned,
-      structure: bank.structure,
       bank,
       plan: client ? bank : bank.outline,
+      structure: bank.structure,
     }),
   };
 }

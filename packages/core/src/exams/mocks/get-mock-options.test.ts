@@ -56,16 +56,18 @@ describe(getMockOptions, () => {
     const user = await userFixture();
     const goal = await goalFixture({ kind: "exam", userId: user.id });
     const now = new Date("2025-01-10T00:00:00Z");
+
     await prisma.mockExam.createMany({
       data: Array.from({ length: 10 }, () => ({
-        userId: user.id,
-        goalId: goal.id,
-        startedAt: now,
-        sectionStartedAt: now,
-        status: "finished" as const,
         conditions: { purpose: "practice" },
+        goalId: goal.id,
+        sectionStartedAt: now,
+        startedAt: now,
+        status: "finished" as const,
+        userId: user.id,
       })),
     });
+
     await expect(canReuseMockItems(prisma, user.id, now)).resolves.toBe(true);
   });
 

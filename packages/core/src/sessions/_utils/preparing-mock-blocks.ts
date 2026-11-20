@@ -42,9 +42,7 @@ export async function loadPreparingMockPositions({
     blueprint === undefined && goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : blueprint,
-    goal.examBlueprintId
-      ? prisma.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } })
-      : null,
+    prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId: goal.id } }),
   ]);
 
   const structure = readScheduledStructure({
@@ -59,13 +57,14 @@ export async function loadPreparingMockPositions({
       const plan = await planWeeklyMock({
         goal,
         identity,
+        paperPlan: savedPlan ?? undefined,
         skillIds,
         structure,
         today: localDate,
         userId: goal.userId,
       });
 
-      return !isScheduledPaperComplete(plan) ? [position] : [];
+      return isScheduledPaperComplete(plan) ? [] : [position];
     }),
   );
 

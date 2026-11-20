@@ -72,6 +72,7 @@ describe(syncCurrentUserAppleSubscription, () => {
   it("owes the first mock for an active exam goal when Plus starts", async () => {
     const user = await authenticateUser();
     const goal = await goalFixture({ kind: "exam", userId: user.id });
+
     vi.mocked(getAppleSubscriptionFromTransaction).mockResolvedValue(
       makeAppleSubscription({ accountToken: user.id }),
     );
@@ -82,7 +83,7 @@ describe(syncCurrentUserAppleSubscription, () => {
       prisma.followUp.findFirst({
         where: { key: goal.id, kind: "prepareMockSupply", userId: user.id },
       }),
-    ).resolves.toMatchObject({ input: { goalId: goal.id, examBlueprintId: null, later: true } });
+    ).resolves.toMatchObject({ input: { examBlueprintId: null, goalId: goal.id, later: true } });
   });
 
   it("persists a verified monthly entitlement for the matching account", async () => {

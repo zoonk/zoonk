@@ -271,7 +271,10 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
 
   const { owned } = found;
   const { mock } = owned;
-  const conditions = mock?.conditions ?? (await buildMockConditions(owned)).conditions;
+
+  const conditions =
+    mock?.conditions ?? (await buildMockConditions(owned).then((paper) => paper.conditions));
+
   const areas = owned.goal ? await loadSkillAreas(owned.goal.id) : new Map<string, string>();
   const running = mock?.status === "active" ? mock : null;
 

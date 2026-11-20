@@ -148,11 +148,18 @@ export async function loadMockCandidates({
 
   const [items, areas] = await Promise.all([
     client.item.findMany({
-      include: {
+      orderBy: { id: "asc" },
+      select: {
+        content: true,
+        difficulty: true,
+        format: true,
+        id: true,
         mockUses: { select: { mockExamId: true, section: true, spentAt: true }, where: { userId } },
         set: { select: { _count: { select: { items: true } } } },
+        setId: true,
+        setPosition: true,
+        skillId: true,
       },
-      orderBy: { id: "asc" },
       where: {
         ...getFormatFilter(typed),
         ...(itemIds

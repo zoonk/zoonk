@@ -80,9 +80,11 @@ async function saveManualPlanChange({
         });
 
     await issueEarnedCertificates(tx, { now: changedAt, plus: "check", userId });
+
     if (!existing) {
       await owePlusMocks(tx, userId);
     }
+
     return saved;
   });
 }

@@ -213,12 +213,12 @@ export async function loadSessionWeeklyChallenge({
     ? {
         ...(await loadMockItems({
           goal,
-          paperPlan,
-          skillIds: asked,
           identity: mockFunding
             ? findScheduledMock({ date: toIsoDate(item.scheduledFor), funding: mockFunding })
             : undefined,
+          paperPlan,
           planItemId: item.id,
+          skillIds: asked,
           structure,
           today,
           userId,

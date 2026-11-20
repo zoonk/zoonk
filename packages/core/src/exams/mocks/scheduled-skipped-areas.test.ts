@@ -11,6 +11,7 @@ import {
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../../sessions/_test-utils/session-goal";
+import { listMockPrepWrites } from "./prepare-mock-questions";
 import { startMock } from "./start-mock";
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
@@ -90,7 +91,11 @@ async function setup({ skippedAreas }: { skippedAreas: string[] }) {
   const blocks = today.status === "ready" ? today.session.blocks : [];
   const block = blocks.find((candidate) => candidate.checkpoint?.mock);
 
-  return { ...fixture, block, blocks, user };
+  if (!block) {
+    throw new Error("Expected a scheduled mock");
+  }
+
+  return { ...fixture, block };
 }
 
 describe("a scheduled mock for a learner who took a subject out of the plan", () => {
@@ -101,10 +106,37 @@ describe("a scheduled mock for a learner who took a subject out of the plan", ()
 
   afterEach(() => vi.useRealTimers());
 
+  it("asks for the retained subject when the scheduled start is short", async () => {
+    const { block, goal, skills } = await setup({ skippedAreas: ["Languages"] });
+    const retained = skills.slice(0, 2).map((skill) => skill.id);
+
+    await prisma.item.updateMany({
+      data: { retiredAt: SESSION_NOW },
+      where: { skillId: { in: retained } },
+    });
+
+    await expect(startMock({ blockId: block.id, input: {} })).resolves.toMatchObject({
+      status: "preparing",
+    });
+
+    const supply = await listMockPrepWrites({ goalId: goal.id });
+    expect(supply.urgentShort).toBe(true);
+
+    expect(supply.writes.flatMap((write) => write.skillIds)).toStrictEqual(
+      expect.arrayContaining(retained),
+    );
+  });
+
   it("starts the scheduled paper with only retained subjects", async () => {
-    const { block } = await setup({ skippedAreas: ["Languages"] });
+    const { block, goal } = await setup({ skippedAreas: ["Languages"] });
+
+    await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
+      urgentShort: false,
+    });
+
     expect(block).toMatchObject({ preparing: false, questions: 4 });
-    await expect(startMock({ blockId: block!.id, input: {} })).resolves.toMatchObject({
+
+    await expect(startMock({ blockId: block.id, input: {} })).resolves.toMatchObject({
       status: "ready",
     });
   });

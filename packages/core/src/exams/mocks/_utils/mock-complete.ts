@@ -21,7 +21,7 @@ export function isScheduledPaperComplete(
   return isPaperComplete(
     plan,
     countPlannedQuestions(plan.outline),
-    plan.outline.written.filter((part) => part.asked).length,
+    plan.outline.sections.reduce((sum, section) => sum + section.essays.length, 0),
     plan.outline.sections.filter((section) => section.name && plan.audio.unvoiced.has(section.name))
       .length,
   );

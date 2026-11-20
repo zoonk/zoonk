@@ -29,6 +29,7 @@ export async function listMockItemClaims(
   const now = instant.getTime();
   const expired = new Set<string>();
   const held = new Set<string>();
+
   for (const mock of sittings) {
     if (hasStoredTimeRunOutAway({ mock, now })) {
       expired.add(mock.id);
@@ -76,7 +77,7 @@ export async function claimMockItems({
   mockExamId: string;
   now: Date;
 }) {
-  const repeats = new Set(candidates.filter(item => item.answered).map(item => item.itemId));
+  const repeats = new Set(candidates.filter((item) => item.answered).map((item) => item.itemId));
 
   const uses = conditions.sections.flatMap((part, section) =>
     sectionItemIds(part).map((itemId) => ({
@@ -117,6 +118,7 @@ export async function spendSection({
   if (!conditions.sections[section]) {
     return;
   }
+
   await tx.mockItemUse.updateMany({
     data: { spentAt: now },
     where: { mockExamId, section, userId },

@@ -124,8 +124,8 @@ export async function pickExamFormatSkills({
       items: {
         select: { content: true, examBlueprintId: true, format: true },
         where: {
-          format: { in: ["multipleChoice", "numeric"] },
           OR: [{ mockOnly: false }, { mockOnly: null }],
+          format: { in: ["multipleChoice", "numeric"] },
         },
       },
       language: true,

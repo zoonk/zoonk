@@ -70,8 +70,8 @@ export async function loadAnytimeMockSetup(
 
   const { recordings, unvoiced, missingParts } = await loadListeningCandidates({
     goalId: goal.id,
-    now: page?.now,
     mix: getMockFormatMix(structure),
+    now: page?.now,
     userId: goal.userId,
   });
 
@@ -107,7 +107,7 @@ export function listMissingRecordings({
   option,
   setup,
 }: {
-  option: MockOption;
+  option: Pick<MockOption, "kind" | "day">;
   setup: AnytimeMockSetup;
 }): string[] {
   if (option.kind === "area" || setup.unvoiced.size === 0) {

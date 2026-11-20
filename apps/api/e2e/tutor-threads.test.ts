@@ -311,7 +311,10 @@ test.describe("Tutor threads beyond lessons", () => {
     const { blockId, sessionId } = await createMockBlock({ api, userId });
     const mockPath = `/v1/mocks/${blockId}`;
 
-    const started = await api.post(`/v1/study-sessions/${sessionId}/blocks/${blockId}/starts`, { data: { timeZone: "UTC" } });
+    const started = await api.post(`/v1/study-sessions/${sessionId}/blocks/${blockId}/starts`, {
+      data: { timeZone: "UTC" },
+    });
+
     expect(started.status()).toBe(200);
 
     const mock = await prisma.mockExam.findFirstOrThrow({ where: { blockId, userId } });
@@ -396,7 +399,10 @@ test.describe("Tutor threads beyond lessons", () => {
     const mockPath = `/v1/mocks/${blockId}`;
     const path = `${mockPath}/questions`;
 
-    const started = await api.post(`/v1/study-sessions/${sessionId}/blocks/${blockId}/starts`, { data: { timeZone: "UTC" } });
+    const started = await api.post(`/v1/study-sessions/${sessionId}/blocks/${blockId}/starts`, {
+      data: { timeZone: "UTC" },
+    });
+
     expect(started.status()).toBe(200);
 
     const [running, runningThread] = await Promise.all([

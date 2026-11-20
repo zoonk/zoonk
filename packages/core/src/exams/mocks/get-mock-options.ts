@@ -39,13 +39,14 @@ export async function getMockOptions({
   }
 
   const now = await getRequestInstant();
+
   const [setup, access, running, lastMock] = await Promise.all([
     loadAnytimeMockSetup(
       goal,
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
       {
-        now,
         essays: readMockEssays(goal.userId, goal.id, goal.examBlueprintId),
+        now,
         plan: readSavedPlan(goal.userId, goal.id),
         typed: getBankTypedParts(goal.examBlueprintId),
       },
@@ -64,8 +65,8 @@ export async function getMockOptions({
     option &&
     (await planFromBank({
       goal,
-      option,
       now,
+      option,
       reuse: await canReuseMockItems(prisma, goal.userId, now),
       setup,
       userId: goal.userId,

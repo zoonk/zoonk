@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
 import { getMockFormatMix } from "../mock-format-mix";
 import { planOptionMock } from "../mock-option-plan";
 import { type MockOption } from "../mock-options";
@@ -53,10 +54,10 @@ async function loadAvailableSetup({
 
   const audio = await loadListeningCandidates({
     client,
-    now,
     exclude: [...exclude],
     goalId,
     mix: getMockFormatMix(setup.structure),
+    now,
     reuse,
     userId,
   });
@@ -73,7 +74,8 @@ export async function planScheduledFromBank({
   client = prisma,
   exclude,
   goal,
-  option,
+  identity,
+  finishedMocks,
   paperPlan,
   scheduledFor,
   now,
@@ -82,7 +84,8 @@ export async function planScheduledFromBank({
   client?: TransactionClient;
   exclude: ReadonlySet<string>;
   goal: Goal;
-  option: MockOption;
+  identity: Parameters<typeof planWeeklyMock>[0]["identity"];
+  finishedMocks: number;
   paperPlan: { graph: unknown; settings: unknown } | null;
   scheduledFor: Date;
   now?: Date;
@@ -94,30 +97,41 @@ export async function planScheduledFromBank({
     goal,
     settings: paperPlan?.settings,
   });
+
+  const goalPlan = await loadGoalPlan(goal.id, undefined, { tx: client });
+
   const plan = await planWeeklyMock({
     client,
-    exclude,
-    now,
     essays: setup.essays,
+    exclude,
+    finishedMocks: Promise.resolve(finishedMocks),
     goal,
-    identity: { day: option.day, fullLength: option.kind === "full" },
+    identity,
+    now,
     paperPlan: paperPlan ?? undefined,
-    skillIds: await loadMockSkillIds(goal.id),
+    skillIds: goalPlan.skills.filter((skill) => !skill.removed).map((skill) => skill.id),
     structure,
     today: scheduledFor,
     userId: goal.userId,
   });
+
   return {
     available: {
       ...setup,
       listening: plan.audio.recordings,
       missingParts: plan.audio.missingParts,
-      unvoiced: plan.audio.unvoiced,
       structure: plan.structure,
+      unvoiced: plan.audio.unvoiced,
     },
     candidates: plan.candidates,
     complete: isScheduledPaperComplete(plan),
-    option: { ...option, questions: countPlannedQuestions(plan.outline) },
+    option: {
+      area: null,
+      areas: [],
+      day: plan.day,
+      kind: plan.fullLength ? ("full" as const) : ("half" as const),
+      questions: countPlannedQuestions(plan.outline),
+    },
     plan,
     reuse: false,
     skillIds: plan.skillIds,
@@ -141,20 +155,20 @@ async function reserveScheduled({
   });
 
   const reserved = new Set<string>();
-  const scheduled = await listScheduledSupplyOptions({ client, goal, plan, setup });
+  const scheduled = await listScheduledSupplyOptions({ client, goal, plan });
 
-  for (const { option, scheduledFor } of scheduled) {
+  for (const paper of scheduled) {
     // oxlint-disable-next-line no-await-in-loop -- Each paper draws from what the previous paper left.
     const planned = await planScheduledFromBank({
       client,
       exclude: reserved,
       goal,
-      option,
-      paperPlan: plan,
+      ...paper,
       now,
-      scheduledFor,
+      paperPlan: plan,
       setup,
     });
+
     for (const id of getPlannedItemIds(planned.plan)) {
       reserved.add(id);
     }
@@ -185,8 +199,8 @@ export async function planFromBank({
   const loaded = await loadMockCandidates({
     client,
     goal,
-    now,
     itemIds: null,
+    now,
     reuse,
     skillIds: await loadMockSkillIds(goal.id),
     structure: setup.structure,
@@ -201,8 +215,8 @@ export async function planFromBank({
       ? await loadAvailableSetup({
           client,
           exclude: protectedIds,
-          now,
           goalId: goal.id,
+          now,
           reuse,
           setup,
           userId,
