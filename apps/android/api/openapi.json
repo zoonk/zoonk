@@ -89798,6 +89798,15 @@
             "description": "The running section, never with answers",
             "type": "object",
             "properties": {
+              "changedItemIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "description": "In a forward-only section's review: the questions whose answer the review already changed. Each may change again without using another of `changesLeft`; empty otherwise"
+              },
               "changesLeft": {
                 "nullable": true,
                 "description": "In a forward-only section with a review at its end (`navigation.answerChanges`): the answers the review may still change; null without a limit",
@@ -90026,6 +90035,7 @@
               }
             },
             "required": [
+              "changedItemIds",
               "changesLeft",
               "deadline",
               "drafts",
