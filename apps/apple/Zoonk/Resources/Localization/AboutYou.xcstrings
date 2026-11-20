@@ -304,7 +304,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "追加する"
+            "value" : "追加"
           }
         },
         "ko" : {
@@ -2279,61 +2279,61 @@
         }
       }
     },
-    "Past or present, finished or not. Pick up to 3." : {
+    "Past or present, finished or not." : {
       "comment" : "Under What have you studied?",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Früher oder heute, abgeschlossen oder nicht. Wähl bis zu 3 aus."
+            "value" : "Früher oder heute, abgeschlossen oder nicht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudios anteriores o actuales, terminados o no. Elige hasta 3."
+            "value" : "Del pasado o del presente, hayas terminado o no."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Études passées ou en cours, terminées ou non. Choisis jusqu’à 3 réponses."
+            "value" : "Dans le passé ou actuellement, que ce soit terminé ou non."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Studi passati o attuali, conclusi o no. Scegline fino a 3."
+            "value" : "Passati o presenti, conclusi o no."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "過去の学習も今の学習も、修了したかどうかに関係なく選べます。3つまで選べます。"
+            "value" : "過去のことでも現在のことでも、終わっていてもいなくても。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "예전에 배웠든 지금 배우든, 끝내지 않았어도 괜찮아요. 최대 3개까지 선택하세요."
+            "value" : "과거든 현재든, 끝났든 아니든."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wcześniejsze lub obecne, ukończone lub nie. Wybierz maksymalnie 3."
+            "value" : "Dawniej lub obecnie, ukończone lub nie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudos anteriores ou atuais, concluídos ou não. Escolha até 3."
+            "value" : "No passado ou no presente, concluído ou não."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Daha önce ya da şu anda okuduklarından en fazla 3 tane seç. Bitirmiş olman gerekmez."
+            "value" : "Geçmişte ya da şu anda, tamamlanmış olsun ya da olmasın."
           }
         }
       }
@@ -2393,65 +2393,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sana yardımcı olanları seç."
-          }
-        }
-      }
-    },
-    "Pick up to 3." : {
-      "comment" : "Under the questions whose chips take up to three picks",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wähl bis zu 3 aus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elige hasta 3."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fais jusqu’à 3 choix."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scegli fino a 3 opzioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "3つまで選べます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "최대 3개까지 골라 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wybierz maksymalnie 3."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolha até 3."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En fazla 3 seçim yap."
           }
         }
       }
@@ -2570,6 +2511,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Okudukların"
+          }
+        }
+      }
+    },
+    "Remove %@" : {
+      "comment" : "Removes a tool the learner typed. {tool} is its name, such as Photoshop.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ entfernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirer %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 삭제"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ öğesini kaldır"
           }
         }
       }
