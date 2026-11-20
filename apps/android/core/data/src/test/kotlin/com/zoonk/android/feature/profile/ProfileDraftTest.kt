@@ -160,20 +160,39 @@ class ProfileDraftTest {
 
     @Test
     fun textLeftInTheFieldIsSentAsAdded() {
-        val draft = ProfileDraft(typed = listOf("SAP"), text = " Excel ")
+        val draft = ProfileDraft(typed = listOf("SAP"), text = " Excel, Python ")
         assertTrue(ProfileDraft(text = "Excel").valid(ProfileQuestion.TOOLS))
-        assertEquals("SAP, Excel", favorites(draft))
         val submitted = draft.submitted(tools)
         assertEquals(listOf("excel"), submitted.picks)
-        assertEquals("SAP", favorites(submitted))
+        assertEquals("SAP, Python", favorites(submitted))
     }
 
     @Test
-    fun theFieldStopsAtTheServersLimit() {
+    fun aKeyTypedPastTheServersLimitIsRefused() {
         val full = ProfileDraft(typed = listOf("a".repeat(60), "b".repeat(55)))
         assertEquals(117, favorites(full).length)
-        assertEquals("c", full.typing("c", tools.options).text)
-        assertEquals(full, full.typing("cc", tools.options))
-        assertEquals(full, full.typing("c, d", tools.options))
+        val typed = full.typing("c", tools.options)
+        assertEquals("c", typed.text)
+        assertEquals(typed, typed.typing("cc", tools.options))
+        assertEquals(listOf("a".repeat(60), "b".repeat(55), "c"), typed.typing("c,", tools.options).typed)
+    }
+
+    @Test
+    fun aPasteAddsTheNamesThatFitWholeAndLeavesTheRestInTheField() {
+        val almostFull = ProfileDraft(typed = listOf("a".repeat(100)))
+        val pasted = almostFull.typing("Photoshop, Illustrator, excel, Figma", tools.options)
+        assertEquals(listOf("a".repeat(100), "Photoshop", "Figma"), pasted.typed)
+        assertEquals(listOf("excel"), pasted.picks)
+        assertEquals("Illustrator", pasted.text)
+        assertEquals(118, favorites(pasted).length)
+        assertEquals(pasted, pasted.added(tools.options))
+    }
+
+    @Test
+    fun aLongPasteWithoutSeparatorsStaysInTheFieldWhole() {
+        val full = ProfileDraft(typed = listOf("a".repeat(115)))
+        val name = "Microsoft Dynamics"
+        assertEquals(name, full.typing(name, tools.options).text)
+        assertEquals(full.copy(text = name), full.copy(text = name).added(tools.options))
     }
 }

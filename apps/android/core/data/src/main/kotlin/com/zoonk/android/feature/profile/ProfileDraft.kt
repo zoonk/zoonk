@@ -22,7 +22,7 @@ val OnboardingStep.profileQuestion: ProfileQuestion?
 
 /**
  * One question's answer while the learner edits it. For tools, [typed] holds the tools they added by name and
- * [text] what is still in the field, which counts as added: Continue never loses it.
+ * [text] what is still in the field, which Continue adds as Add does.
  */
 @Serializable
 data class ProfileDraft(
@@ -69,34 +69,41 @@ data class ProfileDraft(
         return copy(picks = next, declined = false, subjects = subjects.filterKeys { it in next })
     }
 
-    /** The typed tools as the server keeps them: split, without repeats, joined with commas. */
-    fun favorites(): String = splitProfileFavorites((typed + text).joinToString(",")).joinToString(", ")
+    /** The typed tools as the server keeps them: joined with commas. */
+    fun favorites(): String = typed.joinToString(", ")
 
     /**
      * The field's text as tools: a name an offered chip shows picks that chip, one already there is ignored,
-     * and any other becomes a typed tool.
+     * and any other becomes a typed tool if it fits the server's limit. A name is added whole or stays in the field.
      */
     fun added(options: List<ProfileQuestionViewOptionsInner>): ProfileDraft {
         var nextPicks = picks
         var nextTyped = typed
+        val left = mutableListOf<String>()
         splitProfileFavorites(text).forEach { name ->
             val offered = options.find { it.label.equals(name, ignoreCase = true) }
             when {
                 offered != null -> if (offered.id !in nextPicks) nextPicks = nextPicks + offered.id
-                nextTyped.none { it.equals(name, ignoreCase = true) } -> nextTyped = nextTyped + name
+                nextTyped.any { it.equals(name, ignoreCase = true) } -> Unit
+                fitsFavorites(nextTyped + name) -> nextTyped = nextTyped + name
+                else -> left += name
             }
         }
-        return copy(picks = nextPicks, typed = nextTyped, text = "", declined = false)
+        return copy(picks = nextPicks, typed = nextTyped, text = left.joinToString(", "), declined = false)
     }
 
-    /** What the tools field shows as the learner types: a separator adds what came before it; past the limit nothing changes. */
+    /**
+     * What the tools field shows as the learner types: a separator adds what came before it. A key typed past the
+     * limit is refused; a paste lands whole, and what of it doesn't fit stays in the field.
+     */
     fun typing(
         value: String,
         options: List<ProfileQuestionViewOptionsInner>,
     ): ProfileDraft {
         val edited = copy(text = value, declined = false)
         val next = if (PROFILE_FAVORITES_SEPARATORS.containsMatchIn(value)) edited.added(options) else edited
-        return if (next.favorites().length > PROFILE_FAVORITES_LIMIT) this else next
+        val keyPastLimit = value.length == text.length + 1 && !fitsFavorites(next.typed + splitProfileFavorites(next.text))
+        return if (keyPastLimit) this else next
     }
 
     fun removing(tool: String): ProfileDraft = copy(typed = typed - tool)
@@ -215,7 +222,9 @@ data class ProfileDraft(
 }
 
 /** The server's longest favorites text, counted after [splitProfileFavorites] and joined with commas. */
-const val PROFILE_FAVORITES_LIMIT = 120
+private const val PROFILE_FAVORITES_LIMIT = 120
+
+private fun fitsFavorites(names: List<String>): Boolean = names.joinToString(", ").length <= PROFILE_FAVORITES_LIMIT
 
 private val PROFILE_FAVORITES_SEPARATORS = Regex("[,;、，\r\n]")
 
