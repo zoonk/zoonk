@@ -48,7 +48,40 @@ type ExpectedFact =
   | { kind: "breakAfter"; minutes: number }
   | { kind: "tools"; mentions: string }
   | { kind: "testedLanguage"; language: string | null }
-  | { kind: "timeLimit"; minutes: number };
+  | { kind: "timeLimit"; minutes: number }
+  | { kind: "session"; mentions: string }
+  | { kind: "sharedClock" }
+  | WrittenTaskFact;
+
+/** A written task as the notice states it; a field left out isn't checked, `null` must be unknown. */
+type WrittenTaskFact = {
+  kind: "writtenTask";
+  count?: number;
+  criterionPoints?: number[];
+  grading?: WrittenGrading["kind"] | null;
+  handwritten?: boolean | null;
+  language?: { factor: number; method: "errorsPerLine" | "perError" | "other" } | null;
+  lines?: number | null;
+  points?: number | null;
+  rounding?: boolean;
+  zeroing?: boolean;
+};
+
+type WrittenGrading = {
+  criteria: { points: number | null }[];
+  kind: "enem" | "levels" | "oab" | "points";
+  language: { factor: number | null; method: string } | null;
+  rounding: unknown;
+  zeroing: unknown[];
+};
+
+type WrittenTask = {
+  count: number;
+  grading?: WrittenGrading | null;
+  handwritten?: boolean | null;
+  lines?: number | null;
+  points?: number | null;
+};
 
 type PointsMinimum = { unit: "percent" | "points"; value: number };
 
@@ -90,7 +123,8 @@ type Reading = {
         > & {
           breakAfterMinutes?: number | null;
           kind?: string;
-          tasks?: { count: number; plays?: number | null }[];
+          session?: string | null;
+          tasks?: (WrittenTask & { plays?: number | null })[];
           tools?: string | null;
         })[];
       })
@@ -243,6 +277,9 @@ function hasFormat({
 
 const MOCK_FACT_KINDS = [
   "breakAfter",
+  "session",
+  "sharedClock",
+  "writtenTask",
   "finalShare",
   "listeningParts",
   "markingRow",
@@ -413,6 +450,65 @@ function isScoringFactFound({
   }
 }
 
+function sameValue<T>(wanted: T | undefined, found: T | null | undefined): boolean {
+  return wanted === undefined || (found ?? null) === wanted;
+}
+
+function hasLanguageRule(fact: WrittenTaskFact, grading: WrittenGrading | null | undefined) {
+  const language = grading?.language ?? null;
+
+  if (fact.language === undefined || fact.language === null) {
+    return fact.language === undefined || language === null;
+  }
+
+  return language?.method === fact.language.method && language.factor === fact.language.factor;
+}
+
+function hasGrading(fact: WrittenTaskFact, grading: WrittenGrading | null | undefined): boolean {
+  const kind = grading?.kind ?? null;
+  const points = grading?.criteria.map((criterion) => criterion.points) ?? [];
+
+  return (
+    (fact.grading === undefined ||
+      kind === fact.grading ||
+      (fact.grading === null && kind === "levels")) &&
+    (fact.criterionPoints === undefined ||
+      JSON.stringify(points) === JSON.stringify(fact.criterionPoints)) &&
+    hasLanguageRule(fact, grading) &&
+    (fact.rounding === undefined || Boolean(grading?.rounding) === fact.rounding) &&
+    (fact.zeroing === undefined || (grading?.zeroing.length ?? 0) > 0 === fact.zeroing)
+  );
+}
+
+function hasWrittenTask({ fact, reading }: { fact: WrittenTaskFact; reading: Reading }): boolean {
+  return (reading.mock?.sections ?? [])
+    .filter((section) => section.kind === "written")
+    .flatMap((section) => section.tasks ?? [])
+    .some(
+      (task) =>
+        sameValue(fact.count, task.count) &&
+        sameValue(fact.lines, task.lines) &&
+        sameValue(fact.points, task.points) &&
+        sameValue(fact.handwritten, task.handwritten) &&
+        hasGrading(fact, task.grading),
+    );
+}
+
+function hasSharedClock(reading: Reading): boolean {
+  const sections = reading.mock?.sections ?? [];
+
+  return sections.some(
+    (written) =>
+      written.kind === "written" &&
+      sections.some(
+        (other) =>
+          other.kind === "objective" &&
+          other.day === written.day &&
+          normalizeString(other.name) === normalizeString(written.name),
+      ),
+  );
+}
+
 function isMockFactFound({ fact, reading }: { fact: MockFact; reading: Reading }): boolean {
   if (isScoringFact(fact)) {
     return isScoringFactFound({ fact, scoring: reading.mock?.scoring ?? null });
@@ -427,6 +523,14 @@ function isMockFactFound({ fact, reading }: { fact: MockFact; reading: Reading }
       return hasListeningParts({ fact, reading });
     case "breakAfter":
       return sections.some((section) => section.breakAfterMinutes === fact.minutes);
+    case "session":
+      return sections.some((section) =>
+        normalizeString(section.session ?? "").includes(normalizeString(fact.mentions)),
+      );
+    case "sharedClock":
+      return hasSharedClock(reading);
+    case "writtenTask":
+      return hasWrittenTask({ fact, reading });
     case "tools":
       return sections.some((section) =>
         normalizeString(section.tools ?? "").includes(normalizeString(fact.mentions)),
