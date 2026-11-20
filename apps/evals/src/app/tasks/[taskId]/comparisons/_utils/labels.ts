@@ -47,7 +47,7 @@ export function findingLabel(finding: string): string {
 }
 
 export function familyLabel(family: string): string {
-  return family in FAMILY_LABELS ? FAMILY_LABELS[family as Reader["family"]] : family;
+  return FAMILY_LABELS[family] ?? family;
 }
 
 export function modelName(model: string): string {

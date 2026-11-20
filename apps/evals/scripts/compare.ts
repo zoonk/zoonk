@@ -2,7 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { checkRuns } from "@/lib/comparisons/checks";
-import { decide, decisionSchema } from "@/lib/comparisons/decision";
+import { decide, decisionSchema, decisiveUnresolved } from "@/lib/comparisons/decision";
+import { confirmForecast, forecastReads } from "@/lib/comparisons/forecast";
 import { importVerdicts, ownerPackets, saveResponse } from "@/lib/comparisons/packets";
 import { prepare } from "@/lib/comparisons/prepare";
 import { imageContent, readPacket } from "@/lib/comparisons/readers";
@@ -41,6 +42,9 @@ const usage = `Usage: pnpm --filter evals eval:compare --task <task> --id <id> [
   --case <id>              Limit to a case (repeatable)
   --runs <n>               Runs per case (default 2)
   --reader <channel:model> A reader such as seat:anthropic/claude-haiku-5.5 (repeatable, one per family)
+  --reserve <model|none>   Choose the reserve gateway model when sealing, or skip reserve reads
+  --reserve-cap <n>        Maximum reserve calls across attempts in this comparison
+  --seal-only              Freeze and seal saved outputs for free, without generation or reads
   --bank <name>            Control bank in eval-results/controls (default: the task id)
   --question <text>        The question the comparison answers
   --limit-usd <amount>     Stop when the forecast passes this amount (default 1)
@@ -72,8 +76,11 @@ const { values: options } = parseArgs({
     packet: string,
     question: string,
     reader: multiple,
+    reserve: string,
+    "reserve-cap": string,
     runs: string,
     "saved-only": flag,
+    "seal-only": flag,
     "stop-after": string,
     task: string,
   },
@@ -91,6 +98,12 @@ const dir = directory(taskId, id);
 const attempt = identifier.parse(options.attempt ?? "first");
 globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
 
+const limit = z.coerce
+  .number()
+  .nonnegative()
+  .parse(options["limit-usd"] ?? 1);
+
+const reserveCap = z.coerce.number().int().nonnegative().optional().parse(options["reserve-cap"]);
 const current = () => loadComparison(taskId, id);
 
 function readers(image: boolean) {
@@ -98,13 +111,6 @@ function readers(image: boolean) {
     `${image ? "gateway" : "seat"}:anthropic/claude-haiku-5.5`,
     "gateway:openai/gpt-6-luna",
   ];
-
-  if (
-    [options.incumbent, options.challenger].some((model) => model?.startsWith("openai/")) &&
-    [options.incumbent, options.challenger].some((model) => model?.startsWith("anthropic/"))
-  ) {
-    defaultReaders.push("gateway:google/gemini-4-neon");
-  }
 
   const selected = (options.reader ?? defaultReaders).map((raw) => {
     const [channel, model] = raw.split(":");
@@ -118,12 +124,6 @@ function readers(image: boolean) {
     throw new Error(
       "Specify one model reader per family. The owner packet is added automatically.",
     );
-  }
-
-  if (
-    selected.some((reader) => reader.family === "google" && reader.model !== "google/gemini-4-neon")
-  ) {
-    throw new Error("Use Gemini 4 Neon for the Google reader.");
   }
 
   if (
@@ -214,6 +214,12 @@ async function exchange(manifest: Manifest) {
 }
 
 async function readOne(packet: SealedPacket, { manifest, outputs }: Comparison) {
+  if (packet.reader.reserve) {
+    await fs.writeFile(path.join(dir, "reserve-reads", `${packet.id}-${attempt}`), "", {
+      flag: "wx",
+    });
+  }
+
   const { pairs, ...header } = packet.packet;
 
   const { response, costUsd, channel } = await readPacket({
@@ -241,12 +247,34 @@ async function readOne(packet: SealedPacket, { manifest, outputs }: Comparison) 
   );
 }
 
+async function reserveStarts(comparison: Comparison) {
+  const folder = path.join(dir, "reserve-reads");
+  await fs.mkdir(folder, { recursive: true });
+  const started = new Set(await fs.readdir(folder));
+
+  for (const record of comparison.attempts.filter((entry) => entry.reader.reserve)) {
+    started.add(`${record.packetId}-${record.attempt}`);
+  }
+
+  return started;
+}
+
 async function readOrder(reverse: boolean, reserve = false) {
   const comparison = await loadComparison(taskId, id);
   const { manifest } = comparison;
+  const decisive = reserve ? new Set(decisiveUnresolved(comparison)) : null;
   const unresolved = decide(comparison).cases.filter((entry) => entry.result === "unresolved");
 
+  const started = reserve ? await reserveStarts(comparison) : new Set<string>();
+
   const pending = manifest.packets.filter((packet) => {
+    if (
+      decisive &&
+      (!decisive.has(packet.mapping[0]?.caseId ?? "") || started.has(`${packet.id}-${attempt}`))
+    ) {
+      return false;
+    }
+
     if (Boolean(packet.reader.reserve) !== reserve) {
       return false;
     }
@@ -267,14 +295,27 @@ async function readOrder(reverse: boolean, reserve = false) {
     );
   });
 
-  const first = pending.at(0);
+  const cap = reserveCap ?? manifest.reserveCap;
+
+  const used = started.size;
+
+  const available =
+    reserve && cap !== undefined ? pending.slice(0, Math.max(0, cap - used)) : pending;
+
+  const first = available.at(0);
 
   if (options["stop-after"] === "packet" && first) {
     await readOne(first, comparison);
     return true;
   }
 
-  await runInOrder(pending, (packet) => readOne(packet, comparison));
+  await runInOrder(available, async (packet) => {
+    if (reserve && !decisiveUnresolved(await current()).includes(packet.mapping[0]?.caseId ?? "")) {
+      return;
+    }
+
+    await readOne(packet, comparison);
+  });
 
   return false;
 }
@@ -290,37 +331,77 @@ async function getManifest() {
     bank: options.bank ?? task.id,
     caseIds: options.case ?? [],
     challenger: options.challenger ?? "",
-    confirm: options.confirm ?? false,
-    generate: !options["saved-only"],
+    confirm: Boolean(options.confirm || options["seal-only"]),
+    generate: !options["saved-only"] && !options["seal-only"],
     id,
     incumbent: options.incumbent,
-    limit: z.coerce
-      .number()
-      .nonnegative()
-      .parse(options["limit-usd"] ?? 1),
+    limit,
     question: options.question ?? "Which variant better serves the learner?",
     readers: readers(task.output === "image"),
+    reserve: options.reserve,
+    reserveCap,
     runs: z.coerce
       .number()
       .int()
       .positive()
       .parse(options.runs ?? 2),
+    sealOnly: options["seal-only"],
     stopAfterFreeze: options["stop-after"] === "freeze",
     task,
   });
 }
 
-async function run() {
-  const manifest =
-    (await readOptional(path.join(dir, "manifest.json"), manifestSchema)) ?? (await getManifest());
+async function forecastFirstRead(manifest: Manifest) {
+  const comparison = await current();
 
-  if (!manifest || options["stop-after"] === "seal") {
+  if (comparison.attempts.some((record) => record.reader.channel !== "owner")) {
     return;
   }
+
+  const selected = manifest.readers.filter(
+    (reader) => !reader.reserve || options.reserve !== "none",
+  );
+
+  const byReader = await forecastReads(
+    { ...manifest, readers: selected, reserveCap: reserveCap ?? manifest.reserveCap },
+    manifest.runsCompared,
+    new Map(Object.entries(comparison.outputs)),
+    Boolean(manifest.variants.incumbent),
+    false,
+  );
+
+  confirmForecast(byReader, 0, limit, false);
+}
+
+function checkReserveModel(manifest: Manifest) {
+  if (
+    options.reserve &&
+    options.reserve !== "none" &&
+    !manifest.readers.some((reader) => reader.reserve && reader.model === options.reserve)
+  ) {
+    throw new Error(
+      "The chosen reserve model differs from this sealed comparison. Start a new comparison to change readers.",
+    );
+  }
+}
+
+async function run() {
+  const sealed = await readOptional(path.join(dir, "manifest.json"), manifestSchema);
+  const manifest = sealed ?? (await getManifest());
+
+  if (!manifest || options["seal-only"] || options["stop-after"] === "seal") {
+    return;
+  }
+
+  checkReserveModel(manifest);
 
   if (options.export || options.import) {
     await exchange(manifest);
     return;
+  }
+
+  if (sealed && !options.confirm && options["stop-after"] !== "checks") {
+    await forecastFirstRead(sealed);
   }
 
   if (!(await readOptional(path.join(dir, "checks-complete.json"), z.literal(true)))) {
@@ -346,7 +427,11 @@ async function run() {
   ) {
     const interrupted = await readOrder(false);
 
-    if (interrupted || (await readOrder(true)) || (await readOrder(true, true))) {
+    if (
+      interrupted ||
+      (await readOrder(true)) ||
+      (options.reserve !== "none" && (await readOrder(true, true)))
+    ) {
       return;
     }
 

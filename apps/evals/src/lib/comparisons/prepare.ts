@@ -3,14 +3,14 @@ import { isDeepStrictEqual } from "node:util";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import z from "zod";
 import { getTestCaseLanguage } from "../case-languages";
-import { getCallCost, getRunCost } from "../cost";
+import { getRunCost } from "../cost";
 import { generateComparisonRun } from "../output-generator";
 import { type RegisteredTask } from "../types";
+import { confirmForecast, forecastReads } from "./forecast";
 import { hash, hashJson, promptHash } from "./identity";
 import { buildPackets } from "./packets";
 import readerProtocol from "./protocols/reader.md";
 import verifierProtocol from "./protocols/verifier.md";
-import { pricesFor } from "./reader-prices";
 import {
   type Reader,
   controlsSchema,
@@ -43,6 +43,9 @@ export type PrepareOptions = {
   generate: boolean;
   question: string;
   stopAfterFreeze: boolean;
+  reserve?: string;
+  reserveCap?: number;
+  sealOnly?: boolean;
 };
 export async function prepare(options: PrepareOptions) {
   const dir = directory(options.task.id, options.id);
@@ -57,6 +60,12 @@ export async function prepare(options: PrepareOptions) {
 
   if (options.stopAfterFreeze) {
     return null;
+  }
+
+  if (options.sealOnly && frozen.generate && frozen.slots.some((run) => !run.challenger)) {
+    throw new Error(
+      "This selection requires generation. Use a new comparison ID to seal only saved outputs.",
+    );
   }
 
   const runsCompared = await frozen.slots.reduce(
@@ -163,7 +172,12 @@ async function freeze(options: PrepareOptions) {
 
   assertOutputType({ challenger, image, incumbent, readers: options.readers });
 
-  const readers = withReserve(options.readers, challenger.model.id, incumbent?.model.id);
+  const readers = withReserve(
+    options.readers,
+    challenger.model.id,
+    incumbent?.model.id,
+    options.reserve,
+  );
 
   const selection = plannedSelection.parse({
     cases,
@@ -177,6 +191,7 @@ async function freeze(options: PrepareOptions) {
     protocols: { reader: readerProtocol, verifier: verifierProtocol },
     question: options.question,
     readers,
+    reserveCap: options.reserveCap,
     runs: options.runs,
     taskId: task.id,
     variants: { challenger: challenger.variant, incumbent: incumbent?.variant ?? null },
@@ -243,48 +258,11 @@ async function freeze(options: PrepareOptions) {
     slots,
   });
 
-  const inputTokens =
-    (image ? 6 * 2000 : Math.max(1000, ...[...blobs.values()].map((slot) => slot.length))) +
-    JSON.stringify(selection.controls).length +
-    JSON.stringify(selection.criteria).length;
+  const byReader = options.sealOnly
+    ? []
+    : await forecastReads(selection, slots, blobs, Boolean(incumbent), options.generate);
 
-  const prices = await pricesFor(
-    readers.filter((reader) => reader.channel !== "owner").map((reader) => reader.model),
-  );
-
-  const byReader = readers.map((reader) => ({
-    estimatedUsd:
-      reader.channel === "owner"
-        ? 0
-        : slots.length *
-          getCallCost({
-            modelId: reader.model,
-            prices,
-            usage: { inputTokens, outputTokens: 3000 },
-          }),
-    packets: reader.channel === "owner" ? selection.cases.length : slots.length,
-    reader,
-  }));
-
-  const usd =
-    (generation ?? 0) +
-    byReader.reduce((accumulator, record) => accumulator + record.estimatedUsd, 0);
-
-  process.stdout.write(
-    `${JSON.stringify({
-      forecast: {
-        byReader,
-        conditional:
-          "Includes reserve-reader allowance. Reverse reads, answer-key solves and verification are conditional.",
-        generation,
-        initialGatewayUsd: usd,
-      },
-    })}\n`,
-  );
-
-  if ((generation === null || usd > options.limit) && !options.confirm) {
-    throw new Error("Forecast exceeds --limit-usd. Confirm with --confirm.");
-  }
+  confirmForecast(byReader, generation, options.limit, options.confirm);
 
   const dir = directory(task.id, options.id);
 
@@ -414,20 +392,25 @@ async function generateSlot({
   }
 }
 
-function withReserve(requested: Reader[], challenger: string, incumbent?: string) {
+function withReserve(
+  requested: Reader[],
+  challenger: string,
+  incumbent?: string,
+  reserve?: string,
+) {
   const families = new Set([challenger, incumbent].map((model) => model?.split("/")[0]));
 
   const mandatoryNeon = families.has("openai") && families.has("anthropic");
 
-  return requested.some((reader) => reader.family === "google")
+  return reserve === "none" || (!reserve && requested.some((reader) => reader.family === "google"))
     ? requested
     : [
         ...requested,
         {
           channel: "gateway",
-          family: "google",
-          model: "google/gemini-4-neon",
-          reserve: !mandatoryNeon,
+          family: reserve ? identifier.parse(reserve.split("/")[0]) : "google",
+          model: reserve ?? "google/gemini-4-neon",
+          reserve: Boolean(reserve) || !mandatoryNeon,
         } as const,
       ];
 }

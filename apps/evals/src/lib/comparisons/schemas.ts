@@ -8,7 +8,7 @@ const label = z.enum(["A", "B"]);
 const preference = z.enum(["A", "B", "tie"]);
 export const readerSchema = z.object({
   channel: z.enum(["seat", "gateway", "owner"]),
-  family: z.enum(["anthropic", "openai", "google", "owner"]),
+  family: identifier,
   model: text,
   reserve: z.boolean().optional(),
 });
@@ -130,6 +130,7 @@ export const selectionSchema = z.object({
   protocols: z.object({ reader: text, verifier: text }),
   question: text,
   readers: z.array(readerSchema),
+  reserveCap: z.int().nonnegative().optional(),
   runs: z.int().positive(),
   taskId: identifier,
   variants: z.object({ challenger: variantSchema, incumbent: variantSchema.nullable() }),

@@ -185,7 +185,6 @@ export async function source(taskId: string, spec: string): Promise<Source> {
 
   const image = model.kind === "image";
 
-
   const imagePaths = image
     ? outputs.map((entry) => imagePathSchema.parse(JSON.parse(entry.output)).imagePath)
     : [];
