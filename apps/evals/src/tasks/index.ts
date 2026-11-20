@@ -104,6 +104,7 @@ import { wordIpaTask } from "./word-ipa/task";
 import { workFieldTask } from "./work-field/task";
 import { writeItemSetTask } from "./write-item-set/task";
 import { writeListeningSetTask } from "./write-listening-set/task";
+import { writeWritingPromptTask } from "./write-writing-prompt/task";
 
 export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTask[] }[] = [
   {
@@ -196,6 +197,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       solveItemsTask,
       writeListeningSetTask,
       writeItemSetTask,
+      writeWritingPromptTask,
       pastQuestionsTask,
       gradeTypedAnswerTask,
       gradeEssayTask,
