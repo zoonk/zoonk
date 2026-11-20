@@ -71,6 +71,7 @@ async function prepareGoalSupply({
   }
 }
 
+/** Started through `startMockSupply`; tests run it directly. @internal */
 export async function mockSupplyWorkflow(input: SupplyRequest & { ask?: SupplyAsk }) {
   "use workflow";
   const { workflowRunId } = getWorkflowMetadata();
