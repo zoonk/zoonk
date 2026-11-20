@@ -1,17 +1,25 @@
 import { type Decision, decisionSchema } from "./decision-schema";
 import { deliveryTable } from "./delivery-table";
-import { acceptedReads, caseVotes, readerRecords, verifiedClaims } from "./evidence";
+import { acceptedReads, caseVotes, readerRecords, settle, verifiedClaims } from "./evidence";
 import { type Comparison } from "./schemas";
 
 export { decisionSchema, type Decision } from "./decision-schema";
 export { majorClaims } from "./evidence";
 export function decide(comparison: Comparison): Decision {
+  return decisionWith(
+    comparison,
+    caseVotes(comparison, acceptedReads(comparison)),
+    verifiedClaims(comparison),
+  );
+}
+
+type Claims = ReturnType<typeof verifiedClaims>;
+type Cases = ReturnType<typeof caseVotes>;
+
+function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Decision {
   const { manifest } = comparison;
   const rules = manifest.priorities.comparison;
-  const reads = acceptedReads(comparison);
-  const cases = caseVotes(comparison, reads);
-  const readers = readerRecords(comparison, reads);
-  const claims = verifiedClaims(comparison);
+  const readers = readerRecords(comparison, acceptedReads(comparison));
   const rows = deliveryTable(comparison, cases, claims);
   const missing = rows.some((row) => row.missingMatches > 0);
   const languages = [...new Set(cases.map((item) => item.language))];
@@ -57,6 +65,152 @@ export function decide(comparison: Comparison): Decision {
 
   return decisionSchema.parse({ cases, readers, rows: classified, ...choice });
 }
+export function decisiveClaims(comparison: Comparison) {
+  const cases = caseVotes(comparison, acceptedReads(comparison));
+  const claims = verifiedClaims(comparison);
+  const rules = comparison.manifest.priorities.comparison;
+
+  const pending = claims.filter(
+    (claim) => claim.finding === "unsure" && rules?.criteria[claim.observation.criterion],
+  );
+
+  if (!comparison.manifest.variants.incumbent || !rules || pending.length === 0) {
+    return [];
+  }
+
+  const table = deliveryTable(comparison, cases, claims);
+
+  const hard = pending.filter(
+    (claim) =>
+      rules.criteria[claim.observation.criterion] === "disqualifies" &&
+      table.some((row) => row.status !== "disqualified"),
+  );
+
+  if (hard.length > 0) {
+    return hard;
+  }
+
+  const affected = (subject: "incumbent" | "challenger", caseId: string) =>
+    table
+      .find((row) => row.side === subject)
+      ?.quality.some(
+        (metric) =>
+          rules.criteria[metric.criterion] === "counts" && metric.affected.includes(caseId),
+      );
+
+  const potential = (favored: "incumbent" | "challenger") =>
+    claims.map((claim) => {
+      if (claim.finding !== "unsure") {
+        return claim;
+      }
+
+      if (claim.side !== favored) {
+        return { ...claim, finding: "holds" as const };
+      }
+
+      return {
+        ...claim,
+        finding: affected(favored, claim.caseId)
+          ? ("holds for both" as const)
+          : ("doesn't hold" as const),
+      };
+    });
+
+  const best = potential("challenger");
+  const worst = potential("incumbent");
+
+  const outcomes = [best, worst, claims].map(
+    (scenario) => decisionWith(comparison, cases, scenario).outcome,
+  );
+
+  if (new Set(outcomes).size === 1) {
+    return [];
+  }
+
+  const scenarios = [best, worst].map((scenario) => deliveryTable(comparison, cases, scenario));
+  const languages = new Set(cases.map((item) => item.language));
+
+  const decisive = new Set(
+    [...languages].filter((language) => {
+      const bounds = scenarios.map(
+        ([incumbent, challenger]) =>
+          incumbent &&
+          challenger &&
+          evaluateTrades({
+            cases,
+            challenger,
+            incumbent,
+            languages: [language],
+            pending: [],
+            rules,
+          })?.outcome,
+      );
+
+      return bounds[0] !== bounds[1];
+    }),
+  );
+
+  return pending.filter(
+    (claim) =>
+      cases.some((item) => item.caseId === claim.caseId && decisive.has(item.language)) &&
+      !(affected("incumbent", claim.caseId) && affected("challenger", claim.caseId)),
+  );
+}
+
+export function decisiveUnresolved(comparison: Comparison) {
+  const cases = caseVotes(comparison, acceptedReads(comparison));
+  const unresolved = cases.filter((item) => item.result === "unresolved");
+
+  if (unresolved.length === 0) {
+    return [];
+  }
+
+  const claims = verifiedClaims(comparison);
+  const current = decisionWith(comparison, cases, claims);
+
+  const reserve = comparison.manifest.readers.find((reader) => reader.reserve);
+
+  if (!reserve) {
+    return [];
+  }
+
+  const possibilities = new Map(
+    unresolved.map((item) => {
+      const votes = Object.entries(item.votes)
+        .filter(([family]) => family !== reserve.family)
+        .map(([, vote]) => vote);
+
+      const results = (["incumbent", "challenger", "tie"] as const)
+        .map((vote) => settle([...votes, vote]))
+        .filter((vote) => vote !== "unresolved");
+
+      return [item.caseId, results] as const;
+    }),
+  );
+
+  const matters = (["incumbent", "challenger"] as const).some((direction) => {
+    const scenario = cases.map((item) => {
+      const outcomes = possibilities.get(item.caseId);
+
+      if (!outcomes?.length) {
+        return item;
+      }
+
+      const best = outcomes.includes(direction)
+        ? direction
+        : (outcomes.find((vote) => vote === "tie") ?? outcomes[0]);
+
+      return { ...item, result: best ?? item.result };
+    });
+
+    return decisionWith(comparison, scenario, claims).outcome !== current.outcome;
+  });
+
+  return matters
+    ? [...possibilities].filter(([, values]) => values.length > 0).map(([id]) => id)
+    : [];
+}
+
 type Facts = {
   manifest: Comparison["manifest"];
   rows: Decision["rows"];

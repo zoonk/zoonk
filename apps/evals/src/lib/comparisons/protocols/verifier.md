@@ -27,3 +27,5 @@ Portuguese outputs are read as a Brazilian reader reads them.
 ## Answer
 
 Return one result per claim, with its `claimId`, in the format you're given, and nothing else.
+
+When a pair carries several claims, check them together against the same written expectation. If both sides are accused of the same omission and both omit it, return `holds for both` for each claim and identify what you found in each output.
