@@ -538,6 +538,29 @@ describe("mocks taken any time", () => {
     ).resolves.toStrictEqual({ status: "preparing" });
   });
 
+  it("keeps today's paper available before the learner's first on-demand mock", async () => {
+    const { blockId, goal } = await scheduledMockSetup();
+
+    const items = await prisma.item.findMany({
+      take: 12,
+      where: { examBlueprintId: goal.examBlueprintId },
+    });
+
+    await prisma.item.updateMany({
+      data: { retiredAt: SESSION_NOW },
+      where: { examBlueprintId: goal.examBlueprintId, id: { notIn: items.map((item) => item.id) } },
+    });
+
+    await expect(
+      startAnytimeMock({
+        goalId: goal.id,
+        input: { shape: { area: null, day: null, kind: "half" } },
+      }),
+    ).resolves.toStrictEqual({ status: "preparing" });
+
+    await expect(startMock({ blockId, input: {} })).resolves.toStrictEqual({ status: "ready" });
+  });
+
   it("protects the next two scheduled papers, then uses the oldest compatible repeats", async () => {
     const { goal, plan, skills, user } = await anytimeSetup({ itemsPerSkill: 10 });
 

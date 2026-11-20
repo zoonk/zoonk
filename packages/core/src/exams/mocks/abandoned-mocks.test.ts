@@ -149,7 +149,8 @@ describe("a mock whose time ran out while the learner was away", () => {
   });
 
   it("leaves a mock taken any time out of the exam's entry, so a new one starts afresh", async () => {
-    const { goal } = await scheduledMockSetup();
+    const { goal, mockItem } = await scheduledMockSetup();
+    await prisma.planItem.update({ data: { status: "done" }, where: { id: mockItem.id } });
     const first = await startAnytime(goal.id);
 
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
