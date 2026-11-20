@@ -160,13 +160,19 @@ struct FarTopicSheet: View {
   private func follow(_ outline: Resource<SkillOutline>) async {
     while !Task.isCancelled {
       try? await Task.sleep(for: .seconds(4))
+      let revision = outline.revision
       await outline.refresh()
 
-      if outline.value?.status == "ready" {
-        request = .idle
+      guard outline.revision != revision, let status = outline.value?.status, status != "writing"
+      else { continue }
+
+      request = .idle
+
+      if status == "ready" {
         store.cache.invalidate([.goals])
-        return
       }
+
+      return
     }
   }
 

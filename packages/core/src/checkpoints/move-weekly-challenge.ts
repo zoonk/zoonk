@@ -21,7 +21,7 @@ type WeeklyChallengeMove = { changeId: string | null; date: string };
 export type MoveWeeklyChallengeResult =
   | { move: WeeklyChallengeMove; status: "moved" }
   | PlanChangeRefusal
-  | { status: "notFound" | "notMovable" | "unauthorized" };
+  | { status: "conflict" | "notFound" | "notMovable" | "unauthorized" };
 
 export type UndoWeeklyChallengeMoveResult =
   | { status: "undone" }

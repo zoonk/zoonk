@@ -12994,6 +12994,7 @@ msgstr "Practice {minutes} min"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "Get lessons"
@@ -13026,12 +13027,6 @@ msgid "What changed"
 msgstr "What changed"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "Get them now"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Your next lessons"
@@ -13042,12 +13037,6 @@ msgstr "Your next lessons"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "Not ready yet"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "Taking longer than usual"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13088,21 +13077,6 @@ msgstr "Your next lessons are below if you want to study."
 msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "Enjoy your day off!"
-
-#: src/today/today-day-status.tsx
-msgctxt "N-0-Mq"
-msgid "Your mock exam is being prepared."
-msgstr "Your mock exam is being prepared."
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "Today's lessons are taking longer than usual."
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "Come back in a few minutes."
 
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"

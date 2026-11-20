@@ -1804,7 +1804,7 @@
             }
           },
           "409": {
-            "description": "It isn't a weekly challenge, it started, or its day is past",
+            "description": "It isn't a weekly challenge, it started, or its day is past. PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -2337,7 +2337,7 @@
             }
           },
           "409": {
-            "description": "It already started, or isn't a weekly challenge",
+            "description": "It already started, or isn't a weekly challenge. PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -3536,7 +3536,7 @@
     },
     "/goals/{goalId}/lesson-preparations": {
       "post": {
-        "description": "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion, onboarding's schedule answer and plan changes prepare them on the server, so call it only from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never after those writes or on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
+        "description": "Gets a goal's next lessons written: today's next lessons and the next study day's first ones, as many as the learner's plan writes ahead, outlining a topic first when it has no lessons yet. Placement's completion, onboarding's schedule answer, plan changes and lesson starts and finishes prepare them on the server, so call it only from the learner's tap on Today's Get lessons, offered while the day's `state` is `prepare` (with or without blocks; the next read says `lessonsComing`), never after those writes or on a screen view. For a guest only their next lesson is written, counted as a lesson start.",
         "operationId": "createGoalLessonPreparation",
         "security": [
           {
@@ -3911,7 +3911,7 @@
     },
     "/study-sessions/{sessionId}/preparations": {
       "post": {
-        "description": "Prepares content around one of the learner's study sessions: every lesson of this session and the next gets written in the background. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest only the lesson they reach next is written, counted as its start like opening it.",
+        "description": "Prepares content around one of the learner's study sessions: the learner’s lookahead window of lessons is prepared around this session and the next study day. Starting a block, the first stop and the session's end prepare it on the server, so call it only when the learner opens a block without starting it, such as a plan placeholder whose lesson isn't picked yet, never on a screen view. For a guest only the next pending lesson today is written, counted as a lesson start.",
         "operationId": "createStudySessionPreparation",
         "security": [
           {
@@ -5124,6 +5124,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -15776,6 +15786,16 @@
               }
             }
           },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "422": {
             "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date. TARGET_REGION_NOT_OFFERED: the `targetRegion` isn't one of the goal's `regionChoices`, or the goal isn't a language goal. Nothing was saved. CONTENT_COUNTRY_NOT_OFFERED: content countries cannot be changed on exam or language goals.",
             "content": {
@@ -16532,6 +16552,16 @@
               }
             }
           },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "422": {
             "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date.",
             "content": {
@@ -16769,6 +16799,16 @@
               }
             }
           },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -16875,6 +16915,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -17568,6 +17618,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -19306,7 +19366,7 @@
     },
     "/goals/{goalId}/skills/{skillId}/outline": {
       "get": {
-        "description": "A topic of the goal's plan as its lesson plan stands. The plan writes each topic's lessons ahead for the next two weeks; a topic further away shows what the plan knows (its lesson count and first day on the Journey and the syllabus) until its course is outlined. `ready` lists the chapters that teach it; `writing` means its course's outline is being written; `available` means nothing is written yet, and POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now. A skill outside the goal's plan isn't found.",
+        "description": "A topic of the goal's plan as its lesson plan stands. The plan writes each topic's lessons ahead for the next two weeks; a topic further away shows what the plan knows (its lesson count and first day on the Journey and the syllabus) until its course is outlined. `ready` lists the chapters that teach it; `writing` means the learner asked for it and it's being written; `available` means nothing is written yet, and POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now. A skill outside the goal's plan isn't found.",
         "operationId": "getSkillOutline",
         "security": [
           {
@@ -19402,7 +19462,7 @@
     },
     "/goals/{goalId}/skills/{skillId}/outline/generations": {
       "post": {
-        "description": "Writes a far topic's lesson plan when the learner asks to see it (never on a screen view). `ready` when its chapters exist. Otherwise the outline of its course's level band is written (its other topics in the plan come with it, the chapter teaching this one first, about half a minute) and the answer is 202; it's shared Library content, so the next learner of the course gets it free. A request while its course is being outlined starts nothing and is 202 without a `generationId`. A new one counts once per topic toward the learner's lesson plans (`resource: outline`: three a day and ten a month on the free plan, one for a guest, fair use with Plus), so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+        "description": "Writes a far topic's lesson plan when the learner asks to see it (never on a screen view). `ready` when its chapters exist. Otherwise the outline of its course's level band is written (its other topics in the plan come with it, the chapter teaching this one first, about half a minute) and the answer is 202; it's shared Library content, so the next learner of the course gets it free. Another request while the learner's last one for the topic is still being written starts nothing and is 202 without a `generationId`; another learner's outline running on the same course doesn't hold it back. A new one counts once per topic toward the learner's lesson plans (`resource: outline`: three a day and ten a month on the free plan, one for a guest, fair use with Plus), so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
         "operationId": "createSkillOutlineGeneration",
         "security": [
           {
@@ -20619,6 +20679,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -86237,7 +86307,7 @@
           "mockAndReview",
           "lightReview"
         ],
-        "description": "What a day of a plan for a test days away is for: the exam map and gaps, practice, a class test's short mock, or a public exam's light review"
+        "description": "What a day of a plan for a test days away is for: the exam map and gaps, practice, a public exam's mock then practice, the mock alone (`mockAndReview`: a class test's short mock, or a public exam's mock when it is the whole practice phase), or a public exam's light review"
       },
       "PlanMockSchedule": {
         "nullable": true,
@@ -88903,7 +88973,7 @@
               "writing",
               "ready"
             ],
-            "description": "`ready`: its chapters exist. `writing`: its course's outline is being written, or was just asked for; read it again every few seconds (about half a minute for the first chapter). `available`: nothing is written yet; POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now, or the plan writes it as it gets close"
+            "description": "`ready`: its chapters exist. `writing`: the learner asked for it and it's being written; read it again every few seconds (about half a minute for the first chapter), and it's `ready` once written or `available` again if that ended without its chapters. `available`: nothing is written yet; POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now, or the plan writes it as it gets close"
           }
         },
         "required": [
@@ -88945,7 +89015,7 @@
               "ready",
               "writing"
             ],
-            "description": "`ready`: GET the topic's outline now. `writing`: GET it every few seconds until it's `ready` (about half a minute for the topic's first chapter)"
+            "description": "`ready`: GET the topic's outline now. `writing`: GET it every few seconds until it's no longer `writing` (about half a minute for the topic's first chapter)"
           }
         },
         "required": [
@@ -93243,7 +93313,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (the goal's lesson preparation writes them when the learner asks for it, never on its own; the next read says `lessonsComing`), `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and no preparation is in progress, `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -93333,13 +93403,33 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "lessonPlaceholder": {
+            "description": "The first topic in plan order whose outline still owes lessons the day reserves time for. The title is the plan item's title and minutes is its allocation on this day. Null when the day holds no time for an unwritten topic.",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "minutes": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "minutes",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "lessonsComing": {
             "type": "boolean",
             "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again). False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "lessonsToPrepare": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: the goal's lesson preparation writes them when the learner asks for it, never on its own, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons that aren't written while no preparation is in progress. False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
@@ -93395,7 +93485,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons or scheduled mock are being prepared; see `waitingFor`), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined, or its scheduled mock is being prepared; see `waitingFor` and read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -93551,7 +93641,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (the goal's lesson preparation writes them when the learner asks for it, never on its own; the next read says `lessonsComing`), `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and no preparation is in progress, `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -93636,13 +93726,33 @@
             ],
             "additionalProperties": false
           },
+          "lessonPlaceholder": {
+            "description": "The first topic in plan order whose outline still owes lessons the day reserves time for. The title is the plan item's title and minutes is its allocation on this day. Null when the day holds no time for an unwritten topic.",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "minutes": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "minutes",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "lessonsComing": {
             "type": "boolean",
             "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again). False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "lessonsToPrepare": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: the goal's lesson preparation writes them when the learner asks for it, never on its own, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons that aren't written while no preparation is in progress. False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
@@ -93685,7 +93795,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons or scheduled mock are being prepared; see `waitingFor`), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined, or its scheduled mock is being prepared; see `waitingFor` and read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",

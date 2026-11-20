@@ -1,6 +1,7 @@
 import "server-only";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { followPlanChangeToday } from "../../sessions/_utils/refresh-day-session";
+import { unlessPlanConflict } from "../plan-conflict";
 import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 
@@ -11,14 +12,17 @@ export async function followPlanToday({
   changeId?: string | null;
   context: PlanContext;
 }): Promise<void> {
-  const refresh = await followPlanChangeToday({
-    goalId: context.goal.id,
-    localDate: context.today,
-    timeZone: context.timeZone,
-    userId: context.goal.userId,
-  });
+  // The change is saved by now; a day that lost to a newer plan write catches up when it's opened.
+  const refresh = await unlessPlanConflict(() =>
+    followPlanChangeToday({
+      goalId: context.goal.id,
+      localDate: context.today,
+      timeZone: context.timeZone,
+      userId: context.goal.userId,
+    }),
+  );
 
-  if (!changeId || refresh === "notBuilt" || refresh === "same") {
+  if (!changeId || refresh === null || refresh === "notBuilt" || refresh === "same") {
     return;
   }
 
