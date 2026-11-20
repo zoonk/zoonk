@@ -6,7 +6,7 @@ A post image shows one moment of one feature, made from the app's real component
 
 1. **The ground is the app's own background**, light or black, with one soft light on it (`stage.light(x, y)`). No card, no frame, no colored ground.
 2. **One real component in focus**, at the app's wide layout: the narrowest width that gives its composed layout (660 px makes the goal box one line). Scale it until its key line is at least 40 px tall on the 1600 px image, about 10 px in a feed. It is always whole: never cut through the thing being shown.
-3. **One quieter layer behind it**, related to it: what the sentence becomes, what the button leads to, the week around the day. It sits lower in contrast and leaves the frame through a fade (`stage.fade`), so the bleed reads as depth.
+3. **One quieter layer behind it**, related to it: what the sentence becomes, what the button leads to, the week around the day. It sits lower in contrast and leaves the frame through a fade (`stage.fade(piece, "bottom", 0.7)` starts fading at 70% of the frame and is gone just before the edge), so the bleed reads as depth.
 4. **One sign of a moment:** a caret after the last letter (`field`), or a finger on what is about to be pressed (`stage.touch`).
 5. **Interface and ground in the same theme.** Never a light card on black; the stage renders both schemes from one scene.
 6. **No words on top.** The interface's own words carry the image; the post's text does the rest.
@@ -33,5 +33,6 @@ Narrow a try with `--langs en --formats 16x9 --schemes light`. Each image render
 ## Checking
 
 - Look at every image at full size and at 400 px wide, in both languages and both schemes. A contact sheet of all of them at 400 px is the feed check.
-- Every word inside the frame, every layer behind leaving through its fade, nothing cut at an edge, no English in a Portuguese image.
+- The stage refuses an image that cuts what it shows: the render fails, naming the piece and the edge, when a crop slices words or when what a piece shows meets an edge of the frame without its own fade. Fix the layout, not the check; and look anyway, since a layout can pass and still be unbalanced.
+- Every word inside the frame, every layer behind leaving through its fade, no English in a Portuguese image.
 - Labels, numbers and dates match what the app shows that learner; a date the app writes as "~Jan 11" stays an estimate.

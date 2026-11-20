@@ -27,9 +27,9 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
    - Write every line for someone who has never opened Zoonk: their problem and how Zoonk solves it, in everyday words, with only claims that last ([first-time viewers](references/story.md#write-for-someone-who-has-never-opened-zoonk)).
    - Write the plan as a scene table with the text for both languages side by side, and get it approved before building.
 3. **Studio.** Run `node .agents/skills/zoonk-video/scripts/init.mjs <work-dir> [--port 5199]`.
-   - Use a scratch folder outside the repo; nothing a video produces is committed. Pick a free port if another studio runs.
+   - Use a scratch folder outside the repo and a free port; nothing a video produces is committed.
    - It copies the engine, the harness, the scripts and the examples (`films/zoonk-2/`, `films/launch/`), installs GSAP, Lucide and Geist, links the repo's React, Vite, AI SDK and Playwright, and builds the icon and font files.
-   - It ends with `npm run typecheck`: every view against the app's current contracts. A failure names the view and field that drifted; fix it before filming, since a drifted view draws wrong numbers. Run it again after pulling.
+   - It ends with `npm run typecheck`: every view against the app's current contracts. Fix a drifted view before filming, since it draws wrong numbers. Run it again after pulling.
    - Running it again over a studio adds what's missing and never overwrites a file. A studio made before the stage has no `typecheck`, and init stops there: make a fresh folder and copy its `films/` across.
    - It needs FFmpeg, Python 3 with NumPy, and the Chromium the repo's E2E tests use (`pnpm exec playwright install chromium`); it stops early if FFmpeg or NumPy is missing.
    - Then, in the studio: `npm run harness` (keep it running), and `node scripts/export-art.mjs` for the buddy and Trickster SVGs.
@@ -91,7 +91,7 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
 - `scripts/`
   - Setup: `init.mjs` builds a studio; `typecheck.mjs` checks the views; `export-art.mjs` saves the buddy SVGs.
   - Captures: `snap.mjs` (stills), `seq.mjs` (interactions), `typing.mjs`, `manifests.py`; `story-clock.mjs` pins their clock to the story's date.
-  - Video: `render.mjs` turns a page or a stage scene (`--url`, `--scheme dark`) into frames, then an MP4 or stills; `stills.mjs` renders a set's post images in every size, scheme and language; `cues.mjs` lists a page's sound cues.
+  - Video: `render.mjs` turns a page or a stage scene (`--url`, `--scheme dark`) into an MP4 or stills, failing a stage frame that cuts what it shows; `stills.mjs` renders a set's post images in every size, scheme and language; `cues.mjs` lists a page's sound cues.
   - Audio: `narration.py` (spec, fit and captions); `gen-audio.mjs`, `transcribe.mjs`, `judge-audio.mjs` and `rank-audio.mjs` (AI Gateway); `mix.py` and `sfx.py` (the mix and the UI sounds).
 - `engine/`: the page runtime.
   - `engine.js`: the timeline, the frame-exact seek, text reveals, typing and sound cues.
@@ -99,10 +99,10 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
   - `common.css`: Zoonk's tokens and the base styles.
 - `realui/`: the harness that renders app components outside Next.
   - The Vite config, which compiles translations with next-intl's own loaders, as Main's build does.
-  - Views for the player (`player.tsx`), the learn screens (`learn/`) and the exam, language and progress screens (`goals/`).
+  - Views for the player (`player.tsx`), the learn screens (`learn/`) and the goal screens (`goals/`).
   - `art.tsx`: the brand art.
   - `story.ts`: the films' sample learner per locale.
   - `learners/`: the stage's sample learners, built into the app's view models with no `any`.
-  - `stage/`: the stage page, its kit (pieces, timeline, typing, camera) and the catalog of pieces (`pieces.ts`).
+  - `stage/`: the stage page, its kit and the catalog of pieces (`pieces.ts`).
 - `example/zoonk-2/`: the 2.0 launch film, to copy for a new one: pages (`long`, `short`, `thumb`), `copy.js` (the words per language), `stills.json` (the screens to capture), `narration.py` and `music.json`.
 - `example/launch/scenes.ts`: the 2.0 launch stills and the goal-to-plan demo.

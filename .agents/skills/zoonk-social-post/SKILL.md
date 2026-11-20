@@ -33,7 +33,7 @@ Finished assets live in the private `zoonk/marketing` repository, one folder per
 <yyyy-mm>-<campaign>/              such as 2026-11-zoonk-2
   README.md                        what it announces, the Zoonk commit the media was rendered from
   posts.md                         drafts per account, platform and language; then what was posted, when, and how it did
-  en/  pt/                         final images and clips: <scene>-<16x9|4x5>-<light|black>.png, <name>-16x9[-black].mp4
+  en/  pt/                         final images and clips: <scene>-<16x9|4x5>-<light|black>.png, <name>-<16x9|4x5|9x16>[-black].mp4
   source/                          the scenes file and any learner data the set needs to be drawn again
 ```
 

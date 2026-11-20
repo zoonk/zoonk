@@ -5,7 +5,7 @@ What each platform needs, with where each claim comes from and when it was check
 ## Every platform
 
 - **The first line carries the post.** No platform's cutoff before "more" was verified on current phones, so write as if only the first line shows.
-- **Sizes:** stills at 1600×900 (X, LinkedIn) and 1080×1350 (Instagram, LinkedIn); clips at 1920×1080, 60 fps, silent. Current uncropped feed dimensions weren't verified for any platform; look at the post in the composer's preview before publishing.
+- **Sizes:** stills at 1600×900 (X, LinkedIn) and 1080×1350 (Instagram, LinkedIn); clips at 1920×1080 (X, LinkedIn), 1080×1350 (Instagram's feed, LinkedIn) and 1080×1920 (Reels), 60 fps, silent. Current uncropped feed dimensions weren't verified for any platform; look at the post in the composer's preview before publishing.
 - **A founder's account outruns the brand's:** on LinkedIn, personal profiles led company pages on impressions and interactions at most account sizes ([Metricool, 2026](https://metricool.com/wp-content/uploads/Linkedin-Study-2026-EN.pdf)); on X, 10 of the 12 recent launch posts above 50K views in the owner's For You feed came from founders and team members, not companies (feed capture, 19 November 2026). Post the lead from the owner's account and let Zoonk's account follow.
 
 ## X
