@@ -158,11 +158,13 @@ function beatsFor(text: string, opening: number) {
 
 /**
  * Where the words go in each frame: the band they stay inside, and the column they fill, clear of
- * the dissolve at the sides even when the camera leans in.
+ * the dissolve at the sides even when the camera leans in. A Reel's own buttons and caption cover
+ * the rest of a 9:16 frame (references/formats.md).
  */
 const FRAMING = {
   "16x9": { safe: { bottom: 1015, top: 65 }, column: 1680 },
   "4x5": { safe: { bottom: 1270, top: 80 }, column: 840 },
+  "9x16": { safe: { bottom: 1250, top: 270 }, column: 840 },
 } satisfies Record<Format, { safe: { bottom: number; top: number }; column: number }>;
 
 /** Goal to plan to today in one shot: each change is carried by something already on screen. */

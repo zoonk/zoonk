@@ -1,4 +1,4 @@
-// /stage/?film=<folder in films/>&scene=<name>&fmt=16x9|4x5&lang=en|pt
+// /stage/?film=<folder in films/>&scene=<name>&fmt=16x9|4x5|9x16&lang=en|pt
 // Exposes window.__ready, __duration and __seek(t), as scripts/render.mjs and scripts/stills.mjs expect.
 // A name it doesn't know rejects __ready, so a typo fails the render instead of saving this page as an image;
 // so does a moment whose frame or crops cut through words (stage.cuts).

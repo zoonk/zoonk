@@ -4,11 +4,12 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { type Lang } from "../story";
 import { EASE, type Fade, type Piece, type PieceSpec, type Rect, Timeline, makePiece } from "./kit";
 
-export type Format = "16x9" | "4x5";
+export type Format = "16x9" | "4x5" | "9x16";
 
 export const FORMATS: Record<Format, { w: number; h: number }> = {
   "16x9": { w: 1920, h: 1080 },
   "4x5": { w: 1080, h: 1350 },
+  "9x16": { w: 1080, h: 1920 },
 };
 
 type Point = { x: number; y: number };
